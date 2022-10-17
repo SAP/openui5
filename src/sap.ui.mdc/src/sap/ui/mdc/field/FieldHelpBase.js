@@ -1074,7 +1074,6 @@ sap.ui.define([
 	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.)
 	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.)
 	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>FieldHelp</code> element might be connected to a different row.
-	 * @param {boolean} bCheckKeyFirst If set, the field help checks first if the value fits a key
 	 * @param {boolean} bCheckKey If set, the field help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
 	 * @param {boolean} bCheckDescription If set, the field help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
@@ -1086,7 +1085,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
 	 * @since 1.77.0
 	 */
-	FieldHelpBase.prototype.getItemForValue = function(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
+	FieldHelpBase.prototype.getItemForValue = function(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
 
 		if (typeof vValue !== "object" || !vValue.hasOwnProperty("value")) {
 			// not new config object -> map old properties to config
@@ -1096,7 +1095,6 @@ sap.ui.define([
 					inParameters: oInParameters, // TODO: needed?
 					outParameters: oOutParameters, // TODO: needed?
 					bindingContext: oBindingContext,
-					checkKeyFirst: bCheckKeyFirst, // TODO: not longer needed?
 					checkKey: bCheckKey,
 					checkDescription: bCheckDescription,
 					conditionModel: oConditionModel,
@@ -1106,14 +1104,14 @@ sap.ui.define([
 
 		if (vValue && typeof vValue === "object" && vValue.hasOwnProperty("value")) {
 			// map new Config to old API
-			return _getItemForValue.call(this, vValue.value, vValue.parsedValue, vValue.inParameters, vValue.outParameters, vValue.bindingContext, vValue.checkKeyFirst && vValue.checkKey, vValue.checkKey, vValue.checkDescription, vValue.conditionModel, vValue.conditionModelName);
+			return _getItemForValue.call(this, vValue.value, vValue.parsedValue, vValue.inParameters, vValue.outParameters, vValue.bindingContext, vValue.checkKey, vValue.checkDescription, vValue.conditionModel, vValue.conditionModelName);
 		} else {
-			return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst && bCheckKey, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
+			return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
 		}
 
 	};
 
-	function _getItemForValue(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
+	function _getItemForValue(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
 
 		return SyncPromise.resolve().then(function() {
 			// filter case insensitive as user input might in this way

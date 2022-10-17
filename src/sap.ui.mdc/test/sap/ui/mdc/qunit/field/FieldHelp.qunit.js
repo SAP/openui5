@@ -405,49 +405,43 @@ sap.ui.define([
 			}
 		});
 
-		var oResult = oFieldHelp.getItemForValue("X", "X", "in", "out", oContext, true, true, true);
+		var oResult = oFieldHelp.getItemForValue("X", "X", "in", "out", oContext, true, true);
 		assert.deepEqual(oResult, {key: "X", description: "Text"}, "key and description returned");
 		assert.ok(oFieldHelp._getTextOrKey.calledWith("X", true, oContext, "in", "out", false, undefined, undefined, "X", true, false), "_getTextOrKey called with key and description");
 		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "_getTextOrKey only once called");
 
 		oFieldHelp._getTextOrKey.resetHistory();
-		oResult = oFieldHelp.getItemForValue("X", "X", "in", "out", oContext, true, false, true);
+		oResult = oFieldHelp.getItemForValue("X", "X", "in", "out", oContext, false, true);
 		assert.deepEqual(oResult, {key: "Key", description: "X"}, "key and description returned");
 		assert.ok(oFieldHelp._getTextOrKey.calledWith("X", false, oContext, undefined, undefined, false, undefined, undefined, undefined, false, false), "_getTextOrKey called with description");
 		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "_getTextOrKey only once called");
 
 		oFieldHelp._getTextOrKey.resetHistory();
-		oResult = oFieldHelp.getItemForValue("Z", "Z", "in", "out", oContext, true, false, true);
+		oResult = oFieldHelp.getItemForValue("Z", "Z", "in", "out", oContext, false, true);
 		assert.deepEqual(oResult, {key: "Key", description: "z"}, "key and description returned");
 		assert.ok(oFieldHelp._getTextOrKey.calledWith("Z", false, oContext, undefined, undefined, false, undefined, undefined, undefined, false, false), "_getTextOrKey called with description");
 		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "_getTextOrKey only once called");
 
 		oFieldHelp._getTextOrKey.resetHistory();
-		oResult = oFieldHelp.getItemForValue("X", "X", "in", "out", oContext, false, true, true);
-		assert.deepEqual(oResult, {key: "X", description: "Text"}, "key and description returned");
-		assert.ok(oFieldHelp._getTextOrKey.calledWith("X", true, oContext, "in", "out", false, undefined, undefined, "X", true, false), "_getTextOrKey called with key and description");
-		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "_getTextOrKey only once called");
-
-		oFieldHelp._getTextOrKey.resetHistory();
-		oResult = oFieldHelp.getItemForValue("X", "X", "in", "out", oContext, false, true, false);
+		oResult = oFieldHelp.getItemForValue("X", "X", "in", "out", oContext, true, false);
 		assert.deepEqual(oResult, {key: "X", description: "Text"}, "key and description returned");
 		assert.ok(oFieldHelp._getTextOrKey.calledWith("X", true, oContext, "in", "out", false, undefined, undefined, undefined, false, false), "_getTextOrKey called with key");
 		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "_getTextOrKey only once called");
 
 		oFieldHelp._getTextOrKey.resetHistory();
-		oResult = oFieldHelp.getItemForValue("Z", "Z", "in", "out", oContext, false, true, false);
+		oResult = oFieldHelp.getItemForValue("Z", "Z", "in", "out", oContext, true, false);
 		assert.deepEqual(oResult, {key: "z", description: "Text"}, "key and description returned");
 		assert.ok(oFieldHelp._getTextOrKey.calledWith("Z", true, oContext, "in", "out", false, undefined, undefined, undefined, false, false), "_getTextOrKey called with key");
 		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "_getTextOrKey only once called");
 
 		oFieldHelp._getTextOrKey.resetHistory();
-		oResult = oFieldHelp.getItemForValue("Y", "y", "in", "out", oContext, true, true, true);
+		oResult = oFieldHelp.getItemForValue("Y", "y", "in", "out", oContext, true, true);
 		assert.deepEqual(oResult, {key: "y", description: "Y"}, "key and description returned");
 		assert.ok(oFieldHelp._getTextOrKey.calledWith("Y", true, oContext, "in", "out", false, undefined, undefined, "y", true, false), "_getTextOrKey called with key and description");
 		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "_getTextOrKey only once called");
 
 		oFieldHelp._getTextOrKey.resetHistory();
-		oResult = oFieldHelp.getItemForValue("Z", "z", "in", "out", oContext, false, true, true);
+		oResult = oFieldHelp.getItemForValue("Z", "z", "in", "out", oContext, true, true);
 		assert.deepEqual(oResult, {key: "z", description: "Z"}, "key and description returned");
 		assert.ok(oFieldHelp._getTextOrKey.calledWith("Z", true, oContext, "in", "out", false, undefined, undefined, "z", true, false), "_getTextOrKey called with key and description");
 		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "_getTextOrKey only once called");
@@ -537,7 +531,7 @@ sap.ui.define([
 		var iFinished = 0;
 
 		// key and description used
-		var oResult = oFieldHelp.getItemForValue("1", 1, "in", "out", oContext, true, true, true);
+		var oResult = oFieldHelp.getItemForValue("1", 1, "in", "out", oContext, true, true);
 		assert.ok(oResult instanceof Promise, "Test1: Promise returned");
 		assert.ok(oFieldHelp._getTextOrKey.calledWith("1", true, oContext, "in", "out", false, undefined, undefined, 1, true, false), "Test1: _getTextOrKey called with key and description");
 		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "Test1: _getTextOrKey only once called");
@@ -554,7 +548,7 @@ sap.ui.define([
 		fnResolve1({key: 1, description: "Text"});
 
 		// key checked and not found and no check for description
-		oResult = oFieldHelp.getItemForValue("2", 2, "in", "out", oContext, true, true, false);
+		oResult = oFieldHelp.getItemForValue("2", 2, "in", "out", oContext, true, false);
 		assert.ok(oResult instanceof Promise, "Test2: Promise returned");
 		assert.ok(oFieldHelp._getTextOrKey.calledWith(2, true, oContext, "in", "out", false, undefined, undefined, undefined, false, false), "Test2: _getTextOrKey called with key");
 		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "Test2: _getTextOrKey only once called");
@@ -573,7 +567,7 @@ sap.ui.define([
 		fnRejectDescription3(new ParseException("notFound")); // raise exception
 
 		// description checked and not found and no check for key
-		oResult = oFieldHelp.getItemForValue("3", 3, "in", "out", oContext, false, false, true);
+		oResult = oFieldHelp.getItemForValue("3", 3, "in", "out", oContext, false, true);
 		assert.ok(oResult instanceof Promise, "Test3: Promise returned");
 		assert.ok(oFieldHelp._getTextOrKey.calledWith("3", false, oContext, undefined, undefined, false, undefined, undefined, undefined, false, false), "Test3: _getTextOrKey called with description");
 		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "Test3: _getTextOrKey only once called");
@@ -589,7 +583,7 @@ sap.ui.define([
 		});
 
 		// Key and description not found
-		oResult = oFieldHelp.getItemForValue("4", 4, "in", "out", oContext, true, true, true);
+		oResult = oFieldHelp.getItemForValue("4", 4, "in", "out", oContext, true, true);
 		assert.ok(oResult instanceof Promise, "Test4: Promise returned");
 		assert.ok(oFieldHelp._getTextOrKey.calledWith("4", true, oContext, "in", "out", false, undefined, undefined, 4, true, false), "Test4: _getTextOrKey called with key and description");
 		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "Test4: _getTextOrKey only once called");
@@ -607,7 +601,7 @@ sap.ui.define([
 		});
 
 		//  Key checked but other exception thrown
-		oResult = oFieldHelp.getItemForValue("5", 5, "in", "out", oContext, true, true, true);
+		oResult = oFieldHelp.getItemForValue("5", 5, "in", "out", oContext, true, true);
 		assert.ok(oResult instanceof Promise, "Test5: Promise returned");
 		assert.ok(oFieldHelp._getTextOrKey.calledWith("5", true, oContext, "in", "out", false, undefined, undefined, 5, true, false), "Test5: _getTextOrKey called with key and description");
 		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "Test5: _getTextOrKey only once called");
@@ -625,7 +619,7 @@ sap.ui.define([
 		});
 
 		// Key checked first but not unique
-		oResult = oFieldHelp.getItemForValue("6", 6, "in", "out", oContext, true, true, true);
+		oResult = oFieldHelp.getItemForValue("6", 6, "in", "out", oContext, true, true);
 		assert.ok(oResult instanceof Promise, "Test6: Promise returned");
 		assert.ok(oFieldHelp._getTextOrKey.calledWith("6", true, oContext, "in", "out", false, undefined, undefined, 6, true, false), "Test6: _getTextOrKey called with key and description");
 		assert.ok(oFieldHelp._getTextOrKey.calledOnce, "Test6: _getTextOrKey only once called");

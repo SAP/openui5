@@ -278,7 +278,7 @@ sap.ui.define([
 		return false;
 	};
 
-	ConditionFieldHelp.prototype.getItemForValue = function(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription) {
+	ConditionFieldHelp.prototype.getItemForValue = function(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKey, bCheckDescription) {
 
 		// do not check input, just return object with key
 		return {key: vParsedValue, description: undefined};

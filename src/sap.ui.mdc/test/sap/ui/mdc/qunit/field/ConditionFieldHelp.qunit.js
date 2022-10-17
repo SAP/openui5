@@ -350,7 +350,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue", function(assert) {
 
-		var oItem = oFieldHelp.getItemForValue("1", 1, undefined, undefined, undefined, true, true, true);
+		var oItem = oFieldHelp.getItemForValue("1", 1, undefined, undefined, undefined, true, true);
 		assert.deepEqual(oItem, {key: 1, description: undefined}, "only key filled");
 
 	});

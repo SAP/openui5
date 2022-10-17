@@ -3459,16 +3459,16 @@ sap.ui.define([
 	QUnit.test("getItemForValue", function(assert) {
 
 		var oFilter = new Filter({path: "IN", operator: FilterOperator.EQ, value1: "Test1"});
-		oFieldHelp.getItemForValue("I2", "I2", undefined, undefined, undefined, true, true, false);
+		oFieldHelp.getItemForValue("I2", "I2", undefined, undefined, undefined, true, false);
 		assert.ok(oWrapper.getTextForKey.calledWith("I2", oFilter), "getTextForKey of Wrapper called with In-Parameter");
-		oFieldHelp.getItemForValue("Item 2", "item 2", undefined, undefined, undefined, false, false, true);
+		oFieldHelp.getItemForValue("Item 2", "item 2", undefined, undefined, undefined, false, true);
 		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", oFilter), "getKeyForText of Wrapper called with In-Parameter");
 		oFilter.destroy();
 
 		oFilter = new Filter({path: "IN", operator: FilterOperator.EQ, value1: "Test2"});
-		oFieldHelp.getItemForValue("I2", "I2", undefined, undefined, undefined, true, true, false, oCM2, "cm");
+		oFieldHelp.getItemForValue("I2", "I2", undefined, undefined, undefined, true, false, oCM2, "cm");
 		assert.ok(oWrapper.getTextForKey.calledWith("I2", oFilter), "getTextForKey of Wrapper called with In-Parameter from other ConditionModel");
-		oFieldHelp.getItemForValue("Item 2", "item 2", undefined, undefined, undefined, false, false, true, oCM2, "cm");
+		oFieldHelp.getItemForValue("Item 2", "item 2", undefined, undefined, undefined, false, true, oCM2, "cm");
 		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", oFilter), "getKeyForText of Wrapper called with In-Parameter from other ConditionModel");
 		oFilter.destroy();
 
