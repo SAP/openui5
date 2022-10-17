@@ -15,7 +15,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function retrieveUserId() {
+	function retrieveUserId(oSettings) {
+		if (oSettings && oSettings.logonUser) {
+			return Promise.resolve(oSettings.logonUser);
+		}
 		var oUShellContainer = Utils.getUshellContainer();
 		if (oUShellContainer) {
 			return Utils.getUShellService("UserInfo")
@@ -92,7 +95,7 @@ sap.ui.define([
 		var oLoadingPromise = Storage.loadFeatures()
 			.then(function(oLoadedSettings) {
 				oSettings = oLoadedSettings;
-				return retrieveUserId();
+				return retrieveUserId(oSettings);
 			})
 			.then(function (sUserId) {
 				if (!oSettings) {
@@ -427,9 +430,9 @@ sap.ui.define([
 
 	/**
 	 * Getter for the id of the current user.
-	 * This is taken from the <code>userId</code> property of the flex settings. Only filled when UShell is available.
+	 * This is taken from the <code>userId</code> property of the flex settings.
 	 *
-	 * @returns {string} User ID of the current user. Undefined if UShell is not available.
+	 * @returns {string} User ID of the current user.
 	 */
 	 Settings.prototype.getUserId = function() {
 		return this._oSettings.userId;
