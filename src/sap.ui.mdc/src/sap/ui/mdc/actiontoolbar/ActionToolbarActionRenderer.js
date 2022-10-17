@@ -19,7 +19,8 @@ sap.ui.define([], function() {
 	 * @param {sap.ui.mdc.actiontoolbar.ActionToolbarAction} oActionToolbarAction an object representation of the control that should be rendered
 	 */
     ActionToolbarActionRenderer.render = function(rm, oActionToolbarAction) {
-        var mAriaProps = { role: "action" };
+        var oAction = oActionToolbarAction.getAction();
+        var mAriaProps = { role: oAction && oAction.getAccessibilityInfo ? oAction.getAccessibilityInfo().role : "button" };
 
         rm.openStart("div", oActionToolbarAction);
 
@@ -27,7 +28,7 @@ sap.ui.define([], function() {
 
         rm.openEnd();
 
-        rm.renderControl(oActionToolbarAction.getAction());
+        rm.renderControl(oAction);
 
         rm.close("div");
     };
