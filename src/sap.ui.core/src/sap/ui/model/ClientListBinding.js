@@ -52,6 +52,10 @@ sap.ui.define([
 			// the contexts returned by the last call of getContexts if extended change detection is
 			// enabled
 			this.aLastContexts = undefined;
+			// if this.bUseExtendedChangeDetection is true it is the end index calculated from the
+			// defaulted values of the given iStartIndex and iLength from the last call of
+			// getContexts
+			this.iLastEndIndex = undefined;
 			// the defaulted value of the given iLength from the last call of getContexts with
 			// bKeepCurrent !== true
 			this.iLastLength = undefined;
@@ -165,12 +169,14 @@ sap.ui.define([
 	 */
 	 ClientListBinding.prototype.getContexts = function (iStartIndex, iLength, iMaximumPrefetchSize,
 			bKeepCurrent) {
-		var aContextData, aContexts,
-			iLastEnd = this.iLastStartIndex + this.iLastLength;
+		var aContextData, aContexts;
 
+		// Do not update last start and length with the defaulted values as #checkUpdate would only
+		// check in this range for changes. For controls that want to show all data the range must
+		// not be limited.
+		this._updateLastStartAndLength(iStartIndex, iLength, iMaximumPrefetchSize, bKeepCurrent);
 		iStartIndex = iStartIndex || 0;
 		iLength = iLength || Math.min(this.iLength, this.oModel.iSizeLimit);
-		this._updateLastStartAndLength(iStartIndex, iLength, iMaximumPrefetchSize, bKeepCurrent);
 		aContexts = this._getContexts(iStartIndex, iLength);
 		if (this.bUseExtendedChangeDetection) {
 			aContextData = [];
@@ -179,9 +185,10 @@ sap.ui.define([
 				for (var i = 0; i < aContexts.length; i++) {
 					aContextData.push(this.getContextData(aContexts[i]));
 				}
-				if (this.aLastContextData && iStartIndex < iLastEnd) {
+				if (this.aLastContextData && iStartIndex < this.iLastEndIndex) {
 					aContexts.diff = this.diffData(this.aLastContextData, aContextData);
 				}
+				this.iLastEndIndex = iStartIndex + iLength;
 				this.aLastContextData = aContextData;
 				this.aLastContexts = aContexts.slice(0);
 			} catch (oError) {
