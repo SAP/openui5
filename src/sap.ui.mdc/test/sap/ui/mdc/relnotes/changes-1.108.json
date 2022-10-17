@@ -3,6 +3,28 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "c03b9ed4ebd9096219fcccc84848586468b84446",
+        "type": "FIX",
+        "text": " Field: Unit part cut off on small screen",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280141540"
+          }
+        ]
+      },
+      {
+        "id": "6dc9f710c8cbeb2da5908aa31e7d0db9db873375",
+        "type": "FIX",
+        "text": " MultiValueField: text not anounced in display mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270142055"
+          }
+        ]
+      },
+      {
         "id": "18c5cc8bfdc9e193cd8d0e57354d2e3dbbdc66c6",
         "type": "FIX",
         "text": " Field: Change-Promise pending if validation error on unit",

@@ -3,6 +3,11 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "f7034d6d8b4ab1c7127b563daa5ee414ccc653f8",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: primaryCalendarType property introduced"
+      },
+      {
         "id": "45109b020b66c55edd009cdc973a29ffd663f8a0",
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: adjust property setters",

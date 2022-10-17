@@ -3,6 +3,17 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "46da42b5e0b08a20f6b7f924218ca7983c17987f",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageHeader: fix Desktop paddings in Horizon theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270124959"
+          }
+        ]
+      },
+      {
         "id": "f51928b77ecf5c033213e00be633f619a154fa69",
         "type": "FIX",
         "text": " \"72\" Font: redirect C with Caron and R with Caron to \"72-full\"",

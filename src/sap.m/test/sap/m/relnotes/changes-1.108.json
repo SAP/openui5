@@ -3,6 +3,59 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "ce357dafbf92f190d038b06f53e5ac0eae7da440",
+        "type": "FEATURE",
+        "text": "sap.m.AdditionalTextButton: new control (initial implementation)"
+      },
+      {
+        "id": "6595415f2ef27d7e842369f2e42c33d7ac92e6d6",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Missing initials fixed"
+      },
+      {
+        "id": "f7034d6d8b4ab1c7127b563daa5ee414ccc653f8",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: primaryCalendarType property introduced"
+      },
+      {
+        "id": "5c29816e29a1ad54ada402f6d6be8ed67e8aa347",
+        "type": "FIX",
+        "text": " sap.m.Label: Required label asterisk symbol is no longer cut off",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270118944"
+          }
+        ]
+      },
+      {
+        "id": "378c924c2b89a39a101874637395bce205c252f9",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Avatar initials fixed"
+      },
+      {
+        "id": "56f08bffdfb95652a2a542637da16c3d19c9b93b",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Fixed vertical responsiveness",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270144551"
+          }
+        ]
+      },
+      {
+        "id": "aba35aec67813f5690accd615f71413e07f9805e",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: adjust mask initialization",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270142822"
+          }
+        ]
+      },
+      {
         "id": "292a5d8f07ebbc577c560ad054f00b7ec3dd4254",
         "type": "FEATURE",
         "text": " sap.m.DatePicker: Removed existing tooltips"

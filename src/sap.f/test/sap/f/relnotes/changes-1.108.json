@@ -3,6 +3,33 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "502291a06af85b377fd074797e1544775993fd5b",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Padding no longer breaks keyboard navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280125231"
+          }
+        ]
+      },
+      {
+        "id": "880344966b2e09f14666df812ca359efe6233afa",
+        "type": "FEATURE",
+        "text": " Integration card: Analytical card now has loading placeholder"
+      },
+      {
+        "id": "88ad5dd1a75cc9fecda28df683a9cbe0450f9872",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: alignment with Visual Specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270142105"
+          }
+        ]
+      },
+      {
         "id": "a186d09625fd2bc689bd83bba8aaad801f0cf990",
         "type": "FEATURE",
         "text": " Integration Cards: Footer can be hidden"

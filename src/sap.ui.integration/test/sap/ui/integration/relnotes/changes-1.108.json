@@ -3,6 +3,11 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "880344966b2e09f14666df812ca359efe6233afa",
+        "type": "FEATURE",
+        "text": " Integration card: Analytical card now has loading placeholder"
+      },
+      {
         "id": "a186d09625fd2bc689bd83bba8aaad801f0cf990",
         "type": "FEATURE",
         "text": " Integration Cards: Footer can be hidden"
