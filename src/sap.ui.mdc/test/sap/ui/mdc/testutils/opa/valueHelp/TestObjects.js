@@ -21,17 +21,6 @@ sap.ui.define([
 				/**
 				 * OPA5 test action
 				 * @memberof onTheMDCValueHelp
-				 * @method iOpenTheValueHelpForField
-				 * @param {sap.ui.core.Control | string} oField Instance / ID of the <code>sap.ui.mdc.Field</code>
-				 * @returns {Promise} OPA waitFor
-				 * Opens the value help for a given <code>sap.ui.mdc.Field</code>.
-				 */
-				iOpenTheValueHelpForField: function(oField) {
-					return Actions.iOpenTheValueHelpForField.call(this, oField);
-				},
-				/**
-				 * OPA5 test action
-				 * @memberof onTheMDCValueHelp
 				 * @method iCloseTheValueHelpDialog
 				 * @param {boolean} bCancel Boolean that defines if the Cancel button is pressed
 				 * @returns {Promise} OPA waitFor

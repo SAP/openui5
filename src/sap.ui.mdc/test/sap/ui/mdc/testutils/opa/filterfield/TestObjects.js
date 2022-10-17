@@ -32,23 +32,24 @@ sap.ui.define([
 				/**
 				 * OPA5 test action
 				 * @memberof onTheMDCFilterField
-				 * @method iPressKeyOnFilterFieldWithLabel
-				 * @param {string | Object} vIdentifier ID or a plain object providing properties identifying of the given <code>sap.ui.mdc.FilterField</code>
+				 * @method iPressKeyOnTheFilterField
+				 * @param {string|object} vOptions Id or a plain object providing properties identifying the given <code>sap.ui.mdc.FilterField</code>
 				 * @param {string} sValue Value of the key code that is pressed
 				 * @returns {Promise} OPA waitFor
 				 */
-				iPressKeyOnFilterFieldWithLabel: function(vIdentifier, sValue) {
-					return fieldActions.iPressKeyOnFilterFieldWithLabel.call(this, vIdentifier, sValue);
+				 iPressKeyOnTheFilterField: function(vOptions, sValue) {
+					return fieldActions.iPressKeyOnTheFilterField.apply(this, arguments);
 				},
 				/**
 				 * OPA5 test action
 				 * @memberof onTheMDCFilterField
-				 * @method iPressOnTheFilterFieldValueHelpButton
-				 * @param {string | Object} vIdentifier ID or a plain object providing properties identifying of the given <code>sap.ui.mdc.FilterField</code>
+				 * @method iOpenTheValueHelpForFilterField
+				 * @param {Object | string} oFilterField ID or identifying properties of the <code>sap.ui.mdc.FilterField</code>
 				 * @returns {Promise} OPA waitFor
+				 * Opens the value help for a given <code>sap.ui.mdc.FilterField</code>.
 				 */
-				iPressOnTheFilterFieldValueHelpButton: function(vIdentifier) {
-					return fieldActions.iPressOnTheFilterFieldValueHelpButton.call(this, vIdentifier);
+				 iOpenTheValueHelpForFilterField: function(oFilterField) {
+					return fieldActions.iOpenTheValueHelpForFilterField.call(this, oFilterField);
 				}
 			},
 			assertions: {

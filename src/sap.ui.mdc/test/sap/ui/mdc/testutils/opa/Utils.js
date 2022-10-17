@@ -19,12 +19,10 @@ sap.ui.define([
 	};
 
 	Utils.enhanceWaitFor = function (vIdent, oConfig) {
-		var bStringIdent = typeof vIdent === "string";
-		return Object.assign(oConfig, {
-			properties: !bStringIdent && vIdent,
-			id: bStringIdent && vIdent
-		});
-	};
+        var bStringIdent = typeof vIdent === "string";
+        return Object.assign({}, oConfig, bStringIdent ? {properties: {id: vIdent}} : {properties: vIdent});
+    };
+
 
 	Utils.removeUndefinedValues = function(oObject) {
 		var oReturnObject = {};

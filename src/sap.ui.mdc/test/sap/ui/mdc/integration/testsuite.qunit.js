@@ -95,41 +95,38 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				module: "test-resources/sap/ui/mdc/integration/twfb/TestJourney.qunit",
 				sinon: false
 			},
-			/* TODO: disabled due to instability
-			"OverlayJourney": {
-				group: "TWFB",
+			"ValueHelpSelectFromListJourney": {
 				loader: {
 					paths: {
 						"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
 						"sap/ui/mdc/integration": "test-resources/sap/ui/mdc/integration",
-						"sap/ui/v4demo": "test-resources/sap/ui/mdc/internal/TableWithFilterBar",
-						"local": "test-resources/sap/ui/mdc/integration/twfb"
+						"sap/ui/v4demo": "test-resources/sap/ui/mdc/integration/valuehelp",
+						"delegates": "test-resources/sap/ui/mdc/delegates"
 					}
 				},
 				qunit: {
 					reorder: false
 				},
 				autostart: false, // tests are added asynchronously because the V4 server needs to be found first
-				module: "test-resources/sap/ui/mdc/integration/twfb/OverlayJourney.qunit",
+				module: "test-resources/sap/ui/mdc/integration/valuehelp/ValueHelpSelectFromListJourney.qunit",
 				sinon: false
 			},
-			*/
-			// "ValueHelp": {
-			// 	loader: {
-			// 		paths: {
-			// 			"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
-			// 			"sap/ui/mdc/integration": "test-resources/sap/ui/mdc/integration",
-			// 			"sap/ui/v4demo": "test-resources/sap/ui/mdc/integration/valuehelp",
-			// 			"delegates": "test-resources/sap/ui/mdc/delegates"
-			// 		}
-			// 	},
-			// 	qunit: {
-			// 		reorder: false
-			// 	},
-			// 	autostart: false, // tests are added asynchronously because the V4 server needs to be found first
-			// 	module: "test-resources/sap/ui/mdc/integration/valuehelp/opaTests.qunit",
-			// 	sinon: false
-			// },
+			"ValueHelpDefineConditionsJourney": {
+				loader: {
+					paths: {
+						"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
+						"sap/ui/mdc/integration": "test-resources/sap/ui/mdc/integration",
+						"sap/ui/v4demo": "test-resources/sap/ui/mdc/integration/valuehelp",
+						"delegates": "test-resources/sap/ui/mdc/delegates"
+					}
+				},
+				qunit: {
+					reorder: false
+				},
+				autostart: false, // tests are added asynchronously because the V4 server needs to be found first
+				module: "test-resources/sap/ui/mdc/integration/valuehelp/ValueHelpDefineConditionsJourney.qunit",
+				sinon: false
+			},
 			"ActionToolbar": {
 				loader: {
 					paths: {

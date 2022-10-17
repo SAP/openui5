@@ -3,12 +3,11 @@
  */
 
 /* global QUnit */
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/test/Opa5",
 	"mdc/qunit/util/V4ServerHelper",
-	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary"
+	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary",
+	"test-resources/sap/ui/mdc/testutils/opa/Util"
 ], function(
 	Opa5,
 	ODataV4ServerHelper
@@ -37,7 +36,7 @@ sap.ui.require([
 		if (bServerAvailable) {
 
 			sap.ui.require([
-				"sap/ui/v4demo/test/ValueHelpJourney"
+				"sap/ui/v4demo/test/ValueHelpSelectFromListJourney"
 			], function() {
 				QUnit.start();
 			});

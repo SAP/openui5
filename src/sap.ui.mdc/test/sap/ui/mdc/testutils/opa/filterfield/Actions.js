@@ -20,9 +20,11 @@ sap.ui.define([
     "use strict";
 
     return {
-		iEnterTextOnTheFilterField: function(vIdentifier, sValue) {
+		iEnterTextOnTheFilterField: function(vIdentifier, sValue, oConfig) {
 			return waitForFilterField.call(this, Utils.enhanceWaitFor(vIdentifier, {
-				actions: new EnterText({
+				actions: new EnterText(oConfig ? Object.assign({
+					text: sValue
+				}, oConfig) : {
 					text: sValue
 				}),
 				success: function(oFilterField) {

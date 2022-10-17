@@ -26,8 +26,8 @@
 			<mdc:ValueHelp id="FB0-FH-SO" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 				<mdc:typeahead>
 					<mdcv:Popover id="FB0-FH-SO-Popover" title="City">
-						<mdcvc:MTable  id="FB0-FH-SO-Popover-MTable" keyPath="key" descriptionPath="text" filterFields="*text,key*" title="Sales Organization" >
-							<Table id="FB0-FH-SO-Popover-MTable-mTable" items="{path: 'settings>/salesOrganisations', length: 10}" width="30rem" useAsValueHelp="false">
+						<mdcvc:MTable  id="FB0-FH-SO-Popover-MTable" keyPath="key" descriptionPath="text" filterFields="*text,key*" title="Sales Organization">
+							<Table id="FB0-FH-SO-Popover-MTable-mTable" items="{path: 'settings>/salesOrganisations', length: 10}" width="30rem">
 								<columns>
 									<Column>
 										<Label text="Key"/>
@@ -51,8 +51,8 @@
 			<mdc:ValueHelp id="FB0-FH-DC" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 				<mdc:typeahead>
 					<mdcv:Popover id="FB0-FH-DC-Popover" title="City">
-						<mdcvc:MTable  id="FB0-FH-DC-Popover-MTable" keyPath="key" descriptionPath="text" filterFields="*text,key*" title="Sales Organization" >
-							<Table id="FB0-FH-DC-Popover-MTable-mTable" items="{path: 'settings>/distributionChannels', length: 10}" width="30rem" useAsValueHelp="false">
+						<mdcvc:MTable  id="FB0-FH-DC-Popover-MTable" keyPath="key" descriptionPath="text" filterFields="*text,key*" title="Sales Organization">
+							<Table id="FB0-FH-DC-Popover-MTable-mTable" items="{path: 'settings>/distributionChannels', length: 10}" width="30rem">
 								<columns>
 									<Column>
 										<Label text="Key"/>
@@ -80,8 +80,8 @@
 			<mdc:ValueHelp id="FB0-FH-D" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 				<mdc:typeahead>
 					<mdcv:Popover id="FB0-FH-D-Popover" title="Divisions">
-						<mdcvc:MTable  id="FB0-FH-D-Popover-MTable" keyPath="key" descriptionPath="text" filterFields="*text,key*" title="Divisions" >
-							<Table id="FB0-FH-D-Popover-MTable-mTable" items="{path: 'settings>/divisions', length: 10}" width="30rem" useAsValueHelp="false">
+						<mdcvc:MTable  id="FB0-FH-D-Popover-MTable" keyPath="key" descriptionPath="text" filterFields="*text,key*" title="Divisions" useAsValueHelp="false">
+							<Table id="FB0-FH-D-Popover-MTable-mTable" items="{path: 'settings>/divisions', length: 10}" width="30rem">
 								<columns>
 									<Column>
 										<Label text="Key"/>
@@ -120,7 +120,7 @@
 					}}">
 
 
-						<mdcvc:MDCTable title="Divisions" keyPath="key" descriptionPath="text" filterFields="*text*" group="divA">
+						<mdcvc:MDCTable title="Divisions" keyPath="key" descriptionPath="text" filterFields="*text*" group="divA" forceBind="true">
 
 							<mdc:Table autoBindOnInit="false"
 								id="mdcTable-Divisions-1"
@@ -146,7 +146,7 @@
 							</mdc:Table>
 						</mdcvc:MDCTable>
 
-						<mdcvc:MDCTable title="Divisions (salesOrganization)" keyPath="key" descriptionPath="text" filterFields="*text*" group="divA">
+						<mdcvc:MDCTable title="Divisions (salesOrganization)" keyPath="key" descriptionPath="text" filterFields="*text*" group="divA" forceBind="true">
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="fb1" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/salesorganization/FilterBar.delegate', payload: {modelName: 'settings', collectionName: 'divisions'}}">
 									<vhfb:filterItems>

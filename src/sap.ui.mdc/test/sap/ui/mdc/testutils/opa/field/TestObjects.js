@@ -29,6 +29,17 @@ sap.ui.define([
 				 */
 				iEnterTextOnTheField: function(vIdentifier, sValue) {
 					return fieldActions.iEnterTextOnTheField.call(this, vIdentifier, sValue);
+				},
+				/**
+				 * OPA5 test action
+				 * @memberof onTheMDCField
+				 * @method iOpenTheValueHelpForField
+				 * @param {Object | string} oField ID or identifying properties of the <code>sap.ui.mdc.Field</code>
+				 * @returns {Promise} OPA waitFor
+				 * Opens the value help for a given <code>sap.ui.mdc.Field</code>.
+				 */
+				iOpenTheValueHelpForField: function(oField) {
+					return fieldActions.iOpenTheValueHelpForField.call(this, oField);
 				}
 			},
 			assertions: {
