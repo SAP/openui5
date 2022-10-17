@@ -312,6 +312,22 @@ sap.ui.define([
 		expectedDeleteEnabled: true,
 		expectedRenameEnabled: true
 	}, {
+		testName: ", a variant in the PUBLIC layer and its owner could not be determined",
+		variant: {
+			layer: Layer.PUBLIC,
+			user: "",
+			originalLanguage: "EN",
+			sourceSystem: undefined,
+			sourceClient: undefined
+		},
+		settings: {
+			isPublicLayerAvailable: true // testing the = false option is not a real case since the variant was written into it
+		},
+		currentUser: "FRANK",
+		expectedEditEnabled: true,
+		expectedDeleteEnabled: true,
+		expectedRenameEnabled: true
+	}, {
 		testName: ", a variant in the PUBLIC layer and the user is NOT its author but a key user",
 		variant: {
 			layer: Layer.PUBLIC,
