@@ -639,12 +639,18 @@ sap.ui.define([
 		var $Elem = oTable.$("rows-row0-col0");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
+		$Elem = oTable.$("rows-row0").find("td").last(); //dummyCell
+		assert.strictEqual($Elem.attr("role"), "presentation", "role");
 		$Elem = oTable.$("rows-row1-col0");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
+		$Elem = oTable.$("rows-row1").find("td").last(); //dummyCell
+		assert.strictEqual($Elem.attr("role"), "presentation", "role");
 		$Elem = oTreeTable.$("rows-row0-col0");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		assert.strictEqual($Elem.parent().attr("aria-level"), "1", "aria-level");
 		assert.strictEqual($Elem.parent().attr("aria-expanded"), "false", "aria-expanded");
+		$Elem = oTreeTable.$("rows-row0").find("td").last(); //dummyCell
+		assert.strictEqual($Elem.attr("role"), "presentation", "role");
 		$Elem = oTreeTable.$("rows-row0-col1");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		assert.strictEqual($Elem.parent().attr("aria-level"), "1", "aria-level");
@@ -1577,6 +1583,15 @@ sap.ui.define([
 		$Elem = getCell(1, 1, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
+	});
+
+	QUnit.test("ARIA Role of Dummy Elements", function(assert) {
+		var $Elem = oTable.$("focusDummy");
+		assert.strictEqual($Elem.attr("role"), "none", "role");
+		$Elem = oTable.$().find(".sapUiTableCtrlBefore").first();
+		assert.strictEqual($Elem.attr("role"), "none", "role");
+		$Elem = oTable.$().find(".sapUiTableCtrlAfter").first();
+		assert.strictEqual($Elem.attr("role"), "none", "role");
 	});
 
 	QUnit.test("ARIA rowindices", function(assert) {
