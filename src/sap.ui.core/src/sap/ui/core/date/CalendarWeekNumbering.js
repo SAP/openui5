@@ -68,4 +68,4 @@ sap.ui.define([], function() {
 	};
 
 	return CalendarWeekNumbering;
-});
+}, /* bExport= */ true);
