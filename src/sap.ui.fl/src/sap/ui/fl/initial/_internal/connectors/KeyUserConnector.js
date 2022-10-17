@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/fl/initial/_internal/connectors/BackendConnector"
+	"sap/ui/fl/initial/_internal/connectors/BackendConnector",
+	"sap/ui/fl/Layer"
 ], function(
 	merge,
-	BackendConnector
+	BackendConnector,
+	Layer
 ) {
 	"use strict";
 
@@ -23,6 +25,10 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.initial._internal.Storage, sap.ui.fl.write._internal.Storage
 	 */
 	var KeyUserConnector = merge({}, BackendConnector, { /** @lends sap.ui.fl.initial._internal.connectors.KeyUserConnector */
+		layers: [
+			Layer.CUSTOMER,
+			Layer.PUBLIC
+		],
 		API_VERSION: API_VERSION,
 		ROUTES: {
 			DATA: PREFIX + API_VERSION + "/data/"
