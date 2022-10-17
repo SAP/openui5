@@ -50,6 +50,7 @@ module.exports = [
 	"MessageStrip.spec.js",
 	"MessageToast.spec.js",
 	"MessageView.spec.js",
+	"MMenuVisual.spec.js",
 	"MultiComboBox.spec.js",
 	"MultiInput.spec.js",
 	"NotificationListGroup.spec.js",
