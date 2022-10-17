@@ -115,7 +115,7 @@ sap.ui.define([
 				 *
 				 * @method sap.ui.rta.service.ControllerExtension.getTemplate
 				 * @param {string} sViewId - ID of the view whose template should be retrieved
-				 * @return {Promise} Promise that resolves with the template as string or rejects when the file was not found
+				 * @return {Promise<string>} Promise that resolves with the template as string or rejects when the file was not found
 				 * @public
 				 */
 				getTemplate: function(sViewId) {
