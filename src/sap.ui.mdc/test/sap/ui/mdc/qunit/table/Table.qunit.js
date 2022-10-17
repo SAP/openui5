@@ -5302,7 +5302,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Resize GridTable column", function(assert) {
+	QUnit.skip("Resize GridTable column", function(assert) {
 		var oTable = this.oTable;
 
 		return oTable.initialized().then(function() {
@@ -5327,7 +5327,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Resize ResponsiveTable column", function(assert) {
+	QUnit.skip("Resize ResponsiveTable column", function(assert) {
 		var oTable = this.oTable;
 
 		oTable.setType("ResponsiveTable");
