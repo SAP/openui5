@@ -29,21 +29,15 @@ sap.ui.define([
 	testParameter2[seconds] = "seconds";
 	testParameter2[milliseconds] = "milliseconds";
 
-	function prepare() {
-		this.sandbox = sinon.sandbox.create();
-		this.oStubCalendarType = this.sandbox.stub(Configuration, "getCalendarType");
-		this.oStubCalendarType.returns(CalendarType.Gregorian);
-		this.dateSpy = this.sandbox.spy(window, 'Date');
-	}
-	function cleanup() {
-		this.sandbox.restore();
-	}
-	QUnit.module("Constructor", {
+	QUnit.module("sap.ui.core.date.UniversalDate", {
 		beforeEach: function () {
-			prepare.call(this);
+			this.sandbox = sinon.sandbox.create();
+			this.oStubCalendarType = this.sandbox.stub(Configuration, "getCalendarType");
+			this.oStubCalendarType.returns(CalendarType.Gregorian);
+			this.dateSpy = this.sandbox.spy(window, 'Date');
 		},
 		afterEach: function () {
-			cleanup.call(this);
+			this.sandbox.restore();
 		}
 	});
 
@@ -270,14 +264,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.module("Other", {
-		beforeEach: function () {
-			prepare.call(this);
-		},
-		afterEach: function () {
-			cleanup.call(this);
-		}
-	});
 	QUnit.test("Universal objects do not interfere", function (assert) {
 		this.dateSpy.restore();
 		var ud1 = new UniversalDate(2015, 0);
