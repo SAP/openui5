@@ -858,7 +858,7 @@ sap.ui.define([
 	 *   inherited from the model's parameter "sharedRequests", see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}. Supported since 1.80.0
 	 *   <b>Note:</b> These bindings are read-only, so they may be especially useful for value
-	 *   lists; the following APIs are <b>not</b> allowed
+	 *   lists; state messages (since 1.108.0) and the following APIs are <b>not</b> allowed
 	 *   <ul>
 	 *     <li> for the list binding itself:
 	 *       <ul>
