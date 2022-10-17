@@ -147,8 +147,8 @@ sap.ui.define([
 	/**
 	 * Override this method to lazy load dependencies for the extension.
 	 *
-	 * @private
-	 * @ui5-restricted sap/insights
+	 * @public
+	 * @experimental Since 1.108
 	 * @returns {Promise} Returns a promise. The card will wait for this promise to be resolved before continuing with the initialization.
 	 */
 	Extension.prototype.loadDependencies = function () {
