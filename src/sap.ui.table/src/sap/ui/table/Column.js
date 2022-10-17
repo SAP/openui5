@@ -825,12 +825,14 @@ sap.ui.define([
 		}
 	};
 
-	Column.prototype._isMenuOpen = function() {
+	Column.prototype._isHeaderMenuOpen = function() {
 		var oHeaderMenu = this.getHeaderMenuInstance();
-		if (!oHeaderMenu) {
-			return false;
+		if (oHeaderMenu) {
+			return oHeaderMenu.isOpen();
 		}
-		return oHeaderMenu.isOpen();
+
+		var oMenu = this.getAggregation("menu");
+		return oMenu ? oMenu.bOpen : false;
 	};
 
 	Column.prototype._setGrouped = function(bGrouped) {

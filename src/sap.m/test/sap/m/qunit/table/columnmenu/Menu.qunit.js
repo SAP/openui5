@@ -40,7 +40,7 @@ sap.ui.define([
 			var aItems = [];
 			var aPItems = [];
 
-			aQuickActions.push(new QuickAction({label: sText, content: new Button({text: sText})}));
+			aQuickActions.push(new QuickAction({label: sText})); //quick action without content
 			aPQuickActions.push(new QuickAction({label: sText, content: new Button({text: sText})}));
 			aItems.push(new Item({label: sText, content: new Button({text: sText})}));
 			aPItems.push(new Item({label: sText, content: new Button({text: sText})}));
@@ -211,6 +211,16 @@ sap.ui.define([
 		assert.notOk(this.oColumnMenu._oPopover.getShowHeader());
 
 		QUnitUtils.triggerEvent("mousedown", this.oButton1.getId());
+		this.clock.tick(1000);
+		assert.notOk(this.oColumnMenu.isOpen());
+	});
+
+	QUnit.test("Open popover by a control/Close when the same control is clicked", function (assert) {
+		this.createMenu(true, true, true, true);
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu.isOpen());
+
+		QUnitUtils.triggerEvent("mousedown", this.oButton.getId());
 		this.clock.tick(1000);
 		assert.notOk(this.oColumnMenu.isOpen());
 	});

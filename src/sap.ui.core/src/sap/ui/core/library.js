@@ -1738,19 +1738,18 @@ sap.ui.define([
 	 * @interface
 	 * @public
 	 * @experimental As of version 1.98
-	 * @since 1.98.0
+	 * @since 1.98
 	 *
 	 */
 
 	/**
 	 * Opens the menu using the column header.
-	 * @param {sap.ui.core.Control} oControl
-	 *   Specifies the control where the menu is placed.
+	 * @param {sap.ui.core.Control} oControl Specifies the control where the menu is placed.
 	 *
 	 * @public
 	 * @function
 	 * @experimental As of version 1.98
-	 * @since 1.98.0
+	 * @since 1.98
 	 * @name sap.ui.core.IColumnHeaderMenu.openBy
 	 */
 

@@ -1155,7 +1155,7 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.oncontextmenu = function(oEvent) {
-		if (oEvent.isMarked("handledByPointerExtension")) {
+		if (oEvent.isMarked("sapUiTableHandledByPointerExtension")) {
 			return;
 		}
 
