@@ -458,6 +458,14 @@ sap.ui.define([
 			_private(this).bHasDefaultLabel = false;
 		}
 
+		if (oLabel && oLabel.setIsInColumnHeaderContext) {
+			oLabel.setIsInColumnHeaderContext(true);
+		}
+		var oCurrLabel = this.getLabel();
+		if (oCurrLabel && oLabel !== oCurrLabel && oCurrLabel.setIsInColumnHeaderContext) {
+			oCurrLabel.setIsInColumnHeaderContext(false);
+		}
+
 		return this.setAggregation("label", oLabel);
 	};
 

@@ -1212,6 +1212,9 @@ sap.ui.define([
 	 *                            // <code>null</code> can be provided.
 	 *      editable: true,       // Boolean which describes whether the control is editable. If not relevant it must not be set or
 	 *                            // <code>null</code> can be provided.
+	 *      required: true,       // Boolean which describes whether the control is mandatory. If not relevant it must not be set or
+	 *                            // <code>null</code> can be provided. The required state might also be handled as part of the description. In this
+	 *                            // case this flag should not be used.
 	 *      children: []          // Aggregations of the given control (e.g. when the control is a layout). Primitive aggregations will be ignored.
 	 *                            // Note: Children should only be provided when it is helpful to understand the accessibility context
 	 *                            //       (e.g. a form control must not provide details of its internals (fields, labels, ...) but a

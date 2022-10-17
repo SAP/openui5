@@ -190,7 +190,7 @@ function(
 		renderer: ListItemBaseRenderer
 	});
 
-	ListItemBase.getAccessibilityText = function(oControl, bDetectEmpty) {
+	ListItemBase.getAccessibilityText = function(oControl, bDetectEmpty, bHeaderAnnouncement) {
 		var oBundle = Core.getLibraryResourceBundle("sap.m");
 
 		if (!oControl || !oControl.getVisible || !oControl.getVisible()) {
@@ -215,7 +215,7 @@ function(
 			sTooltip = oControl.getTooltip_AsString();
 
 		if (oAccInfo.required === true) {
-			sText += oBundle.getText("CONTROL_REQUIRED") + " ";
+			sText += oBundle.getText(bHeaderAnnouncement ? "CONTROL_IN_COLUMN_REQUIRED" : "ELEMENT_REQUIRED") + " ";
 		}
 		if (oAccInfo.enabled === false) {
 			sText += oBundle.getText("CONTROL_DISABLED") + " ";

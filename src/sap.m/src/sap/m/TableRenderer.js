@@ -206,7 +206,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 
 			if (control) {
 				if (type === "Head") {
-					rm.openStart("div");
+					rm.openStart("div", oColumn.getId() + "-ah");
 					rm.class("sapMColumnHeader");
 
 					var oMenu = oColumn._getHeaderMenuInstance();
@@ -216,6 +216,9 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 						rm.attr("role", "button");
 						rm.class("sapMColumnHeaderActive");
 						rm.attr("aria-haspopup", oMenu ? oMenu.getAriaHasPopupType().toLowerCase() : "dialog");
+						if (control.isA("sap.m.Label") && control.getRequired()) {
+							rm.attr("aria-describedby", InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"));
+						}
 					} else if (oTable.bFocusableHeaders) {
 						rm.attr("tabindex", 0);
 						rm.class("sapMColumnHeaderFocusable");

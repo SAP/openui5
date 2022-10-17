@@ -1035,10 +1035,12 @@ sap.ui.define([
 
 	QUnit.test("Test for accessibility content", function(assert) {
 		var sut = createSUT("idTableAcc", true, false);
+		sut.bActiveHeaders = true;
 		var oColumn = sut.getColumns()[0];
 		var oBinding = sut.getBinding("items");
+		var oColumnHeader = oColumn.getHeader();
 		oColumn.setFooter(new Label({text: "Greetings"}));
-		oColumn.getHeader().setRequired(true);
+		oColumnHeader.setRequired(true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
@@ -1052,12 +1054,23 @@ sap.ui.define([
 		// _setHeaderAnnouncement() test
 		var $tblHeader = sut.$("tblHeader").trigger("focus");
 		var oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
-		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Name * " + oResourceBundle.getText("CONTROL_REQUIRED") +  " . Color . Number .", "Text correctly assigned for screen reader announcement");
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Name " + oResourceBundle.getText("CONTROL_IN_COLUMN_REQUIRED") +  " . Color . Number .", "Text correctly assigned for screen reader announcement");
+		assert.ok(oColumnHeader.hasListeners("_change"), "Property change event handler is added");
+		assert.ok(oColumnHeader._isInColumnHeaderContext , "Label is marked as column header label");
+		assert.equal(oColumn.$("ah").attr("aria-describedby"), InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"), "Required state added as aria-describedby");
+
+		oColumnHeader.setRequired(false);
+		assert.notOk(oColumn.$("ah").attr("aria-describedby"), "Label is not required any more so aria-describedby is removed");
+
+		oColumn.setHeader(new Label({text: "Name"}));
+		assert.notOk(oColumnHeader.hasListeners("_change"), "Property change event handler is removed from the old column header");
+		assert.ok(!oColumnHeader._isInColumnHeaderContext , "Label is not marked as column header label");
+		assert.ok(oColumn.getHeader().hasListeners("_change"), "Property change event handler is added for the new column header");
 
 		// _setFooterAnnouncment() test
 		var $tblFooter = sut.$("tblFooter").trigger("focus");
 		oInvisibleText = document.getElementById($tblFooter.attr("aria-labelledby"));
-		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_FOOTER_ROW") + " Name * " + oResourceBundle.getText("CONTROL_REQUIRED") +  " Greetings", "Text correctly assigned for screen reader announcement");
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_FOOTER_ROW") + " Name Greetings", "Text correctly assigned for screen reader announcement");
 
 		// noDataText test
 		oBinding.filter([new Filter("name", "Contains", "xxx")]);
@@ -1106,12 +1119,14 @@ sap.ui.define([
 			items: oListItem
 		});
 
-		assert.strictEqual(oListItem.getContentAnnouncement(), "First Name Max * " + oBundle.getText("CONTROL_REQUIRED") + " . Last Name Mustermann", "Accessibility punctuation test for ColumnListItem");
-		assert.strictEqual(oListItem.getAccessibilityInfo().description, oBundle.getText("LIST_ITEM_NAVIGATION") + " . " + "First Name Max * " + oBundle.getText("CONTROL_REQUIRED") + " . Last Name Mustermann . " + oBundle.getText("LIST_ITEM_NOT_SELECTED"), "Accessibility punctuation test for ColumnListItem");
+		var sRequired = oBundle.getText("ELEMENT_REQUIRED");
+
+		assert.strictEqual(oListItem.getContentAnnouncement(), "First Name Max " + sRequired + " . Last Name Mustermann", "Accessibility punctuation test for ColumnListItem");
+		assert.strictEqual(oListItem.getAccessibilityInfo().description, oBundle.getText("LIST_ITEM_NAVIGATION") + " . " + "First Name Max " + sRequired + " . Last Name Mustermann . " + oBundle.getText("LIST_ITEM_NOT_SELECTED"), "Accessibility punctuation test for ColumnListItem");
 
 		this.oTable.getColumns()[0].setOrder(1);
 		this.oTable.getColumns()[1].setOrder(0);
-		assert.strictEqual(oListItem.getContentAnnouncement(), "Last Name Mustermann . First Name Max * " + oBundle.getText("CONTROL_REQUIRED"), "Accessibility order is updated");
+		assert.strictEqual(oListItem.getContentAnnouncement(), "Last Name Mustermann . First Name Max " + sRequired, "Accessibility order is updated");
 
 		this.oTable.destroy();
 	});

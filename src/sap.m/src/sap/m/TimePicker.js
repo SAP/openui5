@@ -1511,7 +1511,7 @@ function(
 			if (Device.system.phone) {
 				sArialabelledby = this.$("inner").attr("aria-labelledby");
 				sLabelId = sArialabelledby && sArialabelledby.split(" ")[0];
-				sLabel = sLabelId ? document.getElementById(sLabelId).getAttribute("aria-label") : "";
+				sLabel = sLabelId ? document.getElementById(sLabelId).textContent : "";
 
 				if (sLabel) {
 					oPicker.setTitle(sLabel);

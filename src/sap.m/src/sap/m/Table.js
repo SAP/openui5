@@ -1002,7 +1002,7 @@ sap.ui.define([
 
 			var oHeader = oColumn.getHeader();
 			if (oHeader && oHeader.getVisible()) {
-				sAnnouncement += ListItemBase.getAccessibilityText(oHeader) + " . ";
+				sAnnouncement += ListItemBase.getAccessibilityText(oHeader, false /* bDetectEmpty */, true /* bHeaderAnnouncement */) + " . ";
 			}
 		});
 
