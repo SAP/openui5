@@ -2023,7 +2023,8 @@ sap.ui.define([
 	 */
 	Card.prototype._getIllustratedMessage = function (oErrorConfiguration, bNoItems) {
 		var sIllustratedMessageType = IllustratedMessageType.UnableToLoad,
-			sIllustratedMessageSize = IllustratedMessageSize.Spot,
+			sIllustratedMessageSize = IllustratedMessageSize.Auto,
+			sBoxHeight = "",
 			sTitle = this._oIntegrationRb.getText("CARD_DATA_LOAD_ERROR"),
 			sDescription;
 
@@ -2071,14 +2072,20 @@ sap.ui.define([
 			illustrationType: sIllustratedMessageType,
 			illustrationSize: sIllustratedMessageSize,
 			title: sTitle,
+			enableVerticalResponsiveness: true,
 			description: sDescription ? sDescription : " "
 		});
+
+		if (this.getCardContent() && this.getCardContent().getDomRef()) {
+			sBoxHeight = this.getCardContent().getDomRef().offsetHeight + "px";
+		}
 
 		var oFlexBox = new HBox({
 			renderType: FlexRendertype.Bare,
 			justifyContent: FlexJustifyContent.Center,
 			alignItems: FlexAlignItems.Center,
 			width: "100%",
+			height: sBoxHeight,
 			items: [oIllustratedMessage]
 		}).addStyleClass("sapFCardErrorContent");
 		return oFlexBox;

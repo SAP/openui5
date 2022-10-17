@@ -398,7 +398,7 @@ sap.ui.define([
 						"type": "error",
 						"title": oResourceBundle.getText("CARD_DATA_LOAD_ERROR"),
 						"illustrationType": "sapIllus-UnableToLoad",
-						"illustrationSize": "Spot"
+						"illustrationSize": "Auto"
 					}
 				};
 
@@ -621,7 +621,7 @@ sap.ui.define([
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"message": {
-						"illustrationSize": "Spot",
+						"illustrationSize": "Auto",
 						"illustrationType": "sapIllus-NoData",
 						"title": oResourceBundle.getText("CARD_NO_ITEMS_ERROR_LISTS"),
 						"type": "noData"
@@ -1424,7 +1424,7 @@ sap.ui.define([
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"message": {
-						"illustrationSize": "Spot",
+						"illustrationSize": "Auto",
 						"illustrationType": "sapIllus-NoEntries",
 						"title": oResourceBundle.getText("CARD_NO_ITEMS_ERROR_LISTS"),
 						"type": "noData"
