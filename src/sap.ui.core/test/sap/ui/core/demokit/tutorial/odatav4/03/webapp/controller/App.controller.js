@@ -13,17 +13,16 @@ sap.ui.define([
 		 */
 		onInit : function () {
 			var oJSONData = {
-				busy : false
-			};
-			var oModel = new JSONModel(oJSONData);
+					busy : false
+				},
+				oModel = new JSONModel(oJSONData);
+
 			this.getView().setModel(oModel, "appView");
 		},
-
 
 		/* =========================================================== */
 		/*           begin: event handlers                             */
 		/* =========================================================== */
-
 
 		/**
 		 * Refresh the data.
@@ -39,11 +38,9 @@ sap.ui.define([
 			MessageToast.show(this._getText("refreshSuccessMessage"));
 		},
 
-
 		/* =========================================================== */
 		/*           end: event handlers                               */
 		/* =========================================================== */
-
 
 		/**
 		 * Convenience method for retrieving a translatable text.
@@ -52,7 +49,8 @@ sap.ui.define([
 		 * @returns {string} the text belonging to the given ID.
 		 */
 		_getText : function (sTextId, aArgs) {
-			return this.getOwnerComponent().getModel("i18n").getResourceBundle().getText(sTextId, aArgs);
+			return this.getOwnerComponent().getModel("i18n").getResourceBundle()
+				.getText(sTextId, aArgs);
 		}
 	});
 });

@@ -1,8 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/tutorial/odatav4/localService/mockserver",
-	"sap/base/Log",
 	"sap/m/MessageBox"
-], function (mockserver, Log, MessageBox) {
+], function (mockserver, MessageBox) {
 	"use strict";
 
 	// initialize the mock server

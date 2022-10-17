@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	'sap/ui/thirdparty/sinon',
+	"sap/ui/thirdparty/sinon",
 	"sap/base/Log"
 ], function (JSONModel, sinon, Log) {
 	"use strict";
@@ -9,7 +9,8 @@ sap.ui.define([
 		aUsers, // The array that holds the cached user data
 		sMetadata, // The string that holds the cached mock service metadata
 		sNamespace = "sap/ui/core/tutorial/odatav4",
-		sLogComponent = "sap.ui.core.tutorial.odatav4.mockserver", // Component for writing logs into the console
+		// Component for writing logs into the console
+		sLogComponent = "sap.ui.core.tutorial.odatav4.mockserver",
 		rBaseUrl = /services.odata.org\/TripPinRESTierService/;
 
 	return {
@@ -24,16 +25,18 @@ sap.ui.define([
 			return readData().then(function () {
 				// Initialize the sinon fake server
 				oSandbox.useFakeServer();
-				// Make sure that requests are responded to automatically. Otherwise we would need to do that manually.
+				// Make sure that requests are responded to automatically. Otherwise we would need
+				// to do that manually.
 				oSandbox.server.autoRespond = true;
 
 				// Register the requests for which responses should be faked.
 				oSandbox.server.respondWith(rBaseUrl, handleAllRequests);
 
 				// Apply a filter to the fake XmlHttpRequest.
-				// Otherwise, ALL requests (e.g. for the component, views etc.) would be intercepted.
+				// Otherwise, ALL requests (e.g. for the component, views etc.) would be
+				// intercepted.
 				sinon.FakeXMLHttpRequest.useFilters = true;
-				sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl) {
+				sinon.FakeXMLHttpRequest.addFilter(function (_sMethod, sUrl) {
 					// If the filter returns true, the request will NOT be faked.
 					// We only want to fake requests that go to the intended service.
 					return !rBaseUrl.test(sUrl);
@@ -93,6 +96,7 @@ sap.ui.define([
 	 */
 	function getUserDataFromRequestBody(sBody) {
 		var aMatches = sBody.match(/({.+})/);
+
 		if (!Array.isArray(aMatches) || aMatches.length !== 2) {
 			throw new Error("Could not find any user data in " + sBody);
 		}
@@ -164,49 +168,54 @@ sap.ui.define([
 	 */
 	function readData() {
 		var oMetadataPromise = new Promise(function (fnResolve, fnReject) {
-			var sResourcePath = sap.ui.require.toUrl(sNamespace + "/localService/metadata.xml");
-			var oRequest = new XMLHttpRequest();
+				var sResourcePath = sap.ui.require.toUrl(sNamespace + "/localService/metadata.xml"),
+					oRequest = new XMLHttpRequest();
 
-			oRequest.onload = function () {
-				// 404 is not an error for XMLHttpRequest so we need to handle it here
-				if (oRequest.status === 404) {
-					var sError = "resource " + sResourcePath + " not found";
+				oRequest.onload = function () {
+					// 404 is not an error for XMLHttpRequest so we need to handle it here
+					if (oRequest.status === 404) {
+						var sError = "resource " + sResourcePath + " not found";
+
+						Log.error(sError, sLogComponent);
+						fnReject(new Error(sError, sLogComponent));
+					}
+					sMetadata = this.responseText;
+					fnResolve();
+				};
+				oRequest.onerror = function () {
+					var sError = "error loading resource '" + sResourcePath + "'";
+
 					Log.error(sError, sLogComponent);
 					fnReject(new Error(sError, sLogComponent));
-				}
-				sMetadata = this.responseText;
-				fnResolve();
-			};
-			oRequest.onerror = function () {
-				var sError = "error loading resource '" + sResourcePath + "'";
-				Log.error(sError, sLogComponent);
-				fnReject(new Error(sError, sLogComponent));
-			};
-			oRequest.open("GET", sResourcePath);
-			oRequest.send();
-		});
+				};
+				oRequest.open("GET", sResourcePath);
+				oRequest.send();
+			}),
+			oMockDataPromise = new Promise(function (fnResolve, fnReject) {
+				var sResourcePath
+						= sap.ui.require.toUrl(sNamespace + "/localService/mockdata/people.json"),
+					oMockDataModel = new JSONModel(sResourcePath);
 
-		var oMockDataPromise = new Promise(function (fnResolve, fnReject) {
-			var sResourcePath = sap.ui.require.toUrl(sNamespace + "/localService/mockdata/people.json");
-			var oMockDataModel = new JSONModel(sResourcePath);
+				oMockDataModel.attachRequestCompleted(function (oEvent) {
+					// 404 is not an error for JSONModel so we need to handle it here
+					if (oEvent.getParameter("errorobject")
+						&& oEvent.getParameter("errorobject").statusCode === 404) {
+						var sError = "resource '" + sResourcePath + "' not found";
 
-			oMockDataModel.attachRequestCompleted(function (oEvent) {
-				// 404 is not an error for JSONModel so we need to handle it here
-				if (oEvent.getParameter("errorobject") && oEvent.getParameter("errorobject").statusCode === 404) {
-					var sError = "resource '" + sResourcePath + "' not found";
+						Log.error(sError, sLogComponent);
+						fnReject(new Error(sError, sLogComponent));
+					}
+					aUsers = this.getData().value;
+					fnResolve();
+				});
+
+				oMockDataModel.attachRequestFailed(function () {
+					var sError = "error loading resource '" + sResourcePath + "'";
+
 					Log.error(sError, sLogComponent);
 					fnReject(new Error(sError, sLogComponent));
-				}
-				aUsers = this.getData().value;
-				fnResolve();
+				});
 			});
-
-			oMockDataModel.attachRequestFailed(function () {
-				var sError = "error loading resource '" + sResourcePath + "'";
-				Log.error(sError, sLogComponent);
-				fnReject(new Error(sError, sLogComponent));
-			});
-		});
 
 		return Promise.all([oMetadataPromise, oMockDataPromise]);
 	}
@@ -248,30 +257,29 @@ sap.ui.define([
 
 		if (!Array.isArray(aMatches) || aMatches.length < 2) {
 			return aSortedUsers;
-		} else {
-			sFieldName = aMatches[1];
-			sDirection = aMatches[2] || "asc";
-
-			if (sFieldName !== "LastName") {
-				throw new Error("Filters on field " + sFieldName + " are not supported.");
-			}
-
-			aSortedUsers.sort(function (a, b) {
-				var nameA = a.LastName.toUpperCase();
-				var nameB = b.LastName.toUpperCase();
-				var bAsc = sDirection === "asc";
-
-				if (nameA < nameB) {
-					return bAsc ? -1 : 1;
-				}
-				if (nameA > nameB) {
-					return bAsc ? 1 : -1;
-				}
-				return 0;
-			});
-
-			return aSortedUsers;
 		}
+		sFieldName = aMatches[1];
+		sDirection = aMatches[2] || "asc";
+
+		if (sFieldName !== "LastName") {
+			throw new Error("Filters on field " + sFieldName + " are not supported.");
+		}
+
+		aSortedUsers.sort(function (a, b) {
+			var nameA = a.LastName.toUpperCase(),
+				nameB = b.LastName.toUpperCase(),
+				bAsc = sDirection === "asc";
+
+			if (nameA < nameB) {
+				return bAsc ? -1 : 1;
+			}
+			if (nameA > nameB) {
+				return bAsc ? 1 : -1;
+			}
+			return 0;
+		});
+
+		return aSortedUsers;
 	}
 
 	/**
@@ -329,10 +337,10 @@ sap.ui.define([
 	/**
 	 * Handles GET requests for user data and returns a fitting response.
 	 * @param {Object} oXhr - the Sinon fake XMLHttpRequest
-	 * @param {boolean} bCount - true if the request should include a counter
+	 * @param {boolean} _bCount - true if the request should include a counter
 	 * @returns {Array} an array with the response information needed by Sinon's respond() function
 	 */
-	function handleGetUserRequests(oXhr, bCount) {
+	function handleGetUserRequests(oXhr, _bCount) {
 		var iCount,
 			aExpand,
 			sExpand,
@@ -343,7 +351,8 @@ sap.ui.define([
 			aResult,
 			aSelect,
 			sSelect,
-			aSubSelects;
+			aSubSelects,
+			i;
 
 		// Get expand parameter
 		aExpand = oXhr.url.match(/\$expand=([^&]+)/);
@@ -355,12 +364,12 @@ sap.ui.define([
 
 			// Sort out subselects (e.g. BestFriend($select=Age,UserName),Friend)
 			aSubSelects = sExpand.match(/\([^\)]*\)/g);
-			for (var i = 0; i < aSubSelects.length; i++) {
-				aSubSelects[i] =
-					aSubSelects[i].replace(/\(\$select=/, '').replace(/\)/, '').split(',');
+			for (i = 0; i < aSubSelects.length; i++) {
+				aSubSelects[i]
+					= aSubSelects[i].replace(/\(\$select=/, "").replace(/\)/, "").split(",");
 			}
-			sExpand = sExpand.replace(/\([^\)]*\)/g, '');
-			aExpand = sExpand.split(',');
+			sExpand = sExpand.replace(/\([^\)]*\)/g, "");
+			aExpand = sExpand.split(",");
 		}
 
 		// Get select parameter
@@ -369,8 +378,8 @@ sap.ui.define([
 		// Sort out select parameter values
 		if (Array.isArray(aSelect)) {
 			sSelect = aSelect[0];
-			sSelect = sSelect.replace(/&/, '').replace(/\?/, '').substring(8);
-			aSelect = sSelect.split(',');
+			sSelect = sSelect.replace(/&/, "").replace(/\?/, "").substring(8);
+			aSelect = sSelect.split(",");
 		}
 
 		// Check if an individual user or a user range is requested
@@ -390,38 +399,34 @@ sap.ui.define([
 			if (iIndex > -1) {
 				sResponseBody = JSON.stringify(oResponse);
 				return getSuccessResponse(sResponseBody);
-			} else {
-				sResponseBody = invalidKeyError(sKey);
-				return [
-					400,
-					{
-						"Content-Type" : "application/json; charset=utf-8"
-					},
-					sResponseBody
-				];
 			}
-		} else {
-			// all users requested
-			aResult = applyFilter(oXhr, aUsers);
-			iCount = aResult.length; // the total no. of people found, after filtering
-			aResult = applySort(oXhr, aResult);
-			aResult = applySkipTop(oXhr, aResult);
-
-			// generate sResponse
-			oResponse = {"@odata.count" : iCount, value : []};
-
-			aResult.forEach(function (oUser) {
-				var iUserIndex = findUserIndex(oUser.UserName);
-
-				oResponse.value.push(getUserObject(iUserIndex, aSelect, aExpand, aSubSelects));
-			});
-
-			sResponseBody = JSON.stringify(oResponse);
-
-			return getSuccessResponse(sResponseBody);
+			sResponseBody = invalidKeyError(sKey);
+			return [
+				400,
+				{
+					"Content-Type" : "application/json; charset=utf-8"
+				},
+				sResponseBody
+			];
 		}
+		// all users requested
+		aResult = applyFilter(oXhr, aUsers);
+		iCount = aResult.length; // the total no. of people found, after filtering
+		aResult = applySort(oXhr, aResult);
+		aResult = applySkipTop(oXhr, aResult);
 
+		// generate sResponse
+		oResponse = {"@odata.count" : iCount, value : []};
 
+		aResult.forEach(function (oUser) {
+			var iUserIndex = findUserIndex(oUser.UserName);
+
+			oResponse.value.push(getUserObject(iUserIndex, aSelect, aExpand, aSubSelects));
+		});
+
+		sResponseBody = JSON.stringify(oResponse);
+
+		return getSuccessResponse(sResponseBody);
 	}
 
 	/**
@@ -440,10 +445,10 @@ sap.ui.define([
 			});
 
 			return oHelper;
-		} else {
-			return null;
 		}
+		return null;
 	}
+
 	/**
 	 * Returns the user with iIndex in the aUsers array with all its information
 	 * @param  {Number} iIndex index of user in aUsers
@@ -457,12 +462,13 @@ sap.ui.define([
 			iFriendIndex,
 			aFriends,
 			oObject = {},
-			oUser;
+			oUser,
+			i;
 
 		oObject = getUserByIndex(iIndex, aSelect);
 		if (aExpand) {
 			oUser = aUsers[iIndex];
-			for (var i = 0; i < aExpand.length; i++) {
+			for (i = 0; i < aExpand.length; i++) {
 				switch (aExpand[i]) {
 					case "Friends":
 						oObject.Friends = [];
@@ -481,7 +487,6 @@ sap.ui.define([
 		}
 		return oObject;
 	}
-
 
 	/**
 	 * creates array of friends for a given user
@@ -507,7 +512,6 @@ sap.ui.define([
 		return aArray;
 	}
 
-
 	/**
 	 * Handles PATCH requests for users and returns a fitting response.
 	 * Changes the user data according to the request.
@@ -518,7 +522,8 @@ sap.ui.define([
 		var sKey,
 			oUser,
 			oChanges,
-			sResponseBody;
+			sResponseBody,
+			sFieldName;
 
 		// Get the key of the person to change
 		sKey = getUserKeyFromUrl(oXhr.url);
@@ -528,7 +533,9 @@ sap.ui.define([
 
 		// Check if the UserName is changed to a duplicate.
 		// If the UserName is "changed" to its current value, that is not an error.
-		if (oChanges.hasOwnProperty("UserName") && oChanges.UserName !== sKey && !isUnique(oChanges.UserName)) {
+		if (oChanges.hasOwnProperty("UserName")
+			&& oChanges.UserName !== sKey
+			&& !isUnique(oChanges.UserName)) {
 			// Error
 			sResponseBody = duplicateKeyError(oChanges.UserName);
 			return [
@@ -538,24 +545,24 @@ sap.ui.define([
 				},
 				sResponseBody
 			];
-		} else {
-			// No error: make the change(s)
-			oUser = aUsers[findUserIndex(sKey)];
-			for (var sFieldName in oChanges) {
-				if (oChanges.hasOwnProperty(sFieldName)) {
-					oUser[sFieldName] = oChanges[sFieldName];
-				}
-			}
-
-			// The response to PATCH requests is always http 204 (No Content)
-			sResponseBody = null;
-			return [
-				204,
-				{
-					"OData-Version" : "4.0"
-				},
-				sResponseBody];
 		}
+		// No error: make the change(s)
+		oUser = aUsers[findUserIndex(sKey)];
+		for (sFieldName in oChanges) {
+			if (oChanges.hasOwnProperty(sFieldName)) {
+				oUser[sFieldName] = oChanges[sFieldName];
+			}
+		}
+
+		// The response to PATCH requests is always http 204 (No Content)
+		sResponseBody = null;
+		return [
+			204,
+			{
+				"OData-Version" : "4.0"
+			},
+			sResponseBody
+		];
 	}
 
 	/**
@@ -597,7 +604,8 @@ sap.ui.define([
 		if (isUnique(oUser.UserName)) {
 			aUsers.push(oUser);
 
-			sResponseBody = '{"@odata.context": "' + getBaseUrl(oXhr.url) + '$metadata#People/$entity",';
+			sResponseBody = '{"@odata.context": "' + getBaseUrl(oXhr.url)
+				+ '$metadata#People/$entity",';
 			sResponseBody += JSON.stringify(oUser).slice(1);
 
 			// The response to POST requests is http 201 (Created)
@@ -609,17 +617,16 @@ sap.ui.define([
 				},
 				sResponseBody
 			];
-		} else {
-			// Error
-			sResponseBody = duplicateKeyError(oUser.UserName);
-			return [
-				400,
-				{
-					"Content-Type" : "application/json; charset=utf-8"
-				},
-				sResponseBody
-			];
 		}
+		// Error
+		sResponseBody = duplicateKeyError(oUser.UserName);
+		return [
+			400,
+			{
+				"Content-Type" : "application/json; charset=utf-8"
+			},
+			sResponseBody
+		];
 	}
 
 	/**
@@ -699,13 +706,15 @@ sap.ui.define([
 			sOuterBoundary = oXhr.requestBody.match(/(.*)/)[1], // First line of the body
 			sInnerBoundary,
 			sPartBoundary,
-			aOuterParts = oXhr.requestBody.split(sOuterBoundary).slice(1, -1), // The individual requests
+			// The individual requests
+			aOuterParts = oXhr.requestBody.split(sOuterBoundary).slice(1, -1),
 			aParts,
-			aMatches;
+			aMatches,
+			sHeader;
 
 		aMatches = aOuterParts[0].match(/multipart\/mixed;boundary=(.+)/);
-		// If this request has several change sets, then we need to handle the inner and outer boundaries
-		// (change sets have an additional boundary)
+		// If this request has several change sets, then we need to handle the inner and outer
+		// boundaries (change sets have an additional boundary)
 		if (aMatches && aMatches.length > 0) {
 			sInnerBoundary = aMatches[1];
 			aParts = aOuterParts[0].split("--" + sInnerBoundary).slice(1, -1);
@@ -713,27 +722,28 @@ sap.ui.define([
 			aParts = aOuterParts;
 		}
 
-		// If this request has several change sets, then the response must start with the outer boundary and
-		// content header
+		// If this request has several change sets, then the response must start with the outer
+		// boundary and content header
 		if (sInnerBoundary) {
 			sPartBoundary = "--" + sInnerBoundary;
-			sResponseBody += sOuterBoundary + "\r\n" +
-				"Content-Type: multipart/mixed; boundary=" + sInnerBoundary + "\r\n\r\n";
+			sResponseBody += sOuterBoundary + "\r\n"
+				+ "Content-Type: multipart/mixed; boundary=" + sInnerBoundary + "\r\n\r\n";
 		} else {
 			sPartBoundary = sOuterBoundary;
 		}
 
 		aParts.forEach(function (sPart, iIndex) {
-			// Construct the batch response body out of the single batch request parts.
-			// The RegExp looks for a request body at the end of the string, framed by two line breaks.
-			var aMatches = sPart.match(/(GET|DELETE|PATCH|POST) (\S+)(?:.|\r?\n)+\r?\n(.*)\r?\n$/);
-			var aPartResponse = handleDirectRequest({
-				method : aMatches[1],
-				url : getBaseUrl(oXhr.url) + aMatches[2],
-				requestBody : aMatches[3]
-			});
-			sResponseBody += sPartBoundary + "\r\n" +
-				"Content-Type: application/http\r\n";
+			// Construct the batch response body out of the single batch request parts. The RegExp
+			// looks for a request body at the end of the string, framed by two line breaks.
+			var aMatches = sPart.match(/(GET|DELETE|PATCH|POST) (\S+)(?:.|\r?\n)+\r?\n(.*)\r?\n$/),
+				aPartResponse = handleDirectRequest({
+					method : aMatches[1],
+					url : getBaseUrl(oXhr.url) + aMatches[2],
+					requestBody : aMatches[3]
+				});
+
+			sResponseBody += sPartBoundary + "\r\n"
+				+ "Content-Type: application/http\r\n";
 			// If there are several change sets, we need to add a Content ID header
 			if (sInnerBoundary) {
 				sResponseBody += "Content-ID:" + iIndex + ".0\r\n";
@@ -741,7 +751,7 @@ sap.ui.define([
 			sResponseBody += "\r\nHTTP/1.1 " + aPartResponse[0] + "\r\n";
 			// Add any headers from the request - unless this response is 204 (no content)
 			if (aPartResponse[1] && aPartResponse[0] !== 204) {
-				for (var sHeader in aPartResponse[1]) {
+				for (sHeader in aPartResponse[1]) {
 					if (aPartResponse[1].hasOwnProperty(sHeader)) {
 						sResponseBody += sHeader + ": " + aPartResponse[1][sHeader] + "\r\n";
 					}
@@ -787,7 +797,8 @@ sap.ui.define([
 		// Log the request
 		Log.info(
 			"Mockserver: Received " + oXhr.method + " request to URL " + oXhr.url,
-			(oXhr.requestBody ? "Request body is:\n" + oXhr.requestBody : "No request body.") + "\n",
+			(oXhr.requestBody ? "Request body is:\n" + oXhr.requestBody : "No request body.")
+			+ "\n",
 			sLogComponent);
 
 		if (oXhr.method === "POST" && /\$batch/.test(oXhr.url)) {
@@ -801,7 +812,8 @@ sap.ui.define([
 		// Log the response
 		Log.info(
 			"Mockserver: Sent response with return code " + aResponse[0],
-			("Response headers: " + JSON.stringify(aResponse[1]) + "\n\nResponse body:\n" + aResponse[2]) + "\n",
+			("Response headers: " + JSON.stringify(aResponse[1]) + "\n\nResponse body:\n"
+				+ aResponse[2]) + "\n",
 			sLogComponent);
 	}
 });
