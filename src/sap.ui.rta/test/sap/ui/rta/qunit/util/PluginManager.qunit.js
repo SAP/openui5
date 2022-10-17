@@ -33,7 +33,7 @@ function(
 					}
 					return false;
 				},
-				isPublicLayerAvailable: function() {
+				isLocalResetEnabled: function() {
 					return true;
 				}
 			});
@@ -173,12 +173,12 @@ function(
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but with public layer unavailable", function(assert) {
+		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but with local reset unavailable", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isVariantAdaptationEnabled: function() {
 					return true;
 				},
-				isPublicLayerAvailable: function() {
+				isLocalResetEnabled: function() {
 					return false;
 				}
 			});
@@ -186,12 +186,12 @@ function(
 			assert.equal(oDefaultLocalResetPlugin, undefined, "then the localReset plugin is not available");
 		});
 
-		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but public layer available", function(assert) {
+		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but with local reset available", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isVariantAdaptationEnabled: function() {
 					return true;
 				},
-				isPublicLayerAvailable: function() {
+				isLocalResetEnabled: function() {
 					return true;
 				}
 			});

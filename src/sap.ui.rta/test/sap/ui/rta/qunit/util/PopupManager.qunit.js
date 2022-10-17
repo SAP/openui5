@@ -130,6 +130,9 @@ sap.ui.define([
 				},
 				isContextBasedAdaptationEnabled: function() {
 					return false;
+				},
+				isLocalResetEnabled: function() {
+					return false;
 				}
 			};
 			sandbox.stub(FlSettings, "getInstance").resolves(oSettings);

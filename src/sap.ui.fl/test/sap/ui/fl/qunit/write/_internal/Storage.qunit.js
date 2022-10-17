@@ -1017,6 +1017,7 @@ sap.ui.define([
 				isContextSharingEnabledForComp: true,
 				isPublicFlVariantEnabled: false,
 				isVariantPersonalizationEnabled: true,
+				isLocalResetEnabled: false,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
 				versioning: {
@@ -1105,6 +1106,7 @@ sap.ui.define([
 				draft: {},
 				isProductiveSystem: true,
 				isPublicLayerAvailable: false,
+				isLocalResetEnabled: false,
 				isZeroDowntimeUpgradeRunning: false,
 				system: "",
 				client: ""

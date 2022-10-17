@@ -128,14 +128,14 @@ sap.ui.define([
 		QUnit.test("when loading flex data the settings value is stored", function (assert) {
 			mockResponse.call(this, JSON.stringify({changes: [], settings: {isKeyUser: true}}));
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference"}).then(function () {
-				assert.deepEqual(LrepConnector.settings, {isContextSharingEnabled: true, isContextSharingEnabledForComp: true, isKeyUser: true, isVariantAdaptationEnabled: false}, "and the settings value is stored");
+				assert.deepEqual(LrepConnector.settings, {isContextSharingEnabled: true, isContextSharingEnabledForComp: true, isKeyUser: true, isLocalResetEnabled: true, isVariantAdaptationEnabled: false}, "and the settings value is stored");
 			});
 		});
 
 		QUnit.test("when loading flex data the settings value is stored and the PUBLIC layer is available", function (assert) {
 			mockResponse.call(this, JSON.stringify({changes: [], settings: {isKeyUser: true, isPublicLayerAvailable: true}}));
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference"}).then(function () {
-				assert.deepEqual(LrepConnector.settings, {isContextSharingEnabled: true, isContextSharingEnabledForComp: true, isKeyUser: true, isPublicLayerAvailable: true, isVariantAdaptationEnabled: true}, "and the settings value is stored");
+				assert.deepEqual(LrepConnector.settings, {isContextSharingEnabled: true, isContextSharingEnabledForComp: true, isKeyUser: true, isLocalResetEnabled: true, isPublicLayerAvailable: true, isVariantAdaptationEnabled: true}, "and the settings value is stored");
 			});
 		});
 

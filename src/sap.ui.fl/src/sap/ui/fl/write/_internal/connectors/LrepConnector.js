@@ -396,6 +396,7 @@ sap.ui.define([
 				oResult.response.isVariantAdaptationEnabled = !!oResult.response.isPublicLayerAvailable;
 				oResult.response.isContextSharingEnabled = true;
 				oResult.response.isContextSharingEnabledForComp = true;
+				oResult.response.isLocalResetEnabled = true;
 				return oResult.response;
 			});
 		},
