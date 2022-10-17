@@ -483,6 +483,97 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_NumericHeader_MainIndicator = {
+			"sap.app": {
+				"id": "test.card.mainIndicator"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"visibility": false,
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"visible": "{visibility}",
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"dataTimestamp": "2021-03-18T12:00:00Z",
+					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+					"sideIndicators": [
+						{
+							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+							"number": "3252.234",
+							"unit": "K"
+						},
+						{
+							"title": "Long Deviation Long Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		};
+
+		var oManifest_NumericHeader_SideIndicators = {
+			"sap.app": {
+				"id": "test.card.mainIndicator"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"visibility": false,
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"dataTimestamp": "2021-03-18T12:00:00Z",
+					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+					"sideIndicators": [
+						{
+							"visible": "{visibility}",
+							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+							"number": "3252.234",
+							"unit": "K"
+						},
+						{
+							"visible": "{visibility}",
+							"title": "Long Deviation Long Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		};
+
 		var oManifest_NumericHeader2 = {
 			"sap.app": {
 				"id": "test.card.card10"
@@ -2036,6 +2127,180 @@ sap.ui.define([
 					}
 				}
 			});
+		});
+
+		QUnit.test("Numeric header main indicator visibility", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				var oHeader = this.oCard.getAggregation("_header"),
+					oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
+
+				// Assert aggregation mainIndicator
+				assert.notOk(oMainIndicator.getVisible(), "Card header main indicator is hidden");
+				assert.notOk(oMainIndicator.getDomRef(), "Card header main indicator should not be rendered if invisible");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.mainIndicator"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"type": "Numeric",
+						"data": {
+							"json": {
+								"n": "56",
+								"u": "%",
+								"trend": "Up",
+								"valueColor": "Good"
+							}
+						},
+						"title": "Card title",
+						"subTitle": "Card subtitle",
+						"unitOfMeasurement": "EUR",
+						"mainIndicator": {
+							"visible": false,
+							"number": "{n}",
+							"unit": "{u}",
+							"trend": "{trend}",
+							"state": "{valueColor}"
+						},
+						"dataTimestamp": "2021-03-18T12:00:00Z",
+						"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+						"sideIndicators": [
+							{
+								"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+								"number": "3252.234",
+								"unit": "K"
+							},
+							{
+								"title": "Long Deviation Long Deviation",
+								"number": "22.43",
+								"unit": "%"
+							}
+						]
+					}
+				}
+			});
+		});
+
+		QUnit.test("Numeric header side indicators visibility", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+
+			// Act
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				var oHeader = this.oCard.getAggregation("_header");
+				var oSideIndicators = oHeader.getAggregation("sideIndicators");
+
+				// Assert
+				oSideIndicators.forEach(function (oIndicator, iIndex) {
+					assert.notOk(oIndicator.getDomRef(), "Card header sideIndicators shouldn't be rendered if invisible.");
+					assert.notOk(oIndicator.getVisible(), "Card header sideIndicators are hidden");
+				});
+
+				done();
+			}.bind(this));
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.mainIndicator"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"type": "Numeric",
+						"data": {
+							"json": {
+								"n": "56",
+								"u": "%",
+								"trend": "Up",
+								"valueColor": "Good"
+							}
+						},
+						"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+						"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+						"unitOfMeasurement": "EUR",
+						"mainIndicator": {
+							"number": "{n}",
+							"unit": "{u}",
+							"trend": "{trend}",
+							"state": "{valueColor}"
+						},
+						"dataTimestamp": "2021-03-18T12:00:00Z",
+						"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+						"sideIndicators": [
+							{
+								"visible": false,
+								"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+								"number": "3252.234",
+								"unit": "K"
+							},
+							{
+								"visible": false,
+								"title": "Long Deviation Long Deviation",
+								"number": "22.43",
+								"unit": "%"
+							}
+						]
+					}
+				}
+			});
+		});
+
+		QUnit.test("Numeric header main indicator visibility with binding", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				var oHeader = this.oCard.getAggregation("_header"),
+					oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
+
+				// Assert aggregation mainIndicator
+				assert.notOk(oMainIndicator.getVisible(), "Card header main indicator is hidden");
+				assert.notOk(oMainIndicator.getDomRef(), "Card header main indicator should not be rendered if invisible");
+				assert.equal(oHeader.getNumberVisible(), oManifest_NumericHeader_MainIndicator["sap.card"].header.data.json["visibility"], "Card header main indicator visibility property value should be correct.");
+
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest(oManifest_NumericHeader_MainIndicator);
+		});
+
+		QUnit.test("Numeric header side indicators visibility with binding", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+
+			// Act
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				var oHeader = this.oCard.getAggregation("_header");
+				var oSideIndicators = oHeader.getAggregation("sideIndicators");
+
+				// Assert
+				oSideIndicators.forEach(function (oIndicator, iIndex) {
+					assert.notOk(oIndicator.getDomRef(), "Card header sideIndicators shouldn't be rendered if invisible.");
+					assert.notOk(oIndicator.getVisible(), "Card header sideIndicators are hidden");
+					assert.equal(oIndicator.getVisible(), oManifest_NumericHeader_SideIndicators["sap.card"].header.data.json["visibility"], "Card header side indicators visibility property value should be correct.");
+				});
+
+				done();
+			}.bind(this));
+			this.oCard.setManifest(oManifest_NumericHeader_SideIndicators);
 		});
 
 		QUnit.module("Footer", {

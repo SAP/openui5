@@ -71,6 +71,7 @@ sap.ui.define([
 				mSettings.scale = mConfiguration.mainIndicator.unit;
 				mSettings.trend = mConfiguration.mainIndicator.trend;
 				mSettings.state = mConfiguration.mainIndicator.state; // TODO convert ValueState to ValueColor
+				mSettings.numberVisible = mConfiguration.mainIndicator.visible;
 			}
 
 			if (mConfiguration.sideIndicators) {

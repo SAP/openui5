@@ -27,7 +27,7 @@ describe("sap.ui.integration.CardHeadersVisualTests", function () {
 
 	it("Numeric Header", function () {
 		utils.navigateTo("Numeric Header");
-		var aCardIds = ["fcard1", "fcard2", "kpicard1", "kpicard2", "kpicard3", "kpicard4", "kpicard5", "tablecard1", "tablecard123", "unitOfMeasurementOnly", "hiddenHeader"];
+		var aCardIds = ["fcard1", "fcard2", "kpicard1", "kpicard2", "kpicard3", "kpicard4", "kpicard5", "tablecard1", "tablecard123", "unitOfMeasurementOnly", "hiddenHeader", "indicatorsVisibility1", "indicatorsVisibility2", "indicatorsVisibility3", "indicatorsVisibility4", "indicatorsVisibility5"];
 
 		aCardIds.forEach(function (sId) {
 			utils.takePictureOfElement({

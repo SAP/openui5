@@ -58,6 +58,17 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Numeric Indicators Visibility',
+								key: 'numericIndicators',
+								files: [
+									{
+										url: '/samples/list/numericIndicators.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
 								title: 'Quick Links',
 								key: 'quickLinks',
 								settings: {
