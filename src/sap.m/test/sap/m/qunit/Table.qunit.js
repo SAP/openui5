@@ -2957,6 +2957,37 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("No Columns String", function (assert) {
+		var done = assert.async(2);
+
+		var sut = createSUT("tblNoDataIMNC", false, false, "None", false);
+		var oBundle = Core.getLibraryResourceBundle("sap.m");
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
+		assert.strictEqual($noDataText.text(), oBundle.getText("TABLE_NO_COLUMNS"), "Table's no columns nodata-text contains correct string");
+
+		setTimeout(function () {
+			sut.setNoData();
+			var $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
+			assert.strictEqual($noDataText.text(), oBundle.getText("TABLE_NO_COLUMNS"), "Table's no columns nodata-text contains correct string");
+			done();
+
+			sut.setNoData(new IllustratedMessage());
+			setTimeout(function() {
+				sut.setNoData();
+				Core.applyChanges();
+
+				var oNoColumnsMessage = sut.getAggregation("_noColumnsMessage");
+				assert.strictEqual($noDataText.children().get(0), oNoColumnsMessage.getDomRef(), "Table's nodata-text contains figure's DOM element");
+
+				done();
+				sut.destroy();
+			}, 1000);
+		}, 1000);
+	});
+
 	QUnit.test("No Data Control", function(assert) {
 		var sut = createSUT("tblNoDataIMNC", true, false, "None", false);
 		var oData = {

@@ -355,7 +355,21 @@ sap.ui.define([
 				oNoColumns = Util.getNoColumnsIllustratedMessage();
 				this.setAggregation("_noColumnsMessage", oNoColumns);
 			}
+		} else if (vNoData && (typeof vNoData === "string" || !vNoData.isA("sap.m.IllustratedMessage"))) {
+			// If the given vNoData is not an IllustratedMessage remove the according column message
+			this.removeAllAggregation("_noColumnsMessage");
 		}
+
+		if (!this.shouldRenderItems()) {
+			if (this.getAggregation("_noColumnsMessage")) {
+				// Invalidate table, if there is an illustrated message present, to prevent possible replacement with plain text
+				this.invalidate();
+			} else {
+				// Only set the no columns string, if there is no illustrated message present
+				this.$("nodata-text").text(Core.getLibraryResourceBundle("sap.m").getText("TABLE_NO_COLUMNS"));
+			}
+		}
+
 		return this;
 	};
 
