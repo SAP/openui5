@@ -86,6 +86,9 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 		return aWhitelist.slice();
 	};
 
+	/* eslint-disable no-control-regex */
+	var rCheckWhitespaces = /[\u0009\u000A\u000D]+/g;
+
 	/**
 	 * Validates a URL. Check if it's not a script or other security issue.
 	 *
@@ -201,6 +204,13 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	 */
 	oURLWhitelist.validate = function(sUrl) {
 
+		// Test for not allowed whitespaces
+		if (typeof sUrl === "string") {
+			if (rCheckWhitespaces.test(sUrl)) {
+				return false;
+			}
+		}
+
 		var result = /^(?:([^:\/?#]+):)?((?:\/\/((?:\[[^\]]+\]|[^\/?#:]+))(?::([0-9]+))?)?([^?#]*))(?:\?([^#]*))?(?:#(.*))?$/.exec(sUrl);
 		if (!result) {
 			return false;
@@ -299,14 +309,16 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 				if (!sProtocol || !aWhitelist[i].protocol || sProtocol == aWhitelist[i].protocol) {
 					// protocol OK
 					var bOk = false;
-					if (sHost && aWhitelist[i].host && /^\*/.test(aWhitelist[i].host)) {
+					if (aWhitelist[i].host && /^\*/.test(aWhitelist[i].host)) {
 						// check for wildcard search at begin
 						var sHostEscaped = aWhitelist[i].host.slice(1).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 						var rFilter = RegExp(sHostEscaped + "$");
-						if (rFilter.test(sHost)) {
-							bOk = true;
+						// Host can be undefined, but an empty string is needed to test it against the rFilter regex.
+						if (!sHost) {
+							sHost = "";
 						}
-					} else if (!sHost || !aWhitelist[i].host || sHost == aWhitelist[i].host) {
+						bOk = rFilter.test(sHost);
+					} else if (!aWhitelist[i].host || sHost == aWhitelist[i].host) {
 						bOk = true;
 					}
 					if (bOk) {
