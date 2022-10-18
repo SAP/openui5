@@ -58,7 +58,7 @@ sap.ui.define(["sap/ui/core/theming/Parameters"], function (Parameters) {
 					}
 				},
 				"emphasis": {
-					"backgroundColor": Parameters.get("sapUiNeutralBG"),
+					"backgroundColor": Parameters.get("sapTile_Background"),
 					"foregroundColors": {
 						"default": {
 							"default": Parameters.get("sapUiBaseText")
