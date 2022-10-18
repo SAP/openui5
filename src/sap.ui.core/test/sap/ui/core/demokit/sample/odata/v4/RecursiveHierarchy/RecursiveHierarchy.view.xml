@@ -51,4 +51,37 @@
 			<m:Label text="Age"/>
 		</Column>
 	</Table>
+
+	<TreeTable id="treeTable" ariaLabelledBy="treeTitle"
+		rows="{path : '/EMPLOYEES', parameters : {$count : false, $orderby : 'AGE'},
+			suspended : true}" selectionMode="None" threshold="0"
+		visibleRowCount="5">
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="treeTitle" level="H1" text="Organizational Chart - TreeTable"/>
+			</m:Toolbar>
+		</extension>
+		<Column template="ID">
+			<m:Label text="ID"/>
+		</Column>
+		<Column hAlign="End" width="5em">
+			<m:Label text="Level"/>
+			<template>
+				<m:Text wrapping="false" text="{= %{@$ui5.node.level} }"/>
+			</template>
+		</Column>
+		<Column template="MANAGER_ID">
+			<m:Label text="Manager's ID"/>
+		</Column>
+		<Column>
+			<m:Label text="Name"/>
+			<template>
+				<m:Input value="{Name}"/>
+			</template>
+		</Column>
+		<Column template="AGE">
+			<m:Label text="Age"/>
+		</Column>
+	</TreeTable>
+
 </mvc:View>

@@ -1000,4 +1000,125 @@ sap.ui.define([
 			assert.equal(that.oTable.isExpanded(1), false, "Expanded state of the second collapsed row");
 		});
 	});
+
+	QUnit.module("TreeBindingProxy", {
+		beforeEach: function() {
+			this.oTable = new TreeTable();
+			this.oProxy = this.oTable._oProxy;
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Proxy Initialisation", function(assert) {
+		var oTable = new TreeTable();
+		assert.ok(oTable._oProxy, "TreeTable has a proxy object");
+		assert.equal(oTable._oProxy._sAggregation, "rows", "Proxy has correct aggregation");
+		assert.equal(oTable._oProxy._oControl, oTable, "Proxy has correct control associated");
+		oTable.destroy();
+	});
+
+	QUnit.test("#isTreeBinding", function(assert) {
+		var fnBindingInfoStub = sinon.stub(this.oTable, "getBindingInfo");
+		var fnGetModelStub = sinon.stub(this.oTable, "getModel");
+		var fnIsTreeBindingSpy = sinon.spy(this.oProxy, "isTreeBinding");
+
+		fnBindingInfoStub.returns({model: "undefined"});
+		fnGetModelStub.returns({
+			isA: function(sName) {
+				return false;
+			}
+		});
+
+		assert.ok(this.oTable.isTreeBinding(), "TreeTable has a tree binding");
+		assert.ok(fnIsTreeBindingSpy.calledOnce, "Proxy function is called");
+
+		fnGetModelStub.returns({
+			isA: function(sName) {
+				return true;
+			}
+		});
+
+		assert.notOk(this.oTable.isTreeBinding(), "TreeTable has no tree binding");
+		assert.ok(fnIsTreeBindingSpy.calledTwice, "Proxy function is called");
+
+		fnBindingInfoStub.restore();
+		fnGetModelStub.restore();
+		fnIsTreeBindingSpy.restore();
+	});
+
+	QUnit.test("Correct Proxy Calls", function(assert) {
+		// Initialise spies
+		var fnGetContextsSpy = sinon.spy(this.oProxy, "getContexts");
+		var fnExpandSpy = sinon.spy(this.oProxy, "expand");
+		var fnCollapseSpy = sinon.spy(this.oProxy, "collapse");
+		var fnExpandToLevelSpy = sinon.spy(this.oProxy, "expandToLevel");
+		var fnCollapseAllSpy = sinon.spy(this.oProxy, "collapseAll");
+		var fnIsExpandedSpy = sinon.spy(this.oProxy, "isExpanded");
+		var fnGetContextByIndexSpy = sinon.spy(this.oProxy, "getContextByIndex");
+		var fnSetRootLevelSpy = sinon.spy(this.oProxy, "setRootLevel");
+		var fnSetCollapseRecursiveSpy = sinon.spy(this.oProxy, "setCollapseRecursive");
+
+		// Stub oTable.getBinding
+		var fnGetBinding = sinon.stub(this.oTable, "getBinding");
+		fnGetBinding.returns({
+			getMetadata: function() {
+				return {
+					getName: function () {
+						return undefined;
+					}
+				};
+			}
+		});
+
+		// _getContexts
+		assert.equal(this.oTable._getContexts(0).length, 0, "TreeTable has no contexts");
+		assert.ok(fnGetContextsSpy.calledOnce, "proxy#getContexts was called");
+
+		// expand
+		this.oTable.expand(0);
+		assert.ok(fnExpandSpy.called, "proxy#expand was called");
+
+		// collapse
+		this.oTable.collapse(0);
+		assert.ok(fnCollapseSpy.called, "proxy#collapse was called");
+
+		// expandToLevel
+		this.oTable.expandToLevel(0);
+		assert.ok(fnExpandToLevelSpy.called, "proxy#expandToLevel was called");
+
+		// collapseAll
+		this.oTable.collapseAll();
+		assert.ok(fnCollapseAllSpy.called, "proxy#collapseAll was called");
+
+		// isExpanded
+		this.oTable.isExpanded(0);
+		assert.ok(fnIsExpandedSpy.called, "proxy#isExpanded was called");
+
+		// getContextByIndex
+		this.oTable.getContextByIndex(0);
+		assert.ok(fnGetContextByIndexSpy.called, "proxy#getContextByIndex was called");
+
+		// setRootLevel
+		this.oTable.setRootLevel(0);
+		assert.ok(fnSetRootLevelSpy.called, "proxy#setRootLevel was called");
+
+		// setCollapseRecursive
+		this.oTable.setCollapseRecursive(true);
+		assert.ok(fnSetCollapseRecursiveSpy.called, "proxy#setCollapseRecursive was called");
+
+		// Restore spies and stubs
+		fnGetContextsSpy.restore();
+		fnExpandSpy.restore();
+		fnCollapseSpy.restore();
+		fnExpandToLevelSpy.restore();
+		fnCollapseAllSpy.restore();
+		fnIsExpandedSpy.restore();
+		fnGetContextByIndexSpy.restore();
+		fnSetRootLevelSpy.restore();
+		fnSetCollapseRecursiveSpy.restore();
+
+		fnGetBinding.restore();
+	});
 });

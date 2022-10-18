@@ -12,7 +12,8 @@ sap.ui.define([
 	'./utils/TableUtils',
 	"./plugins/BindingSelection",
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"./proxies/TreeBindingProxy"
 ],
 	function(
 		Table,
@@ -23,7 +24,8 @@ sap.ui.define([
 		TableUtils,
 		BindingSelectionPlugin,
 		Log,
-		assert
+		assert,
+		TreeBindingProxy
 	) {
 	"use strict";
 
@@ -68,7 +70,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of version 1.46.3, replaced by the <code>numberOfExpandedLevels</code> binding parameter
+			 * @deprecated As of version 1.46.3, replaced by the <code>numberOfExpandedLevels</code> binding parameter. May not work with all bindings.
 			 */
 			expandFirstLevel : {type : "boolean", defaultValue : false, deprecated: true},
 
@@ -100,7 +102,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of version 1.76, replaced by the <code>collapseRecursive</code> binding parameter
+			 * @deprecated As of version 1.76, replaced by the <code>collapseRecursive</code> binding parameter. May not work with all bindings.
 			 */
 			collapseRecursive : {type: "boolean", defaultValue: true, deprecated: true},
 
@@ -120,7 +122,7 @@ sap.ui.define([
 			 *   });
 			 * </pre>
 			 *
-			 * @deprecated As of version 1.76, replaced by the <code>rootLevel</code> binding parameter
+			 * @deprecated As of version 1.76, replaced by the <code>rootLevel</code> binding parameter. May not work with all bindings.
 			 */
 			rootLevel : {type: "int", group: "Data", defaultValue: 0, deprecated: true}
 		},
@@ -165,49 +167,29 @@ sap.ui.define([
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
+
+		this._oProxy = new TreeBindingProxy(this, "rows");
 	};
 
 	TreeTable.prototype._bindRows = function(oBindingInfo) {
 		_private(this).bPendingRequest = false;
 
-		if (!oBindingInfo.parameters) {
-			oBindingInfo.parameters = {};
-		}
-
-		if (!("rootLevel" in oBindingInfo.parameters)) {
-			oBindingInfo.parameters.rootLevel = this.getRootLevel();
-		}
-
-		if (!("collapseRecursive" in oBindingInfo.parameters)) {
-			oBindingInfo.parameters.collapseRecursive = this.getCollapseRecursive();
-		}
-
-		if (!("numberOfExpandedLevels" in oBindingInfo.parameters)) {
-			oBindingInfo.parameters.numberOfExpandedLevels = this.getExpandFirstLevel() ? 1 : 0;
-		}
+		var iExpandedLevels = this.getExpandFirstLevel() ? 1 : 0;
+		this._oProxy.applyLegacySettingsToBindingInfo(oBindingInfo, {
+			rootLevel: this.isPropertyInitial("rootLevel") ? undefined : this.getRootLevel(),
+			collapseResursive: this.isPropertyInitial("collapseRecursive") ? undefined : this.getCollapseRecursive(),
+			numberOfExpandedLevels: this.isPropertyInitial("expandFirstLevel") ? undefined : iExpandedLevels
+		});
 
 		return Table.prototype._bindRows.call(this, oBindingInfo);
 	};
 
 	function updateRowState(oState) {
-		var oBinding = this.getBinding();
-		var oNode = oState.context;
+		var mProxyInfo = oState.context["_mProxyInfo"];
 
-		oState.context = oNode.context; // The TreeTable requests nodes from the binding.
-
-		if (!oState.context) {
-			return;
-		}
-
-		oState.level = oNode.level + 1;
-
-		if (oBinding.nodeHasChildren) {
-			oState.expandable = oBinding.nodeHasChildren(oNode);
-		} else {
-			oState.expandable = oBinding.hasChildren(oNode.context);
-		}
-
-		oState.expanded = oNode.nodeState.expanded;
+		oState.level = mProxyInfo.level;
+		oState.expandable = !mProxyInfo.isLeaf;
+		oState.expanded = mProxyInfo.isExpanded;
 
 		if (TableUtils.Grouping.isInGroupMode(this)) {
 			var sHeaderProp = this.getGroupHeaderProperty();
@@ -225,7 +207,9 @@ sap.ui.define([
 
 	function expandRow(oRow) {
 		var iIndex = oRow.getIndex();
-		var bIsExpanded = toggleGroupHeader(this, iIndex, true);
+
+		this._oProxy.expand(iIndex);
+		var bIsExpanded = this._oProxy.isExpanded(iIndex);
 
 		if (typeof bIsExpanded === "boolean") {
 			this._onGroupHeaderChanged(iIndex, bIsExpanded);
@@ -234,87 +218,13 @@ sap.ui.define([
 
 	function collapseRow(oRow) {
 		var iIndex = oRow.getIndex();
-		var bIsExpanded = toggleGroupHeader(this, iIndex, false);
+
+		this._oProxy.collapse(iIndex);
+		var bIsExpanded = this._oProxy.isExpanded(iIndex);
 
 		if (typeof bIsExpanded === "boolean") {
 			this._onGroupHeaderChanged(iIndex, bIsExpanded);
 		}
-	}
-
-	/**
-	 * Toggles or sets the expanded state of a single or multiple rows. Toggling only works for a single row.
-	 *
-	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {int | int[]} vRowIndex A single index, or an array of indices of the rows to expand or collapse.
-	 * @param {boolean} [bExpand] If defined, instead of toggling the desired state is set.
-	 * @returns {boolean | null} The new expanded state in case an action was performed, otherwise <code>null</code>.
-	 */
-	function toggleGroupHeader(oTable, vRowIndex, bExpand) {
-		var aIndices = [];
-		var oBinding = oTable.getBinding();
-
-		if (!oBinding || vRowIndex == null) {
-			return null;
-		}
-
-		if (typeof vRowIndex === "number") {
-			aIndices = [vRowIndex];
-		} else if (Array.isArray(vRowIndex)) {
-			if (bExpand == null && vRowIndex.length > 1) {
-				// Toggling the expanded state of multiple rows seems to be an absurd task. Therefore we assume this is unintentional and
-				// prevent the execution.
-				return null;
-			}
-			aIndices = vRowIndex;
-		}
-
-		var iTotalRowCount = oTable._getTotalRowCount();
-		var aValidSortedIndices = aIndices.filter(function(iIndex) {
-			// Only indices of existing, expandable/collapsible nodes must be considered. Otherwise there might be no change event on the final
-			// expand/collapse.
-			var bIsExpanded = oBinding.isExpanded(iIndex);
-			var bIsLeaf = true; // If the node state cannot be determined, we assume it is a leaf.
-
-			if (oBinding.nodeHasChildren) {
-				if (oBinding.getNodeByIndex) {
-					bIsLeaf = !oBinding.nodeHasChildren(oBinding.getNodeByIndex(iIndex));
-				} else {
-					// The sap.ui.model.TreeBindingCompatibilityAdapter has no #getNodeByIndex function and #nodeHasChildren always returns true.
-					bIsLeaf = false;
-				}
-			}
-
-			return iIndex >= 0 && iIndex < iTotalRowCount
-				   && !bIsLeaf
-				   && bExpand !== bIsExpanded;
-		}).sort(function(a, b) { return a - b; });
-
-		if (aValidSortedIndices.length === 0) {
-			return null;
-		}
-
-		// Operations need to be performed from the highest index to the lowest. This ensures correct results with OData bindings. The indices
-		// are sorted ascending, so the array is iterated backwards.
-
-		// Expand/Collapse all nodes except the first, and suppress the change event.
-		for (var i = aValidSortedIndices.length - 1; i > 0; i--) {
-			if (bExpand) {
-				oBinding.expand(aValidSortedIndices[i], true);
-			} else {
-				oBinding.collapse(aValidSortedIndices[i], true);
-			}
-		}
-
-		// Expand/Collapse the first node without suppressing the change event.
-		if (bExpand === true) {
-			oBinding.expand(aValidSortedIndices[0], false);
-		} else if (bExpand === false) {
-			oBinding.collapse(aValidSortedIndices[0], false);
-		} else {
-			oBinding.toggleIndex(aValidSortedIndices[0]);
-		}
-
-		return oBinding.isExpanded(aValidSortedIndices[0]);
 	}
 
 	/**
@@ -338,7 +248,7 @@ sap.ui.define([
 	TreeTable.prototype.isTreeBinding = function(sName) {
 		sName = sName || "rows";
 		if (sName === "rows") {
-			return true;
+			return this._oProxy.isTreeBinding();
 		}
 		return Table.prototype.isTreeBinding.apply(this, arguments);
 	};
@@ -363,14 +273,8 @@ sap.ui.define([
 		return oBinding;
 	};
 
-	TreeTable.prototype._getContexts = function(iStartIndex, iLength, iThreshold) {
-		var oBinding = this.getBinding();
-		if (oBinding) {
-			// first call getContexts to trigger data load but return nodes instead of contexts
-			return oBinding.getNodes(iStartIndex, iLength, iThreshold);
-		} else {
-			return [];
-		}
+	TreeTable.prototype._getContexts = function(iStartIndex, iLength, iThreshold, bKeepCurrent) {
+		return this._oProxy.getContexts(iStartIndex, iLength, iThreshold, bKeepCurrent);
 	};
 
 	TreeTable.prototype._getRowContexts = function(iRequestLength) {
@@ -417,7 +321,7 @@ sap.ui.define([
 	 * @public
 	 */
 	TreeTable.prototype.expand = function(vRowIndex) {
-		toggleGroupHeader(this, vRowIndex, true);
+		this._oProxy.expand(vRowIndex);
 		return this;
 	};
 
@@ -429,7 +333,7 @@ sap.ui.define([
 	 * @public
 	 */
 	TreeTable.prototype.collapse = function(vRowIndex) {
-		toggleGroupHeader(this, vRowIndex, false);
+		this._oProxy.collapse(vRowIndex);
 		return this;
 	};
 
@@ -440,9 +344,8 @@ sap.ui.define([
 	 * @public
 	 */
 	TreeTable.prototype.collapseAll = function() {
-		var oBinding = this.getBinding();
-		if (oBinding) {
-			oBinding.collapseToLevel(0);
+		this._oProxy.collapseAll();
+		if (this.getBinding()) {
 			this.setFirstVisibleRow(0);
 		}
 
@@ -462,14 +365,7 @@ sap.ui.define([
 	 * @public
 	 */
 	TreeTable.prototype.expandToLevel = function(iLevel) {
-		var oBinding = this.getBinding();
-
-		assert(oBinding && oBinding.expandToLevel, "TreeTable.expandToLevel is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
-
-		if (oBinding && oBinding.expandToLevel) {
-			oBinding.expandToLevel(iLevel);
-		}
-
+		this._oProxy.expandToLevel(iLevel);
 		return this;
 	};
 
@@ -481,11 +377,7 @@ sap.ui.define([
 	 * @public
 	 */
 	TreeTable.prototype.isExpanded = function(iRowIndex) {
-		var oBinding = this.getBinding();
-		if (oBinding) {
-			return oBinding.isExpanded(iRowIndex);
-		}
-		return false;
+		return this._oProxy.isExpanded(iRowIndex);
 	};
 
 	/**
@@ -570,10 +462,7 @@ sap.ui.define([
 	 */
 
 	TreeTable.prototype.getContextByIndex = function(iRowIndex) {
-		var oBinding = this.getBinding();
-		if (oBinding) {
-			return oBinding.getContextByIndex(iRowIndex);
-		}
+		return this._oProxy.getContextByIndex(iRowIndex);
 	};
 
 	/*
@@ -585,14 +474,7 @@ sap.ui.define([
 	 */
 	TreeTable.prototype.setRootLevel = function(iRootLevel) {
 		this.setFirstVisibleRow(0);
-
-		var oBinding = this.getBinding();
-		if (oBinding) {
-			assert(oBinding.setRootLevel, "rootLevel is not supported by the used binding");
-			if (oBinding.setRootLevel) {
-				oBinding.setRootLevel(iRootLevel);
-			}
-		}
+		this._oProxy.setRootLevel(iRootLevel);
 		this.setProperty("rootLevel", iRootLevel, true);
 
 		return this;
@@ -604,13 +486,7 @@ sap.ui.define([
 	 * @param {boolean} bCollapseRecursive
 	 */
 	TreeTable.prototype.setCollapseRecursive = function(bCollapseRecursive) {
-		var oBinding = this.getBinding();
-		if (oBinding) {
-			assert(oBinding.setCollapseRecursive, "Collapse Recursive is not supported by the used binding");
-			if (oBinding.setCollapseRecursive) {
-				oBinding.setCollapseRecursive(bCollapseRecursive);
-			}
-		}
+		this._oProxy.setCollapseRecursive(bCollapseRecursive);
 		this.setProperty("collapseRecursive", !!bCollapseRecursive, true);
 		return this;
 	};

@@ -17,7 +17,8 @@ sap.ui.define([
 	"./plugins/BindingSelection",
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"./proxies/TreeBindingProxy"
 ],
 	function(
 		AnalyticalColumn,
@@ -33,7 +34,8 @@ sap.ui.define([
 		BindingSelectionPlugin,
 		Log,
 		assert,
-		jQuery
+		jQuery,
+		TreeBindingProxy
 	) {
 	"use strict";
 
@@ -171,7 +173,16 @@ sap.ui.define([
 		return oBinding ? [oBinding.getGrandTotalNode()] : [];
 	};
 
-	AnalyticalTable.prototype._getContexts = TreeTable.prototype._getContexts;
+	AnalyticalTable.prototype._getContexts = function(iStartIndex, iLength, iThreshold) {
+		var oBinding = this.getBinding();
+		if (oBinding) {
+			// first call getContexts to trigger data load but return nodes instead of contexts
+			return oBinding.getNodes(iStartIndex, iLength, iThreshold);
+		} else {
+			return [];
+		}
+	};
+
 	AnalyticalTable.prototype._getRowContexts = TreeTable.prototype._getRowContexts;
 
 	/**
@@ -200,6 +211,8 @@ sap.ui.define([
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Table.OpenMenu, onOpenTableContextMenu, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
+
+		this._oProxy = new TreeBindingProxy(this, "rows");
 	};
 
 	AnalyticalTable.prototype.exit = function() {
@@ -742,13 +755,11 @@ sap.ui.define([
 	 * @public
 	 */
 	AnalyticalTable.prototype.getContextByIndex = function(iIndex) {
-		var oBinding = this.getBinding();
-		return iIndex >= 0 && oBinding ? oBinding.getContextByIndex(iIndex) : null;
+		return iIndex >= 0 && this._oProxy.getContextByIndex(iIndex);
 	};
 
 	AnalyticalTable.prototype.getContextInfoByIndex = function(iIndex) {
-		var oBinding = this.getBinding();
-		return iIndex >= 0 && oBinding ? oBinding.getNodeByIndex(iIndex) : null;
+		return iIndex >= 0 && this._oProxy.getNodeByIndex(iIndex);
 	};
 
 	/**
@@ -1048,13 +1059,7 @@ sap.ui.define([
 	 * @param {boolean} bCollapseRecursive
 	 */
 	AnalyticalTable.prototype.setCollapseRecursive = function(bCollapseRecursive) {
-		var oBinding = this.getBinding();
-		if (oBinding) {
-			assert(oBinding.setCollapseRecursive, "Collapse Recursive is not supported by the used binding");
-			if (oBinding.setCollapseRecursive) {
-				oBinding.setCollapseRecursive(bCollapseRecursive);
-			}
-		}
+		this._oProxy.setCollapseRecursive(bCollapseRecursive);
 		this.setProperty("collapseRecursive", !!bCollapseRecursive, true);
 		return this;
 	};
@@ -1200,12 +1205,9 @@ sap.ui.define([
 	 * @since 1.70
 	 */
 	AnalyticalTable.prototype.expandAll = function() {
-		var oBinding = this.getBinding();
-		if (oBinding) {
-			oBinding.expandToLevel(this._aGroupedColumns.length);
-			this.setFirstVisibleRow(0);
-			this._getSelectionPlugin().clearSelection();
-		}
+		this._oProxy.expandToLevel(this._aGroupedColumns.length);
+		this.setFirstVisibleRow(0);
+		this._getSelectionPlugin().clearSelection();
 		return this;
 	};
 
