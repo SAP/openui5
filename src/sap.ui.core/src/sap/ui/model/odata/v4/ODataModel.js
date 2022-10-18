@@ -871,6 +871,9 @@ sap.ui.define([
 	 *     <li> for the list binding itself:
 	 *       <ul>
 	 *         <li> {@link sap.ui.model.odata.v4.ODataListBinding#create}
+	 *         <li> {@link sap.ui.model.odata.v4.ODataListBinding#getKeepAliveContext} or
+	 *           {@link #getKeepAliveContext} as far as it affects such a list binding
+	 *         <li> {@link sap.ui.model.odata.v4.ODataListBinding#resetChanges}
 	 *       </ul>
 	 *     <li> for the {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext header
 	 *       context} of a list binding:
@@ -881,8 +884,12 @@ sap.ui.define([
 	 *       <ul>
 	 *         <li> {@link sap.ui.model.odata.v4.Context#delete}
 	 *         <li> {@link sap.ui.model.odata.v4.Context#refresh}
+	 *         <li> {@link sap.ui.model.odata.v4.Context#replaceWith}
 	 *         <li> {@link sap.ui.model.odata.v4.Context#requestSideEffects}
+	 *         <li> {@link sap.ui.model.odata.v4.Context#setKeepAlive}
 	 *         <li> {@link sap.ui.model.odata.v4.Context#setProperty}
+	 *         <li> executing a bound operation using <code>bReplaceWithRVC</code>, see
+	 *           {@link sap.ui.model.odata.v4.ODataContextBinding#execute}
 	 *       </ul>
 	 *     <li> for a dependent property binding of the list binding:
 	 *       <ul>

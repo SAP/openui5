@@ -1001,6 +1001,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_Cache#resetChangesForPath: PATCHes", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS"),
+			oCacheMock = this.mock(oCache),
 			oCall1,
 			oCall2,
 			oCall3;
@@ -1013,6 +1014,7 @@ sap.ui.define([
 			"foo/bar/baz" : ["foo/bar/baz"]
 		};
 
+		oCacheMock.expects("checkSharedRequest").withExactArgs();
 		this.oRequestorMock.expects("removeChangeRequest").withExactArgs("foo/bar/baz");
 		oCall1 = this.oRequestorMock.expects("removeChangeRequest").withExactArgs("foo/bar(1)");
 		oCall2 = this.oRequestorMock.expects("removeChangeRequest").withExactArgs("foo/bar/2");
@@ -1027,6 +1029,7 @@ sap.ui.define([
 			"foo/bars" : ["foo/bars"]
 		});
 
+		oCacheMock.expects("checkSharedRequest").withExactArgs();
 		this.oRequestorMock.expects("removeChangeRequest").withExactArgs("foo/ba");
 		this.oRequestorMock.expects("removeChangeRequest").withExactArgs("foo/bars");
 
@@ -1055,6 +1058,7 @@ sap.ui.define([
 			"foo/bar/baz" : [oBody4, oBody5]
 		};
 
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		oCall1 = this.oRequestorMock.expects("removePost")
 			.withExactArgs("update", sinon.match.same(oBody2));
 		oCall2 = this.oRequestorMock.expects("removePost")
@@ -1089,6 +1093,7 @@ sap.ui.define([
 			"foo/bar/baz" : [oBody2]
 		};
 
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.oRequestorMock.expects("removePost").withExactArgs("update", sinon.match.same(oBody0));
 		this.oRequestorMock.expects("removePost").withExactArgs("update", sinon.match.same(oBody1));
 		this.oRequestorMock.expects("removePost").withArgs("$inactive.foo").never();
@@ -9837,6 +9842,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
+			oCacheMock = this.mock(oCache),
 			oInactive = {"@$ui5.context.isInactive" : true}, // "inline creation row"
 			oCreated = {}, // ordinary created persisted => not kept!
 			oDeleted = {"@$ui5.context.isDeleted" : true},
@@ -9907,6 +9913,7 @@ sap.ui.define([
 		oCache.aElements.$created = 5;
 		oCache.aElements.$tail = oTail;
 		oCache.iLimit = 42;
+		oCacheMock.expects("checkSharedRequest").exactly(sGroupId ? 1 : 0).withExactArgs();
 
 		// code under test
 		oCache.reset(aKeptElementPredicates.slice(), sGroupId);
@@ -9978,6 +9985,7 @@ sap.ui.define([
 				oCache.mChangeListeners = {};
 				oCache.aElements.$byPredicate = {};
 			}
+			oCacheMock.expects("checkSharedRequest").withExactArgs();
 
 			// code under test
 			oCache.restore(true);
@@ -11615,6 +11623,7 @@ sap.ui.define([
 		var oCache = this.createCache("Employees"),
 			oElement = {};
 
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.mock(_Helper).expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oElement), "predicate")
 			.returns("('foo')");
@@ -11631,6 +11640,8 @@ sap.ui.define([
 		var oCache = this.createCache("Employees"),
 			oElement;
 
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+
 		// code under test
 		oElement = oCache.createEmptyElement("('foo')");
 
@@ -11644,6 +11655,7 @@ sap.ui.define([
 		var oCache = this.createCache("Employees"),
 			oElement = {};
 
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.mock(_Helper).expects("hasPrivateAnnotation").never();
 		this.mock(_Helper).expects("getPrivateAnnotation").never();
 		this.mock(_Helper).expects("setPrivateAnnotation").never();
@@ -11662,6 +11674,7 @@ sap.ui.define([
 			oOldElement = {};
 
 		oCache.aElements[23] = oOldElement;
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.mock(_Helper).expects("hasPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oOldElement), "transientPredicate").returns(false);
 		this.mock(_Helper).expects("getPrivateAnnotation").never();
@@ -11682,6 +11695,7 @@ sap.ui.define([
 			oOldElement = {};
 
 		oCache.aElements[23] = oOldElement;
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		oHelperMock.expects("hasPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oOldElement), "transientPredicate").returns(true);
 		oHelperMock.expects("hasPrivateAnnotation")
@@ -11706,6 +11720,7 @@ sap.ui.define([
 			oOldElement = {};
 
 		oCache.aElements[23] = oOldElement;
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		oHelperMock.expects("hasPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oOldElement), "transientPredicate").returns(true);
 		oHelperMock.expects("hasPrivateAnnotation")
@@ -12052,6 +12067,7 @@ sap.ui.define([
 			.returns("?$filter=" + oFixture.sFilter);
 
 		// refreshKeptElements
+		oCacheMock.expects("checkSharedRequest").withExactArgs();
 		oCacheMock.expects("fetchTypes").returns(SyncPromise.resolve(mTypes));
 		this.mock(this.oRequestor).expects("request")
 			.withExactArgs("GET", "Employees?$filter=" + oFixture.sFilter,
@@ -12095,6 +12111,7 @@ sap.ui.define([
 	QUnit.test("refreshKeptElements w/o kept-alive element", function (assert) {
 		var oCache = _Cache.create(this.oRequestor, "Employees", {});
 
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.mock(oCache.oRequestor).expects("request").never();
 
 		// code under test

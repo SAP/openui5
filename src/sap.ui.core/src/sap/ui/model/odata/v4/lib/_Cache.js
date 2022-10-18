@@ -1243,7 +1243,7 @@ sap.ui.define([
 	 *   A promise to be resolved with the patched data
 	 * @throws {Error} If the cache is shared
 	 *
-	 * @private
+	 * @public
 	 */
 	_Cache.prototype.patch = function (sPath, oData) {
 		var that = this;
@@ -1665,12 +1665,14 @@ sap.ui.define([
 	 *   The path
 	 * @throws {Error}
 	 *   If there is a change which has been sent to the server and for which there is no response
-	 *   yet.
+	 *   yet, or if the cache is shared
 	 *
 	 * @public
 	 */
 	_Cache.prototype.resetChangesForPath = function (sPath) {
 		var that = this;
+
+		this.checkSharedRequest();
 
 		Object.keys(this.mChangeRequests).reverse().forEach(function (sRequestPath) {
 			var aPromises, i;
@@ -1735,6 +1737,7 @@ sap.ui.define([
 	 * @see #hasSentRequest
 	 */
 	_Cache.prototype.setLateQueryOptions = function (mQueryOptions) {
+		// this.checkSharedRequest(); // don't do that here! it might work well enough
 		if (mQueryOptions) {
 			this.mLateQueryOptions = {
 				// must contain both properties for requestSideEffects
@@ -2354,10 +2357,13 @@ sap.ui.define([
 	 * Adds the element to $byPredicate of the cache's element list.
 	 *
 	 * @param {object} oElement - The element
+	 * @throws {Error}
+	 *   If the cache is shared
 	 *
 	 * @public
 	 */
 	_CollectionCache.prototype.addKeptElement = function (oElement) {
+		this.checkSharedRequest();
 		this.aElements.$byPredicate[_Helper.getPrivateAnnotation(oElement, "predicate")] = oElement;
 	};
 
@@ -2395,12 +2401,15 @@ sap.ui.define([
 	 *
 	 * @param {string} sPredicate - The predicate
 	 * @returns {object} The empty element
+	 * @throws {Error}
+	 *   If the cache is shared
 	 *
 	 * @public
 	 */
 	_CollectionCache.prototype.createEmptyElement = function (sPredicate) {
 		var oElement = {};
 
+		this.checkSharedRequest();
 		_Helper.setPrivateAnnotation(oElement, "predicate", sPredicate);
 		this.aElements.$byPredicate[sPredicate] = oElement;
 
@@ -2412,12 +2421,15 @@ sap.ui.define([
 	 *
 	 * @param {number} iIndex - The index
 	 * @param {object} oElement - The new element
+	 * @throws {Error}
+	 *   If the cache is shared
 	 *
 	 * @public
 	 */
 	_CollectionCache.prototype.doReplaceWith = function (iIndex, oElement) {
 		var oOldElement = this.aElements[iIndex];
 
+		this.checkSharedRequest();
 		if (oOldElement && _Helper.hasPrivateAnnotation(oOldElement, "transientPredicate")
 				&& !_Helper.hasPrivateAnnotation(oElement, "transientPredicate")) {
 			// when replacing a created element (w/ transientPredicate), make sure the replacement
@@ -2902,6 +2914,8 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise|undefined}
 	 *   A promise resolving without a defined result, or rejecting with an error if the refresh
 	 *   fails, or <code>undefined</code> if there are no kept-alive elements.
+	 * @throws {Error}
+	 *   If the cache is shared
 	 *
 	 * @public
 	 */
@@ -2957,6 +2971,7 @@ sap.ui.define([
 				&& !that.hasPendingChangesForPath(sPredicate);
 		}
 
+		this.checkSharedRequest();
 		if (aPredicates.length === 0) {
 			return undefined;
 		}
@@ -3212,6 +3227,8 @@ sap.ui.define([
 	 *   The group ID used for a side-effects refresh; if given, only inline creation
 	 *   rows and transient elements with a different batch group shall be kept in place and a
 	 *   backup shall be remembered for a later {@link #restore}
+	 * @throws {Error}
+	 *   If a cache is shared and a group ID is given
 	 *
 	 * @public
 	 * @see _Cache#hasPendingChangesForPath
@@ -3226,6 +3243,7 @@ sap.ui.define([
 			that = this;
 
 		if (sGroupId) {
+			this.checkSharedRequest();
 			this.oBackup = {
 				iActiveElements : this.iActiveElements,
 				mChangeListeners : this.mChangeListeners,
@@ -3284,11 +3302,14 @@ sap.ui.define([
 	 * really do so; drops the backup in any case to free memory.
 	 *
 	 * @param {boolean} bReally - Whether to really restore, not just drop the backup
+	 * @throws {Error}
+	 *   If a shared cache is told to really restore
 	 *
 	 * @public
 	 */
 	_CollectionCache.prototype.restore = function (bReally) {
 		if (bReally) {
+			this.checkSharedRequest();
 			this.iActiveElements = this.oBackup.iActiveElements;
 			this.mChangeListeners = this.oBackup.mChangeListeners;
 			this.sContext = this.oBackup.sContext;
@@ -3739,6 +3760,8 @@ sap.ui.define([
 	 * order to allow that it may change.
 	 *
 	 * @param {string} sPath - The path to the property within the cache
+	 *
+	 * @private
 	 */
 	_SingleCache.prototype.resetProperty = function (sPath) {
 		var oData = this.oPromise.getResult();
@@ -3854,6 +3877,8 @@ sap.ui.define([
 	 * Resets the property for its own relative path within the singleton's single cache. This means
 	 * that the next #fetchValue will request the property again via #fetchLateProperty. Deletes
 	 * also the entity's ETag within the cache in order to allow that it may change.
+	 *
+	 * @public
 	 */
 	_SingletonPropertyCache.prototype.reset = function () {
 		this.oSingleton.resetProperty(this.sRelativePath);
