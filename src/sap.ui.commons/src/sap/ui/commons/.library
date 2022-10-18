@@ -54,12 +54,12 @@ abandoned completely.
 
 		<!-- Thirdparty references -->
 		<thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-			<lib name="jquery_UI" displayName="jQuery UI" version="1.10.4" homepage="https://jqueryui.com" id="73554900106100000044">
+			<lib name="jquery_UI" displayName="jQuery UI" npmName="jquery-ui" version="1.10.4" hash="609347999f7dcc16d3eab27ddaec1066" homepage="https://jqueryui.com" id="73554900106100000044">
 				<license url="http://jQuery.org/license" type="MIT" />
 				<copyright>2014 jQuery Foundation and other contributors</copyright>
 				<pattern>sap/ui/commons/themes/base/jQueryUi*</pattern>
 			</lib>
-			<lib name="jquery-fix-clone" displayName="jquery.fix.clone" version="unknown" homepage="https://github.com/spencertipping/jquery.fix.clone" id="73554900106100005547">
+			<lib name="jquery-fix-clone" displayName="jquery.fix.clone" npmName="n/a" version="unknown" homepage="https://github.com/spencertipping/jquery.fix.clone" id="73554900106100005547">
 				<license url="https://github.com/spencertipping/jquery.fix.clone" type="MIT" />
 				<copyright>Spencer Tipping</copyright>
 				<pattern partial="true" otherContent="SAP" explanation="Carousel.js is authored by SAP, but contains an improved implementation of the clone function which is taken from jquery-fix-clone">sap/ui/commons/Carousel.js</pattern>
