@@ -14,7 +14,8 @@ sap.ui.define([
         "sap/ui/mdc/chart/ChartTypeButton",
         "sap/ui/mdc/chart/ChartSettings",
         "./ChartSelectionDetails",
-        "sap/m/ToolbarSeparator"
+        "sap/m/ToolbarSeparator",
+        "sap/ui/core/aria/HasPopup"
     ],
     function (
         Core,
@@ -28,7 +29,8 @@ sap.ui.define([
         ChartTypeButton,
         ChartSettings,
         ChartSelectionDetails,
-        ToolbarSeparator
+        ToolbarSeparator,
+        AriaHasPopup
     ) {
         "use strict";
 
@@ -116,6 +118,7 @@ sap.ui.define([
                     tooltip: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
 					text: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
                     enabled: false,
+                    ariaHasPopup: AriaHasPopup.ListBox,
                     press: function (oEvent) {
                         oMDCChart._showDrillDown(this._oDrillDownBtn);
                     }.bind(this)
@@ -191,7 +194,9 @@ sap.ui.define([
             }
 
             if (oMDCChart._getTypeBtnActive()) {
-                this._oChartTypeBtn = new ChartTypeButton(oMDCChart);
+                this._oChartTypeBtn = new ChartTypeButton(oMDCChart, {
+                    ariaHasPopup: AriaHasPopup.ListBox
+                });
                 this._oChartTypeBtn.setEnabled(false);
                 this.addEnd(this._oChartTypeBtn);
                 this._chartInternalButtonsToEnable.push(this._oChartTypeBtn);
