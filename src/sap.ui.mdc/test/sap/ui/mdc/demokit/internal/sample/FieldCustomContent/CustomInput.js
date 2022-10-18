@@ -44,7 +44,7 @@ sap.ui.define([
 				 */
 				editable: { type: "boolean", group: "Behavior", defaultValue: true },
 
-				 /**
+				/**
 				  * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
 				  */
 				valueState: { type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: ValueState.None },

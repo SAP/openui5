@@ -66,7 +66,8 @@
 			dataTypeConstraints="{nullable: false}"
 			maxConditions="1"
 			operators="EQ"
-		 	delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}">
+		 	delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+			change="handleChange">
 			<Slider id="F1-S" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" min="0" max="100000"/>
 		</mdc:FilterField>
 
@@ -77,18 +78,33 @@
 			maxConditions="1"
 			operators="EQ"
 			fieldHelp="VH-Title"
-		 	delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}">
+		 	delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+			change="handleChange">
 			<custom:CustomInput id="F2-CI" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"/>
 		</mdc:FilterField>
 
-		<Label text="multi value FilterField with custom control and ValueHelp"/>
+		<Label text="integer multi-value FilterField with custom control and own handling for updates and eventing"/>
 		<mdc:FilterField id="F3"
+			conditions="{cm>/conditions/number}"
+			dataType="sap.ui.model.odata.type.Int32"
+			dataTypeFormatOptions="{emptyString: 0}"
+			dataTypeConstraints="{nullable: false}"
+			maxConditions="-1"
+			operators="EQ"
+		 	delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+			change="handleChange">
+			<custom:CustomButtons id="F3-CB" conditions="{path: '$field>/conditions'}"/>
+		</mdc:FilterField>
+
+		<Label text="multi value FilterField with custom control and ValueHelp"/>
+		<mdc:FilterField id="F4"
 			conditions="{cm>/conditions/descr}"
 			dataType="sap.ui.model.odata.type.String"
 			maxConditions="-1"
 			fieldHelp="VH-Conditions"
-		 	delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}">
-			<custom:CustomMultiInput id="F3-CMI" tokens="{path: '$field>/conditions'}">
+		 	delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+			change="handleChange">
+			<custom:CustomMultiInput id="F4-CMI" tokens="{path: '$field>/conditions'}">
 				<Token text="{path: '$field>', type: 'sap.ui.mdc.field.ConditionType'}"/>
 			</custom:CustomMultiInput>
 		</mdc:FilterField>
