@@ -6,9 +6,6 @@ sap.ui.define([
 	var oConfig = GenericTestCollection.createTestsuiteConfig({
 		library: "sap.f",
 		objectCapabilities: {
-			"sap.f.shellBar.CoPilot": {
-				apiVersion: 1
-			}
 		}
 	});
 
