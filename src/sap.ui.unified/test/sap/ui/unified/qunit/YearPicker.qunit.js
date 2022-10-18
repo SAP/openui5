@@ -253,7 +253,7 @@ sap.ui.define([
 				oJan_01_2003 = new Date(2003, 0, 1),
 				aRefs;
 
-			this.YP.placeAt("content");
+			this.YP.placeAt("qunit-fixture");
 			oCore.applyChanges();
 			aRefs = this.YP.$().find(".sapUiCalItem");
 
@@ -281,7 +281,7 @@ sap.ui.define([
 			this.YP._oMinDate = CalendarDate.fromLocalJSDate(new Date(2018, 0, 1));
 			this.YP._oMaxDate = CalendarDate.fromLocalJSDate(new Date(2022, 11, 31));
 
-			this.YP.placeAt("content");
+			this.YP.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
 			// Act
