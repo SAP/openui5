@@ -3,6 +3,32 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "ed3ff6eee9058a6929b5c82cc3552af7da0ccb43",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.NumberFormat#parseNumberAndCurrencyCode: Add support for case insensitivity for currency codes"
+      },
+      {
+        "id": "380e1819462ba9181c0c8be5a523b1281343907a",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: introduce calendarWeekNumbering format option"
+      },
+      {
+        "id": "8fef82b05d4cfe30a62604d81da099f37d443cb2",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: relative documentation"
+      },
+      {
+        "id": "963795e0e999d7f562a1f93cf3b98b54fb321b50",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalTreeBindingAdapter: avoid loading data if not needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270125832"
+          }
+        ]
+      },
+      {
         "id": "e3f9181804cefa564b860725134704c7bb55dd76",
         "type": "FEATURE",
         "text": " sap.m.Carousel: Improve keyboard navigation"
