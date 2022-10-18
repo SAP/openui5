@@ -27,12 +27,12 @@ sap.ui.define([
 	}
 
 	var aAllViews = [
-		{path: "sap.ui.v4demo.view.FieldValueHelp", text: "Classic FieldValueHelp", maxConditions: -1, maxConditionsToggleEnabled: true},
-		{path: "sap.ui.v4demo.view.Default", text: "Default", maxConditions: -1, maxConditionsToggleEnabled: true},
-		{path: "sap.ui.v4demo.view.SalesOrganization", text: "SalesOrganization Example", maxConditions: -1, maxConditionsToggleEnabled: true},
-		{path: "sap.ui.v4demo.view.ModelInOut", text: "Model In-/Out", maxConditions: 1, maxConditionsToggleEnabled: true},
-		{path: "sap.ui.v4demo.view.SingleSelect", text: "SingleSelect Examples", maxConditions: 1, maxConditionsToggleEnabled: false},
-		{path: "sap.ui.v4demo.view.MultiSelect", text: "MultiSelect Examples", maxConditions: -1, maxConditionsToggleEnabled: false}
+		{path: "sap.ui.v4demo.view.SingleSelect", text: "Explore: ValueHelp Examples SingleSelect", maxConditions: 1, maxConditionsToggleEnabled: false},
+		{path: "sap.ui.v4demo.view.MultiSelect", text: "Explore: ValueHelp Examples MultiSelect", maxConditions: -1, maxConditionsToggleEnabled: false},
+		{path: "sap.ui.v4demo.view.SalesOrganization", footer: "sap.ui.v4demo.view.SalesOrganization-Options",  text: "Explore: ValueHelps With Complex Keys", maxConditions: -1, maxConditionsToggleEnabled: true},
+		{path: "sap.ui.v4demo.view.OPA-1", text: "OPA: Standard Configuration (Single)", maxConditions: 1},
+		{path: "sap.ui.v4demo.view.OPA-2", text: "OPA: Standard Configuration (Multi)", maxConditions: -1},
+		{path: "sap.ui.v4demo.view.OPA-3", text: "OPA: Define Conditions Popover", maxConditions: -1}
 	];
 
 	return Controller.extend("sap.ui.v4demo.controller.App", {
@@ -47,21 +47,21 @@ sap.ui.define([
 			var oParamSuspended = this.oParams.get("suspended");
 			var bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
 
-			var sSelectedView = this.oParams.get("view") || "sap.ui.v4demo.view.Default";
+			var sSelectedView = this.oParams.get("view") || aAllViews[0].path;
 			var oSelectedView = aAllViews.find(function (oView) {
 				return oView.path === sSelectedView;
 			});
 
 
 			var oParamMaxConditions = this.oParams.get("maxconditions");
-			var iMaxConditions = oParamMaxConditions ? parseInt(oParamMaxConditions) : 1;
+			var iMaxConditions = oParamMaxConditions ? parseInt(oParamMaxConditions) : (oSelectedView.maxConditions || 1);
 
 			var oCM = new ConditionModel();
 			this.getView().setModel(oCM, "cm");
 
 			this.oJSONModel = new JSONModel();
 			this.oJSONModel.setData({
-				maxConditions: oSelectedView.maxConditionsToggleEnabled ? (iMaxConditions || oSelectedView.maxConditions) : oSelectedView.maxConditions,
+				maxConditions: iMaxConditions,
 				maxConditionsBlocked: !oSelectedView.maxConditionsToggleEnabled,
 				isSuspended: bSuspended,
 				views: aAllViews,
@@ -113,21 +113,12 @@ sap.ui.define([
 			});
 
 			this.getView().setModel(this.oJSONModel, "settings");
-			this.setFragment(sSelectedView).then(function () {
-				this.visualizeFilterBarState();
-			}.bind(this));
+			this.setFragment(sSelectedView);
 
-		},
-
-		visualizeFilterBarState: function () {
-			var oFilterBar = oCore.byId("FB0");
-			var oTextArea = oCore.byId("container-v4demo---app--footerTA");
-
-			if (oFilterBar) {
-				setInterval(function () {
-					oTextArea.setValue(JSON.stringify(oFilterBar.getInternalConditions(), undefined, 2));
-				}, 1000);
+			if (oSelectedView.footer) {
+				this.setFooterFragment(sSelectedView);
 			}
+
 		},
 
 		setFragment: function (sFragment, sFragmentController) {
@@ -135,6 +126,15 @@ sap.ui.define([
 			return Fragment.load({name: sFragment, type: "XML", controller: this}).then(function name(oFragment) {
 				oPage.removeAllContent();
 				oPage.addContent(oFragment);
+			});
+		},
+
+		setFooterFragment: function (sFragment, sFragmentController) {
+			var oPage = this.getView().byId('P0');
+			return Fragment.load({name: sFragment + "-Footer", type: "XML", controller: this}).then(function name(oFragment) {
+				oPage.setFooter(oFragment);
+			}).catch(function (oError) {
+				//noop
 			});
 		},
 

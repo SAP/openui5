@@ -11,7 +11,7 @@
 		},
 		"dataSources": {
 			"default": {
-				"uri": "/tenant(mdcvaluehelpintegration)/catalog/",
+				"uri": "/tenant(mdcvaluehelpintegration)/catalog-test/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "4.0"

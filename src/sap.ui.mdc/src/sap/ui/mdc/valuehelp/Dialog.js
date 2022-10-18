@@ -108,7 +108,7 @@ sap.ui.define([
 
 	Dialog.prototype._handleContentSelectionChange = function (sNextId) {
 		this.fireRequestDelegateContent({container: this.getId(), contentId: sNextId});
-		this._getRetrieveDelegateContentPromise().then(function () {
+		return this._getRetrieveDelegateContentPromise().then(function () {
 			var sCurrentContentKey = this.getProperty("_selectedContentKey");
 			var aContents = this.getContent();
 			var oCurrentContent = sCurrentContentKey && aContents && aContents.find(function (oContent) {
@@ -121,7 +121,7 @@ sap.ui.define([
 				oCurrentContent.onHide();
 				this._unbindContent(oCurrentContent);
 			}
-			this._renderSelectedContent(sNextId);
+			return this._renderSelectedContent(sNextId);
 		}.bind(this));
 	};
 

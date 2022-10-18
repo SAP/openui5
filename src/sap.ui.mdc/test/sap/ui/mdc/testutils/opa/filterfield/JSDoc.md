@@ -4,14 +4,14 @@
 **Kind**: global namespace  
 
 * [onTheMDCFilterField](#onTheMDCFilterField) : <code>object</code>
-    * [.iEnterTextOnTheFilterField(sLabelName, sValue, oConfig)](#onTheMDCFilterField.iEnterTextOnTheFilterField) ⇒ <code>Promise</code>
-    * [.iPressKeyOnFilterFieldWithLabel(sLabelName, sValue)](#onTheMDCFilterField.iPressKeyOnFilterFieldWithLabel) ⇒ <code>Promise</code>
-    * [.iPressOnTheFilterFieldValueHelpButton(sLabelName)](#onTheMDCFilterField.iPressOnTheFilterFieldValueHelpButton) ⇒ <code>Promise</code>
-    * [.iShouldSeeTheFilterFieldWithValues(sLabelName, oValues)](#onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues) ⇒ <code>Promise</code>
+    * [.iEnterTextOnTheFilterField(oProperties, sValue, oConfig)](#onTheMDCFilterField.iEnterTextOnTheFilterField) ⇒ <code>Promise</code>
+    * [.iPressKeyOnTheFilterField(vOptions, sValue)](#onTheMDCFilterField.iPressKeyOnTheFilterField) ⇒ <code>Promise</code>
+    * [.iOpenTheValueHelpForFilterField(oField)](#onTheMDCFilterField.iOpenTheValueHelpForFilterField) ⇒ <code>Promise</code>
+    * [.iShouldSeeTheFilterFieldWithValues(oProperties, oValues)](#onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues) ⇒ <code>Promise</code>
 
 <a name="onTheMDCFilterField.iEnterTextOnTheFilterField"></a>
 
-### onTheMDCFilterField.iEnterTextOnTheFilterField(sLabelName, sValue, oConfig) ⇒ <code>Promise</code>
+### onTheMDCFilterField.iEnterTextOnTheFilterField(oProperties, sValue, oConfig) ⇒ <code>Promise</code>
 OPA5 test action
 
 **Kind**: static method of [<code>onTheMDCFilterField</code>](#onTheMDCFilterField)  
@@ -19,13 +19,13 @@ OPA5 test action
 
 | Param | Type | Description |
 | --- | --- | --- |
-| sLabelName | <code>string</code> | Label of the given <code>sap.ui.mdc.FilterField</code> |
+| oProperties | <code>object</code> | Properties (e.g. id, label) of the given <code>sap.ui.mdc.FilterField</code> |
 | sValue | <code>string</code> | Value that is entered in the <code>sap.ui.mdc.FilterField</code> |
 | oConfig | <code>object</code> | TODO: to be clarified |
 
-<a name="onTheMDCFilterField.iPressKeyOnFilterFieldWithLabel"></a>
+<a name="onTheMDCFilterField.iPressKeyOnTheFilterField"></a>
 
-### onTheMDCFilterField.iPressKeyOnFilterFieldWithLabel(sLabelName, sValue) ⇒ <code>Promise</code>
+### onTheMDCFilterField.iPressKeyOnTheFilterField(vOptions, sValue) ⇒ <code>Promise</code>
 OPA5 test action
 
 **Kind**: static method of [<code>onTheMDCFilterField</code>](#onTheMDCFilterField)  
@@ -33,24 +33,25 @@ OPA5 test action
 
 | Param | Type | Description |
 | --- | --- | --- |
-| sLabelName | <code>string</code> | Label of the given <code>sap.ui.mdc.FilterField</code> |
+| vOptions | <code>string</code> \| <code>object</code> | Id or a plain object providing properties identifying the given <code>sap.ui.mdc.FilterField</code> |
 | sValue | <code>string</code> | Value of the key code that is pressed |
 
-<a name="onTheMDCFilterField.iPressOnTheFilterFieldValueHelpButton"></a>
+<a name="onTheMDCFilterField.iOpenTheValueHelpForFilterField"></a>
 
-### onTheMDCFilterField.iPressOnTheFilterFieldValueHelpButton(sLabelName) ⇒ <code>Promise</code>
+### onTheMDCFilterField.iOpenTheValueHelpForFilterField(oField) ⇒ <code>Promise</code>
 OPA5 test action
 
 **Kind**: static method of [<code>onTheMDCFilterField</code>](#onTheMDCFilterField)  
-**Returns**: <code>Promise</code> - OPA waitFor  
+**Returns**: <code>Promise</code> - OPA waitFor
+Opens the value help for a given <code>sap.ui.mdc.FilterField</code>.  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| sLabelName | <code>string</code> | Label of the given <code>sap.ui.mdc.FilterField</code> |
+| oField | <code>Object</code> \| <code>string</code> | ID or identifying properties of the <code>sap.ui.mdc.FilterField</code> |
 
 <a name="onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues"></a>
 
-### onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues(sLabelName, oValues) ⇒ <code>Promise</code>
+### onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues(oProperties, oValues) ⇒ <code>Promise</code>
 OPA5 test assertion
 
 **Kind**: static method of [<code>onTheMDCFilterField</code>](#onTheMDCFilterField)  
@@ -58,6 +59,6 @@ OPA5 test assertion
 
 | Param | Type | Description |
 | --- | --- | --- |
-| sLabelName | <code>string</code> | Label of the given <code>sap.ui.mdc.FilterField</code> |
+| oProperties | <code>string</code> | Properties (e.g. id, label) of the given <code>sap.ui.mdc.FilterField</code> |
 | oValues | <code>object</code> | Expected values |
 

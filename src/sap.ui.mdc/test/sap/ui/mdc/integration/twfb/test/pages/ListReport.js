@@ -162,8 +162,8 @@ sap.ui.define([
 				},
 
 				// value help
-				iPressOnTheFilterFieldValueHelpButton: function(sFieldLabelName) {
-					return this.mdcTestLibrary.iPressOnTheFilterFieldValueHelpButton({ label: sFieldLabelName });
+				iOpenTheValueHelpForFilterField: function(sFieldLabelName) {
+					return this.mdcTestLibrary.iOpenTheValueHelpForFilterField({ label: sFieldLabelName });
 				}
 
 				// //TODO missing

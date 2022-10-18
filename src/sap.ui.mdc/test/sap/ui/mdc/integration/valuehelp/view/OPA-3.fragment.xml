@@ -1,0 +1,82 @@
+<layout:VerticalLayout id="notSuspendedLayout"
+	xmlns:layout="sap.ui.layout"
+	width="100%"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:f2="sap.f"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:table="sap.ui.mdc"
+
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
+	xmlns:mdcf="sap.ui.mdc.field"
+	xmlns:mdct="sap.ui.mdc.table"
+	xmlns:ui="sap.ui"
+	xmlns:uit="sap.ui.table"
+	xmlns:variants="sap.ui.fl.variants"
+	xmlns:types="sap.ui.v4demo.types"
+	xmlns:demo="sap.ui.v4demo.controls">
+
+	<Title class="sapUiSmallMarginBottom" level="H3" text="Simple Scenario" />
+
+	<Text text="This scenario covers the following entities: FilterBar, FilterField, ValueHelp, MTable, MDCTable (ResponsiveTableType), ConditionsPanel"/>
+	
+	<mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate="{name: 'delegates/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
+		<mdc:dependents>
+			<mdc:ValueHelp id="FH4_DEFCOND"
+								validateInput="false"
+								delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+								<mdc:typeahead>
+									<mdcv:Popover title="Title">
+										<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search">
+											<Table id="mTable1_2_title" items='{path : "/Authors"}' growing="true" growingScrollToLoad="true" growingThreshold="20" width="50rem" mode="SingleSelectMaster">
+												<columns>
+													<Column>
+														<header>
+															<Text text="Name" />
+														</header>
+													</Column>
+												</columns>
+												<items>
+													<ColumnListItem type="Active">
+														<cells>
+															<Text text="{name}" />
+														</cells>
+													</ColumnListItem>
+												</items>
+											</Table>
+										</mdcvc:MTable>
+									</mdcv:Popover>
+								</mdc:typeahead>
+							</mdc:ValueHelp>
+			<mdc:ValueHelp
+				id="FH-DC"
+				delegate="{name: 'delegates/odata/v4/ValueHelpDelegate', payload: {}}">
+				<mdc:dialog>
+					<mdcv:Popover title="Define Filter Conditions">
+						<mdcvc:Conditions label="My Define Conditions Panel" fieldHelp="FH4_DEFCOND"></mdcvc:Conditions>
+					</mdcv:Popover>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+		</mdc:dependents>
+		<mdc:filterItems>
+			
+			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="FB0-FF1-10"
+				label="TestField"
+				conditions="{$filters>/conditions/author_ID}"
+				dataType="Edm.Int32"
+				required="false"
+				fieldHelp="FH-DC"
+				display="DescriptionValue"
+				maxConditions="{settings>/maxConditions}" />
+		</mdc:filterItems>
+	</mdc:FilterBar>
+
+
+
+
+</layout:VerticalLayout>

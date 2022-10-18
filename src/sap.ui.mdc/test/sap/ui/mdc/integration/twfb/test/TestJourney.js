@@ -99,12 +99,12 @@ sap.ui.define([
 		Given.iStartMyUIComponentInViewMode();
 
 		var sFieldID = "listreport---books--ff1";
-		When.onTheMDCValueHelp.iOpenTheValueHelpForField(sFieldID);
+		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField(sFieldID, true);
 		//TODO not more action or assertions available
 		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(true); //TODO close only work with FieldValueHelp
 
 		sFieldID = "listreport---books--ff2";
-		When.onTheMDCValueHelp.iOpenTheValueHelpForField(sFieldID);
+		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField(sFieldID, true);
 		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(true);
 
 		Then.iTeardownMyUIComponent();

@@ -358,10 +358,10 @@ sap.ui.define([
 	opaTest("I open and close the ValueHelp for a given Field", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
-		When.onTheMDCValueHelp.iOpenTheValueHelpForField("listreport---books--ff1");
+		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField("listreport---books--ff1");
 		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(true);
 
-		When.onTheMDCValueHelp.iOpenTheValueHelpForField("listreport---books--ff1");
+		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField("listreport---books--ff1");
 		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(false);
 
 		// cleanup
