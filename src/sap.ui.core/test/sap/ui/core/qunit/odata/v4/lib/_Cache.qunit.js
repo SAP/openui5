@@ -971,6 +971,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_Cache#hasPendingChangesForPath: bIgnoreKeptAlive", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS"),
+			oDeletePromise = {/* no $isKeepAlive */},
 			oPatchPromise1 = {
 				$isKeepAlive : function () {
 					throw "I should be mocked before being called!";
@@ -983,7 +984,7 @@ sap.ui.define([
 			};
 
 		oCache.mChangeRequests = {
-			bar : [oPatchPromise1],
+			bar : [oDeletePromise, oPatchPromise1],
 			foo : [oPatchPromise1, oPatchPromise2]
 		};
 		assert.strictEqual(oCache.hasPendingChangesForPath("bar", false), true);
@@ -9838,7 +9839,9 @@ sap.ui.define([
 	//*********************************************************************************************
 [[], ["('3')"]].forEach(function (aKeptElementPredicates, i) {
 	[undefined, "myGroup", "$auto"].forEach(function (sGroupId) {
-		var sTitle = "CollectionCache#reset/restore; #" + i + ", sGroupId = " + sGroupId;
+		[false, true].forEach(function (bDeleted) {
+			var sTitle = "CollectionCache#reset/restore; #" + i + ", sGroupId = " + sGroupId
+					+ ", bDeleted = " + bDeleted;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
@@ -9913,6 +9916,12 @@ sap.ui.define([
 		oCache.aElements.$created = 5;
 		oCache.aElements.$tail = oTail;
 		oCache.iLimit = 42;
+		if (bDeleted) {
+			oCache.aElements.$deleted = {
+				"('d1')" : {index : 209},
+				"('d2')" : {index : 210}
+			};
+		}
 		oCacheMock.expects("checkSharedRequest").exactly(sGroupId ? 1 : 0).withExactArgs();
 
 		// code under test
@@ -9977,6 +9986,12 @@ sap.ui.define([
 		assert.ok("$count" in oCache.aElements); // needed for setCount()
 		assert.strictEqual(oCache.aElements.$tail, oTail, "$tail unchanged");
 		assert.strictEqual(oCache.iLimit, Infinity);
+		if (bDeleted) {
+			assert.deepEqual(oCache.aElements.$deleted, {
+				"('d1')" : {index : undefined},
+				"('d2')" : {index : undefined}
+			});
+		}
 
 		if (sGroupId) {
 			if (i) {
@@ -10033,6 +10048,7 @@ sap.ui.define([
 			assert.strictEqual(oCache.iLimit, 42);
 		}
 	});
+		});
 	});
 });
 

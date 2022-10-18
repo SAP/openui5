@@ -1158,7 +1158,7 @@ sap.ui.define([
 		if (oOldCache && oOldCache.getResourcePath() === sResourcePath
 				&& oOldCache.$deepResourcePath === sDeepResourcePath) {
 			aKeepAlivePredicates = this.getKeepAlivePredicates();
-			if (this.iCreatedContexts || aKeepAlivePredicates.length) {
+			if (this.iCreatedContexts || this.iDeletedContexts || aKeepAlivePredicates.length) {
 				oOldCache.reset(aKeepAlivePredicates, sGroupId);
 				// Note: #inheritQueryOptions as called below should not matter in case of own
 				// requests, which are a precondition for kept-alive elements
@@ -1750,13 +1750,17 @@ sap.ui.define([
 	 * @returns {this}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
-	 *   If there are pending changes that cannot be ignored or if an unsupported operation mode is
-	 *   used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}). Since 1.97.0, pending changes
-	 *   are ignored if they relate to a
-	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this binding.
-	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
-	 *   of a {@link #getRootBinding root binding} do not count as pending changes. Pending
-	 *   {@link sap.ui.model.odata.v4.Context#delete deletions} lead to an error.
+	 *   If there are pending changes that cannot be ignored or an unsupported operation mode is
+	 *   used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
+	 *   <br>
+	 *   The following pending changes are ignored:
+	 *   <ul>
+	 *     <li> changes relating to a {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive}
+	 *       context of this binding (since 1.97.0),
+	 *     <li> {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts of a
+	 *       {@link #getRootBinding root binding} (since 1.98.0),
+	 *     <li> {@link sap.ui.model.odata.v4.Context#delete deleted} contexts (since 1.108.0).
+	 *   </ul>
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#filter
@@ -1775,10 +1779,6 @@ sap.ui.define([
 				? _Helper.deepEqual(aFilters, this.aFilters)
 				: _Helper.deepEqual(aFilters, this.aApplicationFilters)) {
 			return this;
-		}
-
-		if (this.iDeletedContexts) {
-			throw new Error("Cannot filter when delete requests are pending");
 		}
 
 		if (this.hasPendingChanges(true)) {
@@ -2140,11 +2140,11 @@ sap.ui.define([
 	 *
 	 * If known, the value represents the sum of the element count of the collection on the server
 	 * and the number of {@link sap.ui.model.odata.v4.Context#isInactive active}
-	 * {@link sap.ui.model.odata.v4.Context#isTransient transient} entities created on the client.
-	 * Otherwise, it is <code>undefined</code>. The value is a number of type
-	 * <code>Edm.Int64</code>. Since 1.91.0, in case of data aggregation with group levels, the
-	 * count is the leaf count on the server; it is only determined if the <code>$count</code>
-	 * system query option is given.
+	 * {@link sap.ui.model.odata.v4.Context#isTransient transient} entities created on the client,
+	 * minus the {@link #sap.ui.model.data.v4.Context#delete deleted} entities. Otherwise, it is
+	 * <code>undefined</code>. The value is a number of type <code>Edm.Int64</code>. Since 1.91.0,
+	 * in case of data aggregation with group levels, the count is the leaf count on the server; it
+	 * is only determined if the <code>$count</code> system query option is given.
 	 *
 	 * The count is known to the binding in the following situations:
 	 * <ul>
@@ -2181,7 +2181,7 @@ sap.ui.define([
 	 * Returns the contexts that were requested by a control last time. Does not trigger a data
 	 * request. In the time between the {@link #event:dataRequested} event and the
 	 * {@link #event:dataReceived} event, the resulting array contains <code>undefined</code> at
-	 * those indexes where the data is not yet available.
+	 * those indexes where the data is not yet available or has been deleted.
 	 *
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The contexts
@@ -2770,10 +2770,6 @@ sap.ui.define([
 			});
 		}
 
-		if (this.iDeletedContexts) {
-			throw new Error("Cannot refresh when delete requests are pending");
-		}
-
 		if (this.isRootBindingSuspended()) {
 			// Note: side-effects (incl. refresh) are forbidden while suspended
 			if (this.bSharedRequest) {
@@ -3299,9 +3295,9 @@ sap.ui.define([
 	 *   as long as the binding is still empty.
 	 * @param {boolean} [bDrop]
 	 *   By default, all created persisted contexts are dropped while transient ones are not.
-	 *   <code>true</code> also drops transient ones, and <code>false</code> keeps inline creation
-	 *   rows only and transient ones where the POST is not within the same $batch as the GET for
-	 *   the side-effects refresh.
+	 *   (Deleted contexts are not affected here.) <code>true</code> also drops transient ones, and
+	 *   <code>false</code> keeps inline creation rows only and transient ones where the POST is not
+	 *   within the same $batch as the GET for the side-effects refresh.
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; used only in case <code>bDrop === false</code>
 	 *
@@ -3700,17 +3696,17 @@ sap.ui.define([
 	 *   the dynamic sorters.
 	 * @returns {this}
 	 *   <code>this</code> to facilitate method chaining
-	 * @throws {Error} If
+	 * @throws {Error}
+	 *   If there are pending changes that cannot be ignored or an unsupported operation mode is
+	 *   used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
+	 *   <br>
+	 *   The following pending changes are ignored:
 	 *   <ul>
-	 *     <li> there are pending changes that cannot be ignored,
-	 *     <li> an unsupported operation mode is used (see
-	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}). Since 1.97.0, pending changes are
-	 *       ignored if they relate to a
-	 *       {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this binding.
-	 *       Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts of a
-	 *       {@link #getRootBinding root binding} do not count as pending changes.
-	 *     <li> contexts are {@link sap.ui.model.data.v4.Context#delete deleted} on the client, but
-	 *       the server request has not finished yet.
+	 *     <li> changes relating to a {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive}
+	 *       context of this binding (since 1.97.0),
+	 *     <li> {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts of a
+	 *       {@link #getRootBinding root binding} (since 1.98.0),
+	 *     <li> {@link sap.ui.model.odata.v4.Context#delete deleted} contexts (since 1.108.0).
 	 *   </ul>
 	 *
 	 * @public
@@ -3727,10 +3723,6 @@ sap.ui.define([
 
 		if (_Helper.deepEqual(aSorters, this.aSorters)) {
 			return this;
-		}
-
-		if (this.iDeletedContexts) {
-			throw new Error("Cannot sort when delete requests are pending");
 		}
 
 		if (this.hasPendingChanges(true)) {

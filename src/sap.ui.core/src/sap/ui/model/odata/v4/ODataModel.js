@@ -1995,10 +1995,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if there are pending changes, meaning updates or created entities
-	 * (see {@link sap.ui.model.odata.v4.ODataListBinding#create}) that have not yet been
-	 * successfully sent to the server. Since 1.98.0,
-	 * {@link sap.ui.model.odata.v4.Context#isInactive inactive} contexts are ignored.
+	 * Returns <code>true</code> if there are pending changes, which can be updates, created
+	 * entities (see {@link sap.ui.model.odata.v4.ODataListBinding#create}) or entity deletions
+	 * (see {@link sap.ui.model.odata.v4.Context#delete}) that have not yet been successfully sent
+	 * to the server. Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isInactive inactive}
+	 * contexts are ignored.
 	 *
 	 * @param {string} [sGroupId]
 	 *   A group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}, except group IDs
@@ -2470,11 +2471,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resets all property changes and created entities associated with the given group ID which
-	 * have not been successfully submitted via {@link #submitBatch}. Resets also invalid user
-	 * input for the same group ID. This function does not reset the deletion of entities
-	 * (see {@link sap.ui.model.odata.v4.Context#delete}) and the execution of OData operations
-	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
+	 * Resets all property changes, created entities, and entity deletions associated with the given
+	 * group ID which have not been successfully submitted via {@link #submitBatch}. Resets also
+	 * invalid user input for the same group ID. This function does not reset the execution of OData
+	 * operations (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
 	 *
 	 * @param {string} [sGroupId]
 	 *   A valid group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}. If it is

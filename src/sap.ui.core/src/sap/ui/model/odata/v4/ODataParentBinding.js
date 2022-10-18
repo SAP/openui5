@@ -340,7 +340,9 @@ sap.ui.define([
 	 *   are ignored if they relate to a
 	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this binding.
 	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
-	 *   of a {@link #getRootBinding root binding} do not count as pending changes.
+	 *   of a {@link #getRootBinding root binding} do not count as pending changes. Since 1.108.0,
+	 *   {@link sap.ui.model.odata.v4.Context#delete deleted} contexts do not count as pending
+	 *   changes.
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -1353,7 +1355,9 @@ sap.ui.define([
 	 * was not supported and threw an error. Since 1.97.0, pending changes are ignored if they
 	 * relate to a {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this
 	 * binding. Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
-	 * of a {@link #getRootBinding root binding} do not count as pending changes.
+	 * of a {@link #getRootBinding root binding} do not count as pending changes. Since 1.108.0
+	 * {@link sap.ui.model.odata.v4.Context#delete deleted} contexts do not count as pending
+	 * changes.
 	 *
 	 * @throws {Error}
 	 *   If this binding

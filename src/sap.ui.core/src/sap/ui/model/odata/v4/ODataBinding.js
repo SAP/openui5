@@ -864,11 +864,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if this binding or its dependent bindings have pending property
-	 * changes or created entities which have not been sent successfully to the server. This
-	 * function does not take into account the deletion of entities (see
-	 * {@link sap.ui.model.odata.v4.Context#delete}) and the execution of OData operations
-	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}). Since 1.98.0,
+	 * Returns <code>true</code> if this binding or its dependent bindings have property changes,
+	 * created entities, or entity deletions which have not been sent successfully to the server.
+	 * This function does not take the execution of OData operations
+	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}) into account. Since 1.98.0,
 	 * {@link sap.ui.model.odata.v4.Context#isInactive inactive} contexts are ignored.
 	 *
 	 * Note: If this binding is relative, its data is cached separately for each parent context
@@ -883,8 +882,9 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#refresh refresh} (since 1.100.0),
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort sort}, or
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#suspend suspend} because they relate to a
-	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this binding
-	 *   (since 1.97.0). Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient}
+	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} (since 1.97.0) or
+	 *   {@link sap.ui.model.odata.v4.Context#delete deleted} (since 1.108.0) context of this
+	 *   binding. Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient}
 	 *   contexts of a {@link #getRootBinding root binding} are treated as kept-alive by this flag.
 	 *   Since 1.99.0, the same happens for bindings using the <code>$$ownRequest</code> parameter
 	 *   (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
@@ -908,7 +908,7 @@ sap.ui.define([
 	 *   The path (absolute or relative to this binding)
 	 * @param {boolean} [bIgnoreKeptAlive]
 	 *   Whether to ignore changes which will not be lost by APIs like sort or filter because they
-	 *   relate to a context which is kept alive.
+	 *   relate to a deleted context or a context which is kept alive
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes for the path
 	 *
@@ -951,7 +951,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} [bIgnoreKeptAlive]
 	 *   Whether to ignore changes which will not be lost by APIs like sort or filter because they
-	 *   relate to a context which is kept alive.
+	 *   relate to a deleted context or a context which is kept alive
 	 * @returns {boolean}
 	 *   <code>true</code> if this binding has pending changes
 	 *
@@ -1073,15 +1073,20 @@ sap.ui.define([
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the given group ID is invalid,
-	 *     <li> there are pending changes that cannot be ignored,
 	 *     <li> refresh on this binding is not supported,
 	 *     <li> a group ID different from the binding's group ID is specified for a suspended
 	 *       binding,
-	 *     <li> or a value of type boolean is given.
-	 *   </ul> Since 1.100.0, pending changes are ignored if they relate to a
-	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this binding, and
-	 *   {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts of a
-	 *   {@link #getRootBinding root binding} do not count as pending changes.
+	 *     <li> a value of type <code>boolean</code> is given,
+	 *     <li> or there are pending changes that cannot be ignored.
+	 *   </ul>
+	 *   The following pending changes are ignored:
+	 *   <ul>
+	 *     <li> changes relating to a {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive}
+	 *       context of this binding (since 1.97.0),
+	 *     <li> {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts of a
+	 *       {@link #getRootBinding root binding} (since 1.98.0),
+	 *     <li> {@link sap.ui.model.odata.v4.Context#delete deleted} contexts (since 1.108.0).
+	 *   </ul>
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh

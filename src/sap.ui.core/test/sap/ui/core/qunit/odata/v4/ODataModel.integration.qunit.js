@@ -18087,7 +18087,7 @@ sap.ui.define([
 	// fails, and it must be reinserted. The binding must refresh the data to find the context's
 	// correct position and must not disturb the pending delete of oRowContext. oKeptContext2
 	// becomes invisible by this, but must not be lost. In the end the binding is reset and
-	// oRowContext must be re-inserted w/o a request.
+	// oRowContext must be re-inserted causing another refresh.
 	// JIRA: CPOUI5ODATAV4-1638
 	QUnit.test("CPOUI5ODATAV4-1638: ODLB: deferred delete w/ isKeepAlive fails", function (assert) {
 		var oBinding,
@@ -18239,6 +18239,16 @@ sap.ui.define([
 			assert.deepEqual(oKeptContext2.getObject(),
 				{GrossAmount : "6", SalesOrderID : "6"});
 
+			that.expectRequest("SalesOrderList?$count=true&$filter=LifecycleStatus eq 'N'"
+					+ "&$select=GrossAmount,SalesOrderID&$orderby=GrossAmount&$skip=0&$top=4", {
+					"@odata.count" : "8",
+					value : [
+						{GrossAmount : "1", SalesOrderID : "2"},
+						{GrossAmount : "2", SalesOrderID : "3"},
+						{GrossAmount : "3", SalesOrderID : "1"},
+						{GrossAmount : "4", SalesOrderID : "4"}
+					]
+				});
 			that.expectCanceledError("Failed to delete /SalesOrderList('2')",
 				"Request canceled: DELETE SalesOrderList('2'); group: doNotSubmit");
 
@@ -18259,6 +18269,149 @@ sap.ui.define([
 				{GrossAmount : "6", SalesOrderID : "6"});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Deferred deletion of a context, then sort/filter/refresh the list, then reset the
+	// changes. The list must be refreshed to restore the deleted context in its right place.
+	// JIRA: CPOUI5ODATAV4-1639
+[{
+	name : "sort",
+	reload : function (oBinding) {
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$orderby=SalesOrderID desc"
+				+ "&$filter=not (SalesOrderID eq '2')&$skip=0&$top=100", {
+				value : [
+					{"@odata.etag" : "etag3", Note : "Note 3", SalesOrderID : "3"},
+					{"@odata.etag" : "etag1", Note : "Note 1", SalesOrderID : "1"}
+				]
+			})
+			.expectChange("id", ["3", "1"])
+			.expectChange("note", ["Note 3", "Note 1"]);
+
+		oBinding.sort(new Sorter("SalesOrderID", true));
+	},
+	expectOnReset : function () {
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$orderby=SalesOrderID desc"
+				+ "&$skip=0&$top=100", {
+				value : [
+					{"@odata.etag" : "etag3", Note : "Note 3", SalesOrderID : "3"},
+					{"@odata.etag" : "etag2", Note : "Note 2", SalesOrderID : "2"},
+					{"@odata.etag" : "etag1", Note : "Note 1", SalesOrderID : "1"}
+				]
+			})
+			.expectChange("id", [, "2", "1"])
+			.expectChange("note", [, "Note 2", "Note 1"]);
+	}
+}, {
+	name : "filter",
+	reload : function (oBinding) {
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+				+ "&$filter=(SalesOrderID gt '1') and not (SalesOrderID eq '2')"
+				+ "&$skip=0&$top=100", {
+				value : [
+					{"@odata.etag" : "etag3", Note : "Note 3", SalesOrderID : "3"}
+				]
+			})
+			.expectChange("id", ["3"])
+			.expectChange("note", ["Note 3"]);
+
+		oBinding.filter(new Filter("SalesOrderID", FilterOperator.GT, "1"));
+	},
+	expectOnReset : function () {
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$filter=SalesOrderID gt '1'"
+				+ "&$skip=0&$top=100", {
+				value : [
+					{"@odata.etag" : "etag2", Note : "Note 2", SalesOrderID : "2"},
+					{"@odata.etag" : "etag3", Note : "Note 3", SalesOrderID : "3"}
+				]
+			})
+			.expectChange("id", ["2", "3"])
+			.expectChange("note", ["Note 2", "Note 3"]);
+	}
+}, {
+	name : "refresh",
+	reload : function (oBinding) {
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+				+ "&$filter=not (SalesOrderID eq '2')&$skip=0&$top=100", {
+				value : [
+					{"@odata.etag" : "etag1*", Note : "Note 1*", SalesOrderID : "1"},
+					{"@odata.etag" : "etag3*", Note : "Note 3*", SalesOrderID : "3"}
+				]
+			})
+			.expectChange("note", ["Note 1*", "Note 3*"]);
+
+		oBinding.refresh();
+	},
+	expectOnReset : function () {
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{"@odata.etag" : "etag1*", Note : "Note 1*", SalesOrderID : "1"},
+					{"@odata.etag" : "etag2*", Note : "Note 2*", SalesOrderID : "2"},
+					{"@odata.etag" : "etag3*", Note : "Note 3*", SalesOrderID : "3"}
+				]
+			})
+			.expectChange("id", [, "2", "3"])
+			.expectChange("note", [, "Note 2*", "Note 3*"]);
+	}
+}].forEach(function (oFixture) {
+	QUnit.test("CPOUI5ODATAV4-1639: ODLB: deferred delete & " + oFixture.name, function (assert) {
+		var oBinding,
+			oContext,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			oPromise,
+			sView = '\
+<Table id="list" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{"@odata.etag" : "etag1", Note : "Note 1", SalesOrderID : "1"},
+					{"@odata.etag" : "etag2", Note : "Note 2", SalesOrderID : "2"},
+					{"@odata.etag" : "etag3", Note : "Note 3", SalesOrderID : "3"}
+				]
+			})
+			.expectChange("id", ["1", "2", "3"])
+			.expectChange("note", ["Note 1", "Note 2", "Note 3"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("id", [, "3"])
+				.expectChange("note", [, "Note 3"]);
+
+			oBinding = that.oView.byId("list").getBinding("items");
+			oContext = oBinding.getCurrentContexts()[1];
+			oPromise = oContext.delete("doNotSubmit");
+
+			return that.waitForChanges(assert, "deferred delete");
+		}).then(function () {
+			oFixture.reload.call(that, oBinding);
+
+			return that.waitForChanges(assert, oFixture.name);
+		}).then(function () {
+			that.expectCanceledError("Failed to delete /SalesOrderList('2')",
+				"Request canceled: DELETE SalesOrderList('2'); group: doNotSubmit");
+			oFixture.expectOnReset.call(that);
+
+			oBinding.resetChanges();
+
+			return Promise.all([
+				oPromise.then(mustFail, function (oError) {
+					assert.ok(oError.canceled);
+					assert.notOk(oContext.isDeleted());
+					// the cache is still waiting for the response
+					return oContext.requestProperty("SalesOrderID").then(function (sValue) {
+						assert.strictEqual(sValue, "2");
+					});
+				}),
+				that.waitForChanges(assert, "reset")
+			]);
+		}).then(function () {
+			assert.strictEqual(oContext.getBinding(), oBinding);
+			assert.strictEqual(oContext.getProperty("SalesOrderID"), "2");
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: A deletion causes a gap, is performed immediately (but not in $auto) and fails. The
