@@ -469,6 +469,10 @@ sap.ui.define([
 			handleSelectionFinish: function(oEvent) {
 				var aSelectedKeys = oEvent.getSource().getSelectedKeys();
 				this.byId("PC1").setBuiltInViews(aSelectedKeys);
+			},
+
+			onCalendarTypeSelect: function (oEvent) {
+				this.byId("PC1").setPrimaryCalendarType(oEvent.getParameters().selectedItem.getKey());
 			}
 
 		});
