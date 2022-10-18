@@ -83,6 +83,7 @@ describe("sap.m.Carousel", function() {
 	// change arrows position
 	it("should change arrows placement", function() {
 		element(by.id("RB-Indicator")).click();
+		_moveToCarousel();
 		forceTransitionComplete();
 
 		expect(takeScreenshot(myCarousel)).toLookAs("6_arrow_placement");
