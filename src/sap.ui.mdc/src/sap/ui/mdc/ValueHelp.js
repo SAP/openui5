@@ -793,7 +793,7 @@ sap.ui.define([
 	/**
 	 * Determines the icon for the value help.
 	 *
-	 * @returns {string} Name of the icon
+	 * @returns {null|string} Name of the icon. If <code>null</code> no value help icon will be shown and it is used only as typeahead.
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase

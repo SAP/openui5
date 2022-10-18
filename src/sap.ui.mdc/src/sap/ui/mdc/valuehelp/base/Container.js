@@ -580,7 +580,7 @@ sap.ui.define([
 	/**
 	 * Return the value help icon that should be used for the field.
 	 *
-	 * @returns {string} Name of the icon
+	 * @returns {null|string} Name of the icon for this container. If <code>null</code> this container will not be used as value help and could only be used as typeahead.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
