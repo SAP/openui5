@@ -159,14 +159,21 @@ sap.ui.define([
 	'"gregorian":{"year":2015,"month":9, "date":15, "day" : 4, "hours":23, "minutes":16, "seconds":10, "milliseconds":118}}');
 
 	//1. Instance related
-	QUnit.module("Constructor", {
+	QUnit.module("sap.ui.core.date.Islamic", {
 		beforeEach: function () {
-			prepare.call(this);
+			this.sandbox = sinon.sandbox.create();
+			// set to "1" and it will fall-back to "A"
+			this.sandbox.stub(Configuration.getFormatSettings(), "getLegacyDateFormat")
+				.returns("1");
+			this.oSpyFormatSettings = this.sandbox.stub(Configuration.getFormatSettings(),
+				"getLegacyDateCalendarCustomizing");
+			this.oSpyFormatSettings.returns(customizingInfo);
 		},
 		afterEach: function () {
-			cleanup.call(this);
+			this.sandbox.restore();
 		}
 	});
+
 	QUnit.test("with no arguments", function (assert) {
 		var clock = sinon.useFakeTimers(); // 1, January 1970 = 22 Shawwal 1389(22.10.1389)
 		var oIslamicDate = new Islamic(); //22 Shawwal 1389(22.10.1389)
@@ -278,14 +285,7 @@ sap.ui.define([
 		verifyDate(assert, "new Islamic(1430, 10, 2, 1, 22, 30) must be equal to 02.11.1430 (wednesday), 01:00:00.00 AM", oIslamicDate, 1430, 10, 2, 3, 1, 22, 30, 0);
 	});
 
-	QUnit.module("Parameter values outside allowed ranges adjust the adjacent value as well", {
-		beforeEach: function () {
-			prepare.call(this);
-		},
-		afterEach: function () {
-			cleanup.call(this);
-		}
-	});
+	// Islamic Parameter values outside allowed ranges adjust the adjacent value as well
 	QUnit.test("month given as setter is outside the range(0-11)", function (assert) {
 		var date = oCivilTestData.t1436_12_1__23_16_10_118;
 		var oIslamicDate = createIslamicDateFromTestEntry(date);
@@ -493,132 +493,7 @@ sap.ui.define([
 				oExpectedId.year, oExpectedId.month, oExpectedId.date, oExpectedId.day, oExpectedId.hours, oExpectedId.minutes, 9, 999);
 	});
 
-	QUnit.module("Setters/Getters", {
-		beforeEach: function (assert) {
-			prepare.call(this);
 
-			this.verifyYear2Date = function (bUTC, iYear, iMonth, iDate, iYearToStartFrom, iMonthToStartFrom, iDateStartFrom) {
-				var oIslamicDate = null,
-						iOrigHours;
-
-				if (bUTC) {
-					oIslamicDate = new Islamic(Islamic.now());
-					if (arguments.length >= 5) {
-						oIslamicDate.setUTCFullYear(iYearToStartFrom);
-					}
-					if (arguments.length >= 6) {
-						oIslamicDate.setUTCMonth(iMonthToStartFrom);
-					}
-					if (arguments.length >= 7) {
-						oIslamicDate.setUTCDate(iDateStartFrom);
-					}
-					iOrigHours = oIslamicDate.getUTCHours();
-					assert.ok(oIslamicDate.setUTCFullYear(iYear, iMonth, iDate), "setUTCFullYear must return value");
-				} else {
-					oIslamicDate = new Islamic();
-					if (arguments.length >= 5) {
-						oIslamicDate.setFullYear(iYearToStartFrom);
-					}
-					if (arguments.length >= 6) {
-						oIslamicDate.setMonth(iMonthToStartFrom);
-					}
-					if (arguments.length >= 7) {
-						oIslamicDate.setDate(iDateStartFrom);
-					}
-					iOrigHours = oIslamicDate.getHours();
-					assert.ok(oIslamicDate.setFullYear(iYear, iMonth, iDate), "setFullYear must return value");
-				}
-
-				assert.equal(bUTC ? oIslamicDate.getUTCFullYear() : oIslamicDate.getFullYear(), iYear, ": year");
-				assert.equal(bUTC ? oIslamicDate.getUTCMonth() : oIslamicDate.getMonth(), iMonth, ": month");
-				assert.equal(bUTC ? oIslamicDate.getUTCDate() : oIslamicDate.getDate(), iDate, ": date");
-				assert.equal(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iOrigHours, ": hours must not be changed");
-			};
-
-			this.verifyMonth2Date = function (bUTC, iMonth, iDate, iMonthToStartFrom, iDateStartFrom) {
-				var oIslamicDate = null,
-						iOrigHours;
-
-				if (bUTC) {
-					oIslamicDate = new Islamic(Islamic.now());
-					if (arguments.length >= 4) {
-						oIslamicDate.setUTCMonth(iMonthToStartFrom);
-					}
-					if (arguments.length >= 5) {
-						oIslamicDate.setUTCDate(iDateStartFrom);
-					}
-					iOrigHours = oIslamicDate.getUTCHours();
-					assert.ok(oIslamicDate.setUTCMonth(iMonth, iDate), "setUTCMonth must return value");
-				} else {
-					oIslamicDate = new Islamic();
-					if (arguments.length >= 4) {
-						oIslamicDate.setMonth(iMonthToStartFrom);
-					}
-					if (arguments.length >= 5) {
-						oIslamicDate.setDate(iDateStartFrom);
-					}
-					iOrigHours = oIslamicDate.getHours();
-					assert.ok(oIslamicDate.setMonth(iMonth, iDate), "setUTCMonth must return value");
-				}
-
-				assert.equal(bUTC ? oIslamicDate.getUTCMonth() : oIslamicDate.getMonth(), iMonth, ": month");
-				assert.equal(bUTC ? oIslamicDate.getUTCDate() : oIslamicDate.getDate(), iDate, ": date");
-				assert.equal(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iOrigHours, ": hours must not be changed");
-			};
-
-			this.verifyHours2Milliseconds = function (bUTC, iHours, iMinutes, iSeconds, iMilliseconds) {
-				var oIslamicDate = null;
-
-				if (bUTC) {
-					oIslamicDate = new Islamic(Islamic.now());
-					assert.ok(oIslamicDate.setUTCHours(iHours, iMinutes, iSeconds, iMilliseconds), "setUTCHours must return value");
-				} else {
-					oIslamicDate = new Islamic();
-					assert.ok(oIslamicDate.setHours(iHours, iMinutes, iSeconds, iMilliseconds), "setUTCHours must return value");
-				}
-
-				assert.equal(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iHours, ": hours");
-				assert.equal(bUTC ? oIslamicDate.getUTCMinutes() : oIslamicDate.getMinutes(), iMinutes, ": minutes");
-				assert.equal(bUTC ? oIslamicDate.getUTCSeconds() : oIslamicDate.getSeconds(), iSeconds, ": seconds");
-				assert.equal(bUTC ? oIslamicDate.getUTCMilliseconds() : oIslamicDate.getMilliseconds(), iMilliseconds, ": milliseconds");
-			};
-
-			this.verifyMinutes2Milliseconds = function (bUTC, iMinutes, iSeconds, iMilliseconds) {
-				var oIslamicDate = null;
-
-				if (bUTC) {
-					oIslamicDate = new Islamic(Islamic.now());
-					assert.ok(oIslamicDate.setUTCMinutes(iMinutes, iSeconds, iMilliseconds), "setUTCMinutes must return value");
-				} else {
-					oIslamicDate = new Islamic();
-					assert.ok(oIslamicDate.setMinutes(iMinutes, iSeconds, iMilliseconds), "setMinutes must return value");
-				}
-
-				assert.equal(bUTC ? oIslamicDate.getUTCMinutes() : oIslamicDate.getMinutes(), iMinutes, ": minutes");
-				assert.equal(bUTC ? oIslamicDate.getUTCSeconds() : oIslamicDate.getSeconds(), iSeconds, ": seconds");
-				assert.equal(bUTC ? oIslamicDate.getUTCMilliseconds() : oIslamicDate.getMilliseconds(), iMilliseconds, ": milliseconds");
-			};
-
-			this.verifySeconds2Milliseconds = function (bUTC, iSeconds, iMilliseconds) {
-				var oIslamicDate = null;
-
-				if (bUTC) {
-					oIslamicDate = new Islamic(Islamic.now());
-					assert.ok(oIslamicDate.setUTCSeconds(iSeconds, iMilliseconds), "setUTCSeconds must return value");
-				} else {
-					oIslamicDate = new Islamic();
-					assert.ok(oIslamicDate.setSeconds(iSeconds, iMilliseconds), "setSeconds must return value");
-				}
-
-				assert.equal(bUTC ? oIslamicDate.getUTCSeconds() : oIslamicDate.getSeconds(), iSeconds, ": seconds");
-				assert.equal(bUTC ? oIslamicDate.getUTCMilliseconds() : oIslamicDate.getMilliseconds(), iMilliseconds, ": milliseconds");
-			};
-		},
-		afterEach: function () {
-			cleanup.call(this);
-		}
-
-	});
 	QUnit.test("Set/Get Full Year", function (assert) {
 		var iYear = 1435;
 		var oIslamicDate = new Islamic(1436, 5, 11, 23, 16, 10, 118);
@@ -627,15 +502,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("setFullYear with optional parameters", function (assert) {
-		this.verifyYear2Date(false, 1433, 2, 5);
+		verifyYear2Date(assert, false, 1433, 2, 5);
 	});
 
 	QUnit.test("setUTCFullYear with optional parameters", function (assert) {
-		this.verifyYear2Date(true, 1433, 2, 5);
+		verifyYear2Date(assert, true, 1433, 2, 5);
 	});
 
 	QUnit.test("setUTCFullYear with optional parameters close to the border values", function (assert) {
-		this.verifyYear2Date(true, 1436, 7, 1, 1436, 6, 30);
+		verifyYear2Date(assert, true, 1436, 7, 1, 1436, 6, 30);
 	});
 
 	QUnit.test("Set/Get Year", function (assert) {
@@ -653,15 +528,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("setMonth with optional parameters", function (assert) {
-		this.verifyMonth2Date(false, 2, 5);
+		verifyMonth2Date(assert, false, 2, 5);
 	});
 
 	QUnit.test("setUTCMonth with optional parameters", function (assert) {
-		this.verifyMonth2Date(true, 2, 5);
+		verifyMonth2Date(assert, true, 2, 5);
 	});
 
 	QUnit.test("setUTCMonth with optional parameters close to te border values", function (assert) {
-		this.verifyMonth2Date(true, 7, 1, 6, 30);
+		verifyMonth2Date(assert, true, 7, 1, 6, 30);
 	});
 
 	QUnit.test("Set/Get Date", function (assert) {
@@ -686,11 +561,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("setHours with optional parameters", function (assert) {
-		this.verifyHours2Milliseconds(false, 5, 22, 17, 11);
+		verifyHours2Milliseconds(assert, false, 5, 22, 17, 11);
 	});
 
 	QUnit.test("setUTCHours with optional parameters", function (assert) {
-		this.verifyHours2Milliseconds(true, 5, 22, 17, 11);
+		verifyHours2Milliseconds(assert, true, 5, 22, 17, 11);
 	});
 
 	QUnit.test("Set/Get Minutes", function (assert) {
@@ -701,11 +576,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("setMinutes with optional parameters", function (assert) {
-		this.verifyMinutes2Milliseconds(false, 22, 17, 11);
+		verifyMinutes2Milliseconds(assert, false, 22, 17, 11);
 	});
 
 	QUnit.test("setUTCMinutes with optional parameters", function (assert) {
-		this.verifyMinutes2Milliseconds(true, 22, 17, 11);
+		verifyMinutes2Milliseconds(assert, true, 22, 17, 11);
 	});
 
 	QUnit.test("Set/Get Seconds", function (assert) {
@@ -716,11 +591,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("setSeconds with optional parameters", function (assert) {
-		this.verifySeconds2Milliseconds(false, 17, 11);
+		verifySeconds2Milliseconds(assert, false, 17, 11);
 	});
 
 	QUnit.test("setUTCSeconds with optional parameters", function (assert) {
-		this.verifySeconds2Milliseconds(true, 17, 11);
+		verifySeconds2Milliseconds(assert, true, 17, 11);
 	});
 
 	QUnit.test("Set/Get Milliseconds", function (assert) {
@@ -735,15 +610,6 @@ sap.ui.define([
 		var oIslamicDate = createIslamicDateFromTestEntry(date);
 		var iTimezoneOffset = getTimezoneOffset(oIslamicDate);
 		assert.equal(oIslamicDate.getTime(), date.timestamp - iTimezoneOffset, "Get time should return the UTC offset from 1.1.1970 UTC");
-	});
-
-	QUnit.module("Others", {
-		beforeEach: function () {
-			prepare.call(this);
-		},
-		afterEach: function () {
-			cleanup.call(this);
-		}
 	});
 
 	QUnit.test("Setters have to return the time since 1.1.1970", function (assert) {
@@ -791,14 +657,6 @@ sap.ui.define([
 		testIslamic2GregorianWithTestDataSet(assert, oCivilTestData);
 	});
 
-	QUnit.module("Customization", {
-		beforeEach: function () {
-			prepare.call(this);
-		},
-		afterEach: function () {
-			cleanup.call(this);
-		}
-	});
 
 	QUnit.test("Convert Gregorian to Islamic dates and vise-versa with customData", function (assert) {
 		testGregorian2IslamicWithTestDataSet(assert, oTestDates4Customization);
@@ -806,6 +664,149 @@ sap.ui.define([
 	});
 
 	// --------------------------- HELPERS -------------------------------------------------------------------------
+
+	function verifyYear2Date(assert, bUTC, iYear, iMonth, iDate, iYearToStartFrom,
+		iMonthToStartFrom, iDateStartFrom) {
+			var oIslamicDate = null,
+				iOrigHours;
+
+			if (bUTC) {
+				oIslamicDate = new Islamic(Islamic.now());
+				if (arguments.length >= 6) {
+					oIslamicDate.setUTCFullYear(iYearToStartFrom);
+				}
+				if (arguments.length >= 7) {
+					oIslamicDate.setUTCMonth(iMonthToStartFrom);
+				}
+				if (arguments.length >= 8) {
+					oIslamicDate.setUTCDate(iDateStartFrom);
+				}
+				iOrigHours = oIslamicDate.getUTCHours();
+				assert.ok(oIslamicDate.setUTCFullYear(iYear, iMonth, iDate),
+					"setUTCFullYear must return value");
+			} else {
+				oIslamicDate = new Islamic();
+				if (arguments.length >= 6) {
+					oIslamicDate.setFullYear(iYearToStartFrom);
+				}
+				if (arguments.length >= 7) {
+					oIslamicDate.setMonth(iMonthToStartFrom);
+				}
+				if (arguments.length >= 8) {
+					oIslamicDate.setDate(iDateStartFrom);
+				}
+				iOrigHours = oIslamicDate.getHours();
+				assert.ok(oIslamicDate.setFullYear(iYear, iMonth, iDate),
+					"setFullYear must return value");
+			}
+
+			assert.equal(bUTC ? oIslamicDate.getUTCFullYear() : oIslamicDate.getFullYear(), iYear,
+				": year");
+			assert.equal(bUTC ? oIslamicDate.getUTCMonth() : oIslamicDate.getMonth(), iMonth,
+				": month");
+			assert.equal(bUTC ? oIslamicDate.getUTCDate() : oIslamicDate.getDate(), iDate,
+				": date");
+			assert.equal(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iOrigHours,
+				": hours must not be changed");
+		}
+
+	function verifyMonth2Date (assert, bUTC, iMonth, iDate, iMonthToStartFrom, iDateStartFrom) {
+		var oIslamicDate = null,
+			iOrigHours;
+
+		if (bUTC) {
+			oIslamicDate = new Islamic(Islamic.now());
+			if (arguments.length >= 5) {
+				oIslamicDate.setUTCMonth(iMonthToStartFrom);
+			}
+			if (arguments.length >= 6) {
+				oIslamicDate.setUTCDate(iDateStartFrom);
+			}
+			iOrigHours = oIslamicDate.getUTCHours();
+			assert.ok(oIslamicDate.setUTCMonth(iMonth, iDate), "setUTCMonth must return value");
+		} else {
+			oIslamicDate = new Islamic();
+			if (arguments.length >= 5) {
+				oIslamicDate.setMonth(iMonthToStartFrom);
+			}
+			if (arguments.length >= 6) {
+				oIslamicDate.setDate(iDateStartFrom);
+			}
+			iOrigHours = oIslamicDate.getHours();
+			assert.ok(oIslamicDate.setMonth(iMonth, iDate), "setUTCMonth must return value");
+		}
+
+		assert.equal(bUTC ? oIslamicDate.getUTCMonth() : oIslamicDate.getMonth(), iMonth,
+			": month");
+		assert.equal(bUTC ? oIslamicDate.getUTCDate() : oIslamicDate.getDate(), iDate,
+			": date");
+		assert.equal(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iOrigHours,
+			": hours must not be changed");
+	}
+
+	function verifyHours2Milliseconds (assert, bUTC, iHours, iMinutes, iSeconds, iMilliseconds) {
+		var oIslamicDate = null;
+
+		if (bUTC) {
+			oIslamicDate = new Islamic(Islamic.now());
+			assert.ok(oIslamicDate.setUTCHours(iHours, iMinutes, iSeconds, iMilliseconds),
+				"setUTCHours must return value");
+		} else {
+			oIslamicDate = new Islamic();
+			assert.ok(oIslamicDate.setHours(iHours, iMinutes, iSeconds, iMilliseconds),
+				"setUTCHours must return value");
+		}
+
+		assert.equal(bUTC ? oIslamicDate.getUTCHours() : oIslamicDate.getHours(), iHours,
+			": hours");
+		assert.equal(bUTC ? oIslamicDate.getUTCMinutes() : oIslamicDate.getMinutes(), iMinutes,
+			": minutes");
+		assert.equal(bUTC ? oIslamicDate.getUTCSeconds() : oIslamicDate.getSeconds(), iSeconds,
+			": seconds");
+		assert.equal(bUTC ? oIslamicDate.getUTCMilliseconds() : oIslamicDate.getMilliseconds(),
+			iMilliseconds, ": milliseconds");
+	}
+
+	function verifyMinutes2Milliseconds (assert, bUTC, iMinutes, iSeconds, iMilliseconds) {
+		var oIslamicDate = null;
+
+		if (bUTC) {
+			oIslamicDate = new Islamic(Islamic.now());
+			assert.ok(oIslamicDate.setUTCMinutes(iMinutes, iSeconds, iMilliseconds),
+				"setUTCMinutes must return value");
+		} else {
+			oIslamicDate = new Islamic();
+			assert.ok(oIslamicDate.setMinutes(iMinutes, iSeconds, iMilliseconds),
+				"setMinutes must return value");
+		}
+
+		assert.equal(bUTC ? oIslamicDate.getUTCMinutes() : oIslamicDate.getMinutes(), iMinutes,
+			": minutes");
+		assert.equal(bUTC ? oIslamicDate.getUTCSeconds() : oIslamicDate.getSeconds(), iSeconds,
+			": seconds");
+		assert.equal(bUTC ? oIslamicDate.getUTCMilliseconds() : oIslamicDate.getMilliseconds(),
+			iMilliseconds, ": milliseconds");
+	}
+
+	function verifySeconds2Milliseconds (assert, bUTC, iSeconds, iMilliseconds) {
+		var oIslamicDate = null;
+
+		if (bUTC) {
+			oIslamicDate = new Islamic(Islamic.now());
+			assert.ok(oIslamicDate.setUTCSeconds(iSeconds, iMilliseconds),
+				"setUTCSeconds must return value");
+		} else {
+			oIslamicDate = new Islamic();
+			assert.ok(oIslamicDate.setSeconds(iSeconds, iMilliseconds),
+				"setSeconds must return value");
+		}
+
+		assert.equal(bUTC ? oIslamicDate.getUTCSeconds() : oIslamicDate.getSeconds(), iSeconds,
+			": seconds");
+		assert.equal(bUTC ? oIslamicDate.getUTCMilliseconds() : oIslamicDate.getMilliseconds(),
+			iMilliseconds, ": milliseconds");
+	}
+
 	function testIslamic2GregorianWithTestDataSet(assert, testDataset) {
 		var sTestDate = null;
 		for (sTestDate in testDataset) {
@@ -885,14 +886,5 @@ sap.ui.define([
 		return isNaN(oDate.getTime());
 	}
 
-	function prepare() {
-		this.sandbox = sinon.sandbox.create();
-		// set to "1" and it will fall-back to "A"
-		this.sandbox.stub(Configuration.getFormatSettings(), "getLegacyDateFormat").returns("1");
-		this.oSpyFormatSettings = this.sandbox.stub(Configuration.getFormatSettings(), "getLegacyDateCalendarCustomizing");
-		this.oSpyFormatSettings.returns(customizingInfo);
-	}
-	function cleanup() {
-		this.sandbox.restore();
-	}
+
 });

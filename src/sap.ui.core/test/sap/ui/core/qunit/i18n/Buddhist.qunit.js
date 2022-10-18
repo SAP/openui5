@@ -16,7 +16,7 @@ sap.ui.define([
 
 
 	//1. Instance related
-	QUnit.module("Constructor");
+	QUnit.module("sap.ui.core.date.Buddhist");
 
 	QUnit.test("with no arguments", function (assert) {
 		var clock = sinon.useFakeTimers(); // 1, January 1970 = 1, January 2513
@@ -127,8 +127,6 @@ sap.ui.define([
 		verifyDate(assert, "new Buddhist(2513, 10, 2) msut be equal to 02.11.2513", oBuddhistDate, 2513, 10, 2);
 	});
 
-	QUnit.module("Overflow/underflow");
-
 	QUnit.test("Overflow/underflow of date values", function (assert) {
 		var oTestDate = aTestData[0],
 			oBuddhistDate;
@@ -170,8 +168,6 @@ sap.ui.define([
 		verifyDate(assert, "day 0 in the constructor must underflow to previous month", oBuddhistDate, 2512, 11, 31);
 	});
 
-	QUnit.module("Setters/Getters");
-
 	QUnit.test("Set/Get Full Year", function (assert) {
 		var oTestDate = aTestData[0],
 			oBuddhistDate = createBuddhistDateFromTestEntry(oTestDate);
@@ -193,8 +189,6 @@ sap.ui.define([
 		oBuddhistDate.setYear(2500);
 		verifyDate(assert, "setYear", oBuddhistDate, 2500, 0, 1);
 	});
-
-	QUnit.module("Others");
 
 	QUnit.test("Setters have to return the time since 1.1.1970", function (assert) {
 		var oDate = new Buddhist(2513, 0, 1, 8, 10, 15, 119);

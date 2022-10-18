@@ -21,7 +21,7 @@ sap.ui.define([
 	];
 
 	//1. Instance related
-	QUnit.module("Constructor");
+	QUnit.module("sap.ui.core.date.Persian");
 
 	QUnit.test("with no arguments", function (assert) {
 		var clock = sinon.useFakeTimers(); // 1, January 1970 = 11 Dey 1348 (11.10.1348)
@@ -126,8 +126,6 @@ sap.ui.define([
 		verifyDate(assert, "new Persian(1430, 10, 2) msut be equal to 02.11.1430 (wednesday) 00:00:00.00 AM", oPersianDate, 1430, 10, 2);
 	});
 
-	QUnit.module("Overflow/underflow");
-
 	QUnit.test("Overflow/underflow of month", function (assert) {
 		var oTestDate = aTestData[1],
 			oPersianDate;
@@ -174,8 +172,6 @@ sap.ui.define([
 		verifyDate(assert, "day 0 in the constructor must underflow to previous month", oPersianDate, 1394, 11, 29);
 	});
 
-	QUnit.module("Setters/Getters");
-
 	QUnit.test("Set/Get Full Year", function (assert) {
 		var oTestDate = aTestData[1],
 			oPersianDate = createPersianDateFromTestEntry(oTestDate);
@@ -197,8 +193,6 @@ sap.ui.define([
 		oPersianDate.setYear(94);
 		verifyDate(assert, "setYear", oPersianDate, 1394, 0, 1);
 	});
-
-	QUnit.module("Others");
 
 	QUnit.test("Setters have to return the time since 1.1.1970", function (assert) {
 		var oDate = new Persian(1395, 0, 1, 8, 10, 15, 119);
