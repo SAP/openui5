@@ -104,11 +104,15 @@ sap.ui.define([
 		return new Promise(function (resolve) {
 			sap.ui.require(aConnectors, function () {
 				Array.from(arguments).forEach(function (oConnector, iIndex) {
+					if (!mConnectors[iIndex].layers) {
+						mConnectors[iIndex].layers = oConnector.layers;
+					} else {
+						mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
+					}
 					if (bLoadConnectors) {
 						mConnectors[iIndex].loadConnectorModule = oConnector;
 					} else {
 						mConnectors[iIndex].writeConnectorModule = oConnector;
-						mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
 					}
 				});
 

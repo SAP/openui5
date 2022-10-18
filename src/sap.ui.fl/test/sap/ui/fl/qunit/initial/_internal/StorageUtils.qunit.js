@@ -215,7 +215,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oGetConnectorsSpy = sandbox.spy(Utils, "getConnectors");
 			this.oConfigurationStub = sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]},
+				{connector: "KeyUserConnector"},
 				{connector: "PersonalizationConnector", layers: [Layer.USER]}
 			]);
 		},
@@ -234,6 +234,10 @@ sap.ui.define([
 
 		QUnit.test("when getLoadConnectors is called", function(assert) {
 			return Utils.getLoadConnectors().then(function(mConnectors) {
+				var oKeyUserLayers = [
+					Layer.CUSTOMER,
+					Layer.PUBLIC
+				];
 				var mConnectorsSorted = sortConnectors(mConnectors);
 				assert.equal(this.oGetConnectorsSpy.callCount, 1, "the getConnector is called once");
 				assert.equal(this.oConfigurationStub.callCount, 1, "configuration is called once");
@@ -241,6 +245,7 @@ sap.ui.define([
 				assert.equal(mConnectorsSorted[0].connector, "StaticFileConnector", "first connector is of type StaticFileConnector");
 				assert.equal(mConnectorsSorted[1].connector, "PersonalizationConnector", "second connector is of type PersonalizationConnector");
 				assert.equal(mConnectorsSorted[2].connector, "KeyUserConnector", "third connector is of type KeyUserConnector");
+				assert.deepEqual(mConnectorsSorted[2].layers, oKeyUserLayers, "the KeyUserConnector contains the right layer");
 			}.bind(this));
 		});
 	});
