@@ -234,7 +234,8 @@ function(
 				press: function () {
 					var truncate = !this.getTruncate();
 					this._getShowMoreButton().setText(truncate ? EXPAND_TEXT : COLLAPSE_TEXT);
-					this.setTruncate(truncate);
+					this.setProperty("truncate", truncate, true);
+					this.$().find(".sapMNLITitleText, .sapMNLIDescription").toggleClass("sapMNLIItemTextLineClamp", truncate);
 				}.bind(this)
 			});
 

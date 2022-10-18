@@ -577,4 +577,31 @@ sap.ui.define([
 		// assert
 		assert.ok(closeButton.$().is(":visible"), "Close button should be visible after details are expanded");
 	});
+
+	QUnit.module('Show More button', {
+		beforeEach: function() {
+			this.notificationListItem = createNotificatoinListItem();
+			this.list = new NotificationList({
+				width: '100px',
+				items: [
+					this.notificationListItem
+				]
+			});
+			this.list.placeAt(RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.list.destroy();
+		}
+	});
+
+	QUnit.test("Clicking on 'Show More' button doesn't rerender the item", function (assert) {
+		var fnSpy = sinon.spy(this.notificationListItem, 'invalidate');
+
+		this.notificationListItem._getShowMoreButton().firePress();
+
+		assert.ok(fnSpy.notCalled, 'invalidate is not called.');
+
+		fnSpy.restore();
+	});
 });
