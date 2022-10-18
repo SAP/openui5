@@ -941,13 +941,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [undefined, "~oError~"].forEach(function (oError) {
-	var sTitle = "fireDataRequested/fireDataReceived" + (oError ? "failed" : "sucess");
+	var sTitle = "fireDataRequested/fireDataReceived: " + (oError ? "failed" : "sucess");
 
 	QUnit.test(sTitle, function (assert) {
 		var oModel = this.createModel(),
 			oModelMock = this.mock(oModel);
 
-		oModelMock.expects("fireEvent").withExactArgs("dataRequested").twice();
+		oModelMock.expects("fireEvent").withExactArgs("dataRequested", {path : "~sPath1~"});
 
 		// code under test
 		oModel.fireDataRequested("~sPath1~");
@@ -955,6 +955,8 @@ sap.ui.define([
 		assert.deepEqual(oModel.mPath2DataRequestedCount, {
 			"~sPath1~" : 1
 		});
+
+		oModelMock.expects("fireEvent").withExactArgs("dataRequested", {path : "~sPath2~"});
 
 		// code under test
 		oModel.fireDataRequested("~sPath2~");
@@ -983,7 +985,7 @@ sap.ui.define([
 		oModelMock.expects("fireEvent")
 			.withExactArgs("dataReceived", oError
 				? {error : oError, path : "~sPath1~"}
-				: {data : {}});
+				: {data : {}, path : "~sPath1~"});
 
 		// code under test
 		oModel.fireDataReceived(oError && "~anotherError~", "~sPath1~");
@@ -992,7 +994,8 @@ sap.ui.define([
 			"~sPath2~" : 1
 		});
 
-		oModelMock.expects("fireEvent").withExactArgs("dataReceived", {data : {}});
+		oModelMock.expects("fireEvent")
+			.withExactArgs("dataReceived", {data : {}, path : "~sPath2~"});
 
 		// code under test
 		oModel.fireDataReceived(undefined, "~sPath2~");
@@ -1004,8 +1007,9 @@ sap.ui.define([
 			oModel.fireDataReceived(undefined, "~sPath1~");
 		}, new Error("Received more data than requested"));
 
-		oModelMock.expects("fireEvent").withExactArgs("dataRequested");
-		oModelMock.expects("fireEvent").withExactArgs("dataReceived", {data : {}});
+		oModelMock.expects("fireEvent").withExactArgs("dataRequested", {path : "~sPath1~"});
+		oModelMock.expects("fireEvent")
+			.withExactArgs("dataReceived", {data : {}, path : "~sPath1~"});
 
 		// code under test
 		oModel.fireDataRequested("~sPath1~");

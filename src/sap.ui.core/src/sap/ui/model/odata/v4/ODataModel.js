@@ -414,33 +414,33 @@ sap.ui.define([
 	 * is only fired for GET requests and is to be used by applications to process an error. For
 	 * each 'dataRequested' event, a 'dataReceived' event is fired.
 	 *
-	 * If back-end requests are successful, the event has almost no parameters. For compatibility
+	 * If a back-end request is successful, the event has almost no parameters. For compatibility
 	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
 	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
-	 * is not. The 'dataReceived' event can be triggered by a binding or by additional property
-	 * requests for an entity that already has been requested. Events triggered by a binding may
-	 * be bubbled up to the model, while events triggered by additional property requests are fired
-	 * directly by the model.
+	 * is not. For additional property requests, the absolute path to the entity is also available.
+	 *
+	 * The 'dataReceived' event can be triggered by a binding or by additional property requests for
+	 * an entity that already has been requested. Events triggered by a binding may be bubbled up to
+	 * the model, while events triggered by additional property requests are fired directly by the
+	 * model.
 	 *
 	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter. If multiple requests are processed within a single $batch
 	 * (or even a single change set), the order of 'dataReceived' events is not guaranteed. For
 	 * requests which are not processed because a previous request failed, <code>error.cause</code>
 	 * points to the root cause error - you should either ignore those events, or unwrap the error
-	 * to access the root cause immediately.
+	 * to access the root cause immediately. For additional property requests, the absolute path to
+	 * the entity is also available.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters()
 	 * @param {object} [oEvent.getParameters().data]
 	 *   An empty data object if a back-end request succeeds
 	 * @param {Error} [oEvent.getParameters().error]
-	 *   The error object if a back-end request failed. If there are multiple failed back-end
-	 *   requests, the error of the first one is provided.
+	 *   The error object if a back-end request failed.
 	 * @param {string} [oEvent.getParameters().path]
-	 *   The absolute path to the entity if a request for an additional property failed. If there
-	 *   are multiple failed requests, the absolute path to the entity of the first one is provided.
-	 *   The path is only provided for additional property requests; for other requests it is
-	 *   <code>undefined</code>.
+	 *   The absolute path to the entity which caused the event. The path is only provided for
+	 *   additional property requests; for other requests it is <code>undefined</code>.
 	 *
 	 * @event sap.ui.model.odata.v4.ODataModel#dataReceived
 	 * @public
@@ -453,7 +453,11 @@ sap.ui.define([
 	/**
 	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
 	 * It is only fired for GET requests. For each 'dataRequested' event, a 'dataReceived' event is
-	 * fired. Registered event handlers are called without parameters.
+	 * fired.
+	 *
+	 * For additional property requests, the absolute path to the entity is available as an event
+	 * parameter.
+	 *
 	 * The 'dataRequested' event can be triggered by a binding or by additional property requests
 	 * for an entity that already has been requested.
 	 * Events triggered by a binding may be bubbled up to the model, while events triggered by
@@ -471,6 +475,10 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters()
+	 * @param {string} [oEvent.getParameters().path]
+	 *   The absolute path to the entity which caused the event. The path is only provided for
+	 *   additional property requests; for other requests it is <code>undefined</code>.
 	 *
 	 * @event sap.ui.model.odata.v4.ODataModel#dataRequested
 	 * @public
@@ -1577,7 +1585,7 @@ sap.ui.define([
 	 * @param {Error} [oError]
 	 *   The error if an additional property request failed
 	 * @param {string} [sPath]
-	 *   The absolute path to the entity if an additional property request failed
+	 *   The absolute path to the entity
 	 *
 	 * @private
 	 */
@@ -1591,7 +1599,7 @@ sap.ui.define([
 		if (this.mPath2DataRequestedCount[sPath] === 0) {
 			this.fireEvent("dataReceived", this.mPath2DataReceivedError[sPath]
 				? {error : this.mPath2DataReceivedError[sPath], path : sPath}
-				: {data : {}});
+				: {data : {}, path : sPath});
 			delete this.mPath2DataReceivedError[sPath];
 			delete this.mPath2DataRequestedCount[sPath];
 		}
@@ -1612,7 +1620,7 @@ sap.ui.define([
 			this.mPath2DataRequestedCount[sPath] += 1;
 		} else {
 			this.mPath2DataRequestedCount[sPath] = 1;
-			this.fireEvent("dataRequested");
+			this.fireEvent("dataRequested", {path : sPath});
 		}
 	};
 
