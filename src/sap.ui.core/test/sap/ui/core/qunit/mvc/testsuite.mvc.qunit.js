@@ -19,6 +19,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			}
 		},
 		tests: {
+			/**
+			 * @deprecated As of 1.108
+			 */
 			AsyncHTMLView: {
 				title: "QUnit Page for async sap.ui.core.mvc.HTMLView"
 			},
@@ -37,6 +40,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			EventHandlerResolver: {
 				title: "QUnit Page for async sap.ui.core.mvc.EventHandlerResolver"
 			},
+			/**
+			 * @deprecated As of 1.108
+			 */
 			HTMLView: {
 				title: "QUnit Page for sap.ui.core.mvc.HTMLView + sap.ui.core.mvc.Controller",
 				sinon: false

@@ -66,6 +66,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of 1.108
+	 */
 	QUnit.test("Generate & Call Delegate HTML Serializing", function(assert) {
 		var oHTML = new HTMLDelegate();
 		var aExpectedResults = [
@@ -125,6 +128,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of 1.108
+	 */
 	QUnit.test("Complex HTML Serializing", function(assert) {
 		var oHTML = new HTMLDelegate();
 
@@ -241,10 +247,6 @@ sap.ui.define([
 
 	QUnit.module("Special Cases", {
 		beforeEach : function() {
-			this._oHTMLDelegate = new HTMLDelegate();
-			this.serializeHTML = function(oControl) {
-				return new Serializer(oControl, this._oHTMLDelegate, false).serialize();
-			};
 			this._oXMLDelegate = new XMLDelegate();
 			this.serializeXML = function(oControl) {
 				return new Serializer(oControl, this._oXMLDelegate, false).serialize();

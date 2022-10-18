@@ -169,6 +169,9 @@ sap.ui.define([
 	});
 
 
+	/**
+	 * @deprecated Since version 1.108
+	 */
 	QUnit.test("HTML Fragment loaded from file", function(assert) {
 		var oFragment = sap.ui.htmlfragment("testdata.fragments.HTMLTestFragment", this.oDummyController);
 		oFragment.placeAt("content1");
@@ -194,6 +197,9 @@ sap.ui.define([
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
 
+	/**
+	 * @deprecated Since version 1.108
+	 */
 	QUnit.test("HTML Fragment loaded from file with given Fragment ID", function(assert) {
 		var oFragment = sap.ui.htmlfragment("myHtmlFrag", "testdata.fragments.HTMLTestFragment", this.oDummyController);
 		oFragment.placeAt("content1");
@@ -220,6 +226,9 @@ sap.ui.define([
 	});
 
 
+	/**
+	 * @deprecated Since version 1.108
+	 */
 	QUnit.test("HTML Fragment loaded from file with given Fragment ID and root control ID", function(assert) {
 		var oFragment = sap.ui.htmlfragment("myHtmlFrag1", "testdata.fragments.HTMLTestFragmentWithId", this.oDummyController);
 		oFragment.placeAt("content1");
@@ -492,7 +501,9 @@ sap.ui.define([
 	});
 
 
-
+	/**
+	 * @deprecated Since version 1.108
+	 */
 	QUnit.test("HTML Fragment in XMLView", function(assert) {
 		assert.expect(8); // incl. Controller function on press
 
@@ -514,6 +525,9 @@ sap.ui.define([
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
 
+	/**
+	 * @deprecated Since version 1.108
+	 */
 	QUnit.test("HTML Fragment in XMLView with given Fragment ID", function(assert) {
 		assert.expect(8); // incl. Controller function on press
 
@@ -615,6 +629,9 @@ sap.ui.define([
 	});
 
 
+	/**
+	 * @deprecated Since version 1.108
+	 */
 	QUnit.test("HTML Fragment as Dialog", function(assert) {
 		var done = assert.async();
 		var oDialog = sap.ui.htmlfragment("testdata.fragments.HTMLFragmentDialog", {
@@ -647,6 +664,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 * @deprecated Since version 1.108
+	 */
 	QUnit.test("HTML Fragment as Dialog Template", function(assert) {
 		assert.expect(6);
 		var done = assert.async();
@@ -713,6 +733,9 @@ sap.ui.define([
 		oFragment.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.108
+	 */
 	QUnit.test("HTML Fragment loaded from file", function(assert) {
 		assert.expect(2);
 		var oFragment = sap.ui.htmlfragment("testdata.fragments.HTMLTestFragmentNoController");
@@ -775,6 +798,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated Since version 1.108
+	 */
 	QUnit.test("HTML Fragment loaded from file", function(assert) {
 		assert.expect(2);
 		return Fragment.load({
@@ -1027,6 +1053,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated Since version 1.108
+	 */
 	QUnit.test("Propagate owner component to Fragment (HTML)", function(assert) {
 		sap.ui.define("myComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 			return UIComponent.extend("myComponent", {
