@@ -26,7 +26,8 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/CalendarWeekNumbering"
 ], function(
 	CalendarType,
 	Control,
@@ -51,7 +52,8 @@ sap.ui.define([
 	containsOrEquals,
 	deepEqual,
 	Log,
-	Configuration
+	Configuration,
+	CalendarWeekNumbering
 ) {
 	"use strict";
 
@@ -105,8 +107,9 @@ sap.ui.define([
 			months : {type : "int", group : "Appearance", defaultValue : 1},
 
 			/**
-			 * If set, the first day of the displayed week is this day. Valid values are 0 to 6.
-			 * If not a valid value is set, the default of the used locale is used.
+			 * If the property is set, this day marks the start of the displayed week. Valid values are 0 to 6.
+			 * If no valid property is set, the current locale's default is applied.
+			 * Note: This property should not be used with the calendarWeekNumbering property.
 			 * @since 1.28.9
 			 */
 			firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1},
@@ -194,7 +197,15 @@ sap.ui.define([
 			 *
 			 * @since 1.84.0
 			 */
-			_currentPicker : {type : "string", group : "Appearance", visibility: "hidden"}
+			_currentPicker : {type : "string", group : "Appearance", visibility: "hidden"},
+
+			/**
+			 * If set, the calendar week numbering is used for display.
+			 * If not set, the calendar week numbering of the global configuration is used.
+			 * Note: This property should not be used with firstDayOfWeek property.
+			 * @since 1.109.0
+			 */
+			calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 
 		},
 		aggregations : {
@@ -472,7 +483,7 @@ sap.ui.define([
 	};
 
 	Calendar.prototype._createMonth = function(sId){
-		var oMonth = new Month(sId, {width: "100%"});
+		var oMonth = new Month(sId, {width: "100%", calendarWeekNumbering: this.getCalendarWeekNumbering()});
 		oMonth._bCalendar = true;
 		oMonth.attachEvent("datehovered", this._handleDateHovered, this);
 		oMonth.attachEvent("weekNumberSelect", this._handleWeekNumberSelect, this);
@@ -513,6 +524,10 @@ sap.ui.define([
 			oCalDate,
 			oMonthDate = aMonths[0].getDate(),
 			oFocusedDate = this._getFocusedDate();
+
+		if (this.getFirstDayOfWeek() !== -1 && this.getCalendarWeekNumbering()) {
+			Log.warning("Both properties firstDayOfWeek and calendarWeekNumbering should not be used at the same time!");
+		}
 
 		if (aMonths.length > 1 && oMonthDate) {
 			// for more than one month - re-render same months (if already rendered once)
@@ -767,6 +782,17 @@ sap.ui.define([
 
 	};
 
+	Calendar.prototype.setCalendarWeekNumbering = function(sCalendarWeekNumbering) {
+		var aMonths = this.getAggregation("month");
+
+		this.setProperty("calendarWeekNumbering", sCalendarWeekNumbering);
+
+		for (var i = 0; i < aMonths.length; i++) {
+			aMonths[i].setProperty("calendarWeekNumbering", sCalendarWeekNumbering);
+		}
+
+		return this;
+	};
 	Calendar.prototype.setMonths = function(iMonths){
 
 		this._bDateRangeChanged = undefined; // to force rerendering
@@ -787,6 +813,7 @@ sap.ui.define([
 				oMonth.attachEvent("_unbindMousemove", _handleUnbindMousemove, this);
 				oMonth._bNoThemeChange = true;
 				oMonth._bNotInTabChain = true;
+				oMonth.setCalendarWeekNumbering(this.getCalendarWeekNumbering());
 				oMonth.setSecondaryCalendarType(this._getSecondaryCalendarType());
 				this.addAggregation("month",oMonth);
 			}
