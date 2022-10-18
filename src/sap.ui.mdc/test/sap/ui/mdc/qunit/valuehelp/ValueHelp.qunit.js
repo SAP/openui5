@@ -310,6 +310,15 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
+	QUnit.test("connect", function(assert) {
+
+		sinon.spy(oContainer, "onConnectionChange");
+		oValueHelp.connect(oField, {test: "X"});
+		oValueHelp.connect(oField2, {test: "Y"});
+		assert.ok(oContainer.onConnectionChange.calledOnce, "onConnectionChange called for Container");
+
+	});
+
 	QUnit.test("open", function(assert) {
 
 		sinon.spy(oContainer, "open");
@@ -679,6 +688,25 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isNavigationEnabled", function(assert) {
+
+		sinon.stub(oContainer, "isNavigationEnabled").returns("X"); // "X" - just for testing return value
+		assert.equal(oValueHelp.isNavigationEnabled(1), "X", "Navigation if closed and no dialog: Result of Container returned");
+		assert.ok(oContainer.isNavigationEnabled.calledWith(1), "isNavigationEnabled of Container called with step");
+		sinon.stub(oContainer, "isOpen").returns(true);
+		assert.equal(oValueHelp.isNavigationEnabled(2), "X", "Navigation if open and no dialog: Result of Container returned");
+		assert.ok(oContainer.isNavigationEnabled.calledWith(2), "isNavigationEnabled of Container called with step");
+		sinon.stub(oValueHelp, "getDialog").returns(true);
+		oContainer.isOpen.returns(false);
+		assert.notOk(oValueHelp.isNavigationEnabled(3), "Navigation if closed and Dialog: disabled");
+		assert.notOk(oContainer.isNavigationEnabled.calledWith(3), "isNavigationEnabled of Container not called with step");
+		oContainer.isOpen.returns(true);
+		assert.ok(oValueHelp.isNavigationEnabled(4), "Navigation if open and dialog: Result of Container returned");
+		assert.ok(oContainer.isNavigationEnabled.calledWith(4), "isNavigationEnabled of Container called with step");
+		oValueHelp.getDialog.restore();
+
+	});
+
 	QUnit.test("Selection handling", function(assert) {
 
 		// set
@@ -841,6 +869,15 @@ sap.ui.define([
 			_initFields();
 		},
 		afterEach: _teardown
+	});
+
+	QUnit.test("connect", function(assert) {
+
+		sinon.spy(oContainer, "onConnectionChange");
+		oValueHelp.connect(oField, {test: "X"});
+		oValueHelp.connect(oField2, {test: "Y"});
+		assert.ok(oContainer.onConnectionChange.calledOnce, "onConnectionChange called for Container");
+
 	});
 
 	QUnit.test("open", function(assert) {
@@ -1101,6 +1138,12 @@ sap.ui.define([
 			ValueHelpDelegate.retrieveContent.restore();
 			fnDone();
 		}, 0);
+
+	});
+
+	QUnit.test("isNavigationEnabled", function(assert) {
+
+		assert.notOk(oValueHelp.isNavigationEnabled(1), "Navigation if closed: disabled if no typeahead");
 
 	});
 

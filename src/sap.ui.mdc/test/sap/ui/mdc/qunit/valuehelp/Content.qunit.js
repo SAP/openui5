@@ -303,6 +303,12 @@ sap.ui.define([
 		assert.notOk(oContent.shouldOpenOnNavigate(), "correctly determined from maxConditions");
 	});
 
+	QUnit.test("isNavigationEnabled", function(assert) {
+
+		assert.notOk(oContent.isNavigationEnabled(1), "isNavigationEnabled");
+
+	});
+
 	QUnit.test("isFocusInHelp", function(assert) {
 
 		assert.ok(oContent.isFocusInHelp(), "correctly determined from typeahead");

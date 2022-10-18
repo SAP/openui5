@@ -38,7 +38,7 @@
 										descriptionPath="Name"
 										caseSensitive="true"
 										useAsValueHelp="false">
-										<m:Table id="VH1-Pop-Table" items="{path: '/ProductCollection'}" width="26rem">
+										<m:Table id="VH1-Pop-Table" items="{path: '/ProductCollection'}" width="26rem" mode="MultiSelect">
 											<m:columns>
 												<m:Column>
 													<m:Label text="{/#Product/ProductId/@sap:label}"/>
@@ -69,7 +69,7 @@
 										descriptionPath="Name"
 										caseSensitive="true"
 										useAsValueHelp="false">
-										<m:Table id="VH1-Dialog-Table" items="{path: '/ProductCollection'}">
+										<m:Table id="VH1-Dialog-Table" items="{path: '/ProductCollection'}" mode="MultiSelect">
 											<m:columns>
 												<m:Column>
 													<m:Label text="{/#Product/ProductId/@sap:label}"/>
@@ -103,7 +103,7 @@
 					editMode="Display"
 					placeholder="Placeholder"
 					showEmptyIndicator="true"
-					fieldHelp="FVH1">
+					fieldHelp="VH1">
 					<mdcField:MultiValueFieldItem key="{view>ProductId}" description="{view>Name}" />
 				</mdc:MultiValueField>
 

@@ -709,7 +709,7 @@
 								dataType="Edm.String"
 								dataTypeConstraints= "{nullable: false, maxLength: 3}"
 								conditions="{$filters>/conditions/language_code}"
-								maxConditions="-1" fieldHelp="FHLanguage"/>
+								maxConditions="1" fieldHelp="FHLanguage"/>
 
 							<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 								id="ff7" label="Genre"

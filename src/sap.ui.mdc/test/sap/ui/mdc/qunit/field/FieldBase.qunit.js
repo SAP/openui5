@@ -320,11 +320,13 @@ sap.ui.define([
 		assert.equal(oSuggestControl, oContent, "inner control is used for suggestion");
 
 		assert.equal(oContent.aBeforeDelegates.length, 1, "Delegate with keyboard handling added");
-		assert.ok(!!oContent.aBeforeDelegates[0].oDelegate.onsapprevious,  "Delegate has onsappevious implemented");
-		assert.ok(!!oContent.aBeforeDelegates[0].oDelegate.onsapnext,  "Delegate has onsapnext implemented");
 		assert.ok(!!oContent.aBeforeDelegates[0].oDelegate.onsapup,  "Delegate has onsapup implemented");
 		assert.ok(!!oContent.aBeforeDelegates[0].oDelegate.onsapdown,  "Delegate has onsapdown implemented");
 		assert.ok(!!oContent.aBeforeDelegates[0].oDelegate.onsapbackspace,  "Delegate has onsapbackspace implemented");
+		assert.ok(!!oContent.aBeforeDelegates[0].oDelegate.onsaphome,  "Delegate has onsaphome implemented");
+		assert.ok(!!oContent.aBeforeDelegates[0].oDelegate.onsapend,  "Delegate has onsapend implemented");
+		assert.ok(!!oContent.aBeforeDelegates[0].oDelegate.onsappageup,  "Delegate has onsappageup implemented");
+		assert.ok(!!oContent.aBeforeDelegates[0].oDelegate.onsappagedown,  "Delegate has onsappagedown implemented");
 
 	}
 
@@ -3372,11 +3374,20 @@ sap.ui.define([
 
 	QUnit.test("keyboard support on closed FieldHelp", function(assert) {
 
+		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		sinon.stub(oFieldHelp, "isNavigationEnabled").returns(false);
+
 		oField.focus(); // as FieldHelp is connected with focus
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		sinon.spy(oContent, "onsapprevious");
 		sinon.spy(oContent, "onsapnext");
+		sinon.spy(oContent, "onsapup");
+		sinon.spy(oContent, "onsapdown");
+		sinon.spy(oContent, "onsaphome");
+		sinon.spy(oContent, "onsapend");
+		sinon.spy(oContent, "onsappageup");
+		sinon.spy(oContent, "onsappagedown");
 		sinon.spy(oContent, "onsapbackspace");
 
 		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
@@ -3384,14 +3395,79 @@ sap.ui.define([
 		oContent.onsapnext.resetHistory();
 
 		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
-		assert.ok(oContent.onsapnext.notCalled, "onsapnext not called on content control");
+		assert.ok(oContent.onsapnext.called, "onsapnext called on content control");
 
 		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_LEFT, false, false, false);
 		assert.ok(oContent.onsapprevious.called, "onsapprevious called on content control");
 		oContent.onsapprevious.resetHistory();
 
 		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
-		assert.ok(oContent.onsapprevious.notCalled, "onsapprevious not called on content control");
+		assert.ok(oContent.onsapprevious.called, "onsapprevious called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+		assert.ok(oContent.onsapup.called, "onsapup called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
+		assert.ok(oContent.onsapdown.called, "onsapdown called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.HOME, false, false, false);
+		assert.ok(oContent.onsaphome.called, "onsaphome called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.END, false, false, false);
+		assert.ok(oContent.onsapend.called, "onsapend called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.PAGE_UP, false, false, false);
+		assert.ok(oContent.onsappageup.called, "onsappageup called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.PAGE_DOWN, false, false, false);
+		assert.ok(oContent.onsappagedown.called, "onsappagedown called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.BACKSPACE, false, false, false);
+		assert.ok(oContent.onsapbackspace.called, "onsapbackspace called on content control");
+
+	});
+
+	QUnit.test("keyboard support on closed FieldHelp with active navigation", function(assert) {
+
+		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		sinon.stub(oFieldHelp, "isNavigationEnabled").returns(true);
+
+		oField.focus(); // as FieldHelp is connected with focus
+		var aContent = oField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+		sinon.spy(oContent, "onsapprevious");
+		sinon.spy(oContent, "onsapnext");
+		sinon.spy(oContent, "onsapup");
+		sinon.spy(oContent, "onsapdown");
+		sinon.spy(oContent, "onsaphome");
+		sinon.spy(oContent, "onsapend");
+		sinon.spy(oContent, "onsappageup");
+		sinon.spy(oContent, "onsappagedown");
+		sinon.spy(oContent, "onsapbackspace");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
+		assert.ok(oContent.onsapnext.called, "onsapnext called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_LEFT, false, false, false);
+		assert.ok(oContent.onsapprevious.called, "onsapprevious called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+		assert.ok(oContent.onsapup.notCalled, "onsapup not called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
+		assert.ok(oContent.onsapdown.notCalled, "onsapdown not called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.HOME, false, false, false);
+		assert.ok(oContent.onsaphome.notCalled, "onsaphome not called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.END, false, false, false);
+		assert.ok(oContent.onsapend.notCalled, "onsapend not called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.PAGE_UP, false, false, false);
+		assert.ok(oContent.onsappageup.notCalled, "onsappageup not called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.PAGE_DOWN, false, false, false);
+		assert.ok(oContent.onsappagedown.notCalled, "onsappagedown not called on content control");
 
 		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.BACKSPACE, false, false, false);
 		assert.ok(oContent.onsapbackspace.called, "onsapbackspace called on content control");
@@ -3408,20 +3484,44 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		sinon.spy(oContent, "onsapprevious");
 		sinon.spy(oContent, "onsapnext");
+		sinon.spy(oContent, "onsapup");
+		sinon.spy(oContent, "onsapdown");
+		sinon.spy(oContent, "onsaphome");
+		sinon.spy(oContent, "onsapend");
+		sinon.spy(oContent, "onsappageup");
+		sinon.spy(oContent, "onsappagedown");
 		sinon.spy(oContent, "onsapbackspace");
 
 		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
-		assert.ok(oContent.onsapnext.notCalled, "onsapnext not called on content control");
+		assert.ok(oContent.onsapnext.called, "onsapnext called on content control");
 
 		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_LEFT, false, false, false);
-		assert.ok(oContent.onsapprevious.notCalled, "onsapprevious not called on content control");
+		assert.ok(oContent.onsapprevious.called, "onsapprevious called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+		assert.ok(oContent.onsapup.notCalled, "onsapup not called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
+		assert.ok(oContent.onsapdown.notCalled, "onsapdown not called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.HOME, false, false, false);
+		assert.ok(oContent.onsaphome.notCalled, "onsaphome not called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.END, false, false, false);
+		assert.ok(oContent.onsapend.notCalled, "onsapend not called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.PAGE_UP, false, false, false);
+		assert.ok(oContent.onsappageup.notCalled, "onsappageup not called on content control");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.PAGE_DOWN, false, false, false);
+		assert.ok(oContent.onsappagedown.notCalled, "onsappagedown not called on content control");
 
 		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.BACKSPACE, false, false, false);
 		assert.ok(oContent.onsapbackspace.notCalled, "onsapbackspace not called on content control");
 
 	});
 
-	QUnit.test("navigation", function(assert) {
+	QUnit.test("navigation in open FieldHelp", function(assert) {
 
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
 		sinon.stub(oFieldHelp, "isOpen").returns(true);
@@ -3479,7 +3579,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigation single Field", function(assert) {
+	QUnit.test("navigation single Field in open FieldHelp", function(assert) {
 
 		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
@@ -3498,6 +3598,18 @@ sap.ui.define([
 		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 		assert.ok(oFieldHelp.navigate.calledWith(-1), "navigate called");
 
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.PAGE_DOWN, false, false, false);
+		assert.ok(oFieldHelp.navigate.calledWith(10), "navigate called");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.PAGE_UP, false, false, false);
+		assert.ok(oFieldHelp.navigate.calledWith(-10), "navigate called");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.HOME, false, false, false);
+		assert.ok(oFieldHelp.navigate.calledWith(-9999), "navigate called");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.END, false, false, false);
+		assert.ok(oFieldHelp.navigate.calledWith(9999), "navigate called");
+
 		oFieldHelp.fireNavigate({ value: "Item 3", key: "I3" });
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		var aConditions = oCM.getConditions("Name");
@@ -3515,6 +3627,38 @@ sap.ui.define([
 
 		qutils.triggerEvent("tap", oContent.getFocusDomRef().id);
 		assert.ok(oContent.hasStyleClass("sapMFocus"), "Focus outline restored");
+
+	});
+
+	QUnit.test("navigation single Field in closed FieldHelp", function(assert) {
+
+		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		oField.setMaxConditions(1);
+		oCore.applyChanges();
+		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		sinon.stub(oFieldHelp, "isOpen").returns(false);
+		sinon.stub(oFieldHelp, "isNavigationEnabled").returns(true);
+		oCore.applyChanges();
+
+		oField.focus(); // as FieldHelp is connected with focus
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
+		assert.ok(oFieldHelp.navigate.calledWith(1), "navigate called");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+		assert.ok(oFieldHelp.navigate.calledWith(-1), "navigate called");
+
+		// no additionTest for navigation events needed as same as for open value help
+
+		oFieldHelp.isNavigationEnabled.returns(false);
+		oFieldHelp.navigate.reset();
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
+		assert.ok(oFieldHelp.navigate.notCalled, "navigate not called");
+
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+		assert.ok(oFieldHelp.navigate.notCalled, "navigate not called");
+
 
 	});
 
@@ -3559,7 +3703,14 @@ sap.ui.define([
 
 		assert.equal(oFieldHelp.getFilterValue(), "C B", "FilterValue set");
 
-		oFieldHelp.close();
+		sinon.stub(oFieldHelp, "isOpen").returns(true); // as it not really opens without content
+		oContent._$input.val("");
+		oContent.fireLiveChange({ value: "" });
+		oClock.tick(400); // fake time to close field help
+		assert.ok(oFieldHelp.close.called, "close called");
+		oFieldHelp.isOpen.restore();
+
+		oFieldHelp.close(); // to be sure
 		oClock.tick(400); // fake closing time
 		oClock.restore();
 

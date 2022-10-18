@@ -100,6 +100,7 @@ sap.ui.define([
 				assert.equal(oContent.getMode(), mLibrary.ListMode.SingleSelectMaster, "List mode");
 				assert.ok(oContent.hasStyleClass("sapMComboBoxBaseList"), "List has style class sapMComboBoxBaseList");
 				assert.ok(oContent.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
+				assert.equal(oContent.getAriaRole(), "listbox", "List aria role");
 				assert.equal(oContent.getItems().length, 3, "Number of items");
 				var oItem = oContent.getItems()[0];
 				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item0 is DisplayListItem");
@@ -502,12 +503,55 @@ sap.ui.define([
 
 	});
 
+	var iNavigate = 0;
+	var oNavigateCondition;
+	var sNavigateItemId;
+	var bNavigateLeaveFocus;
+
+	function _checkNavigatedItem(assert, oContent, iNavigatedIndex, iSelectedIndex, oCondition, bLeaveFocus) {
+
+		var aItems = oContent.getItems();
+		assert.ok(oContent.hasStyleClass("sapMListFocus"), "List has style class sapMListFocus");
+
+		for (var i = 0; i < aItems.length; i++) {
+			var oItem = aItems[i];
+			if (i === iSelectedIndex) {
+				assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " is focused");
+				if (!oItem.isA("sap.m.GroupHeaderListItem")) {
+					assert.ok(oItem.getSelected(), "Item" + i + " is selected");
+				}
+			} else {
+				assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " not focused");
+				if (!oItem.isA("sap.m.GroupHeaderListItem")) {
+					assert.notOk(oItem.getSelected(), "Item" + i + " not selected");
+				}
+			}
+		}
+
+		assert.equal(iNavigate, 1, "Navigated Event fired");
+		if (!bLeaveFocus) {
+			assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
+			assert.equal(sNavigateItemId, aItems[iNavigatedIndex].getId(), "Navigated itemId");
+		} else {
+			assert.deepEqual(oNavigateCondition, undefined, "Navigated condition");
+			assert.equal(sNavigateItemId, undefined, "Navigated itemId");
+		}
+		assert.equal(bNavigateLeaveFocus, bLeaveFocus, "Navigated leaveFocus");
+		assert.deepEqual(oFixedList.getConditions(), oCondition ? [oCondition] : [], "FixedList conditions");
+		assert.equal(oFixedList._iNavigateIndex, iNavigatedIndex, "navigated index stored");
+		iNavigate = 0;
+		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
+		bNavigateLeaveFocus = undefined;
+
+	}
+
 	QUnit.test("navigate", function(assert) {
 
-		var iNavigate = 0;
-		var oNavigateCondition;
-		var sNavigateItemId;
-		var bNavigateLeaveFocus;
+		iNavigate = 0;
+		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
+		bNavigateLeaveFocus = undefined;
 		oFixedList.attachEvent("navigated", function(oEvent) {
 			iNavigate++;
 			oNavigateCondition = oEvent.getParameter("condition");
@@ -521,79 +565,23 @@ sap.ui.define([
 		if (oContent) {
 			var fnDone = assert.async();
 			oContent.then(function(oContent) {
-				oFixedList.onShow(); // to update selection and scroll
+				// oFixedList.onShow(); // to update selection and scroll
 				oFixedList.navigate(1);
-				assert.ok(oContent.hasStyleClass("sapMListFocus"), "List has style class sapMListFocus");
-				var oItem = oContent.getItems()[0];
-				assert.ok(oItem.getSelected(), "Item0 selected");
-				oItem = oContent.getItems()[1];
-				assert.notOk(oItem.getSelected(), "Item1 not selected");
-				oItem = oContent.getItems()[2];
-				assert.notOk(oItem.getSelected(), "Item2 not selected");
-
-				var oCondition = Condition.createItemCondition("I1", "Item 1");
-				assert.equal(iNavigate, 1, "Navigated Event fired");
-				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
-				assert.equal(sNavigateItemId, "FL1-item-FL1-List-0", "Navigated itemId");
-				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
-				iNavigate = 0;
-				oNavigateCondition = undefined;
-				sNavigateItemId = undefined;
+				_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
 
 				// no previout item
 				oFixedList.navigate(-1);
-				oItem = oContent.getItems()[0];
-				assert.ok(oItem.getSelected(), "Item0 selected");
-				oItem = oContent.getItems()[1];
-				assert.notOk(oItem.getSelected(), "Item1 not selected");
-				oItem = oContent.getItems()[2];
-				assert.notOk(oItem.getSelected(), "Item2 not selected");
-
-				assert.equal(iNavigate, 1, "Navigated Event fired");
-				assert.deepEqual(oNavigateCondition, undefined, "no Navigated condition");
-				assert.equal(sNavigateItemId, undefined, " no Navigated itemId");
-				assert.ok(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
-				iNavigate = 0;
-				oNavigateCondition = undefined;
-				sNavigateItemId = undefined;
+				_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), true);
 
 				// next item of selected one
 				oFixedList.navigate(1);
-				oItem = oContent.getItems()[0];
-				assert.notOk(oItem.getSelected(), "Item0 not selected");
-				oItem = oContent.getItems()[1];
-				assert.ok(oItem.getSelected(), "Item1 selected");
-				oItem = oContent.getItems()[2];
-				assert.notOk(oItem.getSelected(), "Item2 not selected");
-
-				oCondition = Condition.createItemCondition("I2", "My Item   2");
-				assert.equal(iNavigate, 1, "Navigated Event fired");
-				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
-				assert.equal(sNavigateItemId, "FL1-item-FL1-List-1", "Navigated itemId");
-				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
-				iNavigate = 0;
-				oNavigateCondition = undefined;
-				sNavigateItemId = undefined;
+				_checkNavigatedItem(assert, oContent, 1, 1, Condition.createItemCondition("I2", "My Item   2"), false);
 				oContent.getItems()[1].setSelected(false); // initialize
+				oFixedList.onConnectionChange(); // simulate new assignment
 
 				// no item selected -> navigate to last
 				oFixedList.navigate(-1);
-				oItem = oContent.getItems()[0];
-				assert.notOk(oItem.getSelected(), "Item0 not selected");
-				oItem = oContent.getItems()[1];
-				assert.notOk(oItem.getSelected(), "Item1 not selected");
-				oItem = oContent.getItems()[2];
-				assert.ok(oItem.getSelected(), "Item2 selected");
-
-				oCondition = Condition.createItemCondition("I3", "item 3");
-				assert.equal(iNavigate, 1, "Navigated Event fired");
-				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
-				assert.equal(sNavigateItemId, "FL1-item-FL1-List-2", "Navigated itemId");
-				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
+				_checkNavigatedItem(assert, oContent, 2, 2, Condition.createItemCondition("I3", "item 3"), false);
 
 				oFixedList.onHide();
 				assert.notOk(oContent.hasStyleClass("sapMListFocus"), "List removed style class sapMListFocus");
@@ -607,12 +595,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigate - without filtering but groupable", function(assert) {
+	QUnit.test("navigate - without filtering but groupable (closed list)", function(assert) {
 
-		var iNavigate = 0;
-		var oNavigateCondition;
-		var sNavigateItemId;
-		var bNavigateLeaveFocus;
+		iNavigate = 0;
+		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
+		bNavigateLeaveFocus = undefined;
 		oFixedList.attachEvent("navigated", function(oEvent) {
 			iNavigate++;
 			oNavigateCondition = oEvent.getParameter("condition");
@@ -631,103 +619,95 @@ sap.ui.define([
 			var fnDone = assert.async();
 			oContent.then(function(oContent) {
 				oFixedList.navigate(1);
-				var oItem = oContent.getItems()[1];
-				assert.notOk(oItem.getSelected(), "Item1 not selected");
-				oItem = oContent.getItems()[2];
-				assert.notOk(oItem.getSelected(), "Item2 not selected");
-				oItem = oContent.getItems()[4];
-				assert.ok(oItem.getSelected(), "Item4 selected");
-
-				var oCondition = Condition.createItemCondition("I2", "My Item   2");
-				assert.equal(iNavigate, 1, "Navigated Event fired");
-				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
-				assert.equal(sNavigateItemId, "FL1-item-FL1-List-2", "Navigated itemId");
-				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
-				assert.equal(oFixedList._iNavigateIndex, 4, "navigated index stored as closed");
+				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
 				iNavigate = 0;
 				oNavigateCondition = undefined;
 				sNavigateItemId = undefined;
 
 				// ignore group header backwards
 				oFixedList.navigate(-1);
-				oItem = oContent.getItems()[1];
-				assert.notOk(oItem.getSelected(), "Item1 not selected");
-				oItem = oContent.getItems()[2];
-				assert.ok(oItem.getSelected(), "Item2 selected");
-				oItem = oContent.getItems()[4];
-				assert.notOk(oItem.getSelected(), "Item4 not selected");
-
-				oCondition = Condition.createItemCondition("I3", "item 3");
-				assert.equal(iNavigate, 1, "Navigated Event fired");
-				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
-				assert.equal(sNavigateItemId, "FL1-item-FL1-List-1", "Navigated itemId");
-				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
-				assert.equal(oFixedList._iNavigateIndex, 2, "navigated index stored as closed");
-				iNavigate = 0;
-				oNavigateCondition = undefined;
-				sNavigateItemId = undefined;
+				_checkNavigatedItem(assert, oContent, 2, 2, Condition.createItemCondition("I3", "item 3"), false);
 
 				// ignore group header forwards
 				oFixedList.navigate(1);
-				oItem = oContent.getItems()[1];
-				assert.notOk(oItem.getSelected(), "Item1 not selected");
-				oItem = oContent.getItems()[2];
-				assert.notOk(oItem.getSelected(), "Item2 not selected");
-				oItem = oContent.getItems()[4];
-				assert.ok(oItem.getSelected(), "Item4 selected");
-
-				oCondition = Condition.createItemCondition("I2", "My Item   2");
-				assert.equal(iNavigate, 1, "Navigated Event fired");
-				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
-				assert.equal(sNavigateItemId, "FL1-item-FL1-List-2", "Navigated itemId");
-				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
-				assert.equal(oFixedList._iNavigateIndex, 4, "navigated index stored as closed");
-				iNavigate = 0;
-				oNavigateCondition = undefined;
-				sNavigateItemId = undefined;
+				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
 				oContent.getItems()[4].setSelected(false); // initialize
+				oFixedList.onConnectionChange(); // simulate new assignment
 
 				// find filtered item backwards
 				oFixedList.navigate(-1);
-				oItem = oContent.getItems()[1];
-				assert.notOk(oItem.getSelected(), "Item1 not selected");
-				oItem = oContent.getItems()[2];
-				assert.notOk(oItem.getSelected(), "Item2 not selected");
-				oItem = oContent.getItems()[4];
-				assert.ok(oItem.getSelected(), "Item4 selected");
-
-				oCondition = Condition.createItemCondition("I2", "My Item   2");
-				assert.equal(iNavigate, 1, "Navigated Event fired");
-				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
-				assert.equal(sNavigateItemId, "FL1-item-FL1-List-2", "Navigated itemId");
-				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
-				assert.equal(oFixedList._iNavigateIndex, 4, "navigated index stored as closed");
+				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
 
 				// ignore group header backwards
-				iNavigate = 0;
-				oNavigateCondition = undefined;
-				sNavigateItemId = undefined;
 				oContent.getItems()[4].setSelected(false); // initialize
 				oContent.getItems()[2].setSelected(true); // set as selected
+				oFixedList.onConnectionChange(); // simulate new assignment
 				oFixedList.navigate(-2);
-				oItem = oContent.getItems()[1];
-				assert.ok(oItem.getSelected(), "Item1 selected");
-				oItem = oContent.getItems()[2];
-				assert.notOk(oItem.getSelected(), "Item2 not selected");
-				oItem = oContent.getItems()[4];
-				assert.notOk(oItem.getSelected(), "Item4 not selected");
+				_checkNavigatedItem(assert, oContent, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
 
-				oCondition = Condition.createItemCondition("I1", "Item 1");
-				assert.equal(iNavigate, 1, "Navigated Event fired");
-				assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
-				assert.equal(sNavigateItemId, "FL1-item-FL1-List-0", "Navigated itemId");
-				assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-				assert.deepEqual(oFixedList.getConditions(), [oCondition], "FixedList conditions");
-				assert.equal(oFixedList._iNavigateIndex, 1, "navigated index stored as closed");
+				fnDone();
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called: " + oError);
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("navigate - without filtering but groupable (open list)", function(assert) {
+
+		iNavigate = 0;
+		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
+		bNavigateLeaveFocus = undefined;
+		oFixedList.attachEvent("navigated", function(oEvent) {
+			iNavigate++;
+			oNavigateCondition = oEvent.getParameter("condition");
+			sNavigateItemId = oEvent.getParameter("itemId");
+			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
+		});
+
+		oFixedList.setGroupable(true);
+		oFixedList.setConditions([]);
+		oFixedList.setFilterList(false);
+		oFixedList.setFilterValue("M");
+		bIsOpen = true;
+		var oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
+
+		if (oContent) {
+			var fnDone = assert.async();
+			oContent.then(function(oContent) {
+				oFixedList.navigate(1);
+				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
+
+				// select group header backwards
+				oFixedList.navigate(-1);
+				_checkNavigatedItem(assert, oContent, 3, 3, undefined, false);
+
+				// navigate from group header to previous item
+				oFixedList.navigate(-1);
+				_checkNavigatedItem(assert, oContent, 2, 2, Condition.createItemCondition("I3", "item 3"), false);
+
+				// select group header forwards
+				oFixedList.navigate(1);
+				_checkNavigatedItem(assert, oContent, 3, 3, undefined, false);
+
+				// navigate from gropu header to next item
+				oFixedList.navigate(1);
+				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
+				oContent.getItems()[4].setSelected(false); // initialize
+				oFixedList.onConnectionChange(); // simulate new assignment
+
+				// find filtered item backwards
+				oFixedList.navigate(-1);
+				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
+
+				// do not ignore group header backwards
+				oContent.getItems()[4].setSelected(false); // initialize
+				oContent.getItems()[2].setSelected(true); // set as selected
+				oFixedList.onConnectionChange(); // simulate new assignment
+				oFixedList.navigate(-3);
+				_checkNavigatedItem(assert, oContent, 0, 0, undefined, false);
 
 				fnDone();
 			}).catch(function(oError) {
@@ -787,6 +767,12 @@ sap.ui.define([
 		oConfig.maxConditions = 1;
 		oFixedList.setConfig(oConfig);
 		assert.notOk(oFixedList.shouldOpenOnNavigate(), "should not open if maxConditions == 1");
+
+	});
+
+	QUnit.test("isNavigationEnabled", function(assert) {
+
+		assert.ok(oFixedList.isNavigationEnabled(1), "Navigation is enabled");
 
 	});
 

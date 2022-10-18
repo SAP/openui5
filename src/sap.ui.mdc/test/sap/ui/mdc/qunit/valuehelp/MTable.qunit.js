@@ -996,8 +996,58 @@ sap.ui.define([
 
 	});
 
+	var iNavigate = 0;
+	var oNavigateCondition;
+	var sNavigateItemId;
+	var bNavigateLeaveFocus;
+
+	function _checkNavigatedItem(assert, oTable, iNavigatedIndex, iSelectedIndex, oCondition, bLeaveFocus) {
+
+		var aItems = oTable.getItems();
+		assert.ok(oTable.hasStyleClass("sapMListFocus"), "Table has style class sapMListFocus");
+
+		for (var i = 0; i < aItems.length; i++) {
+			var oItem = aItems[i];
+			if (i === iSelectedIndex) {
+				assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " is focused");
+				if (!oItem.isA("sap.m.GroupHeaderListItem")) {
+					assert.ok(oItem.getSelected(), "Item" + i + " is selected");
+				}
+			} else {
+				assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " not focused");
+				if (!oItem.isA("sap.m.GroupHeaderListItem")) {
+					assert.notOk(oItem.getSelected(), "Item" + i + " not selected");
+				}
+			}
+		}
+
+		assert.equal(iNavigate, 1, "Navigated Event fired");
+		if (!bLeaveFocus) {
+			if (bIsOpen) {
+				assert.ok(oTable.scrollToIndex.calledWith(iNavigatedIndex), "Table scrolled to item");
+			}
+			assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
+			assert.equal(sNavigateItemId, aItems[iNavigatedIndex].getId(), "Navigated itemId");
+		} else {
+			assert.deepEqual(oNavigateCondition, undefined, "Navigated condition");
+			assert.equal(sNavigateItemId, undefined, "Navigated itemId");
+		}
+		assert.equal(bNavigateLeaveFocus, bLeaveFocus, "Navigated leaveFocus");
+		assert.deepEqual(oMTable.getConditions(), oCondition ? [oCondition] : [], "MTable conditions");
+		assert.equal(oMTable._iNavigateIndex, iNavigatedIndex, "navigated index stored");
+		iNavigate = 0;
+		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
+		bNavigateLeaveFocus = undefined;
+		if (bIsOpen) {
+			oTable.scrollToIndex.reset();
+		}
+
+	}
+
 	QUnit.test("navigate", function(assert) {
 
+		bIsOpen = true; // test for open navigation (for closed is tested later)
 		var oScrollContainer = new ScrollContainer(); // to test scrolling
 		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
 		oContainer._getUIAreaForContent = function() {
@@ -1008,10 +1058,10 @@ sap.ui.define([
 		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
 		sinon.spy(oTable, "scrollToIndex");
 
-		var iNavigate = 0;
-		var oNavigateCondition;
-		var sNavigateItemId;
-		var bNavigateLeaveFocus;
+		iNavigate = 0;
+		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
+		bNavigateLeaveFocus = undefined;
 		oMTable.attachEvent("navigated", function(oEvent) {
 			iNavigate++;
 			oNavigateCondition = oEvent.getParameter("condition");
@@ -1022,83 +1072,22 @@ sap.ui.define([
 		oMTable.setConditions([]);
 		oMTable.onShow(); // to update selection and scroll
 		oMTable.navigate(1);
-		assert.ok(oTable.hasStyleClass("sapMListFocus"), "Table has style class sapMListFocus");
-		var oItem = oTable.getItems()[0];
-		assert.ok(oItem.getSelected(), "Item0 selected");
-		oItem = oTable.getItems()[1];
-		assert.notOk(oItem.getSelected(), "Item1 not selected");
-		oItem = oTable.getItems()[2];
-		assert.notOk(oItem.getSelected(), "Item2 not selected");
-		assert.ok(oTable.scrollToIndex.calledWith(0), "Table scrolled to item");
-
-		var oCondition = Condition.createItemCondition("I1", "Item 1");
-		assert.equal(iNavigate, 1, "Navigated Event fired");
-		assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
-		assert.equal(sNavigateItemId, "MyItem-T1-0", "Navigated itemId");
-		assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-		assert.deepEqual(oMTable.getConditions(), [oCondition], "MTable conditions");
-		iNavigate = 0;
-		oNavigateCondition = undefined;
-		sNavigateItemId = undefined;
-		oTable.scrollToIndex.reset();
+		_checkNavigatedItem(assert, oTable, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
 
 		// no previous item
 		oMTable.navigate(-1);
-		oItem = oTable.getItems()[0];
-		assert.ok(oItem.getSelected(), "Item0 selected");
-		oItem = oTable.getItems()[1];
-		assert.notOk(oItem.getSelected(), "Item1 not selected");
-		oItem = oTable.getItems()[2];
-		assert.notOk(oItem.getSelected(), "Item2 not selected");
-
-		assert.equal(iNavigate, 1, "Navigated Event fired");
-		assert.deepEqual(oNavigateCondition, undefined, "no Navigated condition");
-		assert.equal(sNavigateItemId, undefined, " no Navigated itemId");
-		assert.ok(bNavigateLeaveFocus, "Navigated leaveFocus");
-		assert.deepEqual(oMTable.getConditions(), [oCondition], "MTable conditions");
-		iNavigate = 0;
-		oNavigateCondition = undefined;
-		sNavigateItemId = undefined;
-		oTable.scrollToIndex.reset();
+		_checkNavigatedItem(assert, oTable, 0, 0, Condition.createItemCondition("I1", "Item 1"), true);
 
 		// next item of selected one
 		oMTable.navigate(1);
-		oItem = oTable.getItems()[0];
-		assert.notOk(oItem.getSelected(), "Item0 not selected");
-		oItem = oTable.getItems()[1];
-		assert.ok(oItem.getSelected(), "Item1 selected");
-		oItem = oTable.getItems()[2];
-		assert.notOk(oItem.getSelected(), "Item2 not selected");
-		assert.ok(oTable.scrollToIndex.calledWith(1), "Table scrolled to item");
-
-		oCondition = Condition.createItemCondition("I2", "Item 2");
-		assert.equal(iNavigate, 1, "Navigated Event fired");
-		assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
-		assert.equal(sNavigateItemId, "MyItem-T1-1", "Navigated itemId");
-		assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-		assert.deepEqual(oMTable.getConditions(), [oCondition], "MTable conditions");
-		iNavigate = 0;
-		oNavigateCondition = undefined;
-		sNavigateItemId = undefined;
-		oTable.scrollToIndex.reset();
+		_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I2", "Item 2"), false);
 		oTable.getItems()[1].setSelected(false); // initialize
+		oMTable.onConnectionChange(); // simulate new assignment
+		oMTable.setConditions([]);
 
 		// no item selected -> navigate to last
 		oMTable.navigate(-1);
-		oItem = oTable.getItems()[0];
-		assert.notOk(oItem.getSelected(), "Item0 not selected");
-		oItem = oTable.getItems()[1];
-		assert.notOk(oItem.getSelected(), "Item1 not selected");
-		oItem = oTable.getItems()[2];
-		assert.ok(oItem.getSelected(), "Item2 selected");
-		assert.ok(oTable.scrollToIndex.calledWith(2), "Table scrolled to item");
-
-		oCondition = Condition.createItemCondition("I3", "X-Item 3");
-		assert.equal(iNavigate, 1, "Navigated Event fired");
-		assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
-		assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigated itemId");
-		assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-		assert.deepEqual(oMTable.getConditions(), [oCondition], "MTable conditions");
+		_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false);
 
 		oMTable.onHide();
 		assert.notOk(oTable.hasStyleClass("sapMListFocus"), "Table removed style class sapMListFocus");
@@ -1128,10 +1117,10 @@ sap.ui.define([
 		});
 		sinon.spy(oTable, "focus");
 
-		var iNavigate = 0;
-		var oNavigateCondition;
-		var sNavigateItemId;
-		var bNavigateLeaveFocus;
+		iNavigate = 0;
+		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
+		bNavigateLeaveFocus = undefined;
 		oMTable.attachEvent("navigated", function(oEvent) {
 			iNavigate++;
 			oNavigateCondition = oEvent.getParameter("condition");
@@ -1184,7 +1173,71 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigate grouped table with async ListBinding", function(assert) {
+	QUnit.test("navigate grouped table with async ListBinding (closed)", function(assert) {
+
+		bIsOpen = false; // test for closed navigation (for open is tested later)
+		oModel.setData({
+			items: [
+				{ text: "Item 1", key: "I1", additionalText: "Text 1", group: "a" },
+				{ text: "Item 2", key: "I2", additionalText: "Text 2", group: "b" },
+				{ text: "Item 3", key: "I3", additionalText: "Text 3", group: "a" }
+			]
+		});
+		var oSorter = new Sorter("group", false, true);
+		oTable.bindItems({path: '/items', suspended: true, sorter: oSorter, template: oItemTemplate});
+		var oListBinding = oTable.getBinding("items");
+		iNavigate = 0;
+		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
+		bNavigateLeaveFocus = undefined;
+		oMTable.attachEvent("navigated", function(oEvent) {
+			iNavigate++;
+			oNavigateCondition = oEvent.getParameter("condition");
+			sNavigateItemId = oEvent.getParameter("itemId");
+			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
+		});
+
+		oMTable.setConditions([]);
+		oModel.checkUpdate(true); // force model update
+		sinon.stub(oListBinding, "getLength").onFirstCall().returns(undefined); // to fake pending binding
+		oListBinding.getLength.callThrough();
+		oMTable.navigate(1);
+		var fnDone = assert.async();
+		setTimeout( function(){ // as waiting for Promise
+			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+			var oItem = oTable.getItems()[0];
+			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
+			oItem = oTable.getItems()[3];
+			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item3 is GroupHeaderListItem");
+
+			// next item
+			oMTable.navigate(1);
+			_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+
+			// next item (ignoring group header)
+			oMTable.navigate(1);
+			_checkNavigatedItem(assert, oTable, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
+
+			// previous item (ignoring group header)
+			oMTable.navigate(-1);
+			_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+
+			// previous item
+			oMTable.navigate(-1);
+			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+
+			// no previous item
+			oMTable.navigate(-1);
+			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), true);
+
+			oMTable.onConnectionChange(); // simulate new assignment
+
+			fnDone();
+		}, 0);
+
+	});
+
+	QUnit.test("navigate grouped table with async ListBinding (open)", function(assert) {
 
 		oModel.setData({
 			items: [
@@ -1205,11 +1258,12 @@ sap.ui.define([
 		oScrollContainer.placeAt("content"); // render ScrollContainer
 		oCore.applyChanges();
 		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
+		sinon.spy(oTable, "scrollToIndex");
 
-		var iNavigate = 0;
-		var oNavigateCondition;
-		var sNavigateItemId;
-		var bNavigateLeaveFocus;
+		iNavigate = 0;
+		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
+		bNavigateLeaveFocus = undefined;
 		oMTable.attachEvent("navigated", function(oEvent) {
 			iNavigate++;
 			oNavigateCondition = oEvent.getParameter("condition");
@@ -1218,51 +1272,54 @@ sap.ui.define([
 		});
 
 		oMTable.setConditions([]);
-		oMTable.onShow(); // to resume
+		oMTable.onShow(); // to simulate Open
 		oModel.checkUpdate(true); // force model update
 		sinon.stub(oListBinding, "getLength").onFirstCall().returns(undefined); // to fake pending binding
 		oListBinding.getLength.callThrough();
 		oMTable.navigate(1);
 		var fnDone = assert.async();
 		setTimeout( function(){ // as waiting for Promise
+			_checkNavigatedItem(assert, oTable, 0, 0, undefined, false);
 			var oItem = oTable.getItems()[0];
 			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
-			oItem = oTable.getItems()[1];
-			assert.ok(oItem.getSelected(), "Item0 selected");
-			oItem = oTable.getItems()[2];
-			assert.notOk(oItem.getSelected(), "Item1 not selected");
 			oItem = oTable.getItems()[3];
-			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
-			oItem = oTable.getItems()[4];
-			assert.notOk(oItem.getSelected(), "Item2 not selected");
+			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item3 is GroupHeaderListItem");
 
-			var oCondition = Condition.createItemCondition("I1", "Item 1");
-			assert.equal(iNavigate, 1, "Navigated Event fired");
-			assert.deepEqual(oNavigateCondition, oCondition, "Navigated condition");
-			assert.equal(sNavigateItemId, "MyItem-T1-0", "Navigated itemId");
-			assert.notOk(bNavigateLeaveFocus, "Navigated leaveFocus");
-			assert.deepEqual(oMTable.getConditions(), [oCondition], "MTable conditions");
-			iNavigate = 0;
-			oNavigateCondition = undefined;
-			sNavigateItemId = undefined;
+			// next item
+			oMTable.navigate(1);
+			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+
+			// next item
+			oMTable.navigate(1);
+			_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+
+			// next item (group header)
+			oMTable.navigate(1);
+			_checkNavigatedItem(assert, oTable, 3, 3, undefined, false);
+
+			// next item
+			oMTable.navigate(1);
+			_checkNavigatedItem(assert, oTable, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
+
+			// previous item (group header)
+			oMTable.navigate(-1);
+			_checkNavigatedItem(assert, oTable, 3, 3, undefined, false);
+
+			// previous item
+			oMTable.navigate(-1);
+			_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+
+			// previous item
+			oMTable.navigate(-1);
+			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+
+			// previous item (group header)
+			oMTable.navigate(-1);
+			_checkNavigatedItem(assert, oTable, 0, 0, undefined, false);
 
 			// no previous item
 			oMTable.navigate(-1);
-			oItem = oTable.getItems()[1];
-			assert.ok(oItem.getSelected(), "Item0 selected");
-			oItem = oTable.getItems()[2];
-			assert.notOk(oItem.getSelected(), "Item1 not selected");
-			oItem = oTable.getItems()[4];
-			assert.notOk(oItem.getSelected(), "Item2 not selected");
-
-			assert.equal(iNavigate, 1, "Navigated Event fired");
-			assert.deepEqual(oNavigateCondition, undefined, "no Navigated condition");
-			assert.equal(sNavigateItemId, undefined, " no Navigated itemId");
-			assert.ok(bNavigateLeaveFocus, "Navigated leaveFocus");
-			assert.deepEqual(oMTable.getConditions(), [oCondition], "MTable conditions");
-			iNavigate = 0;
-			oNavigateCondition = undefined;
-			sNavigateItemId = undefined;
+			_checkNavigatedItem(assert, oTable, 0, 0, undefined, true);
 
 			oMTable.onHide();
 
@@ -1319,7 +1376,10 @@ sap.ui.define([
 
 	QUnit.test("shouldOpenOnNavigate", function(assert) {
 
-		assert.ok(oMTable.shouldOpenOnNavigate(), "should open on navigate");
+		assert.notOk(oMTable.shouldOpenOnNavigate(), "should not open on navigate for single Select");
+
+		oTable.setMode(ListMode.MultiSelect);
+		assert.ok(oMTable.shouldOpenOnNavigate(), "should open on navigate for multi Select");
 
 	});
 
@@ -1567,6 +1627,17 @@ sap.ui.define([
 	QUnit.test("_isSingleSelect", function(assert) {
 
 		assert.notOk(oMTable._isSingleSelect(), "multi-selection taken from Table");
+
+	});
+
+	QUnit.test("isNavigationEnabled", function(assert) {
+
+		assert.ok(oMTable.isNavigationEnabled(1), "Navigation is enabled for 1");
+		assert.ok(oMTable.isNavigationEnabled(-1), "Navigation is enabled for -1");
+		assert.notOk(oMTable.isNavigationEnabled(9999), "Navigation is disabled for 9999");
+		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
+		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
+		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
 
 	});
 

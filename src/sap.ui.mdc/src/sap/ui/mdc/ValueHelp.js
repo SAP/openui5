@@ -321,6 +321,16 @@ sap.ui.define([
 			this.close();
 			this.setFilterValue("");
 			this.setConditions([]);
+
+			var oTypeahead = this.getTypeahead();
+			var oDialog = this.getDialog();
+			if (oTypeahead) {
+				oTypeahead.onConnectionChange();
+			}
+			if (oDialog) {
+				oDialog.onConnectionChange();
+			}
+
 			this.fireDisconnect();
 		}
 
@@ -392,7 +402,7 @@ sap.ui.define([
 			ariaHasPopup: sHasPopup,
 			role: sRole,
 			roleDescription: sRoleDescription,
-			valueHelpEnabled: !!oDialog || !!oTypeahead && !!oTypeahead.getUseAsValueHelp()
+			valueHelpEnabled: this.valueHelpEnabled()
 		};
 
 	};
@@ -676,6 +686,34 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Determines if navigation via arrow keys should be possible.
+	 *
+	 * In ComboBox-like case keyboard-navigation should be anabled if closed and if open.
+	 * If only typeahead is used (and maybe an value help dialog) keyboard-navigation schould be enabled only if typeahed is open.
+	 *
+	 * As not all rowas might be loaded navigation with home, end, page up or dowm might be disabled, depending of the used content.
+	 *
+	 * @param {int} iStep Number of steps for navigation (e.g. 1 means next item, -1 means previous item)
+	 *
+	 * @returns {boolean} If <code>true</code>, the navigation should be enabled if value help is closed
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 */
+	ValueHelp.prototype.isNavigationEnabled = function(iStep) {
+		var oTypeahead = this.getTypeahead();
+		if (oTypeahead) {
+			var oDialog = this.getDialog();
+			var bIsOpen = oTypeahead.isOpen();
+
+			if (bIsOpen || !oDialog) {
+				return oTypeahead.isNavigationEnabled(iStep); // if Typeahead open or typeahead is used as value help, keyboard navigation could be used
+			}
+		}
+
+		return false;
+	};
+
 	ValueHelp.prototype.getTextForKey = function (vKey, oContext, oBindingContext, oConditionModel, sConditionModelName) {
 		return this.getItemForValue({
 			parsedValue: vKey,
@@ -843,7 +881,7 @@ sap.ui.define([
 		if (oDialog) {
 			return true;
 		} else {
-			return oTypeahead && oTypeahead.getUseAsValueHelp();
+			return !!oTypeahead && oTypeahead.getUseAsValueHelp();
 		}
 
 	};

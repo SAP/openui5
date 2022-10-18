@@ -315,7 +315,7 @@ sap.ui.define([
 	Popover.prototype._navigate = function (iStep) {
 		var oContent = this._getContent();
 		if (oContent) {
-			return oContent.navigate(iStep);
+			oContent.navigate(iStep);
 		}
 	};
 
@@ -377,7 +377,21 @@ sap.ui.define([
 	Popover.prototype.shouldOpenOnNavigate = function() {
 
 		var oContent = this._getContent();
+		this._bindContent(oContent); // Content might need config data to determine it's behaviour
 		return !!oContent && oContent.shouldOpenOnNavigate();
+		// TODO: do we need to unbind here? Re-binding on every navigation would reset selected condition on content what is not wanted
+		// How to know when navigation ends?
+
+	};
+
+	Popover.prototype.isNavigationEnabled = function(iStep) {
+
+		if (this.isOpen() || this.getUseAsValueHelp()) { //Typeahead already open or it is used for typing and as value help (ComboBox case)
+			var oContent = this._getContent();
+			return !!oContent && oContent.isNavigationEnabled(iStep);
+		}
+
+		return false;
 
 	};
 

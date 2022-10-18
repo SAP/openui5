@@ -108,6 +108,7 @@ sap.ui.define([
 		assert.notOk(oPopover.getUseAsValueHelp(), "getUseAsValueHelp");
 		assert.notOk(oPopover.shouldOpenOnClick(), "shouldOpenOnClick");
 		assert.notOk(oPopover.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
+		assert.notOk(oPopover.isNavigationEnabled(1), "isNavigationEnabled");
 		assert.notOk(oPopover.isFocusInHelp(), "isFocusInHelp");
 
 	});
@@ -480,6 +481,23 @@ sap.ui.define([
 		sinon.stub(oContent, "shouldOpenOnNavigate").returns(true);
 		assert.ok(oPopover.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
 		assert.ok(oContent.shouldOpenOnNavigate.called, "shouldOpenOnNavigate of Content called");
+
+	});
+
+	QUnit.test("isNavigationEnabled", function(assert) {
+
+		sinon.stub(oContent, "isNavigationEnabled").returns("X"); // "X" - just for testing return value
+		assert.notOk(oPopover.isNavigationEnabled(1), "Navigation if closed and not used as value help: disabled");
+		assert.notOk(oContent.isNavigationEnabled.calledWith(1), "isNavigationEnabled of Content not called with step");
+		sinon.stub(oPopover, "isOpen").returns(true);
+		assert.equal(oPopover.isNavigationEnabled(2), "X", "Navigation if open and not used as value help: Result of Content returned");
+		assert.ok(oContent.isNavigationEnabled.calledWith(2), "isNavigationEnabled of Content called with step");
+		sinon.stub(oPopover, "getUseAsValueHelp").returns(true);
+		assert.equal(oPopover.isNavigationEnabled(3), "X", "Navigation if open and used as value help: Result of Content returned");
+		assert.ok(oContent.isNavigationEnabled.calledWith(3), "isNavigationEnabled of Content called with step");
+		oPopover.isOpen.returns(false);
+		assert.equal(oPopover.isNavigationEnabled(4), "X", "Navigation if closed and used as value help: Result of Content returned");
+		assert.ok(oContent.isNavigationEnabled.calledWith(4), "isNavigationEnabled of Content called with step");
 
 	});
 
