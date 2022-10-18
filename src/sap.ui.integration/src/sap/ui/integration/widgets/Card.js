@@ -1074,6 +1074,33 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the value of a filter in the card.
+	 *
+	 * @private
+	 * @ui5-restricted
+	 * @param {string} sFilterKey the key of the filter as defined in the manifest
+	 * @param {*} vValue value to set
+	 */
+	Card.prototype.setFilterValue = function (sFilterKey, vValue) {
+		var mFiltersConfig = this._oCardManifest.get(MANIFEST_PATHS.FILTERS);
+		if (!mFiltersConfig.hasOwnProperty(sFilterKey)) {
+			Log.error("Filter with key '" + sFilterKey + "' does not exist in the manifest section 'filters'.", "sap.ui.integration.widgets.Card");
+			return;
+		}
+
+		var oFilterBar = this.getAggregation("_filterBar");
+		if (!oFilterBar) {
+			return;
+		}
+
+		var oFilter = oFilterBar._getFilters().find(function (oFilter) {
+			return oFilter.getKey() === sFilterKey;
+		});
+
+		oFilter.setValueFromOutside(vValue);
+	};
+
+	/**
 	 * Refreshes the card data by triggering all data requests.
 	 *
 	 * @public
@@ -1687,7 +1714,7 @@ sap.ui.define([
 	 * @private
 	 * @returns {sap.ui.integration.cards.Footer} The footer of the card
 	 */
-	 Card.prototype.getCardFooter = function () {
+	Card.prototype.getCardFooter = function () {
 		return this.getAggregation("_footer");
 	};
 

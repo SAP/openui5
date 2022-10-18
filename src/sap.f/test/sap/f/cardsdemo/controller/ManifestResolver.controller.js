@@ -53,6 +53,10 @@ sap.ui.define([
 			path: "sap/f/cardsdemo/cardcontent/tablecontent/noData.json",
 			baseUrl: "sap/f/cardsdemo/cardcontent/tableContent/"
 		},
+		"filtersCard": {
+			path: "sap/f/cardsdemo/cardcontent/cardFilters/manifest.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/cardFilters/"
+		},
 		"cardWithSevereError": {
 			path: "sap/f/cardsdemo/cardcontent/withSevereError.json",
 			baseUrl: "sap/f/cardsdemo/cardcontent/"

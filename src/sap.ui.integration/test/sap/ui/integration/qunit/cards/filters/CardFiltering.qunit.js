@@ -45,23 +45,51 @@ sap.ui.define([
 				oListItems = oContentList.getItems();
 
 			// Assert
-			assert.strictEqual(oHeader.getSubtitle(), "Category " + sCategory, "The initial value of 'category' is ok.");
+			assert.strictEqual(oHeader.getSubtitle(), "Category " + sCategory, "The initial value of 'category' is correct.");
 			assert.strictEqual(oHeader.getStatusText(), sStatus, "The number of list items is as expected.");
 			assert.strictEqual(oListItems[0].getDescription(), sCategory, "The list items have correct category.");
 
 			// Act - change the category to flat_screens
-			sCategory = "flat_screens";
-			sStatus = "2 of 4";
+			var sNewCategory = "flat_screens";
+			var sNewStatus = "2 of 4";
 
-			this.oCard.getModel("filters").setProperty("/category/value", "flat_screens");
+			this.oCard.getModel("filters").setProperty("/category/value", sNewCategory);
 			Core.applyChanges();
 
 			setTimeout(function () {
-				assert.strictEqual(oHeader.getSubtitle(), "Category " + sCategory, "The initial value of 'category' is ok.");
-				assert.strictEqual(oHeader.getStatusText(), sStatus, "The number of list items is as expected.");
-				assert.strictEqual(oListItems[0].getDescription(), sCategory, "The list items have correct category.");
+				assert.strictEqual(oHeader.getSubtitle(), "Category " + sNewCategory, "The initial value of 'category' is correct.");
+				assert.strictEqual(oHeader.getStatusText(), sNewStatus, "The number of list items is as expected.");
+				assert.strictEqual(oListItems[0].getDescription(), sNewCategory, "The list items have correct category.");
 				done();
 			}, 500);
+
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter.json");
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("Filter using card method", function (assert) {
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var sOldValue = "notebooks",
+				oHeader = this.oCard.getCardHeader();
+
+			assert.strictEqual(oHeader.getSubtitle(), "Category " + sOldValue, "The initial value of 'category' is correct.");
+
+			var sNewValue = "flat_screens";
+			// act
+			this.oCard.setFilterValue("category", sNewValue);
+
+			// assert
+			Core.applyChanges();
+
+			setTimeout(function () {
+				assert.strictEqual(oHeader.getSubtitle(), "Category " + sNewValue, "The new value of 'category' is correct.");
+				done();
+			}, 200);
 
 		}.bind(this));
 

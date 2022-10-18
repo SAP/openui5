@@ -159,6 +159,13 @@ sap.ui.define([
 
 	BaseFilter.prototype.onDataChanged = function () { };
 
+	/**
+	 * @private
+	 * @ui5-restricted
+	 * @param vValue value to set
+	 */
+	BaseFilter.prototype.setValueFromOutside = function (vValue) { };
+
 	BaseFilter.prototype.getValueForModel = function () { };
 
 	BaseFilter.prototype.refreshData = function () {
@@ -256,7 +263,7 @@ sap.ui.define([
 		this._oDataProvider.triggerDataUpdate();
 	};
 
-	BaseFilter.prototype._setValue = function () {
+	BaseFilter.prototype._syncValue = function () {
 		var oValueForModel = this.getValueForModel(),
 			oCard = this.getCardInstance(),
 			mParams = {},

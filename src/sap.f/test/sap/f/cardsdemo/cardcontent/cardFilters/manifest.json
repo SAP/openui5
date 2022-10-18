@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "card.explorer.filters.search.multiple",
+		"id": "card.resolver.filters",
 		"type": "card",
 		"title": "Sample of a Card with Filters"
 	},
@@ -23,12 +23,6 @@
 							"url": "{{destinations.Northwind_V4}}/Shippers"
 						}
 					}
-				},
-				"country": {
-					"type": "Search",
-					"label": "Country",
-					"value": "France",
-					"placeholder": "Enter a country"
 				}
 			},
 			"destinations": {
@@ -43,7 +37,7 @@
 					"value": 3,
 					"type": "integer",
 					"label": "Number of orders",
-					"description": "How many orders to show in the list."
+					"description": "The maximum number of orders that are shown in the list."
 				},
 				"selectedShipperID": {
 					"value": 3,
@@ -56,30 +50,16 @@
 			"request": {
 				"url": "{{destinations.Northwind_V4}}/Orders",
 				"parameters": {
-					"$count": true,
-					"$skip": "{paginator>/skip}",
-					"$top": "{parameters>/maxOrdersShown/value}",
-					"$filter": "Shipper/ShipperID eq {filters>/shipper/value} and contains(ShipCountry, '{filters>/country/value}')"
+					"$filter": "Shipper/ShipperID eq {filters>/shipper/value}"
 				}
 			},
 			"path": "/value/"
 		},
 		"type": "List",
 		"header": {
-			"title": "Orders by shipper {filters>/shipper/selectedItem/title}",
+			"title": "Orders by Shipper {filters>/shipper/selectedItem/title}",
 			"icon": {
 				"src": "sap-icon://product"
-			},
-			"status": {
-				"text": {
-					"format": {
-						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
-						"parts": [
-							"parameters>/visibleItems",
-							"/@odata.count"
-						]
-					}
-				}
 			}
 		},
 		"content": {
@@ -89,13 +69,8 @@
 				"info": {
 					"value": "{ShipCountry}"
 				}
-			}
-		},
-		"footer": {
-			"paginator": {
-				"totalCount": "{/@odata.count}",
-				"pageSize": "{parameters>/maxOrdersShown/value}"
-			}
+			},
+			"maxItems" : "{parameters>/maxOrdersShown/value}"
 		}
 	}
 }

@@ -6,13 +6,15 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/ui/core/ListItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/integration/util/BindingResolver"
+	"sap/ui/integration/util/BindingResolver",
+	"sap/base/util/merge"
 ], function (
 	BaseFilter,
 	Select,
 	ListItem,
 	JSONModel,
-	BindingResolver
+	BindingResolver,
+	merge
 ) {
 	"use strict";
 
@@ -95,29 +97,50 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	SelectFilter.prototype.setValueFromOutside = function (sKey) {
+		this._getSelect().setSelectedKey(BindingResolver.resolveValue(sKey, this.getCardInstance()));
+		this._syncValue();
+	};
+
+	/**
 	 * @returns {object} Filter configuration with static items
 	 */
 	SelectFilter.prototype.getStaticConfiguration = function () {
 		var oConfiguration =  this.getConfig();
 		var sPath = "/";
-		var aItems = this.getModel().getProperty(sPath);
+		var aItems;
 		var aResolvedItems = [];
+		var oResolvedItemTemplate;
 
 		if (oConfiguration.item && oConfiguration.item.path) {
 			sPath = oConfiguration.item.path;
 		}
 
-		for (var i = 0; i < aItems.length; i++) {
-			if (sPath === "/") {
-				aResolvedItems.push(BindingResolver.resolveValue(oConfiguration.item, this, sPath + i));
-			} else {
-				aResolvedItems.push(BindingResolver.resolveValue(oConfiguration.item, this, sPath + "/" + i));
-			}
+		aItems = this.getModel().getProperty(sPath);
+
+		if (oConfiguration.item && oConfiguration.item.template) {
+			oResolvedItemTemplate = oConfiguration.item.template;
+			aResolvedItems = aItems.map(function (oItem, i) {
+				var sBindingPath = sPath === "/" ? sPath + i : sPath + "/" + i;
+				return BindingResolver.resolveValue(oResolvedItemTemplate, this, sBindingPath);
+			}.bind(this));
+		} else {
+			aResolvedItems = aItems;
 		}
 
-		var oStaticConfiguration = Object.assign({}, oConfiguration);
+		aResolvedItems = aResolvedItems.map(function (oItem) {
+			return {
+				key: oItem.key && oItem.key.toString(),
+				title: oItem.title && oItem.title.toString()
+			};
+		});
+
+		var oStaticConfiguration = merge({}, oConfiguration);
 		delete oStaticConfiguration.item;
 		oStaticConfiguration.items = aResolvedItems;
+		oStaticConfiguration.value = this.getValueForModel().value;
 
 		return oStaticConfiguration;
 	};
@@ -147,7 +170,7 @@ sap.ui.define([
 			oLabel = this.createLabel(oConfig);
 
 		oSelect.attachChange(function (oEvent) {
-			this._setValue();
+			this._syncValue();
 		}.bind(this));
 
 		if (oConfig && oConfig.item) {

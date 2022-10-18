@@ -53,6 +53,14 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
+	SearchFilter.prototype.setValueFromOutside = function (vValue) {
+		this._getSearchField().setValue(vValue);
+		this._syncValue();
+	};
+
+	/**
+	 * @override
+	 */
 	SearchFilter.prototype.getValueForModel = function () {
 		return {
 			value: this._escapeDoubleQuotes(this._getSearchField().getValue())
@@ -88,7 +96,7 @@ sap.ui.define([
 		}
 
 		oSearchField.attachChange(function () {
-			this._setValue();
+			this._syncValue();
 		}.bind(this));
 
 		return oSearchField;

@@ -37,6 +37,16 @@ sap.ui.define([
 			oCard.getCardFooter().getPaginator().next();
 		},
 
+		onChangeSelectFilter: function () {
+			var oCard = this.byId("card1");
+			oCard.setFilterValue("shipper", "2");
+		},
+
+		onInitialSelectFilter: function () {
+			var oCard = this.byId("card1");
+			oCard.setFilterValue("shipper", "3");
+		},
+
 		resolveManifest: function () {
 			var oCard = this.byId("card1"),
 				oCodeEditor = this.byId("output");
