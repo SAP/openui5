@@ -3242,6 +3242,11 @@ sap.ui.define([
 			return SyncPromise.resolve();
 		}
 
+		if (!bSingle && this.oCache && this.oCache.isDeletingInOtherGroup(sGroupId)) {
+			throw new Error("Must not request side effects when there is a pending delete in a"
+				+ " different batch group");
+		}
+
 		if (aPaths.indexOf("") < 0) {
 			if (bSingle) {
 				aContexts = [oContext];

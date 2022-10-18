@@ -4155,6 +4155,102 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: deferred delete & requestSideEffects.
+	// - requestSideEffects fails on the deleted context
+	// - If delete runs in a different group, requestSideEffects...
+	//    - succeeds on an undeleted context (property and full refresh)
+	//    - fails on the header context (here: for a single property)
+	//    - fails via absolute path
+	//
+	// JIRA: CPOUI5ODATAV4-1639
+[{
+	name : "deleted context",
+	run : function (assert, _oUndeletedContext, oDeletedContext) {
+		assert.throws(function () {
+			oDeletedContext.requestSideEffects(["Note"]);
+		}, new Error("Unsupported context: " + oDeletedContext));
+	}
+}, {
+	name : "property of undeleted context",
+	run : function (_assert, oUndeletedContext) {
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$filter=SalesOrderID eq '2'",
+				{value : [{Note : "Note 2", SalesOrderID : "2"}]});
+
+		return oUndeletedContext.requestSideEffects(["Note"]);
+	}
+}, {
+	name : "refresh undeleted context",
+	run : function (_assert, oUndeletedContext) {
+		this.expectRequest("SalesOrderList('2')?$select=Note,SalesOrderID",
+				{Note : "Note 2", SalesOrderID : "2"});
+
+		return oUndeletedContext.requestSideEffects([""]);
+	}
+}, {
+	name : "header context",
+	run : function (assert, oUndeletedContext) {
+		return oUndeletedContext.getBinding().getHeaderContext().requestSideEffects(["Note"])
+			.then(mustFail(assert), function (oError) {
+				assert.strictEqual(oError.message, "Must not request side effects when there is"
+					+ " a pending delete in a different batch group");
+			});
+	}
+}, {
+	name : "absolute path",
+	run : function (assert, oUndeletedContext) {
+		return oUndeletedContext.requestSideEffects([
+			"/com.sap.gateway.default.zui5_epm_sample.v0002.Container/SalesOrderList"
+		]).then(mustFail(assert), function (oError) {
+			assert.strictEqual(oError.message, "Must not request side effects when there is"
+				+ " a pending delete in a different batch group");
+		});
+	}
+}].forEach(function (oFixture) {
+	var sTitle = "CPOUI5ODATAV4-1639: deferred delete & requestSideEffects, " + oFixture.name;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding,
+			oDeletedContext,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			oUndeletedContext,
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{Note : "Note 1", SalesOrderID : "1"},
+					{Note : "Note 2", SalesOrderID : "2"}
+				]
+			})
+			.expectChange("id", ["1", "2"])
+			.expectChange("note", ["Note 1", "Note 2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("id", ["2"])
+				.expectChange("note", ["Note 2"]);
+
+			oBinding = that.oView.byId("table").getBinding("items");
+			oDeletedContext = oBinding.getCurrentContexts()[0];
+			oUndeletedContext = oBinding.getCurrentContexts()[1];
+			oDeletedContext.delete("doNotSubmit"); // promise remains unresolved
+
+			return that.waitForChanges(assert, "deferred delete");
+		}).then(function () {
+			return Promise.all([
+				// code under test
+				oFixture.run.call(that, assert, oUndeletedContext, oDeletedContext),
+				that.waitForChanges(assert, "requestSideEffects")
+			]);
+		});
+		// do not clean up; leave the pending delete open
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: ODLB, late property at an entity within $expand.
 	// JIRA: CPOUI5ODATAV4-23
 	QUnit.test("ODLB: late property at nested entity", function (assert) {

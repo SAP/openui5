@@ -130,6 +130,7 @@ sap.ui.define([
 		 */
 		getCacheMock : function () {
 			var oCache = {
+					isDeletingInOtherGroup : function () {},
 					read : function () {},
 					requestSideEffects : function () {},
 					toString : function () { return "/service/EMPLOYEES"; }
@@ -7268,6 +7269,8 @@ sap.ui.define([
 			sGroupId = "group";
 
 		oBinding.iCurrentEnd = 42;
+		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs(sGroupId).returns(false);
+
 		this.mock(oBinding).expects("lockGroup").never();
 		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, false, true)
@@ -7291,6 +7294,7 @@ sap.ui.define([
 			sGroupId = "group",
 			oGroupLock = {};
 
+		oCacheMock.expects("isDeletingInOtherGroup").never();
 		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding).expects("refreshSingle")
@@ -7304,6 +7308,25 @@ sap.ui.define([
 			assert.strictEqual(oError0, oError);
 		});
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bHeader) {
+	QUnit.test("requestSideEffects: deleting in other group, " + bHeader, function (assert) {
+		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
+			oBinding = this.bindList("/Set"),
+			oContext = bHeader ? oBinding.getHeaderContext() : undefined;
+
+		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs("group").returns(true);
+		oCacheMock.expects("requestSideEffects").never();
+		this.mock(oBinding).expects("refreshSingle").never();
+
+		// code under test
+		assert.throws(function () {
+			oBinding.requestSideEffects("group", ["n/a", ""], oContext);
+		}, new Error("Must not request side effects when there is a pending delete in a different "
+			+ "batch group"));
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: call refreshInternal for relative binding", function (assert) {
@@ -7391,6 +7414,8 @@ sap.ui.define([
 		oBinding.mPreviousContextsByPath["('8')"] = oPreviousContext8 = oBinding.aContexts[8];
 		oBinding.aContexts.length = 5; // less than iCurrentEnd, this can happen due to a delete
 
+		oCacheMock.expects("isDeletingInOtherGroup").exactly(bHeader && bHasCache ? 1 : 0)
+			.withExactArgs(sGroupId).returns(false);
 		this.mock(oBinding).expects("lockGroup").exactly(bHasCache ? 1 : 0)
 			.withExactArgs(sGroupId).returns(oGroupLock);
 		this.mock(oPreviousContext6).expects("isKeepAlive").exactly(bHeader ? 1 : 0)
@@ -7452,6 +7477,7 @@ sap.ui.define([
 		oBinding.iCurrentBegin = 0;
 		oBinding.iCurrentEnd = 2;
 
+		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs(sGroupId).returns(false);
 		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		this.mock(oBinding.aContexts[0]).expects("isTransient").withExactArgs().returns(true);
 		this.mock(oBinding.aContexts[1]).expects("isTransient").withExactArgs().returns(false);
@@ -7486,6 +7512,7 @@ sap.ui.define([
 		oBinding.createContexts(3, createData(8, 3, true)); // no key predicates
 		oBinding.iCurrentBegin = 3;
 		oBinding.iCurrentEnd = 8;
+		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs(sGroupId).returns(false);
 		this.mock(oBinding).expects("lockGroup").never();
 		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, false, true)
@@ -7507,6 +7534,7 @@ sap.ui.define([
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oBinding = this.bindList("/Set");
 
+		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs("group").returns(false);
 		this.mock(oBinding).expects("lockGroup").never();
 		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding).expects("refreshInternal").never();
