@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	new ComponentContainer({
-		name: "sap.ui.mdc.integration.Field.DateContent",
+		name: "sap.ui.mdc.integration.field.dateContent",
 		manifest: true,
 		height: "100%",
 		settings : {

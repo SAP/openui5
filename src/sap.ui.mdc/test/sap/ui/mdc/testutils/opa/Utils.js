@@ -18,5 +18,27 @@ sap.ui.define([
 		return oCore.getLibraryResourceBundle(sLibraryName).getText(sTextKey);
 	};
 
+	Utils.enhanceWaitFor = function (vIdent, oConfig) {
+		var bStringIdent = typeof vIdent === "string";
+		return Object.assign(oConfig, {
+			properties: !bStringIdent && vIdent,
+			id: bStringIdent && vIdent
+		});
+	};
+
+	Utils.removeUndefinedValues = function(oObject) {
+		var oReturnObject = {};
+
+		Object.entries(oObject).forEach(function(aEntry) {
+			var vKey = aEntry[0];
+			var vValue = aEntry[1];
+			if (aEntry[1] !== undefined) {
+				oReturnObject[vKey] = vValue;
+			}
+		});
+
+		return oReturnObject;
+	};
+
 	return Utils;
 });

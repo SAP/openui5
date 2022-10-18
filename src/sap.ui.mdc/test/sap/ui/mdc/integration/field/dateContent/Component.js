@@ -7,7 +7,7 @@ sap.ui.define([
 ], function (UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.mdc.integration.Field.DateContent.Component", {
+	return UIComponent.extend("sap.ui.mdc.integration.field.dateContent.Component", {
 		metadata : {
 			manifest: "json"
 		}

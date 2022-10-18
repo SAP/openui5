@@ -2,7 +2,7 @@
 	"_version": "1.11.0",
 	"sap.app": {
 		"_version": "1.11.0",
-		"id": "sap.ui.mdc.integration.Field.DateContent",
+		"id": "sap.ui.mdc.integration.field.dateContent",
 		"type": "application",
 		"title": "sap.ui.mdc.Field Date Content testing",
 		"description": "sap.ui.mdc.Field Date Content testing app for OPA",
@@ -26,7 +26,7 @@
 		"_version": "1.11.0",
 		"flexEnabled": true,
 		"rootView": {
-			"viewName": "sap.ui.mdc.integration.Field.DateContent.view.App",
+			"viewName": "sap.ui.mdc.integration.field.dateContent.view.App",
 			"type": "XML",
 			"async": true,
 			"id": "app"

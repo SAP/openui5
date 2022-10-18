@@ -10,20 +10,15 @@ sap.ui.define([
 	"use strict";
 
 	return function waitForField(oSettings) {
-		oSettings = oSettings || {};
-
 		return this.waitFor({
 			controlType: "sap.ui.mdc.Field",
+			id: oSettings.id,
 			properties: oSettings.properties,
-			matchers: {
-				// ancestor: {
-				// 	controlType: "sap.ui.layout.form.SimpleForm" // "sap.ui.mdc.FilterBar"
-				// }
-			},
+			matchers: oSettings.matchers,
 			actions: oSettings.actions,
-			check: oSettings.check,
-			success: function(aFields) {
-				Opa5.assert.strictEqual(aFields.length, 1, "The field was found");
+			success: function(vFields) {
+				var aFields = [].concat(vFields);
+				Opa5.assert.strictEqual(aFields.length, 1, "The field was found with settings " + JSON.stringify(oSettings));
 
 				if (typeof oSettings.success === "function") {
 					var oField = aFields[0];
