@@ -35,6 +35,10 @@
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/componentCard/booking/manifest.json"
 				width="300px"
 				class="sapUiTinyMargin" />
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/componentCard/componentWithList/manifest.json"
+				width="300px"
+				class="sapUiTinyMargin" />
 		</Panel>
 	</Page>
 </mvc:View>

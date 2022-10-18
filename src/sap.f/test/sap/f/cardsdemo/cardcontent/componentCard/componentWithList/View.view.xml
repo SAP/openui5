@@ -1,0 +1,42 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		width="100%"
+		displayBlock="true">
+
+	<List>
+		<StandardListItem title="Item 1" type="Active" />
+		<StandardListItem title="Item 2" type="Inactive" />
+		<StandardListItem title="Item 3" type="Active" />
+	</List>
+
+	<Table>
+		<columns>
+			<Column>
+				<Text text="Col 1"></Text>
+			</Column>
+			<Column>
+				<Text text="Col 2"></Text>
+			</Column>
+		</columns>
+		<ColumnListItem>
+			<cells>
+				<Text text="1"></Text>
+				<Text text="2"></Text>
+			</cells>
+		</ColumnListItem>
+		<ColumnListItem>
+			<cells>
+				<Text text="1"></Text>
+				<Text text="2"></Text>
+			</cells>
+		</ColumnListItem>
+		<ColumnListItem>
+			<cells>
+				<Text text="1"></Text>
+				<Text text="2"></Text>
+			</cells>
+		</ColumnListItem>
+	</Table>
+
+	<Text class="sapUiSmallMargin" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse hendrerit sapien eu elit mollis varius. In erat nulla, rhoncus nec tristique eget, ullamcorper id tellus. Curabitur sit amet vestibulum elit. Aliquam vel venenatis nisi. Sed iaculis vitae mi at iaculis. Nulla ut tortor placerat, rhoncus lorem at, faucibus ante. Integer feugiat quam dui, a ultrices purus consectetur nec. Aliquam posuere dictum neque, in semper purus malesuada id." />
+</mvc:View>
