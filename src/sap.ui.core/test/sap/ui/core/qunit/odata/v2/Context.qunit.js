@@ -27,7 +27,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("constructor", function (assert) {
-		var oContext;
+		var oContext,
+			oTransientParent = {oSyncCreatePromise : "~parentCreatePromise"};
 
 		// code under test
 		oContext = new Context("~oModel", "/~sPath");
@@ -42,6 +43,10 @@ sap.ui.define([
 		assert.strictEqual(oContext.sDeepPath, "/~sPath");
 		assert.strictEqual(oContext.bForceRefresh, false);
 		assert.strictEqual(oContext.bPreliminary, false);
+		assert.ok("mSubContexts" in oContext);
+		assert.strictEqual(oContext.mSubContexts, undefined);
+		assert.ok("oTransientParent" in oContext);
+		assert.strictEqual(oContext.oTransientParent, undefined);
 
 		// code under test
 		oContext = new Context("~oModel", "/~sPath", "/~sDeepPath");
@@ -60,13 +65,15 @@ sap.ui.define([
 		assert.strictEqual(oContext.fnActivate, undefined);
 
 		// code under test
-		oContext = new Context("~oModel", "/~sPath", undefined, "~oSyncCreatePromise", "~inactive");
+		oContext = new Context("~oModel", "/~sPath", undefined, "~oSyncCreatePromise", "~inactive",
+			oTransientParent);
 
 		assert.strictEqual(oContext.oCreatePromise, undefined);
-		assert.strictEqual(oContext.oSyncCreatePromise, "~oSyncCreatePromise");
+		assert.strictEqual(oContext.oSyncCreatePromise, "~parentCreatePromise");
 		assert.strictEqual(oContext.bInactive, true);
 		assert.ok(oContext.oActivatedPromise instanceof SyncPromise);
 		assert.ok(oContext.oActivatedPromise.isPending());
+		assert.strictEqual(oContext.oTransientParent, oTransientParent);
 
 		// code under test
 		oContext.fnActivate("~result");
@@ -399,5 +406,158 @@ sap.ui.define([
 			// code under test
 			oContext.delete(mParameters);
 		 }, new Error("Parameter 'foo' is not supported"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addSubContext", function (assert) {
+		var oContext = new Context("~oModel", "~sPath");
+
+		// code under test
+		oContext.addSubContext("navProperty", "~oSubContext0", /*bIsCollection*/false);
+		oContext.addSubContext("navProperty2", "~oSubContext1", /*bIsCollection*/true);
+		oContext.addSubContext("navProperty2", "~oSubContext2", /*bIsCollection*/true);
+
+		assert.deepEqual(oContext.mSubContexts, {
+			navProperty : "~oSubContext0",
+			navProperty2 : ["~oSubContext1", "~oSubContext2"]
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getSubContexts", function (assert) {
+		var oContext = new Context("~oModel", "~sPath");
+
+		oContext.mSubContexts = "~subContexts";
+
+		// code under test
+		assert.strictEqual(oContext.getSubContexts(), "~subContexts");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasTransientParent", function (assert) {
+		var oContext = new Context("~oModel", "~sPath", undefined, undefined, undefined,
+				"~transientParent");
+
+		// code under test
+		assert.strictEqual(oContext.hasTransientParent(), true);
+
+		oContext = new Context("~oModel", "~sPath");
+
+		// code under test
+		assert.strictEqual(oContext.hasTransientParent(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasSubContexts", function (assert) {
+		var oContext = new Context("~oModel", "~sPath");
+
+		// code under test
+		assert.strictEqual(oContext.hasSubContexts(), false);
+
+		oContext.mSubContexts = {foo : "~subContext"};
+
+		// code under test
+		assert.strictEqual(oContext.hasSubContexts(), true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("removeSubContext", function (assert) {
+		var oContext = new Context("~oModel", "~sPath");
+
+		oContext.mSubContexts = {
+			foo : "~subContext0",
+			bar : ["~subContext1", "~subContext2"]
+		};
+
+		// code under test
+		oContext.removeSubContext("~subContext0");
+
+		assert.deepEqual(oContext.mSubContexts, {
+			bar : ["~subContext1", "~subContext2"]
+		});
+
+		// code under test
+		oContext.removeSubContext("~subContext1");
+
+		assert.deepEqual(oContext.mSubContexts, {
+			bar : ["~subContext2"]
+		});
+
+		// code under test
+		oContext.removeSubContext("~subContext2");
+
+		assert.deepEqual(oContext.mSubContexts, undefined);
+
+		// code under test
+		oContext.removeSubContext("~subContext42");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("removeFromTransientParent", function (assert) {
+		var oParent = new Context("~oModel", "~sParentPath"),
+			oContext = new Context("~oModel", "~sPath", undefined, undefined, undefined, oParent);
+
+		this.mock(oParent).expects("removeSubContext").withExactArgs(sinon.match.same(oContext));
+
+		// code under test
+		oContext.removeFromTransientParent();
+
+		assert.strictEqual(oContext.oTransientParent, undefined);
+
+		// code under test
+		oContext.removeFromTransientParent();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getSubContextsArray", function (assert) {
+		var oContext = new Context("~oModel", "~sPath"),
+			oSubContext0 = new Context("~oModel", "~sPath0"),
+			oSubContext1 = new Context("~oModel", "~sPath1"),
+			oSubContext2 = new Context("~oModel", "~sPath2");
+
+		// code under test
+		assert.deepEqual(oContext.getSubContextsArray(), []);
+
+		oContext.mSubContexts = {
+			foo : oSubContext0,
+			bar : [oSubContext1, oSubContext2]
+		};
+
+		// code under test
+		assert.deepEqual(oContext.getSubContextsArray(),
+			[oSubContext0, oSubContext1, oSubContext2]);
+
+		this.mock(oSubContext0).expects("getSubContextsArray")
+			.withExactArgs("~bRecursive")
+			.returns(["~oSubContext0.0"]);
+		this.mock(oSubContext1).expects("getSubContextsArray")
+			.withExactArgs("~bRecursive")
+			.returns(["~oSubContext1.0", "~oSubContext1.1"]);
+		this.mock(oSubContext2).expects("getSubContextsArray")
+			.withExactArgs("~bRecursive")
+			.returns([]);
+
+		// code under test
+		assert.deepEqual(oContext.getSubContextsArray("~bRecursive"),
+			[oSubContext0, "~oSubContext0.0", oSubContext1, "~oSubContext1.0", "~oSubContext1.1",
+			oSubContext2]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getSubContextsAsPath, getSubContextsAsKey", function (assert) {
+		var oContext = new Context("~oModel", "~sPath"),
+			oSubContext0 = new Context("~oModel", "/~sPath0"),
+			oSubContext1 = new Context("~oModel", "/~sPath1");
+
+		this.mock(oContext).expects("getSubContextsArray")
+			.withExactArgs("~bRecursive")
+			.twice()
+			.returns([oSubContext0, oSubContext1]);
+
+		// code under test
+		assert.deepEqual(oContext.getSubContextsAsPath("~bRecursive"), ["/~sPath0", "/~sPath1"]);
+
+		// code under test
+		assert.deepEqual(oContext.getSubContextsAsKey("~bRecursive"), ["~sPath0", "~sPath1"]);
 	});
 });

@@ -17925,4 +17925,503 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.deepEqual(aCreateActivateCalledBy, ["table after rebind"]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: For a transient entity, transient sub-entities are created for its :n-navigation
+	// property. The complete deep create object is created in back-end via one POST request.
+	// As per the OData V2 spec, Example 4, 2.2.7.1.1.1 the backend does *not*
+	// return the "deep" sub-entities in the POST response.
+	// JIRA: CPOUI5MODELS-1009
+	QUnit.test("deep create: :n navigation property", function (assert) {
+		var oListBinding, oTable,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="objectPage">\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
+	<Text id="customerName" text="{CustomerName}"/>\
+	<t:Table id="table" rows="{ToLineItems}" visibleRowCount="2">\
+		<Text id="itemPosition" text="{ItemPosition}"/>\
+		<Text id="note" text="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectValue("itemPosition", ["", ""])
+			.expectValue("note", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oRootContext;
+
+			that.expectValue("customerName", "SAP");
+
+			oRootContext = oModel.createEntry("/SalesOrderSet", {
+				properties : {CustomerName : "SAP"}
+			});
+			that.oView.byId("objectPage").setBindingContext(oRootContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oTable = that.oView.byId("table");
+			oListBinding = oTable.getBinding("rows");
+
+			that.expectValue("note", "Note 0", 0)
+				.expectValue("note", "Note 1", 1);
+
+			// code under test: deep creates update controls
+			oListBinding.create({Note : "Note 0"}, /*bAtEnd*/true);
+			oListBinding.create({Note : "Note 1"}, /*bAtEnd*/true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectHeadRequest()
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerName : "SAP",
+						ToLineItems : [
+							{Note : "Note 0"},
+							{Note : "Note 1"}
+						]
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('42')"},
+						SalesOrderID : "42",
+						CustomerName : "SAP"
+					},
+					statusCode : 201
+				})
+				.expectValue("salesOrderID", "42")
+				// transient sub contexts are removed -> controls become empty
+				.expectValue("note", ["", ""]);
+
+			// code under test: proper request with deep payload
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oModel.hasPendingChanges(), false);
+
+			that.expectRequest("SalesOrderSet('42')/ToLineItems?$skip=0&$top=102", {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')"
+						},
+						ItemPosition : "10",
+						Note : "Note 0",
+						SalesOrderID : "42"
+					}, {
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='20')"
+						},
+						ItemPosition : "20",
+						Note : "Note 1",
+						SalesOrderID : "42"
+					}]
+				})
+				.expectValue("itemPosition", ["10", "20"])
+				.expectValue("note", ["Note 0", "Note 1"]);
+
+			// code under test: re-read items
+			oListBinding.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("itemPosition", ["20", ""], 1)
+				.expectValue("note", ["Note 1", "Note 2"], 1);
+
+			// code under test: further create
+			oListBinding.create({Note : "Note 2"}, /*bAtEnd*/true);
+			oTable.setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrderLineItem"},
+						Note : "Note 2"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet('42')/ToLineItems"
+				}, {
+					data : {
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='30')"
+						},
+						ItemPosition : "30",
+						Note : "Note 2",
+						SalesOrderID : "42"
+					},
+					statusCode : 201
+				})
+				.expectValue("itemPosition", "30", 2);
+
+			// code under test: submit further create
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: For a transient entity, transient sub-entities are created for its :n-navigation
+	// property. The complete deep create object is created in back-end via one POST request.
+	// The backend returns the "deep" sub-entities in the POST response and therefore no refresh
+	// is needed.
+	// JIRA: CPOUI5MODELS-1009
+	QUnit.test("deep create: :n navigation property (with deep response)", function (assert) {
+		var oListBinding, oTable,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="objectPage">\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
+	<Text id="customerName" text="{CustomerName}"/>\
+	<t:Table id="table" rows="{ToLineItems}" visibleRowCount="2">\
+		<Text id="itemPosition" text="{ItemPosition}"/>\
+		<Text id="note" text="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectValue("itemPosition", ["", ""])
+			.expectValue("note", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oRootContext;
+
+			that.expectValue("customerName", "SAP");
+
+			oRootContext = oModel.createEntry("/SalesOrderSet", {
+				properties : {CustomerName : "SAP"}
+			});
+			that.oView.byId("objectPage").setBindingContext(oRootContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oTable = that.oView.byId("table");
+			oListBinding = oTable.getBinding("rows");
+
+			that.expectValue("note", "Note 0", 0)
+				.expectValue("note", "Note 1", 1);
+
+			// code under test: deep creates update controls
+			oListBinding.create({Note : "Note 0"}, /*bAtEnd*/true);
+			oListBinding.create({Note : "Note 1"}, /*bAtEnd*/true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectHeadRequest()
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerName : "SAP",
+						ToLineItems : [
+							{Note : "Note 0"},
+							{Note : "Note 1"}
+						]
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('42')"},
+						SalesOrderID : "42",
+						CustomerName : "SAP",
+						ToLineItems : {
+							results : [{
+								__metadata : {
+									uri : "SalesOrderLineItemSet"
+										+ "(SalesOrderID='42',ItemPosition='10')"
+								},
+								ItemPosition : "10",
+								Note : "Note 0",
+								SalesOrderID : "42"
+							}, {
+								__metadata : {
+									uri : "SalesOrderLineItemSet"
+										+ "(SalesOrderID='42',ItemPosition='20')"
+								},
+								ItemPosition : "20",
+								Note : "Note 1",
+								SalesOrderID : "42"
+							}]
+						}
+					},
+					statusCode : 201
+				})
+				.expectValue("salesOrderID", "42")
+				// transient sub contexts are removed -> controls become empty
+				.expectValue("note", ["", ""])
+				// reinserts items from deep response
+				.expectValue("itemPosition", ["10", "20"])
+				.expectValue("note", ["Note 0", "Note 1"]);
+
+			// code under test: proper request with deep payload
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oModel.hasPendingChanges(), false);
+
+			that.expectValue("itemPosition", ["20", ""], 1)
+				.expectValue("note", ["Note 1", "Note 2"], 1);
+
+			// code under test: further create
+			oListBinding.create({Note : "Note 2"}, /*bAtEnd*/true);
+			oTable.setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrderLineItem"},
+						Note : "Note 2"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet('42')/ToLineItems"
+				}, {
+					data : {
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='30')"
+						},
+						ItemPosition : "30",
+						Note : "Note 2",
+						SalesOrderID : "42"
+					},
+					statusCode : 201
+				})
+				.expectValue("itemPosition", "30", 2);
+
+			// code under test: submit further create
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: For a transient entity, a transient sub-entity is created for a :n-navigation
+	// property. From this one, a deeper nested transient sub-entity for a :n-navigation property is
+	// created. The complete deep create object is created in back-end via one POST request.
+	// JIRA: CPOUI5MODELS-1009
+	QUnit.test("deep create: nested navigation properties (:n)", function (assert) {
+		var oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
+			sView = '\
+<FlexBox id="objectPage">\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
+	<Text id="companyName" text="{CompanyName}"/>\
+	<t:Table id="salesOrdersTable" rows="{ToSalesOrders}" visibleRowCount="2">\
+		<Text id="note_table" text="{Note}"/>\
+	</t:Table>\
+</FlexBox>\
+<FlexBox id="salesOrderPage">\
+	<Input id="note_input" value="{Note}"/>\
+	<Select id="lineItemsList" items="{ToLineItems}">\
+		<MenuItem text="{ProductID}" />\
+	</Select>\
+</FlexBox>',
+			that = this;
+
+		this.expectValue("note_table", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oRootContext;
+
+			that.expectValue("companyName", "SAP");
+
+			// code under test: create root entity
+			oRootContext = oModel.createEntry("/BusinessPartnerSet", {
+				properties : {CompanyName : "SAP"}
+			});
+			that.oView.byId("objectPage").setBindingContext(oRootContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oListBinding = that.oView.byId("salesOrdersTable").getBinding("rows"),
+				oSalesOrderContext;
+
+			that.expectValue("note_table", "Note 0", 0)
+				.expectValue("note_input", "Note 0");
+
+			// code under test: create sub-entity level 1 and bind it to object page
+			oSalesOrderContext = oListBinding.create({Note : "Note 0"});
+			that.oView.byId("salesOrderPage").bindObject(oSalesOrderContext.getPath());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note_table", "Note foo", 0)
+				.expectValue("note_input", "Note foo");
+
+			// code under test: two-way binding on sub-entity
+			that.oView.byId("note_input").setValue("Note foo");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oLineItemsList = that.oView.byId("lineItemsList"),
+				oListBinding = oLineItemsList.getBinding("items");
+
+			assert.strictEqual(oLineItemsList.getItems().length, 0);
+
+			// code under test: create sub-entity level 2
+			oListBinding.create({ProductID : "HT-1000"});
+
+			assert.strictEqual(oLineItemsList.getItems().length, 1);
+			assert.strictEqual(oLineItemsList.getItems()[0].getText(), "HT-1000");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectHeadRequest()
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.BusinessPartner"},
+						CompanyName : "SAP",
+						ToSalesOrders : [{
+							Note : "Note foo",
+							ToLineItems : [{ProductID : "HT-1000"}]
+						}]
+					},
+					method : "POST",
+					requestUri : "BusinessPartnerSet"
+				}, {
+					data : {
+						__metadata : {uri : "BusinessPartnerSet('42')"},
+						BusinessPartnerID : "42",
+						CompanyName : "SAP"
+					},
+					statusCode : 201
+				})
+				.expectValue("businessPartnerID", "42")
+				.expectValue("note_table", "", 0)
+				.expectValue("note_input", "");
+
+			// code under test: POST request with deep payload
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(that.oView.byId("lineItemsList").getItems().length, 0);
+			assert.strictEqual(oModel.hasPendingChanges(), false);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: For a transient entity, a transient sub-entity is created for a :1-navigation
+	// property and a :n-navigation property as well as for navigation properties of these.
+	// The complete deep create object is created in back-end via one POST request.
+	// Note: This is a technical test; in a business scenario, it is not realistic to create
+	// a product with related sales order items -> sales order and with business partner and
+	// related contacts. These entities have been chosen to cover cases of creation in navigation
+	// properties with different cardinalities.
+	// JIRA: CPOUI5MODELS-1009
+	// TODO: activate the test if deep create for :1 navigation properties is supported
+	QUnit.skip("deep create: nested navigation properties (:1)", function (assert) {
+		var oRootContext,
+			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
+			sView = '\
+<FlexBox id="objectPage">\
+	<Text id="productID" text="{ProductID}"/>\
+	<Text id="productName" text="{Name}"/>\
+	<t:Table id="tableSOItems" rows="{ToSalesOrderLineItems}" visibleRowCount="2">\
+		<Text id="itemNote" text="{Note}"/>\
+		<Text id="customerName" text="{ToHeader/CustomerName}"/>\
+	</t:Table>\
+</FlexBox>\
+<FlexBox id="supplierObjectPage">\
+	<Input id="supplierCompanyName" value="{CompanyName}"/>\
+</FlexBox>',
+			that = this;
+		//Product
+		//  -> (:n) ToSalesOrderLineItems
+		//    -> (:1) ToHeader
+		//  -> (:1) ToSupplier
+		//    -> (:n) ToContacts
+
+		this.expectValue("itemNote", ["", ""])
+			.expectValue("customerName", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectValue("productName", "MyProduct");
+
+			oRootContext = oModel.createEntry("/ProductSet", {
+				properties : {Name : "MyProduct"}
+			});
+			that.oView.byId("objectPage").setBindingContext(oRootContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oItemContext0, oSupplierContext,
+				oListBinding = that.oView.byId("tableSOItems").getBinding("rows");
+
+			that.expectValue("itemNote", "Note 0", 0)
+				.expectValue("itemNote", "Note 1", 1)
+				.expectValue("supplierCompanyName", "SAP")
+				.expectValue("supplierCompanyName", "ACME");
+
+			// code under test: deep creates update controls
+			oItemContext0 = oListBinding.create({Note : "Note 0"}, true);
+			oListBinding.create({Note : "Note 1"}, true);
+			oModel.createEntry("ToHeader",
+				{context : oItemContext0, properties : {Note : "SalesOrderNote"}});
+			oSupplierContext = oModel.createEntry("ToSupplier",
+				{context : oRootContext, properties : {CompanyName : "SAP"}});
+			oModel.createEntry("ToContacts",
+				{context : oSupplierContext, properties : {FirstName : "Alice"}});
+			oModel.createEntry("ToContacts",
+				{context : oSupplierContext, properties : {FirstName : "Bob"}});
+			that.oView.byId("supplierObjectPage").bindObject(oSupplierContext.getPath());
+			// code under test: user-input for sub-entity
+			that.oView.byId("supplierCompanyName").setValue("ACME");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectHeadRequest()
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.Product"},
+						Name : "MyProduct",
+						ToSalesOrderLineItems : [
+							{
+								Note : "Note 0",
+								ToHeader : {
+									Note : "SalesOrderNote"
+								}
+							},
+							{Note : "Note 1"}
+						],
+						ToSupplier : {
+							CompanyName : "ACME",
+							ToContacts : [{FirstName : "Alice"}, {FirstName : "Bob"}]
+						}
+					},
+					method : "POST",
+					requestUri : "ProductSet"
+				}, {
+					data : {
+						__metadata : {uri : "ProductSet('77')"},
+						ProductID : "77",
+						Name : "MyProduct"
+					},
+					statusCode : 201
+				})
+				.expectValue("productID", "77")
+				// transient sub contexts are removed -> controls become empty
+				.expectValue("supplierCompanyName", "")
+				.expectValue("itemNote", ["", ""]);
+
+			// code under test: proper request with deep payload
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oModel.hasPendingChanges(), false);
+		});
+	});
 });

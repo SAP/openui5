@@ -63,6 +63,7 @@ sap.ui.define([
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v2.ODataModel",
+		aDeepCreateParametersAllowlist = ["context", "properties"],
 		MessageType = coreLibrary.MessageType,
 		mMessageType2Severity = {},
 		aRequestSideEffectsParametersAllowList = ["groupId", "urlParameters"];
@@ -3957,6 +3958,7 @@ sap.ui.define([
 				oStoredRequest.method = oRequest.method;
 				oStoredRequest.headers = oRequest.headers;
 				oStoredRequest.data = oRequest.data;
+				oStoredRequest.sideEffects = oRequest.sideEffects;
 
 				if (oRequest.method === "PUT") {
 					// if stored request was a MERGE before (created by setProperty) but is now sent via PUT
@@ -4317,10 +4319,9 @@ sap.ui.define([
 				//need a deep data copy for import
 				oImportData = merge({}, oResultData);
 				if (oRequest.key || oRequest.created) {
-					// no need to pass sideEffects because side-effects requests don't have a key or
-					// a created property attached to the request
 					that._importData(oImportData, mLocalGetEntities, oResponse, oRequest,
-						/*sPath*/undefined, /*sDeepPath*/undefined, /*sKey*/undefined, bIsFunction);
+						/*sPath*/undefined, /*sDeepPath*/undefined, /*sKey*/undefined, bIsFunction,
+						/*sPathFromCanonicalParent*/undefined, oRequest.sideEffects);
 				} else {
 					that._importData(oImportData, mLocalGetEntities, oResponse, oRequest, sPath,
 						oRequest.deepPath, /*sKey*/undefined, bIsFunction,
@@ -4554,8 +4555,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod, sDeepPath) {
-		var sContentID, bCreated, oEntityType, sETag, oExpandRequest, mHeaders, sMethod, mParams,
-			oPayload, oRequest, oUnModifiedEntry, sUrl, aUrlParams,
+		var sContentID, oContext, bCreated, oEntityType, sETag, oExpandRequest, mHeaders, sMethod,
+			mParams, oPayload, oRequest, oUnModifiedEntry, sUrl, aUrlParams,
+			sEntityPath = "/" + sKey,
 			that = this;
 
 		if (sDeepPath && this.mChangedEntities[sKey] && this.mChangedEntities[sKey].__metadata) {
@@ -4656,8 +4658,9 @@ sap.ui.define([
 
 		sUrl = this._createRequestUrl('/' + sKey, null, aUrlParams, this.bUseBatch);
 
+		oContext = this.getContext(sEntityPath);
 		oRequest = this._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oPayload, sETag,
-			undefined, true);
+			undefined, true, oContext.hasSubContexts());
 
 		if (bCreated) {
 			oRequest.created = true;
@@ -4670,6 +4673,8 @@ sap.ui.define([
 			if (oData.__metadata.created.functionMetadata) {
 				oRequest.functionTarget = this.oMetadata._getCanonicalPathOfFunctionImport(
 					oData.__metadata.created.functionMetadata, mParams.urlParameters);
+			} else {
+				this._addSubEntitiesToPayload(oContext, oPayload);
 			}
 		}
 
@@ -6146,6 +6151,10 @@ sap.ui.define([
 				var oCreatedInfo, oRequest, oRequestHandle0,
 					oGroupInfo = that._resolveGroup(sKey);
 
+				if (that.getContext("/" + sKey).hasTransientParent()) {
+					return;
+				}
+
 				if (oGroupInfo.groupId === sGroupId || !sGroupId) {
 					oRequest = that._processChange(sKey, oData, sMethod || that.sDefaultUpdateMethod);
 					oRequest.key = sKey;
@@ -6292,7 +6301,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._discardEntityChanges = function (sKey, bDeleteEntity) {
-		var oCreated,
+		var oContext, oCreated,
 			// determine group synchronously otherwise #_resolveGroup might return a different group
 			// if for example the entity has been deleted already
 			sGroupId = this._resolveGroup(sKey).groupId,
@@ -6303,9 +6312,11 @@ sap.ui.define([
 			that.abortInternalRequest(sGroupId, {requestKey : sKey});
 		});
 		if (bDeleteEntity) {
+			oContext = this.getContext("/" + sKey);
+			oContext.removeFromTransientParent();
 			// remove context synchronously from the list of created contexts to avoid a temporary
 			// empty table row
-			this.oCreatedContextsCache.findAndRemoveContext(this.mContexts["/" + sKey]);
+			this.oCreatedContextsCache.findAndRemoveContext(oContext);
 			// remember created information before it is deleted in #_removeEntity
 			oCreated = this.mChangedEntities[sKey]
 				&& this.mChangedEntities[sKey].__metadata.created;
@@ -6352,7 +6363,9 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.resetChanges = function (aPath, bAll, bDeleteCreatedEntities) {
-		var pMetaDataLoaded = this.oMetadata.loaded(),
+		var aRemoveKeys,
+			pMetaDataLoaded = this.oMetadata.loaded(),
+			aRemoveRootKeys = [],
 			that = this;
 
 		if (bAll) {
@@ -6396,11 +6409,19 @@ sap.ui.define([
 						oChangedEntity = that.mChangedEntities[sKey];
 						if (ODataModel._isChangedEntityEmpty(oChangedEntity)
 								|| !oEntityInfo.propertyPath) {
-							that._discardEntityChanges(sKey,
-								oChangedEntity.__metadata.created && bDeleteCreatedEntities);
+							aRemoveRootKeys.push(sKey);
 						}
 					}
 				}
+			});
+			aRemoveKeys = aRemoveRootKeys;
+			aRemoveRootKeys.forEach(function (sKey) {
+				aRemoveKeys = aRemoveKeys.concat(
+					that.getContext("/" + sKey).getSubContextsAsKey(/*bRecursive*/true));
+			});
+			(new Set(aRemoveKeys)).forEach(function (sKey) {
+				that._discardEntityChanges(sKey,
+					that.mChangedEntities[sKey].__metadata.created && bDeleteCreatedEntities);
 			});
 		} else {
 			each(this.mChangedEntities, function (sKey, oChangedEntity) {
@@ -6511,6 +6532,12 @@ sap.ui.define([
 		oChangeObject[sPropertyPath] = _Helper.isPlainObject(oValue)
 			? _Helper.merge({}, oValue)
 			: oValue;
+
+		if (oContext && oContext.hasTransientParent()) {
+			mChangedEntities[sKey] = true;
+			this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
+			return true;
+		}
 
 		// If property is key property of ReferentialConstraint, also update the corresponding
 		// navigation property
@@ -6890,9 +6917,16 @@ sap.ui.define([
 	 * initial data, for example if the server requires a unit for an amount. This also applies if
 	 * this property has a default value.
 	 *
-	 * Note: A deep create (including data defined by navigation properties) is not supported. The
-	 * dependent entity has to be created using a second list binding, after this entity has been
-	 * saved successfully in the back-end system.
+	 * Note: Deep create is only supported since 1.108.0, where "deep create" means creation of a
+	 * sub-entity for a navigation property of a transient, not yet persisted root entity. Before
+	 * 1.108.0, the sub-entity had to be created after the transient entity had been saved
+	 * successfully in the back-end system. Since 1.108.0, a deep create is triggered when
+	 * the <code>sPath</code> parameter is a navigation property for the entity type associated with
+	 * the transient context given in <code>mParameters.context</code>. The payload of the OData
+	 * request to create the root entity then contains its sub-entities. On creation of a
+	 * sub-entity, only the <code>sPath</code>, <code>mParameters.context</code> and
+	 * <code>mParameters.properties</code> method parameters are allowed;
+	 * the context given in <code>mParameters.context</code> must not be inactive.
 	 *
 	 * @param {string} sPath
 	 *   The path to the EntitySet
@@ -6949,76 +6983,73 @@ sap.ui.define([
 	 *   <code>undefined</code> if the service metadata are not yet loaded or if a
 	 *   <code>created</code> callback parameter is given
 	 * @throws {Error}
-	 *   If the <code>expand</code> parameter is used but the batch mode is disabled
+	 *   If:
+	 *   <ul>
+	 *     <li>The <code>expand</code> parameter is used but the batch mode is disabled, or
+	 *     <li>in the case of a deep create:
+	 *     <ul>
+	 *       <li>If an unsupported parameter is used, or
+	 *       <li>the <code>sPath</code> parameter is either no navigation property or a navigation
+	 *         property with single cardinality for the entity type associated with the given
+	 *         <code>mParameters.context</code>, or
+	 *       <li><code>mParameters.context</code> is inactive.
+	 *     </ul>
+	 *   </ul>
+	 *
 	 * @public
 	 */
 	ODataModel.prototype.createEntry = function (sPath, mParameters) {
 		var bCanonical, sChangeSetId, oContext, fnCreated, pCreate, fnCreatedPromiseResolve,
-			sDeepPath, fnError, sETag, sExpand, sGroupId, mHeaders, bInactive, sKey,
-			sNormalizedPath, vProperties, bRefreshAfterChange, oRequest, mRequests, fnSuccess, sUrl,
-			aUrlParams, mUrlParams,
+			bDeepCreate, sDeepPath, oEntityMetadata, fnError, sETag, sExpand, sGroupId, mHeaders,
+			bInactive, bIsCollection, sKey, sNormalizedPath, vProperties, bRefreshAfterChange,
+			oRequest, mRequests, fnSuccess, sUrl, aUrlParams, mUrlParams,
 			oEntity = {},
 			sMethod = "POST",
 			that = this;
 
-		if (mParameters) {
-			vProperties = mParameters.properties;
-			sGroupId = mParameters.groupId || mParameters.batchGroupId;
-			sChangeSetId = mParameters.changeSetId;
-			oContext  = mParameters.context;
-			fnSuccess = mParameters.success;
-			fnError   = mParameters.error;
-			fnCreated = mParameters.created;
-			sETag     = mParameters.eTag;
-			mHeaders  = mParameters.headers;
-			mUrlParams = mParameters.urlParameters;
-			bRefreshAfterChange = mParameters.refreshAfterChange;
-			bCanonical = mParameters.canonicalRequest;
-			sExpand = mParameters.expand;
-			bInactive = mParameters.inactive;
+		function addEntityToCacheAndCreateContext(oTransientParent) {
+			sKey = that._addEntity(merge({}, oEntity));
+			if (!bInactive) {
+				that.mChangedEntities[sKey] = oEntity;
+			}
+			return that.getContext("/" + sKey, sDeepPath, pCreate, bInactive, oTransientParent);
 		}
-		if (sExpand && !this.bUseBatch) {
-			throw new Error("The 'expand' parameter is only supported if batch mode is used");
-		}
-		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
-		mHeaders = mHeaders || {};
-		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
-		var oRequestHandle = {
-			abort: function() {
-				if (oRequest) {
-					oRequest._aborted = true;
-					if (oRequest.expandRequest) {
-						oRequest.expandRequest._aborted = true;
-					}
+		function checkDeepCreatePreconditions() {
+			var oSrcEntityType;
+
+			if (bDeepCreate) {
+				oSrcEntityType = that.oMetadata._getEntityTypeByPath(oContext.getPath());
+				if (!that.oMetadata._getNavigationPropertyNames(oSrcEntityType).includes(sPath)) {
+					throw new Error("Cannot create entity; path '" + sPath
+						+ "' is not a navigation property of '" + oSrcEntityType.name + "'");
+				}
+				if (!bIsCollection) {
+					throw new Error("Cannot create entity; deep create on navigation property '"
+					+ sPath + "' with single cardinality is not supported");
 				}
 			}
-		};
-
-		if (!sPath.startsWith("/") && !oContext) {
-			sPath = "/" + sPath;
 		}
 
-		sNormalizedPath = that._normalizePath(sPath, oContext, bCanonical);
-		sDeepPath = that.resolveDeep(sPath, oContext);
-
 		function create() {
-			var oCreateData, oCreatedContext, oCreateResponse, oEntitySetMetadata, oExpandRequest,
-				oGroupInfo, sUID,
+			var oCreateData, oCreatedContext, oCreateResponse, oEntitySetMetadata, sEntityType,
+				sEntityUri, oExpandRequest, oGroupInfo, oParentEntity, sUID,
 				bCreateFailed = false,
 				fnErrorFromParameters = fnError,
 				fnSuccessFromParameters = fnSuccess;
 
-			// fallback to groups as defined in mChangeGroups; using path is OK as we don't have an
-			// entity yet and the entity type can be derived from the path to determine the group ID
-			oGroupInfo = that._resolveGroup(sNormalizedPath);
-			sGroupId = sGroupId || oGroupInfo.groupId;
-			sChangeSetId = sChangeSetId || oGroupInfo.changeSetId;
-			bRefreshAfterChange = that._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
-
-			var oEntityMetadata = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
+			bCanonical = that._isCanonicalRequestNeeded(bCanonical);
+			mHeaders = mHeaders || {};
+			aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
+			if (!sPath.startsWith("/") && !oContext) {
+				sPath = "/" + sPath;
+			}
+			sNormalizedPath = that._normalizePath(sPath, oContext, bCanonical);
+			sDeepPath = that.resolveDeep(sPath, oContext);
+			bIsCollection = that.oMetadata._isCollection(sDeepPath);
+			checkDeepCreatePreconditions();
+			oEntityMetadata = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
 			if (!oEntityMetadata) {
-
 				assert(oEntityMetadata, "No Metadata for collection " + sNormalizedPath + " found");
 				return undefined;
 			}
@@ -7040,16 +7071,31 @@ sap.ui.define([
 					assert(vProperties.length === 0, "No metadata for the following properties found: " + vProperties.join(","));
 				}
 			}
-			//get EntitySet metadata for data storage
+			sEntityType = "" + oEntityMetadata.entityType;
 			oEntitySetMetadata = that.oMetadata._getEntitySetByType(oEntityMetadata);
 			sUID = uid();
 			sKey = oEntitySetMetadata.name + "('" + sUID + "')";
-
-
-			if (sDeepPath && that.oMetadata._isCollection(sDeepPath)){
+			sEntityUri = that.sServiceUrl + '/' + sKey;
+			if (sDeepPath && bIsCollection) {
 				sDeepPath = sDeepPath + "('" + sUID + "')";
 			}
+			if (bDeepCreate) {
+				oParentEntity = that._getObject(oContext.getPath());
+				sChangeSetId = oParentEntity.__metadata.created.changeSetId;
+				sGroupId = oParentEntity.__metadata.created.groupId;
+				oEntity.__metadata = {
+					type : sEntityType,
+					uri : sEntityUri,
+					created : {
+						changeSetId : sChangeSetId,
+						groupId : sGroupId
+					}
+				};
+				oCreatedContext = addEntityToCacheAndCreateContext(oContext);
+				oContext.addSubContext(sPath, oCreatedContext, bIsCollection);
 
+				return oCreatedContext;
+			}
 			if (sExpand) {
 				mHeaders = Object.assign({}, mHeaders, {
 					"Content-ID" : sUID,
@@ -7110,9 +7156,15 @@ sap.ui.define([
 					fnCreatedPromiseResolve();
 				};
 			}
+			// fallback to groups as defined in mChangeGroups; using path is OK as we don't have an
+			// entity yet and the entity type can be derived from the path to determine the group ID
+			oGroupInfo = that._resolveGroup(sNormalizedPath);
+			sGroupId = sGroupId || oGroupInfo.groupId;
+			sChangeSetId = sChangeSetId || oGroupInfo.changeSetId;
+			bRefreshAfterChange = that._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 			oEntity.__metadata = {
-				type : "" + oEntityMetadata.entityType,
-				uri : that.sServiceUrl + '/' + sKey,
+				type : sEntityType,
+				uri : sEntityUri,
 				created : {
 					changeSetId : sChangeSetId,
 					error : fnError,
@@ -7138,6 +7190,11 @@ sap.ui.define([
 						// creation.
 						oCreatedContext.resetCreatedPromise();
 					}
+					if (oCreatedContext.hasSubContexts()) {
+						// _processSuccess already removes this entity change, therefore one must
+						// not call resetChanges with oCreatedContext.getPath()
+						that.resetChanges(oCreatedContext.getSubContextsAsPath(), undefined, true);
+					}
 					resolve();
 				};
 				oEntity.__metadata.created.abort = reject;
@@ -7145,12 +7202,7 @@ sap.ui.define([
 			pCreate.catch(function () {
 				// avoid uncaught in promise if the caller of #createEntry does not use the promise
 			});
-
-			sKey = that._addEntity(merge({}, oEntity));
-			if (!bInactive) {
-				that.mChangedEntities[sKey] = oEntity;
-			}
-
+			oCreatedContext = addEntityToCacheAndCreateContext();
 			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oEntity, sETag);
 
@@ -7166,8 +7218,6 @@ sap.ui.define([
 				oEntity.__metadata.created.contentID = sUID;
 			}
 
-			oCreatedContext = that.getContext("/" + sKey, sDeepPath, pCreate, bInactive);
-
 			oRequest.key = sKey;
 			oRequest.created = true;
 
@@ -7178,6 +7228,16 @@ sap.ui.define([
 
 			that.oMetadata.loaded().then(function () {
 				oCreatedContext.fetchActivated().then(function () {
+					var oRequestHandle = {
+							abort: function() {
+								if (oRequest) {
+									oRequest._aborted = true;
+									if (oRequest.expandRequest) {
+										oRequest.expandRequest._aborted = true;
+									}
+								}
+							}
+						};
 					that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess,
 						fnError, oRequestHandle, bRefreshAfterChange);
 					that._processRequestQueueAsync(that.mRequests);
@@ -7185,6 +7245,38 @@ sap.ui.define([
 			});
 
 			return oCreatedContext;
+		}
+
+		if (mParameters) {
+			vProperties = mParameters.properties;
+			sGroupId = mParameters.groupId || mParameters.batchGroupId;
+			sChangeSetId = mParameters.changeSetId;
+			oContext  = mParameters.context;
+			fnSuccess = mParameters.success;
+			fnError   = mParameters.error;
+			fnCreated = mParameters.created;
+			sETag     = mParameters.eTag;
+			mHeaders  = mParameters.headers;
+			mUrlParams = mParameters.urlParameters;
+			bRefreshAfterChange = mParameters.refreshAfterChange;
+			bCanonical = mParameters.canonicalRequest;
+			sExpand = mParameters.expand;
+			bInactive = mParameters.inactive;
+		}
+		if (sExpand && !this.bUseBatch) {
+			throw new Error("The 'expand' parameter is only supported if batch mode is used");
+		}
+
+		bDeepCreate = oContext && oContext.isTransient && oContext.isTransient();
+		if (bDeepCreate) {
+			Object.keys(mParameters).forEach(function (sParameterKey) {
+				if (!aDeepCreateParametersAllowlist.includes(sParameterKey)) {
+					throw new Error("deep create, unsupported parameter: " + sParameterKey);
+				}
+			});
+			if (oContext.isInactive()) {
+				throw new Error("deep create, context must not be inactive");
+			}
 		}
 
 		// If no callback function is provided context must be returned synchronously
@@ -8127,16 +8219,19 @@ sap.ui.define([
 	 *   A created promise as specified in the constructor of {@link sap.ui.model.odata.v2.Context}
 	 * @param {boolean} [bInactive]
 	 *   Whether the created context is inactive
+	 * @param {sap.ui.model.odata.v2.Context} [oTransientParent]
+	 *   The transient parent context
 	 * @returns {sap.ui.model.odata.v2.Context}
 	 *   The ODate V2 context for the given path
 	 * @private
 	 */
-	ODataModel.prototype.getContext = function (sPath, sDeepPath, oCreatePromise, bInactive) {
+	ODataModel.prototype.getContext = function (sPath, sDeepPath, oCreatePromise, bInactive,
+			oTransientParent) {
 		var oContext = this.mContexts[sPath];
 
 		if (!oContext) {
 			oContext = this.mContexts[sPath]
-				= new Context(this, sPath, sDeepPath, oCreatePromise, bInactive);
+				= new Context(this, sPath, sDeepPath, oCreatePromise, bInactive, oTransientParent);
 		} else {
 			oContext.setDeepPath(sDeepPath || oContext.getDeepPath() || sPath);
 		}
@@ -8440,6 +8535,47 @@ sap.ui.define([
 		return Object.keys(oEntity).every(function (sKey) {
 			return sKey === "__metadata";
 		});
+	};
+
+	/**
+	 * Adds the sub-entities contained in the given root context to the given request payload
+	 * object.
+	 *
+	 * @param {sap.ui.model.odata.v2.Context} oRootContext
+	 *   The root context which may have sub-entities
+	 * @param {object} oPayload
+	 *   The object representing the root context in the payload for the creation POST request
+	 *
+	 * @private
+	 */
+	ODataModel.prototype._addSubEntitiesToPayload = function (oRootContext, oPayload) {
+		var i, sNavProperty, vSubContexts, oSubEntity,
+			mSubContexts = oRootContext.getSubContexts(),
+			that = this;
+
+		function getEntityData(oContext) {
+			var oEntity = _Helper.merge({}, that._getObject(oContext.getPath()));
+
+			delete oEntity.__metadata;
+
+			return oEntity;
+		}
+
+		for (sNavProperty in mSubContexts) {
+			vSubContexts = mSubContexts[sNavProperty];
+			if (Array.isArray(vSubContexts)) {
+				oPayload[sNavProperty] = [];
+				for (i = 0; i < vSubContexts.length; i += 1) {
+					oSubEntity = getEntityData(vSubContexts[i]);
+					oPayload[sNavProperty].push(oSubEntity);
+					this._addSubEntitiesToPayload(vSubContexts[i], oSubEntity);
+				}
+			} else {
+				oSubEntity = getEntityData(vSubContexts);
+				oPayload[sNavProperty] = oSubEntity;
+				this._addSubEntitiesToPayload(vSubContexts, oSubEntity);
+			}
+		}
 	};
 
 	return ODataModel;
