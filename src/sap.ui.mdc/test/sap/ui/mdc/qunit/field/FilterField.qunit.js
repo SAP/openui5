@@ -329,6 +329,9 @@ sap.ui.define([
 		aOperators = oFilterField.getOperators();
 		assert.ok(aOperators.length == 0, "no Operators returned");
 
+		oFilterField.removeOperator("EQ");
+		aOperators = oFilterField.getOperators();
+		assert.ok(aOperators.length == 19, "all default Operators without EQreturned");
 	});
 
 	QUnit.test("set/getDefaultOperator", function(assert) {

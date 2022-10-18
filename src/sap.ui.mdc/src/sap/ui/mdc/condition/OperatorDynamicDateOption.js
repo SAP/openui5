@@ -428,6 +428,8 @@ sap.ui.define([
 					aRange[i] = DateUtil.typeToUniversalDate(aRange[i], oType, sBaseType);
 					aRange[i] = DateUtil.utcToLocal(aRange[i]);
 				}
+			} else if (oOperator.valueTypes.length === 0) {
+				aRange = [];
 			} else if (oOperator.valueTypes[0] === Operator.ValueType.Self) {
 				aRange = oValue.values;
 				for (i = 0; i < aRange.length; i++) {
