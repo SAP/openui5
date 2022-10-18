@@ -4278,6 +4278,8 @@ sap.ui.define([
 	ObjectPageLayout.prototype.setShowFooter = function (bShowFooter) {
 		var vResult = this.setProperty("showFooter", bShowFooter, true);
 		this._toggleFooter(bShowFooter);
+		this.$().toggleClass("sapUxAPObjectPageLayoutFooterVisible", bShowFooter);
+
 		return vResult;
 	};
 

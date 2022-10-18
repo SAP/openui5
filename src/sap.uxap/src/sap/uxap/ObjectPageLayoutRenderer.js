@@ -40,7 +40,8 @@ sap.ui.define([],
 				bHeaderLabelSet = oLandmarkInfo && oLandmarkInfo.getHeaderLabel(),
 				bRootRoleSet = oLandmarkInfo && oLandmarkInfo.getRootRole(),
 				bRootLabelSet = oLandmarkInfo && oLandmarkInfo.getRootLabel(),
-				bNavigationRoleSet = oLandmarkInfo && oLandmarkInfo.getNavigationRole();
+				bNavigationRoleSet = oLandmarkInfo && oLandmarkInfo.getNavigationRole(),
+				bShowFooter = oControl.getShowFooter();
 
 			if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
 				oAnchorBar = oControl.getAggregation("_anchorBar");
@@ -55,6 +56,9 @@ sap.ui.define([],
 				oRm.attr("aria-label", sRootAriaLabelText);
 			}
 			oRm.class("sapUxAPObjectPageLayout");
+			if (bShowFooter) {
+				oRm.class("sapUxAPObjectPageLayoutFooterVisible");
+			}
 			if (bTitleClickable) {
 				oRm.class("sapUxAPObjectPageLayoutTitleClickEnabled");
 			}
