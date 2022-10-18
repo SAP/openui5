@@ -109,10 +109,10 @@ sap.ui.define([
 		return CompVariant.getMappingInfo();
 	};
 
-	function isUserAuthor(oAuthor) {
+	function isUserAuthor(sAuthor) {
 		var oSettings = Settings.getInstanceOrUndef();
 		var vUserId = oSettings && oSettings.getUserId();
-		return !vUserId || vUserId.toUpperCase() === oAuthor.toUpperCase();
+		return !vUserId || !sAuthor || vUserId.toUpperCase() === sAuthor.toUpperCase();
 	}
 
 	/**
