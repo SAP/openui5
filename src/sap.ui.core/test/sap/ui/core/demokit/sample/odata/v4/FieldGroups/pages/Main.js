@@ -2,11 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/Device",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/TestUtils"
-], function (Opa5, EnterText, Press, TestUtils) {
+], function (Device, Opa5, EnterText, Press, TestUtils) {
 	"use strict";
 	var sCurrentRequestBody,
 		sViewName = "sap.ui.core.sample.odata.v4.FieldGroups.FieldGroups";
@@ -55,17 +56,20 @@ sap.ui.define([
 					});
 				},
 				expectRequest : function (aExpectedMessages) {
-					var bDocumentHasFocus = false;
+					var bSkipTest = false;
 
 					this.waitFor({
 						check : function () {
 							// check not possible when document lost focus
-							bDocumentHasFocus = document.hasFocus();
-							return sCurrentRequestBody !== undefined || !bDocumentHasFocus;
+							// or test runs in Firefox
+							bSkipTest = Device.browser.firefox || !document.hasFocus();
+
+							return sCurrentRequestBody !== undefined || bSkipTest;
 						},
 						success : function () {
-							if (!bDocumentHasFocus) {
-								Opa5.assert.ok(true, "Document lost focus, check skipped");
+							if (bSkipTest) {
+								Opa5.assert.ok(true, "Document lost focus or test runs in Firefox,"
+									+ " check skipped");
 							} else {
 								aExpectedMessages.forEach(function (sExpectedMessage) {
 									Opa5.assert.ok(sCurrentRequestBody.includes(sExpectedMessage),
