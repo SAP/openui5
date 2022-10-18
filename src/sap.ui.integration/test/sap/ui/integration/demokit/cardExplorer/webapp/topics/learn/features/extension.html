@@ -80,6 +80,50 @@
 				</table>
 			</div>
 
+			<h2 id="Lifecycle">Extension Lifecycle</h2>
+			<p>
+				The extension lifecycle is bound to the card that uses it.
+				The below listed hooks can be used to react on key card events.
+			</p>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>init</td>
+						<td>
+							Called when the extension is instantiated.
+						</td>
+					</tr>
+					<tr>
+						<td>exit</td>
+						<td>
+							Called when the extension is destroyed.
+						</td>
+					</tr>
+					<tr>
+						<td>onCardReady</td>
+						<td>
+							Called when the card is ready. After this <code>getCard()</code> returns an interface to the card.
+							Read more in the <a href="#extensionApi">Extension API</a>.
+						</td>
+					</tr>
+					<tr>
+						<td>loadDependencies</td>
+						<td>
+							Called during the preparation of the card, before data is displayed for the first time.
+							Use it to load critical libraries or resources, without which the data cannot be displayed.
+							It is important to return a <code>Promise</code>, which will be awaited by the card.
+							Until the promise is resolved, the card displays a loading animation.
+							<br>
+							<b>Note:</b> This hook is experimental since 1.108 and may change!
+						</td>
+					</tr>
+				</table>
+			</div>
+
 			<h2 id="extensionApi">Extension API</h2>
 			<p>
 				In the Extension JavaScript module you can use <code>getCard()</code> method, which provides an <a
@@ -95,7 +139,7 @@
 			<ul>
 				<li>The extension should be defined in a UI5 Module and extend the <a data-demokit-href="#/api/sap.ui.integration.Extension"
 						target="_blank">sap.ui.integration.Extension</a> class.</li>
-				<li>For optimal loading performance it is recommended to avoid any dependencies to non-ui5 modules.</li>
+				<li>For optimal loading performance it is recommended to avoid any dependencies that are not part of the sap.ui.integration library.</li>
 			</ul>
 			<b>Note:</b> Each card can have only one extension.
 
@@ -177,6 +221,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 			<h4>Table of Contents</h4>
 			<div><a href="#overview">Overview</a></div>
 			<div><a href="#manifestProperties">Manifest Properties</a></div>
+			<div><a href="#Lifecycle">Extension Lifecycle</a></div>
 			<div><a href="#extensionApi">Extension API</a></div>
 			<div><a href="#extensionRequirements">Extension Requirements</a></div>
 			<div><a href="#sharing">Sharing Extensions</a></div>

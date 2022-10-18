@@ -1549,6 +1549,26 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Load Third-Party Dependency',
+								key: 'loadDependencies',
+								experimental: true,
+								settings: {
+									columns: 5
+								},
+								files: [
+									{
+										url: '/samples/extension/loadDependencies/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/extension/loadDependencies/Extension.js',
+										name: 'Extension.js',
+										key: 'Extension.js'
+									}
+								]
+							},
+							{
 								title: 'Northwind Image Conversion',
 								key: 'northwindImage',
 								files: [

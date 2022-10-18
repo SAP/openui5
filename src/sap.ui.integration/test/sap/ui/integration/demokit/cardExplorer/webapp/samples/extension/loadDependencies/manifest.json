@@ -1,0 +1,35 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "card.explorer.extension.loadDependencies.card"
+	},
+	"sap.card": {
+		"extension": "./Extension",
+		"data": {
+			"json": [
+				{
+					"IPAddress": "0000:0000:0000:0000:0000:0000:0000:000"
+				},
+				{
+					"IPAddress": "2001:0db8:1111:000a:00b0:0000:9000:0200"
+				},
+				{
+					"IPAddress": "e80:0000:0000:0000:a299:9bff:fe18:50d1"
+				},
+				{
+					"IPAddress": "2001:0db8:aaaa:0001:0000:0000:0000:0100"
+				}
+			]
+		},
+		"type": "List",
+		"header": {
+			"title": "Compressing IPv6 Addresses Using Third-Party Library"
+		},
+		"content": {
+			"item": {
+				"title": "IPv6 Address: {IPAddress}",
+				"description": "Compressed Address: {= extension.formatters.compressIPAddress(${IPAddress}) }"
+			}
+		}
+	}
+}

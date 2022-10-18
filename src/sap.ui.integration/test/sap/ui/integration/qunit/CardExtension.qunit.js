@@ -1,4 +1,4 @@
-/* global QUnit, sinon */
+/* global QUnit */
 
 sap.ui.define([
 	"sap/base/Log",
@@ -529,10 +529,8 @@ sap.ui.define([
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
-	QUnit.module("Life-cycle method onCardReady", {
+	QUnit.module("Extension Lifecycle", {
 		beforeEach: function () {
-			this.fnOnCardReadyStub = sinon.stub(Extension.prototype, "onCardReady");
-
 			this.oCard = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
 				manifest: {
@@ -541,49 +539,60 @@ sap.ui.define([
 					},
 					"sap.card": {
 						"type": "List",
-						"extension": "./extensions/ExtensionSample"
+						"extension": "./extensions/ExtensionSample",
+						"content": {
+							"item": {}
+						}
 					}
 				}
 			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		},
 		afterEach: function () {
 			this.oCard.destroy();
 			this.oCard = null;
-			this.fnOnCardReadyStub.restore();
 		}
 	});
 
 	QUnit.test("Method onCardReady is called once on card initialization", function (assert) {
 		// arrange
 		var done = assert.async();
+		var onCardReadyStub = this.stub(Extension.prototype, "onCardReady");
 
 		this.oCard.attachEvent("_ready", function () {
-			assert.ok(this.fnOnCardReadyStub.calledOnce, "The onCardReady event is called once.");
+			assert.ok(onCardReadyStub.calledOnce, "The onCardReady event is called once.");
 			done();
-		}.bind(this));
-
-		// act
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
 	});
 
 	QUnit.test("Method resolveDestination inside onCardReady does not throw an error", function (assert) {
 		// arrange
 		var done = assert.async();
+		var onCardReadyStub = this.stub(Extension.prototype, "onCardReady");
 
-		this.fnOnCardReadyStub.callsFake(function () {
+		onCardReadyStub.callsFake(function () {
 			this.oCard.resolveDestination("test");
 
 			assert.ok(true, "There is no error when calling resolveDestination.");
 			done();
 		}.bind(this));
+	});
 
-		// act
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	QUnit.test("Method loadDependencies is called once on card initialization", function (assert) {
+		// arrange
+		var done = assert.async();
+		var loadDependenciesStub = this.stub(Extension.prototype, "loadDependencies");
+
+		this.oCard.attachEvent("_ready", function () {
+			// assert
+			assert.ok(loadDependenciesStub.calledOnce, "'loadDependencies' is called once.");
+			done();
+		});
 	});
 
 	QUnit.module("Use translations from inside the extension", {
 		beforeEach: function () {
-			this.fnOnCardReadyStub = sinon.stub(Extension.prototype, "onCardReady");
+			this.fnOnCardReadyStub = this.stub(Extension.prototype, "onCardReady");
 
 			this.oCard = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
@@ -602,7 +611,6 @@ sap.ui.define([
 		afterEach: function () {
 			this.oCard.destroy();
 			this.oCard = null;
-			this.fnOnCardReadyStub.restore();
 		}
 	});
 
@@ -664,7 +672,6 @@ sap.ui.define([
 			this.oCard = null;
 		}
 	});
-
 
 	QUnit.test("validation method", function (assert) {
 		// arrange
