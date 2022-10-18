@@ -48,6 +48,11 @@
 			displayFormat="short"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
+		<Label text="DatePicker with calendarWeekNumbering set to MiddleEastern" labelFor="DP17"/>
+		<DatePicker
+			id="DP17"
+			calendarWeekNumbering="MiddleEastern"
+			class="sapUiSmallMarginBottom"/>
 		<Label text="DatePicker with non-working days - 05.11.2015 - 25.11.2015 and with shortcut for today" labelFor="DP7"/>
 		<DatePicker
 			id="DP7"
