@@ -323,6 +323,78 @@ test("Whitelist", function() {
 	jQuery.sap.clearUrlWhitelist();
 });
 
+QUnit.test("Invalid protocol slashes", function(assert) {
+	jQuery.sap.addUrlWhitelist("http", "sap.com");
+
+	assert.notOk(jQuery.sap.validateUrl("http:/\\evil.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http:/\\/evil.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http:/\\//evil.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http:\\\\evil.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http:/evil.com"), "URL is not valid");
+
+	jQuery.sap.clearUrlWhitelist();
+});
+
+QUnit.test("Whitespaces in URL with allow-list", function(assert) {
+	jQuery.sap.addUrlWhitelist("http", "sap.com");
+
+	// URL not in allow-list
+	assert.notOk(jQuery.sap.validateUrl("\rhttp://example.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("\nhttp://example.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("\thttp://example.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("\r\nhttp://example.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("\r\n\thttp://example.com"), "URL is not valid");
+
+	assert.notOk(jQuery.sap.validateUrl("ht\rtp://example.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("ht\ntp://example.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("ht\ttp://example.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("ht\r\ntp://example.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("ht\r\n\ttp://example.com"), "URL is not valid");
+
+	assert.notOk(jQuery.sap.validateUrl("http://exa\rmple.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http://exa\nmple.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http://exa\tmple.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http://exa\r\nmple.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http://exa\r\n\tmple.com"), "URL is not valid");
+
+	assert.notOk(jQuery.sap.validateUrl("http://example.com?some=ab\ncd"), "URL is not valid.");
+	assert.notOk(jQuery.sap.validateUrl("http://example.com?some=ab" + encodeURIComponent("\n") + "cd"), "URL is not valid.");
+
+	// URL is in allow-list
+	assert.notOk(jQuery.sap.validateUrl("ht\rtp://sap.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("ht\ntp://sap.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("ht\ttp://sap.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("ht\r\ntp://sap.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("ht\r\n\ttp://sap.com"), "URL is not valid");
+
+	assert.notOk(jQuery.sap.validateUrl("http://sa\rp.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http://sa\np.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http://sa\tp.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http://sa\r\np.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http://sa\r\n\tp.com"), "URL is not valid");
+
+	assert.notOk(jQuery.sap.validateUrl("http://sap.com?some=ab\ncd"), "URL is not valid.");
+	assert.ok(jQuery.sap.validateUrl("http://sap.com?some=ab" + encodeURIComponent("\n") + "cd"), "URL is valid because it is on the allow-list.");
+
+	jQuery.sap.clearUrlWhitelist();
+});
+
+QUnit.test("Whitespaces in URL without allow-list", function(assert) {
+	assert.notOk(jQuery.sap.validateUrl("ht\rtp://example.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("ht\ntp://example.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("ht\ttp://example.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("ht\r\ntp://example.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("ht\r\n\ttp://example.com"), "URL is not valid");
+
+	assert.notOk(jQuery.sap.validateUrl("http://exa\rmple.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http://exa\nmple.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http://exa\tmple.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http://exa\r\nmple.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http://exa\r\n\tmple.com"), "URL is not valid");
+
+	jQuery.sap.clearUrlWhitelist();
+});
+
 module("Sanitize check");
 
 test("valid HTML5", function() {
