@@ -3,6 +3,10 @@
 /* Base theme                         */
 /* ================================== */
 
+@_sap_f_DynamicPage_FooterHeight: 3rem;
+@_sap_f_DynamicPage_FooterHeight_Compact: 2.5rem;
+@_sap_f_DynamicPage_FooterMarginBottom: 0.5rem;
+
 .sapFDynamicPage {
 	width: 100%;
 	height: 100%;
@@ -156,6 +160,18 @@ html[data-sap-ui-browser^="ie"] {
 	}
 }
 
+.sapFDynamicPageFooterVisible .sapFDynamicPageContentWrapper,
+.sapFDynamicPageFooterVisible .sapFDynamicPageContentFitContainer *[style*="overflow: hidden auto;"] {
+	scroll-padding-bottom: ~"calc(@{_sap_f_DynamicPage_FooterHeight} +  @{_sap_f_DynamicPage_FooterMarginBottom} + 2px)";
+}
+
+.sapUiSizeCompact {
+	.sapFDynamicPageFooterVisible .sapFDynamicPageContentWrapper,
+	.sapFDynamicPageFooterVisible .sapFDynamicPageContentFitContainer *[style*="overflow: hidden auto;"] {
+		scroll-padding-bottom: ~"calc(@{_sap_f_DynamicPage_FooterHeight_Compact} +  @{_sap_f_DynamicPage_FooterMarginBottom} + 2px)";
+	}
+}
+
 .sapFDynamicPageContentWrapper {
 	width: 100%;
 	height: 100%;
@@ -254,7 +270,7 @@ html.sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
 
 		.sapFDynamicPageActualFooterControl {
 			position: absolute;
-			height: 3rem;
+			height: @_sap_f_DynamicPage_FooterHeight;
 			width: auto;
 			bottom: 0;
 			right: 0;
@@ -262,13 +278,13 @@ html.sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
 			border-radius: 0.25rem;
 			margin-left: 0.5rem;
 			margin-right: 0.5rem;
-			margin-bottom: 0.5rem;
+			margin-bottom: @_sap_f_DynamicPage_FooterMarginBottom;
 		}
 	}
 }
 
 .sapUiSizeCompact .sapFDynamicPage .sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
-	height: 2.5rem;
+	height: @_sap_f_DynamicPage_FooterHeight_Compact;
 }
 
 /* ============================== */

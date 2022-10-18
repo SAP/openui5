@@ -40,6 +40,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		if (oDynamicPage.getToggleHeaderOnTitleClick()) {
 			oRm.class("sapFDynamicPageTitleClickEnabled");
 		}
+		if (oDynamicPageFooter && bShowFooter) {
+			oRm.class("sapFDynamicPageFooterVisible");
+		}
 		oRm.attr("aria-roledescription", oDynamicPage._getAriaRoleDescription());
 		oRm.accessibilityState(oDynamicPage, oDynamicPage._formatLandmarkInfo(oLandmarkInfo, "Root"));
 		oRm.openEnd();
