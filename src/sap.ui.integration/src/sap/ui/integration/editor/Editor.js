@@ -1849,9 +1849,9 @@ sap.ui.define([
 		});
 		oDescIcon.addStyleClass("sapUiIntegrationEditorDescriptionIcon");
 		oDescIcon.onmouseover = function (oDescIcon) {
+			oDescIcon.addDependent(this._getPopover());
 			this._getPopover().getContent()[0].applySettings({ text: oConfig.description });
 			this._getPopover().openBy(oDescIcon);
-			oDescIcon.addDependent(this._getPopover());
 		}.bind(this, oDescIcon);
 		oDescIcon.onmouseout = function (oDescIcon) {
 			this._getPopover().close();

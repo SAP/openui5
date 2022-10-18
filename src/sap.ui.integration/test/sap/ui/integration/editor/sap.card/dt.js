@@ -23,7 +23,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"allowDynamicValues": true,
 						"editableToUser": false,
 						"visibleToUser": false,
-						"description": "test",
+						"description": "{i18n>TRANSLATED_DESCRIPTION_CARDTITLE}",
 						"cols": 1,
 						"visualization": {
 							"fragment": "sap/ui5/test/editor/listcard/viz/Input"
