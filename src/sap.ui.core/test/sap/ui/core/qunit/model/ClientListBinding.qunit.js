@@ -56,6 +56,8 @@ sap.ui.define([
 		assert.strictEqual(oBinding.aLastContextData, undefined);
 		assert.ok(oBinding.hasOwnProperty("aLastContexts"));
 		assert.strictEqual(oBinding.aLastContexts, undefined);
+		assert.ok(oBinding.hasOwnProperty("iLastEndIndex"));
+		assert.strictEqual(oBinding.iLastEndIndex, undefined);
 		assert.ok(oBinding.hasOwnProperty("iLastLength"));
 		assert.strictEqual(oBinding.iLastLength, undefined);
 		assert.ok(oBinding.hasOwnProperty("iLastStartIndex"));
@@ -151,9 +153,9 @@ sap.ui.define([
 				_getContexts : function () {}
 			};
 
-		this.mock(Math).expects("min").withExactArgs("~iLength", "iSizeLimit").returns("~length");
 		this.mock(oBinding).expects("_updateLastStartAndLength")
-			.withExactArgs(0, "~length", undefined, undefined);
+			.withExactArgs(undefined, undefined, undefined, undefined);
+		this.mock(Math).expects("min").withExactArgs("~iLength", "iSizeLimit").returns("~length");
 		this.mock(oBinding).expects("_getContexts")
 			.withExactArgs(0, "~length")
 			.returns("~aContexts");
@@ -170,13 +172,15 @@ sap.ui.define([
 	{aLastContextData : "~aLastContextData", isDiffCalled : false},
 	{
 		aLastContextData : "~aLastContextData",
+		iLastEndIndex : 1,
 		iLastLength : 1,
 		iLastStartIndex : 0,
 		isDiffCalled : false
 	},
-	{iLastLength : 5, iLastStartIndex : 15, isDiffCalled : false},
+	{iLastEndIndex : 20, iLastLength : 5, iLastStartIndex : 15, isDiffCalled : false},
 	{
 		aLastContextData : "~aLastContextData",
+		iLastEndIndex : 20,
 		iLastLength : 5,
 		iLastStartIndex : 15,
 		isDiffCalled : true
@@ -185,6 +189,7 @@ sap.ui.define([
 	QUnit.test("getContexts: with ECD, #" + i, function (assert) {
 		var oBinding = {
 				aLastContextData : oFixture.aLastContextData,
+				iLastEndIndex : oFixture.iLastEndIndex,
 				iLastLength : oFixture.iLastLength,
 				iLastStartIndex : oFixture.iLastStartIndex,
 				bUseExtendedChangeDetection : true,
@@ -219,6 +224,7 @@ sap.ui.define([
 
 		assert.strictEqual(aResult, aContexts);
 		assert.notStrictEqual(oBinding.aLastContexts, aContexts);
+		assert.strictEqual(oBinding.iLastEndIndex, 5);
 		assert.deepEqual(oBinding.aLastContexts, aContexts);
 		assert.deepEqual(oBinding.aLastContextData, ["~data3", "~data4"]);
 		assert.strictEqual(aResult.diff, oFixture.isDiffCalled ? "~diff" : undefined);

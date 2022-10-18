@@ -342,7 +342,8 @@ sap.ui.define([
 		var oDocument;
 
 		oDocument = XMLHelper.parse(
-			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table">'
+			'<mvc:View xmlns="sap.m" xmlns:f="sap.f" xmlns:mvc="sap.ui.core.mvc" \
+				xmlns:t="sap.ui.table">'
 			+ sViewXML
 			+ '</mvc:View>',
 			"application/xml"
@@ -16519,6 +16520,56 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				+ " not use both iMaximumPrefetchSize and bKeepCurrent"));
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: If model data is changed that affects a list binding's filter, then the attached
+	// control need to be notified about the changes via a change-event.
+	// BCP: 2270146962
+	QUnit.test("ClientListBinding#getContexts", function (assert) {
+		var oModel = new JSONModel({
+				tiles : [
+					{ID : "1", visible : true},
+					{ID : "2", visible : false},
+					{ID : "3", visible : true}
+				]
+			}),
+			sView = '\
+<f:GridContainer id="grid" width="100%"\
+	items="{\
+		path : \'/tiles\',\
+		filters : [{path : \'visible\', operator : \'EQ\', value1 : true}]\
+	}">\
+	<f:layout>\
+		<f:GridContainerSettings rowSize="10rem" columnSize="10rem" gap="2rem"/>\
+	</f:layout>\
+	<GenericTile header="{ID}"/>\
+</f:GridContainer>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oGrid = that.oView.byId("grid"),
+				aItems = oGrid.getItems();
+
+			assert.strictEqual(aItems.length, 2, "grid shows 2 tiles");
+			assert.strictEqual(aItems[0].getBindingContext().getProperty("ID"), "1");
+			assert.strictEqual(aItems[1].getBindingContext().getProperty("ID"), "3");
+
+			// change visibility of a tile so grid shows only one tile
+			oModel.setProperty("/tiles/2/visible", false);
+
+			aItems = oGrid.getItems();
+			assert.strictEqual(aItems.length, 1, "grid shows 1 tile");
+			assert.strictEqual(aItems[0].getBindingContext().getProperty("ID"), "1");
+
+			// change visibility of a tile so grid shows 2 tiles again
+			oModel.setProperty("/tiles/1/visible", true);
+
+			aItems = oGrid.getItems();
+			assert.strictEqual(aItems.length, 2, "grid shows 2 tiles");
+			assert.strictEqual(aItems[0].getBindingContext().getProperty("ID"), "1");
+			assert.strictEqual(aItems[1].getBindingContext().getProperty("ID"), "2");
 		});
 	});
 
