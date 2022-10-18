@@ -307,7 +307,8 @@ sap.ui.define([
 			var oSetting = {
 				isKeyUser: true,
 				isAtoAvailable: true,
-				isAppVariantSaveAsEnabled: true
+				isAppVariantSaveAsEnabled: true,
+				logonUser: "DemoUser"
 			};
 
 			sandbox.stub(Storage, "loadFeatures").resolves(oSetting);
@@ -317,6 +318,7 @@ sap.ui.define([
 				assert.equal(oSettings.isAppVariantSaveAsEnabled(), true);
 				assert.equal(oSettings.isModelS(), true);
 				assert.equal(oSettings.isKeyUserTranslationEnabled(), false);
+				assert.equal(oSettings.getUserId(), "DemoUser");
 				Settings.getInstance().then(function(oSettings2) {
 					assert.equal(oSettings, oSettings2);
 				});
