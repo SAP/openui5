@@ -1689,84 +1689,96 @@ function (
 	});
 
 	QUnit.test("Should restore focus on back navigation", function (assert) {
+		// Arrange
+		var oSpy = this.spy(this.oFCL, "_restoreFocusToColumn"),
+			oStub,
+			oCall;
+
 		// Act
 		this.oBtn1.$().trigger("focus");
 
-		// Assert
-		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is in begin column");
-
-		// Act
+		// Opening two columns
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
 		this.oBtn2.$().trigger("focus");
 
-		// Assert
-		assert.strictEqual(this.oBtn2.$().is(":focus"), true, "Focus is in mid column");
+		oStub = this.stub($.prototype, "trigger");
 
-		// Act
+		// Back to first column
 		this.oFCL.setLayout(LT.OneColumn);
+
 		// Assert
-		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is restored to begin column");
+		oCall = oStub.getCalls()[0];
+		assert.ok(oSpy.calledWith("begin"), "_restoreFocusToColumn is called with 'begin' column");
+		assert.ok(oCall.calledWith("focus") && oCall.thisValue[0] === this.oBtn1.getDomRef(), "Focus is restored to begin column");
+
+		// Clean up
+		oStub.restore();
 	});
 
 	QUnit.test("Should preserve existing focus in previous of current column on back navigation", function (assert) {
+		// Arrange
+		var oSpy = this.spy(this.oFCL, "_restoreFocusToColumn"),
+			oStub,
+			oCall;
+
 		// Act
 		this.oBtn1.$().trigger("focus");
 
-		// Assert
-		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is in begin column");
-
-		// Act
+		// Opening two columns
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
 		this.oBtn2.$().trigger("focus");
 
-		// Assert
-		assert.strictEqual(this.oBtn2.$().is(":focus"), true, "Focus is in mid column");
-
-		// Act
+		// Opening three columns
 		this.oFCL.setLayout(LT.ThreeColumnsEndExpanded);
 		this.oBtn3.$().trigger("focus");
 
-		// Assert
-		assert.strictEqual(this.oBtn3.$().is(":focus"), true, "Focus is in end column");
-
-		// Act
-		this.oBtn1.$().trigger("focus");
-
-		// Assert
-		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is in begin column");
-
-		// Act
+		// Back to two columns
+		oStub = this.stub($.prototype, "trigger");
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
+
 		// Assert
-		assert.strictEqual(this.oBtn1.$().is(":focus"), true,
+		oCall = oStub.getCalls()[0];
+		assert.ok(oSpy.calledWith("mid"), "_restoreFocusToColumn is called with 'mid' column");
+		assert.ok(oCall.calledWith("focus") && oCall.thisValue[0] === this.oBtn2.getDomRef(),
 			"Focus is preserved to begin column after navigating back from end to mid");
+
+		// Clean up
+		oStub.restore();
 	});
 
 	QUnit.test("Should restore focus after exiting full screen", function (assert) {
+		// Arrange
+		var oSpy = this.spy(this.oFCL, "_restoreFocusToColumn"),
+			oStub,
+			oCall;
+
 		// Act
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
 		this.oBtn1.$().trigger("focus");
 
-		// Assert
-		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is in begin column");
-
-		// Act
+		// Opening mid molumn full screen
 		this.oFCL.setLayout(LT.MidColumnFullScreen);
 		this.oBtn2.$().trigger("focus");
 
-		// Assert
-		assert.strictEqual(this.oBtn2.$().is(":focus"), true, "Focus is in mid column");
-
-		// Act
+		// Back to first column
+		oStub = this.stub($.prototype, "trigger");
 		this.oFCL.setLayout(LT.OneColumn);
 
 		// Assert
-		assert.strictEqual(this.oBtn1.$().is(":focus"), true,
+		oCall = oStub.getCalls()[0];
+		assert.ok(oSpy.calledWith("begin"), "_restoreFocusToColumn is called with 'begin' column");
+		assert.ok(oCall.calledWith("focus") && oCall.thisValue[0] === this.oBtn1.getDomRef(),
 			"Focus is restored to begin column after exiting from mid's fullscreen.");
+
+		// Clean up
+		oStub.restore();
 	});
 
 	QUnit.test("Should restore focus when navigating back on the first focusable element if no element was stored", function (assert) {
-		var oExpectedFocusedElement;
+		// Arrange
+		var oStub,
+			oCall,
+			oExpectedFocusedElement;
 
 		// Act
 		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
@@ -1779,11 +1791,16 @@ function (
 
 		// Act
 		this.oFCL._oColumnFocusInfo.begin = {}; // reset if there is a stored element
+		oStub = this.stub($.prototype, "trigger");
 		this.oFCL.setLayout(LT.OneColumn);
 
 		// Assert
-		assert.strictEqual(document.activeElement === oExpectedFocusedElement, true,
+		oCall = oStub.getCalls()[0];
+		assert.ok(oCall.calledWith("focus") && oCall.thisValue[0] === oExpectedFocusedElement,
 			"Focus is restored to first focusable element, even if there are no store elements");
+
+		// Clean up
+		oStub.restore();
 	});
 
 	QUnit.module("Column width calculations", {
