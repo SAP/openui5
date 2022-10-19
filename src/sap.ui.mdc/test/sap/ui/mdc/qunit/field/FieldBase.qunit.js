@@ -4384,7 +4384,7 @@ sap.ui.define([
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
-		var oVHIcon = oContent && oContent.getAggregation("_endIcon")[1];
+		var oVHIcon = oContent && oContent.getAggregation("_endIcon", [])[1];
 		var $FocusDomRef = jQuery(oField.getFocusDomRef());
 		var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 		var sText = oResourceBundle.getText("MULTIINPUT_ARIA_ROLE_DESCRIPTION");
@@ -4458,7 +4458,7 @@ sap.ui.define([
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
-		var oVHIcon = oContent && oContent.getAggregation("_endIcon")[0];
+		var oVHIcon = oContent && oContent.getAggregation("_endIcon", [])[0];
 		var $FocusDomRef = jQuery(oField.getFocusDomRef());
 		var sValueHelpEnabledID = InvisibleText.getStaticId("sap.m", "INPUT_VALUEHELP");
 
@@ -4512,6 +4512,40 @@ sap.ui.define([
 		assert.notOk($FocusDomRef.attr("aria-expanded"), "no Help: aria-expanded not set");
 		assert.notOk($FocusDomRef.attr("aria-controls"), "no Help: aria-controls not set");
 		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "no Help: aria-activedescendant not set");
+
+	});
+
+	QUnit.test("aria attributes on single Field with only typeahed", function(assert) {
+
+		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		sinon.stub(oFieldHelp, "getIcon").returns(null); // no icon
+		sinon.stub(oFieldHelp, "getAriaAttributes").callsFake(function (iMaxConditions) {
+			var mAttributes = oFieldHelp.getAriaAttributes.wrappedMethod.call(oFieldHelp, arguments);
+			mAttributes.role = null;
+			return mAttributes;
+		});
+		oField.setFieldHelp(); // to retrigger check for icon
+		oField.setFieldHelp(oFieldHelp);
+
+		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		oField.setMaxConditions(1);
+		oCore.applyChanges();
+		var aContent = oField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+		var oVHIcon = oContent && oContent.getAggregation("_endIcon", [])[0];
+		var $FocusDomRef = jQuery(oField.getFocusDomRef());
+		var sValueHelpEnabledID = InvisibleText.getStaticId("sap.m", "INPUT_VALUEHELP");
+
+		oField.focus(); // as FieldHelp is connected with focus
+
+		assert.notOk(oVHIcon, "No value help icon");
+		assert.notOk($FocusDomRef.attr("role"), "No role set");
+		assert.equal($FocusDomRef.attr("aria-haspopup"), "listbox", "aria-haspopup set");
+		assert.equal($FocusDomRef.attr("autocomplete"), "off", "autocomplete off set");
+		assert.notOk($FocusDomRef.attr("aria-expanded"), "aria-expanded not set");
+		assert.notOk($FocusDomRef.attr("aria-controls"), "aria-controls not set");
+		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "aria-activedescendant not set");
+		assert.ok(!$FocusDomRef.attr("aria-describedby") || $FocusDomRef.attr("aria-describedby").search(sValueHelpEnabledID) < 0, "ValueHelpEnabled text not set");
 
 	});
 
