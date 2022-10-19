@@ -1017,7 +1017,7 @@ sap.ui.define([
 	 * <ul>
 	 * <li>{@link sap.ui.core.mvc.XMLView.create}</li>
 	 * <li>{@link sap.ui.core.mvc.JSONView.create}</li>
-	 * <li>{@link sap.ui.core.mvc.HTMLView.create}</li>
+	 * <li>{@link sap.ui.core.mvc.HTMLView.create} (deprecated)</li>
 	 * </ul>
 	 *
 	 * @param {object} oOptions
@@ -1031,7 +1031,7 @@ sap.ui.define([
 	 *     can be given in the form <code>module:my/views/Main</code> to load a typed view.
 	 * @param {any} [oOptions.definition]
 	 *     The view definition. Only supported for XML and HTML views. See also {@link sap.ui.core.mvc.XMLView.create}
-	 *     and {@link sap.ui.core.mvc.HTMLView.create} for more information
+	 *     and {@link sap.ui.core.mvc.HTMLView.create} (deprecated) for more information.
 	 * @param {sap.ui.core.mvc.ViewType} [oOptions.type]
 	 *     Specifies what kind of view will be instantiated. All valid view types are listed in the enumeration
 	 *     {@link sap.ui.core.mvc.ViewType}.
