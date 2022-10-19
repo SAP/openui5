@@ -104,7 +104,8 @@ sap.ui.define([
 				oRenderManager.flush(oHTMLElement);
 
 				// Notify ScrollExtension and table that the vertical scrollbar is now rendered outside the table.
-				var oExternalVerticalScrollbar = oHTMLElement.querySelector("#" + oTable.getId() + "-" + library.SharedDomRef.VerticalScrollBar);
+				var sId = oTable.getId() + "-" + library.SharedDomRef.VerticalScrollBar;
+				var oExternalVerticalScrollbar = oHTMLElement.querySelector('[id="' + sId + '"]');
 				oScrollExtension.markVerticalScrollbarAsExternal(oExternalVerticalScrollbar);
 
 				// Rendering the vertical scrollbar outside the table makes it necessary to remove the currently existing internal scrollbar from the
