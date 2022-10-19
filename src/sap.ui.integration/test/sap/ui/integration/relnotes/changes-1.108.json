@@ -3,6 +3,28 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "4e0616801f59da8f4676455e3124dd19128052ed",
+        "type": "FIX",
+        "text": " Integration Cards: Card paginator no longer throws error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270141550"
+          }
+        ]
+      },
+      {
+        "id": "8270ef2cf365bdd451bd642740a8633ae20674f4",
+        "type": "FIX",
+        "text": " Integration Card: When error message is shown the Card height is not changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280168050"
+          }
+        ]
+      },
+      {
         "id": "880344966b2e09f14666df812ca359efe6233afa",
         "type": "FEATURE",
         "text": " Integration card: Analytical card now has loading placeholder"

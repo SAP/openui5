@@ -3,6 +3,22 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "4e2fdb1592e4dbb3ef87ee472e0128700092d889",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Title font-size specified",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270112343"
+          }
+        ]
+      },
+      {
+        "id": "e23cd0fe7832cab9e1c6fdea97d2ee0f211dfc21",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Section title padding fixed"
+      },
+      {
         "id": "46da42b5e0b08a20f6b7f924218ca7983c17987f",
         "type": "FIX",
         "text": " sap.f.DynamicPageHeader: fix Desktop paddings in Horizon theme",
