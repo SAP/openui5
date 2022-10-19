@@ -235,7 +235,7 @@ sap.ui.define([
 				 /**
 				 * If set, the calendar week numbering is used for display.
 				 * If not set, the calendar week numbering of the global configuration is used.
-				 * @since 1.109.0
+				 * @since 1.108.0
 				 */
 				calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 

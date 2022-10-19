@@ -165,7 +165,7 @@ sap.ui.define([
 			 * If set, the calendar week numbering is used for display.
 			 * If not set, the calendar week numbering of the global configuration is used.
 			 * Note: This property should not be used with firstDayOfWeek property.
-			 * @since 1.109.0
+			 * @since 1.108.0
 			 */
 			 calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 
@@ -318,7 +318,7 @@ sap.ui.define([
 	};
 
 	Month.prototype.onBeforeRendering = function() {
-		if (this.getFirstDayOfWeek() !== -1 && this.getCalendarWeekNumbering()) {
+		if (this.getFirstDayOfWeek() !== -1 && this.getCalendarWeekNumbering() !== "Default") {
 			Log.warning("Both properties firstDayOfWeek and calendarWeekNumbering should not be used at the same time!");
 		}
 	};
@@ -1608,11 +1608,7 @@ sap.ui.define([
 		var oDateFormat;
 		var iWeekNumber;
 
-		if (this.getCalendarWeekNumbering()) {
-			oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: this.getPrimaryCalendarType(), calendarWeekNumbering: this.getCalendarWeekNumbering()}, oLocale);
-		} else {
-			oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: this.getPrimaryCalendarType()}, oLocale);
-		}
+		oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: this.getPrimaryCalendarType(), calendarWeekNumbering: this.getCalendarWeekNumbering()}, oLocale);
 
 		var bIsRegionUS = oLocaleData.firstDayStartsFirstWeek();
 
