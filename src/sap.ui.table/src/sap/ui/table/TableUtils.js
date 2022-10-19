@@ -382,7 +382,7 @@ sap.ui.define([
 				return false;
 			}
 
-			return oTable.getDomRef().querySelector("#" + oTable.getId() + "-sapUiTableGridCnt > .sapUiLocalBusyIndicator") != null;
+			return oTable.getDomRef().querySelector('[id="' + oTable.getId() + '-sapUiTableGridCnt"] > .sapUiLocalBusyIndicator') != null;
 		},
 
 		/**
