@@ -6933,6 +6933,13 @@ sap.ui.define([
 	vNewValueClone : 42,
 	vOriginalValue : 42,
 	oContext : undefined
+}, {
+	vChangedValue : 13,
+	bMergeRequired : false,
+	vNewValue : 42,
+	vNewValueClone : 42,
+	vOriginalValue : 42,
+	oContext : {} // standard model context having no hasTransientParent method, BCP 2270157004
 }].forEach(function (oFixture, i) {
 	QUnit.test("setProperty: revert pending change; #" + i, function (assert) {
 		var oClonedChangedEntry = {
@@ -6996,7 +7003,7 @@ sap.ui.define([
 			.withExactArgs({}, sinon.match.same(oFixture.vNewValue))
 			.exactly(oFixture.bMergeRequired ? 1 : 0)
 			.callThrough();
-		if (oFixture.oContext) {
+		if (oFixture.oContext && oFixture.oContext.hasTransientParent) {
 			this.mock(oFixture.oContext).expects("hasTransientParent")
 				.withExactArgs()
 				.returns(false);
