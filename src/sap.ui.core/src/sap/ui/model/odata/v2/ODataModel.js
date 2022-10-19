@@ -6533,7 +6533,7 @@ sap.ui.define([
 			? _Helper.merge({}, oValue)
 			: oValue;
 
-		if (oContext && oContext.hasTransientParent()) {
+		if (oContext && oContext.hasTransientParent && oContext.hasTransientParent()) {
 			mChangedEntities[sKey] = true;
 			this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
 			return true;
