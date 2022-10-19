@@ -140,6 +140,29 @@ sap.ui.define([
 		}
 	};
 
+	var oManifestNoData = {
+		"sap.app": {
+			"id": "test.card.NoData"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {},
+			"content": {
+				"item": {
+					"title": ""
+				}
+			},
+			"footer": {
+				"paginator": {
+					"pageSize": 4
+				}
+			},
+			"data": {
+				"json": []
+			}
+		}
+	};
+
 	QUnit.module("Client-Side Pagination", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -486,4 +509,59 @@ sap.ui.define([
 		this.oCard.setManifest(oManifest);
 	});
 
+	QUnit.module("Slice data", {
+		beforeEach: function () {
+			this.oCard = new Card();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Without data", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+		this.oCard.attachEventOnce("_ready", function () {
+			Core.applyChanges();
+
+			var oPaginator = this.oCard.getCardFooter().getPaginator();
+			var oContent = this.oCard.getCardContent();
+
+			// Assert
+			oPaginator.next();
+			assert.strictEqual(oContent.sliceData, undefined, "Slice data is not defined on the content when there is no data");
+
+			done();
+		}.bind(this));
+		// Act
+		this.oCard.setManifest(oManifestNoData);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+	});
+
+	QUnit.test("With data", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+		this.oCard.attachEventOnce("_ready", function () {
+			Core.applyChanges();
+
+			var oPaginator = this.oCard.getCardFooter().getPaginator();
+			var oContent = this.oCard.getCardContent();
+			var oSliceDataSpy = this.spy(oContent, "sliceData");
+
+			// Assert
+			oPaginator.next();
+			assert.strictEqual(typeof oContent.sliceData, "function", "Slice data is defined on the content when there is data");
+			assert.ok(oSliceDataSpy.calledOnce, "Slice data is called on the content when there is data");
+
+			done();
+		}.bind(this));
+		// Act
+		this.oCard.setManifest(oManifestClientSideWithStaticData);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+	});
 });
