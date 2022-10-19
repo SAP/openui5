@@ -3,6 +3,28 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "bdab696b401f59dd68d5d4be062777a09e47dda1",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: stop invalidating when click \"Show More\" button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270139990"
+          }
+        ]
+      },
+      {
+        "id": "044175976f0b5011ef1fd551bc6465bcbe1d963d",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Semantic colors are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270154147"
+          }
+        ]
+      },
+      {
         "id": "ce357dafbf92f190d038b06f53e5ac0eae7da440",
         "type": "FEATURE",
         "text": "sap.m.AdditionalTextButton: new control (initial implementation)"

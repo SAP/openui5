@@ -3,6 +3,27 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "d75745de6a5fd3d44977a0692b7a0bde5d1bbdf1",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataModel#createEntry: Support deep create request"
+      },
+      {
+        "id": "0d984186d4ea876b6e90e008ed46fb40b1c68c16",
+        "type": "FIX",
+        "text": " sap.ui.model.ClientListBinding#getContexts: store start and length as given by the control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270146962"
+          }
+        ]
+      },
+      {
+        "id": "ef397849ae0423ad758ca25ac45a16aa18afc789",
+        "type": "FEATURE",
+        "text": " sap.ui.core: deprecate HTMLView and HTMLFragment"
+      },
+      {
         "id": "ed3ff6eee9058a6929b5c82cc3552af7da0ccb43",
         "type": "FEATURE",
         "text": " sap.ui.core.format.NumberFormat#parseNumberAndCurrencyCode: Add support for case insensitivity for currency codes"
