@@ -1373,22 +1373,7 @@ function(
 
 		//focus the first focusable item in current page's content
 		if (Device.system.desktop) {
-			this._getDialog().attachEventOnce("afterOpen", function () {
-				var oCurrentPage = this._getNavContainer().getCurrentPage(),
-					$firstFocusable;
-				if (oCurrentPage) {
-					$firstFocusable = oCurrentPage.$("cont").firstFocusableDomRef();
-					if ($firstFocusable) {
-						if (jQuery($firstFocusable).hasClass('sapMListUl')) {
-							var $aListItems = jQuery($firstFocusable).find('.sapMLIB');
-							$aListItems.length && $aListItems[0].focus();
-							return;
-						}
-
-						$firstFocusable.focus();
-					}
-				}
-			}, this);
+			this._getDialog().attachEventOnce("afterOpen", this._focusFirstListItem, this);
 		}
 
 		this._checkResetStatus();
@@ -1397,6 +1382,23 @@ function(
 		this._getDialog().open();
 
 		return this;
+	};
+
+	ViewSettingsDialog.prototype._focusFirstListItem = function() {
+		var oCurrentPage = this._getNavContainer().getCurrentPage(),
+			$firstFocusable;
+		if (oCurrentPage) {
+			$firstFocusable = oCurrentPage.$("cont").firstFocusableDomRef();
+			if ($firstFocusable) {
+				if (jQuery($firstFocusable).hasClass('sapMListUl')) {
+					var $aListItems = jQuery($firstFocusable).find('.sapMLIB');
+					$aListItems.length && $aListItems[0].focus();
+					return;
+				}
+
+				$firstFocusable.focus();
+			}
+		}
 	};
 
 	/**
@@ -1818,11 +1820,13 @@ function(
 		this.setGroupDescending(this._oInitialState.groupDescending);
 		this._updateListSelection(this._groupOrderList, this._oInitialState.groupDescending);
 
-		this._getNavContainer().attachEventOnce("afterNavigate", function(){
-			if (this._prevSelectedFilterItem) {
-				this._prevSelectedFilterItem.focus();
+		if (Device.system.desktop) {
+			if (this._filterList && this._filterList.getDomRef()) {
+				this._getNavContainer().attachEventOnce("afterNavigate", this._focusFirstListItem, this);
+			} else if ((this._sortList && this._sortList.getDomRef()) || (this._groupList  && this._groupList.getDomRef())) {
+				this._focusFirstListItem();
 			}
-		}, this);
+		}
 
 		// set reset buttons state the global reset
 		this._checkResetStatus();
