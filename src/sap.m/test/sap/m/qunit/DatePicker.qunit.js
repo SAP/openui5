@@ -428,15 +428,20 @@ sap.ui.define([
 				})
 			}
 		});
+		var oExpectedDate = new Date(2015, 0, 6);
 
 		// act
 		oDatePicker.setModel(new JSONModel({
-			myTimestamp: 1420529121547 // Tue Jan 06 2015 09:25:21 GMT+0200 (FLE Standard Time)
+			myTimestamp: oExpectedDate.getTime()
 		}));
 
 		// assert
-		assert.equal(oDatePicker.getDateValue().getTime(), new Date(2015, 0, 6).getTime(),
-			"DatePicker Date value equals the model timestamp representation");
+		assert.equal(oDatePicker.getDateValue().getFullYear(), oExpectedDate.getFullYear(),
+			"DatePicker dateValue has proper year set");
+		assert.equal(oDatePicker.getDateValue().getMonth(), oExpectedDate.getMonth(),
+			"DatePicker dateValue has proper month set");
+		assert.equal(oDatePicker.getDateValue().getDate(), oExpectedDate.getDate(),
+			"DatePicker dateValue has proper date set");
 
 		// cleanup
 		oDatePicker.destroy();
