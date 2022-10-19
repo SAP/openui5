@@ -754,7 +754,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (this.getTable().bActiveHeaders || this.getColumnHeaderMenu()) {
+		if (this.getTable().bActiveHeaders || this._getHeaderMenuInstance()) {
 			this.$("ah")[oEvent.getSource().getRequired() ? "addAriaDescribedBy" : "removeAriaDescribedBy"](InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"));
 		}
 	};
