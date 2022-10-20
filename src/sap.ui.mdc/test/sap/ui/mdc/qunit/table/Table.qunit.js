@@ -3736,7 +3736,7 @@ sap.ui.define([
 	QUnit.test("Test enableAutoColumnWidth property", function(assert) {
 		var oCanvasContext = document.createElement("canvas").getContext("2d");
 		oCanvasContext.font = [
-			ThemeParameters.get({ name: "sapMFontMediumSize" }) || "0.875rem",
+			parseFloat(ThemeParameters.get({ name: "sapMFontMediumSize" }) || "0.875rem") * parseFloat(MLibrary.BaseFontSize) + "px",
 			ThemeParameters.get({ name: "sapUiFontFamily" }) || "Arial"
 		].join(" ");
 
