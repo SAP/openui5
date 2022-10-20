@@ -356,6 +356,7 @@ sap.ui.define([
 	{bCreated : false, oEntity : undefined, iStatus : 500, sPath : ""},
 	{bCreated : true, oEntity : undefined, iStatus : 500, sPath : "EMPLOYEE_2_EQUIPMENTS"},
 	{bCreated : true, oEntity : undefined, iStatus : 500, sPath : "", bMessagesToRestore : true},
+	{bCreated : false, oEntity : undefined, iStatus : 500, sPath : "", bInactive : true},
 	{bCreated : false, oEntity : {"@odata.etag" : "AnotherETag"}, iStatus : 200, sPath : ""}
 ].forEach(function (oFixture) {
 	QUnit.test("_Cache#_delete: from collection, status: " + oFixture.iStatus
@@ -385,6 +386,9 @@ sap.ui.define([
 			oRequestPromise = Promise.resolve().then(function () {
 				var iOnFailure = oFixture.iStatus === 500 ? 1 : 0;
 
+				if (oFixture.bInactive) {
+					oCache.iActiveUsages = 0;
+				}
 				that.oModelInterfaceMock.expects("fireMessageChange")
 					.exactly(oFixture.bMessagesToRestore ? 1 : 0)
 					.withExactArgs({newMessages : [oMessage1]});
@@ -453,9 +457,7 @@ sap.ui.define([
 			.withExactArgs("DELETE", "Equipments('1')?foo=bar", "~oGroupLock~",
 				{"If-Match" : sinon.match.same(oFixture.oEntity || aCacheData[1])}, undefined,
 				undefined, sinon.match.func, undefined, "~" + (sPath && "/" + sPath) + "('1')")
-			.callsFake(function () {
-				return oRequestPromise;
-			});
+			.returns(oRequestPromise);
 		this.mock(_Helper).expects("addByPath")
 			.withExactArgs(sinon.match.same(oCache.mChangeRequests), sPath + "('1')",
 				sinon.match.same(oRequestPromise));
@@ -480,8 +482,12 @@ sap.ui.define([
 			assert.deepEqual(aCacheData.$deleted, ["a", "b", "c"]);
 			assert.strictEqual(aCacheData.$created, oFixture.bCreated ? 2 : 1);
 			assert.strictEqual(oCache.iActiveElements, oFixture.bCreated && !sPath ? 2 : 1);
-			sinon.assert.calledTwice(fnCallback);
-			sinon.assert.calledWithExactly(fnCallback.secondCall, "~insert~", 1);
+			if (oFixture.bInactive) {
+				sinon.assert.calledOnce(fnCallback);
+			} else {
+				sinon.assert.calledTwice(fnCallback);
+				sinon.assert.calledWithExactly(fnCallback.secondCall, "~insert~", 1);
+			}
 		});
 	});
 });
@@ -560,12 +566,20 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#_delete: kept-alive context not in collection", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
+[
+	{bFailure : false, bInactive : false},
+	{bFailure : true, bInactive : false},
+	{bFailure : true, bInactive : true}
+].forEach(function (oFixture) {
+	var sTitle = "_Cache#_delete: kept-alive context not in collection " + JSON.stringify(oFixture);
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = _Cache.create(this.oRequestor, "EMPLOYEES"),
 			aCacheData = [],
 			fnCallback = this.spy(),
 			bDeleted = false,
-			oGroupLock = new _GroupLock("group", "owner", true);
+			oGroupLock = new _GroupLock("group", "owner", true),
+			aMessages = [];
 
 		aCacheData.$byPredicate = {
 			"('1')" : {
@@ -579,14 +593,22 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
 			.returns(SyncPromise.resolve(aCacheData));
 		this.oModelInterfaceMock.expects("getMessagesByPath")
-			.withExactArgs("/EMPLOYEES('1')", true).returns("~aMessages~");
+			.withExactArgs("/EMPLOYEES('1')", true).returns(aMessages);
 		this.oModelInterfaceMock.expects("fireMessageChange")
-			.withExactArgs({oldMessages : "~aMessages~"});
+			.withExactArgs({oldMessages : sinon.match.same(aMessages)});
+		this.mock(oCache).expects("reset").exactly(oFixture.bFailure && oFixture.bInactive ? 1 : 0)
+			.withExactArgs([]);
 		this.oRequestorMock.expects("request")
 			.withExactArgs("DELETE", "EMPLOYEES('1')", sinon.match.same(oGroupLock), {
 					"If-Match" : "etag"
 				}, undefined, undefined, sinon.match.func, undefined, "EMPLOYEES('1')")
 			.returns(Promise.resolve().then(function () {
+				if (oFixture.bInactive) {
+					oCache.iActiveUsages = 0;
+				}
+				if (oFixture.bFailure) {
+					throw "~oError~";
+				}
 				bDeleted = true;
 			}));
 		this.mock(oCache).expects("removeElement").withExactArgs(aCacheData, undefined, "('1')", "")
@@ -599,8 +621,17 @@ sap.ui.define([
 				assert.strictEqual(bDeleted, true);
 				sinon.assert.calledOnce(fnCallback);
 				sinon.assert.calledWithExactly(fnCallback, undefined, -1);
+			}, function (oError) {
+				assert.strictEqual(bDeleted, false);
+				assert.strictEqual(oError, "~oError~");
+				assert.strictEqual(fnCallback.callCount, oFixture.bInactive ? 1 : 2);
+				sinon.assert.calledWithExactly(fnCallback.firstCall, undefined, -1);
+				if (!oFixture.bInactive) {
+					sinon.assert.calledWithExactly(fnCallback.secondCall, undefined, 1);
+				}
 			});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#_delete: from collection, no lock", function (assert) {
