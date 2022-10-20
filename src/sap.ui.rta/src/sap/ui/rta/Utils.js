@@ -470,16 +470,6 @@ function(
 		return (oParentControl.getId() + "_" + sEntityType + "_" + sBindingPath).replace("/", "_");
 	};
 
-
-	/**
-	 * Allow window.open to be stubbed in tests
-	 *
-	 * @param {string} sUrl - url string
-	 */
-	Utils.openNewWindow = function(sUrl) {
-		window.open(sUrl, "_blank", "noopener noreferrer");
-	};
-
 	/**
 	 * Function to find the binding paths of a given UI5 Element
 	 *
