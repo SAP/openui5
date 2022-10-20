@@ -78,9 +78,9 @@
 											</mdc:typeahead>
 											<mdc:dialog>
 												<mdcv:Dialog title="Book">
-													<mdcvc:MDCTable keyPath="ID" descriptionPath="title" filterFields="$search">
+													<mdcvc:MDCTable keyPath="ID" descriptionPath="title" filterFields="$search" forceBind="true">
 														<mdc:Table id="FH4--mdc--gridtable"
-															autoBindOnInit="true"
+															autoBindOnInit="false"
 															width="100%"
 															height="100%"
 															selectionMode="Single"

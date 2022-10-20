@@ -67,7 +67,7 @@ sap.ui.define([
 					}
 
 					oTable = new MdcTable(oCurrentContent.getId() + "--" +  "template1", {
-						autoBindOnInit: true,
+						autoBindOnInit: false,
 						width: "100%",
 						height: "100%",
 						selectionMode: bMultiSelect ? SelectionMode.Multi : SelectionMode.Single,
@@ -109,7 +109,7 @@ sap.ui.define([
 					}
 
 					oTable = new MdcTable(oCurrentContent.getId() + "--" +  "default", {
-						autoBindOnInit: true,
+						autoBindOnInit: false,
 						width: "100%",
 						height: "100%",
 						selectionMode: bMultiSelect ? SelectionMode.Multi : SelectionMode.Single,

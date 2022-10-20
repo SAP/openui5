@@ -88,28 +88,40 @@ sap.ui.define([
 		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField"}, []);
 	});
 
-	opaTest("Initial conditions", function (Given, When, Then) {
-		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "doug", {keepFocus: true, clearTextFirst: true});
-		When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
-		Then.onTheOPAPage.iShouldSeeTheValueHelpDialogSearchField("doug");
-		Then.onTheOPAPage.iShouldSeeValueHelpListItems("Douglass, Frederick");
-
-	});
-
-	opaTest("Reverting to initial conditions ", function (Given, When, Then) {
-		When.onTheOPAPage.iEnterTextOnTheValueHelpDialogSearchField("carrol", {keepFocus: true, clearTextFirst: true, pressEnterKey: true});
-		Then.onTheOPAPage.iShouldSeeValueHelpListItems("Carroll, Lewis");
-		When.onTheOPAPage.iCloseTheValueHelpDialog(true);
-		When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
-		Then.onTheOPAPage.iShouldSeeTheValueHelpDialogSearchField("doug");
-	});
-
 	opaTest("Navigation between tabs", function (Given, When, Then) {
+		When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
 		When.onTheOPAPage.iNavigateToValueHelpContent({label: "My Define Conditions Panel"});
 		Then.onTheOPAPage.iShouldSeeValueHelpContent({label: "My Define Conditions Panel"});
 		When.onTheOPAPage.iNavigateToValueHelpContent({title: "Default Search Template"});
 		Then.onTheOPAPage.iShouldSeeValueHelpContent({title: "Default Search Template"});
 		When.onTheOPAPage.iCloseTheValueHelpDialog();
 		Then.iTeardownMyAppFrame();
+	});
+
+	var oFilterBarConfigs = {
+		"Default FilterBar": "test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-2",
+		"Dedicated FilterBar": "test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-4"
+	};
+
+	Object.keys(oFilterBarConfigs).forEach(function (sModuleName) {
+		QUnit.module(sModuleName);
+
+		opaTest("Initial conditions", function (Given, When, Then) {
+			Given.iStartMyAppInAFrame(oFilterBarConfigs[sModuleName]);
+			When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "doug", {keepFocus: true, clearTextFirst: true});
+			When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
+			Then.onTheOPAPage.iShouldSeeTheValueHelpDialogSearchField("doug");
+			Then.onTheOPAPage.iShouldSeeValueHelpListItems("Douglass, Frederick");
+		});
+
+		opaTest("Reverting to initial conditions ", function (Given, When, Then) {
+			When.onTheOPAPage.iEnterTextOnTheValueHelpDialogSearchField("carrol", {keepFocus: true, clearTextFirst: true, pressEnterKey: true});
+			Then.onTheOPAPage.iShouldSeeValueHelpListItems("Carroll, Lewis");
+			When.onTheOPAPage.iCloseTheValueHelpDialog(true);
+			When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
+			Then.onTheOPAPage.iShouldSeeTheValueHelpDialogSearchField("doug");
+			Then.iTeardownMyAppFrame();
+
+		});
 	});
 });
