@@ -178,7 +178,8 @@ sap.ui.define([
 			};
 			this.oCard = new Card({
 				baseUrl: BASE_URL,
-				manifest: this.oManifest
+				manifest: this.oManifest,
+				dataMode: "Active"
 			});
 		},
 		afterEach: function () {

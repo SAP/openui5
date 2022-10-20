@@ -63,7 +63,6 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 			}.bind(this));
 			this.oCard.setManifest(oManifest);
 			this.oCard.setBaseUrl("test-resources/sap/ui/integration/qunit/cardbundle/bundle/");
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
 		QUnit.test("Header icon with binding", function (assert) {
@@ -152,7 +151,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 			}.bind(this));
 			this.oCard.setManifest(oManifest);
 			this.oCard.setBaseUrl("test-resources/sap/ui/integration/qunit/cardbundle/bundle/");
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
 		QUnit.test("TableContent item icon", function (assert) {
@@ -285,10 +284,10 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 			}.bind(this));
 			this.oCard.setManifest(oManifest);
 			this.oCard.setBaseUrl("test-resources/sap/ui/integration/qunit/cardbundle/bundle/");
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
-		QUnit.test("ListContent item icon with protocol-relative url" , function (assert) {
+		QUnit.test("ListContent item icon with protocol-relative url", function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -331,7 +330,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 			}.bind(this));
 			this.oCard.setManifest(oManifest);
 			this.oCard.setBaseUrl("test-resources/sap/ui/integration/qunit/cardbundle/bundle/");
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
 		QUnit.module("Card Static Resources with manifest URL", {
@@ -370,7 +369,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				done();
 			}.bind(this));
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/cardbundle/bundle/manifest.json");
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
 		QUnit.test("ListContent item icon", function (assert) {
@@ -391,7 +390,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				done();
 			}.bind(this));
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/cardbundle/bundle/listmanifest.json");
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
 		QUnit.test("TableContent item icon", function (assert) {
@@ -412,7 +411,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				done();
 			}.bind(this));
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/cardbundle/bundle/tablemanifest.json");
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
 		QUnit.test("ObjectContent item icon", function (assert) {
@@ -433,7 +432,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				done();
 			}.bind(this));
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/cardbundle/bundle/objectmanifest.json");
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
 		QUnit.test("ListContent header icon with protocol-relative url", function (assert) {
@@ -454,7 +453,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				done();
 			}.bind(this));
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/cardbundle/bundle/listmanifest.json");
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 	}
 );

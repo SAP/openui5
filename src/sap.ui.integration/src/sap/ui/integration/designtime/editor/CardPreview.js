@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/integration/library",
 	"sap/ui/core/Control",
 	"sap/m/HBox",
 	"sap/m/Image",
@@ -12,9 +13,11 @@ sap.ui.define([
 	"sap/ui/dom/includeStylesheet",
 	"sap/ui/integration/util/CardMerger"
 ], function (
-	Control, HBox, Image, ToggleButton, Card, Core, includeStylesheet, CardMerger
+	library, Control, HBox, Image, ToggleButton, Card, Core, includeStylesheet, CardMerger
 ) {
 	"use strict";
+
+	var CardDataMode = library.CardDataMode;
 
 	/**
 	 * Constructor for a new <code>Preview</code> that show a image, abstract live preview
@@ -258,7 +261,7 @@ sap.ui.define([
 		};
 
 		if (!this._oCardPlaceholder) {
-			this._oCardPlaceholder = new Card();
+			this._oCardPlaceholder = new Card({dataMode: CardDataMode.Active});
 			this._oCardPlaceholder._setPreviewMode(true);
 		}
 		this._oCardPlaceholder.setManifest(placeholder);
@@ -286,7 +289,7 @@ sap.ui.define([
 	 */
 	CardPreview.prototype._getCardRealPreview = function () {
 		if (!this._oCardPreview) {
-			this._oCardPreview = new Card();
+			this._oCardPreview = new Card({dataMode: CardDataMode.Active});
 			this._oCardPreview.setBaseUrl(this.getCard().getBaseUrl());
 		}
 		this._initalChanges = this._initalChanges || this._oCardPreview.getManifestChanges() || [];

@@ -120,7 +120,7 @@ sap.ui.define([
 				iNumberOfCards = parseInt(this.byId("numberOfCards").getValue()),
 				oContainer = this.byId("cardsContainer"),
 				bPreloadManifests = this.byId("preloadManifests").getSelected(),
-				bDataModeAuto = this.byId("dataMode").getSelected(),
+				bDataModeActive = this.byId("dataMode").getSelected(),
 				oSample;
 
 			oContainer.destroyItems();
@@ -132,7 +132,7 @@ sap.ui.define([
 					layoutData: new GridContainerItemLayoutData({
 						columns: oSample.columns
 					}),
-					dataMode: bDataModeAuto ? "Auto" : "Active"
+					dataMode: bDataModeActive ? "Active" : "Auto"
 				});
 
 				// manifest as object

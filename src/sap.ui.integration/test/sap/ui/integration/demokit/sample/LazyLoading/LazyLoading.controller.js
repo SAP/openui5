@@ -91,7 +91,7 @@ sap.ui.define([
 			var iNumberOfCards = parseInt(this.byId("numberOfCards").getValue()),
 				oContainer = this.byId("cardsContainer"),
 				oView = this.getView(),
-				bDataModeAuto = this.byId("dataMode").getSelected(),
+				bDataModeActive = this.byId("dataMode").getSelected(),
 				oSample;
 
 			oContainer.destroyItems();
@@ -106,7 +106,7 @@ sap.ui.define([
 						columns: oSample.columns,
 						minRows: 4
 					}),
-					dataMode: bDataModeAuto ? "Auto" : "Active"
+					dataMode: bDataModeActive ? "Active" : "Auto"
 				}));
 			}
 		},

@@ -29,9 +29,9 @@ sap.ui.define([
 		constructor: function (oCard) {
 			BaseObject.call(this);
 			this._oCard = oCard;
+			this._bIsObserved = false;
 		}
 	});
-
 
 	/**
 	 * Destroys cardObserver
@@ -41,9 +41,9 @@ sap.ui.define([
 		BaseObject.prototype.destroy.apply(this, arguments);
 		this._oCard = null;
 
-		if (this.oObserver) {
-			this.oObserver.disconnect();
-			this.oObserver = null;
+		if (this._oObserver) {
+			this._oObserver.disconnect();
+			this._oObserver = null;
 		}
 	};
 
@@ -51,9 +51,9 @@ sap.ui.define([
 	 * Creates cardObserver.
 	 *
 	 */
-	CardObserver.prototype.createObserver = function () {
-		if (!this.oObserver) {
-			this.oObserver = new window.IntersectionObserver(function (oEntries) {
+	CardObserver.prototype._createObserver = function () {
+		if (!this._oObserver) {
+			this._oObserver = new window.IntersectionObserver(function (oEntries) {
 				oEntries.forEach(function (oEntry) {
 					if (oEntry.isIntersecting) {
 						this.loadManifest();
@@ -66,13 +66,39 @@ sap.ui.define([
 	};
 
 	/**
+	 * Starts observing the target card.
+	 * @param {Object} oDomRef The domRef of the card to be observed.
+	 */
+	CardObserver.prototype.observe = function (oDomRef) {
+		if (!this._oObserver) {
+			this._createObserver();
+		}
+
+		if (!this._bIsObserved) {
+			this._oObserver.observe(oDomRef);
+			this._bIsObserved = true;
+		}
+	};
+
+	/**
+	 * Stops observing the target card.
+ 	 * @param {Object} oDomRef The domRef of the card to be unobserved.
+	 */
+	CardObserver.prototype.unobserve = function (oDomRef) {
+		if (this._oObserver && this._bIsObserved) {
+			this._oObserver.unobserve(oDomRef);
+			this._bIsObserved = false;
+		}
+	};
+
+	/**
 	 * Loads card manifest.
 	 *
 	 */
 	CardObserver.prototype.loadManifest = function () {
 		var oCardDomRef = this._oCard.getDomRef();
 		this._oCard.setDataMode(CardDataMode.Active);
-		this.oObserver.unobserve(oCardDomRef);
+		this.unobserve(oCardDomRef);
 	};
 
 	return CardObserver;

@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/integration/editor/EditorResourceBundles",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/dom/includeStylesheet"
+	"sap/ui/dom/includeStylesheet",
+	"sap/ui/integration/library"
 ], function (
 	Editor,
 	Core,
@@ -25,11 +26,14 @@ sap.ui.define([
 	EditorResourceBundles,
 	LoaderExtensions,
 	Parameters,
-	includeStylesheet
+	includeStylesheet,
+	library
 ) {
 	"use strict";
 
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+
+	var CardDataMode = library.CardDataMode;
 	/**
 	 * Constructor for a new <code>Card Editor</code>.
 	 *
@@ -139,10 +143,14 @@ sap.ui.define([
 				manifest: vCardIdOrSettings.getManifest(),
 				manifestChanges: vCardIdOrSettings.getManifestChanges(),
 				host: vCardIdOrSettings.getHost(),
-				baseUrl: vCardIdOrSettings.getBaseUrl()
+				baseUrl: vCardIdOrSettings.getBaseUrl(),
+				dataMode: CardDataMode.Active
 			};
 		}
 		if (typeof vCardIdOrSettings === "object") {
+			if (!vCardIdOrSettings.dataMode) {
+				vCardIdOrSettings.dataMode = CardDataMode.Active;
+			}
 			this._oEditorCard = new Card(vCardIdOrSettings);
 			this._oEditorCard.onBeforeRendering();
 			this._oEditorCard.attachEventOnce("_dataReady", function () {

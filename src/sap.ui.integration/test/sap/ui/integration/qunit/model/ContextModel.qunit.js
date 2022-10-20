@@ -135,7 +135,10 @@ function (
 	QUnit.module("In card context", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
-			this.oCard = new Card();
+			this.oCard = new Card({
+					dataMode: "Active"
+				}
+			);
 			this.oHost = new Host();
 
 			this.oCard.setHost(this.oHost);
