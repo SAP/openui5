@@ -1591,6 +1591,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "du mat.",
+					"afternoon1": "après-midi",
+					"evening1": "du soir",
+					"night1": "du mat."
+				},
+				"narrow": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "mat."
+				},
+				"wide": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "du matin",
+					"afternoon1": "de l’après-midi",
+					"evening1": "du soir",
+					"night1": "du matin"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "nuit"
+				},
+				"narrow": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "mat."
+				},
+				"wide": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "matin",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "nuit"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "avant Jésus-Christ",
 			"1": "après Jésus-Christ"
@@ -2062,6 +2116,60 @@
 					"a.m.",
 					"p.m."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "du mat.",
+					"afternoon1": "après-midi",
+					"evening1": "du soir",
+					"night1": "du mat."
+				},
+				"narrow": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "mat."
+				},
+				"wide": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "du matin",
+					"afternoon1": "de l’après-midi",
+					"evening1": "du soir",
+					"night1": "du matin"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "nuit"
+				},
+				"narrow": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "mat."
+				},
+				"wide": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "matin",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "nuit"
+				}
 			}
 		},
 		"era-wide": {
@@ -2540,6 +2648,60 @@
 					"a.m.",
 					"p.m."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "du mat.",
+					"afternoon1": "après-midi",
+					"evening1": "du soir",
+					"night1": "du mat."
+				},
+				"narrow": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "mat."
+				},
+				"wide": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "du matin",
+					"afternoon1": "de l’après-midi",
+					"evening1": "du soir",
+					"night1": "du matin"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "nuit"
+				},
+				"narrow": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "mat."
+				},
+				"wide": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "matin",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "nuit"
+				}
 			}
 		},
 		"era-wide": {
@@ -3024,6 +3186,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "du mat.",
+					"afternoon1": "après-midi",
+					"evening1": "du soir",
+					"night1": "du mat."
+				},
+				"narrow": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "mat."
+				},
+				"wide": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "du matin",
+					"afternoon1": "de l’après-midi",
+					"evening1": "du soir",
+					"night1": "du matin"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "nuit"
+				},
+				"narrow": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "mat."
+				},
+				"wide": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "matin",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "nuit"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3492,6 +3708,60 @@
 					"a.m.",
 					"p.m."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "du mat.",
+					"afternoon1": "après-midi",
+					"evening1": "du soir",
+					"night1": "du mat."
+				},
+				"narrow": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "mat."
+				},
+				"wide": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "du matin",
+					"afternoon1": "de l’après-midi",
+					"evening1": "du soir",
+					"night1": "du matin"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "nuit"
+				},
+				"narrow": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "mat.",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "mat."
+				},
+				"wide": {
+					"midnight": "minuit",
+					"noon": "midi",
+					"morning1": "matin",
+					"afternoon1": "après-midi",
+					"evening1": "soir",
+					"night1": "nuit"
+				}
 			}
 		},
 		"era-wide": {
@@ -5438,6 +5708,30 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "24:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "04:00"
+		},
+		"night1": {
+			"_before": "04:00",
+			"_from": "00:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

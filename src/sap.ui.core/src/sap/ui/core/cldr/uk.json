@@ -1519,6 +1519,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "опівночі",
+					"noon": "пополудні",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				},
+				"narrow": {
+					"midnight": "північ",
+					"noon": "п",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				},
+				"wide": {
+					"midnight": "опівночі",
+					"noon": "пополудні",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "північ",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				},
+				"narrow": {
+					"midnight": "північ",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				},
+				"wide": {
+					"midnight": "опівніч",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "до нашої ери",
 			"1": "нашої ери"
@@ -1990,6 +2044,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "опівночі",
+					"noon": "пополудні",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				},
+				"narrow": {
+					"midnight": "північ",
+					"noon": "п",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				},
+				"wide": {
+					"midnight": "опівночі",
+					"noon": "пополудні",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "північ",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				},
+				"narrow": {
+					"midnight": "північ",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				},
+				"wide": {
+					"midnight": "опівніч",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AH"
 		},
@@ -2456,6 +2564,60 @@
 					"дп",
 					"пп"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "опівночі",
+					"noon": "пополудні",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				},
+				"narrow": {
+					"midnight": "північ",
+					"noon": "п",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				},
+				"wide": {
+					"midnight": "опівночі",
+					"noon": "пополудні",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "північ",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				},
+				"narrow": {
+					"midnight": "північ",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				},
+				"wide": {
+					"midnight": "опівніч",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				}
 			}
 		},
 		"era-wide": {
@@ -2938,6 +3100,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "опівночі",
+					"noon": "пополудні",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				},
+				"narrow": {
+					"midnight": "північ",
+					"noon": "п",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				},
+				"wide": {
+					"midnight": "опівночі",
+					"noon": "пополудні",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "північ",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				},
+				"narrow": {
+					"midnight": "північ",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				},
+				"wide": {
+					"midnight": "опівніч",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3404,6 +3620,60 @@
 					"дп",
 					"пп"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "опівночі",
+					"noon": "пополудні",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				},
+				"narrow": {
+					"midnight": "північ",
+					"noon": "п",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				},
+				"wide": {
+					"midnight": "опівночі",
+					"noon": "пополудні",
+					"morning1": "ранку",
+					"afternoon1": "дня",
+					"evening1": "вечора",
+					"night1": "ночі"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "північ",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				},
+				"narrow": {
+					"midnight": "північ",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				},
+				"wide": {
+					"midnight": "опівніч",
+					"noon": "полудень",
+					"morning1": "ранок",
+					"afternoon1": "день",
+					"evening1": "вечір",
+					"night1": "ніч"
+				}
 			}
 		},
 		"era-wide": {
@@ -5818,6 +6088,30 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "24:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "04:00"
+		},
+		"night1": {
+			"_before": "04:00",
+			"_from": "00:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

@@ -1611,6 +1611,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "o północy",
+					"noon": "w południe",
+					"morning1": "rano",
+					"morning2": "przed południem",
+					"afternoon1": "po południu",
+					"evening1": "wieczorem",
+					"night1": "w nocy"
+				},
+				"narrow": {
+					"midnight": "o półn.",
+					"noon": "w poł.",
+					"morning1": "rano",
+					"morning2": "przed poł.",
+					"afternoon1": "po poł.",
+					"evening1": "wiecz.",
+					"night1": "w nocy"
+				},
+				"wide": {
+					"midnight": "o północy",
+					"noon": "w południe",
+					"morning1": "rano",
+					"morning2": "przed południem",
+					"afternoon1": "po południu",
+					"evening1": "wieczorem",
+					"night1": "w nocy"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "północ",
+					"noon": "południe",
+					"morning1": "rano",
+					"morning2": "przedpołudnie",
+					"afternoon1": "popołudnie",
+					"evening1": "wieczór",
+					"night1": "noc"
+				},
+				"narrow": {
+					"midnight": "półn.",
+					"noon": "poł.",
+					"morning1": "rano",
+					"morning2": "przedpoł.",
+					"afternoon1": "popoł.",
+					"evening1": "wiecz.",
+					"night1": "noc"
+				},
+				"wide": {
+					"midnight": "północ",
+					"noon": "południe",
+					"morning1": "rano",
+					"morning2": "przedpołudnie",
+					"afternoon1": "popołudnie",
+					"evening1": "wieczór",
+					"night1": "noc"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "przed naszą erą",
 			"1": "naszej ery"
@@ -2081,6 +2141,66 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "o północy",
+					"noon": "w południe",
+					"morning1": "rano",
+					"morning2": "przed południem",
+					"afternoon1": "po południu",
+					"evening1": "wieczorem",
+					"night1": "w nocy"
+				},
+				"narrow": {
+					"midnight": "o półn.",
+					"noon": "w poł.",
+					"morning1": "rano",
+					"morning2": "przed poł.",
+					"afternoon1": "po poł.",
+					"evening1": "wiecz.",
+					"night1": "w nocy"
+				},
+				"wide": {
+					"midnight": "o północy",
+					"noon": "w południe",
+					"morning1": "rano",
+					"morning2": "przed południem",
+					"afternoon1": "po południu",
+					"evening1": "wieczorem",
+					"night1": "w nocy"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "północ",
+					"noon": "południe",
+					"morning1": "rano",
+					"morning2": "przedpołudnie",
+					"afternoon1": "popołudnie",
+					"evening1": "wieczór",
+					"night1": "noc"
+				},
+				"narrow": {
+					"midnight": "półn.",
+					"noon": "poł.",
+					"morning1": "rano",
+					"morning2": "przedpoł.",
+					"afternoon1": "popoł.",
+					"evening1": "wiecz.",
+					"night1": "noc"
+				},
+				"wide": {
+					"midnight": "północ",
+					"noon": "południe",
+					"morning1": "rano",
+					"morning2": "przedpołudnie",
+					"afternoon1": "popołudnie",
+					"evening1": "wieczór",
+					"night1": "noc"
+				}
 			}
 		},
 		"era-wide": {
@@ -2558,6 +2678,66 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "o północy",
+					"noon": "w południe",
+					"morning1": "rano",
+					"morning2": "przed południem",
+					"afternoon1": "po południu",
+					"evening1": "wieczorem",
+					"night1": "w nocy"
+				},
+				"narrow": {
+					"midnight": "o półn.",
+					"noon": "w poł.",
+					"morning1": "rano",
+					"morning2": "przed poł.",
+					"afternoon1": "po poł.",
+					"evening1": "wiecz.",
+					"night1": "w nocy"
+				},
+				"wide": {
+					"midnight": "o północy",
+					"noon": "w południe",
+					"morning1": "rano",
+					"morning2": "przed południem",
+					"afternoon1": "po południu",
+					"evening1": "wieczorem",
+					"night1": "w nocy"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "północ",
+					"noon": "południe",
+					"morning1": "rano",
+					"morning2": "przedpołudnie",
+					"afternoon1": "popołudnie",
+					"evening1": "wieczór",
+					"night1": "noc"
+				},
+				"narrow": {
+					"midnight": "półn.",
+					"noon": "poł.",
+					"morning1": "rano",
+					"morning2": "przedpoł.",
+					"afternoon1": "popoł.",
+					"evening1": "wiecz.",
+					"night1": "noc"
+				},
+				"wide": {
+					"midnight": "północ",
+					"noon": "południe",
+					"morning1": "rano",
+					"morning2": "przedpołudnie",
+					"afternoon1": "popołudnie",
+					"evening1": "wieczór",
+					"night1": "noc"
+				}
 			}
 		},
 		"era-wide": {
@@ -3041,6 +3221,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "o północy",
+					"noon": "w południe",
+					"morning1": "rano",
+					"morning2": "przed południem",
+					"afternoon1": "po południu",
+					"evening1": "wieczorem",
+					"night1": "w nocy"
+				},
+				"narrow": {
+					"midnight": "o półn.",
+					"noon": "w poł.",
+					"morning1": "rano",
+					"morning2": "przed poł.",
+					"afternoon1": "po poł.",
+					"evening1": "wiecz.",
+					"night1": "w nocy"
+				},
+				"wide": {
+					"midnight": "o północy",
+					"noon": "w południe",
+					"morning1": "rano",
+					"morning2": "przed południem",
+					"afternoon1": "po południu",
+					"evening1": "wieczorem",
+					"night1": "w nocy"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "północ",
+					"noon": "południe",
+					"morning1": "rano",
+					"morning2": "przedpołudnie",
+					"afternoon1": "popołudnie",
+					"evening1": "wieczór",
+					"night1": "noc"
+				},
+				"narrow": {
+					"midnight": "półn.",
+					"noon": "poł.",
+					"morning1": "rano",
+					"morning2": "przedpoł.",
+					"afternoon1": "popoł.",
+					"evening1": "wiecz.",
+					"night1": "noc"
+				},
+				"wide": {
+					"midnight": "północ",
+					"noon": "południe",
+					"morning1": "rano",
+					"morning2": "przedpołudnie",
+					"afternoon1": "popołudnie",
+					"evening1": "wieczór",
+					"night1": "noc"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3508,6 +3748,66 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "o północy",
+					"noon": "w południe",
+					"morning1": "rano",
+					"morning2": "przed południem",
+					"afternoon1": "po południu",
+					"evening1": "wieczorem",
+					"night1": "w nocy"
+				},
+				"narrow": {
+					"midnight": "o półn.",
+					"noon": "w poł.",
+					"morning1": "rano",
+					"morning2": "przed poł.",
+					"afternoon1": "po poł.",
+					"evening1": "wiecz.",
+					"night1": "w nocy"
+				},
+				"wide": {
+					"midnight": "o północy",
+					"noon": "w południe",
+					"morning1": "rano",
+					"morning2": "przed południem",
+					"afternoon1": "po południu",
+					"evening1": "wieczorem",
+					"night1": "w nocy"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "północ",
+					"noon": "południe",
+					"morning1": "rano",
+					"morning2": "przedpołudnie",
+					"afternoon1": "popołudnie",
+					"evening1": "wieczór",
+					"night1": "noc"
+				},
+				"narrow": {
+					"midnight": "półn.",
+					"noon": "poł.",
+					"morning1": "rano",
+					"morning2": "przedpoł.",
+					"afternoon1": "popoł.",
+					"evening1": "wiecz.",
+					"night1": "noc"
+				},
+				"wide": {
+					"midnight": "północ",
+					"noon": "południe",
+					"morning1": "rano",
+					"morning2": "przedpołudnie",
+					"afternoon1": "popołudnie",
+					"evening1": "wieczór",
+					"night1": "noc"
+				}
 			}
 		},
 		"era-wide": {
@@ -5641,6 +5941,34 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "21:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "10:00",
+			"_from": "06:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "10:00"
+		},
+		"night1": {
+			"_before": "06:00",
+			"_from": "21:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

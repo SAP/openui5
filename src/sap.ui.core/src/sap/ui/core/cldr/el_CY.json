@@ -1500,6 +1500,48 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"narrow": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"wide": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημέρι",
+					"evening1": "απόγευμα",
+					"night1": "βράδυ"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"narrow": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"wide": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημέρι",
+					"evening1": "απόγευμα",
+					"night1": "βράδυ"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "προ Χριστού",
 			"1": "μετά Χριστόν"
@@ -1969,6 +2011,48 @@
 					"π.μ.",
 					"μ.μ."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"narrow": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"wide": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημέρι",
+					"evening1": "απόγευμα",
+					"night1": "βράδυ"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"narrow": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"wide": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημέρι",
+					"evening1": "απόγευμα",
+					"night1": "βράδυ"
+				}
 			}
 		},
 		"era-wide": {
@@ -2454,6 +2538,48 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"narrow": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"wide": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημέρι",
+					"evening1": "απόγευμα",
+					"night1": "βράδυ"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"narrow": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"wide": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημέρι",
+					"evening1": "απόγευμα",
+					"night1": "βράδυ"
+				}
+			}
+		},
 		"era-wide": {
 			"232": "Meiji",
 			"233": "Taishō",
@@ -2934,6 +3060,48 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"narrow": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"wide": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημέρι",
+					"evening1": "απόγευμα",
+					"night1": "βράδυ"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"narrow": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"wide": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημέρι",
+					"evening1": "απόγευμα",
+					"night1": "βράδυ"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3400,6 +3568,48 @@
 					"π.μ.",
 					"μ.μ."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"narrow": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"wide": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημέρι",
+					"evening1": "απόγευμα",
+					"night1": "βράδυ"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"narrow": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημ.",
+					"evening1": "απόγ.",
+					"night1": "βράδυ"
+				},
+				"wide": {
+					"morning1": "πρωί",
+					"afternoon1": "μεσημέρι",
+					"evening1": "απόγευμα",
+					"night1": "βράδυ"
+				}
 			}
 		},
 		"era-wide": {
@@ -5348,6 +5558,24 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "17:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "20:00",
+			"_from": "17:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "04:00"
+		},
+		"night1": {
+			"_before": "04:00",
+			"_from": "20:00"
 		}
 	}
 }

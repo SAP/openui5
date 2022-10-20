@@ -1531,6 +1531,54 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				},
+				"narrow": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				},
+				"wide": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				},
+				"narrow": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				},
+				"wide": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "antes de Cristo",
 			"1": "después de Cristo"
@@ -2005,6 +2053,54 @@
 					"a. m.",
 					"p. m."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				},
+				"narrow": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				},
+				"wide": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				},
+				"narrow": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				},
+				"wide": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				}
 			}
 		},
 		"era-wide": {
@@ -2486,6 +2582,54 @@
 					"a. m.",
 					"p. m."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				},
+				"narrow": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				},
+				"wide": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				},
+				"narrow": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				},
+				"wide": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				}
 			}
 		},
 		"era-wide": {
@@ -2973,6 +3117,54 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				},
+				"narrow": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				},
+				"wide": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				},
+				"narrow": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				},
+				"wide": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3444,6 +3636,54 @@
 					"a. m.",
 					"p. m."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				},
+				"narrow": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				},
+				"wide": {
+					"noon": "del mediodía",
+					"morning1": "de la madrugada",
+					"morning2": "de la mañana",
+					"evening1": "de la tarde",
+					"night1": "de la noche"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				},
+				"narrow": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				},
+				"wide": {
+					"noon": "mediodía",
+					"morning1": "madrugada",
+					"morning2": "mañana",
+					"evening1": "tarde",
+					"night1": "noche"
+				}
 			}
 		},
 		"era-wide": {
@@ -5377,6 +5617,27 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"evening1": {
+			"_before": "20:00",
+			"_from": "12:00"
+		},
+		"morning1": {
+			"_before": "06:00",
+			"_from": "00:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "24:00",
+			"_from": "20:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

@@ -1597,6 +1597,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "西元前",
 			"1": "西元"
@@ -2068,6 +2128,66 @@
 					"上午",
 					"下午"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
 			}
 		},
 		"era-wide": {
@@ -2546,6 +2666,66 @@
 					"上午",
 					"下午"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
 			}
 		},
 		"era-wide": {
@@ -3030,6 +3210,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "波斯曆"
 		},
@@ -3498,6 +3738,66 @@
 					"上午",
 					"下午"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"narrow": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				},
+				"wide": {
+					"midnight": "午夜",
+					"morning1": "清晨",
+					"morning2": "上午",
+					"afternoon1": "中午",
+					"afternoon2": "下午",
+					"evening1": "晚上",
+					"night1": "凌晨"
+				}
 			}
 		},
 		"era-wide": {
@@ -5192,6 +5492,35 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "13:00",
+			"_from": "12:00"
+		},
+		"afternoon2": {
+			"_before": "19:00",
+			"_from": "13:00"
+		},
+		"evening1": {
+			"_before": "24:00",
+			"_from": "19:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "08:00",
+			"_from": "05:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "08:00"
+		},
+		"night1": {
+			"_before": "05:00",
+			"_from": "00:00"
 		}
 	},
 	"calendarPreference": "gregorian roc chinese"

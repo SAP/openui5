@@ -1542,6 +1542,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"narrow": {
+					"midnight": "nửa đêm",
+					"noon": "tr",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"wide": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"narrow": {
+					"midnight": "nửa đêm",
+					"noon": "trưa",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"wide": {
+					"midnight": "nửa đêm",
+					"noon": "trưa",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "Trước CN",
 			"1": "sau CN"
@@ -2013,6 +2067,60 @@
 					"SA",
 					"CH"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"narrow": {
+					"midnight": "nửa đêm",
+					"noon": "tr",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"wide": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"narrow": {
+					"midnight": "nửa đêm",
+					"noon": "trưa",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"wide": {
+					"midnight": "nửa đêm",
+					"noon": "trưa",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				}
 			}
 		},
 		"era-wide": {
@@ -2491,6 +2599,60 @@
 					"SA",
 					"CH"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"narrow": {
+					"midnight": "nửa đêm",
+					"noon": "tr",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"wide": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"narrow": {
+					"midnight": "nửa đêm",
+					"noon": "trưa",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"wide": {
+					"midnight": "nửa đêm",
+					"noon": "trưa",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				}
 			}
 		},
 		"era-wide": {
@@ -2975,6 +3137,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"narrow": {
+					"midnight": "nửa đêm",
+					"noon": "tr",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"wide": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"narrow": {
+					"midnight": "nửa đêm",
+					"noon": "trưa",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"wide": {
+					"midnight": "nửa đêm",
+					"noon": "trưa",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3443,6 +3659,60 @@
 					"SA",
 					"CH"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"narrow": {
+					"midnight": "nửa đêm",
+					"noon": "tr",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"wide": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "nửa đêm",
+					"noon": "TR",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"narrow": {
+					"midnight": "nửa đêm",
+					"noon": "trưa",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				},
+				"wide": {
+					"midnight": "nửa đêm",
+					"noon": "trưa",
+					"morning1": "sáng",
+					"afternoon1": "chiều",
+					"evening1": "tối",
+					"night1": "đêm"
+				}
 			}
 		},
 		"era-wide": {
@@ -5138,6 +5408,30 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "21:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "04:00"
+		},
+		"night1": {
+			"_before": "04:00",
+			"_from": "21:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

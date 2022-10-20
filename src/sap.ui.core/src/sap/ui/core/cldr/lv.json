@@ -1488,6 +1488,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "pusnaktī",
+					"noon": "pusd.",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				},
+				"narrow": {
+					"midnight": "pusnaktī",
+					"noon": "pusd.",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				},
+				"wide": {
+					"midnight": "pusnaktī",
+					"noon": "pusdienlaikā",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusdienā",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "pusnakts",
+					"noon": "pusd.",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusdiena",
+					"evening1": "vakars",
+					"night1": "nakts"
+				},
+				"narrow": {
+					"midnight": "pusnakts",
+					"noon": "pusd.",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakars",
+					"night1": "nakts"
+				},
+				"wide": {
+					"midnight": "pusnakts",
+					"noon": "pusdienlaiks",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusdiena",
+					"evening1": "vakars",
+					"night1": "nakts"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "pirms mūsu ēras",
 			"1": "mūsu ērā"
@@ -1957,6 +2011,60 @@
 					"priekšpusdiena",
 					"pēcpusdiena"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "pusnaktī",
+					"noon": "pusd.",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				},
+				"narrow": {
+					"midnight": "pusnaktī",
+					"noon": "pusd.",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				},
+				"wide": {
+					"midnight": "pusnaktī",
+					"noon": "pusdienlaikā",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusdienā",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "pusnakts",
+					"noon": "pusd.",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusdiena",
+					"evening1": "vakars",
+					"night1": "nakts"
+				},
+				"narrow": {
+					"midnight": "pusnakts",
+					"noon": "pusd.",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakars",
+					"night1": "nakts"
+				},
+				"wide": {
+					"midnight": "pusnakts",
+					"noon": "pusdienlaiks",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusdiena",
+					"evening1": "vakars",
+					"night1": "nakts"
+				}
 			}
 		},
 		"era-wide": {
@@ -2433,6 +2541,60 @@
 					"priekšpusdiena",
 					"pēcpusdiena"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "pusnaktī",
+					"noon": "pusd.",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				},
+				"narrow": {
+					"midnight": "pusnaktī",
+					"noon": "pusd.",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				},
+				"wide": {
+					"midnight": "pusnaktī",
+					"noon": "pusdienlaikā",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusdienā",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "pusnakts",
+					"noon": "pusd.",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusdiena",
+					"evening1": "vakars",
+					"night1": "nakts"
+				},
+				"narrow": {
+					"midnight": "pusnakts",
+					"noon": "pusd.",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakars",
+					"night1": "nakts"
+				},
+				"wide": {
+					"midnight": "pusnakts",
+					"noon": "pusdienlaiks",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusdiena",
+					"evening1": "vakars",
+					"night1": "nakts"
+				}
 			}
 		},
 		"era-wide": {
@@ -2915,6 +3077,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "pusnaktī",
+					"noon": "pusd.",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				},
+				"narrow": {
+					"midnight": "pusnaktī",
+					"noon": "pusd.",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				},
+				"wide": {
+					"midnight": "pusnaktī",
+					"noon": "pusdienlaikā",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusdienā",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "pusnakts",
+					"noon": "pusd.",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusdiena",
+					"evening1": "vakars",
+					"night1": "nakts"
+				},
+				"narrow": {
+					"midnight": "pusnakts",
+					"noon": "pusd.",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakars",
+					"night1": "nakts"
+				},
+				"wide": {
+					"midnight": "pusnakts",
+					"noon": "pusdienlaiks",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusdiena",
+					"evening1": "vakars",
+					"night1": "nakts"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "persiešu gads"
 		},
@@ -3381,6 +3597,60 @@
 					"priekšpusdiena",
 					"pēcpusdiena"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "pusnaktī",
+					"noon": "pusd.",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				},
+				"narrow": {
+					"midnight": "pusnaktī",
+					"noon": "pusd.",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				},
+				"wide": {
+					"midnight": "pusnaktī",
+					"noon": "pusdienlaikā",
+					"morning1": "no rīta",
+					"afternoon1": "pēcpusdienā",
+					"evening1": "vakarā",
+					"night1": "naktī"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "pusnakts",
+					"noon": "pusd.",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusdiena",
+					"evening1": "vakars",
+					"night1": "nakts"
+				},
+				"narrow": {
+					"midnight": "pusnakts",
+					"noon": "pusd.",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusd.",
+					"evening1": "vakars",
+					"night1": "nakts"
+				},
+				"wide": {
+					"midnight": "pusnakts",
+					"noon": "pusdienlaiks",
+					"morning1": "rīts",
+					"afternoon1": "pēcpusdiena",
+					"evening1": "vakars",
+					"night1": "nakts"
+				}
 			}
 		},
 		"era-wide": {
@@ -5577,6 +5847,30 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "23:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "06:00",
+			"_from": "23:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

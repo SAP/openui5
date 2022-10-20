@@ -1490,6 +1490,54 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "आधी रात",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "ईसा-पूर्व",
 			"1": "ईसवी सन"
@@ -1960,6 +2008,54 @@
 					"am",
 					"pm"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "आधी रात",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
 			}
 		},
 		"era-wide": {
@@ -2437,6 +2533,54 @@
 					"am",
 					"pm"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "आधी रात",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
 			}
 		},
 		"era-wide": {
@@ -2920,6 +3064,54 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "आधी रात",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3387,6 +3579,54 @@
 					"am",
 					"pm"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"narrow": {
+					"midnight": "आधी रात",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				},
+				"wide": {
+					"midnight": "मध्यरात्रि",
+					"morning1": "सुबह",
+					"afternoon1": "दोपहर",
+					"evening1": "शाम",
+					"night1": "रात"
+				}
 			}
 		},
 		"era-wide": {
@@ -5293,6 +5533,27 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "16:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "20:00",
+			"_from": "16:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "04:00"
+		},
+		"night1": {
+			"_before": "04:00",
+			"_from": "20:00"
 		}
 	},
 	"calendarPreference": "gregorian indian"

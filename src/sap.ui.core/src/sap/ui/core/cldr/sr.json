@@ -1489,6 +1489,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутро",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				},
+				"narrow": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутру",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				},
+				"wide": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутро",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				},
+				"narrow": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				},
+				"wide": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "пре нове ере",
 			"1": "нове ере"
@@ -1962,6 +2016,60 @@
 					"пре подне",
 					"по подне"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутро",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				},
+				"narrow": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутру",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				},
+				"wide": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутро",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				},
+				"narrow": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				},
+				"wide": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				}
 			}
 		},
 		"era-wide": {
@@ -2442,6 +2550,60 @@
 					"пре подне",
 					"по подне"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутро",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				},
+				"narrow": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутру",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				},
+				"wide": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутро",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				},
+				"narrow": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				},
+				"wide": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				}
 			}
 		},
 		"era-wide": {
@@ -2928,6 +3090,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутро",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				},
+				"narrow": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутру",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				},
+				"wide": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутро",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				},
+				"narrow": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				},
+				"wide": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3398,6 +3614,60 @@
 					"пре подне",
 					"по подне"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутро",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				},
+				"narrow": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутру",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				},
+				"wide": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "ујутро",
+					"afternoon1": "по подне",
+					"evening1": "увече",
+					"night1": "ноћу"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				},
+				"narrow": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				},
+				"wide": {
+					"midnight": "поноћ",
+					"noon": "подне",
+					"morning1": "јутро",
+					"afternoon1": "поподне",
+					"evening1": "вече",
+					"night1": "ноћ"
+				}
 			}
 		},
 		"era-wide": {
@@ -5591,6 +5861,30 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "21:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "06:00",
+			"_from": "21:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

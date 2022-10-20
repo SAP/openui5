@@ -1502,6 +1502,72 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"narrow": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"wide": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "délelőtt",
+					"afternoon1": "délután",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"narrow": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"wide": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "délelőtt",
+					"afternoon1": "délután",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "Krisztus előtt",
 			"1": "időszámításunk szerint"
@@ -1970,6 +2036,72 @@
 					"de.",
 					"du."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"narrow": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"wide": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "délelőtt",
+					"afternoon1": "délután",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"narrow": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"wide": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "délelőtt",
+					"afternoon1": "délután",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				}
 			}
 		},
 		"era-wide": {
@@ -2445,6 +2577,72 @@
 					"de.",
 					"du."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"narrow": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"wide": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "délelőtt",
+					"afternoon1": "délután",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"narrow": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"wide": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "délelőtt",
+					"afternoon1": "délután",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				}
 			}
 		},
 		"era-wide": {
@@ -2926,6 +3124,72 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"narrow": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"wide": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "délelőtt",
+					"afternoon1": "délután",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"narrow": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"wide": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "délelőtt",
+					"afternoon1": "délután",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3391,6 +3655,72 @@
 					"de.",
 					"du."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"narrow": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"wide": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "délelőtt",
+					"afternoon1": "délután",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"narrow": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "de.",
+					"afternoon1": "du.",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				},
+				"wide": {
+					"midnight": "éjfél",
+					"noon": "dél",
+					"morning1": "reggel",
+					"morning2": "délelőtt",
+					"afternoon1": "délután",
+					"evening1": "este",
+					"night1": "éjjel",
+					"night2": "hajnal"
+				}
 			}
 		},
 		"era-wide": {
@@ -5321,6 +5651,38 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "21:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "09:00",
+			"_from": "06:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "09:00"
+		},
+		"night1": {
+			"_before": "04:00",
+			"_from": "21:00"
+		},
+		"night2": {
+			"_before": "06:00",
+			"_from": "04:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

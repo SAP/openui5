@@ -1479,6 +1479,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "opoln.",
+					"noon": "opold.",
+					"morning1": "zjut.",
+					"morning2": "dop.",
+					"afternoon1": "pop.",
+					"evening1": "zveč.",
+					"night1": "ponoči"
+				},
+				"narrow": {
+					"midnight": "24.00",
+					"noon": "12.00",
+					"morning1": "zj",
+					"morning2": "d",
+					"afternoon1": "p",
+					"evening1": "zv",
+					"night1": "po"
+				},
+				"wide": {
+					"midnight": "opolnoči",
+					"noon": "opoldne",
+					"morning1": "zjutraj",
+					"morning2": "dopoldan",
+					"afternoon1": "popoldan",
+					"evening1": "zvečer",
+					"night1": "ponoči"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "poln.",
+					"noon": "pold.",
+					"morning1": "jut.",
+					"morning2": "dop.",
+					"afternoon1": "pop.",
+					"evening1": "zveč.",
+					"night1": "noč"
+				},
+				"narrow": {
+					"midnight": "24.00",
+					"noon": "12.00",
+					"morning1": "j",
+					"morning2": "d",
+					"afternoon1": "p",
+					"evening1": "v",
+					"night1": "n"
+				},
+				"wide": {
+					"midnight": "polnoč",
+					"noon": "poldne",
+					"morning1": "jutro",
+					"morning2": "dopoldne",
+					"afternoon1": "popoldne",
+					"evening1": "večer",
+					"night1": "noč"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "pred Kristusom",
 			"1": "po Kristusu"
@@ -1950,6 +2010,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "opoln.",
+					"noon": "opold.",
+					"morning1": "zjut.",
+					"morning2": "dop.",
+					"afternoon1": "pop.",
+					"evening1": "zveč.",
+					"night1": "ponoči"
+				},
+				"narrow": {
+					"midnight": "24.00",
+					"noon": "12.00",
+					"morning1": "zj",
+					"morning2": "d",
+					"afternoon1": "p",
+					"evening1": "zv",
+					"night1": "po"
+				},
+				"wide": {
+					"midnight": "opolnoči",
+					"noon": "opoldne",
+					"morning1": "zjutraj",
+					"morning2": "dopoldan",
+					"afternoon1": "popoldan",
+					"evening1": "zvečer",
+					"night1": "ponoči"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "poln.",
+					"noon": "pold.",
+					"morning1": "jut.",
+					"morning2": "dop.",
+					"afternoon1": "pop.",
+					"evening1": "zveč.",
+					"night1": "noč"
+				},
+				"narrow": {
+					"midnight": "24.00",
+					"noon": "12.00",
+					"morning1": "j",
+					"morning2": "d",
+					"afternoon1": "p",
+					"evening1": "v",
+					"night1": "n"
+				},
+				"wide": {
+					"midnight": "polnoč",
+					"noon": "poldne",
+					"morning1": "jutro",
+					"morning2": "dopoldne",
+					"afternoon1": "popoldne",
+					"evening1": "večer",
+					"night1": "noč"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AH"
 		},
@@ -2416,6 +2536,66 @@
 					"dopoldne",
 					"popoldne"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "opoln.",
+					"noon": "opold.",
+					"morning1": "zjut.",
+					"morning2": "dop.",
+					"afternoon1": "pop.",
+					"evening1": "zveč.",
+					"night1": "ponoči"
+				},
+				"narrow": {
+					"midnight": "24.00",
+					"noon": "12.00",
+					"morning1": "zj",
+					"morning2": "d",
+					"afternoon1": "p",
+					"evening1": "zv",
+					"night1": "po"
+				},
+				"wide": {
+					"midnight": "opolnoči",
+					"noon": "opoldne",
+					"morning1": "zjutraj",
+					"morning2": "dopoldan",
+					"afternoon1": "popoldan",
+					"evening1": "zvečer",
+					"night1": "ponoči"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "poln.",
+					"noon": "pold.",
+					"morning1": "jut.",
+					"morning2": "dop.",
+					"afternoon1": "pop.",
+					"evening1": "zveč.",
+					"night1": "noč"
+				},
+				"narrow": {
+					"midnight": "24.00",
+					"noon": "12.00",
+					"morning1": "j",
+					"morning2": "d",
+					"afternoon1": "p",
+					"evening1": "v",
+					"night1": "n"
+				},
+				"wide": {
+					"midnight": "polnoč",
+					"noon": "poldne",
+					"morning1": "jutro",
+					"morning2": "dopoldne",
+					"afternoon1": "popoldne",
+					"evening1": "večer",
+					"night1": "noč"
+				}
 			}
 		},
 		"era-wide": {
@@ -2898,6 +3078,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "opoln.",
+					"noon": "opold.",
+					"morning1": "zjut.",
+					"morning2": "dop.",
+					"afternoon1": "pop.",
+					"evening1": "zveč.",
+					"night1": "ponoči"
+				},
+				"narrow": {
+					"midnight": "24.00",
+					"noon": "12.00",
+					"morning1": "zj",
+					"morning2": "d",
+					"afternoon1": "p",
+					"evening1": "zv",
+					"night1": "po"
+				},
+				"wide": {
+					"midnight": "opolnoči",
+					"noon": "opoldne",
+					"morning1": "zjutraj",
+					"morning2": "dopoldan",
+					"afternoon1": "popoldan",
+					"evening1": "zvečer",
+					"night1": "ponoči"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "poln.",
+					"noon": "pold.",
+					"morning1": "jut.",
+					"morning2": "dop.",
+					"afternoon1": "pop.",
+					"evening1": "zveč.",
+					"night1": "noč"
+				},
+				"narrow": {
+					"midnight": "24.00",
+					"noon": "12.00",
+					"morning1": "j",
+					"morning2": "d",
+					"afternoon1": "p",
+					"evening1": "v",
+					"night1": "n"
+				},
+				"wide": {
+					"midnight": "polnoč",
+					"noon": "poldne",
+					"morning1": "jutro",
+					"morning2": "dopoldne",
+					"afternoon1": "popoldne",
+					"evening1": "večer",
+					"night1": "noč"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3364,6 +3604,66 @@
 					"dopoldne",
 					"popoldne"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "opoln.",
+					"noon": "opold.",
+					"morning1": "zjut.",
+					"morning2": "dop.",
+					"afternoon1": "pop.",
+					"evening1": "zveč.",
+					"night1": "ponoči"
+				},
+				"narrow": {
+					"midnight": "24.00",
+					"noon": "12.00",
+					"morning1": "zj",
+					"morning2": "d",
+					"afternoon1": "p",
+					"evening1": "zv",
+					"night1": "po"
+				},
+				"wide": {
+					"midnight": "opolnoči",
+					"noon": "opoldne",
+					"morning1": "zjutraj",
+					"morning2": "dopoldan",
+					"afternoon1": "popoldan",
+					"evening1": "zvečer",
+					"night1": "ponoči"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "poln.",
+					"noon": "pold.",
+					"morning1": "jut.",
+					"morning2": "dop.",
+					"afternoon1": "pop.",
+					"evening1": "zveč.",
+					"night1": "noč"
+				},
+				"narrow": {
+					"midnight": "24.00",
+					"noon": "12.00",
+					"morning1": "j",
+					"morning2": "d",
+					"afternoon1": "p",
+					"evening1": "v",
+					"night1": "n"
+				},
+				"wide": {
+					"midnight": "polnoč",
+					"noon": "poldne",
+					"morning1": "jutro",
+					"morning2": "dopoldne",
+					"afternoon1": "popoldne",
+					"evening1": "večer",
+					"night1": "noč"
+				}
 			}
 		},
 		"era-wide": {
@@ -5805,6 +6105,34 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "22:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "10:00",
+			"_from": "06:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "10:00"
+		},
+		"night1": {
+			"_before": "06:00",
+			"_from": "22:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

@@ -1494,6 +1494,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "לפני הספירה",
 			"1": "לספירה"
@@ -1968,6 +2028,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "שנת היג׳רה"
 		},
@@ -2437,6 +2557,66 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				}
 			}
 		},
 		"era-wide": {
@@ -2922,6 +3102,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "הספירה הפרסית"
 		},
@@ -3391,6 +3631,66 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בבוקר",
+					"afternoon1": "בצהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "בערב",
+					"night1": "בלילה",
+					"night2": "לפנות בוקר"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"narrow": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחה״צ",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				},
+				"wide": {
+					"midnight": "חצות",
+					"morning1": "בוקר",
+					"afternoon1": "צהריים",
+					"afternoon2": "אחר הצהריים",
+					"evening1": "ערב",
+					"night1": "לילה",
+					"night2": "לפנות בוקר"
+				}
 			}
 		},
 		"era-wide": {
@@ -5842,6 +6142,35 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "16:00",
+			"_from": "12:00"
+		},
+		"afternoon2": {
+			"_before": "18:00",
+			"_from": "16:00"
+		},
+		"evening1": {
+			"_before": "22:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "03:00",
+			"_from": "22:00"
+		},
+		"night2": {
+			"_before": "06:00",
+			"_from": "03:00"
 		}
 	},
 	"calendarPreference": "gregorian hebrew islamic islamic-civil islamic-tbla"

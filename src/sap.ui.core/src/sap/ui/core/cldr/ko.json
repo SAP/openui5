@@ -1541,6 +1541,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "기원전",
 			"1": "서기"
@@ -2028,6 +2088,66 @@
 					"오전",
 					"오후"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
 			}
 		},
 		"era-wide": {
@@ -2523,6 +2643,66 @@
 					"오전",
 					"오후"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
 			}
 		},
 		"era-wide": {
@@ -3023,6 +3203,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3507,6 +3747,66 @@
 					"오전",
 					"오후"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"narrow": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				},
+				"wide": {
+					"midnight": "자정",
+					"noon": "정오",
+					"morning1": "새벽",
+					"morning2": "오전",
+					"afternoon1": "오후",
+					"evening1": "저녁",
+					"night1": "밤"
+				}
 			}
 		},
 		"era-wide": {
@@ -5202,6 +5502,34 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "21:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "06:00",
+			"_from": "03:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "03:00",
+			"_from": "21:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	},
 	"calendarPreference": "gregorian dangi"

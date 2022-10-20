@@ -1509,6 +1509,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"narrow": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"wide": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"narrow": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"wide": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "преди Христа",
 			"1": "след Христа"
@@ -2005,6 +2059,60 @@
 					"am",
 					"pm"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"narrow": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"wide": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"narrow": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"wide": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				}
 			}
 		},
 		"era-wide": {
@@ -2510,6 +2618,60 @@
 					"am",
 					"pm"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"narrow": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"wide": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"narrow": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"wide": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				}
 			}
 		},
 		"era-wide": {
@@ -3019,6 +3181,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"narrow": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"wide": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"narrow": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"wide": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3512,6 +3728,60 @@
 					"am",
 					"pm"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"narrow": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"wide": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"narrow": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				},
+				"wide": {
+					"midnight": "полунощ",
+					"morning1": "сутринта",
+					"morning2": "на обяд",
+					"afternoon1": "следобед",
+					"evening1": "вечерта",
+					"night1": "през нощта"
+				}
 			}
 		},
 		"era-wide": {
@@ -5444,6 +5714,31 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "14:00"
+		},
+		"evening1": {
+			"_before": "22:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "11:00",
+			"_from": "04:00"
+		},
+		"morning2": {
+			"_before": "14:00",
+			"_from": "11:00"
+		},
+		"night1": {
+			"_before": "04:00",
+			"_from": "22:00"
 		}
 	}
 }

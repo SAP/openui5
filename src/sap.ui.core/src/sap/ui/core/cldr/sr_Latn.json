@@ -1489,6 +1489,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutro",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				},
+				"narrow": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutru",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				},
+				"wide": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutro",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				},
+				"narrow": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				},
+				"wide": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "pre nove ere",
 			"1": "nove ere"
@@ -1962,6 +2016,60 @@
 					"pre podne",
 					"po podne"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutro",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				},
+				"narrow": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutru",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				},
+				"wide": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutro",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				},
+				"narrow": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				},
+				"wide": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				}
 			}
 		},
 		"era-wide": {
@@ -2442,6 +2550,60 @@
 					"pre podne",
 					"po podne"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutro",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				},
+				"narrow": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutru",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				},
+				"wide": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutro",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				},
+				"narrow": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				},
+				"wide": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				}
 			}
 		},
 		"era-wide": {
@@ -2928,6 +3090,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutro",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				},
+				"narrow": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutru",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				},
+				"wide": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutro",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				},
+				"narrow": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				},
+				"wide": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3398,6 +3614,60 @@
 					"pre podne",
 					"po podne"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutro",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				},
+				"narrow": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutru",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				},
+				"wide": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "ujutro",
+					"afternoon1": "po podne",
+					"evening1": "uveče",
+					"night1": "noću"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				},
+				"narrow": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				},
+				"wide": {
+					"midnight": "ponoć",
+					"noon": "podne",
+					"morning1": "jutro",
+					"afternoon1": "popodne",
+					"evening1": "veče",
+					"night1": "noć"
+				}
 			}
 		},
 		"era-wide": {
@@ -5591,6 +5861,30 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "21:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "06:00",
+			"_from": "21:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	},
 	"calendarPreference": "gregorian"

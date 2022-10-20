@@ -256,7 +256,7 @@
             <pattern>sap/ui/thirdparty/less.js</pattern>
         </lib>
         <lib name="datajs" displayName="DataJS" npmName="n/a" version="unknown" hash="0df06fd64d1ebdeb81cdd00d1cf04494" homepage="http://datajs.codeplex.com/" id="73554900106100001652">
-            <!-- hints in the source code suggest this is version 1.1.0 with fixes from 1.1.1.beta2, 
+            <!-- hints in the source code suggest this is version 1.1.0 with fixes from 1.1.1.beta2,
                  but it could also be version 1.1.2 as modeled in PPMS -->
             <license url="http://datajs.codeplex.com/license" type="MIT" />
             <copyright>2011 Microsoft</copyright>
@@ -277,7 +277,7 @@
             <copyright>Google Inc.</copyright>
             <pattern>sap/ui/thirdparty/caja-html-sanitizer.js</pattern>
         </lib>
-        <lib name="cldr" displayName="Unicode Common Locale Data Repository" npmName="cldr-core" version="35.1" hash="067ae9f41caa6ebbe9a736b9bd64bc5e" homepage="http://cldr.unicode.org/" id="73555000106100020909">
+        <lib name="cldr" displayName="Unicode Common Locale Data Repository" npmName="cldr-core" version="35.1" hash="7a09744bcb85e731762b2a3dafd8d1e5" homepage="http://cldr.unicode.org/" id="73555000106100020909">
             <license url="http://www.unicode.org/copyright.html" type="Unicode-DFS-2015" />
             <copyright>1991-2014 Unicode, Inc.</copyright>
             <pattern>sap/ui/core/cldr/*</pattern>

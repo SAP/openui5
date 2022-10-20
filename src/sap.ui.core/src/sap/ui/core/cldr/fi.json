@@ -1629,6 +1629,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "keskiyöllä",
+					"noon": "keskip.",
+					"morning1": "aamulla",
+					"morning2": "aamup.",
+					"afternoon1": "iltap.",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				},
+				"narrow": {
+					"midnight": "ky.",
+					"noon": "kp.",
+					"morning1": "aamulla",
+					"morning2": "ap.",
+					"afternoon1": "ip.",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				},
+				"wide": {
+					"midnight": "keskiyöllä",
+					"noon": "keskipäivällä",
+					"morning1": "aamulla",
+					"morning2": "aamupäivällä",
+					"afternoon1": "iltapäivällä",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "keskiyö",
+					"noon": "keskip.",
+					"morning1": "aamu",
+					"morning2": "aamup.",
+					"afternoon1": "iltap.",
+					"evening1": "ilta",
+					"night1": "yö"
+				},
+				"narrow": {
+					"midnight": "ky.",
+					"noon": "kp.",
+					"morning1": "aamu",
+					"morning2": "ap.",
+					"afternoon1": "ip.",
+					"evening1": "ilta",
+					"night1": "yö"
+				},
+				"wide": {
+					"midnight": "keskiyö",
+					"noon": "keskipäivä",
+					"morning1": "aamu",
+					"morning2": "aamupäivä",
+					"afternoon1": "iltapäivä",
+					"evening1": "ilta",
+					"night1": "yö"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "ennen Kristuksen syntymää",
 			"1": "jälkeen Kristuksen syntymän"
@@ -2102,6 +2162,66 @@
 					"ap.",
 					"ip."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "keskiyöllä",
+					"noon": "keskip.",
+					"morning1": "aamulla",
+					"morning2": "aamup.",
+					"afternoon1": "iltap.",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				},
+				"narrow": {
+					"midnight": "ky.",
+					"noon": "kp.",
+					"morning1": "aamulla",
+					"morning2": "ap.",
+					"afternoon1": "ip.",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				},
+				"wide": {
+					"midnight": "keskiyöllä",
+					"noon": "keskipäivällä",
+					"morning1": "aamulla",
+					"morning2": "aamupäivällä",
+					"afternoon1": "iltapäivällä",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "keskiyö",
+					"noon": "keskip.",
+					"morning1": "aamu",
+					"morning2": "aamup.",
+					"afternoon1": "iltap.",
+					"evening1": "ilta",
+					"night1": "yö"
+				},
+				"narrow": {
+					"midnight": "ky.",
+					"noon": "kp.",
+					"morning1": "aamu",
+					"morning2": "ap.",
+					"afternoon1": "ip.",
+					"evening1": "ilta",
+					"night1": "yö"
+				},
+				"wide": {
+					"midnight": "keskiyö",
+					"noon": "keskipäivä",
+					"morning1": "aamu",
+					"morning2": "aamupäivä",
+					"afternoon1": "iltapäivä",
+					"evening1": "ilta",
+					"night1": "yö"
+				}
 			}
 		},
 		"era-wide": {
@@ -2582,6 +2702,66 @@
 					"ap.",
 					"ip."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "keskiyöllä",
+					"noon": "keskip.",
+					"morning1": "aamulla",
+					"morning2": "aamup.",
+					"afternoon1": "iltap.",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				},
+				"narrow": {
+					"midnight": "ky.",
+					"noon": "kp.",
+					"morning1": "aamulla",
+					"morning2": "ap.",
+					"afternoon1": "ip.",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				},
+				"wide": {
+					"midnight": "keskiyöllä",
+					"noon": "keskipäivällä",
+					"morning1": "aamulla",
+					"morning2": "aamupäivällä",
+					"afternoon1": "iltapäivällä",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "keskiyö",
+					"noon": "keskip.",
+					"morning1": "aamu",
+					"morning2": "aamup.",
+					"afternoon1": "iltap.",
+					"evening1": "ilta",
+					"night1": "yö"
+				},
+				"narrow": {
+					"midnight": "ky.",
+					"noon": "kp.",
+					"morning1": "aamu",
+					"morning2": "ap.",
+					"afternoon1": "ip.",
+					"evening1": "ilta",
+					"night1": "yö"
+				},
+				"wide": {
+					"midnight": "keskiyö",
+					"noon": "keskipäivä",
+					"morning1": "aamu",
+					"morning2": "aamupäivä",
+					"afternoon1": "iltapäivä",
+					"evening1": "ilta",
+					"night1": "yö"
+				}
 			}
 		},
 		"era-wide": {
@@ -3068,6 +3248,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "keskiyöllä",
+					"noon": "keskip.",
+					"morning1": "aamulla",
+					"morning2": "aamup.",
+					"afternoon1": "iltap.",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				},
+				"narrow": {
+					"midnight": "ky.",
+					"noon": "kp.",
+					"morning1": "aamulla",
+					"morning2": "ap.",
+					"afternoon1": "ip.",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				},
+				"wide": {
+					"midnight": "keskiyöllä",
+					"noon": "keskipäivällä",
+					"morning1": "aamulla",
+					"morning2": "aamupäivällä",
+					"afternoon1": "iltapäivällä",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "keskiyö",
+					"noon": "keskip.",
+					"morning1": "aamu",
+					"morning2": "aamup.",
+					"afternoon1": "iltap.",
+					"evening1": "ilta",
+					"night1": "yö"
+				},
+				"narrow": {
+					"midnight": "ky.",
+					"noon": "kp.",
+					"morning1": "aamu",
+					"morning2": "ap.",
+					"afternoon1": "ip.",
+					"evening1": "ilta",
+					"night1": "yö"
+				},
+				"wide": {
+					"midnight": "keskiyö",
+					"noon": "keskipäivä",
+					"morning1": "aamu",
+					"morning2": "aamupäivä",
+					"afternoon1": "iltapäivä",
+					"evening1": "ilta",
+					"night1": "yö"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "Anno Persico"
 		},
@@ -3538,6 +3778,66 @@
 					"ap.",
 					"ip."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "keskiyöllä",
+					"noon": "keskip.",
+					"morning1": "aamulla",
+					"morning2": "aamup.",
+					"afternoon1": "iltap.",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				},
+				"narrow": {
+					"midnight": "ky.",
+					"noon": "kp.",
+					"morning1": "aamulla",
+					"morning2": "ap.",
+					"afternoon1": "ip.",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				},
+				"wide": {
+					"midnight": "keskiyöllä",
+					"noon": "keskipäivällä",
+					"morning1": "aamulla",
+					"morning2": "aamupäivällä",
+					"afternoon1": "iltapäivällä",
+					"evening1": "illalla",
+					"night1": "yöllä"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "keskiyö",
+					"noon": "keskip.",
+					"morning1": "aamu",
+					"morning2": "aamup.",
+					"afternoon1": "iltap.",
+					"evening1": "ilta",
+					"night1": "yö"
+				},
+				"narrow": {
+					"midnight": "ky.",
+					"noon": "kp.",
+					"morning1": "aamu",
+					"morning2": "ap.",
+					"afternoon1": "ip.",
+					"evening1": "ilta",
+					"night1": "yö"
+				},
+				"wide": {
+					"midnight": "keskiyö",
+					"noon": "keskipäivä",
+					"morning1": "aamu",
+					"morning2": "aamupäivä",
+					"afternoon1": "iltapäivä",
+					"evening1": "ilta",
+					"night1": "yö"
+				}
 			}
 		},
 		"era-wide": {
@@ -5473,6 +5773,34 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "23:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "10:00",
+			"_from": "05:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "10:00"
+		},
+		"night1": {
+			"_before": "05:00",
+			"_from": "23:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

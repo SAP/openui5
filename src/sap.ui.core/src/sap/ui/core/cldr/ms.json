@@ -1398,6 +1398,54 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"narrow": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"wide": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"narrow": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"wide": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "S.M.",
 			"1": "TM"
@@ -1866,6 +1914,54 @@
 					"PG",
 					"PTG"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"narrow": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"wide": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"narrow": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"wide": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				}
 			}
 		},
 		"era-wide": {
@@ -2341,6 +2437,54 @@
 					"PG",
 					"PTG"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"narrow": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"wide": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"narrow": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"wide": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				}
 			}
 		},
 		"era-wide": {
@@ -2822,6 +2966,54 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"narrow": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"wide": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"narrow": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"wide": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3287,6 +3479,54 @@
 					"PG",
 					"PTG"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"narrow": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"wide": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"narrow": {
+					"morning1": "pagi",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				},
+				"wide": {
+					"morning1": "tengah malam",
+					"morning2": "pagi",
+					"afternoon1": "tengah hari",
+					"evening1": "petang",
+					"night1": "malam"
+				}
 			}
 		},
 		"era-wide": {
@@ -4980,6 +5220,28 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "14:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "19:00",
+			"_from": "14:00"
+		},
+		"morning1": {
+			"_before": "01:00",
+			"_from": "00:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "01:00"
+		},
+		"night1": {
+			"_before": "24:00",
+			"_from": "19:00"
 		}
 	}
 }
