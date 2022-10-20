@@ -454,7 +454,7 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 				throw Error("The number of siblings of a node cannot be determined with your current binding.");
 			default:
 				var oNode = this.getNodeByIndex(iIndex);
-				return oNode ? oNode.parent.children.length : 0;
+				return oNode && oNode.parent ? oNode.parent.children.length : 0;
 		}
 	};
 
