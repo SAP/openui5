@@ -366,7 +366,7 @@ sap.ui.define([
 		aContexts.forEach(function(oContext, iIndex) {
 			assert.equal(oContext.node, "test" + iIndex, "context property is set correctly");
 			assert.ok(oContext["_mProxyInfo"], "proxyInfo object exists");
-			assert.equal(oContext["_mProxyInfo"].level, 0, "level is 0");
+			assert.equal(oContext["_mProxyInfo"].level, 1, "level is 1");
 			assert.ok(oContext["_mProxyInfo"].isLeaf, "isLeaf is true");
 			assert.ok(oContext["_mProxyInfo"].isExpanded, "isExpanded is true");
 			assert.ok(oContext["_mProxyInfo"].nodeState, "nodeState" + iIndex, "node state is set correctly");
