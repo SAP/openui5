@@ -351,14 +351,17 @@ sap.ui.define([
 				oFixture.expectedLogMessage || oFixture.method + " " + oFixture.url,
 				'{"If-Match":undefined}', "sap.ui.test.TestUtils");
 
-			TestUtils.resetRequestCount();
+			TestUtils.onRequest(function (sMessage) {
+				assert.strictEqual(sMessage, oFixture.requestBody);
+			});
 			return request(oFixture.method, oFixture.url, mHeaders, oFixture.requestBody
 			).then(function (oXHR) {
 				assert.strictEqual(oXHR.status, oFixture.status, "status");
 				assert.strictEqual(oXHR.responseText, oFixture.responseBody || "", "body");
 				assert.strictEqual(oXHR.getAllResponseHeaders(),
 					headerString(oFixture.responseHeaders), "headers");
-				assert.strictEqual(TestUtils.getRequestCount(), 1);
+			}).finally(function () {
+				TestUtils.onRequest(null);
 			});
 		});
 
@@ -383,7 +386,12 @@ sap.ui.define([
 				oFixture.expectedLogMessage || oFixture.method + " " + oFixture.url,
 				'{"If-Match":undefined}', "sap.ui.test.TestUtils");
 
-			TestUtils.resetRequestCount();
+			TestUtils.onRequest(function (sMessage) {
+				assert.ok(sMessage.includes(oFixture.method + " " + sUrl));
+				if (oFixture.requestBody) {
+					assert.ok(sMessage.includes(oFixture.requestBody));
+				}
+			});
 			return request("POST", "/Foo/$batch", mInitialHeaders,
 				"--batch_id-0123456789012-345\r\n"
 				+ "Content-Type: application/http\r\n"
@@ -413,7 +421,8 @@ sap.ui.define([
 				);
 				assert.strictEqual(oXHR.getAllResponseHeaders(), headerString(mBatchHeaders),
 					"batch headers");
-				assert.strictEqual(TestUtils.getRequestCount(), 1);
+			}).finally(function () {
+				TestUtils.onRequest(null);
 			});
 		});
 	});
@@ -464,7 +473,6 @@ sap.ui.define([
 		this.oLogMock.expects("info").withExactArgs("GET /Foo/bar", '{"If-Match":undefined}',
 			"sap.ui.test.TestUtils");
 
-		TestUtils.resetRequestCount();
 		return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"}, [
 			"--batch_id-1538663822135-19",
 			"Content-Type: multipart/mixed;boundary=changeset_id-1538663822135-20",
@@ -542,7 +550,6 @@ sap.ui.define([
 				"--batch_id-1538663822135-19--",
 				""
 			].join("\r\n"));
-			assert.strictEqual(TestUtils.getRequestCount(), 1);
 		});
 	});
 
@@ -556,7 +563,6 @@ sap.ui.define([
 		this.oLogMock.expects("info").withExactArgs("GET /Foo/bar", '{"If-Match":undefined}',
 			"sap.ui.test.TestUtils");
 
-		TestUtils.resetRequestCount();
 		return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"}, [
 			"--batch_id-1538663822135-19",
 			"Content-Type: multipart/mixed;boundary=changeset_id-1538663822135-20",
@@ -612,7 +618,6 @@ sap.ui.define([
 				"--batch_id-1538663822135-19--",
 				""
 			].join("\r\n"));
-			assert.strictEqual(TestUtils.getRequestCount(), 1);
 		});
 	});
 
@@ -794,8 +799,6 @@ sap.ui.define([
 			.withExactArgs("GET /Foo/Any?$skip=0&$top=4",'{"If-Match":undefined}',
 				"sap.ui.test.TestUtils");
 
-		TestUtils.resetRequestCount();
-
 		return request("POST", "/Foo/$batch", {"DataServiceVersion" : "2.0"}, [
 			"--batch_c35a-0361-5112",
 			"Content-Type: multipart/mixed; boundary=changeset_ab4e-9114-8adf",
@@ -850,7 +853,6 @@ sap.ui.define([
 				"--batch_c35a-0361-5112--",
 				""
 			].join("\r\n"));
-			assert.strictEqual(TestUtils.getRequestCount(), 1);
 		});
 	});
 });
