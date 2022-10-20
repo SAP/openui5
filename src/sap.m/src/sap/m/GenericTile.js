@@ -1899,14 +1899,14 @@ GenericTile.prototype._isNavigateActionEnabled = function() {
 		bIsNavigateActionPressed = false;
 
 		if (oTile._isActionMode()) {
-			var oActionsContainerNode = document.querySelector("#" + oTile.getId() + "-actionButtons");
-			bIsActionButtonPressed = oActionsContainerNode && oActionsContainerNode !== event.target &&  oActionsContainerNode.contains(event.target);
-		}
+            var oActionsContainerNode = document.querySelector('[id="'  + oTile.getId() + "-actionButtons" + '"]');
+            bIsActionButtonPressed = oActionsContainerNode && oActionsContainerNode !== event.target &&  oActionsContainerNode.contains(event.target);
+        }
 
-		if (oTile._isNavigateActionEnabled()) {
-			var oNavigateActionContainerNode = document.querySelector("#" + oTile.getId() + "-navigateActionContainer");
-			bIsNavigateActionPressed = oNavigateActionContainerNode && oNavigateActionContainerNode !== event.target &&  oNavigateActionContainerNode.contains(event.target);
-		}
+        if (oTile._isNavigateActionEnabled()) {
+            var oNavigateActionContainerNode = document.querySelector('[id="'  + oTile.getId() + "-navigateActionContainer" + '"]');
+            bIsNavigateActionPressed = oNavigateActionContainerNode && oNavigateActionContainerNode !== event.target &&  oNavigateActionContainerNode.contains(event.target);
+        }
 		return bIsActionButtonPressed || bIsNavigateActionPressed;
 	}
 
