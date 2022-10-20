@@ -851,7 +851,9 @@ sap.ui.define([
 			this._oProgressBox.addStyleClass("sapMUSProgressBox");
 			this.addDependent(this._oProgressBox);
 		}
-
+		if (this._oProgressBox) {
+			this._oProgressBox.setVisible(this.getUploadState() !== UploadState.Complete);
+		}
 		return this._oProgressBox;
 	};
 

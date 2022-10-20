@@ -38,7 +38,6 @@ sap.ui.define([
 			]
 		};
 	}
-
 	QUnit.module("UploadSetItem general functionality", {
 		beforeEach: function () {
 			this.oUploadSet = new UploadSet("uploadSet", {
