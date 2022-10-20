@@ -383,6 +383,13 @@ sap.ui.define([
 				primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null},
 
 				/**
+				 * If set, the days are also displayed in this calendar type
+				 * If not set, the dates are only displayed in the primary calendar type
+				 * @since 1.109.0
+				 */
+				secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null},
+
+				/**
 				 * Determines whether the selection of multiple appointments is enabled.
 				 *
 				 * Note: selection of multiple appointments is possible using CTRL key regardless of the value of this property.
@@ -823,8 +830,7 @@ sap.ui.define([
 	PlanningCalendar.prototype.onBeforeRendering = function(){
 
 		this._bBeforeRendering = true;
-
-		this._getHeader().setProperty("_primaryCalendarType", this.getPrimaryCalendarType());
+		this._updateHeader();
 
 		// init interval if default one is used
 		this._adjustViewKey();
@@ -847,6 +853,16 @@ sap.ui.define([
 
 	};
 
+	PlanningCalendar.prototype._updateHeader = function () {
+		this._getHeader().setProperty("_primaryCalendarType", this.getPrimaryCalendarType());
+		if (this._getSecondaryCalendarType()) {
+			this.setShowDayNamesLine(true);
+			this._getHeader().setProperty("_secondaryCalendarType", this.getSecondaryCalendarType());
+		}
+
+		return this;
+	};
+
 	PlanningCalendar.prototype.attachEvent = function (eventId, data, functionToCall, listener) {
 		Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
 		if (this.hasListeners("intervalSelect")) {
@@ -856,6 +872,7 @@ sap.ui.define([
 				}
 			}, this);
 		}
+
 		return this;
 	};
 
@@ -948,13 +965,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates and formats a string to be displayed in the picker button from the _header aggregation.
+	 * Creates and formats the strings to be displayed in the picker button from the _header aggregation.
 	 * If the date part of the start and end range of the showed view are different, the string contains
 	 * info about the current date. Otherwise, the result string shows info about a date range.
-	 * @returns {string} The concatenated string to be displayed
+	 * @returns {Object} The concatenated strings to be displayed
 	 * @private
 	 */
 	PlanningCalendar.prototype._formatPickerText = function () {
+
 		var oRangeDates = this._getFirstAndLastRangeDate(),
 			oStartDate = CalendarUtils._createLocalDate(oRangeDates.oStartDate, true),
 			oEndDate = CalendarUtils._createLocalDate(oRangeDates.oEndDate, true),
@@ -964,7 +982,15 @@ sap.ui.define([
 			oDateFormat,
 			sResult,
 			sBeginningResult,
-			sEndResult;
+			sEndResult,
+			oDateFormatInSecType,
+			sBeginnigDateResultInSecType,
+			sEndResultInSecType,
+			sResultInSecType;
+
+		if (this._getSecondaryCalendarType()) {
+			oDateFormatInSecType = DateFormat.getDateInstance({ format: "yMMMMd", calendarType: this.getSecondaryCalendarType() });
+		}
 
 		switch (sViewType) {
 			case CalendarIntervalType.Hour:
@@ -973,6 +999,14 @@ sap.ui.define([
 				if (oStartDate.getDate() !== oEndDate.getDate()) {
 					sEndResult = oDateFormat.format(oEndDate);
 				}
+
+				if (this._getSecondaryCalendarType()){
+					sBeginnigDateResultInSecType = oDateFormatInSecType.format(oStartDate);
+					if (oStartDate.getDate() !== oEndDate.getDate()) {
+						sEndResultInSecType = oDateFormatInSecType.format(oEndDate);
+					}
+				}
+
 				break;
 
 			case CalendarIntervalType.Day:
@@ -988,6 +1022,11 @@ sap.ui.define([
 					oDateFormat = DateFormat.getDateInstance({ format: "yMMMMd", calendarType: this.getPrimaryCalendarType() });
 					sBeginningResult = oDateFormat.format(oStartDate);
 					sEndResult = oDateFormat.format(oEndDate);
+					if (this._getSecondaryCalendarType()) {
+						sBeginnigDateResultInSecType = oDateFormatInSecType.format(oStartDate);
+						sEndResultInSecType = oDateFormatInSecType.format(oEndDate);
+					}
+
 				}
 
 				break;
@@ -996,13 +1035,26 @@ sap.ui.define([
 			case "OneMonth":
 				oDateFormat = DateFormat.getDateInstance({format: "yMMMM", calendarType: this.getPrimaryCalendarType()});
 				sBeginningResult = oDateFormat.format(oStartDate);
+				if (this._getSecondaryCalendarType()) {
+					oDateFormatInSecType = DateFormat.getDateInstance({format: "yMMMM", calendarType: this.getSecondaryCalendarType()});
+					sBeginnigDateResultInSecType = oDateFormatInSecType.format(oStartDate);
+				}
 				break;
 
 			case CalendarIntervalType.Month:
 				oDateFormat = DateFormat.getDateInstance({format: "y", calendarType: this.getPrimaryCalendarType()});
 				sBeginningResult = oDateFormat.format(oStartDate);
+
+				if (this._getSecondaryCalendarType()) {
+					oDateFormatInSecType = DateFormat.getDateInstance({format: "y", calendarType: this.getSecondaryCalendarType()});
+					sBeginnigDateResultInSecType = oDateFormatInSecType.format(oStartDate);
+				}
+
 				if (oStartDate.getFullYear() !== oEndDate.getFullYear()) {
 					sEndResult = oDateFormat.format(oEndDate);
+					if (this._getSecondaryCalendarType()) {
+						sEndResultInSecType = oDateFormatInSecType.format(oEndDate);
+					}
 				}
 
 				if (sBeginningResult === sEndResult) {
@@ -1016,8 +1068,13 @@ sap.ui.define([
 
 		if (!bRTL) {
 			sResult = sBeginningResult;
+			sResultInSecType = sBeginnigDateResultInSecType;
 			if (sEndResult) {
 				sResult += " - " + sEndResult;
+			}
+
+			if (this._getSecondaryCalendarType() && sEndResultInSecType) {
+				sResultInSecType += " - " + sEndResultInSecType;
 			}
 		} else {
 			if (sEndResult) {
@@ -1025,9 +1082,14 @@ sap.ui.define([
 			} else {
 				sResult = sBeginningResult;
 			}
+			if (this._getSecondaryCalendarType() && sEndResultInSecType) {
+				sResultInSecType = sBeginnigDateResultInSecType + " - " + sEndResultInSecType;
+			} else if (this._getSecondaryCalendarType()) {
+				sResultInSecType = sBeginnigDateResultInSecType;
+			}
 		}
 
-		return sResult;
+		return { primaryType: sResult, secondaryType: sResultInSecType };
 	};
 
 	/**
@@ -1436,6 +1498,56 @@ sap.ui.define([
 		return this;
 	};
 
+	PlanningCalendar.prototype._getSecondaryCalendarType = function() {
+		var sSecondaryCalendarType;
+
+		if (this._bSecondaryCalendarTypeSet) {
+			sSecondaryCalendarType = this.getSecondaryCalendarType();
+
+			if (sSecondaryCalendarType === this.getPrimaryCalendarType()) {
+				sSecondaryCalendarType = undefined;
+			}
+		}
+
+		return sSecondaryCalendarType;
+	};
+
+	/**
+	 * Sets the secondaryCalendarType.
+	 * @param {sap.ui.core.CalendarType} sSecondaryCalendarType the <code>sap.ui.core.CalendarType</code> to set as <code>sap.m.PlanningCalendar</code> <code>secondaryCalendarType</code>.
+	 * @returns {this} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	PlanningCalendar.prototype.setSecondaryCalendarType = function (sSecondaryCalendarType) {
+		if (this.getProperty("primaryCalendarType") ===  sSecondaryCalendarType) {
+			return this;
+		}
+
+
+		this.setProperty("secondaryCalendarType", sSecondaryCalendarType);
+		this._bSecondaryCalendarTypeSet = true;
+		if (this._getHeader()) {
+			this._getHeader().setProperty("_secondaryCalendarType", sSecondaryCalendarType);
+		}
+		if (this._oTimesRow) {
+			this._oTimesRow.setProperty("secondaryCalendarType", sSecondaryCalendarType);
+		}
+		if (this._oDatesRow) {
+			this._oDatesRow.setSecondaryCalendarType(sSecondaryCalendarType);
+		}
+		if (this._oMonthsRow) {
+			this._oMonthsRow.setProperty("secondaryCalendarType", sSecondaryCalendarType);
+		}
+		if (this._oWeeksRow) {
+			this._oWeeksRow.setSecondaryCalendarType(sSecondaryCalendarType);
+		}
+		if (this._oOneMonthsRow) {
+			this._oOneMonthsRow.setSecondaryCalendarType(sSecondaryCalendarType);
+		}
+
+		return this;
+	};
+
 	PlanningCalendar.prototype.setMinDate = function(oDate){
 
 		if (deepEqual(oDate, this.getMinDate())) {
@@ -1475,7 +1587,7 @@ sap.ui.define([
 				Log.warning("StartDate < minDate -> StartDate set to minDate", this);
 				oStartDate = new Date(oDate.getTime());
 				this.setStartDate(oStartDate);
-				oHeader.setPickerText(this._formatPickerText());
+				oHeader.updatePickerText(this._formatPickerText());
 			}
 		} else {
 			this.setProperty("minDate", undefined, true);
@@ -1539,7 +1651,7 @@ sap.ui.define([
 					oStartDate.setFullYear(1);
 				}
 				this.setStartDate(oStartDate);
-				oHeader.setPickerText(this._formatPickerText());
+				oHeader.updatePickerText(this._formatPickerText());
 			}
 		} else {
 			this.setProperty("maxDate", undefined, true);
@@ -1595,6 +1707,7 @@ sap.ui.define([
 		var oMaxDate = this.getMaxDate();
 		var oView = this._getView(sKey, !this._bBeforeRendering);
 		var oAssociation;
+		var sSecondaryCalendarType = this._getSecondaryCalendarType();
 
 		if (!oView) {
 			this._bCheckView = true;
@@ -1714,6 +1827,9 @@ sap.ui.define([
 							legend: this.getLegend()
 						});
 						this._oMonthsRow.setProperty("primaryCalendarType", this.getPrimaryCalendarType());
+						if (sSecondaryCalendarType) {
+							this._oMonthsRow.setProperty("secondaryCalendarType", sSecondaryCalendarType);
+						}
 						this._setAriaRole(this._oMonthsRow);
 						this._oMonthsRow._setLegendControlOrigin(this);
 						this._oMonthsRow.attachEvent("focus", this._handleFocus, this);
@@ -1745,6 +1861,12 @@ sap.ui.define([
 				oContent.setProperty("_primaryCalendarType", this.getPrimaryCalendarType());
 			} else if (oContent.getMetadata().hasProperty("primaryCalendarType")) {
 				oContent.setPrimaryCalendarType(this.getPrimaryCalendarType());
+			}
+
+			if (sSecondaryCalendarType && oContent.getMetadata().hasProperty("_secondaryCalendarType") ) {
+				oContent.setProperty("_secondaryCalendarType", sSecondaryCalendarType);
+			} else if (sSecondaryCalendarType && oContent.getMetadata().hasProperty("secondaryCalendarType") ) {
+				oContent.setSecondaryCalendarType(sSecondaryCalendarType);
 			}
 
 			if (this._oOneMonthsRow) {
@@ -1983,7 +2105,7 @@ sap.ui.define([
 			oPicker.addSelectedDate(oSelectedRange);
 		}
 
-		this._getHeader().setPickerText(this._formatPickerText());
+		this._getHeader().updatePickerText(this._formatPickerText());
 		this._updateTodayButtonState();
 	};
 
@@ -2956,7 +3078,7 @@ sap.ui.define([
 					var oFocusedDate = new Date(oEvtSelectedStartCalendarDate.toLocalJSDate().getTime());
 					if (CalendarUtils.monthsDiffer(this.getStartDate(), oEvtSelectedStartCalendarDate.toLocalJSDate())) {
 						this.setStartDate(oEvtSelectedStartCalendarDate.toLocalJSDate());
-						this._getHeader().setPickerText(this._formatPickerText());
+						this._getHeader().updatePickerText(this._formatPickerText());
 					}
 					this._setRowsStartDate(oFocusedDate);
 					this._oOneMonthsRow._focusDate(CalendarDate.fromLocalJSDate(oFocusedDate, this.getPrimaryCalendarType()), true);

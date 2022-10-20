@@ -88,6 +88,9 @@ html.sap-desktop .sapMPlanCal .sapUiCalItemOtherMonth:not(.sapUiCalItemSel):hove
 		}
 	}
 	.sapUiCalMonthsRow {
+		.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemText {
+			position: initial;
+		}
 		.sapUiCalItemSel:focus > .sapUiCalItemText:after {
 			left: 0;
 		}

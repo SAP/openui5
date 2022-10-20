@@ -1422,7 +1422,7 @@ function(
 			oCalViewDate = CalendarDate.fromLocalJSDate(oViewStartDate);
 
 		oHeader.setStartDate(oViewStartDate);
-		oHeader.setPickerText(this._formatPickerText(oCalViewDate));
+		oHeader.updatePickerText(this._formatPickerText(oCalViewDate));
 		this._updateCalendarPickerSelection();
 		oGrid.setStartDate(oViewStartDate);
 		oGridMV.setStartDate(oViewStartDate);

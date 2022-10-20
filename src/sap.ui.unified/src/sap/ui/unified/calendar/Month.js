@@ -526,7 +526,6 @@ sap.ui.define([
 		}
 
 		return this;
-
 	};
 
 	Month.prototype.setSecondaryCalendarType = function(sCalendarType){
@@ -537,7 +536,6 @@ sap.ui.define([
 		this._oFormatSecondaryLong = DateFormat.getInstance({style: "long", calendarType: sCalendarType});
 
 		return this;
-
 	};
 
 	Month.prototype._getSecondaryCalendarType = function(){
@@ -553,7 +551,6 @@ sap.ui.define([
 		}
 
 		return sSecondaryCalendarType;
-
 	};
 
 	/*

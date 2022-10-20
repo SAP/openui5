@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/DateRange",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	'sap/ui/core/Core'
 ], function(
 	Control,
 	LocaleData,
@@ -32,7 +33,8 @@ sap.ui.define([
 	containsOrEquals,
 	jQuery,
 	DateRange,
-	Configuration
+	Configuration,
+	Core
 ) {
 	"use strict";
 
@@ -110,7 +112,15 @@ sap.ui.define([
 			 * @private
 			 * @since 1.108.0
 			 */
-			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null}
+			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null},
+
+			/**
+			 * If set, the days are also displayed in this calendar type
+			 * If not set, the dates are only displayed in the primary calendar type
+			 * @private
+			 * @since 1.109.0
+			 */
+			 secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null}
 		},
 		aggregations : {
 
@@ -173,15 +183,43 @@ sap.ui.define([
 
 	MonthsRow.prototype.init = function(){
 		var sCalendarType = this.getProperty("primaryCalendarType");
+		//need day in pattern because in islamic calendar 2 Month can start in one gregorianic calendar
+		this._oFormatYyyymm = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sCalendarType});
+		this._oFormatOnlyYearLong = DateFormat.getInstance({pattern: "yyyy", calendarType: sCalendarType});
+		this._oFormatLong = DateFormat.getInstance({pattern: "MMMM y", calendarType: sCalendarType});
+		this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
+		this._rb = Core.getLibraryResourceBundle("sap.ui.unified");
+	};
 
+	MonthsRow.prototype.setPrimaryCalendarType = function (sCalendarType){
+		this.setProperty("primaryCalendarType", sCalendarType);
 		//need day in pattern because in islamic calendar 2 Month can start in one gregorianic calendar
 		this._oFormatYyyymm = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sCalendarType});
 		this._oFormatLong = DateFormat.getInstance({pattern: "MMMM y", calendarType: sCalendarType});
 
-		this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
+		return this;
+	};
 
-		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+	MonthsRow.prototype.setSecondaryCalendarType = function (sCalendarType){
+		this._bSecondaryCalendarTypeSet = true;
+		this.setProperty("secondaryCalendarType", sCalendarType);
+		this._oFormatYearInSecType = DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
+		this._oFormatLongInSecType = DateFormat.getInstance({pattern: "MMMM y", calendarType: sCalendarType});
 
+		return this;
+	};
+
+	MonthsRow.prototype._getSecondaryCalendarType = function () {
+		var sSecondaryCalendarType;
+
+		if (this._bSecondaryCalendarTypeSet) {
+			sSecondaryCalendarType = this.getSecondaryCalendarType();
+			if (sSecondaryCalendarType === this.getPrimaryCalendarType()) {
+				sSecondaryCalendarType = undefined;
+			}
+		}
+
+		return sSecondaryCalendarType;
 	};
 
 	MonthsRow.prototype.exit = function(){
@@ -275,6 +313,36 @@ sap.ui.define([
 
 		return this.setProperty("date", oDate);
 
+	};
+
+	/**
+	 * Calculates the first and last displayed date about a given month.
+	 * @param {integer} iCurrentMonth is the month on which the date calculations are based.
+	 * @param {integer} iCurrentYear is the year on which the date calculations are based.
+	 * @return {object} object contains two values - start and end date (JSDates in secondary calendat type).
+	 */
+	MonthsRow.prototype._getDisplayedSecondaryDates = function (iCurrentMonth, iCurrentYear){
+		var sSecondaryCalendarType = this._getSecondaryCalendarType(),
+		// oDate = new CalendarDate(this._oDate ? this._oDate : CalendarDate.fromLocalJSDate(new Date()), this.getPrimaryCalendarType()),
+		oDate,
+		oFirstDate,
+		oLastDate;
+
+		if (this._oDate) {
+			oDate = new CalendarDate(this._oDate);
+		} else {
+			oDate = new CalendarDate(CalendarDate.fromLocalJSDate(new Date()), this.getPrimaryCalendarType());
+		}
+
+		oDate.setYear(iCurrentYear);
+		oDate.setMonth(iCurrentMonth);
+		oDate.setDate(1);
+
+		oFirstDate = new CalendarDate(oDate, sSecondaryCalendarType);
+		oDate.setDate(CalendarUtils._daysInMonth(oDate));
+		oLastDate = new CalendarDate(oDate, sSecondaryCalendarType);
+
+		return {start: oFirstDate, end: oLastDate};
 	};
 
 	/**
