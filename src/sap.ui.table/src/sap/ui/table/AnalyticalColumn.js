@@ -50,7 +50,6 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental Since version 1.21.
 	 * @alias sap.ui.table.AnalyticalColumn
 	 */
 	var AnalyticalColumn = Column.extend("sap.ui.table.AnalyticalColumn", /** @lends sap.ui.table.AnalyticalColumn.prototype */ { metadata : {
