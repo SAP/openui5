@@ -416,10 +416,11 @@ sap.ui.define([
 							}
 						} catch (oException) {
 							var oMyException = oException;
-							if (oMyException instanceof ParseException && oOriginalType) {
+							if (oMyException instanceof ParseException && oOriginalType && !bCompositeType) {
 								// As internal yyyy-MM-dd is used as pattern for dates (times similar) the
 								// parse exception might contain this as pattern. The user should see the pattern thats shown
 								// So try to parse date with the original type to get parseException with right pattern.
+								// Not for CompositeTypes as here the parts might have different configuartion what leads to different messages.
 								try {
 									oOriginalType.parseValue(vValue, "string", oOriginalType._aCurrentValue);
 								} catch (oOriginalException) {
@@ -702,6 +703,7 @@ sap.ui.define([
 		var oOriginalType = _getOriginalType.call(this);
 		var aOperators = _getOperators.call(this);
 		var bIsUnit = _isUnit(oType);
+		var bCompositeType = _isCompositeType.call(this, oType);
 		var aCompositeTypes = _getCompositeTypes.call(this);
 		var iCompositePart = 0;
 
@@ -750,10 +752,11 @@ sap.ui.define([
 		try {
 			oOperator.validate(oCondition.values, oType, aCompositeTypes, iCompositePart);
 		} catch (oException) {
-			if (oException instanceof ValidateException && oOriginalType) {
+			if (oException instanceof ValidateException && oOriginalType && !bCompositeType) {
 				// As internal yyyy-MM-dd is used as pattern for dates (times similar) the
 				// ValidateException might contain this as pattern. The user should see the pattern thats shown
 				// So try to validate date with the original type to get ValidateException with right pattern.
+				// Not for CompositeTypes as here the parts might have different configuartion what leads to different messages.
 				oOperator.validate(oCondition.values, oOriginalType, aCompositeTypes, iCompositePart);
 			}
 			throw oException;

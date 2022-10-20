@@ -5,9 +5,11 @@
 sap.ui.define([
 		'sap/ui/mdc/enum/BaseType',
 		'sap/base/util/ObjectPath',
+		'sap/base/util/isEmptyObject',
+		'sap/base/util/merge',
 		'sap/ui/model/SimpleType',
 		'sap/ui/mdc/util/DateUtil'
-], function(BaseType, ObjectPath, SimpleType, DateUtil) {
+], function(BaseType, ObjectPath, isEmptyObject, merge, SimpleType, DateUtil) {
 	"use strict";
 
 	var sDateTimePattern = "yyyy-MM-ddTHH:mm:ssZ"; // milliseconds missing
@@ -254,6 +256,35 @@ sap.ui.define([
 				return vType;
 			}
 			return this.getDataTypeInstance(vType, oFormatOptions, oConstraints); // string
+		},
+
+		/**
+		 * Returns a instance of a unit or currency type based on an existing type.
+		 *
+		 * This type is used fur the number and unit part of a field if the field itself is using a unit or currency type.
+		 *
+		 * @param {sap.ui.model.CompositeType} oOriginalType Original data type used by field
+  		 * @param {boolean} [bShowNumber] number should be shown
+ 		 * @param {boolean} [bShowMeasure] unit should be shown
+		 * @returns {sap.ui.model.CompositeType} creates returns an instance of the resolved dataType
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
+		 getUnitTypeInstance: function(oOriginalType, bShowNumber, bShowMeasure) {
+			var sName = oOriginalType.getMetadata().getName();
+			var oFormatOptions = merge({}, oOriginalType.getFormatOptions()); // for Unit/Currency always set - do not manipulate original object
+			var oConstraints = isEmptyObject(oOriginalType.getConstraints()) ? undefined : merge({}, oOriginalType.getConstraints()); // do not manipulate original object
+			var TypeClass = ObjectPath.get(sName);
+
+			this._adjustUnitFormatOptions(oFormatOptions, bShowNumber, bShowMeasure);
+
+			return new TypeClass(oFormatOptions, oConstraints);
+		},
+
+		_adjustUnitFormatOptions: function (oFormatOptions, bShowNumber, bShowMeasure) {
+			oFormatOptions.showNumber = bShowNumber;
+			oFormatOptions.showMeasure = bShowMeasure;
+			oFormatOptions.strictParsing = true; // do not allow to enter unit in number field
 		}
 	};
 
