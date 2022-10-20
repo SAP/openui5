@@ -455,15 +455,6 @@ function(
 	};
 
 	/**
-	 * Allow window.open to be stubbed in tests
-	 *
-	 * @param {String} sUrl - url string
-	 */
-	Utils.openNewWindow = function(sUrl) {
-		window.open(sUrl, "_blank");
-	};
-
-	/**
 	 * Function to find the binding paths of a given UI5 Element
 	 *
 	 * @param {sap.ui.core.Element} oElement - Element for which the binding info should be found
