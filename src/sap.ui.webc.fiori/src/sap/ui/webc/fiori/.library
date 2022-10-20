@@ -33,7 +33,7 @@
 		</jscoverage>
 		<!-- Thirdparty references -->
 		<thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-			<lib name="ui5-web-components" displayName="UI5 Web Components" npmName="@ui5/webcomponents" version="1.5.0" hash="026d6c74112371f46958e668f6c49d21" homepage="https://sap.github.io/ui5-webcomponents/">
+			<lib name="ui5-web-components" displayName="UI5 Web Components" npmName="@ui5/webcomponents" version="1.5.0" homepage="https://sap.github.io/ui5-webcomponents/">
 				<license url="https://github.com/SAP/ui5-webcomponents/blob/master/LICENSE.txt" type="Apache-2.0"></license>
 				<copyright>SAP</copyright>
 				<pattern>sap/ui/webc/fiori/thirdparty/*.*</pattern>
