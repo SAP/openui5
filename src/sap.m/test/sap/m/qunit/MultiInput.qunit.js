@@ -901,11 +901,13 @@ sap.ui.define([
 		});
 
 		this.multiInput1._$input.focus();
+		sap.ui.getCore().applyChanges();
+
 		this.multiInput1._$input[0].setSelectionRange(3, 3);
 
 		sap.ui.getCore().applyChanges();
 
-		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ARROW_LEFT);
 
 		// assert
 		assert.notOk(oSpy.called, "Tokenizer's onsapprevious is not called");
