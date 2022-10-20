@@ -3477,6 +3477,10 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		}
 	});
 
+	QUnit.test("Correct HTML Element is fetched", function(assert) {
+        assert.ok(document.querySelector('[id="'  + this.oGenericTile.getId() + "-actionButtons" + '"]'), "Html element is fetched");
+    });
+
 	QUnit.test("_applyExtraHeight property should not be called when the tile is in loading state", function(assert) {
 		this.fnWithRenderAsserts(assert);
 
@@ -3999,6 +4003,10 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			assert.ok(this.oGenericTile.getDomRef().classList.contains("TwoByOne"), "TwoByOne FrameType class has been added");
 		}
 	});
+
+	QUnit.test("Correct HTML Element is fetched", function(assert) {
+        assert.ok(document.querySelector('[id="'  + this.oGenericTile.getId() + "-navigateActionContainer" + '"]'), "Html element is fetched");
+    });
 
 	QUnit.test("GenericTile rendered with Read More Button in Article Mode", function(assert) {
 		this.fnWithRenderAsserts(assert);
