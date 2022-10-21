@@ -2,12 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/core/postmessage/Bus",
-	"sap/base/Log",
-	"sap/base/util/includes"
+	"sap/base/Log"
 ], function(
 	PostMessageBus,
-	Log,
-	includes
+	Log
 ) {
 	"use strict";
 
@@ -254,7 +252,7 @@ sap.ui.define([
 				// JSON.stringify/parse are needed to recreate and an object in current window,
 				// otherwise 2 objects could not be compared properly
 				assert.deepEqual(JSON.parse(JSON.stringify(oEvent.data)), mData);
-				assert.ok(includes(this.oPostMessageBus.getAcceptedOrigins(), this.oIframeWindow.location.origin));
+				assert.ok(this.oPostMessageBus.getAcceptedOrigins().includes(this.oIframeWindow.location.origin));
 				fnDone();
 			}, this);
 			this.oPostMessageBus.publish({
@@ -379,14 +377,14 @@ sap.ui.define([
 			// 3.1. Subscribe
 			this.oPostMessageBus.subscribe("fakeChannel", "fakeEvent", function(oEvent) {
 				assert.strictEqual(oEvent.data, sData);
-				assert.ok(includes(this.oPostMessageBus.getAcceptedOrigins(), oEvent.origin));
+				assert.ok(this.oPostMessageBus.getAcceptedOrigins().includes(oEvent.origin));
 				fnDone1();
 			}, this);
 
 			// 3.2. Subscribe in iframe to check ACCEPTED message
 			this.oPostMessageBusInFrame.subscribe("fakeChannel", PostMessageBus.event.ACCEPTED, function(oEvent) {
 				assert.strictEqual(oEvent.data, undefined);
-				assert.ok(includes(this.oPostMessageBusInFrame.getAcceptedOrigins(), oEvent.origin));
+				assert.ok(this.oPostMessageBusInFrame.getAcceptedOrigins().includes(oEvent.origin));
 				fnDone2();
 			}, this);
 
@@ -424,7 +422,7 @@ sap.ui.define([
 			this.oPostMessageBus.subscribe("fakeChannel", PostMessageBus.event.READY, function(oEvent) {
 				assert.strictEqual(oEvent.data, undefined); // no data is allowed in ready event
 				assert.ok(oConfirmationStub.notCalled);
-				assert.notOk(includes(this.oPostMessageBus.getAcceptedOrigins(), oEvent.origin));
+				assert.notOk(this.oPostMessageBus.getAcceptedOrigins().includes(oEvent.origin));
 				fnDone();
 			}, this);
 
@@ -484,7 +482,7 @@ sap.ui.define([
 			// 3.2. Subscribe in iframe to check DECLINED message
 			this.oPostMessageBusInFrame.subscribe("fakeChannel", PostMessageBus.event.DECLINED, function(oEvent) {
 				assert.strictEqual(oEvent.data, undefined);
-				assert.ok(includes(this.oPostMessageBus.getDeclinedOrigins(), this.oIframeWindow.location.origin));
+				assert.ok(this.oPostMessageBus.getDeclinedOrigins().includes(this.oIframeWindow.location.origin));
 				fnDone();
 			}, this);
 
@@ -579,7 +577,7 @@ sap.ui.define([
 			this.oPostMessageBus.subscribe("fakeChannel", PostMessageBus.event.READY, function(oEvent) {
 				assert.strictEqual(oEvent.data, undefined); // no data is allowed in ready event
 				assert.ok(oConfirmationStub.notCalled);
-				assert.notOk(includes(this.oPostMessageBus.getAcceptedOrigins(), oEvent.origin));
+				assert.notOk(this.oPostMessageBus.getAcceptedOrigins().includes(oEvent.origin));
 				fnDone();
 			}, this);
 
@@ -638,13 +636,13 @@ sap.ui.define([
 			// 3.2. Subscribe in iframe to check DECLINED message
 			var oReceiverStub = sandbox.stub()
 				.onFirstCall().callsFake(function() {
-					assert.ok(!includes(this.oPostMessageBus.getDeclinedOrigins(), this.oIframeWindow.location.origin));
+					assert.ok(!this.oPostMessageBus.getDeclinedOrigins().includes(this.oIframeWindow.location.origin));
 				}.bind(this))
 				.onSecondCall().callsFake(function() {
-					assert.ok(!includes(this.oPostMessageBus.getDeclinedOrigins(), this.oIframeWindow.location.origin));
+					assert.ok(!this.oPostMessageBus.getDeclinedOrigins().includes(this.oIframeWindow.location.origin));
 				}.bind(this))
 				.onThirdCall().callsFake(function() {
-					assert.ok(!includes(this.oPostMessageBus.getDeclinedOrigins(), this.oIframeWindow.location.origin));
+					assert.ok(!this.oPostMessageBus.getDeclinedOrigins().includes(this.oIframeWindow.location.origin));
 					fnDone();
 				}.bind(this));
 			this.oPostMessageBusInFrame.subscribe("fakeChannel", PostMessageBus.event.DECLINED, oReceiverStub, this);
@@ -844,18 +842,18 @@ sap.ui.define([
 		});
 
 		QUnit.test("getAcceptedOrigins() - current window origin is automatically accepted", function(assert) {
-			assert.ok(includes(this.oPostMessageBus.getAcceptedOrigins(), window.location.origin));
+			assert.ok(this.oPostMessageBus.getAcceptedOrigins().includes(window.location.origin));
 		});
 
 		QUnit.test("getAcceptedOrigins() - returned array is immutable", function(assert) {
 			var aAcceptedOrigins = this.oPostMessageBus.getAcceptedOrigins();
 			aAcceptedOrigins.push("http://example.com");
-			assert.notOk(includes(this.oPostMessageBus.getAcceptedOrigins(), "http://example.com"));
+			assert.notOk(this.oPostMessageBus.getAcceptedOrigins().includes("http://example.com"));
 		});
 
 		QUnit.test("setAcceptedOrigins() - called with a valid value", function(assert) {
 			this.oPostMessageBus.setAcceptedOrigins(["http://example.com"]);
-			assert.ok(includes(this.oPostMessageBus.getAcceptedOrigins(), "http://example.com"));
+			assert.ok(this.oPostMessageBus.getAcceptedOrigins().includes("http://example.com"));
 		});
 
 		QUnit.test("setAcceptedOrigins() - called with an invalid value (non-array)", function(assert) {
@@ -868,9 +866,9 @@ sap.ui.define([
 			this.oPostMessageBus.addAcceptedOrigin("http://example.com");
 			this.oPostMessageBus.addAcceptedOrigin("http://example.com:8080");
 			this.oPostMessageBus.addAcceptedOrigin("http://localhost:9090");
-			assert.ok(includes(this.oPostMessageBus.getAcceptedOrigins(), "http://example.com"));
-			assert.ok(includes(this.oPostMessageBus.getAcceptedOrigins(), "http://example.com:8080"));
-			assert.ok(includes(this.oPostMessageBus.getAcceptedOrigins(), "http://localhost:9090"));
+			assert.ok(this.oPostMessageBus.getAcceptedOrigins().includes("http://example.com"));
+			assert.ok(this.oPostMessageBus.getAcceptedOrigins().includes("http://example.com:8080"));
+			assert.ok(this.oPostMessageBus.getAcceptedOrigins().includes("http://localhost:9090"));
 		});
 
 		QUnit.test("addAcceptedOrigin() - called with an invalid value (non-string)", function(assert) {
@@ -894,12 +892,12 @@ sap.ui.define([
 		QUnit.test("getDeclinedOrigins() - returned array is immutable", function(assert) {
 			var aDeclinedOrigins = this.oPostMessageBus.getDeclinedOrigins();
 			aDeclinedOrigins.push("http://example.com");
-			assert.notOk(includes(this.oPostMessageBus.getDeclinedOrigins(), "http://example.com"));
+			assert.notOk(this.oPostMessageBus.getDeclinedOrigins().includes("http://example.com"));
 		});
 
 		QUnit.test("setDeclinedOrigins() - called with a valid value", function(assert) {
 			this.oPostMessageBus.setDeclinedOrigins(["http://example.com"]);
-			assert.ok(includes(this.oPostMessageBus.getDeclinedOrigins(), "http://example.com"));
+			assert.ok(this.oPostMessageBus.getDeclinedOrigins().includes("http://example.com"));
 		});
 
 		QUnit.test("setDeclinedOrigins() - called with an invalid value (non-array)", function(assert) {
@@ -912,9 +910,9 @@ sap.ui.define([
 			this.oPostMessageBus.addDeclinedOrigin("http://example.com");
 			this.oPostMessageBus.addDeclinedOrigin("http://example.com:8080");
 			this.oPostMessageBus.addDeclinedOrigin("http://localhost:9090");
-			assert.ok(includes(this.oPostMessageBus.getDeclinedOrigins(), "http://example.com"));
-			assert.ok(includes(this.oPostMessageBus.getDeclinedOrigins(), "http://example.com:8080"));
-			assert.ok(includes(this.oPostMessageBus.getDeclinedOrigins(), "http://localhost:9090"));
+			assert.ok(this.oPostMessageBus.getDeclinedOrigins().includes("http://example.com"));
+			assert.ok(this.oPostMessageBus.getDeclinedOrigins().includes("http://example.com:8080"));
+			assert.ok(this.oPostMessageBus.getDeclinedOrigins().includes("http://localhost:9090"));
 		});
 
 		QUnit.test("addDeclinedOrigin() - called with an invalid value (non-string)", function(assert) {

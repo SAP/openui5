@@ -4,13 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/core/EventBus",
-	"sap/base/util/includes",
 	"sap/base/util/isPlainObject",
 	"sap/base/Log"
 ],
 function (
 	EventBus,
-	includes,
 	isPlainObject,
 	Log
 ) {
@@ -144,16 +142,13 @@ function (
 
 		// Accept host immediately when message is sent
 		if (
-			!includes(
-				[
-					PostMessageBus.event.READY,
-					PostMessageBus.event.ACCEPTED,
-					PostMessageBus.event.DECLINED
-				],
-				sEventId
-			)
+			![
+				PostMessageBus.event.READY,
+				PostMessageBus.event.ACCEPTED,
+				PostMessageBus.event.DECLINED
+			].includes(sEventId)
 			&& sOrigin !== '*'
-			&& !includes(this._aAcceptedOrigins, sOrigin)
+			&& !this._aAcceptedOrigins.includes(sOrigin)
 		) {
 			this._aAcceptedOrigins.push(sOrigin);
 		}
@@ -254,7 +249,7 @@ function (
 			var sOrigin = oEvent.origin;
 
 			// Ignore messages from disabled hosts
-			if (includes(this._aDeclinedOrigins, sOrigin)) {
+			if (this._aDeclinedOrigins.includes(sOrigin)) {
 				fnResolve();
 				return;
 			}
@@ -269,7 +264,7 @@ function (
 							eventId: PostMessageBus.event.DECLINED
 						});
 						fnResolve();
-					} else if (includes(this._aAcceptedOrigins, sOrigin)) {
+					} else if (this._aAcceptedOrigins.includes(sOrigin)) {
 						this.publish({
 							target: oEvent.source,
 							origin: oEvent.origin,
@@ -318,7 +313,7 @@ function (
 					break;
 				}
 				default: {
-					if (includes(this._aAcceptedOrigins, sOrigin)) {
+					if (this._aAcceptedOrigins.includes(sOrigin)) {
 						this._emitMessage(oEvent);
 					}
 					fnResolve();
@@ -395,7 +390,7 @@ function (
 		if (typeof sOrigin !== 'string') {
 			throw new TypeError('Expected a string, but got ' + typeof sOrigin);
 		}
-		if (!includes(this._aAcceptedOrigins, sOrigin)) {
+		if (!this._aAcceptedOrigins.includes(sOrigin)) {
 			this._aAcceptedOrigins.push(sOrigin);
 		}
 	};
@@ -434,7 +429,7 @@ function (
 		if (typeof sOrigin !== 'string') {
 			throw new TypeError('Expected a string, but got ' + typeof sOrigin);
 		}
-		if (!includes(this._aDeclinedOrigins, sOrigin)) {
+		if (!this._aDeclinedOrigins.includes(sOrigin)) {
 			this._aDeclinedOrigins.push(sOrigin);
 		}
 	};

@@ -9,8 +9,7 @@ sap.ui.define([
 		"sap/ui/layout/form/ResponsiveGridLayout",
 		"sap/ui/fl/Change",
 		"sap/ui/core/util/reflection/JsControlTreeModifier",
-		"sap/ui/core/util/reflection/XmlTreeModifier",
-		"sap/base/util/includes"
+		"sap/ui/core/util/reflection/XmlTreeModifier"
 	],
 	function (
 		Title,
@@ -22,8 +21,7 @@ sap.ui.define([
 		ResponsiveGridLayout,
 		Change,
 		JsControlTreeModifier,
-		XmlTreeModifier,
-		fnBaseIncludes
+		XmlTreeModifier
 	) {
 		'use strict';
 
@@ -165,7 +163,7 @@ sap.ui.define([
 				return AddFieldChangeHandler.applyChange(oChange, this.oForm, oPropertyBag);
 			}.bind(this))
 			.catch(function(oReturn) {
-				assert.ok(fnBaseIncludes(oReturn.message, "Control to be created already exists"),
+				assert.ok(oReturn.message.includes("Control to be created already exists"),
 					"the second change to add the same field throws a not applicable info message");
 
 				var oFormContainer = this.oForm.getFormContainers()[0];

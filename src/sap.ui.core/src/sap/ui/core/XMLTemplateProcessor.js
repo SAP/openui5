@@ -18,7 +18,6 @@ sap.ui.define([
 	'sap/ui/base/SyncPromise',
 	'sap/base/Log',
 	'sap/base/util/ObjectPath',
-	'sap/base/util/values',
 	'sap/base/assert',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/JSTokenizer',
@@ -40,7 +39,6 @@ function(
 	SyncPromise,
 	Log,
 	ObjectPath,
-	values,
 	assert,
 	LoaderExtensions,
 	JSTokenizer,
@@ -444,7 +442,7 @@ function(
 							return;
 						}
 						// fall back to async loading
-						sap.ui.require(values(oRequireContext), function() {
+						sap.ui.require(Object.values(oRequireContext), function() {
 							var aLoadedModules = arguments;
 							Object.keys(oRequireContext).forEach(function(sKey, i) {
 								oModules[sKey] = aLoadedModules[i];
