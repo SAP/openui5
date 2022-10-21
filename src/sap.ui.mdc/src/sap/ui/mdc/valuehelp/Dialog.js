@@ -12,7 +12,9 @@ sap.ui.define([
 	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/mdc/util/Common',
 	'sap/ui/mdc/enum/SelectType',
-	'sap/base/strings/formatMessage'
+	'sap/base/strings/formatMessage',
+	'sap/ui/core/library',
+	'sap/ui/core/InvisibleMessage'
 ], function(
 	Container,
 	DialogTab,
@@ -23,12 +25,21 @@ sap.ui.define([
 	ResourceModel,
 	Common,
 	SelectType,
-	formatMessage
+	formatMessage,
+	coreLibrary,
+	InvisibleMessage
 ) {
 	"use strict";
 
+	// translation utils
+	var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	sap.ui.getCore().attachLocalizationChanged(function() {
+		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	});
+
 	var MDialog, MLibrary, Button, ManagedObjectModel, IconTabBar, IconTabFilter;
 	var Panel, HBox, MultiInput, Token, Filter;
+	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
 	/**
 	 * Constructor for a new <code>Dialog</code> container.
@@ -616,6 +627,7 @@ sap.ui.define([
 						press: function(oEvent) {
 							this.fireSelect({type: SelectType.Set, conditions: []});
 
+							this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.REMOVEALLTOKEN_ANNOUNCE"), InvisibleMessageMode.Polite);
 						}.bind(this),
 						type: ButtonType.Transparent,
 						icon: "sap-icon://decline",
@@ -807,6 +819,12 @@ sap.ui.define([
 
 	};
 
+	Dialog.prototype.init = function () {
+		Container.prototype.init.apply(this, arguments);
+
+		this.oInvisibleMessage = InvisibleMessage.getInstance();
+	};
+
 	Dialog.prototype.exit = function () {
 		Common.cleanup(this, [
 			"_oManagedObjectModel",
@@ -819,7 +837,8 @@ sap.ui.define([
 			"_oGroupSelect",
 			"_oGroupSelectModel",
 			"_sInitialContentKey",
-			"_mAlreadyShownContents"
+			"_mAlreadyShownContents",
+			"oInvisibleMessage"
 		]);
 
 		Container.prototype.exit.apply(this, arguments);
