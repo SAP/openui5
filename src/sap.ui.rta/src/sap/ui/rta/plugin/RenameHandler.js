@@ -185,7 +185,7 @@ sap.ui.define([
 
 			this.setOldValue(RenameHandler._getCurrentEditableFieldText.call(this));
 
-			DOMUtil.copyComputedStyle(this._$oEditableControlDomRef, this._$editableField);
+			DOMUtil.copyComputedStyle(this._$oEditableControlDomRef.get(0), this._$editableField.get(0));
 			this._$editableField.children().remove();
 			this._$editableField.css("visibility", "hidden");
 

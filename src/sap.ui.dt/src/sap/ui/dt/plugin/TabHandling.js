@@ -3,14 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/Plugin",
 	"sap/ui/dt/Overlay",
-	"sap/ui/dt/OverlayRegistry",
-	// jQuery custom selectors ":focusable"
-	"sap/ui/dom/jquery/Selectors"
+	"sap/ui/dt/OverlayRegistry"
 ], function(
-	jQuery,
 	Plugin,
 	Overlay,
 	OverlayRegistry
@@ -97,9 +93,9 @@ sap.ui.define([
 	TabHandling.prototype.removeOverlayTabIndex = function() {
 		var aRootOverlays = this._getRootOverlays();
 		aRootOverlays.forEach(function(oRootOverlay) {
-			var $RootOverlay = jQuery(oRootOverlay.getDomRef());
-			if ($RootOverlay) {
-				$RootOverlay.find("[tabindex]:not([tabindex='-1']").each(function(iIndex, oNode) {
+			var oRootDomRef = oRootOverlay.getDomRef();
+			if (oRootDomRef) {
+				oRootDomRef.querySelectorAll("[tabindex]:not([tabindex='-1'])").forEach(function(oNode) {
 					oNode.setAttribute("data-sap-ui-overlay-tabindex", oNode.tabIndex);
 					oNode.setAttribute("tabindex", -1);
 				});
@@ -119,7 +115,7 @@ sap.ui.define([
 	 * Restore the tab indices of all elements of the DOM tree
 	 */
 	TabHandling.prototype.restoreTabIndex = function() {
-		jQuery("[data-sap-ui-dt-tabindex]").each(function(iIndex, oNode) {
+		document.querySelectorAll("[data-sap-ui-dt-tabindex]").forEach(function(oNode) {
 			oNode.setAttribute("tabindex", oNode.getAttribute("data-sap-ui-dt-tabindex"));
 			oNode.removeAttribute("data-sap-ui-dt-tabindex");
 		});
@@ -129,7 +125,7 @@ sap.ui.define([
 	 * Restore the tab indices of all Overlays of the DOM tree
 	 */
 	TabHandling.prototype.restoreOverlayTabIndex = function() {
-		jQuery("[data-sap-ui-overlay-tabindex]").each(function(iIndex, oNode) {
+		document.querySelectorAll("[data-sap-ui-overlay-tabindex]").forEach(function(oNode) {
 			oNode.setAttribute("tabindex", oNode.getAttribute("data-sap-ui-overlay-tabindex"));
 			oNode.removeAttribute("data-sap-ui-overlay-tabindex");
 		});

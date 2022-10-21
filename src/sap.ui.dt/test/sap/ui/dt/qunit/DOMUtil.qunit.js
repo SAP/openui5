@@ -46,8 +46,11 @@ sap.ui.define([
 	 */
 	QUnit.module("Given that a container is rendered", {
 		beforeEach: function() {
-			this.oContainer = jQuery("<div style='background: blue; width: 200px; height: 200px;'></div>");
-			this.oContainer.appendTo("#qunit-fixture");
+			this.oContainer = document.createElement("div");
+			this.oContainer.style.background = "blue";
+			this.oContainer.style.width = "200px";
+			this.oContainer.style.height = "200px";
+			document.getElementById("qunit-fixture").append(this.oContainer);
 		},
 		afterEach: function() {
 			this.oContainer.remove();
@@ -58,8 +61,8 @@ sap.ui.define([
 				width: 200,
 				height: 200
 			};
-			assert.strictEqual(DOMUtil.getSize(this.oContainer.get(0)).width, mExpectedSize.width, "then the width is returned correctly");
-			assert.strictEqual(DOMUtil.getSize(this.oContainer.get(0)).height, mExpectedSize.height, "then the height is returned correctly");
+			assert.strictEqual(DOMUtil.getSize(this.oContainer).width, mExpectedSize.width, "then the width is returned correctly");
+			assert.strictEqual(DOMUtil.getSize(this.oContainer).height, mExpectedSize.height, "then the height is returned correctly");
 		});
 	});
 
@@ -68,36 +71,47 @@ sap.ui.define([
 	 */
 	QUnit.module("Given that a container is rendered with a bigger content element (for scrollbars)", {
 		beforeEach: function() {
-			this.oContent = jQuery("<div style='background: red; width: 200px; height: 200px; position: relative; left: 30px; top: 40px;'></div>");
-			this.oContainer = jQuery("<div style='background: blue; width: 100px; height: 100px; overflow: auto;'></div>");
-			this.oContainer.append(this.oContent).appendTo("#qunit-fixture");
+			this.oContent = document.createElement("div");
+			this.oContent.style.background = "red";
+			this.oContent.style.width = "200px";
+			this.oContent.style.height = "200px";
+			this.oContent.style.position = "relative";
+			this.oContent.style.left = "30px";
+			this.oContent.style.top = "40px";
+			this.oContainer = document.createElement("div");
+			this.oContainer.style.background = "blue";
+			this.oContainer.style.width = "100px";
+			this.oContainer.style.height = "100px";
+			this.oContainer.style.overflow = "auto";
+			this.oContainer.append(this.oContent);
+			document.getElementById("qunit-fixture").append(this.oContainer);
 		},
 		afterEach: function() {
 			this.oContainer.remove();
 		}
 	}, function() {
 		QUnit.test("when getOffsetFromParent is called for the content without scrolling", function(assert) {
-			var oContentGeometry = DOMUtil.getGeometry(this.oContent.get(0));
+			var oContentGeometry = DOMUtil.getGeometry(this.oContent);
 			assert.strictEqual(
-				DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer.get(0)).left,
+				DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer).left,
 				30,
 				"the left offset is correct");
 			assert.strictEqual(
-				DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer.get(0)).top,
+				DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer).top,
 				40,
 				"the top offset is correct");
 		});
 
 		QUnit.test("when getOffsetFromParent is called for the content after scrolling on the container", function(assert) {
-			var oContentGeometry = DOMUtil.getGeometry(this.oContent.get(0));
-			this.oContainer.scrollLeft(50);
-			this.oContainer.scrollTop(60);
+			var oContentGeometry = DOMUtil.getGeometry(this.oContent);
+			this.oContainer.scrollLeft = 50;
+			this.oContainer.scrollTop = 60;
 			assert.strictEqual(
-				Math.round(DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer.get(0)).left),
+				Math.round(DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer).left),
 				80,
 				"the left offset is correct");
 			assert.strictEqual(
-				Math.round(DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer.get(0)).top),
+				Math.round(DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer).top),
 				100,
 				"the top offset is correct");
 		});
@@ -132,7 +146,7 @@ sap.ui.define([
 			mSize.height = Math.round(mSize.height);
 			assert.deepEqual(mSize, oExpected, "then the static method getSize returns the right value");
 
-			jQuery("#qunit-fixture").css("z-index", 1000);
+			document.getElementById("qunit-fixture").style.zIndex = 1000;
 			var zIndex = DOMUtil.getZIndex(oButtonDomRef);
 			assert.equal(zIndex, "1000", 'and the static method "getZIndex" returns the right value');
 		});
@@ -158,17 +172,26 @@ sap.ui.define([
 	 */
 	QUnit.module("Given that some DOM element with child nodes is rendered...", {
 		beforeEach: function() {
-			this.oDomElement = jQuery("<div class='parent' id='parent'></div>");
+			this.oDomElement = document.createElement("div");
+			this.oDomElement.setAttribute("id", "parent");
+			this.oDomElement.classList.add("parent");
 
-			jQuery("<div class='child' id='first-child'></div>").appendTo(this.oDomElement);
-			jQuery("<div class='child' id='second-child'></div>").appendTo(this.oDomElement);
+			var oChild1 = document.createElement("div");
+			oChild1.setAttribute("id", "first-child");
+			oChild1.classList.add("child");
+			this.oDomElement.append(oChild1);
+			var oChild2 = document.createElement("div");
+			oChild2.setAttribute("id", "second-child");
+			oChild2.classList.add("child");
+			this.oDomElement.append(oChild2);
 
-			this.oDomElement.appendTo("#qunit-fixture");
+			document.getElementById("qunit-fixture").append(this.oDomElement);
 		},
 		afterEach: function() {
 			this.oDomElement.remove();
 		}
 	}, function() {
+		//TODO: change when getDomRefForCSSSelector does not return jQuery Object any more
 		QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref", function(assert) {
 			var oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref");
 			assert.strictEqual(oDomRef.length, 1, "one element found");
@@ -199,8 +222,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the getDomRefForCSSSelector is called without arguments", function(assert) {
-			var $DomRef = DOMUtil.getDomRefForCSSSelector();
-			assert.ok($DomRef instanceof jQuery);
+			var oDomRef = DOMUtil.getDomRefForCSSSelector();
+			assert.ok(oDomRef instanceof jQuery);
 		});
 	});
 
@@ -209,6 +232,7 @@ sap.ui.define([
 	 */
 	QUnit.module("Given that some DOM element with child nodes is rendered...", {
 		beforeEach: function() {
+			//TODO: check why classes are not considered when using JS
 			jQuery("<div style='float: left; width: 50%; height: 100%;' id='left-part'></div>").appendTo("#qunit-fixture");
 			jQuery("<div style='float: left; width: 50%; height: 100%;' id='right-part'></div>").appendTo("#qunit-fixture");
 
@@ -221,7 +245,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when this element, it's children and styling is copied", function(assert) {
-			DOMUtil.cloneDOMAndStyles(this.oDomElement, jQuery("#right-part"));
+			DOMUtil.cloneDOMAndStyles(this.oDomElement.get(0), jQuery("#right-part").get(0));
 
 			var oCopyDiv = jQuery("#right-part > [data-find=div]");
 			assert.ok(oCopyDiv, "element is copied");
@@ -235,7 +259,7 @@ sap.ui.define([
 			assert.ok(oCopySpan, "child elemen is copied");
 			assert.strictEqual(oCopySpan.css("color"), "rgb(255, 0, 0)", "styles for child elemen are also copied");
 
-			var sAfterSpanContent = window.getComputedStyle(this.oDomElement.find(">span").get(0), ":after").getPropertyValue("content").replace(/[\"\']/g, "");
+			var sAfterSpanContent = window.getComputedStyle(jQuery(this.oDomElement).find(">span").get(0), ":after").getPropertyValue("content").replace(/[\"\']/g, "");
 			var sAfterCopySpanContent = oCopySpan.children().last().html();
 			assert.strictEqual(sAfterCopySpanContent, sAfterSpanContent, "and the pseudoElements are also copied");
 		});
@@ -246,49 +270,46 @@ sap.ui.define([
 	 */
 	QUnit.module("Given that a container and a content are rendered", {
 		beforeEach: function() {
-			this.oContent = jQuery("<div style='background: red; width: 200px; height: 200px;'></div>");
-			this.oContainer = jQuery("<div style='background: blue; width: 200px; height: 200px;'></div>");
-			this.oContainer.append(this.oContent).appendTo("#qunit-fixture");
+			this.oContent = document.createElement("div");
+			this.oContent.style.background = "red";
+			this.oContent.style.width = "200px";
+			this.oContent.style.height = "200px";
+			this.oContainer = document.createElement("div");
+			this.oContainer.style.background = "blue";
+			this.oContainer.style.width = "200px";
+			this.oContainer.style.height = "200px";
+
+			this.oContainer.append(this.oContent);
+			document.getElementById("qunit-fixture").append(this.oContainer);
 		},
 		afterEach: function() {
 			this.oContainer.remove();
 		}
 	}, function() {
 		QUnit.test("when the content is higher but container has no overflow property set", function(assert) {
-			this.oContent.css({
-				height: 400
-			});
+			this.oContent.style.height = "400px";
 
-			assert.strictEqual(DOMUtil.hasScrollBar(this.oContainer.get(0)), false, "no scroll");
+			assert.strictEqual(DOMUtil.hasScrollBar(this.oContainer), false, "no scroll");
 		});
 
 		QUnit.test("when the content is higher and container has overflow auto", function(assert) {
-			this.oContent.css({
-				height: 400
-			});
+			this.oContent.style.height = "400px";
+			this.oContainer.style.overflow = "auto";
 
-			this.oContainer.css({
-				overflow: "auto"
-			});
-
-			assert.strictEqual(DOMUtil.hasScrollBar(this.oContainer.get(0)), true, "scroll is shown");
+			assert.strictEqual(DOMUtil.hasScrollBar(this.oContainer), true, "scroll is shown");
 		});
 
 		QUnit.test("when the content is wider and container has overflow scroll", function(assert) {
-			this.oContent.css({
-				width: 400
-			});
+			this.oContent.style.width = "400px";
+			this.oContainer.style.overflowX = "scroll";
 
-			this.oContainer.css({
-				"overflow-x": "scroll"
-			});
-
-			assert.strictEqual(DOMUtil.hasScrollBar(this.oContainer.get(0)), true, "scroll is shown");
+			assert.strictEqual(DOMUtil.hasScrollBar(this.oContainer), true, "scroll is shown");
 		});
 	});
 
 	QUnit.module("copyComputedStyle()", {
 		beforeEach: function() {
+			//TODO: check why classes are not considered when using JS
 			this.oSrcDomElement = jQuery("<div class='child' id='first-child' " +
 				"style='background: #000; width: 200px; height: 200px;'" +
 				"></div>")
@@ -301,7 +322,7 @@ sap.ui.define([
 			this.oSrcDomElement.css({
 				display: "none"
 			});
-			DOMUtil.copyComputedStyle(this.oSrcDomElement, this.oDestDomElement);
+			DOMUtil.copyComputedStyle(this.oSrcDomElement.get(0), this.oDestDomElement.get(0));
 			var mSrcStyles = window.getComputedStyle(this.oSrcDomElement.get(0));
 			var mDestStyles = window.getComputedStyle(this.oDestDomElement.get(0));
 			assert.strictEqual(mDestStyles["display"], "none", "css-attribute display is copied to source dom element");
@@ -310,7 +331,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when copyComputedStyle is called without pseudoElements", function(assert) {
-			DOMUtil.copyComputedStyle(this.oSrcDomElement, this.oDestDomElement);
+			DOMUtil.copyComputedStyle(this.oSrcDomElement.get(0), this.oDestDomElement.get(0));
 			var mSrcStyles = window.getComputedStyle(this.oSrcDomElement.get(0));
 			var mDestStyles = window.getComputedStyle(this.oDestDomElement.get(0));
 			assert.strictEqual(mDestStyles["background-color"], mSrcStyles["background-color"],
@@ -325,7 +346,7 @@ sap.ui.define([
 				"<span data-find='span' class='withAfterElement' style='color: rgb(255, 0, 0);'>Text</span></div>");
 			oDomElement.appendTo("#left-part");
 
-			DOMUtil.copyComputedStyle(oDomElement, this.oDestDomElement);
+			DOMUtil.copyComputedStyle(oDomElement.get(0), this.oDestDomElement.get(0));
 			var oSpan = jQuery("#second-child").find("span");
 			assert.strictEqual(oSpan.length, 1, "oDestDomElement contains a span element as well as the source oDomElement");
 		});
@@ -333,100 +354,94 @@ sap.ui.define([
 
 	QUnit.module("getScrollLeft()", {
 		beforeEach: function() {
-			this.$Panel = jQuery("<div></div>").css({
-				width: "100px",
-				height: "100px",
-				overflow: "auto"
-			}).appendTo("#qunit-fixture");
-			jQuery("<div></div>").css({
-				width: "200px",
-				height: "200px"
-			}).appendTo(this.$Panel);
+			var oInnerDiv = document.createElement("div");
+			oInnerDiv.style.width = "200px";
+			oInnerDiv.style.height = "200px";
+			this.oPanel = document.createElement("div");
+			this.oPanel.style.width = "100px";
+			this.oPanel.style.height = "100px";
+			this.oPanel.style.overflow = "auto";
+			this.oPanel.append(oInnerDiv);
+			document.getElementById("qunit-fixture").append(this.oPanel);
 		},
 		afterEach: function() {
-			this.$Panel.remove();
+			this.oPanel.remove();
 		}
 	}, function() {
 		QUnit.test("initial position", function (assert) {
-			assert.strictEqual(DOMUtil.getScrollLeft(this.$Panel.get(0)), 0);
+			assert.strictEqual(DOMUtil.getScrollLeft(this.oPanel), 0);
 		});
 		QUnit.test("scrolled to the most right position", function (assert) {
-			var iMaxScrollLeftValue = this.$Panel.get(0).scrollWidth - this.$Panel.get(0).clientWidth;
+			var iMaxScrollLeftValue = this.oPanel.scrollWidth - this.oPanel.clientWidth;
 
-			this.$Panel.scrollLeft(iMaxScrollLeftValue);
+			this.oPanel.scrollLeft = iMaxScrollLeftValue;
 
-			var iExpectedMaxScrollLeftLTRValue = DOMUtil.getScrollLeft(this.$Panel.get(0));
+			var iExpectedMaxScrollLeftLTRValue = DOMUtil.getScrollLeft(this.oPanel);
 			assert.strictEqual(Math.round(iExpectedMaxScrollLeftLTRValue), iMaxScrollLeftValue);
 		});
 	});
 
 	QUnit.module("hasHorizontalScrollBar()", {
 		beforeEach: function () {
-			this.$OuterPanel = jQuery("<div></div>").css({
-				width: "100px",
-				height: "100px",
-				overflow: "auto",
-				"background-color": "red"
-			}).appendTo("#qunit-fixture");
-			this.$InnerPanel = jQuery("<div></div>").css({
-				width: "100px",
-				"background-color": "blue"
-			}).appendTo(this.$OuterPanel);
+			this.oInnerPanel = document.createElement("div");
+			this.oInnerPanel.style.width = "100px";
+			this.oInnerPanel.style.backgroundColor = "blue";
+			this.oOuterPanel = document.createElement("div");
+			this.oOuterPanel.style.width = "100px";
+			this.oOuterPanel.style.height = "100px";
+			this.oOuterPanel.style.overflow = "auto";
+			this.oOuterPanel.style.backgroundColor = "red";
+			this.oOuterPanel.append(this.oInnerPanel);
+			document.getElementById("qunit-fixture").append(this.oOuterPanel);
 		}
 	}, function () {
 		QUnit.test("initial", function (assert) {
-			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.$OuterPanel.get(0)), false);
+			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.oOuterPanel), false);
 		});
 		QUnit.test("when there is only horizontal scrollbar", function (assert) {
-			this.$InnerPanel.css({
-				width: "200px",
-				height: "100px"
-			});
-			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.$OuterPanel.get(0)), true);
+			this.oInnerPanel.style.width = "200px";
+			this.oInnerPanel.style.height = "100px";
+			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.oOuterPanel), true);
 		});
 		QUnit.test("when there is only vertical scrollbar", function (assert) {
-			this.$InnerPanel.css({
-				width: "100px",
-				height: "200px"
-			});
-			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.$OuterPanel.get(0)), false);
+			this.oInnerPanel.style.width = "100px";
+			this.oInnerPanel.style.height = "200px";
+			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.oOuterPanel), false);
 		});
 		QUnit.test("when both vertical and horizontal scrolling are presented", function (assert) {
-			this.$InnerPanel.css({
-				width: "200px",
-				height: "200px"
-			});
-			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.$OuterPanel.get(0)), true);
+			this.oInnerPanel.style.width = "200px";
+			this.oInnerPanel.style.height = "200px";
+			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.oOuterPanel), true);
 		});
 	});
 
 	QUnit.module("appendChild()", {
 		beforeEach: function() {
-			this.$Container = jQuery("<div></div>").css({
-				width: "500px",
-				height: "500px",
-				overflow: "auto",
-				"background-color": "red"
-			}).appendTo("#qunit-fixture");
-			this.$Child = jQuery("<div></div>").css({
-				width: "500px",
-				height: "300px",
-				overflow: "auto",
-				"background-color": "blue"
-			}).appendTo(this.$Container);
-			jQuery("<div></div>").css({
-				width: "1000px",
-				height: "1000px",
-				"background-color": "green"
-			}).appendTo(this.$Child);
+			var oChildInner = document.createElement("div");
+			oChildInner.style.width = "1000px";
+			oChildInner.style.height = "1000px";
+			oChildInner.style.backgroundColor = "green";
+			this.oChild = document.createElement("div");
+			this.oChild.style.width = "500px";
+			this.oChild.style.height = "300px";
+			this.oChild.style.overflow = "auto";
+			this.oChild.style.backgroundColor = "blue";
+			this.oContainer = document.createElement("div");
+			this.oContainer.style.width = "500px";
+			this.oContainer.style.height = "500px";
+			this.oContainer.style.overflow = "auto";
+			this.oContainer.style.backgroundColor = "red";
+			this.oChild.append(oChildInner);
+			this.oContainer.append(this.oChild);
+			document.getElementById("qunit-fixture").append(this.oContainer);
 		}
 	}, function() {
 		QUnit.test("scrollTop/scrollLeft remain on the same positions", function (assert) {
-			this.$Child.scrollTop(300);
-			this.$Child.scrollLeft(200);
-			DOMUtil.appendChild(this.$Container.get(0), this.$Child.get(0));
-			assert.strictEqual(this.$Child.scrollTop(), 300);
-			assert.strictEqual(this.$Child.scrollLeft(), 200);
+			this.oChild.scrollTop = 300;
+			this.oChild.scrollLeft = 200;
+			DOMUtil.appendChild(this.oContainer, this.oChild);
+			assert.strictEqual(this.oChild.scrollTop, 300);
+			assert.strictEqual(this.oChild.scrollLeft, 200);
 		});
 	});
 
@@ -631,22 +646,22 @@ sap.ui.define([
 			oFixtureNode.appendChild(oNode2);
 
 			oNode1.scrollTop = 100;
-			jQuery(oNode1).scrollLeft(100);
+			oNode1.scrollLeft = 100;
 			oNode2.scrollTop = 0;
-			jQuery(oNode2).scrollLeft(0);
+			oNode2.scrollLeft = 0;
 
 			assert.strictEqual(oNode1.scrollTop, 100);
-			assert.strictEqual(jQuery(oNode1).scrollLeft(), 100);
+			assert.strictEqual(oNode1.scrollLeft, 100);
 			assert.strictEqual(oNode2.scrollTop, 0);
-			assert.strictEqual(jQuery(oNode2).scrollLeft(), 0);
+			assert.strictEqual(oNode2.scrollLeft, 0);
 
 			// Sync
 			DOMUtil.syncScroll(oNode1, oNode2);
 
 			assert.strictEqual(oNode1.scrollTop, 100);
-			assert.strictEqual(jQuery(oNode1).scrollLeft(), 100);
+			assert.strictEqual(oNode1.scrollLeft, 100);
 			assert.strictEqual(oNode2.scrollTop, 100);
-			assert.strictEqual(jQuery(oNode1).scrollLeft(), 100);
+			assert.strictEqual(oNode1.scrollLeft, 100);
 		});
 	});
 

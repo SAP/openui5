@@ -69,7 +69,7 @@ sap.ui.define([
 
 	// Styles on "qunit-fixture" influence the scrolling tests if positioned on the screen during test execution.
 	// Please keep this tag without any styling.
-	jQuery("#qunit-fixture").removeAttr("style");
+	document.getElementById("qunit-fixture").removeAttribute("style");
 
 	var sandbox = sinon.createSandbox();
 
@@ -82,8 +82,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("check whether container is there", function(assert) {
-			var $container = jQuery("#overlay-container");
-			assert.strictEqual($container.length, 1);
+			var aContainer = document.querySelectorAll("#overlay-container");
+			assert.strictEqual(aContainer.length, 1);
 		});
 	});
 
@@ -119,18 +119,18 @@ sap.ui.define([
 		QUnit.test("when all is rendered", function(assert) {
 			assert.ok(this.oElementOverlay.getDomRef(), "overlay is rendered");
 			assert.ok(this.oElementOverlay.isVisible(), "overlay is visible");
-			assert.deepEqual(Math.ceil(this.oElementOverlay.$().offset().top), Math.ceil(this.oButton.$().offset().top), "overlay has same top position as a control");
-			assert.deepEqual(Math.ceil(this.oElementOverlay.$().offset().left), Math.ceil(this.oButton.$().offset().left), "overlay has same left position as a control");
-			assert.equal(this.oElementOverlay.$().css("z-index"), Popup.getLastZIndex(), "the root overlay has the last z-index provided by the Popup");
+			assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oElementOverlay.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oButton.getDomRef()).top), "overlay has same top position as a control");
+			assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oElementOverlay.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oButton.getDomRef()).left), "overlay has same left position as a control");
+			assert.equal(window.getComputedStyle(this.oElementOverlay.getDomRef())["z-index"], Popup.getLastZIndex(), "the root overlay has the last z-index provided by the Popup");
 		});
 
 		QUnit.test("when the control gets a new width and the Overlay is rerendered", function(assert) {
 			var fnDone = assert.async();
-			var iLastZIndex = this.oElementOverlay.$().css("z-index");
+			var iLastZIndex = window.getComputedStyle(this.oElementOverlay.getDomRef())["z-index"];
 
 			this.oElementOverlay.attachEventOnce("geometryChanged", function() {
-				assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "the overlay has the new width as well");
-				assert.equal(this.oElementOverlay.$().css("z-index"), iLastZIndex, "the root overlay does not get a new z-index from the Popup");
+				assert.strictEqual(this.oButton.getDomRef().getBoundingClientRect().width, this.oElementOverlay.getDomRef().getBoundingClientRect().width, "the overlay has the new width as well");
+				assert.equal(window.getComputedStyle(this.oElementOverlay.getDomRef())["z-index"], iLastZIndex, "the root overlay does not get a new z-index from the Popup");
 				fnDone();
 			}, this);
 
@@ -255,16 +255,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control is rendered", function(assert) {
-			var $DomRef = this.oElementOverlay.$();
+			var oDomRef = this.oElementOverlay.getDomRef();
 
-			assert.ok($DomRef.hasClass("sapUiDtOverlay"), "and the right CSS class overlay is set to the element");
-			assert.ok($DomRef.hasClass("sapUiDtElementOverlay"), "and the right CSS element overlay class is set to the element");
+			assert.ok(oDomRef.classList.contains("sapUiDtOverlay"), "and the right CSS class overlay is set to the element");
+			assert.ok(oDomRef.classList.contains("sapUiDtElementOverlay"), "and the right CSS element overlay class is set to the element");
 
-			var mElementOffset = this.oElementOverlay.getElement().$().offset();
-			var mOverlayOffset = $DomRef.offset();
+			var mElementOffset = DOMUtil.getOffset(this.oElementOverlay.getElement().getDomRef());
+			var mOverlayOffset = DOMUtil.getOffset(oDomRef);
 			assert.equal(Math.ceil(mOverlayOffset.top), Math.ceil(mElementOffset.top), "and the right position 'top' is applied to the overlay");
 			assert.equal(Math.ceil(mOverlayOffset.left), Math.ceil(mElementOffset.left), "and the right position 'left' is applied to the overlay");
-			assert.equal(this.oElementOverlay.$().css("z-index"), $DomRef.css("z-index"), "and the right z-index is applied to the overlay");
+			assert.equal(window.getComputedStyle(this.oElementOverlay.getDomRef())["z-index"], window.getComputedStyle(oDomRef)["z-index"], "and the right z-index is applied to the overlay");
 
 			var oDesignTimeMetadata = this.oElementOverlay.getDesignTimeMetadata();
 			assert.ok(oDesignTimeMetadata instanceof ElementDesignTimeMetadata, "and the design time metadata for the control is set");
@@ -300,8 +300,8 @@ sap.ui.define([
 					.onSecondCall().callsFake(function() {
 						setTimeout(function() {
 							// setTimeout added to cover animation duration
-							assert.strictEqual(this.oButton.$().width(), 200, "then the button width is correct");
-							assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "then the overlay size is in sync");
+							assert.strictEqual(this.oButton.getDomRef().getBoundingClientRect().width, 200, "then the button width is correct");
+							assert.strictEqual(this.oButton.getDomRef().getBoundingClientRect().width, this.oElementOverlay.getDomRef().getBoundingClientRect().width, "then the overlay size is in sync");
 							fnDone();
 						}.bind(this), 51);
 					}.bind(this))
@@ -540,7 +540,7 @@ sap.ui.define([
 			this.oVerticalLayout = new VerticalLayout({ content: [this.oLabel] });
 			this.oVerticalLayout.placeAt("qunit-fixture");
 			oCore.applyChanges();
-			this.oVerticalLayout.$().css("display", "none");
+			this.oVerticalLayout.getDomRef().style.display = ("none");
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout]
@@ -570,7 +570,7 @@ sap.ui.define([
 					fnDone();
 				}, this);
 			}, this);
-			this.oVerticalLayout.$().css("display", "block");
+			this.oVerticalLayout.getDomRef().style.display = "block";
 			oCore.applyChanges();
 		});
 	});
@@ -612,10 +612,10 @@ sap.ui.define([
 			// timeout is needed to handle applyStyles
 			setTimeout(function() {
 				// Math.ceil is needed for IE11
-				assert.deepEqual(Math.ceil(this.oLayoutOverlay.$().offset().top), Math.ceil(this.oVerticalLayout.$().offset().top), "top position of the Layout overlay is correct");
-				assert.deepEqual(Math.ceil(this.oLayoutOverlay.$().offset().left), Math.ceil(this.oVerticalLayout.$().offset().left), "left position of the Layout overlay is correct");
-				assert.deepEqual(Math.ceil(this.oLabelOverlay1.$().offset().top), Math.ceil(this.oLabel1.$().offset().top), "top position of the Label overlay is correct");
-				assert.deepEqual(Math.ceil(this.oLabelOverlay1.$().offset().left), Math.ceil(this.oLabel1.$().offset().left), "left position of the Label overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLayoutOverlay.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oVerticalLayout.getDomRef()).top), "top position of the Layout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLayoutOverlay.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oVerticalLayout.getDomRef()).left), "left position of the Layout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLabelOverlay1.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oLabel1.getDomRef()).top), "top position of the Label overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLabelOverlay1.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oLabel1.getDomRef()).left), "left position of the Label overlay is correct");
 				fnDone();
 			}.bind(this));
 		});
@@ -624,23 +624,23 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				assert.deepEqual(Math.ceil(this.oLayoutOverlay.$().offset().top), Math.ceil(this.oVerticalLayout.$().offset().top), "top position of the Layout overlay is correct");
-				assert.deepEqual(Math.ceil(this.oLayoutOverlay.$().offset().left), Math.ceil(this.oVerticalLayout.$().offset().left), "left position of the Layout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLayoutOverlay.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oVerticalLayout.getDomRef()).top), "top position of the Layout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLayoutOverlay.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oVerticalLayout.getDomRef()).left), "left position of the Layout overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLayoutOverlay.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oVerticalLayout.getDomRef()).width), "width of the Layout overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLayoutOverlay.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oVerticalLayout.getDomRef()).height), "height of the Layout overlay is correct");
 
-				assert.deepEqual(Math.ceil(this.oLabelOverlay1.$().offset().top), Math.ceil(this.oLabel1.$().offset().top), "top position of the Label1 overlay is correct");
-				assert.deepEqual(Math.ceil(this.oLabelOverlay1.$().offset().left), Math.ceil(this.oLabel1.$().offset().left), "left position of the Label1 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLabelOverlay1.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oLabel1.getDomRef()).top), "top position of the Label1 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLabelOverlay1.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oLabel1.getDomRef()).left), "left position of the Label1 overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay1.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oLabel1.getDomRef()).width), "width of the Label1 overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay1.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oLabel1.getDomRef()).height), "height of the Label1 overlay is correct");
 
-				assert.deepEqual(Math.ceil(this.oInnerLayoutOverlay.$().offset().top), Math.ceil(this.oInnerLayout.$().offset().top), "top position of the InnerLayout overlay is correct");
-				assert.deepEqual(Math.ceil(this.oInnerLayoutOverlay.$().offset().left), Math.ceil(this.oInnerLayout.$().offset().left), "left position of the InnerLayout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oInnerLayoutOverlay.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oInnerLayout.getDomRef()).top), "top position of the InnerLayout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oInnerLayoutOverlay.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oInnerLayout.getDomRef()).left), "left position of the InnerLayout overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oInnerLayoutOverlay.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oInnerLayout.getDomRef()).width), "width of the InnerLayout overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oInnerLayoutOverlay.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oInnerLayout.getDomRef()).height), "height of the InnerLayout overlay is correct");
 
-				assert.deepEqual(Math.ceil(this.oLabelOverlay2.$().offset().top), Math.ceil(this.oLabel2.$().offset().top), "top position of the Label2 overlay is correct");
-				assert.deepEqual(Math.ceil(this.oLabelOverlay2.$().offset().left), Math.ceil(this.oLabel2.$().offset().left), "left position of the Label2 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLabelOverlay2.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oLabel2.getDomRef()).top), "top position of the Label2 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLabelOverlay2.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oLabel2.getDomRef()).left), "left position of the Label2 overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay2.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oLabel2.getDomRef()).width), "width of the Label2 overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay2.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oLabel2.getDomRef()).height), "height of the Label2 overlay is correct");
 
@@ -655,23 +655,23 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				assert.deepEqual(Math.ceil(this.oLayoutOverlay.$().offset().top), Math.ceil(this.oVerticalLayout.$().offset().top), "top position of the Layout overlay is correct");
-				assert.deepEqual(Math.ceil(this.oLayoutOverlay.$().offset().left), Math.ceil(this.oVerticalLayout.$().offset().left), "left position of the Layout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLayoutOverlay.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oVerticalLayout.getDomRef()).top), "top position of the Layout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLayoutOverlay.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oVerticalLayout.getDomRef()).left), "left position of the Layout overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLayoutOverlay.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oVerticalLayout.getDomRef()).width), "width of the Layout overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLayoutOverlay.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oVerticalLayout.getDomRef()).height), "height of the Layout overlay is correct");
 
-				assert.deepEqual(Math.ceil(this.oLabelOverlay1.$().offset().top), Math.ceil(this.oLabel1.$().offset().top), "top position of the Label1 overlay is correct");
-				assert.deepEqual(Math.ceil(this.oLabelOverlay1.$().offset().left), Math.ceil(this.oLabel1.$().offset().left), "left position of the Label1 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLabelOverlay1.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oLabel1.getDomRef()).top), "top position of the Label1 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLabelOverlay1.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oLabel1.getDomRef()).left), "left position of the Label1 overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay1.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oLabel1.getDomRef()).width), "width of the Label1 overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay1.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oLabel1.getDomRef()).height), "height of the Label1 overlay is correct");
 
-				assert.deepEqual(Math.ceil(this.oInnerLayoutOverlay.$().offset().top), Math.ceil(this.oInnerLayout.$().offset().top), "top position of the InnerLayout overlay is correct");
-				assert.deepEqual(Math.ceil(this.oInnerLayoutOverlay.$().offset().left), Math.ceil(this.oInnerLayout.$().offset().left), "left position of the InnerLayout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oInnerLayoutOverlay.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oInnerLayout.getDomRef()).top), "top position of the InnerLayout overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oInnerLayoutOverlay.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oInnerLayout.getDomRef()).left), "left position of the InnerLayout overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oInnerLayoutOverlay.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oInnerLayout.getDomRef()).width), "width of the InnerLayout overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oInnerLayoutOverlay.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oInnerLayout.getDomRef()).height), "height of the InnerLayout overlay is correct");
 
-				assert.deepEqual(Math.ceil(this.oLabelOverlay2.$().offset().top), Math.ceil(this.oLabel2.$().offset().top), "top position of the Label2 overlay is correct");
-				assert.deepEqual(Math.ceil(this.oLabelOverlay2.$().offset().left), Math.ceil(this.oLabel2.$().offset().left), "left position of the Label2 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLabelOverlay2.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oLabel2.getDomRef()).top), "top position of the Label2 overlay is correct");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLabelOverlay2.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oLabel2.getDomRef()).left), "left position of the Label2 overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay2.getDomRef()).width), Math.ceil(DOMUtil.getSize(this.oLabel2.getDomRef()).width), "width of the Label2 overlay is correct");
 				assert.deepEqual(Math.ceil(DOMUtil.getSize(this.oLabelOverlay2.getDomRef()).height), Math.ceil(DOMUtil.getSize(this.oLabel2.getDomRef()).height), "height of the Label2 overlay is correct");
 
@@ -802,16 +802,20 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oButton1 = new Button({
-				text: "Button 1"
+				text: "Button 1",
+				id: "Button1"
 			});
 			this.oButton2 = new Button({
-				text: "Button 2"
+				text: "Button 2",
+				id: "Button2"
 			});
 			this.oButton3 = new Button({
-				text: "Button 3"
+				text: "Button 3",
+				id: "Button3"
 			});
 			this.oButton4 = new Button({
-				text: "Button 4"
+				text: "Button 4",
+				id: "Button4"
 			});
 
 			this.oVerticalLayout1 = new VerticalLayout({
@@ -862,8 +866,9 @@ sap.ui.define([
 			assert.strictEqual(oDomRefButton4, oDomRefButton2.nextElementSibling, "then Overlay DOM elements in target layout are in correct order - button4 after button2");
 			assert.strictEqual(null, oDomRefButton1.nextElementSibling, "and source layout contains only one control");
 		});
+
 		QUnit.test("when DomRef of Overlay Layout contains extra elements and the control is prepended to this layout", function(assert) {
-			this.oOverlayLayout2.$().prepend("<div></div>");
+			this.oOverlayLayout2.getDomRef().prepend(document.createElement("div"));
 			ElementUtil.insertAggregation(this.oVerticalLayout2, "content", this.oButton2, 0);
 
 			var oDomRefButton2 = this.oOverlayButton2.getDomRef();
@@ -877,8 +882,19 @@ sap.ui.define([
 	QUnit.module("Given that an Overlay is created for a control in the content of a scrollable container", {
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
-			this.$container = jQuery('<div id="scroll-container" style="height: 400px; width: 200px; overflow-y: auto;"><div style="width: 100%; height: 100px;"></div><div id="scroll-content" style="height: 500px;"></div></div>');
-			this.$container.appendTo("#qunit-fixture");
+			this.oContainer = document.createElement("div");
+			this.oContainer.style.height = "400px";
+			this.oContainer.style.width = "200px";
+			this.oContainer.style.overflowY = "auto";
+			this.oContainer.setAttribute("id", "scroll-container");
+			var oChild1 = document.createElement("div");
+			oChild1.style.width = "100%";
+			oChild1.style.height = "100px";
+			var oChild2 = document.createElement("div");
+			oChild2.style.height = "500px";
+			oChild2.setAttribute("id", "scroll-content");
+			this.oContainer.append(oChild1, oChild2);
+			document.getElementById("qunit-fixture").append(this.oContainer);
 
 			this.oButton = new Button({
 				text: "Button"
@@ -896,7 +912,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oDesignTime.destroy();
-			this.$container.remove();
+			this.oContainer.remove();
 			this.oButton.destroy();
 			sandbox.restore();
 		}
@@ -904,11 +920,11 @@ sap.ui.define([
 		QUnit.test("when the container is scrolled", function(assert) {
 			var fnDone = assert.async();
 			this.oOverlay.attachEventOnce("geometryChanged", function() {
-				assert.deepEqual(Math.ceil(this.oOverlay.$().offset().top), Math.ceil(this.oButton.$().offset().top), "overlay has same top position as a control");
-				assert.deepEqual(Math.ceil(this.oOverlay.$().offset().left), Math.ceil(this.oButton.$().offset().left), "overlay has same left position as a control");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oOverlay.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oButton.getDomRef()).top), "overlay has same top position as a control");
+				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oOverlay.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oButton.getDomRef()).left), "overlay has same left position as a control");
 				fnDone();
 			}, this);
-			this.$container.scrollTop(50);
+			this.oContainer.scrollTop = 50;
 		});
 	});
 
@@ -942,7 +958,7 @@ sap.ui.define([
 				this.oSimpleScrollControlOverlay = OverlayRegistry.getOverlay(this.oSimpleScrollControl);
 				this.oContent1Overlay = OverlayRegistry.getOverlay(this.oContent1);
 				// FIXME: when synced event is resolved including scrollbar synchronization
-				if (this.oContent1Overlay.$().css("transform") === "none") {
+				if (window.getComputedStyle(this.oContent1Overlay.getDomRef())["transform"] === "none") {
 					this.oContent1Overlay.attachEventOnce("geometryChanged", fnDone);
 				} else {
 					fnDone();
@@ -957,18 +973,18 @@ sap.ui.define([
 	}, function() {
 		function createInitialScrollHandlerValues() {
 			return {
-				offsetTop: this.oContent1.$().offset().top,
-				controlOffset: this.oContent1.$().offset(),
-				overlayOffset: this.oContent1Overlay.$().offset(),
+				offsetTop: DOMUtil.getOffset(this.oContent1.getDomRef()).top,
+				controlOffset: DOMUtil.getOffset(this.oContent1.getDomRef()),
+				overlayOffset: DOMUtil.getOffset(this.oContent1Overlay.getDomRef()),
 				applyStylesSpy: sandbox.spy(this.oContent1Overlay, "applyStyles")
 			};
 		}
 
 		function scrollHandler(assert, done, mInitialValues) {
 			assert.equal(mInitialValues.applyStylesSpy.callCount, 0, "then the applyStyles Method is not called");
-			assert.equal(Math.ceil(this.oContent1.$().offset().top), Math.ceil(mInitialValues.offsetTop) - 100, "Then the top offset is 100px lower");
-			assert.strictEqual(Math.ceil(this.oContent1.$().offset().left), Math.ceil(this.oContent1Overlay.$().offset().left), "Then the offset left is still equal");
-			assert.strictEqual(Math.ceil(this.oContent1.$().offset().top), Math.ceil(this.oContent1Overlay.$().offset().top), "Then the offset top is still equal");
+			assert.equal(Math.ceil(DOMUtil.getOffset(this.oContent1.getDomRef()).top), Math.ceil(mInitialValues.offsetTop) - 100, "Then the top offset is 100px lower");
+			assert.strictEqual(Math.ceil(DOMUtil.getOffset(this.oContent1.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oContent1Overlay.getDomRef()).left), "Then the offset left is still equal");
+			assert.strictEqual(Math.ceil(DOMUtil.getOffset(this.oContent1.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oContent1Overlay.getDomRef()).top), "Then the offset top is still equal");
 			assert.strictEqual(Math.ceil(mInitialValues.controlOffset.left), Math.ceil(mInitialValues.overlayOffset.left), "Then the offset left is still equal");
 			assert.strictEqual(Math.ceil(mInitialValues.controlOffset.top), Math.ceil(mInitialValues.overlayOffset.top), "Then the offset top is still equal");
 			done();
@@ -978,14 +994,16 @@ sap.ui.define([
 			var fnDone = assert.async();
 			var mInitialValues = createInitialScrollHandlerValues.call(this);
 			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", scrollHandler.bind(this, assert, fnDone, mInitialValues));
-			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scrollTop(100);
+			var oScrollContainerDOM = this.oSimpleScrollControl.getDomRef().querySelector(".sapUiDtTestSSCScrollContainer");
+			oScrollContainerDOM.scrollTop = 100;
 		});
 
 		QUnit.test("when the overlay is scrolled", function(assert) {
 			var fnDone = assert.async();
 			var mInitialValues = createInitialScrollHandlerValues.call(this);
-			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").on("scroll", scrollHandler.bind(this, assert, fnDone, mInitialValues));
-			this.oSimpleScrollControlOverlay.getScrollContainerById(0).scrollTop(100);
+			var oScrollContainerDOM = this.oSimpleScrollControl.getDomRef().querySelector(".sapUiDtTestSSCScrollContainer");
+			oScrollContainerDOM.addEventListener("scroll", scrollHandler.bind(this, assert, fnDone, mInitialValues));
+			this.oSimpleScrollControlOverlay.getScrollContainerById(0).get(0).scrollTop = 100;
 		});
 
 		QUnit.test("when the control is re-rendered (with removal of all events) and then scrolled", function(assert) {
@@ -1140,40 +1158,41 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("check position in DOM tree", function(assert) {
-			var a$Children = jQuery(this.oLayoutOverlay.getChildrenDomRef()).find(">");
-			var $ScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId());
-			var a$ScrollContainerChildren = $ScrollContainer.find(">");
+			var aChildren = Array.from(this.oLayoutOverlay.getChildrenDomRef().children);
+			var oScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId()).get(0);
+			var aScrollContainerChildren = Array.from(oScrollContainer.children);
 
-			var iIndexHeaderTitleOverlay = a$Children.index(this.oHeaderTitleOverlay.getDomRef());
-			var iScrollcontainer = a$Children.index($ScrollContainer);
-			var iIndexFooterOverlay = a$Children.index(this.oFooterOverlay.getDomRef());
-			var iIndexHeaderContentOverlay = a$ScrollContainerChildren.index(this.oHeaderContentOverlay.getDomRef());
-			var iIndexSectionsOverlay = a$ScrollContainerChildren.index(this.oSectionsOverlay.getDomRef());
+			var iIndexHeaderTitleOverlay = aChildren.indexOf(this.oHeaderTitleOverlay.getDomRef());
+			var iScrollContainer = aChildren.indexOf(oScrollContainer);
+			var iIndexFooterOverlay = aChildren.indexOf(this.oFooterOverlay.getDomRef());
+			var iIndexHeaderContentOverlay = aScrollContainerChildren.indexOf(this.oHeaderContentOverlay.getDomRef());
+			var iIndexSectionsOverlay = aScrollContainerChildren.indexOf(this.oSectionsOverlay.getDomRef());
 
-			assert.ok(iIndexHeaderTitleOverlay < iScrollcontainer, "then the overlay for headerTitle is above scrollcontainer");
-			assert.ok(iScrollcontainer < iIndexFooterOverlay, "then the scrollcontainer is above the overlay for headerTitle");
+			assert.ok(iIndexHeaderTitleOverlay < iScrollContainer, "then the overlay for headerTitle is above scrollcontainer");
+			assert.ok(iScrollContainer < iIndexFooterOverlay, "then the scrollcontainer is above the overlay for headerTitle");
 			assert.ok(iIndexHeaderContentOverlay < iIndexSectionsOverlay, "then the overlay for headerContent is above the overlay for sections");
 		});
+
 		QUnit.test("check whether scrollbar position doesn't affect sorting", function(assert) {
 			var fnDone = assert.async();
 
-			var $ScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId());
-			var a$ScrollContainerChildren = $ScrollContainer.find(">");
-			var iIndexHeaderContentOverlay = a$ScrollContainerChildren.index(this.oHeaderContentOverlay.getDomRef());
-			var iIndexSectionsOverlay = a$ScrollContainerChildren.index(this.oSectionsOverlay.getDomRef());
+			var oScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId()).get(0);
+			var aScrollContainerChildren = Array.from(oScrollContainer.children);
+			var iIndexHeaderContentOverlay = aScrollContainerChildren.indexOf(this.oHeaderContentOverlay.getDomRef());
+			var iIndexSectionsOverlay = aScrollContainerChildren.indexOf(this.oSectionsOverlay.getDomRef());
 
-			var oScrollbarSynchronizer = this.oLayoutOverlay._oScrollbarSynchronizers.get($ScrollContainer[0]);
+			var oScrollbarSynchronizer = this.oLayoutOverlay._oScrollbarSynchronizers.get(oScrollContainer);
 			oScrollbarSynchronizer.attachEventOnce("synced", function() {
-				var a$Children = jQuery(this.oLayoutOverlay.getChildrenDomRef()).find(">");
-				var a$ScrollContainerChildren = $ScrollContainer.find(">");
-				assert.ok(a$Children.index(this.oHeaderTitleOverlay.getDomRef()) < a$Children.index($ScrollContainer));
-				assert.ok(a$Children.index($ScrollContainer) < a$Children.index(this.oFooterOverlay.getDomRef()));
-				assert.strictEqual(a$ScrollContainerChildren.index(this.oHeaderContentOverlay.getDomRef()), iIndexHeaderContentOverlay);
-				assert.strictEqual(a$ScrollContainerChildren.index(this.oSectionsOverlay.getDomRef()), iIndexSectionsOverlay);
+				var aChildren = Array.from(this.oLayoutOverlay.getChildrenDomRef().children);
+				var aScrollContainerChildren = Array.from(oScrollContainer.children);
+				assert.ok(aChildren.indexOf(this.oHeaderTitleOverlay.getDomRef()) < aChildren.indexOf(oScrollContainer));
+				assert.ok(aChildren.indexOf(oScrollContainer) < aChildren.indexOf(this.oFooterOverlay.getDomRef()));
+				assert.strictEqual(aScrollContainerChildren.indexOf(this.oHeaderContentOverlay.getDomRef()), iIndexHeaderContentOverlay);
+				assert.strictEqual(aScrollContainerChildren.indexOf(this.oSectionsOverlay.getDomRef()), iIndexSectionsOverlay);
 				fnDone();
 			}.bind(this));
 
-			$ScrollContainer.scrollTop(300);
+			oScrollContainer.scrollTop = 300;
 		});
 	});
 
@@ -1272,7 +1291,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when the overlay is rendered, also aggregation overlays are rendered", function(assert) {
 			assert.ok(this.oAnyControlOverlay.getDomRef(), "overlay has domRef");
-			assert.ok(jQuery(this.oAnyControlOverlay.getGeometry().domRef).hasClass("sapUiDtTestSSCScrollContainer"), "domRef from dt-metadata is taken");
+			assert.ok(this.oAnyControlOverlay.getGeometry().domRef.classList.contains("sapUiDtTestSSCScrollContainer"), "domRef from dt-metadata is taken");
 		});
 	});
 
@@ -1315,14 +1334,12 @@ sap.ui.define([
 			this.oScrollControl.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			this.oScrollControl.$("content1").css({
-				height: 300,
-				overflow: "auto"
-			});
-			this.oScrollControl.$("content2").css({
-				height: 300,
-				overflow: "auto"
-			});
+			var oContent1DOM = this.oScrollControl.getDomRef().querySelector("[id*='content1']");
+			oContent1DOM.style.height = "300px";
+			oContent1DOM.style.overflow = "auto";
+			var oContent2DOM = this.oScrollControl.getDomRef().querySelector("[id*='content2']");
+			oContent2DOM.style.height = "300px";
+			oContent2DOM.style.overflow = "auto";
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oScrollControl]
@@ -1336,7 +1353,7 @@ sap.ui.define([
 				);
 				this.oScrollControlOverlay.getAggregationOverlay("content2").getChildren()[0].attachEventOnce("geometryChanged", function(oEvent) {
 					var oAggregationOverlay = oEvent.getSource();
-					assert.strictEqual(oAggregationOverlay.$().find(">.sapUiDtDummyScrollContainer").length, 0, "make sure dummy container has been removed");
+					assert.strictEqual(oAggregationOverlay.getDomRef().querySelectorAll(".sapUiDtDummyScrollContainer").length, 0, "make sure dummy container has been removed");
 					assert.notOk(
 						this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBar")
 						&& this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBarVertical")
@@ -1345,7 +1362,7 @@ sap.ui.define([
 					this.oScrollControl.destroy();
 					fnDone();
 				}, this);
-				this.oScrollControl.getContent2()[0].$().height(250);
+				this.oScrollControl.getContent2()[0].getDomRef().style.height = "250px";
 			}.bind(this));
 		});
 
@@ -1380,10 +1397,9 @@ sap.ui.define([
 			this.oScrollControl.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			this.oScrollControl.$("content1").css({
-				height: 500,
-				overflow: "auto"
-			});
+			var oContent1DOM = this.oScrollControl.getDomRef().querySelector("[id*='content1']");
+			oContent1DOM.style.height = "500px";
+			oContent1DOM.style.overflow = "auto";
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oScrollControl]
@@ -1398,7 +1414,7 @@ sap.ui.define([
 
 				this.oScrollControlOverlay.getAggregationOverlay("content1").getChildren()[0].attachEventOnce("geometryChanged", function(oEvent) {
 					var oAggregationOverlay = oEvent.getSource().getParentAggregationOverlay();
-					assert.strictEqual(oAggregationOverlay.$().find(">.sapUiDtDummyScrollContainer").length, 1, "make sure dummy container has been created");
+					assert.strictEqual(oAggregationOverlay.getDomRef().querySelectorAll(".sapUiDtDummyScrollContainer").length, 1, "make sure dummy container has been created");
 					assert.ok(
 						this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBar")
 						&& this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBarVertical")
@@ -1407,7 +1423,7 @@ sap.ui.define([
 					this.oScrollControl.destroy();
 					fnDone();
 				}, this);
-				this.oScrollControl.getContent1()[0].$().height(700);
+				this.oScrollControl.getContent1()[0].getDomRef().style.height = "700px";
 			}.bind(this));
 		});
 
@@ -1511,10 +1527,10 @@ sap.ui.define([
 				// setTimeout is needed, because synced event doesn"t wait until all async processes are done
 				setTimeout(function() {
 					this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
-					var $ScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0);
-					assert.strictEqual($ScrollContainerOverlayDomRef.css("display"), "block");
+					var oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0).get(0);
+					assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef)["display"], "block");
 					this.oScrollControlOverlay.attachEvent("geometryChanged", function() {
-						assert.strictEqual($ScrollContainerOverlayDomRef.css("display"), "none");
+						assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef)["display"], "none");
 						this.oDesignTime.destroy();
 						oVerticalLayout.destroy();
 						fnDone();
@@ -1531,7 +1547,6 @@ sap.ui.define([
 				content: [
 					this.oScrollControl = new SimpleScrollControl({
 						id: "scrollControl",
-						height: "200px",
 						content1: [
 							this.oTextArea = new TextArea({
 								height: "500px",
@@ -1566,8 +1581,8 @@ sap.ui.define([
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
 				var oTextAreaOverlay = OverlayRegistry.getOverlay(this.oTextArea);
-				var $ScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0);
-				assert.strictEqual($ScrollContainerOverlayDomRef.css("display"), "block");
+				var oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0).get(0);
+				assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef)["display"], "block");
 				var oGeometryChangedSpy = sandbox.spy();
 				oTextAreaOverlay.attachEvent("geometryChanged", oGeometryChangedSpy);
 				this.oDesignTime.attachEventOnce("synced", function() {
@@ -1608,8 +1623,8 @@ sap.ui.define([
 
 			this.oPanel.placeAt("qunit-fixture");
 			oCore.applyChanges();
-			this.oPanel.$().find(">.sapMPanelContent").scrollLeft(20);
-			this.oPanel.$().find(">.sapMPanelContent").scrollTop(50);
+			this.oPanel.getDomRef().querySelector(".sapMPanelContent").scrollLeft = 20;
+			this.oPanel.getDomRef().querySelector(".sapMPanelContent").scrollTop = 50;
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPanel]
@@ -1631,40 +1646,40 @@ sap.ui.define([
 			var fnAssertPositions = function() {
 				// Math.ceil is required for IE and Edge
 				assert.equal(
-					Math.ceil(this.oPanelOverlay.$().offset().left),
-					Math.ceil(this.oPanel.$().offset().left),
+					Math.ceil(DOMUtil.getOffset(this.oPanelOverlay.getDomRef()).left),
+					Math.ceil(DOMUtil.getOffset(this.oPanel.getDomRef()).left),
 					"panel overlay has same left position as the panel control"
 				);
 				assert.equal(
-					Math.ceil(this.oPanelOverlay.$().offset().top),
-					Math.ceil(this.oPanel.$().offset().top),
+					Math.ceil(DOMUtil.getOffset(this.oPanelOverlay.getDomRef()).top),
+					Math.ceil(DOMUtil.getOffset(this.oPanel.getDomRef()).top),
 					"panel overlay has same top position as the panel control"
 				);
 				assert.equal(
-					Math.ceil(this.oButtonOverlay.$().offset().left),
-					Math.ceil(this.oButton.$().offset().left),
+					Math.ceil(DOMUtil.getOffset(this.oButtonOverlay.getDomRef()).left),
+					Math.ceil(DOMUtil.getOffset(this.oButton.getDomRef()).left),
 					"button overlay has same left position as the button control"
 				);
 				assert.equal(
-					Math.ceil(this.oButtonOverlay.$().offset().top),
-					Math.ceil(this.oButton.$().offset().top),
+					Math.ceil(DOMUtil.getOffset(this.oButtonOverlay.getDomRef()).top),
+					Math.ceil(DOMUtil.getOffset(this.oButton.getDomRef()).top),
 					"button overlay has same top position as the button control"
 				);
 				assert.equal(
-					Math.ceil(this.oButton2Overlay.$().offset().left),
-					Math.ceil(this.oButton2.$().offset().left),
+					Math.ceil(DOMUtil.getOffset(this.oButton2Overlay.getDomRef()).left),
+					Math.ceil(DOMUtil.getOffset(this.oButton2Overlay.getDomRef()).left),
 					"button2 overlay has same left position as the button2 control"
 				);
 				assert.equal(
-					Math.ceil(this.oButton2Overlay.$().offset().top),
-					Math.ceil(this.oButton2.$().offset().top),
+					Math.ceil(DOMUtil.getOffset(this.oButton2Overlay.getDomRef()).top),
+					Math.ceil(DOMUtil.getOffset(this.oButton2Overlay.getDomRef()).top),
 					"button2 overlay has same top position as the button2 control"
 				);
 			};
 
 			// In internet explorer/edge, the checks happen before the overlays inside the scroll container
 			// are properly placed, so we must wait until they are finalized before checking
-			if (Math.ceil(this.oButtonOverlay.$().offset().left) !== Math.ceil(this.oButton.$().offset().left)) {
+			if (Math.ceil(DOMUtil.getOffset(this.oButtonOverlay.getDomRef()).left) !== Math.ceil(DOMUtil.getOffset(this.oButton.getDomRef()).left)) {
 				this.oButton2Overlay.attachEventOnce("geometryChanged", function() {
 					fnAssertPositions.apply(this);
 					fnDone();
@@ -1781,7 +1796,7 @@ sap.ui.define([
 				showFooter: true,
 				title: getDynamicPageTitle(),
 				header: getDynamicPageHeader(),
-				content: [new VerticalLayout("PageContentLayout", { height: "500px" })]
+				content: [new VerticalLayout("PageContentLayout")]
 			});
 
 			this.oDynamicPage.placeAt("qunit-fixture");
@@ -1803,8 +1818,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("check that the scrollcontainer overlay has the correct clip-path", function(assert) {
 			assert.strictEqual(
-				this.oDynamicPage.$wrapper.css("clip-path"),
-				this.oDynamicPageOverlay.getScrollContainerById(0).css("clip-path"),
+				window.getComputedStyle(this.oDynamicPage.$wrapper.get(0))["clip-path"],
+				window.getComputedStyle(this.oDynamicPageOverlay.getScrollContainerById(0).get(0))["clip-path"],
 				"then the scroll container gets the clip-path property from the DynamicPage contentWrapper"
 			);
 		});

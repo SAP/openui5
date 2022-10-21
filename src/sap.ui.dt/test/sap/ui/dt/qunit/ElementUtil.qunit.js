@@ -1,7 +1,6 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/ElementUtil",
 	"sap/m/Button",
 	"sap/m/Input",
@@ -32,7 +31,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
-	jQuery,
 	ElementUtil,
 	Button,
 	Input,
@@ -245,8 +243,10 @@ sap.ui.define([
 			assert.equal(ElementUtil.getClosestElementForNode(oNode), this.oButton, 'then the static method "getClosestElementForNode" returns the control');
 		});
 		QUnit.test("when getClosestElementForNode() is called with a DOM-node not belonging to any control", function(assert) {
-			jQuery("#qunit-fixture").append("<div id='testdiv'>TEST</DIV>");
-			var oNode = jQuery("#testdiv");
+			var oNode = document.createElement("div");
+			oNode.setAttribute("id", "testdiv");
+			oNode.innerHTML = "TEST";
+			document.querySelector("#qunit-fixture").append(oNode);
 			assert.equal(ElementUtil.getClosestElementForNode(oNode), undefined, 'then the static method "getClosestElementForNode" returns undefined');
 		});
 	});

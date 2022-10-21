@@ -4,7 +4,6 @@
 
 // Provides object sap.ui.dt.ElementUtil.
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Object",
 	"sap/ui/dt/Util",
 	"sap/ui/dt/DOMUtil",
@@ -13,7 +12,6 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/ui/core/UIArea"
 ], function(
-	jQuery,
 	BaseObject,
 	Util,
 	DOMUtil,
@@ -78,8 +76,8 @@ sap.ui.define([
 	};
 
 	ElementUtil.getClosestElementForNode = function(oNode) {
-		var $ClosestElement = jQuery(oNode).closest("[data-sap-ui]");
-		return $ClosestElement.length ? sap.ui.getCore().byId($ClosestElement.attr("data-sap-ui")) : undefined;
+		var oClosestElement = oNode.closest("[data-sap-ui]");
+		return oClosestElement ? sap.ui.getCore().byId(oClosestElement.getAttribute("data-sap-ui")) : undefined;
 	};
 
 	ElementUtil.fixComponentParent = function(oElement) {
