@@ -777,6 +777,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.equal(oHeader.getVisibleButton1(), true, "After closing of the Month Picker, Month Button is visible");
 
+		oCal.destroy();
 	});
 
 	QUnit.test("Month Button appearance on two months in two columns", function (assert) {
@@ -2782,54 +2783,34 @@ sap.ui.define([
 
 	QUnit.test("Dummy cell above week numbers is rendered only when necessary", function(assert) {
 		// prepare
-		var oCalM = new Calendar({
-			showWeekNumbers: false,
-			primaryCalendarType: CalendarType.Gregorian
-		}),
-		onBeforeRendering = this.spy(oCalM.getAggregation("month")[0], "onBeforeRendering"),
-		onAfterRendering = this.spy(oCalM.getAggregation("month")[0], "onAfterRendering"),
-		dummyCellSpy = this.spy(MonthRenderer, "renderDummyCell");
+		var oCalM = new Calendar("CalM", {
+				showWeekNumbers: false,
+				primaryCalendarType: CalendarType.Gregorian
+			}),
+			dummyCellSpy = this.spy(MonthRenderer, "renderDummyCell");
 
 		//arrange
 		oCalM.placeAt("qunit-fixture");
 		oCore.applyChanges();
-
 		//act
-		assert.notOk(
-			dummyCellSpy.calledAfter(onBeforeRendering) && dummyCellSpy.calledBefore(onAfterRendering),
-			"The function wasn't called when calendar type is Gregorian and showWeekNumber=false"
-		);
-
+		assert.equal(dummyCellSpy.callCount, 0, "The function wasn't called when calendar type is Gregorian and showWeekNumber=false");
 		//arrange
 		oCalM.setShowWeekNumbers(true);
 		oCore.applyChanges();
-
 		//act
-		assert.ok(dummyCellSpy.calledAfter(onBeforeRendering) && dummyCellSpy.calledBefore(onAfterRendering),
-		"The function was called when calendar type is Gregorian and showWeekNumber=true");
-
-		// clean up
-		dummyCellSpy.resetHistory();
-		onBeforeRendering.resetHistory();
-		onAfterRendering.resetHistory();
-
+		assert.equal(dummyCellSpy.callCount, 1, "The function was called when calendar type is Gregorian and showWeekNumber=true");
 		//arrange
 		oCalM.setPrimaryCalendarType(CalendarType.Islamic);
 		oCore.applyChanges();
-
 		//act
-		assert.ok(dummyCellSpy.notCalled, "The function wasn't called when calendar type is Islamic and showWeekNumber=true");
-
+		assert.equal(dummyCellSpy.callCount, 1, "The function wasn't called when calendar type is Islamic and showWeekNumber=true");
 		//arrange
 		oCalM.setShowWeekNumbers(false);
 		oCore.applyChanges();
-
 		//act
-		assert.ok(dummyCellSpy.notCalled, "The function wasn't called when calendar type is Islamic and showWeekNumber=false");
-
+		assert.equal(dummyCellSpy.callCount, 1, "The function wasn't called when calendar type is Islamic and showWeekNumber=false");
 		// clean up
 		oCalM.destroy();
-		dummyCellSpy.restore();
 	});
 
 	//================================================================================
