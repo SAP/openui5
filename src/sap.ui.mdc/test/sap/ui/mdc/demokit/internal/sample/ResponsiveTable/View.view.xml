@@ -15,7 +15,13 @@
 		<Button type="Accept" icon="sap-icon://message-success" tooltip="Add success" press=".addTableMessage('Success')" />
 		<Button icon="sap-icon://message-information" tooltip="Add information" press=".addTableMessage('Information')" />
 		<ToolbarSeparator />
-		<ToggleButton text="Plugin Enabled" pressed="true" press="onPluginEnablePress" />
+		<Label text="Merge cells:" />
+		<Switch state="false" customTextOn="Yes" customTextOff="No" change=".onMergeCellsChange">
+			<layoutData>
+				<FlexItemData growFactor="1" />
+			</layoutData>
+		</Switch>
+		<ToggleButton text="Plugin Enabled" pressed="true" press=".onPluginEnablePress" />
 		<ComboBox placeholder="Show message strip for" change=".onPluginFilterChange">
 			<core:Item text="All messages" key="" />
 			<core:Item text="Error messages" key="Error" />
@@ -23,7 +29,7 @@
 			<core:Item text="Success messages" key="Success" />
 			<core:Item text="Information messages" key="Information" />
 		</ComboBox>
-		<Button id="msgBtn" icon="sap-icon://alert" type="Emphasized" press="onMessagePopoverPress"
+		<Button id="msgBtn" icon="sap-icon://alert" type="Emphasized" press=".onMessagePopoverPress"
                 visible="{=${message>/}.length > 0}"
                 text="{=${message>/}.length}" />
         <Button icon="sap-icon://delete" tooltip="Clear all messages" type="Emphasized" visible="{=${message>/}.length > 0}" press=".clearMessages" />

@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/core/message/Message",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Core",
+	"sap/ui/mdc/table/ResponsiveColumnSettings",
 	"sap/ui/core/library"
-], function(Controller, Message, Fragment, oCore, coreLibrary) {
+], function(Controller, Message, Fragment, oCore, ResponsiveColumnSettings, coreLibrary) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -70,6 +71,18 @@ sap.ui.define([
 					processor: this.getView().getModel()
 				})
 			);
+		},
+
+		onMergeCellsChange: function(oEvent) {
+			var oColumn = this.byId("onlyTableView--mdcTable--Category");
+
+			if (oEvent.getParameter("state")) {
+				oColumn.setTypeSettings(new ResponsiveColumnSettings({
+					mergeFunction: "getText"
+				}));
+			} else {
+				oColumn.destroyTypeSettings();
+			}
 		},
 
 		//################ Private APIs ###################

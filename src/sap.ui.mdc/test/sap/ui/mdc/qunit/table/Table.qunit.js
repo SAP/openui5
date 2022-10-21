@@ -141,13 +141,6 @@ sap.ui.define([
 		});
 	}
 
-	function waitForBindingInfo(oTable, iTimeout) {
-		return poll(function() {
-			var oInnerTable = oTable._oTable;
-			return oInnerTable && oInnerTable.getBindingInfo(oTable._isOfType("Table", true) ? "rows" : "items");
-		}, iTimeout);
-	}
-
 	function waitForBinding(oTable, iTimeout) {
 		return poll(function() {
 			return !!oTable.getRowBinding();
@@ -359,7 +352,7 @@ sap.ui.define([
 
 	QUnit.test("rows binding - via metadataInfo", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			assert.ok(this.oTable._oTable.isBound("rows"));
 			assert.strictEqual(this.oTable._oTable.getBindingInfo("rows").path, "/testPath");
@@ -372,10 +365,21 @@ sap.ui.define([
 
 			this.oTable.destroy();
 
-			assert.ok(!this.oTable._oTable);
-			assert.ok(!this.oTable._oRowTemplate);
-			assert.strictEqual(oToolbar.bIsDestroyed, true);
+			assert.ok(!this.oTable._oTable, "MDCTable's inner table is not available");
+			assert.ok(!this.oTable._oRowTemplate, "There is no rowTemplate");
+			assert.strictEqual(oToolbar.bIsDestroyed, true, "MDCTable toolbar has been destroied");
 		}.bind(this));
+	});
+
+	QUnit.test("Destroy directly after creation", function(assert) {
+		var done = assert.async();
+		var oTableCreateContent = sinon.spy(this.oTable, "_createContent");
+		this.oTable.destroy();
+
+		setTimeout(function() {
+			assert.equal(oTableCreateContent.callCount, 0, "_createContent has not been called");
+			done();
+		}, 100);
 	});
 
 	QUnit.test("Invalidate", function(assert) {
@@ -578,7 +582,7 @@ sap.ui.define([
 		});
 
 		return this.oTable._fullyInitialized().then(function() {
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			assert.ok(this.oTable._oTable.isBound("items"));
 			assert.strictEqual(this.oTable._oTable.getBindingInfo("items").path, "/testPath");
@@ -689,7 +693,7 @@ sap.ui.define([
 					{name: "column1"}
 				]
 			});
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var aItems = this.oTable._oTable.getItems();
 			assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "Grouping applied as expected");
@@ -926,7 +930,7 @@ sap.ui.define([
 		});
 
 		return this.oTable._fullyInitialized().then(function() {
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oBindingInfo = this.oTable._oTable.getBindingInfo("items");
 			var fDataReceived = oBindingInfo.events["dataReceived"];
@@ -981,7 +985,7 @@ sap.ui.define([
 					dataReceived: fCustomDataReceived
 				};
 			};
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRowBinding = sinon.createStubInstance(ODataListBinding);
 
@@ -2410,7 +2414,7 @@ sap.ui.define([
 	QUnit.test("noDataText - Table with FilterBar without any filters and the table is bound", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
 			this.oTable.setFilter(new FilterBar());
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"),
@@ -2422,7 +2426,7 @@ sap.ui.define([
 		this.oTable.setNoData(new IllustratedMessage());
 		return this.oTable._fullyInitialized().then(function() {
 			this.oTable.setFilter(new FilterBar());
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"),
@@ -2436,7 +2440,7 @@ sap.ui.define([
 			var oFilterBar = new FilterBar("FB1");
 			sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: "EQ", values: ["Pr"]}]});
 			this.oTable.setFilter(oFilterBar);
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"),
@@ -2450,7 +2454,7 @@ sap.ui.define([
 			var oFilterBar = new FilterBar("FB2");
 			sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: "EQ", values: ["Pr"]}]});
 			this.oTable.setFilter(oFilterBar);
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_RESULTS_TITLE"),
@@ -2464,7 +2468,7 @@ sap.ui.define([
 	QUnit.test("noDataText - Table without FilterBar but with internal filters and the table is bound", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
 			this.oTable.setFilterConditions({ key: [{ operator: "EQ", values: ["Pr"] }] });
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available'");
@@ -2475,7 +2479,7 @@ sap.ui.define([
 		this.oTable.setNoData(new IllustratedMessage());
 		return this.oTable._fullyInitialized().then(function() {
 			this.oTable.setFilterConditions({ key: [{ operator: "EQ", values: ["Pr"] }] });
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"), "'No data available'");
@@ -2484,7 +2488,7 @@ sap.ui.define([
 
 	QUnit.test("noDataText - Table without FilterBar and internal filters and the table is bound", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
@@ -2494,7 +2498,7 @@ sap.ui.define([
 	QUnit.test("noDataAggregation - Table without FilterBar and internal filters and the table is bound", function(assert) {
 		this.oTable.setNoData(new IllustratedMessage());
 		return this.oTable._fullyInitialized().then(function() {
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
@@ -2505,7 +2509,7 @@ sap.ui.define([
 		return this.oTable._fullyInitialized().then(function() {
 			var oFilterControl = new CustomFilterControl();
 			this.oTable.setFilter(oFilterControl);
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"),
@@ -2518,7 +2522,7 @@ sap.ui.define([
 		return this.oTable._fullyInitialized().then(function() {
 			var oFilterControl = new CustomFilterControl();
 			this.oTable.setFilter(oFilterControl);
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"),
@@ -2532,7 +2536,7 @@ sap.ui.define([
 		return this.oTable._fullyInitialized().then(function() {
 			var oFilterControl = new CustomFilterControl({customSearch: "found something?"});
 			this.oTable.setFilter(oFilterControl);
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"),
@@ -2545,7 +2549,7 @@ sap.ui.define([
 		return this.oTable._fullyInitialized().then(function() {
 			var oFilterControl = new CustomFilterControl({customSearch: "found something?"});
 			this.oTable.setFilter(oFilterControl);
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_RESULTS_TITLE"),
@@ -2560,7 +2564,7 @@ sap.ui.define([
 		return this.oTable._fullyInitialized().then(function() {
 			var oFilterControl = new CustomFilterControl({customSearch: "found something?"});
 			this.oTable.setFilter(oFilterControl);
-			return waitForBindingInfo(this.oTable);
+			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), "NoData Title");
 			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), "NoData Description");

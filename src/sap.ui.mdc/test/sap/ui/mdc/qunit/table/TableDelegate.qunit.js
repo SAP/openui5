@@ -39,35 +39,6 @@ sap.ui.define([
 		oBindingInfo.path = "/foo";
 	};
 
-	function poll(fnCheck, iTimeout) {
-		return new Promise(function(resolve, reject) {
-			if (fnCheck()) {
-				resolve();
-				return;
-			}
-
-			var iRejectionTimeout = setTimeout(function() {
-				clearInterval(iCheckInterval);
-				reject("Polling timeout");
-			}, iTimeout == null ? 100 : iTimeout);
-
-			var iCheckInterval = setInterval(function() {
-				if (fnCheck()) {
-					clearTimeout(iRejectionTimeout);
-					clearInterval(iCheckInterval);
-					resolve();
-				}
-			}, 10);
-		});
-	}
-
-	function waitForBindingInfo(oTable, iTimeout) {
-		return poll(function() {
-			var oInnerTable = oTable._oTable;
-			return oInnerTable && oInnerTable.getBindingInfo(oTable._isOfType("Table", true) ? "rows" : "items");
-		}, iTimeout);
-	}
-
 	QUnit.module("API", {
 		before: function() {
 			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
@@ -143,7 +114,7 @@ sap.ui.define([
 	QUnit.test("updateBindingInfo", function(assert) {
 		var oTable = this.oTable;
 
-		return waitForBindingInfo(oTable).then(function() {
+		return MDCQUnitUtils.waitForBindingInfo(oTable).then(function() {
 			oTable.setSortConditions({sorters: [{name: "Name", descending: true}]});
 			oTable.setGroupConditions({groupLevels: [{name: "Name"}]});
 			oTable.rebind();
