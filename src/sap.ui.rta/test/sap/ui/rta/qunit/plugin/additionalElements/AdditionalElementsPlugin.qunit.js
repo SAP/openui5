@@ -87,6 +87,10 @@ sap.ui.define([
 			"sap.uxap": {
 				minVersion: "1.44",
 				lazy: false
+			},
+			"sap.ui.comp": {
+				minVersion: "1.20",
+				lazy: false
 			}
 		}
 	};
@@ -123,7 +127,7 @@ sap.ui.define([
 	};
 
 	sinon.stub(Settings, 'getInstance').resolves(new Settings({}));
-	sinon.stub(DelegateMediatorAPI, 'getKnownDefaultDelegateLibraries').returns(["sap.uxap"]);
+	sinon.stub(DelegateMediatorAPI, 'getKnownDefaultDelegateLibraries').returns(["sap.uxap", "sap.ui.comp"]);
 
 	var DEFAULT_MANIFEST = {
 		"sap.app": {
@@ -141,6 +145,9 @@ sap.ui.define([
 					},
 					"sap.m": {
 						minVersion: "2.3.5"
+					},
+					"sap.ui.comp": {
+						lazy: true
 					}
 				}
 			}
@@ -1507,6 +1514,60 @@ sap.ui.define([
 			return createOverlayWithAggregationActions.call(this, {
 				add: {
 					delegate : {
+						changeType: "addFields",
+						changeOnRelevantContainer: true,
+						supportsDefaultDelegate: true
+					}
+				}
+			}, ON_CHILD)
+				.then(function (oOverlay) {
+					return this.oPlugin.showAvailableElements(false, [oOverlay]);
+				}.bind(this))
+
+				.then(function () {
+					assert.ok(true, "then the plugin should not complain about it");
+				});
+		});
+
+		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container and default delegate is available, but library dependency has lazy: true", function (assert) {
+			sandbox.stub(oMockedAppComponent, "getManifestEntry").callsFake(function(sPath) {
+				// Only missing dependency becomes "sap.ui.comp" which is set with "lazy: true"
+				if (sPath.indexOf("libs")) {
+					return merge(
+						{},
+						DEFAULT_MANIFEST["sap.ui5"].dependencies.libs,
+						{
+							"sap.uxap": {
+								minVersion: "1.44",
+								lazy: false
+							}
+						}
+					);
+				}
+				return {};
+			});
+
+			var done = assert.async();
+			this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
+				var oCompositeCommand = oEvent.getParameter("command");
+				assert.equal(oCompositeCommand.getCommands().length, 2, "then two commands are created");
+
+				var oAddLibrary = oCompositeCommand.getCommands()[0];
+				assert.equal(oAddLibrary.getName(), "addLibrary", "then the addLibrary command is created first");
+				assert.equal(oAddLibrary.getReference(), "applicationId", "then the addLibrary command is created with the proper reference");
+				// Existing library but with lazy: true
+				var sLib = Object.keys(DEFAULT_DELEGATE_REGISTRATION.requiredLibraries)[0];
+				assert.equal(
+					oAddLibrary.getParameters().libraries[sLib].minVersion,
+					DEFAULT_DELEGATE_REGISTRATION.requiredLibraries[sLib].minVersion,
+					"then the addLibrary command is created with the library which was on the manifest with lazy: true"
+				);
+				done();
+			});
+
+			return createOverlayWithAggregationActions.call(this, {
+				add: {
+					delegate: {
 						changeType: "addFields",
 						changeOnRelevantContainer: true,
 						supportsDefaultDelegate: true

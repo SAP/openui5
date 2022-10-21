@@ -229,7 +229,7 @@ sap.ui.define([
 	function _areLibDependenciesMissing(oComponent, mRequiredLibraries) {
 		var mAppsLibDependencies = oComponent.getManifestEntry("/sap.ui5/dependencies/libs");
 		return Object.keys(mRequiredLibraries).some(function(sRequiredLib) {
-			return !mAppsLibDependencies[sRequiredLib];
+			return !mAppsLibDependencies[sRequiredLib] || mAppsLibDependencies[sRequiredLib].lazy;
 		});
 	}
 
