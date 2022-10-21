@@ -4,13 +4,11 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
-	"sap/base/util/includes",
 	"sap/base/util/restricted/_merge",
 	"sap/base/util/deepEqual"
 ], function (
 	BasePropertyEditor,
 	MapEditor,
-	includes,
 	_merge,
 	deepEqual
 ) {
@@ -385,8 +383,8 @@ sap.ui.define([
 		var vValue = oOriginalItem.value;
 		var aAllowedTypes = this._getAllowedTypes();
 		return (
-			sType && includes(aAllowedTypes, sType) ||
-			typeof vValue === "string" && includes(aAllowedTypes, "string")
+			sType && aAllowedTypes.includes(sType) ||
+			typeof vValue === "string" && aAllowedTypes.includes("string")
 		);
 	};
 

@@ -4,9 +4,8 @@
 
 sap.ui.define([
 	"sap/base/util/LoaderExtensions",
-	"sap/base/i18n/ResourceBundle",
-	"sap/base/util/includes"
-], function (LoaderExtensions, ResourceBundle, includes) {
+	"sap/base/i18n/ResourceBundle"
+], function (LoaderExtensions, ResourceBundle) {
 	"use strict";
 
 	/**
@@ -43,7 +42,7 @@ sap.ui.define([
 						aFallbacks.push(p.substring(0, p.indexOf("-")));
 					}
 					//add en into fallbacks
-					if (!includes(aFallbacks, "en")) {
+					if (!aFallbacks.includes("en")) {
 						aFallbacks.push("en");
 					}
 					oResourceBundleTemp = ResourceBundle.create({

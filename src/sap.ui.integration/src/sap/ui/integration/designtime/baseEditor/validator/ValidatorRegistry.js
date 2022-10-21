@@ -3,12 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/base/util/includes",
-	"sap/base/util/values",
 	"sap/base/util/restricted/_CancelablePromise"
 ], function (
-	includes,
-	values,
 	_CancelablePromise
 ) {
 	"use strict";
@@ -74,7 +70,7 @@ sap.ui.define([
 	* @name sap.ui.integration.designtime.baseEditor.validator.ValidatorRegistry.ready
 	*/
 	ValidatorRegistry.ready = function () {
-		return Promise.all(values(oLoadingValidators));
+		return Promise.all(Object.values(oLoadingValidators));
 	};
 
 	/**
@@ -131,10 +127,7 @@ sap.ui.define([
 	* @name sap.ui.integration.designtime.baseEditor.validators.ValidatorRegistry.hasValidator
 	*/
 	ValidatorRegistry.hasValidator = function (sName) {
-		return includes(
-			Object.keys(oValidators),
-			sName
-		);
+		return Object.keys(oValidators).includes(sName);
 	};
 
 	/**
@@ -146,10 +139,7 @@ sap.ui.define([
 	* @name sap.ui.integration.designtime.baseEditor.validator.ValidatorRegistry.isRegistered
 	*/
 	ValidatorRegistry.isRegistered = function (sName) {
-		return includes(
-			Object.keys(oLoadingValidators),
-			sName
-		);
+		return Object.keys(oLoadingValidators).includes(sName);
 	};
 
 	return ValidatorRegistry;

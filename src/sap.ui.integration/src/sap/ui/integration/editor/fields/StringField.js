@@ -24,8 +24,7 @@ sap.ui.define([
 	"sap/ui/integration/editor/EditorResourceBundles",
 	"sap/base/util/deepClone",
 	"sap/ui/model/Sorter",
-	'sap/m/GroupHeaderListItem',
-	"sap/base/util/includes",
+	"sap/m/GroupHeaderListItem",
 	"sap/ui/core/CustomData"
 ], function (
 	BaseField,
@@ -50,7 +49,6 @@ sap.ui.define([
 	deepClone,
 	Sorter,
 	GroupHeaderListItem,
-	includes,
 	CustomData
 ) {
 	"use strict";
@@ -91,7 +89,7 @@ sap.ui.define([
 				// filter out TODAY_ISO NOW_ISO LOCALE
 				aResult = aResult.filter(function (oResult) {
 					var oParameter = oResult.substring(11);
-					return !includes(aSpecParameters, oParameter);
+					return !aSpecParameters.includes(oParameter);
 				});
 			}
 			if (aResult && aResult.length > 0) {
@@ -426,12 +424,12 @@ sap.ui.define([
 			var sTranslateText = oField.getTranslationValueInTexts(translatedValue.key, oConfig.manifestpath);
 			if (sTranslateText) {
 				translatedValue.value = sTranslateText;
-				if (!includes(that._aUpdatedLanguages, translatedValue.key)) {
+				if (Array.isArray(that._aUpdatedLanguages) && !that._aUpdatedLanguages.includes(translatedValue.key)) {
 					translatedValue.originValue = translatedValue.value;
 				}
 			} else if (oConfig._beforeLayerChange) {
 				translatedValue.value = oConfig._beforeLayerChange;
-				if (!includes(that._aUpdatedLanguages, translatedValue.key)) {
+				if (Array.isArray(that._aUpdatedLanguages) && !that._aUpdatedLanguages.includes(translatedValue.key)) {
 					translatedValue.originValue = translatedValue.value;
 				}
 			}
@@ -450,7 +448,7 @@ sap.ui.define([
 		if (aTempTranslatedLanguages) {
 			//check the updated language list, update the data model
 			aTempTranslatedLanguages.forEach(function (translatedValue) {
-				if (includes(that._aUpdatedLanguages, translatedValue.key)) {
+				if (Array.isArray(that._aUpdatedLanguages) && that._aUpdatedLanguages.includes(translatedValue.key)) {
 					translatedValue.value = oField.getTranslationValueInTexts(translatedValue.key, oConfig.manifestpath);
 					translatedValue.status = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
 				}

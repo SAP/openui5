@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/base/util/values",
 	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
 	QUnitUtils,
 	EditorQunitUtils,
 	sinon,
-	values,
 	oCore
 ) {
 	"use strict";
@@ -173,8 +171,8 @@ sap.ui.define([
 				var oValue = oEvent.getParameter("value");
 				assert.strictEqual(Object.keys(oValue).length, 4, "Then two data sources with unique keys are added");
 				assert.deepEqual(
-					values(oValue),
-					[].concat(values(this.oComplexMap.datasource), {}, {}),
+					Object.values(oValue),
+					[].concat(Object.values(this.oComplexMap.datasource), {}, {}),
 					"Then two empty data sources are initialized and the original data source is not touched"
 				);
 				fnDone();

@@ -35,7 +35,6 @@ sap.ui.define([
 	"sap/m/FormattedText",
 	"sap/m/MessageStrip",
 	"sap/m/ToolbarSpacer",
-	"sap/base/util/includes",
 	"sap/ui/model/resource/ResourceModel",
 	"./Manifest",
 	"./Merger",
@@ -79,7 +78,6 @@ sap.ui.define([
 	FormattedText,
 	MessageStrip,
 	Separator,
-	includes,
 	ResourceModel,
 	EditorManifest,
 	Merger,
@@ -1568,7 +1566,7 @@ sap.ui.define([
 							});
 							// delete translation texts if uuid not included in value list
 							for (var uuid in mResult.texts[language][key]) {
-								if (!includes(aUUIDs, uuid)) {
+								if (!aUUIDs.includes(uuid)) {
 									delete mResult.texts[language][key][uuid];
 								}
 							}
@@ -2217,7 +2215,7 @@ sap.ui.define([
 					if (Array.isArray(oResult)) {
 						for (var n in oResult) {
 							var sKey = oField.getKeyFromItem(oResult[n]);
-							if (Array.isArray(oFieldConfig.value) && oFieldConfig.value.length > 0 && includes(oFieldConfig.value, sKey)) {
+							if (Array.isArray(oFieldConfig.value) && oFieldConfig.value.length > 0 && oFieldConfig.value.includes(sKey)) {
 								oResult[n].Selected = this._oResourceBundle.getText("EDITOR_ITEM_SELECTED");
 							} else {
 								oResult[n].Selected = this._oResourceBundle.getText("EDITOR_ITEM_UNSELECTED");
@@ -2228,7 +2226,7 @@ sap.ui.define([
 				} else if (Array.isArray(oData)) {
 					for (var n in oData) {
 						var sKey = oField.getKeyFromItem(oData[n]);
-						if (Array.isArray(oFieldConfig.value) && oFieldConfig.value.length > 0 && includes(oFieldConfig.value, sKey)) {
+						if (Array.isArray(oFieldConfig.value) && oFieldConfig.value.length > 0 && oFieldConfig.value.includes(sKey)) {
 							oData[n].Selected = this._oResourceBundle.getText("EDITOR_ITEM_SELECTED");
 						} else {
 							oData[n].Selected = this._oResourceBundle.getText("EDITOR_ITEM_UNSELECTED");
@@ -2712,7 +2710,7 @@ sap.ui.define([
 				aFallbacks.push(sLanguage.substring(0, sLanguage.indexOf("-")));
 			}
 			//add en into fallbacks
-			if (!includes(aFallbacks, "en")) {
+			if (!aFallbacks.includes("en")) {
 				aFallbacks.push("en");
 			}
 			// load the ResourceBundle relative to the manifest
