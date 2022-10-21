@@ -376,10 +376,6 @@ function(
 									isNullable = false;
 								}
 							}
-							//TODO Type specific handling of empty is missing. Empty is currently only available for type String
-							// if (oType == "date") {
-							// 	return new Filter(sFieldPath, oOperator.filterOperator, null});
-							// } else {
 							if (isNullable) {
 								return new Filter({ filters: [new Filter({path: sFieldPath, operator: ModelOperator.EQ, value1: ""}),
 															new Filter({path: sFieldPath, operator: ModelOperator.EQ, value1: null})],
@@ -387,7 +383,6 @@ function(
 							} else {
 								return new Filter({path: sFieldPath, operator: this.filterOperator, value1: ""});
 							}
-							// }
 						}
 					}),
 					notEmpty: new Operator({
@@ -408,10 +403,6 @@ function(
 									isNullable = false;
 								}
 							}
-							//TODO Type specific handling of empty is missing. Empty is currently only available for type String
-							// if (Type == "date") {
-							// 	return new Filter({ path: sFieldPath, operator: oOperator.filterOperator, value1: null });
-							// } else {
 							if (isNullable) {
 								return new Filter({ filters: [new Filter({path: sFieldPath, operator: ModelOperator.NE, value1: ""}),
 															new Filter({path: sFieldPath, operator: ModelOperator.NE, value1: null})],
@@ -419,7 +410,6 @@ function(
 							} else {
 								return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: "" });
 							}
-							// }
 						}
 					}),
 					yesterday: new RangeOperator({
@@ -1576,7 +1566,6 @@ function(
 				 FilterOperatorUtil._mOperators.lessEqual,
 				 FilterOperatorUtil._mOperators.greaterThan,
 				 FilterOperatorUtil._mOperators.greaterEqual,
-				//  FilterOperatorUtil._mOperators.empty,
 
 				 FilterOperatorUtil._mOperators.notEqual,
 				 FilterOperatorUtil._mOperators.notBetween,
@@ -1584,7 +1573,6 @@ function(
 				 FilterOperatorUtil._mOperators.notLessEqual,
 				 FilterOperatorUtil._mOperators.notGreaterThan,
 				 FilterOperatorUtil._mOperators.notGreaterEqual,
-				//  FilterOperatorUtil._mOperators.notEmpty,
 
 				 FilterOperatorUtil._mOperators.today,
 				 FilterOperatorUtil._mOperators.yesterday,

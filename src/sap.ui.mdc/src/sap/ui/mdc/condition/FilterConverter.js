@@ -163,8 +163,12 @@ function(
 						try {
 							oFilter = oOperator.getModelFilter(oCondition, sFieldPath, oDataType, bCaseSensitiveType, sBaseType);
 						} catch (error) {
-							// in case the getModelFilter fails - because the oDataType is missing - we show a console error.
-							Log.error("FilterConverter", "Not able to convert the condition for path '" + sFieldPath + "' into a filter! The type is missing!");
+							if (error) {
+								Log.error("FilterConverter", error);
+							} else {
+								// in case the getModelFilter fails - because the oDataType is missing - we show a console error.
+								Log.error("FilterConverter", "Not able to convert the condition for path '" + sFieldPath + "' into a filter! The type is missing!");
+							}
 							continue;
 						}
 

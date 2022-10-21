@@ -285,7 +285,7 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	FilterField.prototype.removeOperator = function(vOperator) {
-		var aOperators = this.getOperators();
+		var aOperators = this._getOperators();
 		var sOpName = vOperator;
 		if (typeof vOperator !== "string") {
 			sOpName = vOperator.name;

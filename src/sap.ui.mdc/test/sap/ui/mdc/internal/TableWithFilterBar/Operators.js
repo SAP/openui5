@@ -7,8 +7,9 @@ sap.ui.define([
 	'sap/ui/core/date/UniversalDateUtils',
 	'sap/ui/model/FilterOperator',
 	'sap/m/DatePicker',
-	'sap/m/Slider'
-], function (FilterOperatorUtil, Operator, RangeOperator, Filter, UniversalDate, UniversalDateUtils, ModelOperator, DatePicker, Slider) {
+	'sap/m/Slider',
+	'sap/ui/mdc/enum/BaseType'
+], function (FilterOperatorUtil, Operator, RangeOperator, Filter, UniversalDate, UniversalDateUtils, ModelOperator, DatePicker, Slider, BaseType) {
 	"use strict";
 
 
@@ -231,9 +232,68 @@ sap.ui.define([
 		}
 	});
 
-	[oRenaissanceOperator, oMediEvalOperator, oModernOperator, oCustomRangeOperator, oNotInRangeOperator, oLastYearOperator, oEuropeOperator, oMyDateOperator, oMyDateRangeOperator, oMyNextDays].forEach(function (oOperator) {
+	var customDateEmpty = new Operator({
+		name: "CustomDateEmpty",
+		longText: "Empty",
+		filterOperator: ModelOperator.EQ,
+		tokenParse: "^<#tokenText#>$",
+		tokenFormat: "<#tokenText#>",
+		valueTypes: [],
+		group: {id : 0, text: "Single Dates"},
+		getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+			var isNullable = false;
+			//TODO Check if the Date type is nullable
+			if (oType) {
+				var vResult = oType.parseValue("", "string");
+				try {
+					oType.validateValue(vResult);
+					isNullable = vResult === null;
+				} catch (oError) {
+					isNullable = false;
+				}
+			}
+
+			if (isNullable) {
+				return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: null });
+			} else {
+				throw "Cannot create a Filter for fieldPath " + sFieldPath + " and operator " + this.name;
+			}
+		}
+	});
+
+	var customDateNotEmpty = new Operator({
+		name: "CustomDateNotEmpty",
+		longText: "Not Empty",
+		filterOperator: ModelOperator.NE,
+		tokenParse: "^!<#tokenText#>$",
+		tokenFormat: "!(<#tokenText#>)",
+		valueTypes: [],
+		exclude: true,
+		getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+			var isNullable = false;
+			if (oType) {
+				var vResult = oType.parseValue("", "string");
+				try {
+					oType.validateValue(vResult);
+					isNullable = vResult === null;
+				} catch (oError) {
+					isNullable = false;
+				}
+			}
+			if (isNullable) {
+				return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: null });
+			} else {
+				throw "Cannot create a Filter for fieldPath " + sFieldPath + " and operator " + this.name;
+			}
+		}
+	});
+
+	[customDateEmpty, customDateNotEmpty, oRenaissanceOperator, oMediEvalOperator, oModernOperator, oCustomRangeOperator, oNotInRangeOperator, oLastYearOperator, oEuropeOperator, oMyDateOperator, oMyDateRangeOperator, oMyNextDays].forEach(function (oOperator) {
 		FilterOperatorUtil.addOperator(oOperator);
 	});
+
+	// FilterOperatorUtil.addOperatorForType(BaseType.Date, customDateEmpty);
+	// FilterOperatorUtil.addOperatorForType(BaseType.Date, customDateNotEmpty);
 
 });
 
