@@ -1406,13 +1406,15 @@ sap.ui.define([
 			oAttributes.aria["haspopup"] = oAriaAttributes.ariaHasPopup;
 			oAttributes["autocomplete"] = "off";
 			if (bOpen) {
-				oAttributes.aria["expanded"] = "true";
+				if (oAriaAttributes.role) {
+					oAttributes.aria["expanded"] = "true"; // only allowed for combobox, listbox...
+				}
 				oAttributes.aria["controls"] = oAriaAttributes.contentId;
 				if (sItemId) {
 					oAttributes.aria["activedescendant"] = sItemId;
 				}
-			} else {
-				oAttributes.aria["expanded"] = "false";
+			} else if (oAriaAttributes.role) {
+				oAttributes.aria["expanded"] = "false"; // only allowed for combobox, listbox...
 			}
 			oAttributes["valueHelpEnabled"] = oAriaAttributes.valueHelpEnabled;
 		}
