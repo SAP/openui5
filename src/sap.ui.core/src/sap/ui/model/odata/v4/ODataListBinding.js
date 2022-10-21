@@ -657,7 +657,8 @@ sap.ui.define([
 	 *   {@link #changeParameters} leads to {@link sap.ui.model.ChangeReason.Filter Filter} if one
 	 *   of the parameters '$filter' and '$search' is changed, otherwise it leads to
 	 *   {@link sap.ui.model.ChangeReason.Sort Sort} if the parameter '$orderby' is
-	 *   changed; in other cases, it leads to {@link sap.ui.model.ChangeReason.Change Change}.<br>
+	 *   changed; in other cases, it leads to {@link sap.ui.model.ChangeReason.Change Change}.
+	 *   <br>
 	 *   If APIs that would normally fire change events have been called while the binding is
 	 *   suspended, {@link #resume} leads to the &quot;strongest&quot; change reason in the order
 	 *   {@link sap.ui.model.ChangeReason.Filter Filter},
@@ -818,7 +819,7 @@ sap.ui.define([
 	 *   Create an inactive context. Such a context will only be sent to the server after the first
 	 *   property update. From then on it behaves like any other created context.
 	 *   Supported since 1.97.0
-	 *   <p>
+	 *   <br>
 	 *   Since 1.98.0, when the first property updates happens, the context is no longer
 	 *   {@link sap.ui.model.odata.v4.Context#isInactive inactive} and the
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#event:createActivate createActivate} event
@@ -3472,12 +3473,14 @@ sap.ui.define([
 	 *   <a href="https://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 	 *   Extension for Data Aggregation Version 4.0</a>. Since 1.76.0, <code>undefined</code> can be
 	 *   used to remove the data aggregation object, which allows to set <code>$apply</code>
-	 *   explicitly afterwards. <code>null</code> is not supported.<br>
+	 *   explicitly afterwards. <code>null</code> is not supported.
+	 *   <br>
 	 *   Since 1.89.0, the deprecated property <code>"grandTotal like 1.84" : true</code> can be
 	 *   used to turn on the handling of grand totals like in 1.84.0, using aggregates of aggregates
 	 *   and thus allowing to filter by aggregated properties while grand totals are needed. Beware
 	 *   that methods like "average" or "countdistinct" are not compatible with this approach, and
-	 *   it cannot be combined with group levels.<br>
+	 *   it cannot be combined with group levels.
+	 *   <br>
 	 *   Since 1.105.0, either a recursive hierarchy or pure data aggregation is supported, but no
 	 *   mix; <code>hierarchyQualifier</code> is the leading property that decides between those two
 	 *   use cases - this is an <b>experimental API</b> and is only supported if the model uses the

@@ -915,7 +915,8 @@ sap.ui.define([
 	 *   </ul>
 	 *   It is also rejected if <code>bReplaceWithRVC</code> is supplied, and there is no return
 	 *   value context at all or the existing context as described above is currently part of the
-	 *   list's collection (that is, has an index).<br>
+	 *   list's collection (that is, has an index).
+	 *   <br>
 	 *   A return value context is a {@link sap.ui.model.odata.v4.Context} which represents a bound
 	 *   operation response. It is created only if the operation is bound and has a single entity
 	 *   return value from the same entity set as the operation's binding parameter and has a

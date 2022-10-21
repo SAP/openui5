@@ -861,7 +861,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 	 *   The requestor
 	 * @param {string} sResourcePath
-	 *   A resource path relative to the service URL; it must not contain a query string<br>
+	 *   A resource path relative to the service URL; it must not contain a query string
+	 *   <br>
 	 *   Example: Products
 	 * @param {string} sDeepResourcePath
 	 *   The deep resource path to be used to build the target path for bound messages
@@ -872,7 +873,8 @@ sap.ui.define([
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
 	 *   be a string or an array of strings; if it is an array, the resulting query string
-	 *   repeats the key for each array value.<br>
+	 *   repeats the key for each array value.
+	 *   <br>
 	 *   Examples:
 	 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"

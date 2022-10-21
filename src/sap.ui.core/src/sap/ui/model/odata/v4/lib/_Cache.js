@@ -3913,7 +3913,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 	 *   The requestor
 	 * @param {string} sResourcePath
-	 *   A resource path relative to the service URL; it must not contain a query string<br>
+	 *   A resource path relative to the service URL; it must not contain a query string
+	 *   <br>
 	 *   Example: Products
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
@@ -3985,7 +3986,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 	 *   The requestor
 	 * @param {string} sResourcePath
-	 *   A resource path relative to the service URL; it must not contain a query string<br>
+	 *   A resource path relative to the service URL; it must not contain a query string
+	 *   <br>
 	 *   Example: Products
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
@@ -4012,7 +4014,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 	 *   The requestor
 	 * @param {string} sResourcePath
-	 *   A resource path relative to the service URL; it must not contain a query string<br>
+	 *   A resource path relative to the service URL; it must not contain a query string
+	 *   <br>
 	 *   Example: Products
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
