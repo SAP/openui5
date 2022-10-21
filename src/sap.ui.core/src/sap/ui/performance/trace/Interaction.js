@@ -193,6 +193,7 @@ sap.ui.define([
 			oCurrentBrowserEvent = null;
 			isNavigation = false;
 			bMatched = false;
+			bPerfectMatch = false;
 		}
 	}
 
@@ -227,6 +228,7 @@ sap.ui.define([
 		oCurrentBrowserEvent,
 		oBrowserElement,
 		bMatched = false,
+		bPerfectMatch = false,
 		iInteractionStepTimer,
 		bIdle = false,
 		bSuspended = false,
@@ -598,8 +600,11 @@ sap.ui.define([
 		 */
 		notifyStepStart : function(sEventId, oElement, bForce) {
 			if (bInteractionActive) {
+				var sType,
+					elem,
+					sClosestSemanticStepName;
+
 				if ((!oPendingInteraction && oCurrentBrowserEvent && !bInteractionProcessed) || bForce) {
-					var sType;
 					if (bForce) {
 						sType = "startup";
 					} else {
@@ -619,10 +624,15 @@ sap.ui.define([
 						oBrowserElement = oCurrentBrowserEvent.srcControl;
 					}
 					// if browser event matches the first control event we take it for trigger/event determination (step name)
+					sClosestSemanticStepName = FESRHelper.getSemanticStepname(oBrowserElement, sEventId);
 					if (oElement && oElement.getId && oBrowserElement && oElement.getId() === oBrowserElement.getId()) {
-						bMatched = true;
+						bPerfectMatch = true;
+					} else if (sClosestSemanticStepName) {
+						oPendingInteraction.trigger = oBrowserElement.getId();
+						oPendingInteraction.semanticStepName = sClosestSemanticStepName;
+						bPerfectMatch = true;
 					} else {
-						var elem = oBrowserElement;
+						elem = oBrowserElement;
 						while (elem && elem.getParent()) {
 							elem = elem.getParent();
 							if (oElement.getId() === elem.getId()) {
@@ -651,15 +661,20 @@ sap.ui.define([
 					}, 0);
 					bIdle = false;
 					Interaction.notifyStepEnd(true); // Start timer to end Interaction in case there is no timing relevant action e.g. rendering, request
-				} else if (oPendingInteraction && oBrowserElement && !bMatched) {
+				} else if (oPendingInteraction && oBrowserElement && !bPerfectMatch) {
 					// if browser event matches one of the next control events we take it for trigger/event determination (step name)
-					var elem = oBrowserElement;
+					elem = oBrowserElement;
+					sClosestSemanticStepName = FESRHelper.getSemanticStepname(oBrowserElement, sEventId);
 					if (elem && oElement.getId() === elem.getId()) {
 						oPendingInteraction.trigger = oElement.getId();
-						oPendingInteraction.semanticStepName = FESRHelper.getSemanticStepname(oElement, sEventId);
+						oPendingInteraction.semanticStepName = sClosestSemanticStepName;
 						oPendingInteraction.event = sEventId;
-						bMatched = true;
-					} else {
+						bPerfectMatch = true;
+					} else if (sClosestSemanticStepName) {
+						oPendingInteraction.trigger = oBrowserElement.getId();
+						oPendingInteraction.semanticStepName = sClosestSemanticStepName;
+						bPerfectMatch = true;
+					} else if (!bMatched) {
 						while (elem && elem.getParent()) {
 							elem = elem.getParent();
 							if (oElement.getId() === elem.getId()) {
@@ -672,7 +687,6 @@ sap.ui.define([
 						}
 					}
 				}
-
 			}
 		},
 
