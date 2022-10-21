@@ -315,7 +315,7 @@ html.sap-desktop .sapContrast.sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpan
 /* Topics - dynamic page */
 .sapUiDocumentationTopicTitle {
 	font-size: 2rem;
-	font-family: "72Black", "72", "72full", Arial, Helvetica, sans-serif;
+	font-family: "72Black", "72Blackfull", "72", "72full", Arial, Helvetica, sans-serif;
 }
 
 .sapUiMedia-Std-Phone .sapUiDocumentationTopicTitle {
