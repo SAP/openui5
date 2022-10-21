@@ -129,7 +129,12 @@ sap.ui.define([
 				},
 				afterAction: fnConfirmGroup1IsOn1stPosition,
 				afterUndo: fnConfirmGroup1IsOn2ndPosition,
-				afterRedo: fnConfirmGroup1IsOn1stPosition
+				afterRedo: fnConfirmGroup1IsOn1stPosition,
+				changeVisualization: function(oView) {
+					return {
+						displayElementId: oView.byId("title1").getParent().getId()
+					};
+				}
 			});
 
 			// When moving headerless group to second position
@@ -169,7 +174,12 @@ sap.ui.define([
 				},
 				afterAction: fnConfirmGroup0IsOn2ndPosition,
 				afterUndo: fnConfirmGroupIsAgainHeaderless,
-				afterRedo: fnConfirmGroup0IsOn2ndPosition
+				afterRedo: fnConfirmGroup0IsOn2ndPosition,
+				changeVisualization: function(oView) {
+					return {
+						displayElementId: oView.byId("comp---view--simpleForm").getContent()[3].getParent().getId()
+					};
+				}
 			});
 
 			// when moving within group0 label00 to position of label01
@@ -215,7 +225,12 @@ sap.ui.define([
 				},
 				afterAction: fnConfirmElement00IsOn2ndPosition,
 				afterUndo: fnConfirmElement00IsOn1stPosition,
-				afterRedo: fnConfirmElement00IsOn2ndPosition
+				afterRedo: fnConfirmElement00IsOn2ndPosition,
+				changeVisualization: function(oView) {
+					return {
+						displayElementId: oView.byId("label00").getParent().getId()
+					};
+				}
 			});
 
 			// when moving label01 to position of label1 (different group)
@@ -261,7 +276,12 @@ sap.ui.define([
 				},
 				afterAction: fnConfirmLabel01IsOn1stPosition,
 				afterUndo: fnConfirmLabel01IsOn2ndPosition,
-				afterRedo: fnConfirmLabel01IsOn1stPosition
+				afterRedo: fnConfirmLabel01IsOn1stPosition,
+				changeVisualization: function(oView) {
+					return {
+						displayElementId: oView.byId("label01").getParent().getId()
+					};
+				}
 			});
 
 			// when moving label00 into empty group
@@ -307,7 +327,12 @@ sap.ui.define([
 				},
 				afterAction: fnConfirmLabel00IsOn1stPositionInDifferentGroup,
 				afterUndo: fnConfirmLabel00IsOn1stPosition,
-				afterRedo: fnConfirmLabel00IsOn1stPositionInDifferentGroup
+				afterRedo: fnConfirmLabel00IsOn1stPositionInDifferentGroup,
+				changeVisualization: function(oView) {
+					return {
+						displayElementId: oView.byId("label00").getParent().getId()
+					};
+				}
 			});
 
 			// Add SimpleFormGroup
@@ -340,7 +365,12 @@ sap.ui.define([
 				},
 				afterAction: fnComfirmGroupIsAddedWithNewLabel,
 				afterUndo: fnConfirmNewGroupIsRemoved,
-				afterRedo: fnComfirmGroupIsAddedWithNewLabel
+				afterRedo: fnComfirmGroupIsAddedWithNewLabel,
+				changeVisualization: function(oView) {
+					return {
+						displayElementId: oView.byId("simpleForm--Form").getFormContainers()[1].getId()
+					};
+				}
 			});
 
 			function checkIfDependentAdded(oUiComponent, oViewAfterAction, assert) {
@@ -369,7 +399,12 @@ sap.ui.define([
 				},
 				afterAction: checkIfDependentAdded,
 				afterUndo: checkIfDependentRemoved,
-				afterRedo: checkIfDependentAdded
+				afterRedo: checkIfDependentAdded,
+				changeVisualization: function(oView) {
+					return {
+						displayElementId: getSimpleForm(oView).getId()
+					};
+				}
 			});
 
 			/****** Add via delegate tests ***********/

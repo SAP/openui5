@@ -465,9 +465,15 @@ sap.ui.define([
 	MoveSimpleForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {
 		var oSourceContainer;
 		var oTargetContainer;
+		var oMovedElementInstance;
 		var oMovedElement = oChange.getContent().movedElements[0];
+		if (oMovedElement.elementSelector.id) {
+			oMovedElementInstance = JsControlTreeModifier.bySelector(oMovedElement.elementSelector, oAppComponent);
+		} else if (oChange.getContent().newControlId) {
+			// New group header is created (e.g. move headerless group)
+			oMovedElementInstance = JsControlTreeModifier.bySelector(oChange.getContent().newControlId, oAppComponent);
+		}
 		var oGroupSelector = oMovedElement.source.groupSelector;
-		var oAffectedControlSelector = JsControlTreeModifier.bySelector(oMovedElement.elementSelector, oAppComponent).getParent().getId();
 		if (oChange.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD) {
 			var oSourceTitleElement = JsControlTreeModifier.bySelector(oMovedElement.source.groupSelector, oAppComponent);
 			var oTargetTitleElement = JsControlTreeModifier.bySelector(oMovedElement.target.groupSelector, oAppComponent);
@@ -476,7 +482,15 @@ sap.ui.define([
 			oGroupSelector = {
 				id: oSourceContainer
 			};
+		} else if (!oGroupSelector && isTitleOrToolbar([oMovedElementInstance], 0, JsControlTreeModifier)) {
+			// Move headerless group
+			var oGroup = oMovedElementInstance.getParent();
+			oGroupSelector = {
+				id: oGroup.getId()
+			};
 		}
+
+		var oAffectedControlSelector = oMovedElementInstance.getParent().getId();
 		return {
 			affectedControls: [oAffectedControlSelector],
 			dependentControls: [
