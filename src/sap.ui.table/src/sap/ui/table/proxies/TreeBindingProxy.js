@@ -275,6 +275,7 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 		var oBinding = this._oControl.getBinding();
 		var sTreeBinding = this._getBindingName(oBinding);
 		var aContexts = [];
+		var iLevelOffset = 0;
 
 		switch (sTreeBinding) {
 			case undefined:
@@ -286,6 +287,7 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 				aContexts =  oBinding.getContexts(iStartIndex, iLength, iThreshold, bKeepCurrent);
 				break;
 			default:
+				iLevelOffset = 1;
 				var aNodes = oBinding ? oBinding.getNodes(iStartIndex, iLength, iThreshold) : [];
 				aNodes.forEach(function (oNode) {
 					var oContext = oNode.context;
@@ -308,7 +310,7 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 				oContext["_mProxyInfo"] = {};
 			}
 
-			oContext["_mProxyInfo"].level = this.getLevel(iIndex);
+			oContext["_mProxyInfo"].level = this.getLevel(iIndex) + iLevelOffset;
 			oContext["_mProxyInfo"].isLeaf = this.isLeaf(iIndex);
 			oContext["_mProxyInfo"].isExpanded = this.isExpanded(iIndex);
 		}
