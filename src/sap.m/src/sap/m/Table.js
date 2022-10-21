@@ -4,6 +4,7 @@
 
 // Provides control sap.m.Table.
 sap.ui.define([
+	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"./library",
 	"./ListBase",
@@ -20,7 +21,7 @@ sap.ui.define([
 	// jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(Core, library, ListBase, ListItemBase, CheckBox, TableRenderer, BaseObject, ResizeHandler, PasteHelper, jQuery, ListBaseRenderer, Icon, Util) {
+	function(KeyCodes, Core, library, ListBase, ListItemBase, CheckBox, TableRenderer, BaseObject, ResizeHandler, PasteHelper, jQuery, ListBaseRenderer, Icon, Util) {
 	"use strict";
 
 
@@ -834,6 +835,38 @@ sap.ui.define([
 	// updates the type column visibility and sets the aria flag
 	Table.prototype._setTypeColumnVisibility = function(bVisible) {
 		jQuery(this.getTableDomRef()).toggleClass("sapMListTblHasNav", bVisible);
+	};
+
+	Table.prototype.onkeydown = function(oEvent) {
+		// handles the F2 and F7 key on the table header row and column header,
+		// switch focus between the table header row and column header and if F2 is pressed the also switching the keyboardMode
+		var bFocusToggled = false;
+
+		if (oEvent.which === KeyCodes.F2 || oEvent.which === KeyCodes.F7) {
+			var $TblHeader = this.$("tblHeader"),
+				$Tabbables = $TblHeader.find(":sapTabbable");
+
+			if (oEvent.target.classList.contains("sapMColumnHeader")) {
+				this._iLastFocusPosOfColumnHeader = $Tabbables.length && $Tabbables.index(oEvent.target);
+				$TblHeader.trigger("focus");
+				bFocusToggled = true;
+			} else if (oEvent.target === $TblHeader[0]) {
+				var iFocusPos = this._iLastFocusPosOfColumnHeader || 0;
+				iFocusPos = $Tabbables[iFocusPos] ? iFocusPos : -1;
+				$Tabbables.eq(iFocusPos).trigger("focus");
+				bFocusToggled = true;
+			}
+
+			if (bFocusToggled) {
+				oEvent.preventDefault();
+				oEvent.setMarked();
+				if (oEvent.which === KeyCodes.F2) {
+					this.setKeyboardMode(this.getKeyboardMode() === "Edit" ? "Navigation" : "Edit");
+				}
+			}
+		}
+
+		ListBase.prototype.onkeydown.apply(this, arguments);
 	};
 
 	// notify all columns with given action and param
