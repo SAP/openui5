@@ -3168,12 +3168,12 @@ sap.ui.define([
 				return false;
 			});
 			this.aElements.length = iMaxIndex + 1;
-			if (!aElements.length) {
-				return SyncPromise.resolve(); // micro optimization: use cached *sync.* promise
-			}
 			Object.keys(mPredicates).forEach(function (sPredicate) {
 				aElements.push(that.aElements.$byPredicate[sPredicate]);
 			});
+			if (!aElements.length) {
+				return SyncPromise.resolve(); // micro optimization: use cached *sync.* promise
+			}
 		}
 		mQueryOptions.$filter = aElements.map(function (oElement) {
 			// all elements have a key predicate, so we will get a key filter
