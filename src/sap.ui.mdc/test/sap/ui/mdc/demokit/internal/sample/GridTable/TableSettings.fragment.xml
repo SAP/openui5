@@ -15,14 +15,8 @@
 				<form:formContainers>
 					<form:FormContainer>
 						<form:FormElement label="SelectionMode">
-							<Select
-									selectedKey="Multi"
-									change="onSelectionModeChange">
-								<items>
-									<core:Item key="Multi" text="Multi"/>
-									<core:Item key="Single" text="Single"/>
-									<core:Item key="None" text="None"/>
-								</items>
+							<Select items="{tablesettings>/selectionmodes}" selectedKey="Multi" change="onSelectionModeChange">
+								<core:Item key="{tablesettings>key}" text="{tablesettings>text}" />
 							</Select>
 						</form:FormElement>
 						<form:FormElement label="Highlights">
