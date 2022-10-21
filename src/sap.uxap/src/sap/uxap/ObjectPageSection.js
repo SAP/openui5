@@ -157,6 +157,10 @@ sap.ui.define([
 			ResizeHandler.deregister(this._iResizeHandlerId);
 			this._iResizeHandlerId = null;
 		}
+
+		if (ObjectPageSectionBase.prototype.exit) {
+			ObjectPageSectionBase.prototype.exit.call(this);
+		}
 	};
 
 	ObjectPageSection.prototype._onResize = function () {

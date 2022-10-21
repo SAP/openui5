@@ -139,8 +139,15 @@ sap.ui.define([
 
 		this.setInvisibleTextLabelValue(this._getTitle());
 
-		if (!this.getAggregation(sAriaLabeledBy)) {
-			this.setAggregation(sAriaLabeledBy, this._getAriaLabelledBy(), true); // this is called onBeforeRendering, so suppress invalidate
+		// call every time to clear old content
+		this.setAggregation(sAriaLabeledBy, this._getAriaLabelledBy(), true); // this is called onBeforeRendering, so suppress invalidate
+	};
+
+
+	ObjectPageSectionBase.prototype.exit = function () {
+		if (this._oInvisibleText) {
+			this._oInvisibleText.destroy();
+			this._oInvisibleText = null;
 		}
 	};
 
@@ -382,15 +389,34 @@ sap.ui.define([
 	ObjectPageSectionBase.prototype._getAriaLabelledBy = function () {
 		// Each section should be labelled as:
 		// 'titleName' - if the section has a title
-		// 'Section' - if it does not have a title
+		// 'Section' - if it does not have a title or its hidden (for example, showTitle=false)
 
-		var sLabel = "";
+		var sLabel = "",
+			sTitle = this._getShowTitle() && this._getTitle();
 
-		sLabel = this._getTitle() || this.getSectionText();
+		sLabel = sTitle || this.getSectionText();
 
-		return new InvisibleText({
-			text: sLabel
-		}).toStatic();
+		return this._getInvisibleText().setText(sLabel);
+	};
+
+	ObjectPageSectionBase.prototype._getInvisibleText = function () {
+		if (!this._oInvisibleText) {
+			this._oInvisibleText = new InvisibleText();
+			this._oInvisibleText.toStatic();
+		}
+
+		return this._oInvisibleText;
+	};
+
+	/**
+	 * Getter for the visible state of the title.
+	 * This method is overwritten by property setter in inheriting controls.
+	 *
+	 * @returns {boolean} true if the title is visible
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._getShowTitle = function () {
+		return this.getShowTitle ? this.getShowTitle() : true;
 	};
 
 	/**
