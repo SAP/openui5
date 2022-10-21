@@ -307,8 +307,8 @@ function(lib, Device, Element, UIArea, jQuery, Configuration) {
 			return;
 		}
 
-		var mIndicatorConfig = oEvent.dragSession && oEvent.dragSession.getIndicatorConfig(),
-			mClientRect = oDropTarget.getBoundingClientRect(),
+		var mClientRect = oValidDropControl.getDropAreaRect ? oValidDropControl.getDropAreaRect() : oDropTarget.getBoundingClientRect(),
+			mIndicatorConfig = oEvent.dragSession && oEvent.dragSession.getIndicatorConfig(),
 			iPageYOffset = window.pageYOffset,
 			iPageXOffset = window.pageXOffset,
 			$Indicator = getDropIndicator(),

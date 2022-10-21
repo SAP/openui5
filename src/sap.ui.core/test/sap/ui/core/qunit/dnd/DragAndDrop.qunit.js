@@ -474,6 +474,10 @@ sap.ui.define([
 		var oEvent, $Indicator, mIndicatorOffset, mTargetOffset;
 		var oDiv1 = this.oControl.getTopItems()[0];
 		var oDiv2 = this.oControl.getTopItems()[1];
+		oDiv2.getDropAreaRect = function() {
+			return this.getDomRef().getBoundingClientRect().toJSON();
+		};
+		var oGetDropAreaRectSpy = sinon.spy(oDiv2, "getDropAreaRect");
 
 		// init drag session
 		oEvent = createjQueryDragEventDummy("dragstart", oDiv1);
@@ -494,6 +498,8 @@ sap.ui.define([
 		$Indicator = jQuery(oEvent.dragSession.getIndicator());
 		mIndicatorOffset = $Indicator.offset();
 
+		assert.ok(oGetDropAreaRectSpy.calledOnce, "getDropAreaRect is called once");
+		assert.ok(oGetDropAreaRectSpy.calledOn(oDiv2), "getDropAreaRect is called on the Div2");
 		assert.strictEqual($Indicator.attr("data-drop-position"), "Between", "Indicator's data-drop-position attribute is set to between");
 		assert.strictEqual($Indicator.attr("data-drop-layout"), "Vertical", "Indicator's data-drop-layout attribute is set to vertical.");
 		assert.strictEqual($Indicator.width(), oDiv2.$().width() , "Indicator's width is equal to dropped item's width.");
