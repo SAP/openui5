@@ -141,6 +141,8 @@ sap.ui.define([
 					var oContext = oListBinding.create(oProperties);
 					oContext.created().then(function () {
 						MessageToast.show("Order successfully created!");
+					}).catch(function(oException) {
+						MessageToast.show(oException.message);
 					});
 					oView.setBindingContext(oContext);
 					oViewModel.setProperty("/editMode", true);
