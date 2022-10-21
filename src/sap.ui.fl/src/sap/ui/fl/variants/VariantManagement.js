@@ -47,6 +47,7 @@ sap.ui.define([
 	var VariantManagement = Control.extend("sap.ui.fl.variants.VariantManagement", /** @lends sap.ui.fl.variants.VariantManagement.prototype */ {
 		metadata: {
 			interfaces: [
+				"sap.ui.core.IShrinkable",
 				"sap.m.IOverflowToolbarContent"
 			],
 			library: "sap.ui.fl",
@@ -147,6 +148,17 @@ sap.ui.define([
 					type: "sap.ui.core.TitleLevel",
 					group: "Appearance",
 					defaultValue: TitleLevel.Auto
+				},
+
+				/**
+				 * Sets the maximum width of the control.
+				 *
+				 * @since 1.109
+				 */
+				maxWidth: {
+					type: "sap.ui.core.CSSSize",
+					group: "Dimension",
+					defaultValue: "100%"
 				}
 			},
 			events: {
@@ -292,6 +304,7 @@ sap.ui.define([
 			apiVersion: 2,
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl);
+				oRm.style("max-width", oControl.getMaxWidth());
 				oRm.openEnd();
 				oRm.renderControl(oControl._oVM);
 				oRm.close("div");

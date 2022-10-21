@@ -573,11 +573,6 @@ sap.ui.define([
 		this.oVariantText.addStyleClass("sapMVarMngmtClickable");
 		this.oVariantText.addStyleClass("sapMVarMngmtTitle");
 		this.oVariantText.addStyleClass("sapMTitleStyleH4");
-		if (Device.system.phone) {
-			this.oVariantText.addStyleClass("sapMVarMngmtTextPhoneMaxWidth");
-		} else {
-			this.oVariantText.addStyleClass("sapMVarMngmtTextMaxWidth");
-		}
 
 		var oVariantModifiedText = new Text(this.getId() + "-modified", {
 			text: "*",
@@ -614,6 +609,7 @@ sap.ui.define([
 			]
 		});
 		this.oVariantLayout.addStyleClass("sapMVarMngmtLayout");
+		this.oVariantLayout.addStyleClass("sapMVarMngmtLayoutModifiedHidden");
 
 		oVariantModifiedText.setVisible(false);
 
@@ -659,8 +655,10 @@ sap.ui.define([
 		if (sText) {
 			if (bFlag) {
 				sInvisibleTextKey = "VARIANT_MANAGEMENT_SEL_VARIANT_MOD";
+				this.oVariantLayout.removeStyleClass("sapMVarMngmtLayoutModifiedHidden");
 			} else {
 				sInvisibleTextKey = "VARIANT_MANAGEMENT_SEL_VARIANT";
+				this.oVariantLayout.addStyleClass("sapMVarMngmtLayoutModifiedHidden");
 			}
 
 			this.oVariantInvisibleText.setText(this._oRb.getText(sInvisibleTextKey, [sText]));
