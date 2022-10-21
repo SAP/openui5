@@ -1523,4 +1523,21 @@ sap.ui.define([
 		assert.strictEqual(oSemanticPage.getAggregation("_actionSheet"), null, "action sheet is null");
 
 	});
+
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+		},
+
+		afterEach: function () {
+			oVisibleFixture.textContent = ""; // empty
+		}
+	});
+
+	QUnit.test("MessagesIndicator aria-describedby is correct", function (assert) {
+		var oMessagesIndicator = new MessagesIndicator(),
+			sAriaDescribedBy = oMessagesIndicator._getControl().getAriaDescribedBy()[0],
+			sTextId = InvisibleText.getStaticId("sap.m", "SEMANTIC_CONTROL_MESSAGES_INDICATOR");
+
+		assert.strictEqual(sAriaDescribedBy, sTextId, "MessagesIndicator button aria-describedbyis set correctly.");
+	});
 });

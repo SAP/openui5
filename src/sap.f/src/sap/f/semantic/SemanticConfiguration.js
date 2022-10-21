@@ -9,13 +9,11 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/core/IconPool",
 	"sap/m/library",
-	"sap/m/OverflowToolbarLayoutData",
-	"sap/ui/core/InvisibleText"
+	"sap/m/OverflowToolbarLayoutData"
 ], function(BaseObject,
 			IconPool,
 			mobileLibrary,
-			OverflowToolbarLayoutData,
-			InvisibleText) {
+			OverflowToolbarLayoutData) {
 		"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -324,7 +322,6 @@ sap.ui.define([
 			order: 0,
 			mainAction : false,
 			getSettings: function() {
-				var sTooltipId = InvisibleText.getStaticId("sap.f", "SEMANTIC_CONTROL_MESSAGES_INDICATOR");
 
 				return {
 					icon: IconPool.getIconURI("message-popup"),
@@ -335,7 +332,6 @@ sap.ui.define([
 						}
 					},
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR"),
-					ariaLabelledBy: sTooltipId,
 					type: ButtonType.Emphasized,
 					visible: {
 						path: "message>/",

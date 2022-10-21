@@ -988,14 +988,6 @@ function (
 		assert.strictEqual(this.oSemanticPage.$("page-footerWrapper").attr("aria-label"), "Footer", "Footer label is set correctly.");
 	});
 
-	QUnit.test("MessagesIndicator aria-labelledby is correct", function (assert) {
-		var oMessagesIndicator = new MessagesIndicator(),
-			sAriaLabelledBy = oMessagesIndicator._getControl().getAriaLabelledBy()[0],
-			sTextId = InvisibleText.getStaticId("sap.f", "SEMANTIC_CONTROL_MESSAGES_INDICATOR");
-
-		assert.strictEqual(sAriaLabelledBy, sTextId, "MessagesIndicator button aria-labelledby is set correctly.");
-	});
-
 
 	QUnit.test("test SemanticPage snapping and expanding of header", function (assert) {
 		//Arrange
