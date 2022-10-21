@@ -502,10 +502,15 @@ sap.ui.define([
 
 	/**
 	 * The 'createActivate' event is fired when a property is changed on a context in an 'inactive'
-	 * state (see {@link #create}). The context then changes its state to 'transient'.
+	 * state (see {@link #create}). The context then changes its state to 'transient'. Since
+	 * 1.109.0, this default behavior can be prevented by calling
+	 * {@link sap.ui.base.Event#preventDefault}. The context will then remain in the 'inactive'
+	 * state.
+	 *
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
+	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters().context The affected context
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#createActivate
 	 * @public
@@ -1826,14 +1831,21 @@ sap.ui.define([
 	/**
 	 * Fires the 'createActivate' event.
 	 *
-	 * @param {sap.ui.model.odata.v4.Context} _oContext
+	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context being activated
+	 * @returns {boolean}
+	 *   Whether the context should become active
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.fireCreateActivate = function (_oContext) {
-		this.iActiveContexts += 1;
-		this.fireEvent("createActivate");
+	ODataListBinding.prototype.fireCreateActivate = function (oContext) {
+		if (this.fireEvent("createActivate", {context : oContext}, true)) {
+			this.iActiveContexts += 1;
+
+			return true;
+		}
+
+		return false;
 	};
 
 	/**

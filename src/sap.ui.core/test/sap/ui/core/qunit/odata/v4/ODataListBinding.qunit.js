@@ -8848,17 +8848,26 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fireCreateActivate", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES");
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding);
 
 		oBinding.iActiveContexts = 40;
 
-		this.mock(oBinding).expects("fireEvent").withExactArgs("createActivate")
-			.callsFake(function () {
-				assert.strictEqual(oBinding.iActiveContexts, 41);
-			});
+		oBindingMock.expects("fireEvent")
+			.withExactArgs("createActivate", {context : "~oContext~"}, true)
+			.returns(false);
 
 		// code under test
-		oBinding.fireCreateActivate();
+		oBinding.fireCreateActivate("~oContext~");
+
+		assert.strictEqual(oBinding.iActiveContexts, 40);
+
+		oBindingMock.expects("fireEvent")
+			.withExactArgs("createActivate", {context : "~oContext~"}, true)
+			.returns(true);
+
+		// code under test
+		oBinding.fireCreateActivate("~oContext~");
 
 		assert.strictEqual(oBinding.iActiveContexts, 41);
 	});

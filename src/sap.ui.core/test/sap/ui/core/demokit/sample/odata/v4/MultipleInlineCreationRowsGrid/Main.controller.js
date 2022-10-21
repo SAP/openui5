@@ -4,12 +4,13 @@
 sap.ui.define([
 	"sap/f/library",
 	"sap/m/MessageBox",
+	"sap/ui/core/message/Message",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/test/TestUtils"
-], function (library, MessageBox, Controller, Sorter, JSONModel, SubmitMode, TestUtils) {
+], function (library, MessageBox, Message, Controller, Sorter, JSONModel, SubmitMode, TestUtils) {
 	"use strict";
 
 	var oSearchParams = new URLSearchParams(window.location.search),
@@ -111,15 +112,36 @@ sap.ui.define([
 
 		onActivate : function (oEvent) {
 			var oBinding = oEvent.getSource(),
+				oContext = oEvent.getParameter("context"),
+				oMessageManager = sap.ui.getCore().getMessageManager(),
 				that = this;
 
-			setTimeout(function () { // there are sporadic issues with the m.table
-				if (oBinding.getPath() === "/Products") {
-					that.createInactiveProducts(1);
-				} else {
-					that.createInactiveParts(1);
-				}
-			});
+			this.mMessages = this.mMessages || [];
+
+			if (!oContext.getProperty("ID")) {
+				// do not activate row if no ID is given
+				oEvent.preventDefault();
+
+				this.mMessages[oContext.getPath()] = new Message({
+					message : "ID must not be empty",
+					type : sap.ui.core.MessageType.Warning,
+					technical : true,
+					processor : oContext.getModel(),
+					target : oContext.getPath() + "/ID"
+				});
+				oMessageManager.addMessages(this.mMessages[oContext.getPath()]);
+			} else {
+				oMessageManager.removeMessages(this.mMessages[oContext.getPath()]);
+				that.messagePopover.close();
+
+				setTimeout(function () { // there are sporadic issues without using setTimeout
+					if (oBinding.getPath() === "/Products") {
+						that.createInactiveProducts(1);
+					} else {
+						that.createInactiveParts(1);
+					}
+				});
+			}
 		},
 
 		onCancel : function () {

@@ -62,10 +62,15 @@ sap.ui.getCore().attachInit(function () {
 					Then.onTheObjectPage.checkPart(4, "3", "From Server");
 
 					// activate row 2
+					When.onTheObjectPage.enterPartDescription(1, "Part 99");
+					Then.onTheMessagePopover.checkMessages([{
+						message : "ID must not be empty",
+						type : sap.ui.core.MessageType.Warning
+					}]);
 					When.onTheObjectPage.enterPartId(1, "99", bSubmitModeAPI);
 					Then.onTheObjectPage.checkPartsLength(6);
 					Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 4 Parts");
-					Then.onTheObjectPage.checkPart(2, "99", "Persisted");
+					Then.onTheObjectPage.checkPart(2, "99", "Persisted", "Part 99");
 
 					// activate row 2 (will fail and row will be transient)
 					aExpectedLogs.push({
@@ -165,10 +170,15 @@ sap.ui.getCore().attachInit(function () {
 					Then.onTheObjectPage.checkPart(4, "", "Inactive");
 
 					// activate row 4
+					When.onTheObjectPage.enterPartDescription(3, "Part 99");
+					Then.onTheMessagePopover.checkMessages([{
+						message : "ID must not be empty",
+						type : sap.ui.core.MessageType.Warning
+					}]);
 					When.onTheObjectPage.enterPartId(3, "99", bSubmitModeAPI);
 					Then.onTheObjectPage.checkPartsLength(6);
 					Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 4 Parts");
-					Then.onTheObjectPage.checkPart(3, "99", "Persisted");
+					Then.onTheObjectPage.checkPart(3, "99", "Persisted", "Part 99");
 
 					// activate row 5 (will fail and row will be transient)
 					aExpectedLogs.push({

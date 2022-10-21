@@ -540,8 +540,14 @@ sap.ui.define([
 					}
 
 					if (that.isInactive()) {
-						oBinding.fireCreateActivate(that);
-						that.bInactive = false;
+						// early cache update so that the new value is properly available on the
+						// event listener
+						// runs synchronously - setProperty calls fetchValue with $cached
+						oCache.setProperty(oResult.propertyPath, vValue, sEntityPath, bUpdating)
+							.catch(that.oModel.getReporter());
+						if (oBinding.fireCreateActivate(that)) {
+							that.bInactive = false;
+						}
 					}
 
 					// if request is canceled fnPatchSent and fnErrorCallback are not called and
@@ -549,7 +555,8 @@ sap.ui.define([
 					return oCache.update(oGroupLock, oResult.propertyPath, vValue,
 						bSkipRetry ? undefined : errorCallback, oResult.editUrl, sEntityPath,
 						oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
-						oBinding.isPatchWithoutSideEffects(), patchSent, that.isKeepAlive.bind(that)
+						oBinding.isPatchWithoutSideEffects(), patchSent,
+						that.isKeepAlive.bind(that), that.bInactive
 					).then(function () {
 						firePatchCompleted(true);
 					}, function (oError) {

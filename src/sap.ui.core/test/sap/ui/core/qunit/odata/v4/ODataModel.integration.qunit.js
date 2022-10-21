@@ -44769,6 +44769,82 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario:
+	// Two inactive inline creations rows
+	// Attach to createActivate event and block request/processing if no ID was given
+	// Add name to both inline creation rows -> no request
+	// Add ID to the first inline creation row -> request goes out
+	//
+	// JIRA: CPOUI5ODATAV4-1582
+	QUnit.test("Creation Rows: Support for required properties", function (assert) {
+		var oBinding,
+			oContext1,
+			oContext2,
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/TEAMS}">\
+	<Input id="id" value="{Team_Id}"/>\
+	<Input id="name" value="{Name}"/>\
+</Table>',
+			that = this;
+
+		that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+				value : [{Name : "Team #1", Team_Id : "TEAM_01"}]
+			})
+			.expectChange("id", ["TEAM_01"])
+			.expectChange("name", ["Team #1"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+
+			oBinding.attachCreateActivate(function (oEvent) {
+				if (!oEvent.getParameter("context").getProperty("Team_Id")) {
+					// code under test
+					oEvent.preventDefault();
+				}
+			});
+
+			that.expectChange("id", [, "", ""])
+				.expectChange("name", [, "", ""]);
+
+			oContext1 = oBinding.create({}, true, true, /*bInactive*/true);
+			oContext2 = oBinding.create({}, true, true, /*bInactive*/true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// no request is sent
+			that.expectChange("name", [, "Team #2", "Team #3"]);
+
+			// code under test
+			oContext1.setProperty("Name", "Team #2");
+			oContext2.setProperty("Name", "Team #3");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {
+						Team_Id : "TEAM_02",
+						Name : "Team #2"
+					}
+				}, {
+					Team_Id : "TEAM_02",
+					Name : "Team #2"
+				})
+				.expectChange("id", [, "TEAM_02"]);
+
+			// code under test
+			oContext1.setProperty("Team_Id", "TEAM_02");
+
+			return Promise.all([
+				oContext1.created(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Main & dependent detail table. Create inactive rows for the detail table.
 	// Deleting the parent contexts works although there are inactive rows in dependent binding.
 	// JIRA: CPOUI5ODATAV4-1468

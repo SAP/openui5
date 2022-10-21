@@ -41,7 +41,7 @@ sap.ui.define([
 			assertions : {
 				checkProduct : function (iRowNumber, sExpectedProductId) {
 					Helper.checkInputValue(this, sViewName, /productId/, sExpectedProductId,
-						iRowNumber);
+						iRowNumber, undefined, false);
 				},
 				checkProductsLength : function (iExpectedLength) {
 					this.waitFor({
@@ -81,6 +81,32 @@ sap.ui.define([
 						}
 					});
 				}
+			}, assertions : {
+				checkMessages : function (aExpectedMessages) {
+					this.waitFor({
+						controlType : "sap.m.MessagePopover",
+						success : function (aMessagePopover) {
+							var iExpectedCount = aExpectedMessages.length,
+								aItems = aMessagePopover[0].getItems();
+
+							Opa5.assert.ok(aMessagePopover.length === 1);
+							Opa5.assert.strictEqual(aItems.length, iExpectedCount,
+								"Check Messages: message count is as expected: " + iExpectedCount
+							);
+							aExpectedMessages.forEach(function (oExpectedMessage, i) {
+								var bFound;
+
+								bFound = aItems.some(function (oItem) {
+									return oItem.getTitle() === oExpectedMessage.message
+										&& oItem.getType() === oExpectedMessage.type;
+								});
+								Opa5.assert.ok(bFound, "Check Messages: expected message[" + i
+									+ "]: " + oExpectedMessage.message + " type: "
+									+ oExpectedMessage.type);
+							});
+						}
+					});
+				}
 			}
 		},
 		onTheObjectPage : {
@@ -100,6 +126,9 @@ sap.ui.define([
 					if (bPressSave) {
 						Helper.pressButton(this, sViewName, "save");
 					}
+				},
+				enterPartDescription : function (iRow, sId) {
+					Helper.changeInputValue(this, sViewName, /description/, sId, iRow);
 				},
 				pressCancel : function () {
 					Helper.pressButton(this, sViewName, "cancel");

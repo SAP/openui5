@@ -2860,8 +2860,8 @@ sap.ui.define([
 
 	return Promise.resolve("n/a"); // #update succeeds after retry
 }].forEach(function (fnScenario, i) {
-	[undefined, true].forEach(function (bInactive) {
-		var sTitle = "doSetProperty: scenario " + i + ", bInactive=" + bInactive;
+	[undefined, {activate : true}, {activate : false}].forEach(function (oInactive) {
+		var sTitle = "doSetProperty: scenario: " + i;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
@@ -2876,6 +2876,8 @@ sap.ui.define([
 				sPath : "binding/path"
 			},
 			oBindingMock = this.mock(oBinding),
+			oError = new Error("This call intentionally failed"),
+			oFireCreateActivateExpectation,
 			oGroupLock = {},
 			oMetaModel = {
 				fetchUpdateData : function () {},
@@ -2885,25 +2887,28 @@ sap.ui.define([
 				getMetaModel : function () {
 					return oMetaModel;
 				},
+				getReporter : function () {},
 				reportError : function () {},
 				resolve : function () {}
 			},
 			oModelMock = this.mock(oModel),
 			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')", 42,
-				bInactive ? new SyncPromise(function () {}) : /*oCreatePromise*/undefined,
-				bInactive),
-			oError = new Error("This call intentionally failed"),
+				oInactive ? new SyncPromise(function () {}) : /*oCreatePromise*/undefined,
+				!!oInactive),
+			fnReporter = sinon.spy(),
+			oSetPropertyExpectation,
 			bSkipRetry = i === 1,
 			vWithCacheResult = {},
 			that = this;
 
-		if (bInactive) {
+		if (oInactive) {
 			assert.strictEqual(
 				// code under test
 				oContext.toString(),
 				"/BusinessPartnerList('0100000000')[42;inactive]");
 		}
-		this.mock(oContext).expects("isDeleted").withExactArgs().exactly(4).returns(false);
+		this.mock(oContext).expects("isDeleted").withExactArgs().exactly(oInactive ? 4 : 3)
+			.returns(false);
 		this.mock(oContext).expects("getValue").never();
 		this.mock(oContext).expects("isKeepAlive").withExactArgs().on(oContext)
 			.exactly(i === 1 ? 1 : 0).returns("~bKeepAlive~");
@@ -2911,6 +2916,7 @@ sap.ui.define([
 			"some/relative/path", /*bSync*/false, /*bWithOrWithoutCache*/true)
 			.callsFake(function (fnProcessor) {
 				var oCache = {
+						setProperty : function () {},
 						update : function () {}
 					},
 					bPatchWithoutSideEffects = {/*false,true*/},
@@ -2938,8 +2944,16 @@ sap.ui.define([
 				that.mock(_Helper).expects("getRelativePath")
 					.withExactArgs("/entity/path", "/resolved/binding/path")
 					.returns("helper/path");
-				oBindingMock.expects("fireCreateActivate").exactly(bInactive ? 1 : 0)
-					.withExactArgs(sinon.match.same(oContext));
+				if (oInactive) {
+					oSetPropertyExpectation = that.mock(oCache).expects("setProperty")
+						.withExactArgs("property/path", "new value", "helper/path", undefined)
+						.returns(SyncPromise.reject("~error~"));
+					oModelMock.expects("getReporter").withExactArgs()
+						.returns(fnReporter);
+					oFireCreateActivateExpectation = oBindingMock.expects("fireCreateActivate")
+						.withExactArgs(sinon.match.same(oContext))
+						.returns(oInactive.activate);
+				}
 				that.mock(oMetaModel).expects("getUnitOrCurrencyPath")
 					.withExactArgs("/resolved/data/path")
 					.returns("unit/or/currency/path");
@@ -2948,9 +2962,11 @@ sap.ui.define([
 						/*fnErrorCallback*/bSkipRetry ? undefined : sinon.match.func, "/edit/url",
 						"helper/path", "unit/or/currency/path",
 						sinon.match.same(bPatchWithoutSideEffects), /*fnPatchSent*/sinon.match.func,
-						/*fnIsKeepAlive*/sinon.match.func)
+						/*fnIsKeepAlive*/sinon.match.func,
+						oInactive ? !oInactive.activate : undefined)
 					.callsFake(function () {
-						assert.strictEqual(oContext.isInactive(), bInactive ? false : undefined);
+						assert.strictEqual(oContext.isInactive(),
+							oInactive ? !oInactive.activate : undefined);
 						return SyncPromise.resolve(
 							fnScenario(assert, that.mock(oModel), oBinding, oBindingMock,
 								/*fnErrorCallback*/arguments[3], /*fnPatchSent*/arguments[8],
@@ -2985,6 +3001,11 @@ sap.ui.define([
 					assert.strictEqual(vResult, vWithCacheResult);
 				} else {
 					assert.ok(false, "Unexpected success");
+				}
+				if (oInactive) {
+					assert.ok(oSetPropertyExpectation.calledBefore(oFireCreateActivateExpectation));
+					sinon.assert.calledOnce(fnReporter);
+					sinon.assert.calledWithExactly(fnReporter, "~error~");
 				}
 			}, function (oError0) {
 				assert.ok(i < 2);
@@ -3060,7 +3081,8 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
 						/*fnErrorCallback*/sinon.match.func, "/edit/url", "helper/path",
 						"unit/or/currency/path", sinon.match.same(bPatchWithoutSideEffects),
-						/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func)
+						/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func,
+						undefined)
 					.resolves();
 
 				return fnProcessor(oCache, "some/relative/path", oBinding);
@@ -3143,7 +3165,8 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
 						/*fnErrorCallback*/sinon.match.func, "/edit/url", "helper/path",
 						"unit/or/currency/path", sinon.match.same(bPatchWithoutSideEffects),
-						/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func)
+						/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func,
+						undefined)
 					.resolves();
 
 				return fnProcessor(oCache, "/reduced/path", oBinding);
@@ -3284,7 +3307,8 @@ sap.ui.define([
 							/*fnErrorCallback*/bSkipRetry ? undefined : sinon.match.func,
 							"/edit/url", "helper/path", "unit/or/currency/path",
 							sinon.match.same(bPatchWithoutSideEffects),
-							/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func)
+							/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func,
+							undefined)
 						.resolves();
 				}
 

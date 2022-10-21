@@ -12,7 +12,7 @@ sap.ui.define([
 
 	var oPart99 = {
 			ID : 99,
-			description : null,
+			description : "Part 99",
 			quantity : null,
 			_Product_ID : 10
 		},

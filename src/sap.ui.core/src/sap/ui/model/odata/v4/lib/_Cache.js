@@ -1770,7 +1770,7 @@ sap.ui.define([
 	 *   Path of the entity, relative to the cache (as used by change listeners)
 	 * @param {boolean} [bUpdating]
 	 *   Whether the given property will not be overwritten by a creation POST(+GET) response
-	 * @returns {Promise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with <code>undefined</code> once the value has been set, or is
 	 *   rejected with an error if setting fails somehow
 	 * @throws {Error} If the cache is shared
@@ -1878,6 +1878,9 @@ sap.ui.define([
 	 *   If no back-end request is needed, the function is not called.
 	 * @param {function} fnIsKeepAlive
 	 *   A function to tell whether the entity is kept-alive
+	 * @param {boolean} [bInactive]
+	 *   If <code>true</code>, the cache and the POST request will be updated, but the entity stays
+	 *   inactive
 	 * @returns {Promise}
 	 *   A promise for the PATCH request (resolves with <code>undefined</code>); rejected in case of
 	 *   cancellation or if no <code>fnErrorCallback</code> is given
@@ -1887,7 +1890,7 @@ sap.ui.define([
 	 */
 	_Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback,
 			sEditUrl, sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent,
-			fnIsKeepAlive) {
+			fnIsKeepAlive, bInactive) {
 		var oPromise,
 			aPropertyPath = sPropertyPath.split("/"),
 			aUnitOrCurrencyPath,
@@ -2079,7 +2082,7 @@ sap.ui.define([
 			if (oPostBody) {
 				// change listeners are informed later
 				_Helper.updateAll({}, sEntityPath, oPostBody, oUpdateData);
-				if (oEntity["@$ui5.context.isInactive"]) {
+				if (oEntity["@$ui5.context.isInactive"] && !bInactive) {
 					oUpdateData["@$ui5.context.isInactive"] = false;
 					that.iActiveElements += 1;
 					addToCount(that.mChangeListeners, "", that.aElements, 1);
@@ -2103,9 +2106,10 @@ sap.ui.define([
 				}
 			}
 			if (sTransientGroup) {
-				// When updating a transient entity, _Helper.updateAll has already updated the
-				// POST request.
-				if (sParkedGroup) {
+				// When updating a transient entity, the above _Helper.updateAll has already updated
+				// the POST request.
+				// If the entity remains inactive, update the request, but keep it parked
+				if (sParkedGroup && !bInactive) {
 					_Helper.setPrivateAnnotation(oEntity, "transient", sTransientGroup);
 					that.oRequestor.relocate(sParkedGroup, oPostBody, sTransientGroup);
 				}

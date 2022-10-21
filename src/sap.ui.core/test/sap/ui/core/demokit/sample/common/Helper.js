@@ -31,14 +31,18 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 	 *  The row number (zero based) of the control if the control is within a collection
 	 * @param {boolean} bSearchOpenDialogs
 	 *  If set to true, Opa5 will only search in open dialogs
+	 * @param {boolean} bEnabled
+	 *  If set to false, Opa5 will look for both enabled and disabled controls.
 	 */
-	function checkControlValue(oOpa5, sViewName, bText, sId, sValue, iRow, bSearchOpenDialogs) {
+	function checkControlValue(oOpa5, sViewName, bText, sId, sValue, iRow, bSearchOpenDialogs,
+			bEnabled) {
 		oOpa5.waitFor({
 			controlType : bText ? "sap.m.Text" : "sap.m.Input",
 			id : sId,
 			matchers : iRow === undefined ? undefined : function (oControl) {
 				return oControl.getBindingContext().getIndex() === iRow;
 			},
+			enabled : bEnabled,
 			searchOpenDialogs : bSearchOpenDialogs,
 			success : function (vControls) {
 				var oControl = iRow === undefined ? vControls : vControls[0],
@@ -233,9 +237,13 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The row number (zero based) of the control if the control is within a collection
 		 * @param {boolean} [bSearchOpenDialogs]
 		 *  Whether Opa5 will only search for controls in open dialogs
+		 * @param {boolean} bEnabled
+		 *  If set to false, Opa5 will look for both enabled and disabled controls.
 		 */
-		checkInputValue : function (oOpa5, sViewName, sId, vValue, iRow, bSearchOpenDialogs) {
-			checkControlValue(oOpa5, sViewName, false, sId, vValue, iRow, bSearchOpenDialogs);
+		checkInputValue : function (oOpa5, sViewName, sId, vValue, iRow, bSearchOpenDialogs,
+				bEnabled) {
+			checkControlValue(oOpa5, sViewName, false, sId, vValue, iRow, bSearchOpenDialogs,
+				bEnabled);
 		},
 
 		/**
