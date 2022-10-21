@@ -255,7 +255,7 @@
 									header="Total"
 									dataProperty="total"
 								>
-                            <mdc:Field id="F_total" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" editMode="Display" multipleLines="false" width="100%"/>
+                            <mdc:Field id="F_total" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total', type:'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}, {path:'currency_code', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, {mode:'OneTime', path:'/##@@requestCurrencyCodes', targetType:'any'}], type:'sap.ui.model.odata.type.Currency', mode:'TwoWay'}" editMode="Display" multipleLines="false" width="100%"/>
 						</mdc:table.Column>
 					</mdc:columns>
 					<mdc:creationRow>
