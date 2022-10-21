@@ -66,13 +66,14 @@ sap.ui.define([
 					fontFamily: "SAP-icons",
 					fontURI: sap.ui.require.toUrl("sap/ui/core/themes/base/fonts/"),
 					downloadURI: sLocalFontFolder,
-					downloadURIV5: sap.ui.require.toUrl("sap/ui/demo/iconexplorer/fonts/sap_horizon/")
+					downloadURIForHorizon: sap.ui.require.toUrl("sap/ui/demo/iconexplorer/fonts/sap_horizon/")
 				};
 
 				var oTNTConfig = {
 					fontFamily: "SAP-icons-TNT",
 					fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts/"),
-					downloadURI: sLocalFontFolder
+					downloadURI: sLocalFontFolder,
+					downloadURIForHorizon: sap.ui.require.toUrl("sap/ui/demo/iconexplorer/fonts/sap_horizon/")
 				};
 
 				// register TNT icon font

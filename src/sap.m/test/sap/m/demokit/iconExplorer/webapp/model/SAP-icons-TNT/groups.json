@@ -33,7 +33,17 @@
 					{"name" : "router"},
 					{"name" : "switch"},
 					{"name" : "satellite"},
-					{"name" : "system-2"}
+					{"name" : "system-2"},
+					{"name" : "binary"},
+					{"name" : "uuid"},
+					{"name" : "github"},
+					{"name" : "robot"},
+					{"name" : "string"},
+					{"name" : "boolean"},
+					{"name" : "array"},
+					{"name" : "any"},
+					{"name" : "integer"},
+					{"name" : "float"}
 			]
 		},
 		{
@@ -56,7 +66,10 @@
 				{"name" : "aggregation"},
 				{"name" : "composition"},
 				{"name" : "cursor"},
-				{"name" : "network-node"}
+				{"name" : "network-node"},
+				{"name" : "escalation-boundary-interrupting"},
+				{"name" : "escalation-boundary-non-interrupting"},
+				{"name" : "escalation-throwing"}
 			]
 		},
 		{
@@ -166,7 +179,12 @@
 				{"name" : "switch"},
 				{"name" : "satellite"},
 				{"name" : "system-2"},
-				{"name" : "process-package"}
+				{"name" : "process-package"},
+				{"name" : "escalation-boundary-interrupting"},
+				{"name" : "escalation-boundary-non-interrupting"},
+				{"name" : "escalation-throwing"},
+				{"name" : "solution"},
+				{"name" : "robot"}
 			]
 		},
 		{
@@ -230,8 +248,10 @@
 				{"name" : "status-suspending"},
 				{"name" : "status-terminated"},
 				{"name" : "status-terminating"},
-				{"name" : "solution-not-licensed"}
-
+				{"name" : "solution-not-licensed"},
+				{"name" : "escalation-boundary-interrupting"},
+				{"name" : "escalation-boundary-non-interrupting"},
+				{"name" : "escalation-throwing"}
 			]
 		},
 		{
@@ -241,7 +261,8 @@
 				{"name": "code1"},
 				{"name": "code2"},
 				{"name": "note"},
-				{"name": "script-task"}
+				{"name": "script-task"},
+				{"name": "string"}
 			]
 		},
 		{
