@@ -836,6 +836,58 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Test for eliminating non file types passed along with valid file types", function(assert) {
+
+		// arrange
+		var oDataTransferEliminateTypes = new DataTransfer();
+		function nativeWebkitGetAsEntry() {
+			return this.kind && this.kind == "file" ?
+				{
+					isFile: true,
+					isDirectory: false
+				} :
+				null;
+		}
+		var oFileItem1 = new File([new Blob([])], "sample Drop File.txt", {type: "text/plain"} );
+
+		var oFileItem2 = new File([new Blob([])], "sample Drop File.txtSample Drop File 2.txt", {type: "text/plain"} );
+		oDataTransferEliminateTypes.items.add(oFileItem1);
+		oDataTransferEliminateTypes.items.add(oFileItem2);
+
+		// creating non file type
+		oDataTransferEliminateTypes.items.add("sample file 3", "string");
+
+		for (var i = 0; i < oDataTransferEliminateTypes.items.length; i++) {
+			var oItemPrototype = Object.getPrototypeOf(oDataTransferEliminateTypes.items[i]);
+			oItemPrototype.webkitGetAsEntry = nativeWebkitGetAsEntry;
+		}
+
+		var oEvent = new EventBase("drop", {}, { // using BaseEvent to create sample drop event to simulate drag and drop
+			browserEvent: {
+				dataTransfer: oDataTransferEliminateTypes
+			}
+		});
+		var oItems = oEvent.getParameter("browserEvent").dataTransfer.items;
+		oItems = Array.from(oItems);
+		oItems.pop();
+
+		this.stub(this.oUploadSet, "_getFilesFromDataTransferItems").callsFake(function(oItems) {
+			// creating fake function since this function makes xhr call to upload files
+			return new Promise(function(resolve, reject){
+				resolve(true);
+			});
+		});
+		this.stub(MessageBox, "error").returns("Dummy Error message");
+
+		// act
+		this.oUploadSet.setMultiple(true);
+		this.oUploadSet._onDropFile(oEvent); // method invoked on uploadSet when dropping files to upload
+
+		// assert
+		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.calledWithExactly(oItems), "Non file types are eliminated when files are drag and dropped");
+
+	});
+
 	QUnit.test("Test for MultiSelect in pending upload (not supported)", function(assert) {
 		//Act
 		this.oUploadSet.setInstantUpload(false);

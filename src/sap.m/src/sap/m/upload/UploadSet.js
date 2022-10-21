@@ -973,7 +973,13 @@ sap.ui.define([
 		oEvent.preventDefault();
 		if (this.getUploadEnabled()) {
 			var oItems = oEvent.getParameter("browserEvent").dataTransfer.items;
-			var aEntryTypes = Array.from(oItems).map(function (oEntry) {
+			oItems = Array.from(oItems);
+
+			// Filtering out only webkitentries (files/folders system entries) by excluding non file / directory types.
+			oItems = oItems.filter(function(item){
+				return item.webkitGetAsEntry() ? true : false;
+			});
+			var aEntryTypes = oItems.map(function (oEntry) {
 				var oWebKitEntry = oEntry.webkitGetAsEntry();
 				return {
 					entryType: oWebKitEntry && oWebKitEntry.isFile ? 'File' : 'Directory'
