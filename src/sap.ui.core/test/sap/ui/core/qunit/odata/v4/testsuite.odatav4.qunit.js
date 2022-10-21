@@ -158,6 +158,30 @@ sap.ui.define(function () {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/Sticky/Opa.qunit"],
 				realOData : false // requires stable test data
+			},
+			"OPA.Tutorial.08" : {
+				autostart : false,
+				module : ["sap/ui/core/tutorial/odatav4/test/integration/opaTests.qunit"],
+				realOData : false, // requires stable test data
+				loader : {
+					paths : {
+						"sap/ui/core/tutorial/odatav4"
+							: "test-resources/sap/ui/core/demokit/tutorial/odatav4/08/webapp"
+					}
+				},
+				$app : "test-resources/sap/ui/core/demokit/tutorial/odatav4/08/webapp/index.html"
+			},
+			"OPA.Tutorial.11" : {
+				autostart : false,
+				module : ["sap/ui/core/tutorial/odatav4/test/integration/opaTests.qunit"],
+				realOData : false, // requires stable test data
+				loader : {
+					paths : {
+						"sap/ui/core/tutorial/odatav4"
+							: "test-resources/sap/ui/core/demokit/tutorial/odatav4/11/webapp"
+					}
+				},
+				$app : "test-resources/sap/ui/core/demokit/tutorial/odatav4/11/webapp/index.html"
 			}
 		}
 	};
