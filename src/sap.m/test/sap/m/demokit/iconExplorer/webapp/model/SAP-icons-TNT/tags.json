@@ -884,7 +884,8 @@
 			"arrow",
 			"circle",
 			"responsibility",
-			"standard"
+			"standard",
+			"indicator"
 		]
 	},
 	"start-timer-event": {
@@ -1247,6 +1248,132 @@
 			"light",
 			"bulb",
 			"lamp"
+		]
+	},
+
+	"escalation-boundary-interrupting": {
+		"tags": [
+			"arrow",
+			"circle",
+			"responsibility",
+			"standard",
+			"indicator",
+			"boundary"
+		]
+	},
+
+	"escalation-boundary-non-interrupting": {
+		"tags": [
+			"arrow",
+			"circle",
+			"responsibility",
+			"standard",
+			"indicator",
+			"boundary"
+		]
+	},
+
+	"escalation-throwing": {
+		"tags": [
+			"arrow",
+			"circle",
+			"responsibility",
+			"standard",
+			"indicator",
+			"boundary"
+		]
+	},
+
+	"solution": {
+		"tags": [
+			"circle",
+			"half",
+			"fill",
+			"empty",
+			"enterprise",
+			"architecture"
+		]
+	},
+
+	"binary": {
+		"tags": [
+			"number",
+			"system",
+			"code"
+		]
+	},
+
+	"uuid": {
+		"tags": [
+			"system",
+			"code"
+		]
+	},
+
+	"github": {
+		"tags": [
+			"system",
+			"infrastructure",
+			"code"
+		]
+	},
+
+	"robot": {
+		"tags": [
+			"circle",
+			"machine"
+		]
+	},
+
+	"string": {
+		"tags": [
+			"text",
+			"write",
+			"system",
+			"code"
+		]
+	},
+
+	"boolean": {
+		"tags": [
+			"checkmark",
+			"tick",
+			"cancel",
+			"x",
+			"close",
+			"system",
+			"code"
+		]
+	},
+
+	"array": {
+		"tags": [
+			"system",
+			"code"
+		]
+	},
+
+	"any": {
+		"tags": [
+			"circle",
+			"system",
+			"code"
+		]
+	},
+
+	"integer": {
+		"tags": [
+			"number",
+			"system",
+			"code"
+		]
+	},
+
+	"float": {
+		"tags": [
+			"number",
+			"system",
+			"code"
 		]
 	}
 }
