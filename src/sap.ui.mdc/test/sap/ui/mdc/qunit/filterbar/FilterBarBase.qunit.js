@@ -598,4 +598,61 @@ sap.ui.define([
 
 	});
 
+    QUnit.test("Check required missing handling on filter changes", function(assert){
+
+        var done = assert.async();
+
+		var oStub = sinon.stub(this.oFilterBarBase, "_getPropertyByName");
+		oStub.withArgs("key1").returns({name: "key1", required: true, typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
+		oStub.withArgs("key2").returns({name: "key2", required: true, typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
+
+		sinon.stub(this.oFilterBarBase, "_getRequiredPropertyNames").returns(["key1", "key2"]);
+
+		var oFilterField1 = new FilterField("key1", {
+			label: "key1",
+			conditions: "{$filters>/conditions/key1}",
+			dataType: "sap.ui.model.type.String",
+			required: true
+		});
+        this.oFilterBarBase.addFilterItem(oFilterField1);
+
+		var oFilterField2 = new FilterField("key2", {
+			label: "key2",
+			conditions: "{$filters>/conditions/key2}",
+			dataType: "sap.ui.model.type.String",
+			required: true
+		});
+        this.oFilterBarBase.addFilterItem(oFilterField2);
+
+
+        this.oFilterBarBase._checkFilters();
+        assert.equal(oFilterField1.getValueState(), "Error");
+        assert.equal(oFilterField2.getValueState(), "Error");
+
+
+
+		this.oFilterBarBase.initialized().then(function () {
+            // --> this would happen during runtime through a change
+            this.oFilterBarBase.setFilterConditions({
+                "key1": [
+                    {
+                    "operator": "EQ",
+                    "values": [
+                        "test"
+                    ],
+                    "validated": "Validated"
+                    }
+                ]
+            });
+
+            //trigger the handling after changes have been applied
+            this.oFilterBarBase._onModifications().then(function() {
+                assert.equal(oFilterField1.getValueState(), "None");
+                assert.equal(oFilterField2.getValueState(), "Error");
+                done();
+            });
+        }.bind(this));
+
+    });
+
 });

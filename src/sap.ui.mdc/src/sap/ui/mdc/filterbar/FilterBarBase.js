@@ -620,6 +620,8 @@ sap.ui.define([
 
 		if (this.getLiveMode() || mReportSettings.triggerSearch) {
 			this.triggerSearch();
+		} else if (mReportSettings.recheckMissingRequired) {
+			this._recheckMissingRequiredFields();
 		}
 	};
 
@@ -940,6 +942,24 @@ sap.ui.define([
 		return vRetErrorState;
 	};
 
+	FilterBarBase.prototype._recheckMissingRequiredFields = function() {
+		this.getFilterItems().forEach(function(oFilterField) {
+			var aReqFiltersWithoutValue;
+			if (oFilterField) {
+				if ((oFilterField.getValueState() !== ValueState.None) &&
+					(oFilterField.getValueStateText() === this._oRb.getText("filterbar.REQUIRED_FILTER_VALUE_MISSING"))) {
+
+					if (!aReqFiltersWithoutValue) {
+						aReqFiltersWithoutValue = this._getRequiredFieldsWithoutValues();
+					}
+
+					if (aReqFiltersWithoutValue.indexOf(oFilterField.getFieldPath()) < 0) {
+						oFilterField.setValueState(ValueState.None);
+					}
+				}
+			}
+		}.bind(this));
+	};
 
 	FilterBarBase.prototype._checkRequiredFields = function() {
 		var vRetErrorState = ErrorState.NoError;
@@ -1357,7 +1377,8 @@ sap.ui.define([
 		return this._setXConditions(this.getFilterConditions()).then(function(){
 			this._reportModelChange({
 				triggerSearch: false,
-				triggerFilterUpdate: true
+				triggerFilterUpdate: true,
+				recheckMissingRequired: true
 			});
 
 			if (this._oApplyingChanges) {
