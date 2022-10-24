@@ -168,7 +168,7 @@ test("Syntax check", function() {
 	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
 
 	sUrl = "http:\\www.sap.com";
-	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
 
 	sUrl = "https://www.sap.com";
 	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
@@ -323,14 +323,17 @@ test("Whitelist", function() {
 	jQuery.sap.clearUrlWhitelist();
 });
 
-QUnit.test("Invalid protocol slashes", function(assert) {
+QUnit.test("Unusual number of slashes in front of host", function(assert) {
 	jQuery.sap.addUrlWhitelist("http", "sap.com");
 
+	assert.notOk(jQuery.sap.validateUrl("http:evil.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http:/evil.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http:\\evil.com"), "URL is not valid");
 	assert.notOk(jQuery.sap.validateUrl("http:/\\evil.com"), "URL is not valid");
 	assert.notOk(jQuery.sap.validateUrl("http:/\\/evil.com"), "URL is not valid");
 	assert.notOk(jQuery.sap.validateUrl("http:/\\//evil.com"), "URL is not valid");
+	assert.notOk(jQuery.sap.validateUrl("http:///evil.com"), "URL is not valid");
 	assert.notOk(jQuery.sap.validateUrl("http:\\\\evil.com"), "URL is not valid");
-	assert.notOk(jQuery.sap.validateUrl("http:/evil.com"), "URL is not valid");
 
 	jQuery.sap.clearUrlWhitelist();
 });
