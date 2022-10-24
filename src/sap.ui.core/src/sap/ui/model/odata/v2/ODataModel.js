@@ -5116,7 +5116,8 @@ sap.ui.define([
 	 * {@link topic:6c47b2b39db9404582994070ec3d57a2#loio4c4cd99af9b14e08bb72470cc7cabff4 Creating
 	 * Entities documentation} for comprehensive information on the topic.
 	 *
-	 * Please note that deep creates are not supported and may not work.
+	 * <b>Note:</b> This function does not support a "deep create" scenario. Use
+	 * {@link #createEntry} or {@link sap.ui.model.odata.v2.ODataListBinding#create} instead.
 	 *
 	 * @param {string} sPath A string containing the path to the collection where an entry
 	 *		should be created. The path is concatenated to the service URL
