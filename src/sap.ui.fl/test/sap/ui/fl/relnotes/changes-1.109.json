@@ -1,0 +1,12 @@
+{
+  "1.109.0": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "8662fb5a126f75f312f98fcb68b2797351509f7a",
+        "type": "FIX",
+        "text": " sap.ui.rta - update context based adaptation route"
+      }
+    ]
+  }
+}

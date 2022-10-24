@@ -1,0 +1,178 @@
+{
+  "1.109.0": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "89ed2a1db6bfec43bf4deb88d00fad4a9b65d9fb",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: reset the focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280105903"
+          }
+        ]
+      },
+      {
+        "id": "bdab696b401f59dd68d5d4be062777a09e47dda1",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: stop invalidating when click \"Show More\" button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270139990"
+          }
+        ]
+      },
+      {
+        "id": "044175976f0b5011ef1fd551bc6465bcbe1d963d",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Semantic colors are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270154147"
+          }
+        ]
+      },
+      {
+        "id": "ce357dafbf92f190d038b06f53e5ac0eae7da440",
+        "type": "FEATURE",
+        "text": "sap.m.AdditionalTextButton: new control (initial implementation)"
+      },
+      {
+        "id": "6595415f2ef27d7e842369f2e42c33d7ac92e6d6",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Missing initials fixed"
+      },
+      {
+        "id": "f7034d6d8b4ab1c7127b563daa5ee414ccc653f8",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: primaryCalendarType property introduced"
+      },
+      {
+        "id": "b5ec31ab70bdeec864e86ac526827d2ac9a4cdcc",
+        "type": "FIX",
+        "text": " sap.f.SemanticButton: Double reading fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180405499"
+          }
+        ]
+      },
+      {
+        "id": "5c29816e29a1ad54ada402f6d6be8ed67e8aa347",
+        "type": "FIX",
+        "text": " sap.m.Label: Required label asterisk symbol is no longer cut off",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270118944"
+          }
+        ]
+      },
+      {
+        "id": "378c924c2b89a39a101874637395bce205c252f9",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Avatar initials fixed"
+      },
+      {
+        "id": "56f08bffdfb95652a2a542637da16c3d19c9b93b",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Fixed vertical responsiveness",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270144551"
+          }
+        ]
+      },
+      {
+        "id": "aba35aec67813f5690accd615f71413e07f9805e",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: adjust mask initialization",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270142822"
+          }
+        ]
+      },
+      {
+        "id": "292a5d8f07ebbc577c560ad054f00b7ec3dd4254",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker: Removed existing tooltips"
+      },
+      {
+        "id": "5d91ddd17a552101d42d360c325af215e4aab277",
+        "type": "FIX",
+        "text": " sap.m.Dialog: ARIA announcements for draggable/resizable dialog behavior improved"
+      },
+      {
+        "id": "17b57b510b10317281dac94ab1af7965595935ea",
+        "type": "FEATURE",
+        "text": " sap.m.IllustratedMessage: Dot size breakpoint introduced"
+      },
+      {
+        "id": "e3f9181804cefa564b860725134704c7bb55dd76",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: Improve keyboard navigation"
+      },
+      {
+        "id": "f33f3e33bd266bea280af54a8a894aafb44c110b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fixed Demokit sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270123401"
+          }
+        ]
+      },
+      {
+        "id": "874eb80e36f99137540fb2fc31cc060dcd9aa842",
+        "type": "FEATURE",
+        "text": " For GenericTile, sub headers can now be added in the IconMode tile for OneByOne frametype"
+      },
+      {
+        "id": "b9ea05171ca4752fe52923aa5079113455bad3f1",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: fixed getSelectedFilterString() output",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270135361"
+          }
+        ]
+      },
+      {
+        "id": "e87f814435b1e16178467bd55e4ff91ebc1c3081",
+        "type": "FIX",
+        "text": "sap.m.Bar: reverted back to a locale configuration reference",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "d468c5ff4a2fa0aeb862c576b0a2b69f09224088",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: getSelectedFilterString method returns proper text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280129747"
+          }
+        ]
+      },
+      {
+        "id": "7a331fa4e2afb2281c61675751f8bd8118bae180",
+        "type": "FIX",
+        "text": " sap.m.SinglePlannigCalendar: Drop rendering now works correct"
+      }
+    ]
+  }
+}

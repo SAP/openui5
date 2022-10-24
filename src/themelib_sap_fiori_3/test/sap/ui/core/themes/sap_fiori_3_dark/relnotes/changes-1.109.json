@@ -1,0 +1,18 @@
+{
+  "1.109.0": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "f51928b77ecf5c033213e00be633f619a154fa69",
+        "type": "FIX",
+        "text": " \"72\" Font: redirect C with Caron and R with Caron to \"72-full\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280091635"
+          }
+        ]
+      }
+    ]
+  }
+}
