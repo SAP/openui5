@@ -64,6 +64,9 @@ sap.ui.define([
 				group: "Form"
 			},
 
+			/**
+			 * @deprecated Since version 1.67.0
+			 */
 			"GridLayout": {
 				group: "Form"
 			},
@@ -72,6 +75,9 @@ sap.ui.define([
 				group: "Form"
 			},
 
+			/**
+			 * @deprecated As of version 1.93
+			 */
 			"ResponsiveLayout": {
 				group: "Form"
 			},

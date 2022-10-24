@@ -1928,7 +1928,7 @@ sap.ui.define([
 	 */
 	PlanningCalendar.prototype._shiftStartDate = function(oStartDate){
 		if (this.getViewKey() === PlanningCalendarBuiltInView.Week) {
-			/* Calculates the first week's datei for the given oStartDate. Have in mind that the oStartDate is the date that
+			/* Calculates the first week's date for the given oStartDate. Have in mind that the oStartDate is the date that
 			 * the user sees in the UI, thus - local one. As CalendarUtils.getFirstDateOfWeek works with UTC dates (this
 			 * is because the dates are timezone irrelevant), it should be called with the local datetime values presented
 			 * as UTC ones(e.g. if oStartDate is 21 Dec 1981, 13:00 GMT+02:00, it will be converted to 21 Dec 1981, 13:00 GMT+00:00)
@@ -3626,8 +3626,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Detaches the attached functions from the PlanningCalendarRowTimeline instance that corresponts to the row and
-	 * destorys the corresponding PlanningCalendarRowListItem.
+	 * Detaches the attached functions from the PlanningCalendarRowTimeline instance that corresponds to the row and
+	 * destroys the corresponding PlanningCalendarRowListItem.
 	 *
 	 * @param oRow
 	 * @private
@@ -3790,7 +3790,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Represents timeline that holds the appointments and intervals indide the PlanningCalendarRowListItem
+	 * Represents timeline that holds the appointments and intervals inside the PlanningCalendarRowListItem
 	 */
 	var PlanningCalendarRowTimeline = CalendarRow.extend("sap.m._PlanningCalendarRowTimeline", {
 		metadata: {
