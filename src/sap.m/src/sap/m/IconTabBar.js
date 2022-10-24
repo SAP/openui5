@@ -392,7 +392,7 @@ sap.ui.define([
 	 * Sets the tab density mode.
 	 *
 	 * @public
-	 * @param {sap.m.IconTabHeaderMode} mode New parameter value.
+	 * @param {sap.m.IconTabDensityMode} mode New parameter value.
 	 * @return {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setTabDensityMode = function (mode) {
