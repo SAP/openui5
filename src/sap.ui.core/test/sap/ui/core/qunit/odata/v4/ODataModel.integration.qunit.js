@@ -38912,8 +38912,12 @@ sap.ui.define([
 	//
 	// See that the list refresh does not include late properties.
 	// JIRA: CPOUI5ODATAV4-544
+	//
+	// In the end, request side effects for an empty list to see that kept-alive entities are still
+	// requested.
 	QUnit.test("CPOUI5ODATAV4-488: Refresh w/ kept-alive context", function (assert) {
 		var oKeptContext,
+			oKeptContext2,
 			oListBinding,
 			fnOnBeforeDestroy = sinon.spy(),
 			oTable,
@@ -38924,8 +38928,9 @@ sap.ui.define([
 			oTable = that.oView.byId("listReport");
 			oListBinding = oKeptContext.getBinding();
 
-			// 2nd kept-alive ontext (CPOUI5ODATAV4-579)
-			oTable.getItems()[0].getBindingContext().setKeepAlive(true);
+			// 2nd kept-alive context (CPOUI5ODATAV4-579)
+			oKeptContext2 = oTable.getItems()[0].getBindingContext();
+			oKeptContext2.setKeepAlive(true);
 			that.expectRequest({
 					batchNo : 4,
 					url : "SalesOrderList"
@@ -38991,7 +38996,7 @@ sap.ui.define([
 						GrossAmount : "149.2",
 						Note : "Note 2",
 						SalesOrderID : "2"
-					}]
+					}] // Note: SalesOrderID : "3" is missing here!
 				})
 				.expectChange("objectPageGrossAmount", "50.20")
 				.expectChange("objectPageNote", "After refresh 2")
@@ -39051,8 +39056,6 @@ sap.ui.define([
 				that.waitForChanges(assert, "Step 3: request side effects with kept contexts")
 			]);
 		}).then(function () {
-			sinon.assert.called(fnOnBeforeDestroy);
-
 			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '2' or SalesOrderID eq '4'"
 					+ "&$select=GrossAmount,SalesOrderID&$top=2", {
 					value : [{
@@ -39076,6 +39079,32 @@ sap.ui.define([
 				that.waitForChanges(assert,
 					"Step 4: request side effects with kept contexts not yet destroyed")
 			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$count=true&$filter=GrossAmount lt 0"
+				+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2", {
+					"@odata.count" : 0,
+					value : []
+				});
+
+			oListBinding.filter(new Filter("GrossAmount", FilterOperator.LT, 0));
+
+			return that.waitForChanges(assert, "filter to make list empty");
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '2'"
+					+ "&$select=GrossAmount,SalesOrderID", {
+					value : [{
+						GrossAmount : "149.5",
+						SalesOrderID : "2"
+					}]
+				});
+
+			return Promise.all([
+				// code under test
+				oListBinding.getHeaderContext().requestSideEffects(["GrossAmount"]),
+				that.waitForChanges(assert, "request side effects for kept contexts only")
+			]);
+		}).then(function () {
+			assert.strictEqual(oKeptContext2.getProperty("GrossAmount"), "149.5");
 		});
 	});
 
@@ -44236,7 +44265,7 @@ sap.ui.define([
 			oListBinding = oModel.bindList("/Artists", null, [],
 				[new Filter("sendsAutographs", FilterOperator.EQ, true)]);
 
-			that.expectRequest("Artists?$filter=sendsAutographs%20eq%20true&$skip=0&$top=100", {
+			that.expectRequest("Artists?$filter=sendsAutographs eq true&$skip=0&$top=100", {
 					value : []
 				});
 

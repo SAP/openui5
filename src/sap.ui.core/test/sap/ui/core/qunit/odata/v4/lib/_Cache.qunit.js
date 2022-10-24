@@ -9178,6 +9178,14 @@ sap.ui.define([
 		iStart : 4,
 		bTransientElement : true,
 		aValues : []
+	}, { // no visible rows, but kept-alive entities
+		sExpectedKeys : "", // aElements remains empty
+		iExpectedLength : 0,
+		sFilter : "key eq 'a6' or key eq 'a7'",
+		aKeptAliveKeys : ["g", "h"],
+		iLength : 0,
+		iStart : 24,
+		aValues : [{key : "g"}, {key : "h"}]
 	}, { // only transient created element is visible: no GET
 		sExpectedKeys : "@",
 		iExpectedLength : 1,
