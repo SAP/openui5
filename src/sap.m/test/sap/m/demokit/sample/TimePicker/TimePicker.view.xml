@@ -59,13 +59,18 @@
 
 		<Label
 			class="sapUiSmallMarginTop"
-			text="{/timePickers/TP3/format}, dateValue: {/timePickers/TP3/dateValue}" />
+			text="hh:mm a,
+				value: {/timePickers/TP3/value}" />
 		<TimePicker
 				id="TP3"
-				valueFormat="{/timePickers/TP3/format}"
-				displayFormat="{/timePickers/TP3/format}"
 				change="handleChange"
-				dateValue="{/timePickers/TP3/dateValue}"
+				value="{
+					'path':'/timePickers/TP3/value',
+					'type': 'sap.ui.model.type.Time',
+					'formatOptions': {
+							'pattern': 'hh:mm a'
+					}
+				}"
 				maskMode="{= ${/maskMode/state} ? 'On' : 'Off'}"
 				placeholder="{/timePickers/TP3/placeholder}" />
 

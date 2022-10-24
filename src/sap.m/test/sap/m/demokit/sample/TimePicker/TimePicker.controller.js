@@ -29,8 +29,7 @@ sap.ui.define(['sap/m/library',
 							"placeholder" :"Enter meeting end time"
 						},
 						"TP3": {
-							"format": "hh:mm a",
-							"dateValue": new Date(),
+							"value": new Date(),
 							"placeholder" :"Enter daily task deadline"
 						},
 						"TP4": {

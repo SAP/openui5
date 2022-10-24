@@ -26,12 +26,6 @@
 			value="2014-03-26" valueFormat="yyyy-MM-dd" displayFormat="long"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
-		<Label text="DatePicker with given DateValue and Formatter" labelFor="DP3"/>
-		<DatePicker
-			id="DP3"
-			displayFormat="short"
-			change="handleChange"
-			class="sapUiSmallMarginBottom"/>
 		<Label text="DatePicker with islamic date and secondray gregorian date in calendar" labelFor="DP5"/>
 		<DatePicker
 			id="DP5"
@@ -45,9 +39,15 @@
 		<Label text="DatePicker with minDate=2016-01-01 and maxDate=2016-12-31" labelFor="DP6"/>
 		<DatePicker
 			id="DP6"
-			displayFormat="short"
 			change="handleChange"
-			class="sapUiSmallMarginBottom"/>
+			class="sapUiSmallMarginBottom"
+			value= "{
+				'type': 'sap.ui.model.type.Date',
+				'path': '/valueDP6',
+				'formatOptions': {
+					'pattern': 'dd/MM/y'
+				}
+			}"/>
 		<Label text="DatePicker with calendarWeekNumbering set to MiddleEastern" labelFor="DP17"/>
 		<DatePicker
 			id="DP17"
@@ -86,9 +86,24 @@
 		<Label text="DatePicker using DataBinding" labelFor="DP4"/>
 		<DatePicker
 			id="DP4"
-			value="{path:'/dateValue', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true}}"
+			value="{
+				path:'/value',
+				type:'sap.ui.model.type.Date',
+				formatOptions: {
+					style: 'medium',
+					strictParsing: true
+				}
+			}"
 			class="sapUiSmallMarginBottom"/>
-		<Text text="{path:'/dateValue', type:'sap.ui.model.type.Date', formatOptions: { style: 'long'}}" class="sapUiSmallMargin"/>
+		<Text 
+			text="{
+				path:'/value',
+				type:'sap.ui.model.type.Date',
+				formatOptions: {
+					style: 'long'
+				}
+			}" 
+			class="sapUiSmallMargin"/>
 	</Panel>
 	<Panel headerText="DatePicker showing usage of isValidValue function.">
 		<Label text="DatePicker with minDate=2016-01-01 and maxDate=2019-12-31" labelFor="DP9"/>
