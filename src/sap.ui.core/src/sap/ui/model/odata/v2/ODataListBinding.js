@@ -1892,7 +1892,7 @@ sap.ui.define([
 	 *   relative to the created contexts within this list. Note: the order of created contexts in
 	 *   the binding does not necessarily correspond to the order of the resulting back end creation
 	 *   requests.
-	 * @param {object} mParameters
+	 * @param {object} [mParameters]
 	 *   A map of parameters as specified for {@link sap.ui.model.odata.v2.ODataModel#createEntry},
 	 *   where only the subset given below is supported. In case of deep create, <b>none</b> of the
 	 *   parameters in <code>mParameters</code> must be set.
