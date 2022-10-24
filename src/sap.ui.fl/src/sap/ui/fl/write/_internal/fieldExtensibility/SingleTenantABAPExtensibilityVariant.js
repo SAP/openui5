@@ -28,7 +28,7 @@ sap.ui.define([
 		action: "manage"
 	}, {
 		semanticObject: "CustomLogic",
-		action: "maintain"
+		action: "develop"
 	}];
 	var aTextKeys = [
 		"BTN_FREP_CCF",
