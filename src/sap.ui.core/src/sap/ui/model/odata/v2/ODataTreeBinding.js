@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/deepExtend",
 	"sap/base/util/each",
-	"sap/base/util/includes",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
@@ -22,7 +21,7 @@ sap.ui.define([
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/OperationMode"
-], function(assert, Log, deepExtend, each, includes, isEmptyObject, ChangeReason, Context, Filter,
+], function(assert, Log, deepExtend, each, isEmptyObject, ChangeReason, Context, Filter,
 		FilterProcessor, FilterType, Sorter, SorterProcessor, TreeBinding, TreeBindingUtils,
 		CountMode, ODataUtils, OperationMode) {
 	"use strict";
@@ -1555,7 +1554,7 @@ sap.ui.define([
 
 		for (sNodeKey in this.oKeys) {
 			for (sChangedEntityKey in mChangedEntities) {
-				if (includes(this.oKeys[sNodeKey], sChangedEntityKey)) {
+				if (this.oKeys[sNodeKey].includes(sChangedEntityKey)) {
 					return true;
 				}
 			}

@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/m/Label",
-	"sap/m/Input",
-	"sap/base/util/includes"
+	"sap/m/Input"
 ],
 function(
 	Title,
@@ -22,8 +21,7 @@ function(
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Label,
-	Input,
-	includes
+	Input
 ) {
 	'use strict';
 
@@ -324,7 +322,7 @@ function(
 		.then(function() {
 			return AddFieldChangeHandler.applyChange(oChange, this.oSimpleForm, oPropertyBag)
 			.catch(function(oReturn) {
-				assert.ok(includes(oReturn.message, "Control to be created already exists"),
+				assert.ok(oReturn.message.includes("Control to be created already exists"),
 				"the second change to add the same field throws a not applicable info message");
 			});
 		}.bind(this));

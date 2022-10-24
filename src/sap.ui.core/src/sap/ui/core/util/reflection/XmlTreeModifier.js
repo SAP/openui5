@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/core/mvc/EventHandlerResolver",
-	"sap/base/util/includes",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
 	"sap/ui/core/Fragment"
@@ -22,7 +21,6 @@ sap.ui.define([
 	merge,
 	XMLHelper,
 	EventHandlerResolver,
-	includes,
 	ObjectPath,
 	isPlainObject,
 	Fragment
@@ -833,7 +831,7 @@ sap.ui.define([
 
 					sEventHandler += "(" + aParams.join(",") + ")";
 
-					if (!includes(aEventHandlers, sEventHandler)) {
+					if (!aEventHandlers.includes(sEventHandler)) {
 						aEventHandlers.push(sEventHandler);
 					}
 
