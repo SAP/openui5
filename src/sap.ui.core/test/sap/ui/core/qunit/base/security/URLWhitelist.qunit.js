@@ -28,13 +28,16 @@ sap.ui.define(["sap/base/security/URLWhitelist"], function(URLWhitelist) {
 		assert.notOk(URLWhitelist.validate({}), "object is not a valid URL");
 	});
 
-	QUnit.test("Invalid protocol slashes", function(assert) {
+	QUnit.test("Unusual number of slashes in front of host", function(assert) {
 		URLWhitelist.add("http", "sap.com");
+		assert.notOk(URLWhitelist.validate("http:evil.com"), "URL is not valid");
+		assert.notOk(URLWhitelist.validate("http:/evil.com"), "URL is not valid");
+		assert.notOk(URLWhitelist.validate("http:\\evil.com"), "URL is not valid");
 		assert.notOk(URLWhitelist.validate("http:/\\evil.com"), "URL is not valid");
 		assert.notOk(URLWhitelist.validate("http:/\\/evil.com"), "URL is not valid");
 		assert.notOk(URLWhitelist.validate("http:/\\//evil.com"), "URL is not valid");
+		assert.notOk(URLWhitelist.validate("http:///evil.com"), "URL is not valid");
 		assert.notOk(URLWhitelist.validate("http:\\\\evil.com"), "URL is not valid");
-		assert.notOk(URLWhitelist.validate("http:/evil.com"), "URL is not valid");
 	});
 
 	QUnit.test("Whitespaces in URL with allow-list", function(assert) {
