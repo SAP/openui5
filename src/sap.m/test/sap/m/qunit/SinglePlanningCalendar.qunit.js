@@ -644,9 +644,8 @@ sap.ui.define([
 			fnFireHeaderDateSelect = this.spy(oSPC, "fireHeaderDateSelect");
 
 		//act
-		oCore.applyChanges();
-		qutils.triggerEvent("mousedown", oSPCHeaders.getId() + "-20210204");
-		qutils.triggerEvent("mouseup", oSPCHeaders.getId() + "-20210204");
+		oSPCHeaders.setDate(oHeaderDateToSelect);
+		oSPCHeaders.fireSelect();
 
 		//assert
 		assert.ok(fnFireHeaderDateSelect.calledOnce, "Event was fired");
