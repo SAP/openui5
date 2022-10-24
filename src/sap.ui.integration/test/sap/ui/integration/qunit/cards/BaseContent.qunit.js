@@ -130,6 +130,32 @@ sap.ui.define([
 		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "10rem", "Min height in compact must be 10rem");
 	});
 
+	QUnit.test("List card - min height defined by minItems", function (assert) {
+		//Arrange
+		var sType = "List",
+			oConfiguration = {
+				minItems: 1,
+				maxItems: 8,
+				item: {}
+			};
+
+		//Assert
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "2rem", "Min height is correct");
+	});
+
+	QUnit.test("List card - minItems is 0", function (assert) {
+		//Arrange
+		var sType = "List",
+			oConfiguration = {
+				minItems: 0,
+				maxItems: 8,
+				item: {}
+			};
+
+		//Assert
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "0rem", "Min height is correct");
+	});
+
 	QUnit.test("Table card - min height in compact mode", function (assert) {
 		//Arrange
 		var sType = "Table",
@@ -142,6 +168,32 @@ sap.ui.define([
 		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "16rem", "Min height in compact must be 16rem");
 	});
 
+	QUnit.test("Table card - min height defined by minItems", function (assert) {
+		//Arrange
+		var sType = "Table",
+			oConfiguration = {
+				minItems: 1,
+				maxItems: 7,
+				item: {}
+			};
+
+		//Assert
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "4rem", "Min height is correct");
+	});
+
+	QUnit.test("Table card - minItems is 0", function (assert) {
+		//Arrange
+		var sType = "Table",
+			oConfiguration = {
+				minItems: 0,
+				maxItems: 7,
+				item: {}
+			};
+
+		//Assert
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "2rem", "Min height is correct");
+	});
+
 	QUnit.test("TimeLine card - min height in compact mode", function (assert) {
 		//Arrange
 		var sType = "Timeline",
@@ -152,6 +204,32 @@ sap.ui.define([
 
 		//Assert
 		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "39.375rem", "Min height is correct");
+	});
+
+	QUnit.test("TimeLine card - min height defined by minItems", function (assert) {
+		//Arrange
+		var sType = "Timeline",
+			oConfiguration = {
+				minItems: 1,
+				maxItems: 7,
+				item: {}
+			};
+
+		//Assert
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "5.625rem", "Min height is correct");
+	});
+
+	QUnit.test("TimeLine card - minItems is 0", function (assert) {
+		//Arrange
+		var sType = "Timeline",
+			oConfiguration = {
+				minItems: 0,
+				maxItems: 7,
+				item: {}
+			};
+
+		//Assert
+		assert.strictEqual(this.getMinHeight(sType, oConfiguration, this.oFakeContent), "0rem", "Min height is correct");
 	});
 
 	QUnit.module("Cozy min height", {

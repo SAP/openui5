@@ -212,5 +212,44 @@
 				}
 			}
 		}
+	},
+	"tablecard6": {
+		"sap.app": {
+			"id": "tablecard6",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Table",
+			"header": {
+				"title": "Table with minItems set"
+			},
+			"content": {
+				"minItems": 3,
+				"maxItems": 10,
+				"data": {
+					"request": {
+						"url": "./cardcontent/tableitems.json"
+					},
+					"path": "/tableCard3"
+				},
+				"row": {
+					"columns": [
+						{
+							"title": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+						{
+							"title": "Customer",
+							"value": "{name}"
+						},
+						{
+							"title": "Net Amount",
+							"value": "{netAmount}"
+						}
+					]
+				}
+			}
+		}
 	}
 }

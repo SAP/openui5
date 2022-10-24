@@ -1196,6 +1196,55 @@
 					}
 				}
 			}
+		},
+		"card2": {
+			"sap.app": {
+				"id": "cardsdemo.timelineContent.card2",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Timeline",
+				"header": {
+					"title": "Timeline Card with minItems",
+					"subTitle": "For Today"
+				},
+				"content": {
+					"minItems": 1,
+					"maxItems": 8,
+					"data": {
+						"request": {
+							"url": "./cardcontent/employees.json"
+						},
+						"path": "/Activities"
+					},
+					"item": {
+						"dateTime": {
+							"label": "{{time_label}}",
+							"value": "{Time}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Title}"
+						},
+						"icon": {
+							"src": "{Icon}"
+						},
+						"actions": [
+							{
+								"type": "Navigation",
+								"enabled": "{= ${url}}",
+								"parameters": {
+									"url": "{url}"
+								}
+							}
+						]
+					}
+				}
+			}
 		}
 	},
 	"adaptiveCard": {

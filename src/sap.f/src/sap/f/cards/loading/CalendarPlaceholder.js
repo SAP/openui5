@@ -28,9 +28,8 @@ sap.ui.define([
 		metadata: {
 			library: "sap.f",
 			properties: {
-
 				/**
-				 * The maxLegendItems set to the list.
+				 * The maxLegendItems set to the legend items.
 				 */
 				maxLegendItems: {
 					type : "int",
@@ -47,7 +46,7 @@ sap.ui.define([
 		},
 		renderer: {
 			render: function (oRm, oControl) {
-				var iMaxItems = oControl.getMaxItems(),
+				var iMinItems = oControl.getMinItems(),
 					iMaxLegendItems = oControl.getMaxLegendItems(),
 					oItem = oControl.getItem(),
 					oLegendItem = oControl.getLegendItem(),
@@ -136,7 +135,7 @@ sap.ui.define([
 
 					oRm.openEnd();
 
-					for (i = 0; i < iMaxItems; i++) {
+					for (i = 0; i < iMinItems; i++) {
 						oRm.openStart("div")
 							.class("sapFCardListPlaceholderItem")
 							.style("height", oControl.getItemHeight())

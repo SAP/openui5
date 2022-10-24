@@ -30,9 +30,9 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * The maximum number of items (table rows) set to the table
+				 * The minimum number of items (table rows) set to the table
 				 */
-				maxItems: {
+				minItems: {
 					type : "int",
 					group : "Misc"
 				},
@@ -50,7 +50,7 @@ sap.ui.define([
 		renderer: {
 			apiVersion: 2,
 			render: function (oRm, oControl) {
-				var iMaxItems = oControl.getMaxItems(),
+				var iMinItems = oControl.getMinItems(),
 					iColumns = oControl.getColumns(),
 					bHasActualContent = oControl.getParent()._getTable().getColumns().length,
 					// set title for screen reader
@@ -75,7 +75,7 @@ sap.ui.define([
 
 				oRm.openEnd();
 
-				for (var i = 0; i < iMaxItems + 1; i++) { // number of rows + header
+				for (var i = 0; i < iMinItems + 1; i++) { // number of rows + header
 					oRm.openStart("div")
 						.class("sapFCardTablePlaceholderItem")
 						.style("height", oControl.getItemHeight())

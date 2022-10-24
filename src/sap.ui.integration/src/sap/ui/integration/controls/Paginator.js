@@ -183,37 +183,47 @@ sap.ui.define([
 	Paginator.prototype.sliceData = function() {
 		var oCard = this.getCard(),
 			oContent,
+			oCardLoadingProvider,
+			oContentLoadingProvider,
+			oContentLoadingPlaceholder,
 			iStartIndex,
-			bIsPageChanged;
+			bIsPageChanged,
+			bIsServerSide;
 
 		if (!oCard) {
 			return;
 		}
 
 		oContent = oCard.getCardContent();
+		oCardLoadingProvider = oCard.getAggregation("_loadingProvider");
+		oContentLoadingProvider = oContent.getAggregation("_loadingProvider");
+		oContentLoadingPlaceholder = oContent.getAggregation("_loadingPlaceholder");
 		iStartIndex = this.getPageNumber() * this.getPageSize();
 		bIsPageChanged =  this._iPreviousStartIndex !== undefined && this._iPreviousStartIndex !== iStartIndex;
+		bIsServerSide = this.isServerSide();
 
 		if (bIsPageChanged) {
 			this._prepareAnimation(iStartIndex);
 		}
 
-		if (this.isServerSide()) {
-			if (bIsPageChanged) {
-				// changing the model is triggering data update
-				// so there is no need to call "refreshData" method
-				this.getModel("paginator").setData({
-					skip: iStartIndex,
-					size: this.getPageSize(),
-					pageIndex: this.getPageNumber()
-				});
-
-				if (this._hasAnimation()) {
-					oContent.getAggregation("_loadingProvider")._bAwaitPagination = true;
-					oCard.getAggregation("_loadingProvider")._bAwaitPagination = true;
-				}
+		if (bIsServerSide && bIsPageChanged) {
+			if (oContentLoadingPlaceholder) {
+				oContentLoadingPlaceholder.setMinItems(this.getPageSize());
 			}
-		} else if (oContent.isA("sap.ui.integration.cards.BaseContent")) {
+
+			// changing the model is triggering data update
+			// so there is no need to call "refreshData" method
+			this.getModel("paginator").setData({
+				skip: iStartIndex,
+				size: this.getPageSize(),
+				pageIndex: this.getPageNumber()
+			});
+
+			if (this._hasAnimation()) {
+				oContentLoadingProvider.setAwaitPagination(true);
+				oCardLoadingProvider.setAwaitPagination(true);
+			}
+		} else if (!bIsServerSide && oContent.isA("sap.ui.integration.cards.BaseContent")) {
 			oContent.sliceData(iStartIndex, iStartIndex + this.getPageSize());
 		}
 
@@ -277,9 +287,9 @@ sap.ui.define([
 		oCardLoadingProvider = oCard.getAggregation("_loadingProvider");
 		oContentLoadingProvider = oContent.getAggregation("_loadingProvider");
 
-		if (oContentLoadingProvider._bAwaitPagination) {
-			oContentLoadingProvider._bAwaitPagination = false;
-			oCardLoadingProvider._bAwaitPagination = false;
+		if (oContentLoadingProvider.getAwaitPagination()) {
+			oContentLoadingProvider.setAwaitPagination(false);
+			oCardLoadingProvider.setAwaitPagination(false);
 		} else {
 			if (oContentDomRefCloned) {
 				oContentDomRefCloned.parentNode.removeChild(oContentDomRefCloned);

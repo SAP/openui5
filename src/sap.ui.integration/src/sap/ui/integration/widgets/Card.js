@@ -2627,32 +2627,46 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.getContentPageSize = function (oContentConfig) {
-		var iMaxItems = 0,
-			oFooter = this.getAggregation("_footer"),
-			oPaginator;
+		var vMaxItems,
+			iMaxItems,
+			oFooter = this.getCardFooter();
 
-		if (oContentConfig.maxItems !== undefined) {
-			if (typeof oContentConfig.maxItems === "number") {
-				iMaxItems = oContentConfig.maxItems;
-			} else {
-				iMaxItems = parseInt(BindingResolver.resolveValue(oContentConfig, this).maxItems) || 0;
-			}
+		if (oFooter && oFooter.getPaginator()) {
+			return oFooter.getPaginator().getPageSize();
 		}
 
-		if (!oFooter) {
-			return iMaxItems;
+		vMaxItems = BindingResolver.resolveValue(oContentConfig.maxItems, this);
+		if (vMaxItems == null) {
+			return null;
 		}
 
-		oPaginator = oFooter.getAggregation("paginator");
-		if (!oPaginator) {
-			return iMaxItems;
-		}
-
-		if (oPaginator.getPageSize()) {
-			return oPaginator.getPageSize();
+		iMaxItems = parseInt(vMaxItems);
+		if (isNaN(iMaxItems)) {
+			Log.error("Value for maxItems must be integer.");
+			return null;
 		}
 
 		return iMaxItems;
+	};
+
+	/**
+	 * @private
+	 */
+	 Card.prototype.getContentMinItems = function (oContentConfig) {
+		var vMinItems = BindingResolver.resolveValue(oContentConfig.minItems, this),
+			iMinItems;
+
+		if (vMinItems == null) {
+			return this.getContentPageSize(oContentConfig);
+		}
+
+		iMinItems = parseInt(vMinItems);
+		if (isNaN(iMinItems)) {
+			Log.error("Value for minItems must be integer.");
+			return null;
+		}
+
+		return iMinItems;
 	};
 
 	Card.prototype.hasPaginator = function () {

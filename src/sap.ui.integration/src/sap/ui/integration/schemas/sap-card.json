@@ -730,6 +730,17 @@
             }
           ]
         },
+        "minItems": {
+          "description": "Represents the minimum expected number of items",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
         "group": {
           "$ref": "#/definitions/group"
         }
@@ -1222,6 +1233,17 @@
         },
         "maxItems": {
           "description": "Represents number of items",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "minItems": {
+          "description": "Represents the minimum expected number of items",
           "oneOf": [
             {
               "type": "number"
@@ -1793,6 +1815,17 @@
         },
         "maxItems": {
           "description": "Represents number of items",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "minItems": {
+          "description": "Represents the minimum expected number of items",
           "oneOf": [
             {
               "type": "number"

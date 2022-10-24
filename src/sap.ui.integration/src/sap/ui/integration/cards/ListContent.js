@@ -142,6 +142,7 @@ sap.ui.define([
 	 * @override
 	 */
 	ListContent.prototype.onAfterRendering = function () {
+		BaseListContent.prototype.onAfterRendering.apply(this, arguments);
 		this._resizeMicrocharts();
 	};
 

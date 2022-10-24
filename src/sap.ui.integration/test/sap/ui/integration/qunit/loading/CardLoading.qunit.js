@@ -1437,10 +1437,10 @@ sap.ui.define([
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		}
 
-		function isLoadingPlaceholderCorrectType(oLoadingProvider, oConfiguration, sType, sPlaceholderType, sMessage, assert) {
+		function isLoadingPlaceholderCorrectType(oLoadingProvider, oConfiguration, sType, oCard, sPlaceholderType, sMessage, assert) {
 
 			// Arrange
-			var oPlaceholder = oLoadingProvider.createContentPlaceholder(oConfiguration, sType);
+			var oPlaceholder = oLoadingProvider.createContentPlaceholder(oConfiguration, sType, oCard);
 
 			//Act
 			assert.ok(oPlaceholder.getMetadata().getName().indexOf(sPlaceholderType) > -1, sMessage);
@@ -1735,41 +1735,41 @@ sap.ui.define([
 
 		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
 			var oConfiguration = {
-					"maxItems": 2
+					"minItems": 2
 				},
 				sType = "List";
 
-			isLoadingPlaceholderCorrectType(this.oLoadingProvider, oConfiguration, sType, "List", "Loading placeholder is of type ListPlaceholder", assert);
+			isLoadingPlaceholderCorrectType(this.oLoadingProvider, oConfiguration, sType, this.oCard, "List", "Loading placeholder is of type ListPlaceholder", assert);
 		});
 
 		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
 			var oConfiguration = {
-					"maxItems": 2
+					"minItems": 2
 				},
 				sType = "Calendar";
 
-			isLoadingPlaceholderCorrectType(this.oLoadingProvider, oConfiguration, sType, "Calendar", "Loading placeholder is of type CalendarPlaceholder", assert);
+			isLoadingPlaceholderCorrectType(this.oLoadingProvider, oConfiguration, sType, this.oCard, "Calendar", "Loading placeholder is of type CalendarPlaceholder", assert);
 		});
 
 		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
 			var oConfiguration = {
-					"maxItems": 2
+					"minItems": 2
 				},
 				sType = "Table";
 
-			isLoadingPlaceholderCorrectType(this.oLoadingProvider, oConfiguration, sType, "Table", "Loading placeholder is of type TablePlaceholder", assert);
+			isLoadingPlaceholderCorrectType(this.oLoadingProvider, oConfiguration, sType, this.oCard, "Table", "Loading placeholder is of type TablePlaceholder", assert);
 		});
 
 		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
 			var sType = "Object";
 
-			isLoadingPlaceholderCorrectType(this.oLoadingProvider, {}, sType, "Object", "Loading placeholder is of type ObjectPlaceholder", assert);
+			isLoadingPlaceholderCorrectType(this.oLoadingProvider, {}, sType, this.oCard, "Object", "Loading placeholder is of type ObjectPlaceholder", assert);
 		});
 
 		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
 			var sType = "Analytical";
 
-			isLoadingPlaceholderCorrectType(this.oLoadingProvider, {}, sType, "Analytical", "Loading placeholder is of type GenericPlaceholder", assert);
+			isLoadingPlaceholderCorrectType(this.oLoadingProvider, {}, sType, this.oCard, "Analytical", "Loading placeholder is of type GenericPlaceholder", assert);
 		});
 
 		QUnit.module("Card Loading Placeholder API", {
