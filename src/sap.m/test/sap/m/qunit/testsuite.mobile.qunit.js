@@ -850,6 +850,9 @@ sap.ui.define([
 			OverflowToolbarButton: {
 				title: "Test Page for sap.m.OverflowToolbarButton"
 			},
+			/**
+			 * @deprecated as of version 1.98
+			 */
 			P13nColumnsPanel: {
 				title: "Test Page for sap.m.P13nColumnsPanel",
 				sinon: {
@@ -1023,6 +1026,9 @@ sap.ui.define([
 					}
 				}
 			},
+			/**
+			 * @deprecated as of version 1.98
+			 */
 			P13nDialog: {
 				title: "Test Page for sap.m.P13nDialog",
 				loader: {
@@ -1046,6 +1052,9 @@ sap.ui.define([
 					libs: ["sap.m", "sap.ui.layout", "sap.ui.unified"] // to compensate 2 sync loadLibrary
 				}
 			},
+			/**
+			 * @deprecated as of version 1.98
+			 */
 			P13nGroupPanel: {
 				title: "Test Page for sap.m.P13nGroupPanel",
 				ui5: {
@@ -1058,6 +1067,9 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			/**
+			 * @deprecated as of version 1.98
+			 */
 			P13nSortPanel: {
 				title: "Test Page for sap.m.P13nSortPanel",
 				ui5: {
@@ -1602,12 +1614,18 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			/**
+			 * @deprecated as of version 1.50
+			 */
 			Tile: {
 				title: "QUnit Tests - sap.m.Tile",
 				ui5: {
 					language: "en-US"
 				}
 			},
+			/**
+			 * @deprecated as of version 1.50
+			 */
 			TileContainer: {
 				title: "TileContainer - sap.m"
 			},
@@ -1699,6 +1717,9 @@ sap.ui.define([
 					only: "sap/ui/core/util"
 				}
 			},
+			/**
+			 * @deprecated as of version 1.88
+			 */
 			UploadCollection: {
 				title: "Test Page for sap.m.UploadCollection",
 				coverage: {
@@ -2246,6 +2267,9 @@ sap.ui.define([
 			"routing/common/TargetHandler": {
 				title: "QUnit Page for sap.m.routing.TargetHandler"
 			},
+			/**
+			 * @deprecated Since 1.90 together with sync routing
+			 */
 			"routing/sync/RouteMatchedHandler": {
 				title: "QUnit Page for RouteMatchedHandler",
 				sinon: {
@@ -2253,9 +2277,15 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			/**
+			 * @deprecated Since 1.90 together with sync routing
+			 */
 			"routing/sync/Router": {
 				title: "QUnit Page for sap.m.routing.Router"
 			},
+			/**
+			 * @deprecated Since 1.90 together with sync routing
+			 */
 			"routing/sync/Targets": {
 				title: "QUnit Page for sap.m.routing.Targets"
 			},
