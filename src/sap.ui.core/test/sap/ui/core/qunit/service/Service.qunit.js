@@ -718,28 +718,27 @@ sap.ui.define([
 
 		// setup - local component to be able to place the spy
 		var oSpy = this.spy(Component.prototype, "getService");
-		var oComponent = sap.ui.component({
-			manifestUrl : "/anylocation/manifest.json"
-		});
 
-		return oSpy.returnValues[0].then(function() {
-			//assert
-			sinon.assert.calledOnce(oSpy);
-			sinon.assert.calledWith(oSpy, "AutoLoadServiceAlias");
-			sinon.assert.calledOn(oSpy, oComponent);
+		return Component.create({
+			manifest: "/anylocation/manifest.json"
+		}).then(function(oComponent) {
+			return oSpy.returnValues[0].then(function() {
+				//assert
+				sinon.assert.calledOnce(oSpy);
+				sinon.assert.calledWith(oSpy, "AutoLoadServiceAlias");
+				sinon.assert.calledOn(oSpy, oComponent);
 
-			// cleanup
-			oComponent.destroy();
+				// cleanup
+				oComponent.destroy();
+			});
 		});
 
 	});
 
 	QUnit.test("Pass settings to service for instantiating", function(assert) {
 
-		var oComponent = sap.ui.component({
-			manifestUrl : "/anylocation/manifest.json"
-		});
-		var done = assert.async();
+		var oComponent = this.oComponent,
+			done = assert.async();
 
 		sap.ui.require([
 			"sap/ui/core/service/Service",
@@ -777,7 +776,7 @@ sap.ui.define([
 	QUnit.test("Inheritance - services should be inherited from parent components", function (assert) {
 		var oSpy = this.spy(Component.prototype, "getService");
 
-		sap.ui.predefine("test/services/base/Component", ["sap/ui/core/Component"], function (Component) {
+		sap.ui.define("test/services/base/Component", ["sap/ui/core/Component"], function (Component) {
 			return Component.extend("test.services.base.Component", {
 				metadata: {
 					manifest: {
@@ -798,9 +797,10 @@ sap.ui.define([
 			});
 		});
 
-		sap.ui.predefine("test/services/child/Component", ["test/services/base/Component"], function (BaseComponent) {
+		sap.ui.define("test/services/child/Component", ["test/services/base/Component"], function (BaseComponent) {
 			return BaseComponent.extend("test.services.child.Component", {});
 		});
+
 		// load the test component
 		return Component.create({
 			manifest: {
@@ -903,35 +903,6 @@ sap.ui.define([
 		}).finally(function () {
 			ServiceFactoryRegistry.unregister("eager.ServiceFactoryAlias");
 		});
-	});
-
-	QUnit.test("WaitFor service in sync mode - component loading should fail if we are in sync mode with waitFor startup option", function (assert) {
-		// load the test component
-		try {
-			sap.ui.component({
-				async: false,
-				manifest: {
-					"sap.app": {
-						"id": "samples.components.button"
-					},
-					"sap.ui5": {
-						"services": {
-							"EagerService": {
-								"factoryName": "my.ServiceFactoryAlias",
-								"optional": true,
-								"startup": "waitFor"
-							},
-							"LazyService": {
-								"factoryName": "lazy.ServiceFactoryAlias"
-							}
-						}
-					}
-				}
-			});
-			assert.ok(false, "Component.create should not succeed !");
-		} catch (oError) {
-			assert.ok(true, "Component.create should fail!");
-		}
 	});
 
 	QUnit.test("No Services - component loading should not fail if there is no service defined", function (assert) {
