@@ -52,7 +52,11 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	};
 
 	/**
-	 * Adds a whitelist entry
+	 * Adds a whitelist entry.
+	 *
+	 * <b>Note</b>:
+	 * It is strongly recommended to set a path only in combination with an origin (never set a path alone).
+	 * There's almost no case where checking only the path of a URL would allow to ensure its validity.
 	 *
 	 * @param {string} protocol The protocol of the URL
 	 * @param {string} host The host of the URL
@@ -87,11 +91,21 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 	};
 
 	/* eslint-disable no-control-regex */
-	var rCheckWhitespaces = /[\u0009\u000A\u000D]+/g;
+	var rCheckWhitespaces = /[\u0009\u000A\u000D]/;
+	var rSpecialSchemeURLs = /^((?:ftp|https?|wss?):)([\s\S]+)$/;
 
 	/**
 	 * Validates a URL. Check if it's not a script or other security issue.
 	 *
+	 * <b>Note</b>:
+	 * It is strongly recommended to validate only absolute URLs. There's almost no case
+	 * where checking only the path of a URL would allow to ensure its validity.
+	 * For compatibility reasons, this API cannot automatically resolve URLs relative to
+	 * <code>document.baseURI</code>, but callers should do so. In that case, and when the
+	 * allow list is not empty, an entry for the origin of <code>document.baseURI</code>
+	 * must be added to the allow list.
+	 *
+	 * <h3>Details</h3>
 	 * Split URL into components and check for allowed characters according to RFC 3986:
 	 *
 	 * <pre>
@@ -211,7 +225,16 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 			}
 		}
 
-		var result = /^(?:([^:\/?#]+):)?((?:\/\/((?:\[[^\]]+\]|[^\/?#:]+))(?::([0-9]+))?)?([^?#]*))(?:\?([^#]*))?(?:#(.*))?$/.exec(sUrl);
+		// for 'special' URLs without a given base URL, the whatwg spec allows any number of slashes.
+		// As the rBasicUrl regular expression cannot handle 'special' URLs, the URL is modified upfront,
+		// if it wouldn't be recognized by the regex.
+		// See https://url.spec.whatwg.org/#scheme-state (case 2.6.)
+		var result = rSpecialSchemeURLs.exec(sUrl);
+		if (result && !/^[\/\\]{2}/.test(result[2])) {
+			sUrl = result[1] + "//" + result[2];
+		}
+
+		result = /^(?:([^:\/?#]+):)?((?:[\/\\]{2,}((?:\[[^\]]+\]|[^\/?#:]+))(?::([0-9]+))?)?([^?#]*))(?:\?([^#]*))?(?:#(.*))?$/.exec(sUrl);
 		if (!result) {
 			return false;
 		}
@@ -309,16 +332,14 @@ sap.ui.define(["sap/base/assert"], function(assert) {
 				if (!sProtocol || !aWhitelist[i].protocol || sProtocol == aWhitelist[i].protocol) {
 					// protocol OK
 					var bOk = false;
-					if (aWhitelist[i].host && /^\*/.test(aWhitelist[i].host)) {
+					if (sHost && aWhitelist[i].host && /^\*/.test(aWhitelist[i].host)) {
 						// check for wildcard search at begin
 						var sHostEscaped = aWhitelist[i].host.slice(1).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 						var rFilter = RegExp(sHostEscaped + "$");
-						// Host can be undefined, but an empty string is needed to test it against the rFilter regex.
-						if (!sHost) {
-							sHost = "";
+						if (rFilter.test(sHost)) {
+							bOk = true;
 						}
-						bOk = rFilter.test(sHost);
-					} else if (!aWhitelist[i].host || sHost == aWhitelist[i].host) {
+					} else if (!sHost || !aWhitelist[i].host || sHost == aWhitelist[i].host) {
 						bOk = true;
 					}
 					if (bOk) {
