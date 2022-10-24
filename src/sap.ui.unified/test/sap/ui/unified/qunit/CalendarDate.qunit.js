@@ -754,8 +754,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("getEra returns the right era", function(assert) {
-		var o7_Jan_1989_Showa_End = CalendarDate.fromLocalJSDate(new Date(600134400000), "Japanese");
-		var o8_Jan_1989_Heisei_Begin = CalendarDate.fromLocalJSDate(new Date(600220800000), "Japanese");
+		var o7_Jan_1989_Showa_End = CalendarDate.fromLocalJSDate(new Date(1989, 0, 7), "Japanese");
+		var o8_Jan_1989_Heisei_Begin = CalendarDate.fromLocalJSDate(new Date(1989, 0, 8), "Japanese");
 
 		var now = CalendarDate.fromLocalJSDate(new Date(), "Gregorian");
 
