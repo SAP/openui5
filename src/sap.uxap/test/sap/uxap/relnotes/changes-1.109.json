@@ -1,0 +1,18 @@
+{
+  "1.109.0": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "4f5c8d40cbe31134b8e271afbd1c75495f9d7e02",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: fire \"navigate\" event later",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280115969"
+          }
+        ]
+      }
+    ]
+  }
+}
