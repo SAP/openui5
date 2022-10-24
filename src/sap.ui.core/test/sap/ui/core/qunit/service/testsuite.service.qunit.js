@@ -25,6 +25,13 @@ sap.ui.define(function() {
 					libs: "sap.m",
 					language: "en"
 				}
+			},
+			"Service_unavoidablySync": {
+				title: "QUnit test: Service Injection (sync)",
+				ui5: {
+					libs: "sap.m",
+					language: "en"
+				}
 			}
 		}
 	};
