@@ -18510,6 +18510,159 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: Deferred deletion of a context in a relative ODLB. Switch to another parent
+	// context, so that the cache is inactive. Then cancel the delete. The binding must not change
+	// (neither its contexts, nor its count).
+	// In a second test, sort before changing the parent context, so that the cache must be reset
+	// for the reinsertion.
+[false, true].forEach(function (bSort) {
+	var sTitle = "BCP: 2270160572: deferred delete, reset in parked cache, sort=" + bSort;
+
+	QUnit.test(sTitle, function (assert) {
+		var oContext,
+			oDeletePromise,
+			oItemsBinding,
+			oModel = this.createSalesOrdersModel({updateGroupId : "update"}),
+			oObjectPage,
+			sOrderBy = bSort ? "&$orderby=SalesOrderID desc" : "",
+			oOrdersBinding,
+			sView = '\
+<Table id="orders" items="{/SalesOrderList}">\
+	<Text text="{SalesOrderID}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Text id="count" text="{header>$count}"/>\
+	<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$count : true}}">\
+		<Text id="pos" text="{ItemPosition}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1"},
+					{SalesOrderID : "2"}
+				]
+			})
+			.expectChange("count")
+			.expectChange("pos", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oView.setModel(oModel, "header");
+			oOrdersBinding = that.oView.byId("orders").getBinding("items");
+			oItemsBinding = that.oView.byId("items").getBinding("items");
+			oObjectPage = that.oView.byId("objectPage");
+
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$count=true&$skip=0&$top=100", {
+					"@odata.count" : "3",
+					value : [
+						{ItemPosition : "11", SalesOrderID : "1"},
+						{ItemPosition : "12", SalesOrderID : "1"},
+						{ItemPosition : "13", SalesOrderID : "1"}
+					]
+				})
+				.expectChange("count", "3")
+				.expectChange("pos", ["11", "12", "13"]);
+
+			oObjectPage.setBindingContext(oOrdersBinding.getCurrentContexts()[0]);
+			oObjectPage.setBindingContext(oItemsBinding.getHeaderContext(), "header");
+
+			return that.waitForChanges(assert, "SalesOrderList('1')");
+		}).then(function () {
+			that.expectChange("count", "2");
+			if (bSort) {
+				that.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$count=true" + sOrderBy
+						+ "&$filter=not (SalesOrderID eq '1' and ItemPosition eq '11')"
+						+ "&$skip=0&$top=100", {
+						"@odata.count" : "2",
+						value : [
+							{ItemPosition : "13", SalesOrderID : "1"},
+							{ItemPosition : "12", SalesOrderID : "1"}
+						]
+					})
+					.expectChange("pos", ["13", "12"]);
+			} else {
+				that.expectChange("pos", ["12", "13"]);
+			}
+
+			oContext = oItemsBinding.getCurrentContexts()[0];
+			oDeletePromise = oContext.delete();
+			if (bSort) {
+				oItemsBinding.sort(new Sorter("SalesOrderID", true));
+			}
+
+			return that.waitForChanges(assert, "deferred delete" + (bSort ? " and sort" : ""));
+		}).then(function () {
+			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM?$count=true" + sOrderBy
+					+ "&$skip=0&$top=100", {
+					"@odata.count" : "1",
+					value : [
+						{ItemPosition : "21", SalesOrderID : "2"}
+					]
+				})
+				.expectChange("count", "1")
+				.expectChange("pos", ["21"]);
+
+			oObjectPage.setBindingContext(oOrdersBinding.getCurrentContexts()[1]);
+			oObjectPage.setBindingContext(oItemsBinding.getHeaderContext(), "header");
+
+			return that.waitForChanges(assert, "SalesOrderList('2')");
+		}).then(function () {
+			that.expectCanceledError("Failed to delete /SalesOrderList('1')"
+					+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='11')",
+				"Request canceled: DELETE SalesOrderList('1')"
+					+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='11'); group: update");
+
+			// code under test
+			oOrdersBinding.resetChanges();
+
+			return Promise.all([
+				checkCanceled(assert, oDeletePromise),
+				that.waitForChanges(assert, "cancel the delete")
+			]);
+		}).then(function () {
+			assert.strictEqual(oItemsBinding.getCount(), 1);
+			assert.deepEqual(oItemsBinding.getAllCurrentContexts().map(getPath), [
+				"/SalesOrderList('2')/SO_2_SOITEM(SalesOrderID='2',ItemPosition='21')"
+			]);
+
+			that.expectChange("count", "3");
+			if (bSort) {
+				that.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$count=true" + sOrderBy
+						+ "&$skip=0&$top=100", {
+						"@odata.count" : "3",
+						value : [
+							{ItemPosition : "13", SalesOrderID : "1"},
+							{ItemPosition : "12", SalesOrderID : "1"},
+							{ItemPosition : "11", SalesOrderID : "1"}
+						]
+					})
+					.expectChange("pos", ["13", "12", "11"]);
+			} else {
+				that.expectChange("pos", ["11", "12", "13"]);
+			}
+
+			oObjectPage.setBindingContext(oOrdersBinding.getCurrentContexts()[0]);
+			oObjectPage.setBindingContext(oItemsBinding.getHeaderContext(), "header");
+
+			return that.waitForChanges(assert, "back to SalesOrderList('1')");
+		}).then(function () {
+			var aExpectedPaths = [
+					"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='11')",
+					"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='12')",
+					"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='13')"
+				];
+
+			if (bSort) {
+				aExpectedPaths.reverse();
+			}
+			assert.strictEqual(oItemsBinding.getCount(), 3);
+			assert.deepEqual(oItemsBinding.getAllCurrentContexts().map(getPath), aExpectedPaths);
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: A deletion causes a gap, is performed immediately (but not in $auto) and fails. The
 	// gap-filling GET via $auto runs concurrently. Since it uses $filter to exclude the client-
 	// deleted entities, it is indepent on the order in which the requests are processed on the

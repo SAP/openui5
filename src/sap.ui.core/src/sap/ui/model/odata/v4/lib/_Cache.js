@@ -254,7 +254,14 @@ sap.ui.define([
 							that.iActiveElements += 1;
 						}
 					}
-					fnCallback(iIndex, 1);
+					if (that.iActiveUsages) {
+						fnCallback(iIndex, 1);
+					} else if (iIndex === undefined) {
+						// an active cache must let the binding reset to be told about kept-alive
+						// elements, an inactive cache however has no binding and no kept-alive
+						// elements
+						that.reset([]);
+					}
 				}
 				throw oError;
 			}).finally(function () {
