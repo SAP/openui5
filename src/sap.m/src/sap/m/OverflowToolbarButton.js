@@ -71,7 +71,7 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 		OverflowToolbarButton.prototype.getOverflowToolbarConfig = function () {
 			var oConfig = {
 				canOverflow: true,
-				propsUnrelatedToSize: ["enabled", "type"],
+				propsUnrelatedToSize: ["enabled", "type", "accesskey"],
 				autoCloseEvents: ["press"]
 			};
 
