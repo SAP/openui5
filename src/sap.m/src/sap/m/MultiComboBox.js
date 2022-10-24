@@ -723,7 +723,7 @@ function(
 		var sInputValue = this.getValue();
 		if (sInputValue) {
 			var aSelectableItems = this._getUnselectedItemsStartingText(sInputValue);
-			if (aSelectableItems.length === 1) {
+			if (aSelectableItems.length) {
 				this._selectItemByKey(oEvent);
 			} else {
 				this._showWrongValueVisualEffect();

@@ -5795,6 +5795,45 @@ sap.ui.define([
 		assert.strictEqual(spy.callCount, 1, "The picker should be closed once");
 	});
 
+	QUnit.test("onsaptabnext - multiple items starting with the user input", function (assert) {
+		// Arrange
+		var oMultiComboBox = new MultiComboBox({
+			items: [
+				new Item({
+					text: "Item 1",
+					key: "1"
+				}),
+				new Item({
+					text: "Item 1 2",
+					key: "2"
+				}),
+				new Item({
+					text: "Item 3",
+					key: "3"
+				})
+			]
+		});
+		var oSpy = this.spy(oMultiComboBox, "_selectItemByKey");
+
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		Core.applyChanges();
+		this.clock.tick(300);
+
+		// Act
+		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(300);
+		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.TAB);
+		this.clock.tick(300);
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "_selectItemByKey method should be called once");
+
+		// Clean
+		oSpy.restore();
+		oMultiComboBox.destroy();
+	});
+
+
 	QUnit.test("Properly destroy tokens only when allowed", function (assert) {
 		// arrange
 		var oToken, oTokenizer,oTokenSpy,
