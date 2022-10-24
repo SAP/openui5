@@ -8,14 +8,14 @@
 		flex-direction: column;
 		align-items: stretch;
 		height: auto;
-		padding: 0.8125rem 1rem ~"calc(0.8125rem - 1px)" 1rem;
+		padding: 0.875rem 1rem ~"calc(0.875rem - 1px)" 1rem;
 
 		&.sapMSLIWithDescription,
 		&.sapUiIntLCIWithAttributes,
 		&.sapUiIntLCIWithChart {
 			&:not(.sapMSLIThumbnail):not(.sapUiIntLCIIconSizeXS):not(.sapUiIntLCIIconSizeS):not(.sapUiIntLCIIconSizeM) {
 				.sapMLIBContent .sapMSLIDiv {
-					padding: 0.1875rem 0; // increase the height of the inner div
+					padding: 0.25rem 0; // increase the height of the inner div
 				}
 			}
 		}
@@ -164,6 +164,14 @@
 
 		&.sapUiIntLCIWithActionsStrip {
 			padding: 0.5rem 1rem ~"calc(0.5rem - 1px)" 1rem;
+		}
+
+		.sapMLIBContent {
+			.sapMSLITitle,
+			.sapMSLITitleOnly,
+			.sapMSLIDescription {
+				line-height: 1rem; // ensure zoom won't change height
+			}
 		}
 	}
 }
