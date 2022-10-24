@@ -87,7 +87,7 @@ sap.ui.define([
 		}
 
 		if (Configuration.getRTL()) {
-			var iParentWidth = oParent ? oParent.offsetWidth : window.outerWidth;
+			var iParentWidth = oParent ? oParent.offsetWidth : window.innerWidth;
 			//TODO: Workaround - remove when bug in Safari (issue 336512063) is solved
 			if (Device.browser.safari && !Device.browser.mobile && DOMUtil.hasVerticalScrollBar(oParent)) {
 				mOffset.left -= DOMUtil.getScrollbarWidth();
