@@ -155,7 +155,7 @@ sap.ui.define([],
 			if (iLast === i) {
 				oRm.class("sapUiCalHeadBLast");
 			}
-			if (oHead.hasStyleClass("sapUiCalHeadSecondMonth")) {
+			if (i === 3 || i == 4) {
 				oRm.attr('tabindex', "-1");
 			}
 			if (this.getAriaLabelButton(oHead, i)) {
