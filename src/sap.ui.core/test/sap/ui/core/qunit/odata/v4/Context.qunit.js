@@ -1110,45 +1110,54 @@ sap.ui.define([
 		}
 
 	QUnit.test(sTitle, function (assert) {
-		var oBinding = {
-				checkSuspended : function () {},
-				lockGroup : function () {},
-				mParameters : {}
-			},
-			aBindings = [
+		var aAllBindings = [
 				{removeCachesAndMessages : function () {}},
 				{removeCachesAndMessages : function () {}},
 				{removeCachesAndMessages : function () {}}
 			],
+			oBinding = {
+				checkSuspended : function () {},
+				lockGroup : function () {},
+				mParameters : {}
+			},
 			oDeletePromise,
+			aDependentBindings = [
+				{setContext : function () {}},
+				{setContext : function () {}}
+			],
 			oGroupLock = {
 				getGroupId : function () {}
 			},
 			oModel = {
 				getAllBindings : function () {},
+				getDependentBindings : function () {},
 				isApiGroup : function () {}
 			},
-			oContext = Context.create(oModel, oBinding, "/Foo/Bar('42')", 42),
+			oContext = Context.create(oModel, oBinding, "/Foo/Bar('42')", 42,
+					bTransient ? new SyncPromise(function () {}) : /*oCreatePromise*/undefined),
 			oPromise = SyncPromise.resolve(Promise.resolve()),
 			that = this;
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(bTransient);
 		this.mock(_Helper).expects("checkGroupId").exactly(bTransient ? 0 : 1)
 			.withExactArgs("myGroup");
 		this.mock(oBinding).expects("lockGroup").exactly(bTransient ? 0 : 1)
 			.withExactArgs("myGroup", true, true).returns(oGroupLock);
+		this.mock(oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oContext)).returns(aDependentBindings);
+		this.mock(aDependentBindings[0]).expects("setContext").withExactArgs(undefined);
+		this.mock(aDependentBindings[1]).expects("setContext").withExactArgs(undefined);
 		this.mock(oContext).expects("_delete")
 			.withExactArgs(bTransient ? null : sinon.match.same(oGroupLock), null,
 				bTransient ? true : "~bDoNotRequestCount~")
 			.returns(oPromise);
 		oPromise.then(function () {
-			that.mock(oModel).expects("getAllBindings").withExactArgs().returns(aBindings);
-			that.mock(aBindings[0]).expects("removeCachesAndMessages")
+			that.mock(oModel).expects("getAllBindings").withExactArgs().returns(aAllBindings);
+			that.mock(aAllBindings[0]).expects("removeCachesAndMessages")
 				.withExactArgs("Foo/Bar('42')", true);
-			that.mock(aBindings[1]).expects("removeCachesAndMessages")
+			that.mock(aAllBindings[1]).expects("removeCachesAndMessages")
 				.withExactArgs("Foo/Bar('42')", true);
-			that.mock(aBindings[2]).expects("removeCachesAndMessages")
+			that.mock(aAllBindings[2]).expects("removeCachesAndMessages")
 				.withExactArgs("Foo/Bar('42')", true);
 		});
 
@@ -1162,10 +1171,7 @@ sap.ui.define([
 		assert.strictEqual(oContext.toString(), "/Foo/Bar('42')[42;deleted]");
 
 		return oDeletePromise.then(function () {
-			assert.ok(true);
 			assert.strictEqual(oContext.isDeleted(), false);
-		}, function () {
-			assert.notOk(true);
 		});
 	});
 	});
@@ -1184,6 +1190,7 @@ sap.ui.define([
 				unlock : function () {}
 			},
 			oModel = {
+				getDependentBindings : function () {},
 				isApiGroup : function () {},
 				reportError : function () {}
 			},
@@ -1195,6 +1202,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup", true, true)
 			.returns(oGroupLock);
 		oContextMock.expects("checkUpdate").never();
+		this.mock(oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oContext)).returns([]);
 		oContextMock.expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), null, "~bDoNotRequestCount~")
 			.returns(Promise.resolve().then(function () {
@@ -1210,7 +1219,6 @@ sap.ui.define([
 		return oContext.delete("myGroup", "~bDoNotRequestCount~").then(function () {
 			assert.notOk(true);
 		}, function (oError0) {
-			assert.ok(true);
 			assert.strictEqual(oError0, oError);
 			assert.strictEqual(oContext.isDeleted(), false);
 		});
@@ -1224,12 +1232,15 @@ sap.ui.define([
 			},
 			oError = new Error(),
 			oModel = {
+				getDependentBindings : function () {},
 				reportError : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('1')", undefined);
 
 		oContext.bKeepAlive = true;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oContext)).returns([]);
 		this.mock(oContext).expects("_delete").withExactArgs(null, null, true).rejects(oError);
 		this.mock(oContext).expects("checkUpdate").withExactArgs();
 		this.mock(oModel).expects("reportError")

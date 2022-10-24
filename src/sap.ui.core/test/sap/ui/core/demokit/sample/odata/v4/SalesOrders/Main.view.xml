@@ -9,7 +9,6 @@
 	xmlns:plugins="sap.m.plugins">
 	<App>
 	<Page id="page" floatingFooter="true" showHeader="false">
-	<VBox>
 		<Toolbar design="Transparent">
 			<Label design="Bold" labelFor="favoriteProduct" text="Favorite product:">
 				<layoutData>
@@ -150,7 +149,7 @@
 						enabled="{= ${ui>/bSalesOrderSelected}}"
 						icon="sap-icon://delete"
 						id="deleteSalesOrder" press="onDeleteSalesOrder"
-						tooltip="Delete sales order"/>
+						tooltip="Delete selected sales order"/>
 					<Button
 						enabled="{= ${ui>/bSalesOrderSelected}
 							&amp;&amp; !${ui>/bSelectedSalesOrderTransient}
@@ -523,7 +522,6 @@
 					title="{FirstName} {LastName} {DateOfBirth}"/>
 			</List>
 		</VBox>
-	</VBox>
 	</Page>
 	</App>
 </mvc:View>

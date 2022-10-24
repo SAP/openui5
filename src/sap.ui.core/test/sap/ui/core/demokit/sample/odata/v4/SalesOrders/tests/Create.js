@@ -161,6 +161,14 @@ sap.ui.define([
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 				When.onTheSuccessInfo.confirm();
 				Then.onTheMainPage.checkDifferentID(0, "");
+				// Delete and cancel, see that the object page disappears and reappears
+				When.onTheMainPage.deleteSelectedSalesOrder();
+				Then.onTheMainPage.checkObjectPageInvisible();
+				When.onTheMainPage.pressCancelSalesOrderListChangesButton();
+				Then.onTheMainPage.checkNote(0, "Valid Note");
+				Then.onTheMainPage.checkSalesOrderSelected(0);
+				Then.onTheMainPage.checkNoteInDetails("Valid Note");
+				Then.onTheMainPage.checkSalesOrderItemsCount(0); // -> items table is visible
 				// cleanup
 				When.onTheMainPage.deleteSelectedSalesOrder();
 				When.onTheMainPage.pressSaveSalesOrdersButton();

@@ -17587,8 +17587,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Deferred deletion of row contexts with an object page
+	// Scenario: Deferred deletion of row contexts with an object page. The binding context of the
+	// object page is also deleted, but not unbound. See that all bindings in the object page become
+	// unresolved immediately, regardless whether they are direct or indirect dependents of the
+	// deleted context ("note" has an ODCB in between).
+	// In the catch handler of the delete promise the object page is restored by setting its binding
+	// context again.
 	// JIRA: CPOUI5ODATAV4-1629
+	// JIRA: CPOUI5ODATAV4-1831: unresolve dependents
 [
 	{desc : "submit", success : true},
 	{desc : "reset via model", resetViaModel : true},
@@ -17599,8 +17605,10 @@ sap.ui.define([
 			oContext2,
 			oContext3,
 			oContext4,
+			oItemsBinding,
 			oModel = this.createSalesOrdersModel(
 				{autoExpandSelect : true, updateGroupId : "update"}),
+			oObjectPage,
 			oPromise2,
 			oPromise4,
 			sView = '\
@@ -17611,7 +17619,11 @@ sap.ui.define([
 </Table>\
 <FlexBox id="objectPage">\
 	<Text id="id" text="{SalesOrderID}"/>\
-	<Input id="note" value="{Note}"/>\
+	<Input id="note" binding="{}" value="{Note}"/>\
+	<Text id="itemCount" text="{itemHeader>$count}"/>\
+	<Table id="items" items="{path: \'SO_2_SOITEM\', parameters : {$count : true}}">\
+		<Text id="pos" text="{ItemPosition}"/>\
+	</Table>\
 </FlexBox>',
 			that = this;
 
@@ -17628,7 +17640,9 @@ sap.ui.define([
 			.expectChange("count")
 			.expectChange("listId", ["1", "2", "3", "4", "5"])
 			.expectChange("id")
-			.expectChange("note");
+			.expectChange("note")
+			.expectChange("pos", [])
+			.expectChange("itemCount");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("count", "20");
@@ -17642,13 +17656,28 @@ sap.ui.define([
 
 			that.expectChange("id", "2")
 				.expectRequest("SalesOrderList('2')?$select=Note", {Note : "Note 2"})
-				.expectChange("note", "Note 2");
+				.expectChange("note", "Note 2")
+				.expectChange("itemCount", null) // due to setBindingContext
+				.expectRequest("SalesOrderList('2')/SO_2_SOITEM?$count=true"
+					+ "&$select=ItemPosition,SalesOrderID&$skip=0&$top=100", {
+					"@odata.count" : "2",
+					value : [
+						{ItemPosition : "10", SalesOrderID : "2"},
+						{ItemPosition : "20", SalesOrderID : "2"}
+					]
+				})
+				.expectChange("pos", ["10", "20"])
+				.expectChange("itemCount", "2");
 
 			aContexts = oBinding.getCurrentContexts();
 			oContext2 = aContexts[1];
 			oContext3 = aContexts[2];
 			oContext4 = aContexts[3];
-			that.oView.byId("objectPage").setBindingContext(oContext2);
+			that.oView.setModel(oModel, "itemHeader");
+			oObjectPage = that.oView.byId("objectPage");
+			oObjectPage.setBindingContext(oContext2);
+			oItemsBinding = that.oView.byId("items").getBinding("items");
+			oObjectPage.setBindingContext(oItemsBinding.getHeaderContext(), "itemHeader");
 
 			return that.waitForChanges(assert, "object page");
 		}).then(function () {
@@ -17668,8 +17697,9 @@ sap.ui.define([
 				})
 				.expectChange("listId", [,,, "6", "7"]) // no change events for the moved rows
 				.expectChange("count", "19")
-				.expectChange("count", "18");
-				// the object page remains visible
+				.expectChange("count", "18")
+				.expectChange("id", null)
+				.expectChange("note", null);
 
 			oPromise2 = oContext2.delete();
 			oPromise4 = oContext4.delete();
@@ -17680,9 +17710,10 @@ sap.ui.define([
 			assert.throws(function () {
 				oContext2.setProperty("Note", "n/a");
 			}, /must not modify a deleted entity/);
-			assert.throws(function () {
-				that.oView.byId("note").getBinding("value").setValue("n/a");
-			}, /must not modify a deleted entity/);
+			assert.strictEqual(that.oView.byId("id").getBinding("text").isResolved(), false);
+			assert.strictEqual(that.oView.byId("note").getObjectBinding().isResolved(), false);
+			assert.strictEqual(that.oView.byId("note").getBinding("value").isResolved(), false);
+			assert.strictEqual(that.oView.byId("items").getBinding("items").isResolved(), false);
 
 			return that.waitForChanges(assert, "deferred delete");
 		}).then(function () {
@@ -17739,9 +17770,7 @@ sap.ui.define([
 						payload : {Note : "Note 2 (changed)"}
 					})
 					.expectRequest({method : "DELETE", url : "SalesOrderList('2')"})
-					.expectRequest({method : "DELETE", url : "SalesOrderList('4')"})
-					.expectChange("id", null) // The object page is cleared now
-					.expectChange("note", null);
+					.expectRequest({method : "DELETE", url : "SalesOrderList('4')"});
 			} else {
 				that.expectCanceledError("Failed to update path /SalesOrderList('2')/Note",
 					"Request canceled: PATCH SalesOrderList('2'); group: update");
@@ -17750,9 +17779,12 @@ sap.ui.define([
 				that.expectCanceledError("Failed to delete /SalesOrderList('2')",
 					"Request canceled: DELETE SalesOrderList('2'); group: update");
 				that.expectChange("listId", [, "2", "4"])
-					.expectChange("count", "18")
+					.expectChange("count", "18") // change handler of $count fired synchronously
 					.expectChange("count", "19")
-					.expectChange("note", "Note 2");
+					// from the setBindingContext
+					.expectChange("id", "2")
+					.expectChange("note", "Note 2")
+					.expectChange("pos", ["10", "20"]);
 			}
 
 			if (oFixture.resetViaModel) {
@@ -17769,6 +17801,14 @@ sap.ui.define([
 					assert.ok(oError.canceled);
 					assert.notOk(oContext2.isDeleted());
 					assert.strictEqual(oContext2.getProperty("SalesOrderID"), "2");
+
+					// Restore the object page.
+					// The binding context must have been changed, so that setting it to the
+					// undeleted context has an effect. The application typically would do this when
+					// calling delete.
+					oObjectPage.setBindingContext(null);
+					oObjectPage.setBindingContext(oContext2);
+					oObjectPage.setBindingContext(oItemsBinding.getHeaderContext(), "itemHeader");
 				}),
 				oPromise4.then(function () {
 					assert.ok(oFixture.success);

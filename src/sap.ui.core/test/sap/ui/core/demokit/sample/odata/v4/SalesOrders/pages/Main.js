@@ -873,9 +873,23 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				checkNoteInDetails : function (sExpectedNote) {
+					Helper.checkInputValue(this, sViewName, "Note::detail", sExpectedNote);
+				},
 				checkNoteValueState : function (iRow, sValueState, sValueStateText) {
 					Helper.checkValueState(this, sViewName, /Note::list/, sValueState,
 						sValueStateText, false, iRow);
+				},
+				checkObjectPageInvisible : function () {
+					this.waitFor({
+						controlType : "sap.m.VBox",
+						id : "objectPage",
+						success : function (oPage) {
+							Opa5.assert.notOk(oPage.getVisible(), "Object page invisible");
+						},
+						viewName : sViewName,
+						visible : false
+					});
 				},
 				checkSalesOrderIdInDetails : function (bChanged) {
 					this.waitFor({
