@@ -533,5 +533,36 @@
         ]
       }
     ]
+  },
+  "1.105.2": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "98c3f1e90a5d50157f06a7d4a0704b8ba80fb457",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: OverflowToolbarButton invalidation prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280160553"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270143550"
+          }
+        ]
+      },
+      {
+        "id": "6a06de851a815f55031afaf54b4c8a10483d4b23",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Adjust failing QUnit test in Safari and FF",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111932"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -30,5 +30,21 @@
         ]
       }
     ]
+  },
+  "1.105.2": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "b887fd0f4e1dbed21f0396ab8b171700e88d9bba",
+        "type": "FIX",
+        "text": "sap.m.Button: visual alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270143444"
+          }
+        ]
+      }
+    ]
   }
 }

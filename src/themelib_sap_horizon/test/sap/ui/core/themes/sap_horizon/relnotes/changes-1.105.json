@@ -72,5 +72,21 @@
         ]
       }
     ]
+  },
+  "1.105.2": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "c42259830e0b0f1bd0a72774c153ce730c8e56ed",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Width adjustment for not editable input controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280159028"
+          }
+        ]
+      }
+    ]
   }
 }

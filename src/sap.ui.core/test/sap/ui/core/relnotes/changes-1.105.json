@@ -382,5 +382,47 @@
         ]
       }
     ]
+  },
+  "1.105.2": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "e71c19eead854d29844a97e7e8d01a75de67b91a",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: introduce calendarWeekNumbering format option",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007627612021"
+          }
+        ]
+      },
+      {
+        "id": "8b4f69e840eea7e7efe76c385e084d09f6682e6c",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalTreeBindingAdapter: avoid loading data if not needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270125832"
+          }
+        ]
+      },
+      {
+        "id": "57dc02163348e5abd2ede850aa35703e3104c354",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: avoid emtpy rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280169612"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270130789"
+          }
+        ]
+      }
+    ]
   }
 }
