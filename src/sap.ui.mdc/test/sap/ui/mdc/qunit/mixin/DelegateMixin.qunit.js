@@ -162,6 +162,16 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("isControlDelegateInitialized", function(assert) {
+		oSomeInstance = new TestClass();
+		assert.notOk(oSomeInstance.isControlDelegateInitialized(), "Delegate is not initialized");
+		oSomeInstance.initControlDelegate();
+
+		return oSomeInstance.awaitControlDelegate().then(function () {
+			assert.ok(oSomeInstance.isControlDelegateInitialized(), "Delegate is initialized");
+		});
+	});
+
 	QUnit.test("getPayload", function(assert) {
 		var oPayload = {x:1};
 		oSomeInstance = new TestClass({delegate: {name: "sap/ui/mdc/BaseDelegate", payload: oPayload}});

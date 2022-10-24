@@ -112,7 +112,9 @@ sap.ui.define([
 			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		},
 		showPanel: function(oControl, sP13nType, aProperties) {
-			TableSettings["showUI" + sP13nType](oControl, aProperties);
+			oControl.finalizePropertyHelper().then(function() {
+				TableSettings["showUI" + sP13nType](oControl, aProperties);
+			});
 		},
 
 		showUIColumns: function(oControl) {

@@ -608,6 +608,9 @@ sap.ui.define([
 				}
 			});
 			oPlugin.setPropertyInfos(oTable.getPropertyHelper().getPropertiesForPlugin());
+			oTable.propertiesFinalized().then(function() {
+				oPlugin.setPropertyInfos(oTable.getPropertyHelper().getPropertiesForPlugin());
+			});
 			oTable._oTable.addDependent(oPlugin);
 			mTableMap.plugin = oPlugin;
 		});

@@ -280,7 +280,7 @@ sap.ui.define([
 	});
 
 
-    QUnit.test("finalizePropertyHelper, isPropertyHelperFinal", function(assert) {
+    QUnit.test("finalizePropertyHelper, isPropertyHelperFinal, propertiesFinalized", function(assert) {
 
 		fnCreateTestClass(true);
 
@@ -307,18 +307,21 @@ sap.ui.define([
 			assert.notOk(oSomeInstance.isPropertyHelperFinal(), "property helper is not yet marked as final");
 
 			// eslint-disable-next-line max-nested-callbacks
-			return oSomeInstance.finalizePropertyHelper().then(function () {
-				assert.ok(oSomeInstance.isPropertyHelperFinal(), "property helper is now final");
-				var aFinalProperties = oPropertyHelper.getProperties();
-				assert.equal(aFinalProperties.length, 3, "all properties are now available");
-
+			return Promise.all([
+				oSomeInstance.propertiesFinalized(),
+				oSomeInstance.finalizePropertyHelper().then(function () {
+					assert.ok(oSomeInstance.isPropertyHelperFinal(), "property helper is now final");
+					var aFinalProperties = oPropertyHelper.getProperties();
+					assert.equal(aFinalProperties.length, 3, "all properties are now available");
+				})
+			]).then(function() {
+				assert.ok(true, "propertiesFinalized and finalizePropertyHelper did resolve");
 				// eslint-disable-next-line max-nested-callbacks
 				return oSomeInstance.finalizePropertyHelper().then(function () {
 					assert.ok(AggregationBaseDelegate.fetchProperties.calledOnce, "Delegate properties were only fetched once on repeated calls to finalize.");
 					AggregationBaseDelegate.fetchProperties.restore();
 				});
 			});
-
         });
     });
 

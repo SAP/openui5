@@ -1666,7 +1666,7 @@ sap.ui.define([
 					this._fRejectMetadataApplied = null;
 				}.bind(this);
 
-				if (this.bDelegateInitialized) {
+				if (this.isControlDelegateInitialized()) {
 					this.finalizePropertyHelper().then(function() {
 						fnResolveMetadata(true);
 					});
@@ -1905,7 +1905,7 @@ sap.ui.define([
 			});
 		}
 
-		if (this.bDelegateInitialized && this.getControlDelegate().cleanup) {
+		if (this.isControlDelegateInitialized() && this.getControlDelegate().cleanup) {
 			this.getControlDelegate().cleanup(this);
 		}
 

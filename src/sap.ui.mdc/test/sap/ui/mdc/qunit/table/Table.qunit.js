@@ -45,7 +45,8 @@ sap.ui.define([
 	"sap/ui/mdc/table/RowSettings",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Event",
-	"sap/base/util/Deferred"
+	"sap/base/util/Deferred",
+	"sap/ui/base/ManagedObjectObserver"
 ], function(
 	MDCQUnitUtils,
 	QUtils,
@@ -90,7 +91,8 @@ sap.ui.define([
 	RowSettings,
 	jQuery,
 	Event,
-	Deferred
+	Deferred,
+	ManagedObjectObserver
 ) {
 	"use strict";
 
@@ -371,6 +373,9 @@ sap.ui.define([
 			}, 100);
 		}).then(function() {
 			assert.ok(oRebindSpy.notCalled, "Table#rebind not called after initialization");
+			return oTable.propertiesFinalized();
+		}).then(function() {
+			assert.ok(oRebindSpy.notCalled, "Table#rebind not called after property finalization");
 			return oWaitForChanges.promise;
 		}).then(function() {
 			assert.equal(oRebindSpy.callCount, 1, "Table#rebind called once after changes have been applied");
@@ -390,16 +395,17 @@ sap.ui.define([
 		var oIsModificationSupportedStub = sinon.stub(oTable.getEngine(), "isModificationSupported");
 
 		oIsModificationSupportedStub.withArgs(oTable).returns(false);
+		oWaitForChanges.resolve();
 
 		return oTable.initialized().then(function() {
 			assert.ok(oRebindSpy.notCalled, "Table#rebind not called during initialization");
-			setTimeout(function() {
-				oWaitForChanges.resolve();
-			}, 100);
+			return oTable.propertiesFinalized();
 		}).then(function() {
-			assert.equal(oRebindSpy.callCount, 1, "Table#rebind called once after initialization");
+			assert.ok(oRebindSpy.notCalled, "Table#rebind not called after property finalization");
+		}).then(function() {
 			return MDCQUnitUtils.waitForBindingInfo(oTable);
 		}).then(function() {
+			assert.equal(oRebindSpy.callCount, 1, "Table#rebind called once after initialization");
 			assert.ok(oTable._oTable.isBound("rows"), "Table is bound");
 		}).finally(function() {
 			oIsModificationSupportedStub.restore();
@@ -1224,8 +1230,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getSorters should consider the 'path'", function(assert) {
-		var done = assert.async();
-
 		this.oTable.addColumn(new Column({
 			template: new Text(),
 			dataProperty: "name"
@@ -1248,7 +1252,7 @@ sap.ui.define([
 			}
 		]);
 
-		this.oTable.initialized().then(function() {
+		return this.oTable._fullyInitialized().then(function() {
 			var oTable = this.oTable,
 				oSortConditions = {
 					sorters: [
@@ -1257,12 +1261,9 @@ sap.ui.define([
 				};
 
 			oTable.setSortConditions(oSortConditions);
-			oTable.awaitPropertyHelper().then(function() {
-				var aSorters = oTable._getSorters();
-				assert.strictEqual(aSorters.length, 1, "Exported sorters returned");
-				assert.strictEqual(aSorters[0].sPath, "deepPath/name", "path from the propertyInfo is set to the sorter");
-				done();
-			});
+			var aSorters = oTable._getSorters();
+			assert.strictEqual(aSorters.length, 1, "Exported sorters returned");
+			assert.strictEqual(aSorters[0].sPath, "deepPath/name", "path from the propertyInfo is set to the sorter");
 		}.bind(this));
 	});
 
@@ -3940,6 +3941,8 @@ sap.ui.define([
 		]);
 
 		return this.oTable._fullyInitialized().then(function() {
+			return this.oTable.propertiesFinalized();
+		}.bind(this)).then(function() {
 			var oPropertyHelper = this.oTable.getPropertyHelper();
 			var aColumns = this.oTable.getColumns();
 			var getInnerColumnWidth = function(oMDCColumn) {
@@ -3947,7 +3950,7 @@ sap.ui.define([
 			};
 
 			// 1st column must have a width of 10rem due of its predefined
-			assert.equal(aColumns[0].getWidth(), "10rem", "Column firstName width is 10rem");
+			assert.equal(parseFloat(getInnerColumnWidth(aColumns[0])) + "rem", "10rem", "Table inner column firstName width is 10rem");
 
 			// 2nd column maxLength of 30 exceeds a maxWidth of 8
 			assert.notOk(check("A".repeat(30), parseFloat(getInnerColumnWidth(aColumns[1]))), "Column lastName would exceed maxWidth of 8rem");
@@ -3994,26 +3997,23 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test enableAutoColumnWidth for TreeTable type columns", function(assert) {
+		MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
+			name: "firstName",
+			path: "firstName",
+			label: "First name",
+			typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+				maxLength: 30
+			})
+		}, {
+			name: "lastName",
+			path: "lastName",
+			label: "Last name",
+			typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+				maxLength: 30
+			})
+		}]);
 
 		function setupTable(oTable) {
-			MDCQUnitUtils.stubPropertyInfos(oTable, [
-				{
-					name: "firstName",
-					path: "firstName",
-					label: "First name",
-					typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
-						maxLength: 30
-					})
-				}, {
-					name: "lastName",
-					path: "lastName",
-					label: "Last name",
-					typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
-						maxLength: 30
-					})
-				}
-			]);
-
 			oTable.setEnableAutoColumnWidth(true);
 			oTable.addColumn(new Column({
 				header: "First name",
@@ -4026,26 +4026,37 @@ sap.ui.define([
 			return oTable;
 		}
 
-		return setupTable(this.oTable)._fullyInitialized().then(function() {
-			this.oTreeTable = new Table({
-				type: "TreeTable",
-				delegate: {
-					name: sDelegatePath,
-					payload: {
-						collectionPath: "/testPath"
-					}
+		setupTable(this.oTable);
+		this.oTreeTable = setupTable(new Table({
+			type: "TreeTable",
+			delegate: {
+				name: sDelegatePath,
+				payload: {
+					collectionPath: "/testPath"
 				}
-			});
+			}
+		}));
+		this.oTreeTable.placeAt("qunit-fixture");
+		Core.applyChanges();
 
-			return setupTable(this.oTreeTable)._fullyInitialized();
+		return Promise.all([
+			this.oTable._fullyInitialized(),
+			this.oTreeTable._fullyInitialized()
+		]).then(function() {
+			return Promise.all([
+				this.oTable.propertiesFinalized(),
+				this.oTreeTable.propertiesFinalized()
+			]);
 		}.bind(this)).then(function() {
 			var aTreeTableColumns = this.oTreeTable.getColumns().map(function(oColumn) { return oColumn.getInnerColumn(); });
-			var aResponsiveTableColumns = this.oTable.getColumns().map(function(oColumn) { return oColumn.getInnerColumn(); });
+			var aTableColumns = this.oTable.getColumns().map(function(oColumn) { return oColumn.getInnerColumn(); });
 
-			assert.ok(parseFloat(aTreeTableColumns[0].getWidth()) > parseFloat(aResponsiveTableColumns[0].getWidth()), "The first tree column has larger width");
-			assert.equal(aTreeTableColumns[1].getWidth(), aResponsiveTableColumns[1].getWidth(), "The column width is not changed for the the second column");
+			assert.ok(parseFloat(aTreeTableColumns[0].getWidth()) > parseFloat(aTableColumns[0].getWidth()), "The first tree column has larger width");
+			assert.equal(aTreeTableColumns[1].getWidth(), aTableColumns[1].getWidth(), "The column width is not changed for the the second column");
 			this.oTreeTable.destroy();
-		}.bind(this));
+		}.bind(this)).finally(function() {
+			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+		});
 	});
 
 	QUnit.test("Toolbar style", function(assert) {
@@ -5310,7 +5321,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Enable/Disable column resize with ResponsiveTable", function(assert) {
+	QUnit.test("Enable/Disable column resize with ResponsiveTable (SHOULD BE AN OPA TEST!)", function(assert) {
 		var oTable = this.oTable;
 
 		sinon.stub(ColumnResizer, "_isInTouchMode").returns(true);
@@ -5332,7 +5343,9 @@ sap.ui.define([
 			oTable._oTable.fireEvent("columnPress", {
 				column: oTable._oTable.getColumns()[0]
 			});
-			return oTable._fullyInitialized();
+			return oTable._fullyInitialized().then(function() {
+				return oTable.finalizePropertyHelper();
+			});
 		}).then(function() {
 			var oMenu = oTable._oColumnHeaderMenu;
 			var oColumnResizerButton = oMenu._getAllEffectiveQuickActions().find(function(oQuickAction) {
@@ -5697,6 +5710,142 @@ sap.ui.define([
 					}.bind(this), 0);
 				}.bind(this));
 			}.bind(this), 0);
+		}.bind(this));
+	});
+
+	QUnit.module("PropertyInfo handling", {
+		beforeEach: function() {
+			this.aProperties = [{
+				name: "firstname",
+				path: "firstname",
+				label: "First Name",
+				dataType: "String",
+				visualSettings: {
+					widthCalculation: {
+						minWidth: 22
+					}
+				}
+			}, {
+				name: "lastname",
+				path: "lastname",
+				label: "Last Name",
+				exportSettings: {
+					property: "lastname",
+					textAlign: "Center"
+				}
+			}, {
+				name: "age",
+				path: "age",
+				label: "Age"
+			}];
+			this.aInitialProperties = [{
+				name: "lastname",
+				path: "lastname"
+			}, {
+				name: "age",
+				path: "age"
+			}];
+			MDCQUnitUtils.stubPropertyInfos(Table.prototype, this.aProperties);
+		},
+		afterEach: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+				this.oFinalizePropertyHelperSpy.restore();
+			}
+			if (this.oFetchPropertiesSpy) {
+				this.oFetchPropertiesSpy.restore();
+			}
+			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+		},
+		createTable: function(mSettings) {
+			this.oTable = new Table(Object.assign({
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "/testPath"
+					}
+				},
+				columns: [
+					new Column({
+						id: "lastnamecol",
+						template: new Text(),
+						dataProperty: "lastname"
+					}),
+					new Column({
+						id: "agecol",
+						template: new Text(),
+						dataProperty: "age"
+					})
+				],
+				propertyInfo: this.aInitialProperties
+			}, mSettings));
+			this.oFinalizePropertyHelperSpy = sinon.spy(this.oTable, "finalizePropertyHelper");
+			this.oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			return this.oTable.awaitControlDelegate().then(function(oDelegate) {
+				this.oFetchPropertiesSpy = sinon.spy(oDelegate, "fetchProperties");
+				return this.oTable._fullyInitialized();
+			}.bind(this));
+		}
+	});
+
+	QUnit.test("Initialization without initial property infos", function(assert) {
+		return this.createTable({propertyInfo: undefined}).then(function(oTable) {
+			assert.equal(this.oFetchPropertiesSpy.callCount, 1, "Delegate.fetchProperties called");
+			assert.ok(oTable.getPropertyHelper(), "PropertyHelper exists");
+			assert.ok(oTable.isPropertyHelperFinal(), "PropertyHelper is final");
+		}.bind(this));
+	});
+
+	QUnit.test("Initialization with initial property infos", function(assert) {
+		return this.createTable().then(function(oTable) {
+			assert.equal(this.oFetchPropertiesSpy.callCount, 0, "Delegate.fetchProperties not called");
+			assert.ok(oTable.getPropertyHelper(), "PropertyHelper exists");
+			assert.notOk(oTable.isPropertyHelperFinal(), "PropertyHelper is not final");
+			assert.equal(oTable.getPropertyHelper().getProperties().length, this.aInitialProperties.length, "PropertyHelper has initial properties");
+		}.bind(this));
+	});
+
+	QUnit.test("Property finalization when triggering the export", function(assert) {
+		return this.createTable({enableExport: true}).then(function(oTable) {
+			return oTable._createExportColumnConfiguration();
+		}).then(function(oExportConfig) {
+			assert.equal(this.oFinalizePropertyHelperSpy.callCount, 1, "Table#finalizePropertyHelper called");
+			assert.deepEqual(oExportConfig, [{
+				columnId: "lastnamecol",
+				label: "Last Name",
+				property: "lastname",
+				textAlign: "Center",
+				type: "String",
+				width: ""
+			}, {
+				columnId: "agecol",
+				label: "Age",
+				property: "age",
+				textAlign: "Begin",
+				type: "String",
+				width: ""
+			}], "Export config");
+		}.bind(this));
+	});
+
+	QUnit.test("Property finalization when adding a column with width calculation", function(assert) {
+		return this.createTable({enableAutoColumnWidth: true}).then(function(oTable) {
+			oTable.addColumn(new Column({
+				template: new Text(),
+				dataProperty: "firstname"
+			}));
+			return new Promise(function(resolve) {
+				new ManagedObjectObserver(function() {
+					resolve();
+				}).observe(oTable.getColumns()[2].getInnerColumn(), {
+					properties: ["width"]
+				});
+			});
+		}).then(function() {
+			assert.equal(this.oFinalizePropertyHelperSpy.callCount, 1, "Table#finalizePropertyHelper called");
+			assert.equal(this.oTable.getColumns()[2].getInnerColumn().getWidth(), "23.0625rem", "Inner column width");
 		}.bind(this));
 	});
 });
