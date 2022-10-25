@@ -13,7 +13,7 @@ sap.ui.define([
 	"./plugins/BindingSelection",
 	"sap/base/Log",
 	"sap/base/assert",
-	"./proxies/TreeBindingProxy"
+	"sap/ui/model/controlhelper/TreeBindingProxy"
 ],
 	function(
 		Table,

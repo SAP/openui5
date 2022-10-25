@@ -286,9 +286,6 @@ sap.ui.define([
 				group: "Plugins",
 				module: "./plugins/{name}.qunit"
 			},
-			"TreeBindingProxy": {
-				module: "./proxies/{name}.qunit"
-			},
 			"Generic Testsuite": {
 				page: "test-resources/sap/ui/table/qunit/testsuite.generic.qunit.html"
 			}
