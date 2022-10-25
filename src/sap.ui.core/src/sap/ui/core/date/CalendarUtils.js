@@ -32,7 +32,8 @@ sap.ui.define([
 	/**
 	 * Provides calendar-related utilities.
 	 *
-	 * @alias sap.ui.core.date.CalendarUtils
+	 * @namespace
+	 * @alias module:sap/ui/core/date/CalendarUtils
 	 * @public
 	 * @since 1.108.0
 	 */
