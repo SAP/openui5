@@ -406,7 +406,8 @@ sap.ui.define([
 	 * Returns the current variant for a given variant management control.
 	 * @param {string} sVariantManagementReference - Variant management reference
 	 * @returns {string} Current variant reference
-	 * @public
+	 * @private
+	 * @ui5-restricted
 	 */
 	VariantModel.prototype.getCurrentVariantReference = function(sVariantManagementReference) {
 		return this.oData[sVariantManagementReference].currentVariant;
@@ -853,8 +854,9 @@ sap.ui.define([
 	 * @param {string} sLayer - Current layer
 	 * @param {string} sClass - Style class assigned to the management dialog
 	 * @param {Promise<sap.ui.core.ComponentContainer>} oContextSharingComponentPromise - Promise resolving with the ComponentContainer
-	 * @returns {Promise} Promise which resolves when "manage" event is fired from the variant management control
-	 * @public
+	 * @returns {Promise<void>} Promise which resolves when "manage" event is fired from the variant management control
+	 * @private
+	 * @ui5-restricted
 	 */
 	VariantModel.prototype.manageVariants = function(oVariantManagementControl, sVariantManagementReference, sLayer, sClass, oContextSharingComponentPromise) {
 		// called from the ControlVariant plugin in Adaptation mode
@@ -949,8 +951,9 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.executeOnSelect] - New executeOnSelect value for <code>setExecuteOnSelect</code> change type
 	 * @param {string} [mPropertyBag.defaultVariant] - New default variant for <code>setDefault</code> change type
 	 * @param {boolean} [bUpdateCurrentVariant] - Update current variant
-	 * @returns {object} Additional content for change creation
-	 * @public
+	 * @returns {{title: string} | {favorite: boolean} | {executeOnSelect: boolean} | {visible: boolean, createdByReset: boolean} | {contexts: object} | {defaultVariant: string}} Additional content for change creation
+	 * @private
+	 * @ui5-restricted
 	 */
 	VariantModel.prototype.setVariantProperties = function(sVariantManagementReference, mPropertyBag, bUpdateCurrentVariant) {
 		// TODO: this function needs refactoring
@@ -1465,7 +1468,8 @@ sap.ui.define([
 	 * Checks if dirty changes exist for the current variant inside the passed variant management reference.
 	 * If no dirty changes exist, it marks the associated 'modified' model property to <code>false</code>.
 	 * @param {string[]} aVariantManagementReferences - Array of variant management references
-	 * @public
+	 * @private
+	 * @ui5-restricted
 	 */
 	VariantModel.prototype.checkDirtyStateForControlModels = function(aVariantManagementReferences) {
 		aVariantManagementReferences.forEach(function(sVariantManagementReference) {

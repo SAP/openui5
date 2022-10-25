@@ -333,7 +333,7 @@ sap.ui.define([
 	 * Registers invalidations event which is fired when width of the control is changed.
 	 *
 	 * @protected
-	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+	 * @returns {{canOverflow: boolean, invalidationEvents: string[]}} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
 	 */
 	VariantManagement.prototype.getOverflowToolbarConfig = function() {
 		return {
@@ -970,7 +970,7 @@ sap.ui.define([
 	 * Adds a control to the association {@link #for for}.
 	 * @public
 	 * @param {sap.ui.core.ID | sap.ui.core.Control} vFor The control to add; if empty, nothing is inserted
-	 * @returns {Object} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	VariantManagement.prototype.addFor = function(vFor) {
 		this.addAssociation("for", vFor);
