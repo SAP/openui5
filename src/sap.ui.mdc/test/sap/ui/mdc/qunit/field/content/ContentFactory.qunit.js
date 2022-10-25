@@ -215,14 +215,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("setBoundProperty", function(assert) {
-		assert.equal(this.oContentFactory.getBoundProperty(), undefined, "Correct initial sBoundProperty.");
-
-		var sBoundProperty = "test";
-		this.oContentFactory.setBoundProperty(sBoundProperty);
-		assert.equal(this.oContentFactory.getBoundProperty(), sBoundProperty, "sBoundProperty changed correctly.");
-	});
-
 	QUnit.test("_updateLink", function(assert) {
 		var oLink = new Link({
 			href: "",

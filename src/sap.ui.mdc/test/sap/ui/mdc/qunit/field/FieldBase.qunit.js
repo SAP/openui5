@@ -1821,6 +1821,7 @@ sap.ui.define([
 			oField.attachSubmit(_mySubmitHandler);
 			oField.attachParseError(_myParseErrorHandler);
 			oField.attachValidationError(_myValidationErrorHandler);
+			oCore.getMessageManager().registerObject(oField, true); // to test valueState
 			oField.placeAt("content");
 			oCore.applyChanges();
 		},
@@ -2055,6 +2056,7 @@ sap.ui.define([
 		}).placeAt("content");
 		oField._fireChange = _myFireChange;
 		oField.attachEvent("change", _myChangeHandler);
+		oCore.getMessageManager().registerObject(oField, true); // to test valueState
 		oCore.applyChanges();
 
 		var fnDone = assert.async();
@@ -2275,7 +2277,6 @@ sap.ui.define([
 
 	QUnit.test("wrong input on single value", function(assert) {
 
-		oCore.getMessageManager().registerObject(oField, true); // to test valueState
 		oField.setDataTypeConstraints({maximum: 10});
 		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setDataType("sap.ui.model.type.Integer");
@@ -3168,6 +3169,7 @@ sap.ui.define([
 			oCore.setModel(oCM, "cm");
 			var oCondition = Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated); // use validated condition
 			oCM.addCondition("Name", oCondition);
+			oCore.getMessageManager().registerObject(oField, true); // to test valueState
 
 			oField.placeAt("content");
 			oCore.applyChanges();
@@ -3228,6 +3230,8 @@ sap.ui.define([
 		// simulate value help request to see if FieldHelp opens
 		oField.focus();
 		oContent.setDOMValue("I"); // to test clearing of content
+		oContent.fireLiveChange({ newValue: "I" }); // simulate user input
+		oField._sFilterValue = "I"; // als typeahead is async and nit tested here
 		oContent.fireValueHelpRequest();
 
 		var aConditions = oFieldHelp.getConditions();
@@ -3249,10 +3253,11 @@ sap.ui.define([
 		assert.ok(oFieldHelp.onFieldChange.called, "onFieldChange called on FieldHelp");
 		assert.equal(oContent.getDOMValue(), "I", "value still shown in inner control");
 
-		// simulate Enter: Filter value must be removed but no change fired.
+		// simulate Enter & close: Filter value must be removed but no change fired.
 		iCount = 0;
 		sValue = ""; bValid = undefined;
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		oFieldHelp.fireAfterClose(); // as normally Enter triggers close, but here not really open
 		assert.equal(iCount, 0, "Change Event not fired");
 		assert.equal(oContent.getDOMValue(), "", "no value shown in inner control");
 		assert.equal(oContent.getProperty("value"), "", "no value set in inner control"); // as getValue returns DomValue, not property
@@ -3260,77 +3265,42 @@ sap.ui.define([
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 
 		// simulate select event to see if field is updated
-		oCondition = Condition.createItemCondition("I2", "Item2");
 		iCount = 0;
 		sValue = ""; bValid = undefined;
-		oField.setValueState("Error"); // simulate wrong input before
+		sinon.stub(oField._oContentFactory._oConditionsType, "parseValue").throws(new ParseException("Error"));
+		oField.setValueState("Error"); // as valueState is set async
 		oField.setValueStateText("Error");
-		oField._bParseError = true;
 		oContent.setValue("I"); // to test clearing of content
-		oFieldHelp.fireSelect({ conditions: [oCondition], add: true, close: false });
+		assert.ok(oField._bParseError, "parse error"); // just to be sure that set before test
+		oFieldHelp.fireSelect({ conditions: aConditions, add: false, close: true }); // check choosing old conditions after wrong input
 		assert.equal(iCount, 1, "Change Event fired once");
 		assert.ok(bValid, "Change event valid");
 		aConditions = oCM.getConditions("Name");
-		assert.equal(aConditions.length, 2, "two condition in Codition model");
+		assert.equal(aConditions.length, 1, "two condition in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I3", "condition value");
 		assert.equal(aConditions[0] && aConditions[0].values[1], "Item3", "condition description");
 		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
-		assert.equal(aConditions[1] && aConditions[1].values[0], "I2", "condition value");
-		assert.equal(aConditions[1] && aConditions[1].values[1], "Item2", "condition description");
-		assert.equal(aConditions[1] && aConditions[1].operator, "EQ", "condition operator");
-		assert.notOk(oFieldHelp.getKeyForText.called, "getKeyForText not called");
-		assert.equal(oContent.getDOMValue(), "I", "value still shown in inner control");
-		assert.equal(oField.getValueState(), "None", "No ValueState");
-		assert.equal(oField.getValueStateText(), "", "No ValueStateText");
-
-		// simulate close: Filter value must be removed but no change fired.
-		iCount = 0;
-		sValue = ""; bValid = undefined;
-		oFieldHelp.fireAfterClose();
-		assert.equal(iCount, 0, "Change Event not fired");
-		assert.equal(oContent.getDOMValue(), "", "no value shown in inner control");
-		assert.equal(oContent.getProperty("value"), "", "no value set in inner control"); // as getValue returns DomValue, not property
-		aConditions = oCM.getConditions("Name");
-		assert.equal(aConditions.length, 2, "two condition in Codition model");
-
-		// simulate select event to see if field is updated
-		oCondition = Condition.createItemCondition("I2", "Item2");
-		iCount = 0;
-		sValue = ""; bValid = undefined;
-		oField.setValueState("Error"); // simulate wrong input before
-		oField.setValueStateText("Error");
-		oField._bParseError = true;
-		oContent.setValue("I"); // to test clearing of content
-		oFieldHelp.fireSelect({ conditions: aConditions, add: false, close: true }); // check choosing old conditions after wromg input
-		assert.equal(iCount, 1, "Change Event fired once");
-		assert.ok(bValid, "Change event valid");
-		aConditions = oCM.getConditions("Name");
-		assert.equal(aConditions.length, 2, "two condition in Codition model");
-		assert.equal(aConditions[0] && aConditions[0].values[0], "I3", "condition value");
-		assert.equal(aConditions[0] && aConditions[0].values[1], "Item3", "condition description");
-		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
-		assert.equal(aConditions[1] && aConditions[1].values[0], "I2", "condition value");
-		assert.equal(aConditions[1] && aConditions[1].values[1], "Item2", "condition description");
-		assert.equal(aConditions[1] && aConditions[1].operator, "EQ", "condition operator");
 		assert.notOk(oFieldHelp.getKeyForText.called, "getKeyForText not called");
 		assert.equal(oContent.getDOMValue(), "", "value not longer shown in inner control");
 		assert.equal(oField.getValueState(), "None", "No ValueState");
 		assert.equal(oField.getValueStateText(), "", "No ValueStateText");
+		assert.notOk(oField._bParseError, "no parse error");
 
 		// simulate select event with close to see if field is updated
 		oCondition = Condition.createItemCondition("I1", "Item1");
 		iCount = 0;
 		sValue = ""; bValid = undefined;
-		oField.setValueState("Error"); // simulate error set by application
+		oField.setValueState("Error"); // as valueState is set async
 		oField.setValueStateText("Error");
-		oContent.setValue("I"); // to test clearing of content
+		oContent.setValue("J"); // to test clearing of content
+		assert.ok(oField._bParseError, "parse error"); // just to be sure that set before test
 		oFieldHelp.fireSelect({ conditions: [oCondition], add: true, close: true });
 		assert.equal(iCount, 1, "Change Event fired once");
 		assert.ok(bValid, "Change event valid");
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 2, "two condition in Codition model");
-		assert.equal(aConditions[0] && aConditions[0].values[0], "I2", "condition value");
-		assert.equal(aConditions[0] && aConditions[0].values[1], "Item2", "condition description");
+		assert.equal(aConditions[0] && aConditions[0].values[0], "I3", "condition value");
+		assert.equal(aConditions[0] && aConditions[0].values[1], "Item3", "condition description");
 		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
 		assert.equal(aConditions[1] && aConditions[1].values[0], "I1", "condition value");
 		assert.equal(aConditions[1] && aConditions[1].values[1], "Item1", "condition description");
@@ -3338,8 +3308,10 @@ sap.ui.define([
 		assert.notOk(oFieldHelp.getKeyForText.called, "getKeyForText not called");
 		assert.equal(oContent.getDOMValue(), "", "no value shown in inner control");
 		assert.equal(oContent.getProperty("value"), "", "no value set in inner control"); // as getValue returns DomValue, not property
-		assert.equal(oField.getValueState(), "Error", "ValueState");
-		assert.equal(oField.getValueStateText(), "Error", "ValueStateText");
+		assert.equal(oField.getValueState(), "None", "No ValueState"); // after updating conditions valueStae should be cleared
+		assert.equal(oField.getValueStateText(), "", "No ValueStateText");
+		assert.notOk(oField._bParseError, "no parse error");
+		oField._oContentFactory._oConditionsType.parseValue.restore();
 
 		oIcon.destroy();
 
@@ -3803,7 +3775,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 		assert.equal(vGetItemsForValue, "Invalid", "getItemForValue called");
-		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
+		setTimeout(function() { // to wait for update of valueState via Model
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
 			assert.equal(sValue, "=Invalid", "change event value");
@@ -3824,28 +3796,29 @@ sap.ui.define([
 			oFieldHelp.setValidateInput(false);
 			oContent._$input.val("=Unknown");
 			qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-			assert.equal(iCount, 1, "change event fired once");
-			assert.equal(sId, "F1", "change event fired on Field");
-			assert.ok(bValid, "change event valid");
-			assert.equal(oContent.getValueState(), "None", "ValueState set");
-			assert.equal(oContent.getValueStateText(), "", "ValueState text");
-			var aConditions = oFieldHelp.getConditions();
-			assert.equal(aConditions.length, 2, "Condition set on FieldHelp");
-			assert.equal(aConditions[1] && aConditions[1].values[0], "Unknown", "condition value");
-			assert.ok(oFieldHelp.close.called, "close called");
-			aConditions = oCM.getConditions("Name");
-			assert.equal(aConditions.length, 2, "two conditions in Codition model");
-			assert.equal(aConditions[1] && aConditions[1].values[0], "Unknown", "condition value");
-			assert.ok(oFieldHelp.onFieldChange.calledOnce, "onFieldChange called on FieldHelp");
+			setTimeout(function() { // to wait for update of valueState via Model
+				assert.equal(iCount, 1, "change event fired once");
+				assert.equal(sId, "F1", "change event fired on Field");
+				assert.ok(bValid, "change event valid");
+				assert.equal(oContent.getValueState(), "None", "ValueState set");
+				assert.equal(oContent.getValueStateText(), "", "ValueState text");
+				aConditions = oFieldHelp.getConditions();
+				assert.equal(aConditions.length, 2, "Condition set on FieldHelp");
+				assert.equal(aConditions[1] && aConditions[1].values[0], "Unknown", "condition value");
+				assert.ok(oFieldHelp.close.called, "close called");
+				aConditions = oCM.getConditions("Name");
+				assert.equal(aConditions.length, 2, "two conditions in Codition model");
+				assert.equal(aConditions[1] && aConditions[1].values[0], "Unknown", "condition value");
+				assert.ok(oFieldHelp.onFieldChange.calledOnce, "onFieldChange called on FieldHelp");
 
-			fnDone();
+				fnDone();
+			}, 0);
 		}, 0);
 
 	});
 
 	QUnit.test("invalid input on singleValue Field", function(assert) {
 
-		oCore.getMessageManager().registerObject(oField, true); // to activate message manager
 		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
@@ -4247,7 +4220,6 @@ sap.ui.define([
 
 	QUnit.test("invalid input with async parsing on singleValue Field", function(assert) {
 
-		oCore.getMessageManager().registerObject(oField, true); // to activate message manager
 		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		oCore.applyChanges();

@@ -70,8 +70,6 @@ sap.ui.define([
 			aControls.push(oInput1);
 			aControls = this._addUnitControl(oContentFactory, aControls, sId, Input, InvisibleText);
 
-			oContentFactory.setBoundProperty("value");
-
 			return aControls;
 		},
 		createEditMultiValue: function(oContentFactory, aControlClasses, sId) {
@@ -81,6 +79,7 @@ sap.ui.define([
 			var Input = aControlClasses[1];
 			var InvisibleText = aControlClasses[3];
 			var oConditionType = oContentFactory.getConditionType();
+			var oConditionsType = oContentFactory.getConditionsType();
 			this._adjustDataTypeForUnit(oContentFactory);
 
 			var aControls = [];
@@ -105,6 +104,7 @@ sap.ui.define([
 
 			var sInvisibleTextId = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
 			var oMultiInput = new MultiInput(sId, {
+				value: { path: "$field>/conditions", type: oConditionsType }, // only for parsing
 				placeholder: "{$field>/placeholder}",
 				textAlign: "{$field>/textAlign}",
 				textDirection: "{$field>/textDirection}",
@@ -128,8 +128,6 @@ sap.ui.define([
 			oContentFactory.setAriaLabelledBy(oMultiInput);
 			aControls.push(oMultiInput);
 			aControls = this._addUnitControl(oContentFactory, aControls, sId, Input, InvisibleText);
-
-			oContentFactory.setBoundProperty("value");
 
 			return aControls;
 		},

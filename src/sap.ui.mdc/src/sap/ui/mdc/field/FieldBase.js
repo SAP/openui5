@@ -1069,12 +1069,12 @@ sap.ui.define([
 
 	};
 
-	function _setUIMessage(sMsg) {
+	// function _setUIMessage(sMsg) {
 
-		this.setValueState(ValueState.Error);
-		this.setValueStateText(sMsg);
+	// 	this.setValueState(ValueState.Error);
+	// 	this.setValueStateText(sMsg);
 
-	}
+	// }
 
 	FieldBase.prototype._removeUIMessage = function() {
 
@@ -1319,7 +1319,14 @@ sap.ui.define([
 			return this._getContentFactory().getDateOriginalType().formatValue(vValue, "string");
 		} else {
 			var oConditionsType = this._getContentFactory().getConditionsType();
-			return oConditionsType.formatValue(aConditions);
+			var oFormatOptions = oConditionsType.getFormatOptions();
+			var bNoFormatting = oFormatOptions.noFormatting;
+			oFormatOptions.noFormatting = false; // for display text always format
+			oConditionsType.setFormatOptions(oFormatOptions);
+			var sResult = oConditionsType.formatValue(aConditions);
+			oFormatOptions.noFormatting = bNoFormatting; // turn back
+			oConditionsType.setFormatOptions(oFormatOptions);
+			return sResult;
 		}
 
 	};
@@ -1515,6 +1522,7 @@ sap.ui.define([
 			if (!this._getContentFactory().getContentConditionTypes()[sName]) {
 				this._getContentFactory().getContentConditionTypes()[sName] = {};
 			}
+			this._getContentFactory().setNoFormatting(false); // initialize
 			this.awaitControlDelegate().then(function() {
 				if (!this.bIsDestroyed) {
 					this._oContentFactory.setHideOperator(_isOnlyOneSingleValue.call(this, this._getOperators())); // in single value eq Field hide operator
@@ -1525,13 +1533,14 @@ sap.ui.define([
 			// find out what is bound to conditions
 			var oBindingInfo;
 			var sProperty;
+			var bPropertyBound = false;
 			for (sProperty in oContent.getMetadata().getAllProperties()) {
 				if (oContent.getBindingPath(sProperty) === "/conditions") {
 					oBindingInfo = oContent.getBindingInfo(sProperty);
 					if (oBindingInfo && oBindingInfo.type && oBindingInfo.type instanceof ConditionsType) {
 						this._getContentFactory().getContentConditionTypes()[sName].oConditionsType = oBindingInfo.type;
 					}
-					this._getContentFactory().setBoundProperty(sProperty);
+					bPropertyBound = true;
 				}
 				if (sProperty === "editable" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
 					oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: ContentFactory._getEditable });
@@ -1576,6 +1585,9 @@ sap.ui.define([
 							var oTemplateBindingInfo = oBindingInfo.template.getBindingInfo(sProperty);
 							if (oTemplateBindingInfo && oTemplateBindingInfo.type && oTemplateBindingInfo.type instanceof ConditionType) {
 								this._getContentFactory().getContentConditionTypes()[sName].oConditionType = oTemplateBindingInfo.type;
+								if (bPropertyBound) { // both value and tokens are bound -> don't format Value, only parse it
+									this._getContentFactory().setNoFormatting(true);
+								}
 								break;
 							}
 						}
@@ -2117,112 +2129,18 @@ sap.ui.define([
 	function _performContentChange(oChange) {
 
 		var aConditions = this.getConditions();
-		var vValue;
 		var bValid = true;
 		var vWrongValue;
-		var oCondition;
 		var oSource = oChange.changeEvent.source;
-		var bAsync = false;
-		var bChanged = true; // normally only called on real change. But in SearchField called on every ENTER
-		var bChangeIfNotChanged = false; // in SearchField case fire change even if value not changed. TODO: other event for this
 
 		if (oChange.changeEvent.parameters.hasOwnProperty("valid")) {
 			bValid = oChange.changeEvent.parameters["valid"];
-			if (!bValid && oChange.changeEvent.parameters.hasOwnProperty("value")) {
-				vWrongValue = oChange.changeEvent.parameters["value"];
-			}
-		}
-
-		// use parsed value of the condition, if possible
-		var bUpdateConditions = false;
-		var sBoundProperty = this._getContentFactory().getBoundProperty();
-		var oBinding = sBoundProperty && oSource.getBinding(sBoundProperty);
-		if (oBinding && oBinding.getBindingMode() !== BindingMode.OneWay && oBinding.getPath() === "/conditions" && bValid) {
-			oCondition = aConditions[0];
-			vValue = aConditions[0] && aConditions[0].values[0];
-		} else if (oChange.changeEvent.parameters.hasOwnProperty("value")) {
-			vValue = oChange.changeEvent.parameters["value"];
-			if (bValid) {
-				bUpdateConditions = true;
-			}
-		} else {
-			oCondition = aConditions[0];
-			vValue = aConditions[0] && aConditions[0].values[0];
-		}
-
-		if (bUpdateConditions) {
-			// text typed in MultiInput
-			this._removeUIMessage();
-			var oConditionType;
-			var oMyChange;
-
-			if (this._bIgnoreInputValue) {
-				// remove filter value from input and don't use it as input
-				this._bIgnoreInputValue = false;
-				oSource.setDOMValue("");
-				if (oSource.getMetadata().hasProperty("value")) {
-					// clear "value" property of MultiInput as there might be an old value from a invalid input before
-					oSource.setValue();
-				}
-				return;
-			}
-
-			oCondition = SyncPromise.resolve().then(function() {
-				var iMaxConditions = this.getMaxConditions();
-
-				if (this._oNavigateCondition) {
-					// text entered via navigation -> use this data, no parsing is needed
-					bValid = true;
-					return this._oNavigateCondition;
-				} else if (vValue === "" && iMaxConditions !== 1) {
-					// in multivalue case an empty input don't changes the conditions and must not be validated with the data type
-					// this happens after an invalid input was just cleared
-					return null;
-				} else {
-					oConditionType = this._getContentFactory().getConditionType();
-					var vResult = oConditionType.parseValue(vValue);
-					var iLength = this._aAsyncChanges.length;
-
-					if (iLength > 0 && !this._aAsyncChanges[iLength - 1].changeFired) {
-						oMyChange = this._aAsyncChanges[iLength - 1];
-						oMyChange.changeFired = true;
-						oMyChange.changeEvent = oChange.changeEvent;
-						_triggerChange.call(this, undefined, undefined, undefined, oMyChange.promise);
-					}
-					return vResult;
-				}
-			}.bind(this)).then(function(oCondition) {
-				bChanged = _updateConditionsFromChange.call(this, oCondition, aConditions, oConditionType, bValid, vValue, oSource, oMyChange || oChange);
-				bChanged = bChanged || bChangeIfNotChanged; // in SearchField fire change if value not changed
-				return oCondition;
-			}.bind(this)).catch(function(oException) {
-				if (oException && !(oException instanceof ParseException) && !(oException instanceof FormatException) && !(oException instanceof ValidateException)) {// FormatException could also occur
-					// unknown error -> just raise it
-					throw oException;
-				}
-				bValid = false;
-				vWrongValue = vValue;
-				this._bParseError = true;
-				this._sFilterValue = "";
-				_setUIMessage.call(this, oException.message);
-
-				if (oMyChange && oMyChange.reject) {
-					if (_removeAsyncChange.call(this, oMyChange)) { // only if still valid (might be alredy rejected)
-						oMyChange.reject(oException);
-					}
-				} else if (bAsync) {
-					_triggerChange.call(this, aConditions, bValid, vWrongValue);
-				}
-			}.bind(this)).unwrap();
-
-			if (oCondition instanceof Promise) {
-				// will be parsed async
-				bAsync = true;
-			}
-		} else if (!oChange.changeEvent.parameters.hasOwnProperty("valid") && this._bParseError) {
+		} else if (this._bParseError) {
 			// this might be result of a value that cannot be parsed
-			vWrongValue = oChange.changeEvent.parameters["value"];
 			bValid = false;
+		}
+		if (!bValid && oChange.changeEvent.parameters.hasOwnProperty("value")) {
+			vWrongValue = oChange.changeEvent.parameters["value"];
 		}
 
 		var oFieldHelp = _getFieldHelp.call(this);
@@ -2231,7 +2149,7 @@ sap.ui.define([
 				oFieldHelp.close(); // if focus is not in field, Field help closes automatically
 			}
 			this._sFilterValue = "";
-			if (!bAsync && bValid) {
+			if (bValid) {
 				_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
 				oFieldHelp.onControlChange();
 			}
@@ -2247,72 +2165,9 @@ sap.ui.define([
 		if (oChange.resolve) {
 			// async promise needs to be resolved
 			_resolveAsyncChange.call(this, oChange);
-		} else if (!bAsync && bChanged) {
+		} else {
 			_triggerChange.call(this, aConditions, bValid, vWrongValue);
 		}
-
-	}
-
-	// Please note: This method may update aConditions!
-	function _updateConditionsFromChange(oCondition, aConditions, oConditionType, bValid, vValue, oSource, oChange) {
-
-		var iMaxConditions = this.getMaxConditions();
-		var bChanged = false;
-
-		if (oCondition === null && iMaxConditions !== 1) {
-			// in multi value case no new condition means no condition-change
-			// but fire change event as before a change event with invalid value was fired
-			return true;
-		}
-
-		if (oConditionType) {
-			// in navigation no validation needed
-			oConditionType.validateValue(oCondition);
-		}
-
-		if (bValid) {
-			if (oCondition) {
-				if (this._getContentFactory().isMeasure() && aConditions.length === 1 && aConditions[0].values[0][0] === undefined) {
-					// remove empty condition
-					aConditions.length = 0;
-				}
-				if (iMaxConditions !== 1 && FilterOperatorUtil.indexOfCondition(oCondition, aConditions) >= 0) {
-					// condition already exist (only error if tokens, in SearchField it is OK)
-					throw new ParseException(this._oResourceBundle.getText("field.CONDITION_ALREADY_EXIST", [vValue]));
-				} else {
-					if (iMaxConditions > 0 && iMaxConditions <= aConditions.length) {
-						// remove first conditions to meet maxConditions
-						aConditions.splice(0, aConditions.length - iMaxConditions + 1);
-					}
-					aConditions.push(oCondition);
-				}
-			} else if (iMaxConditions === 1) {
-				aConditions.length = 0;
-			}
-
-			if (!deepEqual(aConditions, this.getConditions())) {
-				this.setProperty("conditions", aConditions, true); // do not invalidate whole field
-				bChanged = true;
-			}
-
-			if (iMaxConditions !== 1) {
-				oSource.setValue(""); // remove typed value of MultiInput
-			}
-
-		}
-
-		if (oChange.resolve) {
-			var oFieldHelp = _getFieldHelp.call(this);
-			if (oFieldHelp && this._bConnected) {
-				_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
-				oFieldHelp.onControlChange();
-			}
-			oChange.result = aConditions;
-			_resolveAsyncChange.call(this, oChange);
-			_removeAsyncChange.call(this, oChange);
-		}
-
-		return bChanged;
 
 	}
 
@@ -2717,11 +2572,7 @@ sap.ui.define([
 				}
 				this._sFilterValue = "";
 			} else if (bClose) {
-				if (this.getMaxConditions() !== 1 && !this._getContentFactory().getBoundProperty() && oContent.getMetadata().hasProperty("value") && oContent.getProperty("value")) {
-					// clear "value" property of MultiInput as there might be an old value from a invalid input before
-					oContent.setValue();
-				}
-				oContent.setDOMValue("");
+				oContent.setDOMValue(""); // as value property of MultiInput control might still be empty during typing. So setValue (via Binding) doesn't updates DOM-value (as no change is recognized).
 				this._sFilterValue = "";
 				this._bIgnoreInputValue = false; // just clean up
 			} else {
@@ -2861,9 +2712,10 @@ sap.ui.define([
 			this._bIgnoreInputValue = false;
 			oContent.setDOMValue("");
 			this._sFilterValue = "";
-			if (this.getMaxConditions() !== 1 && !this._getContentFactory().getBoundProperty() && oContent.getMetadata().hasProperty("value") && oContent.getProperty("value")) {
+			this._getContentFactory().updateConditionType();
+			if (this.getMaxConditions() !== 1) {
 				// clear "value" property of MultiInput as there might be an old value from a invalid input before
-				oContent.setValue();
+				this._oManagedObjectModel.checkUpdate(true); // forces update of value property via binding to conditions
 			}
 		}
 
@@ -3102,7 +2954,10 @@ sap.ui.define([
 			conditionModelName: oConditionModelInfo.name,
 			convertWhitespaces: this.getEditMode() === EditMode.Display || this.getMaxConditions() !== 1, // also replace whitespaces in tokens
 			control: this,
-			defaultOperatorName : this.getDefaultOperator ? this.getDefaultOperator() : null
+			defaultOperatorName : this.getDefaultOperator ? this.getDefaultOperator() : null,
+			getConditions: this.getConditions.bind(this), // to add condition in multi-value case
+			noFormatting: this._getContentFactory().getNoFormatting(),
+			keepValue: this._bIgnoreInputValue ? this._sFilterValue : null
 		};
 
 	};
@@ -3180,7 +3035,8 @@ sap.ui.define([
 			conditionModelName : oConditionModelInfo.name,
 			convertWhitespaces: this.getEditMode() === EditMode.Display || this.getEditMode() === EditMode.EditableDisplay,
 			control: this,
-			getConditions: this.getConditions.bind(this) // TODO: better solution to update unit in all conditions
+			getConditions: this.getConditions.bind(this), // TODO: better solution to update unit in all conditions
+			noFormatting: false
 		};
 
 	};
