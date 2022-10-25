@@ -57,7 +57,7 @@ sap.ui.define([
 		CustomLogic: {
 			target: {
 				semanticObject: "CustomLogic",
-				action: "maintain"
+				action: "develop"
 			},
 			params: mExpectedNavigationParams
 		},
