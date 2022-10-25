@@ -6726,5 +6726,48 @@
 			"around",
 			"direction"
 		]
+	},
+	"cloud-check": {
+		"tags": [
+			"cloud",
+			"check",
+			"data"
+		]
+	},
+	"enablement": {
+		"tags": [
+			"people",
+			"person",
+			"setting",
+			"chart",
+			"enable",
+			"tool",
+			"wrench",
+			"widgets"
+		]
+	},
+	"locate-me-2": {
+		"tags": [
+			"arrow",
+			"locate",
+			"me",
+			"map",
+			"location",
+			"pointer",
+			"navigation",
+			"filled"
+		]
+	},
+	"map-fill": {
+		"tags": [
+			"map",
+			"pin",
+			"location",
+			"place",
+			"area",
+			"solid",
+			"fill",
+			"filled"
+		]
 	}
 }
