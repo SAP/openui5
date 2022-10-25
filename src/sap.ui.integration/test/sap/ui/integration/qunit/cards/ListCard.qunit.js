@@ -249,9 +249,10 @@ sap.ui.define([
 			},
 			"content": {
 				"data": {
-					"json": [{
-						"Name": "Notebook Basic 15"
-					},
+					"json": [
+						{
+							"Name": "Notebook Basic 15"
+						},
 						{
 							"Name": "Notebook Basic 17"
 						},
@@ -865,7 +866,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
-			assert.ok(iNumberOfItems === 2, "After Manifest is processed maxItems should be a number");
+			assert.strictEqual(iNumberOfItems, 2, "After Manifest is processed maxItems should be a number");
 
 			done();
 		}.bind(this));
@@ -883,7 +884,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
-			assert.ok(iNumberOfItems === 2, "After Manifest is processed maxItems should be a number");
+			assert.strictEqual(iNumberOfItems, 2, "After Manifest is processed maxItems should be a number");
 
 			done();
 		}.bind(this));
@@ -1497,6 +1498,9 @@ sap.ui.define([
 
 			},
 			removeActiveLoadingProvider: function () {
+
+			},
+			getManifestEntry: function () {
 
 			}
 		});

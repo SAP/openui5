@@ -480,9 +480,11 @@ function (
 
 				oControlToTest._oDataProvider.fireDataChanged({ data: oNewData });
 				assert.notOk(oControlToTest.isLoading(), 'control is not loading any more');
-				assert.deepEqual(oControlToTest.getModel().getData(), oNewData, "Should update data on data changed event.");
 
-				done();
+				setTimeout(function () {
+					assert.deepEqual(oControlToTest.getModel().getData(), oNewData, "Should update data on data changed event.");
+					done();
+				});
 			}.bind(this));
 
 			// Act

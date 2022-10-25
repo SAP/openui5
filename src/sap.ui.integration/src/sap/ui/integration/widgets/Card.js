@@ -820,7 +820,7 @@ sap.ui.define([
 		this._oCardManifest
 			.load(mOptions)
 			.then(function () {
-				if (this.bIsDestroyed) {
+				if (this.isDestroyed()) {
 					throw new Error(CARD_DESTROYED_ERROR);
 				}
 
@@ -1215,8 +1215,11 @@ sap.ui.define([
 
 		this.destroyAggregation("_header");
 		this.destroyAggregation("_filterBar");
-		this.destroyAggregation("_content");
 		this.destroyAggregation("_footer");
+
+		if (this._oContent) {
+			this._oContent.destroy();
+		}
 
 		this._cleanupOldManifest();
 	};
@@ -1400,9 +1403,11 @@ sap.ui.define([
 	 * @param {sap.ui.core.MessageType} sType Type of the message.
 	 */
 	Card.prototype.showMessage = function (sMessage, sType) {
-		if (this._createContentPromise) {
-			this._createContentPromise.then(function (oContent) {
-				oContent.showMessage(sMessage, sType);
+		if (this._contentPromise) {
+			this._contentPromise.then(function (oContent) {
+				if (oContent) {
+					oContent.showMessage(sMessage, sType);
+				}
 			});
 		} else {
 			Log.error("'showMessage' cannot be used before the card instance is ready. Consider using the event 'manifestApplied' event.", "sap.ui.integration.widgets.Card");
@@ -1540,7 +1545,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._applyManifestSettings = function () {
-
 		this._setParametersModelData();
 
 		this._applyServiceManifestSettings();
@@ -1618,11 +1622,13 @@ sap.ui.define([
 				this._applyContentManifestSettings();
 			}
 
-			if (this._createContentPromise) {
-				this._createContentPromise.then(function (oContent) {
-					oContent.onDataChanged();
-					this.fireEvent("_dataPassedToContent");
-					this.onDataRequestComplete();
+			if (this._contentPromise) {
+				this._contentPromise.then(function (oContent) {
+					if (oContent) {
+						oContent.onDataChanged();
+						this.fireEvent("_dataPassedToContent");
+						this.onDataRequestComplete();
+					}
 				}.bind(this));
 			} else {
 				this.fireEvent("_dataPassedToContent");
@@ -1819,7 +1825,13 @@ sap.ui.define([
 	Card.prototype._applyContentManifestSettings = function () {
 		var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE),
 			oContentManifest = this.getContentManifest(),
-			sAriaText = sCardType + " " + this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD");
+			sAriaText = sCardType + " " + this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD"),
+			oPrevContent = this.getAggregation("_content"),
+			oContent;
+
+		if (oPrevContent && oPrevContent !== this._oTemporaryContent) {
+			this.destroyAggregation("_content");
+		}
 
 		this._ariaText.setText(sAriaText);
 
@@ -1835,23 +1847,33 @@ sap.ui.define([
 			return;
 		}
 
-		this._createContentPromise = this.createContent({
-			cardType: sCardType,
-			contentManifest: oContentManifest,
-			serviceManager: this._oServiceManager,
-			dataProviderFactory: this._oDataProviderFactory,
-			iconFormatter: this._oIconFormatter,
-			appId: this._sAppId
-		}).then(function (oContent) {
-			this._setCardContent(oContent);
-			return oContent;
-		}.bind(this));
+		try {
+			oContent = this.createContent({
+				cardType: sCardType,
+				contentManifest: oContentManifest,
+				serviceManager: this._oServiceManager,
+				dataProviderFactory: this._oDataProviderFactory,
+				iconFormatter: this._oIconFormatter,
+				appId: this._sAppId
+			});
+		} catch (e) {
+			this._handleError(e.message);
+			return;
+		}
 
-		this._createContentPromise.catch(function (sError) {
-			if (sError) {
-				this._handleError(sError);
-			}
-		}.bind(this));
+		// TODO: refactor to remove temporary content, call _setCardContent earlier and remove contentPromise
+		this._oContent = oContent;
+		this._contentPromise = oContent.getLoadDependenciesPromise()
+			.then(function (bLoadSuccessful) {
+				if (!bLoadSuccessful || oContent.isDestroyed()) {
+					return null;
+				}
+
+				oContent.setConfiguration(oContentManifest);
+				this._setCardContent(oContent);
+
+				return oContent;
+			}.bind(this));
 	};
 
 	Card.prototype.createHeader = function () {
@@ -1924,16 +1946,6 @@ sap.ui.define([
 			this._handleError(oEvent.getParameter("logMessage"));
 		}.bind(this));
 
-		var oPreviousContent = this.getAggregation("_content");
-
-		// only destroy previous content of type BaseContent
-		if (oPreviousContent && oPreviousContent !== this._oTemporaryContent) {
-			oPreviousContent.destroy();
-		}
-
-		// TO DO: decide if we want to set the content only on _updated event.
-		// This will help to avoid appearance of empty table before its data comes,
-		// but prevent ObjectContent to render its template, which might be useful
 		this.setAggregation("_content", oContent);
 
 		if (oContent.isReady()) {
@@ -1945,18 +1957,8 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Sets a temporary content that will show a loading placeholder while the actual content is loading.
-	 */
 	Card.prototype._setTemporaryContent = function (sCardType, oContentManifest) {
-
-		var oTemporaryContent = this._getTemporaryContent(sCardType, oContentManifest),
-			oPreviousContent = this.getAggregation("_content");
-
-		// only destroy previous content of type BaseContent
-		if (oPreviousContent && oPreviousContent !== oTemporaryContent) {
-			oPreviousContent.destroy();
-		}
+		var oTemporaryContent = this._getTemporaryContent(sCardType, oContentManifest);
 
 		this.setAggregation("_content", oTemporaryContent);
 	};
@@ -2268,9 +2270,11 @@ sap.ui.define([
 				break;
 
 			case CardArea.Content:
-				if (this._createContentPromise) {
-					this._createContentPromise.then(function (oContent) {
-						oContent.showLoadingPlaceholders();
+				if (this._contentPromise) {
+					this._contentPromise.then(function (oContent) {
+						if (oContent) {
+							oContent.showLoadingPlaceholders();
+						}
 					});
 				} else {
 					this._bShowContentLoadingPlaceholders = true;
@@ -2311,9 +2315,11 @@ sap.ui.define([
 				break;
 
 			case CardArea.Content:
-				if (this._createContentPromise) {
-					this._createContentPromise.then(function (oContent) {
-						oContent.hideLoadingPlaceholders();
+				if (this._contentPromise) {
+					this._contentPromise.then(function (oContent) {
+						if (oContent) {
+							oContent.hideLoadingPlaceholders();
+						}
 					});
 				} else {
 					this._bShowContentLoadingPlaceholders = false;

@@ -117,11 +117,9 @@ sap.ui.define([
 		assert.expect(2);
 		var deferred = new jQuery.Deferred();
 
-		this.stub(sap.ui.integration.util.ContentFactory.prototype, "create").callsFake(function () {
-			return deferred.promise();
-		});
-
 		this.oCard.attachEventOnce("manifestApplied", function () {
+			this.oCard._contentPromise = deferred.promise();
+
 			this.oCard.attachEventOnce("_headerReady", function () {
 				// Assert
 				assert.ok(this.oCard.getCardHeader().isReady(), "Header should be ready");

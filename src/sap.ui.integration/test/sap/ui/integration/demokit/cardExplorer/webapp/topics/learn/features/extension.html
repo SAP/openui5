@@ -106,17 +106,22 @@
 					<tr>
 						<td>onCardReady</td>
 						<td>
-							Called when the card is ready. After this <code>getCard()</code> returns an interface to the card.
+							Called after the card is initialized. After this <code>getCard()</code> returns an interface to the card.
 							Read more in the <a href="#extensionApi">Extension API</a>.
 						</td>
 					</tr>
 					<tr>
 						<td>loadDependencies</td>
 						<td>
-							Called during the preparation of the card, before data is displayed for the first time.
-							Use it to load critical libraries or resources, without which the data cannot be displayed.
+							Called during the preparation of the card content, before it is displayed for the first time.
+							Use it to load critical libraries or resources, without which the data in the content cannot be displayed.
 							It is important to return a <code>Promise</code>, which will be awaited by the card.
-							Until the promise is resolved, the card displays a loading animation.
+							Until the promise is resolved, the card content displays a loading animation.
+							For performance optimization the dependencies loading happens in parallel with data loading,
+							therefore your data loading method shouldn't depend on this hook.
+							<br>
+							<b>Note:</b> This hook can only be used in conjunction with the card content (<code>"sap.card"/content</code>),
+								not with the card header, footer, or other part.
 							<br>
 							<b>Note:</b> This hook is experimental since 1.108 and may change!
 						</td>

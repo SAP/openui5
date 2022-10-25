@@ -48,59 +48,51 @@ sap.ui.define([
 
 	ContentFactory.prototype.create = function (mConfig) {
 		var oCard = this._oCard,
-			sType = mConfig.cardType;
+			sType = mConfig.cardType,
+			oExtension = oCard.getAggregation("_extension");
 
-		return new Promise(function (resolve, reject) {
-			var Content = this.getClass(sType);
+		var Content = this.getClass(sType);
 
-			if (!Content) {
-				reject(sType.toUpperCase() + " content type is not supported.");
-				return;
-			}
+		if (!Content) {
+			throw new Error(sType.toUpperCase() + " content type is not supported.");
+		}
 
-			var oContent = new Content();
+		var oContent = new Content();
 
-			// Set the card ID as association to the content
-			oContent.setCard(oCard);
+		// Set the card ID as association to the content
+		oContent.setCard(oCard);
 
-			if (oContent instanceof AdaptiveContent) {
-				oContent.setCardDataProvider(oCard._oDataProvider);
-			}
+		if (oContent instanceof AdaptiveContent) {
+			oContent.setCardDataProvider(oCard._oDataProvider);
+		}
 
-			oContent.loadDependencies(mConfig.cardManifest)
-				.then(function () {
-					var oExtension = oCard.getAggregation("_extension");
+		oContent._sAppId = mConfig.appId;
+		oContent.setServiceManager(mConfig.serviceManager);
+		oContent.setDataProviderFactory(mConfig.dataProviderFactory);
+		oContent.setIconFormatter(mConfig.iconFormatter);
+		oContent.setActions(new CardActions({
+			card: oCard
+		}));
 
-					if (!oExtension) {
-						return Promise.resolve();
-					}
+		if (!(oContent instanceof AdaptiveContent)) {
+			oContent.setDataConfiguration(mConfig.contentManifest.data);
+		}
 
-					return oExtension.loadDependencies();
-				})
-				.then(function () {
-					if ((mConfig.cardManifest && mConfig.cardManifest.isDestroyed()) ||
-						(mConfig.dataProviderFactory && mConfig.dataProviderFactory.isDestroyed())) {
-						// reject creating of the content if a new manifest is loaded meanwhile
-						reject();
-						return;
-					}
+		oContent.setLoadDependenciesPromise(
+			Promise.all([
+				oContent.loadDependencies(mConfig.cardManifest),
+				oExtension ? oExtension.loadDependencies() : Promise.resolve()
+			]).then(function () {
+				return true;
+			}).catch(function (sError) {
+				if (sError) {
+					oCard._handleError(sError);
+				}
+				return false;
+			})
+		);
 
-					var oActions = new CardActions({
-						card: oCard
-					});
-
-					oContent._sAppId = mConfig.appId;
-					oContent.setServiceManager(mConfig.serviceManager);
-					oContent.setDataProviderFactory(mConfig.dataProviderFactory);
-					oContent.setIconFormatter(mConfig.iconFormatter);
-					oContent.setActions(oActions);
-					oContent.setConfiguration(mConfig.contentManifest, sType);
-					resolve(oContent);
-				})
-				.catch(function (sError) {
-					reject(sError);
-				});
-		}.bind(this));
+		return oContent;
 	};
 
 	/**

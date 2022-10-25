@@ -1,11 +1,13 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils"
 ], function (
+	Core,
 	library,
 	RequestDataProvider,
 	Card,
@@ -58,6 +60,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
 			// Act
 			this._pressSubmitButton();
 		}.bind(this));
@@ -105,6 +108,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
 			// Act
 			this._pressSubmitButton();
 		}.bind(this));
