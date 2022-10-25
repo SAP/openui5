@@ -927,12 +927,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook called by sap.ui.core.Core to enrich bundle config with terminologies
+	 * Hook implemented by sap.ui.core.Core. to enrich bundle config with terminologies.
+	 * See also the documentation of the hook's implementation in Core.js.
 	 *
+	 * @see sap.ui.core.Core.getLibraryResourceBundle
+	 *
+	 * @params {object} the ResourceBundle.create bundle config
 	 * @private
 	 * @ui5-restricted sap.ui.core.Core
 	 */
-	ResourceBundle._enrichBundleConfig = function() {};
+	ResourceBundle._enrichBundleConfig = function(mParams) {
+		// Note: the ResourceBundle is a base module, which might be used standalone without the Core,
+		// so the bundle config must remain untouched
+		return mParams;
+	};
 
 	// ---- handling of supported locales and fallback chain ------------------------------------------
 
