@@ -1055,6 +1055,18 @@ sap.ui.define([
 			this._oProgressBox.destroy();
 			this._oProgressBox = null;
 		}
+		if (this._oListItem) {
+			this._oListItem.destroy();
+			this._oListItem = null;
+		}
+		if (this._oIcon) {
+			this._oIcon.destroy();
+			this._oIcon = null;
+		}
+		if (this._oDynamicContent) {
+			this._oDynamicContent.destroy();
+			this._oDynamicContent = null;
+		}
 	};
 
 	/**

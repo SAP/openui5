@@ -708,33 +708,6 @@ sap.ui.define([
         }
     };
 
-	UploadSet.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
-		if (sAggregationName === "items") {
-			this.getItems().forEach(function (oItem) {
-				if (this._oList) {
-					this._oList.removeAggregation("items", oItem._getListItem(), bSuppressInvalidate);
-				}
-			}.bind(this));
-		} else if (sAggregationName === "incompleteItems") {
-			this.getIncompleteItems().forEach(function (oItem) {
-				if (this._oList) {
-					this._oList.removeAggregation("items", oItem._getListItem(), bSuppressInvalidate);
-				}
-			}.bind(this));
-		}
-		Control.prototype.removeAllAggregation.call(this, sAggregationName, bSuppressInvalidate);
-	};
-
-	UploadSet.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
-		if (sAggregationName === "items" || sAggregationName === "incompleteItems") {
-			this.removeAllAggregation(sAggregationName, bSuppressInvalidate);
-		}
-		if (this._oList && this._oList.getItems().length === 0) {
-			this._oList.destroyAggregation("items", bSuppressInvalidate);
-		}
-		Control.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
-	};
-
 	UploadSet.prototype.setFileTypes = function (aNewTypes) {
 		var aTypes = aNewTypes || null;
 		if (typeof aTypes === "string") {
