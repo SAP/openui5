@@ -1,0 +1,19 @@
+/* ==================================================== */
+/* CSS for control sap.ui.integration.cards/ListContent */
+/* Horizon theme                                        */
+/* ==================================================== */
+
+.sapUiIntCard {
+	&.sapFCardNoHeader,
+	&.sapFCardBottomHeader {
+		.sapFCardListContent .sapMLIBFocusable:first-child:focus { // first item in the list
+			border-radius: 1rem 1rem 0 0;
+		}
+	}
+
+	&:not(.sapUiIntCardWithFooter):not(.sapFCardBottomHeader) {
+		.sapFCardListContent .sapMLIBFocusable:last-child:focus { // last item in the list
+			border-radius: 0 0 1rem 1rem;
+		}
+	}
+}
