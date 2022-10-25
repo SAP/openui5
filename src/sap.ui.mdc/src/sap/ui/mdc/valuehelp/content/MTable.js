@@ -636,7 +636,7 @@ sap.ui.define([
 
 		if (this._getMaxConditions() !== 1) {
 			// in case of multiToken field the focus can be set to the table and the navigation will be handled by the focused table control.
-			if (this.getParent().isOpen()) {
+			if (this.getParent().isOpen() && oTable.getMode() === ListMode.MultiSelect) {
 				//TODO cursorUp and the new iSelectedIndex will not be handled correct when we give the focus to the table.
 				oTable.focus();
 				return;
