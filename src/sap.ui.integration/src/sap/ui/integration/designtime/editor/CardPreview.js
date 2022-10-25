@@ -431,14 +431,27 @@ sap.ui.define([
 			yiq = (r * 299 + g * 587 + b * 114) / 1000;
 		return (yiq <= 128);
 	}
+
+	CardPreview.prototype.onfocusin = function (oEvent) {
+		if (!this._focusinByTabPrevious && oEvent.srcControl !== this._oModeToggleButton) {
+			if (this._oModeToggleButton) {
+				this._oModeToggleButton.focus();
+			} else {
+				this.getDomRef("after").focus();
+			}
+		}
+		this._focusinByTabPrevious = false;
+	};
+
 	CardPreview.prototype.onsaptabnext = function (oEvent) {
-		if (oEvent.target === this.getDomRef("before")) {
+		if (oEvent.srcControl !== this._oModeToggleButton) {
 			this.getDomRef("after").focus();
 		}
 	};
 
 	CardPreview.prototype.onsaptabprevious = function (oEvent) {
-		if (oEvent.target === this.getDomRef("after")) {
+		this._focusinByTabPrevious = true;
+		if (!this._oModeToggleButton || oEvent.srcControl === this._oModeToggleButton) {
 			this.getDomRef("before").focus();
 		}
 	};
