@@ -2016,7 +2016,7 @@ sap.ui.define([
 				: "sap.ui.model.odata.v4.AnnotationHelper.invalid is not a function but: undefined",
 			"/@@sap.ui.model.odata.v4.AnnotationHelper"
 				: "sap.ui.model.odata.v4.AnnotationHelper is not a function but: "
-					+ sap.ui.model.odata.v4.AnnotationHelper,
+					+ AnnotationHelper,
 			"/@@requestCodeList" // requestCodeList is @private!
 				: "requestCodeList is not a function but: undefined",
 			"/@@.requestCurrencyCodes" // "." looks in given scope only!
