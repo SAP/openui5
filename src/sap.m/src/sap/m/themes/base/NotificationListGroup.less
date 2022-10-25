@@ -20,6 +20,7 @@
 	}
 
 	.sapMNLGroupHeader {
+		position: relative;
 		min-height: 2.75rem;
 		background: @_sap_m_NotificationListGroup_Background;
 		border-bottom: 0.0625rem solid @sapUiListGroupHeaderBorderColor;
@@ -27,6 +28,7 @@
 		padding: 0.75rem 0.5rem 0 1rem;
 		display: flex;
 		align-items: flex-start;
+		outline: none;
 
 		.sapMNLIBPriority {
 			padding-top: 0.75rem;
@@ -42,6 +44,18 @@
 			flex: 1;
 			min-width: 0;
 		}
+	}
+
+	&:focus .sapMNLGroupHeader::before {
+		content: " ";
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		position: absolute;
+		top: 1px;
+		right: 1px;
+		bottom: 1px;
+		left: 1px;
+		z-index: 2;
+		pointer-events: none;
 	}
 
 	.sapMNLGroupChildren {

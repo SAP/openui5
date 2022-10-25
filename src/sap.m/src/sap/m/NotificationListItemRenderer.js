@@ -63,7 +63,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 			rm.class('sapMNLINoAvatar');
 		}
 
-		rm.attr('tabindex', '0');
+		rm.attr('tabindex', '-1');
 
 		// ARIA
 		rm.accessibilityState(control, {
@@ -84,7 +84,6 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 
 		// actions and close
 		rm.openStart('div')
-			.attr('aria-hidden', 'true')
 			.class('sapMNLIItem')
 			.class('sapMNLIItemAC')
 			.openEnd();
@@ -197,10 +196,8 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 
 		// content - footer - show more
 		if (!control.getHideShowMoreButton()) {
-			// aria-hidden stop show more button to read out the whole notification, when in a group
 			rm.openStart('div')
 				.class('sapMNLIShowMore')
-				.attr('aria-hidden', 'true')
 				.openEnd();
 
 			rm.renderControl(control._getShowMoreButton());

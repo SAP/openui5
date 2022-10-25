@@ -6,29 +6,14 @@
 .sapMNLIB {
 	position: relative;
 
+	&:focus {
+		outline: none;
+	}
+
 	.sapMNLICloseBtn:not(:empty) {
 		margin: 0 0.5rem;
 	}
 }
-
-html.sap-desktop {
-	.sapMNLIB:focus {
-		outline: none;
-	}
-
-	.sapMNLIB:focus::before {
-		content: " ";
-		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
-		position: absolute;
-		top: 1px;
-		right: 1px;
-		bottom: 1px;
-		left: 1px;
-		z-index: 2;
-		pointer-events: none;
-	}
-}
-
 // Priority icons
 
 .sapMNLIBPriority {
