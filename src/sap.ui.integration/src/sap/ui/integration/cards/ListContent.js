@@ -91,6 +91,16 @@ sap.ui.define([
 	});
 
 	/**
+	 * Called on before rendering of the control.
+	 * @private
+	 */
+	ListContent.prototype.onBeforeRendering = function () {
+		BaseListContent.prototype.onBeforeRendering.apply(this, arguments);
+
+		this._getList().setBackgroundDesign(this.getDesign());
+	};
+
+	/**
 	 * Called when control is initialized.
 	 */
 	ListContent.prototype.init = function () {

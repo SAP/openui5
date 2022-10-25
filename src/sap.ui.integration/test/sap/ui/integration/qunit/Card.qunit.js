@@ -3928,5 +3928,51 @@ sap.ui.define([
 			});
 			oCard.startManifestProcessing();
 		});
+
+		QUnit.module("Design property", {
+			beforeEach: function () {
+				this.oCard = new Card();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Design property in list card", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.attachEvent("_ready", function () {
+				// Assert
+				assert.strictEqual(oCard.getCardContent()._getList().getBackgroundDesign(), "Transparent", "The design property is set correctly.");
+				done();
+			});
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			oCard.setDesign("Transparent");
+			oCard.setManifest(oManifest_ListCard);
+			Core.applyChanges();
+		});
+
+		QUnit.test("Design property in table card", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.attachEvent("_ready", function () {
+				// Assert
+				assert.strictEqual(oCard.getCardContent()._getTable().getBackgroundDesign(), "Transparent", "The design property is set correctly.");
+				done();
+			});
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			oCard.setDesign("Transparent");
+			oCard.setManifest(oManifest_TableCard);
+			Core.applyChanges();
+		});
 	}
 );
