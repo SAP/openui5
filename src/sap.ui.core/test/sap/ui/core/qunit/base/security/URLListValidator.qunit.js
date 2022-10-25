@@ -68,13 +68,16 @@ sap.ui.define(["sap/base/security/URLListValidator"], function(URLListValidator)
 		assert.ok(URLListValidator.validate(/asd/), "regex is a valid URL");
 	});
 
-	QUnit.test("Invalid protocol slashes", function(assert) {
+	QUnit.test("Unusual number of slashes in front of host", function(assert) {
 		URLListValidator.add("http", "sap.com");
+		assert.notOk(URLListValidator.validate("http:evil.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http:/evil.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http:\\evil.com"), "URL is not valid");
 		assert.notOk(URLListValidator.validate("http:/\\evil.com"), "URL is not valid");
 		assert.notOk(URLListValidator.validate("http:/\\/evil.com"), "URL is not valid");
 		assert.notOk(URLListValidator.validate("http:/\\//evil.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http:///evil.com"), "URL is not valid");
 		assert.notOk(URLListValidator.validate("http:\\\\evil.com"), "URL is not valid");
-		assert.notOk(URLListValidator.validate("http:/evil.com"), "URL is not valid");
 	});
 
 	QUnit.test("Whitespaces in URL with allow-list", function(assert) {

@@ -143,7 +143,7 @@ sap.ui.define(["jquery.sap.encoder"], function (jQuery) {
 		assert.ok(jQuery.sap.validateUrl(sUrl), sUrl + " valid");
 
 		sUrl = "http:\\www.sap.com";
-		assert.ok(!jQuery.sap.validateUrl(sUrl), sUrl + " not valid");
+		assert.ok(jQuery.sap.validateUrl(sUrl), sUrl + " valid");
 
 		sUrl = "https://www.sap.com";
 		assert.ok(jQuery.sap.validateUrl(sUrl), sUrl + " valid");
