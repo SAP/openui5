@@ -76,7 +76,7 @@ sap.ui.define([
 	 * @param {function} mOptions.afterAction - Function(oUiComponent, oView, assert) which checks the outcome of the action
 	 * @param {function} mOptions.afterUndo - Function(oUiComponent, oView, assert) which checks the execution of the action and an immediate undo
 	 * @param {function} mOptions.afterRedo - Function(oUiComponent, oView, assert) which checks the outcome of action with immediate undo and redo
-	 * @param {object} [mOptions.changeVisualization] - Change visualization information
+	 * @param {object|function} [mOptions.changeVisualization] - Change visualization information or function(oView) that returns the information
 	 * @param {string} [mOptions.changeVisualization.displayElementId] - ID of the element where the change indicator should be displayed
 	 * @param {object} [mOptions.changeVisualization.info] - Change visualization specific information from the change handler
 	 * @param {string[]} [mOptions.changeVisualization.info.affectedControls] - IDs of affected controls
@@ -335,6 +335,13 @@ sap.ui.define([
 				return Promise.resolve();
 			}
 
+			var oChangeVisualizationInput;
+			if (typeof mOptions.changeVisualization === "function") {
+				oChangeVisualizationInput = mOptions.changeVisualization(oView);
+			} else {
+				oChangeVisualizationInput = mOptions.changeVisualization;
+			}
+
 			var oChangeVisualization = new ChangeVisualization({
 				rootControlId: oView.getId(),
 				isActive: true
@@ -355,11 +362,11 @@ sap.ui.define([
 			.then(function() {
 				var oChangeIndicatorRegistry = oChangeVisualization._oChangeIndicatorRegistry;
 				var oData = oChangeIndicatorRegistry.getSelectorsWithRegisteredChanges();
-				var sDisplayElementId = mOptions.changeVisualization.displayElementId;
+				var sDisplayElementId = oChangeVisualizationInput.displayElementId;
 				var sSelector = sDisplayElementId ? oView.createId(sDisplayElementId) : oView.getId();
 				assert.ok(oData[sSelector] && oData[sSelector].length, "there is a change indicator at the correct element");
 				var oRegisteredChange = oChangeIndicatorRegistry.getAllRegisteredChanges()[0];
-				var mVisualizationInfo = mOptions.changeVisualization.info;
+				var mVisualizationInfo = oChangeVisualizationInput.info;
 
 				function mapIds(aIds) {
 					return aIds.map(function(sId) {
@@ -367,20 +374,22 @@ sap.ui.define([
 					});
 				}
 
-				if (mVisualizationInfo.affectedControls) {
-					var aAffectedControlIds = mapIds(mVisualizationInfo.affectedControls);
-					assert.deepEqual(aAffectedControlIds, oRegisteredChange.visualizationInfo.affectedElementIds, "then the affected control ids are correct");
-				}
-				if (mVisualizationInfo.dependentControls) {
-					var aDependentControlIds = mapIds(mVisualizationInfo.dependentControls);
-					assert.deepEqual(aDependentControlIds, oRegisteredChange.visualizationInfo.dependentElementIds, "then the dependent control ids are correct");
-				}
-				if (mVisualizationInfo.displayControls) {
-					var aDisplayControlIds = mapIds(mVisualizationInfo.displayControls);
-					assert.deepEqual(aDisplayControlIds, oRegisteredChange.visualizationInfo.displayElementIds, "then the display control ids are correct");
-				}
-				if (mVisualizationInfo.descriptionPayload) {
-					assert.deepEqual(mVisualizationInfo.descriptionPayload, oRegisteredChange.visualizationInfo.descriptionPayload, "then the descriptionPayload is correct");
+				if (mVisualizationInfo) {
+					if (mVisualizationInfo.affectedControls) {
+						var aAffectedControlIds = mapIds(mVisualizationInfo.affectedControls);
+						assert.deepEqual(aAffectedControlIds, oRegisteredChange.visualizationInfo.affectedElementIds, "then the affected control ids are correct");
+					}
+					if (mVisualizationInfo.dependentControls) {
+						var aDependentControlIds = mapIds(mVisualizationInfo.dependentControls);
+						assert.deepEqual(aDependentControlIds, oRegisteredChange.visualizationInfo.dependentElementIds, "then the dependent control ids are correct");
+					}
+					if (mVisualizationInfo.displayControls) {
+						var aDisplayControlIds = mapIds(mVisualizationInfo.displayControls);
+						assert.deepEqual(aDisplayControlIds, oRegisteredChange.visualizationInfo.displayElementIds, "then the display control ids are correct");
+					}
+					if (mVisualizationInfo.descriptionPayload) {
+						assert.deepEqual(mVisualizationInfo.descriptionPayload, oRegisteredChange.visualizationInfo.descriptionPayload, "then the descriptionPayload is correct");
+					}
 				}
 			});
 		}
