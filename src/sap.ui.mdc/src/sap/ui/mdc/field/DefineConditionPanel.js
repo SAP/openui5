@@ -319,10 +319,10 @@ sap.ui.define([
 			if (iMaxConditions === -1 || aConditions.length < iMaxConditions) {
 				// create a new dummy condition for a new condition on the UI - must be removed later if not used or filled correct
 				this.addDummyCondition(aConditions.length + 1);
-				if (this.getConditions().length === iMaxConditions) {
-					this._bFocusLastCondition = true; // as add-Button will disappear and focus should stay in DefineConditionPanel
-				}
+				this._bFocusLastCondition = true; // as add-Button will disappear and focus should stay in DefineConditionPanel
 			}
+
+			this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_ADDCONDITION_ANNOUNCE"), InvisibleMessageMode.Polite);
 		},
 
 		addDummyCondition: function(index) {
@@ -350,6 +350,7 @@ sap.ui.define([
 				// static condition added, it is ready to use -> fire event
 				this.fireConditionProcessed();
 			}
+
 		},
 
 		updateDefineConditions: function() {
@@ -1208,8 +1209,10 @@ sap.ui.define([
 		}
 
 		if (this._bFocusLastCondition) {
-			// focus last condition after it is rendered
-			aGridContent[0].focus();
+			// focus last condition operator field after it is rendered
+			iIndex = _getGridIndexOfLastRow.call(this, "-operator");
+			// setting the focus on a field only work with a Timeout
+			setTimeout(function() { aGridContent[iIndex].focus(); }, 0);
 			this._bFocusLastCondition = false;
 		}
 		if (this._bFocusLastRemoveBtn) {
@@ -1243,6 +1246,24 @@ sap.ui.define([
 					i++;
 					sSearch = aIdEndsWith[i];
 				}
+			}
+			n--;
+		}
+
+		return 0;
+	}
+
+	function _getGridIndexOfLastRow(sIdEndsWith) {
+		var oGrid = this.byId("conditions");
+		var aElements = oGrid.getContent();
+		var n = aElements.length - 1;
+
+		var sSearch = sIdEndsWith;
+
+		while (n >= 0) {
+			var oElement = aElements[n];
+			if (oElement.getId().endsWith(sSearch)) {
+				return n;
 			}
 			n--;
 		}
