@@ -287,6 +287,18 @@ sap.ui.define([
 				 */
 				manifestChanges: {
 					type: "object[]"
+				},
+
+				/**
+				 * Defines if the card should be displayed with mock data. To be used with component cards.
+				 * @experimental Since 1.109
+				 * @private
+				 * @since 1.109
+				 */
+				useMockData: {
+					type: "boolean",
+					defaultValue: false,
+					visibility: "hidden"
 				}
 			},
 			aggregations: {
