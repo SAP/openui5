@@ -536,6 +536,41 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Test to check if edited item in fetched from source. so, with binding change edithandler still gets actual item", function(assert){
+		//arrange
+		var oItemsList = this.oUploadSet.getItems();
+		var itemTobeEdited = oItemsList[0];
+		var oEvent = new EventBase("click", {}, { // using BaseEvent to create sample mouse click event.
+			item: itemTobeEdited
+		});
+		var findByIdSpy = this.spy(UploadSetItem, "_findById");
+
+		//act
+		this.oUploadSet._handleItemEdit(oEvent, itemTobeEdited);
+
+		//assert
+		assert.ok(findByIdSpy.called, "Edited item fetched from source");
+	});
+
+	QUnit.test("Test to check if item to be deleted is fetched from source. so, with binding change deletehandler still gets actual item", function(assert){
+		//arrange
+		var oItemsList = this.oUploadSet.getItems();
+		var itemTobeDeleted = oItemsList[0];
+		var oEvent = new EventBase("click", {}, { // using BaseEvent to create sample mouse click event.
+			item: itemTobeDeleted
+		});
+		var findByIdSpy = this.stub(UploadSetItem, "_findById");
+		this.stub(MessageBox, "show").callsFake(function(){
+			return true;
+		});
+
+		//act
+		this.oUploadSet._handleItemDelete(oEvent, itemTobeDeleted);
+
+		//assert
+		assert.ok(findByIdSpy.called, "Item to be deleted is fetched from source");
+	});
+
 	QUnit.module("UploadSet general functionality", {
 		beforeEach: function () {
 			this.oUploadSet = new UploadSet("uploadSet", {

@@ -1270,12 +1270,13 @@ sap.ui.define([
 
 	UploadSet.prototype._handleItemEdit = function (oEvent, oItem) {
 		if (this._oEditedItem) {
+			this._oEditedItem = UploadSetItem._findById(this._oEditedItem.getId(), this._getAllItems());
 			this._handleItemEditConfirmation(oEvent, this._oEditedItem);
 		}
 		// If editing of current item could not be finished then editing of another item cannot start
 		if (!this._oEditedItem) {
 			if (this.fireBeforeItemEdited({item: oItem})) {
-				this._oEditedItem = oItem;
+				this._oEditedItem = UploadSetItem._findById(oItem.getId(), this._getAllItems());
 				this._oEditedItem._setInEditMode(true);
 			}
 		}
@@ -1364,6 +1365,7 @@ sap.ui.define([
 		var sMessageText;
 
 		if (this._oEditedItem) {
+			this._oEditedItem = UploadSetItem._findById(this._oEditedItem.getId(), this._getAllItems());
 			this._handleItemEditConfirmation(oEvent, this._oEditedItem);
 			// If editing could not be finished then delete action cannot continue
 			if (this._oEditedItem) {
@@ -1384,7 +1386,7 @@ sap.ui.define([
 		} else {
 			sMessageText = this._oRb.getText("UPLOAD_SET_DELETE_TEXT", oItem.getFileName());
 		}
-		this._oItemToBeDeleted = oItem;
+		this._oItemToBeDeleted = UploadSetItem._findById(oItem.getId(), this._getAllItems());
 		MessageBox.show(sMessageText, {
 			id: this.getId() + "-deleteDialog",
 			title: this._oRb.getText("UPLOAD_SET_DELETE_TITLE"),
