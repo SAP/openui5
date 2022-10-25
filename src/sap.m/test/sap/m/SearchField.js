@@ -80,7 +80,7 @@ sap.ui.define([
 					oDialog.close();
 				}
 			})
-	});
+	}).addStyleClass("sapUiContentPadding");
 
 	var page = new Page("searchPage", {
 		enableScrolling: true,
