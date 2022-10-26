@@ -14,7 +14,7 @@ sap.ui.define([
 	var mApps = {},
 		mTests = {
 			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true' : 'full',
-			// realOData=true is appended so that the module is run in variant "POC verification'
+			// realOData=true is appended so that the module is run in variant "POC verification"
 			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&module=sap.ui.model.odata.v4.ODataModel.integration&realOData=true' : 'integration',
 			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&module=sap.ui.model.odata.v4.ODataModel.realOData&realOData=true' : 'integration'
 		};
@@ -25,14 +25,23 @@ sap.ui.define([
 
 		Object.keys(oSuite.tests).forEach(function (sTest) {
 			if (sTest.startsWith("OPA.")) {
-				var sName = sTest.slice(4),
-					sApp = "demokit/sample/common/index.html?component=odata.v4." + sName,
+				var aLinks,
+					sName = sTest.slice(4),
 					sOpa = sSuite + sTest,
-					aLinks = [sApp, sApp + "&realOData=true", sOpa + "&supportAssistant=true"];
+					oTest = oSuite.tests[sTest],
+					sApp = oTest.$app
+						? oTest.$app.replace("test-resources/sap/ui/core/", "")
+						: "demokit/sample/common/index.html?component=odata.v4." + sName;
+
+				aLinks = [
+					sApp,
+					sApp + (sApp.includes("?") ? "&" : "?") + "realOData=true",
+					sOpa + "&supportAssistant=true"
+				];
 
 				mApps[sName] = aLinks;
 				mTests[sOpa + "&supportAssistant=true"] = "both";
-				if (oSuite.tests[sTest].realOData !== false) {
+				if (oTest.realOData !== false) {
 					mTests[sOpa + "&realOData=true"] = "both";
 					aLinks.push(sOpa + "&realOData=true");
 				}
