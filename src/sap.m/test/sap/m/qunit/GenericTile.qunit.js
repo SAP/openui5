@@ -5076,6 +5076,85 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		//Act
 		assert.equal(this.oGrid1.getItems()[0].getDomRef().getAttribute("draggable"),"true","Tile is draggable");
 	});
+
+	QUnit.module("Test if the pressEnabled property is working on the IconMode tiles in action scope", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile({
+				header: "GenericTile",
+				subheader: "GenericTile subHeader",
+				mode: "IconMode",
+				tileIcon: "sap-icon://table-view",
+				backgroundColor: "red",
+				frameType: "TwoByHalf",
+				pressEnabled : false,
+				scope : "ActionMore"
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+		}
+	});
+
+	QUnit.test("Test if the press event is getting fired on the tile by pressing spacebar or enter keys", function (assert) {
+		//Arrange
+		var bEventNotTriggered = true;
+		this.oGenericTile.attachEvent("press", function() {
+			bEventNotTriggered = false;
+		});
+		//Act
+		qutils.triggerKeyup(this.oGenericTile.getDomRef(),KeyCodes.SPACE);
+		//Assert
+		assert.ok(bEventNotTriggered, "Press event of GenericTile is not getting triggered");
+		//Act
+		qutils.triggerKeyup(this.oGenericTile.getDomRef(),KeyCodes.ENTER);
+		//Assert
+		assert.ok(bEventNotTriggered, "Press event of GenericTile is not getting triggered");
+	});
+
+	QUnit.test("Test if the ActionMore button is getting fired by spacebar or enter keys", function (assert) {
+		//Arrange
+		var bEventNotTriggered = true;
+		this.oGenericTile.attachEvent("press", function() {
+			bEventNotTriggered = false;
+		});
+		var bForward = true;
+
+		//Act
+		qutils.triggerKeydown(this.oGenericTile.getDomRef(), KeyCodes.TAB);
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+		qutils.triggerKeyup(this.oGenericTile._oMoreIcon.getDomRef(),KeyCodes.ENTER);
+
+		//Assert
+		assert.notOk(bEventNotTriggered, "Press event of GenericTile is getting triggered");
+		//Act
+		qutils.triggerKeyup(this.oGenericTile._oMoreIcon.getDomRef(),KeyCodes.SPACE);
+		//Assert
+		assert.notOk(bEventNotTriggered, "Press event of GenericTile is getting triggered");
+	});
+
+	QUnit.test("Test if the ActionMore button is getting fired by mouse", function (assert) {
+		var bEventNotTriggered = true;
+		this.oGenericTile.attachEvent("press", function() {
+			bEventNotTriggered = false;
+		});
+		var bForward = true;
+
+		//Act
+		qutils.triggerKeydown(this.oGenericTile.getDomRef(), KeyCodes.TAB);
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+		qutils.triggerKeyup(this.oGenericTile.getDomRef(), KeyCodes.TAB);
+		qutils.triggerEvent("tap",this.oGenericTile._oMoreIcon.getDomRef());
+
+		//Assert
+		assert.notOk(bEventNotTriggered, "Press event of GenericTile is getting triggered");
+	});
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
 		for (var i = 0; i < aContainers.length; i++) {

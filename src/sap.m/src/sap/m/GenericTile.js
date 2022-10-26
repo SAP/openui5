@@ -1130,8 +1130,8 @@ sap.ui.define([
 	GenericTile.prototype.ontap = function (event) {
 		if (!_isInnerTileButtonPressed(event, this)) {
 			var oParams;
-
-			if (this._bTilePress && this.getState() !== LoadState.Disabled) {
+			// The ActionMore button in IconMode tile would be fired irrespective of the pressEnabled property
+			if ((this._bTilePress || this._isActionMoreButtonVisibleIconMode(event)) && this.getState() !== LoadState.Disabled) {
 				this.$().trigger("focus");
 				oParams = this._getEventParams(event);
 				if (!(this.isInActionRemoveScope() && oParams.action === GenericTile._Action.Press)) {
@@ -1218,7 +1218,8 @@ sap.ui.define([
 
 			}
 
-			if (!preventPress && bFirePress) {
+			// The ActionMore button in IconMode tile would be fired irrespective of the pressEnabled property
+			if ((!preventPress && bFirePress && (this._bTilePress || this._isActionMoreButtonVisibleIconMode(event)))) {
 				this.firePress(oParams);
 				event.preventDefault();
 			}
@@ -1572,6 +1573,17 @@ sap.ui.define([
 	 */
 	GenericTile.prototype.isInActionRemoveScope = function () {
 		return this.getScope() === GenericTileScope.ActionRemove;
+	};
+
+	/**
+	 * Returns true if the tile is in action scope,IconMode and in TwoByHalf frameType
+	 *
+	 * @param {sap.ui.base.Event} oEvent which was fired
+	 * @return {boolean} true if the tile is in action scope,IconMode and in TwoByHalf frameType
+	 * @private
+	 */
+	 GenericTile.prototype._isActionMoreButtonVisibleIconMode = function (oEvent)  {
+		return (this.getScope() === GenericTileScope.ActionMore || this.getScope() === GenericTileScope.Actions) && this._isIconMode() && this.getFrameType() === FrameType.TwoByHalf && oEvent.target.id.indexOf("-action-more") > -1;
 	};
 
 	/**
