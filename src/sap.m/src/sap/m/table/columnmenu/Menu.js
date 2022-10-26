@@ -245,6 +245,8 @@ sap.ui.define([
 		}
 
 		this._oPopover = new ResponsivePopover({
+			title: this._getResourceText("table.COLUMNMENU_TITLE"),
+			ariaLabelledBy: this.getId() + "-menuDescription",
 			showArrow: false,
 			showHeader: Device.system.phone,
 			placement: library.PlacementType.Bottom,
@@ -260,7 +262,7 @@ sap.ui.define([
 			"onAfterRendering": this._focusItem
 		}, this);
 
-		if (this.getItems().length === 0 && !this.getAggregation("_items")) {
+		if (this._getAllEffectiveItems().length === 0) {
 			this._oPopover.attachAfterOpen(this._focusInitialQuickAction.bind(this));
 		} else {
 			// focus the first visible menu item
@@ -542,16 +544,13 @@ sap.ui.define([
 	};
 
 	Menu.prototype._focusInitialQuickAction = function () {
-		// Does not work with content, which contains multiple items
-		if (this.getItems().length === 0 && !this.getAggregation("_items")) {
-			var aQuickActions = [];
-			if (this.getAggregation("_quickActions")) {
-				aQuickActions = this.getAggregation("_quickActions")[0].getEffectiveQuickActions();
-			} else if (this.getQuickActions().length > 0) {
-				aQuickActions = this.getQuickActions()[0].getEffectiveQuickActions();
-			}
-			aQuickActions.length > 0 && aQuickActions[0].getContent()[0].focus();
+		var aQuickActions = [];
+		if (this.getAggregation("_quickActions")) {
+			aQuickActions = this.getAggregation("_quickActions")[0].getEffectiveQuickActions();
+		} else if (this.getQuickActions().length > 0) {
+			aQuickActions = this.getQuickActions()[0].getEffectiveQuickActions();
 		}
+		aQuickActions.length > 0 && aQuickActions[0].getContent()[0].focus();
 	};
 
 	Menu.prototype._setItemVisibility = function (oItem, bVisible) {
@@ -634,6 +633,8 @@ sap.ui.define([
 					}
 					oGridData = new GridData({span: sSpan, indent: sIndent});
 				}
+				oItem.removeAllAssociation("ariaLabelledBy");
+				oItem.addAssociation("ariaLabelledBy", oLabel.getId());
 				oControl = new AssociativeControl({control: oItem.setWidth("100%")});
 				oControl.setLayoutData(oGridData);
 				aControls.push(oControl);
