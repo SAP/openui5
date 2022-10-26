@@ -2549,7 +2549,7 @@ sap.ui.define([
 	 * @public
 	 * @param {string|Element} o DOM element or ID of the UIArea
 	 * @return {sap.ui.core.UIArea|null|undefined} UIArea with the given ID or DOM element or <code>null</code> or <code>undefined</code>.
-	 * @deprecated As of version 1.107, use {@link sap.ui.core.UIArea.registry#get UIArea.registry#get} instead!
+	 * @deprecated As of version 1.107, use {@link sap.ui.core.UIArea.registry#get UIArea.registry#get} instead, but note that <code>UIArea.registry.get</code> only accepts the ID of the UIArea as argument.
 	 */
 	Core.prototype.getUIArea = function(o) {
 		assert(typeof o === "string" || typeof o === "object", "o must be a string or object");
