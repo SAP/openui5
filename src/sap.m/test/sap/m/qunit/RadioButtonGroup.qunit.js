@@ -286,36 +286,6 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("Invisible buttons", function(assert) {
-		var oRBGroup = new RadioButtonGroup({
-			buttons: [
-				new RadioButton({
-					text: "1"
-				}),
-				new RadioButton({
-					text: "2"
-				}),
-				new RadioButton({
-					text: "3",
-					selected: true,
-					visible: false
-				})
-			]
-		}).placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		// assertions
-		assert.strictEqual(oRBGroup.getSelectedIndex(), 0, "selectedIndex=0");
-
-		oRBGroup.getButtons()[0].setVisible(false);
-		Core.applyChanges();
-
-		assert.strictEqual(oRBGroup.getButtons()[1].getDomRef().tabIndex, 0, "tabIndex=0");
-
-		// cleanup
-		oRBGroup.destroy();
-	});
-
 	QUnit.module("Setters", {
 		beforeEach : function() {
 			this.rbg = new RadioButtonGroup({
