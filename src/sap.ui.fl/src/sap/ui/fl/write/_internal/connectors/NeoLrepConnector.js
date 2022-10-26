@@ -4,17 +4,19 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/fl/write/_internal/connectors/BackendConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/ui/fl/initial/_internal/connectors/NeoLrepConnector"
+	"sap/ui/fl/initial/_internal/connectors/NeoLrepConnector",
+	"sap/ui/fl/initial/_internal/connectors/Utils"
 ], function(
 	merge,
-	BackendConnector,
 	LrepConnector,
-	InitialConnector
+	InitialConnector,
+	InitialUtils
 ) {
 	"use strict";
-
+	var ROUTES = {
+		SETTINGS: "/flex/settings"
+	};
 
 	/**
 	 * Connector for requesting data from a Neo LRep-based back end.
@@ -60,9 +62,15 @@ sap.ui.define([
 			}
 		},
 		loadFeatures: function (mPropertyBag) {
-			return BackendConnector.loadFeatures.call(InitialConnector, mPropertyBag).then(function (oFeatures) {
-				oFeatures.isContextSharingEnabled = false;
-				return oFeatures;
+			if (InitialConnector.settings) {
+				return Promise.resolve(InitialConnector.settings);
+			}
+			var mParameters = {};
+
+			var sFeaturesUrl = InitialUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
+			return InitialUtils.sendRequest(sFeaturesUrl, "GET", {initialConnector: InitialConnector}).then(function (oResult) {
+				oResult.response.isContextSharingEnabled = false;
+				return oResult.response;
 			});
 		}
 	});
