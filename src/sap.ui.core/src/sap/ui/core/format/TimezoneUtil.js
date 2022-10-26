@@ -127,7 +127,7 @@ sap.ui.define([], function() {
 	 * var oDate = new Date("2021-10-13T15:22:33Z"); // UTC
 	 * // time zone difference UTC-4 (DST)
 	 * TimezoneUtil.convertToTimezone(oDate, "America/New_York");
-	 * result is:
+	 * // result is:
 	 * // 2021-10-13 11:22:33 in America/New_York
 	 * // same as new Date("2021-10-13T11:22:33Z"); // UTC
 	 *
