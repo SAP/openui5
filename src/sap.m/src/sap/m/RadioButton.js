@@ -243,11 +243,8 @@ function(
 		this._updateGroupName(sGroupName);
 		this._updateLabelProperties();
 
-		// If this radio button is visible and selected, explicitly deselect the other radio buttons in the same group
-		if (this.getVisible() &&
-			this.getSelected() &&
-			sGroupName !== "" &&
-			this._isLastSelectedInGroup(sGroupName)) {
+		// If this radio button is selected, explicitly deselect the other radio buttons in the same group
+		if (this.getSelected() && sGroupName !== "" && this._isLastSelectedInGroup(sGroupName)) {
 			this._deselectOthersInGroup(sGroupName);
 		}
 	};
@@ -436,7 +433,6 @@ function(
 
 		var oNextItem = this._getNextFocusItem(sPosition);
 		oNextItem.focus();
-
 		if (bSelect && !oNextItem.getSelected() && oNextItem.getEditable() && oNextItem.getEnabled()) {
 			oNextItem.setSelected(true);
 
