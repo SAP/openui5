@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/mdc/field/FieldBaseRenderer',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/Condition',
+	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/field/ConditionType',
 	'sap/ui/mdc/field/ConditionsType',
 	'sap/ui/mdc/enum/BaseType',
@@ -39,6 +40,7 @@ sap.ui.define([
 	FieldBaseRenderer,
 	FilterOperatorUtil,
 	Condition,
+	ConditionValidateException,
 	ConditionType,
 	ConditionsType,
 	BaseType,
@@ -2060,20 +2062,10 @@ sap.ui.define([
 
 		// try to find the corresponding async. change and reject it
 		var vValue = oEvent.getParameter("newValue");
+		var oException = oEvent.getParameter("exception");
+		var aWrongConditions = oException && oException instanceof ConditionValidateException && oException.getConditions(); // we store the conditions in the ConditionValidationException
 		var bFound = false;
 		var i = 0;
-		var bIsMeasure = this._oContentFactory.isMeasure();
-		var iPart = 0;
-
-		if (bIsMeasure) { // check on what part the error occurs and compare only this value
-			var oControl = oEvent.getParameter("element");
-			var aContent = this._getContent();
-			for (i = 0; i < aContent.length; i++) {
-				if (oControl === aContent[i]) {
-					iPart = i;
-				}
-			}
-		}
 
 		for (i = 0; i < this._aAsyncChanges.length; i++) {
 			var oChange = this._aAsyncChanges[i];
@@ -2082,23 +2074,10 @@ sap.ui.define([
 					// for empty string no condition is created
 					oChange.reject(oEvent.getParameter("exception"));
 					bFound = true;
-				} else {
-					for (var j = 0; j < oChange.result.length; j++) {
-						var oCondition = oChange.result[j];
-						var vCompare = oCondition.values[0];
-						var vCompareBT = oCondition.operator === "BT" && oCondition.values[1];
-						if (bIsMeasure) {
-							vCompare = vCompare[iPart];
-							vCompareBT = oCondition.operator === "BT" && vCompareBT[iPart];
-						}
-						if (deepEqual(vCompare, vValue) || (oCondition.operator === "BT" && deepEqual(vCompareBT, vValue))) {
-							oChange.reject(oEvent.getParameter("exception"));
-							bFound = true;
-							break;
-						}
-					}
-				}
-				if (bFound) {
+					break;
+				} else if (deepEqual(oChange.result, aWrongConditions)) { // compare parsing result with conditions used for validation -> must be the same
+					oChange.reject(oException);
+					bFound = true;
 					break;
 				}
 			}

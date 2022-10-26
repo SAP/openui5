@@ -5,6 +5,7 @@
 // Provides the base implementation for all model implementations
 sap.ui.define([
 	'sap/ui/mdc/field/ConditionType',
+	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/model/SimpleType',
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
@@ -14,6 +15,7 @@ sap.ui.define([
 ],
 	function(
 		ConditionType,
+		ConditionValidateException,
 		SimpleType,
 		FormatException,
 		ParseException,
@@ -308,7 +310,7 @@ sap.ui.define([
 	 *	The conditions to be validated
 	 * @returns {void|Promise}
 	 *	<code>undefined</code> or a <code>Promise</code> resolving with an undefined value
-	 * @throws {sap.ui.model.ValidateException}
+	 * @throws {sap.ui.mdc.condition.ConditionValidateException}
 	 *	If at least one of the values of the conditions is not valid for the given data type; the message of the exception is
 	 *	language dependent as it may be displayed on the UI
 	 *
@@ -323,19 +325,29 @@ sap.ui.define([
 		}
 
 		if (!Array.isArray(aConditions)) {
-			throw new ValidateException("No valid conditions provided");
+			throw new ConditionValidateException("No valid conditions provided", undefined, undefined, aConditions);
 		}
 
-		for (var i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
-			this._oConditionType.validateValue(oCondition);
-		}
+		try {
+			for (var i = 0; i < aConditions.length; i++) {
+				var oCondition = aConditions[i];
+				this._oConditionType.validateValue(oCondition);
+			}
 
-		var iMaxConditions = _getMaxConditions.call(this);
+			var iMaxConditions = _getMaxConditions.call(this);
 
-		if (aConditions.length === 0 && iMaxConditions === 1) {
-			// test if type is nullable. Only for single-value Fields. For MultiValue only real conditions should be checked for type
-			this._oConditionType.validateValue(null);
+			if (aConditions.length === 0 && iMaxConditions === 1) {
+				// test if type is nullable. Only for single-value Fields. For MultiValue only real conditions should be checked for type
+				this._oConditionType.validateValue(null);
+			}
+		} catch (oException) {
+			// add conditions to exception to improve mapping in FieldBase handleValidationError
+			if (oException instanceof ConditionValidateException) {
+				oException.setConditions(aConditions);
+			} else if (oException instanceof ValidateException) {
+				throw new ConditionValidateException(oException.message, oException.violatedConstraints, merge({}, oCondition));
+			}
+			throw oException;
 		}
 
 	};

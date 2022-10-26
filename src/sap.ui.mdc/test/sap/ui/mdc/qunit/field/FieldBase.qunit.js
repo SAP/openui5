@@ -26,6 +26,7 @@ sap.ui.define([
 	"sap/ui/mdc/enum/EditMode",
 	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/mdc/enum/ConditionValidated",
+	"sap/ui/mdc/condition/ConditionValidateException",
 	"sap/m/Label",
 	"sap/m/MultiInput",
 	"sap/m/Text",
@@ -90,6 +91,7 @@ sap.ui.define([
 	EditMode,
 	FieldDisplay,
 	ConditionValidated,
+	ConditionValidateException,
 	Label,
 	MultiInput,
 	Text,
@@ -4804,7 +4806,7 @@ sap.ui.define([
 								var oConditionsType = oContent2.getBinding("value").getType();
 								sinon.stub(oConditionsType, "validateValue").callsFake(function(aConditions) {
 									if (aConditions && aConditions[0] && aConditions[0].values[0][1] === "JPY") {
-										throw new ValidateException("MyError");
+										throw new ConditionValidateException("MyError", undefined, aConditions[0], aConditions);
 									}
 								});
 								oContent2._$input.val("JPY");

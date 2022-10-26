@@ -299,7 +299,11 @@ sap.ui.define([
 
 					oIcon.setSrc("sap-icon://error");
 					oIcon.setColor("Negative");
-					oText.setText(oException.message);
+					if (oException && oException.message) {
+						oText.setText(oException.message);
+					} else {
+						oText.setText(oException); // might be wrong value
+					}
 				}.bind(this));
 			}
 		},
