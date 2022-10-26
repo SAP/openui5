@@ -2487,7 +2487,7 @@ sap.ui.define([
 	 *   given group ID are running.
 	 *
 	 * @public
-	 * @see sap.ui.model.odata.v4.ODataModel#constructor.
+	 * @see sap.ui.model.odata.v4.ODataModel#constructor
 	 * @since 1.39.0
 	 */
 	ODataModel.prototype.resetChanges = function (sGroupId) {
