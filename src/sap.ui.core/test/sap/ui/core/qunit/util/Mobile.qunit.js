@@ -132,12 +132,9 @@ sap.ui.define([
 
 	QUnit.module("sap/ui/util/Mobile (retina)", {
 		beforeEach: function() {
-			this.retina = jQuery.support.retina;
-			jQuery.support.retina = true; // some more faking...
 			fnRemoveViewort();
 		},
 		afterEach: function() {
-			jQuery.support.retina = this.retina;
 			fnRemoveViewort();
 		}
 	});
