@@ -999,6 +999,39 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("ESC should reset the _sProposedItemText property to 'null'", function (assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({key: "key1", text: "Text 1"}),
+				new Item({key: "key2", text: "Text 2"}),
+				new Item({key: "key3", text: "Text 3"})
+			]
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput._bDoTypeAhead = true;
+		qutils.triggerEvent("focus", oInput.getFocusDomRef());
+		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "Te");
+		qutils.triggerEvent("input", oInput.getFocusDomRef());
+		oInput._getSuggestionsPopover()._oPopover.open();
+		this.clock.tick(300);
+
+		// Act
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ESCAPE);
+		this.clock.tick(300);
+
+		// Assert
+		assert.strictEqual(oInput._sProposedItemText, null, "_sProposedItemText was set to 'null'.");
+		assert.strictEqual(oInput._oSuggPopover._oProposedItem, null, "_oProposedItem was set to 'null'.");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
 	QUnit.module("Destroy");
 
 	QUnit.test("Destroy DOM", function(assert) {
