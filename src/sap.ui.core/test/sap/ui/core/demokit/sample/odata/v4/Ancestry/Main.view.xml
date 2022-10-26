@@ -1,0 +1,39 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.Ancestry.Main"
+	xmlns="sap.ui.table"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<TreeTable id="table" ariaLabelledBy="title"
+		rows="{path : '/SADL_V_RS_Ancestry_4_Hier', parameters : {$count : false}, suspended : true}"
+		selectionMode="None" threshold="0" visibleRowCount="5">
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="title" level="H1" text="Ancestry"/>
+				<m:ToolbarSpacer/>
+				<m:SearchField placeholder="Hobby contains..." search="onFilter"
+					value="{ui>/sFilter}" width="40%"/>
+			</m:Toolbar>
+		</extension>
+		<Column template="id">
+			<m:Label text="ID"/>
+		</Column>
+		<Column template="my_parent_id">
+			<m:Label text="Parent's ID"/>
+		</Column>
+		<Column template="first_name">
+			<m:Label text="First Name"/>
+		</Column>
+		<Column template="last_name">
+			<m:Label text="Last Name"/>
+		</Column>
+		<Column template="date_of_birth">
+			<m:Button icon="{ui>/sIcon}" iconFirst="false" press="onSort" text="Date Of Birth"/>
+		</Column>
+		<Column template="hobby">
+			<m:Label text="Hobby"/>
+		</Column>
+	</TreeTable>
+
+</mvc:View>
