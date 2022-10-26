@@ -1411,6 +1411,7 @@ function(
 		if (this._isSuggestionsPopoverOpen()) {
 			// mark the event as already handled
 			oEvent.originalEvent._sapui_handledByControl = true;
+			this._sProposedItemText = null;
 			this.setSelectionUpdatedFromList(false);
 			this._closeSuggestionPopup();
 
