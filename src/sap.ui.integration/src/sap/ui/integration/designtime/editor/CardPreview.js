@@ -75,9 +75,11 @@ sap.ui.define([
 				}
 				oRm.openEnd();
 				oRm.openStart("div", oControl.getId() + "-before");
-				oRm.class("before");
 				oRm.attr("tabindex", "-1");
-				oRm.style("z-index", oControl.getParent()._iZIndex + 1);
+				if (!oControl.getSettings().preview.interactive) {
+					oRm.class("before");
+					oRm.style("z-index", oControl.getParent()._iZIndex + 1);
+				}
 				oRm.openEnd();
 				oRm.close("div");
 				oRm.renderControl(oControl._getCardPreview());
@@ -433,26 +435,32 @@ sap.ui.define([
 	}
 
 	CardPreview.prototype.onfocusin = function (oEvent) {
-		if (!this._focusinByTabPrevious && oEvent.srcControl !== this._oModeToggleButton) {
-			if (this._oModeToggleButton) {
-				this._oModeToggleButton.focus();
-			} else {
-				this.getDomRef("after").focus();
+		if (!this.getSettings().preview.interactive) {
+			if (!this._focusinByTabPrevious && oEvent.srcControl !== this._oModeToggleButton) {
+				if (this._oModeToggleButton) {
+					this._oModeToggleButton.focus();
+				} else {
+					this.getDomRef("after").focus();
+				}
 			}
+			this._focusinByTabPrevious = false;
 		}
-		this._focusinByTabPrevious = false;
 	};
 
 	CardPreview.prototype.onsaptabnext = function (oEvent) {
-		if (oEvent.srcControl !== this._oModeToggleButton) {
-			this.getDomRef("after").focus();
+		if (!this.getSettings().preview.interactive) {
+			if (oEvent.srcControl !== this._oModeToggleButton) {
+				this.getDomRef("after").focus();
+			}
 		}
 	};
 
 	CardPreview.prototype.onsaptabprevious = function (oEvent) {
-		this._focusinByTabPrevious = true;
-		if (!this._oModeToggleButton || oEvent.srcControl === this._oModeToggleButton) {
-			this.getDomRef("before").focus();
+		if (!this.getSettings().preview.interactive) {
+			this._focusinByTabPrevious = true;
+			if (!this._oModeToggleButton || oEvent.srcControl === this._oModeToggleButton) {
+				this.getDomRef("before").focus();
+			}
 		}
 	};
 

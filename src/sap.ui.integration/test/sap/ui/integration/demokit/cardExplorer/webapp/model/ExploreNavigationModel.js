@@ -2475,6 +2475,27 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Preview interactive: true',
+								key: 'previewInteractiveTrue',
+								files: [
+									{
+										url: '/samples/designtimePreviewInteractive/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimePreviewInteractive/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimePreviewInteractive/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
+							},
+							{
 								title: 'Preview position: left',
 								key: 'previewPositionLeft',
 								previewPosition: 'left',
