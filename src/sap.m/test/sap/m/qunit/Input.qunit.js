@@ -4386,7 +4386,7 @@ sap.ui.define([
 
 		// Act
 		oInput._sProposedItemText = "Bulgaria";
-		oInput.onsaptabnext();
+		oInput.onsapfocusleave({relatedControlId: null});
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -4394,6 +4394,67 @@ sap.ui.define([
 		assert.strictEqual(oInput.getSelectedKey(), oSelectionItem.getKey(), "Focusleave should have triggered key selection");
 
 		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("suggestionItemSelected should be fired, when a proposed item is present vie typeahead and the user focuses out of the input", function (assert) {
+		var fnSpy = this.spy();
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItemSelected: fnSpy,
+			suggestionItems: [
+				new Item({text: "Item 1"}),
+				new Item({text: "Item 2"}),
+				new Item({text: "Item 3"})
+			]
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.getFocusDomRef().focus();
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("I").trigger("input");
+		this.clock.tick(300);
+		oInput.getFocusDomRef().blur();
+		this.clock.tick(300);
+
+
+		assert.strictEqual(fnSpy.callCount, 1, "Suggestion item select should be fired");
+		assert.strictEqual(oInput.getSelectedItem(), oInput.getSuggestionItems()[0].getId(), "Focusleave should have triggered item selection");
+		assert.strictEqual(oInput.getSelectedKey(), oInput.getSuggestionItems()[0].getKey(), "Focusleave should have triggered key selection");
+		oInput.destroy();
+	});
+
+	QUnit.test("suggestionItemSelected should be fired, when a proposed item is present vie typeahead and the user focuses out of the input (tabular)", function (assert) {
+		var fnSpy = this.spy();
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItemSelected: fnSpy,
+			suggestionColumns: [
+				new Column({})
+			],
+			suggestionRows: [
+				new ColumnListItem({
+					cells: [
+						new Text({text:"Item"})
+					]
+				})
+			]
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.getFocusDomRef().focus();
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("I").trigger("input");
+		this.clock.tick(300);
+		oInput.getFocusDomRef().blur();
+		this.clock.tick(300);
+
+
+		assert.strictEqual(fnSpy.callCount, 1, "Suggestion item select should be fired");
+		assert.strictEqual(oInput.getSelectedRow(), oInput.getSuggestionRows()[0].getId(), "Focusleave should have triggered row selection");
+
 		oInput.destroy();
 	});
 
