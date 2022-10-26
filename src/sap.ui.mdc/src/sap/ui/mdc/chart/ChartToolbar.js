@@ -12,10 +12,10 @@ sap.ui.define([
         "sap/m/Title",
         "sap/ui/mdc/library",
         "sap/ui/mdc/chart/ChartTypeButton",
-        "sap/ui/mdc/chart/ChartSettings",
         "./ChartSelectionDetails",
         "sap/m/ToolbarSeparator",
-        "sap/ui/core/aria/HasPopup"
+        "sap/ui/core/aria/HasPopup",
+        "sap/m/OverflowToolbarLayoutData"
     ],
     function (
         Core,
@@ -27,10 +27,10 @@ sap.ui.define([
         Title,
         MDCLib,
         ChartTypeButton,
-        ChartSettings,
         ChartSelectionDetails,
         ToolbarSeparator,
-        AriaHasPopup
+        AriaHasPopup,
+        OverflowToolbarLayoutData
     ) {
         "use strict";
 
@@ -119,6 +119,9 @@ sap.ui.define([
 					text: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
                     enabled: false,
                     ariaHasPopup: AriaHasPopup.ListBox,
+                    layoutData: new OverflowToolbarLayoutData({
+                        closeOverflowOnInteraction: false
+                    }),
                     press: function (oEvent) {
                         oMDCChart._showDrillDown(this._oDrillDownBtn);
                     }.bind(this)
@@ -171,6 +174,7 @@ sap.ui.define([
                 this._oSettingsBtn = new OverflowButton(oMDCChart.getId() + "-chart_settings", {
                     icon: "sap-icon://action-settings",//TODO the right icon for P13n chart dialog
                     tooltip: MDCRb.getText('chart.SETTINGS'),
+                    text: MDCRb.getText('chart.SETTINGS'),
                     enabled: false,
                     press: function (oEvent) {
                         var aP13nMode = oMDCChart.getP13nMode();
@@ -195,7 +199,10 @@ sap.ui.define([
 
             if (oMDCChart._getTypeBtnActive()) {
                 this._oChartTypeBtn = new ChartTypeButton(oMDCChart, {
-                    ariaHasPopup: AriaHasPopup.ListBox
+                    ariaHasPopup: AriaHasPopup.ListBox,
+                    layoutData: new OverflowToolbarLayoutData({
+                        closeOverflowOnInteraction: false
+                    })
                 });
                 this._oChartTypeBtn.setEnabled(false);
                 this.addEnd(this._oChartTypeBtn);
