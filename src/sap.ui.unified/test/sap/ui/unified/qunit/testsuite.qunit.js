@@ -32,15 +32,27 @@ sap.ui.define(function() {
 			autostart: true					// Whether to call QUnit.start() when the test setup is done
 		},
 		tests: {
+			/**
+			 * @deprecated Since version 1.44.0
+			 */
 			"Shell": {
 				group: "Shell"
 			},
+			/**
+			 * @deprecated Since version 1.44.0
+			 */
 			"ShellLayout": {
 				group: "Shell"
 			},
+			/**
+			 * @deprecated Since version 1.44.0
+			 */
 			"ShellOverlay": {
 				group: "Shell"
 			},
+			/**
+			 * @deprecated Since version 1.44.0
+			 */
 			"SplitContainer": {
 				group: "Shell"
 			},
