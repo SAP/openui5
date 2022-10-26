@@ -6,10 +6,10 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/hasher",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -18,10 +18,10 @@ sap.ui.define([
 	Component,
 	URLHandler,
 	VariantManagementState,
+	ControlVariantApplyAPI,
 	VariantManagement,
 	VariantModel,
 	Layer,
-	Utils,
 	hasher,
 	sinon
 ) {
@@ -325,11 +325,11 @@ sap.ui.define([
 
 					// variant management controls
 					this.oVariantManagement1 = new VariantManagement("variantMgmtId1", {updateVariantInURL: true});
-					this.oVariantManagement1.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+					this.oVariantManagement1.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 					this.oVariantManagement2 = new VariantManagement("variantMgmtId2", {updateVariantInURL: true});
-					this.oVariantManagement2.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+					this.oVariantManagement2.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 					this.oVariantManagement3 = new VariantManagement("variantMgmtId3", {updateVariantInURL: true});
-					this.oVariantManagement3.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+					this.oVariantManagement3.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 
 					// mock property bag for URLHandler.update
 					this.mPropertyBag = {

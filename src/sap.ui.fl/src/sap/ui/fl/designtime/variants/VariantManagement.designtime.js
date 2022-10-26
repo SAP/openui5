@@ -4,15 +4,17 @@
 
 // Provides the Design Time Metadata for the sap.ui.fl.variants.VariantManagement control.
 sap.ui.define([
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/Utils"
 ], function(
+	ControlVariantApplyAPI,
 	flUtils
 ) {
 	"use strict";
 	var fnSetControlAttributes = function (oVariantManagement, bDesignTimeMode) {
 		var oAppComponent = flUtils.getAppComponentForControl(oVariantManagement);
 		var sControlId = oVariantManagement.getId();
-		var oModel = oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
+		var oModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 		var sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
 
 		if (!oModel) {
@@ -82,7 +84,7 @@ sap.ui.define([
 			controlVariant: function(oVariantManagement) {
 				var oAppComponent = flUtils.getAppComponentForControl(oVariantManagement);
 				var sControlId = oVariantManagement.getId();
-				var oModel = oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
+				var oModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 				var sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
 				return {
 					validators: [

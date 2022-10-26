@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
@@ -48,6 +49,7 @@ sap.ui.define([
 	FlexState,
 	ManifestUtils,
 	ChangesController,
+	ControlVariantApplyAPI,
 	Settings,
 	VariantManagement,
 	VariantModel,
@@ -1100,7 +1102,7 @@ sap.ui.define([
 			var sLayer = Layer.CUSTOMER;
 			var sDummyClass = "DummyClass";
 			var oFakeComponentContainerPromise = {property: "fake"};
-			oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+			oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			var oOpenManagementDialogStub = sandbox.stub(oVariantManagement, "openManagementDialog").callsFake(oVariantManagement.fireManage);
 			sandbox.stub(VariantManagementState, "setVariantData");
@@ -1132,7 +1134,7 @@ sap.ui.define([
 		QUnit.test("when the VM Control fires the manage event in Personalization mode with dirty VM changes and UI Changes", function(assert) {
 			var sVariantManagementReference = "variantMgmtId1";
 			var oVariantManagement = new VariantManagement(sVariantManagementReference);
-			oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+			oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 			sandbox.stub(VariantManagementState, "setVariantData");
 			sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap");
 			var oVariantInstance = createVariant(this.oModel.getData()[sVariantManagementReference].variants[1]);
@@ -1971,7 +1973,7 @@ sap.ui.define([
 			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves("foo");
 			sandbox.stub(this.oModel, "getVariantManagementReferenceForControl").returns("varMgmtRef1");
 			this.oVariantManagement.setExecuteOnSelectionForStandardDefault(true);
-			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			assert.ok(fnRegisterToModelSpy.calledOnce, "then registerToModel called once, when VariantManagement control setModel is called");
 			assert.ok(fnRegisterToModelSpy.calledWith(this.oVariantManagement), "then registerToModel called with VariantManagement control");
@@ -2078,8 +2080,8 @@ sap.ui.define([
 		QUnit.test("when variant management controls are initialized with with 'updateVariantInURL' property set and default (false)", function(assert) {
 			this.oRegisterControlStub.resetHistory();
 			var oVariantManagementWithURLUpdate = new VariantManagement("varMgmtRef2", {updateVariantInURL: true});
-			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
-			oVariantManagementWithURLUpdate.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
+			oVariantManagementWithURLUpdate.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 			assert.deepEqual(this.oRegisterControlStub.getCall(0).args[0], {
 				vmReference: this.oModel.oAppComponent.getLocalId(this.oVariantManagement.getId()),
 				updateURL: false,
@@ -2122,7 +2124,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 
-			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this.oVariantManagement.fireSave({
 				name: "variant created title",
@@ -2135,7 +2137,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			var fnSwitchPromiseStub = sandbox.stub();
 
-			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 			this.oVariantManagement.attachEventOnce("save", function() {
 				this.oModel._oVariantSwitchPromise.then(function() {
 					// resolved when variant model is not busy anymore
@@ -2179,7 +2181,7 @@ sap.ui.define([
 				})
 				.returns([oDirtyChange1, oDirtyChange2]);
 
-			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this.oVariantManagement.attachEventOnce("save", function() {
 				this.oModel._oVariantSwitchPromise.then(function() {
@@ -2209,7 +2211,7 @@ sap.ui.define([
 			var sVMReference = "varMgmtRef1";
 			sandbox.stub(Reverter, "revertMultipleChanges");
 
-			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			Reverter.revertMultipleChanges.onFirstCall().callsFake(function() {
 				assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, true, "then 'variantBusy' property is set");
@@ -2280,7 +2282,7 @@ sap.ui.define([
 				});
 				return this.oVariantModel.initialize();
 			}.bind(this)).then(function() {
-				this.oComp.setModel(this.oVariantModel, Utils.VARIANT_MODEL_NAME);
+				this.oComp.setModel(this.oVariantModel, ControlVariantApplyAPI.getVariantModelName());
 				this.sVMReference = "mockview--VariantManagement1";
 
 				var oData = this.oVariantModel.getData();

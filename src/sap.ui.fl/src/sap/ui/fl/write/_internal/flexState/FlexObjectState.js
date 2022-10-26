@@ -4,29 +4,29 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/ui/fl/Utils"
 ], function(
 	_omit,
-	FlexState,
-	ManifestUtils,
 	States,
-	ChangesController,
-	CompVariantState,
 	CompVariantMerger,
 	VariantManagementState,
+	FlexState,
+	ManifestUtils,
+	ChangesController,
+	ControlVariantApplyAPI,
+	CompVariantState,
 	ChangePersistenceFactory,
 	LayerUtils,
-	CompVariantsUtils,
 	Utils
 ) {
 	"use strict";
@@ -97,7 +97,7 @@ sap.ui.define([
 	 function filterChangesByCurrentVariants(aChanges, oControl) {
 		// 1. Get current variant references
 		var oComponent = Utils.getAppComponentForControl(oControl);
-		var oModel = oComponent.getModel(Utils.VARIANT_MODEL_NAME);
+		var oModel = oComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 		var sFlexReference = oModel && oModel.sFlexReference;
 		var aVariantManagementReferences = VariantManagementState.getVariantManagementReferences(sFlexReference);
 

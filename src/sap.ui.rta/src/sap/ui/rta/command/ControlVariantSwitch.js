@@ -4,10 +4,12 @@
 sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/Utils"
 ], function(
 	BaseCommand,
 	JsControlTreeModifier,
+	ControlVariantApplyAPI,
 	flUtils
 ) {
 	"use strict";
@@ -56,7 +58,7 @@ sap.ui.define([
 		var oAppComponent = this._getAppComponent();
 		var sNewVariantReference = this.getTargetVariantReference();
 
-		this.oModel = oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
+		this.oModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oElement, oAppComponent).id;
 		return this._updateModelVariant(sNewVariantReference, oAppComponent);
 	};

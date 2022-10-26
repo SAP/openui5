@@ -2,23 +2,25 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/rta/command/BaseCommand",
-	"sap/ui/rta/library",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/Utils",
-	"sap/base/Log",
 	"sap/base/util/merge",
+	"sap/base/util/values",
+	"sap/base/Log",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/base/util/values"
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/rta/library"
 ], function(
-	BaseCommand,
-	rtaLibrary,
-	JsControlTreeModifier,
-	FlUtils,
-	Log,
 	merge,
+	objectValues,
+	Log,
+	JsControlTreeModifier,
+	ControlVariantApplyAPI,
 	ChangesWriteAPI,
-	objectValues
+	FlUtils,
+	BaseCommand,
+	rtaLibrary
 ) {
 	"use strict";
 
@@ -193,7 +195,7 @@ sap.ui.define([
 			mChangeSpecificData = merge({}, mChangeSpecificData, mFlexSettings);
 		}
 		mChangeSpecificData.jsOnly = this.getJsOnly();
-		var oModel = this.getAppComponent().getModel(FlUtils.VARIANT_MODEL_NAME);
+		var oModel = this.getAppComponent().getModel(ControlVariantApplyAPI.getVariantModelName());
 		var sVariantReference;
 		if (oModel && sVariantManagementReference) {
 			sVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);

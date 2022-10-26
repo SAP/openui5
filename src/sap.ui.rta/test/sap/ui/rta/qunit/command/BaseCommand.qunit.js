@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/PropertyChange",
 	"sap/ui/fl/library",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/model/json/JSONModel",
@@ -56,6 +57,7 @@ sap.ui.define([
 	PropertyChange,
 	flLibrary,
 	ChangesWriteAPI,
+	ControlVariantApplyAPI,
 	Change,
 	Layer,
 	JSONModel,
@@ -573,7 +575,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(oMockedAppComponent, "getModel").callsFake(function (sModelName) {
-				if (sModelName === flUtils.VARIANT_MODEL_NAME) {
+				if (sModelName === ControlVariantApplyAPI.getVariantModelName()) {
 					return {
 						getCurrentVariantReference: function (sVariantManagementRef) {
 							if (sVariantManagementRef === sVariantManagementReference) {

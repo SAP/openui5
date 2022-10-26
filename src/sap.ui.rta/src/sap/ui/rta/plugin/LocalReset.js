@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/write/api/LocalResetAPI",
 	"sap/ui/rta/command/CompositeCommand",
 	"sap/m/MessageToast",
@@ -14,6 +15,7 @@ sap.ui.define([
 	Plugin,
 	DtUtil,
 	FlUtils,
+	ControlVariantApplyAPI,
 	LocalResetAPI,
 	CompositeCommand,
 	MessageToast,
@@ -83,7 +85,7 @@ sap.ui.define([
 		var oRelevantElement = oAction.changeOnRelevantContainer ? oElementOverlay.getRelevantContainer() : oElement;
 		var oRelevantOverlay = OverlayRegistry.getOverlay(oRelevantElement);
 		var oAppComponent = FlUtils.getAppComponentForControl(oRelevantElement);
-		var oVariantModel = oAppComponent.getModel(FlUtils.VARIANT_MODEL_NAME);
+		var oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 		var sCurrentVariant = getCurrentVariant(oVariantModel, this.getVariantManagementReference(oRelevantOverlay));
 		return (
 			bIsActionEnabled
@@ -120,7 +122,7 @@ sap.ui.define([
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 		var sVariantManagementReference = this.getVariantManagementReference(oOverlay);
 		var oAppComponent = FlUtils.getAppComponentForControl(oElement);
-		var oVariantModel = oAppComponent.getModel(FlUtils.VARIANT_MODEL_NAME);
+		var oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 		var sCurrentVariant = getCurrentVariant(oVariantModel, sVariantManagementReference);
 		var bHasVariant = !!sCurrentVariant;
 		var oVariantManagementControl = bHasVariant

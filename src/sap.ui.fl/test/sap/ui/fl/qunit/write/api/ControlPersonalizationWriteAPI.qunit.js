@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
@@ -34,6 +35,7 @@ sap.ui.define([
 	Element,
 	UIComponent,
 	VariantUtils,
+	ControlVariantApplyAPI,
 	FlexRuntimeInfoAPI,
 	ChangeHandlerStorage,
 	ChangeHandlerRegistration,
@@ -105,7 +107,7 @@ sap.ui.define([
 				return this.oVariantModel.initialize();
 			}.bind(this))
 			.then(function() {
-				this.oComp.setModel(this.oVariantModel, Utils.VARIANT_MODEL_NAME);
+				this.oComp.setModel(this.oVariantModel, ControlVariantApplyAPI.getVariantModelName());
 				this.oCompContainer = new ComponentContainer({
 					component: this.oComp
 				}).placeAt("qunit-fixture");
@@ -351,7 +353,7 @@ sap.ui.define([
 		QUnit.test("when calling 'add' with 'ignoreVariantManagement' property set, for change contents with and without variantReferences and no variant model", function(assert) {
 			sandbox.stub(this.oComp, "getModel")
 				.callThrough()
-				.withArgs(Utils.VARIANT_MODEL_NAME)
+				.withArgs(ControlVariantApplyAPI.getVariantModelName())
 				.returns(undefined);
 			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
 			return ControlPersonalizationWriteAPI.add({
@@ -416,7 +418,7 @@ sap.ui.define([
 			var aReferences = [];
 			var oSaveStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves(sChangesSaved);
 			var oCheckStub = sandbox.stub(this.oVariantModel, "checkDirtyStateForControlModels");
-			var aVMControl = new VariantManagement({modelName: Utils.VARIANT_MODEL_NAME}).placeAt(Core.getStaticAreaRef());
+			var aVMControl = new VariantManagement({modelName: ControlVariantApplyAPI.getVariantModelName()}).placeAt(Core.getStaticAreaRef());
 			sandbox.stub(VariantUtils, "getAllVariantManagementControlIds").returns([aVMControl.getId()]);
 			Core.applyChanges();
 
@@ -568,7 +570,7 @@ sap.ui.define([
 					return this.oVariantModel.initialize();
 				}.bind(this))
 				.then(function() {
-					this.oComp.setModel(this.oVariantModel, Utils.VARIANT_MODEL_NAME);
+					this.oComp.setModel(this.oVariantModel, ControlVariantApplyAPI.getVariantModelName());
 					this.oCompContainer = new ComponentContainer({
 						component: this.oComp
 					}).placeAt("qunit-fixture");
