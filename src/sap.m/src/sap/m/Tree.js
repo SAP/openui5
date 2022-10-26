@@ -11,7 +11,7 @@ sap.ui.define([
 	'./TreeRenderer',
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/ui/table/proxies/TreeBindingProxy"
+	"sap/ui/model/controlhelper/TreeBindingProxy"
 ],
 function(
 	ListBase,

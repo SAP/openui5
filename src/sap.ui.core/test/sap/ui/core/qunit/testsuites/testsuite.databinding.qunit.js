@@ -214,6 +214,12 @@ sap.ui.define(function() {
 					"test-resources/sap/ui/core/qunit/model/TreeBindingAdapter.qunit"
 				]
 			},
+			TreeBindingProxy: {
+				title: "sap.ui.model.TreeBindingProxy - QUnit Tests",
+				module: [
+					"test-resources/sap/ui/core/qunit/model/controlhelper/TreeBindingProxy.qunit"
+				]
+			},
 			TreeBindingUtils: {
 				title: "sap.ui.model.TreeBindingUtils - QUnit Tests"
 			},

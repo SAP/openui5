@@ -1,23 +1,29 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (assert, UriParameters) {
+sap.ui.define(["sap/base/assert"], function (assert) {
 	"use strict";
 
 	/**
-	 * Proxy for tree controls, such as <code>sap.ui.table.TreeTable</code> or <code>sap.m.Tree</code>.
-	 * Provides proxy methods for binding methods, which can act differently in different binding types.
+	 * Proxy for tree controls, such as <code>sap.ui.table.TreeTable</code>
+	 * or <code>sap.m.Tree</code>.
+	 * Provides proxy methods for binding methods, which can act differently in different
+	 * binding types.
 	 * Enables the usage of OData V4 bindings in tree controls.
 	 *
 	 * @class
 	 *
 	 * @param {sap.ui.core.Control} oControl control instance
 	 * @param {string} sAggregation aggregation name to be applied to, e.g. in TreeTable "rows"
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.Tree, sap.ui.table.TreeTable
 	 */
 	var TreeBindingProxy = function (oControl, sAggregation) {
 		this._oControl = oControl;
 		this._sAggregation = sAggregation;
-		this._bEnableV4 = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-v4tree") === "true";
+		var oParams = new URLSearchParams(window.location.search);
+		this._bEnableV4 = oParams.get("sap-ui-xx-v4tree") === "true";
 	};
 
 	/**
@@ -27,17 +33,20 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 	 * always return <code>false</code>, if the binding is a OData V4 binding.
 	 */
 	TreeBindingProxy.prototype.isTreeBinding = function () {
-		var oModel = this._oControl.getModel(this._oControl.getBindingInfo(this._sAggregation).model);
+		var oModel = this._oControl.getModel(
+			this._oControl.getBindingInfo(this._sAggregation).model);
 		if (oModel.isA("sap.ui.model.odata.v4.ODataModel")) {
 			return false;
 		}
+
 		return true;
 	};
 
 	/**
 	 * Determines whether the node with the given index is a leaf.
 	 * @param {int} iIndex Index of the node
-	 * @returns {boolean} Leaf state. If the binding is undefined, the method will return <code>true</code>.
+	 * @returns {boolean} Leaf state. If the binding is undefined, the method
+	 * will return <code>true</code>.
 	 */
 	TreeBindingProxy.prototype.isLeaf = function (iIndex) {
 		var oBinding = this._oControl.getBinding();
@@ -51,7 +60,9 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 					throw new Error("UnsupportedOperationException: OData V4 is not supported");
 				}
 				var oContext = this.getContextByIndex(iIndex);
-				return oContext ? oContext.getProperty("@$ui5.node.isExpanded") === undefined : true;
+				return oContext
+					? oContext.getProperty("@$ui5.node.isExpanded") === undefined
+					: true;
 			default:
 				var oNode = this.getNodeByIndex(iIndex);
 				return !oBinding.nodeHasChildren(oNode);
@@ -61,8 +72,9 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 	/**
 	 * Retrieves a node object by an index.
 	 * @param {int} iIndex Index of the node
-	 * @returns {undefined|sap.ui.model.Context|object} Returns <code>undefined</code> if no binding is given,
-	 * a binding context if the binding is a OData V4 binding and by default a node object.
+	 * @returns {undefined|sap.ui.model.Context|object} Returns <code>undefined</code>
+	 * if no binding is given, a binding context if the binding is a OData V4 binding
+	 * and by default a node object.
 	 */
 	TreeBindingProxy.prototype.getNodeByIndex = function(iIndex) {
 		var oBinding = this._oControl.getBinding();
@@ -84,7 +96,8 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 	/**
 	 * Retrieves the context of a node by an index.
 	 * @param {int} iIndex Index of the node
-	 * @returns {undefined|sap.ui.model.Context} Binding context of the node or undefined if no binding exists
+	 * @returns {undefined|sap.ui.model.Context} Binding context of the node or undefined
+	 * if no binding exists
 	 */
 	TreeBindingProxy.prototype.getContextByIndex = function (iIndex) {
 		var oBinding = this._oControl.getBinding();
@@ -106,7 +119,8 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 	/**
 	 * Returns the expansion state of a node.
 	 * @param {int} iIndex Index of the node
-	 * @returns {boolean} Always returns <code>false</code> if binding is undefined, otherwise returns the expansion state.
+	 * @returns {boolean} Always returns <code>false</code> if binding is undefined,
+	 * otherwise returns the expansion state.
 	 */
 	TreeBindingProxy.prototype.isExpanded = function (iIndex) {
 		var oBinding = this._oControl.getBinding();
@@ -128,7 +142,8 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 
 	/**
 	 * Expands the nodes for  the given indices.
-	 * @param {int|int[]} vIndices A single index, or an array of indices of the nodes to be expanded
+	 * @param {int|int[]} vIndices A single index, or an array of indices
+	 * of the nodes to be expanded
 	 */
 	TreeBindingProxy.prototype.expand = function (vIndices) {
 		var oBinding = this._oControl.getBinding();
@@ -160,7 +175,8 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 
 	/**
 	 * Collapses the nodes for the given indices.
-	 * @param {int|int[]} vIndices A single index, or an array of indices of the nodes to be collapsed
+	 * @param {int|int[]} vIndices A single index, or an array of indices of the nodes
+	 * to be collapsed
 	 */
 	TreeBindingProxy.prototype.collapse = function (vIndices) {
 		var oBinding = this._oControl.getBinding();
@@ -195,17 +211,24 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 	 * @param {object} mSettings settings object
 	 * @param {object} mSettings.proxy proxy object
 	 * @param {sap.ui.model.Binding} mSettings.binding binding
-	 * @param {int|int[]} mSettings.indices A single index, or an array of indices of the to be changed nodes
-	 * @param {boolean} mSettings.expanded If true, state will be changed to expanded otherwise to collapsed.
+	 * @param {int|int[]} mSettings.indices A single index, or an array of indices
+	 * of the to be changed nodes
+	 * @param {boolean} mSettings.expanded If true, state will be changed to
+	 * expanded otherwise to collapsed.
 	 */
 	function changeExpandedStatePreV4(mSettings) {
-		// Operations need to be performed from the highest index to the lowest. This ensures correct results with ODataV2 bindings. The indices
+		// Operations need to be performed from the highest index to the lowest.
+		// This ensures correct results with ODataV2 bindings. The indices
 		// are sorted ascending, so the array is iterated backwards.
 
 		var aValidSortedIndices = mSettings.indices.filter(function(iIndex) {
-			// Only indices of existing, expandable/collapsible nodes must be considered. Otherwise there might be no change event on the final
+			// Only indices of existing, expandable/collapsible nodes must be considered.
+			// Otherwise there might be no change event on the final
 			// expand/collapse (Client + ODataV2).
-			return iIndex >= 0  && !mSettings.proxy.isLeaf(iIndex) && mSettings.expanded !== mSettings.proxy.isExpanded(iIndex);
+			return iIndex >= 0
+				&& iIndex < mSettings.binding.getLength()
+				&& !mSettings.proxy.isLeaf(iIndex)
+				&& mSettings.expanded !== mSettings.proxy.isExpanded(iIndex);
 		}).sort(function(a, b) { return a - b; });
 
 		if (aValidSortedIndices.length === 0) {
@@ -234,8 +257,10 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 	 * @param {object} mSettings settings object
 	 * @param {object} mSettings.proxy proxy object
 	 * @param {sap.ui.model.Binding} mSettings.binding binding
-	 * @param {int|int[]} mSettings.indices A single index, or an array of indices of the to be changed nodes
-	 * @param {boolean} mSettings.expanded If true, state will be changed to expanded otherwise to collapsed.
+	 * @param {int|int[]} mSettings.indices A single index, or an array of indices of
+	 * the to be changed nodes
+	 * @param {boolean} mSettings.expanded If true, state will be changed to expanded
+	 * otherwise to collapsed.
 	 */
 	function changeExpandedStateV4(mSettings) {
 		for (var i = 0; i < mSettings.indices.length; i++) {
@@ -268,10 +293,12 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 	 * @param {int} iStartIndex start index
 	 * @param {int} iLength length to retrieve
 	 * @param {int} iThreshold threshold
-	 * @returns {sap.ui.model.Context[]|object[]} Returns empty array if binding is <code>undefined</code>, list of contexts in OData V4 case or
-	 * by default an array of node objects.
+	 * @returns {sap.ui.model.Context[]|object[]} Returns empty array if binding is
+	 * <code>undefined</code>, list of contexts in OData V4 case or by default an array
+	 * of node objects.
 	 */
-	TreeBindingProxy.prototype.getContexts = function(iStartIndex, iLength, iThreshold, bKeepCurrent) {
+	TreeBindingProxy.prototype.getContexts = function(iStartIndex, iLength, iThreshold,
+		bKeepCurrent) {
 		var oBinding = this._oControl.getBinding();
 		var sTreeBinding = this._getBindingName(oBinding);
 		var aContexts = [];
@@ -305,6 +332,10 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 		for (var i = 0; i < aContexts.length; i++) {
 			var iIndex = i + iStartIndex;
 			var oContext = aContexts[i];
+
+			if (!oContext) {
+				continue;
+			}
 
 			if (!oContext["_mProxyInfo"]) {
 				oContext["_mProxyInfo"] = {};
@@ -353,12 +384,14 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 				if (!this._bEnableV4) {
 					throw new Error("UnsupportedOperationException: OData V4 is not supported");
 				}
-				throw Error("Expanding all nodes to a certain level is not supported with your current binding.");
+				throw Error("Expanding all nodes to a certain level is not supported with"
+					+ " your current binding.");
 			default:
 				if (oBinding.expandToLevel) {
 					oBinding.expandToLevel(iLevel);
 				} else {
-					assert(oBinding.expandToLevel, "Expanding all nodes to a certain level is not supported with your current binding.");
+					assert(oBinding.expandToLevel, "Expanding all nodes to a certain level"
+						+ " is not supported with your current binding.");
 				}
 		}
 	};
@@ -383,7 +416,8 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 				if (oBinding.setRootLevel) {
 					oBinding.setRootLevel(iRootLevel);
 				} else {
-					assert(oBinding.setRootLevel, "Setting the root level is not supported with your current binding.");
+					assert(oBinding.setRootLevel, "Setting the root level is not supported with"
+						+ " your current binding.");
 				}
 		}
 	};
@@ -403,12 +437,14 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 				if (!this._bEnableV4) {
 					throw new Error("UnsupportedOperationException: OData V4 is not supported");
 				}
-				throw Error("Setting 'collapseRecursive' is not supported with your current binding.");
+				throw Error("Setting 'collapseRecursive' is not supported with your"
+					+ " current binding.");
 			default:
 				if (oBinding.setCollapseRecursive) {
 					oBinding.setCollapseRecursive(bCollapseRecursive);
 				} else {
-					assert(oBinding.setCollapseRecursive, "Setting 'collapseRecursive' is not supported with your current binding.");
+					assert(oBinding.setCollapseRecursive, "Setting 'collapseRecursive' is"
+						+ " not supported with your current binding.");
 				}
 		}
 	};
@@ -440,7 +476,8 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 	/**
 	 * Retrieves the amount of siblings for the given index of the node.
 	 * @param {int} iIndex Index of the node
-	 * @returns {int} Sibling count. If binding is undefined returns 0. In ODataV4 case will throw an error.
+	 * @returns {int} Sibling count. If binding is undefined returns 0.
+	 * In ODataV4 case will throw an error.
 	 */
 	TreeBindingProxy.prototype.getSiblingCount = function(iIndex) {
 		var oBinding = this._oControl.getBinding();
@@ -453,7 +490,8 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 				if (!this._bEnableV4) {
 					throw new Error("UnsupportedOperationException: OData V4 is not supported");
 				}
-				throw Error("The number of siblings of a node cannot be determined with your current binding.");
+				throw Error("The number of siblings of a node cannot be determined"
+					+ " with your current binding.");
 			default:
 				var oNode = this.getNodeByIndex(iIndex);
 				return oNode && oNode.parent ? oNode.parent.children.length : 0;
@@ -463,7 +501,8 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 	/**
 	 * Retrieves the position of a node in the parent.
 	 * @param {int} iIndex Index of the node
-	 * @returns Position in parent. If binding is undefined returns -1. In ODataV4 case will throw an error.
+	 * @returns Position in parent. If binding is undefined returns -1.
+	 * In ODataV4 case will throw an error.
 	 */
 	TreeBindingProxy.prototype.getPositionInParent = function(iIndex) {
 		var oBinding = this._oControl.getBinding();
@@ -476,7 +515,8 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 				if (!this._bEnableV4) {
 					throw new Error("UnsupportedOperationException: OData V4 is not supported");
 				}
-				throw Error("The position of a node in its parent cannot be determined with your current binding.");
+				throw Error("The position of a node in its parent cannot be determined"
+					+ " with your current binding.");
 			default:
 				var oNode = this.getNodeByIndex(iIndex);
 				return oNode ? oNode.positionInParent : -1;
@@ -503,28 +543,34 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 	};
 
 	/**
-	 * Applies legacy settings to the binding information. Only applicable for pre-ODataV4 bindings.
+	 * Applies legacy settings to the binding information. Only applicable for pre-ODataV4
+	 * bindings.
 	 * @param {object} oBindingInfo binding infos
 	 * @param {object} mLegacySettings settings object
 	 * @param {int} mLegacySettings.rootLevel root level
 	 * @param {object} mLegacySettings.collapseRecursive collapse recursive
 	 * @param {object} mLegacySettings.numberOfExpandedLevels number of expanded levels
 	 */
-	TreeBindingProxy.prototype.applyLegacySettingsToBindingInfo = function(oBindingInfo, mLegacySettings) {
+	TreeBindingProxy.prototype.applyLegacySettingsToBindingInfo = function(oBindingInfo,
+		mLegacySettings) {
 		if (!oBindingInfo.parameters) {
 			oBindingInfo.parameters = {};
 		}
 
-		if (!("rootLevel" in oBindingInfo.parameters) && mLegacySettings.rootLevel !== undefined) {
+		if (!("rootLevel" in oBindingInfo.parameters)
+			&& mLegacySettings.rootLevel !== undefined) {
 			oBindingInfo.parameters.rootLevel = mLegacySettings.rootLevel;
 		}
 
-		if (!("collapseRecursive" in oBindingInfo.parameters) && mLegacySettings.collapseRecursive !== undefined) {
+		if (!("collapseRecursive" in oBindingInfo.parameters)
+			&& mLegacySettings.collapseRecursive !== undefined) {
 			oBindingInfo.parameters.collapseRecursive = mLegacySettings.collapseRecursive;
 		}
 
-		if (!("numberOfExpandedLevels" in oBindingInfo.parameters) && mLegacySettings.numberOfExpandedLevels !== undefined) {
-			oBindingInfo.parameters.numberOfExpandedLevels = mLegacySettings.numberOfExpandedLevels;
+		if (!("numberOfExpandedLevels" in oBindingInfo.parameters)
+			&& mLegacySettings.numberOfExpandedLevels !== undefined) {
+			oBindingInfo.parameters.numberOfExpandedLevels
+				= mLegacySettings.numberOfExpandedLevels;
 		}
 	};
 
@@ -534,7 +580,7 @@ sap.ui.define(["sap/base/assert", "sap/base/util/UriParameters"], function (asse
 	 * @returns {string|undefined} Name of the binding or undefined if the binding does not exist.
 	 */
 	TreeBindingProxy.prototype._getBindingName = function (oBinding) {
-		assert(oBinding, "TreeTable does not have a binding.");
+		assert(oBinding, "Control does not have a binding.");
 		return oBinding ? oBinding.getMetadata().getName() : undefined;
 	};
 
