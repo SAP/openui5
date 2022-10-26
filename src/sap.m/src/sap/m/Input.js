@@ -1134,6 +1134,8 @@ function(
 		if (this._isSuggestionsPopoverOpen()) {
 			// mark the event as already handled
 			oEvent.originalEvent._sapui_handledByControl = true;
+			this._sProposedItemText = null;
+			this._oSuggPopover._oProposedItem = null;
 			this._oSuggPopover._iPopupListSelectedIndex = -1;
 			this._closeSuggestionPopup();
 
