@@ -75,6 +75,14 @@ sap.ui.define([
 		return new TypeClass(oFormatOptions, oConstraints);
 	};
 
+	ODataV4TypeUtil._adjustUnitFormatOptions = function (oFormatOptions, bShowNumber, bShowMeasure) {
+		ODataTypeUtil._adjustUnitFormatOptions.call(this, oFormatOptions, bShowNumber, bShowMeasure);
+
+		if (oFormatOptions.hasOwnProperty("unitOptional")) { // as per default set if both, showNumber and showMeasure set
+			delete oFormatOptions.unitOptional; // let the type determine the right default
+		}
+	};
+
 	return ODataV4TypeUtil;
 
 });

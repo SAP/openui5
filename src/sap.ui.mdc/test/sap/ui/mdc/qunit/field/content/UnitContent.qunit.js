@@ -3,12 +3,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/qunit-2",
 	"sap/ui/mdc/field/content/UnitContent",
 	"sap/ui/mdc/Field",
+	"delegates/odata/v4/FieldBaseDelegate", // as V4 type used for test
 	"sap/m/Text",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
 	"sap/m/Token",
-	"sap/ui/core/InvisibleText"
-], function(QUnit, UnitContent, Field, Text, FieldInput, FieldMultiInput, Token, InvisibleText) {
+	"sap/ui/core/InvisibleText",
+	"sap/ui/model/odata/type/Unit"
+], function(QUnit, UnitContent, Field, FieldBaseDelegate, Text, FieldInput, FieldMultiInput, Token, InvisibleText, UnitType) {
 	"use strict";
 
 	var sInvisibleTextIdNumber = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
@@ -20,23 +22,23 @@ sap.ui.define([
 			paths: ["sap/m/Text"],
 			instances: [Text],
 			createFunction: "createDisplay",
-			createdInstances: [{control: Text, boundProperty: "text", type: "sap.ui.model.type.Unit", formatOptions: {preserveDecimals: true}}]
+			createdInstances: [{control: Text, boundProperty: "text", type: "sap.ui.model.odata.type.Unit", formatOptions: {preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: true}}]
 		},
 		"Edit": {
 			getPathsFunction: "getEdit",
 			paths: ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"],
 			instances: [FieldInput, InvisibleText],
 			createFunction: "createEdit",
-			createdInstances: [{control: FieldInput, boundProperty: "value", type: "sap.ui.model.type.Unit", formatOptions: {showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true}, invisibleTextId: sInvisibleTextIdNumber},
-								{control: FieldInput, boundProperty: "value", type: "sap.ui.model.type.Unit", formatOptions: {showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true}, invisibleTextId: sInvisibleTextIdUnit}]
+			createdInstances: [{control: FieldInput, boundProperty: "value", type: "sap.ui.model.odata.type.Unit", formatOptions: {showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdNumber},
+								{control: FieldInput, boundProperty: "value", type: "sap.ui.model.odata.type.Unit", formatOptions: {showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdUnit}]
 		},
 		"EditMultiValue": {
 			getPathsFunction: "getEditMultiValue",
 			paths: ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token", "sap/ui/core/InvisibleText"],
 			instances: [FieldMultiInput, FieldInput, Token, InvisibleText],
 			createFunction: "createEditMultiValue",
-			createdInstances: [{control: FieldMultiInput, boundAggregation: "tokens", boundProperty: "text", type: "sap.ui.model.type.Unit", formatOptions: {showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true}, invisibleTextId: sInvisibleTextIdNumber},
-								{control: FieldInput, boundProperty: "value", type: "sap.ui.model.type.Unit", formatOptions: {showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true}, invisibleTextId: sInvisibleTextIdUnit}]
+			createdInstances: [{control: FieldMultiInput, boundAggregation: "tokens", boundProperty: "text", type: "sap.ui.model.odata.type.Unit", formatOptions: {showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdNumber},
+								{control: FieldInput, boundProperty: "value", type: "sap.ui.model.odata.type.Unit", formatOptions: {showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdUnit}]
 		},
 		"EditMultiLine": {
 			getPathsFunction: "getEditMultiLine",
@@ -86,7 +88,10 @@ sap.ui.define([
 
 	QUnit.module("Content creation", {
 		beforeEach: function() {
-			this.oField = new Field({dataType: "sap.ui.model.type.Unit"});
+			this.oField = new Field({
+				dataType: "sap.ui.model.odata.type.Unit",
+				delegate: {name: "delegates/odata/v4/FieldBaseDelegate"}
+			});
 			this.aControls = [];
 		},
 		afterEach: function() {

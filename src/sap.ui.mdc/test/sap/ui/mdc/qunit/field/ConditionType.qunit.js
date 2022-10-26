@@ -1888,9 +1888,9 @@ sap.ui.define([
 
 	QUnit.module("Currency type", {
 		beforeEach: function() {
-			oValueType = new CurrencyType({showMeasure: false});
-			oUnitType = new CurrencyType({showNumber: false});
-			oOriginalType = new CurrencyType();
+			oValueType = new CurrencyType({showMeasure: false}, {maximum: 1000});
+			oUnitType = new CurrencyType({showNumber: false}, {maximum: 1000});
+			oOriginalType = new CurrencyType(undefined, {maximum: 1000});
 			oConditionType = new ConditionType({valueType: oValueType, additionalType: oUnitType, operators: ["EQ"], originalDateType: oOriginalType, delegate: FieldBaseDelegate});
 			oUnitConditionType = new ConditionType({valueType: oUnitType, additionalType: oValueType, operators: ["EQ"], hideOperator: true, originalDateType: oOriginalType, delegate: FieldBaseDelegate});
 			oOneFieldType = new CurrencyType();
@@ -1989,6 +1989,8 @@ sap.ui.define([
 
 		sinon.spy(oValueType, "parseValue");
 		sinon.stub(oValueType, "getParseWithValues").returns(true); // fake parseWithValue (to simulate oData type)
+		sinon.spy(oUnitType, "parseValue");
+		sinon.stub(oUnitType, "getParseWithValues").returns(true); // fake parseWithValue (to simulate oData type)
 
 		var oCondition = oConditionType.parseValue("1.23");
 		assert.ok(oCondition, "Result returned");
@@ -2010,6 +2012,7 @@ sap.ui.define([
 		assert.equal(oCondition.values[0].length, 2, "Values0 length");
 		assert.equal(oCondition.values[0][0], 1.23, "Values entry0");
 		assert.equal(oCondition.values[0][1], "USD", "Values entry1");
+		assert.ok(oUnitType.parseValue.calledWith("USD", "string", [1.23, null]), "parseValue of type called with currentValue");
 
 		oCondition = oConditionType.parseValue("123.45");
 		assert.ok(oCondition, "Result returned");
@@ -2068,6 +2071,35 @@ sap.ui.define([
 		assert.equal(oCondition.values[0][0], 1.23, "Values entry0");
 		assert.equal(oCondition.values[0][1], "USD", "Values entry1");
 		oType.destroy();
+
+	});
+
+	QUnit.test("Parsing: invalid value", function(assert) {
+
+		var oException;
+		sinon.spy(oValueType, "parseValue");
+		sinon.spy(oUnitType, "parseValue");
+		sinon.spy(oOriginalType, "parseValue");
+
+		try {
+			oConditionType.parseValue("X");
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.ok(oException, "exception fired");
+		assert.ok(oValueType.parseValue.calledWith("X", "string"), "parseValue of ValueType called with currentValue");
+		assert.notOk(oOriginalType.parseValue.called, "parseValue of originalDateType not called");
+
+		try {
+			oUnitConditionType.parseValue("XXXXX");
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.ok(oException, "exception fired");
+		assert.ok(oUnitType.parseValue.calledWith("XXXXX", "string"), "parseValue of UnitType called with currentValue");
+		assert.notOk(oOriginalType.parseValue.called, "parseValue of originalDateType not called");
 
 	});
 
@@ -2254,6 +2286,37 @@ sap.ui.define([
 		oUnitConditionType.validateValue(oCondition);
 		assert.ok(oValueType.validateValue.calledOnce, "Currency type not used for unit validation");
 		assert.ok(oUnitType.validateValue.calledWith([123.45, "USD"]), "Unit type used for validation");
+
+	});
+
+	QUnit.test("Validating: invalid value", function(assert) {
+
+		var oCondition = Condition.createCondition("EQ", [[999999, "USD"]]);
+		var oException;
+		sinon.spy(oValueType, "validateValue");
+		sinon.spy(oUnitType, "validateValue");
+		sinon.spy(oOriginalType, "validateValue");
+
+		try {
+			oConditionType.validateValue(oCondition);
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.ok(oException, "exception fired");
+		assert.ok(oValueType.validateValue.calledWith([999999, "USD"]), "validateValue of ValueType called with currentValue");
+		assert.notOk(oOriginalType.validateValue.called, "validateValue of originalDateType not called");
+
+		try {
+			oUnitConditionType.validateValue(oCondition);
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.ok(oException, "exception fired");
+		assert.ok(oUnitType.validateValue.calledWith([999999, "USD"]), "validateValue of UnitType called with currentValue");
+		assert.notOk(oOriginalType.validateValue.called, "validateValue of originalDateType not called");
+
 
 	});
 
