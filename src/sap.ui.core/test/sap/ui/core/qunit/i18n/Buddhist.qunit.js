@@ -254,6 +254,19 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("getWeek (de)", function (assert) {
+		sap.ui.getCore().getConfiguration().setLanguage("de");
+		assert.deepEqual(new Buddhist(2565,0,1).getWeek(), {
+			"week": 51,
+			"year": 2564
+		}, "Jan 1st 2022 is CW 51");
+		assert.deepEqual(new Buddhist(2565,0,3).getWeek(), {
+			"week": 0,
+			"year": 2565
+		}, "Jan 3rd 2022 is CW 1");
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+	});
+
 
 	// --------------------------- HELPERS -------------------------------------------------------------------------
 	function verifyDateWithTestDate(assert, sMessage, oDate, oExpectedTestDate, bUTC) {

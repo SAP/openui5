@@ -228,12 +228,6 @@ sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
 		}
 		return this._setUTCJapanese(oJapanese);
 	};
-	Japanese.prototype.getWeek = function() {
-		return UniversalDate.getWeekByDate(this.sCalendarType, this.oDate.getFullYear(), this.getMonth(), this.getDate());
-	};
-	Japanese.prototype.getUTCWeek = function() {
-		return UniversalDate.getWeekByDate(this.sCalendarType, this.oDate.getUTCFullYear(), this.getUTCMonth(), this.getUTCDate());
-	};
 
 	_Calendars.set(CalendarType.Japanese, Japanese);
 

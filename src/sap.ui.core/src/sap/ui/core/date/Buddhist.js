@@ -7,13 +7,21 @@ sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
 	function(UniversalDate, CalendarType, _Calendars) {
 	"use strict";
 
-
 	/**
 	 * The Buddhist date class
 	 *
 	 * @class
-	 * The Buddhist date implements the Thai solar calendar (BE). In this calendar the year is offset by 543 compared to the
-	 * Gregorian calendar. Before 1941 the year start was 1st of April, so Januar to March belong to the previous year.
+	 * The Buddhist date implements the Thai solar calendar (BE - Buddhist Era). In this calendar
+	 * the year is offset by 543 compared to the Gregorian calendar.
+	 * e.g. Year 2022 CE corresponds to 2565 BE
+	 *
+	 *
+	 * Before 1941 CE the year start was 1st of April, so Januar to March belong to the previous year.
+	 * <pre>
+	 * Month | 1-3 | 4-6 | 7-9 | 10-12 | 1-3 | 4-6 | 7-9 | 10-12 | 1-3 | 4-6 | 7-9 | 10-12 | 1-3 | 4-6 | 7-9 | 10-12 |
+	 * CE    |       1939              |           1940          |         1941            |          1942           |
+	 * BE     2481 |        2482             |      2483         |         2484            |          2485           |
+	 * </pre>
 	 *
 	 * @private
 	 * @alias sap.ui.core.date.Buddhist
@@ -42,8 +50,8 @@ sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
 	/**
 	 * Find the matching Buddhist date for the given gregorian date
 	 *
-	 * @param {object} oGregorian
-	 * @return {object}
+	 * @param {{year:int,month:int,day:int}} oGregorian Gregorian date
+	 * @return {{year:int,month:int,day:int}} the resulting Buddhist date
 	 */
 	function toBuddhist(oGregorian) {
 		var iEraStartYear = UniversalDate.getEraStartDate(CalendarType.Buddhist, 0).year,
@@ -65,8 +73,8 @@ sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
 	/**
 	 * Calculate gregorian year from Buddhist year and month
 	 *
-	 * @param {object} oBuddhist
-	 * @return {int}
+	 * @param {{year:int,month:int,day:int}} oBuddhist Buddhist date
+	 * @return {{year:int,month:int,day:int}} the resulting Gregorian date
 	 */
 	function toGregorian(oBuddhist) {
 		var iEraStartYear = UniversalDate.getEraStartDate(CalendarType.Buddhist, 0).year,
@@ -185,12 +193,6 @@ sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
 			oBuddhist.day = iDay;
 		}
 		return this._setUTCBuddhist(oBuddhist);
-	};
-	Buddhist.prototype.getWeek = function() {
-		return UniversalDate.getWeekByDate(this.sCalendarType, this.oDate.getFullYear(), this.getMonth(), this.getDate());
-	};
-	Buddhist.prototype.getUTCWeek = function() {
-		return UniversalDate.getWeekByDate(this.sCalendarType, this.oDate.getUTCFullYear(), this.getUTCMonth(), this.getUTCDate());
 	};
 
 	_Calendars.set(CalendarType.Buddhist, Buddhist);
