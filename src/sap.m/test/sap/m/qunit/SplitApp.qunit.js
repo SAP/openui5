@@ -889,7 +889,7 @@ sap.ui.define([
 		oApp.setBackgroundImage(sImgSrc2);
 		oCore.applyChanges();
 		// Check
-		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + (Device.browser.safari ? getAbsoluteURL(sImgSrc2) : sImgSrc2) + '\")',
+		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sImgSrc2 + '\")',
 			"correct property value");
 	});
 
