@@ -9,8 +9,9 @@ sap.ui.define([
     'sap/base/util/deepEqual',
     'sap/m/p13n/SelectionPanel',
     'sap/m/p13n/modules/xConfigAPI',
-    'sap/ui/core/Configuration'
-], function (diff, BaseObject, merge, deepEqual, SelectionPanel, xConfigAPI, Configuration) {
+    'sap/ui/core/Configuration',
+    'sap/ui/core/mvc/View'
+], function (diff, BaseObject, merge, deepEqual, SelectionPanel, xConfigAPI, Configuration, View) {
 	"use strict";
 
     /**
@@ -19,6 +20,9 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
      * @param {sap.ui.core.Control} mSettings.control The control instance that is personalized by this controller
+     * @param {function} [mSettings.getKeyForItem] By default the SelectionController tries to identify the existing item through the
+     * key by checking if there is an existing item with this id. This behaviour can be overruled by implementing this method which will
+     * provide the according item of the <code>targetAggregation</code> to return the according key associated to this item.
      * @param {string} mSettings.targetAggregation The name of the aggregation that is now managed by this controller
 	 *
 	 * @class
@@ -50,7 +54,7 @@ sap.ui.define([
             }
 
             this._sTargetAggregation = mSettings.targetAggregation;
-            this._fSelector = mSettings.selector;
+            this._fSelector = mSettings.getKeyForItem;
 
             this._oP13nData = null;
             this._bLiveMode = false;
@@ -121,13 +125,26 @@ sap.ui.define([
         return oSelectionPanel.setP13nData(oAdaptationData.items);
     };
 
+    var getViewForControl = function(oControl) {
+        if (oControl instanceof View) {
+            return oControl;
+        }
+
+        if (oControl && typeof oControl.getParent === "function") {
+            oControl = oControl.getParent();
+            return getViewForControl(oControl);
+        }
+    };
+
     SelectionController.prototype.getCurrentState = function(){
         var aState = [], aAggregationItems = this.getAdaptationControl().getAggregation(this.getTargetAggregation()) || [];
+        var oView = getViewForControl(this.getAdaptationControl());
         aAggregationItems.forEach(function(oItem, iIndex) {
-            var bRelevant = this._fSelector ? this._fSelector({key: oItem.getId()}) : oItem.getVisible();
-            if (bRelevant) {
+            var sId = oView ? oView.getLocalId(oItem.getId()) : oItem.getId();
+            var vRelevant = this._fSelector ? this._fSelector(oItem) : oItem.getVisible();
+            if (vRelevant) {
                 aState.push({
-                    key: oItem.getId()
+                    key: typeof vRelevant === "boolean" ? sId : vRelevant
                 });
             }
 		}.bind(this));
@@ -447,7 +464,7 @@ sap.ui.define([
 
         var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
             var oExisting = mItemState[oProperty.name || oProperty.key];
-            mItem.visible = this._fSelector ? this._fSelector(oProperty) : (!!oExisting);
+            mItem.visible = !!oExisting;
             mItem.position =  oExisting ? oExisting.position : -1;
             return !(oProperty.visible === false || (this._aStableKeys.indexOf(oProperty.name || oProperty.key) > -1));
         }.bind(this));

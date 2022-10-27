@@ -1265,11 +1265,13 @@
 		},
 		{
 		"id": "sap.m.p13n.Engine",
-			"name": "p13n Engine",
+			"name": "Personalization Engine",
 			"category": "Popup",
 			"since": "1.104",
 			"samples": [
-				"sap.m.sample.p13n.Engine"
+				"sap.m.sample.p13n.Engine",
+				"sap.m.sample.p13n.EngineGridTable",
+				"sap.m.sample.p13n.EngineGridList"
 			]
 		},
 		{
@@ -2644,8 +2646,18 @@
 		},
 		{
 			"id": "sap.m.sample.p13n.Engine",
-			"name": "p13n.Engine usage",
-			"description": "Personalization Engine usage with a responsive Table"
+			"name": "Personalization for responsive table",
+			"description": "Responsive Table using the personalization Engine"
+		},
+		{
+			"id": "sap.m.sample.p13n.EngineGridTable",
+			"name": "Personalization for grid table",
+			"description": "Grid Table using the personalization Engine"
+		},
+		{
+			"id": "sap.m.sample.p13n.EngineGridList",
+			"name": "Personalization for grid list",
+			"description": "GridList using the personalization Engine"
 		},
 		{
 		  "id": "sap.m.sample.P13nDialog",
