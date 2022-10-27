@@ -904,9 +904,41 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oGetSpy.called, true, "_getTypedInValue was called.");
-		assert.strictEqual(oGetSpy.firstCall.returnValue, "Te", "_getTypedInValue returnd the correct result.");
+		assert.strictEqual(oGetSpy.firstCall.returnValue, "Te", "_getTypedInValue returned the correct result.");
 		assert.strictEqual(oSetSpy.callCount, 1, "Input's value was set once.");
 		assert.strictEqual(oSetSpy.firstCall.args[0], "Te", "The input's value was reset to the initially typed by the user input.");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("ESC should reset the _sProposedItemText property to 'null'", function (assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({key: "key1", text: "Text 1"}),
+				new Item({key: "key2", text: "Text 2"}),
+				new Item({key: "key3", text: "Text 3"})
+			]
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput._bDoTypeAhead = true;
+		qutils.triggerEvent("focus", oInput.getFocusDomRef());
+		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "Te");
+		qutils.triggerEvent("input", oInput.getFocusDomRef());
+		oInput._getSuggestionsPopover().getPopover().open();
+		this.clock.tick(300);
+
+		// Act
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ESCAPE);
+		this.clock.tick(300);
+
+		// Assert
+		assert.strictEqual(oInput._sProposedItemText, null, "_sProposedItemText was set to 'null'.");
 
 		// Cleanup
 		oInput.destroy();
