@@ -15,25 +15,13 @@
 				<form:formContainers>
 					<form:FormContainer>
 						<form:FormElement label="GrowingMode">
-							<Select
-									selectedKey="Basic"
-									change="onGrowingModeChange">
-								<items>
-									<core:Item key="Basic" text="Basic"/>
-									<core:Item key="Scroll" text="Scroll"/>
-									<core:Item key="None" text="None"/>
-								</items>
+							<Select items="{tabletypesettings>/growingmodes}" selectedKey="Basic" change="onGrowingModeChange">
+								<core:Item key="{tabletypesettings>key}" text="{tabletypesettings>text}"/>
 							</Select>
 						</form:FormElement>
 						<form:FormElement label="SelectionMode">
-							<Select
-									selectedKey="Multi"
-									change="onSelectionModeChange">
-								<items>
-									<core:Item key="Multi" text="Multi"/>
-									<core:Item key="Single" text="Single"/>
-									<core:Item key="None" text="None"/>
-								</items>
+							<Select items="{tablesettings>/selectionmodes}" selectedKey="Multi" change="onSelectionModeChange">
+								<core:Item key="{tablesettings>key}" text="{tablesettings>text}" />
 							</Select>
 						</form:FormElement>
 						<form:FormElement label="Highlights">
