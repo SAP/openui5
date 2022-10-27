@@ -826,8 +826,8 @@ sap.ui.define([
 			mTypeForMetaPath = {"/meta/path" : {}};
 
 		if (iDistanceFromRoot !== undefined) {
-			oElement.DescendantCount = "~descendants~";
-			oElement.DistanceFromRoot = iDistanceFromRoot;
+			oElement.DescendantCount = "42"; // Edm.Int64!
+			oElement.DistanceFromRoot = "" + iDistanceFromRoot; // Edm.Int64!
 			iExpectedLevel = iDistanceFromRoot + 1;
 		}
 		if (oGroupNode) {
@@ -856,7 +856,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement), bIsExpanded, /*bIsTotal*/undefined,
 				iExpectedLevel);
 		oHelperMock.expects("setPrivateAnnotation").exactly(iDistanceFromRoot !== undefined ? 1 : 0)
-			.withExactArgs(sinon.match.same(oElement), "descendants", "~descendants~");
+			.withExactArgs(sinon.match.same(oElement), "descendants", /*parseInt!*/42);
 
 		assert.strictEqual(
 			// code under test

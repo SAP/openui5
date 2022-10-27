@@ -22702,8 +22702,8 @@ sap.ui.define([
 				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "1",
 				value : [{
-					// DescendantCount : 0, // not needed w/o expandTo
-					// DistanceFromRoot : 0, // not needed w/o expandTo
+					// DescendantCount : "0", // not needed w/o expandTo
+					// DistanceFromRoot : "0", // not needed w/o expandTo
 					DrillState : "leaf",
 					EMPLOYEE_2_TEAM : {
 						Name : "Team #01",
@@ -22778,8 +22778,8 @@ sap.ui.define([
 				"@odata.count" : "6",
 				value : [{
 					AGE : 55,
-					DescendantCount : 0,
-					DistanceFromRoot : 1,
+					DescendantCount : "0", // Edm.Int64
+					DistanceFromRoot : "1", // Edm.Int64
 					DrillState : "collapsed",
 					ID : "1",
 					MANAGER_ID : "0",
@@ -22787,16 +22787,16 @@ sap.ui.define([
 				}, {
 					"@odata.etag" : "etag_kappa",
 					AGE : 56,
-					DescendantCount : 0,
-					DistanceFromRoot : 1,
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
 					DrillState : "leaf",
 					ID : "2",
 					MANAGER_ID : "0",
 					Name : "Kappa"
 				}, {
 					AGE : 57,
-					DescendantCount : 0,
-					DistanceFromRoot : 1,
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
 					DrillState : "leaf",
 					ID : "3",
 					MANAGER_ID : "0",
@@ -22833,8 +22833,8 @@ sap.ui.define([
 					+ "&$skip=0&$top=1", {
 					value : [{
 						AGE : 60,
-						DescendantCount : 5,
-						DistanceFromRoot : 0,
+						DescendantCount : "5",
+						DistanceFromRoot : "0",
 						DrillState : "expanded",
 						ID : "0",
 						MANAGER_ID : null,
@@ -22985,16 +22985,16 @@ sap.ui.define([
 					+ "&$skip=4&$top=2", {
 					value : [{
 						AGE : 58,
-						DescendantCount : 1,
-						DistanceFromRoot : 1,
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
 						DrillState : "collapsed",
 						ID : "4",
 						MANAGER_ID : "0",
 						Name : "Mu"
 					}, {
 						AGE : 59,
-						DescendantCount : 1,
-						DistanceFromRoot : 1,
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
 						DrillState : "collapsed",
 						ID : "5",
 						MANAGER_ID : "0",

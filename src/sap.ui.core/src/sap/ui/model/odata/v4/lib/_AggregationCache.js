@@ -839,13 +839,14 @@ sap.ui.define([
 		}
 		if (oGroupNode) {
 			iLevel = oGroupNode["@$ui5.node.level"] + 1;
-		} else if (oElement.DistanceFromRoot) {
-			iLevel = oElement.DistanceFromRoot + 1;
+		} else if (oElement.DistanceFromRoot) { // Edm.Int64
+			iLevel = parseInt(oElement.DistanceFromRoot) + 1;
 		}
 		// set the node values
 		_AggregationHelper.setAnnotations(oElement, bIsExpanded, /*bIsTotal*/undefined, iLevel);
-		if (oElement.DescendantCount) {
-			_Helper.setPrivateAnnotation(oElement, "descendants", oElement.DescendantCount);
+		if (oElement.DescendantCount) { // Edm.Int64
+			_Helper.setPrivateAnnotation(oElement, "descendants",
+				parseInt(oElement.DescendantCount));
 		}
 		delete oElement.DescendantCount;
 		delete oElement.DistanceFromRoot;
