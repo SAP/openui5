@@ -564,8 +564,8 @@ sap.ui.define([
 
 	/**
 	 * Calls initialization of the <code>ValueHelp</code> element before the value help is really opened.
-	 * This is called during type-ahead on first letter before the value help is opened with a delay. This way the
-	 * content can be determined in the delegate coding early.
+	 * This is called during type-ahead when the user types the first letter and before the value help is opened with a delay.
+	 * This way the content can be determined in the delegate coding early.
 	 *
 	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
 	 * belongs to, not by the application.
