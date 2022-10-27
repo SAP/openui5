@@ -28,7 +28,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Error handling on 'open'", function(assert) {
-
+		this.oPopup.setMode("ResponsivePopover");
 		assert.throws(function(){
 			this.oPopup.open();
 		}, 'Error thrown in case no source control is provided');

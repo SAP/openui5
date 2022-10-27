@@ -14,7 +14,7 @@ sap.ui.define([
      * It should be used as the persistence layer in the {@link sap.m.p13n.Engine#register Engine#register} process.
 	 *
 	 * @author SAP SE
-	 * @public
+	 * @private
      * @experimental Since 1.104.
 	 * @alias sap.m.p13n.modification.LocalStorageModificationHandler
 	 */

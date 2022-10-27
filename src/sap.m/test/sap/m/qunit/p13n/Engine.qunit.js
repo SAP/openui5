@@ -24,7 +24,7 @@ sap.ui.define([
 	QUnit.module("Modification Handler", {
 		beforeEach: function() {
 			this.oControl = new Control("MyCustomModificationHandlerControl");
-			Engine.register(this.oControl, {
+			Engine.getInstance().register(this.oControl, {
 				helper: new MetadataHelper(),
 				controller: {
 					ModificationHandlerTest: new Controller({
@@ -42,7 +42,7 @@ sap.ui.define([
 	/*
 	QUnit.test("Check FlexModificationHandler as default", function(assert){
 
-		var oModificationHandler = Engine.getModificationHandler(this.oControl);
+		var oModificationHandler = Engine.getInstance().getModificationHandler(this.oControl);
 		assert.ok(oModificationHandler.isA("sap.m.p13n.modification.FlexModificationHandler"), "The default for modification is flex explicit");
 
 	});*/
@@ -51,10 +51,10 @@ sap.ui.define([
 
 		/*
 		* This is done for testing purposes, as the persistence provider is created after the registry has been set.
-		* The registry is set by the call to oEngine.register in the beforeEach.
+		* The registry is set by the call to oEngine.getInstance().register in the beforeEach.
 		* TODO: Check whether this could be a real use-case, as currently the engine would not register the new persistenceprovider / VM
 		*/
-		delete Engine._getRegistryEntry(this.oControl).modification;
+		delete Engine.getInstance()._getRegistryEntry(this.oControl).modification;
 
 		var oPP = new PersistenceProvider({
 			mode: PersistenceMode.Auto,
@@ -68,7 +68,7 @@ sap.ui.define([
 		var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
 		oFMHStub.returns(Promise.resolve());
 
-		Engine._processChanges(this.oControl, [{
+		Engine.getInstance()._processChanges(this.oControl, [{
 			selectorElement: this.oControl,
 			changeSpecificData: {
 				changeType: "someTestChange",
@@ -91,10 +91,10 @@ sap.ui.define([
 
 		/*
 		* This is done for testing purposes, as the persistence provider is created after the registry has been set.
-		* The registry is set by the call to oEngine.register in the beforeEach.
+		* The registry is set by the call to oEngine.getInstance().register in the beforeEach.
 		* TODO: Check whether this could be a real use-case, as currently the engine would not register the new persistenceprovider / VM
 		*/
-		delete Engine._getRegistryEntry(this.oControl).modification;
+		delete Engine.getInstance()._getRegistryEntry(this.oControl).modification;
 
 		var oPP = new PersistenceProvider({
 			mode: PersistenceMode.Auto,
@@ -112,7 +112,7 @@ sap.ui.define([
 		var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
 		oFMHStub.returns(Promise.resolve());
 
-		Engine._processChanges(this.oControl, [{
+		Engine.getInstance()._processChanges(this.oControl, [{
 			selectorElement: this.oControl,
 			changeSpecificData: {
 				changeType: "someTestChange",
@@ -136,7 +136,7 @@ sap.ui.define([
 
 		this.oUnregisteredControl = new Control("myControl");
 
-		return Engine.enhanceXConfig(this.oUnregisteredControl, {})
+		return Engine.getInstance().enhanceXConfig(this.oUnregisteredControl, {})
 			.catch(function(oError) {
 				assert.ok(oError.message, "The Engine expects the control to be registered to enhance the xConfig");
 			});
@@ -144,7 +144,7 @@ sap.ui.define([
 
 	QUnit.test("Check 'enhanceXConfig' throws error if aggregation does not exist", function(assert){
 
-		return Engine.enhanceXConfig(this.ocontrol , {
+		return Engine.getInstance().enhanceXConfig(this.ocontrol , {
 			controlMeta: {
 				aggregation: "items",
 				property: "text"
@@ -175,7 +175,7 @@ sap.ui.define([
 
 		this.oCustomAggregationControl = new TestClass();
 
-		Engine.register(this.oCustomAggregationControl, {
+		Engine.getInstance().register(this.oCustomAggregationControl, {
 			helper: new MetadataHelper(),
 			controller: {
 				someTest: new Controller({
@@ -185,7 +185,7 @@ sap.ui.define([
 			}
 		});
 
-		return Engine.enhanceXConfig(this.oCustomAggregationControl , {
+		return Engine.getInstance().enhanceXConfig(this.oCustomAggregationControl , {
 			property: "text",
 			controlMeta: {
 				aggregation: "items"
@@ -195,7 +195,7 @@ sap.ui.define([
 				value: "someTestText"
 			}
 		})
-		.then(Engine.readXConfig.bind(Engine, this.oCustomAggregationControl))
+		.then(Engine.getInstance().readXConfig.bind(Engine, this.oCustomAggregationControl))
 		.then(function(oAggregationConfig) {
 			assert.equal(oAggregationConfig.aggregations.items.test.text, "someTestText", "The xConfig customdata has been written and read correctly");
 
@@ -234,7 +234,7 @@ sap.ui.define([
 			var oAdaptationControl = new TestClass();
 			oAdaptationControl.addItem(new sap.ui.core.Control("a"));
 
-			Engine.register(oAdaptationControl, {
+			Engine.getInstance().register(oAdaptationControl, {
 
 				controller: {
 					Test: new Controller({
@@ -275,7 +275,7 @@ sap.ui.define([
 
 	QUnit.test("Check 'register'", function(assert){
 
-		var oRegistryEntry = Engine._getRegistryEntry(this.oControl);
+		var oRegistryEntry = Engine.getInstance()._getRegistryEntry(this.oControl);
 
 		assert.ok(oRegistryEntry.hasOwnProperty("modification"), "Correct entry attribute found in engine");
 		assert.ok(oRegistryEntry.hasOwnProperty("helper"), "Correct entry attribute found in engine");
@@ -290,26 +290,26 @@ sap.ui.define([
 
 	QUnit.test("Check 'register' Error upon using wrong", function(assert){
 		assert.throws(function() {
-			Engine.register(new Control(), {});
+			Engine.getInstance().register(new Control(), {});
 		}, "The method expects atleast a 'controller configuration");
 	});
 
 	QUnit.test("Check 'getController'", function(assert){
-		assert.ok(Engine.getController(this.oControl, "Test"), "Controller 'Test' found in engine");
-		assert.ok(Engine.getController(this.oControl.getId(), "Test"), "Controller 'Test' found in engine");
+		assert.ok(Engine.getInstance().getController(this.oControl, "Test"), "Controller 'Test' found in engine");
+		assert.ok(Engine.getInstance().getController(this.oControl.getId(), "Test"), "Controller 'Test' found in engine");
 	});
 
 	QUnit.test("Check 'deregister'", function(assert){
 		//Register control
-		var oRegistryEntry = Engine._getRegistryEntry(this.oControl);
+		var oRegistryEntry = Engine.getInstance()._getRegistryEntry(this.oControl);
 		assert.ok(oRegistryEntry, "Entry added to registry");
 
 
 		//de-register control
-		Engine.deregister(this.oControl);
+		Engine.getInstance().deregister(this.oControl);
 
 		//Check wether everything was correctly de-registered
-		oRegistryEntry = Engine._getRegistryEntry(this.oControl);
+		oRegistryEntry = Engine.getInstance()._getRegistryEntry(this.oControl);
 		assert.ok(!oRegistryEntry, "Entry was removed from registry");
 
 	});
@@ -331,7 +331,7 @@ sap.ui.define([
 			}
 		};
 
-		var oIntState = Engine.internalizeKeys(this.oControl, oExternalState);
+		var oIntState = Engine.getInstance().internalizeKeys(this.oControl, oExternalState);
 		assert.equal(JSON.stringify(oIntState), JSON.stringify(oExpectedInternalState), "State is as expected");
 
 	});
@@ -339,21 +339,20 @@ sap.ui.define([
 	QUnit.test("Check 'uimanager.show' and active UI", function(assert){
 		var done = assert.async();
 
-		assert.ok(!Engine.hasActiveP13n(this.oControl, "Test"), "There is no personalization open");
+		assert.ok(!Engine.getInstance().hasActiveP13n(this.oControl, "Test"), "There is no personalization open");
 
-		var oP13nPromise = Engine.uimanager.show(this.oControl, "Test", {source: this.oControl});
-		assert.ok(Engine.hasActiveP13n(this.oControl, "Test"), "There personalization is flagged as open to only initialize it once");
+		var oP13nPromise = Engine.getInstance().uimanager.show(this.oControl, "Test", {source: this.oControl});
+		assert.ok(Engine.getInstance().hasActiveP13n(this.oControl, "Test"), "There personalization is flagged as open to only initialize it once");
 		assert.ok(oP13nPromise instanceof Promise, "Controller 'Test' P13n can be used for personalization");
 
 		oP13nPromise
 		.then(function(oP13nUI){
-			assert.ok(Engine.hasActiveP13n(this.oControl, "Test"), "There personalization is flagged as open to only initialize it once");
+			assert.ok(Engine.getInstance().hasActiveP13n(this.oControl, "Test"), "There personalization is flagged as open to only initialize it once");
 			assert.ok(oP13nUI.isA("sap.m.Dialog"), "A control instance has been returned as UI");
 			assert.ok(oP13nUI.getContent()[0].isA("sap.m.p13n.SelectionPanel"), "A control instance has been returned as UI");
 
-			//oP13nUI.destroy();
-			Engine.setActiveP13n(this.oControl, null);
-
+			oP13nUI.destroy();
+			Engine.getInstance().setActiveP13n(this.oControl, null);
 			done();
 		}.bind(this));
 	});
@@ -361,14 +360,14 @@ sap.ui.define([
 	QUnit.test("Check 'uimanager.show' with an active personalization (should still return a Promise)", function(assert){
 		var done = assert.async();
 
-		Engine.setActiveP13n(this.oControl, "Test");
-		var oP13nPromise = Engine.uimanager.show(this.oControl, "Test");
+		Engine.getInstance().setActiveP13n(this.oControl, "Test");
+		var oP13nPromise = Engine.getInstance().uimanager.show(this.oControl, "Test");
 		assert.ok(oP13nPromise instanceof Promise, "Controller 'Test' P13n can be used for personalization");
 
 		oP13nPromise
-		.then(function(){
+		.then(function(oP13nUI){
 			assert.ok(true, "uimanager.show resolves gracefully even if the personalization is active");
-			Engine.setActiveP13n(this.oControl, null);
+			Engine.getInstance().setActiveP13n(this.oControl, null);
 			done();
 		}.bind(this));
 	});
@@ -376,12 +375,12 @@ sap.ui.define([
 	QUnit.test("Check 'uimanager.create'", function(assert){
 		var done = assert.async();
 
-		var oP13nPromise = Engine.uimanager.create(this.oControl, "Test", {source: this.oControl});
+		var oP13nPromise = Engine.getInstance().uimanager.create(this.oControl, "Test", {source: this.oControl});
 		assert.ok(oP13nPromise instanceof Promise, "Controller 'Test' P13n can be used for personalization");
 
 		oP13nPromise
 		.then(function(oP13nUI){
-			assert.ok(!Engine.hasActiveP13n(this.oControl, "Test"), "There is no personalization open (only via showUI)");
+			assert.ok(!Engine.getInstance().hasActiveP13n(this.oControl, "Test"), "There is no personalization open (only via showUI)");
 			//assert.ok(oP13nUI.isA("sap.m.Dialog"), "A control instance has been returned as UI"); //API change; Not relevant anymore?
 			assert.ok(oP13nUI[0].isA("sap.m.p13n.BasePanel"), "A control instance has been returned as UI");
 
@@ -395,7 +394,7 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		var oChangeCreation = Engine.createChanges({
+		var oChangeCreation = Engine.getInstance().createChanges({
 			control: this.oControl,
 			key: "Test",
 			state: []
@@ -413,7 +412,7 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		var oChangeCreation = Engine.createChanges({
+		var oChangeCreation = Engine.getInstance().createChanges({
 			control: this.oControl,
 			key: "Test",
 			state: []
@@ -422,14 +421,14 @@ sap.ui.define([
 		//The test is meant to check that the 'existingState' has no influence on Control properties,
 		//which are used in "getCurrentState"
 		var aChangedValue = [{key: "someTest"}];
-		sinon.stub(Engine.getController(this.oControl, "Test"), "getDelta").callsFake(function(mDiffParameters) {
+		sinon.stub(Engine.getInstance().getController(this.oControl, "Test"), "getDelta").callsFake(function(mDiffParameters) {
 			mDiffParameters.existingState = aChangedValue;
 			return [];
 		});
 
 		oChangeCreation.then(function(){
-			assert.notDeepEqual(Engine.getController(this.oControl, "Test").getCurrentState(), aChangedValue, "The current state is kept original");
-			Engine.getController(this.oControl, "Test").getDelta.restore();
+			assert.notDeepEqual(Engine.getInstance().getController(this.oControl, "Test").getCurrentState(), aChangedValue, "The current state is kept original");
+			Engine.getInstance().getController(this.oControl, "Test").getDelta.restore();
 			done();
 		}.bind(this));
 	});
@@ -438,41 +437,38 @@ sap.ui.define([
 
 		var done = assert.async(4);
 
-		var oChangeCreation1 = Engine.createChanges({
+		var oChangeCreation1 = Engine.getInstance().createChanges({
 			control: this.oControl,
 			key: "Test",
 			suppressAppliance: true,
-			applySequentially: true,
 			state: []
 		}).then(function(){
 			done(1);
 		});
 
-		var oChangeCreation2 = Engine.createChanges({
+		var oChangeCreation2 = Engine.getInstance().createChanges({
 			control: this.oControl,
 			key: "Test",
 			suppressAppliance: true,
-			applySequentially: true,
 			state: []
 		}).then(function(){
 			done(2);
 		});
 
-		var oChangeCreation3 = Engine.createChanges({
+		var oChangeCreation3 = Engine.getInstance().createChanges({
 			control: this.oControl,
 			key: "Test",
 			suppressAppliance: true,
-			applySequentially: true,
 			state: []
 		}).then(function(){
 			done(3);
 		});
 
-		assert.ok(this.oControl._pModificationQueue instanceof Promise, "Promise queue started");
+		assert.ok(Engine.getInstance()._getRegistryEntry(this.oControl).pendingModification instanceof Promise, "Promise queue started");
 
 		Promise.all([oChangeCreation1, oChangeCreation2, oChangeCreation3])
 		.then(function(){
-			assert.ok(!this.oControl.hasOwnProperty("_pModificationQueue"), "Promise queue finished and cleared");
+			assert.notOk(Engine.getInstance()._getRegistryEntry(this.oControl).pendingModification, "Promise queue finished and cleared");
 			done(4);
 		}.bind(this));
 
@@ -482,7 +478,7 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		var oChangeCreation = Engine.createChanges({
+		var oChangeCreation = Engine.getInstance().createChanges({
 			control: this.oControl,
 			key: "Test",
 			applyAbsolute: false,
@@ -501,22 +497,22 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		var oChangeCreation = Engine.createChanges({
+		var oChangeCreation = Engine.getInstance().createChanges({
 			control: this.oControl,
 			key: "Test",
 			applyAbsolute: true,
 			state: []
 		});
 
-        sinon.stub(Engine, '_processChanges').callsFake(function fakeFn(vControl, aChanges) {
+        sinon.stub(Engine.getInstance(), '_processChanges').callsFake(function fakeFn(vControl, aChanges) {
 			return Promise.resolve(aChanges);
         });
 
 		assert.ok(oChangeCreation instanceof Promise, "Engine#createChanges returns a Promise");
 
 		oChangeCreation.then(function(aChanges){
-			assert.ok(aChanges.Test, "One change created"); //TODO: Check this with Martin once he's back. Not sure whether this really counts as creates change here as "Test" value is emp
-			Engine._processChanges.restore();
+			assert.equal(aChanges.length, 1, "One change created");
+			Engine.getInstance()._processChanges.restore();
 			done();
 		});
 	});
@@ -533,17 +529,17 @@ sap.ui.define([
 			assert.equal(aChanges.length, 1, "Change created due to absolute appliance");
 
 			//reset change appliance
-			Engine._setModificationHandler(this.oControl, FlexModificationHandler.getInstance());
+			Engine.getInstance()._setModificationHandler(this.oControl, FlexModificationHandler.getInstance());
 
 			done();
 			return Promise.resolve();
 
 		}.bind(this);
 
-		Engine._setModificationHandler(this.oControl, oModificationHandler);
+		Engine.getInstance()._setModificationHandler(this.oControl, oModificationHandler);
 
 		//trigger change creation
-		var oChangeCreation = Engine.createChanges({
+		var oChangeCreation = Engine.getInstance().createChanges({
 			control: this.oControl,
 			key: "Test",
 			applyAbsolute: true,
@@ -563,12 +559,12 @@ sap.ui.define([
 		var oModificationHandler = TestModificationHandler.getInstance();
 		oModificationHandler.processChanges = fnTestAppliance;
 
-		Engine._setModificationHandler(this.oControl, oModificationHandler);
+		Engine.getInstance()._setModificationHandler(this.oControl, oModificationHandler);
 
 		var oSpy = sinon.spy(fnTestAppliance);
 
 		//trigger change creation
-		var oChangeCreation = Engine.createChanges({
+		var oChangeCreation = Engine.getInstance().createChanges({
 			control: this.oControl,
 			key: "Test",
 			applyAbsolute: true,
@@ -579,7 +575,7 @@ sap.ui.define([
 		oChangeCreation.then(function(){
 			assert.ok(oChangeCreation instanceof Promise, "Engine#createChanges returns a Promise");
 			assert.equal(oSpy.callCount, 0, "Appliance has been suppressed");
-			Engine._setModificationHandler(this.oControl, FlexModificationHandler.getInstance());
+			Engine.getInstance()._setModificationHandler(this.oControl, FlexModificationHandler.getInstance());
 			done();
 		}.bind(this));
 	});
@@ -588,7 +584,7 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		var oTestController = Engine.getController(this.oControl, "Test");
+		var oTestController = Engine.getInstance().getController(this.oControl, "Test");
 		var oControllerSpy = sinon.stub(oTestController, "getDelta");
 
 		oControllerSpy.callsFake(function(mDeltaConfig){
@@ -610,7 +606,7 @@ sap.ui.define([
 		});
 
 		//trigger change creation
-		Engine.createChanges({
+		Engine.getInstance().createChanges({
 			control: this.oControl,
 			key: "Test",
 			applyAbsolute: true,
@@ -624,7 +620,7 @@ sap.ui.define([
 
 		var done = assert.async(2);
 
-		var oTest2Controller = Engine.getController(this.oControl, "Test2");
+		var oTest2Controller = Engine.getInstance().getController(this.oControl, "Test2");
 		var oControllerUpdateSpy = sinon.spy(oTest2Controller, "update");
 
 		var oModificationHandler = TestModificationHandler.getInstance();
@@ -633,7 +629,7 @@ sap.ui.define([
 			return Promise.resolve();
 		};
 
-		Engine._setModificationHandler(this.oControl, oModificationHandler);
+		Engine.getInstance()._setModificationHandler(this.oControl, oModificationHandler);
 
 		//Enable reset
 		oTest2Controller.getResetEnabled = function() {
@@ -641,10 +637,10 @@ sap.ui.define([
 		};
 
 		//trigger change creation
-		Engine.reset(this.oControl, "Test2").then(function(){
+		Engine.getInstance().reset(this.oControl, "Test2").then(function(){
 			assert.equal(oControllerUpdateSpy.callCount, 1, "Update has been executed");
 			oTest2Controller.update.restore();
-			Engine._setModificationHandler(this.oControl, FlexModificationHandler.getInstance());
+			Engine.getInstance()._setModificationHandler(this.oControl, FlexModificationHandler.getInstance());
 			done(2);
 		}.bind(this));
 
@@ -654,7 +650,7 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		var oTest2Controller = Engine.getController(this.oControl, "Test2");
+		var oTest2Controller = Engine.getInstance().getController(this.oControl, "Test2");
 		var oControllerUpdateSpy = sinon.spy(oTest2Controller, "update");
 
 		//Enable reset
@@ -663,7 +659,7 @@ sap.ui.define([
 		};
 
 		//trigger change creation
-		Engine.reset(this.oControl, "Test2")
+		Engine.getInstance().reset(this.oControl, "Test2")
 		.then(function(){})
 		.catch(function(){
 			assert.equal(oControllerUpdateSpy.callCount, 0, "Update has NOT been executed");
@@ -682,7 +678,7 @@ sap.ui.define([
 		sinon.stub(FlexRuntimeInfoAPI, "isFlexSupported").returns(true);
 		sinon.stub(FlexRuntimeInfoAPI, "waitForChanges").returns(Promise.resolve());
 
-		Engine.applyState(this.oControl, {
+		Engine.getInstance().applyState(this.oControl, {
 			items: []
 		})
 		.then(function(){
@@ -707,7 +703,7 @@ sap.ui.define([
 		sinon.stub(FlexRuntimeInfoAPI, "isFlexSupported").returns(true);
 		sinon.stub(FlexRuntimeInfoAPI, "waitForChanges").returns(Promise.resolve());
 
-		Engine.retrieveState(this.oControl)
+		Engine.getInstance().retrieveState(this.oControl)
 		.then(function(oState){
 
 			assert.ok(oState, "State retrieval promise resolves");
@@ -722,7 +718,7 @@ sap.ui.define([
 
 	QUnit.test("Check '_getRegistry' ", function(assert){
 
-		var mRegistry = Engine._getRegistry(this.oControl);
+		var mRegistry = Engine.getInstance()._getRegistry(this.oControl);
 
 		assert.ok(mRegistry.controlRegistry[this.oControl.getId()], "The registry map includes the controlRegistry");
 		assert.ok(mRegistry.defaultProviderRegistry, "The registry map includes the defaultProviderRegistry");
@@ -731,7 +727,7 @@ sap.ui.define([
 
 	QUnit.test("Check 'getRTASettingsActionHandler' ", function(assert){
 
-		var oRTAPromise = Engine.getRTASettingsActionHandler(this.oControl, {}, "Test");
+		var oRTAPromise = Engine.getInstance().getRTASettingsActionHandler(this.oControl, {}, "Test");
 
 		assert.ok(oRTAPromise instanceof Promise, "RTA settions action handler returns a promise");
 
@@ -747,7 +743,7 @@ sap.ui.define([
 		};
 
 		//provide a custom "model2State" method
-		var oController = Engine.getController(this.oControl, "Test2");
+		var oController = Engine.getInstance().getController(this.oControl, "Test2");
 		oController.model2State = function() {
 			return [{
 				key: "testProperty"
@@ -758,7 +754,7 @@ sap.ui.define([
 		var oP13nUI = new BasePanel({
 			id: "someTestPanel"
 		});
-		/*var mValidation = */Engine.validateP13n(this.oControl, "Test2", oP13nUI);
+		/*var mValidation = */Engine.getInstance().validateP13n(this.oControl, "Test2", oP13nUI);
 
 		//API change; calidateP13n does not return value enymore
 		//assert.equal(mValidation.validation, coreLibrary.MessageType.Warning, "The correct validation state provided");
@@ -777,7 +773,7 @@ sap.ui.define([
 		//Create a mock UI (usually done via runtime in personalization)
 		var oP13nUI = new BasePanel();
 
-		var mValidation = Engine.validateP13n(this.oControl, "SomeUnregisteredKey", oP13nUI);
+		var mValidation = Engine.getInstance().validateP13n(this.oControl, "SomeUnregisteredKey", oP13nUI);
 		assert.notOk(mValidation, "No validation triggered as the provided key is unregistered");
 	});
 
@@ -791,7 +787,7 @@ sap.ui.define([
 		};
 
 		//provide a custom "model2State" method
-		var oController = Engine.getController(this.oControl, "Test2");
+		var oController = Engine.getInstance().getController(this.oControl, "Test2");
 		oController.model2State = function() {
 			return [{
 				key: "testProperty"
@@ -802,7 +798,7 @@ sap.ui.define([
 		var oP13nUI = new BasePanel({
 			id: "someTestPanel"
 		});
-		Engine.validateP13n(this.oControl, "Test2", oP13nUI);
+		Engine.getInstance().validateP13n(this.oControl, "Test2", oP13nUI);
 
 		//Check if the strip has been placed in the BasePanel content area
 		var oMessageStrip = oP13nUI._oMessageStrip;
@@ -823,7 +819,7 @@ sap.ui.define([
 
 		oCore.applyChanges();
 
-		Engine.getRTASettingsActionHandler(this.oControl, {}, "Test").then(function(){
+		Engine.getInstance().getRTASettingsActionHandler(this.oControl, {}, "Test").then(function(){
 			//Promise does not resolve
 		}, function(sErr){
 			assert.ok(sErr, "XOR VM or PP, providing both is prohibited in RTA.");
@@ -861,7 +857,7 @@ sap.ui.define([
 			var oAdaptationControl = new TestClass();
 			oAdaptationControl.addItem(new sap.ui.core.Control("a"));
 
-			Engine.register(oAdaptationControl, {
+			Engine.getInstance().register(oAdaptationControl, {
 
 				controller: {
 					Test: new Controller({
@@ -895,13 +891,13 @@ sap.ui.define([
 
 	QUnit.test("'createChanges' should throw an error if the required attributes are not provided (no control, no key, no state)'", function(assert) {
 		assert.throws(function() {
-			Engine.createChanges();
+			Engine.getInstance().createChanges();
 		}, "The method expects required parameters in order to create changes.");
 	});
 
 	QUnit.test("'createChanges' should throw an error if the required attributes are not provided' (no key, no state)", function(assert) {
 		assert.throws(function() {
-			Engine.createChanges({
+			Engine.getInstance().createChanges({
 				control: this.oControl
 			});
 		}, "The method expects required parameters in order to create changes.");
@@ -909,7 +905,7 @@ sap.ui.define([
 
 	QUnit.test("'createChanges' should throw an error if the required attributes are not provided' (no state)", function(assert) {
 		assert.throws(function() {
-			Engine.createChanges({
+			Engine.getInstance().createChanges({
 				control: this.oControl,
 				key: "Test"
 			});
@@ -918,7 +914,7 @@ sap.ui.define([
 
 	QUnit.test("'createChanges' should throw an error if the required attributes are not provided' (invalid key)", function(assert) {
 		assert.throws(function() {
-			Engine.createChanges({
+			Engine.getInstance().createChanges({
 				control: this.oControl,
 				state: [],
 				key: "unknownkey"
@@ -928,12 +924,12 @@ sap.ui.define([
 
 	QUnit.test("'_setModificationhandler' should throw an error if not the correct object is passed", function(assert) {
 		assert.throws(function() {
-			Engine._setModificationHandler(this.oControl, new BaseObject());
+			Engine.getInstance()._setModificationHandler(this.oControl, new BaseObject());
 		}, "The method expects a ModificationHandler instance");
 	});
 
 	QUnit.test("'_setModificationhandler' should NOT throw an error if a ModificationHandler instance is being used", function(assert) {
-		Engine._setModificationHandler(this.oControl, ModificationHandler.getInstance());
+		Engine.getInstance()._setModificationHandler(this.oControl, ModificationHandler.getInstance());
 		assert.ok(true, "No error occured");
 	});
 
@@ -961,7 +957,7 @@ sap.ui.define([
 		oVBox.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		var bHasAncestor = Engine.hasControlAncestorWithId("MyTestControl", "myVBox");
+		var bHasAncestor = Engine.getInstance().hasControlAncestorWithId("MyTestControl", "myVBox");
 
 		assert.ok(bHasAncestor, "Ancestor 'myVBox' found");
 
@@ -980,7 +976,7 @@ sap.ui.define([
 		oHBox.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		var bHasAncestor = Engine.hasForReference(oControl, "sap.m.HBox");
+		var bHasAncestor = Engine.getInstance().hasForReference(oControl, "sap.m.HBox");
 
 		assert.ok(bHasAncestor, "Ancestor of type 'sap.m.HBox' found");
 
@@ -991,8 +987,8 @@ sap.ui.define([
 		before: function() {
 			this.oControl = new Control("MyStateControl");
 			this.fnHandler = function() {  };
-			Engine.stateHandlerRegistry.attachChange(this.fnHandler);
-			Engine.register(this.oControl, {
+			Engine.getInstance().stateHandlerRegistry.attachChange(this.fnHandler);
+			Engine.getInstance().register(this.oControl, {
 				controller: {
 					StateHandlerTest: new Controller({
                         control: this.oControl,
@@ -1007,19 +1003,19 @@ sap.ui.define([
 		after: function() {
 			this.fnHandler = null;
 			this.oControl.destroy();
-			Engine.destroy();
+			Engine.getInstance().destroy();
 		}
 	});
 /*
 	QUnit.test("Check event firing on Engine change propagation", function(assert){
 
-		var oStateRegistryStub = sinon.stub(Engine.stateHandlerRegistry, "fireChange");
+		var oStateRegistryStub = sinon.stub(Engine.getInstance().stateHandlerRegistry, "fireChange");
 		var oFMHStub = sinon.stub(FlexModificationHandler, "processChanges");
 		var oEngineWaitForChangesStub = sinon.stub(Engine, "waitForChanges");
 		oFMHStub.returns(Promise.resolve());
 		oEngineWaitForChangesStub.returns(Promise.resolve());
 
-		return Engine._processChanges(this.oControl, [{
+		return Engine.getInstance()._processChanges(this.oControl, [{
 			selectorElement: this.oControl,
 			changeSpecificData: {
 				changeType: "someTestChange",
@@ -1028,7 +1024,7 @@ sap.ui.define([
 		}])
 		.then(function(){
 			assert.equal(oStateRegistryStub.callCount, 1, "The event has been fired after changes have been processed");
-			Engine.stateHandlerRegistry.fireChange.restore();
+			Engine.getInstance().stateHandlerRegistry.fireChange.restore();
 			FlexModificationHandler.processChanges.restore();
 		}.bind(this));
 

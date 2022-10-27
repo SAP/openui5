@@ -40,7 +40,7 @@ sap.ui.define([
 				{key: "__xmlview0--size", label: "Size", path: "size"}
 			]);
 
-			Engine.register(oTable, {
+			Engine.getInstance().register(oTable, {
 				helper: this.oMetadataHelper,
 				controller: {
 					Columns: new SelectionController({
@@ -56,13 +56,13 @@ sap.ui.define([
 				}
 			});
 
-			Engine.attachStateChange(this.handleStateChange.bind(this));
+			Engine.getInstance().attachStateChange(this.handleStateChange.bind(this));
 		},
 
 		openPersoDialog: function(oEvt) {
 			var oTable = this.byId("persoTable");
 
-			Engine.show(oTable, ["Columns", "Sorter", "Groups"], {
+			Engine.getInstance().show(oTable, ["Columns", "Sorter", "Groups"], {
 				contentHeight: "35rem",
 				contentWidth: "32rem",
 				source: oEvt.getSource()

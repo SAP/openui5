@@ -52,10 +52,12 @@ sap.ui.define([
 	 * @param {string|string[]} vPanelKeys The affected panels that should be added to the <code>sap.m.p13n.Popup</code>
 	 * @param {object} mSettings The settings object for the personalization
 	 * @param {string} [mSettings.title] The title for the <code>sap.m.p13n.Popup</code> control
-	 * @param {object} [mSettings.source] The source contro to be used by the <code>sap.m.p13n.Popup</code> control (only necessary in case the mode is set to <code>ResponsivePopover</code>)
-	 * @param {object} [mSettings.mode] The mode to be used by the <code>sap.m.p13n.Popup</code> control
-	 * @param {object} [mSettings.contentHeight] Height configuration for the related popup container
-	 * @param {object} [mSettings.contentWidth] Width configuration for the related popup container
+	 * @param {sap.ui.core.Control} [mSettings.source] The source contro to be used by the <code>sap.m.p13n.Popup</code> control (only necessary in case the mode is set to <code>ResponsivePopover</code>)
+	 * @param {sap.m.P13nPopupMode} [mSettings.mode] The mode to be used by the <code>sap.m.p13n.Popup</code> control
+	 * @param {sap.ui.core.CSSSize} [mSettings.contentHeight] Height configuration for the related popup container
+	 * @param {sap.ui.core.CSSSize} [mSettings.contentWidth] Width configuration for the related popup container
+	 * @param {boolean} [mSettings.showReset] Determines the visibility of the <code>Reset</code> button
+	 * @param {function} [mSettings.close] Event handler once the Popup has been closed
 	 *
 	 * @returns {Promise} Promise resolving in the <code>sap.m.p13n.Popup</code> instance.
 	 */
@@ -87,18 +89,31 @@ sap.ui.define([
 						warningText: mSettings.warningText || oResourceBundle.getText("p13n.RESET_WARNING_TEXT"),
 						title: sTitle,
 						close: function(oEvt){
+
+							if (mSettings.close instanceof Function) {
+								mSettings.close(oEvt);
+							}
+
 							var sReason = oEvt.getParameter("reason");
 							if (sReason == "Ok") {
 								that.oAdaptationProvider.handleP13n(oControl, aPanelKeys);
 							}
-							oP13nContainer.removeAllPanels();//TODO
-							that.setActiveP13n(oControl, null);
+							var aPanels = oP13nContainer.getPanels();
 
-							oP13nContainer.destroy();
+							aPanels.forEach(function(oPanel){
+								if (oPanel.keepAlive instanceof Function && oPanel.keepAlive()){
+									oP13nContainer.removePanel(oPanel);
+								}
+							});
+
+							that.setActiveP13n(oControl, null);
+							oP13nContainer._oPopup.attachAfterClose(function(){
+								oP13nContainer.destroy();
+							});
 						},
-						reset: function(){
+						reset: mSettings.showReset !== false ? function(){
 							that.oAdaptationProvider.reset(oControl, aPanelKeys);
-						}
+						} : undefined
 					});
 
 					aInitializedPanels.forEach(function(oPanel, iIndex){

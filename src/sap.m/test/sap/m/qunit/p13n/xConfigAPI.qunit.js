@@ -53,8 +53,7 @@ sap.ui.define([
 							"key": "my_unique_test_key"
 						}
 					}
-				},
-                "properties": {}
+				}
 			}, "The correct value has been created");
 		}.bind(this));
 
@@ -86,8 +85,7 @@ sap.ui.define([
 							"key": "my_unique_test_key"
 						}
 					}
-				},
-                "properties": {}
+				}
 			}, "The correct value has been created");
 
 			return;

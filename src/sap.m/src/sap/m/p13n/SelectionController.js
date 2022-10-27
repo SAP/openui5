@@ -151,7 +151,6 @@ sap.ui.define([
                 aState.splice(iCurrentIndex, 1);
             }
 
-
         }
         return aState;
     };
@@ -261,10 +260,10 @@ sap.ui.define([
                     oExistingProp = oExistingProp ? oExistingProp.changeSpecificData.content : undefined;
                 }
                 // Matching property exists with a different index --> then this is a move operation
-                if (oExistingProp && oExistingProp.key === oProp.key && oResult.index != oExistingProp.index) {
+                if (oExistingProp && (oExistingProp.key || oExistingProp.name) === oProp.key && oResult.index != oExistingProp.index) {
                     // remove the last insert/delete operation
                     aChanges.pop();
-                    aChanges = aChanges.concat(this._createMoveChange(oExistingProp.id, oExistingProp.key, oResult.index, sMoveOperation, oControl, sMoveOperation !== "moveSort", sGenerator));
+                    aChanges = aChanges.concat(this._createMoveChange(oExistingProp.id, (oExistingProp.key || oExistingProp.name), oResult.index, sMoveOperation, oControl, sMoveOperation !== "moveSort", sGenerator));
                     return;
                 }
             }
@@ -358,7 +357,7 @@ sap.ui.define([
         var mItemState = this.arrayToMap(aItemState);
 
         var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
-            var oExisting = mItemState[oProperty.key];
+            var oExisting = mItemState[oProperty.name || oProperty.key];
             mItem.visible = this._fSelector ? this._fSelector(oProperty) : (!!oExisting);
             mItem.position =  oExisting ? oExisting.position : -1;
             return !(oProperty.visible === false);
@@ -378,7 +377,7 @@ sap.ui.define([
      *
      */
     SelectionController.prototype.getP13nData = function() {
-        return this._oPanel ? this._oPanel.getP13nData() : this._oAdaptationModel.getProperty("/items");
+        return this._oPanel ? this._oPanel.getP13nData() : this._oAdaptationModel && this._oAdaptationModel.getProperty("/items");
     };
 
     SelectionController.prototype.model2State = false;
@@ -463,6 +462,8 @@ sap.ui.define([
         oPropertyHelper.getProperties().forEach(function(oProperty) {
 
             var mItem = {};
+            mItem.key = oProperty.name || oProperty.key;
+            mItem.name = oProperty.name || oProperty.key;
 
             if (bEnhance) {
                 var bIsValid = fnEnhace(mItem, oProperty);
@@ -471,9 +472,7 @@ sap.ui.define([
                 }
             }
 
-            mItem.key = oProperty.key;
-            mItem.name = oProperty.key;
-            mItem.label = oProperty.label || oProperty.key;
+            mItem.label = oProperty.label || mItem.key;
             mItem.tooltip = oProperty.tooltip;
 
             if (mItemsGrouped) {
@@ -499,7 +498,22 @@ sap.ui.define([
 
     };
 
-    //TODO: generify
+
+    SelectionController.prototype._buildGroupStructure = function(mItemsGrouped) {
+        var aGroupedItems = [];
+        Object.keys(mItemsGrouped).forEach(function(sGroupKey){
+            this.sortP13nData("generic", mItemsGrouped[sGroupKey]);
+            aGroupedItems.push({
+                group: sGroupKey,
+                groupLabel: mItemsGrouped[sGroupKey][0].groupLabel || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.BASIC_DEFAULT_GROUP"),//Grouplabel might not be necessarily be propagated to every item
+                groupVisible: true,
+                items: mItemsGrouped[sGroupKey]
+            });
+        }.bind(this));
+        return aGroupedItems;
+
+    };
+
     SelectionController.prototype.sortP13nData = function (oSorting, aItems) {
 
         var mP13nTypeSorting = oSorting;
