@@ -1001,21 +1001,21 @@ sap.ui.define([
 		// If there is no waitForTheme or ThemeManager is already available and theme is loaded render directly sync
 		if (this.isThemeApplied() || !sWaitForTheme) {
 			this._executeInitialization();
-			Rendering.renderPendingUIUpdates("during Core init"); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
 		} else {
+			Rendering.suspend();
 			if (sWaitForTheme === "rendering") {
 				Rendering.notifyInteractionStep();
 				this._executeInitialization();
 				Rendering.getLogger().debug("delay initial rendering until theme has been loaded");
 				_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, function() {
-					Rendering.renderPendingUIUpdates("after theme has been loaded", 0);
+					Rendering.resume("after theme has been loaded");
 				}, this);
 			} else if (sWaitForTheme === "init") {
 				Rendering.getLogger().debug("delay init event and initial rendering until theme has been loaded");
 				Rendering.notifyInteractionStep();
 				_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, function() {
 					this._executeInitialization();
-					Rendering.renderPendingUIUpdates("after theme has been loaded", 0);
+					Rendering.resume("after theme has been loaded");
 				}, this);
 			}
 			// Require ThemeManager if not already done to ensure ThemeManager is available and ThemeChanged event will be fired
