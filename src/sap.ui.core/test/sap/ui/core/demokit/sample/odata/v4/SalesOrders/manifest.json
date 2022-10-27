@@ -64,7 +64,7 @@
 				"preload" : true,
 				"settings" : {
 					"autoExpandSelect" : true,
-					"earlyRequests": true,
+					"earlyRequests" : true,
 					"groupProperties" : {
 						"FavoriteProductGroup" : {"submit" : "Auto"},
 						"myAutoGroup" : {"submit" : "Auto"},

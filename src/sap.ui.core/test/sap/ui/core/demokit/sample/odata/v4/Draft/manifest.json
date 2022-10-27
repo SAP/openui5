@@ -78,7 +78,7 @@
 				"preload" : true,
 				"settings" : {
 					"autoExpandSelect" : true,
-					"earlyRequests": true,
+					"earlyRequests" : true,
 					"operationMode" : "Server",
 					"synchronizationMode" : "None"
 				},
@@ -91,58 +91,58 @@
 			"type" : "XML",
 			"viewName" : "sap.ui.core.sample.odata.v4.Draft.Main"
 		},
-		"routing": {
-			"config": {
-				"routerClass": "sap.f.routing.Router",
-				"type": "View",
-				"viewType": "XML",
-				"path": "sap.ui.core.sample.odata.v4.Draft",
-				"controlId": "layout",
-				"controlAggregation": "beginColumnPages",
-				"async": true
+		"routing" : {
+			"config" : {
+				"routerClass" : "sap.f.routing.Router",
+				"type" : "View",
+				"viewType" : "XML",
+				"path" : "sap.ui.core.sample.odata.v4.Draft",
+				"controlId" : "layout",
+				"controlAggregation" : "beginColumnPages",
+				"async" : true
 			},
-			"routes": [{
+			"routes" : [{
 				"layout" : "OneColumn",
-				"name": "listReport",
-				"pattern": "",
-				"target": ["listReport"]
+				"name" : "listReport",
+				"pattern" : "",
+				"target" : ["listReport"]
 			}, {
 				"layout" : "TwoColumnsMidExpanded",
-				"name": "objectPage",
-				"pattern": "Products{key}",
-				"target": ["listReport", "objectPage"]
+				"name" : "objectPage",
+				"pattern" : "Products{key}",
+				"target" : ["listReport", "objectPage"]
 			}, {
 				"layout" : "MidColumnFullScreen",
-				"name": "objectPageNoList",
-				"pattern": "Products{key}?noList",
-				"target": ["empty", "objectPage"]
+				"name" : "objectPageNoList",
+				"pattern" : "Products{key}?noList",
+				"target" : ["empty", "objectPage"]
 			}, {
 				"layout" : "OneColumn",
-				"name": "error",
-				"pattern": "Error",
-				"target": ["error"]
+				"name" : "error",
+				"pattern" : "Error",
+				"target" : ["error"]
 			}],
-			"targets": {
-				"empty": {
-					"id": "empty",
-					"level": 1,
-					"name": "Empty"
+			"targets" : {
+				"empty" : {
+					"id" : "empty",
+					"level" : 1,
+					"name" : "Empty"
 				},
-				"error": {
-					"id": "error",
-					"level": 1,
-					"name": "Error"
+				"error" : {
+					"id" : "error",
+					"level" : 1,
+					"name" : "Error"
 				},
-				"listReport": {
-					"id": "listReport",
-					"level": 1,
-					"name": "ListReport"
+				"listReport" : {
+					"id" : "listReport",
+					"level" : 1,
+					"name" : "ListReport"
 				},
-				"objectPage": {
-					"controlAggregation": "midColumnPages",
-					"id": "objectPage",
-					"level": 1,
-					"name": "ObjectPage"
+				"objectPage" : {
+					"controlAggregation" : "midColumnPages",
+					"id" : "objectPage",
+					"level" : 1,
+					"name" : "ObjectPage"
 				}
 			}
 		}
