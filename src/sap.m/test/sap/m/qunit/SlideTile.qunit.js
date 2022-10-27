@@ -150,13 +150,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Default aria roles on the slide tile", function(assert) {
-		assert.equal(this.oSlideTile.getDomRef().getAttribute("aria-roledescription"), "SlideTile", "SlideTile has been set as the default aria-roledescription");
+		assert.equal(this.oSlideTile.getDomRef().getAttribute("aria-roledescription"), this.oSlideTile._oRb.getText("SLIDETILE"), "SlideTile has been set as the default aria-roledescription");
 		assert.equal(this.oSlideTile.getDomRef().getAttribute("role"), "application", "Application has been set as the default role");
 	});
 
 	QUnit.test("Test ARIA label for single content in Display scope", function(assert) {
 		//Arrange
-		var sExpectedText = "1 of 1 "  + this.oSlideTile._oRb.getText("SLIDETILE_NORMAL")  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+		var sExpectedText = this.oSlideTile._oRb.getText("SLIDETILE_INSTANCE_FOCUS_SCROLL",[1,1])  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
@@ -168,7 +168,7 @@ sap.ui.define([
 
 	QUnit.test("Test ARIA label for single content in Actions scope", function(assert) {
 		//Arrange
-		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" + "1 of 1 "  + this.oSlideTile._oRb.getText("SLIDETILE_NORMAL")  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2"  + "\n" +
+		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" + this.oSlideTile._oRb.getText("SLIDETILE_INSTANCE_FOCUS_SCROLL",[1,1])  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2"  + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
 		this.oSlideTile.setScope(GenericTileScope.Actions);
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
@@ -182,7 +182,7 @@ sap.ui.define([
 
 	QUnit.test("Test ARIA label for multiple contents in Display scope, Tile is sliding", function(assert) {
 		//Arrange
-		var sExpectedText = "1 of 3 "  + this.oSlideTile._oRb.getText("SLIDETILE_NORMAL")  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+		var sExpectedText = this.oSlideTile._oRb.getText("SLIDETILE_INSTANCE_FOCUS_SCROLL",[1,3])  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
@@ -194,7 +194,7 @@ sap.ui.define([
 
 	QUnit.test("Test ARIA label for multiple contents in Display scope, sliding is stopped", function(assert) {
 		//Arrange
-		var sExpectedText = "1 of 3 "  + this.oSlideTile._oRb.getText("SLIDETILE_PAUSE")  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+		var sExpectedText = this.oSlideTile._oRb.getText("SLIDETILE_INSTANCE_FOCUS_PAUSE",[1,3])  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_SCROLL_BACK") + "\n" +
@@ -208,7 +208,7 @@ sap.ui.define([
 
 	QUnit.test("Test ARIA label for multiple content in Actions scope", function(assert) {
 		//Arrange
-		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" + "1 of 3 "  + this.oSlideTile._oRb.getText("SLIDETILE_NORMAL")  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2"  + "\n" +
+		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" + this.oSlideTile._oRb.getText("SLIDETILE_INSTANCE_FOCUS_SCROLL",[1,3])  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2"  + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
 		this.oSlideTile.setScope(GenericTileScope.Actions);
 		oCore.applyChanges();
@@ -554,7 +554,7 @@ sap.ui.define([
 				oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
 				oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
 				oResBundle.getText("SLIDETILE_ACTIVATE"),
-			sAriaLabelExpected = "3 of 3 "  + this.oSlideTile._oRb.getText("SLIDETILE_PAUSE") + "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6" + "\n" + sAdditionalText;
+			sAriaLabelExpected = this.oSlideTile._oRb.getText("SLIDETILE_INSTANCE_FOCUS_PAUSE",[3,3])  + "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6" + "\n" + sAdditionalText;
 		this.oSlideTile._toggleAnimation();
 		//Act
 		this.oSlideTile._scrollToNextTile(true, true);
@@ -572,7 +572,7 @@ sap.ui.define([
 				oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
 				oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
 				oResBundle.getText("SLIDETILE_ACTIVATE"),
-			sAriaLabelExpected = "2 of 3 "  + this.oSlideTile._oRb.getText("SLIDETILE_PAUSE") + "Tile 2 30 Neutral Footer 3 40 Neutral Footer 4" + "\n" + sAdditionalText;
+			sAriaLabelExpected = this.oSlideTile._oRb.getText("SLIDETILE_INSTANCE_FOCUS_PAUSE",[2,3]) + "Tile 2 30 Neutral Footer 3 40 Neutral Footer 4" + "\n" + sAdditionalText;
 		this.oSlideTile._toggleAnimation();
 		//Act
 		this.oSlideTile._scrollToNextTile(true, false);
@@ -590,7 +590,7 @@ sap.ui.define([
 				oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
 				oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
 				oResBundle.getText("SLIDETILE_ACTIVATE"),
-			sAriaLabelExpected = "3 of 3 "  + this.oSlideTile._oRb.getText("SLIDETILE_PAUSE") + "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6"  + "\n" + sAdditionalText;
+			sAriaLabelExpected = this.oSlideTile._oRb.getText("SLIDETILE_INSTANCE_FOCUS_PAUSE",[3,3]) + "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6"  + "\n" + sAdditionalText;
 		this.oSlideTile._toggleAnimation();
 		//Act
 		this.oSlideTile._scrollToNextTile(true, false);

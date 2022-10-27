@@ -694,8 +694,8 @@ sap.ui.define([
 		sScope = this.getScope();
 		aTiles = this.getTiles();
 		iTiles = aTiles.length;
-		sState = (this._bAnimationPause) ? this._oRb.getText("SLIDETILE_PAUSE") : this._oRb.getText("SLIDETILE_NORMAL");
-		sPrefixText = this._oRb.getText("SLIDETILE_INSTANCE_FOCUS",[this._iCurrentTile + 1,iTiles]) + " " + sState;
+		sState = (this._bAnimationPause) ? "SLIDETILE_INSTANCE_FOCUS_PAUSE" : "SLIDETILE_INSTANCE_FOCUS_SCROLL";
+		sPrefixText = this._oRb.getText(sState,[this._iCurrentTile + 1,iTiles]);
 		sText += sPrefixText;
 		oCurrentTile = aTiles[this._iCurrentTile];
 		sText += oCurrentTile._getAriaText(true).replace(/\s/g, " ");// Gets Tile's ARIA text and collapses whitespaces
