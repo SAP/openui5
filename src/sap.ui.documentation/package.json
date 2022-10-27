@@ -18,6 +18,7 @@
     "@openui5/sap.ui.core": "1.109.0-SNAPSHOT",
     "@openui5/sap.ui.layout": "1.109.0-SNAPSHOT",
     "@openui5/themelib_sap_belize": "1.109.0-SNAPSHOT",
-    "@openui5/themelib_sap_fiori_3": "1.109.0-SNAPSHOT"
+    "@openui5/themelib_sap_fiori_3": "1.109.0-SNAPSHOT",
+    "@openui5/themelib_sap_horizon": "1.109.0-SNAPSHOT"
   }
 }
