@@ -2992,22 +2992,36 @@ sap.ui.define([
 
 		});
 
-		QUnit.test("format date to Japanese type with locale en and calendar week", function (assert) {
-			var oDate = new Date(2017, 3, 11);
+		QUnit.test("format date to Japanese type with locale de and calendar week",
+			function (assert) {
+				var oDate, oDateFormatCalendarYear, oDateFormatYearWeek,
+					oDeLocale = new Locale("de");
 
-			var oDateFormat = DateFormat.getDateInstance({
-				calendarType: CalendarType.Japanese,
-				pattern: "YYYY'/'ww"
+				oDateFormatYearWeek = DateFormat.getDateInstance({
+					calendarType: CalendarType.Japanese,
+					pattern: "YYYY'/'ww"
+				}, oDeLocale);
+
+				oDateFormatCalendarYear = DateFormat.getDateInstance({
+					calendarType: CalendarType.Japanese,
+					pattern: "yyyy"
+				}, oDeLocale);
+
+
+				// 2022 (Reiwa 4)
+				oDate = new Date(2022, 0, 1);
+				assert.equal(oDateFormatYearWeek.format(oDate), "2021/52",
+					"Date is formatted in Japanese calendar (YYYY'/'ww)");
+				assert.equal(oDateFormatCalendarYear.format(oDate), "0004",
+					"Date is formatted in Japanese calendar (yyyy)");
+
+				// 2016 (Heisei 28)
+				oDate = new Date(2016, 0, 1);
+				assert.equal(oDateFormatYearWeek.format(oDate), "2015/53",
+					"Date is formatted in Japanese calendar (YYYY'/'ww)");
+				assert.equal(oDateFormatCalendarYear.format(oDate), "0028",
+					"Date is formatted in Japanese calendar (yyyy)");
 			});
-
-			assert.equal(oDateFormat.format(oDate), "0029/15", "Date is formatted in Buddhist calendar");
-
-			oDateFormat = DateFormat.getDateInstance({
-				calendarType: CalendarType.Japanese,
-				pattern: "yyyy"
-			});
-			assert.equal(oDateFormat.format(oDate), "0029", "Date is formatted in Buddhist calendar");
-		});
 
 		QUnit.test("Interval format with Date instance, Japanese calendar, different eras, ja-JA", function (assert) {
 			var oLocale = new Locale("ja-JA");
