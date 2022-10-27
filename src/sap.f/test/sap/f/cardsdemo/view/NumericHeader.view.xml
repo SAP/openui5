@@ -126,6 +126,31 @@
 						<f:GridContainerItemLayoutData columns="4" />
 					</w:layoutData>
 				</w:Card>
+				<w:Card id="indicatorsVisibility1" manifest="{manifests>/kpiManifests/indicatorsVisibility1}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="indicatorsVisibility2" manifest="{manifests>/kpiManifests/indicatorsVisibility2}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="indicatorsVisibility3" manifest="{manifests>/kpiManifests/indicatorsVisibility3}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="indicatorsVisibility4" manifest="{manifests>/kpiManifests/indicatorsVisibility4}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="indicatorsVisibility5" manifest="{manifests>/kpiManifests/indicatorsVisibility5}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
 			</f:GridContainer>
 		</Panel>
 	</Page>

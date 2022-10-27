@@ -820,6 +820,236 @@
 					}
 				}
 			}
+		},
+		"indicatorsVisibility1": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.indicatorsVisibility",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"visibility": true,
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Main and Side Indicators Both Visible",
+					"subTitle": "Card subtitle",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"visible": "{visibility}",
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Card details",
+					"sideIndicators": [
+						{
+							"visible": "{visibility}",
+							"title": "Target",
+							"number": "420",
+							"unit": "K"
+						},
+						{
+							"visible": "{visibility}",
+							"title": "Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"indicatorsVisibility2": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.indicatorsVisibility",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"visibility": false,
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Only Main Indicator Visible",
+					"subTitle": "Card subtitle",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"visible": "{!visibility}",
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Card details",
+					"sideIndicators": [
+						{
+							"visible": "{visibility}",
+							"title": "Target",
+							"number": "352",
+							"unit": "K"
+						},
+						{
+							"visible": "{visibility}",
+							"title": "Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"indicatorsVisibility3": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.indicatorsVisibility",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"visibility": false,
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Neither Main nor Side Indicators Visible",
+					"subTitle": "Card subtitle",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"visible": "{visibility}",
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Card details",
+					"sideIndicators": [
+						{
+							"visible": "{visibility}",
+							"title": "Target",
+							"number": "352",
+							"unit": "K"
+						},
+						{
+							"visible": "{visibility}",
+							"title": "Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"indicatorsVisibility4": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.indicatorsVisibility",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"visibility": false,
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Main and Only One Side Indicators Visible",
+					"subTitle": "Card subtitle",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"visible": "{!visibility}",
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Card details",
+					"sideIndicators": [
+						{
+							"visible": "{visibility}",
+							"title": "Target",
+							"number": "352",
+							"unit": "K"
+						},
+						{
+							"visible": "{!visibility}",
+							"title": "Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		},
+		"indicatorsVisibility5": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.indicatorsVisibility",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"visibility": false,
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Only Side Indicators Visible",
+					"subTitle": "Card subtitle",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"visible": "{visibility}",
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Card details",
+					"sideIndicators": [
+						{
+							"visible": "{!visibility}",
+							"title": "Target",
+							"number": "352",
+							"unit": "K"
+						},
+						{
+							"visible": "{!visibility}",
+							"title": "Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
 		}
 	},
 	"manifestTests": {

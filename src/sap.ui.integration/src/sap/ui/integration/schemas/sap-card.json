@@ -639,6 +639,18 @@
               "$ref": "#/definitions/simpleBinding"
             }
           ]
+        },
+        "visible": {
+          "description": "Visibility of the main indicator",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },
@@ -666,6 +678,18 @@
             {
               "description": "The state color of the side indicator",
               "$ref": "#/definitions/Enums.ValueColor"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "visible": {
+          "description": "Visibility of the side indicator",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
             },
             {
               "$ref": "#/definitions/simpleBinding"
@@ -1596,6 +1620,7 @@
             }
           ]
         }
+      
       }
     },
     "ContentType.Object.Item.IconGroupTemplate": {

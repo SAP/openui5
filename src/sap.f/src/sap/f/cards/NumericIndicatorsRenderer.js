@@ -16,7 +16,10 @@ sap.ui.define([], function () {
 	 */
 	NumericIndicatorsRenderer.render = function (oRm, oNumericIndicators) {
 		var oMainIndicator = oNumericIndicators.getAggregation("_mainIndicator"),
-			oSideIndicators = oNumericIndicators.getSideIndicators();
+			oSideIndicators = oNumericIndicators.getSideIndicators(),
+			bHasVisibleSideIndicator = oSideIndicators.some(function (oIndicator) {
+				return oIndicator.getVisible();
+			});
 
 		oRm.openStart("div", oNumericIndicators)
 			.class("sapFCardNumericIndicators")
@@ -29,7 +32,7 @@ sap.ui.define([], function () {
 
 		oRm.openEnd();
 
-		if (oMainIndicator) {
+		if (oMainIndicator && oNumericIndicators.getNumberVisible()) {
 			oRm.openStart("div")
 				.class("sapFCardNumericIndicatorsMain")
 				.openEnd()
@@ -42,7 +45,7 @@ sap.ui.define([], function () {
 				.close("div");
 		}
 
-		if (oSideIndicators.length !== 0) {
+		if (oSideIndicators.length !== 0 && bHasVisibleSideIndicator) {
 			oRm.openStart("div")
 				.class("sapFCardNumericIndicatorsSide")
 				.openEnd();
