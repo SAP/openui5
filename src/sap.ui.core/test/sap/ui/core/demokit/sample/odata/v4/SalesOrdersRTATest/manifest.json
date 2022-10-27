@@ -1,10 +1,10 @@
 {
 	"sap.ui5" : {
-		"extends": {
-			"component": "sap.ui.core.sample.odata.v4.SalesOrders",
+		"extends" : {
+			"component" : "sap.ui.core.sample.odata.v4.SalesOrders",
 			"extensions" : {
-				"sap.ui.controllerExtensions": {
-					"sap.ui.core.sample.odata.v4.SalesOrders.Main": {
+				"sap.ui.controllerExtensions" : {
+					"sap.ui.core.sample.odata.v4.SalesOrders.Main" : {
 						"controllerName" : "sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main"
 					}
 				}

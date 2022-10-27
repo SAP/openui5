@@ -11,13 +11,13 @@
 				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 				"type" : "OData",
 				"settings" : {
-					"annotations": ["testanno"],
+					"annotations" : ["testanno"],
 					"odataVersion" : "4.0"
 				}
 			},
-			"testanno": {
-				"uri": "data/annotations.xml",
-				"type": "ODataAnnotation"
+			"testanno" : {
+				"uri" : "data/annotations.xml",
+				"type" : "ODataAnnotation"
 			}
 		},
 		"id" : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate",
