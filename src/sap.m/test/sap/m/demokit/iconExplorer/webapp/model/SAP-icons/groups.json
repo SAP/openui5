@@ -1193,7 +1193,10 @@
 				{ "name" : "keyboard-and-mouse" },
 				{ "name" : "touch" },
 				{ "name" : "s4hana" },
-				{ "name" : "qr-code" }
+				{ "name" : "qr-code" },
+				{ "name" : "cloud-check" },
+				{ "name" : "enablement" },
+				{ "name" : "map-fill" }
 			]
 		},
 		{
