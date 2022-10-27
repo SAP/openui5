@@ -194,6 +194,9 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			/**
+			 * @deprecated As of version 1.50
+			 */
 			CustomTile: {
 				title: "QUnit Tests - sap.m.CustomTile"
 			},
@@ -241,6 +244,9 @@ sap.ui.define([
 					version: 1 // sinon-qunit-bridge does not support nested modules
 				}
 			},
+			/**
+			 * @deprecated as of version 1.32.8
+			 */
 			DateTimeInput: {
 				title: "Test Page for sap.m.DateTimeInput",
 				ui5: {
@@ -522,8 +528,8 @@ sap.ui.define([
 					}
 				}
 			},
-			GrowingList_databinding: {
-				title: "QUnit Page for sap.m.GrowingList databinding"
+			GrowingEnablement_databinding: {
+				title: "QUnit Page for sap.m.GrowingEnablement and databinding"
 			},
 			HBox: {
 				title: "QUnit Page for sap.m.HBox"
@@ -1427,6 +1433,9 @@ sap.ui.define([
 					language: "en-US"
 				}
 			},
+			/**
+			 * @deprecated as of version 1.50
+			 */
 			StandardTile: {
 				title: "StandardTile - sap.m"
 			},
