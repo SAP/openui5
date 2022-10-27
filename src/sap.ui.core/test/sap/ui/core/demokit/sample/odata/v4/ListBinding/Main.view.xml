@@ -58,7 +58,7 @@
 								id="ChangeTeamBudgetByID" layout="ResponsiveGridLayout">
 								<Label text="Team ID"/>
 								<Input id="ChangeTeamBudgetDialog::TeamID" value="{TeamID}"
-									   editable="false"/>
+									editable="false"/>
 								<Label text="Budget"/>
 								<Input id="ChangeTeamBudgetDialog::Budget" value="{Budget}"/>
 							</form:SimpleForm>
@@ -151,8 +151,7 @@
 			<Input value="{AGE}"/>
 			<Text text="{LOCATION/City/CITYNAME}"/>
 			<Input value="{ENTRYDATE}"/>
-			<!-- Note: automatic type determination cannot work here and triggers a warning
-			  -->
+			<!-- Note: automatic type determination cannot work here and triggers a warning -->
 			<Text text="{path : '@odata.etag', type : 'sap.ui.model.odata.type.String'}"/>
 			<Button icon="sap-icon://delete" text="Delete" press="onDeleteEmployee"/>
 		</ColumnListItem>

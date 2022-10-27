@@ -189,8 +189,8 @@
 										editable="true">
 									<Label text="Sales Order"/>
 									<Text id="SimulateDiscountForm::SalesOrderID"
-										  text="{parameterContext>SalesOrder/SalesOrderID}"
-										  tooltip="SalesOrderID (via parameter context)"/>
+										text="{parameterContext>SalesOrder/SalesOrderID}"
+										tooltip="SalesOrderID (via parameter context)"/>
 									<Label text="Gross Amount"/>
 									<Text id="SimulateDiscountForm::GrossAmount"
 										text="{GrossAmount}"
@@ -384,7 +384,7 @@
 								SOITEM_2_PRODUCT : {
 									$expand : {
 										PRODUCT_2_BP : {
-											$expand :  {
+											$expand : {
 												BP_2_CONTACT : {
 													$select : ['ContactGUID','DateOfBirth',
 														'EmailAddress','FirstName','LastName',

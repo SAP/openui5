@@ -52,7 +52,7 @@
 							<headerToolbar>
 								<Toolbar>
 									<Title id="productsTitle" level="H2"
-										   text="{headerContext0>$count} Products"/>
+										text="{headerContext0>$count} Products"/>
 								</Toolbar>
 							</headerToolbar>
 							<columns>
@@ -108,12 +108,12 @@
 								parameters : {$count : true, $$ownRequest : true},
 								templateShareable : true
 							}"
-							 selectionMode="None"
-							 visibleRowCount="20">
+							selectionMode="None"
+							visibleRowCount="20">
 							<t:extension>
 								<Toolbar design="Transparent" class="sapMTBHeader-CTX">
 									<Title id="partsTitle" level="H2"
-										   text="Product: {ID}, {headerContext1>$count} Parts"/>
+										text="Product: {ID}, {headerContext1>$count} Parts"/>
 								</Toolbar>
 							</t:extension>
 							<t:columns>
