@@ -344,18 +344,48 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getWeek (de)", function (assert) {
+["getWeek", "getUTCWeek"].forEach(function(sMethodeName) {
+	// use 10:00 to avoid day shifting when using UTC
+	QUnit.test(sMethodeName + " (de)", function (assert) {
 		sap.ui.getCore().getConfiguration().setLanguage("de");
-		assert.deepEqual(new Japanese([236, 4],0,1).getWeek(), {
+
+		/*
+		 *    Januar 2022 (236, 4)
+		 * Week Mo Tu We Th Fr Sa Su
+		 *  52                  1  2
+		 *   1   3  4  5  6  7  8  9
+		 */
+		assert.deepEqual(new Japanese([236, 4], 0, 1, 10)[sMethodeName](), {
 			"week": 51,
-			"year": 3
-		}, "Jan 1st 2022 is CW 51");
-		assert.deepEqual(new Japanese([236, 4], 0, 3).getWeek(), {
+			"year": 2021
+		}, "Jan 1st 2022 is CW 52");
+		assert.deepEqual(new Japanese([236, 4], 0, 3, 10)[sMethodeName](), {
 			"week": 0,
-			"year": 4
+			"year": 2022
 		}, "Jan 3rd 2022 is CW 1");
+
+
+		/*
+		 *    Januar 2016 (235, 28)
+		 * Week Mo Tu We Th Fr Sa Su
+		 *  53               1  2  3
+		 *   1   4  5  6  7  8  9 10
+		 */
+		assert.deepEqual(new Japanese([235, 28], 0, 1, 10)[sMethodeName](), {
+			"week": 52,
+			"year": 2015
+		}, "Jan 1st 2016 is CW 53");
+		assert.deepEqual(new Japanese([235, 28], 0, 3, 10)[sMethodeName](), {
+			"week": 52,
+			"year": 2015
+		}, "Jan 3rd 2016 is CW 53");
+		assert.deepEqual(new Japanese([235, 28], 0, 4, 10)[sMethodeName](), {
+			"week": 0,
+			"year": 2016
+		}, "Jan 4th 2016 is CW 1");
 		sap.ui.getCore().getConfiguration().setLanguage("en_US");
 	});
+});
 
 	// --------------------------- HELPERS -------------------------------------------------------------------------
 	function verifyDateWithTestDate(assert, sMessage, oDate, oExpectedTestDate, bUTC) {

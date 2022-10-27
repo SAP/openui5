@@ -229,6 +229,36 @@ sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
 		return this._setUTCJapanese(oJapanese);
 	};
 
+	/**
+	 * Note: The resulting year is the Gregorian year
+	 *
+	 * @override
+	 * @see sap.ui.core.date.UniversalDate#getWeek
+	 */
+	Japanese.prototype.getWeek = function(oLocale, vCalendarWeekNumbering) {
+		// Use the Gregorian year (from this.oDate), because the Japanese emperor year lacks the
+		// information of the era which makes the year not unique.
+		// Using the Gregorian year is valid, because Japanese#constructor is able to calculate the
+		// era and Japanese emperor year from the Gregorian year.
+		return UniversalDate.getWeekByDate(this.sCalendarType, this.oDate.getFullYear(),
+			this.getMonth(), this.getDate(), oLocale, vCalendarWeekNumbering);
+	};
+
+	/**
+	 * Note: The resulting year is the Gregorian year
+	 *
+	 * @override
+	 * @see sap.ui.core.date.UniversalDate#getUTCWeek
+	 */
+	Japanese.prototype.getUTCWeek = function(oLocale, vCalendarWeekNumbering) {
+		// Use the Gregorian year (from this.oDate), because the Japanese emperor year lacks the
+		// information of the era which makes the year not unique.
+		// Using the Gregorian year is valid, because Japanese#constructor is able to calculate the
+		// era and Japanese emperor year from the Gregorian year.
+		return UniversalDate.getWeekByDate(this.sCalendarType, this.oDate.getUTCFullYear(),
+			this.getUTCMonth(), this.getUTCDate(), oLocale, vCalendarWeekNumbering);
+	};
+
 	_Calendars.set(CalendarType.Japanese, Japanese);
 
 	return Japanese;
