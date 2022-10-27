@@ -17,9 +17,9 @@ sap.ui.define([
 				]
 			});
 			this.oHandler = new LocalStorageModificationHandler();
-			Engine.register(this.oControl, {
+			Engine.getInstance().register(this.oControl, {
 				modification: this.oHandler,
-				helper: new MetadataHelper(),
+				helper: new MetadataHelper([]),
 				controller: {
 					Selection: new SelectionController({
 						targetAggregation: "columns",

@@ -21,5 +21,9 @@ sap.ui.define([
 		return new TestModificationHandler();
 	};
 
+	TestModificationHandler.processChanges = function(aChanges){
+		return Promise.resolve(aChanges);
+	};
+
 	return TestModificationHandler;
 });

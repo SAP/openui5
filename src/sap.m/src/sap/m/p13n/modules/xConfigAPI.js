@@ -19,7 +19,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Element} oControl The according element which should be checked
 	 * @param {object} oModificationPayload An object providing a modification handler specific payload
-	 * @param {object} oModificationPayload.key The affected property name
+	 * @param {object} oModificationPayload.key The affected metadata property key
 	 * @param {object} oModificationPayload.controlMeta Object describing which config is affected
 	 * @param {object} oModificationPayload.controlMeta.aggregation The affected aggregation name (such as <code>columns</code> or <code>filterItems</code>)
 	 * @param {object} oModificationPayload.property The affected property name (such as <code>width</code> or <code>lable</code>)
@@ -58,10 +58,7 @@ sap.ui.define([
 						return merge({}, JSON.parse(sConfig.replace(/\\/g, '')));
 					});
 				}
-				return {
-					aggregations: {},
-					properties: {}
-				};
+				return {};
 			})
 			.then(function(oExistingConfig) {
 
@@ -181,7 +178,7 @@ sap.ui.define([
 	 */
 	xConfigAPI.createAggregationConfig = function(oControl, oModificationPayload, oExistingConfig) {
 
-		var sPropertyInfoKey = oModificationPayload.key;
+		var sPropertyInfoKey = oModificationPayload.key || oModificationPayload.name;
 		var mControlMeta = oModificationPayload.controlMeta;
 
 		var sAffectedProperty = oModificationPayload.property;
@@ -189,10 +186,9 @@ sap.ui.define([
 		var vValue = oModificationPayload.value;
 		var oControlMetadata = oModificationPayload.controlMetadata || oControl.getMetadata();
 		var sAffectedAggregation = mControlMeta.aggregation;
-		var sAggregationName = sAffectedAggregation ? sAffectedAggregation : oControlMetadata.getDefaultAggregation().key;
-		var oConfig = oExistingConfig || {
-			aggregations: {}
-		};
+		var sAggregationName = sAffectedAggregation ? sAffectedAggregation : oControlMetadata.getDefaultAggregation().name;
+		var oConfig = oExistingConfig || {};
+		oConfig.aggregations = {};
 
 		if (!oConfig.aggregations.hasOwnProperty(sAggregationName)) {
 			if (oControlMetadata.hasAggregation(sAggregationName)) {
@@ -215,8 +211,15 @@ sap.ui.define([
 				case "remove":
 				case "add":
 				default:
-					oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue.value;
-					oConfig.aggregations[sAggregationName][sPropertyInfoKey]["position"] = vValue.index;
+					/*TODO*/
+					if (vValue.hasOwnProperty("value")) {
+						oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue.value;
+						oConfig.aggregations[sAggregationName][sPropertyInfoKey]["position"] = vValue.index;
+					} else {
+						oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue;
+					}
+
+					/*TODO*/
 					break;
 			}
 
@@ -256,9 +259,8 @@ sap.ui.define([
 		var vValue = oModificationPayload.value;
 		//var oControlMetadata = oModificationPayload.controlMetadata || oControl.getMetadata();
 		var sAffectedProperty = oModificationPayload.property;
-		var oConfig = oExistingConfig || {
-			properties: {}
-		};
+		var oConfig = oExistingConfig || {};
+		oConfig.properties = {};
 
 		if (!oConfig.properties.hasOwnProperty(sAffectedProperty)) {
 			oConfig.properties[sAffectedProperty] = [];

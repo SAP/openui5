@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/m/p13n/modules/DefaultProviderRegistry",
 	"sap/m/p13n/modules/UIManager",
 	"sap/m/p13n/modules/StateHandlerRegistry",
-	"sap/m/p13n/modules/xConfigAPI"
-], function (AdaptationProvider, merge, Log, FlexModificationHandler, MessageStrip, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI) {
+	"sap/m/p13n/modules/xConfigAPI",
+	"sap/m/p13n/enum/ProcessingStrategy"
+], function (AdaptationProvider, merge, Log, FlexModificationHandler, MessageStrip, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI, ProcessingStrategy) {
 	"use strict";
 
 	var ERROR_INSTANCING = "Engine: This class is a singleton. Please use the getInstance() method instead.";
@@ -127,12 +128,8 @@ sap.ui.define([
 	 */
 	 Engine.prototype.register = function(oControl, oConfig) {
 
-		if (!oConfig.hasOwnProperty("controller") || Object.keys(oConfig.controller).length < 1) {
+		if (!oConfig.hasOwnProperty("controller")/* || Object.keys(oConfig.controller).length < 1*/) {
 			throw new Error("Please provide at least a configuration 'controller' containing a map of key-value pairs (key + Controller class) in order to register adaptation.");
-		}
-
-		if (!oConfig.hasOwnProperty("helper") || !(oConfig.helper.getProperties instanceof Function)) {
-			throw new Error("Please provide at least a configuration 'helper' containing a metadata helper instance implementing a #getProperties function.");
 		}
 
 		var oRegistryEntry = this._getRegistryEntry(oControl);
@@ -159,7 +156,9 @@ sap.ui.define([
 
 		}.bind(this));
 
-		this.getModificationHandler(oControl).initialize(oControl);
+		if (oRegistryEntry && oRegistryEntry.modification) {
+			this.getModificationHandler(oControl).initialize(oControl);
+		}
 
 	};
 
@@ -403,18 +402,21 @@ sap.ui.define([
 		this._getRegistryEntry(vControl).modification = oModificationSetting;
 	};
 
-	var fnQueue = function(oControl, fTask) {
+	Engine.prototype._addToQueue = function(oControl, fTask) {
+		var oRegistryEntry = this._getRegistryEntry(oControl);
+
 		var fCleanupPromiseQueue = function(pOriginalPromise) {
-			if (oControl._pModificationQueue === pOriginalPromise){
-				delete oControl._pModificationQueue;
+			if (oRegistryEntry.pendingModification === pOriginalPromise){
+				oRegistryEntry.pendingModification = null;
 			}
 		};
 
-		oControl._pModificationQueue = oControl._pModificationQueue instanceof Promise ? oControl._pModificationQueue.then(fTask) : fTask();
-		oControl._pModificationQueue.then(fCleanupPromiseQueue.bind(null, oControl._pModificationQueue));
+		oRegistryEntry.pendingModification = oRegistryEntry.pendingModification instanceof Promise ? oRegistryEntry.pendingModification.then(fTask) : fTask();
+		oRegistryEntry.pendingModification.then(fCleanupPromiseQueue.bind(null, oRegistryEntry.pendingModification));
 
-		return oControl._pModificationQueue;
+		return oRegistryEntry.pendingModification;
 	};
+
 
 	/**
 	 * <code>Engine#createChanges</code> can be used to programmatically trigger the creation
@@ -426,7 +428,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} mDiffParameters.control The control instance that should be adapted
 	 * @param {string} mDiffParameters.key The key used to retrieve the related controller
 	 * @param {object} mDiffParameters.state The state that is applied to the provided control instance
-	 * @param {boolean} [mDiffParameters.applyAbsolute] Determines whether unmentioned entries are affected
+	 * @param {sap.ui.mdc.p13n.ProcessingStrategy} [mDiffParameters.applyAbsolute] Determines about the comparison algorithm between two states
 	 * @param {boolean} [mDiffParameters.stateBefore] If the state should be diffed manually;
 	 * for example, if "A" exists in the control state, but is not mentioned in the new state provided in the
 	 * mDiffParameters.state then the absolute appliance decides whether to remove "A" or to keep it.
@@ -438,20 +440,20 @@ sap.ui.define([
 	 */
 	Engine.prototype.createChanges = function(mDiffParameters) {
 
+		var oControl = Engine.getControlInstance(mDiffParameters.control);
 		var sKey = mDiffParameters.key;
-		var aNewState = mDiffParameters.state;
-		var bApplyAbsolute = !!mDiffParameters.applyAbsolute;
+		var vNewState = mDiffParameters.state;
 		var bSuppressCallback = !!mDiffParameters.suppressAppliance;
-		var bApplySequentially = !!mDiffParameters.applySequentially;
 
-		if (!sKey || !mDiffParameters.control || !aNewState) {
+		if (!sKey || !mDiffParameters.control || !vNewState) {
 			throw new Error("To create changes via Engine, atleast a 1)Control 2)Key and 3)State needs to be provided.");
 		}
 
-		var oControl = Engine.getControlInstance(mDiffParameters.control);
-
 		var fDeltaHandling = function() {
 			return this.initAdaptation(oControl, sKey).then(function(){
+				return vNewState;
+			})
+			.then(function(aNewState){
 
 				var oController = this.getController(oControl, sKey);
 				var mChangeOperations = oController.getChangeOperations();
@@ -462,12 +464,17 @@ sap.ui.define([
 
 				var mDeltaConfig = {
 					existingState: mDiffParameters.stateBefore || oPriorState,
-					applyAbsolute: bApplyAbsolute,
+					applyAbsolute: mDiffParameters.applyAbsolute,
 					changedState: aNewState,
 					control: oController.getAdaptationControl(),
 					changeOperations: mChangeOperations,
 					deltaAttributes: ["key"],
-					propertyInfo: oRegistryEntry.helper.getProperties().map(function(a){return {key: a.key};})
+					propertyInfo: oRegistryEntry.helper.getProperties().map(function(a){
+						return {
+							key: a.key,
+							name: a.name
+						};
+					})
 				};
 
 				//Only execute change calculation in case there is a difference (--> example: press 'Ok' without a difference)
@@ -476,7 +483,10 @@ sap.ui.define([
 				if (!bSuppressCallback) {
 					var mChangeMap = {};
 					mChangeMap[sKey] = aChanges;
-					return this._processChanges(oControl, mChangeMap);
+					return this._processChanges(oControl, mChangeMap)
+					.then(function(){
+						return aChanges;
+					});
 				}
 
 				return aChanges || [];
@@ -485,11 +495,7 @@ sap.ui.define([
 
 		}.bind(this);
 
-		if (bApplySequentially) {
-			return fnQueue(oControl, fDeltaHandling);
-		} else {
-			return fDeltaHandling.apply(this);
-		}
+		return this._addToQueue(oControl, fDeltaHandling);
 	};
 
 	/**
@@ -500,13 +506,16 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl The related control instance
 	 * @returns {Promise} A Promise resolving after all pending modifications have been applied
 	 */
-	Engine.prototype.waitForChanges = function(oControl) {
+	 Engine.prototype.waitForChanges = function(oControl) {
 		var oModificationSetting = this._determineModification(oControl);
-		return oModificationSetting.handler.waitForChanges({
-			element: oControl
-		}, oModificationSetting.payload);
+		var oRegistryEntry = this._getRegistryEntry(oControl);
+		return oRegistryEntry && oRegistryEntry.pendingModification ? oRegistryEntry.pendingModification : Promise.resolve()
+		.then(function(){
+			return oModificationSetting.handler.waitForChanges({
+				element: oControl
+			}, oModificationSetting.payload);
+		});
 	};
-
 	/**
 	 * Determines whether the environment is suitable for the desired modification of the provided control instance.
 	 *
@@ -575,7 +584,7 @@ sap.ui.define([
 		// TODO: clarify if we need this error handling / what to do with the Link if we want to keep it
 		var aPVs = this.hasForReference(oControl, "sap.m.p13n.PersistenceProvider");
 
-		if (aPVs.length > 0 && !oControl.isA("sap.m.link.Panel")) {
+		if (aPVs.length > 0 && !oControl.isA("sap.ui.mdc.link.Panel")) {
 			return Promise.reject("Please do not use a PeristenceProvider in RTA.");
 		}
 
@@ -593,12 +602,14 @@ sap.ui.define([
 
 		this._setModificationHandler(oControl, oTemporaryRTAHandler);
 
-		this.uimanager.show(oControl, aKeys).then(function(oContainer){
-			var oCustomHeader = oContainer._oPopup.getCustomHeader();
+		this.uimanager.show(oControl, aKeys, {
+			showReset: false
+		}).then(function(oContainer){
+			var oCustomHeader = oContainer.getCustomHeader();
 			if (oCustomHeader) {
 				oCustomHeader.getContentRight()[0].setVisible(false);
 			}
-			oContainer._oPopup.addStyleClass(mPropertyBag.styleClass);
+			oContainer.addStyleClass(mPropertyBag.styleClass);
 			if (mPropertyBag.fnAfterClose instanceof Function) {
 				oContainer.attachAfterClose(mPropertyBag.fnAfterClose);
 			}
@@ -707,26 +718,24 @@ sap.ui.define([
 		oOld = merge({}, oOld);
 		oNew = merge({}, oNew);
 
-		this.getRegisteredControllers(oControl).forEach(function(sKey){
-
+		Object.keys(oNew).forEach(function(sKey){
 			aDiffCreation.push(this.createChanges({
 				control: oControl,
 				stateBefore: oOld[sKey],
 				state: oNew[sKey],
-				applyAbsolute: true,
+				applyAbsolute: ProcessingStrategy.FullReplace,
 				key: sKey,
 				suppressAppliance: true
 			}));
-
 		}.bind(this));
-
 		return Promise.all(aDiffCreation)
 		.then(function(aChanges){
-			this.getRegisteredControllers(oControl).forEach(function(sKey, i){
+			Object.keys(oNew).forEach(function(sKey, i){
 
-				var aState = this.getController(oControl, sKey).changesToState(aChanges[i], oOld[sKey], oNew[sKey]);
-				oDiffState[sKey] = aState;
-
+				if (oNew[sKey]) {
+					var aState = this.getController(oControl, sKey).changesToState(aChanges[i], oOld[sKey], oNew[sKey]);
+					oDiffState[sKey] = aState;
+				}
 			}.bind(this));
 
 			return oDiffState;
@@ -882,9 +891,8 @@ sap.ui.define([
 	 */
 	Engine.prototype.getRegisteredControllers = function(vControl){
 		var oRegistryEntry = this._getRegistryEntry(vControl);
-		return Object.keys(oRegistryEntry.controller);
+		return oRegistryEntry ? Object.keys(oRegistryEntry.controller) : [];
 	};
-
 	/**
 	 * This method can be used to get the registry entry for a control instance
 	 *
@@ -933,9 +941,9 @@ sap.ui.define([
 
 			_mRegistry.set(oControl, {
 				modification: oPreConfig && oPreConfig.modification ? {
-					handler: oPreConfig.modification,//TBD
+					handler: oPreConfig.modification,
 					payload: {
-						mode: "Auto",//TBD,
+						mode: "Auto",
 						hasVM: true,
 						hasPP: false
 					}
@@ -943,12 +951,36 @@ sap.ui.define([
 				controller: {},
 				activeP13n: null,
 				helper: oPreConfig && oPreConfig.helper ? oPreConfig.helper : null,
-				xConfig: null
+				xConfig: null,
+				pendingAppliance: {}
 			});
 
 		}
 
 		return _mRegistry.get(oControl);
+	};
+
+	Engine.prototype.trace = function(vControl, oChange) {
+		var oRegistryEntry = this._getRegistryEntry(vControl);
+		this.getRegisteredControllers(vControl).forEach(function(sKey){
+			var oController = this.getController(vControl, sKey);
+			var mChangeOperations = oController.getChangeOperations();
+			Object.keys(mChangeOperations).forEach(function(sType){
+				if (mChangeOperations[sType] === oChange.changeSpecificData.changeType) {
+					oRegistryEntry.pendingAppliance[sKey] = [].concat(oRegistryEntry.pendingAppliance[sKey]).concat(oChange);
+				}
+			});
+		}.bind(this));
+	};
+
+	Engine.prototype.getTrace = function(vControl, oChange) {
+		var oRegistryEntry = this._getRegistryEntry(vControl);
+		return Object.keys(oRegistryEntry.pendingAppliance);
+	};
+
+	Engine.prototype.clearTrace = function(vControl, oChange) {
+		var oRegistryEntry = this._getRegistryEntry(vControl);
+		oRegistryEntry.pendingAppliance = {};
 	};
 
 	/**
@@ -967,7 +999,7 @@ sap.ui.define([
 			return oRegistryEntry.modification;
 		}
 
-		var aPPResults = this.hasForReference(vControl, "sap.m.p13n.PersistenceProvider");
+		var aPPResults = this.hasForReference(vControl, "sap.m.p13n.PersistenceProvider").concat(this.hasForReference(vControl, "sap.ui.mdc.p13n.PersistenceProvider"));
 		var aVMResults = this.hasForReference(vControl, "sap.ui.fl.variants.VariantManagement");
 
 		var aPersistenceProvider = aPPResults.length ? aPPResults : undefined;
@@ -1013,7 +1045,7 @@ sap.ui.define([
 			}
 			var aFor = oElement.getFor instanceof Function ? oElement.getFor() : [];
 			for (var n = 0; n < aFor.length; n++) {
-				if (aFor[n] === sControlId || this.hasControlAncestorWithId(sControlId, aFor[n])) {
+				if (aFor[n] === sControlId || oEngine.hasControlAncestorWithId(sControlId, aFor[n])) {
 					return true;
 				}
 			}
@@ -1253,5 +1285,5 @@ sap.ui.define([
 		this.uimanager = null;
 	};
 
-	return Engine.getInstance();
+	return Engine;
 });

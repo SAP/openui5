@@ -11,8 +11,8 @@ sap.ui.define([
 
 	QUnit.test("Use DefaultProviderRegistry as Singleton", function(assert){
 
-		var oFirstDefaultProviderRegistry = DefaultProviderRegistry.getInstance(Engine);
-		var oSecondDefaultProviderRegistry = DefaultProviderRegistry.getInstance(Engine);
+		var oFirstDefaultProviderRegistry = DefaultProviderRegistry.getInstance(Engine.getInstance());
+		var oSecondDefaultProviderRegistry = DefaultProviderRegistry.getInstance(Engine.getInstance());
 		assert.ok(oFirstDefaultProviderRegistry.isA("sap.m.p13n.modules.DefaultProviderRegistry"), "getInstance() returns an instance of DefaultProviderRegistry");
 		assert.deepEqual(oFirstDefaultProviderRegistry, oSecondDefaultProviderRegistry, "There is only one 'DefaultProviderRegistry' instance per session");
 
@@ -35,7 +35,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oFirstControl = new Control("myControl1");
 			this.oSecondControl = new Control("myControl2");
-			this.defaultProviderRegistry = DefaultProviderRegistry.getInstance(Engine);
+			this.defaultProviderRegistry = DefaultProviderRegistry.getInstance(Engine.getInstance());
 		},
 		afterEach: function() {
 			this.oFirstControl.destroy();
@@ -49,7 +49,7 @@ sap.ui.define([
 		var _retrieveDefaultProviderSpy = sinon.spy(this.defaultProviderRegistry, "_retrieveDefaultProvider");
 
 		assert.equal(Object.keys(this.defaultProviderRegistry._mDefaultProviders).length, 0, "No persistence provider exists yet.");
-		var oEngineStub = sinon.stub(Engine, "isRegisteredForModification").returns(true);
+		var oEngineStub = sinon.stub(Engine.getInstance(), "isRegisteredForModification").returns(true);
 
 		assert.throws(
 			function() {

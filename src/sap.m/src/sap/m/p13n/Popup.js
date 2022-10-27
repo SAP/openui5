@@ -174,7 +174,7 @@ sap.ui.define([
 	 */
 	Popup.prototype.open = function(oSource, mSettings) {
 
-		if (!oSource) {
+		if (!oSource && this.getMode() === "Popover") {
 			throw new Error("Please provide a source control!");
 		}
 
@@ -240,7 +240,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the current panels in the <code>panels</code> aggregation.
+	 * Returns the current panels in the <code>panels</code> aggregation.
 	 * @public
 	 * @returns {sap.m.p13n.IContent[]} An array of panel instances
 	 */
@@ -295,7 +295,7 @@ sap.ui.define([
 			content: this.getPanels().length > 1 ? this._getContainer() : this.getPanels()[0],
 			escapeHandler: function() {
 				this._onClose(oContainer, "Escape");
-			},
+			}.bind(this),
 			buttons: [
 				new Button(this.getId() + "-confirmBtn", {
 					text:  mDialogSettings.confirm && mDialogSettings.confirm.text ?  mDialogSettings.confirm.text : oResourceBundle.getText("p13n.POPUP_OK"),
