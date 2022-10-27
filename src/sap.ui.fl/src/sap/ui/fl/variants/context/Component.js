@@ -35,7 +35,6 @@ sap.ui.define([
 		onInit: function() {
 			var oSelectedContextsModel = this.getModel("selectedContexts");
 			oSelectedContextsModel.setProperty("/selected", []);
-			oSelectedContextsModel.setProperty("/showMessageStrip", true);
 		},
 
 		/**
