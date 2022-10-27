@@ -226,7 +226,7 @@ sap.ui.define([
 		if (!oPopover) {
 			Fragment.load({
 				name: "sap.ui.rta.util.changeVisualization.ChangeIndicatorCategorySelection",
-				id: this._getComponent().createId("changeVisualization_changesListPopover"),
+				id: this._getComponent().createId("changeVisualization_changesList"),
 				controller: this
 			})
 				.then(function(oPopover) {

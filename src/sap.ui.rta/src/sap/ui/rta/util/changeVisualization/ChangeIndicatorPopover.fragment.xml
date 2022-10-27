@@ -5,6 +5,7 @@
 	<Popover
 		showHeader="false"
 		placement="PreferredTopOrFlip"
+		id="popover"
 		class="sapUiRtaPopover sapUiRtaChangeVisualizationPopover">
 		<Table
 			ariaLabelledBy="Changes"

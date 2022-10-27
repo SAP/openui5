@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/actions/Press",
+	"sap/ui/test/actions/Drag",
+	"sap/ui/test/actions/Drop",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/events/KeyCodes",
@@ -11,8 +12,9 @@ sap.ui.define([
 ], function(
 	Opa5,
 	PropertyStrictEquals,
-	Properties,
 	Press,
+	Drag,
+	Drop,
 	QUnitUtils,
 	FakeLrepConnectorSessionStorage,
 	KeyCodes,
@@ -43,6 +45,63 @@ sap.ui.define([
 						actions: new Press()
 					});
 				},
+				iSwitchToVisualizationMode: function() {
+					var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+					var sButtonText = oRtaResourceBundle.getText("BTN_VISUALIZATION");
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: function(oButton) {
+							return oButton.getText() === sButtonText;
+						},
+						actions: new Press(),
+						errorMessage: "Did not find Visualization-Button"
+					});
+				},
+				iSwitchToAdaptationMode: function() {
+					var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+					var sButtonText = oRtaResourceBundle.getText("BTN_ADAPTATION");
+					return this.waitFor({
+						autoWait: false,
+						controlType: "sap.m.Button",
+						matchers: function(oButton) {
+							return oButton.getText() === sButtonText;
+						},
+						actions: new Press(),
+						errorMessage: "Did not find UI-Adaptation-Button"
+					});
+				},
+				iDragAndDropAnElement: function(sElementDragId, sElementDropId) {
+					this.waitFor({
+						controlType: "sap.ui.dt.ElementOverlay",
+						matchers: function(oOverlay) {
+							return oOverlay.getElement().getId() === sElementDragId;
+						},
+						// Start the dragging
+						actions: new Drag(),
+						errorMessage: "Could not find the drag element"
+					});
+					return this.waitFor({
+						controlType: "sap.ui.dt.ElementOverlay",
+						matchers: function(oOverlay) {
+							return oOverlay.getElement().getId() === sElementDropId;
+						},
+						// Finish dragging and drop the item right before this one.
+						actions: new Drop({
+							before: true
+						}),
+						errorMessage: "Could not find the drop zone"
+					});
+				},
+				iClickTheUndoButton: function() {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: function(oButton) {
+							return oButton.getDomRef().closest(".sapUiRtaToolbar") && oButton.getIcon() === "sap-icon://undo";
+						},
+						actions: new Press(),
+						errorMessage: "Did not find UndoButton"
+					});
+				},
 				iWaitUntilTheBusyIndicatorIsGone: function(sId, sViewName) {
 					return this.waitFor({
 						autoWait: false,
@@ -62,7 +121,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
 						matchers: function(oOverlay) {
-							return oOverlay.getElementInstance().getId() === sId;
+							return oOverlay.getElement().getId() === sId;
 						},
 						success: function(aOverlays) {
 							aOverlays[0].$().trigger('contextmenu');
@@ -74,7 +133,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
 						matchers: function(oOverlay) {
-							return oOverlay.getElementInstance().getId() === sId;
+							return oOverlay.getElement().getId() === sId;
 						},
 						errorMessage: "Did not find the Element Overlay",
 						actions: new Press()
@@ -84,7 +143,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
 						matchers: function(oOverlay) {
-							return oOverlay.getElementInstance().getId() === sId;
+							return oOverlay.getElement().getId() === sId;
 						},
 						success: function(oOverlay) {
 							var oAggregationOverlay = oOverlay[0].getAggregationOverlay(sAggregationName);
@@ -189,7 +248,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: function(oButton) {
-							return oButton.$().closest(".sapUiRtaToolbar").length > 0 && oButton.getProperty("text") === oResources.getText("BTN_EXIT");
+							return oButton.getDomRef().closest(".sapUiRtaToolbar") && oButton.getProperty("text") === oResources.getText("BTN_EXIT");
 						},
 						actions: new Press(),
 						success: function(aButtons) {
@@ -197,12 +256,12 @@ sap.ui.define([
 						}
 					});
 				},
-				// Only for UI Personalization. Plese do not use in UI Adaptation tests
+				// Only for UI Personalization. Please do not use in UI Adaptation tests
 				iPressOnRemoveSection: function(sSectionId) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
 						matchers: function(oOverlay) {
-							return oOverlay.getElementInstance().getId() === sSectionId;
+							return oOverlay.getElement().getId() === sSectionId;
 						},
 						success: function(aOverlays) {
 							var oOverlay = aOverlays[0];
@@ -212,12 +271,12 @@ sap.ui.define([
 						errorMessage: "Did not find the Remove Button on the section"
 					});
 				},
-				// Only for UI Personalization. Plese do not use in UI Adaptation tests
+				// Only for UI Personalization. Please do not use in UI Adaptation tests
 				iPressOnAddSection: function(sSectionId) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
 						matchers: function(oOverlay) {
-							return oOverlay.getElementInstance().getId() === sSectionId;
+							return oOverlay.getElement().getId() === sSectionId;
 						},
 						success: function(aOverlays) {
 							var oOverlay = aOverlays[0];
@@ -252,6 +311,9 @@ sap.ui.define([
 				clearRtaRestartSessionStorage: function() {
 					window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
 					window.sessionStorage.removeItem("sap.ui.rta.restart.USER");
+				},
+				clearChangesFromSessionStorage: function() {
+					FakeLrepConnectorSessionStorage.forTesting.synchronous.clearAll();
 				}
 			},
 
@@ -285,7 +347,7 @@ sap.ui.define([
 							return this.waitFor({
 								controlType: "sap.m.Image",
 								matchers: function(oImage) {
-									return oImage.$().closest(".sapUiRtaToolbar").length > 0;
+									return oImage.getDomRef().closest(".sapUiRtaToolbar");
 								},
 								success: function(aLogo) {
 									Opa5.assert.ok(aLogo.length > 0, "the logo is found on the UI");
@@ -293,6 +355,18 @@ sap.ui.define([
 							});
 						},
 						errorMessage: "Did not find the Toolbar"
+					});
+				},
+				iShouldSeeTheUndoButton: function() {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: function(oButton) {
+							return oButton.getDomRef().closest(".sapUiRtaToolbar") && oButton.getIcon() === "sap-icon://undo";
+						},
+						success: function(oButton) {
+							Opa5.assert.ok(oButton.getVisible(), "then the button is visible");
+						},
+						errorMessage: "Did not find UndoButton"
 					});
 				},
 				iShouldSeeTheFLPToolbarAndChangesInLRep: function(iCount, sReference) {
@@ -318,7 +392,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
 						matchers: function(oOverlay) {
-							return oOverlay.getElementInstance() === oApp;
+							return oOverlay.getElement() === oApp;
 						},
 						success: function(oOverlay) {
 							Opa5.assert.ok(oOverlay[0].getVisible(), "The Overlay is shown.");
@@ -341,10 +415,10 @@ sap.ui.define([
 						controlType: "sap.ui.dt.ElementOverlay",
 						visible: false,
 						matchers: function(oOverlay) {
-							return oOverlay.getElementInstance().getId() === sId;
+							return oOverlay.getElement().getId() === sId;
 						},
 						success: function(aOverlays) {
-							Opa5.assert.notOk(aOverlays[0].getElementInstance().getVisible(), "The element is not visible on the UI");
+							Opa5.assert.notOk(aOverlays[0].getElement().getVisible(), "The element is not visible on the UI");
 						},
 						errorMessage: "Did not find the element or it is still visible"
 					});
@@ -354,10 +428,26 @@ sap.ui.define([
 						controlType: "sap.ui.dt.ElementOverlay",
 						visible: false,
 						matchers: function(oOverlay) {
-							return oOverlay.getElementInstance().getId() === sId;
+							return oOverlay.getElement().getId() === sId;
 						},
 						success: function(aOverlays) {
-							Opa5.assert.ok(aOverlays[0].getElementInstance().getVisible(), "The element is visible on the UI");
+							Opa5.assert.ok(aOverlays[0].getElement().getVisible(), "The element is visible on the UI");
+						},
+						errorMessage: "Did not find the element or it is still invisible"
+					});
+				},
+				iShouldSeeTheElementWithTitle: function(sTitle) {
+					return this.waitFor({
+						controlType: "sap.ui.dt.ElementOverlay",
+						visible: false,
+						matchers: function(oOverlay) {
+							if (oOverlay.getElement().getTitle) {
+								return oOverlay.getElement().getTitle() === sTitle;
+							}
+							return undefined;
+						},
+						success: function(aOverlays) {
+							Opa5.assert.ok(aOverlays[0].getElement().getVisible(), "The element is visible on the UI");
 						},
 						errorMessage: "Did not find the element or it is still invisible"
 					});

@@ -370,6 +370,7 @@ sap.ui.define([
 			this._iOldTabIndex = this.getDomRef().getAttribute("tabindex");
 			Fragment.load({
 				name: "sap.ui.rta.util.changeVisualization.ChangeIndicatorPopover",
+				id: this.sId + "Info",
 				controller: this
 			}).then(function(oPopover) {
 				oPopover._bOpenedByChangeIndicator = true;
