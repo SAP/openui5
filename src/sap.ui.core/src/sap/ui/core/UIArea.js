@@ -510,7 +510,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	UIArea.prototype.getEventingParent = function() {
-		return oCore._getEventProvider();
+		return oCore ? oCore._getEventProvider() : undefined;
 	};
 
 	// ###########################################################################
@@ -909,12 +909,14 @@ sap.ui.define([
 		// forward the control event:
 		// if the control propagation has been stopped or the default should be
 		// prevented then do not forward the control event.
-		oCore._handleControlEvent(oEvent, sId);
+		if (oCore) {
+			oCore._handleControlEvent(oEvent, sId);
+		}
 
 		// if the UIArea or the Core is locked then we do not dispatch
 		// any event to the control => but they will still be dispatched
 		// as control event afterwards!
-		if (this.bLocked || oCore.isLocked()) {
+		if (this.bLocked || (oCore && oCore.isLocked())) {
 			return;
 		}
 
@@ -1303,7 +1305,7 @@ sap.ui.define([
 		var oUIArea = UIArea.registry.get(sId);
 		if (!oUIArea) {
 			oUIArea = new UIArea(oDomRef);
-			if (!isEmptyObject(oCore.oModels)) {
+			if (oCore && !isEmptyObject(oCore.oModels)) {
 				var oProperties = {
 					oModels: Object.assign({}, oCore.oModels),
 					oBindingContexts: {},
