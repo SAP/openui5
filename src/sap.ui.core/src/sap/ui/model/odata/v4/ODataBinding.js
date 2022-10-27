@@ -487,6 +487,9 @@ sap.ui.define([
 						sGroupId, oCallToken.oOldCache);
 				});
 			}
+			if (oCache) {
+				oCache.setActive(false);
+			}
 			that.oCache = null;
 			return null;
 		});

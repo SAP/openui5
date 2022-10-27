@@ -351,8 +351,7 @@ sap.ui.define([
 			}
 			oContext.resetKeepAlive();
 			oContext.iIndex = Context.VIRTUAL; // prevent further cache access via this context
-			that.oModel.addPrerenderingTask(
-				that.destroyPreviousContexts.bind(that, [oContext.getPath()]));
+			that.destroyPreviousContextsLater([oContext.getPath()]);
 		}, function (oError) {
 			that.iDeletedContexts -= 1;
 			if (bReset) {
@@ -885,7 +884,8 @@ sap.ui.define([
 		// only for createInCache
 		oGroupLock = this.lockGroup(sGroupId, true, true, function () {
 			if (!that.aContexts.includes(oContext)) { // #setContext changed the parent context
-				oContext.destroy();
+				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+				that.destroyPreviousContextsLater([oContext.getPath()]);
 				return;
 			}
 
@@ -983,7 +983,6 @@ sap.ui.define([
 			oModel = this.oModel,
 			sPath = this.getResolvedPath(),
 			sPredicate,
-			aPreviousPaths,
 			bStartBeyondRange = iStart > this.aContexts.length,
 			i,
 			that = this;
@@ -1031,10 +1030,7 @@ sap.ui.define([
 			}
 		}
 		// destroy previous contexts which are not reused or kept-alive
-		aPreviousPaths = Object.keys(this.mPreviousContextsByPath);
-		if (aPreviousPaths.length) {
-			oModel.addPrerenderingTask(this.destroyPreviousContexts.bind(this, aPreviousPaths));
-		}
+		this.destroyPreviousContextsLater(Object.keys(this.mPreviousContextsByPath));
 		if (iCount !== undefined) { // server count is available or "non-empty short read"
 			this.bLengthFinal = true;
 			this.iMaxLength = iCount - this.iActiveContexts;
@@ -1144,6 +1140,23 @@ sap.ui.define([
 					}
 				}
 			});
+		}
+	};
+
+	/**
+	 * Removes and destroys the contexts with the given paths from mPreviousContextsByPaths in a
+	 * prerendering task.
+	 *
+	 * @param {string[]} aPathsToDelete
+	 *   Only contexts with paths in this list except kept-alive and deleted ones are removed and
+	 *   destroyed (transient contexts are removed only)
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.destroyPreviousContextsLater = function (aPathsToDelete) {
+		if (aPathsToDelete.length) {
+			this.oModel.addPrerenderingTask(
+				this.destroyPreviousContexts.bind(this, aPathsToDelete));
 		}
 	};
 
