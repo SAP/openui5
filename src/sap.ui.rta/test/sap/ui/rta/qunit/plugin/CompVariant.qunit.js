@@ -73,6 +73,7 @@ sap.ui.define([
 			this.oVariantManagementControl = new SmartVariantManagement("svm", {
 				persistencyKey: "myPersistencyKey"
 			});
+			this.oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			return SmartVariantManagementApplyAPI.loadVariants({
 				control: this.oVariantManagementControl,
 				standardVariant: {}
@@ -275,6 +276,107 @@ sap.ui.define([
 
 			oMenuItem.handler([this.oVariantManagementOverlay], {eventItem: oEvent});
 			return pReturn;
+		});
+
+		function testSwitchDialogOptions(fnDialogCheck, pReturn) {
+			var aVariants = [
+				SmartVariantManagementWriteAPI.addVariant({
+					changeSpecificData: {
+						id: "id1",
+						texts: {
+							variantName: "text1"
+						},
+						layer: Layer.CUSTOMER
+					},
+					control: this.oVariantManagementControl
+				}),
+				SmartVariantManagementWriteAPI.addVariant({
+					changeSpecificData: {
+						id: "id2",
+						texts: {
+							variantName: "text2"
+						},
+						layer: Layer.CUSTOMER
+					},
+					control: this.oVariantManagementControl
+				})
+			];
+			this.oVariantManagementControl.getAllVariants.restore();
+			sandbox.stub(this.oVariantManagementControl, "getAllVariants").returns(aVariants);
+			this.oVariantManagementControl.getPresentVariantId.restore();
+			sandbox.stub(this.oVariantManagementControl, "getPresentVariantId").returns("id1");
+
+			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
+
+			var oMenuItem = getContextMenuEntryById.call(this, "CTX_COMP_VARIANT_SWITCH");
+
+			var oEvent = {
+				getParameters: function () {
+					return {
+						item: {
+							getProperty: function() {
+								return "id2";
+							}
+						}
+					};
+				}
+			};
+
+			sandbox.stub(MessageBox, "warning").callsFake(fnDialogCheck.bind(this));
+
+			oMenuItem.handler([this.oVariantManagementOverlay], {eventItem: oEvent});
+			return pReturn;
+		}
+
+		QUnit.test("when the current variant has unsaved changes and user switches to another variant - user chooses 'save'", function(assert) {
+			function fnDialogCheck(sMessage, oParameters) {
+				assert.strictEqual(sMessage, this.oLibraryBundle.getText("MSG_CHANGE_MODIFIED_VARIANT"), "the message is correct");
+				assert.strictEqual(oParameters.styleClass, Utils.getRtaStyleClassName(), "the style class is set");
+				assert.strictEqual(oParameters.emphasizedAction, this.oLibraryBundle.getText("BTN_MODIFIED_VARIANT_SAVE"), "the emphasized button text is correct");
+				oParameters.onClose(oParameters.emphasizedAction);
+			}
+
+			var pReturn = waitForCommandToBeCreated(this.oPlugin).then(function(oParameters) {
+				var aCommands = oParameters.command.getCommands();
+				var oUpdateCommand = aCommands[0];
+				assert.strictEqual(oUpdateCommand.getName(), "compVariantUpdate", "then the update command is created successfully");
+				assert.ok(oUpdateCommand.getOnlySave(), "then the update command is created with onlySave = true");
+				var oSwitchCommand = aCommands[1];
+				assert.strictEqual(oSwitchCommand.getTargetVariantId(), "id2", "the targetVariantId property is set");
+				assert.deepEqual(oSwitchCommand.getSourceVariantId(), "id1", "the sourceVariantId property is set");
+			});
+
+			return testSwitchDialogOptions.call(this, fnDialogCheck, pReturn);
+		});
+
+		QUnit.test("when the current variant has unsaved changes and user switches to another variant - user chooses 'discard'", function(assert) {
+			function fnDialogCheck(sMessage, oParameters) {
+				oParameters.onClose(this.oLibraryBundle.getText("BTN_MODIFIED_VARIANT_DISCARD"));
+			}
+
+			var pReturn = waitForCommandToBeCreated(this.oPlugin).then(function(oParameters) {
+				var oCommand = oParameters.command;
+				assert.strictEqual(oCommand.getTargetVariantId(), "id2", "the targetVariantId property is set");
+				assert.deepEqual(oCommand.getSourceVariantId(), "id1", "the sourceVariantId property is set");
+				assert.ok(oCommand.getDiscardVariantContent(), "the discard property was set on the command");
+			});
+
+			return testSwitchDialogOptions.call(this, fnDialogCheck, pReturn);
+		});
+
+		QUnit.test("when the current variant has unsaved changes and user switches to another variant - user chooses 'cancel'", function(assert) {
+			var fnDone = assert.async();
+			var oFireElementModifiedSpy = sandbox.spy(this.oPlugin, "fireElementModified");
+
+			function fnDialogCheck(sMessage, oParameters) {
+				oParameters.onClose(MessageBox.Action.CANCEL);
+				assert.ok(oFireElementModifiedSpy.notCalled, "the variant does not switch");
+				fnDone();
+			}
+
+			var pReturn = Promise.resolve();
+
+			return testSwitchDialogOptions.call(this, fnDialogCheck, pReturn);
 		});
 
 		QUnit.test("SaveAs with return value from the dialog", function(assert) {
