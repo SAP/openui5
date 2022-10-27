@@ -744,9 +744,9 @@
 					"$Path": "__CT__FAKE__Message/__FAKE__Messages"
 				},
 				"@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#OrgChart": {
-					"DescendantCountProperty": {"$PropertyPath": "DescendantCount"},
 					"DistanceFromRootProperty": {"$PropertyPath": "DistanceFromRoot"},
-					"DrillStateProperty": {"$PropertyPath": "DrillState"}
+					"DrillStateProperty": {"$PropertyPath": "DrillState"},
+					"LimitedDescendantCountProperty": {"$PropertyPath": "DescendantCount"}
 				}
 			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/LOCATION/COUNTRY" : {

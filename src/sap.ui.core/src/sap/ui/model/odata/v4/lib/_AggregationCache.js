@@ -273,7 +273,7 @@ sap.ui.define([
 		mQueryOptions.$count = true;
 		oCache = _Cache.create(this.oRequestor, this.sResourcePath, mQueryOptions, true);
 		oCache.calculateKeyPredicate = oAggregation.hierarchyQualifier
-			? _AggregationCache.calculateKeyPredicateRH.bind(null, oGroupNode)
+			? _AggregationCache.calculateKeyPredicateRH.bind(null, oGroupNode, oAggregation)
 			: _AggregationCache.calculateKeyPredicate.bind(null, oGroupNode, aGroupBy,
 				aAllProperties, bLeaf, bTotal);
 
@@ -803,6 +803,9 @@ sap.ui.define([
 	 *
 	 * @param {object} [oGroupNode]
 	 *   The group node or <code>undefined</code> for an element of the first level cache
+	 * @param {object} oAggregation
+	 *   An object holding the information needed for a recursive hierarchy; must already be
+	 *   normalized by {@link _AggregationHelper.buildApply4Hierarchy}
 	 * @param {object} oElement
 	 *   The element for which to calculate the key predicate
 	 * @param {object} mTypeForMetaPath
@@ -815,14 +818,17 @@ sap.ui.define([
 	 * @public
 	 */
 	// @override sap.ui.model.odata.v4.lib._Cache#calculateKeyPredicate
-	_AggregationCache.calculateKeyPredicateRH = function (oGroupNode, oElement, mTypeForMetaPath,
-			sMetaPath) {
-		var iLevel = 1,
+	_AggregationCache.calculateKeyPredicateRH = function (oGroupNode, oAggregation, oElement,
+			mTypeForMetaPath, sMetaPath) {
+		var sDistanceFromRootProperty = oAggregation.$DistanceFromRootProperty,
+			sDrillStateProperty = oAggregation.$DrillStateProperty,
 			bIsExpanded,
+			iLevel = 1,
+			sLimitedDescendantCountProperty = oAggregation.$LimitedDescendantCountProperty,
 			sPredicate = _Helper.getKeyPredicate(oElement, sMetaPath, mTypeForMetaPath);
 
 		_Helper.setPrivateAnnotation(oElement, "predicate", sPredicate);
-		switch (oElement.DrillState) {
+		switch (oElement[sDrillStateProperty]) {
 			case "expanded":
 				bIsExpanded = true;
 				_AggregationHelper.getOrCreateExpandedObject({/*oAggregation*/}, oElement);
@@ -839,18 +845,18 @@ sap.ui.define([
 		}
 		if (oGroupNode) {
 			iLevel = oGroupNode["@$ui5.node.level"] + 1;
-		} else if (oElement.DistanceFromRoot) { // Edm.Int64
-			iLevel = parseInt(oElement.DistanceFromRoot) + 1;
+		} else if (oElement[sDistanceFromRootProperty]) { // Edm.Int64
+			iLevel = parseInt(oElement[sDistanceFromRootProperty]) + 1;
 		}
 		// set the node values
 		_AggregationHelper.setAnnotations(oElement, bIsExpanded, /*bIsTotal*/undefined, iLevel);
-		if (oElement.DescendantCount) { // Edm.Int64
+		if (oElement[sLimitedDescendantCountProperty]) { // Edm.Int64
 			_Helper.setPrivateAnnotation(oElement, "descendants",
-				parseInt(oElement.DescendantCount));
+				parseInt(oElement[sLimitedDescendantCountProperty]));
 		}
-		delete oElement.DescendantCount;
-		delete oElement.DistanceFromRoot;
-		delete oElement.DrillState;
+		delete oElement[sDistanceFromRootProperty];
+		delete oElement[sDrillStateProperty];
+		delete oElement[sLimitedDescendantCountProperty];
 
 		return sPredicate;
 	};
