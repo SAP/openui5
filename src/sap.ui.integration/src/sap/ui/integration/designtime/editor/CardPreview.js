@@ -89,7 +89,8 @@ sap.ui.define([
 				oRm.openEnd();
 				oRm.close("div");
 				// TODO unsupported DOM structure: button is not a child of the root element
-				if (oControl._getModes().indexOf("Live") > -1 && oControl._getModes().indexOf("Abstract") > -1) {
+				if ((oControl._getModes().indexOf("Live") > -1 && oControl._getModes().indexOf("Abstract") > -1)
+				|| (oControl._getModes().indexOf("Mock") > -1 && oControl._getModes().indexOf("Abstract") > -1)) {
 					oRm.renderControl(oControl._getModeToggleButton());
 				}
 				oRm.close("div");
@@ -139,7 +140,7 @@ sap.ui.define([
 	CardPreview.prototype.onAfterRendering = function () {
 		var oPreview = this.getAggregation("cardPreview"),
 		    sModes = this._getModes();
-		if (sModes.indexOf("Live") > -1 && oPreview && oPreview.getDomRef() && oPreview.getDomRef().getElementsByClassName("sapVizFrame")) {
+		if ((sModes.indexOf("Live") > -1 || sModes.indexOf("Mock") > -1) && oPreview && oPreview.getDomRef() && oPreview.getDomRef().getElementsByClassName("sapVizFrame")) {
 			window.setTimeout(function() {
 				try {
 					var vizFrameId = oPreview.getDomRef().getElementsByClassName("sapVizFrame")[0].id;
@@ -165,7 +166,7 @@ sap.ui.define([
 			} else {
 				oPreview = this._getCardPlaceholderPreview();
 			}
-		} else if (this._getCurrentMode() === "Live") {
+		} else if (this._getCurrentMode() === "Live" || this._getCurrentMode() === "Mock") {
 			oPreview = this._getCardRealPreview();
 		}
 		if (oPreview) {
@@ -295,6 +296,9 @@ sap.ui.define([
 		if (!this._oCardPreview) {
 			this._oCardPreview = new Card({dataMode: CardDataMode.Active});
 			this._oCardPreview.setBaseUrl(this.getCard().getBaseUrl());
+			if (this._currentMode === "Mock") {
+				this._oCardPreview.setProperty("useMockData", true);
+			}
 		}
 		this._initalChanges = this._initalChanges || this._oCardPreview.getManifestChanges() || [];
 		var aChanges = this._initalChanges.concat([this.getParent().getCurrentSettings()]);
@@ -339,25 +343,34 @@ sap.ui.define([
 	 */
 	CardPreview.prototype._getModes = function () {
 		var mSettings = this.getSettings();
-		//default setting - live preview
+		//default setting - abstract preview
 		mSettings.preview = mSettings.preview || {};
 		mSettings.preview.modes = mSettings.preview.modes || "Abstract";
+		// Mock mode is only used for Component Card now, replace it with "Live" for other Cards
+		var sType = this.getCard().getManifestEntry("/sap.card/type");
+		if (sType !== "Component") {
+			mSettings.preview.modes = mSettings.preview.modes.replace("Mock", "Live");
+		}
 		return mSettings.preview.modes;
 	};
 
 	/**
-	 * returns the current mode of the preview, "Abstract" or "Live"
+	 * returns the current mode of the preview, "Abstract" or "Live" or "Mock"
 	 */
 	CardPreview.prototype._getCurrentMode = function () {
 		var sModes = this._getModes();
 		if (!this._currentMode) {
 			switch (sModes) {
-				case "AbstractLive":
 				case "Abstract":
+				case "AbstractLive":
+				case "AbstractMock":
 					this._currentMode = "Abstract"; break;
-				case "LiveAbstract":
 				case "Live":
+				case "LiveAbstract":
 					this._currentMode = "Live"; break;
+				case "Mock":
+				case "MockAbstract":
+					this._currentMode = "Mock"; break;
 				default: this._currentMode = "None";
 			}
 		}
@@ -365,17 +378,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * toggles the current mode from "Abstract" to "Live" and vice versa
+	 * toggles the current mode from "Abstract" to "Live" or "Mock" and vice versa
 	 */
 	CardPreview.prototype._toggleCurrentMode = function () {
 		var sModes = this._getModes();
 		if (sModes.indexOf("Live") > -1 && sModes.indexOf("Abstract") > -1) {
 			this._currentMode = this._getCurrentMode() === "Abstract" ? "Live" : "Abstract";
+		} else if (sModes.indexOf("Mock") > -1 && sModes.indexOf("Abstract") > -1) {
+			this._currentMode = this._getCurrentMode() === "Abstract" ? "Mock" : "Abstract";
 		}
 	};
 
 	/**
-	 * toggles the current mode from "Abstract" to "Live" and vice versa
+	 * toggles the current mode from "Abstract" to "Live" or "Mock" and vice versa
 	 * @returns {sap.m.ToggleButton}
 	 */
 	CardPreview.prototype._getModeToggleButton = function () {
@@ -406,9 +421,12 @@ sap.ui.define([
 		if (currentMode === "Abstract") {
 			tb.setIcon("sap-icon://media-play");
 			tb.setPressed(false);
-			tb.setTooltip(oBundle.getText("CARDEDITOR_PREVIEW_BTN_LIVEPREVIEW"));
-
-		} else if (currentMode === "Live") {
+			if (this._getModes().indexOf("Mock") > -1) {
+				tb.setTooltip(oBundle.getText("CARDEDITOR_PREVIEW_BTN_MOCKPREVIEW"));
+			} else {
+				tb.setTooltip(oBundle.getText("CARDEDITOR_PREVIEW_BTN_LIVEPREVIEW"));
+			}
+		} else if (currentMode === "Live" || currentMode === "Mock") {
 			tb.setIcon("sap-icon://media-pause");
 			tb.setPressed(true);
 			tb.setTooltip(oBundle.getText("CARDEDITOR_PREVIEW_BTN_SAMPLEPREVIEW"));

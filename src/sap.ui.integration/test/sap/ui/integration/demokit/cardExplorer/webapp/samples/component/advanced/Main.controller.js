@@ -6,8 +6,12 @@ sap.ui.define([
 	return Controller.extend("my.component.sample.advanced.Main", {
 		onInit: function () {
 			var oComponent = this.getOwnerComponent(),
-				oParameters = oComponent.card.getCombinedParameters(),
+				oCard = oComponent.card,
+				oParameters = oCard.getCombinedParameters(),
 				sCity = oParameters.city;
+			if (oCard.getProperty("useMockData")) {
+				sCity = "Mock " + sCity;
+			}
 
 			this.byId("cityValue").setText(sCity);
 		}

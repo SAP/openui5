@@ -1,10 +1,10 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
-		"id": "my.component.sample.advanced",
+		"id": "my.component.sample.cardContentControls",
 		"type": "card",
-		"title": "Sample of a Component Content",
-		"subTitle": "Sample of a Component Content",
+		"title": "Sample of a Component Content with Form",
+		"subTitle": "Sample of a Component Content with Form",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -22,12 +22,12 @@
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
-			"icon": "sap-icon://technical-object"
+			"icon": "sap-icon://bus-public-transport"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "my.component.sample.advanced.View",
+			"viewName": "my.component.sample.cardContentControls.View",
 			"type": "XML",
 			"async": true,
 			"id": "app"
@@ -37,6 +37,14 @@
 			"libs": {
 				"sap.m": {}
 			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Card.controller.js"
+				]
+			}
 		}
 	},
 	"sap.card": {
@@ -44,13 +52,14 @@
 		"configuration": {
 			"editor": "dt/configuration",
 			"parameters": {
-				"city": {
-					"value": "Berlin"
-				}
 			}
 		},
 		"header": {
-			"title": "Visit our workshop"
+			"icon": {
+				"src": "sap-icon://bus-public-transport"
+			},
+			"title": "Buy your bus ticket online",
+			"subTitle": "You’ll receive an email with a QR code. No need to print!"
 		}
 	}
 }

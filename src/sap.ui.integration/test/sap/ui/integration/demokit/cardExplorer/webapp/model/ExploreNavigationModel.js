@@ -961,6 +961,11 @@ sap.ui.define([
 								key: 'advanced',
 								files: [
 									{
+										url: '/samples/component/advanced/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
 										url: '/samples/component/advanced/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
