@@ -1281,7 +1281,7 @@ sap.ui.define([
 			oControl.attachEvent("_change", this._onContentPropertyChangedOverflowToolbar, this);
 
 			// Check if the control implements sap.m.IOverflowToolbarContent interface
-			if (oControl.getMetadata().getInterfaces().indexOf("sap.m.IOverflowToolbarContent") > -1) {
+			if (oControl.isA("sap.m.IOverflowToolbarContent")) {
 				aInvalidationEvents = oControl.getOverflowToolbarConfig().invalidationEvents;
 
 				if (aInvalidationEvents && Array.isArray(aInvalidationEvents)) {
@@ -1306,7 +1306,7 @@ sap.ui.define([
 			oControl.detachEvent("_change", this._onContentPropertyChangedOverflowToolbar, this);
 
 			// Check if the control implements sap.m.IOverflowToolbarContent interface
-			if (oControl.getMetadata().getInterfaces().indexOf("sap.m.IOverflowToolbarContent") > -1) {
+			if (oControl.isA("sap.m.IOverflowToolbarContent")) {
 				aInvalidationEvents = oControl.getOverflowToolbarConfig().invalidationEvents;
 
 				if (aInvalidationEvents && Array.isArray(aInvalidationEvents)) {

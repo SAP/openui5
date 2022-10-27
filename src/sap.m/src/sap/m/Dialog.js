@@ -1956,7 +1956,7 @@ function(
 				return false;
 			}
 
-			if (!oControl || oControl.getMetadata().getInterfaces().indexOf("sap.m.IBar") > -1) {
+			if (!oControl || oControl.isA("sap.m.IBar")) {
 				return true;
 			}
 
