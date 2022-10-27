@@ -789,7 +789,7 @@ function(
 			oSuggestionsPopover = this._getSuggestionsPopover(),
 			oList = oSuggestionsPopover && oSuggestionsPopover.getItemsContainer();
 
-		if (sKey === '') {
+		if (!this._hasTabularSuggestions() && sKey === '') {
 			return;
 		}
 
@@ -806,11 +806,6 @@ function(
 		this.setProperty("selectedKey", '', true);
 		this.setAssociation("selectedRow", null, true);
 		this.setAssociation("selectedItem", null, true);
-
-		this.fireSuggestionItemSelected({
-			selectedItem: null,
-			selectedRow: null
-		});
 	};
 
 	/**
@@ -1792,7 +1787,6 @@ function(
 
 		if (this.getValueLiveUpdate()) {
 			this.setProperty("value", sValue, true);
-			this._onValueUpdated(sValue);
 		}
 
 		this.fireLiveChange({
