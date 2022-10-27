@@ -1,19 +1,21 @@
 /*global QUnit,sinon */
 
 sap.ui.define([
-	"sap/ui/table/TreeTable"
+	"sap/ui/core/Control",
+	"sap/ui/model/controlhelper/TreeBindingProxy"
 ], function(
-	TreeTable
+	Control,
+	TreeBindingProxy
 ) {
 	"use strict";
 
-	QUnit.module("Behaviour for undefined bindings", {
+	QUnit.module("sap.ui.model.TreeBindingProxy: Behaviour for undefined bindings", {
 		beforeEach: function() {
-			this.oTable = new TreeTable();
-			this.oProxy = this.oTable._oProxy;
+			this.oControl = new Control();
+			this.oProxy = new TreeBindingProxy(this.oControl, "rows");
 
 			// Stub oTable.getBinding
-			this.fnGetBinding = sinon.stub(this.oTable, "getBinding");
+			this.fnGetBinding = sinon.stub(this.oControl, "getBinding");
 			this.fnGetBinding.returns({
 				getMetadata: function() {
 					return {
@@ -26,7 +28,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.fnGetBinding.restore();
-			this.oTable.destroy();
+			this.oControl.destroy();
 		}
 	});
 
@@ -50,7 +52,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("#getContexts", function(assert) {
-		assert.equal(this.oProxy.getContexts(0), 0, "getContexts returns []");
+		assert.equal(this.oProxy.getContexts(0).length, 0, "getContexts returns []");
 	});
 
 	QUnit.test("#getLevel", function(assert) {
@@ -84,16 +86,16 @@ sap.ui.define([
 		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, mLegacySettings.numberOfExpandedLevels);
 	});
 
-	QUnit.module("Behaviour for V4 bindings", {
+	QUnit.module("sap.ui.model.TreeBindingProxy: Behaviour for V4 bindings", {
 		beforeEach: function() {
-			this.oTable = new TreeTable();
-			this.oProxy = this.oTable._oProxy;
+			this.oControl = new Control();
+			this.oProxy = new TreeBindingProxy(this.oControl, "rows");
 
 			// Enable V4 branch
 			this.oProxy._bEnableV4 = true;
 
 			// Stub oTable.getBinding
-			this.fnGetBinding = sinon.stub(this.oTable, "getBinding");
+			this.fnGetBinding = sinon.stub(this.oControl, "getBinding");
 			this.fnGetBinding.returns({
 				getMetadata: function() {
 					return {
@@ -115,7 +117,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.fnGetBinding.restore();
-			this.oTable.destroy();
+			this.oControl.destroy();
 		}
 	});
 
@@ -275,13 +277,13 @@ sap.ui.define([
 		assert.notOk(this.oProxy.isSelectionSupported(), "isSelectionSupported returns false");
 	});
 
-	QUnit.module("Behaviour for older bindings", {
+	QUnit.module("sap.ui.model.TreeBindingProxy: Behaviour for older bindings", {
 		beforeEach: function() {
-			this.oTable = new TreeTable();
-			this.oProxy = this.oTable._oProxy;
+			this.oControl = new Control();
+			this.oProxy = new TreeBindingProxy(this.oControl, "rows");
 
 			// Stub oTable.getBinding
-			this.fnGetBinding = sinon.stub(this.oTable, "getBinding");
+			this.fnGetBinding = sinon.stub(this.oControl, "getBinding");
 			this.fnGetBinding.returns({
 				getMetadata: function() {
 					return {
@@ -321,7 +323,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.fnGetBinding.restore();
-			this.oTable.destroy();
+			this.oControl.destroy();
 		}
 	});
 
@@ -392,6 +394,9 @@ sap.ui.define([
 			},
 			isExpanded: function() {
 				return false;
+			},
+			getLength: function() {
+				return 10;
 			}
 		});
 		var fnIsLeafStub = sinon.stub(this.oProxy, "isLeaf");
@@ -419,6 +424,9 @@ sap.ui.define([
 			},
 			isExpanded: function() {
 				return true;
+			},
+			getLength: function() {
+				return 10;
 			}
 		});
 		var fnIsLeafStub = sinon.stub(this.oProxy, "isLeaf");

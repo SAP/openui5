@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
-	"./proxies/TreeBindingProxy"
+	"sap/ui/model/controlhelper/TreeBindingProxy"
 ],
 	function(
 		AnalyticalColumn,
