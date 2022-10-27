@@ -550,6 +550,13 @@ sap.ui.define([
 
 	};
 
+	Field.prototype.getOverflowToolbarConfig = function() {
+		var oConfig = FieldBase.prototype.getOverflowToolbarConfig.apply(this, arguments);
+		oConfig.propsUnrelatedToSize.push("value");
+		oConfig.propsUnrelatedToSize.push("additionalValue");
+		return oConfig;
+	};
+
 	/**
 	 * Sets conditions to the property <code>conditions</code>.
 	 *
