@@ -22,20 +22,25 @@ sap.ui.define([
 
 		/**
 		 * Formats date and time.
-		 * @param {string|number|object} vDate Any string and number from which Date object can be created, or a Date object.
+		 * @param {string|integer|Date|Array<string|integer|Date>} vDate The date or dates to be formatted. Accepts date string, timestamp, Date instance, or array of the same.
 		 * @param {object} [oFormatOptions] All format options which sap.ui.core.format.DateFormat.getDateTimeInstance accepts.
 		 * @param {string} [sLocale] A string representing the desired locale. If skipped the current locale of the user is taken
 		 * @returns {string} The formatted date time.
 		 */
 		dateTime: function (vDate, oFormatOptions, sLocale) {
-
 			var oArguments = Utils.processFormatArguments(oFormatOptions, sLocale),
 				oDateFormat = DateFormat.getDateTimeInstance(oArguments.formatOptions, oArguments.locale),
-				oParsedDate = Utils.parseJsonDateTime(vDate);
+				vUniversalDate;
 
-			// Calendar is determined base on sap.ui.getCore().getConfiguration().getCalendarType()
-			var oUniversalDate = new UniversalDate(oParsedDate);
-			var sFormattedDate = oDateFormat.format(oUniversalDate);
+			if (Array.isArray(vDate)) {
+				vUniversalDate = vDate.map(function (date) {
+					return new UniversalDate(Utils.parseJsonDateTime(date));
+				});
+			} else {
+				vUniversalDate = new UniversalDate(Utils.parseJsonDateTime(vDate));
+			}
+
+			var sFormattedDate = oDateFormat.format(vUniversalDate);
 
 			return sFormattedDate;
 		},

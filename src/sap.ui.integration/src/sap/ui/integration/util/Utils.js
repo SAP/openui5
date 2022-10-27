@@ -64,16 +64,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Parses the JSON Date representation into a Date object.
-	 * @param {string|number|object} vDate Any string and number from which Date object can be created, or a Date object.
-	 * @returns {object} A Date object if the vDate matches one else the vDate itself
+	 * Parses the JSON Date string representation into a Date object.
+	 * @param {string|int|Date} vDate String, timestamp or Date instance.
+	 * @returns {string|int|Date} A Date object if the vDate matches one else the vDate itself
 	 */
-
-	var JSON_DATE_TICKS = 1,
-		JSON_DATE_SIGN = 2,
-		JSON_DATE_MINUTES = 3;
-
 	Utils.parseJsonDateTime = function (vDate) {
+		var JSON_DATE_TICKS = 1,
+			JSON_DATE_SIGN = 2,
+			JSON_DATE_MINUTES = 3;
+
 		var rJSONDateFormat = /^\/Date\((-?\d+)(\+|-)?(\d+)?\)\/$/,
 			aJSONDateParts;
 		if (typeof vDate === "string") {

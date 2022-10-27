@@ -1,9 +1,13 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/integration/formatters/DateTimeFormatter"
+	"sap/ui/integration/formatters/DateTimeFormatter",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/date/UniversalDate"
 ],
 function (
-	DateTimeFormatter
+	DateTimeFormatter,
+	CoreDateFormat,
+	UniversalDate
 ) {
 	"use strict";
 
@@ -27,6 +31,13 @@ function (
 	QUnit.test("DateTime Formatter should be able to format JSON date format with positive minutes offset", function (assert) {
 		var oDateResult = DateTimeFormatter.dateTime('/Date(0+1440)/', {format: "yMMMd"});
 		assert.strictEqual(oDateResult, "Dec 31, 1969", "Date is formatted correctly");
+	});
+
+	QUnit.test("DateTime Formatter with array of 2 dates and interval option", function (assert) {
+		var sResult = DateTimeFormatter.dateTime(["2022-10-05", "2022-10-10"], { interval: true });
+		var sExpected = CoreDateFormat.getDateTimeInstance({ interval: true }).format([new UniversalDate("2022-10-05"), new UniversalDate("2022-10-10")]);
+
+		assert.strictEqual(sResult, sExpected, "Interval is formatted correctly");
 	});
 
 });
