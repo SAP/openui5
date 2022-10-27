@@ -81,7 +81,9 @@ sap.ui.define([
 			mPropertyBag.payload = JSON.stringify(mPropertyBag.flexObjects);
 			mPropertyBag.dataType = "json";
 			mPropertyBag.contentType = "application/json; charset=utf-8";
-			return WriteUtils.sendRequest(sContextsUrl, "POST", mPropertyBag);
+			return WriteUtils.sendRequest(sContextsUrl, "POST", mPropertyBag).then(function (oResult) {
+				return oResult.response;
+			});
 		},
 
 		/**
