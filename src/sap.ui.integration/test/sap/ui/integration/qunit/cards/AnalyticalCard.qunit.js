@@ -935,7 +935,7 @@ sap.ui.define([
 
 		// Act
 		oCard.setManifest(oManifest);
-		oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
 	}
 
 	function testContentInitialization(oManifest, assert) {
