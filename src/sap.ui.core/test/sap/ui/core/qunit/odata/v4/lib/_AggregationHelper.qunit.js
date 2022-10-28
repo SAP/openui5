@@ -890,7 +890,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [undefined, 1, 2, 3].forEach(function (iExpandTo) {
-	var sTitle = "buildApply4Hierarchy: top levels of nodes, $select, expandTo : " + iExpandTo;
+	[false, true].forEach(function (bStored) {
+		var sTitle = "buildApply4Hierarchy: top levels of nodes, $select, expandTo : " + iExpandTo
+				+ ", property paths already stored: " + bStored;
 
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {
@@ -906,15 +908,22 @@ sap.ui.define([
 			},
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
+		if (bStored) {
+			oAggregation.$DrillStateProperty = "myDrillState";
+			if (iExpandTo > 1) {
+				oAggregation.$DistanceFromRootProperty = "DistFromRoot";
+				oAggregation.$LimitedDescendantCountProperty = "LtdDescendant_Count";
+			}
+		}
 		oAggregationMock.expects("$fetchMetadata").withExactArgs(
 				"/Foo/@Org.OData.Aggregation.V1.RecursiveHierarchy#X/NodeProperty/$PropertyPath")
 			.returns(SyncPromise.resolve("SomeNodeID"));
-		oAggregationMock.expects("$fetchMetadata")
+		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1)
 			.withExactArgs("/Foo/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#X")
 			.returns(SyncPromise.resolve({
-				DescendantCountProperty : {$PropertyPath : "Descendant_Count"},
 				DistanceFromRootProperty : {$PropertyPath : "DistFromRoot"},
-				DrillStateProperty : {$PropertyPath : "myDrillState"}
+				DrillStateProperty : {$PropertyPath : "myDrillState"},
+				LimitedDescendantCountProperty : {$PropertyPath : "LtdDescendant_Count"}
 			}));
 
 		// code under test
@@ -923,12 +932,28 @@ sap.ui.define([
 					+ ",HierarchyQualifier='X',NodeProperty='SomeNodeID',Levels=" + (iExpandTo || 1)
 					+ ")",
 				$select : iExpandTo > 1
-					? ["ID", "Descendant_Count", "DistFromRoot", "myDrillState"]
+					? ["ID", "DistFromRoot", "LtdDescendant_Count", "myDrillState"]
 					: ["ID", "myDrillState"],
 				foo : "bar"
 			});
 
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
+		assert.deepEqual(oAggregation, iExpandTo > 1 ? {
+			expandTo : iExpandTo,
+			hierarchyQualifier : "X",
+			$fetchMetadata : oAggregation.$fetchMetadata,
+			$path : "/Foo",
+			$DistanceFromRootProperty : "DistFromRoot",
+			$DrillStateProperty : "myDrillState",
+			$LimitedDescendantCountProperty : "LtdDescendant_Count"
+		} : {
+			expandTo : iExpandTo,
+			hierarchyQualifier : "X",
+			$fetchMetadata : oAggregation.$fetchMetadata,
+			$path : "/Foo",
+			$DrillStateProperty : "myDrillState"
+		});
+	});
 	});
 });
 

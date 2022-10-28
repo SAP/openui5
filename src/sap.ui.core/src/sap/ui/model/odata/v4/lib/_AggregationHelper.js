@@ -342,7 +342,9 @@ sap.ui.define([
 		/**
 		 * Builds the value for a "$apply" system query option based on the given data aggregation
 		 * information for a recursive hierarchy. If no query options are given, only a symbolic
-		 * "$apply" is constructed to avoid timing issues with metadata.
+		 * "$apply" is constructed to avoid timing issues with metadata. The property paths for
+		 * DistanceFromRootProperty, DrillStateProperty, and LimitedDescendantCountProperty are
+		 * stored at <code>oAggregation</code> using a "$" prefix (if not already stored).
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for a recursive hierarchy; see
@@ -381,14 +383,21 @@ sap.ui.define([
 				sSeparator = "";
 
 			function select(sProperty) {
-				if (mQueryOptions.$select) {
-					if (!mRecursiveHierarchy) {
-						mRecursiveHierarchy = oAggregation.$fetchMetadata(sPath
-							+ "/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#"
-							+ sHierarchyQualifier).getResult();
-					}
+				var sPropertyPath;
 
-					mQueryOptions.$select.push(mRecursiveHierarchy[sProperty].$PropertyPath);
+				if (mQueryOptions.$select) {
+					sPropertyPath = oAggregation["$" + sProperty];
+					if (!sPropertyPath) {
+						if (!mRecursiveHierarchy) {
+							mRecursiveHierarchy = oAggregation.$fetchMetadata(sPath
+								+ "/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#"
+								+ sHierarchyQualifier).getResult();
+						}
+
+						sPropertyPath = oAggregation["$" + sProperty]
+							= mRecursiveHierarchy[sProperty].$PropertyPath;
+					}
+					mQueryOptions.$select.push(sPropertyPath);
 				}
 			}
 
@@ -432,8 +441,8 @@ sap.ui.define([
 					+ "',Levels=" + (oAggregation.expandTo || 1)
 					+ ")";
 				if (oAggregation.expandTo > 1) {
-					select("DescendantCountProperty");
 					select("DistanceFromRootProperty");
+					select("LimitedDescendantCountProperty");
 				}
 			}
 			select("DrillStateProperty");

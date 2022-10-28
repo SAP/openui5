@@ -711,8 +711,8 @@ sap.ui.define([
 		// This must be done before calling createGroupLevelCache, so that bind grabs the mock
 		this.mock(_AggregationCache).expects("calculateKeyPredicate").never();
 		this.mock(_AggregationCache).expects("calculateKeyPredicateRH").on(null)
-			.withExactArgs(sinon.match.same(oParentGroupNode), "~oElement~",
-				"~mTypeForMetaPath~", "~metapath~")
+			.withExactArgs(sinon.match.same(oParentGroupNode), sinon.match.same(oAggregation),
+				"~oElement~", "~mTypeForMetaPath~", "~metapath~")
 			.returns("~sPredicate~");
 
 		assert.strictEqual(
@@ -811,8 +811,13 @@ sap.ui.define([
 			+ ", DrillState : " + sDrillState + ", oGroupNode : " + JSON.stringify(oGroupNode);
 
 	QUnit.test(sTitle, function (assert) {
-		var oElement = {
-				DrillState : sDrillState,
+		var oAggregation = {
+				$DistanceFromRootProperty : "DistFromRoot",
+				$DrillStateProperty : "myDrillState",
+				$LimitedDescendantCountProperty : "LtdDescendant_Count"
+			},
+			oElement = {
+				myDrillState : sDrillState,
 				Foo : "bar",
 				XYZ : 42
 			},
@@ -826,8 +831,8 @@ sap.ui.define([
 			mTypeForMetaPath = {"/meta/path" : {}};
 
 		if (iDistanceFromRoot !== undefined) {
-			oElement.DescendantCount = "42"; // Edm.Int64!
-			oElement.DistanceFromRoot = "" + iDistanceFromRoot; // Edm.Int64!
+			oElement.LtdDescendant_Count = "42"; // Edm.Int64!
+			oElement.DistFromRoot = "" + iDistanceFromRoot; // Edm.Int64!
 			iExpectedLevel = iDistanceFromRoot + 1;
 		}
 		if (oGroupNode) {
@@ -860,8 +865,8 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			_AggregationCache.calculateKeyPredicateRH(oGroupNode, oElement, mTypeForMetaPath,
-				"/meta/path"),
+			_AggregationCache.calculateKeyPredicateRH(oGroupNode, oAggregation, oElement,
+				mTypeForMetaPath, "/meta/path"),
 			"~predicate~");
 
 		assert.deepEqual(oElement, {Foo : "bar", XYZ : 42});
