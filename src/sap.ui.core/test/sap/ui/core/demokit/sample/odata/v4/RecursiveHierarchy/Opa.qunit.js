@@ -8,13 +8,22 @@ sap.ui.getCore().attachInit(function () {
 
 	sap.ui.require([
 		"sap/ui/core/sample/common/Helper",
+		"sap/ui/core/sample/odata/v4/RecursiveHierarchy/pages/Main",
 		"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/pageExpandCollapse",
 		"sap/ui/test/opaQunit"
-	], function (Helper, pageExpandCollapse, opaTest) {
+	], function (Helper, Main, pageExpandCollapse, opaTest) {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.RecursiveHierarchy");
 
 		//*****************************************************************************
-		opaTest("page, expand, collapse", pageExpandCollapse);
+		[false, true].forEach(function (bTreeTable) {
+			var sTitle = "page, expand, collapse; w/ TreeTable: " + bTreeTable;
+
+			opaTest(sTitle, function (Given, When, Then) {
+				Main.setTreeTable(bTreeTable);
+
+				pageExpandCollapse(Given, When, Then);
+			});
+		});
 
 		QUnit.start();
 	});

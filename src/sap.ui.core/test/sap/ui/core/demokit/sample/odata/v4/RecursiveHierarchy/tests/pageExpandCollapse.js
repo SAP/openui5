@@ -10,12 +10,29 @@ sap.ui.define([
 
 	return function (Given, When, Then) {
 		// DO NOT modify original data! Also, for timing reasons, use different clones each time!
-		var aCollapsedAlpha,
-			aCollapsedBeta,
-			aCollapsedMu,
-			aExpandedGamma,
-			aExpandedZeta,
-			aNodes;
+		var aAfterCollapseAlpha,
+			aAfterCollapseBeta,
+			aAfterExpandGamma,
+			oCollapsedBeta,
+			oCollapsedMu,
+			oCollapsedOmicron,
+			oExpandedGamma,
+			oExpandedMu,
+			oExpandedOmicron,
+			oExpandedZeta,
+			aNodes; // current table content
+
+		function checkTable(aExpected, mDefaults) {
+			Then.onTheMainPage.checkTable(aExpected, mDefaults);
+		}
+
+		function scrollToRow(iRow, sComment) {
+			When.onTheMainPage.scrollToRow(iRow, sComment);
+		}
+
+		function toggleExpandInRow(iRow, sComment) {
+			When.onTheMainPage.toggleExpandInRow(iRow, sComment);
+		}
 
 		Given.iStartMyUIComponent({
 			autoWait : true,
@@ -23,64 +40,88 @@ sap.ui.define([
 				name : "sap.ui.core.sample.odata.v4.RecursiveHierarchy"
 			}
 		});
-		Then.onTheMainPage.checkTable(SandboxModel.getNodes(0, 5));
 
-		When.onTheMainPage.toggleExpandInRow(0, "Collapse 0 (Alpha)");
-		aCollapsedAlpha = SandboxModel.getNodes(0, 1);
-		aCollapsedAlpha[0] = Object.assign({}, aCollapsedAlpha[0], {DrillState : "collapsed"});
-		aCollapsedAlpha.push(null, null, null, null); // 4 empty rows
-		Then.onTheMainPage.checkTable(aCollapsedAlpha);
+		// basics: initial data
+		aNodes = SandboxModel.getNodes(0, 5);
+		checkTable(aNodes);
 
-		When.onTheMainPage.toggleExpandInRow(0, "Expand 0 (Alpha)");
-		Then.onTheMainPage.checkTable(SandboxModel.getNodes(0, 5));
+		// basics: collapse (incl. all placeholders for children!)
+		toggleExpandInRow(0, "Collapse 0 (Alpha)");
+		aAfterCollapseAlpha = [Object.assign({}, aNodes[0], {DrillState : "collapsed"}),
+			null, null, null, null]; // 4 empty rows
+		checkTable(aAfterCollapseAlpha);
 
-		When.onTheMainPage.toggleExpandInRow(3, "Expand 1.2 (Zeta)");
-		When.onTheMainPage.toggleExpandInRow(2, "Expand 1.1 (Gamma)");
-		aExpandedGamma = SandboxModel.getNodes(0, 3).concat(SandboxModel.getChildrenOf1_1());
-		aExpandedGamma[2] = Object.assign({}, aExpandedGamma[2], {DrillState : "expanded"});
-		Then.onTheMainPage.checkTable(aExpandedGamma, {DistanceFromRoot : 3});
+		// basics: expand (restores previous state!)
+		toggleExpandInRow(0, "Expand 0 (Alpha)");
+		checkTable(aNodes);
 
-		When.onTheMainPage.scrollToRow(5, "1.2 (Zeta) is at the top");
-		aExpandedZeta = SandboxModel.getNodes(3, 1).concat(SandboxModel.getChildrenOf1_2());
-		aExpandedZeta[0] = Object.assign({}, aExpandedZeta[0], {DrillState : "expanded"});
-		Then.onTheMainPage.checkTable(aExpandedZeta, {DistanceFromRoot : 3});
+		// expand nodes "at the edge" of the top pyramid (loads children)
+		toggleExpandInRow(3, "Expand 1.2 (Zeta)");
+		oExpandedZeta = Object.assign({}, aNodes[3], {DrillState : "expanded"});
+		aNodes = aNodes.slice(0, 3).concat(oExpandedZeta, SandboxModel.getChildrenOf1_2()[0]);
+		checkTable(aNodes, {DistanceFromRoot : 3});
 
-		When.onTheMainPage.scrollToRow(0, "Scroll to the top");
-		When.onTheMainPage.toggleExpandInRow(1, "Collapse 1 (Beta)");
-		aCollapsedBeta = SandboxModel.getNodes(0, 2).concat(SandboxModel.getNodes(4, 3));
-		aCollapsedBeta[1] = Object.assign({}, aCollapsedBeta[1], {DrillState : "collapsed"});
-		Then.onTheMainPage.checkTable(aCollapsedBeta);
+		toggleExpandInRow(2, "Expand 1.1 (Gamma)");
+		oExpandedGamma = Object.assign({}, aNodes[2], {DrillState : "expanded"});
+		aAfterExpandGamma
+			= aNodes.slice(0, 2).concat(oExpandedGamma, SandboxModel.getChildrenOf1_1());
+		checkTable(aAfterExpandGamma, {DistanceFromRoot : 3});
 
-		When.onTheMainPage.toggleExpandInRow(4, "Collapse 4 (Mu)");
-		aCollapsedMu = aCollapsedBeta.slice();
-		aCollapsedMu[4] = Object.assign({}, aCollapsedMu[4], {DrillState : "collapsed"});
-		Then.onTheMainPage.checkTable(aCollapsedMu);
+		// show more children of newly expanded node
+		scrollToRow(5, "1.2 (Zeta) is at the top");
+		aNodes = [oExpandedZeta].concat(SandboxModel.getChildrenOf1_2());
+		checkTable(aNodes, {DistanceFromRoot : 3});
 
-		When.onTheMainPage.scrollToRow(2, "Scroll to the bottom");
-		aNodes = aCollapsedMu.slice(2);
-		aNodes = aNodes.concat(SandboxModel.getNodes(8, 2));
-		Then.onTheMainPage.checkTable(aNodes);
+		// collapse incl. children outside of top pyramid
+		scrollToRow(0, "Scroll to the top");
+		checkTable(aAfterExpandGamma, {DistanceFromRoot : 3});
 
-		When.onTheMainPage.toggleExpandInRow(4, "Expand 4 (Mu)");
-		aNodes = aNodes.slice(0, 4); // 5.1 (Omicron) disappears
-		aNodes.splice(3, 0, SandboxModel.getNodes(7, 1)[0]); // 4.1 (Nu) appears
-		aNodes[2] = Object.assign({}, aNodes[2], {DrillState : "expanded"});
-		Then.onTheMainPage.checkTable(aNodes);
+		toggleExpandInRow(1, "Collapse 1 (Beta)");
+		oCollapsedBeta = Object.assign({}, aAfterExpandGamma[1], {DrillState : "collapsed"});
+		aAfterCollapseBeta = aAfterExpandGamma.slice(0, 1)
+			.concat(oCollapsedBeta, SandboxModel.getNodes(4, 3));
+		checkTable(aAfterCollapseBeta);
 
-		When.onTheMainPage.scrollToRow(3, "Scroll to the bottom");
-		When.onTheMainPage.toggleExpandInRow(7, "Expand 5.1 (Omicron)");
-		aNodes = SandboxModel.getNodes(5, 5);
-		aNodes[4] = Object.assign({}, aNodes[4], {DrillState : "expanded"});
-		Then.onTheMainPage.checkTable(aNodes);
-		When.onTheMainPage.scrollToRow(8, "Show first page of 5.1's children");
-		Then.onTheMainPage.checkTable(SandboxModel.getChildrenOf5_1(0, 5), {DistanceFromRoot : 3});
+		toggleExpandInRow(4, "Collapse 4 (Mu)");
+		oCollapsedMu = Object.assign({}, aAfterCollapseBeta[4], {DrillState : "collapsed"});
+		aNodes = aAfterCollapseBeta.slice(0, 4).concat(oCollapsedMu);
+		checkTable(aNodes);
 
-		When.onTheMainPage.scrollToRow(12, "Show second page of 5.1's children");
-		Then.onTheMainPage.checkTable(SandboxModel.getChildrenOf5_1(4, 5), {DistanceFromRoot : 3});
+		// this skips 4.1 (Nu) which has not been shown so far!
+		scrollToRow(2, "Scroll to the bottom");
+		aNodes = aNodes.slice(2).concat(SandboxModel.getNodes(8, 2));
+		checkTable(aNodes);
 
-		When.onTheMainPage.scrollToRow(0, "Scroll to the top");
-		When.onTheMainPage.toggleExpandInRow(0, "Collapse 0 (Alpha)");
-		Then.onTheMainPage.checkTable(aCollapsedAlpha);
+		// reveal a child from the top pyramid for the 1st time
+		toggleExpandInRow(4, "Expand 4 (Mu)");
+		oExpandedMu = Object.assign({}, aNodes[2], {DrillState : "expanded"});
+		 // 4.1 (Nu) appears, 5.1 (Omicron) disappears
+		oCollapsedOmicron = aNodes[4];
+		aNodes = aNodes.slice(0, 2).concat(oExpandedMu, SandboxModel.getNodes(7, 1)[0], aNodes[3]);
+		checkTable(aNodes);
+
+		// load children outside top pyramid, incl. paging
+		scrollToRow(3, "Scroll to the bottom");
+		aNodes = aNodes.slice(1).concat(oCollapsedOmicron);
+		checkTable(aNodes);
+
+		toggleExpandInRow(7, "Expand 5.1 (Omicron)");
+		oExpandedOmicron = Object.assign({}, oCollapsedOmicron, {DrillState : "expanded"});
+		aNodes = aNodes.slice(0, 4).concat(oExpandedOmicron);
+		checkTable(aNodes);
+
+		scrollToRow(8, "Show first page of 5.1's children");
+		checkTable(SandboxModel.getChildrenOf5_1(0, 5), {DistanceFromRoot : 3});
+
+		scrollToRow(12, "Show second page of 5.1's children");
+		checkTable(SandboxModel.getChildrenOf5_1(4, 5), {DistanceFromRoot : 3});
+
+		// collapse incl. children not counted via "Descendants" property
+		scrollToRow(0, "Scroll to the top");
+		checkTable(aAfterCollapseBeta);
+
+		toggleExpandInRow(0, "Collapse 0 (Alpha)");
+		checkTable(aAfterCollapseAlpha);
 
 		Then.onAnyPage.checkLog();
 		Then.iTeardownMyUIComponent();
