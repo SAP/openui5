@@ -294,7 +294,8 @@ sap.ui.define([
 			role: [
 				{id: "ZSOME_ROLE_ONE", description: "Some role one description"},
 				{id: "ZSOME_ROLE_TWO", description: "Some role two description"}
-			]};
+			]
+		};
 
 		QUnit.test("given a mock server, when loadContextDescriptions is triggered", function (assert) {
 			var mPropertyBag = {
@@ -305,7 +306,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: aReturnedContexts});
 			return KeyUserConnector.loadContextDescriptions(mPropertyBag).then(function (oResponse) {
 				var call = oStubSendRequest.getCall(0);
-				assert.deepEqual(oResponse.response, aReturnedContexts, "the contexts are returned correctly");
+				assert.deepEqual(oResponse, aReturnedContexts, "the contexts are returned correctly");
 				assert.equal(call.args[0], sUrl, "the request has the correct url");
 				assert.equal(call.args[1], "POST", "the request has the correct method");
 				assert.deepEqual(call.args[2].payload, JSON.stringify(mPropertyBag.flexObjects), "the request has the correct payload");
