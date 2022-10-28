@@ -986,13 +986,16 @@ sap.ui.define([
 				// do not destroy if used in Field binding
 				this._getContentFactory().getUnitOriginalType().destroy();
 			}
-			this._getContentFactory().getUnitOriginalType(undefined);
+			this._getContentFactory().setUnitOriginalType(undefined);
 		}
+
+		this._getContentFactory().setIsMeasure(false);
 	};
 
 	function _getDataTypeName() {
-		if (this._getContentFactory().getDataType() && typeof this._getContentFactory().getDataType() === "object") {
-			return this._getContentFactory().getDataType().getMetadata().getName();
+		var oDataType = this._getContentFactory().getDateOriginalType() || this._getContentFactory().getUnitOriginalType() || this._getContentFactory().getDataType(); // use original data type
+		if (oDataType && typeof oDataType === "object") {
+			return oDataType.getMetadata().getName();
 		} else if (this.bDelegateInitialized) {
 			return this.getControlDelegate().getDataTypeClass(this.getPayload(), this.getDataType());
 		} else {
@@ -1001,7 +1004,7 @@ sap.ui.define([
 	}
 
 	function _getDataTypeConstraints() {
-		var oDataType = this._getContentFactory().getDataType();
+		var oDataType = this._getContentFactory().getDateOriginalType() || this._getContentFactory().getUnitOriginalType() || this._getContentFactory().getDataType(); // use original data type
 		if (oDataType && typeof oDataType === "object" && oDataType.getConstraints()) {
 			return oDataType.getConstraints();
 		} else {
@@ -1010,7 +1013,7 @@ sap.ui.define([
 	}
 
 	function _getDataTypeFormatOptions() {
-		var oDataType = this._getContentFactory().getDataType();
+		var oDataType = this._getContentFactory().getDateOriginalType() || this._getContentFactory().getUnitOriginalType() || this._getContentFactory().getDataType(); // use original data type
 		if (oDataType && typeof oDataType === "object" && oDataType.getFormatOptions()) {
 			return oDataType.getFormatOptions();
 		} else {

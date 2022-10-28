@@ -160,6 +160,9 @@ sap.ui.define([
 				!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
 				oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
 				this._getContentFactory().setDataType(oBindingInfo.type);
+				this._getContentFactory().setDateOriginalType(undefined);
+				this._getContentFactory().setUnitOriginalType(undefined);
+				this._getContentFactory().setIsMeasure(false);
 				if (oBindingInfo.type.isA("sap.ui.model.CompositeType") && oBindingInfo.parts) {
 					var aTypes = [];
 					for (var i = 0; i < oBindingInfo.parts.length; i++) {
