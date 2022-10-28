@@ -432,11 +432,10 @@ sap.ui.define([
 			this.oAppComponent.rootControlLoaded = sandbox.stub().resolves();
 			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
 				.then(function() {
-					assert.equal(this.oLoadLibStub.callCount, 1, "rta library is requested");
-					assert.equal(oRequireStub.withArgs(["sap/ui/rta/api/startKeyUserAdaptation"]).callCount, 1, "rta functionality is requested");
-					assert.equal(fnStartRtaSpy.callCount, 1, "and rta is started");
-					assert.equal(fnStartRtaSpy.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
-					assert.equal(window.sessionStorage.getItem("sap.ui.rta.restart.CUSTOMER"), undefined, "and the restart parameter was removed from the sessionStorage");
+					assert.strictEqual(this.oLoadLibStub.callCount, 1, "rta library is requested");
+					assert.strictEqual(oRequireStub.withArgs(["sap/ui/rta/api/startKeyUserAdaptation"]).callCount, 1, "rta functionality is requested");
+					assert.strictEqual(fnStartRtaSpy.callCount, 1, "and rta is started");
+					assert.strictEqual(fnStartRtaSpy.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
 				}.bind(this));
 		});
 
@@ -481,11 +480,10 @@ sap.ui.define([
 			this.oAppComponent.rootControlLoaded = sandbox.stub().resolves();
 			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
 				.then(function() {
-					assert.equal(this.oLoadLibStub.callCount, 1, "rta library is requested");
-					assert.equal(oRequireStub.withArgs(["sap/ui/rta/api/startKeyUserAdaptation"]).callCount, 1, "rta functionality is requested");
-					assert.equal(fnStartRtaSpy.callCount, 1, "and rta is started");
-					assert.equal(fnStartRtaSpy.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
-					assert.equal(window.sessionStorage.getItem("sap.ui.rta.restart.CUSTOMER"), undefined, "and the restart parameter was removed from the sessionStorage");
+					assert.strictEqual(this.oLoadLibStub.callCount, 1, "rta library is requested");
+					assert.strictEqual(oRequireStub.withArgs(["sap/ui/rta/api/startKeyUserAdaptation"]).callCount, 1, "rta functionality is requested");
+					assert.strictEqual(fnStartRtaSpy.callCount, 1, "and rta is started");
+					assert.strictEqual(fnStartRtaSpy.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
 				}.bind(this));
 		});
 

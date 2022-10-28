@@ -297,6 +297,19 @@ sap.ui.define([
 		ReloadManager.disableAutomaticStart(sLayer);
 	};
 
+	/**
+	 * Check if RTA is about to start or starting after a reload
+	 * e.g. when reloading without personalization changes
+	 *
+	 * @public
+	 * @static
+	 * @param {sap.ui.fl.Layer} [sLayer] - Active layer, CUSTOMER by default
+	 * @returns {boolean} Returns true if RTA is about to start or starting
+	 */
+	RuntimeAuthoring.willRTAStartAfterReload = function(sLayer) {
+		return ReloadManager.needsAutomaticStart(sLayer || Layer.CUSTOMER);
+	};
+
 	RuntimeAuthoring.prototype.addDependent = function(oObject, sName, bCreateGetter) {
 		bCreateGetter = typeof bCreateGetter === "undefined" ? true : !!bCreateGetter;
 		if (!(sName in this._dependents)) {
@@ -556,6 +569,7 @@ sap.ui.define([
 					validateFlexEnabled(this);
 				}
 				this._sStatus = STARTED;
+				RuntimeAuthoring.disableRestart(Layer.CUSTOMER);
 				this.fireStart({
 					editablePluginsCount: this.getPluginManager().getEditableOverlaysCount()
 				});

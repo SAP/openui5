@@ -18,10 +18,12 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
+	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/rta/api/startKeyUserAdaptation",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/service/index",
@@ -49,10 +51,12 @@ sap.ui.define([
 	KeyCodes,
 	FlexRuntimeInfoAPI,
 	SmartVariantManagementApplyAPI,
+	FlexControllerFactory,
 	PersistenceWriteAPI,
 	Layer,
 	FlUtils,
 	JSONModel,
+	startKeyUserAdaptation,
 	AppVariantFeature,
 	ReloadManager,
 	mServicesDictionary,
@@ -739,6 +743,51 @@ sap.ui.define([
 			RuntimeAuthoring.disableRestart(sLayer);
 
 			assert.notOk(RuntimeAuthoring.needsRestart(sLayer), "then restart is not needed");
+		});
+
+		QUnit.test("when RTA is about to be started after a reload", function(assert) {
+			sandbox.stub(FlUtils, "isApplicationComponent").returns(true);
+			var fnResolve;
+			var oStartPromise = new Promise(function(resolve) {
+				fnResolve = resolve;
+			});
+			var fnStartRtaStub = sandbox.stub(RuntimeAuthoring.prototype, "start").callsFake(function() {
+				assert.ok(
+					RuntimeAuthoring.willRTAStartAfterReload(Layer.CUSTOMER),
+					"then the starting flag is still set while RTA is starting"
+				);
+				fnStartRtaStub.wrappedMethod.apply(this, arguments)
+					.then(fnResolve)
+					.then(function() {
+						this.destroy();
+					}.bind(this));
+			});
+
+			assert.notOk(
+				RuntimeAuthoring.willRTAStartAfterReload(Layer.CUSTOMER),
+				"then the starting flag is initially not set"
+			);
+			// Simulate reload e.g. when perso changes exist
+			ReloadManager.enableAutomaticStart(Layer.CUSTOMER, oComp);
+			assert.ok(
+				RuntimeAuthoring.willRTAStartAfterReload(Layer.CUSTOMER),
+				"then the starting flag is set when RTA is about to start after a reload"
+			);
+
+			// Simulate RTA starting after app was reloaded
+			FlexControllerFactory.getChangesAndPropagate(oComp, {});
+			return oStartPromise
+				.then(function() {
+					assert.strictEqual(
+						window.sessionStorage.getItem("sap.ui.rta.restart.CUSTOMER"),
+						null,
+						"then the reload flag is removed after the reload is finished"
+					);
+					assert.notOk(
+						RuntimeAuthoring.willRTAStartAfterReload(Layer.CUSTOMER),
+						"then the starting flag is cleared after the reload"
+					);
+				});
 		});
 
 		QUnit.test("when RTA is created without rootControl and start is triggered", function(assert) {
