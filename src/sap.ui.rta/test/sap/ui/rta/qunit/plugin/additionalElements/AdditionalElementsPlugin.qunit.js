@@ -78,7 +78,7 @@ sap.ui.define([
 				minVersion: "1.44",
 				lazy: false
 			},
-			"sap.ui.comp": {
+			"sap.ui.layout": {
 				minVersion: "1.20",
 				lazy: false
 			}
@@ -87,7 +87,7 @@ sap.ui.define([
 	DelegateMediatorAPI.registerDefaultDelegate(DEFAULT_DELEGATE_REGISTRATION);
 
 	sinon.stub(Settings, "getInstance").resolves(new Settings({}));
-	sinon.stub(DelegateMediatorAPI, "getKnownDefaultDelegateLibraries").returns(["sap.uxap", "sap.ui.comp"]);
+	sinon.stub(DelegateMediatorAPI, "getKnownDefaultDelegateLibraries").returns(["sap.uxap", "sap.ui.layout"]);
 
 	var DEFAULT_MANIFEST = {
 		"sap.app": {
@@ -106,7 +106,7 @@ sap.ui.define([
 					"sap.m": {
 						minVersion: "2.3.5"
 					},
-					"sap.ui.comp": {
+					"sap.ui.layout": {
 						lazy: true
 					}
 				}
@@ -1553,7 +1553,7 @@ sap.ui.define([
 
 		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container and default delegate is available, but library dependency has lazy: true", function (assert) {
 			sandbox.stub(oMockedAppComponent, "getManifestEntry").callsFake(function(sPath) {
-				// Only missing dependency becomes "sap.ui.comp" which is set with "lazy: true"
+				// Only missing dependency becomes "sap.ui.layout" which is set with "lazy: true"
 				if (sPath.indexOf("libs")) {
 					return merge(
 						{},
