@@ -1424,24 +1424,25 @@ sap.ui.define([
 
 		QUnit.test("showMessage creates and adds the message to the DOM", function (assert) {
 			var done = assert.async();
-			var showMessageStub = this.stub(BaseContent.prototype, "showMessage");
-
-			showMessageStub.callsFake(function () {
-				Core.applyChanges();
-				var oContent = this.oCard.getCardContent();
-				showMessageStub.wrappedMethod.apply(oContent, arguments); // call the original method
-				Core.applyChanges();
-
-				var oMessageContainer = oContent.getAggregation("_messageContainer");
-				// Assert
-				assert.ok(oMessageContainer.isA("sap.m.VBox"), "Message container should be created and added aggregated");
-				assert.ok(oMessageContainer.getItems()[0].isA("sap.m.MessageStrip"), "_messageContainer has 1 message");
-				assert.ok(oMessageContainer.getDomRef(), "Message container is added to the DOM");
-
-				done();
-			}.bind(this));
 
 			this.oCard.attachManifestApplied(function () {
+				var oContent = this.oCard.getCardContent();
+				var oDelegate = {
+					onAfterRendering: function () {
+						var oMessageContainer = oContent.getAggregation("_messageContainer");
+
+						// Assert
+						assert.ok(oMessageContainer.isA("sap.m.VBox"), "Message container should be created and added aggregated");
+						assert.ok(oMessageContainer.getItems()[0].isA("sap.m.MessageStrip"), "_messageContainer has 1 message");
+						assert.ok(oMessageContainer.getDomRef(), "Message container is added to the DOM");
+
+						oContent.removeEventDelegate(oDelegate);
+						done();
+					}
+				};
+
+				oContent.addEventDelegate(oDelegate);
+
 				// Act
 				this.oCard.showMessage();
 			}.bind(this));
@@ -1451,25 +1452,27 @@ sap.ui.define([
 
 		QUnit.test("Message container is destroyed when the message is closed", function (assert) {
 			var done = assert.async();
-			var showMessageStub = this.stub(BaseContent.prototype, "showMessage");
-
-			showMessageStub.callsFake(function () {
-				Core.applyChanges();
-				var oContent = this.oCard.getCardContent();
-				showMessageStub.wrappedMethod.apply(oContent, arguments); // call the original method
-				var oMessageContainer = oContent.getAggregation("_messageContainer");
-				var oMessageContainerDestroySpy = this.spy(oMessageContainer, "destroy");
-
-				// Act
-				oMessageContainer.getItems()[0].fireClose();
-
-				// Assert
-				assert.ok(oMessageContainerDestroySpy.called, "Message container should be destroyed");
-
-				done();
-			}.bind(this));
 
 			this.oCard.attachManifestApplied(function () {
+				var oContent = this.oCard.getCardContent();
+				var oDelegate = {
+					onAfterRendering: function () {
+						var oMessageContainer = oContent.getAggregation("_messageContainer");
+						var oMessageContainerDestroySpy = this.spy(oMessageContainer, "destroy");
+
+						// Act
+						oMessageContainer.getItems()[0].fireClose();
+
+						// Assert
+						assert.ok(oMessageContainerDestroySpy.called, "Message container should be destroyed");
+
+						oContent.removeEventDelegate(oDelegate);
+						done();
+					}
+				};
+
+				oContent.addEventDelegate(oDelegate, this);
+
 				// Act
 				this.oCard.showMessage();
 			}.bind(this));
@@ -1479,26 +1482,28 @@ sap.ui.define([
 
 		QUnit.test("Multiple calls to showMessage - previous messages are destroyed", function (assert) {
 			var done = assert.async();
-			var showMessageStub = this.stub(BaseContent.prototype, "showMessage");
 			var oMessageStripDestroySpy = this.spy(MessageStrip.prototype, "destroy");
 
-			showMessageStub
-				.callThrough() // call the original function on 1st and 2nd calls
-				.onThirdCall().callsFake(function () {
-					Core.applyChanges();
-					var oContent = this.oCard.getCardContent();
-					showMessageStub.wrappedMethod.apply(oContent, arguments); // call the original method
-					var oMessageContainer = oContent.getAggregation("_messageContainer");
-					var oMessage = oMessageContainer.getItems()[0];
-
-					assert.strictEqual(oMessageStripDestroySpy.callCount, 2, "The previous messages should be destroyed");
-					assert.strictEqual(oMessageContainer.getItems().length, 1, "There is only 1 message");
-					assert.strictEqual(oMessage.getType(), "Success", "The last given message type is used");
-					assert.strictEqual(oMessage.getText(), "Last message", "The last given message is used");
-					done();
-				}.bind(this));
-
 			this.oCard.attachManifestApplied(function () {
+				var oContent = this.oCard.getCardContent();
+				var oDelegate = {
+					onAfterRendering: function () {
+						var oMessageContainer = oContent.getAggregation("_messageContainer");
+						var oMessage = oMessageContainer.getItems()[0];
+
+						// Assert
+						assert.strictEqual(oMessageStripDestroySpy.callCount, 2, "The previous messages should be destroyed");
+						assert.strictEqual(oMessageContainer.getItems().length, 1, "There is only 1 message");
+						assert.strictEqual(oMessage.getType(), "Success", "The last given message type is used");
+						assert.strictEqual(oMessage.getText(), "Last message", "The last given message is used");
+
+						oContent.removeEventDelegate(oDelegate);
+						done();
+					}
+				};
+
+				oContent.addEventDelegate(oDelegate);
+
 				// Act
 				this.oCard.showMessage();
 				this.oCard.showMessage();
@@ -1510,20 +1515,24 @@ sap.ui.define([
 
 		QUnit.test("showMessage text containing expression binding with card formatters", function (assert) {
 			var done = assert.async();
-			var showMessageStub = this.stub(BaseContent.prototype, "showMessage");
-
-			showMessageStub.callsFake(function () {
-				Core.applyChanges();
-				var oContent = this.oCard.getCardContent();
-				showMessageStub.wrappedMethod.apply(oContent, arguments); // call the original method
-				var oMessageContainer = oContent.getAggregation("_messageContainer");
-				var oMessage = oMessageContainer.getItems()[0];
-
-				assert.strictEqual(oMessage.getText(), "My inserted text", "Card formatters should be available inside showMessage");
-				done();
-			}.bind(this));
 
 			this.oCard.attachManifestApplied(function () {
+				var oContent = this.oCard.getCardContent();
+				var oDelegate = {
+					onAfterRendering: function () {
+						var oMessageContainer = oContent.getAggregation("_messageContainer");
+						var oMessage = oMessageContainer.getItems()[0];
+
+						// Assert
+						assert.strictEqual(oMessage.getText(), "My inserted text", "Card formatters should be available inside showMessage");
+
+						oContent.removeEventDelegate(oDelegate);
+						done();
+					}
+				};
+
+				oContent.addEventDelegate(oDelegate);
+
 				// Act
 				this.oCard.showMessage("{= format.text('My {0} text', ['inserted'])}", MessageType.Error);
 			}.bind(this));

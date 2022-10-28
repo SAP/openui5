@@ -92,6 +92,13 @@ sap.ui.define([
 			})
 		);
 
+		oContent.getLoadDependenciesPromise()
+			.then(function (bLoadSuccessful) {
+				if (bLoadSuccessful && !oContent.isDestroyed()) {
+					oContent.setConfiguration(mConfig.contentManifest);
+				}
+			});
+
 		return oContent;
 	};
 

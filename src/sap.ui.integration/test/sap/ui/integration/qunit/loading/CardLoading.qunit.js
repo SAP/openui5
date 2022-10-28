@@ -1700,7 +1700,6 @@ sap.ui.define([
 							// Act
 							bShouldBeLoading = false;
 							oCard.hideLoadingPlaceholders(CardArea.Content);
-							Core.applyChanges();
 						} else {
 							// Assert
 							assert.notOk(bContentLoading, "Content is shown after re-rendering.");

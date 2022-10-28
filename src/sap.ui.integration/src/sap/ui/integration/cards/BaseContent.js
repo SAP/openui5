@@ -325,11 +325,12 @@ sap.ui.define([
 				this._getMessageContainer().destroy();
 			}.bind(this)
 		}).addStyleClass("sapFCardContentMessage");
+		var oDomRef = this.getDomRef();
 
 		oMessagePopup.destroyItems();
 		oMessagePopup.addItem(oMessage);
 
-		if (this.getDomRef().contains(document.activeElement)) {
+		if (oDomRef && oDomRef.contains(document.activeElement)) {
 			InvisibleMessage.getInstance().announce(sMessage, InvisibleMessageMode.Assertive);
 		} else {
 			InvisibleMessage.getInstance().announce(sMessage, InvisibleMessageMode.Polite);
@@ -485,6 +486,14 @@ sap.ui.define([
 	 */
 	BaseContent.prototype.onDataChanged = function () { };
 
+	BaseContent.prototype.onCardDataChanged = function () {
+		this.getLoadDependenciesPromise().then(function (bLoadSuccessful){
+			if (bLoadSuccessful && !this.isDestroyed()) {
+				this.onDataChanged();
+			}
+		}.bind(this));
+	};
+
 	/**
 	 * Binds an aggregation to the binding path of the BaseContent.
 	 * Observes the aggregation to update parameters>/visibleItems.
@@ -521,9 +530,8 @@ sap.ui.define([
 			return;
 		}
 
-		oControl.bindAggregation(sAggregation, oBindingInfo);
-
 		this._observeAggregation(sAggregation, oControl);
+		oControl.bindAggregation(sAggregation, oBindingInfo);
 	};
 
 	/**
