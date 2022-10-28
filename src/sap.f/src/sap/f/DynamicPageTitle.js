@@ -1203,7 +1203,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._focusExpandButton = function () {
-		var sTextToAnnounce = this._getExpandButton().getTooltip() + " " +  this._oRB.getText("SNAPPED_HEADER");
+		var sTextToAnnounce = this._oRB.getText("SNAPPED_HEADER");
 		this._getExpandButton().$().trigger("focus");
 		this._oInvisibleMessage.announce(sTextToAnnounce, InvisibleMessageMode.Polite);
 	};
