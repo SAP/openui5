@@ -14,6 +14,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -23,7 +25,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
@@ -44,6 +45,8 @@ sap.ui.define([
 	URLHandler,
 	VariantUtil,
 	FlexObjectFactory,
+	UIChange,
+	States,
 	Switcher,
 	VariantManagementState,
 	FlexState,
@@ -53,7 +56,6 @@ sap.ui.define([
 	Settings,
 	VariantManagement,
 	VariantModel,
-	Change,
 	FlexControllerFactory,
 	LayerUtils,
 	Layer,
@@ -221,7 +223,7 @@ sap.ui.define([
 			sandbox.stub(VariantManagementState, "getContent").returns("{}");
 			var oCheckStub = sandbox.stub(this.oModel, "checkDirtyStateForControlModels");
 			var oChange = {
-				getState: function() {return Change.states.NEW;},
+				getState: function() {return States.LifecycleState.NEW;},
 				convertToFileContent: function() {
 					return {fileType: "change"};
 				}
@@ -1047,7 +1049,7 @@ sap.ui.define([
 					return "variant1";
 				},
 				getState: function() {
-					return Change.states.NEW;
+					return States.LifecycleState.NEW;
 				}
 			};
 			this.oModel.oData["variantMgmtId1"].modified = false;
@@ -1153,7 +1155,7 @@ sap.ui.define([
 			assert.equal(aArgs[1], false, "the second parameter is false");
 			assert.deepEqual(aArgs[2].length, 4, "an array with 4 changes was passed");
 			aArgs[2].forEach(function(oChange) {
-				assert.ok(oChange instanceof Change);
+				assert.ok(oChange instanceof UIChange);
 			});
 			assert.strictEqual(oVariantInstance.getName(), "test", "the title was changed");
 			assert.strictEqual(oVariantInstance.getFavorite(), false, "the favorite was changed");
@@ -1170,19 +1172,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_getDirtyChangesFromVariantChanges'", function(assert) {
-			var oChange1 = new Change({
+			var oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: "change1",
 				selector: {
 					id: "abc123"
 				}
 			});
-			var oChange2 = new Change({
+			var oChange2 = FlexObjectFactory.createFromFileContent({
 				fileName: "change2",
 				selector: {
 					id: "abc123"
 				}
 			});
-			var oChange3 = new Change({
+			var oChange3 = FlexObjectFactory.createFromFileContent({
 				fileName: "change3",
 				selector: {
 					id: "abc123"
@@ -1202,19 +1204,19 @@ sap.ui.define([
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default/execute box checked", function(assert) {
 			var fnDone = assert.async();
 			var sVMReference = "variantMgmtId1";
-			var oChange1 = new Change({
+			var oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: "change1",
 				selector: {
 					id: "abc123"
 				}
 			});
-			var oChange2 = new Change({
+			var oChange2 = FlexObjectFactory.createFromFileContent({
 				fileName: "change2",
 				selector: {
 					id: "abc123"
 				}
 			});
-			var oChange3 = new Change({
+			var oChange3 = FlexObjectFactory.createFromFileContent({
 				fileName: "change3",
 				selector: {
 					id: "abc123"
@@ -1371,19 +1373,19 @@ sap.ui.define([
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default box unchecked", function(assert) {
 			var fnDone = assert.async();
 			var sVMReference = "variantMgmtId1";
-			var oChange1 = new Change({
+			var oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: "change1",
 				selector: {
 					id: "abc123"
 				}
 			});
-			var oChange2 = new Change({
+			var oChange2 = FlexObjectFactory.createFromFileContent({
 				fileName: "change2",
 				selector: {
 					id: "abc123"
 				}
 			});
-			var oChange3 = new Change({
+			var oChange3 = FlexObjectFactory.createFromFileContent({
 				fileName: "change3",
 				selector: {
 					id: "abc123"
@@ -1457,13 +1459,13 @@ sap.ui.define([
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from Save button, which calls 'checkDirtyStateForControlModels' later, with no dirty changes existing after Save", function(assert) {
 			var sVMReference = "variantMgmtId1";
-			var oChange1 = new Change({
+			var oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: "change1",
 				selector: {
 					id: "abc123"
 				}
 			});
-			var oChange2 = new Change({
+			var oChange2 = FlexObjectFactory.createFromFileContent({
 				fileName: "change2",
 				selector: {
 					id: "abc123"
@@ -1509,7 +1511,7 @@ sap.ui.define([
 
 		QUnit.test("when calling the checkDirtyStateForControlModels check with newly added dirty changes", function (assert) {
 			var sVMReference = "variantMgmtId1";
-			var oChange1 = new Change({
+			var oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: "change1",
 				selector: {
 					id: "abc123"
@@ -1561,19 +1563,19 @@ sap.ui.define([
 			var fnDone = assert.async();
 			var sVMReference = "variantMgmtId1";
 			var sNewVariantReference = "variant2";
-			var oChange1 = new Change({
+			var oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: "change1",
 				selector: {
 					id: "abc123"
 				}
 			});
-			var oChange2 = new Change({
+			var oChange2 = FlexObjectFactory.createFromFileContent({
 				fileName: "change2",
 				selector: {
 					id: "abc123"
 				}
 			});
-			var oChange3 = new Change({
+			var oChange3 = FlexObjectFactory.createFromFileContent({
 				fileName: "change3",
 				selector: {
 					id: "abc123"
@@ -1729,7 +1731,7 @@ sap.ui.define([
 			sandbox.stub(VariantManagementState, "fillVariantModel").returns({});
 			this.oModel = new VariantModel({}, {flexController: {_oChangePersistence: {getComponentName: function() {}}}, appComponent: {getId: function() {}}});
 
-			var oChange0 = new Change({
+			var oChange0 = FlexObjectFactory.createFromFileContent({
 				fileName: "change0",
 				selector: {id: "abc123"},
 				variantReference: "variant0",
@@ -1738,7 +1740,7 @@ sap.ui.define([
 				reference: "test.Component",
 				packageName: "MockPackageName"
 			});
-			var oChange1 = new Change({
+			var oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: "change1",
 				selector: {id: "abc123"},
 				variantReference: "variant0",
@@ -2167,8 +2169,8 @@ sap.ui.define([
 			var sVMReference = "varMgmtRef1";
 			var fnSwitchPromiseStub = sandbox.stub();
 
-			var oDirtyChange1 = new Change({fileName: "newChange1"});
-			var oDirtyChange2 = new Change({fileName: "newChange2"});
+			var oDirtyChange1 = FlexObjectFactory.createFromFileContent({fileName: "newChange1"});
+			var oDirtyChange2 = FlexObjectFactory.createFromFileContent({fileName: "newChange2"});
 			this.oFlexController._oChangePersistence.addDirtyChange(oDirtyChange1);
 			this.oFlexController._oChangePersistence.addDirtyChange(oDirtyChange2);
 
@@ -2406,7 +2408,7 @@ sap.ui.define([
 			var sSourceVariantId = this.oVariantModel.oData[this.sVMReference].currentVariant;
 
 			this.oVariantModel.oData[this.sVMReference].modified = true;
-			var aMockDirtyChanges = [new Change({fileName: "dirtyChange1"}), new Change({fileName: "dirtyChange2"})];
+			var aMockDirtyChanges = [FlexObjectFactory.createFromFileContent({fileName: "dirtyChange1"}), FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})];
 			VariantManagementState.getControlChangesForVariant.returns(aMockDirtyChanges);
 			this.oVariantModel.oChangePersistence.getDirtyChanges.returns(aMockDirtyChanges);
 
@@ -2448,7 +2450,7 @@ sap.ui.define([
 			var sVMControlId = this.oComp.createId(this.sVMReference);
 			var oVMControl = oCore.byId(sVMControlId);
 
-			var aMockDirtyChanges = [new Change({fileName: "dirtyChange1"}), new Change({fileName: "dirtyChange2"})];
+			var aMockDirtyChanges = [FlexObjectFactory.createFromFileContent({fileName: "dirtyChange1"}), FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})];
 			VariantManagementState.getControlChangesForVariant.returns(aMockDirtyChanges);
 			this.oVariantModel.oChangePersistence.getDirtyChanges.returns(aMockDirtyChanges);
 
@@ -2477,7 +2479,7 @@ sap.ui.define([
 			var oCallListenerStub = sandbox.stub(this.oVariantModel, "_callVariantSwitchListeners");
 
 			this.oVariantModel.oData[this.sVMReference].modified = true;
-			var aMockDirtyChanges = [new Change({fileName: "dirtyChange1"}), new Change({fileName: "dirtyChange2"})];
+			var aMockDirtyChanges = [FlexObjectFactory.createFromFileContent({fileName: "dirtyChange1"}), FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})];
 			VariantManagementState.getControlChangesForVariant.returns(aMockDirtyChanges);
 			this.oVariantModel.oChangePersistence.getDirtyChanges.returns(aMockDirtyChanges);
 

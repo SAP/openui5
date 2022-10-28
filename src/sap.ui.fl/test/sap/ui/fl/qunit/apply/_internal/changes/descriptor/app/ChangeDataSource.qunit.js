@@ -2,18 +2,20 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeDataSource",
-	"sap/ui/fl/Change"
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange"
 ],
 function (
 	ChangeDataSource,
-	Change
+	AppDescriptorChange
 ) {
 	"use strict";
 
 	QUnit.module("applyChange", {
 		beforeEach: function () {
-			this.oChangeUri = new Change({
-				changeType: "appdescr_app_changeDataSource",
+			this.oChangeUri = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeDataSource"
+				},
 				content: {
 					dataSourceId: "ppm",
 					entityPropertyChange: {
@@ -24,8 +26,10 @@ function (
 				}
 			});
 
-			this.oChangeSettings = new Change({
-				changeType: "appdescr_app_changeDataSource",
+			this.oChangeSettings = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeDataSource"
+				},
 				content: {
 					dataSourceId: "ppm",
 					entityPropertyChange: {
@@ -36,8 +40,10 @@ function (
 				}
 			});
 
-			this.oChangeInsert = new Change({
-				changeType: "appdescr_app_changeDataSource",
+			this.oChangeInsert = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeDataSource"
+				},
 				content: {
 					dataSourceId: "ppm",
 					entityPropertyChange: {
@@ -48,8 +54,10 @@ function (
 				}
 			});
 
-			this.oChangeArray = new Change({
-				changeType: "appdescr_app_changeDataSource",
+			this.oChangeArray = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeDataSource"
+				},
 				content: {
 					dataSourceId: "ppm",
 					entityPropertyChange: [

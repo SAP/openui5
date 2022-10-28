@@ -1,6 +1,6 @@
 [
 	{
-		"id": "id_1575964813623_132_propertyChange",
+		"fileName": "id_1575964813623_132_propertyChange",
 		"changeType": "propertyChange",
 		"reference": "sap.ui.rta.test.Component",
 		"layer": "VENDOR",
@@ -16,7 +16,7 @@
 		"creation": "2019-12-10T08:01:26.564Z"
 	},
 	{
-		"id": "id_1575964813623_132_propertyChange",
+		"fileName": "id_1575964813623_132_propertyChange",
 		"changeType": "propertyChange",
 		"reference": "sap.ui.rta.test.Component",
 		"layer": "VENDOR",
@@ -32,7 +32,7 @@
 		"creation": "2019-12-10T08:01:26.564Z"
 	},
 	{
-		"id": "id_1479218968907_101_propertyChange",
+		"fileName": "id_1479218968907_101_propertyChange",
 		"changeType": "propertyChange",
 		"reference": "sap.ui.rta.test.Component",
 		"layer": "VENDOR",
@@ -47,7 +47,7 @@
 		}
 	},
 	{
-		"id": "id_1479219043003_105_propertyChange",
+		"fileName": "id_1479219043003_105_propertyChange",
 		"changeType": "propertyChange",
 		"reference": "sap.ui.rta.test.Component",
 		"layer": "VENDOR",
@@ -62,7 +62,7 @@
 		}
 	},
 	{
-		"id": "id_1491823781561_91_propertyChange",
+		"fileName": "id_1491823781561_91_propertyChange",
 		"changeType": "propertyChange",
 		"reference": "sap.ui.rta.test.Component",
 		"layer": "VENDOR",
@@ -77,7 +77,7 @@
 		}
 	},
 	{
-		"id": "id_1493382638641_97_propertyChange",
+		"fileName": "id_1493382638641_97_propertyChange",
 		"changeType": "propertyChange",
 		"reference": "sap.ui.rta.test.Component",
 		"layer": "VENDOR",
@@ -93,7 +93,7 @@
 		}
 	},
 	{
-		"id": "id_1493382638641_97_propertyChange",
+		"fileName": "id_1493382638641_97_propertyChange",
 		"changeType": "propertyChange",
 		"reference": "sap.ui.rta.test.Component",
 		"layer": "VENDOR",
@@ -109,7 +109,7 @@
 		}
 	},
 	{
-		"id": "id_1493382638641_97_propertyChange",
+		"fileName": "id_1493382638641_97_propertyChange",
 		"changeType": "propertyChange",
 		"reference": "sap.ui.rta.test.Component",
 		"layer": "VENDOR",
@@ -125,7 +125,7 @@
 		}
 	},
 	{
-		"id": "id_1493382638641_97_propertyChange",
+		"fileName": "id_1493382638641_97_propertyChange",
 		"changeType": "propertyChange",
 		"reference": "sap.ui.rta.test.Component",
 		"layer": "VENDOR",
@@ -141,7 +141,7 @@
 		}
 	},
 	{
-		"id": "id_1493382638641_97_propertyChange",
+		"fileName": "id_1493382638641_97_propertyChange",
 		"changeType": "propertyChange",
 		"reference": "sap.ui.rta.test.Component",
 		"layer": "VENDOR",

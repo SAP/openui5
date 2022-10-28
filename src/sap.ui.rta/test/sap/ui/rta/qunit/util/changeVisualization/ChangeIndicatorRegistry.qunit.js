@@ -34,9 +34,6 @@ sap.ui.define([
 				};
 			},
 			getLayer: function() {},
-			getFileName: function() {
-				return sId;
-			},
 			getChangeType: function() {},
 			getState: function() {
 				return sState;
@@ -78,9 +75,9 @@ sap.ui.define([
 		QUnit.test("when changes with valid command types are registered", function(assert) {
 			var oVersionsModel = createMockVersioning(["draftChange"]);
 			return Promise.all([
-				this.oRegistry.registerChange(createMockChange("fooChange", FlStates.NEW), "foo", oVersionsModel),
-				this.oRegistry.registerChange(createMockChange("barChange", FlStates.PERSISTED), "bar", oVersionsModel),
-				this.oRegistry.registerChange(createMockChange("draftChange", FlStates.PERSISTED), "bar", oVersionsModel)
+				this.oRegistry.registerChange(createMockChange("fooChange", FlStates.LifecycleState.NEW), "foo", oVersionsModel),
+				this.oRegistry.registerChange(createMockChange("barChange", FlStates.LifecycleState.PERSISTED), "bar", oVersionsModel),
+				this.oRegistry.registerChange(createMockChange("draftChange", FlStates.LifecycleState.PERSISTED), "bar", oVersionsModel)
 			]).then(function() {
 				assert.deepEqual(this.oRegistry.getRegisteredChangeIds(), ["fooChange", "barChange", "draftChange"], "then the change ids are registered");
 				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 3, "then the changes are added to the registry");

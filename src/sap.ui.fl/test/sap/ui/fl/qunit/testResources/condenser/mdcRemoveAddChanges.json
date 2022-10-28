@@ -1,6 +1,6 @@
 [
 	{
-		"id": "id_01_removeColumn",
+		"fileName": "id_01_removeColumn",
 		"changeType": "removeColumn",
 		"reference": "test.Component",
 		"content": {
@@ -15,7 +15,7 @@
 		"creation": "2020-01-31T06:33:51.192Z"
 	},
 	{
-		"id": "id_02_addColumn",
+		"fileName": "id_02_addColumn",
 		"changeType": "addColumn",
 		"reference": "test.Component",
 		"content": {

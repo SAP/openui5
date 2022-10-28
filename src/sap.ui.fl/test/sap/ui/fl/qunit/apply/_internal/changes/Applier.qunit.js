@@ -12,8 +12,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -33,8 +33,8 @@ sap.ui.define([
 	FlexCustomData,
 	ChangeUtils,
 	DependencyHandler,
+	FlexObjectFactory,
 	ChangeHandlerBase,
-	Change,
 	FlexController,
 	Layer,
 	FlUtils,
@@ -112,9 +112,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("updates the dependencies if the change was already processed but not applied", function(assert) {
-			var oChange0 = new Change(getLabelChangeContent("a"));
+			var oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			oChange0.markFinished();
-			var oChange1 = new Change(getLabelChangeContent("a"));
+			var oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			oChange1.markFinished();
 
 			var fnGetChangesMap = function() {
@@ -146,7 +146,7 @@ sap.ui.define([
 		QUnit.test("synchronously add the changes to the queue", function(assert) {
 			this.oApplyChangeOnControlStub.restore();
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").resolves({success: true});
-			var oChange0 = new Change(getLabelChangeContent("a"));
+			var oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			var oSetQueuedForApplySpy = sandbox.spy(oChange0, "setQueuedForApply");
 			var fnGetChangesMap = function() {
 				return getInitialChangesMap({
@@ -166,7 +166,7 @@ sap.ui.define([
 		QUnit.test("does not add to queue and apply the changes to the queue if _ignoreOnce is set", function(assert) {
 			this.oApplyChangeOnControlStub.restore();
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").resolves({success: true});
-			var oChange0 = new Change(getLabelChangeContent("a"));
+			var oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			oChange0._ignoreOnce = true;
 			var fnGetChangesMap = function() {
 				return getInitialChangesMap({
@@ -185,8 +185,8 @@ sap.ui.define([
 
 		QUnit.test("updates change status if change was already applied (viewCache)", function(assert) {
 			var oRevertData = {foo: "bar"};
-			var oChange0 = new Change(getLabelChangeContent("a"));
-			var oChange1 = new Change(getLabelChangeContent("a"));
+			var oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
+			var oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			var fnGetChangesMap = function() {
 				return getInitialChangesMap({
 					mChanges: {
@@ -217,8 +217,8 @@ sap.ui.define([
 
 		QUnit.test("updates change status if change was already applied (viewCache) and control template is affected", function(assert) {
 			var oRevertData = {foo: "bar"};
-			var oChange0 = new Change(getLabelChangeContent("a"));
-			var oChange1 = new Change(getLabelChangeContent("a"));
+			var oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
+			var oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			var fnGetChangesMap = function() {
 				return getInitialChangesMap({
 					mChanges: {
@@ -260,7 +260,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("updates change status if change is not applicable (viewCache)", function(assert) {
-			var oChange = new Change(getLabelChangeContent("a"));
+			var oChange = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			var fnGetChangesMap = function() {
 				return getInitialChangesMap({
 					mChanges: {
@@ -290,11 +290,11 @@ sap.ui.define([
 
 		QUnit.test("when applyAllChangesForControl is called with app component and a control belonging to an embedded component", function(assert) {
 			var oChangeContent = getLabelChangeContent("a");
-			var oChange0 = new Change(oChangeContent);
-			var oChange1 = new Change(oChangeContent);
-			var oChange2 = new Change(oChangeContent);
-			var oChange3 = new Change(oChangeContent);
-			var oSomeOtherChange = new Change(oChangeContent);
+			var oChange0 = FlexObjectFactory.createFromFileContent(oChangeContent);
+			var oChange1 = FlexObjectFactory.createFromFileContent(oChangeContent);
+			var oChange2 = FlexObjectFactory.createFromFileContent(oChangeContent);
+			var oChange3 = FlexObjectFactory.createFromFileContent(oChangeContent);
+			var oSomeOtherChange = FlexObjectFactory.createFromFileContent(oChangeContent);
 
 			var fnGetChangesMap = function() {
 				return getInitialChangesMap({
@@ -324,9 +324,9 @@ sap.ui.define([
 		QUnit.test("applyAllChangesForControl dependency test 1", function(assert) {
 			var oControlForm1 = new Control("form1-1");
 			var oControlGroup1 = new Control("group1-1");
-			var oChange0 = new Change(getLabelChangeContent("fileNameChange0"));
-			var oChange1 = new Change(getLabelChangeContent("fileNameChange1"));
-			var oChange2 = new Change(getLabelChangeContent("fileNameChange2"));
+			var oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange0"));
+			var oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange1"));
+			var oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange2"));
 
 			var mChangesMap = getInitialChangesMap({
 				mChanges: {
@@ -362,9 +362,9 @@ sap.ui.define([
 		QUnit.test("applyAllChangesForControl dependency test 2", function(assert) {
 			var oControlForm1 = new Control("form2-1");
 			var oControlGroup1 = new Control("group2-1");
-			var oChange1 = new Change(getLabelChangeContent("fileNameChange1"));
-			var oChange2 = new Change(getLabelChangeContent("fileNameChange2"));
-			var oChange3 = new Change(getLabelChangeContent("fileNameChange3"));
+			var oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange1"));
+			var oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange2"));
+			var oChange3 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange3"));
 
 			var mChangesMap = getInitialChangesMap({
 				mChanges: {
@@ -401,11 +401,11 @@ sap.ui.define([
 		});
 
 		function fnDependencyTest3Setup() {
-			var oChange1 = new Change(getLabelChangeContent("fileNameChange1", "id1"));
-			var oChange2 = new Change(getLabelChangeContent("fileNameChange2", "id2"));
-			var oChange3 = new Change(getLabelChangeContent("fileNameChange3", "id3"));
-			var oChange4 = new Change(getLabelChangeContent("fileNameChange4", "id4"));
-			var oChange5 = new Change(getLabelChangeContent("fileNameChange5", "id5"));
+			var oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange1", "id1"));
+			var oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange2", "id2"));
+			var oChange3 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange3", "id3"));
+			var oChange4 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange4", "id4"));
+			var oChange5 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange5", "id5"));
 
 			return getInitialChangesMap({
 				mChanges: {
@@ -442,9 +442,9 @@ sap.ui.define([
 			var oAppliedControl = new Control("appliedControl"); // processed and applied on control
 			var oProcessedControl = new Control("processedControl"); // processed and not applied on control
 			var oNotProcessedControl = new Control("notProcessedControl"); // not processed and not applied on control
-			var oAppliedChange = new Change(getLabelChangeContent("appliedChange", "appliedControl"));
-			var oProcessedChange = new Change(getLabelChangeContent("processedChange", "processedControl"));
-			var oNotProcessedChange = new Change(getLabelChangeContent("notProcessedChange", "notProcessedControl"));
+			var oAppliedChange = FlexObjectFactory.createFromFileContent(getLabelChangeContent("appliedChange", "appliedControl"));
+			var oProcessedChange = FlexObjectFactory.createFromFileContent(getLabelChangeContent("processedChange", "processedControl"));
+			var oNotProcessedChange = FlexObjectFactory.createFromFileContent(getLabelChangeContent("notProcessedChange", "notProcessedControl"));
 
 			// mock previously processed changes, by marking them as finished
 			oAppliedChange.markFinished();
@@ -647,8 +647,8 @@ sap.ui.define([
 		QUnit.test("applyAllChangesForControl dependency test 4", function(assert) {
 			var oControlForm1 = new Control("form4");
 
-			var oChange1 = new Change(getLabelChangeContent("fileNameChange1"));
-			var oChange2 = new Change(getLabelChangeContent("fileNameChange2"));
+			var oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange1"));
+			var oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange2"));
 
 			var mChanges = {
 				form4: [oChange1, oChange2]
@@ -688,9 +688,9 @@ sap.ui.define([
 			var oControlForm1 = new Control("form6-1");
 			var oControlGroup1 = new Control("group6-1");
 
-			var oChange0 = new Change(getLabelChangeContent("fileNameChange0"));
-			var oChange1 = new Change(getLabelChangeContent("fileNameChange1"));
-			var oChange2 = new Change(getLabelChangeContent("fileNameChange2"));
+			var oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange0"));
+			var oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange1"));
+			var oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange2"));
 
 			var mChangesMap = getInitialChangesMap({
 				mChanges: {
@@ -750,9 +750,9 @@ sap.ui.define([
 		QUnit.test("applyAllChangesForControl dependency test 6 - with broken changes", function(assert) {
 			var oControlGroup1 = new Control("group7-1");
 
-			var oChange0 = new Change(getLabelChangeContent("fileNameChange0"));
-			var oChange1 = new Change(getLabelChangeContent("fileNameChange1"));
-			var oChange2 = new Change(getLabelChangeContent("fileNameChange2"));
+			var oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange0"));
+			var oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange1"));
+			var oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange2"));
 
 			var mChangesMap = getInitialChangesMap({
 				mChanges: {
@@ -803,7 +803,7 @@ sap.ui.define([
 		QUnit.test("applyAllChangesForControl dependency test - with dependent controls without changes that get rendered later", function(assert) {
 			var oProcessDependentQueueSpy = sandbox.spy(DependencyHandler, "processDependentQueue");
 			var oRandomControl = new Control("randomId");
-			var oChange0 = new Change(getLabelChangeContent("fileNameChange0"));
+			var oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange0"));
 
 			var mChangesMap = getInitialChangesMap({
 				mChanges: {
@@ -850,7 +850,7 @@ sap.ui.define([
 		QUnit.test("applyAllChangesForControl with to be adjusted template changes - 1", function(assert) {
 			var oOriginalTemplateControl = new Control("originalTemplate");
 			var oActualTemplateControl = new Control("actualTemplate");
-			var oChange0 = new Change(getLabelChangeContent("a"));
+			var oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			var oChange0Content = oChange0.getContent();
 			oChange0Content.boundAggregation = "boundAggregationName";
 			oChange0.setContent(oChange0Content);
@@ -897,7 +897,7 @@ sap.ui.define([
 				items: [new Control(), new Control(), oActualInnerToolbar, new Control()]
 			});
 
-			var oChange0 = new Change(getLabelChangeContent("a"));
+			var oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			var oChange0Content = oChange0.getContent();
 			oChange0Content.boundAggregation = "boundAggregationName";
 			oChange0.setContent(oChange0Content);
@@ -933,7 +933,7 @@ sap.ui.define([
 			var sLabelId = "label";
 			var oLabelChangeContent = getLabelChangeContent("a", sLabelId);
 			this.oControl = new Label(sLabelId);
-			this.oChange = new Change(oLabelChangeContent);
+			this.oChange = FlexObjectFactory.createFromFileContent(oLabelChangeContent);
 
 			this.oErrorStub = sandbox.stub(Log, "error");
 			this.oAddAppliedCustomDataSpy = sandbox.spy(FlexCustomData, "addAppliedCustomData");
@@ -1072,7 +1072,7 @@ sap.ui.define([
 	QUnit.module("[XML] applyChangeOnControl", {
 		beforeEach: function() {
 			var sLabelId = "labelId";
-			this.oChange = new Change(getLabelChangeContent("fileName", sLabelId));
+			this.oChange = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileName", sLabelId));
 
 			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData").resolves();
 			this.oAddFailedCustomDataStub = sandbox.stub(FlexCustomData, "addFailedCustomData").resolves();
@@ -1156,8 +1156,8 @@ sap.ui.define([
 	QUnit.module("[XML] applyAllChangesForXMLView", {
 		beforeEach: function() {
 			this.oControl = new Control("existingId");
-			this.oChange = new Change(getLabelChangeContent("fileName", "labelId"));
-			this.oExtensionPointChange = new Change({
+			this.oChange = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileName", "labelId"));
+			this.oExtensionPointChange = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.CUSTOMER,
 				fileName: "aName",
@@ -1282,7 +1282,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("logs error when the change has no selector", function(assert) {
-			var oChange = new Change({
+			var oChange = FlexObjectFactory.createFromFileContent({
 				selector: {}
 			});
 
@@ -1293,7 +1293,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("logs error when the control is not available", function(assert) {
-			var oChange = new Change({
+			var oChange = FlexObjectFactory.createFromFileContent({
 				selector: {
 					id: "abc",
 					local: false
@@ -1307,7 +1307,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("continues the processing if an error occurs before change applying", function(assert) {
-			var oChange1 = new Change({
+			var oChange1 = FlexObjectFactory.createFromFileContent({
 				selector: {}
 			});
 			this.oApplyChangeOnControlStub.resolves({success: true});
@@ -1319,7 +1319,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("continues the processing if an error occurs during change applying", function(assert) {
-			var oChange2 = new Change(getLabelChangeContent("fileName", "hbox"));
+			var oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileName", "hbox"));
 			this.oApplyChangeOnControlStub.resolves({success: false});
 
 			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange, oChange2]).then(function() {
@@ -1357,9 +1357,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("processes the changes in the correct order", function(assert) {
-			var oChange1 = new Change(getLabelChangeContent("a"));
-			var oChange2 = new Change(getLabelChangeContent("a2"));
-			var oChange3 = new Change(getLabelChangeContent("a3"));
+			var oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
+			var oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a2"));
+			var oChange3 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a3"));
 
 			sandbox.stub(XmlTreeModifier, "bySelectorTypeIndependent").withArgs(sinon.match.defined).resolves(this.oXmlLabel);
 			sandbox.stub(XmlTreeModifier, "getControlType").returns("aType");
@@ -1374,12 +1374,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("stops processing a selector if a change failed", function(assert) {
-			var oChange1 = new Change(getLabelChangeContent("a", "labelId"));
-			var oChange2 = new Change(getLabelChangeContent("a2", "labelId"));
-			var oChange3 = new Change(getLabelChangeContent("a3", "labelId"));
-			var oChange11 = new Change(getLabelChangeContent("a", "labelId"));
-			var oChange22 = new Change(getLabelChangeContent("a2", "labelId"));
-			var oChange33 = new Change(getLabelChangeContent("a3", "labelId"));
+			var oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a", "labelId"));
+			var oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a2", "labelId"));
+			var oChange3 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a3", "labelId"));
+			var oChange11 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a", "labelId"));
+			var oChange22 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a2", "labelId"));
+			var oChange33 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a3", "labelId"));
 
 			this.oApplyChangeOnControlStub
 				.onCall(0).resolves({success: true})
@@ -1412,9 +1412,9 @@ sap.ui.define([
 					idIsLocal: false
 				}
 			};
-			var oChange1 = new Change(oChangeDef);
-			var oChange2 = new Change(getLabelChangeContent("a2", "labelId"));
-			var oChange3 = new Change(getLabelChangeContent("a3", "labelId"));
+			var oChange1 = FlexObjectFactory.createFromFileContent(oChangeDef);
+			var oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a2", "labelId"));
+			var oChange3 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a3", "labelId"));
 
 			this.oApplyChangeOnControlStub
 				.onCall(0).rejects("error")
@@ -1433,18 +1433,18 @@ sap.ui.define([
 
 	QUnit.module("onAfterXMLChangeProcessing hook", {
 		beforeEach: function() {
-			this.oChange1 = new Change(getLabelChangeContent("c1", "label1"));
+			this.oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("c1", "label1"));
 			// Same control, same handler
-			this.oChange2 = new Change(getLabelChangeContent("c2", "label1"));
+			this.oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("c2", "label1"));
 			// Same control, different handler
-			this.oChange3 = new Change(Object.assign(
+			this.oChange3 = FlexObjectFactory.createFromFileContent(Object.assign(
 				getLabelChangeContent("c2", "label1"),
 				{
 					changeType: "someOtherChangeType"
 				}
 			));
 			// Different control, same handler
-			this.oChange4 = new Change(getLabelChangeContent("c4", "label2"));
+			this.oChange4 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("c4", "label2"));
 
 			var oXmlString =
 				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +

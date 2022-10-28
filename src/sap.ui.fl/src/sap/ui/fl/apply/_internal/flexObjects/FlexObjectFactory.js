@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/ControllerExtensionChange",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
 ], function(
 	_pick,
@@ -21,24 +23,20 @@ sap.ui.define([
 	ControllerExtensionChange,
 	FlexObject,
 	FlVariant,
+	UIChange,
 	Layer,
+	LayerUtils,
 	Utils
 ) {
 	"use strict";
 
-	/**
-	 * @enum {string}
-	 * Valid flex object types.
-	 *
-	 * @alias sap.ui.fl.apply._internal.flexObjects.FlexObjectFactory.FLEX_OBJECT_TYPES
-	 * @private
-	 */
 	var FLEX_OBJECT_TYPES = {
 		BASE_FLEX_OBJECT: FlexObject,
 		COMP_VARIANT_OBJECT: CompVariant,
 		FL_VARIANT_OBJECT: FlVariant,
 		CONTROLLER_EXTENSION: ControllerExtensionChange,
-		APP_DESCRIPTOR_CHANGE: AppDescriptorChange
+		APP_DESCRIPTOR_CHANGE: AppDescriptorChange,
+		UI_CHANGE: UIChange
 	};
 
 	function getFlexObjectClass(oNewFileContent) {
@@ -51,7 +49,7 @@ sap.ui.define([
 		} else if (oNewFileContent.appDescriptorChange) {
 			return FLEX_OBJECT_TYPES.APP_DESCRIPTOR_CHANGE;
 		}
-		return FLEX_OBJECT_TYPES.BASE_FLEX_OBJECT;
+		return FLEX_OBJECT_TYPES.UI_CHANGE;
 	}
 
 	function createBasePropertyBag(mProperties) {
@@ -64,10 +62,12 @@ sap.ui.define([
 			texts: mProperties.texts,
 			supportInformation: {
 				service: mProperties.ODataService,
+				oDataInformation: mProperties.oDataInformation,
 				command: mProperties.command,
 				compositeCommand: mProperties.compositeCommand,
 				generator: mProperties.generator,
 				sapui5Version: Core.getConfiguration().getVersion().toString(),
+				sourceChangeFileName: mProperties.support && mProperties.support.sourceChangeFileName,
 				sourceSystem: mProperties.sourceSystem,
 				sourceClient: mProperties.sourceClient,
 				originalLanguage: mProperties.originalLanguage,
@@ -76,7 +76,8 @@ sap.ui.define([
 			flexObjectMetadata: {
 				changeType: sChangeType,
 				reference: mProperties.reference,
-				packageName: mProperties.packageName
+				packageName: mProperties.packageName,
+				projectId: mProperties.projectId
 			}
 		};
 	}
@@ -120,6 +121,18 @@ sap.ui.define([
 		}, {});
 		var oFlexObject = new FlexObjectClass(mProperties);
 		return oFlexObject;
+	};
+
+	FlexObjectFactory.createUIChange = function(mPropertyBag) {
+		var mProperties = createBasePropertyBag(mPropertyBag);
+		if (!mProperties.layer) {
+			mProperties.layer = mPropertyBag.isUserDependent ? Layer.USER : LayerUtils.getCurrentLayer();
+		}
+		mProperties.selector = mPropertyBag.selector;
+		mProperties.jsOnly = mPropertyBag.jsOnly;
+		mProperties.variantReference = mPropertyBag.variantReference;
+		mProperties.fileType = mPropertyBag.fileType || "change";
+		return new UIChange(mProperties);
 	};
 
 	FlexObjectFactory.createAppDescriptorChange = function(mPropertyBag) {

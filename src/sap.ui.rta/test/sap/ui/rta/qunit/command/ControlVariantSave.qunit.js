@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Change",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/OverlayRegistry",
@@ -18,7 +17,6 @@ sap.ui.define([
 ], function(
 	Layer,
 	FlLayerUtils,
-	Change,
 	CommandFactory,
 	ElementDesignTimeMetadata,
 	OverlayRegistry,
@@ -59,7 +57,7 @@ sap.ui.define([
 				// non-personalization mode
 				this.oModel._bDesignTimeMode = true;
 
-				this.oChange1 = new Change({
+				this.oChange1 = RtaQunitUtils.createUIChange({
 					fileName: "change44",
 					fileType: "change",
 					layer: Layer.CUSTOMER,
@@ -69,7 +67,7 @@ sap.ui.define([
 					reference: "Dummy.Component",
 					variantReference: "variantMgmtId1"
 				});
-				this.oChange2 = new Change({
+				this.oChange2 = RtaQunitUtils.createUIChange({
 					fileName: "change45",
 					fileType: "change",
 					layer: Layer.CUSTOMER,

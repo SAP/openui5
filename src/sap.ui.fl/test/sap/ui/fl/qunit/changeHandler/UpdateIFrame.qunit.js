@@ -1,8 +1,8 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/changeHandler/UpdateIFrame",
-	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/fl/util/IFrame",
@@ -12,8 +12,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/fl/Utils"
 ], function(
+	UIChange,
 	UpdateIFrame,
-	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	IFrame,
@@ -69,7 +69,7 @@ sap.ui.define([
 				}
 			};
 
-			this.oChange = new Change(oChangeJson);
+			this.oChange = new UIChange(oChangeJson);
 			return this.oIFrame._oSetUrlPromise;
 		},
 		afterEach: function() {

@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetAbstract",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	SetAbstract,
-	Change,
+	AppDescriptorChange,
 	sinon
 ) {
 	"use strict";
@@ -15,7 +15,7 @@ sap.ui.define([
 
 	QUnit.module("applyChange", {
 		beforeEach: function () {
-			this.oChange = new Change({
+			this.oChange = new AppDescriptorChange({
 				content: {
 					"abstract": false
 				}
@@ -23,9 +23,9 @@ sap.ui.define([
 
 			this.oManifestEmpty = {};
 
-			this.oChangeAbstractSetTrue = new Change({ content: { "abstract": true } });
-			this.oChangeEmpty = new Change({ content: { } });
-			this.oChangeError = new Change({ content: { otherFlag: "test" } });
+			this.oChangeAbstractSetTrue = new AppDescriptorChange({ content: { "abstract": true } });
+			this.oChangeEmpty = new AppDescriptorChange({ content: { } });
+			this.oChangeError = new AppDescriptorChange({ content: { otherFlag: "test" } });
 		},
 		afterEach: function () {
 			sandbox.restore();

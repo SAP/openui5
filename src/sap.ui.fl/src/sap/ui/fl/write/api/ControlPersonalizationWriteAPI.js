@@ -96,7 +96,7 @@ sap.ui.define([
 	 * @property {sap.ui.core.Element} selectorElement - Control object to be used as the selector for the change
 	 * @property {object} changeSpecificData - Map of change-specific data to perform a flex change
 	 * @property {string} changeSpecificData.changeType - Change type for which a change handler is registered
-	 * @property {object} changeSpecificData.content - Content for the change, see {@link sap.ui.fl.Change#createInitialFileContent}
+	 * @property {object} changeSpecificData.content - Content for the change
 	 * @since 1.69
 	 * @private
 	 * @ui5-restricted UI5 controls that allow personalization

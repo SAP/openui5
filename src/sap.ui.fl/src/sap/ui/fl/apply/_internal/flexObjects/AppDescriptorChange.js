@@ -14,7 +14,6 @@ sap.ui.define([
 	 *
 	 * @class Flexibility AppDescriptor Change Class.
 	 * @extends sap.ui.fl.apply._internal.flexObjects.FlexObject
-	 * @namespace sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange
 	 * @alias sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange
 	 * @since 1.105
 	 * @version ${version}

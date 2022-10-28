@@ -25,7 +25,6 @@ sap.ui.define([
 	"sap/ui/fl/library",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
@@ -58,7 +57,6 @@ sap.ui.define([
 	flLibrary,
 	ChangesWriteAPI,
 	ControlVariantApplyAPI,
-	Change,
 	Layer,
 	JSONModel,
 	flUtils,
@@ -82,7 +80,7 @@ sap.ui.define([
 
 	function prepareAndExecute(oFlexCommand) {
 		return Promise.resolve()
-		.then(oFlexCommand.prepare.bind(oFlexCommand, {generator: "myFancyGenerator"}))
+		.then(oFlexCommand.prepare.bind(oFlexCommand, {generator: "myFancyGenerator", layer: Layer.CUSTOMER}))
 		.then(oFlexCommand.execute.bind(oFlexCommand));
 	}
 
@@ -861,8 +859,8 @@ sap.ui.define([
 				},
 				support: {}
 			};
-			var oChange1 = new Change(oChangeContent1);
-			var oChange2 = new Change(oChangeContent2);
+			var oChange1 = RtaQunitUtils.createUIChange(oChangeContent1);
+			var oChange2 = RtaQunitUtils.createUIChange(oChangeContent2);
 			this.command4._oPreparedChange = oChange1;
 			this.command5._oPreparedChange = oChange2;
 
@@ -891,8 +889,8 @@ sap.ui.define([
 				},
 				support: {}
 			};
-			var oChange1 = new Change(oChangeContent1);
-			var oChange2 = new Change(oChangeContent2);
+			var oChange1 = RtaQunitUtils.createUIChange(oChangeContent1);
+			var oChange2 = RtaQunitUtils.createUIChange(oChangeContent2);
 			this.command4._oPreparedChange = oChange1;
 			this.command5._oPreparedChange = oChange2;
 
@@ -1074,7 +1072,7 @@ sap.ui.define([
 			this.oCommandStack.push(this.oFlexCommand);
 
 			return Promise.resolve()
-				.then(this.oFlexCommand.prepare.bind(this.oFlexCommand, {}))
+				.then(this.oFlexCommand.prepare.bind(this.oFlexCommand, {layer: Layer.CUSTOMER}))
 				.then(this.oCommandStack.execute.bind(this.oCommandStack))
 				.then(function () {
 					var oChange = this.oFlexCommand.getPreparedChange();
@@ -1086,10 +1084,7 @@ sap.ui.define([
 							assert.ok(true, "then a Promise.resolve() is returned on Stack.undo()");
 							assert.ok(this.oWriteAPIRevertStub.calledWithExactly({change: oChange, element: this.oButton}), "then PersistenceWriteAPI.remove called with required parameters");
 						}.bind(this));
-				}.bind(this))
-				.catch(function(oError) {
-					assert.ok(false, "catch must never be called - Error: " + oError);
-				});
+				}.bind(this));
 		});
 
 		QUnit.test("when change handler is not available", function (assert) {
@@ -1220,9 +1215,9 @@ sap.ui.define([
 				assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
 				assert.strictEqual(oMoveCommand.getPreparedChange().getOriginalSelector().id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
 				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggregation is written to the change content");
-				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().source.selector.id, oMoveCommand.getPreparedChange().getDependentSelector().source.id, "and the content of the change is also adjusted");
-				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().target.selector.id, oMoveCommand.getPreparedChange().getDependentSelector().target.id, "and the content of the change is also adjusted");
-				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().movedElements[0].selector.id, oMoveCommand.getPreparedChange().getDependentSelector().movedElements[0].id, "and the content of the change is also adjusted");
+				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().source.selector.id, oMoveCommand.getPreparedChange().getDependentSelectors().source.id, "and the content of the change is also adjusted");
+				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().target.selector.id, oMoveCommand.getPreparedChange().getDependentSelectors().target.id, "and the content of the change is also adjusted");
+				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().movedElements[0].selector.id, oMoveCommand.getPreparedChange().getDependentSelectors().movedElements[0].id, "and the content of the change is also adjusted");
 				assert.notEqual(oMoveCommand.getMovedElements()[0].element.getId(), this.oText1.getId(), "and the moved element is not the UI control anymore");
 				var oTextItem = this.oItemTemplate.getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 				assert.strictEqual(oMoveCommand.getMovedElements()[0].element, oTextItem, "the moved element is the corresponding control in the template");

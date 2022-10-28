@@ -7,12 +7,14 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	// "sap/ui/core/UIComponent",
 	// "sap/ui/mdc/TableDelegate",
-	"sap/ui/fl/changeHandler/MoveControls",
-	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/changeHandler/MoveControls",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
@@ -21,12 +23,14 @@ sap.ui.define([
 	JsControlTreeModifier,
 	// UIComponent,
 	// TableDelegate,
-	MoveControls,
-	ChangeHandlerStorage,
 	Applier,
 	Reverter,
+	FlexObjectFactory,
+	States,
+	MoveControls,
+	ChangeHandlerStorage,
 	Condenser,
-	Change,
+	Layer,
 	sinon
 ) {
 	"use strict";
@@ -67,7 +71,8 @@ sap.ui.define([
 		.then(function(aChangeDefinitions) {
 			var aChanges = [];
 			aChangeDefinitions.forEach(function(oChangeDefinition) {
-				aChanges.push(new Change(Change.createInitialFileContent(oChangeDefinition)));
+				oChangeDefinition.layer = Layer.VENDOR;
+				aChanges.push(FlexObjectFactory.createFromFileContent(oChangeDefinition));
 			});
 			assert.equal(aChanges.length, iNumber, "Expected number of changes: " + iNumber);
 			return aChanges;
@@ -121,7 +126,7 @@ sap.ui.define([
 
 	function setPersistedState(aChanges, aIndicesForChangeState) {
 		aIndicesForChangeState.forEach(function(iIndex) {
-			aChanges[iIndex].setState(Change.states.PERSISTED);
+			aChanges[iIndex].setState(States.LifecycleState.PERSISTED);
 		});
 	}
 
@@ -377,9 +382,9 @@ sap.ui.define([
 				// Initial UI [ Name, Victim, Code ]
 				// UI after applying persisted change [ Victim, Name, Code ]
 				// Target UI [ Victim, Code, Name ]
-				assert.strictEqual(this.aChanges[0].getState(), Change.states.PERSISTED, "then the persisted change is still persisted (not updated)");
+				assert.strictEqual(this.aChanges[0].getState(), States.LifecycleState.PERSISTED, "then the persisted change is still persisted (not updated)");
 				assert.strictEqual(this.aChanges[0].condenserState, "select", "then the persisted change is marked as 'selected' in the condenser");
-				assert.strictEqual(this.aChanges[1].getState(), Change.states.NEW, "then the new move is a change in state NEW");
+				assert.strictEqual(this.aChanges[1].getState(), States.LifecycleState.NEW, "then the new move is a change in state NEW");
 				assert.strictEqual(this.aChanges[1].condenserState, "select", "then the new change is marked as 'select' in the condenser");
 				assert.strictEqual(aFirstGroupElements.length, 3, sContainerElementsMsg + 3);
 				assert.strictEqual(aFirstGroupElements[0].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sVictimFieldId);
@@ -422,7 +427,7 @@ sap.ui.define([
 							aChangeStates.push(oChange.getState());
 							aCondenserStates.push(oChange.condenserState);
 						});
-						assert.propEqual(aChangeStates, [Change.states.DIRTY, Change.states.DIRTY, Change.states.DIRTY, Change.states.NEW, Change.states.NEW], "all remaining changes have the correct change state");
+						assert.propEqual(aChangeStates, [States.LifecycleState.DIRTY, States.LifecycleState.DIRTY, States.LifecycleState.DIRTY, States.LifecycleState.NEW, States.LifecycleState.NEW], "all remaining changes have the correct change state");
 						assert.propEqual(aCondenserStates, ["update", "update", "update", "select", "select"], "all remaining changes have the correct condenser state");
 						aExpectedChangeOrder = [
 							"id_1579608135402_40_moveControls",
@@ -442,7 +447,7 @@ sap.ui.define([
 					}
 
 					var aActualChangeOrder = this.aChanges.map(function(oChange) {
-						return oChange.getFileName();
+						return oChange.getId();
 					});
 					// the changes on the groups are independent - the changes done first should also come first
 					assert.deepEqual(aActualChangeOrder, aExpectedChangeOrder, "the order is correct");
@@ -484,7 +489,7 @@ sap.ui.define([
 					aChangeStates.push(oChange.getState());
 					aCondenserStates.push(oChange.condenserState);
 				});
-				assert.propEqual(aChangeStates, [Change.states.NEW], "the remaining change has the correct change state");
+				assert.propEqual(aChangeStates, [States.LifecycleState.NEW], "the remaining change has the correct change state");
 				assert.propEqual(aCondenserStates, ["select"], "the remaining change has the correct condenser state");
 			}.bind(this));
 		});
@@ -499,7 +504,7 @@ sap.ui.define([
 					aChangeStates.push(oChange.getState());
 					aCondenserStates.push(oChange.condenserState);
 				});
-				assert.propEqual(aChangeStates, [Change.states.NEW], "the remaining change has the correct change state");
+				assert.propEqual(aChangeStates, [States.LifecycleState.NEW], "the remaining change has the correct change state");
 				assert.propEqual(aCondenserStates, ["select"], "the remaining change has the correct condenser state");
 			}.bind(this));
 		});
@@ -553,7 +558,7 @@ sap.ui.define([
 							aChangeStates.push(oChange.getState());
 							aCondenserStates.push(oChange.condenserState);
 						});
-						assert.propEqual(aChangeStates, [Change.states.PERSISTED, Change.states.PERSISTED, Change.states.PERSISTED], "all remaining changes have change state 'PERSISTED'");
+						assert.propEqual(aChangeStates, [States.LifecycleState.PERSISTED, States.LifecycleState.PERSISTED, States.LifecycleState.PERSISTED], "all remaining changes have change state 'PERSISTED'");
 						assert.propEqual(aCondenserStates, ["select", "select", "select"], "all remaining changes have condenser state 'select' - no position changed on the UI");
 					}
 
@@ -672,7 +677,7 @@ sap.ui.define([
 				this.aChanges = aLoadedChanges;
 				return applyChangeSequentially(aLoadedChanges);
 			}.bind(this)).then(function() {
-				// mix in some objects that are not of type sap.ui.fl.Change
+				// mix in some objects that are not of type sap.ui.fl.apply._internal.flexObjects.UIChange
 				var aChanges = [].concat(this.aChanges);
 				aChanges.splice(0, 0, "not a change");
 				aChanges.splice(20, 0, {type: "variant"});
@@ -691,10 +696,11 @@ sap.ui.define([
 				this.aChanges = aLoadedChanges;
 				return applyChangeSequentially(aLoadedChanges);
 			}.bind(this)).then(function() {
-				// mix in some objects that are not of type sap.ui.fl.Change
+				// mix in some objects that are not of type sap.ui.fl.apply._internal.flexObjects.UIChange
 				var aChanges = [].concat(this.aChanges);
-				aChanges.splice(0, 0, new Change(Change.createInitialFileContent({
-					id: "idrename0",
+				aChanges.splice(0, 0, FlexObjectFactory.createFromFileContent(({
+					fileName: "idRename0",
+					layer: Layer.CUSTOMER,
 					changeType: "renameField",
 					reference: "sap.ui.rta.test.Component",
 					selector: {
@@ -702,8 +708,9 @@ sap.ui.define([
 						idIsLocal: true
 					}
 				})));
-				aChanges.splice(20, 0, new Change(Change.createInitialFileContent({
-					id: "idrename1",
+				aChanges.splice(20, 0, FlexObjectFactory.createFromFileContent(({
+					fileName: "idRename1",
+					layer: Layer.CUSTOMER,
 					changeType: "renameField",
 					reference: "sap.ui.rta.test.Component",
 					selector: {
@@ -714,8 +721,8 @@ sap.ui.define([
 				return Condenser.condense(oAppComponent, aChanges);
 			}.bind(this)).then(function(aRemainingChanges) {
 				assert.strictEqual(aRemainingChanges.length, 12, "Expected number of remaining changes: " + 12);
-				assert.strictEqual(aRemainingChanges[0].getId(), "idrename0", "the not applied UI Change was sorted correctly");
-				assert.deepEqual(aRemainingChanges[4].getId(), "idrename1", "the not applied UI Change was sorted correctly");
+				assert.strictEqual(aRemainingChanges[0].getId(), "idRename0", "the not applied UI Change was sorted correctly");
+				assert.deepEqual(aRemainingChanges[4].getId(), "idRename1", "the not applied UI Change was sorted correctly");
 			});
 		});
 

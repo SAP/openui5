@@ -57,9 +57,9 @@ sap.ui.define([
 			if (sSubSection === "variants") {
 				oFlexObject = FlexObjectFactory.createCompVariant(oCompVariantChangeDefinition);
 			} else {
-				oFlexObject = new UpdatableChange(oCompVariantChangeDefinition);
+				oFlexObject = FlexObjectFactory.createFromFileContent(oCompVariantChangeDefinition, UpdatableChange);
 			}
-			oFlexObject.setState(States.PERSISTED); // prevent persisting these anew
+			oFlexObject.setState(States.LifecycleState.PERSISTED); // prevent persisting these anew
 			return oFlexObject;
 		});
 

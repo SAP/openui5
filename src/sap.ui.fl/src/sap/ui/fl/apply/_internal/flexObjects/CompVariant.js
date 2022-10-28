@@ -57,7 +57,7 @@ sap.ui.define([
 				 * TODO: When the FL Variant is also a FlexObject, try to consolidate RevertData from both
 				 */
 				revertData: {
-					type: "sap.ui.fl.apply._internal.flexObjects.CompVariantRevertData",
+					type: "sap.ui.base.ManagedObject", // "sap.ui.fl.apply._internal.flexObjects.CompVariantRevertData"
 					multiple: true,
 					singularName: "revertData",
 					defaultValue: []
@@ -66,7 +66,7 @@ sap.ui.define([
 				 * Changes belonging to the variant
 				 */
 				changes: {
-					type: "sap.ui.fl.Change",
+					type: "sap.ui.base.ManagedObject", // "sap.ui.fl.apply._internal.flexObjects.FlexObject"
 					multiple: true,
 					defaultValue: []
 				}
@@ -234,7 +234,7 @@ sap.ui.define([
 	 */
 	CompVariant.prototype.storeFavorite = function (bFavorite) {
 		if (bFavorite !== this.getFavorite()) {
-			this.setState(States.DIRTY);
+			this.setState(States.LifecycleState.DIRTY);
 			this.setFavorite(bFavorite);
 		}
 	};
@@ -268,7 +268,7 @@ sap.ui.define([
 	 */
 	CompVariant.prototype.storeExecuteOnSelection = function (bExecuteOnSelection) {
 		if (bExecuteOnSelection !== this.getExecuteOnSelection()) {
-			this.setState(States.DIRTY);
+			this.setState(States.LifecycleState.DIRTY);
 			this.setExecuteOnSelection(bExecuteOnSelection);
 		}
 	};
@@ -293,7 +293,7 @@ sap.ui.define([
 	 */
 	CompVariant.prototype.storeContexts = function (mContexts) {
 		this.setContexts(mContexts);
-		this.setState(States.DIRTY);
+		this.setState(States.LifecycleState.DIRTY);
 	};
 
 	return CompVariant;

@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	AddLibrary,
-	Change,
+	AppDescriptorChange,
 	sinon
 ) {
 	"use strict";
@@ -15,8 +15,10 @@ sap.ui.define([
 
 	QUnit.module("applyChange", {
 		beforeEach: function () {
-			this.oChange = new Change({
-				changeType: "appdescr_ui5_addLibraries",
+			this.oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addLibraries"
+				},
 				content: {
 					libraries: {
 						"sap.me": {
@@ -199,7 +201,7 @@ sap.ui.define([
 				}
 			};
 
-			var oChange = new Change({
+			var oChange = new AppDescriptorChange({
 				content: {
 					libraries: {
 						"descriptor.mocha133": {

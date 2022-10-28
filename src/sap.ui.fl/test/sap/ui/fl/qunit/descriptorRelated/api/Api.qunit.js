@@ -2219,7 +2219,7 @@ sap.ui.define([
 					id: "a.id",
 					reference: "a.reference",
 					layer: Layer.CUSTOMER,
-					packageName: '$TMP'
+					packageName: "$TMP"
 				})
 			});
 			sandbox.stub(Settings, "getInstance").resolves(
@@ -2296,8 +2296,7 @@ sap.ui.define([
 
 	QUnit.module("DescriptorVariantFactory - ATO true and app variant already published", {
 		beforeEach: function() {
-			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest");
-			this._fStubSend.resolves({
+			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id: "a.id",
 					reference: "a.reference",
@@ -2319,7 +2318,6 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("new - submit", function(assert) {
-			var that = this;
 			return DescriptorVariantFactory.createNew({
 				id: "a.id",
 				reference: "a.reference",
@@ -2328,12 +2326,11 @@ sap.ui.define([
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?sap-language=EN');
-			});
+				assert.equal(this._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?sap-language=EN');
+			}.bind(this));
 		});
 
 		QUnit.test("Smart Business: new - submit", function(assert) {
-			var that = this;
 			return DescriptorVariantFactory.createNew({
 				id: "a.id",
 				reference: "a.reference",
@@ -2344,30 +2341,28 @@ sap.ui.define([
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN');
-			});
+				assert.equal(this._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN');
+			}.bind(this));
 		});
 
 		QUnit.test("Smart Business: for existing - submit", function(assert) {
-			var that = this;
 			return DescriptorVariantFactory.createForExisting("a.id")
-				.then(function(oDescriptorVariant) {
-					return oDescriptorVariant.submit();
-				}).then(function(oResponse) {
-					assert.notEqual(oResponse, null);
-					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION&sap-language=EN');
-				});
+			.then(function(oDescriptorVariant) {
+				return oDescriptorVariant.submit();
+			}).then(function(oResponse) {
+				assert.notEqual(oResponse, null);
+				assert.equal(this._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION&sap-language=EN');
+			}.bind(this));
 		});
 
 		QUnit.test("Smart Business: delete - submit", function(assert) {
-			var that = this;
 			return DescriptorVariantFactory.createDeletion("a.id")
-				.then(function(oDescriptorVariant) {
-					return oDescriptorVariant.submit();
-				}).then(function(oResponse) {
-					assert.notEqual(oResponse, null);
-					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION');
-				});
+			.then(function(oDescriptorVariant) {
+				return oDescriptorVariant.submit();
+			}).then(function(oResponse) {
+				assert.notEqual(oResponse, null);
+				assert.equal(this._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION');
+			}.bind(this));
 		});
 	});
 

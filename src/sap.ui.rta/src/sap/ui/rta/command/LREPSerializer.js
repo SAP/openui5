@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/rta/command/FlexCommand",
 	"sap/ui/rta/command/AppDescriptorCommand",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/Change",
 	"sap/ui/dt/ElementUtil",
 	"sap/base/Log",
 	"sap/ui/fl/write/api/PersistenceWriteAPI"
@@ -15,7 +14,6 @@ sap.ui.define([
 	FlexCommand,
 	AppDescriptorCommand,
 	FlUtils,
-	Change,
 	ElementUtil,
 	Log,
 	PersistenceWriteAPI
@@ -112,9 +110,6 @@ sap.ui.define([
 						var oAppComponent = oCommand.getAppComponent();
 						if (oAppComponent) {
 							var oPreparedChange = oCommand.getPreparedChange();
-							if (oPreparedChange.getState() === Change.states.DELETED) {
-								oPreparedChange.setState(Change.states.NEW);
-							}
 							if (!this._isPersistedChange(oPreparedChange)) {
 								PersistenceWriteAPI.add({change: oCommand.getPreparedChange(), selector: oAppComponent});
 							}

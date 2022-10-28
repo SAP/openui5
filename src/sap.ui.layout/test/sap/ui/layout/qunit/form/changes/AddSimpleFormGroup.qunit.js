@@ -2,32 +2,28 @@
 sap.ui.define([
 	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
 	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Title",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	AddSimpleFormGroup,
 	SimpleForm,
-	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Title,
 	Label,
 	Input,
-	jQuery,
-	oCore
+	oCore,
+	FlexTestAPI
 ) {
 	"use strict";
 
-
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform with title and having old index", {
 		beforeEach: function () {
-
 			this.oTitle0 = new Title({id: "Title0", text: "Title 0"});
 			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
 			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
@@ -39,50 +35,6 @@ sap.ui.define([
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
 			oCore.applyChanges();
-
-			var mCommonChangeData = {
-				"selector": {
-					"id": "SimpleForm"
-				},
-				"content": {
-					"group": {
-
-					}
-				},
-				"texts": {
-					"groupLabel": {
-						"value": "New Control"
-					}
-				},
-				"changeType": "addSimpleFormGroup"
-			};
-
-			var oLegacyChange = jQuery.extend(true, {}, mCommonChangeData);
-			oLegacyChange.content.group = {
-				"id": "newId",
-				"index": 5
-			};
-			this.oLegacyChangeWrapper = new Change(oLegacyChange);
-
-			var oChangeWithLocalIds = jQuery.extend(true, {}, mCommonChangeData);
-			oChangeWithLocalIds.content.group = {
-				"selector": {
-					"id": "newId",
-					"idIsLocal": true
-				},
-				"index": 5
-			};
-			this.oChangeWithLocalIdsWrapper = new Change(oChangeWithLocalIds);
-
-			var oChangeWithGlobalIds = jQuery.extend(true, {}, mCommonChangeData);
-			oChangeWithGlobalIds.content.group = {
-				"selector": {
-					"id": "newId",
-					"idIsLocal": false
-				},
-				"index": 5
-			};
-			this.oChangeWithGlobalIdsWrapper = new Change(oChangeWithGlobalIds);
 
 			this.oMockedComponent = {
 				createId: function (sString) {
@@ -98,32 +50,42 @@ sap.ui.define([
 				modifier: JsControlTreeModifier
 			};
 
-			this.oChangeHandler = AddSimpleFormGroup;
-			this.oXmlTreeModifier = XmlTreeModifier;
+			return FlexTestAPI.createFlexObject({
+				changeSpecificData: {
+					changeType: "addSimpleFormGroup",
+					index: 5,
+					newLabel: "New Control",
+					newControlId: "newId"
+				},
+				selector: this.oSimpleForm,
+				appComponent: this.oMockedComponent
+			}).then(function(oChange) {
+				this.oChange = oChange;
+			}.bind(this));
 		},
-
 		afterEach: function () {
 			this.oSimpleForm.destroy();
 		}
 	});
 
-	function _testApplyChangeWithJsControlTreeModifier (oChange, sExpectedId, iIndex, assert){
-		return this.oChangeHandler.applyChange(oChange, this.oSimpleForm, this.mPropertyBag)
+	function testApplyChangeWithJsControlTreeModifier (oChange, sExpectedId, iIndex, assert){
+		return AddSimpleFormGroup.applyChange(oChange, this.oSimpleForm, this.mPropertyBag)
 			.then(function() {
 				assert.equal(this.oSimpleForm.getContent()[iIndex].getId(), sExpectedId, "the FormContainer has the correct id");
 				assert.equal(this.oSimpleForm.getContent()[iIndex].getText(), "New Control", "the FormContainer is added");
 			}.bind(this));
 	}
 
-	function _testApplyChangeWithXMLTreeModifier (oXmlString, oChange, sExpectedId, iIndex, assert){
+	function testApplyChangeWithXMLTreeModifier (oXmlString, oChange, sExpectedId, iIndex, assert){
 		var oDOMParser = new DOMParser();
 		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 
 		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 
-		return this.oChangeHandler.applyChange(this.oLegacyChangeWrapper, this.oXmlSimpleForm, {
-			modifier: this.oXmlTreeModifier,
-			view: this.oXmlDocument
+		return AddSimpleFormGroup.applyChange(this.oChange, this.oXmlSimpleForm, {
+			modifier: XmlTreeModifier,
+			view: this.oXmlDocument,
+			appComponent: this.oMockedComponent
 		})
 			.then(function() {
 				this.testControl = this.oXmlSimpleForm.childNodes[0].childNodes[iIndex];
@@ -131,16 +93,8 @@ sap.ui.define([
 			}.bind(this));
 	}
 
-	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert);
-	});
-
-	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing local ids", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 5, assert);
-	});
-
-	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing global ids", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 5, assert);
+	QUnit.test("when calling applyChange with JsControlTreeModifier with a change", function (assert) {
+		return testApplyChangeWithJsControlTreeModifier.call(this, this.oChange, "component---newId", 5, assert);
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
@@ -157,12 +111,11 @@ sap.ui.define([
 			"</form:SimpleForm>" +
 			"</mvc:View>";
 
-		return _testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 5, assert);
+		return testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 5, assert);
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform without title and having old index", {
 		beforeEach: function () {
-
 			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
 			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
 			this.oInput0 = new Input({id: "Input0", visible: true});
@@ -173,50 +126,6 @@ sap.ui.define([
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
 			oCore.applyChanges();
-
-			var mCommonChangeData = {
-				"selector": {
-					"id": "SimpleForm"
-				},
-				"content": {
-					"group": {
-
-					}
-				},
-				"texts": {
-					"groupLabel": {
-						"value": "New Control"
-					}
-				},
-				"changeType": "addSimpleFormGroup"
-			};
-
-			var oLegacyChange = jQuery.extend(true, {}, mCommonChangeData);
-			oLegacyChange.content.group = {
-				"id": "newId",
-				"index": 0
-			};
-			this.oLegacyChangeWrapper = new Change(oLegacyChange);
-
-			var oChangeWithLocalIds = jQuery.extend(true, {}, mCommonChangeData);
-			oChangeWithLocalIds.content.group = {
-				"selector": {
-					"id": "newId",
-					"idIsLocal": true
-				},
-				"index": 0
-			};
-			this.oChangeWithLocalIdsWrapper = new Change(oChangeWithLocalIds);
-
-			var oChangeWithGlobalIds = jQuery.extend(true, {}, mCommonChangeData);
-			oChangeWithGlobalIds.content.group = {
-				"selector": {
-					"id": "newId",
-					"idIsLocal": false
-				},
-				"index": 0
-			};
-			this.oChangeWithGlobalIdsWrapper = new Change(oChangeWithGlobalIds);
 
 			this.oMockedComponent = {
 				createId: function (sString) {
@@ -232,25 +141,26 @@ sap.ui.define([
 				modifier: JsControlTreeModifier
 			};
 
-			this.oChangeHandler = AddSimpleFormGroup;
-			this.oXmlTreeModifier = XmlTreeModifier;
+			return FlexTestAPI.createFlexObject({
+				changeSpecificData: {
+					changeType: "addSimpleFormGroup",
+					index: 0,
+					newLabel: "New Control",
+					newControlId: "newId"
+				},
+				selector: this.oSimpleForm,
+				appComponent: this.oMockedComponent
+			}).then(function(oChange) {
+				this.oChange = oChange;
+			}.bind(this));
 		},
-
 		afterEach: function () {
 			this.oSimpleForm.destroy();
 		}
 	});
 
-	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 0, assert);
-	});
-
-	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing local ids", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 0, assert);
-	});
-
-	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing global ids", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 0, assert);
+	QUnit.test("when calling applyChange with JsControlTreeModifier with a change", function (assert) {
+		return testApplyChangeWithJsControlTreeModifier.call(this, this.oChange, "component---newId", 0, assert);
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
@@ -266,54 +176,21 @@ sap.ui.define([
 			"</form:SimpleForm>" +
 			"</mvc:View>";
 
-		return _testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 0, assert);
-	});
-
-	QUnit.test("applyChange shall raise an exception if the control is invalid", function (assert) {
-		var oControl;
-
-		oControl = {};
-
-		//Call CUT
-		return this.oChangeHandler.applyChange(this.oLegacyChangeWrapper, oControl, {modifier: this.JsControlTreeModifier})
-			.catch(function(oError) {
-				assert.ok(oError, "Shall raise an exception");
-		});
-	});
-
-	QUnit.test('when calling completeChangeContent with relative index', function (assert) {
-		var oChange = {
-			"selector": {
-				"id": "SimpleForm"
-			},
-			"changeType": "addSimpleFormGroup",
-			"content": {}
-		};
-		var oChangeWrapper = new Change(oChange);
-		var oSpecificChangeInfo = {index: 5, newControlId: "newId", newLabel: "New Control"};
-
-		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo, this.mPropertyBag);
-
-		assert.equal(oChange.content.group.selector.id, "newId", "newControlId has been added to the change");
-		assert.equal(oChange.content.group.relativeIndex, 5, "index has been added to the change");
-		assert.equal(oChange.texts.groupLabel.value, "New Control", "groupLabel has been added to the change");
+		return testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oChange, "New Control", 0, assert);
 	});
 
 	QUnit.test('when calling completeChangeContent with incomplete specificChangeInfo', function (assert) {
-		var oChangeWrapper = new Change({
-			"selector": {
-				"id": "SimpleForm"
+		return FlexTestAPI.createFlexObject({
+			changeSpecificData: {
+				changeType: "addSimpleFormGroup",
+				index: 0,
+				newControlId: "newId"
 			},
-			"changeType": "addSimpleFormGroup",
-			"content": {}
+			selector: this.oSimpleForm,
+			appComponent: this.oMockedComponent
+		}).catch(function(oError) {
+			assert.strictEqual(oError.message, "oSpecificChangeInfo.newLabel attribute required", "the undefined value raises an error message");
 		});
-
-		assert.throws(function () {
-				this.oChangeHandler.completeChangeContent(oChangeWrapper, this.oSimpleForm, this.mPropertyBag);
-			},
-			new Error("oSpecificChangeInfo.newLabel attribute required"),
-			"the undefined value raises an error message"
-		);
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform with title and having relative index", {
@@ -330,50 +207,6 @@ sap.ui.define([
 			this.oSimpleForm.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			var mCommonChangeData = {
-				"selector": {
-					"id": "SimpleForm"
-				},
-				"content": {
-					"group": {
-
-					}
-				},
-				"texts": {
-					"groupLabel": {
-						"value": "New Control"
-					}
-				},
-				"changeType": "addSimpleFormGroup"
-			};
-
-			var oLegacyChange = jQuery.extend(true, {}, mCommonChangeData);
-			oLegacyChange.content.group = {
-				"id": "newId",
-				"relativeIndex": 1
-			};
-			this.oLegacyChangeWrapper = new Change(oLegacyChange);
-
-			var oChangeWithLocalIds = jQuery.extend(true, {}, mCommonChangeData);
-			oChangeWithLocalIds.content.group = {
-				"selector": {
-					"id": "newId",
-					"idIsLocal": true
-				},
-				"relativeIndex": 1
-			};
-			this.oChangeWithLocalIdsWrapper = new Change(oChangeWithLocalIds);
-
-			var oChangeWithGlobalIds = jQuery.extend(true, {}, mCommonChangeData);
-			oChangeWithGlobalIds.content.group = {
-				"selector": {
-					"id": "newId",
-					"idIsLocal": false
-				},
-				"relativeIndex": 1
-			};
-			this.oChangeWithGlobalIdsWrapper = new Change(oChangeWithGlobalIds);
-
 			this.oMockedComponent = {
 				createId: function (sString) {
 					return "component---" + sString;
@@ -387,26 +220,26 @@ sap.ui.define([
 				appComponent: this.oMockedComponent,
 				modifier: JsControlTreeModifier
 			};
-
-			this.oChangeHandler = AddSimpleFormGroup;
-			this.oXmlTreeModifier = XmlTreeModifier;
+			return FlexTestAPI.createFlexObject({
+				changeSpecificData: {
+					changeType: "addSimpleFormGroup",
+					index: 1,
+					newLabel: "New Control",
+					newControlId: "newId"
+				},
+				selector: this.oSimpleForm,
+				appComponent: this.oMockedComponent
+			}).then(function(oChange) {
+				this.oChange = oChange;
+			}.bind(this));
 		},
-
 		afterEach: function () {
 			this.oSimpleForm.destroy();
 		}
 	});
 
-	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert);
-	});
-
 	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing local ids", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 5, assert);
-	});
-
-	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing global ids", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 5, assert);
+		return testApplyChangeWithJsControlTreeModifier.call(this, this.oChange, "component---newId", 5, assert);
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
@@ -423,12 +256,11 @@ sap.ui.define([
 			"</form:SimpleForm>" +
 			"</mvc:View>";
 
-		return _testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 5, assert);
+		return testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oChange, "New Control", 5, assert);
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform without title and having relative index", {
 		beforeEach: function () {
-
 			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
 			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
 			this.oInput0 = new Input({id: "Input0", visible: true});
@@ -439,50 +271,6 @@ sap.ui.define([
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
 			oCore.applyChanges();
-
-			var mCommonChangeData = {
-				"selector": {
-					"id": "SimpleForm"
-				},
-				"content": {
-					"group": {
-
-					}
-				},
-				"texts": {
-					"groupLabel": {
-						"value": "New Control"
-					}
-				},
-				"changeType": "addSimpleFormGroup"
-			};
-
-			var oLegacyChange = jQuery.extend(true, {}, mCommonChangeData);
-			oLegacyChange.content.group = {
-				"id": "newId",
-				"relativeIndex": 0
-			};
-			this.oLegacyChangeWrapper = new Change(oLegacyChange);
-
-			var oChangeWithLocalIds = jQuery.extend(true, {}, mCommonChangeData);
-			oChangeWithLocalIds.content.group = {
-				"selector": {
-					"id": "newId",
-					"idIsLocal": true
-				},
-				"relativeIndex": 0
-			};
-			this.oChangeWithLocalIdsWrapper = new Change(oChangeWithLocalIds);
-
-			var oChangeWithGlobalIds = jQuery.extend(true, {}, mCommonChangeData);
-			oChangeWithGlobalIds.content.group = {
-				"selector": {
-					"id": "newId",
-					"idIsLocal": false
-				},
-				"relativeIndex": 0
-			};
-			this.oChangeWithGlobalIdsWrapper = new Change(oChangeWithGlobalIds);
 
 			this.oMockedComponent = {
 				createId: function (sString) {
@@ -497,26 +285,26 @@ sap.ui.define([
 				appComponent: this.oMockedComponent,
 				modifier: JsControlTreeModifier
 			};
-
-			this.oChangeHandler = AddSimpleFormGroup;
-			this.oXmlTreeModifier = XmlTreeModifier;
+			return FlexTestAPI.createFlexObject({
+				changeSpecificData: {
+					changeType: "addSimpleFormGroup",
+					index: 0,
+					newLabel: "New Control",
+					newControlId: "newId"
+				},
+				selector: this.oSimpleForm,
+				appComponent: this.oMockedComponent
+			}).then(function(oChange) {
+				this.oChange = oChange;
+			}.bind(this));
 		},
-
 		afterEach: function () {
 			this.oSimpleForm.destroy();
 		}
 	});
 
-	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 0, assert);
-	});
-
 	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing local ids", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 0, assert);
-	});
-
-	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing global ids", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 0, assert);
+		return testApplyChangeWithJsControlTreeModifier.call(this, this.oChange, "component---newId", 0, assert);
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
@@ -532,12 +320,11 @@ sap.ui.define([
 			"</form:SimpleForm>" +
 			"</mvc:View>";
 
-		return _testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 0, assert);
+		return testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oChange, "New Control", 0, assert);
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.AddSimpleFormGroup on simpleform with two form containers having title and relative index", {
 		beforeEach: function () {
-
 			this.oTitle0 = new Title({id: "Title0", text: "Title 0"});
 			this.oLabel0 = new Label({id: "Label0", text: "Label 0", visible: true});
 			this.oLabel1 = new Label({id: "Label1", text: "Label 1"});
@@ -557,50 +344,6 @@ sap.ui.define([
 			this.oSimpleForm.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			var mCommonChangeData = {
-				"selector": {
-					"id": "SimpleForm"
-				},
-				"content": {
-					"group": {
-
-					}
-				},
-				"texts": {
-					"groupLabel": {
-						"value": "New Control"
-					}
-				},
-				"changeType": "addSimpleFormGroup"
-			};
-
-			var oLegacyChange = jQuery.extend(true, {}, mCommonChangeData);
-			oLegacyChange.content.group = {
-				"id": "newId",
-				"relativeIndex": 1
-			};
-			this.oLegacyChangeWrapper = new Change(oLegacyChange);
-
-			var oChangeWithLocalIds = jQuery.extend(true, {}, mCommonChangeData);
-			oChangeWithLocalIds.content.group = {
-				"selector": {
-					"id": "newId",
-					"idIsLocal": true
-				},
-				"relativeIndex": 1
-			};
-			this.oChangeWithLocalIdsWrapper = new Change(oChangeWithLocalIds);
-
-			var oChangeWithGlobalIds = jQuery.extend(true, {}, mCommonChangeData);
-			oChangeWithGlobalIds.content.group = {
-				"selector": {
-					"id": "newId",
-					"idIsLocal": false
-				},
-				"relativeIndex": 1
-			};
-			this.oChangeWithGlobalIdsWrapper = new Change(oChangeWithGlobalIds);
-
 			this.oMockedComponent = {
 				createId: function (sString) {
 					return "component---" + sString;
@@ -614,38 +357,38 @@ sap.ui.define([
 				appComponent: this.oMockedComponent,
 				modifier: JsControlTreeModifier
 			};
-
-			this.oChangeHandler = AddSimpleFormGroup;
-			this.oXmlTreeModifier = XmlTreeModifier;
+			return FlexTestAPI.createFlexObject({
+				changeSpecificData: {
+					changeType: "addSimpleFormGroup",
+					index: 1,
+					newLabel: "New Control",
+					newControlId: "newId"
+				},
+				selector: this.oSimpleForm,
+				appComponent: this.oMockedComponent
+			}).then(function(oChange) {
+				this.oChange = oChange;
+			}.bind(this));
 		},
-
 		afterEach: function () {
 			this.oSimpleForm.destroy();
 		}
 	});
 
-	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert);
-	});
-
 	QUnit.test("when calling applyChange with JsControlTreeModifier twice with the same control to add", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oLegacyChangeWrapper, "newId", 5, assert)
-			// add the same change another time
-			.then(this.oChangeHandler.applyChange.bind(this.oChangeHandler, this.oLegacyChangeWrapper, this.oSimpleForm, this.mPropertyBag))
-				.catch(function(oError) {
-					assert.ok(oError.message.indexOf("Control to be created already exists") >= 0,
-						"the second change to add the same group throws a not applicable info message");
-					assert.equal(this.oSimpleForm.getContent()[5].getId(), "newId", "the FormContainer has the correct id");
-					assert.equal(this.oSimpleForm.getContent()[5].getText(), "New Control", "the FormContainer is still available");
-				}.bind(this));
+		return testApplyChangeWithJsControlTreeModifier.call(this, this.oChange, "component---newId", 5, assert)
+		// add the same change another time
+		.then(AddSimpleFormGroup.applyChange.bind(AddSimpleFormGroup, this.oChange, this.oSimpleForm, this.mPropertyBag))
+		.catch(function(oError) {
+			assert.ok(oError.message.indexOf("Control to be created already exists") >= 0,
+				"the second change to add the same group throws a not applicable info message");
+			assert.equal(this.oSimpleForm.getContent()[5].getId(), "component---newId", "the FormContainer has the correct id");
+			assert.equal(this.oSimpleForm.getContent()[5].getText(), "New Control", "the FormContainer is still available");
+		}.bind(this));
 	});
 
-	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing local ids", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithLocalIdsWrapper, "component---newId", 5, assert);
-	});
-
-	QUnit.test("when calling applyChange with JsControlTreeModifier with a change containing global ids", function (assert) {
-		return _testApplyChangeWithJsControlTreeModifier.call(this, this.oChangeWithGlobalIdsWrapper, "newId", 5, assert);
+	QUnit.test("when calling applyChange with JsControlTreeModifier with a change", function (assert) {
+		return testApplyChangeWithJsControlTreeModifier.call(this, this.oChange, "component---newId", 5, assert);
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
@@ -667,6 +410,6 @@ sap.ui.define([
 			"</form:SimpleForm>" +
 			"</mvc:View>";
 
-		return _testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 5, assert);
+		return testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oChange, "New Control", 5, assert);
 	});
 });

@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetRegistrationIds",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	SetRegistrationIds,
-	Change,
+	AppDescriptorChange,
 	sinon
 ) {
 	"use strict";
@@ -15,12 +15,12 @@ sap.ui.define([
 
 	QUnit.module("applyChange", {
 		beforeEach: function () {
-			this.oChange1 = new Change({
+			this.oChange1 = new AppDescriptorChange({
 				content: {
 					registrationIds: ["F0001"]
 				}
 			});
-			this.oChange2 = new Change({
+			this.oChange2 = new AppDescriptorChange({
 				content: {
 					registrationIds: ["F0002", "F0003"]
 				}

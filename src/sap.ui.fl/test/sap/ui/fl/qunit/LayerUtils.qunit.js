@@ -1,14 +1,14 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Change,
+	FlexObject,
 	Layer,
 	LayerUtils,
 	Settings,
@@ -285,8 +285,8 @@ sap.ui.define([
 			this.vChanges = [
 				{layer: Layer.USER},
 				{layer: Layer.CUSTOMER},
-				new Change({layer: Layer.USER}),
-				new Change({layer: Layer.CUSTOMER})
+				new FlexObject({layer: Layer.USER}),
+				new FlexObject({layer: Layer.CUSTOMER})
 			];
 		}
 	}, function() {

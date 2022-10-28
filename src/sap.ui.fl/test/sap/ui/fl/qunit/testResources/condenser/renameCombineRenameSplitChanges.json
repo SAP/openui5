@@ -1,6 +1,6 @@
 [
 	{
-		"id": "id_1_renameField",
+		"fileName": "id_1_renameField",
 		"changeType": "renameField",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -19,7 +19,7 @@
 		"creation": "2019-12-18T12:22:31.863Z"
 	},
 	{
-		"id": "id_2_combineFields",
+		"fileName": "id_2_combineFields",
 		"changeType": "combineFields",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -55,7 +55,7 @@
 		"creation": "2019-12-18T12:22:31.864Z"
 	},
 	{
-		"id": "id_3_renameField",
+		"fileName": "id_3_renameField",
 		"changeType": "renameField",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -74,7 +74,7 @@
 		"creation": "2019-12-18T12:22:31.865Z"
 	},
 	{
-		"id": "id_4_splitField",
+		"fileName": "id_4_splitField",
 		"changeType": "splitField",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {

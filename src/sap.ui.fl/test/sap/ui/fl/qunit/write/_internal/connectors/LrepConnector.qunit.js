@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
@@ -9,12 +10,12 @@ sap.ui.define([
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Change",
 	"sap/m/MessageBox",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Core"
 ], function(
 	sinon,
+	FlexObjectFactory,
 	InitialLrepConnector,
 	WriteLrepConnector,
 	WriteUtils,
@@ -22,7 +23,6 @@ sap.ui.define([
 	Version,
 	Settings,
 	Layer,
-	Change,
 	MessageBox,
 	BusyIndicator,
 	oCore
@@ -56,8 +56,10 @@ sap.ui.define([
 				setResponse: function(oDefinition) {
 					this.packageName = oDefinition.packageName;
 				},
-				getPackage: function() {
-					return this.packageName;
+				getFlexObjectMetadata: function() {
+					return {
+						packageName: this.packageName
+					};
 				}
 			};
 
@@ -328,10 +330,10 @@ sap.ui.define([
 				transport: "transportId"
 			};
 			// changes for the component
-			var oVENDORChange1 = new Change({
+			var oVENDORChange1 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "1",
+				fileName: "c1",
 				namespace: "b",
 				packageName: "$TMP",
 				changeType: "labelChange",
@@ -345,10 +347,10 @@ sap.ui.define([
 				}
 			});
 
-			var oVENDORChange2 = new Change({
+			var oVENDORChange2 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "2",
+				fileName: "c2",
 				namespace: "b",
 				packageName: "c",
 				changeType: "labelChange",
@@ -371,8 +373,8 @@ sap.ui.define([
 			};
 			var oAdjustedResponse = {
 				response: [
-					{fileName: "1"},
-					{fileName: "2"}
+					{fileName: "c1"},
+					{fileName: "c2"}
 				]
 			};
 			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
@@ -380,7 +382,7 @@ sap.ui.define([
 			sandbox.spy(BusyIndicator, "show");
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&changelist=transportId&generator=Change.createInitialFileContent";
-			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: [{name: "1"}, {name: "2"}]});
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: [{name: "c1"}, {name: "c2"}]});
 			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
 				layer: Layer.VENDOR,
@@ -406,10 +408,10 @@ sap.ui.define([
 				transport: "transportId"
 			};
 			// changes for the component
-			var oVENDORChange1 = new Change({
+			var oVENDORChange1 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "1",
+				fileName: "c1",
 				namespace: "b",
 				packageName: "$TMP",
 				changeType: "labelChange",
@@ -423,10 +425,10 @@ sap.ui.define([
 				}
 			});
 
-			var oVENDORChange2 = new Change({
+			var oVENDORChange2 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "2",
+				fileName: "c2",
 				namespace: "b",
 				packageName: "c",
 				changeType: "labelChange",
@@ -477,10 +479,10 @@ sap.ui.define([
 				transport: "ATO_NOTIFICATION"
 			};
 			// changes for the component
-			var oUserChange = new Change({
+			var oUserChange = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.USER,
-				fileName: "1",
+				fileName: "c1",
 				namespace: "b",
 				packageName: "c",
 				changeType: "labelChange",
@@ -494,10 +496,10 @@ sap.ui.define([
 				}
 			});
 
-			var oCUSTOMERChange1 = new Change({
+			var oCUSTOMERChange1 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.CUSTOMER,
-				fileName: "2",
+				fileName: "c2",
 				namespace: "b",
 				packageName: "c",
 				changeType: "labelChange",
@@ -511,10 +513,10 @@ sap.ui.define([
 				}
 			});
 
-			var oCUSTOMERChange2 = new Change({
+			var oCUSTOMERChange2 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.CUSTOMER,
-				fileName: "3",
+				fileName: "c3",
 				namespace: "b",
 				packageName: "c",
 				changeType: "labelChange",
@@ -1127,7 +1129,7 @@ sap.ui.define([
 			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: "aTransport"});
 			return WriteLrepConnector.appVariant.update(mPropertyBag).then(function () {
 				assert.ok(oStubOpenTransportSelection.calledOnce);
-				assert.equal(oStubOpenTransportSelection.getCalls()[0].args[0].getPackage(), "", "no package information is sent to get transport info");
+				assert.equal(oStubOpenTransportSelection.getCalls()[0].args[0].package, "", "no package information is sent to get transport info");
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "PUT", {
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,

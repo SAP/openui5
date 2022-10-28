@@ -3,8 +3,8 @@
 sap.ui.define([
 	"sap/ui/util/XMLHelper",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
 	"sap/ui/thirdparty/sinon-4",
@@ -12,8 +12,8 @@ sap.ui.define([
 ], function(
 	XMLHelper,
 	XMLView,
+	FlexObjectFactory,
 	AddXMLAtExtensionPoint,
-	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	sinon,
@@ -61,11 +61,11 @@ sap.ui.define([
 			'</Panel>' +
 		'</mvc:View>';
 
-	function _createXMLViewWithExtensionPoints() {
+	function createXMLViewWithExtensionPoints() {
 		return XMLHelper.parse(sXmlString, "application/xml").documentElement;
 	}
 
-	function _createAddXMLAtExtensionPointChange(sPath, sSelectorExtensionName, sProjectId) {
+	function createAddXMLAtExtensionPointChange(sPath, sSelectorExtensionName, sProjectId) {
 		var oChangeJson = {
 			moduleName: sPath,
 			reference: "sap.ui.fl.qunit.changeHander.AddXMLAtExtensionPoint",
@@ -80,12 +80,12 @@ sap.ui.define([
 			fileName: "addXMLAtExtensionPointChange",
 			projectId: sProjectId || "projectId"
 		};
-		var oChange = new Change(oChangeJson);
+		var oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
 		return oChange;
 	}
 
-	function _createAndCompleteAddXmlAtExtensionPointChange(sPath, sFragmentPath, sSelectorExtensionName, sProjectId) {
-		var oChange = _createAddXMLAtExtensionPointChange(sPath, sSelectorExtensionName, sProjectId);
+	function createAndCompleteAddXmlAtExtensionPointChange(sPath, sFragmentPath, sSelectorExtensionName, sProjectId) {
+		var oChange = createAddXMLAtExtensionPointChange(sPath, sSelectorExtensionName, sProjectId);
 		var oChangeSpecificContent1 = {
 			fragmentPath: sFragmentPath
 		};
@@ -93,7 +93,7 @@ sap.ui.define([
 		return oChange;
 	}
 
-	function _createComponent() {
+	function createComponent() {
 		return oCore.createComponent({
 			name: "testComponent",
 			id: "testComponent",
@@ -103,7 +103,7 @@ sap.ui.define([
 		});
 	}
 
-	function _createAsyncView(sViewName, oComponent) {
+	function createAsyncView(sViewName, oComponent) {
 		return oComponent.runAsOwner(function () {
 			return XMLView.create({
 				id: sViewName,
@@ -118,7 +118,7 @@ sap.ui.define([
 			this.oChangeHandler = AddXMLAtExtensionPoint;
 			this.sExtensionName = "extension";
 
-			this.oChange = _createAddXMLAtExtensionPointChange(sFragmentPath, this.sExtensionName);
+			this.oChange = createAddXMLAtExtensionPointChange(sFragmentPath, this.sExtensionName);
 			this.oChangeSpecificContent = {
 				fragmentPath: "fragments/Fragment"
 			};
@@ -136,7 +136,7 @@ sap.ui.define([
 		QUnit.test("When calling 'completeChangeContent' with complete information", function(assert) {
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
 			assert.deepEqual(this.oChange.getContent(), this.oChangeSpecificContent, "then the change specific content is in the change, but the fragment not");
-			assert.equal(this.oChange.getModuleName(), "sap/ui/fl/qunit/changeHander/AddXMLAtExtensionPoint/changes/fragments/Fragment", "and the module name is set correct");
+			assert.equal(this.oChange.getFlexObjectMetadata().moduleName, "sap/ui/fl/qunit/changeHander/AddXMLAtExtensionPoint/changes/fragments/Fragment", "and the module name is set correct");
 		});
 
 		QUnit.test("When calling 'completeChangeContent' without fragmentPath", function(assert) {
@@ -152,12 +152,12 @@ sap.ui.define([
 	QUnit.module("Given a AddXMLAtExtensionPoint Change Handler with XmlTreeModifier", {
 		beforeEach: function() {
 			this.oChangeHandler = AddXMLAtExtensionPoint;
-			this.oChange1 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint1");
-			this.oChange2 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sSecondFragmentPath, "fragments/SecondFragment", "ExtensionPoint2");
-			this.oChange3 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sThirdFragmentPath, "fragments/ThirdFragment", "ExtensionPoint3");
+			this.oChange1 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint1");
+			this.oChange2 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sSecondFragmentPath, "fragments/SecondFragment", "ExtensionPoint2");
+			this.oChange3 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sThirdFragmentPath, "fragments/ThirdFragment", "ExtensionPoint3");
 
-			this.oComponent = _createComponent();
-			this.oXmlView = _createXMLViewWithExtensionPoints();
+			this.oComponent = createComponent();
+			this.oXmlView = createXMLViewWithExtensionPoints();
 			this.oHBox = this.oXmlView.childNodes[0];
 			this.oPanel = this.oXmlView.childNodes[1];
 			this.oPanelWithoutStableId = this.oXmlView.childNodes[2];
@@ -178,7 +178,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("When applying changes on different extension points in xml control tree - apply scenario", function(assert) {
 			var oInsertAggregationSpy = sandbox.spy(XmlTreeModifier, "insertAggregation");
-			var oChange3 = _createAddXMLAtExtensionPointChange(sThirdFragmentPath, "ExtensionPoint1");
+			var oChange3 = createAddXMLAtExtensionPointChange(sThirdFragmentPath, "ExtensionPoint1");
 			var oChangeSpecificContent3 = {
 				fragmentPath: "fragments/ThirdFragment"
 			};
@@ -201,7 +201,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying changes on extension point with default value in xml control tree", function(assert) {
-			var oChange4 = _createAddXMLAtExtensionPointChange(sThirdFragmentPath, "ExtensionPoint4");
+			var oChange4 = createAddXMLAtExtensionPointChange(sThirdFragmentPath, "ExtensionPoint4");
 			var oChangeSpecificContent4 = {
 				fragmentPath: "fragments/ThirdFragment"
 			};
@@ -278,8 +278,8 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oChangeHandler = AddXMLAtExtensionPoint;
-			this.oComponent = _createComponent();
-			_createAsyncView("myView", this.oComponent).then(function (oXmlView) {
+			this.oComponent = createComponent();
+			createAsyncView("myView", this.oComponent).then(function (oXmlView) {
 				this.oXmlView = oXmlView;
 				this.oPropertyBag = {
 					modifier: JsControlTreeModifier,
@@ -301,9 +301,9 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("When applying changes on different extension points", function(assert) {
-			var oChange1 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint1");
-			var oChange2 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sSecondFragmentPath, "fragments/SecondFragment", "ExtensionPoint2");
-			var oChange4 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sThirdFragmentPath, "fragments/ThirdFragment", "ExtensionPoint1");
+			var oChange1 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint1");
+			var oChange2 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sSecondFragmentPath, "fragments/SecondFragment", "ExtensionPoint2");
+			var oChange4 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sThirdFragmentPath, "fragments/ThirdFragment", "ExtensionPoint1");
 
 			return this.oChangeHandler.applyChange(oChange1, this.oHBox, this.oPropertyBag)
 				.then(this.oChangeHandler.applyChange.bind(this.oChangeHandler, oChange2, this.oPanel, this.oPropertyBag))
@@ -321,7 +321,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying changes on extension point with default value", function(assert) {
-			var oChange3 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sFourthFragmentPath, "fragments/FourthFragment", "ExtensionPoint4");
+			var oChange3 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sFourthFragmentPath, "fragments/FourthFragment", "ExtensionPoint4");
 			return this.oChangeHandler.applyChange(oChange3, this.oPanel, this.oPropertyBag)
 				.then(function() {
 					var aPanelContent = this.oPanel.getContent();
@@ -336,7 +336,7 @@ sap.ui.define([
 				id: "myView--projectId.button",
 				aggregationName: "items"
 			}];
-			var oChange1 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint1");
+			var oChange1 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint1");
 			return this.oChangeHandler.applyChange(oChange1, this.oHBox, this.oPropertyBag)
 				.then(function() {
 					var aHBoxItems = this.oHBox.getItems();
@@ -358,7 +358,7 @@ sap.ui.define([
 				id: "myView--projectId.button",
 				aggregationName: "content"
 			}];
-			var oChange1 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint3");
+			var oChange1 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint3");
 			return this.oChangeHandler.applyChange(oChange1, this.oPanelWithoutStableId, this.oPropertyBag)
 				.then(function() {
 					var aPanelContent = this.oPanelWithoutStableId.getContent();
@@ -376,7 +376,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When extensionpoint is not existing or multiple times available with the same name in the view", function(assert) {
-			var oChange1 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint1");
+			var oChange1 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint1");
 			sandbox.stub(JsControlTreeModifier, "getExtensionPointInfo").returns(undefined);
 			return this.oChangeHandler.applyChange(oChange1, this.oHBox, this.oPropertyBag)
 				.catch(function(oError) {
@@ -392,8 +392,8 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oChangeHandler = AddXMLAtExtensionPoint;
-			this.oComponent = _createComponent();
-			_createAsyncView("myView", this.oComponent).then(function (oXmlView) {
+			this.oComponent = createComponent();
+			createAsyncView("myView", this.oComponent).then(function (oXmlView) {
 				this.oXmlView = oXmlView;
 				this.oPropertyBag = {
 					modifier: JsControlTreeModifier,
@@ -411,7 +411,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When create and apply change with extension point information", function(assert) {
-			var oChange1 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint4");
+			var oChange1 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint4");
 			var oReadyStub = sandbox.stub();
 			var oGetExtensionPointInfoSpy = sandbox.spy(JsControlTreeModifier, "getExtensionPointInfo");
 			oChange1.getExtensionPointInfo = function () {

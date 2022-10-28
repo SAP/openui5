@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ovp/ChangeCard",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ChangeCard,
-	Change,
+	AppDescriptorChange,
 	sinon
 ) {
 	"use strict";
@@ -29,8 +29,10 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling '_applyChange' with a change containing title in the OVP card", function (assert) {
-			var oChange = new Change({
-				changeType: "appdescr_ovp_changecard",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ovp_changecard"
+				},
 				content: {
 					cardId: "card1",
 					entityPropertyChange: {
@@ -48,8 +50,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_applyChange' with a change not containing customer settings", function (assert) {
-			var oChange = new Change({
-				changeType: "appdescr_ovp_changecard",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ovp_changecard"
+				},
 				content: {
 					cardId: "card1",
 					entityPropertyChange: {
@@ -64,8 +68,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_applyChange' with change that is not a valid operation", function (assert) {
-			var oChange = new Change({
-				changeType: "appdescr_ovp_changecard",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ovp_changecard"
+				},
 				content: {
 					cardId: "card1",
 					entityPropertyChange: {
@@ -84,8 +90,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_applyChange' with change that is an array and not object", function (assert) {
-			var oChange = new Change({
-				changeType: "appdescr_ovp_changecard",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ovp_changecard"
+				},
 				content: {
 					cardId: "card1",
 					entityPropertyChange: [

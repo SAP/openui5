@@ -1,9 +1,9 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/changeHandler/BaseRename",
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
@@ -13,9 +13,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
+	UIChange,
 	BaseRename,
 	Base,
-	Change,
 	Utils,
 	JsControlTreeModifier,
 	XmlTreeModifier,
@@ -53,13 +53,9 @@ sap.ui.define([
 				translationTextType: "XFLD"
 			});
 
-			var oChangeJson = {
-				selector: JsControlTreeModifier.getSelector(this.oButton, oComponent),
-				content: {},
-				texts: {}
-			};
-
-			this.oChange = new Change(oChangeJson);
+			this.oChange = new UIChange({
+				selector: JsControlTreeModifier.getSelector(this.oButton, oComponent)
+			});
 			this.mSpecificChangeInfo = {
 				value: "Button New Text"
 			};

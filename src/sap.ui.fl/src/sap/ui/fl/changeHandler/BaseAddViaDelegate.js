@@ -95,7 +95,7 @@ sap.ui.define([
 				})
 					.then(function (oDelegate) {
 						var bCondensingSupported = !isFunction(oDelegate.instance.createLayout);
-						return bCondensingSupported || skipCreateLayout(mChange.getODataInformation());
+						return bCondensingSupported || skipCreateLayout(mChange.getSupportInformation().oDataInformation);
 					});
 			}
 
@@ -150,7 +150,7 @@ sap.ui.define([
 				/**
 				 * Added a property from the model's metadata via delegate
 				 *
-				 * @param {sap.ui.fl.Change} oChange - change object with instructions to be applied on the control map
+				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - change object with instructions to be applied on the control map
 				 * @param {sap.ui.core.Control} oControl - Control that matches the change selector for applying the change
 				 * @param {object} mPropertyBag - property bag
 				 * @param {object} mPropertyBag.modifier - modifier for the controls
@@ -161,7 +161,7 @@ sap.ui.define([
 				applyChange: function(oChange, oControl, mPropertyBag) {
 					var oAppComponent = mPropertyBag.appComponent;
 					var oChangeContent = oChange.getContent();
-					var oChangeODataInformation = oChange.getODataInformation();
+					var oChangeODataInformation = oChange.getSupportInformation().oDataInformation;
 					var mFieldSelector = oChangeContent.newFieldSelector;
 					var mCreateProperties = {
 						appComponent: mPropertyBag.appComponent,
@@ -223,7 +223,7 @@ sap.ui.define([
 				/**
 				 * Reverts an applied addViaDelegate Change
 				 *
-				 * @param {sap.ui.fl.Change} oChange change wrapper object with instructions to be applied on the control map
+				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change wrapper object with instructions to be applied on the control map
 				 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
 				 * @param {object} mPropertyBag property bag
 				 * @param {object} mPropertyBag.modifier modifier for the controls
@@ -280,7 +280,7 @@ sap.ui.define([
 				/**
 				 * Completes the change by adding change handler specific content
 				 *
-				 * @param {sap.ui.fl.Change} oChange Change wrapper object to be completed
+				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange Change wrapper object to be completed
 				 * @param {Object} mSpecificChangeInfo Information specific to this change
 				 * @param {string} mSpecificChangeInfo.newControlId The control ID for the control to be added
 				 * @param {string} mSpecificChangeInfo.bindingPath The binding path for the new control

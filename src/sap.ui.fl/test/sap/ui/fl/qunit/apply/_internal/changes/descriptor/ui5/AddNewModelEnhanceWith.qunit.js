@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModelEnhanceWith",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	AddNewModelEnhanceWith,
-	Change,
+	AppDescriptorChange,
 	sinon
 ) {
 	"use strict";
@@ -15,7 +15,7 @@ sap.ui.define([
 
 	QUnit.module("applyChange", {
 		beforeEach: function () {
-			this.oChangeRelPath = new Change({
+			this.oChangeRelPath = new AppDescriptorChange({
 				content: {
 					modelId: "random"
 				},
@@ -24,7 +24,7 @@ sap.ui.define([
 				}
 			});
 
-			this.oChangeRel2Path = new Change({
+			this.oChangeRel2Path = new AppDescriptorChange({
 				content: {
 					modelId: "random"
 				},
@@ -33,7 +33,7 @@ sap.ui.define([
 				}
 			});
 
-			this.oChangeAbsPath = new Change({
+			this.oChangeAbsPath = new AppDescriptorChange({
 				content: {
 					modelId: "random"
 				},

@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/FlexController",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/core/Control",
 	"sap/ui/fl/write/api/Version",
@@ -16,6 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/model/json/JSONModel",
@@ -30,7 +30,6 @@ sap.ui.define([
 ], function(
 	ChangeHandlerStorage,
 	FlexController,
-	Change,
 	Layer,
 	Control,
 	Version,
@@ -43,6 +42,7 @@ sap.ui.define([
 	FlexCustomData,
 	ChangeUtils,
 	Reverter,
+	FlexObjectFactory,
 	Versions,
 	Storage,
 	JSONModel,
@@ -108,7 +108,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 			this.oControl = new Control("existingId");
-			this.oChange = new Change(labelChangeContent);
+			this.oChange = FlexObjectFactory.createFromFileContent(labelChangeContent);
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -296,21 +296,19 @@ sap.ui.define([
 			return this.oFlexController.addChange({}, oControl)
 				.then(function(oChange) {
 					assert.ok(oChange);
-
-
 					var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
 					var aDirtyChanges = oChangePersistence.getDirtyChanges();
 
 					assert.strictEqual(aDirtyChanges.length, 1);
 					assert.strictEqual(aDirtyChanges[0].getSelector().id, "Id1");
 					assert.strictEqual(aDirtyChanges[0].getNamespace(), "apps/testScenarioComponent/changes/");
-					assert.strictEqual(aDirtyChanges[0].getComponent(), "testScenarioComponent");
+					assert.strictEqual(aDirtyChanges[0].getFlexObjectMetadata().reference, "testScenarioComponent");
 				}.bind(this));
 		});
 
 		QUnit.test("addPreparedChange shall add a change to flex persistence", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-			var oChange = new Change(labelChangeContent);
+			var oChange = FlexObjectFactory.createFromFileContent(labelChangeContent);
 
 			var oPrepChange = this.oFlexController.addPreparedChange(oChange, oComponent);
 			assert.ok(oPrepChange);
@@ -324,7 +322,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("addPreparedChange shall add a change with variant reference to flex persistence and create a variant change", function(assert) {
-			assert.expect(9);
+			assert.expect(8);
 			var oAddChangeStub = sandbox.stub();
 			var oRemoveChangeStub = sandbox.stub();
 			var oModel = {
@@ -349,7 +347,7 @@ sap.ui.define([
 				}
 			};
 
-			var oChange = new Change(labelChangeContent);
+			var oChange = FlexObjectFactory.createFromFileContent(labelChangeContent);
 
 			oChange.setVariantReference("testVarRef");
 
@@ -362,7 +360,6 @@ sap.ui.define([
 			assert.strictEqual(aDirtyChanges.length, 1);
 			assert.strictEqual(aDirtyChanges[0].getSelector().id, "abc123");
 			assert.strictEqual(aDirtyChanges[0].getNamespace(), "b");
-			assert.strictEqual(aDirtyChanges[0].isVariant(), false);
 
 			this.oFlexController.deleteChange(oPrepChange, oAppComponent);
 			assert.ok(oRemoveChangeStub.calledOnce, "then model's removeChange is called as VariantManagement Change is detected and deleted");
@@ -382,7 +379,7 @@ sap.ui.define([
 			var sGenerator = "test.Generator";
 			var sSelectorString = "abc123";
 			var sChangeTypeString = "labelChange";
-			var aDeletedChanges = [new Change({fileName: "change1"}), new Change({fileName: "change2"})];
+			var aDeletedChanges = [FlexObjectFactory.createFromFileContent({fileName: "change1"}), FlexObjectFactory.createFromFileContent({fileName: "change2"})];
 			sandbox.stub(URLHandler, "update");
 			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function() {
 				assert.strictEqual(arguments[0], sLayer, "then correct layer passed");
@@ -442,11 +439,11 @@ sap.ui.define([
 		QUnit.test("resetChanges for whole component was called and two changes are present, one related to a control variant", function(assert) {
 			assert.expect(3);
 
-			var oDeletedChangeWithVariantReference = new Change({
+			var oDeletedChangeWithVariantReference = FlexObjectFactory.createFromFileContent({
 				variantReference: "someReference"
 			});
 
-			var oDeletedChange = new Change({});
+			var oDeletedChange = FlexObjectFactory.createFromFileContent({});
 
 			var oVariantModel = {
 				id: "variantModel",
@@ -524,37 +521,11 @@ sap.ui.define([
 					assert.strictEqual(aDirtyChanges[0].getSelector().id, "Id1");
 					assert.ok(aDirtyChanges[0].getSelector().idIsLocal);
 					assert.strictEqual(aDirtyChanges[0].getNamespace(), "apps/testScenarioComponent/changes/");
-					assert.strictEqual(aDirtyChanges[0].getComponent(), "testScenarioComponent");
+					assert.strictEqual(aDirtyChanges[0].getFlexObjectMetadata().reference, "testScenarioComponent");
 					oControl.destroy();
 				}.bind(this));
 		});
 		//TODO non local id
-
-		QUnit.test("addChange shall not set transport information", function(assert) {
-			var oControl = new Control("mockControl2");
-			this.oFlexController._sComponentName = "myComponent";
-			var oChangeParameters = {transport: "testtransport", packageName: "testpackage"};
-			var fChangeHandler = sandbox.stub();
-			fChangeHandler.applyChange = sandbox.stub();
-			fChangeHandler.completeChangeContent = sandbox.stub();
-			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves(fChangeHandler);
-			sandbox.stub(Utils, "getAppDescriptor").returns({
-				"sap.app": {
-					id: "myComponent",
-					applicationVersion: {
-						version: "1.0.0"
-					}
-				}
-			});
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-			var oSetRequestSpy = sandbox.spy(Change.prototype, "setRequest");
-			return this.oFlexController.addChange(oChangeParameters, oControl)
-				.then(function(oChange) {
-					assert.strictEqual(oSetRequestSpy.callCount, 0);
-					assert.equal(oChange.getPackage(), "$TMP");
-					oControl.destroy();
-				});
-		});
 
 		QUnit.test("createAndApplyChange shall remove the change from the persistence and rethrow the error, if applying the change raised an exception", function(assert) {
 			var oControl = new Control();
@@ -568,7 +539,7 @@ sap.ui.define([
 				error: new Error("myError")
 			}));
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves(HideControl);
-			sandbox.stub(this.oFlexController, "createChangeWithControlSelector").resolves(new Change(oChangeSpecificData));
+			sandbox.stub(this.oFlexController, "createChangeWithControlSelector").resolves(FlexObjectFactory.createFromFileContent(oChangeSpecificData));
 			sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 			sandbox.spy(this.oFlexController._oChangePersistence, "deleteChange");
 
@@ -588,7 +559,7 @@ sap.ui.define([
 			var oChangeSpecificData = {
 				changeType: "hideControl"
 			};
-			var oChange = new Change(oChangeSpecificData);
+			var oChange = FlexObjectFactory.createFromFileContent(oChangeSpecificData);
 			sandbox.stub(Applier, "applyChangeOnControl").resolves({success: true});
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves(HideControl);
 			sandbox.stub(this.oFlexController, "createChangeWithControlSelector").resolves(oChange);
@@ -613,7 +584,7 @@ sap.ui.define([
 
 			sandbox.stub(Applier, "applyChangeOnControl").resolves(({success: false}));
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves(HideControl);
-			sandbox.stub(this.oFlexController, "createChangeWithControlSelector").resolves(new Change(oChangeSpecificData));
+			sandbox.stub(this.oFlexController, "createChangeWithControlSelector").resolves(FlexObjectFactory.createFromFileContent(oChangeSpecificData));
 			sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 
 			return this.oFlexController.addChange(oChangeSpecificData, oControl)
@@ -839,9 +810,9 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oControl = new Label(labelChangeContent.selector.id);
 			this.oControl4 = new Label(labelChangeContent4.selector.id);
-			this.oChange = new Change(labelChangeContent); // selector.id === "abc123"
-			this.oChange2 = new Change(labelChangeContent2); // selector.id === "abc123"
-			this.oChange4 = new Change(labelChangeContent4); // selector.id === "foo"
+			this.oChange = FlexObjectFactory.createFromFileContent(labelChangeContent); // selector.id === "abc123"
+			this.oChange2 = FlexObjectFactory.createFromFileContent(labelChangeContent2); // selector.id === "abc123"
+			this.oChange4 = FlexObjectFactory.createFromFileContent(labelChangeContent4); // selector.id === "foo"
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 
 			var oManifestObj = {
@@ -870,7 +841,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when applyVariantChanges is called with 2 unapplied changes. One of them has a wrong selector", function(assert) {
-			this.oChangeWithWrongSelector = new Change(labelChangeContent5);
+			this.oChangeWithWrongSelector = FlexObjectFactory.createFromFileContent(labelChangeContent5);
 			return this.oFlexController.applyVariantChanges([this.oChange, this.oChangeWithWrongSelector], this.oComponent).then(function() {
 				assert.equal(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["abc123"].length, 1, "then 1 change added to map");
 				assert.deepEqual(this.oFlexController._oChangePersistence._mChangesInitial.mControlsWithDependencies["abc123"], [this.oChange.getId()], "then the control dependencies were added to the initial changes map");
@@ -908,15 +879,15 @@ sap.ui.define([
 			this.oControl2 = new Label(this.sLabelId2);
 			this.oControl3 = new Label(this.sLabelId3);
 			this.oOtherControl = new Label(this.sOtherControlId);
-			this.oChange = new Change(labelChangeContent);
-			this.oChange2 = new Change(labelChangeContent2);
-			this.oChange3 = new Change(labelChangeContent3);
-			this.oChange4 = new Change(labelChangeContent4); // Selector of this change points to no control
-			this.oChange5 = new Change(labelChangeContent5); // already failed changed (mocked with a stub)
+			this.oChange = FlexObjectFactory.createFromFileContent(labelChangeContent);
+			this.oChange2 = FlexObjectFactory.createFromFileContent(labelChangeContent2);
+			this.oChange3 = FlexObjectFactory.createFromFileContent(labelChangeContent3);
+			this.oChange4 = FlexObjectFactory.createFromFileContent(labelChangeContent4); // Selector of this change points to no control
+			this.oChange5 = FlexObjectFactory.createFromFileContent(labelChangeContent5); // already failed changed (mocked with a stub)
 			var mChangeOnOtherControl = deepClone(labelChangeContent3);
 			mChangeOnOtherControl.selector.id = this.sOtherControlId;
 			mChangeOnOtherControl.fileName = "independentChange";
-			this.oChangeOnOtherControl = new Change(mChangeOnOtherControl);
+			this.oChangeOnOtherControl = FlexObjectFactory.createFromFileContent(mChangeOnOtherControl);
 			this.mChanges = getInitialChangesMap();
 			this.fnGetChangesMap = function() {
 				return getInitialChangesMap(this.mChanges);
@@ -1162,7 +1133,6 @@ sap.ui.define([
 					assert.ok(oChangePromiseSpy.called, "change was in applying state when waitForChangesToBeApplied was called");
 					assert.notOk(oChangePromiseSpy2.called, "change was filtered out");
 					assert.notOk(oChangePromiseSpy3.called, "change was filtered out");
-					delete this.oChange2._oDefinition.dependentSelector;
 				}.bind(this));
 		});
 

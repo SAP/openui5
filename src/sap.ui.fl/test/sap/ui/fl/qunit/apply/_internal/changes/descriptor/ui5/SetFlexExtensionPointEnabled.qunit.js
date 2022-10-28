@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/SetFlexExtensionPointEnabled",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	SetFlexExtensionPointEnabled,
-	Change,
+	AppDescriptorChange,
 	sinon
 ) {
 	"use strict";
@@ -15,20 +15,20 @@ sap.ui.define([
 
 	QUnit.module("applyChange", {
 		beforeEach: function () {
-			this.oChange = new Change({
+			this.oChange = new AppDescriptorChange({
 				content: {
 					flexExtensionPointEnabled: "true"
 				}
 			});
 
-			this.oChangeFalse = new Change({
+			this.oChangeFalse = new AppDescriptorChange({
 				content: {
 					flexExtensionPointEnabled: "false"
 				}
 			});
 
-			this.oChangeEmpty = new Change({ content: { } });
-			this.oChangeError = new Change({ content: { otherFlag: "test" } });
+			this.oChangeEmpty = new AppDescriptorChange({ content: { } });
+			this.oChangeError = new AppDescriptorChange({ content: { otherFlag: "test" } });
 		},
 		afterEach: function () {
 			sandbox.restore();

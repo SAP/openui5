@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Control",
 	"sap/base/util/UriParameters",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/ChangesController",
@@ -12,7 +13,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
@@ -21,6 +21,7 @@ sap.ui.define([
 	UIComponent,
 	Control,
 	UriParameters,
+	FlexObjectFactory,
 	FlexState,
 	ManifestUtils,
 	ChangesController,
@@ -29,7 +30,6 @@ sap.ui.define([
 	FlexObjectState,
 	SessionStorageConnector,
 	ChangePersistenceFactory,
-	Change,
 	Layer,
 	Utils,
 	Settings,
@@ -50,14 +50,14 @@ sap.ui.define([
 	};
 
 	function addChangesToChangePersistence(oChangePersistence) {
-		var oChangeInPersistence1 = new Change({
+		var oChangeInPersistence1 = FlexObjectFactory.createFromFileContent({
 			fileName: "change1",
 			fileType: "change",
 			selector: {},
 			changeType: "renameField",
 			layer: Layer.USER
 		});
-		var oChangeInPersistence2 = new Change({
+		var oChangeInPersistence2 = FlexObjectFactory.createFromFileContent({
 			fileType: "change",
 			fileName: "change1",
 			selector: {},
@@ -68,12 +68,12 @@ sap.ui.define([
 	}
 
 	function addDirtyChanges(oChangePersistence) {
-		var oChangeInPersistence1 = new Change({
+		var oChangeInPersistence1 = FlexObjectFactory.createFromFileContent({
 			selector: {},
 			changeType: "dirtyRenameField",
 			layer: Layer.USER
 		});
-		var oChangeInPersistence2 = new Change({
+		var oChangeInPersistence2 = FlexObjectFactory.createFromFileContent({
 			selector: {},
 			changeType: "dirtyAddGroup",
 			layer: Layer.USER
@@ -316,19 +316,19 @@ sap.ui.define([
 		QUnit.test("when flex objects for the current variant are requested", function(assert) {
 			var sPersistencyKey = "persistency.key";
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-			var oChangeOnVariant1 = new Change({
+			var oChangeOnVariant1 = FlexObjectFactory.createFromFileContent({
 				selector: {},
 				changeType: "renameField",
 				layer: Layer.USER,
 				variantReference: "variant1"
 			});
-			var oChangeOnVariant2 = new Change({
+			var oChangeOnVariant2 = FlexObjectFactory.createFromFileContent({
 				selector: {},
 				changeType: "addGroup",
 				layer: Layer.USER,
 				variantReference: "variant2"
 			});
-			var oVariantIndependentChange = new Change({
+			var oVariantIndependentChange = FlexObjectFactory.createFromFileContent({
 				selector: {},
 				changeType: "addGroup",
 				layer: Layer.USER,

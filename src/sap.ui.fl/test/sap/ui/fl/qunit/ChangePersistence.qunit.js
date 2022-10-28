@@ -8,6 +8,9 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Component",
 	"sap/ui/core/Control",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -19,7 +22,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/ChangePersistence",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -29,6 +31,9 @@ sap.ui.define([
 	UriParameters,
 	Component,
 	Control,
+	FlexObjectFactory,
+	UIChange,
+	States,
 	DependencyHandler,
 	VariantManagementState,
 	FlexState,
@@ -40,7 +45,6 @@ sap.ui.define([
 	Version,
 	Cache,
 	ChangePersistence,
-	Change,
 	LayerUtils,
 	Layer,
 	Utils,
@@ -273,7 +277,7 @@ sap.ui.define([
 
 			return this.oChangePersistence.getChangesForComponent().then(function(changes) {
 				assert.strictEqual(changes.length, 1, "Changes is an array of length one");
-				assert.ok(changes[0] instanceof Change, "Change is instanceof Change");
+				assert.ok(changes[0] instanceof UIChange, "Change is instanceof UIChange");
 			});
 		});
 
@@ -430,7 +434,7 @@ sap.ui.define([
 					layer: Layer.USER
 				}
 			);
-			oResponse.variantDependentControlChanges.push(new Change(
+			oResponse.variantDependentControlChanges.push(FlexObjectFactory.createFromFileContent(
 				{
 					fileName: "variantDependentControlChange",
 					fileType: "change",
@@ -624,11 +628,11 @@ sap.ui.define([
 				id: "mockAppComponent"
 
 			};
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([new Change({}), new Change({}), new Change({})]);
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([FlexObjectFactory.createFromFileContent({}), FlexObjectFactory.createFromFileContent({}), FlexObjectFactory.createFromFileContent({})]);
 
 			var mExpectedChangesMap = {changesStub: true};
 			var oAddChangeStub = sandbox.stub(DependencyHandler, "addChangeAndUpdateDependencies");
-			var oSetStateStub = sandbox.stub(Change.prototype, "setInitialApplyState");
+			var oSetStateStub = sandbox.stub(UIChange.prototype, "setInitialApplyState");
 			sandbox.stub(DependencyHandler, "createEmptyDependencyMap").returns(mExpectedChangesMap);
 			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {}).then(function(fnGetChangesMap) {
 				assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
@@ -642,34 +646,34 @@ sap.ui.define([
 		});
 
 		QUnit.test("getAllUIChanges shall return an map array with all UI changes for the component", function(assert) {
-			var oChange1 = new Change({
+			var oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: "change1",
 				fileType: "change",
 				layer: Layer.VENDOR,
 				selector: {id: "id1"}
 			});
-			oChange1.setState(Change.states.PERSISTED);
-			var oChange2 = new Change({
+			oChange1.setState(States.LifecycleState.PERSISTED);
+			var oChange2 = FlexObjectFactory.createFromFileContent({
 				fileName: "change2",
 				fileType: "change",
 				layer: Layer.CUSTOMER,
 				selector: {id: "id2"}
 			});
-			oChange2.setState(Change.states.PERSISTED);
-			var oChange3 = new Change({
+			oChange2.setState(States.LifecycleState.PERSISTED);
+			var oChange3 = FlexObjectFactory.createFromFileContent({
 				fileName: "change3",
 				fileType: "change",
 				layer: Layer.CUSTOMER,
 				selector: {id: "id3"}
 			});
-			oChange3.setState(Change.states.PERSISTED);
-			var oChange4 = new Change({
+			oChange3.setState(States.LifecycleState.PERSISTED);
+			var oChange4 = FlexObjectFactory.createFromFileContent({
 				fileName: "change4",
 				fileType: "change",
 				layer: Layer.CUSTOMER,
 				selector: {id: "id4"}
 			});
-			var oChange5 = new Change({
+			var oChange5 = FlexObjectFactory.createFromFileContent({
 				fileName: "change5",
 				fileType: "change",
 				layer: Layer.CUSTOMER,
@@ -883,8 +887,8 @@ sap.ui.define([
 			sandbox.stub(this.oChangePersistence, "_updateCacheAndDirtyState");
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
 
 				addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 
@@ -1128,18 +1132,18 @@ sap.ui.define([
 			var oAppComponent = {
 				id: "mockAppComponent"
 			};
-			var oChange0 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange0",
+			var oChange0 = FlexObjectFactory.createFromFileContent(
+				{
+					fileName: "fileNameChange0",
 					layer: Layer.USER,
 					reference: "appComponentReference",
 					namespace: "namespace",
 					selector: {id: "group1"}
-				})
+				}
 			);
-			var oChange1 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange1",
+			var oChange1 = FlexObjectFactory.createFromFileContent(
+				{
+					fileName: "fileNameChange1",
 					layer: Layer.USER,
 					reference: "appComponentReference",
 					namespace: "namespace",
@@ -1151,11 +1155,11 @@ sap.ui.define([
 							id: "group2"
 						}]
 					}
-				})
+				}
 			);
-			var oChange2 = new Change(
-				Change.createInitialFileContent({
-					id: "fileNameChange2",
+			var oChange2 = FlexObjectFactory.createFromFileContent(
+				{
+					fileName: "fileNameChange2",
 					layer: Layer.USER,
 					reference: "appComponentReference",
 					namespace: "namespace",
@@ -1170,7 +1174,7 @@ sap.ui.define([
 							id: "field3-2"
 						}
 					}
-				})
+				}
 			);
 			var aNames = ["fileNameChange0", "fileNameChange2"];
 			var aExpectedChanges = [oChange0, oChange2];
@@ -1276,13 +1280,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling removeDirtyChanges without generator, selector IDs and change types specified", function(assert) {
-			var oVendorChange = new Change({
+			var oVendorChange = FlexObjectFactory.createFromFileContent({
 				layer: Layer.VENDOR,
-				fileName: "1"
+				fileName: "c1"
 			});
-			var oCustomerChange = new Change({
+			var oCustomerChange = FlexObjectFactory.createFromFileContent({
 				layer: Layer.CUSTOMER,
-				fileName: "2"
+				fileName: "c2"
 			});
 			this.oChangePersistence.addDirtyChange(oVendorChange);
 			this.oChangePersistence.addDirtyChange(oCustomerChange);
@@ -1300,17 +1304,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling removeDirtyChanges with multiple layers", function(assert) {
-			var oVendorChange = new Change({
+			var oVendorChange = FlexObjectFactory.createFromFileContent({
 				layer: Layer.VENDOR,
-				fileName: "1"
+				fileName: "c1"
 			});
-			var oUserChange = new Change({
+			var oUserChange = FlexObjectFactory.createFromFileContent({
 				layer: Layer.USER,
-				fileName: "2"
+				fileName: "c2"
 			});
-			var oCustomerChange = new Change({
+			var oCustomerChange = FlexObjectFactory.createFromFileContent({
 				layer: Layer.CUSTOMER,
-				fileName: "3"
+				fileName: "c3"
 			});
 			this.oChangePersistence.addDirtyChange(oVendorChange);
 			this.oChangePersistence.addDirtyChange(oUserChange);
@@ -1330,17 +1334,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling removeDirtyChanges without any layer specified", function(assert) {
-			var oVendorChange = new Change({
+			var oVendorChange = FlexObjectFactory.createFromFileContent({
 				layer: Layer.VENDOR,
-				fileName: "1"
+				fileName: "c1"
 			});
-			var oUserChange = new Change({
+			var oUserChange = FlexObjectFactory.createFromFileContent({
 				layer: Layer.USER,
-				fileName: "2"
+				fileName: "c2"
 			});
-			var oCustomerChange = new Change({
+			var oCustomerChange = FlexObjectFactory.createFromFileContent({
 				layer: Layer.CUSTOMER,
-				fileName: "3"
+				fileName: "c3"
 			});
 			this.oChangePersistence.addDirtyChange(oVendorChange);
 			this.oChangePersistence.addDirtyChange(oUserChange);
@@ -1355,10 +1359,10 @@ sap.ui.define([
 		QUnit.test("when calling removeDirtyChanges with a generator and a change is in a different layer", function(assert) {
 			var sGenerator = "some generator";
 
-			var oVendorChange = new Change({
+			var oVendorChange = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "1",
+				fileName: "c1",
 				namespace: "b",
 				packageName: "$TMP",
 				changeType: "labelChange",
@@ -1375,10 +1379,10 @@ sap.ui.define([
 				}
 			});
 
-			var oCustomerChange = new Change({
+			var oCustomerChange = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.CUSTOMER,
-				fileName: "2",
+				fileName: "c2",
 				namespace: "b",
 				packageName: "c",
 				changeType: "labelChange",
@@ -1404,10 +1408,10 @@ sap.ui.define([
 		QUnit.test("when calling removeDirtyChanges with a generator and a change is in a different layer and localIDs", function(assert) {
 			var sGenerator = "some generator";
 
-			var oVendorChange1 = new Change({
+			var oVendorChange1 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "1",
+				fileName: "c1",
 				namespace: "b",
 				packageName: "$TMP",
 				changeType: "labelChange",
@@ -1425,10 +1429,10 @@ sap.ui.define([
 				}
 			});
 
-			var oVendorChange2 = new Change({
+			var oVendorChange2 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "2",
+				fileName: "c2",
 				namespace: "b",
 				packageName: "c",
 				changeType: "labelChange",
@@ -1453,10 +1457,10 @@ sap.ui.define([
 		QUnit.test("when calling removeDirtyChanges with a generator", function(assert) {
 			var sGenerator = "some generator";
 
-			var oVENDORChange1 = new Change({
+			var oVENDORChange1 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "1",
+				fileName: "c1",
 				namespace: "b",
 				packageName: "$TMP",
 				changeType: "labelChange",
@@ -1471,10 +1475,10 @@ sap.ui.define([
 				support: {}
 			});
 
-			var oVENDORChange2 = new Change({
+			var oVENDORChange2 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "2",
+				fileName: "c2",
 				namespace: "b",
 				packageName: "c",
 				changeType: "labelChange",
@@ -1500,10 +1504,10 @@ sap.ui.define([
 		QUnit.test("when calling removeDirtyChanges with a controlId", function(assert) {
 			var sGenerator = "some generator";
 
-			var oVENDORChange1 = new Change({
+			var oVENDORChange1 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "1",
+				fileName: "c1",
 				namespace: "b",
 				packageName: "$TMP",
 				changeType: "labelChange",
@@ -1518,10 +1522,10 @@ sap.ui.define([
 				support: {}
 			});
 
-			var oVENDORChange2 = new Change({
+			var oVENDORChange2 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "2",
+				fileName: "c2",
 				namespace: "b",
 				packageName: "c",
 				changeType: "labelChange",
@@ -1539,10 +1543,10 @@ sap.ui.define([
 			});
 
 			var sSelectorOfVendorChange3 = "ghi789";
-			var oVENDORChange3 = new Change({
+			var oVENDORChange3 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "2",
+				fileName: "c2",
 				namespace: "b",
 				packageName: "c",
 				changeType: "labelChange",
@@ -1569,7 +1573,7 @@ sap.ui.define([
 		QUnit.test("when calling resetChanges without generator, aSelectorIds and aChangeTypes (application reset)", function(assert) {
 			var done = assert.async();
 			// changes for the component
-			var oCUSTOMERChange1 = new Change({
+			var oCUSTOMERChange1 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.CUSTOMER,
 				fileName: "oCUSTOMERChange1",
@@ -1586,7 +1590,7 @@ sap.ui.define([
 				}
 			});
 
-			var oCUSTOMERChange2 = new Change({
+			var oCUSTOMERChange2 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.CUSTOMER,
 				fileName: "oCUSTOMERChange2",
@@ -1607,7 +1611,7 @@ sap.ui.define([
 					return "$TMP";
 				},
 				getState: function () {
-					return Change.states.NEW;
+					return States.LifecycleState.NEW;
 				},
 				getLayer: function () {
 					return Layer.CUSTOMER;
@@ -1619,7 +1623,7 @@ sap.ui.define([
 					return "some_transport_id";
 				},
 				getState: function () {
-					return Change.states.PERSISTED;
+					return States.LifecycleState.PERSISTED;
 				},
 				getLayer: function () {
 					return Layer.VENDOR;
@@ -1634,7 +1638,7 @@ sap.ui.define([
 					return "some_transport_id";
 				},
 				getState: function () {
-					return Change.states.PERSISTED;
+					return States.LifecycleState.PERSISTED;
 				},
 				getLayer: function () {
 					return Layer.CUSTOMER;
@@ -1681,10 +1685,10 @@ sap.ui.define([
 
 		QUnit.test("when calling resetChanges with selector and change type (control reset)", function(assert) {
 			// changes for the component
-			var oVENDORChange1 = new Change({
+			var oVENDORChange1 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "1",
+				fileName: "c1",
 				namespace: "b",
 				packageName: "$TMP",
 				changeType: "labelChange",
@@ -1698,10 +1702,10 @@ sap.ui.define([
 				}
 			});
 
-			var oVENDORChange2 = new Change({
+			var oVENDORChange2 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.VENDOR,
-				fileName: "2",
+				fileName: "c2",
 				namespace: "b",
 				packageName: "c",
 				changeType: "labelChange",
@@ -1739,14 +1743,14 @@ sap.ui.define([
 	});
 
 	function createChange(sId) {
-		return new Change(
-			Change.createInitialFileContent({
+		return FlexObjectFactory.createFromFileContent(
+			{
 				id: sId || "fileNameChange0",
 				layer: Layer.USER,
 				reference: "appComponentReference",
 				namespace: "namespace",
 				selector: {id: "control1"}
-			})
+			}
 		);
 	}
 
@@ -1861,7 +1865,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Shall add propagation listener on the app component if an embedded component is passed", function(assert) {
-			var oChangeContent = new Change({layer: ""});
+			var oChangeContent = FlexObjectFactory.createFromFileContent({layer: ""});
 			var done = assert.async();
 			sandbox.stub(this.oChangePersistence, "addDirtyChange").returns(oChangeContent);
 			sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
@@ -2099,7 +2103,7 @@ sap.ui.define([
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1);
-				assert.strictEqual(oChange.getState(), Change.states.PERSISTED, "the state was changed to persisted");
+				assert.strictEqual(oChange.getState(), States.LifecycleState.PERSISTED, "the state was changed to persisted");
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called with only one change");
 			}.bind(this));
 		});
@@ -2116,8 +2120,8 @@ sap.ui.define([
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oStorageCondenseStub.callCount, 1, "the condense route of the storage is called");
-				assert.strictEqual(aChanges[0].getState(), Change.states.PERSISTED, "the state was changed to persisted");
-				assert.strictEqual(aChanges[1].getState(), Change.states.PERSISTED, "the state was changed to persisted");
+				assert.strictEqual(aChanges[0].getState(), States.LifecycleState.PERSISTED, "the state was changed to persisted");
+				assert.strictEqual(aChanges[1].getState(), States.LifecycleState.PERSISTED, "the state was changed to persisted");
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 			}.bind(this));
 		});
@@ -2131,8 +2135,8 @@ sap.ui.define([
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 
@@ -2174,8 +2178,8 @@ sap.ui.define([
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 
@@ -2217,8 +2221,8 @@ sap.ui.define([
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 
@@ -2356,8 +2360,8 @@ sap.ui.define([
 			});
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
 				this.oCondenserStub.resetHistory();
 
 				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, false, false, false, false, true, Layer.VENDOR);
@@ -2387,8 +2391,8 @@ sap.ui.define([
 				}
 			);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
 
 				addTwoChanges(
 					this.oChangePersistence,
@@ -2484,8 +2488,8 @@ sap.ui.define([
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
 
@@ -2511,8 +2515,8 @@ sap.ui.define([
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
 
@@ -2532,8 +2536,8 @@ sap.ui.define([
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
 
@@ -2571,8 +2575,8 @@ sap.ui.define([
 			var oCacheDeleteSpy = sandbox.spy(Cache, "deleteChange");
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 				assert.equal(oDeleteSpy.callCount, 0, "no change got deleted from persistence");
@@ -2652,7 +2656,7 @@ sap.ui.define([
 				changeType: "addField",
 				selector: {id: "control1"}
 			};
-			var oChange = new Change(oChangeContent);
+			var oChange = FlexObjectFactory.createFromFileContent(oChangeContent);
 
 			this.oChangePersistence.deleteChange(oChange);
 
@@ -2665,14 +2669,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("Shall save passed dirty changes with changes in DELETE state", function(assert) {
-			var oChangeNotToBeSaved = new Change({
+			var oChangeNotToBeSaved = FlexObjectFactory.createFromFileContent({
 				fileName: "Gizorillus1",
 				fileType: "change",
 				changeType: "addField",
 				selector: {id: "control1"}
 			});
 
-			var oChangeToBeSaved = new Change({
+			var oChangeToBeSaved = FlexObjectFactory.createFromFileContent({
 				fileName: "Gizorillus2",
 				fileType: "change",
 				changeType: "addField",
@@ -2712,8 +2716,8 @@ sap.ui.define([
 			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "then two dirty changes exist initially");
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
 				assert.equal(this.oWriteStub.callCount, 1, "the create method of the connector is called once");
-				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0], oChangeContent1, "the first change was processed first");
-				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[1], oChangeContent2, "the second change was processed afterwards");
+				assert.strictEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0].fileName, oChangeContent1.fileName, "the first change was processed first");
+				assert.strictEqual(this.oWriteStub.getCall(0).args[0].flexObjects[1].fileName, oChangeContent2.fileName, "the second change was processed afterwards");
 				assert.equal(this.oChangePersistence.getDirtyChanges(), 0, "then no dirty changes exist any more");
 			}.bind(this));
 		});
@@ -2784,14 +2788,15 @@ sap.ui.define([
 
 			return this.oChangePersistence.saveDirtyChanges(true).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1, "the create method of the connector is called once");
-				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0], oChangeContent1, "the first change was processed first");
-				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[1], oChangeContent2, "the second change was processed afterwards");
+				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0].fileName, oChangeContent1.fileName, "the first change was processed first");
+				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[1].fileName, oChangeContent2.fileName, "the second change was processed afterwards");
 			}.bind(this));
 		});
 
 		QUnit.test("Shall add and remove changes to the cache depending upon change category", function(assert) {
 			var aSavedChanges = [];
 			sandbox.stub(VariantManagementState, "updateVariantsState");
+			sandbox.stub(DependencyHandler, "addRuntimeChangeAndUpdateDependencies");
 
 			var oChangeContent1 = {
 				content: {
@@ -2806,7 +2811,6 @@ sap.ui.define([
 				variantReference: "variant0",
 				fileName: "controlChange0",
 				fileType: "change",
-				content: {},
 				selector: {
 					id: "selectorId"
 				}
@@ -2866,7 +2870,7 @@ sap.ui.define([
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
 				_checkVariantSyncCall();
 				assert.equal(oAddChangeSpy.callCount, 1, "then addChange was called for only non-variant related change");
-				assert.ok(oAddChangeSpy.calledWith(this._mComponentProperties, oChangeContent5));
+				assert.strictEqual(oAddChangeSpy.lastCall.args[1].fileName, oChangeContent5.fileName, "the correct change was passed");
 				aSavedChanges.forEach(function(oSavedChange) {
 					this.oChangePersistence.deleteChange(oSavedChange);
 				}.bind(this));
@@ -3064,11 +3068,11 @@ sap.ui.define([
 
 			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges).then(function() {
 				assert.equal(this.oWriteStub.callCount, 2, "the create method of the connector is called for each selected change");
-				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0], oChangeContent1, "the first change was processed first");
-				assert.deepEqual(this.oWriteStub.getCall(1).args[0].flexObjects[0], oChangeContent3, "the second change was processed afterwards");
-				assert.strictEqual(oDirtyChange2.getState(), Change.states.NEW, "the state was not changed");
-				assert.strictEqual(oDirtyChange1.getState(), Change.states.PERSISTED, "the state was changed to persisted");
-				assert.strictEqual(oDirtyChange3.getState(), Change.states.PERSISTED, "the state was changed to persisted");
+				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0].fileName, oChangeContent1.fileName, "the first change was processed first");
+				assert.deepEqual(this.oWriteStub.getCall(1).args[0].flexObjects[0].fileName, oChangeContent3.fileName, "the second change was processed afterwards");
+				assert.strictEqual(oDirtyChange2.getState(), States.LifecycleState.NEW, "the state was not changed");
+				assert.strictEqual(oDirtyChange1.getState(), States.LifecycleState.PERSISTED, "the state was changed to persisted");
+				assert.strictEqual(oDirtyChange3.getState(), States.LifecycleState.PERSISTED, "the state was changed to persisted");
 			}.bind(this));
 		});
 
@@ -3114,9 +3118,9 @@ sap.ui.define([
 
 			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges, undefined, Version.Number.Original).then(function() {
 				assert.equal(this.oWriteStub.callCount, 2, "the create method of the connector is called for each selected change");
-				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0], oChangeContent1, "the first change was processed first");
+				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0].fileName, oChangeContent1.fileName, "the first change was processed first");
 				assert.equal(this.oWriteStub.getCall(0).args[0].parentVersion, Version.Number.Original, "the (original) version parameter was passed");
-				assert.deepEqual(this.oWriteStub.getCall(1).args[0].flexObjects[0], oChangeContent3, "the second change was processed afterwards");
+				assert.deepEqual(this.oWriteStub.getCall(1).args[0].flexObjects[0].fileName, oChangeContent3.fileName, "the second change was processed afterwards");
 				assert.equal(this.oWriteStub.getCall(1).args[0].parentVersion, Version.Number.Draft, "the version parameter is set to draft for further requests");
 			}.bind(this));
 		});

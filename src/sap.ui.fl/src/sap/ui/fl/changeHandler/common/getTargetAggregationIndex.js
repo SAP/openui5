@@ -10,7 +10,7 @@ sap.ui.define([
 	/**
 	 * Get the target aggregation index (or default it if not found)
 	 *
-	 * @param {sap.ui.fl.Change} oChange Change object with instructions to be applied on the control:
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange Change object with instructions to be applied on the control:
 	 * the definition must contains a targetAggregation and index.
 	 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag Map of properties

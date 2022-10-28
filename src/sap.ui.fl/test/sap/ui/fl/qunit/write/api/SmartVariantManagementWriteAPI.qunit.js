@@ -481,13 +481,11 @@ sap.ui.define([
 				}).then(function (oVariant) {
 					if (oTestData.expectedChange) {
 						assert.equal(oVariant.getChanges().length, 1, "one change was added");
-						assert.equal(oVariant.getChanges()[0].getPackage(), "PACKAGE_A", "the packageName was set correct");
-						assert.equal(oVariant.getChanges()[0].getRequest(), "transport1", "the transportId was set correct");
-						assert.equal(oVariant.getState(), States.PERSISTED, "the change is not flagged as dirty");
+						assert.equal(oVariant.getChanges()[0].getFlexObjectMetadata().packageName, "PACKAGE_A", "the packageName was set correct");
+						assert.equal(oVariant.getState(), States.LifecycleState.PERSISTED, "the change is not flagged as dirty");
 					} else {
 						assert.equal(oVariant.getChanges().length, 0, "no change was added");
-						assert.equal(oVariant.getRequest(), "transport1", "the transportId was set correct");
-						assert.equal(oVariant.getState(), States.DIRTY, "the change is not flagged as dirty");
+						assert.equal(oVariant.getState(), States.LifecycleState.DIRTY, "the change is not flagged as dirty");
 					}
 				});
 			});
@@ -944,12 +942,12 @@ sap.ui.define([
 					control: oControl
 				});
 			}).then(function (oRemovedVariant) {
-				assert.equal(oRemovedVariant.getState(), States.DELETED, "the variant is flagged for deletion");
+				assert.equal(oRemovedVariant.getState(), States.LifecycleState.DELETED, "the variant is flagged for deletion");
 				var aRevertData = oRemovedVariant.getRevertData();
 				assert.equal(aRevertData.length, 1, "revertData was stored");
 				var oLastRevertData = aRevertData[0];
 				assert.equal(oLastRevertData.getType(), CompVariantState.operationType.StateUpdate, "it is stored that the state was updated ...");
-				assert.deepEqual(oLastRevertData.getContent(), {previousState: States.PERSISTED}, "... to PERSISTED");
+				assert.deepEqual(oLastRevertData.getContent(), {previousState: States.LifecycleState.PERSISTED}, "... to PERSISTED");
 
 				SmartVariantManagementWriteAPI.revert({
 					reference: sReference,
@@ -960,7 +958,7 @@ sap.ui.define([
 
 				aRevertData = oRemovedVariant.getRevertData();
 				assert.equal(aRevertData.length, 0, "after a revert... the revert data is no longer available");
-				assert.equal(oRemovedVariant.getState(), States.PERSISTED, "and the change is flagged as new");
+				assert.equal(oRemovedVariant.getState(), States.LifecycleState.PERSISTED, "and the change is flagged as new");
 			});
 		});
 	});

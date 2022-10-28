@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/fl/variants/VariantManagement",
@@ -13,7 +12,6 @@ sap.ui.define([
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
-	Change,
 	Layer,
 	FlVariant,
 	VariantManagement,
@@ -85,13 +83,13 @@ sap.ui.define([
 			}.bind(this));
 			var aChanges = [
 				new FlVariant("foo", {flexObjectMetadata: {reference: "myReference"}}),
-				new Change({
+				RtaQunitUtils.createUIChange({
 					fileName: "change1",
 					reference: "Dummy.Component",
 					variantReference: "variantMgmtId1",
 					fileType: "change"
 				}),
-				new Change({
+				RtaQunitUtils.createUIChange({
 					fileName: "change2",
 					reference: "Dummy.Component",
 					variantReference: "variantMgmtId1",
@@ -100,7 +98,7 @@ sap.ui.define([
 			];
 			this.oHandleSaveStub.resolves(aChanges);
 			sandbox.stub(this.oModel, "getVariant").returns({
-				controlChanges: [new Change({
+				controlChanges: [RtaQunitUtils.createUIChange({
 					fileName: "change0",
 					reference: "Dummy.Component",
 					variantReference: "variantMgmtId1",

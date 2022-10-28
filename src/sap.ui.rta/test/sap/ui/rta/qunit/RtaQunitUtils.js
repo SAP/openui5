@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -21,6 +22,7 @@ sap.ui.define([
 	KeyCodes,
 	Layer,
 	flUtils,
+	FlexObjectFactory,
 	FlexState,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
@@ -76,7 +78,7 @@ sap.ui.define([
 				return aCustomerChanges.concat(aUserChangesChanges).reverse()
 					.filter(function (oChange) {
 						//skip descriptor changes
-						return !oChange.isAppDescriptorChange();
+						return !oChange.isA("sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange");
 					})
 					.reduce(function (oPreviousPromise, oChange) {
 						var oElementToBeReverted = JsControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
@@ -238,6 +240,10 @@ sap.ui.define([
 		sandbox.stub(flUtils, "getAppComponentForControl").returns(oComponent);
 		oComponent._restoreGetAppComponentStub = flUtils.getAppComponentForControl.restore;
 		return oComponent;
+	};
+
+	RtaQunitUtils.createUIChange = function(oFileContent) {
+		return FlexObjectFactory.createFromFileContent(oFileContent);
 	};
 
 	return RtaQunitUtils;

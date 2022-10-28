@@ -2,8 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/util/XMLHelper",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/changeHandler/AddIFrame",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
 	"sap/ui/core/mvc/View",
@@ -12,8 +12,8 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ], function(
 	XMLHelper,
+	FlexObjectFactory,
 	AddIFrame,
-	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	View,
@@ -69,7 +69,7 @@ sap.ui.define([
 				content: this.mChangeSpecificContent
 			};
 
-			this.oChange = new Change(oChangeJson);
+			this.oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
 
 			this.mPropertyBag = {
 				modifier: JsControlTreeModifier,
@@ -132,7 +132,7 @@ sap.ui.define([
 				content: this.mChangeSpecificContent
 			};
 
-			this.oChange = new Change(oChangeJson);
+			this.oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
 
 			// JSTreeModifier specific beforeEach
 			this.oButton = new Button();
@@ -239,7 +239,7 @@ sap.ui.define([
 				content: this.mChangeSpecificContent
 			};
 
-			this.oChange = new Change(oChangeJson);
+			this.oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
 
 			// XMLTreeModifier specific beforeEach
 			this.oComponent = oCore.createComponent({

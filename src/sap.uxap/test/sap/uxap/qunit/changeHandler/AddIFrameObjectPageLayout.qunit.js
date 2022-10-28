@@ -3,25 +3,23 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/uxap/changeHandler/AddIFrameObjectPageLayout",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
-	"sap/ui/core/mvc/View",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/ui/util/XMLHelper",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	jQuery,
 	AddIFrameObjectPageLayout,
-	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	View,
 	ObjectPageLayout,
 	ObjectPageSection,
 	XMLHelper,
-	oCore
+	oCore,
+	FlexTestAPI
 ) {
 	"use strict";
 
@@ -29,62 +27,18 @@ sap.ui.define([
 	var EXAMPLE_URL = "exampleurl";
 
 	QUnit.module("Given a AddIFrameObjectPageLayout Change Handler", {
-		beforeEach : function() {
-			this.oMockedAppComponent = {
-				getLocalId: function () {
-					return undefined;
-				}
-			};
-
+		beforeEach: function() {
 			this.oChangeHandler = AddIFrameObjectPageLayout;
-			this.oObjectPageLayout = new ObjectPageLayout("obp", {
-				sections: [
-					new ObjectPageSection()
-				]
-			});
-
-			this.oView = new View({content : [
-				this.oObjectPageLayout
-			]});
-
-			var mExpectedSelector = {
-				id: this.oObjectPageLayout.getId(),
-				type: "sap.uxap.ObjectPageLayout"
-			};
-
-			var oChangeJson = {
-				reference: "sap.uxap.qunit.changeHander.AddIFrameObjectPageLayout",
-				validAppVersions: {
-					creation: "1.0.0"
-				},
-				selector: mExpectedSelector,
-				changeType: "addIFrame",
-				fileName: "AddIFrameChange",
-				projectId: "projectId"
-			};
-
 			this.mChangeSpecificContent = {
 				targetAggregation: "sections",
 				baseId: BASE_ID,
 				url: EXAMPLE_URL
 			};
-
 			this.mSpecificChangeData = {
-				selector : mExpectedSelector,
-				changeType : "addIFrame",
-				content : this.mChangeSpecificContent
+				selector: {},
+				changeType: "addIFrame",
+				content: this.mChangeSpecificContent
 			};
-
-			this.oChange = new Change(oChangeJson);
-
-			this.mPropertyBag = {
-				modifier : JsControlTreeModifier,
-				view : this.oView,
-				appComponent : this.oMockedAppComponent
-			};
-		},
-		afterEach : function() {
-			this.oObjectPageLayout.destroy();
 		}
 	}, function() {
 		["targetAggregation", "baseId", "url"].forEach(function (sRequiredProperty) {
@@ -92,7 +46,7 @@ sap.ui.define([
 				delete this.mChangeSpecificContent[sRequiredProperty];
 				assert.throws(
 					function() {
-						this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
+						this.oChangeHandler.completeChangeContent({}, this.mSpecificChangeData, {});
 					},
 					Error("Attribute missing from the change specific content '" + sRequiredProperty + "'"),
 					"without " + sRequiredProperty + " 'completeChangeContent' throws an error"
@@ -101,75 +55,72 @@ sap.ui.define([
 		});
 	});
 
+	function beforeEachFunction() {
+		this.oMockedAppComponent = {
+			getLocalId: function () {
+				return undefined;
+			}
+		};
+
+		this.oChangeHandler = AddIFrameObjectPageLayout;
+		this.sObjectPageLayoutId = "obp";
+
+		var mExpectedSelector = {
+			id: this.sObjectPageLayoutId,
+			type: "sap.uxap.ObjectPageLayout"
+		};
+
+		this.mChangeSpecificContent = {
+			targetAggregation: "sections",
+			baseId: BASE_ID,
+			url: EXAMPLE_URL
+		};
+
+		this.mSpecificChangeData = {
+			selector: mExpectedSelector,
+			changeType: "addIFrame",
+			content: this.mChangeSpecificContent
+		};
+
+		// JSTreeModifier specific beforeEach
+		this.oObjectPageSection = new ObjectPageSection();
+
+		this.oObjectPageLayout = new ObjectPageLayout(this.sObjectPageLayoutId, {
+			sections: [this.oObjectPageSection]
+		});
+
+		this.oObjectPageLayout.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		this.mPropertyBag = {
+			view: {
+				getController: function () {},
+				getId: function () {},
+				createId: function (sId) { return sId; }
+			},
+			appComponent: this.oMockedAppComponent
+		};
+
+		return FlexTestAPI.createFlexObject({
+			appComponent: this.oMockedAppComponent,
+			changeSpecificData: this.mSpecificChangeData,
+			selector: this.oObjectPageLayout
+		}).then(function(oChange) {
+			this.oChange = oChange;
+		}.bind(this));
+	}
+
 	QUnit.module("Given a AddIFrameObjectPageLayout Change Handler with JSTreeModifier", {
-		beforeEach : function () {
-			this.oMockedAppComponent = {
-				getLocalId: function () {
-					return undefined;
-				}
-			};
-
-			this.oChangeHandler = AddIFrameObjectPageLayout;
-
-			this.sObjectPageLayoutId = "obp";
-
-			var mExpectedSelector = {
-				id: this.sObjectPageLayoutId,
-				type: "sap.uxap.ObjectPageLayout"
-			};
-
-			var oChangeJson = {
-				selector: mExpectedSelector,
-				reference: "sap.uxap.qunit.changeHander.AddIFrameObjectPageLayout",
-				validAppVersions: {
-					creation: "1.0.0"
-				},
-				changeType: "addIFrame",
-				fileName: "AddIFrameChange",
-				projectId: "projectId"
-			};
-
-			this.mChangeSpecificContent = {
-				targetAggregation: "sections",
-				baseId: BASE_ID,
-				url: EXAMPLE_URL
-			};
-
-			this.mSpecificChangeData = {
-				selector : mExpectedSelector,
-				changeType : "addIFrame",
-				content : this.mChangeSpecificContent
-			};
-
-			this.oChange = new Change(oChangeJson);
-
-			// JSTreeModifier specific beforeEach
-			this.oObjectPageSection = new ObjectPageSection();
-
-			this.oObjectPageLayout = new ObjectPageLayout(this.sObjectPageLayoutId, {
-				sections: [this.oObjectPageSection]
-			});
-
-			this.oObjectPageLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
-
-			this.mPropertyBag = {
-				modifier : JsControlTreeModifier,
-				view : {
-					getController : function () {},
-					getId : function () {},
-					createId: function (sId) { return sId; }
-				},
-				appComponent: this.oMockedAppComponent
-			};
-
-			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
+		beforeEach: function () {
+			return beforeEachFunction.call(this).then(function() {
+				this.mPropertyBag.modifier = JsControlTreeModifier;
+			}.bind(this));
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oObjectPageLayout.destroy();
 		}
 	}, function () {
-		function _checkCreatedSection (assert, iExpectedCreatedSectionIndex) {
+		function checkCreatedSection (assert, iExpectedCreatedSectionIndex) {
 			assert.strictEqual(this.oObjectPageLayout.getSections().length, 2, "after the change there are 2 sections in the object page layout");
 			var oCreatedSection = this.oObjectPageLayout.getSections()[iExpectedCreatedSectionIndex];
 			assert.ok(oCreatedSection.getId() === BASE_ID, "the created section matches the expected baseId");
@@ -188,14 +139,14 @@ sap.ui.define([
 
 		QUnit.test("When applying the change on a js control tree", function(assert) {
 			return this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag)
-				.then(_checkCreatedSection.bind(this, assert, 1));
+				.then(checkCreatedSection.bind(this, assert, 1));
 		});
 
 		QUnit.test("When applying the change on a js control tree (index = 0)", function(assert) {
 			this.mChangeSpecificContent.index = 0;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
 			return this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag)
-				.then(_checkCreatedSection.bind(this, assert, 0));
+				.then(checkCreatedSection.bind(this, assert, 0));
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid targetAggregation", function(assert) {
@@ -220,23 +171,11 @@ sap.ui.define([
 	QUnit.module("Given a AddIFrame Change Handler with XMLTreeModifier", {
 		beforeEach : function() {
 			this.oChangeHandler = AddIFrameObjectPageLayout;
-
 			this.sObjectPageLayoutId = "hbx";
 
 			var mExpectedSelector = {
 				id: this.sObjectPageLayoutId,
 				type: "sap.uxap.ObjectPageLayout"
-			};
-
-			var oChangeJson = {
-				selector: mExpectedSelector,
-				reference: "sap.uxap.qunit.changeHander.AddIFrameObjectPageLayout",
-				validAppVersions: {
-					creation: "1.0.0"
-				},
-				changeType: "AddIFrame",
-				fileName: "AddIFrameChange",
-				projectId: "projectId"
 			};
 
 			this.mChangeSpecificContent = {
@@ -250,8 +189,6 @@ sap.ui.define([
 				changeType : "addIFrame",
 				content : this.mChangeSpecificContent
 			};
-
-			this.oChange = new Change(oChangeJson);
 
 			this.oComponent = oCore.createComponent({
 				name: "testComponent",
@@ -277,13 +214,24 @@ sap.ui.define([
 				appComponent: this.oComponent
 			};
 
-			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
+			this.oTempObjectPageLayout = new ObjectPageLayout("foo", {
+				sections: []
+			});
+
+			return FlexTestAPI.createFlexObject({
+				appComponent: this.oComponent,
+				changeSpecificData: this.mSpecificChangeData,
+				selector: this.oTempObjectPageLayout
+			}).then(function(oChange) {
+				this.oChange = oChange;
+			}.bind(this));
 		},
 		afterEach : function() {
+			this.oTempObjectPageLayout.destroy();
 			this.oComponent.destroy();
 		}
 	}, function() {
-		function _checkCreatedSection (assert, iExpectedCreatedSectionIndex) {
+		function checkCreatedSectionXml (assert, iExpectedCreatedSectionIndex) {
 			var oObjectPageLayoutSectionsAggregation = this.oObjectPageLayout.childNodes[0];
 			assert.strictEqual(oObjectPageLayoutSectionsAggregation.childNodes.length, 2, "after the addXML there are two sections in the object page layout");
 			var oCreatedSection = oObjectPageLayoutSectionsAggregation.childNodes[iExpectedCreatedSectionIndex];
@@ -301,14 +249,14 @@ sap.ui.define([
 
 		QUnit.test("When applying the change on a xml control tree", function(assert) {
 			return this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag)
-				.then(_checkCreatedSection.bind(this, assert, 1));
+				.then(checkCreatedSectionXml.bind(this, assert, 1));
 		});
 
 		QUnit.test("When applying the change on a xml control tree (index = 0)", function(assert) {
 			this.mChangeSpecificContent.index = 0;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
 			return this.oChangeHandler.applyChange(this.oChange, this.oObjectPageLayout, this.mPropertyBag)
-				.then(_checkCreatedSection.bind(this, assert, 0));
+				.then(checkCreatedSectionXml.bind(this, assert, 0));
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid targetAggregation", function(assert) {

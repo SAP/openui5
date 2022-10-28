@@ -2,8 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Scenario",
 	"sap/ui/layout/VerticalLayout",
@@ -19,8 +19,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FlVariant,
+	UIChange,
 	Utils,
-	Change,
 	Layer,
 	Scenario,
 	VerticalLayout,
@@ -392,15 +392,15 @@ sap.ui.define([
 				new FlVariant({
 					fileName: "variant0"
 				}),
-				new Change({
+				new UIChange({
 					fileType: "ctrl_variant_change",
 					fileName: "change0"
 				}),
-				new Change({
+				new UIChange({
 					fileType: "ctrl_variant_management_change",
 					fileName: "change1"
 				}),
-				new Change({
+				new UIChange({
 					fileType: "change",
 					fileName: "change2",
 					variantReference: "variant0"

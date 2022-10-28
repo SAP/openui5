@@ -40,7 +40,6 @@ builder:
               - sap/ui/fl/util/ManagedObjectModel.js
               - sap/ui/fl/apply/_internal/DelegateMediator.js
               - sap/ui/fl/apply/api/DelegateMediatorAPI.js
-              - sap/ui/fl/codeExt/CodeExtManager.js
               - sap/ui/fl/library-dbg.support.js
               - sap/ui/fl/registry/SimpleChanges.js
               - sap/ui/fl/interfaces/Delegate.js

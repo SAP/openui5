@@ -42,7 +42,7 @@ sap.ui.define([
 	 * Checks the custom data of the provided control for applied changes and returns the value or 'undefined'
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange The change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
 	 *
 	 * @returns {string|undefined} Returns the custom data or 'undefined'
 	 */
@@ -55,7 +55,7 @@ sap.ui.define([
 	 * Checks the custom data of the provided control for applied changes and returns the value or 'undefined'
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange The change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 *
 	 * @returns {Promise<string|undefined>} Resolves the custom data or 'undefined'
@@ -71,7 +71,7 @@ sap.ui.define([
 	 * Checks the custom data of the provided control. If there is a custom data value it gets parsed and returned as object
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange The change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
 	 *
 	 * @returns {object|undefined} Returns the revert data from the custom data as object or 'undefined'
 	 */
@@ -89,7 +89,7 @@ sap.ui.define([
 	 * Checks the custom data of the provided control. If there is a custom data value it gets parsed and returned as object
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange The change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 *
 	 * @returns {Promise<object>|object} Returns the revert data from the custom data as object or 'undefined'. The return value is wrapped in a promise when 'xml tree modifier' is used.
@@ -106,7 +106,7 @@ sap.ui.define([
 	 * Synchronous execution
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange The change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
 	 *
 	 * @returns {boolean} Resolves <code>true</code> if the custom data is there.
 	 */
@@ -130,7 +130,7 @@ sap.ui.define([
 	 * Checks the custom data of the provided control and returns 'true' if the notApplicable, applied or failed change key is there
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange The change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 *
 	 * @returns {Promise<boolean>} Resolves <code>true</code> if the custom data is there.
@@ -176,7 +176,7 @@ sap.ui.define([
 	 * the value of the custom data is either the revert data of the change (stringified and '{' and '}' escaped) or simply 'true'
 	 *
 	 * @param {sap.ui.core.Control} oControl The control that should be checked
-	 * @param {sap.ui.fl.Change} oChange The change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
 	 * @param {object} mPropertyBag The propertyBag
 	 * @param {object} mPropertyBag.view The view to process
 	 * @param {object} mPropertyBag.modifier The polymorph reuse operations handling the changes on the given view type
@@ -195,7 +195,7 @@ sap.ui.define([
 	 * Adds failed custom data to the control. The value is just 'true'
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange The change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
 	 * @param {object} mPropertyBag The propertyBag
 	 * @param {object} mPropertyBag.view The view to process
 	 * @param {object} mPropertyBag.modifier The polymorph reuse operations handling the changes on the given view type
@@ -213,7 +213,7 @@ sap.ui.define([
 	 * Destroys the applied custom data for the given control
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange - The change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - The change instance
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 */
 	FlexCustomData.sync.destroyAppliedCustomData = function(oControl, oChange, oModifier) {
@@ -228,7 +228,7 @@ sap.ui.define([
 	 * Destroys the applied custom data for the given control
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.Change} oChange - The change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - The change instance
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 * @return {Promise} resolves when the applied custom data is destroyed
 	 */
@@ -273,7 +273,7 @@ sap.ui.define([
 	 * Creates the Custom Data key by combining the identifier and the change ID.
 	 * Also used in tests.
 	 *
-	 * @param {sap.ui.fl.Change} oChange - Change Instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change Instance
 	 * @param {string} sIdentifier - Identifier of the Custom Data that should be written
 	 * @returns {string} Returns the key for the Custom Data
 	 */

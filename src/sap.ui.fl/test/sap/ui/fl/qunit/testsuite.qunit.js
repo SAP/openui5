@@ -345,6 +345,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexObjects/FlVariant"]
 				}
 			},
+			"apply/_internal/flexObjects/UIChange": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexObjects/UIChange"]
+				}
+			},
 			"apply/_internal/flexObjects/Variant": {
 				group: "Apply Internal",
 				coverage: {
@@ -409,12 +415,6 @@ sap.ui.define([
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/appDescriptorChanges/prepareAppDescriptorMap"]
-				}
-			},
-			"apply/_internal/flexState/changes/prepareChangesMap": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/changes/prepareChangesMap"]
 				}
 			},
 			"apply/_internal/flexState/compVariants/prepareCompVariantsMap": {
@@ -791,11 +791,6 @@ sap.ui.define([
 			},
 
 			// Team 42 tests:
-			Change: {
-				coverage: {
-					only: ["sap/ui/fl/Change"]
-				}
-			},
 			ChangePersistence: {
 				coverage: {
 					only: ["sap/ui/fl/ChangePersistence"]
@@ -1078,14 +1073,6 @@ sap.ui.define([
 			LayerUtils: {
 				coverage: {
 					only: ["sap/ui/fl/LayerUtils"]
-				}
-			},
-
-			// codeExt
-			"codeExt/CodeExtManager": {
-				group: "codeExt",
-				coverage: {
-					only: ["sap/ui/fl/codeExt/CodeExtManager"]
 				}
 			},
 

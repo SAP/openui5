@@ -87,7 +87,7 @@ sap.ui.define([
 	 * @param {any} [mInfo.additionalDesigntimeAttributes] - Additional functions or properties that end up in the designtime mock
 	 * @param {string|string[]} mInfo.designtimeActionStructure - Name of the action in the designtime file - nested structures should be put into an array
 	 * @param {object} mCommandProperties - Properties with which the command will be created
-	 * @param {object} mExpectedSpecificData - Command specific data that will be passed to the creation of the <code>sap.ui.fl.Change</code>
+	 * @param {object} mExpectedSpecificData - Command specific data that will be passed to the creation of the <code>sap.ui.fl.apply._internal.flexObjects.UIChange</code>
 	 */
 	function basicCommandTest(mInfo, mCommandProperties, mExpectedSpecificData) {
 		var sMsg = mInfo.moduleName || "Test for '" + mInfo.commandName + "' command";

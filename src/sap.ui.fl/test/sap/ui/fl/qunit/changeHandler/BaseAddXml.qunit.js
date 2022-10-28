@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/util/XMLHelper",
 	"sap/ui/fl/changeHandler/BaseAddXml",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
 	"sap/m/HBox",
@@ -13,7 +13,7 @@ sap.ui.define([
 ], function(
 	XMLHelper,
 	BaseAddXml,
-	Change,
+	FlexObjectFactory,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	HBox,
@@ -81,7 +81,7 @@ sap.ui.define([
 				index: 1
 			};
 
-			this.oChange = new Change(oChangeJson);
+			this.oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
 		},
 		afterEach: function() {
 			this.oHBox.destroy();
@@ -94,7 +94,7 @@ sap.ui.define([
 
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChange.getContent());
 			assert.deepEqual(this.oChange.getContent(), oExpectedChangeContent, "then the change specific content is in the change, but the fragment not");
-			assert.equal(this.oChange.getModuleName(), "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/Fragment.fragment.xml", "and the module name is set correct in change");
+			assert.equal(this.oChange.getFlexObjectMetadata().moduleName, "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/Fragment.fragment.xml", "and the module name is set correct in change");
 		});
 
 		QUnit.test("When calling 'completeChangeContent' without complete information", function(assert) {
@@ -114,7 +114,7 @@ sap.ui.define([
 
 			this.sHBoxId = "hbox";
 
-			var oChangeJson = {
+			this.oChangeJson = {
 				moduleName: sFragmentPath,
 				selector: {
 					id: this.sHBoxId,
@@ -136,7 +136,7 @@ sap.ui.define([
 				index: this.oChangeSpecificContent.index
 			};
 
-			this.oChange = new Change(oChangeJson);
+			this.oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChange.getContent());
 
 			// JSTreeModifier specific beforeEach
@@ -182,9 +182,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a js control tree with multiple root elements and one invalid type inside", function(assert) {
-			this.oChange.setModuleName(sFragmentMultipleInvalidTypesPath);
-
-			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+			this.oChangeJson.moduleName = sFragmentMultipleInvalidTypesPath;
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 				.catch(function(oError) {
 					assert.equal(oError.message,
 						"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
@@ -203,9 +203,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("When reverting the change on a js control tree with multiple root elements", function(assert) {
-			this.oChange.setModuleName(sFragmentMultiplePath);
-			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
-				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oHBox, this.oPropertyBag))
+			this.oChangeJson.moduleName = sFragmentMultiplePath;
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, oChange, this.oHBox, this.oPropertyBag))
 				.then(function() {
 					assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
 					assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
@@ -213,15 +214,15 @@ sap.ui.define([
 		});
 
 		QUnit.test("When reverting a change that failed on a js control tree with multiple root elements", function(assert) {
-			this.oChange.setModuleName(sFragmentMultipleInvalidTypesPath);
-
-			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+			this.oChangeJson.moduleName = sFragmentMultipleInvalidTypesPath;
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 				.catch(function(oError) {
 					assert.equal(oError.message,
 						"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
 						"then apply change throws an error");
 					assert.equal(this.oHBox.getItems().length, 1, "after the change there is still only 1 item in the hbox");
-					return this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
+					return this.oChangeHandler.revertChange(oChange, this.oHBox, this.oPropertyBag);
 				}.bind(this))
 				.then(function() {
 					assert.equal(this.oHBox.getItems().length, 1, "after reversal there is again only one child of the HBox");
@@ -236,7 +237,7 @@ sap.ui.define([
 
 			this.sHBoxId = "hbox";
 
-			var oChangeJson = {
+			this.oChangeJson = {
 				moduleName: sFragmentPath,
 				selector: {
 					id: this.sHBoxId,
@@ -258,7 +259,7 @@ sap.ui.define([
 				index: this.oChangeSpecificContent.index
 			};
 
-			this.oChange = new Change(oChangeJson);
+			this.oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChange.getContent());
 
 			// XMLTreeModifier specific beforeEach
@@ -322,9 +323,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a xml control tree with an invalid type", function(assert) {
-			this.oChange.setModuleName(sFragmentInvalidTypePath);
-
-			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+			this.oChangeJson.moduleName = sFragmentInvalidTypePath;
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 				.catch(function(oError) {
 					assert.equal(oError.message,
 						"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
@@ -344,9 +345,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a xml control tree with multiple root elements", function(assert) {
-			this.oChange.setModuleName(sFragmentMultiplePath);
-
-			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+			this.oChangeJson.moduleName = sFragmentMultiplePath;
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 				.then(function() {
 					var oHBoxItems = this.oHBox.childNodes[1];
 					assert.equal(oHBoxItems.childNodes.length, 4, "after the change there are 4 items in the hbox");
@@ -357,9 +358,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a xml control tree with multiple root elements and one invalid type inside", function(assert) {
-			this.oChange.setModuleName(sFragmentMultipleInvalidTypesPath);
-
-			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+			this.oChangeJson.moduleName = sFragmentMultipleInvalidTypesPath;
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 				.catch(function(oError) {
 					assert.equal(oError.message,
 						"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
@@ -370,21 +371,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("When reverting the change on an xml control tree with multiple root elements", function(assert) {
-			this.oChange.setModuleName(sFragmentMultiplePath);
-
-			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
-				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, this.oChange, this.oHBox, this.oPropertyBag))
+			this.oChangeJson.moduleName = sFragmentMultiplePath;
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+				.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, oChange, this.oHBox, this.oPropertyBag))
 				.then(function() {
 					var oHBoxItems = this.oHBox.childNodes[1];
 					assert.equal(oHBoxItems.childNodes.length, 1, "after reversal there is again only one child of the HBox");
-					assert.equal(this.oChange.getRevertData(), undefined, "and the revert data got reset");
+					assert.equal(oChange.getRevertData(), undefined, "and the revert data got reset");
 				}.bind(this));
 		});
 
 		QUnit.test("When reverting a failed change on an xml control tree with multiple root elements", function(assert) {
-			this.oChange.setModuleName(sFragmentMultipleInvalidTypesPath);
-
-			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+			this.oChangeJson.moduleName = sFragmentMultipleInvalidTypesPath;
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 				.catch(function(oError) {
 					assert.equal(oError.message,
 						"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
@@ -398,9 +399,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change with a not found module", function(assert) {
-			this.oChange.setModuleName(sNonExistingPath);
-
-			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
+			this.oChangeJson.moduleName = sNonExistingPath;
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			return this.oChangeHandler.applyChange(oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 				.catch(function(oError) {
 					var sErrorMessage = "resource sap/ui/fl/qunit/changeHander/BaseAddXml/" +
 						"changes/fragments/NonExisting could not be loaded from";

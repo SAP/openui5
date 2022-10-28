@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -23,7 +24,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Cache",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -41,6 +41,7 @@ sap.ui.define([
 	ChangesUtils,
 	FlexObject,
 	FlexObjectFactory,
+	States,
 	DependencyHandler,
 	VariantManagementState,
 	FlexState,
@@ -50,7 +51,6 @@ sap.ui.define([
 	Storage,
 	Version,
 	Cache,
-	Change,
 	LayerUtils,
 	Layer,
 	Utils,
@@ -92,19 +92,15 @@ sap.ui.define([
 
 	function getChangeInstance(oFileContent, oChangeOrChangeContent) {
 		var oChange;
-		if (oChangeOrChangeContent instanceof Change || oChangeOrChangeContent instanceof FlexObject) {
+		if (oChangeOrChangeContent instanceof FlexObject) {
 			oChange = oChangeOrChangeContent; // can have other states
 			this._mChangesEntries[oChange.getId()] = oChange;
 		} else {
 			if (!this._mChangesEntries[oChangeOrChangeContent.fileName]) {
-				if (oChangeOrChangeContent.changeType === "codeExt") {
-					this._mChangesEntries[oChangeOrChangeContent.fileName] = FlexObjectFactory.createFromFileContent(oChangeOrChangeContent);
-				} else {
-					this._mChangesEntries[oChangeOrChangeContent.fileName] = new Change(oChangeOrChangeContent);
-				}
+				this._mChangesEntries[oChangeOrChangeContent.fileName] = FlexObjectFactory.createFromFileContent(oChangeOrChangeContent);
 			}
 			oChange = this._mChangesEntries[oChangeOrChangeContent.fileName];
-			oChange.setState(Change.states.PERSISTED);
+			oChange.setState(States.LifecycleState.PERSISTED);
 		}
 		return oChange;
 	}
@@ -148,7 +144,7 @@ sap.ui.define([
 		var sVariantReference;
 		var sSelectorId;
 
-		if (oChangeOrChangeContent instanceof Change) {
+		if (oChangeOrChangeContent instanceof FlexObject) {
 			var oChange = oChangeOrChangeContent;
 			sFileType = oChange.getFileType();
 			sVariantReference = oChange.getVariantReference();
@@ -181,7 +177,6 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.cacheKey] Key to validate the cache entry stored on client side
 	 * @param {sap.ui.core.Component} [mPropertyBag.component] - Component instance
 	 * @param {boolean} bInvalidateCache - should the cache be invalidated
-	 * @see sap.ui.fl.Change
 	 * @returns {Promise} Promise resolving with an array of changes
 	 * @public
 	 */
@@ -262,7 +257,7 @@ sap.ui.define([
 		var sChangeLayer;
 		if (
 			typeof oChangeOrChangeContent.isA === "function"
-			&& (oChangeOrChangeContent.isA("sap.ui.fl.apply._internal.flexObjects.FlVariant") || oChangeOrChangeContent.isA("sap.ui.fl.Change"))
+			&& (oChangeOrChangeContent.isA("sap.ui.fl.apply._internal.flexObjects.FlVariant") || oChangeOrChangeContent.isA("sap.ui.fl.apply._internal.flexObjects.UIChange"))
 		) {
 			sChangeLayer = oChangeOrChangeContent.getLayer();
 		} else {
@@ -289,7 +284,6 @@ sap.ui.define([
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
 	 * @param {object} oAppComponent - Component instance used to prepare the IDs (e.g. local)
-	 * @see sap.ui.fl.Change
 	 * @returns {Promise} Promise resolving with a getter for the changes map
 	 * @public
 	 */
@@ -317,7 +311,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oSelector selector of the control
 	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
-	 * @returns {sap.ui.fl.Change[]} Array of all open dependent changes for the control
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of all open dependent changes for the control
 	 */
 	ChangePersistence.prototype.getOpenDependentChangesForControl = function(oSelector, oAppComponent) {
 		return DependencyHandler.getOpenDependentChangesForControl(this._mChanges, JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent), oAppComponent);
@@ -355,7 +349,7 @@ sap.ui.define([
 	 * Also checks if the dependency is still valid in a callback
 	 * This function is used in the case that controls got destroyed and recreated
 	 *
-	 * @param {sap.ui.fl.Change} oChange The change whose dependencies should be copied
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change whose dependencies should be copied
 	 * @param {function} fnDependencyValidation this function is called to check if the dependency is still valid
 	 * @param {sap.ui.core.Component} oAppComponent Application component instance that is currently loading
 	 * @returns {object} Returns the mChanges object with the updated dependencies
@@ -381,7 +375,7 @@ sap.ui.define([
 	 * Also checks if the dependency is still valid in a callback
 	 * This function is used in the case that controls got destroyed and recreated
 	 *
-	 * @param {sap.ui.fl.Change} oChange The change whose dependencies should be copied
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change whose dependencies should be copied
 	 * @param {function} fnDependencyValidation this function is called to check if the dependency is still valid
 	 * @param {sap.ui.core.Component} oAppComponent Application component instance that is currently loading
 	 * @returns {Promise} Resolves the mChanges object with the updated dependencies
@@ -413,8 +407,8 @@ sap.ui.define([
 	 * Adds a new change into changes map positioned right after the referenced change and updates the change dependencies
 	 *
 	 * @param {sap.ui.core.Component} oAppComponent - Application component for the view
-	 * @param {sap.ui.fl.changeObject} oChange - Change instance
-	 * @param {sap.ui.fl.changeObject} [oReferenceChange] - Refernce change. New change is positioned right after this one in the changes map
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} [oReferenceChange] - Reference change. New change is positioned right after this one in the changes map
 	 */
 	ChangePersistence.prototype.addChangeAndUpdateDependencies = function(oAppComponent, oChange, oReferenceChange) {
 		// the change status should always be initial when it gets added to the map / dependencies
@@ -431,7 +425,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Getter for the private aggregation containing sap.ui.fl.Change objects mapped by their selector ids.
+	 * Getter for the private aggregation containing sap.ui.fl.apply._internal.flexObjects.FlexObject objects mapped by their selector ids.
 	 * @return {map} mChanges mapping with changes sorted by their selector ids
 	 * @public
 	 */
@@ -444,7 +438,7 @@ sap.ui.define([
 	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
 	 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading changes
 	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Whether dirty changes of the current session should be included
-	 * @returns {sap.ui.fl.Change[]} Array of changes
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of changes
 	 * @public
 	 */
 	ChangePersistence.prototype.getAllUIChanges = function(mPropertyBag) {
@@ -504,7 +498,7 @@ sap.ui.define([
 	 *
 	 * @param {object} vChange - The complete and finalized JSON object representation the file content of the change or a Change instance
 	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
-	 * @returns {sap.ui.fl.Change} the newly created change
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} the newly created change
 	 * @public
 	 */
 	ChangePersistence.prototype.addChange = function(vChange, oAppComponent) {
@@ -519,18 +513,15 @@ sap.ui.define([
 	 * Adds a new dirty change.
 	 *
 	 * @param {object} vChange - JSON object of change or change object
-	 * @returns {sap.ui.fl.Change} The prepared change object
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} The prepared change object
 	 * @public
 	 */
 	ChangePersistence.prototype.addDirtyChange = function(vChange) {
 		var oNewChange;
-		if (
-			typeof vChange.isA === "function"
-			&& (vChange.isA("sap.ui.fl.Change") || vChange.isA("sap.ui.fl.apply._internal.flexObjects.FlexObject"))
-		) {
+		if (typeof vChange.isA === "function" && vChange.isA("sap.ui.fl.apply._internal.flexObjects.FlexObject")) {
 			oNewChange = vChange;
 		} else {
-			oNewChange = new Change(vChange);
+			oNewChange = FlexObjectFactory.createFromFileContent(vChange);
 		}
 
 		// don't add the same change twice
@@ -637,9 +628,9 @@ sap.ui.define([
 		}
 		var aPersistedAndSameLayerChanges = this._mChanges.aChanges.filter(function(oChange) {
 			if (sLayer === Layer.CUSTOMER && aDraftFilenames) {
-				return oChange.getState() === Change.states.PERSISTED && aDraftFilenames.includes(oChange.getId());
+				return oChange.getState() === States.LifecycleState.PERSISTED && aDraftFilenames.includes(oChange.getId());
 			}
-			return oChange.getState() === Change.states.PERSISTED && LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), sLayer) === 0;
+			return oChange.getState() === States.LifecycleState.PERSISTED && LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), sLayer) === 0;
 		});
 		return aPersistedAndSameLayerChanges.concat(aDirtyChanges);
 	}
@@ -648,7 +639,7 @@ sap.ui.define([
 		if (aDirtyChanges.length) {
 			var aRequests = getRequests(aDirtyChanges);
 			var aStates = getStates(aDirtyChanges);
-			return aStates.length === 1 && aRequests.length === 1 && aStates[0] === Change.states.NEW;
+			return aStates.length === 1 && aRequests.length === 1 && aStates[0] === States.LifecycleState.NEW;
 		}
 		return true;
 	}
@@ -663,7 +654,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.UIComponent} [oAppComponent] - AppComponent instance
 	 * @param {boolean} [bSkipUpdateCache] - If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
-	 * @param {sap.ui.fl.Change} [aChanges] - If passed only those changes are saved
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} [aChanges] - If passed only those changes are saved
 	 * @param {string} sParentVersion - Parent version
 	 * @param {string[]} [aDraftFilenames] - Filenames from persisted changes draft version
 	 * @param {boolean} [bCondenseAnyLayer] - This will enable condensing regardless of the current layer
@@ -726,7 +717,7 @@ sap.ui.define([
 	 * to ensure the correct order, the methods are called sequentially;
 	 * after a change was saved successfully, it is removed from the dirty changes and the cache is updated.
 	 *
-	 * @param {sap.ui.fl.Change[]} aDirtyChanges - Array of dirty changes to be saved
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aDirtyChanges - Array of dirty changes to be saved
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 * @param {string} [sParentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
@@ -738,7 +729,7 @@ sap.ui.define([
 			// in case of changes saved for a draft only the first writing operation must have the parentVersion targeting the basis
 			// followup changes must point the the existing draft created with the first request
 			var aNewChanges = aDirtyChanges.filter(function (oChange) {
-				return oChange.getState() === Change.states.NEW;
+				return oChange.getState() === States.LifecycleState.NEW;
 			});
 			oFirstNewChange = [].concat(aNewChanges).shift();
 		}
@@ -752,7 +743,7 @@ sap.ui.define([
 
 	function performSingleSaveAction(oDirtyChange, oFirstChange, sParentVersion) {
 		switch (oDirtyChange.getState()) {
-			case Change.states.NEW:
+			case States.LifecycleState.NEW:
 				if (sParentVersion !== undefined) {
 					sParentVersion = oDirtyChange === oFirstChange ? sParentVersion : Version.Number.Draft;
 				}
@@ -762,7 +753,7 @@ sap.ui.define([
 					transport: oDirtyChange.getRequest(),
 					parentVersion: sParentVersion
 				});
-			case Change.states.DELETED:
+			case States.LifecycleState.DELETED:
 				return Storage.remove({
 					flexObject: oDirtyChange.convertToFileContent(),
 					layer: oDirtyChange.getLayer(),
@@ -775,7 +766,7 @@ sap.ui.define([
 
 	/**
 	 * Updates the cache with the dirty change passed and removes it from the array of dirty changes if present.
-	 * @param {sap.ui.fl.Change} oDirtyChange Dirty change which was saved
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oDirtyChange Dirty change which was saved
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app
 	 * therefore, the cache update of the current app is skipped
 	 */
@@ -792,15 +783,15 @@ sap.ui.define([
 				});
 			} else {
 				switch (oDirtyChange.getState()) {
-					case Change.states.NEW:
-						oDirtyChange.setState(Change.states.PERSISTED);
+					case States.LifecycleState.NEW:
+						oDirtyChange.setState(States.LifecycleState.PERSISTED);
 						Cache.addChange(this._mComponent, oDirtyChange.convertToFileContent());
 						break;
-					case Change.states.DELETED:
+					case States.LifecycleState.DELETED:
 						Cache.deleteChange(this._mComponent, oDirtyChange.convertToFileContent());
 						break;
-					case Change.states.DIRTY:
-						oDirtyChange.setState(Change.states.PERSISTED);
+					case States.LifecycleState.DIRTY:
+						oDirtyChange.setState(States.LifecycleState.PERSISTED);
 						Cache.updateChange(this._mComponent, oDirtyChange.convertToFileContent());
 						break;
 				}
@@ -809,7 +800,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {sap.ui.fl.Change[]} aDirtyChanges - Array of dirty changes
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aDirtyChanges - Array of dirty changes
 	 * @param {boolean} [bSkipUpdateCache]-  If <code>true</code>, then the dirty change shall be saved for the newly created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 */
@@ -869,14 +860,14 @@ sap.ui.define([
 	 *
 	 * Otherwise it will be marked for deletion.
 	 *
-	 * @param {sap.ui.fl.Change} oChange the change to be deleted
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange the change to be deleted
 	 * @param {boolean} [bRunTimeCreatedChange] set if the change was created at runtime
 	 */
 	ChangePersistence.prototype.deleteChange = function(oChange, bRunTimeCreatedChange) {
 		var nIndexInDirtyChanges = this._aDirtyChanges.indexOf(oChange);
 
 		if (nIndexInDirtyChanges > -1) {
-			if (oChange.getState() === Change.states.DELETED) {
+			if (oChange.getState() === States.LifecycleState.DELETED) {
 				return;
 			}
 			this._aDirtyChanges.splice(nIndexInDirtyChanges, 1);
@@ -901,7 +892,7 @@ sap.ui.define([
 	/**
 	 * Deletes a change object from the internal map.
 	 *
-	 * @param {sap.ui.fl.Change} oChange change which has to be removed from the mapping
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change which has to be removed from the mapping
 	 * @param {boolean} [bRunTimeCreatedChange] set if the change was created at runtime
 	 * @private
 	 */
@@ -916,7 +907,7 @@ sap.ui.define([
 	}
 
 	function isPersistedAndInLayer(sLayer, oObject) {
-		return oObject.getState() === Change.states.PERSISTED && oObject.getLayer() === sLayer;
+		return oObject.getState() === States.LifecycleState.PERSISTED && oObject.getLayer() === sLayer;
 	}
 
 	function getAllCompVariantsEntities() {
@@ -962,7 +953,7 @@ sap.ui.define([
 	 * Collect changes from the internal map by names
 	 *
 	 * @param {string[]} aNames Names of changes
-	 * @returns {sap.ui.fl.Change[]} aChanges Array of changes with corresponding names
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges Array of changes with corresponding names
 	 * @private
 	 */
 	ChangePersistence.prototype._getChangesFromMapByNames = function(aNames) {

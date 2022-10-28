@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/LayerUtils"
 ], function(
 	each,
@@ -24,7 +24,7 @@ sap.ui.define([
 	Log,
 	VariantsApplyUtil,
 	FlexObjectFactory,
-	Change,
+	States,
 	LayerUtils
 ) {
 	"use strict";
@@ -48,8 +48,8 @@ sap.ui.define([
 	function addVariantDependentControlChanges(oVariantsMap, aVariantDependentChanges, sReference) {
 		var oVariantsMapClone = merge({}, oVariantsMap);
 		aVariantDependentChanges.forEach(function(oChange) {
-			var oChangeInstance = new Change(oChange);
-			oChangeInstance.setState(Change.states.PERSISTED);
+			var oChangeInstance = FlexObjectFactory.createFromFileContent(oChange);
+			oChangeInstance.setState(States.LifecycleState.PERSISTED);
 			var oVariantEntry = oVariantsMapClone[oChange.variantReference];
 			oVariantEntry = oVariantEntry || createStandardVariant(oChange.variantReference, sReference);
 			oVariantEntry.controlChanges.push(oChangeInstance);
@@ -298,7 +298,7 @@ sap.ui.define([
 
 	function getActiveChange(aChanges) {
 		if (aChanges.length > 0) {
-			return new Change(aChanges[aChanges.length - 1]);
+			return FlexObjectFactory.createFromFileContent(aChanges[aChanges.length - 1]);
 		}
 		return false;
 	}

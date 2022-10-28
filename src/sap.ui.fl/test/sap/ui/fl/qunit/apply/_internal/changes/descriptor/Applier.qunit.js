@@ -1,6 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/base/util/restricted/_omit",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary",
@@ -8,11 +9,12 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/SetTitle",
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeDataSource",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModelEnhanceWith",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	_omit,
 	Applier,
 	ApplyStrategyFactory,
 	AddLibrary,
@@ -20,7 +22,7 @@ sap.ui.define([
 	SetTitle,
 	ChangeDataSource,
 	AddNewModelEnhanceWith,
-	Change,
+	AppDescriptorChange,
 	Log,
 	jQuery,
 	sinon
@@ -31,7 +33,11 @@ sap.ui.define([
 
 	function convertChanges(aChanges) {
 		return aChanges.map(function(oChange) {
-			return new Change(oChange);
+			var oFileContent = _omit(oChange, "changeType");
+			oFileContent.flexObjectMetadata = {
+				changeType: oChange.changeType
+			};
+			return new AppDescriptorChange(oFileContent);
 		});
 	}
 
@@ -260,9 +266,7 @@ sap.ui.define([
 			var aChanges = [
 				 {
 					changeType: "appdescr_app_setTitle",
-					content: {
-
-					}
+					content: {}
 				}
 			];
 

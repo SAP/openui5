@@ -7,6 +7,7 @@ sap.ui.define([
 	FlexObject
 ) {
 	"use strict";
+
 	/**
 	 * Base class for all variants.
 	 *

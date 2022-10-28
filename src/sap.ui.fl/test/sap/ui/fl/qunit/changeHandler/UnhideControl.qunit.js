@@ -3,16 +3,16 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/changeHandler/UnhideControl",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier"
 ],
 function(
 	Control,
 	Element,
+	UIChange,
 	UnhideControlChangeHandler,
-	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier
 ) {
@@ -24,12 +24,10 @@ function(
 			var oChangeJson = {
 				selector: {
 					id: "key"
-				},
-				content: {},
-				texts: {}
+				}
 			};
 
-			this.oChange = new Change(oChangeJson);
+			this.oChange = new UIChange(oChangeJson);
 		},
 		afterEach: function() {
 			this.oChange = null;

@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/Change",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/LREPSerializer",
 	"sap/ui/rta/command/Stack",
@@ -18,7 +17,6 @@ sap.ui.define([
 	DesignTimeMetadata,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
-	Change,
 	CommandFactory,
 	CommandSerializer,
 	CommandStack,
@@ -34,7 +32,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
@@ -63,14 +61,14 @@ sap.ui.define([
 				rootControl: this.oPanel
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oCommandStack.destroy();
 			this.oSerializer.destroy();
 			this.oComponent.destroy();
 			this.oPanel.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when 2 Changes get executed at the same time", function(assert) {
 			var done = assert.async();
 
@@ -98,7 +96,7 @@ sap.ui.define([
 			.then(function(oRemoveCommand) {
 				this.oCommandStack.pushAndExecute(oRemoveCommand);
 			}.bind(this))
-			.catch(function (oError) {
+			.catch(function(oError) {
 				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
@@ -152,7 +150,7 @@ sap.ui.define([
 					sandbox.stub(this.oCommandStack, "getSubCommands").returns(undefined);
 					return this.oCommandStack.pushAndExecute(oRemoveCommand);
 				}.bind(this))
-				.catch(function (oError) {
+				.catch(function(oError) {
 					assert.ok(true, "catch has be called during execution of second command - Error: " + oError);
 					assert.equal(this.oCommandStack._toBeExecuted, -1, "the Variable '_toBeExecuted' is not descreased a second time");
 					done();
@@ -195,7 +193,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an array of dirty changes...", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 			this.oChangeDefinition1 = {
@@ -257,13 +255,13 @@ sap.ui.define([
 
 			this.oControl = {id: "a Control"};
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oComponent.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when calling function 'initializeWithChanges' with the array...", function(assert) {
-			var aChanges = [new Change(this.oChangeDefinition1), new Change(this.oChangeDefinition2)];
+			var aChanges = [RtaQunitUtils.createUIChange(this.oChangeDefinition1), RtaQunitUtils.createUIChange(this.oChangeDefinition2)];
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
 
 			return CommandStack.initializeWithChanges(this.oControl, ["fileName1", "fileName2"]).then(function(oStack) {
@@ -277,8 +275,8 @@ sap.ui.define([
 
 		QUnit.test("when calling function 'initializeWithChanges' with the array containing changes from a composite command...", function(assert) {
 			var aCompositeChanges = [
-				new Change(this.oChangeDefinitionForComposite11), new Change(this.oChangeDefinitionForComposite12),
-				new Change(this.oChangeDefinitionForComposite21), new Change(this.oChangeDefinitionForComposite22)
+				RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite11), RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite12),
+				RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite21), RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite22)
 			];
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aCompositeChanges);
 
@@ -298,7 +296,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling function 'initializeWithChanges' for a non existent change...", function(assert) {
-			var aChanges = [new Change(this.oChangeDefinition1), new Change(this.oChangeDefinition2)];
+			var aChanges = [RtaQunitUtils.createUIChange(this.oChangeDefinition1), RtaQunitUtils.createUIChange(this.oChangeDefinition2)];
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
 
 			return CommandStack.initializeWithChanges(this.oControl, ["unavailableChangeFileName"]).then(function(oStack) {
@@ -309,7 +307,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

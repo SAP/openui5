@@ -2,8 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/util/XMLHelper",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/changeHandler/AddXML",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
 	"sap/m/HBox",
@@ -11,8 +11,8 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ], function(
 	XMLHelper,
+	FlexObjectFactory,
 	AddXML,
-	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	HBox,
@@ -59,7 +59,7 @@ sap.ui.define([
 				index: 1
 			};
 
-			this.oChange = new Change(oChangeJson);
+			this.oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
 		},
 		afterEach: function() {
 			this.oHBox.destroy();
@@ -74,7 +74,7 @@ sap.ui.define([
 
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
 			assert.deepEqual(this.oChange.getContent(), oExpectedChangeContent, "then the change specific content is in the change, but the fragment not");
-			assert.equal(this.oChange.getModuleName(), "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/Fragment", "and the module name is set correct");
+			assert.equal(this.oChange.getFlexObjectMetadata().moduleName, "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/Fragment", "and the module name is set correct");
 		});
 
 		QUnit.test("When calling 'completeChangeContent' without complete information", function(assert) {
@@ -128,7 +128,7 @@ sap.ui.define([
 				index: 1
 			};
 
-			this.oChange = new Change(oChangeJson);
+			this.oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
 
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
 
@@ -210,7 +210,7 @@ sap.ui.define([
 				index: 1
 			};
 
-			this.oChange = new Change(oChangeJson);
+			this.oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
 
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
 

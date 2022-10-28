@@ -1,13 +1,13 @@
 /* global QUnit*/
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	FlexObjectFactory,
 	Base,
-	Change,
 	JsControlTreeModifier,
 	sinon
 ) {
@@ -51,12 +51,9 @@ sap.ui.define([
 			sap.ui.require.preload(mPreloadedModules);
 		},
 		beforeEach: function () {
-			var oChangeJson = {
+			this.oChangeJson = {
 				projectId: "projectId"
 			};
-
-			this.oChange = new Change(oChangeJson);
-
 
 			this.mPropertyBag = {
 				modifier: JsControlTreeModifier,
@@ -72,31 +69,26 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("When applying the change on a js control tree without a fragment", function(assert) {
-			return Base.instantiateFragment(this.oChange, this.mPropertyBag)
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			return Base.instantiateFragment(oChange, this.mPropertyBag)
 				.catch(function (vError) {
 					assert.ok(vError instanceof Error, "then apply change throws an error");
 				});
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid fragment", function(assert) {
-			this.oChange.setModuleName(this.sFragmentInvalidPath);
-			return Base.instantiateFragment(this.oChange, this.mPropertyBag)
-				.catch(function (vError) {
-					assert.ok(vError instanceof Error, "then apply change throws an error");
-				});
-		});
-
-		QUnit.test("When applying the change on a js control tree with an invalid fragment", function(assert) {
-			this.oChange.setModuleName(this.sFragmentInvalidPath);
-			return Base.instantiateFragment(this.oChange, this.mPropertyBag)
+			this.oChangeJson.moduleName = this.sFragmentInvalidPath;
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			return Base.instantiateFragment(oChange, this.mPropertyBag)
 				.catch(function (vError) {
 					assert.ok(vError instanceof Error, "then apply change throws an error");
 				});
 		});
 
 		QUnit.test("When applying the change with a not found module", function(assert) {
-			this.oChange.setModuleName(this.sNonExistingPath);
-			return Base.instantiateFragment(this.oChange, this.mPropertyBag)
+			this.oChangeJson.moduleName = this.sNonExistingPath;
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			return Base.instantiateFragment(oChange, this.mPropertyBag)
 				.catch(function (vError) {
 					assert.ok(vError.message.indexOf("resource sap/somePath/toSomewhereNonExisting could not be loaded from") > -1,
 						"then apply change throws an error");
@@ -104,8 +96,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a js control tree with multiple root elements", function(assert) {
-			this.oChange.setModuleName(this.sFragmentMultiplePath);
-			return Base.instantiateFragment(this.oChange, this.mPropertyBag)
+			this.oChangeJson.moduleName = this.sFragmentMultiplePath;
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			return Base.instantiateFragment(oChange, this.mPropertyBag)
 				.then(function (aItems) {
 					assert.equal(aItems.length, 3, "after the change there are 4 items in the hbox");
 					assert.equal(aItems[0].getId(), "projectId.button1", "then the first button in the fragment has the correct index and ID");
@@ -116,9 +109,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a js control tree with multiple root elements and extension point with fragmentId", function(assert) {
-			this.oChange.setModuleName(this.sFragmentMultiplePath);
-			this.oChange.setExtensionPointInfo({ fragmentId: "EPFRAGMENTID" });
-			return Base.instantiateFragment(this.oChange, this.mPropertyBag)
+			this.oChangeJson.moduleName = this.sFragmentMultiplePath;
+			var oChange = FlexObjectFactory.createFromFileContent(this.oChangeJson);
+			oChange.setExtensionPointInfo({ fragmentId: "EPFRAGMENTID" });
+			return Base.instantiateFragment(oChange, this.mPropertyBag)
 				.then(function (aItems) {
 					assert.equal(aItems.length, 3, "after the change there are 4 items in the hbox");
 					assert.equal(aItems[0].getId(), "projectId.EPFRAGMENTID.button1", "then the first button in the fragment has the correct index and ID");
@@ -138,10 +132,6 @@ sap.ui.define([
 			sap.ui.require.preload(mPreloadedModules);
 		},
 		beforeEach: function () {
-			var oChangeJson = {
-				projectId: "projectId"
-			};
-			this.oChange = new Change(oChangeJson);
 			this.oInstantiateFragmentStub = sandbox.stub().resolves();
 			this.mPropertyBag = {
 				modifier: { instantiateFragment: this.oInstantiateFragmentStub },
@@ -151,50 +141,61 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			sandbox.restore();
-			this.oChange.destroy();
 		}
 	}, function () {
 		QUnit.test("When applying the change on a xml control tree with viewId and without prefix", function(assert) {
-			this.oChange._oDefinition.projectId = undefined;
-			this.oChange.setModuleName(this.sFragmentMultiplePath);
+			var oChange = FlexObjectFactory.createFromFileContent({
+				moduleName: this.sFragmentMultiplePath,
+				projectId: undefined
+			});
 			this.mPropertyBag.viewId = undefined;
-			return Base.instantiateFragment(this.oChange, this.mPropertyBag)
+			return Base.instantiateFragment(oChange, this.mPropertyBag)
 				.then(function () {
 					assert.strictEqual(this.oInstantiateFragmentStub.firstCall.args[1], "", "then the namespace is prepared properly");
 				}.bind(this));
 		});
 
 		QUnit.test("When applying the change on a xml control tree with viewId and without projectId & fragmentId available as prefix", function(assert) {
-			this.oChange._oDefinition.projectId = undefined;
-			this.oChange.setModuleName(this.sFragmentMultiplePath);
-			return Base.instantiateFragment(this.oChange, this.mPropertyBag)
+			var oChange = FlexObjectFactory.createFromFileContent({
+				moduleName: this.sFragmentMultiplePath,
+				projectId: undefined
+			});
+			return Base.instantiateFragment(oChange, this.mPropertyBag)
 				.then(function () {
 					assert.strictEqual(this.oInstantiateFragmentStub.firstCall.args[1], "componentId--viewId--", "then the namespace is prepared properly");
 				}.bind(this));
 		});
 
 		QUnit.test("When applying the change on a xml control tree with viewId & fragmentId and without projectId available as prefix", function(assert) {
-			this.oChange._oDefinition.projectId = undefined;
-			this.oChange.setModuleName(this.sFragmentMultiplePath);
-			this.oChange.setExtensionPointInfo({ fragmentId: "fragmentId" });
-			return Base.instantiateFragment(this.oChange, this.mPropertyBag)
+			var oChange = FlexObjectFactory.createFromFileContent({
+				moduleName: this.sFragmentMultiplePath,
+				projectId: undefined
+			});
+			oChange.setExtensionPointInfo({ fragmentId: "fragmentId" });
+			return Base.instantiateFragment(oChange, this.mPropertyBag)
 				.then(function () {
 					assert.strictEqual(this.oInstantiateFragmentStub.firstCall.args[1], "componentId--viewId--fragmentId", "then the namespace is prepared properly");
 				}.bind(this));
 		});
 
 		QUnit.test("When applying the change on a xml control tree with viewId is available as prefix", function(assert) {
-			this.oChange.setModuleName(this.sFragmentMultiplePath);
-			return Base.instantiateFragment(this.oChange, this.mPropertyBag)
+			var oChange = FlexObjectFactory.createFromFileContent({
+				moduleName: this.sFragmentMultiplePath,
+				projectId: "projectId"
+			});
+			return Base.instantiateFragment(oChange, this.mPropertyBag)
 				.then(function () {
 					assert.strictEqual(this.oInstantiateFragmentStub.firstCall.args[1], "componentId--viewId--projectId", "then the namespace is prepared properly");
 				}.bind(this));
 		});
 
 		QUnit.test("When applying the change on a xml control tree with viewId and fragmentId are available as prefixes", function(assert) {
-			this.oChange.setModuleName(this.sFragmentMultiplePath);
-			this.oChange.setExtensionPointInfo({ fragmentId: "fragmentId" });
-			return Base.instantiateFragment(this.oChange, this.mPropertyBag)
+			var oChange = FlexObjectFactory.createFromFileContent({
+				moduleName: this.sFragmentMultiplePath,
+				projectId: "projectId"
+			});
+			oChange.setExtensionPointInfo({ fragmentId: "fragmentId" });
+			return Base.instantiateFragment(oChange, this.mPropertyBag)
 				.then(function () {
 					assert.strictEqual(this.oInstantiateFragmentStub.firstCall.args[1], "componentId--viewId--projectId.fragmentId", "then the namespace is prepared properly");
 				}.bind(this));

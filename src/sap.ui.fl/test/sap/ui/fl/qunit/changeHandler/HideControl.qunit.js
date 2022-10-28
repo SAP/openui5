@@ -3,16 +3,16 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/changeHandler/HideControl",
-	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier"
 ],
 function(
 	Control,
 	Element,
+	UIChange,
 	HideControlChangeHandler,
-	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier
 ) {
@@ -27,18 +27,13 @@ function(
 			'<Button text="foo" enabled="true" id="buttonId" />' +
 			'</mvc:View>';
 			this.oXmlDocument = oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
-			var oChangeJson = {
-				selector: {
-					id: "key"
-				},
-				content: {},
-				texts: {}
-			};
 
-			this.oChange = new Change(oChangeJson);
+			this.oChange = new UIChange({
+				selector: {id: "key"}
+			});
 		},
 		afterEach: function() {
-			this.oChange = null;
+			this.oChange.destroy();
 		}
 	}, function() {
 		QUnit.test('applyChange on a js control tree', function(assert) {

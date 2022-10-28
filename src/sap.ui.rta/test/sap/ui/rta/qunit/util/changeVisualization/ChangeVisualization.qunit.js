@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/Utils",
 	"sap/m/VBox",
 	"sap/m/HBox",
 	"sap/m/Button",
@@ -28,7 +27,6 @@ sap.ui.define([
 	ChangesWriteAPI,
 	ChangesUtils,
 	FlStates,
-	FlUtils,
 	VBox,
 	HBox,
 	Button,
@@ -174,9 +172,6 @@ sap.ui.define([
 			getState: function() {
 				return sState;
 			},
-			getFileName: function() {
-				return sId;
-			},
 			getChangeType: function() { return "changeType"; },
 			getLayer: function() { return "layer"; }
 		}, oCustomChange);
@@ -230,9 +225,9 @@ sap.ui.define([
 				count: 0
 			};
 			this.aMockChanges = [
-				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1", undefined, FlStates.NEW),
-				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2", undefined, FlStates.PERSISTED),
-				createMockChange("testRename", "rename", "Comp1---idMain1--lb1", undefined, FlStates.PERSISTED)
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1", undefined, FlStates.LifecycleState.NEW),
+				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2", undefined, FlStates.LifecycleState.PERSISTED),
+				createMockChange("testRename", "rename", "Comp1---idMain1--lb1", undefined, FlStates.LifecycleState.PERSISTED)
 			];
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp,
@@ -626,9 +621,9 @@ sap.ui.define([
 		},
 		beforeEach: function() {
 			this.aMockChanges = [
-				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1", undefined, FlStates.NEW),
-				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2", undefined, FlStates.PERSISTED),
-				createMockChange("testRename", "rename", "Comp1---idMain1--lb1", undefined, FlStates.PERSISTED)
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1", undefined, FlStates.LifecycleState.NEW),
+				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2", undefined, FlStates.LifecycleState.PERSISTED),
+				createMockChange("testRename", "rename", "Comp1---idMain1--lb1", undefined, FlStates.LifecycleState.PERSISTED)
 			];
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp,

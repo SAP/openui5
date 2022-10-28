@@ -285,7 +285,7 @@ sap.ui.define([
 		/**
 		 * Applying a specific change on the passed control, if it is not already applied.
 		 *
-		 * @param {sap.ui.fl.Change} oChange - Change object which should be applied on the passed control
+		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change object which should be applied on the passed control
 		 * @param {sap.ui.core.Control} oControl - Control which is the target of the passed change
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {object} mPropertyBag.view - View to process
@@ -420,7 +420,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.viewId - ID of the processed view
 		 * @param {string} mPropertyBag.appComponent - Application component instance responsible for the view
 		 * @param {object} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type
-		 * @param {sap.ui.fl.Change[]} aChanges List of flexibility changes on controls for the current processed view
+		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges List of flexibility changes on controls for the current processed view
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario including view object in both cases
 		 */
 		applyAllChangesForXMLView: function(mPropertyBag, aChanges) {

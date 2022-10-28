@@ -43,7 +43,7 @@ sap.ui.define([
 	 * Checks the format consistency for change mergers (ChangeDataSource and ChangeInbound)
 	 * and other mergers with the prefix "change". The format of a change is valid if it includes the ID as well as <code>entityPropertyChange</code>.
 	 *
-	 * @param {sap.ui.fl.Change} oChange - Changes to be merged
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Changes to be merged
 	 * @param {Array} aSupportedProperties - Array of supported properties by change merger
 	 * @param {Array} aSupportedOperations - Array of supported operations by change merger
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
@@ -72,7 +72,7 @@ sap.ui.define([
 	 * Checks the namespace compliance of an ID for a given change.
 	 * The target layer is derived from the change.
 	 * @param {string} sId - The ID to check
-	 * @param {sap.ui.fl.Change} oChange - The change from where to derive the layer
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - The change from where to derive the layer
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
 	function checkIdNamespaceCompliance(sId, oChange) {

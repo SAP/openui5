@@ -1,6 +1,6 @@
 [
 	{
-		"id": "id_1579503257763_40_moveControls",
+		"fileName": "id_1579503257763_40_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -38,7 +38,7 @@
 		"creation": "2020-01-20T06:54:42.759Z"
 	},
 	{
-		"id": "id_1579503257763_41_moveControls",
+		"fileName": "id_1579503257763_41_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {

@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/m/Panel",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
@@ -12,7 +12,7 @@ sap.ui.define([
 	ChangesUtils,
 	ExtensionPointState,
 	ChangePersistenceFactory,
-	Change,
+	UIChange,
 	Panel,
 	Log,
 	sinon
@@ -47,7 +47,7 @@ sap.ui.define([
 	function createChangeList(iChangesCount, bInInitialState, sExtensionPointName) {
 		var aChanges = [];
 		while (iChangesCount-- > 0) {
-			var oChange = new Change({ selector: { name: sExtensionPointName }});
+			var oChange = new UIChange({ selector: { name: sExtensionPointName }});
 			if (!bInInitialState) {
 				oChange.markFinished();
 			}
@@ -85,7 +85,7 @@ sap.ui.define([
 				.then(function (aEnhancedChanges) {
 					assert.strictEqual(aEnhancedChanges.length, 3, "then 3 changes are returned");
 					assert.deepEqual(aEnhancedChanges[0].getSelector().id, undefined, "then change selector is not enhanced by id");
-					assert.strictEqual(aEnhancedChanges[0].getExtensionPointInfo(), null, "then extension point info is not attached to the change");
+					assert.notOk(aEnhancedChanges[0].getExtensionPointInfo(), "then extension point info is not attached to the change");
 				});
 		});
 

@@ -3,11 +3,12 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/write/api/LocalResetAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/m/VBox",
@@ -15,11 +16,12 @@ sap.ui.define([
 ], function(
 	sinon,
 	ManifestUtils,
+	FlexObjectFactory,
+	States,
 	LocalResetAPI,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
 	Layer,
-	Change,
 	ChangePersistence,
 	ChangePersistenceFactory,
 	VBox,
@@ -30,7 +32,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	function createChange (sChangeId, sSelectorId, oCustomDef) {
-		return new Change(Object.assign(
+		return FlexObjectFactory.createFromFileContent(Object.assign(
 			{
 				fileName: sChangeId,
 				fileType: "change",
@@ -61,7 +63,7 @@ sap.ui.define([
 				createChange("foo", "fooElement"),
 				createChange("foo2", "fooElement")
 			];
-			aChanges[0].setState(Change.states.PERSISTED);
+			aChanges[0].setState(States.LifecycleState.PERSISTED);
 			this.oChangePersistence.addChangeAndUpdateDependencies(this.oComponent, aChanges[0]);
 			this.oChangePersistence.addDirtyChange(aChanges[1]);
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns(this.oChangePersistence);
@@ -112,6 +114,7 @@ sap.ui.define([
 			sandbox.stub(PersistenceWriteAPI, "remove").callsFake(function (aArguments) {
 				// Simulate deletion to validate that the state is restored
 				this.oChangePersistence.deleteChange(aArguments.change);
+				return Promise.resolve();
 			}.bind(this));
 			sandbox.stub(ChangesWriteAPI, "revert").resolves();
 
@@ -131,7 +134,7 @@ sap.ui.define([
 						aNestedChanges.map(function (oChange) {
 							return oChange.getState();
 						}),
-						[Change.states.PERSISTED, Change.states.NEW],
+						[States.LifecycleState.PERSISTED, States.LifecycleState.NEW],
 						"then the original change states are restored"
 					);
 					assert.notOk(
@@ -250,7 +253,7 @@ sap.ui.define([
 
 		QUnit.test("when a change was already deleted", function (assert) {
 			var aChanges = [createChange("foo", "element")];
-			aChanges[0].setState(Change.states.DELETED);
+			aChanges[0].setState(States.LifecycleState.DELETED);
 			sandbox.stub(ChangePersistence.prototype, "getAllUIChanges").returns(aChanges);
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
 				layer: Layer.CUSTOMER

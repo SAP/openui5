@@ -190,10 +190,10 @@ sap.ui.define([
 
 		QUnit.test("when 'storeFavorite' is set to true", function(assert) {
 			var oCompVariant = FlexObjectFactory.createCompVariant({});
-			oCompVariant.setState(States.PERSISTED);
+			oCompVariant.setState(States.LifecycleState.PERSISTED);
 			oCompVariant.storeFavorite(true);
 			assert.strictEqual(oCompVariant.getFavorite(), true, "then after setter is called, getFavorite returns 'true'");
-			assert.strictEqual(oCompVariant.getState(), States.DIRTY, "then the comp variant state is 'dirty'");
+			assert.strictEqual(oCompVariant.getState(), States.LifecycleState.DIRTY, "then the comp variant state is 'dirty'");
 		});
 
 		QUnit.test("when 'getOwnerId' is called", function(assert) {
@@ -215,28 +215,28 @@ sap.ui.define([
 
 		QUnit.test("when 'storeExecuteOnSelection' is called", function(assert) {
 			var oCompVariant = FlexObjectFactory.createCompVariant({});
-			oCompVariant.setState(States.PERSISTED);
+			oCompVariant.setState(States.LifecycleState.PERSISTED);
 			oCompVariant.storeExecuteOnSelection(true);
 			assert.strictEqual(oCompVariant.getExecuteOnSelection(), true, "then after setter is called, getExecuteOnSelection returns 'true'");
-			assert.strictEqual(oCompVariant.getState(), States.DIRTY, "then the comp variant state is 'dirty'");
+			assert.strictEqual(oCompVariant.getState(), States.LifecycleState.DIRTY, "then the comp variant state is 'dirty'");
 		});
 
 		QUnit.test("when 'storeName' is called", function(assert) {
 			var oCompVariant = FlexObjectFactory.createCompVariant({});
-			oCompVariant.setState(States.PERSISTED);
+			oCompVariant.setState(States.LifecycleState.PERSISTED);
 			oCompVariant.storeName("test-variant-name");
 			assert.strictEqual(oCompVariant.getName(), "test-variant-name", "then after setter is called, getName returns stored name");
-			assert.strictEqual(oCompVariant.getState(), States.DIRTY, "then the comp variant state is 'dirty'");
+			assert.strictEqual(oCompVariant.getState(), States.LifecycleState.DIRTY, "then the comp variant state is 'dirty'");
 		});
 
 		QUnit.test("when 'storeContexts' is called", function(assert) {
 			var oCompVariant = FlexObjectFactory.createCompVariant({});
-			oCompVariant.setState(States.PERSISTED);
+			oCompVariant.setState(States.LifecycleState.PERSISTED);
 			oCompVariant.storeContexts({
 				test: "test"
 			});
 			assert.strictEqual(oCompVariant.getContexts().test, "test", "then after setter is called, getContexts returns contexts");
-			assert.strictEqual(oCompVariant.getState(), States.DIRTY, "then the comp variant state is 'dirty'");
+			assert.strictEqual(oCompVariant.getState(), States.LifecycleState.DIRTY, "then the comp variant state is 'dirty'");
 		});
 
 		QUnit.test("when new variant is initialized including both name and variant id parameters", function(assert) {

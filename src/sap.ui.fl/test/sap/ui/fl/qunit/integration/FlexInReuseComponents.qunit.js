@@ -5,14 +5,14 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/Layer"
 ], function(
 	Input,
 	Component,
 	ManifestUtils,
 	FlexControllerFactory,
-	Change,
+	States,
 	Layer
 ) {
 	"use strict";
@@ -75,7 +75,7 @@ sap.ui.define([
 				oInitialFieldInstance.destroy();
 
 				// simulate a recreation of the control
-				var oChangeApplyPromise = oChange.addChangeProcessingPromise(Change.operations.APPLY);
+				var oChangeApplyPromise = oChange.addChangeProcessingPromise(States.Operations.APPLY);
 				oNewFieldInstance = new Input(oView.createId("myGroupField"));
 				oForm.addContent(oNewFieldInstance);
 				return oChangeApplyPromise;

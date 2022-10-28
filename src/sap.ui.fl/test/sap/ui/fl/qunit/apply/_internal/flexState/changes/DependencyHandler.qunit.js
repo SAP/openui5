@@ -4,13 +4,13 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	merge,
 	UIComponent,
 	DependencyHandler,
-	Change,
+	UIChange,
 	sinon
 ) {
 	"use strict";
@@ -18,10 +18,10 @@ sap.ui.define([
 	var PENDING = "sap.ui.fl:PendingChange";
 
 	function createChange(mPropertyBag) {
-		return new Change({
-			fileName: mPropertyBag.fileName,
+		return new UIChange({
+			id: mPropertyBag.fileName,
 			selector: mPropertyBag.selector,
-			dependentSelector: mPropertyBag.dependentSelector
+			dependentSelectors: mPropertyBag.dependentSelector
 		});
 	}
 

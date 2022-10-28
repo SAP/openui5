@@ -5,8 +5,8 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/UIComponent",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/changeHandler/UnstashControl",
-	"sap/ui/fl/Change",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/ui/core/Core"
@@ -15,8 +15,8 @@ sap.ui.define([
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	UIComponent,
+	UIChange,
 	UnstashControlChangeHandler,
-	Change,
 	ObjectPageLayout,
 	ObjectPageSection,
 	oCore
@@ -29,7 +29,6 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oChangeHandler = UnstashControlChangeHandler;
 			var oChangeJson = {
-				changeType: "unstashControl",
 				selector: {
 					id: "key"
 				},
@@ -38,17 +37,14 @@ sap.ui.define([
 					index: 0
 				}
 			};
-			this.oChange = new Change(oChangeJson);
+			this.oChange = new UIChange(oChangeJson);
 
 			var oNonMoveChangeJson = {
-				changeType: "unstashControl",
 				selector: {
 					id: "key"
-				},
-				content: {
 				}
 			};
-			this.oNonMoveChange = new Change(oNonMoveChangeJson);
+			this.oNonMoveChange = new UIChange(oNonMoveChangeJson);
 
 			this.oObjectPageSection1 = new ObjectPageSection();
 			this.oObjectPageSection2 = new ObjectPageSection();
