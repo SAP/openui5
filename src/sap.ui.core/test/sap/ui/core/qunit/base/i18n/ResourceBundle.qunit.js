@@ -81,6 +81,43 @@ sap.ui.define(["sap/base/i18n/ResourceBundle", "sap/base/util/Properties"], func
 		});
 	});
 
+	QUnit.test("locale sr -> sh", function(assert) {
+		var sExpectedLocale = "sh";
+		var sLocale = "sr";
+
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
+
+	QUnit.test("locale sh -> sh", function(assert) {
+		var sExpectedLocale = "sh";
+		var sLocale = "sh";
+
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
+
+	QUnit.test("locale sr-Latn -> sh", function(assert) {
+		var sExpectedLocale = "sh";
+
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: "sr-Latn", async: true}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
 
 	QUnit.test("getText (multiple resource bundles) checking that nextLocale is loaded", function(assert) {
 		var done = assert.async();
