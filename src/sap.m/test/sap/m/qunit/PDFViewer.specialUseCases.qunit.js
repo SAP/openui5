@@ -212,7 +212,10 @@ sap.ui.define( [
 
 	QUnit.test("Desktop View Emulated from Mobile", function (assert) {
 		this.stub(Device, "system").value({desktop: true});
-		this.stub(window.navigator.mimeTypes, "namedItem").value(function() { return null; });
+
+		if (window && window.navigator && window.navigator.mimeTypes && window.navigator.mimeTypes.namedItem) {
+            this.stub(window.navigator.mimeTypes, "namedItem").value(function() { return null; });
+        }
 
 		oPDFViewer = TestUtils.createPdfViewer({
 			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
