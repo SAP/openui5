@@ -1,0 +1,76 @@
+{
+	"_version" : "1.42.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"dataSources" : {
+			"default" : {
+				"uri" : "/sap/opu/odata4/sap/zmbr_sadl_hierarchy_bdg/srvd/sap/zmbr_sadl_hierarchy/0001/",
+				"type" : "OData",
+				"settings" : {
+					"annotations" : ["localAnnotations"],
+					"odataVersion" : "4.0"
+				}
+			},
+			"localAnnotations" : {
+				"uri" : "data/annotations.xml",
+				"type" : "ODataAnnotation"
+			}
+		},
+		"description" : "Example for OData V4 Ancestry",
+		"id" : "sap.ui.core.sample.odata.v4.Ancestry",
+		"title" : "OData V4 Ancestry",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"config" : {
+			"sample" : {
+				"files" : [
+					"Component.js",
+					"Main.controller.js",
+					"Main.view.xml",
+					"manifest.json"
+				]
+			}
+		},
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"libs" : {
+				"sap.m" : {},
+				"sap.ui.table" : {}
+			},
+			"minUI5Version" : "1.109"
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"autoExpandSelect" : true,
+					"earlyRequests" : true,
+					"operationMode" : "Server",
+					"synchronizationMode" : "None"
+				}
+			}
+		},
+		"rootView" : {
+			"async" : true,
+			"type" : "XML",
+			"viewName" : "sap.ui.core.sample.odata.v4.Ancestry.Main"
+		}
+	}
+}
