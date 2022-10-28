@@ -132,6 +132,40 @@ function (
 		this.clock.tick(Utils.DEFAULT_PROMISE_TIMEOUT + 100);
 	});
 
+	QUnit.test("Call #getProperty with Host which resolves with undefined", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oModel = new ContextModel(),
+			oHost = new Host(),
+			sSamplePath = "/sap.host/property/value",
+			fnSpy;
+
+		oHost.getContextValue = function (sPath) {
+			return Promise.resolve(undefined);
+		};
+
+		fnSpy = sinon.spy(oHost, "getContextValue");
+
+		oModel.setHost(oHost);
+
+		// assert
+		assert.strictEqual(oModel.getProperty(sSamplePath), null, "The property returns null the first time.");
+
+		oModel.waitForPendingProperties().then(function () {
+			assert.strictEqual(oModel.getProperty(sSamplePath), undefined, "The property is undefined.");
+			assert.ok(fnSpy.calledOnce, "Get context is called only once. There is no infinite loop.");
+
+			// cleanup
+			oModel.destroy();
+			oHost.destroy();
+			fnSpy.restore();
+			done();
+		});
+
+		// act
+		this.clock.tick(Utils.DEFAULT_PROMISE_TIMEOUT + 100);
+	});
+
 	QUnit.module("In card context", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
