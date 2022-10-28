@@ -36,6 +36,10 @@ sap.ui.define([
 			this.getView().getModel().resetChanges();
 		},
 
+		onCancelSelectedSalesOrderChanges : function () {
+			this.byId("SalesOrderList").getSelectedItem().getBindingContext().resetChanges();
+		},
+
 		onCloseSalesOrderSchedules : function () {
 			this.byId("salesOrderSchedulesDialog").close();
 		},

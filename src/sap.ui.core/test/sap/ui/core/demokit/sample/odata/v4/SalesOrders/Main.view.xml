@@ -166,6 +166,11 @@
 						icon="sap-icon://accept"
 						press="onConfirmSalesOrder" tooltip="Confirm selected sales order"/>
 					<Button
+						enabled="{= ${ui>/bSalesOrderSelected}}"
+						id="cancelSelectedSalesOrderChanges" icon="sap-icon://reset"
+						press="onCancelSelectedSalesOrderChanges"
+						tooltip="Reset changes for selected sales order"/>
+					<Button
 							enabled="{= ${ui>/bSalesOrderSelected}
 								&amp;&amp; !${ui>/bSelectedSalesOrderTransient}
 								&amp;&amp; !${ui>/bCreateItemPending}}"

@@ -390,6 +390,9 @@ sap.ui.define([
 				pressCancelSalesOrderListChangesButton : function () {
 					pressButton(this, "cancelSalesOrderListChanges");
 				},
+				pressCancelSelectedSalesOrderChangesButton : function () {
+					pressButton(this, "cancelSelectedSalesOrderChanges");
+				},
 				pressCancelStrictModeButton : function () {
 					pressButton(this, "cancelStrictMode", true);
 				},

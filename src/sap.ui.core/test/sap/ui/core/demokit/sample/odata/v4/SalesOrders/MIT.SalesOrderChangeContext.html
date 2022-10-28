@@ -21,6 +21,17 @@
 			<li> local: <a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders">http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders</a></li>
 		</ul>
 		<h2>REALIZE and CHECK</h2>
+		<h3>Test Context#resetChanges for a Sales Order</h3>
+		<ol>
+			<li>Select a Sales Order.</li>
+			<li>Change the note of the Sales Order (in the table row cell).</li>
+			<li>Select another Sales Order.</li>
+			<li>Change the note of the second Sales Order.</li>
+			<li>Press the <code>Reset changes for selected Sales Order</code> Button.</li>
+			<li><b>Check:</b> That the note in the selected Sales Order only is reset.</li>
+			<li>Press the <code>Cancel sales order list changes</code> button.</li>
+			<li><b>Check:</b> That the note for the first changed Sales Order also is reset.</li>
+		</ol>
 		<h3>Change a sales order line item, change sales order context</h3>
 		<ol>
 			<li>Change the note of a Sales Order Line Item.</li>

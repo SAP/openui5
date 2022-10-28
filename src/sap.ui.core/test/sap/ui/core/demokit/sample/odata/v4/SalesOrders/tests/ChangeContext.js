@@ -15,6 +15,17 @@ sap.ui.define([], function () {
 
 			When.onTheMainPage.firstSalesOrderIsVisible();
 
+			// CPOUI5ODATAV4-1786: Context#resetChanges for absolute row contexts
+			When.onTheMainPage.selectSalesOrder(2);
+			When.onTheMainPage.changeNoteInSalesOrders(2, "CPOUI5ODATAV4-1786: A");
+			When.onTheMainPage.selectSalesOrder(4);
+			When.onTheMainPage.changeNoteInSalesOrders(4, "CPOUI5ODATAV4-1786: B");
+			When.onTheMainPage.pressCancelSelectedSalesOrderChangesButton();
+			Then.onTheMainPage.checkNote(4, "EPM DG: SO ID 0500000008 Deliver as fast as possible");
+			Then.onTheMainPage.checkNote(2, "CPOUI5ODATAV4-1786: A");
+			When.onTheMainPage.pressCancelSalesOrderListChangesButton(); // get rid of 2nd change
+			Then.onTheMainPage.checkNote(2, "EPM DG: SO ID 0500000002 Deliver as fast as possible");
+
 			// change a sales order line item, change sales order context
 			When.onTheMainPage.selectFirstSalesOrder();
 			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");

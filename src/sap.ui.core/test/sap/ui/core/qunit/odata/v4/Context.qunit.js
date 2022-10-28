@@ -3614,6 +3614,35 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resetChanges", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {},
+				resetChangesForPath : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/path"),
+			oResetChangesPromise,
+			oResetChangesForPathPromise = SyncPromise.resolve(new Promise(function (resolve) {
+				setTimeout(resolve.bind(null, "foo"));
+			}));
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("resetChangesForPath").withExactArgs("/path", [])
+			.callsFake(function (_sPath, aPromises) {
+				aPromises.push(oResetChangesForPathPromise);
+			});
+
+		// code under test
+		oResetChangesPromise = oContext.resetChanges();
+
+		assert.ok(oResetChangesPromise instanceof Promise);
+
+		return oResetChangesPromise.then(function (oResult) {
+			assert.ok(oResetChangesForPathPromise.isFulfilled());
+			assert.strictEqual(oResult, undefined);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("resetKeepAlive", function (assert) {
 		var oBinding = {
 				checkKeepAlive : function () {}

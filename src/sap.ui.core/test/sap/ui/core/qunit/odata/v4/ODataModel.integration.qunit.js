@@ -40146,6 +40146,11 @@ sap.ui.define([
 				oModel.getKeepAliveContext("/Artists(ArtistID='1',IsActiveEntity=false)");
 			}, new Error("Must not call method when the binding's root binding is suspended: "
 				+ oListBinding));
+
+			assert.throws(function () { // CPOUI5ODATAV4-1786
+				oListBinding.getCurrentContexts()[0].resetChanges();
+			}, new Error("Must not call method when the binding's root binding is suspended: "
+				+ oListBinding));
 		});
 	});
 
@@ -44674,6 +44679,107 @@ sap.ui.define([
 				oModel.submitBatch("noSubmit"), // expect no PATCH
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: (1) Context#resetChanges within an absolute ODLB (only PATCHes)
+	// Patch two entities, call Context#resetChanges for one of those, submit the batch and see that
+	// only the remaining PATCH is sent.
+	//
+	// JIRA: CPOUI5ODATAV4-1786
+	QUnit.test("CPOUI5ODATAV4-1786: (1) Context#resetChanges absolute ODLB", function (assert) {
+		var oBinding,
+			oContext1,
+			oContext2,
+			oModel = this.createSalesOrdersModel({updateGroupId : "update"}),
+			oPatchPromise1,
+			oPatchPromise2,
+			fnResolve,
+			oSubmitBatchPromise,
+			sView = '\
+<Table id="orders" items="{/SalesOrderList}">\
+	<Text id="note" text="{Note}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1", Note : "Order 1"},
+					{SalesOrderID : "2", Note : "Order 2"}
+				]
+			})
+			.expectChange("note", ["Order 1", "Order 2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("orders").getBinding("items");
+			oContext1 = oBinding.getCurrentContexts()[0];
+			oContext2 = oBinding.getCurrentContexts()[1];
+
+			that.expectChange("note", ["Order 1 changed", "Order 2 changed"]);
+
+			oPatchPromise1 = oContext1.setProperty("Note", "Order 1 changed");
+			oPatchPromise2 = oContext2.setProperty("Note", "Order 2 changed");
+
+			assert.ok(oContext1.hasPendingChanges());
+			assert.ok(oContext2.hasPendingChanges());
+			assert.ok(oBinding.hasPendingChanges());
+			assert.ok(oModel.hasPendingChanges());
+
+			return that.waitForChanges(assert, "patch entities");
+		}).then(function () {
+			var oResetChangesPromise;
+
+			that.expectCanceledError("Failed to update path /SalesOrderList('1')/Note",
+					"Request canceled: PATCH SalesOrderList('1'); group: update")
+				.expectChange("note", ["Order 1"]);
+
+			// code under test
+			oResetChangesPromise = oContext1.resetChanges();
+
+			// changes reset synchronously
+			assert.notOk(oContext1.hasPendingChanges());
+			assert.ok(oContext2.hasPendingChanges());
+			assert.ok(oBinding.hasPendingChanges());
+			assert.ok(oModel.hasPendingChanges());
+
+			return Promise.all([
+				oResetChangesPromise.then(function () {
+					assert.notOk(oContext1.hasPendingChanges());
+				}),
+				checkCanceled(assert, oPatchPromise1),
+				that.waitForChanges(assert, "reset one patched entity")
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('2')",
+					payload : {Note : "Order 2 changed"}
+				}, new Promise(function (resolve) {
+					fnResolve = resolve;
+			}));
+
+			oSubmitBatchPromise = oModel.submitBatch("update");
+
+			return that.waitForChanges(assert, "submit remaining change");
+		}).then(function () {
+			assert.throws(function () {
+				// code under test
+				oContext2.resetChanges();
+			}, new Error("Cannot reset the changes, the batch request is running"));
+
+			fnResolve(); // 204 No Content
+
+			return Promise.all([
+				oPatchPromise2,
+				oSubmitBatchPromise,
+				that.waitForChanges(assert, "throw error during running $batch")
+			]);
+		}).then(function () {
+			assert.notOk(oContext1.hasPendingChanges());
+			assert.notOk(oContext2.hasPendingChanges());
+			assert.notOk(oBinding.hasPendingChanges());
+			assert.notOk(oModel.hasPendingChanges());
 		});
 	});
 });
