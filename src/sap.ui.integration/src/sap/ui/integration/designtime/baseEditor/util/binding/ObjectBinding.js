@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
 	"sap/ui/base/BindingParser",
-	"sap/base/util/includes",
 	"sap/base/util/deepEqual"
 ], function (
 	ManagedObject,
@@ -15,7 +14,6 @@ sap.ui.define([
 	ObjectPath,
 	isPlainObject,
 	BindingParser,
-	includes,
 	deepEqual
 ) {
 	"use strict";
@@ -279,7 +277,7 @@ sap.ui.define([
 	 * @return {boolean} - `true` if specified key is in the ignore list
 	 */
 	ObjectBinding.prototype.isIgnored = function (sKey) {
-		return includes(this._aIgnoreList, sKey);
+		return this._aIgnoreList.includes(sKey);
 	};
 
 	return ObjectBinding;

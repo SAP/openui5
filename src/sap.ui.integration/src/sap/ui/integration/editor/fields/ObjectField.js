@@ -35,7 +35,6 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/core/CustomData",
 	"sap/ui/integration/editor/EditorResourceBundles",
-	"sap/base/util/includes",
 	"sap/ui/integration/util/Utils"
 ], function (
 	BaseField,
@@ -70,7 +69,6 @@ sap.ui.define([
 	Sorter,
 	CustomData,
 	EditorResourceBundles,
-	includes,
 	Utils
 ) {
 	"use strict";
@@ -1502,7 +1500,7 @@ sap.ui.define([
 			var sTranslateText = that.getTranslationValueInTexts(oTempTranslatedValue.key, sUUID, sProperty);
 			if (sTranslateText) {
 				oTempTranslatedValue.value = sTranslateText;
-				if (includes(that._oUpdatedTranslations[sTranslationKey], oTempTranslatedValue.key)) {
+				if (Array.isArray(that._oUpdatedTranslations[sTranslationKey]) && that._oUpdatedTranslations[sTranslationKey].includes(oTempTranslatedValue.key)) {
 					oTempTranslatedValue.value = that.getTranslationValueInTexts(oTempTranslatedValue.key, sUUID, sProperty);
 					oTempTranslatedValue.status = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
 				} else {
@@ -1626,7 +1624,7 @@ sap.ui.define([
 				if (aUpdatedLanguages.length > 0) {
 					that._oUpdatedTranslations = that._oUpdatedTranslations || {};
 					that._oUpdatedTranslations[sTranslationKey] = aUpdatedLanguages;
-					if (includes(aUpdatedLanguages, sCurrentLanugae)) {
+					if (aUpdatedLanguages.includes(sCurrentLanugae)) {
 						bUpdateDependentFieldsAndPreview = true;
 					}
 				}
@@ -1822,7 +1820,7 @@ sap.ui.define([
 					var oData = oModel.getProperty(sPath);
 					var oNewData = [];
 					for (var i = 0; i < oData.length; i++) {
-						if (includes(aSelectedIndexs, i + "")) {
+						if (aSelectedIndexs.includes(i + "")) {
 							that.deleteTranslationValueInTexts(undefined, oData[i]._dt._uuid);
 						} else {
 							oNewData.push(oData[i]);

@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/util/MockServer",
-	"./jsons/withDesigntime/sap.card/DataExtensionImpl",
-	"sap/base/util/includes"
+	"./jsons/withDesigntime/sap.card/DataExtensionImpl"
 ], function (
 	Editor,
 	Host,
@@ -17,8 +16,7 @@ sap.ui.define([
 	Core,
 	QUnitUtils,
 	MockServer,
-	DataExtensionImpl,
-	includes
+	DataExtensionImpl
 ) {
 	"use strict";
 
@@ -1545,7 +1543,7 @@ sap.ui.define([
 											}
 											for (var i = 0; i < value.length; i++) {
 												var sKey = value[i];
-												if (!includes(valueRange, sKey)) {
+												if (!valueRange.includes(sKey)) {
 													oResult = false;
 													break;
 												}
@@ -1655,7 +1653,7 @@ sap.ui.define([
 											}
 											for (var i = 0; i < value.length; i++) {
 												var sKey = value[i];
-												if (!includes(valueRange, sKey)) {
+												if (!valueRange.includes(sKey)) {
 													oResult = false;
 													break;
 												}
@@ -1763,7 +1761,7 @@ sap.ui.define([
 											}
 											for (var i = 0; i < value.length; i++) {
 												var sKey = value[i];
-												if (!includes(valueRange, sKey)) {
+												if (!valueRange.includes(sKey)) {
 													oResult = false;
 													break;
 												}

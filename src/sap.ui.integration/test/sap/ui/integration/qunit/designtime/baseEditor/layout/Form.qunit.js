@@ -511,7 +511,7 @@ function (
 		QUnit.test("groups creation with invisible fields", function (assert) {
 			var aPropertyEditorsConfig = this.aPropertyEditorsConfig.map(function (mConfig) {
 				return (
-					includes(mConfig.tags, "foo")
+					mConfig.tags.includes("foo")
 						? (
 							Object.assign({}, mConfig, {
 								visible: false
@@ -555,7 +555,7 @@ function (
 			var aPropertyEditorsConfig = this.aPropertyEditorsConfig.map(function (mConfig) {
 				if (includes(mConfig.tags, "foo", "bar")) {
 					return mConfig;
-				} else if (includes(mConfig.tags, "foo")) {
+				} else if (mConfig.tags.includes("foo")) {
 					return Object.assign({}, mConfig, {
 						visible: false
 					});

@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
 	"sap/base/util/isPlainObject",
-	"sap/base/util/values",
 	"sap/base/util/each",
 	"sap/ui/integration/designtime/baseEditor/validator/ValidatorRegistry",
 	"sap/ui/integration/designtime/baseEditor/util/BaseDefaultValidatorModules",
@@ -34,7 +33,6 @@ sap.ui.define([
 	deepClone,
 	deepEqual,
 	isPlainObject,
-	values,
 	each,
 	ValidatorRegistry,
 	BaseDefaultValidatorModules,
@@ -410,7 +408,7 @@ sap.ui.define([
 
 	BasePropertyEditor.prototype._getValidators = function () {
 		var oPropertyValidators = this.getConfig().validators || {};
-		return values(Object.assign(
+		return Object.values(Object.assign(
 			{},
 			this.getDefaultValidators(),
 			oPropertyValidators

@@ -2,9 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/util/includes"
 ], function (
-	includes
 ) {
 	"use strict";
 
@@ -40,7 +38,7 @@ sap.ui.define([
 			return (
 				// Avoid duplicate key errors for the initial value
 				oConfig.currentKey === undefined
-				|| !includes(oConfig.keys, sValue)
+				|| !oConfig.keys.includes(sValue)
 				|| sValue === undefined
 				|| sValue === oConfig.currentKey
 			);
