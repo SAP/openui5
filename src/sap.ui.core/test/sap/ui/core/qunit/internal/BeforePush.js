@@ -152,15 +152,14 @@
 					text : sText,
 					url : sUrl
 				},
-				oDiv = document.createElement("div"),
-				oText = document.createTextNode(sText);
+				oDiv = document.createElement("div");
 
 			oTest.element.appendChild(oDiv);
 			oTest.icon = document.createElement("div");
 			oTest.icon.classList.add("status");
 			oDiv.appendChild(oTest.icon);
 			oDiv.addEventListener("click", select.bind(null, oTest));
-			oDiv.appendChild(oText);
+			oDiv.appendChild(document.createTextNode(sText));
 			oTest.infoNode = document.createTextNode("");
 			oTest.element.appendChild(oTest.infoNode);
 			document.getElementById("results").appendChild(oTest.element);
@@ -171,7 +170,7 @@
 		// starts another test or shows the summary
 		function next() {
 			if (aTests.length) {
-				return runTest(aTests.shift());
+				runTest(aTests.shift());
 			} else if (!iRunningTests) {
 				oTotal.element.classList.remove("hidden");
 				oTotal.element.firstChild.classList.add("running");
@@ -181,16 +180,15 @@
 					select(oFirstFailedTest);
 				}
 			}
-			return undefined;
 		}
 
 		// runs a test: creates its frame (out of sight), registers first at the frame's page, then
 		// at the frame's QUnit to observe the progress and notice when it's finished
 		function runTest(oTest) {
-			function invalid(sText) {
+			function invalid(sReason) {
 				oTest.element.firstChild.classList.remove("running");
 				oTest.element.firstChild.classList.add("failed");
-				oTest.infoNode.data = sText;
+				oTest.infoNode.data = " " + sReason;
 				if (bVisible && oTest === oSelectedTest) {
 					select(oTest); // unselect the test to make it invisible
 				}
@@ -198,13 +196,7 @@
 				next();
 			}
 
-			function observe() {
-				var oQUnit = oTest.frame.contentWindow.QUnit;
-
-				if (!oQUnit.on) {
-					invalid("no QUnit V2 found");
-					return;
-				}
+			function observe(oQUnit) {
 				// see https://github.com/js-reporters/js-reporters (@since QUnit 2)
 				oQUnit.on("runStart", function (oDetails) {
 					oTest.testCounts = oDetails.testCounts;
@@ -236,17 +228,23 @@
 				});
 			}
 
-			function onLoad() {
+			function onFrameLoad() {
+				oTest.frame.removeEventListener("load", onFrameLoad);
+				waitForQUnit(5);
+			}
+
+			function waitForQUnit(iRetryCount) {
 				var oQUnit = oTest.frame.contentWindow.QUnit;
 
-				oTest.frame.removeEventListener("load", onLoad);
-				if (!oQUnit) {
-					invalid(oTest, "no QUnit found");
-				} else if (!oQUnit.on) {
-					// Test.qunit.html needs some time when using "coverage"
-					setTimeout(observe, 1000);
-				} else {
-					observe();
+				if (oQUnit && oQUnit.on) {
+					observe(oQUnit);
+				} else if (iRetryCount) {
+					// retry after a second
+					setTimeout(waitForQUnit.bind(null, iRetryCount - 1), 1000);
+				} else if (!oQUnit) {
+					invalid("no QUnit found");
+				} else /*if (!oQUnit.on)*/ {
+					invalid("no QUnit V2 found");
 				}
 			}
 
@@ -261,7 +259,7 @@
 			document.body.appendChild(oTest.frame);
 			oTest.element.firstChild.classList.add("running");
 			iRunningTests += 1;
-			oTest.frame.addEventListener("load", onLoad);
+			oTest.frame.addEventListener("load", onFrameLoad);
 			if (bVisible) {
 				select(oTest);
 			}
