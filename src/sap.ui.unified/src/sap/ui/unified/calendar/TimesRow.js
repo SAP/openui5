@@ -417,7 +417,7 @@ sap.ui.define([
 
 		if (this._oFormatLong.oLocale.toString() != sLocale) {
 			var oLocale = new Locale(sLocale);
-			this._oFormatLong = DateFormat.getInstance({style: "long/short"}, oLocale);
+			this._oFormatLong = DateFormat.getDateTimeInstance({style: "long/short"}, oLocale);
 		}
 
 		return this._oFormatLong;
