@@ -3691,6 +3691,11 @@ sap.ui.define([
 	 * request. Since 1.97.0, if sorters are unchanged, no request is sent, regardless of pending
 	 * changes.
 	 *
+	 * <b>Note:</b> If a sorter uses a function (for example via the <code>vGroup</code> parameter),
+	 * it must be the exact same function instance which was given before, and not a newly created
+	 * one. Avoid calling <code>Function.prototype.bind</code> repeatedly, because this creates a
+	 * new function instance, which causes the deep equal comparison to report a difference.
+	 *
 	 * If there are pending changes that cannot be ignored, an error is thrown. Use
 	 * {@link #hasPendingChanges} to check if there are such pending changes. If there are, call
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
