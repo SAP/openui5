@@ -1796,6 +1796,8 @@ sap.ui.define([
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 2, "both changes were copied");
 			assert.strictEqual(oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName, "change0", "the sourceChangeFileName is correct");
 			assert.strictEqual(oDuplicateVariant.controlChanges[1].getSupportInformation().sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+			assert.notEqual(oDuplicateVariant.controlChanges[0].getId(), "change0", "the fileName is different from the source");
+			assert.notEqual(oDuplicateVariant.controlChanges[1].getId(), "change1", "the fileName is different from the source");
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from USER layer referencing a CUSTOMER layer variant", function(assert) {

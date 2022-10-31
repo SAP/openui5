@@ -675,6 +675,7 @@ sap.ui.define([
 				oDuplicateChangeData.support.sourceChangeFileName = oChange.fileName;
 				// For new change instances the package name needs to be reset to $TMP, BCP: 1870561348
 				oDuplicateChangeData.packageName = "$TMP";
+				oDuplicateChangeData.fileName = Utils.createDefaultFileName(oDuplicateChangeData.changeType);
 				aSameLayerChanges.push(FlexObjectFactory.createFromFileContent(oDuplicateChangeData));
 			}
 			return aSameLayerChanges;
