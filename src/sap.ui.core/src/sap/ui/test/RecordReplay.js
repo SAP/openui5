@@ -199,7 +199,7 @@ sap.ui.define([
 					resolve();
 				}
 			});
-		});
+		}, "PROMISE_WAITER_IGNORE");
 	};
 
 	return RecordReplay;
