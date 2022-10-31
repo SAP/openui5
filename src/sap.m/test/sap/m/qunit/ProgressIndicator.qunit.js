@@ -2,10 +2,11 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ProgressIndicator",
+	"sap/m/Page",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/ui/core/Core"
-], function(createAndAppendDiv, ProgressIndicator, jQuery, coreLibrary, Core) {
+], function(createAndAppendDiv, ProgressIndicator, Page, jQuery, coreLibrary, Core) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -184,6 +185,37 @@ sap.ui.define([
 
 		oProgressIndicator.destroy();
 	});
+
+	QUnit.test("setPercentValue when not rendered (removed and then added back to parent's aggregation)", function(assert) {
+		// Arrange
+		var oProgressIndicator = new ProgressIndicator({
+			percentValue: 1
+		}),
+		oPage = new Page({
+			content: [ oProgressIndicator ]
+		});
+
+		oPage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Act - set percentValue to 0 and remove it from parent's aggregation
+		oProgressIndicator.setPercentValue(0);
+		oPage.removeContent(oProgressIndicator);
+		Core.applyChanges();
+
+		// Act - set percentValue to 5 and add it again to the parent's aggregation
+		oProgressIndicator.setPercentValue(5);
+		oPage.addContent(oProgressIndicator);
+		Core.applyChanges();
+
+		// Assert
+		assert.notOk(oProgressIndicator.$().hasClass("sapMPIValueMin"),
+			"ProgressIndicator does not have 'sapMPIValueMin' class, when percentValue is greater than 0");
+
+		// Clean up
+		oPage.destroy();
+	});
+
 
 	QUnit.test("text should not be rendered when displayValue is not set", function(assert) {
 		var oProgIndicator = new ProgressIndicator({

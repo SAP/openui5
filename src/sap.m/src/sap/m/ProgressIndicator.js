@@ -340,15 +340,16 @@ sap.ui.define([
 			this._fPercentValueDiff = this.getPercentValue() - fPercentValue;
 			this.setProperty("percentValue", fPercentValue);
 
-			if (!oProgressIndicatorDomRef) {
-				return this;
-			}
-
 			["sapMPIValueMax", "sapMPIValueMin", "sapMPIValueNormal", "sapMPIValueGreaterHalf"].forEach(function (sClass){
 				that.removeStyleClass(sClass);
 			});
 
 			this.addStyleClass(this._getCSSClassByPercentValue(fPercentValue).join(" "));
+
+			if (!oProgressIndicatorDomRef) {
+				return this;
+			}
+
 			oProgressIndicatorDomRef.setAttribute("aria-valuenow", fPercentValue);
 			oProgressIndicatorDomRef.setAttribute("aria-valuetext", this._getAriaValueText({fPercent: fPercentValue}));
 
