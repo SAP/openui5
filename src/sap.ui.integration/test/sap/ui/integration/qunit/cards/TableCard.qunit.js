@@ -564,7 +564,6 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest_TableCard);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
 	QUnit.test("Visible columns", function (assert) {
@@ -588,7 +587,6 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest_TableCard_Visible);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
 	QUnit.test("Table Card - static content", function (assert) {

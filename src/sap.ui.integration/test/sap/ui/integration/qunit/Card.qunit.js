@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/filters/SelectFilter",
 	"sap/ui/integration/util/DataProvider",
 	"sap/ui/integration/util/Utils",
+	"sap/ui/integration/library",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/core/Manifest",
@@ -34,6 +35,7 @@ sap.ui.define([
 		Filter,
 		DataProvider,
 		Utils,
+		library,
 		Core,
 		coreLibrary,
 		CoreManifest,
@@ -58,6 +60,7 @@ sap.ui.define([
 
 		var AvatarColor = mLibrary.AvatarColor;
 		var MessageType = coreLibrary.MessageType;
+		var CardDataMode = library.CardDataMode;
 
 		var oManifest_Header = {
 			"sap.app": {
@@ -2387,16 +2390,17 @@ sap.ui.define([
 				this.oRb = Core.getLibraryResourceBundle("sap.f");
 				this.oCard = new Card("somecard", {
 					width: "400px",
-					height: "600px"
+					height: "600px",
+					dataMode: CardDataMode.Active
 				});
 				this.oNumericHeaderCard = new Card("numericCard", {
 					width: "400px",
-					height: "600px"
+					height: "600px",
+					dataMode: CardDataMode.Active
 				});
 
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
 				this.oNumericHeaderCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -2404,7 +2408,6 @@ sap.ui.define([
 				this.oNumericHeaderCard.destroy();
 				this.oNumericHeaderCard = null;
 				this.oRb = null;
-				Core.applyChanges();
 			}
 		});
 
@@ -2451,7 +2454,6 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Generic Interactive", function (assert) {
@@ -2536,7 +2538,7 @@ sap.ui.define([
 				sLogMessage = "Log this error in the console.";
 
 			this.oCard.setManifest(oManifest_ListCard);
-			this.oCard.setDataMode("Active");
+			this.oCard.setDataMode(CardDataMode.Active);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 
@@ -3247,7 +3249,7 @@ sap.ui.define([
 
 				// Act
 				oApplyManifestSpy.reset();
-				this.oCard.setDataMode("Inactive");
+				this.oCard.setDataMode(CardDataMode.Inactive);
 
 				// Assert
 				assert.ok(oApplyManifestSpy.notCalled, "Card with 'Inactive' state should NOT try to apply the manifest settings.");
@@ -3263,7 +3265,7 @@ sap.ui.define([
 					done();
 				});
 
-				this.oCard.setDataMode("Active");
+				this.oCard.setDataMode(CardDataMode.Active);
 				Core.applyChanges();
 
 			}.bind(this));
@@ -3922,7 +3924,7 @@ sap.ui.define([
 				done = assert.async();
 
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/listCard.manifest.json");
-			this.oCard.setDataMode("Active");
+			this.oCard.setDataMode(CardDataMode.Active);
 			Core.applyChanges();
 
 			assert.ok(this.oCard._oCardManifest, "There is Manifest instance");

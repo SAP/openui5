@@ -1,18 +1,22 @@
 sap.ui.require([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/integration/library",
 	"sap/ui/integration/widgets/Card",
 	"sap/m/CheckBox",
 	"sap/m/Page",
 	"sap/m/App",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer"
-], function (jQuery, Card, CheckBox, Page, App, Toolbar, ToolbarSpacer) {
+], function (jQuery, integrationLibrary, Card, CheckBox, Page, App, Toolbar, ToolbarSpacer) {
 	"use strict";
+
+	var CardDataMode = integrationLibrary.CardDataMode;
 
 	delete Document.prototype.adoptedStyleSheets;
 
 	var oCard = new Card("AdaptiveCard", {
-			manifest: "./adaptivecardvisualtests-manifest.json"
+			manifest: "./adaptivecardvisualtests-manifest.json",
+			dataMode: CardDataMode.Active
 		}),
 		oCompactMode = new CheckBox("compactMode", {
 			text: "Compact Mode",
