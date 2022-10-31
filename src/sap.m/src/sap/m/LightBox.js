@@ -7,12 +7,12 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Popup",
 	"sap/ui/core/Core",
-	"sap/m/Text",
+	"sap/m/IllustratedMessage",
+	"sap/m/IllustratedMessageType",
+	"sap/m/IllustratedMessageSize",
 	"sap/m/Button",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/Device",
-	"sap/ui/core/Icon",
-	"sap/ui/layout/VerticalLayout",
 	"./InstanceManager",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/library",
@@ -25,12 +25,12 @@ sap.ui.define([
 	Control,
 	Popup,
 	Core,
-	Text,
+	IllustratedMessage,
+	IllustratedMessageType,
+	IllustratedMessageSize,
 	Button,
 	ResizeHandler,
 	Device,
-	Icon,
-	VerticalLayout,
 	InstanceManager,
 	InvisibleText,
 	coreLibrary,
@@ -49,9 +49,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
-
-	// shortcut for sap.ui.core.TextAlign
-	var TextAlign = coreLibrary.TextAlign;
 
 	/**
 	 * Constructor for a new LightBox.
@@ -125,10 +122,10 @@ sap.ui.define([
 				_closeButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
 
 				/**
-				 * A layout control used to display the error texts when the image could not be loaded.
+				 * Control used to display the error message when the image could not be loaded.
 				 * @private
 				 */
-				_verticalLayout: {type: "sap.ui.layout.VerticalLayout", multiple: false, visibility: "hidden"},
+				 _errorMessage: {type: "sap.m.IllustratedMessage", multiple: false, visibility: "hidden"},
 
 				/**
 				 * Hidden text used for accessibility of the popup.
@@ -216,6 +213,7 @@ sap.ui.define([
 				this._calculateSizes(oNativeImage);
 				break;
 			case LightBoxLoadingStates.Error:
+			case LightBoxLoadingStates.TimeOutError:
 				clearTimeout(this._iTimeoutId);
 				sInvisiblePopupText += " " + sErrorMessageTitle + " " + sErrorMessageSubtitle;
 				break;
@@ -395,13 +393,12 @@ sap.ui.define([
 	 * Forces invalidation of the control when an image loads/fails to load.
 	 *
 	 * @private
-	 * @param {sap.m.LightBoxLoadingStates} sNewState The new state of the image. Possible values are: "LOADING", "LOADED" and "ERROR".
+	 * @param {sap.m.LightBoxLoadingStates} sNewState The new state of the image.
 	 */
 	LightBox.prototype._imageStateChanged = function (sNewState) {
-		var bEndState = sNewState === LightBoxLoadingStates.Loaded || sNewState === LightBoxLoadingStates.Error;
 
-		if (bEndState && !this._isRendering) {
-			this.rerender();
+		if (sNewState !== LightBoxLoadingStates.Loading && !this._isRendering) {
+			this.invalidate();
 		}
 	};
 
@@ -445,41 +442,33 @@ sap.ui.define([
 	 * @private
 	 */
 	LightBox.prototype._createErrorControls = function() {
-		var sErrorTitle,
-			sErrorSubtitle,
-			oTitle,
-			oSubtitle,
-			oIcon;
+		var sErrorTitle = this._oRB.getText("LIGHTBOX_IMAGE_TIMED_OUT"),
+		sErrorSubtitle = this._oRB.getText("LIGHTBOX_IMAGE_TIMED_OUT_DETAILS"),
+		oIllustratedMessage;
 
-		if (this.getAggregation("_verticalLayout")) {
+		if (this.getAggregation("_errorMessage")) {
+			if (this._getImageContent()._getImageState() === LightBoxLoadingStates.TimeOutError) {
+				this.getAggregation("_errorMessage").setTitle(sErrorTitle);
+				this.getAggregation("_errorMessage").setDescription(sErrorSubtitle);
+			}
+
 			return;
 		}
 
-		if (this._getImageContent()._getImageState() === LightBoxLoadingStates.TimeOutError) {
-			sErrorTitle = this._oRB.getText("LIGHTBOX_IMAGE_TIMED_OUT");
-			sErrorSubtitle = this._oRB.getText("LIGHTBOX_IMAGE_TIMED_OUT_DETAILS");
-		} else {
+		if (this._getImageContent()._getImageState() !== LightBoxLoadingStates.TimeOutError) {
 			sErrorTitle = this._oRB.getText("LIGHTBOX_IMAGE_ERROR");
 			sErrorSubtitle = this._oRB.getText("LIGHTBOX_IMAGE_ERROR_DETAILS");
 		}
 
-		oTitle = new Text({
-			text: sErrorTitle,
-			textAlign: TextAlign.Center
-		}).addStyleClass("sapMLightBoxErrorTitle");
+		oIllustratedMessage = new IllustratedMessage({
+			illustrationType: IllustratedMessageType.UnableToLoadImage,
+			illustrationSize: Device.system.phone ? IllustratedMessageSize.Auto : IllustratedMessageSize.Scene,
+			enableVerticalResponsiveness: true,
+			title: sErrorTitle,
+			description: sErrorSubtitle
+		});
 
-		oSubtitle = new Text({
-			text: sErrorSubtitle,
-			textAlign: TextAlign.Center
-		}).addStyleClass("sapMLightBoxErrorSubtitle");
-
-		oIcon = new Icon({
-			src: "sap-icon://picture"
-		}).addStyleClass("sapMLightBoxErrorIcon");
-
-		this.setAggregation("_verticalLayout", new VerticalLayout({
-			content: [oIcon, oTitle, oSubtitle]
-		}).addStyleClass("sapMLightBoxVerticalLayout"));
+		this.setAggregation("_errorMessage", oIllustratedMessage);
 	};
 
 	/**
