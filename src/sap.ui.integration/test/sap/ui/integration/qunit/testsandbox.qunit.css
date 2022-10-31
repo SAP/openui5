@@ -1,8 +1,8 @@
 #qunit-fixture.sapUiIntegrationQUnitFixture {
 	position: fixed;
-	top: auto;
+	top: 7rem;
 	right: 0;
-	bottom: 0;
+	bottom: auto;
 	left: auto;
 	width: 600px;
 	height: 600px;
