@@ -1320,7 +1320,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchCache: previous cache", function (assert) {
-		var oCache = {},
+		var oCache = {
+				setActive : function () {}
+			},
 			oBinding = new ODataBinding({
 				oCache : oCache,
 				oCachePromise : SyncPromise.resolve(oCache),
@@ -1334,6 +1336,8 @@ sap.ui.define([
 					getReporter : getForbiddenReporter
 				}
 			});
+
+		this.mock(oCache).expects("setActive").withExactArgs(false);
 
 		// code under test
 		oBinding.fetchCache();

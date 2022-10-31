@@ -307,7 +307,8 @@ sap.ui.define([
 			var oBinding,
 				oModel = this.oModel,
 				oCache = {
-					oRequestor : oModel.oRequestor
+					oRequestor : oModel.oRequestor,
+					setActive : function () {}
 				},
 				oCacheMock = this.mock(_Cache),
 				oInitialContext = createContext(oFixture.sInit, "/EMPLOYEES(ID='1')"),
