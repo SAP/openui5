@@ -2401,6 +2401,7 @@ sap.ui.define([
 		// Act
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.t });
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
+		oInput._openSuggestionPopup();
 		this.clock.tick(300);
 
 		// Assert
@@ -4418,7 +4419,7 @@ sap.ui.define([
 		assert.notOk(oInput.getSelectedItem(), "SelectedItems should be empty");
 
 		// Act
-		oInput._sProposedItemText = "Bulgaria";
+		oInput._setProposedItemText("Bulgaria");
 		oInput.onsapfocusleave({relatedControlId: null});
 		sap.ui.getCore().applyChanges();
 
@@ -5641,6 +5642,286 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("_handleTypeahead should return map with the selected text and item instance - List suggestions", function (assert) {
+		// arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({text: "Germany"}),
+				new Item({text: "Bulgaria"}),
+				new Item({text: "Italy"})
+			]
+		}).placeAt("content");
+		var mResult;
+
+		oCore.applyChanges();
+
+		oInput.setValue("B");
+		oInput._$input.trigger("focus");
+		oInput._bDoTypeAhead = true;
+
+		// act
+		mResult = oInput._handleTypeAhead(oInput);
+		this.clock.tick(300);
+
+		assert.strictEqual(mResult.selectedItem, oInput.getSuggestionItems()[1], "The correct suggestion item was passed");
+		assert.strictEqual(mResult.value, oInput.getSuggestionItems()[1].getText(), "The correct value was passed");
+
+		// Clean
+		oInput.destroy();
+	});
+
+	QUnit.test("_handleTypeahead should return map with the selected text and item instance - Tabular suggestions", function (assert) {
+		// arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionColumns: [
+				new Column({
+					header: new Label({
+						text: "{i18n>/Name}"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "{i18n>/Qty}"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "{i18n>/Value}"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "{i18n>/Price}"
+					})
+				})
+			]});
+
+		var oTableItemTemplate = new ColumnListItem({
+			vAlign : "Middle",
+			cells : [
+				new Label({
+					text : "{name}"
+				}),
+				new Label({
+					text: "{qty}"
+				}), new Label({
+					text: "{limit}"
+				}), new Label({
+					text : "{price}"
+				})
+			]
+		});
+
+		var oSuggestionData = {
+			tabularSuggestionItems : [{
+				name : "Product1",
+				qty : "10 EA",
+				limit : "15.00 Eur",
+				price : "10.00 EUR"
+			}, {
+				name : "Product2",
+				qty : "9 EA",
+				limit : "25.00 Eur",
+				price : "20.00 EUR"
+			}, {
+				name : "Photo scan",
+				qty : "8 EA",
+				limit : "35.00 Eur",
+				price : "30.00 EUR"
+			}]
+		};
+
+		var oModel = new JSONModel(oSuggestionData);
+		var mResult;
+
+		oInput.setModel(oModel);
+		oInput.bindSuggestionRows({
+			path: "/tabularSuggestionItems",
+			template: oTableItemTemplate
+		});
+
+		oInput.placeAt("content");
+
+		oCore.applyChanges();
+
+		oInput.setValue("P");
+		oInput._$input.trigger("focus");
+		oInput._bDoTypeAhead = true;
+
+		// act
+		mResult = oInput._handleTypeAhead(oInput);
+		this.clock.tick(300);
+
+		assert.strictEqual(mResult.selectedItem, oInput.getSuggestionRows()[0], "The correct suggestion item was passed");
+		assert.strictEqual(mResult.value, oInput._getRowResultFunction()(oInput.getSuggestionRows()[0]), "The correct value was passed");
+
+		// Clean
+		oInput.destroy();
+	});
+
+	QUnit.test("Dynamic suggestions: List suggestions - Item in the list should be selected if type-ahead was performed", function (assert) {
+		// arrange
+		var oData = {
+			items: [
+				{key: "key1", value: "test1"},
+				{key: "key2", value: "test2"},
+				{key: "key3", value: "test3"}
+			]
+		};
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.T });
+		var oInput = new Input({
+			showSuggestion: true,
+			suggest: function (oEvent) {
+				// simulate network request
+				oData.items.forEach(function (oItem) {
+					oInput.addSuggestionItem(new Item({ key: oItem.key, text: oItem.value }));
+				});
+			}
+		}).placeAt("content");
+
+		oCore.applyChanges();
+
+		// act
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
+		this.clock.tick(300);
+
+		// assert
+		assert.strictEqual(oInput.getSelectedItem(),null, "There is still no selected suggestion item in the Input.");
+		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].getSelected(), true, "The first matching list item was selected");
+
+		// Clean
+		oInput.destroy();
+	});
+
+	QUnit.test("Dynamic suggestions: Tabular suggestions - Row in the list should be selected if type-ahead was performed", function (assert) {
+		// arrange
+		var oData = {
+			items: [
+				{key: "key1", value: "test1"},
+				{key: "key2", value: "test2"},
+				{key: "key3", value: "test3"}
+			]
+		};
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.T });
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionColumns: [
+				new Column({
+					header: new Label({ text: "Text" })
+				})
+			],
+			suggest: function (oEvent) {
+				// simulate network request
+				oData.items.forEach(function (oItem) {
+					oInput.addSuggestionRow(new ColumnListItem({
+						cells: [
+							new Text({ text: oItem.value })
+						]
+					}));
+				});
+			}
+		}).placeAt("content");
+
+		oCore.applyChanges();
+
+		// act
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
+		this.clock.tick(300);
+
+		// assert
+		assert.strictEqual(oInput.getSelectedRow(),null, "There is still no selected suggestion row in the Input.");
+		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].getSelected(), true, "The first matching table row was selected");
+
+		// Clean
+		oInput.destroy();
+	});
+
+	QUnit.test("Dynamic suggestions: List suggestions - Backspace should deselect the matching list item after type-ahead was performed and it was selected", function (assert) {
+		// arrange
+		var oData = {
+			items: [
+				{key: "key1", value: "test1"},
+				{key: "key2", value: "test2"},
+				{key: "key3", value: "test3"}
+			]
+		};
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.T });
+		var oInput = new Input({
+			showSuggestion: true,
+			suggest: function (oEvent) {
+				// simulate network request
+				oData.items.forEach(function (oItem) {
+					oInput.addSuggestionItem(new Item({ key: oItem.key, text: oItem.value }));
+				});
+			}
+		}).placeAt("content");
+
+		oCore.applyChanges();
+
+		// act
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
+		this.clock.tick(300);
+		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
+		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
+		this.clock.tick(300);
+
+		// assert
+		assert.strictEqual(oInput.getSelectedRow(),null, "There is still no selected suggestion item in the Input.");
+		assert.notOk(oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].getSelected(), "The first matching list item is not selected");
+
+		// Clean
+		oInput.destroy();
+	});
+
+
+	QUnit.test("Dynamic suggestions: Tabular suggestions - Backspace should deselect the matching table row after type-ahead was performed and it was selected", function (assert) {
+		// arrange
+		var oData = {
+			items: [
+				{key: "key1", value: "test1"},
+				{key: "key2", value: "test2"},
+				{key: "key3", value: "test3"}
+			]
+		};
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.T });
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionColumns: [
+				new Column({
+					header: new Label({ text: "Text" })
+				})
+			],
+			suggest: function (oEvent) {
+				// simulate network request
+				oData.items.forEach(function (oItem) {
+					oInput.addSuggestionRow(new ColumnListItem({
+						cells: [
+							new Text({ text: oItem.value })
+						]
+					}));
+				});
+			}
+		}).placeAt("content");
+
+		oCore.applyChanges();
+
+		// act
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
+		this.clock.tick(300);
+		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
+		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
+		this.clock.tick(300);
+
+		// assert
+		assert.strictEqual(oInput.getSelectedRow(),null, "There is still no selected suggestion row in the Input.");
+		assert.notOk(oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].getSelected(), "The first matching table row is not selected");
+
+		// Clean
+		oInput.destroy();
+	});
+
 	QUnit.module("Input with Suggestions and Value State, but not Value State Message", {
 		beforeEach: function () {
 			this.inputWithSuggestions = new Input({
@@ -6350,7 +6631,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change event should be fired only once when there is a proposed item", function(assert) {
-
 		var fnFireChangeSpy = this.spy(this.oInput, "fireChange");
 		this.oInput.onfocusin();
 		this.oInput._$input.trigger("focus").val("u").trigger("input");

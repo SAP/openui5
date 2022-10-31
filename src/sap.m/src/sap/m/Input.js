@@ -1464,7 +1464,7 @@ function(
 
 		this.bValueHelpRequested = false;
 
-		if (!this._sProposedItemText || this.isMobileDevice()) {
+		if (!this._getProposedItemText() || this.isMobileDevice()) {
 			return;
 		}
 
@@ -1479,7 +1479,7 @@ function(
 			// but there is a proposed item due to the typeahead
 			var oSelectedItem = this.getSuggestionItems()
 				.filter(function (oItem) {
-					return oItem.getText() === this._sProposedItemText;
+					return oItem.getText() === this._getProposedItemText();
 				}.bind(this))[0];
 
 			if (oSelectedItem) {
@@ -1548,8 +1548,7 @@ function(
 	};
 
 	/**
-	 * Updates the selection, when the picker is closed and the suggestions selection
-	 * was updated, while navigating.
+	 * Updates the selection, when the picker closes and there is selected item/row in the list/table.
 	 *
 	 * @param {sap.m.StandardListItem | sap.m.ColumnListItem | sap.m.GroupHeaderListItem} oSelectedItem The selected from navigation item
 	 * @private
@@ -1780,10 +1779,20 @@ function(
 	Input.prototype.onkeyup = function (oEvent) {
 		var sValue = this.getValue();
 		var sLastValue = this.getLastValue();
+		var oSuggestionsPopover, oItemsContainer, oSelectedItem;
 
-		if ([KeyCodes.BACKSPACE, KeyCodes.DELETE].indexOf(oEvent.which) !== -1 && !sValue) {
+		if (!this._bDoTypeAhead && !sValue) {
 			this.getShowSuggestion() && this.setSelectedKey(null);
 			(sLastValue !== sValue) && this.setLastValue(sLastValue);
+		} else if (!this._bDoTypeAhead && sValue) {
+			oSuggestionsPopover = this.getShowSuggestion() && this._getSuggestionsPopover();
+			oItemsContainer = oSuggestionsPopover && oSuggestionsPopover.getItemsContainer();
+			oSelectedItem = oItemsContainer && oItemsContainer.getSelectedItem();
+
+			this._setProposedItemText(null);
+			if (oSelectedItem) {
+				oSelectedItem.setSelected(false);
+			}
 		}
 
 		this.getShowClearIcon() && this.setProperty("effectiveShowClearIcon", !!sValue);
@@ -2131,19 +2140,24 @@ function(
 	/**
 	 * Handles Input's specific type ahead logic.
 	 *
-	 * @param oInput {sap.m.Input} Input's instance to which the type ahead would be applied. For example: this OR Dialog's Input instance.
+	 * @param {sap.m.Input} oInput Input's instance to which the type ahead would be applied. For example: this OR Dialog's Input instance.
+	 * @returns {null|object} Map object containing type-ahead info or null if no type-ahead is performed.
 	 * @private
 	 */
 	Input.prototype._handleTypeAhead = function (oInput) {
 		var sValue = this.getValue();
+		var mTypeAheadInfo = {
+			value: "",
+			selectedItem: null
+		};
 
 		// check if typeahead is already performed
-		if ((oInput && oInput.getValue().toLowerCase()) === (this._sProposedItemText && this._sProposedItemText.toLowerCase())) {
+		if ((oInput && oInput.getValue().toLowerCase()) === (this._getProposedItemText() && this._getProposedItemText().toLowerCase())) {
 			return;
 		}
 
 		this._setTypedInValue(sValue);
-		oInput._sProposedItemText = null;
+		oInput._setProposedItemText(null);
 
 		if (!this._bDoTypeAhead || sValue === "" ||
 			sValue.length < this.getStartSuggestion() || document.activeElement !== this.getFocusDomRef()) {
@@ -2164,7 +2178,12 @@ function(
 			return this._formatTypedAheadValue(fnExtractText(oItem));
 		}.bind(this));
 
-		oInput._sProposedItemText = fnExtractText(aItemsToSelect[0]);
+		mTypeAheadInfo.value = fnExtractText(aItemsToSelect[0]);
+		mTypeAheadInfo.selectedItem = aItemsToSelect[0];
+
+		oInput._setProposedItemText(mTypeAheadInfo.value);
+
+		return mTypeAheadInfo;
 	};
 
 	/**
@@ -2176,7 +2195,7 @@ function(
 	Input.prototype._resetTypeAhead = function (oInput) {
 		oInput = oInput || this;
 
-		oInput._sProposedItemText = null;
+		oInput._setProposedItemText(null);
 		this._setTypedInValue('');
 	};
 
@@ -2772,7 +2791,7 @@ function(
 
 		oInput.addEventDelegate({
 			onsapenter: function () {
-				this.setValue(this._sProposedItemText);
+				this.setValue(this._getProposedItemText());
 			}
 		}, this);
 
@@ -2892,7 +2911,25 @@ function(
 		}, this);
 
 		oPopover.attachAfterOpen(function () {
-			this._handleTypeAhead(this);
+			var mTypeAheadInfo;
+			var oSuggPopover = this.getShowSuggestion() && this._getSuggestionsPopover();
+			var oList = oSuggPopover && oSuggPopover.getItemsContainer();
+			var oItemToBeSelected;
+
+			mTypeAheadInfo = this._handleTypeAhead(this);
+
+			// In case the items were provided on a later stage and the type-ahead was called
+			// when the items were refreshed, there will be no selected item / row in the list,
+			// no matter that we use the first matching item to auto-complete the user's input.
+			// This will, later on, result in no item being added in the selectedItem/Row association.
+			// Here we need to make sure that the first item (which's text was already used) is indeed selected.
+			if (!(this._getProposedItemText() && oList && !oList.getSelectedItem() && mTypeAheadInfo && mTypeAheadInfo.selectedItem)) {
+				return;
+			}
+
+			oItemToBeSelected = this._hasTabularSuggestions() ? mTypeAheadInfo.selectedItem : ListHelpers.getListItem(mTypeAheadInfo.selectedItem);
+			oItemToBeSelected.setSelected(true);
+			this.setSelectionUpdatedFromList(true);
 		}, this);
 
 		if (this.isMobileDevice()) {
@@ -3215,7 +3252,10 @@ function(
 				oTabularRow.setVisible(bShowItem);
 				bShowItem && aFilteredItems.push(oTabularRow);
 
-				if (!bIsAnySuggestionAlreadySelected && bShowItem && this._sProposedItemText === this._getRowResultFunction()(oTabularRow)) {
+				if (!bIsAnySuggestionAlreadySelected && bShowItem && this._getProposedItemText() === this._getRowResultFunction()(oTabularRow)) {
+					// Setting the row to selected only works in case the items were there prior the user's input
+					// as otherwise there will be no proposed text.
+					// In case the items became available on a later stage, the typeahead functionality will set the selected row.
 					oTabularRow.setSelected(true);
 					bIsAnySuggestionAlreadySelected = true;
 				}
@@ -3262,7 +3302,10 @@ function(
 				oListItem = ListHelpers.createListItemFromCoreItem(oItem, true);
 				oList.addItem(oListItem);
 
-				if (!bIsAnySuggestionAlreadySelected && this._sProposedItemText === oItem.getText()) {
+				if (!bIsAnySuggestionAlreadySelected && this._getProposedItemText() === oItem.getText()) {
+					// Setting the item to selected only works in case the items were there prior the user's input
+					// as otherwise there will be no proposed text.
+					// In case the items became available on a later stage, the typeahead functionality will set the selected item.
 					oListItem.setSelected(true);
 					bIsAnySuggestionAlreadySelected = true;
 				}
@@ -3317,6 +3360,27 @@ function(
 		return true;
 	};
 
+	/**
+	 * Setter for the _sProposedItemText property, representing the text extracted from the proposed item/row.
+	 *
+	 * @private
+	 * @param {string} sProposedText The new proposed text, extracted from the item/row.
+	 * @returns {this} <code>this</code> to allow method chaining.
+	 */
+	Input.prototype._setProposedItemText = function (sProposedText) {
+		this._sProposedItemText = sProposedText;
+		return this;
+	};
+
+	/**
+	 * Getter for the _sProposedItemText property representing the text extracted from the proposed item/row.
+	 *
+	 * @private
+	 * @returns {string} The text extracted from the proposed item/row.
+	 */
+	Input.prototype._getProposedItemText = function () {
+		return this._sProposedItemText;
+	};
 
 	return Input;
 
