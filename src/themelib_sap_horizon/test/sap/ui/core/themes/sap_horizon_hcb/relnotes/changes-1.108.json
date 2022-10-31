@@ -3,6 +3,17 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "d8da4cd01e3d9a185c1de10a2c706335a0860393",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.03 and v4.15",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "4e2fdb1592e4dbb3ef87ee472e0128700092d889",
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: Title font-size specified",

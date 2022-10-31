@@ -3,6 +3,17 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "d8da4cd01e3d9a185c1de10a2c706335a0860393",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.03 and v4.15",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "d75745de6a5fd3d44977a0692b7a0bde5d1bbdf1",
         "type": "FEATURE",
         "text": " sap.ui.model.odata.v2.ODataModel#createEntry: Support deep create request"
