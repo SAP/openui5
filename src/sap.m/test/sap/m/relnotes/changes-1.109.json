@@ -3,6 +3,114 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "82538b54441d56f3fffc38bc3bc910f03f1b3ce0",
+        "type": "FIX",
+        "text": " sap.m.Slider: Display all tickmarks of the custom scale",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270109925"
+          }
+        ]
+      },
+      {
+        "id": "e331f89de20157cf40d9a7c88df7bb453faa12d5",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.03 and v4.15"
+      },
+      {
+        "id": "fef67067271b3b3326d04eabd8ec1a631e93ae35",
+        "type": "FIX",
+        "text": " sap.m.Input: Selected row is now cleared correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270129657"
+          }
+        ]
+      },
+      {
+        "id": "d520ee87a5952b93dcc19cbd6d9d0f3188236bb5",
+        "type": "FIX",
+        "text": " sap.m.SplitApp: Fixed failing test on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270154471"
+          }
+        ]
+      },
+      {
+        "id": "6a7028cd9c6d33342100f1ad4aeaca4b4bfb1ae3",
+        "type": "FIX",
+        "text": " sap.m.Input: Pressing ESC now resets the proposed text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007258462022"
+          }
+        ]
+      },
+      {
+        "id": "72cc5ecfea2aacc8a76b522b6c76c27c18f59698",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Revert \"Buttons are correct when any button is not visible\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270162989"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270162925"
+          }
+        ]
+      },
+      {
+        "id": "0e55223806e2638f27f5d7fcd2c1942f539bdffc",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Selecting option with the same starting text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280107625"
+          }
+        ]
+      },
+      {
+        "id": "5a25c4e7424f2a609533da7f96628eea6497762b",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Corrected parameter for setTabDensityMode method in documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270158238"
+          }
+        ]
+      },
+      {
+        "id": "7e6f0c2c0cd2b21a3cea1830a3e56e91d753a751",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Buttons are correct when any button is not visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270140605"
+          }
+        ]
+      },
+      {
+        "id": "fdee8ac0e99738baa21abaecd638fe51d1130ad3",
+        "type": "FIX",
+        "text": " sap.m.Slider: Remove the random height of the root DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270125940"
+          }
+        ]
+      },
+      {
         "id": "89ed2a1db6bfec43bf4deb88d00fad4a9b65d9fb",
         "type": "FIX",
         "text": " sap.m.ViewSettingsDialog: reset the focus",
