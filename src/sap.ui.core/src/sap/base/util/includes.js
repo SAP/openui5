@@ -47,7 +47,7 @@ sap.ui.define([
 	* @param {int} [iFromIndex=0] - optional start index, negative start index will start from the end
 	* @returns {boolean} - true if value is in the collection, false otherwise
 	* @public
-	* @deprecated as of version 1.90. Use the <code>Array.includes</code> or <code>String.includes</code> instead.
+	* @deprecated as of version 1.90. Use the <code>Array.prototype.includes</code> or <code>String.prototype.includes</code> instead, but note that <code>Array.prototype.includes</code> or <code>String.prototype.includes</code> fail when called on null values.
 	*/
 	var fnIncludes = function (vCollection, vValue, iFromIndex) {
 		if (typeof iFromIndex !== 'number') {
