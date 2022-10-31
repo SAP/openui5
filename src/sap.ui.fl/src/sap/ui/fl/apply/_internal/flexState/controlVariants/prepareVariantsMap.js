@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/LayerUtils"
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/registry/Settings"
 ], function(
 	each,
 	includes,
@@ -25,7 +26,8 @@ sap.ui.define([
 	VariantsApplyUtil,
 	FlexObjectFactory,
 	States,
-	LayerUtils
+	LayerUtils,
+	Settings
 ) {
 	"use strict";
 
@@ -122,6 +124,23 @@ sap.ui.define([
 		return oReferencedVariant;
 	}
 
+	// add missing user id (for variants created on the same session)
+	function addMissingUser(oVariantsMap) {
+		var oVariantsMapClone = merge({}, oVariantsMap);
+		values(oVariantsMapClone).forEach(function(oVariantEntry) {
+			var mSupportInformation = oVariantEntry.instance.getSupportInformation();
+			if (!mSupportInformation.user) {
+				var sUserId = Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().getUserId();
+				if (sUserId) {
+					mSupportInformation.user = sUserId;
+					oVariantEntry.instance.setSupportInformation(mSupportInformation);
+				}
+			}
+		});
+
+		return oVariantsMapClone;
+	}
+
 	// prepares initial map for variants
 	function getVariantsMap(oStorageResponse, sReference) {
 		var oVariantsMap = {};
@@ -131,6 +150,7 @@ sap.ui.define([
 		oVariantsMap = addVariantChanges(oVariantsMap, oStorageResponse.variantChanges, sReference);
 		oVariantsMap = filterInvisibleVariants(oVariantsMap);
 		oVariantsMap = resolveReferences(oVariantsMap, sReference);
+		oVariantsMap = addMissingUser(oVariantsMap);
 
 		return oVariantsMap;
 	}

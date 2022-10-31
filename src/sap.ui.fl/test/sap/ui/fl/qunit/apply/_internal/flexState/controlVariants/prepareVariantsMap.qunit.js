@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/values",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	prepareVariantsMap,
 	VariantUtil,
 	LoaderExtensions,
 	values,
+	Settings,
 	sinon
 ) {
 	"use strict";
@@ -133,6 +135,23 @@ sap.ui.define([
 			checkVariantsMap(oVariantsMap, assert);
 			assert.strictEqual(oVariantsMap["vmReference1"].currentVariant, "vmReference1", "the current variant is set");
 			assert.strictEqual(oVariantsMap["vmReference2"].currentVariant, "variant11", "the current variant is set");
+		});
+
+		QUnit.test("when calling for variants without user id in when Settings returns a user", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				getUserId: function() {
+					return "TestUser";
+				}
+			});
+
+			var oVariantsMap = prepareVariantsMap(this.mPropertyBag);
+
+			// mocking properties in response for technical parameters
+			assert.strictEqual(
+				oVariantsMap["vmReference1"].variants[1].instance.getSupportInformation().user,
+				"TestUser",
+				"then the user is set to what is retrieved from Settings"
+			);
 		});
 	});
 
