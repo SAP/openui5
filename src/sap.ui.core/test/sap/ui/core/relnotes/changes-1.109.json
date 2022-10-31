@@ -3,6 +3,22 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "e331f89de20157cf40d9a7c88df7bb453faa12d5",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.03 and v4.15"
+      },
+      {
+        "id": "8bc4be0e6eac68c86a07be6a27d27ded665bc70f",
+        "type": "FIX",
+        "text": " core.BusyIndicator:Adjust css to align with theme sap_fiori_3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280150532"
+          }
+        ]
+      },
+      {
         "id": "d75745de6a5fd3d44977a0692b7a0bde5d1bbdf1",
         "type": "FEATURE",
         "text": " sap.ui.model.odata.v2.ODataModel#createEntry: Support deep create request"

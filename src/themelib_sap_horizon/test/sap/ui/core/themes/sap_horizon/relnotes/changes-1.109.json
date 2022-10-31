@@ -3,6 +3,33 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "e331f89de20157cf40d9a7c88df7bb453faa12d5",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.03 and v4.15"
+      },
+      {
+        "id": "0af6da23b7a36f1d554c121dd5660f63ab07cace",
+        "type": "FIX",
+        "text": " sap.m.Select: Visual alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270149476"
+          }
+        ]
+      },
+      {
+        "id": "eb29951d63c5f71c548e266035afb8251ad33b6f",
+        "type": "FIX",
+        "text": " Integration Cards: Improved focus border radius in Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270154510"
+          }
+        ]
+      },
+      {
         "id": "2f9854b905b322da9a5fd3f258e99ff6d6d0707a",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Fix misalignment of SimpeForm and Table",

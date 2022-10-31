@@ -3,6 +3,22 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "42a3803e9e2969ad20497b73ef57a3517f0229aa",
+        "type": "FEATURE",
+        "text": " Integration Cards: Main and side indicators can be hidden"
+      },
+      {
+        "id": "eb29951d63c5f71c548e266035afb8251ad33b6f",
+        "type": "FIX",
+        "text": " Integration Cards: Improved focus border radius in Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270154510"
+          }
+        ]
+      },
+      {
         "id": "502291a06af85b377fd074797e1544775993fd5b",
         "type": "FIX",
         "text": " sap.f.GridContainer: Padding no longer breaks keyboard navigation",
