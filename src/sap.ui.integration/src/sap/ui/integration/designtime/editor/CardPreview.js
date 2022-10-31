@@ -57,6 +57,7 @@ sap.ui.define([
 				if (oControl._getCurrentMode() === "None") {
 					oRm.openStart("div", oControl);
 					oRm.openEnd();
+					oRm.close("div");
 					return;
 				}
 				oRm.openStart("div", oControl);
@@ -91,6 +92,7 @@ sap.ui.define([
 				if (oControl._getModes().indexOf("Live") > -1 && oControl._getModes().indexOf("Abstract") > -1) {
 					oRm.renderControl(oControl._getModeToggleButton());
 				}
+				oRm.close("div");
 			}
 		}
 	});

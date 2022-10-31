@@ -233,14 +233,12 @@ sap.ui.define([
 				var oPreview = oControl.getAggregation("_preview");
 				var bShowPreview = oControl.getMode() !== "translation" && oControl.hasPreview();
 				var sPreviewPosition = oControl.getPreviewPosition();
-				if (bShowPreview
-					&& (sPreviewPosition === "top" || sPreviewPosition === "bottom")) {
+				if (bShowPreview && (sPreviewPosition === "top" || sPreviewPosition === "bottom")) {
 					oRm.openStart("div", oControl);
 					oRm.openEnd();
 					//render the additional content if alignment of it is "top"
 					if (oControl.isReady() && sPreviewPosition === "top") {
 						oRm.renderControl(oPreview);
-						oRm.close("div");
 					}
 				}
 				if (bShowPreview && sPreviewPosition === "left") {
@@ -249,10 +247,8 @@ sap.ui.define([
 					oRm.openEnd();
 					if (oControl.isReady()){
 						oRm.renderControl(oPreview);
-						oRm.close("div");
 					}
-				} else if (bShowPreview
-					&& (sPreviewPosition === "bottom" || sPreviewPosition === "top")) {
+				} else if (bShowPreview && (sPreviewPosition === "top" || sPreviewPosition === "bottom")) {
 					oRm.openStart("div");
 					oRm.class("sapUiIntegrationEditor");
 					oRm.openEnd();
@@ -857,9 +853,11 @@ sap.ui.define([
 					}
 				}
 				oRm.close("div");
-				//render the additional content if alignment of it is "right"
-				if (oControl.isReady() && bShowPreview && sPreviewPosition === "bottom") {
-					oRm.renderControl(oPreview);
+				if (bShowPreview && (sPreviewPosition === "top" || sPreviewPosition === "bottom")) {
+					//render the additional content if alignment of it is "bottom"
+					if (sPreviewPosition === "bottom") {
+						oRm.renderControl(oPreview);
+					}
 					oRm.close("div");
 				}
 			}
