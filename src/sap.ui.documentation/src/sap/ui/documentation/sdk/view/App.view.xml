@@ -90,14 +90,7 @@
 
 						<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" liveChange="onSearchLiveChange" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 
-						<Button id="feedBackDialogButton" tooltip="{i18n>APP_FEEDBACK_BTN_TOOLTIP}" press="feedbackDialogOpen" icon="sap-icon://comment" type="Transparent" visible="{=${appView>/bUseFeedbackDialog} &amp;&amp; !${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
-
-							<layoutData>
-								<OverflowToolbarLayoutData priority="NeverOverflow" />
-							</layoutData>
-						</Button>
-
-						<Button id="surveyButton" class="surveyButton" tooltip="{i18n>APP_FEEDBACK_BTN_TOOLTIP}" press="launchSurvey" icon="sap-icon://feedback" type="Transparent" visible="{=!${appView>/bUseFeedbackDialog} &amp;&amp; !${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
+						<Button id="surveyButton" class="surveyButton" tooltip="{i18n>APP_FEEDBACK_BTN_TOOLTIP}" press="launchSurvey" icon="sap-icon://feedback" type="Transparent" visible="{= !${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode} }">
 							<customData>
 								<BadgeCustomData
 									visible="{appView>/bShowLongSurvey}"
@@ -158,8 +151,8 @@
 										<MenuItem icon="sap-icon://document-text" text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" key="terms_of_use" visible="{versionData>/isOpenUI5}"/>
 										<MenuItem icon="sap-icon://tree" text="{i18n>APP_INFORMATION_BTN_SITEMAP}" key="sitemap" visible="{versionData>/isOpenUI5}"/>
 										<MenuItem icon="sap-icon://hello-world" text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE}" key="settings"/>
-										<MenuItem icon="sap-icon://customize" text="{i18n>APP_SETTINGS_DIALOG_COOKIE_PREFERENCES}" key="cookie_preferences"
-												visible="{= ${versionData>/enableAdvancedCookieSettings}}"/>
+										<MenuItem icon="sap-icon://customize" text="{i18n>APP_SETTINGS_DIALOG_COOKIE_PREFERENCES}" key="cookie_preferences" visible="{= ${versionData>/enableAdvancedCookieSettings}}"/>
+										<MenuItem icon="sap-icon://feedback" text="{i18n>APP_FEEDBACK_BTN_TOOLTIP}" key="feedback" />
 									</items>
 								</Menu>
 							</menu>
