@@ -49,6 +49,37 @@ sap.ui.define([
 			}
 		};
 
+		QUnit.module("CardObserver", {
+			beforeEach: function () {
+				this.oCard = new Card();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+			}
+		});
+
+		QUnit.test("Changing card DOM ref", function (assert) {
+			// Act - create card DOM ref
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			// Assert
+			var oObservedDomRef = this.oCard._oCardObserver._oObservedDomRef;
+			assert.strictEqual(oObservedDomRef, this.oCard.getDomRef(), "Observed DOM ref is stored");
+
+			// Arrange
+			var oUnobserveSpy = this.spy(this.oCard._oCardObserver._oObserver, "unobserve");
+
+			// Act - change card DOM ref
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			// Assert
+			var oNewObserverDomRef = this.oCard._oCardObserver._oObservedDomRef;
+			assert.notStrictEqual(oNewObserverDomRef, oObservedDomRef,  "Observed DOM ref should be updated");
+			assert.strictEqual(oUnobserveSpy.callCount, 1, "Old DOM ref is unobserved");
+		});
+
 		QUnit.module("CardObserver is instantiated only when dataMode:'Auto'", {
 			beforeEach: function () {
 				this.oCreateObserverSpy = sinon.spy(CardObserver.prototype, "_createObserver");

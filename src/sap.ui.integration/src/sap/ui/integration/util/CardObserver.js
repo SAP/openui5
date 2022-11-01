@@ -29,7 +29,7 @@ sap.ui.define([
 		constructor: function (oCard) {
 			BaseObject.call(this);
 			this._oCard = oCard;
-			this._bIsObserved = false;
+			this._oObservedDomRef = null;
 		}
 	});
 
@@ -74,9 +74,13 @@ sap.ui.define([
 			this._createObserver();
 		}
 
-		if (!this._bIsObserved) {
+		if (oDomRef !== this._oObservedDomRef) {
+			if (this._oObservedDomRef) {
+				this._oObserver.unobserve(this._oObservedDomRef);
+			}
+
 			this._oObserver.observe(oDomRef);
-			this._bIsObserved = true;
+			this._oObservedDomRef = oDomRef;
 		}
 	};
 
@@ -85,9 +89,9 @@ sap.ui.define([
  	 * @param {Object} oDomRef The domRef of the card to be unobserved.
 	 */
 	CardObserver.prototype.unobserve = function (oDomRef) {
-		if (this._oObserver && this._bIsObserved) {
+		if (this._oObserver && this._oObservedDomRef === oDomRef) {
 			this._oObserver.unobserve(oDomRef);
-			this._bIsObserved = false;
+			this._oObservedDomRef = null;
 		}
 	};
 

@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function (
 	Card,
-	jQuery
+	jQuery,
+	Core
 ) {
 	"use strict";
 
@@ -137,6 +139,42 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.module("Ready state with different data modes");
+
+	QUnit.test("Default data mode, multiple times placeAt", function (assert) {
+		// Arrange
+		var done = assert.async();
+		var oCard = new Card("asd");
+
+		// Act
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		oCard.attachEvent("_ready", function () {
+			assert.ok(true, "_ready event should be called even if the DOM ref of the card changes");
+
+			done();
+		});
+
+		oCard.setManifest({
+			"sap.app": {
+				"id": "test.readyState.card"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"json": {}
+				},
+				"content": {
+					"item": {}
+				}
+			}
+		});
+
+		// Act - change the DOM ref
+		oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
 });
