@@ -61,6 +61,12 @@ sap.ui.define([], function() {
 				}
 			},
 
+			"Highlighter": {
+				coverage: {
+					only : ["sap/ui/documentation/sdk/controller/util/Highlighter"]
+				}
+			},
+
 			"Formatting": {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/model/formatter"]
