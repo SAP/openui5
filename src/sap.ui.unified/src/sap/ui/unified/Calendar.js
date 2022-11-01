@@ -817,6 +817,7 @@ sap.ui.define([
 				oMonth.setSecondaryCalendarType(this._getSecondaryCalendarType());
 				this.addAggregation("month",oMonth);
 			}
+			this._toggleTwoMonthsInTwoColumnsCSS();
 		} else if (aMonths.length > iMonths){
 			for (i = aMonths.length; i > iMonths; i--) {
 				oMonth = this.removeAggregation("month", i - 1);
@@ -826,6 +827,7 @@ sap.ui.define([
 				// back to standard case -> initialize month width
 				this._bInitMonth = true;
 			}
+			this._toggleTwoMonthsInTwoColumnsCSS();
 		}
 
 		if (iMonths > 1 && aMonths[0].getDate()) {
