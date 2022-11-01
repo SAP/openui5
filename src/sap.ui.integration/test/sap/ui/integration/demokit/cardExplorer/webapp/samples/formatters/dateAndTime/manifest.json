@@ -24,8 +24,7 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"title": "Order status {= format.dateTime(Date.now(), {format: 'yMMMd'}) }",
-			"subTitle": "Orders exceeding 50$ are highlighted as important",
+			"title": "Orders in the Interval {= format.dateTime(['2020-05-05T00:00:00.000Z', Date.now()], {format: 'yMMMd', interval: true}) }",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},
@@ -38,32 +37,32 @@
 				"json": [
 					{
 						"Name": "Keyboard and Mouse",
-						"image": "sap-icon://keyboard-and-mouse",
+						"Image": "sap-icon://keyboard-and-mouse",
 						"Price": 155,
-						"arrivalDate": "/Date(1600430944000)/"
+						"CreatedAt": "/Date(1600430944000)/"
 					},
 					{
 						"Name": "ITelO Vault",
-						"image": "sap-icon://shield",
+						"Image": "sap-icon://shield",
 						"Price": 30,
-						"arrivalDate": 1600430944000
+						"CreatedAt": 1600430944000
 					},
 					{
 						"Name": "Notebook Professional 15",
-						"image": "sap-icon://laptop",
+						"Image": "sap-icon://laptop",
 						"Price": 30,
-						"arrivalDate": "Fri Sep 18 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
+						"CreatedAt": "Fri Sep 18 2020 03:24:00 GMT+0200 (Eastern European Standard Time)"
 					},
 					{
 						"Name": "Ergo Screen E-I",
-						"image": "sap-icon://desktop-mobile",
-						"arrivalDate": "Sun May 2 2021 03:24:00 GMT+0200 (Eastern European Standard Time)",
+						"Image": "sap-icon://desktop-mobile",
+						"CreatedAt": "Sun May 2 2021 03:24:00 GMT+0200 (Eastern European Standard Time)",
 						"Price": 69
 					},
 					{
 						"Name": "Laser Professional Eco",
-						"image": "sap-icon://keyboard-and-mouse",
-						"arrivalDate": "Sun Aug 17 2020 03:24:00 GMT+0200 (Eastern European Standard Time)",
+						"Image": "sap-icon://keyboard-and-mouse",
+						"CreatedAt": "2020-08-17T01:24:00.000Z",
 						"Price": 40
 					}
 				]
@@ -71,10 +70,9 @@
 			"maxItems": 4,
 			"item": {
 				"title": "{Name}",
-				"description": "Should arrive {= format.dateTime(${arrivalDate}, {relative:true}) }",
-				"highlight": "{= ${Price} < 50 ? 'Success' : 'Error'}",
+				"description": "Created {= format.dateTime(${CreatedAt}, {relative: true}) }",
 				"icon": {
-					"src": "{image}"
+					"src": "{Image}"
 				},
 				"info": {
 					"value": "{Price}$"
