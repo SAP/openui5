@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-/* global Set */
-
 sap.ui.define([
 	"./BaseContentRenderer",
 	"sap/m/MessageStrip",
@@ -131,6 +129,18 @@ sap.ui.define([
 		this._mObservers = {};
 
 		this.setAggregation("_loadingProvider", new LoadingProvider());
+		this.awaitEvent("_dataReady");
+		this.awaitEvent("_actionContentReady");
+	};
+
+	BaseContent.prototype.onBeforeRendering = function () {
+		var oCard = this.getCardInstance();
+
+		if (!this.getAggregation("_loadingPlaceholder") && oCard && this.getConfiguration()) {
+			var oLoadingPlaceholder = this.getAggregation("_loadingProvider")
+				.createContentPlaceholder(this.getConfiguration(), oCard.getManifestEntry("/sap.card/type"), oCard);
+			this.setAggregation("_loadingPlaceholder", oLoadingPlaceholder);
+		}
 	};
 
 	/**
@@ -183,6 +193,19 @@ sap.ui.define([
 		return Promise.resolve();
 	};
 
+	BaseContent.prototype.setLoadDependenciesPromise = function (oPromise) {
+		this._pLoadDependencies = oPromise;
+		this.awaitEvent("_loadDependencies");
+
+		this._pLoadDependencies.then(function () {
+			this.fireEvent("_loadDependencies");
+		}.bind(this));
+	};
+
+	BaseContent.prototype.getLoadDependenciesPromise = function () {
+		return this._pLoadDependencies;
+	};
+
 	BaseContent.prototype.getActions = function () {
 		return this._oActions;
 	};
@@ -221,21 +244,14 @@ sap.ui.define([
 	/**
 	 * @public
 	 * @param {object} oConfiguration Content configuration from the manifest
-	 * @param {string} sType The type of the content
 	 * @returns {this} Pointer to the control instance to allow method chaining
 	 */
-	BaseContent.prototype.setConfiguration = function (oConfiguration, sType) {
+	BaseContent.prototype.setConfiguration = function (oConfiguration) {
 		this._oConfiguration = oConfiguration;
-		this.awaitEvent("_dataReady");
-		this.awaitEvent("_actionContentReady");
 
 		if (!oConfiguration) {
 			return this;
 		}
-
-		var oLoadingPlaceholder = this.getAggregation("_loadingProvider").createContentPlaceholder(oConfiguration, sType, this.getCardInstance());
-		this.setAggregation("_loadingPlaceholder", oLoadingPlaceholder);
-		this._setDataConfiguration(oConfiguration.data);
 
 		return this;
 	};
@@ -307,9 +323,10 @@ sap.ui.define([
 	 * Requests data and bind it to the item template.
 	 *
 	 * @private
+	 * @ui5-restricted sap.ui.integration.util.ContentFactory
 	 * @param {Object} oDataSettings The data part of the configuration object
 	 */
-	BaseContent.prototype._setDataConfiguration = function (oDataSettings) {
+	BaseContent.prototype.setDataConfiguration = function (oDataSettings) {
 		var oCard = this.getCardInstance(),
 			oModel;
 
@@ -343,11 +360,12 @@ sap.ui.define([
 
 		oModel.attachEvent("change", function () {
 			// It is possible to receive change event after the content is destroyed
-			// TO DO: unsubscribe from all events upon exit and remove this check
-			if (!this.isDestroyed()) {
-				this.onDataChanged();
-				this.onDataRequestComplete();
-			}
+			this.getLoadDependenciesPromise().then(function (bLoadSuccessful){
+				if (bLoadSuccessful && !this.isDestroyed()) {
+					this.onDataChanged();
+					this.onDataRequestComplete();
+				}
+			}.bind(this));
 		}.bind(this));
 
 		if (this._oDataProvider) {
@@ -356,8 +374,14 @@ sap.ui.define([
 			}.bind(this));
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
-				oModel.setData(oEvent.getParameter("data"));
-			});
+				var oData = oEvent.getParameter("data");
+
+				this.getLoadDependenciesPromise().then(function (bLoadSuccessful){
+					if (bLoadSuccessful && !this.isDestroyed()) {
+						oModel.setData(oData);
+					}
+				}.bind(this));
+			}.bind(this));
 
 			this._oDataProvider.attachError(function (oEvent) {
 				this.handleError(oEvent.getParameter("message"));

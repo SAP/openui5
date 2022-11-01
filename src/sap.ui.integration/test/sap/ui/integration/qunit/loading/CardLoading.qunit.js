@@ -1773,29 +1773,6 @@ sap.ui.define([
 			isLoadingPlaceholderCorrectType(this.oLoadingProvider, {}, sType, "Analytical", "Loading placeholder is of type GenericPlaceholder", assert);
 		});
 
-		QUnit.test("setConfiguration of BaseContent should be called with sType as a parameter", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			var fnSetConfigurationSpy = sinon.spy(BaseContent.prototype, "setConfiguration");
-			this.oCard.attachEvent("_ready", function () {
-
-				Core.applyChanges();
-				var oConfiguration = this.oCard.getCardContent().getConfiguration();
-
-				assert.ok(fnSetConfigurationSpy.calledWithExactly(oConfiguration, "List"), "setConfiguration is called with two arguments 'oConfiguration and sType'");
-
-				// Cleanup
-				fnSetConfigurationSpy.restore();
-				done();
-			}.bind(this));
-
-			// Act
-			this.oCard.setManifest(oManifest_List_CardLevel);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-		});
-
 		QUnit.module("Card Loading Placeholder API", {
 			beforeEach: function () {
 				this.oCard = new Card({

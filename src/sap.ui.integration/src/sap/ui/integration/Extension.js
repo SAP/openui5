@@ -139,7 +139,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called when the card is ready.
+	 * Called after the card is initialized.
 	 * @public
 	 */
 	Extension.prototype.onCardReady = function () { };

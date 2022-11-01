@@ -417,6 +417,8 @@ sap.ui.define([
 			Core.applyChanges();
 
 			oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
 				assert.strictEqual(oCard.getCardContent().adaptiveCardInstance.renderedElement.tabIndex, -1, "Additional tab stop should be removed");
 				assert.notOk(oLoadManifestFunctionSpy.calledOnce, "The _loadManifestFromUrl function should not be called.");
 				assert.ok(oFireCardReadyFunctionSpy.callCount, "_fireCardReadyEvent should be called.");
@@ -578,7 +580,7 @@ sap.ui.define([
 			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
 			var oRenderCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_renderMSCardContent");
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
-			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "_setDataConfiguration");
+			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "setDataConfiguration");
 			var oDataRequestSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
 
 			var fnChecks = function () {
@@ -592,8 +594,8 @@ sap.ui.define([
 					assert.ok(oSetTemplatingFunctionSpy.args[0][1].name, "_setTemplating should be called with a valid json data as a second argument.");
 					assert.ok(oSetTemplatingFunctionSpy.returnValues[0].$schema, "_setTemplating should return a valid card json.");
 
-					assert.ok(oSetDataConfigurationSpy.called, "_setDataConfiguration should be called.");
-					assert.ok(oSetDataConfigurationSpy.calledWith(oTemplateManifest["sap.card"].content.data), "_setDataConfiguration should be called with the data settings as an argument.");
+					assert.ok(oSetDataConfigurationSpy.called, "setDataConfiguration should be called.");
+					assert.ok(oSetDataConfigurationSpy.calledWith(oTemplateManifest["sap.card"].content.data), "setDataConfiguration should be called with the data settings as an argument.");
 					assert.ok(oDataRequestSpy.calledOnce, "Data is correctly fetched only once");
 
 					assert.ok(document.querySelectorAll(".ac-textBlock")[0], "A TextBlock element should be present in the DOM.");
@@ -626,7 +628,7 @@ sap.ui.define([
 			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
 			var oRenderCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_renderMSCardContent");
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
-			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "_setDataConfiguration");
+			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "setDataConfiguration");
 			var oDataRequestSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
 
 			var fnChecks = function () {
@@ -640,8 +642,8 @@ sap.ui.define([
 					assert.ok(oSetTemplatingFunctionSpy.args[0][1].name, "_setTemplating should be called with a valid json data as a second argument.");
 					assert.ok(oSetTemplatingFunctionSpy.returnValues[0].$schema, "_setTemplating should return a valid card json.");
 
-					assert.ok(oSetDataConfigurationSpy.called, "_setDataConfiguration should be called.");
-					assert.ok(oSetDataConfigurationSpy.calledWith({json: oTemplateManifest2["sap.card"].content.$data }), "_setDataConfiguration should be called with the data settings within a json property.");
+					assert.ok(oSetDataConfigurationSpy.called, "setDataConfiguration should be called.");
+					assert.ok(oSetDataConfigurationSpy.calledWith({json: oTemplateManifest2["sap.card"].content.$data }), "setDataConfiguration should be called with the data settings within a json property.");
 					assert.ok(oDataRequestSpy.calledOnce, "Data is correctly fetched only once");
 
 					assert.ok(document.querySelectorAll(".ac-textBlock")[0], "A TextBlock element should be present in the DOM.");
@@ -673,7 +675,7 @@ sap.ui.define([
 			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
 			var oRenderCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_renderMSCardContent");
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
-			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "_setDataConfiguration");
+			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "setDataConfiguration");
 			var oDataRequestSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
 
 			var fnChecks = function () {
@@ -687,8 +689,8 @@ sap.ui.define([
 					assert.notOk(oSetTemplatingFunctionSpy.args[0][1].length, "An empty object should be passed as data.");
 					assert.ok(oSetTemplatingFunctionSpy.returnValues[0].$schema, "_setTemplating should return a valid card json.");
 
-					assert.ok(oSetDataConfigurationSpy.called, "_setDataConfiguration should be called.");
-					assert.ok(oSetDataConfigurationSpy.calledWith({json: oTemplateManifest4["sap.card"].content.$data }), "_setDataConfiguration should be called with the data settings within a json property as an argument.");
+					assert.ok(oSetDataConfigurationSpy.called, "setDataConfiguration should be called.");
+					assert.ok(oSetDataConfigurationSpy.calledWith({json: oTemplateManifest4["sap.card"].content.$data }), "setDataConfiguration should be called with the data settings within a json property as an argument.");
 					assert.ok(oDataRequestSpy.calledOnce, "Data is correctly fetched only once");
 
 					assert.ok(document.querySelectorAll(".ac-textBlock")[0], "A TextBlock element should be present in the DOM.");
@@ -744,7 +746,7 @@ sap.ui.define([
 			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
 			var oRenderCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_renderMSCardContent");
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
-			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "_setDataConfiguration");
+			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "setDataConfiguration");
 			var oDataRequestSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
 
 			var fnChecks = function () {
@@ -758,7 +760,7 @@ sap.ui.define([
 					assert.ok(oSetTemplatingFunctionSpy.args[0][1].name, "_setTemplating should be called with a valid json data as a second argument.");
 					assert.ok(oSetTemplatingFunctionSpy.returnValues[0].$schema, "_setTemplating should return a valid card json.");
 
-					assert.ok(oSetDataConfigurationSpy.called, "_setDataConfiguration should be called.");
+					assert.ok(oSetDataConfigurationSpy.called, "setDataConfiguration should be called.");
 					assert.ok(oSetDataConfigurationSpy.calledWith(oTemplateManifest3["sap.card"].content.data), "setDataConfiguration should be called with data set on content level");
 					assert.ok(oDataRequestSpy.calledOnce, "Data is correctly fetched only once");
 
@@ -794,7 +796,7 @@ sap.ui.define([
 			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
 			var oRenderCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_renderMSCardContent");
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
-			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "_setDataConfiguration");
+			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "setDataConfiguration");
 			var oDataRequestSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
 
 			var fnChecks = function () {
@@ -807,7 +809,7 @@ sap.ui.define([
 					assert.ok(oSetTemplatingFunctionSpy.args[0][0].$schema, "_setTemplating should be called with a card json as a first argument.");
 					assert.ok(oSetTemplatingFunctionSpy.args[0][1].name, "_setTemplating should be called with a valid json data as a second argument.");
 
-					assert.ok(oSetDataConfigurationSpy.called, "_setDataConfiguration should be called.");
+					assert.ok(oSetDataConfigurationSpy.called, "setDataConfiguration should be called.");
 					assert.ok(oSetDataConfigurationSpy.calledWith(undefined), "setDataConfiguration should be called with empty data argument");
 					assert.ok(oDataRequestSpy.calledOnce, "Data is correctly fetched only once");
 
@@ -841,7 +843,7 @@ sap.ui.define([
 			var oSetupCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setupMSCardContent");
 			var oRenderCardFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_renderMSCardContent");
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
-			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "_setDataConfiguration");
+			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "setDataConfiguration");
 			var oDataRequestSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
 
 			var fnChecks = function () {
@@ -855,7 +857,7 @@ sap.ui.define([
 					assert.ok(oSetTemplatingFunctionSpy.args[0][1].company, "_setTemplating should be called with a valid json data as a second argument.");
 					assert.ok(oSetTemplatingFunctionSpy.returnValues[0].$schema, "_setTemplating should return a valid card json.");
 
-					assert.ok(oSetDataConfigurationSpy.called, "_setDataConfiguration should be called.");
+					assert.ok(oSetDataConfigurationSpy.called, "setDataConfiguration should be called.");
 					assert.ok(oSetDataConfigurationSpy.calledWith(undefined), "setDataConfiguration should be called with empty data argument");
 					assert.ok(oDataRequestSpy.calledOnce, "Data is correctly fetched only once");
 

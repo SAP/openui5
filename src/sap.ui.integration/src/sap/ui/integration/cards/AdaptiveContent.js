@@ -59,6 +59,8 @@ sap.ui.define([
 		AdaptiveContent.prototype.init = function () {
 			BaseContent.prototype.init.apply(this, arguments);
 
+			//workaround until actions refactor
+			this.fireEvent("_actionContentReady"); // todo
 			this.setComponentsReady(false);
 			this._bAdaptiveCardElementsReady = false;
 			this._setupCardContent();
@@ -369,6 +371,7 @@ sap.ui.define([
 			if (!oContentTemplateData && !oCardDataProvider) {
 				this._oCardTemplate = null;
 				this._renderMSCardContent(oConfiguration);
+				this.fireEvent("_dataReady");
 				return;
 			}
 
@@ -381,7 +384,7 @@ sap.ui.define([
 
 			}
 			// create a data provider with the templating data and setup it
-			this._setDataConfiguration(oContentTemplateData);
+			this.setDataConfiguration(oContentTemplateData);
 		};
 
 		/**

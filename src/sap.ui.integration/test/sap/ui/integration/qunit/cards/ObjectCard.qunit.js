@@ -1963,6 +1963,10 @@ sap.ui.define([
 			},
 			removeActiveLoadingProvider: function () {
 
+			},
+
+			getManifestEntry: function () {
+
 			}
 		});
 

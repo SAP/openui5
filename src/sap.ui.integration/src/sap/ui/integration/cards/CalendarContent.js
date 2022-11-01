@@ -194,6 +194,8 @@ sap.ui.define([
 		};
 
 		CalendarContent.prototype.onBeforeRendering = function () {
+			BaseContent.prototype.onBeforeRendering.apply(this, arguments);
+
 			var oInitiallySelectedDate = this._oCalendar.getSelectedDates().length ? this._oCalendar.getSelectedDates()[0].getStartDate() : this._oCalendar.getStartDate();
 
 			this._setParameters();
