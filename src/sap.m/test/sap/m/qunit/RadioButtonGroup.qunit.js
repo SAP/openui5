@@ -286,6 +286,95 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
+	QUnit.test("Invisible buttons", function(assert) {
+		var oRBGroup = new RadioButtonGroup({
+			buttons: [
+				new RadioButton({
+					text: "1"
+				}),
+				new RadioButton({
+					text: "2"
+				}),
+				new RadioButton({
+					text: "3",
+					selected: true,
+					visible: false
+				})
+			]
+		}).placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// assertions
+		assert.strictEqual(oRBGroup.getSelectedIndex(), 0, "selectedIndex=0");
+
+		oRBGroup.getButtons()[0].setVisible(false);
+		Core.applyChanges();
+
+		assert.strictEqual(oRBGroup.getSelectedIndex(), 0, "selectedIndex=0");
+		assert.strictEqual(oRBGroup.getButtons()[1].getDomRef().tabIndex, 0, "tabIndex=0");
+
+		// cleanup
+		oRBGroup.destroy();
+	});
+
+	QUnit.test("Invisible buttons - selected index", function(assert) {
+		var oRBGroup = new RadioButtonGroup({
+			selectedIndex: 2,
+			buttons: [
+				new RadioButton({
+					text: "1"
+				}),
+				new RadioButton({
+					text: "2",
+					visible: false
+				}),
+				new RadioButton({
+					text: "3"
+				})
+			]
+		}).placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.ok(oRBGroup.getButtons()[2].getSelected(), "correct button is selected");
+		assert.strictEqual(oRBGroup._oItemNavigation.getFocusedIndex(), 1, "item navigation focused index is correct");
+
+		// cleanup
+		oRBGroup.destroy();
+	});
+
+	QUnit.test("Invisible buttons - chaning focus", function(assert) {
+		var oRBGroup = new RadioButtonGroup({
+			buttons: [
+				new RadioButton({
+					text: "1"
+				}),
+				new RadioButton({
+					text: "2",
+					visible: false
+				}),
+				new RadioButton({
+					text: "3"
+				})
+			]
+		}).placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// act
+		oRBGroup.getButtons()[0].focus();
+
+		// assert
+		assert.strictEqual(document.activeElement, oRBGroup.getButtons()[0].getDomRef(), "First button should be focused");
+
+		// act
+		oRBGroup.setSelectedIndex(2);
+
+		// assert
+		assert.strictEqual(document.activeElement, oRBGroup.getButtons()[2].getDomRef(), "Third button should be focused");
+
+		// cleanup
+		oRBGroup.destroy();
+	});
+
 	QUnit.module("Setters", {
 		beforeEach : function() {
 			this.rbg = new RadioButtonGroup({

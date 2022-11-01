@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/library',
+	'sap/ui/base/ManagedObjectObserver',
 	'./RadioButton',
 	'./RadioButtonGroupRenderer',
 	"sap/base/Log"
@@ -17,6 +18,7 @@ sap.ui.define([
 		Control,
 		ItemNavigation,
 		coreLibrary,
+		ManagedObjectObserver,
 		RadioButton,
 		RadioButtonGroupRenderer,
 		Log
@@ -157,6 +159,10 @@ sap.ui.define([
 
 			RadioButtonGroup.prototype.init = function() {
 				this._iSelectionNumber = -1;
+				this._oObserver = new ManagedObjectObserver(this._observeChanges.bind(this));
+				this._oObserver.observe(this, {
+					aggregations: ["buttons"]
+				});
 			};
 
 			/**
@@ -172,6 +178,11 @@ sap.ui.define([
 					this.removeDelegate(this._oItemNavigation);
 					this._oItemNavigation.destroy();
 					delete this._oItemNavigation;
+				}
+
+				if (this._oObserver) {
+					this._oObserver.disconnect();
+					this._oObserver = null;
 				}
 			};
 
@@ -223,16 +234,16 @@ sap.ui.define([
 			 * @private
 			 */
 			RadioButtonGroup.prototype._initItemNavigation = function() {
-
 				// Collect buttons for ItemNavigation
+				var aRBs = this._getVisibleButtons();
 				var aDomRefs = [];
 				var bHasEnabledRadios = false;
 				var bRadioGroupEnabled = this.getEnabled();
-				for (var i = 0; i < this.aRBs.length; i++) {
-					aDomRefs.push(this.aRBs[i].getDomRef());
+				for (var i = 0; i < aRBs.length; i++) {
+					aDomRefs.push(aRBs[i].getDomRef());
 
 					// if the i-th radio button is enabled - set the flag to true
-					bHasEnabledRadios = bHasEnabledRadios || this.aRBs[i].getEnabled();
+					bHasEnabledRadios = bHasEnabledRadios || aRBs[i].getEnabled();
 				}
 
 				// if no radio buttons are enabled or the whole group is disabled
@@ -264,6 +275,41 @@ sap.ui.define([
 				});
 			};
 
+			RadioButtonGroup.prototype._getVisibleButtons = function() {
+				return this.getButtons().filter(function (oRB) {
+					return oRB.getVisible();
+				});
+			};
+
+			RadioButtonGroup.prototype._observeChanges = function (oChanges) {
+				var oObject = oChanges.object,
+					sChangeName = oChanges.name,
+					sMutationName = oChanges.mutation,
+					oChild = oChanges.child;
+
+				if (oObject === this) {
+					if (sMutationName === "insert") {
+						this._observeVisibility(oChild);
+					} else if (sMutationName === "remove") {
+						this._unobserveVisibility(oChild);
+					}
+				} else if (sChangeName === "visible") {
+					this._initItemNavigation();
+				}
+			};
+
+			RadioButtonGroup.prototype._observeVisibility = function (oControl) {
+				this._oObserver.observe(oControl, {
+					properties: ["visible"]
+				});
+			};
+
+			RadioButtonGroup.prototype._unobserveVisibility = function (oControl) {
+				this._oObserver.unobserve(oControl, {
+					properties: ["visible"]
+				});
+			};
+
 			/**
 			 * Sets the selected sap.m.RadioButton using index.
 			 *
@@ -272,13 +318,12 @@ sap.ui.define([
 			 * @returns {this} Pointer to the control instance for chaining.
 			 */
 			RadioButtonGroup.prototype.setSelectedIndex = function(iSelectedIndex) {
-
 				var iIndexOld = this.getSelectedIndex();
 				// if a radio button in the group is focused is true, otherwise - false
-				var hasFocusedRadioButton = document.activeElement && document.activeElement.parentNode &&
-					document.activeElement.parentNode.parentNode === this.getDomRef();
+				var hasFocusedRadioButton = this.getDomRef() && this.getDomRef().contains(document.activeElement);
 				// if radio button group has buttons and one of them is selected is true, otherwise - false
 				var isRadioGroupSelected = !!(this.aRBs && this.aRBs[iSelectedIndex]);
+				var iFocusedIndex;
 
 				if (iSelectedIndex < -1) {
 					// invalid negative index -> don't change index.
@@ -288,6 +333,7 @@ sap.ui.define([
 
 				this.setProperty("selectedIndex", iSelectedIndex, true); // no re-rendering
 				this._iSelectionNumber = RadioButton.getNextSelectionNumber();
+				iFocusedIndex = this._getSelectedIndexInRange();
 
 				// deselect old RadioButton
 				if (!isNaN(iIndexOld) && this.aRBs && this.aRBs[iIndexOld]) {
@@ -301,8 +347,8 @@ sap.ui.define([
 				}
 
 				if (this._oItemNavigation) {
-					this._oItemNavigation.setFocusedIndex(iSelectedIndex);
-					this._oItemNavigation.setSelectedIndex(iSelectedIndex);
+					this._oItemNavigation.setFocusedIndex(iFocusedIndex);
+					this._oItemNavigation.setSelectedIndex(iFocusedIndex);
 				}
 
 				// if focus is in the group - focus the selected element
@@ -595,9 +641,17 @@ sap.ui.define([
 			 * @param {sap.ui.base.Event} oControlEvent The event that gets fired by the {@link sap.ui.core.delegate.ItemNavigation} delegate.
 			 */
 			RadioButtonGroup.prototype._handleAfterFocus = function(oControlEvent) {
-
+				var aRBs = this.getButtons();
 				var iIndex = oControlEvent.getParameter("index");
 				var oEvent = oControlEvent.getParameter("event");
+
+				// buttons that are not visible are not included in the HTML
+				// adjust the index to include them
+				for (var i = 0; i <= iIndex; i++) {
+					if (!aRBs[i].getVisible()) {
+						iIndex++;
+					}
+				}
 
 				// handle only keyboard navigation here
 				if (oEvent.keyCode === undefined) {
@@ -627,15 +681,24 @@ sap.ui.define([
 				}
 			};
 
-			RadioButtonGroup.prototype._getSelectedIndexInRange = function(oControlEvent) {
-				var iLength = this.getButtons().length,
-					iInd = this.getSelectedIndex();
+			RadioButtonGroup.prototype._getSelectedIndexInRange = function() {
+				var aRBs = this.getButtons(),
+					iLength = aRBs.length,
+					iSelectedIndex = this.getSelectedIndex(),
+					iFocusedIndex = -1;
 
-				if (iInd >= -1  && iInd < iLength) {
-					return iInd;
+				if (iSelectedIndex <= -1  || iSelectedIndex > iLength - 1) {
+					return -1;
 				}
 
-				return -1;
+				// include only the visible buttons to the focused index
+				for (var i = 0; i <= iSelectedIndex; i++) {
+					if (aRBs[i].getVisible()) {
+						iFocusedIndex++;
+					}
+				}
+
+				return iFocusedIndex;
 			};
 
 			return RadioButtonGroup;
