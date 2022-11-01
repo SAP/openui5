@@ -1230,6 +1230,84 @@ sap.ui.define([
 		oDatesRow.destroy();
 	});
 
+	QUnit.test("DatesRow getWeekNumbers in ISO_8601", function(assert) {
+		//arrange
+		var oDatesRow = new DatesRow({
+			startDate: new Date(2016, 0, 1),
+			days: 14,
+			calendarWeekNumbering: "ISO_8601"
+		});
+
+		//act
+		var aWeekNumbers = oDatesRow.getWeekNumbers();
+
+		//assert
+		assert.equal(aWeekNumbers.length, 3, "we get week info for 3 weeks");
+
+		assert.equal(aWeekNumbers[0].len, 3, "first week is with 6 displayed days");
+		assert.equal(aWeekNumbers[1].len, 7, "second week is with 7 displayed days");
+		assert.equal(aWeekNumbers[2].len, 4, "last week is with 1 displayed day");
+
+		assert.equal(aWeekNumbers[0].number, 53, "first week number is correct");
+		assert.equal(aWeekNumbers[1].number, 1, "second week number is correct");
+		assert.equal(aWeekNumbers[2].number, 2, "last week number is correct");
+
+		//clean
+		oDatesRow.destroy();
+	});
+
+	QUnit.test("DatesRow getWeekNumbers in MiddleEastern", function(assert) {
+		//arrange
+		var oDatesRow = new DatesRow({
+			startDate: new Date(2016, 0, 1),
+			days: 14,
+			calendarWeekNumbering: "MiddleEastern"
+		});
+
+		//act
+		var aWeekNumbers = oDatesRow.getWeekNumbers();
+
+		//assert
+		assert.equal(aWeekNumbers.length, 3, "we get week info for 3 weeks");
+
+		assert.equal(aWeekNumbers[0].len, 1, "first week is with 6 displayed days");
+		assert.equal(aWeekNumbers[1].len, 7, "second week is with 7 displayed days");
+		assert.equal(aWeekNumbers[2].len, 6, "last week is with 1 displayed day");
+
+		assert.equal(aWeekNumbers[0].number, 1, "first week number is correct");
+		assert.equal(aWeekNumbers[1].number, 2, "second week number is correct");
+		assert.equal(aWeekNumbers[2].number, 3, "last week number is correct");
+
+		//clean
+		oDatesRow.destroy();
+	});
+
+	QUnit.test("DatesRow getWeekNumbers in WesternTraditional", function(assert) {
+		//arrange
+		var oDatesRow = new DatesRow({
+			startDate: new Date(2016, 0, 1),
+			days: 14,
+			calendarWeekNumbering: "WesternTraditional"
+		});
+
+		//act
+		var aWeekNumbers = oDatesRow.getWeekNumbers();
+
+		//assert
+		assert.equal(aWeekNumbers.length, 3, "we get week info for 3 weeks");
+
+		assert.equal(aWeekNumbers[0].len, 2, "first week is with 6 displayed days");
+		assert.equal(aWeekNumbers[1].len, 7, "second week is with 5 displayed days");
+		assert.equal(aWeekNumbers[2].len, 5, "last week is with 1 displayed day");
+
+		assert.equal(aWeekNumbers[0].number, 1, "first week number is correct");
+		assert.equal(aWeekNumbers[1].number, 2, "second week number is correct");
+		assert.equal(aWeekNumbers[2].number, 3, "last week number is correct");
+
+		//clean
+		oDatesRow.destroy();
+	});
+
 	QUnit.module("Other");
 
 	QUnit.test("CalendarDateInterval year range picker interaction sets proper start date", function(assert) {

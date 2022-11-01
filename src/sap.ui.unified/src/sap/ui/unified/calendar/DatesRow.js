@@ -9,8 +9,10 @@ sap.ui.define([
 	'sap/ui/unified/calendar/Month',
 	'sap/ui/unified/library',
 	"./DatesRowRenderer",
-	"sap/ui/thirdparty/jquery"
-], function(CalendarUtils, CalendarDate, Month, library, DatesRowRenderer, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/Locale'
+], function(CalendarUtils, CalendarDate, Month, library, DatesRowRenderer, jQuery, DateFormat, Locale) {
 	"use strict";
 
 	/*
@@ -60,7 +62,15 @@ sap.ui.define([
 			 * If not set the day names are shown inside the single days.
 			 * @since 1.34.0
 			 */
-			showDayNamesLine : {type : "boolean", group : "Appearance", defaultValue : true}
+			showDayNamesLine : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
+			 * If set, the calendar week numbering is used for display.
+			 * If not set, the calendar week numbering of the global configuration is used.
+			 * Note: This property should not be used with <code>Month.prototype.firstDayOfWeek</code> property.
+			 * @since 1.110.0
+			 */
+			 calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 
 		}
 	}, renderer: DatesRowRenderer});
@@ -336,8 +346,7 @@ sap.ui.define([
 	 */
 	DatesRow.prototype.getWeekNumbers = function() {
 		var iDays = this.getDays(),
-			oLocale = this._getLocale(),
-			oLocaleData = this._getLocaleData(),
+			sLocale = this._getLocale(),
 			oCalType = this.getPrimaryCalendarType(),
 			oStartDate = this._getStartDate(),
 			oDate = new CalendarDate(oStartDate, oCalType),
@@ -350,7 +359,9 @@ sap.ui.define([
 		}
 
 		this._aWeekNumbers = aDisplayedDates.reduce(function (aWeekNumbers, oDay) {
-			var iWeekNumber = CalendarUtils.calculateWeekNumber(oDay.toUTCJSDate(), oDay.getYear(), oLocale, oLocaleData);
+			var oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: this.getPrimaryCalendarType(), calendarWeekNumbering: this.getCalendarWeekNumbering()}, new Locale(sLocale));
+
+			var iWeekNumber = Number(oDateFormat.format(oDay.toUTCJSDate(), true));
 
 			if (!aWeekNumbers.length || aWeekNumbers[aWeekNumbers.length - 1].number !== iWeekNumber) {
 				aWeekNumbers.push({
@@ -362,7 +373,7 @@ sap.ui.define([
 			aWeekNumbers[aWeekNumbers.length - 1].len++;
 
 			return aWeekNumbers;
-		}, []);
+		}.bind(this), []);
 
 		return this._aWeekNumbers;
 	};
