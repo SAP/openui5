@@ -89,6 +89,16 @@ sap.ui.define([
 		renderer: TableContentRenderer
 	});
 
+	/**
+	 * Called on before rendering of the control.
+	 * @private
+	 */
+	TableContent.prototype.onBeforeRendering = function () {
+		BaseListContent.prototype.onBeforeRendering.apply(this, arguments);
+
+		this._getTable().setBackgroundDesign(this.getDesign());
+	};
+
 	TableContent.prototype.exit = function () {
 		BaseListContent.prototype.exit.apply(this, arguments);
 

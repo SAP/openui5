@@ -111,6 +111,8 @@ sap.ui.define([
 
 	var CardDataMode = library.CardDataMode;
 
+	var CardDesign = library.CardDesign;
+
 	var CARD_DESTROYED_ERROR = "Card is destroyed!";
 
 	var FlexRendertype = mLibrary.FlexRendertype;
@@ -299,6 +301,17 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: false,
 					visibility: "hidden"
+				},
+
+				/**
+				 * Defines the design of the <code>Card</code>.
+				 * @experimental Since 1.109
+				 * @since 1.109
+				 */
+				design: {
+					type: "sap.ui.integration.CardDesign",
+					group: "Appearance",
+					defaultValue: CardDesign.Solid
 				}
 			},
 			aggregations: {
@@ -659,6 +672,12 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.onBeforeRendering = function () {
+
+		var oCardContent = this.getCardContent();
+		if (oCardContent && oCardContent.isA("sap.ui.integration.cards.BaseContent")) {
+
+			oCardContent.setDesign(this.getDesign());
+		}
 
 		if (this.getDataMode() !== CardDataMode.Active) {
 			return;

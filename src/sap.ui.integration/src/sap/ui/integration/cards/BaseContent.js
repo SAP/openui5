@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/integration/library"
 ], function (
 	BaseContentRenderer,
 	MessageStrip,
@@ -31,12 +32,16 @@ sap.ui.define([
 	LoadingProvider,
 	BindingHelper,
 	BindingResolver,
-	merge
+	merge,
+	library
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.InvisibleMessageMode
 	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
+
+	// shortcut for sap.ui.integration.widgets.CardDesign
+	var CardDesign = library.CardDesign;
 
 	/**
 	 * Constructor for a new <code>BaseContent</code>.
@@ -60,6 +65,18 @@ sap.ui.define([
 	var BaseContent = Control.extend("sap.ui.integration.cards.BaseContent", {
 		metadata: {
 			library: "sap.ui.integration",
+			properties: {
+				/**
+				 * Defines the design of the content.
+				 * @experimental Since 1.109
+				 * @since 1.109
+				 */
+				design: {
+					type: "sap.ui.integration.CardDesign",
+					group: "Appearance",
+					defaultValue: CardDesign.Solid
+				}
+			},
 			aggregations: {
 
 				/**

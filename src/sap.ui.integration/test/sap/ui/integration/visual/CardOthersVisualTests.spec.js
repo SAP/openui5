@@ -174,7 +174,7 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 
 	it("Transparent Card", function () {
 		utils.navigateTo("Transparent");
-		var aCardIds = ["containerCard", "list1", "object1", "todo3"];
+		var aCardIds = ["containerCard", "list1", "object1", "todo3", "table1"];
 
 		aCardIds.forEach(function (sId) {
 			utils.takePictureOfElement({

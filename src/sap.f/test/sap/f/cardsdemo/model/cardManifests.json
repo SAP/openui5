@@ -2922,6 +2922,47 @@
 					]
 				}
 			}
+		},
+		"tablecard1": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.tablecard123",
+				"type": "card"
+			},
+			"sap.card": {
+				"headerPosition": "Top",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"request": {
+							"url": "./cardcontent/kpi.json"
+						},
+						"path": "/kpiInfos/kpi"
+					},
+					"title": "Numeric Header with Only Title and Subtitle",
+					"subTitle": "Some subtitle"
+				},
+				"type": "Table",
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/tableitems.json"
+						},
+						"path": "/names"
+					},
+					"row": {
+						"columns": [
+							{
+								"title": "First Name",
+								"value": "{firstName}"
+							},
+							{
+								"title": "Last Name",
+								"value": "{lastName}"
+							}
+						]
+					}
+				}
+			}
 		}
 	}
 }

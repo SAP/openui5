@@ -2398,6 +2398,50 @@ sap.ui.define([
 								key: 'Component.js'
 							}
 						]
+					},
+					{
+						key: 'design',
+						target: 'exploreSamples',
+						title: 'Design',
+						useIFrame: true,
+						isApplication: true,
+						experimental: true,
+						files: [{
+								url: '/samples/design/indexTemplate.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/design/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/design/Design.view.xml',
+								name: 'Design.view.xml',
+								key: 'Design.view.xml'
+							},
+							{
+								url: '/samples/design/Design.controller.js',
+								name: 'Design.controller.js',
+								key: 'Design.controller.js'
+							},
+							{
+								url: '/samples/design/objectCardManifest.json',
+								name: 'objectManifest.json',
+								key: 'objectManifest.json'
+							},
+							{
+								url: '/samples/design/listCardManifest.json',
+								name: 'listManifest.json',
+								key: 'listManifest.json'
+							},
+							{
+								url: '/samples/design/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
 					}
 				]
 			},

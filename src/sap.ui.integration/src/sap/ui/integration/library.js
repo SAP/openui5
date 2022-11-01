@@ -39,7 +39,8 @@ sap.ui.define([
 		types: [
 			"sap.ui.integration.CardActionType",
 			"sap.ui.integration.CardDataMode",
-			"sap.ui.integration.CardMenuAction"
+			"sap.ui.integration.CardMenuAction",
+			"sap.ui.integration.CardDesign"
 		],
 		controls: [
 			"sap.ui.integration.widgets.Card",
@@ -139,6 +140,27 @@ sap.ui.define([
 		 * @public
 		 */
 		Auto: "Auto"
+	};
+
+	/**
+	 * Possible designs for <code>{@link sap.ui.integration.widgets.Card}</code>.
+	 *
+	 * @enum {string}
+	 * @experimental since 1.109
+	 * @public
+	 * @since 1.109
+	 */
+	thisLib.CardDesign = {
+		/**
+		 * When in this mode, the card has a solid background.
+		 * @public
+		 */
+		Solid: "Solid",
+		/**
+		 * When in this mode, the card background is transparent.
+		 * @public
+		 */
+		Transparent: "Transparent"
 	};
 
 	/**
