@@ -128,7 +128,7 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(mPropertyBag.selector.appComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(mPropertyBag.selector.appComponent.getManifest());
 
 			return ChangesWriteAPI.create(mPropertyBag)
 				.then(function (oChange) {
@@ -197,7 +197,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(mPropertyBag.selector.appComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(mPropertyBag.selector.appComponent.getManifest());
 
 			var oCreateInlineChangeStub = sandbox.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").rejects(new Error("myError"));
 			var oCreateChangeStub = sandbox.stub(DescriptorChangeFactory.prototype, "createNew");

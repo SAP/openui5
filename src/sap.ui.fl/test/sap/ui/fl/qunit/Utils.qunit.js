@@ -296,14 +296,6 @@ sap.ui.define([
 			assert.equal(oStub.firstCall.args[0], oParentComponent, "the function was called with the parent component the first time");
 		});
 
-		QUnit.test("getAppDescriptorComponentObjectForControl calls getAppComponentForControl and returns a modified object", function(assert) {
-			var oComponent = new UIComponent();
-
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-			var oAppDescriptorComponent = Utils.getAppDescriptorComponentObjectForControl(oComponent);
-			assert.equal(oAppDescriptorComponent.name, "sap.ui.core", "the component name is correct");
-		});
-
 		QUnit.test("indexOfObject with array containing object", function(assert) {
 			var oObject = {a: 1, b: 2, c: 3};
 			var aArray = [{a: 4, b: 5, c: 6}, {a: 1, b: 2, c: 3}, {a: 7, b: 8, c: 9}];

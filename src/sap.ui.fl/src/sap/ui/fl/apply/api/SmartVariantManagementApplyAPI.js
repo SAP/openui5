@@ -134,7 +134,7 @@ sap.ui.define([
 			var oControl = mPropertyBag.control;
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
-			var sAppId = appendComponentToString(Utils.getAppIdFromManifest(oAppComponent.getManifest()));
+			var sAppId = appendComponentToString(ManifestUtils.getAppIdFromManifest(oAppComponent.getManifest()));
 
 			if (sFlexReference !== sAppId) {
 				return true;
