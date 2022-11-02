@@ -2364,7 +2364,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("getAriaRole", function(assert) {
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 		assert.strictEqual(this.oList.getAriaRole(), "list", "'list' is the default role");
 		this.oList.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -2377,7 +2376,6 @@ sap.ui.define([
 		// StandardListItem check
 		var oSLIDomRef = this.oSLI.getDomRef();
 		assert.strictEqual(oSLIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
-		assert.strictEqual(oSLIDomRef.getAttribute("aria-roledescription"), oResourceBundle.getText("ACC_CTR_TYPE_OPTION"), "correct aria-roledescription added");
 		assert.strictEqual(oSLIDomRef.getAttribute("aria-posinset"), "1", "correct aria-posinset. Added by default");
 		assert.strictEqual(oSLIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
 		assert.notOk(oSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
@@ -2390,7 +2388,6 @@ sap.ui.define([
 		// CustomListItem check
 		var oCLIDomRef = this.oCLI.getDomRef();
 		assert.strictEqual(oCLIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
-		assert.strictEqual(oCLIDomRef.getAttribute("aria-roledescription"), oResourceBundle.getText("ACC_CTR_TYPE_OPTION"), "correct aria-roledescription added");
 		assert.strictEqual(oCLIDomRef.getAttribute("aria-posinset"), "3", "correct aria-posinset. Added by default");
 		assert.strictEqual(oCLIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
 		assert.notOk(oCLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
@@ -2398,7 +2395,6 @@ sap.ui.define([
 		// DisplayListItem check
 		var oDLIDomRef = this.oDLI.getDomRef();
 		assert.strictEqual(oDLIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
-		assert.strictEqual(oDLIDomRef.getAttribute("aria-roledescription"), oResourceBundle.getText("ACC_CTR_TYPE_OPTION"), "correct aria-roledescription added");
 		assert.strictEqual(oDLIDomRef.getAttribute("aria-posinset"), "4", "correct aria-posinset. Added by default");
 		assert.strictEqual(oDLIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
 		assert.notOk(oDLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
@@ -2406,7 +2402,6 @@ sap.ui.define([
 		// InputListItem check
 		var oILIDomRef = this.oILI.getDomRef();
 		assert.strictEqual(oILIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
-		assert.strictEqual(oILIDomRef.getAttribute("aria-roledescription"), oResourceBundle.getText("ACC_CTR_TYPE_OPTION"), "correct aria-roledescription added");
 		assert.strictEqual(oILIDomRef.getAttribute("aria-posinset"), "5", "correct aria-posinset. Added by default");
 		assert.strictEqual(oILIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
 		assert.notOk(oILIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
@@ -2414,7 +2409,6 @@ sap.ui.define([
 		// ActionListItem check
 		var oALIDomRef = this.oALI.getDomRef();
 		assert.strictEqual(oALIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
-		assert.strictEqual(oALIDomRef.getAttribute("aria-roledescription"), oResourceBundle.getText("ACC_CTR_TYPE_OPTION"), "correct aria-roledescription added");
 		assert.strictEqual(oALIDomRef.getAttribute("aria-posinset"), "6", "correct aria-posinset. Added by default");
 		assert.strictEqual(oALIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
 	});
