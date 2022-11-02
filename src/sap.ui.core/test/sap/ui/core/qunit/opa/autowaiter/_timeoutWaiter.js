@@ -2,11 +2,11 @@
 /*eslint max-nested-callbacks: [2,5]*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
 	"sap/ui/test/autowaiter/_timeoutWaiter",
 	"sap/ui/test/_LogCollector",
 	"sap/ui/test/_OpaLogger"
-], function ($, timeoutWaiter, _LogCollector, _OpaLogger) {
+], function (Log, timeoutWaiter, _LogCollector, _OpaLogger) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();
@@ -18,7 +18,7 @@ sap.ui.define([
 		var fnClearFunction = window["clear" + sFunctionUnderTest];
 
 		if (!fnSetFunction) {
-			$.sap.log.debug("Skipped tests because" + sFunctionUnderTest + " is not defined in this browser");
+			Log.debug("Skipped tests because" + sFunctionUnderTest + " is not defined in this browser");
 			return;
 		}
 
@@ -94,7 +94,7 @@ sap.ui.define([
 					fnDone();
 				});
 
-			fnSetFunction($.proxy(fnSpy, oThis));
+			fnSetFunction(fnSpy.bind(oThis));
 		});
 
 		QUnit.test("Should handle a single timeout", function (assert) {

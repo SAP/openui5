@@ -18,7 +18,7 @@ sap.ui.define([
 
 	return {
 		// _OpaLogger might also be loaded in an iFrame. setLevel should be called for each iFrame
-		// $.sap.log reference changes depending on the contentWindow
+		// `Log` reference changes depending on the contentWindow
 		setLevel: function (sNewLogLevel) {
 			sNewLogLevel = sNewLogLevel && sNewLogLevel.toUpperCase();
 			if (sNewLogLevel && Log.Level[sNewLogLevel]) {

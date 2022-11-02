@@ -16,6 +16,8 @@
 	}
 
 sap.ui.define([
+	'sap/base/util/extend',
+	'sap/base/util/ObjectPath',
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/base/Object',
 	'sap/ui/core/Element',
@@ -24,7 +26,7 @@ sap.ui.define([
 	'sap/ui/test/matchers/MatcherFactory',
 	'sap/ui/test/pipelines/MatcherPipeline',
 	'sap/ui/test/_OpaLogger'
-], function ($, UI5Object, UI5Element, View, Ancestor, MatcherFactory,
+], function (extend, ObjectPath, $, UI5Object, UI5Element, View, Ancestor, MatcherFactory,
 			MatcherPipeline, _OpaLogger) {
 
 		/**
@@ -417,7 +419,7 @@ sap.ui.define([
 			 */
 			_getFilteredControls : function(oOptions) {
 				var vControl = this._filterControlsByCondition(oOptions);
-				var oFilterOptions = $.extend({}, oOptions);
+				var oFilterOptions = extend({}, oOptions);
 
 				// when on the root level of oOptions, these options are already processed (see _filterControlsByCondition) and should not be processed again,
 				// as this results in error when no controls are passed to the matcher pipeline (see _filterControlsByMatchers)
@@ -454,7 +456,7 @@ sap.ui.define([
 
 			// instantiate any matchers with declarative syntax and run controls through matcher pipeline
 			_filterControlsByMatchers: function (oOptions, vControl) {
-				var oOptionsWithMatchers = $.extend({}, oOptions);
+				var oOptionsWithMatchers = extend({}, oOptions);
 				var aMatchers = this._oMatcherFactory.getFilteringMatchers(oOptionsWithMatchers);
 				var bPluginLooksForControls = this._isLookingForAControl(oOptions);
 				var vResult = null;
@@ -559,7 +561,7 @@ sap.ui.define([
 					return null;
 				}
 
-				var fnControlType = $.sap.getObject(sControlType);
+				var fnControlType = ObjectPath.get(sControlType);
 
 				// no control type
 				if (!fnControlType) {
