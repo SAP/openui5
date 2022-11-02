@@ -11,12 +11,13 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/InputListItem",
 	"sap/m/CustomListItem",
+	"sap/m/ColumnListItem",
 	"sap/m/Text",
 	"sap/m/VBox",
 	"sap/m/Input",
 	"sap/base/strings/capitalize",
 	"sap/ui/core/Core",
-	"sap/m/GrowingEnablement"
+	"sap/ui/base/ManagedObjectObserver"
 ], function(
 	MockServer,
 	ODataModel,
@@ -29,12 +30,12 @@ sap.ui.define([
 	StandardListItem,
 	InputListItem,
 	CustomListItem,
+	ColumnListItem,
 	Text,
 	VBox,
 	Input,
 	capitalize,
-	oCore,
-	GrowingEnablement
+	oCore
 ) {
 	"use strict";
 
@@ -1030,20 +1031,22 @@ sap.ui.define([
 					// call the original function
 					fnFillItemsPool.call(oControl._oGrowingDelegate);
 					assert.strictEqual(oControl._oGrowingDelegate._aItemsPool.length, 8, "8 items are available in the itemsPool");
-					// inform that the "fillItemsPool" has done its job by resolving the promise
-					fnDone();
+
+					setTimeout(function() {
+						// change the template to see whether the pool is still usable
+						oControl.getBindingInfo("items").template.removeCell(0);
+						assert.strictEqual(oControl._oGrowingDelegate._aItemsPool.length, 0, "There is no item in the itemsPool");
+
+						fnDone();
+					}, 100);
 				});
 			}
 		}, {
-			template: new CustomListItem({
-				content: [
-					new VBox({
-						items: [
-							new Text({text: "{ProductId}"}),
-							new Text({text: "{Name}"}),
-							new Text({text: "{Category}"})
-						]
-					})
+			template: new ColumnListItem({
+				cells: [
+					new Text({text: "{ProductId}"}),
+					new Text({text: "{Name}"}),
+					new Text({text: "{Category}"})
 				]
 			})
 		},
