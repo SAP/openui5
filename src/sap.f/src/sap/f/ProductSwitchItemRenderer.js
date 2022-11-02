@@ -24,7 +24,6 @@ sap.ui.define([],
 
 			oRm.openStart("div", oControl);
 			oRm.class("sapFPSItemContainer");
-			oRm.attr("tabindex", 0);
 			if (sTooltip) {
 				oRm.attr("title", sTooltip);
 			}
