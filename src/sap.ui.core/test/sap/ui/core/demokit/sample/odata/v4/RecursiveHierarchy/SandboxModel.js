@@ -41,8 +41,6 @@ sap.ui.define([
 	// Ωω  Omega
 	//
 	// Note:
-	// - The URLs shown here are purely accidental and just "good enough" to dinstinguish different
-	//   requests; in no way do they represent what really needs to be sent!
 	// - Sometimes, you can derive the DrillState from DescendantCount and DistanceFromRoot, but at
 	//   the "edge of expansion" you cannot be certain.
 	// - When expanding, DescendantCount, DistanceFromRoot, MANAGER_ID are of no use
