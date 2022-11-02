@@ -392,7 +392,7 @@ function(
 	};
 
 	ListItemBase.prototype.getAccessibilityType = function(oBundle) {
-		return oBundle.getText("ACC_CTR_TYPE_OPTION");
+		return this.getListProperty("ariaRole") == "list" ? oBundle.getText("ACC_CTR_TYPE_LISTITEM") : "";
 	};
 
 	ListItemBase.prototype.getGroupAnnouncement = function() {

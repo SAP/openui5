@@ -287,8 +287,17 @@ sap.ui.define([
 					oEvent.preventDefault();
 				},
 				onsapspace : function(oEvent) {
-					this.requestNewPage();
+					this._bSpaceKeyPressed = true;
+					this._oTrigger.setActive(true);
 					oEvent.preventDefault();
+				},
+				onkeydown : function(oEvent) {
+					this._bSpaceKeyCancelled = this._bSpaceKeyCancelled || (oEvent.shiftKey || oEvent.which == 27 /** KeyCodes.ESCAPE */);
+				},
+				onkeyup: function(oEvent) {
+					this._bSpaceKeyPressed && !this._bSpaceKeyCancelled && this.requestNewPage();
+					this._bSpaceKeyPressed = this._bSpaceKeyCancelled = false;
+					this._oTrigger.setActive(false);
 				},
 				onAfterRendering : function(oEvent) {
 					var $oTrigger = this._oTrigger.$();
@@ -798,12 +807,13 @@ sap.ui.define([
 					oControl.$("triggerList").css("display", "none");
 					oControl.$("listUl").removeClass("sapMListHasGrowing");
 				} else {
+					var oBundle = Core.getLibraryResourceBundle("sap.m");
 					if (bLengthFinal) {
 						oControl.$("triggerInfo").css("display", "block").text(this._getListItemInfo());
 						var aCounts = this._getItemCounts();
-						oControl.$("triggerMessage").text(Core.getLibraryResourceBundle("sap.m").getText("LOAD_MORE_DATA_ACC_WITH_COUNT", aCounts));
+						oControl.$("triggerMessage").text(oBundle.getText(oControl.isA("sap.m.Table") ? "LOAD_MORE_ROWS_ACC_WITH_COUNT" : "LOAD_MORE_DATA_ACC_WITH_COUNT", aCounts));
 					} else {
-						oControl.$("triggerMessage").text(Core.getLibraryResourceBundle("sap.m").getText("LOAD_MORE_DATA_ACC"));
+						oControl.$("triggerMessage").text(oBundle.getText("LOAD_MORE_DATA_ACC"));
 					}
 
 					oControl.$("triggerList").css("display", "");

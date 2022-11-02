@@ -2052,13 +2052,7 @@ function(
 			// prepare the announcement for the screen reader
 			var oAccInfo = oItem.getAccessibilityInfo(),
 				oBundle = Core.getLibraryResourceBundle("sap.m"),
-				sDescription = "";
-
-			// when items have the role="listitem", aria-roledescription attribute containing the "type" info is already added to DOM,
-			// hence there is no need to add this information again to the custom announcement
-			if (this.getAriaRole() !== "list") {
-				sDescription += oAccInfo.type + " . ";
-			}
+				sDescription = oAccInfo.type + " . ";
 
 			if (this.isA("sap.m.Table")) {
 				var mPosition = this.getAccessbilityPosition(oItem);

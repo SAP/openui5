@@ -101,7 +101,7 @@ sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHea
 	};
 
 	GroupHeaderListItem.prototype.getAccessibilityType = function(oBundle) {
-		var sType = this.getTable() ? "ROW" : "OPTION";
+		var sType = this.getTable() ? "ROW" : "LISTITEM";
 		return oBundle.getText("LIST_ITEM_GROUP_HEADER") + " " + oBundle.getText("ACC_CTR_TYPE_" + sType);
 	};
 
