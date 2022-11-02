@@ -184,6 +184,10 @@ sap.ui.define([
 					sString += s;
 					return this;
 				},
+				style: function(p, v) {
+					sString += ('style=\"\{' + p + '=' + v + '\}\"');
+					return this;
+				},
 				'class': function(s) {
 					sString += ('class=\"' + s + '\"');
 					return this;
