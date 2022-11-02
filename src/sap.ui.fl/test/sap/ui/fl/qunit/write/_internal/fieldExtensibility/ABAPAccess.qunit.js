@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/Utils",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -21,7 +20,6 @@ sap.ui.define([
 	ExtUtils,
 	ABAPAccess,
 	ABAPExtensibilityVariantFactory,
-	jQuery,
 	sinon,
 	oCore
 ) {
@@ -254,14 +252,12 @@ sap.ui.define([
 				return JSON.stringify(mIntentWithParameter);
 			},
 			isNavigationSupported: function(aIntents) {
-				var oDeferred = jQuery.Deferred();
 				var aResults = aIntents.map(function(oIntent) {
 					return {
 						supported: oIntent.semanticObject === "CustomField" || false
 					};
 				});
-				oDeferred.resolve(aResults);
-				return oDeferred.promise();
+				return Promise.resolve(aResults);
 			}
 		},
 		oServer: null,

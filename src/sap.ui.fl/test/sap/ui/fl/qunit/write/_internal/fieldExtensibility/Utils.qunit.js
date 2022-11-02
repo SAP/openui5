@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
@@ -14,7 +13,6 @@ sap.ui.define([
 	FlexUtils,
 	ODataModelV2,
 	ODataModelV4,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -244,11 +242,10 @@ sap.ui.define([
 			var aPromises = [];
 			var done = assert.async();
 
-			var sMetadata = jQuery.ajax({
-				type: "GET",
-				url: "test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v2_metadata.xml",
-				async: false
-			}).responseText;
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", "test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v2_metadata.xml", false);
+			xhr.send();
+			var sMetadata = xhr.responseText;
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
 			this.oServer.respondWith("GET", /.*\$metadata/, [200, { "Content-Type": "application/xml" }, sMetadata]);
@@ -290,11 +287,10 @@ sap.ui.define([
 			var aPromises = [];
 			var done = assert.async();
 
-			var sMetadata = jQuery.ajax({
-				type: "GET",
-				url: "test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v2_metadata.xml",
-				async: false
-			}).responseText;
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", "test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v2_metadata.xml", false);
+			xhr.send();
+			var sMetadata = xhr.responseText;
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
 			this.oServer.respondWith("GET", /.*\$metadata/, [200, { "Content-Type": "application/xml" }, sMetadata]);
@@ -335,11 +331,10 @@ sap.ui.define([
 			var aPromises = [];
 			var done = assert.async();
 
-			var sMetadata = jQuery.ajax({
-				type: "GET",
-				url: "test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v2_metadata.xml",
-				async: false
-			}).responseText;
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", "test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v2_metadata.xml", false);
+			xhr.send();
+			var sMetadata = xhr.responseText;
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
 			this.oServer.respondWith("GET", /.*\$metadata/, [200, { "Content-Type": "application/xml" }, sMetadata]);
@@ -380,11 +375,10 @@ sap.ui.define([
 			var aPromises = [];
 			var done = assert.async();
 
-			var sMetadata = jQuery.ajax({
-				type: "GET",
-				url: "test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v2_metadata.xml",
-				async: false
-			}).responseText;
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", "test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v2_metadata.xml", false);
+			xhr.send();
+			var sMetadata = xhr.responseText;
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
 			this.oServer.respondWith("GET", /.*\$metadata/, [200, { "Content-Type": "application/xml" }, sMetadata]);
@@ -425,11 +419,10 @@ sap.ui.define([
 			var aPromises = [];
 			var done = assert.async();
 
-			var sMetadata = jQuery.ajax({
-				type: "GET",
-				url: "test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v4_metadata.xml",
-				async: false
-			}).responseText;
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", "test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v4_metadata.xml", false);
+			xhr.send();
+			var sMetadata = xhr.responseText;
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
 			this.oServer.respondWith("GET", /.*\$metadata/, [200, { "Content-Type": "application/xml" }, sMetadata]);

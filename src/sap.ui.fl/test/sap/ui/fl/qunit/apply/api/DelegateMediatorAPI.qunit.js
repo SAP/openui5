@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Button",
 	"sap/ui/rta/enablement/TestDelegate",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	DelegateMediator,
@@ -22,7 +21,6 @@ sap.ui.define([
 	Panel,
 	Button,
 	TestDelegate,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -158,7 +156,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When it is called without delegate specified (XML Case)", function (assert) {
-			var vDomNode = jQuery("#qunit-fixture").get(0);
+			var vDomNode = document.getElementById("qunit-fixture");
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(vDomNode, XmlTreeModifier))
 				.then(function (vReturnValue) {
 					assert.notOk(vReturnValue, "then an 'undefined' is returned");
@@ -166,7 +164,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When it is called with delegate specified as default delegate (XML Case)", function (assert) {
-			var vDomNode = jQuery("#qunit-fixture").get(0);
+			var vDomNode = document.getElementById("qunit-fixture");
 			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(vDomNode, XmlTreeModifier, this.mPropertyBag.modelType, true))
 				.then(function (mDelegateInfo) {
@@ -206,7 +204,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When default delegate is available, but default delegate should be ignored (XML Case)", function (assert) {
-			var vDomNode = jQuery("#qunit-fixture").get(0);
+			var vDomNode = document.getElementById("qunit-fixture");
 			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(vDomNode, XmlTreeModifier, this.mPropertyBag.modelType))
 				.then(function (mDelegateInfo) {
@@ -336,7 +334,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When no default delegate is available, but default delegate is asked (XML Case)", function (assert) {
-			var vDomNode = jQuery("#qunit-fixture").get(0);
+			var vDomNode = document.getElementById("qunit-fixture");
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(vDomNode, XmlTreeModifier, "some.not.existing.model", true))
 				.then(function (mDelegateInfo) {
 					assert.notOk(mDelegateInfo, "then an 'undefined' is returned");

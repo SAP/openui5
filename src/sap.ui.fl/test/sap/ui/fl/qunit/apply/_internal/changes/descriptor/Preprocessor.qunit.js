@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
 	"sap/ui/fl/Layer",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Preprocessor,
@@ -20,7 +19,6 @@ sap.ui.define([
 	LrepConnector,
 	StaticFileConnector,
 	Layer,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -29,16 +27,19 @@ sap.ui.define([
 
 	QUnit.module("Preprocessor", {
 		beforeEach: function (assert) {
-			var done = assert.async();
 			this.oConfig = {
 				componentData: {},
 				asyncHints: {},
 				id: "componentId"
 			};
 
-			jQuery.getJSON("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
-				.done(function(oTestApplierManifestResponse) {
-					this.oManifest = oTestApplierManifestResponse;
+			var done = assert.async();
+			fetch("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
+				.then(function(oTestApplierManifestResponse) {
+					return oTestApplierManifestResponse.json();
+				})
+				.then(function(oTestApplierManifestResponseJSON) {
+					this.oManifest = oTestApplierManifestResponseJSON;
 					done();
 				}.bind(this));
 
@@ -237,10 +238,12 @@ sap.ui.define([
 	QUnit.module("Preprocessor", {
 		beforeEach: function (assert) {
 			var done = assert.async();
-
-			jQuery.getJSON("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
-				.done(function(oTestApplierManifestResponse) {
-					this.oManifest = oTestApplierManifestResponse;
+			fetch("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
+				.then(function(oTestApplierManifestResponse) {
+					return oTestApplierManifestResponse.json();
+				})
+				.then(function(oTestApplierManifestResponseJSON) {
+					this.oManifest = oTestApplierManifestResponseJSON;
 					done();
 				}.bind(this));
 

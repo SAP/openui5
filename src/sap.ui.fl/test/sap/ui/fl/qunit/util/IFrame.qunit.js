@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	IFrame,
@@ -16,7 +15,6 @@ sap.ui.define([
 	JSONModel,
 	Core,
 	XMLView,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -96,8 +94,8 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("IFrame should not be rendered", function (assert) {
-			var $iframe = jQuery("#qunit-fixture iframe");
-			assert.strictEqual($iframe.length, 0, "No iframe is being rendered");
+			var oFixtureDom = document.getElementById("qunit-fixture");
+			assert.strictEqual(!!oFixtureDom.querySelector("iframe"), false, "No iframe is being rendered");
 		});
 	});
 
@@ -117,8 +115,9 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("Title is rendered", function (assert) {
-			var $iframe = jQuery("#qunit-fixture iframe");
-			var sFrameTitle = $iframe.get()[0].getAttribute("title");
+			var oFixtureDom = document.getElementById("qunit-fixture");
+			var oIframe = oFixtureDom.querySelector("iframe");
+			var sFrameTitle = oIframe.getAttribute("title");
 			assert.strictEqual(sFrameTitle, sTitle, "Title is being rendered correct");
 		});
 	});
@@ -147,8 +146,9 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("getFocusDomRef", function (assert) {
 			var oFocusDomRef = this.oIFrame.getFocusDomRef();
-			var $iframe = jQuery("#qunit-fixture iframe");
-			assert.strictEqual($iframe[0], oFocusDomRef, "Returns the iframe DOM element");
+			var oFixtureDom = document.getElementById("qunit-fixture");
+			var oIframe = oFixtureDom.querySelector("iframe");
+			assert.strictEqual(oIframe, oFocusDomRef, "Returns the iframe DOM element");
 		});
 
 		QUnit.test("URL should refresh if bound to a changing model without rewriting the iframe", function(assert) {
