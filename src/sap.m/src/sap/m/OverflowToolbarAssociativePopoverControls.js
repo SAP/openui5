@@ -216,7 +216,7 @@ sap.ui.define(['sap/ui/base/Object', './OverflowToolbarButton', './OverflowToolb
 			var oConfig;
 
 			// First check if the control's class implements the sap.m.IOverflowToolbarContent interface
-			if (oControl.getMetadata().getInterfaces().indexOf("sap.m.IOverflowToolbarContent") !== -1) {
+			if (oControl.isA("sap.m.IOverflowToolbarContent")) {
 				if (typeof oControl.getOverflowToolbarConfig !== "function") {
 					Log.error("Required method getOverflowToolbarConfig not implemented by: " + oControl.getMetadata().getName());
 					return;
