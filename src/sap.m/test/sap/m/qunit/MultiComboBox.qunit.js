@@ -5766,6 +5766,24 @@ sap.ui.define([
 		assert.ok(oPreviousItem.getText() !== 'Item3', "Should not return the last item anymore as it's selected already");
 	});
 
+	QUnit.test("_getNextTraversalItem/_getPreviousTraversalItem should not exclude items with no values", function (assert) {
+		// Arrange
+		var oItem = new Item({text: ""}),
+			oNextItem, oPreviousItem;
+
+		this.oMultiComboBox.insertItem(oItem, 0);
+		this.oMultiComboBox.addItem(oItem);
+		this.oMultiComboBox.syncPickerContent();
+		Core.applyChanges();
+
+		oNextItem = this.oMultiComboBox._getNextTraversalItem();
+		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
+
+		// Assert
+		assert.ok(oNextItem, "Should return an item");
+		assert.ok(oPreviousItem, "Should return the an item");
+	});
+
 	QUnit.test("onsapend should focus the input if the tokenizer has forwarded the focus", function (assert) {
 		var oEvent = {isMarked: function(sKey){ if (sKey === "forwardFocusToParent") { return true;}}};
 
@@ -5818,6 +5836,48 @@ sap.ui.define([
 		this.clock.tick(100);
 
 		assert.strictEqual(this.oFirstItem.getText(), this.oMultiComboBox.getValue(), "Item's text should be the same as input's value");
+	});
+
+	QUnit.test("onsapdown should not skip items with no values", function (assert) {
+		var oItem = new Item({text: ""});
+
+		// setup
+		this.oMultiComboBox.insertItem(oItem, 0);
+		Core.applyChanges();
+
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(100);
+
+		assert.notEqual(this.oFirstItem.getText(), this.oMultiComboBox.getValue(), "The first item should not be skipped, even though it has no value");
+		assert.strictEqual(oItem, this.oMultiComboBox._oTraversalItem, "The traversal item should be set correctly");
+		assert.strictEqual(this.oMultiComboBox.getValue(), "", "The item value should be set correctly as an input value");
+
+
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(100);
+
+		assert.strictEqual(this.oFirstItem.getText(), this.oMultiComboBox.getValue(), "The second item value should be set as an input value");
+	});
+
+	QUnit.test("onsapup should not skip items with no values", function (assert) {
+		var oItem = new Item({text: ""});
+
+		// setup
+		this.oMultiComboBox.addItem(oItem);
+		Core.applyChanges();
+
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick(100);
+
+		assert.notEqual(this.oLastItem.getText(), this.oMultiComboBox.getValue(), "The last item should not be skipped, even though it has no value");
+		assert.strictEqual(oItem, this.oMultiComboBox._oTraversalItem, "The traversal item should be set correctly");
+		assert.strictEqual(this.oMultiComboBox.getValue(), "", "The item value should be set correctly as an input value");
+
+
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick(100);
+
+		assert.strictEqual(this.oLastItem.getText(), this.oMultiComboBox.getValue(), "The new item value should be set as an input value");
 	});
 
 	QUnit.test("onsapup should update input's value with previous selectable item's text", function (assert) {

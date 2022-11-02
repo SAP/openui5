@@ -619,8 +619,7 @@ function(
 	 */
 	MultiComboBox.prototype._selectItemByKey = function(oEvent) {
 		var aVisibleItems, oParam,
-			oItem, i, bItemMatched, bKeyIsValid,
-			bPickerOpened = this.isOpen();
+			oItem, i, bItemMatched, bKeyIsValid;
 
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
@@ -632,7 +631,7 @@ function(
 			oEvent.setMarked();
 		}
 
-		aVisibleItems = this._getUnselectedItems(bPickerOpened ? "" : this.getValue());
+		aVisibleItems = this._getUnselectedItems();
 
 		for (i = 0; i < aVisibleItems.length; i++) {
 			// Empty string should be valid key for sap.ui.core.Item only
@@ -2686,18 +2685,15 @@ function(
 	 */
 	MultiComboBox.prototype._getNextTraversalItem = function() {
 		var sValue = this.getValue();
-		var aItems = sValue ? this._getItemsStartingWithPerTerm(sValue) : [];
-		var aSelectableItems = this._getUnselectedItems();
+		var aUnselectedMatchingItems = this._getUnselectedItemsPerTerm(sValue);
 
-		if (aItems.indexOf(this._oTraversalItem) > -1 && this._oTraversalItem.getText() === this.getValue()) {
+		// if there is already a previous traversal item, return the next one
+		if (aUnselectedMatchingItems.indexOf(this._oTraversalItem) > -1 && this._oTraversalItem.getText() === this.getValue()) {
 			return this._getNextUnselectedItemOf(this._oTraversalItem);
 		}
 
-		if (aItems.length && aItems[0].getText() === this.getValue()) {
-			return this._getNextUnselectedItemOf(aItems[0]);
-		}
-
-		return aItems.length ? aItems[0] : aSelectableItems[0];
+		// if there is an unselected matching item return it
+		return aUnselectedMatchingItems[0];
 	};
 
 	/**
@@ -2707,27 +2703,13 @@ function(
 	 */
 	MultiComboBox.prototype._getPreviousTraversalItem = function() {
 		var sValue = this.getValue();
-		var aItems = sValue ? this._getItemsStartingWithPerTerm(sValue) : [];
+		var aUnselectedMatchingItems = this._getUnselectedItemsPerTerm(sValue);
 
-		if (aItems.indexOf(this._oTraversalItem) > -1 && this._oTraversalItem.getText() === this.getValue()) {
+		if (aUnselectedMatchingItems.indexOf(this._oTraversalItem) > -1 && this._oTraversalItem.getText() === this.getValue()) {
 			return this._getPreviousUnselectedItemOf(this._oTraversalItem);
 		}
 
-		if (aItems.length && aItems[aItems.length - 1].getText() === this.getValue()) {
-			return this._getPreviousUnselectedItemOf(aItems[aItems.length - 1]);
-		}
-
-		if (aItems.length) {
-			return aItems[aItems.length - 1];
-		} else {
-			var aSelectableItems = this._getUnselectedItems();
-
-			if (aSelectableItems.length > 0) {
-				return aSelectableItems[aSelectableItems.length - 1];
-			} else {
-				return null;
-			}
-		}
+		return aUnselectedMatchingItems[aUnselectedMatchingItems.length - 1];
 	};
 
 	/* =========================================================== */
@@ -2971,6 +2953,35 @@ function(
 		}
 
 		return aItems;
+	};
+
+	/**
+	 * Gets the unselected items, matching a certain term
+	 *
+	 * @param {string} sText The text to be used for filtering
+	 * @returns {sap.ui.core.Item[]} Array of sap.ui.core.Item instances. The current target of the <code>selectedItems</code> association.
+	 * @private
+	 */
+	 MultiComboBox.prototype._getUnselectedItemsPerTerm = function(sText) {
+		var aItems =  jQuery(ListHelpers.getSelectableItems(this.getItems())).not(this.getSelectedItems()).get();
+		var aSelectableMatchingItems = [];
+		var fnFilter = this.fnFilter ? this.fnFilter : inputsDefaultFilter;
+
+		// If the MultiComboBox is not opened, we want to skip any items that
+		// represent group headers or separators.
+		if (!this.isOpen()) {
+			aItems = aItems.filter(function (oItem) {
+				return !oItem.isA("sap.ui.core.SeparatorItem");
+			});
+		}
+
+		aItems.forEach(function(oItem) {
+			if (fnFilter(sText, oItem)) {
+				aSelectableMatchingItems.push(oItem);
+			}
+		}, this);
+
+		return aSelectableMatchingItems;
 	};
 
 	/**
