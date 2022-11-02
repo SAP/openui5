@@ -64,9 +64,6 @@ sap.ui.define([
 		// shortcut for sap.m.SplitAppMode
 		var SplitAppMode = mobileLibrary.SplitAppMode;
 
-		// Shortcut for sap.m.URLHelper
-		var URLHelper = mobileLibrary.URLHelper;
-
 		var MAIN_WEB_PAGE_TITLE = "Demo Kit - \uFFFD SDK",
 			WEB_PAGE_TITLE = {
 				topic: "Documentation - " + MAIN_WEB_PAGE_TITLE,
@@ -161,8 +158,7 @@ sap.ui.define([
 					"Check at <a href = 'https://sdk.openui5.org/versionoverview.html'>https://sdk.openui5.org/versionoverview.html</a> " +
 					"which versions are available. " +
 					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
-					"<a href='https://sdk.openui5.org/1.71.46/'>https://sdk.openui5.org/1.71.46/</a>",
-					bUseFeedbackDialog: false // enable to restore previous feedback dialog and hide the Qualtrics surveys
+					"<a href='https://sdk.openui5.org/1.71.46/'>https://sdk.openui5.org/1.71.46/</a>"
 				});
 
 				var oComponent = this.getOwnerComponent();
@@ -460,17 +456,12 @@ sap.ui.define([
 
 			handleMenuItemClick: function (oEvent) {
 				var sTargetText = oEvent.getParameter("item").getKey(),
-					sTarget = this.MENU_LINKS_MAP[sTargetText],
-					bUseFeedbackDialog = this.getModel("appView").getProperty("/bUseFeedbackDialog");
+					sTarget = this.MENU_LINKS_MAP[sTargetText];
 
 				if (sTargetText === ABOUT_TEXT) {
 					this.aboutDialogOpen();
 				} else if (sTargetText === FEEDBACK_TEXT) {
-					if (!bUseFeedbackDialog) {
-						this.launchSurvey(oEvent, true);
-					} else {
-						this.feedbackDialogOpen();
-					}
+					this.feedbackDialogOpen();
 				} else if (sTargetText === CHANGE_SETTINGS_TEXT) {
 					this.settingsDialogOpen();
 				} else if (sTargetText === CHANGE_COOKIE_PREFERENCES_TEXT) {
@@ -1286,7 +1277,7 @@ sap.ui.define([
 			},
 
 			/**
-			 * Opens the Qualtrics UX survey when the feedback button gets pressed.
+			 * Opens the Qualtrics UX survey when the feedback button is pressed.
 			 * There are two available surveys - a short one (all year round), and quarterly survey.
 			 *
 			 * Depending on the number of available surveys:
