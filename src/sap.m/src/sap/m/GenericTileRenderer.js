@@ -82,9 +82,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 		if (oControl._isIconMode()){
 			if (frameType === frameTypes.OneByOne) {
 				var sClass = "sapMGTOneByOne";
-				if (!oControl.getSubheader()) {
-					oRm.class("sapMGTNoSubHeader");
-				}
 			} else if (frameType === frameTypes.TwoByHalf) {
 				var sClass = "TwoByHalf";
 			}
@@ -257,6 +254,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 				} else {
 					if (frameType === frameTypes.OneByOne) {
 						oRm.openStart("div");
+						oRm.class("sapMGTHideOverflow");
+						oRm.openEnd();
+						oRm.openStart("div");
 						oRm.class("sapMGTIconWrapper");
 						oRm.openEnd();
 					}
@@ -344,9 +344,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 			if (!(isHalfFrame && isContentPresent) && oControl.getSubheader()) {
 				this._renderSubheader(oRm, oControl);
 			}
-			if (!bIsIconModeOneByOne) {
 				oRm.close("div");
-			}
 
 			if ( !oControl._isIconMode() ) { //Restrict creation of Footer for IconMode
 				oRm.openStart("div", oControl.getId() + "-content");

@@ -1292,6 +1292,7 @@ sap.ui.define([
 		this.spy(ResizeHandler, "deregister");
 		this.spy(ResizeHandler, "register");
 		this.oGenericTile._sParentResizeListenerId = null;
+		this.oGenericTile._sGenericTileResizeListenerId = null;
 
 		//Act
 		this.oGenericTile.invalidate();
@@ -1299,7 +1300,7 @@ sap.ui.define([
 
 		//Assert
 		assert.ok(ResizeHandler.deregister.notCalled);
-		assert.ok(ResizeHandler.register.calledOnce);
+		assert.equal(ResizeHandler.register.callCount,2,"Total of two resize handler has been attached");
 	});
 
 	QUnit.test("Resize Handler attached to parent, with deregister", function(assert) {
@@ -1307,14 +1308,15 @@ sap.ui.define([
 		this.spy(ResizeHandler, "deregister");
 		this.spy(ResizeHandler, "register");
 		this.oGenericTile._sParentResizeListenerId = "SomeListener";
+		this.oGenericTile._sGenericTileResizeListenerId = "SomeListener";
 
 		//Act
 		this.oGenericTile.invalidate();
 		oCore.applyChanges();
 
 		//Assert
-		assert.ok(ResizeHandler.deregister.calledOnce);
-		assert.ok(ResizeHandler.register.calledOnce);
+		assert.equal(ResizeHandler.deregister.callCount,2,"Total of two resize handler has been detached");
+		assert.equal(ResizeHandler.register.callCount,2,"Total of two resize handler has been attached");
 	});
 
 	QUnit.test("Hover style update on transitionend", function(assert) {
@@ -4703,8 +4705,8 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		this.oGenericTile.setIconLoaded(true);
 		oCore.applyChanges();
 		//Act
-		var oIconDomRef = this.oGenericTile.getDomRef().children[0].children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().children[0].children[1];
+		var oIconDomRef = document.querySelector(".sapMGTOneByOneIcon");
+		var oContentDomRef = document.querySelector(".sapMGTHdrContent");
 		//Assert
 		assert.notOk(oIconDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is not present when state is loaded");
 		assert.ok(oIconDomRef.classList.contains("sapMGTOneByOneIcon"), "Icon div is present when state is loaded");
@@ -4754,8 +4756,8 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		this.oGenericTile.setIconLoaded(true);
 		oCore.applyChanges();
 		//Act
-		var oIconDomRef = this.oGenericTile.getDomRef().children[0].children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().children[0].children[1];
+		var oIconDomRef = document.querySelector(".sapMGTOneByOneIcon");
+		var oContentDomRef = document.querySelector(".sapMGTHdrContent");
 		//Assert
 		assert.notOk(oIconDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is not present when state is loaded");
 		assert.ok(oIconDomRef.classList.contains("sapMGTOneByOneIcon"), "Icon div is present when state is loaded");
@@ -5155,6 +5157,38 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		//Assert
 		assert.notOk(bEventNotTriggered, "Press event of GenericTile is getting triggered");
 	});
+
+	QUnit.module("Resize handler on IconMode tiles", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile({
+				header: "GenericTile",
+				subheader: "GenericTile subHeader",
+				mode: "IconMode",
+				tileIcon: "sap-icon://table-view",
+				backgroundColor: "red",
+				frameType: "OneByOne"
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+		}
+	});
+
+	QUnit.test("Test if the resize handler is getting activated on width change", function (assert) {
+		//Arrange
+		this.oSpy = this.spy(this.oGenericTile, "_handleResizeOnIconTile");
+		var done = assert.async();
+
+		//Act
+		this.oGenericTile.getDomRef().style.width = "128px";
+
+		//Assert
+		handleResize(this.oSpy,function() {
+			assert.ok(this.oSpy.calledOnce, "The resize handler has been called on the change of the dimension");
+			done();
+		}.bind(this));
+	});
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
 		for (var i = 0; i < aContainers.length; i++) {
@@ -5181,5 +5215,18 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		return $Tabbables.filter(function() {
 			return isContained(aScopes, this);
 		});
+	}
+	// Checks whether the attached resizeHandler is called when the dimensions are changed
+	function handleResize(oSpy, fnCallback) {
+		if (oSpy.calledOnce) {
+			if (typeof fnCallback === "function") {
+				fnCallback.bind(this)();
+				fnCallback = undefined;
+			}
+		} else {
+			setTimeout(function(){
+				handleResize(oSpy,fnCallback);
+			},200);
+		}
 	}
 });

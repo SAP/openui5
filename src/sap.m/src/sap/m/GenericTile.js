@@ -549,6 +549,11 @@ sap.ui.define([
 			this._sParentResizeListenerId = null;
 		}
 
+		if (this._sGenericTileResizeListenerId) {
+			ResizeHandler.deregister(this._sGenericTileResizeListenerId);
+			this._sGenericTileResizeListenerId = null;
+		}
+
 		Device.media.detachHandler(this._handleMediaChange, this, DEVICE_SET);
 
 		if (this._$RootNode) {
@@ -598,6 +603,10 @@ sap.ui.define([
 			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sParentResizeListenerId = null;
 		}
+		if (this._sGenericTileResizeListenerId) {
+			ResizeHandler.deregister(this._sGenericTileResizeListenerId);
+			this._sGenericTileResizeListenerId = null;
+		}
 
 		//sets the extra width of 0.5rem when the grid container has 1rem gap for the TwoByxxxx tiles
 		var oGetParent = this.getParent();
@@ -645,6 +654,8 @@ sap.ui.define([
 
 		var sMode = this.getMode();
 		var bScreenLarge = this._isScreenLarge();
+		this._sGenericTileResizeListenerId = ResizeHandler.register(this, this._handleResizeOnTile.bind(this));
+		this._handleResizeOnTile();
 		if (sMode === GenericTileMode.LineMode) {
 			var $Parent = this.$().parent();
 			if (bScreenLarge) {
@@ -694,7 +705,6 @@ sap.ui.define([
 		if (this.getTooltip() && this.getDomRef()) {
 			this.getDomRef().setAttribute("aria-describedby",this.getAggregation("_invisibleText").getId());
 		}
-
 		this.onDragComplete();
 	};
 	/**
@@ -778,6 +788,47 @@ sap.ui.define([
 	GenericTile.prototype._handleResize = function () {
 		if (this.getMode() === GenericTileMode.LineMode && this._isScreenLarge() && this.getParent()) {
 			this._queueAnimationEnd();
+		}
+	};
+
+	/**
+	 *Resize handler on the GenericTile
+	 *
+	 * @private
+	 */
+
+	 GenericTile.prototype._handleResizeOnTile = function () {
+		if (this._isIconMode() && this.getFrameType() === FrameType.OneByOne) {
+				this._handleResizeOnIconTile();
+		}
+	};
+
+	/**
+	 *Adjusts the alignment inside the IconMode tiles when its width is getting changed
+	 *
+	 * @private
+	 */
+
+	GenericTile.prototype._handleResizeOnIconTile = function () {
+		var oTitle = this._oTitle.getDomRef();
+		var bIsTabletSize =  window.matchMedia("(max-width: 600px)").matches;
+		var bIsMobileSize =  window.matchMedia("(max-width: 374px)").matches;
+		if (oTitle) {
+			var iHeight = parseInt(getComputedStyle(oTitle).height.slice(0,2));
+			var iLineHeight = parseInt(getComputedStyle(oTitle).lineHeight.slice(0,2));
+			var iNumLines = iHeight / iLineHeight;
+			if (iNumLines === 1) {
+				this.addStyleClass("sapMGTHeaderOneLine");
+			} else {
+				this.removeStyleClass("sapMGTHeaderOneLine");
+			}
+			if (!(bIsTabletSize || bIsMobileSize) && iNumLines === 3 && this._oSubTitle.getDomRef()) {
+				this._oSubTitle.setMaxLines(1);
+				this.addStyleClass("sapMGTHeaderThreeLine");
+			} else {
+				this.removeStyleClass("sapMGTHeaderThreeLine");
+				this._oSubTitle.setMaxLines(2);
+			}
 		}
 	};
 
@@ -1285,7 +1336,7 @@ sap.ui.define([
 			var iHeaderLines,iSubHeaderLines;
 			iSubHeaderLines = (frameType === FrameType.TwoByHalf) ? 1 : 2;
 			if (frameType === FrameType.OneByOne) {
-				iHeaderLines = (bSubheader) ? 2 : 4;
+				iHeaderLines = 4;
 			} else if (frameType === FrameType.TwoByHalf) {
 				iHeaderLines = (bSubheader) ? 1 : 2;
 			}

@@ -210,9 +210,9 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		assert.strictEqual(oSpyRegister.callCount, 1, "ResizeHandler.register was called.");
+		assert.strictEqual(oSpyRegister.callCount, 2, "ResizeHandler.register was called.");
 		this.oGenericTile.destroy();
-		assert.strictEqual(oSpyDeregister.callCount, 1, "ResizeHandler.deregister was called.");
+		assert.strictEqual(oSpyDeregister.callCount, 3, "ResizeHandler.deregister was called.");
 
 		// Cleanup
 		this.oGenericTile = null;
