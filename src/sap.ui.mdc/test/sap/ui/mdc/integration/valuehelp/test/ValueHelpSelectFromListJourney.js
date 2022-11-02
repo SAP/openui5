@@ -22,7 +22,7 @@ sap.ui.define([
 	opaTest("Typing raises fitting suggestions", function (Given, When, Then) {
 		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-1");
 		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField"});
-		When.onTheOPAPage.iEnterTextOnTheFilterField("FB0-FF1-10", "aust", {keepFocus: true, clearTextFirst: false});
+		When.onTheOPAPage.iEnterTextOnTheFilterField("FB0-FF1-10", "aust", {keepFocus: true, clearTextFirst: true});
 		Then.onTheOPAPage.iShouldSeeValueHelpListItems([
 			["101", "Austen, Jane"],
 			["373", "Craig, Austin"]
@@ -38,11 +38,48 @@ sap.ui.define([
 		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "aust", {keepFocus: true, clearTextFirst: true});
 		When.onTheOPAPage.iPressKeyOnTheFilterField({label: "TestField"}, KeyCodes.ESCAPE);
 		Then.onTheOPAPage.iShouldNotSeeTheValueHelp();
+		Then.iTeardownMyAppFrame();
+
+	});
+
+
+	opaTest("Popover.opensOnClick", function (Given, When, Then) {
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-6");
+		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField"});
+
+		// We do not blur after entering text, so the filterValue is kept
+		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "aust", {keepFocus: true, clearTextFirst: false, pressEnterKey: false});
+		Then.onTheOPAPage.iShouldSeeValueHelpListItems([
+			["101", "Austen, Jane"],
+			["373", "Craig, Austin"]
+		]);
+
+		When.onTheOPAPage.iPressKeyOnTheFilterField({label: "TestField"}, KeyCodes.ESCAPE);
+		Then.onTheOPAPage.iShouldNotSeeTheValueHelp();
+
+		When.onTheOPAPage.iPressOnTheFilterField({label: "TestField"});
+		Then.onTheOPAPage.iShouldSeeValueHelpListItems([
+			["101", "Austen, Jane"],
+			["373", "Craig, Austin"]
+		]);
+
+		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "aus", {keepFocus: true, clearTextFirst: true, pressEnterKey: false});
+		Then.onTheOPAPage.iShouldSeeValueHelpListItems([
+			["101", "Austen, Jane"],
+			["328", "Clausewitz, Carl von"],
+			["373", "Craig, Austin"]
+		]);
+
+		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "", {keepFocus: true, clearTextFirst: true, pressEnterKey: false});
+		Then.onTheOPAPage.iShouldNotSeeTheValueHelp();
+
+		Then.iTeardownMyAppFrame();
 	});
 
 	QUnit.module("Dialog");
 
 	opaTest("F4 opens VH Dialog", function (Given, When, Then) {
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-1");
 		When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
 		Then.onTheOPAPage.iShouldSeeTheValueHelpDialog();
 
@@ -159,5 +196,7 @@ sap.ui.define([
 
 		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "Division"}, "02", {keepFocus: false, clearTextFirst: true});
 		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "Division"}, "Division 02 for 1010 10 (02)");
+
+		Then.iTeardownMyAppFrame();
 	});
 });

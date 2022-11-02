@@ -39,6 +39,15 @@ sap.ui.define([
 		isOpen: function() {
 			return bIsOpen;
 		},
+		isOpening: function() {
+			return bIsOpen;
+		},
+		isTypeahead: function () {
+			return true;
+		},
+		getValueHelpDelegatePayload: function () {
+			return undefined;
+		},
 		invalidate: function () {},
 		getValueHelpDelegate: function () {}
 	};

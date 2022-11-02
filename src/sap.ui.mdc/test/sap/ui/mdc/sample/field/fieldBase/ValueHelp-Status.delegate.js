@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/mdc/ValueHelpDelegate",
+	"../ValueHelpODataV2.delegate",
 	"sap/m/library",
 	"sap/m/Table",
 	"sap/m/ColumnListItem",

@@ -5,3 +5,8 @@
 .pageBox > .sapMFlexItem {
 	height: 100%;
 }
+
+#container-v4demo---app .sapMTBStandard {
+	margin-top: 0.5rem;
+	border-bottom: solid 1px transparent;
+}

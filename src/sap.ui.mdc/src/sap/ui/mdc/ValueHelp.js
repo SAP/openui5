@@ -483,7 +483,7 @@ sap.ui.define([
 		}
 
 		if (oContainer && !oContainer.isOpen() && !oContainer.isOpening()) {
-			oContainer.open(this._retrieveDelegateContent(oContainer));
+			oContainer.open(this._retrieveDelegateContent(oContainer), bTypeahead);
 			this.fireOpen({container: oContainer});
 		}
 	};
@@ -562,7 +562,7 @@ sap.ui.define([
 	ValueHelp.prototype.isOpen = function() {
 		var oTypeahead = this.getTypeahead();
 		var oDialog = this.getDialog();
-		return !!((oTypeahead && oTypeahead.isOpen()) || (oDialog && oDialog.isOpen()));
+		return !!((oTypeahead && (oTypeahead.isOpen() || oTypeahead.isOpening())) || (oDialog && (oDialog.isOpen() || oDialog.isOpening())));
 	};
 
 	/**
