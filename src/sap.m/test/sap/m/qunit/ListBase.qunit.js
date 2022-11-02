@@ -2954,10 +2954,9 @@ sap.ui.define([
 			oSLI.focus();
 			var $SLI = oSLI.$();
 			var oRb = Core.getLibraryResourceBundle("sap.m");
-			assert.strictEqual($SLI.attr("aria-roledescription"), oRb.getText("ACC_CTR_TYPE_OPTION"), "aria-roledescription contains the expected type info");
 			var oCustomAnnouncement = document.getElementById($SLI.attr("aria-labelledby")),
 				aTexts = oCustomAnnouncement.innerText.split(" . ");
-			assert.ok(aTexts.indexOf(oRb.getText("ACC_CTR_TYPE_OPTION")) === -1, "Type info is not added to custom announcement");
+			assert.ok(aTexts.indexOf(oRb.getText("ACC_CTR_TYPE_LISTITEM")) !== -1, "Type info is added to custom announcement for compatibility reasons");
 		});
 
 		QUnit.test("Accessibility announcement for role='listbox'", function(assert) {
@@ -2973,10 +2972,9 @@ sap.ui.define([
 			oSLI.focus();
 			var $SLI = oSLI.$();
 			var oRb = Core.getLibraryResourceBundle("sap.m");
-			assert.notOk($SLI.attr("aria-roledescription"), "aria-roledescription not added to the list item DOM");
 			var oCustomAnnouncement = document.getElementById($SLI.attr("aria-labelledby")),
 				aTexts = oCustomAnnouncement.innerText.split(" . ");
-			assert.ok(aTexts.indexOf(oRb.getText("ACC_CTR_TYPE_OPTION")) > -1, "Type info is added to custom announcement");
+			assert.ok(aTexts.indexOf(oRb.getText("ACC_CTR_TYPE_LISTITEM")) === -1, "Type info is not added to custom announcement since Jaws also does not announce the role option");
 		});
 
 		QUnit.test("Grouping behavior with role='list'", function(assert) {
@@ -3005,7 +3003,7 @@ sap.ui.define([
 			aGroupHeaderListItems.forEach(function(oGroupItem) {
 				var $GroupItem = oGroupItem.$();
 				assert.strictEqual($GroupItem.attr("role"), "group", "Group header has role='group'");
-				assert.strictEqual($GroupItem.attr("aria-roledescription"), oRb.getText("LIST_ITEM_GROUP_HEADER") + " " + oRb.getText("ACC_CTR_TYPE_OPTION"), "correct aria-roledescription assigned");
+				assert.strictEqual($GroupItem.attr("aria-roledescription"), oRb.getText("LIST_ITEM_GROUP_HEADER") + " " + oRb.getText("ACC_CTR_TYPE_LISTITEM"), "correct aria-roledescription assigned");
 				assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset attribute not added to groupHeader");
 				assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize attribute not added to groupHeader");
 				assert.ok($GroupItem.attr("aria-owns"), "aria-owns attribute added to Group Headers");

@@ -60,6 +60,8 @@ sap.ui.define([
 		var oGrowingDelegate = oList._oGrowingDelegate;
 		var oTrigger = oGrowingDelegate._oTrigger;
 
+		assert.equal(document.getElementById(oList.$("trigger").attr("aria-describedby")).textContent, Core.getLibraryResourceBundle("sap.m").getText("LOAD_MORE_DATA_ACC_WITH_COUNT", [1, 2]));
+
 		// Act
 		setTimeout(function() {
 			assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible after initial rendering");
@@ -495,7 +497,7 @@ sap.ui.define([
 			iTotalNumberOfItems = oList.getBinding("items").getLength();
 
 			oList.setGrowingThreshold(Math.floor(iTotalNumberOfItems / 2));
-			oList._oGrowingDelegate.requestNewPage();
+			qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.ENTER);
 
 			oList.attachEventOnce("updateFinished", oSecondPageDeferred.resolve);
 		});
@@ -505,7 +507,16 @@ sap.ui.define([
 			//Assert
 			assert.strictEqual(oList.getGrowingThreshold() + iInitialThreshold, oList.getItems().length, "The list did contain the same number of items as twice the treshold");
 
-			oList._oGrowingDelegate.requestNewPage();
+			var fnRequestNewPageSpy = sinon.spy(oList._oGrowingDelegate, "requestNewPage");
+			qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.SPACE);
+			qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.ESCAPE);
+			qutils.triggerKeyup(oList.getDomRef("trigger"), KeyCodes.SPACE);
+			assert.notOk(fnRequestNewPageSpy.calledOnce);
+
+			qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.SPACE);
+			qutils.triggerKeyup(oList.getDomRef("trigger"), KeyCodes.SPACE);
+			assert.ok(fnRequestNewPageSpy.calledOnce);
+			fnRequestNewPageSpy.restore();
 
 			oList.attachEventOnce("updateFinished", oAllPagesDeferred.resolve);
 		});
@@ -566,6 +577,7 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
 
+		assert.equal(document.getElementById(oTable.$("trigger").attr("aria-describedby")).textContent, Core.getLibraryResourceBundle("sap.m").getText("LOAD_MORE_ROWS_ACC_WITH_COUNT", [2, 3]));
 		assert.strictEqual(oTable.getItems().length, 2, "2 items are rendered");
 		var sItemIds = oTable.getItems().toString();
 
