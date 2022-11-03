@@ -299,8 +299,15 @@ sap.ui.define([
 	 * @private
 	 */
 	Panel.prototype.onsapspace = function(oEvent) {
-		// prevent browser scrolling
-		oEvent.preventDefault();
+		var aHeaderTargets = [
+			this.getDomRef().querySelector(".sapMPanelWrappingDiv"),
+			this.getDomRef("expandButton")
+		];
+
+		if (aHeaderTargets.includes(oEvent.target)) {
+			// prevent browser scrolling
+			oEvent.preventDefault();
+		}
 
 		this.ontap(oEvent);
 	};
