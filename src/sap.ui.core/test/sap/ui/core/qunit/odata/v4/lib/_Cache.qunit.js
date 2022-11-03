@@ -127,7 +127,7 @@ sap.ui.define([
 		 * limited to 26 items.
 		 *
 		 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache The collection cache
-		 * @param {number} iStartOffset The start offset to compute index within the cache
+		 * @param {number} iStartOffset The start offset to compute the index within the cache
 		 * @param {string} sUrl The service URL
 		 * @param {number} iStart The index of the first item of the response ($skip)
 		 * @param {number} iLength The length of the request ($top)
@@ -4245,7 +4245,7 @@ sap.ui.define([
 				assert.strictEqual(mQueryOptionsForPathCopy.$apply, "apply");
 				assert.strictEqual(mQueryOptionsForPathCopy.$search, undefined);
 				if (!oFixture.inCollection) {
-					oReplaceExpectation.calledAfter(oRemoveExpectation);
+					assert.ok(oReplaceExpectation.calledAfter(oRemoveExpectation));
 					sinon.assert.calledOnce(fnOnRemove);
 					sinon.assert.calledWithExactly(fnOnRemove, true);
 				}
@@ -9288,7 +9288,6 @@ sap.ui.define([
 				iReceivedLength = oFixture.aValues.length,
 				sResourcePath = "TEAMS('42')/Foo",
 				oCache = this.createCache(sResourcePath),
-				oCacheMock = this.mock(oCache),
 				that = this,
 				i;
 
@@ -9321,7 +9320,7 @@ sap.ui.define([
 							$expand : {expand : null},
 							$filter : oFixture.sFilter,
 							$select : ["Name"],
-							foo : "bar",
+							foo : "baz",
 							"sap-client" : "123"
 						},
 						mQueryOptions1 = {
@@ -9329,7 +9328,7 @@ sap.ui.define([
 							$expand : "~",
 							$filter : oFixture.sFilter,
 							$select : "~",
-							foo : "bar",
+							foo : "baz",
 							"sap-client" : "123"
 						},
 						sTransientPredicate = "($uid=id-1-23)",
@@ -9384,7 +9383,7 @@ sap.ui.define([
 					iExpectedByPredicateLength = iLength === undefined
 						? Object.keys(oCache.aElements.$byPredicate).length
 						: iReceivedLength + (oCreatedElement ? 1 : 0);
-					oCacheMock.expects("checkSharedRequest").withExactArgs();
+					that.mock(oCache).expects("checkSharedRequest").withExactArgs();
 					that.mock(Object).expects("assign")
 						.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
 							sinon.match.same(oCache.mLateQueryOptions))
@@ -9394,9 +9393,16 @@ sap.ui.define([
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
 							"/TEAMS/Foo", "", true)
 						.returns(mMergedQueryOptions);
-					oCacheMock.expects("drop").atLeast(0).callThrough();
+					oCache.beforeRequestSideEffects = function () {};
+					that.mock(oCache).expects("beforeRequestSideEffects")
+						.withExactArgs(sinon.match.same(mMergedQueryOptions))
+						.callsFake(function (mQueryOptions2) {
+							mQueryOptions2.foo = "baz";
+						});
+					that.mock(oCache).expects("filterVisibleElements").exactly(bSingle ? 0 : 1)
+						.withExactArgs(aPredicates).callThrough(); // too hard to refactor :-(
 					// Note: fetchTypes() would have been triggered by read() already
-					oCacheMock.expects("fetchTypes").withExactArgs()
+					that.mock(oCache).expects("fetchTypes").withExactArgs()
 						.returns(SyncPromise.resolve(mTypeForMetaPath));
 					for (i = 0; i < iReceivedLength; i += 1) { // prepare request/response
 						sPredicate = "('" + oFixture.aValues[i].key + "')";
@@ -9427,7 +9433,7 @@ sap.ui.define([
 									$select : ["Name"]
 								}, sinon.match.same(oCache), sinon.match.func)
 							.resolves(oResult);
-						oCacheMock.expects("visitResponse").withExactArgs(
+						that.mock(oCache).expects("visitResponse").withExactArgs(
 								sinon.match.same(oResult), sinon.match.same(mTypeForMetaPath),
 								undefined, "", false, NaN)
 							.callsFake(function () {
@@ -9533,6 +9539,10 @@ sap.ui.define([
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				"/TEAMS/Foo", "", true)
 			.returns(null); // "nothing to do"
+		oCache.beforeRequestSideEffects = function () {
+			throw new Error("Do not call!");
+		};
+		this.mock(oCache).expects("filterVisibleElements").never();
 		this.mock(_Helper).expects("getKeyFilter").never();
 		this.mock(_Helper).expects("selectKeyProperties").never();
 		this.oRequestorMock.expects("buildQueryString").never();
@@ -9553,7 +9563,6 @@ sap.ui.define([
 	QUnit.test("CollectionCache#requestSideEffects: no data to update", function (assert) {
 		var sResourcePath = "TEAMS('42')/Foo",
 			oCache = this.createCache(sResourcePath),
-			oCacheMock = this.mock(oCache),
 			that = this;
 
 		// Note: fill cache with more than just "visible" rows
@@ -9561,13 +9570,11 @@ sap.ui.define([
 			.then(function () {
 				var mTypeForMetaPath = {};
 
-				oCacheMock.expects("fetchTypes").withExactArgs()
+				that.mock(oCache).expects("fetchTypes").withExactArgs()
 					.returns(SyncPromise.resolve(mTypeForMetaPath));
 				that.mock(_Helper).expects("intersectQueryOptions").returns({/*don't care*/});
-				oCacheMock.expects("drop").withExactArgs(0, "('a')");
-				oCacheMock.expects("drop").withExactArgs(1, "('b')");
-				oCacheMock.expects("drop").withExactArgs(2, "('c')");
-				oCacheMock.expects("drop").withExactArgs(3, "('d')");
+				that.mock(oCache).expects("filterVisibleElements").withExactArgs([])
+					.returns([]);
 				that.mock(_Helper).expects("getKeyFilter").never();
 				that.mock(_Helper).expects("selectKeyProperties").never();
 				that.oRequestorMock.expects("buildQueryString").never();
@@ -9576,6 +9583,28 @@ sap.ui.define([
 				// code under test
 				assert.strictEqual(oCache.requestSideEffects(null, null, [], false),
 					SyncPromise.resolve());
+
+				assert.strictEqual(oCache.aElements.$count, 26, "$count is preserved");
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#filterVisibleElements: no data left", function (assert) {
+		var sResourcePath = "TEAMS('42')/Foo",
+			oCache = this.createCache(sResourcePath),
+			oCacheMock = this.mock(oCache);
+
+		// Note: fill cache with more than just "visible" rows
+		return this.mockRequestAndRead(oCache, 0, sResourcePath, 1, 4, 4, undefined, "26")
+			.then(function () {
+				oCache.aElements[0] = undefined; // can result from a failed requestElements
+				oCacheMock.expects("drop").withExactArgs(1, "('b')");
+				oCacheMock.expects("drop").withExactArgs(2, "('c')");
+				oCacheMock.expects("drop").withExactArgs(3, "('d')");
+				oCacheMock.expects("drop").withExactArgs(4, "('e')");
+
+				// code under test
+				assert.deepEqual(oCache.filterVisibleElements([]), []);
 
 				assert.deepEqual(oCache.aElements, [], "all elements discarded");
 				assert.strictEqual(oCache.aElements.$count, 26, "$count is preserved");
@@ -9604,7 +9633,6 @@ sap.ui.define([
 			mQueryOptions = {},
 			sResourcePath = "TEAMS('42')/Foo",
 			oCache = this.createCache(sResourcePath),
-			oCacheMock = this.mock(oCache),
 			that = this;
 
 		// Note: fill cache with more than just "visible" rows
@@ -9615,7 +9643,7 @@ sap.ui.define([
 				oCache.aElements[2].Bar = {
 					"@$ui5._" : {predicate : "(2)"}
 				};
-				oCacheMock.expects("fetchTypes").withExactArgs()
+				that.mock(oCache).expects("fetchTypes").withExactArgs()
 					.returns(SyncPromise.resolve(mTypeForMetaPath));
 				that.mock(Object).expects("assign")
 					.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
@@ -9626,9 +9654,8 @@ sap.ui.define([
 						sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
 						"/TEAMS/Foo", "", true)
 					.returns(mMergedQueryOptions);
-				oCacheMock.expects("drop").withExactArgs(0, "('a')");
-				oCacheMock.expects("drop").withExactArgs(1, "('b')");
-				oCacheMock.expects("drop").withExactArgs(3, "('d')");
+				that.mock(oCache).expects("filterVisibleElements").withExactArgs(["('c')"])
+					.returns([oCache.aElements[2]]);
 				oHelperMock.expects("getKeyFilter")
 					.withExactArgs(sinon.match.same(oCache.aElements[2]), "/TEAMS/Foo",
 						sinon.match.same(mTypeForMetaPath))
@@ -9673,7 +9700,9 @@ sap.ui.define([
 		var sTitle = "CollectionCache#requestSideEffects: unexpected response " + i;
 
 		QUnit.test(sTitle, function (assert) {
-			var oGroupLock = {},
+			var oBeforeExpectation,
+				oFilterExpectation,
+				oGroupLock = {},
 				mMergeableQueryOptions = {},
 				mMergedQueryOptions = {},
 				aPaths = [],
@@ -9700,9 +9729,11 @@ sap.ui.define([
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
 							"/TEAMS/Foo", "", true)
 						.returns(mMergedQueryOptions);
-					oCacheMock.expects("drop").withExactArgs(1, "('b')");
-					oCacheMock.expects("drop").withExactArgs(3, "('d')");
-					oCacheMock.expects("drop").withExactArgs(4, "('e')");
+					oCache.beforeRequestSideEffects = function () {};
+					oBeforeExpectation = that.mock(oCache).expects("beforeRequestSideEffects")
+						.withExactArgs(sinon.match.same(mMergedQueryOptions));
+					oFilterExpectation = that.mock(oCache).expects("filterVisibleElements")
+						.withExactArgs(["('c')"]).returns([oCache.aElements[2]]);
 					that.mock(_Helper).expects("getKeyFilter")
 						.withExactArgs(sinon.match.same(oCache.aElements[2]), "/TEAMS/Foo",
 							sinon.match.same(mTypeForMetaPath))
@@ -9728,6 +9759,7 @@ sap.ui.define([
 						}, function (oError) {
 							assert.strictEqual(oError.message,
 								"Expected 1 row(s), but instead saw " + aData.length);
+							assert.ok(oBeforeExpectation.calledBefore(oFilterExpectation));
 						});
 				});
 		});
@@ -9778,6 +9810,8 @@ sap.ui.define([
 					sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 					"/TEAMS/Foo", "", true)
 				.returns(mIntersectedQueryOptions);
+			this.mock(oCache).expects("filterVisibleElements").withExactArgs(["('c')"])
+				.returns([oCache.aElements[0]]);
 			this.mock(_Helper).expects("getKeyFilter")
 				.withExactArgs(sinon.match.same(oCache.aElements[0]), "/TEAMS/Foo",
 					sinon.match.same(mTypeForMetaPath))

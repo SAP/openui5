@@ -2553,6 +2553,57 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines the list of visible or kept-alive elements determined by the given predicates. All
+	 * other elements from the back end are discarded!
+	 *
+	 * @param {string[]} aPredicates
+	 *   The key predicates of the root elements to request side effects for
+	 * @returns {object[]}
+	 *   The list of visible or kept-alive elements
+	 *
+	 * @private
+	 */
+	_CollectionCache.prototype.filterVisibleElements = function (aPredicates) {
+		var aElements,
+			iMaxIndex = -1,
+			mPredicates = {}, // a set of the predicates (as map to true) to speed up the search
+			that = this;
+
+		aPredicates.forEach(function (sPredicate) {
+			mPredicates[sPredicate] = true;
+		});
+
+		aElements = this.aElements.filter(function (oElement, i) {
+			var sPredicate;
+
+			if (!oElement) {
+				return false; // ignore
+			}
+			if (_Helper.hasPrivateAnnotation(oElement, "transient")) {
+				iMaxIndex = i;
+				return false; // keep, but do not request
+			}
+
+			sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+			if (mPredicates[sPredicate]
+					|| _Helper.hasPrivateAnnotation(oElement, "transientPredicate")) {
+				iMaxIndex = i;
+				delete mPredicates[sPredicate];
+				return true; // keep and request
+			}
+
+			that.drop(i, sPredicate);
+			return false;
+		});
+		this.aElements.length = iMaxIndex + 1;
+		Object.keys(mPredicates).forEach(function (sPredicate) {
+			aElements.push(that.aElements.$byPredicate[sPredicate]);
+		});
+
+		return aElements;
+	};
+
+	/**
 	 * Returns a filter that excludes all created entities in this cache's collection and all
 	 * entities that have been deleted on the client, but not on the server yet.
 	 *
@@ -3131,10 +3182,8 @@ sap.ui.define([
 	_CollectionCache.prototype.requestSideEffects = function (oGroupLock, aPaths, aPredicates,
 			bSingle) {
 		var aElements,
-			iMaxIndex = -1,
 			mMergeableQueryOptions,
 			mQueryOptions,
-			mPredicates = {}, // a set of the predicates (as map to true) to speed up the search
 			sResourcePath,
 			bSkip,
 			mTypeForMetaPath = this.fetchTypes().getResult(),
@@ -3154,40 +3203,14 @@ sap.ui.define([
 		if (!mQueryOptions) {
 			return SyncPromise.resolve(); // micro optimization: use *sync.* promise which is cached
 		}
+		if (this.beforeRequestSideEffects) {
+			this.beforeRequestSideEffects(mQueryOptions);
+		}
 
 		if (bSingle) {
 			aElements = [this.aElements.$byPredicate[aPredicates[0]]];
 		} else {
-			aPredicates.forEach(function (sPredicate) {
-				mPredicates[sPredicate] = true;
-			});
-
-			aElements = this.aElements.filter(function (oElement, i) {
-				var sPredicate;
-
-				if (!oElement) {
-					return false; // ignore
-				}
-				if (_Helper.hasPrivateAnnotation(oElement, "transient")) {
-					iMaxIndex = i;
-					return false; // keep, but do not request
-				}
-
-				sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
-				if (mPredicates[sPredicate]
-						|| _Helper.hasPrivateAnnotation(oElement, "transientPredicate")) {
-					iMaxIndex = i;
-					delete mPredicates[sPredicate];
-					return true; // keep and request
-				}
-
-				that.drop(i, sPredicate);
-				return false;
-			});
-			this.aElements.length = iMaxIndex + 1;
-			Object.keys(mPredicates).forEach(function (sPredicate) {
-				aElements.push(that.aElements.$byPredicate[sPredicate]);
-			});
+			aElements = this.filterVisibleElements(aPredicates);
 			if (!aElements.length) {
 				return SyncPromise.resolve(); // micro optimization: use cached *sync.* promise
 			}
