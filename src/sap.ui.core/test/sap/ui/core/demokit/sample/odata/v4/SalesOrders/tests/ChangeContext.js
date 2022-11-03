@@ -16,15 +16,30 @@ sap.ui.define([], function () {
 			When.onTheMainPage.firstSalesOrderIsVisible();
 
 			// CPOUI5ODATAV4-1786: Context#resetChanges for absolute row contexts
-			When.onTheMainPage.selectSalesOrder(2);
-			When.onTheMainPage.changeNoteInSalesOrders(2, "CPOUI5ODATAV4-1786: A");
+			When.onTheMainPage.pressMoreButton(); // to prevent gap filling request due to delete
+			When.onTheMainPage.selectSalesOrder(3);
+			When.onTheMainPage.changeNoteInSalesOrders(3, "0500000003 changed");
 			When.onTheMainPage.selectSalesOrder(4);
-			When.onTheMainPage.changeNoteInSalesOrders(4, "CPOUI5ODATAV4-1786: B");
+			When.onTheMainPage.changeNoteInSalesOrders(4, "0500000004 changed");
 			When.onTheMainPage.pressCancelSelectedSalesOrderChangesButton();
-			Then.onTheMainPage.checkNote(4, "EPM DG: SO ID 0500000008 Deliver as fast as possible");
-			Then.onTheMainPage.checkNote(2, "CPOUI5ODATAV4-1786: A");
+			Then.onTheMainPage.checkNote(4, "EPM DG: SO ID 0500000004 Deliver as fast as possible");
+			Then.onTheMainPage.checkNote(3, "0500000003 changed");
+			When.onTheMainPage.selectSalesOrder(5);
+			When.onTheMainPage.changeNoteInSalesOrders(5, "0500000005 changed");
+			Then.onTheMainPage.checkUndoSalesOrderDeletionButtonIsEnabled(false);
+			When.onTheMainPage.deleteSelectedSalesOrder();
+			Then.onTheMainPage.checkNote(5, "EPM DG: SO ID 0500000006 Deliver as fast as possible");
+			Then.onTheMainPage.checkUndoSalesOrderDeletionButtonIsEnabled(true);
+			When.onTheMainPage.selectSalesOrder(5);
+			When.onTheMainPage.deleteSelectedSalesOrder();
+			Then.onTheMainPage.checkNote(5, "EPM DG: SO ID 0500000007 Deliver as fast as possible");
+			When.onTheMainPage.pressUndoSalesOrderDeletionButton(); // restore 0500000006
+			Then.onTheMainPage.checkNote(5, "EPM DG: SO ID 0500000006 Deliver as fast as possible");
+			When.onTheMainPage.pressUndoSalesOrderDeletionButton(); // restore 0500000005
+			Then.onTheMainPage.checkNote(5, "EPM DG: SO ID 0500000005 Deliver as fast as possible");
+			Then.onTheMainPage.checkUndoSalesOrderDeletionButtonIsEnabled(false);
 			When.onTheMainPage.pressCancelSalesOrderListChangesButton(); // get rid of 2nd change
-			Then.onTheMainPage.checkNote(2, "EPM DG: SO ID 0500000002 Deliver as fast as possible");
+			Then.onTheMainPage.checkNote(4, "EPM DG: SO ID 0500000004 Deliver as fast as possible");
 
 			// change a sales order line item, change sales order context
 			When.onTheMainPage.selectFirstSalesOrder();

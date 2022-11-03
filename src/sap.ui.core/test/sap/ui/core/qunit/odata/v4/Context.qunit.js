@@ -52,7 +52,9 @@ sap.ui.define([
 		assert.strictEqual(oContext.isDeleted(), false);
 		assert.strictEqual(oContext.isInactive(), undefined);
 		assert.strictEqual(oContext.isKeepAlive(), false);
+		assert.ok(oContext.hasOwnProperty("fnOnBeforeDestroy"));
 		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
+		assert.strictEqual(oContext.oDeletePromise, null);
 
 		// code under test
 		oContext = Context.create(oModel, oBinding, sPath, 42, undefined, false);
@@ -1165,6 +1167,7 @@ sap.ui.define([
 		oDeletePromise = oContext.delete(sGroupId, "~bDoNotRequestCount~");
 
 		assert.ok(oDeletePromise instanceof Promise);
+		assert.strictEqual(oContext.oDeletePromise, oDeletePromise);
 		assert.strictEqual(oContext.isDeleted(), true);
 
 		// code under test
@@ -1172,6 +1175,9 @@ sap.ui.define([
 
 		return oDeletePromise.then(function () {
 			assert.strictEqual(oContext.isDeleted(), false);
+			assert.strictEqual(oContext.oDeletePromise, null);
+		}, function () {
+			assert.notOk(true);
 		});
 	});
 	});
@@ -1221,6 +1227,7 @@ sap.ui.define([
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
 			assert.strictEqual(oContext.isDeleted(), false);
+			assert.strictEqual(oContext.oDeletePromise, null);
 		});
 	});
 
@@ -1342,7 +1349,7 @@ sap.ui.define([
 	QUnit.test("delete: already deleted", function (assert) {
 		var oContext = Context.create("~oModel~", "~oBinding~", "/EMPLOYEES/42", 42);
 
-		this.mock(oContext).expects("isDeleted").withExactArgs().returns(true);
+		this.mock(oContext).expects("isDeleted").withExactArgs().thrice().returns(true);
 		this.mock(oContext).expects("_delete").never();
 
 		assert.throws(function () {
@@ -1611,11 +1618,13 @@ sap.ui.define([
 				oBinding : oBinding,
 				iIndex : undefined,
 				bKeepAlive : true,
-				getValue : function () {}
+				getValue : function () {},
+				isDeleted : function () {}
 			};
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oOtherContext).expects("isDeleted").withExactArgs().returns(false);
 		this.mock(oOtherContext).expects("getValue").withExactArgs().returns("~value~");
 		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~value~", "predicate")
 			.returns("('23')");
@@ -1650,7 +1659,7 @@ sap.ui.define([
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('1')");
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("isDeleted").withExactArgs().returns(true);
+		this.mock(oContext).expects("isDeleted").withExactArgs().thrice().returns(true);
 
 		assert.throws(function () {
 			// code under test
@@ -1686,17 +1695,22 @@ sap.ui.define([
 [
 	{bDeleted : false, bKeepAlive : false},
 	{bDeleted : true, bKeepAlive : true}
-].forEach(function (oOtherContext) {
-	QUnit.test("replaceWith: other context = " + JSON.stringify(oOtherContext), function (assert) {
+].forEach(function (oFixture) {
+	QUnit.test("replaceWith: other context = " + JSON.stringify(oFixture), function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES($uid=1)", 0,
-					SyncPromise.resolve(Promise.resolve()));
+					SyncPromise.resolve(Promise.resolve())),
+			oOtherContext = {
+				isDeleted : function () {},
+				bKeepAlive : oFixture.bKeepAlive
+			};
 
 		oOtherContext.oBinding = oBinding;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oOtherContext).expects("isDeleted").withExactArgs().returns(oFixture.bDeleted);
 
 		assert.throws(function () {
 			// code under test
@@ -2669,7 +2683,7 @@ sap.ui.define([
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("isDeleted").withExactArgs().returns(true);
+		this.mock(oContext).expects("isDeleted").withExactArgs().thrice().returns(true);
 		this.mock(oContext).expects("requestSideEffectsInternal").never();
 
 		assert.throws(function () {
@@ -2717,7 +2731,7 @@ sap.ui.define([
 			oError = new Error("This call intentionally failed"),
 		that = this;
 
-		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("isDeleted").withExactArgs().twice().returns(false);
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
 		this.mock(oContext).expects("isInactive").withExactArgs().returns(true);
 		this.mock(oContext).expects("getValue").never();
@@ -2749,7 +2763,7 @@ sap.ui.define([
 				unlock : function () {}
 			};
 
-		this.mock(oContext).expects("isDeleted").twice().withExactArgs().returns(true);
+		this.mock(oContext).expects("isDeleted").exactly(6).withExactArgs().returns(true);
 		this.mock(oContext).expects("getValue").never();
 		this.mock(oContext).expects("withCache").never();
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
@@ -2889,7 +2903,7 @@ sap.ui.define([
 				oContext.toString(),
 				"/BusinessPartnerList('0100000000')[42;inactive]");
 		}
-		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("isDeleted").withExactArgs().exactly(4).returns(false);
 		this.mock(oContext).expects("getValue").never();
 		this.mock(oContext).expects("isKeepAlive").withExactArgs().on(oContext)
 			.exactly(i === 1 ? 1 : 0).returns("~bKeepAlive~");
@@ -3631,14 +3645,22 @@ sap.ui.define([
 				resetChangesForPath : function () {}
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/path"),
+			oError = new Error("deletion cancelled"),
+			oDeletePromise = Promise.reject(oError),
 			oResetChangesPromise,
 			oResetChangesForPathPromise = SyncPromise.resolve(new Promise(function (resolve) {
 				setTimeout(resolve.bind(null, "foo"));
 			}));
 
+		oContext.oDeletePromise = oDeletePromise;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oBinding).expects("resetChangesForPath").withExactArgs("/path", [])
+		this.mock(oBinding).expects("resetChangesForPath")
+			.withExactArgs("/path", sinon.match.array)
 			.callsFake(function (_sPath, aPromises) {
+				assert.strictEqual(aPromises.length, 1);
+				aPromises[0].catch(function (oError0) {
+					assert.strictEqual(oError0, oError);
+				});
 				aPromises.push(oResetChangesForPathPromise);
 			});
 
@@ -3651,6 +3673,21 @@ sap.ui.define([
 			assert.ok(oResetChangesForPathPromise.isFulfilled());
 			assert.strictEqual(oResult, undefined);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges: w/o oDeletePromise", function () {
+		var oBinding = {
+				checkSuspended : function () {},
+				resetChangesForPath : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/path");
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("resetChangesForPath").withExactArgs("/path", []);
+
+		// code under test
+		return oContext.resetChanges();
 	});
 
 	//*********************************************************************************************
@@ -3727,7 +3764,7 @@ sap.ui.define([
 		assert.strictEqual(oContext.isKeepAlive(), true);
 		assert.strictEqual(oContext.fnOnBeforeDestroy, "fnOnBeforeDestroy");
 
-		oContext.bDeleted = true;
+		oContext.oDeletePromise = "~deletePromise~";
 
 		// code under test - reset kept-alive on a deleted context
 		oContext.setKeepAlive(false);
@@ -3776,7 +3813,7 @@ sap.ui.define([
 		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("isDeleted").withExactArgs().returns(true);
+		this.mock(oContext).expects("isDeleted").withExactArgs().thrice().returns(true);
 
 		assert.throws(function () {
 			// code under test

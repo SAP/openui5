@@ -226,6 +226,9 @@
 					<Button id="cancelSalesOrderListChanges" icon="sap-icon://sys-cancel-2"
 						press="onCancelSalesOrderListChanges"
 						tooltip="Cancel sales order list changes"/>
+					<Button enabled="{= ${ui>/bSalesOrderDeleted}}"
+						id="undoSalesOrderDeletion" press="onUndoSalesOrderDeletion"
+							icon="sap-icon://undo" tooltip="Undo sales order deletion"/>
 					<ToolbarSpacer/>
 					<SearchField id="filterGrossAmount"
 						placeholder="Filter by gross amount greater than"

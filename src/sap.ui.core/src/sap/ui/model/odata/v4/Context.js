@@ -124,7 +124,8 @@ sap.ui.define([
 			// ensure to return a promise that is resolved w/o data
 			&& Promise.resolve(oCreatePromise).then(function () {});
 		this.oSyncCreatePromise = oCreatePromise;
-		this.bDeleted = false; // deleted on the client, but not on the server yet
+		// a promise waiting for the deletion, also used as indicator for #isDeleted
+		this.oDeletePromise = null;
 		this.iGeneration = iGeneration || 0;
 		this.bInactive = bInactive || undefined; // be in sync with the annotation
 		this.iIndex = iIndex;
@@ -285,8 +286,8 @@ sap.ui.define([
 	 *
 	 * Since 1.105 such a pending deletion is a pending change. It causes
 	 * <code>hasPendingChanges</code> to return <code>true</code> for the context, the binding
-	 * containing it, and the model. <code>resetChanges</code> in binding or model cancels the
-	 * deletion and restores the context.
+	 * containing it, and the model. The <code>resetChanges</code> method called on the context
+	 * (since 1.109.0), the binding, or the model cancels the deletion and restores the context.
 	 *
 	 * If the DELETE request succeeds, the context is destroyed and must not be used anymore. If it
 	 * fails or is canceled, the context is restored, reinserted into the list, and fully functional
@@ -338,6 +339,7 @@ sap.ui.define([
 	 * @function
 	 * @public
 	 * @see #hasPendingChanges
+	 * @see #resetChanges
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#hasPendingChanges
 	 * @see sap.ui.model.odata.v4.ODataListBinding#hasPendingChanges
 	 * @see sap.ui.model.odata.v4.ODataModel#hasPendingChanges
@@ -372,16 +374,16 @@ sap.ui.define([
 			oGroupLock = this.oBinding.lockGroup(sGroupId, true, true);
 		}
 
-		this.bDeleted = true;
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
 			oDependentBinding.setContext(undefined);
 		});
 
-		return Promise.resolve(this._delete(oGroupLock, /*oETagEntity*/null, bDoNotRequestCount))
-		.then(function () {
+		this.oDeletePromise = Promise.resolve(
+			this._delete(oGroupLock, /*oETagEntity*/null, bDoNotRequestCount)
+		).then(function () {
 			var sResourcePathPrefix = that.sPath.slice(1);
 
-			that.bDeleted = false;
+			that.oDeletePromise = null;
 			// Messages have been updated via _Cache#_delete; "that" is already destroyed; remove
 			// all dependent caches in all bindings
 			oModel.getAllBindings().forEach(function (oBinding) {
@@ -392,10 +394,12 @@ sap.ui.define([
 				oGroupLock.unlock(true);
 			}
 			oModel.reportError("Failed to delete " + that.getPath(), sClassName, oError);
-			that.bDeleted = false;
+			that.oDeletePromise = null;
 			that.checkUpdate();
 			throw oError;
 		});
+
+		return this.oDeletePromise;
 	};
 
 	/**
@@ -947,7 +951,7 @@ sap.ui.define([
 	 * @since 1.105.0
 	 */
 	Context.prototype.isDeleted = function () {
-		return this.bDeleted;
+		return !!this.oDeletePromise;
 	};
 
 	/**
@@ -1131,7 +1135,7 @@ sap.ui.define([
 			throw new Error("Cannot replace " + this);
 		}
 		if (oOtherContext.oBinding !== this.oBinding || oOtherContext.iIndex !== undefined
-			|| oOtherContext.bDeleted || !oOtherContext.bKeepAlive) {
+			|| oOtherContext.isDeleted() || !oOtherContext.bKeepAlive) {
 			throw new Error("Cannot replace with " + oOtherContext);
 		}
 		oElement = oOtherContext.getValue();
@@ -1565,10 +1569,11 @@ sap.ui.define([
 
 	/**
 	 * Resets all pending changes of this context, see {@link #hasPendingChanges}. Resets also
-	 * invalid user input.
+	 * invalid user input. If this context is currently {@link #delete deleted} on the client, but
+	 * not yet on the server, this method cancels the deletion and restores the context.
 	 *
-	 * Note: This is an experimental API. Currently only PATCH changes for row contexts of an
-	 * absolute {@link sap.ui.model.odata.v4.ODataListBinding} are supported.
+	 * Note: This is an experimental API. Currently only PATCH and DELETE changes for row contexts
+	 * of an absolute {@link sap.ui.model.odata.v4.ODataListBinding} are supported.
 	 *
 	 * @returns {Promise}
 	 *   A promise which is resolved without a defined result as soon as all changes in the context
@@ -1581,7 +1586,9 @@ sap.ui.define([
 	 * @public
 	 */
 	Context.prototype.resetChanges = function () {
-		var aPromises = [];
+		var aPromises = this.oDeletePromise
+				? [this.oDeletePromise.catch(function () { /*already handled in #delete*/ })]
+				: [];
 
 		this.oBinding.checkSuspended();
 		this.oBinding.resetChangesForPath(this.sPath, aPromises);
@@ -1782,7 +1789,7 @@ sap.ui.define([
 
 		if (!this.oModel) {
 			sSuffix = ";destroyed";
-		} else if (this.bDeleted) {
+		} else if (this.isDeleted()) {
 			sSuffix = ";deleted";
 		}
 
