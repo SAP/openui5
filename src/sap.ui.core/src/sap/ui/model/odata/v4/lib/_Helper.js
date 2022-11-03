@@ -355,6 +355,32 @@ sap.ui.define([
 		},
 
 		/**
+		 * Copies the value of the private client-side instance annotation with the given
+		 * unqualified name from the given source to the given target object, if present at the
+		 * source.
+		 *
+		 * @param {object} oSource
+		 *   Any object
+		 * @param {string} sAnnotation
+		 *   The unqualified name of a private client-side instance annotation (hidden inside
+		 *   namespace "@$ui5._")
+		 * @param {object} oTarget
+		 *   Any object
+		 * @throws {Error}
+		 *   If the annotation to be copied is already present at the target, no matter if the value
+		 *   is the same or not
+		 */
+		copyPrivateAnnotation : function (oSource, sAnnotation, oTarget) {
+			if (_Helper.hasPrivateAnnotation(oSource, sAnnotation)) {
+				if (_Helper.hasPrivateAnnotation(oTarget, sAnnotation)) {
+					throw new Error("Must not overwrite: " + sAnnotation);
+				}
+				_Helper.setPrivateAnnotation(oTarget, sAnnotation,
+					_Helper.getPrivateAnnotation(oSource, sAnnotation));
+			}
+		},
+
+		/**
 		 * Returns an <code>Error</code> instance from a jQuery XHR wrapper.
 		 *
 		 * @param {object} jqXHR
