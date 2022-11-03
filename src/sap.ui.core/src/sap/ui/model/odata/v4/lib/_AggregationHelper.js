@@ -34,6 +34,8 @@ sap.ui.define([
 			search : "string",
 			subtotalsAtBottomOnly : "boolean"
 		},
+		oFrozenCollapsed = Object.freeze({"@$ui5.node.isExpanded" : false}),
+		oFrozenExpanded = Object.freeze({"@$ui5.node.isExpanded" : true}),
 		// Example: "Texts/Country asc"
 		// capture groups: 1 - the property path
 		rOrderbyItem = new RegExp("^(" + _Parser.sODataIdentifier
@@ -95,6 +97,7 @@ sap.ui.define([
 	/*
 	 * Takes care of the $skip/$top system query options and returns the corresponding
 	 * transformation(s).
+	 *
 	 * @param {object} mQueryOptions
 	 *   A modifiable map of key-value pairs representing the query string
 	 * @param {number} [mQueryOptions.$skip]
@@ -639,6 +642,21 @@ sap.ui.define([
 		},
 
 		/**
+		 * Gets an object with property updates to be applied when collapsing the given group node.
+		 *
+		 * @param {object} oGroupNode
+		 *   The group node which is about to be expanded
+		 * @returns {object}
+		 *   An object with property updates to be applied when collapsing the given group node
+		 *
+		 * @public
+		 * @see .getOrCreateExpandedObject
+		 */
+		getCollapsedObject : function (oGroupNode) {
+			return _Helper.getPrivateAnnotation(oGroupNode, "collapsed") || oFrozenCollapsed;
+		},
+
+		/**
 		 * Returns the "$orderby" system query option filtered in such a way that only aggregatable
 		 * or groupable properties, units, or additionally requested properties are used, provided
 		 * they are contained in the given aggregation information and are relevant for the given
@@ -729,7 +747,7 @@ sap.ui.define([
 		/**
 		 * Gets an object with property updates to be applied when expanding the given group node,
 		 * creating it when needed for the first time. Creates a corresponding object to be applied
-		 * when collapsing the node again. Takes placement of subtotals into account.
+		 * when collapsing the node again, if needed. Takes placement of subtotals into account.
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation;
@@ -740,20 +758,23 @@ sap.ui.define([
 		 *   An object with property updates to be applied when expanding the given group node
 		 *
 		 * @public
+		 * @see .getCollapsedObject
 		 */
 		getOrCreateExpandedObject : function (oAggregation, oGroupNode) {
-			var oCollapsed,
-				oExpanded = _Helper.getPrivateAnnotation(oGroupNode, "expanded");
+			var oCollapsed, oExpanded;
 
+			if (oAggregation.subtotalsAtBottomOnly === undefined) { // "top only"
+				return oFrozenExpanded;
+			}
+
+			oExpanded = _Helper.getPrivateAnnotation(oGroupNode, "expanded");
 			if (!oExpanded) {
 				oCollapsed = {"@$ui5.node.isExpanded" : false};
 				_Helper.setPrivateAnnotation(oGroupNode, "collapsed", oCollapsed);
 				oExpanded = {"@$ui5.node.isExpanded" : true};
 				_Helper.setPrivateAnnotation(oGroupNode, "expanded", oExpanded);
-				if (oAggregation.subtotalsAtBottomOnly !== undefined) { // "only or also at bottom"
-					_AggregationHelper.extractSubtotals(oAggregation, oGroupNode, oCollapsed,
-						oAggregation.subtotalsAtBottomOnly ? oExpanded : null);
-				}
+				_AggregationHelper.extractSubtotals(oAggregation, oGroupNode, oCollapsed,
+					oAggregation.subtotalsAtBottomOnly ? oExpanded : null);
 			}
 
 			return oExpanded;

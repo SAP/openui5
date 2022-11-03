@@ -193,7 +193,7 @@ sap.ui.define([
 			iCount += 1;
 		}
 
-		oCollapsed = _Helper.getPrivateAnnotation(oGroupNode, "collapsed");
+		oCollapsed = _AggregationHelper.getCollapsedObject(oGroupNode);
 		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode, oCollapsed);
 
 		iDescendants = _Helper.getPrivateAnnotation(oGroupNode, "descendants");
@@ -348,7 +348,7 @@ sap.ui.define([
 		return oCache.read(0, this.iReadLength, 0, oGroupLock).then(function (oResult) {
 			var iIndex = that.aElements.indexOf(oGroupNode) + 1,
 				iLevel = oGroupNode["@$ui5.node.level"],
-				oSubtotals = _Helper.getPrivateAnnotation(oGroupNode, "collapsed"),
+				oSubtotals = _AggregationHelper.getCollapsedObject(oGroupNode),
 				// Note: there is at least one key for "@$ui5.node.isExpanded"; there are more keys
 				// if and only if subtotals are actually being requested and only or also shown at
 				// bottom
@@ -404,7 +404,7 @@ sap.ui.define([
 		}, function (oError) {
 			// Note: typeof vGroupNodeOrPath === "string"
 			_Helper.updateAll(that.mChangeListeners, vGroupNodeOrPath, oGroupNode,
-				_Helper.getPrivateAnnotation(oGroupNode, "collapsed"));
+				_AggregationHelper.getCollapsedObject(oGroupNode));
 
 			throw oError;
 		});
@@ -831,7 +831,6 @@ sap.ui.define([
 		switch (oElement[sDrillStateProperty]) {
 			case "expanded":
 				bIsExpanded = true;
-				_AggregationHelper.getOrCreateExpandedObject({/*oAggregation*/}, oElement);
 				break;
 
 			case "collapsed":

@@ -1774,7 +1774,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[undefined, false, true].forEach(function (bSubtotalsAtBottomOnly, i) {
+[false, true].forEach(function (bSubtotalsAtBottomOnly, i) {
 	var sTitle = "getOrCreateExpandedObject: subtotalsAtBottomOnly = " + bSubtotalsAtBottomOnly;
 
 	QUnit.test(sTitle, function (assert) {
@@ -1785,9 +1785,8 @@ sap.ui.define([
 			oGroupNode = {};
 
 		oExpectation = this.mock(_AggregationHelper).expects("extractSubtotals")
-			.exactly(i ? 1 : 0)
 			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(oGroupNode),
-				/*oCollapsed*/sinon.match.object, i === 2 ? /*oExpanded*/sinon.match.object : null);
+				/*oCollapsed*/sinon.match.object, i ? /*oExpanded*/sinon.match.object : null);
 
 		// code under test (1st time)
 		oExpanded = _AggregationHelper.getOrCreateExpandedObject(oAggregation, oGroupNode);
@@ -1797,9 +1796,6 @@ sap.ui.define([
 		oCollapsed = _Helper.getPrivateAnnotation(oGroupNode, "collapsed");
 		assert.deepEqual(oCollapsed, {"@$ui5.node.isExpanded" : false});
 		if (i) {
-			assert.strictEqual(oExpectation.args[0][2], oCollapsed);
-		}
-		if (i === 2) {
 			assert.strictEqual(oExpectation.args[0][3], oExpanded);
 		}
 
@@ -1809,8 +1805,70 @@ sap.ui.define([
 			oExpanded);
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oGroupNode, "collapsed"), oCollapsed);
+
+		// code under test
+		assert.strictEqual(_AggregationHelper.getCollapsedObject(oGroupNode), oCollapsed);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getOrCreateExpandedObject: subtotalsAtBottomOnly = undefined", function (assert) {
+		var oAggregation = {subtotalsAtBottomOnly : undefined},
+			oExpanded;
+
+		this.mock(_Helper).expects("getPrivateAnnotation").never();
+		this.mock(_Helper).expects("setPrivateAnnotation").never();
+		this.mock(_AggregationHelper).expects("extractSubtotals").never();
+
+		// code under test (1st time)
+		oExpanded = _AggregationHelper.getOrCreateExpandedObject(oAggregation, {});
+
+		assert.deepEqual(oExpanded, {"@$ui5.node.isExpanded" : true});
+
+		assert.strictEqual(
+			// code under test (2nd time)
+			_AggregationHelper.getOrCreateExpandedObject(oAggregation, {}),
+			oExpanded,
+			"always the same");
+
+		// check that no modification is possible
+		assert.throws(function () {
+			delete oExpanded["@$ui5.node.isExpanded"];
+		});
+		assert.throws(function () {
+			oExpanded["@$ui5.node.isExpanded"] = false;
+		});
+		assert.throws(function () {
+			oExpanded.foo = "bar";
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCollapsedObject: no private annotation", function (assert) {
+		var oCollapsed;
+
+		// code under test (1st time)
+		oCollapsed = _AggregationHelper.getCollapsedObject({});
+
+		assert.deepEqual(oCollapsed, {"@$ui5.node.isExpanded" : false});
+
+		assert.strictEqual(
+			// code under test (2nd time)
+			_AggregationHelper.getCollapsedObject({}),
+			oCollapsed,
+			"always the same");
+
+		// check that no modification is possible
+		assert.throws(function () {
+			delete oCollapsed["@$ui5.node.isExpanded"];
+		});
+		assert.throws(function () {
+			oCollapsed["@$ui5.node.isExpanded"] = true;
+		});
+		assert.throws(function () {
+			oCollapsed.foo = "bar";
+		});
+	});
 
 	//*********************************************************************************************
 [undefined, "", "sFilteredOrderby"].forEach(function (sFilteredOrderby) {

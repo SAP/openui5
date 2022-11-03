@@ -853,9 +853,6 @@ sap.ui.define([
 				.returns("~filter~");
 			oHelperMock.expects("setPrivateAnnotation")
 				.withExactArgs(sinon.match.same(oElement), "filter", "~filter~");
-		} else if (sDrillState === "expanded") {
-			this.mock(_AggregationHelper).expects("getOrCreateExpandedObject")
-				.withExactArgs({/*oAggregation*/}, sinon.match.same(oElement));
 		}
 		this.mock(_AggregationHelper).expects("setAnnotations")
 			.withExactArgs(sinon.match.same(oElement), bIsExpanded, /*bIsTotal*/undefined,
@@ -1869,7 +1866,6 @@ sap.ui.define([
 			oCollapsed.A = "10"; // placeholder for an aggregate with subtotals
 		}
 		oExpandResult.value.$count = 7;
-		_Helper.setPrivateAnnotation(oGroupNode, "collapsed", oCollapsed);
 		_Helper.setPrivateAnnotation(oGroupNode, "predicate", "(~predicate~)");
 		if (vHasCache) {
 			_Helper.setPrivateAnnotation(oGroupNode, "cache", oGroupLevelCache);
@@ -1904,6 +1900,8 @@ sap.ui.define([
 		this.mock(oGroupLevelCache).expects("read")
 			.withExactArgs(0, oCache.iReadLength, 0, sinon.match.same(oGroupLock))
 			.returns(SyncPromise.resolve(Promise.resolve(oExpandResult)));
+		this.mock(_AggregationHelper).expects("getCollapsedObject")
+			.withExactArgs(sinon.match.same(oGroupNode)).returns(oCollapsed);
 		oHelperMock.expects("setPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oGroupNode), "groupLevelCount", 7);
 		oHelperMock.expects("updateAll")
@@ -2277,8 +2275,8 @@ sap.ui.define([
 		this.mock(oGroupLevelCache).expects("read")
 			.withExactArgs(0, oCache.iReadLength, 0, "~oGroupLock~")
 			.returns(SyncPromise.resolve(Promise.resolve().then(function () {
-				that.mock(_Helper).expects("getPrivateAnnotation")
-					.withExactArgs(sinon.match.same(oGroupNode), "collapsed").returns(oCollapsed);
+				that.mock(_AggregationHelper).expects("getCollapsedObject")
+					.withExactArgs(sinon.match.same(oGroupNode)).returns(oCollapsed);
 				that.mock(_Helper).expects("updateAll")
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
 						sinon.match.same(oGroupNode), sinon.match.same(oCollapsed));
@@ -2437,18 +2435,17 @@ sap.ui.define([
 				"@$ui5.node.groupLevelCount" : 42,
 				"@$ui5.node.isExpanded" : true,
 				"@$ui5.node.level" : 5
-			}],
-			oHelperMock = this.mock(_Helper);
+			}];
 
 		oCache.aElements = aElements.slice(); // simulate a read
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
 			.returns(SyncPromise.resolve(aElements[0]));
-		oHelperMock.expects("getPrivateAnnotation")
-			.withExactArgs(sinon.match.same(aElements[0]), "collapsed").returns(oCollapsed);
-		oHelperMock.expects("getPrivateAnnotation")
+		this.mock(_AggregationHelper).expects("getCollapsedObject")
+			.withExactArgs(sinon.match.same(aElements[0])).returns(oCollapsed);
+		this.mock(_Helper).expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(aElements[0]), "descendants").returns(undefined);
-		oHelperMock.expects("updateAll")
+		this.mock(_Helper).expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
 				sinon.match.same(aElements[0]), sinon.match.same(oCollapsed))
 			.callThrough();
