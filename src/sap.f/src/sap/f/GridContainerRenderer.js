@@ -56,7 +56,7 @@ sap.ui.define([], function () {
 
 		oRM.openEnd();
 
-		this.renderDummyArea(oRM, sId, "before", -1);
+		this.renderDummyArea(oRM, sId, "before", aItems.length > 0 ? 0 : -1);
 
 		aItems.forEach(function (oItem, iIndex) {
 			this.renderItem(oRM, oItem, oControl, iIndex);
