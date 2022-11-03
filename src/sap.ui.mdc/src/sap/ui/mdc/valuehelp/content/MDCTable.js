@@ -224,8 +224,13 @@ sap.ui.define([
 					} else if (oRowMode.isA("sap.ui.table.rowmodes.AutoRowMode")) {
 						oRowMode.setMinRowCount(3);
 					}
+
+					var sMDCTableSelectionMode = oTable.getSelectionMode();
 					var sSelectionMode = this._isSingleSelect() ? UITableSelectionMode.Single : UITableSelectionMode.MultiToggle;
-					oInnerTable.setSelectionBehavior(UITableSelectionBehavior.Row);
+					if (sMDCTableSelectionMode !== MDCSelectionMode.SingleMaster) {
+						// only for multi we can set selectionBehavior to Row
+						oInnerTable.setSelectionBehavior(UITableSelectionBehavior.Row);
+					}
 					_getUITableSelectionHandler().setSelectionMode(sSelectionMode);
 				},
 				handleScrolling: function (iIndex) {
@@ -585,7 +590,7 @@ sap.ui.define([
 	MDCTable.prototype.onShow = function () {
 		if (this._oTable) {
 			// check if selection mode is fine
-			var sSelectionMode = FilterableListContent.prototype._isSingleSelect.apply(this) ? MDCSelectionMode.Single : MDCSelectionMode.Multi;
+			var sSelectionMode = FilterableListContent.prototype._isSingleSelect.apply(this) ? MDCSelectionMode.SingleMaster : MDCSelectionMode.Multi;
 			if (this._oTable.getSelectionMode() === MDCSelectionMode.None) { // only set automatically if not provided from outside (and do it only once)
 				this._oTable.setSelectionMode(sSelectionMode);
 			}

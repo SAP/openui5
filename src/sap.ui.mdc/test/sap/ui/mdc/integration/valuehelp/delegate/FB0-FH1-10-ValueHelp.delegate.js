@@ -172,7 +172,7 @@ sap.ui.define([
 						showRowCount: true,
 						width: "100%",
 						height: "100%",
-						selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}",
+						selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}",
 						type: new GridTableType({rowCountMode: "Auto"}),
 						delegate: {
 							name: "sap/ui/v4demo/delegate/GridTable.delegate",
@@ -229,7 +229,7 @@ sap.ui.define([
 						showRowCount: true,
 						width: "100%",
 						height: "100%",
-						selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}",
+						selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}",
 						type: new GridTableType({rowCountMode: "Auto"}),
 						delegate: {
 							name: "sap/ui/v4demo/delegate/GridTable.delegate",
