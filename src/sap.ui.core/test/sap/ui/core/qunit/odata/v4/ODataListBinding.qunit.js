@@ -539,6 +539,94 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("getAggregation: basics", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oExpectation,
+			fnReplacer;
+
+		oBinding.mParameters.$$aggregation = "~aggregation~";
+		oExpectation = this.mock(_Helper).expects("clone")
+			.withExactArgs("~aggregation~", sinon.match.func).returns("~clone~");
+
+		// code under test
+		assert.strictEqual(oBinding.getAggregation(), "~clone~");
+
+		fnReplacer = oExpectation.getCall(0).args[1];
+
+		// Check:
+		//   - sKey[0] === "$" => fnReplacer(sKey, vValue) === undefined for each vValue
+		//   - sKey[0] !== "$" => fnReplacer(sKey, vValue) === vValue for each vValue
+		// code under test
+		assert.strictEqual(fnReplacer("$foo", undefined), undefined);
+		assert.strictEqual(fnReplacer("$foo", null), undefined);
+		assert.strictEqual(fnReplacer("$foo", ""), undefined);
+		assert.strictEqual(fnReplacer("$foo", 42), undefined);
+		assert.strictEqual(fnReplacer("u$a", undefined), undefined);
+		assert.strictEqual(fnReplacer("u$a", null), null);
+		assert.strictEqual(fnReplacer("u$a", ""), "");
+		assert.strictEqual(fnReplacer("u$a", 42), 42);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getAggregation: example", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		// internal data structure, not valid for #setAggregation!
+		oBinding.mParameters.$$aggregation = {
+			$path : "n/a", // private decorations must be dropped!
+			aggregate : {
+				$bar : "n/a", // not a valid OData identifier!
+				foo : {
+					$decoration : "n/a", // private decorations must be dropped!
+					grandTotal : true,
+					max : false,
+					min : true,
+					name : "~name~",
+					subtotals : false,
+					unit : "~unit~",
+					with : "~width~"
+				}
+			},
+			"grandTotal like 1.84" : true,
+			grandTotalAtBottomOnly : false,
+			group : {
+				$bar : "n/a", // not a valid OData identifier!
+				bar : { // Note: nice to know, but $ inside array should not happen
+					additionally : ["~additionally~", "$additionally"]
+				}
+			},
+			groupLevels : ["baz"],
+			search : "~search~",
+			subtotalsAtBottomOnly : true
+		};
+
+		// code under test
+		assert.deepEqual(oBinding.getAggregation(), {
+			aggregate : {
+				foo : {
+					grandTotal : true,
+					max : false,
+					min : true,
+					name : "~name~",
+					subtotals : false,
+					unit : "~unit~",
+					with : "~width~"
+				}
+			},
+			"grandTotal like 1.84" : true,
+			grandTotalAtBottomOnly : false,
+			group : {
+				bar : {
+					additionally : ["~additionally~", "$additionally"]
+				}
+			},
+			groupLevels : ["baz"],
+			search : "~search~",
+			subtotalsAtBottomOnly : true
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("applyParameters: simulate call from c'tor", function (assert) {
 		var oAggregation = {},
 			sApply = "A.P.P.L.E.",
