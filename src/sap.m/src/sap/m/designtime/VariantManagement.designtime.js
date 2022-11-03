@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides the Design Time Metadata for the sap.ui.fl.variants.VariantManagement control.
+// Provides the Design Time Metadata for the sap.ui.m.VariantManagement control.
 sap.ui.define([
 ], function(
 ) {
@@ -57,6 +57,9 @@ sap.ui.define([
 				ignore: false
 			},
 			level: {
+				ignore: false
+			},
+			maxWidth: {
 				ignore: false
 			}
 		}

@@ -134,6 +134,7 @@ sap.ui.define([
 	var VariantManagement = Control.extend("sap.m.VariantManagement", /** @lends sap.m.VariantManagement.prototype */ {
 		metadata: {
 			interfaces: [
+				"sap.ui.core.IShrinkable",
 				"sap.m.IOverflowToolbarContent"
 			],
 			library: "sap.m",
@@ -287,8 +288,19 @@ sap.ui.define([
 				},
 
 				/**
+				 * Sets the maximum width of the control.
+				 *
+				 * @since 1.109
+				 */
+				maxWidth: {
+					type: "sap.ui.core.CSSSize",
+					group: "Dimension",
+					defaultValue: "100%"
+				},
+
+				/**
 				 * Defines the behavior, when the same list item is selected
-                 * If set to <code>false</code> the <code>select</code> event will be ommited.
+                 * If set to <code>false</code> the <code>select</code> event will be omitted.
 				 */
 				_selectStategyForSameItem: {
 					type: "boolean",
@@ -446,6 +458,7 @@ sap.ui.define([
 			apiVersion: 2,
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl)
+					.style("max-width", oControl.getMaxWidth())
 					.class("sapMVarMngmt")
 					.openEnd();
 
