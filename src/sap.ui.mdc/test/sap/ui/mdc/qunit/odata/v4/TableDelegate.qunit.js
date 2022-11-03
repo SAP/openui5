@@ -99,7 +99,7 @@ sap.ui.define([
 	function waitForBindingInfo(oTable, iTimeout) {
 		return poll(function() {
 			var oInnerTable = oTable._oTable;
-			return oInnerTable && oInnerTable.getBindingInfo(oTable._getStringType() === "Table" ? "rows" : "items");
+			return oInnerTable && oInnerTable.getBindingInfo(oTable._isOfType(TableType.Table, true) ? "rows" : "items");
 		}, iTimeout);
 	}
 

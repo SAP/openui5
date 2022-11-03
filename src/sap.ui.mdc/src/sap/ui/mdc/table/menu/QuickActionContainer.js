@@ -127,9 +127,8 @@ sap.ui.define([
 			}
 		}
 
-		if (oTable._bMobileTable && oTable.getEnableColumnResize()) {
-			var oColumnResize = ResponsiveTableType.startColumnResize(oTable._oTable, oTable._oTable.getColumns()[oTable.indexOfColumn(oColumn)], this.getMenu());
-			this.addQuickAction(oColumnResize);
+		if (oTable.getEnableColumnResize()) {
+			this.addQuickAction(oTable._getType().createColumnResizeMenuItem(oColumn, this.getMenu()));
 		}
 
 		return pCreateContent;

@@ -171,7 +171,7 @@ sap.ui.define([
 				control: oControl,
 				key: "Group",
 				state: aGroup,
-				applyAbsolute: oControl._bMobileTable
+				applyAbsolute: oControl._isOfType("ResponsiveTable")
 			});
 		},
 
@@ -210,24 +210,23 @@ sap.ui.define([
 			});
 		},
 
-		moveColumn: function(oControl, iDraggedIndex, iNewIndex) {
-			//in case the user might enable different d&d options, this function should not create a move change with similar index
-			if (iDraggedIndex != iNewIndex){
-				this._moveItem(oControl, iDraggedIndex, iNewIndex, "moveColumn");
+		moveColumn: function(oTable, oColumn, iNewIndex) {
+			var iCurrentIndex = oTable.indexOfColumn(oColumn);
+
+			if (iCurrentIndex === iNewIndex){
+				return;
 			}
-		},
-		_moveItem: function(oControl, iDraggedIndex, iNewIndex, sMoveOperation) {
 
-			var aVisibleFields = oControl.getCurrentState(oControl).items || [];
-			var oMovedField = aVisibleFields[iDraggedIndex];
+			var aVisibleFields = oTable.getCurrentState(oTable).items || [];
+			var oMovedField = aVisibleFields[iCurrentIndex];
 
-			oControl.getEngine().createChanges({
-				control: oControl,
+			oTable.getEngine().createChanges({
+				control: oTable,
 				key: "Column",
 				state: [{name: oMovedField.name, position: iNewIndex}]
 			});
-
 		}
 	};
+
 	return TableSettings;
 });

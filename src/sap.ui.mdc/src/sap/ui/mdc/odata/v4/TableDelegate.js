@@ -103,7 +103,7 @@ sap.ui.define([
 						message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_TOTALS", [oListFormat.format(aAggregateGroupableProperties)])
 					};
 				}
-			} else if (oTable._bMobileTable) {
+			} else if (oTable._isOfType(TableType.ResponsiveTable)) {
 				if (!checkForValidity(oTable, oState.items, oState.groupLevels)) {
 					oValidation = {
 						validation: coreLibrary.MessageType.Information,
@@ -255,7 +255,7 @@ sap.ui.define([
 	Delegate.getSupportedP13nModes = function(oTable) {
 		var aSupportedModes = TableDelegate.getSupportedP13nModes(oTable);
 
-		if (oTable._getStringType() === TableType.Table) {
+		if (oTable._isOfType(TableType.Table)) {
 			if (!aSupportedModes.includes(P13nMode.Group)) {
 				aSupportedModes.push(P13nMode.Group);
 			}

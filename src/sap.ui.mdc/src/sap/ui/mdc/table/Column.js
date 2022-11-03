@@ -5,6 +5,7 @@
 sap.ui.define([
 	"./GridTableType",
 	"./ResponsiveTableType",
+	"../library",
 	"sap/base/Log",
 	"sap/m/library",
 	"sap/m/Label",
@@ -15,6 +16,7 @@ sap.ui.define([
 ], function(
 	GridTableType,
 	ResponsiveTableType,
+	library,
 	Log,
 	MLibrary,
 	Label,
@@ -24,6 +26,8 @@ sap.ui.define([
 	Core
 ) {
 	"use strict";
+
+	var TableType = library.TableType;
 
 	/**
 	 * Constructor for a new <code>Column</column>.
@@ -180,7 +184,7 @@ sap.ui.define([
 
 		this._readP13nValues(); // XConfig might not have been available on init - depends on the order settings are applied in Table#applySettings.
 
-		if (oTable._bMobileTable) {
+		if (oTable._isOfType(TableType.ResponsiveTable)) {
 			oColumn = ResponsiveTableType.createColumn(this.getId() + "-innerColumn", {
 				width: oWidthBindingInfo,
 				autoPopinWidth: "{$this>/minWidth}",
@@ -260,17 +264,17 @@ sap.ui.define([
 					width: "{= ${$this>/headerVisible} ? null : '0px' }",
 					text: "{$this>/header}",
 					textAlign: "{$this>/hAlign}",
-					tooltip: oTable._bMobileTable ? "{$this>/tooltip}" : "",
+					tooltip: oTable._isOfType(TableType.ResponsiveTable) ? "{$this>/tooltip}" : "",
 					wrapping: {
 						parts: [
 							{path: "$this>/headerVisible"},
 							{path: "$columnSettings>/resizable"}
 						],
 						formatter: function(bHeaderVisible, bResizable) {
-							return oTable._bMobileTable && bHeaderVisible && !bResizable;
+							return oTable._isOfType(TableType.ResponsiveTable) && bHeaderVisible && !bResizable;
 						}
 					},
-					wrappingType: oTable._bMobileTable ? "Hyphenated" : null
+					wrappingType: oTable._isOfType(TableType.ResponsiveTable) ? "Hyphenated" : null
 				})
 			});
 		}
@@ -285,7 +289,7 @@ sap.ui.define([
 		if (oTable && oTemplate && (!this._oTemplateClone || this._oTemplateClone.isDestroyed())) {
 			this._oTemplateClone = oTemplate.clone();
 
-			if (!oTable._bMobileTable) {
+			if (!oTable._isOfType(TableType.ResponsiveTable)) {
 				if (this._oTemplateClone.setWrapping) {
 					this._oTemplateClone.setWrapping(false);
 				}
@@ -306,7 +310,7 @@ sap.ui.define([
 		if (oTable && oCreationTemplate && (!this._oCreationTemplateClone || this._oCreationTemplateClone.isDestroyed())) {
 			this._oCreationTemplateClone = oCreationTemplate.clone();
 
-			if (!oTable._bMobileTable) {
+			if (!oTable._isOfType(TableType.ResponsiveTable)) {
 				if (this._oCreationTemplateClone.setWrapping) {
 					this._oCreationTemplateClone.setWrapping(false);
 				}

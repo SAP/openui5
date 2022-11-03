@@ -216,8 +216,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Grid table - Group", function(assert) {
-		var oTable = this.oTable,
-			oInnerColumn;
+		var oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function () {
 			oTable.setType("Table");
@@ -226,8 +225,7 @@ sap.ui.define([
 			oTable.setP13nMode([
 				"Group"
 			]);
-			oInnerColumn = oTable._oTable.getColumns()[0];
-			oTable._onColumnPress(oInnerColumn);
+			oTable._onColumnPress({column: oTable.getColumns()[0]});
 
 			return Promise.all([
 				wait(0),
@@ -252,8 +250,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("updateQuickActions", function(assert) {
-		var oTable = this.oTable,
-			oInnerColumn;
+		var oTable = this.oTable;
 
 		function testUpdateQuickActions(sSortOrder, bGrouped, bTotaled) {
 			oTable._oQuickActionContainer.updateQuickActions(["Sort", "Group"]);
@@ -270,11 +267,10 @@ sap.ui.define([
 		}
 
 		return oTable._fullyInitialized().then(function () {
-			oInnerColumn = oTable._oTable.getColumns()[0];
 			oTable.setP13nMode([
 				"Sort", "Group"
 			]);
-			oTable._onColumnPress(oInnerColumn);
+			oTable._onColumnPress({column: oTable.getColumns()[0]});
 		}).then(function() {
 			oTable._getSortedProperties = function() {
 				return [{ name: "test", Descending: false }];
@@ -333,8 +329,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialize Items", function(assert) {
-		var oTable = this.oTable,
-			oInnerColumn;
+		var oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function () {
 			oTable.setType("Table");
@@ -346,8 +341,7 @@ sap.ui.define([
 			oTable.getSupportedP13nModes = function() {
 				return ["Sort", "Filter", "Group"];
 			};
-			oInnerColumn = oTable._oTable.getColumns()[0];
-			oTable._onColumnPress(oInnerColumn);
+			oTable._onColumnPress({column: oTable.getColumns()[0]});
 		}).then(function() {
 			var aItems = oTable._oItemContainer.getItems();
 
