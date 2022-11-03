@@ -2450,6 +2450,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Drops the element with the given index and predicate from this cache's collection.
+	 *
+	 * @param {number} iIndex - An index
+	 * @param {string} sPredicate - A key predicate
+	 */
+	_CollectionCache.prototype.drop = function (iIndex, sPredicate) {
+		delete this.aElements[iIndex];
+		delete this.aElements.$byPredicate[sPredicate];
+	};
+
+	/**
 	 * Returns a promise to be resolved (synchronously if possible) with an OData object for the
 	 * requested data.
 	 *
@@ -3170,8 +3181,7 @@ sap.ui.define([
 					return true; // keep and request
 				}
 
-				delete that.aElements[i];
-				delete that.aElements.$byPredicate[sPredicate];
+				that.drop(i, sPredicate);
 				return false;
 			});
 			this.aElements.length = iMaxIndex + 1;
