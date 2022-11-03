@@ -7,12 +7,15 @@ sap.ui.define([
 	"sap/f/cards/NumericSideIndicator",
 	"sap/m/BadgeCustomData",
 	"sap/m/library",
+	"sap/m/Button",
 	"sap/m/Text",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/date/UniversalDate"
+	"sap/ui/core/date/UniversalDate",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes"
 ],
 function (
 	Card,
@@ -21,12 +24,15 @@ function (
 	CardNumericSideIndicator,
 	BadgeCustomData,
 	mLibrary,
+	Button,
 	Text,
 	Core,
 	jQuery,
 	Control,
 	DateFormat,
-	UniversalDate
+	UniversalDate,
+	QUnitUtils,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -77,25 +83,6 @@ function (
 		assert.strictEqual(oHeader.$().find(".sapFCardNumericIndicators").length, 1, "NumericIndicators are rendered.");
 
 		oHeader.destroy();
-	});
-
-	QUnit.test("Press is fired on sapselect for numeric header", function (assert) {
-		// Arrange
-		var oHeader = new CardNumericHeader({ title: "Title" }),
-			oCard = new Card({
-				header: oHeader
-			}),
-			fnPressHandler = this.stub();
-
-		oHeader.attachPress(fnPressHandler);
-
-		// Act
-		oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
-		oHeader.onsapselect(new jQuery.Event("sapselect"));
-
-		// Assert
-		assert.ok(fnPressHandler.calledOnce, "The press event is fired on sapselect");
 	});
 
 	QUnit.test("Numeric Header indicator truncation", function (assert) {
@@ -289,6 +276,83 @@ function (
 
 		// Clean up
 		oHeader.destroy();
+	});
+
+	QUnit.module("Headers press event");
+
+	QUnit.test("Press is fired on sapselect for numeric header", function (assert) {
+		// Arrange
+		var oHeader = new CardNumericHeader({ title: "Title" }),
+			oCard = new Card({
+				header: oHeader
+			}),
+			fnPressHandler = this.stub();
+
+		oHeader.attachPress(fnPressHandler);
+
+		// Act
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+		oHeader.onsapselect(new jQuery.Event("sapselect"));
+
+		// Assert
+		assert.ok(fnPressHandler.calledOnce, "The press event is fired on sapselect");
+
+		// Clean up
+		oCard.destroy();
+	});
+
+	QUnit.test("Press event is NOT fired when Enter or Space is pressed on the toolbar", function (assert) {
+		// Arrange
+		var oToolbar = new Button(),
+			oHeader = new CardNumericHeader({
+				title: "Title",
+				toolbar: oToolbar
+			}),
+			oCard = new Card({
+				header: oHeader
+			}),
+			fnPressHandler = this.stub();
+
+		oHeader.attachPress(fnPressHandler);
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		QUnitUtils.triggerKeydown(oToolbar.getDomRef(), KeyCodes.ENTER);
+		QUnitUtils.triggerKeydown(oToolbar.getDomRef(), KeyCodes.SPACE);
+
+		// Assert
+		assert.ok(fnPressHandler.notCalled, "Enter or Space on the toolbar shouldn't result in press event");
+
+		// Clean up
+		oCard.destroy();
+	});
+
+	QUnit.test("Press is NOT fired when the toolbar is tapped", function (assert) {
+		// Arrange
+		var oToolbar = new Button(),
+			oHeader = new CardNumericHeader({
+				title: "Title",
+				toolbar: oToolbar
+			}),
+			oCard = new Card({
+				header: oHeader
+			}),
+			fnPressHandler = this.stub();
+
+		oHeader.attachPress(fnPressHandler);
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		QUnitUtils.triggerEvent("tap", oToolbar.getDomRef());
+
+		// Assert
+		assert.ok(fnPressHandler.notCalled, "Tapping the toolbar shouldn't result in press event");
+
+		// Clean up
+		oCard.destroy();
 	});
 
 	QUnit.module("Accessibility");

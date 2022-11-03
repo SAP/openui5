@@ -133,21 +133,13 @@ sap.ui.define([
 	};
 
 	BaseHeader.prototype.ontap = function (oEvent) {
-		var srcControl = oEvent.srcControl;
-		if (srcControl && srcControl.getId().indexOf("overflowButton") > -1) { // better way?
-			return;
-		}
-
-		if (this._isInteractive()) {
+		if (this._isInteractive() && !this._isInsideToolbar(oEvent.target)) {
 			this.firePress();
 		}
 	};
 
-	/**
-	 * Fires the <code>sap.f.cards.NumericHeader</code> press event.
-	 */
-	BaseHeader.prototype.onsapselect = function () {
-		if (this._isInteractive()) {
+	BaseHeader.prototype.onsapselect = function (oEvent) {
+		if (this._isInteractive() && !this._isInsideToolbar(oEvent.target)) {
 			this.firePress();
 		}
 	};
@@ -356,6 +348,12 @@ sap.ui.define([
 
 	BaseHeader.prototype._isInteractive = function() {
 		return this.hasListeners("press");
+	};
+
+	BaseHeader.prototype._isInsideToolbar = function(oElement) {
+		var oToolbar = this.getToolbar();
+
+		return oToolbar && oToolbar.getDomRef() && oToolbar.getDomRef().contains(oElement);
 	};
 
 	return BaseHeader;
