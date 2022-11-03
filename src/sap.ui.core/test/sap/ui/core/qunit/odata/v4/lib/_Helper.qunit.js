@@ -2183,6 +2183,41 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("copyPrivateAnnotation", function (assert) {
+		var oHelperMock = this.mock(_Helper),
+			oSource = {},
+			oTarget = {};
+
+		oHelperMock.expects("hasPrivateAnnotation").withExactArgs(sinon.match.same(oSource), "n/a")
+			.returns(false);
+
+		// code under test
+		_Helper.copyPrivateAnnotation(oSource, "n/a", null);
+
+		oHelperMock.expects("hasPrivateAnnotation").withExactArgs(sinon.match.same(oSource), "foo")
+			.returns(true);
+		oHelperMock.expects("hasPrivateAnnotation").withExactArgs(sinon.match.same(oTarget), "foo")
+			.returns(false);
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs(sinon.match.same(oSource), "foo")
+			.returns(42);
+		oHelperMock.expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oTarget), "foo", 42);
+
+		// code under test
+		_Helper.copyPrivateAnnotation(oSource, "foo", oTarget);
+
+		oHelperMock.expects("hasPrivateAnnotation").withExactArgs(sinon.match.same(oSource), "bar")
+			.returns(true);
+		oHelperMock.expects("hasPrivateAnnotation").withExactArgs(sinon.match.same(oTarget), "bar")
+			.returns(true);
+
+		assert.throws(function () {
+			// code under test
+			_Helper.copyPrivateAnnotation(oSource, "bar", oTarget);
+		}, new Error("Must not overwrite: bar"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("setAnnotation", function (assert) {
 		var oObject = {};
 
