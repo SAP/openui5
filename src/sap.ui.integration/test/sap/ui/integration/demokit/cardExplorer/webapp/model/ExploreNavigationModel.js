@@ -860,6 +860,22 @@ sap.ui.define([
 										key: 'manifest.json'
 									}
 								]
+							},
+							{
+								title: 'Translations',
+								key: 'translations',
+								files: [
+									{
+										url: '/samples/adaptive/translationSample/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/adaptive/translationSample/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n/i18n.properties'
+									}
+								]
 							}
 						]
 					},
