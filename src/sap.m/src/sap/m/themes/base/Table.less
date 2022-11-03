@@ -176,6 +176,7 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 /* Ensuring that the row height is not smaller that 3rem in Cozy mode */
 .sapMListTblRow {
 	height: @sapUiElementLineHeight;
+	position: static; /* override the position: relative rule of the list item */
 }
 
 .sapMListTblCell.sapMListTblCellNoData {
