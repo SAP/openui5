@@ -2483,6 +2483,9 @@ sap.ui.define([
 
 		oCache.aElements = aElements.slice();
 		oCache.aElements.$byPredicate = {};
+		this.mock(_AggregationHelper).expects("beforeOverwritePlaceholder")
+			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(aReadElements[0]),
+				sinon.match.same(oGroupLevelCache), 42);
 
 		// code under test
 		oCache.addElements(aReadElements, 2, oGroupLevelCache, 42);
@@ -2514,6 +2517,9 @@ sap.ui.define([
 
 		oCache.aElements = aElements.slice();
 		oCache.aElements.$byPredicate = {};
+		this.mock(_AggregationHelper).expects("beforeOverwritePlaceholder")
+			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(oReadElement),
+				sinon.match.same(oGroupLevelCache), 42);
 
 		// code under test
 		oCache.addElements(oReadElement, 1, oGroupLevelCache, 42);
@@ -2522,57 +2528,6 @@ sap.ui.define([
 		assert.strictEqual(oCache.aElements[1], oReadElement);
 		assert.strictEqual(oCache.aElements[2], aElements[2]);
 		assert.deepEqual(oCache.aElements.$byPredicate, {"(1)" : oReadElement});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("addElements: wrong placeholder", function (assert) {
-		var oAggregation = { // filled before by buildApply
-				aggregate : {},
-				group : {},
-				groupLevels : ["foo"]
-			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
-			oGroupLevelCache = {};
-
-			// Note: no need to check for level as well, because oGroupLevelCache belongs to a
-			// specific level!
-			oCache.aElements = [,
-				_AggregationHelper.createPlaceholder(NaN, 42, oGroupLevelCache),
-				_AggregationHelper.createPlaceholder(NaN, 43, oGroupLevelCache)];
-			oCache.aElements.$byPredicate = {};
-
-			assert.throws(function () {
-				// code under test
-				oCache.addElements([{}, {}], 0, oGroupLevelCache, 42); // 41 would be right
-			}, new Error("Wrong placeholder"));
-
-			assert.throws(function () {
-				// code under test
-				oCache.addElements([{}], 2, {/*wrong cache*/}, 43);
-			}, new Error("Wrong placeholder"));
-
-			assert.throws(function () {
-				// code under test
-				oCache.addElements({}, 2);
-			}, new Error("Wrong placeholder"));
-		});
-
-	//*********************************************************************************************
-	QUnit.test("addElements: unexpected element", function (assert) {
-		var oAggregation = { // filled before by buildApply
-				aggregate : {},
-				group : {},
-				groupLevels : ["foo"]
-			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
-
-		oCache.aElements = [, {/*unexpected element*/}];
-		oCache.aElements.$byPredicate = {};
-
-		assert.throws(function () {
-			// code under test
-			oCache.addElements([{}, {}], 0); // oCache/iStart does not matter here
-		}, new Error("Unexpected element"));
 	});
 
 	//*********************************************************************************************
@@ -2602,6 +2557,9 @@ sap.ui.define([
 			_AggregationHelper.createPlaceholder(NaN, 0, oGroupLevelCache)
 		];
 		oCache.aElements.$byPredicate = {};
+		this.mock(_AggregationHelper).expects("beforeOverwritePlaceholder")
+			.withExactArgs(sinon.match.same(oCache.aElements[1]), {},
+				sinon.match.same(oGroupLevelCache), 0);
 
 		assert.throws(function () {
 			// code under test

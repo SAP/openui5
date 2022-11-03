@@ -124,6 +124,34 @@ sap.ui.define([
 
 	_AggregationHelper = {
 		/**
+		 * Before overwriting the given placeholder with the given element, perform some sanity
+		 * checks and restore some data from the placeholder to the element.
+		 *
+		 * @param {object} oPlaceholder - A placeholder
+		 * @param {object} _oElement - Any node or leaf element
+		 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
+		 *   The group level cache which the given element has been read from
+		 * @param {number} iIndex
+		 *   The index of the given element within the cache's collection
+		 * @throws {Error}
+		 *   In case an unexpected element or placeholder would be overwritten, or in case of a
+		 *   structural change
+		 *
+		 * @private
+		 */
+		beforeOverwritePlaceholder : function (oPlaceholder, _oElement, oCache, iIndex) {
+			var oParent = _Helper.getPrivateAnnotation(oPlaceholder, "parent");
+
+			if (!oParent) {
+				throw new Error("Unexpected element");
+			}
+			if (oParent !== oCache
+				|| _Helper.getPrivateAnnotation(oPlaceholder, "index") !== iIndex) {
+				throw new Error("Wrong placeholder");
+			}
+		},
+
+		/**
 		 * Builds the value for a "$apply" system query option based on the given data aggregation
 		 * information. The value is "groupby((&lt;groupable_1,...,groupable_N),aggregate(
 		 * &lt;aggregatable> with &lt;method> as &lt;alias>,...))" where the "aggregate" part is
