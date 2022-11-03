@@ -562,6 +562,49 @@ sap.ui.define([
 				assert.deepEqual(oGetFlexObjectsStub.firstCall.args[0], oExpectedParameters, "the parameters for getFlexObjects are correct");
 			});
 		});
+
+		QUnit.test("Save with app variant by startup param ", function(assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getAppIdFromManifest").returns("id");
+			sandbox.stub(Utils, "isVariantByStartupParameter").returns("true");
+			ManifestUtils.getFlexReferenceForControl.returns("name");
+			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll");
+			var oFlexController = ChangesController.getFlexControllerInstance(oComponent);
+			var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oComponent);
+			var oSaveAllStub1 = sandbox.stub(oFlexController, "saveAll").resolves();
+			var oSaveAllStub2 = sandbox.stub(oDescriptorFlexController, "saveAll").resolves();
+			var oGetFlexObjectsStub = sandbox.stub(FlexObjectState, "getFlexObjects").resolves("foo");
+
+			return FlexObjectState.saveFlexObjects({
+				selector: oComponent,
+				skipUpdateCache: true,
+				draft: true,
+				layer: Layer.USER,
+				condenseAnyLayer: true
+			}).then(function(sReturn) {
+				assert.equal(sReturn, "foo", "the function returns whatever getFlexObjects returns");
+				assert.equal(oPersistAllStub.callCount, 1, "the CompVariant changes were saved");
+
+				assert.equal(oSaveAllStub1.callCount, 1, "the UI Changes were saved");
+				assert.deepEqual(oSaveAllStub1.firstCall.args[0], oComponent, "the component was passed");
+				assert.deepEqual(oSaveAllStub1.firstCall.args[1], true, "the skipUpdateCache flag was passed");
+				assert.deepEqual(oSaveAllStub1.firstCall.args[2], true, "the draft flag was passed");
+				assert.deepEqual(oSaveAllStub1.firstCall.args[5], true, "the condense flag was passed");
+				assert.ok(oSaveAllStub2.notCalled, "Saving of descriptor Changes is not necessary");
+
+				assert.equal(oGetFlexObjectsStub.callCount, 1, "the changes were retrieved at the end");
+				var oExpectedParameters = {
+					componentId: "id",
+					selector: oComponent,
+					draft: true,
+					layer: Layer.USER,
+					currentLayer: Layer.USER,
+					invalidateCache: true,
+					condenseAnyLayer: true
+				};
+				assert.deepEqual(oGetFlexObjectsStub.firstCall.args[0], oExpectedParameters, "the parameters for getFlexObjects are correct");
+			});
+		});
 	});
 
 	QUnit.done(function() {

@@ -137,7 +137,6 @@ sap.ui.define([
 
 	function saveChangePersistenceEntities(mPropertyBag, oAppComponent) {
 		var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
-		var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
 
 		return oFlexController.saveAll(
 			oAppComponent,
@@ -147,15 +146,21 @@ sap.ui.define([
 			mPropertyBag.removeOtherLayerChanges,
 			mPropertyBag.condenseAnyLayer
 		)
-			.then(oDescriptorFlexController.saveAll.bind(
-				oDescriptorFlexController,
-				oAppComponent,
-				mPropertyBag.skipUpdateCache,
-				mPropertyBag.draft,
-				mPropertyBag.layer,
-				mPropertyBag.removeOtherLayerChanges,
-				mPropertyBag.condenseAnyLayer
-			));
+			.then(function () {
+				//In case of pseudo app variant by startup parameter "sap-app-id", descriptor changes can not be saved because there is no real descriptor for merging.
+				if (Utils.isVariantByStartupParameter(mPropertyBag.selector)) {
+					return Promise.resolve();
+				}
+				var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
+				return oDescriptorFlexController.saveAll(
+					oAppComponent,
+					mPropertyBag.skipUpdateCache,
+					mPropertyBag.draft,
+					mPropertyBag.layer,
+					mPropertyBag.removeOtherLayerChanges,
+					mPropertyBag.condenseAnyLayer
+				);
+			});
 	}
 
 	/**
