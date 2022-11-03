@@ -538,6 +538,61 @@ sap.ui.define([
 			"Re-rendered when focus was on an element outside the table: The onfocusin event was not triggered");
 	});
 
+	QUnit.test("Focus restoration (datacell->NoData->previously selected datacell) with empty model", function(assert) {
+		var done = assert.async();
+
+		oTable.attachEventOnce("rowsUpdated", function() {
+			var oCell = oTable.getRows()[0].getDomRef("col0");
+			var aData = oTable.getModel().getData();
+			var oModel = new JSONModel();
+
+			oModel.setData({modelData: aData});
+
+			oCell.focus();
+			assert.strictEqual(document.activeElement.id, oCell.id, "1st focus on cell");
+
+			oTable.setModel(new JSONModel());
+			oTable.attachEventOnce("rowsUpdated", function() {
+				assert.strictEqual(document.activeElement.id, oTable.getDomRef("noDataCnt").id, "Focus on NoData");
+
+				oTable.setModel(oModel);
+				oCore.applyChanges();
+				oTable.bindRows("/modelData");
+				oTable.attachEventOnce("rowsUpdated", function() {
+					assert.strictEqual(document.activeElement.id, oCell.id, "2nd focus on cell");
+					done();
+				});
+			});
+		});
+	});
+
+	QUnit.test("Focus restoration (datacell->NoData->previously selected datacell) with unbindRows", function(assert) {
+		var done = assert.async();
+
+		oTable.attachEventOnce("rowsUpdated", function() {
+			var oCell = oTable.getRows()[0].getDomRef("col0");
+			var aData = oTable.getModel().getData();
+			var oModel = new JSONModel();
+
+			oModel.setData({modelData: aData});
+
+			oCell.focus();
+			assert.strictEqual(document.activeElement.id, oCell.id, "1st focus on cell");
+
+			oTable.unbindRows();
+			oTable.attachEventOnce("rowsUpdated", function() {
+				assert.strictEqual(document.activeElement.id, oTable.getDomRef("noDataCnt").id, "Focus on NoData");
+				oTable.setModel(oModel);
+				oCore.applyChanges();
+				oTable.bindRows("/modelData");
+				oTable.attachEventOnce("rowsUpdated", function() {
+					assert.strictEqual(document.activeElement.id, oCell.id, "2nd focus on cell");
+					done();
+				});
+			});
+		});
+	});
+
 	QUnit.module("Destruction", {
 		beforeEach: function() {
 			createTables();
