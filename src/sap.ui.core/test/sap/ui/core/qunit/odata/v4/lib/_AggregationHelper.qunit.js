@@ -22,6 +22,35 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("beforeOverwritePlaceholder: unexpected element", function (assert) {
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.beforeOverwritePlaceholder({}); // other args do not matter here
+		}, new Error("Unexpected element"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("beforeOverwritePlaceholder: wrong placeholder", function (assert) {
+		var oCache = {};
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.beforeOverwritePlaceholder(
+				_AggregationHelper.createPlaceholder(NaN, 42, oCache), null, {/*not oCache*/}, 42);
+		}, new Error("Wrong placeholder"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.beforeOverwritePlaceholder(
+				_AggregationHelper.createPlaceholder(NaN, 42, oCache), null, oCache, 41);
+		}, new Error("Wrong placeholder"));
+
+		// code under test
+		_AggregationHelper.beforeOverwritePlaceholder(
+			_AggregationHelper.createPlaceholder(NaN, 42, oCache), null, oCache, 42);
+	});
+
+	//*********************************************************************************************
 	[{
 		oAggregation : {
 			group : {

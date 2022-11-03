@@ -130,21 +130,14 @@ sap.ui.define([
 
 		function addElement(oElement, i) {
 			var oOldElement = aElements[iOffset + i],
-				oParent,
 				sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 
 			if (oOldElement) { // check before overwriting
 				if (oOldElement === oElement) {
 					return;
 				}
-				oParent = _Helper.getPrivateAnnotation(oOldElement, "parent");
-				if (!oParent) {
-					throw new Error("Unexpected element");
-				}
-				if (oParent !== oCache
-						|| _Helper.getPrivateAnnotation(oOldElement, "index") !== iStart + i) {
-					throw new Error("Wrong placeholder");
-				}
+				_AggregationHelper
+					.beforeOverwritePlaceholder(oOldElement, oElement, oCache, iStart + i);
 			} else if (iOffset + i >= aElements.length) {
 				throw new Error("Array index out of bounds: " + (iOffset + i));
 			}
