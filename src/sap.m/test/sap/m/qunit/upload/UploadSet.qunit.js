@@ -43,24 +43,6 @@ sap.ui.define([
 			]
 		};
 	}
-	QUnit.test("Test for progressbar visibility", function(assert){
-	//arrange
-	var oItem = this.oUploadSet.getItems()[0];
-	oItem.setUploadState("Ready");
-	var progressBox = oItem._getProgressBox();
-	assert.ok(progressBox.getVisible(), "progress bar is visible for the uploading state");
-	this.oUploadSet.placeAt("qunit-fixture");
-	oCore.applyChanges();
-	//Act
-	this.oUploadSet.uploadItem(oItem);
-	var done = assert.async();
-	this.oUploadSet.attachEventOnce("uploadCompleted",function(oEvent){
-		var progressBox = oEvent.getParameter("item")._getProgressBox();
-		//assert
-		assert.ok(!progressBox.getVisible(), "progress bar is not visible for the uploaded state");
-		done();
-	});
-	});
 	QUnit.module("UploadSet general functionality", {
 		beforeEach: function () {
 			this.oUploadSet = new UploadSet("uploadSet", {
@@ -86,6 +68,25 @@ sap.ui.define([
 	var NoopUploader = Uploader.extend("sap.m.qunit.upload.NoopUploader", {});
 	NoopUploader.prototype.uploadItem = function (oItem, aHeaders) {};
 	NoopUploader.prototype.downloadItem = function (oItem, aHeaders, bAskForLocation) {};
+
+	QUnit.test("Test for progressbar visibility", function (assert) {
+		//arrange
+		var oItem = this.oUploadSet.getItems()[0];
+		oItem.setUploadState("Ready");
+		var progressBox = oItem._getProgressBox();
+		assert.ok(progressBox.getVisible(), "progress bar is visible for the uploading state");
+		this.oUploadSet.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		//Act
+		this.oUploadSet.uploadItem(oItem);
+		var done = assert.async();
+		this.oUploadSet.attachEventOnce("uploadCompleted", function (oEvent) {
+			var progressBox = oEvent.getParameter("item")._getProgressBox();
+			//assert
+			assert.ok(!progressBox.getVisible(), "progress bar is not visible for the uploaded state");
+			done();
+		});
+	});
 
 	QUnit.test("Events beforeItemAdded and afterItemAdded are called at proper time and with correct parameters, prevent default applies.", function (assert) {
 		assert.expect(5);
