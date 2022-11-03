@@ -22,10 +22,6 @@ sap.ui.define([
 		return oApp.getDomRef("BG");
 	}
 
-	function getAbsoluteURL(sRelPath) {
-		return document.baseURI + sRelPath;
-	}
-
 	var sBackroungImageSrc  = "test-resources/sap/m/images/SAPLogo.jpg",
 
 
@@ -139,7 +135,7 @@ sap.ui.define([
 	QUnit.test("style is set to DOM element", function(assert) {
 		// Arrange
 		var oApp = this.oApp,
-			sExpectedOutputImagePath = 'url("' + (Device.browser.safari ? getAbsoluteURL(sBackroungImageSrc) : sBackroungImageSrc) + '")',
+			sExpectedOutputImagePath = 'url("' + (sBackroungImageSrc) + '")',
 			$oAppImageHolder;
 
 		// Act
@@ -168,7 +164,7 @@ sap.ui.define([
 			sQuery = "?q1=1&q2=2",
 			sImgSrc = sPath + sUnreservedChars + sReservedChars1 + sReservedChars2 + sOtherChars + sReservedCharsUnencoded + sFileExtension + sQuery,
 			$oAppImageHolder,
-			sExpectedOutputImagePath = 'url("' + (Device.browser.safari ? getAbsoluteURL(sImgSrc) : sImgSrc) + '")';
+			sExpectedOutputImagePath = 'url("' + (sImgSrc) + '")';
 
 		// Act
 		oApp.setBackgroundImage(sImgSrc);
