@@ -9,7 +9,7 @@ sap.ui.define([
 ], function(Mobile, Device, jQuery) {
 	"use strict";
 
-	var fnRemoveViewort = function(){
+	var fnRemoveViewport = function(){
 		jQuery("meta").filter("[name=viewport]").remove();
 	};
 
@@ -17,8 +17,8 @@ sap.ui.define([
 
 	// TESTS
 	QUnit.module("sap/ui/util/Mobile", {
-		beforeEach: fnRemoveViewort,
-		afterEach: fnRemoveViewort
+		beforeEach: fnRemoveViewport,
+		afterEach: fnRemoveViewport
 	});
 
 	QUnit.test("Test init with default settings", function (assert) {
@@ -74,7 +74,7 @@ sap.ui.define([
 
 		// touch icon  <link rel="apple-touch-icon...
 		var $ti = jQuery("link").filter("[rel=apple-touch-icon-precomposed]");
-		assert.equal($ti.length, 4, "There should be four apple-touch-icon-precomposed link tags");
+		assert.equal($ti.length, 1, "There should be one apple-touch-icon-precomposed link tags");
 		assert.equal($ti.attr("href"), "home.png", "The apple-touch-icon-precomposed link tag href should be correct");
 	});
 
@@ -92,11 +92,11 @@ sap.ui.define([
 				};
 			})(oSystem);
 
-			fnRemoveViewort();
+			fnRemoveViewport();
 		},
 		afterEach: function() {
 			Device.system.restore();
-			fnRemoveViewort();
+			fnRemoveViewport();
 		}
 	});
 
@@ -132,10 +132,10 @@ sap.ui.define([
 
 	QUnit.module("sap/ui/util/Mobile (retina)", {
 		beforeEach: function() {
-			fnRemoveViewort();
+			fnRemoveViewport();
 		},
 		afterEach: function() {
-			fnRemoveViewort();
+			fnRemoveViewport();
 		}
 	});
 

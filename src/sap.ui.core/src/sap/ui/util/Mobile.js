@@ -199,17 +199,17 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', 'sap/base/util/extend', 'sap/ui/
 	 * When at least one home icon is given, all existing home icons will be removed and new home icon tags for all
 	 * four resolutions will be created.
 	 *
-	 * The home icons must be in PNG format and given in different sizes for iPad/iPhone with and without retina
+	 * The home icons must be in PNG format and given in different sizes for iPad/iPhone with low and high pixel density
 	 * display. The favicon is used in the browser and for desktop shortcuts and should optimally be in ICO format:
 	 * ICO files can contain different image sizes for different usage locations. E.g. a 16x16px version is used
 	 * inside browsers.
 	 *
 	 * All icons are given in an an object holding icon URLs and other settings. The properties of this object are:
 	 * <ul>
-	 * <li>phone: a 60x60 pixel version for non-retina iPhones</li>
-	 * <li>tablet: a 76x76 pixel version for non-retina iPads</li>
-	 * <li>phone@2: a 120x120 pixel version for retina iPhones</li>
-	 * <li>tablet@2: a 152x152 pixel version for retina iPads</li>
+	 * <li>phone: a 120x120 pixel version for iPhones with low pixel density</li>
+	 * <li>tablet: a 152x152 pixel version for iPads with low pixel density</li>
+	 * <li>phone@2: a 180x180 pixel version for iPhones with high pixel density</li>
+	 * <li>tablet@2: a 167x167 pixel version for iPads with high pixel density</li>
 	 * <li>precomposed: whether the home icons already have some glare effect (otherwise iOS will add it) (default:
 	 * false)</li>
 	 * <li>favicon: the ICO file to be used inside the browser and for desktop shortcuts</li>
@@ -218,10 +218,10 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', 'sap/base/util/extend', 'sap/ui/
 	 * One example is:
 	 * <pre>
 	 * {
-	 *    'phone':'phone-icon_60x60.png',
-	 *    'phone@2':'phone-retina_120x120.png',
-	 *    'tablet':'tablet-icon_76x76.png',
-	 *    'tablet@2':'tablet-retina_152x152.png',
+	 *    'phone':'phone-icon_120x120.png',
+	 *    'phone@2':'phone-retina_180x180.png',
+	 *    'tablet':'tablet-icon_152x152.png',
+	 *    'tablet@2':'tablet-retina_167x167.png',
 	 *    'precomposed':true,
 	 *    'favicon':'desktop.ico'
 	 * }
@@ -245,14 +245,12 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', 'sap/base/util/extend', 'sap/ui/
 		}
 
 		var precomposed = oIcons.precomposed ? "-precomposed" : "",
-			getBestFallback = function(res) {
-				return oIcons[res] || oIcons['tablet@2'] || oIcons['phone@2'] || oIcons['phone'] || oIcons['tablet']; // fallback logic
-			},
+			// Sizes according to https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html#//apple_ref/doc/uid/TP40002051-CH3-SW4
 			mSizes = {
 				"phone": "",
-				"tablet": "76x76",
-				"phone@2": "120x120",
-				"tablet@2": "152x152"
+				"tablet": "152x152",
+				"phone@2": "180x180",
+				"tablet@2": "167x167"
 			};
 
 		// desktop icon
@@ -267,16 +265,17 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', 'sap/base/util/extend', 'sap/ui/
 			});
 		}
 
+		var bMobileUpdateIcon = Object.keys(mSizes).some(function (sPlatform) {
+			return oIcons.hasOwnProperty(sPlatform);
+		});
 		// mobile home screen icons
-		if (getBestFallback("phone")) {
-
+		if (bMobileUpdateIcon) {
 			// if any home icon is given remove old ones
 			removeFromHead("[rel=apple-touch-icon]");
 			removeFromHead("[rel=apple-touch-icon-precomposed]");
 		}
 
 		for (var platform in mSizes) {
-			oIcons[platform] = oIcons[platform] || getBestFallback(platform);
 			if (oIcons[platform]) {
 				addElementToHead("link", {
 					rel: "apple-touch-icon" + precomposed,
