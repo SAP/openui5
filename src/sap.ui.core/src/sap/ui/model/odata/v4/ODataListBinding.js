@@ -3704,10 +3704,10 @@ sap.ui.define([
 	 * request. Since 1.97.0, if sorters are unchanged, no request is sent, regardless of pending
 	 * changes.
 	 *
-	 * <b>Note:</b> If a sorter uses a function (for example via the <code>vGroup</code> parameter),
-	 * it must be the exact same function instance which was given before, and not a newly created
-	 * one. Avoid calling <code>Function.prototype.bind</code> repeatedly, because this creates a
-	 * new function instance, which causes the deep equal comparison to report a difference.
+	 * <b>Note:</b> To allow proper detection whether sorters are unchanged, care must be taken if a
+	 * sorter uses a function (for example via the <code>vGroup</code> parameter): it must be the
+	 * exact same function instance which was given before, and not a newly created one, for example
+	 * because <code>Function.prototype.bind</code> is called repeatedly.
 	 *
 	 * If there are pending changes that cannot be ignored, an error is thrown. Use
 	 * {@link #hasPendingChanges} to check if there are such pending changes. If there are, call
