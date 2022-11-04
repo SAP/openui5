@@ -155,9 +155,6 @@ sap.ui.define([
 		oRm.class("sapFDynamicPageTitleMainContent");
 		oRm.class("sapFDynamicPageTitleContent-CTX");
 		oRm.style("flex-shrink", oDynamicPageTitleState.contentAreaShrinkFactor.toString());
-		if (oDynamicPageTitleState.contentAreaFlexBasis) {
-			oRm.style("flex-basis", oDynamicPageTitleState.contentAreaFlexBasis);
-		}
 		if (oDynamicPageTitleState.contentAreaMinWidth) {
 			oRm.style("min-width", oDynamicPageTitleState.contentAreaMinWidth);
 		}
@@ -173,9 +170,6 @@ sap.ui.define([
 		oRm.openStart("div", oDynamicPageTitleState.id + "-mainActions");
 		oRm.class("sapFDynamicPageTitleMainActions");
 		oRm.style("flex-shrink", oDynamicPageTitleState.actionsAreaShrinkFactor.toString());
-		if (oDynamicPageTitleState.actionsAreaFlexBasis) {
-			oRm.style("flex-basis", oDynamicPageTitleState.actionsAreaFlexBasis);
-		}
 		if (oDynamicPageTitleState.actionsAreaMinWidth) {
 			oRm.style("min-width", oDynamicPageTitleState.actionsAreaMinWidth);
 		}
