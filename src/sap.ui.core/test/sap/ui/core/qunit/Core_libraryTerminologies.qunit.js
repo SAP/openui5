@@ -1,5 +1,5 @@
 /*global QUnit sinon*/
-sap.ui.require([
+sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/Core"
 ], function(ResourceBundle, Core) {
