@@ -184,10 +184,26 @@ function (
 		oGrid.destroy();
 	});
 
-	QUnit.test("Tab indexes of dummy areas", function (assert) {
+	QUnit.test("Tab indexes of dummy areas when the grid has items", function (assert) {
 		// Arrange
 		var oGrid = new GridContainer({
 			items: [new Card()]
+		});
+		oGrid.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oGrid.getDomRef("before").tabIndex, 0, "tabindex of 'before' dummy area should be correct");
+		assert.strictEqual(oGrid.getDomRef("after").tabIndex, 0, "tabindex of 'after' dummy area should be correct");
+
+		// Clean up
+		oGrid.destroy();
+	});
+
+	QUnit.test("Tab indexes of dummy areas when the grid doesn't have items", function (assert) {
+		// Arrange
+		var oGrid = new GridContainer({
+			items: []
 		});
 		oGrid.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
@@ -1743,6 +1759,41 @@ function (
 		assert.strictEqual(document.activeElement, GridContainerUtils.getItemWrapper(oCard), "Correct grid item wrapper is focused");
 
 		// Clean up
+		oGrid.destroy();
+	});
+
+	QUnit.test("'before' dummy area correctly forwards the focus to grid item", function (assert) {
+		// Arrange
+		var oBtnBefore = new Button(),
+			oBtn1 = new Button({ text: "1" }),
+			oBtn2 = new Button({ text: "2" }),
+			oGrid = new GridContainer({
+				items: [ oBtn1, oBtn2 ]
+			});
+
+		oBtnBefore.placeAt(DOM_RENDER_LOCATION);
+		oGrid.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerEvent("focusin", oGrid.getDomRef());
+		qutils.triggerEvent("focusin", oGrid.getDomRef("before"));
+
+		// Assert - check if the "before" element correctly forwarded the focus to grid element
+		assert.strictEqual(document.activeElement, GridContainerUtils.getItemWrapper(oBtn1), "First grid item wrapper should be focused");
+
+		// Act - focus the second item and leave the grid
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_RIGHT, false, false, false);
+		oBtnBefore.focus();
+
+		// Act - return the focus where it was
+		qutils.triggerEvent("focusin", oGrid.getDomRef("before"));
+
+		// Assert - check if the "before" element correctly restored the focus to grid element
+		assert.strictEqual(document.activeElement, GridContainerUtils.getItemWrapper(oBtn2), "Second grid item wrapper should be focused");
+
+		// Clean up
+		oBtnBefore.destroy();
 		oGrid.destroy();
 	});
 

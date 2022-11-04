@@ -63,7 +63,6 @@ sap.ui.define([
 	});
 
 	GridContainerItemNavigation.prototype._onFocusLeave = function (oEvent) {
-
 		var currentFocused = this.getFocusedDomRef();
 		this.getItemDomRefs().forEach(function (item, index) {
 			if (currentFocused === item) {
@@ -71,8 +70,6 @@ sap.ui.define([
 				this.setFocusedIndex(nextFocusableIndex);
 			}
 		}.bind(this));
-
-		this._bFocusLeft = true;
 	};
 
 	/**
@@ -204,6 +201,16 @@ sap.ui.define([
 	GridContainerItemNavigation.prototype.onfocusin = function(oEvent) {
 		GridItemNavigation.prototype.onfocusin.call(this, oEvent);
 
+		// focus is coming in the grid container from Tab
+		if (oEvent.target === this._getGridInstance().getDomRef("before") && !this.getRootDomRef().contains(oEvent.relatedTarget)) {
+			var oLastFocused = this._lastFocusedElement || this.getItemDomRefs()[this.getFocusedIndex()];
+
+			if (oLastFocused) {
+				oLastFocused.focus();
+			}
+			return;
+		}
+
 		// focus is coming in the grid container from Shift + Tab
 		if (oEvent.target === this._getGridInstance().getDomRef("after") && !this.getRootDomRef().contains(oEvent.relatedTarget)) {
 			this._focusPrevious(oEvent);
@@ -211,10 +218,7 @@ sap.ui.define([
 		}
 
 		var $listItem = jQuery(oEvent.target).closest('.sapFGridContainerItemWrapperNoVisualFocus'),
-			oControl,
-			aNavigationDomRefs,
-			iLastFocusedIndex,
-			oLastFocused;
+			oControl;
 
 		if ($listItem.length) {
 			oControl = $listItem.children().eq(0).control()[0];
@@ -231,23 +235,6 @@ sap.ui.define([
 				}
 			}
 		}
-
-		if (oEvent.target.classList.contains("sapFGridContainerItemWrapper")) {
-			this._lastFocusedElement = null;
-		}
-
-		if (this._bFocusLeft && !this._bIsMouseDown) {
-			aNavigationDomRefs = this.getItemDomRefs();
-			iLastFocusedIndex = this.getFocusedIndex();
-
-			oLastFocused = this._lastFocusedElement || aNavigationDomRefs[iLastFocusedIndex];
-
-			if (!containsOrEquals(oLastFocused, oEvent.target)) {
-				oLastFocused.focus();
-			}
-		}
-
-		this._bFocusLeft = false;
 	};
 
 	/**
