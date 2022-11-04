@@ -443,7 +443,7 @@ sap.ui.define([
 	Table.prototype.onAfterRendering = function() {
 		ListBase.prototype.onAfterRendering.call(this);
 		this.updateSelectAllCheckbox();
-		this._renderOverlay();
+		this._adaptBlockLayer();
 
 		if (this._bFirePopinChanged) {
 			this._firePopinChangedEvent();
@@ -485,15 +485,26 @@ sap.ui.define([
 		return this;
 	};
 
-	Table.prototype._renderOverlay = function() {
-		var $this = this.$(),
-			$overlay = $this.find(".sapMTableOverlay"),
-			bShowOverlay = this.getShowOverlay();
-		if (bShowOverlay && $overlay.length === 0) {
-			$overlay = jQuery("<div>").addClass("sapUiOverlay sapMTableOverlay").css("z-index", "1");
-			$this.append($overlay);
-		} else if (!bShowOverlay) {
-			$overlay.remove();
+	Table.prototype._adaptBlockLayer = function(bLastTry) {
+		if (!this.getShowOverlay()) {
+			return;
+		}
+
+		var oBlockLayer = this.getDomRef("blockedLayer");
+		if (oBlockLayer) {
+			var aValidAttributes = ["id", "class", "tabindex"];
+			oBlockLayer.getAttributeNames().forEach(function(sAttribute) {
+				if (!aValidAttributes.includes(sAttribute)) {
+					oBlockLayer.removeAttribute(sAttribute);
+				}
+			});
+			oBlockLayer.setAttribute("role", "region");
+			oBlockLayer.setAttribute("aria-labelledby", [
+				TableRenderer.getAriaLabelledBy(this),
+				TableRenderer.getAriaAnnouncement("TABLE_INVALID")
+			].join(" ").trimLeft());
+		} else if (!bLastTry) {
+			setTimeout(this._adaptBlockLayer.bind(this, true));
 		}
 	};
 
@@ -520,7 +531,8 @@ sap.ui.define([
 
 	Table.prototype.setShowOverlay = function(bShow) {
 		this.setProperty("showOverlay", bShow, true);
-		this._renderOverlay();
+		this.setBlocked(this.getShowOverlay());
+		this._adaptBlockLayer();
 		return this;
 	};
 

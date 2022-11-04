@@ -259,6 +259,12 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	z-index: 1;
 }
 
+/* define outline for the block layer */
+.sapMListTblCnt > .sapUiBlockLayerOnly:focus {
+	outline: @_sap_m_ListItemBase_Focus_Outline;
+	outline-offset: @_sap_m_ListItemBase_Focus_OffsetWithGap;
+}
+
 /* table footer */
 .sapMListTblFooter > td {
 	border-top: 1px solid @sapUiListTableFooterBorder;

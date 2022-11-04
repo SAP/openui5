@@ -63,7 +63,7 @@ sap.ui.define([
 		if (bCreateHeader) {
 			sut.setHeaderToolbar(new Toolbar({
 				content: [
-							new Label({text: "Random Data"}),
+							new Title("titleId", {text: "Random Data"}),
 							new ToolbarSpacer({}),
 							new Button("idPersonalizationButton", {
 								icon: "sap-icon://person-placeholder"
@@ -252,7 +252,8 @@ sap.ui.define([
 	QUnit.module("Display");
 
 	QUnit.test("Basic Properties", function(assert) {
-		var sut = createSUT('idBasicPropertiesTable');
+		var done = assert.async();
+		var sut = createSUT('idBasicPropertiesTable', false, true);
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -261,19 +262,40 @@ sap.ui.define([
 
 		assert.ok(sut.$().find("th").hasClass("sapMTableTH"), ".sapMTableTH added to 'th' elements");
 
-		assert.ok(!sut.$().children().hasClass("sapMTableOverlay"), "Table overlay is not rendered as showOverlay=false");
+		assert.ok(!sut.$().children().hasClass("sapUiBlockLayer"), "Table overlay is not rendered as showOverlay=false");
 		sut.setShowOverlay(true);
 		Core.applyChanges();
-		assert.ok(sut.$().children().hasClass("sapMTableOverlay"), "Table overlay is rendered as showOverlay=true");
+		var $BL = sut.$("blockedLayer");
+		assert.ok($BL.hasClass("sapUiBlockLayer"), "Table overlay is rendered as showOverlay=true");
+		assert.ok($BL.hasClass("sapUiBlockLayerOnly"), "Table overlay is rendered as showOverlay=true");
+		assert.equal($BL.attr("role"), "region", "Table overlay role is correct");
+		assert.equal($BL.attr("aria-labelledby"), "titleId " + InvisibleText.getStaticId("sap.m", "TABLE_INVALID"), "aria-labelledby valid for overlay");
 
-		sut.setVisible(false);
-		Core.applyChanges();
-		assert.ok(sut.$().length === 0, "Table has been removed from DOM");
+		sut.rerender();
+		assert.notOk(sut.getDomRef("blockedLayer").getAttribute("aria-labelledby"), "There is no aria-labelledby for overlay after rerendering. It is not yet adapted");
 
-		assert.equal(sut.getItemsContainerDomRef(), sut.$("tblBody")[0]);
+		setTimeout(function() {
+			$BL = sut.$("blockedLayer");
+			assert.ok($BL.hasClass("sapUiBlockLayer"), "Table overlay is rerendered as showOverlay=true");
+			assert.ok($BL.hasClass("sapUiBlockLayerOnly"), "Table overlay is rerendered as showOverlay=true");
+			assert.equal($BL.attr("role"), "region", "Table overlay role is correct after rerendering");
+			assert.equal($BL.attr("aria-labelledby"), "titleId " + InvisibleText.getStaticId("sap.m", "TABLE_INVALID"), "aria-labelledby valid for overlay after rerendering");
 
-		//clean up
-		sut.destroy();
+			sut.setShowOverlay(false);
+			Core.applyChanges();
+			assert.notOk(sut.$("blockedLayer")[0], "Table overlay is removed as showOverlay=false");
+
+			sut.setVisible(false);
+			Core.applyChanges();
+			assert.ok(sut.$().length === 0, "Table has been removed from DOM");
+
+			assert.equal(sut.getItemsContainerDomRef(), sut.$("tblBody")[0]);
+
+			//clean up
+			sut.destroy();
+
+			done();
+		});
 	});
 
 	QUnit.test("Column Display", function(assert) {
