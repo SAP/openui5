@@ -309,4 +309,41 @@ sap.ui.define([
 
 	});
 
+	[
+		{ amountOfPanels: 0, verticalScrolling: true },
+		{ amountOfPanels: 1, verticalScrolling: true },
+		{ amountOfPanels: 2, verticalScrolling: false }
+	].forEach(function(oConfig) {
+		var iAmountOfPanels = oConfig.amountOfPanels;
+		var bVerticalScrolling = oConfig.verticalScrolling;
+		QUnit.test("_createResponsivePopover with " + iAmountOfPanels +  " panel" + (iAmountOfPanels != 1 ? "s" : ""), function(assert) {
+			var Custom = this.getCustomPanelClass();
+
+			for (var iCount = 0; iCount < iAmountOfPanels; iCount++) {
+				this.oPopup.addPanel(new Custom({
+					title: "My Custom Test"
+				}));
+			}
+			var oResponsivePopover = this.oPopup._createResponsivePopover({});
+			assert.equal(this.oPopup.getPanels().length, iAmountOfPanels, iAmountOfPanels + " panel" + (iAmountOfPanels != 1 ? "s" : "") + " on the popup");
+			assert.equal(oResponsivePopover.getVerticalScrolling(), bVerticalScrolling, "verticalScrolling is " + (bVerticalScrolling ? "enabled" : "disabled"));
+			oResponsivePopover.destroy();
+		});
+
+		QUnit.test("_createDialog with " + iAmountOfPanels +  " panel" + (iAmountOfPanels != 1 ? "s" : ""), function(assert) {
+			var Custom = this.getCustomPanelClass();
+
+			for (var iCount = 0; iCount < iAmountOfPanels; iCount++) {
+				this.oPopup.addPanel(new Custom({
+					title: "My Custom Test"
+				}));
+			}
+			var oDialog = this.oPopup._createDialog({});
+			assert.equal(this.oPopup.getPanels().length, iAmountOfPanels, iAmountOfPanels + " panel" + (iAmountOfPanels != 1 ? "s" : "") + " on the popup");
+			assert.equal(oDialog.getVerticalScrolling(), bVerticalScrolling, "verticalScrolling is " + (bVerticalScrolling ? "enabled" : "disabled"));
+			oDialog.destroy();
+		});
+	});
+
+
 });

@@ -259,16 +259,17 @@ sap.ui.define([
 	};
 
 	Popup.prototype._createResponsivePopover = function(mDialogSettings) {
-
+		var aPanels = this.getPanels();
+		var bUseContainer = aPanels.length > 1;
 		var oPopover = new ResponsivePopover(this.getId() + "-responsivePopover", {
 			title: this.getTitle(),
 			horizontalScrolling: mDialogSettings.hasOwnProperty("horizontalScrolling") ? mDialogSettings.horizontalScrolling : false,
-			verticalScrolling: false,
+			verticalScrolling: !bUseContainer,
 			contentWidth: mDialogSettings.contentWidth ? mDialogSettings.contentWidth : "30rem",
 			resizable: mDialogSettings.hasOwnProperty("resizable") ? mDialogSettings.resizable : true,
 			contentHeight: mDialogSettings.contentHeight ? mDialogSettings.contentHeight : "35rem",
 			placement: mDialogSettings.placement ? mDialogSettings.placement : "Bottom",
-			content: this.getPanels().length > 1 ? this._getContainer() : this.getPanels()[0],
+			content: bUseContainer ? this._getContainer() : aPanels[0],
 			afterClose: function() {
 				this._onClose(oPopover, "AutoClose");
 			}.bind(this)
@@ -281,18 +282,19 @@ sap.ui.define([
 	};
 
 	Popup.prototype._createDialog = function(mDialogSettings) {
-
+		var aPanels = this.getPanels();
+		var bUseContainer = aPanels.length > 1;
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		var oContainer = new Dialog(this.getId() + "-dialog", {
 			title: this.getTitle(),
 			horizontalScrolling: mDialogSettings.hasOwnProperty("horizontalScrolling") ? mDialogSettings.horizontalScrolling : false,
-			verticalScrolling: false,
+			verticalScrolling: !bUseContainer,
 			contentWidth: mDialogSettings.contentWidth ? mDialogSettings.contentWidth : "40rem",
 			contentHeight: mDialogSettings.contentHeight ? mDialogSettings.contentHeight : "55rem",
 			draggable: true,
 			resizable: true,
 			stretch: Device.system.phone,
-			content: this.getPanels().length > 1 ? this._getContainer() : this.getPanels()[0],
+			content: bUseContainer ? this._getContainer() : aPanels[0],
 			escapeHandler: function() {
 				this._onClose(oContainer, "Escape");
 			}.bind(this),
