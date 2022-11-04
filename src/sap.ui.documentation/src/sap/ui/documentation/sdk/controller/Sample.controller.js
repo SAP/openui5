@@ -193,7 +193,7 @@ sap.ui.define([
 								}
 							}
 							// Sets the current iframe URL or restores it to "undefined"
-							oModelData.iframe = oSampleConfig.iframe;
+							oModelData.iframe = oSampleConfig.iframe || null;
 							oPage.setProperty("enableScrolling", !!oSampleConfig.stretch, true);
 						}
 
