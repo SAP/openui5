@@ -391,7 +391,7 @@ sap.ui.define([
 
 		if (this._oFormatLong.oLocale.toString() != sLocale) {
 			var oLocale = new Locale(sLocale);
-			this._oFormatLong = DateFormat.getInstance({style: "long/short", calendarType: this.getProperty("primaryCalendarType")}, oLocale);
+			this._oFormatLong = DateFormat.getDateTimeInstance({style: "long/short", calendarType: this.getProperty("primaryCalendarType")}, oLocale);
 		}
 
 		return this._oFormatLong;
