@@ -1885,9 +1885,17 @@ html[data-sap-ui-browser*='ff'] {
 		.sapMGT.sapMGTOneByOne {
 			width: 12.875rem;
 			height: 7.8125rem;
+			.sapMGTHideOverflow {
+				bottom: 0.6875rem;
+			}
 			.sapMGTSubHdrTxt {
 				.sapMTextMaxLine {
 					-webkit-line-clamp: 1 !important;
+				}
+			}
+			&.HighContrastTile {
+				.sapMGTHideOverflow {
+					bottom: 0.5rem;
 				}
 			}
 		}
@@ -1907,16 +1915,31 @@ html[data-sap-ui-browser*='ff'] {
 				bottom: 0.3rem;
 			}
 		}
+	.sapMGTHideOverflow {
+		bottom: 1rem;
+	}
+	&.HighContrastTile {
+		.sapMGTHideOverflow {
+			bottom: 0.75rem;
+		}
+	}
 	}
 }
 .sapMGT.sapMGTOneByOne {
 	border-radius: @sapTile_BorderCornerRadius;
 	border: none;
+	.sapMGTHideOverflow {
+		position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+		overflow: hidden;
+	}
 	.sapMGTIconWrapper {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
-		margin-bottom: 0.5rem;
+		gap: 0.375rem;
+		margin-bottom: 0.375rem;
 		.sapMGTHdrContent {
 			padding: 0 0.5rem;
 			display: flex;
@@ -1924,11 +1947,10 @@ html[data-sap-ui-browser*='ff'] {
 			height: fit-content;
 			align-items: center;
 			.sapMGTHdrTxt {
-				max-height: 2.74rem;
-				height: 2rem;
-				display: flex;
-				align-items: end;
-				line-height: 1rem;
+				height: inherit;
+				max-height: none;
+				overflow: visible;
+				justify-content: center;
 				word-break: break-word;
 			}
 		}
@@ -1942,40 +1964,24 @@ html[data-sap-ui-browser*='ff'] {
 		.sapMText {
 			font-weight: 400;
 			color: @sapUiContentContrastTextColor;
-			white-space: initial;
 			text-align: center !important;
+			white-space: pre-line;
+			line-height: 1rem;
 		}
 	}
-}
-
-.sapMGT.sapMGTOneByOne.sapMGTNoSubHeader {
-	.sapMGTIconWrapper {
-		.sapMGTHdrContent {
-			&::marker {
-				color: transparent;
-			}
+	&.sapMGTHeaderOneLine {
+		.sapMGTHdrContent.sapMGTOneByOne {
 			height: 2rem;
-			position: relative;
-			display: list-item;
-			line-height: 0.6;
+			justify-content: end;
 			.sapMGTHdrTxt {
-				height: inherit;
-				max-height: none;
-				overflow: visible;
-				justify-content: center;
+				height: fit-content;
 			}
 		}
 	}
-}
-
-.sapMGT.sapMGTOneByOne.sapMGTNoSubHeader.sapMTileSmallPhone {
-	.sapMGTIconWrapper {
-		.sapMGTHdrContent {
-			overflow: initial;
-			.sapMGTHdrTxt {
-				.sapMTextMaxLine {
-					-webkit-line-clamp: 3 !important;
-				}
+	&.sapMGTHeaderThreeLine {
+		.sapMGTSubHdrTxt {
+			.sapMText {
+				white-space: nowrap;
 			}
 		}
 	}
@@ -2176,6 +2182,8 @@ html[data-sap-ui-browser*='ff'] {
 	}
 	.sapMGTHdrTxt > .sapMText {
 		text-shadow: none;
+		line-height: 1rem;
+		display: block;
 	}
 	.sapMGTOneByOneIconLoaded {
 		margin-top: -1rem;
@@ -2286,18 +2294,26 @@ html[data-sap-ui-browser*='ff'] {
 	height: 5.375rem;
 	display: flex;
 	flex-direction: column;
+	.sapMGTHideOverflow {
+		bottom: 1rem;
+	}
 	.sapMGTIconWrapper {
-		margin: 1rem 0.5rem 0.5rem 0.5rem;
+		margin: 1rem 0.5rem 0.375rem 0.5rem;
 		align-items: center;
 		flex-direction: row;
 		gap: 0;
 		.sapMGTOneByOneIcon{
 			padding: 0;
+			margin-bottom: auto;
+			margin-top: 0.375rem;
 		}
 		.sapMGTHdrTxt{
 			align-items: center;
 			.sapMText {
 				text-align: left !important;
+				.sapMTextMaxLine {
+					-webkit-line-clamp: 3 !important;
+				}
 			}
 		}
 	}
@@ -2313,6 +2329,16 @@ html[data-sap-ui-browser*='ff'] {
 			.sapMTextMaxLine {
 				-webkit-line-clamp: 1 !important;
 			}
+		}
+	}
+	&.sapMGTHeaderOneLine {
+		.sapMGTHdrContent.sapMGTOneByOne {
+			justify-content: center;
+		}
+	}
+	&.HighContrastTile {
+		.sapMGTHideOverflow {
+			bottom: 0.75rem;
 		}
 	}
 }
