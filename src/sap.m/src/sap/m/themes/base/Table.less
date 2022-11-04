@@ -227,9 +227,8 @@ html[data-sap-ui-browser^='ed'] .sapMTableTH,
 }
 
 /* sticky headerToolbar, infoToolbar and column headers */
-.sapMSticky .sapMTableTH {
+.sapMSticky .sapMListTblHeader {
 	position: sticky;
-	position: -webkit-sticky;
 	z-index: 1;
 }
 
@@ -238,7 +237,7 @@ html[data-sap-ui-browser^='ed'] .sapMTableTH,
 /* .sapMSticky5 denotes that the headerToolbar and column headers are sticky */
 /* .sapMSticky4 denotes that only the column headers are sticky */
 /* top: 0 sticky conditions : 1st sticky elements */
-.sapMSticky4 .sapMTableTH,
+.sapMSticky4 .sapMListTblHeader,
 .sapMSticky5 > .sapMListHdr,
 .sapMSticky6 > .sapMListInfoTBarContainer,
 .sapMSticky7 > .sapMListHdr {
@@ -246,31 +245,19 @@ html[data-sap-ui-browser^='ed'] .sapMTableTH,
 }
 
 /* top: 2rem sticky conditions : 2nd sticky elements */
-.sapMSticky6 .sapMTableTH {
+.sapMSticky6 .sapMListTblHeader {
 	top: 2rem;
 }
 
 /* top: 3rem sticky conditions : 2nd sticky elements */
-.sapMSticky5 .sapMTableTH,
+.sapMSticky5 .sapMListTblHeader,
 .sapMSticky7 > .sapMListInfoTBarContainer {
 	top: @sapUiElementLineHeight;
 }
 
 /* top: 5rem conditions : 3rd sticky elements */
-.sapMSticky7 .sapMTableTH {
+.sapMSticky7 .sapMListTblHeader {
 	top: @sapUiElementLineHeight + 2rem;
-}
-
-/* to make the focus outline visible on the all sides */
-.sapMSticky > .sapMListTbl {
-	padding: 1px 1px 0 1px;
-}
-
-/* In Safari browser the table content was visible when scrolled with sticky elements,
-hence margin-top is applied instead of padding */
-html[data-sap-ui-browser^="sf"] .sapMSticky > .sapMListTbl {
-	margin-top: 1px;
-	padding: 0 1px;
 }
 
 /* busyIndicator should not block the toolbars if <table> is set busy */
