@@ -233,6 +233,35 @@ sap.ui.define([
 		return Promise.resolve({ XLSX: {} });
 	};
 
+	/**
+	 * Checks whether data export is supported by the combination of this delegate and the current table state (e.g. type).
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table.
+	 * @returns {boolean} Whether data export is supported.
+	 * @private
+	 */
+	TableDelegate.isExportSupported = function(oTable) {
+		return true;
+	};
+
+	/**
+	 * Checks whether selection is supported by the combination of this delegate and the current table state (e.g. type).
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table.
+	 * @returns {boolean} Whether selection is supported.
+	 * @private
+	 */
+	TableDelegate.isSelectionSupported = function(oTable) {
+		return true;
+	};
+
+	/**
+	 * Gets the p13n modes that are supported by the combination of this delegate and the current table state (e.g. type).
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table.
+	 * @returns {sap.ui.mdc.TableP13nMode[]} The supported p13n modes.
+	 * @private
+	 */
 	TableDelegate.getSupportedP13nModes = function(oTable) {
 		var aSupportedModes = [P13nMode.Column, P13nMode.Sort, P13nMode.Filter];
 

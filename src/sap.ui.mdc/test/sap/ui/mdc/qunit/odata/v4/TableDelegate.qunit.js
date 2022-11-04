@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/odata/v4/TableDelegate",
 	"sap/ui/mdc/library",
 	"../../QUnitUtils",
 	"../../util/createAppEnvironment",
@@ -15,6 +16,7 @@ sap.ui.define([
 ], function(
 	Table,
 	Column,
+	TableDelegate,
 	Library,
 	MDCQUnitUtils,
 	createAppEnvironment,
@@ -1282,7 +1284,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("v4.TableDelegate#updateBinding", {
+	QUnit.module("#updateBinding", {
 		before: function() {
 			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
 				name: "Name",
@@ -1305,10 +1307,7 @@ sap.ui.define([
 				autoBindOnInit: false,
 				p13nMode: ["Column", "Sort", "Filter", "Group", "Aggregate"],
 				delegate: {
-					name: "odata.v4.TestDelegate",
-					payload: {
-						collectionPath: "/ProductList"
-					}
+					name: "odata.v4.TestDelegate"
 				}
 			}).addColumn(new Column({
 				header: "Name",
@@ -1361,8 +1360,7 @@ sap.ui.define([
 		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
         oUpdateBindingInfoStub.callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
-			var oMetadataInfo = oMDCTable.getPayload();
-			oBindingInfo.path = oMetadataInfo.collectionPath;
+			oBindingInfo.path = "/ProductList";
 			oBindingInfo.filters = aFilters;
         });
 
@@ -1408,20 +1406,17 @@ sap.ui.define([
 
         oUpdateBindingInfoStub.onCall(0).callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
-			var oMetadataInfo = oMDCTable.getPayload();
-			oBindingInfo.path = oMetadataInfo.collectionPath;
+			oBindingInfo.path = "/ProductList";
             oBindingInfo.parameters.$search = "x";
         });
 		oUpdateBindingInfoStub.onCall(1).callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
-			var oMetadataInfo = oMDCTable.getPayload();
-			oBindingInfo.path = oMetadataInfo.collectionPath;
+			oBindingInfo.path = "/ProductList";
             oBindingInfo.parameters.$search = undefined;
         });
 		oUpdateBindingInfoStub.onCall(2).callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
-			var oMetadataInfo = oMDCTable.getPayload();
-			oBindingInfo.path = oMetadataInfo.collectionPath;
+			oBindingInfo.path = "/ProductList";
             oBindingInfo.parameters.$$canonicalPath = true;
         });
 
@@ -1462,5 +1457,57 @@ sap.ui.define([
 
 		assert.equal(this.oRebindSpy.callCount, 1, "Changing the path forces a rebind");
 		oUpdateBindingInfoStub.restore();
+	});
+
+	QUnit.module("API", {
+		afterEach: function() {
+			this.destroyTable();
+		},
+		initTable: function(sTableType) {
+			this.destroyTable();
+			this.oTable = new Table({
+				type: sTableType,
+				autoBindOnInit: false,
+				delegate: {
+					name: "sap/ui/mdc/odata/v4/TableDelegate"
+				}
+			});
+			return this.oTable.initialized();
+		},
+		destroyTable: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+		}
+	});
+
+	QUnit.test("#isExportSupported", function(assert) {
+		var fnTest = function(sTableType, bExpectedSupport) {
+			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable(sTableType);
+			return pInit.then(function(oTable) {
+				assert.strictEqual(oTable.getControlDelegate().isExportSupported(oTable), bExpectedSupport, "Table type: " + sTableType);
+			});
+		}.bind(this);
+
+		return fnTest(TableType.Table, true).then(function() {
+			return fnTest(TableType.TreeTable, false);
+		}).then(function() {
+			return fnTest(TableType.ResponsiveTable, true);
+		});
+	});
+
+	QUnit.test("#isSelectionSupported", function(assert) {
+		var fnTest = function(sTableType, bExpectedSupport) {
+			var pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable(sTableType);
+			return pInit.then(function(oTable) {
+				assert.strictEqual(oTable.getControlDelegate().isSelectionSupported(oTable), bExpectedSupport, "Table type: " + sTableType);
+			});
+		}.bind(this);
+
+		return fnTest(TableType.Table, true).then(function() {
+			return fnTest(TableType.TreeTable, false);
+		}).then(function() {
+			return fnTest(TableType.ResponsiveTable, true);
+		});
 	});
 });

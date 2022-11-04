@@ -112,7 +112,22 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/Table.qunit",
+				module: "./table/{name}.qunit",
+				qunit: {
+					reorder: false
+				}
+			},
+			"TreeTableType": {
+				group: "Table",
+				coverage: {
+					only: "[sap/ui/mdc]",
+					never: "[sap/ui/mdc/qunit]",
+					branchTracking: true
+				},
+				ui5: {
+					libs: ["sap.ui.mdc", "sap.ui.table"]
+				},
+				module: "./table/{name}.qunit",
 				qunit: {
 					reorder: false
 				}
@@ -124,14 +139,14 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/ResponsiveTableType.qunit",
+				module: "./table/{name}.qunit",
 				qunit: {
 					reorder: false
 				}
 			},
 			"TableDelegate": {
 				group: "Table",
-				module: "./table/TableDelegate.qunit",
+				module: "./table/{name}.qunit",
 				qunit: {
 					reorder: false
 				}
@@ -150,7 +165,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/Column.qunit",
+				module: "./table/{name}.qunit",
 				qunit: {
 					reorder: false
 				}
@@ -162,7 +177,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/CreationRow.qunit",
+				module: "./table/{name}.qunit",
 				qunit: {
 					reorder: false
 				}
@@ -174,7 +189,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/Menu.qunit",
+				module: "./table/{name}.qunit",
 				qunit: {
 					reorder: false
 				}
@@ -186,7 +201,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/TableFlex.qunit",
+				module: "./table/{name}.qunit",
 				qunit: {
 					reorder: false
 				}
@@ -198,7 +213,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					never: "[sap/ui/mdc/qunit]",
 					branchTracking: true
 				},
-				module: "./table/TableSettings.qunit",
+				module: "./table/{name}.qunit",
 				qunit: {
 					reorder: false
 				}

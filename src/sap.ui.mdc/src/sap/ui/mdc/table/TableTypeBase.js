@@ -69,7 +69,9 @@ sap.ui.define([
 	};
 
 	TableTypeBase.prototype.updateTable = function() {
-		for (var sProperty in this.getMetadata().getProperties()) {
+		// TODO: With getAllProperties it iterates over all properties, also core properties.
+		//  It would be better to configure the inner table correctly on table creation (#createTable) instead of configuring it (directly) afterwards
+		for (var sProperty in this.getMetadata().getAllProperties()) {
 			this.updateTableByProperty(sProperty, this.getProperty(sProperty));
 		}
 	};

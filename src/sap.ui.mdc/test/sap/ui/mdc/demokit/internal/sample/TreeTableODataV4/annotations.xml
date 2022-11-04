@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="SAP__aggregation"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_HIERARCHY',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Hierarchy.v1" Alias="SAP__hierarchy"/>
+	</edmx:Reference>
+
+	<edmx:Reference Uri="/sap/opu/odata4/sap/zmbr_sadl_hierarchy_bdg/srvd/sap/zmbr_sadl_hierarchy/0001/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.srvd.zmbr_sadl_hierarchy.v0001" Alias="SAP__self"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="my.zmbr_sadl_hierarchy.v0001" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<Annotations Target="SAP__self.I_SADL_RS_HIERARCHY_SOURCEType">
+				<Annotation Term="SAP__aggregation.RecursiveHierarchy" Qualifier="I_SADL_RS_HIERARCHY">
+					<Record>
+						<PropertyValue Property="NodeProperty" PropertyPath="SADL__NodeId"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__hierarchy.RecursiveHierarchy" Qualifier="I_SADL_RS_HIERARCHY">
+					<Record>
+						<PropertyValue Property="LimitedDescendantCountProperty" PropertyPath="SADL__LimitedDescendantCount"/>
+						<PropertyValue Property="DrillStateProperty" PropertyPath="SADL__DrillState"/>
+						<PropertyValue Property="DistanceFromRootProperty" PropertyPath="SADL__DistanceFromOutputRoot"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+
+<!-- 	<edmx:Reference Uri="/sap/opu/odata4/sap/zsadl_hierarchy_v4_srvc_bdg/srvd/sap/zsadl_hierarchy_service_def/0001/$metadata">-->
+<!--		<edmx:Include Namespace="com.sap.gateway.srvd.zsadl_hierarchy_service_def.v0001" Alias="SAP__self"/>-->
+<!--	</edmx:Reference>-->
+<!--	<edmx:DataServices>-->
+<!--		<Schema Namespace="my.zsadl_hierarchy_service_def.v0001" xmlns="http://docs.oasis-open.org/odata/ns/edm">-->
+<!--			<Annotations Target="SAP__self.I_SADL_RS_HIERARCHY_SOURCEType">-->
+<!--				<Annotation Term="SAP__aggregation.RecursiveHierarchy" Qualifier="I_SADL_RS_HIERARCHY">-->
+<!--					<Record>-->
+<!--						<PropertyValue Property="NodeProperty" PropertyPath="SADL__NodeId"/>-->
+<!--					</Record>-->
+<!--				</Annotation>-->
+<!--				<Annotation Term="SAP__hierarchy.RecursiveHierarchy" Qualifier="I_SADL_RS_HIERARCHY">-->
+<!--					<Record>-->
+<!--						<PropertyValue Property="LimitedDescendantCountProperty" PropertyPath="SADL__LimitedDescendantCount"/>-->
+<!--						<PropertyValue Property="DrillStateProperty" PropertyPath="SADL__DrillState"/>-->
+<!--						<PropertyValue Property="DistanceFromRootProperty" PropertyPath="SADL__DistanceFromOutputRoot"/>-->
+<!--					</Record>-->
+<!--				</Annotation>-->
+<!--			</Annotations>-->
+<!--		</Schema>-->
+<!--	</edmx:DataServices>-->
+</edmx:Edmx>

@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/mdc/Table",
+	"sap/ui/mdc/library",
 	"../QUnitUtils",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
@@ -15,6 +16,7 @@ sap.ui.define([
 ], function(
 	Text,
 	Table,
+	library,
 	MDCQUnitUtils,
 	Core,
 	coreLibrary,
@@ -28,6 +30,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var TableType = library.TableType;
 	var sDelegatePath = "sap/ui/mdc/TableDelegate";
 
 	var fnOriginalUpdateBindingInfo = TableDelegate.updateBindingInfo;
@@ -65,7 +68,7 @@ sap.ui.define([
 		}, iTimeout);
 	}
 
-	QUnit.module("TableDelegate#Methods", {
+	QUnit.module("API", {
 		before: function() {
 			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
 				name: "Name",
@@ -123,7 +126,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Filter Restriction", function(assert) {
+	QUnit.test("validateState", function(assert) {
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 		var oState = {};
 		var oValidationState = this.oTable.validateState(oState, "Group");
@@ -218,11 +221,39 @@ sap.ui.define([
 		);
 	});
 
-	QUnit.test("Export Capabilities", function(assert) {
+	QUnit.test("fetchExportCapabilities", function(assert) {
 		return TableDelegate.fetchExportCapabilities(this.oTable).then(function(oExportCapabilities) {
 			assert.ok(typeof oExportCapabilities === 'object', 'Function fetchExportCapabilities returns an object');
 			assert.ok(oExportCapabilities.hasOwnProperty('XLSX'), 'Default export type XLSX is provided');
 			assert.notOk(oExportCapabilities.hasOwnProperty('PDF'), 'Export type PDF is not provided');
+		});
+	});
+
+	QUnit.test("isExportSupported", function(assert) {
+		var fnTest = function(sTableType, bExpectedSupport) {
+			return this.oTable.setType(sTableType).initialized().then(function(oTable) {
+				assert.strictEqual(oTable.getControlDelegate().isExportSupported(oTable), bExpectedSupport, "Table type: " + sTableType);
+			});
+		}.bind(this);
+
+		return fnTest(TableType.Table, true).then(function() {
+			return fnTest(TableType.TreeTable, true);
+		}).then(function() {
+			return fnTest(TableType.ResponsiveTable, true);
+		});
+	});
+
+	QUnit.test("isSelectionSupported", function(assert) {
+		var fnTest = function(sTableType, bExpectedSupport) {
+			return this.oTable.setType(sTableType).initialized().then(function(oTable) {
+				assert.strictEqual(oTable.getControlDelegate().isSelectionSupported(oTable), bExpectedSupport, "Table type: " + sTableType);
+			});
+		}.bind(this);
+
+		return fnTest(TableType.Table, true).then(function() {
+			return fnTest(TableType.TreeTable, true);
+		}).then(function() {
+			return fnTest(TableType.ResponsiveTable, true);
 		});
 	});
 });
