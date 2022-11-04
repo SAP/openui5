@@ -197,6 +197,9 @@ sap.ui.define([
 		ComboBoxBase.prototype.updateItems = function(sReason) {
 			this.bItemsUpdated = false;
 
+			var iItemsCount = this.getItems().length;
+			var oList;
+
 			// for backward compatibility and to keep the old data binding behavior,
 			// the items should be destroyed before calling .updateAggregation("items")
 			this.destroyItems();
@@ -211,6 +214,19 @@ sap.ui.define([
 				}
 
 				this.onItemsLoaded();
+			}
+
+			oList = this._getList();
+
+			// when there are no items both before the update and after it, we have to remove the busy state
+			if (oList && iItemsCount === this.getItems().length) {
+				oList.setBusy(false);
+				oList.setShowNoData(!this.getItems().length);
+				this.bInitialBusyIndicatorState = false;
+
+				if (this.getValue()) {
+					this.open();
+				}
 			}
 		};
 

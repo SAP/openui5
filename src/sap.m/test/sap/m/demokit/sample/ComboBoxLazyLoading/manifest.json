@@ -23,7 +23,8 @@
 				"files": [
 					"view/ComboBoxLazyLoading.view.xml",
 					"controller/ComboBoxLazyLoading.controller.js",
-					"manifest.json"
+					"manifest.json",
+					"MockServer.js"
 				]
 			}
 		}

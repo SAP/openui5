@@ -194,6 +194,13 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			"opa/combobox/LoadItemsOPA": {
+				title: "OPA Test Page for sap.m.ComboBox",
+				ui5: {
+					libs: "sap.m",
+					language: "en"
+				}
+			},
 			/**
 			 * @deprecated As of version 1.50
 			 */

@@ -564,7 +564,7 @@ sap.ui.define([
 			var oSelectedItem = this.getSelectedItem(),
 				oSelectedListItem = ListHelpers.getListItem(oSelectedItem);
 
-			if (this.bProcessingLoadItemsEvent && (this.getItems().length === 0)) {
+			if (this.bProcessingLoadItemsEvent && !this.bItemsUpdated && (this.getItems().length === 0)) {
 				return;
 			}
 
@@ -659,7 +659,12 @@ sap.ui.define([
 			// if the loadItems event is being processed,
 			// we need to open the dropdown list to show the busy indicator
 			if (this.bProcessingLoadItemsEvent && (this.getPickerType() === "Dropdown")) {
-				this.open();
+
+				if (this.isOpen() && !this.getValue()) {
+					this.close();
+				} else {
+					this.open();
+				}
 			}
 
 			if (this.getLastFocusedListItem()) {
