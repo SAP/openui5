@@ -1142,7 +1142,7 @@ sap.ui.define([
 			}
 		});
 
-		["ar", "he", "tr", "de", "en", "uk", "th", "zh_TW", "zh_CN"].forEach(function(sLocale) {
+		["ar", "he", "tr", "de", "en", "uk", "ur", "th", "zh_TW", "zh_CN"].forEach(function(sLocale) {
 			var oDate = new Date("2021-10-13T02:22:33Z");
 			QUnit.test("Timezone integration all timezones for " + sLocale, function (assert) {
 				var oLocale = new Locale(sLocale);

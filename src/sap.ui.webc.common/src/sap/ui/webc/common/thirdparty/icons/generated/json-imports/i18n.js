@@ -162,7 +162,7 @@ sap.ui.define(['require', "sap/ui/webc/common/thirdparty/base/asset-registries/i
     return data;
   };
 
-  const localeIds = ["ar", "bg", "ca", "cs", "cy", "da", "de", "el", "en", "en_GB", "en_US_sappsd", "en_US_saprigi", "en_US_saptrc", "es", "es_MX", "et", "fi", "fr", "fr_CA", "hi", "hr", "hu", "in", "it", "iw", "ja", "kk", "ko", "lt", "lv", "ms", "nl", "no", "pl", "pt", "pt_PT", "ro", "ru", "sh", "sk", "sl", "sv", "th", "tr", "uk", "vi", "zh_CN", "zh_TW"];
+  const localeIds = ["ar", "bg", "ca", "cs", "cy", "da", "de", "el", "en", "en_GB", "en_US_sappsd", "en_US_saprigi", "en_US_saptrc", "es", "es_MX", "et", "fi", "fr", "fr_CA", "hi", "hr", "hu", "in", "it", "iw", "ja", "kk", "ko", "lt", "lv", "ms", "nl", "no", "pl", "pt", "pt_PT", "ro", "ru", "sh", "sk", "sl", "sv", "th", "tr", "uk", "ur", "vi", "zh_CN", "zh_TW"];
   localeIds.forEach(localeId => {
     (0, _i18n.registerI18nLoader)("@ui5/webcomponents-icons", localeId, importAndCheck);
   });
