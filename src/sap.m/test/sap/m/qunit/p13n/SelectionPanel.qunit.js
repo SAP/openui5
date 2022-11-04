@@ -269,6 +269,37 @@ sap.ui.define([
 		assert.ok(!oHoveredItem.getCells()[1].getItems()[0].getVisible(), "active icon is not visible");
 	});
 
+	QUnit.test("Check '_handleActivated' for deselction and icon", function(assert){
+		this.oSelectionPanel.setP13nData(this.getTestData());
+
+		var oHoveredItem = this.oSelectionPanel._oListControl.getItems()[1];
+
+		//execute hover handler
+		this.oSelectionPanel._handleActivated(oHoveredItem);
+
+		//check that movement buttons have been added
+		assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oSelectionPanel._getMoveTopButton()) > -1, "Move Top Button found");
+		assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oSelectionPanel._getMoveUpButton()) > -1, "Move Up Button found");
+		assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oSelectionPanel._getMoveDownButton()) > -1, "Move Down Button found");
+		assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oSelectionPanel._getMoveBottomButton()) > -1, "Move Bottom Button found");
+
+		//uncheck the item in the model and execute activation logic again --> no move buttons and the icon is enabled
+		var aTestData = this.getTestData();
+		aTestData[1].visible = false;
+		this.oSelectionPanel.setP13nData(aTestData);
+		oHoveredItem = this.oSelectionPanel._oListControl.getItems()[1];
+		this.oSelectionPanel._handleActivated(oHoveredItem);
+
+		//check that the icon has been set to visible: false
+		assert.ok(oHoveredItem.getCells()[1].getItems()[0].getVisible(), "active icon is visible");
+
+		//check that movement buttons have been removed
+		assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oSelectionPanel._getMoveTopButton()) === -1, "Move Top Button found");
+		assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oSelectionPanel._getMoveUpButton()) === -1, "Move Up Button found");
+		assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oSelectionPanel._getMoveDownButton()) === -1, "Move Down Button found");
+		assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oSelectionPanel._getMoveBottomButton()) === -1, "Move Bottom Button found");
+	});
+
 	QUnit.test("Check 'enableReorder'", function(assert){
 		this.oSelectionPanel.setEnableReorder(true);
 		assert.equal(this.oSelectionPanel.getAggregation("_template").aDelegates.length, 1, "Hover event delegate registered");

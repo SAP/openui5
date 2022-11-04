@@ -262,7 +262,9 @@ sap.ui.define([
 		}
 		//Store (new) hovered item and set its icon to visible: false + add move buttons to it
 		var oIcon = oHoveredItem.getCells()[1].getItems()[0];
-		oIcon.setVisible(false);
+		if (oHoveredItem.getSelected()) {
+			oIcon.setVisible(false);
+		}
 		this._oHoveredItem = oHoveredItem;
 		this._updateEnableOfMoveButtons(oHoveredItem, false);
 		this._addMoveButtons(oHoveredItem);
