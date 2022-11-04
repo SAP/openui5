@@ -511,13 +511,15 @@ sap.ui.define([
 		this._aGroupHeadersAdded = [];
 		this._iFileUploaderPH = null;
 		this._oItemToUpdate = null;
-		var illustratedMessage = new IllustratedMessage({
+		var oIllustratedMessage = new IllustratedMessage({
 				illustrationType: IllustratedMessageType.NoData,
 				illustrationSize: IllustratedMessageSize.Auto,
 				title: this.getNoDataText(),
 				description: this.getNoDataDescription()
 			});
-		this.setAggregation("_illustratedMessage", illustratedMessage);
+
+		this.setAggregation("_illustratedMessage", oIllustratedMessage);
+		oIllustratedMessage.addIllustrationAriaLabelledBy(oIllustratedMessage.getId());
 		this._cloudFilePickerControl = null;
 	};
 
