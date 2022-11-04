@@ -14,7 +14,6 @@
 @_sap_m_LightBox_SubtitleMarginTop: 0.5rem;
 @_sap_m_LightBox_OverlayBackground: @sapUiBlockLayerBackground;
 @_sap_m_LightBox_ContainerBackground: @sapUiGlobalBackgroundColor;
-@_sap_m_LightBox_ErrorIconColor: @sapUiContentNonInteractiveIconColor;
 @_sap_m_LightBox_OverlayOpacity: 0.9;
 @_sap_m_LightBox_FontFamily: @sapUiFontFamily;
 
@@ -190,56 +189,8 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
    Error State
   ========================================================================== */
 
-.sapMLightBox .sapMLightBoxErrorContainer {
-	padding: 1rem;
-}
-
-.sapMLightBox .sapMLightBoxErrorContainerTwoLines {
-	padding: 2rem;
-	height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightCozy);
-}
-
-.sapMLightBox .sapMLightBoxVerticalLayout {
-	text-align: center;
-	max-width: 30rem;
-}
-
-.sapMLightBox .sapMLightBoxIconErrorContainer {
-	margin: 0 auto;
-	width: 5rem;
-}
-
-.sapMLightBox .sapMLightBoxErrorIcon {
-	font-family: SAP-icons;
-	font-size: 4rem;
-	font-weight: normal;
-	width: 5rem;
-	height: 5rem;
-}
-
-.sapMLightBox .sapMLightBoxErrorTitle {
-	margin-top: 1rem;
-	font-size: 1.5rem;
-	line-height: 2rem;
-	color: @sapUiGroupTitleTextColor;
-	font-size: @sapMFontHeader2Size;
-}
-
-.sapMLightBox .sapMLightBoxErrorSubtitle {
-	line-height: normal;
-	margin: 1rem auto;
-	font-size: 1rem;
-	color: @sapUiContentLabelColor;
-	font-size: @sapMFontHeader5Size;
-}
-
 .sapMLightBox.sapMLightBoxError .sapMLightBoxFooter {
 	position: initial;
-}
-
-.sapMLightBox .sapMLightBoxErrorContainer .sapUiIcon::before,
-.sapMLightBox .sapMLightBoxErrorContainerTwoLines .sapUiIcon::before {
-	color: @_sap_m_LightBox_ErrorIconColor;
 }
 
 /* ==========================================================================
@@ -276,9 +227,5 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 	.sapMLightBoxFooter .sapMBtn {
 		padding-right: 0.5rem;
 		margin-bottom: 0.25rem;
-	}
-
-	.sapMLightBox .sapMLightBoxErrorContainerTwoLines {
-		height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightCompact);
 	}
 }

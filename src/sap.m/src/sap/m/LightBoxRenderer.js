@@ -50,11 +50,13 @@ sap.ui.define([
 			oRM.class("sapMLightBoxTopCornersRadius");
 		}
 
-		if (oImageState !== LightBoxLoadingStates.Error) {
+		if (oImageState === LightBoxLoadingStates.TimeOutError || oImageState === LightBoxLoadingStates.Error) {
+			oRM.class("sapMLightBoxError");
+			oRM.style("width", "auto");
+			oRM.style("height", "auto");
+		} else {
 			oRM.style("width", oControl._iWidth + "px");
 			oRM.style("height", oControl._iHeight + "px");
-		} else {
-			oRM.class("sapMLightBoxError");
 		}
 
 		oRM.openEnd();
@@ -107,7 +109,7 @@ sap.ui.define([
 
 		oRM.openEnd();
 
-		oRM.renderControl(oControl.getAggregation("_verticalLayout"));
+		oRM.renderControl(oControl.getAggregation("_errorMessage"));
 
 		oRM.close("div");
 	};

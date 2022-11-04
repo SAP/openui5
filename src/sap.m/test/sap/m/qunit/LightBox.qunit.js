@@ -516,5 +516,37 @@ sap.ui.define([
 
 			}.bind(this), 100);
 		});
+
+		QUnit.module('Error message', {
+			beforeEach: function() {
+				this.LightBox = new LightBox({
+					imageContent : [
+						new LightBoxItem({
+							imageSrc: IMAGE_PATH + 'fakepath'
+						})
+					]
+				});
+			},
+			afterEach: function() {
+				this.LightBox.close();
+				this.LightBox.destroy();
+			}
+		});
+
+		QUnit.test('image could not be loaded', function(assert) {
+			var done = assert.async();
+
+			// Act
+			this.LightBox.open();
+			oCore.applyChanges();
+
+			// Wait for CSS animation to complete
+			setTimeout(function () {
+
+				assert.ok(this.LightBox.getAggregation("_errorMessage").isA("sap.m.IllustratedMessage"), 'There is Illustrated message shown when the image could not be loaded');
+				done();
+
+			}.bind(this), 100);
+		});
 	}
 );

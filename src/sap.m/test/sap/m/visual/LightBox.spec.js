@@ -106,7 +106,7 @@ describe('sap.m.LightBox', function() {
 		element(by.id('lB8-closeButton')).click();
 	});
 
-	// LightBox Compactmode
+	// LightBox Compact mode
 
 	it('should show lightBox compact mode', function () {
 		element(by.id('toggleCompactModeButton')).click();
