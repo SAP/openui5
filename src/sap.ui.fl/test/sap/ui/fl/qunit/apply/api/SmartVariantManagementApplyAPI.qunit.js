@@ -198,7 +198,7 @@ sap.ui.define([
 		QUnit.test("When isApplicationVariant() is called", function (assert) {
 			this.oControl = new Control("controlId1");
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("foo.Component");
-			var oGetAppIdStub = sandbox.stub(Utils, "getAppIdFromManifest").returns("bar");
+			var oGetAppIdStub = sandbox.stub(ManifestUtils, "getAppIdFromManifest").returns("bar");
 			var oStubUtilsGetComponentForControl = sandbox.stub(Utils, "getComponentForControl").returns(null);
 
 			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant({control: this.oControl}), true, "the function returns true");

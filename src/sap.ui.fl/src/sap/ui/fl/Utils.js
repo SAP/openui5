@@ -47,8 +47,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	var Utils = {
-		APP_ID_AT_DESIGN_TIME: "${pro" + "ject.art" + "ifactId}", //avoid replaced by content of ${project.artifactId} placeholder at build steps
-
 		/**
 		 * Formats the log message by replacing placeholders with values and logging the message.
 		 *
@@ -258,20 +256,6 @@ sap.ui.define([
 		getAppComponentForControl: function(oControl) {
 			var oComponent = oControl instanceof Component ? oControl : this._getComponentForControl(oControl);
 			return this._getAppComponentForComponent(oComponent);
-		},
-
-		/**
-		 * Returns an object with 'name' and 'version' of the App Component where the App Descriptor changes are saved
-		 *
-		 * @param {sap.ui.base.ManagedObject} oControl control or app component for which the flex controller should be instantiated
-		 * @returns {Promise} Returns Object with name and version of Component for App Descriptor changes
-		 */
-		getAppDescriptorComponentObjectForControl: function(oControl) {
-			var oAppComponent = this.getAppComponentForControl(oControl);
-			var oManifest = oAppComponent.getManifest();
-			return {
-				name: this.getAppIdFromManifest(oManifest)
-			};
 		},
 
 		/**
@@ -640,33 +624,6 @@ sap.ui.define([
 		 */
 		isEmbeddedComponent: function(oComponent) {
 			return oComponent instanceof Component && Utils._getComponentTypeFromManifest(oComponent.getManifestObject()) === "component";
-		},
-
-		/**
-		 * Returns the descriptor Id, which is always the reference for descriptor changes
-		 *
-		 * @param {object|sap.ui.core.Manifest} oManifest - Manifest of the component
-		 * @returns {string} Version of application if it is available in the manifest, otherwise an empty string
-		 *
-		 * @private
-		 * @ui5-restricted sap.ui.fl
-		 */
-		getAppIdFromManifest: function(oManifest) {
-			if (oManifest) {
-				var oSapApp = (oManifest.getEntry) ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
-				var sAppId = oSapApp && oSapApp.id;
-				if (sAppId === Utils.APP_ID_AT_DESIGN_TIME) {
-					if (oManifest.getComponentName) {
-						return oManifest.getComponentName();
-					}
-					if (oManifest.name) {
-						return oManifest.name;
-					}
-				}
-				return sAppId;
-			}
-
-			throw new Error("No Manifest received, descriptor changes are not possible");
 		},
 
 		/**

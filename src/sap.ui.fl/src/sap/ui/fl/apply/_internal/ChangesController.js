@@ -4,12 +4,27 @@
 
 sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/Utils"
 ], function(
 	OldFlexControllerFactory,
+	ManifestUtils,
 	FlexUtils
 ) {
 	"use strict";
+
+
+
+	/**
+	 * Returns an object with 'name' and 'version' of the App Component where the App Descriptor changes are saved
+	 *
+	 * @param {sap.ui.base.ManagedObject} oControl control or app component for which the flex controller should be instantiated
+	 * @returns {string} Returns name of Component for App Descriptor changes
+	 */
+	function getAppDescriptorComponentObjectForControl(oControl) {
+		var oManifest = FlexUtils.getAppDescriptor(oControl);
+		return ManifestUtils.getAppIdFromManifest(oManifest);
+	}
 
 	var ChangesController = {
 		/**
@@ -37,8 +52,8 @@ sap.ui.define([
 				return OldFlexControllerFactory.create(vSelector.appId);
 			}
 			var oAppComponent = vSelector.appComponent || vSelector;
-			var oAppDescriptorComponent = FlexUtils.getAppDescriptorComponentObjectForControl(oAppComponent);
-			return OldFlexControllerFactory.create(oAppDescriptorComponent.name);
+			var sAppId = getAppDescriptorComponentObjectForControl(oAppComponent);
+			return OldFlexControllerFactory.create(sAppId);
 		},
 
 		/**

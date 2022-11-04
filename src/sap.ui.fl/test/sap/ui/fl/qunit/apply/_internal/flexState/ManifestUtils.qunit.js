@@ -2,11 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/core/Manifest",
+	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Manifest,
+	UIComponent,
 	ManifestUtils,
 	Utils,
 	sinon
@@ -15,6 +17,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 	var sReference = "fl.reference";
+	var APP_ID_AT_DESIGN_TIME = "${pro" + "ject.art" + "ifactId}"; //avoid replaced by content of ${project.artifactId} placeholder at build steps
 
 	function createAppComponent(bFlexExtensionPointEnabled) {
 		return {
@@ -86,16 +89,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("without old or new appvar id or componentName (raw manifest)", function (assert) {
-			var oGetAppIdStub = sandbox.stub(Utils, "getAppIdFromManifest").returns("appId");
 			var mPropertyBag = {
 				manifest: {
+					"sap.app": {
+						id: "appId"
+					},
 					"sap-ui6": {
 						appVariantId: "appVarId"
 					}
 				}
 			};
 			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId.Component", "the app id is returned");
-			assert.equal(oGetAppIdStub.callCount, 1, "the function was called");
 		});
 
 		QUnit.test("with an appvar id (manifest object)", function (assert) {
@@ -121,16 +125,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("without old or new appvar id or componentName (manifest object)", function (assert) {
-			var oGetAppIdStub = sandbox.stub(Utils, "getAppIdFromManifest").returns("appId");
 			var mPropertyBag = {
 				manifest: new Manifest({
+					"sap.app": {
+						id: "appId"
+					},
 					"sap-ui6": {
 						appVariantId: "appVarId"
 					}
 				})
 			};
 			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId.Component", "the app id is returned");
-			assert.equal(oGetAppIdStub.callCount, 1, "the function was called");
 		});
 
 		QUnit.test("with manifest object at design time and getComponentName is available", function (assert) {
@@ -138,7 +143,7 @@ sap.ui.define([
 				manifest: {
 					getEntry: function () {
 						return {
-							id: Utils.APP_ID_AT_DESIGN_TIME
+							id: APP_ID_AT_DESIGN_TIME
 						};
 					},
 					getComponentName: function() {
@@ -154,12 +159,12 @@ sap.ui.define([
 				manifest: {
 					getEntry: function () {
 						return {
-							id: Utils.APP_ID_AT_DESIGN_TIME
+							id: APP_ID_AT_DESIGN_TIME
 						};
 					}
 				}
 			};
-			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), Utils.APP_ID_AT_DESIGN_TIME + ".Component", "the app id at design time is returned");
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), APP_ID_AT_DESIGN_TIME + ".Component", "the app id at design time is returned");
 		});
 
 		QUnit.test("with manifest raw at design time and name property available", function (assert) {
@@ -169,7 +174,7 @@ sap.ui.define([
 						appVariantId: "appVarId"
 					},
 					"sap.app": {
-						id: Utils.APP_ID_AT_DESIGN_TIME
+						id: APP_ID_AT_DESIGN_TIME
 					},
 					name: "appId.Component"
 				}
@@ -184,11 +189,67 @@ sap.ui.define([
 						appVariantId: "appVarId"
 					},
 					"sap.app": {
-						id: Utils.APP_ID_AT_DESIGN_TIME
+						id: APP_ID_AT_DESIGN_TIME
 					}
 				}
 			};
-			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), Utils.APP_ID_AT_DESIGN_TIME + ".Component", "the app id at design time is returned");
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), APP_ID_AT_DESIGN_TIME + ".Component", "the app id at design time is returned");
+		});
+	});
+
+	QUnit.module("ManifestUtils.getAppIdFromManifest", {
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("with a getEntry function (manifest instance)", function (assert) {
+			var sId = "appId";
+			var oManifest = {
+				getEntry: function() {
+					return {
+						id: sId
+					};
+				}
+			};
+
+			assert.equal(ManifestUtils.getAppIdFromManifest(oManifest), sId, "the ID is returned");
+		});
+
+		QUnit.test("without a getEntry function (manifest JSON)", function (assert) {
+			var sId = "appId";
+			var oManifest = {
+				"sap.app": {
+					id: sId
+				}
+			};
+
+			assert.equal(ManifestUtils.getAppIdFromManifest(oManifest), sId, "the ID is returned");
+		});
+
+		QUnit.test("with a design time placeholder (manifest instance)", function (assert) {
+			var sId = "appId";
+			var oManifest = {
+				"sap.app": {
+					id: APP_ID_AT_DESIGN_TIME
+				},
+				getComponentName: function () {
+					return sId;
+				}
+			};
+
+			assert.equal(ManifestUtils.getAppIdFromManifest(oManifest), sId, "the ID is returned");
+		});
+
+		QUnit.test("with a design time placeholder (manifest JSON)", function (assert) {
+			var sId = "appId";
+			var oManifest = {
+				"sap.app": {
+					id: APP_ID_AT_DESIGN_TIME
+				},
+				name: sId
+			};
+
+			assert.equal(ManifestUtils.getAppIdFromManifest(oManifest), sId, "the ID is returned");
 		});
 	});
 
@@ -289,17 +350,14 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("ManifestUtils.getBaseComponentNameFromManifest", {
-		beforeEach: function() {
-			this.oGetAppIdStub = sandbox.stub(Utils, "getAppIdFromManifest").returns("appId");
-		},
-		afterEach: function() {
-			sandbox.restore();
-		}
-	}, function() {
+	QUnit.module("ManifestUtils.getBaseComponentNameFromManifest", {}, function() {
 		QUnit.test("without sap.ui5 entry", function(assert) {
-			assert.equal(ManifestUtils.getBaseComponentNameFromManifest({}), "appId", "the appId is returned");
-			assert.equal(this.oGetAppIdStub.callCount, 1, "the function was called once");
+			var oManifest = {
+				"sap.app": {
+					id: "appId"
+				}
+			};
+			assert.equal(ManifestUtils.getBaseComponentNameFromManifest(oManifest), "appId", "the appId is returned");
 		});
 
 		QUnit.test("with sap.ui5 entry and componentName", function(assert) {
@@ -309,17 +367,16 @@ sap.ui.define([
 				}
 			};
 			assert.equal(ManifestUtils.getBaseComponentNameFromManifest(oManifest), "componentName", "the componentName is returned");
-			assert.equal(this.oGetAppIdStub.callCount, 0, "the function was not called");
 		});
 
 		QUnit.test("with sap.ui5 entry but without componentName", function(assert) {
 			var oManifest = {
-				"sap.ui5": {
-					name: "name"
+				"sap.ui5": {},
+				"sap.app": {
+					id: "appId"
 				}
 			};
 			assert.equal(ManifestUtils.getBaseComponentNameFromManifest(oManifest), "appId", "the appId is returned");
-			assert.equal(this.oGetAppIdStub.callCount, 1, "the function was called once");
 		});
 	});
 

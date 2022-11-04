@@ -43,7 +43,7 @@ sap.ui.define([
 	FeaturesAPI,
 	Settings,
 	Layer,
-	flexUtils,
+	FlexUtils,
 	JSONModel,
 	sinon
 ) {
@@ -249,7 +249,7 @@ sap.ui.define([
 			simulateSystemConfig(false);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
 				displayedVersion: "versionGUID"
 			}));
@@ -272,7 +272,8 @@ sap.ui.define([
 			simulateSystemConfig(false);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppComponentForControl").withArgs(oAppComponent).returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
 				},
@@ -286,7 +287,7 @@ sap.ui.define([
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
-			sandbox.stub(flexUtils, "getControlType").returns("sap.ui.fl.DummyControl");
+			sandbox.stub(FlexUtils, "getControlType").returns("sap.ui.fl.DummyControl");
 
 			var oUIChange;
 			// Creates a first descriptor change
@@ -357,7 +358,8 @@ sap.ui.define([
 
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppComponentForControl").withArgs(oAppComponent).returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
 				},
@@ -371,7 +373,7 @@ sap.ui.define([
 
 			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "App variant failed to save").returns();
 
-			sandbox.stub(flexUtils, "getControlType").returns("sap.ui.fl.DummyControl");
+			sandbox.stub(FlexUtils, "getControlType").returns("sap.ui.fl.DummyControl");
 
 			var oUIChange;
 			// Creates a first descriptor change
@@ -438,7 +440,8 @@ sap.ui.define([
 
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppComponentForControl").withArgs(oAppComponent).returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
 				},
@@ -454,7 +457,7 @@ sap.ui.define([
 
 			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "Dirty changes failed to save").returns();
 
-			sandbox.stub(flexUtils, "getControlType").returns("sap.ui.fl.DummyControl");
+			sandbox.stub(FlexUtils, "getControlType").returns("sap.ui.fl.DummyControl");
 			var fnDeleteAppVarSpy = sandbox.stub(SaveAs, "deleteAppVariant").resolves();
 
 			var oUIChange;
@@ -531,7 +534,8 @@ sap.ui.define([
 
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppComponentForControl").withArgs(oAppComponent).returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
 				},
@@ -545,7 +549,7 @@ sap.ui.define([
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
-			sandbox.stub(flexUtils, "getControlType").returns("sap.ui.fl.DummyControl");
+			sandbox.stub(FlexUtils, "getControlType").returns("sap.ui.fl.DummyControl");
 
 			var oUIChange;
 			// Creates a descriptor change
@@ -590,7 +594,7 @@ sap.ui.define([
 			simulateSystemConfig(false);
 
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 
 			var mAppVariant = {
 				response: {
@@ -652,7 +656,7 @@ sap.ui.define([
 			simulateSystemConfig(false);
 
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 
 			var mAppVariant = {
 				response: {
@@ -712,7 +716,7 @@ sap.ui.define([
 			simulateSystemConfig(false);
 
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 
 			var oTransportResponse = {
 				response: {
@@ -760,7 +764,7 @@ sap.ui.define([
 			simulateSystemConfig(false);
 
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 
 			var mAppVariant = {
 				response: {
@@ -826,7 +830,7 @@ sap.ui.define([
 			simulateSystemConfig(false);
 
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 
 			var mAppVariant = {
 				response: {
@@ -873,7 +877,7 @@ sap.ui.define([
 			simulateSystemConfig(true);
 
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 
 			var mAppVariant = {
 				response: {
@@ -920,7 +924,7 @@ sap.ui.define([
 			simulateSystemConfig(true);
 
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 
 			var mAppVariant = {
 				response: {
@@ -1203,13 +1207,19 @@ sap.ui.define([
 			simulateSystemConfig(false);
 
 			var oGetFlexReferenceStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl");
-			var getAppComponentForControlStub = sandbox.stub(flexUtils, "getAppComponentForControl");
+			var getAppComponentForControlStub = sandbox.stub(FlexUtils, "getAppComponentForControl");
+			var oGetAppDescriptorStub = sandbox.stub(FlexUtils, "getAppDescriptor");
 
 			oGetFlexReferenceStub.withArgs(oAppComponent).returns("testComponent");
+			oGetAppDescriptorStub.withArgs(oAppComponent).returns(oAppComponent.getManifest());
 			getAppComponentForControlStub.withArgs(oAppComponent).returns(oAppComponent);
 
 			oGetFlexReferenceStub.withArgs(oAppVariantComponent).returns("customer.reference.app.variant.id_123456");
+			oGetAppDescriptorStub.withArgs(oAppVariantComponent).returns(oAppVariantComponent.getManifest());
 			getAppComponentForControlStub.withArgs(oAppVariantComponent).returns(oAppVariantComponent);
+
+
+
 
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
@@ -1224,7 +1234,7 @@ sap.ui.define([
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
-			sandbox.stub(flexUtils, "getControlType").returns("sap.ui.fl.DummyControl");
+			sandbox.stub(FlexUtils, "getControlType").returns("sap.ui.fl.DummyControl");
 
 			var oUIChange;
 
