@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
@@ -30,7 +29,6 @@ sap.ui.define([
 	Button,
 	RuntimeAuthoring,
 	sinon,
-	jQuery,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
@@ -41,17 +39,15 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 	var oComp;
-
-	jQuery("<div></div>", {
-		id: "content"
-	}).css({
-		width: "600px",
-		height: "600px",
-		position: "fixed",
-		right: "0",
-		bottom: "0",
-		top: "auto"
-	}).appendTo(jQuery("body"));
+	var oContentDOM = document.createElement("div");
+	oContentDOM.setAttribute("id", "content");
+	oContentDOM.style.width = "600px";
+	oContentDOM.style.height = "600px";
+	oContentDOM.style.position = "fixed";
+	oContentDOM.style.right = "0";
+	oContentDOM.style.bottom = "0";
+	oContentDOM.style.top = "auto";
+	document.querySelector('body').appendChild(oContentDOM);
 
 	RtaQunitUtils.renderTestAppAtAsync("content")
 		.then(function(oCompCont) {
@@ -845,7 +841,7 @@ sap.ui.define([
 		if (oComp) {
 			oComp.destroy();
 		}
-		jQuery("#content").hide();
+		document.getElementById("content").style.display = 'none';
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

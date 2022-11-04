@@ -201,7 +201,7 @@ sap.ui.define([
 		// 2) animate DomRef
 		.then(function () {
 			return this.animation
-				? Animation.waitTransition(this.$(), this.addStyleClass.bind(this, "is_visible"))
+				? Animation.waitTransition(this.getDomRef(), this.addStyleClass.bind(this, "is_visible"))
 				: Promise.resolve();
 		}.bind(this))
 		// 3) focus on Toolbar
@@ -223,7 +223,7 @@ sap.ui.define([
 			if (bSkipTransition) {
 				this.removeStyleClass("is_visible");
 			} else {
-				oPromise = Animation.waitTransition(this.$(), this.removeStyleClass.bind(this, "is_visible"));
+				oPromise = Animation.waitTransition(this.getDomRef(), this.removeStyleClass.bind(this, "is_visible"));
 			}
 		}
 		return oPromise

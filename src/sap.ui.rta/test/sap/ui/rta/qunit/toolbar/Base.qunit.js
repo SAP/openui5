@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/util/Animation",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -15,7 +14,6 @@ sap.ui.define([
 	BusyIndicator,
 	BaseToolbar,
 	Animation,
-	jQuery,
 	sinon,
 	oCore
 ) {
@@ -26,9 +24,12 @@ sap.ui.define([
 	 ********************************************************************************************************/
 
 	//RTA Toolbar needs RTA Mode settings
-	jQuery("body").addClass("sapUiRtaMode");
+	document.body.classList.add("sapUiRtaMode");
 
 	var sandbox = sinon.createSandbox();
+	function isVisible(oElement) {
+		return !!(oElement.offsetWidth || oElement.offsetHeight || oElement.getClientRects().length);
+	}
 
 	QUnit.module("Basic functionality", {
 		beforeEach: function() {
@@ -41,7 +42,6 @@ sap.ui.define([
 		QUnit.test("initialization", function(assert) {
 			assert.ok(this.oToolbar, "Toolbar instance is created");
 			assert.strictEqual(this.oToolbar.getDomRef(), null, "Toolbar is not rendered");
-			assert.ok(this.oToolbar.$().filter(":visible").length === 0, "Toolbar is not visible");
 		});
 
 		QUnit.test("show() method", function(assert) {
@@ -52,7 +52,7 @@ sap.ui.define([
 			return oPromise.then(function () {
 				oCore.applyChanges();
 				assert.ok(this.oToolbar.getDomRef() instanceof HTMLElement, "Toolbar is rendered");
-				assert.ok(this.oToolbar.$().filter(":visible").length === 1, "Toolbar is visible");
+				assert.ok(isVisible(this.oToolbar.getDomRef()), true, "Toolbar is visible");
 			}.bind(this));
 		});
 
@@ -64,7 +64,6 @@ sap.ui.define([
 			return oPromise.then(function () {
 				oCore.applyChanges();
 				assert.strictEqual(this.oToolbar.getDomRef(), null, "Toolbar is not rendered");
-				assert.ok(this.oToolbar.$().filter(":visible").length === 0, "Toolbar is not visible");
 			}.bind(this));
 		});
 
@@ -76,7 +75,6 @@ sap.ui.define([
 			return oPromise.then(function () {
 				oCore.applyChanges();
 				assert.strictEqual(this.oToolbar.getDomRef(), null, "Toolbar is not rendered");
-				assert.ok(this.oToolbar.$().filter(":visible").length === 0, "Toolbar is not visible");
 			}.bind(this));
 		});
 
@@ -84,26 +82,24 @@ sap.ui.define([
 			return this.oToolbar.show().then(function () {
 				oCore.applyChanges();
 				assert.ok(this.oToolbar.getDomRef() instanceof HTMLElement, "Toolbar is rendered");
-				assert.ok(this.oToolbar.$().filter(":visible").length === 1, "Toolbar is visible");
+				assert.ok(isVisible(this.oToolbar.getDomRef()), true, "Toolbar is visible");
 
 				return this.oToolbar.hide().then(function () {
 					oCore.applyChanges();
 					assert.strictEqual(this.oToolbar.getDomRef(), null, "Toolbar is not rendered");
-					assert.ok(this.oToolbar.$().filter(":visible").length === 0, "Toolbar is not visible");
 				}.bind(this));
 			}.bind(this));
 		});
 
 		QUnit.test("setZIndex() method", function(assert) {
 			return this.oToolbar.show().then(function () {
-				var iInitialZIndex = parseInt(this.oToolbar.$().css("z-index"));
+				var iInitialZIndex = parseInt(getComputedStyle(this.oToolbar.getDomRef())["z-index"]);
 				assert.strictEqual(this.oToolbar.getZIndex(), iInitialZIndex, "z-index is rendered properly");
 
 				var iZIndex = iInitialZIndex + 1;
 				this.oToolbar.setZIndex(iZIndex);
 				oCore.applyChanges();
-
-				assert.strictEqual(parseInt(this.oToolbar.$().css("z-index")), iZIndex, "z-index is updated properly");
+				assert.strictEqual(parseInt(getComputedStyle(this.oToolbar.getDomRef())["z-index"]), iZIndex, "z-index is updated properly");
 			}.bind(this));
 		});
 
@@ -300,7 +296,7 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("body").removeClass("sapUiRtaMode");
+		document.body.classList.remove("sapUiRtaMode");
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

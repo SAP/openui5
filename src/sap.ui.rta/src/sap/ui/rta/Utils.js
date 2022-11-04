@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
@@ -20,7 +19,6 @@ sap.ui.define([
 	"sap/ui/core/Fragment"
 ],
 function(
-	jQuery,
 	FieldExtensibility,
 	FlexUtils,
 	Layer,
@@ -204,7 +202,7 @@ function(
 	 * @private
 	 */
 	Utils.getOverlayInstanceForDom = function(oDomRef) {
-		var sId = jQuery(oDomRef).attr("id");
+		var sId = oDomRef.getAttribute("id");
 		if (sId) {
 			return sap.ui.getCore().byId(sId);
 		}
@@ -451,9 +449,8 @@ function(
 	 * @returns{boolean} - Returns if <code>oDomElement</code> is currently visible on the screen.
 	 */
 	Utils.isElementInViewport = function(oDomElement) {
-		if (oDomElement instanceof jQuery) {
-			oDomElement = oDomElement.get(0);
-		}
+		//TODO: remove when all calls are replaced
+		oDomElement = oDomElement.jquery ? oDomElement.get(0) : oDomElement;
 
 		var mRect = oDomElement.getBoundingClientRect();
 

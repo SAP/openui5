@@ -4,12 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/rta/plugin/Remove",
-	"sap/m/Button",
-	"sap/ui/thirdparty/jquery"
+	"sap/m/Button"
 ], function(
 	Remove,
-	Button,
-	jQuery
+	Button
 ) {
 	"use strict";
 
@@ -49,6 +47,7 @@ sap.ui.define([
 			oOverlay.addStyleClass("sapUiRtaPersDelete");
 		}
 
+		//TODO: check this, this makes no sense; length is always 0
 		if (oOverlay.hasStyleClass("sapUiRtaPersDelete") && oOverlay.$().children(".sapUiRtaPersDeleteClick").length <= 0) {
 			var onDeletePressed = function(oOverlay) {
 				this.handler([oOverlay]);
@@ -91,18 +90,21 @@ sap.ui.define([
 	EasyRemove.prototype._addButton = function(oOverlay) {
 		var bEnabled = this.isEnabled([oOverlay]);
 		var sId = oOverlay.getId() + "-DeleteIcon";
-		var oHtmlIconWrapper = jQuery("<div class='sapUiRtaPersDeleteClick' draggable='true'> </div>");
-		var oHtmlIconOuter = jQuery("<div class='sapUiRtaPersDeleteIconOuter'> </div>");
+		var oHtmlIconWrapper = document.createElement("div");
+		oHtmlIconWrapper.classList.add("sapUiRtaPersDeleteClick");
+		oHtmlIconWrapper.setAttribute("draggable", "true");
+		var oHtmlIconOuter = document.createElement("div");
+		oHtmlIconOuter.classList.add("sapUiRtaPersDeleteIconOuter");
 
 		oOverlay._oDeleteButton = new Button(sId, {
 			icon: "sap-icon://less",
 			tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_REMOVE"),
 			enabled: bEnabled
-		}).placeAt(oHtmlIconOuter.get(0));
+		}).placeAt(oHtmlIconOuter);
 		oHtmlIconWrapper.append(oHtmlIconOuter);
-		oOverlay.$().append(oHtmlIconWrapper);
+		oOverlay.getDomRef().append(oHtmlIconWrapper);
 
-		oHtmlIconWrapper[0].addEventListener("dragstart", function(oEvent) {
+		oHtmlIconWrapper.addEventListener("dragstart", function(oEvent) {
 			oEvent.stopPropagation();
 			oEvent.preventDefault();
 		});

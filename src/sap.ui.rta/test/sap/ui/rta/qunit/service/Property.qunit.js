@@ -388,9 +388,13 @@ sap.ui.define([
 
 			return this.oRta.getService("property").then(function (oService) {
 				this.oProperty = oService;
-				return jQuery.getJSON("test-resources/sap/ui/rta/qunit/service/Property.json", function (oExpectedPropertyData) {
-					this.oExpectedPropertyData = oExpectedPropertyData;
-				}.bind(this));
+				return fetch("test-resources/sap/ui/rta/qunit/service/Property.json")
+					.then(function(oResponse) {
+						return oResponse.json();
+					})
+					.then(function(oResponseJSON) {
+						this.oExpectedPropertyData = oResponseJSON;
+					}.bind(this));
 			}.bind(this));
 		},
 		after: function() {

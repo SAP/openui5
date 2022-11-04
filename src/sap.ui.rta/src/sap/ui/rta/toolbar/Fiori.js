@@ -63,14 +63,15 @@ function(
 
 			if (this._oFioriHeader.getShowLogo() && sLogoPath) {
 				// Unstable: if FLP changes ID of <img> element, logo could be not found
-				var $logo = this._oFioriHeader.$().find("#shell-header-icon");
+				// $() is still needed because this._oFioriHeader does not offer a getDomRef method
+				var oLogo = this._oFioriHeader.$().find("#shell-header-icon").get(0);
 				var iWidth;
 				var iHeight;
 
-				if ($logo.length) {
-					iWidth = $logo.width();
-					iHeight = $logo.height();
-					this._checkLogoSize($logo, iWidth, iHeight);
+				if (oLogo) {
+					iWidth = oLogo.getBoundingClientRect().width;
+					iHeight = oLogo.getBoundingClientRect().height;
+					this._checkLogoSize(oLogo, iWidth, iHeight);
 				}
 
 				this.getControl("iconSpacer").setWidth("10%");
@@ -95,9 +96,9 @@ function(
 		}.bind(this));
 	};
 
-	Fiori.prototype._checkLogoSize = function($logo, iWidth, iHeight) {
-		var iNaturalWidth = $logo.get(0).naturalWidth;
-		var iNaturalHeight = $logo.get(0).naturalHeight;
+	Fiori.prototype._checkLogoSize = function(oLogo, iWidth, iHeight) {
+		var iNaturalWidth = oLogo.naturalWidth;
+		var iNaturalHeight = oLogo.naturalHeight;
 
 		if (iWidth !== iNaturalWidth || iHeight !== iNaturalHeight) {
 			Log.error([

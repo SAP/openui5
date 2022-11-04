@@ -992,33 +992,33 @@ sap.ui.define([
 
 		QUnit.test("when stopEdit is called in non-error mode", function(assert) {
 			var oControl = this.oVariantManagementControl.getTitle();
-			var $oControl = jQuery(oControl.getDomRef("inner"));
+			var oControlInnerDOM = oControl.getDomRef().querySelector("[id*='inner']");
 			var sOldText = "Title Old";
 			this.oControlVariantPlugin.setOldValue(sOldText);
 			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
 
-			$oControl.css("visibility", "hidden");
+			oControlInnerDOM.style.visible = "hidden";
 			this.oControlVariantPlugin.stopEdit();
 
 			assert.strictEqual(this.oControlVariantPlugin.getOldValue(), sOldText, "then old value is the same");
-			assert.ok($oControl.css("visibility"), "visible", "then control visibility set back to visible");
+			assert.ok(getComputedStyle(oControlInnerDOM)["visibility"], "visible", "then control visibility set back to visible");
 			assert.notOk(this._$oEditableControlDomRef);
 			assert.notOk(this._oEditedOverlay);
 		});
 
 		QUnit.test("when stopEdit is called in error mode", function(assert) {
 			var oControl = this.oVariantManagementControl.getTitle();
-			var $oControl = jQuery(oControl.getDomRef("inner"));
+			var oControlInnerDOM = oControl.getDomRef().querySelector("[id*='inner']");
 			var sOldText = "Title Old";
 			this.oControlVariantPlugin.setOldValue(sOldText);
 			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
 			sandbox.stub(this.oVariantManagementOverlay, "hasStyleClass").returns(true);
 
-			$oControl.css("visibility", "hidden");
+			oControlInnerDOM.style.visible = "hidden";
 			this.oControlVariantPlugin.stopEdit();
 
 			assert.strictEqual(this.oControlVariantPlugin.getOldValue(), sOldText, "then old value is the same");
-			assert.ok($oControl.css("visibility"), "visible", "then control visibility set back to visible");
+			assert.ok(getComputedStyle(oControlInnerDOM)["visibility"], "visible", "then control visibility set back to visible");
 			assert.notOk(this._$oEditableControlDomRef);
 			assert.notOk(this._oEditedOverlay);
 		});
@@ -1072,14 +1072,12 @@ sap.ui.define([
 			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 
 			var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef); /* Text control */
-			var $control = jQuery(this.oVariantManagementControl.getDomRef()); /* Main control */
-			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().outerWidth());
+			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
+			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.getDomRef().offsetWidth);
 
-			$control.css({
-				width: "10px",
-				"max-width": "10px",
-				position: "fixed"
-			});
+			oControlDOM.style.width = "10px";
+			oControlDOM.style.maxWidth = "10px";
+			oControlDOM.style.position = "fixed";
 			$editableControl.css({
 				"min-width": "15px",
 				width: "15px",
@@ -1091,62 +1089,58 @@ sap.ui.define([
 				position: "fixed"
 			});
 
-			var iWidthDiff = parseInt($control.outerWidth()) - parseInt($editableControl.parent().outerWidth());
+			var iWidthDiff = parseInt(oControlDOM.offsetWidth) - parseInt($editableControl.parent().outerWidth());
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
-			var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
-			assert.strictEqual($editableWrapper.width(), iOverlayInnerWidth - iWidthDiff, "then correct width set for the editable field wrapper");
+			var oEditableWrapperDOM = this.oVariantManagementOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
+			assert.strictEqual(oEditableWrapperDOM.getBoundingClientRect().width, iOverlayInnerWidth - iWidthDiff, "then correct width set for the editable field wrapper");
 		});
 
 		QUnit.test("when startEdit is called and renamed control's text container has no overflow", function(assert) {
 			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 
 			var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef); /* Text control */
-			var $control = jQuery(this.oVariantManagementControl.getDomRef()); /* Main control */
-			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().innerWidth());
+			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
+			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.getDomRef().clientWidth);
 
-			var iWidthDiff = parseInt($control.outerWidth()) - parseInt($editableControl.outerWidth());
+			var iWidthDiff = parseInt(oControlDOM.offsetWidth) - parseInt($editableControl.parent().outerWidth());
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
-			var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
-			assert.equal($editableWrapper.width(), iOverlayInnerWidth - iWidthDiff, "then correct with set for the editable field wrapper");
+			var oEditableWrapperDOM = this.oVariantManagementOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
+			assert.equal(oEditableWrapperDOM.getBoundingClientRect().width, iOverlayInnerWidth - iWidthDiff, "then correct with set for the editable field wrapper");
 		});
 
 		QUnit.test("when startEdit is called and renamed control's text container and parent container having overflow", function(assert) {
 			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 
 			var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef); /* Text control */
-			var $control = jQuery(this.oVariantManagementControl.getDomRef()); /* Main control */
+			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
 
-			$control.css({
-				width: "10px",
-				"max-width": "10px",
-				position: "fixed"
-			});
+			oControlDOM.style.width = "10px";
+			oControlDOM.style.maxWidth = "10px";
+			oControlDOM.style.position = "fixed";
 			$editableControl.parent().css({
 				width: "20px",
 				"min-width": "20px",
 				position: "fixed"
 			});
-			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().innerWidth());
+			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.getDomRef().clientWidth);
 
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
-			var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
-			assert.equal($editableWrapper.width(), iOverlayInnerWidth, "then correct width set for the editable field wrapper");
+			var oEditableWrapperDOM = this.oVariantManagementOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
+			assert.equal(oEditableWrapperDOM.getBoundingClientRect().width, iOverlayInnerWidth, "then correct width set for the editable field wrapper");
 		});
 
 		QUnit.test("when startEdit is called and renamed control's editable dom has its own overlay", function(assert) {
 			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 
 			var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef);/* Text control */
-			var $control = jQuery(this.oVariantManagementControl.getDomRef());/* Main control */
+			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
 			var sInnerControlOverlayWidth = "10px";
-			$control.css({
-				width: "100px",
-				"max-width": "100px",
-				position: "fixed"
-			});
+			oControlDOM.style.width = "10px";
+			oControlDOM.style.maxWidth = "10px";
+			oControlDOM.style.position = "fixed";
 
 			return new Promise(function (fnResolve) {
 				// eslint-disable-next-line no-new
@@ -1155,17 +1149,15 @@ sap.ui.define([
 					init: function (oEvent) {
 						var oTitleOverlay = oEvent.getSource();
 						oTitleOverlay.render();
-						oTitleOverlay.$().appendTo(this.oVariantManagementOverlay.$());
+						this.oVariantManagementOverlay.getDomRef().append(oTitleOverlay.getDomRef());
 						fnResolve(oTitleOverlay);
 					}.bind(this)
 				});
 			}.bind(this))
 				.then(function (oTitleOverlay) {
-					oTitleOverlay.$().css({
-						width: sInnerControlOverlayWidth,
-						"min-width": sInnerControlOverlayWidth,
-						position: "fixed"
-					});
+					oTitleOverlay.getDomRef().style.width = sInnerControlOverlayWidth;
+					oTitleOverlay.getDomRef().style.minWidth = sInnerControlOverlayWidth;
+					oTitleOverlay.getDomRef().style.position = "fixed";
 
 					sandbox.stub(OverlayRegistry, "getOverlay")
 						.callThrough()
@@ -1174,8 +1166,8 @@ sap.ui.define([
 
 					this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
-					var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
-					assert.equal($editableWrapper.css("width"), sInnerControlOverlayWidth, "then correct width is set for the editable field wrapper, outer control width not considered");
+					var oEditableWrapperDOM = this.oVariantManagementOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
+					assert.equal(oEditableWrapperDOM.getBoundingClientRect().width + "px", sInnerControlOverlayWidth, "then correct width is set for the editable field wrapper, outer control width not considered");
 				}.bind(this));
 		});
 

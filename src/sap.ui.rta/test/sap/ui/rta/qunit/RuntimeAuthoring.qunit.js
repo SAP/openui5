@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/DOMUtil",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
@@ -19,7 +20,6 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
@@ -29,6 +29,7 @@ sap.ui.define([
 	Device,
 	DesignTimeMetadata,
 	OverlayRegistry,
+	DOMUtil,
 	KeyCodes,
 	SmartVariantManagementApplyAPI,
 	FlexRuntimeInfoAPI,
@@ -40,7 +41,6 @@ sap.ui.define([
 	Stack,
 	RuntimeAuthoring,
 	RtaUtils,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -284,7 +284,7 @@ sap.ui.define([
 				assert.ok(true, "then the promise got rejected");
 				assert.ok(this.oRta, "RTA is still up and running");
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 command is still in the stack");
-				assert.strictEqual(jQuery(".sapUiRtaToolbar:visible").length, 1, "and the Toolbar is visible.");
+				assert.equal(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), true, "and the Toolbar is visible.");
 			}.bind(this));
 		});
 

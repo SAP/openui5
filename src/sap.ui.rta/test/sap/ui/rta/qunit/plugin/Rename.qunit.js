@@ -533,19 +533,19 @@ sap.ui.define([
 				return triggerAndWaitForStopEdit(this.oRenamePlugin);
 			}.bind(this))
 			.then(function() {
-				assert.ok(this.oLabelOverlay.getParent().$()[0].className.indexOf("sapUiDtOverlayWithScrollBarHorizontal") === -1, "then the ScrollBar Horizontal Style Class was not set");
+				assert.ok(this.oLabelOverlay.getParent().getDomRef().className.indexOf("sapUiDtOverlayWithScrollBarHorizontal") === -1, "then the ScrollBar Horizontal Style Class was not set");
 			}.bind(this));
 		});
 
 		QUnit.test("when the title is not on the currently visible viewport and gets renamed", function(assert) {
-			var $Button = this.oButton.$();
-			var $Label = this.oLabel.$();
-			$Button.css("margin-bottom", document.documentElement.clientHeight);
-			var oScrollSpy = sinon.spy($Label.get(0), "scrollIntoView");
+			var oButtonDom = this.oButton.getDomRef();
+			var oLabelDom = this.oLabel.getDomRef();
+			oButtonDom.style.marginBottom = document.documentElement.clientHeight + "px";
+			var oScrollSpy = sinon.spy(oLabelDom, "scrollIntoView");
 
 			return triggerAndWaitForStartEdit(this.oRenamePlugin, this.oLayoutOverlay).then(function() {
 				assert.equal(oScrollSpy.callCount, 1, "then the Label got scrolled");
-				$Label.get(0).scrollIntoView.restore();
+				oLabelDom.scrollIntoView.restore();
 			});
 		});
 

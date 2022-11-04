@@ -168,11 +168,11 @@ sap.ui.define([
 			assert.strictEqual(oSuperDeregisterSpy.callCount, 1, "the super class was called");
 
 			sControlStyleClass = "sapUiRtaPaddingTop";
-			assert.ok(this.oLayout.$("sectionsContainer").hasClass(sControlStyleClass), "initially the style class got set on the layout");
+			assert.ok(this.oLayout.getDomRef().querySelector("[id*='sectionsContainer']").classList.contains(sControlStyleClass), "initially the style class got set on the layout");
 
 			this.oEasyAddPlugin.deregisterElementOverlay(this.oLayoutOverlay);
 			assert.ok(this.oLayoutOverlay._oAddButton.bIsDestroyed, "after deregistering, the easy add button got destroyed");
-			assert.notOk(this.oLayout.$("sectionsContainer").hasClass(sControlStyleClass), "and the style class got deleted");
+			assert.notOk(this.oLayout.getDomRef().querySelector("[id*='sectionsContainer']").classList.contains(sControlStyleClass), "and the style class got deleted");
 			assert.strictEqual(oSuperDeregisterSpy.callCount, 2, "the super class was called");
 		});
 	});
