@@ -16176,6 +16176,16 @@ sap.ui.define([
 		}).then(function () {
 			oFormBinding.suspend();
 			oListBinding.setAggregation({aggregate : {AGE : {}}});
+
+			// code under test
+			assert.deepEqual(oListBinding.getAggregation(), {
+				aggregate : {
+					AGE : {}
+				},
+				group : {},
+				groupLevels : []
+			}, "JIRA: CPOUI5ODATAV4-1825");
+
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?custom=foo&$apply=aggregate(AGE)"
 					+ "&$orderby=Name&$filter=AGE gt 42&$skip=0&$top=100", {
 					value : [{
@@ -16200,6 +16210,10 @@ sap.ui.define([
 			oListBinding.sort([]);
 			oListBinding.filter([]);
 			oFormBinding.changeParameters({custom : "foo"});
+
+			// code under test
+			assert.strictEqual(oListBinding.getAggregation(), undefined,
+				"JIRA: CPOUI5ODATAV4-1825");
 
 			that.expectRequest("TEAMS('TEAM_01')?custom=foo&$select=MEMBER_COUNT,Team_Id"
 					+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name),TEAM_2_MANAGER($select=ID)", {
@@ -16787,6 +16801,15 @@ sap.ui.define([
 			var oBinding = that.oView.byId("table").getBinding("items");
 
 			oBinding.setAggregation({groupLevels : ["BusinessPartnerRole"]});
+
+			// code under test
+			assert.deepEqual(oBinding.getAggregation(), {
+				aggregate : {},
+				group : {
+					BusinessPartnerRole : {}
+				},
+				groupLevels : ["BusinessPartnerRole"]
+			}, "JIRA: CPOUI5ODATAV4-1825");
 
 			that.expectEvents(assert, oBinding, [
 					[, "change", {detailedReason : "AddVirtualContext", reason : "filter"}],
@@ -19324,6 +19347,16 @@ sap.ui.define([
 			assert.throws(function () {
 				oListBinding.changeParameters({$apply : "groupby((LifecycleStatus))"});
 			}, new Error("Cannot combine $$aggregation and $apply"));
+
+			// code under test
+			assert.deepEqual(oListBinding.getAggregation(), {
+				aggregate : {},
+				group : {
+					CurrencyCode : {},
+					LifecycleStatus : {}
+				},
+				groupLevels : ["LifecycleStatus"]
+			}, "JIRA: CPOUI5ODATAV4-1825");
 		});
 	});
 
@@ -19391,6 +19424,17 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oListBinding = that.oView.byId("table").getBinding("items");
+
+			// code under test
+			assert.deepEqual(oListBinding.getAggregation(), {
+				aggregate : {
+					GrossAmount : {grandTotal : true, unit : "CurrencyCode"}
+				},
+				group : {
+					LifecycleStatus : {additionally : ["LifecycleStatusDesc"]}
+				},
+				groupLevels : []
+			}, "JIRA: CPOUI5ODATAV4-1825");
 
 			// code under test
 			assert.strictEqual(oListBinding.getDownloadUrl(),
@@ -20409,6 +20453,25 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
 			oListBinding = oTable.getBinding("items");
+
+			// code under test
+			assert.deepEqual(oListBinding.getAggregation(), {
+				aggregate : {
+					SalesAmountLocalCurrency : {
+						grandTotal : true,
+						subtotals : true,
+						unit : "LocalCurrency"
+					}
+				},
+				grandTotalAtBottomOnly : false,
+				group : {
+					Country : {},
+					LocalCurrency : {},
+					Region : {}
+				},
+				groupLevels : ["Country", "LocalCurrency", "Region"],
+				subtotalsAtBottomOnly : bSubtotalsAtBottomOnly
+			}, "JIRA: CPOUI5ODATAV4-1825");
 
 			checkTable("initial state", assert, oTable, [
 				"/BusinessPartners()",
@@ -21960,6 +22023,17 @@ sap.ui.define([
 			});
 
 			// code under test
+			assert.deepEqual(oListBinding.getAggregation(), {
+				aggregate : {
+					SalesNumber : {grandTotal : true}
+				},
+				group : {
+					Region : {}
+				},
+				groupLevels : []
+			}, "JIRA: CPOUI5ODATAV4-1825");
+
+			// code under test
 			oListBinding.filter([
 				new Filter("Name", FilterOperator.EQ, "Foo"),
 				new Filter("Region", FilterOperator.NE, "Bar")
@@ -22235,15 +22309,32 @@ sap.ui.define([
 							with : "sum"
 						}
 					},
+					"grandTotal like 1.84" : true, // code under test
 					group : {
 						Region : {}
-					},
-					"grandTotal like 1.84" : true // code under test
+					}
 				},
 				$count : true, // Note: not by default in 1.84
 				$filter : "SalesAmountSum gt 0",
 				$orderby : "Region"
 			});
+
+			// code under test
+			assert.deepEqual(oListBinding.getAggregation(), {
+				aggregate : {
+					SalesAmountSum : {
+						grandTotal : true,
+						name : "SalesAmount",
+						unit : "Currency", // Note: unsupported in 1.84
+						with : "sum"
+					}
+				},
+				"grandTotal like 1.84" : true,
+				group : {
+					Region : {}
+				},
+				groupLevels : []
+			}, "JIRA: CPOUI5ODATAV4-1825");
 
 			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')/groupby((Region)"
 						+ ",aggregate(SalesAmount with sum as SalesAmountSum,Currency))"
@@ -22563,7 +22654,23 @@ sap.ui.define([
 			}); // TypeError("Cannot read property 'groupLevels' of null")
 
 			// code under test
+			assert.deepEqual(oListBinding.getAggregation(), {
+				aggregate : {
+					GrossAmount : {}
+				},
+				group : {},
+				groupLevels : []
+			}, "JIRA: CPOUI5ODATAV4-1825");
+
+			// code under test
 			oListBinding.setAggregation({});
+
+			// code under test
+			assert.deepEqual(oListBinding.getAggregation(), {
+				aggregate : {},
+				group : {},
+				groupLevels : []
+			}, "JIRA: CPOUI5ODATAV4-1825");
 
 			assert.throws(function () {
 				// code under test
@@ -22583,6 +22690,10 @@ sap.ui.define([
 		}).then(function () {
 			// code under test (Note: no request!)
 			oListBinding.setAggregation();
+
+			// code under test
+			assert.strictEqual(oListBinding.getAggregation(), undefined,
+				"JIRA: CPOUI5ODATAV4-1825");
 
 			that.expectRequest("SalesOrderList"
 					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
@@ -22841,6 +22952,11 @@ sap.ui.define([
 			]);
 		}).then(function (aResults) {
 			assert.strictEqual(aResults[0], 60);
+
+			// code under test
+			assert.deepEqual(oRoot.getBinding().getAggregation(), {
+				hierarchyQualifier : "OrgChart"
+			}, "JIRA: CPOUI5ODATAV4-1825");
 		});
 	});
 
@@ -22912,6 +23028,12 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
+
+			// code under test
+			assert.deepEqual(oTable.getBinding("rows").getAggregation(), {
+				expandTo : 2,
+				hierarchyQualifier : "OrgChart"
+			}, "JIRA: CPOUI5ODATAV4-1825");
 
 			checkTable("initial page", assert, oTable, [
 				"/EMPLOYEES('1')",
@@ -23654,6 +23776,7 @@ sap.ui.define([
 				name : "AGE",
 				total : false
 			}],
+			oListBinding,
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', suspended : true}">\
 	<Text id="text" text="{Name}"/>\
@@ -23665,8 +23788,9 @@ sap.ui.define([
 			.expectChange("age", []);
 
 		return this.createView(assert, sView).then(function () {
-			var oListBinding = that.oView.byId("table").getBinding("items"),
-				oMeasureRangePromise;
+			var oMeasureRangePromise;
+
+			oListBinding = that.oView.byId("table").getBinding("items");
 
 			that.expectRequest("EMPLOYEES?$apply=search(covfefe)/groupby((Name),aggregate(AGE))"
 					+ "/concat(aggregate(AGE with min as UI5min__AGE,AGE with max as UI5max__AGE)"
@@ -23690,6 +23814,14 @@ sap.ui.define([
 			oListBinding.setAggregation({search : "covfefe"});
 
 			// code under test
+			assert.deepEqual(oListBinding.getAggregation(), {
+				aggregate : {},
+				group : {},
+				groupLevels : [],
+				search : "covfefe"
+			}, "JIRA: CPOUI5ODATAV4-1825");
+
+			// code under test
 			oMeasureRangePromise
 				= oListBinding.updateAnalyticalInfo(aAggregation).measureRangePromise;
 
@@ -23706,6 +23838,21 @@ sap.ui.define([
 					min : 42
 				}
 			});
+
+			// code under test
+			assert.deepEqual(oListBinding.getAggregation(), {
+				aggregate : {
+					AGE : {
+						max : true,
+						min : true
+					}
+				},
+				group : {
+					Name : {}
+				},
+				groupLevels : [],
+				search : "covfefe"
+			}, "JIRA: CPOUI5ODATAV4-1825");
 		});
 	});
 

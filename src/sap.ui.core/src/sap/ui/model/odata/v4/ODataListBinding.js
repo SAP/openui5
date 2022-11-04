@@ -1836,6 +1836,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the current object holding the information needed for data aggregation, see
+	 * {@link #setAggregation}.
+	 *
+	 * @returns {object}
+	 *   The current data aggregation object, incl. some default values
+	 *
+	 * @public
+	 * @since 1.109.0
+	 */
+	ODataListBinding.prototype.getAggregation = function () {
+		return _Helper.clone(this.mParameters.$$aggregation, function (sKey, vValue) {
+			return sKey[0] === "$" ? undefined : vValue;
+		});
+	};
+
+	/**
 	 * Returns all current contexts of this list binding in no special order. Just like
 	 * {@link #getCurrentContexts}, this method does not request any data from a back end and does
 	 * not change the binding's state. In contrast to {@link #getCurrentContexts}, it does not only
@@ -3587,6 +3603,7 @@ sap.ui.define([
 	 *     <li> a recursive hierarchy is requested, but the model does not use the
 	 *       <code>autoExpandSelect</code> parameter.
 	 *   </ul>
+	 *
 	 * @example <caption>First group level is product category including subtotals for the net
 	 *     amount in display currency. On leaf level, transaction currency is used as an additional
 	 *     dimension and the net amount is averaged.</caption>
@@ -3607,6 +3624,7 @@ sap.ui.define([
 	 *     groupLevels : ['ProductCategory']
 	 *   });
 	 * @public
+	 * @see #getAggregation
 	 * @since 1.55.0
 	 */
 	ODataListBinding.prototype.setAggregation = function (oAggregation) {
