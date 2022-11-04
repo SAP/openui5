@@ -642,15 +642,37 @@ sap.ui.define([
 		return this._oToolbar;
 	};
 
+	// Functions returns sNoDataText which is combination of Title and Description from the IllustratedMessage
+	UploadSet.prototype._setListNoDataText = function (sText, bIsDescription) {
+		var sNoDataText = "";
+		var oIllustratedMessage = this.getAggregation("_illustratedMessage");
+		if (!sText) {
+			sNoDataText = oIllustratedMessage.getTitle() + " " + oIllustratedMessage.getDescription();
+		} else if (sText) {
+			if (bIsDescription) {
+				sNoDataText = oIllustratedMessage.getTitle() + " " + sText;
+			} else {
+				sNoDataText = sText + " " + oIllustratedMessage.getDescription();
+			}
+		}
+		return sNoDataText;
+	};
+
 	UploadSet.prototype.getNoDataText = function () {
 		var sNoDataText = this.getProperty("noDataText");
 		sNoDataText = sNoDataText || this._oRb.getText("UPLOAD_SET_NO_DATA_TEXT");
+		if (this._oList) {
+			this._oList.setNoDataText(this._setListNoDataText(sNoDataText));
+		}
 		return sNoDataText;
 	};
 
 	UploadSet.prototype.getNoDataDescription = function () {
 		var sNoDataDescription = this.getProperty("noDataDescription");
 		sNoDataDescription = sNoDataDescription || this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION");
+		if (this._oList) {
+			this._oList.setNoDataText(this._setListNoDataText(sNoDataDescription, true));
+		}
 		return sNoDataDescription;
 	};
 
@@ -905,7 +927,8 @@ sap.ui.define([
 						drop: [this._onDropFile, this]
 					})
 				],
-				mode: this.getMode()
+				mode: this.getMode(),
+				noDataText: this._setListNoDataText()
 			});
 			this._oList.addStyleClass("sapMUCList");
 			this.addDependent(this._oList);

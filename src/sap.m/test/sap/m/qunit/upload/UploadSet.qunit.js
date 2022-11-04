@@ -377,6 +377,7 @@ sap.ui.define([
 		//Assert
 		assert.equal(this.oUploadSet.getNoDataText(), sNoDataText, "default text is returned for getNoDataText");
 		assert.equal(this.oUploadSet.getNoDataDescription(), sNoDataDescription, "default description is returned for getNoDataDescription");
+		assert.equal(this.oUploadSet._oList.getNoDataText(), sNoDataText + " " + sNoDataDescription, "Nodata Text is set in the List");
 		assert.equal(oIllustratedMessage.getTitle(), sNoDataText, "default text is rendered in Upload set");
 		assert.equal(oIllustratedMessage.getDescription(), sNoDataDescription, "default discription is rendered in Upload set");
 		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), oIllustratedMessage.getId(), "AriaLabelledBy is set correctly.");
@@ -402,6 +403,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		//Assert
 		assert.equal(oIllustratedMessage.getTitle(), "myNoDataText", "The no data text set by user is rendered");
+		assert.equal(this.oUploadSet._oList.getNoDataText(), "myNoDataText" + " " + this.oUploadSet.getNoDataDescription(), "Nodata Text is set in the List");
 		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), oIllustratedMessage.getId(), "AriaLabelledBy is set correctly.");
 	});
 
@@ -414,6 +416,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		//Assert
 		assert.equal(oIllustratedMessage.getDescription(), "myNoDataDescription", "The no data description set by user is rendered");
+		assert.equal(this.oUploadSet._oList.getNoDataText(), this.oUploadSet.getNoDataText() + " " + "myNoDataDescription", "Nodata Text is set in the List");
 		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), oIllustratedMessage.getId(), "AriaLabelledBy is set correctly.");
 	});
 
