@@ -31,7 +31,7 @@ sap.ui.define([
 
 	/**
 	 * Resource bundles are stored according to the Java Development Kit conventions.
-	 * JDK uses old language names for a few ISO639 codes ("iw" for "he", "ji" for "yi", "in" for "id" and "sh" for "sr").
+	 * JDK uses old language names for a few ISO639 codes ("iw" for "he", "ji" for "yi" and "no" for "nb").
 	 * Make sure to convert newer codes to older ones before creating file names.
 	 * @const
 	 * @private
@@ -39,9 +39,8 @@ sap.ui.define([
 	var M_ISO639_NEW_TO_OLD = {
 		"he" : "iw",
 		"yi" : "ji",
-		"id" : "in",
-		"sr" : "sh",
-		"nb" : "no"
+		"nb" : "no",
+		"sr" : "sh" // for backward compatibility, as long as "sr (Cyrillic)" is not supported
 	};
 
 	/**
@@ -52,8 +51,6 @@ sap.ui.define([
 	var M_ISO639_OLD_TO_NEW = {
 		"iw" : "he",
 		"ji" : "yi",
-		"in" : "id",
-		"sh" : "sr",
 		"no" : "nb"
 	};
 
@@ -97,6 +94,9 @@ sap.ui.define([
 				} else if ( sScript === "hant" ) {
 					sRegion = "TW";
 				}
+			}
+			if (sLanguage === "sr" && sScript === "latn") {
+				sLanguage = "sh";
 			}
 			return sLanguage + (sRegion ? "_" + sRegion + (sVariants ? "_" + sVariants.replace("-","_") : "") : "");
 		}
@@ -158,6 +158,11 @@ sap.ui.define([
 		var m;
 		if ( typeof sLocale === 'string' && (m = rLocale.exec(sLocale.replace(/_/g, '-'))) ) {
 			var sLanguage = m[1].toLowerCase();
+			var sScript = m[2] ? m[2].toLowerCase() : undefined;
+			// special case for "sr_Latn" language: "sh" should then be used
+			if (sLanguage === "sr" && sScript === "latn") {
+				sLanguage = "sh";
+			}
 			sLanguage = M_ISO639_OLD_TO_NEW[sLanguage] || sLanguage;
 			return sLanguage + (m[3] ? "-" + m[3].toUpperCase() + (m[4] ? "-" + m[4].slice(1).replace("_","-") : "") : "");
 		}
