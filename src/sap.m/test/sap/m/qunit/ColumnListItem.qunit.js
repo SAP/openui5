@@ -1,7 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/util/Mobile",
-	"sap/ui/Device",
 	"sap/ui/core/Core",
 	"sap/m/ColumnListItem",
 	"sap/m/Column",
@@ -10,7 +9,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/MessageToast",
 	"sap/m/Input"
-], function(Mobile, Device, Core, ColumnListItem, Column, Table, Text, Label, MessageToast, Input) {
+], function(Mobile, Core, ColumnListItem, Column, Table, Text, Label, MessageToast, Input) {
 	"use strict";
 
 
@@ -79,6 +78,30 @@ sap.ui.define([
 
 		testCase("_activeHandlingInheritor",true);
 		testCase("_inactiveHandlingInheritor",false);
+	});
+
+	QUnit.test("Should calculate drop area rectangle", function(assert) {
+		var sut = new ColumnListItem({
+				cells: new Text()
+			}),
+			column = [new Column({
+				demandPopin : true,
+				// make the column bigger than the screen
+				minScreenWidth : "48000px"
+			}), new Column()],
+			table = new Table({
+				columns : column,
+				items : sut
+			});
+
+		table.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		//Assert
+		assert.ok(sut.getDropAreaRect().bottom > sut.getDomRef().getBoundingClientRect().bottom + 16);
+		assert.ok(sut.getDropAreaRect().height > sut.getDomRef().getBoundingClientRect().height + 16);
+
+		table.destroy();
 	});
 
 	QUnit.test("Should not clone headers for popinDisplay:WithoutHeader", function(assert) {
