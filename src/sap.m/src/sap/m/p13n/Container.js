@@ -183,8 +183,8 @@ sap.ui.define([
 	Container.prototype._getTabBar = function () {
 		if (!this._oTabBar) {
 			this._oTabBar = new IconTabBar({
-				expandable: false,
-				expanded: true,
+				headerBackgroundDesign: "Transparent",
+				applyContentPadding: false,
 				select: function (oEvt) {
 					this.switchView(oEvt.getParameter("key"));
 				}.bind(this)
