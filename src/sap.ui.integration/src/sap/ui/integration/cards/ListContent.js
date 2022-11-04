@@ -250,6 +250,23 @@ sap.ui.define([
 				growing: false,
 				showNoData: false
 			});
+
+			this._oList.addEventDelegate({
+				onfocusin: function (oEvent) {
+					if (!(oEvent.srcControl instanceof ListContentItem)) {
+						return;
+					}
+
+					var fItemBottom = oEvent.target.getBoundingClientRect().bottom;
+					var fContentBottom = this.getDomRef().getBoundingClientRect().bottom;
+					var fDist = Math.abs(fItemBottom - fContentBottom);
+					var ROUNDED_CORNER_PX_THRESHOLD = 10;
+
+					if (fDist < ROUNDED_CORNER_PX_THRESHOLD) {
+						oEvent.srcControl.addStyleClass("sapUiIntLCIRoundedCorners");
+					}
+				}
+			}, this);
 		}
 
 		return this._oList;

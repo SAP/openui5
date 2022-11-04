@@ -109,7 +109,6 @@ sap.ui.define([
 	};
 
 	TableContent.prototype._getTable = function () {
-
 		if (this._bIsBeingDestroyed) {
 			return null;
 		}
@@ -121,6 +120,24 @@ sap.ui.define([
 				id: this.getId() + "-Table",
 				showSeparators: ListSeparators.None
 			});
+
+			oTable.addEventDelegate({
+				onfocusin: function (oEvent) {
+					if (!(oEvent.srcControl instanceof ColumnListItem)) {
+						return;
+					}
+
+					var fItemBottom = oEvent.target.getBoundingClientRect().bottom;
+					var fContentBottom = this.getDomRef().getBoundingClientRect().bottom;
+					var fDist = Math.abs(fItemBottom - fContentBottom);
+					var ROUNDED_CORNER_PX_THRESHOLD = 10;
+
+					if (fDist < ROUNDED_CORNER_PX_THRESHOLD) {
+						oEvent.srcControl.addStyleClass("sapUiIntTCIRoundedCorners");
+					}
+				}
+			}, this);
+
 			this.setAggregation("_content", oTable);
 		}
 

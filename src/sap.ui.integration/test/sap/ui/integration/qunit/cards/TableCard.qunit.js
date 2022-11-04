@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/QUnitUtils"
 ], function (
 	mLibrary,
 	Card,
-	Core
+	Core,
+	QUnitUtils
 ) {
 	"use strict";
 
@@ -906,6 +908,54 @@ sap.ui.define([
 				}
 			}
 		});
+	});
+
+	QUnit.module("Table Card Rendering", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Rounded corners is applied on focusin of the last row", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oContent = this.oCard.getCardContent();
+			Core.applyChanges();
+			var aItems = oContent.getInnerList().getItems();
+			var oFirstItem = aItems[0];
+			var oLastItem = aItems[aItems.length - 1];
+
+			// Assert
+			assert.notOk(oFirstItem.getDomRef().classList.contains("sapUiIntTCIRoundedCorners"), "Rounded corners class should NOT be applied on the first item");
+			assert.notOk(oLastItem.getDomRef().classList.contains("sapUiIntTCIRoundedCorners"), "Rounded corners class should NOT be applied on the last item yet");
+
+			// Act
+			QUnitUtils.triggerEvent("focusin", oFirstItem.getDomRef());
+
+			// Assert
+			assert.notOk(oFirstItem.getDomRef().classList.contains("sapUiIntTCIRoundedCorners"), "Rounded corners class should NOT be applied on the first item");
+
+			// Act
+			QUnitUtils.triggerEvent("focusin", oLastItem.getDomRef());
+
+			// Assert
+			assert.ok(oLastItem.getDomRef().classList.contains("sapUiIntTCIRoundedCorners"), "Rounded corners class should be applied on the last item");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_TableCard);
 	});
 
 });
