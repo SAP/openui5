@@ -12,6 +12,7 @@ sap.ui.define([
 
 	var oDefaultInteger = NumberFormat.getIntegerInstance(),
 		oDefaultFloat = NumberFormat.getFloatInstance(),
+		sDefaultLanguage = Configuration.getLanguage(),
 		oCustomInteger = NumberFormat.getIntegerInstance({
 			maxIntegerDigits: 4,
 			minIntegerDigits: 2,
@@ -1270,7 +1271,11 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("Unit Format");
+	QUnit.module("Unit Format", {
+		afterEach : function () {
+			Configuration.setLanguage(sDefaultLanguage);
+		}
+	});
 
 
 	var aCombinations = generateUniqueChars(300);
@@ -1653,6 +1658,160 @@ sap.ui.define([
 		assert.deepEqual(oFormat.parse("1 olf"), [1, undefined], "1 olf");
 		assert.deepEqual(oFormat.parse("1 H"), [1, "electric-inductance"], "1 H");
 
+	});
+
+	//*********************************************************************************************
+	QUnit.test("#parse case-insensitive: language tag by Config/Locale", function (assert) {
+		var oFormat;
+
+		// turkish "İ" results in different lower case characters depending on the locale
+		assert.notStrictEqual("İ".toLocaleLowerCase("tr"), "İ".toLocaleLowerCase("en"));
+
+		// lower/upper case is locale dependent - language by configuration
+		Configuration.setLanguage("tr");
+		oFormat = NumberFormat.getUnitInstance();
+
+		assert.deepEqual(oFormat.parse("42 fit"), [42, "length-foot"]);
+		assert.deepEqual(oFormat.parse("42 FİT"), [42, "length-foot"]);
+
+		// lower/upper case is locale dependent - language by given locale, config is not used
+		Configuration.setLanguage("en");
+		oFormat = NumberFormat.getUnitInstance({}, new Locale("tr"));
+
+		assert.deepEqual(oFormat.parse("42 fit"), [42, "length-foot"]);
+		assert.deepEqual(oFormat.parse("42 FİT"), [42, "length-foot"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("#parse case-insensitive: unit pattern contains number expression",
+			function (assert) {
+		var oFormat = NumberFormat.getUnitInstance({}, new Locale("en"));
+
+		// postfix match
+		assert.deepEqual(oFormat.parse("42 kg"), [42, "mass-kilogram"]);
+		assert.deepEqual(oFormat.parse("42 Kg"), [42, "mass-kilogram"]);
+		assert.deepEqual(oFormat.parse("42 KG"), [42, "mass-kilogram"]);
+
+		// check that short number symbol (e.g. "K") could be part of unit pattern
+		assert.deepEqual(oFormat.parse("42K kg"), [42000, "mass-kilogram"]);
+		assert.deepEqual(oFormat.parse("42K KG"), [42000, "mass-kilogram"]);
+		assert.deepEqual(oFormat.parse("42 K"), [42, "temperature-kelvin"]);
+		assert.deepEqual(oFormat.parse("42 k"), [42, "temperature-kelvin"]);
+		assert.deepEqual(oFormat.parse("42K K"), [42000, "temperature-kelvin"]);
+		assert.deepEqual(oFormat.parse("42K k"), [42000, "temperature-kelvin"]);
+
+		oFormat = NumberFormat.getUnitInstance({
+			customUnits : {
+				"custom-foot" : {
+					"displayName" : "foot unit",
+					"unitPattern-count-other" : "{0} Fuß"
+				},
+				"custom-prefix-postfix" : {
+					"displayName" : "prefix postfix unit",
+					"unitPattern-count-other" : "Foo {0} Bar"
+				}
+			}
+		}, new Locale("de"));
+
+		// prefix + postfix match
+		assert.deepEqual(oFormat.parse("Foo 42 Bar"), [42, "custom-prefix-postfix"]);
+		assert.deepEqual(oFormat.parse("foo 42 bar"), [42, "custom-prefix-postfix"]);
+		assert.deepEqual(oFormat.parse("FOO 42 BAR"), [42, "custom-prefix-postfix"]);
+
+		// use lower-case instead of upper-case to prevent "ß" to "SS" conversion
+		assert.deepEqual(oFormat.parse("42 Fuß"), [42, "custom-foot"]);
+		assert.deepEqual(oFormat.parse("42 fuß"), [42, "custom-foot"]);
+
+		// ensure that short numbers must not be converted to lower/upper case
+		oFormat = NumberFormat.getUnitInstance({}, new Locale("es"));
+
+		assert.deepEqual(oFormat.parse("42 mil km"), [42000, "length-kilometer"]);
+		assert.deepEqual(oFormat.parse("42 mil KM"), [42000, "length-kilometer"]);
+		assert.deepEqual(oFormat.parse("42 M km"), [42000000, "length-kilometer"]);
+		assert.deepEqual(oFormat.parse("42 M KM"), [42000000, "length-kilometer"]);
+
+		oFormat = NumberFormat.getUnitInstance({}, new Locale("en"));
+
+		// ambiguous unit (duration-century, volume-cup) cannot be parsed case insensitive
+		assert.deepEqual(oFormat.parse("1 c"), [1, undefined]);
+		assert.deepEqual(oFormat.parse("1 C"), null);
+
+		// only exact matches should be found for units only differing by case
+		assert.deepEqual(oFormat.parse("42 g"), [42, "mass-gram"]);
+		assert.deepEqual(oFormat.parse("42 G"), [42, "acceleration-g-force"]);
+
+		oFormat = NumberFormat.getUnitInstance({
+			customUnits : {
+				"custom-mJ" : {
+					"displayName" : "unit Millijoule",
+					"unitPattern-count-other" : "{0} mJ"
+				},
+				"custom-MJ" : {
+					"displayName" : "unit Megajoule",
+					"unitPattern-count-other" : "{0} MJ"
+				}
+			}
+		}, new Locale("en"));
+
+		assert.deepEqual(oFormat.parse("42 mJ"), [42, "custom-mJ"]);
+		assert.deepEqual(oFormat.parse("42 MJ"), [42, "custom-MJ"]);
+		// ambiguous matches resulting of case-insensitivity are not parseable
+		assert.deepEqual(oFormat.parse("42 mj"), null);
+		assert.deepEqual(oFormat.parse("42 Mj"), null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("#parse case-insensitive: unit pattern does not contain an expression "
+			+ "(plural cases)", function (assert) {
+		var oFormat = NumberFormat.getUnitInstance({}, new Locale("da"));
+
+		assert.deepEqual(oFormat.parse("mpt"), [1, "volume-pint-metric"]);
+		assert.deepEqual(oFormat.parse("Mpt"), [1, "volume-pint-metric"]);
+
+		oFormat = NumberFormat.getUnitInstance({
+			customUnits : {
+				"custom-mJ" : {
+					"displayName" : "unit Millijoule",
+					"unitPattern-count-zero" : "no mJ"
+				},
+				"custom-MJ" : {
+					"displayName" : "unit Megajoule",
+					"unitPattern-count-zero" : "no MJ"
+				},
+				"custom-foo" : {
+					"displayName" : "unit foo",
+					"unitPattern-count-zero" : "foo",
+					"unitPattern-count-one" : "foo"
+				}
+			}
+		}, new Locale("en"));
+
+		// exact match wins over case-insensitive match
+		assert.deepEqual(oFormat.parse("no mJ"), [0, "custom-mJ"]);
+		assert.deepEqual(oFormat.parse("no MJ"), [0, "custom-MJ"]);
+		// ambiguous matches resulting of case-insensitivity are not parseable
+		assert.deepEqual(oFormat.parse("no mj"), null);
+		assert.deepEqual(oFormat.parse("no Mj"), null);
+
+		// align with existing behavior: the first number match wins
+		assert.deepEqual(oFormat.parse("foo"), [0, "custom-foo"]);
+		assert.deepEqual(oFormat.parse("Foo"), [0, "custom-foo"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("#parse case-insensitive: unit pattern does not contain an expression "
+			+ "(showNumber=false)", function (assert) {
+		var oFormat = NumberFormat.getUnitInstance({showNumber: false}, new Locale("en"));
+
+		assert.deepEqual(oFormat.parse("bit"), [undefined, "digital-bit"]);
+		assert.deepEqual(oFormat.parse("Bit"), [undefined, "digital-bit"]);
+
+		assert.deepEqual(oFormat.parse("g"), [undefined, "mass-gram"]);
+		assert.deepEqual(oFormat.parse("G"), [undefined, "acceleration-g-force"]);
+
+		// ambiguous matches resulting of case-insensitivity are not parseable
+		assert.deepEqual(oFormat.parse("c"), null);
+		assert.deepEqual(oFormat.parse("C"), null);
 	});
 
 	QUnit.module("Unit Format using configuration", {
