@@ -5,7 +5,11 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(["sap/ui/performance/trace/FESR", "sap/base/Log"], function(FESR, Log) {
+sap.ui.define([
+	"sap/ui/performance/trace/FESR",
+	"sap/base/Log",
+	"sap/base/util/UriParameters"
+], function(FESR, Log, UriParameters) {
 
 	"use strict";
 
@@ -22,13 +26,13 @@ sap.ui.define(["sap/ui/performance/trace/FESR", "sap/base/Log"], function(FESR, 
 		var oFESRMeta = document.querySelector("meta[name=sap-ui-fesr]"),
 			sFESRMetaContent = oFESRMeta ? oFESRMeta.getAttribute("content") : undefined,
 			bActive =  !!sFESRMetaContent && sFESRMetaContent !== "false",
-			aParamMatches = window.location.search.match(/[\?|&]sap-ui-(?:xx-)?fesr=(true|x|X|false|.+)&?/),
+			sUriParam = new UriParameters(window.location.search).get("sap-ui-fesr"),
 			sUrl = sFESRMetaContent && sFESRMetaContent !== "true" ? sFESRMetaContent : undefined;
 
-		if (aParamMatches) {
-			bActive = aParamMatches[1] && aParamMatches[1] != "false";
+		if (sUriParam) {
+			bActive = sUriParam != "false";
 			// FESR Definition via URL wins over meta
-			sUrl = ["true", "false", "x", "X", undefined].indexOf(aParamMatches[1]) === -1 ? aParamMatches[1] : sUrl;
+			sUrl = ["true", "false", "x", "X", undefined].indexOf(sUriParam) === -1 ? sUriParam : sUrl;
 		}
 
 		if (typeof window.performance.getEntriesByType === "function") {
