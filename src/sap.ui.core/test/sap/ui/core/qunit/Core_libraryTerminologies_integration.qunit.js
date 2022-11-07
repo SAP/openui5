@@ -1,5 +1,5 @@
 /*global QUnit*/
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/ComponentContainer"
 ], function (ComponentContainer) {
 	"use strict";
