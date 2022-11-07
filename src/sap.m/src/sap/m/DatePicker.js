@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CustomMonthPicker",
 	"sap/ui/unified/calendar/CustomYearPicker",
 	"sap/ui/core/LabelEnablement",
+	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/dom/jquery/cursorPos"
 ],
 	function(
@@ -51,7 +52,8 @@ sap.ui.define([
 		DateRange,
 		CustomMonthPicker,
 		CustomYearPicker,
-		LabelEnablement
+		LabelEnablement,
+		CalendarWeekNumbering
 	) {
 	"use strict";
 
@@ -191,7 +193,16 @@ sap.ui.define([
 			 *
 			 * @since 1.70
 			 */
-			showFooter : {type : "boolean", group : "Misc", defaultValue : false}
+			showFooter : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * If set, the calendar week numbering is used for display.
+			 * If not set, the calendar week numbering of the global configuration is used.
+			 * Note: This API has been introduced with version 1.108 and downported to this release with
+			 * patch level 52.
+			 * @since 1.71.52
+			 */
+			calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 
 		},
 
@@ -1155,12 +1166,15 @@ sap.ui.define([
 				CalendarConstructor = Calendar;
 				Log.warning("Not valid date pattern! Openning default Calendar", this);
 			}
+		}
 
+		if (!this._getCalendar()) {
 			this._oCalendar = new CalendarConstructor(this.getId() + "-cal", {
 				intervalSelection: this._bIntervalSelection,
 				minDate: this.getMinDate(),
 				maxDate: this.getMaxDate(),
 				legend: this.getLegend(),
+				calendarWeekNumbering: this.getCalendarWeekNumbering(),
 				startDateChange: function () {
 						this.fireNavigate({
 							dateRange: this._getVisibleDatesRange(this._oCalendar)

@@ -5,8 +5,8 @@
 /**
  * Initialization Code and shared classes of library sap.ui.core.
  */
-sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
-	function(DataType, CalendarType) {
+sap.ui.define(['sap/ui/base/DataType', './CalendarType', './date/CalendarWeekNumbering', './Core'],
+	function(DataType, CalendarType, CalendarWeekNumbering) {
 	"use strict";
 
 	// delegate further initialization of this library to the Core
@@ -59,6 +59,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 			"sap.ui.core.ValueState",
 			"sap.ui.core.VerticalAlign",
 			"sap.ui.core.Wrapping",
+			"sap.ui.core.date.CalendarWeekNumbering",
 			"sap.ui.core.dnd.DropEffect",
 			"sap.ui.core.dnd.DropLayout",
 			"sap.ui.core.dnd.DropPosition",
