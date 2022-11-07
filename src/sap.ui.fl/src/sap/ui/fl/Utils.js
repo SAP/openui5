@@ -35,6 +35,30 @@ sap.ui.define([
 ) {
 	"use strict";
 
+
+	/**
+	 * Returns the type of "sap.app" from the manifest object passed.
+	 * @param {sap.ui.core.Manifest} oManifest - Manifest object
+	 * @returns {string|undefined} Manifest object's <code>type</code> property for <code>sap.app</code> entry
+	 */
+	function getComponentType(oManifest) {
+		// manifest instance
+		if (oManifest && oManifest.getEntry) {
+			return oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type;
+		}
+
+		// raw manifest
+		return oManifest && oManifest["sap.app"] && oManifest["sap.app"].type;
+	}
+
+	function getStartUpParameter(oComponentData, sParameterName) {
+		if (oComponentData && oComponentData.startupParameters && sParameterName) {
+			if (Array.isArray(oComponentData.startupParameters[sParameterName])) {
+				return oComponentData.startupParameters[sParameterName][0];
+			}
+		}
+	}
+
 	/**
 	 * Provides utility functions for the SAPUI5 flexibility library
 	 *
@@ -65,8 +89,8 @@ sap.ui.define([
 			// determine UI5 component out of given control
 			if (oControl) {
 				var oAppComponent = this.getAppComponentForControl(oControl);
-				if (oAppComponent) {
-					return !!this._getComponentStartUpParameter(oAppComponent, "sap-app-id");
+				if (oAppComponent && oAppComponent.getComponentData) {
+					return !!getStartUpParameter(oAppComponent.getComponentData(), "sap-app-id");
 				}
 			}
 
@@ -85,24 +109,18 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
 		getAppDescriptor: function(oControl) {
-			var oManifest = null;
-			var oComponent = null;
-			var oComponentMetaData = null;
-
 			// determine UI5 component out of given control
 			if (oControl) {
-				oComponent = this.getAppComponentForControl(oControl);
+				var oComponent = this.getAppComponentForControl(oControl);
 
 				// determine manifest out of found component
 				if (oComponent && oComponent.getMetadata) {
-					oComponentMetaData = oComponent.getMetadata();
+					var oComponentMetaData = oComponent.getMetadata();
 					if (oComponentMetaData && oComponentMetaData.getManifest) {
-						oManifest = oComponentMetaData.getManifest();
+						return oComponentMetaData.getManifest();
 					}
 				}
 			}
-
-			return oManifest;
 		},
 
 		/**
@@ -117,7 +135,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl.apply._internal.flexState.Loader
 		 */
 		getSiteIdByComponentData: function(oComponentData) {
-			return this._getStartUpParameter(oComponentData, "hcpApplicationId");
+			return getStartUpParameter(oComponentData, "hcpApplicationId");
 		},
 
 		/**
@@ -168,70 +186,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Determines the content for a given startUpParameter name
-		 *
-		 * @param {sap.ui.core.Component} oComponent - component instance
-		 * @param {string} sParameterName - startUpParameterName that shall be determined
-		 * @returns {string} content of found startUpParameter
-		 * @private
-		 */
-		_getComponentStartUpParameter: function(oComponent, sParameterName) {
-			var startUpParameterContent = null;
-
-			if (sParameterName) {
-				if (oComponent && oComponent.getComponentData) {
-					startUpParameterContent = this._getStartUpParameter(oComponent.getComponentData(), sParameterName);
-				}
-			}
-
-			return startUpParameterContent;
-		},
-
-		_getStartUpParameter: function(oComponentData, sParameterName) {
-			if (oComponentData && oComponentData.startupParameters && sParameterName) {
-				if (Array.isArray(oComponentData.startupParameters[sParameterName])) {
-					return oComponentData.startupParameters[sParameterName][0];
-				}
-			}
-		},
-
-		/**
-		 * Gets the component instance for a component ID.
-		 *
-		 * @param {string} sComponentId component ID
-		 * @returns {sap.ui.core.Component} component for the component ID
-		 * @private
-		 */
-		_getComponent: function(sComponentId) {
-			var oComponent;
-			if (sComponentId) {
-				oComponent = Component.get(sComponentId);
-			}
-			return oComponent;
-		},
-
-		/**
-		 * Returns ComponentId of the control. If the control has no component, it walks up the control tree in order to find a control having one
-		 *
-		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @returns {string} The component id or empty string if component id couldn't be found
-		 * @see sap.ui.core.Component.getOwnerIdFor
-		 * @private
-		 */
-		_getComponentIdForControl: function(oControl) {
-			var sComponentId = Utils._getOwnerIdForControl(oControl);
-			if (!sComponentId) {
-				if (oControl && typeof oControl.getParent === "function") {
-					var oParent = oControl.getParent();
-					if (oParent) {
-						return Utils._getComponentIdForControl(oParent);
-					}
-				}
-			}
-			return sComponentId || "";
-		},
-
-		/**
 		 * Returns the Component that belongs to given control. If the control has no component, it walks up the control tree in order to find a
 		 * control having one.
 		 *
@@ -241,7 +195,26 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl
 		 */
 		getComponentForControl: function(oControl) {
-			return Utils._getComponentForControl(oControl);
+			function getComponentIdForControl (oControl) {
+				var sComponentId = Component.getOwnerIdFor(oControl);
+				if (!sComponentId) {
+					if (oControl && typeof oControl.getParent === "function") {
+						var oParent = oControl.getParent();
+						if (oParent) {
+							return getComponentIdForControl(oParent);
+						}
+					}
+				}
+				return sComponentId || "";
+			}
+
+			// determine UI5 component out of given control
+			if (oControl) {
+				var sComponentId = getComponentIdForControl(oControl);
+				if (sComponentId) {
+					return Component.get(sComponentId);
+				}
+			}
 		},
 
 		/**
@@ -254,42 +227,8 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl
 		 */
 		getAppComponentForControl: function(oControl) {
-			var oComponent = oControl instanceof Component ? oControl : this._getComponentForControl(oControl);
-			return this._getAppComponentForComponent(oComponent);
-		},
+			var oComponent = oControl instanceof Component ? oControl : Utils.getComponentForControl(oControl);
 
-		/**
-		 * Returns the Component that belongs to given control. If the control has no component, it walks up the control tree in order to find a
-		 * control having one.
-		 *
-		 * @param {sap.ui.base.ManagedObject} oControl - Managed object instance
-		 * @returns {sap.ui.core.Component|null} found component
-		 * @private
-		 */
-		_getComponentForControl: function(oControl) {
-			var oComponent = null;
-			var sComponentId = null;
-
-			// determine UI5 component out of given control
-			if (oControl) {
-				sComponentId = Utils._getComponentIdForControl(oControl);
-				if (sComponentId) {
-					oComponent = Utils._getComponent(sComponentId);
-				}
-			}
-
-			return oComponent;
-		},
-
-		/**
-		 * Returns the Component that belongs to given component whose type is "application".
-		 *
-		 * @param {sap.ui.core.Component} oComponent - SAPUI5 component
-		 * @returns {sap.ui.core.Component|null} component instance if found or null
-		 * @private
-		 */
-		_getAppComponentForComponent: function(oComponent) {
-			var oSapApp = null;
 			// special case for Fiori Elements to reach the real appComponent
 			if (oComponent && oComponent.getAppComponent && oComponent.getAppComponent() instanceof Component) {
 				return oComponent.getAppComponent();
@@ -301,19 +240,16 @@ sap.ui.define([
 			}
 
 			if (oComponent && oComponent.getManifestEntry) {
-				oSapApp = oComponent.getManifestEntry("sap.app");
-			} else {
-				// if no manifest entry
-				return oComponent;
-			}
+				var oSapApp = oComponent.getManifestEntry("sap.app");
 
-			if (oSapApp && oSapApp.type && oSapApp.type !== "application") {
-				if (oComponent instanceof Component) {
-					// we need to call this method only when the component is an instance of Component in order to walk up the tree
-					// returns owner app component
-					oComponent = this._getComponentForControl(oComponent);
+				if (oSapApp && oSapApp.type && oSapApp.type !== "application") {
+					if (oComponent instanceof Component) {
+						// we need to call this method only when the component is an instance of Component in order to walk up the tree
+						// returns owner app component
+						oComponent = Utils.getComponentForControl(oComponent);
+					}
+					return this.getAppComponentForControl(oComponent);
 				}
-				return this.getAppComponentForControl(oComponent);
 			}
 
 			return oComponent;
@@ -331,30 +267,14 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl
 		 */
 		getViewForControl: function(oControl) {
-			return Utils.getFirstAncestorOfControlWithControlType(oControl, View);
-		},
-
-		getFirstAncestorOfControlWithControlType: function(oControl, controlType) {
-			if (oControl instanceof controlType) {
+			if (oControl instanceof View) {
 				return oControl;
 			}
 
 			if (oControl && typeof oControl.getParent === "function") {
 				oControl = oControl.getParent();
-				return Utils.getFirstAncestorOfControlWithControlType(oControl, controlType);
+				return Utils.getViewForControl(oControl);
 			}
-		},
-
-		/**
-		 * Returns OwnerId of the control
-		 *
-		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @returns {string} The owner id
-		 * @see sap.ui.core.Component.getOwnerIdFor
-		 * @private
-		 */
-		_getOwnerIdForControl: function(oControl) {
-			return Component.getOwnerIdFor(oControl);
 		},
 
 		/**
@@ -370,13 +290,9 @@ sap.ui.define([
 		getClient: function() {
 			var oUriParams;
 			var sClient;
-			oUriParams = this._getUriParameters();
+			oUriParams = UriParameters.fromQuery(window.location.search);
 			sClient = oUriParams.get("sap-client");
 			return sClient || undefined;
-		},
-
-		_getUriParameters: function() {
-			return UriParameters.fromQuery(window.location.search);
 		},
 
 		getLrepUrl: function() {
@@ -462,16 +378,6 @@ sap.ui.define([
 		 * See {@link sap.ui.core.BaseTreeModifier#hasLocalIdSuffix} method
 		 */
 		hasLocalIdSuffix: BaseTreeModifier.hasLocalIdSuffix,
-
-		/**
-		 * Returns the a string containing all url parameters of the current window.location
-		 *
-		 * @returns {string} Substring of url containing the url query parameters
-		 * @private
-		 */
-		_getAllUrlParameters: function() {
-			return window.location.search.substring(1);
-		},
 
 		/**
 		 * Returns URL hash when ushell container is available synchronously.
@@ -573,34 +479,15 @@ sap.ui.define([
 			return sRootNamespace;
 		},
 
-		/** Returns the type of "sap.app" from the manifest object passed.
-		 * @param {sap.ui.core.Manifest} oManifest - Manifest object
-		 * @returns {string|undefined} Manifest object's <code>type</code> property for <code>sap.app</code> entry
-		 * @private
-		 */
-		_getComponentTypeFromManifest: function(oManifest) {
-			return oManifest && oManifest.getEntry && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type;
-		},
-
-		/** Returns the type of "sap.app" from the manifest object passed.
-		 * @param {sap.ui.core.Manifest} oManifest - Raw manifest object
-		 * @returns {string|undefined} Manifest object's <code>type</code> property for <code>sap.app</code> entry
-		 * @private
-		 */
-		_getComponentTypeFromRawManifest: function(oManifest) {
-			return oManifest && oManifest["sap.app"] && oManifest["sap.app"].type;
-		},
-
 		/** Returns <code>true</code> if the passed manifest object is of type "application".
 		 * @param {sap.ui.core.Manifest} oManifest - Manifest object
-		 * @param {boolean} isRaw - is manifest raw object
 		 * @returns {boolean} <code>true</code> if the passed manifest object is of type "application"
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
-		isApplication: function(oManifest, isRaw) {
-			var sComponentType = isRaw ? Utils._getComponentTypeFromRawManifest(oManifest) : Utils._getComponentTypeFromManifest(oManifest);
+		isApplication: function(oManifest) {
+			var sComponentType = getComponentType(oManifest);
 			return sComponentType === "application";
 		},
 
@@ -623,7 +510,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl
 		 */
 		isEmbeddedComponent: function(oComponent) {
-			return oComponent instanceof Component && Utils._getComponentTypeFromManifest(oComponent.getManifestObject()) === "component";
+			return oComponent instanceof Component && getComponentType(oComponent.getManifestObject()) === "component";
 		},
 
 		/**

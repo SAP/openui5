@@ -764,7 +764,7 @@ sap.ui.define([
 	QUnit.module("Given an empty command stack and commands", {
 		beforeEach: function() {
 			this.stack = new Stack();
-			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
 			this.command2 = new BaseCommand();
 			this.command3 = new BaseCommand();
@@ -975,7 +975,7 @@ sap.ui.define([
 
 	QUnit.module("Given controls and designTimeMetadata", {
 		beforeEach: function () {
-			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oMovable = new Button(oMockedAppComponent.createId("attribute"));
 			this.oSourceParent = new VBox(oMockedAppComponent.createId("vbox"), {
@@ -1043,7 +1043,7 @@ sap.ui.define([
 	QUnit.module("Given a command stack with a hideControl flex command", {
 		beforeEach: function() {
 			this.oCommandStack = new Stack();
-			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button(oMockedAppComponent.createId("button"));
 			this.oLayout = new VerticalLayout(oMockedAppComponent.createId("layout"), {
 				content: [this.oButton]
@@ -1101,7 +1101,7 @@ sap.ui.define([
 
 	QUnit.module("Given a command factory and a bound control containing a template binding", {
 		beforeEach: function(assert) {
-			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 
 			var done = assert.async();
 
@@ -1352,7 +1352,7 @@ sap.ui.define([
 
 	QUnit.module("Given a command factory and a bound control containing multiple template bindings", {
 		beforeEach: function(assert) {
-			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
 			var done = assert.async();
@@ -1432,7 +1432,7 @@ sap.ui.define([
 
 	QUnit.module("Given a command factory and a bound control containing an aggregation binding with a factory function", {
 		beforeEach: function(assert) {
-			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "getComponentForControl").returns(oMockedAppComponent);
 
 			var done = assert.async();
 

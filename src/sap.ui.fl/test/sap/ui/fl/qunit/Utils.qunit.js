@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Manifest",
+	"sap/ui/core/mvc/View",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -32,6 +33,7 @@ sap.ui.define([
 	isEmptyObject,
 	UriParameters,
 	Manifest,
+	View,
 	_omit,
 	sinon
 ) {
@@ -51,21 +53,35 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("isVariantByStartupParameter can detect a variant by the startup parameter", function(assert) {
-			sandbox.stub(Utils, "getAppComponentForControl").returns({});
-			sandbox.stub(Utils, "_getComponentStartUpParameter").returns("someId");
+			sandbox.stub(Utils, "getAppComponentForControl").returns({
+				getComponentData: function () {
+					return {
+						startupParameters: {
+							"sap-app-id": ["someId"]
+						}
+					};
+				}
+			});
 
 			var bIsStartupParameterBasedVariant = Utils.isVariantByStartupParameter({});
 
-			assert.ok(bIsStartupParameterBasedVariant, "the variant was detected");
+			assert.equal(bIsStartupParameterBasedVariant, true, "the variant was detected");
 		});
 
 		QUnit.test("isVariantByStartupParameter returns false if no variant by the startup parameter is present", function(assert) {
-			sandbox.stub(Utils, "getAppComponentForControl").returns({});
-			sandbox.stub(Utils, "_getComponentStartUpParameter").returns();
+			sandbox.stub(Utils, "getAppComponentForControl").returns({
+				getComponentData: function () {
+					return {
+						startupParameters: {
+							"some-other-param": ["test"]
+						}
+					};
+				}
+			});
 
 			var bIsStartupParameterBasedVariant = Utils.isVariantByStartupParameter({});
 
-			assert.ok(!bIsStartupParameterBasedVariant);
+			assert.equal(bIsStartupParameterBasedVariant, false, "the entity is not a variant");
 		});
 
 		QUnit.test("getClient", function(assert) {
@@ -79,46 +95,6 @@ sap.ui.define([
 			assert.equal(Utils.convertBrowserLanguageToISO639_1("de"), 'DE');
 			assert.equal(Utils.convertBrowserLanguageToISO639_1(""), '');
 			assert.equal(Utils.convertBrowserLanguageToISO639_1("hkjhkashik"), '');
-		});
-
-		QUnit.test("_getComponentIdForControl shall return the result of getOwnerIdForControl", function(assert) {
-			var sComponentId;
-			sandbox.stub(Utils, "_getOwnerIdForControl").returns('Rumpelstilzchen');
-			sComponentId = Utils._getComponentIdForControl(null);
-			assert.equal(sComponentId, 'Rumpelstilzchen');
-		});
-
-		QUnit.test("_getComponentIdForControl shall walk up the control tree until it finds a component id", function(assert) {
-			var oControl1 = {};
-			var oControl2 = {
-				getParent: sandbox.stub().returns(oControl1)
-			};
-			var oControl3 = {
-				getParent: sandbox.stub().returns(oControl2)
-			};
-
-			var fnGetOwnerIdForControl = sandbox.stub(Utils, "_getOwnerIdForControl");
-			fnGetOwnerIdForControl.withArgs(oControl3).returns("");
-			fnGetOwnerIdForControl.withArgs(oControl2).returns("");
-			fnGetOwnerIdForControl.withArgs(oControl1).returns("sodimunk");
-
-			var sComponentId = Utils._getComponentIdForControl(oControl3);
-
-			assert.equal(sComponentId, 'sodimunk');
-			assert.equal(fnGetOwnerIdForControl.callCount, 3);
-		});
-
-		QUnit.test("_getComponentIdForControl shall return an empty string if component id is not found without any errors", function(assert) {
-			var oButton = new Button();
-			var oLayout = new VerticalLayout({
-				content: [
-					oButton
-				]
-			});
-			var spyConsole = sandbox.spy(console, "assert");
-			assert.strictEqual(Utils._getComponentIdForControl(oButton), "");
-			assert.ok(spyConsole.notCalled);
-			oLayout.destroy();
 		});
 
 		QUnit.test("isBinding shall return false if the property is null", function(assert) {
@@ -174,33 +150,33 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test('getFirstAncestorOfControlWithControlType', function(assert) {
-			var button1 = new Button('button1');
-			var hLayout1 = new HorizontalLayout('hLayout1');
-			var hLayout2 = new HorizontalLayout('hLayout2');
-			var vLayout1 = new VerticalLayout('vLayout1');
-			var vLayout2 = new VerticalLayout('vLayout2');
-			vLayout2.addContent(button1);
-			hLayout2.addContent(vLayout2);
-			vLayout1.addContent(hLayout2);
-			hLayout1.addContent(vLayout1);
-			// hL1-vL1-hL2-vL2-b1
-			aControls.push(hLayout1);
-
-			var ancestorControlOfType = Utils.getFirstAncestorOfControlWithControlType(button1, HorizontalLayout);
-
-			assert.strictEqual(hLayout2, ancestorControlOfType);
-
-			ancestorControlOfType = Utils.getFirstAncestorOfControlWithControlType(button1, Button);
-
-			assert.strictEqual(button1, ancestorControlOfType);
+		QUnit.test('getViewForControl called with a view', function(assert) {
+			var oView = new View('view1');
+			assert.strictEqual(Utils.getViewForControl(oView), oView);
 		});
 
-		QUnit.test("getAppDescriptor shall return NULL if the control does not belong to a SAPUI5 component", function(assert) {
+		QUnit.test('getViewForControl called with a control containing a view', function(assert) {
+			var button1 = new Button('button1');
+			var oView = new View('view2');
+			var hLayout1 = new HorizontalLayout('hLayout1');
+			var vLayout1 = new VerticalLayout('vLayout1');
+			oView.addContent(button1);
+			oView.addContent(hLayout1);
+			hLayout1.addContent(vLayout1);
+			/*
+				view
+				- button1
+				- hLayout1
+				  - vLayout1
+			 */
+			assert.strictEqual(Utils.getViewForControl(oView), oView);
+		});
+
+		QUnit.test("getAppDescriptor shall return undefined if the control does not belong to a SAPUI5 component", function(assert) {
 			var oAppDescriptor;
 
 			oAppDescriptor = Utils.getAppDescriptor({});
-			assert.strictEqual(oAppDescriptor, null);
+			assert.strictEqual(oAppDescriptor, undefined);
 		});
 
 		QUnit.test("getAppDescriptor shall return the an appDescriptor instance", function(assert) {
@@ -220,13 +196,10 @@ sap.ui.define([
 					};
 				}
 			};
-			var oGetComponentIdForControlStub = sandbox.stub(Utils, "_getComponentIdForControl").returns("testId");
-			var oGetComponentStub = sandbox.stub(Utils, "_getComponent").returns(oComponentMock);
+			sandbox.stub(Component, "getOwnerIdFor").returns("testId");
+			sandbox.stub(Component, "get").returns(oComponentMock);
 
 			assert.equal(Utils.getAppDescriptor(oControl), oAppDescriptor);
-
-			assert.ok(oGetComponentIdForControlStub.called);
-			assert.ok(oGetComponentStub.called);
 		});
 
 		QUnit.test("getAppComponentForControl can determine the smart template special case", function(assert) {
@@ -287,13 +260,9 @@ sap.ui.define([
 				return sParameter === "sap.app" ? oSapAppEntry : undefined;
 			};
 
-			var oStub = sandbox.stub(Utils, "getAppComponentForControl");
-			sandbox.stub(Utils, "_getComponentForControl").returns(oParentComponent);
+			sandbox.stub(Utils, "getComponentForControl").returns(oParentComponent);
 
-			Utils._getAppComponentForComponent(oComponent);
-
-			assert.ok(oStub.calledOnce, "the function was called once");
-			assert.equal(oStub.firstCall.args[0], oParentComponent, "the function was called with the parent component the first time");
+			assert.equal(Utils.getAppComponentForControl(oComponent), oParentComponent);
 		});
 
 		QUnit.test("indexOfObject with array containing object", function(assert) {
