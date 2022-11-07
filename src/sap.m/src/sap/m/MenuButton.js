@@ -65,6 +65,9 @@ sap.ui.define([
 		 */
 		var MenuButton = Control.extend("sap.m.MenuButton", /** @lends sap.m.MenuButton.prototype */ {
 			metadata : {
+				interfaces : [
+					"sap.m.IToolbarInteractiveControl"
+				],
 				library : "sap.m",
 				properties : {
 					/**
@@ -774,6 +777,19 @@ sap.ui.define([
 				oOpeningMenuButton.$().attr("aria-controls", oMenu.getDomRefId());
 				oOpeningMenuButton.$().attr("aria-expanded", "true");
 			}
+		};
+
+		/**
+		 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+		 * Determines if the Control is interactive.
+		 *
+		 * @returns {boolean} If it is an interactive Control
+		 *
+		 * @private
+		 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+		 */
+		MenuButton.prototype._getToolbarInteractive = function () {
+			return true;
 		};
 
 		/**

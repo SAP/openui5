@@ -98,7 +98,8 @@ function(
 				"sap.ui.core.IShrinkable",
 				"sap.ui.core.IFormContent",
 				"sap.ui.core.ITitleContent",
-				"sap.ui.core.IAccessKeySupport"
+				"sap.ui.core.IAccessKeySupport",
+				"sap.m.IToolbarInteractiveControl"
 			],
 			library : "sap.m",
 			designtime: "sap/m/designtime/Link.designtime",
@@ -504,6 +505,20 @@ function(
 		// than the link's text. For this reason a self-reference should be added in such cases.
 		return !bAlreadyHasSelfReference && (aAriaLabelledBy.length > 0 || bHasReferencingLabels || bAllowEnhancingByParent);
 	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	Link.prototype._getToolbarInteractive = function () {
+		return true;
+	};
+
 
 	var setRefLabelsHighlightAccKeysRef = function (bHighlightAccKeysRef) {
 		var aLabels = this.getAriaLabelledBy();

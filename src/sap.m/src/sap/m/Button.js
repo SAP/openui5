@@ -103,7 +103,8 @@ sap.ui.define([
 
 			interfaces : [
 				"sap.ui.core.IFormContent",
-				"sap.ui.core.IAccessKeySupport"
+				"sap.ui.core.IAccessKeySupport",
+				"sap.m.IToolbarInteractiveControl"
 			],
 			library : "sap.m",
 			properties : {
@@ -997,6 +998,20 @@ sap.ui.define([
 	Button.prototype._getTitleAttribute = function(sDOMID) {
 		return this.getTooltip();
 	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	 Button.prototype._getToolbarInteractive = function () {
+		return true;
+	};
+
 
 	return Button;
 

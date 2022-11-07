@@ -94,6 +94,7 @@ sap.ui.define([
 		metadata : {
 
 			interfaces : [
+				"sap.m.IToolbarInteractiveControl",
 				"sap.ui.core.IFormContent",
 				"sap.ui.core.ISemanticFormContent",
 				"sap.ui.core.IAccessKeySupport"
@@ -575,6 +576,19 @@ sap.ui.define([
 			enabled: this.getEnabled(),
 			editable: this.getEditable()
 		};
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	CheckBox.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
 	/*

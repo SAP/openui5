@@ -90,6 +90,7 @@ function(
 				"sap.ui.core.Label",
 				"sap.ui.core.IShrinkable",
 				"sap.m.IOverflowToolbarContent",
+				"sap.m.IToolbarInteractiveControl",
 				"sap.m.IHyphenation",
 				"sap.ui.core.IAccessKeySupport"
 			],
@@ -317,6 +318,19 @@ function(
 	 */
 	 Label.prototype.setIsInColumnHeaderContext = function (bIsInColumnHeaderContext) {
 		this._isInColumnHeaderContext = !!bIsInColumnHeaderContext;
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	Label.prototype._getToolbarInteractive = function () {
+		return false;
 	};
 
 	// enrich Label functionality

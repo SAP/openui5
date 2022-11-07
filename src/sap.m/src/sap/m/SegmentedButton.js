@@ -65,7 +65,8 @@ function(
 
 			interfaces : [
 				"sap.ui.core.IFormContent",
-				"sap.m.IOverflowToolbarContent"
+				"sap.m.IOverflowToolbarContent",
+				"sap.m.IToolbarInteractiveControl"
 			],
 			library : "sap.m",
 			designtime: "sap/m/designtime/SegmentedButton.designtime",
@@ -1038,6 +1039,16 @@ function(
 		return this.getButtons().filter(function(oButton) {
 			return oButton.getVisible();
 		});
+	};
+
+	/**
+	 * Determines if it is interactive Control
+	 *
+	 * @private
+	 * @returns {boolean} If it is an interactive Control
+	 */
+	 SegmentedButton.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
 	SegmentedButton.prototype.clone = function () {
