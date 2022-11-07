@@ -217,14 +217,17 @@ sap.ui.define([
 
 	QUnit.test("Default ARIA attributes", function(assert) {
 		// Arrange + System under Test
-		var oBtn = new Button({
+		var oBtn1 = new Button({
 			text : "Button Text"
-		});
-		var oTitle = new Title({
+		}),
+		oBtn2 = new Button({
+			text: "Button Text 2"
+		}),
+		oTitle = new Title({
 			text : "Title text"
-		});
-		var oTB = new Toolbar({
-			content : [oTitle, oBtn]
+		}),
+		oTB = new Toolbar({
+			content : [oTitle, oBtn1, oBtn2]
 		}).applyTagAndContextClassFor("header");
 		oTB.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -240,10 +243,114 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(oTB.$().attr("aria-disabled"), "true", "Toolbar has attribute aria-disabled='true'");
-		assert.equal(oBtn.$().attr("aria-disabled"), undefined, "Toolbar's children have attribute aria-disabled='true'");
+		assert.equal(oBtn1.$().attr("aria-disabled"), undefined, "Toolbar's children have attribute aria-disabled='true'");
 
 		//Cleanup
-		oBtn.destroy();
+		oTB.destroy();
+	});
+
+	QUnit.test("Role attribute and aria-labelledby with interactive Controls", function(assert) {
+		// Arrange + System under Test
+		var oBtn1 = new Button({
+			text : "Button Text"
+		}),
+		oBtn2 = new Button({
+			text: "Button Text 2"
+		}),
+		oTitle = new Title({
+			text : "Title text"
+		}),
+		oTB = new Toolbar({
+			content : [oTitle, oBtn1]
+		});
+		oTB.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(oTB.$().attr("role"), undefined,
+			"Toolbar does not have 'role' attribute, when there are less than two interactive Controls");
+		assert.strictEqual(oTB.$().attr("aria-labelledby"), undefined,
+			"Toolbar does not have 'aria-labelledby' attribute, when there are less than two interactive Controls");
+
+		//Act
+		oTB.addContent(oBtn2);
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(oTB.$().attr("role"), "toolbar",
+			"Toolbar has 'role' attribute, when there are at least two interactive Controls");
+		assert.strictEqual(oTB.$().attr("aria-labelledby"), oTitle.getId(),
+			"Toolbar has 'aria-labelledby' attribute, when there are at least two interactive Controls");
+
+		//Cleanup
+		oTB.destroy();
+	});
+
+	QUnit.test("Role attribute and aria-labelledby with visible/not visible interactive Controls", function(assert) {
+		// Arrange + System under Test
+		var oBtn1 = new Button({
+			text : "Button Text"
+		}),
+		oBtn2 = new Button({
+			visible: false,
+			text: "Button Text 2"
+		}),
+		oTitle = new Title({
+			text : "Title text"
+		}),
+		oTB = new Toolbar({
+			content : [oTitle, oBtn1, oBtn2]
+		});
+		oTB.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(oTB.$().attr("role"), undefined,
+			"Toolbar does not have 'role' attribute, when there are less than two interactive Controls");
+		assert.strictEqual(oTB.$().attr("aria-labelledby"), undefined,
+			"Toolbar does not have 'aria-labelledby' attribute, when there are less than two interactive Controls");
+
+		//Act
+		oBtn2.setVisible(true);
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(oTB.$().attr("role"), "toolbar",
+			"Toolbar has 'role' attribute, when there are at least two interactive Controls");
+		assert.strictEqual(oTB.$().attr("aria-labelledby"), oTitle.getId(),
+			"Toolbar has 'aria-labelledby' attribute, when there are at least two interactive Controls");
+
+		//Cleanup
+		oTB.destroy();
+	});
+
+	QUnit.test("_getToolbarInteractiveControlsCount with non interactive Controls", function(assert) {
+		// Arrange + System under Test
+		var oTB = new Toolbar({
+			content : [new Title(), new Label(), new Text()]
+		});
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(oTB._getToolbarInteractiveControlsCount(), 0,
+			"Title, Label and Text are not interactive Control");
+
+		//Cleanup
+		oTB.destroy();
+	});
+
+	QUnit.test("_getToolbarInteractiveControlsCount with interactive Controls", function(assert) {
+		// Arrange + System under Test
+		var oTB = new Toolbar({
+			content : [new Input(), new Link(), new Button()]
+		});
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(oTB._getToolbarInteractiveControlsCount(), 3,
+			"Input, Link and Button are interactive Control");
+
+		//Cleanup
 		oTB.destroy();
 	});
 
@@ -335,7 +442,10 @@ sap.ui.define([
 
 	QUnit.test("_setEnableAccessibilty", function(assert) {
 		// Arrange
-		var oTB = new Toolbar();
+		var oTB = new Toolbar({
+			content: [ new sap.m.Button(),
+				new sap.m.Button() ]
+		});
 		oTB.placeAt("qunit-fixture");
 		Core.applyChanges();
 

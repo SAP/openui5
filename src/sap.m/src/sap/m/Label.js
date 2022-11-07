@@ -84,14 +84,15 @@ function(
 	 */
 	var Label = Control.extend("sap.m.Label", /** @lends sap.m.Label.prototype */ { metadata : {
 
-		interfaces : [
-			"sap.ui.core.Label",
-			"sap.ui.core.IShrinkable",
-			"sap.m.IOverflowToolbarContent",
-			"sap.m.IHyphenation"
-		],
-		library : "sap.m",
-		properties : {
+			interfaces : [
+				"sap.ui.core.Label",
+				"sap.ui.core.IShrinkable",
+				"sap.m.IOverflowToolbarContent",
+				"sap.m.IToolbarInteractiveControl",
+				"sap.m.IHyphenation"
+			],
+			library : "sap.m",
+			properties : {
 
 			/**
 			 * Sets the design of a Label to either Standard or Bold.
@@ -258,6 +259,19 @@ function(
 		return {
 			"main": this.$("bdi")[0]
 		};
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	Label.prototype._getToolbarInteractive = function () {
+		return false;
 	};
 
 	// enrich Label functionality

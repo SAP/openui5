@@ -166,7 +166,9 @@ function(
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Input = InputBase.extend("sap.m.Input", /** @lends sap.m.Input.prototype */ { metadata : {
-
+		interfaces : [
+			"sap.m.IToolbarInteractiveControl"
+		],
 		library : "sap.m",
 		properties : {
 
@@ -3274,6 +3276,20 @@ function(
 	Input.prototype._getTypedInValue = function () {
 		return this._sTypedInValue;
 	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	Input.prototype._getToolbarInteractive = function () {
+		return true;
+	};
+
 
 	return Input;
 

@@ -37,7 +37,8 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 		metadata: {
 			interfaces: [
 				"sap.f.IShellBar",
-				"sap.m.IOverflowToolbarContent"
+				"sap.m.IOverflowToolbarContent",
+				"sap.m.IToolbarInteractiveControl"
 			]
 		},
 		renderer: ButtonRenderer
@@ -61,10 +62,23 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 			return sTooltip;
 	};
 
-		/**
-		 * OVERFLOW TOOLBAR settings
-		 */
-		OverflowToolbarButton.prototype._onBeforeEnterOverflow = function () {this._bInOverflow = true;};
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	OverflowToolbarButton.prototype._getToolbarInteractive = function () {
+		return true;
+	};
+
+	/**
+	 * OVERFLOW TOOLBAR settings
+	 */
+	OverflowToolbarButton.prototype._onBeforeEnterOverflow = function () {this._bInOverflow = true;};
 
 		OverflowToolbarButton.prototype._onAfterExitOverflow = function () {this._bInOverflow = false;};
 
@@ -75,11 +89,11 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 				autoCloseEvents: ["press"]
 			};
 
-			oConfig.onBeforeEnterOverflow = this._onBeforeEnterOverflow.bind(this);
-			oConfig.onAfterExitOverflow = this._onAfterExitOverflow.bind(this);
+		oConfig.onBeforeEnterOverflow = this._onBeforeEnterOverflow.bind(this);
+		oConfig.onAfterExitOverflow = this._onAfterExitOverflow.bind(this);
 
-			return oConfig;
-		};
+		return oConfig;
+	};
 
 	return OverflowToolbarButton;
 
