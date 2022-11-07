@@ -56,7 +56,7 @@ sap.ui.define([
 
 	QUnit.test("Home Icon Tag", function(assert) {
 		var $hi = jQuery("link").filter("[rel=apple-touch-icon]");
-		assert.equal($hi.length, 4, "There should be 4 link tags with the home icons");
+		assert.equal($hi.length, 1, "There should be 1 link tags with the home icons");
 		assert.equal($hi.attr("href"), "test.png", "link tag should point to the home icon");
 	});
 

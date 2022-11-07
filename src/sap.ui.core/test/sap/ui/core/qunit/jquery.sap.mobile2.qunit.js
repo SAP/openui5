@@ -19,7 +19,7 @@ sap.ui.define([
 
 		// touch icon  <link rel="apple-touch-icon...
 		var $ti = jQuery("link").filter("[rel=apple-touch-icon-precomposed]");
-		assert.equal($ti.length, 4, "There should be four apple-touch-icon-precomposed link tags");
+		assert.equal($ti.length, 1, "There should be one apple-touch-icon-precomposed link tags");
 		assert.equal($ti.attr("href"), "home.png", "The apple-touch-icon-precomposed link tag href should be correct");
 	});
 });
