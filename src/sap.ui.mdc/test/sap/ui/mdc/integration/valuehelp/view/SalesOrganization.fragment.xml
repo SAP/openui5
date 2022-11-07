@@ -128,7 +128,7 @@
 								width="100%"
 								height="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate="{name: 'sap/ui/v4demo/delegate/salesorganization/Table.delegate', payload: {collectionName: 'divisions', model: 'settings'}}"
 								threshold="50">
@@ -162,7 +162,7 @@
 								width="100%"
 								height="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate="{name: 'sap/ui/v4demo/delegate/salesorganization/Table.delegate', payload: {collectionName: 'divisions', model: 'settings'}}"
 								threshold="50">
@@ -191,7 +191,7 @@
 								width="100%"
 								height="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate="{name: 'sap/ui/v4demo/delegate/salesorganization/Table.delegate', payload: {collectionName: 'divisions', model: 'settings'}}"
 								threshold="50">
@@ -225,7 +225,7 @@
 									width="100%"
 									height="100%"
 									headerVisible="true"
-									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 									p13nMode="Column,Sort"
 									delegate="{name: 'sap/ui/v4demo/delegate/salesorganization/Table.delegate', payload: {collectionName: 'divisions', model: 'settings'}}"
 									threshold="50">

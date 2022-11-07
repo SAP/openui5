@@ -251,7 +251,7 @@
 								width="100%"
 								height="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}}"
 								threshold="50">
@@ -295,7 +295,7 @@
 								width="100%"
 								height="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}}"
 								threshold="50">
@@ -381,7 +381,7 @@
 									width="100%"
 									height="100%"
 									headerVisible="true"
-									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 									p13nMode="Column,Sort"
 									delegate="{name: 'sap/ui/v4demo/delegate/ResponsiveTable.delegate', payload: {collectionName: 'Authors'}}"
 									threshold="50">
@@ -422,7 +422,7 @@
 									width="100%"
 									height="100%"
 									headerVisible="true"
-									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 									p13nMode="Column,Sort"
 									delegate="{name: 'sap/ui/v4demo/delegate/ResponsiveTable.delegate', payload: {collectionName: 'Authors'}}"
 									threshold="50">
@@ -466,7 +466,7 @@
 									width="100%"
 									height="100%"
 									headerVisible="true"
-									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 									p13nMode="Column,Sort"
 									delegate="{name: 'sap/ui/v4demo/delegate/ResponsiveTable.delegate', payload: {collectionName: 'Authors'}}"
 									threshold="50">
@@ -731,7 +731,7 @@
 								width="100%"
 								height="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Cities'}}"
 								threshold="50">
@@ -808,7 +808,7 @@
 								autoBindOnInit="false"
 								width="100%"
 								height="100%"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
 								<mdc:columns>
@@ -926,7 +926,7 @@
 								autoBindOnInit="false"
 								width="100%"
 								height="100%"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
 								<mdc:columns>
@@ -1044,7 +1044,7 @@
 								autoBindOnInit="false"
 								width="100%"
 								height="100%"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
 								<mdc:columns>

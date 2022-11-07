@@ -51,8 +51,17 @@ sap.ui.define([
 	opaTest("Select and Confirm", function (Given, When, Then) {
 		When.onTheOPAPage.iToggleTheValueHelpListItem("Carroll, Lewis");
 		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField"}, "Carroll, Lewis (103)");
-		Then.iTeardownMyAppFrame();
+	});
 
+	opaTest("Reopen F4, change ColSearch and select from SingleMaster table", function (Given, When, Then) {
+		When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
+		Then.onTheOPAPage.iShouldSeeTheValueHelpDialog();
+
+		When.onTheOPAPage.iNavigateToValueHelpContent({title: "Search Template 1"});
+		When.onTheOPAPage.iToggleTheValueHelpListItem("Twain, Mark");
+		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField"}, "Twain, Mark (106)");
+
+		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("MultiSelect and Confirm", function (Given, When, Then) {
