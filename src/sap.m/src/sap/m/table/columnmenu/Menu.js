@@ -130,7 +130,6 @@ sap.ui.define([
 
 	var DEFAULT_KEY = "$default";
 	var ARIA_POPUP_TYPE = HasPopup.Dialog;
-	var MENU_WIDTH = "500px";
 
 	Menu.prototype.init = function() {
 		this.fAnyEventHandlerProxy = jQuery.proxy(function(oEvent){
@@ -250,12 +249,12 @@ sap.ui.define([
 			showHeader: Device.system.phone,
 			placement: library.PlacementType.Bottom,
 			content: new AssociativeControl({control: this, height: true}),
-			contentWidth: MENU_WIDTH,
 			horizontalScrolling: false,
 			verticalScrolling: false,
 			afterClose: [this.close, this]
 		});
 		this.addDependent(this._oPopover);
+		this._oPopover.addStyleClass("sapMTCMenuPopup");
 
 		this._oPopover.addEventDelegate({
 			"onAfterRendering": this._focusItem
@@ -573,15 +572,19 @@ sap.ui.define([
 			oFormContainer = new FormContainer();
 			this._oForm = new Form({
 				layout: new ResponsiveGridLayout({
-					labelSpanXL: 3,
-					labelSpanL: 3,
-					labelSpanM: 3,
+					breakpointM: 600,
+					labelSpanXL: 4,
+					labelSpanL: 4,
+					labelSpanM: 4,
 					labelSpanS: 12,
+					columnsL: 1,
+					columnsM: 1,
 					adjustLabelSpan: false
 				}),
 				editable: true,
 				formContainers: oFormContainer
 			});
+			this._oForm.addStyleClass("sapMTCMenuQAForm");
 			this._oForm.addEventDelegate({
 				onAfterRendering: function() {
 					this.getDomRef().classList.remove("sapUiFormLblColon");
@@ -604,8 +607,8 @@ sap.ui.define([
 				wrapping: true,
 				width: "100%",
 				showColon: sQuickActionLabel !== ""
-						   && !(oQuickAction.getParent() && oQuickAction.getParent().isA("sap.m.table.columnmenu.QuickSortItem"))
-						   && oQuickAction._bHideLabelColon !== true
+							&& !(oQuickAction.getParent() && oQuickAction.getParent().isA("sap.m.table.columnmenu.QuickSortItem"))
+							&& oQuickAction._bHideLabelColon !== true
 			});
 			oLabel.addStyleClass("sapMTCMenuQALabel");
 
@@ -613,15 +616,25 @@ sap.ui.define([
 			var aControls = [];
 			var aContent = oQuickAction.getContent();
 
-			aContent.forEach(function(oItem) {
+			aContent.forEach(function(oItem, iIndex) {
+				var oGridData, sSpan, sIndent, oControl;
+
 				if (oItem.getLayoutData()) {
 					oGridData = oItem.getLayoutData().clone();
 				} else {
-					var iSpan = Math.floor(8 / aContent.length);
-					var iSpanS = aContent.length > 2 ? 12 : Math.floor(12 / aContent.length);
-					oGridData = new GridData({spanS: iSpanS, spanM: iSpan, spanL: iSpan, spanXL: iSpan});
+					sSpan = "L8 M8 S12";
+					sIndent = "";
+
+					if (iIndex > 0 || (iIndex == 0 && aContent.length > 1)) {
+						sSpan = "L4 M4 S6";
+
+						if (iIndex != 0 && (iIndex + 1) % 2 > 0) {
+							sIndent = "L4 M4 S0";
+						}
+					}
+					oGridData = new GridData({span: sSpan, indent: sIndent});
 				}
-				var oControl = new AssociativeControl({control: oItem.setWidth("100%")});
+				oControl = new AssociativeControl({control: oItem.setWidth("100%")});
 				oControl.setLayoutData(oGridData);
 				aControls.push(oControl);
 			}, this);
