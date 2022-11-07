@@ -86,13 +86,14 @@ function(
 	 */
 	var Link = Control.extend("sap.m.Link", /** @lends sap.m.Link.prototype */ { metadata : {
 
-		interfaces : [
-			"sap.ui.core.IShrinkable",
-			"sap.ui.core.IFormContent"
-		],
-		library : "sap.m",
-		designtime: "sap/m/designtime/Link.designtime",
-		properties : {
+			interfaces : [
+				"sap.ui.core.IShrinkable",
+				"sap.ui.core.IFormContent",
+				"sap.m.IToolbarInteractiveControl"
+			],
+			library : "sap.m",
+			designtime: "sap/m/designtime/Link.designtime",
+			properties : {
 
 			/**
 			 * Defines the displayed link text.
@@ -423,6 +424,19 @@ function(
 		// When the link has aria-labelledby attribute, screen readers will read the references inside, rather
 		// than the link's text. For this reason a self-reference should be added in such cases.
 		return !bAlreadyHasSelfReference && (aAriaLabelledBy.length > 0 || bHasReferencingLabels || bAllowEnhancingByParent);
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	Link.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
 	return Link;

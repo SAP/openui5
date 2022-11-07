@@ -39,7 +39,9 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToggleButton = Button.extend("sap.m.ToggleButton", /** @lends sap.m.ToggleButton.prototype */ { metadata : {
-
+		interfaces : [
+			"sap.m.IToolbarInteractiveControl"
+		],
 		library : "sap.m",
 		designtime: "sap/m/designtime/ToggleButton.designtime",
 		properties : {
@@ -132,6 +134,18 @@ sap.ui.define([
 		return oInfo;
 	};
 
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	ToggleButton.prototype._getToolbarInteractive = function () {
+		return true;
+	};
 
 	return ToggleButton;
 

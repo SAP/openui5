@@ -32,11 +32,12 @@ sap.ui.define(['./BarInPageEnabler'],
 	 * @param {sap.ui.core.Control} oToolbar An object representation of the control that should be rendered.
 	 */
 	ToolbarRenderer.writeAccessibilityState = function(oRm, oToolbar) {
-		var oAccInfo = {
-			role: oToolbar._getAccessibilityRole()
-		};
+		var sRole = oToolbar._getAccessibilityRole(),
+			oAccInfo = {
+				role: sRole
+			};
 
-		if (!oToolbar.getAriaLabelledBy().length) {
+		if (!oToolbar.getAriaLabelledBy().length && sRole) {
 			oAccInfo.labelledby = oToolbar.getTitleId();
 		}
 
@@ -44,7 +45,7 @@ sap.ui.define(['./BarInPageEnabler'],
 			oAccInfo.haspopup = oToolbar.getAriaHasPopup();
 		}
 
-		if (oToolbar._sAriaRoleDescription) {
+		if (oToolbar._sAriaRoleDescription && sRole) {
 			oAccInfo.roledescription = oToolbar._sAriaRoleDescription;
 		}
 

@@ -161,6 +161,7 @@ sap.ui.define([
 			"sap.m.ObjectHeaderContainer",
 			"sap.m.IOverflowToolbarContent",
 			"sap.m.IOverflowToolbarFlexibleContent",
+			"sap.m.IToolbarInteractiveControl",
 			"sap.m.IHyphenation"
 		],
 		controls: [

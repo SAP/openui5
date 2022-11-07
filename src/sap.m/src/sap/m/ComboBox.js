@@ -121,6 +121,9 @@ sap.ui.define([
 		 */
 		var ComboBox = ComboBoxBase.extend("sap.m.ComboBox", /** @lends sap.m.ComboBox.prototype */ {
 			metadata: {
+				interfaces : [
+					"sap.m.IToolbarInteractiveControl"
+				],
 				library: "sap.m",
 				designtime: "sap/m/designtime/ComboBox.designtime",
 				properties: {
@@ -2360,6 +2363,19 @@ sap.ui.define([
 			} else {
 				return ComboBoxTextField.prototype.getFormattedValueStateText.call(this);
 			}
+		};
+
+		/**
+		 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+		 * Determines if the Control is interactive.
+		 *
+		 * @returns {boolean} If it is an interactive Control
+		 *
+		 * @private
+		 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+		 */
+		ComboBox.prototype._getToolbarInteractive = function () {
+			return true;
 		};
 
 		return ComboBox;
