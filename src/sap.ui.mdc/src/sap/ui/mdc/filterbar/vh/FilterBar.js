@@ -67,6 +67,22 @@ sap.ui.define(
 			{
 				metadata: {
 					properties: {
+						delegate: {
+							type: "object",
+							defaultValue: {
+								/**
+								 * Contains the class name which implements the {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} class.
+								 */
+								name: "sap/ui/mdc/filterbar/vh/FilterBarDelegate",
+								/**
+								 * Contains the mandatory information about the metamodel name <code>modelName</code> and the main data part in its <code>collectionName</code>.<br>
+								 * <b>Note:</b> Additional information relevant for the specific {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} implementation might be included but is of no relevance for the filter bar itself.
+								 */
+								payload: {
+									modelName: undefined,
+									collectionName: ""
+								}}
+						},
 						/**
 						 * Determines whether the Show/Hide Filters button is in the state show or hide.<br>
 						 */

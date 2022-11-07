@@ -113,7 +113,7 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog title="Title">
-										<mdcvc:MDCTable keyPath="title" descriptionPath="title" filterFields="$search">
+										<mdcvc:MDCTable keyPath="title" descriptionPath="title" filterFields="$search" forceBind="true">
 											<mdcvc:filterBar>
 												<vhfb:FilterBar id="titleVHFB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 													<vhfb:basicSearchField>
@@ -131,7 +131,7 @@
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
 											<mdc:Table id="FH4--mdc--gridtable"
-												autoBindOnInit="true"
+												autoBindOnInit="false"
 												width="100%"
 												height="100%"
 												selectionMode="Multi"
@@ -225,8 +225,8 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog id="FH1-Dialog" title="Author ID">
-										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_default" title="Default" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch"/>
-										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_withCountry" title="with Country" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch"/>
+										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_default" title="Default" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch" forceBind="true"/>
+										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_withCountry" title="with Country" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch" forceBind="true"/>
 										<mdcvc:Conditions label="Author ID" fieldHelp="FH1_DEFCOND"/>
 									</mdcv:Dialog>
 								</mdc:dialog>
@@ -306,9 +306,9 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog title="Languages">
-										<mdcvc:MDCTable keyPath="code" descriptionPath="name" filterFields="$search">
+										<mdcvc:MDCTable id="languageTable" keyPath="code" descriptionPath="name" filterFields="$search" forceBind="true">
 											<mdc:Table id="FHLanguage-mdcTable"
-												autoBindOnInit="true"
+												autoBindOnInit="false"
 												width="100%"
 												height="100%"
 												selectionMode="SingleMaster"
@@ -467,7 +467,7 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog title="Sub Genre">
-										<mdcvc:MDCTable id="subGenre" keyPath="code" descriptionPath="title" filterFields="$search">
+										<mdcvc:MDCTable id="subGenre" keyPath="code" descriptionPath="title" filterFields="$search" forceBind="true">
 											<mdcvc:filterBar>
 												<vhfb:FilterBar id="subgenreVHFB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 													<vhfb:basicSearchField>
@@ -488,7 +488,7 @@
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
 											<mdc:Table id="FHSubGenre-MDCTable"
-												autoBindOnInit="true"
+												autoBindOnInit="false"
 												width="100%"
 												height="100%"
 												selectionMode="Multi"
@@ -596,7 +596,7 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog title="Detail Genre">
-										<mdcvc:MDCTable id="detailGenre" keyPath="code" descriptionPath="title" filterFields="$search">
+										<mdcvc:MDCTable id="detailGenre" keyPath="code" descriptionPath="title" filterFields="$search" forceBind="true">
 											<mdcvc:filterBar>
 												<vhfb:FilterBar id="detailgenreVHFB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 													<vhfb:basicSearchField>
@@ -618,7 +618,7 @@
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
 											<mdc:Table id="FHDetailGenre-MDCTable"
-												autoBindOnInit="true"
+												autoBindOnInit="false"
 												width="100%"
 												height="100%"
 												selectionMode="Multi"
@@ -1048,7 +1048,7 @@
 					</mdc:typeahead>
 					<mdc:dialog>
 						<mdcv:Dialog title="Genre">
-							<mdcvc:MDCTable id="genre" keyPath="code" descriptionPath="title" filterFields="$search">
+							<mdcvc:MDCTable id="genre" keyPath="code" descriptionPath="title" filterFields="$search" forceBind="true">
 								<mdcvc:filterBar>
 									<vhfb:FilterBar id="genreVHFB" liveMode="false" expandFilterFields="true" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 										<vhfb:basicSearchField>
@@ -1068,7 +1068,7 @@
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
 								<mdc:Table id="FHGenre-MDCTable"
-									autoBindOnInit="true"
+									autoBindOnInit="false"
 									width="100%"
 									height="100%"
 									selectionMode="Multi"

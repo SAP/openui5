@@ -78,7 +78,7 @@
 												</mdc:typeahead>
 												<mdc:dialog>
 													<mdcv:Dialog id="FH1-Dialog" title="Author ID">
-														<mdcvc:MDCTable id="FH1-Dialog-MDCTable" keyPath="ID" descriptionPath="name" filterFields="$search">
+														<mdcvc:MDCTable id="FH1-Dialog-MDCTable" keyPath="ID" descriptionPath="name" filterFields="$search" forceBind="true">
 															<mdcvc:filterBar>
 																<vhfb:FilterBar id="FH1-Dialog-MDCTable--default-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 																	<vhfb:basicSearchField>
@@ -109,7 +109,7 @@
 																</vhfb:FilterBar>
 															</mdcvc:filterBar>
 															<mdc:Table id="FH1-Dialog-MDCTable--default"
-																autoBindOnInit="true"
+																autoBindOnInit="false"
 																width="100%"
 																height="100%"
 																selectionMode="Single"
@@ -235,9 +235,9 @@
 										</mdc:typeahead>
 										<mdc:dialog>
 											<mdcv:Dialog title="Genre">
-												<mdcvc:MDCTable id="genreDialog" keyPath="code" descriptionPath="title" filterFields="$search">
+												<mdcvc:MDCTable id="genreDialog" keyPath="code" descriptionPath="title" filterFields="$search" forceBind="true">
 													<mdc:Table id="FHGenre-MDCTable"
-														autoBindOnInit="true"
+														autoBindOnInit="false"
 														width="100%"
 														height="100%"
 														selectionMode="Single"
@@ -328,7 +328,7 @@
 										</mdc:typeahead>
 										<mdc:dialog>
 											<mdcv:Dialog title="Sub Genre">
-												<mdcvc:MDCTable id="subGenreDialog" keyPath="code" descriptionPath="title" filterFields="$search">
+												<mdcvc:MDCTable id="subGenreDialog" keyPath="code" descriptionPath="title" filterFields="$search" forceBind="true">
 													<mdcvc:filterBar>
 														<vhfb:FilterBar id="subGenreDialog-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 															<vhfb:basicSearchField>
@@ -349,7 +349,7 @@
 														</vhfb:FilterBar>
 													</mdcvc:filterBar>
 													<mdc:Table id="FHSubGenre-MDCTable"
-														autoBindOnInit="true"
+														autoBindOnInit="false"
 														width="100%"
 														height="100%"
 														selectionMode="Single"

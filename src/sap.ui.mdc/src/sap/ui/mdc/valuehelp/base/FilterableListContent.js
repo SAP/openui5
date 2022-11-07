@@ -229,7 +229,7 @@ sap.ui.define([
 			var FilterBar = aModules[0];
 			var oFilterBar = new FilterBar(this.getId() + "-FB", {
 				liveMode: false, // !oWrapper.isSuspended(), // if suspended, no live search
-				showGoButton: false
+				showGoButton: true
 			});
 			_setBasicSearch.call(this, oFilterBar);
 			this.setAggregation("_defaultFilterBar", oFilterBar, true);
