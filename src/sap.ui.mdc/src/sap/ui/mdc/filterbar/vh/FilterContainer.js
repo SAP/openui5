@@ -7,7 +7,7 @@ sap.ui.define(
 	[
 		"sap/ui/mdc/filterbar/IFilterContainer",
 		"sap/ui/layout/AlignedFlowLayout",
-		"sap/m/Toolbar",
+		"sap/m/OverflowToolbar",
 		"sap/m/ToolbarSpacer",
 		"sap/m/VBox"
 	],

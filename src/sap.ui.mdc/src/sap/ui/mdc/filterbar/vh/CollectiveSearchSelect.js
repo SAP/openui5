@@ -118,5 +118,18 @@ sap.ui.define([
 		this.oRb = undefined;
 	};
 
+	/**
+	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
+	 * Registers invalidations event which is fired when width of the control is changed.
+	 *
+	 * @protected
+	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+	 */
+	CollectiveSearchSelect.prototype.getOverflowToolbarConfig = function() {
+		var oOverflowToolbarConfig = VariantManagement.prototype.getOverflowToolbarConfig.apply(this); // Call base class
+		oOverflowToolbarConfig.canOverflow = true;
+		return oOverflowToolbarConfig;
+	};
+
 	return CollectiveSearchSelect;
 });

@@ -434,7 +434,8 @@ sap.ui.define([
 								select: function (oEvent) {
 									this._handleContentSelectionChange(oEvent.getParameter("key"));
 								}.bind(this),
-								selectedItemKey: this.getSelectedContent().getId()
+								selectedItemKey: this.getSelectedContent().getId(),
+								maxWidth: Device.system.phone ? "5em" : "25rem"
 							}
 						);
 						this._oGroupSelect.setModel(this._oGroupSelectModel, "$select");
