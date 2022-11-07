@@ -77,6 +77,7 @@ sap.ui.define([
 				valueStateText: "{$field>/valueStateText}",
 				width: "100%",
 				tooltip: "{$field>/tooltip}",
+				liveChange: oContentFactory.getHandleContentLiveChange(),
 				change: oContentFactory.getHandleContentChange()
 			});
 
@@ -117,6 +118,7 @@ sap.ui.define([
 				valueStateText: "{$field>/valueStateText}",
 				width: "100%",
 				tooltip: "{$field>/tooltip}",
+				liveChange: oContentFactory.getHandleContentLiveChange(),
 				change: oContentFactory.getHandleContentChange()
 			});
 
@@ -217,6 +219,7 @@ sap.ui.define([
 				tooltip: "{$field>/tooltip}",
 				// enableGroupHeaders: false,	// disable the grouping of the options
 				options: vOptions,
+				// liveChange: oContentFactory.getHandleContentLiveChange(), this event does not exist for DynamicDateRange
 				change: oContentFactory.getHandleContentChange()
 			});
 
