@@ -58,14 +58,15 @@ function(
 	 */
 	var SegmentedButton = Control.extend("sap.m.SegmentedButton", /** @lends sap.m.SegmentedButton.prototype */ { metadata : {
 
-		interfaces : [
-			"sap.ui.core.IFormContent",
-			"sap.m.IOverflowToolbarContent"
-		],
-		library : "sap.m",
-		designtime: "sap/m/designtime/SegmentedButton.designtime",
-		publicMethods : ["createButton"],
-		properties : {
+			interfaces : [
+				"sap.ui.core.IFormContent",
+				"sap.m.IOverflowToolbarContent",
+				"sap.m.IToolbarInteractiveControl"
+			],
+			library : "sap.m",
+			designtime: "sap/m/designtime/SegmentedButton.designtime",
+			publicMethods : ["createButton"],
+			properties : {
 
 			/**
 			 * Defines the width of the SegmentedButton control. If not set, it uses the minimum required width to make all buttons inside of the same size (based on the biggest button).
@@ -1009,6 +1010,16 @@ function(
 		return this.getButtons().filter(function(oButton) {
 			return oButton.getVisible();
 		});
+	};
+
+	/**
+	 * Determines if it is interactive Control
+	 *
+	 * @private
+	 * @returns {boolean} If it is an interactive Control
+	 */
+	 SegmentedButton.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
 	SegmentedButton.prototype.clone = function () {

@@ -80,12 +80,13 @@ sap.ui.define([
 	*/
 	var SearchField = Control.extend("sap.m.SearchField", /** @lends sap.m.SearchField.prototype */ { metadata : {
 
-		interfaces : [
-			"sap.ui.core.IFormContent",
-			"sap.f.IShellBar"
-		],
-		library : "sap.m",
-		properties : {
+			interfaces : [
+				"sap.ui.core.IFormContent",
+				"sap.f.IShellBar",
+				"sap.m.IToolbarInteractiveControl"
+			],
+			library : "sap.m",
+			properties : {
 
 			/**
 			 * Input Value.
@@ -869,6 +870,19 @@ sap.ui.define([
 	 */
 	SearchField.prototype.getPopupAnchorDomRef = function() {
 		return this.getDomRef("F"); // the form element inside the search  field is the anchor
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	SearchField.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
 	/**

@@ -95,9 +95,12 @@ sap.ui.define([
 	 */
 	var CheckBox = Control.extend("sap.m.CheckBox", /** @lends sap.m.CheckBox.prototype */ { metadata : {
 
-		interfaces : ["sap.ui.core.IFormContent"],
-		library : "sap.m",
-		properties : {
+			interfaces : [
+				"sap.m.IToolbarInteractiveControl",
+				"sap.ui.core.IFormContent"
+			],
+			library : "sap.m",
+			properties : {
 
 			/**
 			 * Determines whether the <code>CheckBox</code> is selected (checked).
@@ -525,6 +528,19 @@ sap.ui.define([
 			enabled: this.getEnabled(),
 			editable: this.getEditable()
 		};
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	CheckBox.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
 	/*

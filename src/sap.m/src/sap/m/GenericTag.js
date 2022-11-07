@@ -64,6 +64,7 @@ sap.ui.define([
 			library : "sap.m",
 			interfaces : [
 				"sap.m.IOverflowToolbarContent",
+				"sap.m.IToolbarInteractiveControl",
 				"sap.m.IOverflowToolbarFlexibleContent"
 			],
 			properties : {
@@ -291,6 +292,20 @@ sap.ui.define([
 
 		return oConfig;
 	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	GenericTag.prototype._getToolbarInteractive = function () {
+		return true;
+	};
+
 
 	return GenericTag;
 });

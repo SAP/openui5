@@ -34,9 +34,12 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var OverflowToolbarButton = Button.extend("sap.m.OverflowToolbarButton", /** @lends sap.m.OverflowToolbarButton.prototype */ {
-		interfaces: [
-			"sap.f.IShellBar"
-		],
+		metadata: {
+			interfaces: [
+				"sap.f.IShellBar",
+				"sap.m.IToolbarInteractiveControl"
+			]
+		},
 		renderer: ButtonRenderer.render
 	});
 
@@ -46,6 +49,19 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 			}
 
 			return "";
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	OverflowToolbarButton.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
 	return OverflowToolbarButton;
