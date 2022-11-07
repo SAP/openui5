@@ -1,7 +1,132 @@
 {
   "1.109.0": {
-    "date": "October 2022",
+    "date": "November 2022",
     "notes": [
+      {
+        "id": "335ad7ef044e9c21e610da357f051417f133c86a",
+        "type": "FIX",
+        "text": " sap.m.Table: Invalid table should not be accessed by keyboard",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280161876"
+          }
+        ]
+      },
+      {
+        "id": "e01f24fafccc7612d3f76afbf86088415ae0a412",
+        "type": "FIX",
+        "text": " sap.m.Slider: Change measurement units to relative ones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280172283"
+          }
+        ]
+      },
+      {
+        "id": "3393a058ec506b7edcc132fdf8f644ce444e0ff7",
+        "type": "FIX",
+        "text": " sap.m.Panel: preventDefault called only when header is focused onsapspace"
+      },
+      {
+        "id": "7f5655727b5dcb4a97e72752db71ba829b1d0b3c",
+        "type": "FIX",
+        "text": " sap.m.Table: Four-sided focus outline for the sticky headers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280162944"
+          }
+        ]
+      },
+      {
+        "id": "f155001e4cb4662f3790715043ae7f36f6cabdcd",
+        "type": "FIX",
+        "text": " sap.m.List/Table: Accessibility improvements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270141475"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270141480"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270141473"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270155411"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270161640"
+          }
+        ]
+      },
+      {
+        "id": "bfb24dfbc0b492b6600c8acb0e19bb741f97884b",
+        "type": "FEATURE",
+        "text": " sap.m.LightBox: IllustratedMessage used"
+      },
+      {
+        "id": "b07e3222d5a9768697ca231b3a608f0a67dca64f",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Visual misalignment of percent value fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270167989"
+          }
+        ]
+      },
+      {
+        "id": "28b880a1eb5f6b315ab6c3b63694ced2bffb5580",
+        "type": "FIX",
+        "text": " sap.m.Panel: Prevent scrolling when expanding with space",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280155244"
+          }
+        ]
+      },
+      {
+        "id": "865e4790ef7a9d71423a27cf1c128e7e5eaca800",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Buttons are correct when any button is not visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270140605"
+          }
+        ]
+      },
+      {
+        "id": "22d068fa06d89d3d44f86f5882ff6bcdd3684fe7",
+        "type": "FIX",
+        "text": " sap.m.Input: Typahead now selects the first matching item from the suggestion list or table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270141561"
+          }
+        ]
+      },
+      {
+        "id": "1fa3ee8454b2cbabc77d9c37b4f8f5ec7302d62f",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Interaction on closed picker corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280105836"
+          }
+        ]
+      },
       {
         "id": "82538b54441d56f3fffc38bc3bc910f03f1b3ce0",
         "type": "FIX",
@@ -48,6 +173,17 @@
           {
             "type": "BCP",
             "reference": "002075129400007258462022"
+          }
+        ]
+      },
+      {
+        "id": "52a7c25485ad54eeb2b01572dae5baf293cbe532",
+        "type": "FIX",
+        "text": " m.ColumnListItem: take the popin are into account for drop zones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270158237"
           }
         ]
       },
@@ -109,6 +245,11 @@
             "reference": "2270125940"
           }
         ]
+      },
+      {
+        "id": "1fe85f38e3211c9bc82c5ec7f06c29cd30217ff5",
+        "type": "FEATURE",
+        "text": " sap.tnt: Updated SAP-icons-TNT (V2) font"
       },
       {
         "id": "89ed2a1db6bfec43bf4deb88d00fad4a9b65d9fb",

@@ -1,7 +1,34 @@
 {
   "1.109.0": {
-    "date": "October 2022",
+    "date": "November 2022",
     "notes": [
+      {
+        "id": "e01f24fafccc7612d3f76afbf86088415ae0a412",
+        "type": "FIX",
+        "text": " sap.m.Slider: Change measurement units to relative ones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280172283"
+          }
+        ]
+      },
+      {
+        "id": "0e1123e34fb40d78708806a0b56ebd244837f130",
+        "type": "FIX",
+        "text": " core/Icon: increase color contrast ratio for high contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270162604"
+          }
+        ]
+      },
+      {
+        "id": "bfb24dfbc0b492b6600c8acb0e19bb741f97884b",
+        "type": "FEATURE",
+        "text": " sap.m.LightBox: IllustratedMessage used"
+      },
       {
         "id": "d30dfe96c2d0cac762af9a90706d7642af01bd15",
         "type": "FIX",

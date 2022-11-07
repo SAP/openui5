@@ -1,7 +1,18 @@
 {
   "1.109.0": {
-    "date": "October 2022",
+    "date": "November 2022",
     "notes": [
+      {
+        "id": "02d46e6e1679b610bde24ebf633bb7494053e7c6",
+        "type": "FIX",
+        "text": "sap.m.TimesRow: getting a correct instance of a DateFormat",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007162242022"
+          }
+        ]
+      },
       {
         "id": "f7034d6d8b4ab1c7127b563daa5ee414ccc653f8",
         "type": "FEATURE",

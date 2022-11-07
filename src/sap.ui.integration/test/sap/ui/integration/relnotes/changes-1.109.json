@@ -1,7 +1,12 @@
 {
   "1.109.0": {
-    "date": "October 2022",
+    "date": "November 2022",
     "notes": [
+      {
+        "id": "dae75c515bda3c82a114a66a3b7f111675b8498d",
+        "type": "FEATURE",
+        "text": " Integration Cards: dateTime formatter now supports intervals"
+      },
       {
         "id": "42a3803e9e2969ad20497b73ef57a3517f0229aa",
         "type": "FEATURE",

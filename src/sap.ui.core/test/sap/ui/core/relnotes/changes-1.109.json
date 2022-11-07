@@ -1,7 +1,29 @@
 {
   "1.109.0": {
-    "date": "October 2022",
+    "date": "November 2022",
     "notes": [
+      {
+        "id": "0e1123e34fb40d78708806a0b56ebd244837f130",
+        "type": "FIX",
+        "text": " core/Icon: increase color contrast ratio for high contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270162604"
+          }
+        ]
+      },
+      {
+        "id": "2b17f629bc6142f7e5ddf804a0a8127b4d156105",
+        "type": "FIX",
+        "text": " sap/ui/util/Storage: improve JSDoc / type signatures",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270164451"
+          }
+        ]
+      },
       {
         "id": "e331f89de20157cf40d9a7c88df7bb453faa12d5",
         "type": "FEATURE",
@@ -15,6 +37,17 @@
           {
             "type": "BCP",
             "reference": "2280150532"
+          }
+        ]
+      },
+      {
+        "id": "52a7c25485ad54eeb2b01572dae5baf293cbe532",
+        "type": "FIX",
+        "text": " m.ColumnListItem: take the popin are into account for drop zones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270158237"
           }
         ]
       },
