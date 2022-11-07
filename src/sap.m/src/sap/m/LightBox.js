@@ -308,7 +308,7 @@ sap.ui.define([
 		this._oPopup.setContent(this);
 
 		if (oImageContent && oImageContent.getImageSrc()) {
-			this._oPopup.open(300, "center center", "center center", document.body, null);
+			this._oPopup.open(300, Popup.Dock.CenterCenter, Popup.Dock.CenterCenter, window, null);
 			InstanceManager.addLightBoxInstance(this);
 		}
 
@@ -488,16 +488,20 @@ sap.ui.define([
 	 * @private
 	 */
 	LightBox.prototype._onResize = function () {
-		var iMinimumSideOffset = this._calculateOffset() / 2 + "px",
-			vTop = iMinimumSideOffset,
-			vLeft = iMinimumSideOffset,
-			vMarginTop = "",
-			vMarginLeft = "",
-			oImageContent = this._getImageContent(),
-			oDomRef = this.getDomRef(),
-			vLightBoxWidth,
+		var oDomRef = this.getDomRef();
+		if (!oDomRef) {
+			return;
+		}
+
+		var vLightBoxWidth,
 			vLightBoxHeight,
-			iMinimumOffset = this._calculateOffset();
+			fHeight,
+			fWidth,
+			iScrollOffsetY = Math.round(window.scrollY),
+			iScrollOffsetX = Math.round(window.scrollX),
+			iTop,
+			iLeft,
+			oImageContent = this._getImageContent();
 
 		if (oImageContent._getImageState() === LightBoxLoadingStates.Loaded) {
 			this._calculateSizes(oImageContent._getNativeImage());
@@ -512,21 +516,14 @@ sap.ui.define([
 			vLightBoxHeight = oDomRef.clientHeight;
 		}
 
-		if (window.innerWidth > vLightBoxWidth + iMinimumOffset) {
-			vLeft = "50%";
-			vMarginLeft = Math.round(-vLightBoxWidth / 2);
-		}
-
-		if (window.innerHeight > vLightBoxHeight + iMinimumOffset) {
-			vTop = "50%";
-			vMarginTop = Math.round(-vLightBoxHeight / 2);
-		}
+		fHeight = window.innerHeight - vLightBoxHeight;
+		fWidth = window.innerWidth - vLightBoxWidth;
+		iTop = iScrollOffsetY + Math.round(fHeight / 2);
+		iLeft = iScrollOffsetX + Math.round(fWidth / 2);
 
 		this._$lightBox.css({
-			"top": vTop,
-			"margin-top": vMarginTop,
-			"left": vLeft,
-			"margin-left": vMarginLeft
+			"top": iTop,
+			"left": iLeft
 		});
 	};
 

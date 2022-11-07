@@ -250,6 +250,44 @@ sap.ui.define([
 			assert.strictEqual(actualResult, expectedResult, 'The result should be "ERROR"');
 		});
 
+		QUnit.test("LightBox is visible on a scrolled-down page", function (assert) {
+			// arrange
+			var OFFSET = 5000;
+			document.body.style.paddingTop = OFFSET + "px"; // create a scrollbar and scroll down
+			window.scroll({ top: OFFSET });
+
+			var done = assert.async(),
+				oImageContent = this.LightBox.getImageContent()[0],
+				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg',
+				oNativeImage = oImageContent._getNativeImage(),
+				fnOnload = oNativeImage.onload;
+
+			oImageContent.setImageSrc(sImageSource);
+			oCore.applyChanges();
+
+			setTimeout(function () {
+			// oNativeImage.onload = function () {
+				fnOnload.apply(oNativeImage, arguments);
+
+				// Assert
+				var oBoundingRect = this.LightBox.getDomRef().getBoundingClientRect();
+				assert.strictEqual(oBoundingRect.top > 0, true, "LightBox is within the viewport");
+				assert.strictEqual(oBoundingRect.left > 0, true, "LightBox is within the viewport");
+				assert.strictEqual(oBoundingRect.bottom < window.innerHeight, true, "LightBox is within the viewport");
+				assert.strictEqual(oBoundingRect.right < window.innerWidth, true, "LightBox is within the viewport");
+
+				done();
+
+				// Clean-up
+				document.body.style.paddingTop = ""; // create a scrollbar and scroll down
+			}.bind(this), LIGHTBOX_OPEN_TIME);
+
+			assert.expect(4);
+
+			//act
+			this.LightBox.open();
+		});
+
 		//================================================================================
 		// LightBox accessibility
 		//================================================================================
