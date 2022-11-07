@@ -67,14 +67,15 @@
 							</layoutData>
 						</Input>
 						<Input id="Input4" value="Walldorf" />
-						<Label id="Label3" text="Country" />
-						<Select id="Select0" width="100%">
-							<items>
-								<core:Item text="Germany" />
-								<core:Item text="USA" />
-								<core:Item text="England" />
-							</items>
-						</Select>
+						<Label id="Label3" text="State/Country" />
+						<Input id="Input31" value="BW" />
+						<ComboBox id="ComboBox0"
+							items="{
+								path: '/CountriesCollection',
+								sorter: { path: 'text' }
+							}">
+							<core:Item key="{key}" text="{text}" />
+						</ComboBox>
 						<core:Title id="Title1" text="Online" />
 						<Label id="Label4" text="Web" />
 						<Input id="Input5" value="www.sap.com" />
