@@ -34,6 +34,7 @@ sap.ui.define([
 		 * @version ${version}
 		 *
 		 * @private
+		 * @ui5-restricted sap.ushell
 		 * @alias sap.ui.integration.util.BindingResolver
 		 */
 		var BindingResolver = {};
@@ -133,6 +134,7 @@ sap.ui.define([
 		 * @param {*} vModelOrObject The model.
 		 * @param {string} [sPath] The path to the referenced entity which is going to be used as a binding context.
 		 * @private
+		 * @ui5-restricted sap.ushell
 		 * @returns {*} The resolved value.
 		 */
 		BindingResolver.resolveValue = function (vValue, vModelOrObject, sPath) {
