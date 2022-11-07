@@ -1,11 +1,11 @@
 // /**
 // * Copyright (c) 2012-2022 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 1.69.2
-// * data:{"sModified":"2022-05-24T07:19:31Z"}
+// * Theming Engine VERSION_UNKNOWN
+// * data:{"sModified":"2022-10-11T12:15:49Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/baseTheme/base.less (Version 11.1.40) *******************/
+/******************* FILE /Base/baseLib/baseTheme/base.less (Version 11.1.44) *******************/
 
 
 // [Label "Brand Color"]
@@ -937,6 +937,342 @@
 // [TranslationKey "sapShell_NeutClr"]
 // [Tags "Base", "Shell", "Color", "Protected"]
 @sapShell_NeutralColor: @sapDefault_Color;
+
+// [Label "Shell Category 1 Background Color"]
+// [Description "The background color of shell elements of category 1."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_1_Background: @sapDefault_Color;
+
+// [Label "Shell Category 1 Border Color"]
+// [Description "The border color of shell elements of category 1."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_1_BrdClr"]
+@sapShell_Category_1_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 1 Text Color"]
+// [Description "The text color of shell elements of category 1. Ensures a defined contrast against sapShell_Category_1_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_1_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 1 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 1. Ensures a defined contrast against sapShell_Category_1_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_1_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 2 Background Color"]
+// [Description "The background color of shell elements of category 2."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_2_Background: @sapDefault_Color;
+
+// [Label "Shell Category 2 Border Color"]
+// [Description "The border color of shell elements of category 2."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_2_BrdClr"]
+@sapShell_Category_2_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 2 Text Color"]
+// [Description "The text color of shell elements of category 2. Ensures a defined contrast against sapShell_Category_2_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_2_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 2 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 2. Ensures a defined contrast against sapShell_Category_2_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_2_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 3 Background Color"]
+// [Description "The background color of shell elements of category 3."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_3_Background: @sapDefault_Color;
+
+// [Label "Shell Category 3 Border Color"]
+// [Description "The border color of shell elements of category 3."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_3_BrdClr"]
+@sapShell_Category_3_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 3 Text Color"]
+// [Description "The text color of shell elements of category 3. Ensures a defined contrast against sapShell_Category_3_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_3_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 3 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 3. Ensures a defined contrast against sapShell_Category_3_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_3_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 4 Background Color"]
+// [Description "The background color of shell elements of category 4."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_4_Background: @sapDefault_Color;
+
+// [Label "Shell Category 4 Border Color"]
+// [Description "The border color of shell elements of category 4."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_4_BrdClr"]
+@sapShell_Category_4_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 4 Text Color"]
+// [Description "The text color of shell elements of category 4. Ensures a defined contrast against sapShell_Category_4_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_4_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 4 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 4. Ensures a defined contrast against sapShell_Category_4_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_4_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 5 Background Color"]
+// [Description "The background color of shell elements of category 5."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_5_Background: @sapDefault_Color;
+
+// [Label "Shell Category 5 Border Color"]
+// [Description "The border color of shell elements of category 5."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_5_BrdClr"]
+@sapShell_Category_5_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 5 Text Color"]
+// [Description "The text color of shell elements of category 5. Ensures a defined contrast against sapShell_Category_5_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_5_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 5 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 5. Ensures a defined contrast against sapShell_Category_5_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_5_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 6 Background Color"]
+// [Description "The background color of shell elements of category 6."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_6_Background: @sapDefault_Color;
+
+// [Label "Shell Category 6 Border Color"]
+// [Description "The border color of shell elements of category 6."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_6_BrdClr"]
+@sapShell_Category_6_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 6 Text Color"]
+// [Description "The text color of shell elements of category 6. Ensures a defined contrast against sapShell_Category_6_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_6_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 6 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 6. Ensures a defined contrast against sapShell_Category_6_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_6_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 7 Background Color"]
+// [Description "The background color of shell elements of category 7."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_7_Background: @sapDefault_Color;
+
+// [Label "Shell Category 7 Border Color"]
+// [Description "The border color of shell elements of category 7."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_7_BrdClr"]
+@sapShell_Category_7_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 7 Text Color"]
+// [Description "The text color of shell elements of category 7. Ensures a defined contrast against sapShell_Category_7_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_7_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 7 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 7. Ensures a defined contrast against sapShell_Category_7_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_7_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 8 Background Color"]
+// [Description "The background color of shell elements of category 8."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_8_Background: @sapDefault_Color;
+
+// [Label "Shell Category 8 Border Color"]
+// [Description "The border color of shell elements of category 8."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_8_BrdClr"]
+@sapShell_Category_8_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 8 Text Color"]
+// [Description "The text color of shell elements of category 8. Ensures a defined contrast against sapShell_Category_8_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_8_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 8 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 8. Ensures a defined contrast against sapShell_Category_8_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_8_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 9 Background Color"]
+// [Description "The background color of shell elements of category 9."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_9_Background: @sapDefault_Color;
+
+// [Label "Shell Category 9 Border Color"]
+// [Description "The border color of shell elements of category 9."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_9_BrdClr"]
+@sapShell_Category_9_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 9 Text Color"]
+// [Description "The text color of shell elements of category 9. Ensures a defined contrast against sapShell_Category_9_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_9_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 9 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 9. Ensures a defined contrast against sapShell_Category_9_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_9_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 10 Background Color"]
+// [Description "The background color of shell elements of category 10."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_10_Background: @sapDefault_Color;
+
+// [Label "Shell Category 10 Border Color"]
+// [Description "The border color of shell elements of category 10."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_10_BrdClr"]
+@sapShell_Category_10_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 10 Text Color"]
+// [Description "The text color of shell elements of category 10. Ensures a defined contrast against sapShell_Category_10_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_10_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 10 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 10. Ensures a defined contrast against sapShell_Category_10_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_10_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 11 Background Color"]
+// [Description "The background color of shell elements of category 11."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_11_Background: @sapDefault_Color;
+
+// [Label "Shell Category 11 Border Color"]
+// [Description "The border color of shell elements of category 11."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_11_BrdClr"]
+@sapShell_Category_11_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 11 Text Color"]
+// [Description "The text color of shell elements of category 11. Ensures a defined contrast against sapShell_Category_11_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_11_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 11 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 11. Ensures a defined contrast against sapShell_Category_11_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_11_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 12 Background Color"]
+// [Description "The background color of shell elements of category 12."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_12_Background: @sapDefault_Color;
+
+// [Label "Shell Category 12 Border Color"]
+// [Description "The border color of shell elements of category 12."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_12_BrdClr"]
+@sapShell_Category_12_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 12 Text Color"]
+// [Description "The text color of shell elements of category 12. Ensures a defined contrast against sapShell_Category_12_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_12_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 12 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 12. Ensures a defined contrast against sapShell_Category_12_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_12_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 13 Background Color"]
+// [Description "The background color of shell elements of category 13."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_13_Background: @sapDefault_Color;
+
+// [Label "Shell Category 13 Border Color"]
+// [Description "The border color of shell elements of category 13."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_13_BrdClr"]
+@sapShell_Category_13_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 13 Text Color"]
+// [Description "The text color of shell elements of category 13. Ensures a defined contrast against sapShell_Category_13_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_13_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 13 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 13. Ensures a defined contrast against sapShell_Category_13_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_13_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 14 Background Color"]
+// [Description "The background color of shell elements of category 14."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_14_Background: @sapDefault_Color;
+
+// [Label "Shell Category 14 Border Color"]
+// [Description "The border color of shell elements of category 14."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_14_BrdClr"]
+@sapShell_Category_14_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 14 Text Color"]
+// [Description "The text color of shell elements of category 14. Ensures a defined contrast against sapShell_Category_14_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_14_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 14 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 14. Ensures a defined contrast against sapShell_Category_14_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_14_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 15 Background Color"]
+// [Description "The background color of shell elements of category 15."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_15_Background: @sapDefault_Color;
+
+// [Label "Shell Category 15 Border Color"]
+// [Description "The border color of shell elements of category 15."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_15_BrdClr"]
+@sapShell_Category_15_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 15 Text Color"]
+// [Description "The text color of shell elements of category 15. Ensures a defined contrast against sapShell_Category_15_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_15_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 15 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 15. Ensures a defined contrast against sapShell_Category_15_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_15_TextShadow: @sapDefault_Color;
+
+// [Label "Shell Category 16 Background Color"]
+// [Description "The background color of shell elements of category 16."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_16_Background: @sapDefault_Color;
+
+// [Label "Shell Category 16 Border Color"]
+// [Description "The border color of shell elements of category 16."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+// [TranslationKey "sapShell_Cat_16_BrdClr"]
+@sapShell_Category_16_BorderColor: @sapDefault_Color;
+
+// [Label "Shell Category 16 Text Color"]
+// [Description "The text color of shell elements of category 16. Ensures a defined contrast against sapShell_Category_16_TextShadow."]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_Category_16_TextColor: @sapDefault_Color;
+
+// [Label "Shell Category 16 Text Shadow Color"]
+// [Description "The text shadow color of shell elements of category 16. Ensures a defined contrast against sapShell_Category_16_TextColor."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_Category_16_TextShadow: @sapDefault_Color;
 
 // [Label "Avatar 1 Background Color"]
 // [Description "The background color of type-1 avatars."]
@@ -3661,34 +3997,16 @@
 // @sapFontUrl_72_Regular_woff: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
-// @sapFontUrl_72_Bold_woff2: none;
-
-// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
-// @sapFontUrl_72_Bold_woff: none;
-
-// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
-// @sapFontUrl_72_Semibold_woff2: none;
-
-// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
-// @sapFontUrl_72_Semibold_woff: none;
-
-// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
-// @sapFontUrl_72_SemiboldDuplex_woff2: none;
-
-// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
-// @sapFontUrl_72_SemiboldDuplex_woff: none;
-
-// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
-// @sapFontUrl_72_Light_woff2: none;
-
-// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
-// @sapFontUrl_72_Light_woff: none;
-
-// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_Regular_full_woff2: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_Regular_full_woff: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_Bold_woff2: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_Bold_woff: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_Bold_full_woff2: none;
@@ -3697,16 +4015,34 @@
 // @sapFontUrl_72_Bold_full_woff: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_Semibold_woff2: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_Semibold_woff: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_Semibold_full_woff2: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_Semibold_full_woff: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_SemiboldDuplex_woff2: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_SemiboldDuplex_woff: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_SemiboldDuplex_full_woff2: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_SemiboldDuplex_full_woff: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_Light_woff2: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_Light_woff: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_Light_full_woff2: none;
@@ -3721,10 +4057,22 @@
 // @sapFontUrl_72_Black_woff: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_Black_full_woff2: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_Black_full_woff: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_BoldItalic_woff2: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_BoldItalic_woff: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_BoldItalic_full_woff2: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_BoldItalic_full_woff: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_Condensed_woff2: none;
@@ -3733,16 +4081,34 @@
 // @sapFontUrl_72_Condensed_woff: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_Condensed_full_woff2: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_Condensed_full_woff: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_CondensedBold_woff2: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_CondensedBold_woff: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_CondensedBold_full_woff2: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_CondensedBold_full_woff: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_Italic_woff2: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72_Italic_woff: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_Italic_full_woff2: none;
+
+// [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
+// @sapFontUrl_72_Italic_full_woff: none;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
 // @sapFontUrl_72Mono_Regular_woff2: none;
@@ -3884,36 +4250,8 @@
 // @font-face {
 //   font-family: '72';
 //   font-style: normal;
-//   font-weight: 300;
-//   src: @sapFontUrl_72_Light_woff2 format('woff2'), @sapFontUrl_72_Light_woff format('woff'), local('72-Light');
-// }
-
-// @font-face {
-//   font-family: '72';
-//   font-style: normal;
 //   font-weight: 400;
 //   src: @sapFontUrl_72_Regular_woff2 format('woff2'), @sapFontUrl_72_Regular_woff format('woff'), local('72');
-// }
-
-// @font-face {
-//   font-family: '72';
-//   font-style: normal;
-//   font-weight: 600;
-//   src: @sapFontUrl_72_Semibold_woff2 format('woff2'), @sapFontUrl_72_Semibold_woff format('woff'), local('72-Semibold');
-// }
-
-// @font-face {
-//   font-family: '72';
-//   font-style: normal;
-//   font-weight: 700;
-//   src: @sapFontUrl_72_Bold_woff2 format('woff2'), @sapFontUrl_72_Bold_woff format('woff'), local('72-Bold');
-// }
-
-// @font-face {
-//   font-family: '72full';
-//   font-style: normal;
-//   font-weight: 300;
-//   src: @sapFontUrl_72_Light_full_woff2 format('woff2'), @sapFontUrl_72_Light_full_woff format('woff');
 // }
 
 // @font-face {
@@ -3924,68 +4262,14 @@
 // }
 
 // @font-face {
-//   font-family: '72full';
-//   font-style: normal;
-//   font-weight: 600;
-//   src: @sapFontUrl_72_Semibold_full_woff2 format('woff2'), @sapFontUrl_72_Semibold_full_woff format('woff');
-// }
-
-// @font-face {
-//   font-family: '72full';
-//   font-style: normal;
-//   font-weight: 700;
-//   src: @sapFontUrl_72_Bold_full_woff2 format('woff2'), @sapFontUrl_72_Bold_full_woff format('woff');
-// }
-
-// @font-face {
-//   font-family: '72';
-//   font-style: normal;
-//   font-weight: 900;
-//   src: @sapFontUrl_72_Black_woff2 format('woff2'), @sapFontUrl_72_Black_woff format('woff'), local('72Black');
-// }
-
-// @font-face {
-//   font-family: '72';
-//   font-style: italic;
-//   font-weight: 700;
-//   src: @sapFontUrl_72_BoldItalic_woff2 format('woff2'), @sapFontUrl_72_BoldItalic_woff format('woff'), local('72-BoldItalic');
-// }
-
-// @font-face {
-//   font-family: '72';
-//   font-style: normal;
-//   font-weight: 400;
-//   font-stretch: condensed;
-//   src: @sapFontUrl_72_Condensed_woff2 format('woff2'), @sapFontUrl_72_Condensed_woff format('woff'), local('72-Condensed');
-// }
-
-// @font-face {
-//   font-family: '72';
-//   font-style: normal;
-//   font-weight: 700;
-//   font-stretch: condensed;
-//   src: @sapFontUrl_72_CondensedBold_woff2 format('woff2'), @sapFontUrl_72_CondensedBold_woff format('woff'), local('72-CondensedBold');
-// }
-
-// @font-face {
-//   font-family: '72';
-//   font-style: italic;
-//   font-weight: 400;
-//   src: @sapFontUrl_72_Italic_woff2 format('woff2'), @sapFontUrl_72_Italic_woff format('woff'), local('72-Italic');
-// }
-
-// @font-face {
-//   font-family: '72-Light';
-//   src: @sapFontUrl_72_Light_woff2 format('woff2'), @sapFontUrl_72_Light_woff format('woff'), local('72-Light');
-// }
-
-// @font-face {
-//   font-family: '72-Lightfull';
-//   src: @sapFontUrl_72_Light_full_woff2 format('woff2'), @sapFontUrl_72_Light_full_woff format('woff');
-// }
-
-// @font-face {
 //   font-family: '72-Bold';
+//   src: @sapFontUrl_72_Bold_woff2 format('woff2'), @sapFontUrl_72_Bold_woff format('woff'), local('72-Bold');
+// }
+
+// @font-face {
+//   font-family: '72';
+//   font-style: normal;
+//   font-weight: 700;
 //   src: @sapFontUrl_72_Bold_woff2 format('woff2'), @sapFontUrl_72_Bold_woff format('woff'), local('72-Bold');
 // }
 
@@ -3995,12 +4279,33 @@
 // }
 
 // @font-face {
+//   font-family: '72full';
+//   font-style: normal;
+//   font-weight: 700;
+//   src: @sapFontUrl_72_Bold_full_woff2 format('woff2'), @sapFontUrl_72_Bold_full_woff format('woff');
+// }
+
+// @font-face {
 //   font-family: '72-Semibold';
 //   src: @sapFontUrl_72_Semibold_woff2 format('woff2'), @sapFontUrl_72_Semibold_woff format('woff'), local('72-Semibold');
 // }
 
 // @font-face {
+//   font-family: '72';
+//   font-style: normal;
+//   font-weight: 600;
+//   src: @sapFontUrl_72_Semibold_woff2 format('woff2'), @sapFontUrl_72_Semibold_woff format('woff'), local('72-Semibold');
+// }
+
+// @font-face {
 //   font-family: '72-Semiboldfull';
+//   src: @sapFontUrl_72_Semibold_full_woff2 format('woff2'), @sapFontUrl_72_Semibold_full_woff format('woff');
+// }
+
+// @font-face {
+//   font-family: '72full';
+//   font-style: normal;
+//   font-weight: 600;
 //   src: @sapFontUrl_72_Semibold_full_woff2 format('woff2'), @sapFontUrl_72_Semibold_full_woff format('woff');
 // }
 
@@ -4015,8 +4320,46 @@
 // }
 
 // @font-face {
+//   font-family: '72-Light';
+//   src: @sapFontUrl_72_Light_woff2 format('woff2'), @sapFontUrl_72_Light_woff format('woff'), local('72-Light');
+// }
+
+// @font-face {
+//   font-family: '72';
+//   font-style: normal;
+//   font-weight: 300;
+//   src: @sapFontUrl_72_Light_woff2 format('woff2'), @sapFontUrl_72_Light_woff format('woff'), local('72-Light');
+// }
+
+// @font-face {
+//   font-family: '72-Lightfull';
+//   src: @sapFontUrl_72_Light_full_woff2 format('woff2'), @sapFontUrl_72_Light_full_woff format('woff');
+// }
+
+// @font-face {
+//   font-family: '72full';
+//   font-style: normal;
+//   font-weight: 300;
+//   src: @sapFontUrl_72_Light_full_woff2 format('woff2'), @sapFontUrl_72_Light_full_woff format('woff');
+// }
+
+// @font-face {
 //   font-family: '72Black';
 //   src: @sapFontUrl_72_Black_woff2 format('woff2'), @sapFontUrl_72_Black_woff format('woff'), local('72Black');
+// }
+
+// @font-face {
+//   font-family: '72';
+//   font-style: normal;
+//   font-weight: 900;
+//   src: @sapFontUrl_72_Black_woff2 format('woff2'), @sapFontUrl_72_Black_woff format('woff'), local('72Black');
+// }
+
+// @font-face {
+//   font-family: '72full';
+//   font-style: normal;
+//   font-weight: 900;
+//   src: @sapFontUrl_72_Black_full_woff2 format('woff2'), @sapFontUrl_72_Black_full_woff format('woff');
 // }
 
 // @font-face {
@@ -4025,8 +4368,38 @@
 // }
 
 // @font-face {
+//   font-family: '72';
+//   font-style: italic;
+//   font-weight: 700;
+//   src: @sapFontUrl_72_BoldItalic_woff2 format('woff2'), @sapFontUrl_72_BoldItalic_woff format('woff'), local('72-BoldItalic');
+// }
+
+// @font-face {
+//   font-family: '72full';
+//   font-style: italic;
+//   font-weight: 700;
+//   src: @sapFontUrl_72_BoldItalic_full_woff2 format('woff2'), @sapFontUrl_72_BoldItalic_full_woff format('woff');
+// }
+
+// @font-face {
 //   font-family: '72-Condensed';
 //   src: @sapFontUrl_72_Condensed_woff2 format('woff2'), @sapFontUrl_72_Condensed_woff format('woff'), local('72-Condensed');
+// }
+
+// @font-face {
+//   font-family: '72';
+//   font-style: normal;
+//   font-weight: 400;
+//   font-stretch: condensed;
+//   src: @sapFontUrl_72_Condensed_woff2 format('woff2'), @sapFontUrl_72_Condensed_woff format('woff'), local('72-Condensed');
+// }
+
+// @font-face {
+//   font-family: '72';
+//   font-style: normal;
+//   font-weight: 400;
+//   font-stretch: condensed;
+//   src: @sapFontUrl_72_Condensed_full_woff2 format('woff2'), @sapFontUrl_72_Condensed_full_woff format('woff');
 // }
 
 // @font-face {
@@ -4035,8 +4408,38 @@
 // }
 
 // @font-face {
+//   font-family: '72';
+//   font-style: normal;
+//   font-weight: 700;
+//   font-stretch: condensed;
+//   src: @sapFontUrl_72_CondensedBold_woff2 format('woff2'), @sapFontUrl_72_CondensedBold_woff format('woff'), local('72-CondensedBold');
+// }
+
+// @font-face {
+//   font-family: '72full';
+//   font-style: normal;
+//   font-weight: 700;
+//   font-stretch: condensed;
+//   src: @sapFontUrl_72_CondensedBold_full_woff2 format('woff2'), @sapFontUrl_72_CondensedBold_full_woff format('woff');
+// }
+
+// @font-face {
 //   font-family: '72-Italic';
 //   src: @sapFontUrl_72_Italic_woff2 format('woff2'), @sapFontUrl_72_Italic_woff format('woff'), local('72-Italic');
+// }
+
+// @font-face {
+//   font-family: '72';
+//   font-style: italic;
+//   font-weight: 400;
+//   src: @sapFontUrl_72_Italic_woff2 format('woff2'), @sapFontUrl_72_Italic_woff format('woff'), local('72-Italic');
+// }
+
+// @font-face {
+//   font-family: '72full';
+//   font-style: italic;
+//   font-weight: 400;
+//   src: @sapFontUrl_72_Italic_full_woff2 format('woff2'), @sapFontUrl_72_Italic_full_woff format('woff');
 // }
 
 // @font-face {
@@ -4077,12 +4480,12 @@
 
 // /**
 // * Copyright (c) 2012-2022 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 1.69.2
-// * data:{"sModified":"2022-05-24T07:19:31Z"}
+// * Theming Engine VERSION_UNKNOWN
+// * data:{"sModified":"2022-10-11T12:15:50Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_belize_hcw/base.less (Version 11.1.40) *******************/
+/******************* FILE /Base/baseLib/sap_belize_hcw/base.less (Version 11.1.44) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -4705,6 +5108,102 @@
 
 // [Tags "!Protected"]
 @sapShell_NeutralColor: @sapNeutralColor;
+@sapShell_Category_1_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_1_BorderColor: @sapLegendColor6;
+@sapShell_Category_1_TextColor: contrast(@sapShell_Category_1_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_1_TextShadow: none;
+@sapShell_Category_2_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_2_BorderColor: @sapLegendColor3;
+@sapShell_Category_2_TextColor: contrast(@sapShell_Category_2_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_2_TextShadow: none;
+@sapShell_Category_3_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_3_BorderColor: @sapLegendColor1;
+@sapShell_Category_3_TextColor: contrast(@sapShell_Category_3_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_3_TextShadow: none;
+@sapShell_Category_4_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_4_BorderColor: @sapLegendColor10;
+@sapShell_Category_4_TextColor: contrast(@sapShell_Category_4_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_4_TextShadow: none;
+@sapShell_Category_5_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_5_BorderColor: @sapLegendColor12;
+@sapShell_Category_5_TextColor: contrast(@sapShell_Category_5_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_5_TextShadow: none;
+@sapShell_Category_6_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_6_BorderColor: @sapLegendColor7;
+@sapShell_Category_6_TextColor: contrast(@sapShell_Category_6_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_6_TextShadow: none;
+@sapShell_Category_7_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_7_BorderColor: @sapLegendColor5;
+@sapShell_Category_7_TextColor: contrast(@sapShell_Category_7_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_7_TextShadow: none;
+@sapShell_Category_8_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_8_BorderColor: @sapLegendColor8;
+@sapShell_Category_8_TextColor: contrast(@sapShell_Category_8_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_8_TextShadow: none;
+@sapShell_Category_9_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_9_BorderColor: #002a86;
+@sapShell_Category_9_TextColor: contrast(@sapShell_Category_9_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_9_TextShadow: none;
+@sapShell_Category_10_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_10_BorderColor: #47596c;
+@sapShell_Category_10_TextColor: contrast(@sapShell_Category_10_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_10_TextShadow: none;
+@sapShell_Category_11_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_11_BorderColor: #af080b;
+@sapShell_Category_11_TextColor: contrast(@sapShell_Category_11_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_11_TextShadow: none;
+@sapShell_Category_12_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_12_BorderColor: #7000e0;
+@sapShell_Category_12_TextColor: contrast(@sapShell_Category_12_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_12_TextShadow: none;
+@sapShell_Category_13_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_13_BorderColor: #580440;
+@sapShell_Category_13_TextColor: contrast(@sapShell_Category_13_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_13_TextShadow: none;
+@sapShell_Category_14_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_14_BorderColor: #035663;
+@sapShell_Category_14_TextColor: contrast(@sapShell_Category_14_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_14_TextShadow: none;
+@sapShell_Category_15_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_15_BorderColor: #223548;
+@sapShell_Category_15_TextColor: contrast(@sapShell_Category_15_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_15_TextShadow: none;
+@sapShell_Category_16_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+@sapShell_Category_16_BorderColor: #1e592f;
+@sapShell_Category_16_TextColor: contrast(@sapShell_Category_16_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Category_16_TextShadow: none;
 
 // [Tags "!Protected"]
 @sapAvatar_1_Background: @sapBackgroundColor;
@@ -6210,34 +6709,44 @@
 // @sapFontUrl_SAP-icons-Business-Suite_woff2: url(./../baseTheme/fonts/BusinessSuiteInAppSymbols.woff2);
 // @sapFontUrl_72_Regular_woff2: url(./../baseTheme/fonts/72-Regular.woff2);
 // @sapFontUrl_72_Regular_woff: url(./../baseTheme/fonts/72-Regular.woff);
-// @sapFontUrl_72_Bold_woff2: url(./../baseTheme/fonts/72-Bold.woff2);
-// @sapFontUrl_72_Bold_woff: url(./../baseTheme/fonts/72-Bold.woff);
-// @sapFontUrl_72_Semibold_woff2: url(./../baseTheme/fonts/72-Semibold.woff2);
-// @sapFontUrl_72_Semibold_woff: url(./../baseTheme/fonts/72-Semibold.woff);
-// @sapFontUrl_72_SemiboldDuplex_woff2: url(./../baseTheme/fonts/72-SemiboldDuplex.woff2);
-// @sapFontUrl_72_SemiboldDuplex_woff: url(./../baseTheme/fonts/72-SemiboldDuplex.woff);
-// @sapFontUrl_72_Light_woff2: url(./../baseTheme/fonts/72-Light.woff2);
-// @sapFontUrl_72_Light_woff: url(./../baseTheme/fonts/72-Light.woff);
 // @sapFontUrl_72_Regular_full_woff2: url(./../baseTheme/fonts/72-Regular-full.woff2);
 // @sapFontUrl_72_Regular_full_woff: url(./../baseTheme/fonts/72-Regular-full.woff);
+// @sapFontUrl_72_Bold_woff2: url(./../baseTheme/fonts/72-Bold.woff2);
+// @sapFontUrl_72_Bold_woff: url(./../baseTheme/fonts/72-Bold.woff);
 // @sapFontUrl_72_Bold_full_woff2: url(./../baseTheme/fonts/72-Bold-full.woff2);
 // @sapFontUrl_72_Bold_full_woff: url(./../baseTheme/fonts/72-Bold-full.woff);
+// @sapFontUrl_72_Semibold_woff2: url(./../baseTheme/fonts/72-Semibold.woff2);
+// @sapFontUrl_72_Semibold_woff: url(./../baseTheme/fonts/72-Semibold.woff);
 // @sapFontUrl_72_Semibold_full_woff2: url(./../baseTheme/fonts/72-Semibold-full.woff2);
 // @sapFontUrl_72_Semibold_full_woff: url(./../baseTheme/fonts/72-Semibold-full.woff);
+// @sapFontUrl_72_SemiboldDuplex_woff2: url(./../baseTheme/fonts/72-SemiboldDuplex.woff2);
+// @sapFontUrl_72_SemiboldDuplex_woff: url(./../baseTheme/fonts/72-SemiboldDuplex.woff);
 // @sapFontUrl_72_SemiboldDuplex_full_woff2: url(./../baseTheme/fonts/72-SemiboldDuplex-full.woff2);
 // @sapFontUrl_72_SemiboldDuplex_full_woff: url(./../baseTheme/fonts/72-SemiboldDuplex-full.woff);
+// @sapFontUrl_72_Light_woff2: url(./../baseTheme/fonts/72-Light.woff2);
+// @sapFontUrl_72_Light_woff: url(./../baseTheme/fonts/72-Light.woff);
 // @sapFontUrl_72_Light_full_woff2: url(./../baseTheme/fonts/72-Light-full.woff2);
 // @sapFontUrl_72_Light_full_woff: url(./../baseTheme/fonts/72-Light-full.woff);
 // @sapFontUrl_72_Black_woff2: url(./../baseTheme/fonts/72-Black.woff2);
 // @sapFontUrl_72_Black_woff: url(./../baseTheme/fonts/72-Black.woff);
+// @sapFontUrl_72_Black_full_woff2: url(./../baseTheme/fonts/72-Black-full.woff2);
+// @sapFontUrl_72_Black_full_woff: url(./../baseTheme/fonts/72-Black-full.woff);
 // @sapFontUrl_72_BoldItalic_woff2: url(./../baseTheme/fonts/72-BoldItalic.woff2);
 // @sapFontUrl_72_BoldItalic_woff: url(./../baseTheme/fonts/72-BoldItalic.woff);
+// @sapFontUrl_72_BoldItalic_full_woff2: url(./../baseTheme/fonts/72-BoldItalic-full.woff2);
+// @sapFontUrl_72_BoldItalic_full_woff: url(./../baseTheme/fonts/72-BoldItalic-full.woff);
 // @sapFontUrl_72_Condensed_woff2: url(./../baseTheme/fonts/72-Condensed.woff2);
 // @sapFontUrl_72_Condensed_woff: url(./../baseTheme/fonts/72-Condensed.woff);
+// @sapFontUrl_72_Condensed_full_woff2: url(./../baseTheme/fonts/72-Condensed-full.woff2);
+// @sapFontUrl_72_Condensed_full_woff: url(./../baseTheme/fonts/72-Condensed-full.woff);
 // @sapFontUrl_72_CondensedBold_woff2: url(./../baseTheme/fonts/72-CondensedBold.woff2);
 // @sapFontUrl_72_CondensedBold_woff: url(./../baseTheme/fonts/72-CondensedBold.woff);
+// @sapFontUrl_72_CondensedBold_full_woff2: url(./../baseTheme/fonts/72-CondensedBold-full.woff2);
+// @sapFontUrl_72_CondensedBold_full_woff: url(./../baseTheme/fonts/72-CondensedBold-full.woff);
 // @sapFontUrl_72_Italic_woff2: url(./../baseTheme/fonts/72-Italic.woff2);
 // @sapFontUrl_72_Italic_woff: url(./../baseTheme/fonts/72-Italic.woff);
+// @sapFontUrl_72_Italic_full_woff2: url(./../baseTheme/fonts/72-Italic-full.woff2);
+// @sapFontUrl_72_Italic_full_woff: url(./../baseTheme/fonts/72-Italic-full.woff);
 // @sapFontUrl_72Mono_Regular_woff2: url(./../baseTheme/fonts/72Mono-Regular.woff2);
 // @sapFontUrl_72Mono_Regular_woff: url(./../baseTheme/fonts/72Mono-Regular.woff);
 // @sapFontUrl_72Mono_Regular_full_woff2: url(./../baseTheme/fonts/72Mono-Regular-full.woff2);
