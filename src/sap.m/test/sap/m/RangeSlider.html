@@ -18,9 +18,10 @@
 					"sap/m/App",
 					"sap/m/Page",
 					"sap/m/RangeSlider",
-					"sap/m/ResponsiveScale"
-				], function (HTML, App, Page, RangeSlider, ResponsiveScale){
-					var oDefaultTitle = new HTML({ content: "<h2>Default RangeSlider</h2>" }),
+					"sap/m/ResponsiveScale",
+					"sap/m/Title"
+				], function (HTML, App, Page, RangeSlider, ResponsiveScale, Title){
+					var oDefaultTitle = new Title({ text: "Default RangeSlider" }),
 						oRangeSlider1 = new RangeSlider("rangeSlider1", {
 							range: [0, 100],
 							liveChange: function (oControlEvent) {
@@ -57,7 +58,10 @@
 							showHandleTooltip: false
 						});
 
-				var oStepsTitle = new HTML({ content: "<h2>RangeSlider with steps</h2>" }),
+				var oStepsTitle = new Title({
+						text: "RangeSlider with steps",
+						width: "100%"
+					}),
 					oRangeSlider4 = new sap.m.RangeSlider("rangeSlider4", {
 						width: "100%",
 						step: 5,
@@ -74,7 +78,7 @@
 						showHandleTooltip: false
 					});
 
-				var oInputsTitle = new HTML({ content: "<h2>RangeSlider with inputs</h2>" }),
+				var oInputsTitle = new Title({ text: "RangeSlider with inputs" }),
 					oRangeSlider5 = new RangeSlider("rangeSlider5", {
 						width: "100%",
 						showAdvancedTooltip: true,
@@ -92,7 +96,7 @@
 						name: "RangeSlider10"
 					});
 
-				var oDecimalNumbersTitle = new HTML({ content: "<h2>RangeSlider with decimal numbers</h2>" }),
+				var oDecimalNumbersTitle = new Title({ text: "RangeSlider with decimal numbers" }),
 					oRangeSlider6 = new RangeSlider("rangeSlider6", {
 						width: "100%",
 						showAdvancedTooltip: true,
@@ -110,22 +114,22 @@
 						step: 0.5
 					});
 
-				var oTickmarksTitle = new HTML({ content: "<h2>RangeSlider with tickmarks</h2>" }),
+				var oTickmarksTitle = new Title({ text: "RangeSlider with tickmarks" }),
 					oRangeSlider7 = new RangeSlider("rangeSlider7", {
 						showAdvancedTooltip: true,
 						showHandleTooltip: false,
 						inputsAsTooltips: true,
 						enableTickmarks: true
-					});
+					}).addStyleClass("sapUiSmallMarginBottom");
 
-				var oTickmarksAndLabelsTitle = new HTML({ content: "<h2>RangeSlider with tickmarks and labels</h2>" }),
+				var oTickmarksAndLabelsTitle = new Title({ text: "RangeSlider with tickmarks and labels" }),
 					oRangeSlider8 = new RangeSlider("rangeSlider8", {
 						showAdvancedTooltip: true,
 						showHandleTooltip: false,
 						inputsAsTooltips: true,
 						enableTickmarks: true,
 						scale: new ResponsiveScale({tickmarksBetweenLabels: 5})
-					});
+					}).addStyleClass("sapUiSmallMarginBottom");
 
 					var oPage = new Page("page", {
 						title: "sap.m.RangeSlider",
