@@ -473,6 +473,39 @@ sap.ui.define([
 		oMenu.destroy();
 	});
 
+	QUnit.test("Accessibility", function(assert) {
+		this.createMenu(true, true, true, true);
+		this.oColumnMenu.openBy(this.oButton);
+		oCore.applyChanges();
+
+		var oMenu = this.oColumnMenu;
+		var $MenuDomRef = oMenu.getDomRef();
+
+		assert.equal(oMenu._oPopover.getAriaLabelledBy(), oMenu.getId() + "-menuDescription",
+			"The popover is associated to the Menu description via aria-labelledby");
+		assert.equal(document.getElementById(oMenu.getId() + "-menuDescription").innerText,
+			oMenu._getResourceText("table.COLUMNMENU_TITLE"), "Menu description text is correct");
+
+		assert.equal($MenuDomRef.getElementsByClassName("sapMTCMenuQAList")[0].getAttribute("aria-labelledby"), oMenu.getId() + "-actionContainerDescription",
+			"The QuickActions section is associated to the Action container description via aria-labelledby");
+		assert.equal(document.getElementById(oMenu.getId() + "-actionContainerDescription").innerText,
+			oMenu._getResourceText("table.COLUMNMENU_ACTION_CONTAINER_DESC"), "Action container description text is correct");
+
+		assert.equal($MenuDomRef.getElementsByClassName("sapMTCMenuContainerWrapper")[0].getAttribute("aria-labelledby"), oMenu.getId() + "-itemContainerDescription",
+			"The Items section is associated to the Item container description via aria-labelledby");
+		assert.equal(document.getElementById(oMenu.getId() + "-itemContainerDescription").innerText,
+			oMenu._getResourceText("table.COLUMNMENU_ITEM_CONTAINER_DESC"), "Item container description text is correct");
+
+		var oFormElements = oMenu._oForm.getFormContainers()[0].getFormElements();
+		var sControlId, oControl;
+		for (var i = 0; i < oFormElements.length; i++) {
+			sControlId = oFormElements[i].getFields()[0].getControl();
+			oControl = document.getElementById(sControlId);
+			assert.ok(oControl.getAttribute("aria-labelledby").includes(oFormElements[i].getLabelControl().getId()),
+				"aria-labelledby is correct");
+		}
+	});
+
 	QUnit.module("Button states", {
 		beforeEach: function () {
 			this.oItem = new Item({label: sText, content: new Button({text: sText})});
