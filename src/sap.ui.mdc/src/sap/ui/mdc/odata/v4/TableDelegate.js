@@ -267,14 +267,6 @@ sap.ui.define([
 		return aSupportedModes;
 	};
 
-	/**
-	 * Provides a hook especially for V4 to suppress the grouping by non visible column.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @param {string} sPropertyName Property to group
-	 * @return {undefined|*} Undefined or continue on parent
-	 * @protected
-	 */
 	Delegate.getGroupSorter = function(oTable, sPropertyName) {
 		var oPropertyHelper = oTable.getPropertyHelper();
 		var oVisibleProperty = oTable._getVisibleProperties().find(function(oProperty) {
@@ -285,6 +277,7 @@ sap.ui.define([
 		});
 
 		if (!oVisibleProperty) {
+			// Suppress grouping by non-visible property.
 			return undefined;
 		}
 

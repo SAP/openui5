@@ -81,7 +81,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
 	 * @param {string} sPropertyName Property to group
-	 * @returns {sap.ui.model.Sorter} New sorter
+	 * @returns {sap.ui.model.Sorter | undefined} New sorter
 	 * @protected
 	 */
 	TableDelegate.getGroupSorter = function(oTable, sPropertyName){
@@ -91,9 +91,16 @@ sap.ui.define([
 		var sPath = oTable.getPropertyHelper().getProperty(sPropertyName).path;
 		var bDescending = oSortedProperty ? oSortedProperty.descending : false;
 
-		return new Sorter(sPath, bDescending, function(oContext) {
-			return this.formatGroupHeader(oTable, oContext, sPropertyName);
-		}.bind(this));
+		if (!oTable._mFormatGroupHeaderInfo || oTable._mFormatGroupHeaderInfo.propertyName !== sPropertyName) {
+			oTable._mFormatGroupHeaderInfo = {
+				propertyName: sPropertyName,
+				formatter: function(oContext) {
+					return this.formatGroupHeader(oTable, oContext, sPropertyName);
+				}.bind(this)
+			};
+		}
+
+		return new Sorter(sPath, bDescending, oTable._mFormatGroupHeaderInfo.formatter);
 	};
 
 	/**
