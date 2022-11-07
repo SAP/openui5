@@ -130,6 +130,7 @@ sap.ui.define([
 		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variant should be updated
 		 * @param {string} mPropertyBag.id - ID of the variant
 		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the save of variant content takes place
+		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated variant
 		 * @private
 		 * @ui5-restricted sap.ui.rta.command
 		 */
