@@ -454,5 +454,32 @@
         ]
       }
     ]
+  },
+  "1.102.11": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "1305fee19c82e86b221acc08caae5530914c5217",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: introduce calendarWeekNumbering format option",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007627612021"
+          }
+        ]
+      },
+      {
+        "id": "ab60b5b43a54112564c6049c27b1efcb388b9e16",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalTreeBindingAdapter: avoid loading data if not needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270125832"
+          }
+        ]
+      }
+    ]
   }
 }

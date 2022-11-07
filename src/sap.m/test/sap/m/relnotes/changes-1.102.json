@@ -1128,5 +1128,51 @@
         ]
       }
     ]
+  },
+  "1.102.11": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "652bc4118e859986b0b7a371182780b388dc8243",
+        "type": "FIX",
+        "text": " sap.m.Input: Pressing ESC now resets the proposed text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007258462022"
+          }
+        ]
+      },
+      {
+        "id": "243a070babfb96486236303e460a4d3e0c64972b",
+        "type": "FIX",
+        "text": " sap.m.Input: suggestionItemSelected is now fired correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270121964"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270121963"
+          }
+        ]
+      },
+      {
+        "id": "dc2058b8172bec1c943ec3bb1e23c4f3f0375dab",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Max sizes are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270068256"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270149659"
+          }
+        ]
+      }
+    ]
   }
 }

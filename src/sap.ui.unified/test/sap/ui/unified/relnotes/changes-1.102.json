@@ -180,5 +180,21 @@
         ]
       }
     ]
+  },
+  "1.102.11": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "31e51ec356981772c61d7600c05dcce4ead57df0",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust keyboard navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004860722022"
+          }
+        ]
+      }
+    ]
   }
 }
