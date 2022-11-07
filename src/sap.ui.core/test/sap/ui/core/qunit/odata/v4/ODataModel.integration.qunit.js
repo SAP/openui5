@@ -23213,7 +23213,7 @@ sap.ui.define([
 					+ "&$skip=4&$top=2", {
 					value : [{
 						AGE : 58,
-						DescendantCount : "1",
+						DescendantCount : "0", // Note: this is LimitedDescendantCountProperty!
 						DistanceFromRoot : "1",
 						DrillState : "collapsed",
 						ID : "4",
@@ -23221,7 +23221,7 @@ sap.ui.define([
 						Name : "Mu"
 					}, {
 						AGE : 59,
-						DescendantCount : "1",
+						DescendantCount : "0",
 						DistanceFromRoot : "1",
 						DrillState : "collapsed",
 						ID : "5",
@@ -23322,6 +23322,190 @@ sap.ui.define([
 			oRoot.expand();
 
 			return that.waitForChanges(assert, "expand root");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 3. Collapse nested
+	// initially expanded nodes 1 (Beta) and 0 (Alpha). See that an additional root node becomes
+	// visible!
+	//
+	// JIRA: CPOUI5ODATAV4-1743
+	QUnit.test("Recursive Hierarchy: collapse nested initially expanded nodes", function (assert) {
+		var oAlpha,
+			oBeta,
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{path : \'/EMPLOYEES\',\
+		parameters : {\
+			$$aggregation : {\
+				expandTo : 3,\
+				hierarchyQualifier : \'OrgChart\'\
+			}\
+		}}" threshold="0" visibleRowCount="5">\
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text text="{= %{@$ui5.node.level} }"/>\
+	<Text text="{ID}"/>\
+	<Text text="{MANAGER_ID}"/>\
+	<Input value="{Name}"/>\
+	<Text text="{AGE}"/>\
+</t:Table>',
+			that = this;
+
+		// 0 Alpha
+		//   1 Beta
+		//     1.1 Gamma
+		//     1.2 Zeta
+		//   2 Kappa
+		//   3 Lambda
+		//   4 Mu
+		//     4.1 Nu
+		//   5 Xi
+		//     5.1 Omicron
+		// 9 Aleph
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=3)"
+				+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$count=true&$skip=0&$top=5", {
+				"@odata.count" : "11",
+				value : [{
+					AGE : 60,
+					DescendantCount : "9", // Edm.Int64
+					DistanceFromRoot : "0", // Edm.Int64
+					DrillState : "expanded",
+					ID : "0",
+					MANAGER_ID : null,
+					Name : "Alpha"
+				}, {
+					AGE : 55,
+					DescendantCount : "2",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "1",
+					MANAGER_ID : "0",
+					Name : "Beta"
+				}, {
+					AGE : 41,
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "collapsed",
+					ID : "1.1",
+					MANAGER_ID : "1",
+					Name : "Gamma"
+				}, {
+					AGE : 42,
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "collapsed",
+					ID : "1.2",
+					MANAGER_ID : "1",
+					Name : "Zeta"
+				}, {
+					AGE : 56,
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					MANAGER_ID : "0",
+					Name : "Kappa"
+				}]
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oAlpha = oTable.getRows()[0].getBindingContext();
+			assert.strictEqual(oAlpha.getProperty("Name"), "Alpha");
+			oBeta = oTable.getRows()[1].getBindingContext();
+			assert.strictEqual(oBeta.getProperty("Name"), "Beta");
+
+			checkTable("initial page", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('1.1')",
+				"/EMPLOYEES('1.2')",
+				"/EMPLOYEES('2')"
+			], [
+				[true, 1, "0", "", "Alpha", 60],
+				[true, 2, "1", "0", "Beta", 55],
+				[false, 3, "1.1", "1", "Gamma", 41],
+				[false, 3, "1.2", "1", "Zeta", 42],
+				[undefined, 2, "2", "0", "Kappa", 56]
+			], 11);
+
+			that.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+						+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+						+ ",NodeProperty='ID',Levels=3)"
+					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+					+ "&$skip=5&$top=2", {
+					value : [{
+						AGE : 57,
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						ID : "3",
+						MANAGER_ID : "0",
+						Name : "Lambda"
+					}, {
+						AGE : 58,
+						DescendantCount : "2",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						ID : "4",
+						MANAGER_ID : "0",
+						Name : "Mu"
+					}]
+				});
+
+			oBeta.collapse();
+
+			return that.waitForChanges(assert, "collapse 1 (Beta)");
+		}).then(function () {
+			checkTable("after collapse 1 (Beta) ", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')",
+				"/EMPLOYEES('4')"
+			], [
+				[true, 1, "0", "", "Alpha", 60],
+				[false, 2, "1", "0", "Beta", 55],
+				[undefined, 2, "2", "0", "Kappa", 56],
+				[undefined, 2, "3", "0", "Lambda", 57],
+				[true, 2, "4", "0", "Mu", 58]
+			], 9);
+
+			that.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+						+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+						+ ",NodeProperty='ID',Levels=3)"
+					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+					+ "&$skip=10&$top=1", {
+					value : [{
+						AGE : 69,
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						ID : "9",
+						MANAGER_ID : null,
+						Name : "Aleph"
+					}]
+				});
+
+			oAlpha.collapse();
+
+			return that.waitForChanges(assert, "collapse 0 (Alpha)");
+		}).then(function () {
+			checkTable("after collapse 0 (Alpha) ", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('9')"
+			], [
+				[false, 1, "0", "", "Alpha", 60],
+				[undefined, 1, "9", "", "Aleph", 69],
+				["", "", "", "", "", ""],
+				["", "", "", "", "", ""],
+				["", "", "", "", "", ""]
+			], 2);
 		});
 	});
 

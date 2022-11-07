@@ -805,10 +805,19 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [undefined, 0, 7].forEach(function (iDistanceFromRoot) {
-	["collapsed", "expanded", "leaf"].forEach(function (sDrillState) {
-		[undefined, {"@$ui5.node.level" : 41}].forEach(function (oGroupNode) {
-	var sTitle = "calculateKeyPredicateRH: DistanceFromRoot : " + iDistanceFromRoot
-			+ ", DrillState : " + sDrillState + ", oGroupNode : " + JSON.stringify(oGroupNode);
+	[0, 42].forEach(function (iLimitedDescendantCount) {
+		["collapsed", "expanded", "leaf"].forEach(function (sDrillState) {
+			[undefined, {"@$ui5.node.level" : 41}].forEach(function (oGroupNode) {
+				var sTitle = "calculateKeyPredicateRH: DistanceFromRoot : " + iDistanceFromRoot
+						+ ", LimitedDescendantCount : " + iLimitedDescendantCount
+						+ ", DrillState : " + sDrillState
+						+ ", oGroupNode : " + JSON.stringify(oGroupNode);
+
+				if (iDistanceFromRoot === undefined && iLimitedDescendantCount
+						|| sDrillState === "expanded" && !iLimitedDescendantCount
+						|| sDrillState === "leaf" && iLimitedDescendantCount) {
+					return;
+				}
 
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {
@@ -831,7 +840,7 @@ sap.ui.define([
 			mTypeForMetaPath = {"/meta/path" : {}};
 
 		if (iDistanceFromRoot !== undefined) {
-			oElement.LtdDescendant_Count = "42"; // Edm.Int64!
+			oElement.LtdDescendant_Count = "" + iLimitedDescendantCount; // Edm.Int64!
 			oElement.DistFromRoot = "" + iDistanceFromRoot; // Edm.Int64!
 			iExpectedLevel = iDistanceFromRoot + 1;
 		}
@@ -857,8 +866,9 @@ sap.ui.define([
 		this.mock(_AggregationHelper).expects("setAnnotations")
 			.withExactArgs(sinon.match.same(oElement), bIsExpanded, /*bIsTotal*/undefined,
 				iExpectedLevel);
-		oHelperMock.expects("setPrivateAnnotation").exactly(iDistanceFromRoot !== undefined ? 1 : 0)
-			.withExactArgs(sinon.match.same(oElement), "descendants", /*parseInt!*/42);
+		oHelperMock.expects("setPrivateAnnotation").exactly(iLimitedDescendantCount ? 1 : 0)
+			.withExactArgs(sinon.match.same(oElement), "descendants",
+				/*parseInt!*/iLimitedDescendantCount);
 
 		assert.strictEqual(
 			// code under test
@@ -868,6 +878,7 @@ sap.ui.define([
 
 		assert.deepEqual(oElement, {Foo : "bar", XYZ : 42});
 	});
+			});
 		});
 	});
 });
@@ -2462,6 +2473,155 @@ sap.ui.define([
 			"@$ui5.node.level" : 5
 		}]);
 		assert.strictEqual(oCache.aElements[0], aElements[0]);
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bExpanded) {
+	var sTitle = "collapse: skip descendants of manually collapsed node; isExpanded=" + bExpanded;
+
+	QUnit.test(sTitle, function (assert) {
+		var oAggregation = {
+				expandTo : 3,
+				hierarchyQualifier : "X"
+			},
+			oCache,
+			aElements = [{
+				"@$ui5._" : {
+					descendants : 41,
+					predicate : "('0')"
+				},
+				"@$ui5.node.isExpanded" : true,
+				"@$ui5.node.level" : 1
+			}, {
+				"@$ui5._" : {
+					descendants : 40,
+					predicate : "('1')"
+				},
+				"@$ui5.node.isExpanded" : bExpanded,
+				"@$ui5.node.level" : 2
+			}, {
+				"@$ui5._" : {
+					predicate : "('2')"
+				},
+				"@$ui5.node.level" : 1
+			}],
+			oPlaceholder,
+			aSpliced = [aElements[1]],
+			i;
+
+		// avoid trouble when creating 1st level cache
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
+		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
+		oCache.aElements = aElements.slice(); // simulate a read
+		oCache.aElements.$byPredicate = {
+			"('0')" : aElements[0],
+			"('1')" : aElements[1],
+			"('2')" : aElements[2]
+		};
+		if (bExpanded) {
+			for (i = 0; i < 40; i += 1) { // add 40 placeholders for descendants of ('1')
+				oPlaceholder = {"@$ui5.node.level" : 3};
+				oCache.aElements.splice(2, 0, oPlaceholder);
+				aSpliced.push(oPlaceholder);
+			}
+		}
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
+			.returns(SyncPromise.resolve(aElements[0]));
+		// don't care about getCollapsedObject and updateAll here
+
+		// code under test
+		assert.strictEqual(oCache.collapse("~path~"), bExpanded ? 41 : 1,
+			"number of removed elements");
+
+		assert.deepEqual(oCache.aElements, [{
+			"@$ui5._" : {
+				descendants : 41,
+				predicate : "('0')",
+				spliced : aSpliced
+			},
+			"@$ui5.node.isExpanded" : false,
+			"@$ui5.node.level" : 1
+		}, {
+			"@$ui5._" : {
+				predicate : "('2')"
+			},
+			"@$ui5.node.level" : 1
+		}]);
+		assert.strictEqual(oCache.aElements[0], aElements[0]);
+		assert.strictEqual(oCache.aElements[1], aElements[2]);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("collapse: no descendants at edge of top pyramid", function (assert) {
+		var oAggregation = {
+				expandTo : 2,
+				hierarchyQualifier : "X"
+			},
+			oCache,
+			aElements = [{
+				"@$ui5._" : {
+					descendants : 2,
+					predicate : "('0')"
+				},
+				"@$ui5.node.isExpanded" : true,
+				"@$ui5.node.level" : 1
+			}, {
+				"@$ui5._" : {
+					// no descendants at edge of top pyramid!
+					predicate : "('1')"
+				},
+				"@$ui5.node.isExpanded" : false,
+				"@$ui5.node.level" : 2
+			}, {
+				"@$ui5._" : {
+					// no descendants at edge of top pyramid!
+					predicate : "('2')"
+				},
+				"@$ui5.node.isExpanded" : false,
+				"@$ui5.node.level" : 2
+			}, {
+				"@$ui5._" : {
+					predicate : "('3')"
+				},
+				"@$ui5.node.level" : 1
+			}];
+
+		// avoid trouble when creating 1st level cache
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
+		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
+		oCache.aElements = aElements.slice(); // simulate a read
+		oCache.aElements.$byPredicate = {
+			"('0')" : aElements[0],
+			"('1')" : aElements[1],
+			"('2')" : aElements[2],
+			"('3')" : aElements[3]
+		};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
+			.returns(SyncPromise.resolve(aElements[0]));
+		// don't care about getCollapsedObject and updateAll here
+
+		// code under test
+		assert.strictEqual(oCache.collapse("~path~"), 2, "number of removed elements");
+
+		assert.deepEqual(oCache.aElements, [{
+			"@$ui5._" : {
+				descendants : 2,
+				predicate : "('0')",
+				spliced : [aElements[1], aElements[2]]
+			},
+			"@$ui5.node.isExpanded" : false,
+			"@$ui5.node.level" : 1
+		}, {
+			"@$ui5._" : {
+				predicate : "('3')"
+			},
+			"@$ui5.node.level" : 1
+		}]);
+		assert.strictEqual(oCache.aElements[0], aElements[0]);
+		assert.strictEqual(oCache.aElements[1], aElements[3]);
 	});
 
 	//*********************************************************************************************

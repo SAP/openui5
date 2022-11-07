@@ -191,6 +191,8 @@ sap.ui.define([
 
 		iDescendants = _Helper.getPrivateAnnotation(oGroupNode, "descendants");
 		if (iDescendants) { // => this.oAggregation.expandTo > 1
+			// Note: "descendants" refers to LimitedDescendantCountProperty and counts descendants
+			// within "top pyramid" only!
 			iGroupNodeLevel = this.oAggregation.expandTo;
 		}
 		while (i < aElements.length) {
@@ -200,6 +202,10 @@ sap.ui.define([
 					break; // we've reached a sibling of the collapsed node
 				}
 				iDescendants -= 1;
+				if (aElements[i]["@$ui5.node.isExpanded"] === false) {
+					// skip descendants of manually collapsed node
+					iDescendants -= _Helper.getPrivateAnnotation(aElements[i], "descendants") || 0;
+				}
 			}
 			collapse(i);
 			i += 1;
@@ -842,7 +848,8 @@ sap.ui.define([
 		}
 		// set the node values
 		_AggregationHelper.setAnnotations(oElement, bIsExpanded, /*bIsTotal*/undefined, iLevel);
-		if (oElement[sLimitedDescendantCountProperty]) { // Edm.Int64
+		if (oElement[sLimitedDescendantCountProperty]
+			&& oElement[sLimitedDescendantCountProperty] !== "0") { // Edm.Int64
 			_Helper.setPrivateAnnotation(oElement, "descendants",
 				parseInt(oElement[sLimitedDescendantCountProperty]));
 		}
