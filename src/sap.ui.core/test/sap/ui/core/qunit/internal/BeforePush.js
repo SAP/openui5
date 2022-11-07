@@ -185,10 +185,18 @@
 		// runs a test: creates its frame (out of sight), registers first at the frame's page, then
 		// at the frame's QUnit to observe the progress and notice when it's finished
 		function runTest(oTest) {
-			function invalid(sReason) {
+			// finishes the test: sets the CSS according to the status, removes the frame and starts
+			// the next test
+			function finish(bFailed) {
 				oTest.element.firstChild.classList.remove("running");
-				oTest.element.firstChild.classList.add("failed");
-				oTest.infoNode.data = " " + sReason;
+				if (bFailed) {
+					oTest.element.firstChild.classList.add("failed");
+					oFirstFailedTest = oFirstFailedTest || oTest;
+				} else if (!mParameters.keepResults) {
+					// remove iframe in order to free memory
+					document.body.removeChild(oTest.frame);
+					oTest.frame = undefined;
+				}
 				if (bVisible && oTest === oSelectedTest) {
 					select(oTest); // unselect the test to make it invisible
 				}
@@ -196,35 +204,20 @@
 				next();
 			}
 
+			// observes QUnit within the test frame
 			function observe(oQUnit) {
 				// see https://github.com/js-reporters/js-reporters (@since QUnit 2)
 				oQUnit.on("runStart", function (oDetails) {
 					oTest.testCounts = oDetails.testCounts;
-					oTest.testCounts.finished = 0;
-					oTest.infoNode.data = ": 0/" + oTest.testCounts.total;
+					progress(0);
 				});
 				oQUnit.on("testEnd", function () {
-					oTest.testCounts.finished += 1;
-					oTest.infoNode.data = ": " + oTest.testCounts.finished + "/"
-						+ oTest.testCounts.total;
+					progress(oTest.testCounts.finished + 1);
 				});
 				oQUnit.on("runEnd", function (oDetails) {
 					oTest.testCounts = oDetails.testCounts;
 					summary(oDetails.runtime, oTest);
-					oTest.element.firstChild.classList.remove("running");
-					if (oDetails.status === "failed") {
-						oTest.element.firstChild.classList.add("failed");
-						oFirstFailedTest = oFirstFailedTest || oTest;
-					} else if (!mParameters.keepResults) {
-						// remove iframe in order to free memory
-						document.body.removeChild(oTest.frame);
-						oTest.frame = undefined;
-					}
-					if (bVisible && oTest === oSelectedTest) {
-						select(oTest); // unselect the test to make it invisible
-					}
-					iRunningTests -= 1;
-					next();
+					finish(oDetails.status === "failed");
 				});
 			}
 
@@ -233,6 +226,13 @@
 				waitForQUnit(5);
 			}
 
+			function progress(iFinished) {
+				oTest.testCounts.finished = iFinished;
+				oTest.infoNode.data = ": " + iFinished + "/" + oTest.testCounts.total;
+			}
+
+			// searches QUnit within the test frame; waits iRetryCount times for one second if not
+			// found
 			function waitForQUnit(iRetryCount) {
 				var oQUnit = oTest.frame.contentWindow.QUnit;
 
@@ -241,10 +241,9 @@
 				} else if (iRetryCount) {
 					// retry after a second
 					setTimeout(waitForQUnit.bind(null, iRetryCount - 1), 1000);
-				} else if (!oQUnit) {
-					invalid("no QUnit found");
-				} else /*if (!oQUnit.on)*/ {
-					invalid("no QUnit V2 found");
+				} else {
+					oTest.infoNode.data = oQUnit ? " no QUnit V2 found" : " no QUnit found";
+					finish(true);
 				}
 			}
 
