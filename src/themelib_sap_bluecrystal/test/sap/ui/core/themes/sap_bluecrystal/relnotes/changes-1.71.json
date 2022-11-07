@@ -1,0 +1,18 @@
+{
+  "1.71.49": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "4dc24efb0d77abef5bf23b001da775d663e61057",
+        "type": "FEATURE",
+        "text": " Prevent overwrite SAP themes from OS high contrast settings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007514032022"
+          }
+        ]
+      }
+    ]
+  }
+}

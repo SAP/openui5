@@ -529,5 +529,43 @@
         ]
       }
     ]
+  },
+  "1.71.49": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "96341be172b7aaad1b80aa3a2f14b1c19c0d1246",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust picker hints",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006900922022"
+          }
+        ]
+      },
+      {
+        "id": "317a0e140f050300459f3132619b9376514697a8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust focus handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003995662022"
+          }
+        ]
+      },
+      {
+        "id": "2e9b1c47b2678335212fac2f5705f4c57687f73b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust day of the week announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004825022022"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -3351,5 +3351,69 @@
         ]
       }
     ]
+  },
+  "1.71.49": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "c875d8623dfb06a9dab1625017ca27fe401c26a0",
+        "type": "FIX",
+        "text": " sap.m.Input: Pressing ESC now resets the proposed text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007258462022"
+          }
+        ]
+      },
+      {
+        "id": "c3eefcac185f7357802d2b8aca4d9139f560c405",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Failing QUnit test in Safari are fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270149150"
+          }
+        ]
+      },
+      {
+        "id": "d9653184624b4014b9d3d5c5656036c8805881a6",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Failing QUnit fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270141612"
+          }
+        ]
+      },
+      {
+        "id": "7ed02ea72b142125b663a61b79af7a7d08cd5b3a",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Enhanced active title description",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280115924"
+          }
+        ]
+      },
+      {
+        "id": "be3200f0de72306851a4d1689609592022b0f6be",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: formats value when out of min/max range",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007020792022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005668632021"
+          }
+        ]
+      }
+    ]
   }
 }
