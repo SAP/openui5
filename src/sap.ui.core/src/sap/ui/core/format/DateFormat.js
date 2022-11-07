@@ -8,6 +8,8 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/date/UniversalDate',
+	'sap/ui/core/date/CalendarUtils',
+	'sap/ui/core/date/CalendarWeekNumbering',
 	"sap/base/util/deepEqual",
 	"sap/base/strings/formatMessage",
 	"sap/base/Log",
@@ -18,6 +20,8 @@ sap.ui.define([
 		Locale,
 		LocaleData,
 		UniversalDate,
+		CalendarUtils,
+		CalendarWeekNumbering,
 		deepEqual,
 		formatMessage,
 		Log,
@@ -140,6 +144,9 @@ sap.ui.define([
 	 * Get a date instance of the DateFormat, which can be used for formatting.
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
+	 * @param {sap.ui.core.date.CalendarWeekNumbering} [oFormatOptions.calendarWeekNumbering] @since 1.84.31 specifies the calendar week numbering.
+	 *   Note: This API has been introduced with version 1.108 and downported to this release with
+	 *   patch level 31.
 	 * @param {string} [oFormatOptions.format] @since 1.34.0 contains pattern symbols (e.g. "yMMMd" or "Hms") which will be converted into the pattern in the used locale, which matches the wanted symbols best.
 	 *  The symbols must be in canonical order, that is: Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w/W), Day-Of-Week (E/e/c), Day (d/D), Hour (h/H/k/K/j/J), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)
 	 *  See {@link http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems}
@@ -159,6 +166,7 @@ sap.ui.define([
 	 * @return {sap.ui.core.format.DateFormat} date instance of the DateFormat
 	 * @static
 	 * @public
+	 * @throws {TypeError} If the <code>calendarWeekNumbering</code> format option has an unsupported value
 	 */
 	DateFormat.getDateInstance = function(oFormatOptions, oLocale) {
 		return this.createInstance(oFormatOptions, oLocale, this.oDateInfo);
@@ -168,6 +176,9 @@ sap.ui.define([
 	 * Get a datetime instance of the DateFormat, which can be used for formatting.
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
+	 * @param {sap.ui.core.date.CalendarWeekNumbering} [oFormatOptions.calendarWeekNumbering] @since 1.84.31 specifies the calendar week numbering.
+	 *   Note: This API has been introduced with version 1.108 and downported to this release with
+	 *   patch level 31.
 	 * @param {string} [oFormatOptions.format] @since 1.34.0 contains pattern symbols (e.g. "yMMMd" or "Hms") which will be converted into the pattern in the used locale, which matches the wanted symbols best.
 	 *  The symbols must be in canonical order, that is: Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w/W), Day-Of-Week (E/e/c), Day (d/D), Hour (h/H/k/K/j/J), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)
 	 *  See http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
@@ -187,6 +198,7 @@ sap.ui.define([
 	 * @return {sap.ui.core.format.DateFormat} datetime instance of the DateFormat
 	 * @static
 	 * @public
+	 * @throws {TypeError} If the <code>calendarWeekNumbering</code> format option has an unsupported value
 	 */
 	DateFormat.getDateTimeInstance = function(oFormatOptions, oLocale) {
 		return this.createInstance(oFormatOptions, oLocale, this.oDateTimeInfo);
@@ -196,6 +208,9 @@ sap.ui.define([
 	 * Get a time instance of the DateFormat, which can be used for formatting.
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
+	 * @param {sap.ui.core.date.CalendarWeekNumbering} [oFormatOptions.calendarWeekNumbering] @since 1.84.31 specifies the calendar week numbering.
+	 *   Note: This API has been introduced with version 1.108 and downported to this release with
+	 *   patch level 31.
 	 * @param {string} [oFormatOptions.format] @since 1.34.0 contains pattern symbols (e.g. "yMMMd" or "Hms") which will be converted into the pattern in the used locale, which matches the wanted symbols best.
 	 *  The symbols must be in canonical order, that is: Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w/W), Day-Of-Week (E/e/c), Day (d/D), Hour (h/H/k/K/j/J), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)
 	 *  See http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
@@ -215,6 +230,7 @@ sap.ui.define([
 	 * @return {sap.ui.core.format.DateFormat} time instance of the DateFormat
 	 * @static
 	 * @public
+	 * @throws {TypeError} If the <code>calendarWeekNumbering</code> format option has an unsupported value
 	 */
 	DateFormat.getTimeInstance = function(oFormatOptions, oLocale) {
 		return this.createInstance(oFormatOptions, oLocale, this.oTimeInfo);
@@ -236,6 +252,7 @@ sap.ui.define([
 	 * @return {sap.ui.core.format.DateFormat} time instance of the DateFormat
 	 * @static
 	 * @private
+	 * @throws {TypeError} If the <code>calendarWeekNumbering</code> format option has an unsupported value
 	 */
 	DateFormat.createInstance = function(oFormatOptions, oLocale, oInfo) {
 		// Create an instance of the DateFormat
@@ -260,6 +277,10 @@ sap.ui.define([
 
 		if (!oFormat.oFormatOptions.calendarType) {
 			oFormat.oFormatOptions.calendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+		}
+
+		if (oFormat.oFormatOptions.calendarWeekNumbering && !Object.values(CalendarWeekNumbering).includes(oFormat.oFormatOptions.calendarWeekNumbering)) {
+			throw new TypeError("Illegal format option calendarWeekNumbering: '" + oFormat.oFormatOptions.calendarWeekNumbering + "'");
 		}
 
 		if (!oFormat.oFormatOptions.pattern) {
@@ -687,7 +708,7 @@ sap.ui.define([
 		"Y": {
 			name: "weekYear",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var oWeek = bUTC ? oDate.getUTCWeek() : oDate.getWeek();
+				var oWeek = bUTC ? oDate.getUTCWeek(oFormat.oLocale, oFormat.oFormatOptions.calendarWeekNumbering) : oDate.getWeek(oFormat.oLocale, oFormat.oFormatOptions.calendarWeekNumbering);
 				var iWeekYear = oWeek.year;
 				var sWeekYear = String(iWeekYear);
 				var sCalendarType = oFormat.oFormatOptions.calendarType;
@@ -833,7 +854,7 @@ sap.ui.define([
 		"w": {
 			name: "weekInYear",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var oWeek = bUTC ? oDate.getUTCWeek() : oDate.getWeek();
+				var oWeek = bUTC ? oDate.getUTCWeek(oFormat.oLocale, oFormat.oFormatOptions.calendarWeekNumbering) : oDate.getWeek(oFormat.oLocale, oFormat.oFormatOptions.calendarWeekNumbering);
 				var iWeek = oWeek.week;
 				var sWeek = String(iWeek + 1);
 				if (oField.digits < 3) {
@@ -1792,7 +1813,7 @@ sap.ui.define([
 
 	// recreate javascript date object from the given oDateValues.
 	// In case of oDateValue.valid == false, null value will be returned
-	var fnCreateDate = function(oDateValue, sCalendarType, bUTC, bStrict) {
+	var fnCreateDate = function(oDateValue, sCalendarType, bUTC, bStrict, oFormatOptions, oLocale) {
 		var oDate,
 			iYear = typeof oDateValue.year === "number" ? oDateValue.year : 1970;
 
@@ -1821,9 +1842,9 @@ sap.ui.define([
 						oDate.setUTCWeek({
 							year: oDateValue.weekYear || oDateValue.year,
 							week: oDateValue.week
-						});
+						}, oLocale, oFormatOptions.calendarWeekNumbering);
 
-						//add the dayNumberOfWeek to the current day
+						// add the dayNumberOfWeek to the current day
 						if (oDateValue.dayNumberOfWeek !== undefined) {
 							oDate.setUTCDate(oDate.getUTCDate() + oDateValue.dayNumberOfWeek - 1);
 						}
@@ -1848,7 +1869,7 @@ sap.ui.define([
 					oDate.setWeek({
 						year: oDateValue.weekYear || oDateValue.year,
 						week: oDateValue.week
-					});
+					}, oLocale, oFormatOptions.calendarWeekNumbering);
 
 					//add the dayNumberOfWeek to the current day
 					if (oDateValue.dayNumberOfWeek !== undefined) {
@@ -1940,7 +1961,8 @@ sap.ui.define([
 				oDateValue.valid = false;
 			}
 
-			oJSDate = fnCreateDate(oDateValue, sCalendarType, bUTC, bStrict);
+
+			oJSDate = fnCreateDate(oDateValue, sCalendarType, bUTC, bStrict, this.oFormatOptions, this.oLocale);
 
 			if (oJSDate) {
 				return oJSDate;
@@ -1954,8 +1976,10 @@ sap.ui.define([
 				var oDateValue1 = mergeWithoutOverwrite(aDateValues[0], aDateValues[1]);
 				var oDateValue2 = mergeWithoutOverwrite(aDateValues[1], aDateValues[0]);
 
-				oJSDate1 = fnCreateDate(oDateValue1, sCalendarType, bUTC, bStrict);
-				oJSDate2 = fnCreateDate(oDateValue2, sCalendarType, bUTC, bStrict);
+
+				oJSDate1 = fnCreateDate(oDateValue1, sCalendarType, bUTC, bStrict, this.oFormatOptions, this.oLocale);
+				oJSDate2 = fnCreateDate(oDateValue2, sCalendarType, bUTC, bStrict, this.oFormatOptions, this.oLocale);
+
 
 				if (oJSDate1 && oJSDate2) {
 
@@ -2336,7 +2360,9 @@ sap.ui.define([
 	DateFormat.prototype._adaptDayOfWeek = function(iDayOfWeek) {
 		// day of week depends on the format locale
 		// the DateFormat's locale is independent
-		var iFirstDayOfWeek = LocaleData.getInstance(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()).getFirstDayOfWeek();
+		var sCalendarWeekParameter = this.oFormatOptions.calendarWeekNumbering;
+		var iFirstDayOfWeek = CalendarUtils.getWeekConfigurationValues(sCalendarWeekParameter, this.oLocale).firstDayOfWeek;
+
 		var iDayNumberOfWeek = iDayOfWeek - (iFirstDayOfWeek - 1);
 
 		if (iDayNumberOfWeek <= 0) {
