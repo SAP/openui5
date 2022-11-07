@@ -1650,7 +1650,8 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
-		assert.strictEqual(oDialog.$('footer').attr('role'), "toolbar", "The role of the header should be set to 'heading'");
+		assert.strictEqual(oDialog.$('footer').attr('role'), undefined,
+			"When there is only one interactive Control (Button), role 'toolbar' should not be set");
 
 		// cleanup
 		oDialog.destroy();

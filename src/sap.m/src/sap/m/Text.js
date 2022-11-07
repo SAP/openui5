@@ -67,7 +67,8 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 				"sap.ui.core.IShrinkable",
 				"sap.ui.core.IFormContent",
 				"sap.ui.core.ISemanticFormContent",
-				"sap.m.IHyphenation"
+				"sap.m.IHyphenation",
+				"sap.m.IToolbarInteractiveControl"
 			],
 			library: "sap.m",
 			properties: {
@@ -486,6 +487,19 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 	 */
 	Text.prototype.getAccessibilityInfo = function () {
 		return { description: this.getText() };
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	Text.prototype._getToolbarInteractive = function () {
+		return false;
 	};
 
 	/**

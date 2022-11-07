@@ -76,6 +76,7 @@ sap.ui.define([
 			interfaces: [
 				"sap.m.IBreadcrumbs",
 				"sap.m.IOverflowToolbarContent",
+				"sap.m.IToolbarInteractiveControl",
 				"sap.ui.core.IShrinkable"
 			],
 			designtime: "sap/m/designtime/Breadcrumbs.designtime",
@@ -789,6 +790,19 @@ sap.ui.define([
 		};
 
 		return oConfig;
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	 Breadcrumbs.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
 	// helper functions

@@ -98,7 +98,10 @@ function(
 	 */
 	var RadioButton = Control.extend("sap.m.RadioButton", /** @lends sap.m.RadioButton.prototype */ {
 		metadata : {
-			interfaces : ["sap.ui.core.IFormContent"],
+			interfaces : [
+				"sap.ui.core.IFormContent",
+				"sap.m.IToolbarInteractiveControl"
+			],
 			library : "sap.m",
 			properties : {
 				/**
@@ -622,6 +625,19 @@ function(
 				oControl.setSelected(false);
 			}
 		}
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	RadioButton.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
 	// Private properties setter generation

@@ -55,7 +55,8 @@ function(
 			metadata : {
 
 				interfaces : [
-					"sap.m.IOverflowToolbarContent"
+					"sap.m.IOverflowToolbarContent",
+					"sap.m.IToolbarInteractiveControl"
 				],
 				library : "sap.m",
 				properties : {
@@ -324,6 +325,17 @@ function(
 
 			return oConfig;
 		};
+
+	/**
+	 * Determines if it is interactive Control
+	 *
+	 * @private
+	 * @returns {boolean} If it is an interactive Control
+	 */
+	SplitButton.prototype._getToolbarInteractive = function () {
+		return true;
+	};
+
 
 		return SplitButton;
 	});

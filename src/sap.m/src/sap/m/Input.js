@@ -165,7 +165,8 @@ function(
 	var Input = InputBase.extend("sap.m.Input", /** @lends sap.m.Input.prototype */ {
 		metadata : {
 			interfaces : [
-				"sap.ui.core.IAccessKeySupport"
+				"sap.ui.core.IAccessKeySupport",
+				"sap.m.IToolbarInteractiveControl"
 			],
 			library : "sap.m",
 			properties : {
@@ -3339,6 +3340,20 @@ function(
 
 		return this;
 	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	Input.prototype._getToolbarInteractive = function () {
+		return true;
+	};
+
 
 	return Input;
 
