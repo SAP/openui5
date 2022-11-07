@@ -10,7 +10,7 @@
     class="sapUiContentPadding"
     controllerName="sap.m.sample.p13n.Engine.Engine">
 
-    <VBox class="sapUiSmallMargin">
+    <VBox class="sapUiSmallMargin" alignItems="Start">
 
         <vm:VariantManagement for="persoTable"/>
 
