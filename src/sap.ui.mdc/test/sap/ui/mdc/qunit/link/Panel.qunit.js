@@ -12,8 +12,10 @@ sap.ui.define([
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/link/LinkItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery"
-], function(layoutLibrary, Panel, PanelItem, SimpleForm, Icon, Engine, oCore, Text, Link, LinkItem, JSONModel, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/base/Event",
+	"sap/m/Link"
+], function(layoutLibrary, Panel, PanelItem, SimpleForm, Icon, Engine, oCore, Text, Link, LinkItem, JSONModel, jQuery, Event, MLink) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout
@@ -312,6 +314,10 @@ sap.ui.define([
 		fnHasVisibleIcons(assert, this.oPanel, 2);
 	});
 
+	var fnLinkSelectionPanelGetLink = function(oLinkSelectionPanel, iIndex) {
+		return oLinkSelectionPanel.getAggregation("_content").getItems()[0].getItems()[iIndex].getCells()[0].getItems()[0].getItems()[0];
+	};
+
 	QUnit.module("sap.ui.mdc.link.Panel: open selection dialog", {
 		afterEach: function() {
 			this.oPanel.destroy();
@@ -400,11 +406,11 @@ sap.ui.define([
 				assert.ok(oDialog.isOpen(), "Dialog opened");
 				assert.ok(oDialog.isA("sap.m.Dialog"), "Dialog is a 'sap.m.Dialog'");
 				assert.ok(oDialog.getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
-				assert.equal(oDialog.getContent()[0].getAggregation("_content").getItems()[0].getItems()[0].getCells()[0].getItems()[0].getItems()[0].getCustomData()[0].getValue(), sBaseUrl + "#AInternal", "Correct internal href");
-				assert.equal(oDialog.getContent()[0].getAggregation("_content").getItems()[0].getItems()[1].getCells()[0].getItems()[0].getItems()[0].getCustomData()[0].getValue(), "#BInternal", "Correct internal href");
-				assert.equal(oDialog.getContent()[0].getAggregation("_content").getItems()[0].getItems()[2].getCells()[0].getItems()[0].getItems()[0].getCustomData()[0].getValue(), "#CInternal", "Correct internal href");
+				assert.equal(fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 0).getCustomData()[0].getValue(), sBaseUrl + "#AInternal", "Correct internal href");
+				assert.equal(fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 1).getCustomData()[0].getValue(), "#BInternal", "Correct internal href");
+				assert.equal(fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 2).getCustomData()[0].getValue(), "#CInternal", "Correct internal href");
 
-				oDialog.getContent()[0].getAggregation("_content").getItems()[0].getItems()[0].getCells()[0].getItems()[0].getItems()[0].firePress();
+				fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 0).firePress();
 
 				setTimeout(function() {
 					assert.equal(window.location.href, sBaseUrl + "#AInternal", "Navigation happened with internalHref");
@@ -449,7 +455,7 @@ sap.ui.define([
 				assert.ok(oDialog.isA("sap.m.Dialog"), "Dialog is a 'sap.m.Dialog'");
 				assert.ok(oDialog.getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
 
-				oDialog.getContent()[0].getAggregation("_content").getItems()[0].getItems()[0].getCells()[0].getItems()[0].getItems()[0].firePress();
+				fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 0).firePress();
 				setTimeout(function() {
 					assert.equal(window.location.href, sBaseUrl + "#A", "Navigation happened without internalHref");
 
@@ -457,6 +463,54 @@ sap.ui.define([
 				}, 50);
 			});
 		}.bind(this));
+	});
+
+	var fnCheckLinkSelectionPanelNavigation = function(assert, oEventSettings) {
+		var sBaseUrl = window.location.href;
+		var done = assert.async();
+		var oLink = new Link({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
+				payload: {
+					items: [
+						new LinkItem({
+							text: "A",
+							href: sBaseUrl + "#A"
+						}),
+						new LinkItem({
+							text: "B",
+							href: "#B",
+							internalHref: "#BInternal"
+						})
+					]
+				}
+			}
+		});
+		oLink.createPopover().then(function(oPopover) {
+			this.oPanel = oPopover.getContent()[0];
+			this.oPanel._openPersonalizationDialog().then(function(oDialog) {
+				assert.ok(oDialog.isOpen(), "Dialog opened");
+				assert.ok(oDialog.isA("sap.m.Dialog"), "Dialog is a 'sap.m.Dialog'");
+				assert.ok(oDialog.getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
+
+				fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 0).firePress(oEventSettings);
+
+				setTimeout(function() {
+					assert.equal(window.location.href, sBaseUrl, "navigation prevented");
+					done();
+				}, 50);
+			});
+		}.bind(this));
+	};
+
+	[
+		{ctrlKey: true, metaKey: false},
+		{ctrlKey: false, metaKey: true},
+		{ctrlKey: true, metaKey: true}
+	].forEach(function(oEventSettings) {
+		QUnit.test("Prevent navigation when ctrlKey" + (!oEventSettings.ctrlKey ? " not" : "") + " pressed and metaKey " + (!oEventSettings.metaKey ? " not" : "") + " pressed", function(assert) {
+			fnCheckLinkSelectionPanelNavigation.call(this, assert, oEventSettings);
+		});
 	});
 
 	QUnit.module("basic methods");
@@ -467,6 +521,85 @@ sap.ui.define([
 		Panel.navigate(sBaseUrl + "#navigate");
 		assert.equal(window.location.href, sBaseUrl + "#navigate", "Navigation happened");
 		assert.equal(Panel.oNavigationPromise, undefined, "Navigation Promise is undefined");
+	});
+
+	QUnit.module("onPressLink", {
+		beforeEach: function() {
+			this.oMLink = new MLink({});
+		},
+		afterEach: function() {
+			this.oMLink.destroy();
+		}
+	});
+
+	var fnCheckPreventedNavigation = function(assert, oPanel, oEvent) {
+		var oPanelNavigateSpy = sinon.spy(Panel, "navigate");
+
+		assert.ok(oPanelNavigateSpy.notCalled, "Panel 'navigate' function not called before onPressLink");
+		oPanel.onPressLink(oEvent);
+
+		assert.ok(oPanelNavigateSpy.notCalled, "Panel 'navigate' function not called after 'onPressLink'");
+		oPanelNavigateSpy.restore();
+	};
+
+	QUnit.test("without beforeNavigationCallback", function(assert) {
+		var oPanel = new Panel({});
+		var oEvent = new Event("eventId", this.oMLink, {});
+
+		fnCheckPreventedNavigation(assert, oPanel, oEvent);
+	});
+
+	QUnit.test("with target='_blank'", function(assert) {
+		var oPanel = new Panel({
+			beforeNavigationCallback: function() {
+				return Promise.resolve(true);
+			}
+		});
+		this.oMLink.setTarget("_blank");
+		var oEvent = new Event("eventId", this.oMLink, {});
+
+		fnCheckPreventedNavigation(assert, oPanel, oEvent);
+	});
+
+	[
+		{ctrlKey: true, metaKey: false},
+		{ctrlKey: false, metaKey: true},
+		{ctrlKey: true, metaKey: true}
+	].forEach(function(oEventSettings) {
+		QUnit.test("ctrlKey" + (!oEventSettings.ctrlKey ? " not" : "") + " pressed and metaKey " + (!oEventSettings.metaKey ? " not" : "") + " pressed", function(assert) {
+			var oPanel = new Panel({
+				beforeNavigationCallback: function() {
+					return Promise.resolve(true);
+				}
+			});
+			var oEvent = new Event("eventId", this.oMLink, oEventSettings);
+
+			fnCheckPreventedNavigation(assert, oPanel, oEvent);
+		});
+	});
+
+	QUnit.test("straight forward", function(assert) {
+		var done = assert.async();
+		var sBaseUrl = window.location.href;
+		var oPanel = new Panel({
+			beforeNavigationCallback: function() {
+				return Promise.resolve(true);
+			}
+		});
+		this.oMLink.setHref(sBaseUrl + "#onNavigate");
+		var oEvent = new Event("eventId", this.oMLink, {});
+		var oPanelNavigateSpy = sinon.spy(Panel, "navigate");
+
+		assert.ok(oPanelNavigateSpy.notCalled, "Panel 'navigate' function not called before onPressLink");
+		oPanel.onPressLink(oEvent);
+
+		setTimeout(function() {
+			assert.ok(oPanelNavigateSpy.calledOnce, "Panel 'navigate' function called after onPressLink");
+			assert.equal(window.location.href, sBaseUrl + "#onNavigate", "Navigation happened");
+
+			oPanelNavigateSpy.restore();
+			done();
+		}, 50);
 	});
 
 	QUnit.module("applySettings");

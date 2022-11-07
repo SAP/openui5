@@ -320,9 +320,10 @@ sap.ui.define([
 
 	Panel.prototype.onPressLink = function(oEvent) {
 		var oLink = oEvent.getSource();
-		if (this.getBeforeNavigationCallback() && oLink && oLink.getTarget() !== "_blank") {
+		var bCtrlKeyPressed = oEvent.getParameters().ctrlKey || oEvent.getParameters().metaKey;
+		if (this.getBeforeNavigationCallback() && oLink && oLink.getTarget() !== "_blank" && !bCtrlKeyPressed) {
 			// Fall back to using href property when there is no internalHref
-			var bUseInternalHref = oLink && oLink.getCustomData() && oLink.getCustomData()[0].getValue();
+			var bUseInternalHref = oLink && oLink.getCustomData() && oLink.getCustomData()[0] && oLink.getCustomData()[0].getValue();
 			var sHref = bUseInternalHref ? oLink.getCustomData()[0].getValue() : oLink.getHref();
 			oEvent.preventDefault();
 			this.getBeforeNavigationCallback()(oEvent).then(function(bNavigate) {

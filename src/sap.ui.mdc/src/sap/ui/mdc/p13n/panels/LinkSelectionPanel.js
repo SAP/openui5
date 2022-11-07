@@ -88,7 +88,8 @@ sap.ui.define([
 	};
 
     LinkSelectionPanel.prototype._onLinkPressed = function(oEvent) {
-        if (oEvent.getSource().getTarget() !== "_blank") {
+        var bCtrlKeyPressed = oEvent.getParameters().ctrlKey || oEvent.getParameters().metaKey;
+        if (oEvent.getSource().getTarget() !== "_blank" && !bCtrlKeyPressed) {
             oEvent.preventDefault();
             this.fireLinkPressed(oEvent);
         }
