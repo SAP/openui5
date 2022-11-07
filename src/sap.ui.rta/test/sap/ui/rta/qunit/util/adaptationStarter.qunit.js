@@ -33,6 +33,27 @@ sap.ui.define([
 		sandbox.stub(FeaturesAPI, "isKeyUser").resolves(bIsKeyUser);
 	}
 
+	function checkMessageFromStub(assert, stubbedMessageCall, sExpectedMessage, sSuccessOutput) {
+		if (typeof stubbedMessageCall.args[0] === "string") {
+			assert.strictEqual(
+				stubbedMessageCall.args[0],
+				oResourceBundle.getText(sExpectedMessage),
+				sSuccessOutput
+			);
+		} else {
+			assert.strictEqual(
+				stubbedMessageCall.args[0].mAggregations.content.map(function(item, index) {
+					if (index === 1) {
+						return "[" + item.getText() + "]" + "(" + item.getHref() + ")";
+					}
+					return item.getText();
+				}).join(""),
+				oResourceBundle.getText(sExpectedMessage),
+				sSuccessOutput
+			);
+		}
+	}
+
 	QUnit.module("When adaptationStarter is called... ", {
 		beforeEach: function() {
 			this.fnRtaStartStub = sandbox.stub(RuntimeAuthoring.prototype, "start").resolves();
@@ -60,14 +81,10 @@ sap.ui.define([
 					oResourceBundle.getText("TIT_ADAPTATION_STARTER_MIXED_CHANGES_TITLE"),
 					"then the title of the mixed changes message is shown correctly"
 				);
-				assert.strictEqual(
-					this.fnMessageBoxStub.lastCall.args[0].mAggregations.content.map(function(item, index) {
-						if (index === 1) {
-							return "[" + item.getText() + "]" + "(" + item.getHref() + ")";
-						}
-						return item.getText();
-					}).join(""),
-					oResourceBundle.getText("MSG_ADAPTATION_STARTER_MIXED_CHANGES_WARNING"),
+				checkMessageFromStub(
+					assert,
+					this.fnMessageBoxStub.lastCall,
+					"MSG_ADAPTATION_STARTER_MIXED_CHANGES_WARNING",
 					"then the text of the mixed changes message is shown correctly"
 				);
 			}.bind(this));
