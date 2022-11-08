@@ -85,6 +85,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/initial/_internal/connectors/KeyUserConnector"]
 				}
 			},
+			"initial/_internal/connectors/Utils": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/connectors/Utils"]
+				}
+			},
 			"initial/_internal/Storage": {
 				group: "Initial Internal",
 				ui5: {
