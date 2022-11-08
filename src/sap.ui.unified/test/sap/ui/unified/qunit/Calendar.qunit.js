@@ -1749,6 +1749,25 @@ sap.ui.define([
 
 	QUnit.module("Misc");
 
+
+	QUnit.test("Check if the CSS toggle is called", function(assert) {
+		//arrange
+		var oCalendar = new Calendar({
+			months: 1
+		}).placeAt("qunit-fixture");
+
+		var oSpyHandleColumnsCss = this.spy(oCalendar, "_toggleTwoMonthsInTwoColumnsCSS");
+
+		//act.
+		oCalendar.setMonths(3);
+
+		//assert
+		assert.ok(oSpyHandleColumnsCss.calledOnce, "Proper CSS styles are applied to header");
+
+		//clean
+		oCalendar.destroy();
+	});
+
 	QUnit.test("dates are correctly styled as special or not", function(assert) {
 		//arrange
 		var oCal = new Calendar({
