@@ -3666,7 +3666,6 @@ sap.ui.define([
 		var oBinding = this.bindList("relative"),
 			oContext1 = { // no flag
 				destroy : function () {},
-				isDeleted : function () {},
 				isKeepAlive : function () {},
 				isTransient : function () {}
 			},
@@ -3674,35 +3673,45 @@ sap.ui.define([
 				iIndex : 2,
 				isKeepAlive : function () {}
 			},
-			oContext3 = { // deleted
-				isDeleted : function () {},
+			oContext3 = { // delete pending
+				oDeletePromise : new SyncPromise(function () {}),
 				isKeepAlive : function () {}
 			},
-			oContext4 = { // transient
-				isDeleted : function () {},
+			oContext4 = { // deleted
+				oDeletePromise : SyncPromise.resolve(),
+				destroy : function () {},
 				isKeepAlive : function () {},
 				isTransient : function () {}
 			},
-			oContext5 = {};
+			oContext5 = { // transient
+				isKeepAlive : function () {},
+				isTransient : function () {}
+			};
 
-		oBinding.mPreviousContextsByPath
-			= {p1 : oContext1, p2 : oContext2, p3 : oContext3, p4 : oContext4, p5 : oContext5};
+		oBinding.mPreviousContextsByPath = {
+			p1 : oContext1,
+			p2 : oContext2,
+			p3 : oContext3,
+			p4 : oContext4,
+			p5 : oContext5,
+			p6 : "~oContext6~" // not in selection
+		};
 		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oContext1).expects("isDeleted").withExactArgs().returns(false);
 		this.mock(oContext1).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oContext1).expects("destroy").withExactArgs();
 		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(true);
 		this.mock(oContext3).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oContext3).expects("isDeleted").withExactArgs().returns(true);
 		this.mock(oContext4).expects("isKeepAlive").withExactArgs().returns(false);
-		this.mock(oContext4).expects("isDeleted").withExactArgs().returns(false);
-		this.mock(oContext4).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext4).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext4).expects("destroy").withExactArgs();
+		this.mock(oContext5).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oContext5).expects("isTransient").withExactArgs().returns(true);
 
 		// code under test
-		oBinding.destroyPreviousContexts(["p1", "p2", "p3", "p4", "p6"]);
+		oBinding.destroyPreviousContexts(["p1", "p2", "p3", "p4", "p5", "p7"]);
 
 		assert.deepEqual(oBinding.mPreviousContextsByPath,
-			{p2 : oContext2, p3 : oContext3, p5 : oContext5});
+			{p2 : oContext2, p3 : oContext3, p6 : "~oContext6~"});
 		assert.strictEqual(oContext2.iIndex, undefined);
 	});
 

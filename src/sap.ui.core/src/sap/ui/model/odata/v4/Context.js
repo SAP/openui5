@@ -279,10 +279,10 @@ sap.ui.define([
 	 * Deletes the OData entity this context points to. The context is removed from the binding
 	 * immediately, even if {@link sap.ui.model.odata.v4.SubmitMode.API} is used, and the request is
 	 * only sent later when {@link sap.ui.model.odata.v4.ODataModel#submitBatch} is called. As soon
-	 * as the context is deleted on the client, but not yet on the server, {@link #isDeleted}
-	 * returns <code>true</code> and the context must not be used anymore (except for status APIs
-	 * like {@link #isDeleted}, {@link #isKeepAlive}, {@link #hasPendingChanges},
-	 * {@link #resetChanges}), especially not as a binding context.
+	 * as the context is deleted on the client, {@link #isDeleted} returns <code>true</code> and the
+	 * context must not be used anymore (except for status APIs like {@link #isDeleted},
+	 * {@link #isKeepAlive}, {@link #hasPendingChanges}, {@link #resetChanges}), especially not as a
+	 * binding context.
 	 *
 	 * Since 1.105 such a pending deletion is a pending change. It causes
 	 * <code>hasPendingChanges</code> to return <code>true</code> for the context, the binding
@@ -378,12 +378,11 @@ sap.ui.define([
 			oDependentBinding.setContext(undefined);
 		});
 
-		this.oDeletePromise = Promise.resolve(
-			this._delete(oGroupLock, /*oETagEntity*/null, bDoNotRequestCount)
+		this.oDeletePromise = this._delete(
+			oGroupLock, /*oETagEntity*/null, bDoNotRequestCount
 		).then(function () {
 			var sResourcePathPrefix = that.sPath.slice(1);
 
-			that.oDeletePromise = null;
 			// Messages have been updated via _Cache#_delete; "that" is already destroyed; remove
 			// all dependent caches in all bindings
 			oModel.getAllBindings().forEach(function (oBinding) {
@@ -399,7 +398,7 @@ sap.ui.define([
 			throw oError;
 		});
 
-		return this.oDeletePromise;
+		return Promise.resolve(this.oDeletePromise);
 	};
 
 	/**
@@ -918,8 +917,8 @@ sap.ui.define([
 	 * Returns whether there are pending changes for bindings dependent on this context, or for
 	 * unresolved bindings (see {@link sap.ui.model.Binding#isResolved}) which were dependent on
 	 * this context at the time the pending change was created. This includes the context itself
-	 * being {@link #isTransient transient} or {@link #isDeleted deleted}. Since 1.98.0,
-	 * {@link #isInactive inactive} contexts are ignored.
+	 * being {@link #isTransient transient} or {@link #delete deleted} on the client, but not yet on
+	 * the server. Since 1.98.0, {@link #isInactive inactive} contexts are ignored.
 	 *
 	 * @returns {boolean}
 	 *   Whether there are pending changes
@@ -929,7 +928,7 @@ sap.ui.define([
 	 */
 	Context.prototype.hasPendingChanges = function () {
 		return this.isTransient()
-			|| this.isDeleted()
+			|| this.oDeletePromise && this.oDeletePromise.isPending()
 			|| this.getBinding().hasPendingChangesForPath(this.sPath)
 			|| this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
 				return oDependentBinding.oCache
@@ -940,9 +939,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether this context is deleted on the client, but not on the server yet. The result
-	 * of this function can also be accessed via the "@$ui5.context.isDeleted" instance annotation
-	 * at the entity.
+	 * Returns whether this context is deleted. It becomes <code>true</code> immediately after
+	 * calling {@link #delete}, even while the request is waiting for
+	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch submitBatch} or is in process. It becomes
+	 * <code>false</code> again when the DELETE request fails or is canceled. The result of this
+	 * function can also be accessed via the "@$ui5.context.isDeleted" instance annotation at the
+	 * entity.
 	 *
 	 * @returns {boolean} <code>true</code> if this context is deleted
 	 *

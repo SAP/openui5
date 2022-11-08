@@ -17796,6 +17796,7 @@ sap.ui.define([
 			return Promise.all([
 				oPromise2.then(function () {
 					assert.ok(oFixture.success);
+					assert.ok(oContext2.isDeleted());
 				}, function (oError) {
 					assert.notOk(oFixture.success);
 					assert.ok(oError.canceled);
@@ -17812,6 +17813,7 @@ sap.ui.define([
 				}),
 				oPromise4.then(function () {
 					assert.ok(oFixture.success);
+					assert.ok(oContext4.isDeleted());
 				}, function (oError) {
 					assert.notOk(oFixture.success);
 					assert.ok(oError.canceled);
@@ -46304,7 +46306,7 @@ sap.ui.define([
 			assert.notOk(oContext3.hasPendingChanges());
 			assert.notOk(oContext3.isDeleted());
 			assert.notOk(oContext4.hasPendingChanges());
-			assert.notOk(oContext4.isDeleted());
+			assert.ok(oContext4.isDeleted());
 			assert.notOk(oBinding.hasPendingChanges());
 			assert.notOk(oModel.hasPendingChanges());
 		});
