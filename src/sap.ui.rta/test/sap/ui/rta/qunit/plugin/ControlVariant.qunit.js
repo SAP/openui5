@@ -31,7 +31,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/m/MessageBox"
 ], function(
 	Button,
 	FlexBox,
@@ -63,7 +64,8 @@ sap.ui.define([
 	jQuery,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	oCore,
+	MessageBox
 ) {
 	"use strict";
 
@@ -284,7 +286,7 @@ sap.ui.define([
 			assert.notOk(bButtonEnabled, "then variant configure is not enabled for a non VariantManagement control");
 		});
 
-		QUnit.test("when switchVariant is called", function(assert) {
+		QUnit.test("when switchVariant is called without changes", function(assert) {
 			var done = assert.async();
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");
@@ -292,6 +294,65 @@ sap.ui.define([
 				assert.ok(oCommand instanceof ControlVariantSwitch, "then an switchVariant event is received with a switch command");
 				done();
 			});
+			this.oControlVariantPlugin.switchVariant(this.oVariantManagementOverlay, "variant2", "variant1");
+		});
+
+		QUnit.test("when the current variant has unsaved changes and a user switches to another variant - user chooses 'cancel'", function(assert) {
+			var fnDone = assert.async();
+			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
+			var oFireElementModifiedSpy = sandbox.spy(this.oControlVariantPlugin, "fireElementModified");
+			sandbox.stub(MessageBox, "warning").callsFake(function(sMessage, oParameters) {
+				oParameters.onClose(MessageBox.Action.CANCEL);
+				assert.ok(oFireElementModifiedSpy.notCalled, "the variant does not switch");
+				fnDone();
+			});
+			this.oControlVariantPlugin.switchVariant(this.oVariantManagementOverlay, "variant2", "variant1");
+		});
+
+		QUnit.test("when the current variant has unsaved changes and a user switches to another variant - user chooses 'save'", function(assert) {
+			var fnDone = assert.async();
+			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
+
+			this.oControlVariantPlugin.attachElementModified(function (oEvent) {
+				var oCommand = oEvent.getParameter("command");
+				var oSaveCommand = oCommand.mAggregations.commands[0];
+				assert.strictEqual(oSaveCommand.getName(), "save", "then the save command is part of the composite command");
+				var oSwitchCommand = oCommand.mAggregations.commands[1];
+				assert.strictEqual(oSwitchCommand.getName(), "switch", "then the switch command is part of the composite command");
+				assert.strictEqual(oSwitchCommand.getSourceVariantReference(), "variant1", "then the source is set correctly");
+				assert.strictEqual(oSwitchCommand.getTargetVariantReference(), "variant2", "then the target is set correctly");
+				fnDone();
+			});
+
+			sandbox.stub(MessageBox, "warning").callsFake(function(sMessage, oParameters) {
+				assert.strictEqual(sMessage, oLibraryBundle.getText("MSG_CHANGE_MODIFIED_VARIANT"), "the message is correct");
+				assert.strictEqual(oParameters.styleClass, RtaUtils.getRtaStyleClassName(), "the style class is set");
+				assert.strictEqual(oParameters.emphasizedAction, oLibraryBundle.getText("BTN_MODIFIED_VARIANT_SAVE"), "the emphasized button text is correct");
+				oParameters.onClose(oParameters.emphasizedAction);
+			});
+
+			this.oControlVariantPlugin.switchVariant(this.oVariantManagementOverlay, "variant2", "variant1");
+		});
+
+		QUnit.test("when the current variant has unsaved changes and a user switches to another variant - user chooses 'discard'", function(assert) {
+			var fnDone = assert.async();
+			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
+
+			this.oControlVariantPlugin.attachElementModified(function (oEvent) {
+				var oSwitchCommand = oEvent.getParameter("command");
+				assert.strictEqual(oSwitchCommand.getName(), "switch", "then the switch command is created");
+				assert.strictEqual(oSwitchCommand.getSourceVariantReference(), "variant1", "then the source is set correctly");
+				assert.strictEqual(oSwitchCommand.getTargetVariantReference(), "variant2", "then the target is set correctly");
+				assert.ok(oSwitchCommand.getDiscardVariantContent(), "then the property is set correctly");
+				fnDone();
+			});
+
+			sandbox.stub(MessageBox, "warning").callsFake(function(sMessage, oParameters) {
+				oParameters.onClose(oLibraryBundle.getText("BTN_MODIFIED_VARIANT_DISCARD"));
+			});
+
 			this.oControlVariantPlugin.switchVariant(this.oVariantManagementOverlay, "variant2", "variant1");
 		});
 
