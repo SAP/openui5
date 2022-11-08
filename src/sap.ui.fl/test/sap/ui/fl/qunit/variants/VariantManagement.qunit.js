@@ -1427,6 +1427,16 @@ sap.ui.define([
 			assert.ok(this.oVariantManagement.getHeaderLevel(), "H1");
 			assert.ok(this.oVariantManagement._getEmbeddedVM().oVariantText.getLevel(), "H1");
 		});
+
+		QUnit.test("check setTitleStyle", function(assert) {
+			assert.ok(this.oVariantManagement.getTitleStyle(), "Auto");
+			assert.ok(this.oVariantManagement._getEmbeddedVM().oVariantText.getTitleStyle(), "Auto");
+
+			this.oVariantManagement.setTitleStyle("H1");
+
+			assert.ok(this.oVariantManagement.getTitleStyle(), "H1");
+			assert.ok(this.oVariantManagement._getEmbeddedVM().oVariantText.getTitleStyle(), "H1");
+		});
 	});
 
 	QUnit.done(function() {

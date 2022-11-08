@@ -96,6 +96,17 @@ sap.ui.define([
 		assert.ok(this.oVM, "could be instantiated");
 	});
 
+	QUnit.test("Check properties", function(assert) {
+		assert.equal(this.oVM.getLevel(), "Auto", "expected level");
+		assert.equal(this.oVM.getTitleStyle(), "Auto", "expected title style");
+
+		this.oVM.setLevel("H1");
+		this.oVM.setTitleStyle("H2");
+
+		assert.equal(this.oVM.getLevel(), "H1", "expected level");
+		assert.equal(this.oVM.getTitleStyle(), "H2", "expected title style");
+	});
+
 	QUnit.test("VariantManagement with two VariantItems", function(assert) {
 		this.oVM.addItem(new VariantItem({key: "1", title:"One"}));
 		this.oVM.addItem(new VariantItem({key: "2", title:"Two"}));
@@ -151,6 +162,7 @@ sap.ui.define([
 			this.oVM.destroy();
 		}
 	});
+
 	QUnit.test("check items", function(assert) {
 		this.oVM.addItem(new VariantItem({key: "1", title:"One"}));
 		this.oVM.addItem(new VariantItem({key: "2", title:"Two"}));

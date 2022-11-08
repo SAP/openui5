@@ -288,6 +288,18 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines the style of the title.
+				 * For more information, see {@link sap.m.Title#setTitleStyle}.
+				 *
+				 * @since 1.109
+				 */
+				titleStyle: {
+					type: "sap.ui.core.TitleLevel",
+					group: "Appearance",
+					defaultValue: TitleLevel.Auto
+				},
+
+				/**
 				 * Sets the maximum width of the control.
 				 *
 				 * @since 1.109
@@ -580,12 +592,15 @@ sap.ui.define([
 			level: {
 				path: '/level',
 				model: "$mVariants"
+			},
+			titleStyle: {
+				path: '/titleStyle',
+				model: "$mVariants"
 			}
 		});
 
 		this.oVariantText.addStyleClass("sapMVarMngmtClickable");
 		this.oVariantText.addStyleClass("sapMVarMngmtTitle");
-		this.oVariantText.addStyleClass("sapMTitleStyleH4");
 
 		var oVariantModifiedText = new Text(this.getId() + "-modified", {
 			text: "*",

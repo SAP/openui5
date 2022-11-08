@@ -59,6 +59,9 @@ sap.ui.define([
 			level: {
 				ignore: false
 			},
+			titleStyle: {
+				ignore: false
+			},
 			maxWidth: {
 				ignore: false
 			}
