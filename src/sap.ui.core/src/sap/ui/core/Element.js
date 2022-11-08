@@ -799,6 +799,49 @@ sap.ui.define([
 		return this.getDomRef() || null;
 	};
 
+	/**
+	 * Checks whether an element is able to get the focus after {@link #focus} is called.
+	 *
+	 * An element is treated as 'focusable' when all of the following conditions are met:
+	 * <ul>
+	 *   <li>The element and all of its parents are not 'busy' or 'blocked',</li>
+	 *   <li>the element is rendered at the top layer on the UI and not covered by any other DOM elements, such as an
+	 *   opened modal popup or the global <code>BusyIndicator</code>,</li>
+	 *   <li>the element matches the browser's prerequisites for being focusable: if it's a natively focusable element,
+	 *   for example <code>input</code>, <code>select</code>, <code>textarea</code>, <code>button</code>, and so on, no
+	 *   'tabindex' attribute is needed. Otherwise, 'tabindex' must be set. In any case, the element must be visible in
+	 *   order to be focusable.</li>
+	 * </ul>
+	 *
+	 * @returns {boolean} Whether the element can get the focus after calling {@link #focus}
+	 * @since 1.110
+	 * @public
+	 */
+	Element.prototype.isFocusable = function() {
+		var oTarget = this;
+		while (oTarget) {
+			if ((oTarget.getBusy && oTarget.getBusy()) || (oTarget.getBlocked && oTarget.getBlocked())) {
+				return false;
+			}
+			oTarget = oTarget.getParent();
+		}
+
+		var oFocusDomRef = this.getFocusDomRef();
+
+		if (!oFocusDomRef) {
+			return false;
+		}
+
+		var oRect = oFocusDomRef.getBoundingClientRect();
+		var oTopDomRef = document.elementFromPoint(oRect.x, oRect.y);
+
+		if (!oFocusDomRef.contains(oTopDomRef)) {
+			return false;
+		}
+
+		return jQuery(oFocusDomRef).is(":sapFocusable");
+	};
+
 	function getAncestorScrollPositions(oDomRef) {
 		var oParentDomRef,
 			aScrollHierarchy = [];
