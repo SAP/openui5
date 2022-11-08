@@ -28,10 +28,16 @@
 			value="2016-02-18-10-32-30" valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="long"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
-		<Label text="DateTimePicker with given DateValue and Formatter" labelFor="DTP3"/>
+		<Label text="DateTimePicker with given Value and Formatter" labelFor="DTP3"/>
 		<DateTimePicker
 			id="DTP3"
-			displayFormat="short"
+			value= "{
+				'type': 'sap.ui.model.type.DateTime',
+				'path': '/value',
+				'formatOptions': {
+					'pattern': 'M/d/yy h:mm a'
+				}
+			}"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
 		<Label text="DateTimePicker with Islamic date and secondary Gregorian date in calendar" labelFor="DTP4"/>
@@ -63,11 +69,24 @@
 		<Label text="DateTimePicker using DataBinding" labelFor="DTP5"/>
 		<DateTimePicker
 			id="DTP5"
-			value="{path:'/dateValue', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true}}"
+			value="{
+				path:'/value',
+				type:'sap.ui.model.type.DateTime',
+				formatOptions: {
+					style: 'medium',
+					strictParsing: true
+				}
+			}"
 			class="sapUiSmallMarginBottom"/>
 		<Text
 			id="textResultForDataBinding"
-			text="{path:'/dateValue', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'long'}}"
+			text="{
+				path:'/value',
+				type:'sap.ui.model.type.DateTime',
+				formatOptions: {
+					style: 'long'
+				}
+			}"
 			class="sapUiSmallMargin"/>
 	</Panel>
 	<form:SimpleForm
@@ -92,7 +111,13 @@
 		<Label text="Not showing the timezone label, showing the current time in New York" labelFor="DTP9" />
 		<DateTimePicker
 			id="DTP9"
-			dateValue="{path:'/dateValue', formatOptions: { style: 'medium' }}"
+			value="{
+				'path':'/value',
+				'type': 'sap.ui.model.type.DateTime',
+				'formatOptions': {
+						'style': 'medium'
+				}
+			}"
 			timezone="America/New_York"
 			class="sapUiSmallMarginBottom"/>
 		<Input editable="false" value="America/New_York">

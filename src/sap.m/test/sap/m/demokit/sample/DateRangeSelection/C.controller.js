@@ -11,9 +11,6 @@ sap.ui.define([
 
 		onInit: function () {
 			var oDRS2 = this.byId("DRS2"),
-				oDRS3 = this.byId("DRS3"),
-				oDRS4 = this.byId("DRS4"),
-				oDRS5 = this.byId("DRS5"),
 				dateFrom = new Date(),
 				dateTo = new Date(),
 				oModel = new JSONModel();
@@ -27,26 +24,25 @@ sap.ui.define([
 			dateTo.setUTCFullYear(2014);
 
 			oModel.setData({
-				delimiterDRS1: "@",
-				dateValueDRS1: dateFrom,
-				secondDateValueDRS1: dateTo,
-				dateFormatDRS1: "yyyy/MM/dd"
+				start: dateFrom,
+				end: dateTo,
+
+				oDRS2Start: new Date(2016, 1, 16),
+				oDRS2End: new Date(2016, 1, 18),
+
+				oDRS3Start: new Date(2014, 1, 2),
+				oDRS3End: new Date(2014, 1, 17),
+
+				oDRS4Start: new Date(2019, 3, 2),
+				oDRS4End: new Date(2019, 9, 17),
+
+				oDRS5Start: new Date(2009, 1, 2),
+				oDRS5End: new Date(2015, 1, 17)
 			});
 			this.getView().setModel(oModel);
 
-			oDRS2.setDateValue(new Date(2016, 1, 16));
-			oDRS2.setSecondDateValue(new Date(2016, 1, 18));
 			oDRS2.setMinDate(new Date(2016, 0, 1));
 			oDRS2.setMaxDate(new Date(2016, 11, 31));
-
-			oDRS3.setDateValue(new Date(2014, 1, 2));
-			oDRS3.setSecondDateValue(new Date(2014, 1, 17));
-
-			oDRS4.setDateValue(new Date(2019, 3, 2));
-			oDRS4.setSecondDateValue(new Date(2019, 9, 17));
-
-			oDRS5.setDateValue(new Date(2009, 1, 2));
-			oDRS5.setSecondDateValue(new Date(2015, 1, 17));
 
 			this._iEvent = 0;
 		},
