@@ -4,8 +4,9 @@ sap.ui.define([
 		'sap/ui/model/FilterOperator',
 		'sap/ui/model/Sorter',
 		'sap/ui/model/json/JSONModel',
-		'sap/m/MessageToast'
-	], function(Controller, Filter, FilterOperator, Sorter, JSONModel, MessageToast) {
+		'sap/m/MessageToast',
+		'sap/m/MenuItem'
+	], function(Controller, Filter, FilterOperator, Sorter, JSONModel, MessageToast, MenuItem) {
 	"use strict";
 
 	var OverflowToolbarController = Controller.extend("sap.m.sample.OverflowToolbarFooter.OverflowToolbar", {
@@ -82,6 +83,29 @@ sap.ui.define([
 			}
 
 			this.byId("idProductsTable").getBinding("items").filter(aFilters).sort(aSorters);
+		},
+
+		onDefaultActionAccept: function() {
+			MessageToast.show("Default action triggered");
+		},
+		onBeforeMenuOpen: function (evt) {
+			MessageToast.show("beforeMenuOpen is fired");
+		},
+		onPress: function (evt) {
+			MessageToast.show(evt.getSource().getId() + " Pressed");
+		},
+		onMenuAction: function(oEvent) {
+			var oItem = oEvent.getParameter("item"),
+				sItemPath = "";
+
+			while (oItem instanceof MenuItem) {
+				sItemPath = oItem.getText() + " > " + sItemPath;
+				oItem = oItem.getParent();
+			}
+
+			sItemPath = sItemPath.substring(0, sItemPath.lastIndexOf(" > "));
+
+			MessageToast.show("Action triggered on item: " + sItemPath);
 		}
 	});
 
