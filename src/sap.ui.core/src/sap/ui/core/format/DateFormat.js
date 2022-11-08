@@ -11,6 +11,7 @@ sap.ui.define([
 	'sap/ui/core/date/CalendarUtils',
 	'sap/ui/core/date/CalendarWeekNumbering',
 	"sap/base/util/deepEqual",
+	'sap/base/util/values',
 	"sap/base/strings/formatMessage",
 	"sap/base/Log",
 	"sap/base/util/extend"
@@ -23,6 +24,7 @@ sap.ui.define([
 		CalendarUtils,
 		CalendarWeekNumbering,
 		deepEqual,
+		values,
 		formatMessage,
 		Log,
 		extend
@@ -279,7 +281,7 @@ sap.ui.define([
 			oFormat.oFormatOptions.calendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 		}
 
-		if (oFormat.oFormatOptions.calendarWeekNumbering && !Object.values(CalendarWeekNumbering).includes(oFormat.oFormatOptions.calendarWeekNumbering)) {
+		if (oFormat.oFormatOptions.calendarWeekNumbering && values(CalendarWeekNumbering).indexOf(oFormat.oFormatOptions.calendarWeekNumbering) < 0) {
 			throw new TypeError("Illegal format option calendarWeekNumbering: '" + oFormat.oFormatOptions.calendarWeekNumbering + "'");
 		}
 
