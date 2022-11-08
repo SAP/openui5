@@ -80,7 +80,9 @@ sap.ui.define([
 		}
 
 	//		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-		oRm.accessibilityState(oRow/*, mAccProps*/);
+		oRm.accessibilityState(oRow, {
+			role: "row"
+		});
 		oRm.openEnd(); // div element
 
 		this.renderAppointmentsRow(oRm, oRow, aTypes);
@@ -93,6 +95,7 @@ sap.ui.define([
 		var sId = oRow.getId();
 		oRm.openStart("div", sId + "-Apps");
 		oRm.class("sapUiCalendarRowApps");
+		oRm.attr("role", "list");
 		oRm.openEnd();
 
 		this.renderBeforeAppointments(oRm, oRow);
@@ -506,6 +509,7 @@ sap.ui.define([
 		var sId = oAppointment.getId();
 		var bReducedHeight = oRow._getAppointmentReducedHeight(oAppointmentInfo);
 		var mAccProps = {
+			role: "listitem",
 			labelledby: {value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT") + " " + sId + "-Descr", append: true},
 			selected: null
 		};
