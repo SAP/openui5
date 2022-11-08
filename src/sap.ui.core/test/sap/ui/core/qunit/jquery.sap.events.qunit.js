@@ -3,11 +3,12 @@ sap.ui.define([
 	"jquery.sap.events",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
+	"sap/ui/events/F6Navigation",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Configuration",
 	// provides jQuery.sap.keyCodes
 	"jquery.sap.keycodes"
-], function(jQuery, Device, Control, qutils, Configuration) {
+], function(jQuery, Device, Control, F6Navigation, qutils, Configuration) {
 	"use strict";
 
 	// Initialization
@@ -337,7 +338,15 @@ sap.ui.define([
 
 
 	//***************************************
-	QUnit.module("Basic Pseudo Events");
+	QUnit.module("Basic Pseudo Events", {
+		before: function () {
+			this.oF6NavStub = sinon.stub(F6Navigation, "handleF6GroupNavigation");
+		},
+		after: function () {
+			this.oF6NavStub.restore();
+			delete this.oF6NavStub;
+		}
+	});
 
 	aPseudoKeyEvents.forEach(function(oPseudoKeyEvent) {
 		doTestPseudoEvent("keydown", oPseudoKeyEvent.sName, oPseudoKeyEvent.iTrigger, oPseudoKeyEvent.oParams);
