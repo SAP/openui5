@@ -849,7 +849,7 @@ function(
 
 		// if only one piece of text was pasted, we can assume that the user wants to alter it before it is converted into a token
 		// in this case we leave it as plain text input
-		if (aSeparatedText.length <= 1) {
+		if (this._shouldSkipTokenCreationOnPaste(aSeparatedText)) {
 			return;
 		}
 
@@ -2007,6 +2007,18 @@ function(
 				fValidateCallback && fValidateCallback(false);
 			}
 		};
+	};
+
+	/**
+	 * Should return true/false if token creation on paste should be skipped
+	 *
+	 * @param aSeparatedText array with pasted text parts
+	 * @returns {boolean}
+	 * @ui5-restricted sap.ui.comp.smartfilterbar.FilterProvider
+	 * @private
+	 */
+	MultiInput.prototype._shouldSkipTokenCreationOnPaste = function (aSeparatedText) {
+		return aSeparatedText.length <= 1;
 	};
 
 	/**
