@@ -4006,7 +4006,7 @@ sap.ui.define([
 			_private(oTable).hideBusyIndicatorTimeoutId = setTimeout(function() {
 				oTable.setBusy(false);
 				clearHideBusyIndicatorTimeout(oTable);
-			}, 0);
+			}, 10); // BCP: 2270133571 - In V4 there can be asynchronous sequential requests where a timeout of 0 is insufficient to avoid flickering.
 		}
 	}
 
