@@ -4,11 +4,13 @@
 
 // Provides class sap.ui.core.date.UniversalDate
 sap.ui.define([
+	'sap/base/util/values',
 	'sap/ui/base/Object',
 	'sap/ui/core/LocaleData',
 	'./CalendarUtils',
 	'./CalendarWeekNumbering'
 ], function(
+	values,
 	BaseObject,
 	LocaleData,
 	CalendarUtils,
@@ -371,7 +373,7 @@ sap.ui.define([
 	 * @private
 	 */
 	function checkWeekConfig(sCalendarWeekNumbering) {
-		if (sCalendarWeekNumbering && !Object.values(CalendarWeekNumbering).includes(sCalendarWeekNumbering)) {
+		if (sCalendarWeekNumbering && values(CalendarWeekNumbering).indexOf(sCalendarWeekNumbering) < 0) {
 			throw new TypeError("Illegal format option calendarWeekNumbering: '" + sCalendarWeekNumbering + "'");
 		}
 	}
