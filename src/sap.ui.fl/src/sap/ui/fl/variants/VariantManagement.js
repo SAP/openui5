@@ -151,6 +151,18 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines the style of the title.
+				 * For more information, see {@link sap.m.Title#setTitleStyle}.
+				 *
+				 * @since 1.109
+				 */
+				titleStyle: {
+					type: "sap.ui.core.TitleLevel",
+					group: "Appearance",
+					defaultValue: TitleLevel.Auto
+				},
+
+				/**
 				 * Sets the maximum width of the control.
 				 *
 				 * @since 1.109
@@ -642,6 +654,12 @@ sap.ui.define([
 	VariantManagement.prototype.setHeaderLevel = function(sValue) {
 		this.setProperty("headerLevel", sValue);
 		this._oVM.setLevel(sValue);
+		return this;
+	};
+
+	VariantManagement.prototype.setTitleStyle = function(sValue) {
+		this.setProperty("titleStyle", sValue);
+		this._oVM.setTitleStyle(sValue);
 		return this;
 	};
 
