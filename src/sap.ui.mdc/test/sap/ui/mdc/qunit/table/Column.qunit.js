@@ -84,6 +84,7 @@ sap.ui.define([
 		assert.ok(!this.oColumn.getTooltip(), "Default tooltip property");
 		assert.ok(this.oColumn.getHeaderVisible(), "Default headerVisible property");
 		assert.strictEqual(this.oColumn.getHAlign(), "Begin", "Default hAlign property");
+		assert.ok(!this.oColumn.getRequired(), "Default required property");
 
 		this.oColumn.setHeader("Text1");
 
@@ -113,6 +114,7 @@ sap.ui.define([
 			this.oColumn.setTooltip("Tooltip2");
 			this.oColumn.setHeaderVisible(false);
 			this.oColumn.setHAlign("End");
+			this.oColumn.setRequired(true);
 
 			assert.strictEqual(oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
 			assert.strictEqual(oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
@@ -120,6 +122,7 @@ sap.ui.define([
 			assert.strictEqual(oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to headerVisible");
 			assert.strictEqual(this.oColumn.getInnerColumn().getTooltip(), "Tooltip2", "tooltip forwarded to inner column control");
 			assert.ok(oColumnHeaderLabel.getTooltip() === "Tooltip2", "tooltip set also on column label");
+			assert.strictEqual(oColumnHeaderLabel.getRequired(), true, "required set on label control according to required");
 
 			this.oColumn.setHeaderVisible(true);
 			oTable.setEnableColumnResize(true);
@@ -137,6 +140,7 @@ sap.ui.define([
 		assert.ok(!this.oColumn.getTooltip(), "Default tooltip property");
 		assert.ok(this.oColumn.getHeaderVisible(), "Default headerVisible property");
 		assert.strictEqual(this.oColumn.getHAlign(), "Begin", "Default hAlign property");
+		assert.ok(!this.oColumn.getRequired(), "Default required property");
 
 		this.oColumn.setHeader("Text1");
 
@@ -166,6 +170,7 @@ sap.ui.define([
 			this.oColumn.setTooltip("Tooltip2");
 			this.oColumn.setHeaderVisible(false);
 			this.oColumn.setHAlign("End");
+			this.oColumn.setRequired(true);
 
 			assert.strictEqual(oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
 			assert.strictEqual(oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
@@ -173,6 +178,7 @@ sap.ui.define([
 			assert.strictEqual(oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to headerVisible");
 			assert.strictEqual(this.oColumn.getInnerColumn().getTooltip(), "Tooltip2", "tooltip forwarded to inner column control");
 			assert.ok(!oColumnHeaderLabel.getTooltip(), "no tooltip on column label");
+			assert.strictEqual(oColumnHeaderLabel.getRequired(), true, "required set on label control according to required");
 
 			this.oColumn.setHeaderVisible(true);
 			oTable.setEnableColumnResize(false);

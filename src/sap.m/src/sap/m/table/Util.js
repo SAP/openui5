@@ -209,6 +209,7 @@ sap.ui.define([
 	 * @param {boolean} [mSettings.headerGap=false] Whether icons in the header should be taken into account
 	 * @param {boolean} [mSettings.truncateLabel=true] Whether the header of the column can be truncated or not
 	 * @param {boolean} [mSettings.verticalArrangement=false] Whether the fields are arranged vertically
+	 * @param {boolean} [mSettings.required=false] Indicates the state of the column header as defined by the <code>required</code> property
 	 * @param {int} [mSettings.defaultWidth=8] The default column content width when type check fails
 	 * @returns {string} The calculated width of the column
 	 * @private
@@ -253,6 +254,7 @@ sap.ui.define([
 		if (sHeader) {
 			fHeaderWidth = Util.calcHeaderWidth(sHeader, (mSettings.truncateLabel ? fContentWidth : 0), iMaxWidth, iMinWidth);
 			fHeaderWidth += mSettings.headerGap ? (8 /* padding */ + 14 /* icon width */) / fBaseFontSize : 0;
+			fHeaderWidth += mSettings.required ? parseFloat(ThemeParameters.get({ name: "sapMFontLargeSize" })) + 0.125 /* margin-left */: 0; // required marker
 		}
 
 		fContentWidth = Math.max(iMinWidth, fContentWidth, fHeaderWidth);

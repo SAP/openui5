@@ -246,7 +246,8 @@ sap.ui.define([
 			}),
 			creationTemplate: new Text({
 				text: "Test1"
-			})
+			}),
+			required: true
 		}));
 		this.oTable.insertColumn(new Column({
 			minWidth: 8.5,
@@ -273,6 +274,7 @@ sap.ui.define([
 			assert.equal(aInnerColumns[1].getLabel().getText(), "Test1", "column1: label is correct");
 			assert.equal(aInnerColumns[1].getMinWidth(), 134, "column1: minWidth is correct");
 			assert.ok(aInnerColumns[1]._menuHasItems(), "columnSelect event enabled always");
+			assert.ok(aInnerColumns[1].getLabel().getLabel().isRequired(), "column1: is required");
 			assert.equal(aInnerColumns[2].getLabel().getText(), "Test2", "column1: label is correct");
 			assert.equal(aInnerColumns[2].getMinWidth(), 128, "column2: minWidth is correct (default value)");
 			assert.ok(aInnerColumns[2]._menuHasItems(), "columnSelect event enabled always");
@@ -425,7 +427,8 @@ sap.ui.define([
 			importance: "High",
 			template: new Text({
 				text: "Test"
-			})
+			}),
+			required: true
 		}));
 
 		this.oTable.addColumn(new Column({
@@ -450,6 +453,7 @@ sap.ui.define([
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
 			assert.equal(aMDCColumns[0].getHeader(), aInnerColumns[0].getHeader().getText());
 			assert.equal(aInnerColumns[0].getHeader().getText(), "Test");
+			assert.ok(aInnerColumns[0].getHeader().getLabel().getRequired(), "First column is required");
 			assert.equal(getInnerColumnLabel(aInnerColumns[0]).getWrappingType(), "Hyphenated");
 			assert.equal(aInnerColumns[0].getImportance(), "High");
 			assert.equal(aInnerColumns[0].getAutoPopinWidth(), 8, "minWidth is not set, default value is 8");
@@ -3743,6 +3747,13 @@ sap.ui.define([
 			dataProperty: "stringValue_nolabeltruncate"
 		}));
 
+		this.oTable.addColumn(new Column({
+			id: "column_required",
+			header: "a",
+			dataProperty: "a",
+			required: true
+		}));
+
 		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "firstName",
@@ -3854,6 +3865,16 @@ sap.ui.define([
 						truncateLabel: false
 					}
 				}
+			}, {
+				name: "a",
+				label: "a",
+				required: true,
+				typeConfig: TypeUtil.getTypeConfig("Edm.Boolean"),
+				visualSettings: {
+					widthCalculation: {
+						minWidth: 1
+					}
+				}
 			}
 		]);
 
@@ -3905,6 +3926,9 @@ sap.ui.define([
 			assert.equal(getInnerColumnWidth(aColumns[10]), 19 + fPadding + "rem", "String type with big maxLength gets maxWidth");
 
 			assert.ok(check(aColumns[11].getHeader(), parseFloat(getInnerColumnWidth(aColumns[11])) - fPadding, 0), "The header is not truncated and the column width is as wide as the header");
+
+			// 12th column. required "*" is added to column
+			assert.ok(check("Yes *", parseFloat(getInnerColumnWidth(aColumns[12])) - fPadding - 0.125 /* subtract padding from marker */));
 		}.bind(this));
 	});
 

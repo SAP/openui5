@@ -351,7 +351,7 @@ sap.ui.define([
 			return null;
 		}
 
-		return this._calcColumnWidth(oProperty, oMDCColumn.getHeader());
+		return this._calcColumnWidth(oProperty, oMDCColumn.getHeader(), oMDCColumn.getRequired());
 	};
 
 	/**
@@ -359,16 +359,18 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.table.PropertyInfo} oProperty The property of the <code>Column</code> instance for which to set the width
 	 * @param {string} [sHeader] The header in case of it is different than the PropertyInfo header
+	 * @param {boolean} [bRequired] Indicates whether the column is required
 	 * @return {string} The calculated column width
 	 * @since 1.95
 	 * @private
 	 */
-	 PropertyHelper.prototype._calcColumnWidth = function (oProperty, sHeader) {
+	 PropertyHelper.prototype._calcColumnWidth = function (oProperty, sHeader, bRequired) {
 		var mWidthCalculation = Object.assign({
 			gap: 0,
 			includeLabel: true,
 			truncateLabel: true,
-			excludeProperties: []
+			excludeProperties: [],
+			required: bRequired
 		}, oProperty.visualSettings && oProperty.visualSettings.widthCalculation);
 
 		var aTypes = [];
