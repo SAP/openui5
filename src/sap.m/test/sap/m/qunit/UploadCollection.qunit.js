@@ -2300,6 +2300,7 @@ sap.ui.define([
 	QUnit.test("Edit", function(assert) {
 		//trigger edit button of line 2 and check the status of the line
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
+		assert.equal(window.getComputedStyle(oCore.byId(sEditButtonId).getDomRef().parentElement).alignSelf, "center", "Button Container is Center Alligned");
 		oCore.byId(sEditButtonId).firePress();
 		oCore.applyChanges();
 		assert.equal(this.oUploadCollection.aItems[1]._status, "Edit", "Item 2 has status 'Edit'");

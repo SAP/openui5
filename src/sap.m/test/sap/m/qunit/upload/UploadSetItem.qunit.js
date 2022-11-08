@@ -68,6 +68,7 @@ sap.ui.define([
 		assert.ok(oItem0._getDeleteButton().getVisible(), "Delete button should be visible by default.");
 		assert.ok(oItem0._getEditButton().getEnabled(), "Edit button should be enabled by default.");
 		assert.ok(oItem0._getEditButton().getVisible(), "Edit button should be visible by default.");
+		assert.equal(window.getComputedStyle(oItem0._getDeleteButton().getDomRef().parentElement).alignSelf.toLowerCase(), "center", "Button Container is Center Alligned");
 
 		assert.notOk(oItem1._getDeleteButton().getEnabled(), "Delete button should be disabled for 'enabledRemove' set to false.");
 		assert.notOk(oItem1._getDeleteButton().getVisible(), "Delete button should be invisible by for 'visibleRemove' set to false.");
