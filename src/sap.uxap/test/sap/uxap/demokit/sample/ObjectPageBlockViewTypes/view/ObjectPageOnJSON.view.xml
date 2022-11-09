@@ -42,10 +42,6 @@
 						<m:Link text="Page 2 long link" press="handleLink2Press"/>
 					</m:Breadcrumbs>
 				</breadcrumbs>
-				<breadCrumbsLinks>
-					<m:Link id="breadCrumbLink1" text="Links in old aggregation" press="handleLink1Press"/>
-					<m:Link id="breadCrumbLink2" text="Don't appear in ObjectPageHeader" press="handleLink2Press"/>
-				</breadCrumbsLinks>
 			</ObjectPageHeader>
 		</headerTitle>
 
