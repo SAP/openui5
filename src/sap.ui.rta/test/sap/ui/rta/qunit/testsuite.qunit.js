@@ -29,13 +29,6 @@ sap.ui.define([
 		},
 		// keep tests in alphabetical order!
 		tests: {
-			// Opa Testsuite
-			"opa/testsuite": {
-				title: "Opa Testsuite",
-				group: "Opa Testsuite",
-				page: "test-resources/sap/ui/rta/qunit/opa/testsuite.opa.qunit.html"
-			},
-
 			// API
 			"api/startKeyUserAdaptation": {
 				group: "API",
@@ -47,14 +40,6 @@ sap.ui.define([
 				group: "API",
 				coverage: {
 					only: ["sap/ui/rta/api/startAdaptation"]
-				}
-			},
-
-			// AppContexts
-			"appContexts/controller/ManageContexts.controller": {
-				group: "AppContexts",
-				coverage: {
-					only: ["sap/ui/rta/appContexts/controller/ManageContexts.controller"]
 				}
 			},
 
