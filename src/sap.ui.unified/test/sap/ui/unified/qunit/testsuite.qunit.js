@@ -290,6 +290,15 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/calendar/MonthPicker"]
 				}
 			},
+			"TimesRow":{
+				group: "Calendar",
+				qunit: {
+					reorder: false
+				},
+				coverage: {
+					only: ["sap/ui/unified/calendar/TimesRow"]
+				}
+			},
 			"YearPicker": {
 				group: "Calendar",
 				ui5: {
