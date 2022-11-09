@@ -2090,7 +2090,7 @@ sap.ui.define([
 		oPopover.openBy(oButton);
 		this.clock.tick(400);
 
-		assert.equal(oPopover._headerTitle.getDomRef().nodeName, "H2", "Popover heading should be set to H2 tag");
+		assert.equal(oPopover._headerTitle.getDomRef().nodeName, "H1", "Popover heading should be set to H1 tag");
 		assert.ok(oPopover._headerTitle instanceof Title, "Heading of the popover should be of type sap.m.Title");
 
 		oPopover.destroy();

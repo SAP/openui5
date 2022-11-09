@@ -145,6 +145,7 @@ sap.ui.define([
 
 					/**
 					 * If a header should be shown at the top of the popover.
+					 * *Note:* The heading level of the popover is H1. Headings in the popover content should start with H2 heading level.
 					 */
 					showHeader: {type: "boolean", group: "Appearance", defaultValue: true},
 
@@ -1566,15 +1567,13 @@ sap.ui.define([
 				} else {
 					this._calcBestPos();
 				}
-			} else {
-				if (this._checkVertical()) {
+			} else if (this._checkVertical()) {
 					this._calcVertical();
 				} else if (this._checkHorizontal()) {
 					this._calcHorizontal();
 				} else {
 					this._calcBestPos();
 				}
-			}
 
 		};
 
@@ -1853,8 +1852,7 @@ sap.ui.define([
 			if (bExceedHorizontal) {
 				iLeft = oPosParams._fPopoverMarginLeft;
 				iRight = oPosParams._fPopoverMarginRight;
-			} else {
-				if (bOverLeft) {
+			} else if (bOverLeft) {
 					iLeft = oPosParams._fPopoverMarginLeft;
 					if (bRtl) {
 						// when only one side of the popover goes beyond the defined border make sure that
@@ -1869,21 +1867,18 @@ sap.ui.define([
 					// can't react to content size change when both are set
 					iLeft = "";
 				}
-			}
 
 			if (bExceedVertical) {
 				iTop = oPosParams._fPopoverMarginTop;
 				iBottom = oPosParams._fPopoverMarginBottom;
-			} else {
-				if (bOverTop) {
-					iTop = oPosParams._fPopoverMarginTop;
-				} else if (bOverBottom) {
-					iBottom = oPosParams._fPopoverMarginBottom;
-					// when only one side of the popover goes beyond the defined border make sure that
-					// only one from the iLeft and iRight is set because Popover has a fixed size and
-					// can't react to content size change when both are set
-					iTop = "";
-				}
+			} else if (bOverTop) {
+				iTop = oPosParams._fPopoverMarginTop;
+			} else if (bOverBottom) {
+				iBottom = oPosParams._fPopoverMarginBottom;
+				// when only one side of the popover goes beyond the defined border make sure that
+				// only one from the iLeft and iRight is set because Popover has a fixed size and
+				// can't react to content size change when both are set
+				iTop = "";
 			}
 
 			var mPosition = {
@@ -2226,11 +2221,9 @@ sap.ui.define([
 		Popover.prototype._getAnyHeader = function () {
 			if (this.getCustomHeader()) {
 				return this.getCustomHeader();
-			} else {
-				if (this.getShowHeader()) {
-					this._createInternalHeader();
-					return this._internalHeader;
-				}
+			} else if (this.getShowHeader()) {
+				this._createInternalHeader();
+				return this._internalHeader;
 			}
 		};
 
@@ -2461,7 +2454,7 @@ sap.ui.define([
 			if (!this._headerTitle) {
 				this._headerTitle = new Title(this.getId() + "-title", {
 					text: this.getTitle(),
-					level: "H2"
+					level: "H1"
 				});
 
 				this._createInternalHeader();
