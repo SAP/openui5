@@ -25,7 +25,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-
 	var CompVariant = Plugin.extend("sap.ui.rta.plugin.CompVariant", /** @lends sap.ui.rta.plugin.CompVariant.prototype */ {
 		metadata: {
 			library: "sap.ui.rta",
@@ -270,11 +269,13 @@ sap.ui.define([
 		var oElementOverlay = aOverlays[0];
 		var oControl = oElementOverlay.getElementInstance();
 		var oAction = this.getAction(oElementOverlay);
+		var oVariantManagementControl = oControl.getVariantManagement();
+		// the modified flag might be changed before the dialog is closed, so it has to be saved here already
+		var bIsModified = oVariantManagementControl.getModified();
 
 		return oAction.handler(oControl, {styleClass: Utils.getRtaStyleClassName()}).then(function(aChangeContentData) {
 			if (aChangeContentData && aChangeContentData.length) {
 				var sPersistencyKey = aChangeContentData[0].changeSpecificData.content.persistencyKey;
-				var oVariantManagementControl = oControl.getVariantManagement();
 				var aVariants = oVariantManagementControl.getAllVariants();
 				var oCurrentVariant = aVariants.find(function(oVariant) {
 					return oVariant.getVariantId() === oVariantManagementControl.getPresentVariantId();
@@ -286,8 +287,9 @@ sap.ui.define([
 					createCommandAndFireEvent.call(this, oElementOverlay, ["compVariantContent"], {
 						variantId: aChangeContentData[0].changeSpecificData.content.key,
 						newContent: aChangeContentData[0].changeSpecificData.content.content,
-						persistencyKey: sPersistencyKey
-					}, oControl.getVariantManagement());
+						persistencyKey: sPersistencyKey,
+						isModifiedBefore: bIsModified
+					}, oVariantManagementControl);
 				} else {
 					MessageBox.warning(oLibraryBundle.getText("MSG_CHANGE_READONLY_VARIANT"), {
 						onClose: onWarningClose.bind(this, oVariantManagementControl, oCurrentVariant.getVariantId()),
