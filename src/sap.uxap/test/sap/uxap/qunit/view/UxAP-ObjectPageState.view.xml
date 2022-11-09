@@ -23,10 +23,6 @@
 					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>
 					<ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" type="Emphasized"/>
 				</actions>
-				<breadCrumbsLinks>
-					<m:Link text="Page 1 a very long link"/>
-					<m:Link text="Page 2 long link"/>
-				</breadCrumbsLinks>
 			</ObjectPageHeader>
 		</headerTitle>
 

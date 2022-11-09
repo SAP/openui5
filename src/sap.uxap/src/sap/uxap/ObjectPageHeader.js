@@ -379,6 +379,9 @@ sap.ui.define([
 		this._oChangesIconCont = this._lazyLoadInternalAggregation("_changesIconCont", true).attachPress(this._handleChangesPress, this);
 	};
 
+	/**
+	 * @deprecated as of version 1.50, breadCrumbsLinks has been deprecated
+	 */
 	ObjectPageHeader.getMetadata().forwardAggregation(
 		"breadCrumbsLinks",
 		{

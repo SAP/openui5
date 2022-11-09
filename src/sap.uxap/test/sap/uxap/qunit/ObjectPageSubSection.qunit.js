@@ -915,7 +915,7 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 										'<uxap:actions>' +
 											'<m:Button press="doSomething" text="Remove Button"/>' +
 										'</uxap:actions>' +
-										'<uxap:breadCrumbsLinks/>' +
+										'<uxap:breadcrumbs/>' +
 										'<uxap:navigationBar/>' +
 									'</uxap:ObjectPageHeader>' +
 								'</uxap:headerTitle>' +
