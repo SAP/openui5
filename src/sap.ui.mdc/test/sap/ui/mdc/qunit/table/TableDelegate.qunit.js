@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/mdc/table/Column",
 	"sap/ui/model/Sorter",
-	"sap/ui/model/Context"
+	"sap/ui/model/Context",
+	"sap/base/util/deepEqual"
 ], function(
 	Text,
 	Table,
@@ -22,7 +23,8 @@ sap.ui.define([
 	ODataModel,
 	Column,
 	Sorter,
-	Context
+	Context,
+	deepEqual
 ) {
 	"use strict";
 
@@ -170,6 +172,10 @@ sap.ui.define([
 				"First sorter properties");
 			assert.ok(aSorters[1].sPath === "Name_Path" && aSorters[1].bDescending === true && aSorters[1].vGroup == null,
 				"Second sorter properties");
+
+			var oBindingInfo = {};
+			TableDelegate.updateBindingInfo(oTable, oBindingInfo);
+			assert.ok(deepEqual(aSorters, oBindingInfo.sorter), "The new sorters are equal to the old sorters if grouping didn't change");
 
 			oTable.setGroupConditions();
 			oTable.rebind();
