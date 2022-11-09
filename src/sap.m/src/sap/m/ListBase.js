@@ -85,6 +85,8 @@ function(
 	 *
 	 * See section "{@link topic:295e44b2d0144318bcb7bdd56bfa5189 List, List Item, and Table}"
 	 * in the documentation for an introduction to subclasses of <code>sap.m.ListBase</code> control.
+	 * More information on how to use binding-related functionality, such as {@link topic:ec79a5d5918f4f7f9cbc2150e66778cc Sorting, Grouping, and Filtering},
+	 * is also available in the documentation.
 	 *
 	 * <b>Note:</b> The ListBase including all contained items may be completely re-rendered when the data of a bound model is changed. Due to the limited hardware resources of mobile devices this can lead to longer delays for lists that contain many items. As such the usage of a list is not recommended for these use cases.
 	 * @extends sap.ui.core.Control
