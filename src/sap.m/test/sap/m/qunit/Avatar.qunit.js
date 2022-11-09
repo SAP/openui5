@@ -28,7 +28,6 @@ sap.ui.define([
 
 	var sControlId = "AvatarId",
 		sImagePath = "test-resources/sap/f/images/Woman_avatar_01.png",
-		sAbsoluteImageUrl = new URI(sap.ui.require.toUrl("test-resources/sap/f/images/Woman_avatar_01.png"), document.baseURI).href(),
 		sIconPath = "sap-icon://lab",
 		sPreAvatarSize = "Avatar's size is ",
 		sPreAvatarShape = "Avatar's shape is ",
@@ -235,9 +234,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Avatar with src leading to an image has correct css style", function (assert) {
-		var sExpectedOutputImage = Device.browser.safari ? // safari returns the absolute url
-			'url("' + sAbsoluteImageUrl + '")' :
-			'url("' + sImagePath + '")';
+		var sExpectedOutputImage = 'url("' + sImagePath + '")';
 		this.oAvatar.setSrc(sImagePath);
 		oCore.applyChanges();
 
