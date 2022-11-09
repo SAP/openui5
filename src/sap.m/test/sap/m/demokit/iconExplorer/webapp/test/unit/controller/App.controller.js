@@ -26,11 +26,11 @@ sap.ui.define([
 			};
 
 			this.oComponentStub.getCookiesManagement = function() {
-				return {
+				return Promise.resolve({
 					enable: function () {
 						return true;
 					}
-				};
+				});
 			};
 			this.oComponentStub.getRootControl = function() {
 				return true;
