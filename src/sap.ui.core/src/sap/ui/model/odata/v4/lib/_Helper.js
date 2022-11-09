@@ -355,6 +355,37 @@ sap.ui.define([
 		},
 
 		/**
+		 * Converts $select and $expand of the given query options into corresponding paths. Expects
+		 * $select to be always an array and $expand to be always an object (as delivered by
+		 * ODataModel#buildQueryOptions). Other query options are ignored.
+		 *
+		 * $expand must not contain collection-valued navigation properties.
+		 *
+		 * @param {object} mQueryOptions - The query options
+		 * @returns {string[]} The paths
+		 */
+		convertExpandSelectToPaths : function (mQueryOptions) {
+			var aPaths = [];
+
+			function convert(mQueryOptions0, sPathPrefix) {
+				if (mQueryOptions0.$select) {
+					mQueryOptions0.$select.forEach(function (sSelect) {
+						aPaths.push(_Helper.buildPath(sPathPrefix, sSelect));
+					});
+				}
+				if (mQueryOptions0.$expand) {
+					Object.keys(mQueryOptions0.$expand).forEach(function (sExpandPath) {
+						convert(mQueryOptions0.$expand[sExpandPath],
+							_Helper.buildPath(sPathPrefix, sExpandPath));
+						});
+				}
+			}
+
+			convert(mQueryOptions, "");
+			return aPaths;
+		},
+
+		/**
 		 * Copies the value of the private client-side instance annotation with the given
 		 * unqualified name from the given source to the given target object, if present at the
 		 * source.

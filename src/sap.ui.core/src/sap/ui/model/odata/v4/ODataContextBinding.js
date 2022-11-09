@@ -146,6 +146,8 @@ sap.ui.define([
 		if (sPath.endsWith("/")) {
 			throw new Error("Invalid path: " + sPath);
 		}
+		// Whether the binding has fetched its own $select/$expand in the current parent cache
+		this.bHasFetchedExpandSelectProperties = false;
 		this.oOperation = undefined;
 		this.oParameterContext = null;
 		this.oReturnValueContext = null;
@@ -984,6 +986,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Fetches all properties described in $expand and $select of the binding parameters, unless
+	 * the binding already has fetched it. This is only done if the model uses autoExpandSelect. The
+	 * goal is that these properties are also requested as late properties.
+	 *
+	 * Expects that the binding is resolved and has no own cache (and thus a parent context). This
+	 * together with autoExpandSelect also implies that $expand contains no collection-valued
+	 * navigation properties.
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.doFetchExpandSelectProperties = function () {
+		var sResolvedPath,
+			that = this;
+
+		if (this.bHasFetchedExpandSelectProperties || !this.oModel.bAutoExpandSelect
+				|| !this.mParameters.$expand && !this.mParameters.$select) {
+			return;
+		}
+
+		sResolvedPath = this.getResolvedPath();
+		_Helper.convertExpandSelectToPaths(this.oModel.buildQueryOptions(this.mParameters, true))
+			.forEach(function (sPath) {
+				that.oContext.fetchValue(_Helper.buildPath(sResolvedPath, sPath))
+					.catch(that.oModel.getReporter());
+			});
+		this.bHasFetchedExpandSelectProperties = true;
+	};
+
+	/**
 	 * Requests the value for the given path; the value is requested from this binding's
 	 * cache or from its context in case it has no cache. For a suspended binding, requesting the
 	 * value is canceled by throwing a "canceled" error.
@@ -1082,6 +1113,9 @@ sap.ui.define([
 			}
 
 			if (!that.oOperation && that.oContext) {
+				if (!bCached) {
+					that.doFetchExpandSelectProperties();
+				}
 				return that.oContext.fetchValue(sPath, oListener, bCached);
 			}
 		});
@@ -1352,6 +1386,8 @@ sap.ui.define([
 			return SyncPromise.resolve();
 		}
 
+		this.bHasFetchedExpandSelectProperties = false;
+
 		if (this.isRootBindingSuspended()) {
 			this.refreshSuspended(sGroupId);
 			return this.refreshDependentBindings(sResourcePathPrefix, sGroupId, bCheckUpdate,
@@ -1614,6 +1650,7 @@ sap.ui.define([
 							this.oModel.resolve(this.sPath + "/$Parameter", oContext));
 					}
 				}
+				this.bHasFetchedExpandSelectProperties = false;
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
 			} else {

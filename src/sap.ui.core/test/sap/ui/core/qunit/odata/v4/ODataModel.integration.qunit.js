@@ -12850,7 +12850,16 @@ sap.ui.define([
 	// Afterwards, refresh the list and see that no late properties from the context binding are
 	// requested for all rows.
 	// JIRA: CPOUI5ODATAV4-544
-	QUnit.test("Auto-$expand/$select: list/detail with separate requests", function (assert) {
+	//
+	// Ensure that $expand/$select at the detail page's context binding are included into the late
+	// property request when the detail page is bound and when the list is refreshed (even if the
+	// refresh is done within suspend/resume).
+	// BCP: 2270178472
+[false, true].forEach(function (bRefreshSuspended) {
+	var sTitle = "Auto-$expand/$select: list/detail with separate requests,"
+			+ " bRefreshSuspended=" + bRefreshSuspended;
+
+	QUnit.test(sTitle, function (assert) {
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
@@ -12858,7 +12867,11 @@ sap.ui.define([
 	<Text id="currency" text="{BudgetCurrency}"/>\
 	<Text id="id" text="{Team_Id}"/>\
 </Table>\
-<FlexBox id="detail" binding="{}">\
+<FlexBox id="detail" binding="{path : \'\', \
+		parameters : {\
+			$select : \'MANAGER_ID\',\
+			$expand : {TEAM_2_MANAGER : {$select : \'TEAM_ID\'}}\
+		}}">\
 	<Text id="name" text="{Name}"/>\
 	<Text id="budget" text="{Budget}"/>\
 	<Input id="budgetCurrency" value="{BudgetCurrency}"/>\
@@ -12883,8 +12896,13 @@ sap.ui.define([
 			oContext = oTable.getItems()[0].getBindingContext();
 
 			// 'Budget' and 'Name' are added to the table row
-			that.expectRequest("TEAMS('TEAM_01')?$select=Budget,Name",
-					{Budget : "456", Name : "Team #1"})
+			that.expectRequest("TEAMS('TEAM_01')?$select=Budget,MANAGER_ID,Name,TEAM_2_MANAGER"
+					+ "&$expand=TEAM_2_MANAGER($select=ID,TEAM_ID)", {
+					Budget : "456",
+					MANAGER_ID : "Manager_01",
+					Name : "Team #1",
+					TEAM_2_MANAGER : {MANAGER_ID : "Manager_01", TEAM_ID : "Team_01"}
+				})
 				.expectChange("name", "Team #1")
 				.expectChange("budget", "456");
 
@@ -12895,8 +12913,13 @@ sap.ui.define([
 			// JIRA: CPOUI5ODATAV4-459
 			return that.setInvalidBudgetCurrency(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS('TEAM_02')?$select=Budget,Name",
-					{Budget : "789", Name : "Team #2"})
+			that.expectRequest("TEAMS('TEAM_02')?$select=Budget,MANAGER_ID,Name,TEAM_2_MANAGER"
+					+ "&$expand=TEAM_2_MANAGER($select=ID,TEAM_ID)", {
+					Budget : "789",
+					MANAGER_ID : "Manager_02",
+					Name : "Team #2",
+					TEAM_2_MANAGER : {MANAGER_ID : "Manager_02", TEAM_ID : "Team_02"}
+				})
 				.expectChange("name", "Team #2")
 				.expectChange("budget", "789");
 
@@ -12911,6 +12934,9 @@ sap.ui.define([
 
 			return that.checkValueState(assert, "budgetCurrency", "None", "");
 		}).then(function () {
+			var oBinding = oTable.getBinding("items"),
+				oRefreshPromise;
+
 			that.expectRequest("TEAMS?$select=BudgetCurrency,Team_Id&$skip=0&$top=100", {
 					value : [
 						{BudgetCurrency : "UAH", Team_Id : "TEAM_01"},
@@ -12918,16 +12944,75 @@ sap.ui.define([
 					]
 				})
 				.expectChange("currency", ["UAH", "UAH"])
-				.expectRequest("TEAMS('TEAM_02')?$select=Budget,Name",
-					{Budget : "123", Name : "Nftgz"})
+				.expectRequest("TEAMS('TEAM_02')?$select=Budget,MANAGER_ID,Name,TEAM_2_MANAGER"
+					+ "&$expand=TEAM_2_MANAGER($select=ID,TEAM_ID)", {
+					Budget : "123",
+					MANAGER_ID : "Manager_02",
+					Name : "Nftgz",
+					TEAM_2_MANAGER : {MANAGER_ID : "Manager_02", TEAM_ID : "Team_02"}
+				})
 				.expectChange("name", "Nftgz")
 				.expectChange("budget", "123");
 
+			// code under test (JIRA: CPOUI5ODATAV4-544, BCP: 2270178472)
+			if (bRefreshSuspended) {
+				oBinding.suspend();
+				oRefreshPromise = oBinding.requestRefresh();
+				oBinding.resume();
+			} else {
+				oRefreshPromise = oBinding.requestRefresh();
+			}
 			return Promise.all([
-				// code under test (JIRA: CPOUI5ODATAV4-544)
-				oTable.getBinding("items").requestRefresh(),
+				oRefreshPromise,
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: list/detail where the detail needs additional $expand/$select, but contains a
+	// $expand with a collection-valued navigation property. The detail page cannot use the list
+	// binding's cache.
+	// BCP: 2270178472
+	QUnit.test("Auto-$expand/$select: no cache sharing possible", function (assert) {
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			oRowContext,
+			sView = '\
+<Table id="list" items="{/TEAMS}">\
+	<Text id="id" text="{Team_Id}"/>\
+</Table>\
+<FlexBox id="detail" binding="{path : \'\', \
+		parameters : {\
+			$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}\
+		}}">\
+	<Text id="name" text="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100",
+				{value : [{Team_Id : "TEAM_01"}]})
+			.expectChange("id", ["TEAM_01"])
+			.expectChange("name"); // expect a later change
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("TEAMS('TEAM_01')?$expand=TEAM_2_EMPLOYEES($select=ID,Name)"
+					+ "&$select=Name,Team_Id", {
+					Name : "Team #1",
+					TEAM_2_EMPLOYEES : []
+				})
+				.expectChange("name", "Team #1");
+
+			oRowContext = that.oView.byId("list").getItems()[0].getBindingContext();
+			that.oView.byId("detail").setBindingContext(oRowContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.oLogMock.expects("error")
+				.withArgs("Failed to drill-down into ('TEAM_01')/Name, invalid segment: Name");
+
+			assert.strictEqual(oRowContext.getProperty("Name"), undefined,
+				"'Name' not in the list's cache because the detail has its own");
 		});
 	});
 
