@@ -800,5 +800,36 @@
 				"maxItems": 8
 			}
 		}
+	},
+	"listDefaultIcons": {
+		"sap.app": {
+			"id": "cardsdemo.listContent.listDefaultIcons",
+			"type": "card"
+		},
+		"sap.card": {
+			"data": {
+				"request": {
+					"url": "./cardcontent/someitems.json"
+				}
+			},
+			"type": "List",
+			"header": {
+				"title": "List with Default Icons",
+				"icon": {
+					"src": "",
+					"shape": "Square"
+				}
+			},
+			"content": {
+				"item": {
+					"icon": {
+						"src": "",
+						"shape": "Circle"
+					},
+					"title": "{Name}"
+				},
+				"maxItems": 4
+			}
+		}
 	}
 }

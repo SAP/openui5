@@ -61,7 +61,7 @@ sap.ui.define([
 
 		// render image
 		// ListContentItem specific
-		if (oLI.getIcon() || oLI.getIconInitials()) {
+		if (!oLI.isPropertyInitial("icon") || !oLI.isPropertyInitial("iconInitials")) {
 			rm.renderControl(oLI._getAvatar());
 		}
 

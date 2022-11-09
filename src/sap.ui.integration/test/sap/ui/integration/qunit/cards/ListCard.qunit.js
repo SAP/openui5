@@ -1257,6 +1257,80 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Default icons when src is empty string and shape is 'Circle'", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oAvatarIcon = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar()._getIcon(),
+				sPersonPlaceHolder = "sap-icon://person-placeholder";
+
+			// Assert
+			assert.strictEqual(oAvatarIcon.getSrc(), sPersonPlaceHolder, "Should show 'sap-icon://person-placeholder' when icon src is empty and the shape is 'Circle'.");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "testListCard"
+			},
+			"sap.card": {
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [{
+							"src": ""
+						}]
+					},
+					"item": {
+						"icon": {
+							"src": "{src}",
+							"shape": "Circle"
+						}
+					}
+				}
+			}
+		});
+	});
+
+	QUnit.test("Default icons when src is empty string and shape is 'Square'", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oAvatarIcon = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar()._getIcon(),
+				sProduct = "sap-icon://product";
+
+			// Assert
+			assert.strictEqual(oAvatarIcon.getSrc(), sProduct, "Should show 'sap-icon://product' when icon src is empty and the shape is 'Square'.");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "testListCard"
+			},
+			"sap.card": {
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [{
+							"src": ""
+						}]
+					},
+					"item": {
+						"icon": {
+							"src": "{src}",
+							"shape": "Square"
+						}
+					}
+				}
+			}
+		});
+	});
+
 	QUnit.module("Loading of the Microchart library", {
 		beforeEach: function () {
 			this.oCard = new Card({

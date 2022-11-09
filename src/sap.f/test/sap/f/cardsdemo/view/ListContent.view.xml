@@ -85,6 +85,11 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
+			<w:Card id="card10" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{listContentManifests>/listDefaultIcons}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
 		</f:GridContainer>
 	</Page>
 </mvc:View>
