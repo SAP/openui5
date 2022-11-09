@@ -331,9 +331,6 @@ sap.ui.define([
 					}
 				}
 			});
-			_Helper.updateAll(that.mChangeListeners, vGroupNodeOrPath, oGroupNode,
-				{"@$ui5.node.groupLevelCount" :
-					_Helper.getPrivateAnnotation(oGroupNode, "groupLevelCount")});
 			return SyncPromise.resolve(iCount);
 		}
 
