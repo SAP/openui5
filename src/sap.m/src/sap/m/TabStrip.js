@@ -236,7 +236,11 @@ function(
 		 *
 		 * @type {number}
 		 */
-		TabStrip.SCROLL_ANIMATION_DURATION = Configuration.getAnimation() ? 500 : 0;
+		TabStrip.SCROLL_ANIMATION_DURATION = (function(){
+			var sAnimationMode = Configuration.getAnimationMode();
+
+			return (sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal ? 500 : 0);
+		})();
 
 
 		/**
