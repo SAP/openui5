@@ -116,7 +116,9 @@ sap.ui.define([
 				this.getRouter().initialize();
 			}.bind(this));
 
-			this.getCookiesManagement().enable(this.getRootControl());
+			this.getCookiesManagement().then(function(oCookieMgmtComponent) {
+				oCookieMgmtComponent.enable(this.getRootControl());
+			}.bind(this));
 		},
 
 		/**
@@ -142,7 +144,9 @@ sap.ui.define([
 		destroy : function () {
 			this._oErrorHandler.destroy();
 
-			this._oCookiesComponent && this._oCookiesComponent.destroy();
+			this._pCookiesComponent && this._pCookiesComponent.then(function(oCookiesMgmtComponent) {
+				oCookiesMgmtComponent.destroy();
+			});
 
 			// call the base component's destroy function
 			UIComponent.prototype.destroy.apply(this, arguments);
@@ -172,18 +176,14 @@ sap.ui.define([
 		getCookiesManagement: function() {
 			var sId = "sap.ui.documentation.sdk.cookieSettingsDialog";
 
-			if (!this._oCookiesComponent) {
-				this._oCookiesComponent = this.runAsOwner(function() {
-					this._oCookiesComponent = oCore.createComponent({
-						id: 'cookiesComp-' + sId,
-						name: sId
-					});
-
-					return this._oCookiesComponent;
-				}.bind(this));
+			if (!this._pCookiesComponent) {
+				this._pCookiesComponent = this.createComponent({
+					usage: "cookieSettingsDialog",
+					id: 'cookiesComp-' + sId
+				});
 			}
 
-			return this._oCookiesComponent;
+			return this._pCookiesComponent;
 		}
 	});
 

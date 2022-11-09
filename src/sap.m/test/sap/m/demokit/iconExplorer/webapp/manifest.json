@@ -53,7 +53,16 @@
 				"sap.f": {
 				},
 				"sap.ui.layout" : {
+				},
+				"sap.ui.documentation": {
+					"lazy": true
 				}
+			}
+		},
+
+		"componentUsages": {
+			"cookieSettingsDialog": {
+				"name": "sap.ui.documentation.sdk.cookieSettingsDialog"
 			}
 		},
 

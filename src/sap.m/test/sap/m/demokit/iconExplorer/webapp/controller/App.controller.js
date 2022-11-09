@@ -36,7 +36,9 @@ sap.ui.define([
 				// apply content density mode to root view
 				this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 
-				oComponent.getCookiesManagement().enable(oComponent.getRootControl());
+				oComponent.getCookiesManagement().then(function(oCookieMgmtComponent) {
+					oCookieMgmtComponent.enable(oComponent.getRootControl());
+				});
 			}
 		});
 
