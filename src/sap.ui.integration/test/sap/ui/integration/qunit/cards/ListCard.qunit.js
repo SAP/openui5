@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/integration/cards/ListContent",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/qunit/utils/MemoryLeakCheck"
+	"sap/ui/qunit/utils/MemoryLeakCheck",
+	"sap/ui/qunit/QUnitUtils"
 ], function (
 	mLibrary,
 	Core,
@@ -15,7 +16,8 @@ sap.ui.define([
 	ListContent,
 	CardActions,
 	Card,
-	MemoryLeakCheck
+	MemoryLeakCheck,
+	QUnitUtils
 ) {
 	"use strict";
 
@@ -1511,5 +1513,53 @@ sap.ui.define([
 		});
 
 		return oListContent;
+	});
+
+	QUnit.module("List Card Rendering", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Rounded corners is applied on focusin of the last item", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oContent = this.oCard.getCardContent();
+			Core.applyChanges();
+			var aItems = oContent.getInnerList().getItems();
+			var oFirstItem = aItems[0];
+			var oLastItem = aItems[aItems.length - 1];
+
+			// Assert
+			assert.notOk(oFirstItem.getDomRef().classList.contains("sapUiIntLCIRoundedCorners"), "Rounded corners class should NOT be applied on the first item");
+			assert.notOk(oLastItem.getDomRef().classList.contains("sapUiIntLCIRoundedCorners"), "Rounded corners class should NOT be applied on the last item yet");
+
+			// Act
+			QUnitUtils.triggerEvent("focusin", oFirstItem.getDomRef());
+
+			// Assert
+			assert.notOk(oFirstItem.getDomRef().classList.contains("sapUiIntLCIRoundedCorners"), "Rounded corners class should NOT be applied on the first item");
+
+			// Act
+			QUnitUtils.triggerEvent("focusin", oLastItem.getDomRef());
+
+			// Assert
+			assert.ok(oLastItem.getDomRef().classList.contains("sapUiIntLCIRoundedCorners"), "Rounded corners class should be applied on the last item");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_ListCard);
 	});
 });
