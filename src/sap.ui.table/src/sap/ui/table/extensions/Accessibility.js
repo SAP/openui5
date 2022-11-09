@@ -851,7 +851,7 @@ sap.ui.define([
 						if (oTable.getBinding()) {
 							if (mParams && mParams.row) {
 								if (mParams.row.isExpandable()) {
-									var sText = TableUtils.getResourceText(mParams.row.isExpanded() ? "TBL_COLLAPSE" : "TBL_EXPAND");
+									var sText = TableUtils.getResourceText("TBL_COLLAPSE_EXPAND");
 									if (oTable._getShowStandardTooltips()) {
 										mAttributes["title"] = sText;
 									} else {
