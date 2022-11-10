@@ -589,6 +589,7 @@ sap.ui.define([
 
 	MDCTable.prototype.onShow = function () {
 		if (this._oTable) {
+			_adjustTable.call(this);
 			// check if selection mode is fine
 			var sSelectionMode = FilterableListContent.prototype._isSingleSelect.apply(this) ? MDCSelectionMode.SingleMaster : MDCSelectionMode.Multi;
 			if (this._oTable.getSelectionMode() === MDCSelectionMode.None) { // only set automatically if not provided from outside (and do it only once)

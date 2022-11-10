@@ -92,6 +92,7 @@ sap.ui.define([
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
 	var P13nMode = MdcLibrary.TableP13nMode;
+	var TableType = MdcLibrary.TableType;
 	var aTestedTypes = ["Table", "ResponsiveTable"];
 	var sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
 
@@ -143,7 +144,7 @@ sap.ui.define([
 	function waitForBindingInfo(oTable, iTimeout) {
 		return poll(function() {
 			var oInnerTable = oTable._oTable;
-			return oInnerTable && oInnerTable.getBindingInfo(oTable._getStringType() === "Table" ? "rows" : "items");
+			return oInnerTable && oInnerTable.getBindingInfo(oTable._isOfType("Table", true) ? "rows" : "items");
 		}, iTimeout);
 	}
 
@@ -225,12 +226,12 @@ sap.ui.define([
 
 	QUnit.test("Create UI5 Grid Table (default) after initialise", function(assert) {
 		assert.ok(!this.oTable._oTable);
-		assert.ok(!this.oTable._oTemplate);
+		assert.ok(!this.oTable._oRowTemplate);
 		assert.ok(!this.oTable._oToolbar);
 
 		return this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-			assert.ok(!this.oTable._oTemplate);
+			assert.ok(!this.oTable._oRowTemplate);
 			assert.ok(this.oTable._oToolbar);
 			assert.equal(this.oTable._oToolbar.getStyle(), "Clear", "Default toolbar style is set");
 		}.bind(this));
@@ -370,7 +371,7 @@ sap.ui.define([
 			this.oTable.destroy();
 
 			assert.ok(!this.oTable._oTable);
-			assert.ok(!this.oTable._oTemplate);
+			assert.ok(!this.oTable._oRowTemplate);
 			assert.strictEqual(oToolbar.bIsDestroyed, true);
 		}.bind(this));
 	});
@@ -395,12 +396,12 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.ok(!this.oTable._oTable);
-		assert.ok(!this.oTable._oTemplate);
+		assert.ok(!this.oTable._oRowTemplate);
 		assert.ok(!this.oTable._oToolbar);
 
 		return this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oTable.isA("sap.m.Table"));
-			assert.ok(this.oTable._oTemplate.isA("sap.m.ColumnListItem"));
+			assert.ok(this.oTable._oRowTemplate.isA("sap.m.ColumnListItem"));
 			assert.ok(this.oTable._oTable.getAutoPopinMode(), "autoPopinMode is true");
 			assert.strictEqual(this.oTable._oTable.getContextualWidth(), "Auto", "contextualWidth='Auto'");
 			assert.ok(this.oTable._oToolbar);
@@ -718,7 +719,7 @@ sap.ui.define([
 		return this.oTable.initialized().then(function() {
 			this.oTable.destroy();
 			assert.ok(!this.oTable._oTable);
-			assert.ok(!this.oTable._oTemplate);
+			assert.ok(!this.oTable._oRowTemplate);
 		}.bind(this));
 	});
 
@@ -739,11 +740,11 @@ sap.ui.define([
 
 			this.oTable.initialized().then(function() {
 				assert.ok(this.oTable._oTable.isA("sap.m.Table"));
-				assert.ok(this.oTable._oTemplate);
-				assert.ok(this.oTable._oTemplate.isA("sap.m.ColumnListItem"));
+				assert.ok(this.oTable._oRowTemplate);
+				assert.ok(this.oTable._oRowTemplate.isA("sap.m.ColumnListItem"));
 				assert.equal(this.oTable._oTable.getGrowingThreshold(), this.oTable.getThreshold());
 				fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
-				fInnerTemplateDestroySpy = sinon.spy(this.oTable._oTemplate, "destroy");
+				fInnerTemplateDestroySpy = sinon.spy(this.oTable._oRowTemplate, "destroy");
 
 				// Setting same table type does nothing
 				this.oTable.setType("ResponsiveTable");
@@ -753,13 +754,18 @@ sap.ui.define([
 				assert.ok(fInnerTemplateDestroySpy.notCalled);
 				assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), false);
 
-				// Setting same table type does nothing
 				this.oTable.setType(new ResponsiveTableType({
 					growingMode: "Scroll"
 				}));
 
-				assert.ok(fInnerTableDestroySpy.notCalled);
-				assert.ok(fInnerTemplateDestroySpy.notCalled);
+				assert.ok(fInnerTableDestroySpy.calledOnce);
+				assert.ok(fInnerTemplateDestroySpy.calledOnce);
+
+				return this.oTable.initialized();
+			}.bind(this)).then(function() {
+				fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
+				fInnerTemplateDestroySpy = sinon.spy(this.oTable._oRowTemplate, "destroy");
+
 				// growingScrollToLoad of the inner table will be set
 				assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), true);
 				// growing of inner table is set
@@ -785,13 +791,12 @@ sap.ui.define([
 				// growing of inner table is set
 				assert.equal(this.oTable._oTable.getGrowing(), false);
 
-
 				this.oTable.setType("Table");
 				assert.ok(fInnerTableDestroySpy.calledOnce);
 				assert.ok(fInnerTemplateDestroySpy.calledOnce);
 				this.oTable.initialized().then(function() {
 					assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-					assert.ok(!this.oTable._oTemplate);
+					assert.ok(!this.oTable._oRowTemplate);
 					assert.equal(this.oTable._oTable.getThreshold(), this.oTable.getThreshold());
 					done();
 				}.bind(this));
@@ -808,9 +813,9 @@ sap.ui.define([
 
 		this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oTable.isA("sap.m.Table"));
-			assert.ok(this.oTable._oTemplate.isA("sap.m.ColumnListItem"));
+			assert.ok(this.oTable._oRowTemplate.isA("sap.m.ColumnListItem"));
 			fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
-			fInnerTemplateDestroySpy = sinon.spy(this.oTable._oTemplate, "destroy");
+			fInnerTemplateDestroySpy = sinon.spy(this.oTable._oRowTemplate, "destroy");
 
 			// Setting same table type does nothing
 			this.oTable.setType("ResponsiveTable");
@@ -824,7 +829,7 @@ sap.ui.define([
 
 			this.oTable.initialized().then(function() {
 				assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-				assert.ok(!this.oTable._oTemplate);
+				assert.ok(!this.oTable._oRowTemplate);
 				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.AutoRowMode"), "The inner GridTable has an auto row mode");
 				assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 10);
 
@@ -832,13 +837,17 @@ sap.ui.define([
 				fRowModeDestroySpy = sinon.spy(this.oTable._oTable.getRowMode(), "destroy");
 				bHideEmptyRows = this.oTable._oTable.getRowMode().getHideEmptyRows();
 
-				// Setting same table type only updates properties
 				this.oTable.setType(new GridTableType({
 					rowCountMode: "Fixed"
 				}));
 
-				assert.ok(fInnerTableDestroySpy.notCalled);
+				assert.ok(fInnerTableDestroySpy.calledOnce);
 				assert.ok(fRowModeDestroySpy.calledOnce);
+
+				return this.oTable.initialized();
+			}.bind(this)).then(function() {
+				fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
+
 				// inner table is updated
 				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.FixedRowMode"), "The inner GridTable has a fixed row mode");
 				assert.equal(this.oTable._oTable.getRowMode().getRowCount(), 10);
@@ -886,9 +895,11 @@ sap.ui.define([
 				// Setting same table type only updates properties
 				this.oTable.setType("Table");
 
-				assert.ok(fInnerTableDestroySpy.notCalled);
-				assert.ok(fRowModeDestroySpy.notCalled);
-				// inner table is updated to defaults
+				assert.ok(fInnerTableDestroySpy.calledOnce);
+				assert.ok(fRowModeDestroySpy.calledOnce);
+
+				return this.oTable.initialized();
+			}.bind(this)).then(function() {
 				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.AutoRowMode"), "The inner GridTable has an auto row mode");
 				assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 10);
 				done();
@@ -1051,7 +1062,7 @@ sap.ui.define([
 		}.bind(this)).then(function() {
 			var aMDCColumns = this.oTable.getColumns();
 			var aInnerColumns = this.oTable._oTable.getColumns();
-			var oInnerColumnListItem = this.oTable._oTemplate;
+			var oInnerColumnListItem = this.oTable._oRowTemplate;
 			var oFirstInnerItem = this.oTable._oTable.getItems()[0];
 
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
@@ -1603,25 +1614,22 @@ sap.ui.define([
 	QUnit.test("rearrange columns", function(assert) {
 		var done = assert.async();
 		var fMoveColumnSpy = sinon.spy(TableSettings, "moveColumn");
-		var fMoveItemSpy = sinon.spy(TableSettings, "_moveItem");
 		//move from 0 --> 1
 		fnRearrangeTest.bind(this)(0, 1).then(function() {
 			assert.ok(fMoveColumnSpy.calledOnce);
-			assert.ok(fMoveItemSpy.calledOnce);
-			assert.ok(fMoveColumnSpy.calledWithExactly(this.oTable, 0, 1));
+			assert.ok(fMoveColumnSpy.calledWithExactly(this.oTable, this.oTable.getColumns()[0], 1));
 			fMoveColumnSpy.restore();
-			fMoveItemSpy.restore();
 			done();
 		}.bind(this));
 	});
 
 	QUnit.test("rearrange columns (similar index) - no change should be created", function(assert) {
 		var done = assert.async();
-		var fMoveItemSpy = sinon.spy(TableSettings, "_moveItem");
+		var fCreateChanges = sinon.spy(this.oTable.getEngine(), "createChanges");
 		//move from 0 --> 0
 		fnRearrangeTest.bind(this)(0, 0).then(function() {
-			assert.ok(!fMoveItemSpy.calledOnce);
-			fMoveItemSpy.restore();
+			assert.ok(fCreateChanges.notCalled);
+			fCreateChanges.restore();
 			done();
 		});
 	});
@@ -1659,7 +1667,7 @@ sap.ui.define([
 		return oTable.initialized().then(function() {
 			var oTest3MDCColumn = oTable.getColumns()[2];
 			var oTest3InnerColumn = oTest3MDCColumn.getInnerColumn();
-			var oTest3Cell = oTable._oTemplate.getCells()[oTable._oTable.indexOfColumn(oTest3InnerColumn)];
+			var oTest3Cell = oTable._oRowTemplate.getCells()[oTable._oTable.indexOfColumn(oTest3InnerColumn)];
 			assert.strictEqual(oTest3MDCColumn.getHeader(), "Test3");
 			assert.strictEqual(oTable.indexOfColumn(oTest3MDCColumn), 2, "Column index is 2");
 			assert.strictEqual(oTest3InnerColumn.getOrder(), 2, "inner column has the correct order");
@@ -1704,7 +1712,8 @@ sap.ui.define([
 				payload: {
 					collectionPath: "/testPath"
 				}
-			}
+			},
+			type: new GridTableType()
 		});
 
 		this.oTable.setModel(oModel);
@@ -1868,9 +1877,8 @@ sap.ui.define([
 						var oSelectionPlugin = that.oTable._oTable.getPlugins()[0];
 
 						// reduce limit to force trigger error
-						that.oTable.setType(new GridTableType({
-							selectionLimit: 3
-						}));
+						that.oTable.getType().setSelectionLimit(3);
+
 						// check that notification is enabled
 						assert.ok(oSelectionPlugin.getEnableNotification(), true);
 
@@ -2508,19 +2516,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("MultiSelectionPlugin", function(assert) {
+		this.oTable.setType(new GridTableType());
 		return this.oTable.initialized().then(function() {
 			var oMultiSelectionPlugin = this.oTable._oTable.getPlugins()[0];
 			assert.ok(oMultiSelectionPlugin, "MultiSelectionPlugin is initialized");
 
 			assert.equal(oMultiSelectionPlugin.getLimit(), 200, "default selection limit is correct");
 			assert.ok(oMultiSelectionPlugin.getShowHeaderSelector(), "default value showHeaderSelector is correct");
-			this.oTable.setType(new GridTableType({
-				selectionLimit: 20,
-				showHeaderSelector: false
-			}));
-			assert.equal(this.oTable.getType().getSelectionLimit(), 20, "selection limit is updated");
+			this.oTable.getType().setSelectionLimit(20);
+			this.oTable.getType().setShowHeaderSelector(false);
 			assert.equal(oMultiSelectionPlugin.getLimit(), 20, "MultiSelectionPlugin.limit is updated");
-			assert.ok(!this.oTable.getType().getShowHeaderSelector(), "showHeaderSelector is updated");
 			assert.ok(!oMultiSelectionPlugin.getShowHeaderSelector(), "MultiSelectionPlugin.showHeaderSelector is updated");
 		}.bind(this));
 	});
@@ -3404,63 +3409,44 @@ sap.ui.define([
 	});
 
 	QUnit.test("test scrollToIndex", function(assert) {
-		var done = assert.async(), oScrollStub, oTable = this.oTable, n = 0;
+		var oScrollStub;
+		var oTable = this.oTable;
 
 		function testScroll(iIndex) {
-			return new Promise(function(resolve) {
-				oTable.scrollToIndex(iIndex).then(function () {
-					if (oTable._getStringType() === "Table" && iIndex === -1) {
-						iIndex = oTable._oTable.getBinding('rows') ? oTable._oTable.getBinding('rows').getLength() : 0;
-					}
+			return oTable.scrollToIndex(iIndex).then(function () {
+				if (oTable._isOfType("Table", true) && iIndex === -1) {
+					iIndex = 0;
+				}
 
-					n++;
-					assert.ok(oScrollStub.called, oScrollStub.propName + " was called");
-					assert.equal(oScrollStub.callCount, n, oScrollStub.propName + " was called only once");
-					assert.ok(oScrollStub.calledWith(iIndex), oScrollStub.propName + " was called with the correct parameter");
-					resolve();
-				});
+				assert.ok(oScrollStub.calledOnceWithExactly(iIndex), "Call to " + oScrollStub.propName + " with index " + iIndex);
+				oScrollStub.resetHistory();
 			});
 		}
 
-		oTable.initialized().then(function() {
+		return oTable.initialized().then(function() {
 			oScrollStub = sinon.stub(oTable._oTable, "_setFirstVisibleRowIndex");
-
-			return new Promise(function(resolve) {
-				resolve();
-			}).then(function() {
-				return testScroll(0);
-			}).then(function () {
-				return testScroll(5);
-			}).then(function () {
-				return testScroll(-1);
-			}).then(function () {
-				return testScroll(10000);
-			}).then(function () {
-				oScrollStub.restore();
-				return Promise.resolve();
-			});
 		}).then(function() {
-			oTable.setType("ResponsiveTable").initialized().then(function() {
-
-				oScrollStub = sinon.stub(oTable._oTable, "scrollToIndex");
-				oScrollStub.resolves();
-				n = 0;
-
-				return new Promise(function(resolve) {
-					resolve();
-				}).then(function() {
-					return testScroll(0);
-				}).then(function () {
-					return testScroll(5);
-				}).then(function () {
-					return testScroll(-1);
-				}).then(function () {
-					return testScroll(10000);
-				}).then(function () {
-					oScrollStub.restore();
-					done();
-				});
-			});
+			return testScroll(0);
+		}).then(function () {
+			return testScroll(5);
+		}).then(function () {
+			return testScroll(-1);
+		}).then(function () {
+			return testScroll(10000);
+		}).then(function () {
+			oTable.setType("ResponsiveTable");
+			return oTable.initialized();
+		}).then(function() {
+			oScrollStub = sinon.stub(oTable._oTable, "scrollToIndex");
+			oScrollStub.resolves();
+		}).then(function() {
+			return testScroll(0);
+		}).then(function () {
+			return testScroll(5);
+		}).then(function () {
+			return testScroll(-1);
+		}).then(function () {
+			return testScroll(10000);
 		});
 	});
 
@@ -3608,7 +3594,7 @@ sap.ui.define([
 		}));
 
 		this.oTable.initialized().then(function() {
-			assert.strictEqual(this.oTable._oTemplate.getType(), "Inactive", "row template is Inactive since no rowPress event is attached");
+			assert.strictEqual(this.oTable._oRowTemplate.getType(), "Inactive", "row template is Inactive since no rowPress event is attached");
 			done();
 		}.bind(this));
 	});
@@ -3631,7 +3617,7 @@ sap.ui.define([
 		}));
 
 		this.oTable.initialized().then(function() {
-			assert.strictEqual(this.oTable._oTemplate.getType(), "Active", "row template type is Active since rowPress event is attached");
+			assert.strictEqual(this.oTable._oRowTemplate.getType(), "Active", "row template type is Active since rowPress event is attached");
 			done();
 		}.bind(this));
 	});
@@ -3648,7 +3634,7 @@ sap.ui.define([
 		oTable.destroy();
 
 		assert.ok(!oTable._oTable);
-		assert.ok(!oTable._oTemplate);
+		assert.ok(!oTable._oRowTemplate);
 		assert.ok(!oTable._oToolbar);
 		// Toolbar is destroyed
 		assert.strictEqual(oToolbar.bIsDestroyed, true);
@@ -4095,7 +4081,7 @@ sap.ui.define([
 			var oTable = this.oTable || oMDCTable;
 			var oFilterInfoBar;
 
-			if (oTable._bMobileTable) {
+			if (oTable._isOfType(TableType.ResponsiveTable)) {
 				oFilterInfoBar = oTable._oTable.getInfoToolbar();
 			} else {
 				oFilterInfoBar = oTable._oTable.getExtension()[1];
@@ -4489,7 +4475,7 @@ sap.ui.define([
 
 				switch (sTableType) {
 					case "ResponsiveTable":
-						assert.equal(oTable._oTemplate.getType(), "Navigation", "Type of the list item template");
+						assert.equal(oTable._oRowTemplate.getType(), "Navigation", "Type of the list item template");
 						break;
 					default:
 						assert.ok(oTable._oTable.getRowActionTemplate(), "Row action template exists");
@@ -4510,7 +4496,7 @@ sap.ui.define([
 
 				switch (sTableType) {
 					case "ResponsiveTable":
-						assert.equal(oTable._oTemplate.getType(), "Inactive", "Type of the list item template");
+						assert.equal(oTable._oRowTemplate.getType(), "Inactive", "Type of the list item template");
 						break;
 					default:
 						assert.notOk(oTable._oTable.getRowActionTemplate(), "Row action template does not exist");
@@ -4522,11 +4508,11 @@ sap.ui.define([
 
 				switch (sTableType) {
 					case "ResponsiveTable":
-						assert.equal(oTable._oTemplate.getType(), "Navigation", "Type of the list item template");
-						assert.ok(oTable._oTemplate.getBindingInfo("type").formatter, "Type has formatter");
-						var sType = oTable._oTemplate.getBindingInfo("type").formatter("Test");
+						assert.equal(oTable._oRowTemplate.getType(), "Navigation", "Type of the list item template");
+						assert.ok(oTable._oRowTemplate.getBindingInfo("type").formatter, "Type has formatter");
+						var sType = oTable._oRowTemplate.getBindingInfo("type").formatter("Test");
 						assert.equal(sType, "Navigation", "Type is Navigation when boolean is true");
-						sType = oTable._oTemplate.getBindingInfo("type").formatter("False");
+						sType = oTable._oRowTemplate.getBindingInfo("type").formatter("False");
 						assert.equal(sType, "Inactive", "Type is Navigation when boolean is false");
 						break;
 					default:
@@ -5566,7 +5552,7 @@ sap.ui.define([
 
 
 		this.oTable.initialized().then(function() {
-			var oBindingStub = sinon.stub(this.oTable, "_getRowBinding");
+			var oBindingStub = sinon.stub(this.oTable, "getRowBinding");
 			oBindingStub.returns(oListBinding);
 
 			var oInnerBindingStub = sinon.stub(this.oTable._oTable, "getBinding");

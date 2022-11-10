@@ -55,7 +55,7 @@ sap.ui.define([
 			oBindingInfo.filters = [oTable._oMessageFilter];
 		}
 
-		if (oTable._bMobileTable) {
+		if (oTable._isOfType(TableType.ResponsiveTable)) {
 			var oGroupedProperty = oTable._getGroupedProperties()[0];
 
 			if (oGroupedProperty) {
@@ -162,9 +162,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	TableDelegate.rebind = function(oTable, oBindingInfo) {
-		if (oTable._oTable) {
-			oTable._oTable.bindRows(oBindingInfo);
-		}
+		oTable._getType().bindRows(oBindingInfo);
 	};
 
 	/**
@@ -238,7 +236,7 @@ sap.ui.define([
 	TableDelegate.getSupportedP13nModes = function(oTable) {
 		var aSupportedModes = [P13nMode.Column, P13nMode.Sort, P13nMode.Filter];
 
-		if (oTable._getStringType() === TableType.ResponsiveTable) {
+		if (oTable._isOfType(TableType.ResponsiveTable)) {
 			aSupportedModes.push(P13nMode.Group);
 		}
 

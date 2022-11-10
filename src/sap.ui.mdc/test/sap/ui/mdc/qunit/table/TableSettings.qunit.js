@@ -86,10 +86,7 @@ sap.ui.define([
 					assert.equal(that.oTable._oTable.getBinding("rows").getLength(), 2, "The table contains 2 rows");
 					assert.equal(that.oTable.getRowSettings(), null, "No row settings defined");
 
-					var oSettings = that.oTable._oTable.getRows()[0].getAggregation("_settings");
-					assert.equal(oSettings.getNavigated(), false, "Navigated is false by default");
-					assert.equal(oSettings.getHighlight(), "None", "No highlight by default");
-					assert.equal(oSettings.getHighlightText(), "", "No highlight text by default");
+					assert.equal(that.oTable._oTable.getRows()[0].getAggregation("_settings"), null, "No inner row settings defined");
 
 					// Set fixed bound values for settings
 					var oTableRowSettings = new RowSettings();
@@ -98,7 +95,7 @@ sap.ui.define([
 					that.oTable.setRowSettings(oTableRowSettings);
 					Core.applyChanges();
 
-					oSettings = that.oTable._oTable.getRows()[0].getAggregation("_settings");
+					var oSettings = that.oTable._oTable.getRows()[0].getAggregation("_settings");
 					assert.equal(oSettings.getNavigated(), true, "Fixed value for navigated");
 					assert.equal(oSettings.getHighlight(), "Error", "Fixed value for highlight");
 

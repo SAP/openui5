@@ -28,7 +28,7 @@ sap.ui.define([
         var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
 		var oAdaptationControl = this.getAdaptationControl();
 
-		if (oAdaptationControl.isA("sap.ui.mdc.Table") && oAdaptationControl._getStringType() === "ResponsiveTable") {
+		if (oAdaptationControl.isA("sap.ui.mdc.Table") && oAdaptationControl._isOfType("ResponsiveTable")) {
 			oGroupPanel.setQueryLimit(1);
 		}
 

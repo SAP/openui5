@@ -1,8 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/library", "sap/ui/mdc/Table", "sap/ui/mdc/table/Column", "sap/ui/mdc/table/CreationRow", "sap/ui/table/Table",
-	"sap/ui/table/rowmodes/AutoRowMode", "sap/m/Table","sap/ui/model/json/JSONModel"
-], function(Library, Table, Column, CreationRow, GridTable, GridTableAutoRowMode, ResponsiveTable, JSONModel) {
+	"sap/ui/mdc/library", "sap/ui/mdc/Table", "sap/ui/mdc/table/CreationRow", "sap/ui/model/json/JSONModel"
+], function(Library, Table, CreationRow, JSONModel) {
 	"use strict";
 
 	var TableType = Library.TableType;
@@ -11,12 +10,9 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oCreationRow = new CreationRow();
 			this.oMDCGridTable = new Table();
-			this.oMDCGridTable._oTable = new GridTable();
-			this.oMDCGridTable._oTable.setRowMode(new GridTableAutoRowMode());
 			this.oMDCResponsiveTable = new Table({
 				type: TableType.ResponsiveTable
 			});
-			this.oMDCResponsiveTable._oTable = new ResponsiveTable();
 
 			return Promise.all([this.oMDCGridTable.initialized(), this.oMDCResponsiveTable.initialized()]);
 		},

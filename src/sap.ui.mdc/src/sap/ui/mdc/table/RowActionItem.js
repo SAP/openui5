@@ -113,5 +113,11 @@ sap.ui.define([
 		return oIcon;
 	};
 
+	RowActionItem.prototype._onPress = function(mPropertyBag) {
+		this.firePress({
+			bindingContext: mPropertyBag.bindingContext
+		});
+	};
+
 	return RowActionItem;
 });

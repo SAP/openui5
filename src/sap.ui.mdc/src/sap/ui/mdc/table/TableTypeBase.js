@@ -3,9 +3,17 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element"
-], function(Element) {
+	"../library",
+	"sap/ui/core/Element",
+	"sap/ui/core/dnd/DragDropInfo"
+], function(
+	library,
+	Element,
+	DragDropInfo
+) {
 	"use strict";
+
+	var P13nMode = library.TableP13nMode;
 
 	/**
 	 * Constructor for a new <code>TableTypeBase</code>.
@@ -30,57 +38,128 @@ sap.ui.define([
 		}
 	});
 
-	TableTypeBase.prototype.setProperty = function(sProperty, vValue, bSupressInvalidate) {
-		Element.prototype.setProperty.call(this, sProperty, vValue, true);
-		var oTable = this.getRelevantTable();
-		if (oTable) {
-			this.updateRelevantTableProperty(oTable, sProperty, vValue);
+	TableTypeBase.prototype.getSupportedP13nModes = function() {
+		return Object.keys(P13nMode);
+	};
+
+	TableTypeBase.prototype.callHook = function(sHookName, oObject, mPropertyBag) {
+		var sFunctionName = "_on" + sHookName;
+
+		if (!oObject || !(oObject[sFunctionName] instanceof Function)) {
+			throw new Error(this + ": Hook '" + sHookName + "' does not exist on " + oObject);
 		}
+
+		oObject[sFunctionName].call(oObject, mPropertyBag);
+	};
+
+	TableTypeBase.prototype.getTable = function() {
+		var oTable = this.getParent();
+		return oTable && oTable.isA("sap.ui.mdc.Table") ? oTable : null;
+	};
+
+	TableTypeBase.prototype.getInnerTable = function() {
+		var oTable = this.getTable();
+		return oTable ? oTable._oTable : null;
+	};
+
+	TableTypeBase.prototype.setProperty = function(sProperty, vValue) {
+		Element.prototype.setProperty.apply(this, arguments);
+		this.updateTableByProperty(sProperty, vValue);
 		return this;
 	};
 
-	// Should be implemented in the actual types
-	TableTypeBase.prototype.updateRelevantTableProperty = function(oTable, sProperty, vValue) {
-
-	};
-
-	TableTypeBase.prototype.getRelevantTable = function() {
-		var oTable = this.getParent();
-		if (oTable && oTable.isA("sap.ui.mdc.Table")) {
-			// get the right inner table
-			oTable = oTable._oTable;
-		} else {
-			oTable = null;
-		}
-		return oTable;
-	};
-
-	TableTypeBase.prototype.updateTableSettings = function(mAdditionalProperties) {
-		var mProperties = Object.assign({}, mAdditionalProperties, this.getMetadata().getProperties()), sProperty, oTable = this.getRelevantTable();
-		if (oTable) {
-			for (sProperty in mProperties) {
-				this.updateRelevantTableProperty(oTable, sProperty, this.getProperty(sProperty));
-			}
+	TableTypeBase.prototype.updateTable = function() {
+		for (var sProperty in this.getMetadata().getProperties()) {
+			this.updateTableByProperty(sProperty, this.getProperty(sProperty));
 		}
 	};
 
-	TableTypeBase.getSelectionMode = function(oTable) {
-		var sSelectionMode = oTable.getSelectionMode();
-		switch (sSelectionMode) {
-			case "Single":
-				sSelectionMode = oTable._bMobileTable ? "SingleSelectLeft" : "Single";
-				break;
-			case "SingleMaster":
-				sSelectionMode = oTable._bMobileTable ? "SingleSelectMaster" : "Single";
-				break;
-			case "Multi":
-				sSelectionMode = oTable._bMobileTable ? "MultiSelect" : "MultiToggle";
-				break;
-			default:
-				sSelectionMode = "None";
+	TableTypeBase.prototype.getTableSettings = function() {
+		var oTable = this.getTable();
+
+		if (!oTable) {
+			return {};
 		}
-		return sSelectionMode;
+
+		var oDragDropInfo = new DragDropInfo({
+			sourceAggregation: "columns",
+			targetAggregation: "columns",
+			dropPosition: "Between",
+			enabled: oTable.getActiveP13nModes().includes(P13nMode.Column),
+			drop: [this._onColumnMove, this]
+		});
+		oDragDropInfo.bIgnoreMetadataCheck = true;
+
+		return {
+			dragDropConfig: [oDragDropInfo],
+			busyIndicatorDelay: oTable.getBusyIndicatorDelay(),
+			paste: [this._onPaste, this]
+		};
 	};
+
+	TableTypeBase.prototype.getThreshold = function() {
+		var oTable = this.getTable();
+		var iThreshold = oTable ? oTable.getThreshold() : -1;
+		return iThreshold > -1 ? iThreshold : undefined;
+	};
+
+	TableTypeBase.prototype.getRowSettingsConfig = function() {
+		var oTable = this.getTable();
+		var oRowSettings = oTable ? oTable.getRowSettings() : null;
+		return oRowSettings ? oRowSettings.getAllSettings() : null;
+	};
+
+	TableTypeBase.prototype.getRowActionsConfig = function() {
+		var oTable = this.getTable();
+		var oRowSettings = oTable ? oTable.getRowSettings() : null;
+		return oRowSettings ? oRowSettings.getAllActions() : null;
+	};
+
+	TableTypeBase.prototype._onColumnMove = function(oEvent) {
+		var oTable = this.getTable();
+		var oInnerTable = this.getInnerTable();
+		var oDraggedColumn = oEvent.getParameter("draggedControl");
+		var oDroppedColumn = oEvent.getParameter("droppedControl");
+
+		if (oDraggedColumn === oDroppedColumn) {
+			return;
+		}
+
+		var sDropPosition = oEvent.getParameter("dropPosition");
+		var iDraggedIndex = oInnerTable.indexOfColumn(oDraggedColumn);
+		var iDroppedIndex = oInnerTable.indexOfColumn(oDroppedColumn);
+		var iNewIndex = iDroppedIndex + (sDropPosition == "Before" ? 0 : 1) + (iDraggedIndex < iDroppedIndex ? -1 : 0);
+
+		this.callHook("ColumnMove", oTable, {
+			column: oTable.getColumns()[iDraggedIndex],
+			newIndex: iNewIndex
+		});
+	};
+
+	TableTypeBase.prototype._onPaste = function(oEvent) {
+		this.callHook("Paste", this.getTable(), {
+			data: oEvent.getParameter("data")
+		});
+	};
+
+	// To be implemented in the subclass
+	TableTypeBase.prototype.loadModules = function() {return Promise.reject();};
+	TableTypeBase.prototype.updateTableByProperty = function(sProperty, vValue) {};
+	TableTypeBase.prototype.removeToolbar = function() {};
+	TableTypeBase.prototype.scrollToIndex = function(iIndex) {return Promise.reject();};
+	TableTypeBase.prototype.updateRowSettings = function() {};
+	TableTypeBase.prototype.createTable = function(sId) {};
+	TableTypeBase.prototype.getRowBinding = function() {};
+	TableTypeBase.prototype.bindRows = function(oBindingInfo) {};
+	TableTypeBase.prototype.isTableBound = function() {};
+	TableTypeBase.prototype.createRowTemplate = function(sId) {};
+	TableTypeBase.prototype.updateSelectionSettings = function() {};
+	TableTypeBase.prototype.insertFilterInfoBar = function(oFilterInfoBar, sAriaLabelId) {};
+	TableTypeBase.prototype.enableColumnResize = function() {};
+	TableTypeBase.prototype.disableColumnResize = function() {};
+	TableTypeBase.prototype.createColumnResizeMenuItem = function() {};
+	TableTypeBase.prototype.updateRowActions = function() {};
+	TableTypeBase.prototype.updateSortIndicator = function(oColumn, sSortOrder) {};
 
 	return TableTypeBase;
 });
