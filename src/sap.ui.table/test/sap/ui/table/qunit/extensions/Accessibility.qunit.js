@@ -1463,16 +1463,27 @@ sap.ui.define([
 
 	QUnit.test("ARIA Attributes of Tree Table Expand Icon", function(assert) {
 		var done = assert.async();
+		var $Elem;
 
 		oTreeTable.attachEventOnce("rowsUpdated", function() {
-			var $Elem = oTreeTable.$("rows-row0-col0").find(".sapUiTableTreeIcon");
-			assert.strictEqual($Elem.attr("role"), "button", "Tree icon role of expandable row");
+			$Elem = oTreeTable.$("rows-row0-col0").find(".sapUiTableTreeIcon");
+			assert.strictEqual($Elem.attr("role"), "button", "Expanded Tree icon role of expandable row");
+			assert.strictEqual($Elem.attr("aria-expanded"), "true", "Expanded Tree icon aria-expanded property");
+			assert.strictEqual($Elem.attr("aria-hidden"), "false", "Expanded Tree icon aria-hidden property");
+			assert.strictEqual($Elem.attr("title"), TableUtils.getResourceBundle().getText("TBL_COLLAPSE_EXPAND"), "Expanded Tree icon title property");
 
 			$Elem = oTreeTable.$("rows-row1-col0").find(".sapUiTableTreeIcon");
 			assert.strictEqual($Elem.attr("role"), "", "Tree icon role of leaf row");
+			assert.strictEqual($Elem.attr("aria-hidden"), "true", "Leaf Tree icon aria-hidden property");
 
 			done();
 		});
+
+		$Elem = oTreeTable.$("rows-row0-col0").find(".sapUiTableTreeIcon");
+		assert.strictEqual($Elem.attr("role"), "button", "Collapsed Tree icon role of expandable row");
+		assert.strictEqual($Elem.attr("aria-expanded"), "false", "Collapsed Tree icon aria-expanded property");
+		assert.strictEqual($Elem.attr("aria-hidden"), "false", "Collapsed Tree icon aria-hidden property");
+		assert.strictEqual($Elem.attr("title"), TableUtils.getResourceBundle().getText("TBL_COLLAPSE_EXPAND"), "Collapsed Tree icon title property");
 
 		oTreeTable.expand(0);
 		oCore.applyChanges();
