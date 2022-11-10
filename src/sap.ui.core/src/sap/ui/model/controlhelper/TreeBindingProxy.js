@@ -302,7 +302,6 @@ sap.ui.define(["sap/base/assert"], function (assert) {
 		var oBinding = this._oControl.getBinding();
 		var sTreeBinding = this._getBindingName(oBinding);
 		var aContexts = [];
-		var iLevelOffset = 0;
 
 		switch (sTreeBinding) {
 			case undefined:
@@ -312,42 +311,61 @@ sap.ui.define(["sap/base/assert"], function (assert) {
 					throw new Error("UnsupportedOperationException: OData V4 is not supported");
 				}
 				aContexts =  oBinding.getContexts(iStartIndex, iLength, iThreshold, bKeepCurrent);
+				aContexts.forEach(function (oContext) {
+					if (!oContext) {
+						return;
+					}
+
+					oContext._mProxyInfo = {};
+					oContext._mProxyInfo.level = getLevelFromObject(oContext, false);
+					oContext._mProxyInfo.isLeaf = oContext.getProperty("@$ui5.node.isExpanded")
+						=== undefined;
+					oContext._mProxyInfo.isExpanded = !!oContext
+						.getProperty("@$ui5.node.isExpanded");
+				}, this);
 				break;
 			default:
-				iLevelOffset = 1;
 				var aNodes = oBinding ? oBinding.getNodes(iStartIndex, iLength, iThreshold) : [];
-				aNodes.forEach(function (oNode) {
+				aNodes.forEach(function (oNode, iIndex) {
+					if (!oNode) {
+						return;
+					}
+
+					var iRowIndex = iIndex + iStartIndex;
 					var oContext = oNode.context;
-					if (oNode.context) {
+
+					if (oContext) {
+						oContext._mProxyInfo = {};
+
 						if (oNode.nodeState) {
-							oContext["_mProxyInfo"] = {};
-							oContext["_mProxyInfo"].nodeState = oNode.nodeState;
+							oContext._mProxyInfo.nodeState = oNode.nodeState;
 						}
+
+						oContext._mProxyInfo.level = getLevelFromObject(oNode, true);
+						oContext._mProxyInfo.isLeaf = !oBinding.nodeHasChildren(oNode);
+						oContext._mProxyInfo.isExpanded = oBinding.isExpanded(iRowIndex);
+
 						aContexts.push(oNode.context);
 					}
 				}, this);
 				break;
 		}
 
-		for (var i = 0; i < aContexts.length; i++) {
-			var iIndex = i + iStartIndex;
-			var oContext = aContexts[i];
-
-			if (!oContext) {
-				continue;
-			}
-
-			if (!oContext["_mProxyInfo"]) {
-				oContext["_mProxyInfo"] = {};
-			}
-
-			oContext["_mProxyInfo"].level = this.getLevel(iIndex) + iLevelOffset;
-			oContext["_mProxyInfo"].isLeaf = this.isLeaf(iIndex);
-			oContext["_mProxyInfo"].isExpanded = this.isExpanded(iIndex);
-		}
-
 		return aContexts;
 	};
+
+	/**
+	 * Retrieves the level property from a given object.
+	 * @param {object|sap.ui.model.Context} oObject object to retrieve the level from, either
+	 * a node or a binding context
+	 * @param {boolean} bIsNode indicates whether the given object is a node or a binding context
+	 * @returns {undefined|int} If the object does not exist, returns undefined otherwise the level
+	 */
+	function getLevelFromObject(oObject, bIsNode) {
+		if (oObject) {
+			return bIsNode ? oObject.level + 1 : oObject.getProperty("@$ui5.node.level");
+		}
+	}
 
 	function expandToV4(oBinding, iLevel) {
 		var oAggregation = Object.assign(oBinding.getAggregation(), {
@@ -474,10 +492,10 @@ sap.ui.define(["sap/base/assert"], function (assert) {
 					throw new Error("UnsupportedOperationException: OData V4 is not supported");
 				}
 				var oContext = this.getContextByIndex(iIndex);
-				return oContext ? oContext.getProperty("@$ui5.node.level") : undefined;
+				return getLevelFromObject(oContext, false);
 			default:
 				var oNode = this.getNodeByIndex(iIndex);
-				return oNode ? oNode.level : undefined;
+				return getLevelFromObject(oNode, true);
 		}
 	};
 
