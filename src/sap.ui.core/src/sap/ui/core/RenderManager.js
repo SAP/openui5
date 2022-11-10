@@ -220,6 +220,52 @@ sap.ui.define([
 			sOpenTag = "";
 		}
 
+		function writeAttribute(sName, vValue) {
+			aBuffer.push(" ", sName, "=\"", vValue, "\"");
+		}
+
+		function writeClasses(oElement) {
+			var oStyle = aStyleStack[aStyleStack.length - 1];
+
+			// Custom classes are added by default from the currently rendered control. If an oElement is given, this Element's custom style
+			// classes are added instead. If oElement === false, no custom style classes are added.
+			var aCustomClasses;
+			if (oElement) {
+				aCustomClasses = oElement.aCustomStyleClasses;
+			} else if (oElement === false) {
+				aCustomClasses = [];
+			} else {
+				aCustomClasses = oStyle.aCustomStyleClasses;
+			}
+
+			if (oStyle.aClasses || aCustomClasses) {
+				var aClasses = [].concat(oStyle.aClasses || [], aCustomClasses || []);
+				if (aClasses.length) {
+					writeAttribute("class", aClasses.join(" "));
+				}
+			}
+
+			if (!oElement) {
+				oStyle.aCustomStyleClasses = null;
+			}
+			oStyle.aClasses = null;
+		}
+
+		/**
+		 * Used by the string rendering APIs to write out the collected styles during writeStyles/openEnd/voidEnd
+		 * @param {sap.ui.core.RenderManager} oRm The <code>RenderManager</code> instance
+		 * @private
+		 */
+		function writeStyles() {
+			var oStyle = aStyleStack[aStyleStack.length - 1];
+			if (oStyle.aStyle && oStyle.aStyle.length) {
+				// Due to possible CSP restrictions we do not write styles into the HTML buffer. Instead, we store the styles in the aRenderingStyles array
+				// and add a ATTR_STYLE_KEY_MARKER attribute marker for which the value references the original style index in the aRenderingStyles array.
+				writeAttribute(ATTR_STYLE_KEY_MARKER, aRenderingStyles.push(oStyle.aStyle.join(" ")) - 1);
+			}
+			oStyle.aStyle = null;
+		}
+
 		//#################################################################################################
 		// Assertion methods for validating Semantic Rendering API calls
 		// These methods will be converted to inline asserts when assertion removal is supported
@@ -384,13 +430,7 @@ sap.ui.define([
 		 *  the actual writing of styles happens when {@link sap.ui.core.RenderManager#openEnd} or {@link sap.ui.core.RenderManager#voidEnd} are used.
 		 */
 		this.writeStyles = function() {
-			var oStyle = aStyleStack[aStyleStack.length - 1];
-			if (oStyle.aStyle && oStyle.aStyle.length) {
-				// Due to possible CSP restrictions we do not write styles into the HTML buffer. Instead, we store the styles in the aRenderingStyles array
-				// and add a ATTR_STYLE_KEY_MARKER attribute marker for which the value references the original style index in the aRenderingStyles array.
-				this.writeAttribute(ATTR_STYLE_KEY_MARKER, aRenderingStyles.push(oStyle.aStyle.join(" ")) - 1);
-			}
-			oStyle.aStyle = null;
+			writeStyles();
 			return this;
 		};
 
@@ -430,30 +470,7 @@ sap.ui.define([
 		 */
 		this.writeClasses = function(oElement) {
 			assert(!oElement || typeof oElement === "boolean" || BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be empty, a boolean, or an sap.ui.core.Element");
-			var oStyle = aStyleStack[aStyleStack.length - 1];
-
-			// Custom classes are added by default from the currently rendered control. If an oElement is given, this Element's custom style
-			// classes are added instead. If oElement === false, no custom style classes are added.
-			var aCustomClasses;
-			if (oElement) {
-				aCustomClasses = oElement.aCustomStyleClasses;
-			} else if (oElement === false) {
-				aCustomClasses = [];
-			} else {
-				aCustomClasses = oStyle.aCustomStyleClasses;
-			}
-
-			if (oStyle.aClasses || aCustomClasses) {
-				var aClasses = [].concat(oStyle.aClasses || [], aCustomClasses || []);
-				if (aClasses.length) {
-					this.writeAttribute("class", aClasses.join(" "));
-				}
-			}
-
-			if (!oElement) {
-				oStyle.aCustomStyleClasses = null;
-			}
-			oStyle.aClasses = null;
+			writeClasses(oElement);
 			return this;
 		};
 
@@ -482,12 +499,15 @@ sap.ui.define([
 			assert(!(sLastStyleMethod = sLastClassMethod = ""));
 			sOpenTag = sTagName;
 
-			this.write("<" + sTagName);
+			aBuffer.push("<" + sTagName);
 			if (vControlOrId) {
 				if (typeof vControlOrId == "string") {
 					this.attr("id", vControlOrId);
 				} else {
-					this.writeElementData(vControlOrId);
+					assert(vControlOrId && BaseObject.isA(vControlOrId, 'sap.ui.core.Element'), "vControlOrId must be an sap.ui.core.Element");
+
+					this.attr("id", vControlOrId.getId());
+					renderElementData(this, vControlOrId);
 				}
 			}
 
@@ -509,9 +529,9 @@ sap.ui.define([
 			assert(bExludeStyleClasses === undefined || bExludeStyleClasses === true, "The private parameter bExludeStyleClasses must be true or omitted!");
 			sOpenTag = "";
 
-			this.writeClasses(bExludeStyleClasses === true ? false : undefined);
-			this.writeStyles();
-			this.write(">");
+			writeClasses(bExludeStyleClasses === true ? false : undefined);
+			writeStyles();
+			aBuffer.push(">");
 			return this;
 		};
 
@@ -529,7 +549,7 @@ sap.ui.define([
 			assertValidName(sTagName, "tag");
 			assertOpenTagHasEnded();
 
-			this.write("</" + sTagName + ">");
+			aBuffer.push("</" + sTagName + ">");
 			return this;
 		};
 
@@ -570,9 +590,9 @@ sap.ui.define([
 			bVoidOpen = false;
 			sOpenTag = "";
 
-			this.writeClasses(bExludeStyleClasses ? false : undefined);
-			this.writeStyles();
-			this.write(">");
+			writeClasses(bExludeStyleClasses ? false : undefined);
+			writeStyles();
+			aBuffer.push(">");
 			return this;
 		};
 
@@ -590,7 +610,7 @@ sap.ui.define([
 		this.unsafeHtml = function(sHtml) {
 			assertOpenTagHasEnded();
 
-			this.write(sHtml);
+			aBuffer.push(sHtml);
 			return this;
 		};
 
@@ -613,8 +633,10 @@ sap.ui.define([
 		 */
 		this.text = function(sText) {
 			assertOpenTagHasEnded();
-
-			this.writeEscaped(sText);
+			if ( sText != null ) {
+				sText = encodeXML( String(sText) );
+				aBuffer.push(sText);
+			}
 			return this;
 		};
 
@@ -645,7 +667,7 @@ sap.ui.define([
 			if (sName == "style") {
 				aStyleStack[aStyleStack.length - 1].aStyle = [vValue];
 			} else {
-				this.writeAttributeEscaped(sName, vValue);
+				aBuffer.push(" ", sName, "=\"", encodeXML(String(vValue)), "\"");
 			}
 			return this;
 		};
@@ -664,9 +686,12 @@ sap.ui.define([
 		this.class = function(sClass) {
 			if (sClass) {
 				assertValidClass.apply(this, arguments);
-				this.addClass(encodeXML(sClass));
+				var oStyle = aStyleStack[aStyleStack.length - 1];
+				if (!oStyle.aClasses) {
+					oStyle.aClasses = [];
+				}
+				oStyle.aClasses.push(encodeXML(sClass));
 			}
-
 			return this;
 		};
 
@@ -679,15 +704,22 @@ sap.ui.define([
 		 * For more information, see {@link https://www.w3.org/TR/CSS/#indices}.
 		 *
 		 * @param {string} sName Name of the style property
-		 * @param {string} sValue Value of the style property
+		 * @param {string|float|int} vValue Value of the style property
 		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
-		this.style = function(sName, sValue) {
+		this.style = function(sName, vValue) {
 			assertValidStyle(sName);
 
-			this.addStyle(sName, sValue);
+			if (vValue != null && vValue != "") {
+				assert((typeof vValue === "string" || typeof vValue === "number"), "value must be a string or number");
+				var oStyle = aStyleStack[aStyleStack.length - 1];
+				if (!oStyle.aStyle) {
+					oStyle.aStyle = [];
+				}
+				oStyle.aStyle.push(sName + ": " + vValue + ";");
+			}
 			return this;
 		};
 
