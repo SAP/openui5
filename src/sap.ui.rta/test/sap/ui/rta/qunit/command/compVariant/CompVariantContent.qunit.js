@@ -64,9 +64,6 @@ sap.ui.define([
 			var oCommand;
 			var oSetModifiedStub = sandbox.stub();
 			this.oControl.setModified = oSetModifiedStub;
-			this.oControl.getModified = function () {
-				return false;
-			};
 			var oUpdateFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "updateVariantContent");
 			var oUndoVariantFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "revert").returns({
 				getRevertData: function () {
@@ -93,7 +90,8 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oControl, "compVariantContent", {
 				variantId: "myId",
 				persistencyKey: this.sPersistencyKey,
-				newContent: this.oNewContent
+				newContent: this.oNewContent,
+				isModifiedBefore: false
 			}, {})
 				.then(function(oCreatedCommand) {
 					oCommand = oCreatedCommand;
@@ -128,9 +126,6 @@ sap.ui.define([
 			var oCommand;
 			var oSetModifiedStub = sandbox.stub();
 			this.oControl.setModified = oSetModifiedStub;
-			this.oControl.getModified = function () {
-				return false;
-			};
 			var oUpdateFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "updateVariantContent");
 			var oUndoVariantFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "revert").returns({
 				getRevertData: function () {
@@ -156,7 +151,8 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oControl, "compVariantContent", {
 				variantId: "myId",
 				persistencyKey: this.sPersistencyKey,
-				newContent: this.oNewContent
+				newContent: this.oNewContent,
+				isModifiedBefore: true
 			}, {})
 				.then(function(oCreatedCommand) {
 					oCommand = oCreatedCommand;
@@ -166,14 +162,14 @@ sap.ui.define([
 					assert.deepEqual(oUpdateFlAPIStub.lastCall.args[0], mExpectedProperties, "the FL API was called with the correct properties");
 					assert.equal(oSetModifiedStub.callCount, 1, "the setModified was called..");
 					assert.equal(oSetModifiedStub.lastCall.args[0], true, "and set to true");
-					assert.equal(oCommand.getIsModifiedBefore(), false, "isModifiedBefore value stored correctly");
+					assert.equal(oCommand.getIsModifiedBefore(), true, "isModifiedBefore value stored correctly");
 					assertApplyVariantCalled.call(this, assert, oCommand, this.oNewContent);
 
 					return oCommand.undo();
 				}.bind(this)).then(function() {
 					assert.equal(oUndoVariantFlAPIStub.callCount, 1, "the undo function was called");
 					assert.equal(oSetModifiedStub.callCount, 2, "the setModified was called again..");
-					assert.equal(oSetModifiedStub.lastCall.args[0], false, "and set to false");
+					assert.equal(oSetModifiedStub.lastCall.args[0], true, "and set to true");
 					assertApplyVariantCalled.call(this, assert, oCommand, this.oOldContent);
 
 					return oCommand.execute();
@@ -181,7 +177,7 @@ sap.ui.define([
 					assert.equal(oUpdateFlAPIStub.callCount, 2, "the FL update function was called again");
 					assert.deepEqual(oUpdateFlAPIStub.lastCall.args[0], mExpectedProperties, "the FL API was called with the correct properties");
 					assert.equal(oSetModifiedStub.callCount, 3, "the setModified was called again..");
-					assert.equal(oCommand.getIsModifiedBefore(), false, "isModifiedBefore value stored correctly");
+					assert.equal(oCommand.getIsModifiedBefore(), true, "isModifiedBefore value stored correctly");
 					assert.equal(oSetModifiedStub.lastCall.args[0], true, "and set to true");
 					assertApplyVariantCalled.call(this, assert, oCommand, this.oNewContent);
 				}.bind(this));

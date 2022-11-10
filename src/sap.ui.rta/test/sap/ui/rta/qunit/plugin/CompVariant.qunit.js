@@ -534,12 +534,14 @@ sap.ui.define([
 					}
 				}
 			]);
+			sandbox.stub(this.oVariantManagementControl, "getModified").returns(false);
 			var pReturn = waitForCommandToBeCreated(this.oPlugin).then(function(oParameters) {
 				var oCommand = oParameters.command;
 				assert.strictEqual(oCommand.getVariantId(), "myKey", "the key is set");
 				assert.deepEqual(oCommand.getNewContent(), {foo: "myContent"}, "the new content is set");
 				assert.strictEqual(oCommand.getPersistencyKey(), "myPersistencyKey", "the persistency key is set");
 				assert.strictEqual(oCommand.getElement().getId(), "svm", "the SVM is passed as element key is set");
+				assert.strictEqual(oCommand.getIsModifiedBefore(), false, "the modified flag is passed");
 			});
 
 			var oMenuItem = this.oPlugin.getMenuItems([this.oOverlay])[0];
