@@ -99,7 +99,7 @@ sap.ui.define([], function () {
 			mAccState.roledescription = oItem.getAriaRoleDescription();
 		}
 
-		oRM.openStart("div", oControl.getId() + "-item-" + iIndex)
+		oRM.openStart("div", this.generateWrapperId(oItem, oControl))
 			.attr("tabindex", "0")
 			.accessibilityState(oControl, mAccState);
 
@@ -163,6 +163,10 @@ sap.ui.define([], function () {
 			styles: mStyles,
 			classes: aClasses
 		};
+	};
+
+	GridContainerRenderer.generateWrapperId = function (oItem, oGridContainer) {
+		return oGridContainer.getId() + "-item-" + oItem.getId();
 	};
 
 	/**

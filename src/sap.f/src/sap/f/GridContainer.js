@@ -944,6 +944,7 @@ sap.ui.define([
 			mStyles = mStylesInfo.styles,
 			aClasses = mStylesInfo.classes,
 			oWrapper = document.createElement("div");
+			oWrapper.setAttribute("id", GridContainerRenderer.generateWrapperId(oItem, this));
 			oWrapper.setAttribute("tabindex", "0");
 
 		mStyles.forEach(function (sValue, sKey) {
