@@ -140,7 +140,7 @@ sap.ui.define([
 			// in parse error and same Conditions - no update on property - so remove error here
 			// As ConditionModel triggers checkUpdate in forced mode on addCondition, setConditions... also unchanged conditions will be updated
 			// So e.g. if a variant is applied an error will be removed.
-			if (this._oContentFactory.getBoundProperty()) { // single value case
+			if (this._getContentFactory().getBoundProperty()) { // single value case
 				if (this._oManagedObjectModel) {
 					this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates (additionalValue will follow)
 				}
@@ -361,7 +361,7 @@ sap.ui.define([
 				return;
 			}
 
-			this._oContentFactory.retrieveDataType();
+			this._getContentFactory().retrieveDataType();
 			FieldBase.prototype._checkCreateInternalContent.apply(this, arguments);
 		}
 

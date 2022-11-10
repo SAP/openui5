@@ -153,21 +153,21 @@ sap.ui.define([
 
 		if (sName === "value" && !oBindingInfo.formatter) { // not if a formatter is used, as this needs to be executed
 			oBindingInfo.targetType = "raw"; // provide internal value to inner control
-			var oDataType = this._oContentFactory.getDataType();
+			var oDataType = this._getContentFactory().getDataType();
 			if (oBindingInfo.type && (!oDataType ||
 				oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
 				!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
 				!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
 				oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
-				this._oContentFactory.setDataType(oBindingInfo.type);
+				this._getContentFactory().setDataType(oBindingInfo.type);
 				if (oBindingInfo.type.isA("sap.ui.model.CompositeType") && oBindingInfo.parts) {
 					var aTypes = [];
 					for (var i = 0; i < oBindingInfo.parts.length; i++) {
 						aTypes.push(oBindingInfo.parts[i].type);
 					}
-					this._oContentFactory.setCompositeTypes(aTypes);
+					this._getContentFactory().setCompositeTypes(aTypes);
 				}
-				this._oContentFactory.updateConditionType();
+				this._getContentFactory().updateConditionType();
 				this.invalidate(); // as new inner control might be needed
 			}
 		}
@@ -187,7 +187,7 @@ sap.ui.define([
 			if (Context.hasChanged(this._oBindingContext, oBindingContext)) {
 				// BindingContextChanged -> if parsing error trigger update to remove valueState and wrong input
 				this._oBindingContext = oBindingContext;
-				this._oContentFactory.updateConditionType();
+				this._getContentFactory().updateConditionType();
 				if (this._bParseError || this.getFieldHelp()) { // In FieldHelp case InParameters might need an update
 					if (this._oManagedObjectModel) {
 						this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates
@@ -196,8 +196,8 @@ sap.ui.define([
 				}
 			}
 
-			if (!this._oContentFactory.getDataType()) {
-				this._oContentFactory.setDataType(oBinding.getType());
+			if (!this._getContentFactory().getDataType()) {
+				this._getContentFactory().setDataType(oBinding.getType());
 				this.invalidate(); // as new inner control might be needed
 			}
 		}
@@ -210,7 +210,7 @@ sap.ui.define([
 
 		var oBinding = this.getBinding("value");
 		if (oBinding) {
-			this._oContentFactory.setDataType(oBinding.getType());
+			this._getContentFactory().setDataType(oBinding.getType());
 		}
 
 	};
@@ -351,7 +351,7 @@ sap.ui.define([
 
 	function _adjustValue(vValue, vOldValue) {
 
-		var sDataType = this._oContentFactory.getDataType() ? this._oContentFactory.getDataType().getMetadata().getName() : this.getDataType(); // as type must not exist now
+		var sDataType = this._getContentFactory().getDataType() ? this._getContentFactory().getDataType().getMetadata().getName() : this.getDataType(); // as type must not exist now
 
 		if (vValue && vOldValue && (sDataType === "sap.ui.model.odata.type.Unit" || sDataType === "sap.ui.model.odata.type.Currency")
 			&& !vValue[2] && vOldValue[2] !== undefined) {
@@ -383,7 +383,7 @@ sap.ui.define([
 	function _compareValues(vValue1, vValue2, bUpdateCheck) {
 
 		var bEqual = vValue1 === vValue2;
-		var sDataType = this._oContentFactory.getDataType() ? this._oContentFactory.getDataType().getMetadata().getName() : this.getDataType(); // as type must not exist now
+		var sDataType = this._getContentFactory().getDataType() ? this._getContentFactory().getDataType().getMetadata().getName() : this.getDataType(); // as type must not exist now
 
 		if (!bEqual && this.getTypeUtil().getBaseType(sDataType) === BaseType.Unit && Array.isArray(vValue1) && Array.isArray(vValue2)) {
 			// in unit type the unit table is in there setting the value but not after parsing
@@ -422,13 +422,13 @@ sap.ui.define([
 			}
 
 			var oBinding = this.getBinding("value");
-			var oDataType = oBinding ? oBinding.getType() : this._oContentFactory.getDataType(); // use type from binding, not internal (might be a different one)
+			var oDataType = oBinding ? oBinding.getType() : this._getContentFactory().getDataType(); // use type from binding, not internal (might be a different one)
 			this._oTypeInitialization = this.getControlDelegate().initializeTypeFromBinding(this.getPayload(), oDataType, vValue);
 			this._bTypeInitialized = this._oTypeInitialization.bTypeInitialized;
-			if (this._bTypeInitialized && this._oContentFactory.getUnitOriginalType()) {
+			if (this._bTypeInitialized && this._getContentFactory().getUnitOriginalType()) {
 				// internal type already created, initialize it too
-				this.getControlDelegate().initializeInternalUnitType(this.getPayload(), this._oContentFactory.getDataType(), this._oTypeInitialization);
-				this.getControlDelegate().initializeInternalUnitType(this.getPayload(), this._oContentFactory.getUnitType(), this._oTypeInitialization);
+				this.getControlDelegate().initializeInternalUnitType(this.getPayload(), this._getContentFactory().getDataType(), this._oTypeInitialization);
+				this.getControlDelegate().initializeInternalUnitType(this.getPayload(), this._getContentFactory().getUnitType(), this._oTypeInitialization);
 			}
 		}
 
@@ -466,9 +466,9 @@ sap.ui.define([
 	Field.prototype._getResultForPromise = function(aConditions) {
 
 		var vValue;
-		if (aConditions.length === 0 && this._oContentFactory.getDataType()) {
+		if (aConditions.length === 0 && this._getContentFactory().getDataType()) {
 			// parse "" to get type specific initial value
-			vValue = this._oContentFactory.getDataType().parseValue("", "string", []); // we need the empty array when the type is Unit
+			vValue = this._getContentFactory().getDataType().parseValue("", "string", []); // we need the empty array when the type is Unit
 		} else if (aConditions.length === 1) {
 			vValue = aConditions[0].values[0];
 		}
@@ -542,7 +542,7 @@ sap.ui.define([
 
 	Field.prototype._checkCreateInternalContent = function() {
 
-		if (!this.bIsDestroyed && this._oContentFactory.getDataType() && !this._isPropertyInitial("editMode") && !this._isPropertyInitial("multipleLines")) {
+		if (!this.bIsDestroyed && this._getContentFactory().getDataType() && !this._isPropertyInitial("editMode") && !this._isPropertyInitial("multipleLines")) {
 			// If DataType is provided via Binding and EditMode is set the internal control can be created
 			// TODO: no control needed if just template for cloning
 			FieldBase.prototype._checkCreateInternalContent.apply(this, arguments);
