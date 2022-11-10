@@ -1017,6 +1017,19 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getOverflowToolbarConfig", function(assert) {
+
+		assert.ok(oField.isA("sap.m.IOverflowToolbarContent"), "Field is sap.m.IOverflowToolbarContent");
+
+		var oCheckConfig = {
+			canOverflow: true,
+			invalidationEvents: [],
+			propsUnrelatedToSize: ["conditions", "editMode", "display", "valueState", "valueStateText"] // only add properties taht are normally changed during livetime
+		};
+		var oConfig = oField.getOverflowToolbarConfig();
+		assert.deepEqual(oConfig, oCheckConfig, "Configuration");
+
+	});
 
 	var oFieldEditMulti, oFieldEditSingle, oFieldDisplay, oFieldSearch;
 

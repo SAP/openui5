@@ -135,6 +135,31 @@ sap.ui.define([
 		iParseError = 0;
 	};
 
+	QUnit.module("Field API", {
+		beforeEach: function() {
+			oField = new Field("F1");
+		},
+		afterEach: function() {
+			oField.destroy();
+			oField = undefined;
+			_cleanupEvents();
+		}
+	});
+
+	QUnit.test("getOverflowToolbarConfig", function(assert) {
+
+		assert.ok(oField.isA("sap.m.IOverflowToolbarContent"), "Field is sap.m.IOverflowToolbarContent");
+
+		var oCheckConfig = {
+			canOverflow: true,
+			invalidationEvents: [],
+			propsUnrelatedToSize: ["conditions", "editMode", "display", "valueState", "valueStateText", "value", "additionalValue"]
+		};
+		var oConfig = oField.getOverflowToolbarConfig();
+		assert.deepEqual(oConfig, oCheckConfig, "Configuration");
+
+	});
+
 	QUnit.module("Field rendering", {
 		beforeEach: function() {
 			oField = new Field("F1");
