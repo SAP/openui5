@@ -2114,7 +2114,6 @@ sap.ui.define([
 				"@$ui5.node.isExpanded" : false,
 				"@$ui5.node.level" : 0
 			},
-			oHelperMock = this.mock(_Helper),
 			oPromise,
 			aSpliced,
 			oUpdateAllExpectation;
@@ -2130,13 +2129,10 @@ sap.ui.define([
 		oCacheMock.expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
 			.returns(SyncPromise.resolve(oGroupNode));
-		oUpdateAllExpectation = oHelperMock.expects("updateAll")
+		oUpdateAllExpectation = this.mock(_Helper).expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
 				sinon.match.same(oGroupNode), {"@$ui5.node.isExpanded" : true})
 			.callThrough(); // "@$ui5.node.isExpanded" is checked once read has finished
-		oHelperMock.expects("updateAll")
-			.withExactArgs(oCache.mChangeListeners, "~path~", sinon.match.same(oGroupNode),
-			{"@$ui5.node.groupLevelCount" : 7});
 		oCacheMock.expects("createGroupLevelCache").never();
 		this.mock(oGroupLevelCache).expects("read").never();
 		oCacheMock.expects("addElements").never();
