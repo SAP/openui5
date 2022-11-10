@@ -44,24 +44,6 @@ sap.ui.define([
 		assert.equal(this.token1.getText(), text, "Input value is " + text);
 	});
 
-	QUnit.test("setter / getter editable", function(assert) {
-		var sTooltipText = oCore.getLibraryResourceBundle("sap.m").getText("TOKEN_ARIA_DELETABLE"),
-			isEditable = true;
-
-		assert.equal(this.token1.getEditable(), isEditable, "Token is editable");
-		assert.strictEqual(this.token1._getTooltip(this.token1, this.token1.getEditable()), sTooltipText, "Token has a tooltip");
-
-		isEditable = false;
-		this.token1.setEditable(isEditable);
-		assert.equal(this.token1.getEditable(), isEditable, "Token is not editable");
-		assert.ok(!this.token1._getTooltip(this.token1, this.token1.getEditable()), "Token does not have a tooltip");
-
-		isEditable = true;
-		this.token1.setEditable(isEditable);
-		assert.equal(this.token1.getEditable(), isEditable, "Token is editable");
-		assert.strictEqual(this.token1._getTooltip(this.token1, this.token1.getEditable()), sTooltipText, "Token has a tooltip");
-	});
-
 	QUnit.test("setter / getter editableParent", function(assert) {
 		var isEditableParent = true,
 			aAriaDescibedByTextIds, aUniqueTextIds;
@@ -117,7 +99,10 @@ sap.ui.define([
 	QUnit.test("show / hide delete icon depending on isEditable", function(assert) {
 		var isEditable = true;
 		this.token1.setEditable(isEditable);
-		assert.ok(!this.token1.$().hasClass("sapMTokenReadOnly"), "Token contains icon");
+
+		var oTokenIcon = this.token1.getAggregation("deleteIcon");
+		assert.ok(oTokenIcon, "Token contains icon");
+		assert.strictEqual(oTokenIcon.getTooltip(), oCore.getLibraryResourceBundle("sap.m").getText("TOKEN_ICON_TOOLTIP"), "Token icon contains a tooltip");
 
 		isEditable = false;
 		this.token1.setEditable(isEditable);

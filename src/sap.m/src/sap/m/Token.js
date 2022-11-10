@@ -162,7 +162,8 @@ sap.ui.define([
 				id : this.getId() + "-icon",
 				src : "sap-icon://decline",
 				noTabStop: true,
-				press : this._fireDeleteToken.bind(this)
+				press : this._fireDeleteToken.bind(this),
+				tooltip: Core.getLibraryResourceBundle("sap.m").getText("TOKEN_ICON_TOOLTIP")
 			});
 
 		oDeleteIcon.addStyleClass("sapMTokenIcon");
@@ -191,14 +192,7 @@ sap.ui.define([
 	 * @return {string} The tooltip text
 	 */
 	Token.prototype._getTooltip = function (oControl, bEditable) {
-		var sTooltip = oControl.getTooltip_AsString(),
-			sDeletableTooltip = Core.getLibraryResourceBundle("sap.m").getText("TOKEN_ARIA_DELETABLE");
-
-		if (bEditable && !sTooltip) {
-			return sDeletableTooltip;
-		}
-
-		return sTooltip;
+		return oControl.getTooltip_AsString();
 	};
 
 	/**
