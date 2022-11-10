@@ -356,7 +356,7 @@ sap.ui.define([
 
 	QUnit.test("internal control creation", function(assert) {
 
-		oField = new MultiValueField("F3", {
+		var oField = new MultiValueField("F3", {
 			items: {path: "/items", template: oItemTemplate}
 		});
 
