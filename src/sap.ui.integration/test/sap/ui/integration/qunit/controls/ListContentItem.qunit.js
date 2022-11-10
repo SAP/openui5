@@ -2,14 +2,20 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/library",
 	"sap/ui/integration/controls/ListContentItem",
-	"sap/ui/integration/controls/Microchart"
+	"sap/ui/integration/controls/Microchart",
+	"sap/m/ObjectStatus"
 ], function (
 	Core,
+	coreLibrary,
 	ListContentItem,
-	Microchart
+	Microchart,
+	ObjectStatus
 ) {
 	"use strict";
+
+	var ValueState = coreLibrary.ValueState;
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
@@ -29,38 +35,18 @@ sap.ui.define([
 		oLCI.destroy();
 	});
 
-	QUnit.test("Root classes when there is a chart", function (assert) {
+	QUnit.test("Content layout when there are title and description", function (assert) {
 		// arrange
 		var oLCI = new ListContentItem({
-			microchart: new Microchart()
+			title: "This is title",
+			description: "This is description"
 		});
 
 		oLCI.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
 		// assert
-		assert.ok(oLCI.$().hasClass("sapUiIntLCIWithChart"), "'sapUiIntLCIWithChart' class should be present.");
-
-		// clean up
-		oLCI.destroy();
-	});
-
-	QUnit.test("Root classes for icon size", function (assert) {
-		// arrange
-		var oLCI = new ListContentItem();
-
-		oLCI.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
-
-		// assert
-		assert.notOk(oLCI.$().hasClass("sapUiIntLCIIconSize" + oLCI.getIconSize()), "sapUiIntLCIIconSize" + oLCI.getIconSize() + " class is not added when there is no icon.");
-
-		// act
-		oLCI.setIcon("sap-icon://warning");
-		Core.applyChanges();
-
-		// assert
-		assert.ok(oLCI.$().hasClass("sapUiIntLCIIconSize" + oLCI.getIconSize()), "sapUiIntLCIIconSize" + oLCI.getIconSize() + " class is added when there is icon.");
+		assert.ok(oLCI.$().hasClass("sapUiIntLCITwoLines"), "'sapUiIntLCITwoLines' class should be present.");
 
 		// clean up
 		oLCI.destroy();
@@ -77,7 +63,27 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assert
-		assert.strictEqual(oLCI.$().find(".sapMSLIDiv").css("flex-direction"), "row", "The list item should be in row.");
+		assert.ok(oLCI.$().hasClass("sapUiIntLCITwoLines"), "'sapUiIntLCITwoLines' class should be present.");
+
+		// clean up
+		oLCI.destroy();
+	});
+
+	QUnit.test("Content layout when there are title and 1 row of attributes", function (assert) {
+		// arrange
+		var oLCI = new ListContentItem({
+			title: "This is title",
+			attributes: [
+				new ObjectStatus(),
+				new ObjectStatus()
+			]
+		});
+
+		oLCI.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// assert
+		assert.ok(oLCI.$().hasClass("sapUiIntLCITwoLines"), "'sapUiIntLCITwoLines' class should be present.");
 
 		// clean up
 		oLCI.destroy();
@@ -88,16 +94,42 @@ sap.ui.define([
 		var oLCI = new ListContentItem({
 			title: "This is title",
 			description: "This is description",
-			chart: new Microchart()
+			microchart: new Microchart()
 		});
 
 		oLCI.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
 		// assert
-		assert.strictEqual(oLCI.$().find(".sapMSLIDiv").css("flex-direction"), "column", "The content should be in column.");
+		assert.ok(oLCI.$().hasClass("sapUiIntLCIMultipleLines"), "'sapUiIntLCIMultipleLines' class should be present.");
 
 		// clean up
 		oLCI.destroy();
+	});
+
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oLCI = new ListContentItem();
+		},
+		afterEach: function () {
+			this.oLCI.destroy();
+		}
+	});
+
+	QUnit.test("getContentAnnouncement", function (assert) {
+		// arrange
+		var sTitle = "Item title",
+			sDescription = "Item description",
+			sInfo = "Item info",
+			sInfoState = ValueState.Error,
+			oMBundle = Core.getLibraryResourceBundle("sap.m"),
+			sExpectedAnnouncement = sTitle + " . " + sDescription + " . " + sInfo + " . " + oMBundle.getText("LIST_ITEM_STATE_" + sInfoState.toUpperCase());
+		this.oLCI.setTitle(sTitle)
+			.setDescription(sDescription)
+			.setInfo(sInfo)
+			.setInfoState(sInfoState);
+
+		// assert
+		assert.strictEqual(this.oLCI.getContentAnnouncement(), sExpectedAnnouncement, "Content announcement should be correct");
 	});
 });
