@@ -523,47 +523,70 @@
 				</form:Form>
 			</Panel>
 
-			<Panel id="tableLayout" expandable="true" headerText="Panel with Table" width="auto" class="sapUiResponsiveMargin">
-				<Table id="idProductsTable"
-					items="{ProductCollection>/}"
-					inset="false">
+			<Panel
+					id="tableLayout"
+					expandable="true"
+					headerText="Panel with Table"
+					width="auto"
+					class="sapUiResponsiveMargin">
+				<Table
+						id="idProductsTable"
+						items="{ProductCollection>/}"
+						inset="false">
 					<columns>
 						<Column
-							width="12em">
-							<Text text="Product" />
+								id="idProductsTable-productColumn"
+								width="12em">
+							<Text
+									id="idProductsTable-productText"
+									text="Product" />
 						</Column>
-						<Column>
-							<Text text="Supplier" />
+						<Column id="idProductsTable-supportColumn">
+							<Text
+									id="idProductsTable-supportText"
+									text="Supplier" />
 						</Column>
-						<Column>
-							<Text text="Category" />
+						<Column	id="idProductsTable-categoryColumn">
+							<Text
+									id="idProductsTable-categoryText"
+									text="Category" />
 						</Column>
-						<Column>
-							<Text text="Activation" />
+						<Column	id="idProductsTable-activationColumn">
+							<Text
+									id="idProductsTable-activationText"
+									text="Activation" />
 						</Column>
 					</columns>
 					<items>
-						<ColumnListItem id="TableItem">
+						<ColumnListItem id="idProductsTable-tableItem">
 							<cells>
 								<ObjectIdentifier
-									title="{ProductCollection>Name}"
-									text="{ProductCollection>ProductId}"/>
-								<Text id="TableText"
-									text="{ProductCollection>SupplierName}" />
-								<sap.ui.layout:VerticalLayout id="columnLayout">
-									<Text id="LayoutText01"
-										text="{ProductCollection>MainCategory}" />
-									<sap.ui.layout:VerticalLayout id="columnLayout02">
-										<Text id="LayoutText02"
-											text="{ProductCollection>Category}" />
-										<Text id="LayoutText03"
-											text="{ProductCollection>Status}" />
+										id="idProductsTable-tableItemProductId"
+										title="{ProductCollection>Name}"
+										text="{ProductCollection>ProductId}"/>
+								<Text
+										id="idProductsTable-tableText"
+										text="{ProductCollection>SupplierName}" />
+								<sap.ui.layout:VerticalLayout id="idProductsTable-columnLayout">
+									<Text
+											id="LayoutText01"
+											text="{ProductCollection>MainCategory}" />
+									<sap.ui.layout:VerticalLayout id="idProductsTable-columnLayout02">
+										<Text
+												id="idProductsTable-layoutText02"
+												text="{ProductCollection>Category}" />
+										<Text
+												id="idProductsTable-layoutText03"
+												text="{ProductCollection>Status}" />
 									</sap.ui.layout:VerticalLayout>
 								</sap.ui.layout:VerticalLayout>
 								<Select
-									id="TableSelect"
-									items= "{ path: 'ProductCollection>Active', templateShareable: false}" >
-									<core:Item key="{ProductCollection>key}" text="{ProductCollection>text}" />
+										id="idProductsTable-tableSelect"
+										items= "{ path: 'ProductCollection>Active', templateShareable: false}" >
+									<core:Item
+											id="idProductsTable-tableSelectItem"
+											key="{ProductCollection>key}"
+											text="{ProductCollection>text}" />
 								</Select>
 							</cells>
 						</ColumnListItem>

@@ -9,7 +9,7 @@
 		},
 		"dependentSelector": {
 			"originalSelector": {
-				"id": "idMain1--TableText",
+				"id": "idMain1--idProductsTable-tableText",
 				"idIsLocal": true
 			}
 		},
@@ -36,7 +36,7 @@
 		},
 		"dependentSelector": {
 			"originalSelector": {
-				"id": "idMain1--TableText",
+				"id": "idMain1--idProductsTable-tableText",
 				"idIsLocal": true
 			}
 		},
@@ -63,7 +63,7 @@
 		},
 		"dependentSelector": {
 			"originalSelector": {
-				"id": "idMain1--TableText",
+				"id": "idMain1--idProductsTable-tableText",
 				"idIsLocal": true
 			}
 		},
@@ -171,7 +171,7 @@
 		"reference": "sap.ui.rta.test.Component",
 		"dependentSelector": {
 			"originalSelector": {
-				"id": "idMain1--columnLayout02",
+				"id": "idMain1--idProductsTable-columnLayout02",
 				"idIsLocal": true
 			}
 		},
@@ -190,7 +190,7 @@
 		"layer": "CUSTOMER",
 		"dependentSelector": {
 			"originalSelector": {
-				"id": "idMain1--columnLayout02",
+				"id": "idMain1--idProductsTable-columnLayout02",
 				"idIsLocal": true
 			}
 		},
@@ -211,7 +211,7 @@
 		"reference": "sap.ui.rta.test.Component",
 		"dependentSelector": {
 			"originalSelector": {
-				"id": "idMain1--columnLayout02",
+				"id": "idMain1--idProductsTable-columnLayout02",
 				"idIsLocal": true
 			}
 		},
@@ -230,7 +230,7 @@
 			"movedElements": [
 				{
 					"selector": {
-						"id": "idMain1--LayoutText02",
+						"id": "idMain1--idProductsTable-layoutText02",
 						"idIsLocal": true
 					},
 					"sourceIndex": 0,
@@ -241,7 +241,7 @@
 				"selector": {
 					"aggregation": "content",
 					"type": "sap.ui.layout.VerticalLayout",
-					"id": "idMain1--columnLayout02",
+					"id": "idMain1--idProductsTable-columnLayout02",
 					"idIsLocal": true
 				}
 			},
@@ -249,14 +249,14 @@
 				"selector": {
 					"aggregation": "content",
 					"type": "sap.ui.layout.VerticalLayout",
-					"id": "idMain1--columnLayout02",
+					"id": "idMain1--idProductsTable-columnLayout02",
 					"idIsLocal": true
 				}
 			}
 		},
 		"dependentSelector": {
 			"originalSelector": {
-				"id": "idMain1--columnLayout02",
+				"id": "idMain1--idProductsTable-columnLayout02",
 				"idIsLocal": true
 			}
 		},
@@ -275,7 +275,7 @@
 			"movedElements": [
 				{
 					"selector": {
-						"id": "idMain1--LayoutText03",
+						"id": "idMain1--idProductsTable-layoutText03",
 						"idIsLocal": true
 					},
 					"sourceIndex": 0,
@@ -286,7 +286,7 @@
 				"selector": {
 					"aggregation": "content",
 					"type": "sap.ui.layout.VerticalLayout",
-					"id": "idMain1--columnLayout02",
+					"id": "idMain1--idProductsTable-columnLayout02",
 					"idIsLocal": true
 				}
 			},
@@ -294,14 +294,14 @@
 				"selector": {
 					"aggregation": "content",
 					"type": "sap.ui.layout.VerticalLayout",
-					"id": "idMain1--columnLayout02",
+					"id": "idMain1--idProductsTable-columnLayout02",
 					"idIsLocal": true
 				}
 			}
 		},
 		"dependentSelector": {
 			"originalSelector": {
-				"id": "idMain1--columnLayout02",
+				"id": "idMain1--idProductsTable-columnLayout02",
 				"idIsLocal": true
 			}
 		},
@@ -320,7 +320,7 @@
 			"movedElements": [
 				{
 					"selector": {
-						"id": "idMain1--LayoutText02",
+						"id": "idMain1--idProductsTable-layoutText02",
 						"idIsLocal": true
 					},
 					"sourceIndex": 0,
@@ -331,7 +331,7 @@
 				"selector": {
 					"aggregation": "content",
 					"type": "sap.ui.layout.VerticalLayout",
-					"id": "idMain1--columnLayout02",
+					"id": "idMain1--idProductsTable-columnLayout02",
 					"idIsLocal": true
 				}
 			},
@@ -339,14 +339,14 @@
 				"selector": {
 					"aggregation": "content",
 					"type": "sap.ui.layout.VerticalLayout",
-					"id": "idMain1--columnLayout02",
+					"id": "idMain1--idProductsTable-columnLayout02",
 					"idIsLocal": true
 				}
 			}
 		},
 		"dependentSelector": {
 			"originalSelector": {
-				"id": "idMain1--columnLayout02",
+				"id": "idMain1--idProductsTable-columnLayout02",
 				"idIsLocal": true
 			}
 		},
