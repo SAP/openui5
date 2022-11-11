@@ -32,7 +32,8 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @namespace sap.ui.fl.apply._internal.flexState.FlexObjectState
+	 * @namespace
+	 * @alias sap.ui.fl.write._internal.flexState.FlexObjectState
 	 * @since 1.83
 	 * @version ${version}
 	 * @private

@@ -46,7 +46,8 @@ function(
 	}
 
 	/**
-	 * @namespace sap.ui.fl.initial._internal.StorageResultDisassemble
+	 * @name sap.ui.fl.initial._internal.storageResultDisassemble
+	 * @function
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
@@ -56,7 +57,6 @@ function(
 	 * @param {object} oResponse Flexibility data response from a <code>sap.ui.connectors.BaseConnector</code> implementation
 	 * @param {object} oResponse.variantSection Variant section of the response (mandatory)
 	 * @returns {object[]} Disassembled result
-	 *
 	 */
 	return function(oResponse) {
 		var aFlexObjects;

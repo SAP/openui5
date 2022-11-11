@@ -34,7 +34,8 @@ sap.ui.define([
 	/**
 	 * URL handler utility for <code>sap.ui.fl variants</code> (@see sap.ui.fl.variants.VariantManagement}
 	 *
-	 * @namespace sap.ui.fl.apply._internal.variants.URLHandler
+	 * @namespace
+	 * @alias sap.ui.fl.apply._internal.controlVariants.URLHandler
 	 * @since 1.72
 	 * @private
 	 * @ui5-restricted sap.ui.fl.variants.VariantModel

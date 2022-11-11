@@ -22,13 +22,14 @@ sap.ui.define([
 	 *
 	 * Only available during build time see {@link sap.ui.fl.apply._internal.changes.descriptor.RegistrationBuild}.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.app.ChangeDataSouce
+	 * @namespace
+	 * @alias sap.ui.fl.apply._internal.changes.descriptor.app.ChangeDataSource
 	 * @experimental
 	 * @version ${version}
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal
 	 */
-	var ChangeDataSouce = /** @lends sap.ui.fl.apply._internal.changes.descriptor.app.ChangeDataSouce */ {
+	var ChangeDataSource = {
 
 		/**
 		 * Method to apply the  <code>appdescr_app_changeDataSource</code> change to the manifest.
@@ -64,5 +65,5 @@ sap.ui.define([
 
 	};
 
-	return ChangeDataSouce;
+	return ChangeDataSource;
 });
