@@ -31,7 +31,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery",
 		 *
 		 * @namespace
 		 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
-		 * @alias jQuery.sap.support
 		 * @author SAP SE
 		 * @version ${version}
 		 * @public
@@ -44,7 +43,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery",
 			 * Allows to choose a particular execution scope - desired part of the UI
 			 * to be checked and a flexible way to specify the list of rules to be used.
 			 *
-			 * @memberof jQuery.sap.support
 			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
 			 * @public
 			 * @param {object} [oExecutionScope] The execution scope of the analysis (see {@link topic:e15067d976f24b11907f4c262bd749a0 Execution Scopes}).
@@ -72,7 +70,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery",
 
 			/**
 			 * Returns the result of the last analysis performed.
-			 * @memberof jQuery.sap.support
 			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
 			 * @public
 			 * @returns {Object} Last analysis history.
@@ -84,7 +81,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery",
 			/**
 			 * Returns the history of all executed analyses.
 			 *
-			 * @memberof jQuery.sap.support
 			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
 			 * @public
 			 * @returns {Object[]} Array of history objects in the order of analyses performed. The results of the last analysis are contained in the last element in the array.
@@ -96,7 +92,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery",
 			/**
 			 * Returns the history of all executed analyses into formatted output depending on the passed format.
 			 *
-			 * @memberof jQuery.sap.support
 			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
 			 * @public
 			 * @param {sap.ui.support.HistoryFormats} [sFormat=sap.ui.support.HistoryFormats.String] The format into which the history object will be converted. Possible values are listed in sap.ui.support.HistoryFormats.
@@ -109,7 +104,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery",
 			 /**
 			 * Adds new temporary rule when in silent mode
 			 *
-			 * @memberof jQuery.sap.support
 			 * @deprecated Since version 1.60.0. Please use sap/ui/support/RuleAnalyzer instead.
 			 * @public
 			 * @since 1.60

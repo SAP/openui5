@@ -6,16 +6,13 @@ sap.ui.define([],
 		"use strict";
 
 		/**
-		 * Constants used in the Support Assistant
-		 * @enum {string}
+		 * Constants used in the Support Assistant.
 		 * @private
 		 * @author SAP SE
 		 * @namespace
 		 * @name sap.ui.support.Constants
-		 * @alias sap.ui.support.AssistantConstants
-		 * @returns {Object} Object that contains all the constants.
 		 */
-		return {
+		return /** @lends sap.ui.support.Constants */ {
 			/*
 			 * The following constants are used to store rules and user data in the local storage.
 			 */
