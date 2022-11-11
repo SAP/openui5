@@ -123,7 +123,7 @@ sap.ui.define([
 		internalizeValue: function (vValue, vType, oFormatOptions, oConstraints) {
 			var oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
 			if (this.getBaseType(oTypeInstance) === BaseType.Numeric) {
-				if (typeof sValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
+				if (typeof vValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
 					// INT64 and Decimal using string as internal value -> if for some reason a number comes in convert it to string
 					return vValue.toString(); // don't use type as this could have locale dependent parsing
 				}
