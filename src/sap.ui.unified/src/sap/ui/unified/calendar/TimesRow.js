@@ -120,7 +120,14 @@ sap.ui.define([
 			 * @private
 			 * @since 1.108.0
 			 */
-			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null}
+			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null},
+			/**
+			 * If set, the days are also displayed in this calendar type
+			 * If not set, the dates are only displayed in the primary calendar type
+			 * @private
+			 * @since 1.109.0
+			 */
+			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null}
 		},
 		aggregations : {
 

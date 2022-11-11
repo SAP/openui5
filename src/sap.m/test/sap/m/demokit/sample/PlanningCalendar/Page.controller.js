@@ -473,6 +473,10 @@ sap.ui.define([
 
 			onCalendarTypeSelect: function (oEvent) {
 				this.byId("PC1").setPrimaryCalendarType(oEvent.getParameters().selectedItem.getKey());
+			},
+
+			onCalendarSecondaryTypeSelect: function (oEvent) {
+				this.byId("PC1").setSecondaryCalendarType(oEvent.getParameters().selectedItem.getKey());
 			}
 
 		});

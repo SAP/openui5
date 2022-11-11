@@ -10,6 +10,7 @@ sap.ui.define([
 	'./Toolbar',
 	'./AssociativeOverflowToolbar',
 	'./Button',
+	'./AdditionalTextButton',
 	'./Popover',
 	'./Title',
 	'./ToolbarSpacer',
@@ -32,6 +33,7 @@ function(
 	Toolbar,
 	AssociativeOverflowToolbar,
 	Button,
+	AdditionalTextButton,
 	Popover,
 	Title,
 	ToolbarSpacer,
@@ -122,12 +124,25 @@ function(
 				pickerText : { type : "string", group : "Data" },
 
 				/**
+				 * Determines the additional text of the button which opens the calendar picker.
+				 */
+				pickerTextInSecondaryType : { type : "string", group : "Data" },
+
+				/**
 				 * If set, the calendar type is used for display.
 				 * If not set, the calendar type of the global configuration is used.
 				 * @private
 				 * @since 1.108.0
 				 */
-				_primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null}
+				_primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null},
+
+				/**
+				 * If set, the days are also displayed in this calendar type
+				 * If not set, the dates are only displayed in the primary calendar type
+				 * @privates
+				 * @since 1.109.0
+				 */
+				_secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null}
 
 			},
 
@@ -331,8 +346,9 @@ function(
 		this.setAggregation("_indexPicker", oIndexPicker);
 		this._oIndexPicker = oIndexPicker;
 
-		this._oPickerBtn = new Button(sNavToolbarId + "-PickerBtn", {
+		this._oPickerBtn = new AdditionalTextButton(sNavToolbarId + "-PickerBtn", {
 			text: this.getPickerText(),
+			additionalText: this.getPickerTextInSecondaryType(),
 			ariaHasPopup: coreLibrary.aria.HasPopup.Dialog,
 			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_SELECT_RANGE"),
 			press: function () {
@@ -393,10 +409,13 @@ function(
 
 	PlanningCalendarHeader.prototype.onBeforeRendering = function () {
 		var bVisible = !!this.getActions().length || !!this.getTitle() || this._getOrCreateViewSwitch().getItems().length > 1;
-
+		var sSecondaryCalendarType = this.getProperty("_secondaryCalendarType");
 		this._getActionsToolbar().setProperty("visible", bVisible, true);
 
 		this.setPrimaryCalendarTypeToPickers(this.getProperty("_primaryCalendarType"));
+		if (sSecondaryCalendarType){
+			this.setSecondaryCalendarTypeToPickers(sSecondaryCalendarType);
+		}
 	};
 
 	PlanningCalendarHeader.prototype.setTitle = function (sTitle) {
@@ -456,7 +475,26 @@ function(
 		return this;
 	};
 
+	PlanningCalendarHeader.prototype.updatePickerText = function (oPickerTextInfo) {
+		if (!oPickerTextInfo) {
+			return this;
+		}
+		this.setPickerText(oPickerTextInfo.primaryType);
+		this.setPickerTextInSecondaryType(oPickerTextInfo.secondaryType);
+
+		return true;
+	};
+
+	PlanningCalendarHeader.prototype.setPickerTextInSecondaryType = function (sAdditionalText){
+		this.setProperty("pickerTextInSecondaryType", sAdditionalText);
+		this._oPickerBtn.setAdditionalText(sAdditionalText);
+		return this;
+	};
+
 	PlanningCalendarHeader.prototype.setPickerText = function (sText) {
+		if (!sText) {
+			return this;
+		}
 		this.setProperty("pickerText", sText);
 		this._oPickerBtn.setText(sText);
 
@@ -467,6 +505,12 @@ function(
 		this._oCalendar.setPrimaryCalendarType(sCalendarType);
 		this._oMonthPicker.setPrimaryCalendarType(sCalendarType);
 		this._oYearPicker.setPrimaryCalendarType(sCalendarType);
+	};
+
+	PlanningCalendarHeader.prototype.setSecondaryCalendarTypeToPickers = function (sCalendarType) {
+		this._oCalendar.setSecondaryCalendarType(sCalendarType);
+		this._oMonthPicker.setSecondaryCalendarType(sCalendarType);
+		this._oYearPicker.setSecondaryCalendarType(sCalendarType);
 	};
 
 	/**

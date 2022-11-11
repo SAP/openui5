@@ -4159,4 +4159,64 @@ sap.ui.define([
 
 		return iAppointments;
 	}
+
+	QUnit.module("PC with secondaryCalendarType", {
+		beforeEach: function() {
+			this.oPC = new PlanningCalendar();
+		},
+		afterEach: function() {
+			this.oPC.destroy();
+		}
+	});
+
+	QUnit.test("initial PC with two calendar types", function (assert) {
+		//Assert
+		assert.equal(this.oPC.getSecondaryCalendarType(), "Gregorian", "default value in PC is Gregorian (form CalendarType enum)");
+		assert.notOk(this.oPC._getSecondaryCalendarType(), "If no second calendar type is explicitly set, it must be undefined");
+	});
+
+	QUnit.test("set the same primary and secondary calendar types", function (assert){
+		// Act
+		this.oPC.setPrimaryCalendarType("Islamic");
+		this.oPC.setSecondaryCalendarType("Islamic");
+
+		// Assert
+		assert.equal(this.oPC._getSecondaryCalendarType(), undefined, "After a primary calendar type is set, the secondaryCalendarType defaults to no value from the calendar type enum");
+
+		//if remove _bSecondaryCalendarTypeSet form setter for secondaryCalendarType, calendar type is set automatically to Gregorian (default for Calendar Type enum)
+		assert.equal(this.oPC._getSecondaryCalendarType(), undefined, "the secondaryCalendarType cannot be the same as the primaryCalendarType");
+
+		// Act
+		this.oPC.setSecondaryCalendarType("Gregorian");
+
+		// Assert
+		assert.strictEqual(this.oPC._getSecondaryCalendarType(), "Gregorian", "secondary calendar type is correctly set to Gregorian");
+	});
+
+	QUnit.test("headerButton", function (assert){
+		// Prepare
+		this.oPC.setViewKey(CalendarIntervalType.Day);
+		this.oPC.setStartDate(new Date(2021, 0, 1));
+		this.oPC.setPrimaryCalendarType("Gregorian");
+		this.oPC.placeAt("bigUiArea");
+		Core.applyChanges();
+
+		// Act
+		var sButtonText = this.oPC._getHeader()._oPickerBtn.getText();
+		var sSecondaryButtonText = this.oPC._getHeader()._oPickerBtn.getAdditionalText();
+
+		// Assert
+		assert.strictEqual(sButtonText, "1 January 2021 - 14 January 2021");
+		assert.equal(sSecondaryButtonText, "", "The button has no additional text with only one calendar type");
+
+		// Act
+		this.oPC.setSecondaryCalendarType("Islamic");
+		Core.applyChanges();
+		sSecondaryButtonText = this.oPC._getHeader()._oPickerBtn.getAdditionalText();
+
+		// Assert
+		assert.strictEqual(sSecondaryButtonText, "17 Jumada I 1442 AH - 30 Jumada I 1442 AH", "button shuld have additional text '17 Jumada I 1442 AH - 30 Jumada I 1442 AH'");
+
+	});
+
 });

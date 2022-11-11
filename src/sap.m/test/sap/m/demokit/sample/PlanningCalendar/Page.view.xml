@@ -22,6 +22,13 @@
 					<core:Item key="Persian" text="Persian" />
 					<core:Item key="Buddhist" text="Buddhist" />
 				</Select>
+				<Select change="onCalendarSecondaryTypeSelect">
+					<core:Item key="Gregorian" text="Gregorian" />
+					<core:Item key="Islamic" text="Islamic" />
+					<core:Item key="Japanese" text="Japanese" />
+					<core:Item key="Persian" text="Persian" />
+					<core:Item key="Buddhist" text="Buddhist" />
+				</Select>
 			</toolbarContent>
 			<rows>
 				<PlanningCalendarRow

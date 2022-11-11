@@ -198,6 +198,13 @@ sap.ui.define([
 
 	};
 
+	DatesRow.setSecondaryCalendarType = function(sCalendarType){
+		this._bSecondaryCalendarTypeSet = true;
+		Month.prototype.setSecondaryCalendarType.apply(this, arguments);
+
+		return this;
+	};
+
 	/**
 	 * Handler used for controling the behaviour when border is reached.
 	 *
