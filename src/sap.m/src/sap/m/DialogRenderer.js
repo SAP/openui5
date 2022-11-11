@@ -164,38 +164,39 @@ sap.ui.define([
 				.close("span");
 		}
 
-		if (oHeader) {
-			oHeader._applyContextClassFor("header");
+		if (oHeader || oSubHeader) {
 			oRM.openStart("header")
-				.class("sapMDialogTitle")
-				.openEnd()
-				.openStart("div")
-				.class("sapMDialogTitleGroup");
+				.openEnd();
+			if (oHeader) {
+				oHeader._applyContextClassFor("header");
+				oRM.openStart("div")
+					.class("sapMDialogTitleGroup");
 
-			if (oDialog._isDraggableOrResizable()) {
-				oRM.attr("tabindex", 0)
-					.accessibilityState(oHeader, {
-						role: "group",
-						roledescription: Core.getLibraryResourceBundle("sap.m").getText("DIALOG_HEADER_ARIA_ROLE_DESCRIPTION"),
-						describedby: { value: oDialog.getId() + "-ariaDescribedbyText", append: true }
-					});
+				if (oDialog._isDraggableOrResizable()) {
+					oRM.attr("tabindex", 0)
+						.accessibilityState(oHeader, {
+							role: "group",
+							roledescription: Core.getLibraryResourceBundle("sap.m").getText("DIALOG_HEADER_ARIA_ROLE_DESCRIPTION"),
+							describedby: { value: oDialog.getId() + "-ariaDescribedbyText", append: true }
+						});
+				}
+
+				oRM.openEnd()
+					.renderControl(oHeader)
+					.renderControl(oDialog._oAriaDescribedbyText)
+					.close("div");
 			}
 
-			oRM.openEnd()
-			.renderControl(oHeader)
-			.renderControl(oDialog._oAriaDescribedbyText)
-			.close("div")
-			.close("header");
+			if (oSubHeader && oSubHeader.getVisible()) {
+				oSubHeader._applyContextClassFor("subheader");
+				oRM.openStart("div")
+					.class("sapMDialogSubHeader")
+					.openEnd()
+					.renderControl(oSubHeader)
+					.close("div");
+			}
+			oRM.close("header");
 
-		}
-
-		if (oSubHeader && oSubHeader.getVisible()) {
-			oSubHeader._applyContextClassFor("subheader");
-			oRM.openStart("header")
-				.class("sapMDialogSubHeader")
-				.openEnd()
-				.renderControl(oSubHeader)
-				.close("header");
 		}
 
 		if (oValueStateText) {
