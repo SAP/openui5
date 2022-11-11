@@ -2,19 +2,21 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Core",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/library",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/rta/Utils",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/api/ContextSharingAPI"
+	"sap/ui/rta/Utils"
 ], function(
+	Core,
+	JsControlTreeModifier,
+	flUtils,
+	ContextSharingAPI,
 	BaseCommand,
 	rtaLibrary,
-	JsControlTreeModifier,
-	rtaUtils,
-	flUtils,
-	ContextSharingAPI
+	rtaUtils
 ) {
 	"use strict";
 
@@ -144,11 +146,9 @@ sap.ui.define([
 
 			return this.oModel.removeVariant(mPropertyBag, true)
 				.then(function() {
-					this._aControlChanges.forEach(function(oChange) {
-						this.oModel.oFlexController.addPreparedChange(oChange, this.oAppComponent);
-						var oControl = sap.ui.getCore().byId(JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), this.oAppComponent));
-						this.oModel.oFlexController.applyChange(oChange, oControl);
-					}.bind(this));
+					return this.oModel.addAndApplyChangesOnVariant(this._aControlChanges);
+				}.bind(this))
+				.then(function() {
 					this.oModel.getData()[this.sVariantManagementReference].defaultVariant = this.getSourceDefaultVariant();
 					this.oModel.getData()[this.sVariantManagementReference].originalDefaultVariant = this.getSourceDefaultVariant();
 					this._aPreparedChanges = null;

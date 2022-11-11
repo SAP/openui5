@@ -1,14 +1,14 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/rta/command/CommandFactory",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	CommandFactory,
 	VariantManagement,
+	CommandFactory,
 	FlexTestAPI,
 	RtaQunitUtils,
 	sinon
@@ -24,7 +24,7 @@ sap.ui.define([
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 			return FlexTestAPI.createVariantModel({
-				data: {variantManagementReference: {variants: []}},
+				data: {"variantManagementReference-1": {variants: []}},
 				appComponent: this.oMockedAppComponent
 			}).then(function(oInitializedModel) {
 				this.oModel = oInitializedModel;
@@ -73,6 +73,65 @@ sap.ui.define([
 				.catch(function (oError) {
 					assert.ok(false, 'catch must never be called - Error: ' + oError);
 				});
+		});
+
+		QUnit.test("when getting a switch command for VariantManagement and discardVariantContent is true", function(assert) {
+			var oSwitchCommand;
+			var oSwitchCommandData = {
+				targetVariantReference: "newVariantReference",
+				sourceVariantReference: "oldVariantReference",
+				discardVariantContent: true
+			};
+
+			var aDirtyChanges = [
+				RtaQunitUtils.createUIChange({
+					fileName: "change1",
+					reference: "Dummy.Component",
+					variantReference: "oldVariantReference",
+					fileType: "change"
+				}),
+				RtaQunitUtils.createUIChange({
+					fileName: "change2",
+					reference: "Dummy.Component",
+					variantReference: "oldVariantReference",
+					fileType: "ctrl_variant_management_change"
+				})
+			];
+
+			var oCheckUpdateStub = sandbox.stub(this.oModel, "checkUpdate");
+			var oAddAndApplyChangesStub = sandbox.stub(this.oModel, "addAndApplyChangesOnVariant").resolves();
+			sandbox.stub(this.oModel, "eraseDirtyChangesOnVariant").resolves(aDirtyChanges);
+
+			return CommandFactory.getCommandFor(this.oVariantManagement, "switch", oSwitchCommandData)
+				.then(function(oCommand) {
+					assert.ok(oCommand, "switch command for VariantManagement exists");
+					oSwitchCommand = oCommand;
+					return oSwitchCommand.execute();
+				})
+				.then(function() {
+					assert.deepEqual(oSwitchCommand._aSourceVariantDirtyChanges, aDirtyChanges, "then the dirty changes are retrieved correctly");
+					assert.equal(this.fnUpdateCurrentVariantStub.callCount, 1, "then updateCurrentVariant after execute command is called once");
+					assert.ok(oCheckUpdateStub.calledOnce, "then the model is synchronized");
+					assert.deepEqual(this.fnUpdateCurrentVariantStub.getCall(0).args[0], {
+						variantManagementReference: this.sVariantManagementReference,
+						newVariantReference: oSwitchCommandData.targetVariantReference,
+						appComponent: this.oMockedAppComponent
+					}, "then updateCurrentVariant after execute command is called with the correct parameters");
+				}.bind(this))
+				.then(function() {
+					return oSwitchCommand.undo();
+				})
+				.then(function() {
+					assert.deepEqual(oAddAndApplyChangesStub.getCall(0).args[0], aDirtyChanges, "then the changes are applied again");
+					assert.deepEqual(oSwitchCommand._aSourceVariantDirtyChanges, null, "then the dirty changes are cleared on the command");
+					assert.ok(oCheckUpdateStub.calledTwice, "then the model is synchronized again");
+					assert.equal(this.fnUpdateCurrentVariantStub.callCount, 2, "then updateCurrentVariant after undo command is called once again");
+					assert.deepEqual(this.fnUpdateCurrentVariantStub.getCall(1).args[0], {
+						variantManagementReference: this.sVariantManagementReference,
+						newVariantReference: oSwitchCommandData.sourceVariantReference,
+						appComponent: this.oMockedAppComponent
+					}, "then updateCurrentVariant after undo command is called with the correct parameters");
+				}.bind(this));
 		});
 
 		QUnit.test("when getting a switch command for VariantManagement with equal source and target variantId ...", function(assert) {

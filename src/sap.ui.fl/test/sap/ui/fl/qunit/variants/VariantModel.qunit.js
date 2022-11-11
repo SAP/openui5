@@ -762,7 +762,7 @@ sap.ui.define([
 		QUnit.test("when calling 'updateCurrentVariant' with root app component", function(assert) {
 			sandbox.stub(Switcher, "switchVariant").resolves();
 			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
-			var oCallVariantSwitchListenersStub = sandbox.stub(this.oModel, "_callVariantSwitchListeners");
+			var oCallVariantSwitchListenersStub = sandbox.stub(this.oModel, "callVariantSwitchListeners");
 
 			assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant1", "then initially current variant was correct before updating");
 			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant was correct before updating");
@@ -1724,6 +1724,45 @@ sap.ui.define([
 			this.oModel.setData({});
 			assert.deepEqual(this.oModel.getCurrentControlVariantIds(), [], "then the function returns an empty array");
 		});
+
+		QUnit.test("When eraseDirtyChangesOnVariant is called", function(assert) {
+			var aDummyChanges = ["c1", "c2"];
+
+			var oRevertMultipleChangesStub = sandbox.stub(Reverter, "revertMultipleChanges");
+			var oGetControlChangesForVariantStub = sandbox.stub(VariantManagementState, "getControlChangesForVariant");
+			sandbox.stub(this.oModel, "_getDirtyChangesFromVariantChanges").returns(aDummyChanges);
+			sandbox.stub(VariantManagementState, "removeChangeFromVariant");
+			sandbox.stub(this.oModel.oFlexController, "deleteChange");
+
+			return this.oModel.eraseDirtyChangesOnVariant("vm1", "v1")
+							.then(function(aChanges) {
+								assert.deepEqual(aChanges, aDummyChanges, "then the correct changes are returned");
+								assert.ok(oRevertMultipleChangesStub.calledOnce, "then the changes were reverted");
+								assert.ok(oGetControlChangesForVariantStub.calledOnce, "then are changes are retrieved for the variant");
+							});
+		});
+
+		QUnit.test("When addAndApplyChangesOnVariant is called", function(assert) {
+			var aDummyChanges = [
+				{
+					fileName: "c1",
+					getSelector: function() {}
+				},
+				{
+					fileName: "c2",
+					getSelector: function() {}
+				}
+			];
+			var oAddPrepareChangesStub = sandbox.stub(this.oModel.oFlexController, "addPreparedChange");
+			var oApplyChangeStub = sandbox.stub(this.oModel.oFlexController, "applyChange").resolves();
+			sandbox.stub(JsControlTreeModifier, "getControlIdBySelector");
+
+			return this.oModel.addAndApplyChangesOnVariant(aDummyChanges)
+							.then(function() {
+								assert.ok(oAddPrepareChangesStub.calledTwice, "then every change in the array was prepared");
+								assert.ok(oApplyChangeStub.calledTwice, "then every change in the array was applied");
+							});
+		});
 	});
 
 	QUnit.module("_duplicateVariant", {
@@ -2119,7 +2158,7 @@ sap.ui.define([
 		QUnit.test("when 'save' event event is triggered from a variant management control for a new variant", function(assert) {
 			var fnDone = assert.async();
 
-			sandbox.stub(this.oModel, "_callVariantSwitchListeners").callsFake(function(sVmReference, sNewVMReference) {
+			sandbox.stub(this.oModel, "callVariantSwitchListeners").callsFake(function(sVmReference, sNewVMReference) {
 				assert.strictEqual(
 					this.oVariantManagement.getCurrentVariantKey(),
 					sNewVMReference,
@@ -2372,7 +2411,7 @@ sap.ui.define([
 
 		QUnit.test("when the control is switched to a new variant with no unsaved personalization changes", function(assert) {
 			var fnDone = assert.async();
-			var oCallListenerStub = sandbox.stub(this.oVariantModel, "_callVariantSwitchListeners");
+			var oCallListenerStub = sandbox.stub(this.oVariantModel, "callVariantSwitchListeners");
 			var sVMControlId = this.oComp.createId(this.sVMReference);
 			var oVMControl = oCore.byId(sVMControlId);
 
@@ -2404,7 +2443,7 @@ sap.ui.define([
 
 		QUnit.test("when the control is switched to a new variant with unsaved personalization changes", function(assert) {
 			var fnDone = assert.async();
-			var oCallListenerStub = sandbox.stub(this.oVariantModel, "_callVariantSwitchListeners");
+			var oCallListenerStub = sandbox.stub(this.oVariantModel, "callVariantSwitchListeners");
 			var sVMControlId = this.oComp.createId(this.sVMReference);
 			var oVMControl = oCore.byId(sVMControlId);
 			var sSourceVariantId = this.oVariantModel.oData[this.sVMReference].currentVariant;
@@ -2448,7 +2487,7 @@ sap.ui.define([
 
 		QUnit.test("when the control is switched to the same variant with no unsaved personalization changes", function(assert) {
 			var fnDone = assert.async();
-			var oCallListenerStub = sandbox.stub(this.oVariantModel, "_callVariantSwitchListeners");
+			var oCallListenerStub = sandbox.stub(this.oVariantModel, "callVariantSwitchListeners");
 			var sVMControlId = this.oComp.createId(this.sVMReference);
 			var oVMControl = oCore.byId(sVMControlId);
 
@@ -2478,7 +2517,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			var sVMControlId = this.oComp.createId(this.sVMReference);
 			var oVMControl = oCore.byId(sVMControlId);
-			var oCallListenerStub = sandbox.stub(this.oVariantModel, "_callVariantSwitchListeners");
+			var oCallListenerStub = sandbox.stub(this.oVariantModel, "callVariantSwitchListeners");
 
 			this.oVariantModel.oData[this.sVMReference].modified = true;
 			var aMockDirtyChanges = [FlexObjectFactory.createFromFileContent({fileName: "dirtyChange1"}), FlexObjectFactory.createFromFileContent({fileName: "dirtyChange2"})];
@@ -2548,7 +2587,7 @@ sap.ui.define([
 				assert.equal(fnCallback1.callCount, 0, "the callback was not called yet");
 				assert.equal(fnCallback2.callCount, 0, "the callback was not called yet");
 
-				this.oVariantModel._callVariantSwitchListeners(sVMReference, "variant1");
+				this.oVariantModel.callVariantSwitchListeners(sVMReference, "variant1");
 				assert.equal(fnCallback1.callCount, 1, "the callback was called once");
 				assert.deepEqual(fnCallback1.lastCall.args[0], this.oVariant1, "the new variant is passed as parmeter");
 				assert.equal(fnCallback2.callCount, 0, "the callback was not called");
@@ -2561,7 +2600,7 @@ sap.ui.define([
 				});
 			}.bind(this))
 			.then(function() {
-				this.oVariantModel._callVariantSwitchListeners(sVMReference, "variant2");
+				this.oVariantModel.callVariantSwitchListeners(sVMReference, "variant2");
 				assert.equal(fnCallback1.callCount, 1, "the callback was not called again");
 				assert.equal(fnCallback2.callCount, 1, "the callback was called once");
 				assert.deepEqual(fnCallback2.lastCall.args[0], this.oVariant2, "the new variant is passed as parmeter");
@@ -2574,17 +2613,17 @@ sap.ui.define([
 				});
 			}.bind(this))
 			.then(function() {
-				this.oVariantModel._callVariantSwitchListeners(sVMReference, "variant2");
+				this.oVariantModel.callVariantSwitchListeners(sVMReference, "variant2");
 				assert.equal(fnCallback1.callCount, 2, "the callback was called again");
 				assert.equal(fnCallback2.callCount, 2, "the callback was called again");
 
 				this.oVariantModel.detachVariantApplied(sVMControlId, this.oView.createId("MainForm"));
-				this.oVariantModel._callVariantSwitchListeners(sVMReference, "variant2");
+				this.oVariantModel.callVariantSwitchListeners(sVMReference, "variant2");
 				assert.equal(fnCallback1.callCount, 3, "the callback was called again");
 				assert.equal(fnCallback2.callCount, 2, "the callback was not called again");
 
 				this.oVariantModel.detachVariantApplied(sVMControlId, this.oView.createId("ObjectPageSection1"));
-				this.oVariantModel._callVariantSwitchListeners(sVMReference, "variant2");
+				this.oVariantModel.callVariantSwitchListeners(sVMReference, "variant2");
 				assert.equal(fnCallback1.callCount, 3, "the callback was not called again");
 				assert.equal(fnCallback2.callCount, 2, "the callback was not called again");
 			}.bind(this));
@@ -2622,7 +2661,7 @@ sap.ui.define([
 			]).then(function() {
 				assert.equal(fnCallback3.callCount, 0, "the callback was not called yet");
 
-				this.oVariantModel._callVariantSwitchListeners(sVMReference, "variant1");
+				this.oVariantModel.callVariantSwitchListeners(sVMReference, "variant1");
 				assert.equal(fnCallback1.callCount, 2, "the callback was called again");
 				assert.equal(fnCallback2.callCount, 1, "the callback was not called again");
 				assert.equal(fnCallback3.callCount, 1, "the callback was called once");

@@ -2,15 +2,15 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/command/BaseCommand"
 ], function(
-	BaseCommand,
 	JsControlTreeModifier,
 	ControlVariantApplyAPI,
-	flUtils
+	flUtils,
+	BaseCommand
 ) {
 	"use strict";
 
@@ -35,6 +35,9 @@ sap.ui.define([
 				},
 				sourceVariantReference: {
 					type: "string"
+				},
+				discardVariantContent: {
+					type: "boolean"
 				}
 			},
 			associations: {},
@@ -42,7 +45,15 @@ sap.ui.define([
 		}
 	});
 
-	ControlVariantSwitch.prototype._getAppComponent = function () {
+	function discardVariantContent(sVReference) {
+		return this.oModel.eraseDirtyChangesOnVariant(this.sVariantManagementReference, sVReference)
+		.then(function(aDirtyChanges) {
+			this._aSourceVariantDirtyChanges = aDirtyChanges;
+			this.oModel.checkUpdate(true);
+		}.bind(this));
+	}
+
+	ControlVariantSwitch.prototype._getAppComponent = function() {
 		var oElement = this.getElement();
 		return oElement ? flUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
 	};
@@ -50,6 +61,7 @@ sap.ui.define([
 
 	/**
 	 * Template Method to implement execute logic, with ensure precondition Element is available.
+	 *
 	 * @public
 	 * @returns {Promise} Returns resolve after execution
 	 */
@@ -60,7 +72,15 @@ sap.ui.define([
 
 		this.oModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oElement, oAppComponent).id;
-		return this._updateModelVariant(sNewVariantReference, oAppComponent);
+
+		return Promise.resolve()
+		.then(function() {
+			if (this.getDiscardVariantContent()) {
+				return discardVariantContent.call(this, this.getSourceVariantReference());
+			}
+			return undefined;
+		}.bind(this))
+		.then(this._updateModelVariant.bind(this, sNewVariantReference, oAppComponent));
 	};
 
 	/**
@@ -71,10 +91,20 @@ sap.ui.define([
 	ControlVariantSwitch.prototype.undo = function() {
 		var sOldVariantReference = this.getSourceVariantReference();
 		var oAppComponent = this._getAppComponent();
+
+		if (this.getDiscardVariantContent()) {
+			return this.oModel.addAndApplyChangesOnVariant(this._aSourceVariantDirtyChanges)
+			.then(function() {
+				this._aSourceVariantDirtyChanges = null;
+				this.oModel.checkUpdate(true);
+				return this._updateModelVariant(sOldVariantReference, oAppComponent);
+			}.bind(this));
+		}
+
 		return this._updateModelVariant(sOldVariantReference, oAppComponent);
 	};
 
-	ControlVariantSwitch.prototype._updateModelVariant = function (sVariantReference, oAppComponent) {
+	ControlVariantSwitch.prototype._updateModelVariant = function(sVariantReference, oAppComponent) {
 		if (this.getTargetVariantReference() !== this.getSourceVariantReference()) {
 			return this.oModel.updateCurrentVariant({
 				variantManagementReference: this.sVariantManagementReference,
