@@ -7,7 +7,7 @@
 		},
 		"dataSources" : {
 			"default" : {
-				"uri" : "/sap/opu/odata4/sap/zmbr_sadl_hierarchy_bdg/srvd/sap/zmbr_sadl_hierarchy/0001/",
+				"uri" : "/sap/opu/odata4/sap/zsadl_hierarchy_v4_srvc_bdg/srvd/sap/zsadl_hierarchy_service_def/0001/",
 				"type" : "OData",
 				"settings" : {
 					"annotations" : ["localAnnotations"],
