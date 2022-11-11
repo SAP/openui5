@@ -1779,12 +1779,13 @@ function(
 	Input.prototype.onkeyup = function (oEvent) {
 		var sValue = this.getValue();
 		var sLastValue = this.getLastValue();
+		var bIsNavigationKey = (oEvent.which === KeyCodes.ARROW_DOWN) || (oEvent.which === KeyCodes.ARROW_UP);
 		var oSuggestionsPopover, oItemsContainer, oSelectedItem;
 
 		if (!this._bDoTypeAhead && !sValue) {
 			this.getShowSuggestion() && this.setSelectedKey(null);
 			(sLastValue !== sValue) && this.setLastValue(sLastValue);
-		} else if (!this._bDoTypeAhead && sValue) {
+		} else if (!this._bDoTypeAhead && !bIsNavigationKey && sValue) {
 			oSuggestionsPopover = this.getShowSuggestion() && this._getSuggestionsPopover();
 			oItemsContainer = oSuggestionsPopover && oSuggestionsPopover.getItemsContainer();
 			oSelectedItem = oItemsContainer && oItemsContainer.getSelectedItem();

@@ -5795,6 +5795,49 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Shoud select item on arrow up/down when autocomplete is off", function (assert) {
+		var oInput = new Input({
+			showSuggestion: true,
+			autocomplete: false,
+			suggestionItems: [
+				new Item({
+					text: 'one',
+					key: '1'
+				}),
+				new Item({
+					text: 'one more',
+					key: '2'
+				})
+			]
+		}).placeAt("content");
+		oCore.applyChanges();
+
+		oInput._$input.trigger("focus").val("o").trigger("input");
+		this.clock.tick(300);
+
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(300);
+		qutils.triggerKeyup(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(300);
+
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(300);
+		qutils.triggerKeyup(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(300);
+
+		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[1].getSelected(), true, "Second item should be selected item");
+
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick(300);
+		qutils.triggerKeyup(oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick(300);
+
+		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].getSelected(), true, "First item should be selected item");
+
+		// Clean
+		oInput.destroy();
+	});
+
 	QUnit.test("Dynamic suggestions: Tabular suggestions - Row in the list should be selected if type-ahead was performed", function (assert) {
 		// arrange
 		var oData = {
