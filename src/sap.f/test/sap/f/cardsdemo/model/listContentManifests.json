@@ -766,5 +766,39 @@
 				"maxItems": 4
 			}
 		}
+	},
+	"listWithMinItems": {
+		"sap.app": {
+			"id": "listWithMinItems",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "List with minItems"
+			},
+			"content": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/listContent/tasks.json"
+					},
+					"path": "/"
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"value": "{Name}"
+					},
+					"info": {
+						"value": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Exceeded' : 'In Range' }",
+						"state": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Error' : 'Success' }"
+					}
+				},
+				"minItems": 1,
+				"maxItems": 8
+			}
+		}
 	}
 }

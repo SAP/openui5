@@ -30,23 +30,25 @@
 				<li><a href="../../index.html#/explore/calendar" target="_parent">Calendar Card</a></li>
 				<li><a href="../../index.html#/explore/object" target="_parent">Object Card</a></li>
 			</ul>
-			<h2 id="maxItems">
-				maxItems Property
+			<h2 id="minItemsMaxItems">
+				minItems and maxItems Properties
 			</h2>
 			<p>
+				The minItems property defines the minimum number of expected items in the card. Its purpose is the calculation of the minimum card height, based on estimated item's height.
+				When minItems is not defined, then the maxItems or pageSize will be used for calculating the minimum card height.
+				This calculation is needed to prevent the card of changing its height too much, until data is loaded.
+				Note that there will be an empty space if you set minItems to 5, but there are only 3 items.
+				<br />
+				<br />
 				The maxItems property defines the maximum number of items the card may contain.
 				It is used to set a (preliminary) sizing limit in the model, used during the initial loading animation.
-				<br />
-				<br />
-				The height of the card is calculated automatically, depending of the card content.
-				The maxItems can be used, so the height of the card doesn't change too often.
-				Note that there will be an empty space if you set maxItems to 10, but there are only 4 items.
 			<pre class="lang-json">
 {
 	"sap.card": {
 		"content": {
 			"data": {
 			},
+			"minItems": 2,
 			"maxItems": 10
 		}
 	}
@@ -57,7 +59,7 @@
 				Because of UI5 data model, the maximum number of displayed items is 100.
 			</div>
 			<br />
-			<p>The content maxItems property can be used in:</p>
+			<p>The content minItems and maxItems properties can be used in:</p>
 			<ul>
 				<li><a href="../../../index.html#/explore/list" target="_parent">List Card</a></li>
 				<li><a href="../../../index.html#/explore/table" target="_parent">Table Card</a></li>
@@ -87,7 +89,7 @@
 			<h4>Table of Contents</h4>
 			<div><a href="#sizing">Sizing</a></div>
 			<div><a href="#responsive">Responsive Behavior</a></div>
-			<div><a href="#maxItems">Max Items</a></div>
+			<div><a href="#minItemsMaxItems">Min Items and Max Items</a></div>
 			<div><a href="#requiredSpace">Min Required Height/Width</a></div>
 		</div>
 	</div>

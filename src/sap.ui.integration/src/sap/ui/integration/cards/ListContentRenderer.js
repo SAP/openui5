@@ -37,18 +37,22 @@ sap.ui.define([
 	 * @override
 	 */
 	ListContentRenderer.getMinHeight = function (oConfiguration, oContent, oCard) {
-		var iMaxItems = oCard.getContentPageSize(oConfiguration),
+		if (oContent._fMinHeight) {
+			return oContent._fMinHeight + "px";
+		}
+
+		var iMinItems = oCard.getContentMinItems(oConfiguration),
 			fItemHeight;
 
 		if (!oConfiguration ||
 			!oConfiguration.item ||
-			!iMaxItems) {
+			iMinItems == null) {
 			return this.DEFAULT_MIN_HEIGHT;
 		}
 
 		fItemHeight = this.getItemMinHeight(oConfiguration, oContent);
 
-		return (iMaxItems * fItemHeight) + "rem";
+		return (iMinItems * fItemHeight) + "rem";
 	};
 
 	ListContentRenderer.getItemMinHeight = function (oConfiguration, oControl) {

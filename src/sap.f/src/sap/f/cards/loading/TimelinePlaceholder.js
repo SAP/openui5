@@ -30,9 +30,9 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * The maximum number of items set to the timeline.
+				 * The minimum number of items set to the timeline.
 				 */
-				maxItems: {
+				minItems: {
 					type : "int",
 					group : "Misc"
 				},
@@ -52,7 +52,7 @@ sap.ui.define([
 		renderer: {
 			apiVersion: 2,
 			render: function (oRm, oControl) {
-				var iMaxItems = oControl.getMaxItems(),
+				var iMinItems = oControl.getMinItems(),
 					oItem = oControl.getItem(),
 					// set title for screen reader
 					oResBundle = Core.getLibraryResourceBundle("sap.ui.core"),
@@ -72,7 +72,7 @@ sap.ui.define([
 
 				oRm.openEnd();
 
-				for (var i = 0; i < iMaxItems; i++) {
+				for (var i = 0; i < iMinItems; i++) {
 					oRm.openStart("div")
 						.class("sapFCardTimelinePlaceholderItem")
 						.style("height", oControl.getItemHeight())
@@ -89,7 +89,7 @@ sap.ui.define([
 							.openEnd()
 							.close("div");
 
-						if (i !== iMaxItems - 1) {
+						if (i !== iMinItems - 1) {
 							oRm.openStart("div")
 								.class("sapFCardTimelinePlaceholderLine")
 								.class("sapFCardLoadingShimmer")

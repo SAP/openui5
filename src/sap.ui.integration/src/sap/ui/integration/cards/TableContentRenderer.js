@@ -18,9 +18,13 @@ sap.ui.define(["./BaseContentRenderer", "../library"], function (BaseContentRend
 	 * @override
 	 */
 	TableContentRenderer.getMinHeight = function (oConfiguration, oContent, oCard) {
-		var  iMaxItems = oCard.getContentPageSize(oConfiguration);
+		if (oContent._fMinHeight) {
+			return oContent._fMinHeight + "px";
+		}
 
-		if (!iMaxItems) {
+		var iMinItems = oCard.getContentMinItems(oConfiguration);
+
+		if (iMinItems == null) {
 			return this.DEFAULT_MIN_HEIGHT;
 		}
 
@@ -28,7 +32,7 @@ sap.ui.define(["./BaseContentRenderer", "../library"], function (BaseContentRend
 			iRowHeight = bIsCompact ? 2 : 2.75, // table row height in "rem"
 			iTableHeaderHeight = bIsCompact ? 2 : 2.75; // table header height in "rem"
 
-		return (iMaxItems * iRowHeight + iTableHeaderHeight) + "rem";
+		return (iMinItems * iRowHeight + iTableHeaderHeight) + "rem";
 	};
 
 	TableContentRenderer.getItemMinHeight = function (oConfiguration, oControl) {

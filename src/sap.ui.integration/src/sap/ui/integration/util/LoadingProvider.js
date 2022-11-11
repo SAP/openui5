@@ -90,18 +90,24 @@ sap.ui.define([
 	};
 
 	LoadingProvider.prototype.createContentPlaceholder = function (oConfiguration, sType, oCard) {
+		var iContentMinItems;
+
 		switch (sType) {
 			case "List":
+				iContentMinItems = oCard.getContentMinItems(oConfiguration);
+
 				this._oContentPlaceholder = new ListPlaceholder({
-					maxItems: oCard ? oCard.getContentPageSize(oConfiguration) || 2 : 2,
+					minItems: iContentMinItems !== null ? iContentMinItems : 2,
 					item: oConfiguration.item,
 					itemHeight: ListContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem"
 				});
 				break;
 
 			case "Calendar":
+				iContentMinItems = oCard.getContentMinItems(oConfiguration);
+
 				this._oContentPlaceholder = new CalendarPlaceholder({
-					maxItems: oConfiguration.maxItems ? parseInt(oConfiguration.maxItems) : 2,
+					minItems: iContentMinItems !== null ? iContentMinItems : 2,
 					maxLegendItems: oConfiguration.maxLegendItems ? parseInt(oConfiguration.maxLegendItems) : 2,
 					item: oConfiguration.item ? oConfiguration.item.template : {},
 					legendItem: oConfiguration.legendItem ? oConfiguration.legendItem.template : {}
@@ -112,16 +118,20 @@ sap.ui.define([
 				break;
 
 			case "Table":
+				iContentMinItems = oCard.getContentMinItems(oConfiguration);
+
 				this._oContentPlaceholder = new TablePlaceholder({
-					maxItems: oCard ? oCard.getContentPageSize(oConfiguration) || 2 : 2,
+					minItems: iContentMinItems !== null ? iContentMinItems : 2,
 					itemHeight: TableContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem",
 					columns: oConfiguration.row ? oConfiguration.row.columns.length || 2 : 2
 				});
 				break;
 
 			case "Timeline":
+				iContentMinItems = oCard.getContentMinItems(oConfiguration);
+
 				this._oContentPlaceholder = new TimelinePlaceholder({
-					maxItems: oCard ? oCard.getContentPageSize(oConfiguration) || 2 : 2,
+					minItems: iContentMinItems !== null ? iContentMinItems : 2,
 					item: oConfiguration.item,
 					itemHeight: TimelineContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem"
 				});
@@ -139,6 +149,26 @@ sap.ui.define([
 		}
 
 		return this._oContentPlaceholder;
+	};
+
+	/**
+	 * Set to <code>true</code> if the loading should wait for a pagination animation.
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 * @param {boolean} bValue True if it should wait. False otherwise.
+	 */
+	LoadingProvider.prototype.setAwaitPagination = function (bValue) {
+		this._bAwaitPagination = bValue;
+	};
+
+	/**
+	 * Gets if the loading should wait for a pagination animation.
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 * @returns {boolean} bValue True if it should wait. False otherwise.
+	 */
+	LoadingProvider.prototype.getAwaitPagination = function () {
+		return this._bAwaitPagination;
 	};
 
 	return LoadingProvider;

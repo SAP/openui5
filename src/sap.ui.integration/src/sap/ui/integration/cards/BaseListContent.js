@@ -51,6 +51,8 @@ sap.ui.define([
 	BaseListContent.prototype.init = function () {
 		BaseContent.prototype.init.apply(this, arguments);
 		this._oAwaitingPromise = null;
+		this._fMinHeight = 0;
+		this._bIsFirstRendering = true;
 	};
 
 	/**
@@ -60,6 +62,30 @@ sap.ui.define([
 		BaseContent.prototype.exit.apply(this, arguments);
 
 		this._oAwaitingPromise = null;
+	};
+
+	BaseListContent.prototype.onAfterRendering = function () {
+		if (!this._bIsFirstRendering) {
+			this._keepHeight();
+		}
+
+		this._bIsFirstRendering = false;
+	};
+
+	BaseListContent.prototype._keepHeight = function () {
+		if (!this.getDomRef()) {
+			return;
+		}
+
+		var fCurrentHeight = this.getDomRef().getBoundingClientRect().height;
+
+		if (fCurrentHeight > this._fMinHeight) {
+			this._fMinHeight = fCurrentHeight;
+		}
+
+		if (this._fMinHeight) {
+			this.getDomRef().style.minHeight = this._fMinHeight + "px";
+		}
 	};
 
 	/**
@@ -88,6 +114,8 @@ sap.ui.define([
 			});
 			oList.addStyleClass("sapFCardMaxItems");
 		}
+
+		this._fMinHeight = 0;
 
 		return this;
 	};
@@ -220,6 +248,9 @@ sap.ui.define([
 
 	BaseListContent.prototype.sliceData = function (iStartIndex, iEndIndex) {
 		this.getModel().sliceData(iStartIndex, iEndIndex);
+		if (iStartIndex !== 0) {
+			this._keepHeight();
+		}
 	};
 
 	BaseListContent.prototype.getDataLength = function () {

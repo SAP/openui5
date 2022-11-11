@@ -3884,6 +3884,154 @@ sap.ui.define([
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
+		QUnit.test("List Content height doesn't decrease after data is changed", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oServer = sinon.createFakeServer({
+					autoRespond: true,
+					respondImmediately: true
+				}),
+				oCard = this.oCard,
+				bFirstCall = true,
+				fFirstHeight;
+
+			oServer.respondWith("GET", /fakeService\/getProducts/, function (oXhr) {
+				if (bFirstCall) {
+					bFirstCall = false;
+					oXhr.respond(200, { "Content-Type": "application/json"}, JSON.stringify([{}, {}, {}, {}, {}, {}]));
+				} else {
+					oXhr.respond(200, { "Content-Type": "application/json"}, JSON.stringify([{}, {}, {}]));
+				}
+			});
+
+			function firstReady () {
+				Core.applyChanges();
+				fFirstHeight = this.oCard.getCardContent().getDomRef().getBoundingClientRect().height;
+
+				// Assert 1
+				assert.ok(fFirstHeight > 0, "The height of the content should be bigger than 0.");
+
+				// Act 2
+				oCard.attachEventOnce("_dataReady", handleDataRefresh.bind(this));
+				oCard.refreshData();
+			}
+
+			function handleDataRefresh () {
+				Core.applyChanges();
+				var iHeight = oCard.getCardContent().getDomRef().getBoundingClientRect().height;
+
+				// Assert 2
+				assert.ok(iHeight >= fFirstHeight, "The height of the content has shrunk. It is: " + iHeight + ", was: " + fFirstHeight);
+
+				// Clean up
+				oServer.restore();
+				done();
+			}
+
+			oCard.attachEventOnce("_ready", firstReady.bind(this));
+
+			// Act 1
+			oCard.setManifest({
+				"sap.app": {
+					"id": "my.card.qunit.test.ListCard"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"request": {
+							"url": "fakeService/getProducts"
+						}
+					},
+					"header": {
+						"title": "Header"
+					},
+					"content": {
+
+						"item": {
+							"title": "Item",
+							"description": "Description"
+						}
+					}
+				}
+			});
+			oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Content height doesn't decrease after data is changed", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard,
+				oServer = sinon.createFakeServer({
+					autoRespond: true,
+					respondImmediately: true
+				}),
+				bFirstCall = true,
+				fFirstHeight;
+
+			oServer.respondWith("GET", /fakeService\/getProducts/, function (oXhr) {
+				if (bFirstCall) {
+					bFirstCall = false;
+					oXhr.respond(200, { "Content-Type": "application/json"}, JSON.stringify([{}, {}, {}, {}, {}, {}]));
+				} else {
+					oXhr.respond(200, { "Content-Type": "application/json"}, JSON.stringify([{}, {}, {}]));
+				}
+			});
+
+			function firstReady () {
+				Core.applyChanges();
+				fFirstHeight = oCard.getCardContent().getDomRef().getBoundingClientRect().height;
+
+				// Assert 1
+				assert.ok(fFirstHeight > 0, "The height of the content should be bigger than 0.");
+
+				// Act 2
+				oCard.attachEventOnce("_dataReady", handleDataRefresh.bind(this));
+				oCard.refreshData();
+			}
+
+			function handleDataRefresh () {
+				Core.applyChanges();
+				var iHeight = oCard.getCardContent().getDomRef().getBoundingClientRect().height;
+
+				// Assert 2
+				assert.strictEqual(iHeight, fFirstHeight, "The height of the content did not decrease.");
+
+				// Clean up
+				oServer.restore();
+				done();
+			}
+
+			oCard.attachEventOnce("_ready", firstReady.bind(this));
+
+			// Act 1
+			oCard.setManifest({
+				"sap.app": {
+					"id": "my.card.qunit.test.ListCard"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"request": {
+							"url": "fakeService/getProducts"
+						}
+					},
+					"header": {
+						"title": "Header"
+					},
+					"content": {
+						"minItems": 1,
+						"maxItems": 6,
+						"item": {
+							"title": "Item",
+							"description": "Description"
+						}
+					}
+				}
+			});
+
+			oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
 		QUnit.module("Card without rendering", {
 			beforeEach: function () {
 				this.oCard = new Card();
