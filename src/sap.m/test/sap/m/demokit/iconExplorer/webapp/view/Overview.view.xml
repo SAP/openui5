@@ -4,7 +4,6 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
-	xmlns:f="sap.f"
 	busy="{view>/busy}">
 	<Page
 		id="page"
@@ -384,7 +383,7 @@
 													alignItems="Center"
 													height="100%"
 													justifyContent="Center">
-														<f:Avatar
+														<Avatar
 															src="sap-icon://{view>/iconPath}{name}"
 															displaySize="L"/>
 														<Text

@@ -488,23 +488,26 @@ sap.ui.define([
 				}
 				this.byId("iconTabBar").setSelectedKey(oQuery.tab);
 				if (bTabChanged) {
-					var oContent = this.byId("resultContainer").getContent();
+					var oResultContainer = this.byId("resultContainer");
 
-					// destroy content item if available
-					if (oContent.length === 1) {
-						oContent.pop().destroy();
-					}
 					// uppercase first letter
 					var sFragmentName = formatter.uppercaseFirstLetter(oQuery.tab);
 
-					// add new content to the end of result container
-					this._resultsLoaded = Fragment.load({
-						id: this.getView().getId(),
-						name: "sap.ui.demo.iconexplorer.view.browse." + sFragmentName,
-						controller: this
-					}).then(function(oFragmentContent){
-						this.byId("resultContainer").addContent(oFragmentContent);
-					}.bind(this));
+					// first destroy old content, then add new content to the end of result container
+					this._resultsLoaded = Promise.resolve(this._resultsLoaded)
+						.catch(function() {})
+						.then(function() {
+							oResultContainer.destroyContent();
+							// load the fragment only now
+							return Fragment.load({
+								id: this.getView().getId(),
+								name: "sap.ui.demo.iconexplorer.view.browse." + sFragmentName,
+								controller: this
+							});
+						}.bind(this))
+						.then(function(oFragmentContent){
+							oResultContainer.addContent(oFragmentContent);
+						});
 
 					var bCategoriesVisible = !(Device.system.phone || oQuery.tab == "favorites");
 					this.byId("categorySelection").setVisible(bCategoriesVisible);
