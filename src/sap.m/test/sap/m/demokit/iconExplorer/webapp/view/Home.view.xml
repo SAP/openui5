@@ -41,8 +41,7 @@
 								}"
 								suggestionItemSelected=".onSuggestionSelect"
 								valueLiveUpdate="true"
-								startSuggestion="2"
-								liveChange=".onSearch">
+								startSuggestion="2">
 								<layoutData>
 									<FlexItemData growFactor="0.7" />
 								</layoutData>
@@ -101,7 +100,6 @@
 												}">
 												<Token
 													text="{name}"
-													select=".onTagSelect"
 													editable="false"/>
 											</l:HorizontalLayout>
 											<Label text="{font}"/>
