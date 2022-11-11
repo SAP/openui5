@@ -1,9 +1,9 @@
 .sapUiIntegrationDTPreview {
 	padding: 0.5rem;
-	overflow: hidden;
+	overflow: auto;
 	min-width: calc(190px + 5rem);
-	width: calc(190px + 5rem);
-	height: 350px;
+	width: var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 5rem));
+	height: var(--sapUiIntegrationEditorPreviewHeight, 350px);
 	box-sizing: border-box;
 	display: inline-block;
 	background-color: rgba(222, 222, 222, 0.3) !important;
@@ -11,23 +11,25 @@
 	border-radius: 2px;
 }
 
-.sapUiIntegrationDTPreviewMarginForAlignTopAndBottom {
-	margin-left: calc(50% - 135px);
-	position: relative;
+.sapUiIntegrationDTPreview.sapUiIntegrationDTPreviewSeparate {
+	width: auto;
+	height: auto;
+	display: block;
 }
 
-.sapUiIntegrationDTPreviewMarginForAlignTopAndBottomSpec {
-	margin-right: calc(50% - 135px);
-	position: relative;
+.sapUiIntegrationDTPreview::-webkit-scrollbar {
+	width: 7px !important;
+	background-color: transparent !important	;
+	transition: all 0.5s ease-in;
 }
 
-.sapUiIntegrationDTPreview>.before {
-	position: absolute;
-	min-width: calc(190px + 5rem);
-	height: calc(350px - 2.2rem);
-	background-color: rgba(222, 222, 222, 0.5); /* background-color needed for blocking */
-	opacity: 0.01;
-	margin: -0.5rem;
+.sapUiIntegrationDTPreview::-webkit-scrollbar-thumb {
+	background-color: transparent !important;
+	width: 7px;
+}
+
+.sapUiIntegrationDTPreview:hover::-webkit-scrollbar-thumb {
+	background-color: var(--sapUiChartScrollbarBorderColor, rgba(148, 148, 148, 0.4))!important;
 }
 
 .sapUiIntegrationDTPreview.sapUiIntegrationDTPreviewDark {
@@ -37,10 +39,18 @@
 
 .sapUiIntegrationDTPreview.sapUiIntegrationDTPreviewDark .sapUiIntegrationDTPreviewImg {
 	opacity: 0.2;
+	width: var(--sapUiIntegrationEditorPreviewWidth, calc(400px + 10rem)) !important;
+	height: var(--sapUiIntegrationEditorPreviewHeight, calc(700px - 1.5rem)) !important;
 }
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewImg {
 	opacity: 1;
+	width: var(--sapUiIntegrationEditorPreviewWidth, calc(400px + 10rem)) !important;
+	height: var(--sapUiIntegrationEditorPreviewHeight, calc(700px - 1.5rem)) !important;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewImgHBox {
+	width: var(--sapUiIntegrationEditorPreviewWidth, calc(400px + 10rem)) !important;
 }
 
 .sapUiIntegrationDTPreview .sapFCard.sapUiIntegrationDTPreviewScale {
@@ -59,12 +69,64 @@
 	position: absolute
 }
 
-.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewButton {
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewModeButton {
 	position: absolute !important;
-	margin: calc(350px - 2.8rem) 0 0 calc(95px + 1rem) !important;
+	margin: calc(350px - 2.8rem) 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 8rem) !important;
 }
 
-.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewButtonSpec {
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewModeButtonSpec {
 	position: absolute !important;
-	margin:calc(350px - 2.8rem) calc(95px + 1rem) 0 0 !important
+	margin: calc(350px - 2.8rem) calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 8rem) 0 0 !important
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewModeButtonFull {
+	margin: 0.5rem 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 1rem))/2 - 2.5rem) !important;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewModeButtonFullSpec {
+	margin: 0.5rem calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 1rem))/2 - 2.5rem) 0 0 !important;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewModeButtonVerticalFull {
+	margin: 0.5rem 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px - 2rem))/2 - 1rem) !important;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewModeButtonVerticalFullSpec {
+	margin: 0.5rem calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px - 2rem))/2 - 1rem) 0 0 !important;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButton {
+	position: absolute !important;
+	margin: calc(350px - 2.8rem) 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 5rem) !important;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButtonSpec {
+	position: absolute !important;
+	margin: calc(350px - 2.8rem) calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 5rem) 0 0 !important
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButtonFull {
+	margin: 0.5rem 0 0 1rem !important;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButtonFullSpec {
+	margin: 0.5rem 1rem 0 0 !important;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButtonOnly {
+	position: absolute !important;
+	margin: calc(350px - 2.8rem) 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 6.5rem) !important;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButtonOnlySpec {
+	position: absolute !important;
+	margin: calc(350px - 2.8rem) calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 6.5rem) 0 0 !important
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButtonOnlyFull {
+	margin: 0.5rem 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px - 2rem))/2 - 1rem) !important;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewResizeButtonOnlyFullSpec {
+	margin: 0.5rem calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px - 2rem))/2 - 1rem) 0 0 !important;
 }

@@ -1430,7 +1430,6 @@ sap.ui.define([
 							var oEditorDom = this.oCardEditor.getDomRef();
 							assert.equal(oEditorDom.children.length, 2, "Editor children length: OK");
 							assert.equal(oEditorDom.children[0].id, cardPreview.getId(), "Preview Position: OK");
-							assert.ok(oEditorDom.children[0].classList.contains("sapUiIntegrationDTPreviewMarginForAlignTopAndBottom"), "Preview style class: margin OK");
 							resolve();
 						}.bind(this)
 					});
@@ -1470,7 +1469,6 @@ sap.ui.define([
 							var oEditorDom = this.oCardEditor.getDomRef();
 							assert.equal(oEditorDom.children.length, 2, "Editor children length: OK");
 							assert.equal(oEditorDom.children[1].id, cardPreview.getId(), "Preview Position: OK");
-							assert.ok(oEditorDom.children[1].classList.contains("sapUiIntegrationDTPreviewMarginForAlignTopAndBottom"), "Preview style class: margin OK");
 							resolve();
 						}.bind(this)
 					});

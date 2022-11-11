@@ -25,6 +25,17 @@
 		</select>
 	</div>
 	<div id="editor">
+		<h2>Separate Preview</h2>
+		<div class="buttons">
+			<button onclick="showSeparatePreview('separatePreview', this)">
+				Show Separate Preview in Popup
+			</button>
+			<button onclick="showSeparatePreview('separatePreview', this, 'Dialog')">
+				Show Separate Preview in Dialog
+			</button>
+		</div>
+		<ui-integration-card-editor id="separatePreview" mode="admin" preview-position="separate" designtime="previewLive">
+		</ui-integration-card-editor>
 		<h2>Abstract Mode</h2>
 		<ui-integration-card-editor id="previewAbstract" mode="admin" designtime="previewAbstract">
 		</ui-integration-card-editor>

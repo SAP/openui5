@@ -2663,6 +2663,28 @@ sap.ui.define([
 										key: 'i18n.properties'
 									}
 								]
+							},
+							{
+								title: 'Preview position: separate',
+								key: 'previewPositionSeparate',
+								previewPosition: 'separate',
+								files: [
+									{
+										url: '/samples/designtimePreviewPositionSeparate/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimePreviewPositionSeparate/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimePreviewPositionSeparate/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
 							}
 						]
 					},

@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/dom/includeStylesheet",
-	"sap/ui/integration/library"
+	"sap/ui/integration/library",
+	"sap/ui/integration/designtime/editor/CardPreview"
 ], function (
 	Editor,
 	Core,
@@ -25,7 +26,8 @@ sap.ui.define([
 	LoaderExtensions,
 	Parameters,
 	includeStylesheet,
-	library
+	library,
+	CardPreview
 ) {
 	"use strict";
 
@@ -85,9 +87,9 @@ sap.ui.define([
 	});
 
 	CardEditor.prototype.hasPreview = function() {
-		var oPreview = this.getAggregation("_preview");
-		if (oPreview) {
-			if (oPreview.getSettings() && oPreview.getSettings().preview && oPreview.getSettings().preview.modes === "None") {
+		var oCardPreview = this.getAggregation("_preview");
+		if (oCardPreview) {
+			if (oCardPreview.getSettings() && oCardPreview.getSettings().preview && oCardPreview.getSettings().preview.modes === "None") {
 				return false;
 			}
 			return true;
@@ -95,13 +97,21 @@ sap.ui.define([
 		return false;
 	};
 
+	CardEditor.prototype.getSeparatePreview = function() {
+		var sPreviewPosition = this.getPreviewPosition();
+		if (!this.isReady() || sPreviewPosition !== "separate") {
+			return null;
+		}
+		return this._initPreview();
+	};
+
 	/**
 	 * updates the card preview
 	 */
 	 CardEditor.prototype._updatePreview = function () {
-		var oPreview = this.getAggregation("_preview");
-		if (oPreview && oPreview.update && oPreview._getCurrentMode() !== "None") {
-			oPreview.update();
+		var oCardPreview = this.getAggregation("_preview");
+		if (oCardPreview && oCardPreview.update && oCardPreview._getCurrentMode() !== "None") {
+			oCardPreview.update();
 		}
 	};
 
@@ -215,16 +225,15 @@ sap.ui.define([
 		var oSettings = this._oDesigntimeInstance.getSettings() || {};
 		oSettings.preview = oSettings.preview || {};
 		oSettings.preview.position = this.getPreviewPosition();
-		return new Promise(function (resolve, reject) {
-			sap.ui.require(["sap/ui/integration/designtime/editor/CardPreview"], function (Preview) {
-				var oPreview = new Preview({
-					settings: oSettings,
-					card: this._oEditorCard
-				});
-				this.setAggregation("_preview", oPreview);
-				resolve();
-			}.bind(this));
-		}.bind(this));
+		var oCardPreview = new CardPreview({
+			settings: oSettings,
+			card: this._oEditorCard,
+			parentWidth: this.getWidth(),
+			parentHeight: this.getHeight()
+		});
+		this.setAggregation("_preview", oCardPreview);
+		oCardPreview.setAssociation("_editor", this);
+		return oCardPreview;
 	};
 
 	CardEditor.prototype._loadExtension = function () {

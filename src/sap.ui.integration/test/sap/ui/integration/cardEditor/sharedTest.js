@@ -15,16 +15,55 @@ var baseUrl = document.location.pathname.substring(0, document.location.pathname
 			"type": "List",
 			"configuration": {
 				"parameters": {
-					"stringParameter": {}
+					"stringParameter": {},
+					"cardTitle": {
+						"value": "Card Title"
+					}
 				}
 			},
 			"header": {
-				"title": "Card Title",
+				"title": "{{parameters.cardTitle}}",
 				"subTitle": "Card Sub Title",
 				"icon": {
 					"src": "sap-icon://accept"
 				}
 			},
+			"content": {
+				"data": {
+					"json": [{
+							"Name": "Comfort Easy",
+							"Description": "32 GB Digital Assistant",
+							"Highlight": "Error"
+						},
+						{
+							"Name": "ITelO Vault",
+							"Description": "Digital Organizer",
+							"Highlight": "Warning"
+						},
+						{
+							"Name": "Notebook Professional 15",
+							"Description": "Notebook Professional",
+							"Highlight": "Success"
+						},
+						{
+							"Name": "Ergo Screen E-I",
+							"Description": "Optimum Hi-Resolution max. 1920 x 1080",
+							"Highlight": "Information"
+						},
+						{
+							"Name": "Laser Professional Eco",
+							"Description": "Print 2400 dpi image quality color documents",
+							"Highlight": "None"
+						}
+					]
+				},
+				"maxItems": 4,
+				"item": {
+					"title": "{Name}",
+					"description": "{Description}",
+					"highlight": "{Highlight}"
+				}
+			}
 		}
 	};
 
@@ -75,6 +114,7 @@ function showCurrentValues(id) {
 	console.log(o);
 	alert(JSON.stringify(o, null, "\t"));
 }
+
 function saveCurrentValues(id) {
 	var o = document.getElementById(id).getCurrentSettings();
 	if (id === "cardEditorAdminContent") {
@@ -83,11 +123,13 @@ function saveCurrentValues(id) {
 	localStorage.setItem(localStorageKey + id, JSON.stringify(o, null, "\t"));
 	updateAllLayerCard();
 }
+
 function deleteCurrentValues(id) {
 	localStorage.removeItem(localStorageKey + id);
 	loadCurrentValues(id);
 	updateAllLayerCard();
 }
+
 function createCardEditorTag(id, changes, mode, language, designtime, previewPosition) {
 	language = language || "";
 	var card = {
@@ -109,6 +151,7 @@ function createCardEditorTag(id, changes, mode, language, designtime, previewPos
 		'" card=\'' + JSON.stringify(card).replaceAll("'", "&apos;") +
 		'\'></ui-integration-card-editor>';
 }
+
 function loadCurrentValues(id) {
 	var dom = document.getElementById(id);
 	if (!dom) return;
@@ -128,6 +171,7 @@ function loadAllChanges() {
 	loadCurrentValues("cardEditorAdmin");
 	loadCurrentValues("cardEditorContent")
 	loadCurrentValues("cardEditorTranslation");
+	loadCurrentValues("separatePreview");
 	loadCurrentValues("previewAbstract");
 	loadCurrentValues("previewAbstractLive");
 	loadCurrentValues("previewLive")
@@ -250,4 +294,45 @@ function showEditorInDialog(oButton) {
 		});
 		oSeparateEditorDialog.open();
 	});
+}
+
+function showSeparatePreview(id, oButton, sControlType) {
+	var oEditor = document.getElementById(id);
+	var oSeparatePreview = oEditor.getSeparatePreview();
+	if (oSeparatePreview) {
+		if (!sControlType || sControlType === "Popup") {
+			sap.ui.require(["sap/m/Popover"], function (Popover) {
+				var oSeparatePreviewPopover = new Popover({
+					placement: "Right",
+					contentWidth: "300px",
+					contentHeight: "400px",
+					content: oSeparatePreview,
+					resizable: true,
+					showHeader: false,
+					afterClose: function(oEvent) {
+						oSeparatePreview.destroy();
+					}
+				});
+				oSeparatePreviewPopover.openBy(oButton);
+			});
+		} else if (sControlType === "Dialog") {
+			sap.ui.require(["sap/m/Dialog"], function (Dialog) {
+				var oSeparatePreviewDialog= new Dialog({
+					title: "Card Preview In Dailog",
+					contentWidth: "550px",
+					contentHeight: "300px",
+					resizable: true,
+					content: oSeparatePreview,
+					endButton: new sap.m.Button({
+						text: "Close",
+						press: function () {
+							oSeparatePreviewDialog.destroyContent();
+							oSeparatePreviewDialog.close();
+						}
+					})
+				});
+				oSeparatePreviewDialog.open();
+			});
+		}
+	}
 }

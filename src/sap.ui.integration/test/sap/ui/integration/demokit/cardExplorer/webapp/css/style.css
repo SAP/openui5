@@ -87,3 +87,7 @@ html.sap-phone .sapFGridContainer { /* in "Explore" section */
 .manifestChangesTextArea .sapMInputBaseContentWrapper {
 	border: none !important;
 }
+
+.styleSeparatePreviewContainer.sapMPopover .sapMPopoverScroll {
+    display: block;
+}

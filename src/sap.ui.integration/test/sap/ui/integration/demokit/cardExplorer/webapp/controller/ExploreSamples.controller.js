@@ -19,11 +19,13 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/m/Dialog",
 	"sap/m/Button",
+	"sap/m/ToolbarSpacer",
 	"sap/m/TextArea",
 	"sap/m/Label",
 	"sap/m/MessageStrip",
 	"sap/m/OverflowToolbar",
 	"sap/m/Panel",
+	"sap/m/Popover",
 	"sap/m/Select",
 	"sap/m/VBox",
 	"sap/m/HBox",
@@ -50,11 +52,13 @@ sap.ui.define([
 	ObjectPath,
 	Dialog,
 	Button,
+	ToolbarSpacer,
 	TextArea,
 	Label,
 	MessageStrip,
 	OverflowToolbar,
 	Panel,
+	Popover,
 	Select,
 	VBox,
 	HBox,
@@ -620,6 +624,21 @@ sap.ui.define([
 					content: [
 						new Label({
 							text: cardTitle
+						}),
+						new ToolbarSpacer({
+							visible: sPreviewPosition === "separate"
+						}),
+						new Button({
+							text: "Show Preview (Popup)",
+							type: "Emphasized",
+							visible: sPreviewPosition === "separate",
+							press: this._showSeparatePreviewInPopup.bind(this)
+						}),
+						new Button({
+							text: "Show Preview (Dialog)",
+							type: "Emphasized",
+							visible: sPreviewPosition === "separate",
+							press: this._showSeparatePreviewInDialog.bind(this)
 						})
 					]
 				}),
@@ -746,6 +765,48 @@ sap.ui.define([
 					this._oFileEditor.showError(oErr.name + ": " + oErr.message);
 				}
 			}.bind(this));
+		},
+
+		_showSeparatePreviewInPopup: function(oEvent) {
+			var oButton = oEvent.getSource();
+			var oEditor = this._getCardEditorControl();
+			var oSeparatePreview = oEditor.getSeparatePreview();
+			if (oSeparatePreview) {
+				var oSeparatePreviewPopover = new Popover({
+					placement: "Left",
+					contentWidth: "300px",
+					contentHeight: "400px",
+					content: oSeparatePreview,
+					resizable: true,
+					showHeader: false,
+					afterClose: function(oEvent) {
+						oSeparatePreview.destroy();
+					}
+				}).addStyleClass("styleSeparatePreviewContainer");
+				oSeparatePreviewPopover.openBy(oButton);
+			}
+		},
+
+		_showSeparatePreviewInDialog: function(oEvent) {
+			var oEditor = this._getCardEditorControl();
+			var oSeparatePreview = oEditor.getSeparatePreview();
+			if (oSeparatePreview) {
+				var oSeparatePreviewDialog = new Dialog({
+					title: "Card Preview In Dialog",
+					contentWidth: "550px",
+					contentHeight: "300px",
+					resizable: true,
+					content: oSeparatePreview,
+					endButton: new sap.m.Button({
+						text: "Close",
+						press: function () {
+							oSeparatePreviewDialog.destroyContent();
+							oSeparatePreviewDialog.close();
+						}
+					})
+				});
+				oSeparatePreviewDialog.open();
+			}
 		},
 
 		_getCardEditorControl: function() {

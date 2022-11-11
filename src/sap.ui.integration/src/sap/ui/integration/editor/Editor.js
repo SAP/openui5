@@ -184,7 +184,7 @@ sap.ui.define([
 				},
 				previewPosition:{
 					type: "string",
-					defaultValue: "right" // value can be "top", "bottom", "left", "right"
+					defaultValue: "right" // value can be "top", "bottom", "left", "right" or "separate"
 				},
 				width: {
 					type: "sap.ui.core.CSSSize",
@@ -936,6 +936,17 @@ sap.ui.define([
 			return true;
 		}
 		return false;
+	};
+
+	Editor.prototype.getSeparatePreview = function() {
+		var sPreviewPosition = this.getPreviewPosition();
+		if (!this.isReady() || sPreviewPosition !== "separate") {
+			return null;
+		}
+		if (!this._oPreview) {
+			this._oPreview = this.getAggregation("_preview");
+		}
+		return this._oPreview;
 	};
 
 	Editor.prototype.flattenData = function(oData, s, a, path) {
@@ -2148,7 +2159,7 @@ sap.ui.define([
 	 * TODO: Track changes and call update of the additional content
 	 */
 	Editor.prototype._updatePreview = function () {
-		var oPreview = this.getAggregation("_preview");
+		var oPreview = this.getAggregation("_preview") || this._oPreview;
 		if (oPreview && oPreview.update) {
 			oPreview.update();
 		}
@@ -2990,20 +3001,14 @@ sap.ui.define([
 			this.setProperty("width", editorWidth);
 			document.body.style.setProperty("--sapUiIntegrationEditorFormWidth", editorWidth);
 		}
-		//add additional content
-		if (this.getMode() !== "translation") {
-			this._initPreview().then(function() {
-				Promise.all(this._aFieldReadyPromise).then(function () {
-					this._ready = true;
-					this.fireReady();
-				}.bind(this));
-			}.bind(this));
-		} else {
-			Promise.all(this._aFieldReadyPromise).then(function () {
-				this._ready = true;
-				this.fireReady();
-			}.bind(this));
+		//add preview
+		if (this.getMode() !== "translation" && this.getPreviewPosition() !== "separate") {
+			this._initPreview();
 		}
+		Promise.all(this._aFieldReadyPromise).then(function () {
+			this._ready = true;
+			this.fireReady();
+		}.bind(this));
 	};
 
 	Editor.prototype.setHeight = function(sValue) {
@@ -3042,6 +3047,8 @@ sap.ui.define([
 		this._beforeManifestModel = null;
 		this._oInitialManifestModel = null;
 		this._settingsModel = null;
+		document.body.style.removeProperty("--sapUiIntegrationEditorFormWidth");
+		document.body.style.removeProperty("--sapUiIntegrationEditorFormHeight");
 		Control.prototype.destroy.apply(this, arguments);
 	};
 
@@ -3049,9 +3056,6 @@ sap.ui.define([
 	 * Initializes the additional content
 	 */
 	Editor.prototype._initPreview = function () {
-		return new Promise(function (resolve, reject) {
-			resolve();
-		});
 	};
 
 	/**

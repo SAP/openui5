@@ -25,6 +25,9 @@ sap.ui.require([
 	CustomElementCardEditor.prototype.getCurrentSettings = function () {
 		return this._getControl().getCurrentSettings();
 	};
+	CustomElementCardEditor.prototype.getSeparatePreview = function () {
+		return this._getControl().getSeparatePreview();
+	};
 	var aDependencies = ["ui-integration-card"];
 	CustomElementBase.define("ui-integration-card-editor", CustomElementCardEditor, aDependencies);
 });
