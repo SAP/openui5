@@ -1792,7 +1792,7 @@ sap.ui.define([
 	 */
 	 UploadSet.prototype._mapGroupForItem = function(item) {
 		var oItemsBinding = this.getBinding("items"),
-			sModelName = this.getBindingInfo("items") ? this.getBindingInfo("items").oModel : undefined,
+			sModelName = this.getBindingInfo("items") ? this.getBindingInfo("items").model : undefined,
 			fnGroupHeader = this.getBindingInfo("items") ? this.getBindingInfo("items").groupHeaderFactory : null;
 		var fnGroup = function(oItem) {
 			//Added sModelName to consider named model cases if empty default model is picked without checking model bind to items.

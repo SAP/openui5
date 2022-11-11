@@ -947,6 +947,7 @@ sap.ui.define([
 	QUnit.test("Test for adding Groups", function(assert) {
 		//Arrange
 		this.spy(this.oUploadSet._oList, "addItemGroup");
+		this.spy(this.oUploadSet, "getBindingInfo");
 		var aList = this.oUploadSet._oList,
 			aItems = aList.getItems();
 
@@ -954,6 +955,7 @@ sap.ui.define([
 		this.oUploadSet.rerender();
 
 		//Assert
+		assert.ok(this.oUploadSet.getBindingInfo.calledWith("items"), "Model fetched from items binding to lookup for grouping keys");
 		assert.equal(this.oUploadSet._oList.addItemGroup.callCount, 2, "Two groups were added");
 		assert.equal(aItems.length, 4, "Each item is part of a separate group (we have inside 2 group items, each with 1 UploadSet item)");
 		aItems.forEach(function(oItem) {
