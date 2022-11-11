@@ -19,7 +19,12 @@ sap.ui.define([
 	"./MonthRenderer",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/core/InvisibleMessage',
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/date/CalendarUtils",
+	"sap/base/Log"
 ], function(
 	Control,
 	Device,
@@ -36,7 +41,12 @@ sap.ui.define([
 	MonthRenderer,
 	containsOrEquals,
 	KeyCodes,
-	jQuery
+	jQuery,
+	InvisibleMessage,
+	Configuration,
+	CalendarWeekNumbering,
+	CalendarDateUtils,
+	Log
 ) {
 	"use strict";
 
@@ -97,8 +107,9 @@ sap.ui.define([
 			showHeader : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * If set, the first day of the displayed week is this day. Valid values are 0 to 6.
-			 * If not a valid value is set, the default of the used locale is used.
+			 * If the property is set, this day marks the start of the displayed week. Valid values are 0 to 6.
+			 * If no valid property is set, the current locale's default is applied.
+			 * Note: This property should not be used with the calendarWeekNumbering property.
 			 * @since 1.28.9
 			 */
 			firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1},
@@ -138,7 +149,14 @@ sap.ui.define([
 			 * regardless of what is set to this property.
 			 * @since 1.48
 			 */
-			showWeekNumbers : {type : "boolean", group : "Appearance", defaultValue : true}
+			showWeekNumbers : {type : "boolean", group : "Appearance", defaultValue : true},
+			/**
+			 * If set, the calendar week numbering is used for display.
+			 * If not set, the calendar week numbering of the global configuration is used.
+			 * Note: This property should not be used with firstDayOfWeek property.
+			 * @since 1.108.0
+			 */
+			 calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 
 		},
 		aggregations : {
@@ -278,6 +296,12 @@ sap.ui.define([
 
 	Month.prototype.getFocusDomRef = function(){
 		return this._oItemNavigation.getItemDomRefs()[this._oItemNavigation.getFocusedIndex()];
+	};
+
+	Month.prototype.onBeforeRendering = function() {
+		if (this.getFirstDayOfWeek() !== -1 && this.getCalendarWeekNumbering() !== "Default") {
+			Log.warning("Both properties firstDayOfWeek and calendarWeekNumbering should not be used at the same time!");
+		}
 	};
 
 	Month.prototype.onAfterRendering = function(){
@@ -729,8 +753,14 @@ sap.ui.define([
 		}
 
 		if (iFirstDayOfWeek < 0 || iFirstDayOfWeek > 6) {
-			var oLocaleData = this._getLocaleData();
-			iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+			var oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(this._getLocale()));
+
+			if (oWeekConfigurationValues) {
+				iFirstDayOfWeek = oWeekConfigurationValues.firstDayOfWeek;
+			} else {
+				var oLocaleData = this._getLocaleData();
+				iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+			}
 		}
 
 		return iFirstDayOfWeek;
@@ -1587,6 +1617,36 @@ sap.ui.define([
 		this._toggleDaysBetween(oStartDate, oEndDate, !bShouldDeselectDays);
 
 		return this;
+	};
+
+	/**
+	 * Calculates week number.
+	 *
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate Start date of the week
+	 * @returns {int} Week number
+	 * @private
+	 */
+	Month.prototype._calculateWeekNumber = function (oDate) {
+		var oLocale = new Locale(this._getLocale());
+		var oEndDate = this._getLastWeekDate(oDate);
+		var oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), oLocale);
+		var oDateFormat;
+		var iWeekNumber;
+
+		oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: this.getPrimaryCalendarType(), calendarWeekNumbering: this.getCalendarWeekNumbering()}, oLocale);
+
+		var bIsRegionUS = oWeekConfigurationValues.firstDayOfWeek === 0;
+
+		// Because the date we use to calculate the week number may be in one year and in the same time
+		// includes days in a new month into a new year, we explicitly changed the week number
+		// US calendar weeks overlap, Jan 1st is always week 1, while Dec 31st is always last week.
+		if (oEndDate.getMonth() === 0 && this._oDate.getMonth() === 0  && bIsRegionUS) {
+			iWeekNumber = oDateFormat.format(oEndDate.toUTCJSDate(), true);
+		} else {
+			iWeekNumber = oDateFormat.format(oDate.toUTCJSDate(), true);
+		}
+
+		return iWeekNumber;
 	};
 
 	/**

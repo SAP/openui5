@@ -34,6 +34,8 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CustomYearPicker",
 	"sap/ui/core/LabelEnablement",
 	"sap/ui/unified/library",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/dom/jquery/cursorPos"
 ],
 	function(
@@ -60,7 +62,9 @@ sap.ui.define([
 		CustomMonthPicker,
 		CustomYearPicker,
 		LabelEnablement,
-		unifiedLibrary
+		unifiedLibrary,
+		Configuration,
+		CalendarWeekNumbering
 	) {
 	"use strict";
 
@@ -200,8 +204,13 @@ sap.ui.define([
 			 *
 			 * @since 1.70
 			 */
-			showFooter : {type : "boolean", group : "Misc", defaultValue : false}
-
+			showFooter : {type : "boolean", group : "Misc", defaultValue : false},
+			/**
+			 * If set, the calendar week numbering is used for display.
+			 * If not set, the calendar week numbering of the global configuration is used.
+			 * @since 1.108.0
+			 */
+			calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 		},
 
 		aggregations : {
@@ -1176,12 +1185,12 @@ sap.ui.define([
 		var CalendarConstructor = this._getCalendarConstructor();
 
 		if (!this._getCalendar()) {
-
 			this._oCalendar = new CalendarConstructor(this.getId() + "-cal", {
 				intervalSelection: this._bIntervalSelection,
 				minDate: this.getMinDate(),
 				maxDate: this.getMaxDate(),
 				legend: this.getLegend(),
+				calendarWeekNumbering: this.getCalendarWeekNumbering(),
 				startDateChange: function () {
 						this.fireNavigate({
 							dateRange: this._getVisibleDatesRange(this._getCalendar())
@@ -1194,7 +1203,6 @@ sap.ui.define([
 			this._getCalendar()._setSpecialDatesControlOrigin(this);
 			this._getCalendar().attachCancel(_cancel, this);
 			this._getCalendar().setPopupMode(true);
-
 			if (this.$().closest(".sapUiSizeCompact").length > 0) {
 				this._getCalendar().addStyleClass("sapUiSizeCompact");
 			}

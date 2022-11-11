@@ -19,6 +19,7 @@ sap.ui.define([], function() {
 	 *
 	 * @enum {string}
 	 * @public
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 * @since 1.84.31
 	 * @alias sap.ui.core.date.CalendarWeekNumbering
 	 */

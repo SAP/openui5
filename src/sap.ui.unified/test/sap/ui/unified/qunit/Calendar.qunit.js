@@ -125,15 +125,55 @@ sap.ui.define([
 			aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 
 		assert.equal(aWeekHeaders.length, 7, "7 weekheaders rendered");
-		assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday ist first weekday for en-US");
+		assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for en-US");
 
 		oMonthDomRef = sap.ui.getCore().byId("Cal2").getAggregation("month")[0].getDomRef();
 		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
-		assert.equal(aWeekHeaders[0].textContent, "Mo", "Monday ist first weekday for de-DE");
+		assert.equal(aWeekHeaders[0].textContent, "Mo", "Monday is the first weekday for de-DE");
 
 		oMonthDomRef = sap.ui.getCore().byId("Cal3").getAggregation("month")[0].getDomRef();
 		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
-		assert.equal(aWeekHeaders[0].textContent, "Di", "Thuesday ist first weekday for custom setting");
+		assert.equal(aWeekHeaders[0].textContent, "Di", "Thuesday is the first weekday for custom setting");
+
+		assert.equal(iStartDateChangeFired, 0, "Initially no startdateChange event fired");
+		assert.equal(oFormatYyyymmdd.format(oCal2.getStartDate()), "20110101", "Cal2: Start date");
+	});
+
+	QUnit.test("Week day orders", function(assert) {
+		//Assert
+		oCal1.setCalendarWeekNumbering("ISO_8601");
+		sap.ui.getCore().applyChanges();
+
+		var oMonthDomRef = sap.ui.getCore().byId("Cal1").getAggregation("month")[0].getDomRef(),
+			aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
+
+		assert.equal(aWeekHeaders.length, 7, "7 weekheaders rendered");
+		assert.equal(aWeekHeaders[0].textContent, "Mon", "Sunday is the first weekday for ISO_8601");
+
+		oCal2.setCalendarWeekNumbering("MiddleEastern");
+		var oCal2Locale = oCal2.getLocale();
+		oCal2.setLocale("en-US");
+		sap.ui.getCore().applyChanges();
+		oMonthDomRef = sap.ui.getCore().byId("Cal2").getAggregation("month")[0].getDomRef();
+		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
+		assert.equal(aWeekHeaders[0].textContent, "Sat", "Saturday is the first weekday for MiddleEastern");
+		oCal2.setLocale(oCal2Locale);
+		oCal2.setCalendarWeekNumbering("Default");
+
+		var oCal3Locale = oCal3.getLocale();
+		var oCal3FirstDayOfWeek = oCal3.getFirstDayOfWeek();
+		oCal3.setCalendarWeekNumbering("WesternTraditional");
+		oCal3.setLocale("en-US");
+		oCal3.setFirstDayOfWeek(-1);
+		sap.ui.getCore().applyChanges();
+		oMonthDomRef = sap.ui.getCore().byId("Cal3").getAggregation("month")[0].getDomRef();
+		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
+		assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for WesternTraditional");
+
+		oCal3.setLocale(oCal3Locale);
+		oCal3.setCalendarWeekNumbering("Default");
+		oCal3.setFirstDayOfWeek(oCal3FirstDayOfWeek);
+		sap.ui.getCore().applyChanges();
 
 		assert.equal(iStartDateChangeFired, 0, "Initially no startdateChange event fired");
 		assert.equal(oFormatYyyymmdd.format(oCal2.getStartDate()), "20110101", "Cal2: Start date");
@@ -277,6 +317,91 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(jQuery(document.activeElement).attr("id"), "Cal2--Month0-20110110",
 					"Focus should NOT remain on Cal1 but on Cal2 focused date");
+	});
+
+	QUnit.test("week number with calendarWeekNumbering calculation", function(assert) {
+		// ISO_8601
+		oCal1.focusDate(new Date(2011, 0, 10));
+		oCal1.setCalendarWeekNumbering("ISO_8601");
+		sap.ui.getCore().applyChanges();
+		var aMonths = jQuery("#Cal1-content").children(".sapUiCalMonthView"),
+			aWeekNumbers = jQuery(aMonths[0]).find(".sapUiCalWeekNum");
+
+		assert.equal(jQuery(aWeekNumbers[0]).text(), "52", "week number 2011 first week for ISO_8601");
+		assert.equal(jQuery(aWeekNumbers[1]).text(), "1", "week number 2011 second week for ISO_8601");
+		oCal1.focusDate(new Date(2014, 0, 10));
+		sap.ui.getCore().applyChanges();
+
+		aWeekNumbers = jQuery(aMonths[0]).find(".sapUiCalWeekNum");
+		assert.equal(jQuery(aWeekNumbers[0]).text(), "1", "week number 2014 first week for ISO_8601");
+		assert.equal(jQuery(aWeekNumbers[1]).text(), "2", "week number 2014 second week for ISO_8601");
+		oCal1.focusDate(new Date());
+		oCal1.setCalendarWeekNumbering("Default");
+		sap.ui.getCore().applyChanges();
+
+		// Prepare
+		sap.ui.getCore().applyChanges();
+		var oCal12 = new Calendar("Cal12",{
+			calendarWeekNumbering: "MiddleEastern",
+			width: "400px"
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCal12.focusDate(new Date(2011, 0, 10));
+		sap.ui.getCore().applyChanges();
+		aMonths = jQuery("#Cal12-content").children(".sapUiCalMonthView");
+		aWeekNumbers = jQuery(aMonths[0]).find(".sapUiCalWeekNum");
+
+		// Assert
+		assert.equal(jQuery(aWeekNumbers[0]).text(), "1", "week number 2011 first week for MiddleEastern");
+		assert.equal(jQuery(aWeekNumbers[1]).text(), "2", "week number 2011 second week for MiddleEastern");
+
+		// Act
+		oCal12.focusDate(new Date(2014, 0, 10));
+		sap.ui.getCore().applyChanges();
+		aMonths = jQuery("#Cal12-content").children(".sapUiCalMonthView");
+		aWeekNumbers = jQuery(aMonths[0]).find(".sapUiCalWeekNum");
+
+		// Assert
+		assert.equal(jQuery(aWeekNumbers[0]).text(), "1", "week number 2014 first week for MiddleEastern");
+		assert.equal(jQuery(aWeekNumbers[1]).text(), "2", "week number 2014 second week for MiddleEastern");
+
+		// Prepare
+		sap.ui.getCore().applyChanges();
+		var oCal122 = new Calendar("Cal122",{
+			calendarWeekNumbering: "WesternTraditional",
+			width: "400px"
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCal122.focusDate(new Date(2011, 0, 10));
+		sap.ui.getCore().applyChanges();
+		aMonths = jQuery("#Cal122-content").children(".sapUiCalMonthView");
+		aWeekNumbers = jQuery(aMonths[0]).find(".sapUiCalWeekNum");
+
+		// Assert
+		assert.equal(jQuery(aWeekNumbers[0]).text(), "1", "week number 2011 first week for WesternTraditional");
+		assert.equal(jQuery(aWeekNumbers[1]).text(), "2", "week number 2011 second week for WesternTraditional");
+
+		// Act
+		oCal122.focusDate(new Date(2014, 0, 10));
+		sap.ui.getCore().applyChanges();
+		aMonths = jQuery("#Cal122-content").children(".sapUiCalMonthView");
+		aWeekNumbers = jQuery(aMonths[0]).find(".sapUiCalWeekNum");
+
+		// Assert
+		assert.equal(jQuery(aWeekNumbers[0]).text(), "1", "week number 2014 first week for WesternTraditional");
+		assert.equal(jQuery(aWeekNumbers[1]).text(), "2", "week number 2014 second week for WesternTraditional");
+
+		sap.ui.getCore().getConfiguration().setLanguage("en-US");
+		sap.ui.getCore().applyChanges();
+		oCal2.focusDate(new Date(2011, 0, 10));
+
+		// Clean
+		oCal122.destroy();
+		oCal12.destroy();
 	});
 
 	QUnit.test("week number calculation", function(assert) {
