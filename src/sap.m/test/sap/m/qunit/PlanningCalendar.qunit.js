@@ -1188,6 +1188,69 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("calendarWeekNumbering", function(assert) {
+		var sInitialWeekNumbering = "ISO_8601",
+			sChangedWeekNumbering = "MiddleEastern",
+			sInitialFirstDay = "Mon",
+			sChangedFirstDay = "Sat",
+			iInitialFirstDayOfWeek = 1, // Mon
+			iChangedFirstDayOfWeek = 6, // Sat
+			oHeader,
+			oPicker;
+
+		this.oPC.setCalendarWeekNumbering(sInitialWeekNumbering);
+
+		this.oPC.placeAt("smallUiArea");
+		Core.applyChanges();
+
+		oHeader = this.oPC._getHeader();
+
+		// act
+		oHeader._oPickerBtn.firePress();
+		Core.applyChanges();
+		oPicker = oHeader._oPopup.getContent()[0];
+
+		// assert
+		assert.strictEqual(oPicker.getCalendarWeekNumbering(), sInitialWeekNumbering, "Picker has proper initial calendarWeekNumbering");
+		assert.strictEqual(oPicker.getAggregation("month")[0].getDomRef().querySelectorAll(".sapUiCalWH")[1].textContent, sInitialFirstDay, "Picker - First day is correct for the calendarWerekNumbering set initially");
+
+		// act
+		this.oPC.setViewKey("One Month");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(this.oPC._oOneMonthsRow.getCalendarWeekNumbering(), sInitialWeekNumbering, "One Month row has proper initial calendarWeekNumbering");
+		assert.strictEqual(this.oPC._oOneMonthsRow.getDomRef().querySelector(".sapUiCalWH").textContent, sInitialFirstDay, "One Month - First day is correct for the calendarWerekNumbering set initially");
+
+		// act
+		this.oPC.setViewKey("Week");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(this.oPC._oWeeksRow.getCalendarWeekNumbering(), sInitialWeekNumbering, "One Week row has proper initial calendarWeekNumbering");
+		assert.strictEqual(this.oPC._oWeeksRow.getDomRef().querySelector(".sapUiCalDayName").textContent, sInitialFirstDay, "One Week - First day is correct for the calendarWerekNumbering set initially");
+		assert.strictEqual(this.oPC._dateNav.getWeekConfiguration().firstDayOfWeek, iInitialFirstDayOfWeek, "One Week - First day of week of the DateNavigation is correct for the calendarWerekNumbering set initially");
+
+		// act
+		this.oPC.setCalendarWeekNumbering(sChangedWeekNumbering);
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oPicker.getCalendarWeekNumbering(), sChangedWeekNumbering, "Picker has proper calendarWeekNumbering after changing the PlanningCalendar property");
+		assert.strictEqual(oPicker.getAggregation("month")[0].getDomRef().querySelectorAll(".sapUiCalWH")[1].textContent, sChangedFirstDay, "Picker - First day is correct when calendarWerekNumbering is changed");
+		assert.strictEqual(this.oPC._oWeeksRow.getCalendarWeekNumbering(), sChangedWeekNumbering, "One Week row has proper calendarWeekNumbering after changing the PlanningCalendar property");
+		assert.strictEqual(this.oPC._oWeeksRow.getDomRef().querySelector(".sapUiCalDayName").textContent, sChangedFirstDay, "One Week - First day is correct when calendarWerekNumbering is changed");
+		assert.strictEqual(this.oPC._dateNav.getWeekConfiguration().firstDayOfWeek, iChangedFirstDayOfWeek, "One Week - First day of week of the DateNavigation is correct when calendarWerekNumbering is changed");
+
+		// act
+		this.oPC.setViewKey("One Month");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(this.oPC._oOneMonthsRow.getCalendarWeekNumbering(), sChangedWeekNumbering, "One Month row has proper calendarWeekNumbering after changing the PlanningCalendar property");
+		assert.strictEqual(this.oPC._oOneMonthsRow.getDomRef().querySelector(".sapUiCalWH").textContent, sChangedFirstDay, "One Month - First day is correct when calendarWerekNumbering is changed");
+	});
+
 	QUnit.test("startDate", function(assert) {
 		var oExpectedDate = new Date("2015", "0", "1", "08", "00");
 		var iStartTime = oPC1.getStartDate().getTime();

@@ -29,6 +29,10 @@ sap.ui.define([
 	'sap/ui/core/dnd/DropInfo',
 	'sap/ui/core/dnd/DragDropInfo',
 	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/Configuration',
+	'sap/ui/core/date/CalendarWeekNumbering',
+	'sap/ui/core/date/CalendarUtils',
+	'sap/ui/core/Locale',
 	'sap/m/Toolbar',
 	'sap/m/Table',
 	'sap/m/Column',
@@ -71,6 +75,10 @@ sap.ui.define([
 	DropInfo,
 	DragDropInfo,
 	DateFormat,
+	Configuration,
+	CalendarWeekNumbering,
+	CalendarDateUtils,
+	Locale,
 	Toolbar,
 	Table,
 	Column,
@@ -374,6 +382,13 @@ sap.ui.define([
 				 * @since 1.94
 				 */
 				firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1},
+
+				/**
+				 * If set, the calendar week numbering is used for display.
+				 * If not set, the calendar week numbering of the global configuration is used.
+				 * @since 1.110.0
+				 */
+				calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
 
 				/**
 				 * If set, the calendar type is used for display.
@@ -896,7 +911,9 @@ sap.ui.define([
 	 * @private
 	 */
 	PlanningCalendar.prototype._createHeader = function () {
-		var oHeader = new PlanningCalendarHeader(this.getId() + "-Header");
+		var oHeader = new PlanningCalendarHeader(this.getId() + "-Header", {
+			calendarWeekNumbering: this.getCalendarWeekNumbering()
+		});
 
 		oHeader._getRelativeInfo = this._getRelativeInfo.bind(this);
 
@@ -1668,6 +1685,26 @@ sap.ui.define([
 
 	};
 
+	PlanningCalendar.prototype.setCalendarWeekNumbering = function(sCalendarWeekNumbering) {
+		var oHeader = this._getHeader(),
+			oCalendarPicker = oHeader._oPopup && oHeader._oPopup.getContent()[0],
+			sLocale = Configuration.getFormatSettings().getFormatLocale().toString(),
+			oWeekConfiguration = CalendarDateUtils.getWeekConfigurationValues(sCalendarWeekNumbering, new Locale(sLocale)),
+			key;
+
+		this.setProperty("calendarWeekNumbering", sCalendarWeekNumbering);
+
+		this._dateNav.setWeekConfiguration(oWeekConfiguration);
+		oHeader.setCalendarWeekNumbering(sCalendarWeekNumbering);
+		oCalendarPicker && oCalendarPicker.setCalendarWeekNumbering(sCalendarWeekNumbering);
+		for (key in INTERVAL_METADATA) {
+			this[INTERVAL_METADATA[key].sInstanceName] && this[INTERVAL_METADATA[key].sInstanceName].setCalendarWeekNumbering(sCalendarWeekNumbering);
+		}
+		this.setStartDate(this.getStartDate());
+
+		return this;
+	};
+
 	PlanningCalendar.prototype.removeIntervalInstanceFromInfoToolbar = function () {
 		var aInfoToolbarContent = this._oInfoToolbar.getContent();
 		aInfoToolbarContent.forEach(function (oControl) {
@@ -1761,7 +1798,8 @@ sap.ui.define([
 							days: iIntervals,
 							showDayNamesLine: this.getShowDayNamesLine(),
 							legend: this.getLegend(),
-							showWeekNumbers: this.getShowWeekNumbers()
+							showWeekNumbers: this.getShowWeekNumbers(),
+							calendarWeekNumbering: this.getCalendarWeekNumbering()
 						});
 
 						oInterval.isRelative = this.isRelative.bind(this);
@@ -1787,6 +1825,7 @@ sap.ui.define([
 					}
 					this._insertInterval(oInterval);
 					this[oIntervalMetadata.sInstanceName] = oInterval;
+
 					if ((sIntervalType === CalendarIntervalType.OneMonth || sIntervalType === "OneMonth")) {
 						oAssociation = oHeader.getAggregation("_monthPicker") ? oHeader.getAggregation("_monthPicker") : oHeader._oPopup.getContent()[0];
 						oHeader.setAssociation("currentPicker", oAssociation);
@@ -2051,7 +2090,9 @@ sap.ui.define([
 			 * is because the dates are timezone irrelevant), it should be called with the local datetime values presented
 			 * as UTC ones(e.g. if oStartDate is 21 Dec 1981, 13:00 GMT+02:00, it will be converted to 21 Dec 1981, 13:00 GMT+00:00)
 			 */
-			var oFirstDateOfWeek = CalendarUtils.getFirstDateOfWeek(CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true)),
+			var sLocale = Configuration.getFormatSettings().getFormatLocale().toString(),
+				oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(sLocale)),
+				oFirstDateOfWeek = CalendarUtils.getFirstDateOfWeek(CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true), oWeekConfigurationValues),
 				//CalendarUtils.getFirstDateOfWeek works with UTC based date values, restore the result back in local timezone.
 				oLocalDate = CalendarUtils._createLocalDate(oFirstDateOfWeek, true);
 			if (this.getFirstDayOfWeek() > -1) {
