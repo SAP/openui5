@@ -3,21 +3,22 @@
  */
 
 sap.ui.define([
-		"sap/ui/thirdparty/jquery",
-		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/model/resource/ResourceModel",
-		"sap/ui/Device",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/sdk/controller/util/ResourceDownloadUtil",
-		"sap/ui/documentation/sdk/model/formatter",
+		"sap/base/Log",
 		"sap/m/MessageBox",
 		"sap/m/MessageToast",
+		"sap/ui/Device",
+		"sap/ui/VersionInfo",
+		"sap/ui/documentation/sdk/controller/BaseController",
+		"sap/ui/documentation/sdk/controller/util/ResourceDownloadUtil",
+		"sap/ui/documentation/sdk/model/formatter",
+		'sap/ui/documentation/sdk/model/libraryData',
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
-		'sap/ui/documentation/sdk/model/libraryData',
-		"sap/base/Log"
-	], function(jQuery, BaseController, ResourceModel, Device, JSONModel, ResourceDownloadUtil, formatter, MessageBox,
-			MessageToast, Filter, FilterOperator, libraryData, Log) {
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/model/resource/ResourceModel",
+		"sap/ui/thirdparty/jquery"
+	], function(Log, MessageBox, MessageToast, Device, VersionInfo, BaseController, ResourceDownloadUtil,
+			 formatter, libraryData, Filter, FilterOperator, JSONModel, ResourceModel, jQuery) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.DemoApps", {
@@ -47,7 +48,7 @@ sap.ui.define([
 
 				this.getRouter().getRoute("demoapps").attachPatternMatched(this._onMatched, this);
 
-				sap.ui.getVersionInfo({async: true}).then(function (oVersionInfo) {
+				VersionInfo.load().then(function (oVersionInfo) {
 					var oViewModel = new JSONModel({
 						isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
 					});
