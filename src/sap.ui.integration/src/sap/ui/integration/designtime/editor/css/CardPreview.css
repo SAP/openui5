@@ -1,5 +1,5 @@
 .sapUiIntegrationDTPreview {
-	padding: 2rem;
+	padding: 0.5rem;
 	overflow: hidden;
 	min-width: calc(190px + 5rem);
 	width: calc(190px + 5rem);
@@ -24,10 +24,10 @@
 .sapUiIntegrationDTPreview>.before {
 	position: absolute;
 	min-width: calc(190px + 5rem);
-	height: calc(350px - 3.5rem);
+	height: calc(350px - 2.2rem);
 	background-color: rgba(222, 222, 222, 0.5); /* background-color needed for blocking */
 	opacity: 0.01;
-	margin: -2rem
+	margin: -0.5rem;
 }
 
 .sapUiIntegrationDTPreview.sapUiIntegrationDTPreviewDark {
@@ -44,27 +44,27 @@
 }
 
 .sapUiIntegrationDTPreview .sapFCard.sapUiIntegrationDTPreviewScale {
-	transform: scale3d(0.4, 0.4, 1);
+	transform: scale3d(0.45, 0.45, 1);
 	transform-origin: 0 0;
-	width: 500px !important;
-	height: 600px !important;
-	position: absolute
+	width: calc(400px + 10rem) !important;
+	height: calc(700px - 1.5rem) !important;
+	position: absolute;
 }
 
 .sapUiIntegrationDTPreview .sapFCard.sapUiIntegrationDTPreviewScaleSpec {
-	transform: scale3d(0.4, 0.4, 1);
+	transform: scale3d(0.45, 0.45, 1);
 	transform-origin: 100% 0;
-	width: 500px !important;
-	height: 600px !important;
+	width: calc(400px + 10rem) !important;
+	height: calc(700px - 1.5rem) !important;
 	position: absolute
 }
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewButton {
 	position: absolute !important;
-	margin: calc(260px + 0.3rem) 0 0 calc(95px - 0.5rem) !important;
+	margin: calc(350px - 2.8rem) 0 0 calc(95px + 1rem) !important;
 }
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewButtonSpec {
 	position: absolute !important;
-	margin: calc(260px + 0.3rem) calc(95px - 0.5rem) 0 0 !important
+	margin:calc(350px - 2.8rem) calc(95px + 1rem) 0 0 !important
 }
