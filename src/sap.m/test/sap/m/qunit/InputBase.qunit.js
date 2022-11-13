@@ -1540,7 +1540,7 @@ sap.ui.define([
 		assert.notEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Before escape call dom value and value property are not same.");
 
 		// act
-		qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");
+		qutils.triggerKeydown(oInput.getFocusDomRef(), "ESCAPE");
 
 		// assertion - after escape
 		assert.strictEqual(oInput.getValue(), sInitValue, "Input value is returned to the inital value after escape.");
@@ -1559,7 +1559,7 @@ sap.ui.define([
 		fnFireEventSpy.resetHistory();
 
 		// retest while dom and value property are same
-		qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");
+		qutils.triggerKeydown(oInput.getFocusDomRef(), "ESCAPE");
 
 		// assertion - after 2nd escape
 		assert.strictEqual(fnFireEventSpy.callCount, 0, "LiveChange event is not fired again because dom and value property are same.");

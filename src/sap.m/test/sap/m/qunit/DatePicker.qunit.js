@@ -1159,7 +1159,7 @@ sap.ui.define([
 		sId = "";
 		oDP2.focus();
 		jQuery("#DP2").find("input").val("32+04+2014");
-		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP2", "Change event fired");
 		assert.equal(sValue, "32+04+2014", "Value of event has entered value if invalid");
@@ -1173,7 +1173,7 @@ sap.ui.define([
 		sId = "";
 		oDP2.focus();
 		jQuery("#DP2").find("input").val("02+04+2014");
-		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP2", "Change event fired");
 		assert.equal(sValue, "2014-04-02", "Value in internal format priovided");
@@ -1189,7 +1189,7 @@ sap.ui.define([
 		sId = "";
 		oDP6.focus();
 		jQuery("#DP6").find("input").val("13/23/2015");
-		qutils.triggerKeyboardEvent("DP6-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP6-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP6").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bParseError, "parse error fired");
 		assert.ok(!bValidationSuccess, "no validation success fired");
@@ -1206,7 +1206,7 @@ sap.ui.define([
 		sId = "";
 		oDP6.focus();
 		jQuery("#DP6").find("input").val("01/01/15");
-		qutils.triggerKeyboardEvent("DP6-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP6-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP6").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(!bParseError, "no parse error fired");
 		assert.ok(bValidationSuccess, "validation success fired");
@@ -1222,7 +1222,7 @@ sap.ui.define([
 		sValue = "";
 		sId = "";
 		oDP2.focus();
-		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.PAGE_UP, false, false, false);
+		qutils.triggerKeydown("DP2-inner", KeyCodes.PAGE_UP, false, false, false);
 		assert.equal(sId, "DP2", "PageUp: Change event fired");
 		assert.equal(sValue, "2014-04-03", "PageUp: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2014-04-03", "PageUp: Value in internal format set");
@@ -1231,7 +1231,7 @@ sap.ui.define([
 		bChange = false;
 		sValue = "";
 		sId = "";
-		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.PAGE_UP, true, false, false);
+		qutils.triggerKeydown("DP2-inner", KeyCodes.PAGE_UP, true, false, false);
 		assert.equal(sId, "DP2", "PageUp+shift: Change event fired");
 		assert.equal(sValue, "2014-05-03", "PageUp+shift: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2014-05-03", "PageUp+shift: Value in internal format set");
@@ -1240,7 +1240,7 @@ sap.ui.define([
 		bChange = false;
 		sValue = "";
 		sId = "";
-		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.PAGE_UP, true, false, true);
+		qutils.triggerKeydown("DP2-inner", KeyCodes.PAGE_UP, true, false, true);
 		assert.equal(sId, "DP2", "PageUp+shift+ctrl: Change event fired");
 		assert.equal(sValue, "2015-05-03", "PageUp+shift+ctrl: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2015-05-03", "PageUp+shift+ctrl: Value in internal format set");
@@ -1249,7 +1249,7 @@ sap.ui.define([
 		bChange = false;
 		sValue = "";
 		sId = "";
-		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.PAGE_DOWN, false, false, false);
+		qutils.triggerKeydown("DP2-inner", KeyCodes.PAGE_DOWN, false, false, false);
 		assert.equal(sId, "DP2", "PageDown: Change event fired");
 		assert.equal(sValue, "2015-05-02", "PageDown: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2015-05-02", "PageDown: Value in internal format set");
@@ -1258,7 +1258,7 @@ sap.ui.define([
 		bChange = false;
 		sValue = "";
 		sId = "";
-		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.PAGE_DOWN, true, false, false);
+		qutils.triggerKeydown("DP2-inner", KeyCodes.PAGE_DOWN, true, false, false);
 		assert.equal(sId, "DP2", "PageDown+shift: Change event fired");
 		assert.equal(sValue, "2015-04-02", "PageDown+shift: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2015-04-02", "PageUp+shift: Value in internal format set");
@@ -1267,7 +1267,7 @@ sap.ui.define([
 		bChange = false;
 		sValue = "";
 		sId = "";
-		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.PAGE_DOWN, true, false, true);
+		qutils.triggerKeydown("DP2-inner", KeyCodes.PAGE_DOWN, true, false, true);
 		assert.equal(sId, "DP2", "PageDown+shift+ctrl: Change event fired");
 		assert.equal(sValue, "2014-04-02", "PageDown+shift+ctrl: Value in internal format priovided");
 		assert.equal(oDP2.getValue(), "2014-04-02", "PageDown+shift+ctrl: Value in internal format set");
@@ -1287,21 +1287,21 @@ sap.ui.define([
 		qutils.triggerEvent("click", "DP5-icon");
 		oCore.applyChanges();
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
-		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after date selection");
 
 		qutils.triggerEvent("click", "DP5-icon");
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
-		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after selecting the same date");
 
 		oDP5.focus();
 		jQuery("#DP5").find("input").val("4"); // enter invalid date
-		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP5").find("input").trigger("change");
 		qutils.triggerEvent("click", "DP5-icon");
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus"); // choose previous valid date
-		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after first entering invalid date and then selecting the previous valid date");
 
 		qutils.triggerEvent("click", "DP5-icon");
@@ -1313,12 +1313,12 @@ sap.ui.define([
 		Device.system.desktop = false;
 		qutils.triggerEvent("click", "DP5-icon");
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
-		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after date selection");
 
 		qutils.triggerEvent("click", "DP5-icon");
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
-		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after selecting the same date");
 
 		qutils.triggerEvent("click", "DP5-icon");
@@ -1356,7 +1356,7 @@ sap.ui.define([
 		}
 
 		// use ENTER to not run into itemNavigation
-		qutils.triggerKeyboardEvent(oDay, KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown(oDay, KeyCodes.ENTER, false, false, false);
 		assert.ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
 		assert.equal(sId, "DP3", "Change event fired");
 		assert.equal(sValue, "4/10/14", "Value in internal format priovided");
@@ -1380,7 +1380,7 @@ sap.ui.define([
 		assert.equal(oDP5._getCalendar().getPrimaryCalendarType(), "Islamic", "DP5: Primary calendar type set");
 		assert.equal(oDP5._getCalendar().getSecondaryCalendarType(), "Gregorian", "DP5: Secondary calendar type set");
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
-		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.equal(oDP5.getValue(), "11/24/15", "Value in internal format set");
 
 		oDP7.focus();
@@ -1388,7 +1388,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.equal(oDP7._getCalendar().getPrimaryCalendarType(), "Islamic", "DP7: Primary calendar type set");
 		jQuery("#DP7-cal--Month0-20151124").trigger("focus");
-		qutils.triggerKeyboardEvent("DP7-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP7-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.equal(oDP7.getValue(), "2/11/1437 AH", "Value in binding format set");
 
 		// invalid enterd value must be set to valid by picking in calendar
@@ -1398,7 +1398,7 @@ sap.ui.define([
 		sId = "";
 		oDP3.focus();
 		jQuery("#DP3").find("input").val("invalid");
-		qutils.triggerKeyboardEvent("DP3-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP3-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP3").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP3", "Change event fired");
 		assert.equal(sValue, "invalid", "Value of event has entered value if invalid");
@@ -1415,7 +1415,7 @@ sap.ui.define([
 		assert.ok(jQuery("#DP3-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
 		jQuery("#DP3-cal--Month0-20140410").trigger("focus");
-		qutils.triggerKeyboardEvent("DP3-cal--Month0-20140410", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP3-cal--Month0-20140410", KeyCodes.ENTER, false, false, false);
 		assert.ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
 		assert.equal(sId, "DP3", "Change event fired");
 		// Ssince no format is set, the date picker uses the default short format which for setted local "en-US" is "M/d/yy"
@@ -2597,7 +2597,7 @@ sap.ui.define([
 		bValid = true;
 		sId = "";
 		jQuery("#DP2").find("input").val("11/190/2016");
-		qutils.triggerKeyboardEvent("DP2-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DP2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP2", "Change event fired");
 		assert.equal(sValue, "11/190/2016", "The new value is set to an invalid one");
@@ -2612,7 +2612,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		var $Date = jQuery("#DP2-cal--Month0-20140401");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		assert.ok(oDP2.getValue() !== "11/190/2016",
 			"The value has successfully changed after a selection from the calendar");
 	}

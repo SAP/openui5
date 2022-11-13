@@ -142,7 +142,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("10");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "FF1", "change event fired on Field");
 		assert.equal(sValue, 10, "change event value");
@@ -166,7 +166,7 @@ sap.ui.define([
 		assert.equal(sLiveValue, "2", "liveChange event value");
 
 		jQuery(oContent.getFocusDomRef()).val("1000");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 2, "change event fired again");
 		assert.notOk(bValid, "Value is not valid");
 		assert.equal(sValue, "1000", "change event wrongValue");
@@ -186,7 +186,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("XXXX");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.ok(oFilterField._bParseError, "ParseError fired");
 		assert.equal(iCount, 1, "change event fired again");
 		assert.notOk(bValid, "Value is not valid");
@@ -229,7 +229,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("XXXX");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.ok(oFilterField._bParseError, "ParseError fired");
 		assert.equal(iCount, 1, "change event fired again");
 		assert.notOk(bValid, "Value is not valid");

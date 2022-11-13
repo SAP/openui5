@@ -242,7 +242,7 @@ sap.ui.define([
 		sId = "";
 		dti0.focus();
 		oDatePicker.$().find("input").val("33 May, 2012");
-		qutils.triggerKeyboardEvent("__input0-Picker-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("__input0-Picker-inner", KeyCodes.ENTER, false, false, false);
 		oDatePicker.$().find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, dti0.getId(), "Change event fired");
 		assert.equal(sValue, "33 May, 2012", "Value of event has entered value if invalid");
@@ -255,7 +255,7 @@ sap.ui.define([
 		sId = "";
 		dti0.focus();
 		oDatePicker.$().find("input").val("30 May, 2012");
-		qutils.triggerKeyboardEvent("__input0-Picker-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("__input0-Picker-inner", KeyCodes.ENTER, false, false, false);
 		oDatePicker.$().find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, dti0.getId(), "Change event fired");
 		assert.equal(sValue, "2012-05-30", "Value in internal format priovided");

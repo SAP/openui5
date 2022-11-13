@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/core/CalendarType",
+	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/unified/library",
@@ -17,7 +18,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(Month, CalendarDate, CalendarLegend,
-	CalendarLegendItem, Button, DateRange, DateTypeRange, CalendarType, InvisibleText, ItemNavigation, unifiedLibrary, KeyCodes, Device, jQuery, oCore) {
+	CalendarLegendItem, Button, DateRange, DateTypeRange, CalendarType, Element, InvisibleText, ItemNavigation, unifiedLibrary, KeyCodes, Device, jQuery, oCore) {
 	"use strict";
 
 	(function () {
@@ -267,7 +268,7 @@ sap.ui.define([
 					return;
 				}
 
-				oAssert.strictEqual($Focus.control(0).getId(), oButton.getId(),
+				oAssert.strictEqual(Element.closestTo($Focus[0]).getId(), oButton.getId(),
 					"Focus should remain on the button");
 
 				fnDone();

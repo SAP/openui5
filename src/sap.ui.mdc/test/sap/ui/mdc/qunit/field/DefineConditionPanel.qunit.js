@@ -321,7 +321,7 @@ sap.ui.define([
 			assert.equal(oField.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_VALUE"), "Placeholder of Field");
 
 			jQuery(oField.getFocusDomRef()).val("foo");
-			qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 			oCore.applyChanges();
 
 			assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
@@ -564,7 +564,7 @@ sap.ui.define([
 			oField1.focus();
 			setTimeout(function() { // for FieldGroup delay
 				jQuery(oField1.getFocusDomRef()).val("B");
-				qutils.triggerKeyboardEvent(oField1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+				qutils.triggerKeydown(oField1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 				oButton.focus(); // to leave FieldGroup
 				oCore.applyChanges();
 				setTimeout(function() { // for FieldGroup delay
@@ -578,7 +578,7 @@ sap.ui.define([
 					oField2.focus();
 					setTimeout(function() { // for fieldGroup delay
 						jQuery(oField2.getFocusDomRef()).val("C");
-						qutils.triggerKeyboardEvent(oField2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+						qutils.triggerKeydown(oField2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 						oButton.focus(); // to leave FieldGroup
 						oCore.applyChanges();
 						setTimeout(function() { // for FieldGroup delay
@@ -596,7 +596,7 @@ sap.ui.define([
 							oField1.focus();
 							setTimeout(function() { // for FieldGroup delay
 								jQuery(oField1.getFocusDomRef()).val("C");
-								qutils.triggerKeyboardEvent(oField1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+								qutils.triggerKeydown(oField1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 								oOperatorField.focus();
 								setTimeout(function() { // for FieldGroup delay
 									oButton.focus(); // to leave FieldGroup

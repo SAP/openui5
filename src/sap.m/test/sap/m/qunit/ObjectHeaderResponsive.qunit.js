@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/ObjectStatus",
 	"sap/ui/core/library",
 	"sap/m/ObjectAttribute",
+	"sap/ui/core/Element",
 	"sap/ui/core/IconPool",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
@@ -19,6 +20,7 @@ sap.ui.define([
 	ObjectStatus,
 	coreLibrary,
 	ObjectAttribute,
+	Element,
 	IconPool,
 	jQuery,
 	Device,
@@ -160,7 +162,7 @@ sap.ui.define([
 		// Assert
 		var iconEl = document.getElementById(sControlId + "-img");
 		assert.ok(iconEl, "Icon is rendered.");
-		assert.ok(!oObjectHeader.$("img").control(0).getTooltip(), "icon has no tooltip");
+		assert.ok(!Element.closestTo(oObjectHeader.getDomRef("img")).getTooltip(), "icon has no tooltip");
 
 		// Clean up
 		oObjectHeader.destroy();
@@ -177,8 +179,8 @@ sap.ui.define([
 		oObjectHeader.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		var $sImg = oObjectHeader.$("img");
-		assert.equal($sImg.control(0).getTooltip(), "test tooltip", "icon has tooltip");
+		var oImg = oObjectHeader.getDomRef("img");
+		assert.equal(Element.closestTo(oImg).getTooltip(), "test tooltip", "icon has tooltip");
 
 		// Clean up
 		oObjectHeader.destroy();

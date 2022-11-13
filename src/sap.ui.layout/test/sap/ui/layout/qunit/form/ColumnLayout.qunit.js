@@ -290,10 +290,10 @@ sap.ui.define([
 		this.spy(oColumnLayout, "onsapright");
 		this.spy(oColumnLayout, "onsapleft");
 
-		qutils.triggerKeyboardEvent("CL1", "ARROW_DOWN");
+		qutils.triggerKeydown("CL1", "ARROW_DOWN");
 		assert.ok(oColumnLayout.onsapright.called, "sapright called");
 
-		qutils.triggerKeyboardEvent("CL1", "ARROW_UP");
+		qutils.triggerKeydown("CL1", "ARROW_UP");
 		assert.ok(oColumnLayout.onsapright.called, "sapleft called");
 	});
 

@@ -9,6 +9,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
+	'sap/ui/core/UIArea',
 	'sap/ui/Device',
 	'./ResponsivePopoverRenderer',
 	'./Toolbar',
@@ -21,6 +22,7 @@ sap.ui.define([
 		library,
 		Control,
 		IconPool,
+		UIArea,
 		Device,
 		ResponsivePopoverRenderer,
 		Toolbar,
@@ -424,7 +426,7 @@ sap.ui.define([
 	ResponsivePopover.prototype.openBy = function(oParent){
 		if (!this._bAppendedToUIArea && !this.getParent()) {
 			var oStatic = sap.ui.getCore().getStaticAreaRef();
-			oStatic = sap.ui.getCore().getUIArea(oStatic);
+			oStatic = UIArea.registry.get(oStatic.id);
 			oStatic.addContent(this, true);
 			this._bAppendedToUIArea = true;
 		}

@@ -297,7 +297,7 @@ sap.ui.define([
 			sDate = DateFormat().getInstance({pattern: "yyyymmdd"}).format(new Date(iYear, iMonth, iDay));
 			$Date = jQuery("#" + sCalendarPickerId + "--Month0-" + sDate);
 			$Date.trigger("focus");
-			qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 			oCore.applyChanges();
 		}
 	};

@@ -1242,7 +1242,7 @@ sap.ui.define([
 
 		var $tblHeader = sut.$("tblHeader").trigger("focus");
 		// shift-tab on header row
-		qutils.triggerKeyboardEvent($tblHeader, KeyCodes.TAB, true, false, false);
+		qutils.triggerKeydown($tblHeader, KeyCodes.TAB, true, false, false);
 		assert.equal(document.activeElement, sut.$("before")[0]);
 
 		// trigger onsaptabnext
@@ -1253,7 +1253,7 @@ sap.ui.define([
 		assert.ok(!sut.bAnnounceDetails, "Focus is not in the table");
 
 		// shift-tab on from the trigger button
-		qutils.triggerKeyboardEvent($trigger, KeyCodes.TAB, true, false, false);
+		qutils.triggerKeydown($trigger, KeyCodes.TAB, true, false, false);
 		assert.ok(ListBase.getInvisibleText().getText().includes("Header Row"));
 		assert.equal(document.activeElement, $tblHeader[0]);
 

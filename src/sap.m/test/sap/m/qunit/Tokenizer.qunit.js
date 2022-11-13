@@ -614,7 +614,7 @@ sap.ui.define([
 		this.tokenizer.setEditable(false);
 
 		// act
-		qutils.triggerKeyboardEvent("t", KeyCodes.DELETE);
+		qutils.triggerKeydown("t", KeyCodes.DELETE);
 
 		// assert
 		assert.equal(this.tokenizer.getTokens().length, 3, "No tokens were removed");
@@ -642,7 +642,7 @@ sap.ui.define([
 		var oSpy = this.spy(this.tokenizer, "fireTokenDelete");
 
 		// act
-		qutils.triggerKeyboardEvent("t", KeyCodes.DELETE);
+		qutils.triggerKeydown("t", KeyCodes.DELETE);
 
 		var oCall = oSpy.getCalls()[0];
 
@@ -652,7 +652,7 @@ sap.ui.define([
 
 	QUnit.test("tab", function(assert) {
 		// act
-		qutils.triggerKeyboardEvent("t", KeyCodes.TAB);
+		qutils.triggerKeydown("t", KeyCodes.TAB);
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 0, "There are no selected tokens");
@@ -663,13 +663,13 @@ sap.ui.define([
 		var fnCopySpy = this.spy(this.tokenizer, "_copy");
 
 		// act
-		qutils.triggerKeyboardEvent("t", KeyCodes.C, false, false, true);
+		qutils.triggerKeydown("t", KeyCodes.C, false, false, true);
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
 
 		// act
-		qutils.triggerKeyboardEvent("t", KeyCodes.INSERT, false, false, true);
+		qutils.triggerKeydown("t", KeyCodes.INSERT, false, false, true);
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 2, "Copy was triggered");
@@ -679,7 +679,7 @@ sap.ui.define([
 		var fnCutSpy = this.spy(this.tokenizer, "_cut");
 
 		// act
-		qutils.triggerKeyboardEvent("t", KeyCodes.X, false, false, true);
+		qutils.triggerKeydown("t", KeyCodes.X, false, false, true);
 
 		// assert
 		assert.equal(fnCutSpy.callCount, 1, "Cut was triggered");
@@ -712,7 +712,7 @@ sap.ui.define([
 		this.tokenizer.setEditable(false);
 
 		// act
-		qutils.triggerKeyboardEvent("t", KeyCodes.X, false, false, true);
+		qutils.triggerKeydown("t", KeyCodes.X, false, false, true);
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
@@ -722,7 +722,7 @@ sap.ui.define([
 		var fnCutSpy = this.spy(this.tokenizer, "_cut");
 
 		// act
-		qutils.triggerKeyboardEvent("t", KeyCodes.DELETE, true);
+		qutils.triggerKeydown("t", KeyCodes.DELETE, true);
 
 		// assert
 		assert.equal(fnCutSpy.callCount, 1, "Cut was triggered");
@@ -754,7 +754,7 @@ sap.ui.define([
 		this.tokenizer.setEditable(false);
 
 		// act
-		qutils.triggerKeyboardEvent("t", KeyCodes.DELETE, true);
+		qutils.triggerKeydown("t", KeyCodes.DELETE, true);
 
 		// assert
 		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
@@ -765,7 +765,7 @@ sap.ui.define([
 		Core.byId("t1").focus();
 
 		// act
-		qutils.triggerKeyboardEvent("t1", KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown("t1", KeyCodes.ARROW_RIGHT);
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 2, "The initial selection is preserved");
@@ -811,7 +811,7 @@ sap.ui.define([
 		Core.byId("t1").focus();
 
 		// act
-		qutils.triggerKeyboardEvent("t1", KeyCodes.ARROW_UP);
+		qutils.triggerKeydown("t1", KeyCodes.ARROW_UP);
 
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 2, "Token selection is not changed");
@@ -978,7 +978,7 @@ sap.ui.define([
 		var oSpySelection = this.spy(this.tokenizer, "_selectRange");
 
 		// act
-		qutils.triggerKeyboardEvent("t", KeyCodes.HOME, true);
+		qutils.triggerKeydown("t", KeyCodes.HOME, true);
 
 		// assert
 		assert.ok(oSpySelection.called, "Range selection is triggered");
@@ -989,7 +989,7 @@ sap.ui.define([
 		var oSpySelection = this.spy(this.tokenizer, "_selectRange");
 
 		// act
-		qutils.triggerKeyboardEvent("t", KeyCodes.END, true);
+		qutils.triggerKeydown("t", KeyCodes.END, true);
 
 		// assert
 		assert.ok(oSpySelection.called, "Range selection is triggered");
@@ -1005,7 +1005,7 @@ sap.ui.define([
 		var oSpyNext = this.spy(this.tokenizer, "onsapnext");
 
 		// act
-		qutils.triggerKeyboardEvent("t", KeyCodes.ARROW_RIGHT, false, false, true);
+		qutils.triggerKeydown("t", KeyCodes.ARROW_RIGHT, false, false, true);
 
 		// assert
 		assert.ok(oSpyNext.called, "Forward navigation is triggered");

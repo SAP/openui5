@@ -1061,7 +1061,7 @@ sap.ui.define([
 		this.oVSD._switchToPage(2);
 		this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[0]); // name details page
 
-		qutils.triggerKeyboardEvent(this.oVSD._getDialog().getDomRef(), KeyCodes.ENTER, true, false, false);
+		qutils.triggerKeydown(this.oVSD._getDialog().getDomRef(), KeyCodes.ENTER, true, false, false);
 		assert.equal(this.oVSD._vContentPage, 2, "Internal page state should be on the second page");
 		assert.equal(this.oVSD._navContainer.getCurrentPage(), this.oVSD._getPage1(), "NavContainer should be on the first page");
 	});

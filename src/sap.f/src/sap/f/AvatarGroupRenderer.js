@@ -3,12 +3,9 @@
  */
 
 // Provides default renderer for control sap.f.AvatarGroupRenderer
-sap.ui.define(["sap/f/library"],
-	function (library) {
+sap.ui.define(["sap/m/AvatarSize"],
+	function (AvatarSize) {
 		"use strict";
-
-		// shortcut for sap.f.AvatarSize
-		var AvatarSize = library.AvatarSize;
 
 		/**
 		 * <code>AvatarGroup</code> renderer.

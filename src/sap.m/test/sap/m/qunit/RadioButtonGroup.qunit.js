@@ -204,31 +204,31 @@ sap.ui.define([
 		assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 		// Test arrow pressing
-		qutils.triggerKeyboardEvent("RBG1", KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown("RBG1", KeyCodes.ARROW_RIGHT);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 1, "Selected index should be 1");
 
-		qutils.triggerKeyboardEvent("RBG1", KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown("RBG1", KeyCodes.ARROW_DOWN);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
-		qutils.triggerKeyboardEvent("RBG1", KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown("RBG1", KeyCodes.ARROW_LEFT);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 2, "Selected index should be 2");
 
-		qutils.triggerKeyboardEvent("RBG1", KeyCodes.ARROW_UP);
+		qutils.triggerKeydown("RBG1", KeyCodes.ARROW_UP);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
-		qutils.triggerKeyboardEvent("RBG1", KeyCodes.END);
+		qutils.triggerKeydown("RBG1", KeyCodes.END);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
-		qutils.triggerKeyboardEvent("RBG1", KeyCodes.HOME);
+		qutils.triggerKeydown("RBG1", KeyCodes.HOME);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
-		qutils.triggerKeyboardEvent("RBG1", KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown("RBG1", KeyCodes.ARROW_LEFT);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 

@@ -3,13 +3,15 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/Illustration",
 	"sap/m/IllustrationPool",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/InvisibleText"
 ],
 function (
 	Log,
 	Illustration,
 	IllustrationPool,
-	Core
+	Core,
+	InvisibleText
 ) {
 	"use strict";
 
@@ -120,7 +122,7 @@ function (
 		QUnit.test("Testing ariaLabelledBy association", function (assert) {
 
 			// Arrange
-			new sap.ui.core.InvisibleText("illustration_label", {text: "My label"}).toStatic();
+			new InvisibleText("illustration_label", {text: "My label"}).toStatic();
 
 			var $illustration = this.oIllustration.$();
 

@@ -9,10 +9,11 @@ sap.ui.define([
 	'./SearchField',
 	'./Table',
 	'./library',
-	"sap/ui/core/library",
+	'sap/ui/core/library',
 	'./SelectDialogBase',
 	'sap/ui/core/InvisibleText',
-	"sap/ui/core/InvisibleMessage",
+	'sap/ui/core/InvisibleMessage',
+	'sap/ui/core/UIArea',
 	'sap/ui/Device',
 	'sap/m/Toolbar',
 	'sap/m/Text',
@@ -30,6 +31,7 @@ sap.ui.define([
 	SelectDialogBase,
 	InvisibleText,
 	InvisibleMessage,
+	UIArea,
 	Device,
 	Toolbar,
 	Text,
@@ -477,7 +479,7 @@ sap.ui.define([
 		// but only if it added it there itself. As we did that, we have to remove it also on our own
 		if ( this._bAppendedToUIArea ) {
 			var oStatic = sap.ui.getCore().getStaticAreaRef();
-			oStatic = sap.ui.getCore().getUIArea(oStatic);
+			oStatic = UIArea.registry.get(oStatic.id);
 			oStatic.removeContent(this, true);
 		}
 
@@ -545,7 +547,7 @@ sap.ui.define([
 	TableSelectDialog.prototype.open = function (sSearchValue) {
 		if (!this.getParent() && !this._bAppendedToUIArea) {
 			var oStatic = sap.ui.getCore().getStaticAreaRef();
-			oStatic = sap.ui.getCore().getUIArea(oStatic);
+			oStatic = UIArea.registry.get(oStatic.id);
 			oStatic.addContent(this, true);
 			this._bAppendedToUIArea = true;
 		}

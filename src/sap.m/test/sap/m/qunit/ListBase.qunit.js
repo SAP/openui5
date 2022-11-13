@@ -387,7 +387,6 @@ sap.ui.define([
 			assert.ok(oProperties.inset, 'Property "inset" exists');
 			assert.ok(oProperties.visible, 'Property "visible" exists');
 			assert.ok(oProperties.headerText, 'Property "headerText" exists');
-			assert.ok(oProperties.headerDesign, 'Property "headerDesign" exists');
 			assert.ok(oProperties.footerText, 'Property "footerText" exists');
 			assert.ok(oProperties.mode, 'Property "mode" exists');
 			assert.ok(oProperties.width, 'Property "width" exists');
@@ -404,16 +403,22 @@ sap.ui.define([
 			assert.ok(oProperties.growingScrollToLoad, 'Property "growingScrollToLoad" exists');
 		});
 
+		/**
+		 * @deprecated Since version 1.16.
+		 */
+		QUnit.test("Deprecated Property 'headerDesign'", function(assert) {
+			var oProperties = oList.getMetadata().getAllProperties();
+
+			assert.ok(oProperties.headerDesign, 'Property "headerDesign" exists');
+		});
+
 		QUnit.test("Events", function(assert) {
 			var oEvents = oList.getMetadata().getAllEvents();
 			bindListData(oList, data2, "/items", createTemplateListItem());
 
-			assert.ok(oEvents.select, 'Event "select" exists');
 			assert.ok(oEvents.selectionChange, 'Event "selectionChange" exists');
 			assert.ok(oEvents["delete"], 'Event "delete" exists');
 			assert.ok(oEvents.swipe, 'Event "swipe" exists');
-			assert.ok(oEvents.growingStarted, 'Event "growingStarted" exists');
-			assert.ok(oEvents.growingFinished, 'Event "growingFinished" exists');
 			assert.ok(oEvents.updateStarted, 'Event "updateStarted" exists');
 			assert.ok(oEvents.updateFinished, 'Event "updateFinished" exists');
 			assert.ok(oEvents.beforeOpenContextMenu, 'Event "beforeOpenContextMenu" exists');
@@ -449,6 +454,25 @@ sap.ui.define([
 			oList.removeSelections();
 			oList.selectAll(true);
 			assert.strictEqual(oSelectionChangeSpy.callCount, 1, "selectAll is fired via true parameter call");
+		});
+
+		/**
+		 * @deprecated Since version 1.16.
+		 */
+		QUnit.test("Deprecated Event 'select'", function(assert) {
+			var oEvents = oList.getMetadata().getAllEvents();
+
+			assert.ok(oEvents.select, 'Event "select" exists');
+		});
+
+		/**
+		 * @deprecated Since version 1.16.3.
+		 */
+		QUnit.test("Deprecated Events 'growingStarted', 'growingFinished'", function(assert) {
+			var oEvents = oList.getMetadata().getAllEvents();
+
+			assert.ok(oEvents.growingStarted, 'Event "growingStarted" exists');
+			assert.ok(oEvents.growingFinished, 'Event "growingFinished" exists');
 		});
 
 		QUnit.test("Aggregations", function(assert) {
@@ -493,11 +517,10 @@ sap.ui.define([
 
 		QUnit.test("Default values", function(assert) {
 			var sAddText = " (state: before rendering)",
-				fAssertions = function(sAddText) {
+				fnAssertions = function(sAddText) {
 					assert.strictEqual(oList.getInset(), false, 'The default value of property "inset" should be "false" on ' + oList + sAddText);
 					assert.strictEqual(oList.getVisible(), true, 'The default value of property "visible" should be "true" on ' + oList + sAddText);
 					assert.strictEqual(oList.getHeaderText(), "", 'The default value of property "headerText" should be "" on ' + oList + sAddText);
-					assert.strictEqual(oList.getHeaderDesign(), library.ListHeaderDesign.Standard, 'The default value of property "headerDesign" should be "' + library.ListHeaderDesign.Standard + '" on ' + oList + sAddText);
 					assert.strictEqual(oList.getFooterText(), "", 'The default value of property "footerText" should be "" on ' + oList + sAddText);
 					assert.strictEqual(oList.getMode(), library.ListMode.None, 'The default value of property "mode" should be "' + library.ListMode.None + '" on ' + oList + sAddText);
 					assert.strictEqual(oList.getWidth(), "100%", 'The default value of property "width" should be "100%" on ' + oList + sAddText);
@@ -515,7 +538,7 @@ sap.ui.define([
 				};
 
 			// check before rendering
-			fAssertions(sAddText);
+			fnAssertions(sAddText);
 
 			// add item to page & render
 			oPage.addContent(oList);
@@ -523,7 +546,31 @@ sap.ui.define([
 
 			// check again after rendering
 			sAddText = " (state: after rendering)";
-			fAssertions(sAddText);
+			fnAssertions(sAddText);
+
+			// cleanup
+			oPage.removeAllContent();
+		});
+
+		/**
+		 * @deprecated Since version 1.16.
+		 */
+		QUnit.test("Default value for deprecated Property headerDesign", function(assert) {
+			var sAddText = " (state: before rendering)",
+				fnAssertions = function(sAddText) {
+					assert.strictEqual(oList.getHeaderDesign(), library.ListHeaderDesign.Standard, 'The default value of property "headerDesign" should be "' + library.ListHeaderDesign.Standard + '" on ' + oList + sAddText);
+				};
+
+			// check before rendering
+			fnAssertions(sAddText);
+
+			// add item to page & render
+			oPage.addContent(oList);
+			Core.applyChanges();
+
+			// check again after rendering
+			sAddText = " (state: after rendering)";
+			fnAssertions(sAddText);
 
 			// cleanup
 			oPage.removeAllContent();
@@ -1732,29 +1779,29 @@ sap.ui.define([
 			oPage.addContent(oList);
 			oPage.addContent(oAfterList);
 			oPage.placeAt("qunit-fixture");
-				Core.applyChanges();
-				oList.forwardTab = fnSpy;
+			Core.applyChanges();
+			oList.forwardTab = fnSpy;
 
-				// tab key
-			qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "TAB", false, false, false);
+			// tab key
+			qutils.triggerKeydown(oInput.getFocusDomRef(), "TAB", false, false, false);
 			assert.strictEqual(fnSpy.callCount, 1, "List is informed to forward tab when tab is pressed while focus is on last tabbable item");
 			assert.strictEqual(fnSpy.args[0][0], true, "Tab Forward is informed");
 			fnSpy.resetHistory();
 
 			// shift-tab key
-			qutils.triggerKeyboardEvent(oListItem.getFocusDomRef(), "TAB", true, false, false);
+			qutils.triggerKeydown(oListItem.getFocusDomRef(), "TAB", true, false, false);
 			assert.strictEqual(fnSpy.callCount, 1, "List is informed to forward tab backwards when tab is pressed while focus is on the row");
 			assert.strictEqual(fnSpy.args[0][0], false, "Backwards tab is informed");
 			fnSpy.resetHistory();
 
 			// shift-F6 key
 			oInput.getFocusDomRef().focus();
-			qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "F6", true, false, false);
+			qutils.triggerKeydown(oInput.getFocusDomRef(), "F6", true, false, false);
 			assert.strictEqual(document.activeElement.id, oBeforeList.getFocusDomRef().id, "Focus is moved correctly after Shift-F6");
 
 			// F6
 			oInput.getFocusDomRef().focus();
-			qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "F6", false, false, false);
+			qutils.triggerKeydown(oInput.getFocusDomRef(), "F6", false, false, false);
 			assert.strictEqual(document.activeElement.id, oAfterList.getFocusDomRef().id, "Focus is moved correctly after F6");
 
 			// cleanup

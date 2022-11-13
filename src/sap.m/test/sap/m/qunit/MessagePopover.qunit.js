@@ -108,7 +108,7 @@ sap.ui.define([
 			"</ol>" +
 			"<embed src='helloworld.swf'> <object width=\"400\" height=\"400\"></object>";
 
-			this.oMessageTemplate = new MessagePopoverItem({
+			this.oMessageTemplate = new MessageItem({
 				type: "{type}",
 				title: "{title}",
 				subtitle: "{subtitle}",
@@ -227,16 +227,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("setSubtitle() property", function (assert) {
-		var sInterlListItemDescription, sMessagePopoverItemSubtitle;
+		var sInterlListItemDescription, sMessageItemSubtitle;
 
 		this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 		this.oMessagePopover.openBy(this.oButton);
 
 		sInterlListItemDescription = this.oMessagePopover._oMessageView._oLists.all.getItems()[0].getDescription();
-		sMessagePopoverItemSubtitle = this.oMessagePopover.getItems()[0].getSubtitle();
+		sMessageItemSubtitle = this.oMessagePopover.getItems()[0].getSubtitle();
 
-		assert.strictEqual(sInterlListItemDescription, "Subtitle", "Description of the interal listItem should be binded with the subtitle of the MessagePopoverItem");
-		assert.strictEqual(sInterlListItemDescription, sMessagePopoverItemSubtitle, "Setting a subtitle to MessagePopoverItem should set the description of the internal StandardListItem");
+		assert.strictEqual(sInterlListItemDescription, "Subtitle", "Description of the internal listItem should be binded with the subtitle of the MessageItem");
+		assert.strictEqual(sInterlListItemDescription, sMessageItemSubtitle, "Setting a subtitle to MessageItem should set the description of the internal StandardListItem");
 	});
 
 	QUnit.test("setCounter() property", function (assert) {
@@ -249,7 +249,7 @@ sap.ui.define([
 		iInterListItemCounter = this.oMessagePopover._oMessageView._oLists.all.getItems()[0].getCounter();
 
 		assert.strictEqual(iInterListItemCounter, 1, "Internal listItem's counter should be set to 1");
-		assert.strictEqual(iInterListItemCounter, iMPItemCounter, "Internal listItem's counter should be the same as MessagePopoverItems's counter");
+		assert.strictEqual(iInterListItemCounter, iMPItemCounter, "Internal listItem's counter should be the same as MessageItems's counter");
 	});
 
 	QUnit.test("No Navigation arrow should be shown if there is no description", function (assert) {
@@ -553,7 +553,7 @@ sap.ui.define([
 		var oMessagePopover = new MessagePopover({
 				items: {
 					path: "/messages",
-					template: new MessagePopoverItem({
+					template: new MessageItem({
 						type: "{type}",
 						title: "{title}",
 						subtitle: "{subtitle}",
@@ -692,7 +692,10 @@ sap.ui.define([
 		assert.ok(oActiveTitlePressStub.called, "Event should be forwarded");
 	});
 
-	QUnit.module("MessagePopoveritem Public API", {
+	/**
+	 * @deprecated Since version 1.46, public API of successor is tested in MessageItem.qumit.js
+	 */
+	QUnit.module("MessagePopoverItem Public API", {
 		beforeEach: function() {
 			this.oMessagePopoverItem = new MessagePopoverItem();
 		}, afterEach: function() {
@@ -788,7 +791,7 @@ sap.ui.define([
 			"sapMMsgPopover-init class should present on the HTML element");
 	});
 
-	QUnit.test("MessagePopoverItem's with truncated title", function (assert) {
+	QUnit.test("MessageItem's with truncated title", function (assert) {
 		var sLongTitle = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod" +
 				"tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam," +
 				"quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo" +
@@ -796,11 +799,11 @@ sap.ui.define([
 				"cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non" +
 				"proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-		this.oMessagePopover.addItem(new MessagePopoverItem({
+		this.oMessagePopover.addItem(new MessageItem({
 			title: sLongTitle
 		}));
 
-		this.oMessagePopover.addItem(new MessagePopoverItem({
+		this.oMessagePopover.addItem(new MessageItem({
 			title: "dummy item"
 		}));
 
@@ -828,7 +831,7 @@ sap.ui.define([
 
 		var oMessagePopover = new MessagePopover({
 			items: [
-				new MessagePopoverItem({
+				new MessageItem({
 					type: MessageType.Error,
 					title: 'ERROR',
 					description: 'ERROR desc'
@@ -942,7 +945,7 @@ sap.ui.define([
 					"	<li>Ordered list item 2</li>" +
 					"</ol>";
 
-			this.oMessageTemplate = new MessagePopoverItem({
+			this.oMessageTemplate = new MessageItem({
 				type: "{type}",
 				title: "{title}",
 				description: "{description}",
@@ -1015,7 +1018,7 @@ sap.ui.define([
 		this.clock.tick(500);
 	});
 
-	QUnit.test("MessagePopoverItems type Navigation", function (assert) {
+	QUnit.test("MessageItems type Navigation", function (assert) {
 		var aItems;
 
 		this.oMockupData.messages.forEach(function (message) {
@@ -1034,7 +1037,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("MessagePopoverItems type Navigation", function (assert) {
+	QUnit.test("MessageItems type Navigation", function (assert) {
 		var aItems;
 
 		this.oMockupData.messages.forEach(function (message) {
@@ -1173,7 +1176,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oButton2 = new Button({text: "Press me"});
 
-			var oMessageTemplate = new MessagePopoverItem({
+			var oMessageTemplate = new MessageItem({
 				title: '{message}'
 			});
 
@@ -1224,10 +1227,10 @@ sap.ui.define([
 
 	QUnit.test("Adding item to MessagePopover", function (assert) {
 		var oMessagePopover = new MessagePopover(),
-			oMessagePopoverItem = new MessagePopoverItem({ title: "Test" }),
+			oMessageItem = new MessageItem({ title: "Test" }),
 			oButton = new Button();
 
-		oMessagePopover.addItem(oMessagePopoverItem);
+		oMessagePopover.addItem(oMessageItem);
 
 		oButton.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -1409,7 +1412,7 @@ sap.ui.define([
 
 	QUnit.module("Refactoring", {
 		beforeEach: function () {
-			var oMessageTemplate = new MessagePopoverItem({
+			var oMessageTemplate = new MessageItem({
 				type: "{type}",
 				title: "{title}",
 				subtitle: "{subtitle}",

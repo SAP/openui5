@@ -238,12 +238,12 @@ sap.ui.define([
 		core.applyChanges();
 
 		//Act
-		qutils.triggerKeyboardEvent(sut.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(sut.getDomRef(), KeyCodes.ENTER);
 		//Assert
 		assert.equal(result, 1);
 
 		//Act
-		qutils.triggerKeyboardEvent(sut.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(sut.getDomRef(), KeyCodes.SPACE);
 		//Assert
 		assert.equal(result, 2);
 	});
