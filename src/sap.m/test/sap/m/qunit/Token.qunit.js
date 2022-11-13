@@ -159,13 +159,13 @@ sap.ui.define([
 
 	QUnit.test("Space", function(assert) {
 		// act
-		qutils.triggerKeyboardEvent("t1", KeyCodes.SPACE, false, false, false);
+		qutils.triggerKeydown("t1", KeyCodes.SPACE, false, false, false);
 
 		// assert
 		assert.equal(this.token1.getSelected(), true, "Token is selected");
 
 		// act
-		qutils.triggerKeyboardEvent("t1", KeyCodes.SPACE, false, false, false);
+		qutils.triggerKeydown("t1", KeyCodes.SPACE, false, false, false);
 
 		// assert
 		assert.equal(this.token1.getSelected(), false, "Token is deselected");
@@ -173,13 +173,13 @@ sap.ui.define([
 
 	QUnit.test("Ctrl + Space", function(assert) {
 		// act
-		qutils.triggerKeyboardEvent("t1", KeyCodes.SPACE, false, false, true);
+		qutils.triggerKeydown("t1", KeyCodes.SPACE, false, false, true);
 
 		// assert
 		assert.equal(this.token1.getSelected(), true, "Token is selected");
 
 		// act
-		qutils.triggerKeyboardEvent("t1", KeyCodes.SPACE, false, false, true);
+		qutils.triggerKeydown("t1", KeyCodes.SPACE, false, false, true);
 
 		// assert
 		assert.equal(this.token1.getSelected(), false, "Token is deselected");
@@ -208,7 +208,7 @@ sap.ui.define([
 	QUnit.test("Selection", function(assert) {
 		// act
 		qutils.triggerEvent("tap", this.token1.getDomRef());
-		qutils.triggerKeyboardEvent("t", KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown("t", KeyCodes.ARROW_RIGHT);
 
 		// assert
 		assert.ok(this.token1.getSelected(), 1, "Token1 is selected.");

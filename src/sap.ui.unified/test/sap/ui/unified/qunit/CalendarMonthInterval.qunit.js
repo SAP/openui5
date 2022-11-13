@@ -425,7 +425,7 @@ sap.ui.define([
 
 		var $Date = jQuery("#CalP--Cal--YP-y20160101");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 
 		assert.equal(oCore.byId("CalP").getStartDate().getFullYear(), 2016, "start date is set correctly");

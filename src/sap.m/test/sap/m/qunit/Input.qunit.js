@@ -563,7 +563,7 @@ sap.ui.define([
 
 		// Act
 		oSpy.reset();
-		qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
 		this.clock.tick();
 
 		// Assert
@@ -859,7 +859,7 @@ sap.ui.define([
 		assert.strictEqual(oInput.getProperty("value"), sNewValue, "Before escape - getProperty(value) should return the NEW value.");
 
 		// Act
-		qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");
+		qutils.triggerKeydown(oInput.getFocusDomRef(), "ESCAPE");
 
 		// Assert - after escape
 		assert.strictEqual(oInput.getValue(), sInitValue, "After escape - getValue should return the INITIAL value.");
@@ -1232,7 +1232,7 @@ sap.ui.define([
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
 		// Enter key is pressed directly after typing "abc"
-		qutils.triggerKeyboardEvent(oInput._$input[0], KeyCodes.ENTER);
+		qutils.triggerKeydown(oInput._$input[0], KeyCodes.ENTER);
 
 		this.clock.tick(300);
 
@@ -1279,7 +1279,7 @@ sap.ui.define([
 		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
-		qutils.triggerKeyboardEvent(oInput.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ENTER);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup should be closed");
 
 		oInput.destroy();

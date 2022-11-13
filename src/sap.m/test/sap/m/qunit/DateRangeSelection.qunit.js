@@ -251,7 +251,7 @@ sap.ui.define([
 		bValid = true;
 		oDRS2.focus();
 		jQuery("#DRS2").find("input").val("01+04+2013 - 10+04+2014");
-		qutils.triggerKeyboardEvent("DRS2-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DRS2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DRS2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bChange, "DRS2: change event fired by typing invalid date");
 		assert.ok(!bValid, "DRS2: invalid typed date is not valid");
@@ -261,7 +261,7 @@ sap.ui.define([
 		bValid = true;
 		oDRS2.focus();
 		jQuery("#DRS2").find("input").val("02+04+2014 - 11+04+2014");
-		qutils.triggerKeyboardEvent("DRS2-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DRS2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DRS2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bChange, "DRS2: change event fired by typing valid date");
 		assert.ok(bValid, "DRS2: valid typed date is valid");
@@ -272,7 +272,7 @@ sap.ui.define([
 		bValid = true;
 		oDRS2.focus();
 		jQuery("#DRS2").find("input").val("01+04+2014 - 10+04+2015");
-		qutils.triggerKeyboardEvent("DRS2-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DRS2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DRS2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bChange, "DRS2: change event fired by typing invalid date");
 		assert.ok(!bValid, "DRS2: invalid typed date is not valid");
@@ -390,9 +390,9 @@ sap.ui.define([
 		qutils.triggerEvent("click", "DRS2-icon");
 		oCore.applyChanges();
 		jQuery("#DRS2-cal--Month0-20140406").trigger("focus");
-		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DRS2-cal--Month0-20140406", KeyCodes.ENTER, false, false, false);
 		jQuery("#DRS2-cal--Month0-20140409").trigger("focus");
-		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DRS2-cal--Month0-20140409", KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after date selection");
 
 		qutils.triggerEvent("click", "DRS2-icon");
@@ -404,9 +404,9 @@ sap.ui.define([
 		Device.system.desktop = false;
 		qutils.triggerEvent("click", "DRS2-icon");
 		jQuery("#DRS2-cal--Month0-20140406").trigger("focus");
-		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DRS2-cal--Month0-20140406", KeyCodes.ENTER, false, false, false);
 		jQuery("#DRS2-cal--Month0-20140409").trigger("focus");
-		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140409", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DRS2-cal--Month0-20140409", KeyCodes.ENTER, false, false, false);
 		assert.notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after date selection");
 
 		qutils.triggerEvent("click", "DRS2-icon");

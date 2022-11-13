@@ -12985,7 +12985,7 @@ sap.ui.define([
 		var	oValueStateHeader;
 
 		// Act
-		qutils.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick();
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick();
@@ -13005,7 +13005,7 @@ sap.ui.define([
 		var	oValueStateHeader;
 
 		// Act
-		qutils.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick();
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
@@ -13032,7 +13032,7 @@ sap.ui.define([
 			iLastItemIndex;
 
 			// Act
-		qutils.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick();
 
 		iLastItemIndex = this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getItems().length - 1;

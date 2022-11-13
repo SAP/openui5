@@ -240,7 +240,7 @@ sap.ui.define([
 
 		// act - type into the input
 		oInputRef.val("Feb 18, 2016, 9:00:00 AM");
-		qutils.triggerKeyboardEvent("dtpb-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("dtpb-inner", KeyCodes.ENTER, false, false, false);
 		oInputRef.trigger("change");
 
 		// assert
@@ -471,7 +471,7 @@ sap.ui.define([
 		sId = "";
 		oDTP2.focus();
 		jQuery("#DTP2").find("input").val("37+02+2016:10+11");
-		qutils.triggerKeyboardEvent("DTP2-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DTP2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DTP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DTP2", "Change event fired");
 		assert.equal(sValue, "37+02+2016:10+11", "Value of event has entered value if it is invalid");
@@ -484,7 +484,7 @@ sap.ui.define([
 		sId = "";
 		oDTP2.focus();
 		jQuery("#DTP2").find("input").val("18+02+2016:10+30");
-		qutils.triggerKeyboardEvent("DTP2-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("DTP2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DTP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DTP2", "Change event fired");
 		assert.equal(sValue, "2016-02-18,10-30-00", "Value of event has entered value if valid");
@@ -526,10 +526,10 @@ sap.ui.define([
 			}
 
 			// use ENTER to not run into itemNavigation
-			qutils.triggerKeyboardEvent(oDay, KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeydown(oDay, KeyCodes.ENTER, false, false, false);
 
 			oDTP3._oClocks.getAggregation("_buttons")[0].focus();
-			qutils.triggerKeyboardEvent(oDTP3._oClocks.getAggregation("_buttons")[0].getDomRef(), KeyCodes.ARROW_UP, false, false, false);
+			qutils.triggerKeydown(oDTP3._oClocks.getAggregation("_buttons")[0].getDomRef(), KeyCodes.ARROW_UP, false, false, false);
 			oCore.applyChanges();
 			assert.equal(jQuery("#DTP3-Clocks-clockH-selected").text(), "11" , "DTP3: correct hours set after keyboard navigation");
 
@@ -1114,7 +1114,7 @@ sap.ui.define([
 
 		// act - type into the input
 		oInputRef.val("Feb 18, 2016, 9:00:00 AM");
-		qutils.triggerKeyboardEvent("dtpb-inner", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown("dtpb-inner", KeyCodes.ENTER, false, false, false);
 		oInputRef.trigger("change");
 
 		// assert

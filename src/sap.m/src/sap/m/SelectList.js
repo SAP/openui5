@@ -7,6 +7,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Core',
 	'sap/ui/core/Control',
+	'sap/ui/core/Element',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/Item',
 	'./SelectListRenderer',
@@ -15,7 +16,7 @@ sap.ui.define([
 	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control"
 ],
-	function(library, Core, Control, ItemNavigation, Item, SelectListRenderer, Log, jQuery) {
+	function(library, Core, Control, Element, ItemNavigation, Item, SelectListRenderer, Log, jQuery) {
 		"use strict";
 
 		// shortcut for sap.m.touch
@@ -338,7 +339,7 @@ sap.ui.define([
 		};
 
 		SelectList.prototype._handleARIAActivedescendant = function() {
-			var oActiveDescendant = jQuery(document.activeElement).control(0),
+			var oActiveDescendant = Element.closestTo(document.activeElement),
 				oDomRef = this.getDomRef();
 
 			if (oActiveDescendant && oDomRef) {

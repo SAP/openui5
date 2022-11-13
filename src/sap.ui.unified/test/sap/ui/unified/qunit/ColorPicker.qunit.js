@@ -219,7 +219,7 @@ sap.ui.define([
 			// Act - simulate typing in the first alpha value field.
 			this.oCP.oAlphaField.focus();
 			jQuery("#cp-aF").find("input").val("0.5");
-			qutils.triggerKeyboardEvent("cp-aF-inner", KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeydown("cp-aF-inner", KeyCodes.ENTER, false, false, false);
 			jQuery("#cp-aF").find("input").trigger("change");
 
 			// Assert
@@ -231,7 +231,7 @@ sap.ui.define([
 			// Act - simulate typing in the second alpha value field.
 			this.oCP.oAlphaField.focus();
 			jQuery("#cp-aF2").find("input").val("0.3");
-			qutils.triggerKeyboardEvent("cp-aF2-inner", KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeydown("cp-aF2-inner", KeyCodes.ENTER, false, false, false);
 			jQuery("#cp-aF2").find("input").trigger("change");
 
 			// Assert

@@ -2861,8 +2861,8 @@ sap.ui.define([
 	QUnit.test("viewChange", function(assert) {
 		bViewChange = false;
 		jQuery("#PC1-Header-ViewSwitch-select").trigger("focus");
-		qutils.triggerKeyboardEvent("PC1-Header-ViewSwitch-select", "ARROW_DOWN");
-		qutils.triggerKeyboardEvent("PC1-Header-ViewSwitch-select", "ENTER");
+		qutils.triggerKeydown("PC1-Header-ViewSwitch-select", "ARROW_DOWN");
+		qutils.triggerKeydown("PC1-Header-ViewSwitch-select", "ENTER");
 		Core.applyChanges();
 		assert.ok(bViewChange, "viewChange fired");
 
@@ -2881,7 +2881,7 @@ sap.ui.define([
 		bSubInterval = undefined;
 		oIntervalRow = undefined;
 		jQuery("#PC1-TimesRow-201501011200").trigger("focus");
-		qutils.triggerKeyboardEvent("PC1-TimesRow-201501011200", "ENTER");
+		qutils.triggerKeydown("PC1-TimesRow-201501011200", "ENTER");
 		Core.applyChanges();
 		assert.ok(bIntervalSelect, "intervalSelect fired");
 		assert.equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201501011200", "interval start date returned");
@@ -3690,7 +3690,7 @@ sap.ui.define([
 
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160902");
-			qutils.triggerKeyboardEvent($Day.get(0), KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeydown($Day.get(0), KeyCodes.ENTER, false, false, false);
 			Core.applyChanges();
 			assert.ok($Day.hasClass("sapUiCalItemSel"), "Day marked as selected");
 
@@ -3733,7 +3733,7 @@ sap.ui.define([
 
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160830");
-			qutils.triggerKeyboardEvent($Day.get(0), KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeydown($Day.get(0), KeyCodes.ENTER, false, false, false);
 			Core.applyChanges();
 
 			this.oPC2Interval = oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
@@ -3775,7 +3775,7 @@ sap.ui.define([
 
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-WeeksRow--Cal--Month0-20160830");
-			qutils.triggerKeyboardEvent($Day.get(0), KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeydown($Day.get(0), KeyCodes.ENTER, false, false, false);
 
 			this.oPC2Interval = oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
 			aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");

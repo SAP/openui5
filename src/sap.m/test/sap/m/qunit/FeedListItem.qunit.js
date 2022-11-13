@@ -584,7 +584,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press X Key on Sender", function (assert) {
-		qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkControl.getId(), KeyCodes.X, false, false, false);
+		qutils.triggerKeydown(oFeedList.getItems()[9]._oLinkControl.getId(), KeyCodes.X, false, false, false);
 		assert.notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
 	});
 
@@ -596,7 +596,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press X Key on MORE", function (assert) {
-		qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), KeyCodes.X, false, false, false);
+		qutils.triggerKeydown(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), KeyCodes.X, false, false, false);
 		assert.notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
 	});
 

@@ -173,9 +173,9 @@ sap.ui.define([
 
 			// Test Navigation via Arrow Keys from / to Trigger
 			oList.getItems()[0].focus();
-			qutils.triggerKeyboardEvent(oList.getItems()[0].getDomRef(), KeyCodes.ARROW_DOWN);
+			qutils.triggerKeydown(oList.getItems()[0].getDomRef(), KeyCodes.ARROW_DOWN);
 			assert.ok(oList.getDomRef("trigger") === document.activeElement, "Trigger has focus after navigation from last item via arrow key");
-			qutils.triggerKeyboardEvent(oList.getDomRef("trigger"), KeyCodes.ARROW_UP);
+			qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.ARROW_UP);
 			assert.ok(oList.getItems()[0].getDomRef() === document.activeElement, "Item has focus after navigation from trigger via arrow key");
 
 			done();

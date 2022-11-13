@@ -2,8 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log", "sap/ui/core/Configuration"],
-	function(BaseObject, jQuery, Log, Configuration) {
+sap.ui.define([
+	"sap/ui/base/Object",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Element"
+],
+	function(BaseObject, jQuery, Log, Configuration, Element) {
 	"use strict";
 
 	/**
@@ -448,7 +454,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log",
 			return null;
 		}
 
-		oTargetControl = $target.control(0, true);
+		oTargetControl = Element.closestTo($target[0], true);
 
 		if (!sBeforeOrAfter) {
 			sBeforeOrAfter = this._calculateDropBeforeOrAfter(oTargetControl, oDragEvent);

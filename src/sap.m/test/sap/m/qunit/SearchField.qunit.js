@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Button",
 	"sap/m/SuggestionItem"
@@ -21,6 +22,7 @@ sap.ui.define([
 	Label,
 	Device,
 	KeyCodes,
+	Element,
 	InvisibleText,
 	Button,
 	SuggestionItem
@@ -48,7 +50,6 @@ sap.ui.define([
 	function doTouchEnd(sTarget, oParams){
 		var sEventName = "touchend";
 		var oTarget = document.getElementById(sTarget);
-		var $Target = jQuery(oTarget);
 		var oEvent = jQuery.Event(sEventName);
 		oEvent.originalEvent = {};
 		oEvent.target = oTarget;
@@ -59,7 +60,7 @@ sap.ui.define([
 				oEvent.originalEvent[x] = oParams[x];
 			}
 		}
-		var oElement = $Target.control(0);
+		var oElement = Element.closestTo(oTarget);
 		if (oElement && oElement["on" + sEventName]){
 			oElement["on" + sEventName].apply(oElement, [oEvent]);
 		}
@@ -650,7 +651,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// tap on the 'magnifier' button
-		var searchFieldInDialog = jQuery(".sapMDialog .sapMSF").control()[0];
+		var searchFieldInDialog = Element.closestTo(document.querySelector(".sapMDialog .sapMSF"));
 		var searchIconInDialog = jQuery(".sapMDialog .sapMSFS")[0];
 
 		searchFieldInDialog.ontouchend({

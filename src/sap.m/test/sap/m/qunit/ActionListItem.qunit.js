@@ -40,7 +40,7 @@ sap.ui.define([
 			oList.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			qutils.triggerKeyboardEvent("item1", KeyCodes.SPACE);
+			qutils.triggerKeydown("item1", KeyCodes.SPACE);
 
 			this.clock.tick(50);
 
@@ -79,7 +79,7 @@ sap.ui.define([
 			press : oSpy
 		});
 
-		qutils.triggerKeyboardEvent("item1", KeyCodes.ENTER);
+		qutils.triggerKeydown("item1", KeyCodes.ENTER);
 
 		this.clock.tick(50);
 
@@ -96,7 +96,7 @@ sap.ui.define([
 			press : oSpy
 		});
 
-		qutils.triggerKeyboardEvent("item1", KeyCodes.SPACE);
+		qutils.triggerKeydown("item1", KeyCodes.SPACE);
 
 		this.clock.tick(50);
 

@@ -2,12 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/core/delegate/ItemNavigation",
 	"./GridItemNavigation",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selector ":sapTabbable"
 ], function (
+	Element,
 	ItemNavigation,
 	GridItemNavigation,
 	containsOrEquals,
@@ -50,15 +52,6 @@ sap.ui.define([
 			GridItemNavigation.apply(this, arguments);
 
 			this.attachEvent(ItemNavigation.Events.FocusLeave, this._onFocusLeave, this);
-		},
-		metadata: {
-			library: "sap.f",
-			properties: {
-
-			},
-			events: {
-
-			}
 		}
 	});
 
@@ -111,11 +104,9 @@ sap.ui.define([
 			}
 		});
 
-		var $Tabbables = jQuery(Tabbables),
-			focusableIndex = $Tabbables.length === 1 ? 0 : $Tabbables.length  - 1;
-
+		var focusableIndex = Tabbables.length  - 1;
 		if (focusableIndex === -1 ||
-			($Tabbables.control(focusableIndex) && $Tabbables.control(focusableIndex).getId() === oEvent.target.id)) {
+			(Element.closestTo(Tabbables[focusableIndex]) && Element.closestTo(Tabbables[focusableIndex]).getId() === oEvent.target.id)) {
 			this._lastFocusedElement = oEvent.target;
 			this.forwardTab(true);
 		}
@@ -163,7 +154,7 @@ sap.ui.define([
 			oControl;
 
 		if ($listItem.length) {
-			oControl = $listItem.children().eq(0).control()[0];
+			oControl = Element.closestTo($listItem.children()[0]);
 
 			// if the list item visual focus is displayed by the currently focused control,
 			// move the focus to the list item
@@ -221,7 +212,7 @@ sap.ui.define([
 			oControl;
 
 		if ($listItem.length) {
-			oControl = $listItem.children().eq(0).control()[0];
+			oControl = Element.closestTo($listItem.children()[0]);
 
 			if (oControl) {
 				doVirtualFocusin(oControl);
@@ -303,7 +294,7 @@ sap.ui.define([
 			this.aItemDomRefs[this.iFocusedIndex].focus();
 
 			// make the DOM element that has the outline focus to be visible in the view area
-			oInnerControl = jQuery(this.aItemDomRefs[this.iFocusedIndex].firstChild).control()[0];
+			oInnerControl = Element.closestTo(this.aItemDomRefs[this.iFocusedIndex].firstChild);
 
 			if (oInnerControl) {
 				oInnerControlFocusDomRef = oInnerControl.getFocusDomRef();

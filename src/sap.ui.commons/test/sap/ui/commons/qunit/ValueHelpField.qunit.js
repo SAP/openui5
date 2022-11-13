@@ -130,7 +130,7 @@ sap.ui.define([
 		assert.equal(sEvent, "ValueHelpRequest","Click - event fired");
 		sEvent = "";
 
-		qutils.triggerKeyboardEvent("VHF1", KeyCodes.F4, false, false, false);
+		qutils.triggerKeydown("VHF1", KeyCodes.F4, false, false, false);
 		assert.equal(sEvent, "ValueHelpRequest","F4 - event fired");
 		sEvent = "";
 
@@ -139,7 +139,7 @@ sap.ui.define([
 		assert.equal(sEvent, "","Click - no event fired");
 		sEvent = "";
 
-		qutils.triggerKeyboardEvent("VHF2", KeyCodes.F4, false, false, false);
+		qutils.triggerKeydown("VHF2", KeyCodes.F4, false, false, false);
 		assert.equal(sEvent, "","F4 - event fired");
 		sEvent = "";
 
@@ -148,7 +148,7 @@ sap.ui.define([
 		assert.equal(sEvent, "","Click - no event fired");
 		sEvent = "";
 
-		qutils.triggerKeyboardEvent("VHF3", KeyCodes.F4, false, false, false);
+		qutils.triggerKeydown("VHF3", KeyCodes.F4, false, false, false);
 		assert.equal(sEvent, "","F4 - event fired");
 		sEvent = "";
 

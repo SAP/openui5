@@ -1557,7 +1557,7 @@ sap.ui.define([
 
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160902");
-			qutils.triggerKeyboardEvent($Day.get(0), KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeydown($Day.get(0), KeyCodes.ENTER, false, false, false);
 			Core.applyChanges();
 			assert.ok($Day.hasClass("sapUiCalItemSel"), "Day marked as selected");
 
@@ -1600,7 +1600,7 @@ sap.ui.define([
 
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160830");
-			qutils.triggerKeyboardEvent($Day.get(0), KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeydown($Day.get(0), KeyCodes.ENTER, false, false, false);
 			Core.applyChanges();
 
 			this.oPC2Interval = oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
@@ -1642,7 +1642,7 @@ sap.ui.define([
 
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-WeeksRow--Cal--Month0-20160830");
-			qutils.triggerKeyboardEvent($Day.get(0), KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeydown($Day.get(0), KeyCodes.ENTER, false, false, false);
 
 			this.oPC2Interval = oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
 			aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");

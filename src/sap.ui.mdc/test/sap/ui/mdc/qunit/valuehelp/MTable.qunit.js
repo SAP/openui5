@@ -1147,7 +1147,7 @@ sap.ui.define([
 		assert.equal(iNavigate, 0, "Navigated Event not fired");
 
 		var aItems = oTable.getItems();
-		qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+		qutils.triggerKeydown(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 		assert.equal(iNavigate, 1, "Navigate event fired");
 		assert.notOk(oNavigateCondition, "Navigate condition");
 		assert.notOk(sNavigateItemId, "Navigate event itemId");

@@ -24,10 +24,11 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/m/ListItemBase",
 	"sap/base/Log",
 	"sap/ui/model/Sorter"
-], function(jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, ListItemBase, Log, Sorter) {
+], function(jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, Element, ListItemBase, Log, Sorter) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
@@ -778,7 +779,9 @@ sap.ui.define([
 	}
 
 	function switchStyle() {
-		var listArray = jQuery(".sapMList").control();
+		var listArray = Array.from(document.querySelectorAll(".sapMList"), function(oElement) {
+			return Element.closestTo(oElement);
+		});
 		var inset = !listArray[listArray.length - 1].getInset();
 		for ( var i = 0; i < listArray.length; i++) {
 			listArray[i].setInset(inset);
@@ -1620,7 +1623,7 @@ sap.ui.define([
 
 		oList.placeAt("qunit-fixture");
 		Core.applyChanges();
-		var oIcon = oStdLI.$().find(".sapUiIcon").control(0);
+		var oIcon = Element.closestTo(oStdLI.$().find(".sapUiIcon")[0]);
 
 		function createEvent(sEventName, oTarget, oParams) {
 			var oEvent = jQuery.Event(sEventName);
@@ -1890,7 +1893,7 @@ sap.ui.define([
 
 		//trigger onsapspace on description text
 		$descButton.focus();
-		qutils.triggerKeyboardEvent($descButton.getAttribute("id"), KeyCodes.SPACE);
+		qutils.triggerKeydown($descButton.getAttribute("id"), KeyCodes.SPACE);
 		this.clock.tick(50);
 
 		Core.applyChanges();

@@ -192,7 +192,7 @@ sap.ui.define([
 
 		// Act
 		this.oDRF._getDdr().$("input-inner").val("Oct 7, 2021").trigger("input");
-		QUnitUtils.triggerKeyboardEvent(this.oDRF._getDdr().getDomRef("input"), KeyCodes.ENTER);
+		QUnitUtils.triggerKeydown(this.oDRF._getDdr().getDomRef("input"), KeyCodes.ENTER);
 
 		// Assert
 		assert.notDeepEqual(this.oDRF.getValue(), oOldValue, "Value should be changed after new value is entered");
@@ -206,14 +206,14 @@ sap.ui.define([
 
 		// Act
 		this.oDRF._getDdr().$("input-inner").val("invalid value").trigger("input");
-		QUnitUtils.triggerKeyboardEvent(this.oDRF._getDdr().getDomRef("input"), KeyCodes.ENTER);
+		QUnitUtils.triggerKeydown(this.oDRF._getDdr().getDomRef("input"), KeyCodes.ENTER);
 
 		// Assert
 		assert.strictEqual(this.oDRF._getDdr().getValueState(), coreLibrary.ValueState.Error, "Value  state should be updated");
 
 		// Act
 		this.oDRF._getDdr().$("input-inner").val("Oct 7, 2021").trigger("input");
-		QUnitUtils.triggerKeyboardEvent(this.oDRF._getDdr().getDomRef("input"), KeyCodes.ENTER);
+		QUnitUtils.triggerKeydown(this.oDRF._getDdr().getDomRef("input"), KeyCodes.ENTER);
 
 		// Assert
 		assert.strictEqual(this.oDRF._getDdr().getValueState(), coreLibrary.ValueState.None, "Value  state should be updated");

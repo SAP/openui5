@@ -3,9 +3,9 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/InvisibleRenderer",
-	"sap/ui/thirdparty/jquery"
-], function (Log, InvisibleRenderer, jQuery) {
+	"sap/ui/core/Element",
+	"sap/ui/core/InvisibleRenderer"
+], function (Log, Element, InvisibleRenderer) {
 	"use strict";
 
 	return {
@@ -72,7 +72,7 @@ sap.ui.define([
 						return fnMatch(oItemWrapper, a);
 					})
 					.map(function (oGrid) {
-						var oNextGrid = jQuery(oGrid).control(0);
+						var oNextGrid = Element.closestTo(oGrid);
 						var oCfg = this.createConfig(oNextGrid, this._findClosest(oItem, oNextGrid.getItems()), oItem, fnMatch);
 						oCfg.distFromItemToGrid = this._getDistance(oItem, oNextGrid, fnMatch);
 						return oCfg;

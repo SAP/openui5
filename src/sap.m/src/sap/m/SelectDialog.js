@@ -10,17 +10,18 @@ sap.ui.define([
 	'./List',
 	'./SearchField',
 	'./library',
-	"sap/ui/core/library",
+	'sap/ui/core/library',
 	'./SelectDialogBase',
 	'sap/ui/core/InvisibleText',
-	"sap/ui/core/InvisibleMessage",
+	'sap/ui/core/InvisibleMessage',
+	'sap/ui/core/UIArea',
 	'sap/ui/Device',
 	'sap/m/Toolbar',
 	'sap/m/Text',
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/m/Title',
-	"sap/base/Log"
+	'sap/base/Log'
 ],
 function(
 	jQuery,
@@ -33,6 +34,7 @@ function(
 	SelectDialogBase,
 	InvisibleText,
 	InvisibleMessage,
+	UIArea,
 	Device,
 	Toolbar,
 	Text,
@@ -534,7 +536,7 @@ function(
 		// but only if it added it there itself. As we did that, we have to remove it also on our own
 		if ( this._bAppendedToUIArea ) {
 			var oStatic = sap.ui.getCore().getStaticAreaRef();
-			oStatic = sap.ui.getCore().getUIArea(oStatic);
+			oStatic = UIArea.registry.get(oStatic.id);
 			oStatic.removeContent(this, true);
 		}
 
@@ -603,7 +605,7 @@ function(
 		// use fragments instead or take care of proper parent-child dependencies
 		if ((!this.getParent() || !this.getUIArea()) && !this._bAppendedToUIArea) {
 			var oStatic = sap.ui.getCore().getStaticAreaRef();
-			oStatic = sap.ui.getCore().getUIArea(oStatic);
+			oStatic = UIArea.registry.get(oStatic.id);
 			oStatic.addContent(this, true);
 			this._bAppendedToUIArea = true;
 		}

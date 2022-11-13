@@ -955,7 +955,7 @@ sap.ui.define([
 		// select 14.08.2015
 		$Date = jQuery("#CalP--Cal--Month0-20150814");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 
 		assert.equal(oCore.byId("CalP").getStartDate().getDate(), 14, "start date is set correctly");
@@ -980,7 +980,7 @@ sap.ui.define([
 		// click on September
 		$Date = jQuery("#CalP--Cal--MP-m8");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 
 		// click on Year button inside calendar picker
@@ -989,13 +989,13 @@ sap.ui.define([
 		// click on 2016
 		$Date = jQuery("#CalP--Cal--YP-y20160101");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 
 		// click on 14 of September
 		$Date = jQuery("#CalP--Cal--Month0-20160914");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 
 		oCalStartDate = oCore.byId("CalP").getStartDate();
@@ -1045,7 +1045,7 @@ sap.ui.define([
 		// click on 17 of August 2017
 		$Date = jQuery("#CalP--Cal--Month0-20170817");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 
 		// open again the CalendarPicker

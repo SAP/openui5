@@ -489,8 +489,7 @@ sap.ui.define([
 
 			this._oRestoreFocusDelegate = {
 				onBeforeRendering: function () {
-					var $ActiveElement = jQuery(document.activeElement),
-						oActiveControl = $ActiveElement.control(0);
+					var oActiveControl = Element.closestTo(document.activeElement);
 					this._sFocusControlId = oActiveControl && oActiveControl.getId();
 				},
 				onAfterRendering: function () {
@@ -2668,7 +2667,7 @@ sap.ui.define([
 		};
 
 		Popover.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
-			var oActiveControl = jQuery(document.activeElement).control(0);
+			var oActiveControl = Element.closestTo(document.activeElement);
 			if (sAggregationName === "beginButton" || sAggregationName === "endButton") {
 				var sButton = this["_" + sAggregationName];
 				if (sButton) {

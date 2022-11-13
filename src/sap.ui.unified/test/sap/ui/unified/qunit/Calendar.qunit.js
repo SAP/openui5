@@ -553,7 +553,7 @@ sap.ui.define([
 
 		$Date = jQuery("#Cal2--YP-y20101208");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date.get(0), KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date.get(0), KeyCodes.ENTER, false, false, false);
 
 		this.oCal2.setPrimaryCalendarType(oCore.getConfiguration().getCalendarType());
 		oCore.applyChanges();
@@ -1295,7 +1295,7 @@ sap.ui.define([
 		bSelectFired = false;
 		oSelectedDate = undefined;
 		$Today.trigger("focus");
-		qutils.triggerKeyboardEvent($Today[0], KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Today[0], KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 		assert.ok(bSelectFired, "Select event fired");
 		assert.equal(oSelectedDate.getDate(), oToday.getDate(), "Today was selected");
@@ -1306,7 +1306,7 @@ sap.ui.define([
 		oSelectedDate = undefined;
 		var $Date = jQuery("#Cal3--Month0-20150110");
 		$Date.trigger("focus");
-		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
 		oCore.applyChanges();
 		assert.ok(!bSelectFired, "No Select event fired on disabled date");
 		assert.ok(!$Date.hasClass("sapUiCalItemSel"), "Disabled date not marked as selected");

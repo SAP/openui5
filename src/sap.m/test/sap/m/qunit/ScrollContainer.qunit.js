@@ -474,7 +474,7 @@ sap.ui.define([
 	QUnit.test("Press [CTRL] + [DOWN]", function(assert) {
 		intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled to position 0");
 
-		qutils.triggerKeyboardEvent(oSC4.getDomRef(), "ARROW_DOWN", false, false, true);
+		qutils.triggerKeydown(oSC4.getDomRef(), "ARROW_DOWN", false, false, true);
 
 		intEqual(oSC4.$().scrollTop(), parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF), "ScrollContainer 4 should be scrolled vertically to position " + parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF));
 
@@ -483,7 +483,7 @@ sap.ui.define([
 	QUnit.test("Press [CTRL] + [UP]", function(assert) {
 		intEqual(oSC4.$().scrollTop(), parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF), "ScrollContainer 4 should be scrolled vertically to position " + parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF));
 
-		qutils.triggerKeyboardEvent(oSC4.getDomRef(), "ARROW_UP", false, false, true);
+		qutils.triggerKeydown(oSC4.getDomRef(), "ARROW_UP", false, false, true);
 
 		intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled vertically to position 0");
 	});
@@ -491,7 +491,7 @@ sap.ui.define([
 	QUnit.test("Press [CTRL] + [RIGHT]", function(assert) {
 		intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled to horizontal position 0");
 
-		qutils.triggerKeyboardEvent(oSC4.getDomRef(), "ARROW_RIGHT", false, false, true);
+		qutils.triggerKeydown(oSC4.getDomRef(), "ARROW_RIGHT", false, false, true);
 
 		intEqual(oSC4.$().scrollLeft(), parseInt(oSC4.getDomRef().clientWidth), "ScrollContainer 4 should be scrolled horizontally to position " + parseInt(oSC4.getDomRef().clientWidth));
 	});
@@ -499,7 +499,7 @@ sap.ui.define([
 	QUnit.test("Press [CTRL] + [LEFT]", function(assert) {
 		intEqual(oSC4.$().scrollLeft(), parseInt(oSC4.getDomRef().clientWidth), "ScrollContainer 4 should be scrolled horizontally to position " + parseInt(oSC4.getDomRef().clientWidth));
 
-		qutils.triggerKeyboardEvent(oSC4.getDomRef(), "ARROW_LEFT", false, false, true);
+		qutils.triggerKeydown(oSC4.getDomRef(), "ARROW_LEFT", false, false, true);
 
 		intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled horizontally to position 0");
 	});
@@ -508,7 +508,7 @@ sap.ui.define([
 		intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled horizontally to position 0");
 		intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled vertically to position 0");
 
-		qutils.triggerKeyboardEvent(oSC4.getDomRef(), "END", false, false, true);
+		qutils.triggerKeydown(oSC4.getDomRef(), "END", false, false, true);
 
 		//in this case Math.ceil is using instead of Math.round because of issue in Chrome with oDomRef.scrollHeight
 		assert.equal(Math.ceil(oSC4.$().scrollLeft()), _getMaxScrollLeft(oSC4), "ScrollContainer 4 should be scrolled horizontally to position " + _getMaxScrollLeft(oSC4));
@@ -516,7 +516,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press [CTRL] + [HOME]", function(assert) {
-		qutils.triggerKeyboardEvent(oSC4.getDomRef(), "HOME", false, false, true);
+		qutils.triggerKeydown(oSC4.getDomRef(), "HOME", false, false, true);
 
 		intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled horizontally to position 0");
 		intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled vertically to position 0");
@@ -525,7 +525,7 @@ sap.ui.define([
 	QUnit.test("Press [ALT] + [PAGE DOWN]", function(assert) {
 		intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled to position 0");
 
-		qutils.triggerKeyboardEvent(oSC4.getDomRef(), "PAGE_DOWN", false, true, false);
+		qutils.triggerKeydown(oSC4.getDomRef(), "PAGE_DOWN", false, true, false);
 
 		intEqual(oSC4.$().scrollLeft(), parseInt(oSC4.getDomRef().clientWidth), "ScrollContainer 4 should be scrolled horizontally to position " + parseInt(oSC4.getDomRef().clientWidth));
 	});
@@ -533,7 +533,7 @@ sap.ui.define([
 	QUnit.test("Press [ALT] + [PAGE UP]", function(assert) {
 		intEqual(oSC4.$().scrollLeft(), parseInt(oSC4.getDomRef().clientWidth), "ScrollContainer 4 should be scrolled horizontally to position " + parseInt(oSC4.getDomRef().clientWidth));
 
-		qutils.triggerKeyboardEvent(oSC4.getDomRef(), "PAGE_UP", false, true, false);
+		qutils.triggerKeydown(oSC4.getDomRef(), "PAGE_UP", false, true, false);
 
 		intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled to position 0");
 	});
@@ -542,7 +542,7 @@ sap.ui.define([
 		var oStub = this.stub(Core.getConfiguration(), "getRTL", function() { return true; }),
 			oSpy = this.spy(oSC5._oScroller, "_scrollTo");
 
-		qutils.triggerKeyboardEvent(oSC5.getDomRef(), "END", false, false, true);
+		qutils.triggerKeydown(oSC5.getDomRef(), "END", false, false, true);
 
 		assert.ok(oSpy.firstCall.args[0] < 0, "In RTL scenario scrolling to beginning with CTRL + [END] scrolls to negative position");
 
