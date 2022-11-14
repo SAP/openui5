@@ -223,7 +223,7 @@ sap.ui.define([
 		}
 		while (i < aElements.length) {
 			if (aElements[i]["@$ui5.node.level"] <= iGroupNodeLevel) {
-				// Note: level 1 is used for initial placeholders of 1st level cache!
+				// Note: level 0 or 1 is used for initial placeholders of 1st level cache!
 				if (!iDescendants) {
 					break; // we've reached a sibling of the collapsed node
 				}
@@ -767,7 +767,8 @@ sap.ui.define([
 							that.oFirstLevel, iFirstLevelIndex);
 						for (j = 0; j < that.aElements.$count; j += 1) {
 							if (!that.aElements[j]) {
-								that.aElements[j] = _AggregationHelper.createPlaceholder(1,
+								that.aElements[j] = _AggregationHelper.createPlaceholder(
+									that.oAggregation.expandTo > 1 ? /*don't know*/0 : 1,
 									j - iOffset, that.oFirstLevel);
 							}
 						}

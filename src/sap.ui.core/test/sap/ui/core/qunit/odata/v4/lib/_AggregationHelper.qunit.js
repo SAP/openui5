@@ -58,31 +58,15 @@ sap.ui.define([
 				},
 				"@$ui5.node.level" : 9
 			},
-			// Note: level 1 is used for initial placeholders of 1st level cache!
-			oPlaceholder = _AggregationHelper.createPlaceholder(1, 42, oCache);
+			// Note: level 0 is used for initial placeholders of 1st level cache in case
+			// expandTo > 1
+			oPlaceholder = _AggregationHelper.createPlaceholder(0, 42, oCache);
 
 		this.mock(_Helper).expects("copyPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
 
 		// code under test
 		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("beforeOverwritePlaceholder: wrong placeholder; top pyramid", function (assert) {
-		var oCache = {},
-			// Note: level 1 is used for initial placeholders of 1st level cache!
-			oPlaceholder = _AggregationHelper.createPlaceholder(1, 42, oCache);
-
-		// Note: this is not done by _AggregationHelper.createPlaceholder, but only by
-		// _AggregationCache#replaceByPlaceholder!
-		oPlaceholder["@$ui5.node.isExpanded"] = undefined; // value must not matter
-
-		assert.throws(function () {
-			// code under test
-			_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, {"@$ui5.node.level" : 9},
-				oCache, 42);
-		}, new Error("Wrong placeholder"), "not an initial placeholder");
 	});
 
 	//*********************************************************************************************

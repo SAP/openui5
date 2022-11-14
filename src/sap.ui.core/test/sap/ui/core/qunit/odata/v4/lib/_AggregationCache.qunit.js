@@ -1078,6 +1078,13 @@ sap.ui.define([
 	bHasGrandTotal : true,
 	iFirstLevelIndex : 0,
 	iFirstLevelLength : 42
+}, {
+	iExpandTo : 2,
+	iIndex : 10,
+	iLength : 3,
+	iLevel : 0, // symbolic level for generic initial placeholders inside top pyramid
+	iFirstLevelIndex : 10,
+	iFirstLevelLength : 3
 }].forEach(function (oFixture, i) {
 	QUnit.test("read: 1st time, #" + i, function (assert) {
 		var oAggregation = { // filled before by buildApply
@@ -1090,6 +1097,7 @@ sap.ui.define([
 			oAggregationHelperMock = this.mock(_AggregationHelper),
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oCacheMock = this.mock(oCache),
+			iExpectedLevel = "iLevel" in oFixture ? oFixture.iLevel : 1, // cf. createPlaceholder
 			iFirstLevelIndex = oFixture.iFirstLevelIndex,
 			iFirstLevelLength = oFixture.iFirstLevelLength,
 			oGrandTotal = {},
@@ -1114,6 +1122,9 @@ sap.ui.define([
 			}
 		}
 
+		if (oFixture.iExpandTo) { // unrealistic combination, but never mind
+			oAggregation.expandTo = oFixture.iExpandTo;
+		}
 		if ("grandTotalAtBottomOnly" in oFixture) {
 			oAggregation.grandTotalAtBottomOnly = oFixture.grandTotalAtBottomOnly;
 		}
@@ -1159,12 +1170,12 @@ sap.ui.define([
 		// expect placeholders before and after real read results
 		for (i = 0; i < iFirstLevelIndex; i += 1) {
 			oAggregationHelperMock.expects("createPlaceholder")
-				.withExactArgs(1, i, sinon.match.same(oCache.oFirstLevel))
+				.withExactArgs(iExpectedLevel, i, sinon.match.same(oCache.oFirstLevel))
 				.returns("~placeholder~" + i);
 		}
 		for (i = iFirstLevelIndex + iFirstLevelLength; i < 42; i += 1) {
 			oAggregationHelperMock.expects("createPlaceholder")
-				.withExactArgs(1, i, sinon.match.same(oCache.oFirstLevel))
+				.withExactArgs(iExpectedLevel, i, sinon.match.same(oCache.oFirstLevel))
 				.returns("~placeholder~" + i);
 		}
 

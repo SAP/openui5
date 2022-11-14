@@ -148,8 +148,9 @@ sap.ui.define([
 			if (oParent !== oCache
 				|| _Helper.getPrivateAnnotation(oPlaceholder, "index") !== iIndex
 				|| oPlaceholder["@$ui5.node.level"] !== oElement["@$ui5.node.level"]
-				&& (oPlaceholder["@$ui5.node.level"] !== 1
-					|| "@$ui5.node.isExpanded" in oPlaceholder)) {
+				// Note: level 0 is used for initial placeholders of 1st level cache in case
+				// expandTo > 1
+				&& oPlaceholder["@$ui5.node.level"] !== 0) {
 				throw new Error("Wrong placeholder");
 			}
 			["descendants", "filter", "predicate"].forEach(function (sAnnotation) {
