@@ -373,9 +373,11 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._createQuickResize = function(oColumn) {
+		var oSapMResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+
 		return new QuickAction({
 			content: new Button({
-				icon: "sap-icon://resize-horizontal",
+				text: oSapMResourceBundle.getText("table.COLUMNMENU_RESIZE"),
 				press: [function(oEvent) {
 					this._startColumnResize(oColumn);
 					this._oMenu.close();

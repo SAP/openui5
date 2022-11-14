@@ -505,9 +505,8 @@ sap.ui.define([
 		}
 
 		return new QuickAction({
-			label: Core.getLibraryResourceBundle("sap.m").getText("table.COLUMN_MENU_RESIZE"),
 			content: new Button({
-				icon: "sap-icon://resize-horizontal",
+				text: Core.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_RESIZE"),
 				press: function() {
 					oColumnMenu.close();
 					this.startResizing(oColumn.getDomRef());
