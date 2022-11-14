@@ -277,11 +277,11 @@ sap.ui.define([
 	/**
 	 * Deletes the OData entity this context points to. The context is removed from the binding
 	 * immediately, even if {@link sap.ui.model.odata.v4.SubmitMode.API} is used, and the request is
-	 * only sent later when {@link sap.ui.model.odata.v4.ODataModel#submitBatch} is called. As long
+	 * only sent later when {@link sap.ui.model.odata.v4.ODataModel#submitBatch} is called. As soon
 	 * as the context is deleted on the client, but not yet on the server, {@link #isDeleted}
-	 * returns <code>true</code> and the context must not be used anymore (except for checking
-	 * {@link #isDeleted}), especially not as a binding context. The application has to take care
-	 * that the context is no longer used.
+	 * returns <code>true</code> and the context must not be used anymore (except for status APIs
+	 * like {@link #isDeleted}, {@link #isKeepAlive}, {@link #hasPendingChanges},
+	 * {@link #resetChanges}), especially not as a binding context.
 	 *
 	 * Since 1.105 such a pending deletion is a pending change. It causes
 	 * <code>hasPendingChanges</code> to return <code>true</code> for the context, the binding
@@ -289,7 +289,15 @@ sap.ui.define([
 	 * deletion and restores the context.
 	 *
 	 * If the DELETE request succeeds, the context is destroyed and must not be used anymore. If it
-	 * fails, the context is restored, reinserted into the list, and fully functional again.
+	 * fails or is canceled, the context is restored, reinserted into the list, and fully functional
+	 * again.
+	 *
+	 * If the deleted context is used as binding context of a control or view, the application is
+	 * advised to unbind it via
+	 * <code>{@link sap.ui.base.ManagedObject#setBindingContext setBindingContext(null)}</code>
+	 * before calling <code>delete</code>, and to possibly rebind it after reset or failure. The
+	 * model itself ensures that all bindings depending on this context become unresolved, but no
+	 * attempt is made to restore these bindings in case of reset or failure.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the DELETE request; if not specified, the update group ID for
@@ -365,6 +373,9 @@ sap.ui.define([
 		}
 
 		this.bDeleted = true;
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			oDependentBinding.setContext(undefined);
+		});
 
 		return Promise.resolve(this._delete(oGroupLock, /*oETagEntity*/null, bDoNotRequestCount))
 		.then(function () {

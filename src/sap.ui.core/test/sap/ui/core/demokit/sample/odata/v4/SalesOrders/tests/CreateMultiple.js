@@ -78,6 +78,7 @@ sap.ui.define([
 			When.onTheMainPage.selectSalesOrder(0);
 			When.onTheMainPage.deleteSelectedSalesOrder();
 			Then.onTheMainPage.checkSalesOrdersCount(13);
+			Then.onTheMainPage.checkObjectPageInvisible();
 			When.onTheMainPage.selectSalesOrder(0);
 			When.onTheMainPage.deleteSelectedSalesOrder();
 			Then.onTheMainPage.checkSalesOrdersCount(12);
@@ -90,11 +91,16 @@ sap.ui.define([
 			Then.onTheMainPage.checkNote(1, "new 3");
 			Then.onTheMainPage.checkNote(2, "new 2");
 			Then.onTheMainPage.checkNote(3, "new 1");
+			Then.onTheMainPage.checkSalesOrderSelected(1);
+			Then.onTheMainPage.checkNoteInDetails("new 3");
+			Then.onTheMainPage.checkSalesOrderItemsCount(0); // -> items table is visible
 
 			When.onTheMainPage.selectSalesOrder(0);
 			When.onTheMainPage.deleteSelectedSalesOrder();
+			Then.onTheMainPage.checkObjectPageInvisible();
 			When.onTheMainPage.selectSalesOrder(0);
 			When.onTheMainPage.deleteSelectedSalesOrder();
+			Then.onTheMainPage.checkObjectPageInvisible();
 			Then.onTheMainPage.checkNote(0, "new 2");
 			Then.onTheMainPage.checkNote(1, "new 1");
 			When.onTheMainPage.pressSaveSalesOrdersButton();

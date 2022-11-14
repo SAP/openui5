@@ -264,15 +264,28 @@ sap.ui.define([
 		},
 
 		onDeleteSalesOrder : function () {
-			var oContext = this.byId("SalesOrderList").getSelectedItem().getBindingContext();
+			var oSalesOrderTable = this.byId("SalesOrderList"),
+				oContext = oSalesOrderTable.getSelectedItem().getBindingContext(),
+				that = this;
 
+			this.setSalesOrderBindingContext(null); // hide the object page
 			oContext.delete().catch(function (oError) {
+				var oItem;
+
+				if (!oSalesOrderTable.getSelectedItem()) {
+					oItem = oSalesOrderTable.getItems().find(function (oItem0) {
+						return oItem0.getBindingContext() === oContext;
+					});
+					if (oItem) {
+						oSalesOrderTable.setSelectedItem(oItem);
+						that.setSalesOrderBindingContext(oContext); // show the object page again
+					}
+				}
 				if (!oError.canceled) {
 					MessageToast.show("Could not delete sales order "
 						+ oContext.getProperty("SalesOrderID"));
 				}
 			});
-			this.setSalesOrderBindingContext(null);
 		},
 
 		onDeleteSalesOrderLineItem : function () {
