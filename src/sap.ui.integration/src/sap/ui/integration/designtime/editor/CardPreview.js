@@ -280,11 +280,11 @@ sap.ui.define([
 	 */
 	CardPreview.prototype.getTransformContentInfo = function () {
 		return {
-			transformStyle: "scale3d(0.4, 0.4, 1)",
-			transformFactor: 0.4,
+			transformStyle: "scale3d(0.45, 0.45, 1)",
+			transformFactor: 0.45,
 			transformOriginStyle: "0 0",
-			widthStyle: "500px",
-			heightStyle: "600px",
+			widthStyle: "400px + 10rem",
+			heightStyle: "700px - 1.5rem",
 			zIndex: this.getParent()._iZIndex
 		};
 	};
