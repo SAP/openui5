@@ -25,18 +25,21 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var sLocalStorageKey = "TreeTableODataV4.settings";
+
 	function isLocalhost() {
 		return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 	}
 
-	return Controller.extend("sap.ui.mdc.sample.TableODataV4Analytics.View", {
+	return Controller.extend("sap.ui.mdc.sample.TreeTableODataV4.View", {
 		onInit: function() {
 			if (isLocalhost()) {
-				var mSettings = JSON.parse(window.localStorage.getItem("settings"));
+				var mSettings = JSON.parse(window.localStorage.getItem(sLocalStorageKey));
 
 				if (mSettings) {
 					this.byId("serviceUrl").setValue(mSettings.serviceUrl);
 					this.byId("collectionName").setValue(mSettings.collectionName);
+					this.byId("hierarchyQualifier").setValue(mSettings.hierarchyQualifier);
 					this.byId("initiallyVisibleProperties").setValue(mSettings.initiallyVisibleProperties);
 				}
 			}
@@ -45,20 +48,22 @@ sap.ui.define([
 		onRefresh: function() {
 			var sServiceUrl = this.byId("serviceUrl").getValue().trim();
 			var sCollectionName = this.byId("collectionName").getValue().trim();
+			var sHierarchyQualifier = this.byId("hierarchyQualifier").getValue().trim();
 			var sInitiallyVisibleProperties = this.byId("initiallyVisibleProperties").getValue().trim();
 			var oVBox = this.byId("content");
 
-			if (!sServiceUrl || !sCollectionName) {
-				MessageBox.error("Please provide the required service URL and collection name");
+			if (!sServiceUrl || !sCollectionName || !sHierarchyQualifier) {
+				MessageBox.error("Please provide the required service URL, collection name, and hierarchy qualifier");
 				return;
 			}
 
 			oVBox.destroyItems();
 
 			if (isLocalhost()) {
-				window.localStorage.setItem("settings", JSON.stringify({
+				window.localStorage.setItem(sLocalStorageKey, JSON.stringify({
 					serviceUrl: sServiceUrl,
 					collectionName: sCollectionName,
+					hierarchyQualifier: sHierarchyQualifier,
 					initiallyVisibleProperties: sInitiallyVisibleProperties
 				}));
 			}
@@ -69,6 +74,14 @@ sap.ui.define([
 			}).filter(Boolean);
 			var sUsername = this.byId("username").getValue();
 			var sPassword = this.byId("password").getValue();
+
+			oVBox.setModel(new ODataModel({
+				serviceUrl: sProxyServiceUrl,
+				synchronizationMode: "None",
+				operationMode: "Server",
+				autoExpandSelect: true,
+				annotationURI: "test-resources/sap/ui/mdc/demokit/internal/sample/TreeTableODataV4//annotations.xml"
+			}));
 
 			if (sUsername && sPassword) {
 				var sEncodedCredentials = btoa(sUsername + ":" + sPassword);
@@ -81,23 +94,23 @@ sap.ui.define([
 						xhr.setRequestHeader("accept", "*/*");
 					},
 					complete: function() {
-						that.createContentControls(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties).forEach(function(oControl) {
+						that.createContentControls(sProxyServiceUrl, sCollectionName, sHierarchyQualifier, aInitiallyVisibleProperties).forEach(function(oControl) {
 							oVBox.addItem(oControl);
 						});
 					}
 				});
 			} else {
-				this.createContentControls(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties).forEach(function(oControl) {
+				this.createContentControls(sProxyServiceUrl, sCollectionName, sHierarchyQualifier, aInitiallyVisibleProperties).forEach(function(oControl) {
 					oVBox.addItem(oControl);
 				});
 			}
 		},
 
-		createContentControls: function(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties) {
+		createContentControls: function(sProxyServiceUrl, sCollectionName, sHierarchyQualifier, aInitiallyVisibleProperties) {
 			return [
 				this.createVariantManagement(),
-				this.createFilterBar(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties),
-				this.createTable(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties)
+				this.createFilterBar(sProxyServiceUrl, sCollectionName),
+				this.createTable(sProxyServiceUrl, sCollectionName, sHierarchyQualifier, aInitiallyVisibleProperties)
 			];
 		},
 
@@ -107,24 +120,22 @@ sap.ui.define([
 			});
 		},
 
-		createTable: function(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties) {
+		createTable: function(sProxyServiceUrl, sCollectionName, sHierarchyQualifier, aInitiallyVisibleProperties) {
 			var oTable = new Table("mdcTable", {
-				header: "Table with analytical capabilities",
+				type: "TreeTable",
+				header: "TreeTable",
 				enableExport: true,
 				selectionMode: "Multi",
+				showRowCount: false,
 				p13nMode: ["Column", "Filter", "Sort", "Group", "Aggregate"],
 				delegate: {
-					name: "delegates/odata/v4/TableDelegate",
+					name: "sap/ui/mdc/sample/TreeTableODataV4/TableDelegate",
 					payload: {
-						collectionName: sCollectionName
+						collectionName: sCollectionName,
+						hierarchyQualifier: sHierarchyQualifier
 					}
 				},
 				autoBindOnInit: false,
-				models: new ODataModel({
-					serviceUrl: sProxyServiceUrl,
-					synchronizationMode: "None",
-					operationMode: "Server"
-				}),
 				filter: "mdcFilterBar"
 			});
 
@@ -212,7 +223,7 @@ sap.ui.define([
 			oTable.addColumn(oColumn);
 		},
 
-		createFilterBar: function(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties) {
+		createFilterBar: function(sProxyServiceUrl, sCollectionName) {
 			return new FilterBar("mdcFilterBar", {
 				liveMode: false,
 				delegate: {

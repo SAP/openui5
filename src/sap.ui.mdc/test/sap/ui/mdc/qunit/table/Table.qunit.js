@@ -2981,17 +2981,97 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("enableExport property & export button test", function(assert) {
-		assert.notOk(this.oTable.getEnableExport(), "default property value enableExport=false");
+	QUnit.test("Export button handling on initialization when export is disabled", function(assert) {
+		var oTable = this.oTable;
 
-		this.oTable.setEnableExport(true);
-		Core.applyChanges();
-		assert.ok(this.oTable.getEnableExport(), "enableExport=true");
+		assert.notOk(oTable._oExportButton, "Export button does not exist before table initialization");
 
-		return this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oExportButton, "Export button created");
-			assert.ok(this.oTable._oExportButton.isA("sap.m.MenuButton"), "Export button is a sap.m.MenuButton");
-		}.bind(this));
+		return oTable.initialized().then(function() {
+			assert.notOk(oTable._oExportButton, "Export button does not exist after table initialization");
+		});
+	});
+
+	QUnit.test("Export button handling on initialization when export is enabled", function(assert) {
+		var oTable = this.oTable;
+
+		oTable.setEnableExport(true);
+		assert.notOk(oTable._oExportButton, "Export button does not exist before table initialization");
+
+		return oTable.initialized().then(function() {
+			assert.ok(oTable._oExportButton, "Export button exists after initialization");
+			assert.ok(oTable._oExportButton.isA("sap.m.MenuButton"), "Is a sap.m.MenuButton");
+			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Is child of the toolbar");
+			assert.ok(oTable._oExportButton.getVisible(), "Is visible");
+		});
+	});
+
+	QUnit.test("Export button handling on initialization when export is enabled but not supported by the delegate", function(assert) {
+		var oTable = this.oTable;
+
+		oTable.setEnableExport(true);
+
+		return oTable.awaitControlDelegate().then(function(oDelegate) {
+			sinon.stub(oDelegate, "isExportSupported").returns(false);
+			return oTable.initialized();
+		}).then(function() {
+			assert.notOk(oTable._oExportButton, "Export button does not exist after table initialization");
+			oTable.getControlDelegate().isExportSupported.restore();
+		});
+	});
+
+	QUnit.test("Export button handling when enabling/disabling export after initialization", function(assert) {
+		var oTable = this.oTable;
+
+		return oTable.initialized().then(function() {
+			oTable.setEnableExport(true);
+			assert.ok(oTable._oExportButton, "Enabled: Export button exists");
+			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Enabled: Is child of the toolbar");
+			assert.ok(oTable._oExportButton.getVisible(), "Enabled: Is visible");
+
+			oTable.setEnableExport(false);
+			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Disabled: Is child of the toolbar");
+			assert.notOk(oTable._oExportButton.getVisible(), "Disabled: Is invisible");
+
+			oTable.setEnableExport(true);
+			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Enabled: Is child of the toolbar");
+			assert.ok(oTable._oExportButton.getVisible(), "Enabled: Is visible");
+		});
+	});
+
+	QUnit.test("Export button handling when enabling export after initialization but not supported by the delegate", function(assert) {
+		var oTable = this.oTable;
+
+
+		return oTable.awaitControlDelegate().then(function(oDelegate) {
+			sinon.stub(oDelegate, "isExportSupported").returns(false);
+			return oTable.initialized();
+		}).then(function() {
+			oTable.setEnableExport(true);
+			assert.notOk(oTable._oExportButton, "Export button does not exist");
+			oTable.getControlDelegate().isExportSupported.restore();
+		});
+	});
+
+	QUnit.test("Export button handling when changing the table type", function(assert) {
+		var oTable = this.oTable;
+
+		oTable.setEnableExport(true);
+
+		return oTable.initialized().then(function() {
+			sinon.stub(oTable.getControlDelegate(), "isExportSupported").returns(false);
+			oTable.setType(TableType.ResponsiveTable);
+			return oTable.initialized();
+		}).then(function() {
+			assert.notOk(oTable._oExportButton.getVisible(),
+				"Export button is invisible after changing to a type for which the delegate does not support export");
+
+			oTable.getControlDelegate().isExportSupported.restore();
+			oTable.setType(TableType.Table);
+			return oTable.initialized();
+		}).then(function() {
+			assert.ok(oTable._oExportButton.getVisible(),
+				"Export button is visible after changing to a type for which the delegate supports export");
+		});
 	});
 
 	QUnit.test("trigger export - no visible columns", function(assert) {
@@ -3033,7 +3113,7 @@ sap.ui.define([
 
 			// trigger CTRL + SHIFT + E keyboard shortcut
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
-			assert.ok(this.oTable._onExport.notCalled, "Export button is disabled");
+			assert.ok(this.oTable._onExport.notCalled, "Export button is disabled: Export not triggered");
 
 			this.oTable._oExportButton.setEnabled(true);
 			Core.applyChanges();
@@ -3041,6 +3121,15 @@ sap.ui.define([
 			// trigger CTRL + SHIFT + E keyboard shortcut
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
 			assert.ok(this.oTable._onExport.calledWith(true), "Export settings dialog opened");
+
+			sinon.stub(this.oTable.getControlDelegate(), "isExportSupported").returns(false);
+			this.oTable.setType(TableType.ResponsiveTable);
+			return this.oTable.initialized();
+		}.bind(this)).then(function() {
+			this.oTable._onExport.resetHistory();
+			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
+			assert.ok(this.oTable._onExport.notCalled, "Export is not supported by delegate: Export not triggered");
+			this.oTable.getControlDelegate().isExportSupported.restore();
 		}.bind(this));
 	});
 

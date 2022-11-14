@@ -785,6 +785,13 @@
 		 */
 		Table: "Table",
 		/**
+		 * Tree table ({@link sap.ui.table.TreeTable} control) is used.
+		 *
+		 * @private
+		 * @experimental
+		 */
+		TreeTable: "TreeTable",
+		/**
 		 * Responsive table ({@link sap.m.Table} control) is used.
 		 *
 		 * @public

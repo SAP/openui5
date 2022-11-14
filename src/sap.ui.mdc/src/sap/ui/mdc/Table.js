@@ -7,6 +7,7 @@ sap.ui.define([
 	"./ActionToolbar",
 	"./table/TableSettings",
 	"./table/GridTableType",
+	"./table/TreeTableType",
 	"./table/ResponsiveTableType",
 	"./table/PropertyHelper",
 	"./mixin/FilterIntegrationMixin",
@@ -48,6 +49,7 @@ sap.ui.define([
 	ActionToolbar,
 	TableSettings,
 	GridTableType,
+	TreeTableType,
 	ResponsiveTableType,
 	PropertyHelper,
 	FilterIntegrationMixin,
@@ -104,6 +106,12 @@ sap.ui.define([
 			});
 		}
 		return internalMap.get(oTable);
+	};
+	var mTypeMap = {
+		"Table": GridTableType,
+		"TreeTable": TreeTableType,
+		"ResponsiveTable": ResponsiveTableType,
+		"null": GridTableType // default
 	};
 
 	/**
@@ -749,15 +757,11 @@ sap.ui.define([
 
 	Table.prototype._isOfType = function(sType, bIncludeSubTypes) {
 		var oType = this._getType();
-		var mTypeMap = {
-			"Table": "sap.ui.mdc.table.GridTableType",
-			"ResponsiveTable": "sap.ui.mdc.table.ResponsiveTableType"
-		};
 
 		if (bIncludeSubTypes) {
-			return oType.isA(mTypeMap[sType]);
+			return oType.isA(mTypeMap[sType].getMetadata().getName());
 		} else {
-			return oType.getMetadata().getName() === mTypeMap[sType];
+			return oType.constructor === mTypeMap[sType];
 		}
 	};
 
@@ -844,12 +848,6 @@ sap.ui.define([
 		this._initializeContent();
 
 		return this;
-	};
-
-	var mTypeMap = {
-		"Table": GridTableType,
-		"ResponsiveTable": ResponsiveTableType,
-		"null": GridTableType // default
 	};
 
 	Table.prototype._getType = function() {
@@ -1379,6 +1377,7 @@ sap.ui.define([
 		this._createTable();
 		this._updateColumnResize();
 		this._updateRowActions();
+		this._updateExportState();
 		this.getColumns().forEach(this._insertInnerColumn, this);
 		this.setAggregation("_content", this._oTable);
 		this._onAfterTableCreated(true); // Resolve any pending promise if table exists
@@ -1434,14 +1433,13 @@ sap.ui.define([
 	};
 
 	Table.prototype.setEnableExport = function(bEnableExport) {
-		if (bEnableExport !== this.getEnableExport()) {
-			this.setProperty("enableExport", bEnableExport, true);
-			if (bEnableExport && !this._oExportButton && this._oToolbar) {
-				this._oToolbar.addEnd(this._getExportButton());
-			} else if (this._oExportButton) {
-				this._oExportButton.setVisible(bEnableExport);
-			}
+		this.setProperty("enableExport", bEnableExport, true);
+
+		if (this.getEnableExport() && this._oToolbar) {
+			this._oToolbar.addEnd(this._getExportButton());
 		}
+
+		this._updateExportState();
 
 		return this;
 	};
@@ -1735,7 +1733,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getExportButton = function() {
-		if (!this.getEnableExport()) {
+		if (!this._isExportEnabled()) {
 			return null;
 		}
 
@@ -1758,6 +1756,10 @@ sap.ui.define([
 		return this._oExportButton;
 	};
 
+	Table.prototype._isExportEnabled = function() {
+		return this.getEnableExport() && this.bDelegateInitialized && this.getControlDelegate().isExportSupported(this);
+	};
+
 	/**
 	 * Disables the export button if no data is present, otherwise enables it.
 	 *
@@ -1769,6 +1771,8 @@ sap.ui.define([
 	Table.prototype._updateExportState = function(bUpdateFilename) {
 		if (this._oExportButton) {
 			this._oExportButton.setEnabled(this._getRowCount(false) > 0);
+			this._oExportButton.setVisible(this._isExportEnabled());
+
 			if (bUpdateFilename && this._cachedExportSettings) {
 				this._cachedExportSettings.fileName = this.getHeader();
 			}
@@ -1894,7 +1898,7 @@ sap.ui.define([
 		}
 
 		if ((oEvent.metaKey || oEvent.ctrlKey) && oEvent.shiftKey && oEvent.which === KeyCodes.E) {
-			if (this.getEnableExport() && this._oExportButton && this._oExportButton.getEnabled()) {
+			if (this._oExportButton && this._oExportButton.getEnabled() && this._isExportEnabled()) {
 				this._onExport(true);
 				oEvent.setMarked();
 				oEvent.preventDefault();
