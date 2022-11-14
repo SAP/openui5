@@ -349,6 +349,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 			if ( !oControl._isIconMode() ) { //Restrict creation of Footer for IconMode
 				oRm.openStart("div", oControl.getId() + "-content");
 				oRm.class("sapMGTContent");
+				if (frameType === frameTypes.TwoByOne) {
+					oRm.class("TwoByOne");
+				}
 				if (oControl.getSystemInfo() || oControl.getAppShortcut()) {
 					if (aTileContent.length === 0){
 						oRm.class("appInfoWithoutTileCnt");
