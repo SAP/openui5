@@ -590,6 +590,26 @@ sap.ui.define([
 		assert.ok(!oToken.bIsDestroyed, "Token1 is NOT destroyed");
 	});
 
+	QUnit.test("Pressing delete icon should fire delete event with cancel bubbling", function(assert) {
+		// arrange
+		var oFireDeleteSpy,
+			oToken = new Token({text: "test"});
+
+		this.tokenizer.attachEvent("delete", function(oEvent) {
+			assert.strictEqual(oEvent.bCancelBubble, true, "The event should not bubble.");
+		});
+
+		oFireDeleteSpy = this.spy(oToken, "fireDelete");
+		this.tokenizer.addToken(oToken);
+		Core.applyChanges();
+
+		// act
+		oToken.getAggregation("deleteIcon").firePress();
+
+		// assert
+		assert.equal(oFireDeleteSpy.callCount, 1, "delete event was fired");
+	});
+
 	QUnit.module("Keyboard handling", {
 		beforeEach : function() {
 			this.tokenizer = new Tokenizer("t", {
