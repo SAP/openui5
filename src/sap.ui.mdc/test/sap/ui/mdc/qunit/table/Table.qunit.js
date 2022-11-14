@@ -5220,9 +5220,10 @@ sap.ui.define([
 		});
 
 		oTable.initialized().then(function() {
-			assert.equal(oTable._oTable.getMultiSelectMode(), "Default", "MultiSelectMode is set default on the responsiveTableType");
+			assert.equal(oTable.getMultiSelectMode(), "Default", "MultiSelectMode is set to 'Default' on MDC table");
+			assert.equal(oTable._oTable.getMultiSelectMode(), "SelectAll", "MultiSelectMode is set to 'SelectAll' on the inner table");
 			oTable.setMultiSelectMode("ClearAll");
-			assert.equal(oTable._oTable.getMultiSelectMode(), "ClearAll", "MultiSelectMode is set to is set to ClearAll type on the inner table");
+			assert.equal(oTable._oTable.getMultiSelectMode(), "ClearAll", "MultiSelectMode to is set to 'ClearAll' on the inner table");
 			oTable.destroy();
 			done();
 		});

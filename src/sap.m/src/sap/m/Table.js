@@ -573,6 +573,7 @@ sap.ui.define([
 	Table.prototype.selectAll = function () {
 		ListBase.prototype.selectAll.apply(this, arguments);
 		this.updateSelectAllCheckbox();
+
 		return this;
 	};
 
@@ -956,7 +957,10 @@ sap.ui.define([
 		if (this.getMode() !== "MultiSelect") {
 			return;
 		}
-		if (this._selectAllCheckBox && this.getMultiSelectMode() == "Default") {
+
+		Util.hideSelectionLimitPopover();
+
+		if (this._selectAllCheckBox && this.getMultiSelectMode() != "ClearAll") {
 			var aItems = this.getItems(),
 				iSelectedItemCount = this.getSelectedItems().length,
 				iSelectableItemCount = aItems.filter(function(oItem) {
@@ -1114,7 +1118,7 @@ sap.ui.define([
 			var sMultiSelectMode = this.getMultiSelectMode();
 
 			// toggle select all header checkbox and fire its event
-			if (this._selectAllCheckBox && sMultiSelectMode == "Default") {
+			if (this._selectAllCheckBox && sMultiSelectMode != "ClearAll") {
 				this._selectAllCheckBox.setSelected(!this._selectAllCheckBox.getSelected()).fireSelect();
 				oEvent.setMarked();
 			} else if (this._clearAllButton && sMultiSelectMode == "ClearAll" && !this._clearAllButton.hasStyleClass("sapMTableDisableClearAll")) {

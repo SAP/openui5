@@ -210,4 +210,28 @@ sap.ui.define([
 		assert.equal(ccw([[new Byte(), {gap: 10, maxWidth: 5}]]), "6rem", "Gap and maxWidth taken into account");
 	});
 
+	QUnit.test("showSelectionLimitPopover & hideSelectionLimitPopover", function(assert) {
+		var done = assert.async();
+		var fnGetSelectAllPopoverSpy = sinon.spy(Util, "getSelectAllPopover");
+		var oElement = new sap.m.List();
+		oElement.placeAt("qunit-fixture");
+		Core.applyChanges();
+		Util.showSelectionLimitPopover(10, oElement);
+		Util.getSelectAllPopover().then(function(oResult) {
+			var oPopover = oResult.oSelectAllNotificationPopover;
+			var oResourceBundle = oResult.oResourceBundle;
+			var sMessage = oResourceBundle.getText("TABLE_SELECT_LIMIT", [10]);
+			oPopover.attachEventOnce("afterOpen", function() {
+				assert.strictEqual(fnGetSelectAllPopoverSpy.callCount, 2, "Util#getSelectAllPopover is called when showSelectionLimitPopovers is called");
+				assert.strictEqual(oPopover.getContent()[0].getText(), sMessage, "Correct warning message displayed on the popover");
+				assert.ok(oPopover.isOpen(), sMessage, "Popover is opened");
+				Util.hideSelectionLimitPopover();
+			});
+			oPopover.attachEventOnce("afterClose", function() {
+				assert.notOk(oPopover.isOpen(), sMessage, "Popover is opened");
+				done();
+			});
+		});
+	});
+
 });

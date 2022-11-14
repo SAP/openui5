@@ -1330,7 +1330,7 @@ sap.ui.define([
 		qutils.triggerKeyup($trigger, KeyCodes.SPACE);
 		assert.ok(iItemsLength < sut.getItems().length, "Growing triggered via onsapspace event");
 		assert.ok(fnCheckGrowingFromScratch.called, "checkGrowingFromScratch called in order to recalculate merging cells");
-
+		fnCheckGrowingFromScratch.restore();
 		sut.destroy();
 	});
 
@@ -3442,5 +3442,110 @@ sap.ui.define([
 		qutils.triggerKeydown(document.activeElement, "HOME", false, false, false);
 		Core.applyChanges();
 		assert.strictEqual(document.activeElement.getAttribute("id"), this.oTable.$("tblHeader").attr("id"), "Focus is set on the last item");
+	});
+
+	QUnit.module("SelectAllLimit");
+	QUnit.test("Test for SelectAllPopover", function(assert) {
+		var done = assert.async();
+
+		var oData = {
+			items: [
+				{ name: "Michelle", color: "orange", number: 3.14 },
+				{ name: "Michelle", color: "orange", number: 3.14 },
+				{ name: "Michelle", color: "orange", number: 3.14 },
+				{ name: "Joseph", color: "blue", number: 1.618 },
+				{ name: "Joseph", color: "blue", number: 1.618 },
+				{ name: "Joseph", color: "blue", number: 1.618 },
+				{ name: "David", color: "green", number: 0 },
+				{ name: "David", color: "green", number: 0 },
+				{ name: "David", color: "green", number: 0 },
+				{ name: "Michelle", color: "orange", number: 3.14 },
+				{ name: "Michelle", color: "orange", number: 3.14 },
+				{ name: "Michelle", color: "orange", number: 3.14 },
+				{ name: "Joseph", color: "blue", number: 1.618 },
+				{ name: "Joseph", color: "blue", number: 1.618 },
+				{ name: "Joseph", color: "blue", number: 1.618 },
+				{ name: "David", color: "green", number: 0 },
+				{ name: "David", color: "green", number: 0 },
+				{ name: "David", color: "green", number: 0 },
+				{ name: "Michelle", color: "orange", number: 3.14 },
+				{ name: "Michelle", color: "orange", number: 3.14 },
+				{ name: "Michelle", color: "orange", number: 3.14 },
+				{ name: "Joseph", color: "blue", number: 1.618 },
+				{ name: "Joseph", color: "blue", number: 1.618 },
+				{ name: "Joseph", color: "blue", number: 1.618 },
+				{ name: "David", color: "green", number: 0 },
+				{ name: "David", color: "green", number: 0 },
+				{ name: "David", color: "green", number: 0 }
+			],
+			cols: ["Name", "Color", "Number"]
+		};
+
+		var Util = sap.ui.require("sap/m/table/Util");
+		var sut = new Table("idTblGrowingSelectAll", {
+			growing: true,
+			growingThreshold: 5,
+			mode: "MultiSelect",
+			multiSelectMode: "SelectAll"
+		});
+
+		var aColumns = oData.cols.map(function (colname) {
+			if (colname === "Name") {
+				return new Column({ header: new Label({ text: colname }), mergeDuplicates: true});
+			}
+			return new Column({ header: new Label({ text: colname })});
+		}),
+		i = aColumns.length;
+		while (i--) {
+			sut.addColumn(aColumns[aColumns.length - i - 1]);
+		}
+
+		sut.setModel(new JSONModel(oData));
+		sut.bindAggregation("items", "/items", new ColumnListItem({
+			cells: oData.cols.map(function (colname) {
+				return new Label({ text: "{" + colname.toLowerCase() + "}" });
+			})
+		}));
+
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var fnShowSelectionLimitPopoverSpy = this.spy(Util, "showSelectionLimitPopover");
+		var sMessage;
+		var $trigger = sut.$("trigger").trigger("focus");
+		var $tblHeader = sut.$('tblHeader').trigger("focus");
+		var iItemsLength = sut.getItems().length;
+		assert.equal(iItemsLength, 5, "5 items are shown in the table, growing is not triggered");
+		qutils.triggerKeydown($tblHeader, KeyCodes.SPACE);
+
+		new Promise(function(resolve) {
+			Util.getSelectAllPopover().then(function(oResult) {
+				var oPopover = oResult.oSelectAllNotificationPopover;
+				var oResourceBundle = oResult.oResourceBundle;
+				sMessage = oResourceBundle.getText("TABLE_SELECT_LIMIT", [5]);
+				oPopover.attachEventOnce("afterOpen", function() {
+					assert.ok(oPopover.isOpen(), "Popover is opened since growing is enabled");
+					assert.strictEqual(oPopover.getContent()[0].getText(), sMessage, "Warning message");
+					assert.strictEqual(fnShowSelectionLimitPopoverSpy.callCount, 1, "Util#showSelectionLimitPopover is called when selectAll is triggerred");
+					qutils.triggerKeydown($trigger, KeyCodes.SPACE);
+					qutils.triggerKeyup($trigger, KeyCodes.SPACE);
+					qutils.triggerKeydown($tblHeader, KeyCodes.SPACE);
+					resolve();
+				});
+			});
+		}).then(function() {
+			Util.getSelectAllPopover().then(function(oResult) {
+				var oPopover = oResult.oSelectAllNotificationPopover;
+				var oResourceBundle = oResult.oResourceBundle;
+				oPopover.attachEventOnce("afterOpen", function() {
+					sMessage = oResourceBundle.getText("TABLE_SELECT_LIMIT", [10]);
+					assert.ok(oPopover.isOpen(), "Popover since growing is enabled");
+					assert.strictEqual(oPopover.getContent()[0].getText(), sMessage, "Warning message");
+					oPopover.close();
+					sut.destroy();
+					done();
+				});
+			});
+		});
 	});
 });

@@ -26,7 +26,6 @@ sap.ui.define([
 	var InnerTable, InnerColumn, InnerRow;
 	var GrowingMode = library.GrowingMode;
 	var RowAction = library.RowAction;
-
 	/**
 	 * Constructor for a new <code>ResponsiveTableType</code>.
 	 *
@@ -184,7 +183,7 @@ sap.ui.define([
 			headerToolbar: oTable._oToolbar,
 			ariaLabelledBy: [oTable._oTitle],
 			mode: this._getSelectionMode(),
-			multiSelectMode: oTable.getMultiSelectMode()
+			multiSelectMode: this._getMultiSelectMode()
 		});
 	};
 
@@ -266,6 +265,16 @@ sap.ui.define([
 		return mSelectionModeMap[sSelectionMode];
 	};
 
+	ResponsiveTableType.prototype._getMultiSelectMode = function() {
+		var oTable = this.getTable();
+		var sMultiSelectMode = oTable ? oTable.getMultiSelectMode() : undefined;
+		var mMultiSelectModeMap = {
+			Default: "SelectAll",
+			ClearAll: "ClearAll"
+		};
+		return mMultiSelectModeMap[sMultiSelectMode];
+	};
+
 	ResponsiveTableType.prototype.updateSelectionSettings = function() {
 		var oTable = this.getTable();
 		var oResponsiveTable = this.getInnerTable();
@@ -275,7 +284,7 @@ sap.ui.define([
 		}
 
 		oResponsiveTable.setMode(this._getSelectionMode());
-		oResponsiveTable.setMultiSelectMode(oTable.getMultiSelectMode());
+		oResponsiveTable.setMultiSelectMode(this._getMultiSelectMode());
 	};
 
 	ResponsiveTableType.prototype.updateRowSettings = function() {

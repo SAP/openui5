@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/ui/core/InvisibleMessage",
+	"sap/m/table/Util",
 	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
 	"sap/ui/dom/jquery/Selectors", // jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Aria" // jQuery Plugin "addAriaLabelledBy", "removeAriaLabelledBy"
@@ -42,7 +43,8 @@ function(
 	capitalize,
 	jQuery,
 	Log,
-	InvisibleMessage
+	InvisibleMessage,
+	Util
 ) {
 	"use strict";
 
@@ -1016,6 +1018,18 @@ function(
 
 		if (bFireEvent && aChangedListItems.length) {
 			this._fireSelectionChangeEvent(aChangedListItems, bFireEvent);
+		}
+
+		var iSelectableItemCount = this.getItems().filter(function(oListItem) {
+			return oListItem.isSelectable();
+		}).length;
+		if (bFireEvent && this.getGrowing() && this.getMultiSelectMode() === "SelectAll" && this.getBinding("items").getLength() > iSelectableItemCount) {
+			var oSelectAllDomRef = this._getSelectAllCheckbox ? this._getSelectAllCheckbox() : undefined;
+			if (oSelectAllDomRef) {
+				Util.showSelectionLimitPopover(iSelectableItemCount, oSelectAllDomRef);
+			} else {
+				throw Error("Unsupported Operation");
+			}
 		}
 
 		return this;
