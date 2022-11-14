@@ -67,13 +67,6 @@ sap.ui.define([
 		sandbox.stub(oChangePersistence, "getChangesForComponent").resolves(oReturn);
 	}
 
-	function mockDescriptorController(oControl, oReturn) {
-		sandbox.stub(ChangesController, "getDescriptorFlexControllerInstance")
-			.throws("invalid parameters for flex persistence function")
-			.withArgs(oControl)
-			.returns(oReturn);
-	}
-
 	function getMethodStub(aArguments, vReturnValue) {
 		var fnPersistenceStub = sandbox.stub();
 		fnPersistenceStub
@@ -571,7 +564,7 @@ sap.ui.define([
 
 			var fnDeleteChangeStub = sandbox.stub();
 
-			mockDescriptorController(oAppComponent, { deleteChange: fnDeleteChangeStub });
+			mockFlexController(oAppComponent, { deleteChange: fnDeleteChangeStub });
 
 			return PersistenceWriteAPI.remove(mPropertyBag)
 				.then(function () {

@@ -135,20 +135,14 @@ sap.ui.define([
 			var oFlexObjectMetadata = this.getFlexObjectMetadata();
 			var sReference = oFlexObjectMetadata.reference;
 			if (sReference) {
-				if (!oFlexObjectMetadata.namespace) {
-					oFlexObjectMetadata.namespace = Utils.createNamespace({ reference: sReference }, this.getFileType());
-				}
-
-				if (!oFlexObjectMetadata.projectId) {
-					oFlexObjectMetadata.projectId = sReference.replace(".Component", "");
-				}
+				oFlexObjectMetadata.namespace = oFlexObjectMetadata.namespace || Utils.createNamespace({ reference: sReference }, this.getFileType());
+				oFlexObjectMetadata.projectId = oFlexObjectMetadata.projectId || sReference;
 			}
 			this.setFlexObjectMetadata(oFlexObjectMetadata);
 
 			var oSupportInformation = this.getSupportInformation();
-			if (!oSupportInformation.originalLanguage) {
-				oSupportInformation.originalLanguage = Utils.getCurrentLanguage();
-			}
+			oSupportInformation.originalLanguage = oSupportInformation.originalLanguage || Utils.getCurrentLanguage();
+
 			this.setSupportInformation(oSupportInformation);
 		}
 	});

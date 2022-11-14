@@ -322,8 +322,7 @@ sap.ui.define([
 				.then(function() {
 					assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
 					assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
-					fnAssertWrite(1, 0); // first call with 1 object
-					fnAssertWrite(2, 1); // second call with 2 objects
+					fnAssertWrite(3, 0); // first call with 3 objects
 				}.bind(this));
 		});
 
