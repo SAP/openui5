@@ -45,7 +45,7 @@ describe('sap.f.AdaptiveCardVisualTests', function() {
 	});
 
 	it('Changing themes should work', function() {
-		browser.executeScript('sap.ui.getCore().applyTheme("sap_fiori_3_dark")').then(function() {
+		browser.executeScript('sap.ui.getCore().applyTheme("sap_horizon_dark")').then(function() {
 			expect(takeScreenshot()).toLookAs("cards_with_changed_theme");
 		});
 	});
