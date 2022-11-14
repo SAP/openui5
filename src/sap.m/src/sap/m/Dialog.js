@@ -198,11 +198,12 @@ function(
 
 					/**
 					 * Title text appears in the Dialog header.
+					 * <br/><b>Note:</b> The heading level of the Dialog is <code>H1</code>. Headings in the Dialog content should start with <code>H2</code> heading level.
 					 */
 					title: {type: "string", group: "Appearance", defaultValue: null},
 
 					/**
-					 * Determines whether the header is shown inside the Dialog. If this property is set to <code>true</code>, the <code>text</code> and <code>icon</code> properties are ignored. This property has a default value <code>true</code>.
+					 * Determines whether the header is shown inside the Dialog. If this property is set to <code>false</code>, the <code>text</code> and <code>icon</code> properties are ignored. This property has a default value <code>true</code>.
 					 * @since 1.15.1
 					 */
 					showHeader: {type: "boolean", group: "Appearance", defaultValue: true},
@@ -320,6 +321,7 @@ function(
 
 					/**
 					 * When it is set, the <code>icon</code>, <code>title</code> and <code>showHeader</code> properties are ignored. Only the <code>customHeader</code> is shown as the header of the Dialog.
+					 * <br/><b>Note:</b> To improve accessibility, titles with heading level <code>H1</code> should be used inside the custom header.
 					 * @since 1.15.1
 					 */
 					customHeader: {type: "sap.m.IBar", multiple: false},
@@ -1373,7 +1375,7 @@ function(
 			} else {
 				this._headerTitle = new Title(this.getId() + "-title", {
 					text: sTitle,
-					level: TitleLevel.H2
+					level: TitleLevel.H1
 				}).addStyleClass("sapMDialogTitle");
 
 				this._header.addContentMiddle(this._headerTitle);

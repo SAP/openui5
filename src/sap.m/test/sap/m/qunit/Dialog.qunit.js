@@ -1592,9 +1592,9 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
-		assert.ok(oDialog.getDomRef("header").querySelector("h2"), "Semantic HTML heading is rendered for title");
+		assert.ok(oDialog.getDomRef("header").querySelector("h1"), "Semantic HTML heading is rendered for title");
 		assert.notStrictEqual(oDialog._getAnyHeader().$().attr("role"), "heading", "The role of the header shouldn't be set to 'heading'");
-		assert.notStrictEqual(oDialog._getAnyHeader().$().attr("aria-level"), "2", "There should be no aria-level be set to the header");
+		assert.notStrictEqual(oDialog._getAnyHeader().$().attr("aria-level"), "1", "There should be no aria-level be set to the header");
 
 		// cleanup
 		oDialog.destroy();
