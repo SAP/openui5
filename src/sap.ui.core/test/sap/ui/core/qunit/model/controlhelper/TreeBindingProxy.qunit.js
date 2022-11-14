@@ -96,7 +96,7 @@ sap.ui.define([
 
 			// Stub oTable.getBinding
 			this.fnGetBinding = sinon.stub(this.oControl, "getBinding");
-			this.fnGetBinding.returns({
+			this.oBinding = {
 				getMetadata: function() {
 					return {
 						getName: function() {
@@ -112,8 +112,18 @@ sap.ui.define([
 						});
 					}
 					return aContexts;
+				},
+				getAggregation: function() {
+					return {
+						hierarchyQualifier: "ExampleQualifier",
+						expandTo: 4
+					};
+				},
+				setAggregation: function(oAggregation) {
+					return;
 				}
-			});
+			};
+			this.fnGetBinding.returns(this.oBinding);
 		},
 		afterEach: function() {
 			this.fnGetBinding.restore();
@@ -219,17 +229,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("#collapseAll", function(assert) {
-		var fnThrows = function() {
-			this.oProxy.collapseAll();
-		};
-		assert.throws(fnThrows, /Collapsing all nodes is not supported with your current binding./, "Collapse all is not supported in V4");
+		var oSpy = sinon.spy(this.oBinding, "setAggregation");
+
+		this.oProxy.collapseAll();
+
+		assert.ok(oSpy.calledOnceWithExactly({hierarchyQualifier: "ExampleQualifier", expandTo: 1}), "setAggregation was called with correct parameters");
+		oSpy.restore();
 	});
 
 	QUnit.test("#expandToLevel", function(assert) {
-		var fnThrows = function() {
-			this.oProxy.expandToLevel(2);
-		};
-		assert.throws(fnThrows, /Expanding all nodes to a certain level is not supported with your current binding./, "Expanding to level is not supported in V4");
+		var oSpy = sinon.spy(this.oBinding, "setAggregation");
+
+		this.oProxy.expandToLevel(2);
+
+		assert.ok(oSpy.calledOnceWithExactly({hierarchyQualifier: "ExampleQualifier", expandTo: 2}), "setAggregation was called with correct parameters");
+		oSpy.restore();
 	});
 
 	QUnit.test("#setRootLevel", function(assert) {

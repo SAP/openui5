@@ -349,6 +349,13 @@ sap.ui.define(["sap/base/assert"], function (assert) {
 		return aContexts;
 	};
 
+	function expandToV4(oBinding, iLevel) {
+		var oAggregation = Object.assign(oBinding.getAggregation(), {
+			expandTo: iLevel
+		});
+		oBinding.setAggregation(oAggregation);
+	}
+
 	/**
 	 * Collapses all nodes.
 	 */
@@ -363,7 +370,8 @@ sap.ui.define(["sap/base/assert"], function (assert) {
 				if (!this._bEnableV4) {
 					throw new Error("UnsupportedOperationException: OData V4 is not supported");
 				}
-				throw Error("Collapsing all nodes is not supported with your current binding.");
+				expandToV4(oBinding, 1);
+				break;
 			default:
 				oBinding.collapseToLevel(0);
 		}
@@ -384,8 +392,8 @@ sap.ui.define(["sap/base/assert"], function (assert) {
 				if (!this._bEnableV4) {
 					throw new Error("UnsupportedOperationException: OData V4 is not supported");
 				}
-				throw Error("Expanding all nodes to a certain level is not supported with"
-					+ " your current binding.");
+				expandToV4(oBinding, iLevel);
+				break;
 			default:
 				if (oBinding.expandToLevel) {
 					oBinding.expandToLevel(iLevel);
