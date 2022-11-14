@@ -8,28 +8,6 @@
 			"uploadState": "Complete",
 			"uploadedBy" : "Jane Burns",
 			"fileSize" : 100,
-			"attributes": [
-				{
-					"title": "Uploaded By",
-					"text": "Jane Burns",
-					"active": true
-				},
-				{
-					"title": "Uploaded On",
-					"text": "2014-07-28",
-					"active": false
-				},
-				{
-					"title": "File Size",
-					"text": "25",
-					"active": false
-				},
-				{
-					"title": "Lorem ipsum dolor sit amet",
-					"text": "consectetur adipisici elit",
-					"active": false
-				}
-			],
 			"markers": [
 				{
 					"type": "Draft"
@@ -49,21 +27,24 @@
 			],
 			"statuses": [
 				{
-					"title": "Basic",
-					"text": "Error",
-					"state": "Error"
-				},
-				{
-					"title": "Advanced",
-					"text": "Success",
-					"state": "Success",
-					"icon": "sap-icon://message-success"
-				},
-				{
-					"title": "Ultimate",
-					"text": "Warning",
-					"state": "Warning",
+					"title": "Uploaded By",
+					"text": "Jane Burns",
 					"active": true
+				},
+				{
+					"title": "Uploaded On",
+					"text": "2014-07-28",
+					"active": false
+				},
+				{
+					"title": "File Size",
+					"text": "25",
+					"active": false
+				},
+				{
+					"title":"Document Info Record",
+					"text":"SSP/101010101",
+					"state":"Information"
 				}
 			],
 			"selected": false
@@ -78,7 +59,7 @@
 			"fileSize" : 5000,
 			"thumbnailUrl": "test-resources/sap/m/images/Woman_04.png",
 			"selected": false,
-			"attributes": [
+			"statuses": [
 				{
 					"title": "Uploaded By",
 					"text": "Jane Burns",
@@ -100,7 +81,7 @@
 			"uploadedBy" : "Susan Baker",
 			"fileSize" : 500,
 			"selected": false,
-			"attributes": [
+			"statuses": [
 				{
 					"title": "Uploaded By",
 					"text": "Susan Baker",
@@ -122,7 +103,7 @@
 			"uploadedBy" : "Jeremy",
 			"fileSize" : 1248576,
 			"selected": false,
-			"attributes": [
+			"statuses": [
 				{
 					"title": "Uploaded By",
 					"text": "Jeremy",
@@ -144,7 +125,7 @@
 			"uploadedBy" : "Jeremy",
 			"fileSize" : 300,
 			"selected": false,
-			"attributes": [
+			"statuses": [
 				{
 					"title": "Uploaded By",
 					"text": "Jeremy",
