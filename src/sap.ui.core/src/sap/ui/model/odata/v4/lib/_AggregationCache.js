@@ -601,11 +601,7 @@ sap.ui.define([
 	 *   The length of the range; <code>Infinity</code> is supported
 	 * @param {number} iPrefetchLength
 	 *   The number of rows to read before and after the given range; with this it is possible to
-	 *   prefetch data for a paged access. The cache ensures that at least half the prefetch length
-	 *   is available left and right of the requested range without a further request. If data is
-	 *   missing on one side, the full prefetch length is added at this side.
-	 *   <code>Infinity</code> is supported. In case server-driven paging (@odata.nextLink) has been
-	 *   encountered before, this parameter is ignored.
+	 *   prefetch data for a paged access. <code>Infinity</code> is supported.
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with
 	 * @param {function} [fnDataRequested]
@@ -616,8 +612,7 @@ sap.ui.define([
 	 *   "@odata.context" and the rows as an array in the property <code>value</code>, enhanced
 	 *   with a number property <code>$count</code> representing the element count on server-side;
 	 *   <code>$count</code> may be <code>undefined</code>, but not <code>Infinity</code>). If an
-	 *   HTTP request fails, the error from the _Requestor is returned and the requested range is
-	 *   reset to <code>undefined</code>.
+	 *   HTTP request fails, the error from the _Requestor is returned.
 	 *   The promise is rejected if a conflicting {@link #collapse} happens before the response
 	 *   arrives, in this case the error has the property <code>canceled</code> with value
 	 *   <code>true</code>.
@@ -635,8 +630,7 @@ sap.ui.define([
 			iFirstLevelLength = iLength,
 			oGapParent,
 			iGapStart,
-			bHasGrandTotal = !!this.oGrandTotalPromise,
-			bHasGrandTotalAtTop = bHasGrandTotal
+			bHasGrandTotalAtTop = this.oGrandTotalPromise
 				&& this.oAggregation.grandTotalAtBottomOnly !== true,
 			aReadPromises = [],
 			i, n,
@@ -650,60 +644,9 @@ sap.ui.define([
 		 * @param {number} iGapEnd end of gap, exclusive
 		 */
 		function readGap(iGapStart, iGapEnd) {
-			var oCache = oGapParent,
-				sPredicate,
-				oPromise,
-				mQueryOptions = oGapParent.getQueryOptions(),
-				iStart = _Helper.getPrivateAnnotation(that.aElements[iGapStart], "index"),
-				oStartElement = that.aElements[iGapStart],
-				i;
-
-			if (mQueryOptions.$count) { // $count not needed anymore, 1st read was done by #expand
-				delete mQueryOptions.$count;
-				oGapParent.setQueryOptions(mQueryOptions, true);
-			}
-
-			oPromise = oGapParent.read(iStart, iGapEnd - iGapStart, 0, oGroupLock.getUnlockedCopy(),
-					fnDataRequested)
-				.then(function (oResult) {
-					// Note: this code must be idempotent, it might well run twice!
-					var bGapHasMoved = false,
-						oError;
-
-					// Note: aElements[iGapStart] may have changed by a parallel operation
-					if (oStartElement !== that.aElements[iGapStart]
-							&& oResult.value[0] !== that.aElements[iGapStart]) {
-						// start of the gap has moved meanwhile
-						bGapHasMoved = true;
-						iGapStart = that.aElements.indexOf(oStartElement);
-						if (iGapStart < 0) {
-							iGapStart = that.aElements.indexOf(oResult.value[0]);
-							if (iGapStart < 0) {
-								oError = new Error("Collapse before read has finished");
-								oError.canceled = true;
-								throw oError;
-							}
-						}
-					}
-
-					that.addElements(oResult.value, iGapStart, oCache, iStart);
-
-					if (bGapHasMoved) {
-						oError = new Error("Collapse or expand before read has finished");
-						oError.canceled = true;
-						throw oError;
-					}
-				});
-			aReadPromises.push(oPromise);
-			if (oPromise.isPending()) {
-				for (i = iGapStart; i < iGapEnd; i += 1) {
-					sPredicate = _Helper.getPrivateAnnotation(that.aElements[i], "predicate");
-
-					if (sPredicate) {
-						that.aElements.$byPredicate[sPredicate] = oPromise;
-					}
-				}
-			}
+			aReadPromises.push(
+				that.readGap(oGapParent, iGapStart, iGapEnd, oGroupLock.getUnlockedCopy(),
+					fnDataRequested));
 		}
 
 		if (bHasGrandTotalAtTop && !iIndex && iLength === 1) {
@@ -715,7 +658,9 @@ sap.ui.define([
 			return this.oGrandTotalPromise.then(function (oGrandTotal) {
 				return {value : [oGrandTotal]};
 			});
-		} else if (this.aElements.$count === undefined) {
+		}
+
+		if (this.aElements.$count === undefined) {
 			this.iReadLength = iLength + iPrefetchLength;
 			if (bHasGrandTotalAtTop) { // account for grand total row at top
 				if (iFirstLevelIndex) {
@@ -724,55 +669,9 @@ sap.ui.define([
 					iFirstLevelLength -= 1;
 				}
 			}
-
 			aReadPromises.push(
-				this.oFirstLevel.read(iFirstLevelIndex, iFirstLevelLength, iPrefetchLength,
-						oGroupLock, fnDataRequested)
-					.then(function (oResult) {
-						// Note: this code must be idempotent, it might well run twice!
-						var oGrandTotal,
-							oGrandTotalCopy,
-							iOffset = 0, // offset for 1st level data rows
-							j;
-
-						that.aElements.length = that.aElements.$count = oResult.value.$count;
-
-						if (bHasGrandTotal) {
-							that.aElements.$count += 1;
-							that.aElements.length += 1;
-							oGrandTotal = that.oGrandTotalPromise.getResult();
-
-							switch (that.oAggregation.grandTotalAtBottomOnly) {
-								case false: // top & bottom
-									iOffset = 1;
-									that.aElements.$count += 1;
-									that.aElements.length += 1;
-									that.addElements(oGrandTotal, 0);
-									oGrandTotalCopy
-										= _Helper.getPrivateAnnotation(oGrandTotal, "copy");
-									that.addElements(oGrandTotalCopy, that.aElements.length - 1);
-									break;
-
-								case true: // bottom
-									that.addElements(oGrandTotal, that.aElements.length - 1);
-									break;
-
-								default: // top
-									iOffset = 1;
-									that.addElements(oGrandTotal, 0);
-							}
-						}
-
-						that.addElements(oResult.value, iFirstLevelIndex + iOffset,
-							that.oFirstLevel, iFirstLevelIndex);
-						for (j = 0; j < that.aElements.$count; j += 1) {
-							if (!that.aElements[j]) {
-								that.aElements[j] = _AggregationHelper.createPlaceholder(
-									that.oAggregation.expandTo > 1 ? /*don't know*/0 : 1,
-									j - iOffset, that.oFirstLevel);
-							}
-						}
-					}));
+				this.readFirst(iFirstLevelIndex, iFirstLevelLength, iPrefetchLength,
+					oGroupLock, fnDataRequested));
 		} else {
 			for (i = iIndex, n = Math.min(iIndex + iLength, this.aElements.length); i < n; i += 1) {
 				oElement = this.aElements[i];
@@ -809,6 +708,159 @@ sap.ui.define([
 
 			return {value : aElements};
 		});
+	};
+
+	/**
+	 * Returns a promise to be resolved with an OData object for the first range of data requested.
+	 *
+	 * @param {number} iStart
+	 *   The start index of the range
+	 * @param {number} iLength
+	 *   The length of the range; <code>Infinity</code> is supported
+	 * @param {number} iPrefetchLength
+	 *   The number of rows to read before and after the given range; with this it is possible to
+	 *   prefetch data for a paged access. code>Infinity</code> is supported.
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group to associate the requests with
+	 * @param {function} [fnDataRequested]
+	 *   The function is called just before a back-end request is sent.
+	 *   If no back-end request is needed, the function is not called.
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result when the read is finished, or rejecting in
+	 *   case of an error
+	 * @throws {Error} If given index or length is less than 0
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.readFirst = function (iStart, iLength, iPrefetchLength, oGroupLock,
+			fnDataRequested) {
+		var that = this;
+
+		return this.oFirstLevel.read(iStart, iLength, iPrefetchLength, oGroupLock, fnDataRequested)
+			.then(function (oResult) {
+				// Note: this code must be idempotent, it might well run twice!
+				var oGrandTotal,
+					oGrandTotalCopy,
+					iOffset = 0, // offset for 1st level data rows
+					j;
+
+				that.aElements.length = that.aElements.$count = oResult.value.$count;
+
+				if (that.oGrandTotalPromise) {
+					that.aElements.$count += 1;
+					that.aElements.length += 1;
+					oGrandTotal = that.oGrandTotalPromise.getResult();
+
+					switch (that.oAggregation.grandTotalAtBottomOnly) {
+						case false: // top & bottom
+							iOffset = 1;
+							that.aElements.$count += 1;
+							that.aElements.length += 1;
+							that.addElements(oGrandTotal, 0);
+							oGrandTotalCopy
+								= _Helper.getPrivateAnnotation(oGrandTotal, "copy");
+							that.addElements(oGrandTotalCopy, that.aElements.length - 1);
+							break;
+
+						case true: // bottom
+							that.addElements(oGrandTotal, that.aElements.length - 1);
+							break;
+
+						default: // top
+							iOffset = 1;
+							that.addElements(oGrandTotal, 0);
+					}
+				}
+
+				that.addElements(oResult.value, iStart + iOffset, that.oFirstLevel, iStart);
+				for (j = 0; j < that.aElements.$count; j += 1) {
+					if (!that.aElements[j]) {
+						that.aElements[j] = _AggregationHelper.createPlaceholder(
+							that.oAggregation.expandTo > 1 ? /*don't know*/0 : 1,
+							j - iOffset, that.oFirstLevel);
+					}
+				}
+			});
+	};
+
+	/**
+	 * Reads the given gap from the given cache and replaces the gap with the read's result.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
+	 *   The collection cache to read data from
+	 * @param {number} iStart
+	 *   Start of gap, inclusive
+	 * @param {number} iEnd
+	 *   End of gap, exclusive
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group to associate the requests with
+	 * @param {function} [fnDataRequested]
+	 *   The function is called just before a back-end request is sent.
+	 *   If no back-end request is needed, the function is not called.
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result when the read is finished, or rejecting in
+	 *   case of an error
+	 * @throws {Error} If index of placeholder at start of gap is less than 0, or if end of gap is
+	 *   before start
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.readGap = function (oCache, iStart, iEnd, oGroupLock,
+			fnDataRequested) {
+		var sPredicate,
+			oPromise,
+			mQueryOptions = oCache.getQueryOptions(),
+			iIndex = _Helper.getPrivateAnnotation(this.aElements[iStart], "index"),
+			oStartElement = this.aElements[iStart],
+			i,
+			that = this;
+
+		if (mQueryOptions.$count) { // $count not needed anymore, 1st read was done by #expand
+			delete mQueryOptions.$count;
+			oCache.setQueryOptions(mQueryOptions, true);
+		}
+
+		oPromise = oCache.read(iIndex, iEnd - iStart, 0, oGroupLock, fnDataRequested)
+			.then(function (oResult) {
+				// Note: this code must be idempotent, it might well run twice!
+				var bGapHasMoved = false,
+					oError;
+
+				// Note: aElements[iGapStart] may have changed by a parallel operation
+				if (oStartElement !== that.aElements[iStart]
+						&& oResult.value[0] !== that.aElements[iStart]) {
+					// start of the gap has moved meanwhile
+					bGapHasMoved = true;
+					iStart = that.aElements.indexOf(oStartElement);
+					if (iStart < 0) {
+						iStart = that.aElements.indexOf(oResult.value[0]);
+						if (iStart < 0) {
+							oError = new Error("Collapse before read has finished");
+							oError.canceled = true;
+							throw oError;
+						}
+					}
+				}
+
+				that.addElements(oResult.value, iStart, oCache, iIndex);
+
+				if (bGapHasMoved) {
+					oError = new Error("Collapse or expand before read has finished");
+					oError.canceled = true;
+					throw oError;
+				}
+			});
+		if (oPromise.isPending()) {
+			for (i = iStart; i < iEnd; i += 1) {
+				sPredicate = _Helper.getPrivateAnnotation(this.aElements[i], "predicate");
+
+				if (sPredicate) {
+					this.aElements.$byPredicate[sPredicate] = oPromise;
+				}
+			}
+		}
+
+		return oPromise;
 	};
 
 	/**
