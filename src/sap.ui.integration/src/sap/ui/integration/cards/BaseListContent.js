@@ -86,6 +86,24 @@ sap.ui.define([
 		if (this._fMinHeight) {
 			this.getDomRef().style.minHeight = this._fMinHeight + "px";
 		}
+
+		this._keepPlaceholderMinItems();
+	};
+
+	BaseListContent.prototype._keepPlaceholderMinItems = function () {
+		var oLoadingPlaceholder = this.getAggregation("_loadingPlaceholder"),
+			bContentReady = !!this.getAggregation("_content"),
+			iNumberOfItems,
+			iNewMinItems;
+
+		if (!oLoadingPlaceholder || !oLoadingPlaceholder.getMinItems || !bContentReady) {
+			return;
+		}
+
+		iNumberOfItems = this.getInnerList().getItems().length;
+
+		iNewMinItems = Math.max(oLoadingPlaceholder.getMinItems(), iNumberOfItems);
+		oLoadingPlaceholder.setMinItems(iNewMinItems);
 	};
 
 	/**

@@ -185,7 +185,6 @@ sap.ui.define([
 			oContent,
 			oCardLoadingProvider,
 			oContentLoadingProvider,
-			oContentLoadingPlaceholder,
 			iStartIndex,
 			bIsPageChanged,
 			bIsServerSide;
@@ -197,7 +196,6 @@ sap.ui.define([
 		oContent = oCard.getCardContent();
 		oCardLoadingProvider = oCard.getAggregation("_loadingProvider");
 		oContentLoadingProvider = oContent.getAggregation("_loadingProvider");
-		oContentLoadingPlaceholder = oContent.getAggregation("_loadingPlaceholder");
 		iStartIndex = this.getPageNumber() * this.getPageSize();
 		bIsPageChanged =  this._iPreviousStartIndex !== undefined && this._iPreviousStartIndex !== iStartIndex;
 		bIsServerSide = this.isServerSide();
@@ -207,10 +205,6 @@ sap.ui.define([
 		}
 
 		if (bIsServerSide && bIsPageChanged) {
-			if (oContentLoadingPlaceholder) {
-				oContentLoadingPlaceholder.setMinItems(this.getPageSize());
-			}
-
 			// changing the model is triggering data update
 			// so there is no need to call "refreshData" method
 			this.getModel("paginator").setData({
