@@ -241,14 +241,29 @@ sap.ui.define([
 	 * @private
 	 */
 	CardBase.prototype._getAriaLabelledIds = function () {
-		var oHeader = this.getCardHeader(),
-			sAriaLabelledBy = "";
+		var oHeader = this.getCardHeader();
 
-		if (oHeader && oHeader._getTitle && oHeader._getTitle()) {
-			sAriaLabelledBy = oHeader._getTitle().getId();
+		if (oHeader) {
+			if (this._isInsideGridContainer()) {
+				return oHeader._getAriaLabelledBy();
+			}
+
+			if (oHeader._getTitle && oHeader._getTitle()) {
+				return oHeader._getTitle().getId();
+			}
 		}
 
-		return sAriaLabelledBy;
+		return undefined;
+	};
+
+	/**
+	 * Returns if the control is inside a sap.f.GridContainer
+	 *
+	 * @private
+	 */
+	CardBase.prototype._isInsideGridContainer = function() {
+		var oParent = this.getParent();
+		return oParent && oParent.isA("sap.f.GridContainer");
 	};
 
 	/**

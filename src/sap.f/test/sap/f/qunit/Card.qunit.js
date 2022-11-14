@@ -367,7 +367,7 @@ function (
 		assert.strictEqual(oTitleDomRef.getAttribute("aria-level"), "3", "Card title's heading level is correct.");
 
 		var $header = oCard.getHeader().$();
-		assert.strictEqual($header.attr("role"), "group" , "Header role is correct.");
+		assert.strictEqual(oCard.getFocusDomRef().getAttribute("role"), "group" , "Header role is correct.");
 		assert.notOk($header.hasClass("sapFCardClickable"), "sapFCardClickable class is not set");
 
 		oCard.getHeader().attachPress(function () { });
@@ -376,7 +376,7 @@ function (
 		Core.applyChanges();
 
 		$header = oCard.getHeader().$();
-		assert.strictEqual($header.attr("role"), "group" , "Header role is correct.");
+		assert.strictEqual(oCard.getFocusDomRef().getAttribute("role"), "button" , "Header role is correct.");
 		assert.ok($header.hasClass("sapFCardClickable"), "sapFCardClickable class is set");
 
 		oCard.destroy();
@@ -392,7 +392,7 @@ function (
 		assert.strictEqual(oTitleDomRef.getAttribute("aria-level"), "3", "Card title's heading level is correct.");
 
 		var $header = oCard.getHeader().$();
-		assert.strictEqual($header.attr("role"), "group" , "Header role is correct.");
+		assert.strictEqual(oCard.getFocusDomRef().getAttribute("role"), "group" , "Header role is correct.");
 		assert.notOk($header.hasClass("sapFCardClickable"), "sapFCardClickable class is not set");
 
 		oCard.getHeader().attachPress(function () { });
@@ -401,7 +401,7 @@ function (
 		Core.applyChanges();
 
 		$header = oCard.getHeader().$();
-		assert.strictEqual($header.attr("role"), "group" , "Header role is correct.");
+		assert.strictEqual(oCard.getFocusDomRef().getAttribute("role"), "button" , "Header role is correct.");
 		assert.ok($header.hasClass("sapFCardClickable"), "sapFCardClickable class is set");
 
 		oCard.destroy();

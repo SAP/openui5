@@ -91,8 +91,7 @@ sap.ui.define([], function () {
 			mStyles = mStylesInfo.styles,
 			aClasses = mStylesInfo.classes,
 			mAccState = {
-				role: "listitem",
-				labelledby: oItem.getId()
+				role: "listitem"
 			};
 
 		if (oItem.getAriaRoleDescription) {
@@ -180,6 +179,7 @@ sap.ui.define([], function () {
 		oRM.openStart("div", sControlId + "-" + sAreaId)
 			.class("sapFGridContainerDummyArea")
 			.attr("tabindex", iTabIndex)
+			.attr("role", "none")
 			.openEnd()
 			.close("div");
 	};

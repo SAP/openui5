@@ -1148,35 +1148,6 @@ function (
 		}.bind(this));
 	});
 
-	QUnit.test("'mouseup' on the control focus dom ref should focus the grid list item", function (assert) {
-		// Arrange
-		var done = assert.async(),
-			oJQueryTriggerSpy = this.spy(jQuery.prototype, "trigger");
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			// Arrange
-			var oCardFocusDomRef = this.oCard.getFocusDomRef();
-
-			// Act
-			qutils.triggerMouseEvent(oCardFocusDomRef, "mousedown");
-			oCardFocusDomRef.focus();
-			Core.applyChanges();
-
-			assert.notOk(oJQueryTriggerSpy.calledWith("focus"), "Focus should not be moved");
-
-			qutils.triggerMouseEvent(oCardFocusDomRef, "mouseup");
-			oCardFocusDomRef.focus();
-			Core.applyChanges();
-
-			// Assert
-			assert.ok(oJQueryTriggerSpy.calledWith("focus"), "Focus should be moved to the grid list item");
-
-			done();
-		}.bind(this));
-	});
-
 	QUnit.test("focusing the grid list item should call onfocusin of the control", function (assert) {
 		// Arrange
 		var done = assert.async(),
@@ -1220,12 +1191,12 @@ function (
 	QUnit.test("FocusDomRef tab index", function (assert) {
 		var oCard = this.oGrid.getItems()[0];
 
-		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), "-1", "Focus DomRef should have tabindex='-1'");
+		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), null, "Focus DomRef should not have tabindex");
 
 		oCard.getHeader().invalidate();
 		Core.applyChanges();
 
-		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), "-1", "Focus DomRef should have tabindex='-1'");
+		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), null, "Focus DomRef should not have tabindex");
 	});
 
 	QUnit.module("'borderReached' event and 'focusItemByDirection' method", {
@@ -1850,14 +1821,23 @@ function (
 
 	QUnit.test("Wrapper attributes", function (assert) {
 		var done = assert.async(),
-			oWrapper = this.oGrid.$().children().eq(1);
+			oWrapper = this.oGrid.$().children().eq(1),
+			oCard,
+			oHeader,
+			sAriaLabelledByIds;
 
 		assert.notOk(oWrapper.attr("aria-keyshortcuts"), "there is not aria-keyshortcuts attribute");
 		assert.strictEqual(oWrapper.attr("tabindex"), "-1", "tabindex is set");
 
 		setTimeout(function () {
+			oCard = this.oGrid.getItems()[2];
+			oHeader = oCard.getCardHeader();
 			oWrapper = this.oGrid.$().children().eq(3);
-			assert.ok(oWrapper.attr("aria-roledescription"), "aria-roledescription attribute is set");
+			sAriaLabelledByIds = oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
+
+			assert.notOk(oWrapper.attr("aria-roledescription"), "aria-roledescription attribute is not set");
+			assert.strictEqual(oWrapper.children()[0].getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header element should have aria-labelledby - pointing to the ID of an element describing the card type, title, subtitle, status text, or avatar, if there is such element");
+
 			done();
 		}.bind(this), 100);
 	});

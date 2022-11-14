@@ -28,8 +28,7 @@ sap.ui.define([], function () {
 			bLoading = oHeader.isLoading(),
 			oError = oHeader.getAggregation("_error"),
 			oToolbar = oHeader.getToolbar(),
-			bIconVisible = oHeader.getIconVisible ? oHeader.getIconVisible() : true,
-			sTabIndex;
+			bIconVisible = oHeader.getIconVisible ? oHeader.getIconVisible() : true;
 
 		oRm.openStart("div", oHeader)
 			.class("sapFCardHeader");
@@ -46,26 +45,23 @@ sap.ui.define([], function () {
 			oRm.class("sapFCardHeaderError");
 		}
 
-		//Accessibility state
-		oRm.accessibilityState(oHeader, {
-			role: oHeader.getAriaRole(),
-			roledescription: { value: oHeader.getAriaRoleDescription(), append: true }
-		});
 		oRm.openEnd();
 
 		oRm.openStart("div")
 			.attr("id", sId + "-focusable")
 			.class("sapFCardHeaderWrapper");
 
-		if (oHeader.getProperty("focusable")) {
-			sTabIndex = oHeader._isInsideGridContainer() ? "-1" : "0";
-			oRm.attr("tabindex", sTabIndex);
+		if (oHeader.getProperty("focusable") && !oHeader._isInsideGridContainer()) {
+			oRm.attr("tabindex", "0");
 		}
 
-		oRm.accessibilityState({
-			labelledby: { value: oHeader._getAriaLabelledBy(), append: true },
-			role: oHeader.getFocusableElementAriaRole()
-		});
+		if (!oHeader._isInsideGridContainer()) {
+			oRm.accessibilityState({
+				labelledby: {value: oHeader._getAriaLabelledBy(), append: true},
+				role: oHeader.getFocusableElementAriaRole(),
+				roledescription: oHeader.getAriaRoleDescription()
+			});
+		}
 
 		oRm.openEnd();
 

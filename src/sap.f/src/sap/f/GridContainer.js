@@ -10,11 +10,13 @@ sap.ui.define([
 	"./library",
 	"./dnd/GridKeyboardDragAndDrop",
 	"sap/base/strings/capitalize",
+	'sap/ui/core/delegate/ItemNavigation',
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/InvisibleMessage",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery"
@@ -27,11 +29,13 @@ sap.ui.define([
 	library,
 	GridKeyboardDragAndDrop,
 	capitalize,
+	ItemNavigation,
 	ManagedObjectObserver,
 	Control,
 	Core,
 	Element,
 	ResizeHandler,
+	InvisibleMessage,
 	Device,
 	KeyCodes,
 	jQuery
@@ -407,18 +411,21 @@ sap.ui.define([
 		oContainer._setItemNavigationItems();
 
 		oContainer._applyItemAutoRows(this);
+	};
 
-		if (this.getAriaRoleDescription) {
-			var oListItemDomRef = this.getDomRef().parentElement,
-				sAriaRoleDesc = this.getAriaRoleDescription();
+	GridContainer.prototype._onItemWrapperFocusIn = function (oEvent) {
+		var oFocusedDomRef = this._oItemNavigation.getFocusedDomRef(),
+			oControl = Element.closestTo(oFocusedDomRef.firstChild),
+			sAccText;
 
-			if (oListItemDomRef.classList.contains("sapFGridContainerItemWrapper")) {
-				if (sAriaRoleDesc) {
-					oListItemDomRef.setAttribute("aria-roledescription", sAriaRoleDesc);
-				} else {
-					oListItemDomRef.removeAttribute("aria-roledescription");
-				}
-			}
+		if (!oControl || !oControl.getAriaRoleDescription) {
+			return;
+		}
+
+		// announce the aria role description text, if any
+		sAccText = oControl.getAriaRoleDescription();
+		if (sAccText) {
+			InvisibleMessage.getInstance().announce(sAccText);
 		}
 	};
 
@@ -499,7 +506,8 @@ sap.ui.define([
 					sapnext : ["alt", "meta", "ctrl"],
 					sapprevious : ["alt", "meta", "ctrl"]
 				})
-				.setFocusedIndex(0);
+				.setFocusedIndex(0)
+				.attachEvent(ItemNavigation.Events.AfterFocus, this._onItemWrapperFocusIn.bind(this));
 
 			that.addDelegate(this._oItemNavigation);
 		}
@@ -628,6 +636,9 @@ sap.ui.define([
 		Device.resize.attachHandler(this._resizeDeviceHandler);
 
 		this._resizeItemHandler = this._resizeItem.bind(this);
+
+		// init the InvisibleMessage
+		InvisibleMessage.getInstance();
 	};
 
 	/**
@@ -1009,9 +1020,12 @@ sap.ui.define([
 
 		if (mOwnVisualFocusControls[sName] && mOwnVisualFocusControls[sName](oControl)) {
 			oFocusDomRef = oControl.getFocusDomRef();
+
 			// remove the focus DOM ref from the tab chain
-			oFocusDomRef.setAttribute("tabindex", -1);
-			oFocusDomRef.tabIndex = -1;
+			if (oFocusDomRef.getAttribute("tabindex") === "0") {
+				oFocusDomRef.setAttribute("tabindex", -1);
+				oFocusDomRef.tabIndex = -1;
+			}
 			GridContainerUtils.getItemWrapper(oControl).classList.add("sapFGridContainerItemWrapperNoVisualFocus");
 		}
 	};

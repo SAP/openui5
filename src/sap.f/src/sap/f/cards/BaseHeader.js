@@ -295,13 +295,6 @@ sap.ui.define([
 	/**
 	 * @ui5-restricted
 	 */
-	BaseHeader.prototype.getAriaRole = function () {
-		return "group";
-	};
-
-	/**
-	 * @ui5-restricted
-	 */
 	BaseHeader.prototype.getTitleAriaRole = function () {
 		return "heading";
 	};
@@ -310,7 +303,7 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	BaseHeader.prototype.getFocusableElementAriaRole = function () {
-		return this.hasListeners("press") ? "button" : null;
+		return this.hasListeners("press") ? "button" : "group";
 	};
 
 	/**
