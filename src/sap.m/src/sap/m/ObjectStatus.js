@@ -113,12 +113,21 @@ sap.ui.define([
 				 *
 				 * @since 1.89
 				 */
-				emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
+				emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off },
+
+				/**
+				 * Еnables overriding of the default state announcement.
+				 *
+				 * @since 1.110
+				 */
+				stateAnnouncementText : {type : "string", group : "Misc"}
 			},
 			associations : {
 
 				/**
 				 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
+				 *
+				 * <b>Note:</b> The additional description will take effect only if <code>active</code> property is set to <code>true</code>.
 				 */
 				ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}
 			},
@@ -144,15 +153,13 @@ sap.ui.define([
 	 * @returns {string} The text compliant to the control state
 	 */
 	ObjectStatus.prototype._getStateText = function(sState) {
-		var sStateText;
-
-		if (sState !== ValueState.None) {
-			sStateText = ValueStateSupport.getAdditionalText(sState) ?
-				ValueStateSupport.getAdditionalText(sState) :
-				IndicationColorSupport.getAdditionalText(sState);
+		if (sState !== ValueState.None && this.isPropertyInitial("stateAnnouncementText")) {
+			return ValueStateSupport.getAdditionalText(sState)
+					? ValueStateSupport.getAdditionalText(sState)
+					: IndicationColorSupport.getAdditionalText(sState);
 		}
 
-		return sStateText;
+		return !this.isPropertyInitial("stateAnnouncementText") ? this.getStateAnnouncementText() : "";
 	};
 
 	/**
@@ -279,7 +286,9 @@ sap.ui.define([
 	 * @protected
 	 */
 	ObjectStatus.prototype.getAccessibilityInfo = function() {
-		var sState = ValueStateSupport.getAdditionalText(this.getState()),
+		var sState = this.isPropertyInitial("stateAnnouncementText")
+						? ValueStateSupport.getAdditionalText(this.getState())
+						: this.getStateAnnouncementText(),
 			sDescription;
 
 		if (this.getState() != ValueState.None) {
@@ -293,9 +302,11 @@ sap.ui.define([
 			(this.getTooltip() || "")
 		).trim();
 
-		return {
-			description: sDescription + (sDescription ? " " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS") : "")
-		};
+		sDescription = this._isActive()
+			? sDescription + (sDescription ? " " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ACTIVE") : "")
+			: sDescription;
+
+		return { description: sDescription };
 	};
 
 	ObjectStatus.prototype._isClickable = function(oEvent) {
