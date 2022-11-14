@@ -4,12 +4,13 @@
 
 sap.ui.define([
     "sap/ui/base/Object",
+    "sap/ui/core/Element",
     "sap/ui/test/OpaPlugin",
     "sap/ui/test/actions/Press",
     "sap/ui/test/_LogCollector",
     "sap/ui/test/_OpaLogger",
     "sap/ui/thirdparty/jquery"
-], function(UI5Object, OpaPlugin, Press, _LogCollector, _OpaLogger, $) {
+], function(UI5Object, UI5Element, OpaPlugin, Press, _LogCollector, _OpaLogger, $) {
     "use strict";
 
     var oPlugin = new OpaPlugin();
@@ -103,13 +104,12 @@ sap.ui.define([
      * Retrieves the control best corresponding to the DOM element
      * @param {object|string} vElement DOM element or its ID
      * Before change 3592877, only ID is allowed
-     * @returns {sap.ui.core.Control} the control in the given context
+     * @returns {sap.ui.core.Element} the control in the given context
      * @private
      */
     _ControlFinder._getControlForElement = function (vElement) {
         var vSelector = Object.prototype.toString.call(vElement) === "[object String]" ? "#" + vElement : vElement;
-        var controls = _ControlFinder._getIdentifiedDOMElement(vSelector).control();
-        return controls && controls[0];
+        return fnClosestTo(_ControlFinder._getIdentifiedDOMElement(vSelector));
     };
 
     /**
@@ -182,6 +182,22 @@ sap.ui.define([
         var oStaticArea = sap.ui.getCore().getStaticAreaRef();
         return $.contains(oStaticArea, oControl.getDomRef());
     };
+
+	var fnClosestTo = function($Element) {
+		return UI5Element.closestTo($Element[0]);
+	};
+
+	/**
+	 * Fallback to an implementation based on jQuery plugin when UI5Element.closestTo does not
+	 * exist yet (when the application under test is executed with a much older UI5 version).
+	 *
+	 * @deprecated Since 1.106
+	 */
+	if ( typeof UI5Element.closestTo !== "function" ) {
+		fnClosestTo = function(oElement) {
+			return jQuery(oElement).control(0);
+		};
+	}
 
     /**
      * check if a selector contains "expansion" values, meaning values that are nested selector objects
