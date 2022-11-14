@@ -197,7 +197,6 @@ sap.ui.define([
 
 			return this.oRta.start().then(function() {
 				assert.equal(this.oRta.getToolbar().getControl("restore").getVisible(), true, "then the Reset Button is still visible");
-				assert.equal(this.oRta.getToolbar().getControl("publish").getVisible(), false, "then the Publish Button is invisible");
 			}.bind(this));
 		});
 
@@ -214,7 +213,6 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves(oSettingsInstance);
 			return this.oRta.start().then(function() {
 				assert.equal(this.oRta.getToolbar().getControl("restore").getVisible(), true, "then the Reset Button is visible");
-				assert.equal(this.oRta.getToolbar().getControl("publish").getVisible(), true, "then the Publish Button is visible");
 			}.bind(this));
 		});
 

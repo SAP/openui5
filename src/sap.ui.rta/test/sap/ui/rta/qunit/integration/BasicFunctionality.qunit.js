@@ -82,7 +82,6 @@ sap.ui.define([
 
 			assert.strictEqual(this.oRta.canUndo(), false, "initially no undo is possible");
 			assert.strictEqual(this.oRta.canRedo(), false, "initially no redo is possible");
-			assert.notOk(this.oRta.getToolbar().getControl("publish").getEnabled(), "initially no Changes are existing");
 
 			return new CommandFactory().getCommandFor(this.oGroup, "Remove", {
 				removedElement: this.oGroup
@@ -98,7 +97,6 @@ sap.ui.define([
 				assert.strictEqual(this.oRta.canUndo(), true, "after any change undo is possible");
 				assert.strictEqual(this.oRta.canRedo(), false, "after any change no redo is possible");
 				assert.ok(this.oRta.getToolbar().getControl("undo").getEnabled(), "Undo button of RTA is enabled");
-				assert.ok(this.oRta.getToolbar().getControl("publish").getEnabled(), "Transport button of RTA is enabled");
 			}.bind(this))
 
 			.then(this.oCommandStack.undo.bind(this.oCommandStack))
@@ -108,7 +106,6 @@ sap.ui.define([
 				assert.strictEqual(this.oGroup.getVisible(), true, "when the undo is called, then the group is visible again");
 				assert.strictEqual(this.oRta.canUndo(), false, "after reverting a change undo is not possible");
 				assert.strictEqual(this.oRta.canRedo(), true, "after reverting a change redo is possible");
-				assert.notOk(this.oRta.getToolbar().getControl("publish").getEnabled(), "Transport button of RTA is disabled");
 			}.bind(this))
 
 			.then(this.oRta.redo.bind(this.oRta))
@@ -116,7 +113,6 @@ sap.ui.define([
 			.then(function() {
 				oCore.applyChanges();
 				assert.strictEqual(this.oGroup.getVisible(), false, "when the redo is called, then the group is not visible again");
-				assert.ok(this.oRta.getToolbar().getControl("publish").getEnabled(), "Transport button of RTA is enabled again");
 				assert.strictEqual(iFiredCounter, 3, "undoRedoStackModified event of RTA is fired 3 times");
 			}.bind(this))
 

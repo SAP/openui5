@@ -811,51 +811,6 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	/**
-	 * Function to handle ABAP transport of the changes
-	 *
-	 * @returns {Promise} Returns a Promise processing the transport of changes
-	 */
-	RuntimeAuthoring.prototype.transport = function() {
-		this.getPluginManager().handleStopCutPaste();
-
-		BusyIndicator.show(500);
-		return this._serializeToLrep().then(function() {
-			BusyIndicator.hide();
-			var bVariantByStartupParameter = FlexUtils.isVariantByStartupParameter(this._oRootControl);
-			var bAppVariantRunning = SmartVariantManagementApplyAPI.isApplicationVariant({control: this._oRootControl}) && !bVariantByStartupParameter;
-			return (bAppVariantRunning ? RtaAppVariantFeature.getAppVariantDescriptor(this._oRootControl) : Promise.resolve())
-				.then(function(oAppVariantDescriptor) {
-					var aAppVariantDescriptor = [];
-					if (oAppVariantDescriptor) {
-						aAppVariantDescriptor.push(oAppVariantDescriptor);
-					}
-					return PersistenceWriteAPI.publish({
-						selector: this.getRootControlInstance(),
-						styleClass: Utils.getRtaStyleClassName(),
-						layer: this.getLayer(),
-						appVariantDescriptors: aAppVariantDescriptor
-					})
-					.then(function(sMessage) {
-						if (sMessage !== "Error" && sMessage !== "Cancel") {
-							MessageToast.show(sMessage);
-							if (this.getShowToolbars()) {
-								PersistenceWriteAPI.getResetAndPublishInfo({
-									selector: this.getRootControlInstance(),
-									layer: this.getLayer()
-								})
-								.then(function(oPublishAndResetInfo) {
-									this._oToolbarControlsModel.setProperty("/publishEnabled", oPublishAndResetInfo.isPublishEnabled);
-									this._oToolbarControlsModel.setProperty("/restoreEnabled", oPublishAndResetInfo.isResetEnabled);
-								}.bind(this));
-							}
-						}
-					}.bind(this));
-				}.bind(this));
-		}.bind(this))
-		.catch(showTechnicalError);
-	};
-
 	RuntimeAuthoring.prototype.undo = function() {
 		this.getPluginManager().handleStopCutPaste();
 		return this.getCommandStack().undo();
@@ -1014,7 +969,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Adapt the enablement of undo/redo/reset/transport button
+	 * Adapt the enablement of undo/redo/reset button
 	 *
 	 * @returns {Promise} Resolves as soon as the MessageBox is closed
 	 */
@@ -1083,7 +1038,7 @@ sap.ui.define([
 	}
 
 	function onKeyDown(oEvent) {
-		// if for example the addField Dialog/transport/reset Popup is open, we don't want the user to be able to undo/redo
+		// if for example the addField Dialog/reset Popup is open, we don't want the user to be able to undo/redo
 		var bMacintosh = Device.os.macintosh;
 		var bFocusInsideOverlayContainer = Overlay.getOverlayContainer().get(0).contains(document.activeElement);
 		var bFocusInsideRtaToolbar = this.getShowToolbars() && this.getToolbar().getDomRef().contains(document.activeElement);
@@ -1331,7 +1286,6 @@ sap.ui.define([
 			};
 
 			if (!bUserLayer) {
-				oProperties.transport = this.transport.bind(this);
 				oProperties.publishVersion = onPublishVersion.bind(this);
 				oProperties.undo = this.undo.bind(this);
 				oProperties.redo = this.redo.bind(this);

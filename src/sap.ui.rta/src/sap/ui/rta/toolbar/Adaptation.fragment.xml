@@ -150,17 +150,6 @@
 					</layoutData>
 				</Button>
 				<toolbar:OverflowToolbarButton
-						id="sapUiRta_publish"
-						enabled="{controls>/publishEnabled}"
-						visible="{= (${controls>/publishVisible} &amp;&amp; !${versions>/versioningEnabled} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
-						press=".publish"
-						type="Transparent"
-						text="{i18n>BTN_PUBLISH}" >
-					<toolbar:layoutData>
-						<OverflowToolbarLayoutData priority="High" />
-					</toolbar:layoutData>
-				</toolbar:OverflowToolbarButton>
-				<toolbar:OverflowToolbarButton
 						id="sapUiRta_restore"
 						enabled="{controls>/restoreEnabled}"
 						visible="{= ((${path: 'versions>/versioningEnabled', formatter: '.showRestore'}) &amp;&amp; ((${controls>/modeSwitcher} === 'visualization') || (${controls>/modeSwitcher} === 'adaptation')))}"

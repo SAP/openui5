@@ -363,21 +363,6 @@ sap.ui.define([
 				assert.strictEqual(aSavePropertyBag.condenseAnyLayer, true, "the condense flag is set to true");
 			});
 		});
-
-		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is not an application variant", function(assert) {
-			sandbox.stub(PersistenceWriteAPI, "publish").resolves();
-			var fnGetResetAndPublishInfoStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
-				isPublishEnabled: false,
-				isResetEnabled: true
-			});
-			var oMessageToastStub = sandbox.stub(MessageToast, "show");
-			var oAppVariantRunningStub = sandbox.stub(SmartVariantManagementApplyAPI, "isApplicationVariant").returns(false);
-			return this.oRta.transport().then(function() {
-				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
-				assert.equal(oAppVariantRunningStub.callCount, 1, "then isApplicationVariant() got called");
-				assert.equal(fnGetResetAndPublishInfoStub.callCount, 1, "then the status of publish and reset button is evaluated");
-			});
-		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started with a scope set...", {
