@@ -108,6 +108,16 @@ sap.ui.define([
 				 */
 				dataProperty: {
 					type: "string"
+				},
+				/**
+				 * Indicates whether the content of the column is required.
+				 * <b>Note:</b> The table only takes care of announcing the state of the column header as defined by the <code>required</code> property.
+				 * The application needs to take care of the screen reader announcement of the state of the table cells,
+				 * for example, by setting the <code>required</code> property to <code>true</code> for <code>sap.m.Input</code>.
+				 */
+				required: {
+					type: "boolean",
+					defaultValue: false
 				}
 			},
 			aggregations: {
@@ -274,7 +284,8 @@ sap.ui.define([
 							return oTable._isOfType(TableType.ResponsiveTable) && bHeaderVisible && !bResizable;
 						}
 					},
-					wrappingType: oTable._isOfType(TableType.ResponsiveTable) ? "Hyphenated" : null
+					wrappingType: oTable._isOfType(TableType.ResponsiveTable) ? "Hyphenated" : null,
+					required: "{$this>/required}"
 				})
 			});
 		}
