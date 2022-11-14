@@ -12,10 +12,14 @@ sap.ui.define([
 		// DO NOT modify original data! Also, for timing reasons, use different clones each time!
 		var aAfterCollapseAlpha,
 			aAfterCollapseBeta,
+			aAfterCollapseBetaMu,
+			aAfterCollapseBetaMuXi,
 			aAfterExpandGamma,
+			aAfterShowOmicron,
 			oCollapsedBeta,
 			oCollapsedMu,
 			oCollapsedOmicron,
+			oCollapsedXi,
 			oExpandedGamma,
 			oExpandedMu,
 			oExpandedOmicron,
@@ -27,11 +31,16 @@ sap.ui.define([
 		}
 
 		function scrollToRow(iRow, sComment) {
+			// Note: calling #synchronize here and there must not make this test fail!
+			// When.onTheMainPage.synchronize(sComment);
 			When.onTheMainPage.scrollToRow(iRow, sComment);
+			// When.onTheMainPage.synchronize(sComment);
 		}
 
 		function toggleExpandInRow(iRow, sComment) {
+			// When.onTheMainPage.synchronize(sComment);
 			When.onTheMainPage.toggleExpandInRow(iRow, sComment);
+			// When.onTheMainPage.synchronize(sComment);
 		}
 
 		Given.iStartMyUIComponent({
@@ -44,6 +53,10 @@ sap.ui.define([
 		// basics: initial data
 		aNodes = SandboxModel.getNodes(0, 5);
 		checkTable(aNodes);
+
+		// Note: expand 1.1 (Gamma), synch., collapse 1.1 (Gamma) => Failed to drill-down...
+		// (but we prefer to do this later, see the "Expand 1 (Beta)" through "Collapse 1 (Beta)"
+		// block around synchronize("2nd time"))
 
 		// basics: collapse (incl. all placeholders for children!)
 		toggleExpandInRow(0, "Collapse 0 (Alpha)");
@@ -122,6 +135,110 @@ sap.ui.define([
 
 		toggleExpandInRow(0, "Collapse 0 (Alpha)");
 		checkTable(aAfterCollapseAlpha);
+
+		// side effect
+		When.onTheMainPage.synchronize("1st time");
+		checkTable(aAfterCollapseAlpha);
+
+		// tree state must be kept, even inside collapsed node, and update must happen there as well
+		toggleExpandInRow(0, "Expand 0 (Alpha)");
+		aNodes = SandboxModel.getNodes(0, 1).concat(aAfterCollapseBeta.slice(1, 5));
+		checkTable(aNodes);
+
+		toggleExpandInRow(1, "Expand 1 (Beta)");
+		checkTable(aAfterExpandGamma, {DistanceFromRoot : 3});
+
+		toggleExpandInRow(2, "Collapse 1.1 (Gamma)");
+		aNodes = SandboxModel.getNodes(0, 3).concat(oExpandedZeta)
+			.concat(SandboxModel.getChildrenOf1_2()[0]);
+		checkTable(aNodes, {DistanceFromRoot : 3});
+
+		toggleExpandInRow(3, "Collapse 1.2 (Zeta)");
+		checkTable(SandboxModel.getNodes(0, 5));
+
+		toggleExpandInRow(2, "Expand 1.1 (Gamma)");
+		aNodes = SandboxModel.getNodes(0, 2).concat(oExpandedGamma)
+			.concat(SandboxModel.getChildrenOf1_1());
+		checkTable(aNodes, {DistanceFromRoot : 3});
+
+		When.onTheMainPage.synchronize("2nd time");
+		checkTable(aNodes, {DistanceFromRoot : 3});
+
+		toggleExpandInRow(2, "Collapse 1.1 (Gamma)");
+		checkTable(SandboxModel.getNodes(0, 5));
+
+		toggleExpandInRow(1, "Collapse 1 (Beta)");
+		aNodes = SandboxModel.getNodes(0, 1).concat(aAfterCollapseBeta.slice(1, 5));
+		checkTable(aNodes);
+
+		// still functional
+		toggleExpandInRow(4, "Collapse 4 (Mu)");
+		aAfterCollapseBetaMu = aNodes.slice(0, 4).concat(oCollapsedMu);
+		checkTable(aAfterCollapseBetaMu);
+
+		scrollToRow(1, "Scroll down one row"); // 5 (Xi) appears
+		aNodes = aAfterCollapseBetaMu.slice(1).concat(SandboxModel.getNodes(8, 1));
+		checkTable(aNodes);
+
+		toggleExpandInRow(5, "Collapse 5 (Xi)");
+		oCollapsedXi = Object.assign({}, aNodes[4], {DrillState : "collapsed"});
+		aAfterCollapseBetaMuXi = aAfterCollapseBetaMu.slice(1).concat(oCollapsedXi);
+		checkTable(aAfterCollapseBetaMuXi);
+
+		scrollToRow(0, "Scroll to the top");
+		checkTable(aAfterCollapseBetaMu);
+
+		toggleExpandInRow(0, "Collapse 0 (Alpha)");
+		checkTable(aAfterCollapseAlpha);
+
+		When.onTheMainPage.synchronize("3rd time");
+		checkTable(aAfterCollapseAlpha);
+
+		toggleExpandInRow(0, "Expand 0 (Alpha)");
+		checkTable(aAfterCollapseBetaMu);
+
+		// tree state properly kept
+		scrollToRow(1, "Scroll down one row");
+		checkTable(aAfterCollapseBetaMuXi);
+
+		// hidden node 5.1 (Omicron) still expanded and properly updated
+		toggleExpandInRow(5, "Expand 5 (Xi)");
+		aNodes = aAfterCollapseBetaMu.slice(1).concat(SandboxModel.getNodes(8, 1));
+		checkTable(aNodes);
+
+		scrollToRow(2, "Scroll down one row");
+		aAfterShowOmicron = aNodes.slice(1).concat(oExpandedOmicron);
+		checkTable(aAfterShowOmicron);
+
+		scrollToRow(7, "PAGE DOWN");
+		checkTable(SandboxModel.getChildrenOf5_1(0, 5), {DistanceFromRoot : 3});
+
+		scrollToRow(11, "Scroll To The Bottom");
+		checkTable(SandboxModel.getChildrenOf5_1(4, 5), {DistanceFromRoot : 3});
+
+		scrollToRow(6, "Scroll To 5.1 (Omicron)");
+		aNodes = [oExpandedOmicron].concat(SandboxModel.getChildrenOf5_1(0, 4));
+		checkTable(aNodes, {DistanceFromRoot : 3});
+
+		toggleExpandInRow(6, "Collapse 5.1 (Omicron)");
+		aNodes = aAfterShowOmicron.slice(0, 4).concat(oCollapsedOmicron);
+		checkTable(aNodes);
+
+		// collapse incl. children not counted via "Descendants" property
+		scrollToRow(0, "Scroll to the top");
+		checkTable(aAfterCollapseBetaMu);
+
+		toggleExpandInRow(0, "Collapse 0 (Alpha)");
+		checkTable(aAfterCollapseAlpha);
+
+		toggleExpandInRow(0, "Expand 0 (Alpha)");
+		checkTable(aAfterCollapseBetaMu);
+
+		When.onTheMainPage.synchronize("4th time");
+		checkTable(aAfterCollapseBetaMu);
+
+		scrollToRow(2, "Scroll To The Bottom");
+		checkTable(aNodes);
 
 		Then.onAnyPage.checkLog();
 		Then.iTeardownMyUIComponent();

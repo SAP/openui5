@@ -25,6 +25,22 @@ sap.ui.define([
 			oTreeRowsBinding.resume();
 		},
 
+		onNameChanged : function (oEvent) {
+			oEvent.getSource().getBindingContext().requestSideEffects(["AGE", "Name"]);
+		},
+
+		onNameChangedInTreeTable : function (oEvent) {
+			oEvent.getSource().getBindingContext().requestSideEffects(["AGE", "Name"]);
+		},
+
+		onSynchronize : function () {
+			this.byId("table").getBinding("rows").getHeaderContext().requestSideEffects(["*"]);
+		},
+
+		onSynchronizeTreeTable : function () {
+			this.byId("treeTable").getBinding("rows").getHeaderContext().requestSideEffects(["*"]);
+		},
+
 		onToggleExpand : function (oEvent) {
 			// get the context from the button's row
 			var oRowContext = oEvent.getSource().getBindingContext();

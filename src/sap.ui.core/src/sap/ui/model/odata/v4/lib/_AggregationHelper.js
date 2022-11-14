@@ -128,7 +128,7 @@ sap.ui.define([
 		 * checks and restore some data from the placeholder to the element.
 		 *
 		 * @param {object} oPlaceholder - A placeholder
-		 * @param {object} _oElement - Any node or leaf element
+		 * @param {object} oElement - Any node or leaf element
 		 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
 		 *   The group level cache which the given element has been read from
 		 * @param {number} iIndex
@@ -139,15 +139,34 @@ sap.ui.define([
 		 *
 		 * @private
 		 */
-		beforeOverwritePlaceholder : function (oPlaceholder, _oElement, oCache, iIndex) {
+		beforeOverwritePlaceholder : function (oPlaceholder, oElement, oCache, iIndex) {
 			var oParent = _Helper.getPrivateAnnotation(oPlaceholder, "parent");
 
-			if (!oParent) {
+			if (!_Helper.hasPrivateAnnotation(oPlaceholder, "placeholder")) {
 				throw new Error("Unexpected element");
 			}
 			if (oParent !== oCache
-				|| _Helper.getPrivateAnnotation(oPlaceholder, "index") !== iIndex) {
+				|| _Helper.getPrivateAnnotation(oPlaceholder, "index") !== iIndex
+				|| oPlaceholder["@$ui5.node.level"] !== oElement["@$ui5.node.level"]
+				&& (oPlaceholder["@$ui5.node.level"] !== 1
+					|| "@$ui5.node.isExpanded" in oPlaceholder)) {
 				throw new Error("Wrong placeholder");
+			}
+			["descendants", "filter", "predicate"].forEach(function (sAnnotation) {
+				if (_Helper.hasPrivateAnnotation(oPlaceholder, sAnnotation)
+					&& _Helper.getPrivateAnnotation(oElement, sAnnotation)
+						!== _Helper.getPrivateAnnotation(oPlaceholder, sAnnotation)) {
+					throw new Error("Unexpected structural change: " + sAnnotation);
+				}
+			});
+
+			_Helper.copyPrivateAnnotation(oPlaceholder, "spliced", oElement);
+			if ("@$ui5.node.isExpanded" in oPlaceholder) {
+				if ((oElement["@$ui5.node.isExpanded"] === undefined)
+						!== (oPlaceholder["@$ui5.node.isExpanded"] === undefined)) {
+					throw new Error("Not a leaf anymore (or vice versa)");
+				}
+				oElement["@$ui5.node.isExpanded"] = oPlaceholder["@$ui5.node.isExpanded"];
 			}
 		},
 
@@ -547,6 +566,7 @@ sap.ui.define([
 
 			_Helper.setPrivateAnnotation(oPlaceholder, "index", iIndex);
 			_Helper.setPrivateAnnotation(oPlaceholder, "parent", oParentCache);
+			_Helper.setPrivateAnnotation(oPlaceholder, "placeholder", true);
 
 			return oPlaceholder;
 		},
@@ -894,6 +914,20 @@ sap.ui.define([
 					|| oAggregation.groupLevels.some(fnAffects)
 					|| hasAffectedFilter(sSideEffectPath, aFilters);
 			});
+		},
+
+		/**
+		 * Marks the value of the given element's private annotation "spliced" with
+		 * <code>$stale : true</code>, if available.
+		 *
+		 * @param {object} oElement - Any node or leaf element
+		 */
+		markSplicedStale : function (oElement) {
+			var aSpliced = _Helper.getPrivateAnnotation(oElement, "spliced");
+
+			if (aSpliced) { // => collapsed
+				aSpliced.$stale = true;
+			}
 		},
 
 		/**

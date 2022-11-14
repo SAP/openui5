@@ -12,6 +12,9 @@
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="Organizational Chart"/>
+				<m:ToolbarSpacer/>
+				<m:Button icon="sap-icon://synchronize" id="synchronize" press="onSynchronize"
+					tooltip="Synchronize"/>
 			</m:Toolbar>
 		</extension>
 		<Column hAlign="End" width="5em">
@@ -44,7 +47,7 @@
 		<Column>
 			<m:Label text="Name"/>
 			<template>
-				<m:Input value="{Name}"/>
+				<m:Input value="{Name}" change="onNameChanged"/>
 			</template>
 		</Column>
 		<Column template="AGE">
@@ -59,6 +62,9 @@
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="treeTitle" level="H1" text="Organizational Chart - TreeTable"/>
+				<m:ToolbarSpacer/>
+				<m:Button icon="sap-icon://synchronize" id="synchronizeTreeTable"
+					press="onSynchronizeTreeTable" tooltip="SynchronizeTreeTable"/>
 			</m:Toolbar>
 		</extension>
 		<Column template="ID">
@@ -76,7 +82,7 @@
 		<Column>
 			<m:Label text="Name"/>
 			<template>
-				<m:Input value="{Name}"/>
+				<m:Input value="{Name}" change="onNameChangedInTreeTable"/>
 			</template>
 		</Column>
 		<Column template="AGE">

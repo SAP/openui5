@@ -3258,7 +3258,7 @@ sap.ui.define([
 			});
 		}
 
-		if (this.mParameters.$$aggregation) {
+		if (this.mParameters.$$aggregation && !this.mParameters.$$aggregation.hierarchyQualifier) {
 			if (bSingle) {
 				throw new Error(
 					"Must not request side effects for a context of a binding with $$aggregation");
@@ -3542,8 +3542,10 @@ sap.ui.define([
 	 *       suggestion: <code>CASE WHEN MIN(Unit) = MAX(Unit) THEN MIN(Unit) END</code>)
 	 *   </ul>
 	 * @param {number} [oAggregation.expandTo=1]
-	 *   The number of initially expanded levels as a positive integer (@experimental as of version
-	 *   1.105.0), supported only if a <code>hierarchyQualifier</code> is given.
+	 *   The number (as a positive integer) of different levels initially available without calling
+	 *   {@link sap.ui.model.odata.v4.Context#expand} (@experimental as of version 1.105.0),
+	 *   supported only if a <code>hierarchyQualifier</code> is given. Root nodes are on the first
+	 *   level. By default, only root nodes are available; they are not yet expanded.
 	 * @param {boolean} [oAggregation.grandTotalAtBottomOnly]
 	 *   Tells whether the grand totals for aggregatable properties are displayed at the bottom only
 	 *   (since 1.86.0); <code>true</code> for bottom only, <code>false</code> for top and bottom,

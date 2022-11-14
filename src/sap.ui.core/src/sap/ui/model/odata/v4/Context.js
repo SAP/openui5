@@ -1378,8 +1378,9 @@ sap.ui.define([
 	 *       property that was changed on the server and now targets a different entity
 	 *       (since 1.79.0)
 	 *     <li> the binding of this context has "$$aggregation" (see
-	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}) and the context is not the header
-	 *       context
+	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}), the context is not the header
+	 *       context, and (since 1.109.0) no <code>hierarchyQualifier</code> is given (see
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation})
 	 *   </ul>
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#execute
