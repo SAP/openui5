@@ -95,12 +95,10 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 		ALL : (5 + 1)
 	};
 
-	var sDefaultComponent,
-
 	/**
 	 * The array that holds the log entries that have been recorded so far
 	 */
-	aLog = [],
+	var aLog = [],
 
 	/**
 	 * Maximum log level to be recorded (per component).
@@ -350,7 +348,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * @public
 	 */
 	Log.setLevel = function(iLogLevel, sComponent, _bDefault) {
-		sComponent = sComponent || sDefaultComponent || '';
+		sComponent = sComponent || '';
 		if (!_bDefault || mMaxLevel[sComponent] == null) {
 			mMaxLevel[sComponent] = iLogLevel;
 			var sLogLevel;
@@ -373,7 +371,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * @public
 	 */
 	Log.getLevel = function(sComponent) {
-		return level(sComponent || sDefaultComponent);
+		return level(sComponent);
 	};
 
 	/**
@@ -388,7 +386,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * @public
 	 */
 	Log.isLoggable = function(iLevel, sComponent) {
-		return (iLevel == null ? Log.Level.DEBUG : iLevel) <= level(sComponent || sDefaultComponent);
+		return (iLevel == null ? Log.Level.DEBUG : iLevel) <= level(sComponent);
 	};
 
 	/**
@@ -443,7 +441,6 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 			sComponent = "";
 		}
 
-		sComponent = sComponent || sDefaultComponent;
 		if (iLevel <= level(sComponent) ) {
 			var fNow =  now(),
 				oNow = new Date(fNow),
