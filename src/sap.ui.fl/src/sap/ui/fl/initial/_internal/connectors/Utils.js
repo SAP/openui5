@@ -56,7 +56,7 @@ sap.ui.define([
 		 */
 		addLanguageInfo: function (mParameters) {
 			if (!mParameters) {
-				mParameters = {};
+				throw new Error("No parameters map were passed");
 			}
 			mParameters["sap-language"] = Configuration.getLanguage();
 		},
@@ -69,7 +69,7 @@ sap.ui.define([
 		 */
 		addSAPLogonLanguageInfo: function (mParameters) {
 			if (!mParameters) {
-				mParameters = {};
+				throw new Error("No parameters map were passed");
 			}
 			mParameters["sap-language"] = Configuration.getSAPLogonLanguage();
 		},

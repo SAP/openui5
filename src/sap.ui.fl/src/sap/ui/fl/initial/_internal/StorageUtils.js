@@ -307,19 +307,6 @@ sap.ui.define([
 				}
 				return !isEmptyObject(oResponse[sKey]);
 			});
-		},
-
-		/** Adds current language information into request parameters
-		 *
-		 *
-		 * @param {object} mParameters - Parameters of the request
-		 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
-		 */
-		addLanguageInfo: function (mParameters) {
-			if (!mParameters) {
-				mParameters = {};
-			}
-			mParameters["sap-language"] = Configuration.getLanguage();
 		}
 	};
 });
