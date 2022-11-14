@@ -45,9 +45,7 @@ sap.ui.define(['sap/ui/core/library', './library', 'sap/ui/core/Core'],
 				bInverted = oObjStatus.getInverted(),
 				sTextDir = oObjStatus.getTextDirection(),
 				bPageRTL = oCore.getConfiguration().getRTL(),
-				oAccAttributes = {
-					roledescription: oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS")
-				},
+				oAccAttributes = {},
 				sTooltip = oObjStatus.getTooltip_AsString();
 
 			if (sTextDir === TextDirection.Inherit) {
@@ -68,8 +66,7 @@ sap.ui.define(['sap/ui/core/library', './library', 'sap/ui/core/Core'],
 				oRm.class("sapMObjStatusActive");
 				oRm.attr("tabindex", "0");
 				oAccAttributes.role = "button";
-			} else {
-				oAccAttributes.role = "group";
+				oAccAttributes.roledescription = oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ACTIVE");
 			}
 
 			var bTooltipAndAriaDescribedBy = sTooltip && oObjStatus.getAriaDescribedBy().length,
