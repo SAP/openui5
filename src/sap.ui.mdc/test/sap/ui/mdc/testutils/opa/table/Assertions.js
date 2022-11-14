@@ -179,12 +179,10 @@ sap.ui.define([
 						columnName: sColumn,
 						success: function(oColumn) {
 							this.waitFor({
-								controlType: "sap.m.Popover",
-								matchers: [
-									new Ancestor(oColumn, false)
-								],
-								success: function(aPopovers) {
-									QUnit.assert.equal(aPopovers.length, 1, "The column header dialog popover has opened");
+								searchOpenDialogs: true,
+								controlType: "sap.m.table.columnmenu.Menu",
+								success: function(aMenus) {
+									QUnit.assert.ok(aMenus.length === 1 && aMenus[0].isOpen(), "The column header menu has opened");
 								},
 								errorMessage: "The column header dialog for column '" + sColumn + "' did not open"
 							});

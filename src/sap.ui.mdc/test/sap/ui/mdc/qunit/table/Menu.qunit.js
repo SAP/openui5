@@ -44,7 +44,6 @@ sap.ui.define([
 				}
 			});
 
-			this.oTable._bUseColumnMenu = true;
 			this.oTable.placeAt("qunit-fixture");
 			Core.applyChanges();
 
@@ -135,7 +134,6 @@ sap.ui.define([
 				}
 			});
 
-			this.oTable._bUseColumnMenu = true;
 			this.oTable.placeAt("qunit-fixture");
 			Core.applyChanges();
 
@@ -309,7 +307,6 @@ sap.ui.define([
 				}
 			});
 
-			this.oTable._bUseColumnMenu = true;
 			this.oTable.placeAt("qunit-fixture");
 			Core.applyChanges();
 

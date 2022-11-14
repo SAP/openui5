@@ -14,8 +14,6 @@ sap.ui.define([
 	"./library",
 	"sap/m/Text",
 	"sap/m/Title",
-	"sap/m/ColumnHeaderPopover",
-	"sap/m/ColumnPopoverSelectListItem",
 	"sap/m/OverflowToolbar",
 	"sap/m/library",
 	"sap/m/table/Util",
@@ -56,8 +54,6 @@ sap.ui.define([
 	library,
 	Text,
 	Title,
-	ColumnHeaderPopover,
-	ColumnPopoverSelectListItem,
 	OverflowToolbar,
 	MLibrary,
 	MTableUtil,
@@ -589,7 +585,6 @@ sap.ui.define([
 		constructor: function() {
 			this._oTableReady = new Deferred();
 			this._oFullInitialize = new Deferred();
-			this._bUseColumnMenu = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-columnmenu") === "true";
 
 			Control.apply(this, arguments);
 			this.bCreated = true;
@@ -1949,98 +1944,25 @@ sap.ui.define([
 		var oColumn = mPropertyBag.column;
 
 		this._fullyInitialized().then(function() {
-			if (this._bUseColumnMenu) {
-				if (!this._oColumnHeaderMenu) {
-					this._oQuickActionContainer = new QuickActionContainer({table: this});
-					this._oItemContainer = new ItemContainer({table: this});
-					this._oColumnHeaderMenu = new ColumnMenu({
-						_quickActions: [this._oQuickActionContainer],
-						_items: [this._oItemContainer]
-					});
-				}
-				this._oQuickActionContainer.setAssociation("column", oColumn);
-				this._oItemContainer.setAssociation("column", oColumn);
-
-				Promise.all([
-					this._oQuickActionContainer.initializeQuickActions(),
-					this._oItemContainer.initializeItems()
-				]).then(function() {
-					if (this._oQuickActionContainer.hasQuickActions() || this._oItemContainer.hasItems()) {
-						this._oColumnHeaderMenu.openBy(oColumn);
-					}
-				}.bind(this));
-			} else {
-				var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-
-				if (this._oPopover) {
-					this._oPopover.destroy();
-				}
-
-				this._oPopover = new ColumnHeaderPopover();
-				// Adding it as a dependent to anything other than the inner sap.m.Column breaks OPA tests.
-				oColumn.getInnerColumn().addDependent(this._oPopover);
-
-				if (this.isSortingEnabled()) {
-					var aAscendItems = [] , aDescendItems = [];
-					var aSortableProperties = this.getPropertyHelper().getProperty(oColumn.getDataProperty()).getSortableProperties();
-					aSortableProperties.forEach(function(oProperty) {
-						aAscendItems.push(new Item({
-							text: oProperty.label,
-							key: oProperty.name
-						}));
-						aDescendItems.push(new Item({
-							text: oProperty.label,
-							key: oProperty.name
-						}));
-					});
-
-					// create ColumnHeaderPopover
-					if (aAscendItems.length > 0) {
-						this._oPopover.addItem(new ColumnPopoverSelectListItem({
-							items: aAscendItems,
-							label: oResourceBundle.getText("table.SETTINGS_ASCENDING"),
-							icon: "sap-icon://sort-ascending",
-							action: [SortOrder.Ascending, this._onCustomSort, this]
-						}));
-						this._oPopover.addItem(new ColumnPopoverSelectListItem({
-							items: aDescendItems,
-							label: oResourceBundle.getText("table.SETTINGS_DESCENDING"),
-							icon: "sap-icon://sort-descending",
-							action: [SortOrder.Descending, this._onCustomSort, this]
-						}));
-					}
-				}
-
-				if (this.isFilteringEnabled()) {
-					var aFilterableProperties = this.getPropertyHelper().getProperty(oColumn.getDataProperty()).getFilterableProperties();
-
-					if (aFilterableProperties.length > 0) {
-						this._oPopover.addItem(new ColumnPopoverSelectListItem({
-							label: oResourceBundle.getText("table.SETTINGS_FILTER"),
-							icon: "sap-icon://filter",
-							action: [aFilterableProperties, onShowFilterDialog, this]
-						}));
-					}
-				}
-
-				var oDelegate = this.getControlDelegate();
-				var aItemsFromDelegate = (oDelegate.addColumnMenuItems && oDelegate.addColumnMenuItems(this, oColumn)) || [];
-
-				aItemsFromDelegate.forEach(function(oItem) {
-					this._oPopover.addItem(oItem);
-				}, this);
-
-				if (this.getEnableColumnResize()) {
-					this._oPopover.addItem(this._getType().createColumnResizeMenuItem(oColumn, this._oPopover));
-				}
-
-				if (this._oPopover.getItems().length > 0) {
-					this._oPopover.openBy(oColumn);
-				} else {
-					this._oPopover.destroy();
-					this._oPopover = null;
-				}
+			if (!this._oColumnHeaderMenu) {
+				this._oQuickActionContainer = new QuickActionContainer({table: this});
+				this._oItemContainer = new ItemContainer({table: this});
+				this._oColumnHeaderMenu = new ColumnMenu({
+					_quickActions: [this._oQuickActionContainer],
+					_items: [this._oItemContainer]
+				});
 			}
+			this._oQuickActionContainer.setAssociation("column", oColumn);
+			this._oItemContainer.setAssociation("column", oColumn);
+
+			Promise.all([
+				this._oQuickActionContainer.initializeQuickActions(),
+				this._oItemContainer.initializeItems()
+			]).then(function() {
+				if (this._oQuickActionContainer.hasQuickActions() || this._oItemContainer.hasItems()) {
+					this._oColumnHeaderMenu.openBy(oColumn);
+				}
+			}.bind(this));
 		}.bind(this));
 	};
 

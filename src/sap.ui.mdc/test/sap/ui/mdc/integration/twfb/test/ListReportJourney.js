@@ -135,7 +135,7 @@ sap.ui.define([
 		Then.iTeardownMyUIComponent();
 	});
 
-	opaTest("Table - check if sorting works correctly on Table via column header dialog", function(Given, When, Then) {
+	opaTest("Table - check if sorting works correctly on Table via column header menu", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
 		// check unsorted state

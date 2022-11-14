@@ -80,8 +80,8 @@ sap.ui.define([
 			MoveToTop: "sap-icon://collapse-group",
 			MoveUp: "sap-icon://slim-arrow-up",
 			MoveDown: "sap-icon://slim-arrow-down",
-			Ascending: "sap-icon://sort-ascending",
-			Descending: "sap-icon://sort-descending"
+			Ascending: TestUtil.getTextFromResourceBundle("sap.m", "table.COLUMNMENU_SORT_ASCENDING"),
+			Descending: TestUtil.getTextFromResourceBundle("sap.m", "table.COLUMNMENU_SORT_DESCENDING")
 		},
 		Filter:{
 			key: "Filter",

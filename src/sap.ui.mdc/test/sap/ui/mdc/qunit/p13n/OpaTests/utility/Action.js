@@ -146,7 +146,6 @@ sap.ui.define([
 			});
 		},
 
-
 		iChangeTheModificationHandler: function(sControlId, sModificationHandler) {
 			return this.waitFor({
 				id: sControlId,
@@ -301,6 +300,18 @@ sap.ui.define([
 						}).executeOn(oFilterField);
 					});
 				}
+			});
+		},
+
+		iPressOnButtonWithText: function (sText) {
+			return this.waitFor({
+				searchOpenDialogs: true,
+				controlType: "sap.m.Button",
+				matchers: new PropertyStrictEquals({
+					name: "text",
+					value: sText
+				}),
+				actions: new Press()
 			});
 		},
 

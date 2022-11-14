@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/actions/Press",
 	"../p13n/waitForP13nButtonWithMatchers",
 	"../p13n/waitForP13nDialog",
@@ -20,6 +21,7 @@ sap.ui.define([
 	Opa5,
 	Properties,
 	Ancestor,
+	PropertyStrictEquals,
 	Press,
 	waitForP13nButtonWithMatchers,
 	waitForP13nDialog,
@@ -182,27 +184,24 @@ sap.ui.define([
 				}
 			});
 		},
-		iClickOnAColumnHeaderMenuButtonWithIcon: function(sColumn, sIcon) {
+		iClickOnAColumnHeaderMenuButtonWithText: function(sColumn, sText) {
 			return waitForTable.call(this, {
 				success: function(oTable) {
 					waitForColumnHeader.call(this, {
 						table: oTable,
 						columnName: sColumn,
-						success: function(oColumn) {
+						success: function() {
 							this.waitFor({
-								controlType: "sap.m.Popover",
+								searchOpenDialogs: true,
+								controlType: "sap.m.Button",
 								matchers: [
-									new Ancestor(oColumn, false)
+									new PropertyStrictEquals({
+										name: "text",
+										value: sText
+									})
 								],
-								success: function(aPopovers) {
-									waitForP13nButtonWithParentAndIcon.call(this, {
-										parent: aPopovers[0],
-										icon: sIcon,
-										actions: new Press(),
-										errorMessage: "The column header menu button " + sIcon + " is not available"
-									});
-								},
-								errorMessage: "The column header toolbar popup is not available"
+								actions: new Press(),
+								errorMessage: "The column header menu button " + sText + " is not available"
 							});
 						}
 					});

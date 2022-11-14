@@ -348,7 +348,7 @@ sap.ui.define([
 
 		When.iClickOnColumn("Founding Year");
 
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Ascending);
+		When.iPressOnButtonWithText(Arrangement.P13nDialog.Sort.Ascending);
 
 		//open Dialog
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
@@ -370,7 +370,7 @@ sap.ui.define([
 
 		When.iClickOnColumn("Name");
 
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Descending);
+		When.iPressOnButtonWithText(Arrangement.P13nDialog.Sort.Descending);
 
 		//open Dialog
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
