@@ -957,7 +957,6 @@ sap.ui.define([
 
 		QUnit.test("when calling restore successfully in AppVariant", function(assert) {
 			assert.expect(2);
-			sandbox.stub(SmartVariantManagementApplyAPI, "isApplicationVariant").returns(true);
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
 				assert.deepEqual(arguments[0], {
 					selector: oComp,

@@ -55,13 +55,6 @@ sap.ui.define([
 		});
 	}
 
-	function appendComponentToString(sComponentName) {
-		if (sComponentName.length > 0 && sComponentName.indexOf(".Component") < 0) {
-			sComponentName += ".Component";
-		}
-		return sComponentName;
-	}
-
 	/**
 	 * Object containing data for a SmartVariantManagement control.
 	 *
@@ -119,39 +112,6 @@ sap.ui.define([
 					var sPersistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
 					return CompVariantMerger.merge(sPersistencyKey, mCompMaps, mPropertyBag.standardVariant);
 				});
-		},
-
-		/**
-		 * Indicates if the current application is a variant of an existing one.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
-		 * @returns {boolean} <code>true</code> if it's an application variant
-		 * @private
-		 * @ui5-restricted
-		 */
-		isApplicationVariant: function(mPropertyBag) {
-			var oControl = mPropertyBag.control;
-			var oAppComponent = Utils.getAppComponentForControl(oControl);
-			var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
-			var sAppId = appendComponentToString(ManifestUtils.getAppIdFromManifest(oAppComponent.getManifest()));
-
-			if (sFlexReference !== sAppId) {
-				return true;
-			}
-
-			var oComponent = Utils.getComponentForControl(oControl);
-
-			// special case for SmartTemplating to reach the real appComponent
-			if (oComponent && oComponent.getAppComponent) {
-				oComponent = oComponent.getAppComponent();
-
-				if (oComponent) {
-					return true;
-				}
-			}
-
-			return false;
 		},
 
 		/**
