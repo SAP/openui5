@@ -341,7 +341,6 @@ sap.ui.define([
 					assert.ok(this.oToolbar.getControl("undo").getVisible(), "undo is visible");
 					assert.ok(this.oToolbar.getControl("redo").getVisible(), "redo is visible");
 					assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is not visible");
-					assert.notOk(this.oToolbar.getControl("publish").getVisible(), "publish is hidden");
 					assert.notOk(this.oToolbar.getControl("restore").getVisible(), "restore is not visible");
 					assert.ok(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is visible");
 					assert.ok(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is visible");
@@ -361,7 +360,6 @@ sap.ui.define([
 					assert.notOk(this.oToolbar.getControl("undo").getVisible(), "undo is not visible");
 					assert.notOk(this.oToolbar.getControl("redo").getVisible(), "redo is not visible");
 					assert.notOk(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is not visible");
-					assert.notOk(this.oToolbar.getControl("publish").getVisible(), "publish is not visible");
 					assert.notOk(this.oToolbar.getControl("restore").getVisible(), "restore is not visible");
 					assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
 					assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is not visible");
@@ -382,7 +380,6 @@ sap.ui.define([
 					assert.notOk(this.oToolbar.getControl("undo").getVisible(), "undo is not visible");
 					assert.notOk(this.oToolbar.getControl("redo").getVisible(), "redo is not visible");
 					assert.ok(this.oToolbar.getControl("toggleChangeVisualizationMenuButton").getVisible(), "toggleChangeVisualizationMenuButton is visible");
-					assert.notOk(this.oToolbar.getControl("publish").getVisible(), "publish is not visible");
 					assert.ok(this.oToolbar.getControl("restore").getVisible(), "restore is visible");
 					assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
 					assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is not visible");
