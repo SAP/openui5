@@ -38,6 +38,14 @@
 						<Button text="Reset" type="Transparent" press="onReset"/>
 						<OverflowToolbarButton tooltip="Sort" type="Transparent" text="Sort" icon="sap-icon://sort" press="onSort"/>
 						<OverflowToolbarButton tooltip="Group" type="Transparent" text="Group" icon="sap-icon://group-2" press="onGroup"/>
+						<OverflowToolbarMenuButton tooltip="Export" text="Export" buttonMode="Split" type="Accept" icon="sap-icon://share" defaultAction="onDefaultActionAccept" beforeMenuOpen="onBeforeMenuOpen" useDefaultActionOnly="true">
+							<menu>
+								<Menu itemSelected="onMenuAction">
+									<MenuItem text="Export as PDF" icon="sap-icon://pdf-attachment" />
+									<MenuItem text="Export to Excel" icon="sap-icon://excel-attachment" />
+								</Menu>
+							</menu>
+						</OverflowToolbarMenuButton>
 					</OverflowToolbar>
 				</headerToolbar>
 				<columns>
