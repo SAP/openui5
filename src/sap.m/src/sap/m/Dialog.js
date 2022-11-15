@@ -12,6 +12,7 @@ sap.ui.define([
 	"./library",
 	"sap/m/Image",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Popup",
 	"sap/ui/core/delegate/ScrollEnablement",
@@ -30,8 +31,6 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
 	"sap/ui/dom/units/Rem",
-	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control",
 	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
 ],
@@ -44,6 +43,7 @@ function(
 	library,
 	Image,
 	Control,
+	Element,
 	IconPool,
 	Popup,
 	ScrollEnablement,
@@ -1949,7 +1949,7 @@ function(
 		 */
 		function isHeaderClicked(eventTarget) {
 			var $target = jQuery(eventTarget);
-			var oControl = $target.control(0);
+			var oControl = Element.closestTo(eventTarget);
 
 			// target is inside the content section
 			if ($target.parents('.sapMDialogSection').length) {

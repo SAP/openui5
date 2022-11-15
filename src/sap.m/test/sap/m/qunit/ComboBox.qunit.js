@@ -11654,6 +11654,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 * @deprecated As of version 1.62
+	 */
 	QUnit.module("Deprecated methods");
 
 	QUnit.test("log warning when trying to use ComboBox.getList().", function (assert) {
@@ -11837,7 +11840,7 @@ sap.ui.define([
 		assert.strictEqual(oListItem.getInfo(), "New additional text", "The list item info is updated.");
 	});
 
-	QUnit.test("Item should be maked as selecable after changing of enabled property", function (assert) {
+	QUnit.test("Item should be marked as selectable after changing of enabled property", function (assert) {
 		var oItem = new Item({
 			text: "Item 2",
 			enabled: false
@@ -11864,7 +11867,7 @@ sap.ui.define([
 
 		openComboBox();
 
-		var oList = oComboBox.getList();
+		var oList = oComboBox._getList();
 		var getVisibleListItems = function () {
 			return oList.getItems().filter(function (oElement) {
 				return oElement.getVisible();

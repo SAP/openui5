@@ -8,6 +8,7 @@ sap.ui.define([
 	'./Tokenizer',
 	'./Token',
 	'./library',
+	'sap/ui/core/Element',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectMetadata',
@@ -21,15 +22,14 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "cursorPos"
-	"sap/ui/dom/jquery/cursorPos",
-	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control"
+	"sap/ui/dom/jquery/cursorPos"
 ],
 function(
 	Input,
 	Tokenizer,
 	Token,
 	library,
+	Element,
 	EnabledPropagator,
 	ManagedObject,
 	ManagedObjectMetadata,
@@ -707,7 +707,7 @@ function(
 		}
 
 		// find focused element
-		var oFocusedElement = jQuery(document.activeElement).control()[0];
+		var oFocusedElement = Element.closestTo(document.activeElement);
 
 		if (!oFocusedElement) {
 			// we cannot rule out that the focused element does not correspond to an SAPUI5 control in which case oFocusedElement

@@ -343,6 +343,9 @@ sap.ui.define([
 		oIconTabBar.destroy();
 	});
 
+	/**
+	 * @deprecated As of 1.15.0.
+	 */
 	QUnit.test("getShowSelection()", function(assert) {
 
 		// Arrange
@@ -357,6 +360,9 @@ sap.ui.define([
 		oIconTabBar.destroy();
 	});
 
+	/**
+	 * @deprecated As of 1.15.0.
+	 */
 	QUnit.test("setShowSelection()", function(assert) {
 
 		// Arrange

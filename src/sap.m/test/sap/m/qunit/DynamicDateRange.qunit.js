@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/DynamicDateUtil",
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/format/DateFormat",
 	"sap/m/Button",
 	"sap/ui/core/Icon",
@@ -20,6 +21,7 @@ sap.ui.define([
 	DynamicDateUtil,
 	DateRange,
 	oCore,
+	Element,
 	DateFormat,
 	Button,
 	Icon,
@@ -1202,7 +1204,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// assert
-		assert.notOk(oDynamicDateRange.$("input").control(0)._getValueHelpIcon().getTooltip(), "icon tooltip is disabled");
+		assert.notOk(Element.closestTo(oDynamicDateRange.getDomRef("input"))._getValueHelpIcon().getTooltip(), "icon tooltip is disabled");
 
 		// cleanup
 		oDynamicDateRange.destroy();

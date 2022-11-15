@@ -50,7 +50,6 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 
 		var bar2 = new Bar("myBar2", {
-			enableFlexBox: true,
 			contentLeft: [ new Image({src: "../images/SAPUI5.jpg"})],
 			contentMiddle: [ new Label({text: "my Bar 1"})],
 			contentRight: [ new Button({text: "Edit"})]
@@ -173,21 +172,29 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("should add and remove the flexBox", function(assert) {
+	/**
+	 * @deprecated since version 1.16
+	 */
+	QUnit.test("Deprecated property 'enableFlexBox': should add and remove the flex box", function(assert) {
 
-		renderingTest.call(this, function() {
+		var bar = new Bar("myBar2", {
+			enableFlexBox: true,
+			contentLeft: [ new Image({src: "../images/SAPUI5.jpg"})],
+			contentMiddle: [ new Label({text: "my Bar 1"})],
+			contentRight: [ new Button({text: "Edit"})]
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
 
-			var bar2 = oCore.byId("myBar2");
-			assert.ok(jQuery("#myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should be a FlexBox with class sapMFlexBox");
-			assert.ok(jQuery("#myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should be a HBox with class sapMHBox");
-			bar2.setEnableFlexBox(false);
+		assert.ok(jQuery("#myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should be a FlexBox with class sapMFlexBox");
+		assert.ok(jQuery("#myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should be a HBox with class sapMHBox");
 
-			oCore.applyChanges();
+		bar.setEnableFlexBox(false);
+		oCore.applyChanges();
 
-			assert.ok(!jQuery("#myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should not be a FlexBox with class sapMFlexBox");
-			assert.ok(!jQuery("#myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should not be a HBox with class sapMHBox");
+		assert.ok(!jQuery("#myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should not be a FlexBox with class sapMFlexBox");
+		assert.ok(!jQuery("#myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should not be a HBox with class sapMHBox");
 
-		});
+		bar.destroy();
 	});
 
 	QUnit.test("Should set the translucent class if on a touch device", function(assert) {

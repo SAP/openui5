@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
+	"sap/ui/core/UIArea",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/ControlEvents",
@@ -36,6 +37,7 @@ sap.ui.define([
 	Control,
 	Core,
 	coreLibrary,
+	UIArea,
 	jQuery,
 	containsOrEquals,
 	ControlEvents,
@@ -161,7 +163,7 @@ sap.ui.define([
 		}
 
 		if (!this.getParent()) {
-			Core.getUIArea(Core.getStaticAreaRef()).addContent(this, true);
+			UIArea.registry.get(Core.getStaticAreaRef().id).addContent(this, true);
 		}
 
 		var oControl = oAnchor;

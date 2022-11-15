@@ -798,7 +798,8 @@ sap.ui.define([
 
 		oImage.$().on("load", function() {
 			assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
-			oImage.rerender();
+			oImage.invalidate(); // force re-rendering
+			Core.applyChanges();
 			oImage.$().on("load", function() {
 				assert.ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
 				oImage.destroy();

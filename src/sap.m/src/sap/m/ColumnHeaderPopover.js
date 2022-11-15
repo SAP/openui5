@@ -3,12 +3,16 @@
  */
 sap.ui.define([
 	'sap/ui/core/Control',
+	'sap/ui/core/Core',
+	'sap/ui/core/UIArea',
 	'sap/m/Toolbar',
 	'sap/m/Button',
 	'sap/m/ResponsivePopover',
 	'sap/m/ToolbarSpacer'
 ], function(
 	Control,
+	oCore,
+	UIArea,
 	Toolbar,
 	Button,
 	ResponsivePopover,
@@ -80,7 +84,7 @@ sap.ui.define([
 	ColumnHeaderPopover.prototype._createPopover = function() {
 		var that = this;
 		this._oShownCustomContent = null;
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oBundle = oCore.getLibraryResourceBundle("sap.m"),
 			sCloseText = oBundle.getText("COLUMNHEADERPOPOVER_CLOSE_BUTTON");
 
 		var oPopover = new ResponsivePopover(this.getId() + "-popover", {
@@ -165,8 +169,8 @@ sap.ui.define([
 		this._oToolbar.addContent(this._closeBtn);
 		// Append to static area of the UIArea once
 		if (!this._bAppendedToUIArea && !this.getParent()) {
-			var oStatic = sap.ui.getCore().getStaticAreaRef();
-			oStatic = sap.ui.getCore().getUIArea(oStatic);
+			var oStatic = oCore.getStaticAreaRef();
+			oStatic = UIArea.registry.get(oStatic.id);
 			oStatic.addContent(this, true);
 			this._bAppendedToUIArea = true;
 		}
