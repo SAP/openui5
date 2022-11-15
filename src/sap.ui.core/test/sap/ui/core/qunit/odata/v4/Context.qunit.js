@@ -443,7 +443,6 @@ sap.ui.define([
 
 			this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
 			this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-			this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
 			this.mock(oParentBinding).expects("hasPendingChangesForPath").withExactArgs(sPath)
 				.returns(false);
 			this.mock(oModel).expects("getDependentBindings")
@@ -478,8 +477,6 @@ sap.ui.define([
 
 			this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
 			this.mock(oContext).expects("isTransient").withExactArgs().returns(bTransient);
-			this.mock(oContext).expects("isDeleted").withExactArgs().exactly(bTransient ? 0 : 1)
-				.returns(false);
 			this.mock(oBinding).expects("hasPendingChangesForPath").exactly(bTransient ? 0 : 1)
 				.withExactArgs("/TEAMS('1')").returns(false);
 			this.mock(oModel).expects("getDependentBindings").exactly(bTransient ? 0 : 1)
@@ -493,8 +490,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bDeleted) {
-	QUnit.test("hasPendingChanges: deleted=" + bDeleted, function (assert) {
+[false, true].forEach(function (bDeletePending) {
+	QUnit.test("hasPendingChanges: deleted, bDeletePending=" + bDeletePending, function (assert) {
 		var oBinding = {
 				hasPendingChangesForPath : function () {}
 			},
@@ -504,18 +501,20 @@ sap.ui.define([
 			},
 			oContext = Context.create(oModel, oBinding, "/TEAMS('1')", 0);
 
+		oContext.oDeletePromise = bDeletePending
+			? new SyncPromise(function () {})
+			: SyncPromise.resolve();
 		this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("isDeleted").withExactArgs().returns(bDeleted);
-		this.mock(oBinding).expects("hasPendingChangesForPath").exactly(bDeleted ? 0 : 1)
+		this.mock(oBinding).expects("hasPendingChangesForPath").exactly(bDeletePending ? 0 : 1)
 			.withExactArgs("/TEAMS('1')").returns(false);
-		this.mock(oModel).expects("getDependentBindings").exactly(bDeleted ? 0 : 1)
+		this.mock(oModel).expects("getDependentBindings").exactly(bDeletePending ? 0 : 1)
 			.withExactArgs(sinon.match.same(oContext)).returns([]);
-		this.mock(oModel).expects("withUnresolvedBindings").exactly(bDeleted ? 0 : 1)
+		this.mock(oModel).expects("withUnresolvedBindings").exactly(bDeletePending ? 0 : 1)
 			.withExactArgs("hasPendingChangesInCaches", "TEAMS('1')").returns(false);
 
 		// code under test
-		assert.strictEqual(oContext.hasPendingChanges(), bDeleted);
+		assert.strictEqual(oContext.hasPendingChanges(), bDeletePending);
 	});
 });
 
@@ -533,7 +532,6 @@ sap.ui.define([
 
 		this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
 		this.mock(oBinding).expects("hasPendingChangesForPath")
 			.withExactArgs("/TEAMS('1')").returns(bForPath);
 		this.mock(oModel).expects("getDependentBindings").exactly(bForPath ? 0 : 1)
@@ -1167,15 +1165,15 @@ sap.ui.define([
 		oDeletePromise = oContext.delete(sGroupId, "~bDoNotRequestCount~");
 
 		assert.ok(oDeletePromise instanceof Promise);
-		assert.strictEqual(oContext.oDeletePromise, oDeletePromise);
+		assert.ok(oContext.oDeletePromise.isPending());
 		assert.strictEqual(oContext.isDeleted(), true);
 
 		// code under test
 		assert.strictEqual(oContext.toString(), "/Foo/Bar('42')[42;deleted]");
 
 		return oDeletePromise.then(function () {
-			assert.strictEqual(oContext.isDeleted(), false);
-			assert.strictEqual(oContext.oDeletePromise, null);
+			assert.strictEqual(oContext.isDeleted(), true);
+			assert.ok(oContext.oDeletePromise.isFulfilled());
 		}, function () {
 			assert.notOk(true);
 		});
@@ -1465,6 +1463,7 @@ sap.ui.define([
 			};
 		}
 		oContext.bKeepAlive = "~bKeepAlive~";
+		oContext.oDeletePromise = "~oDeletePromise~";
 		oContext.setNewGeneration();
 		iGeneration = oContext.getGeneration(true);
 
@@ -1483,6 +1482,7 @@ sap.ui.define([
 		assert.strictEqual(oContext.sPath, "/EMPLOYEES/42");
 		assert.strictEqual(oContext.iIndex, 42); // Note: sPath and iIndex mainly define #toString
 		assert.strictEqual(oContext.bKeepAlive, undefined);
+		assert.strictEqual(oContext.oDeletePromise, "~oDeletePromise~");
 		assert.strictEqual(oContext.created(), undefined);
 		assert.strictEqual(oContext.getGeneration(true), iGeneration, "generation is kept");
 		assert.strictEqual(oContext.isInactive(), undefined);

@@ -1116,7 +1116,7 @@ sap.ui.define([
 	 * Removes and destroys contexts from mPreviousContextsByPath.
 	 *
 	 * @param {string[]} [aPathsToDelete]
-	 *   If given, only contexts with paths in this list except kept-alive and deleted ones are
+	 *   If given, only contexts with paths in this list except kept-alive and pending deletes are
 	 *   removed and destroyed (transient contexts are removed only); otherwise all contexts in the
 	 *   list are removed and destroyed
 	 *
@@ -1130,7 +1130,8 @@ sap.ui.define([
 				var oContext = mPreviousContextsByPath[sPath];
 
 				if (oContext) {
-					if (aPathsToDelete && (oContext.isKeepAlive() || oContext.isDeleted())) {
+					if (aPathsToDelete && (oContext.isKeepAlive()
+							|| oContext.oDeletePromise && oContext.oDeletePromise.isPending())) {
 						oContext.iIndex = undefined;
 					} else {
 						if (!oContext.isTransient()) {
@@ -1148,7 +1149,7 @@ sap.ui.define([
 	 * prerendering task.
 	 *
 	 * @param {string[]} aPathsToDelete
-	 *   Only contexts with paths in this list except kept-alive and deleted ones are removed and
+	 *   Only contexts with paths in this list except kept-alive and pending deletes are removed and
 	 *   destroyed (transient contexts are removed only)
 	 *
 	 * @private
