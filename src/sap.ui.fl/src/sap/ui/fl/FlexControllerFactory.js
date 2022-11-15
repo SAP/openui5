@@ -109,7 +109,6 @@ sap.ui.define([
 				return Promise.resolve(oResult);
 			}
 
-			window.sessionStorage.removeItem("sap.ui.rta.restart." + Layer.CUSTOMER);
 			return new Promise(function (resolve, reject) {
 				Promise.all([
 					sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true}),
