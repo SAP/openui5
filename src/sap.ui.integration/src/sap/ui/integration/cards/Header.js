@@ -239,7 +239,7 @@ sap.ui.define([
 			this._oDataProvider.destroy();
 		}
 
-		this._oDataProvider = oCard.getDataProviderFactory().create(oDataSettings, this._oServiceManager);
+		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
 		this.getAggregation("_loadingProvider").setDataProvider(this._oDataProvider);
 

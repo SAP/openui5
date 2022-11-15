@@ -73,6 +73,7 @@ sap.ui.define([
 		var oSelect = this._getSelect();
 
 		oSelect.setSelectedKey(this.getValue().value);
+		this._syncValue();
 	};
 
 	/**
