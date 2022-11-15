@@ -83,6 +83,7 @@ sap.ui.define([
 								bLineItemSelected : false,
 								iMessages : 0,
 								bRealOData : TestUtils.isRealOData(),
+								bSalesOrderDeleted : false,
 								bSalesOrderSelected : false,
 								bScheduleSelected : false,
 								bSelectedSalesOrderItemTransient : false,

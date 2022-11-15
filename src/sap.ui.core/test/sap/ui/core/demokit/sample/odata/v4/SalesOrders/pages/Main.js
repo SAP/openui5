@@ -447,6 +447,9 @@ sap.ui.define([
 				pressRefreshSelectedSalesOrdersButton : function () {
 					pressButton(this, "refreshSelectedSalesOrder");
 				},
+				pressUndoSalesOrderDeletionButton : function () {
+					pressButton(this, "undoSalesOrderDeletion");
+				},
 				pressSaveSalesOrderButton : function () {
 					pressButton(this, "saveSalesOrder");
 				},
@@ -1020,6 +1023,18 @@ sap.ui.define([
 								iExpectedLength,
 								"Expected length for table with ID " + sTableId + ": "
 									+ iExpectedLength);
+						},
+						viewName : sViewName
+					});
+				},
+				checkUndoSalesOrderDeletionButtonIsEnabled : function (bEnabled) {
+					this.waitFor({
+						controlType : "sap.m.Button",
+						enabled : bEnabled,
+						id : "undoSalesOrderDeletion",
+						success : function (oPage) {
+							Opa5.assert.strictEqual(oPage.getEnabled(), bEnabled,
+								"Undo Button is " + (bEnabled ? "enabled" : "disabled"));
 						},
 						viewName : sViewName
 					});

@@ -46155,19 +46155,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: (1) Context#resetChanges within an absolute ODLB (only PATCHes)
-	// Patch two entities, call Context#resetChanges for one of those, submit the batch and see that
-	// only the remaining PATCH is sent.
+	// Scenario: (1+2) Context#resetChanges within an absolute ODLB (only PATCHes, and DELETEs)
+	// Patch two entities, patch and delete a third entity, delete a fourth entity, call
+	// Context#resetChanges for first and the third entity, submit the batch and see that only the
+	// remaining PATCH request and the remaining DELETE request are sent.
 	//
 	// JIRA: CPOUI5ODATAV4-1786
-	QUnit.test("CPOUI5ODATAV4-1786: (1) Context#resetChanges absolute ODLB", function (assert) {
+	QUnit.test("CPOUI5ODATAV4-1786: (1+2) Context#resetChanges absolute ODLB", function (assert) {
 		var oBinding,
 			oContext1,
 			oContext2,
+			oContext3,
+			oContext4,
+			oDeletePromise3,
+			oDeletePromise4,
 			oModel = this.createSalesOrdersModel({updateGroupId : "update"}),
 			oPatchPromise1,
 			oPatchPromise2,
-			fnResolve,
+			oPatchPromise3,
+			fnResolveDelete,
+			fnResolvePatch,
 			oSubmitBatchPromise,
 			sView = '\
 <Table id="orders" items="{/SalesOrderList}">\
@@ -46178,78 +46185,126 @@ sap.ui.define([
 		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
 				value : [
 					{SalesOrderID : "1", Note : "Order 1"},
-					{SalesOrderID : "2", Note : "Order 2"}
+					{SalesOrderID : "2", Note : "Order 2"},
+					{SalesOrderID : "3", Note : "Order 3"},
+					{SalesOrderID : "4", Note : "Order 4"}
 				]
 			})
-			.expectChange("note", ["Order 1", "Order 2"]);
+			.expectChange("note", ["Order 1", "Order 2", "Order 3", "Order 4"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oBinding = that.oView.byId("orders").getBinding("items");
-			oContext1 = oBinding.getCurrentContexts()[0];
-			oContext2 = oBinding.getCurrentContexts()[1];
+			var aContexts;
 
-			that.expectChange("note", ["Order 1 changed", "Order 2 changed"]);
+			oBinding = that.oView.byId("orders").getBinding("items");
+			aContexts = oBinding.getCurrentContexts();
+			oContext1 = aContexts[0]; // patched context to be reset
+			oContext2 = aContexts[1]; // PATCH to be submitted
+			oContext3 = aContexts[2]; // patched+deleted context to be reset and undeleted
+			oContext4 = aContexts[3]; // DELETE to be submitted
+
+			that.expectChange("note", ["Order 1 changed", "Order 2 changed", "Order 3 changed"]);
 
 			oPatchPromise1 = oContext1.setProperty("Note", "Order 1 changed");
 			oPatchPromise2 = oContext2.setProperty("Note", "Order 2 changed");
+			oPatchPromise3 = oContext3.setProperty("Note", "Order 3 changed");
+			oDeletePromise3 = oContext3.delete();
+			oDeletePromise4 = oContext4.delete();
 
 			assert.ok(oContext1.hasPendingChanges());
 			assert.ok(oContext2.hasPendingChanges());
+			assert.ok(oContext3.hasPendingChanges());
+			assert.ok(oContext3.isDeleted());
+			assert.ok(oContext4.hasPendingChanges());
+			assert.ok(oContext4.isDeleted());
 			assert.ok(oBinding.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges());
 
 			return that.waitForChanges(assert, "patch entities");
 		}).then(function () {
-			var oResetChangesPromise;
-
 			that.expectCanceledError("Failed to update path /SalesOrderList('1')/Note",
 					"Request canceled: PATCH SalesOrderList('1'); group: update")
 				.expectChange("note", ["Order 1"]);
 
-			// code under test
-			oResetChangesPromise = oContext1.resetChanges();
-
-			// changes reset synchronously
-			assert.notOk(oContext1.hasPendingChanges());
-			assert.ok(oContext2.hasPendingChanges());
-			assert.ok(oBinding.hasPendingChanges());
-			assert.ok(oModel.hasPendingChanges());
-
 			return Promise.all([
-				oResetChangesPromise.then(function () {
+				// code under test
+				oContext1.resetChanges().then(function () {
 					assert.notOk(oContext1.hasPendingChanges());
+					assert.ok(oContext2.hasPendingChanges());
+					assert.ok(oContext3.hasPendingChanges());
+					assert.ok(oContext3.isDeleted());
+					assert.ok(oContext4.hasPendingChanges());
+					assert.ok(oContext4.isDeleted());
+					assert.ok(oBinding.hasPendingChanges());
+					assert.ok(oModel.hasPendingChanges());
 				}),
 				checkCanceled(assert, oPatchPromise1),
 				that.waitForChanges(assert, "reset one patched entity")
 			]);
 		}).then(function () {
+			that.expectCanceledError("Failed to update path /SalesOrderList('3')/Note",
+					"Request canceled: PATCH SalesOrderList('3'); group: update")
+				.expectCanceledError("Failed to delete /SalesOrderList('3')",
+					"Request canceled: DELETE SalesOrderList('3'); group: update")
+				.expectChange("note", [,, "Order 3"]);
+
+			return Promise.all([
+				// code under test
+				oContext3.resetChanges().then(function () {
+					assert.notOk(oContext1.hasPendingChanges());
+					assert.ok(oContext2.hasPendingChanges());
+					assert.notOk(oContext3.hasPendingChanges());
+					assert.notOk(oContext3.isDeleted());
+					assert.ok(oContext4.hasPendingChanges());
+					assert.ok(oContext4.isDeleted());
+					assert.ok(oBinding.hasPendingChanges());
+					assert.ok(oModel.hasPendingChanges());
+				}),
+				checkCanceled(assert, oPatchPromise3),
+				checkCanceled(assert, oDeletePromise3),
+				that.waitForChanges(assert, "reset one patched+deleted entity")
+			]);
+		}).then(function () {
 			that.expectRequest({
+					batchNo : 2,
 					method : "PATCH",
 					url : "SalesOrderList('2')",
 					payload : {Note : "Order 2 changed"}
 				}, new Promise(function (resolve) {
-					fnResolve = resolve;
-			}));
+					fnResolvePatch = resolve;
+				}))
+				.expectRequest({
+					batchNo : 2,
+					method : "DELETE",
+					url : "SalesOrderList('4')"
+				}, new Promise(function (resolve) {
+					fnResolveDelete = resolve;
+				}));
 
 			oSubmitBatchPromise = oModel.submitBatch("update");
 
-			return that.waitForChanges(assert, "submit remaining change");
+			return that.waitForChanges(assert, "submit remaining change and deletion");
 		}).then(function () {
 			assert.throws(function () {
 				// code under test
 				oContext2.resetChanges();
 			}, new Error("Cannot reset the changes, the batch request is running"));
 
-			fnResolve(); // 204 No Content
+			fnResolvePatch(); // 204 No Content
+			fnResolveDelete(); // 204 No Content
 
 			return Promise.all([
 				oPatchPromise2,
+				oDeletePromise4,
 				oSubmitBatchPromise,
 				that.waitForChanges(assert, "throw error during running $batch")
 			]);
 		}).then(function () {
 			assert.notOk(oContext1.hasPendingChanges());
 			assert.notOk(oContext2.hasPendingChanges());
+			assert.notOk(oContext3.hasPendingChanges());
+			assert.notOk(oContext3.isDeleted());
+			assert.notOk(oContext4.hasPendingChanges());
+			assert.notOk(oContext4.isDeleted());
 			assert.notOk(oBinding.hasPendingChanges());
 			assert.notOk(oModel.hasPendingChanges());
 		});

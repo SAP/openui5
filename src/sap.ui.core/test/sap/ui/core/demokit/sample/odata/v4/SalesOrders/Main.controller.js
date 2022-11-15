@@ -269,6 +269,8 @@ sap.ui.define([
 				that = this;
 
 			this.setSalesOrderBindingContext(null); // hide the object page
+			this.aDeletedSalesOrders.push(oContext);
+			this.updateUndoButton();
 			oContext.delete().catch(function (oError) {
 				var oItem;
 
@@ -285,6 +287,9 @@ sap.ui.define([
 					MessageToast.show("Could not delete sales order "
 						+ oContext.getProperty("SalesOrderID"));
 				}
+			}).finally(function () {
+				that.aDeletedSalesOrders.splice(that.aDeletedSalesOrders.indexOf(oContext), 1);
+				that.updateUndoButton();
 			});
 		},
 
@@ -436,6 +441,7 @@ sap.ui.define([
 
 			this.byId("highlight").bindProperty("highlight", oHighlightBindingInfo);
 			this.byId("itemHighlight").bindProperty("highlight", oHighlightBindingInfo);
+			this.aDeletedSalesOrders = [];
 		},
 
 		onProductIDChanged : function (oEvent) {
@@ -604,6 +610,14 @@ sap.ui.define([
 			oBinding.setValue(oDateFormat.format(new Date()));
 		},
 
+		onUndoSalesOrderDeletion : function () {
+			var oContext = this.aDeletedSalesOrders[this.aDeletedSalesOrders.length - 1];
+
+			oContext.resetChanges().then(function () {
+				MessageToast.show("Sales order restored: " + oContext.getProperty("SalesOrderID"));
+			});
+		},
+
 		produceTechnicalError : function () {
 			var oViewElement = this.byId("favoriteProduct");
 
@@ -746,6 +760,11 @@ sap.ui.define([
 			return oView.getModel().submitBatch(sGroupId).finally(function () {
 				oView.setBusy(false);
 			});
+		},
+
+		updateUndoButton : function () {
+			this.getView().getModel("ui").setProperty("/bSalesOrderDeleted",
+				this.aDeletedSalesOrders.length > 0);
 		}
 	});
 });

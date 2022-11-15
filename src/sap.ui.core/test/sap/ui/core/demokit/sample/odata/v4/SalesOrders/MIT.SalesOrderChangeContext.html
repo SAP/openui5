@@ -21,16 +21,33 @@
 			<li> local: <a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders">http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders</a></li>
 		</ul>
 		<h2>REALIZE and CHECK</h2>
-		<h3>Test Context#resetChanges for a Sales Order</h3>
+		<h3>Test Context#resetChanges for Sales Orders</h3>
 		<ol>
-			<li>Select a Sales Order.</li>
-			<li>Change the note of the Sales Order (in the table row cell).</li>
-			<li>Select another Sales Order.</li>
-			<li>Change the note of the second Sales Order.</li>
+			<li><b>Press</b> the <code>More</code> button in the <code>Sales Orders</code> table.
+				</li>
+			<li>Select the 3rd Sales Order.</li>
+			<li>Change the note of the selected Sales Order (in the table row cell).</li>
+			<li>Select the 4th Sales Order.</li>
+			<li>Change the note of the selected Sales Order.</li>
 			<li>Press the <code>Reset changes for selected Sales Order</code> Button.</li>
-			<li><b>Check:</b> That the note in the selected Sales Order only is reset.</li>
+			<li><b>Check:</b> That the note in the 4th Sales Order only is restored.</li>
+			<li>Select the 5th Sales Order.</li>
+			<li>Change the note of the selected Sales Order.</li>
+			<li><b>Check:</b> That the <code>Undo</code> Button is disabled.</li>
+			<li>Press on the <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> That the deleted Sales Order is gone.</li>
+			<li><b>Check:</b> That the <code>Undo</code> Button is enabled.</li>
+			<li>Select the 5th Sales Order (the Sales Order below the deleted one before).</li>
+			<li>Press on the <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> That the deleted Sales Order is gone.</li>
+			<li>Press on the <code>Undo</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> That the last deleted Sales Order is restored.</li>
+			<li>Press on the <code>Undo</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> That the first deleted Sales Order is restored with its initial
+				value.</li>
+			<li><b>Check:</b> That the <code>Undo</code> Button is disabled.</li>
 			<li>Press the <code>Cancel sales order list changes</code> button.</li>
-			<li><b>Check:</b> That the note for the first changed Sales Order also is reset.</li>
+			<li><b>Check:</b> That the note for the first changed Sales Order also is restored.</li>
 		</ol>
 		<h3>Change a sales order line item, change sales order context</h3>
 		<ol>
