@@ -1509,6 +1509,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				},
+				"narrow": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				},
+				"wide": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				},
+				"narrow": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				},
+				"wide": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "antes de Cristo",
 			"1": "depois de Cristo"
@@ -1980,6 +2034,60 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				},
+				"narrow": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				},
+				"wide": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				},
+				"narrow": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				},
+				"wide": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				}
 			}
 		},
 		"era-wide": {
@@ -2458,6 +2566,60 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				},
+				"narrow": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				},
+				"wide": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				},
+				"narrow": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				},
+				"wide": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				}
 			}
 		},
 		"era-wide": {
@@ -2942,6 +3104,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				},
+				"narrow": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				},
+				"wide": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				},
+				"narrow": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				},
+				"wide": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3410,6 +3626,60 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				},
+				"narrow": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				},
+				"wide": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "da manhã",
+					"afternoon1": "da tarde",
+					"evening1": "da noite",
+					"night1": "da madrugada"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				},
+				"narrow": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				},
+				"wide": {
+					"midnight": "meia-noite",
+					"noon": "meio-dia",
+					"morning1": "manhã",
+					"afternoon1": "tarde",
+					"evening1": "noite",
+					"night1": "madrugada"
+				}
 			}
 		},
 		"era-wide": {
@@ -5270,6 +5540,30 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "19:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "24:00",
+			"_from": "19:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "06:00",
+			"_from": "00:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

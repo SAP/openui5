@@ -259,6 +259,138 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		},
 
 		/**
+		 * Get flexible day periods in style format "abbreviated", "narrow" or "wide".
+		 *
+		 * @param {string} sWidth
+		 *   The required width for the flexible day period names
+		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 *   The type of calendar. If it's not set, it falls back to the calendar type either set in
+		 *   configuration or calculated from locale.
+		 * @returns {object|undefined}
+		 *   Object of flexible day periods or 'undefined' if none can be found
+		 *
+		 * @example <caption>Output</caption>
+		 * {
+		 *   "midnight": "midnight",
+		 *   "noon": "noon",
+		 *   "morning1": "in the morning",
+		 *   "afternoon1": "in the afternoon",
+		 *   "evening1": "in the evening",
+		 *   "night1": "at night"
+		 * }
+		 *
+		 * @private
+		 */
+		getFlexibleDayPeriods : function (sWidth, sCalendarType) {
+			return this._get(getCLDRCalendarName(sCalendarType), "flexibleDayPeriods", "format",
+				sWidth);
+		},
+
+		/**
+		 * Get flexible day periods in style format "abbreviated", "narrow" or "wide" for case
+		 * "stand-alone".
+		 *
+		 * @param {string} sWidth
+		 *   The required width for the flexible day period names
+		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 *   The type of calendar. If it's not set, it falls back to the calendar type either set in
+		 *   configuration or calculated from locale.
+		 * @returns {object|undefined}
+		 *   Object of flexible day periods or 'undefined' if none can be found
+		 *
+		 * @example <caption>Output</caption>
+		 * {
+		 *   "midnight": "midnight",
+		 *   "noon": "noon",
+		 *   "morning1": "in the morning",
+		 *   "afternoon1": "in the afternoon",
+		 *   "evening1": "in the evening",
+		 *   "night1": "at night"
+		 * }
+		 *
+		 * @private
+		 */
+		getFlexibleDayPeriodsStandAlone : function (sWidth, sCalendarType) {
+			return this._get(getCLDRCalendarName(sCalendarType), "flexibleDayPeriods",
+				"stand-alone", sWidth);
+		},
+
+		/**
+		 * Get flexible day period of time or a point in time
+		 *
+		 * @param {int} iHour Hour
+		 * @param {int} iMinute Minute
+		 * @returns {string} Key of flexible day period of time e.g. <code>afternoon2</code>
+		 *
+		 * @private
+		 */
+		getFlexibleDayPeriodOfTime : function (iHour, iMinute) {
+			var iAbsoluteMinutes, oDayPeriodRules, sPeriodMatch;
+
+			iAbsoluteMinutes = (iHour * 60 + iMinute) % 1440;
+			oDayPeriodRules = this._get("dayPeriodRules");
+
+			function parseToAbsoluteMinutes(sValue) {
+				var aSplit = sValue.split(":"),
+					sHour = aSplit[0],
+					sMinute = aSplit[1];
+
+				return parseInt(sHour) * 60 + parseInt(sMinute);
+			}
+
+			// unfortunately there are some overlaps:
+			// e.g. en.json
+			// "afternoon1": {
+			//   "_before": "18:00",
+			//   "_from": "12:00"
+			// },
+			// "noon": {
+			//   "_at": "12:00"
+			// }
+			// -> 12:00 can be either "noon" or "afternoon1" because "_from" is inclusive
+			// therefore first check all exact periods
+
+			sPeriodMatch = Object.keys(oDayPeriodRules).find(function (sDayPeriodRule) {
+				var oDayPeriodRule = oDayPeriodRules[sDayPeriodRule];
+
+				return oDayPeriodRule["_at"] &&
+					parseToAbsoluteMinutes(oDayPeriodRule["_at"]) === iAbsoluteMinutes;
+			});
+			if (sPeriodMatch) {
+				return sPeriodMatch;
+			}
+
+			return Object.keys(oDayPeriodRules).find(function (sDayPeriodRule) {
+				var iEndValue, aIntervals, iStartValue,
+					oDayPeriodRule = oDayPeriodRules[sDayPeriodRule];
+
+				if (oDayPeriodRule["_at"]) {
+					return false;
+				}
+
+				iStartValue = parseToAbsoluteMinutes(oDayPeriodRule["_from"]);
+				iEndValue = parseToAbsoluteMinutes(oDayPeriodRule["_before"]);
+
+				// periods which span across days need to be split into individual intervals
+				// e.g. "22:00 - 03:00" becomes "22:00 - 24:00" and "00:00 - 03:00"
+				if (iStartValue > iEndValue) {
+					aIntervals = [
+						{start : iStartValue, end : 1440}, // 24 * 60
+						{start : 0, end : iEndValue}
+					];
+				} else {
+					aIntervals = [
+						{start : iStartValue, end : iEndValue}
+					];
+				}
+
+				return aIntervals.some(function (oInterval) {
+					return oInterval.start <= iAbsoluteMinutes && oInterval.end > iAbsoluteMinutes;
+				});
+			});
+		},
+
+		/**
 		 * Get time pattern in style "short", "medium", "long" or "full".
 		 *
 		 * @param {string} sStyle the required style for the date pattern

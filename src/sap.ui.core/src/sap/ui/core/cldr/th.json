@@ -1626,6 +1626,72 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"narrow": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "เช้า",
+					"afternoon1": "เที่ยง",
+					"afternoon2": "บ่าย",
+					"evening1": "เย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"wide": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"narrow": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "เช้า",
+					"afternoon1": "ช่วงเที่ยง",
+					"afternoon2": "บ่าย",
+					"evening1": "เย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"wide": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "ปีก่อนคริสตกาล",
 			"1": "คริสต์ศักราช"
@@ -2106,6 +2172,72 @@
 					"ก่อนเที่ยง",
 					"หลังเที่ยง"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"narrow": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "เช้า",
+					"afternoon1": "เที่ยง",
+					"afternoon2": "บ่าย",
+					"evening1": "เย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"wide": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"narrow": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "เช้า",
+					"afternoon1": "ช่วงเที่ยง",
+					"afternoon2": "บ่าย",
+					"evening1": "เย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"wide": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				}
 			}
 		},
 		"era-wide": {
@@ -2594,6 +2726,72 @@
 					"ก่อนเที่ยง",
 					"หลังเที่ยง"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"narrow": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "เช้า",
+					"afternoon1": "เที่ยง",
+					"afternoon2": "บ่าย",
+					"evening1": "เย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"wide": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"narrow": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "เช้า",
+					"afternoon1": "ช่วงเที่ยง",
+					"afternoon2": "บ่าย",
+					"evening1": "เย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"wide": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				}
 			}
 		},
 		"era-wide": {
@@ -3087,6 +3285,72 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"narrow": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "เช้า",
+					"afternoon1": "เที่ยง",
+					"afternoon2": "บ่าย",
+					"evening1": "เย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"wide": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"narrow": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "เช้า",
+					"afternoon1": "ช่วงเที่ยง",
+					"afternoon2": "บ่าย",
+					"evening1": "เย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"wide": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "ปีเปอร์เซีย"
 		},
@@ -3566,6 +3830,72 @@
 					"ก่อนเที่ยง",
 					"หลังเที่ยง"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"narrow": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "เช้า",
+					"afternoon1": "เที่ยง",
+					"afternoon2": "บ่าย",
+					"evening1": "เย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"wide": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"narrow": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "เช้า",
+					"afternoon1": "ช่วงเที่ยง",
+					"afternoon2": "บ่าย",
+					"evening1": "เย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				},
+				"wide": {
+					"midnight": "เที่ยงคืน",
+					"noon": "เที่ยง",
+					"morning1": "ในตอนเช้า",
+					"afternoon1": "ในตอนบ่าย",
+					"afternoon2": "บ่าย",
+					"evening1": "ในตอนเย็น",
+					"evening2": "ค่ำ",
+					"night1": "กลางคืน"
+				}
 			}
 		},
 		"era-wide": {
@@ -5261,6 +5591,38 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "13:00",
+			"_from": "12:00"
+		},
+		"afternoon2": {
+			"_before": "16:00",
+			"_from": "13:00"
+		},
+		"evening1": {
+			"_before": "18:00",
+			"_from": "16:00"
+		},
+		"evening2": {
+			"_before": "21:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "06:00",
+			"_from": "21:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	},
 	"calendarPreference": "buddhist gregorian"

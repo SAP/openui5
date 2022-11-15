@@ -1586,6 +1586,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				},
+				"narrow": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				},
+				"wide": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				},
+				"narrow": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				},
+				"wide": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "avanti Cristo",
 			"1": "dopo Cristo"
@@ -2054,6 +2108,60 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				},
+				"narrow": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				},
+				"wide": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				},
+				"narrow": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				},
+				"wide": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				}
 			}
 		},
 		"era-wide": {
@@ -2529,6 +2637,60 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				},
+				"narrow": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				},
+				"wide": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				},
+				"narrow": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				},
+				"wide": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				}
 			}
 		},
 		"era-wide": {
@@ -3010,6 +3172,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				},
+				"narrow": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				},
+				"wide": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				},
+				"narrow": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				},
+				"wide": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3475,6 +3691,60 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				},
+				"narrow": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				},
+				"wide": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "di mattina",
+					"afternoon1": "del pomeriggio",
+					"evening1": "di sera",
+					"night1": "di notte"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				},
+				"narrow": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				},
+				"wide": {
+					"midnight": "mezzanotte",
+					"noon": "mezzogiorno",
+					"morning1": "mattina",
+					"afternoon1": "pomeriggio",
+					"evening1": "sera",
+					"night1": "notte"
+				}
 			}
 		},
 		"era-wide": {
@@ -5415,6 +5685,30 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "24:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "06:00",
+			"_from": "00:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

@@ -692,6 +692,18 @@ sap.ui.define([
 		this.aDayPeriodsAbbrev = this.oLocaleData.getDayPeriods("abbreviated", sCalendarType);
 		this.aDayPeriodsNarrow = this.oLocaleData.getDayPeriods("narrow", sCalendarType);
 		this.aDayPeriodsWide = this.oLocaleData.getDayPeriods("wide", sCalendarType);
+		this.oFlexibleDayPeriodsAbbrev = this.oLocaleData.getFlexibleDayPeriods("abbreviated",
+			sCalendarType);
+		this.oFlexibleDayPeriodsNarrow = this.oLocaleData.getFlexibleDayPeriods("narrow",
+			sCalendarType);
+		this.oFlexibleDayPeriodsWide = this.oLocaleData.getFlexibleDayPeriods("wide",
+			sCalendarType);
+		this.oFlexibleDayPeriodsAbbrevSt = this.oLocaleData.getFlexibleDayPeriodsStandAlone(
+			"abbreviated", sCalendarType);
+		this.oFlexibleDayPeriodsNarrowSt = this.oLocaleData.getFlexibleDayPeriodsStandAlone(
+			"narrow", sCalendarType);
+		this.oFlexibleDayPeriodsWideSt = this.oLocaleData.getFlexibleDayPeriodsStandAlone(
+			"wide", sCalendarType);
 		this.aFormatArray = this.parseCldrDatePattern(this.oFormatOptions.pattern);
 		this.sAllowedCharacters = this.getAllowedCharacters(this.aFormatArray);
 	};
@@ -1602,6 +1614,104 @@ sap.ui.define([
 				};
 			}
 		},
+		"B" : {
+			name : "flexibleDayPeriod",
+			/**
+			 * Formats the flexible day period.
+			 *
+			 * @param {Object<string, any>} oField
+			 *   The date pattern field as parsed by {@link DateFormat#parseCldrDatePattern}
+			 * @param {int} oField.digits
+			 *   The number of repetitions of the pattern symbol, e.g. <code>3</code> for "BBB"
+			 * @param {sap.ui.core.date.UniversalDate} oDate
+			 *   The date object to format
+			 * @param {boolean} bUTC
+			 *   Whether the UTC option is set; not used
+			 * @param {sap.ui.core.format.DateFormat} oFormat
+			 *   The <code>DateFormat</code> instance
+			 * @returns {string}
+			 *   The selected day period e.g. "in the afternoon" for the according style width
+			 *   "abbreviated", "narrow" or "wide"
+			 */
+			format : function (oField, oDate, bUTC, oFormat) {
+				// If no hours symbol is contained in the pattern, the stand-alone format must be
+				// used. Only non-input skeleton symbols are used. The pattern symbols for hour can
+				// be found under:
+				// https://unicode.org/reports/tr35/tr35-dates.html#dfst-hour
+				var bContainsHour = oFormat.aFormatArray.some(function (oFormatElement) {
+						return "hHKk".includes(oFormatElement.symbol);
+					}),
+					sFlexibleDayPeriod = oFormat.oLocaleData.getFlexibleDayPeriodOfTime(
+						oDate.getUTCHours(), oDate.getUTCMinutes());
+
+				if (bContainsHour) {
+					if (oField.digits <= 3) {
+						return oFormat.oFlexibleDayPeriodsAbbrev[sFlexibleDayPeriod];
+					}
+					if (oField.digits === 4) {
+						return oFormat.oFlexibleDayPeriodsWide[sFlexibleDayPeriod];
+					}
+
+					return oFormat.oFlexibleDayPeriodsNarrow[sFlexibleDayPeriod];
+				}
+
+				if (oField.digits <= 3) {
+					return oFormat.oFlexibleDayPeriodsAbbrevSt[sFlexibleDayPeriod];
+				}
+				if (oField.digits === 4) {
+					return oFormat.oFlexibleDayPeriodsWideSt[sFlexibleDayPeriod];
+				}
+
+				return oFormat.oFlexibleDayPeriodsNarrowSt[sFlexibleDayPeriod];
+			},
+			/**
+			 * Parses the flexible day period from a given input string.
+			 *
+			 * @param {string} sValue
+			 *   The given input, e.g. "in the afternoon 01:37"
+			 * @param {Object<string, any>} oPart
+			 *   The date pattern field as parsed by {@link DateFormat#parseCldrDatePattern}
+			 * @param {sap.ui.core.format.DateFormat} oFormat
+			 *   The <code>DateFormat</code> instance
+			 * @param {object} oConfig
+			 *   The configuration object for parsing the value
+			 * @returns {{flexDayPeriod: string, length: number}|{valid: boolean}}
+			 *   An object with the parsed <code>flexDayPeriod</code> and the <code>length</code>
+			 *   value of the match; otherwise, an object with property <code>valid</code>
+			 *   <code>false</code> if it could not be parsed correctly or in case it is attempted
+			 *   to parse a string with a stand-alone format
+			 */
+			parse : function (sValue, oPart, oFormat, oConfig) {
+				var i, oFound, oVariant,
+					bContainsHour = oFormat.aFormatArray.some(function (oFormatElement) {
+						return "hHKk".includes(oFormatElement.symbol);
+					}),
+					// "aFlexibleDayPeriodVariants" is ordered from "wide" to "narrow" to find the
+					// longest match
+					aFlexibleDayPeriodVariants = [
+						oFormat.oFlexibleDayPeriodsWide,
+						oFormat.oFlexibleDayPeriodsAbbrev,
+						oFormat.oFlexibleDayPeriodsNarrow
+					];
+
+				if (bContainsHour) {
+					for (i = 0; i < aFlexibleDayPeriodVariants.length; i++) {
+						oVariant = aFlexibleDayPeriodVariants[i];
+						oFound = oParseHelper.findEntry(sValue, Object.values(oVariant),
+							oFormat.oLocaleData.sCLDRLocaleId);
+
+						if (oFound.index !== -1) {
+							return {
+								flexDayPeriod : Object.keys(oVariant)[oFound.index],
+								length : oFound.length
+							};
+						}
+					}
+				}
+
+				return {valid : false};
+			}
+		},
 		"H": {
 			name: "hour0_23",
 			format: function(oField, oDate) {
@@ -2232,7 +2342,7 @@ sap.ui.define([
 
 	DateFormat.prototype._parse = function(sValue, aFormatArray, bUTC, bStrict, sTimezone) {
 		var iIndex = 0,
-			oPart, sSubValue, oResult;
+			sFlexibleDayPeriod, oPart, bPM, sSubValue, oResult;
 
 		var oDateValue = {
 			valid: true,
@@ -2266,7 +2376,17 @@ sap.ui.define([
 
 		oDateValue.index = iIndex;
 
-		if (oDateValue.pm) {
+		bPM = oDateValue.pm;
+		// "getFlexibleDayPeriodOfTime" is required if the given time is earlier than 12 pm because,
+		// for a "h" pattern it can't distinguished whether e.g. 1 o'clock is meant to be AM or PM
+		if (oDateValue.flexDayPeriod && (oDateValue.hour * 60 + (oDateValue.minute || 0)) < 720) {
+			sFlexibleDayPeriod = this.oLocaleData.getFlexibleDayPeriodOfTime(
+				oDateValue.hour + 12, (oDateValue.minute || 0));
+
+			bPM = oDateValue.flexDayPeriod === sFlexibleDayPeriod;
+		}
+
+		if (bPM) {
 			oDateValue.hour += 12;
 		}
 

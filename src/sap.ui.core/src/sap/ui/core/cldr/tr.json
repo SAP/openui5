@@ -1596,6 +1596,72 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"narrow": {
+					"midnight": "gece",
+					"noon": "ö",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"wide": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"narrow": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"wide": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "Milattan Önce",
 			"1": "Milattan Sonra"
@@ -2067,6 +2133,72 @@
 					"ÖÖ",
 					"ÖS"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"narrow": {
+					"midnight": "gece",
+					"noon": "ö",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"wide": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"narrow": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"wide": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				}
 			}
 		},
 		"era-wide": {
@@ -2545,6 +2677,72 @@
 					"ÖÖ",
 					"ÖS"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"narrow": {
+					"midnight": "gece",
+					"noon": "ö",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"wide": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"narrow": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"wide": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				}
 			}
 		},
 		"era-wide": {
@@ -3029,6 +3227,72 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"narrow": {
+					"midnight": "gece",
+					"noon": "ö",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"wide": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"narrow": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"wide": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3497,6 +3761,72 @@
 					"ÖÖ",
 					"ÖS"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"narrow": {
+					"midnight": "gece",
+					"noon": "ö",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"wide": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"narrow": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				},
+				"wide": {
+					"midnight": "gece yarısı",
+					"noon": "öğle",
+					"morning1": "sabah",
+					"morning2": "öğleden önce",
+					"afternoon1": "öğleden sonra",
+					"afternoon2": "akşamüstü",
+					"evening1": "akşam",
+					"night1": "gece"
+				}
 			}
 		},
 		"era-wide": {
@@ -5444,6 +5774,38 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"afternoon2": {
+			"_before": "19:00",
+			"_from": "18:00"
+		},
+		"evening1": {
+			"_before": "21:00",
+			"_from": "19:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "11:00",
+			"_from": "06:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "11:00"
+		},
+		"night1": {
+			"_before": "06:00",
+			"_from": "21:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

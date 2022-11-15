@@ -1601,6 +1601,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "midnatt",
+					"morning1": "på morg.",
+					"morning2": "på förm.",
+					"afternoon1": "på efterm.",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				},
+				"narrow": {
+					"midnight": "midn.",
+					"morning1": "på morg.",
+					"morning2": "på förm.",
+					"afternoon1": "på efterm.",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				},
+				"wide": {
+					"midnight": "midnatt",
+					"morning1": "på morgonen",
+					"morning2": "på förmiddagen",
+					"afternoon1": "på eftermiddagen",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "midnatt",
+					"morning1": "morgon",
+					"morning2": "förm.",
+					"afternoon1": "efterm.",
+					"evening1": "kväll",
+					"night1": "natt"
+				},
+				"narrow": {
+					"midnight": "midn.",
+					"morning1": "morg.",
+					"morning2": "förm.",
+					"afternoon1": "efterm.",
+					"evening1": "kväll",
+					"night1": "natt"
+				},
+				"wide": {
+					"midnight": "midnatt",
+					"morning1": "morgon",
+					"morning2": "förmiddag",
+					"afternoon1": "eftermiddag",
+					"evening1": "kväll",
+					"night1": "natt"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "före Kristus",
 			"1": "efter Kristus"
@@ -2077,6 +2131,60 @@
 					"förmiddag",
 					"eftermiddag"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "midnatt",
+					"morning1": "på morg.",
+					"morning2": "på förm.",
+					"afternoon1": "på efterm.",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				},
+				"narrow": {
+					"midnight": "midn.",
+					"morning1": "på morg.",
+					"morning2": "på förm.",
+					"afternoon1": "på efterm.",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				},
+				"wide": {
+					"midnight": "midnatt",
+					"morning1": "på morgonen",
+					"morning2": "på förmiddagen",
+					"afternoon1": "på eftermiddagen",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "midnatt",
+					"morning1": "morgon",
+					"morning2": "förm.",
+					"afternoon1": "efterm.",
+					"evening1": "kväll",
+					"night1": "natt"
+				},
+				"narrow": {
+					"midnight": "midn.",
+					"morning1": "morg.",
+					"morning2": "förm.",
+					"afternoon1": "efterm.",
+					"evening1": "kväll",
+					"night1": "natt"
+				},
+				"wide": {
+					"midnight": "midnatt",
+					"morning1": "morgon",
+					"morning2": "förmiddag",
+					"afternoon1": "eftermiddag",
+					"evening1": "kväll",
+					"night1": "natt"
+				}
 			}
 		},
 		"era-wide": {
@@ -2560,6 +2668,60 @@
 					"förmiddag",
 					"eftermiddag"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "midnatt",
+					"morning1": "på morg.",
+					"morning2": "på förm.",
+					"afternoon1": "på efterm.",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				},
+				"narrow": {
+					"midnight": "midn.",
+					"morning1": "på morg.",
+					"morning2": "på förm.",
+					"afternoon1": "på efterm.",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				},
+				"wide": {
+					"midnight": "midnatt",
+					"morning1": "på morgonen",
+					"morning2": "på förmiddagen",
+					"afternoon1": "på eftermiddagen",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "midnatt",
+					"morning1": "morgon",
+					"morning2": "förm.",
+					"afternoon1": "efterm.",
+					"evening1": "kväll",
+					"night1": "natt"
+				},
+				"narrow": {
+					"midnight": "midn.",
+					"morning1": "morg.",
+					"morning2": "förm.",
+					"afternoon1": "efterm.",
+					"evening1": "kväll",
+					"night1": "natt"
+				},
+				"wide": {
+					"midnight": "midnatt",
+					"morning1": "morgon",
+					"morning2": "förmiddag",
+					"afternoon1": "eftermiddag",
+					"evening1": "kväll",
+					"night1": "natt"
+				}
 			}
 		},
 		"era-wide": {
@@ -3049,6 +3211,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "midnatt",
+					"morning1": "på morg.",
+					"morning2": "på förm.",
+					"afternoon1": "på efterm.",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				},
+				"narrow": {
+					"midnight": "midn.",
+					"morning1": "på morg.",
+					"morning2": "på förm.",
+					"afternoon1": "på efterm.",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				},
+				"wide": {
+					"midnight": "midnatt",
+					"morning1": "på morgonen",
+					"morning2": "på förmiddagen",
+					"afternoon1": "på eftermiddagen",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "midnatt",
+					"morning1": "morgon",
+					"morning2": "förm.",
+					"afternoon1": "efterm.",
+					"evening1": "kväll",
+					"night1": "natt"
+				},
+				"narrow": {
+					"midnight": "midn.",
+					"morning1": "morg.",
+					"morning2": "förm.",
+					"afternoon1": "efterm.",
+					"evening1": "kväll",
+					"night1": "natt"
+				},
+				"wide": {
+					"midnight": "midnatt",
+					"morning1": "morgon",
+					"morning2": "förmiddag",
+					"afternoon1": "eftermiddag",
+					"evening1": "kväll",
+					"night1": "natt"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "Anno Persarum"
 		},
@@ -3522,6 +3738,60 @@
 					"förmiddag",
 					"eftermiddag"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "midnatt",
+					"morning1": "på morg.",
+					"morning2": "på förm.",
+					"afternoon1": "på efterm.",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				},
+				"narrow": {
+					"midnight": "midn.",
+					"morning1": "på morg.",
+					"morning2": "på förm.",
+					"afternoon1": "på efterm.",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				},
+				"wide": {
+					"midnight": "midnatt",
+					"morning1": "på morgonen",
+					"morning2": "på förmiddagen",
+					"afternoon1": "på eftermiddagen",
+					"evening1": "på kvällen",
+					"night1": "på natten"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "midnatt",
+					"morning1": "morgon",
+					"morning2": "förm.",
+					"afternoon1": "efterm.",
+					"evening1": "kväll",
+					"night1": "natt"
+				},
+				"narrow": {
+					"midnight": "midn.",
+					"morning1": "morg.",
+					"morning2": "förm.",
+					"afternoon1": "efterm.",
+					"evening1": "kväll",
+					"night1": "natt"
+				},
+				"wide": {
+					"midnight": "midnatt",
+					"morning1": "morgon",
+					"morning2": "förmiddag",
+					"afternoon1": "eftermiddag",
+					"evening1": "kväll",
+					"night1": "natt"
+				}
 			}
 		},
 		"era-wide": {
@@ -5476,6 +5746,31 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "24:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "10:00",
+			"_from": "05:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "10:00"
+		},
+		"night1": {
+			"_before": "05:00",
+			"_from": "00:00"
 		}
 	}
 }

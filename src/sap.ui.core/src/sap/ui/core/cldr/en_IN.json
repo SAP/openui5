@@ -1604,6 +1604,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				},
+				"narrow": {
+					"midnight": "mi",
+					"noon": "n",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				},
+				"wide": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				},
+				"narrow": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				},
+				"wide": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "Before Christ",
 			"1": "Anno Domini"
@@ -2072,6 +2126,60 @@
 					"am",
 					"pm"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				},
+				"narrow": {
+					"midnight": "mi",
+					"noon": "n",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				},
+				"wide": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				},
+				"narrow": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				},
+				"wide": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				}
 			}
 		},
 		"era-wide": {
@@ -2547,6 +2655,60 @@
 					"am",
 					"pm"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				},
+				"narrow": {
+					"midnight": "mi",
+					"noon": "n",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				},
+				"wide": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				},
+				"narrow": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				},
+				"wide": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				}
 			}
 		},
 		"era-wide": {
@@ -3028,6 +3190,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				},
+				"narrow": {
+					"midnight": "mi",
+					"noon": "n",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				},
+				"wide": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				},
+				"narrow": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				},
+				"wide": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3493,6 +3709,60 @@
 					"am",
 					"pm"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				},
+				"narrow": {
+					"midnight": "mi",
+					"noon": "n",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				},
+				"wide": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "in the morning",
+					"afternoon1": "in the afternoon",
+					"evening1": "in the evening",
+					"night1": "at night"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				},
+				"narrow": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				},
+				"wide": {
+					"midnight": "midnight",
+					"noon": "noon",
+					"morning1": "morning",
+					"afternoon1": "afternoon",
+					"evening1": "evening",
+					"night1": "night"
+				}
 			}
 		},
 		"era-wide": {
@@ -5436,6 +5706,30 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "21:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "06:00",
+			"_from": "21:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	},
 	"calendarPreference": "gregorian indian"

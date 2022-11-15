@@ -1586,6 +1586,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				},
+				"narrow": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				},
+				"wide": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				},
+				"narrow": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				},
+				"wide": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "enne Kristust",
 			"1": "pärast Kristust"
@@ -2056,6 +2110,60 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				},
+				"narrow": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				},
+				"wide": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				},
+				"narrow": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				},
+				"wide": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				}
 			}
 		},
 		"era-wide": {
@@ -2533,6 +2641,60 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				},
+				"narrow": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				},
+				"wide": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				},
+				"narrow": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				},
+				"wide": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				}
 			}
 		},
 		"era-wide": {
@@ -3016,6 +3178,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				},
+				"narrow": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				},
+				"wide": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				},
+				"narrow": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				},
+				"wide": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3483,6 +3699,60 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				},
+				"narrow": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				},
+				"wide": {
+					"midnight": "keskööl",
+					"noon": "keskpäeval",
+					"morning1": "hommikul",
+					"afternoon1": "pärastlõunal",
+					"evening1": "õhtul",
+					"night1": "öösel"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				},
+				"narrow": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				},
+				"wide": {
+					"midnight": "kesköö",
+					"noon": "keskpäev",
+					"morning1": "hommik",
+					"afternoon1": "pärastlõuna",
+					"evening1": "õhtu",
+					"night1": "öö"
+				}
 			}
 		},
 		"era-wide": {
@@ -5432,6 +5702,30 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "23:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "05:00"
+		},
+		"night1": {
+			"_before": "05:00",
+			"_from": "23:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

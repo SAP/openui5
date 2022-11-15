@@ -1534,6 +1534,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"narrow": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"wide": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"narrow": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"wide": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "Sebelum Masehi",
 			"1": "Masehi"
@@ -2003,6 +2057,60 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"narrow": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"wide": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"narrow": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"wide": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				}
 			}
 		},
 		"era-wide": {
@@ -2479,6 +2587,60 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"narrow": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"wide": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"narrow": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"wide": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				}
 			}
 		},
 		"era-wide": {
@@ -2961,6 +3123,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"narrow": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"wide": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"narrow": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"wide": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3427,6 +3643,60 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"narrow": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"wide": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"narrow": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				},
+				"wide": {
+					"midnight": "tengah malam",
+					"noon": "tengah hari",
+					"morning1": "pagi",
+					"afternoon1": "siang",
+					"evening1": "sore",
+					"night1": "malam"
+				}
 			}
 		},
 		"era-wide": {
@@ -5123,6 +5393,30 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "15:00",
+			"_from": "10:00"
+		},
+		"evening1": {
+			"_before": "18:00",
+			"_from": "15:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "10:00",
+			"_from": "00:00"
+		},
+		"night1": {
+			"_before": "24:00",
+			"_from": "18:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

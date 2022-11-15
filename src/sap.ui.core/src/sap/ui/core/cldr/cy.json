@@ -1488,6 +1488,54 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				},
+				"narrow": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "yn y bore",
+					"afternoon1": "yn y prynhawn",
+					"evening1": "min nos"
+				},
+				"wide": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "bore",
+					"afternoon1": "prynhawn",
+					"evening1": "yr hwyr"
+				},
+				"narrow": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "bore",
+					"afternoon1": "prynhawn",
+					"evening1": "min nos"
+				},
+				"wide": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "Cyn Crist",
 			"1": "Oed Crist"
@@ -1959,6 +2007,54 @@
 					"yb",
 					"yh"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				},
+				"narrow": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "yn y bore",
+					"afternoon1": "yn y prynhawn",
+					"evening1": "min nos"
+				},
+				"wide": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "bore",
+					"afternoon1": "prynhawn",
+					"evening1": "yr hwyr"
+				},
+				"narrow": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "bore",
+					"afternoon1": "prynhawn",
+					"evening1": "min nos"
+				},
+				"wide": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				}
 			}
 		},
 		"era-wide": {
@@ -2437,6 +2533,54 @@
 					"yb",
 					"yh"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				},
+				"narrow": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "yn y bore",
+					"afternoon1": "yn y prynhawn",
+					"evening1": "min nos"
+				},
+				"wide": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "bore",
+					"afternoon1": "prynhawn",
+					"evening1": "yr hwyr"
+				},
+				"narrow": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "bore",
+					"afternoon1": "prynhawn",
+					"evening1": "min nos"
+				},
+				"wide": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				}
 			}
 		},
 		"era-wide": {
@@ -2921,6 +3065,54 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				},
+				"narrow": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "yn y bore",
+					"afternoon1": "yn y prynhawn",
+					"evening1": "min nos"
+				},
+				"wide": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "bore",
+					"afternoon1": "prynhawn",
+					"evening1": "yr hwyr"
+				},
+				"narrow": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "bore",
+					"afternoon1": "prynhawn",
+					"evening1": "min nos"
+				},
+				"wide": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3389,6 +3581,54 @@
 					"yb",
 					"yh"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				},
+				"narrow": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "yn y bore",
+					"afternoon1": "yn y prynhawn",
+					"evening1": "min nos"
+				},
+				"wide": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "bore",
+					"afternoon1": "prynhawn",
+					"evening1": "yr hwyr"
+				},
+				"narrow": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "bore",
+					"afternoon1": "prynhawn",
+					"evening1": "min nos"
+				},
+				"wide": {
+					"midnight": "canol nos",
+					"noon": "canol dydd",
+					"morning1": "y bore",
+					"afternoon1": "y prynhawn",
+					"evening1": "yr hwyr"
+				}
 			}
 		},
 		"era-wide": {
@@ -6349,6 +6589,26 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "24:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "00:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

@@ -1600,6 +1600,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vorm.",
+					"afternoon1": "mittags",
+					"afternoon2": "nachm.",
+					"evening1": "abends",
+					"night1": "nachts"
+				},
+				"narrow": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vorm.",
+					"afternoon1": "mittags",
+					"afternoon2": "nachm.",
+					"evening1": "abends",
+					"night1": "nachts"
+				},
+				"wide": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vormittags",
+					"afternoon1": "mittags",
+					"afternoon2": "nachmittags",
+					"evening1": "abends",
+					"night1": "nachts"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vorm.",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachm.",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				},
+				"narrow": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vorm.",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachm.",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				},
+				"wide": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vormittag",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachmittag",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "v. Chr.",
 			"1": "n. Chr."
@@ -2071,6 +2131,66 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vorm.",
+					"afternoon1": "mittags",
+					"afternoon2": "nachm.",
+					"evening1": "abends",
+					"night1": "nachts"
+				},
+				"narrow": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vorm.",
+					"afternoon1": "mittags",
+					"afternoon2": "nachm.",
+					"evening1": "abends",
+					"night1": "nachts"
+				},
+				"wide": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vormittags",
+					"afternoon1": "mittags",
+					"afternoon2": "nachmittags",
+					"evening1": "abends",
+					"night1": "nachts"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vorm.",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachm.",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				},
+				"narrow": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vorm.",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachm.",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				},
+				"wide": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vormittag",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachmittag",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				}
 			}
 		},
 		"era-wide": {
@@ -2549,6 +2669,66 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vorm.",
+					"afternoon1": "mittags",
+					"afternoon2": "nachm.",
+					"evening1": "abends",
+					"night1": "nachts"
+				},
+				"narrow": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vorm.",
+					"afternoon1": "mittags",
+					"afternoon2": "nachm.",
+					"evening1": "abends",
+					"night1": "nachts"
+				},
+				"wide": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vormittags",
+					"afternoon1": "mittags",
+					"afternoon2": "nachmittags",
+					"evening1": "abends",
+					"night1": "nachts"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vorm.",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachm.",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				},
+				"narrow": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vorm.",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachm.",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				},
+				"wide": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vormittag",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachmittag",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				}
 			}
 		},
 		"era-wide": {
@@ -3033,6 +3213,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vorm.",
+					"afternoon1": "mittags",
+					"afternoon2": "nachm.",
+					"evening1": "abends",
+					"night1": "nachts"
+				},
+				"narrow": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vorm.",
+					"afternoon1": "mittags",
+					"afternoon2": "nachm.",
+					"evening1": "abends",
+					"night1": "nachts"
+				},
+				"wide": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vormittags",
+					"afternoon1": "mittags",
+					"afternoon2": "nachmittags",
+					"evening1": "abends",
+					"night1": "nachts"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vorm.",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachm.",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				},
+				"narrow": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vorm.",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachm.",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				},
+				"wide": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vormittag",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachmittag",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3501,6 +3741,66 @@
 					"AM",
 					"PM"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vorm.",
+					"afternoon1": "mittags",
+					"afternoon2": "nachm.",
+					"evening1": "abends",
+					"night1": "nachts"
+				},
+				"narrow": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vorm.",
+					"afternoon1": "mittags",
+					"afternoon2": "nachm.",
+					"evening1": "abends",
+					"night1": "nachts"
+				},
+				"wide": {
+					"midnight": "Mitternacht",
+					"morning1": "morgens",
+					"morning2": "vormittags",
+					"afternoon1": "mittags",
+					"afternoon2": "nachmittags",
+					"evening1": "abends",
+					"night1": "nachts"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vorm.",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachm.",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				},
+				"narrow": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vorm.",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachm.",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				},
+				"wide": {
+					"midnight": "Mitternacht",
+					"morning1": "Morgen",
+					"morning2": "Vormittag",
+					"afternoon1": "Mittag",
+					"afternoon2": "Nachmittag",
+					"evening1": "Abend",
+					"night1": "Nacht"
+				}
 			}
 		},
 		"era-wide": {
@@ -5382,6 +5682,35 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "13:00",
+			"_from": "12:00"
+		},
+		"afternoon2": {
+			"_before": "18:00",
+			"_from": "13:00"
+		},
+		"evening1": {
+			"_before": "24:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "10:00",
+			"_from": "05:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "10:00"
+		},
+		"night1": {
+			"_before": "05:00",
+			"_from": "00:00"
 		}
 	}
 }

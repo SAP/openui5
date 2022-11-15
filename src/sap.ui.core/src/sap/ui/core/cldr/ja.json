@@ -1604,6 +1604,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"narrow": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"wide": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"narrow": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"wide": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "紀元前",
 			"1": "西暦"
@@ -2098,6 +2158,66 @@
 					"午前",
 					"午後"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"narrow": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"wide": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"narrow": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"wide": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				}
 			}
 		},
 		"era-wide": {
@@ -2600,6 +2720,66 @@
 					"午前",
 					"午後"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"narrow": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"wide": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"narrow": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"wide": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				}
 			}
 		},
 		"era-wide": {
@@ -3107,6 +3287,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"narrow": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"wide": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"narrow": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"wide": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3600,6 +3840,66 @@
 					"午前",
 					"午後"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"narrow": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"wide": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"narrow": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				},
+				"wide": {
+					"midnight": "真夜中",
+					"noon": "正午",
+					"morning1": "朝",
+					"afternoon1": "昼",
+					"evening1": "夕方",
+					"night1": "夜",
+					"night2": "夜中"
+				}
 			}
 		},
 		"era-wide": {
@@ -5294,6 +5594,34 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "16:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "19:00",
+			"_from": "16:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "04:00"
+		},
+		"night1": {
+			"_before": "23:00",
+			"_from": "19:00"
+		},
+		"night2": {
+			"_before": "04:00",
+			"_from": "23:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	},
 	"calendarPreference": "gregorian japanese"

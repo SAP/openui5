@@ -1502,6 +1502,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				},
+				"narrow": {
+					"morning1": "ب",
+					"morning2": "ص",
+					"afternoon1": "ظ",
+					"afternoon2": "ع",
+					"night1": "ش",
+					"night2": "ن"
+				},
+				"wide": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				},
+				"narrow": {
+					"morning1": "ب",
+					"morning2": "ص",
+					"afternoon1": "ظ",
+					"afternoon2": "ع",
+					"night1": "ش",
+					"night2": "ن"
+				},
+				"wide": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "قبل از میلاد",
 			"1": "میلادی"
@@ -1982,6 +2036,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				},
+				"narrow": {
+					"morning1": "ب",
+					"morning2": "ص",
+					"afternoon1": "ظ",
+					"afternoon2": "ع",
+					"night1": "ش",
+					"night2": "ن"
+				},
+				"wide": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				},
+				"narrow": {
+					"morning1": "ب",
+					"morning2": "ص",
+					"afternoon1": "ظ",
+					"afternoon2": "ع",
+					"night1": "ش",
+					"night2": "ن"
+				},
+				"wide": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "هجری قمری"
 		},
@@ -2457,6 +2565,60 @@
 					"قبل‌ازظهر",
 					"بعدازظهر"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				},
+				"narrow": {
+					"morning1": "ب",
+					"morning2": "ص",
+					"afternoon1": "ظ",
+					"afternoon2": "ع",
+					"night1": "ش",
+					"night2": "ن"
+				},
+				"wide": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				},
+				"narrow": {
+					"morning1": "ب",
+					"morning2": "ص",
+					"afternoon1": "ظ",
+					"afternoon2": "ع",
+					"night1": "ش",
+					"night2": "ن"
+				},
+				"wide": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				}
 			}
 		},
 		"era-wide": {
@@ -2940,6 +3102,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				},
+				"narrow": {
+					"morning1": "ب",
+					"morning2": "ص",
+					"afternoon1": "ظ",
+					"afternoon2": "ع",
+					"night1": "ش",
+					"night2": "ن"
+				},
+				"wide": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				},
+				"narrow": {
+					"morning1": "ب",
+					"morning2": "ص",
+					"afternoon1": "ظ",
+					"afternoon2": "ع",
+					"night1": "ش",
+					"night2": "ن"
+				},
+				"wide": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "هجری شمسی"
 		},
@@ -3407,6 +3623,60 @@
 					"قبل‌ازظهر",
 					"بعدازظهر"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				},
+				"narrow": {
+					"morning1": "ب",
+					"morning2": "ص",
+					"afternoon1": "ظ",
+					"afternoon2": "ع",
+					"night1": "ش",
+					"night2": "ن"
+				},
+				"wide": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				},
+				"narrow": {
+					"morning1": "ب",
+					"morning2": "ص",
+					"afternoon1": "ظ",
+					"afternoon2": "ع",
+					"night1": "ش",
+					"night2": "ن"
+				},
+				"wide": {
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
+				}
 			}
 		},
 		"era-wide": {
@@ -5347,6 +5617,32 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "13:00",
+			"_from": "12:00"
+		},
+		"afternoon2": {
+			"_before": "19:00",
+			"_from": "13:00"
+		},
+		"morning1": {
+			"_before": "04:00",
+			"_from": "01:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "04:00"
+		},
+		"night1": {
+			"_before": "24:00",
+			"_from": "19:00"
+		},
+		"night2": {
+			"_before": "01:00",
+			"_from": "00:00"
 		}
 	},
 	"calendarPreference": "persian gregorian islamic islamic-civil islamic-tbla"

@@ -273,6 +273,131 @@ sap.ui.define([
 		assert.equal(oLocaleData.getDatePattern("short", CalendarType.Gregorian), "M/d/yy", "short pattern for Gregorian calendar type should be fetched from locale data");
 	});
 
+	//*********************************************************************************************
+["abbreviated", "narrow", "wide"].forEach(function (sFormatType) {
+	[true, false].forEach(function (bStandAlone) {
+	var sMethod = bStandAlone ? "getFlexibleDayPeriodsStandAlone" : "getFlexibleDayPeriods",
+		sTitle = sMethod + ": " + sFormatType;
+
+	QUnit.test(sTitle, function (assert) {
+		var oLocaleData = new LocaleData(new Locale("de_DE")),
+			sParseType =  bStandAlone ? "stand-alone" : "format";
+
+		this.mock(oLocaleData).expects("_get")
+			.withExactArgs("ca-gregorian", "flexibleDayPeriods", sParseType, sFormatType)
+			.returns("~flexibleDayPeriods");
+
+		assert.strictEqual(oLocaleData[sMethod](sFormatType, "Gregorian"), "~flexibleDayPeriods");
+	});
+	});
+});
+
+	//*********************************************************************************************
+[
+	{sCalenderType : CalendarType.Gregorian, sCLDRCalenderType : "ca-gregorian"},
+	{sCalenderType : CalendarType.Islamic, sCLDRCalenderType : "ca-islamic"},
+	{sCalenderType : CalendarType.Japanese, sCLDRCalenderType : "ca-japanese"},
+	{sCalenderType : CalendarType.Persian, sCLDRCalenderType : "ca-persian"},
+	{sCalenderType : CalendarType.Buddhist, sCLDRCalenderType : "ca-buddhist"}
+].forEach(function (oFixture) {
+	[true, false].forEach(function (bStandAlone) {
+	var sMethod = bStandAlone ? "getFlexibleDayPeriodsStandAlone" : "getFlexibleDayPeriods",
+		sTitle = sMethod + ": " + oFixture.sCLDRCalenderType;
+
+	QUnit.test(sTitle, function (assert) {
+		var oLocaleData = new LocaleData(new Locale("de_DE")),
+			sParseType =  bStandAlone ? "stand-alone" : "format";
+
+		this.mock(oLocaleData).expects("_get")
+			.withExactArgs(oFixture.sCLDRCalenderType, "flexibleDayPeriods", sParseType, "wide")
+			.returns("~flexibleDayPeriods");
+
+		assert.strictEqual(oLocaleData[sMethod]("wide", oFixture.sCalenderType),
+			"~flexibleDayPeriods");
+	});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getFlexibleDayPeriods; integrative test", function (assert) {
+		var oLocaleData = new LocaleData(new Locale("de_DE"));
+
+		assert.deepEqual(oLocaleData.getFlexibleDayPeriods("foo", "Gregorian"), undefined);
+		assert.deepEqual(oLocaleData.getFlexibleDayPeriods("abbreviated", "foo"), undefined);
+
+		assert.deepEqual(oLocaleData.getFlexibleDayPeriods("abbreviated", "Gregorian"), {
+			"afternoon1" : "mittags",
+			"afternoon2" : "nachm.",
+			"evening1" : "abends",
+			"midnight" : "Mitternacht",
+			"morning1" : "morgens",
+			"morning2" : "vorm.",
+			"night1" : "nachts"
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFlexibleDayPeriodsStandAlone; integrative test", function (assert) {
+		var oLocaleData = new LocaleData(new Locale("de_DE"));
+
+		assert.deepEqual(oLocaleData.getFlexibleDayPeriodsStandAlone("foo", "Gregorian"),
+			undefined);
+		assert.deepEqual(oLocaleData.getFlexibleDayPeriodsStandAlone("wide", "foo"),
+			undefined);
+
+		assert.deepEqual(oLocaleData.getFlexibleDayPeriodsStandAlone("wide", "Gregorian"), {
+			"afternoon1" : "Mittag",
+			"afternoon2" : "Nachmittag",
+			"evening1" : "Abend",
+			"midnight" : "Mitternacht",
+			"morning1" : "Morgen",
+			"morning2" : "Vormittag",
+			"night1" : "Nacht"
+		});
+	});
+
+	//*********************************************************************************************
+[
+	{iHour : 5, iMinute : 59, sResult : "night"},
+	{iHour : 6, iMinute : 0, sResult : "morning1"},
+	{iHour : 6, iMinute : 1, sResult : "morning1"},
+	{iHour : 21, iMinute : 59, sResult : "evening"},
+	{iHour : 22, iMinute : 0, sResult : "night"},
+	{iHour : 11, iMinute : 59, sResult : "morning1"},
+	{iHour : 36, iMinute : 40, sResult : "morning2"},
+	{iHour : 12, iMinute : 0, sResult : "noon"},
+	{iHour : 11, iMinute : 60, sResult : "noon"},
+	{iHour : 36, iMinute : 0, sResult : "noon"},
+	{iHour : 24, iMinute : 0, sResult : "midnight"},
+	{iHour : 23, iMinute : 60, sResult : "midnight"},
+	{iHour : 23, iMinute : 61, sResult : "night"},
+	{iHour : 23, iMinute : 59, sResult : "night"},
+	{iHour : 24, iMinute : 1, sResult : "night"},
+	{iHour : 99, iMinute : 100, sResult : "night"}
+].forEach(function (oFixture) {
+	var sTitle = "getFlexibleDayPeriodOfTime testing period edges for time " + oFixture.iHour + ":"
+		+ oFixture.iMinute;
+
+	QUnit.test(sTitle, function (assert) {
+		var oLocaleData = new LocaleData(new Locale("de_DE"));
+
+		this.mock(oLocaleData).expects("_get")
+			.withExactArgs("dayPeriodRules")
+			.returns({
+				evening : {_before : "22:00", _from : "18:00"},
+				midnight : {_at : "00:00"},
+				morning1 : {_before : "12:00", _from : "06:00"},
+				morning2 : {_before : "18:00", _from : "12:00"},
+				night : {_before : "06:00", _from : "22:00"},
+				noon : {_at : "12:00"}
+			});
+
+		assert.strictEqual(oLocaleData.getFlexibleDayPeriodOfTime(oFixture.iHour, oFixture.iMinute),
+			oFixture.sResult);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("Unit Display Name L10N", function(assert) {
 		var oLocale = new Locale("de_DE");
 		var oLocaleData = new LocaleData(oLocale);

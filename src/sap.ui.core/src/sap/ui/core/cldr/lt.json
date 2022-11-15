@@ -1620,6 +1620,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"narrow": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"wide": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"narrow": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"wide": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "prieš Kristų",
 			"1": "po Kristaus"
@@ -2089,6 +2143,60 @@
 					"priešpiet",
 					"popiet"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"narrow": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"wide": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"narrow": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"wide": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				}
 			}
 		},
 		"era-wide": {
@@ -2565,6 +2673,60 @@
 					"priešpiet",
 					"popiet"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"narrow": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"wide": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"narrow": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"wide": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				}
 			}
 		},
 		"era-wide": {
@@ -3047,6 +3209,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"narrow": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"wide": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"narrow": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"wide": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3513,6 +3729,60 @@
 					"priešpiet",
 					"popiet"
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"narrow": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"wide": {
+					"midnight": "vidurnaktis",
+					"noon": "perpiet",
+					"morning1": "rytas",
+					"afternoon1": "popietė",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"narrow": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				},
+				"wide": {
+					"midnight": "vidurnaktis",
+					"noon": "vidurdienis",
+					"morning1": "rytas",
+					"afternoon1": "diena",
+					"evening1": "vakaras",
+					"night1": "naktis"
+				}
 			}
 		},
 		"era-wide": {
@@ -5946,6 +6216,30 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "24:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "06:00",
+			"_from": "00:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

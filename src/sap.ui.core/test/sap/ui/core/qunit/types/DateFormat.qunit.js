@@ -42,6 +42,70 @@ sap.ui.define([
 		assert.deepEqual(oDateFormatInstance.aDayPeriodsWide, ["오전", "오후"]);
 	});
 
+	QUnit.test("instance fields flexible day periods", function (assert) {
+		var oDateFormatInstance = DateFormat.getInstance(new Locale("de"));
+
+		assert.deepEqual(oDateFormatInstance.oFlexibleDayPeriodsAbbrev, {
+			"midnight" : "Mitternacht",
+			"morning1" : "morgens",
+			"morning2" : "vorm.",
+			"afternoon1" : "mittags",
+			"afternoon2" : "nachm.",
+			"evening1" : "abends",
+			"night1" : "nachts"
+		});
+		assert.deepEqual(oDateFormatInstance.oFlexibleDayPeriodsNarrow, {
+			"midnight" : "Mitternacht",
+			"morning1" : "morgens",
+			"morning2" : "vorm.",
+			"afternoon1" : "mittags",
+			"afternoon2" : "nachm.",
+			"evening1" : "abends",
+			"night1" : "nachts"
+		});
+		assert.deepEqual(oDateFormatInstance.oFlexibleDayPeriodsWide, {
+			"midnight" : "Mitternacht",
+			"morning1" : "morgens",
+			"morning2" : "vormittags",
+			"afternoon1" : "mittags",
+			"afternoon2" : "nachmittags",
+			"evening1" : "abends",
+			"night1" : "nachts"
+		});
+	});
+
+	QUnit.test("instance fields flexible day periods stand-alone", function (assert) {
+		var oDateFormatInstance = DateFormat.getInstance(new Locale("de"));
+
+		assert.deepEqual(oDateFormatInstance.oFlexibleDayPeriodsAbbrevSt, {
+			"midnight" : "Mitternacht",
+			"morning1" : "Morgen",
+			"morning2" : "Vorm.",
+			"afternoon1" : "Mittag",
+			"afternoon2" : "Nachm.",
+			"evening1" : "Abend",
+			"night1" : "Nacht"
+		});
+		assert.deepEqual(oDateFormatInstance.oFlexibleDayPeriodsNarrowSt, {
+			"midnight" : "Mitternacht",
+			"morning1" : "Morgen",
+			"morning2" : "Vorm.",
+			"afternoon1" : "Mittag",
+			"afternoon2" : "Nachm.",
+			"evening1" : "Abend",
+			"night1" : "Nacht"
+		});
+		assert.deepEqual(oDateFormatInstance.oFlexibleDayPeriodsWideSt, {
+			"midnight" : "Mitternacht",
+			"morning1" : "Morgen",
+			"morning2" : "Vormittag",
+			"afternoon1" : "Mittag",
+			"afternoon2" : "Nachmittag",
+			"evening1" : "Abend",
+			"night1" : "Nacht"
+		});
+	});
+
 	//*********************************************************************************************
 	QUnit.test("pattern 'aaaa'", function (assert) {
 		assert.deepEqual(DateFormat.getInstance().parseCldrDatePattern("aaaa"),
@@ -2141,6 +2205,172 @@ sap.ui.define([
 			Configuration.setLanguage("en_US");
 		});
 
+	//*********************************************************************************************
+[
+	{pattern : "yyyy-MM-dd B hh:mm", sFormatted : "2017-01-01 nachm. 02:00"},
+	{pattern : "yyyy-MM-dd BB hh:mm", sFormatted : "2017-01-01 nachm. 02:00"},
+	{pattern : "yyyy-MM-dd BBB hh:mm", sFormatted : "2017-01-01 nachm. 02:00"},
+	{pattern : "yyyy-MM-dd BBBB hh:mm", sFormatted : "2017-01-01 nachmittags 02:00"},
+	{pattern : "yyyy-MM-dd BBBBB hh:mm", sFormatted : "2017-01-01 nachm. 02:00"},
+	{pattern : "yyyy-MM-dd BBBBB HH:mm", sFormatted : "2017-01-01 nachm. 14:00"},
+	{pattern : "yyyy-MM-dd B k:mm", sFormatted : "2017-01-01 nachm. 14:00"},
+	{pattern : "yyyy-MM-dd BB K:mm", sFormatted : "2017-01-01 nachm. 2:00"},
+	{pattern : "yyyy-MM-dd B", sFormatted : "2017-01-01 Nachm."},
+	{pattern : "yyyy-MM-dd B 'heute'", sFormatted : "2017-01-01 Nachm. heute"},
+	{pattern : "yyyy-MM-dd BB", sFormatted : "2017-01-01 Nachm."},
+	{pattern : "yyyy-MM-dd BBB", sFormatted : "2017-01-01 Nachm."},
+	{pattern : "yyyy-MM-dd BBBB", sFormatted : "2017-01-01 Nachmittag"},
+	{pattern : "yyyy-MM-dd BBBBB", sFormatted : "2017-01-01 Nachm."}
+].forEach(function (oFixture, i) {
+	var sTitle = "format flexible day period with variable number of 'B' for regular and"
+			+ " stand-alone case: " + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oDateFormat = DateFormat.getDateInstance({pattern : oFixture.pattern},
+				new Locale("de_DE"));
+
+		assert.strictEqual(oDateFormat.format(new Date(2017, 0, 1, 14, 0)).toString(),
+			oFixture.sFormatted, "Formatted: " + oFixture.sFormatted);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{oDate : new Date(2017, 0, 1, 0, 0), sFormatted : "2017-01-01 Mitternacht 12:00"},
+	{oDate : new Date(2017, 0, 1, 0, 1), sFormatted : "2017-01-01 nachts 12:01"},
+	{oDate : new Date(2017, 0, 1, 5, 0), sFormatted : "2017-01-01 morgens 05:00"},
+	{oDate : new Date(2017, 0, 1, 10, 0), sFormatted : "2017-01-01 vorm. 10:00"},
+	{oDate : new Date(2017, 0, 1, 12, 0), sFormatted : "2017-01-01 mittags 12:00"},
+	{oDate : new Date(2017, 0, 1, 13, 0), sFormatted : "2017-01-01 nachm. 01:00"},
+	{oDate : new Date(2017, 0, 1, 18, 0), sFormatted : "2017-01-01 abends 06:00"},
+	{oDate : new Date(2017, 0, 1, 23, 59), sFormatted : "2017-01-01 abends 11:59"}
+].forEach(function (oFixture, i) {
+	QUnit.test("format and parse flexible day period 'B' de_DE: " + i, function (assert) {
+		var oDateFormat = DateFormat.getDateInstance({
+				pattern: "yyyy-MM-dd B hh:mm"
+			}, new Locale("de_DE"));
+
+		assert.strictEqual(oDateFormat.format(oFixture.oDate).toString(), oFixture.sFormatted,
+			"Formatted: " + oFixture.sFormatted);
+		assert.deepEqual(oDateFormat.parse(oFixture.sFormatted), oFixture.oDate,
+			"The formatted string can be correctly parsed");
+	});
+});
+
+	//*********************************************************************************************
+["yyyy-MM-dd B hh", "yyyy-MM-dd B hh:mm"].forEach(function (sPattern, i) {
+	QUnit.test("parse flexible day periods 'B' de_DE without minutes: " + i, function (assert) {
+		var oDateFormat = DateFormat.getDateInstance({
+				pattern: sPattern
+			}, new Locale("de_DE"));
+
+		assert.deepEqual(oDateFormat.parse("2017-01-01 nachm. 1"), new Date(2017, 0, 1, 13, 0),
+			"The formatted string can be correctly parsed");
+	});
+});
+
+	//*********************************************************************************************
+[
+	{oDate : new Date(2017, 0, 5, 4, 39), sFormatted : "2017-01-01 abends 99:99"},
+	{oDate : new Date(2017, 0, 2, 3, 1), sFormatted : "2017-01-01 nachts 26:61"},
+	{oDate : new Date(2017, 0, 2, 5, 0), sFormatted : "2017-01-01 nachm. 29:00"}
+].forEach(function (oFixture, i) {
+	QUnit.test("parse flexible day period 'B' de_DE for numbers > 24: " + i, function (assert) {
+		var oDateFormat = DateFormat.getDateInstance({
+				pattern: "yyyy-MM-dd B h:mm"
+			}, new Locale("de_DE"));
+
+		assert.deepEqual(oDateFormat.parse(oFixture.sFormatted), oFixture.oDate,
+			"The formatted string can be correctly parsed");
+	});
+});
+
+	//*********************************************************************************************
+[
+	{oDate : new Date(2017, 0, 1, 0, 0), sFormatted : "2017-01-01 Mitternacht"},
+	{oDate : new Date(2017, 0, 1, 0, 1), sFormatted : "2017-01-01 Nacht"},
+	{oDate : new Date(2017, 0, 1, 5, 0), sFormatted : "2017-01-01 Morgen"},
+	{oDate : new Date(2017, 0, 1, 10, 0), sFormatted : "2017-01-01 Vorm."},
+	{oDate : new Date(2017, 0, 1, 12, 0), sFormatted : "2017-01-01 Mittag"},
+	{oDate : new Date(2017, 0, 1, 13, 0), sFormatted : "2017-01-01 Nachm."},
+	{oDate : new Date(2017, 0, 1, 18, 0), sFormatted : "2017-01-01 Abend"},
+	{oDate : new Date(2017, 0, 1, 23, 59), sFormatted : "2017-01-01 Abend"}
+].forEach(function (oFixture, i) {
+	QUnit.test("format flexible day period stand-alone 'B' de_DE: " + i, function (assert) {
+		var oDateFormat = DateFormat.getDateInstance({
+				pattern: "yyyy-MM-dd B"
+			}, new Locale("de_DE"));
+
+		assert.strictEqual(oDateFormat.format(oFixture.oDate).toString(), oFixture.sFormatted,
+			"Formatted: " + oFixture.sFormatted);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{sFormatted : "2017-01-01 Mitternacht"},
+	{sFormatted : "2017-01-01 Nacht"},
+	{sFormatted : "2017-01-01 Morgen"},
+	{sFormatted : "2017-01-01 Vorm."},
+	{sFormatted : "2017-01-01 Mittag"},
+	{sFormatted : "2017-01-01 Nachm."},
+	{sFormatted : "2017-01-01 Abend"},
+	{sFormatted : "2017-01-01 Abend 19:00"}
+].forEach(function (oFixture, i) {
+	QUnit.test("parse flexible day period stand-alone 'B' de_DE, string: " + i, function (assert) {
+		var oDateFormat = DateFormat.getDateInstance({
+				pattern: "yyyy-MM-dd B"
+			}, new Locale("de_DE"));
+
+		// Due to the return of {valid: false} from "B".parse(), #fnCreateDate() returns null.
+		assert.deepEqual(oDateFormat.parse(oFixture.sFormatted), null,
+			"stand-alone case cannot be parsed, without hour");
+	});
+});
+
+	//*********************************************************************************************
+[
+	{oDate : new Date(2017, 0, 1, 24, 0), sFormatted : "2017-01-02 půlnoc 12:00"},
+	{oDate : new Date(2017, 0, 1, 0, 0), sFormatted : "2017-01-01 půlnoc 12:00"},
+	{oDate : new Date(2017, 0, 1, 0, 1), sFormatted : "2017-01-01 v noci 12:01"},
+	{oDate : new Date(2017, 0, 1, 23, 59), sFormatted : "2017-01-01 v noci 11:59"}
+].forEach(function (oFixture, i) {
+	var sTitle = "format and parse overlapping time period rules for 'B' in 'cs_CZ': " + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oDateFormat = DateFormat.getDateInstance({
+				pattern: "yyyy-MM-dd BBBB hh:mm"
+			}, new Locale("cs_CZ"));
+
+		assert.strictEqual(oDateFormat.format(oFixture.oDate).toString(), oFixture.sFormatted,
+			"Formatted: " + oFixture.sFormatted);
+		assert.deepEqual(oDateFormat.parse(oFixture.sFormatted), oFixture.oDate,
+			"The formatted string can be correctly parsed");
+	});
+});
+
+	//*********************************************************************************************
+[
+	{sFormatted : "2017-01-01 夜 10:59", oDate : new Date(2017, 0, 1, 22, 59), sLocale : "ja_JP"},
+	{sFormatted : "2017-01-01 夜中 11:00", oDate : new Date(2017, 0, 1, 23), sLocale : "ja_JP"},
+	{sFormatted : "2017-01-01 pusnaktī 00:00", oDate : new Date(2017, 0, 1), sLocale : "lv_LV"},
+	{sFormatted : "2017-01-01 naktī 00:01", oDate : new Date(2017, 0, 1, 0, 1), sLocale : "lv_LV"}
+].forEach(function (oFixture, i) {
+	// These cases are special since, the parsed day period strings contain other day periods as
+	// substrings e.g. pusnaktī contains naktī
+	var sTitle = "parse flexible time period special cases for 'B' in different languages: " + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oDateFormat = DateFormat.getDateInstance({
+				pattern: "yyyy-MM-dd B hh:mm"
+			}, new Locale(oFixture.sLocale));
+
+		assert.deepEqual(oDateFormat.parse(oFixture.sFormatted), oFixture.oDate,
+			"The formatted string can be correctly parsed");
+	});
+});
+
+	//*********************************************************************************************
 		QUnit.test("origin info", function (assert) {
 			var oOriginInfoStub = this.stub(Configuration, "getOriginInfo").returns(true);
 			var oOriginDate = DateFormat.getInstance(), sValue = oOriginDate.format(oDateTime), oInfo = sValue.originInfo;

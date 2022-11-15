@@ -1497,6 +1497,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"narrow": {
+					"midnight": "miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"wide": {
+					"midnight": "la miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"narrow": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"wide": {
+					"midnight": "la miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "înainte de Hristos",
 			"1": "după Hristos"
@@ -1966,6 +2020,60 @@
 					"a.m.",
 					"p.m."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"narrow": {
+					"midnight": "miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"wide": {
+					"midnight": "la miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"narrow": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"wide": {
+					"midnight": "la miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				}
 			}
 		},
 		"era-wide": {
@@ -2442,6 +2550,60 @@
 					"a.m.",
 					"p.m."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"narrow": {
+					"midnight": "miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"wide": {
+					"midnight": "la miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"narrow": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"wide": {
+					"midnight": "la miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				}
 			}
 		},
 		"era-wide": {
@@ -2924,6 +3086,60 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"narrow": {
+					"midnight": "miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"wide": {
+					"midnight": "la miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"narrow": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"wide": {
+					"midnight": "la miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "Anno Persico"
 		},
@@ -3390,6 +3606,60 @@
 					"a.m.",
 					"p.m."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"narrow": {
+					"midnight": "miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"wide": {
+					"midnight": "la miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"narrow": {
+					"midnight": "miezul nopții",
+					"noon": "amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				},
+				"wide": {
+					"midnight": "la miezul nopții",
+					"noon": "la amiază",
+					"morning1": "dimineața",
+					"afternoon1": "după-amiaza",
+					"evening1": "seara",
+					"night1": "noaptea"
+				}
 			}
 		},
 		"era-wide": {
@@ -5555,6 +5825,30 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "18:00",
+			"_from": "12:00"
+		},
+		"evening1": {
+			"_before": "22:00",
+			"_from": "18:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "12:00",
+			"_from": "05:00"
+		},
+		"night1": {
+			"_before": "05:00",
+			"_from": "22:00"
+		},
+		"noon": {
+			"_at": "12:00"
 		}
 	}
 }

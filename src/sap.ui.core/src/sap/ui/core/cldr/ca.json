@@ -1565,6 +1565,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"narrow": {
+					"midnight": "mitjanit",
+					"morning1": "mat.",
+					"morning2": "matí",
+					"afternoon1": "md",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"wide": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"narrow": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"wide": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "abans de Crist",
 			"1": "després de Crist"
@@ -2049,6 +2109,66 @@
 					"a. m.",
 					"p. m."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"narrow": {
+					"midnight": "mitjanit",
+					"morning1": "mat.",
+					"morning2": "matí",
+					"afternoon1": "md",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"wide": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"narrow": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"wide": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				}
 			}
 		},
 		"era-wide": {
@@ -2542,6 +2662,66 @@
 					"a. m.",
 					"p. m."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"narrow": {
+					"midnight": "mitjanit",
+					"morning1": "mat.",
+					"morning2": "matí",
+					"afternoon1": "md",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"wide": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"narrow": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"wide": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				}
 			}
 		},
 		"era-wide": {
@@ -3039,6 +3219,66 @@
 				]
 			}
 		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"narrow": {
+					"midnight": "mitjanit",
+					"morning1": "mat.",
+					"morning2": "matí",
+					"afternoon1": "md",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"wide": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"narrow": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"wide": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				}
+			}
+		},
 		"era-wide": {
 			"0": "AP"
 		},
@@ -3520,6 +3760,66 @@
 					"a. m.",
 					"p. m."
 				]
+			}
+		},
+		"flexibleDayPeriods": {
+			"format": {
+				"abbreviated": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"narrow": {
+					"midnight": "mitjanit",
+					"morning1": "mat.",
+					"morning2": "matí",
+					"afternoon1": "md",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"wide": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				}
+			},
+			"stand-alone": {
+				"abbreviated": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"narrow": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				},
+				"wide": {
+					"midnight": "mitjanit",
+					"morning1": "matinada",
+					"morning2": "matí",
+					"afternoon1": "migdia",
+					"afternoon2": "tarda",
+					"evening1": "vespre",
+					"night1": "nit"
+				}
 			}
 		},
 		"era-wide": {
@@ -5461,6 +5761,35 @@
 		},
 		"236": {
 			"_start": "2019-5-1"
+		}
+	},
+	"dayPeriodRules": {
+		"afternoon1": {
+			"_before": "13:00",
+			"_from": "12:00"
+		},
+		"afternoon2": {
+			"_before": "19:00",
+			"_from": "13:00"
+		},
+		"evening1": {
+			"_before": "21:00",
+			"_from": "19:00"
+		},
+		"midnight": {
+			"_at": "00:00"
+		},
+		"morning1": {
+			"_before": "06:00",
+			"_from": "00:00"
+		},
+		"morning2": {
+			"_before": "12:00",
+			"_from": "06:00"
+		},
+		"night1": {
+			"_before": "24:00",
+			"_from": "21:00"
 		}
 	}
 }
