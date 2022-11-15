@@ -795,7 +795,7 @@ sap.ui.define([
 		Object.keys(mConditionsInternal).forEach(function(sKey){
 			mConditionsInternal[sKey].forEach(function(oCondition, iConditionIndex){
 				var oProperty = this._getPropertyByName(sKey);
-				this._toInternal(oProperty, oCondition);
+				mConditionsInternal[sKey][iConditionIndex] = this._toInternal(oProperty, oCondition);
 			}, this);
 		}, this);
 
