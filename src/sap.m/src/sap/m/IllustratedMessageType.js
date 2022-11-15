@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define([], function () {
 	"use strict";
 
 	/**
@@ -88,6 +88,12 @@ sap.ui.define([], function() {
 		NoTasksV1: "sapIllus-NoTasks_v1",
 
 		/**
+		 * "No Dimensions Set" illustration type.
+		 * @public
+		 */
+		NoDimensionsSet: "sapIllus-NoDimensionsSet",
+
+		/**
 		 * "Unable To Load" illustration type.
 		 * @public
 		 */
@@ -97,13 +103,19 @@ sap.ui.define([], function() {
 		 * "Unable To Load Image" illustration type.
 		 * @public
 		 */
-		 UnableToLoadImage: "sapIllus-UnableToLoadImage",
+		UnableToLoadImage: "sapIllus-UnableToLoadImage",
 
 		/**
 		 * "Unable To Upload" illustration type.
 		 * @public
 		 */
 		UnableToUpload: "sapIllus-UnableToUpload",
+
+		/**
+		 * "Upload To Cloud" illustration type.
+		 * @public
+		 */
+		UploadToCloud: "sapIllus-UploadToCloud",
 
 		/**
 		 * "Add Column" illustration type.
@@ -116,6 +128,12 @@ sap.ui.define([], function() {
 		 * @public
 		 */
 		AddPeople: "sapIllus-AddPeople",
+
+		/**
+		 * "Add Dimensions" illustration type.
+		 * @public
+		 */
+		AddDimensions: "sapIllus-AddDimensions",
 
 		/**
 		 * "Balloon Sky" illustration type.
