@@ -332,20 +332,42 @@ sap.ui.define([
 	 * Returns a locale-specific string value for the given key sKey.
 	 *
 	 * The text is searched in this resource bundle according to the fallback chain described in
-	 * {@link module:sap/base/i18n/ResourceBundle}. If no text could be found, the key itself is used as text.
+	 * {@link module:sap/base/i18n/ResourceBundle}. If no text could be found, the key itself is used
+	 * as text.
 	 *
-	 * If the second parameter <code>aArgs</code> is given, then any placeholder of the form "{<i>n</i>}"
-	 * (with <i>n</i> being an integer) is replaced by the corresponding value from <code>aArgs</code>
-	 * with index <i>n</i>.  Note: This replacement is applied to the key if no text could be found.
+	 *
+	 * <h3>Placeholders</h3>
+	 *
+	 * A text can contain placeholders that will be replaced with concrete values when
+	 * <code>getText</code> is called. The replacement is triggered by the <code>aArgs</code> parameter.
+	 *
+	 * Whenever this parameter is given, then the text and the arguments are additionally run through
+	 * the {@link module:sap/base/strings/formatMessage} API to replace placeholders in the text with
+	 * the corresponding values from the arguments array. The resulting string is returned by
+	 * <code>getText</code>.
+	 *
+	 * As the <code>formatMessage</code> API imposes some requirements on the input text (regarding
+	 * curly braces and single apostrophes), text authors need to be aware of the specifics of the
+	 * <code>formatMessage</code> API. Callers of <code>getText</code>, on the other side, should only
+	 * supply <code>aArgs</code> when the text has been created with the <code>formatMessage</code> API
+	 * in mind. Otherwise, single apostrophes in the text might be removed unintentionally.
+	 *
+	 * When <code>getText</code> is called without <code>aArgs</code>, the <code>formatMessage</code>
+	 * API is not applied and the transformation reg. placeholders and apostrophes does not happen.
+	 *
 	 * For more details on the replacement mechanism refer to {@link module:sap/base/strings/formatMessage}.
 	 *
 	 * @param {string} sKey Key to retrieve the text for
 	 * @param {any[]} [aArgs] List of parameter values which should replace the placeholders "{<i>n</i>}"
-	 *     (<i>n</i> is the index) in the found locale-specific string value. Note that the replacement is done
-	 *     whenever <code>aArgs</code> is given, no matter whether the text contains placeholders or not
-	 *     and no matter whether <code>aArgs</code> contains a value for <i>n</i> or not.
-	 * @param {boolean} [bIgnoreKeyFallback=false] If set, <code>undefined</code> is returned instead of the key string, when the key is not found in any bundle or fallback bundle.
-	 * @returns {string|undefined} The value belonging to the key, if found; otherwise the key itself or <code>undefined</code> depending on <code>bIgnoreKeyFallback</code>.
+	 *     (<i>n</i> is the index) in the found locale-specific string value. Note that the replacement
+	 *     is done whenever <code>aArgs</code> is given, no matter whether the text contains placeholders
+	 *     or not and no matter whether <code>aArgs</code> contains a value for <i>n</i> or not.
+	 * @param {boolean} [bIgnoreKeyFallback=false]
+	 *     If set, <code>undefined</code> is returned instead of the key string, when the key is not found
+	 *     in any bundle or fallback bundle.
+	 * @returns {string|undefined}
+	 *     The value belonging to the key, if found; otherwise the key itself or <code>undefined</code>
+	 *     depending on <code>bIgnoreKeyFallback</code>.
 	 *
 	 * @public
 	 */
