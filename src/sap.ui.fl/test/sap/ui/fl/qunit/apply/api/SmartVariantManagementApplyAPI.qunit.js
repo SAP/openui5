@@ -195,32 +195,6 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("When isApplicationVariant() is called", function (assert) {
-			this.oControl = new Control("controlId1");
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("foo.Component");
-			var oGetAppIdStub = sandbox.stub(ManifestUtils, "getAppIdFromManifest").returns("bar");
-			var oStubUtilsGetComponentForControl = sandbox.stub(Utils, "getComponentForControl").returns(null);
-
-			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant({control: this.oControl}), true, "the function returns true");
-
-			oGetAppIdStub.returns("foo");
-			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant({control: this.oControl}), false, "the function returns false");
-
-			oStubUtilsGetComponentForControl.returns({
-				getAppComponent: function () {
-					return {};
-				}
-			});
-			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant({control: this.oControl}), true, "the function returns true");
-
-			oStubUtilsGetComponentForControl.returns({
-				getAppComponent: function () {
-					return null;
-				}
-			});
-			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant({control: this.oControl}), false, "the function returns false");
-		});
-
 		QUnit.test("When isVendorLayer() is called it calls the corresponding Utils function", function (assert) {
 			sandbox.stub(LayerUtils, "isVendorLayer").withArgs().returns(false);
 			var bVendorLayer = SmartVariantManagementApplyAPI.isVendorLayer();
