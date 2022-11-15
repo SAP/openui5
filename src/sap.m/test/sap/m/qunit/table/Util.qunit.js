@@ -33,6 +33,10 @@ sap.ui.define([
 		return Util.measureText(Chars(iLength));
 	}
 
+	function OuterWidth(fInnerWidth) {
+		return fInnerWidth + 1.0625 + "rem";
+	}
+
 	QUnit.test("measureText", function(assert) {
 		var oThemeParametersStub, fSizeBeforeThemeChanged;
 		var done = assert.async();
@@ -175,12 +179,12 @@ sap.ui.define([
 
 	QUnit.test("calcColumnWidth", function(assert) {
 		var ccw = Util.calcColumnWidth.bind(Util);
-		assert.equal(ccw(new Byte()), "3rem", "Byte Type < Min width");
-		assert.equal(ccw(new BooleanType()), "3rem", "BooleanType Type < Min width");
+		assert.equal(ccw(new Byte()), OuterWidth(2), "Byte Type < Min width");
+		assert.equal(ccw(new BooleanType()), OuterWidth(2), "BooleanType Type < Min width");
 
 		assert.ok(parseFloat(ccw(new SByte())) < parseFloat(ccw(new Byte(), Chars(4))), "Byte type width < 4 character column header width");
 		assert.ok(parseFloat(ccw(new SByte(), Chars(1000))) < 8, "Long column headers can only push small column widths logarithmically");
-		assert.equal(parseFloat(ccw(new SByte(), Chars(1000), {truncateLabel: false, maxWidth: 10})), 11, "Long column headers could push up to max width");
+		assert.equal(ccw(new SByte(), Chars(1000), {truncateLabel: false, maxWidth: 10}), OuterWidth(10), "Long column headers could push up to max width");
 		assert.equal(parseInt(ccw(new SByte(), "HeaderText", {truncateLabel: false})), parseInt(Util.calcHeaderWidth("HeaderText") + 1));
 		assert.equal(parseInt(ccw(new SByte(), "HeaderText", {truncateLabel: false, headerGap: true})), parseInt(Util.calcHeaderWidth("HeaderText") + 1 + 1.375));
 
@@ -203,11 +207,11 @@ sap.ui.define([
 			assert.equal(parseFloat(ccw([oType, oType], "", {padding: 0, verticalArrangement: true})), fWidth, "Complex Fields Vertical: " + oType);
 		});
 
-		assert.equal(ccw([[Str(10), {maxWidth: 3}], [Str(10), {maxWidth: 2}]]), "6.5rem", "Type related settings");
+		assert.equal(ccw([[Str(10), {maxWidth: 3}], [Str(10), {maxWidth: 2}]]), OuterWidth(5.5), "Type related settings");
 		assert.equal(ccw([[Str(10), {maxWidth: 3}], [Str(10), {maxWidth: 2}]], "", {minWidth: 10, padding: 0}), "10rem", "Type related and column related settings");
 
 		assert.ok(parseFloat(ccw([[new Byte(), {gap: 10}]])) > 12, "Gap taken into account 10rem gap + 1rem padding + ~1rem Byte width ");
-		assert.equal(ccw([[new Byte(), {gap: 10, maxWidth: 5}]]), "6rem", "Gap and maxWidth taken into account");
+		assert.equal(ccw([[new Byte(), {gap: 10, maxWidth: 5}]]), OuterWidth(5), "Gap and maxWidth taken into account");
 	});
 
 	QUnit.test("showSelectionLimitPopover & hideSelectionLimitPopover", function(assert) {

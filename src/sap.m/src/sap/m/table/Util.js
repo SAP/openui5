@@ -227,7 +227,7 @@ sap.ui.define([
 			maxWidth: 19,
 			defaultWidth: 8,
 			truncateLabel: true,
-			padding: 1,
+			padding: 1.0625,
 			gap: 0
 		}, mSettings);
 
