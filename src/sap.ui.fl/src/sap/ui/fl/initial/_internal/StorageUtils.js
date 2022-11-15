@@ -244,6 +244,8 @@ sap.ui.define([
 				} else if (oFlexObject.fileType === "change") {
 					if (oFlexObject.variantReference) {
 						mGroupedFlexObjects[sLayer].variantDependentControlChanges.push(oFlexObject);
+					} else if (oFlexObject.appDescriptorChange) {
+						mGroupedFlexObjects[sLayer].appDescriptorChanges.push(oFlexObject);
 					} else {
 						switch (oFlexObject.changeType) {
 							case "addFavorite":

@@ -94,6 +94,11 @@ sap.ui.define([
 				fileType: "ctrl_variant_management_change",
 				layer: Layer.CUSTOMER
 			};
+			this.oAppDescriptorCustomer = {
+				fileType: "change",
+				appDescriptorChange: true,
+				layer: Layer.CUSTOMER
+			};
 			this.oChangeUser = {
 				fileType: "change",
 				layer: Layer.USER
@@ -155,7 +160,8 @@ sap.ui.define([
 				// oVariantChangeUser2 & oVariantChangeUser1 are set in this order to check the sort functionality
 				this.oCtrlVariantManagUser, this.oCtrlVariantManagCustomer, this.oVariantChangeUser2, this.oVariantChangeUser1,
 				this.oChangeUser, this.oChangeCustomer,	this.oChangeUserWithVMR, this.oChangeCustomerWithVMR, this.oVariantUser,
-				this.oVariantCustomer, this.oCtrlVariantChangeUser, this.oCtrlVariantChangeCustomer, this.oOtherType
+				this.oVariantCustomer, this.oCtrlVariantChangeUser, this.oCtrlVariantChangeCustomer, this.oOtherType,
+				this.oAppDescriptorCustomer
 			];
 
 			this.oEmptyResponse.USER.changes = [this.oChangeUser];
@@ -167,6 +173,7 @@ sap.ui.define([
 			this.oEmptyResponse.USER.variantManagementChanges = [this.oCtrlVariantManagUser];
 
 			this.oEmptyResponse.CUSTOMER.changes = [this.oChangeCustomer];
+			this.oEmptyResponse.CUSTOMER.appDescriptorChanges = [this.oAppDescriptorCustomer];
 			this.oEmptyResponse.CUSTOMER.comp.variants = [this.oVariantCustomer];
 			this.oEmptyResponse.CUSTOMER.variants = [this.oCtrlVariantCustomerWithVMR];
 			this.oEmptyResponse.CUSTOMER.variantChanges = [this.oCtrlVariantChangeCustomer];
