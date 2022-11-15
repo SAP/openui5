@@ -267,22 +267,6 @@ sap.ui.define([
 		return aSupportedModes;
 	};
 
-	Delegate.isExportSupported = function(oTable) {
-		if (oTable._isOfType(TableType.TreeTable)) {
-			return false;
-		}
-
-		return TableDelegate.isExportSupported.apply(this, arguments);
-	};
-
-	Delegate.isSelectionSupported = function(oTable) {
-		if (oTable._isOfType(TableType.TreeTable)) {
-			return false;
-		}
-
-		return TableDelegate.isSelectionSupported.apply(this, arguments);
-	};
-
 	Delegate.getGroupSorter = function(oTable, sPropertyName) {
 		var oPropertyHelper = oTable.getPropertyHelper();
 		var oVisibleProperty = oTable._getVisibleProperties().find(function(oProperty) {

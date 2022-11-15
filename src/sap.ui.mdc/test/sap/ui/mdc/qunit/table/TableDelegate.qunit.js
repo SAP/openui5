@@ -237,7 +237,7 @@ sap.ui.define([
 		}.bind(this);
 
 		return fnTest(TableType.Table, true).then(function() {
-			return fnTest(TableType.TreeTable, true);
+			return fnTest(TableType.TreeTable, false);
 		}).then(function() {
 			return fnTest(TableType.ResponsiveTable, true);
 		});
@@ -251,7 +251,7 @@ sap.ui.define([
 		}.bind(this);
 
 		return fnTest(TableType.Table, true).then(function() {
-			return fnTest(TableType.TreeTable, true);
+			return fnTest(TableType.TreeTable, false);
 		}).then(function() {
 			return fnTest(TableType.ResponsiveTable, true);
 		});
