@@ -57,7 +57,15 @@ function (library, Log, Element) {
 				 *
 				 * @since 1.98
 				 */
-				firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1}
+				firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1},
+
+				/**
+			 	 * If set, the calendar week numbering is used for display.
+				 * If not set, the calendar week numbering of the global configuration is used.
+				 * Note: This property should not be used with firstDayOfWeek property.
+				 * @since 1.110.0
+				 */
+				calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 
 			}
 		}

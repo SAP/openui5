@@ -760,7 +760,7 @@
 		  "category": "Action",
 		  "since": "1.38",
 		  "samples": [
-		    "sap.m.sample.Menu"
+			"sap.m.sample.Menu"
 		  ]
 		},
 		{
@@ -1064,7 +1064,8 @@
 				"sap.m.sample.SinglePlanningCalendarDND",
 				"sap.m.sample.SinglePlanningCalendarWithZoomInZoomOut",
 				"sap.m.sample.SinglePlanningCalendarSnappingHeader",
-				"sap.m.sample.SinglePlanningCalendarCreateApp"]
+				"sap.m.sample.SinglePlanningCalendarCreateApp",
+				"sap.m.sample.SinglePlanningCalendarWeekNumbering"]
 		},
 		{
 		  "id": "sap.m.Popover",
@@ -1409,7 +1410,7 @@
 			"sap.m.sample.TextMaxLines",
 			"sap.m.sample.TextRenderWhitespace",
 			"sap.m.sample.TextHyphenation",
-		    "sap.m.sample.TextEmptyIndicator"
+			"sap.m.sample.TextEmptyIndicator"
 		  ]
 		},
 		{
@@ -2725,7 +2726,7 @@
 		  "id": "sap.m.sample.TreeDnD",
 		  "name": "Tree - Drag and Drop",
 		  "description": "This example shows drag-and-drop capability."
-        },
+		},
 		{
 		  "id": "sap.m.sample.TreeIcon",
 		  "name": "Tree - Icon & Context Menu",
@@ -2737,11 +2738,11 @@
 		  "description": "This example shows how to expand/collapse multiple nodes and demonstrates the sticky header toolbar and info toolbar options."
 		},
 		{
-          "id": "sap.m.sample.TreeJSONLazyLoading",
-          "name": "Tree - Lazy loading with a JSON model",
-          "description": "Shows how lazy loading with a JSON model can be done using the toggleOpenState event."
-        },
-        {
+		  "id": "sap.m.sample.TreeJSONLazyLoading",
+		  "name": "Tree - Lazy loading with a JSON model",
+		  "description": "Shows how lazy loading with a JSON model can be done using the toggleOpenState event."
+		},
+		{
 		  "id": "sap.m.sample.TreeOData",
 		  "name": "Tree - OData",
 		  "description": "This example shows Tree with OData service."
@@ -3066,11 +3067,11 @@
 			"name": "Table - Item Navigated",
 			"description": "This example demonstrates the navigated property of the item."
 		},
-	    {
+		{
 		  "id": "sap.m.sample.TableAutoPopin",
 		  "name": "Table - Auto popin of the table columns",
 		  "description": "This example demonstrates the automatic pop-in behavior of the table and hiding columns instead of moving them into the pop-in depending on their importance."
-	    },
+		},
 		{
 			"id": "sap.m.sample.TableStrictLayout",
 			"name": "Table - Strict layout",
@@ -3765,6 +3766,11 @@
 		  "id": "sap.m.sample.SinglePlanningCalendarCreateApp",
 		  "name": "Single Planning Calendar - Create and Modify Appointments",
 		  "description": "This sample demonstrates how the SinglePlanningCalendar control can be used in combination with sap.m.Dialog to create new appointments and sap.m.ResponsivePopover to edit already existing appointments. It also showcases how appointments can be deleted. Please note that these features are not part of the control."
+		},
+		{
+			"id": "sap.m.sample.SinglePlanningCalendarWeekNumbering",
+			"name": "Single Planning Calendar - Week Numbering",
+			"description": "This sample demonstrates how the SinglePlanningCalendar control can be used width different week numbering (only Week and Month views are affected)"
 		},
 		{
 		  "id": "sap.m.sample.ImageContent",

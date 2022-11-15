@@ -8,9 +8,11 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
-	'sap/ui/core/Configuration'
+	'sap/ui/core/Configuration',
+	"sap/ui/core/date/CalendarUtils",
+	'sap/ui/core/Locale'
 ],
-function (library, SinglePlanningCalendarView, LocaleData, CalendarDate, CalendarUtils, Configuration) {
+function (library, SinglePlanningCalendarView, LocaleData, CalendarDate, CalendarUtils, Configuration, CalendarDateUtils, Locale) {
 	"use strict";
 
 	/**
@@ -74,13 +76,23 @@ function (library, SinglePlanningCalendarView, LocaleData, CalendarDate, Calenda
 	 * @public
 	 */
 	SinglePlanningCalendarWeekView.prototype.calculateStartDate = function (oStartDate) {
+
+		var sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+
 		var oLocaleData = LocaleData.getInstance(Configuration.getFormatSettings().getFormatLocale()),
-			iFirstDayOfWeek = this.getFirstDayOfWeek(),
-			// -1 is the default value of firstDayOfWeek property. It means that the information from the used locale is used.
-			iCurrentFirstDayOfWeek = iFirstDayOfWeek === -1 ? oLocaleData.getFirstDayOfWeek() : iFirstDayOfWeek;
+			iFirstDayOfWeek = this.getFirstDayOfWeek();
 
-		oStartDate.setDate(oStartDate.getDate() - oStartDate.getDay() + iCurrentFirstDayOfWeek);
+			if (iFirstDayOfWeek < 0 || iFirstDayOfWeek > 6) {
+				var oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(sLocale));
 
+				if (oWeekConfigurationValues) {
+					iFirstDayOfWeek = oWeekConfigurationValues.firstDayOfWeek;
+				} else {
+					iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+				}
+			}
+
+		oStartDate.setDate(oStartDate.getDate() - oStartDate.getDay() + iFirstDayOfWeek);
 		return CalendarUtils
 			._getFirstDateOfWeek(CalendarDate.fromLocalJSDate(oStartDate), {
 				firstDayOfWeek: iFirstDayOfWeek,

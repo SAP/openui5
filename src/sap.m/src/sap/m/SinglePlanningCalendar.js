@@ -21,7 +21,8 @@ sap.ui.define([
 	'sap/ui/unified/DateTypeRange',
 	'sap/ui/unified/library',
 	'sap/ui/base/ManagedObjectObserver',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/date/CalendarWeekNumbering"
 ],
 function(
 	library,
@@ -41,7 +42,8 @@ function(
 	DateTypeRange,
 	unifiedLibrary,
 	ManagedObjectObserver,
-	jQuery
+	jQuery,
+	CalendarWeekNumbering
 ) {
 	"use strict";
 
@@ -208,10 +210,19 @@ function(
 				 *
 				 * Note: This property will only have effect in Week view and Month view of the SinglePlanningCalendar,
 				 * but it wouldn't have effect in WorkWeek view.
+				 * This property should not be used with the calendarWeekNumbering property.
 				 *
 				 * @since 1.98
 				 */
-				firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1}
+				firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1},
+
+				/**
+			 	 * If set, the calendar week numbering is used for display.
+				 * If not set, the calendar week numbering of the global configuration is used.
+				 * Note: This property should not be used with firstDayOfWeek property.
+				 * @since 1.110.0
+				 */
+				calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 			},
 
 			aggregations : {
@@ -501,6 +512,11 @@ function(
 	SinglePlanningCalendar.prototype.onBeforeRendering = function () {
 		// We can apply/remove sticky classes even before the control is rendered.
 		this._toggleStickyClasses();
+
+		if (this.getFirstDayOfWeek() !== -1 && this.getCalendarWeekNumbering()) {
+			Log.warning("Both properties firstDayOfWeek and calendarWeekNumbering should not be used at the same time!");
+		}
+
 	};
 
 	/**
@@ -961,6 +977,23 @@ function(
 		return this;
 	};
 
+	SinglePlanningCalendar.prototype.setCalendarWeekNumbering = function(sCalendarWeekNumbering) {
+		this.setProperty("calendarWeekNumbering", sCalendarWeekNumbering);
+		this.getViews().forEach(function (oView) {
+			oView.setCalendarWeekNumbering(sCalendarWeekNumbering);
+		});
+		var oHeader = this._getHeader(),
+			oPicker = oHeader.getAggregation("_calendarPicker") ? oHeader.getAggregation("_calendarPicker") : oHeader._oPopup.getContent()[0],
+			oMonthGrid = this.getAggregation("_mvgrid");
+
+		oMonthGrid.setCalendarWeekNumbering(this.getCalendarWeekNumbering());
+		oPicker.setCalendarWeekNumbering(this.getCalendarWeekNumbering());
+
+		this._alignColumns();
+
+		return this;
+	};
+
 	/**
 	 * Switches the visibility of the SegmentedButton in the _header and aligns the columns in the grid after an
 	 * operation (add, insert, remove, removeAll, destroy) with the views is performed.
@@ -1329,7 +1362,7 @@ function(
 			endDate: oRangeDates.oEndDate.toLocalJSDate()
 		});
 
-		oCalPicker.removeAllSelectedDates();
+		oCalPicker.destroySelectedDates();
 		oCalPicker.addSelectedDate(oSelectedRange);
 	};
 
