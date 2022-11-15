@@ -1,26 +1,28 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/m/MessageBox",
-	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
-	"sap/m/HBox",
-	"sap/m/Text",
-	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/mdc/table/TreeTableType",
 	"sap/ui/mdc/FilterBar",
 	"sap/ui/mdc/FilterField",
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/m/HBox",
+	"sap/m/Text",
+	"sap/m/MessageBox",
+	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Controller,
-	MessageBox,
-	ODataModel,
 	Table,
 	Column,
-	HBox,
-	Text,
-	VariantManagement,
+	TreeTableType,
 	FilterBar,
 	FilterField,
+	ODataModel,
+	HBox,
+	Text,
+	MessageBox,
+	VariantManagement,
 	jQuery
 ) {
 	"use strict";
@@ -122,10 +124,11 @@ sap.ui.define([
 
 		createTable: function(sProxyServiceUrl, sCollectionName, sHierarchyQualifier, aInitiallyVisibleProperties) {
 			var oTable = new Table("mdcTable", {
-				type: "TreeTable",
+				type: new TreeTableType(),
 				header: "TreeTable",
 				enableExport: true,
 				selectionMode: "Multi",
+				enableAutoColumnWidth: true,
 				showRowCount: false,
 				p13nMode: ["Column", "Filter", "Sort", "Group", "Aggregate"],
 				delegate: {

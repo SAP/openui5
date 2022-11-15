@@ -241,7 +241,7 @@ sap.ui.define([
 	 * @private
 	 */
 	TableDelegate.isExportSupported = function(oTable) {
-		return true;
+		return !oTable._isOfType(TableType.TreeTable);
 	};
 
 	/**
@@ -252,7 +252,7 @@ sap.ui.define([
 	 * @private
 	 */
 	TableDelegate.isSelectionSupported = function(oTable) {
-		return true;
+		return !oTable._isOfType(TableType.TreeTable);
 	};
 
 	/**
