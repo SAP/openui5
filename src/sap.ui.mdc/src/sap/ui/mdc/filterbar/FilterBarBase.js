@@ -1720,6 +1720,8 @@ sap.ui.define([
 
 	FilterBarBase.prototype._cleanUpAllFilterFieldsInErrorState = function() {
 
+		this._getConditionModel().checkUpdate(true);
+
 		var aFilterFields = this.getFilterItems();
 		aFilterFields.forEach( function(oFilterField) {
 			this._cleanUpFilterFieldInErrorState(oFilterField);
