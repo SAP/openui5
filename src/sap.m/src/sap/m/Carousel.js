@@ -7,6 +7,7 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/library",
@@ -24,6 +25,7 @@ sap.ui.define([
 	library,
 	Core,
 	Control,
+	Element,
 	Device,
 	ResizeHandler,
 	coreLibrary,
@@ -1003,7 +1005,7 @@ sap.ui.define([
 		var oPage;
 
 		if (this._isSlide(oFocusedElement)) {
-			oPage = jQuery(oFocusedElement).find(".sapMCrsPage").control(0);
+			oPage = Element.closestTo(jQuery(oFocusedElement).find(".sapMCrsPage")[0]);
 		} else {
 			oPage = this._getClosestPage(oFocusedElement);
 		}
@@ -1344,7 +1346,7 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} The page
 	 */
 	Carousel.prototype._getClosestPage = function (oElement) {
-		return jQuery(oElement).closest(".sapMCrsPage").control(0);
+		return Element.closestTo(jQuery(oElement).closest(".sapMCrsPage")[0]);
 	};
 
 	//================================================================================

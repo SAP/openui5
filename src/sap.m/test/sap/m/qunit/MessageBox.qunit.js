@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	App,
@@ -38,6 +39,7 @@ sap.ui.define([
 	coreLibrary,
 	Device,
 	oCore,
+	Element,
 	jQuery
 ) {
 	"use strict";
@@ -1221,7 +1223,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var oMessageBoxDialog = oCore.byId("messageId");
-		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText").control(0);
+		var oViewDetails = Element.closestTo(oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText")[0]);
 
 		// Act
 		pressLink(oViewDetails);
@@ -1255,7 +1257,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 		var oMessageBoxDialog = oCore.byId("messageId");
-		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText").control(0);
+		var oViewDetails = Element.closestTo(oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText")[0]);
 
 		// Act
 		pressLink(oViewDetails);
@@ -1328,7 +1330,7 @@ sap.ui.define([
 			// assert
 			assert.strictEqual(
 				document.activeElement.getAttribute("id"),
-				oViewDetails.control(0).getDomRef("busyIndicator").getAttribute("id"),
+				Element.closestTo(oViewDetails[0]).getDomRef("busyIndicator").getAttribute("id"),
 				"ViewDetails link should be focused");
 
 			// clean up
@@ -1381,7 +1383,7 @@ sap.ui.define([
 		});
 		oCore.applyChanges();
 		var oMessageBoxDialog = oCore.byId("messageId");
-		var oViewDetails = oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText").control(0);
+		var oViewDetails = Element.closestTo(oMessageBoxDialog.$().find("a.sapMMessageBoxLinkText")[0]);
 		pressLink(oViewDetails);
 
 		setTimeout(function () {

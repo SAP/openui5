@@ -368,7 +368,9 @@ sap.ui.define([
 		};
 		var done = assert.async();
 		this.applyTheme("sap_belize", function() {
-			this.oNonActiveItem.rerender();
+			this.oNonActiveItem.invalidate();
+			oCore.applyChanges();
+
 			assert.equal(this.oNonActiveItem.oAvatar.$().css("color"), "rgb(255, 255, 255)", "The inactive icon color is white in sap_belize theme");
 			done();
 		}.bind(this));
@@ -604,11 +606,13 @@ sap.ui.define([
 
 	QUnit.test("Expanded text should appear also after rerendering", function (assert) {
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowMore);
+
 		oFeedList.getItems()[10]._toggleTextExpanded();
-		oFeedList.getItems()[10].rerender();
+		oCore.applyChanges();
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowLess);
+
 		oFeedList.getItems()[10]._toggleTextExpanded();
-		oFeedList.getItems()[10].rerender();
+		oCore.applyChanges();
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowMore);
 	});
 
@@ -633,7 +637,8 @@ sap.ui.define([
 		var oItem = oFeedList.getItems()[0];
 		//Act
 		oItem.setIconActive(false);
-		oFeedList.rerender();
+		oCore.applyChanges();
+
 		var $Image = oItem.oAvatar.getDomRef();
 		var sStyleClass = $Image.className;
 		//Assert
@@ -651,20 +656,23 @@ sap.ui.define([
 		oFeedList.getItems()[10].setMoreLabel("MORE TEXT");
 		oFeedList.getItems()[10].setLessLabel("LESS TEXT");
 		oCore.applyChanges();
+
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "MORE TEXT");
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), oFeedList.getItems()[10].getMoreLabel());
 	});
 
 	QUnit.test("Text Expanded", function (assert) {
 		oFeedList.getItems()[10]._toggleTextExpanded();
-		oFeedList.getItems()[10].rerender();
+		oCore.applyChanges();
+
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "LESS TEXT");
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), oFeedList.getItems()[10].getLessLabel());
 	});
 
 	QUnit.test("Text Collapsed", function (assert) {
 		oFeedList.getItems()[10]._toggleTextExpanded();
-		oFeedList.getItems()[10].rerender();
+		oCore.applyChanges();
+
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "MORE TEXT");
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), oFeedList.getItems()[10].getMoreLabel());
 	});
@@ -716,7 +724,9 @@ sap.ui.define([
 
 	QUnit.test("Only single Press event is added.", function (assert) {
 		assert.equal(Object.keys(this.oFeedListItem.oAvatar.mEventRegistry).length, 1,  "Only single press event is added to the ImageControl");
-		this.oFeedListItem.rerender();
+		this.oFeedListItem.invalidate();
+		oCore.applyChanges();
+
 		assert.equal(Object.keys(this.oFeedListItem.oAvatar.mEventRegistry).length, 1,  "Only single press event is added to the ImageControl");
 	});
 

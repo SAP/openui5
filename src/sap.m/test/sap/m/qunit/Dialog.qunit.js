@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Popup",
 	"sap/m/Dialog",
@@ -37,6 +38,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	Device,
 	Core,
+	Element,
 	IconPool,
 	Popup,
 	Dialog,
@@ -708,6 +710,9 @@ sap.ui.define([
 		jQuery("html").css("overflow", ""); // restore scrollbar after test
 	});
 
+	/**
+	 * @deprecated Since version 1.13.1
+	 */
 	QUnit.test("Dialog: set stretchOnPhone to true should not stretch on desktop", function (assert) {
 		var oDialog = new Dialog({
 			stretchOnPhone: true
@@ -721,6 +726,9 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.13.1
+	 */
 	QUnit.test("Dialog: set stretchOnPhone to true should stretch on phone", function (assert) {
 		var oSystem = {
 			desktop: false,
@@ -1033,7 +1041,10 @@ sap.ui.define([
 		jQuery("html").removeClass("sap-phone");
 	});
 
-	QUnit.test("Setting starting and ending buttons", function (assert) {
+	/**
+	 * @deprecated Since version 1.15.1
+	 */
+	QUnit.test("Deprecated: Setting left and right buttons", function (assert) {
 		// Arrange
 		var oDialog = new Dialog();
 		var testButton = new Button();
@@ -1179,7 +1190,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		var oFocusedControl = jQuery(document.activeElement).control(0);
+		var oFocusedControl = Element.closestTo(document.activeElement);
 		assert.strictEqual(oFocusedControl.getId(), oInput2.getId(), "oInput2 has focus.");
 
 		// Clean up
@@ -1235,7 +1246,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		var oFocusedControl = jQuery(document.activeElement).control(0);
+		var oFocusedControl = Element.closestTo(document.activeElement);
 		assert.strictEqual(oFocusedControl.getId(), oInput1.getId(), "oInput1 has focus.");
 
 		// Clean up
@@ -1276,7 +1287,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		var oFocusedControl = jQuery(document.activeElement).control(0);
+		var oFocusedControl = Element.closestTo(document.activeElement);
 		assert.strictEqual(oFocusedControl.getId(), oButton1.getId(), "oButton1 has focus.");
 
 		// Clean up
@@ -1297,7 +1308,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		var oFocusedControl = jQuery(document.activeElement).control(0);
+		var oFocusedControl = Element.closestTo(document.activeElement);
 		assert.strictEqual(oFocusedControl.getId(), oButton2.getId(), "oButton2 has focus.");
 
 		// Clean up
@@ -1317,7 +1328,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		var oFocusedControl = jQuery(document.activeElement).control(0);
+		var oFocusedControl = Element.closestTo(document.activeElement);
 		assert.strictEqual(oFocusedControl.getId(), oButton1.getId(), "oButton1 has focus.");
 
 		// Clean up
@@ -1337,7 +1348,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		var oFocusedControl = jQuery(document.activeElement).control(0);
+		var oFocusedControl = Element.closestTo(document.activeElement);
 		assert.strictEqual(oFocusedControl.getId(), oButton2.getId(), "oButton2 has focus.");
 
 		// Clean up
@@ -1353,7 +1364,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		var oFocusedControl = jQuery(document.activeElement).control(0);
+		var oFocusedControl = Element.closestTo(document.activeElement);
 		assert.strictEqual(oFocusedControl.getId(), oDialog.getId(), "oDialog has focus.");
 
 		// Clean up
@@ -1393,8 +1404,7 @@ sap.ui.define([
 		oDialog.open();
 		this.clock.tick(300);
 
-		var $FocusedElement = jQuery(document.activeElement);
-		var oFocusedControl = $FocusedElement.control(0);
+		var oFocusedControl = Element.closestTo(document.activeElement);
 
 		assert.notEqual(oFocusedControl.getId(), "inputWantsFocus", "Input control shouldn't get the focus");
 		assert.strictEqual(oFocusedControl.getId(), oDialog.getId(), "Dialog should get the focus");
@@ -1422,12 +1432,12 @@ sap.ui.define([
 		oDialog.open();
 		this.clock.tick(400);
 
-		var oFocusedControl = jQuery(document.activeElement).control(0);
+		var oFocusedControl = Element.closestTo(document.activeElement);
 		assert.equal(oFocusedControl.getId(), "initialFocusButton", "Initial focus should be set correctly");
 
 		assert.strictEqual(oDialog.getCustomHeader().$().attr("aria-level"), "2", "Customer header should have aria-level= '2'");
 		oDialog.$("lastfe").trigger("focus");
-		oFocusedControl = jQuery(document.activeElement).control(0);
+		oFocusedControl = Element.closestTo(document.activeElement);
 		assert.equal(oFocusedControl.getId(), "tabChainButton", "Focus should be set to the button in custom header");
 
 		oDialog.destroy();

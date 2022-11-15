@@ -11,13 +11,6 @@ sap.ui.define([
 
 	createAndAppendDiv("content");
 
-
-
-	var landscape;
-	function oc(evt) {
-		landscape = evt.getParameter("landscape");
-	}
-
 	function getBgDomElement(oApp) {
 		return oApp.getDomRef("BG");
 	}
@@ -28,7 +21,6 @@ sap.ui.define([
 	app = new App("myFirstApp", {
 		initialPage: "page1",
 		homeIcon: "test.png",
-		orientationChange: oc,
 		pages: [
 			new Page("page1", {
 				title: "Page 1"
@@ -67,13 +59,26 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated Since version 1.20.0
+	 */
 	QUnit.test("orientationChange event", function(assert) {
+		var landscape;
+
+		function onOrientationChange(evt) {
+			landscape = evt.getParameter("landscape");
+		}
+
+		app.attachOrientationChange(onOrientationChange);
+
 		assert.equal(landscape, undefined, "handler for orientationChange should not have been called yet");
 		app._handleOrientationChange();
 		assert.ok(landscape !== undefined, "handler for orientationChange should have been called");
 
 		var isLandscape = jQuery(window).width() > jQuery(window).height();
 		assert.equal(landscape, isLandscape, "'landscape' parameter should contain the current orientation");
+
+		app.detachOrientationChange(onOrientationChange);
 	});
 
 	QUnit.test("Dimensions", function(assert) {

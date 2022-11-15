@@ -11,6 +11,7 @@ sap.ui.define([
 	'./CheckBox',
 	'./Toolbar',
 	'./library',
+	'sap/ui/core/Element',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/library',
@@ -35,9 +36,7 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "cursorPos"
-	"sap/ui/dom/jquery/cursorPos",
-	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control"
+	"sap/ui/dom/jquery/cursorPos"
 ],
 function(
 	InputBase,
@@ -48,6 +47,7 @@ function(
 	CheckBox,
 	Toolbar,
 	library,
+	Element,
 	EnabledPropagator,
 	IconPool,
 	coreLibrary,
@@ -817,7 +817,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._handleItemTap = function(oEvent) {
-		var oTappedControl = jQuery(oEvent.target).control(0);
+		var oTappedControl = Element.closestTo(oEvent.target);
 
 		if (!oTappedControl.isA("sap.m.CheckBox") && !oTappedControl.isA("sap.m.GroupHeaderListItem")) {
 			this._bCheckBoxClicked = false;
@@ -1981,7 +1981,7 @@ function(
 
 				var aVisibleItems = ListHelpers.getVisibleItems(this.getItems());
 				var oItemFirst = aVisibleItems[0];
-				var oItemCurrent = jQuery(document.activeElement).control()[0];
+				var oItemCurrent = Element.closestTo(document.activeElement);
 
 				if (oItemCurrent !== ListHelpers.getListItem(oItemFirst)) {
 					return;
@@ -2411,7 +2411,7 @@ function(
 		}
 
 		// find focused element
-		var oFocusedElement = jQuery(document.activeElement).control()[0];
+		var oFocusedElement = Element.closestTo(document.activeElement);
 
 		if (!oFocusedElement) {
 

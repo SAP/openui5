@@ -539,14 +539,14 @@ sap.ui.define([
 	QUnit.test("GenericTile border rendered for valueColor", function(assert) {
 		assert.notOk(document.querySelector("#generic-tile .sapMGTCriticalBorder"), "Generic tile has no criticality border");
 		this.oGenericTile.setValueColor("Error");
-		this.oGenericTile.rerender();
+		oCore.applyChanges();
 		assert.ok(document.querySelector("#generic-tile .sapMGTCriticalBorder"), "Generic tile border was rendered sucessfully");
 		assert.equal(document.querySelector("#generic-tile .sapMGTCriticalBorder").classList[1], "Error", "Generic tile border has error state");
 	});
 
 	QUnit.test("GenericTile border not rendered when no valueColor", function(assert) {
 		this.oGenericTile.setValueColor("None");
-		this.oGenericTile.rerender();
+		oCore.applyChanges();
 		assert.notOk(document.querySelector("#generic-tile .sapMGTCriticalBorder"), "Generic tile border was not rendered");
 	});
 
@@ -3487,12 +3487,15 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		this.fnWithRenderAsserts(assert);
 
 		var openSpy = sinon.spy(GenericTile.prototype, "_applyExtraHeight");
+
 		this.oGenericTile.setState(LoadState.Loaded);
-		this.oGenericTile.rerender();
+		this.oGenericTile.invalidate(); // force invalidation, in case state was already "Loaded"
+		oCore.applyChanges();
 		assert.equal(openSpy.callCount, 1, "The _applyExtraHeight function is called when the state is in loaded");
-		openSpy.reset();
+		openSpy.resetHistory();
+
 		this.oGenericTile.setState(LoadState.Loading);
-		this.oGenericTile.rerender();
+		oCore.applyChanges();
 		assert.equal(openSpy.callCount, 0, "The _applyExtraHeight function is not called when the state is in loading");
 	});
 

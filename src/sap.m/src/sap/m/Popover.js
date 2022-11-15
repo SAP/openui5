@@ -26,8 +26,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Configuration",
 	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
-	"sap/ui/dom/jquery/rect", // jQuery Plugin "rect"
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
 ],
 	function(
 		Bar,
