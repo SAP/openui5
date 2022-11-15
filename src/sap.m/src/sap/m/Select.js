@@ -86,6 +86,9 @@ function(
 		// shortcut for sap.ui.core.InvisibleMessageMode
 		var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
+		// shortcut for sap.ui.core.TitleLevel
+		var TitleLevel = coreLibrary.TitleLevel;
+
 		/**
 		 * Constructor for a new <code>sap.m.Select</code>.
 		 *
@@ -1337,7 +1340,8 @@ function(
 				this.setAggregation("_pickerHeader", new Bar({
 					titleAlignment: library.TitleAlignment.Auto,
 					contentMiddle: new Title({
-						text: oResourceBundle.getText("SELECT_PICKER_TITLE_TEXT")
+						text: oResourceBundle.getText("SELECT_PICKER_TITLE_TEXT"),
+						level: TitleLevel.H1
 					}),
 					contentRight: new Button({
 						icon: sIconURI,

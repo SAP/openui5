@@ -1,6 +1,7 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/IconPool',
+	'sap/ui/core/library',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/Link',
 	'sap/m/MessageItem',
@@ -9,8 +10,11 @@ sap.ui.define([
 	'sap/m/Dialog',
 	'sap/m/Bar',
 	'sap/m/Title'
-], function(Controller, IconPool, JSONModel, Link, MessageItem, MessageView, Button, Dialog, Bar, Title) {
+], function(Controller, IconPool, coreLibrary, JSONModel, Link, MessageItem, MessageView, Button, Dialog, Bar, Title) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	return Controller.extend("sap.m.sample.MessageViewInsideDialog.controller.MessageViewInsideDialog", {
 
@@ -105,7 +109,10 @@ sap.ui.define([
 				customHeader: new Bar({
 					contentLeft: [oBackButton],
 					contentMiddle: [
-						new Title({text: "Error"})
+						new Title({
+							text: "Error",
+							level: TitleLevel.H1
+						})
 					]
 				}),
 				contentHeight: "50%",
