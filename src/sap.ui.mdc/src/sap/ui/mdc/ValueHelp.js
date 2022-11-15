@@ -227,6 +227,30 @@ sap.ui.define([
 				closed: {},
 
 				/**
+				 * This event is fired as the value help opening is triggered.
+				 */
+				open: {
+					parameters: {
+						/**
+						 * The container which will be opened
+						 */
+						container: {type: "object"}
+					}
+				},
+
+				/**
+				 * This event is fired as the value help is fully open.
+				 */
+				opened: {
+					parameters: {
+						/**
+						 * The container which was opened
+						 */
+						container: {type: "object"}
+					}
+				},
+
+				/**
 				 * This event is fired after the user navigated, using the arrow keys, in the value help.
 				 */
 				navigated: {
@@ -460,6 +484,7 @@ sap.ui.define([
 
 		if (oContainer && !oContainer.isOpen() && !oContainer.isOpening()) {
 			oContainer.open(this._retrieveDelegateContent(oContainer));
+			this.fireOpen({container: oContainer});
 		}
 	};
 
@@ -974,7 +999,7 @@ sap.ui.define([
 	}
 
 	function _handleOpened(oEvent) {
-
+		this.fireOpened({container: oEvent.getSource()});
 	}
 
 	function _handleClosed(oEvent) {

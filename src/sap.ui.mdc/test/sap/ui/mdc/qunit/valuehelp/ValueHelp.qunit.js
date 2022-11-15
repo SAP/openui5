@@ -323,18 +323,28 @@ sap.ui.define([
 
 		sinon.spy(oContainer, "open");
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
+		sinon.spy(oValueHelp, "fireOpen");
+		sinon.spy(oValueHelp, "fireOpened");
+
 
 		var fnDone = assert.async();
 		oValueHelp.open(false); //-> check nothing happens
 		assert.notOk(oContainer.open.called, "Container open not called for Dialog opening");
 
 		oValueHelp.open(true);
+		assert.ok(oValueHelp.fireOpen.called, "ValueHelp open event fired for typeahead opening");
+		assert.equal(oValueHelp.fireOpen.lastCall.args[0].container, oContainer, "ValueHelp open event carries correct container");
 
 		setTimeout(function() { // Delegate is called async
 			assert.ok(oContainer.open.called, "Container open called for typeahead opening");
 			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for typeahead opening");
+			oContainer._handleOpened();
+			assert.ok(oValueHelp.fireOpened.called, "ValueHelp opened event fired for typeahead opening");
+			assert.equal(oValueHelp.fireOpened.lastCall.args[0].container, oContainer, "ValueHelp opened event carries correct container");
 
 			ValueHelpDelegate.retrieveContent.restore();
+			oValueHelp.fireOpen.restore();
+			oValueHelp.fireOpened.restore();
 			fnDone();
 		}, 0);
 
@@ -884,18 +894,27 @@ sap.ui.define([
 
 		sinon.spy(oContainer, "open");
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
+		sinon.spy(oValueHelp, "fireOpen");
+		sinon.spy(oValueHelp, "fireOpened");
 
 		var fnDone = assert.async();
 		oValueHelp.open(true); //-> check nothing happens
 		assert.notOk(oContainer.open.called, "Container open not called for typeahead opening");
 
 		oValueHelp.open(false);
+		assert.ok(oValueHelp.fireOpen.called, "ValueHelp open event fired for typeahead opening");
+		assert.equal(oValueHelp.fireOpen.lastCall.args[0].container, oContainer, "ValueHelp open event carries correct container");
 
 		setTimeout(function() { // Delegate is called async
 			assert.ok(oContainer.open.called, "Container open called for dialog opening");
 			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for opening");
+			oContainer._handleOpened();
+			assert.ok(oValueHelp.fireOpened.called, "ValueHelp opened event fired for typeahead opening");
+			assert.equal(oValueHelp.fireOpened.lastCall.args[0].container, oContainer, "ValueHelp opened event carries correct container");
 
 			ValueHelpDelegate.retrieveContent.restore();
+			oValueHelp.fireOpen.restore();
+			oValueHelp.fireOpened.restore();
 			fnDone();
 		}, 0);
 
