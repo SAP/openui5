@@ -1342,6 +1342,31 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_List_MinItems = {
+			"sap.app": {
+				"id": "test.card.loading.cardMinItems"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Test loading placeholder with minItems"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "cost.json"
+						},
+						"path": "/milk"
+					},
+					"item": {
+						"title": "{Revenue}"
+					},
+					"maxItems": 5,
+					"minItems": 1
+				}
+			}
+		};
+
 		function isLoadingIndicatorShowingHeader(oManifest, oCard, bLoading, bExpectedTitle, bExpectedSubtitle, bExpectedAvatar, assert) {
 
 			// Arrange
@@ -1770,6 +1795,29 @@ sap.ui.define([
 			var sType = "Analytical";
 
 			isLoadingPlaceholderCorrectType(this.oLoadingProvider, {}, sType, this.oCard, "Analytical", "Loading placeholder is of type GenericPlaceholder", assert);
+		});
+
+		QUnit.test("Card loading placeholder has correct number of items when minItems is used", function (assert) {
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.attachEventOnce("_contentReady", function () {
+				var oLoadingPlaceholder = oCard.getCardContent().getAggregation("_loadingPlaceholder");
+
+				assert.strictEqual(oLoadingPlaceholder.getMinItems(), 1, "The placeholder minItems is 1 initially");
+
+				oCard.attachEventOnce("_ready", function () {
+					assert.strictEqual(oLoadingPlaceholder.getMinItems(), 5, "The placeholder minItems are 5 initially");
+					done();
+				});
+
+				oCard.refreshData();
+				Core.applyChanges();
+			});
+
+			oCard.setManifest(oManifest_List_MinItems);
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			oCard.showLoadingPlaceholders();
 		});
 
 		QUnit.module("Card Loading Placeholder API", {
