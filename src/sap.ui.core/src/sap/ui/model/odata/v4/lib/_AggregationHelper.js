@@ -557,7 +557,7 @@ sap.ui.define([
 		 *
 		 * @param {number} iLevel - The level
 		 * @param {number} iIndex - The index within the parent cache
-		 * @param {object} oParentCache - The parent cache
+		 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oParentCache - The parent cache
 		 * @returns {object} A placeholder object
 		 *
 		 * @public
