@@ -204,18 +204,6 @@ sap.ui.define([
 			if (!oBinding) {
 				return;
 			}
-
-			var iBindingRowCount = oBinding.getLength();
-			var iTableRowCount = this.getInnerTable().getItems().filter(function(oItem) {
-				return !oItem.isGroupHeader();
-			}).length;
-			var bIsLengthFinal = oBinding.isLengthFinal();
-
-			if (iTableRowCount != iBindingRowCount || !bIsLengthFinal) {
-				showMessage("table.SELECTION_LIMIT_MESSAGE", [
-					iTableRowCount
-				]);
-			}
 		}
 
 		this.callHook("SelectionChange", oTable, {
@@ -224,15 +212,6 @@ sap.ui.define([
 			selectAll: bSelectAll
 		});
 	};
-
-	function showMessage(sTextKey, aValues) {
-		sap.ui.require([
-			"sap/m/MessageToast"
-		], function(MessageToast) {
-			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
-			MessageToast.show(oRb.getText(sTextKey, aValues));
-		});
-	}
 
 	ResponsiveTableType.prototype._onColumnPress = function(oEvent) {
 		var oTable = this.getTable();

@@ -4748,7 +4748,7 @@ sap.ui.define([
 
 		/**
 		 * Renders the <code>selectAll</code> checkbox with warning popover.
-		 * Availble for sap.m.Table control
+		 * Available only for sap.m.Table control
 		 * @public
 		 * @since 1.109
 		 */
