@@ -10,7 +10,10 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/m/ColumnListItem",
-	"sap/ui/rta/Utils"
+	"sap/ui/rta/Utils",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/json/JSONModel"
 ],
 function(
 	Log,
@@ -19,7 +22,10 @@ function(
 	Fragment,
 	ContextBasedAdaptationsAPI,
 	ColumnListItem,
-	Utils
+	Utils,
+	Filter,
+	FilterOperator,
+	JSONModel
 ) {
 	"use strict";
 
@@ -59,6 +65,7 @@ function(
 				controller: {
 					formatContextColumnCell: formatContextColumnCell.bind(this),
 					formatContextColumnTooltip: formatContextColumnTooltip.bind(this),
+					onLiveSearch: onLiveSearch.bind(this),
 					moveUp: moveUp.bind(this),
 					moveDown: moveDown.bind(this),
 					onDropSelectedAdaptation: onDropSelectedAdaptation.bind(this),
@@ -76,6 +83,7 @@ function(
 			}.bind(this));
 		} else {
 			setEnabledPropertyOfMoveButton.call(this, false);
+			enableDragAndDropForAdaptationTable.call(this, true);
 			enableSaveButton.call(this, false);
 		}
 		return this._oManageAdaptationDialogPromise.then(function() {
@@ -84,7 +92,9 @@ function(
 		}.bind(this)).then(function(oAdaptationsModel) {
 			this.oAdaptationsModel = oAdaptationsModel;
 			this.oReferenceAdaptationsData = JSON.parse(JSON.stringify(oAdaptationsModel.getData()));
+			this._oControlConfigurationModel = new JSONModel({isTableItemSelected: false});
 			this._oManageAdaptationDialog.setModel(this.oAdaptationsModel, "contextBased");
+			this._oManageAdaptationDialog.setModel(this._oControlConfigurationModel, "controlConfiguration");
 			initializeRanks(this.oAdaptationsModel);
 			getAdaptationsTable.call(this).attachSelectionChange(onSelectionChange.bind(this));
 			return this._oManageAdaptationDialog.open();
@@ -110,7 +120,10 @@ function(
 
 	function onSelectionChange(oEvent) {
 		if (oEvent.getParameter("selected") === true) {
-			setEnabledPropertyOfMoveButton.call(this, true);
+			this._oControlConfigurationModel.setProperty("/isTableItemSelected", true);
+			if (isSearchFieldValueEmpty.call(this)) {
+				setEnabledPropertyOfMoveButton.call(this, true);
+			}
 		}
 	}
 
@@ -119,6 +132,47 @@ function(
 		var oDownButton = getControlInDialog.call(this, "moveDownButton");
 		oUpButton.setEnabled(bIsEnabled);
 		oDownButton.setEnabled(bIsEnabled);
+	}
+
+	// ------ search field ------
+	function onLiveSearch(oEvent) {
+		var oFilters;
+		var sQuery = oEvent.getSource().getValue();
+		var oAdaptationsTable = getAdaptationsTable.call(this);
+		var oDefaultApplicationTable = getDefaultApplicationTable.call(this);
+		var sDefaultTableText = getDefaultApplicationTitle.call(this);
+		if (sQuery && sQuery.length > 0) {
+			setEnabledPropertyOfMoveButton.call(this, false);
+			enableDragAndDropForAdaptationTable.call(this, false);
+			//filter Table context
+			var oFilterByTitle = new Filter("title", FilterOperator.Contains, sQuery);
+			var oFilterByContextId = new Filter({
+				path: "contexts/role",
+				test: function(aRoles) {
+					return aRoles.some(function(sRole) {
+						return sRole.includes(sQuery.toUpperCase());
+					});
+				}
+			});
+			var oFilterCreatedBy = new Filter("createdBy", FilterOperator.Contains, sQuery);
+			var oFilterChangedBy = new Filter("changedBy", FilterOperator.Contains, sQuery);
+			oFilters = new Filter([oFilterByTitle, oFilterByContextId, oFilterCreatedBy, oFilterChangedBy]);
+			//Filter default Table context
+			if (sDefaultTableText.toUpperCase().includes(sQuery.toUpperCase())) {
+				oDefaultApplicationTable.setVisible(true);
+			} else {
+				oDefaultApplicationTable.setVisible(false);
+			}
+		} else {
+			enableDragAndDropForAdaptationTable.call(this, true);
+			if (this._oControlConfigurationModel.getProperty("/isTableItemSelected")) {
+				setEnabledPropertyOfMoveButton.call(this, true);
+			}
+			oDefaultApplicationTable.setVisible(true);
+		}
+		// update list binding
+		var oBindingTableContext = oAdaptationsTable.getBinding("items");
+		oBindingTableContext.filter(oFilters, "Application");
 	}
 
 	// ------ drag & drop of priority ------
@@ -236,6 +290,26 @@ function(
 		return this.getToolbar().getControl("manageAdaptationDialog--" + sId);
 	}
 
+	function getDefaultApplicationTable() {
+		return getControlInDialog.call(this, "defaultContext");
+	}
+
+	function getDefaultApplicationTitle() {
+		return getControlInDialog.call(this, "defaultApplicationTitle").getProperty("text");
+	}
+
+	function getSearchField() {
+		return getControlInDialog.call(this, "searchField");
+	}
+
+	function isSearchFieldValueEmpty() {
+		return getSearchField.call(this).getValue().length === 0;
+	}
+
+	function enableDragAndDropForAdaptationTable(bIsEnabled) {
+		getAdaptationsTable.call(this).getDragDropConfig()[0].setEnabled(bIsEnabled);
+	}
+
 	function onSaveReorderedAdaptations() {
 		if (didAdaptationsPriorityChange.call(this)) {
 			var oRtaInformation = this.getToolbar().getRtaInformation();
@@ -253,6 +327,9 @@ function(
 	}
 
 	function onCloseDialog() {
+		this._oControlConfigurationModel.setProperty("/isTableItemSelected", false);
+		getSearchField.call(this).setValue("");
+		getDefaultApplicationTable.call(this).setVisible(true);
 		this._oManageAdaptationDialog.getModel("contextBased").setData(null);
 		this._oManageAdaptationDialog.close();
 	}

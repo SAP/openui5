@@ -17,6 +17,8 @@
 		}">
 			<headerToolbar>
 				<OverflowToolbar>
+					<SearchField id="searchField" liveChange=".onLiveSearch" width="80%" />
+					<ToolbarSpacer/>
 					<Button id="moveUpButton"
 						icon="sap-icon://navigation-up-arrow"
 						tooltip="{i18n>BTN_TOOLTIP_MOVE_UP}"
@@ -120,7 +122,7 @@
 						<CustomListItem>
 							<HBox>
 								<VBox class="sapUiSmallMarginTopBottom">
-									<Text text="{i18n>TXT_DEFAULT_APP}"/>
+									<Text id="defaultApplicationTitle" text="{i18n>TXT_DEFAULT_APP}"/>
 									<FormattedText htmlText=""/>
 								</VBox>
 							</HBox>
