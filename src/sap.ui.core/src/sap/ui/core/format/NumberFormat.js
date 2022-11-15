@@ -1791,7 +1791,8 @@ sap.ui.define([
 				mUnitPatterns = mFilteredUnits;
 			}
 
-			var oPatternAndResult = parseNumberAndUnit(mUnitPatterns, sValue, oOptions.showNumber);
+			var oPatternAndResult = parseNumberAndUnit(mUnitPatterns, sValue, oOptions.showNumber,
+					this.oLocaleData.sCLDRLocaleId);
 			var bUnitIsAmbiguous = false;
 
 			aUnitCode = oPatternAndResult.cldrCode;
@@ -2673,89 +2674,109 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns the cldr code and the number value by checking each pattern and finding the best match.
+	 * Returns the CLDR code and the number value by checking each pattern and finding the best
+	 * match. The best match means most of the unit value matched and the number match is shorter.
 	 *
-	 * 1. iterate over each unit pattern, e.g. "{0}m", "{0}km"
-	 * 1a. convert it to a reg exp pattern, e.g. "^(.+)m$"
-	 * 1b. match it with the input "12km" and store the value "12k" and the unit value "m"
-	 * 1c. do this for each pattern and update the best result if a better match is found
+	 * Example input: "12km" matches for the unit postfix "m" and the resulting number value is
+	 * "12k" while the unit postfix "km" results in "12". Since unit postfix "km" returns a shorter
+	 * result it is considered the best match.
 	 *
-	 * A better match means most of the unit value matched and the number match is shorter.
-	 * E.g. input: 12km matches for the pattern "^(.+)m$" and the resulting value is "12k"
-	 * while the pattern "^(.+)km$" results in "12".
-	 * Since pattern "^(.+)km$" returns a shorter result it is considered the better match.
+	 * Note: the CLDR data is not distinct in its patterns.
+	 * For example "100 c" could be in "en_gb" either 100 units of "volume-cup" or
+	 * "duration-century" both having the same pattern "{0} c". Therefore best matches will be
+	 * returned in an array.
 	 *
-	 * Note: the cldr data is not distinct in its patterns.
-	 * E.g. "100 c" could be in "en_gb" either 100 units of "volume-cup" or "duration-century" both having the same pattern "{0} c"
-	 * Therefore best matches will be returned in an array.
-	 *
-	 * @param {object} mUnitPatterns the unit patterns
-	 * @param {string} sValue The value e.g. "12 km"
-	 * @param {boolean} bShowNumber whether or not number os shown
-	 * @return {object} An object containing the unit codes (key: <code>[cldrCode]</code>) and the number value (key: <code>numberValue</code>).
-	 * Values are <code>undefined</code> or an empty array if not found. E.g. <code>{
-			numberValue: 12,
-			cldrCode: [length-kilometer]
-		}</code>
+	 * @param {object} mUnitPatterns The unit patterns
+	 * @param {string} sValue The given value
+	 * @param {boolean} bShowNumber Whether the number is shown
+	 * @param {string} sLanguageTag The language tag of the locale for language dependent processing
+	 * @return {{cldrCode: string[], numberValue: (string|undefined)}}
+	 *   An object containing the unit codes and the number value
 	 */
-	function parseNumberAndUnit(mUnitPatterns, sValue, bShowNumber) {
-		var oBestMatch = {
-			numberValue: undefined,
-			cldrCode: []
-		};
-		var iBestLength = Number.POSITIVE_INFINITY;
-		var sUnitCode, sKey;
+	function parseNumberAndUnit(mUnitPatterns, sValue, bShowNumber, sLanguageTag) {
+		var bContainsNumber, sKey, sNumber, iNumberPatternIndex, sPostfix, sPostfixLowerCase,
+			sPrefix, sPrefixLowerCase, sUnitCode, sUnitPattern, sUnitPatternLowerCase,
+			oBestMatch = {
+				numberValue : undefined,
+				cldrCode : []
+			},
+			aCaseInsensitiveMatches = [],
+			bCaseSensitive = true,
+			bPatternMatchWasCaseSensitive = true,
+			iShortestNumberPartLength = Number.POSITIVE_INFINITY,
+			bShortestNumberPartWasCaseSensitive = true,
+			sValueLowerCase = sValue.toLocaleLowerCase(sLanguageTag);
+
 		for (sUnitCode in mUnitPatterns) {
 			for (sKey in mUnitPatterns[sUnitCode]) {
 				//use only unit patterns
-				if (sKey.indexOf("unitPattern") === 0) {
-					var sUnitPattern = mUnitPatterns[sUnitCode][sKey];
+				if (!sKey.startsWith("unitPattern")) {
+					continue;
+				}
+				sUnitPattern = mUnitPatterns[sUnitCode][sKey];
 
-					// IMPORTANT:
-					// To increase performance we are using native string operations instead of regex,
-					// to match the patterns against the input.
-					//
-					// sample input: e.g. "mi 12 tsd. ms²"
-					// unit pattern: e.g. "mi {0} ms²"
+				// IMPORTANT:
+				// To increase performance we are using native string operations instead of regex,
+				// to match the patterns against the input.
+				//
+				// sample input: e.g. "mi 12 tsd. ms²"
+				// unit pattern: e.g. "mi {0} ms²"
 
-					// The smallest resulting number (String length) will be the best match
-					var iNumberPatternIndex = sUnitPattern.indexOf("{0}");
-					var bContainsExpression = iNumberPatternIndex > -1;
-					if (bContainsExpression && !bShowNumber) {
-						sUnitPattern = sUnitPattern.replace("{0}", "").trim();
-						bContainsExpression = false;
+				// The smallest resulting number (String length) will be the best match
+				iNumberPatternIndex = sUnitPattern.indexOf("{0}");
+				bContainsNumber = iNumberPatternIndex > -1;
+				if (bContainsNumber && !bShowNumber) {
+					sUnitPattern = sUnitPattern.replace("{0}", "").trim();
+					bContainsNumber = false;
+				}
+				sNumber = undefined;
+				bCaseSensitive = true;
+				if (bContainsNumber) {
+					sPrefix = sUnitPattern.substring(0, iNumberPatternIndex);
+					sPrefixLowerCase = sPrefix.toLocaleLowerCase(sLanguageTag);
+					sPostfix = sUnitPattern.substring(iNumberPatternIndex + "{0}".length);
+					sPostfixLowerCase = sPostfix.toLocaleLowerCase(sLanguageTag);
+
+					if (sValue.startsWith(sPrefix) && sValue.endsWith(sPostfix)) {
+						sNumber = sValue.substring(sPrefix.length, sValue.length - sPostfix.length);
+					} else if (sValueLowerCase.startsWith(sPrefixLowerCase)
+							&& sValueLowerCase.endsWith(sPostfixLowerCase)) {
+						bCaseSensitive = false;
+						sNumber = sValue.substring(sPrefixLowerCase.length,
+							sValueLowerCase.length - sPostfixLowerCase.length);
 					}
-					if (bContainsExpression) {
 
-						//escape regex characters to match it properly
-						var sPrefix = sUnitPattern.substring(0, iNumberPatternIndex);
-						var sPostfix = sUnitPattern.substring(iNumberPatternIndex + "{0}".length);
+					if (sNumber) {
+						//get the match with the shortest result.
+						// e.g. 1km -> (.+)m -> "1k" -> length 2
+						// e.g. 1km -> (.+)km -> "1" -> length 1
 
-						var bMatches = sValue.startsWith(sPrefix) && sValue.endsWith(sPostfix);
-
-						var match = bMatches && sValue.substring(sPrefix.length, sValue.length - sPostfix.length);
-						if (match) {
-							//get the match with the shortest result.
-							// e.g. 1km -> (.+)m -> "1k" -> length 2
-							// e.g. 1km -> (.+)km -> "1" -> length 1
-
-							if (match.length < iBestLength) {
-								iBestLength = match.length;
-								oBestMatch.numberValue = match;
+						if (sNumber.length < iShortestNumberPartLength) {
+							iShortestNumberPartLength = sNumber.length;
+							bShortestNumberPartWasCaseSensitive = bCaseSensitive;
+							oBestMatch.numberValue = sNumber;
+							oBestMatch.cldrCode = [sUnitCode];
+						} else if (sNumber.length === iShortestNumberPartLength
+								&& oBestMatch.cldrCode.indexOf(sUnitCode) === -1) {
+							if (bCaseSensitive && !bShortestNumberPartWasCaseSensitive) {
+								oBestMatch.numberValue = sNumber;
 								oBestMatch.cldrCode = [sUnitCode];
-							} else if (match.length === iBestLength && oBestMatch.cldrCode.indexOf(sUnitCode) === -1) {
+								bShortestNumberPartWasCaseSensitive = true;
+							} else if (bCaseSensitive || !bShortestNumberPartWasCaseSensitive) {
 								//ambiguous unit (en locale)
 								// e.g. 100 c -> (.+) c -> duration-century
 								// e.g. 100 c -> (.+) c -> volume-cup
 								oBestMatch.cldrCode.push(sUnitCode);
 							}
 						}
-					} else if (sUnitPattern === sValue) {
+					}
+				} else {
+					sUnitPatternLowerCase = sUnitPattern.toLocaleLowerCase(sLanguageTag);
+
+					if (sUnitPattern === sValue || sUnitPatternLowerCase === sValueLowerCase) {
 						if (bShowNumber) {
-							oBestMatch.cldrCode = [sUnitCode];
 
 							//for units which do not have a number representation, get the number from the pattern
-							var sNumber;
 							if (sKey.endsWith("-zero")) {
 								sNumber = "0";
 							} else if (sKey.endsWith("-one")) {
@@ -2763,14 +2784,34 @@ sap.ui.define([
 							} else if (sKey.endsWith("-two")) {
 								sNumber = "2";
 							}
-							oBestMatch.numberValue = sNumber;
-							return oBestMatch;
+
+							if (sUnitPattern === sValue) {
+								oBestMatch.numberValue = sNumber;
+								oBestMatch.cldrCode = [sUnitCode];
+
+								return oBestMatch;
+							} else if (!oBestMatch.cldrCode.includes(sUnitCode)) {
+								bPatternMatchWasCaseSensitive = false;
+								oBestMatch.numberValue = sNumber;
+								oBestMatch.cldrCode.push(sUnitCode);
+							}
 						} else if (oBestMatch.cldrCode.indexOf(sUnitCode) === -1) {
-							oBestMatch.cldrCode.push(sUnitCode);
+							if (sUnitPattern === sValue) {
+								oBestMatch.cldrCode.push(sUnitCode);
+							} else if (!aCaseInsensitiveMatches.includes(sUnitCode)) {
+								aCaseInsensitiveMatches.push(sUnitCode);
+							}
 						}
 					}
 				}
 			}
+		}
+		if ((!bShortestNumberPartWasCaseSensitive || !bPatternMatchWasCaseSensitive)
+				&& oBestMatch.cldrCode.length > 1) {
+			oBestMatch.numberValue = undefined;
+		}
+		if (!bShowNumber && !oBestMatch.cldrCode.length) {
+			oBestMatch.cldrCode = aCaseInsensitiveMatches;
 		}
 
 		return oBestMatch;
