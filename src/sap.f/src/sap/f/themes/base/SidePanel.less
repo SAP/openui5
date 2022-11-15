@@ -3,7 +3,6 @@
 /* Base theme                      */
 /* =============================== */
 
-
 /***** Desktop *****/
 
 // Cozy
@@ -11,13 +10,109 @@
 	height: 100%;
 	display: flex;
 	margin: 0;
+	touch-action: none;
 
+	// Main content
 	.sapFSPMain {
 		flex: 1 1;
 		padding: 0.5rem;
 		overflow: hidden auto;
 	}
 
+	// Splitter
+	.sapFSPSplitterBar {
+		cursor: col-resize;
+		width: 1rem;
+		height: 100%;
+		display: inline-flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		border-left: none;
+		border-right: none;
+		vertical-align: top;
+		color: @sapUiHighlight;
+		position: absolute;
+		left: -1rem;
+
+		&:focus {
+			outline: none;
+		}
+
+		&:focus::after {
+			content: "";
+			display: block;
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		}
+
+		.sapFSPSplitterBarDecorationBefore {
+			width: 1rem;
+			height: 4rem;
+			background-image: linear-gradient(to top, @sapUiGroupContentBorderColor, fade(@sapUiGroupContentBorderColor, 0));
+			background-size: 0.0625rem 100%;
+			background-repeat: no-repeat;
+			background-position: center;
+		}
+
+		.sapFSPSplitterBarDecorationAfter {
+			width: 1rem;
+			height: 4rem;
+			height: 4rem;
+			background-image: linear-gradient(to bottom, @sapUiGroupContentBorderColor, fade(@sapUiGroupContentBorderColor, 0));
+			background-size: 0.0625rem 100%;
+			background-repeat: no-repeat;
+			background-position: center;
+		}
+
+		.sapFSPSplitterBarGrip {
+			cursor: col-resize;
+			width: 1.5rem;
+			height: 2rem;
+			line-height: 2rem;
+			position: relative;
+			z-index: 1;
+
+			.sapFSPSplitterBarGripIcon {
+				cursor: col-resize;
+				line-height: 1.625rem - @sapUiButtonBorderWidth - @sapUiButtonBorderWidth;
+				box-sizing: border-box;
+				height: 1.625rem;
+				width: 1.5rem;
+				margin-top: 3px;
+				border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
+				border-radius: @sapUiButtonBorderCornerRadius;
+				background: @sapUiButtonLiteBackground;
+			}
+		}
+
+		&:hover {
+			.sapFSPSplitterBarDecorationBefore,
+			.sapFSPSplitterBarDecorationAfter {
+				flex-grow: 1;
+				transition: all 0.1s ease-in;
+			}
+
+			.sapFSPSplitterBarGripIcon {
+				background: @sapUiButtonLiteBackground;
+				border-color: @sapUiButtonLiteBorderColor;
+			}
+		}
+
+		&.sapFSPSplitterActive {
+			.sapFSPSplitterBarDecorationBefore,
+			.sapFSPSplitterBarDecorationAfter {
+				flex-grow: 1;
+				background-image: linear-gradient(to left, @sapUiHighlight, @sapUiHighlight);
+			}
+		}
+	}
+
+	// Side panel
 	.sapFSPSide {
 		position: relative;
 		display: flex;
@@ -32,7 +127,6 @@
 		.sapFSPSideInner {
 			box-sizing: border-box;
 			position: absolute;
-			overflow: hidden;
 			top: 0;
 			right: 0;
 			height: 100%;
@@ -44,7 +138,7 @@
 			box-shadow: 0 0 1rem fade(@sapUiContentShadowColor, 10);
 			background-color: @sapUiGroupContentBackground;
 			min-width: 4.25rem;
-			width: 4.25rem;
+			width: 100%;
 
 			.sapFSPExpanded {
 				width: 100%;
@@ -57,6 +151,7 @@
 				width: auto;
 				overflow: hidden;
 				padding: 0.5rem 0 0.5rem 1rem;
+				z-index: 1;
 
 				.sapFSPSideContentHeader {
 					height: 2.25rem;
@@ -96,6 +191,12 @@
 		}
 
 		.sapFSPActionBar {
+			height: 100%;
+			min-width: 4.25rem;
+			width: 4.25rem;
+		}
+
+		.sapFSPActionBarList {
 			margin: 0;
 			padding: 0;
 			display: flex;
@@ -225,15 +326,35 @@
 	}
 
 	&.sapFSPActionBarExpanded {
-		.sapFSPSide {
-			.sapFSPSideContent {
-				flex-grow: 0;
-			}
-			.sapFSPActionBar {
+		&:not(.sapFSPSideContentExpanded) .sapFSPSide {
+			width: 20rem;
+		}
+
+		.sapFSPActionBar {
+			max-width: 20rem;
+			width: 100%;
+			flex-shrink: 0;
+
+			.sapFSPActionBarList {
 				flex-grow: 0;
 				width: 100%;
 			}
 		}
+
+		&.sapFSPSideContentExpanded {
+			.sapFSPSide:not(.sapFSPSplitView) {
+				.sapFSPSideContent {
+					display: none;
+				}
+
+				.sapFSPActionBar {
+					min-width: 100%;
+					width: 100%;
+					border-left-width: 0;
+				}
+			}
+		}
+
 	}
 
 	&:not(.sapFSPSingleItem) .sapFSPSideContent {
@@ -241,16 +362,29 @@
 	}
 
 	&.sapFSPSingleItem {
-		&.sapFSPSideContentExpanded	.sapFSPExpandCollapse {
-			display: none;
+		&.sapFSPSideContentExpanded	{
+			.sapFSPExpandCollapse,
+			.sapFSPActionBar {
+				display: none;
+			}
 		}
+
 		.sapFSPExpanded {
 			display: none;
 		}
 	}
+
+	.sapFSPMinWidth,
+	.sapFSPMaxWidth {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 0;
+		overflow: hidden;
+	}
 }
 
-.sapFSP.sapFSPSingleItem.sapFSPSideContentExpanded .sapFSPSide .sapFSPActionBar {
+.sapFSP.sapFSPSingleItem.sapFSPSideContentExpanded .sapFSPSide .sapFSPActionBarList {
 	width: 0;
 	padding: 0;
 	margin: 0;
@@ -284,10 +418,15 @@
 
 			.sapFSPSideInner {
 				min-width: 4rem;
-				width: 4rem;
+				width: 100%;
+
+				.sapFSPActionBar {
+					min-width: 4rem;
+					width: 4rem;
+				}
 			}
 
-			.sapFSPActionBar {
+			.sapFSPActionBarList {
 				.sapFSPItem {
 					height: 2.375rem;
 					padding: 0.1875rem 1rem;
@@ -315,6 +454,12 @@
 			}
 		}
 
+		&.sapFSPActionBarExpanded {
+			.sapFSPSideInner .sapFSPActionBar {
+				width: 20rem;
+				max-width: 20rem;
+			}
+		}
 	}
 }
 
@@ -355,7 +500,14 @@ html.sap-phone {
 				border: none;
 				border-top: 0.0625rem solid @sapUiGroupContentBorderColor;
 
-				.sapFSPActionBarWrapper {
+				.sapFSPActionBar {
+					position: relative;
+					height: auto;
+					min-width: 100%;
+					width: 100%;
+				}
+
+				.sapFSPActionBarListWrapper {
 					overflow: auto hidden;
 					height: 6.125rem;
 					box-sizing: border-box;
@@ -387,7 +539,7 @@ html.sap-phone {
 					}
 				}
 
-				.sapFSPActionBar {
+				.sapFSPActionBarList {
 					display: flex;
 					align-items: center;
 					flex-direction: row;
@@ -454,11 +606,19 @@ html.sap-phone {
 			justify-content: center;
 		}
 
-		&.sapFSPActionBarExpanded .sapFSPSide {
-			flex: 0 0 6.125rem;
+		&.sapFSPActionBarExpanded {
+			&.sapFSPSideContentExpanded .sapFSPSide:not(.sapFSPSplitView) .sapFSPSideContent {
+				display: flex;
+			}
 
-			.sapFSPSideInner .sapFSPSideContent {
-				flex-grow: 1;
+			.sapFSPSide {
+				flex: 0 0 6.125rem;
+				max-width: initial;
+				width: initial;
+
+				.sapFSPSideInner .sapFSPSideContent {
+					flex-grow: 1;
+				}
 			}
 		}
 
@@ -472,13 +632,13 @@ html.sap-phone {
 					height: 100%;
 					width: 100%;
 
-					.sapFSPActionBarWrapper {
+					.sapFSPActionBarListWrapper {
 						height: inherit;
 						width: 100%;
 						display: flex;
 						border: none;
 
-						.sapFSPActionBar {
+						.sapFSPActionBarList {
 							height: inherit;
 
 							.sapFSPItem {
@@ -525,7 +685,7 @@ html.sap-phone {
 				}
 			}
 
-			&.sapFSPSideContentExpanded .sapFSPSide .sapFSPSideInner .sapFSPActionBarWrapper {
+			&.sapFSPSideContentExpanded .sapFSPSide .sapFSPSideInner .sapFSPActionBarListWrapper {
 				height: 0;
 				overflow: hidden;
 				border: none;
@@ -550,13 +710,13 @@ html.sap-phone {
 				width: 100%;
 				border: none;
 
-				.sapFSPActionBarWrapper {
+				.sapFSPActionBarListWrapper {
 					border-top: 0.0625rem solid @sapUiGroupContentBorderColor;
 				}
 			}
 		}
 
-		&:not(.sapFSPActionBarExpanded):not(.sapFSPSingleItem) .sapFSPSide .sapFSPSideInner .sapFSPActionBarWrapper {
+		&:not(.sapFSPActionBarExpanded):not(.sapFSPSingleItem) .sapFSPSide .sapFSPSideInner .sapFSPActionBarListWrapper {
 			height: 4.125rem;
 			width: 100%;
 		}
@@ -569,7 +729,7 @@ html.sap-phone {
 				flex: 0 0 3.75rem;
 
 				.sapFSPSideInner {
-					.sapFSPActionBarWrapper {
+					.sapFSPActionBarListWrapper {
 						height: 5.5rem;
 					}
 
@@ -578,7 +738,7 @@ html.sap-phone {
 						height: 1.625rem;
 					}
 
-					.sapFSPActionBar {
+					.sapFSPActionBarList {
 						height: 5.5rem;
 
 						.sapFSPItem {
@@ -619,14 +779,14 @@ html.sap-phone {
 				}
 			}
 
-			&:not(.sapFSPActionBarExpanded) .sapFSPSide .sapFSPSideInner .sapFSPActionBarWrapper {
+			&:not(.sapFSPActionBarExpanded) .sapFSPSide .sapFSPSideInner .sapFSPActionBarListWrapper {
 				height: 3.75rem;
 			}
 
 			&.sapFSPSingleItem {
 				.sapFSPSide {
 					.sapFSPSideInner {
-						.sapFSPActionBarWrapper .sapFSPActionBar .sapFSPItem .sapUiIcon {
+						.sapFSPActionBarListWrapper .sapFSPActionBarList .sapFSPItem .sapUiIcon {
 							width: 2rem;
 						}
 
@@ -635,7 +795,7 @@ html.sap-phone {
 						}
 					}
 				}
-				&.sapFSPSideContentExpanded .sapFSPSide .sapFSPSideInner .sapFSPActionBarWrapper {
+				&.sapFSPSideContentExpanded .sapFSPSide .sapFSPSideInner .sapFSPActionBarListWrapper {
 					height: 0;
 					overflow: hidden;
 				}

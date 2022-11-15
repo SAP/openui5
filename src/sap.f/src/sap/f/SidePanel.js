@@ -50,6 +50,17 @@ sap.ui.define([
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.f"),
 		InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
+	// Resize positions
+	var SIDE_PANEL_POSITION_MIN_WIDTH = 0,	// Minimum width
+		SIDE_PANEL_POSITION_INITIAL = 1,	// Initial width
+		SIDE_PANEL_POSITION_MAX_WIDTH = 2;	// Maximum width
+
+	// Split breakpoint
+	var SIDE_PANEL_SPLIT_BREAKPOINT = 560;
+	// When there is an action item chosen and the width of the expanded side panel is less or equal to this value,
+	// the expanded action bar takes the whole width and hides the side content, otherwise the action bar takes
+	// 20rem (its default width), and the rest of the side panel width is taken by the expanded side content.
+
 	/**
 	 * Constructor for a new <code>SidePanel</code>.
 	 *
@@ -61,14 +72,14 @@ sap.ui.define([
 	 * <h3>Overview</h3>
 	 *
 	 * <code>SidePanel</code> is a layout control that allows primary and additional content to be
-	 * displayed by clicking/tapping the action items from its action bar.
+	 * displayed by choosing the action items from its action bar.
 	 *
 	 * <h3>Usage</h3>
 	 *
 	 * Action bar with action items have two states - collapsed and expanded. In collapsed state
 	 * only icons are displayed, and in expanded state both icons and titles are displayed.
 	 *
-	 * Each action item can have a content and click/tap on action item toggles the display of its content.
+	 * Each action item can have a content and choose an action item toggles the display of its content.
 	 * The content can be added to the action item's <code>content</code> aggregation, or can be added or
 	 * changed later.
 	 *
@@ -89,19 +100,21 @@ sap.ui.define([
 	 * action items, an overflow icon is displayed, and it toggles ON/OFF an overflow menu with the rest
 	 * of the action items that are not visible at the moment.
 	 *
-	 * Screen width > 1440 px
-	 *
-	 * <ul><li>When expanded, the side content shrinks the main content.</li></ul>
-	 *
-	 * Screen width <= 1440 px
-	 *
-	 * <ul><li>When expanded, the side content is placed over the main content.</li></ul>
+	 * When expanded, the side content shrinks the main content.
 	 *
 	 * <b>On mobile device</b>
 	 *
 	 * The side panel contains action bar that have action items placed horizontally at the bottom of the
 	 * display, and when expanded, the side content is displayed above the action bar. If there is not enough
 	 * room for all action items, the action bar can be swiped to access the rest of the action items.
+	 *
+	 * <h3>Resizing</h3>
+	 *
+	 * Resizing functionality only affects desktop or tablet devices.
+	 *
+	 * By setting the <code>sidePanelResizable</code> property, the expanded side panel can be resized
+	 * by mouse (drag), keyboard or by choosing one of three predefined positions in the side panel's
+	 * context menu (min, max and default widths)
 	 *
 	 * <h3>Keyboard shortcuts</h3>
 	 *
@@ -115,6 +128,17 @@ sap.ui.define([
 	 * <li>[Esc] - Close the opened side content panel and set focus back to main content</li>
 	 * </ul>
 	 *
+	 * If the side panel's <code>sidePanelResizable</code> property is set, there is an action item chosen, and the resize splitter is focused:
+	 *
+	 * <ul>
+	 * <li>[Home] - set the expanded side panel width to the minimum value defined in <code>sidePanelMinWidth</code> property</li>
+	 * <li>[End] - set the expanded side panel width to the maximum value defined in <code>sidePanelMaxWidth</code> property</li>
+	 * <li>[Enter] - set the expanded side panel width to the default value defined in <code>sidePanelWidth</code> property</li>
+	 * <li>[Shift]+[F10] or [Context menu] - show the resize context menu</li>
+	 * <li>[Arrow Left] / [Arrow Right] - increase/decrease the width of the expanded side panel with the regular step</li>
+	 * <li>[Shift] + [Arrow Left] / [Arrow Right] - increase/decrease the width of the expanded side panel with the larger step</li>
+	 * </ul>
+	 *
  	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -124,7 +148,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.107
 	 * @alias sap.f.SidePanel
-	 * @experimental Since 1.107. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SidePanel = Control.extend("sap.f.SidePanel", {
@@ -142,6 +165,13 @@ sap.ui.define([
 				ariaLabel: {type: "string", group: "Accessibility", defaultValue: "Side Panel" },
 
 				/**
+				 * Determines whether the side panel is resizable or fixed.
+				 * <b>Note:</b> setting this property only affects desktop or tablet devices.
+				 * @since: 1.109
+				 */
+				sidePanelResizable: {type: "boolean", group: "Appearance", defaultValue: false},
+
+				/**
 				 * Determines the side panel width (Side Content width + Action Bar width).
 				 * <b>Note:</b> if the width is given in percent(%), it is calculated as given percent from the Side Panel parent container width,
 				 * otherwise it's calculated in absolute units.
@@ -152,17 +182,33 @@ sap.ui.define([
 				 * Determines the minimum side panel width (Side Content width + Action Bar width).
 				 * <b>Note:</b> if the width is given in percent(%), it is calculated as given percent from the Side Panel parent container width,
 				 * otherwise it's calculated in absolute units.
-				 * @private
+				 * @since 1.109.0
 				 */
-				sidePanelMinWidth: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "10%", visibility: "hidden" },
+				sidePanelMinWidth: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "15rem"},
 
 				/**
 				 * Determines the maximum side panel width (Side Content width + Action Bar width).
 				 * <b>Note:</b> if the width is given in percent(%), it is calculated as given percent from the Side Panel parent container width,
 				 * otherwise it's calculated in absolute units.
-				 * @private
+				 * @since 1.109.0
 				 */
-				sidePanelMaxWidth: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "90%", visibility: "hidden" },
+				sidePanelMaxWidth: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "90%"},
+
+				 /**
+				 * Determines the step (in pixels) when changing the width of the side panel with the keyboard.
+				 * <b>Note:</b> the width can be changed by this step with <code>Left Arrow</code> and <code>Right Arrow</code>
+				 * keys when the resize splitter is focused.
+				 * @since 1.109.0
+				 */
+				sidePanelResizeStep: { type: "int", group: "Appearance", defaultValue: 10},
+
+				/**
+				 * Determines the large step (in pixels) when changing the width of the side panel with the keyboard.
+				 * <b>Note:</b> the width can be changed by large step with <code>Shift + Left Arrow</code> and
+				 * <code>Shift + Right Arrow</code> keys when the resize splitter is focused.
+				 * @since 1.109.0
+				 */
+				sidePanelResizeLargerStep: { type: "int", group: "Appearance", defaultValue: 100},
 
 				/**
 				 * Determines whether the side content is visible or hidden.
@@ -201,7 +247,13 @@ sap.ui.define([
 				/**
 				 * Overflow menu. It displays action items that don't fit in the available height of the side panel.
 				 */
-				_overflowMenu: { type: "sap.m.Menu", multiple: false, visibility: "hidden"}
+				_overflowMenu: { type: "sap.m.Menu", multiple: false, visibility: "hidden"},
+
+				/**
+				 * Context menu. It displays predefined options for side panel resize.
+				 */
+				 _contextMenu: { type: "sap.m.Menu", multiple: false, visibility: "hidden"}
+
 			},
 			associations: {
 				/**
@@ -268,10 +320,19 @@ sap.ui.define([
 			this.setAggregation("_overflowMenu", oMenu);
 		}
 
-		this._onResizeRef = this._onResize.bind(this);
-		this._onMainScroll = this._handleScroll.bind(this);
+		this._fnOnResizeRef = this._onResize.bind(this);
+		this._fnOnMainScroll = this._handleScroll.bind(this);
+		this._fnOnMainFocusOut = this._onMainFocusOut.bind(this);
+		this._fnOnTouchStart = this._onTouchStart.bind(this);
+		this._fnOnTouchEnd = this._onTouchEnd.bind(this);
+		this._fnOnTouchMove = this._onTouchMove.bind(this);
+		this._fnOnDblClick = this._onDblClick.bind(this);
 
 		this._iLastScrollPosition = 0;
+
+		this._sSidePanelWidth = this._getSidePanelWidth(); // save the currently set side panel width for size toggle
+		this._iSidePanelPosition = SIDE_PANEL_POSITION_INITIAL; // possible values: SIDE_PANEL_POSITION_MIN_WIDTH/SIDE_PANEL_POSITION_INITIAL/SIDE_PANEL_POSITION_MAX_WIDTH
+		this._bShouldAttachGlobalHandlers = true; // flag for attachment of "global" event handlers (on whole Side Panel control)
 
 		this._iVisibleItems = 0; // how many action items can fit in the available height of the action bar
 		this._bOverflowMenuOpened = false; // whether the overflow menu is opened or not
@@ -284,6 +345,22 @@ sap.ui.define([
 		this._detachResizeHandlers();
 		this._detachScrollHandler();
 		this._detachMainFocusOutHandler();
+		this._detachResizableHandlers();
+	};
+
+	/**
+	 * Override <code>sidePanelWidth</code> property setter.
+	 *
+	 * Sets the width of the side panel.
+	 *
+	 * @param {sap.ui.core.CSSSize} oWidth width of the side panel.
+	 * @returns {this} this for method chaining
+	 */
+	 SidePanel.prototype.setSidePanelWidth = function(oWidth) {
+		this.setProperty("sidePanelWidth", oWidth);
+		this._sSidePanelWidth = this._getSidePanelWidth();
+
+		return this;
 	};
 
 	/**
@@ -332,9 +409,9 @@ sap.ui.define([
 
 		this._detachResizeHandlers();
 		this._attachResizeHandlers();
-
 		this._detachScrollHandler();
 		this._detachMainFocusOutHandler();
+		this._detachResizableHandlers();
 
 		this._oInvisibleMessage = InvisibleMessage.getInstance();
 	};
@@ -343,22 +420,22 @@ sap.ui.define([
 		var oArrowButton = this._isSingleItem() && this.getActionBarExpanded()
 			? this.getAggregation("_closeButton")
 			: this.getAggregation("_arrowButton"),
-			oDomRef;
+			oArrowDomRef;
 
 		if (!Device.system.phone) {
-			oDomRef = oArrowButton.getDomRef();
-			oDomRef && oDomRef.setAttribute("aria-expanded", this.getActionBarExpanded() ? "true" : "false");
+			oArrowDomRef = oArrowButton.getDomRef();
+			oArrowDomRef && oArrowDomRef.setAttribute("aria-expanded", this.getActionBarExpanded() ? "true" : "false");
 		}
 
 		!this._getSideContentExpanded() && this._attachScrollHandler();
-
 		this._attachMainFocusOutHandler();
+		this._attachResizableHandlers();
 
 		if (!Device.system.phone) {
 			if (!this._isSingleItem() && this._iVisibleItems > 0) {
 				this._initItemNavigation();
 			}
-			if (this.getActionBarExpanded() || this._getSideContentExpanded()) {
+			if (this._getSideContentExpanded()) {
 				this.getItems().length && this._fixSidePanelWidth();
 			}
 		} else {
@@ -366,15 +443,29 @@ sap.ui.define([
 				this.setActionBarExpanded(true);
 			}
 		}
+	};
 
+	SidePanel.prototype.oncontextmenu = function(oEvent) {
+		var bSplitterFocused = document.activeElement === this.getDomRef().querySelector(".sapFSPSplitterBar");
+
+		if (bSplitterFocused || oEvent.target.closest(".sapFSPSide.sapFSPResizable")) {
+			// show the resize context menu only if there is a keyboard call ([Shift]+[F10] or [Context menu] keys)
+			// from focused splitter bar or right click somewhere within the side panel
+			oEvent.preventDefault();
+			if (bSplitterFocused){
+				this._bContextMenuFromSplitter = true;
+			}
+			this._showResizeContextMenu(oEvent);
+		}
 	};
 
 	SidePanel.prototype.onkeydown = function(oEvent) {
 		var oTarget = oEvent.target,
-			oActionBarDom = this.$().find(".sapFSPActionBar")[0],
+			oActionBarDom = this.getDomRef().querySelector(".sapFSPActionBarList"),
 			bSideContentExpanded = this._getSideContentExpanded(),
 			bSideExpanded = this.getActionBarExpanded() || bSideContentExpanded,
-			bCtrlOrCmd = oEvent.ctrlKey || oEvent.metaKey;
+			bCtrlOrCmd = oEvent.ctrlKey || oEvent.metaKey,
+			bSplitterFocused = document.activeElement === this.getDomRef().querySelector(".sapFSPSplitterBar");
 
 		if (bCtrlOrCmd && oEvent.which === KeyCodes.ARROW_LEFT) {
 			oEvent.preventDefault();
@@ -402,6 +493,32 @@ sap.ui.define([
 			this.setActionBarExpanded(false);
 			this._closeSideContent();
 			this._focusMain();
+		} else if (bSplitterFocused) {
+			// resize splitter keyboard handling
+			switch (oEvent.which) {
+				case KeyCodes.ENTER:
+					this._setSidePanelResizePosition(SIDE_PANEL_POSITION_INITIAL);
+					break;
+				case KeyCodes.END:
+					this._setSidePanelResizePosition(SIDE_PANEL_POSITION_MAX_WIDTH);
+					break;
+				case KeyCodes.HOME:
+					this._setSidePanelResizePosition(SIDE_PANEL_POSITION_MIN_WIDTH);
+					break;
+				case KeyCodes.ARROW_LEFT:
+					this._moveSidePanelResizePositionWith(oEvent.shiftKey ? this.getSidePanelResizeLargerStep() : this.getSidePanelResizeStep());
+					break;
+				case KeyCodes.ARROW_RIGHT:
+					this._moveSidePanelResizePositionWith(oEvent.shiftKey ? -this.getSidePanelResizeLargerStep() : -this.getSidePanelResizeStep());
+					break;
+				case KeyCodes.F10:
+					if (oEvent.shiftKey) {
+						oEvent.preventDefault();
+						this._bContextMenuFromSplitter = true;
+						this._showResizeContextMenu(oEvent);
+					}
+					break;
+			}
 		}
 
 		if (!containsOrEquals(oActionBarDom, oTarget) || oTarget === oActionBarDom) {
@@ -422,7 +539,7 @@ sap.ui.define([
 
 	SidePanel.prototype.onkeyup = function(oEvent) {
 		var oTarget = oEvent.target,
-			oActionBarDom = this.$().find(".sapFSPActionBar")[0];
+			oActionBarDom = this.getDomRef().querySelector(".sapFSPActionBarList");
 
 		if (!containsOrEquals(oActionBarDom, oTarget) || oTarget === oActionBarDom) {
 			return;
@@ -436,7 +553,7 @@ sap.ui.define([
 	SidePanel.prototype.ontap = function(oEvent) {
 		var oItemDom,
 			oTarget = oEvent.target,
-			oActionBarDom = this.$().find(".sapFSPActionBar")[0];
+			oActionBarDom = this.getDomRef().querySelector(".sapFSPActionBarList");
 
 		if (!containsOrEquals(oActionBarDom, oTarget) || oTarget === oActionBarDom) {
 			return;
@@ -475,6 +592,44 @@ sap.ui.define([
 	};
 
 	// Private methods
+
+	SidePanel.prototype._getContextMenu = function() {
+		var oContextMenu = this.getAggregation("_contextMenu");
+
+		if (!oContextMenu) {
+			oContextMenu = new Menu({
+				items: [
+					new MenuItem({
+						text: oResourceBundle.getText("SIDEPANEL_CONTEXTMENU_MAXIMUM_WIDTH"),
+						press: function() {
+							this._setSidePanelResizePosition(SIDE_PANEL_POSITION_MAX_WIDTH);
+						}.bind(this)
+					}),
+					new MenuItem({
+						text: oResourceBundle.getText("SIDEPANEL_CONTEXTMENU_MINIMUM_WIDTH"),
+						press: function() {
+							this._setSidePanelResizePosition(SIDE_PANEL_POSITION_MIN_WIDTH);
+						}.bind(this)
+					}),
+					new MenuItem({
+						text: oResourceBundle.getText("SIDEPANEL_CONTEXTMENU_DEFAULT_WIDTH"),
+						press: function() {
+							this._setSidePanelResizePosition(SIDE_PANEL_POSITION_INITIAL);
+						}.bind(this)
+					})
+				],
+				closed: function(oEvent) {
+					if (this._bContextMenuFromSplitter) {
+						this._bContextMenuFromSplitter = false;
+						this.getDomRef().querySelector(".sapFSPSplitterBar").focus();
+					}
+				}.bind(this)
+			});
+			this.setAggregation("_contextMenu", oContextMenu);
+		}
+
+		return oContextMenu;
+	};
 
 	SidePanel.prototype._getSideContentExpanded = function() {
 		return this.getProperty("sideContentExpanded");
@@ -641,7 +796,7 @@ sap.ui.define([
 	};
 
 	SidePanel.prototype._attachResizeHandlers = function () {
-		this._iResizeHandlerId = ResizeHandler.register(this, this._onResizeRef);
+		this._iResizeHandlerId = ResizeHandler.register(this, this._fnOnResizeRef);
 	};
 
 	SidePanel.prototype._detachResizeHandlers = function () {
@@ -658,55 +813,66 @@ sap.ui.define([
 
 		var iCurrentWidth = oEvent.size.width,
 			bSingleItem = this._isSingleItem(),
-			oStyle = window.getComputedStyle(this.$().find(".sapFSPActionBar")[0]),
+			oDomRef = this.getDomRef(),
+			oStyle = window.getComputedStyle(oDomRef.querySelector(".sapFSPActionBarList")),
 			iItemsGap = parseInt(oStyle.gap),
 			iMarginBottom = parseInt(oStyle.marginBottom),
 			iMarginTop = parseInt(oStyle.marginTop),
-			oFirstItem = this.$().find(".sapFSPOverflowItem")[0],
+			oFirstItem = oDomRef.querySelector(".sapFSPOverflowItem"),
 			iItemsHeight = oFirstItem && oFirstItem.clientHeight,
-			iActionBarHeight,
-			iCurrentWidth;
-
-		if (iCurrentWidth < 1440 && (this._iPreviousWidth === undefined || this._iPreviousWidth >= 1440)) {
-			this.addStyleClass("sapFSPSizeMedium");
-		} else if (iCurrentWidth >= 1440 && (this._iPreviousWidth === undefined || this._iPreviousWidth < 1440)) {
-			this.removeStyleClass("sapFSPSizeMedium");
-		}
+			iActionBarHeight;
 
 		this._iPreviousWidth = iCurrentWidth;
 
-		if (!Device.system.phone) {
-			if (!bSingleItem) {
-				iActionBarHeight = this.$().find(".sapFSPSideInner")[0].clientHeight - iMarginBottom - iMarginTop;
-				this._iVisibleItems = parseInt((iActionBarHeight + iItemsGap) / (iItemsHeight + iItemsGap));
-				this._initItemNavigation();
-			}
-			if (this.getActionBarExpanded() || this._getSideContentExpanded()) {
-				this._fixSidePanelWidth();
-			}
+		if (Device.system.phone) {
+			return;
+		}
+
+		if (!bSingleItem) {
+			iActionBarHeight = oDomRef.querySelector(".sapFSPSideInner").clientHeight - iMarginBottom - iMarginTop;
+			this._iVisibleItems = parseInt((iActionBarHeight + iItemsGap) / (iItemsHeight + iItemsGap));
+			this._initItemNavigation();
+		}
+		if (this._getSideContentExpanded()) {
+			this._fixSidePanelWidth();
 		}
 	};
 
 	SidePanel.prototype._fixSidePanelWidth = function() {
-		var oSide =  this.getDomRef().querySelector(".sapFSPSide"),
-			oSideInner = this.getDomRef().querySelector(".sapFSPSideInner"),
+		var oDomRef = this.getDomRef(),
+			oSide =  oDomRef.querySelector(".sapFSPSide"),
 			iControlWidth = this._getControlWidth(),
-			iSidePanelWidth = parseInt(window.getComputedStyle(oSideInner).width),
-			bResizeSidePanel = iControlWidth < iSidePanelWidth; // doesn't work stable
+			iSidePanelWidth = parseInt(window.getComputedStyle(oSide).width),
+			bResizeSidePanel = iControlWidth < iSidePanelWidth;
 
-		if (!this.hasStyleClass("sapFSPSizeMedium")) {
-			oSide.style.width = bResizeSidePanel ? iControlWidth + "px" : this._getSidePanelWidth();
-			oSide.style.minWidth = bResizeSidePanel ? iControlWidth + "px" : this._getSidePanelMinWidth();
-			oSide.style.maxWidth = this._getSidePanelMaxWidth();
+		oSide.style.width = bResizeSidePanel ? iControlWidth + "px" : this._getSidePanelWidth();
+		oSide.style.minWidth = bResizeSidePanel ? iControlWidth + "px" : this._getSidePanelMinWidth();
+		oSide.style.maxWidth = this._getSidePanelMaxWidth();
+
+		this._updateSplitViewClass(oSide);
+		this.getSidePanelResizable() && this._updateAriaValues();
+	};
+
+	SidePanel.prototype._updateSplitViewClass = function(oSide) {
+		var iSidePanelWidth = parseInt(window.getComputedStyle(oSide).width);
+
+		if (iSidePanelWidth > SIDE_PANEL_SPLIT_BREAKPOINT) {
+			oSide.classList.add("sapFSPSplitView");
 		} else {
-			oSide.style.width = "";
-			oSide.style.minWidth = "";
-			oSide.style.maxWidth = "";
+			oSide.classList.contains("sapFSPSplitView") && this.setActionBarExpanded(false);
+			oSide.classList.remove("sapFSPSplitView");
 		}
+	};
 
-		oSideInner.style.width = bResizeSidePanel ? iControlWidth + "px" : this._getSidePanelWidth();
-		oSideInner.style.minWidth = bResizeSidePanel ? iControlWidth + "px" : this._getSidePanelMinWidth();
-		oSideInner.style.maxWidth = this._getSidePanelMaxWidth();
+	SidePanel.prototype._updateAriaValues = function() {
+		var oDomRef = this.getDomRef(),
+			oSplitter = oDomRef.querySelector(".sapFSPSplitterBar"),
+			iControlWidth = this._getControlWidth(),
+			iSidePanelWidth = parseInt(window.getComputedStyle(oDomRef.querySelector(".sapFSPSide")).width);
+
+		oSplitter.setAttribute("aria-valuenow", Math.round(iSidePanelWidth / iControlWidth * 100));
+		oSplitter.setAttribute("aria-valuemin", Math.round(parseInt(window.getComputedStyle(oDomRef.querySelector(".sapFSPMinWidth")).width) / iControlWidth * 100));
+		oSplitter.setAttribute("aria-valuemax", Math.round(parseInt(window.getComputedStyle(oDomRef.querySelector(".sapFSPMaxWidth")).width) / iControlWidth * 100));
 	};
 
 	SidePanel.prototype._setOverflowItemSelection = function(bState) {
@@ -738,6 +904,10 @@ sap.ui.define([
 
 	SidePanel.prototype._getSideContentAriaLabel = function () {
 		return oResourceBundle.getText("SIDEPANEL_CONTENT_ARIA_LABEL");
+	};
+
+	SidePanel.prototype._getSplitterTitle = function () {
+		return oResourceBundle.getText("SIDEPANEL_RESIZE_SPLITTER_TITLE");
 	};
 
 	SidePanel.prototype._toggleItemSelection = function(oItem) {
@@ -834,10 +1004,6 @@ sap.ui.define([
 		}
 	};
 
-	SidePanel.prototype._isSideContentExpanded = function() {
-		return (Device.system.phone || (!this.getActionBarExpanded() || this._isSingleItem())) && this._getSideContentExpanded();
-	};
-
 	SidePanel.prototype._getSelectedItem = function() {
 		return Core.byId(this.getSelectedItem());
 	};
@@ -888,11 +1054,13 @@ sap.ui.define([
 						oOverflowItem = this.getAggregation("_overflowItem");
 
 					this._bAnnounceSelected = false;
-					// set proper focus
-					if (this.$().find("#" + oSelectedItem.getId()).css("display") === "none") {
-						oOverflowItem && oOverflowItem.focus();
-					} else {
-						oSelectedItem && oSelectedItem.focus();
+					if (!this._isSingleItem()) {
+						// set proper focus
+						if (this.getDomRef().querySelector("#" + oSelectedItem.getId()).style.display === "none") {
+							oOverflowItem && oOverflowItem.focus();
+						} else {
+							oSelectedItem && oSelectedItem.focus();
+						}
 					}
 					this._closeSideContent();
 				}.bind(this)
@@ -909,7 +1077,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.$().find(".sapFSPMain")[0].addEventListener('scroll', this._onMainScroll);
+		this.getDomRef().querySelector(".sapFSPMain").addEventListener('scroll', this._fnOnMainScroll);
 	};
 
 	SidePanel.prototype._detachScrollHandler = function() {
@@ -917,7 +1085,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.$().find(".sapFSPMain")[0].removeEventListener('scroll', this._onMainScroll);
+		this.getDomRef().querySelector(".sapFSPMain").removeEventListener('scroll', this._fnOnMainScroll);
 	};
 
 	SidePanel.prototype._closeOverflowMenu = function() {
@@ -930,14 +1098,14 @@ sap.ui.define([
 	SidePanel.prototype._attachMainFocusOutHandler = function() {
 		if (!Device.system.phone) {
 			var oDomRef = this.getDomRef();
-			oDomRef && oDomRef.querySelector(".sapFSPMain").addEventListener("focusout", this._onMainFocusOut.bind(this), false);
+			oDomRef && oDomRef.querySelector(".sapFSPMain").addEventListener("focusout", this._fnOnMainFocusOut, false);
 		}
 	};
 
 	SidePanel.prototype._detachMainFocusOutHandler = function() {
 		if (!Device.system.phone) {
 			var oDomRef = this.getDomRef();
-			oDomRef && oDomRef.querySelector(".sapFSPMain").removeEventListener("focusout", this._onMainFocusOut.bind(this), false);
+			oDomRef && oDomRef.querySelector(".sapFSPMain").removeEventListener("focusout", this._fnOnMainFocusOut, false);
 		}
 	};
 
@@ -974,7 +1142,7 @@ sap.ui.define([
 	 * @private
 	 */
 	SidePanel.prototype._handleGroupNavigation = function(oEvent, bShiftKey) {
-		var oEventF6 = jQuery.Event("keydown");
+		var oEventF6 = new jQuery.Event("keydown");
 
 		this.$().trigger("focus");
 
@@ -989,17 +1157,21 @@ sap.ui.define([
 		return this.getItems().length === 1;
 	};
 
-	SidePanel.prototype._calculatePixelWidth = function(sWidth) {
-		sWidth = sWidth.replace(/\s/g, '');
-		if (sWidth.slice(-1) === "%") {
-			sWidth = parseInt(this._getControlWidth() * parseFloat(sWidth) / 100) + "px";
+	SidePanel.prototype._calculatePixelWidth = function(vWidth) {
+		if (typeof vWidth === "string") {
+			vWidth = vWidth.replace(/\s/g, '');
+			if (vWidth.slice(-1) === "%") {
+				vWidth = parseInt(this._getControlWidth() * parseFloat(vWidth) / 100) + "px";
+			}
+		} else {
+			vWidth = vWidth.toString() + "px";
 		}
 
-		return sWidth;
+		return vWidth;
 	};
 
 	SidePanel.prototype._getControlWidth = function() {
-		return parseInt(this.$().css("width"));
+		return parseInt(window.getComputedStyle(this.getDomRef()).width);
 	};
 
 	SidePanel.prototype._getSidePanelWidth = function() {
@@ -1007,11 +1179,141 @@ sap.ui.define([
 	};
 
 	SidePanel.prototype._getSidePanelMinWidth = function() {
-		return this._calculatePixelWidth(this.getProperty("sidePanelMinWidth"));
+		return this._calculatePixelWidth(this.getSidePanelMinWidth());
 	};
 
 	SidePanel.prototype._getSidePanelMaxWidth = function() {
-		return this._calculatePixelWidth(this.getProperty("sidePanelMaxWidth"));
+		return this._calculatePixelWidth(this.getSidePanelMaxWidth());
+	};
+
+	// Side Panel resizable-related methods
+
+	SidePanel.prototype._isResizable = function() {
+		return this.getSidePanelResizable() && !Device.system.phone && (this.getActionBarExpanded() || this._getSideContentExpanded());
+	};
+
+	SidePanel.prototype._attachResizableHandlers = function() {
+		var oDomRef = this.getDomRef(),
+			oSplitter = oDomRef && oDomRef.querySelector(".sapFSPSplitterBar");
+
+		if (!oSplitter) {
+			return;
+		}
+
+		if (Device.system.combi || Device.system.phone || Device.system.tablet) {
+			// Attach touch events
+			oSplitter.addEventListener("touchstart", this._fnOnTouchStart);
+			oSplitter.addEventListener("touchend", this._fnOnTouchEnd);
+			oSplitter.addEventListener("touchmove", this._fnOnTouchMove);
+		}
+		if (Device.system.desktop || Device.system.combi) {
+			// Attach mouse events
+			oSplitter.addEventListener("dblclick", this._fnOnDblClick);
+			oSplitter.addEventListener("mousedown", this._fnOnTouchStart);
+			oDomRef.addEventListener("mouseup", this._fnOnTouchEnd);
+			oDomRef.addEventListener("mousemove", this._fnOnTouchMove);
+		}
+	};
+
+	SidePanel.prototype._detachResizableHandlers = function() {
+		var oDomRef = this.getDomRef(),
+			oSplitter = oDomRef && oDomRef.querySelector(".sapFSPSplitterBar");
+
+		if (!oSplitter) {
+			return;
+		}
+
+		if (Device.system.combi || Device.system.phone || Device.system.tablet) {
+			// Detach touch events
+			oSplitter.removeEventListener("touchstart", this._fnOnTouchStart);
+			oSplitter.removeEventListener("touchend", this._fnOnTouchEnd);
+			oSplitter.removeEventListener("touchmove", this._fnOnTouchMove);
+		}
+		if (Device.system.desktop || Device.system.combi) {
+			// Detach mouse events
+			oSplitter.removeEventListener("dblclick", this._fnOnDblClick);
+			oSplitter.removeEventListener("mousedown", this._fnOnTouchStart);
+			oDomRef.removeEventListener("mouseup", this._fnOnTouchEnd);
+			oDomRef.removeEventListener("mousemove", this._fnOnTouchMove);
+		}
+
+	};
+
+	SidePanel.prototype._onTouchStart = function(oEvent) {
+		oEvent.preventDefault();
+		this.getDomRef().querySelector(".sapFSPSplitterBar").classList.add("sapFSPSplitterActive");
+		this._bResizeStarted = true;
+		this._iStartPositionX = oEvent.touches ? oEvent.touches[0].pageX : oEvent.pageX;
+	};
+
+	SidePanel.prototype._onTouchEnd = function(oEvent) {
+		var oDomRef = this.getDomRef(),
+			oSplitter = oDomRef && oDomRef.querySelector(".sapFSPSplitterBar");
+
+		this._bResizeStarted && oEvent.preventDefault();
+		this._bResizeStarted = false;
+
+		oSplitter && oSplitter.classList.remove("sapFSPSplitterActive");
+	};
+
+	SidePanel.prototype._onTouchMove = function(oEvent) {
+		if (!this._bResizeStarted) {
+			return;
+		}
+
+		var iCurrentPositionX = oEvent.touches ? oEvent.touches[0].pageX : oEvent.pageX,
+			iDeltaX = this._iStartPositionX - iCurrentPositionX,
+			oSide = this.getDomRef().querySelector(".sapFSPSide"),
+			iSidePanelWidth = parseInt(window.getComputedStyle(oSide)['width']);
+
+		oEvent.preventDefault();
+
+		if (iSidePanelWidth) {
+			iSidePanelWidth += iDeltaX;
+			this.setProperty("sidePanelWidth", iSidePanelWidth + "px", true);
+			oSide.style.width = iSidePanelWidth + "px";
+			this._iStartPositionX = iCurrentPositionX;
+			this._updateSplitViewClass(oSide);
+			this._updateAriaValues();
+		}
+	};
+
+	SidePanel.prototype._onDblClick = function(oEvent) {
+		oEvent.preventDefault();
+		this._iSidePanelPosition++;
+		if (this._iSidePanelPosition > SIDE_PANEL_POSITION_MAX_WIDTH) {
+			this._iSidePanelPosition = SIDE_PANEL_POSITION_MIN_WIDTH;
+		}
+		this._setSidePanelResizePosition(this._iSidePanelPosition);
+	};
+
+	SidePanel.prototype._setSidePanelResizePosition = function(iResizePosition) {
+		var aPositions = [
+				this._getSidePanelMinWidth(),
+				this._sSidePanelWidth,
+				this._getSidePanelMaxWidth()
+			];
+
+		this.setProperty("sidePanelWidth", aPositions[iResizePosition], true);
+		this._fixSidePanelWidth();
+	};
+
+	SidePanel.prototype._moveSidePanelResizePositionWith = function(iStep) {
+		var oSide = this.getDomRef().querySelector(".sapFSPSide"),
+			iSidePanelWidth = parseInt(window.getComputedStyle(oSide)['width']);
+
+		if (iStep && iSidePanelWidth) {
+			iSidePanelWidth += iStep;
+			this.setProperty("sidePanelWidth", iSidePanelWidth + "px", true);
+			oSide.style.width = iSidePanelWidth + "px";
+			this._updateAriaValues();
+		}
+	};
+
+	SidePanel.prototype._showResizeContextMenu = function(oEvent) {
+		var oContextMenu = this._getContextMenu();
+
+		(this._bContextMenuFromSplitter && oContextMenu.openBy(this.getDomRef().querySelector(".sapFSPSplitterBarGrip"))) || oContextMenu.openAsContextMenu(oEvent, this);
 	};
 
 	return SidePanel;

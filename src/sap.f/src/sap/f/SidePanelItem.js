@@ -31,7 +31,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.107
 	 * @alias sap.f.SidePanelItem
-	 * @experimental Since 1.107. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	 var SidePanelItem = Item.extend("sap.f.SidePanelItem", {
