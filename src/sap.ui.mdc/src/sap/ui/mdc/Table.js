@@ -1377,7 +1377,7 @@ sap.ui.define([
 		this._createTable();
 		this._updateColumnResize();
 		this._updateRowActions();
-		this._updateExportState();
+		this._updateExportButton();
 		this.getColumns().forEach(this._insertInnerColumn, this);
 		this.setAggregation("_content", this._oTable);
 		this._onAfterTableCreated(true); // Resolve any pending promise if table exists
@@ -1414,7 +1414,6 @@ sap.ui.define([
 	Table.prototype.setHeader = function(sText) {
 		this.setProperty("header", sText, true);
 		this._updateHeaderText();
-		this._updateExportState(true);
 		return this;
 	};
 
@@ -1434,13 +1433,7 @@ sap.ui.define([
 
 	Table.prototype.setEnableExport = function(bEnableExport) {
 		this.setProperty("enableExport", bEnableExport, true);
-
-		if (this.getEnableExport() && this._oToolbar) {
-			this._oToolbar.addEnd(this._getExportButton());
-		}
-
-		this._updateExportState();
-
+		this._updateExportButton();
 		return this;
 	};
 
@@ -1479,7 +1472,7 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {boolean} bShowP13nButton
-	 * @@experimental This setting is only temporary and will be replaced with an alternative API in future releases.
+	 * @experimental This setting is only temporary and will be replaced with an alternative API in future releases.
 	 * @since 1.108
 	 * @private
 	 * @ui5-restricted sap.fe
@@ -1509,12 +1502,13 @@ sap.ui.define([
 				],
 				end: [
 					this._getPasteButton(),
-					this._getP13nButton(),
-					this._getExportButton()
+					this._getP13nButton()
 				]
 			});
 		}
+
 		this._oToolbar.setStyle(this._isOfType(TableType.ResponsiveTable) ? ToolbarStyle.Standard : ToolbarStyle.Clear);
+
 		return this._oToolbar;
 	};
 
@@ -1726,57 +1720,48 @@ sap.ui.define([
 		}
 	};
 
+	Table.prototype._isExportEnabled = function() {
+		return this.getEnableExport() && this.bDelegateInitialized && this.getControlDelegate().isExportSupported(this);
+	};
+
+	Table.prototype._updateExportButton = function() {
+		var bNeedExportButton = this._oToolbar != null && this._isExportEnabled();
+
+		if (bNeedExportButton && !this._oExportButton) {
+			this._oExportButton = this._createExportButton();
+		}
+
+		if (!this._oExportButton) {
+			return;
+		}
+
+		if (this._oToolbar && !this._oToolbar.getEnd().includes(this._oExportButton)) {
+			this._oToolbar.addEnd(this._oExportButton);
+		}
+
+		this._oExportButton.setEnabled(this._getRowCount(false) > 0);
+		this._oExportButton.setVisible(this._isExportEnabled());
+	};
+
 	/**
 	 * Returns the export button if <code>enableExport</code> is <code>true</code>.
 	 *
 	 * @returns {null|sap.m.MenuButton} If <code>enableExport</code> property is set to <code>false</code> then returns null else export button
 	 * @private
 	 */
-	Table.prototype._getExportButton = function() {
-		if (!this._isExportEnabled()) {
-			return null;
-		}
-
-		if (!this._oExportButton) {
-			this._oExportButton = TableSettings.createExportButton(this.getId(), {
-				"default": [
-					function() {
-						this._onExport();
-					}, this
-				],
-				"exportAs": [
-					function() {
-						this._onExport(true);
-					}, this
-				]
-			});
-		}
-
-		this._updateExportState();
-		return this._oExportButton;
-	};
-
-	Table.prototype._isExportEnabled = function() {
-		return this.getEnableExport() && this.bDelegateInitialized && this.getControlDelegate().isExportSupported(this);
-	};
-
-	/**
-	 * Disables the export button if no data is present, otherwise enables it.
-	 *
-	 * If the header text of the table is changed, then the cached file name of the export is also updated accordingly.
-	 * @param {boolean} bUpdateFilename Used for updating the file name in the cached export config
-	 *
-	 * @private
-	 */
-	Table.prototype._updateExportState = function(bUpdateFilename) {
-		if (this._oExportButton) {
-			this._oExportButton.setEnabled(this._getRowCount(false) > 0);
-			this._oExportButton.setVisible(this._isExportEnabled());
-
-			if (bUpdateFilename && this._cachedExportSettings) {
-				this._cachedExportSettings.fileName = this.getHeader();
-			}
-		}
+	Table.prototype._createExportButton = function() {
+		return TableSettings.createExportButton(this.getId(), {
+			"default": [
+				function() {
+					this._onExport();
+				}, this
+			],
+			"exportAs": [
+				function() {
+					this._onExport(true);
+				}, this
+			]
+		});
 	};
 
 	/**
@@ -2365,6 +2350,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._onBindingChange = function() {
+		this._updateExportButton();
+
 		/* skip calling of _updateHeaderText till data is received otherwise _announceTableUpdate
 		will be called to early and the user gets an incorrect announcement via screen reader of the actual table state*/
 		if (this._bIgnoreChange) {
@@ -2380,7 +2367,6 @@ sap.ui.define([
 	 */
 	Table.prototype._updateTableHeaderState = function() {
 		this._updateHeaderText();
-		this._updateExportState();
 	};
 
 	Table.prototype._updateHeaderText = function() {
