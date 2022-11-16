@@ -3054,23 +3054,63 @@ sap.ui.define([
 
 	QUnit.test("Export button handling when changing the table type", function(assert) {
 		var oTable = this.oTable;
+		var oExportButton;
 
 		oTable.setEnableExport(true);
 
-		return oTable.initialized().then(function() {
-			sinon.stub(oTable.getControlDelegate(), "isExportSupported").returns(false);
+		return oTable.awaitControlDelegate().then(function(oDelegate) {
+			sinon.stub(oDelegate, "isExportSupported").returns(false);
+			return oTable.initialized();
+		}).then(function() {
+			oTable.getControlDelegate().isExportSupported.returns(true);
 			oTable.setType(TableType.ResponsiveTable);
+			return oTable.initialized();
+		}).then(function() {
+			oExportButton = oTable._oExportButton;
+			assert.ok(oTable._oExportButton,
+				"Export button exists after changing to a type for which the delegate does support export");
+			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
+			assert.ok(oTable._oExportButton.getVisible(), "Export button is visible");
+
+			oTable.getControlDelegate().isExportSupported.returns(false);
+			oTable.setType(TableType.Table);
 			return oTable.initialized();
 		}).then(function() {
 			assert.notOk(oTable._oExportButton.getVisible(),
 				"Export button is invisible after changing to a type for which the delegate does not support export");
+			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
+			assert.equal(oExportButton, oTable._oExportButton, "Same button instance is used");
 
-			oTable.getControlDelegate().isExportSupported.restore();
-			oTable.setType(TableType.Table);
+			oTable.getControlDelegate().isExportSupported.returns(true);
+			oTable.setType(TableType.ResponsiveTable);
 			return oTable.initialized();
 		}).then(function() {
 			assert.ok(oTable._oExportButton.getVisible(),
 				"Export button is visible after changing to a type for which the delegate supports export");
+			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
+			assert.equal(oExportButton, oTable._oExportButton, "Same button instance is used");
+		}).finally(function() {
+			oTable.getControlDelegate().isExportSupported.restore();
+		});
+	});
+
+	QUnit.test("Export button initialization with toolbar actions", function(assert) {
+		var oTable = this.oTable;
+
+		// Aggregation forwarding will cause the creation of the ActionToolbar. The export button will not be added at this point, because
+		// the delegate is not yet loaded. The button has to be added to the toolbar when the rest of the content is created.
+		oTable.addAction(new Text());
+		oTable.setEnableExport(true);
+
+		return oTable.awaitControlDelegate().then(function(oDelegate) {
+			sinon.stub(oDelegate, "isExportSupported").returns(true);
+			return oTable.initialized();
+		}).then(function() {
+			assert.ok(oTable._oExportButton, "Export button exists after initialization with toolbar actions");
+			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
+			assert.ok(oTable._oExportButton.getVisible(), "Export button is visible");
+		}).finally(function() {
+			oTable.getControlDelegate().isExportSupported.restore();
 		});
 	});
 
@@ -4108,13 +4148,13 @@ sap.ui.define([
 			return waitForBinding(this.oTable);
 		}.bind(this)).then(function() {
 			assert.notOk(this.oTable._oExportButton.getEnabled(), "Export button is disabled since there are no rows");
-			var fUpdateExportState = sinon.spy(this.oTable, "_updateExportState"),
+			var oUpdateExportButtonSpy = sinon.spy(this.oTable, "_updateExportButton"),
 				fGetRowCountStub = sinon.stub(this.oTable, "_getRowCount");
 			fGetRowCountStub.returns(1);
 
 			// simulate binding change
 			this.oTable.getRowBinding().fireEvent("change");
-			assert.ok(fUpdateExportState.calledOnce);
+			assert.ok(oUpdateExportButtonSpy.calledOnce);
 			assert.ok(this.oTable._oExportButton.getEnabled(), "Export button enabled, since binding change added a row to the table");
 
 			fGetRowCountStub.restore();
