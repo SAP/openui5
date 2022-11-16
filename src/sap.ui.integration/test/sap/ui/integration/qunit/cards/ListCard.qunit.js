@@ -321,6 +321,73 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_ListCard_BulletMicrochartMultiple = {
+		"sap.app": {
+			"id": "oManifest_ListCard_BulletMicrochartMultiple"
+		},
+		"sap.card": {
+			"type": "List",
+			"content": {
+				"data": {
+					"json": [
+						{
+							"Name": "Comfort Easy",
+							"Description": "32 GB Digital Assistant",
+							"Highlight": "Success",
+							"Expected": 300000,
+							"Actual": 330000,
+							"Target": 280000,
+							"ChartColor": "Good"
+						},
+						{
+							"Name": "Ergo Screen E-I",
+							"Description": "Optimum Hi-Resolution max.",
+							"Highlight": "Warning",
+							"Expected": 300000,
+							"Actual": 100000,
+							"Target": 100000,
+							"ChartColor": "Neutral"
+						},
+						{
+							"Name": "Laser Professional Eco",
+							"Description": "Powerful 500 MHz processor",
+							"Highlight": "Error",
+							"Expected": 300000,
+							"Actual": 60000,
+							"Target": 75000,
+							"ChartColor": "Error"
+						}
+					]
+				},
+				"item": {
+					"title": "{Name}",
+					"description": "{Description}",
+					"highlight": "{Highlight}",
+					"chart": {
+						"type": "Bullet",
+						"minValue": "{MinValue}",
+						"maxValue": "{MaxValue}",
+						"target": "{Target}",
+						"value": "{Actual}",
+						"displayValue": "{= format.currency(${Actual}, 'EUR', {currencyCode:false})}",
+						"color": "{ChartColor}",
+						"scale": "$",
+						"thresholds": [
+							{
+								"value": 50000,
+								"color": "Error"
+							},
+							{
+								"value": 50000,
+								"color": "Error"
+							}
+						]
+					}
+				}
+			}
+		}
+	};
+
 	var oManifest_ListCard_StackedBarMicrochart = {
 		"sap.app": {
 			"id": "oManifest_ListCard_StackedBarMicrochart"
@@ -1462,6 +1529,61 @@ sap.ui.define([
 			assert.strictEqual(aBars[0].getValueColor(), oExpectedSettings["Notebooks"][0]["Notebook13Color"], "'color' property from the bar in the manifest should be set to the chart.");
 
 			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Bullet MicroCharts sizes are equal", function (assert) {
+		testMicrochartCreation(assert, this.oCard, oManifest_ListCard_BulletMicrochartMultiple, function (done) {
+			var $charts = this.oCard.$().find(".sapUiIntMicrochartChart"),
+				sMaxWidth,
+				bMaxWidthIsSame = true;
+
+			setTimeout(function () {
+				$charts.find(".sapUiIntMicrochartChartInner").each(function (iInd, oElement) {
+					var sElementMaxWidth = oElement.style.maxWidth;
+
+					if (!sMaxWidth) {
+						sMaxWidth = sElementMaxWidth;
+					}
+
+					if (!sElementMaxWidth || sElementMaxWidth !== sMaxWidth) {
+						bMaxWidthIsSame = false;
+					}
+				});
+
+				// Assert
+				assert.ok(bMaxWidthIsSame, "All charts have same max width");
+
+				done();
+			}, 0);
+		}.bind(this));
+	});
+
+
+	QUnit.test("StackedBar MicroCharts sizes are equal", function (assert) {
+		testMicrochartCreation(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
+			var $charts = this.oCard.$().find(".sapUiIntMicrochartChart"),
+				sMaxWidth,
+				bMaxWidthIsSame = true;
+
+			setTimeout(function () {
+				$charts.find(".sapUiIntMicrochartChartInner").each(function (iInd, oElement) {
+					var sElementMaxWidth = oElement.style.maxWidth;
+
+					if (!sMaxWidth) {
+						sMaxWidth = sElementMaxWidth;
+					}
+
+					if (!sElementMaxWidth || sElementMaxWidth !== sMaxWidth) {
+						bMaxWidthIsSame = false;
+					}
+				});
+
+				// Assert
+				assert.ok(bMaxWidthIsSame, "All charts have same max width");
+
+				done();
+			}, 0);
 		}.bind(this));
 	});
 
