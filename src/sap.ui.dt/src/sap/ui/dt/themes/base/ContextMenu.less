@@ -70,7 +70,9 @@
 					}
 				}
 			}
-
+			.sapUiMnuItmIco {
+				position: relative;
+			}
 			.sapUiMnuItmTxt {
 				display: none !important;
 			}
@@ -91,7 +93,9 @@
 	&.sapUiDtContextMiniMenu {
 		.sapUiMnuItmIco {
 			width: 3rem;
-
+			+ .sapUiMnuItmTxt {
+				margin-left: 2.5rem;
+			}
 			.sapUiIcon {
 				height: 2.625rem;
 				line-height: 2.625rem !important;
@@ -101,15 +105,17 @@
 	}
 }
 
-.sapUiSizeCompact .sapUiMnu.sapUiDtContextMenu {
+.sapUiSizeCompact .sapMMenu.sapUiMnu.sapUiDtContextMenu {
 	.sapUiMnuItm {
 		height: 2.25rem;
 		padding-right: 0.25rem;
 
 		.sapUiMnuItmIco {
 			padding: 0 0.25rem;
+			+ .sapUiMnuItmTxt {
+				margin-left: 2.5rem;
+			}
 		}
-
 		.sapUiMnuItmSbMnu {
 			line-height: 2.25rem;
 		}
