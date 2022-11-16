@@ -1270,6 +1270,38 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
+	QUnit.test("DateTimeWithTimezone type value binding", function(assert) {
+		// arrange
+		var oModel = new JSONModel({
+				date: null,
+				timezone: null
+			}),
+			oDTP = new DateTimePicker({
+				value: {
+					type: "sap.ui.model.odata.type.DateTimeWithTimezone",
+					parts: [{
+						path: "/date",
+						type: "sap.ui.model.odata.type.DateTimeOffset"
+					}, {
+						path: "/timezone",
+						type: "sap.ui.model.odata.type.String"
+					}]
+				}
+			});
+
+		oDTP.placeAt("qunit-fixture");
+		oDTP.setModel(oModel);
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(oDTP._getTimezoneFormatOptions(false).showTimezone, "Time Zone is displayed with value format");
+		assert.notOk(oDTP._getTimezoneFormatOptions(true).showTimezone, "Time Zone is not displayed with display format");
+		assert.notOk(oDTP.getDomRef().querySelector("input").innerText, "Input value is empty");
+
+		// clean
+		oDTP.destroy();
+	});
+
 	QUnit.module("Different application timezone", {
 		before: function() {
 			var sTZ1 = "Europe/Sofia";

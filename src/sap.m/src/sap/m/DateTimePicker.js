@@ -390,10 +390,6 @@ sap.ui.define([
 	DateTimePicker.prototype._formatValueAndUpdateOutput = function(oDate, sValue) {
 		delete this._prefferedValue;
 
-		if (!this.getDomRef()) {
-			return;
-		}
-
 		// convert to output
 		var sOutputValue = oDate ? this._formatValue(oDate) : sValue;
 		if (!oDate) {
@@ -403,6 +399,10 @@ sap.ui.define([
 				this._prefferedValue = sFallbackValue;
 				sOutputValue = sFallbackValue;
 			}
+		}
+
+		if (!this.getDomRef()) {
+			return;
 		}
 
 		if (this._bPreferUserInteraction) {
@@ -655,9 +655,13 @@ sap.ui.define([
 			oBinding = this.getBinding("value") || this.getBinding("dateValue"),
 			oBindingType = oBinding && oBinding.getType && oBinding.getType();
 
-		if (bDisplayFormat || !this._getTimezone() ||
-			(oBindingType && !oBindingType.isA(["sap.ui.model.odata.type.DateTimeWithTimezone"]))) {
+		if (bDisplayFormat || !this._getTimezone()
+			|| (oBindingType && !oBindingType.isA(["sap.ui.model.odata.type.DateTimeWithTimezone"]))) {
 			oFormatOptions.showTimezone = false;
+		}
+
+		if (!bDisplayFormat && oBindingType && oBindingType.isA(["sap.ui.model.odata.type.DateTimeWithTimezone"])) {
+			oFormatOptions.showTimezone = true;
 		}
 
 		if (oFormatOptions.relative === undefined) {
