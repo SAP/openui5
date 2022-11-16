@@ -791,9 +791,7 @@ sap.ui.define([
 	ODataContextBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, _oContext,
 			sDeepResourcePath) {
 		return _Cache.createSingle(this.oModel.oRequestor, sResourcePath, mQueryOptions,
-			this.oModel.bAutoExpandSelect, this.oModel.bSharedRequests, function () {
-				return sDeepResourcePath;
-			});
+			this.oModel.bAutoExpandSelect, this.oModel.bSharedRequests, sDeepResourcePath);
 	};
 
 	/**
