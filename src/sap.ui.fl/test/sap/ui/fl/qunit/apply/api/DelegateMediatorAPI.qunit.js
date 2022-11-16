@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Button",
 	"sap/ui/rta/enablement/TestDelegate",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	DelegateMediator,
 	DelegateMediatorAPI,
@@ -21,7 +22,8 @@ sap.ui.define([
 	Panel,
 	Button,
 	TestDelegate,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -253,14 +255,16 @@ sap.ui.define([
 					return Promise.resolve(new Button("myBrandNewButton"));
 				}
 			};
-			sandbox.stub(sap.ui, "require")
-				.withArgs(["sap/ui/rta/enablement/TestDelegate1"]).callsFake(function (sModuleName, fnCallback) {
-					fnCallback(oFakeReadOnlyDelegate);
-				})
-				.withArgs(["sap/ui/rta/enablement/TestDelegate2"]).callsFake(function (sModuleName, fnCallback) {
-					fnCallback(oFakeWriteOnlyDelegate);
-				})
-				.callThrough();
+			FlQUnitUtils.stubSapUiRequire(sandbox, [
+				{
+					name: ["sap/ui/rta/enablement/TestDelegate1"],
+					stub: oFakeReadOnlyDelegate
+				},
+				{
+					name: ["sap/ui/rta/enablement/TestDelegate2"],
+					stub: oFakeWriteOnlyDelegate
+				}
+			]);
 
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier, undefined, true))
 				.then(function (mDelegateInfo) {
@@ -304,14 +308,20 @@ sap.ui.define([
 					return Promise.resolve(new Button("buttonFromInstancespecificDelegate"));
 				}
 			};
-			sandbox.stub(sap.ui, "require")
-				.withArgs(["sap/ui/rta/enablement/readonly/TestDelegate"]).callsFake(function (sModuleName, fnCallback) {
-					fnCallback(oFakeReadOnlyDelegate);
-				})
-				.withArgs(["sap/ui/rta/enablement/TestDelegate"]).callsFake(function (sModuleName, fnCallback) {
-					fnCallback(oFakeWriteOnlyDelegate);
-				})
-				.callThrough();
+			FlQUnitUtils.stubSapUiRequire(sandbox, [
+				{
+					name: ["sap/ui/rta/enablement/readonly/TestDelegate"],
+					stub: oFakeReadOnlyDelegate
+				},
+				{
+					name: ["sap/ui/rta/enablement/TestDelegate"],
+					stub: oFakeWriteOnlyDelegate
+				},
+				{
+					name: "sap/ui/rta/enablement/TestDelegate",
+					stub: undefined
+				}
+			]);
 
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier, undefined, true))
 				.then(function (mDelegateInfo) {

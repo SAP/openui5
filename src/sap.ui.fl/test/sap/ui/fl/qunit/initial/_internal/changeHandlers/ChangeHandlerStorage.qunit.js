@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/Layer",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	Log,
 	JsControlTreeModifier,
 	Control,
 	ChangeHandlerStorage,
 	Layer,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -54,13 +56,13 @@ sap.ui.define([
 		QUnit.test("registerChangeHandlersForLibrary", function(assert) {
 			assert.expect(6);
 			var oErrorLogStub = sandbox.stub(Log, "error");
-			var oRequireStub = sandbox.stub(sap.ui, "require");
-			oRequireStub
-				.withArgs(["sap/ui/fl/notThere.flexibility"])
-				.callsFake(function(sModuleName, fnSuccess, fnError) {
-					fnError(new Error("myFancyError"));
-				});
-			oRequireStub.callThrough();
+			FlQUnitUtils.stubSapUiRequire(sandbox, [
+				{
+					name: ["sap/ui/fl/notThere.flexibility"],
+					stub: new Error("myFancyError"),
+					error: true
+				}
+			]);
 			var mChangeHandlers = {
 				myFancyControl: {
 					hideControl: "default"
@@ -199,15 +201,14 @@ sap.ui.define([
 
 		QUnit.test("instanceSpecific change handlers using default", function(assert) {
 			var oGetModulePathStub = sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("anyString");
-			var oRequireStub = sandbox.stub(sap.ui, "require");
-			oRequireStub
-				.withArgs(["anyString"])
-				.callsFake(function(sModuleName, fnSuccess) {
-					fnSuccess({
+			FlQUnitUtils.stubSapUiRequire(sandbox, [
+				{
+					name: ["anyString"],
+					stub: {
 						hideControl: "default"
-					});
-				});
-			oRequireStub.callThrough();
+					}
+				}
+			]);
 			var oControl = {foo: "bar"};
 			var mChangeHandlers = {
 				myFancyControl: {
@@ -236,13 +237,13 @@ sap.ui.define([
 			assert.expect(2);
 			var oErrorStub = sandbox.stub(Log, "error");
 			var oControl = new Control("myControl");
-			var oRequireStub = sandbox.stub(sap.ui, "require");
-			oRequireStub
-				.withArgs(["sap/ui/fl/notThere.flexibility"])
-				.callsFake(function(sModuleName, fnSuccess, fnError) {
-					fnError(new Error("myFancyError"));
-				});
-			oRequireStub.callThrough();
+			FlQUnitUtils.stubSapUiRequire(sandbox, [
+				{
+					name: ["sap/ui/fl/notThere.flexibility"],
+					stub: new Error("myFancyError"),
+					error: true
+				}
+			]);
 			sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/notThere.flexibility");
 			return ChangeHandlerStorage.getChangeHandler("doSomething", "myFancyControl", oControl, JsControlTreeModifier, Layer.CUSTOMER)
 

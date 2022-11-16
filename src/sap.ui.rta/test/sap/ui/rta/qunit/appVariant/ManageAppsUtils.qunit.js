@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/base/i18n/ResourceBundle",
@@ -12,6 +13,7 @@ sap.ui.define([
 	AppVariantOverviewUtils,
 	AppVariantUtils,
 	Layer,
+	FlUtils,
 	Settings,
 	AppVariantWriteAPI,
 	ResourceBundle,
@@ -23,28 +25,24 @@ sap.ui.define([
 
 	QUnit.module("Given an AppVariantOverviewUtils is instantiated", {
 		beforeEach: function () {
-			this.originalUShell = sap.ushell;
-
-			sap.ushell = Object.assign({}, sap.ushell, {
-				Container: {
-					getServiceAsync: function() {
-						return Promise.resolve({
-							getLinks: function() {
-								return Promise.resolve([{
-									result: "success"
-								}]);
-							}
-						});
-					},
-					setDirtyFlag: function() {
-						return "";
-					}
+			this.oUshellContainerStub = {
+				getServiceAsync: function() {
+					return Promise.resolve({
+						getLinks: function() {
+							return Promise.resolve([{
+								result: "success"
+							}]);
+						}
+					});
+				},
+				setDirtyFlag: function() {
+					return "";
 				}
-			});
+			};
+			sandbox.stub(FlUtils, "getUshellContainer").returns(this.oUshellContainerStub);
 		},
 		afterEach: function () {
 			sandbox.restore();
-			sap.ushell = this.originalUShell;
 		}
 	}, function() {
 		QUnit.test("When getAppVariantOverviewAttributes() method is called with some missing properties (Key user view) on S4/Hana Cloud", function (assert) {
@@ -382,7 +380,7 @@ sap.ui.define([
 				}
 			};
 
-			sap.ushell.Container.getServiceAsync = function() {
+			this.oUshellContainerStub.getServiceAsync = function() {
 				return Promise.reject("Failed to get service");
 			};
 
@@ -653,25 +651,20 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an AppVariantOverviewUtils is instantiated", {
-		beforeEach: function () {
-			this.originalUShell = sap.ushell;
-			// this overrides the ushell globally => we need to restore it!
-
-			sap.ushell = Object.assign({}, sap.ushell, {
-				Container: {
-					getServiceAsync: function() {
-						return Promise.resolve({
-							getLinks: function() {
-								return Promise.resolve([]);
-							}
-						});
-					}
+		beforeEach: function() {
+			this.oUshellContainerStub = {
+				getServiceAsync: function() {
+					return Promise.resolve({
+						getLinks: function() {
+							return Promise.resolve([]);
+						}
+					});
 				}
-			});
+			};
+			sandbox.stub(FlUtils, "getUshellContainer").returns(this.oUshellContainerStub);
 		},
 		afterEach: function () {
 			sandbox.restore();
-			sap.ushell = this.originalUShell;
 		}
 	}, function() {
 		QUnit.test("When getAppVariantOverview() method is called on an app variant (currently adapting) which is also a reference app and has intent information present (Key user view) on cloud system", function (assert) {

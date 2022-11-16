@@ -561,16 +561,13 @@ sap.ui.define([
 
 		QUnit.test("When navigateToFLPHomepage() method is called and navigation to launchpad gets triggered", function (assert) {
 			sandbox.restore();
-			window.bUShellNavigationTriggered = false;
-			if (!sap.ushell) {
-				sap.ushell = {};
-			}
+			var bUShellNavigationTriggered = false;
 
 			sandbox.stub(FlUtils, "getUshellContainer").returns({
 				getServiceAsync: function() {
 					return Promise.resolve({
 						toExternal: function() {
-							window.bUShellNavigationTriggered = true;
+							bUShellNavigationTriggered = true;
 						},
 						getCurrentApplication: function() {
 							return {
@@ -582,23 +579,19 @@ sap.ui.define([
 			});
 
 			return AppVariantUtils.navigateToFLPHomepage().then(function() {
-				assert.equal(window.bUShellNavigationTriggered, true, "then the navigation to fiorilaunchpad gets triggered");
-				delete window.bUShellNavigationTriggered;
+				assert.ok(bUShellNavigationTriggered, "then the navigation to fiorilaunchpad gets triggered");
 			});
 		});
 
 		QUnit.test("When navigateToFLPHomepage() method is called and navigation to launchad does not get triggered", function (assert) {
 			sandbox.restore();
-			window.bUShellNavigationTriggered = false;
-			if (!sap.ushell) {
-				sap.ushell = {};
-			}
+			var bUShellNavigationTriggered = false;
 
 			sandbox.stub(FlUtils, "getUshellContainer").returns({
 				getServiceAsync: function() {
 					return Promise.resolve({
 						toExternal: function() {
-							window.bUShellNavigationTriggered = true;
+							bUShellNavigationTriggered = true;
 						},
 						getCurrentApplication: function() {
 							return {
@@ -614,8 +607,7 @@ sap.ui.define([
 			});
 
 			return AppVariantUtils.navigateToFLPHomepage().then(function() {
-				assert.equal(window.bUShellNavigationTriggered, false, "then the navigation to fiorilaunchpad does not get triggered");
-				delete window.bUShellNavigationTriggered;
+				assert.notOk(bUShellNavigationTriggered, "then the navigation to fiorilaunchpad does not get triggered");
 			});
 		});
 

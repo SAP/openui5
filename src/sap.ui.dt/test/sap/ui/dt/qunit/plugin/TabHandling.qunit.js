@@ -6,9 +6,9 @@ sap.ui.define([
 	"sap/ui/dt/plugin/TabHandling",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/core/Core"
-],
-function(
+	"sap/ui/core/Core",
+	"sap/ui/dom/jquery/Selectors"
+], function(
 	jQuery,
 	DesignTime,
 	TabHandling,

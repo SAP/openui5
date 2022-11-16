@@ -415,25 +415,6 @@ sap.ui.define([
 
 
 		QUnit.test("When showSuccessMessage() method is called on S4/Hana Cloud ('Save As' is triggered from RTA Toolbar)", function (assert) {
-			window.bUShellNavigationTriggered = false;
-			var originalUShell = sap.ushell;
-
-			sap.ushell = Object.assign({}, sap.ushell, {
-				services: {
-					AppConfiguration: {
-						getCurrentApplication: function() {
-							return {
-								componentHandle: {
-									getInstance: function() {
-										return "testInstance";
-									}
-								}
-							};
-						}
-					}
-				}
-			});
-
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser: true,
@@ -451,32 +432,11 @@ sap.ui.define([
 			}).then(function(oDescriptor) {
 				return this.oAppVariantManager.showSuccessMessage(oDescriptor, true).then(function() {
 					assert.ok("then the promise is resolved and app is navigated to FLP Homepage");
-					sap.ushell = originalUShell;
-					delete window.bUShellNavigationTriggered;
 				});
 			}.bind(this));
 		});
 
 		QUnit.test("When showSuccessMessage() method is called on S4/Hana on premise ('Save As' is triggered from RTA Toolbar)", function (assert) {
-			window.bUShellNavigationTriggered = false;
-			var originalUShell = sap.ushell;
-
-			sap.ushell = Object.assign({}, sap.ushell, {
-				services: {
-					AppConfiguration: {
-						getCurrentApplication: function() {
-							return {
-								componentHandle: {
-									getInstance: function() {
-										return "testInstance";
-									}
-								}
-							};
-						}
-					}
-				}
-			});
-
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser: true,
@@ -494,8 +454,6 @@ sap.ui.define([
 			}).then(function(oDescriptor) {
 				return this.oAppVariantManager.showSuccessMessage(oDescriptor, true).then(function() {
 					assert.ok("then the promise is resolved and app is navigated to FLP Homepage");
-					sap.ushell = originalUShell;
-					delete window.bUShellNavigationTriggered;
 				});
 			}.bind(this));
 		});

@@ -308,11 +308,9 @@ sap.ui.define([
 
 	QUnit.module("Given that a ManageApps controller is instantiated", {
 		beforeEach: function () {
-			window.bUShellNavigationTriggered = false;
 		},
 		afterEach: function () {
 			sandbox.restore();
-			delete window.bUShellNavigationTriggered;
 		}
 	}, function() {
 		QUnit.test("when handleUiAdaptation is called", function(assert) {

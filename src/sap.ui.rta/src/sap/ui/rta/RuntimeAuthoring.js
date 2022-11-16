@@ -1621,94 +1621,93 @@ sap.ui.define([
 				}
 			}
 		} else {
-			this._mServices[sName] = mService = {
-				status: SERVICE_STARTING,
-				location: sServiceLocation,
-				initPromise: new Promise(function(fnResolve, fnReject) {
-					sap.ui.require(
-						[sServiceLocation],
-						function(fnServiceFactory) {
-							mService.factory = fnServiceFactory;
+			this._mServices[sName] = mService = {};
+			mService.status = SERVICE_STARTING;
+			mService.location = sServiceLocation;
+			mService.initPromise = new Promise(function(fnResolve, fnReject) {
+				sap.ui.require(
+					[sServiceLocation],
+					function(fnServiceFactory) {
+						mService.factory = fnServiceFactory;
 
-							if (!this._oServiceEventBus) {
-								this._oServiceEventBus = new ServiceEventBus();
-							}
-
-							DtUtil.wrapIntoPromise(fnServiceFactory)(
-								this,
-								this._oServiceEventBus.publish.bind(this._oServiceEventBus, sName)
-							)
-								.then(function(oService) {
-									if (this.bIsDestroyed) {
-										throw DtUtil.createError(
-											"RuntimeAuthoring#startService",
-											DtUtil.printf("RuntimeAuthoring instance is destroyed while initializing the service '{0}'", sName),
-											"sap.ui.rta"
-										);
-									}
-									if (!isPlainObject(oService)) {
-										throw DtUtil.createError(
-											"RuntimeAuthoring#startService",
-											DtUtil.printf("Invalid service format. Service should return simple javascript object after initialization. Service name = '{0}'", sName),
-											"sap.ui.rta"
-										);
-									}
-
-									mService.service = oService;
-									mService.exports = {};
-
-									// Expose events API if there is at least one event
-									if (Array.isArray(oService.events) && oService.events.length > 0) {
-										mService.exports = Object.assign({}, mService.exports, {
-											attachEvent: this._oServiceEventBus.subscribe.bind(this._oServiceEventBus, sName),
-											detachEvent: this._oServiceEventBus.unsubscribe.bind(this._oServiceEventBus, sName),
-											attachEventOnce: this._oServiceEventBus.subscribeOnce.bind(this._oServiceEventBus, sName)
-										});
-									}
-
-									// Expose methods/properties from exports object if any
-									var mExports = oService.exports || {};
-									mService.exports = Object.assign(
-										mService.exports,
-										Object.keys(mExports).reduce(function(mResult, sKey) {
-											var vValue = mExports[sKey];
-											mResult[sKey] = typeof vValue === "function"
-												? DtUtil.waitForSynced(this._oDesignTime, vValue)
-												: vValue;
-											return mResult;
-										}.bind(this), {})
-									);
-
-									mService.status = SERVICE_STARTED;
-									fnResolve(Object.freeze(mService.exports));
-								}.bind(this))
-								.catch(fnReject);
-						}.bind(this),
-						function(vError) {
-							mService.status = SERVICE_FAILED;
-							fnReject(
-								DtUtil.propagateError(
-									vError,
-									"RuntimeAuthoring#startService",
-									DtUtil.printf("Can't load service '{0}' by its name: {1}", sName, sServiceLocation),
-									"sap.ui.rta"
-								)
-							);
+						if (!this._oServiceEventBus) {
+							this._oServiceEventBus = new ServiceEventBus();
 						}
-					);
-				}.bind(this))
-					.catch(function(vError) {
+
+						DtUtil.wrapIntoPromise(fnServiceFactory)(
+							this,
+							this._oServiceEventBus.publish.bind(this._oServiceEventBus, sName)
+						)
+							.then(function(oService) {
+								if (this.bIsDestroyed) {
+									throw DtUtil.createError(
+										"RuntimeAuthoring#startService",
+										DtUtil.printf("RuntimeAuthoring instance is destroyed while initializing the service '{0}'", sName),
+										"sap.ui.rta"
+									);
+								}
+								if (!isPlainObject(oService)) {
+									throw DtUtil.createError(
+										"RuntimeAuthoring#startService",
+										DtUtil.printf("Invalid service format. Service should return simple javascript object after initialization. Service name = '{0}'", sName),
+										"sap.ui.rta"
+									);
+								}
+
+								mService.service = oService;
+								mService.exports = {};
+
+								// Expose events API if there is at least one event
+								if (Array.isArray(oService.events) && oService.events.length > 0) {
+									Object.assign(mService.exports, {
+										attachEvent: this._oServiceEventBus.subscribe.bind(this._oServiceEventBus, sName),
+										detachEvent: this._oServiceEventBus.unsubscribe.bind(this._oServiceEventBus, sName),
+										attachEventOnce: this._oServiceEventBus.subscribeOnce.bind(this._oServiceEventBus, sName)
+									});
+								}
+
+								// Expose methods/properties from exports object if any
+								var mExports = oService.exports || {};
+								Object.assign(
+									mService.exports,
+									Object.keys(mExports).reduce(function(mResult, sKey) {
+										var vValue = mExports[sKey];
+										mResult[sKey] = typeof vValue === "function"
+											? DtUtil.waitForSynced(this._oDesignTime, vValue)
+											: vValue;
+										return mResult;
+									}.bind(this), {})
+								);
+
+								mService.status = SERVICE_STARTED;
+								fnResolve(Object.freeze(mService.exports));
+							}.bind(this))
+							.catch(fnReject);
+					}.bind(this),
+					function(vError) {
 						mService.status = SERVICE_FAILED;
-						return Promise.reject(
+						fnReject(
 							DtUtil.propagateError(
 								vError,
 								"RuntimeAuthoring#startService",
-								DtUtil.printf("Error during service '{0}' initialization.", sName),
+								DtUtil.printf("Can't load service '{0}' by its name: {1}", sName, sServiceLocation),
 								"sap.ui.rta"
 							)
 						);
-					})
-			};
+					}
+				);
+			}.bind(this))
+			.catch(function(vError) {
+				mService.status = SERVICE_FAILED;
+				return Promise.reject(
+					DtUtil.propagateError(
+						vError,
+						"RuntimeAuthoring#startService",
+						DtUtil.printf("Error during service '{0}' initialization.", sName),
+						"sap.ui.rta"
+					)
+				);
+			});
 
 			return mService.initPromise;
 		}

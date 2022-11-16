@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/base/Object",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
@@ -19,7 +20,8 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/restricted/_intersection",
 	"sap/base/util/restricted/_max"
-], function (
+], function(
+	BaseObject,
 	Overlay,
 	OverlayRegistry,
 	OverlayUtil,
@@ -896,7 +898,7 @@ sap.ui.define([
 	 */
 	ElementOverlay.prototype.getParentAggregationOverlay = function() {
 		var oParentAggregationOverlay = this.getParent();
-		return oParentAggregationOverlay instanceof sap.ui.dt.AggregationOverlay ? oParentAggregationOverlay : null;
+		return BaseObject.isA(oParentAggregationOverlay, "sap.ui.dt.AggregationOverlay") ? oParentAggregationOverlay : null;
 	};
 
 	/**
@@ -957,7 +959,7 @@ sap.ui.define([
 	 */
 	ElementOverlay.prototype.getElementVisibility = function() {
 		var oElement = this.getElement();
-		if (oElement instanceof sap.ui.core.Control) {
+		if (oElement instanceof Control) {
 			return oElement.getVisible();
 		}
 		var oDesignTimeMetadata = this.getDesignTimeMetadata();
