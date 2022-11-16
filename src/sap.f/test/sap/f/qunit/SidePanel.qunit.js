@@ -649,4 +649,30 @@ sap.ui.define([
 		assert.notOk(this.oSPDomRef.querySelectorAll(".sapFSPItem")[0].getAttribute("title"), "When action bar is expanded, action items shouldn't have title");
 	});
 
+	QUnit.module("Misc", {
+		beforeEach : function() {
+			this.oSP = new SidePanel();
+			addItems(this.oSP, 3);
+		},
+		afterEach : function() {
+			this.oSP.destroy();
+		}
+	});
+
+	QUnit.test("Calculating and storing default side panel width", function (assert) {
+		// act
+		this.oSP.setSidePanelWidth("50%");
+
+		// assert
+		assert.notOk(this.oSP._sSidePanelWidth, "if the control is not rendered yet, the width cannot be calculated and stored properly");
+
+		// act
+		this.oSP.placeAt("test-parent");
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(this.oSP._sSidePanelWidth, "After the rendering of the control, the width can be calculated and stored properly");
+
+	});
+
 });
