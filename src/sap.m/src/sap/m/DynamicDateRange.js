@@ -37,6 +37,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/Configuration',
+	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/dom/jquery/Focusable' // provides jQuery.fn.firstFocusableDomRef
 ], function(
 		InvisibleText,
@@ -71,7 +72,8 @@ sap.ui.define([
 		StandardDynamicDateOption,
 		library,
 		jQuery,
-		Configuration
+		Configuration,
+		CalendarUtils
 	) {
 		"use strict";
 
@@ -989,7 +991,7 @@ sap.ui.define([
 			}
 
 			for (var i = 0; i < aValueDates.length; i++) {
-				aResultDates[i] = this._convertDate(aValueDates[i], bTimezone);
+				aResultDates[i] = CalendarUtils._createUTCDate(this._convertDate(aValueDates[i], bTimezone), true);
 			}
 
 			if (aResultDates) {
@@ -997,7 +999,7 @@ sap.ui.define([
 					|| this._oSelectedOption.getKey() === "FROM" || this._oSelectedOption.getKey() === "TO") {
 					aResultDates.push(null);
 				}
-				sFormattedDates = this._getDatesLabelFormatter().format(aResultDates);
+				sFormattedDates = this._getDatesLabelFormatter().format(aResultDates, true);
 				this._getDatesLabel().setText(oResourceBundle.getText("DDR_INFO_DATES", [sFormattedDates]));
 			}
 		};
