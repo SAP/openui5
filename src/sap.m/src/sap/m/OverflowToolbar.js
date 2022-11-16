@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"./library",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/m/ToggleButton",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Toolbar",
@@ -19,13 +20,13 @@ sap.ui.define([
 	"sap/ui/Device",
 	"./OverflowToolbarRenderer",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "lastFocusableDomRef"
 ], function(
 	coreLibrary,
 	oCore,
 	library,
 	Control,
+	Element,
 	ToggleButton,
 	InvisibleText,
 	Toolbar,
@@ -36,8 +37,7 @@ sap.ui.define([
 	IconPool,
 	Device,
 	OverflowToolbarRenderer,
-	Log,
-	jQuery
+	Log
 ) {
 	"use strict";
 
@@ -1097,7 +1097,7 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype._popOverClosedHandler = function () {
 		this._getOverflowButton().setPressed(false); // Turn off the toggle button
-		if (jQuery(document.activeElement).control(0)) {
+		if (Element.closestTo(document.activeElement)) {
 			return;
 		}
 		this._getOverflowButton().focus();

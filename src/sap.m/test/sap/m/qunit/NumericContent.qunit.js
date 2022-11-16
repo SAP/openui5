@@ -668,12 +668,9 @@ sap.ui.define([
 		assert.ok(document.getElementById("numeric-cnt-scale"), "Scale was rendered successfully");
 	}
 
-	/**
-	 * @deprecated Since version 1.38.0.
-	 */
 	function fnCreateExampleNumericContent () {
 		return new NumericContent("numeric-cnt", {
-			size: Size.L,
+			size: Size.L, // deprecated since 1.38
 			state: LoadState.Loaded,
 			scale: "M",
 			indicator: DeviationIndicator.Up,

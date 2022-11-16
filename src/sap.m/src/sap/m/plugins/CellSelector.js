@@ -5,9 +5,9 @@ sap.ui.define([
 	"./PluginBase",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Element",
 	"sap/base/Log"
-], function (PluginBase, KeyCodes, Core, jQuery, Log) {
+], function (PluginBase, KeyCodes, Core, Element, Log) {
 	"use strict";
 
 	var SELECTION_DIRECTION = {
@@ -1022,7 +1022,7 @@ sap.ui.define([
 			 * @returns {int} row index
 			 */
 			rowIndex: function (oTable, oCellDomRef) {
-				return jQuery(oCellDomRef).control(0, true).getIndex();
+				return Element.closestTo(oCellDomRef, true).getIndex();
 			},
 			/**
 			 * Retrieves the column index for the given cell's DOM reference.

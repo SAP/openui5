@@ -11,6 +11,7 @@ sap.ui.define([
 	'sap/m/ResponsivePopover',
 	'sap/ui/core/Core',
 	'sap/ui/core/Control',
+	'sap/ui/core/Element',
 	'sap/ui/core/delegate/ScrollEnablement',
 	'sap/ui/Device',
 	'sap/ui/core/InvisibleText',
@@ -21,9 +22,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/thirdparty/jquery",
-	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control",
 	// jQuery Plugin "scrollLeftRTL"
 	"sap/ui/dom/jquery/scrollLeftRTL"
 ],
@@ -35,6 +33,7 @@ sap.ui.define([
 		ResponsivePopover,
 		Core,
 		Control,
+		Element,
 		ScrollEnablement,
 		Device,
 		InvisibleText,
@@ -44,9 +43,7 @@ sap.ui.define([
 		KeyCodes,
 		Log,
 		EnabledPropagator,
-		Parameters,
-		jQuery,
-		scrollLeftRTL
+		Parameters
 	) {
 	"use strict";
 
@@ -1057,7 +1054,7 @@ sap.ui.define([
 	Tokenizer.prototype._selectRange = function (bForwardSection) {
 		var oRange = {},
 			oTokens = this._getVisibleTokens(),
-			oFocusedControl = jQuery(document.activeElement).control()[0],
+			oFocusedControl = Element.closestTo(document.activeElement),
 			iTokenIndex = oTokens.indexOf(oFocusedControl);
 
 		if (!oFocusedControl || !oFocusedControl.isA("sap.m.Token")) {
@@ -1237,7 +1234,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oFocusedElement = jQuery(document.activeElement).control()[0];
+		var oFocusedElement = Element.closestTo(document.activeElement);
 
 		// oFocusedElement could be undefined since the focus element might not correspond to an SAPUI5 Control
 		var index = oFocusedElement ? aTokens.indexOf(oFocusedElement) : -1;
@@ -1285,7 +1282,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oFocusedElement = jQuery(document.activeElement).control()[0];
+		var oFocusedElement = Element.closestTo(document.activeElement);
 
 		// oFocusedElement could be undefined since the focus element might not correspond to an SAPUI5 Control
 		var index = oFocusedElement ? aTokens.indexOf(oFocusedElement) : -1;

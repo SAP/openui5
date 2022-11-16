@@ -221,6 +221,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of version 1.92
+	 */
 	QUnit.test("Deprecated property 'icon'", function (assert) {
 		// Arrange
 		var sIcon = "sap-icon://building";
@@ -232,6 +235,7 @@ sap.ui.define([
 		assert.strictEqual(oAvatar.getSrc(), sIcon, "'icon' property should be correctly propagated to inner avatar");
 	});
 
+	// TODO should there be a _crossApplicationNavigation without icon?
 	QUnit.test("crossApplicationNavigation when property 'icon and 'titleUrl' are set", function (assert) {
 		// Arrange
 		var oStub = sinon.stub(this.oQuickViewPage, "_crossApplicationNavigation");
@@ -246,6 +250,9 @@ sap.ui.define([
 		assert.ok(oStub.called, "crossApplicationNavigation should happen");
 	});
 
+	/**
+	 * @deprecated As of version 1.92
+	 */
 	QUnit.test("Deprecated property 'fallbackIcon'", function (assert) {
 		// Arrange
 		var sFallbackIcon = "sap-icon://error";

@@ -1033,6 +1033,9 @@ sap.ui.define([
 					paths: {
 						resourceroot: "test-resources/sap/m/qunit/p13n"
 					}
+				},
+				ui5: {
+					language: "en-US"
 				}
 			},
 			/**
@@ -1082,6 +1085,7 @@ sap.ui.define([
 			P13nSortPanel: {
 				title: "Test Page for sap.m.P13nSortPanel",
 				ui5: {
+					language: "en-US",
 					libs: ["sap.m", "sap.ui.layout", "sap.ui.unified"] // to compensate 2 sync loadLibrary
 				}
 			},
@@ -2262,8 +2266,14 @@ sap.ui.define([
 				title: "Test Page for sap.m.plugins.ColumnResizer"
 			},
 			"plugins/PasteProvider": {
-				title: "Test Page for sap.m.plugins.PasteProvider"
+				title: "Test Page for sap.m.plugins.PasteProvider",
+				ui5: {
+					language: "en-US"
+				}
 			},
+			/**
+			 * @deprecated Since 1.28
+			 */
 			"routing/async/RouteMatchedHandler": {
 				title: "QUnit Page for RouteMatchedHandler"
 			},
@@ -2273,6 +2283,9 @@ sap.ui.define([
 			"routing/async/Targets": {
 				title: "QUnit Page for sap.m.routing.Targets"
 			},
+			/**
+			 * @deprecated Since 1.28
+			 */
 			"routing/common/RouteMatchedHandler": {
 				title: "QUnit Page for RouteMatchedHandler"
 			},
@@ -2280,7 +2293,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.routing.TargetHandler"
 			},
 			/**
-			 * @deprecated Since 1.90 together with sync routing
+			 * @deprecated Since 1.28
 			 */
 			"routing/sync/RouteMatchedHandler": {
 				title: "QUnit Page for RouteMatchedHandler",

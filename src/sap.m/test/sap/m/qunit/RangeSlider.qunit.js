@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	Log,
 	RangeSlider,
@@ -25,7 +26,8 @@ sap.ui.define([
 	qutils,
 	jQuery,
 	JSONModel,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -722,8 +724,8 @@ sap.ui.define([
 
 		oRangeSlider.getAggregation("_tooltipContainer").show(oRangeSlider);
 
-		oLeftTooltip = jQuery("#" + oRangeSlider.getId() + "-" + "leftTooltip").control(0);
-		oRightTooltip = jQuery("#" + oRangeSlider.getId() + "-" + "rightTooltip").control(0);
+		oLeftTooltip = Element.closestTo(oRangeSlider.getDomRef("leftTooltip"));
+		oRightTooltip = Element.closestTo(oRangeSlider.getDomRef("rightTooltip"));
 
 		//Assert
 		assert.equal(oLeftTooltip.getValue(), "2");
@@ -1430,12 +1432,11 @@ sap.ui.define([
 		};
 
 		oTooltip = SliderTooltipBase.extend("sap.xx.TestTooltip", {
-			renderer: function (oRm, oControl) {
-				SliderTooltipBaseRenderer.render.apply({
-					renderTooltipContent: function (oRm, oControl) {
-						oRm.write("zzzz");
-					}
-				}, arguments);
+			renderer: {
+				apiVersion: 2,
+				renderTooltipContent: function (oRm, oControl) {
+					oRm.text("zzzz");
+				}
 			}
 		});
 

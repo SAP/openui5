@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/m/Button",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel"
@@ -19,6 +20,7 @@ sap.ui.define([
 	coreLibrary,
 	mLibrary,
 	Core,
+	Element,
 	Button,
 	KeyCodes,
 	JSONModel
@@ -195,7 +197,7 @@ sap.ui.define([
 
 	QUnit.test('show more', function(assert) {
 		var $item = this.notificationListItem.$();
-		var showMoreButton = $item.find('.sapMNLIFooter .sapMNLIShowMore a').control()[0];
+		var showMoreButton = Element.closestTo($item.find('.sapMNLIFooter .sapMNLIShowMore a')[0]);
 		showMoreButton.firePress();
 		Core.applyChanges();
 
@@ -222,7 +224,7 @@ sap.ui.define([
 	QUnit.test('close button', function(assert) {
 		var fnSpy = sinon.spy(this.notificationListItem, 'fireClose'),
 			$item = this.notificationListItem.$(),
-			closeButton = $item.find('.sapMNLIItem:last-child button').control()[0];
+			closeButton = Element.closestTo($item.find('.sapMNLIItem:last-child button')[0]);
 
 		closeButton.firePress();
 
@@ -567,8 +569,8 @@ sap.ui.define([
 		this.list.addItem(nli);
 		Core.applyChanges();
 
-		var showMoreButton = nli.$("showMoreButton").control(0);
-		var closeButton = nli.$("closeButtonX").control(0);
+		var showMoreButton = Element.closestTo(nli.getDomRef("showMoreButton"));
+		var closeButton = Element.closestTo(nli.getDomRef("closeButtonX"));
 
 		// act
 		showMoreButton.firePress();

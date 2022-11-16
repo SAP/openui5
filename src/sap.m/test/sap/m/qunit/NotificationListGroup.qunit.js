@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/m/NotificationListItem",
 	"sap/m/Button",
 	"sap/ui/core/Core",
-	'sap/ui/Device',
+	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"sap/m/library"
 ], function(
@@ -15,7 +15,7 @@ sap.ui.define([
 	NotificationListItem,
 	Button,
 	Core,
-	Device,
+	Element,
 	coreLibrary,
 	mLibrary
 ) {
@@ -133,7 +133,7 @@ sap.ui.define([
 
 		var fnSpy = sinon.spy(this.notificationListGroup, 'fireOnCollapse'),
 			$item = this.notificationListGroup.$(),
-			collapseButton = $item.find('.sapMNLGroupCollapseButton button').control()[0];
+			collapseButton = Element.closestTo($item.find('.sapMNLGroupCollapseButton button')[0]);
 
 		collapseButton.firePress();
 		Core.applyChanges();
@@ -157,7 +157,7 @@ sap.ui.define([
 	QUnit.test("collapse button retains focus when pressed after a child notification item's overflow menu closes", function (assert) {
 		var done = assert.async(),
 			$NLG = this.notificationListGroup.$(),
-			oNLGCollapseButton = $NLG.find('.sapMNLGroupCollapseButton button').control()[0],
+			oNLGCollapseButton = Element.closestTo($NLG.find('.sapMNLGroupCollapseButton button')[0]),
 			oNLIOverflowToolbar = this.notificationListGroup.getItems()[0]._getOverflowToolbar(),
 			oNLIOverflowToolbarButton = oNLIOverflowToolbar._getOverflowButton();
 
@@ -181,7 +181,7 @@ sap.ui.define([
 
 		var fnSpy = sinon.spy(this.notificationListGroup, 'fireClose'),
 			$item = this.notificationListGroup.$(),
-			closeButton = $item.find('.sapMNLIItem.sapMNLICloseBtn button').control()[0];
+			closeButton = Element.closestTo($item.find('.sapMNLIItem.sapMNLICloseBtn button')[0]);
 
 		closeButton.firePress();
 

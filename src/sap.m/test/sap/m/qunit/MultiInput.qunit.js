@@ -2021,6 +2021,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated Since version 1.46.
+	 */
 	QUnit.test("tokens change event", function(assert) {
 		var eventType;
 		this.multiInput1.attachTokenChange(function(args){

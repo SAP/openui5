@@ -157,7 +157,8 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.equal(iRenderCounter, 1, "Page should be rendered only once");
 
-		oRenderOncePage.rerender();
+		oRenderOncePage.invalidate();
+		oCore.applyChanges();
 		assert.equal(iRenderCounter, 2, "Page should be rendered twice after another forced rerendering");
 
 		oRenderOncePage.destroy();
@@ -180,7 +181,8 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.equal(iRenderCounter, 1, "Page should be rendered only once");
 
-		oRenderOncePage.rerender();
+		oRenderOncePage.invalidate();
+		oCore.applyChanges();
 		assert.equal(iRenderCounter, 2, "Page should be rendered twice after another forced rerendering");
 
 		oRenderOncePage.destroy();
@@ -391,6 +393,9 @@ sap.ui.define([
 		clock.restore();
 	});
 
+	/**
+	 * @deprecated Since version 1.20
+	 */
 	QUnit.test("setNavButtonType should propagate to internal button", function (assert) {
 		var oPage = new Page();
 

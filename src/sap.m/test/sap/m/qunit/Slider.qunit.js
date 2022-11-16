@@ -2440,12 +2440,11 @@ sap.ui.define([
 		};
 
 		oTooltip = SliderTooltipBase.extend("sap.xx.TestTooltip", {
-			renderer: function (oRm, oControl) {
-				SliderTooltipBaseRenderer.render.apply({
-					renderTooltipContent: function (oRm, oControl) {
-						oRm.write("zzzz");
-					}
-				}, arguments);
+			renderer: {
+				apiVersion: 2,
+				renderTooltipContent: function (oRm, oControl) {
+					oRm.text("zzzz");
+				}
 			}
 		});
 
