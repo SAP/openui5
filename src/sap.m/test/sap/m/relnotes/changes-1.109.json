@@ -3,6 +3,93 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "b0d450277005e98513701a213b6280dcaa690275",
+        "type": "FEATURE",
+        "text": " sap.m.OverflowMenuButton: New control for OverflowToolbar"
+      },
+      {
+        "id": "951d30fa409c82be42e42135929a1332987665d4",
+        "type": "FIX",
+        "text": " sap.m.Input: Item selection on arrow up/down when autocomplete is off",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270181732"
+          }
+        ]
+      },
+      {
+        "id": "e4de53e8602ce295b7931f7d92ce7d99fc9dc67b",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: secondaryCalendarType property introduced"
+      },
+      {
+        "id": "023a10c7789bc5eef5c87c4f0602eb79d09b869b",
+        "type": "FIX",
+        "text": " sap.m.Popover: Default heading level changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270174205"
+          }
+        ]
+      },
+      {
+        "id": "e933a0c06f0ca079a77edc8534771c67797f2be4",
+        "type": "FIX",
+        "text": " ListBase: Add cross-link to binding documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270167993"
+          }
+        ]
+      },
+      {
+        "id": "94a82af7423b226ab23caf307afc9e6b4f9a9113",
+        "type": "FIX",
+        "text": " sap.m.Token: Token tooltip enhancement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270177244"
+          }
+        ]
+      },
+      {
+        "id": "0757ec148811c461e89edb823b9e41df50e8e1de",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Control is now centered on a scrolled page",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270171548"
+          }
+        ]
+      },
+      {
+        "id": "6d882d9129ad0d11c443e1efe2baca109c3c93d3",
+        "type": "FIX",
+        "text": " sap.m.Panel: Expand/collapse button properly visualised",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280106202"
+          }
+        ]
+      },
+      {
+        "id": "a817b864c335044c239b2820d7101567756aa9f4",
+        "type": "FIX",
+        "text": " p13n.Popover: fix vertical scrolling with only one panel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270171406"
+          }
+        ]
+      },
+      {
         "id": "335ad7ef044e9c21e610da357f051417f133c86a",
         "type": "FIX",
         "text": " sap.m.Table: Invalid table should not be accessed by keyboard",
@@ -21,6 +108,17 @@
           {
             "type": "BCP",
             "reference": "2280172283"
+          }
+        ]
+      },
+      {
+        "id": "335852a9b02738a43215623e0ae2f1101e9c3eca",
+        "type": "FIX",
+        "text": " sap.m.App: Qunit fixed on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270157456"
           }
         ]
       },
@@ -162,6 +260,17 @@
           {
             "type": "BCP",
             "reference": "2270154471"
+          }
+        ]
+      },
+      {
+        "id": "abe80984fe7d0df602b62fcec44f7bd2e9c5b88e",
+        "type": "FIX",
+        "text": " sap.m.Menu: removed max-width of the menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270039241"
           }
         ]
       },

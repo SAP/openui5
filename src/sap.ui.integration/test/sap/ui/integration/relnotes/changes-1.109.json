@@ -3,6 +3,17 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "e5cc3f524aed08c627ce235a8e46baa98fee0c2d",
+        "type": "FIX",
+        "text": " Integration Cards: Corners of list items are no longer rounded if not needed in Horizon theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270163450"
+          }
+        ]
+      },
+      {
         "id": "dae75c515bda3c82a114a66a3b7f111675b8498d",
         "type": "FEATURE",
         "text": " Integration Cards: dateTime formatter now supports intervals"
@@ -11,6 +22,17 @@
         "id": "42a3803e9e2969ad20497b73ef57a3517f0229aa",
         "type": "FEATURE",
         "text": " Integration Cards: Main and side indicators can be hidden"
+      },
+      {
+        "id": "75563760ddb1d7490f3d4fa7ff1dd07085d8c845",
+        "type": "FIX",
+        "text": " sap.f.CalendarInCard: documentation links are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270157849"
+          }
+        ]
       },
       {
         "id": "4e0616801f59da8f4676455e3124dd19128052ed",

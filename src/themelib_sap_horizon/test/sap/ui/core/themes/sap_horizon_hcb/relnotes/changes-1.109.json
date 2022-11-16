@@ -3,6 +3,55 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "e4de53e8602ce295b7931f7d92ce7d99fc9dc67b",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: secondaryCalendarType property introduced"
+      },
+      {
+        "id": "e88cd6c9797759d0927b54a140a1455e7a39fca7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Adjust header buttons display.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280132535"
+          }
+        ]
+      },
+      {
+        "id": "6d882d9129ad0d11c443e1efe2baca109c3c93d3",
+        "type": "FIX",
+        "text": " sap.m.Panel: Expand/collapse button properly visualised",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280106202"
+          }
+        ]
+      },
+      {
+        "id": "e55b4cbdfcd23fd5f7544dc2cdf4b23715126704",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Left padding is fixed in Horizon and Quartz",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270122597"
+          }
+        ]
+      },
+      {
+        "id": "e5cc3f524aed08c627ce235a8e46baa98fee0c2d",
+        "type": "FIX",
+        "text": " Integration Cards: Corners of list items are no longer rounded if not needed in Horizon theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270163450"
+          }
+        ]
+      },
+      {
         "id": "e01f24fafccc7612d3f76afbf86088415ae0a412",
         "type": "FIX",
         "text": " sap.m.Slider: Change measurement units to relative ones",

@@ -3,6 +3,17 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "e55b4cbdfcd23fd5f7544dc2cdf4b23715126704",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Left padding is fixed in Horizon and Quartz",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270122597"
+          }
+        ]
+      },
+      {
         "id": "e01f24fafccc7612d3f76afbf86088415ae0a412",
         "type": "FIX",
         "text": " sap.m.Slider: Change measurement units to relative ones",

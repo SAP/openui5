@@ -3,6 +3,22 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "9fefa2cd3c893842745b37ef847be149964e1b7f",
+        "type": "FEATURE",
+        "text": " sap.f.SidePanel: resizing options for the side panel"
+      },
+      {
+        "id": "ffa54eff2025aad9940b615cc61feb2a3fb5b9e0",
+        "type": "FIX",
+        "text": " sap.f.GridList: Keyboard navigation is now correct when grid gap is 0px",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270174197"
+          }
+        ]
+      },
+      {
         "id": "ff124554148deae4dd87fdc07af6d0b315f1038f",
         "type": "FIX",
         "text": " sap.f.Card: Opening the toolbar via keyboard no longer triggers press event of the header",
