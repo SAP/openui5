@@ -600,6 +600,55 @@ sap.ui.define([
 		assert.ok(findByIdSpy.called, "Item to be deleted is fetched from source");
 	});
 
+	QUnit.test("Edit with different event target", function(assert) {
+		// Arrange
+		var sEditButtonId = this.oUploadSet.getItems()[0].sId + "-editButton";
+		oCore.byId(sEditButtonId).firePress();
+		oCore.applyChanges();
+
+		var oSpy = this.spy(UploadSet.prototype, "_handleItemEditConfirmation");
+		var oEvent = {
+			target: {
+				id: "",
+				closest: function(selector) {
+					return null;
+				}
+			}
+		};
+
+		// Act
+		this.oUploadSet._handleClick(oEvent, this.oUploadSet.getItems()[1]);
+		oCore.applyChanges();
+
+		// Assert
+		assert.equal(oSpy.callCount, 1, "Editing will proceed with target clicked elsewhere on the list");
+	});
+
+	QUnit.test("Cancel with different event target", function(assert) {
+		// Arrange
+		var sEditButtonId = this.oUploadSet.getItems()[1].sId + "-editButton";
+		oCore.byId(sEditButtonId).firePress();
+		oCore.applyChanges();
+
+		var oSpy = this.spy(UploadSet.prototype, "_handleItemEditCancelation");
+		var oEvent = {
+			target: {
+				closest: function(selector) {
+					return {
+						id: 'item-cancelButton'
+					};
+				}
+			}
+		};
+
+		// Act
+		this.oUploadSet._handleClick(oEvent, this.oUploadSet.getItems()[1]);
+		oCore.applyChanges();
+
+		// Assert
+		assert.equal(oSpy.callCount, 1, "Cancel handling is done even for targets that are not the button itself.");
+	});
+
 	QUnit.module("UploadSet general functionality", {
 		beforeEach: function () {
 			this.oUploadSet = new UploadSet("uploadSet", {

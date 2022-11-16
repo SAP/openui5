@@ -521,6 +521,7 @@ sap.ui.define([
 		this.setAggregation("_illustratedMessage", oIllustratedMessage);
 		oIllustratedMessage.addIllustrationAriaLabelledBy(oIllustratedMessage.getId());
 		this._cloudFilePickerControl = null;
+		this._oListEventDelegate = null;
 	};
 
 	UploadSet.prototype.exit = function () {
@@ -547,6 +548,10 @@ sap.ui.define([
 	/* ===================== */
 
 	UploadSet.prototype.onBeforeRendering = function (oEvent) {
+		if (this._oListEventDelegate) {
+			this._oList.removeEventDelegate(this._oListEventDelegate);
+			this._oListEventDelegate = null;
+		}
 		this._aGroupHeadersAdded = [];
 		this._clearGroupHeaders();
 		this._fillListWithUploadSetItems(this.getItems());
@@ -569,7 +574,35 @@ sap.ui.define([
 				}
 			}
 		}
+		this._oListEventDelegate = {
+			onclick: function(event) {
+				this._handleClick(event, this._oEditedItem);
+			}.bind(this)
+		};
+		this._oList.addDelegate(this._oListEventDelegate);
 	};
+
+	/**
+	 * Handling of 'click' of the list (items + header)
+	 * @param {sap.ui.base.Event} oEvent Event of the 'click'
+	 * @param {Object} item List item
+	 * @private
+	 */
+	UploadSet.prototype._handleClick = function (oEvent, item) {
+        var $Button = oEvent.target.closest("button");
+        var sId = "";
+        if ($Button) {
+            sId = $Button.id;
+        }
+        if (sId.lastIndexOf("editButton") === -1) {
+            if (sId.lastIndexOf("cancelButton") !== -1) {
+                this._handleItemEditCancelation(oEvent, item);
+            } else if (oEvent.target.id.lastIndexOf("thumbnail") < 0 && oEvent.target.id.lastIndexOf("icon") < 0 &&
+                oEvent.target.id.lastIndexOf("deleteButton") < 0 && oEvent.target.id.lastIndexOf("fileNameEdit-inner") < 0) {
+                this._handleItemEditConfirmation(oEvent, item);
+            }
+        }
+    };
 
 	UploadSet.prototype.onkeydown = function (oEvent) {
 		var oListItem,
@@ -1829,6 +1862,10 @@ sap.ui.define([
 		var that = this;
 		aItems.forEach(function(item, index) {
 			item._reset();
+			// resetting the state of the item from edit state.
+			if (item && !item.getVisibleEdit() && (that._oEditedItem && that._oEditedItem.getId() === item.getId()) ) {
+				item._setInEditMode(false);
+			}
 			that._projectToNewListItem(item, true);
 			that._refreshInnerListStyle();
 		});
