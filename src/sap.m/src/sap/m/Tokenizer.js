@@ -295,6 +295,7 @@ sap.ui.define([
 				tokens: [oToken]
 			});
 
+			oEvent.cancelBubble();
 		}, this);
 	};
 
