@@ -113,8 +113,8 @@ sap.ui.define([
 	 * Resizing functionality only affects desktop or tablet devices.
 	 *
 	 * By setting the <code>sidePanelResizable</code> property, the expanded side panel can be resized
-	 * by mouse (drag), keyboard or by choosing one of three predefined positions in the side panel's
-	 * context menu (min, max and default widths)
+	 * by mouse (by drag or by double click on resize splitter), by keyboard or by choosing one of three predefined positions
+	 * in the side panel's context menu (min, max and default widths)
 	 *
 	 * <h3>Keyboard shortcuts</h3>
 	 *
@@ -330,7 +330,6 @@ sap.ui.define([
 
 		this._iLastScrollPosition = 0;
 
-		this._sSidePanelWidth = this._getSidePanelWidth(); // save the currently set side panel width for size toggle
 		this._iSidePanelPosition = SIDE_PANEL_POSITION_INITIAL; // possible values: SIDE_PANEL_POSITION_MIN_WIDTH/SIDE_PANEL_POSITION_INITIAL/SIDE_PANEL_POSITION_MAX_WIDTH
 		this._bShouldAttachGlobalHandlers = true; // flag for attachment of "global" event handlers (on whole Side Panel control)
 
@@ -358,7 +357,9 @@ sap.ui.define([
 	 */
 	 SidePanel.prototype.setSidePanelWidth = function(oWidth) {
 		this.setProperty("sidePanelWidth", oWidth);
-		this._sSidePanelWidth = this._getSidePanelWidth();
+		if (this.getDomRef()) {
+			this._sSidePanelWidth = this._getSidePanelWidth();
+		}
 
 		return this;
 	};
@@ -442,6 +443,10 @@ sap.ui.define([
 			if (this.getDomRef().querySelector(".sapFSPMain").scrollTop === 0) {
 				this.setActionBarExpanded(true);
 			}
+		}
+
+		if (!this._sSidePanelWidth) {
+			this._sSidePanelWidth = this._getSidePanelWidth();
 		}
 	};
 
