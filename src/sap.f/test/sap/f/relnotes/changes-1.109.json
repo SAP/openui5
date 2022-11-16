@@ -3,6 +3,17 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "ecd5a969b61817a9d03e084086a3355f707da4da",
+        "type": "FIX",
+        "text": " sap.f.GridList: Bottom border of 'More' button no longer sticks out",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270184708"
+          }
+        ]
+      },
+      {
         "id": "9fefa2cd3c893842745b37ef847be149964e1b7f",
         "type": "FEATURE",
         "text": " sap.f.SidePanel: resizing options for the side panel"
