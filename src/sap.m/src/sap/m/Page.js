@@ -433,7 +433,8 @@ function(
 			}
 
 			var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last(),
-				useAnimation = Configuration.getAnimation();
+				sAnimationMode = Configuration.getAnimationMode(),
+				bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 			if (!this.getFloatingFooter()) {
 				this.setProperty("showFooter", bShowFooter);
@@ -450,7 +451,7 @@ function(
 				return this;
 			}
 
-			if (useAnimation) {
+			if (bHasAnimations) {
 				setTimeout(function () {
 					$footer.toggleClass("sapUiHidden", !bShowFooter);
 				}, Page.FOOTER_ANIMATION_DURATION);
