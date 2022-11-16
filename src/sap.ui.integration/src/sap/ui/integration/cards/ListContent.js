@@ -295,7 +295,6 @@ sap.ui.define([
 			};
 
 		if (mItem.icon) {
-
 			mSettings.icon = BindingHelper.formattedProperty(mItem.icon.src, function (sValue) {
 				return this._oIconFormatter.formatSrc(sValue);
 			}.bind(this));

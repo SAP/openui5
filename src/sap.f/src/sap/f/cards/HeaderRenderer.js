@@ -77,7 +77,7 @@ sap.ui.define([], function () {
 			return;
 		}
 
-		if (bIconVisible && (oHeader.getIconSrc() || oHeader.getIconInitials() || oBindingInfos.iconSrc)) {
+		if (bIconVisible && (!oHeader.isPropertyInitial("iconSrc") || !oHeader.isPropertyInitial("iconInitials"))) {
 			oRm.openStart("div")
 				.class("sapFCardHeaderImage")
 				.openEnd();

@@ -1900,6 +1900,142 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Default header icon when src is empty string and shape is 'Circle'", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEvent("_ready", function () {
+
+				var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
+				sPersonPlaceHolder = "sap-icon://person-placeholder";
+
+				// Assert
+				assert.strictEqual(oAvatarIcon.getSrc(), sPersonPlaceHolder, "Should show 'sap-icon://person-placeholder' when icon src is empty and the shape is 'Circle'.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.defaultHeaderIcon"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "Card title",
+						"icon": {
+							"src": "",
+							"shape": "Circle"
+						}
+					}
+				}
+			});
+		});
+
+		QUnit.test("Default header icon when src is empty string and shape is 'Square'", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
+					sProduct = "sap-icon://product";
+
+				// Assert
+				assert.strictEqual(oAvatarIcon.getSrc(), sProduct, "Should show 'sap-icon://product' when icon src is empty and the shape is 'Square'.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.defaultHeaderIcon"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "Card title",
+						"icon": {
+							"src": "",
+							"shape": "Square"
+						}
+					}
+				}
+			});
+		});
+
+		QUnit.test("Default header icon when src is empty string and shape is 'Circle' with binding", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEvent("_ready", function () {
+
+				var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
+					sPersonPlaceHolder = "sap-icon://person-placeholder";
+
+				// Assert
+				assert.strictEqual(oAvatarIcon.getSrc(), sPersonPlaceHolder, "Should show 'sap-icon://person-placeholder' when icon src is empty and the shape is 'Circle'.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.defaultHeaderIcon"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"data": {
+							"json": {
+								"Icon": "",
+								"Shape": "Circle"
+							}
+						},
+						"title": "Card title",
+						"icon": {
+							"src": "{Icon}",
+							"shape": "{Shape}"
+						}
+					}
+				}
+			});
+		});
+
+		QUnit.test("Default header icon when src is empty string and shape is 'Square' with binding", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
+					sProduct = "sap-icon://product";
+
+				// Assert
+				assert.strictEqual(oAvatarIcon.getSrc(), sProduct, "Should show 'sap-icon://product' when icon src is empty and the shape is 'Square'.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.defaultHeaderIcon"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"data": {
+							"json": {
+								"Icon": "",
+								"Shape": "Square"
+							}
+						},
+						"title": "Card title",
+						"icon": {
+							"src": "{Icon}",
+							"shape": "{Shape}"
+						}
+					}
+				}
+			});
+		});
+
 		QUnit.module("Numeric Header", {
 			beforeEach: function () {
 				this.oCard = new Card("somecard", {
