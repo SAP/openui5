@@ -426,10 +426,15 @@ sap.ui.define([
 			this._oFilterBarLayout.getInner().attachChange(function(oEvt){
 				if (oEvt.getParameter("reason") === "Remove") {
 					var oItem = oEvt.getParameter("item");
-					var mConditions = this._bPersistValues ? merge({}, this.getFilterConditions()) : this._getAdaptationControlInstance()._getXConditions();
+					var mConditions = {};
 					mConditions[this.mFilterFields[oItem.name].getFieldPath()] = [];
-					this._setXConditions(mConditions, true);
-					this.setFilterConditions(mConditions);
+
+					return this.getEngine().createChanges({
+						control: this,
+						applyAbsolute: true,
+						key: "Filter",
+						state: mConditions
+					});
 				}
 				this.fireChange();
 			}.bind(this));
