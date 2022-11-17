@@ -1492,7 +1492,8 @@ sap.ui.define([
 			this._oTitle = new Title(this.getId() + "-title", {
 				text: this.getHeader(),
 				width: this.getHeaderVisible() ? undefined : "0px",
-				level: this.getHeaderLevel()
+				level: this.getHeaderLevel(),
+				titleStyle: TitleLevel.H4
 			});
 			// Create Toolbar
 			this._oToolbar = new ActionToolbar(this.getId() + "-toolbar", {

@@ -1517,6 +1517,7 @@ sap.ui.define([
 			var oTitle = this.oTable._oTitle;
 			assert.ok(oTitle, "Title is available");
 			assert.ok(!oTitle.getWidth(), "Title is shown");
+			assert.equal(this.oTable._oTitle.getTitleStyle(), "H4", "Title style Property added");
 			this.oTable.setHeaderVisible(false);
 			assert.equal(oTitle.getWidth(), "0px", "Title is hidden due to width");
 
