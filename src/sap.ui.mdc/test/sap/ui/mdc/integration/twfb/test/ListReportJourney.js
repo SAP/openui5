@@ -51,7 +51,7 @@ sap.ui.define([
 						settings: { id: "listreport" }
 					},
 					hash: "",
-					autowait: true
+					autoWait: true
 				});
 			}
 		}

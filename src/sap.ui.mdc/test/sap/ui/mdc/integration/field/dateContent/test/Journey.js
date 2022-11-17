@@ -61,7 +61,7 @@ sap.ui.define([
 						}
 					},
 					hash: "",
-					autowait: true
+					autoWait: true
 				});
 			}
 		}
