@@ -24,7 +24,7 @@ sap.ui.define([
 				oViewModel = new JSONModel({
 					busy : false,
 					hasUIChanges : false,
-					usernameEmpty : true,
+					usernameEmpty : false,
 					order : 0
 				});
 
@@ -70,14 +70,29 @@ sap.ui.define([
 		 * Delete an entry.
 		 */
 		onDelete : function () {
-			var oSelected = this.byId("peopleList").getSelectedItem();
+			var oContext,
+				oPeopleList = this.byId("peopleList"),
+				oSelected = oPeopleList.getSelectedItem(),
+				sUserName;
 
 			if (oSelected) {
-				oSelected.getBindingContext().delete("$auto").then(function () {
-					MessageToast.show(this._getText("deletionSuccessMessage"));
+				oContext = oSelected.getBindingContext();
+				sUserName = oContext.getProperty("UserName");
+				oContext.delete().then(function () {
+					MessageToast.show(this._getText("deletionSuccessMessage", sUserName));
 				}.bind(this), function (oError) {
-					MessageBox.error(oError.message);
-				});
+					if (oContext === oPeopleList.getSelectedItem().getBindingContext()) {
+						this._setDetailArea(oContext);
+					}
+					this._setUIChanges();
+					if (oError.canceled) {
+						MessageToast.show(this._getText("deletionRestoredMessage", sUserName));
+						return;
+					}
+					MessageBox.error(oError.message + ": " + sUserName);
+				}.bind(this));
+				this._setDetailArea();
+				this._setUIChanges();
 			}
 		},
 
@@ -222,30 +237,7 @@ sap.ui.define([
 		},
 
 		onSelectionChange : function (oEvent) {
-			var oDetailArea = this.byId("detailArea"),
-				oLayout = this.byId("defaultLayout"),
-				oOldContext = oDetailArea.getBindingContext(),
-				oSearchField = this.byId("searchField"),
-				oUserContext = oEvent.getParameters().listItem.getBindingContext();
-
-			if (oOldContext) {
-				oOldContext.setKeepAlive(false);
-			}
-			// set binding
-			oDetailArea.setBindingContext(oUserContext);
-			// set keepAlive for new context
-			oUserContext.setKeepAlive(true, function () {
-				// hides detail area when context is destroyed
-				oLayout.setSize("100%");
-				oLayout.setResizable(false);
-				oDetailArea.setVisible(false);
-				oSearchField.setWidth("20%");
-			});
-			// resize view
-			oDetailArea.setVisible(true);
-			oLayout.setSize("60%");
-			oLayout.setResizable(true);
-			oSearchField.setWidth("40%");
+			this._setDetailArea(oEvent.getParameter("listItem").getBindingContext());
 		},
 
 		/* =========================================================== */
@@ -289,6 +281,38 @@ sap.ui.define([
 			var oModel = this.getView().getModel("appView");
 
 			oModel.setProperty("/busy", bIsBusy);
+		},
+
+		/**
+		 * Toggles the visibility of the detail area
+		 *
+		 * @param {object} [oUserContext] - the current user context
+		 */
+		_setDetailArea : function (oUserContext) {
+			var oDetailArea = this.byId("detailArea"),
+				oLayout = this.byId("defaultLayout"),
+				oOldContext,
+				oSearchField = this.byId("searchField");
+
+			if (!oDetailArea) {
+				return; // do nothing during view destruction
+			}
+
+			oOldContext = oDetailArea.getBindingContext();
+			if (oOldContext) {
+				oOldContext.setKeepAlive(false);
+			}
+			if (oUserContext) {
+				oUserContext.setKeepAlive(true,
+					// hide details if kept entity was refreshed but does not exist any more
+					this._setDetailArea.bind(this));
+			}
+			oDetailArea.setBindingContext(oUserContext || null);
+			// resize view
+			oDetailArea.setVisible(!!oUserContext);
+			oLayout.setSize(oUserContext ? "60%" : "100%");
+			oLayout.setResizable(!!oUserContext);
+			oSearchField.setWidth(oUserContext ? "40%" : "20%");
 		}
 	});
 });

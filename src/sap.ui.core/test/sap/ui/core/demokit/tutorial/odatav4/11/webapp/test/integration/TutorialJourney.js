@@ -54,14 +54,29 @@ sap.ui.define([
 			.and.thePageFooterShouldBeVisible(false);
 	});
 
-	opaTest("Should be able to delete the new users", function (_Given, When, Then) {
-		//Actions
-		When.onTheTutorialPage.iSelectUser("a")
-			.and.iPressOnDelete();
+	opaTest("Should be able to delete/undelete the new users", function (_Given, When, Then) {
+		// delete and undelete
 		When.onTheTutorialPage.iSelectUser("b")
 			.and.iPressOnDelete();
-		// Assertions
-		Then.onTheTutorialPage.theMessageToastShouldShow("deletionSuccessMessage")
+		Then.onTheTutorialPage.theTableShouldStartWith("a")
+			.and.theTableShouldShowTotalUsers(iTotalUsers + 1);
+		When.onTheTutorialPage.iSelectUser("a")
+			.and.iPressOnDelete();
+		Then.onTheTutorialPage.theTableShouldStartWith("Alfred")
+			.and.theTableShouldShowTotalUsers(iTotalUsers);
+		When.onTheTutorialPage.iPressOnCancel();
+		Then.onTheTutorialPage.theMessageToastShouldShow("deletionRestoredMessage", "b")
+			.and.theMessageToastShouldShow("deletionRestoredMessage", "a")
+			.and.theTableShouldStartWith("b")
+			.and.theTableShouldShowTotalUsers(iTotalUsers + 2);
+		// delete and save
+		When.onTheTutorialPage.iSelectUser("a")
+			.and.iPressOnDelete()
+			.and.iSelectUser("b")
+			.and.iPressOnDelete()
+			.and.iPressOnSave();
+		Then.onTheTutorialPage.theMessageToastShouldShow("deletionSuccessMessage", "a")
+			.and.theMessageToastShouldShow("deletionSuccessMessage", "b")
 			.and.theTableShouldStartWith("Alfred")
 			.and.theTableShouldShowTotalUsers(iTotalUsers);
 	});
@@ -110,15 +125,21 @@ sap.ui.define([
 		Then.onTheTutorialPage.theDetailAreaShouldBeVisible(true);
 	});
 
-	opaTest("Should be able to close detail area when user is deleted",
+	opaTest("Should be able to toggle detail area when user is deleted/undeleted",
 		function (_Given, When, Then) {
 			//Actions
 			When.onTheTutorialPage.iSelectUser("javieralfred")
-				.and.iPressUser();
-			When.onTheTutorialPage.iSelectUser("javieralfred")
+				.and.iPressUser()
 				.and.iPressOnDelete();
-			// Assertions
-			Then.onTheTutorialPage.theDetailAreaShouldBeVisible(false);
+			//Assertion
+			Then.onTheTutorialPage.theDetailAreaShouldBeVisible(false)
+				.and.theTableShouldShowUsers(iGrowingBy - 1);
+			//Action
+			When.onTheTutorialPage.iPressOnCancel();
+			//Assertion
+			Then.onTheTutorialPage.theDetailAreaShouldBeVisible(true)
+				.and.theMessageToastShouldShow("deletionRestoredMessage", "javieralfred")
+				.and.theTableShouldShowUsers(iGrowingBy);
 			//Cleanup
 			Then.iTeardownMyApp();
 		}
