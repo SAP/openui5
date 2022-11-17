@@ -13,12 +13,9 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/base/util/Version",
-	"sap/base/util/UriParameters",
 	"sap/ui/util/Storage",
 	"sap/ui/core/Core",
-	"sap/ui/documentation/sdk/controller/util/Highlighter",
-	"sap/ui/documentation/sdk/util/Resources",
-	"sap/m/BusyDialog"
+	"sap/ui/documentation/sdk/controller/util/Highlighter"
 ], function(
 	jQuery,
 	Device,
@@ -30,12 +27,9 @@ sap.ui.define([
 	FilterOperator,
 	Sorter,
 	Version,
-	UriParameters,
 	Storage,
 	Core,
-	Highlighter,
-	ResourcesUtil,
-	BusyDialog
+	Highlighter
 ) {
 		"use strict";
 
@@ -195,19 +189,6 @@ sap.ui.define([
 				this._oDefaultSettings.themeActive = oData.sThemeActive;
 			},
 
-			_viewSettingsResetOnNavigation: function (oEvent) {
-				var sRouteName = oEvent.getParameter("name");
-				if (["group", "entity", "sample", "code", "code_file", "controls", "controlsMaster", "listFilter"].indexOf(sRouteName) === -1) {
-					// Reset view settings
-					this._applyAppConfiguration(this._oDefaultSettings.themeActive,
-						this._oDefaultSettings.densityMode,
-						this._oDefaultSettings.rtl);
-
-					// When we restore the default settings we don't need the event any more
-					this.getRouter().detachBeforeRouteMatched(this._viewSettingsResetOnNavigation, this);
-				}
-			},
-
 			/**
 			 * Initialize the list settings. At first local storage is checked. If this is empty defaults are used.
 			 * @private
@@ -217,97 +198,6 @@ sap.ui.define([
 				if (sJson) {
 					this._oListSettings = JSON.parse(sJson);
 				}
-			},
-
-			/**
-			 * Toggles content density classes in the provided html body
-			 * @param {object} oBody the html body to set the correct class on
-			 * @param {string} sDensityMode content density mode
-			 * @private
-			 */
-			_toggleContentDensityClasses: function(oBody, sDensityMode){
-				switch (sDensityMode) {
-					case COMPACT:
-						oBody.toggleClass("sapUiSizeCompact", true).toggleClass("sapUiSizeCozy", false).toggleClass("sapUiSizeCondensed", false);
-						break;
-					case CONDENSED:
-						oBody.toggleClass("sapUiSizeCondensed", true).toggleClass("sapUiSizeCozy", false).toggleClass("sapUiSizeCompact", true);
-						break;
-					default:
-						oBody.toggleClass("sapUiSizeCozy", true).toggleClass("sapUiSizeCondensed", false).toggleClass("sapUiSizeCompact", false);
-				}
-			},
-
-			/**
-			 * Apply content configuration
-			 * @param {string} sThemeActive name of the theme
-			 * @param {string} sDensityMode content density mode
-			 * @param {boolean} bRTL right to left mode
-			 * @private
-			 */
-			_applyAppConfiguration: function(sThemeActive, sDensityMode, bRTL){
-				var oSampleFrameContent,
-					oSampleFrameCore,
-					$SampleFrame,
-					bRTLChanged,
-					bThemeChanged,
-					bContentDensityChanged;
-
-				// Handle content density change
-				if (this._oViewSettings.densityMode !== sDensityMode) {
-					this._toggleContentDensityClasses(jQuery(document.body), sDensityMode);
-					this._oViewSettings.densityMode = sDensityMode;
-					bContentDensityChanged = true;
-				}
-
-				// Handle RTL mode change
-				if (this._oViewSettings.rtl !== bRTL) {
-					this._oCore.getConfiguration().setRTL(bRTL);
-
-					this._oViewSettings.rtl = bRTL;
-					bRTLChanged = true;
-				}
-
-				// Handle theme change
-				if (this._oCore.getConfiguration().getTheme() !== sThemeActive) {
-					this._oCore.applyTheme(sThemeActive);
-
-					bThemeChanged = true;
-				} else if (bContentDensityChanged) {
-					// NOTE: We notify for content density change only if no theme change is applied because both
-					// methods fire the same event which may lead to unpredictable result.
-					this._oCore.notifyContentDensityChanged();
-				}
-
-				// Apply theme and compact mode also to iframe samples if there is actually a change
-				if ((bRTLChanged || bContentDensityChanged || bThemeChanged) && !ResourcesUtil.getHasProxy()) {
-
-					$SampleFrame = jQuery("#sampleFrame");
-					if ($SampleFrame.length > 0) {
-						oSampleFrameContent = $SampleFrame[0].contentWindow;
-						if (oSampleFrameContent) {
-							oSampleFrameCore = oSampleFrameContent.sap.ui.getCore();
-
-							if (bContentDensityChanged) {
-								this._toggleContentDensityClasses(oSampleFrameContent.jQuery('body'), sDensityMode);
-							}
-
-							if (bRTLChanged) {
-								oSampleFrameCore.getConfiguration().setRTL(bRTL);
-							}
-
-							if (bThemeChanged) {
-								oSampleFrameCore.applyTheme(sThemeActive);
-							} else if (bContentDensityChanged) {
-								// Notify Core for content density change only if no theme change happened
-								oSampleFrameCore.notifyContentDensityChanged();
-							}
-
-						}
-					}
-
-				}
-
 			},
 
 			_onGroupMatched: function (event) {
@@ -670,72 +560,6 @@ sap.ui.define([
 				} else {
 					this._vsFilterBar.setVisible(false);
 				}
-			},
-
-			/**
-			 * Opens the View settings dialog
-			 * @public
-			 */
-			handleSettings: function () {
-				if (!this._oSettingsDialog) {
-					this._oSettingsDialog = new sap.ui.xmlfragment("sap.ui.documentation.sdk.view.appSettingsDialog", this);
-					this._oView.addDependent(this._oSettingsDialog);
-				}
-
-				setTimeout(function () {
-					var oAppSettings = this._oCore.getConfiguration(),
-						oThemeSelect = this._oCore.byId("ThemeSelect"),
-						sUriParamTheme = UriParameters.fromQuery(window.location.search).get("sap-theme"),
-						bDensityMode = this._oViewSettings.densityMode;
-
-					// Theme select
-					oThemeSelect.setSelectedKey(sUriParamTheme ? sUriParamTheme : oAppSettings.getTheme());
-
-					// RTL
-					this._oCore.byId("RTLSwitch").setState(oAppSettings.getRTL());
-
-					// Density mode select
-					this._oCore.byId("DensityModeSwitch").setSelectedKey(bDensityMode);
-					this._oSettingsDialog.open();
-				}.bind(this), 0);
-			},
-
-			/**
-			 * Closes the View settings dialog
-			 * @public
-			 */
-			handleCloseAppSettings: function () {
-				this._oSettingsDialog.close();
-			},
-
-			/**
-			 * Saves settings from the view settings dialog
-			 * @public
-			 */
-			handleSaveAppSettings: function () {
-				var sDensityMode = this._oCore.byId('DensityModeSwitch').getSelectedKey(),
-					sTheme = this._oCore.byId('ThemeSelect').getSelectedKey(),
-					bRTL = this._oCore.byId('RTLSwitch').getState();
-
-				this._oSettingsDialog.close();
-
-				// Lazy loading of busy dialog
-				if (!this._oBusyDialog) {
-					this._oBusyDialog = new BusyDialog();
-					this.getView().addDependent(this._oBusyDialog);
-				}
-
-				// Handle busy dialog
-				this._oBusyDialog.open();
-				setTimeout(function () {
-					this._oBusyDialog.close();
-				}.bind(this), 1000);
-
-				// handle settings change
-				this._applyAppConfiguration(sTheme, sDensityMode, bRTL);
-
-				// If we are navigating outside the Explored App section: view settings should be reset
-				this.getRouter().attachBeforeRouteMatched(this._viewSettingsResetOnNavigation, this);
 			}
 		});
 	}
