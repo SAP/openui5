@@ -21,7 +21,7 @@ sap.ui.define([
 		actions: new Action(),
 		assertions: new Assertion(),
 		viewNamespace: "view.",
-		autowait: true
+		autoWait: true
 	});
 
 	var aTableItems = [

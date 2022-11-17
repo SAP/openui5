@@ -29,7 +29,7 @@ sap.ui.require([
 						async: true
 					},
 					hash: "",
-					autowait: true
+					autoWait: true
 				});
 			}
 		},

@@ -23,7 +23,7 @@ sap.ui.define([
                         settings: { id: "filterbarTest" }
                     },
                     hash: "",
-                    autowait: true
+                    autoWait: true
                 });
 			}
 		}),

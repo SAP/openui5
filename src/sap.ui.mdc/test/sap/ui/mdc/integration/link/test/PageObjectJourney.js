@@ -50,7 +50,7 @@ sap.ui.define([
 						settings: { id: "appUnderTestPageObject" }
 					},
 					hash: "",
-					autowait: true
+					autoWait: true
 				});
 			},
 			iEnableTheLocalLRep: function() {

@@ -35,6 +35,7 @@ sap.ui.define([
 		appParams: {
 			"sap-ui-rta-skip-flex-validation": true
 		},
+
 		arrangements: {
 			iStartMyUIComponentInViewMode: function() {
 
@@ -56,7 +57,7 @@ sap.ui.define([
 						async: true
 					},
 					hash: "",
-					autowait: true
+					autoWait: true
 				});
 			},
 			iClearTheSessionLRep: function () {
