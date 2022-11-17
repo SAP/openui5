@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/InvisibleRenderer"],
-	function(library, Core, Device, InvisibleText, InvisibleRenderer) {
+sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/InvisibleRenderer", "sap/ui/core/Configuration"],
+	function(library, Core, Device, InvisibleText, InvisibleRenderer, Configuration) {
 	"use strict";
 
 
@@ -83,7 +83,7 @@ sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/In
 		oModeControl.removeStyleClass("sapMLIBSelectAnimation sapMLIBUnselectAnimation");
 
 		// determine whether animation is necessary or not
-		if (!Core.getConfiguration().getAnimation() || !oLI.getListProperty("modeAnimationOn")) {
+		if (Core.getConfiguration().getAnimationMode() === Configuration.AnimationMode.none || !oLI.getListProperty("modeAnimationOn")) {
 			return;
 		}
 
