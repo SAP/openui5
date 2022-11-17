@@ -228,7 +228,7 @@ sap.ui.define([
 		this.oMessagePage.setIcon(sNewIcon);
 
 		assert.equal(this.oMessagePage.getIcon(), sNewIcon, "New Icon is set.");
-		assert.equal(this.oMessagePage._oIconControl.getSrc(), sNewIcon, "New Icon is set.");
+		assert.equal(this.oMessagePage.getAggregation("_icon").getSrc(), sNewIcon, "New Icon is set.");
 	});
 
 	QUnit.test("setIcon with image URI", function(assert) {
@@ -242,12 +242,12 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		assert.equal(this.oMessagePage.getIcon(), sNewImage, "New Image is set.");
-		assert.equal(this.oMessagePage._oIconControl.getSrc(), sNewImage, "New Icon is set.");
+		assert.equal(this.oMessagePage.getAggregation("_icon").getSrc(), sNewImage, "New Icon is set.");
 	});
 
 	QUnit.test("Set iconAlt", function(assert) {
 		// Assert
-		assert.strictEqual(this.oMessagePage._oIconControl.getAlt(), "My Documents", "Alt property of the inner Icon image is properly set");
+		assert.strictEqual(this.oMessagePage.getAggregation("_icon").getAlt(), "My Documents", "Alt property of the inner Icon image is properly set");
 	});
 
 	QUnit.test("Set textDirection", function(assert) {
