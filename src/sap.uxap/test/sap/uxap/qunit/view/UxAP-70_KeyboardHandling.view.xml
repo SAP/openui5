@@ -2,6 +2,7 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.uxap"
 		xmlns:m="sap.m"
+		xmlns:forms="sap.ui.layout.form"
 		xmlns:html="http://www.w3.org/1999/xhtml"
 		height="100%">
 
@@ -71,6 +72,40 @@
 
 			<ObjectPageSection title="Employment">
 				<subSections>
+
+					<ObjectPageSubSection title="SubSection3 (single form inside)">
+						<blocks>
+							<forms:SimpleForm editable="false" layout="ColumnLayout">
+
+								<m:Label text="Evangelize the UI framework across the company" />
+								<m:Text text="4 days overdue Cascaded"/>
+
+								<m:Label text="Get trained in development management direction" />
+								<m:Text text="Due Nov 21"/>
+
+								<m:Label text="Mentor junior developers" />
+								<m:Text text="Due Dec 31 Cascaded"/>
+
+							</forms:SimpleForm>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="SubSection4 (single form inside)">
+						<blocks>
+							<forms:SimpleForm editable="false" layout="ColumnLayout">
+
+								<m:Label text="Evangelize the UI framework across the company" />
+								<m:Text text="4 days overdue Cascaded"/>
+
+								<m:Label text="Get trained in development management direction" />
+								<m:Text text="Due Nov 21"/>
+
+								<m:Label text="Mentor junior developers" />
+								<m:Text text="Due Dec 31 Cascaded"/>
+
+							</forms:SimpleForm>
+						</blocks>
+					</ObjectPageSubSection>
+
 					<ObjectPageSubSection title="Job information">
 						<html:div class="dummyBlockContentA"></html:div>
 					</ObjectPageSubSection>
