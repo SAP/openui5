@@ -144,7 +144,9 @@ sap.ui.define([
 
 		if (!Device.browser.webkit) {
 			this._removeDragScrollHandler(oAggregationOverlay);
-			this._clearScrollIntervalFor(oAggregationOverlay.getDomRef().getAttribute("id"));
+			if (oAggregationOverlay.getDomRef()) {
+				this._clearScrollIntervalFor(oAggregationOverlay.getDomRef().getAttribute("id"));
+			}
 		}
 	};
 
@@ -781,9 +783,10 @@ sap.ui.define([
 			oAggregationOverlay = oEventOrAggregationOverlay.srcControl;
 		}
 
-		if (DOMUtil.hasScrollBar(oAggregationOverlay.$())) {
-			oAggregationOverlay.getDomRef().addEventListener("dragover", this._dragScrollHandler, true);
-			oAggregationOverlay.getDomRef().addEventListener("dragleave", this._dragLeaveHandler, true);
+		var oAggregationOverlayDomRef = oAggregationOverlay.getDomRef();
+		if (oAggregationOverlayDomRef && Object.keys(oAggregationOverlayDomRef).length > 0 && DOMUtil.hasScrollBar(oAggregationOverlayDomRef)) {
+			oAggregationOverlayDomRef.addEventListener("dragover", this._dragScrollHandler, true);
+			oAggregationOverlayDomRef.addEventListener("dragleave", this._dragLeaveHandler, true);
 		}
 	};
 
