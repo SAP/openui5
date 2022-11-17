@@ -563,6 +563,14 @@ sap.ui.define([
 						 */
 						userExportSettings: {
 							type: "object"
+						},
+						/**
+						 * Contains an array of {@link sap.ui.export.util.Filter} objects.
+						 *
+						 * @since 1.110
+						 */
+						filterSettings: {
+							type: "object[]"
 						}
 					}
 				},
@@ -1824,6 +1832,8 @@ sap.ui.define([
 	Table.prototype._onExport = function(bExportAs) {
 		var that = this;
 		return this._createExportColumnConfiguration().then(function(aSheetColumns) {
+			var sExportFunctionName, fnGetColumnLabel, mExportSettings, oRowBinding;
+
 			// If no columns exist, show message and return without exporting
 			if (!aSheetColumns || !aSheetColumns.length) {
 				sap.ui.require(["sap/m/MessageBox"], function(MessageBox) {
@@ -1834,9 +1844,10 @@ sap.ui.define([
 				return;
 			}
 
-			var oRowBinding = that.getRowBinding();
-			var fnGetColumnLabel = that._getColumnLabel.bind(that);
-			var mExportSettings = {
+			oRowBinding = that.getRowBinding();
+			fnGetColumnLabel = that._getColumnLabel.bind(that);
+			sExportFunctionName = bExportAs ? "exportAs" : "export";
+			mExportSettings = {
 				workbook: {
 					columns: aSheetColumns,
 					context: {
@@ -1847,30 +1858,71 @@ sap.ui.define([
 				fileName: that.getHeader()
 			};
 
-			that._loadExportLibrary().then(function() {
-				sap.ui.require(["sap/ui/export/ExportHandler"], function(ExportHandler) {
-					var oHandler;
-
-					that.getControlDelegate().fetchExportCapabilities(that).then(function(oExportCapabilities) {
-						if (!that._oExportHandler) {
-							oHandler = new ExportHandler(oExportCapabilities);
-
-							oHandler.attachBeforeExport(function(oEvent) {
-								that.fireBeforeExport({
-									exportSettings: oEvent.getParameter('exportSettings'),
-									userExportSettings: oEvent.getParameter('userExportSettings')
-								});
-							});
-							that._oExportHandler = oHandler;
-						}
-						if (bExportAs) {
-							that._oExportHandler.exportAs(mExportSettings, fnGetColumnLabel);
-						} else {
-							that._oExportHandler.export(mExportSettings, fnGetColumnLabel);
-						}
-					});
-				});
+			that._getExportHandler().then(function(oHandler) {
+				oHandler[sExportFunctionName](mExportSettings, fnGetColumnLabel);
 			});
+		});
+	};
+
+	/**
+	 * Loads the export library and export capabilities in parallel and
+	 * returns an initialized <code>ExportHandler</code> instance. The
+	 * instance will be cached for subsequent calls.
+	 *
+	 * @returns {Promise} Promise that resolves with an initialized <code>ExportHandler</code> instance
+	 * @private
+	 */
+	Table.prototype._getExportHandler = function() {
+		var that = this;
+
+		if (this._oExportHandler) {
+			return Promise.resolve(this._oExportHandler);
+		}
+
+		return new Promise(function(fnResolve, fnReject) {
+			Promise.all([
+				that._loadExportLibrary(),
+				that.getControlDelegate().fetchExportCapabilities(that)
+			]).then(function(aResult) {
+				var oExportCapabilities = aResult[1];
+
+				sap.ui.require(["sap/ui/export/ExportHandler"], function(ExportHandler) {
+					that._oExportHandler = new ExportHandler(oExportCapabilities);
+					that._oExportHandler.attachBeforeExport(that._onBeforeExport, that);
+					fnResolve(that._oExportHandler);
+				});
+			}).catch(fnReject);
+		});
+	};
+
+	/**
+	 * Generic event hander for <code>beforeExport</code> event of
+	 * the referenced <code>ExportHandler</code>. The event parameters
+	 * will be enhanced with table specific information and its own
+	 * <code>beforeExport</code> is fired.
+	 *
+	 * @param {sap.ui.base.Event} oEvent <code>beforeExport</code> event of the ExportHandler
+	 * @private
+	 */
+	Table.prototype._onBeforeExport = function(oEvent) {
+		var aFilters = oEvent.getParameter("filterSettings");
+		var oHelper = this.getPropertyHelper();
+
+		aFilters.forEach(function(oFilter) {
+			var oProperty = oHelper.getProperties().find(function(oPropertyInfo) {
+				return oPropertyInfo.path === oFilter.getProperty();
+			});
+
+			if (oProperty) {
+				oFilter.setLabel(oProperty.label);
+				oFilter.setType(oProperty.typeConfig.typeInstance);
+			}
+		});
+
+		this.fireBeforeExport({
+			exportSettings: oEvent.getParameter("exportSettings"),
+			userExportSettings: oEvent.getParameter("userExportSettings"),
+			filterSettings: aFilters
 		});
 	};
 

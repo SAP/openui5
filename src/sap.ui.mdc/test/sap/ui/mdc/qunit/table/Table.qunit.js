@@ -44,6 +44,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/RowActionItem",
 	"sap/ui/mdc/table/RowSettings",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/base/Event",
 	"sap/base/util/Deferred"
 ], function(
 	MDCQUnitUtils,
@@ -88,6 +89,7 @@ sap.ui.define([
 	RowActionItem,
 	RowSettings,
 	jQuery,
+	Event,
 	Deferred
 ) {
 	"use strict";
@@ -2988,6 +2990,119 @@ sap.ui.define([
 			assert.ok(this.oTable._onExport.notCalled, "Export is not supported by delegate: Export not triggered");
 			this.oTable.getControlDelegate().isExportSupported.restore();
 		}.bind(this));
+	});
+
+	QUnit.test("test attachBeforeExport", function(assert) {
+		var done, fnSetLabel, fnSetType, oFakeExportHandlerEvent, oTable;
+
+		done = assert.async();
+		oTable = this.oTable;
+		fnSetLabel = sinon.stub();
+		fnSetType = sinon.stub();
+		oFakeExportHandlerEvent = sinon.createStubInstance(Event);
+		oFakeExportHandlerEvent.getParameter.withArgs("exportSettings").returns({});
+		oFakeExportHandlerEvent.getParameter.withArgs("userExportSettings").returns({
+			splitCells: false,
+			includeFilterSettings: true
+		});
+		oFakeExportHandlerEvent.getParameter.withArgs("filterSettings").returns([{
+			getProperty: sinon.stub().returns("SampleField"),
+			setLabel: fnSetLabel,
+			setType: fnSetType
+		}]);
+
+		oTable.attachBeforeExport(function(oEvent) {
+			var mExportSettings = oEvent.getParameter("exportSettings");
+			var mUserSettings = oEvent.getParameter("userExportSettings");
+			var aFilterSettings = oEvent.getParameter("filterSettings");
+
+			assert.ok(mExportSettings, "Export settings defined");
+			assert.ok(mUserSettings, "User settings defined");
+			assert.ok(aFilterSettings, "Filter settings defined");
+			assert.ok(Array.isArray(aFilterSettings), "Filter settings defined");
+
+			assert.ok(fnSetLabel.called, "Filter#setLabel was called");
+			assert.ok(fnSetLabel.calledWith("SampleLabel"), "Filter#setLabel was called with correct value");
+			assert.ok(fnSetType.called, "Filter#setType was called");
+			assert.ok(fnSetType.calledWith(oTable.getPropertyHelper().getProperty("SampleField").typeConfig.typeInstance), "Filter#setType was called with the expected type instance");
+
+			done();
+		});
+
+		oTable.initialized().then(function() {
+			MDCQUnitUtils.stubPropertyInfos(oTable, [
+				{
+					name: "SampleField",
+					path: "SampleField",
+					label: "SampleLabel",
+					typeConfig: TypeUtil.getTypeConfig("Edm.String")
+				}
+			]);
+
+			assert.ok(fnSetLabel.notCalled, "setLabel function not called");
+			assert.ok(fnSetType.notCalled, "setType function not called");
+
+			return oTable._fullyInitialized();
+		}).then(function() {
+			oTable._onBeforeExport(oFakeExportHandlerEvent);
+		});
+	});
+
+	QUnit.test("test _getExportHandler", function(assert) {
+		var FakeExportHandler, fnCapabilities, fnRequire, oTable;
+
+		oTable = this.oTable;
+		fnRequire = sap.ui.require;
+
+		/* Create fake ExportHandler class because dependency to sapui5.runtime is not possible */
+		FakeExportHandler = function() {};
+		FakeExportHandler.prototype.isA = function(sClass) { return sClass === "sap.ui.export.ExportHandler"; };
+		FakeExportHandler.prototype.attachBeforeExport = sinon.stub();
+
+		sinon.stub(sap.ui, "require").callsFake(function(aDependencies, fnCallback) {
+			if (Array.isArray(aDependencies) && aDependencies.length === 1 && aDependencies[0] === "sap/ui/export/ExportHandler") {
+				fnCallback(FakeExportHandler);
+			} else {
+				fnRequire(aDependencies, fnCallback);
+			}
+		});
+
+		return oTable.initialized().then(function() {
+			fnCapabilities = sinon.spy(oTable.getControlDelegate(), "fetchExportCapabilities");
+			sinon.stub(oTable, "_loadExportLibrary").resolves();
+
+			assert.ok(oTable._loadExportLibrary.notCalled, "Not called yet");
+			assert.ok(fnCapabilities.notCalled, "Not called yet");
+			assert.notOk(oTable._oExportHandler, "No cached instance");
+		}).then(function() {
+			return oTable._getExportHandler();
+		}).then(function(oHandler) {
+			assert.equal(oTable._loadExportLibrary.callCount, 1, "_loadExportLibrary has been called once");
+			assert.equal(fnCapabilities.callCount, 1, "fetchExportCapabilities has been called once");
+			assert.ok(oHandler, "Variable is defined");
+			assert.ok(oTable._oExportHandler, "Cached instance available");
+			assert.ok(oHandler.attachBeforeExport.calledOnce, "ExportHandler#attachBeforeExport has been called once");
+			assert.ok(oHandler.attachBeforeExport.calledWith(oTable._onBeforeExport, oTable), "Table._onBeforeExport has been attached as event handler");
+		}).then(function() {
+
+			/* Reset spies */
+			oTable._loadExportLibrary.reset();
+			fnCapabilities.reset();
+			assert.ok(oTable._loadExportLibrary.notCalled, "Not called yet");
+			assert.ok(fnCapabilities.notCalled, "Not called yet");
+
+			return oTable._getExportHandler();
+		}).then(function(oHandler) {
+			assert.ok(oTable._loadExportLibrary.notCalled, "Not called again");
+			assert.ok(fnCapabilities.notCalled, "Not called again");
+			assert.ok(oHandler, "Variable is defined");
+			assert.ok(oHandler.isA("sap.ui.export.ExportHandler"), "Parameter is a sap.ui.export.ExportHandler");
+			assert.equal(oHandler, oTable._oExportHandler, "Cached instance has been returned");
+		}).finally(function() {
+			oTable._loadExportLibrary.restore();
+			fnCapabilities.restore();
+			sap.ui.require.restore();
+		});
 	});
 
 	QUnit.test("test _createExportColumnConfiguration", function(assert) {
