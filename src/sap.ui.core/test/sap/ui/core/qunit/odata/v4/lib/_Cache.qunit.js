@@ -5037,7 +5037,7 @@ sap.ui.define([
 	QUnit.test("CollectionCache#fill", function (assert) {
 		var oCache = this.createCache("Employees"),
 			aExpected,
-			oPromise = {};
+			oPromise = "~oPromise~";
 
 		assert.deepEqual(oCache.aElements, []);
 
@@ -5077,12 +5077,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#fill, iEnd = 1024", function (assert) {
 		var oCache = this.createCache("Employees"),
-			oPromise = {};
+			oPromise = "~oPromise~";
 
 		assert.deepEqual(oCache.aElements, []);
 
 		// code under test
-		//TODO 20000 is too much for Chrome?!
 		oCache.fill(oPromise, 0, 1024);
 
 		assert.deepEqual(oCache.aElements, new Array(1024).fill(oPromise, 0));
@@ -5092,7 +5091,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#fill, iEnd = 1025, []", function (assert) {
 		var oCache = this.createCache("Employees"),
-			oPromise = {};
+			oPromise = "~oPromise~";
 
 		assert.deepEqual(oCache.aElements, []);
 
@@ -5107,8 +5106,8 @@ sap.ui.define([
 	QUnit.test("CollectionCache#fill, iEnd = 1025, [many rows] & $tail", function (assert) {
 		var oCache = this.createCache("Employees"),
 			aExpected,
-			oPromiseNew = {},
-			oPromiseOld = {};
+			oPromiseNew = "~oPromiseNew~",
+			oPromiseOld = "~oPromiseOld~";
 
 		oCache.aElements.length = 4096;
 		oCache.aElements.fill(oPromiseOld, 2048); // many existing rows
@@ -5129,8 +5128,8 @@ sap.ui.define([
 	QUnit.test("CollectionCache#fill, iEnd = Infinity, [many rows]", function (assert) {
 		var oCache = this.createCache("Employees"),
 			aExpected,
-			oPromiseNew = {},
-			oPromiseOld = {};
+			oPromiseNew = "~oPromiseNew~",
+			oPromiseOld = "~oPromiseOld~";
 
 		oCache.aElements.length = 4096;
 		oCache.aElements.fill(oPromiseOld, 2048); // many existing rows
@@ -5142,6 +5141,23 @@ sap.ui.define([
 		aExpected.fill(oPromiseNew, 0, 4096);
 		assert.deepEqual(oCache.aElements, aExpected);
 		assert.strictEqual(oCache.aElements.$tail, oPromiseNew);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#fill, iStart = 2000, iEnd = 3024, []", function (assert) {
+		var oCache = this.createCache("Employees"),
+			aExpected = new Array(3024),
+			oPromise = "~oPromise~";
+
+		assert.deepEqual(oCache.aElements, []);
+		assert.strictEqual(oCache.aElements.$tail, undefined);
+
+		// code under test
+		oCache.fill(oPromise, 2000, 3024);
+
+		aExpected.fill(oPromise, 2000, 3024);
+		assert.deepEqual(oCache.aElements, aExpected);
+		assert.strictEqual(oCache.aElements.$tail, undefined);
 	});
 
 	//*********************************************************************************************

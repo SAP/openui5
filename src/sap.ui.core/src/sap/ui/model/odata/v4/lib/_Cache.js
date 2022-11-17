@@ -2146,10 +2146,9 @@ sap.ui.define([
 	 * @private
 	 */
 	_CollectionCache.prototype.fill = function (oPromise, iStart, iEnd) {
-		var i,
-			n = Math.max(this.aElements.length, 1024);
+		var i;
 
-		if (iEnd > n) {
+		if (iEnd > this.aElements.length && iEnd - iStart > 1024) {
 			if (this.aElements.$tail && oPromise) {
 				throw new Error("Cannot fill from " + iStart + " to " + iEnd
 					+ ", $tail already in use, # of elements is " + this.aElements.length);

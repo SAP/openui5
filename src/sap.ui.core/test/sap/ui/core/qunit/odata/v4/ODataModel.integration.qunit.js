@@ -13925,6 +13925,64 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Paging beyond the magical limit of 1024 must not serialize GET requests (due to
+	// $tail being used internally) if only a small number of rows is requested each time.
+	//
+	// BCP: 2270181455
+	QUnit.test("BCP: 2270181455", function (assert) {
+		var oListBinding,
+			oPromise1,
+			oPromise2,
+			fnRespond1,
+			fnRespond2,
+			aValues = [],
+			i,
+			that = this;
+
+		for (i = 1030; i < 1050; i += 1) {
+			aValues[i] = {Team_Id : "TEAM_" + i};
+		}
+
+		return this.createView(assert).then(function () {
+			oListBinding = that.oModel.bindList("/TEAMS");
+
+			that.expectRequest("TEAMS?$skip=1030&$top=10", new Promise(function (resolve) {
+					fnRespond1 = resolve.bind(null, {value : aValues.slice(1030, 1040)});
+				}));
+
+			// code under test
+			oPromise1 = oListBinding.requestContexts(1030, 10);
+
+			return that.waitForChanges(assert, "1st GET");
+		}).then(function () {
+			that.expectRequest("TEAMS?$skip=1040&$top=10", new Promise(function (resolve) {
+					fnRespond2 = resolve.bind(null, {value : aValues.slice(1040, 1050)});
+				}));
+
+			// code under test
+			oPromise2 = oListBinding.requestContexts(1040, 10);
+
+			return that.waitForChanges(assert, "2nd GET");
+		}).then(function () {
+			fnRespond2();
+
+			return oPromise2.then(function (aResult) {
+				assert.deepEqual(aResult.map(function (oContext) {
+					return oContext.getObject();
+				}), aValues.slice(1040, 1050), "2nd request may well overtake 1st one");
+			});
+		}).then(function () {
+			fnRespond1();
+
+			return oPromise1.then(function (aResult) {
+				assert.deepEqual(aResult.map(function (oContext) {
+					return oContext.getObject();
+				}), aValues.slice(1030, 1040));
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Retrieve existing data from cache and prefetch further entries. Make sure that a
 	// dataReceived event is sent after each dataRequested.
 	//
@@ -13936,8 +13994,10 @@ sap.ui.define([
 			i,
 			that = this;
 
-		for (i = 0; i < 1200; i += 1) {
-			aValues[i] = {Team_Id : "TEAM_" + i};
+		for (i = 0; i < 1110; i += 1) {
+			if (i < 10 || i >= 1098) {
+				aValues[i] = {Team_Id : "TEAM_" + i};
+			}
 		}
 
 		return this.createView(assert).then(function () {
