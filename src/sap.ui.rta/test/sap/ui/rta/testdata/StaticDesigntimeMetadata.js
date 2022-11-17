@@ -141,7 +141,21 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 			},
 			actions: {
 				remove: {
-					changeType: "hideControl"
+					changeType: "hideControl",
+					isEnabled: function (oElement) {
+						var oSection = oElement.getParent();
+						var aVisibleSubSections;
+
+						if (oSection) {
+							aVisibleSubSections = oSection.getSubSections().filter(function (oSubSection) {
+								return oSubSection.getVisible();
+							});
+
+							return aVisibleSubSections.length > 1;
+						}
+
+						return false;
+					}
 				},
 				reveal: {
 					changeType: "unhideControl"
