@@ -21,7 +21,7 @@ sap.ui.define([
 				var oTb = oView.byId("infobar");
 				oTb.addContent(new ToolbarSpacer());
 				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/DnD"));
-			}, function(oError){/*ignore*/});
+			}, function(oError) { /*ignore*/ });
 		},
 
 		onExit: function() {
@@ -156,7 +156,7 @@ sap.ui.define([
 				// insert always as a first row
 				var iNewRank = this.config.defaultRank;
 				if (oFirstRowContext) {
-					iNewRank =  this.config.rankAlgorithm.Before(oFirstRowContext.getProperty("Rank"));
+					iNewRank = this.config.rankAlgorithm.Before(oFirstRowContext.getProperty("Rank"));
 				}
 
 				this.oProductsModel.setProperty("Rank", iNewRank, oSelectedRowContext);

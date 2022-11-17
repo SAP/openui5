@@ -74,8 +74,8 @@ sap.ui.define([
 	QUnit.test("Add to the same table again", function(assert) {
 		this.oTable.addDependent(this.oPlugin);
 
-		var oOnDeactivate =  this.oPluginMock.expects("onDeactivate").once().withExactArgs(this.oTable);
-		var oOnActivate =  this.oPluginMock.expects("onActivate").once().withExactArgs(this.oTable);
+		var oOnDeactivate = this.oPluginMock.expects("onDeactivate").once().withExactArgs(this.oTable);
+		var oOnActivate = this.oPluginMock.expects("onActivate").once().withExactArgs(this.oTable);
 
 		this.oTable.insertDependent(this.oPlugin, 0);
 
@@ -94,7 +94,7 @@ sap.ui.define([
 		oOtherTable.addDependent(this.oPlugin);
 
 		assert.ok(this.oPlugin.isActive(), "Active");
-		assert.ok(oOnActivate.calledAfter(oOnDeactivate),  "First deactivate, then activate");
+		assert.ok(oOnActivate.calledAfter(oOnDeactivate), "First deactivate, then activate");
 		this.oPluginMock.verify();
 
 		oOtherTable.destroy();

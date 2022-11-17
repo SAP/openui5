@@ -407,7 +407,7 @@ sap.ui.define([
 
 		if (oTable.getShowOverlay()) {
 			if (containsOrEquals(oTable.getDomRef(), oFocusRef) && oTable.$("overlay")[0] !== oFocusRef) {
-				this._oLastFocus = { Ref: oFocusRef, Pos: "overlay" };
+				this._oLastFocus = {Ref: oFocusRef, Pos: "overlay"};
 				oTable.getDomRef("overlay").focus();
 			}
 		} else if (TableUtils.isNoDataVisible(oTable) && oTable.$("noDataCnt")[0] !== oFocusRef) {

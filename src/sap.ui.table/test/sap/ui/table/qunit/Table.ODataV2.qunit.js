@@ -32,7 +32,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("#_getTotalRowCount", function(assert){
+	QUnit.test("#_getTotalRowCount", function(assert) {
 		var oTable = this.oTable;
 
 		assert.strictEqual(oTable._getTotalRowCount(), 16, "Binding#getLength defines the total row count in the table");

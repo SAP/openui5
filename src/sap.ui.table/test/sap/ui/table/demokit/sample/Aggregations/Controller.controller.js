@@ -12,7 +12,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.Aggregations.Controller", {
 
-		onInit : function() {
+		onInit: function() {
 			var oView = this.getView();
 
 			// set explored app's demo model on this sample
@@ -30,10 +30,10 @@ sap.ui.define([
 				var oTb = oView.byId("infobar");
 				oTb.addContent(new ToolbarSpacer());
 				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Aggregations"));
-			}, function(oError){/*ignore*/});
+			}, function(oError) { /*ignore*/ });
 		},
 
-		initSampleDataModel : function() {
+		initSampleDataModel: function() {
 			var oModel = new JSONModel();
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
@@ -74,7 +74,7 @@ sap.ui.define([
 			return oModel;
 		},
 
-		_filter : function() {
+		_filter: function() {
 			var oFilter = null;
 
 			if (this._oTxtFilter && this._oFacetFilter) {
@@ -88,7 +88,7 @@ sap.ui.define([
 			this.byId("table").getBinding().filter(oFilter, "Application");
 		},
 
-		handleTxtFilter : function(oEvent) {
+		handleTxtFilter: function(oEvent) {
 			var sQuery = oEvent ? oEvent.getParameter("query") : null;
 			this._oTxtFilter = null;
 
@@ -106,18 +106,18 @@ sap.ui.define([
 			}
 		},
 
-		clearAllFilters : function() {
+		clearAllFilters: function() {
 			this.handleTxtFilter();
 			this.handleFacetFilterReset();
 			this._filter();
 		},
 
-		_getFacetFilterLists : function() {
+		_getFacetFilterLists: function() {
 			var oFacetFilter = this.byId("facetFilter");
 			return oFacetFilter.getLists();
 		},
 
-		handleFacetFilterReset : function(oEvent) {
+		handleFacetFilterReset: function(oEvent) {
 			var aFacetFilterLists = this._getFacetFilterLists();
 
 			for (var i = 0; i < aFacetFilterLists.length; i++) {
@@ -130,7 +130,7 @@ sap.ui.define([
 			}
 		},
 
-		handleListClose : function(oEvent) {
+		handleListClose: function(oEvent) {
 			var aFacetFilterLists = this._getFacetFilterLists().filter(function(oList) {
 				return oList.getActive() && oList.getSelectedItems().length;
 			});
@@ -144,7 +144,7 @@ sap.ui.define([
 			this._filter();
 		},
 
-		formatAvailableToObjectState : function(bAvailable) {
+		formatAvailableToObjectState: function(bAvailable) {
 			return bAvailable ? "Success" : "Error";
 		}
 

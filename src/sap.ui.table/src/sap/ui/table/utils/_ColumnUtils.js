@@ -770,7 +770,7 @@ sap.ui.define([
 		 * @param {sap.ui.table.Column} oColumn Instance of the column
 		 * @returns {sap.ui.core.Control} Returns the column header label
 		 */
-		getHeaderLabel: function (oColumn) {
+		getHeaderLabel: function(oColumn) {
 			if (!oColumn) {
 				return null;
 			}

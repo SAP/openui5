@@ -1076,7 +1076,7 @@ sap.ui.define([
 	QUnit.test("dynamicCall", function(assert) {
 		var bCallbackCalled = false;
 		var oTestObject = {prop: "value", funcA: sinon.spy(), funcB: sinon.spy()};
-		var oTestObjectWithReturn = {returnString: function() {return "string";}, returnNumber: function() {return 1;}};
+		var oTestObjectWithReturn = {returnString: function() { return "string"; }, returnNumber: function() { return 1; }};
 		var oTestContext = {};
 
 		function reset() {
@@ -1099,7 +1099,7 @@ sap.ui.define([
 		assert.ok(!bCallbackCalled, "The object does not exist, so the callback was not called");
 		reset();
 
-		TableUtils.dynamicCall(function() {return oTestObject;}, function(vObject) {
+		TableUtils.dynamicCall(function() { return oTestObject; }, function(vObject) {
 			bCallbackCalled = true;
 			assert.strictEqual(this, oTestContext, "Callback was called with the specified context");
 			assert.strictEqual(vObject, oTestObject, "The object was passed to the callback");
@@ -1107,7 +1107,7 @@ sap.ui.define([
 		assert.ok(bCallbackCalled, "The object getter returns an object, so the callback was called");
 		reset();
 
-		TableUtils.dynamicCall(function() {return undefined;}, function() {
+		TableUtils.dynamicCall(function() { return undefined; }, function() {
 			bCallbackCalled = true;
 		});
 		assert.ok(!bCallbackCalled, "The object getter does not return an object, so the callback was not called");

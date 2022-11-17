@@ -38,7 +38,7 @@ sap.ui.define([
 	 * Disables the metadata cache, so that the metadata is always requested, even if already available.
 	 */
 	TableQUnitUtilsODataV2.disableMetadataCache = function() {
-		ODataModel._getSharedData = function() {return {};};
+		ODataModel._getSharedData = function() { return {}; };
 	};
 
 	/**

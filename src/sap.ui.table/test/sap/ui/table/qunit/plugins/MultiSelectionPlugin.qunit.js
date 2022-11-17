@@ -162,7 +162,7 @@ sap.ui.define([
 		assert.ok($SelectAll.attr("aria-disabled"), "aria-disabled is set to true");
 		assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "Deselect All is disabled");
 
-		oSelectionPlugin.attachSelectionChange(function(){
+		oSelectionPlugin.attachSelectionChange(function() {
 			assert.strictEqual($SelectAll.attr("title"), "Deselect All", "Tooltip exists");
 			assert.notOk($SelectAll.attr("aria-disabled"), "aria-disabled is removed");
 			assert.notOk($SelectAll.hasClass("sapUiTableSelAllDisabled"), "Deselect All is enabled");
@@ -253,7 +253,7 @@ sap.ui.define([
 			oSelectionChangeSpy.resetHistory();
 			oSelectionPlugin.addSelectionInterval(6, 7).then(function() {
 				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
-			}).catch(function(oError){
+			}).catch(function(oError) {
 				assert.equal(oError.toString(), "Error: SelectionMode is 'None'", "Promise rejected with Error: SelectionMode is 'None'");
 				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
 				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
@@ -302,7 +302,7 @@ sap.ui.define([
 				fnGetContexts.resetHistory();
 				oSelectionChangeSpy.resetHistory();
 				oSelectionPlugin.addSelectionInterval(5, 5);
-				setTimeout(function () {
+				setTimeout(function() {
 					assert.ok(fnGetContexts.calledWithExactly(5, 1, 0, true), "getContexts was called with the correct parameters");
 					assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
@@ -493,7 +493,7 @@ sap.ui.define([
 			oSelectionChangeSpy.resetHistory();
 			oSelectionPlugin.setSelectionInterval(6, 7).then(function() {
 				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
-			}).catch(function(oError){
+			}).catch(function(oError) {
 				assert.equal(oError.toString(), "Error: SelectionMode is 'None'", "Promise rejected with Error: SelectionMode is 'None'");
 				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
 				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
@@ -543,7 +543,7 @@ sap.ui.define([
 				fnGetContexts.resetHistory();
 				oSelectionChangeSpy.resetHistory();
 				oSelectionPlugin.setSelectionInterval(5, 10); // Limit reached
-				setTimeout(function () {
+				setTimeout(function() {
 					assert.ok(fnGetContexts.calledWithExactly(5, 6, 0, true), "getContexts was called with the correct parameters");
 					assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "The selection did not change");
@@ -557,7 +557,7 @@ sap.ui.define([
 				fnGetContexts.resetHistory();
 				oSelectionChangeSpy.resetHistory();
 				oSelectionPlugin.setSelectionInterval(5, 9); // Limit not reached
-				setTimeout(function () {
+				setTimeout(function() {
 					assert.ok(fnGetContexts.calledWithExactly(5, 5, 0, true), "getContexts was called with the correct parameters");
 					assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "The selection did not change");
@@ -636,7 +636,7 @@ sap.ui.define([
 			oSelectionChangeSpy.resetHistory();
 			oSelectionPlugin.setSelectedIndex(1).then(function() {
 				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
-			}).catch(function(oError){
+			}).catch(function(oError) {
 				assert.equal(oError.toString(), "Error: SelectionMode is 'None'", "Promise rejected with Error: SelectionMode is 'None'");
 				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
 				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
@@ -888,7 +888,7 @@ sap.ui.define([
 			oSelectionChangeSpy.resetHistory();
 			oSelectionPlugin.selectAll().then(function() {
 				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
-			}).catch(function(oError){
+			}).catch(function(oError) {
 				assert.equal(oError.toString(), "Error: SelectionMode is 'None'", "Promise rejected with Error: SelectionMode is 'None'");
 				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
 				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");

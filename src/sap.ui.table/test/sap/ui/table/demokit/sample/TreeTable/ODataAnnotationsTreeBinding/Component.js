@@ -9,7 +9,7 @@ sap.ui.define([
 		metadata: {
 			manifest: "json"
 		},
-		init : function(){
+		init: function() {
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
 
@@ -21,8 +21,8 @@ sap.ui.define([
 			// set model on component
 			this.setModel(
 				new ODataModel(sODataServiceUrl, {
-					json : true,
-					useBatch : true
+					json: true,
+					useBatch: true
 				})
 			);
 		}

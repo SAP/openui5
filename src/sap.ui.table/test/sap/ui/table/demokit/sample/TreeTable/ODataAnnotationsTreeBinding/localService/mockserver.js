@@ -23,7 +23,7 @@ sap.ui.define([
 
 			// simulate
 			oMockServer.simulate(sLocalServicePath + "/metadata.xml", {
-				sMockdataBaseUrl : sLocalServicePath + "/mockdata",
+				sMockdataBaseUrl: sLocalServicePath + "/mockdata",
 				bGenerateMissingMockData: false
 			});
 

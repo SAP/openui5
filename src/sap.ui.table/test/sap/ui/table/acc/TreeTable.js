@@ -13,7 +13,7 @@ sap.ui.define([
 
 	// TABLE TEST DATA
 	var oData = {
-		root:{
+		root: {
 			name: "root",
 			description: "moep moep",
 			checked: false,
@@ -79,7 +79,7 @@ sap.ui.define([
 					}
 				}
 			},
-			1:{
+			1: {
 				name: "Hip-Hop",
 				description: "Hip-Hop",
 				checked: true,

@@ -14,21 +14,21 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.Selection.Controller", {
 
-		onInit : function() {
+		onInit: function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			var oView = this.getView();
 			oView.setModel(oJSONModel);
 
 			var aSelectionModes = [];
-			jQuery.each(SelectionMode, function(k, v){
+			jQuery.each(SelectionMode, function(k, v) {
 				if (k != SelectionMode.Multi) {
 					aSelectionModes.push({key: k, text: v});
 				}
 			});
 
 			var aSelectionBehaviors = [];
-			jQuery.each(SelectionBehavior, function(k, v){
+			jQuery.each(SelectionBehavior, function(k, v) {
 				aSelectionBehaviors.push({key: k, text: v});
 			});
 
@@ -41,7 +41,7 @@ sap.ui.define([
 			oView.setModel(oModel, "selectionmodel");
 		},
 
-		initSampleDataModel : function() {
+		initSampleDataModel: function() {
 			var oModel = new JSONModel();
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
@@ -128,15 +128,15 @@ sap.ui.define([
 			this.byId("table1").clearSelection();
 		},
 
-		formatAvailableToObjectState : function(bAvailable) {
+		formatAvailableToObjectState: function(bAvailable) {
 			return bAvailable ? "Success" : "Error";
 		},
 
-		formatAvailableToIcon : function(bAvailable) {
+		formatAvailableToIcon: function(bAvailable) {
 			return bAvailable ? "sap-icon://accept" : "sap-icon://decline";
 		},
 
-		handleDetailsPress : function(oEvent) {
+		handleDetailsPress: function(oEvent) {
 			MessageToast.show("Details for product with id " + this.getView().getModel().getProperty("ProductId", oEvent.getSource().getBindingContext()));
 		}
 

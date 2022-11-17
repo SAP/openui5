@@ -315,7 +315,7 @@ sap.ui.define([
 		var oCell = oRow.getCells()[iCol];
 		var iIndex = Column.ofCell(oCell).getIndex();
 
-		if (oTable instanceof TreeTable && iIndex == 0 && $Cell.find(".sapUiTableTreeIcon").not(".sapUiTableTreeIconLeaf").length == 1 || bGroup){
+		if (oTable instanceof TreeTable && iIndex == 0 && $Cell.find(".sapUiTableTreeIcon").not(".sapUiTableTreeIconLeaf").length == 1 || bGroup) {
 			aDescriptions.push(oTable.getId() + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 		}
 
@@ -502,7 +502,7 @@ sap.ui.define([
 		oTreeTable.expand(0);
 		oTreeTable.expand(2);
 		oTreeTable.attachEventOnce("rowsUpdated", function() {
-			setTimeout(function(){
+			setTimeout(function() {
 				$Cell = getCell(0, 0, true, assert, oTreeTable);
 				testAriaDescriptionsForFocusedDataCell($Cell, 0, 0, assert, {firstTime: true, colChange: true, table: oTreeTable}, true);
 				$Cell = getCell(1, 0, true, assert, oTreeTable);
@@ -575,7 +575,7 @@ sap.ui.define([
 			}
 
 			TableQUnitUtils.setFocusOutsideOfTable(assert);
-			setTimeout(function () {
+			setTimeout(function() {
 				testAriaLabelsForNonFocusedDataCell(getCell(1, oTable.columnCount - 1, false, assert), 1, oTable.columnCount - 1, assert);
 				done();
 			}, 100);
@@ -949,7 +949,7 @@ sap.ui.define([
 				"The row header of a group row doesn't have row selector text");
 
 			TableQUnitUtils.setFocusOutsideOfTable(assert);
-			setTimeout(function () {
+			setTimeout(function() {
 				that.testAriaLabels($Cell, 1, assert);
 				done();
 			}, 100);
@@ -973,7 +973,7 @@ sap.ui.define([
 
 		oTreeTable.expand(0);
 		oTreeTable.attachEventOnce("rowsUpdated", function() {
-			setTimeout(function(){
+			setTimeout(function() {
 				that.testAriaLabels($Cell, 0, assert, {group: true, focus: true, rowChange: true, expanded: true, table: oTreeTable});
 				done();
 			}, 100);
@@ -1085,7 +1085,7 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			oTable.attachEventOnce("rowsUpdated", resolve);
 		}).then(function() {
-			testTitleAndSelectorText(assert, "MultiToggle","RowSelector", 1, true);
+			testTitleAndSelectorText(assert, "MultiToggle", "RowSelector", 1, true);
 			oTable.clearSelection();
 			testTitleAndSelectorText(assert, "MultiToggle", "RowSelector", 1, false);
 
@@ -1104,7 +1104,7 @@ sap.ui.define([
 			oTable.setFixedColumnCount(0, false);
 			oCore.applyChanges();
 
-			return new Promise(function (resolve) {
+			return new Promise(function(resolve) {
 				oTable._getSelectionPlugin().attachEventOnce("selectionChange", resolve);
 				oTable.setSelectedIndex(0);
 			});
@@ -1132,7 +1132,7 @@ sap.ui.define([
 				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
-			testTitleAndSelectorText(assert,"None");
+			testTitleAndSelectorText(assert, "None");
 
 			oTable.setSelectionMode(SelectionMode.MultiToggle);
 			oCore.applyChanges();
@@ -1277,7 +1277,7 @@ sap.ui.define([
 			});
 
 			TableQUnitUtils.setFocusOutsideOfTable(assert);
-			setTimeout(function () {
+			setTimeout(function() {
 				that.testAriaLabels($Cell, 2, assert);
 				done();
 			}, 100);
@@ -1302,7 +1302,7 @@ sap.ui.define([
 			}
 
 			TableQUnitUtils.setFocusOutsideOfTable(assert);
-			setTimeout(function () {
+			setTimeout(function() {
 				that.testAriaLabels($Cell, 2, assert);
 				done();
 			}, 100);
@@ -1352,7 +1352,7 @@ sap.ui.define([
 
 		oTreeTable.expand(1);
 		oTreeTable.attachEventOnce("rowsUpdated", function() {
-			setTimeout(function(){
+			setTimeout(function() {
 				that.testAriaLabels($Cell, 1, assert, {group: true, focus: true, rowChange: true, colChange: true, expanded: true, table: oTreeTable});
 				done();
 			}, 100);

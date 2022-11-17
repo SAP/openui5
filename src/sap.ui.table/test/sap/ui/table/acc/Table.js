@@ -133,8 +133,7 @@ sap.ui.define([
 		new Item({key: "v2", text: "Value 2"}),
 		new Item({key: "v3", text: "Value 3"}),
 		new Item({key: "v4", text: "Value 4"})
-	]
-	});
+	]});
 	oColumn = new Column({label: new Label({text: "India"}), template: oControl, width: "150px"});
 	oTable.addColumn(oColumn);
 
@@ -144,8 +143,7 @@ sap.ui.define([
 		new Item({key: "v2", text: "Value 2"}),
 		new Item({key: "v3", text: "Value 3"}),
 		new Item({key: "v4", text: "Value 4"})
-	]
-	});
+	]});
 	oColumn = new Column({label: new Label({text: "Juliett"}), template: oControl, width: "250px"});
 	oTable.addColumn(oColumn);
 

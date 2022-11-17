@@ -14,16 +14,16 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.OData2.Controller", {
 
-		onInit : function() {
+		onInit: function() {
 			this.oMockServer = new MockServer({
-				rootUri : sServiceUrl
+				rootUri: sServiceUrl
 			});
 
 			MockServer.config({autoRespondAfter: 2000});
 
 			this.oMockServer.simulate(sap.ui.require.toUrl("sap/ui/table/sample/OData2/metadata.xml"), {
-				sMockdataBaseUrl : sap.ui.require.toUrl("sap/ui/table/sample/OData"),
-				bGenerateMissingMockData : true
+				sMockdataBaseUrl: sap.ui.require.toUrl("sap/ui/table/sample/OData"),
+				bGenerateMissingMockData: true
 			});
 
 			this.oMockServer.start();
@@ -31,7 +31,7 @@ sap.ui.define([
 			var oView = this.getView();
 			var oDataModel = new ODataModel(sServiceUrl);
 
-			oDataModel.getMetaModel().loaded().then(function(){
+			oDataModel.getMetaModel().loaded().then(function() {
 				oView.setModel(oDataModel.getMetaModel(), "meta");
 			});
 			oView.setModel(oDataModel);
@@ -39,21 +39,21 @@ sap.ui.define([
 			var oTable = oView.byId("table");
 			var oBinding = oTable.getBinding();
 			var oBusyIndicator = oTable.getNoData();
-			oBinding.attachDataRequested(function(){
+			oBinding.attachDataRequested(function() {
 				oTable.setNoData(oBusyIndicator);
 			});
-			oBinding.attachDataReceived(function(){
+			oBinding.attachDataReceived(function() {
 				oTable.setNoData(null); //Use default again ("No Data" in case no data is available)
 			});
 		},
 
-		onExit : function() {
+		onExit: function() {
 			this.oMockServer.destroy();
 			this.oMockServer = null;
 			MockServer.config({autoRespondAfter: 0});
 		},
 
-		columnFactory : function(sId, oContext) {
+		columnFactory: function(sId, oContext) {
 			var oModel = this.getView().getModel();
 			var sName = oContext.getProperty("name");
 			var sType = oContext.getProperty("type");

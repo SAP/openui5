@@ -127,7 +127,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Menu entries", function (assert) {
+	QUnit.test("Menu entries", function(assert) {
 		var that = this;
 
 		return this.openColumnMenu(0).then(function() {
@@ -227,7 +227,7 @@ sap.ui.define([
 		}).then(function() {
 			that.oColumn1.setShowSortMenuEntry(false);
 			return that.openColumnMenu(0);
-		}).then(function () {
+		}).then(function() {
 			oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
 			assert.ok(that.getQuickAction(oMenu, "QuickSort").getItems()[0].getAggregation("quickAction") === oQuickAction,
 				"The QuickSort instance is not destroyed");

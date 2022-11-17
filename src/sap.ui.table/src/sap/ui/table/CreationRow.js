@@ -63,7 +63,7 @@ sap.ui.define([
 				/**
 				 * The default toolbar.
 				 */
-				_defaultToolbar : {type : "sap.ui.core.Toolbar", multiple : false, visibility : "hidden"}
+				_defaultToolbar: {type: "sap.ui.core.Toolbar", multiple: false, visibility: "hidden"}
 			},
 			events: {
 				/**

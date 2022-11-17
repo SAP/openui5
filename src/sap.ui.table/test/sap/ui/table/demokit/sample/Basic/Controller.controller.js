@@ -10,13 +10,13 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.Basic.Controller", {
 
-		onInit : function() {
+		onInit: function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			this.getView().setModel(oJSONModel);
 		},
 
-		initSampleDataModel : function() {
+		initSampleDataModel: function() {
 			var oModel = new JSONModel();
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
@@ -64,25 +64,25 @@ sap.ui.define([
 					return oToken.getKey();
 				}),
 				aCurrentTokensData = oMultiInput.getTokens().map(function(oToken) {
-					return {"Key" : oToken.getKey(), "Name" : oToken.getText()};
+					return {"Key": oToken.getKey(), "Name": oToken.getText()};
 				});
 
-			aCurrentTokensData = aCurrentTokensData.filter(function(oToken){
+			aCurrentTokensData = aCurrentTokensData.filter(function(oToken) {
 				return aRemovedTokensKeys.indexOf(oToken.Key) === -1;
 			});
 
 			oMultiInput.getModel().setProperty(sTokensPath, aCurrentTokensData);
 		},
 
-		formatAvailableToObjectState : function(bAvailable) {
+		formatAvailableToObjectState: function(bAvailable) {
 			return bAvailable ? "Success" : "Error";
 		},
 
-		formatAvailableToIcon : function(bAvailable) {
+		formatAvailableToIcon: function(bAvailable) {
 			return bAvailable ? "sap-icon://accept" : "sap-icon://decline";
 		},
 
-		handleDetailsPress : function(oEvent) {
+		handleDetailsPress: function(oEvent) {
 			MessageToast.show("Details for product with id " + this.getView().getModel().getProperty("ProductId", oEvent.getSource().getBindingContext()));
 		},
 

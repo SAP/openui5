@@ -49,10 +49,10 @@ sap.ui.define([
 	 * @see {@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I Choose?}
 	 * @see {@link fiori:/tree-table/ Tree Table}
 	 */
-	var TreeTable = Table.extend("sap.ui.table.TreeTable", /** @lends sap.ui.table.TreeTable.prototype */ { metadata : {
+	var TreeTable = Table.extend("sap.ui.table.TreeTable", /** @lends sap.ui.table.TreeTable.prototype */ {metadata: {
 
-		library : "sap.ui.table",
-		properties : {
+		library: "sap.ui.table",
+		properties: {
 
 			/**
 			 * Specifies whether the first level is expanded.
@@ -72,18 +72,18 @@ sap.ui.define([
 			 *
 			 * @deprecated As of version 1.46.3, replaced by the <code>numberOfExpandedLevels</code> binding parameter. May not work with all bindings.
 			 */
-			expandFirstLevel : {type : "boolean", defaultValue : false, deprecated: true},
+			expandFirstLevel: {type: "boolean", defaultValue: false, deprecated: true},
 
 			/**
 			 * If group mode is enabled nodes with subitems are rendered as if they were group headers.
 			 * This can be used to do the grouping for an OData service on the backend and visualize this in a table.
 			 */
-			useGroupMode : {type : "boolean", group : "Appearance", defaultValue : false},
+			useGroupMode: {type: "boolean", group: "Appearance", defaultValue: false},
 
 			/**
 			 * The property name of the rows data which will be displayed as a group header if the group mode is enabled
 			 */
-			groupHeaderProperty : {type : "string", group : "Data", defaultValue : null},
+			groupHeaderProperty: {type: "string", group: "Data", defaultValue: null},
 
 			/**
 			 * Setting collapseRecursive to true means, that when collapsing a node all subsequent child nodes will also be collapsed.
@@ -104,7 +104,7 @@ sap.ui.define([
 			 *
 			 * @deprecated As of version 1.76, replaced by the <code>collapseRecursive</code> binding parameter. May not work with all bindings.
 			 */
-			collapseRecursive : {type: "boolean", defaultValue: true, deprecated: true},
+			collapseRecursive: {type: "boolean", defaultValue: true, deprecated: true},
 
 			/**
 			 * The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
@@ -124,35 +124,34 @@ sap.ui.define([
 			 *
 			 * @deprecated As of version 1.76, replaced by the <code>rootLevel</code> binding parameter. May not work with all bindings.
 			 */
-			rootLevel : {type: "int", group: "Data", defaultValue: 0, deprecated: true}
+			rootLevel: {type: "int", group: "Data", defaultValue: 0, deprecated: true}
 		},
-		events : {
+		events: {
 
 			/**
 			 * Fired when a row has been expanded or collapsed by user interaction. Only available in hierarchical mode.
 			 */
-			toggleOpenState : {
-				parameters : {
+			toggleOpenState: {
+				parameters: {
 
 					/**
 					 * Index of the expanded/collapsed row
 					 */
-					rowIndex : {type : "int"},
+					rowIndex: {type: "int"},
 
 					/**
 					 * Binding context of the expanded/collapsed row
 					 */
-					rowContext : {type : "object"},
+					rowContext: {type: "object"},
 
 					/**
 					 * Flag that indicates whether the row has been expanded or collapsed
 					 */
-					expanded : {type : "boolean"}
+					expanded: {type: "boolean"}
 				}
 			}
 		}
 	}, renderer: TableRenderer});
-
 
 	/**
 	 * Initialization of the TreeTable control
@@ -243,7 +242,6 @@ sap.ui.define([
 		Log.warning("TreeTable: the property \"fixedRowCount\" is not supported and will be ignored!");
 		return this;
 	};
-
 
 	TreeTable.prototype.isTreeBinding = function(sName) {
 		sName = sName || "rows";

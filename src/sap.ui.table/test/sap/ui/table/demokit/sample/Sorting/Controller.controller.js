@@ -15,7 +15,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.Sorting.Controller", {
 
-		onInit : function() {
+		onInit: function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			var oView = this.getView();
@@ -29,10 +29,10 @@ sap.ui.define([
 				var oTb = oView.byId("infobar");
 				oTb.addContent(new ToolbarSpacer());
 				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Sorting"));
-			}, function(oError){/*ignore*/});
+			}, function(oError) { /*ignore*/ });
 		},
 
-		initSampleDataModel : function() {
+		initSampleDataModel: function() {
 			var oModel = new JSONModel();
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
@@ -73,13 +73,13 @@ sap.ui.define([
 			return oModel;
 		},
 
-		clearAllSortings : function(oEvent) {
+		clearAllSortings: function(oEvent) {
 			var oTable = this.byId("table");
 			oTable.getBinding().sort(null);
 			this._resetSortingState();
 		},
 
-		sortCategories : function(oEvent) {
+		sortCategories: function(oEvent) {
 			var oView = this.getView();
 			var oTable = oView.byId("table");
 			var oCategoriesColumn = oView.byId("categories");
@@ -88,14 +88,14 @@ sap.ui.define([
 			this._bSortColumnDescending = !this._bSortColumnDescending;
 		},
 
-		sortCategoriesAndName : function(oEvent) {
+		sortCategoriesAndName: function(oEvent) {
 			var oView = this.getView();
 			var oTable = oView.byId("table");
 			oTable.sort(oView.byId("categories"), SortOrder.Ascending, false);
 			oTable.sort(oView.byId("name"), SortOrder.Ascending, true);
 		},
 
-		sortDeliveryDate : function(oEvent) {
+		sortDeliveryDate: function(oEvent) {
 			var oCurrentColumn = oEvent.getParameter("column");
 			var oDeliveryDateColumn = this.byId("deliverydate");
 			if (oCurrentColumn != oDeliveryDateColumn) {
@@ -137,7 +137,7 @@ sap.ui.define([
 			this.byId("table").getBinding().sort(oSorter);
 		},
 
-		_resetSortingState : function() {
+		_resetSortingState: function() {
 			var oTable = this.byId("table");
 			var aColumns = oTable.getColumns();
 			for (var i = 0; i < aColumns.length; i++) {

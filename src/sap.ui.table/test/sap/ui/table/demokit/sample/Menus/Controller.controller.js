@@ -17,7 +17,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.Menus.Controller", {
 
-		onInit : function() {
+		onInit: function() {
 			var oView = this.getView();
 
 			// set explored app's demo model on this sample
@@ -34,10 +34,10 @@ sap.ui.define([
 				var oTb = oView.byId("infobar");
 				oTb.addContent(new ToolbarSpacer());
 				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Menus"));
-			}, function(oError){/*ignore*/});
+			}, function(oError) { /*ignore*/ });
 		},
 
-		initSampleDataModel : function() {
+		initSampleDataModel: function() {
 			var oModel = new JSONModel();
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
@@ -78,7 +78,7 @@ sap.ui.define([
 			return oModel;
 		},
 
-		onColumnSelect : function(oEvent) {
+		onColumnSelect: function(oEvent) {
 			var oCurrentColumn = oEvent.getParameter("column");
 			var oImageColumn = this.byId("image");
 			if (oCurrentColumn === oImageColumn) {
@@ -97,7 +97,7 @@ sap.ui.define([
 			oEvent.preventDefault();
 		},
 
-		onProductIdCellContextMenu : function(oEvent) {
+		onProductIdCellContextMenu: function(oEvent) {
 			if (Device.support.touch) {
 				return; //Do not use context menus on touch devices
 			}
@@ -129,11 +129,11 @@ sap.ui.define([
 			this._oIdContextMenu.open(false, oCellDomRef, eDock.BeginTop, eDock.BeginBottom, oCellDomRef, "none none");
 		},
 
-		onQuantityCustomItemSelect : function(oEvent) {
+		onQuantityCustomItemSelect: function(oEvent) {
 			MessageToast.show("Some custom action triggered on column 'Quantity'.");
 		},
 
-		onQuantitySort : function(oEvent) {
+		onQuantitySort: function(oEvent) {
 			var bAdd = oEvent.getParameter("ctrlKey") === true;
 			var oColumn = this.byId("quantity");
 			var sOrder = oColumn.getSortOrder() == "Ascending" ? "Descending" : "Ascending";
@@ -141,7 +141,7 @@ sap.ui.define([
 			this.byId("table").sort(oColumn, sOrder, bAdd);
 		},
 
-		onToggleContextMenu : function(oEvent) {
+		onToggleContextMenu: function(oEvent) {
 			if (oEvent.getParameter("pressed")) {
 				this.byId("table").setContextMenu(new MenuM({
 					items: [

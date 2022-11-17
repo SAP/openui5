@@ -1696,7 +1696,7 @@ sap.ui.define([
 
 		// Fixed area - Single cell
 		// *HOME* -> SelectAll
-		this.triggerKey(Key.HOME, this.oTable.qunit.getColumnHeaderCell(0),this.oTable.qunit.getSelectAllCell());
+		this.triggerKey(Key.HOME, this.oTable.qunit.getColumnHeaderCell(0), this.oTable.qunit.getSelectAllCell());
 
 		// *HOME* -> SelectAll
 		this.triggerKey(Key.HOME, this.oTable.qunit.getSelectAllCell(), this.oTable.qunit.getSelectAllCell());
@@ -5518,7 +5518,7 @@ sap.ui.define([
 		oTable.setFooter(new TestInputControl());
 		oTable.setTitle(new TestInputControl());
 		oTable.addEventDelegate({
-			onkeydown: function (oEvent) {
+			onkeydown: function(oEvent) {
 				assert.ok(!oEvent.isDefaultPrevented(), "Default action was not prevented");
 			}
 		});
@@ -6517,8 +6517,8 @@ sap.ui.define([
 					resolve(oElem);
 				}, 0);
 			});
-		}).then(function(oElem){
-			return new Promise(function(resolve){
+		}).then(function(oElem) {
+			return new Promise(function(resolve) {
 				simulateTabEvent(oElem, false);
 				oElem = checkFocus(oTable.getRows()[2].getCells()[1].getDomRef(), assert);
 				simulateTabEvent(oElem, false);
@@ -6531,8 +6531,8 @@ sap.ui.define([
 					}, 0);
 				});
 			});
-		}).then(function(oElem){
-			return new Promise(function(resolve){
+		}).then(function(oElem) {
+			return new Promise(function(resolve) {
 				simulateTabEvent(oElem, true);
 				oElem = checkFocus(oTable.getRows()[1].getCells()[1].getDomRef(), assert);
 				simulateTabEvent(oElem, true);
@@ -6549,8 +6549,8 @@ sap.ui.define([
 					}, 0);
 				});
 			});
-		}).then(function(oElem){
-			return new Promise(function(resolve){
+		}).then(function(oElem) {
+			return new Promise(function(resolve) {
 				simulateTabEvent(oElem, true);
 				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
@@ -6585,8 +6585,8 @@ sap.ui.define([
 					}, 0);
 				});
 			});
-		}).then(function(oElem){
-			return new Promise(function(resolve){
+		}).then(function(oElem) {
+			return new Promise(function(resolve) {
 				simulateTabEvent(oElem, false);
 				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
@@ -6597,8 +6597,8 @@ sap.ui.define([
 					}, 0);
 				});
 			});
-		}).then(function(oElem){
-			return new Promise(function(resolve){
+		}).then(function(oElem) {
+			return new Promise(function(resolve) {
 				simulateTabEvent(oElem, false);
 				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
@@ -6609,8 +6609,8 @@ sap.ui.define([
 					}, 0);
 				});
 			});
-		}).then(function(oElem){
-			return new Promise(function(resolve){
+		}).then(function(oElem) {
+			return new Promise(function(resolve) {
 				simulateTabEvent(oElem, true);
 				oElem = checkFocus(oTable.getRows()[1].getCells()[1].getDomRef(), assert);
 				simulateTabEvent(oElem, true);
@@ -6625,8 +6625,8 @@ sap.ui.define([
 					}, 0);
 				});
 			});
-		}).then(function(oElem){
-			return new Promise(function(resolve){
+		}).then(function(oElem) {
+			return new Promise(function(resolve) {
 				simulateTabEvent(oElem, true);
 				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
@@ -6637,8 +6637,8 @@ sap.ui.define([
 					}, 0);
 				});
 			});
-		}).then(function(oElem){
-			return new Promise(function(resolve){
+		}).then(function(oElem) {
+			return new Promise(function(resolve) {
 				simulateTabEvent(oElem, true);
 				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {

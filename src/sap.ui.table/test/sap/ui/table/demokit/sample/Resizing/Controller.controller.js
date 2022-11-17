@@ -11,7 +11,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.Resizing.Controller", {
 
-		onInit : function() {
+		onInit: function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			var oView = this.getView();
@@ -28,10 +28,10 @@ sap.ui.define([
 				var oTb = oView.byId("infobar");
 				oTb.addContent(new ToolbarSpacer());
 				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Resizing"));
-			}, function(oError){/*ignore*/});
+			}, function(oError) { /*ignore*/ });
 		},
 
-		initSampleDataModel : function() {
+		initSampleDataModel: function() {
 			var oModel = new JSONModel();
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
@@ -72,7 +72,7 @@ sap.ui.define([
 			return oModel;
 		},
 
-		onColumnWidthsChange : function(oEvent) {
+		onColumnWidthsChange: function(oEvent) {
 			var sColumnWidthMode = oEvent ? oEvent.getParameter("item").getKey() : "Static";
 			var oWidthData;
 
@@ -97,7 +97,7 @@ sap.ui.define([
 			this.getView().getModel("ui").setProperty("/widths", oWidthData);
 		},
 
-		onColumnResize : function(oEvent) {
+		onColumnResize: function(oEvent) {
 			var oColumn = oEvent.getParameter("column");
 
 			if (this.byId("deliverydate") == oColumn) {
@@ -107,7 +107,7 @@ sap.ui.define([
 				if (this._messageTimer) {
 					clearTimeout(this._messageTimer);
 				}
-				this._messageTimer = setTimeout(function(){
+				this._messageTimer = setTimeout(function() {
 					MessageToast.show(this._messageBuffer.join("\n"));
 					this._messageBuffer = [];
 					this._messageTimer = null;

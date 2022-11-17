@@ -13,7 +13,7 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 		var oPopover = new Popover({
 			showHeader: false,
 			placement: "Auto",
-			afterClose: function(){
+			afterClose: function() {
 				oPopover.destroy();
 			},
 			content: [
@@ -56,7 +56,7 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 		return new Button({
 			icon: "sap-icon://hint",
 			tooltip: "Show information",
-			press: function(oEvent){
+			press: function(oEvent) {
 				Utils.showInfo(sap.ui.require.toUrl(sInfoFor) + "/info.json", oEvent.getSource());
 			}
 		});

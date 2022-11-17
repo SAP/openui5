@@ -90,7 +90,7 @@ sap.ui.define([
 			oInjectMenuItemsSpy.reset();
 
 			ColumnHeaderMenuAdapter.activateFor(that.oColumn2);
-			setTimeout(function () {
+			setTimeout(function() {
 				assert.ok(oRemoveItemsSpy.calledOnceWith(that.oMenu1), "removeMenuItems is called once with the correct parameters");
 				assert.ok(oInjectMenuItemsSpy.calledOnceWith(that.oMenu2, that.oColumn2), "injectMenuItems called once with the correct parameters");
 				assert.ok(oTestAdapterInstance._mInjectionTarget.column === that.oColumn2 && oTestAdapterInstance._mInjectionTarget.menu === that.oMenu2,
@@ -120,7 +120,7 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("Adapter lifecycle", function(assert){
+	QUnit.test("Adapter lifecycle", function(assert) {
 		var done = assert.async();
 		var oActivateSpy = sinon.spy(ColumnHeaderMenuAdapter, "activateFor");
 		var oUnlinkSpy = sinon.spy(ColumnHeaderMenuAdapter, "unlink");
