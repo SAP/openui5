@@ -1045,7 +1045,7 @@ sap.ui.define([
 			"aria-roledescription - Table container");
 
 		var aLabels = sut.$("listUl").attr("aria-labelledby").split(" ");
-		assert.ok(aLabels[0] === "idTitle" && document.getElementById(aLabels[2]).innerText === Core.getLibraryResourceBundle("sap.m").getText("TABLE_ARIA_LABEL"),
+		assert.ok(aLabels[0] === "idTitle" && document.getElementById(aLabels[1]).innerText === Core.getLibraryResourceBundle("sap.m").getText("TABLE_ARIA_LABEL"),
 			"aria-labelledby - Table element");
 		assert.ok(!sut.$("listUl").attr("role"), "Table has no ARIA role");
 
