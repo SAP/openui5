@@ -351,27 +351,31 @@ sap.ui.define([
 			return null;
 		}
 
-		return this._calcColumnWidth(oProperty, oMDCColumn.getHeader(), oMDCColumn.getRequired());
+		return this._calcColumnWidth(oProperty, oMDCColumn);
 	};
 
 	/**
 	 * Calculates the column width based on the provided <code>PropertyInfo</code>.
 	 *
 	 * @param {sap.ui.mdc.table.PropertyInfo} oProperty The property of the <code>Column</code> instance for which to set the width
-	 * @param {string} [sHeader] The header in case of it is different than the PropertyInfo header
-	 * @param {boolean} [bRequired] Indicates whether the column is required
+	 * @param {sap.ui.mdc.table.Column} oMDCColumn The <code>Column</code> instance for which the width is calculated
 	 * @return {string} The calculated column width
 	 * @since 1.95
 	 * @private
 	 */
-	 PropertyHelper.prototype._calcColumnWidth = function (oProperty, sHeader, bRequired) {
+	 PropertyHelper.prototype._calcColumnWidth = function (oProperty, oMDCColumn) {
 		var mWidthCalculation = Object.assign({
 			gap: 0,
 			includeLabel: true,
 			truncateLabel: true,
 			excludeProperties: [],
-			required: bRequired
+			required: oMDCColumn.getRequired()
 		}, oProperty.visualSettings && oProperty.visualSettings.widthCalculation);
+
+		var oMDCTable = oMDCColumn.getParent();
+		if (oMDCTable && oMDCTable._isOfType("TreeTable") && oMDCTable.indexOfColumn(oMDCColumn) == 0) {
+			mWidthCalculation.treeColumn = true;
+		}
 
 		var aTypes = [];
 		if (oProperty.isComplex()) {
@@ -392,7 +396,7 @@ sap.ui.define([
 			mWidthCalculation.gap += 2.5;
 		}
 
-		sHeader = (mWidthCalculation.includeLabel) ? sHeader || oProperty.label : "";
+		var sHeader = (mWidthCalculation.includeLabel) ? oMDCColumn.getHeader() || oProperty.label : "";
 		return TableUtil.calcColumnWidth(aTypes, sHeader, mWidthCalculation);
 	};
 

@@ -3847,7 +3847,7 @@ sap.ui.define([
 			var sPropertyName = aColumns[3].getDataProperty();
 			var oProperty = oPropertyHelper.getProperty(sPropertyName);
 
-			var sWidth = oPropertyHelper._calcColumnWidth(oProperty, fPadding);
+			var sWidth = oPropertyHelper._calcColumnWidth(oProperty, aColumns[3]);
 			assert.equal(sWidth, aColumns[3]._oSettingsModel.getProperty("/calculatedWidth"), "calculatedWidth for numberValue width is " + sWidth);
 			assert.equal(sWidth, getInnerColumnWidth(aColumns[3]), "Column numberValue width is " + sWidth);
 
@@ -3875,6 +3875,61 @@ sap.ui.define([
 
 			// 12th column. required "*" is added to column
 			assert.ok(check("Yes *", parseFloat(getInnerColumnWidth(aColumns[12])) - fPadding - 0.125 /* subtract padding from marker */));
+		}.bind(this));
+	});
+
+	QUnit.test("Test enableAutoColumnWidth for TreeTable type columns", function(assert) {
+
+		function setupTable(oTable) {
+			MDCQUnitUtils.stubPropertyInfos(oTable, [
+				{
+					name: "firstName",
+					path: "firstName",
+					label: "First name",
+					typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+						maxLength: 30
+					})
+				}, {
+					name: "lastName",
+					path: "lastName",
+					label: "Last name",
+					typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+						maxLength: 30
+					})
+				}
+			]);
+
+			oTable.setEnableAutoColumnWidth(true);
+			oTable.addColumn(new Column({
+				header: "First name",
+				dataProperty: "firstName"
+			}));
+			oTable.addColumn(new Column({
+				header: "Last name",
+				dataProperty: "lastName"
+			}));
+			return oTable;
+		}
+
+		return setupTable(this.oTable)._fullyInitialized().then(function() {
+			this.oTreeTable = new Table({
+				type: "TreeTable",
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "/testPath"
+					}
+				}
+			});
+
+			return setupTable(this.oTreeTable)._fullyInitialized();
+		}.bind(this)).then(function() {
+			var aTreeTableColumns = this.oTreeTable.getColumns().map(function(oColumn) { return oColumn.getInnerColumn(); });
+			var aResponsiveTableColumns = this.oTable.getColumns().map(function(oColumn) { return oColumn.getInnerColumn(); });
+
+			assert.ok(parseFloat(aTreeTableColumns[0].getWidth()) > parseFloat(aResponsiveTableColumns[0].getWidth()), "The first tree column has larger width");
+			assert.equal(aTreeTableColumns[1].getWidth(), aResponsiveTableColumns[1].getWidth(), "The column width is not changed for the the second column");
+			this.oTreeTable.destroy();
 		}.bind(this));
 	});
 
