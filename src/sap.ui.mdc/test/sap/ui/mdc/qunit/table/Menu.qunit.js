@@ -202,8 +202,8 @@ sap.ui.define([
 			});
 		}).then(function() {
 			var oQuickAction = oTable._oQuickActionContainer.getQuickActions()[0];
-			assert.equal(oQuickAction.getLabel(), Core.getLibraryResourceBundle("sap.m").getText("table.COLUMN_MENU_RESIZE"),
-				"QuickAction resize column");
+			assert.equal(oQuickAction.getLabel(), "", "label is empty");
+			assert.equal(oQuickAction.getContent()[0].getText(), Core.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_RESIZE"), "button text is correct");
 
 			var oColumnResizer = oTable._oTable.getDependents()[0];
 			oColumnResizer.startResizing = function() {};
