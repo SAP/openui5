@@ -151,7 +151,7 @@ sap.ui.define([
 			oList.attachEvent("updateFinished", this._listUpdateFinishedHandler);
 
 			if (this.isServerSide()) {
-				oContent.getAggregation("_loadingProvider")._oContentPlaceholder.addDelegate({
+				oContent.getAggregation("_loadingPlaceholder").addDelegate({
 					onAfterRendering: this.onPlaceholderAfterRendering.bind(this)
 				});
 			}
