@@ -162,6 +162,8 @@ sap.ui.define([
 	TableTypeBase.prototype.createColumnResizeMenuItem = function() {};
 	TableTypeBase.prototype.updateRowActions = function() {};
 	TableTypeBase.prototype.updateSortIndicator = function(oColumn, sSortOrder) {};
+	TableTypeBase.prototype.getSelectedContexts = function() {};
+	TableTypeBase.prototype.clearSelection = function() {};
 
 	return TableTypeBase;
 });

@@ -487,5 +487,26 @@ sap.ui.define([
 		oGridColumn.setSortOrder(sSortOrder === SortOrder.None ? undefined : sSortOrder);
 	};
 
+	GridTableType.prototype.getSelectedContexts = function() {
+		var oGridTable = this.getInnerTable();
+		var oMultiSelectionPlugin = this._getMultiSelectionPlugin();
+
+		if (!oMultiSelectionPlugin) {
+			return [];
+		}
+
+		return oMultiSelectionPlugin.getSelectedIndices().map(function(iIndex) {
+			return oGridTable.getContextByIndex(iIndex);
+		}, this);
+	};
+
+	GridTableType.prototype.clearSelection = function() {
+		var oMultiSelectionPlugin = this._getMultiSelectionPlugin();
+
+		if (oMultiSelectionPlugin) {
+			oMultiSelectionPlugin.clearSelection();
+		}
+	};
+
 	return GridTableType;
 });

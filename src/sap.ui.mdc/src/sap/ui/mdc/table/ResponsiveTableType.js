@@ -593,5 +593,23 @@ sap.ui.define([
 		oColumn.getInnerColumn().setSortIndicator(sSortOrder);
 	};
 
+	ResponsiveTableType.prototype.getSelectedContexts = function() {
+		var oResponsiveTable = this.getInnerTable();
+
+		if (!oResponsiveTable) {
+			return [];
+		}
+
+		return oResponsiveTable.getSelectedContexts();
+	};
+
+	ResponsiveTableType.prototype.clearSelection = function() {
+		var oResponsiveTable = this.getInnerTable();
+
+		if (oResponsiveTable) {
+			oResponsiveTable.removeSelections(true);
+		}
+	};
+
 	return ResponsiveTableType;
 });
