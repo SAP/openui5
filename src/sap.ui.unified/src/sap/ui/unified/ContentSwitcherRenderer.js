@@ -32,7 +32,7 @@ sap.ui.define([
 	ContentSwitcherRenderer.render = function(oRm, oControl){
 		var sId            = oControl.getId();
 		var sAnimation     = oControl.getAnimation();
-		if (!Configuration.getAnimation()) {
+		if (Configuration.getAnimationMode() === Configuration.AnimationMode.none) {
 			sAnimation = ContentSwitcherAnimation.None;
 		}
 

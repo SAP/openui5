@@ -33,7 +33,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Configuration"],
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiUfdSpltCont");
 		rm.addClass("sapUiUfdSpltCont" + (bVertical ? "V" : "H"));
-		if (Configuration.getAnimation()) {
+		if (Configuration.getAnimationMode() !== Configuration.AnimationMode.none) {
 			rm.addClass("sapUiUfdSpltContAnim");
 		}
 
