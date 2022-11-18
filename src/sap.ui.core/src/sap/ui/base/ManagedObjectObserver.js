@@ -257,7 +257,8 @@ sap.ui.define([
 
 	// private implementation
 	var Observer = {},
-		mTargets = Object.create(null);
+		mTargets = Object.create(null),
+		mListeners = new WeakMap();
 
 	// observer interface for ManagedObject implementation.
 
@@ -408,14 +409,25 @@ sap.ui.define([
 				type: "destroy"
 			};
 		});
+		cleanupListener(oManagedObject);
+	};
+
+	// cleanup listener map
+	function cleanupListener(oManagedObject) {
 		var sId = oManagedObject.getId();
 		if (mTargets[sId]) {
 			// detachEvent doesn't fail if the listener is not registered
 			oManagedObject.detachEvent("EventHandlerChange", fnHandleEventChange);
+			for (var i = 0; i < mTargets[sId].listeners.length; i++) {
+				var mTargetSet = mListeners.get(mTargets[sId].listeners[i]);
+				if (mTargetSet) {
+					mTargetSet.delete(sId);
+				}
+			}
 			delete mTargets[sId];
 		}
 		delete oManagedObject._observer;
-	};
+	}
 
 	// handles the change event and pipelines it to the ManagedObjectObservers that are attached as listeners
 	function handleChange(sType, oObject, sName, fnCreateChange) {
@@ -511,8 +523,12 @@ sap.ui.define([
 	// removes a given listener by looking at all registered targets and their listeners.
 	// if there are no more listeners to a target, the registered target is removed from the mTargets map.
 	function destroy(oListener) {
-		for (var n in mTargets) {
-			var oTargetConfig = mTargets[n];
+		var mTargetSet = mListeners.get(oListener);
+		if (!mTargetSet) {
+			return;
+		}
+		mTargetSet.forEach(function(sId) {
+			var oTargetConfig = mTargets[sId];
 			for (var i = 0; i < oTargetConfig.listeners.length; i++) {
 				if (oTargetConfig.listeners[i] === oListener) {
 					oTargetConfig.listeners.splice(i, 1);
@@ -520,10 +536,11 @@ sap.ui.define([
 				}
 			}
 			if (oTargetConfig.listeners && oTargetConfig.listeners.length === 0) {
-				delete mTargets[n];
+				delete mTargets[sId];
 				oTargetConfig.object._observer = undefined;
 			}
-		}
+		});
+		mListeners.delete(oListener);
 	}
 
 	// update a complete configuration, create one if needed or remove it
@@ -531,6 +548,7 @@ sap.ui.define([
 
 		var sId = oTarget.getId(),
 			oTargetConfig = mTargets[sId],
+			mTargetSet = mListeners.get(oListener) || new Set(),
 			oCurrentConfig,
 			iIndex;
 		if (bRemove) {
@@ -551,6 +569,11 @@ sap.ui.define([
 					object: oTarget
 				};
 			}
+			if (mTargetSet.size === 0) {
+				mListeners.set(oListener, mTargetSet);
+			}
+			mTargetSet.add(sId);
+
 			iIndex = oTargetConfig.listeners.indexOf(oListener);
 			if (iIndex === -1) {
 				// not registered, push listener and configuration
@@ -606,8 +629,7 @@ sap.ui.define([
 					!hasObserverFor(oTarget, "destroy") &&
 					!hasObserverFor(oTarget, "parent") &&
 					!hasObserverFor(oTarget, "bindings")) {
-				delete oTarget._observer;
-				delete mTargets[sId];
+				cleanupListener(oTarget);
 			}
 		} else if (!oTarget._observer && !bRemove) {
 			//is any config listening to events
