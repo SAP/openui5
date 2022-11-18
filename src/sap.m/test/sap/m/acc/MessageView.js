@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MessagePopoverItem",
+	"sap/m/MessageItem",
 	"sap/m/MessageView",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Dialog",
@@ -18,7 +18,7 @@ sap.ui.define([
 ], function(
 	Log,
 	JSONModel,
-	MessagePopoverItem,
+	MessageItem,
 	MessageView,
 	InvisibleText,
 	Dialog,
@@ -86,7 +86,7 @@ sap.ui.define([
 	var oModel = new JSONModel();
 	oModel.setData(aMockMessages);
 
-	var oMessageTemplate = new MessagePopoverItem({
+	var oMessageTemplate = new MessageItem({
 			type: "{type}",
 			title: "{title}",
 			description: "{description}",

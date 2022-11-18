@@ -7,9 +7,9 @@ sap.ui.define([
 	'sap/ui/model/Filter',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/MessagePopover',
-	'sap/m/MessagePopoverItem',
+	'sap/m/MessageItem',
 	'sap/m/MessageBox'
-], function(Core, coreLibrary, ControlMessageProcessor, Message, Controller, Filter, JSONModel, MessagePopover, MessagePopoverItem, MessageBox) {
+], function(Core, coreLibrary, ControlMessageProcessor, Message, Controller, Filter, JSONModel, MessagePopover, MessageItem, MessageBox) {
 	"use strict";
 
 	var MessageType = coreLibrary.MessageType;
@@ -42,7 +42,7 @@ sap.ui.define([
 				this._messagePopover = new MessagePopover({
 					items: {
 						path: "message>/",
-						template: new MessagePopoverItem({
+						template: new MessageItem({
 							description: "{message>description}",
 							type: "{message>type}",
 							title: "{message>message}"

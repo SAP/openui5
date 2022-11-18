@@ -6,10 +6,10 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/Device',
 	'sap/m/MessagePopover',
-	'sap/m/MessagePopoverItem',
+	'sap/m/MessageItem',
 	'sap/m/MessageToast',
 	"sap/ui/core/Core"
-], function(coreLibrary, Controller, ControlMessageProcessor, Message, JSONModel, Device, MessagePopover, MessagePopoverItem, MessageToast, oCore) {
+], function(coreLibrary, Controller, ControlMessageProcessor, Message, JSONModel, Device, MessagePopover, MessageItem, MessageToast, oCore) {
 	"use strict";
 
 	var MessageType = coreLibrary.MessageType;
@@ -43,7 +43,7 @@ sap.ui.define([
 				this._messagePopover = new MessagePopover({
 					items: {
 						path: "message>/",
-						template: new MessagePopoverItem({
+						template: new MessageItem({
 							description: "{message>description}",
 							type: "{message>type}",
 							title: "{message>message}"

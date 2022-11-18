@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/MessagePopover",
 	"sap/m/Button",
-	"sap/m/MessagePopoverItem",
 	"sap/ui/base/ObjectPool",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/library",
@@ -20,7 +19,6 @@ sap.ui.define([
 	qutils,
 	MessagePopover,
 	Button,
-	MessagePopoverItem,
 	ObjectPool,
 	JSONModel,
 	coreLibrary,
@@ -696,8 +694,13 @@ sap.ui.define([
 	 * @deprecated Since version 1.46, public API of successor is tested in MessageItem.qumit.js
 	 */
 	QUnit.module("MessagePopoverItem Public API", {
-		beforeEach: function() {
-			this.oMessagePopoverItem = new MessagePopoverItem();
+		beforeEach: function(assert) {
+			var done = assert.async();
+			// load MessagePopoverItem dynamically to decouple the remainder of the test from it
+			sap.ui.require(["sap/m/MessagePopoverItem"], function(MessagePopoverItem) {
+				this.oMessagePopoverItem = new MessagePopoverItem();
+				done();
+			}.bind(this));
 		}, afterEach: function() {
 			this.oMessagePopoverItem.destroy();
 		}

@@ -22,7 +22,7 @@ sap.ui.define([
 
 				iPressTheErrorMessage: function () {
 					return this.waitFor({
-						controlType: "sap.m.MessagePopoverItem",
+						controlType: "sap.m.MessageItem",
 						viewName: sViewName,
 						matchers: new BindingPath({
 							modelName: "alerts",

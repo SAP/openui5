@@ -1,14 +1,14 @@
 sap.ui.define([
 	"sap/m/App",
-	"sap/ui/model/json/JSONModel",
-	"sap/m/MessagePopoverItem",
-	"sap/m/MessagePopover",
 	"sap/m/Button",
 	"sap/m/CheckBox",
+	"sap/m/MessageItem",
+	"sap/m/MessagePopover",
 	"sap/m/Page",
 	"sap/m/Toolbar",
-	"sap/m/ToolbarSpacer"
-], function(App, JSONModel, MessagePopoverItem, MessagePopover, Button, CheckBox, Page, Toolbar, ToolbarSpacer) {
+	"sap/m/ToolbarSpacer",
+	"sap/ui/model/json/JSONModel"
+], function(App, Button, CheckBox, MessageItem, MessagePopover, Page, Toolbar, ToolbarSpacer, JSONModel) {
 	"use strict";
 
 	var oApp = new App("myApp", {
@@ -39,7 +39,7 @@ sap.ui.define([
 
 	oModel.setData(oData);
 
-	var oTemplate = new MessagePopoverItem({
+	var oTemplate = new MessageItem({
 			title: "{title}",
 			type: "{type}",
 			description: "{description}"

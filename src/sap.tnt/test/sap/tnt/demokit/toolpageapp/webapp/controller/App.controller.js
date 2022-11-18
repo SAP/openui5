@@ -6,7 +6,7 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Link',
 	'sap/m/NotificationListItem',
-	'sap/m/MessagePopoverItem',
+	'sap/m/MessageItem',
 	'sap/ui/core/CustomData',
 	'sap/m/MessageToast',
 	'sap/ui/Device',
@@ -20,7 +20,7 @@ sap.ui.define([
 	Button,
 	Link,
 	NotificationListItem,
-	MessagePopoverItem,
+	MessageItem,
 	CustomData,
 	MessageToast,
 	Device,
@@ -45,7 +45,7 @@ sap.ui.define([
 		onInit: function() {
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 
-			// if the app starts on desktop devices with small or meduim screen size, collaps the sid navigation
+			// if the app starts on desktop devices with small or medium screen size, collaps the side navigation
 			if (Device.resize.width <= 1024) {
 				this.onSideNavButtonPress();
 			}
@@ -248,7 +248,7 @@ sap.ui.define([
 				}.bind(this)
 			});
 
-			var oMessageItem = new MessagePopoverItem({
+			var oMessageItem = new MessageItem({
 				title: oBindingObject.title,
 				subtitle: oBindingObject.subTitle,
 				description: oBindingObject.description,
@@ -259,7 +259,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns a promises which resolves with the resource bundle value of the given key <code>sI18nKey</code>
+		 * Returns a promise which resolves with the resource bundle value of the given key <code>sI18nKey</code>
 		 *
 		 * @public
 		 * @param {string} sI18nKey The key
