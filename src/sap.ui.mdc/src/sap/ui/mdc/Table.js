@@ -1262,15 +1262,13 @@ sap.ui.define([
 				vNoData.setIllustrationType(IllustratedMessageType.EmptyList);
 				vNoData.setTitle(oRb.getText("table.NO_DATA"));
 			}
+		} else if (isFiltered(this)) {
+			vNoData.setTitle(oRb.getText("table.NO_RESULTS_TITLE"));
+			vNoData.setDescription(oRb.getText("table.NO_RESULTS_DESCRIPTION"));
+			vNoData.setIllustrationType(IllustratedMessageType.NoFilterResults);
 		} else {
-			if (isFiltered(this)) {
-				vNoData.setTitle(oRb.getText("table.NO_RESULTS_TITLE"));
-				vNoData.setDescription(oRb.getText("table.NO_RESULTS_DESCRIPTION"));
-				vNoData.setIllustrationType(IllustratedMessageType.NoFilterResults);
-			} else {
-				vNoData.setTitle(oRb.getText("table.NO_DATA")).setDescription(" ");
-				vNoData.setIllustrationType(IllustratedMessageType.NoEntries);
-			}
+			vNoData.setTitle(oRb.getText("table.NO_DATA")).setDescription(" ");
+			vNoData.setIllustrationType(IllustratedMessageType.NoEntries);
 		}
 		this._sLastNoDataTitle = vNoData.getTitle();
 	};
@@ -2240,18 +2238,7 @@ sap.ui.define([
 	 * @experimental The API is subject to change.
 	 */
 	Table.prototype.getSelectedContexts = function() {
-		if (this._oTable) {
-			if (this._isOfType(TableType.ResponsiveTable)) {
-				return this._oTable.getSelectedContexts();
-			}
-
-			var aSelectedIndices = this._oTable.getPlugins()[0].getSelectedIndices();
-
-			return aSelectedIndices.map(function(iIndex) {
-				return this._oTable.getContextByIndex(iIndex);
-			}, this);
-		}
-		return [];
+		return this._getType().getSelectedContexts();
 	};
 
 	/**
@@ -2262,15 +2249,9 @@ sap.ui.define([
 	 * MDC_PUBLIC_CANDIDATE
 	 */
 	Table.prototype.clearSelection = function() {
-		if (this._oTable) {
-			if (this._isOfType(TableType.ResponsiveTable)) {
-				this._oTable.removeSelections(true);
-			} else {
-				this._bSelectionChangedByAPI = true;
-				this._oTable.getPlugins()[0].clearSelection();
-				this._bSelectionChangedByAPI = false;
-			}
-		}
+		this._bSelectionChangedByAPI = true;
+		this._getType().clearSelection();
+		this._bSelectionChangedByAPI = false;
 	};
 
 	Table.prototype._registerInnerFilter = function(oFilter) {
