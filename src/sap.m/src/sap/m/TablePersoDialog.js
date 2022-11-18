@@ -304,7 +304,7 @@ sap.ui.define([
 			initialFocus: (Device.system.desktop ? this._oInnerTable : null),
 			content : [this._oInnerTable ],
 			subHeader : oSubHeader,
-			leftButton : new Button(this.getId() + "-buttonOk", {
+			beginButton : new Button(this.getId() + "-buttonOk", {
 				text : this._oRb.getText("PERSODIALOG_OK"),
 				press : function () {
 					that._oDialog.close();
@@ -314,7 +314,7 @@ sap.ui.define([
 				},
 				type : ButtonType.Emphasized
 			}),
-			rightButton : new Button(this.getId() + "-buttonCancel", {
+			endButton : new Button(this.getId() + "-buttonCancel", {
 				text: this._oRb.getText("PERSODIALOG_CANCEL"),
 				press: function () {
 					that._oDialog.close();

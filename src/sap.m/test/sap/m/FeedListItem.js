@@ -140,8 +140,8 @@ sap.ui.define([
 		placement: PlacementType.Auto,
 		title: "Popover",
 		showHeader: true,
-		leftButton: oLeftButton,
-		rightButton: oRightButton,
+		beginButton: oLeftButton,
+		endButton: oRightButton,
 		beforeOpen: function(oEvent) {
 			Log.info("before popover opens!!!");
 		},
