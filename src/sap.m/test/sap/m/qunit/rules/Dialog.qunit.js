@@ -10,7 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Dialog rule tests", {
-		setup: function () {
+		beforeEach: function () {
 
 			var dialog1 = new Dialog({
 				title: "Dialog 1",
@@ -87,7 +87,7 @@ sap.ui.define([
 
 
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.b1.destroy();
 			this.b2.destroy();
 			this.b3.destroy();

@@ -10,7 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Input rule tests", {
-		setup: function () {
+		beforeEach: function () {
 			this.page = new Page({
 				content: [
 					new Panel({
@@ -28,7 +28,7 @@ sap.ui.define([
 			});
 			this.page.placeAt("qunit-fixture");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.page.destroy();
 		}
 	});

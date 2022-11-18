@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("ObjectHeader markers aggregation with markFlagged: true", {
-		setup: function () {
+		beforeEach: function () {
 			this.page = new Page("objectHeaderContext", {
 				content: new ObjectHeader({
 					markers: new ObjectMarker(),
@@ -21,7 +21,7 @@ sap.ui.define([
 			});
 			this.page.placeAt("qunit-fixture");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.page.destroy();
 		}
 	});
@@ -35,7 +35,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ObjectHeader markers aggregation with markFavorite: true", {
-		setup: function () {
+		beforeEach: function () {
 			this.page = new Page("objectHeaderContext", {
 				content: new ObjectHeader({
 					markers: new ObjectMarker(),
@@ -44,7 +44,7 @@ sap.ui.define([
 			});
 			this.page.placeAt("qunit-fixture");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.page.destroy();
 		}
 	});
@@ -58,7 +58,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ObjectHeader statuses with set firstStatus", {
-		setup: function () {
+		beforeEach: function () {
 			this.page = new Page("objectHeaderContext", {
 				content: new ObjectHeader({
 					statuses: new ObjectStatus(),
@@ -67,7 +67,7 @@ sap.ui.define([
 			});
 			this.page.placeAt("qunit-fixture");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.page.destroy();
 		}
 	});
@@ -81,7 +81,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ObjectHeader statuses with set secondStatus", {
-		setup: function () {
+		beforeEach: function () {
 			this.page = new Page("objectHeaderContext", {
 				content: new ObjectHeader({
 					statuses: new ObjectStatus(),
@@ -90,7 +90,7 @@ sap.ui.define([
 			});
 			this.page.placeAt("qunit-fixture");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.page.destroy();
 		}
 	});
@@ -104,7 +104,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ObjectHeader condensed set to true with responsive - true", {
-		setup: function () {
+		beforeEach: function () {
 			this.page = new Page("objectHeaderContext", {
 				content: new ObjectHeader({
 					condensed: true,
@@ -113,7 +113,7 @@ sap.ui.define([
 			});
 			this.page.placeAt("qunit-fixture");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.page.destroy();
 		}
 	});
@@ -127,7 +127,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ObjectHeader fullScreenOptimized set to true with responsive - false", {
-		setup: function () {
+		beforeEach: function () {
 			this.page = new Page("objectHeaderContext", {
 				content: new ObjectHeader({
 					fullScreenOptimized: true,
@@ -136,7 +136,7 @@ sap.ui.define([
 			});
 			this.page.placeAt("qunit-fixture");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.page.destroy();
 		}
 	});
@@ -150,7 +150,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ObjectHeader additionalNumbers aggregation used with responsive - true", {
-		setup: function () {
+		beforeEach: function () {
 			this.page = new Page("objectHeaderContext", {
 				content: new ObjectHeader({
 					additionalNumbers: new ObjectNumber(),
@@ -159,7 +159,7 @@ sap.ui.define([
 			});
 			this.page.placeAt("qunit-fixture");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.page.destroy();
 		}
 	});
@@ -173,7 +173,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ObjectHeader headerContainer aggregation used with responsive - false", {
-		setup: function () {
+		beforeEach: function () {
 			this.page = new Page("objectHeaderContext", {
 				content: new ObjectHeader({
 					headerContainer: new HeaderContainer(),
@@ -182,7 +182,7 @@ sap.ui.define([
 			});
 			this.page.placeAt("qunit-fixture");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.page.destroy();
 		}
 	});

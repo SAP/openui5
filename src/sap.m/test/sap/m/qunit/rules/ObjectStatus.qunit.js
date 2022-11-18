@@ -8,7 +8,7 @@ sap.ui.define([
 		"use strict";
 
 		QUnit.module("ObjectStatus with active: true and no icon or text", {
-			setup: function () {
+			beforeEach: function () {
 				this.page = new Page("objectStatusContext", {
 					content: new ObjectStatus({
 						active: true
@@ -16,7 +16,7 @@ sap.ui.define([
 				});
 				this.page.placeAt("qunit-fixture");
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.page.destroy();
 			}
 		});
