@@ -108,7 +108,13 @@ sap.ui.define([
 					var aContexts = [];
 					for (var i = 0; i < iLength; i++) {
 						aContexts.push({
-							context: "test" + i
+							context: "test" + i,
+							getProperty: function(sProperty) {
+								switch (sProperty) {
+									case "@$ui5.node.level": return 0;
+									case "@$ui5.node.isExpanded": return true;
+								}
+							}
 						});
 					}
 					return aContexts;
@@ -155,7 +161,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("#getContextByIndex", function(assert) {
-		assert.deepEqual(this.oProxy.getContextByIndex(0), {context: "test0"}, "getContextByIndex returns context object");
+		assert.equal(this.oProxy.getContextByIndex(0).context, "test0", "getContextByIndex returns correct context object");
 	});
 
 	QUnit.test("#isExpanded", function(assert) {
@@ -172,14 +178,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("#getContexts", function(assert) {
-		var fnGetLevelStub = sinon.stub(this.oProxy, "getLevel");
-		var fnIsLeafStub = sinon.stub(this.oProxy, "isLeaf");
-		var fnIsExpandedStub = sinon.stub(this.oProxy, "isExpanded");
-
-		fnGetLevelStub.returns(0);
-		fnIsLeafStub.returns(true);
-		fnIsExpandedStub.returns(true);
-
 		var aContexts = this.oProxy.getContexts(0, 3);
 
 		assert.equal(aContexts.length, 3, "getContexts returns array with 3 objects");
@@ -187,13 +185,9 @@ sap.ui.define([
 			assert.equal(oContext.context, "test" + iIndex, "context property is set correctly");
 			assert.ok(oContext["_mProxyInfo"], "proxyInfo object exists");
 			assert.equal(oContext["_mProxyInfo"].level, 0, "level is 0");
-			assert.ok(oContext["_mProxyInfo"].isLeaf, "isLeaf is true");
+			assert.ok(!oContext["_mProxyInfo"].isLeaf, "isLeaf is false");
 			assert.ok(oContext["_mProxyInfo"].isExpanded, "isExpanded is true");
 		});
-
-		fnGetLevelStub.restore();
-		fnIsLeafStub.restore();
-		fnIsExpandedStub.restore();
 	});
 
 	QUnit.test("#expand", function(assert) {
@@ -311,7 +305,8 @@ sap.ui.define([
 					for (var i = 0; i < iLength; i++) {
 						aNodes.push({
 							context: {node: "test" + i},
-							nodeState: "nodeState" + i
+							nodeState: "nodeState" + i,
+							level: 0
 						});
 					}
 					return aNodes;
@@ -368,14 +363,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("#getContexts", function(assert) {
-		var fnGetLevelStub = sinon.stub(this.oProxy, "getLevel");
-		var fnIsLeafStub = sinon.stub(this.oProxy, "isLeaf");
-		var fnIsExpandedStub = sinon.stub(this.oProxy, "isExpanded");
-
-		fnGetLevelStub.returns(0);
-		fnIsLeafStub.returns(true);
-		fnIsExpandedStub.returns(true);
-
 		var aContexts = this.oProxy.getContexts(0, 3);
 
 		assert.equal(aContexts.length, 3, "getContexts returns array with 3 objects");
@@ -383,14 +370,10 @@ sap.ui.define([
 			assert.equal(oContext.node, "test" + iIndex, "context property is set correctly");
 			assert.ok(oContext["_mProxyInfo"], "proxyInfo object exists");
 			assert.equal(oContext["_mProxyInfo"].level, 1, "level is 1");
-			assert.ok(oContext["_mProxyInfo"].isLeaf, "isLeaf is true");
+			assert.ok(!oContext["_mProxyInfo"].isLeaf, "isLeaf is false");
 			assert.ok(oContext["_mProxyInfo"].isExpanded, "isExpanded is true");
 			assert.ok(oContext["_mProxyInfo"].nodeState, "nodeState" + iIndex, "node state is set correctly");
 		});
-
-		fnGetLevelStub.restore();
-		fnIsLeafStub.restore();
-		fnIsExpandedStub.restore();
 	});
 
 	QUnit.test("#expand", function(assert) {
@@ -528,7 +511,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("#getLevel", function(assert) {
-		assert.equal(this.oProxy.getLevel(0), 0, "getLevel returns 0");
+		assert.equal(this.oProxy.getLevel(0), 1, "getLevel returns 1");
 	});
 
 	QUnit.test("#getSiblingCount", function(assert) {
