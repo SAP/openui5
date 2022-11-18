@@ -2015,7 +2015,7 @@ sap.ui.define([
 			content: [
 				oMessageContent
 			],
-			leftButton:
+			beginButton:
 				new Button({
 					text: "Reject",
 					type: ButtonType.Reject,
@@ -2023,7 +2023,7 @@ sap.ui.define([
 						oMessageDialog1.close();
 					}
 				}),
-			rightButton:
+			endButton:
 				new Button({
 					text: "Accept",
 					type: ButtonType.Accept,

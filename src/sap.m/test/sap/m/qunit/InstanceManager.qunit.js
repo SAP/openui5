@@ -127,7 +127,7 @@ sap.ui.define([
 			new HTML({content:"<p>Do you want to start a new world domination campaign?</p>"})
 		],
 		icon: IMAGE_PATH + "SAPUI5Icon.png",
-		leftButton:
+		beginButton:
 			new Button("leftButton", {
 				text: "Reject",
 				type: ButtonType.Reject,
@@ -135,7 +135,7 @@ sap.ui.define([
 					oDialog.close();
 				}
 			}),
-		rightButton:
+		endButton:
 			new Button("rightButton", {
 				text: "Accept",
 				type: ButtonType.Accept,
