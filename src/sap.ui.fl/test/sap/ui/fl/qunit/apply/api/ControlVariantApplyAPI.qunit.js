@@ -1,10 +1,10 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/util/restricted/_omit",
 	"sap/base/Log",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
@@ -13,10 +13,10 @@ sap.ui.define([
 	"sap/ui/thirdparty/hasher",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	_omit,
 	Log,
 	Component,
 	URLHandler,
-	VariantManagementState,
 	ControlVariantApplyAPI,
 	VariantManagement,
 	VariantModel,
@@ -32,11 +32,7 @@ sap.ui.define([
 	function stubTechnicalParameterValues(aUrlTechnicalParameters) {
 		sandbox.stub(this.oModel, "getLocalId").withArgs(this.oDummyControl.getId(), this.oAppComponent).returns("variantMgmtId1");
 		sandbox.spy(URLHandler, "update");
-		sandbox.stub(VariantManagementState, "getVariant").withArgs({
-			vmReference: "variantMgmtId1",
-			vReference: "variant1",
-			reference: "someComponentName"
-		}).returns(true);
+		sandbox.stub(this.oModel, "getVariant").withArgs("variant1", "variantMgmtId1").returns(true);
 		sandbox.stub(hasher, "replaceHash");
 		this.fnParseShellHashStub = sandbox.stub().callsFake(function() {
 			if (!this.bCalled) {
@@ -152,11 +148,10 @@ sap.ui.define([
 			ControlVariantApplyAPI.clearVariantParameterInURL({control: this.oDummyControl});
 
 			assert.ok(this.fnParseShellHashStub.calledTwice, "then variant parameter values were requested; once for read and write each");
-			assert.deepEqual(URLHandler.update.getCall(0).args[0], {
+			assert.deepEqual(_omit(URLHandler.update.getCall(0).args[0], "model"), {
 				parameters: [aUrlTechnicalParameters[0]],
 				updateURL: true,
 				updateHashEntry: true,
-				model: this.oModel,
 				silent: false
 			}, "then URLHandler.update called with the desired arguments");
 		});

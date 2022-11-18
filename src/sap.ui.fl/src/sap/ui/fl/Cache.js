@@ -3,14 +3,16 @@
  */
 
 sap.ui.define([
+	"sap/base/util/ObjectPath",
+	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/base/Log"
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI"
 ],
 function(
+	ObjectPath,
+	Log,
 	FlexState,
-	ControlVariantApplyAPI,
-	Log
+	ControlVariantApplyAPI
 ) {
 	"use strict";
 
@@ -29,17 +31,34 @@ function(
 	 */
 	var Cache = function() {};
 
+	function getChangeCategory(oChangeDefinition) {
+		switch (oChangeDefinition.fileType) {
+			case "change":
+				if (oChangeDefinition.selector && oChangeDefinition.selector.persistencyKey) {
+					return ["comp", "changes"];
+				}
+				if (oChangeDefinition.variantReference) {
+					return "variantDependentControlChanges";
+				}
+				return "changes";
+			case "ctrl_variant":
+				return "variants";
+			case "ctrl_variant_change":
+				return "variantChanges";
+			case "ctrl_variant_management_change":
+				return "variantManagementChanges";
+			case "variant":
+				return ["comp", "variants"];
+			default:
+				return undefined;
+		}
+	}
+
 	function _getArray(sComponentName, oChange) {
 		// FIXME Don't mutate the storage response
 		var mStorageResponse = FlexState.getFlexObjectsFromStorageResponse(sComponentName);
-
-		if (oChange.fileType === "variant") {
-			return mStorageResponse.comp.variants;
-		}
-		if (oChange.selector && oChange.selector.persistencyKey) {
-			return mStorageResponse.comp.changes;
-		}
-		return mStorageResponse.changes;
+		var vPath = getChangeCategory(oChange);
+		return ObjectPath.get(vPath, mStorageResponse);
 	}
 
 	function _concatControlVariantIdWithCacheKey(sCacheKey, sControlVariantIds) {
@@ -154,6 +173,8 @@ function(
 			return;
 		}
 		aChanges.push(oChange);
+
+		FlexState.getFlexObjectsDataSelector().checkUpdate({ reference: oComponent.name });
 	};
 
 	/**
@@ -176,6 +197,8 @@ function(
 				break;
 			}
 		}
+
+		FlexState.getFlexObjectsDataSelector().checkUpdate({ reference: oComponent.name });
 	};
 
 	/**
@@ -198,6 +221,8 @@ function(
 				break;
 			}
 		}
+
+		FlexState.getFlexObjectsDataSelector().checkUpdate({ reference: oComponent.name });
 	};
 
 	/**
@@ -218,14 +243,7 @@ function(
 			return aChangeNames.indexOf(oChange.fileName) === -1;
 		});
 
-		var oVariantsState = FlexState.getVariantsState(oComponent.name);
-		Object.keys(oVariantsState).forEach(function(sId) {
-			oVariantsState[sId].variants.forEach(function(oVariant) {
-				oVariant.controlChanges = oVariant.controlChanges.filter(function(oChange) {
-					return aChangeNames.indexOf(oChange.getId()) === -1;
-				});
-			});
-		});
+		FlexState.getFlexObjectsDataSelector().checkUpdate({ reference: oComponent.name });
 	};
 
 	return Cache;

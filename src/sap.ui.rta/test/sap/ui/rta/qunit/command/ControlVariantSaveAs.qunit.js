@@ -72,6 +72,7 @@ sap.ui.define([
 			var mFlexSettings = {layer: Layer.CUSTOMER};
 			var oSourceVariantReference = "mySourceReference";
 			var oCreateComponentStub = sandbox.stub(ContextSharingAPI, "createComponent").returns("myContextSharing");
+			var oInvalidationStub = sandbox.stub(this.oModel, "invalidateMap");
 			this.oOpenDialogStub.callsFake(function(sStyleClass, oContextSharing) {
 				assert.strictEqual(sStyleClass, "myRtaStyleClass", "the style class was passed");
 				assert.strictEqual(oContextSharing, "myContextSharing", "the context sharing component was passed");
@@ -108,9 +109,7 @@ sap.ui.define([
 					fileType: "change"
 				})]
 			});
-			var oCheckStub = sandbox.stub(this.oModel, "checkDirtyStateForControlModels");
 			var oRemoveStub = sandbox.stub(this.oModel, "removeVariant").resolves();
-			var oCheckUpdateStub = sandbox.stub(this.oModel, "checkUpdate");
 			var oDeleteChangeStub = sandbox.stub(this.oModel.oFlexController, "deleteChange");
 			var oAddChangeStub = sandbox.stub(this.oModel.oFlexController, "addPreparedChange");
 			var oApplyChangeStub = sandbox.stub(this.oModel.oFlexController, "applyChange");
@@ -147,8 +146,7 @@ sap.ui.define([
 				assert.strictEqual(this.oHandleSaveStub.callCount, 1, "the model was called");
 				assert.strictEqual(this.oHandleSaveStub.firstCall.args[0].getId(), "variantMgmtId1", "the VM Control is the first argument");
 				assert.deepEqual(this.oHandleSaveStub.firstCall.args[1], mExpectedParams, "the property bag was enhanced");
-				assert.strictEqual(oCheckStub.callCount, 1, "the check dirty state function was called");
-				assert.deepEqual(oCheckStub.firstCall.args[0], ["variantMgmtId1"], "the variant management id was passed");
+				assert.strictEqual(oInvalidationStub.callCount, 1, "the invalidation function was called");
 
 				return oSaveAsCommand.undo();
 			}.bind(this)).then(function() {
@@ -165,8 +163,6 @@ sap.ui.define([
 				assert.deepEqual(oRemoveStub.firstCall.args[1], true, "the correct properties were passed-2");
 				assert.strictEqual(oAddChangeStub.callCount, 1, "one change was added back");
 				assert.strictEqual(oApplyChangeStub.callCount, 1, "one change was applied again");
-				assert.strictEqual(oCheckUpdateStub.callCount, 1, "the check update function was called");
-				assert.strictEqual(oCheckUpdateStub.firstCall.args[0], true, "the correct properties were passed");
 			});
 		});
 

@@ -2,20 +2,21 @@
 
 sap.ui.define([
 	"sap/m/Button",
-	"sap/m/FlexBox",
-	"sap/m/Page",
 	"sap/m/Dialog",
+	"sap/m/FlexBox",
+	"sap/m/MessageBox",
+	"sap/m/Page",
+	"sap/ui/core/Core",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/ContextSharingAPI",
-	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/Layer",
-	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/ControlVariantConfigure",
@@ -30,25 +31,25 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core",
-	"sap/m/MessageBox"
+	"test-resources/sap/ui/fl/api/FlexTestAPI",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Button,
-	FlexBox,
-	Page,
 	Dialog,
+	FlexBox,
+	MessageBox,
+	Page,
+	oCore,
 	ToolHooksPlugin,
 	DesignTime,
 	ElementOverlay,
 	OverlayRegistry,
 	KeyCodes,
+	ControlVariantApplyAPI,
 	VariantManagement,
 	ChangesWriteAPI,
 	ContextSharingAPI,
-	ControlVariantApplyAPI,
 	Layer,
-	FlexTestAPI,
 	VerticalLayout,
 	CommandFactory,
 	ControlVariantConfigure,
@@ -63,9 +64,8 @@ sap.ui.define([
 	ObjectPageSection,
 	ObjectPageSubSection,
 	sinon,
-	RtaQunitUtils,
-	oCore,
-	MessageBox
+	FlexTestAPI,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -90,6 +90,7 @@ sap.ui.define([
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oData = {
 				varMgtKey: {
+					currentVariant: "variant1",
 					defaultVariant: "variant1",
 					variantsEditable: true,
 					variants: [
@@ -129,7 +130,8 @@ sap.ui.define([
 			this.sLocalVariantManagementId = "varMgtKey";
 			return FlexTestAPI.createVariantModel({
 				data: this.oData,
-				appComponent: this.oMockedAppComponent
+				appComponent: this.oMockedAppComponent,
+				initFlexState: true
 			}).then(function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
@@ -432,6 +434,7 @@ sap.ui.define([
 
 		QUnit.test("when createSaveAsCommand is called and the key user presses the save button", function(assert) {
 			var done = assert.async();
+			sandbox.stub(this.oModel, "_handleSave");
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			this.oVariantManagementControl._createSaveAsDialog();
 
@@ -647,7 +650,8 @@ sap.ui.define([
 			this.sLocalVariantManagementId = "varMgtKey";
 			return FlexTestAPI.createVariantModel({
 				data: this.oData,
-				appComponent: this.oMockedAppComponent
+				appComponent: this.oMockedAppComponent,
+				initFlexState: true
 			}).then(function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
@@ -726,7 +730,8 @@ sap.ui.define([
 
 			return FlexTestAPI.createVariantModel({
 				data: {variantManagementReference: {variants: []}},
-				appComponent: this.oMockedAppComponent
+				appComponent: this.oMockedAppComponent,
+				initFlexState: true
 			}).then(function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
@@ -761,6 +766,7 @@ sap.ui.define([
 			sandbox.restore();
 			this.oVariantManagementControl.destroy();
 			this.oDesignTime.destroy();
+			this.oModel.destroy();
 		}
 	}, function () {
 		QUnit.test("when variant is renamed with a new title", function(assert) {
@@ -1034,7 +1040,8 @@ sap.ui.define([
 
 			return FlexTestAPI.createVariantModel({
 				data: {variantManagementReference: {variants: []}},
-				appComponent: this.oMockedAppComponent
+				appComponent: this.oMockedAppComponent,
+				initFlexState: true
 			}).then(function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
@@ -1212,7 +1219,8 @@ sap.ui.define([
 			this.sLocalVariantManagementId = "varMgtKey";
 			return FlexTestAPI.createVariantModel({
 				data: this.oData,
-				appComponent: this.oMockedAppComponent
+				appComponent: this.oMockedAppComponent,
+				initFlexState: true
 			}).then(function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);

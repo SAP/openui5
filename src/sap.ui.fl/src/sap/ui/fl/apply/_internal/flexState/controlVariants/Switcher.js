@@ -113,7 +113,6 @@ sap.ui.define([
 			return Promise.resolve().then(function() {
 				//TODO: should be a function in FlexState e.g. getUIChanges()
 				mPropertyBag.changesMap = mPropertyBag.flexController._oChangePersistence.getChangesMapForComponent().mChanges;
-				mPropertyBag.variantsMap = VariantManagementState.getContent(mPropertyBag.reference);
 				var mChangesToBeSwitched = _getControlChangesForVariantSwitch(mPropertyBag);
 
 				return Reverter.revertMultipleChanges(mChangesToBeSwitched.changesToBeReverted, mPropertyBag)

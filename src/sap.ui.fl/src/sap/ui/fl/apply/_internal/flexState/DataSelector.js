@@ -8,7 +8,8 @@ sap.ui.define([
 ) {
 	"use strict";
 	/**
-	 * Base class for data selectors
+	 * Base class for data selectors.
+	 * The ID of the data selector should hint on the return type, i.e. plural for arrays and otherwise singular.
 	 *
 	 * @class Base class for data selectors
 	 * @extends sap.ui.base.ManagedObject
@@ -21,7 +22,7 @@ sap.ui.define([
 		metadata: {
 			properties: {
 				/**
-				 * Parent selector for chaining execute functions
+				 * Parent selector for chaining DataSelectors.
 				 * If a parent selector is provided, its <code>execute</code> function is
 				 * called first with the parameters that were specified by the consumer
 				 * The result is then passed to the <code>execute</code> function of the next
@@ -45,7 +46,7 @@ sap.ui.define([
 					type: "string"
 				},
 				/**
-				 * Callback function which is executed once after the selector is created
+				 * Callback function which is executed once for every parameter after the selector is created.
 				 */
 				initFunction: {
 					type: "function"
@@ -79,6 +80,7 @@ sap.ui.define([
 		},
 		constructor: function() {
 			ManagedObject.apply(this, arguments);
+			this._mInitialized = {};
 			if (this.getParameterKey()) {
 				// If value is parameterized, create a map for easier access
 				this.setCachedResult({});
@@ -91,17 +93,6 @@ sap.ui.define([
 			}
 		}
 	});
-
-	DataSelector.prototype.setParentDataSelector = function(oParentDataSelector) {
-		if (
-			oParentDataSelector
-			&& this.getParameterKey()
-			&& this.getParameterKey() === oParentDataSelector.getParameterKey()
-		) {
-			throw new Error('Parameter key names must be unique');
-		}
-		return this.setProperty("parentDataSelector", oParentDataSelector);
-	};
 
 	/**
 	 * Registers a callback listener to get notified about changes to the state
@@ -190,29 +181,36 @@ sap.ui.define([
 	 * @returns {any} Derived state object
 	 */
 	DataSelector.prototype.get = function(mParameters) {
-		if (!this._bInitialized && this.getInitFunction()) {
-			this.getInitFunction()(mParameters);
-			this._bInitialized = true;
-		}
 		var sParameterKey = this.getParameterKey();
 		if (sParameterKey && !(mParameters || {})[sParameterKey]) {
 			throw new Error("Parameter '" + sParameterKey + "' is missing");
 		}
 		var vResult = this._getParameterizedCachedResult(mParameters);
-		// eslint-disable-next-line eqeqeq
-		if (vResult != null) {
+		// Check for undefined or null as indicators for an empty cache
+		if (vResult !== null && vResult !== undefined) {
 			return vResult;
 		}
 		var oParentDataSelector = this.getParentDataSelector();
-		var oData = oParentDataSelector && oParentDataSelector.get(mParameters);
+		var oParentData = oParentDataSelector && oParentDataSelector.get(mParameters);
+
+		var vParameterValue = (mParameters || {})[sParameterKey];
+		if (!this._mInitialized[vParameterValue] && this.getInitFunction()) {
+			this.getInitFunction()(
+				oParentData,
+				vParameterValue
+			);
+			this._mInitialized[vParameterValue] = true;
+		}
+
 		var vNewResult = this.getExecuteFunction()(
-			oData,
-			(mParameters || {})[sParameterKey]
+			oParentData,
+			vParameterValue
 		);
 		this._setParameterizedCachedResult(mParameters, vNewResult);
-		this.getUpdateListeners().forEach(function(fnUpdateFunction) {
-			fnUpdateFunction();
-		});
+		// FIXME: Might lead to infinite loop if update always invalidates
+		// this.getUpdateListeners().forEach(function(fnUpdateFunction) {
+		// 	fnUpdateFunction();
+		// });
 		return vNewResult;
 	};
 
@@ -221,7 +219,7 @@ sap.ui.define([
 	 * @param {object} mParameters - Map of selector specific parameters
 	 */
 	DataSelector.prototype.checkUpdate = function(mParameters) {
-		if (this.getCheckInvalidation()(mParameters)) {
+		if (this.getCheckInvalidation()(mParameters) === true) {
 			this._clearCache(mParameters);
 			this.getUpdateListeners().forEach(function(fnUpdateFunction) {
 				fnUpdateFunction();

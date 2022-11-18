@@ -69,6 +69,13 @@ sap.ui.define([
 					type: "string"
 				},
 
+				/**
+				 * Indicates if the UIChange is saved to a variant
+				 */
+				savedToVariant: {
+					type: "boolean"
+				},
+
 				// TODO: consolidate with other revert data properties
 				/**
 				 * Information with which the UIChange can be reverted

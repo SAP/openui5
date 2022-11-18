@@ -64,19 +64,28 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with additional information
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - application component owning the VariantModel
 	 * @param {object} mPropertyBag.data - Preset data
+	 * @param {boolean} mPropertyBag.initFlexState - Flag to indicate whether additionally the FlexState should be initialized
 	 * @returns {Promise<sap.ui.fl.variants.VariantModel>} Resolving to the initialized variant model
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	FlexTestAPI.createVariantModel = function(mPropertyBag) {
-		var oFlexController = FlexControllerFactory.createForControl(mPropertyBag.appComponent);
-		var oModel = new VariantModel(mPropertyBag.data, {
-			flexController: oFlexController,
-			appComponent: mPropertyBag.appComponent
-		});
-		return oModel.initialize()
-			.then(function() {
-				return oModel;
+		var oInitPromise = Promise.resolve();
+		if (mPropertyBag.initFlexState) {
+			oInitPromise = FlexState.initialize({
+				componentId: mPropertyBag.appComponent.getId()
 			});
+		}
+		return oInitPromise.then(function() {
+			var oFlexController = FlexControllerFactory.createForControl(mPropertyBag.appComponent);
+			var oModel = new VariantModel(mPropertyBag.data, {
+				flexController: oFlexController,
+				appComponent: mPropertyBag.appComponent
+			});
+			return oModel.initialize()
+				.then(function() {
+					return oModel;
+				});
+		});
 	};
 
 	/**

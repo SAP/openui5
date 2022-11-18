@@ -4,8 +4,10 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/Log",
 	"sap/ui/core/UIComponent",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/InitialPrepareFunctions",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/Storage",
@@ -18,8 +20,10 @@ sap.ui.define([
 	merge,
 	Log,
 	UIComponent,
+	FlexObjectFactory,
 	DataSelector,
 	FlexState,
+	InitialPrepareFunctions,
 	Loader,
 	ManifestUtils,
 	Storage,
@@ -34,7 +38,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 	var sReference = "sap.ui.fl.reference";
 	var sComponentId = "componentId";
-	var mResponse = {
+	var mEmptyResponse = {
 		changes: StorageUtils.getEmptyFlexDataResponse()
 	};
 
@@ -54,11 +58,7 @@ sap.ui.define([
 
 	QUnit.module("Clear FlexState with Data Selector", {
 		beforeEach: function() {
-			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(merge(mResponse,
-				{
-					changes: {}
-				}
-			));
+			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
 			this.oClearCachedResultSpy = sandbox.spy(DataSelector.prototype, "clearCachedResult");
 		},
 		afterEach: function() {
@@ -92,7 +92,7 @@ sap.ui.define([
 				componentId: sComponentId
 			})
 				.then(function() {
-					assert.ok(FlexState.getFlexObjectsSelector(), "then the data selector is created");
+					assert.ok(FlexState.getFlexObjectsDataSelector(), "then the data selector is created");
 					assert.strictEqual(this.oCheckUpdateSelectorStub.callCount, 1, "then the selector is updated during the state initialization");
 				}.bind(this));
 		});
@@ -106,7 +106,7 @@ sap.ui.define([
 					var oDummyFlexObject = { test: "test" };
 					FlexState.addDirtyFlexObject(sReference, oDummyFlexObject);
 					assert.deepEqual(
-						FlexState.getFlexObjectsSelector().get({reference: sReference})[0],
+						FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0],
 						oDummyFlexObject,
 						"then the flexObject is added to the selector"
 					);
@@ -117,7 +117,7 @@ sap.ui.define([
 					);
 					FlexState.removeDirtyFlexObject(sReference, oDummyFlexObject);
 					assert.notOk(
-						FlexState.getFlexObjectsSelector().get({reference: sReference})[0],
+						FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0],
 						"then the flexObject is removed from the selector"
 					);
 					assert.strictEqual(
@@ -126,7 +126,7 @@ sap.ui.define([
 						"then the selector is updated after removing a flexObject"
 					);
 					assert.deepEqual(
-						FlexState.getFlexObjectsSelector().get({reference: "wrongReference"}),
+						FlexState.getFlexObjectsDataSelector().get({reference: "wrongReference"}),
 						[],
 						"then an empty array is returned for invalid references"
 					);
@@ -135,7 +135,8 @@ sap.ui.define([
 
 		QUnit.test("When data from the storage response is loaded", function(assert) {
 			sandbox.stub(Loader, "loadFlexData").resolves(merge(
-				mResponse,
+				{},
+				mEmptyResponse,
 				{
 					changes: {
 						appDescriptorChanges: [{changeType: "moveChange"}],
@@ -151,17 +152,17 @@ sap.ui.define([
 			})
 				.then(function() {
 					assert.deepEqual(
-						FlexState.getFlexObjectsSelector().get({reference: sReference}).length,
+						FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
 						2,
 						"then the flexObjects are created and added to the selector"
 					);
 					assert.strictEqual(
-						FlexState.getFlexObjectsSelector().get({reference: sReference})[0].getFlexObjectMetadata().changeType,
+						FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0].getFlexObjectMetadata().changeType,
 						"moveChange",
 						"then the data is set correctly"
 					);
 					assert.strictEqual(
-						FlexState.getFlexObjectsSelector().get({reference: sReference})[1].getFlexObjectMetadata().changeType,
+						FlexState.getFlexObjectsDataSelector().get({reference: sReference})[1].getFlexObjectMetadata().changeType,
 						"variant1",
 						"then the data is set correctly"
 					);
@@ -171,42 +172,47 @@ sap.ui.define([
 
 	QUnit.module("FlexState with loadFlexData, callPrepareFunction and filtering stubbed", {
 		beforeEach: function() {
-			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(merge(mResponse,
-				{
-					changes: {}
-				}
-			));
+			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "callPrepareFunction").callsFake(mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
 			this.oFilterStub = sandbox.spy(LayerUtils, "filterChangeDefinitionsByMaxLayer");
+			this.sFlexReference = "flexReference";
 		},
 		afterEach: function() {
 			FlexState.clearState();
+			FlexState.resetInitialNonFlCompVariantData(this.sFlexReference);
 			this.oAppComponent.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when initialize is called with complete information", function(assert) {
-			assert.equal(FlexState.isInitialized({reference: sReference}), false, "FlexState is not initialized at beginning");
-			assert.equal(FlexState.isInitialized({control: this.oAppComponent}), false, "FlexState is not initialized at beginning");
+			assert.notOk(FlexState.isInitialized({ reference: sReference }), "FlexState is not initialized at beginning");
+			assert.notOk(FlexState.isInitialized({ control: this.oAppComponent }), "FlexState is not initialized at beginning");
+			var aInitialPreparationSpies = Object.getOwnPropertyNames(InitialPrepareFunctions).map(function(sName) {
+				return sandbox.spy(InitialPrepareFunctions, sName);
+			});
+
 			return FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
 			})
-			.then(function(oReturn) {
-				assert.equal(FlexState.isInitialized({reference: sReference}), true, "FlexState has been initialized");
-				assert.equal(FlexState.isInitialized({control: this.oAppComponent}), false, "FlexState is not initialized at beginning");
-				assert.equal(oReturn, undefined, "the function resolves without value");
-				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the FlexState made a call to load the flex data");
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 0, "no prepare function was called");
-				assert.equal(this.oFilterStub.callCount, 0, "nothing got filtered");
-				return FlexState.getStorageResponse(sReference);
-			}.bind(this))
-			.then(function() {
-				assert.deepEqual(FlexState.getVariantsState(sReference), mockPrepareFunctions("variants"), "then variants map was prepared correctly");
-				assert.equal(this.oCallPrepareFunctionStub.callCount, 1, "variant prepare function was not called again");
-			}.bind(this));
+				.then(function() {
+					assert.ok(FlexState.isInitialized({ reference: sReference }), "FlexState has been initialized");
+					assert.notOk(FlexState.isInitialized({ control: this.oAppComponent }), "FlexState is not initialized at beginning");
+					assert.strictEqual(this.oLoadFlexDataStub.callCount, 1, "the FlexState made a call to load the flex data");
+					assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 0, "no prepare function was called");
+					assert.strictEqual(this.oFilterStub.callCount, 0, "nothing got filtered");
+					return FlexState.getStorageResponse(sReference);
+				}.bind(this))
+				.then(function() {
+					assert.ok(
+						aInitialPreparationSpies.every(function(oSpy) {
+							return oSpy.calledOnce;
+						}),
+						"then the initial prepare functions are all called during the state initialization"
+					);
+				});
 		});
 
 		QUnit.test("when initialize is called without a reference and with a componentID", function(assert) {
@@ -304,16 +310,10 @@ sap.ui.define([
 				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was not called again");
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
 
-				assert.deepEqual(FlexState.getVariantsState(sReference), {variantsMap: "variants"}, "the correct map is returned");
-				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was called once for the Variants");
-				assert.deepEqual(FlexState.getVariantsState(sReference), {variantsMap: "variants"}, "the correct map is returned");
+				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was called once for the CompVariants");
+				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
 				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was not called again");
-				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
-
-				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
-				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was called once for the CompVariants");
-				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
-				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 4, "the prepare function was not called again");
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
 			}.bind(this));
 		});
@@ -386,7 +386,7 @@ sap.ui.define([
 		QUnit.test("when clearAndInitialize is called for two component references", function(assert) {
 			var sReference2 = "second.reference";
 			sandbox.spy(FlexState, "clearState");
-			this.oLoadFlexDataStub.resolves(mResponse);
+			this.oLoadFlexDataStub.resolves(mEmptyResponse);
 			return FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
@@ -412,7 +412,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when external comp variant data is stored and retrieved", function(assert) {
-			var oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component");
+			var oStoredData = FlexState.getInitialNonFlCompVariantData(this.sFlexReference);
 			assert.equal(oStoredData, undefined, "when no external data is stored, retrieve function return undefined");
 			var aVariants1 = [{
 				id: "variant_1",
@@ -440,14 +440,14 @@ sap.ui.define([
 				standardVariant: oStandardVariant2,
 				controlId: "controlId2"
 			};
-			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey", oStandardVariant1, aVariants1, "controlId1");
-			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component");
+			FlexState.setInitialNonFlCompVariantData(this.sFlexReference, "persistencyKey", oStandardVariant1, aVariants1, "controlId1");
+			oStoredData = FlexState.getInitialNonFlCompVariantData(this.sFlexReference);
 			assert.deepEqual(oStoredData, {persistencyKey: oStoredData1}, "retrieve function return stored data correctly");
-			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey", oStandardVariant2, aVariants2, "controlId2");
-			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component");
+			FlexState.setInitialNonFlCompVariantData(this.sFlexReference, "persistencyKey", oStandardVariant2, aVariants2, "controlId2");
+			oStoredData = FlexState.getInitialNonFlCompVariantData(this.sFlexReference);
 			assert.deepEqual(oStoredData, {persistencyKey: oStoredData2}, "store the data will overwrite existing stored data");
-			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey2", oStandardVariant1, aVariants1, "controlId1");
-			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component");
+			FlexState.setInitialNonFlCompVariantData(this.sFlexReference, "persistencyKey2", oStandardVariant1, aVariants1, "controlId1");
+			oStoredData = FlexState.getInitialNonFlCompVariantData(this.sFlexReference);
 			assert.deepEqual(oStoredData, {persistencyKey: oStoredData2, persistencyKey2: oStoredData1}, "storing data for a new persistencyKey does not overwrite existing data");
 		});
 	});
@@ -472,7 +472,7 @@ sap.ui.define([
 
 	QUnit.module("FlexState with loadFlexData and callPrepareFunction stubbed, filtering active", {
 		beforeEach: function() {
-			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mResponse);
+			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
 			this.ogetUShellServiceStub = sandbox.stub(Utils, "getUShellService").withArgs("URLParsing").returns(Promise.resolve("DummyURLParsingService"));
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "callPrepareFunction").callsFake(mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
@@ -535,7 +535,7 @@ sap.ui.define([
 
 	QUnit.module("FlexState with a ushell container", {
 		beforeEach: function() {
-			sandbox.stub(Loader, "loadFlexData").resolves(mResponse);
+			sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
 			sandbox.stub(FlexState, "callPrepareFunction").callsFake(mockPrepareFunctions);
 			sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
 
@@ -758,11 +758,19 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when initialize is called in parallel after partialFlexState is set", function(assert) {
-			mResponse.changes.changes = [{
-				fileType: "change",
-				changeType: "propertyChange",
-				layer: LayerUtils.getCurrentLayer()
-			}];
+			var mResponse = merge(
+				{},
+				mEmptyResponse,
+				{
+					changes: {
+						changes: [{
+							fileType: "change",
+							changeType: "propertyChange",
+							layer: LayerUtils.getCurrentLayer()
+						}]
+					}
+				}
+			);
 			this.oApplyStorageLoadFlexDataStub.resolves(mResponse.changes);
 			var oFlexStateSpy = sandbox.spy(FlexState, "initialize");
 			return FlexState.initialize({
@@ -804,8 +812,11 @@ sap.ui.define([
 		beforeEach: function() {
 			sComponentId = "componentId";
 			this.sReference = "flexReference";
-			this.oVariant = {foo: "bar"};
-			sandbox.stub(Loader, "loadFlexData").resolves(mResponse);
+			this.oVariant = FlexObjectFactory.createFlVariant({
+				id: "myStandardVariant",
+				reference: this.sReference
+			});
+			sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
 			sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
 			this.oAppComponent = new UIComponent(sComponentId);
 			FlexState.rebuildFilteredResponse(this.sReference);
@@ -818,46 +829,38 @@ sap.ui.define([
 			sandbox.restore();
 			this.oAppComponent.destroy();
 			FlexState.rebuildFilteredResponse(this.sReference);
+			FlexState.resetFakeStandardVariants(this.sReference, sComponentId);
 		}
 	}, function() {
-		QUnit.test("adding a fake variant", function(assert) {
-			var oExpectedMap = {
-				foo: "bar"
-			};
+		QUnit.test("when a fake standard variant is added", function(assert) {
+			assert.strictEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: this.sReference}).length,
+				0,
+				"then initially no variants flex objects are part of the flex state"
+			);
 
-			assert.deepEqual(FlexState.getVariantsState(this.sReference), {}, "initially the variants map is empty");
-			FlexState.setFakeStandardVariant(this.sReference, sComponentId, this.oVariant);
-			assert.deepEqual(FlexState.getVariantsState(this.sReference), oExpectedMap, "the fake standard is also part of the map");
-			assert.deepEqual(FlexState.getVariantsState(this.sReference), oExpectedMap, "no difference the second time the content is fetched");
-
-			FlexState.resetFakedStandardVariants(this.sReference, sComponentId);
-			assert.deepEqual(FlexState.getVariantsState(this.sReference), oExpectedMap, "the faked variant is still in the map");
+			FlexState.addFakeStandardVariantToExternalData(this.sReference, sComponentId, this.oVariant);
+			var aFlexObjects = FlexState.getFlexObjectsDataSelector().get({reference: this.sReference});
+			assert.strictEqual(
+				aFlexObjects.length,
+				1,
+				"then the standard variant flex object is added"
+			);
+			assert.strictEqual(
+				aFlexObjects[0],
+				this.oVariant,
+				"then the standard variant is returned by the data selector"
+			);
 		});
 
-		QUnit.test("adding the same variant twice to the same reference", function(assert) {
-			var oExpectedMap = {
-				foo: "bar"
-			};
-			assert.deepEqual(FlexState.getVariantsState(this.sReference), {}, "initially the variants map is empty");
-			FlexState.setFakeStandardVariant(this.sReference, sComponentId, this.oVariant);
-			assert.deepEqual(FlexState.getVariantsState(this.sReference), oExpectedMap, "the fake standard is also part of the map");
-			FlexState.setFakeStandardVariant(this.sReference, sComponentId, this.oVariant);
-			assert.deepEqual(FlexState.getVariantsState(this.sReference), oExpectedMap, "the map has not changed");
-		});
-
-		QUnit.test("adding fake variants with a variant section already available", function(assert) {
-			merge(FlexState.getVariantsState(this.sReference), {bar: "already available"});
-			var oVariant2 = {
-				bar: "foobar"
-			};
-			FlexState.setFakeStandardVariant(this.sReference, sComponentId, this.oVariant);
-			FlexState.setFakeStandardVariant(this.sReference, sComponentId, oVariant2);
-
-			var oExpectedContent = {
-				bar: "already available",
-				foo: "bar"
-			};
-			assert.deepEqual(FlexState.getVariantsState(this.sReference), oExpectedContent, "one fake variant was added");
+		QUnit.test("when the fake standard variants are reset", function(assert) {
+			FlexState.addFakeStandardVariantToExternalData(this.sReference, sComponentId, this.oVariant);
+			FlexState.resetFakeStandardVariants(this.sReference, sComponentId);
+			assert.strictEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: this.sReference}).length,
+				0,
+				"then the variant is removed"
+			);
 		});
 
 		QUnit.test("adding fake variants for components with the same reference but different IDs", function(assert) {
@@ -867,15 +870,21 @@ sap.ui.define([
 				reference: this.sReference,
 				componentId: sComponentId2
 			}).then(function() {
-				var oVariant2 = {
-					bar: "foobar"
-				};
-				FlexState.setFakeStandardVariant(this.sReference, sComponentId, this.oVariant);
-				FlexState.setFakeStandardVariant(this.sReference, sComponentId2, oVariant2);
+				var oVariant2 = FlexObjectFactory.createFlVariant({
+					id: "bar",
+					reference: this.sReference
+				});
+				FlexState.addFakeStandardVariantToExternalData(this.sReference, sComponentId, this.oVariant);
+				FlexState.addFakeStandardVariantToExternalData(this.sReference, sComponentId2, oVariant2);
 
 				FlexState.rebuildFilteredResponse(this.sReference);
-				assert.deepEqual(FlexState.getVariantsState(this.sReference), oVariant2, "only one fake variant is available");
+				assert.strictEqual(
+					FlexState.getFlexObjectsDataSelector().get({reference: this.sReference}).length,
+					1,
+					"then only one fake variant is available"
+				);
 
+				FlexState.resetFakeStandardVariants(this.sReference, sComponentId2);
 				oAppComponent2.destroy();
 			}.bind(this));
 		});

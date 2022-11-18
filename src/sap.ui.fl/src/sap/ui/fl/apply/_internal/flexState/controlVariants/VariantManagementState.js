@@ -5,12 +5,10 @@
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/restricted/_pick",
-	"sap/base/util/includes",
-	"sap/base/util/isEmptyObject",
 	"sap/base/util/ObjectPath",
-	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/LayerUtils",
@@ -18,12 +16,10 @@ sap.ui.define([
 ], function(
 	_omit,
 	_pick,
-	includes,
-	isEmptyObject,
 	ObjectPath,
-	Log,
 	JsControlTreeModifier,
 	VariantsApplyUtil,
+	DataSelector,
 	States,
 	FlexState,
 	LayerUtils,
@@ -43,129 +39,283 @@ sap.ui.define([
 	 */
 	var VariantManagementState = {};
 
-	var mUpdateStateListeners = {};
+	// Map that contains the IDs of selected current variants per flex reference and variant management
+	// Might contain outdated entries if a different component with the same flex reference is loaded
+	// However these outdated entries will be invalidated when the variant management map is built
+	var mCurrentVariantReferences = {};
 
-	function getReferencedChanges(mPropertyBag) {
-		var aReferencedVariantChanges = [];
-		if (mPropertyBag.variantData.instance.getVariantReference()) {
-			aReferencedVariantChanges = VariantManagementState.getControlChangesForVariant(Object.assign(
-				mPropertyBag, {
-					vReference: mPropertyBag.variantData.instance.getVariantReference()
-				}));
-			return aReferencedVariantChanges.filter(function(oReferencedChange) {
-				return LayerUtils.compareAgainstCurrentLayer(oReferencedChange.getLayer(), mPropertyBag.variantData.instance.getLayer()) === -1; /* Referenced change layer below current layer*/
+	function getInitialCurrentVariant(sReference, aCtrlVariantManagementChanges, aVariants) {
+		var oComponentData = FlexState.getComponentData(sReference);
+		var aVariantReferencesFromUrl = ObjectPath.get(
+			["technicalParameters", VariantsApplyUtil.VARIANT_TECHNICAL_PARAMETER],
+			oComponentData
+		) || [];
+
+		// Check if variant is set via url parameter
+		var oDesiredSelectedVariant = aVariants.find(function(oVariant) {
+			return aVariantReferencesFromUrl.includes(oVariant.getId());
+		});
+		if (oDesiredSelectedVariant) {
+			return oDesiredSelectedVariant.getId();
+		}
+
+		// Check setDefault changes
+		return aCtrlVariantManagementChanges
+			.reverse()
+			.map(function(oVariantManagementChange) {
+				return oVariantManagementChange.getContent().defaultVariant;
+			})
+			.filter(Boolean)[0];
+	}
+
+	function createVariantManagement(aFlexObjects, aVariants, sReference, sVMReference) {
+		var sCurrentVariantReference = (mCurrentVariantReferences[sReference] || {})[sVMReference];
+		var aRelevantVariants = aVariants.filter(function(oFlexObject) {
+			return sVMReference === oFlexObject.getVariantManagementReference();
+		});
+		if (
+			!sCurrentVariantReference
+			// Current variant might be unavailable due to layer filtering
+			// or because a component with a different id but the same flex reference was initalized
+			|| !aRelevantVariants.find(function(oVariant) {
+				return oVariant.getId() === sCurrentVariantReference;
+			})
+		) {
+			// Try to determine the initial variant from setDefault changes or the url params
+			var aCtrlVariantManagementChanges = aFlexObjects.filter(function(oFlexObject) {
+				return (
+					oFlexObject.getFileType() === "ctrl_variant_management_change"
+					&& sVMReference === oFlexObject.getSelector().id
+				);
+			});
+			sCurrentVariantReference = getInitialCurrentVariant(sReference, aCtrlVariantManagementChanges, aRelevantVariants) || sVMReference;
+			ObjectPath.set(
+				[sReference, sVMReference],
+				sCurrentVariantReference,
+				mCurrentVariantReferences
+			);
+		}
+		return {
+			defaultVariant: sVMReference,
+			currentVariant: sCurrentVariantReference,
+			variants: [],
+			variantManagementChanges: aFlexObjects.filter(function(oFlexObject) {
+				return (
+					oFlexObject.getFileType() === "ctrl_variant_management_change"
+					&& oFlexObject.getSelector().id === sVMReference
+				);
+			})
+		};
+	}
+
+	function createVariantEntry(aFlexObjects, oVariantInstance) {
+		return {
+			instance: oVariantInstance,
+			variantChanges: aFlexObjects.filter(function(oFlexObject) {
+				return (
+					oFlexObject.getFileType() === "ctrl_variant_change"
+					&& oFlexObject.getSelector().id === oVariantInstance.getId()
+				);
+			}),
+			controlChanges: aFlexObjects.filter(function(oFlexObject) {
+				var bCorrectFileType = oFlexObject.getFileType() === "change";
+				var bOwnControlChange = oFlexObject.getVariantReference() === oVariantInstance.getId();
+				var bControlChangeOfReferencedVariant = oFlexObject.getVariantReference() === oVariantInstance.getVariantReference();
+				var bLowerLayerChange = LayerUtils.compareAgainstCurrentLayer(oFlexObject.getLayer(), oVariantInstance.getLayer()) === -1;
+				return bCorrectFileType && (bOwnControlChange || bControlChangeOfReferencedVariant && bLowerLayerChange);
+			}),
+			key: oVariantInstance.getId(),
+			title: oVariantInstance.getName(),
+			layer: oVariantInstance.getLayer(),
+			favorite: oVariantInstance.getFavorite(),
+			executeOnSelect: oVariantInstance.getExecuteOnSelection(),
+			visible: oVariantInstance.getVisible(),
+			author: oVariantInstance.getSupportInformation().user,
+			contexts: oVariantInstance.getContexts(),
+			isStandardVariant: oVariantInstance.getStandardVariant()
+		};
+	}
+
+	function applyVariantChange(oVariantEntry, oVariantChange, sReference, oVariantManagementsMap) {
+		switch (oVariantChange.getChangeType()) {
+			case "setTitle":
+				oVariantEntry.title = oVariantChange.getText("title");
+				break;
+			case "setFavorite":
+				oVariantEntry.favorite = oVariantChange.getContent().favorite;
+				break;
+			case "setExecuteOnSelect":
+				oVariantEntry.executeOnSelect = oVariantChange.getContent().executeOnSelect;
+				break;
+			case "setVisible":
+				oVariantEntry.visible = oVariantChange.getContent().visible;
+				// Invisible variants cannot be set as the current variant
+				// TODO the control automatically selects the standard variant, if the current variant is deleted
+				// this means we can't properly set the current variant and have to react to setVisible changes
+				var sVMReference = oVariantEntry.instance.getVariantManagementReference();
+				if (
+					mCurrentVariantReferences[sReference][sVMReference] === oVariantEntry.key
+					&& !oVariantEntry.visible
+				) {
+					// Set standard variant as current variant
+					mCurrentVariantReferences[sReference][sVMReference] = sVMReference;
+					oVariantManagementsMap[sVMReference].currentVariant = sVMReference;
+				}
+				break;
+			case "setContexts":
+				oVariantEntry.contexts = oVariantChange.getContent().contexts;
+				break;
+			default:
+				throw Error("Unknown ctrl_variant_change type");
+		}
+	}
+
+	function applyVariantManagementChange(oVariantManagementEntry, oVariantManagementChange) {
+		// Currently only setDefault
+		oVariantManagementEntry.defaultVariant = oVariantManagementChange.getContent().defaultVariant;
+	}
+
+	function createVariantsMap(aFlexObjects, sReference) {
+		var aVariants = aFlexObjects.filter(function(oFlexObject) {
+			return oFlexObject.getFileType() === "ctrl_variant";
+		});
+
+		var oVariantManagementsMap = {};
+		aVariants.forEach(function(oVariantInstance) {
+			var sVMReference = oVariantInstance.getVariantManagementReference();
+			if (!oVariantManagementsMap[sVMReference]) {
+				oVariantManagementsMap[sVMReference] = createVariantManagement(aFlexObjects, aVariants, sReference, sVMReference);
+			}
+			oVariantManagementsMap[sVMReference].variants.push(
+				createVariantEntry(aFlexObjects, oVariantInstance)
+			);
+		});
+
+		aFlexObjects
+			.filter(function(oFlexObject) {
+				return oFlexObject.getFileType() === "ctrl_variant_change";
+			})
+			.forEach(function(oVariantChange) {
+				var oVariantEntry = findVariant(oVariantManagementsMap, oVariantChange);
+				applyVariantChange(oVariantEntry, oVariantChange, sReference, oVariantManagementsMap);
+			});
+
+		aFlexObjects
+			.filter(function(oFlexObject) {
+				return oFlexObject.getFileType() === "ctrl_variant_management_change";
+			})
+			.forEach(function(oVariantManagementChange) {
+				var oVariantManagementEntry = oVariantManagementsMap[oVariantManagementChange.getSelector().id];
+				applyVariantManagementChange(oVariantManagementEntry, oVariantManagementChange);
+			});
+
+		Object.values(oVariantManagementsMap).forEach(function(oVariantManagement) {
+			// Standard variant should always be at the first position, all others are sorted alphabetically
+			oVariantManagement.variants.sort(function(oVariant1, oVariant2) {
+				if (oVariant1.isStandardVariant) {
+					return -1;
+				}
+				if (oVariant2.isStandardVariant) {
+					return 1;
+				}
+				return oVariant1.title.toLowerCase() < oVariant2.title.toLowerCase() ? -1 : 1;
+			});
+
+			// Set modified flag
+			var aCurrentVariantChanges = oVariantManagement.variants.find(function(oVariant) {
+				return oVariant.key === oVariantManagement.currentVariant;
+			}).controlChanges;
+			oVariantManagement.modified = aCurrentVariantChanges.some(function(oChange) {
+				return !oChange.isPersisted() && !oChange.getSavedToVariant();
+			});
+		});
+
+		return oVariantManagementsMap;
+	}
+
+	function findVariant(oVariantsMap, oVariantChange) {
+		var oFoundVariant;
+		Object.values(oVariantsMap).some(function(oVariantsMapEntry) {
+			return oVariantsMapEntry.variants.some(function(oVariant) {
+				if (oVariantChange.getSelector().id === oVariant.key) {
+					oFoundVariant = oVariant;
+					return true;
+				}
+				return false;
+			});
+		});
+		return oFoundVariant;
+	}
+
+	// DataSelectors
+
+	var oVariantManagementMapDataSelector = new DataSelector({
+		id: "variantManagementMap",
+		parameterKey: "reference",
+		parentDataSelector: FlexState.getFlexObjectsDataSelector(),
+		executeFunction: createVariantsMap
+	});
+
+	var oVariantManagementsDataSelector = new DataSelector({
+		id: "variantManagements",
+		parameterKey: "variantManagementReference",
+		parentDataSelector: oVariantManagementMapDataSelector,
+		executeFunction: function(oVariantManagementsMap, sVMReference) {
+			return oVariantManagementsMap[sVMReference];
+		}
+	});
+
+	var oVariantsDataSelector = new DataSelector({
+		id: "variants",
+		parameterKey: "variantReference",
+		parentDataSelector: oVariantManagementsDataSelector,
+		executeFunction: function(oVariantManagement, sVariantReference) {
+			return oVariantManagement.variants.find(function(oVariant) {
+				return oVariant.instance.getId() === sVariantReference;
 			});
 		}
-		return aReferencedVariantChanges;
-	}
-
-	function getVariants(mPropertyBag) {
-		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
-		var aVariants = ObjectPath.get([mPropertyBag.vmReference, "variants"], oVariantsMap);
-		return aVariants || [];
-	}
-
-	function addChangeContentToVariantMap(oVariantObject, oChangeContent, bAdd) {
-		var sChangeType = oChangeContent.changeType;
-		if (!oVariantObject) {
-			oVariantObject = {};
-		}
-		if (!oVariantObject[sChangeType]) {
-			oVariantObject[sChangeType] = [];
-		}
-		if (bAdd) {
-			oVariantObject[sChangeType].push(oChangeContent);
-			return true;
-		}
-		return oVariantObject[sChangeType].some(function(oExistingContent, iIndex) {
-			if (oExistingContent.fileName === oChangeContent.fileName) {
-				oVariantObject[sChangeType].splice(iIndex, 1);
-				return true;
-			}
-		});
-	}
-
-	function addChange(oChangeContent, oFlexObjects) {
-		var sChangeCategory = getVariantChangeCategory(oChangeContent);
-		oFlexObjects[sChangeCategory].push(oChangeContent);
-	}
-
-	function deleteChange(oChangeContent, oFlexObjects) {
-		var sChangeCategory = getVariantChangeCategory(oChangeContent);
-		var iChangeContentIndex = -1;
-		oFlexObjects[sChangeCategory].some(function(oExistingChangeContent, iIndex) {
-			if (oExistingChangeContent.fileName === oChangeContent.fileName) {
-				iChangeContentIndex = iIndex;
-				return true;
-			}
-		});
-		if (iChangeContentIndex > -1) {
-			oFlexObjects[sChangeCategory].splice(iChangeContentIndex, 1);
-		}
-	}
-
-	function updateChange(oChangeContent, oFlexObjects) {
-		var sChangeCategory = getVariantChangeCategory(oChangeContent);
-		oFlexObjects[sChangeCategory] = oFlexObjects[sChangeCategory].map(function(oExistingFlexObject) {
-			return oChangeContent.fileName === oExistingFlexObject.fileName
-				? oChangeContent
-				: oExistingFlexObject;
-		});
-	}
-
-	function getVariantChangeCategory(oChangeContent) {
-		switch (oChangeContent.fileType) {
-			case "change":
-				return "variantDependentControlChanges";
-			case "ctrl_variant":
-				return "variants";
-			case "ctrl_variant_change":
-				return "variantChanges";
-			case "ctrl_variant_management_change":
-				return "variantManagementChanges";
-			default:
-		}
-	}
+	});
 
 	/**
-	 * TODO: adapt as soon as the ChangePersistence is removed
-	 * Temporary function to inform the VariantModel about the state being updated, so that the dirty state can be updated.
-	 * The concept is fine, but the functionality will probably move somewhere else
-	 *
-	 * @param {string} sReference - Flex Reference
-	 * @param {function} fnListener - Function to call when the state changes
+	 * Test function to reset all current variant references.
 	 */
-	VariantManagementState.addUpdateStateListener = function(sReference, fnListener) {
-		mUpdateStateListeners[sReference] = fnListener;
+	VariantManagementState.resetCurrentVariantReferences = function() {
+		mCurrentVariantReferences = {};
 	};
 
 	/**
-	 * Removes the listener registered for the given reference
+	 * Access to the variant management map selector.
 	 *
-	 * @param {string} sReference - Flex Reference
+	 * @returns {object} The data selector for the variant management map
 	 */
-	VariantManagementState.removeUpdateStateListener = function(sReference) {
-		delete mUpdateStateListeners[sReference];
+	VariantManagementState.getVariantManagementMap = function() {
+		return oVariantManagementMapDataSelector;
 	};
 
 	/**
-	 * Returns variant management state for the passed component reference.
+	 * Wrapper to add a fake standard variant for a variant management if none exists yet.
 	 *
-	 * @param {string} sReference - Component reference
-	 * @returns {object} Variant management state
-	 * @private
-	 * @ui5-restricted
+	 * @param {string} sReference - Flex reference of the app
+	 * @param {string} sComponentId - ID of the component
+	 * @param {string} sVMReference - Variant management reference
+	 * @param {object} oStandardVariantInstance - Variant instance
+	 *
 	 */
-	VariantManagementState.getContent = function(sReference) {
-		return FlexState.getVariantsState(sReference);
+	VariantManagementState.addFakeStandardVariant = function(sReference, sComponentId, sVMReference, oStandardVariantInstance) {
+		var oVariantsMap = this.getVariantManagementMap().get({ reference: sReference });
+		if (!oVariantsMap[sVMReference]) {
+			FlexState.addFakeStandardVariantToExternalData(sReference, sComponentId, oStandardVariantInstance);
+		}
 	};
 
-	VariantManagementState.addFakeStandardVariant = function(sReference, sComponentId, oStandardVariant) {
-		FlexState.setFakeStandardVariant(sReference, sComponentId, oStandardVariant);
-	};
-
-	VariantManagementState.clearFakedStandardVariants = function(sReference, sComponentId) {
-		FlexState.resetFakedStandardVariants(sReference, sComponentId);
+	/**
+	 * Wrapper to reset the fake standard variants for all variant management controls of the given component.
+	 *
+	 * @param {string} sReference - Flex reference of the app
+	 * @param {string} sComponentId - ID of the component
+	 */
+	VariantManagementState.clearFakeStandardVariants = function(sReference, sComponentId) {
+		FlexState.resetFakeStandardVariants(sReference, sComponentId);
 	};
 
 	/**
@@ -215,24 +365,25 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with the necessary properties
 	 * @param {string} mPropertyBag.vmReference - Variant management reference
 	 * @param {string} mPropertyBag.reference - Component reference
-	 * @param {string} [mPropertyBag.vReference] - Variant reference
+	 * @param {string} [mPropertyBag.vReference] - Variant reference, default if omitted
 	 *
 	 * @returns {object | undefined} Variant object if found
 	 * @private
 	 * @ui5-restricted
 	 */
 	VariantManagementState.getVariant = function(mPropertyBag) {
-		var oVariant;
-		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
-		mPropertyBag.vReference = mPropertyBag.vReference || oVariantsMap[mPropertyBag.vmReference].defaultVariant;
-		var aVariants = getVariants(mPropertyBag);
-		aVariants.some(function(oCurrentVariant) {
-			if (oCurrentVariant.instance.getId() === mPropertyBag.vReference) {
-				oVariant = oCurrentVariant;
-				return true;
-			}
+		var sVReference = (
+			mPropertyBag.vReference
+			|| oVariantManagementsDataSelector.get({
+				variantManagementReference: mPropertyBag.vmReference,
+				reference: mPropertyBag.reference
+			}).defaultVariant
+		);
+		return oVariantsDataSelector.get({
+			variantManagementReference: mPropertyBag.vmReference,
+			variantReference: sVReference,
+			reference: mPropertyBag.reference
 		});
-		return oVariant;
 	};
 
 	/**
@@ -244,9 +395,11 @@ sap.ui.define([
 	 * @returns {string} Reference of the current variant
 	 */
 	VariantManagementState.getCurrentVariantReference = function(mPropertyBag) {
-		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
-		var oVariantManagementSection = oVariantsMap[mPropertyBag.vmReference];
-		return oVariantManagementSection.currentVariant || oVariantManagementSection.defaultVariant;
+		var oVariantManagementSection = oVariantManagementsDataSelector.get({
+			variantManagementReference: mPropertyBag.vmReference,
+			reference: mPropertyBag.reference
+		});
+		return oVariantManagementSection.currentVariant;
 	};
 
 	/**
@@ -256,156 +409,10 @@ sap.ui.define([
 	 * @returns {string[]} Array of flexreferences
 	 */
 	VariantManagementState.getVariantManagementReferences = function(sReference) {
-		var oVariantsMap = VariantManagementState.getContent(sReference);
-		return Object.keys(oVariantsMap);
-	};
-
-	/**
-	 * Adds a variant to a variant management reference.
-	 *
-	 * @param {object} mPropertyBag - Object with the necessary properties
-	 * @param {object} mPropertyBag.variantData - Variant data to be added
-	 * @param {string} mPropertyBag.vmReference - Variant management reference
-	 * @param {string} mPropertyBag.reference - Component reference
-	 *
-	 * @returns {int} Index at which the variant was added
-	 * @private
-	 * @ui5-restricted
-	 */
-	VariantManagementState.addVariantToVariantManagement = function(mPropertyBag) {
-		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
-		var aVariants = oVariantsMap[mPropertyBag.vmReference].variants.slice().splice(1);
-		var iIndex = VariantsApplyUtil.getIndexToSortVariant(aVariants, mPropertyBag.variantData);
-
-		//Set the whole list of changes to the variant
-		if (mPropertyBag.variantData.instance.getVariantReference()) {
-			var aReferencedVariantChanges = getReferencedChanges(mPropertyBag);
-			mPropertyBag.variantData.controlChanges = aReferencedVariantChanges.concat(mPropertyBag.variantData.controlChanges);
-		}
-
-		//Skipping standard variant with iIndex + 1
-		oVariantsMap[mPropertyBag.vmReference].variants.splice(iIndex + 1, 0, mPropertyBag.variantData);
-		return iIndex + 1;
-	};
-
-	/**
-	 * Removes a variant from a variant management reference.
-	 *
-	 * @param {object} mPropertyBag - Object with the necessary properties
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlVariant} mPropertyBag.variant - Variant to be removed
-	 * @param {string} mPropertyBag.vmReference - Variant management reference
-	 * @param {string} mPropertyBag.reference - Component reference
-	 *
-	 * @returns {int} Index from which the variant was removed
-	 * @private
-	 * @ui5-restricted
-	 */
-	VariantManagementState.removeVariantFromVariantManagement = function(mPropertyBag) {
-		var iIndex;
-		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
-		var bFound = oVariantsMap[mPropertyBag.vmReference].variants.some(
-			function(oCurrentVariantContent, index) {
-				if (oCurrentVariantContent.instance.getId() === mPropertyBag.variant.getId()) {
-					iIndex = index;
-					return true;
-				}
-			});
-		if (bFound) {
-			oVariantsMap[mPropertyBag.vmReference].variants.splice(iIndex, 1);
-		}
-		return iIndex;
-	};
-
-	/**
-	 * Sorts and re-orders the passed variant object in the variants map
-	 *
-	 * @param {object} mPropertyBag - Object with the necessary properties
-	 * @param {string} mPropertyBag.vmReference - Variant management reference
-	 * @param {string} mPropertyBag.reference - Component reference
-	 * @param {int} mPropertyBag.previousIndex - Previous index of variant object
-	 *
-	 * @returns {int} The updated index for the passed variant data
-	 * @private
-	 * @ui5-restricted
-	 */
-	VariantManagementState.setVariantData = function(mPropertyBag) {
-		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
-		var aVariants = oVariantsMap[mPropertyBag.vmReference].variants;
-		var oVariantData = aVariants[mPropertyBag.previousIndex];
-
-		//Standard variant should always be at the first position, all others are sorted alphabetically
-		if (oVariantData.instance.getId() !== mPropertyBag.vmReference) {
-			//remove element
-			aVariants.splice(mPropertyBag.previousIndex, 1);
-
-			//slice to skip first element, which is the standard variant
-			var iSortedIndex = VariantsApplyUtil.getIndexToSortVariant(aVariants.slice(1), oVariantData);
-
-			//add at sorted index (+1 to accommodate standard variant)
-			aVariants.splice(iSortedIndex + 1, 0, oVariantData);
-
-			return iSortedIndex + 1;
-		}
-
-		aVariants.splice(mPropertyBag.previousIndex, 1, oVariantData);
-		return mPropertyBag.previousIndex;
-	};
-
-	/**
-	 * Add a control change to a variant.
-	 *
-	 * @param {object} mPropertyBag - Object with the necessary properties
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} mPropertyBag.change - Control change
-	 * @param {string} mPropertyBag.vmReference - Variant management reference
-	 * @param {string} mPropertyBag.vReference - Variant reference
-	 * @param {string} mPropertyBag.reference - Component reference
-	 *
-	 * @returns {boolean} Indicates if change was added
-	 * @private
-	 * @ui5-restricted
-	 */
-	VariantManagementState.addChangeToVariant = function(mPropertyBag) {
-		var aExistingChanges = VariantManagementState.getControlChangesForVariant(mPropertyBag);
-		var aChangeIds = aExistingChanges.map(function(oChange) {
-			return oChange.getId();
+		var oVariantsMap = oVariantManagementMapDataSelector.get({
+			reference: sReference
 		});
-
-		if (!includes(aChangeIds, mPropertyBag.change.getId())) {
-			var oVariant = VariantManagementState.getVariant(mPropertyBag);
-			oVariant.controlChanges = aExistingChanges.concat([mPropertyBag.change]);
-			return true;
-		}
-		return false;
-	};
-
-	/**
-	 * Removes a control change from a variant.
-	 *
-	 * @param {object} mPropertyBag - Object with the necessary properties
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} mPropertyBag.change - Control change
-	 * @param {string} mPropertyBag.vmReference - Variant management reference
-	 * @param {string} mPropertyBag.vReference - Variant reference
-	 * @param {string} mPropertyBag.reference - Component reference
-	 *
-	 * @returns {boolean} Indicates if change was removed
-	 * @private
-	 * @ui5-restricted
-	 */
-	VariantManagementState.removeChangeFromVariant = function(mPropertyBag) {
-		var aControlChanges = VariantManagementState.getControlChangesForVariant(mPropertyBag);
-		var oVariant = VariantManagementState.getVariant(mPropertyBag);
-		var bChangeFound = false;
-
-		if (oVariant) {
-			oVariant.controlChanges = aControlChanges.filter(function(oCurrentChange) {
-				if (!bChangeFound && oCurrentChange.getId() === mPropertyBag.change.getId()) {
-					bChangeFound = true;
-					return false;
-				}
-				return true;
-			});
-		}
-		return bChangeFound;
+		return Object.keys(oVariantsMap);
 	};
 
 	/**
@@ -423,16 +430,17 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	VariantManagementState.getInitialChanges = function(mPropertyBag) {
-		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
+		var oVariantsMap = oVariantManagementMapDataSelector.get({
+			reference: mPropertyBag.reference
+		});
 		return Object.keys(oVariantsMap).reduce(function(aInitialChanges, sVMReference) {
 			if (
 				(mPropertyBag.vmReference && mPropertyBag.vmReference === sVMReference)
 				|| !mPropertyBag.vmReference
 			) {
-				var sCurrentVReference = oVariantsMap[sVMReference].currentVariant ? "currentVariant" : "defaultVariant";
 				var mArguments = Object.assign({}, mPropertyBag, {
 					vmReference: sVMReference,
-					vReference: oVariantsMap[sVMReference][sCurrentVReference],
+					vReference: oVariantsMap[sVMReference].currentVariant,
 					includeDirtyChanges: false
 				});
 
@@ -441,77 +449,6 @@ sap.ui.define([
 			}
 			return aInitialChanges;
 		}, []);
-	};
-
-	/**
-	 * Returns prepared variant model data based on the passed component reference.
-	 *
-	 * @param {object} mPropertyBag - Object with the necessary properties
-	 * @param {string} mPropertyBag.reference - Component reference
-	 *
-	 * @returns {object} Prepared variant model data
-	 * @private
-	 * @ui5-restricted
-	 */
-	VariantManagementState.fillVariantModel = function(mPropertyBag) {
-		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
-		return Object.keys(oVariantsMap).reduce(
-			function(oVariantData, sVMReference) {
-				oVariantData[sVMReference] = {
-					//in case of no variant management change the standard variant is set as default
-					defaultVariant: oVariantsMap[sVMReference].defaultVariant,
-					variants: []
-				};
-				//if a current variant is set in the map, it should be set in the model
-				if (oVariantsMap[sVMReference].currentVariant) {
-					oVariantData[sVMReference].currentVariant = oVariantsMap[sVMReference].currentVariant;
-				}
-				getVariants(Object.assign(mPropertyBag, {vmReference: sVMReference}))
-					.forEach(function(oVariantEntry, index) {
-						var oVariant = oVariantEntry.instance;
-						oVariantData[sVMReference].variants[index] =
-							//JSON.parse(JSON.stringify()) used to remove undefined properties e.g. standard variant layer
-							JSON.parse(
-								JSON.stringify({
-									key: oVariant.getId(),
-									title: oVariant.getName(),
-									layer: oVariant.getLayer(),
-									favorite: oVariant.getFavorite(),
-									executeOnSelect: oVariant.getExecuteOnSelection(),
-									visible: oVariant.getVisible(),
-									author: oVariant.getSupportInformation().user,
-									contexts: oVariant.getContexts()
-								})
-							);
-					});
-				return oVariantData;
-			}, {});
-	};
-
-	/**
-	 * Adds or deletes a variant or variant management change for a variant management reference for the passed variants map.
-	 *
-	 * @param {object} mPropertyBag - Object with the necessary properties
-	 * @param {string} mPropertyBag.vmReference - Variant management reference
-	 * @param {object} mPropertyBag.changeContent - Change content to be added or deleted
-	 * @param {string} mPropertyBag.reference - Component reference
-	 * @param {boolean} [mPropertyBag.add] - Indicates if change should be added
-	 *
-	 * @private
-	 * @ui5-restricted
-	 */
-	VariantManagementState.updateChangesForVariantManagementInMap = function(mPropertyBag) {
-		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
-		var oVariantManagement = oVariantsMap[mPropertyBag.vmReference];
-		if (mPropertyBag.changeContent.fileType === "ctrl_variant_change") {
-			oVariantManagement.variants.some(function(oVariantData) {
-				if (oVariantData.instance.getId() === mPropertyBag.changeContent.selector.id) {
-					addChangeContentToVariantMap(oVariantData.variantChanges, mPropertyBag.changeContent, mPropertyBag.add);
-				}
-			});
-		} else if (mPropertyBag.changeContent.fileType === "ctrl_variant_management_change") {
-			addChangeContentToVariantMap(oVariantManagement.variantManagementChanges, mPropertyBag.changeContent, mPropertyBag.add);
-		}
 	};
 
 	/**
@@ -526,56 +463,14 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	VariantManagementState.setCurrentVariant = function(mPropertyBag) {
-		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
-		if (ObjectPath.get([mPropertyBag.vmReference], oVariantsMap)) {
-			oVariantsMap[mPropertyBag.vmReference].currentVariant = mPropertyBag.newVReference;
-		}
-	};
-
-	/**
-	 * Updates the variants state and optionally also adds or deletes a flex object from the flex state
-	 *
-	 * @param {object} mPropertyBag - Object with the necessary properties
-	 * @param {string} mPropertyBag.reference - Flex reference
-	 * @param {string} mPropertyBag.content - Variant section content
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject | sap.ui.fl.apply._internal.flexObjects.FlVariant} mPropertyBag.changeToBeAddedOrDeleted - Flex object to be added or deleted
-	 *
-	 * @private
-	 * @ui5-restricted
-	 */
-	VariantManagementState.updateVariantsState = function(mPropertyBag) {
-		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
-
-		if (isEmptyObject(oVariantsMap)) {
-			// at this point the variants map should be filled,
-			// at least through model._ensureStandardVariantExists(),
-			// if no variants exist in response
-			Log.error("Variant state is not initialized yet");
-			return;
-		}
-
-		var oFlexObjects = FlexState.getFlexObjectsFromStorageResponse(mPropertyBag.reference);
-
-		if (mPropertyBag.changeToBeAddedOrDeleted) {
-			var oFileContent = mPropertyBag.changeToBeAddedOrDeleted.convertToFileContent();
-			switch (mPropertyBag.changeToBeAddedOrDeleted.getState()) {
-				case States.LifecycleState.NEW:
-					addChange(oFileContent, oFlexObjects);
-					mPropertyBag.changeToBeAddedOrDeleted.setState(States.LifecycleState.PERSISTED);
-					break;
-				case States.LifecycleState.DELETE:
-					deleteChange(oFileContent, oFlexObjects);
-					break;
-				case States.LifecycleState.DIRTY:
-					updateChange(oFileContent, oFlexObjects);
-					mPropertyBag.changeToBeAddedOrDeleted.setState(States.LifecycleState.PERSISTED);
-					break;
-				default:
-			}
-			if (mUpdateStateListeners[mPropertyBag.reference]) {
-				mUpdateStateListeners[mPropertyBag.reference]();
-			}
-		}
+		ObjectPath.set(
+			[mPropertyBag.reference, mPropertyBag.vmReference],
+			mPropertyBag.newVReference,
+			mCurrentVariantReferences
+		);
+		oVariantManagementMapDataSelector.checkUpdate({
+			reference: mPropertyBag.reference
+		});
 	};
 
 	/**
@@ -585,7 +480,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.vmReference - Variant management reference
 	 * @param {string} mPropertyBag.reference - Component reference
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - App component instance
-	 * @param {sap.ui.fl.FlexController} mPropertyBag.flexController - FlexControllerinstance
+	 * @param {sap.ui.fl.FlexController} mPropertyBag.flexController - FlexController instance
 	 * @returns {Promise} Promise that resolves when all changes for the initial variant are applied
 	 */
 	VariantManagementState.waitForInitialVariantChanges = function(mPropertyBag) {
@@ -596,8 +491,8 @@ sap.ui.define([
 		var aControls = aCurrentVariantChanges.reduce(function(aCurrentControls, oChange) {
 			var oSelector = oChange.getSelector();
 			var oControl = JsControlTreeModifier.bySelector(oSelector, mPropertyBag.appComponent);
-			if (oControl && Utils.indexOfObject(aCurrentControls, {selector: oControl}) === -1) {
-				aCurrentControls.push({selector: oControl});
+			if (oControl && Utils.indexOfObject(aCurrentControls, { selector: oControl }) === -1) {
+				aCurrentControls.push({ selector: oControl });
 			}
 			return aCurrentControls;
 		}, []);

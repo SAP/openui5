@@ -401,8 +401,8 @@ sap.ui.define([
 					return oReturnObject;
 				}
 			});
-			sandbox.stub(VariantManagementState, "getVariant").callsFake(function(mPropertyBag) {
-				if (mPropertyBag.vmReference === this.oVariantManagement1.getId() && mPropertyBag.vReference === this.oVariantManagement1.getId()) {
+			sandbox.stub(this.oModel, "getVariant").callsFake(function(sVReference, sVMReference) {
+				if (sVMReference === this.oVariantManagement1.getId() && sVReference === this.oVariantManagement1.getId()) {
 					return true;
 				}
 			}.bind(this));
@@ -645,11 +645,7 @@ sap.ui.define([
 			};
 
 			var aModifiedUrlTechnicalParameters = ["variant0"];
-			sandbox.stub(VariantManagementState, "getVariant").withArgs({
-				vReference: "variantMgmtId1",
-				vmReference: "variantMgmtId1",
-				reference: "someComponentName"
-			}).returns(true);
+			sandbox.stub(this.oModel, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
 			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
 				parseShellHash: function() {
 					return oParameters;
@@ -685,11 +681,7 @@ sap.ui.define([
 				return encodeURIComponent(sExistingParameter);
 			});
 
-			sandbox.stub(VariantManagementState, "getVariant").withArgs({
-				vReference: "variantMgmtId1",
-				vmReference: "variantMgmtId1",
-				reference: "someComponentName"
-			}).returns(true);
+			sandbox.stub(this.oModel, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
 			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
 				parseShellHash: function() {
 					return oParameters;
@@ -761,11 +753,7 @@ sap.ui.define([
 				}
 			});
 
-			sandbox.stub(VariantManagementState, "getVariant").withArgs({
-				vReference: "variantMgmtId1",
-				vmReference: "variantMgmtId1",
-				reference: "someComponentName"
-			}).returns(true);
+			sandbox.stub(this.oModel, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
 
 			URLHandler.updateVariantInURL({
 				vmReference: "variantMgmtId1",
@@ -790,11 +778,7 @@ sap.ui.define([
 			});
 			// return parameters saved at the current index of the hash register
 			sandbox.stub(URLHandler, "getStoredHashParams").returns(["Dummy", "variantMgmtId1", "Dummy1"]);
-			sandbox.stub(VariantManagementState, "getVariant").withArgs({
-				vReference: "variantMgmtId1",
-				vmReference: "variantMgmtId1",
-				reference: "someComponentName"
-			}).returns(true);
+			sandbox.stub(this.oModel, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
 			this.oModel._bDesignTimeMode = true;
 
 			URLHandler.updateVariantInURL({

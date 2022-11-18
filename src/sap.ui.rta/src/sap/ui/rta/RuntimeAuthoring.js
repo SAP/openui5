@@ -1767,7 +1767,7 @@ sap.ui.define([
 						if (oError && oError.message && oError.message.indexOf("The following Change cannot be applied because of a dependency") > -1) {
 							Utils.showMessageBox("error", "MSG_DEPENDENCY_ERROR", {error: oError});
 						}
-						Log.error("sap.ui.rta: " + oError.message);
+						Log.error("sap.ui.rta:", oError.message, oError.stack);
 					});
 			}
 			return undefined;

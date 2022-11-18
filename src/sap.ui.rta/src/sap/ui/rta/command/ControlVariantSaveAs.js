@@ -117,12 +117,10 @@ sap.ui.define([
 				this.sNewVariantReference = this._oVariantChange.getId();
 				this._aPreparedChanges.forEach(function(oChange) {
 					if (oChange.getFileType() === "change") {
-						oChange.assignedToVariant = true;
+						oChange.setSavedToVariant(true);
 					}
 				});
-				// Assigning changes to the variant might have an impact on the modified state
-				// Call the check again to make sure it is up to date
-				this.getModel().checkDirtyStateForControlModels([this.sVariantManagementReference]);
+				this.getModel().invalidateMap();
 			}.bind(this));
 	};
 
@@ -135,7 +133,7 @@ sap.ui.define([
 		if (this._oVariantChange) {
 			this._aPreparedChanges.forEach(function(oChange) {
 				if (oChange.getFileType() === "ctrl_variant_management_change") {
-					this.oModel.oFlexController.deleteChange(oChange, this.oAppComponent);
+					this.oModel.oFlexController.deleteChange(oChange);
 				}
 			}.bind(this));
 
@@ -151,11 +149,8 @@ sap.ui.define([
 					return this.oModel.addAndApplyChangesOnVariant(this._aControlChanges);
 				}.bind(this))
 				.then(function() {
-					this.oModel.getData()[this.sVariantManagementReference].defaultVariant = this.getSourceDefaultVariant();
-					this.oModel.getData()[this.sVariantManagementReference].originalDefaultVariant = this.getSourceDefaultVariant();
 					this._aPreparedChanges = null;
 					this._oVariantChange = null;
-					this.getModel().checkUpdate(true);
 				}.bind(this));
 		}
 		return Promise.resolve();

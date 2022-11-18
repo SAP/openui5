@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
@@ -20,7 +19,6 @@ sap.ui.define([
 ], function(
 	Log,
 	JsControlTreeModifier,
-	Core,
 	Element,
 	FlexState,
 	VariantUtils,
@@ -72,18 +70,6 @@ sap.ui.define([
 	function getRelevantVariantManagementReference(oAppComponent, oControl, bUseStaticArea) {
 		var sVMControlId = VariantUtils.getRelevantVariantManagementControlId(oControl, [], bUseStaticArea);
 		return JsControlTreeModifier.getSelector(sVMControlId, oAppComponent).id;
-	}
-
-	function getAllVariantManagementReferences(oAppComponent) {
-		var aVMControlIds = VariantUtils.getAllVariantManagementControlIds(oAppComponent);
-		return aVMControlIds.reduce(function(aValidIds, sVMControlId) {
-			var oForControls = Core.byId(sVMControlId).getFor();
-			// without any referenced controls the VM control is not active and should be ignored
-			if (oForControls.length) {
-				aValidIds.push(JsControlTreeModifier.getSelector(sVMControlId, oAppComponent).id);
-			}
-			return aValidIds;
-		}, []);
 	}
 
 	function logAndReject(sMessage) {
@@ -309,17 +295,9 @@ sap.ui.define([
 				return logAndReject("App Component could not be determined");
 			}
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-			var oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
-			var aVariantManagementReferences = getAllVariantManagementReferences(oAppComponent);
 
 			if (FlexState.isInitialized({control: oAppComponent})) {
-				return oFlexController.saveSequenceOfDirtyChanges(mPropertyBag.changes, oAppComponent)
-					.then(function(oResponse) {
-						if (oVariantModel) {
-							oVariantModel.checkDirtyStateForControlModels(aVariantManagementReferences);
-						}
-						return oResponse;
-					});
+				return oFlexController.saveSequenceOfDirtyChanges(mPropertyBag.changes, oAppComponent);
 			}
 			return Promise.resolve();
 		},

@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/HideControl",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
@@ -36,7 +35,6 @@ sap.ui.define([
 	Utils,
 	HideControl,
 	ChangePersistenceFactory,
-	ControlVariantApplyAPI,
 	URLHandler,
 	Applier,
 	FlexCustomData,
@@ -330,50 +328,6 @@ sap.ui.define([
 			assert.strictEqual(aDirtyChanges[0].getNamespace(), "b");
 		});
 
-		QUnit.test("addPreparedChange shall add a change with variant reference to flex persistence and create a variant change", function(assert) {
-			assert.expect(8);
-			var oAddChangeStub = sandbox.stub();
-			var oRemoveChangeStub = sandbox.stub();
-			var oModel = {
-				addChange: oAddChangeStub,
-				removeChange: oRemoveChangeStub,
-				getVariant: function() {
-					return {
-						content: {
-							fileName: "idOfVariantManagementReference",
-							title: "Standard",
-							fileType: "variant",
-							reference: "Dummy.Component",
-							variantManagementReference: "idOfVariantManagementReference"
-						}
-					};
-				}
-			};
-			var oAppComponent = {
-				getModel: function(sModel) {
-					assert.strictEqual(sModel, ControlVariantApplyAPI.getVariantModelName(), "then variant model called on the app component");
-					return oModel;
-				}
-			};
-
-			var oChange = FlexObjectFactory.createFromFileContent(labelChangeContent);
-
-			oChange.setVariantReference("testVarRef");
-
-			var oPrepChange = this.oFlexController.addPreparedChange(oChange, oAppComponent);
-			assert.ok(oPrepChange, "then change object returned");
-			assert.ok(oAddChangeStub.calledOnce, "then model's addChange is called as VariantManagement Change is detected");
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName());
-			var aDirtyChanges = oChangePersistence.getDirtyChanges();
-
-			assert.strictEqual(aDirtyChanges.length, 1);
-			assert.strictEqual(aDirtyChanges[0].getSelector().id, "abc123");
-			assert.strictEqual(aDirtyChanges[0].getNamespace(), "b");
-
-			this.oFlexController.deleteChange(oPrepChange, oAppComponent);
-			assert.ok(oRemoveChangeStub.calledOnce, "then model's removeChange is called as VariantManagement Change is detected and deleted");
-		});
-
 		QUnit.test("resetChanges for control shall call ChangePersistence.resetChanges(), reset control variant URL parameters, and revert changes", function(assert) {
 			var oVariantModel = {
 				id: "variantModel"
@@ -443,38 +397,6 @@ sap.ui.define([
 						model: oVariantModel
 					}, "then URLHandler._setTechnicalURLParameterValues with the correct parameters");
 				});
-		});
-
-		QUnit.test("resetChanges for whole component was called and two changes are present, one related to a control variant", function(assert) {
-			assert.expect(3);
-
-			var oDeletedChangeWithVariantReference = FlexObjectFactory.createFromFileContent({
-				variantReference: "someReference"
-			});
-
-			var oDeletedChange = FlexObjectFactory.createFromFileContent({});
-
-			var oVariantModel = {
-				id: "variantModel",
-				removeChange: function (oChange) {
-					assert.equal(oChange, oDeletedChangeWithVariantReference, "the Model.removeChange was called for a change with a variant reference");
-				}
-			};
-			var oComp = {
-				name: "testComp",
-				getModel: function() {
-					return oVariantModel;
-				}
-			};
-			var sLayer = "testLayer";
-			var sGenerator = "test.Generator";
-			sandbox.stub(URLHandler, "update");
-			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function() {
-				assert.strictEqual(arguments[0], sLayer, "then correct layer passed");
-				assert.strictEqual(arguments[1], sGenerator, "then correct generator passed");
-				return Promise.resolve([oDeletedChangeWithVariantReference, oDeletedChange]);
-			});
-			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp);
 		});
 
 		QUnit.test("addChange shall add a change and contain the applicationVersion in the connector", function(assert) {

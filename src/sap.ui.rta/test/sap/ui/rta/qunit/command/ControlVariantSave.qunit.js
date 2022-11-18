@@ -95,7 +95,6 @@ sap.ui.define([
 				};
 
 				this.oModel.oData["variantMgmtId1"].variantsEditable = true;
-				this.oModel.oData["variantMgmtId1"].modified = true;
 
 				this.oGetCurrentLayerStub = sinon.stub(FlLayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 				sinon.stub(VariantManagementState, "getControlChangesForVariant").returns([this.oChange1, this.oChange2]);
@@ -118,6 +117,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when calling command factory for save variants and undo", function(assert) {
 			var oOverlay = new ElementOverlay({element: this.oVariantManagement});
+			var oInvalidationStub = sandbox.stub(this.oModel, "invalidateMap");
 			sandbox.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 			sandbox.stub(oOverlay, "getVariantManagement").returns("idMain1--variantManagementOrdersTable");
 
@@ -133,22 +133,19 @@ sap.ui.define([
 					return oControlVariantSaveCommand.execute();
 				})
 				.then(function() {
-					assert.ok(oControlVariantSaveCommand._aDirtyChanges[0].assignedToVariant, "the first change is assigned to variant");
-					assert.ok(oControlVariantSaveCommand._aDirtyChanges[1].assignedToVariant, "the second change is assigned to variant");
-					assert.notOk(this.oModel.oData["variantMgmtId1"].modified, "the dirty flag is set to false");
+					assert.ok(oControlVariantSaveCommand._aDirtyChanges[0].getSavedToVariant(), "the first change is assigned to variant");
+					assert.ok(oControlVariantSaveCommand._aDirtyChanges[1].getSavedToVariant(), "the second change is assigned to variant");
+					assert.strictEqual(oInvalidationStub.callCount, 1, "the map was invalidated");
 					return oControlVariantSaveCommand.undo();
-				}.bind(this))
+				})
 				.then(function() {
-					assert.notOk(oControlVariantSaveCommand._aDirtyChanges[0].assignedToVariant, "the first change is not assigned to variant");
-					assert.notOk(oControlVariantSaveCommand._aDirtyChanges[1].assignedToVariant, "the second change is not assigned to variant");
-					assert.ok(this.oModel.oData["variantMgmtId1"].modified, "the dirty flag is set to true again");
+					assert.notOk(oControlVariantSaveCommand._aDirtyChanges[0].getSavedToVariant(), "the first change is not assigned to variant");
+					assert.notOk(oControlVariantSaveCommand._aDirtyChanges[1].getSavedToVariant(), "the second change is not assigned to variant");
+					assert.strictEqual(oInvalidationStub.callCount, 2, "the map was invalidated again");
 					return oControlVariantSaveCommand.undo();
-				}.bind(this))
+				})
 				.then(function() {
 					assert.ok(true, "then by default a Promise.resolve() is returned on undo(), even if no changes exist for the command");
-				})
-				.catch(function(oError) {
-					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
 		});
 	});

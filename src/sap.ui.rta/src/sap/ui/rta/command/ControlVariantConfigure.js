@@ -77,9 +77,7 @@ sap.ui.define([
 			this._aPreparedChanges.push(this.oModel.addVariantChange(this.sVariantManagementReference, mChangeProperties));
 		}.bind(this));
 
-		return Promise.resolve().then(function() {
-			this.oModel.checkUpdate(true);
-		}.bind(this));
+		return Promise.resolve();
 	};
 
 	/**
@@ -106,10 +104,8 @@ sap.ui.define([
 			this.oModel.deleteVariantChange(this.sVariantManagementReference, mPropertyBag, oChange);
 		}.bind(this));
 
-		return Promise.resolve().then(function() {
-			this.oModel.checkUpdate(true);
-			this._aPreparedChanges = null;
-		}.bind(this));
+		this._aPreparedChanges = null;
+		return Promise.resolve();
 	};
 
 	return ControlVariantConfigure;

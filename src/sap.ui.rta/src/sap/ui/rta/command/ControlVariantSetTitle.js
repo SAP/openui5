@@ -67,7 +67,6 @@ sap.ui.define([
 	 */
 	ControlVariantSetTitle.prototype.execute = function() {
 		var oVariantManagementControl = this.getElement();
-		var oVariantManagementControlBinding = oVariantManagementControl.getTitle().getBinding("text");
 
 		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
 		this.oModel = this.oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
@@ -89,7 +88,6 @@ sap.ui.define([
 		return Promise.resolve(this.oModel.addVariantChange(this.sVariantManagementReference, mPropertyBag))
 			.then(function(oChange) {
 				this._oVariantChange = oChange;
-				oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
 			}.bind(this));
 	};
 
@@ -99,7 +97,6 @@ sap.ui.define([
 	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantSetTitle.prototype.undo = function() {
-		var oVariantManagementControlBinding = this.getElement().getTitle().getBinding("text");
 		var mPropertyBag = {
 			variantReference: this.sCurrentVariant,
 			changeType: "setTitle",
@@ -110,7 +107,6 @@ sap.ui.define([
 		return Promise.resolve(this.oModel.deleteVariantChange(this.sVariantManagementReference, mPropertyBag, oChange))
 			.then(function() {
 				this._oVariantChange = null;
-				oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
 			}.bind(this));
 	};
 

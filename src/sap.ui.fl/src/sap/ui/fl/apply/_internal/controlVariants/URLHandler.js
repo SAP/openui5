@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/ui/core/Component",
-	"sap/ui/fl/Utils",
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
 	"sap/base/util/merge",
@@ -13,11 +12,9 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/thirdparty/hasher",
 	"sap/base/util/includes",
-	"sap/ui/fl/apply/_internal/controlVariants/Utils",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"
+	"sap/ui/fl/apply/_internal/controlVariants/Utils"
 ], function(
 	Component,
-	Utils,
 	Log,
 	deepEqual,
 	merge,
@@ -26,8 +23,7 @@ sap.ui.define([
 	ManagedObjectObserver,
 	hasher,
 	includes,
-	VariantUtil,
-	VariantManagementState
+	VariantUtil
 ) {
 	"use strict";
 
@@ -245,15 +241,11 @@ sap.ui.define([
 			if (Array.isArray(mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER])) {
 				mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER].map(decodeURIComponent);
 				mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER].some(function(sParamDecoded, iIndex) {
-					var bVariantExistsForParameter = VariantManagementState.getVariant({
-						vmReference: mPropertyBag.vmReference,
-						vReference: sParamDecoded,
-						reference: oModel.oChangePersistence.getComponentName()
-					});
-					if (bVariantExistsForParameter) {
+					if (oModel.getVariant(sParamDecoded, mPropertyBag.vmReference)) {
 						mReturnObject.index = iIndex;
 						return true;
 					}
+					return false;
 				});
 			}
 		}

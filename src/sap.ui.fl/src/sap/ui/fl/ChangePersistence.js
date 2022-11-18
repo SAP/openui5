@@ -775,26 +775,19 @@ sap.ui.define([
 		});
 
 		if (!bSkipUpdateCache) {
-			if (Utils.isChangeRelatedToVariants(oDirtyChange)) {
-				VariantManagementState.updateVariantsState({
-					reference: this._mComponent.name,
-					changeToBeAddedOrDeleted: oDirtyChange
-				});
-			} else {
-				switch (oDirtyChange.getState()) {
-					case States.LifecycleState.NEW:
-						oDirtyChange.setState(States.LifecycleState.PERSISTED);
-						Cache.addChange(this._mComponent, oDirtyChange.convertToFileContent());
-						break;
-					case States.LifecycleState.DELETED:
-						Cache.deleteChange(this._mComponent, oDirtyChange.convertToFileContent());
-						break;
-					case States.LifecycleState.DIRTY:
-						oDirtyChange.setState(States.LifecycleState.PERSISTED);
-						Cache.updateChange(this._mComponent, oDirtyChange.convertToFileContent());
-						break;
-					default:
-				}
+			switch (oDirtyChange.getState()) {
+				case States.LifecycleState.NEW:
+					oDirtyChange.setState(States.LifecycleState.PERSISTED);
+					Cache.addChange(this._mComponent, oDirtyChange.convertToFileContent());
+					break;
+				case States.LifecycleState.DELETED:
+					Cache.deleteChange(this._mComponent, oDirtyChange.convertToFileContent());
+					break;
+				case States.LifecycleState.DIRTY:
+					oDirtyChange.setState(States.LifecycleState.PERSISTED);
+					Cache.updateChange(this._mComponent, oDirtyChange.convertToFileContent());
+					break;
+				default:
 			}
 		}
 	};

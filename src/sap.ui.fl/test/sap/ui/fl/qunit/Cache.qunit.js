@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/Log"
 ], function(
 	Cache,
 	FlexState,
+	StorageUtils,
 	sinon,
 	Log
 ) {
@@ -18,17 +20,15 @@ sap.ui.define([
 
 	function _createEntryMap(mChangesObject, mVariantObject, mVariantChangeObject) {
 		return {
-			changes: {
+			changes: Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
 				changes: [mChangesObject],
 				comp: {
 					changes: mVariantChangeObject ? [mVariantChangeObject] : [],
+					variants: mVariantObject ? [mVariantObject] : [],
 					standardVariant: [],
-					defaultVariant: [],
-					variants: mVariantObject ? [mVariantObject] : []
-				},
-				variantSection: {},
-				ui2personalization: {}
-			}
+					defaultVariant: []
+				}
+			})
 		};
 	}
 
@@ -37,6 +37,10 @@ sap.ui.define([
 			this.oEntry = _createEntryMap({something: "1"});
 			this.oGetStorageResponseStub = sandbox.stub(FlexState, "getStorageResponse").resolves(this.oEntry);
 			this.oGetFlexObjectsStub = sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(this.oEntry.changes);
+			this.oCheckUpdateStub = sandbox.stub();
+			sandbox.stub(FlexState, "getFlexObjectsDataSelector").returns({
+				checkUpdate: this.oCheckUpdateStub
+			});
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -46,19 +50,22 @@ sap.ui.define([
 			var oAddedEntry = {
 				something: "3",
 				content: {},
-				selector: {}
+				selector: {},
+				fileType: "change"
 			};
 			var oChangesFromFirstCall;
 
 			return Cache.getChangesFillingCache({name: sComponentName}).then(function(oFirstChanges) {
 				oChangesFromFirstCall = oFirstChanges;
 				Cache.addChange({name: sComponentName}, oAddedEntry);
+				assert.strictEqual(this.oCheckUpdateStub.callCount, 1, "the selector was updated");
 				return Cache.getChangesFillingCache({name: sComponentName});
-			}).then(function(oSecondChanges) {
+			}.bind(this)).then(function(oSecondChanges) {
 				assert.strictEqual(oChangesFromFirstCall, oSecondChanges);
 				assert.equal(oSecondChanges.changes.changes.length, 2);
 			});
 		});
+
 		QUnit.test("updateChange", function(assert) {
 			var oEntry = _createEntryMap({
 				something: "1",
@@ -70,19 +77,22 @@ sap.ui.define([
 				something: "3",
 				fileName: "A",
 				content: {},
-				selector: {}
+				selector: {},
+				fileType: "change"
 			};
 			this.oGetStorageResponseStub.resolves(oEntry);
 			this.oGetFlexObjectsStub.returns(oEntry.changes);
 
 			return Cache.getChangesFillingCache({name: sComponentName}).then(function() {
 				Cache.updateChange({name: sComponentName}, oUpdatedEntry);
+				assert.strictEqual(this.oCheckUpdateStub.callCount, 1, "the selector was updated");
 				return Cache.getChangesFillingCache({name: sComponentName});
-			}).then(function(mFlexData) {
+			}.bind(this)).then(function(mFlexData) {
 				assert.equal(mFlexData.changes.changes.length, 1);
 				assert.equal(mFlexData.changes.changes[0].something, "3");
 			});
 		});
+
 		QUnit.test("deleteChange", function(assert) {
 			var oEntry = _createEntryMap({
 				something: "1",
@@ -94,19 +104,22 @@ sap.ui.define([
 				something: "3",
 				fileName: "A",
 				content: {},
-				selector: {}
+				selector: {},
+				fileType: "change"
 			};
 			this.oGetStorageResponseStub.resolves(oEntry);
 			this.oGetFlexObjectsStub.returns(oEntry.changes);
 
 			return Cache.getChangesFillingCache({name: sComponentName}).then(function() {
 				Cache.deleteChange({name: sComponentName}, oDeleteEntry);
+				assert.strictEqual(this.oCheckUpdateStub.callCount, 1, "the selector was updated");
 				return Cache.getChangesFillingCache({name: sComponentName});
-			}).then(function(mFlexData) {
+			}.bind(this)).then(function(mFlexData) {
 				assert.strictEqual(mFlexData.changes.changes.length, 0);
 			});
 		});
-		QUnit.test("remove all addChange changes from the cache and VariantState", function(assert) {
+
+		QUnit.test("remove all addChange changes", function(assert) {
 			var oEntry = _createEntryMap([{
 				something: "1",
 				fileName: "addChange",
@@ -116,81 +129,41 @@ sap.ui.define([
 				something: "2",
 				fileName: "moveChange",
 				content: {},
-				selector: {}
+				selector: {},
+				fileType: "change"
 			}]);
 
 			this.oGetStorageResponseStub.resolves(oEntry);
 			this.oGetFlexObjectsStub.returns(oEntry.changes);
-			var oVariantState = {
-				1: {
-					variants: [{
-						controlChanges: [
-							{
-								getId: function() {return "addChange";}
-							},
-							{
-								getId: function() {return "moveChange";}
-							}
-						]
-					}]
-				}
-			};
-			sandbox.stub(FlexState, "getVariantsState").returns(oVariantState);
 
 			Cache.removeChanges({name: sComponentName}, ["addChange"]);
 
 			assert.strictEqual(oEntry.changes.changes.length, 1);
-			Object.keys(oVariantState).forEach(function(sId) {
-				oVariantState[sId].variants.forEach(function(oVariant) {
-					oVariant.controlChanges.forEach(function(oChange) {
-						assert.strictEqual(oChange.getId(), "moveChange", "moveChange is the only change left in the VariantState");
-					});
-				});
-			});
+			assert.strictEqual(this.oCheckUpdateStub.callCount, 1, "the selector was updated");
 		});
+
 		QUnit.test("remove all moveChange types from the Cache", function(assert) {
 			var oEntry = _createEntryMap({
 				something: "1",
 				fileName: "moveChange",
 				content: {},
-				selector: {}
+				selector: {},
+				fileType: "change"
 			});
 			this.oGetStorageResponseStub.resolves(oEntry);
 			this.oGetFlexObjectsStub.returns(oEntry.changes);
-			var oVariantState = {
-				1: {
-					variants: [{
-						controlChanges: [
-							{
-								getId: function() {return "moveChange";}
-							}
-						]
-					}]
-				}
-			};
-			sandbox.stub(FlexState, "getVariantsState").returns(oVariantState);
 
 			Cache.removeChanges({name: sComponentName}, ["moveChange"]);
 
 			assert.strictEqual(oEntry.changes.changes.length, 0);
-			Object.keys(oVariantState).forEach(function(sId) {
-				oVariantState[sId].variants.forEach(function(oVariant) {
-					assert.strictEqual(oVariant.controlChanges.length, 0, "moveChanges were all removed");
-				});
-			});
+			assert.strictEqual(this.oCheckUpdateStub.callCount, 1, "the selector was updated");
 		});
 
 		QUnit.test("removeChanges correctly aborts when storage response is undefined", function(assert) {
-			this.oGetStorageResponseStub.resolves(undefined);
 			this.oGetFlexObjectsStub.returns(undefined);
-			var oGetVariantStateStub = sandbox.stub(FlexState, "getVariantsState");
-
-			var oCacheSpy = sandbox.spy(Cache, "removeChanges");
 
 			Cache.removeChanges({name: sComponentName}, ["moveChange"]);
-
-			assert.strictEqual(oCacheSpy.calledOnce, true);
-			assert.strictEqual(oGetVariantStateStub.notCalled, true);
+			assert.strictEqual(this.oCheckUpdateStub.callCount, 0, "the selector was not updated");
 		});
 
 		QUnit.test("addChange of an comp variant related change", function(assert) {
@@ -199,7 +172,8 @@ sap.ui.define([
 				content: {},
 				selector: {
 					persistencyKey: "something"
-				}
+				},
+				fileType: "change"
 			};
 
 			return Cache.getChangesFillingCache({name: sComponentName}).then(function() {
@@ -215,20 +189,23 @@ sap.ui.define([
 				something: "1",
 				fileName: "A",
 				content: {},
-				selector: {}
+				selector: {},
+				fileType: "change"
 			}, {
 				fileName: "V",
 				content: {},
 				selector: {
 					persistencyKey: "something"
-				}
+				},
+				fileType: "change"
 			}, {
 				something: "2",
 				fileName: "B",
 				content: {},
 				selector: {
 					persistencyKey: "something"
-				}
+				},
+				fileType: "change"
 			});
 			var oUpdatedEntry = {
 				something: "3",
@@ -236,7 +213,8 @@ sap.ui.define([
 				content: {},
 				selector: {
 					persistencyKey: "something"
-				}
+				},
+				fileType: "change"
 			};
 			this.oGetStorageResponseStub.resolves(oEntry);
 			this.oGetFlexObjectsStub.returns(oEntry.changes);
@@ -255,7 +233,8 @@ sap.ui.define([
 				something: "1",
 				fileName: "A",
 				content: {},
-				selector: {}
+				selector: {},
+				fileType: "change"
 			}, {
 				fileName: "V",
 				fileType: "variant",
@@ -269,7 +248,8 @@ sap.ui.define([
 				content: {},
 				selector: {
 					persistencyKey: "something"
-				}
+				},
+				fileType: "change"
 			});
 			var oDeleteEntry = {
 				something: "3",
@@ -277,7 +257,8 @@ sap.ui.define([
 				content: {},
 				selector: {
 					persistencyKey: "something"
-				}
+				},
+				fileType: "change"
 			};
 			this.oGetStorageResponseStub.resolves(oEntry);
 			this.oGetFlexObjectsStub.returns(oEntry.changes);
@@ -287,6 +268,30 @@ sap.ui.define([
 				return Cache.getChangesFillingCache({name: sComponentName});
 			}).then(function(mFlexData) {
 				assert.strictEqual(mFlexData.changes.comp.changes.length, 0);
+			});
+		});
+
+		QUnit.test("addChange with various different kinds of changes", function(assert) {
+			Cache.addChange({name: sComponentName}, {
+				fileType: "ctrl_variant"
+			});
+			Cache.addChange({name: sComponentName}, {
+				fileType: "ctrl_variant_change"
+			});
+			Cache.addChange({name: sComponentName}, {
+				fileType: "ctrl_variant_management_change"
+			});
+			Cache.addChange({name: sComponentName}, {
+				fileType: "change",
+				variantReference: "foo"
+			});
+
+			return Cache.getChangesFillingCache({name: sComponentName}).then(function(mFlexData) {
+				assert.strictEqual(mFlexData.changes.changes.length, 1, "only the initial change is present");
+				assert.strictEqual(mFlexData.changes.variantDependentControlChanges.length, 1, "a variant related UI change was added");
+				assert.strictEqual(mFlexData.changes.variants.length, 1, "a variant was added");
+				assert.strictEqual(mFlexData.changes.variantChanges.length, 1, "a variantChange was added");
+				assert.strictEqual(mFlexData.changes.variantManagementChanges.length, 1, "a variant management change was added");
 			});
 		});
 

@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
@@ -16,7 +15,6 @@ sap.ui.define([
 	Control,
 	UIComponent,
 	VariantUtils,
-	VariantManagementState,
 	FlexState,
 	ChangesController,
 	FlexRuntimeInfoAPI,
@@ -124,7 +122,6 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(VariantManagementState, "updateVariantsState");
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 			return FlexRuntimeInfoAPI.isPersonalized({
 				selectors: aControls,

@@ -296,7 +296,7 @@ sap.ui.define([
 				// descriptor change
 				if (isDescriptorChange(mPropertyBag.change)) {
 					var oDescriptorFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
-					oDescriptorFlexController.deleteChange(mPropertyBag.change, oAppComponent);
+					oDescriptorFlexController.deleteChange(mPropertyBag.change);
 					return undefined;
 				}
 				var oElement = JsControlTreeModifier.bySelector(mPropertyBag.change.getSelector(), oAppComponent);
@@ -306,7 +306,7 @@ sap.ui.define([
 					FlexCustomData.destroyAppliedCustomData(oElement, mPropertyBag.change, JsControlTreeModifier);
 				}
 				// delete from flex persistence map
-				oFlexController.deleteChange(mPropertyBag.change, oAppComponent);
+				oFlexController.deleteChange(mPropertyBag.change);
 				return undefined;
 			});
 	};

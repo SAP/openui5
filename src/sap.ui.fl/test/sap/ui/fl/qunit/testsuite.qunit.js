@@ -393,7 +393,15 @@ sap.ui.define([
 			"apply/_internal/flexState/controlVariants/VariantManagementState": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"]
+					only: [
+						"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+						"sap/ui/fl/apply/_internal/flexState/InitialPrepareFunctions"
+					]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/qunit": "test-resources/sap/ui/rta/qunit/"
+					}
 				}
 			},
 			"apply/_internal/flexState/controlVariants/Switcher": {
@@ -448,12 +456,6 @@ sap.ui.define([
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/Utils"]
-				}
-			},
-			"apply/_internal/flexState/controlVariants/prepareVariantsMap": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/prepareVariantsMap"]
 				}
 			},
 			"apply/_internal/preprocessors/ControllerExtension": {

@@ -125,7 +125,8 @@ sap.ui.define([
 		}, {});
 		var oFlexObject = new FlexObjectClass(mProperties);
 		if (bPersisted) {
-			oFlexObject.setState(States.LifecycleState.PERSISTED);
+			// Set the property directly for the initial state to avoid state change validation
+			oFlexObject.setProperty("state", States.LifecycleState.PERSISTED);
 		}
 		return oFlexObject;
 	};

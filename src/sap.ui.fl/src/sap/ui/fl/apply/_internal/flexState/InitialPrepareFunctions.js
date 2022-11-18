@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/base/util/includes",
 	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
-	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory"
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/Layer"
 ], function(
 	includes,
 	Core,
 	ControlVariantUtils,
-	FlexObjectFactory
+	FlexObjectFactory,
+	Layer
 ) {
 	"use strict";
 
@@ -28,7 +30,16 @@ sap.ui.define([
 		var aVariantIds = (mPropertyBag.storageResponse.changes.variants || [])
 			.map(function(oVariantDef) {
 				return oVariantDef.fileName;
-			});
+			})
+			.concat(
+				mPropertyBag.externalData
+					.filter(function(oFlexObject) {
+						return oFlexObject.getFileType() === "ctrl_variant";
+					})
+					.map(function(oVariant) {
+						return oVariant.getId();
+					})
+			);
 
 		// Look through the variant references of known variants to find the standard
 		// variant id on any variant that directly inherited from it
@@ -36,18 +47,27 @@ sap.ui.define([
 		// If there are no custom variants at all, the VariantModel will create the
 		// standard variant
 		var oUpdate = {};
-		(mPropertyBag.storageResponse.changes.variants || []).some(function(oVariant) {
-			var sVariantReference = oVariant.variantReference;
+		// TODO: remove fallback to empty array and adjust tests that don't use the whole changes structure
+		var aRelevantFlexObjects = []
+		.concat(mPropertyBag.storageResponse.changes.variants || [])
+		.concat(mPropertyBag.storageResponse.changes.variantDependentControlChanges || [])
+		.concat(mPropertyBag.storageResponse.changes.variantChanges || []);
+
+		aRelevantFlexObjects.some(function(oFlexObject) {
+			var sVariantReference = oFlexObject.fileType === "ctrl_variant_change"
+				? oFlexObject.selector.id
+				: oFlexObject.variantReference;
 			if (sVariantReference && !includes(aVariantIds, sVariantReference)) {
 				var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
 				var oNewVariant = FlexObjectFactory.createFlVariant({
 					id: sVariantReference,
-					variantManagementReference: oVariant.variantManagementReference,
+					variantManagementReference: sVariantReference,
 					variantName: oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
+					layer: Layer.BASE,
 					user: ControlVariantUtils.DEFAULT_AUTHOR,
-					reference: oVariant.reference
+					reference: oFlexObject.reference
 				});
-				oUpdate.runtimePersistence = {
+				oUpdate = {
 					runtimeOnlyData: {
 						flexObjects: [oNewVariant]
 					}

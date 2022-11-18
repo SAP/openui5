@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/each",
-	"sap/base/util/includes",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
 	"sap/base/Log",
@@ -14,12 +13,10 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/appDescriptorChanges/prepareAppDescriptorMap",
 	"sap/ui/fl/apply/_internal/flexState/changes/prepareChangesMap",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/prepareCompVariantsMap",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/prepareVariantsMap",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexState/InitialPrepareFunctions",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/write/_internal/FlexInfoSession",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/requireAsync",
@@ -27,7 +24,6 @@ sap.ui.define([
 ], function(
 	_omit,
 	each,
-	includes,
 	merge,
 	ObjectPath,
 	Log,
@@ -36,12 +32,10 @@ sap.ui.define([
 	prepareAppDescriptorMap,
 	prepareChangesMap,
 	prepareCompVariantsMap,
-	prepareVariantsMap,
 	DataSelector,
 	InitialPrepareFunctions,
 	Loader,
 	ManifestUtils,
-	StorageUtils,
 	FlexInfoSession,
 	LayerUtils,
 	requireAsync,
@@ -77,7 +71,7 @@ sap.ui.define([
 	 * 			},
 	 * 			loadModules: <boolean>
 	 * 		},
-	 * 		unfilteredStorageResnonse: {...}, // same as above but without layer filtering
+	 * 		unfilteredStorageResponse: {...}, // same as above but without layer filtering
 	 * 		runtimePersistence: {
 	 * 			flexObjects: [...],
 	 * 			runtimeOnlyData: {}
@@ -108,13 +102,12 @@ sap.ui.define([
 			pathInResponse: []
 		},
 		changes: {
-			initialPreparation: InitialPrepareFunctions.uiChanges,
+			initialPreparationFunctionName: "uiChanges",
 			prepareFunction: prepareChangesMap,
 			pathInResponse: ["changes"]
 		},
 		variants: {
-			initialPreparation: InitialPrepareFunctions.variants,
-			prepareFunction: prepareVariantsMap,
+			initialPreparationFunctionName: "variants",
 			pathInResponse: ["variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"]
 		},
 		compVariants: {
@@ -123,10 +116,11 @@ sap.ui.define([
 		}
 	};
 	// some runtime data is only fetched once (e.g. during control init) and has to survive an invalidation of the FlexState
-	// TODO: move to maps as soon as they don't get cleared with cache invalidation
+	// TODO: Move to runtime persistence as soon as flex objects are no longer deleted during cache invalidation
+	// but instead updated with the new data from the flex response
 	var _mExternalData = {
 		compVariants: {},
-		variants: {}
+		flexObjects: {}
 	};
 
 	function enhancePropertyBag(mPropertyBag) {
@@ -154,17 +148,23 @@ sap.ui.define([
 		return aRuntimePersistence;
 	}
 
-	function initializeState(sMapName, mPropertyBag, sReference) {
-		var fnPreparation = _mFlexObjectInfo[sMapName].initialPreparation;
+	function runInitialPreparation(sMapName, mPropertyBag) {
+		var sPreparationFunctionName = _mFlexObjectInfo[sMapName].initialPreparationFunctionName;
+		var fnPreparation = InitialPrepareFunctions[sPreparationFunctionName];
 		if (fnPreparation) {
-			var oUpdate = fnPreparation(mPropertyBag);
-			if (oUpdate) {
-				updateInstance(sReference, oUpdate);
-			}
+			return fnPreparation(mPropertyBag);
+		}
+		return undefined;
+	}
+
+	function initializeState(sMapName, mPropertyBag, sReference) {
+		var oUpdate = runInitialPreparation(sMapName, mPropertyBag);
+		if (oUpdate) {
+			updateInstance(sReference, oUpdate);
 		}
 	}
 
-	var oFlexObjectDataSelector = new DataSelector({
+	var oFlexObjectsDataSelector = new DataSelector({
 		id: "flexObjects",
 		parameterKey: "reference",
 		executeFunction: function(oData, sReference) {
@@ -172,7 +172,10 @@ sap.ui.define([
 				return [];
 			}
 			var oPersistence = _mInstances[sReference].runtimePersistence;
-			return oPersistence.flexObjects.concat(oPersistence.runtimeOnlyData.flexObjects);
+			return oPersistence.flexObjects.concat(
+				oPersistence.runtimeOnlyData.flexObjects || [],
+				_mExternalData.flexObjects[sReference][_mInstances[sReference].componentId] || []
+			);
 		}
 	});
 
@@ -192,7 +195,6 @@ sap.ui.define([
 			};
 			_mInstances[sReference].preparedMaps[sMapName] = FlexState.callPrepareFunction(sMapName, mPropertyBag);
 			initializeState(sMapName, mPropertyBag, sReference);
-			oFlexObjectDataSelector.checkUpdate({ reference: sReference });
 		}
 
 		return _mInstances[sReference].preparedMaps[sMapName];
@@ -200,7 +202,7 @@ sap.ui.define([
 
 	function updateInstance(sReference, oUpdate) {
 		_mInstances[sReference] = merge(_mInstances[sReference], oUpdate);
-		oFlexObjectDataSelector.checkUpdate({ reference: sReference });
+		oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
 	}
 
 	function getAppDescriptorMap(sReference) {
@@ -211,22 +213,27 @@ sap.ui.define([
 		return getInstanceEntryOrThrowError(sReference, "changes");
 	}
 
-	function getVariantsMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "variants");
-	}
-
 	function getCompVariantsMap(sReference) {
 		return getInstanceEntryOrThrowError(sReference, "compVariants");
 	}
 
-	function buildRuntimePersistence(oStorageResponse) {
-		var aFlexObjects = createFlexObjects(oStorageResponse);
-		return {
-			flexObjects: aFlexObjects,
+	function buildRuntimePersistence(oStorageResponse, aExternalFlexObjects) {
+		var oFlexInstance = {
+			flexObjects: createFlexObjects(oStorageResponse),
 			runtimeOnlyData: {
 				flexObjects: []
 			}
 		};
+		Object.keys(_mFlexObjectInfo).forEach(function(sMapName) {
+			var oUpdate = runInitialPreparation(sMapName, {
+				storageResponse: oStorageResponse,
+				externalData: aExternalFlexObjects
+			});
+			if (oUpdate) {
+				oFlexInstance = merge(oFlexInstance, oUpdate);
+			}
+		});
+		return oFlexInstance;
 	}
 
 	function initializeNewInstance(mPropertyBag) {
@@ -243,13 +250,21 @@ sap.ui.define([
 			delete _mInstances[sReference].runtimePersistence;
 			bDataUpdated = true;
 		}
+
+		if (!ObjectPath.get(["flexObjects", sReference, mPropertyBag.componentId], _mExternalData)) {
+			ObjectPath.set(["flexObjects", sReference, mPropertyBag.componentId], [], _mExternalData);
+		}
+
 		if (!_mInstances[sReference].runtimePersistence) {
-			_mInstances[sReference].runtimePersistence = buildRuntimePersistence(_mInstances[sReference].storageResponse);
+			_mInstances[sReference].runtimePersistence = buildRuntimePersistence(
+				_mInstances[sReference].storageResponse,
+				_mExternalData.flexObjects[sReference][mPropertyBag.componentId] || []
+			);
 			bDataUpdated = true;
 		}
 
 		if (bDataUpdated) {
-			oFlexObjectDataSelector.checkUpdate({ reference: sReference });
+			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
 		}
 	}
 
@@ -473,7 +488,7 @@ sap.ui.define([
 			deRegisterMaxLayerHandler(sReference);
 			delete _mInstances[sReference];
 			delete _mInitPromises[sReference];
-			oFlexObjectDataSelector.clearCachedResult({ reference: sReference });
+			oFlexObjectsDataSelector.clearCachedResult({ reference: sReference });
 			// TODO: get rid of the following deletes as soon as the change state
 			// is migrated from changePersistenceFactory to the FlexState
 			if (
@@ -488,7 +503,7 @@ sap.ui.define([
 			});
 			_mInstances = {};
 			_mInitPromises = {};
-			oFlexObjectDataSelector.clearCachedResult();
+			oFlexObjectsDataSelector.clearCachedResult();
 		}
 	};
 
@@ -504,20 +519,43 @@ sap.ui.define([
 		return _mExternalData.compVariants[sReference];
 	};
 
-	FlexState.setFakeStandardVariant = function(sReference, sComponentId, oStandardVariant) {
-		var oVariantsMap = FlexState.getVariantsState(sReference);
-		if (!oVariantsMap[Object.keys(oStandardVariant)[0]]) {
-			merge(oVariantsMap, oStandardVariant);
-
-			_mExternalData.variants[sReference] = _mExternalData.variants[sReference] || {};
-			_mExternalData.variants[sReference][sComponentId] = _mExternalData.variants[sReference][sComponentId] || {};
-			merge(_mExternalData.variants[sReference][sComponentId], oStandardVariant);
-		}
+	FlexState.resetInitialNonFlCompVariantData = function(sReference) {
+		delete _mExternalData.compVariants[sReference];
 	};
 
-	FlexState.resetFakedStandardVariants = function(sReference, sComponentId) {
-		if (_mExternalData.variants[sReference]) {
-			delete _mExternalData.variants[sReference][sComponentId];
+	/**
+	 * Adds a fake standard variant to the external data map which survives when the FlexState is cleared.
+	 * Fake standard variant refers to a variant that was not created based on file content returned from the backend.
+	 * If the flex response contains no variants that inherited from the standard variant, it is impossible
+	 * to know its ID without access to the related variant management control. Thus the standard variant cannot
+	 * be created during initialization but has to be added by the VariantManagement control via this method.
+	 * @param {string} sReference - Flex reference of the app
+	 * @param {string} sComponentId - ID of the component
+	 * @param {object} oStandardVariantInstance - Variant instance
+	 */
+	FlexState.addFakeStandardVariantToExternalData = function(sReference, sComponentId, oStandardVariantInstance) {
+		if (!_mExternalData.flexObjects[sReference]) {
+			_mExternalData.flexObjects[sReference] = {};
+		}
+		if (!_mExternalData.flexObjects[sReference][sComponentId]) {
+			_mExternalData.flexObjects[sReference][sComponentId] = [];
+		}
+		_mExternalData.flexObjects[sReference][sComponentId].push(oStandardVariantInstance);
+		oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
+	};
+
+	/**
+	 * Resets the fake standard variants for all variant management controls of the given component.
+	 *
+	 * @param {string} sReference - Flex reference of the app
+	 * @param {string} sComponentId - ID of the component
+	 */
+	FlexState.resetFakeStandardVariants = function(sReference, sComponentId) {
+		// External data is currently only used to store the standard variant
+		if (_mExternalData.flexObjects[sReference]) {
+			delete _mExternalData.flexObjects[sReference][sComponentId];
+			// Only called during destruction, no need to recalculate new state immediately
+			oFlexObjectsDataSelector.clearCachedResult({ reference: sReference });
 		}
 	};
 
@@ -532,8 +570,11 @@ sap.ui.define([
 			_mInstances[sReference].preparedMaps = {};
 			_mInstances[sReference].storageResponse = filterByMaxLayer(_mInstances[sReference].unfilteredStorageResponse);
 			// Storage response has changed, recreate the flex objects
-			_mInstances[sReference].runtimePersistence = buildRuntimePersistence(_mInstances[sReference].storageResponse);
-			oFlexObjectDataSelector.checkUpdate({ reference: sReference });
+			_mInstances[sReference].runtimePersistence = buildRuntimePersistence(
+				_mInstances[sReference].storageResponse,
+				_mExternalData.flexObjects[sReference][_mInstances[sReference].componentId] || []
+			);
+			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
 		}
 	};
 
@@ -544,7 +585,7 @@ sap.ui.define([
 		// make sure to remove the safeguard
 		if (_mInstances[sReference]) {
 			_mInstances[sReference].runtimePersistence.flexObjects.push(oFlexObject);
-			oFlexObjectDataSelector.checkUpdate({ reference: sReference });
+			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
 		}
 	};
 
@@ -557,12 +598,12 @@ sap.ui.define([
 			var aFlexObjects = _mInstances[sReference].runtimePersistence.flexObjects;
 			var iIndex = aFlexObjects.indexOf(oFlexObject);
 			aFlexObjects.splice(iIndex, 1);
-			oFlexObjectDataSelector.checkUpdate({ reference: sReference });
+			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
 		}
 	};
 
-	FlexState.getFlexObjectsSelector = function() {
-		return oFlexObjectDataSelector;
+	FlexState.getFlexObjectsDataSelector = function() {
+		return oFlexObjectsDataSelector;
 	};
 
 	FlexState.getUIChanges = function(sReference) {
@@ -571,24 +612,6 @@ sap.ui.define([
 
 	FlexState.getAppDescriptorChanges = function(sReference) {
 		return getAppDescriptorMap(sReference).appDescriptorChanges;
-	};
-
-	FlexState.getVariantsState = function(sReference) {
-		var oVariantsMap = getVariantsMap(sReference);
-		if (_mExternalData.variants[sReference]) {
-			each(_mExternalData.variants[sReference], function(sComponentId, oContent) {
-				// the faked variants could belong to a component that is not the currently active one
-				// if multiple apps with the same reference are loaded
-				if (_mInstances[sReference].componentId === sComponentId) {
-					each(oContent, function(sVariantManagementReference, oVariants) {
-						if (!oVariantsMap[sVariantManagementReference]) {
-							oVariantsMap[sVariantManagementReference] = oVariants;
-						}
-					});
-				}
-			});
-		}
-		return oVariantsMap;
 	};
 
 	FlexState.getUI2Personalization = function(sReference) {
@@ -616,6 +639,10 @@ sap.ui.define([
 	// temporary function until the maps are ready
 	FlexState.getFlexObjectsFromStorageResponse = function(sReference) {
 		return _mInstances[sReference] && _mInstances[sReference].unfilteredStorageResponse.changes;
+	};
+
+	FlexState.getComponentData = function(sReference) {
+		return _mInstances[sReference] && _mInstances[sReference].componentData;
 	};
 
 	return FlexState;

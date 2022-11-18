@@ -39,7 +39,7 @@ sap.ui.define([
 
 	function revertChangesAndUpdateVariantModel(oComponent, bSkipUrlUpdate, aChanges) {
 		return Promise.resolve()
-			.then(function () {
+			.then(function() {
 				if (aChanges.length !== 0) {
 					// Always revert changes in reverse order
 					aChanges.reverse();
@@ -50,17 +50,10 @@ sap.ui.define([
 					});
 				}
 			}.bind(this))
-			.then(function () {
+			.then(function() {
 				if (oComponent) {
 					var oModel = oComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 					if (oModel) {
-						aChanges.forEach(function (oChange) {
-							var sVariantReference = oChange.getVariantReference();
-							if (sVariantReference) {
-								oModel.removeChange(oChange);
-							}
-						});
-
 						// Temporary fix, parameters generally should not be removed
 						if (!bSkipUrlUpdate) {
 							URLHandler.update({
@@ -290,14 +283,7 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.addPreparedChange = function(oChange, oAppComponent) {
-		if (oChange.getVariantReference()) {
-			// variant model is always associated with the app component
-			var oModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
-			oModel.addChange(oChange);
-		}
-
 		this._oChangePersistence.addChange(oChange, oAppComponent);
-
 		return oChange;
 	};
 
@@ -314,11 +300,8 @@ sap.ui.define([
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - the change to be deleted
 	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
 	 */
-	FlexController.prototype.deleteChange = function(oChange, oAppComponent) {
+	FlexController.prototype.deleteChange = function(oChange) {
 		this._oChangePersistence.deleteChange(oChange);
-		if (oChange.getVariantReference()) {
-			oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName()).removeChange(oChange);
-		}
 	};
 
 	/**

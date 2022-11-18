@@ -108,7 +108,7 @@ sap.ui.define([
 			this.appComponent.destroy();
 			ChangePersistenceFactory._instanceCache = {};
 			FlexState.clearState(sReference);
-			FlexState.resetFakedStandardVariants(sReference, this.appComponent.getId());
+			FlexState.resetFakeStandardVariants(sReference, this.appComponent.getId());
 			sandbox.restore();
 		}
 	}, function() {

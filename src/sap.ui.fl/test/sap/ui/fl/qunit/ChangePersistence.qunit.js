@@ -53,7 +53,6 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	sinon.stub(FlexState, "getVariantsState").returns({});
 	var aControls = [];
 
 	function getInitialChangesMap(mPropertyBag) {
@@ -2849,7 +2848,6 @@ sap.ui.define([
 
 		QUnit.test("Shall add and remove changes to the cache depending upon change category", function(assert) {
 			var aSavedChanges = [];
-			sandbox.stub(VariantManagementState, "updateVariantsState");
 			sandbox.stub(DependencyHandler, "addRuntimeChangeAndUpdateDependencies");
 
 			var oChangeContent1 = {
@@ -2908,31 +2906,19 @@ sap.ui.define([
 
 			var oAddChangeSpy = sandbox.spy(Cache, "addChange");
 			var oDeleteChangeSpy = sandbox.spy(Cache, "deleteChange");
-			var mPropertyBag = {
-				reference: this.oChangePersistence._mComponent.name
-			};
 
-			function _checkVariantSyncCall() {
-				aSavedChanges.forEach(function(oSavedChange, iIndex) {
-					if (iIndex < 4) { // only first 4 changes are variant related
-						assert.ok(VariantManagementState.updateVariantsState.getCall(iIndex).calledWith(
-							Object.assign(mPropertyBag, {changeToBeAddedOrDeleted: oSavedChange})), "then the change was added to flex state response");
-					}
-				});
-			}
-
-			return this.oChangePersistence.saveDirtyChanges().then(function() {
-				_checkVariantSyncCall();
-				assert.equal(oAddChangeSpy.callCount, 1, "then addChange was called for only non-variant related change");
-				assert.strictEqual(oAddChangeSpy.lastCall.args[1].fileName, oChangeContent5.fileName, "the correct change was passed");
-				aSavedChanges.forEach(function(oSavedChange) {
-					this.oChangePersistence.deleteChange(oSavedChange);
-				}.bind(this));
-				return this.oChangePersistence.saveDirtyChanges().then(function() {
-					_checkVariantSyncCall();
+			return this.oChangePersistence.saveDirtyChanges()
+				.then(function() {
+					assert.equal(oAddChangeSpy.callCount, 5, "then addChange was called for all changes");
+					assert.strictEqual(oAddChangeSpy.lastCall.args[1].fileName, oChangeContent5.fileName, "the correct change was passed");
+					aSavedChanges.forEach(function(oSavedChange) {
+						this.oChangePersistence.deleteChange(oSavedChange);
+					}.bind(this));
+					return this.oChangePersistence.saveDirtyChanges();
+				}.bind(this))
+				.then(function() {
 					assert.ok(oDeleteChangeSpy.calledWith(this._mComponentProperties, aSavedChanges[4].convertToFileContent()));
 				}.bind(this));
-			}.bind(this));
 		});
 
 		QUnit.test("shall remove the change from the dirty changes, after it has been saved", function(assert) {

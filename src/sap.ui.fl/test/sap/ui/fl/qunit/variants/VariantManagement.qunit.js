@@ -94,6 +94,7 @@ sap.ui.define([
 						{
 							key: "Standard",
 							title: "Standard",
+							originalTitle: "Standard",
 							author: "A",
 							layer: Layer.VENDOR,
 							favorite: true,
@@ -102,6 +103,7 @@ sap.ui.define([
 						}, {
 							key: "1",
 							title: "One",
+							originalTitle: "One",
 							author: "A",
 							layer: Layer.USER,
 							change: true,
@@ -112,6 +114,7 @@ sap.ui.define([
 						}, {
 							key: "2",
 							title: "Two",
+							originalTitle: "Two",
 							author: "V",
 							layer: Layer.CUSTOMER,
 							favorite: true,
@@ -122,6 +125,7 @@ sap.ui.define([
 						}, {
 							key: "3",
 							title: "Three",
+							originalTitle: "Three",
 							author: "U",
 							layer: Layer.CUSTOMER,
 							favorite: true,
@@ -132,6 +136,7 @@ sap.ui.define([
 						}, {
 							key: "4",
 							title: "Four",
+							originalTitle: "Four",
 							author: "Z",
 							layer: Layer.USER,
 							change: true,

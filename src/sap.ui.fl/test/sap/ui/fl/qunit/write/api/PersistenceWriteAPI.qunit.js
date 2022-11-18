@@ -456,30 +456,6 @@ sap.ui.define([
 			PersistenceWriteAPI.add({change: oChange, selector: this.vSelector});
 		});
 
-		QUnit.test("when add is called but an error is thrown", function(assert) {
-			var sError = "mock error";
-			var mPropertyBag = {
-				change: {
-					_getMap: function () {
-						return {
-							changeType: "whatever"
-						};
-					},
-					getVariantReference: function () {
-						throw new Error(sError);
-					}
-				},
-				selector: this.vSelector
-			};
-			assert.throws(
-				function() {
-					PersistenceWriteAPI.add(mPropertyBag);
-				},
-				new Error(sError),
-				"then an error is caught during the process"
-			);
-		});
-
 		QUnit.test("when remove is called for a flex change", function(assert) {
 			var mPropertyBag = {
 				change: {
@@ -511,7 +487,7 @@ sap.ui.define([
 			return PersistenceWriteAPI.remove(mPropertyBag)
 				.then(function () {
 					assert.ok(fnRemoveChangeStub.calledWith(oElement, mPropertyBag.change, JsControlTreeModifier), "then the flex persistence was called with correct parameters");
-					assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change, oAppComponent), "then the flex persistence was called with correct parameters");
+					assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change), "then the flex persistence was called with correct parameters");
 				});
 		});
 
@@ -587,7 +563,7 @@ sap.ui.define([
 
 			return PersistenceWriteAPI.remove(mPropertyBag)
 				.then(function () {
-					assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change, oAppComponent), "then the flex persistence was called with correct parameters");
+					assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change), "then the flex persistence was called with correct parameters");
 				});
 		});
 

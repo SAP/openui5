@@ -28,6 +28,7 @@ sap.ui.define([
 		beforeEach: function() {
 			var oData = {
 				variantMgmtId1: {
+					currentVariant: "variant0",
 					defaultVariant: "variant0",
 					variants: [
 						{
@@ -58,7 +59,6 @@ sap.ui.define([
 			var oSetTitleCommand;
 			var sNewText = "Test";
 			var oAddChangeStub = sandbox.stub(this.oModel, "addVariantChange").resolves("setTitleChange");
-			var oUpdateSpy = sandbox.spy(this.oVariantManagement.getTitle().getBinding("text"), "checkUpdate");
 			var oDeleteStub = sandbox.stub(this.oModel, "deleteVariantChange").resolves();
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
@@ -81,7 +81,6 @@ sap.ui.define([
 				assert.strictEqual(oAddChangeStub.callCount, 1, "the add function was called once");
 				assert.deepEqual(oAddChangeStub.firstCall.args[0], "variantMgmtId1", "the first parameter is the variantManagement reference");
 				assert.deepEqual(oAddChangeStub.firstCall.args[1], mExpectedParams, "the second parameter is the correct property bag");
-				assert.strictEqual(oUpdateSpy.callCount, 1, "the checkUpdate function was called once on the binding");
 
 				return oSetTitleCommand.undo();
 			}).then(function() {
@@ -94,7 +93,6 @@ sap.ui.define([
 				assert.strictEqual(oDeleteStub.firstCall.args[0], "variantMgmtId1", "the vm reference was passed");
 				assert.deepEqual(oDeleteStub.firstCall.args[1], mExpectedParams, "the propertyBag was passed");
 				assert.strictEqual(oDeleteStub.firstCall.args[2], "setTitleChange", "the change was passed");
-				assert.strictEqual(oUpdateSpy.callCount, 2, "the checkUpdate function was called again on the binding");
 			});
 		});
 	});

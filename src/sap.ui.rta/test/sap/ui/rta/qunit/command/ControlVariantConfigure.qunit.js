@@ -35,7 +35,6 @@ sap.ui.define([
 				sandbox.stub(oMockedAppComponent, "getModel").returns(this.oModel);
 				this.oAddVariantChangeStub = sandbox.stub(this.oModel, "addVariantChange").returnsArg(1);
 				this.oDeleteVariantChangeStub = sandbox.stub(this.oModel, "deleteVariantChange");
-				this.oCheckUpdateStub = sandbox.stub(this.oModel, "checkUpdate");
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -100,8 +99,6 @@ sap.ui.define([
 				aPreparedChanges.forEach(function(oChange) {
 					assert.equal(oChange.generator, rtaLibrary.GENERATOR_NAME, "the generator was correctly set");
 				});
-				assert.strictEqual(this.oCheckUpdateStub.callCount, 1, "the checkUpdate function was called");
-				assert.strictEqual(this.oCheckUpdateStub.lastCall.args[0], true, "with true");
 
 				return oConfigureCommand.undo();
 			}.bind(this)).then(function() {
@@ -111,8 +108,6 @@ sap.ui.define([
 				assert.deepEqual(_omit(this.oDeleteVariantChangeStub.getCall(2).args[1], "appComponent"), oVisibleUndoChange, "the change was correctly removed");
 				assert.deepEqual(_omit(this.oDeleteVariantChangeStub.getCall(3).args[1], "appComponent"), oContextsUndoChange, "the change was correctly removed");
 				assert.deepEqual(_omit(this.oDeleteVariantChangeStub.getCall(4).args[1], "appComponent"), oDefaultUndoChange, "the change was correctly removed");
-				assert.strictEqual(this.oCheckUpdateStub.callCount, 2, "the checkUpdate function was called again");
-				assert.strictEqual(this.oCheckUpdateStub.lastCall.args[0], true, "with true");
 				assert.notOk(oConfigureCommand.getPreparedChange(), "the prepared changes got removed");
 			}.bind(this));
 		});
