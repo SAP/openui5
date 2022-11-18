@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/m/Button",
 	"sap/m/MessagePopover",
-	"sap/m/MessagePopoverItem",
+	"sap/m/MessageItem",
 	"sap/ui/core/Core",
     "sap/ui/table/library",
     "sap/ui/core/util/MockServer",
@@ -20,7 +20,7 @@ sap.ui.define([
     "sap/base/util/uid",
     "sap/base/security/encodeXML",
     "sap/ui/core/syncStyleClass"
-], function(Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button, MessagePopover, MessagePopoverItem, oCore,
+], function(Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button, MessagePopover, MessageItem, oCore,
 			tableLibrary, MockServer, Filter, TreeTable, Column, ODataModel, HTML, Measurement, uid, encodeXML, syncStyleClass) {
 	"use strict";
 
@@ -29,7 +29,7 @@ sap.ui.define([
 
 	var oTable;
 
-	var oMessageTemplate = new MessagePopoverItem({
+	var oMessageTemplate = new MessageItem({
 		type: '{type}',
 		title: '{message}',
 		description: '{code}',

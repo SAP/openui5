@@ -127,7 +127,7 @@ sap.ui.define([
 				 * Callback function for resolving a promise after description has been asynchronously loaded inside this function.
 				 * @callback sap.m.MessageView~asyncDescriptionHandler
 				 * @param {object} config A single parameter object
-				 * @param {MessagePopoverItem} config.item Reference to respective MessagePopoverItem instance
+				 * @param {sap.m.MessageItem} config.item Reference to respective MessageItem instance
 				 * @param {object} config.promise Object grouping a promise's reject and resolve methods
 				 * @param {function} config.promise.resolve Method to resolve promise
 				 * @param {function} config.promise.reject Method to reject promise

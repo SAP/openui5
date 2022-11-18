@@ -1,15 +1,15 @@
 sap.ui.define([
-	'sap/m/MessageView',
-	'sap/m/MessagePopoverItem',
-	'sap/m/Link',
-	'sap/m/Dialog',
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/IconPool',
-	'sap/ui/model/json/JSONModel',
-	'sap/m/Button',
 	'sap/m/Bar',
-	'sap/m/Text'
-], function(MessageView, MessagePopoverItem, Link, Dialog, Controller, IconPool, JSONModel, Button, Bar, Text) {
+	'sap/m/Button',
+	'sap/m/Dialog',
+	'sap/m/Link',
+	'sap/m/MessageItem',
+	'sap/m/MessageView',
+	'sap/m/Text',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel'
+], function(Bar, Button, Dialog, Link, MessageItem, MessageView, Text, IconPool, Controller, JSONModel) {
 	"use strict";
 
 	var oLink = new Link({
@@ -18,7 +18,7 @@ sap.ui.define([
 		target: "_blank"
 	});
 
-	var oMessageTemplate = new MessagePopoverItem({
+	var oMessageTemplate = new MessageItem({
 		type: '{type}',
 		title: '{title}',
 		description: '{description}',

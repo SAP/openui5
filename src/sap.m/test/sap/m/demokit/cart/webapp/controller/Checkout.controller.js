@@ -1,27 +1,27 @@
 sap.ui.define([
 	"./BaseController",
 	"../model/cart",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/Device",
-	"../model/formatter",
-	"sap/m/MessageBox",
-	"sap/m/Link",
-	"sap/m/MessagePopover",
-	"sap/m/MessagePopoverItem",
 	"../model/EmailType",
-	"sap/ui/core/Core"
+	"../model/formatter",
+	"sap/m/Link",
+	"sap/m/MessageBox",
+	"sap/m/MessageItem",
+	"sap/m/MessagePopover",
+	"sap/ui/Device",
+	"sap/ui/core/Core",
+	"sap/ui/model/json/JSONModel"
 ], function (
 	BaseController,
 	cart,
-	JSONModel,
-	Device,
-	formatter,
-	MessageBox,
-	Link,
-	MessagePopover,
-	MessagePopoverItem,
 	EmailType,
-	oCore
+	formatter,
+	Link,
+	MessageBox,
+	MessageItem,
+	MessagePopover,
+	Device,
+	oCore,
+	JSONModel
 ) {
 	"use strict";
 
@@ -109,7 +109,7 @@ sap.ui.define([
 			/**
 			 * Gather information that will be visible on the MessagePopover
 			 */
-			var oMessageTemplate = new MessagePopoverItem({
+			var oMessageTemplate = new MessageItem({
 				type: '{message>type}',
 				title: '{message>message}',
 				subtitle: '{message>additionalText}',
