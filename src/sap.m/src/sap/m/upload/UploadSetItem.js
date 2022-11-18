@@ -964,7 +964,7 @@ sap.ui.define([
 		if (aButtonsToRender.length > 0) {
 			oRm.openStart("div").class("sapMUCButtonContainer").openEnd();
 			aButtonsToRender.forEach(function (oBtn, iIndex) {
-				if (iIndex < (aButtonsToRender.length - 1)) {
+				if (iIndex < (aButtonsToRender.length)) {
 					oBtn.addStyleClass("sapMUCFirstButton");
 				}
 				oRm.renderControl(oBtn);
