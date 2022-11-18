@@ -367,7 +367,7 @@ sap.ui.define([
 	};
 
 	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
-			var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(oPayload, oContent, oConfig);
+		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(oPayload, oContent, oConfig);
 
 		var oConfigPayload = oConfig && oConfig.context && oConfig.context.payload;	// As oConfig is present we are called in a getItemForValue context and would also like to search by payload, if available
 		if (oConfigPayload) {
@@ -380,6 +380,7 @@ sap.ui.define([
 				});
 			});
 		}
+
 		return oConditions;
 	};
 

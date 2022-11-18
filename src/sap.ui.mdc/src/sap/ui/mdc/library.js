@@ -677,12 +677,12 @@
 	 * @typedef {object} sap.ui.mdc.valuehelp.ValueHelpItem
 	 * @property {any} key Key of the item
 	 * @property {string} description Description of the item
-	 * @property {object} [inParameters] In parameters of the item. For each field path a value is stored
-	 * @property {object} [outParameters] Out parameters of the item. For each field path a value is stored
+	 * @property {object} [payload] Payload of the item.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 * @experimental As of version 1.95
 	 */
+
 
 	/**
 	 *
