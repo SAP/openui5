@@ -19,7 +19,7 @@ sap.ui.define([
 
 	opaTest("Open app", function(Given, When, Then) {
 		Given.iStartMyAppInAFrame({
-			source: "test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?sap-ui-xx-columnmenu=true",
+			source: "test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html",
 			autoWait: true
 		});
 		Given.enableAndDeleteLrepLocalStorage();

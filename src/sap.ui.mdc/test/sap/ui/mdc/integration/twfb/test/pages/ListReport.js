@@ -9,14 +9,16 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/testutils/opa/filterbar/Actions",
 	"test-resources/sap/ui/mdc/testutils/opa/filterbar/Assertions",
 	"test-resources/sap/ui/mdc/testutils/opa/filterfield/Actions",
-	"test-resources/sap/ui/mdc/testutils/opa/filterfield/Assertions"
+	"test-resources/sap/ui/mdc/testutils/opa/filterfield/Assertions",
+	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util"
 ], function(Opa5,
 	TableActions,
 	TableAssertions,
 	FilterBarActions,
 	FilterBarAssertions,
 	FilterFieldActions,
-	FilterFieldAssertions) {
+	FilterFieldAssertions,
+	TestUtil) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -34,15 +36,11 @@ sap.ui.define([
 				},
 
 				iClickOnColumnHeaderMenuSortAscendingButton: function(sColumn) {
-					return TableActions.iClickOnAColumnHeaderMenuButtonWithIcon.call(this, sColumn, "sap-icon://sort-ascending");
+					return TableActions.iClickOnAColumnHeaderMenuButtonWithText.call(this, sColumn, TestUtil.getTextFromResourceBundle("sap.m", "table.COLUMNMENU_SORT_ASCENDING"));
 				},
 
 				iClickOnColumnHeaderMenuSortDescendingButton: function(sColumn) {
-					return TableActions.iClickOnAColumnHeaderMenuButtonWithIcon.call(this, sColumn, "sap-icon://sort-descending");
-				},
-
-				iClickOnColumnHeaderMenuCloseButton: function(sColumn) {
-					return TableActions.iClickOnAColumnHeaderMenuButtonWithIcon.call(this, sColumn, "sap-icon://decline");
+					return TableActions.iClickOnAColumnHeaderMenuButtonWithText.call(this, sColumn, TestUtil.getTextFromResourceBundle("sap.m", "table.COLUMNMENU_SORT_DESCENDING"));
 				},
 
 				iClickOnTheColumnSettingsButton: function() {
