@@ -1011,9 +1011,8 @@ sap.ui.define([
 
 		iVisibleIntervals = jQuery("#PC3-WeeksRow .sapUiCalItem").length;
 		assert.equal(iVisibleIntervals, 7, "days are 7");
-
 		oEndDate = CalendarUtils.getFirstDateOfWeek(oPCStartDate);
-		oEndDate.setDate(oEndDate.getDate() + iVisibleIntervals - 1);
+		oEndDate.setDate(oEndDate.getUTCDate() + iVisibleIntervals - 1);
 		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
 
 		assert.equal(this.oPC.getVisibleIntervalsCount(), 7, "correct number of shown intervals");
@@ -1034,7 +1033,7 @@ sap.ui.define([
 		assert.equal(iVisibleIntervals, 7, "days are 7");
 
 		oEndDate = CalendarUtils.getFirstDateOfWeek(oPCStartDate);
-		oEndDate.setDate(oEndDate.getDate() + iVisibleIntervals - 1);
+		oEndDate.setDate(oEndDate.getUTCDate() + iVisibleIntervals - 1);
 		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
 
 		assert.equal(this.oPC.getVisibleIntervalsCount(), 7, "correct number of shown intervals");
@@ -3118,13 +3117,15 @@ sap.ui.define([
 	QUnit.test("'_handleDateSelect()' sets a date to the row only if the selected date is new", function (assert) {
 		//prepare
 		var _rowSetDateSpy = this.spy(this.sut._oWeeksRow, 'displayDate');
+		var oTestUTCDate = new Date(Date.UTC(2015, 0, 5));
+		var oTestDate = new Date(2015, 0, 5 , oTestUTCDate.getHours(), oTestUTCDate.getMinutes(), oTestUTCDate.getSeconds());
 
 		//act
 		this.sut._handleDateSelect({
 			getSource: function(x) {
 				return	{
 					getStartDate: function () {
-						return new Date(Date.UTC(2015, 0, 5));
+						return oTestDate;
 					}
 				};
 			}

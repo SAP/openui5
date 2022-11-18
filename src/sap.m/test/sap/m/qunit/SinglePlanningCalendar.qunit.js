@@ -19,7 +19,8 @@ sap.ui.define([
 	'sap/ui/events/KeyCodes',
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(
 	qutils,
 	jQuery,
@@ -40,10 +41,11 @@ sap.ui.define([
 	KeyCodes,
 	JSONModel,
 	Log,
-	oCore
+	oCore,
+	createAndAppendDiv
 ) {
 	"use strict";
-
+	createAndAppendDiv("bigUiArea").style.width = "1024px";
 	QUnit.module("API");
 
 	QUnit.test("setTitle", function (assert) {
