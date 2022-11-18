@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, MessageToast, MessageBox, Sorter, Filter, FilterOperator, FilterType, JSONModel) {
+], function (Controller, MessageToast, MessageBox, Sorter, Filter, FilterOperator, FilterType,
+	JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.tutorial.odatav4.controller.App", {
@@ -17,18 +18,17 @@ sap.ui.define([
 		 */
 		onInit : function () {
 			var oJSONData = {
-				busy : false,
-				order : 0
-			};
-			var oModel = new JSONModel(oJSONData);
+					busy : false,
+					order : 0
+				},
+				oModel = new JSONModel(oJSONData);
+
 			this.getView().setModel(oModel, "appView");
 		},
-
 
 		/* =========================================================== */
 		/*           begin: event handlers                             */
 		/* =========================================================== */
-
 
 		/**
 		 * Refresh the data.
@@ -64,24 +64,24 @@ sap.ui.define([
 				aStates = [undefined, "asc", "desc"],
 				aStateTextIds = ["sortNone", "sortAscending", "sortDescending"],
 				sMessage,
-				iOrder = oView.getModel("appView").getProperty("/order");
+				iOrder = oView.getModel("appView").getProperty("/order"),
+				sOrder;
 
 			// Cycle between the states
 			iOrder = (iOrder + 1) % aStates.length;
-			var sOrder = aStates[iOrder];
+			sOrder = aStates[iOrder];
 
 			oView.getModel("appView").setProperty("/order", iOrder);
-			oView.byId("peopleList").getBinding("items").sort(sOrder && new Sorter("LastName", sOrder === "desc"));
+			oView.byId("peopleList").getBinding("items")
+				.sort(sOrder && new Sorter("LastName", sOrder === "desc"));
 
 			sMessage = this._getText("sortMessage", [this._getText(aStateTextIds[iOrder])]);
 			MessageToast.show(sMessage);
 		},
 
-
 		/* =========================================================== */
 		/*           end: event handlers                               */
 		/* =========================================================== */
-
 
 		/**
 		 * Convenience method for retrieving a translatable text.
@@ -90,7 +90,8 @@ sap.ui.define([
 		 * @returns {string} the text belonging to the given ID.
 		 */
 		_getText : function (sTextId, aArgs) {
-			return this.getOwnerComponent().getModel("i18n").getResourceBundle().getText(sTextId, aArgs);
+			return this.getOwnerComponent().getModel("i18n").getResourceBundle()
+				.getText(sTextId, aArgs);
 		}
 	});
 });

@@ -18,7 +18,8 @@
 				"test/sap/ui/core/qunit/odata/v4/**/*.js",
 				"test/sap/ui/core/demokit/sample/common/**/*.js",
 				"test/sap/ui/core/demokit/sample/odata/v4/**/*.js",
-				"test/sap/ui/core/demokit/sample/ViewTemplate/types/**/*.js"
+				"test/sap/ui/core/demokit/sample/ViewTemplate/types/**/*.js",
+				"test/sap/ui/core/demokit/tutorial/odatav4/**/*.js"
 			],
 			"rules": {
 				"consistent-return": "off", // override "warn"
@@ -96,7 +97,8 @@
 				"test/sap/ui/core/qunit/odata/v4/**/*.js",
 				"test/sap/ui/core/demokit/sample/common/**/*.js",
 				"test/sap/ui/core/demokit/sample/odata/v4/**/*.js",
-				"test/sap/ui/core/demokit/sample/ViewTemplate/types/**/*.js"
+				"test/sap/ui/core/demokit/sample/ViewTemplate/types/**/*.js",
+				"test/sap/ui/core/demokit/tutorial/odatav4/??/webapp/test/**/*.js"
 			],
 			"globals": {
 				"QUnit": "readonly",
@@ -107,27 +109,6 @@
 				"camelcase" : "off",
 				"max-nested-callbacks": "off",
 				"no-warning-comments": "off"
-			}
-		},
-		{
-			"files": [
-				"test/sap/ui/core/demokit/tutorial/odatav4/**/*.js"
-			],
-			"rules": {
-				"array-bracket-spacing": "error",
-				"block-spacing": "error",
-				"comma-spacing": "error",
-				"computed-property-spacing": "error",
-				"key-spacing": ["error", {"beforeColon":  true}],
-				"lines-between-class-members": "error",
-				"no-multiple-empty-lines": "error",
-				"no-multi-spaces": "error",
-				"no-whitespace-before-property": "error",
-				"object-curly-spacing": "error",
-				"space-before-blocks": "error",
-				"space-before-function-paren": ["error", {"named": "never"}],
-				"space-in-parens": "error",
-				"switch-colon-spacing": "error"
 			}
 		},
 		{

@@ -35,11 +35,9 @@ sap.ui.define([
 			this._bTechnicalErrors = false;
 		},
 
-
 		/* =========================================================== */
 		/*           begin: event handlers                             */
 		/* =========================================================== */
-
 
 		/**
 		 * Create a new entry.
@@ -49,10 +47,10 @@ sap.ui.define([
 				oBinding = oList.getBinding("items"),
 				// Create a new entry through the table's list binding
 				oContext = oBinding.create({
-					"UserName" : "",
-					"FirstName" : "",
-					"LastName" : "",
-					"Age" : "18"
+					UserName : "",
+					FirstName : "",
+					LastName : "",
+					Age : "18"
 				});
 
 			this._setUIChanges(true);
@@ -236,11 +234,9 @@ sap.ui.define([
 			oLayout.setResizable(true);
 		},
 
-
 		/* =========================================================== */
 		/*           end: event handlers                               */
 		/* =========================================================== */
-
 
 		/**
 		 * Convenience method for retrieving a translatable text.
@@ -267,6 +263,7 @@ sap.ui.define([
 				bHasUIChanges = this.getView().getModel().hasPendingChanges();
 			}
 			var oModel = this.getView().getModel("appView");
+
 			oModel.setProperty("/hasUIChanges", bHasUIChanges);
 		},
 

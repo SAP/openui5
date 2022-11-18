@@ -7,7 +7,6 @@ sap.ui.define([
 	return Opa5.extend("sap.ui.core.tutorial.odatav4.test.integration.arrangements.Startup", {
 
 		iStartMyApp : function () {
-
 			// start the mock server
 			this.iWaitForPromise(mockserver.init());
 
