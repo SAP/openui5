@@ -482,7 +482,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 			}
 		}
 
-		if (TableUtils.hasRowHeader(oTable) && oTable._getSelectionPlugin()._getSelectionMode() === library.SelectionMode.None) {
+		if (TableUtils.hasRowHeader(oTable) && oTable.getSelectionMode() === library.SelectionMode.None) {
 			rm.openStart("span", oTable.getId() + "-rowselecthdr");
 			rm.class("sapUiPseudoInvisibleText");
 			rm.openEnd();
