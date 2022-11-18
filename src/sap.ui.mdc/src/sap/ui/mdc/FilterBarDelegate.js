@@ -133,11 +133,48 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate"], function(AggregationBaseDe
 	 * This method is called when the 'Clear' button was pressed.
 	 *
 	 * @param {sap.ui.mdc.Control} oControl - The instance of a filter bar
-	 * @returns {Promise} Promise that is resolved once the action completes.
+	 * @returns {Promise} Promise that is resolved once the action completes
 	 */
 	FilterBarDelegate.clearFilters = function(oControl) {
 		return Promise.resolve();
     };
+
+	/**
+	 * A validator to evaluate the theoretical control state.
+	 *
+	 * @param {sap.ui.mdc.Control} oControl Instance of a <code>sap.ui.mdc.Control</code>
+	 * @param {Object} oState The theoretical external state representation of an MDC control. The representation of this format is similar as processed by {@link sap.ui.mdc.p13n.StateUtil StateUtil}
+	 * @param {object} [mValidation] Object describing the validation result. This object is only provided when called from the {@link sap.ui.mdc.FilterBar FilterBar}
+	 * @param {string} [mValidation.status] of the validation {@link sap.ui.mdc.enum.FilterBarValidationStatus}
+	 * @returns {Object} An object that must contain at least the <code>validation</code> attribute {@link sap.ui.core.MessageType MessageType}.
+	 * If <code>warning</code> or <code>error</code> state types have been provided, the <code>message</code> is shown in addition.
+	 */
+    FilterBarDelegate.validateState = function(oControl, oState) {
+		return AggregationBaseDelegate.validateState(oControl, oState);
+	};
+
+	/**
+	 * A validator to evaluate the filter bar state.
+	 *
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of a <code>sap.ui.mdc.FilterBar</code>
+	 * @param {map} [mValidation] Object describing the validation result. This object is only provided when called from the {@link sap.ui.mdc.FilterBar FilterBar}
+	 * @param {string} [mValidation.status] Status of the validation {@link sap.ui.mdc.enum.FilterBarValidationStatus}
+	 * @returns {sap.ui.mdc.enum.FilterBarValidationStatus} The inner filter bar state
+	 */
+    FilterBarDelegate.determineValidationState = function(oFilterBar) {
+		 return oFilterBar.checkValidationState();
+	};
+
+	/**
+	 * Visualizes the filter bar validation state.
+	 *
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of a <code>sap.ui.mdc.FilterBar</code>
+	 * @param {map} mValidation Describes the validation result. This object is only provided when called from the {@link sap.ui.mdc.FilterBar FilterBar}
+	 * @param {sap.ui.mdc.enum.FilterBarValidationStatus} mValidation.status of the validation
+	 */
+    FilterBarDelegate.visualizeValidationState = function(oFilterBar, mValidation) {
+	};
+
 
 	return FilterBarDelegate;
 });
