@@ -52,10 +52,14 @@ sap.ui.define([
 	 * is supported.
 	 * If no pattern is specified a default pattern according to the locale settings is used.
 	 *
+	 * Documentation links:
+	 * <ul>
+	 *   <li>{@link topic:91f2eba36f4d1014b6dd926db0e91070 Date Format}</li>
+	 *   <li>{@link http://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table}</li>
+	 * </ul>
+	 *
 	 * @public
 	 * @hideconstructor
-	 * @see {@link topic:91f2eba36f4d1014b6dd926db0e91070 Date Format}
-	 * @see http://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
 	 * @alias sap.ui.core.format.DateFormat
 	 */
 	var DateFormat = function() {
