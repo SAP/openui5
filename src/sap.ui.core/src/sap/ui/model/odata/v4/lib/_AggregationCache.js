@@ -48,6 +48,7 @@ sap.ui.define([
 			bHasGrandTotal) {
 		var fnCount = function () {}, // no specific handling needed for "UI5__count" here
 			fnLeaves = null,
+			fnResolve,
 			that = this;
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
@@ -60,16 +61,23 @@ sap.ui.define([
 		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined;
 		this.aElements.$created = 0; // required for _Cache#drillDown (see _Cache.from$skip)
-		this.oLeavesPromise = undefined;
-		if (mQueryOptions.$count && oAggregation.groupLevels.length) {
-			mQueryOptions.$$leaves = true; // do this after #getDownloadUrl
-			this.oLeavesPromise = new SyncPromise(function (resolve) {
-				fnLeaves = function (oLeaves) {
-					// Note: count is of type Edm.Int64, represented as a string in OData responses;
-					// $count should be a number and the loss of precision is acceptable
-					resolve(parseInt(oLeaves.UI5__leaves));
-				};
-			});
+		this.oCountPromise = undefined;
+		if (mQueryOptions.$count) {
+			if (oAggregation.hierarchyQualifier) {
+				this.oCountPromise = new SyncPromise(function (resolve) {
+					fnResolve = resolve;
+				});
+				this.oCountPromise.$resolve = fnResolve;
+			} else if (oAggregation.groupLevels.length) {
+				mQueryOptions.$$leaves = true; // do this after #getDownloadUrl
+				this.oCountPromise = new SyncPromise(function (resolve) {
+					fnLeaves = function (oLeaves) {
+						// Note: count has type Edm.Int64, represented as string in OData responses;
+						// $count should be a number and the loss of precision is acceptable
+						resolve(parseInt(oLeaves.UI5__leaves));
+					};
+				});
+			}
 		}
 		this.oFirstLevel = this.createGroupLevelCache(null, bHasGrandTotal || !!fnLeaves);
 		this.requestSideEffects = this.oFirstLevel.requestSideEffects; // @borrows ...
@@ -470,8 +478,8 @@ sap.ui.define([
 		var that = this;
 
 		if (sPath === "$count") {
-			if (this.oLeavesPromise) {
-				return this.oLeavesPromise;
+			if (this.oCountPromise) {
+				return this.oCountPromise;
 			}
 			if (this.oAggregation.hierarchyQualifier || this.oAggregation.groupLevels.length) {
 				Log.error("Failed to drill-down into $count, invalid segment: $count",
@@ -670,6 +678,7 @@ sap.ui.define([
 				}
 			}
 			aReadPromises.push(
+				this.readCount(oGroupLock),
 				this.readFirst(iFirstLevelIndex, iFirstLevelLength, iPrefetchLength,
 					oGroupLock, fnDataRequested));
 		} else {
@@ -711,7 +720,42 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise to be resolved with an OData object for the first range of data requested.
+	 * Reads the count of data (in case of a recursive hierarchy), taking the current filter and
+	 * search into account.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group to associate the requests with;
+	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy} still needs to be called!
+	 * @returns {sap.ui.base.SyncPromise|undefined}
+	 *   A promise resolving without a defined result when the read is finished, or rejecting in
+	 *   case of an error; <code>undefined</code> in case no count needs to be read
+	 * @throws {Error}
+	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.readCount = function (oGroupLock) {
+		var fnResolve = this.oCountPromise && this.oCountPromise.$resolve,
+			sResourcePath = this.sResourcePath + "/$count",
+			sSeparator = "?";
+
+		if (fnResolve) {
+			delete this.oCountPromise.$resolve;
+			if (this.mQueryOptions.$filter) {
+				sResourcePath += "?$filter=" + this.mQueryOptions.$filter;
+				sSeparator = "&";
+			}
+			if (this.oAggregation.search) {
+				sResourcePath += sSeparator + "$search=" + this.oAggregation.search;
+			}
+
+			return this.oRequestor.request("GET", sResourcePath, oGroupLock.getUnlockedCopy())
+				.then(fnResolve); // Note: $count is already of type number here
+		}
+	};
+
+	/**
+	 * Reads the first range of data being requested.
 	 *
 	 * @param {number} iStart
 	 *   The start index of the range

@@ -1845,7 +1845,10 @@ sap.ui.define([
 			JSON.stringify(oPayload), sOriginalResourcePath
 		).then(function (oResponse) {
 			that.reportHeaderMessages(oResponse.resourcePath, oResponse.messages);
-			return that.doConvertResponse(oResponse.body, sMetaPath);
+			return that.doConvertResponse(
+				// Note: "text/plain" used for $count
+				typeof oResponse.body === "string" ? JSON.parse(oResponse.body) : oResponse.body,
+				sMetaPath);
 		});
 	};
 

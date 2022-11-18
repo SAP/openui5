@@ -1310,7 +1310,9 @@ sap.ui.define([
 						return {
 							headers : mHeaders,
 							status : oResponse.status || 200,
-							responseText : JSON.stringify(oResponse.body)
+							responseText : typeof oResponse.body === "object"
+								? JSON.stringify(oResponse.body) // content type "application/json"
+								: oResponse.body // keep string for "text/plain"
 						};
 					});
 				}
@@ -1445,6 +1447,13 @@ sap.ui.define([
 						oResponseBody.resourcePath = sOriginalResourcePath;
 						oResponseBody.headers = mResponseHeaders;
 						throw oResponseBody;
+					}
+
+					if (typeof oResponseBody === "number") {
+						oResponseBody = String(oResponseBody);
+					} else if (oResponseBody !== undefined && typeof oResponseBody !== "object"
+						&& typeof oResponseBody !== "string") {
+						throw new Error("Response must be object|string: " + oResponseBody);
 					}
 
 					if ("ETag" in mResponseHeaders) {
@@ -1824,10 +1833,13 @@ sap.ui.define([
 		 *      <li> changeSetNo: The number of the change set within $batch (starting with 1)
 		 *      <li> $ContentID: The content ID of the request within the change set
 		 *   </ul>
-		 * @param {any|Error|Promise|function} [vResponse]
+		 * @param {object|string|number|Error|Promise|function} [vResponse]
 		 *   The response message to be returned from the requestor or a promise on it or a function
 		 *   (invoked "just in time" when the request is actually sent) returning the response
-		 *   message (any, error, or promise). May be omitted in case it does not matter.
+		 *   message (object, string, number, error, or promise). May be omitted in case it does not
+		 *   matter. For content type "application/json", an object is expected in the end, and for
+		 *   "text/plain", a string - but a number is automatically converted to a string to
+		 *   facilitate requests for ".../$count".
 		 * @param {object} [mResponseHeaders]
 		 *   The response headers to be returned from the requestor
 		 * @returns {object} The test instance for chaining
@@ -23223,12 +23235,16 @@ sap.ui.define([
 	//
 	// Request a side effect for a single row that does not affect the hierarchy.
 	// JIRA: CPOUI5ODATAV4-1785
+	//
+	// Use $count (JIRA: CPOUI5ODATAV4-1855).
 	QUnit.test("Recursive Hierarchy: expand to 2, collapse & expand root etc.", function (assert) {
 		var oCollapsed,
+			oListBinding,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oRoot,
 			oTable,
 			sView = '\
+<Text id="count" text="{$count}"/>\
 <t:Table firstVisibleRow="1" id="table" rows="{path : \'/EMPLOYEES\',\
 		parameters : {\
 			$$aggregation : {\
@@ -23236,6 +23252,7 @@ sap.ui.define([
 				hierarchyQualifier : \'OrgChart\'\
 			},\
 			$$patchWithoutSideEffects : true,\
+			$count : true,\
 			$orderby : \'AGE desc\'\
 		}}" threshold="0" visibleRowCount="3">\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
@@ -23247,11 +23264,18 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
+		this.expectRequest({
+				batchNo : 1,
+				url : "EMPLOYEES/$count"
+			}, 24)
+			.expectRequest({
+				batchNo : 1,
+				url : "EMPLOYEES?$apply=orderby(AGE desc)"
 				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
 				+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
-				+ "&$count=true&$skip=1&$top=3", {
+				+ "&$count=true&$skip=1&$top=3"
+			}, {
 				"@odata.count" : "6",
 				value : [{
 					AGE : 55,
@@ -23279,13 +23303,15 @@ sap.ui.define([
 					MANAGER_ID : "0",
 					Name : "Lambda"
 				}]
-			});
+			})
+			.expectChange("count");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
+			oListBinding = oTable.getBinding("rows");
 
 			// code under test
-			assert.deepEqual(oTable.getBinding("rows").getAggregation(), {
+			assert.deepEqual(oListBinding.getAggregation(), {
 				expandTo : 2,
 				hierarchyQualifier : "OrgChart"
 			}, "JIRA: CPOUI5ODATAV4-1825");
@@ -23298,7 +23324,8 @@ sap.ui.define([
 				[false, 2, "1", "0", "Beta", 55],
 				[undefined, 2, "2", "0", "Kappa", 56],
 				[undefined, 2, "3", "0", "Lambda", 57]
-			], 6);
+			], 6); // Note: length is not count
+			assert.strictEqual(oListBinding.getCount(), 24, "count of nodes"); // code under test
 			assert.deepEqual(oTable.getRows()[1].getBindingContext().getObject(), {
 					"@odata.etag" : "etag_kappa",
 					// "@$ui5.node.isExpanded" : undefined, // lost by _Helper.publicClone?!
@@ -23309,6 +23336,13 @@ sap.ui.define([
 					Name : "Kappa"
 				}, "technical properties have been removed");
 
+			that.expectChange("count", "24");
+
+			// code under test
+			that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+
+			return that.waitForChanges(assert, "$count");
+		}).then(function () {
 			that.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
 					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 						+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
@@ -23409,11 +23443,8 @@ sap.ui.define([
 				["", "", "", "", "", ""]
 			]);
 
-			that.oLogMock.expects("error").withArgs(
-				"Failed to drill-down into $count, invalid segment: $count");
-
-			// code under test -- will log an error because $count is not available
-			assert.strictEqual(oTable.getBinding("rows").getCount(), undefined);
+			// code under test
+			assert.strictEqual(oListBinding.getCount(), 24);
 
 			// code under test
 			oRoot.expand();
@@ -23546,15 +23577,20 @@ sap.ui.define([
 	// Scenario: Show the single root node of a recursive hierarchy and expand it. Use a filter and
 	// a search as well as a sort order.
 	// JIRA: CPOUI5ODATAV4-1675
+	//
+	// Use $count w/ $direct (JIRA: CPOUI5ODATAV4-1855).
 	QUnit.test("Recursive Hierarchy: expand root, w/ filter, search & orderby", function (assert) {
-		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
+			oTable,
 			sView = '\
+<Text id="count" text="{$count}"/>\
 <t:Table id="table" rows="{path : \'/EMPLOYEES\',\
 		parameters : {\
 			$$aggregation : {\
 				hierarchyQualifier : \'OrgChart\',\
 				search : \'covfefe\'\
 			},\
+			$count : true,\
 			$filter : \'Is_Manager\',\
 			$orderby : \'AGE desc\'\
 		}}">\
@@ -23562,7 +23598,8 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$apply=ancestors"
+		this.expectRequest("EMPLOYEES/$count?$filter=Is_Manager&$search=covfefe", 2)
+			.expectRequest("EMPLOYEES?$apply=ancestors"
 				+ "($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager)/search(covfefe),keep start)"
 				+ "/orderby(AGE desc)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
 				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
@@ -23573,11 +23610,25 @@ sap.ui.define([
 					ID : "0"
 				}]
 			})
+			.expectChange("count")
 			.expectChange("id", ["0"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oTable = that.oView.byId("table"),
-				oRoot = oTable.getRows()[0].getBindingContext();
+			var oListBinding;
+
+			oTable = that.oView.byId("table");
+			oListBinding = oTable.getBinding("rows");
+
+			assert.strictEqual(oListBinding.getCount(), 2, "count of nodes"); // code under test
+
+			that.expectChange("count", "2");
+
+			 // code under test
+			that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+
+			return that.waitForChanges(assert, "$count");
+		}).then(function () {
+			var oRoot = oTable.getRows()[0].getBindingContext();
 
 			that.expectRequest("EMPLOYEES?$apply=ancestors"
 					+ "($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager)/search(covfefe),keep start)"

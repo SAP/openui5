@@ -5,12 +5,12 @@
 	xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 
-	<TreeTable id="table" ariaLabelledBy="title"
-		rows="{path : '/SADL_V_RS_Ancestry_4_Hier', parameters : {$count : false}, suspended : true}"
-		selectionMode="None" threshold="0" visibleRowCount="5">
+	<TreeTable id="table" ariaLabelledBy="title" minAutoRowCount="2"
+		rows="{path : '/SADL_V_RS_Ancestry_4_Hier', parameters : {$count : true}, suspended : true}"
+		selectionMode="None" threshold="0" visibleRowCount="5" visibleRowCountMode="Interactive">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
-				<m:Title id="title" level="H1" text="Ancestry"/>
+				<m:Title id="title" level="H1" text="{header>$count} Ancestors"/>
 				<m:ToolbarSpacer/>
 				<m:SearchField placeholder="Hobby contains..." search="onFilter"
 					value="{ui>/sFilter}" width="40%"/>

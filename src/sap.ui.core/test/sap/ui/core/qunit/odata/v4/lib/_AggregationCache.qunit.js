@@ -78,9 +78,9 @@ sap.ui.define([
 
 			this.oRequestor = {
 				buildQueryString : function () { return ""; },
-				getServiceUrl : function () { return "/~/"; }
+				getServiceUrl : function () { return "/~/"; },
+				request : function () { throw new Error("must be mocked"); }
 			};
-			this.oRequestorMock = this.mock(this.oRequestor);
 		}
 	});
 	//*********************************************************************************************
@@ -389,21 +389,21 @@ sap.ui.define([
 			"@borrows ...");
 		if (bCountLeaves) {
 			assert.strictEqual(oCache.mQueryOptions.$$leaves, true);
-			assert.ok(oCache.oLeavesPromise instanceof SyncPromise);
-			assert.strictEqual(oCache.oLeavesPromise.isPending(), true);
+			assert.ok(oCache.oCountPromise instanceof SyncPromise);
+			assert.strictEqual(oCache.oCountPromise.isPending(), true);
 
 			// code under test (fnLeaves)
 			oEnhanceCacheWithGrandTotalExpectation.args[0][2][0]({UI5__leaves : "42"});
 
-			assert.strictEqual(oCache.oLeavesPromise.isFulfilled(), true);
-			assert.strictEqual(oCache.oLeavesPromise.getResult(), 42);
+			assert.strictEqual(oCache.oCountPromise.isFulfilled(), true);
+			assert.strictEqual(oCache.oCountPromise.getResult(), 42);
 
 			// code under test
-			assert.strictEqual(oCache.fetchValue(null, "$count"), oCache.oLeavesPromise);
+			assert.strictEqual(oCache.fetchValue(null, "$count"), oCache.oCountPromise);
 		} else {
 			assert.notOk("$$leaves" in oCache.mQueryOptions);
-			assert.ok("oLeavesPromise" in oCache, "be nice to V8");
-			assert.strictEqual(oCache.oLeavesPromise, undefined);
+			assert.ok("oCountPromise" in oCache, "be nice to V8");
+			assert.strictEqual(oCache.oCountPromise, undefined);
 		}
 		if (bHasGrandTotal || bCountLeaves) {
 			// code under test (fnCount) - nothing should happen :-)
@@ -480,13 +480,15 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("create: hierarchyQualifier", function (assert) {
+[false, true].forEach(function (bCount) {
+	QUnit.test("create: hierarchyQualifier, $count=" + bCount, function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
 			oCache,
 			// oGetDownloadUrlExpectation,
 			mQueryOptions = {
+				$count : bCount,
 				$expand : {
 					EMPLOYEE_2_TEAM : {$select : ["Team_Id", "Name"]}
 				},
@@ -507,7 +509,7 @@ sap.ui.define([
 		this.mock(_ConcatHelper).expects("enhanceCache").never();
 
 		// code under test
-		oCache = _AggregationCache.create(this.oRequestor, "resource/path", "n/a", oAggregation,
+		oCache = _AggregationCache.create(this.oRequestor, "resource/path", "~n/a~", oAggregation,
 			mQueryOptions);
 
 		// "super" call
@@ -532,12 +534,22 @@ sap.ui.define([
 		assert.strictEqual(oCache.aElements.$created, 0);
 		assert.strictEqual(oCache.oFirstLevel, "~firstLevelCache~");
 		assert.notOk("$$leaves" in oCache.mQueryOptions);
-		assert.ok("oLeavesPromise" in oCache, "be nice to V8");
-		assert.strictEqual(oCache.oLeavesPromise, undefined);
+		assert.ok("oCountPromise" in oCache, "be nice to V8");
 		assert.strictEqual(oCache.oGrandTotalPromise, undefined);
 		assert.ok("oGrandTotalPromise" in oCache, "be nice to V8");
 		assert.strictEqual(oCache.isDeletingInOtherGroup(), false);
+		if (bCount) {
+			assert.ok(oCache.oCountPromise.isPending());
+
+			// code under test
+			oCache.oCountPromise.$resolve(42);
+
+			assert.strictEqual(oCache.oCountPromise.getResult(), 42);
+		} else {
+			assert.strictEqual(oCache.oCountPromise, undefined);
+		}
 	});
+});
 
 	//*********************************************************************************************
 	// Using PICT /r:4848
@@ -1132,6 +1144,7 @@ sap.ui.define([
 		if (oFixture.bHasGrandTotal) {
 			oCache.oGrandTotalPromise = new SyncPromise(function () {});
 		}
+		this.mock(oCache).expects("readCount").withExactArgs("~oGroupLock~");
 		this.mock(oCache).expects("readFirst")
 			.withExactArgs(oFixture.iFirstLevelIndex, oFixture.iFirstLevelLength, iPrefetchLength,
 				"~oGroupLock~", "~fnDataRequested~")
@@ -1162,6 +1175,129 @@ sap.ui.define([
 					.read(iIndex, iLength, iPrefetchLength, oGroupLock, "~fnDataRequested~")
 					.then(checkResult);
 			});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("read: 1st time, readCount fails", function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X"
+			},
+			oCache,
+			oError = new Error();
+
+		// avoid trouble when creating 1st level cache
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
+		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
+		this.mock(oCache).expects("readCount").withExactArgs("~oGroupLock~")
+			.rejects(oError);
+		this.mock(oCache).expects("readFirst"); // don't care about more details here
+
+		// code under test
+		return oCache.read(0, 10, 0, "~oGroupLock~").then(function () {
+			assert.ok(false);
+		}, function (oResult) {
+			assert.strictEqual(oResult, oError);
+		});
+	});
+
+	//*********************************************************************************************
+[undefined, {}].forEach(function (oCountPromise, i) {
+	QUnit.test("readCount: nothing to do #" + i, function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X"
+			},
+			oCache,
+			oGroupLock = {
+				getUnlockedCopy : function () {}
+			};
+
+		// avoid trouble when creating 1st level cache
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
+		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
+		oCache.oCountPromise = oCountPromise;
+		this.mock(oGroupLock).expects("getUnlockedCopy").never();
+		this.mock(this.oRequestor).expects("request").never();
+
+		// code under test
+		assert.strictEqual(oCache.readCount(oGroupLock), undefined);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("readCount: GET fails", function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X"
+			},
+			oCache,
+			oError = new Error(),
+			oGroupLock = {
+				getUnlockedCopy : function () {}
+			};
+
+		// avoid trouble when creating 1st level cache
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
+		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
+		oCache.oCountPromise = {
+			$resolve : true // will not be called :-)
+		};
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
+			.returns("~oGroupLockCopy~");
+		this.mock(this.oRequestor).expects("request")
+			.withExactArgs("GET", "~/$count", "~oGroupLockCopy~").rejects(oError);
+
+		// code under test
+		return oCache.readCount(oGroupLock).then(function () {
+			assert.ok(false);
+		}, function (oResult) {
+			assert.strictEqual(oResult, oError);
+		});
+	});
+
+	//*********************************************************************************************
+[
+	{sExpectedPath : "~/$count"},
+	{$filter : "Is_Manager", sExpectedPath : "~/$count?$filter=Is_Manager"},
+	{search : "covfefe", sExpectedPath : "~/$count?$search=covfefe"},
+	{
+		$filter : "Is_Manager",
+		search : "covfefe",
+		sExpectedPath : "~/$count?$filter=Is_Manager&$search=covfefe"
+	}
+].forEach(function (oFixture, i) {
+	QUnit.test("readCount: #" + i, function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X",
+				search : oFixture.search
+			},
+			oCache,
+			oGroupLock = {
+				getUnlockedCopy : function () {}
+			},
+			fnResolve = sinon.spy(),
+			oResult;
+
+		// avoid trouble when creating 1st level cache
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
+		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation,
+			{$filter : oFixture.$filter});
+		oCache.oCountPromise = {
+			$resolve : fnResolve
+		};
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
+			.returns("~oGroupLockCopy~");
+		this.mock(this.oRequestor).expects("request")
+			.withExactArgs("GET", oFixture.sExpectedPath, "~oGroupLockCopy~").resolves(42);
+
+		// code under test
+		oResult = oCache.readCount(oGroupLock);
+
+		assert.notOk(fnResolve.called, "not yet");
+		assert.notOk("$resolve" in oCache.oCountPromise, "prevent 2nd GET");
+
+		return oResult.then(function () {
+			assert.strictEqual(fnResolve.args[0][0], 42);
+		});
 	});
 });
 

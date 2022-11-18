@@ -12,17 +12,24 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Ancestry.Main", {
 		onFilter : function () {
-			var sFilter = this.getView().getModel("ui").getProperty("/sFilter");
+			var sFilter = this.getView().getModel("ui").getProperty("/sFilter"),
+				oRowsBinding = this.byId("table").getBinding("rows");
 
-			this.byId("table").getBinding("rows")
-				.filter(new Filter("hobby", FilterOperator.Contains, sFilter));
+			oRowsBinding.suspend();
+			oRowsBinding.filter(sFilter
+				? new Filter("hobby", FilterOperator.Contains, sFilter)
+				: []);
+			this._oAggregation.expandTo = sFilter ? 99 : 2; // auto expand on filter
+			oRowsBinding.setAggregation(this._oAggregation);
+			oRowsBinding.resume();
 		},
 
 		onInit : function () {
 			var oTable = this.byId("table"),
-				oRowsBinding = oTable.getBinding("rows");
+				oRowsBinding = oTable.getBinding("rows"),
+				oView = this.getView();
 
-			this.getView().setModel(new JSONModel({
+			oView.setModel(new JSONModel({
 				sFilter : "",
 				sIcon : ""
 			}), "ui");
@@ -37,6 +44,9 @@ sap.ui.define([
 			};
 			oRowsBinding.setAggregation(this._oAggregation);
 			oRowsBinding.resume();
+
+			oView.setModel(oView.getModel(), "header");
+			oView.setBindingContext(oRowsBinding.getHeaderContext(), "header");
 		},
 
 		onSort : function () {
