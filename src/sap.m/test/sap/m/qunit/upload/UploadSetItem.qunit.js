@@ -87,6 +87,15 @@ sap.ui.define([
 		assert.notOk(oItem0._getEditButton().getVisible(), "Edit button should be invisible for 'visibleEdit' set ex-post to false.");
 	});
 
+	QUnit.test("Adding sapMUCFirstButton class to the cancel button", function (assert) {
+		var oItem = new UploadSetItem({
+				fileName: "fileName.txt"
+			});
+		this.oUploadSet.insertItem(oItem);
+		assert.equal(
+			oItem._getCancelRenameButton().aCustomStyleClasses[0] === "sapMUCCancelBtn", true, "sapMUCFirstButton class added to the cancel button");
+	});
+
 	QUnit.test("Flags visibleRemove, visibleEdit after UploadSetItem state is complete", function (assert) {
 		var oItem1 = this.oUploadSet.getItems()[1];
 		oItem1.setUploadState("Complete");
