@@ -102,7 +102,13 @@ sap.ui.define(function() {
 				group: "Bootstrap",
 				title: "Test Page for the SAPUI5 Bootstrap functionality with custom boot task and preload lib css",
 				qunit: {
-					version: 1
+					version: 1,
+					reorder: false
+				},
+				loader: {
+					paths: {
+						"fantasyLib": "test-resources/sap/ui/core/qunit/bootstrap/preloadedCss"
+					}
 				},
 				beforeBootstrap: "./BootstrapCustomBootTaskPreloadCss.beforeBootstrap.qunit"
 			},
