@@ -374,7 +374,7 @@ sap.ui.define([
 				iTimestamp = parseInt(oTarget.getAttribute("sap-ui-date"));
 
 				oStartDate = new Date(iTimestamp);
-				oStartDate = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate());
+				oStartDate = new Date(oStartDate.getUTCFullYear(), oStartDate.getUTCMonth(), oStartDate.getUTCDate());
 
 				oEndDate = new Date(oStartDate);
 				oEndDate.setDate(oEndDate.getDate() + 1);
@@ -469,7 +469,7 @@ sap.ui.define([
 			var iTimestamp = parseInt(oEvent.getSource().getCustomData()[0].getValue()),
 				oDate = new Date(iTimestamp);
 
-			oDate = new Date(oDate.getFullYear(), oDate.getMonth(), oDate.getDate());
+			oDate = new Date(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate());
 
 			this.fireEvent("moreLinkPress", { date: oDate });
 		};

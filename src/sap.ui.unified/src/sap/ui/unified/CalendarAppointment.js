@@ -277,14 +277,13 @@ sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/
 	 * @private
 	 */
 	CalendarAppointment.prototype._convertToTimezone = function(oDate) {
-		var sTimezone = Core.getConfiguration().getTimezone();
-		var oNewDate = CalendarUtils._createUniversalUTCDate(oDate, undefined, true);
+		var sConfigTimezone = Core.getConfiguration().getTimezone();
+		var sLocalTimezone = TimezoneUtil.getLocalTimezone();
 
-		oNewDate = new Date(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(), oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds());
-		oNewDate.setUTCFullYear(oDate.getUTCFullYear());
-		oNewDate = TimezoneUtil.convertToTimezone(oNewDate, sTimezone);
+		var iConfigOffsetMillis = TimezoneUtil.calculateOffset(oDate, sConfigTimezone) * 1000;
+		var iLocalOffsetMillis = TimezoneUtil.calculateOffset(oDate, sLocalTimezone) * 1000;
 
-		return oNewDate;
+		return new Date(oDate.getTime() - iConfigOffsetMillis + iLocalOffsetMillis);
 	};
 
 	return CalendarAppointment;
