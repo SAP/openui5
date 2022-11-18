@@ -33,7 +33,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.valuehelp.content.Conditions
 	 */
 	 var Conditions = Content.extend(
-		"sap.ui.mdc.valuehelp.content.Conditions" /** @lends sap.ui.mdc.valuehelp.content.Conditions.prototype */,
+		"sap.ui.mdc.valuehelp.content.Conditions", /** @lends sap.ui.mdc.valuehelp.content.Conditions.prototype */
 		{
 			metadata: {
 				library: "sap.ui.mdc",
