@@ -1,5 +1,4 @@
 <mvc:View
-	id="mainView"
 	controllerName="appUnderTest.controller.Main"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"

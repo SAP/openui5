@@ -1,7 +1,6 @@
 <mvc:View
 		height="100%"
 		controllerName="sap.ui.documentation.sdk.controller.TopicDetail"
-		id="sap.ui.documentation.sdk.controller.TopicDetail"
 		xmlns="sap.f"
 		xmlns:m="sap.m"
 		xmlns:l="sap.ui.layout"

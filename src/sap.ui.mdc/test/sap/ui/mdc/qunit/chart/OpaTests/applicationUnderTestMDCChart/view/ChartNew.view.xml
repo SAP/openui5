@@ -1,4 +1,4 @@
-<mvc:View id="chartNewView" displayBlock="true"
+<mvc:View displayBlock="true"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"

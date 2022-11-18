@@ -1,8 +1,7 @@
 <mvc:View
 		controllerName="sap.ui.sample.appUnderTest.controller.Main"
 		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		id="mainView">
+		xmlns:mvc="sap.ui.core.mvc">
 	<App>
 		<Page title="List Page">
 			<content>
