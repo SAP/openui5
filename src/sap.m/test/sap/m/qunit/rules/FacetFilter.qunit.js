@@ -13,7 +13,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("FacetFilter rules", {
-		setup: function() {
+		beforeEach: function() {
 			this.model1 = new JSONModel({
 				items: [{ text: 'a' }]
 			});
@@ -66,7 +66,7 @@ sap.ui.define([
 			});
 			this.page.placeAt("qunit-fixture");
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.page.destroy();
 			this.model1 = null;
 			this.model2 = null;

@@ -11,7 +11,7 @@ sap.ui.define([
 	var TitleLevel = coreLibrary.TitleLevel;
 
 	QUnit.module("Title rule tests", {
-		setup: function () {
+		beforeEach: function () {
 			this.page = new Page("myPage", {
 				content: [
 					new Title({
@@ -33,7 +33,7 @@ sap.ui.define([
 			});
 			this.page.placeAt("qunit-fixture");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.page.destroy();
 		}
 	});

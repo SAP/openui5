@@ -9,7 +9,7 @@ sap.ui.define([
 		"use strict";
 
 		QUnit.module("ObjectListItem markers aggregation with markFlagged: true", {
-			setup: function () {
+			beforeEach: function () {
 				this.page = new Page("objectListItemContext", {
 					content: new ObjectListItem({
 						markers: new ObjectMarker(),
@@ -18,7 +18,7 @@ sap.ui.define([
 				});
 				this.page.placeAt("qunit-fixture");
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.page.destroy();
 			}
 		});
@@ -32,7 +32,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("ObjectListItem markers aggregation with markFavorite: true", {
-			setup: function () {
+			beforeEach: function () {
 				this.page = new Page("objectListItemContext", {
 					content: new ObjectListItem({
 						markers: new ObjectMarker(),
@@ -41,7 +41,7 @@ sap.ui.define([
 				});
 				this.page.placeAt("qunit-fixture");
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.page.destroy();
 			}
 		});

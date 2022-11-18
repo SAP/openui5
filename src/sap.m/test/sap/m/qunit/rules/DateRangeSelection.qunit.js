@@ -11,7 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("DateRangeSelection rules", {
-		setup: function() {
+		beforeEach: function() {
 			this.model = new JSONModel({
 				date1: new Date(),
 				date2: new Date()
@@ -72,7 +72,7 @@ sap.ui.define([
 			this.page.placeAt("qunit-fixture");
 			this.page.setModel(this.model);
 		},
-		teardown: function() {
+		afterEach: function() {
 			this.page.destroy();
 			this.model = null;
 		}

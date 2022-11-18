@@ -18,7 +18,7 @@ sap.ui.define([
 	var IconTabHeaderMode = mobileLibrary.IconTabHeaderMode;
 
 	QUnit.module("IconTabBar rule tests", {
-		setup: function () {
+		beforeEach: function () {
 			this.page = new Page("myPage", {
 				title : "IconTabBar Support Rules Test",
 				content: [
@@ -190,7 +190,7 @@ sap.ui.define([
 			});
 			this.page.placeAt("qunit-fixture");
 		},
-		teardown: function () {
+		afterEach: function () {
 			this.page.destroy();
 		}
 	});

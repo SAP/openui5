@@ -1258,11 +1258,6 @@ sap.ui.define([
 						}
 					}
 				},
-				qunit: {
-					// to be checked: TestHelper does not work with qunit-2 & sinon-4
-					// sinon-4 alone works
-					version: 1
-				},
 				ui5: {
 					libs: ["sap.m", "sap.ui.support", "sap.ui.unified"],  // to compensate sync loadLibrary
 					support: "silent",

@@ -8,7 +8,7 @@ sap.ui.define([
 		"use strict";
 
 		QUnit.module("ObjectMarker with additional info and no type", {
-			setup: function () {
+			beforeEach: function () {
 				this.page = new Page("objectMarkerContext", {
 					content: new ObjectMarker({
 						additionalInfo: "Additional Info"
@@ -16,7 +16,7 @@ sap.ui.define([
 				});
 				this.page.placeAt("qunit-fixture");
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.page.destroy();
 			}
 		});
