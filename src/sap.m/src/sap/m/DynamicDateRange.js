@@ -356,7 +356,7 @@ sap.ui.define([
 			};
 
 			this._oInput._getValueHelpIcon().setDecorative(false);
-			this._oInput._getValueHelpIcon().resetProperty("alt");
+
 			this._oInput.addDelegate(this._onBeforeInputRenderingDelegate, this);
 
 			this.setAggregation("_input", this._oInput, false);
