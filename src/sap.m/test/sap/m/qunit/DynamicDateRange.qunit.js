@@ -1193,19 +1193,16 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("picker icon does not have a tooltip", function (assert) {
+	QUnit.test("icon is properly configured", function (assert) {
 		// arrange
-		var oDynamicDateRange = new DynamicDateRange();
+		var oIcon = new DynamicDateRange().getAggregation("_input").getAggregation("_endIcon")[0];
 
 		// act
-		oDynamicDateRange.placeAt("qunit-fixture");
-		oCore.applyChanges();
-
 		// assert
-		assert.notOk(oDynamicDateRange.$("input").control(0)._getValueHelpIcon().getTooltip(), "icon tooltip is disabled");
-
-		// cleanup
-		oDynamicDateRange.destroy();
+		assert.notOk(oIcon.getTooltip(), "icon has no tooltip");
+		assert.notOk(oIcon.getDecorative(), "icon isn't decorative");
+		assert.notOk(oIcon.getUseIconTooltip(), "icon doesn't have default tooltip");
+		assert.strictEqual(oIcon.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON") , "icon alt is present");
 	});
 
 });

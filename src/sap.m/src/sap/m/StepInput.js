@@ -296,6 +296,11 @@ function(
 			renderer: StepInputRenderer
 		});
 
+		// get resource translation bundle;
+		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP = oLibraryResourceBundle.getText("STEP_INPUT_INCREASE_BTN");
+		StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP = oLibraryResourceBundle.getText("STEP_INPUT_DECREASE_BTN");
+
 		StepInput.INITIAL_WAIT_TIMEOUT = 500;
 		StepInput.ACCELLERATION = 0.8;
 		StepInput.MIN_WAIT_TIMEOUT = 50;
@@ -503,7 +508,8 @@ function(
 					noTabStop: true,
 					decorative: false,
 					press: this._handleButtonPress.bind(this, 1),
-					useIconTooltip: false
+					useIconTooltip: false,
+					alt: StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP
 				});
 
 			oIcon.getEnabled = function () {
@@ -536,7 +542,8 @@ function(
 					noTabStop: true,
 					decorative: false,
 					press: this._handleButtonPress.bind(this, -1),
-					useIconTooltip: false
+					useIconTooltip: false,
+					alt: StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP
 				});
 
 			oIcon.getEnabled = function () {
