@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/test/actions/Action",
 	"sap/ui/thirdparty/jquery"
-], function (Action, jQueryDOM) {
+], function (Action, jQuery) {
 	"use strict";
 
 	/**
@@ -36,7 +36,7 @@ sap.ui.define([
 		executeOn : function (oControl) {
 			var sKeyCode = this.getKeyCode();
 
-			oControl.$().trigger(jQueryDOM.Event("keydown", { keyCode: sKeyCode }));
+			oControl.$().trigger(jQuery.Event("keydown", { keyCode: sKeyCode }));
 
 		}
 	});

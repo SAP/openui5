@@ -961,10 +961,10 @@ sap.ui.define([
 	QUnit.test("ariaLabelledBy propery propaged to the anchor tag", function(assert) {
 		// Prepare
 		var sLabelId = "label",
-			oLabel = new sap.m.Label(sLabelId, {
+			oLabel = new Label(sLabelId, {
 				text: "label text"
 			}),
-			oOI = new sap.m.ObjectIdentifier({
+			oOI = new ObjectIdentifier({
 				text: "identifier text",
 				title: "identifier title",
 				ariaLabelledBy: [sLabelId]

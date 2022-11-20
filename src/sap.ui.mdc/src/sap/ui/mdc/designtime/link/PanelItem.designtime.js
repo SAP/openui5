@@ -4,18 +4,19 @@
 
 // Provides the Design Time Metadata for the sap.ui.mdc.Link
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery"
-], function(jQuery) {
+], function(Element, jQuery) {
 	"use strict";
 
 	return {
 		// RTA mode
 		domRef: function(oPanelItem) {
-			var $aPanelListItems = jQuery.find(".mdcbaseinfoPanelListItem");
-			var $oPanelListItem = $aPanelListItems.filter(function($PanelListItem) {
-				return jQuery($PanelListItem).control(0).getParent().getKey() === oPanelItem.getId();
+			var aPanelListItems = jQuery.find(".mdcbaseinfoPanelListItem");
+			var aFilteredPanelListItem = aPanelListItems.filter(function(oPanelListItem) {
+				return Element.closestTo(oPanelListItem).getParent().getKey() === oPanelItem.getId();
 			});
-			return $oPanelListItem[0];
+			return aFilteredPanelListItem[0];
 		},
 		name: {
 			singular: "p13nDialog.PANEL_ITEM_NAME",

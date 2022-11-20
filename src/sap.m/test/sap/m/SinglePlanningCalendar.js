@@ -524,21 +524,21 @@ sap.ui.define([
 			title: "Month"
 		});
 
-	SinglePlanningCalendarView.extend("sap.custom.CustomView", {});
+	var CustomView = SinglePlanningCalendarView.extend("sap.custom.CustomView", {
+		getEntityCount: function () {
+			return 10;
+		},
 
-	sap.custom.CustomView.prototype.getEntityCount = function () {
-		return 10;
-	};
+		getScrollEntityCount: function () {
+			return 10;
+		},
 
-	sap.custom.CustomView.prototype.getScrollEntityCount = function () {
-		return 10;
-	};
+		calculateStartDate: function (oStartDate) {
+			return oStartDate;
+		}
+	});
 
-	sap.custom.CustomView.prototype.calculateStartDate = function (oStartDate) {
-		return oStartDate;
-	};
-
-	var oCustomView = new sap.custom.CustomView({
+	var oCustomView = new CustomView({
 		title: "10 days",
 		key: "10Days"
 	});

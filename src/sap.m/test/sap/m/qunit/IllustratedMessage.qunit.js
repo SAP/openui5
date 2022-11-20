@@ -4,14 +4,16 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/IllustratedMessage",
 	"sap/m/Button",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/InvisibleText"
 ],
 function (
 	library,
 	jQuery,
 	IllustratedMessage,
 	Button,
-	Core
+	Core,
+	InvisibleText
 ) {
 	"use strict";
 
@@ -776,7 +778,7 @@ function (
 	QUnit.test("Testing illustrationAriaLabelledBy association", function (assert) {
 
 		// Arrange
-		new sap.ui.core.InvisibleText("illustration_label", {text: "My label"}).toStatic();
+		new InvisibleText("illustration_label", {text: "My label"}).toStatic();
 
 		var $illustration = this.oIllustration.$();
 

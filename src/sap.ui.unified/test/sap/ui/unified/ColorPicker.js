@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/unified/ColorPicker",
 	"sap/ui/unified/ColorPickerPopover",
-	"sap/ui/unified/library"
-], function(App, Button, Label, MessageToast, Page, Select, ToggleButton, Item, VerticalLayout, ColorPicker, ColorPickerPopover, unifiedLibrary) {
+	"sap/ui/unified/library",
+	"sap/ui/thirdparty/jquery"
+], function(App, Button, Label, MessageToast, Page, Select, ToggleButton, Item, VerticalLayout, ColorPicker, ColorPickerPopover, unifiedLibrary, jQuery) {
 	"use strict";
 
 	var ColorPickerDisplayMode = unifiedLibrary.ColorPickerDisplayMode;

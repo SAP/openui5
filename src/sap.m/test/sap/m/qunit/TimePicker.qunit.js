@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
 ], function(
 	qutils,
@@ -57,7 +58,8 @@ sap.ui.define([
 	Device,
 	XMLView,
 	KeyCodes,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -1151,7 +1153,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// assert
-		assert.notOk(oTimePicker.$("icon").control(0).getTooltip(), "icon tooltip is disabled");
+		assert.notOk(Element.closestTo(oTimePicker.getDomRef("icon")).getTooltip(), "icon tooltip is disabled");
 
 		// cleanup
 		oTimePicker.destroy();

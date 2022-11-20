@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	JsControlTreeModifier,
-	ManifestUtils
+	ManifestUtils,
+	jQuery
 ) {
 	"use strict";
 

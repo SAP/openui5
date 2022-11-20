@@ -1,5 +1,8 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(Controller) {
+sap.ui.define([
+	'sap/ui/core/Element',
+	'sap/ui/core/mvc/Controller'
+],
+	function(Element, Controller) {
 		'use strict';
 
 		return Controller.extend('sap.ui.layout.GridData.controller.GridData', {
@@ -19,7 +22,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 					return;
 				}
 
-				$oGridWrapper.control()[0].setWidth(iValue + '%');
+				Element.closestTo($oGridWrapper[0]).setWidth(iValue + '%');
 			}
 		});
 	});

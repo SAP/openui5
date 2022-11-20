@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/dom/jquery/cursorPos"
 ], function(
 	qutils,
@@ -41,7 +42,8 @@ sap.ui.define([
 	deepEqual,
 	Log,
 	jQuery,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -396,7 +398,7 @@ sap.ui.define([
 		assert.equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after date selection");
 
 		qutils.triggerEvent("click", "DRS2-icon");
-		jQuery("#DRS2-cal").control(0).fireCancel();
+		Element.closestTo("#DRS2-cal").fireCancel();
 		assert.equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after cancel");
 
 		// On a touch device
@@ -410,7 +412,7 @@ sap.ui.define([
 		assert.notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after date selection");
 
 		qutils.triggerEvent("click", "DRS2-icon");
-		jQuery("#DRS2-cal").control(0).fireCancel();
+		Element.closestTo("#DRS2-cal").fireCancel();
 		assert.notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after cancel");
 
 		Device.system.desktop = bOrigDesktop;

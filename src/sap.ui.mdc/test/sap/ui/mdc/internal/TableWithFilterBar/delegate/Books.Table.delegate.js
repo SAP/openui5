@@ -6,9 +6,12 @@ sap.ui.define([
 	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/mdc/enum/EditMode",
 	"delegates/odata/v4/util/DelegateUtil",
+	"sap/ui/model/odata/type/Currency",
+	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/Int32",
+	"sap/ui/model/odata/type/String",
 	"sap/m/Text"
-], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, EditMode, DelegateUtil, Int32Type, Text) {
+], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, EditMode, DelegateUtil, CurrencyType, DecimalType, Int32Type, StringType, Text) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
 
@@ -126,7 +129,15 @@ sap.ui.define([
 		};
 
 		if (oProperty.name === "price") {
-			oCtrlProperties.value = {parts: [{path:'price', type: new sap.ui.model.odata.type.Decimal(undefined, {precision: 9, scale: 2})}, {path:'currency_code', type: new sap.ui.model.odata.type.String(undefined, {maxLength: 3})}, {path:'/##@@requestCurrencyCodes', mode:'OneTime', targetType:'any'}], type: new sap.ui.model.odata.type.Currency(), mode:'TwoWay'};
+			oCtrlProperties.value = {
+				parts: [
+					{path:'price', type: new DecimalType(undefined, {precision: 9, scale: 2})},
+					{path:'currency_code', type: new StringType(undefined, {maxLength: 3})},
+					{path:'/##@@requestCurrencyCodes', mode:'OneTime', targetType:'any'}
+				],
+				type: new CurrencyType(),
+				mode:'TwoWay'
+			};
 		} else if (oProperty.name === "descr") {
 			oCtrlProperties.multipleLines = true;
 		} else if (oProperty.name === "language_code") {

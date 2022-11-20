@@ -4,7 +4,6 @@
 
 // Provides control sap.f.ShellBar
 sap.ui.define([
-	'sap/f/library',
 	"sap/ui/core/Control",
 	"./shellBar/Factory",
 	"./shellBar/AdditionalContentSupport",
@@ -13,10 +12,10 @@ sap.ui.define([
 	"sap/m/BarInPageEnabler",
 	"sap/m/BadgeCustomData",
 	"sap/m/Button",
+	"sap/m/library",
 	"./ShellBarRenderer"
 ],
 function(
-	library,
 	Control,
 	Factory,
 	AdditionalContentSupport,
@@ -25,11 +24,12 @@ function(
 	BarInPageEnabler,
 	BadgeCustomData,
 	Button,
+	mobileLibrary,
 	ShellBarRenderer
 ) {
 	"use strict";
 
-	var AvatarSize = library.AvatarSize;
+	var AvatarSize = mobileLibrary.AvatarSize;
 
 	/**
 	 * Constructor for a new <code>ShellBar</code>.

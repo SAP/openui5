@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/m/CheckBox",
 	"sap/m/Page",
 	"sap/m/Toolbar",
-	"sap/m/ToolbarSpacer",
-	"sap/ui/thirdparty/jquery"
-], function(App, ActionSheet, Button, coreLibrary, CheckBox, Page, Toolbar, ToolbarSpacer, jQuery) {
+	"sap/m/ToolbarSpacer"
+], function(App, ActionSheet, Button, coreLibrary, CheckBox, Page, Toolbar, ToolbarSpacer) {
 	"use strict";
 
 	// shortcut for sap.ui.core.aria.HasPopup

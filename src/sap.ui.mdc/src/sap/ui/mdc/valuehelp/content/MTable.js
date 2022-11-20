@@ -18,6 +18,7 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/mdc/enum/SelectType',
 	'sap/base/Log',
+	'sap/ui/core/Element',
 	'sap/ui/thirdparty/jquery'
 ], function(
 	FilterableListContent,
@@ -35,6 +36,7 @@ sap.ui.define([
 	merge,
 	SelectType,
 	Log,
+	Element,
 	jQuery
 ) {
 	"use strict";
@@ -882,7 +884,7 @@ sap.ui.define([
 		}
 
 		var oTable = this._getTable();
-		var oItem = jQuery(oEvent.target).control(0);
+		var oItem = Element.closestTo(oEvent.target);
 
 		switch (oEvent.type) {
 			case "sapprevious":

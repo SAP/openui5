@@ -891,7 +891,7 @@ function(
 			assert.ok(this.oMDCChart.setHeaderLevel(TitleLevel.H3));
 
 			assert.ok(toolbarSpy.calledOnce, "setHeaderLevel called on toolbar");
-			assert.equal(this.oMDCChart.getAggregation("_toolbar")._oTitle.getLevel(), sap.ui.core.TitleLevel.H3, "Level set on title");
+			assert.equal(this.oMDCChart.getAggregation("_toolbar")._oTitle.getLevel(), TitleLevel.H3, "Level set on title");
 
 			done();
 		}.bind(this));

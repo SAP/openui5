@@ -5,16 +5,15 @@
 // Provides control sap.ui.layout.form.FormLayout.
 sap.ui.define([
 	'sap/ui/core/Control',
+	'sap/ui/core/Element',
 	'sap/ui/layout/library',
 	'./FormLayoutRenderer',
 	'sap/ui/core/theming/Parameters',
 	'sap/ui/thirdparty/jquery',
 	"sap/ui/core/Configuration",
 	// jQuery custom selectors ":sapFocusable"
-	'sap/ui/dom/jquery/Selectors',
-	// jQuery Plugin "control"
-	'sap/ui/dom/jquery/control'
-], function(Control, library, FormLayoutRenderer, Parameters, jQuery, Configuration) {
+	'sap/ui/dom/jquery/Selectors'
+], function(Control, Element, library, FormLayoutRenderer, Parameters, jQuery, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.BackgroundDesign
@@ -424,7 +423,7 @@ sap.ui.define([
 
 	FormLayout.prototype.onBeforeFastNavigationFocus = function(oEvent){
 		if (jQuery.contains(this.getDomRef(), oEvent.source)) {
-			oEvent.srcControl = jQuery(oEvent.source).control(0);
+			oEvent.srcControl = Element.closestTo(oEvent.source);
 			if (oEvent.forward) {
 				this.onsapskipforward(oEvent);
 			} else {

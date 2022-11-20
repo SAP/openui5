@@ -186,6 +186,9 @@ function (
 			"SemanticPage toggleHeaderOnTitleClick set to true and retrieved successfully.");
 	});
 
+	/**
+	 * @deprecated as of version 1.58
+	 */
 	QUnit.test("test SemanticPage titlePrimaryArea setter and getter", function (assert) {
 		var sBeginArea = DynamicPageTitleArea.Begin,
 			sMiddleArea = DynamicPageTitleArea.Middle;

@@ -9,10 +9,13 @@ sap.ui.define([
 	"delegates/odata/v4/util/DelegateUtil",
 	"sap/ui/core/Core",
 	"sap/ui/model/Filter",
-	'sap/ui/model/FilterOperator',
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/odata/type/Currency",
+	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/Int32",
+	"sap/ui/model/odata/type/String",
 	"sap/m/Text"
-], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, EditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text) {
+], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, EditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, CurrencyType, DecimalType, Int32Type, StringType, Text) {
 	"use strict";
 	var OrdersTableDelegate = Object.assign({}, ODataTableDelegate);
 
@@ -88,7 +91,15 @@ sap.ui.define([
 		};
 
 		if (oProperty.name === "total") {
-			oCtrlProperties.value = {parts: [{path:'total', type: new sap.ui.model.odata.type.Decimal(undefined, {precision: 9, scale: 2})}, {path:'currency_code', type: new sap.ui.model.odata.type.String(undefined, {maxLength: 3})}, {path:'/##@@requestCurrencyCodes', mode:'OneTime', targetType:'any'}], type: new sap.ui.model.odata.type.Currency(), mode:'TwoWay'};
+			oCtrlProperties.value = {
+				parts: [
+					{path:'total', type: new DecimalType(undefined, {precision: 9, scale: 2})},
+					{path:'currency_code', type: new StringType(undefined, {maxLength: 3})},
+					{path:'/##@@requestCurrencyCodes', mode:'OneTime', targetType:'any'}
+				],
+				type: new CurrencyType(),
+				mode:'TwoWay'
+			};
 		} else if (oProperty.name === "customer_ID") {
 			oCtrlProperties.additionalValue = "{customer/name}";
 			oCtrlProperties.display = FieldDisplay.Description;

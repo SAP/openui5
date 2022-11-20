@@ -9,14 +9,15 @@ sap.ui.define([
 	'sap/ui/mdc/enum/SelectType',
 	'sap/ui/mdc/library',
 	'sap/m/library',
-	"sap/ui/table/library",
-	"sap/ui/thirdparty/jquery",
-	// "sap/ui/mdc/p13n/Engine",
-	// "sap/ui/mdc/enum/PersistenceMode",
+	'sap/ui/table/library',
+	'sap/ui/thirdparty/jquery',
+	// 'sap/ui/mdc/p13n/Engine',
+	// 'sap/ui/mdc/enum/PersistenceMode',
 	'sap/ui/mdc/condition/FilterConverter',
 	'sap/base/util/restricted/_throttle',
 	'sap/ui/mdc/util/Common',
-	"sap/base/Log"
+	'sap/base/Log',
+	'sap/ui/core/Element'
 ], function(
 	FilterableListContent,
 	loadModules,
@@ -31,7 +32,8 @@ sap.ui.define([
 	FilterConverter,
 	throttle,
 	Common,
-	Log
+	Log,
+	Element
 ) {
 	"use strict";
 
@@ -447,7 +449,7 @@ sap.ui.define([
 				this._oObserver.observe(oTable, {aggregations: ["_content"]});
 				this._sTableType = _getMDCTableType(oTable);
 				oTable.addDelegate({ onmouseover: function (oEvent) {	// Fix m.Table itemPress
-					var oItem = jQuery(oEvent.target).control(0);
+					var oItem = Element.closestTo(oEvent.target);
 					if (oItem && oItem.isA("sap.m.ColumnListItem")) {
 						oItem.setType("Active");
 					}

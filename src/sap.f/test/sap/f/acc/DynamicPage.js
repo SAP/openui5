@@ -16,7 +16,7 @@ sap.ui.define([
 
 	var oTitle = oDynamicPageUtil.getTitle(oToggleFooterButton);
 	var oHeader = oDynamicPageUtil.getHeader();
-	var oContent = new sap.m.Button({text: "Home"});
+	var oContent = new Button({text: "Home"});
 	var oFooter = oDynamicPageUtil.getFooter();
 
 	var oPage = oDynamicPageUtil.getDynamicPage(false, oTitle, oHeader, oContent, oFooter);

@@ -8,12 +8,13 @@ sap.ui.define([
 	"../utils/TableUtils",
 	"../library",
 	"sap/ui/Device",
+	"sap/ui/core/Element",
 	"sap/ui/core/Popup",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/jquery/scrollLeftRTL",
 	"sap/ui/dom/jquery/control"
-], function(ExtensionBase, TableUtils, library, Device, Popup, Log, jQuery) {
+], function(ExtensionBase, TableUtils, library, Device, Element, Popup, Log, jQuery) {
 	"use strict";
 
 	// shortcuts
@@ -75,7 +76,7 @@ sap.ui.define([
 			}
 
 			// Special handling for known clickable controls
-			var oClickedControl = $Target.control(0);
+			var oClickedControl = Element.closestTo($Target[0]);
 			if (oClickedControl) {
 				var $ClickedControl = oClickedControl.$();
 				if ($ClickedControl.length) {

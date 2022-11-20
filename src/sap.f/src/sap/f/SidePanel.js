@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/core/Icon",
+	"sap/ui/core/Popup",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/delegate/ScrollEnablement",
 	'sap/ui/core/delegate/ItemNavigation',
@@ -28,6 +29,7 @@ sap.ui.define([
 	Control,
 	Core,
 	Icon,
+	Popup,
 	ResizeHandler,
 	ScrollEnablement,
 	ItemNavigation,
@@ -287,7 +289,8 @@ sap.ui.define([
 					}
 				}
 			}
-		}
+		},
+		renderer: SidePanelRenderer
 	});
 
 	SidePanel.prototype.init = function() {
@@ -988,7 +991,7 @@ sap.ui.define([
 			this._setOverflowItemSelection(true);
 			setTimeout(function() {
 				var bNoMenu = !oOverflowMenu.getAggregation("_menu");
-				oOverflowMenu.openBy(oDomRef, false, sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.EndBottom, "3 0");
+				oOverflowMenu.openBy(oDomRef, false, Popup.Dock.BeginBottom, Popup.Dock.EndBottom, "3 0");
 				oOverflowMenu._getMenu().getPopup().setExtraContent([this.getAggregation("_overflowItem")]);
 				bNoMenu && oOverflowMenu.getAggregation("_menu").addEventDelegate(oDelegate);
 			}.bind(this), 0);

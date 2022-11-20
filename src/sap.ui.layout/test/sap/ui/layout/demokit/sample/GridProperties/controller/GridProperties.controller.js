@@ -19,7 +19,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 					return;
 				}
 
-				$oGridWrapper.control()[0].setWidth(iValue + '%');
+				Element.closestTo($oGridWrapper[0]).setWidth(iValue + '%');
 			}
 		});
 	});

@@ -43,7 +43,8 @@ describe("sap.m.RangeSlider", function() {
 	});
 
 	it("should show RangeSlider with tickmarks and labels", function() {
-		element(by.id("rangeSlider8-handle1")).click();
-		expect(takeScreenshot()).toLookAs("tickmarks-and-labels-rangeSlider");
+		browser.executeScript('document.getElementById("rangeSlider8").scrollIntoView()').then(function() {
+			expect(takeScreenshot(element(by.id("rangeSlider8")))).toLookAs("tickmarks-and-labels-rangeSlider");
+		});
 	});
 });

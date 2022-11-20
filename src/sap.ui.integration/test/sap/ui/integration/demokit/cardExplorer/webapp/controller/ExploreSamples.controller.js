@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/f/GridContainerItemLayoutData",
 	"sap/ui/core/Core",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
@@ -20,6 +21,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/TextArea",
 	"sap/m/Label",
+	"sap/m/MessageStrip",
+	"sap/m/OverflowToolbar",
+	"sap/m/Panel",
+	"sap/m/Select",
 	"sap/m/VBox",
 	"sap/m/HBox",
 	"sap/ui/integration/widgets/Card",
@@ -36,6 +41,7 @@ sap.ui.define([
 	GridContainerItemLayoutData,
 	Core,
 	Fragment,
+	Item,
 	JSONModel,
 	BindingMode,
 	Device,
@@ -46,6 +52,10 @@ sap.ui.define([
 	Button,
 	TextArea,
 	Label,
+	MessageStrip,
+	OverflowToolbar,
+	Panel,
+	Select,
 	VBox,
 	HBox,
 	Card,
@@ -601,44 +611,44 @@ sap.ui.define([
 				cardTitle = "Card Editor with Administration Mode";
 			}
 
-			var oPanel = new sap.m.Panel({
+			var oPanel = new Panel({
 				id: "conf_card_panel",
 				expandable: false,
 				expanded: true,
 				height: "100%",
-				headerToolbar: new sap.m.OverflowToolbar({
+				headerToolbar: new OverflowToolbar({
 					content: [
-						new sap.m.Label({
+						new Label({
 							text: cardTitle
 						})
 					]
 				}),
 				content: [
-					new sap.m.HBox({
+					new HBox({
 						visible: sMode === "Translation",
 						items: [
-							new sap.m.Label({
+							new Label({
 								text: "Select Translation Language"
 							}).addStyleClass("styleCardEditorLanguageLabel"),
-							new sap.m.Select({
+							new Select({
 								autoAdjustWidth: true,
 								change: function(oEvent) {
 									that.onSwitchLanguage(oEvent);
 								},
 								items: [
-									new sap.ui.core.Item({
+									new Item({
 										key: "en",
 										text: "English"
 									}),
-									new sap.ui.core.Item({
+									new Item({
 										key: "fr",
 										text: "Français"
 									}),
-									new sap.ui.core.Item({
+									new Item({
 										key: "de",
 										text: "Deutsch"
 									}),
-									new sap.ui.core.Item({
+									new Item({
 										key: "zh-CN",
 										text: "简体中文"
 									})
@@ -649,20 +659,20 @@ sap.ui.define([
 					new HBox({
 						visible: sMode === "AdminContent",
 						items: [
-							new sap.m.Label({
+							new Label({
 								text: "Select Card Editor Mode"
 							}).addStyleClass("styleCardEditorLanguageLabel"),
-							new sap.m.Select({
+							new Select({
 								autoAdjustWidth: true,
 								change: function(oEvent) {
 									that.onSwitchEditorMode(oEvent);
 								},
 								items: [
-									new sap.ui.core.Item({
+									new Item({
 										key: "admin",
 										text: "Company Administrator"
 									}),
-									new sap.ui.core.Item({
+									new Item({
 										key: "content",
 										text: "Page/Content Administrator"
 									})
@@ -722,7 +732,7 @@ sap.ui.define([
 						}
 					}
 					if (isManifestChanged) {
-						var oMessageStrip = new sap.m.MessageStrip({
+						var oMessageStrip = new MessageStrip({
 							id: "msgstrip_manifest_change",
 							showIcon: true,
 							type: "Information",
@@ -1281,13 +1291,13 @@ sap.ui.define([
 				var oMessageStrip = Core.byId("msgstrip_manifest_change");
 				if (!oMessageStrip) {
 					var oPanel = Core.byId("conf_card_panel");
-					oMessageStrip = new sap.m.MessageStrip({
+					oMessageStrip = new MessageStrip({
 						id: "msgstrip_manifest_change",
 						showIcon: true,
 						type: "Information",
 						text: "Modifications of values in this editor are not saved, neither included in the card bundle zip."
 					});
-					// var oLink = new sap.m.Link({
+					// var oLink = new Link({
 					// 	text: "Check it.",
 					// 	press: function(oEvent) {
 					// 		this.onShowManifestChanges(oEvent);

@@ -3,11 +3,10 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/library",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/unified/calendar/TimesRow",
-	'sap/ui/core/format/DateFormat'
-], function (qutils, unifiedLibrary, jQuery, oCore, TimesRow, DateFormat) {
+	"sap/ui/core/format/DateFormat"
+], function (qutils, unifiedLibrary, oCore, TimesRow, DateFormat) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested

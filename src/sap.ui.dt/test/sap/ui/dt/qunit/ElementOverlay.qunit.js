@@ -29,7 +29,6 @@ sap.ui.define([
 	"sap/f/DynamicPageHeader",
 	"sap/ui/webc/main/CheckBox",
 	"sap/ui/dt/qunit/TestUtil",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -61,7 +60,6 @@ sap.ui.define([
 	DynamicPageHeader,
 	WebComponentCheckBox,
 	TestUtil,
-	jQuery,
 	sinon,
 	oCore
 ) {

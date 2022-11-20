@@ -7,10 +7,10 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/m/library",
-	'sap/ui/Device',
-	"sap/ui/base/Object",
+	"sap/ui/Device",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"sap/ui/core/UIArea",
 	"sap/ui/thirdparty/jquery",
@@ -33,9 +33,9 @@ sap.ui.define([
 	ToolbarSpacer,
 	library,
 	Device,
-	BaseObject,
 	Control,
 	Core,
+	Element,
 	coreLibrary,
 	UIArea,
 	jQuery,
@@ -167,8 +167,8 @@ sap.ui.define([
 		}
 
 		var oControl = oAnchor;
-		if (!BaseObject.isA(oAnchor, "sap.ui.core.Element")) {
-			oControl = jQuery(oAnchor).control(0, true);
+		if (!(oAnchor instanceof Element)) {
+			oControl = Element.closestTo(oAnchor, true);
 		}
 
 		this.fireBeforeOpen({

@@ -246,10 +246,7 @@ sap.ui.define([
 	WizardStep.prototype._getWizardParent = function () {
 		var oParent = this.getParent();
 
-		while (!(oParent instanceof sap.m.Wizard)) {
-			if (oParent === null) {
-				return null;
-			}
+		while (oParent && !oParent.isA("sap.m.Wizard")) {
 			oParent = oParent.getParent();
 		}
 
