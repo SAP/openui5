@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/Device",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/TestUtils"
-], function (Device, Opa5, EnterText, Press, TestUtils) {
+], function (Opa5, EnterText, Press, TestUtils) {
 	"use strict";
 	var sCurrentRequestBody,
 		sViewName = "sap.ui.core.sample.odata.v4.FieldGroups.FieldGroups";
@@ -61,8 +60,7 @@ sap.ui.define([
 					this.waitFor({
 						check : function () {
 							// check not possible when document lost focus
-							// or test runs in Firefox
-							bSkipTest = Device.browser.firefox || !document.hasFocus();
+							bSkipTest = !document.hasFocus();
 
 							return sCurrentRequestBody !== undefined || bSkipTest;
 						},
