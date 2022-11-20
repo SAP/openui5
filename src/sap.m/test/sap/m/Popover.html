@@ -163,17 +163,6 @@
 			right: auto;
 		}
 
-		.positioned13 {
-			position: absolute !important;
-			top: 400px;
-			right: 10px;
-		}
-
-		html[dir="rtl"] .positioned13 {
-			left: 10px;
-			right: auto;
-		}
-
 		.positioned14 {
 			position: absolute !important;
 			top: 450px;
@@ -558,26 +547,6 @@
 			]
 		});
 
-		var oChangeToFioriTheme = new sap.m.Button({
-			id: "change-fiori-theme",
-			text: "Change theme to sap_fiori_3",
-			press: function() {
-				sap.ui.getCore().applyTheme("sap_fiori_3");
-			}
-		});
-
-		oChangeToFioriTheme.addStyleClass("positioned12");
-
-		var oChangeToBelizeTheme = new sap.m.Button({
-			id: "change-belize-theme",
-			text: "Change theme to sap_belize",
-			press: function() {
-				sap.ui.getCore().applyTheme("sap_belize");
-			}
-		});
-
-		oChangeToBelizeTheme.addStyleClass("positioned13");
-
 		var oButton14 = new sap.m.Button("btn11", {
 			text: "Popover with Responsive paddings",
 			press: function () {
@@ -770,7 +739,7 @@
 				oCustomCssButton,
 			],
 			content: [
-				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox, oButton14, oButton15, oButton16, oChangeToFioriTheme, oChangeToBelizeTheme
+				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox, oButton14, oButton15, oButton16
 			]
 		});
 
