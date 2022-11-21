@@ -47,6 +47,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 			sAriaLablledByIds = sGroupTitleId + ' ' + sInvisibleTitleText;
 
 		rm.openStart('li', control)
+			.attr('tabindex', '-1')
 			.class('sapMLIB')
 			.class('sapMNLIB')
 			.class('sapMNLGroup');
@@ -59,11 +60,8 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 			rm.class('sapMNLGroupUnread');
 		}
 
-		rm.attr('tabindex', '0');
-
 		rm.accessibilityState(control, {
 			role: "listitem",
-			expanded: !control.getCollapsed(),
 			labelledby: {
 				value: sAriaLablledByIds
 			}
@@ -139,7 +137,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 		// end group header
 		rm.close('div');
 
-		rm.openStart('ul')
+		rm.openStart('ul', sControlId + "-childrenList")
 			.class('sapMNLGroupChildren')
 			.attr('role', 'list')
 			.openEnd();

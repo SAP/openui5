@@ -42,5 +42,30 @@ function(
 
 	NotificationList.prototype.onItemFocusIn = function() { };
 
+	NotificationList.prototype.setItemFocusable  = function() { };
+
+	NotificationList.prototype._startItemNavigation = function () {
+		ListBase.prototype._startItemNavigation.call(this);
+
+		if (this._oItemNavigation) {
+			this._oItemNavigation.setTableMode(false);
+		}
+	};
+
+	NotificationList.prototype.setNavigationItems = function(oItemNavigation, oNavigationRoot) {
+		var aItems = [],
+			aGroupItems = oNavigationRoot.querySelectorAll(":scope > .sapMNLGroup"),
+			aListItems = oNavigationRoot.querySelectorAll(":scope > .sapMNLI");
+
+		aGroupItems.forEach(function (oGroupItem) {
+			aItems.push(oGroupItem);
+			aItems = aItems.concat(Array.from(oGroupItem.querySelectorAll(".sapMNLI")));
+		});
+
+		aItems = aItems.concat(Array.from(aListItems));
+
+		oItemNavigation.setItemDomRefs(aItems);
+	};
+
 	return NotificationList;
 });

@@ -188,6 +188,16 @@ function(
 		this._groupTitleInvisibleText = new InvisibleText({id: this.getId() + "-invisibleGroupTitleText"});
 	};
 
+	NotificationListGroup.prototype.onAfterRendering = function() {
+		NotificationListBase.prototype.onAfterRendering.apply(this, arguments);
+
+		var collapseButtonDomRef = this._getCollapseButton().getDomRef();
+		if (collapseButtonDomRef) {
+			collapseButtonDomRef.setAttribute("aria-expanded", !this.getCollapsed());
+			collapseButtonDomRef.setAttribute("aria-controls", this.getId() + "-childrenList");
+		}
+	};
+
 	/**
 	 * Handles the internal event exit.
 	 *
@@ -341,6 +351,22 @@ function(
 			title: RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_TITLE', this.getItems().length - maxNumberOfNotifications),
 			description: RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_BODY')
 		};
+	};
+
+	NotificationListGroup.prototype._collapse = function (event) {
+		if (!this.getCollapsed()) {
+			this.setCollapsed(true);
+			this.fireOnCollapse({collapsed: true});
+			event.stopImmediatePropagation();
+		}
+	};
+
+	NotificationListGroup.prototype._expand = function (event) {
+		if (this.getCollapsed()) {
+			this.setCollapsed(false);
+			this.fireOnCollapse({collapsed: false});
+			event.stopImmediatePropagation();
+		}
 	};
 
 	return NotificationListGroup;

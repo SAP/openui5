@@ -2,18 +2,22 @@
 
 sap.ui.define([
 	"sap/m/ScrollContainer",
+	"sap/m/NotificationList",
 	"sap/m/NotificationListGroup",
 	"sap/m/NotificationListItem",
 	"sap/m/Button",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"sap/m/library"
 ], function(
 	ScrollContainer,
+	NotificationList,
 	NotificationListGroup,
 	NotificationListItem,
 	Button,
+	KeyCodes,
 	Core,
 	Element,
 	coreLibrary,
@@ -299,5 +303,127 @@ sap.ui.define([
 
 		assert.strictEqual(closeButton.getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'close button overflow priority is ok');
 		assert.notOk(toolbarSeparator.getVisible(), 'toolbar separator is not visible');
+	});
+
+	QUnit.module('Keyboard Navigation', {
+		beforeEach: function() {
+			this.notificationList = new NotificationList({
+				items: [
+					new NotificationListGroup({
+						title: 'Notification List Group Title',
+						items: [
+							new NotificationListItem({
+								title: 'Item 1',
+								description: 'Item 1 Description'
+							}),
+							new NotificationListItem({
+								title: 'Item 2',
+								description: 'Item 2 Description'
+							})
+						]
+					}),
+					new NotificationListGroup({
+						collapsed: true,
+						title: 'Notification List Group Title',
+						items: [
+							new NotificationListItem({
+								title: 'Item 1',
+								description: 'Item 1 Description'
+							}),
+							new NotificationListItem({
+								title: 'Item 2',
+								description: 'Item 2 Description'
+							})
+						]
+					}),
+					new NotificationListGroup({
+						title: 'Notification List Group Title',
+						items: [
+							new NotificationListItem({
+								title: 'Item 1',
+								description: 'Item 1 Description'
+							}),
+							new NotificationListItem({
+								title: 'Item 2',
+								description: 'Item 2 Description'
+							})
+						]
+					}),
+					new NotificationListGroup({
+						title: 'Notification List Group Title',
+						items: [
+							new NotificationListItem({
+								title: 'Item 1',
+								description: 'Item 1 Description'
+							}),
+							new NotificationListItem({
+								title: 'Item 2',
+								description: 'Item 2 Description'
+							})
+						]
+					})
+				]
+			});
+
+			this.notificationList.placeAt(RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.notificationList.destroy();
+		}
+	});
+
+	QUnit.test('items navigation', function(assert) {
+		var groupItems = this.notificationList.getItems();
+
+		groupItems[0].focus();
+		assert.strictEqual(groupItems[0].getDomRef(), document.activeElement, 'first item is focused');
+
+		groupItems[0].onkeydown({
+			target: groupItems[0].getDomRef(),
+			which: KeyCodes.ARROW_DOWN,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
+		});
+		assert.strictEqual(groupItems[0].getItems()[0].getDomRef(), document.activeElement, 'second item is focused');
+
+		groupItems[0].getItems()[0].onkeydown({
+			target: groupItems[0].getItems()[0].getDomRef(),
+			which: KeyCodes.ARROW_UP,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
+		});
+		assert.strictEqual(groupItems[0].getDomRef(), document.activeElement, 'first item is focused');
+	});
+
+	QUnit.test('navigation between "collapse" buttons', function(assert) {
+		var groupItems = this.notificationList.getItems();
+
+		groupItems[1].focus();
+		groupItems[1]._getCollapseButton().focus();
+
+		groupItems[1].onkeydown({
+			target: groupItems[1]._getCollapseButton().getDomRef(),
+			which: KeyCodes.ARROW_DOWN,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
+		});
+		assert.strictEqual(groupItems[2]._getCollapseButton().getDomRef(), document.activeElement, '"collapse" button is focused');
+
+		groupItems[2].onkeydown({
+			target: groupItems[2]._getCollapseButton().getDomRef(),
+			which: KeyCodes.ARROW_DOWN,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
+		});
+		assert.strictEqual(groupItems[2].getItems()[0].getDomRef(), document.activeElement, 'inner navigation item is focused');
 	});
 });

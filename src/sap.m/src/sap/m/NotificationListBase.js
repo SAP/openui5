@@ -7,25 +7,30 @@ sap.ui.define([
 		'sap/ui/core/Core',
 		'sap/ui/core/Element',
 		'sap/ui/Device',
+		"sap/ui/dom/isHidden",
 		'sap/ui/core/ResizeHandler',
 		'./ListItemBase',
 		'./Button',
 		'./ToolbarSeparator',
 		'sap/m/OverflowToolbar',
 		'sap/m/OverflowToolbarLayoutData',
+		'sap/ui/events/KeyCodes',
 		'sap/ui/core/IconPool',
 		'sap/ui/core/Icon',
-		'sap/ui/core/library'],
+		'sap/ui/core/library'
+	],
 	function (library,
 			  Core,
 			  Element,
 			  Device,
+			  isHidden,
 			  ResizeHandler,
 			  ListItemBase,
 			  Button,
 			  ToolbarSeparator,
 			  OverflowToolbar,
 			  OverflowToolbarLayoutData,
+			  KeyCodes,
 			  IconPool,
 			  Icon,
 			  coreLibrary) {
@@ -371,6 +376,11 @@ sap.ui.define([
 			return null;
 		};
 
+		NotificationListBase.prototype._hasToolbarOverflowButton = function () {
+			var iMinLength =  this._isSmallSize() ? 0 : 1;
+			return this.getShowButtons() && this.getButtons().length > iMinLength;
+		};
+
 		NotificationListBase.prototype._hasActionButtons = function () {
 			return this.getShowButtons() && this.getButtons().length;
 		};
@@ -416,6 +426,182 @@ sap.ui.define([
 
 			this._sCurrentLayoutClassName = null;
 		};
+
+		NotificationListBase.prototype.onkeydown = function(event) {
+			var target = event.target;
+
+			switch (event.which) {
+				case KeyCodes.MINUS:
+				case KeyCodes.ARROW_LEFT:
+					if (target.classList.contains("sapMNLGroup")) {
+						this._collapse(event);
+						return;
+					}
+					break;
+				case KeyCodes.PLUS:
+				case KeyCodes.ARROW_RIGHT:
+					if (target.classList.contains("sapMNLGroup")) {
+						this._expand(event);
+						return;
+					}
+					break;
+				case KeyCodes.F10:
+					if (target.classList.contains("sapMNLIB") && event.shiftKey && this._hasToolbarOverflowButton()) {
+						this._getOverflowToolbar()._getOverflowButton().firePress();
+						event.stopImmediatePropagation();
+						event.preventDefault();
+						return;
+					}
+					break;
+			}
+
+			this._focusSameItemOnNextRow(event);
+		};
+
+		NotificationListBase.prototype._focusSameItemOnNextRow = function (event) {
+			var list = this._getParentList(),
+				itemNavigation,
+				focusedIndex ,
+				itemDomRefs,
+				sourceControl,
+				listItemDomRef,
+				nextListItemControl,
+				nextFocusedDomRef;
+
+			if (!list) {
+				return;
+			}
+
+			if (event.which !== KeyCodes.ARROW_UP &&
+				event.which !== KeyCodes.ARROW_DOWN) {
+				return;
+			}
+
+			event.stopPropagation();
+			event.preventDefault();
+
+			itemNavigation = list.getItemNavigation();
+			if (!itemNavigation) {
+				return;
+			}
+
+			focusedIndex = itemNavigation.getFocusedIndex();
+			itemDomRefs = itemNavigation.getItemDomRefs();
+
+			switch (event.which) {
+				case KeyCodes.ARROW_UP:
+					do {
+						focusedIndex--;
+					} while (itemDomRefs[focusedIndex] && isHidden(itemDomRefs[focusedIndex]));
+					break;
+				case KeyCodes.ARROW_DOWN:
+					do {
+						focusedIndex++;
+					} while (itemDomRefs[focusedIndex] && isHidden(itemDomRefs[focusedIndex]));
+					break;
+			}
+
+			listItemDomRef = itemDomRefs[focusedIndex];
+			if (!listItemDomRef) {
+				return;
+			}
+
+			// focus the entire row first
+			listItemDomRef.focus();
+
+			if (this.getDomRef() === event.target) {
+				return;
+			}
+
+			sourceControl = Element.closestTo(event.target);
+
+			// collapse/expand button
+			if (sourceControl.getId() === this.getId() + "-collapseButton") {
+				nextFocusedDomRef = listItemDomRef.querySelector(":scope > .sapMNLGroupHeader .sapMNLGroupCollapseButton .sapMBtn");
+				if (nextFocusedDomRef) {
+					nextFocusedDomRef.focus();
+				}
+				return;
+			}
+
+			// "show more" link
+			if (sourceControl.isA("sap.m.Link")) {
+				nextFocusedDomRef = listItemDomRef.querySelector(":scope > .sapMNLIMain .sapMNLIShowMore a");
+				if (nextFocusedDomRef) {
+					nextFocusedDomRef.focus();
+				}
+
+				return;
+			}
+
+			nextListItemControl = Element.closestTo(listItemDomRef);
+
+			// close button
+			if (!sourceControl.getParent().isA("sap.m.OverflowToolbar")) {
+				if (!nextListItemControl._focusCloseButton()) {
+					nextListItemControl._focusToolbarButton();
+				}
+
+				return;
+			}
+
+			// toolbar button
+			if (!nextListItemControl._focusToolbarButton()) {
+				nextListItemControl._focusCloseButton();
+			}
+		};
+
+		NotificationListBase.prototype._focusCloseButton = function () {
+			if (this.getShowCloseButton() && this.getAggregation("_closeButton")) {
+				this.getAggregation("_closeButton").focus();
+				return true;
+			}
+
+			return false;
+		};
+
+		NotificationListBase.prototype._focusToolbarButton = function () {
+			var button,
+				overflowToolbar,
+				visibleContent;
+
+			if (this._shouldRenderOverflowToolbar()) {
+				overflowToolbar = this._getOverflowToolbar();
+
+				if (overflowToolbar._getOverflowButtonNeeded()) {
+					button = overflowToolbar._getOverflowButton();
+				} else {
+					visibleContent = overflowToolbar._getVisibleContent();
+					button = this._isSmallSize() ? visibleContent[visibleContent.length - 1] : visibleContent[0];
+				}
+
+				button.focus();
+
+				return true;
+			}
+
+			return false;
+		};
+
+		NotificationListBase.prototype._getParentList = function () {
+			var parent = this.getParent();
+			if (parent) {
+				if (parent.isA("sap.m.NotificationList")) {
+					return parent;
+				}
+
+				parent = parent.getParent();
+				if (parent && parent.isA("sap.m.NotificationList")) {
+					return parent;
+				}
+			}
+
+			return null;
+		};
+
+		NotificationListBase.prototype._collapse = function () { };
+
+		NotificationListBase.prototype._expand = function () { };
 
 		NotificationListBase.prototype._onResize = function () {
 			var oDomRef = this.getDomRef(),

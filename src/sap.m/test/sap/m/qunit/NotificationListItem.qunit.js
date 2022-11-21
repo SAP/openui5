@@ -60,30 +60,117 @@ sap.ui.define([
 		});
 	}
 
-	function createNotificationListGroup() {
-		return new NotificationListGroup({
-			unread : true,
-			title: 'Notification List Group Title',
-			showCloseButton : true,
-			showButtons: true,
-
-			buttons: [
-				new Button({
-					text: 'Accept'
-				}),
-				new Button({
-					text: 'Cancel'
-				})
-			],
-
+	function createNotificationList() {
+		return new NotificationList({
+			width: "610px",
 			items: [
 				new NotificationListItem({
-					title: 'Item 1',
-					description: 'Item 1 Description'
+					unread : true,
+					title: 'Notification List Item Title Title TitleNotification List Item Title Title TitleNotification List Item Title Title TitleNotification List Item Title Title Title',
+					priority: Priority.High,
+					showCloseButton : true,
+					showButtons: true,
+					datetime : '3 days',
+					authorName : 'John Smith',
+					authorPicture : 'sap-icon://group',
+					description: 'Notification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item Description',
+					buttons: [
+						new Button({
+							text: 'Accept'
+						})
+					]
 				}),
 				new NotificationListItem({
-					title: 'Item 2',
-					description: 'Item 2 Description'
+					unread : true,
+					title: 'Notification List Item Title Title TitleNotification List Item Title Title TitleNotification List Item Title Title TitleNotification List Item Title Title Title',
+					priority: Priority.High,
+					showCloseButton : true,
+					showButtons: true,
+					datetime : '3 days',
+					authorName : 'John Smith',
+					authorPicture : 'sap-icon://group',
+					description: 'Notification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item Description',
+					buttons: [
+						new Button({
+							text: 'Accept'
+						}),
+						new Button({
+							text: 'Cancel'
+						})
+					]
+				}),
+				new NotificationListItem({
+					unread : true,
+					title: 'Notification List Item Title Title TitleNotification List Item Title Title TitleNotification List Item Title Title TitleNotification List Item Title Title Title',
+					priority: Priority.High,
+					showCloseButton : true,
+					showButtons: true,
+					datetime : '3 days',
+					authorName : 'John Smith',
+					authorPicture : 'sap-icon://group',
+					description: 'Notification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item Description',
+					buttons: [
+						new Button({
+							text: 'Accept'
+						}),
+						new Button({
+							text: 'Cancel'
+						})
+					]
+				}),
+				new NotificationListItem({
+					unread : true,
+					title: 'Title',
+					showCloseButton : true,
+					showButtons: false,
+					datetime : '3 days',
+					authorName : 'John Smith',
+					authorPicture : 'sap-icon://group',
+					description: 'Descr',
+					buttons: [
+						new Button({
+							text: 'Accept'
+						}),
+						new Button({
+							text: 'Cancel'
+						})
+					]
+				}),
+				new NotificationListItem({
+					unread : true,
+					title: 'Title',
+					showCloseButton : false,
+					showButtons: true,
+					datetime : '3 days',
+					authorName : 'John Smith',
+					authorPicture : 'sap-icon://group',
+					description: 'Descr',
+					buttons: [
+						new Button({
+							text: 'Accept'
+						}),
+						new Button({
+							text: 'Cancel'
+						})
+					]
+				}),
+				new NotificationListItem({
+					unread : true,
+					title: 'Title',
+					showCloseButton : false,
+					showButtons: false,
+					datetime : '3 days',
+					authorName : 'John Smith',
+					authorPicture : 'sap-icon://group',
+					description: 'Descr',
+					buttons: [
+						new Button({
+							text: 'Accept'
+						}),
+						new Button({
+							text: 'Cancel'
+						})
+					]
 				})
 			]
 		});
@@ -286,34 +373,160 @@ sap.ui.define([
 
 	QUnit.module('Keyboard navigation', {
 		beforeEach: function() {
-			this.notificationListGroup = createNotificationListGroup();
+			this.notificationList = createNotificationList();
 
-			this.notificationListGroup.placeAt(RENDER_LOCATION);
+			this.notificationList.placeAt(RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function() {
-			this.notificationListGroup.destroy();
+			this.notificationList.destroy();
 		}
 	});
 
-	QUnit.test('keyboard navigation within a group', function (assert) {
-		var item1 = this.notificationListGroup.getItems()[0],
-			item2 = this.notificationListGroup.getItems()[1];
+	QUnit.test('items navigation', function (assert) {
+		var item1 = this.notificationList.getItems()[0],
+			item2 = this.notificationList.getItems()[1];
 
 		item1.focus();
 		assert.strictEqual(item1.getDomRef(), document.activeElement, 'first item is focused');
 
 		item1.onkeydown({
 			target: item1.getDomRef(),
-			which: KeyCodes.ARROW_DOWN
+			which: KeyCodes.ARROW_DOWN,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
 		});
 		assert.strictEqual(item2.getDomRef(), document.activeElement, 'second item is focused');
 
 		item2.onkeydown({
 			target: item2.getDomRef(),
-			which: KeyCodes.ARROW_UP
+			which: KeyCodes.ARROW_UP,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
 		});
 		assert.strictEqual(item1.getDomRef(), document.activeElement, 'first item is focused');
+	});
+
+	QUnit.test('navigation between the same elements on different rows - "show more"', function (assert) {
+		var items = this.notificationList.getItems();
+
+		items[0].focus();
+		items[0]._getShowMoreButton().focus();
+
+		items[0].onkeydown({
+			target: items[0]._getShowMoreButton().getDomRef(),
+			which: KeyCodes.ARROW_DOWN,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
+		});
+		assert.strictEqual(items[1]._getShowMoreButton().getDomRef(), document.activeElement, 'second "show more" is focused');
+
+		items[1].onkeydown({
+			target: items[1]._getShowMoreButton().getDomRef(),
+			which: KeyCodes.ARROW_UP,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
+		});
+		assert.strictEqual(items[0]._getShowMoreButton().getDomRef(), document.activeElement, 'first "show more" is focused');
+
+		items[2].focus();
+		items[2]._getShowMoreButton().focus();
+
+		items[2].onkeydown({
+			target: items[2]._getShowMoreButton().getDomRef(),
+			which: KeyCodes.ARROW_DOWN,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
+		});
+		assert.strictEqual(items[3].getDomRef(), document.activeElement, '4th row is focused');
+	});
+
+	QUnit.test('navigation between the same elements on different rows - "actions" and "close" buttons', function (assert) {
+		var items = this.notificationList.getItems();
+
+		items[0].focus();
+		items[0]._getCloseButton().focus();
+
+		items[0].onkeydown({
+			target: items[0]._getCloseButton().getDomRef(),
+			which: KeyCodes.ARROW_DOWN,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
+		});
+		assert.strictEqual(items[1]._getCloseButton().getDomRef(), document.activeElement, 'second "close" button is focused');
+
+		items[1].onkeydown({
+			target: items[1]._getCloseButton().getDomRef(),
+			which: KeyCodes.ARROW_UP,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
+		});
+		assert.strictEqual(items[0]._getCloseButton().getDomRef(), document.activeElement, 'first "close" button is focused');
+
+		items[4].focus();
+		items[4]._getOverflowToolbar()._getOverflowButton().focus();
+
+		items[4].onkeydown({
+			target: items[4]._getOverflowToolbar()._getOverflowButton().getDomRef(),
+			which: KeyCodes.ARROW_DOWN,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
+		});
+		assert.strictEqual(items[5].getDomRef(), document.activeElement, '6th row is focused');
+
+		items[0].focus();
+		items[0].getButtons()[0].focus();
+
+		items[0].onkeydown({
+			target: items[0].getButtons()[0].getDomRef(),
+			which: KeyCodes.ARROW_DOWN,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
+		});
+		assert.strictEqual(items[1]._getOverflowToolbar()._getOverflowButton().getDomRef(), document.activeElement, 'toolbar button is focused');
+
+
+		items[2].focus();
+		items[2]._getOverflowToolbar()._getOverflowButton().focus();
+
+		items[2].onkeydown({
+			target: items[2]._getOverflowToolbar()._getOverflowButton().getDomRef(),
+			which: KeyCodes.ARROW_DOWN,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
+		});
+		assert.strictEqual(items[3]._getCloseButton().getDomRef(), document.activeElement, 'close button is focused');
+
+		items[3].onkeydown({
+			target: items[3]._getCloseButton().getDomRef(),
+			which: KeyCodes.ARROW_DOWN,
+			stopPropagation: function () {
+			},
+			preventDefault: function () {
+			}
+		});
+
+		assert.strictEqual(items[4]._getOverflowToolbar()._getOverflowButton().getDomRef(), document.activeElement, 'toolbar button is focused');
 	});
 
 	QUnit.module('Cloning');
