@@ -834,7 +834,7 @@ sap.ui.define([
 				});
 			} else {
 				oObject.getContent().forEach(function (oControl) {
-					this.addAggregation(sAggregationName, oControl);
+					this.addAggregation(sAggregationName, oControl, true);
 				}, this);
 
 				oObject.removeAllContent();

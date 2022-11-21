@@ -2421,7 +2421,8 @@ sap.ui.define([
 			bParentIsFirstVisibleSection,
 			bIsFullscreenSection,
 			oDomRef = this.getDomRef(),
-			bUseIconTabBar = this.getUseIconTabBar();
+			bUseIconTabBar = this.getUseIconTabBar(),
+			oSectionToSelect = this.oCore.byId(this.getSelectedSection());
 
 		if (!oDomRef || !this._bDomReady) { //calculate the layout only if the object page is full ready
 			return false; // return success flag
@@ -2433,6 +2434,10 @@ sap.ui.define([
 
 		if (this.iScreenHeight === 0) {
 			return; // element is hidden or not in DOM => the resulting calculations would be invalid
+		}
+
+		if (bUseIconTabBar && oSectionToSelect) {
+			this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(oSectionToSelect);
 		}
 
 		this.iFooterHeight = this._getFooterHeight();
