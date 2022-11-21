@@ -706,7 +706,7 @@ sap.ui.define([
 
 
 		// tap on the 'X' button
-		QunitUtils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogTitle .sapMBtn")[0]);
+		QunitUtils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogTitleGroup .sapMBtn")[0]);
 
 		// Assert
 		setTimeout(function () {
@@ -729,6 +729,7 @@ sap.ui.define([
 		this.oSearchField.suggest();
 
 		// tap on the 'OK' button
+
 		QunitUtils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogFooter .sapMBtn")[0]);
 	});
 
