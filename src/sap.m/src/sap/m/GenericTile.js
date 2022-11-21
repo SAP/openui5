@@ -706,6 +706,11 @@ sap.ui.define([
 			this.getDomRef().setAttribute("aria-describedby",this.getAggregation("_invisibleText").getId());
 		}
 		this.onDragComplete();
+
+		//Removes the focus on the GenericTile if the parent is SlideTile
+		if (this.getDomRef() && this.getParent() && this.getParent().isA("sap.m.SlideTile")) {
+			this.getDomRef().setAttribute("tabindex","-1");
+		}
 	};
 	/**
 	 * Increases the height of the TileContent when the header-text has one line

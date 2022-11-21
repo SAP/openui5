@@ -252,8 +252,8 @@ sap.ui.define([
 	QUnit.test("Focus stays on SlideTile", function(assert) {
 		//Assert
 		assert.ok(this.oSlideTile.$().attr("tabindex"), "Focus stays on SlideTile");
-		assert.notOk(this.oSlideTile.getTiles()[0].$().attr("tabindex"), "Focus is removed from first GenericTile");
-		assert.notOk(this.oSlideTile.getTiles()[1].$().attr("tabindex"), "Focus is removed from second GenericTile");
+		assert.equal(this.oSlideTile.getTiles()[0].$().attr("tabindex"), "-1","Focus is removed from first GenericTile");
+		assert.equal(this.oSlideTile.getTiles()[1].$().attr("tabindex"), "-1","Focus is removed from second GenericTile");
 	});
 
 	QUnit.test("SlideTile in Actions scope", function(assert) {
@@ -1001,7 +1001,7 @@ var FrameType = library.FrameType;
 				})]
 			});
 		},
-		createSlideTile: function(bIsMobile){
+		createSlideTile: function(bIsMobile,bIsNavigationDisabled){
 			var iHeight, iWidth, sSizeBehavior;
 			if (bIsMobile) {
 				iHeight = "176px";
@@ -1022,7 +1022,7 @@ var FrameType = library.FrameType;
 						mode: "ArticleMode",
 						frameType: "Stretch",
 						url: "#",
-						enableNavigationButton: true,
+						enableNavigationButton: !bIsNavigationDisabled,
 						backgroundImage: "test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage2.png",
 						sizeBehavior: sSizeBehavior,
 						tileContent: new TileContent({
@@ -1038,7 +1038,7 @@ var FrameType = library.FrameType;
 						mode: "ArticleMode",
 						frameType: "Stretch",
 						url: "#",
-						enableNavigationButton: true,
+						enableNavigationButton: !bIsNavigationDisabled,
 						backgroundImage: "test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage2.png",
 						sizeBehavior: sSizeBehavior,
 						tileContent: new TileContent({
@@ -1054,7 +1054,7 @@ var FrameType = library.FrameType;
 						mode: "ArticleMode",
 						frameType: "Stretch",
 						url: "#",
-						enableNavigationButton: true,
+						enableNavigationButton: !bIsNavigationDisabled,
 						backgroundImage: "test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage2.png",
 						sizeBehavior: sSizeBehavior,
 						tileContent: new TileContent({
@@ -1274,6 +1274,42 @@ var FrameType = library.FrameType;
 			}
 			done();
 		});
+	});
+
+	QUnit.test("Focus should not be present on the GenericTile level when rendered as a link", function(assert){
+		this.oSlideTile = this.createSlideTile(false,true).placeAt("qunit-fixture");
+		oCore.applyChanges();
+		this.oSlideTile.getTiles().forEach(function(oTile) {
+			assert.equal(oTile.getDomRef().getAttribute("tabindex"),"-1","Focus is not present on the GenericTile");
+		});
+	});
+
+	QUnit.test("Aria text should not be updated while the focus is getting out", function(assert) {
+		var bForward = true;
+		this.oTile1 = this.createTile().placeAt("qunit-fixture");
+		this.oSlideTile = this.createSlideTile(false,true).placeAt("qunit-fixture");
+		this.oTile2 = this.createTile().placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		document.getElementById(this.oTile1.getId()).focus();
+		assert.equal(document.activeElement.id, this.oTile1.getId(), "Focus on Tile1");
+
+		qutils.triggerKeydown(this.oTile1.getDomRef(), KeyCodes.TAB);
+
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+		assert.equal(document.activeElement.id, this.oSlideTile.getId(), "Focus on Slide Tile");
+		var spy = sinon.spy(this.oSlideTile, "_setAriaDescriptor");
+		qutils.triggerKeydown(this.oSlideTile.getDomRef(), KeyCodes.TAB);
+
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+		assert.equal(document.activeElement.id, this.oTile2.getId(), "Focus on Tile2");
+		assert.ok(spy.notCalled, "Function _setAriaDescriptor not called");
 	});
 
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
