@@ -10,14 +10,14 @@
 	<VBox class="sapUiSmallMargin" >
 		<Label text="By Button with text" />
 		<Button
-			ariaHasPopup="true"
+			ariaHasPopup="Dialog"
 			text="Open Dynamic Date Range"
 			press=".openDynamicDateRange" />
 	</VBox>
 	<VBox class="sapUiSmallMargin" >
 		<Label text="By Button with icon" />
 		<Button
-			ariaHasPopup="true"
+			ariaHasPopup="Dialog"
 			tooltip="Open Dynamic Date Range"
 			icon="sap-icon://check-availability"
 			press=".openDynamicDateRange" />
@@ -25,7 +25,7 @@
 	<VBox class="sapUiSmallMargin" >
 		<Label text="By Link" />
 		<Link
-			ariaHasPopup="true"
+			ariaHasPopup="Dialog"
 			text="Open Dynamic Date Range"
 			press=".openDynamicDateRange" />
 	</VBox>

@@ -1977,6 +1977,9 @@ sap.ui.define([
 				},
 				group: "Designtime"
 			},
+			/**
+			 * @deprecated As of version 1.50
+			 */
 			"designtime/CustomTile": {
 				title: "QUnit Page for sap.m.CustomTile design time",
 				ui5: {

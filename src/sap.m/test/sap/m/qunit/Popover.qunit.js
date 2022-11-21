@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/m/NavContainer",
 	"sap/m/SegmentedButton",
+	"sap/m/SegmentedButtonItem",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Title",
@@ -52,6 +53,7 @@ sap.ui.define([
 	Popup,
 	NavContainer,
 	SegmentedButton,
+	SegmentedButtonItem,
 	Parameters,
 	InvisibleText,
 	Title,
@@ -1304,26 +1306,25 @@ sap.ui.define([
 			contentHeight: "300px"
 		});
 
-		var oButton = new Button({
-			text: "Open Popover",
-			press: function () {
-				oPopover.openBy(this);
-			}
-		});
-
 		var oSegBtn = new SegmentedButton({
-			buttons: [
-				new Button({
+			items: [
+				new SegmentedButtonItem({
 					text: "Button1"
 				}),
-				oButton
+				new SegmentedButtonItem({
+					text: "Open Popover",
+					press: function () {
+						oPopover.openBy(this);
+					}
+				})
 			]
 		});
 
 		oSegBtn.placeAt("content");
 		oCore.applyChanges();
 
-		oButton.firePress();
+		oSegBtn.getItems()[1].oButton.firePress(); // TODO avoid private property 'oButton'
+
 		assert.ok(oPopover.isOpen(), "Popover should be opened");
 
 		oPopover.destroy();

@@ -202,7 +202,7 @@ sap.ui.define([
 
 				}).then(function(oComponent) {
 
-					var oConfig = oComponent.getMetadata().getConfig();
+					var oConfig = oComponent.getManifestEntry("/sap.ui5/config");
 					var aListedResources = oConfig && oConfig.sample && Array.isArray(oConfig.sample.files) ? oConfig.sample.files : [];
 					var aRequestedResources = oCollector.resources();
 

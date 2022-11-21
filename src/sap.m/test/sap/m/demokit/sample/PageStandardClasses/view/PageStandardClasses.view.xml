@@ -34,6 +34,7 @@
 				class="sapUiSmallMarginBottom sapUiResponsiveContentPadding">
 				<items>
 					<IconTabFilter
+						key="info"
 						text="Info">
 						<f:SimpleForm
 							minWidth="1024"
@@ -47,11 +48,13 @@
 						</f:SimpleForm>
 					</IconTabFilter>
 					<IconTabFilter
+						key="attachments"
 						text="Attachments">
 						<List headerText="A List" showSeparators="Inner" >
 						</List>
 					</IconTabFilter>
 					<IconTabFilter
+						key="notes"
 						text="Notes">
 						<FeedInput />
 					</IconTabFilter>

@@ -41,8 +41,8 @@
 				</f:SimpleForm>
 				<IconTabBar upperCase="true" expandable="false" applyContentPadding="true" stretchContentHeight="true" class="sapUiResponsiveContentPadding">
 					<items>
-						<IconTabFilter text="Balances" />
-						<IconTabFilter text="Compare" />
+						<IconTabFilter key="balances" text="Balances" />
+						<IconTabFilter key="compare" text="Compare" />
 					</items>
 					<content>
 						<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">

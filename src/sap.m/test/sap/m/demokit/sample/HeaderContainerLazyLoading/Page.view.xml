@@ -30,7 +30,7 @@
 		</statuses>
 		<headerContainer>
 			<HeaderContainer scrollStep="200" id="headerContainer" scroll="onScroll" content="{/ContentData/}">
-				<NumericContent size="S" scale="M" value="{value}" valueColor="{color}" indicator="{growth}" press="press" />
+				<NumericContent scale="M" value="{value}" valueColor="{color}" indicator="{growth}" press="press" />
 			</HeaderContainer>
 		</headerContainer>
 	</ObjectHeader>

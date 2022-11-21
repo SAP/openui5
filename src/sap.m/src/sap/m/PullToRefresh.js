@@ -98,8 +98,7 @@ sap.ui.define([
 		// lazy create a Busy indicator to avoid overhead when invisible at start
 		if (this.getVisible() && !this._oBusyIndicator) {
 			this._oBusyIndicator = new BusyIndicator({
-				size: "1.7rem",
-				design: "auto"
+				size: "1.7rem"
 			});
 			this._oBusyIndicator.setParent(this);
 		}

@@ -19,7 +19,7 @@
 		"resources": {
 			"css": [
 				{
-					"uri": "NavContainer/style.css"
+					"uri": "style.css"
 				}
 			]
 		},

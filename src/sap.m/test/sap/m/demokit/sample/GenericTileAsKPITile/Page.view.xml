@@ -101,14 +101,14 @@
 		</TileContent>
 	</GenericTile>
 
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" press="press" frameType="OneByHalf">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" press="onPress" frameType="OneByHalf">
 		<TileContent unit="Unit" footer="Footer Text">
 			<NumericContent value="1762" icon="sap-icon://line-charts" withMargin="false" />
 		</TileContent>
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Right click to open in new tab"
-		 subheader="Link tile" press="press" url="https://www.sap.com/" frameType="TwoByHalf">
+		 subheader="Link tile" press="onPress" url="https://www.sap.com/" frameType="TwoByHalf">
 		<TileContent>
 			<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/SAPLogoLargeTile_28px_height.png" />
 		</TileContent>
@@ -127,14 +127,14 @@
 		</TileContent>
 	</GenericTile>
 	
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" press="press" >
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" press="onPress" >
 		<TileContent unit="Unit" footer="Footer Text">
 			<NumericContent value="1762" icon="sap-icon://line-charts" withMargin="false" />
 		</TileContent>
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Right click to open in new tab"
-		 subheader="Link tile" press="press" url="https://www.sap.com/" frameType="TwoByOne">
+		 subheader="Link tile" press="onPress" url="https://www.sap.com/" frameType="TwoByOne">
 		<TileContent>
 			<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/SAPLogoLargeTile_28px_height.png" />
 		</TileContent>

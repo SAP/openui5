@@ -16,13 +16,11 @@ sap.ui.define([
 	createAndAppendDiv("content");
 	var sMarginQUnitView =
 		"<mvc:View" +
-		"    id=\"testView\"" +
 		"    height=\"100%\"" +
 		"    xmlns:f=\"sap.ui.layout.form\"" +
 		"    xmlns:l=\"sap.ui.layout\"" +
 		"    xmlns:core=\"sap.ui.core\"" +
 		"    xmlns:mvc=\"sap.ui.core.mvc\"" +
-		"    xmlns:u=\"sap.ui.unified\"" +
 		"    xmlns=\"sap.m\">" +
 		"    <Page" +
 		"        id=\"page\"" +
@@ -47,6 +45,7 @@ sap.ui.define([
 		"                expanded=\"{device>/isNoPhone}\">" +
 		"                <items>" +
 		"                    <IconTabFilter" +
+		"                        key=\"info\"" +
 		"                        text=\"Info\">" +
 		"                        <f:SimpleForm" +
 		"                            minWidth=\"1024\"" +
@@ -60,11 +59,13 @@ sap.ui.define([
 		"                        </f:SimpleForm>" +
 		"                    </IconTabFilter>" +
 		"                    <IconTabFilter" +
+		"                        key=\"attachments\"" +
 		"                        text=\"Attachments\">" +
 		"                        <List headerText=\"A List\" showSeparators=\"Inner\" >" +
 		"                        </List>" +
 		"                    </IconTabFilter>" +
 		"                    <IconTabFilter" +
+		"                        key=\"notes\"" +
 		"                        text=\"Notes\">" +
 		"                        <FeedInput />" +
 		"                    </IconTabFilter>" +
@@ -115,14 +116,14 @@ sap.ui.define([
 		"                    <Image src=\"test-resources/sap/ui/documentation/sdk/images/HT-1112.jpg\" />" +
 		"                </pages>" +
 		"            </Carousel>" +
-		"            <u:SplitContainer id=\"splitContainer\" showSecondaryContent=\"true\">" +
-		"                <u:secondaryContent>" +
+		"            <SplitContainer id=\"splitContainer\">" +
+		"                <detailPages>" +
 		"                    <Text text=\"Hello World!\" />" +
-		"                </u:secondaryContent>" +
-		"                <u:content>" +
+		"                </detailPages>" +
+		"                <masterPages>" +
 		"                    <List headerText=\"An Empty List\" backgroundDesign=\"Translucent\"/>" +
-		"                </u:content>" +
-		"            </u:SplitContainer>" +
+		"                </masterPages>" +
+		"            </SplitContainer>" +
 		"        </content>" +
 		"    </Page>" +
 		"</mvc:View>";
