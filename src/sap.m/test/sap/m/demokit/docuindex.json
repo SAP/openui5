@@ -987,6 +987,15 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.OverflowToolbarMenuButton",
+		  "name": "Overflow Toolbar Menu Button",
+		  "category": "Action",
+		  "since": "1.109",
+		  "samples": [
+			"sap.m.sample.OverflowToolbarFooter"
+		  ]
+		},
+		{
 		  "id": "sap.m.Page",
 		  "name": "Page",
 		  "category": "Container",
