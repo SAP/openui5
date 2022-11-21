@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8' />
+	<title>ComboBox with local Metadata</title>
+
+	<script id="sap-ui-bootstrap" type="text/javascript" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_horizon"
+		data-sap-ui-compatVersion="edge" src="../../../../../../../resources/sap-ui-core.js">
+		</script>
+
+	<script id="mainView" type="text/xml">
+				<mvc:View
+								viewName="MyView"
+								xmlns:core="sap.ui.core"
+								xmlns:mvc="sap.ui.core.mvc"
+								controllerName="mainView.controller"
+								xmlns="sap.m"
+								height="100%">
+
+						<App>
+								<Page id="page" title="ComboBox with load items">
+										<VBox>
+												<ComboBox id="c1" items="{path: '/NotExisting', suspended: true}" loadItems=".handleLoadItems">
+														<core:Item key="{ID}" text="{Name}" />
+												</ComboBox>
+												<Button id="dummy" text="Dummy button" />
+												<Button id="ReBind" text="Rebind to correct Path" press=".bindToExisting"/>
+										</VBox>
+								</Page>
+						</App>
+
+				</mvc:View>
+	</script>
+
+	<script id="metadata" type="text/xml"><?xml version="1.0" encoding="utf-8"?>
+				<edmx:Edmx Version="1.0"
+									 xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+									 xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+									 xmlns:sap="http://www.sap.com/Protocols/SAPData">
+
+						<edmx:DataServices m:DataServiceVersion="2.0">
+
+								<Schema Namespace="EmployeesNamespace"
+												sap:schema-version="1"
+												xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+
+										<EntityType Name="Employee"
+																sap:label="Employees"
+																sap:content-version="1">
+
+												<Key>
+														<PropertyRef Name="Id"/>
+												</Key>
+
+												<Property Name="Id"
+																	Type="Edm.String"
+																	Nullable="false"
+																	MaxLength="4"
+																	sap:visible="false"
+																	sap:label="Employee Id"
+																	sap:creatable="false"/>
+
+												<Property Name="Name"
+																	Type="Edm.String"
+																	sap:creatable="false"
+																	sap:updatable="true"
+																	sap:label="Name -> suggestions disabled"
+																	Nullable="false"/>
+
+										</EntityType>
+
+										<EntityContainer Name="EmployeesNamespace_Entities"
+																		 m:IsDefaultEntityContainer="true"
+																		 sap:supported-formats="atom json xlsx">
+
+												<EntitySet Name="Employees"
+																	 EntityType="EmployeesNamespace.Employee"
+																	 sap:creatable="false"
+																	 sap:updatable="true"
+																	 sap:deletable="true"
+																	 sap:content-version="1"/>
+
+										</EntityContainer>
+
+								</Schema>
+						</edmx:DataServices>
+				</edmx:Edmx>
+	</script>
+
+	<script id="employees" type="application/json">
+				{"d": {
+						"__count": "2",
+						"results": [
+								{
+										"__metadata": { "uri": "testService.Employees/Employees('0001')", "type": "EmployeesNamespace.Employee" },
+										"Name": "John Doe",
+										"Id": "0001"
+								},
+								{
+										"__metadata": { "uri": "testService.Employees/Employees('0002')", "type": "EmployeesNamespace.Employee" },
+										"Name": "Doe John",
+										"Id": "0002"
+								}
+						]
+				}}
+	</script>
+
+</head>
+
+<script src="./LoadItems.js"></script>
+
+<body class='sapUiBody'>
+	<div id='content'></div>
+</body>
+
+</html>
