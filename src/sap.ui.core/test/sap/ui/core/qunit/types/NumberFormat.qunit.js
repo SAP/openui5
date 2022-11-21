@@ -4449,7 +4449,14 @@ sap.ui.define([
 
 			assert.deepEqual(oUnitFormat.parse("1,234,567.89 gal Imp."), null, "Parse '1,234,567.89 gal Imp.'");
 		});
-
 	});
 
+	QUnit.test("NumberFormat#format uses LocaleData#convertToDecimal", function (assert) {
+		var oFloatFormat = NumberFormat.getFloatInstance({}, new Locale("de-DE"));
+
+		this.mock(LocaleData).expects("convertToDecimal").withExactArgs(42).returns("77");
+
+		// code under test
+		assert.strictEqual(oFloatFormat.format(42).toString(), "77");
+	});
 });
