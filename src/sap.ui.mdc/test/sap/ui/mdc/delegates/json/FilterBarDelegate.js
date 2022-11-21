@@ -148,5 +148,6 @@ sap.ui.define([
 		});
 	};
 
+
 	return JSONFilterBarDelegate;
 });

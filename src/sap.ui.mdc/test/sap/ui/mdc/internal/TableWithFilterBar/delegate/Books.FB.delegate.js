@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enum/FieldDisplay', "sap/ui/mdc/enum/FilterBarValidationStatus"
-], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, FilterBarValidationStatus) {
+	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enum/FieldDisplay'
+], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay) {
 	"use strict";
 
 	var FilterBarBooksSampleDelegate = Object.assign({}, FilterBarDelegate);
@@ -93,6 +93,17 @@ sap.ui.define([
 
 			return aProperties;
 		});
+
+		// { name: "author_ID",
+		// groupLabel: "none",
+		// label: "Author ID",
+		// type: "Edm.Int32",
+		// baseType:new sap.ui.model.odata.type.Int32(),
+		// required: false,
+		// hiddenFilter: false,
+		// visible: true,
+		// maxConditions : -1,
+		// fieldHelp: "FHAuthor"}
 	};
 
 	FilterBarBooksSampleDelegate._createFilterField = function (oProperty, oFilterBar, mPropertyBag) {
@@ -107,7 +118,7 @@ sap.ui.define([
 		var sName = oProperty.path || oProperty.name;
 		var oFilterFieldPromise = FilterBarDelegate._createFilterField.apply(this, arguments);
 
-		return oFilterFieldPromise.then(function (oFilterField) {
+		oFilterFieldPromise.then(function (oFilterField) {
 
 			if (sName === "stock") {
 
@@ -128,38 +139,10 @@ sap.ui.define([
 			} else if (sName === "published") {
 				oModifier.setProperty(oFilterField, "defaultOperator", "RENAISSANCE");
 			}
-
-			return oFilterField;
 		});
-	};
 
-	FilterBarBooksSampleDelegate.visualizeValidationState = function(oFilterBar, mValidation) {
+		return oFilterFieldPromise;
 
-		var sErrorText = "";
-		if (mValidation.status === FilterBarValidationStatus.NoError) {
-			sErrorText = "";
-		} else if (mValidation.status === FilterBarValidationStatus.FieldInErrorState) {
-			sErrorText = oFilterBar._oRb.getText("filterbar.VALIDATION_ERROR");
-		} else if (mValidation.status === FilterBarValidationStatus.RequiredHasNoValue) {
-			sErrorText = oFilterBar._oRb.getText("filterbar.REQUIRED_FILTER_VALUE_MISSING");
-		}
-
-		if (sErrorText) {
-			sErrorText = "\u00a0\u00a0" + sErrorText.replace("\n", "");
-		}
-
-		var oView = oFilterBar._getView();
-		if (oView) {
-			var oErrorTextCollapsed = oView.byId("errorTextCollapsed");
-			if (oErrorTextCollapsed) {
-				oErrorTextCollapsed.setText(sErrorText);
-				if (oErrorTextCollapsed.$()) {
-					oErrorTextCollapsed.$().css("color", "red");
-				}
-			}
-		}
-
-		oFilterBar.setFocusOnFirstErroneousField();
 	};
 
 

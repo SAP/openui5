@@ -83,6 +83,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 *
 		 * @param {sap.ui.mdc.Control} oControl Instance of a <code>sap.ui.mdc.Control</code>
 		 * @param {Object} oState The theoretical external state representation of an MDC control. The representation of this format is similar as processed by {@link sap.ui.mdc.p13n.StateUtil StateUtil}
+		 *
 		 * @returns {Object} An object that must contain at least the <code>validation</code> attribute {@link sap.ui.core.MessageType MessageType}.
 		 * If <code>warning</code> or <code>error</code> state types have been provided, the <code>message</code> is shown in addition.
 		 */
@@ -106,28 +107,6 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 */
 		onAfterXMLChangeProcessing: function(oControl, mPropertyBag) {
 			//Neccessary cleanups can be implemented here
-		},
-
-		/**
-		 * A validator to evaluate the filter bar state.
-		 *
-		 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of a <code>sap.ui.mdc.FilterBar</code>
-		 * @param {map} [mValidation] Object describing the validation result. This object is only provided when called from the {@link sap.ui.mdc.FilterBar FilterBar}
-		 * @param {string} [mValidation.status] Status of the validation {@link sap.ui.mdc.enum.FilterBarValidationStatus}
-		 * @returns {sap.ui.mdc.enum.FilterBarValidationStatus} The inner filter bar state
-		 */
-		determineValidationState: function(oFilterBar) {
-            return oFilterBar.checkValidationState ? oFilterBar.checkValidationState() : -1;
-		},
-
-		/**
-		 * Visualizes the validation state of the filter bar.
-		 *
-		 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of a <code>sap.ui.mdc.FilterBar</code>
-		 * @param {map} mValidation Describes the validation result. This object is only provided when called from the {@link sap.ui.mdc.FilterBar FilterBar}
-		 * @param {sap.ui.mdc.enum.FilterBarValidationStatus} mValidation.status of the validation
-		 */
-	    visualizeValidationState: function(oFilterBar, mValidation) {
 		}
 
 	});

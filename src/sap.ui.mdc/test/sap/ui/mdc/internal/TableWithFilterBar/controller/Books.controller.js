@@ -19,44 +19,11 @@ sap.ui.define([
 	return Controller.extend("sap.ui.v4demo.controller.Books", {
 
 		onInit: function () {
-//			this.byId("bookChart").attachSelectionDetailsActionPressed(function(oEvent) {
-//				MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n " + oEvent.getParameter("itemContexts").length + " items selected" + "\n level is: " + oEvent.getParameter("level"));
-//			});
+			this.byId("bookChart").attachSelectionDetailsActionPressed(function(oEvent) {
+				MessageToast.show(oEvent.getParameter("action").getText() + " is pressed" + "\n " + oEvent.getParameter("itemContexts").length + " items selected" + "\n level is: " + oEvent.getParameter("level"));
+			});
 		},
 
-		onStateChanged: function(oEvent) {
-
-			var oView = this.getView();
-			var oFilterBar = oView.byId("booksFilterBar");
-			if (oFilterBar) {
-				if (!oEvent.getParameter("isExpanded")) {
-					oFilterBar.checkValidationState().then(function(nStatus) {
-						oFilterBar.visualizeValidationState(nStatus);
-
-						var oText = oView.byId("errorTextCollapsed");
-						if (oText) {
-							if (oText.$()) {
-								oText.$().css("color", "red");
-							}
-						}
-					});
-				} else {
-					oFilterBar.setFocusOnFirstErroneousField();
-				}
-			}
-		},
-		onAfterRendering: function(oEvent) {
-			var oText = this.getView().byId("errorTextCollapsed");
-			if (oText && !oText.__formerOnAfterRendering) {
-				oText.__formerOnAfterRendering = oText.onAfterRendering;
-				oText.onAfterRendering = function() {
-					oText.__formerOnAfterRendering();
-					if (oText.$()) {
-						oText.$().css("color", "red");
-					}
-				};
-			}
-		},
 		onFiltersChanged: function(oEvent) {
 			var oText = this.getView().byId("statusTextExpanded");
 			if (oText) {

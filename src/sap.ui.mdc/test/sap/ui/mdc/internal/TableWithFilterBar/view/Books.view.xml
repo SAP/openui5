@@ -19,7 +19,7 @@
 	xmlns:demo="sap.ui.v4demo.controls" controllerName="sap.ui.v4demo.controller.Books">
 		<f2:DynamicPage id="dynamicPage">
 			<f2:title>
-				<f2:DynamicPageTitle stateChange="onStateChanged">
+				<f2:DynamicPageTitle>
 					<f2:actions>
 <!--
 						<Button id="changeProperty1" text="Change Req Property" press="onChangeReqProperty" />
@@ -31,10 +31,10 @@
 					</f2:heading>
 
 					<f2:snappedContent>
-						<HBox><Text id="statusTextCollapsed" /><Text id="errorTextCollapsed" /></HBox>
+						<Text id="statusTextCollapsed" />
 					</f2:snappedContent>
 					<f2:expandedContent>
-						<HBox><Text id="statusTextExpanded" /><Text id="errorTextExpanded" /></HBox>					
+						<Text id="statusTextExpanded" />
 					</f2:expandedContent>
 				</f2:DynamicPageTitle>
 			</f2:title>
