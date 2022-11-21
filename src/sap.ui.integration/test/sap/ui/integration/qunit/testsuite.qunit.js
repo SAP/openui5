@@ -73,6 +73,7 @@ sap.ui.define(function () {
 				]
 			},
 			"CardHostAndExtension": {},
+			"CardMeasurements": {},
 			"CardReadyState": {},
 			"CardHost": {
 				coverage: {
