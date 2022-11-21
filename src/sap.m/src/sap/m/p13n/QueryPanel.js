@@ -351,11 +351,10 @@ sap.ui.define([
 						this._updatePresence(oRow.getContent()[0].getContent()[0]._key, false, undefined);
 						if (bNewRowRequired) {
 							this._addQueryRow();
-						} else {
-							//In case an item has been removed, focus the Select control of the new 'none' row
-							var iLastIndex = this._oListControl.getItems().length - 1;
-							this._oListControl.getItems()[iLastIndex].getContent()[0].getContent()[0].focus();
 						}
+						//In case an item has been removed, focus the Select control of the new 'none' row
+						var iLastIndex = this._oListControl.getItems().length - 1;
+						this._oListControl.getItems()[iLastIndex].getContent()[0].getContent()[0].focus();
 
 						this._getP13nModel().checkUpdate(true);
 					}.bind(this)
