@@ -2095,9 +2095,11 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(_Helper.clone(null), null);
+		assert.strictEqual(_Helper.clone(null, undefined, true), "null");
 
 		// code under test
 		assert.deepEqual(_Helper.clone({}), {});
+		assert.strictEqual(_Helper.clone({}, undefined, true), "{}");
 
 		// code under test
 		oResult = _Helper.clone(oSource);
@@ -2106,19 +2108,24 @@ sap.ui.define([
 		assert.notStrictEqual(oResult, oSource);
 
 		// code under test
+		assert.strictEqual(_Helper.clone(oSource, undefined, true), '{"k1":"v1","k2":"v2"}');
+
+		// code under test
 		assert.deepEqual(_Helper.clone(oSource, replacer), {k1 : "w1"});
+		assert.deepEqual(_Helper.clone(oSource, replacer, true), '{"k1":"w1"}');
 
 		// code under test
 		assert.strictEqual(_Helper.clone(undefined), undefined);
+		assert.strictEqual(_Helper.clone(undefined, undefined, true), undefined);
 
 		// code under test
-		assert.ok(isNaN(_Helper.clone(NaN)));
+		assert.ok(Number.isNaN(_Helper.clone(NaN))); // no assertions for bAsString
 
 		// code under test
-		assert.strictEqual(_Helper.clone(Infinity), Infinity);
+		assert.strictEqual(_Helper.clone(Infinity), Infinity); // no assertions for bAsString
 
 		// code under test
-		assert.strictEqual(_Helper.clone(-Infinity), -Infinity);
+		assert.strictEqual(_Helper.clone(-Infinity), -Infinity); // no assertions for bAsString
 	});
 
 	//*********************************************************************************************
@@ -2206,13 +2213,13 @@ sap.ui.define([
 [false, true].forEach(function (bClientSide) {
 	QUnit.test("publicClone: bClientSide=" + bClientSide, function (assert) {
 		var oCloneMock = this.mock(_Helper).expects("clone")
-				.withExactArgs("~value~", sinon.match.func),
+				.withExactArgs("~value~", sinon.match.func, "~bAsString~"),
 			fnReplacer;
 
 		oCloneMock.returns("~clone~");
 
 		// code under test
-		assert.strictEqual(_Helper.publicClone("~value~", bClientSide), "~clone~");
+		assert.strictEqual(_Helper.publicClone("~value~", bClientSide, "~bAsString~"), "~clone~");
 
 		fnReplacer = oCloneMock.getCall(0).args[1];
 
