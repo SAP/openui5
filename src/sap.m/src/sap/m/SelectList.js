@@ -11,12 +11,9 @@ sap.ui.define([
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/Item',
 	'./SelectListRenderer',
-	'sap/base/Log',
-	"sap/ui/thirdparty/jquery",
-	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control"
+	'sap/base/Log'
 ],
-	function(library, Core, Control, Element, ItemNavigation, Item, SelectListRenderer, Log, jQuery) {
+	function(library, Core, Control, Element, ItemNavigation, Item, SelectListRenderer, Log) {
 		"use strict";
 
 		// shortcut for sap.m.touch

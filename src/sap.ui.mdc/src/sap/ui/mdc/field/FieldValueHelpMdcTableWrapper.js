@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	'sap/ui/mdc/field/FieldValueHelpTableWrapperBase',
 	"sap/ui/mdc/util/loadModules",
 	"sap/base/util/deepEqual",
@@ -12,6 +13,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/FilterConverter',
 	"sap/ui/thirdparty/jquery"
 	], function(
+		Element,
 		FieldValueHelpTableWrapperBase,
 		loadModules,
 		deepEqual,
@@ -210,7 +212,7 @@ sap.ui.define([
 
 	var oMDCTableDelegate = {
 		onmouseover: function (oEvent) {
-			var oItem = jQuery(oEvent.target).control(0);
+			var oItem = Element.closestTo(oEvent.target);
 			if (oItem && oItem.isA("sap.m.ColumnListItem")) {
 				oItem.setType("Active");
 			}

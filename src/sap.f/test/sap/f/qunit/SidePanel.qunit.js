@@ -468,7 +468,7 @@ sap.ui.define([
 		oResizeBar.focus();
 
 		// Act (Shift + F10)
-		qutils.triggerKeyboardEvent(oResizeBar, KeyCodes.F10, true);
+		qutils.triggerKeydown(oResizeBar, KeyCodes.F10, true);
 		oCore.applyChanges();
 
 		assert.ok(document.querySelector(".sapMMenu"), "Context menu is opened after pressing Shift + F10");
@@ -507,43 +507,43 @@ sap.ui.define([
 		oResizeBar.focus();
 
 		// Act (Arrow Left)
-		qutils.triggerKeyboardEvent(oResizeBar, KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_LEFT);
 
 		// Assert
 		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth + iStep, "Side panel width is increased with regular step when Arrow Left is pressed");
 
 		// Act (Arrow Right)
-		qutils.triggerKeyboardEvent(oResizeBar, KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_RIGHT);
 
 		// Assert
 		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth, "Side panel width is decreased with regular step when Arrow Right is pressed");
 
 		// Act (Shift + Arrow Left)
-		qutils.triggerKeyboardEvent(oResizeBar, KeyCodes.ARROW_LEFT, true);
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_LEFT, true);
 
 		// Assert
 		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth + iLargerStep, "Side panel width is increased with larger step when Shift + Arrow Left is pressed");
 
 		// Act (Shift + Arrow Right)
-		qutils.triggerKeyboardEvent(oResizeBar, KeyCodes.ARROW_RIGHT, true);
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ARROW_RIGHT, true);
 
 		// Assert
 		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth, "Side panel width is decreased with larger step when Shift + Arrow Right is pressed");
 
 		// Act (Home)
-		qutils.triggerKeyboardEvent(oResizeBar, KeyCodes.HOME);
+		qutils.triggerKeydown(oResizeBar, KeyCodes.HOME);
 
 		// Assert
 		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iMinWidth, "Side panel width is set to minimum width when Home is pressed");
 
 		// Act (End)
-		qutils.triggerKeyboardEvent(oResizeBar, KeyCodes.END);
+		qutils.triggerKeydown(oResizeBar, KeyCodes.END);
 
 		// Assert
 		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iMaxWidth, "Side panel width is set to maximum width when End is pressed");
 
 		// Act (Home)
-		qutils.triggerKeyboardEvent(oResizeBar, KeyCodes.ENTER);
+		qutils.triggerKeydown(oResizeBar, KeyCodes.ENTER);
 
 		// Assert
 		assert.strictEqual(parseInt(window.getComputedStyle(oSidePanel).width), iWidth, "Side panel width is set to default width when Enter is pressed");

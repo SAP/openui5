@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/enablement/Test",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/enablement/Util",
+	"sap/base/Log",
 	"sap/base/util/ObjectPath",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/qunit/utils/waitForThemeApplied",
@@ -14,6 +15,7 @@ sap.ui.define([
 	Test,
 	DesignTime,
 	EnablementUtil,
+	Log,
 	ObjectPath,
 	ElementOverlay,
 	waitForThemeApplied,
@@ -131,26 +133,35 @@ sap.ui.define([
 
 	/**
 	 * @private
-	 * @returns {sap.ui.core.Element}
+	 * @returns {Promise<sap.ui.core.Element>}
 	 */
 	ElementEnablementTest.prototype._createElement = function() {
 		var sType = this.getType();
 		var fnCreate = this.getCreate();
-		var Element = ObjectPath.get(sType || "");
 
-		var oElement;
+		return new Promise(function(resolve) {
+			if (fnCreate) {
+				resolve(fnCreate());
+				return;
+			}
 
-		if (fnCreate) {
-			oElement = fnCreate();
-		} else {
-			oElement = new Element();
-		}
-
-		if (oElement.addStyleClass) {
-			oElement.addStyleClass("minSize");
-		}
-
-		return oElement;
+			// try to load the module whose name matches the type's name
+			sap.ui.require([
+				sType.replace(/\./g, "/")
+			], function(Element) {
+				resolve(new Element());
+			}, function() {
+				// fall back to global name
+				Log.warning("[Deprecated] Control " + sType + " could only be loaded via global name");
+				var Element = ObjectPath.get(sType || "");
+				resolve(new Element());
+			});
+		}).then(function(oElement) {
+			if (oElement.addStyleClass) {
+				oElement.addStyleClass("minSize");
+			}
+			return oElement;
+		});
 	};
 
 
@@ -179,7 +190,9 @@ sap.ui.define([
 
 		return new Promise(function(fnResolve) {
 			waitForThemeApplied().then(function() {
-				this._oElement = this._createElement();
+				return this._createElement();
+			}.bind(this)).then(function(oElement) {
+				this._oElement = oElement;
 
 				try {
 					this._oElement.getRenderer();

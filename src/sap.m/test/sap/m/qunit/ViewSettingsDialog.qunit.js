@@ -4182,35 +4182,35 @@ sap.ui.define([
 
 		var oVSD = new ViewSettingsDialog({
 				filterItems: [
-					new sap.m.ViewSettingsFilterItem({
+					new ViewSettingsFilterItem({
 						text: "Filter 1",
 						items: [
-							new sap.m.ViewSettingsItem({
+							new ViewSettingsItem({
 								key:"noEmptyString",
 								text: ""
 							}),
-							new sap.m.ViewSettingsItem({
+							new ViewSettingsItem({
 								key:"Contacts",
 								text: "Contacts"
 							}),
-							new sap.m.ViewSettingsItem({
+							new ViewSettingsItem({
 								key:"test",
 								text: "Interactions Rating"
 							})
 						]
 					}),
-					new sap.m.ViewSettingsFilterItem({
+					new ViewSettingsFilterItem({
 						text: "Filter 2",
 						items: [
-							new sap.m.ViewSettingsItem({
+							new ViewSettingsItem({
 								key:"noEmptyString",
 								text: ""
 							}),
-							new sap.m.ViewSettingsItem({
+							new ViewSettingsItem({
 								key:"Contacts",
 								text: "Contacts"
 							}),
-							new sap.m.ViewSettingsItem({
+							new ViewSettingsItem({
 								key:"test",
 								text: "Interactions Rating"
 							})

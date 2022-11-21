@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/menus/ColumnHeaderMenuAdapter",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/type/Integer",
 	"sap/ui/unified/Menu",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
@@ -27,6 +28,7 @@ sap.ui.define([
 	CreationRow,
 	ColumnHeaderMenuAdapter,
 	JSONModel,
+	IntegerType,
 	Menu,
 	ColumnMenu,
 	QuickAction,
@@ -1242,7 +1244,7 @@ sap.ui.define([
 			this.oMenu1 = new ColumnMenu({
 				quickSort: new QuickAction({
 					label: "Custom Quick Sort",
-					content: new sap.m.Button({text: "Sort by Property A"})
+					content: new Button({text: "Sort by Property A"})
 				}),
 				quickActions: [new QuickAction({label: "Quick Action B", content: new Button({text: "Execute B"})})],
 				items: [new Item({label: "Item C", icon: "sap-icon://sort"})]
@@ -1355,7 +1357,7 @@ sap.ui.define([
 		oColumn1.setFilterValue("A");
 
 		assert.equal(oColumn1._getFilterState(), "None", "FilterState None");
-		oColumn1.setFilterType(new sap.ui.model.type.Integer());
+		oColumn1.setFilterType(new IntegerType());
 		assert.equal(oColumn1._getFilterState(), "Error", "FilterState Error");
 	});
 });

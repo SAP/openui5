@@ -22,7 +22,6 @@ sap.ui.define([
         "sap/ui/base/ManagedObjectObserver",
         "sap/ui/mdc/chart/DrillBreadcrumbs",
         "sap/ui/mdc/actiontoolbar/ActionToolbarAction",
-        "sap/ui/thirdparty/jquery",
         "sap/ui/core/library"
     ],
     function (
@@ -45,7 +44,6 @@ sap.ui.define([
         ManagedObjectObserver,
         Breadcrumbs,
         ActionToolbarAction,
-        jQuery,
         coreLibrary
     ) {
         "use strict";

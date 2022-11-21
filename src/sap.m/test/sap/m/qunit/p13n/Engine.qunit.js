@@ -15,10 +15,11 @@ sap.ui.define([
 	"sap/m/p13n/BasePanel",
 	"sap/ui/core/library",
 	"sap/ui/mdc/enum/PersistenceMode",
+	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/m/p13n/modules/xConfigAPI",
 	"sap/m/p13n/MetadataHelper"
-], function (Control, Engine, Controller, FlexRuntimeInfoAPI, FlexModificationHandler, ModificationHandler, TestModificationHandler, BaseObject, VBox, HBox, PersistenceProvider, VariantManagement, BasePanel, coreLibrary, PersistenceMode, oCore, xConfigAPI, MetadataHelper) {
+], function (Control, Engine, Controller, FlexRuntimeInfoAPI, FlexModificationHandler, ModificationHandler, TestModificationHandler, BaseObject, VBox, HBox, PersistenceProvider, VariantManagement, BasePanel, coreLibrary, PersistenceMode, CoreControl, oCore, xConfigAPI, MetadataHelper) {
 	"use strict";
 
 	QUnit.module("Modification Handler", {
@@ -207,7 +208,7 @@ sap.ui.define([
 
 	QUnit.module("Generic API tests", {
 		prepareSetup: function() {
-			var TestClass = sap.ui.core.Control.extend("adaptationTestControl-Engine", {
+			var TestClass = CoreControl.extend("adaptationTestControl-Engine", {
 				metadata: {
 					interfaces: [
 						"sap.ui.mdc.IxState"
@@ -232,7 +233,7 @@ sap.ui.define([
 			});
 
 			var oAdaptationControl = new TestClass();
-			oAdaptationControl.addItem(new sap.ui.core.Control("a"));
+			oAdaptationControl.addItem(new CoreControl("a"));
 
 			Engine.getInstance().register(oAdaptationControl, {
 
@@ -830,7 +831,7 @@ sap.ui.define([
 
 	QUnit.module("Error handling", {
 		prepareSetup: function() {
-			var TestClass = sap.ui.core.Control.extend("adaptationTestControl-Engine", {
+			var TestClass = CoreControl.extend("adaptationTestControl-Engine", {
 				metadata: {
 					interfaces: [
 						"sap.ui.mdc.IxState"
@@ -855,7 +856,7 @@ sap.ui.define([
 			});
 
 			var oAdaptationControl = new TestClass();
-			oAdaptationControl.addItem(new sap.ui.core.Control("a"));
+			oAdaptationControl.addItem(new CoreControl("a"));
 
 			Engine.getInstance().register(oAdaptationControl, {
 

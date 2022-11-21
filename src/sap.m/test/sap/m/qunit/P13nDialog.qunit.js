@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/P13nItem",
 	"sap/m/P13nColumnsItem",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/core/Element"
 ], function(
 	createAndAppendDiv,
 	P13nDialog,
@@ -30,7 +30,7 @@ sap.ui.define([
 	P13nItem,
 	P13nColumnsItem,
 	oCore,
-	jQuery
+	Element
 ) {
 	"use strict";
 
@@ -542,8 +542,7 @@ sap.ui.define([
 				messageText: "Dummy Warning..."
 			}
 		]).then(function () {
-			var $Dialog = jQuery.find(".sapMMessageBoxWarning");
-			var oDialog = jQuery($Dialog).control(0);
+			var oDialog = Element.closestTo(".sapMMessageBoxWarning");
 
 			// assertions
 			assert.ok(oDialog);
@@ -569,8 +568,7 @@ sap.ui.define([
 				messageText: "Dummy Warning..."
 			}
 		]).then(function () {
-			var $Dialog = jQuery.find(".sapMMessageBoxWarning");
-			var oDialog = jQuery($Dialog).control(0);
+			var oDialog = Element.closestTo(".sapMMessageBoxWarning");
 
 			// assertions
 			assert.ok(oDialog);
@@ -586,8 +584,7 @@ sap.ui.define([
 		var done = assert.async();
 		this.oP13nDialog._showValidationDialog(function () {
 		}, [], []).then(function () {
-			var $Dialog = jQuery.find(".sapMMessageBoxWarning");
-			var oDialog = jQuery($Dialog).control(0);
+			var oDialog = Element.closestTo(".sapMMessageBoxWarning");
 
 			// assertions
 			assert.ok(!oDialog);

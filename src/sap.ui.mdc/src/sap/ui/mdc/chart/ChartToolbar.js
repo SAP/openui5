@@ -4,7 +4,6 @@
 
 sap.ui.define([
         "sap/ui/core/Core",
-        "sap/ui/mdc/library",
         "sap/ui/mdc/ActionToolbar",
         "sap/m/OverflowToolbarRenderer",
         "sap/m/OverflowToolbarButton",
@@ -14,12 +13,11 @@ sap.ui.define([
         "sap/ui/mdc/chart/ChartTypeButton",
         "./ChartSelectionDetails",
         "sap/m/ToolbarSeparator",
-        "sap/ui/core/aria/HasPopup",
-        "sap/m/OverflowToolbarLayoutData"
+        "sap/m/OverflowToolbarLayoutData",
+        "sap/ui/core/library"
     ],
     function (
         Core,
-        Control,
         ActionToolbar,
         OverflowToolbarRenderer,
         OverflowButton,
@@ -29,10 +27,13 @@ sap.ui.define([
         ChartTypeButton,
         ChartSelectionDetails,
         ToolbarSeparator,
-        AriaHasPopup,
-        OverflowToolbarLayoutData
+        OverflowToolbarLayoutData,
+        coreLibrary
     ) {
         "use strict";
+
+		// shortcut for sap.ui.core.aria.HasPopup
+		var AriaHasPopup = coreLibrary.aria.HasPopup;
 
         /**
          * Constructor for a new ChartToolbar.

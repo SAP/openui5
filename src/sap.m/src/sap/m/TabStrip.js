@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	'sap/ui/core/Control',
+	'sap/ui/core/Element',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/base/ManagedObject',
@@ -25,11 +26,11 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Configuration",
-	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
 	"sap/ui/dom/jquery/scrollLeftRTL" // jQuery Plugin "scrollLeftRTL"
 ],
 function(
 	Control,
+	Element,
 	IconPool,
 	ItemNavigation,
 	ManagedObject,
@@ -428,7 +429,7 @@ function(
 
 		TabStrip.prototype.onkeyup = function (oEvent){
 			if (oEvent && oEvent.keyCode === KeyCodes.ARROW_LEFT || oEvent.keyCode === KeyCodes.ARROW_RIGHT) {
-				var oTarget = jQuery(oEvent.target).control(0);
+				var oTarget = Element.closestTo(oEvent.target);
 				this._scrollIntoView(oTarget, 500);
 			}
 		};
@@ -698,7 +699,7 @@ function(
 		 * @param {jQuery.Event} oEvent The event object
 		 */
 		TabStrip.prototype.onsapdelete = function(oEvent) {
-			var oItem = jQuery("#" + oEvent.target.id).control(0),
+			var oItem = Element.closestTo(oEvent.target),
 				bShouldChangeSelection = oItem.getId() === this.getSelectedItem(),
 				fnSelectionCallback = function() {
 					this._moveToNextItem(bShouldChangeSelection);
@@ -1245,7 +1246,7 @@ function(
 		 * @param {jQuery.Event} oEvent  Event object
 		 */
 		TabStrip.prototype.ontouchstart = function (oEvent) {
-			var oTargetItem = jQuery(oEvent.target).control(0);
+			var oTargetItem = Element.closestTo(oEvent.target);
 			if (oTargetItem instanceof TabStripItem ||
 				oTargetItem instanceof AccButton ||
 				oTargetItem instanceof Icon ||
@@ -1269,7 +1270,7 @@ function(
 				return;
 			}
 
-			oTarget = jQuery(oEvent.target).control(0);
+			oTarget = Element.closestTo(oEvent.target);
 			// check if we click on the item Icon and if so, give the parent as a target
 			if (oEvent.target.id === oTarget.getParent().getId() + "-img") {
 				oTarget = oTarget.getParent();

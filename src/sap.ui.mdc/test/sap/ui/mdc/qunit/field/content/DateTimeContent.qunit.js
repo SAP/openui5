@@ -11,11 +11,14 @@ sap.ui.define([
 	"sap/m/DynamicDateRange",
 	"sap/ui/mdc/condition/OperatorDynamicDateOption",
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
-	"sap/m/StandardDynamicDateRangeKeys",
 	"sap/m/DynamicDateUtil",
-	"sap/m/DynamicDateFormat"
-], function(QUnit, DateTimeContent, Field, Text, FieldInput, FieldMultiInput, Token, DateTimePicker, DynamicDateRange, OperatorDynamicDateOption, DynamicDateRangeConditionsType, StandardDynamicDateRangeKeys, DynamicDateUtil, DynamicDateFormat) {
+	"sap/m/DynamicDateFormat",
+	"sap/m/library"
+], function(QUnit, DateTimeContent, Field, Text, FieldInput, FieldMultiInput, Token, DateTimePicker, DynamicDateRange, OperatorDynamicDateOption, DynamicDateRangeConditionsType, DynamicDateUtil, DynamicDateFormat, mobileLibrary) {
 	"use strict";
+
+	// shortcut for sap.m.StandardDynamicDateRangeKeys
+	var StandardDynamicDateRangeKeys = mobileLibrary.StandardDynamicDateRangeKeys;
 
 	var oControlMap = {
 		"Display": {

@@ -2,6 +2,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Item"
 ], function(
 	Core,
+	Element,
 	createAndAppendDiv,
 	jQuery,
 	qutils,
@@ -230,7 +232,7 @@ QUnit.test("ColumnPopoverActionItem", function(assert){
 
 	var oRBPopover = oPopover.getAggregation("_popover");
 
-	var oActionButton = jQuery(oRBPopover.$().find("button")[1]).control(0);
+	var oActionButton = Element.closestTo(oRBPopover.$().find("button")[1]);
 	assert.equal(oActionButton.getTooltip(), "action2", "property setting of text is correct");
 	assert.equal(oActionButton.getIcon(), "sap-icon://add-photo", "property setting of icon is correct");
 

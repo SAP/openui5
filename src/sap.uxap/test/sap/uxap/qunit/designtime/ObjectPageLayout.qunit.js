@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/uxap/ObjectPageSubSection',
 	'sap/ui/layout/HorizontalLayout',
 	'sap/m/Button',
+	'sap/m/Input',
 	'sap/ui/dt/DesignTime',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/rta/plugin/DragDrop',
@@ -23,6 +24,7 @@ sap.ui.define([
 	ObjectPageSubSection,
 	HorizontalLayout,
 	Button,
+	Input,
 	DesignTime,
 	CommandFactory,
 	DragDropPlugin,
@@ -523,14 +525,14 @@ sap.ui.define([
 
 			this.btn = new Button("btn",{});
 
-			this.input1 = new sap.m.Input("I1",{
+			this.input1 = new Input("I1",{
 				enabled:true,
 				editable:true,
 				showValueHelp:true,
 				valueHelpOnly:true
 			});
 
-			this.input2 = new sap.m.Input("I2", {});
+			this.input2 = new Input("I2", {});
 
 			oSubSection.addBlock(this.btn);
 			oSubSection.addBlock(this.input1);

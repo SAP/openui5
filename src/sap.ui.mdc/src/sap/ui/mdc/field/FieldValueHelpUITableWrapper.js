@@ -3,12 +3,14 @@
  */
 
 sap.ui.define([
+	'sap/ui/core/Element',
 	'sap/ui/mdc/field/FieldValueHelpTableWrapperBase',
 	'sap/ui/model/ChangeReason',
 	'sap/base/strings/capitalize',
 	"sap/ui/table/library",
 	'sap/ui/thirdparty/jquery'
 	], function(
+			Element,
 			FieldValueHelpTableWrapperBase,
 			ChangeReason,
 			capitalize,
@@ -260,7 +262,7 @@ sap.ui.define([
 			return; // only in suggestion popover
 		}
 
-		var oItem = jQuery(oEvent.target).control(0);
+		var oItem = Element.closestTo(oEvent.target);
 
 		switch (oEvent.type) {
 			case "sapprevious":

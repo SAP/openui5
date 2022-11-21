@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/model/type/Integer"
 ], function(
 	TableQUnitUtils,
 	qutils,
@@ -39,7 +40,8 @@ sap.ui.define([
 	Button,
 	CoreLibrary,
 	Core,
-	Device
+	Device,
+	IntegerType
 ) {
 	"use strict";
 
@@ -257,7 +259,7 @@ sap.ui.define([
 			oColumnGetFilterStateSpy.restore();
 			oColumnFilterSpy.restore();
 
-			oColumn.setFilterType(new sap.ui.model.type.Integer());
+			oColumn.setFilterType(new IntegerType());
 			assert.equal(oColumn._getFilterState(), "Error", "Validation error, the expected input was integer");
 
 			oColumn.setFilterValue("1");

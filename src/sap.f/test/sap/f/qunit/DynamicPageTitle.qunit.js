@@ -29,9 +29,6 @@ function (
 ) {
 	"use strict";
 
-	// shortcut for sap.f.DynamicPageTitleArea
-	var DynamicPageTitleArea = fioriLibrary.DynamicPageTitleArea;
-
 	var oFactory = DynamicPageUtil.oFactory,
 		oUtil = DynamicPageUtil.oUtil;
 
@@ -940,8 +937,12 @@ function (
 		vResult = null;
 	});
 
+	/**
+	 * @deprecated Since version 1.54
+	 */
 	QUnit.test("test primaryArea", function (assert) {
-		var oDynamicPageTitle = this.oDynamicPageTitle,
+		var DynamicPageTitleArea = fioriLibrary.DynamicPageTitleArea,
+			oDynamicPageTitle = this.oDynamicPageTitle,
 			sBeginArea = DynamicPageTitleArea.Begin;
 
 		// Assert default: primary area is "Begin"

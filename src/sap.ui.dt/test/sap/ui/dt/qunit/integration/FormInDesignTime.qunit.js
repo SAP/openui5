@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Label",
 	"sap/ui/core/Core",
+	"sap/ui/core/library",
 	"sap/ui/core/Title",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -20,6 +21,7 @@ sap.ui.define([
 	Input,
 	Label,
 	oCore,
+	coreLibrary,
 	Title,
 	DesignTime,
 	OverlayRegistry,
@@ -32,6 +34,9 @@ sap.ui.define([
 	ResponsiveLayout
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var initFormWithGivenLayout = function(assert, oLayout) {
 		var fnDone = assert.async();
@@ -67,7 +72,7 @@ sap.ui.define([
 		});
 
 		this.oFormContainer3 = new FormContainer({
-			title: new Title({text: "Container3", level: sap.ui.core.TitleLevel.H3}),
+			title: new Title({text: "Container3", level: TitleLevel.H3}),
 			tooltip: "Container tooltip",
 			expandable: true,
 			formElements: [

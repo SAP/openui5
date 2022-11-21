@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/IconPool",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageHeader",
@@ -16,7 +17,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils"],
-function (jQuery, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, ObjectPageSection, ObjectPageSubSection, Button, Link, Text, Breadcrumbs, XMLView, Device, QUtils) {
+function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, ObjectPageSection, ObjectPageSubSection, Button, Link, Text, Breadcrumbs, XMLView, Device, QUtils) {
 	"use strict";
 
 	var oFactory = {
@@ -264,8 +265,8 @@ function (jQuery, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPage
 		var img1 = this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[0],
 			img2 = this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[1];
 
-		assert.strictEqual(jQuery(img1).control()[0].getSrc(), sUpdatedSrc, "image1 is updated");
-		assert.strictEqual(jQuery(img2).control()[0].getSrc(), sUpdatedSrc, "image2 is updated");
+		assert.strictEqual(Element.closestTo(img1).getSrc(), sUpdatedSrc, "image1 is updated");
+		assert.strictEqual(Element.closestTo(img2).getSrc(), sUpdatedSrc, "image2 is updated");
 	});
 	QUnit.test("Two different placeholders in DOM if showTitleInHeaderContent===true", function (assert) {
 		//act
@@ -279,7 +280,7 @@ function (jQuery, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPage
 		var oPlaceholder1 = this.oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon")[0],
 			oPlaceholder2 = this.oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon")[1];
 
-		 assert.notEqual(oPlaceholder1.id, oPlaceholder2.id, "two different placeholders in DOM");
+		assert.notEqual(oPlaceholder1.id, oPlaceholder2.id, "two different placeholders in DOM");
 	});
 
 	QUnit.test("Placeholder should be of type sap.m.Avatar", function (assert) {

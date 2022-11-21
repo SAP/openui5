@@ -476,7 +476,7 @@ sap.ui.define([
 						oSyncPoint2.finishTask(iVersionInfoTask);
 					});
 				} else {
-					fnCallback(sap.ui.getVersionInfo({ async: bAsync, failOnError: false }));
+					fnCallback(sap.ui.getVersionInfo({ async: bAsync, failOnError: false })); // legacy-relevant: sync path
 				}
 			}
 
@@ -1675,7 +1675,7 @@ sap.ui.define([
 			// (but the loader avoids double loading).
 			Log.debug("Lazy dependency to '" + lib + "' encountered, loading library-preload-lazy.js");
 			try {
-				sap.ui.requireSync(libPackage + '/library-preload-lazy');
+				sap.ui.requireSync(libPackage + '/library-preload-lazy'); // legacy-relevant: synchronous preloading
 			} catch (e) {
 				Log.error("failed to load '" + libPackage + "/library-preload-lazy.js" + "' synchronously (" + (e && e.message || e) + ")");
 			}

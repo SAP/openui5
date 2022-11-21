@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/util/deepExtend",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/P13nColumnsPanel",
@@ -7,8 +8,10 @@ sap.ui.define([
 	"sap/m/P13nItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	deepExtend,
 	qutils,
 	createAndAppendDiv,
 	P13nColumnsPanel,
@@ -16,6 +19,7 @@ sap.ui.define([
 	P13nItem,
 	JSONModel,
 	oCore,
+	Element,
 	jQuery
 ) {
 	"use strict";
@@ -84,7 +88,7 @@ sap.ui.define([
 
 		assert.deepEqual(oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "B");
 		assert.ok(oPanel._getMarkedTableItem());
-		assert.deepEqual(oPanel._getMarkedTableItem(), jQuery(oPanel.$().find("td").find("span")[0].parentNode).control()[0]);
+		assert.deepEqual(oPanel._getMarkedTableItem(), Element.closestTo(oPanel.$().find("td").find("span")[0].parentNode));
 		assert.deepEqual(oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], oPanel.$().find("td").find("span")[0].parentNode.parentNode);
 
 		oPanel.destroy();
@@ -123,7 +127,7 @@ sap.ui.define([
 
 		assert.deepEqual(oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "B");
 		assert.ok(oPanel._getMarkedTableItem());
-		assert.deepEqual(oPanel._getMarkedTableItem(), jQuery(oPanel.$().find("td").find("span")[0].parentNode).control()[0]);
+		assert.deepEqual(oPanel._getMarkedTableItem(), Element.closestTo(oPanel.$().find("td").find("span")[0].parentNode));
 		assert.deepEqual(oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], oPanel.$().find("td").find("span")[0].parentNode.parentNode);
 
 		oPanel.destroy();
@@ -186,7 +190,7 @@ sap.ui.define([
 
 		assert.deepEqual(oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "B");
 		assert.ok(oPanel._getMarkedTableItem());
-		assert.deepEqual(oPanel._getMarkedTableItem(), jQuery(oPanel.$().find("td").find("span")[0].parentNode).control()[0]);
+		assert.deepEqual(oPanel._getMarkedTableItem(), Element.closestTo(oPanel.$().find("td").find("span")[0].parentNode));
 		assert.deepEqual(oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], oPanel.$().find("td").find("span")[0].parentNode.parentNode);
 
 		//		assert.equal(oPanel.getModel().getProperty("/items/0/columnKey"), "A");
@@ -255,7 +259,7 @@ sap.ui.define([
 
 		assert.deepEqual(oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "B");
 		assert.ok(oPanel._getMarkedTableItem());
-		assert.deepEqual(oPanel._getMarkedTableItem(), jQuery(oPanel.$().find("td").find("span")[0].parentNode).control()[0]);
+		assert.deepEqual(oPanel._getMarkedTableItem(), Element.closestTo(oPanel.$().find("td").find("span")[0].parentNode));
 		assert.deepEqual(oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], oPanel.$().find("td").find("span")[0].parentNode.parentNode);
 
 		//		assert.equal(oPanel.getModel().getProperty("/items/0/columnKey"), "B");
@@ -369,7 +373,7 @@ sap.ui.define([
 
 		assert.deepEqual(this.oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "B");
 		assert.ok(this.oPanel._getMarkedTableItem());
-		assert.deepEqual(this.oPanel._getMarkedTableItem(), jQuery(this.oPanel.$().find("td").find("span")[1].parentNode).control()[0]);
+		assert.deepEqual(this.oPanel._getMarkedTableItem(), Element.closestTo(this.oPanel.$().find("td").find("span")[1].parentNode));
 		assert.deepEqual(this.oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], this.oPanel.$().find("td").find("span")[1].parentNode.parentNode);
 
 		//		assert.equal(this.oPanel.getModel().getProperty("/items/0/columnKey"), "B");
@@ -388,7 +392,7 @@ sap.ui.define([
 
 		assert.deepEqual(this.oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "B");
 		assert.ok(this.oPanel._getMarkedTableItem());
-		assert.deepEqual(this.oPanel._getMarkedTableItem(), jQuery(this.oPanel.$().find("td").find("span")[2].parentNode).control()[0]);
+		assert.deepEqual(this.oPanel._getMarkedTableItem(), Element.closestTo(this.oPanel.$().find("td").find("span")[2].parentNode));
 		assert.deepEqual(this.oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], this.oPanel.$().find("td").find("span")[2].parentNode.parentNode);
 
 		//		assert.equal(this.oPanel.getModel().getProperty("/items/0/columnKey"), "B");
@@ -408,7 +412,7 @@ sap.ui.define([
 
 		assert.deepEqual(this.oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "A");
 		assert.ok(this.oPanel._getMarkedTableItem());
-		assert.deepEqual(this.oPanel._getMarkedTableItem(), jQuery(this.oPanel.$().find("td").find("span")[2].parentNode).control()[0]);
+		assert.deepEqual(this.oPanel._getMarkedTableItem(), Element.closestTo(this.oPanel.$().find("td").find("span")[2].parentNode));
 		assert.deepEqual(this.oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], this.oPanel.$().find("td").find("span")[2].parentNode.parentNode);
 
 		//		assert.equal(this.oPanel.getModel().getProperty("/items/0/columnKey"), "B");
@@ -483,7 +487,7 @@ sap.ui.define([
 
 		assert.deepEqual(this.oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "A");
 		assert.ok(this.oPanel._getMarkedTableItem());
-		assert.deepEqual(this.oPanel._getMarkedTableItem(), jQuery(this.oPanel.$().find("td").find("span")[0].parentNode).control()[0]);
+		assert.deepEqual(this.oPanel._getMarkedTableItem(), Element.closestTo(this.oPanel.$().find("td").find("span")[0].parentNode));
 		assert.deepEqual(this.oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], this.oPanel.$().find("td").find("span")[0].parentNode.parentNode);
 
 		//		assert.equal(this.oPanel.getModel().getProperty("/items/0/columnKey"), "B");
@@ -533,7 +537,7 @@ sap.ui.define([
 
 		assert.deepEqual(this.oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "C");
 		assert.ok(this.oPanel._getMarkedTableItem());
-		assert.deepEqual(this.oPanel._getMarkedTableItem(), jQuery(this.oPanel.$().find("td").find("span")[0].parentNode).control()[0]);
+		assert.deepEqual(this.oPanel._getMarkedTableItem(), Element.closestTo(this.oPanel.$().find("td").find("span")[0].parentNode));
 		assert.deepEqual(this.oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], this.oPanel.$().find("td").find("span")[0].parentNode.parentNode);
 
 		//		assert.equal(this.oPanel.getModel().getProperty("/items/0/columnKey"), "B");
@@ -601,7 +605,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("1. Model: ^D, ^B, C", function(assert) {
-		var oTableItem = jQuery(this.oPanel.$().find("td").find("span")[2].parentNode.parentNode).control()[0];
+		var oTableItem = Element.closestTo(this.oPanel.$().find("td").find("span")[2].parentNode.parentNode);
 		oTableItem.setVisible(true);
 		this.oPanel._selectTableItem();
 
@@ -762,7 +766,7 @@ sap.ui.define([
 					}
 				]
 			};
-			this.oPanel.setModel(new JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
+			this.oPanel.setModel(new JSONModel(deepExtend({}, this.oDataInitial)));
 
 			this.oPanel.placeAt("content");
 			oCore.applyChanges();
@@ -930,7 +934,7 @@ sap.ui.define([
 					}
 				]
 			};
-			this.oPanel.setModel(new JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
+			this.oPanel.setModel(new JSONModel(deepExtend({}, this.oDataInitial)));
 
 			this.oPanel.placeAt("content");
 			oCore.applyChanges();

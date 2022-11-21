@@ -29,7 +29,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -60,7 +61,8 @@ sap.ui.define([
 	Log,
 	deepEqual,
 	jQuery,
-	oCore
+	oCore,
+	Element
 ) {
 	"use strict";
 
@@ -322,13 +324,13 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// assert
-		assert.notOk(oDatePicker.$("icon").control(0).getTooltip(), "icon tooltip is disabled");
+		assert.notOk(Element.closestTo(oDatePicker.getDomRef("icon")).getTooltip(), "icon tooltip is disabled");
 
 		// cleanup
 		oDatePicker.destroy();
 	});
 
-	QUnit.test("Footer is correctly displayed on dekstop", function(assert) {
+	QUnit.test("Footer is correctly displayed on desktop", function(assert) {
 		// Prepare
 		var oDP = new DatePicker({
 				valueFormat: "yyyyMMdd",
@@ -1305,7 +1307,7 @@ sap.ui.define([
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after first entering invalid date and then selecting the previous valid date");
 
 		qutils.triggerEvent("click", "DP5-icon");
-		jQuery("#DP5-cal").control(0).fireCancel();
+		Element.closestTo("#DP5-cal").fireCancel();
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after cancel");
 
 		// On a touch device
@@ -1322,7 +1324,7 @@ sap.ui.define([
 		assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after selecting the same date");
 
 		qutils.triggerEvent("click", "DP5-icon");
-		jQuery("#DP5-cal").control(0).fireCancel();
+		Element.closestTo("#DP5-cal").fireCancel();
 		assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after cancel");
 
 		Device.system.desktop = bOrigDesktop;

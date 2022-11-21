@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/Host",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
@@ -25,6 +26,7 @@ sap.ui.define([
 		RequestDataProvider,
 		Host,
 		Core,
+		Element,
 		Log,
 		KeyCodes,
 		qutils,
@@ -1803,7 +1805,7 @@ sap.ui.define([
 				var oObjContent = this.oCard.getCardContent();
 
 				//Act
-				var oLink = oObjContent.$().find(".sapMLnk").control(0);
+				var oLink = Element.closestTo(oObjContent.$().find(".sapMLnk")[0]);
 				oLink.firePress();
 
 				Core.applyChanges();
@@ -1830,7 +1832,7 @@ sap.ui.define([
 				var oContent = this.oCard.getCardContent();
 
 				//Act
-				var oLink = oContent.$().find(".sapMLnk").control(1);
+				var oLink = Element.closestTo(oContent.$().find(".sapMLnk")[1]);
 				assert.strictEqual(oLink.getEnabled(), false, "Link is disabled");
 
 				done();
@@ -1850,7 +1852,7 @@ sap.ui.define([
 				var oContent = this.oCard.getCardContent();
 
 				//Act
-				var oLink = oContent.$().find("a:contains('Book a meeting')").control(0);
+				var oLink = Element.closestTo(oContent.$().find("a:contains('Book a meeting')")[0]);
 				assert.strictEqual(oLink.getEnabled(), true, "Link is enabled");
 				oLink.firePress();
 
@@ -1896,7 +1898,7 @@ sap.ui.define([
 				var oContent = this.oCard.getCardContent();
 
 				//Act
-				var oLink = oContent.$().find(".sapMLnk:not(.sapMLnkDsbl)").control(0);
+				var oLink = Element.closestTo(oContent.$().find(".sapMLnk:not(.sapMLnkDsbl)")[0]);
 				qutils.triggerKeydown(oLink.getDomRef(), KeyCodes.ENTER);
 
 				Core.applyChanges();
@@ -2052,7 +2054,7 @@ sap.ui.define([
 
 			this.oCard.attachEvent("_ready", function () {
 				//Act
-				var oLink = this.oCard.getCardContent().$().find(".sapMLnk:not(.sapMLnkDsbl)").control(0);
+				var oLink = Element.closestTo(this.oCard.getCardContent().$().find(".sapMLnk:not(.sapMLnkDsbl)")[0]);
 				qutils.triggerKeydown(oLink.getDomRef(), KeyCodes.ENTER);
 			}.bind(this));
 
