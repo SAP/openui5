@@ -345,13 +345,18 @@ sap.ui.define([
 		 * @param {any} vValue - Any value, including <code>undefined</code>
 		 * @param {function} [fnReplacer] - The replacer function to transform the result, see
 		 *   <code>JSON.stringify</code>
-		 * @returns {any} - A clone
+		 * @param {boolean} [bAsString] - Whether to return the result of JSON.stringify
+		 * @returns {any} A clone or its string representation
 		 */
-		clone : function clone(vValue, fnReplacer) {
-			return vValue === undefined || vValue === Infinity || vValue === -Infinity
-				|| /*NaN?*/vValue !== vValue // eslint-disable-line no-self-compare
-				? vValue
-				: JSON.parse(JSON.stringify(vValue, fnReplacer));
+		clone : function clone(vValue, fnReplacer, bAsString) {
+			var sStringified;
+
+			if (vValue === undefined || vValue === Infinity || vValue === -Infinity
+					|| Number.isNaN(vValue)) {
+				return vValue;
+			}
+			sStringified = JSON.stringify(vValue, fnReplacer);
+			return bAsString ? sStringified : JSON.parse(sStringified);
 		},
 
 		/**
@@ -1895,18 +1900,20 @@ sap.ui.define([
 		 *   Any value, including <code>undefined</code>
 		 * @param {boolean} [bRemoveClientAnnotations]
 		 *   Whether to remove all client-side annotations, not just private ones
+		 * @param {boolean} [bAsString]
+		 *   Whether to return the result of JSON.stringify
 		 * @returns {any}
-		 *   A public clone
+		 *   A public clone or its string representation
 		 *
 		 * @see sap.ui.model.odata.v4.lib._Helper.clone
 		 */
-		publicClone : function (vValue, bRemoveClientAnnotations) {
+		publicClone : function (vValue, bRemoveClientAnnotations, bAsString) {
 			return _Helper.clone(vValue, function (sKey, vValue) {
 				if (bRemoveClientAnnotations ? !sKey.startsWith("@$ui5.") : sKey !== "@$ui5._") {
 					return vValue;
 				}
 				// return undefined;
-			});
+			}, bAsString);
 		},
 
 		/**

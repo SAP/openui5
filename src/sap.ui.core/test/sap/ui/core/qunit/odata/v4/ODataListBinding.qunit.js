@@ -5380,17 +5380,18 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getEntryData", function (assert) {
-		var oValue = {key : "value"},
-			oContext = {
+		var oContext = {
 				getValue : function () {
-					return oValue;
+					return "~oValue~";
 				}
 			};
 
+		this.mock(_Helper).expects("publicClone")
+			.withExactArgs("~oValue~", false, true).returns("~oClone~");
+
 		// code under test
 		// Note: not really an instance method
-		assert.strictEqual(ODataListBinding.prototype.getEntryData(oContext),
-			JSON.stringify(oValue));
+		assert.strictEqual(ODataListBinding.prototype.getEntryData(oContext), "~oClone~");
 	});
 
 	//*********************************************************************************************
