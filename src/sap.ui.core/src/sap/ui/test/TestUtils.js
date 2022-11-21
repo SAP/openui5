@@ -161,6 +161,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 *   200.
 		 */
 		useFakeServer : function (oSandbox, sBase, mFixture) {
+			var aPathParts;
 
 			function batch(mUrls, oRequest) {
 				var sBody = oRequest.requestBody,
@@ -287,7 +288,14 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 			// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
 			sinon.xhr.supportsCORS = true;
 
-			sBase = "/" + window.location.pathname.split("/")[1] + "/test-resources/" + sBase + "/";
+			aPathParts = window.location.pathname.split("/");
+			// useFakeServer is used only in explored.html and our testsuite
+			if (aPathParts[1].endsWith(".html") || aPathParts[1] === "test-resources") {
+				sBase = "/test-resources/" + sBase + "/";
+			} else {
+				sBase = "/" + aPathParts[1] + "/test-resources/" + sBase + "/";
+			}
+
 			setupServer();
 
 			// set up a filter so that other requests (e.g. from jQuery.sap.require) go through
