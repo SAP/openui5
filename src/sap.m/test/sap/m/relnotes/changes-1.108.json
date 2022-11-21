@@ -411,5 +411,36 @@
         ]
       }
     ]
+  },
+  "1.108.1": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "d99a43f64f660c3b3b4c137a658476b8ae3180e4",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: adjust value formatting and parsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270142435"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270154248"
+          }
+        ]
+      },
+      {
+        "id": "e0d2e43d9ad0f3f92dffd6942b0fbedecb0933a4",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Buttons are correct when any button is not visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270140605"
+          }
+        ]
+      }
+    ]
   }
 }
