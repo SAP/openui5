@@ -649,6 +649,34 @@ sap.ui.define([
 		assert.equal(oSpy.callCount, 1, "Cancel handling is done even for targets that are not the button itself.");
 	});
 
+	QUnit.test("Test for nullable Queryselection check", function(assert) {
+		var sEditButtonId = this.oUploadSet.getItems()[1].sId + "-editButton";
+		var oItem = this.oUploadSet.getItems()[1];
+		oCore.byId(sEditButtonId).firePress();
+		oCore.applyChanges();
+
+		var querySpy = this.spy(oItem._oListItem.getDomRef(), "querySelector");
+		this.stub(oItem._oListItem, "getDomRef").callsFake(function(){
+			return null;
+		});
+		var oEvent = {
+			target: {
+				closest: function(selector) {
+					return {
+						id: 'item-editButton'
+					};
+				}
+			}
+		};
+
+		// Act
+		this.oUploadSet._handleItemEditConfirmation(oEvent, this.oUploadSet.getItems()[1]);
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(querySpy.notCalled, "QuerySelector not called without dom reference.");
+	});
+
 	QUnit.module("UploadSet general functionality", {
 		beforeEach: function () {
 			this.oUploadSet = new UploadSet("uploadSet", {
