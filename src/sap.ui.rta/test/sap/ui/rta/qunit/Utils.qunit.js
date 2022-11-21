@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/InstanceManager",
 	"sap/m/Label",
+	"sap/m/MessageBox",
 	"sap/ui/core/Control",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -27,6 +28,7 @@ sap.ui.define([
 	Button,
 	InstanceManager,
 	Label,
+	MessageBox,
 	Control,
 	DesignTime,
 	OverlayRegistry,
@@ -645,6 +647,103 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when 'getFiori2Renderer' is called", function(assert) {
 			assert.strictEqual(Utils.getFiori2Renderer(), undefined, "then 'undefined' is returned");
+		});
+	});
+
+	QUnit.module("showMessageBox", {
+		beforeEach: function () {
+			sandbox.stub(Utils, "getRtaStyleClassName").returns("RtaStyleClass");
+			this.oWarningStub = sandbox.stub(MessageBox, "warning");
+			this.oErrorStub = sandbox.stub(MessageBox, "error");
+			return oCore.getLibraryResourceBundle("sap.ui.rta", true)
+				.then(function(oBundle) {
+					this.oRtaMessageBundle = oBundle;
+				}.bind(this));
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("called with 'warning' and some actions (with emphasizedAction and without cancel)", function(assert) {
+			sandbox.stub(this.oRtaMessageBundle, "getText").callsFake(function(sKey) {
+				return sKey + "_Text";
+			});
+			this.oWarningStub.callsFake(function(sText, mOptions) {
+				mOptions.onClose("ACTIONKEY_Text");
+			});
+
+			return Utils.showMessageBox("warning", "TEXTKEY", {
+				titleKey: "TITLEKEY",
+				actionKeys: [
+					"ACTIONKEY",
+					"ACTIONKEY2"
+				],
+				emphasizedActionKey: "ACTIONKEY"
+			})
+			.then(function(sAction) {
+				assert.equal(
+					this.oWarningStub.getCall(0).args[1].title,
+					"TITLEKEY_Text",
+					"then the MessageBox method 'warning' is called with the right title"
+				);
+				assert.equal(
+					this.oWarningStub.getCall(0).args[0],
+					"TEXTKEY_Text",
+					"then the MessageBox method 'warning' is called with the right text"
+				);
+				assert.deepEqual(
+					this.oWarningStub.getCall(0).args[1].actions,
+					[
+						"ACTIONKEY_Text",
+						"ACTIONKEY2_Text"
+					],
+					"then the MessageBox method 'warning' is called with the right actions"
+				);
+				assert.equal(
+					this.oWarningStub.getCall(0).args[1].emphasizedAction,
+					"ACTIONKEY_Text",
+					"then the MessageBox method 'warning' is called with the right emphasized action"
+				);
+				assert.equal(
+					this.oWarningStub.getCall(0).args[1].styleClass,
+					"RtaStyleClass",
+					"then the MessageBox method 'warning' is called with the right style class"
+				);
+				assert.equal(sAction, "ACTIONKEY_Text", "then the expected action is returned");
+			}.bind(this));
+		});
+
+		QUnit.test("called with 'error' and some actions (without emphasized action and with cancel)", function(assert) {
+			sandbox.stub(this.oRtaMessageBundle, "getText").callsFake(function(sKey) {
+				return sKey + "_Text";
+			});
+			this.oErrorStub.callsFake(function(sText, mOptions) {
+				mOptions.onClose("ACTIONKEY_Text");
+			});
+
+			return Utils.showMessageBox("error", "TEXTKEY", {
+				titleKey: "TITLEKEY",
+				actionKeys: [
+					"ACTIONKEY",
+					"ACTIONKEY2"
+				],
+				showCancel: true
+			})
+			.then(function() {
+				assert.deepEqual(
+					this.oErrorStub.getCall(0).args[1].actions,
+					[
+						"ACTIONKEY_Text",
+						"ACTIONKEY2_Text",
+						MessageBox.Action.CANCEL
+					],
+					"then the MessageBox method 'error' is called with the right actions"
+				);
+				assert.notOk(
+					this.oErrorStub.getCall(0).args[1].emphasizedAction,
+					"then no action is emphasized"
+				);
+			}.bind(this));
 		});
 	});
 

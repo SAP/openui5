@@ -232,46 +232,38 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when _onUnload is called with changes", function(assert) {
-			sandbox.stub(this.oRta, "getCommandStack").returns({
+		function createCommandstackStub(oRta, bCanUndo, bCanRedo) {
+			return sandbox.stub(oRta, "getCommandStack").returns({
 				canUndo: function() {
-					return true;
+					return bCanUndo;
+				},
+				canRedo: function() {
+					return bCanRedo;
 				}
 			});
+		}
+
+		QUnit.test("when _onUnload is called with changes", function(assert) {
+			createCommandstackStub(this.oRta, true, true);
 			var sMessage = this.oRta._onUnload();
 			assert.equal(sMessage, this.oRta._getTextResources().getText("MSG_UNSAVED_CHANGES"), "then the function returns the correct message");
 		});
 
 		QUnit.test("when _onUnload is called with changes but 'showWindowUnloadDialog' set to false", function(assert) {
-			sandbox.stub(this.oRta, "getCommandStack").returns({
-				canUndo: function() {
-					return true;
-				}
-			});
+			createCommandstackStub(this.oRta, true, true);
 			this.oRta.setShowWindowUnloadDialog(false);
 			var sMessage = this.oRta._onUnload();
 			assert.equal(sMessage, undefined, "then the function returns no message");
 		});
 
 		QUnit.test("when _onUnload is called without changes", function(assert) {
-			sandbox.stub(this.oRta, "getCommandStack").returns({
-				canUndo: function() {
-					return false;
-				}
-			});
+			createCommandstackStub(this.oRta, false, false);
 			var sMessage = this.oRta._onUnload();
 			assert.equal(sMessage, undefined, "then the function returns no message");
 		});
 
 		QUnit.test("when _onUnload is called after all changes were undone", function(assert) {
-			sandbox.stub(this.oRta, "getCommandStack").returns({
-				canUndo: function() {
-					return false;
-				},
-				canRedo: function() {
-					return true;
-				}
-			});
+			createCommandstackStub(this.oRta, false, true);
 			var sMessage = this.oRta._onUnload();
 			assert.equal(sMessage, undefined, "then the function returns no message");
 		});

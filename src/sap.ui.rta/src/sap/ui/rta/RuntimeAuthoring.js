@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -69,7 +68,6 @@ sap.ui.define([
 	DtUtil,
 	KeyCodes,
 	Version,
-	SmartVariantManagementApplyAPI,
 	ContextBasedAdaptationsAPI,
 	ControlPersonalizationWriteAPI,
 	FeaturesAPI,
@@ -589,6 +587,18 @@ sap.ui.define([
 		return Promise.reject("RuntimeAuthoring is already started");
 	};
 
+	function showSaveConfirmation() {
+		return Utils.showMessageBox("warning", "MSG_UNSAVED_CHANGES_ON_CLOSE", {
+			titleKey: "TIT_UNSAVED_CHANGES_ON_CLOSE",
+			actionKeys: [
+				"BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE",
+				"BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"
+			],
+			emphasizedActionKey: "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE",
+			showCancel: true
+		});
+	}
+
 	/**
 	 * Stops Runtime Authoring
 	 *
@@ -598,9 +608,25 @@ sap.ui.define([
 	 * @returns {Promise} Resolves with undefined
 	 */
 	RuntimeAuthoring.prototype.stop = function(bSkipSave, bSkipRestart) {
+		var bUserCancelled;
 		checkToolbarAndExecuteFunction.call(this, "setBusy", true);
-		var oReloadInfo;
 		return waitForPendingActions.call(this)
+			.then(function() {
+				var oCommandStack = this.getCommandStack();
+				if (!bSkipSave && oCommandStack.canUndo()) {
+					return showSaveConfirmation()
+					.then(function (sAction) {
+						if (sAction === MessageBox.Action.CANCEL) {
+							bUserCancelled = true;
+							return Promise.reject();
+						}
+						return sAction === this._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE")
+							? this._serializeToLrep()
+							: this._oSerializer.clearCommandStack(/*bRemoveChanges = */true);
+					}.bind(this));
+				}
+				return Promise.resolve();
+			}.bind(this))
 			.then(function() {
 				if (bSkipRestart) {
 					return {};
@@ -614,22 +640,25 @@ sap.ui.define([
 					changesNeedReloadPromise: this._bSavedChangesNeedReload ? Promise.resolve(true) : this._oSerializer.needsReload()
 				});
 			}.bind(this))
-			.then(function(oReturn) {
-				oReloadInfo = oReturn;
-				return bSkipSave ? Promise.resolve() : this._serializeToLrep();
-			}.bind(this))
-			.then(checkToolbarAndExecuteFunction.bind(this, "hide", bSkipSave))
-			.then(function() {
+			.then(function(oReloadInfo) {
+				checkToolbarAndExecuteFunction.call(this, "hide", bSkipSave);
 				this.fireStop();
 				if (!bSkipRestart) {
 					ReloadManager.handleUrlParametersOnExit(oReloadInfo);
 				}
 			}.bind(this))
-			.catch(showTechnicalError)
+			.catch(function(vError) {
+				if (!bUserCancelled) {
+					return showTechnicalError(vError);
+				}
+				return undefined;
+			})
 			.then(function() {
 				checkToolbarAndExecuteFunction.call(this, "setBusy", false);
-				this._sStatus = STOPPED;
-				document.body.classList.remove("sapUiRtaMode");
+				if (!bUserCancelled) {
+					this._sStatus = STOPPED;
+					document.body.classList.remove("sapUiRtaMode");
+				}
 			}.bind(this));
 	};
 
@@ -877,8 +906,7 @@ sap.ui.define([
 	RuntimeAuthoring.prototype._onUnload = function() {
 		// this function is still in the prototype scope for easier testing
 		var oCommandStack = this.getCommandStack();
-		var bUnsaved = oCommandStack.canUndo();
-		if (bUnsaved && this.getShowWindowUnloadDialog()) {
+		if (oCommandStack.canUndo() && this.getShowWindowUnloadDialog()) {
 			return this._getTextResources().getText("MSG_UNSAVED_CHANGES");
 		}
 		window.onbeforeunload = this._oldUnloadHandler;
@@ -1028,6 +1056,7 @@ sap.ui.define([
 			var oCommandStack = this.getCommandStack();
 			var bCanUndo = oCommandStack.canUndo();
 			var bCanRedo = oCommandStack.canRedo();
+			var bWasSaved = oCommandStack.getSaved();
 			var bTranslationRelevantDirtyChange = this._oToolbarControlsModel.getProperty("/translationVisible") &&
 				TranslationAPI.hasTranslationRelevantDirtyChanges({layer: Layer.CUSTOMER, selector: this.getRootControlInstance()});
 
@@ -1036,7 +1065,7 @@ sap.ui.define([
 			this._oToolbarControlsModel.setProperty("/undoEnabled", bCanUndo);
 			this._oToolbarControlsModel.setProperty("/redoEnabled", bCanRedo);
 			this._oToolbarControlsModel.setProperty("/publishEnabled", this.bInitialPublishEnabled || bCanUndo);
-			this._oToolbarControlsModel.setProperty("/restoreEnabled", this.bInitialResetEnabled || bCanUndo);
+			this._oToolbarControlsModel.setProperty("/restoreEnabled", this.bInitialResetEnabled || bCanUndo || bWasSaved);
 			this._oToolbarControlsModel.setProperty("/translationEnabled", this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange);
 		}
 		this.fireUndoRedoStackModified();
@@ -1142,6 +1171,7 @@ sap.ui.define([
 				if (sAction === MessageBox.Action.OK) {
 					return activate.call(this, sVersionTitle);
 				}
+				return undefined;
 			}.bind(this));
 		}
 		return activate.call(this, sVersionTitle);
@@ -1543,6 +1573,7 @@ sap.ui.define([
 						Log.error("sap.ui.rta: " + oError.message);
 					});
 			}
+			return undefined;
 		}.bind(this));
 		return this._pElementModified;
 	}

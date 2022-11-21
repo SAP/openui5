@@ -147,7 +147,6 @@ sap.ui.define([
 		this._showButtonIcon("adaptationSwitcherButton", "sap-icon://wrench", "BTN_ADAPTATION");
 		this._showButtonIcon("navigationSwitcherButton", "sap-icon://explorer", "BTN_NAVIGATION");
 		this._showButtonIcon("visualizationSwitcherButton", "sap-icon://show", "BTN_VISUALIZATION");
-		this._showButtonIcon("exit", "sap-icon://decline", "BTN_EXIT");
 	};
 
 	Adaptation.prototype._switchToTexts = function () {
@@ -159,7 +158,6 @@ sap.ui.define([
 		this._showButtonText("adaptationSwitcherButton", "BTN_ADAPTATION");
 		this._showButtonText("navigationSwitcherButton", "BTN_NAVIGATION");
 		this._showButtonText("visualizationSwitcherButton", "BTN_VISUALIZATION");
-		this._showButtonText("exit", "BTN_EXIT");
 	};
 
 	Adaptation.prototype._onSizeChanged = function(mParams, bInitial) {
@@ -211,6 +209,7 @@ sap.ui.define([
 				formatSaveAsEnabled: formatSaveAsEnabled,
 				restore: this.eventHandler.bind(this, "Restore"),
 				publishVersion: this.eventHandler.bind(this, "PublishVersion"),
+				save: this.eventHandler.bind(this, "Save"),
 				exit: this.eventHandler.bind(this, "Exit"),
 				formatVersionButtonText: this.formatVersionButtonText.bind(this),
 				showVersionHistory: this.showVersionHistory.bind(this),
