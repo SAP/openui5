@@ -1,0 +1,34 @@
+{
+  "1.110.0": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "3cf3b0f9b5d8c4cfd8c659175f5a1c3a041027f3",
+        "type": "FEATURE",
+        "text": " MDCTable: enable new ColumnMenu without UrlParameters"
+      },
+      {
+        "id": "0e8b1bfbc27d9fcc18e94106454e28658f1229ae",
+        "type": "FIX",
+        "text": " mdc.FilterBar: clear inner wrong values from filter fields",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270165598"
+          }
+        ]
+      },
+      {
+        "id": "f7620a2ba7022f850e0beb169a8a2a59bd4efe4d",
+        "type": "FIX",
+        "text": " Field: aria-expanded used even if no role",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270153249"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "1.110.0": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "c7790d4945257c07ce6e40919282510bf4761bed",
+        "type": "FIX",
+        "text": " Demo Kit: Sample download missing file fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270136458"
+          }
+        ]
+      }
+    ]
+  }
+}

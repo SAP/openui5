@@ -1,0 +1,29 @@
+{
+  "1.110.0": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "3ed0e109a2134a1e9f9a5e3a7c000cbeae71667e",
+        "type": "FIX",
+        "text": ": sap.ui.dt.DragDrop.js - Fix crash in Firefox on saving Ui Adaptation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270188168"
+          }
+        ]
+      },
+      {
+        "id": "9241964e08069a65ef9b20f7b2e88508445186d0",
+        "type": "FIX",
+        "text": " sap.ui.rta - minimenu icons overlap",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270179901"
+          }
+        ]
+      }
+    ]
+  }
+}

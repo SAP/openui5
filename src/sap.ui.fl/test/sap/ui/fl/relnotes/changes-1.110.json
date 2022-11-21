@@ -1,0 +1,23 @@
+{
+  "1.110.0": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "3582c2498912b485396970a2c678b6c4e1559505",
+        "type": "FIX",
+        "text": " sap.ui.fl - fix response of KeyUserConnector"
+      },
+      {
+        "id": "fb7688793613ebee3f1e6bc88764cde2632e333c",
+        "type": "FIX",
+        "text": " sap.ui.fl - fix messageStrip not showing up in ContextVisibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270164304"
+          }
+        ]
+      }
+    ]
+  }
+}

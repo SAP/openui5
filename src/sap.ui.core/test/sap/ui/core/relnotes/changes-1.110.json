@@ -1,0 +1,99 @@
+{
+  "1.110.0": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "4a8a827db6a3fbf9446ba9936db04ca84222626e",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.DateFormat: Support pattern symbol \"B\""
+      },
+      {
+        "id": "172dffcce17048ac59fa8680647e19612be83348",
+        "type": "FEATURE",
+        "text": " sap.ui.core.format.NumberFormat#parse: Support case insensitive units"
+      },
+      {
+        "id": "a6970f7f3239172ebcbf077b62f2b3453d25555f",
+        "type": "FEATURE",
+        "text": " sap/base/Log: Log methods accept Error as details parameter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270045087"
+          }
+        ]
+      },
+      {
+        "id": "4525e24710c3b206eebe44a590d7450f37ba5444",
+        "type": "FIX",
+        "text": " sap.ui.core: Fix Text Verticalization for libraries QUnit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270174458"
+          }
+        ]
+      },
+      {
+        "id": "ea3e28b57118b2609cd9dce38cb1681484eb6893",
+        "type": "FIX",
+        "text": " sap.ui.core.date.Japanese: calendar week",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270172759"
+          }
+        ]
+      },
+      {
+        "id": "0e1123e34fb40d78708806a0b56ebd244837f130",
+        "type": "FIX",
+        "text": " core/Icon: increase color contrast ratio for high contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270162604"
+          }
+        ]
+      },
+      {
+        "id": "2b17f629bc6142f7e5ddf804a0a8127b4d156105",
+        "type": "FIX",
+        "text": " sap/ui/util/Storage: improve JSDoc / type signatures",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270164451"
+          }
+        ]
+      },
+      {
+        "id": "e331f89de20157cf40d9a7c88df7bb453faa12d5",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.03 and v4.15"
+      },
+      {
+        "id": "8bc4be0e6eac68c86a07be6a27d27ded665bc70f",
+        "type": "FIX",
+        "text": " core.BusyIndicator:Adjust css to align with theme sap_fiori_3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280150532"
+          }
+        ]
+      },
+      {
+        "id": "52a7c25485ad54eeb2b01572dae5baf293cbe532",
+        "type": "FIX",
+        "text": " m.ColumnListItem: take the popin are into account for drop zones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270158237"
+          }
+        ]
+      }
+    ]
+  }
+}
