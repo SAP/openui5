@@ -82,28 +82,14 @@ describe("sap.m.Popover", function () {
 		});
 
 		it("Should open Popover with responsive paddings", function () {
-			element(by.id("change-fiori-theme")).click();
 			element(by.id("btn11")).click();
 			expect(takeScreenshot()).toLookAs("popover-responsivePaddings" + "-" + sMode);
-			//cleanup
-			element(by.id("change-belize-theme")).click();
-		});
 
-		it("Should resize Popover to 700px with responsive paddings", function () {
-			element(by.id("btn11")).click();
 			element(by.id("btn-set-width-700")).click();
 			expect(takeScreenshot()).toLookAs("700px-responsivePaddings" + "-" + sMode);
-			//cleanup
-			element(by.id("change-belize-theme")).click();
-		});
 
-		it("Should resize Popover to 1024px with responsive paddings", function () {
-			element(by.id("change-fiori-theme")).click();
-			element(by.id("btn11")).click();
 			element(by.id("btn-set-width-1024")).click();
 			expect(takeScreenshot()).toLookAs("1024px-responsivePaddings" + "-" + sMode);
-			//cleanup
-			element(by.id("change-belize-theme")).click();
 		});
 
 		it("Should open Popover with checkboxes and check one of them", function () {
