@@ -5192,6 +5192,56 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			done();
 		}.bind(this));
 	});
+
+	QUnit.module("Tab navigating inside the IconMode tiles", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile("tile",{
+				header: "GenericTile",
+				subheader: "GenericTile subHeader",
+				mode: "IconMode",
+				tileIcon: "sap-icon://table-view",
+				backgroundColor: "red",
+				frameType: "TwoByHalf",
+				scope: "ActionMore"
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+		}
+	});
+
+	QUnit.test("Checking the visibility of ActionMore button", function (assert) {
+		//Getting focus on the tile
+		var bForward = true;
+		qutils.triggerKeydown(this.oGenericTile.getDomRef(), KeyCodes.TAB);
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+		assert.equal(document.activeElement,this.oGenericTile.getDomRef(),"Focus is on the ActionMore button");
+
+		//Getting focus on the ActionMore button
+		qutils.triggerKeydown(this.oGenericTile.getDomRef(), KeyCodes.TAB);
+		$Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+		assert.equal(document.activeElement,this.oGenericTile._oMoreIcon.getDomRef(),"Focus is on the ActionMore button");
+		assert.ok(this.oGenericTile.$("action-more").hasClass("sapMGTVisible"),"The Action More button is visible");
+
+		//Shift tabbing back to tile level
+		bForward = false;
+		var oSpy = this.spy(this.oGenericTile, "onsaptabprevious");
+		qutils.triggerKeyEvent("keydown",this.oGenericTile._oMoreIcon.getDomRef(),KeyCodes.TAB,true);
+		$Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+		assert.equal(document.activeElement,this.oGenericTile.getDomRef(),"Focus is on the GenericTile");
+		assert.equal(oSpy.calledOnce, true, "onsaptabprevious method has been called");
+		assert.notOk(this.oGenericTile.$("action-more").hasClass("sapMGTVisible"),"The Action More button should not be visible");
+	});
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
 		for (var i = 0; i < aContainers.length; i++) {

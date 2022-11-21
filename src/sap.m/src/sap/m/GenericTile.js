@@ -1237,6 +1237,11 @@ sap.ui.define([
 			}
 		}
     };
+	GenericTile.prototype.onsaptabprevious = function() {
+		if (this._isIconMode() && this.getFrameType() === FrameType.TwoByHalf) {
+			this._oMoreIcon.removeStyleClass("sapMGTVisible");
+		}
+	};
 	GenericTile.prototype.onkeyup = function (event) {
 		if (!_isInnerTileButtonPressed(event, this)) {
 			var currentKey = keyPressed[event.keyCode];    //disable navigation to other tiles when one tile is selected
