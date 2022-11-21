@@ -1964,6 +1964,73 @@ sap.ui.define([
 		assert.ok(NumberFormat.getCurrencyInstance(), "instantiation without options should succeed");
 	});
 
+	//*****************************************************************************************************************
+	QUnit.test("Currency spacing [:^S:]", function (assert) {
+		var oFormat = getCurrencyInstance({
+				currencyCode : false,
+				customCurrencies : {
+					BasicChar : {decimals : 0, symbol : "foo"},
+					CurrencySymbol : {decimals : 0, symbol : "$"},
+					MathematicalSymbol : {decimals : 0, symbol : "+"},
+					ModifierSymbol : {decimals : 0, symbol : "^"},
+					OtherSymbol : {decimals : 0, symbol : "©"},
+					LineSeparator : {decimals : 0, symbol : "$\u2028"},
+					ParagraphSeparator : {decimals : 0, symbol : "$\u2029"},
+					SpaceSeparator : {decimals : 0, symbol : "$\u3000"}
+				}
+			}, new Locale("en"));
+
+		this.mock(oFormat.oLocaleData).expects("getCurrencySpacing")
+			.withExactArgs("after")
+			.exactly(8)
+			.returns({currencyMatch : "[:^S:]", insertBetween : "...", surroundingMatch : "[:digit:]"});
+
+		assert.strictEqual(oFormat.format(2, "BasicChar").toString(), "foo...2");
+		assert.strictEqual(oFormat.format(2, "CurrencySymbol").toString(), "$2");
+		assert.strictEqual(oFormat.format(2, "LineSeparator").toString(), "$\u2028...2");
+		assert.strictEqual(oFormat.format(2, "ParagraphSeparator").toString(), "$\u2029...2");
+		assert.strictEqual(oFormat.format(2, "SpaceSeparator").toString(), "$\u3000...2");
+
+		// Symbols Sk (modifier), Sm (mathematical) and So (other) are not yet supported
+		assert.strictEqual(oFormat.format(2, "MathematicalSymbol").toString(), "+...2");
+		assert.strictEqual(oFormat.format(2, "ModifierSymbol").toString(), "^...2");
+		assert.strictEqual(oFormat.format(2, "OtherSymbol").toString(), "©...2");
+	});
+
+	//*****************************************************************************************************************
+	QUnit.test("Currency spacing [[:^S:]&[:^Z:]]", function (assert) {
+		var oFormat = getCurrencyInstance({
+				currencyCode : false,
+				customCurrencies : {
+					BasicChar : {decimals : 0, symbol : "foo"},
+					CurrencySymbol : {decimals : 0, symbol : "$"},
+					MathematicalSymbol : {decimals : 0, symbol : "+"},
+					ModifierSymbol : {decimals : 0, symbol : "^"},
+					OtherSymbol : {decimals : 0, symbol : "©"},
+					LineSeparator : {decimals : 0, symbol : "$\u2028"},
+					ParagraphSeparator : {decimals : 0, symbol : "$\u2029"},
+					SpaceSeparator : {decimals : 0, symbol : "$\u3000"}
+				}
+			}, new Locale("en"));
+
+		this.mock(oFormat.oLocaleData).expects("getCurrencySpacing")
+			.withExactArgs("after")
+			.exactly(8)
+			.returns({currencyMatch : "[[:^S:]&[:^Z:]]", insertBetween : "...", surroundingMatch : "[:digit:]"});
+
+		assert.strictEqual(oFormat.format(2, "BasicChar").toString(), "foo...2");
+		assert.strictEqual(oFormat.format(2, "CurrencySymbol").toString(), "$2");
+		assert.strictEqual(oFormat.format(2, "LineSeparator").toString(), "$\u2028" + "2");
+		assert.strictEqual(oFormat.format(2, "ParagraphSeparator").toString(), "$\u2029" + "2");
+		assert.strictEqual(oFormat.format(2, "SpaceSeparator").toString(), "$\u3000" + "2");
+
+		// Symbols Sk (modifier), Sm (mathematical) and So (other) are not yet supported
+		assert.strictEqual(oFormat.format(2, "MathematicalSymbol").toString(), "+...2");
+		assert.strictEqual(oFormat.format(2, "ModifierSymbol").toString(), "^...2");
+		assert.strictEqual(oFormat.format(2, "OtherSymbol").toString(), "©...2");
+	});
+
+	//*****************************************************************************************************************
 	QUnit.module("Support case insensitive input of currency codes", {
 		beforeEach : function () {
 			this.defaultLanguage = Configuration.getLanguage();

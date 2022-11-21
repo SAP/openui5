@@ -44,10 +44,15 @@ sap.ui.define([
 		}
 	});
 
-	// Regex for matching the number placeholder in pattern
-	var rNumPlaceHolder = /0+(\.0+)?/;
-	// Regex for checking that the given string only consists of '0' characters
-	var rOnlyZeros = /^0+$/;
+	var rDigit = /\d/,
+		// Not matching Sc (currency symbol) characters: https://www.unicode.org/reports/tr44/#General_Category_Values
+		rNotS = /[^\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6]/,
+		// Not matching Z (separator) characters: https://www.unicode.org/reports/tr44/#General_Category_Values
+		rNotZ = /[^\u0020\xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/,
+		// Regex for matching the number placeholder in pattern
+		rNumPlaceHolder = /0+(\.0+)?/,
+		// Regex for checking that the given string only consists of '0' characters
+		rOnlyZeros = /^0+$/;
 
 	// Indian currency INR (e.g. xx.xx.yyy.xx.xx.yyy.xx.xx.yyy)
 	var getIndianCurrencyINRGroupingRegExp = function() {
@@ -1650,13 +1655,12 @@ sap.ui.define([
 
 		if (oOptions.showMeasure && sMeasure) {
 			var sPlaceHolder = "\u00a4",
-				// convert the PCRE regex in CLDR to the regex supported by Javascript
-				// The regex means to exclude all possible currency symbols.
-				// In PCRE regex, there's an expression to match all currency symbols /\p{Sc}/ which has to be converted to this long regex in javascript.
-				// This regex is borrowed from https://stackoverflow.com/questions/25910808/javascript-regex-currency-symbol-in-a-string.
 				mRegex = {
-					"[:digit:]": /\d/,
-					"[:^S:]": /[^\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6]/
+					"[:digit:]": rDigit,
+					"[:^S:]": rNotS,
+					"[[:^S:]&[:^Z:]]": {
+						test: function (s) { return rNotS.test(s) && rNotZ.test(s); }
+					}
 				},
 				iMeasureStart = sPattern.indexOf(sPlaceHolder),
 				// determine whether the number is before the measure or after it by comparing the position of measure placeholder with half of the length of the pattern string
