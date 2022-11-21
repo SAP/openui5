@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/ui/core/ListItem",
 	"sap/m/StepInput",
+	"sap/m/TimePicker",
 	"sap/m/Popover",
 	"sap/m/Button",
 	"sap/ui/test/Opa5",
@@ -22,6 +23,7 @@ sap.ui.define([
 	TextArea,
 	ListItem,
 	StepInput,
+	TimePicker,
 	Popover,
 	Button,
 	Opa5,
@@ -69,6 +71,23 @@ sap.ui.define([
 		changeEvent: "search",
 		liveChangeEventParameter: "newValue",
 		changeEventParameter: "query"
+	},
+	{
+		Control: TimePicker,
+		textInControl: "2:00:00 AM",
+		changeEvent: "change",
+		changeEventParameter: "value",
+		props: {
+			maskMode: "Off"
+		}
+	},
+	{
+		Control: TimePicker,
+		textInControl: "3:00:00 AM",
+		textToEnter: "2:00:00 AM",
+		changeEvent: "change",
+		changeEventParameter: "value",
+		clearTextFirst: true
 	}].forEach(function (testInfo) {
 
 		function testBobyForValidAction(bClearText, assert) {
@@ -132,9 +151,11 @@ sap.ui.define([
 			oEnterText.executeOn(oControl);
 		}
 
-		QUnit.test("Should enter a text and preserve the value in a " + testInfo.Control.getMetadata().getName(), function (assert) {
-			testBobyForValidAction.call(this, false, assert);
-		});
+		if (!testInfo.clearTextFirst) {
+			QUnit.test("Should enter a text and preserve the value in a " + testInfo.Control.getMetadata().getName(), function (assert) {
+				testBobyForValidAction.call(this, false, assert);
+			});
+		}
 
 		QUnit.test("Should enter a text and clear the value in a " + testInfo.Control.getMetadata().getName(), function (assert) {
 			testBobyForValidAction.call(this, true, assert);
