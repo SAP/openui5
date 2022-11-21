@@ -79,11 +79,6 @@ sap.ui.define([
 	};
 
 	LoadingProvider.prototype.destroy = function () {
-		if (this._oContentPlaceholder) {
-			this._oContentPlaceholder.destroy();
-			this._oContentPlaceholder = null;
-		}
-
 		this._oDataProvider = null;
 
 		Element.prototype.destroy.apply(this, arguments);
@@ -91,12 +86,13 @@ sap.ui.define([
 
 	LoadingProvider.prototype.createContentPlaceholder = function (oConfiguration, sType, oCard) {
 		var iContentMinItems;
+		var oContentPlaceholder;
 
 		switch (sType) {
 			case "List":
 				iContentMinItems = oCard.getContentMinItems(oConfiguration);
 
-				this._oContentPlaceholder = new ListPlaceholder({
+				oContentPlaceholder = new ListPlaceholder({
 					minItems: iContentMinItems !== null ? iContentMinItems : 2,
 					item: oConfiguration.item,
 					itemHeight: ListContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem"
@@ -106,7 +102,7 @@ sap.ui.define([
 			case "Calendar":
 				iContentMinItems = oCard.getContentMinItems(oConfiguration);
 
-				this._oContentPlaceholder = new CalendarPlaceholder({
+				oContentPlaceholder = new CalendarPlaceholder({
 					minItems: iContentMinItems !== null ? iContentMinItems : 2,
 					maxLegendItems: oConfiguration.maxLegendItems ? parseInt(oConfiguration.maxLegendItems) : 2,
 					item: oConfiguration.item ? oConfiguration.item.template : {},
@@ -114,13 +110,13 @@ sap.ui.define([
 				});
 				break;
 			case "Object":
-				this._oContentPlaceholder = new ObjectPlaceholder();
+				oContentPlaceholder = new ObjectPlaceholder();
 				break;
 
 			case "Table":
 				iContentMinItems = oCard.getContentMinItems(oConfiguration);
 
-				this._oContentPlaceholder = new TablePlaceholder({
+				oContentPlaceholder = new TablePlaceholder({
 					minItems: iContentMinItems !== null ? iContentMinItems : 2,
 					itemHeight: TableContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem",
 					columns: oConfiguration.row ? oConfiguration.row.columns.length || 2 : 2
@@ -130,7 +126,7 @@ sap.ui.define([
 			case "Timeline":
 				iContentMinItems = oCard.getContentMinItems(oConfiguration);
 
-				this._oContentPlaceholder = new TimelinePlaceholder({
+				oContentPlaceholder = new TimelinePlaceholder({
 					minItems: iContentMinItems !== null ? iContentMinItems : 2,
 					item: oConfiguration.item,
 					itemHeight: TimelineContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem"
@@ -138,17 +134,17 @@ sap.ui.define([
 				break;
 
 			case "Analytical":
-				this._oContentPlaceholder = new AnalyticalPlaceholder({
+				oContentPlaceholder = new AnalyticalPlaceholder({
 					chartType: oConfiguration.chartType,
 					minHeight: AnalyticalContentRenderer.getMinHeight(oConfiguration)
 				});
 				break;
 
 			default:
-				this._oContentPlaceholder = new GenericPlaceholder();
+				oContentPlaceholder = new GenericPlaceholder();
 		}
 
-		return this._oContentPlaceholder;
+		return oContentPlaceholder;
 	};
 
 	/**

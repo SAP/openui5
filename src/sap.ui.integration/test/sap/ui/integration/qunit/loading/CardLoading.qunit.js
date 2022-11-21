@@ -1469,6 +1469,9 @@ sap.ui.define([
 
 			//Act
 			assert.ok(oPlaceholder.getMetadata().getName().indexOf(sPlaceholderType) > -1, sMessage);
+
+			// Clean up
+			oPlaceholder.destroy();
 		}
 
 		function isLoadingIndicatorShowingFilter(oManifest, oCard, sMassage, bExpected, sCSSClass, assert) {

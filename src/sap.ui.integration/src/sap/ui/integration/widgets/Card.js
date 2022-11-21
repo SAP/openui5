@@ -1272,6 +1272,8 @@ sap.ui.define([
 			this._oDataProviderFactory = null;
 			this._oDataProvider = null;
 		}
+
+		this._setLoadingProviderState(false);
 	};
 
 	/**
