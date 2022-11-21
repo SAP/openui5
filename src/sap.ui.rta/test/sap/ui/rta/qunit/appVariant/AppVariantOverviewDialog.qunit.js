@@ -1,14 +1,12 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/appVariant/AppVariantOverviewDialog",
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
-	jQuery,
 	AppVariantOverviewDialog,
 	AppVariantOverviewUtils,
 	AppVariantUtils,
@@ -25,7 +23,9 @@ sap.ui.define([
 			sandbox.restore();
 		},
 		after: function() {
-			jQuery("#sapUiBusyIndicator").hide();
+			if (document.getElementById("sapUiBusyIndicator")) {
+				document.getElementById("sapUiBusyIndicator").style.display = "none";
+			}
 		}
 	}, function() {
 		QUnit.test("when AppVariantOverviewDialog gets opened from an original app and a key user has already created app variants based on an original app,", function(assert) {

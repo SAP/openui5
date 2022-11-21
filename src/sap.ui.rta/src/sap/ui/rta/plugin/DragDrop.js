@@ -119,7 +119,7 @@ function(
 			oOverlay.setSelected(false);
 		});
 
-		oOverlay.$().addClass("sapUiRtaOverlayPlaceholder");
+		oOverlay.getDomRef().classList.add("sapUiRtaOverlayPlaceholder");
 	};
 
 	/**
@@ -136,7 +136,7 @@ function(
 				command: oCommand
 			});
 
-			oOverlay.$().removeClass("sapUiRtaOverlayPlaceholder");
+			oOverlay.getDomRef().classList.remove("sapUiRtaOverlayPlaceholder");
 			oOverlay.setSelected(true);
 			oOverlay.focus();
 

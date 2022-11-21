@@ -1,7 +1,6 @@
 /* global QUnit  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/appVariant/Utils",
@@ -20,7 +19,6 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function (
-	jQuery,
 	sinon,
 	RtaAppVariantFeature,
 	AppVariantOverviewUtils,
@@ -88,7 +86,9 @@ sap.ui.define([
 			sandbox.restore();
 		},
 		after: function() {
-			jQuery("#sapUiBusyIndicator").hide();
+			if (document.getElementById("sapUiBusyIndicator")) {
+				document.getElementById("sapUiBusyIndicator").style.display = "none";
+			}
 		}
 	}, function () {
 		QUnit.test("when isManifestSupported() is called,", function(assert) {
@@ -417,7 +417,9 @@ sap.ui.define([
 			delete window.bUShellNavigationTriggered;
 		},
 		after: function() {
-			jQuery("#sapUiBusyIndicator").hide();
+			if (document.getElementById("sapUiBusyIndicator")) {
+				document.getElementById("sapUiBusyIndicator").style.display = "none";
+			}
 		}
 	}, function() {
 		QUnit.test("when onSaveAs() is bound with null and is triggered from RTA toolbar", function(assert) {
@@ -648,7 +650,9 @@ sap.ui.define([
 			delete window.bUShellNavigationTriggered;
 		},
 		after: function() {
-			jQuery("#sapUiBusyIndicator").hide();
+			if (document.getElementById("sapUiBusyIndicator")) {
+				document.getElementById("sapUiBusyIndicator").style.display = "none";
+			}
 		}
 	}, function() {
 		QUnit.test("when onSaveAs() method is called and saving an app variant failed", function(assert) {

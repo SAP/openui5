@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/uxap/library",
 	"sap/uxap/ObjectPageLayout",
@@ -37,7 +36,6 @@ sap.ui.define([
 	FlexUtils,
 	BindingsExtractor,
 	Utils,
-	jQuery,
 	sinon,
 	uxapLibrary,
 	ObjectPageLayout,
@@ -356,26 +354,26 @@ sap.ui.define([
 
 	QUnit.module("Given some dom elements in and out of viewport...", {
 		beforeEach: function() {
-			this.$insideDom = jQuery("<input>").appendTo("#qunit-fixture");
-			this.$outsideDom = jQuery("<button></button>").appendTo("#qunit-fixture");
+			this.oInsideDom = document.createElement("input");
+			document.getElementById("qunit-fixture").append(this.oInsideDom);
+			this.oOutsideDom = document.createElement("button");
+			document.getElementById("qunit-fixture").append(this.oOutsideDom);
 
-			this.$insideDom.css("margin-bottom", jQuery("#qunit-fixture").get(0).clientHeight);
-			this.$insideDom.css("margin-right", jQuery("#qunit-fixture").get(0).clientWidth);
-			this.$insideDom.css("margin-top", "10px");
+			this.oInsideDom.style.marginBottom = document.getElementById("qunit-fixture").clientHeight + "px";
+			this.oInsideDom.style.marginRight = document.getElementById("qunit-fixture").clientWidth + "px";
+			this.oInsideDom.style.marginTop = "10px";
 		},
 		afterEach: function() {
-			this.$insideDom.remove();
-			this.$outsideDom.remove();
+			this.oInsideDom.remove();
+			this.oOutsideDom.remove();
 		}
 	}, function () {
 		QUnit.test("when isElementInViewport is called from inside viewport", function(assert) {
-			assert.ok(Utils.isElementInViewport(this.$insideDom), "then the function returns true");
-			assert.ok(Utils.isElementInViewport(this.$insideDom.get(0)), "then the function returns true");
+			assert.ok(Utils.isElementInViewport(this.oInsideDom), "then the function returns true");
 		});
 
 		QUnit.test("when isElementInViewport is called from outside viewport", function(assert) {
-			assert.notOk(Utils.isElementInViewport(this.$outsideDom), "then the function returns false");
-			assert.notOk(Utils.isElementInViewport(this.$outsideDom.get(0)), "then the function returns false");
+			assert.notOk(Utils.isElementInViewport(this.oOutsideDom), "then the function returns false");
 		});
 	});
 
@@ -425,7 +423,7 @@ sap.ui.define([
 			var done = assert.async();
 			Utils.openRemoveConfirmationDialog()
 			.then(function(bResult) {
-				assert.notOk(jQuery(".sapUiRtaConfirmationDialog").get(0), "the dialog was destroyed");
+				assert.notOk(document.querySelector(".sapUiRtaConfirmationDialog"), "the dialog was destroyed");
 				assert.equal(bResult, true, "the function resolves with 'true' as result");
 				done();
 			});
@@ -440,7 +438,7 @@ sap.ui.define([
 			var done = assert.async();
 			Utils.openRemoveConfirmationDialog()
 			.then(function(bResult) {
-				assert.notOk(jQuery(".sapUiRtaConfirmationDialog").get(0), "the dialog was destroyed");
+				assert.notOk(document.querySelector(".sapUiRtaConfirmationDialog"), "the dialog was destroyed");
 				assert.equal(bResult, false, "the function resolves with 'false' as result");
 				done();
 			});

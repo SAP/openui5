@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/m/Button",
-	"sap/ui/thirdparty/jquery"
+	"sap/m/Button"
 ], function(
 	AdditionalElementsPlugin,
 	OverlayRegistry,
-	Button,
-	jQuery
+	Button
 ) {
 	"use strict";
 
@@ -52,7 +50,9 @@ sap.ui.define([
 			oControl.addStyleClass("sapUiRtaMarginBottom");
 		} else if (oControl.getMetadata().getName() === "sap.uxap.ObjectPageLayout" && this.hasStableId(oOverlay)) {
 			oOverlay.addStyleClass("sapUiRtaPersAddTop");
-			oControl.$("sectionsContainer").addClass("sapUiRtaPaddingTop");
+			oControl.getDomRef().querySelectorAll("[id*='sectionsContainer']").forEach(function(oNode) {
+				oNode.classList.add("sapUiRtaPaddingTop");
+			});
 		}
 
 		var onAddPressed = function(bOverlayIsSibling, oOverlay, iIndex) {
@@ -80,14 +80,16 @@ sap.ui.define([
 		}.bind(this);
 
 		if (oOverlay.hasStyleClass("sapUiRtaPersAdd")) {
-			var bAddButton = oOverlay.hasStyleClass("sapUiRtaPersAdd") && oOverlay.$().children(".sapUiRtaPersAddIconOuter").length <= 0;
+			var aChildren = Array.from(oOverlay.getDomRef().querySelectorAll(":scope > .sapUiRtaPersAddIconOuter"));
+			var bAddButton = oOverlay.hasStyleClass("sapUiRtaPersAdd") && aChildren.length === 0;
 			if (bAddButton) {
-				fnAddButton(oOverlay, oOverlay.$(), true, oOverlay.getDesignTimeMetadata().getName().singular);
+				fnAddButton(oOverlay, oOverlay.getDomRef(), true, oOverlay.getDesignTimeMetadata().getName().singular);
 			}
 		} else if (oOverlay.hasStyleClass("sapUiRtaPersAddTop")) {
-			if (oOverlay.getAggregationOverlay("sections").$().children(".sapUiRtaPersAddIconOuter").length <= 0) {
-				var $SectionsOverlay = oOverlay.getAggregationOverlay("sections").$();
-				fnAddButton(oOverlay, $SectionsOverlay, false, oOverlay.getDesignTimeMetadata().getAggregation("sections").childNames.singular, 0);
+			var aChildren = Array.from(oOverlay.getAggregationOverlay("sections").getDomRef().querySelectorAll(":scope > .sapUiRtaPersAddIconOuter"));
+			if (aChildren.length === 0) {
+				var oSectionsOverlayDOM = oOverlay.getAggregationOverlay("sections").getDomRef();
+				fnAddButton(oOverlay, oSectionsOverlayDOM, false, oOverlay.getDesignTimeMetadata().getAggregation("sections").childNames.singular, 0);
 			}
 		}
 
@@ -110,7 +112,9 @@ sap.ui.define([
 			oControl.removeStyleClass("sapUiRtaMarginBottom");
 		} else if (oControl.getMetadata().getName() === "sap.uxap.ObjectPageLayout") {
 			oOverlay.removeStyleClass("sapUiRtaPersAddTop");
-			oControl.$("sectionsContainer").removeClass("sapUiRtaPaddingTop");
+			oControl.getDomRef().querySelectorAll("[id*='sectionsContainer']").forEach(function(oNode) {
+				oNode.classList.remove("sapUiRtaPaddingTop");
+			});
 		}
 
 		AdditionalElementsPlugin.prototype.deregisterElementOverlay.apply(this, arguments);
@@ -131,7 +135,9 @@ sap.ui.define([
 				if (bIsLayout) {
 					var oLayout = oOverlay.getElement();
 					oLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
-						oLayout.$("sectionsContainer").addClass("sapUiRtaPaddingTop");
+						oLayout.getDomRef().querySelectorAll("[id*='sectionsContainer']").forEach(function(oNode) {
+							oNode.classList.add("sapUiRtaPaddingTop");
+						});
 					});
 				}
 			}
@@ -152,18 +158,21 @@ sap.ui.define([
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
 		var sId = oOverlay.getId() + "-AddButton";
-		var oHtmlButtonOuter = jQuery("<div class='sapUiRtaPersAddIconOuter' draggable='true' tabindex='-1'> </div>");
+		var oHtmlButtonOuter = document.createElement("div");
+		oHtmlButtonOuter.classList.add("sapUiRtaPersAddIconOuter");
+		oHtmlButtonOuter.setAttribute("draggable", "true");
+		oHtmlButtonOuter.setAttribute("tabindex", -1);
 		oOverlay._oAddButton = new Button(sId, {
 			text: oTextResources.getText("CTX_ADD_ELEMENTS", sControlName),
 			icon: "sap-icon://add",
 			enabled: bIsEditable
 		})
-			.placeAt(oHtmlButtonOuter.get(0))
+			.placeAt(oHtmlButtonOuter)
 			.attachBrowserEvent('click', fnCallback)
 			.attachBrowserEvent('tap', fnCallback);
 		oOverlayDom.append(oHtmlButtonOuter);
 
-		oHtmlButtonOuter[0].addEventListener("mouseover", function(oEvent) {
+		oHtmlButtonOuter.addEventListener("mouseover", function(oEvent) {
 			oEvent.stopPropagation();
 			var oOverlay = oEvent.fromElement ? OverlayRegistry.getOverlay(oEvent.fromElement.id) : null;
 			if (oOverlay && oOverlay.getMetadata().getName() === "sap.ui.dt.ElementOverlay") {
@@ -172,7 +181,7 @@ sap.ui.define([
 			}
 		});
 
-		oHtmlButtonOuter[0].addEventListener("mouseleave", function(oEvent) {
+		oHtmlButtonOuter.addEventListener("mouseleave", function(oEvent) {
 			oEvent.stopPropagation();
 			var oOverlay = oEvent.toElement ? OverlayRegistry.getOverlay(oEvent.toElement.id) : null;
 			if (oOverlay && oOverlay.getMetadata().getName() === "sap.ui.dt.ElementOverlay") {
@@ -183,16 +192,16 @@ sap.ui.define([
 			}
 		});
 
-		oHtmlButtonOuter[0].addEventListener("click", function(oEvent) {
+		oHtmlButtonOuter.addEventListener("click", function(oEvent) {
 			oEvent.stopPropagation();
 		});
 
-		oHtmlButtonOuter[0].addEventListener("contextmenu", function(oEvent) {
+		oHtmlButtonOuter.addEventListener("contextmenu", function(oEvent) {
 			oEvent.stopPropagation();
 			oEvent.preventDefault();
 		});
 
-		oHtmlButtonOuter[0].addEventListener("dragstart", function(oEvent) {
+		oHtmlButtonOuter.addEventListener("dragstart", function(oEvent) {
 			oEvent.stopPropagation();
 			oEvent.preventDefault();
 		});

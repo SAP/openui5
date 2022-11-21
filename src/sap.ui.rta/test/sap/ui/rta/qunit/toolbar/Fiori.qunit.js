@@ -110,7 +110,10 @@ function(
 				assert.equal(oImage.getSrc(), "logo", "then the name of the logo is correctly set");
 
 				var oErrorStub = sandbox.stub(Log, "error");
-				this.oToolbar._checkLogoSize(jQuery({naturalWidth: 5, naturalHeight: 5}), 6, 6);
+				var oImg = document.createElement('img');
+				oImg.width = "5px";
+				oImg.height = "5px";
+				this.oToolbar._checkLogoSize(oImg, 6, 6);
 				assert.equal(oErrorStub.callCount, 1, "then an error was thrown");
 
 				this.oToolbar.show();

@@ -612,10 +612,18 @@ sap.ui.define([
 			this.fnUndoStub = sandbox.stub().resolves();
 			this.fnRedoStub = sandbox.stub().resolves();
 
-			this.oOverlayContainer = jQuery("<button></button>").appendTo("#qunit-fixture");
-			this.oAnyOtherDomRef = jQuery("<button></button>").appendTo("#qunit-fixture").get(0);
-			this.oContextMenu = jQuery("<button class='sapUiDtContextMenu' ></button>").appendTo("#qunit-fixture").get(0);
-			this.oContextMenu2 = jQuery("<button class='sapUiDtContextMenu' ></button>").appendTo("#qunit-fixture").get(0);
+			this.oOverlayContainer = document.createElement("button");
+			document.getElementById("qunit-fixture").append(this.oOverlayContainer);
+			//TODO: remove when Overlay.getOverlayContainer does not return jQuery any more
+			this.oOverlayContainer = jQuery(this.oOverlayContainer);
+			this.oAnyOtherDomRef = document.createElement("button");
+			document.getElementById("qunit-fixture").append(this.oAnyOtherDomRef);
+			this.oContextMenu = document.createElement("button");
+			this.oContextMenu.classList.add("sapUiDtContextMenu");
+			document.getElementById("qunit-fixture").append(this.oContextMenu);
+			this.oContextMenu2 = document.createElement("button");
+			this.oContextMenu2.classList.add("sapUiDtContextMenu");
+			document.getElementById("qunit-fixture").append(this.oContextMenu2);
 
 			this.oUndoEvent = new Event("dummyEvent", new EventProvider());
 			this.oUndoEvent.keyCode = KeyCodes.Z;
@@ -691,10 +699,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("during rename", function(assert) {
-			jQuery("<div></div>", {
-				"class": "sapUiRtaEditableField",
-				tabIndex: 1
-			}).appendTo("#qunit-fixture").get(0).focus();
+			var oNode = document.createElement("div");
+			oNode.classList.add("sapUiRtaEditableField");
+			oNode.setAttribute("tabindex", 1);
+			document.getElementById("qunit-fixture").append(oNode);
+			oNode.focus();
 
 			this.oRta.fnKeyDown(this.oUndoEvent);
 			assert.equal(this.oUndoStub.callCount, 0, "then undo was not called");
@@ -865,7 +874,7 @@ sap.ui.define([
 			});
 			return oRuntimeAuthoring.start().then(function() {
 				assert.ok(oRuntimeAuthoring, "then RuntimeAuthoring is created");
-				assert.strictEqual(jQuery(".sapUiRtaToolbar").length, 0, "then Toolbar is not visible.");
+				assert.strictEqual(document.querySelectorAll(".sapUiRtaToolbar").length, 0, "then Toolbar is not visible.");
 			});
 		});
 

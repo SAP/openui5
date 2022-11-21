@@ -8,15 +8,13 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/base/util/includes",
-	"sap/base/util/restricted/_debounce",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/util/restricted/_debounce"
 ], function(
 	Plugin,
 	OverlayRegistry,
 	OverlayUtil,
 	includes,
-	_debounce,
-	jQuery
+	_debounce
 ) {
 	"use strict";
 
@@ -75,12 +73,13 @@ sap.ui.define([
 				oElement.removeStyleClass(Stretch.STRETCHSTYLECLASS);
 			}
 		} else {
-			var $Element = oOverlay.getAssociatedDomRef();
-			if ($Element) {
+			//TODO: replace when  Overlay.getAssociatedDomRef() does not return jQuery any more
+			var oElementDomRef = oOverlay.getAssociatedDomRef() && oOverlay.getAssociatedDomRef().get(0);
+			if (oElementDomRef) {
 				if (bAddClass) {
-					$Element.addClass(Stretch.STRETCHSTYLECLASS);
+					oElementDomRef.classList.add(Stretch.STRETCHSTYLECLASS);
 				} else {
-					$Element.removeClass(Stretch.STRETCHSTYLECLASS);
+					oElementDomRef.classList.remove(Stretch.STRETCHSTYLECLASS);
 				}
 			}
 		}
@@ -107,7 +106,7 @@ sap.ui.define([
 		// remove padding if it is already stretched
 		var iHeight = oParentGeometry.size.height;
 		if (bIsAlreadyStretched) {
-			iHeight -= parseInt(jQuery(oParentGeometry.domRef).css("padding-top"));
+			iHeight -= parseInt(window.getComputedStyle(oParentGeometry.domRef, null).getPropertyValue("padding-top"));
 		}
 		var iParentSize = Math.round(oParentGeometry.size.width) * Math.round(iHeight);
 		aChildOverlays = aChildOverlays || OverlayUtil.getAllChildOverlays(oReferenceOverlay);
@@ -380,9 +379,10 @@ sap.ui.define([
 
 	Stretch.prototype._reevaluateStretching = function(oOverlay) {
 		if (!oOverlay.bIsDestroyed) {
-			var $Element = oOverlay.getAssociatedDomRef();
-			if ($Element) {
-				var bIsStretched = $Element.hasClass(Stretch.STRETCHSTYLECLASS);
+			//TODO: replace when getAssociatedDomRef does not return jQuery any more
+			var oElementDomRef = oOverlay.getAssociatedDomRef() && oOverlay.getAssociatedDomRef().get(0);
+			if (oElementDomRef) {
+				var bIsStretched = oElementDomRef.classList.contains(Stretch.STRETCHSTYLECLASS);
 				var bShouldBeStretched = childrenAreSameSize(oOverlay, undefined, bIsStretched);
 				if (bIsStretched && !bShouldBeStretched) {
 					this.removeStretchCandidate(oOverlay);
@@ -396,8 +396,9 @@ sap.ui.define([
 
 	Stretch.prototype._checkParentAndAddToStretchCandidates = function(oOverlay) {
 		var oParentOverlay = oOverlay.getParentElementOverlay();
-		var $ParentElement = oParentOverlay && oParentOverlay.getAssociatedDomRef();
-		if ($ParentElement) {
+		//TODO: replace when getAssociatedDomRef does not return jQuery any more
+		var oParentElementDOM = oParentOverlay && oParentOverlay.getAssociatedDomRef() && oParentOverlay.getAssociatedDomRef().get(0);
+		if (oParentElementDOM) {
 			if (startAtSamePosition(oParentOverlay, oOverlay)) {
 				if (childrenAreSameSize(oParentOverlay)) {
 					this.addStretchCandidate(oParentOverlay);

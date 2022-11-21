@@ -25,7 +25,6 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"testdata/StaticDesigntimeMetadata",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
@@ -50,7 +49,6 @@ sap.ui.define([
 	ObjectPageSection,
 	ObjectPageSubSection,
 	StaticDesigntimeMetadata,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -198,18 +196,20 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when get() is called and and no parameter is passed for initial control id and depth", function (assert) {
-			var done = assert.async();
-			jQuery.getJSON("test-resources/sap/ui/rta/qunit/service/Outline.json", function(aExpectedOutlineData) {
-				var aRootElements = this.oRta._oDesignTime.getRootElements();
-				this.oOutline.get().then(function(aReceivedResponse) {
-					assert.ok(Array.isArray(aReceivedResponse), "then an array is received");
-					assert.equal(aReceivedResponse.length, 2, "then two items in the array for each root element");
-					assert.strictEqual(aReceivedResponse[0].id, aRootElements[0].getId(), "then outline for first item created starting from the first root element");
-					assert.strictEqual(aReceivedResponse[1].id, aRootElements[1].getId(), "then outline for second created starting from the second root element");
-					assert.deepEqual(aReceivedResponse, aExpectedOutlineData, "then expected outline data received");
-					done();
-				});
-			}.bind(this));
+			return fetch("test-resources/sap/ui/rta/qunit/service/Outline.json")
+				.then(function(oResponse) {
+					return oResponse.json();
+				})
+				.then(function(aExpectedOutlineData) {
+					var aRootElements = this.oRta._oDesignTime.getRootElements();
+					this.oOutline.get().then(function(aReceivedResponse) {
+						assert.ok(Array.isArray(aReceivedResponse), "then an array is received");
+						assert.equal(aReceivedResponse.length, 2, "then two items in the array for each root element");
+						assert.strictEqual(aReceivedResponse[0].id, aRootElements[0].getId(), "then outline for first item created starting from the first root element");
+						assert.strictEqual(aReceivedResponse[1].id, aRootElements[1].getId(), "then outline for second created starting from the second root element");
+						assert.deepEqual(aReceivedResponse, aExpectedOutlineData, "then expected outline data received");
+					});
+				}.bind(this));
 		});
 
 		QUnit.test("when get() is called and and depth (3) is passed without initial control id", function (assert) {
@@ -567,31 +567,35 @@ sap.ui.define([
 
 		QUnit.test("when a root element is added to the design time", function (assert) {
 			var done = assert.async();
-			jQuery.getJSON("test-resources/sap/ui/rta/qunit/service/Outline.json", function (aExpectedOutlineData) {
-				aExpectedOutlineData[1].elements[0].elements.splice(1, 1); // clean-up of unwanted element
+			fetch("test-resources/sap/ui/rta/qunit/service/Outline.json")
+				.then(function(oResponse) {
+					return oResponse.json();
+				})
+				.then(function(aExpectedOutlineData) {
+					aExpectedOutlineData[1].elements[0].elements.splice(1, 1); // clean-up of unwanted element
 
-				// control editable property is initially false
-				aExpectedOutlineData[1].editable = false;
-				aExpectedOutlineData[1].elements[0].elements[0].editable = false;
+					// control editable property is initially false
+					aExpectedOutlineData[1].editable = false;
+					aExpectedOutlineData[1].elements[0].elements[0].editable = false;
 
-				var oExpectedResponse = {
-					type: "new",
-					element: aExpectedOutlineData[1]
-				};
-				var oOuterLayout = new VerticalLayout({
-					id: "layout2",
-					content: [new Button("button2")]
-				});
-				oOuterLayout.placeAt('qunit-fixture');
-				oCore.applyChanges();
+					var oExpectedResponse = {
+						type: "new",
+						element: aExpectedOutlineData[1]
+					};
+					var oOuterLayout = new VerticalLayout({
+						id: "layout2",
+						content: [new Button("button2")]
+					});
+					oOuterLayout.placeAt('qunit-fixture');
+					oCore.applyChanges();
 
-				this.oRta._oDesignTime.addRootElement(oOuterLayout);
-				this.oOutline.attachEventOnce("update", function (aUpdates) {
-					assert.deepEqual(aUpdates[0], oExpectedResponse, "then expected response for new update was received");
-					oOuterLayout.destroy();
-					done();
-				}, this);
-			}.bind(this));
+					this.oRta._oDesignTime.addRootElement(oOuterLayout);
+					this.oOutline.attachEventOnce("update", function (aUpdates) {
+						assert.deepEqual(aUpdates[0], oExpectedResponse, "then expected response for new update was received");
+						oOuterLayout.destroy();
+						done();
+					}, this);
+				}.bind(this));
 		});
 	});
 

@@ -46,6 +46,23 @@ sap.ui.define([
 		};
 	};
 
+	/**
+	 * Returns the parents for an element
+	 * Replaces the jQuery method parents
+	 * @param {HTMLElement} oElement - Element
+	 * @param {string} sSelector - jQuery (CSS-like) selector to search for
+	 * @returns {Array} aParents - Array containing Parents which match selector
+	 */
+	DOMUtil.getParents = function(oElement, sSelector) {
+		var aParents = [];
+		while ((oElement = oElement.parentNode) && oElement !== document) {
+			if (!sSelector || oElement.matches(sSelector)) {
+				aParents.unshift(oElement);
+			}
+		}
+		return aParents;
+	};
+
 	DOMUtil.getSize = function(oDomRef) {
 		var oClientRec = oDomRef.getBoundingClientRect();
 		return {

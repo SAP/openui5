@@ -65,7 +65,7 @@
 				) {
 					DtPerformanceTestUtil.measureApplyStylePerformance("applyStylesResize", 2000);
 
-					var iStartWidth = jQuery('#content').width(),
+					var iStartWidth = document.getElementById("content").getBoundingClientRect().width,
 						aWidthsToTest = [450, 300, 650, 500],
 						iJumpsInPxls = 5,
 						iNextWidth = iStartWidth - (iStartWidth % iJumpsInPxls);
@@ -74,11 +74,11 @@
 						var iTargetWidth = aWidthsToTest.shift();
 						if (iTargetWidth) {
 							for(iNextWidth = iStartWidth - (iStartWidth % iJumpsInPxls); iNextWidth !== iTargetWidth; iNextWidth = (iTargetWidth > iStartWidth) ? iNextWidth + iJumpsInPxls : iNextWidth - iJumpsInPxls) {
-								setTimeout(function(iNextWidth) { jQuery('#content').width(iNextWidth + 'px'); }, 0, iNextWidth);
+								setTimeout(function(iNextWidth) { document.getElementById("content").style.width = iNextWidth + 'px'; }, 0, iNextWidth);
 							}
 							iStartWidth = iNextWidth;
 							setTimeout(function() {
-								jQuery('#content').width(iNextWidth + 'px');
+								document.getElementById("content").style.width = iNextWidth + 'px';
 								fnRecursiveloop(aWidthsToTest, iStartWidth, iJumpsInPxls);
 							}, 100);
 						}

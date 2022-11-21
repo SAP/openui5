@@ -134,7 +134,7 @@ sap.ui.define([
 
 			// case where the editable control has it's own overlay
 			var oOverlayForWrapper = OverlayRegistry.getOverlay(
-				vEditableControlDomRef instanceof jQuery
+				vEditableControlDomRef.jquery
 					? vEditableControlDomRef.get(0).id
 					: vEditableControlDomRef.id
 			);
@@ -143,20 +143,25 @@ sap.ui.define([
 			// for this purpose the width of the editable control should be adjusted
 			if (!oOverlayForWrapper) {
 				oOverlayForWrapper = this._oEditedOverlay;
-				var _$ControlForWrapperDomRef = jQuery(ElementUtil.getDomRef(oElement)); /* Main Control */
-				var _$oEditableControlParentDomRef = this._$oEditableControlDomRef.parent(); /* Text Control parent */
-				var iControlForWrapperWidth = parseInt(_$ControlForWrapperDomRef.outerWidth()); /* Main Control Width */
+				var _oControlForWrapperDomRef = ElementUtil.getDomRef(oElement); /* Main Control */
+				var _oEditableControlParentDomRef = this._$oEditableControlDomRef.parent().get(0); /* Text Control parent */
+				var iControlForWrapperWidth = _oControlForWrapperDomRef ? parseInt(_oControlForWrapperDomRef.offsetWidth) : "NaN"; /* Main Control Width */
 
 				if (!isNaN(iControlForWrapperWidth)) {
 					var iEditableControlWidth = parseInt(this._$oEditableControlDomRef.outerWidth());
-					var iEditableControlParentWidth = parseInt(_$oEditableControlParentDomRef.outerWidth());
+					var iEditableControlParentWidth = parseInt(_oEditableControlParentDomRef.offsetWidth);
 
 					iWidthDifference = iControlForWrapperWidth - iEditableControlWidth;
 
+					var aCHildren = Array.from(_oEditableControlParentDomRef.children);
+					var aVisibleChildren = aCHildren.filter(function(oNode) {
+						return DOMUtil.isVisible(oNode);
+					});
+
 					if (iWidthDifference < 0 && iEditableControlParentWidth) {
-						if (_$oEditableControlParentDomRef.get(0).id !== _$ControlForWrapperDomRef.get(0).id
-							&& _$oEditableControlParentDomRef.children(":visible").length === 1
-							&& _$oEditableControlParentDomRef.children(":visible").get(0).id === this._$oEditableControlDomRef.get(0).id
+						if (_oEditableControlParentDomRef.id !== _oControlForWrapperDomRef.id
+							&& aVisibleChildren.length === 1
+							&& aVisibleChildren[0].id === this._$oEditableControlDomRef.get(0).id
 							&& iControlForWrapperWidth > iEditableControlParentWidth) {
 							iWidthDifference = iControlForWrapperWidth - iEditableControlParentWidth;
 						} else {
@@ -166,13 +171,17 @@ sap.ui.define([
 				}
 			}
 
-			var _$oWrapper = jQuery("<div class='sapUiRtaEditableField'></div>")
-				.css({
-					"white-space": "nowrap",
-					overflow: "hidden",
-					width: "calc(100% - (" + iWidthDifference + "px))"
-				}).appendTo(oOverlayForWrapper.$());
-			this._$editableField = jQuery("<div contentEditable='true'></div>").appendTo(_$oWrapper);
+			var _oWrapperDomRef = document.createElement("div");
+			_oWrapperDomRef.classList.add("sapUiRtaEditableField");
+			_oWrapperDomRef.style.whiteSpace = "nowrap";
+			_oWrapperDomRef.style.overflow = "hidden";
+			_oWrapperDomRef.style.width = "calc(100% - (" + iWidthDifference + "px))";
+			oOverlayForWrapper.getDomRef().append(_oWrapperDomRef);
+			var _oEditableFieldDomRef = document.createElement("div");
+			_oEditableFieldDomRef.setAttribute("contentEditable", "true");
+			_oWrapperDomRef.append(_oEditableFieldDomRef);
+			//TODO: replace the private jQuery variable to HTMLElement
+			this._$editableField = jQuery(_oEditableFieldDomRef);
 
 			// if label is empty, set a preliminary dummy text at the control to get an overlay
 			var sCurrentText = this._fnGetControlText();
@@ -226,7 +235,7 @@ sap.ui.define([
 			this._$editableField.on("mousedown", RenameHandler._stopPropagation.bind(this));
 
 			this._$oEditableControlDomRef.css("visibility", "hidden");
-			_$oWrapper.offset({left: this._$oEditableControlDomRef.offset().left});
+			jQuery(_oWrapperDomRef).offset({left: this._$oEditableControlDomRef.offset().left});
 			RenameHandler._setEditableFieldPosition.apply(this);
 			this._$editableField.css("visibility", "");
 			this._$editableField.trigger("focus");
@@ -318,6 +327,7 @@ sap.ui.define([
 				this._fnSetControlText("");
 			}
 
+			//TODO: check why test gets red when this is replaced by vanilla JS
 			this._oEditedOverlay.$().find(".sapUiRtaEditableField").remove();
 			Overlay.getMutationObserver().ignoreOnce({
 				target: this._$oEditableControlDomRef.get(0)

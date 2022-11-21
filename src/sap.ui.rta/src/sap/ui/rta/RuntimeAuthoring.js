@@ -393,7 +393,7 @@ sap.ui.define([
 		var oUriParams = UriParameters.fromQuery(window.location.search);
 		var sUriLayer = oUriParams.get("sap-ui-layer");
 
-		mFlexSettings = jQuery.extend({}, this.getFlexSettings(), mFlexSettings);
+		mFlexSettings = Object.assign({}, this.getFlexSettings(), mFlexSettings);
 		if (sUriLayer) {
 			mFlexSettings.layer = sUriLayer.toUpperCase();
 		}
@@ -494,12 +494,13 @@ sap.ui.define([
 					//add root control is triggering overlay creation, so we need to wait for the scope to be set.
 					this._oDesignTime.addRootElement(this._oRootControl);
 
-					jQuery(Overlay.getOverlayContainer()).addClass("sapUiRta");
+					//TODO: remove when Overlay.getOverlayContainer() does not return jQuery any more
+					Overlay.getOverlayContainer().get(0).classList.add("sapUiRta");
 					if (this.getLayer() === Layer.USER) {
-						jQuery(Overlay.getOverlayContainer()).addClass("sapUiRtaPersonalize");
+						Overlay.getOverlayContainer().get(0).classList.add("sapUiRtaPersonalize");
 					} else {
 						// RTA Visual Improvements
-						jQuery("body").addClass("sapUiRtaMode");
+						document.body.classList.add("sapUiRtaMode");
 					}
 					this._oDesignTime.getSelectionManager().attachChange(function(oEvent) {
 						this.fireSelectionChange({selection: oEvent.getParameter("selection")});
@@ -628,7 +629,7 @@ sap.ui.define([
 			.then(function() {
 				checkToolbarAndExecuteFunction.call(this, "setBusy", false);
 				this._sStatus = STOPPED;
-				jQuery("body").removeClass("sapUiRtaMode");
+				document.body.classList.remove("sapUiRtaMode");
 			}.bind(this));
 	};
 
@@ -705,9 +706,13 @@ sap.ui.define([
 
 			Overlay.getOverlayContainer().toggleClass("sapUiRtaVisualizationMode", (sNewMode === "visualization"));
 			if (sNewMode === "visualization") {
-				jQuery(".sapUiDtOverlayMovable").css("cursor", "default");
+				document.querySelectorAll(".sapUiDtOverlayMovable").forEach(function(oNode) {
+					oNode.style.cursor = "default";
+				});
 			} else {
-				jQuery(".sapUiDtOverlayMovable").css("cursor", "move");
+				document.querySelectorAll(".sapUiDtOverlayMovable").forEach(function(oNode) {
+					oNode.style.cursor = "move";
+				});
 			}
 
 			this._oToolbarControlsModel.setProperty("/modeSwitcher", sNewMode);
@@ -1058,13 +1063,13 @@ sap.ui.define([
 		var bFocusInsideRtaToolbar = this.getShowToolbars() && this.getToolbar().getDomRef().contains(document.activeElement);
 		var bFocusOnContextMenu = false;
 		// there might be two divs with that style-class (compact and expanded context menu)
-		jQuery(".sapUiDtContextMenu").each(function(iIndex, oDomRef) {
-			if (oDomRef.contains(document.activeElement)) {
+		document.querySelectorAll(".sapUiDtContextMenu").forEach(function(oNode) {
+			if (oNode.contains(document.activeElement)) {
 				bFocusOnContextMenu = true;
 			}
 		});
 		var bFocusOnBody = document.body === document.activeElement;
-		var bFocusInsideRenameField = jQuery(document.activeElement).parents(".sapUiRtaEditableField").length > 0;
+		var bFocusInsideRenameField = DOMUtil.getParents(document.activeElement, ".sapUiRtaEditableField").length > 0;
 
 		if ((bFocusInsideOverlayContainer || bFocusInsideRtaToolbar || bFocusOnContextMenu || bFocusOnBody) && !bFocusInsideRenameField) {
 			// OSX: replace CTRL with CMD
@@ -1654,7 +1659,7 @@ sap.ui.define([
 
 									// Expose events API if there is at least one event
 									if (Array.isArray(oService.events) && oService.events.length > 0) {
-										jQuery.extend(mService.exports, {
+										mService.exports = Object.assign({}, mService.exports, {
 											attachEvent: this._oServiceEventBus.subscribe.bind(this._oServiceEventBus, sName),
 											detachEvent: this._oServiceEventBus.unsubscribe.bind(this._oServiceEventBus, sName),
 											attachEventOnce: this._oServiceEventBus.subscribeOnce.bind(this._oServiceEventBus, sName)
@@ -1663,7 +1668,7 @@ sap.ui.define([
 
 									// Expose methods/properties from exports object if any
 									var mExports = oService.exports || {};
-									jQuery.extend(
+									mService.exports = Object.assign(
 										mService.exports,
 										Object.keys(mExports).reduce(function(mResult, sKey) {
 											var vValue = mExports[sKey];

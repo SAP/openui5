@@ -27,7 +27,6 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Stretch",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
@@ -56,7 +55,6 @@ sap.ui.define([
 	Stretch,
 	ReloadManager,
 	RuntimeAuthoring,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -336,7 +334,7 @@ sap.ui.define([
 				assert.ok(true, "the 'stop' event was fired");
 
 				this.oRta.destroy();
-				assert.strictEqual(jQuery(".sapUiRtaToolbar").length, 0, "... and Toolbar is destroyed.");
+				assert.strictEqual(document.querySelectorAll(".sapUiRtaToolbar").length, 0, "... and Toolbar is destroyed.");
 				done();
 			}.bind(this));
 			this.oRta.stop().then(function() {
@@ -428,7 +426,7 @@ sap.ui.define([
 			assert.equal(oTabHandlingRemoveOverlaySpy.callCount, 1, "removeOverlayTabIndex was called");
 			assert.equal(oFireModeChangedSpy.callCount, 1, "the event ModeChanged was fired");
 			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "visualization"}, "the argument of the event is correct");
-			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "default", "the movable overlays switched to the default cursor");
+			assert.equal(getComputedStyle(document.querySelector(".sapUiDtOverlayMovable"))["cursor"], "default", "the movable overlays switched to the default cursor");
 			assert.strictEqual(oStopCutPasteStub.callCount, 1, "the cut paste was stopped");
 
 			// simulate mode change from toolbar
@@ -438,7 +436,7 @@ sap.ui.define([
 			assert.equal(oTabHandlingRestoreOverlaySpy.callCount, 1, "restoreOverlayTabIndex was called");
 			assert.equal(oFireModeChangedSpy.callCount, 2, "the event ModeChanged was fired again");
 			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "adaptation"}, "the argument of the event is correct");
-			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "move", "the movable overlays switched back to the move cursor");
+			assert.equal(getComputedStyle(document.querySelector(".sapUiDtOverlayMovable"))["cursor"], "move", "the movable overlays switched back to the move cursor");
 			oComp.getRootControl().removeStyleClass("sapUiDtOverlayMovable");
 			assert.strictEqual(oStopCutPasteStub.callCount, 1, "the cut paste was not stopped again");
 		});
@@ -452,7 +450,7 @@ sap.ui.define([
 			var oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabHandlingPlugin, "removeOverlayTabIndex");
 			var oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabHandlingPlugin, "restoreOverlayTabIndex");
 			var oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
-			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "default", "the movable overlays switched to the default cursor");
+			assert.equal(getComputedStyle(document.querySelector(".sapUiDtOverlayMovable"))["cursor"], "default", "the movable overlays switched to the default cursor");
 
 			this.oRta.setMode("navigation");
 			assert.notOk(this.oRta._oDesignTime.getEnabled(), " in navigation mode the designTime property enabled is false");
@@ -460,7 +458,7 @@ sap.ui.define([
 			assert.equal(oTabHandlingRemoveOverlaySpy.callCount, 1, "removeOverlayTabIndex was called");
 			assert.equal(oFireModeChangedSpy.callCount, 1, "the event ModeChanged was fired");
 			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "navigation"}, "the argument of the event is correct");
-			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "move", "the movable overlays back to the move cursor");
+			assert.equal(getComputedStyle(document.querySelector(".sapUiDtOverlayMovable"))["cursor"], "move", "the movable overlays back to the move cursor");
 
 			// simulate mode change from toolbar
 			this.oRta.getToolbar().fireModeChange({item: { getKey: function() {return "visualization";}}});
@@ -469,7 +467,7 @@ sap.ui.define([
 			assert.equal(oTabHandlingRestoreOverlaySpy.callCount, 0, "restoreOverlayTabIndex was not called");
 			assert.equal(oFireModeChangedSpy.callCount, 2, "the event ModeChanged was fired again");
 			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "visualization"}, "the argument of the event is correct");
-			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "default", "the movable overlays switched again to the default cursor");
+			assert.equal(getComputedStyle(document.querySelector(".sapUiDtOverlayMovable"))["cursor"], "default", "the movable overlays switched again to the default cursor");
 			oComp.getRootControl().removeStyleClass("sapUiDtOverlayMovable");
 		});
 
@@ -525,7 +523,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when RTA gets started", function(assert) {
 			return this.oRta.start().then(function() {
-				assert.equal(jQuery(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
+				assert.equal(document.querySelectorAll(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
 
 				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewEnabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
 				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewVisible"), false, "then the 'AppVariant Overview' Menu Button is not visible");

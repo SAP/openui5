@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/m/MenuItem",
 	"sap/m/MessageToast",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	ManageAppsController,
@@ -30,7 +29,6 @@ sap.ui.define([
 	MenuItem,
 	MessageToast,
 	Log,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -42,7 +40,9 @@ sap.ui.define([
 			sandbox.restore();
 		},
 		after: function() {
-			jQuery("#sapUiBusyIndicator").hide();
+			if (document.getElementById("sapUiBusyIndicator")) {
+				document.getElementById("sapUiBusyIndicator").style.display = "none";
+			}
 		}
 	}, function() {
 		QUnit.test("when onInit is called in case app variants exist", function(assert) {

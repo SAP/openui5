@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/OverflowToolbar",
 	"sap/ui/rta/toolbar/OverflowToolbarButton",
+	"sap/ui/dt/DOMUtil",
 	"sap/m/OverflowToolbarLayoutData",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/sinon-4"
@@ -11,6 +12,7 @@ sap.ui.define([
 	mLibrary,
 	OverflowToolbar,
 	OverflowToolbarButton,
+	DOMUtil,
 	OverflowToolbarLayoutData,
 	Core,
 	sinon
@@ -57,7 +59,7 @@ sap.ui.define([
 		oButton.setLayoutData(oLayoutData);
 		Core.applyChanges();
 
-		assert.ok(this.oOTB._getOverflowButton().$().is(":visible"), "Overflow button is visible");
+		assert.ok(DOMUtil.isVisible(this.oOTB._getOverflowButton().getDomRef()), "Overflow button is visible");
 		assert.ok(oButton._bInOverflow, "OverflowToolbarButton is in the overflow area");
 		assert.strictEqual(oButton._getText(), "Icon button", "OverflowToolbarButton text value is shown");
 	});
@@ -74,7 +76,7 @@ sap.ui.define([
 		oButton.setLayoutData(oLayoutData);
 		Core.applyChanges();
 
-		assert.ok(this.oOTB._getOverflowButton().$().is(":visible"), "Overflow button is visible");
+		assert.ok(DOMUtil.isVisible(this.oOTB._getOverflowButton().getDomRef()), "Overflow button is visible");
 		assert.ok(oButton._bInOverflow, "OverflowToolbarButton is in the overflow area");
 		assert.strictEqual(oButton._getText(), "Text button", "OverflowToolbarButton text value is correct");
 	});
@@ -95,7 +97,7 @@ sap.ui.define([
 		//Move button into overflowarea
 		oButton.setLayoutData(oLayoutData);
 		Core.applyChanges();
-		assert.ok(this.oOTB._getOverflowButton().$().is(":visible"), "Overflow button is visible");
+		assert.ok(DOMUtil.isVisible(this.oOTB._getOverflowButton().getDomRef()), "Overflow button is visible");
 		assert.ok(oButton._bInOverflow, "OverflowToolbarButton is in the overflow area");
 		assert.notOk(oButton.getIcon(), "OverflowToolbarButton has no icon");
 		assert.equal(oBeforeEnterSpy.callCount, 1, "_onBeforeEnterOverflow has been called");
@@ -123,7 +125,7 @@ sap.ui.define([
 		//Move button into overflowarea
 		oButton.setLayoutData(oLayoutData);
 		Core.applyChanges();
-		assert.ok(this.oOTB._getOverflowButton().$().is(":visible"), "Overflow button is visible");
+		assert.ok(DOMUtil.isVisible(this.oOTB._getOverflowButton().getDomRef()), "Overflow button is visible");
 		assert.ok(oButton._bInOverflow, "OverflowToolbarButton is in the overflow area");
 		assert.notOk(oButton.getIcon(), "OverflowToolbarButton has no icon");
 		assert.equal(oBeforeEnterSpy.callCount, 1, "_onBeforeEnterOverflow has been called");

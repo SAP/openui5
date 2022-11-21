@@ -23,6 +23,13 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var oContextMenuEvent = new MouseEvent('contextmenu', {
+		bubbles: true,
+		cancelable: true,
+		view: window,
+		buttons: 2
+	});
+
 	Opa5.createPageObjects({
 		onPageWithRTA: {
 			actions: {
@@ -124,7 +131,7 @@ sap.ui.define([
 							return oOverlay.getElement().getId() === sId;
 						},
 						success: function(aOverlays) {
-							aOverlays[0].$().trigger('contextmenu');
+							aOverlays[0].getDomRef().dispatchEvent(oContextMenuEvent);
 						},
 						errorMessage: "Did not find the Element Overlay"
 					});
@@ -147,7 +154,7 @@ sap.ui.define([
 						},
 						success: function(oOverlay) {
 							var oAggregationOverlay = oOverlay[0].getAggregationOverlay(sAggregationName);
-							oAggregationOverlay.$().trigger('contextmenu');
+							oAggregationOverlay.getDomRef().dispatchEvent(oContextMenuEvent);
 						},
 						errorMessage: "Did not find the Element Overlay"
 					});
@@ -156,10 +163,10 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.ui.unified.Menu",
 						matchers: function(oMenu) {
-							return oMenu.$().hasClass("sapUiDtContextMenu");
+							return oMenu.getDomRef().classList.contains("sapUiDtContextMenu");
 						},
 						success: function(aMenu) {
-							aMenu[0].getItems()[iIndex].$().trigger("click");
+							aMenu[0].getItems()[iIndex].getDomRef().click();
 						},
 						errorMessage: "Did not find the Context Menu"
 					});
@@ -192,9 +199,9 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
 						matchers: function(oOverlay) {
-							if (oOverlay.$().hasClass("sapUiDtOverlaySelected")) {
-								var $Overlay = oOverlay.$().find(".sapUiRtaEditableField");
-								var oEditableFieldDomNode = $Overlay.children()[0];
+							if (oOverlay.getDomRef().classList.contains("sapUiDtOverlaySelected")) {
+								var oOverlayDOM = oOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
+								var oEditableFieldDomNode = oOverlayDOM.children[0];
 								return oEditableFieldDomNode;
 							}
 						},
@@ -265,8 +272,8 @@ sap.ui.define([
 						},
 						success: function(aOverlays) {
 							var oOverlay = aOverlays[0];
-							var sOverlayId = oOverlay.getId();
-							oOverlay.$().find("#" + sOverlayId + "-DeleteIcon").trigger("click");
+							var sQueryString = "#" + oOverlay.getId() + "-DeleteIcon";
+							oOverlay.getDomRef().querySelector(sQueryString).click();
 						},
 						errorMessage: "Did not find the Remove Button on the section"
 					});
@@ -280,8 +287,8 @@ sap.ui.define([
 						},
 						success: function(aOverlays) {
 							var oOverlay = aOverlays[0];
-							var sOverlayId = oOverlay.getId();
-							oOverlay.$().find("#" + sOverlayId + "-AddButton").trigger("click");
+							var sQueryString = "#" + oOverlay.getId() + "-AddButton";
+							oOverlay.getDomRef().querySelector(sQueryString).click();
 						},
 						errorMessage: "Did not find the Add Button on the section"
 					});
@@ -291,8 +298,8 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: function(oButton) {
-							return oButton.getParent().$ && oButton.getParent().$().hasClass("sapUiRtaToolbar")
-								&& oButton.getParent().$().hasClass("type_personalization")
+							return oButton.getParent() && oButton.getParent().getDomRef() && oButton.getParent().getDomRef().classList.contains("sapUiRtaToolbar")
+								&& oButton.getParent().getDomRef().classList.contains("type_personalization")
 								&& oButton.getProperty("text") === oResources.getText("BTN_DONE");
 						},
 						actions: new Press()
@@ -324,7 +331,7 @@ sap.ui.define([
 						timeout: 100,
 						controlType: "sap.m.HBox",
 						matchers: function(oToolbar) {
-							return oToolbar.$().hasClass("sapUiRtaToolbar");
+							return oToolbar.getDomRef().classList.contains("sapUiRtaToolbar");
 						},
 						success: function(oToolbar) {
 							Opa5.assert.ok(oToolbar[0].getVisible(), "The Toolbar is shown.");
@@ -337,7 +344,7 @@ sap.ui.define([
 						autoWait: false,
 						controlType: "sap.m.HBox",
 						matchers: function(oToolbar) {
-							return oToolbar.$().hasClass("sapUiRtaToolbar");
+							return oToolbar.getDomRef().classList.contains("sapUiRtaToolbar");
 						},
 						success: function(oToolbar) {
 							var oFioriToolbar = oToolbar[0];

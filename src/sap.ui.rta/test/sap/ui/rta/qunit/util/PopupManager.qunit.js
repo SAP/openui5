@@ -23,7 +23,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/form/Form",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/dom/jquery/zIndex" // jQuery Plugin "zIndex"
 ], function(
@@ -49,7 +48,6 @@ sap.ui.define([
 	FlUtils,
 	Form,
 	RuntimeAuthoring,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -156,7 +154,7 @@ sap.ui.define([
 	}
 
 	//RTA Toolbar needs RTA Mode settings
-	jQuery("body").addClass("sapUiRtaMode");
+	document.body.classList.add("sapUiRtaMode");
 
 	QUnit.module("Given PopupManager exists", {
 		beforeEach: function() {
@@ -853,7 +851,7 @@ sap.ui.define([
 
 	QUnit.done(function() {
 		PersistenceWriteAPI.save.restore();
-		jQuery("body").removeClass("sapUiRtaMode");
+		document.body.classList.remove("sapUiRtaMode");
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });
