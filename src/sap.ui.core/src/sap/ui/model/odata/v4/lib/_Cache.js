@@ -2387,7 +2387,7 @@ sap.ui.define([
 	 * @param {number} iStart
 	 *   The start index
 	 * @param {number} iEnd
-	 *   The end index (will not be filled)
+	 *   The end index (will not be checked)
 	 * @throws {Error}
 	 *   If there is an index no longer containing the promise
 	 *
@@ -2396,7 +2396,7 @@ sap.ui.define([
 	_CollectionCache.prototype.checkRange = function (oPromise, iStart, iEnd) {
 		var i;
 
-		// if the request used $tail, not all indexes got the promise, so we cannot check
+		// if the request used $tail, not all indexes got the promise, so we cannot easily check
 		if (oPromise !== this.aElements.$tail) {
 			iEnd = Math.min(iEnd, this.aElements.length);
 			for (i = iStart; i < iEnd; i += 1) {
@@ -2539,10 +2539,9 @@ sap.ui.define([
 	 * @private
 	 */
 	_CollectionCache.prototype.fill = function (oPromise, iStart, iEnd) {
-		var i,
-			n = Math.max(this.aElements.length, 1024);
+		var i;
 
-		if (iEnd > n) {
+		if (iEnd > this.aElements.length && iEnd - iStart > 1024) {
 			if (this.aElements.$tail && oPromise) {
 				throw new Error("Cannot fill from " + iStart + " to " + iEnd
 					+ ", $tail already in use, # of elements is " + this.aElements.length);
