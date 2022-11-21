@@ -2288,10 +2288,9 @@ sap.ui.define([
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
 		sap.ui.getCore().byId(sEditButtonId).firePress();
 		sap.ui.getCore().applyChanges();
-
-		var oSpy = sinon.spy(UploadCollection.prototype, "_handleCancel");
+		var oStub = sinon.stub(UploadCollection.prototype, "_handleCancel");
 		var oEvent = {
-			target: this.oUploadCollection.$().find(".sapMUCItem").eq(1).find(".sapMUCCancelBtn .sapMBtnContent")[0]
+			target: this.oUploadCollection.getDomRef().querySelector(".sapMUCCancelBtn")
 		};
 
 		// Act
@@ -2299,10 +2298,10 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.equal(oSpy.callCount, 1, "Cancel handling is done even for targets that are not the button itself.");
+		assert.ok(oStub.called, "Cancel handling is done even for targets that are not the button itself.");
 
 		// Cleanup
-		oSpy.restore();
+		oStub.restore();
 	});
 
 	QUnit.test("Cancelling the edit mode of an item while another item is being uploaded", function (assert) {
