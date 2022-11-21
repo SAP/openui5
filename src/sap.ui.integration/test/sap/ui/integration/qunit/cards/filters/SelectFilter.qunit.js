@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/integration/cards/filters/SelectFilter",
@@ -15,7 +15,9 @@ sap.ui.define([
 
 	QUnit.module("Initialization", {
 		beforeEach: function () {
-			this.oCard = new Card();
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		},
 		afterEach: function () {
@@ -58,6 +60,79 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter.json");
+	});
+
+	QUnit.test("Initial value for filters model when filter is with dynamic data", function (assert) {
+		// Arrange
+		assert.expect(3);
+		var done = assert.async();
+		var oFakeData = [{
+			ShipperID: 1,
+			CompanyName: "Speedy Express"
+		}];
+		var oServer = sinon.createFakeServer({
+			autoRespond: true,
+			respondImmediately: true
+		});
+
+		oServer.respondWith("GET", /test-resources\/sap\/ui\/integration\/qunit\/fake-api$/, function (oXhr) {
+			oXhr.respond(200, { "Content-Type": "application/json" }, JSON.stringify(oFakeData));
+		});
+
+		this.oCard.attachEventOnce("_ready", function () {
+			// Assert
+			assert.notOk(this.oCard.getModel("filters").getProperty("/shipper").hasOwnProperty("selectedItem"), "Initial filter model data doesn't contain 'selectedItem'");
+		}.bind(this));
+
+		this.oCard.attachEventOnce("configurationChange", function () {
+			// Assert
+			assert.ok(this.oCard.getModel("filters").getProperty("/shipper").hasOwnProperty("selectedItem"), "Filter model data should contain 'selectedItem' after data update");
+			assert.strictEqual(
+				this.oCard.getModel("filters").getProperty("/shipper/selectedItem/title"),
+				oFakeData[0].CompanyName,
+				"Filter model data should be updated after data is loaded"
+			);
+
+			// Clean up
+			oServer.restore();
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "tests.card.filters.dynamicFilter"
+			},
+			"sap.card": {
+				"configuration": {
+					"filters": {
+						"shipper": {
+							"value": 1,
+							"type": "Select",
+							"item": {
+								"path": "/",
+								"template": {
+									"key": "{ShipperID}",
+									"title": "{CompanyName}"
+								}
+							},
+							"data": {
+								"request": {
+									"url": "test-resources/sap/ui/integration/qunit/fake-api"
+								}
+							}
+						}
+					}
+				},
+				"type": "Object",
+				"header": {
+					"title": "Orders by Shipper {filters>/shipper/selectedItem/title}"
+				},
+				"content": {
+					"groups": []
+				}
+			}
+		});
 	});
 
 	QUnit.module("SelectFilter Properties");
