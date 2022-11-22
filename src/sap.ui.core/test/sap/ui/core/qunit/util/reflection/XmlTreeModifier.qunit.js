@@ -5,8 +5,7 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	XmlTreeModifier,
 	XMLHelper,
 	Event,
@@ -327,6 +326,15 @@ function(
 					assert.equal(aCustomData.length, 4, "the new custom data was returned");
 					return Promise.all(aCustomData.map(fnCheck, Promise.resolve()));
 				});
+		});
+
+		QUnit.test("createAndAddCustomData adds the custom data properly, and getCustomDataInfo returns them", function(assert) {
+			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_CUSTOM_DATA, this.oXmlView);
+			return XmlTreeModifier.createAndAddCustomData(oControl, "myKey", "myValue").then(function() {
+				var oCustomData = XmlTreeModifier.getCustomDataInfo(oControl, "myKey");
+				assert.ok(oCustomData.customData, "the custom data is returned");
+				assert.strictEqual(oCustomData.customDataValue, "myValue", "the custom data value is returned");
+			});
 		});
 
 		QUnit.test("the first non default aggregation childNode is added under a newly created aggregation node ", function (assert) {

@@ -31,25 +31,27 @@ sap.ui.define([
 	 * @version ${version}
 	 */
 	var FlexCustomData = {};
-	FlexCustomData.sync = {};
 
 	FlexCustomData.appliedChangesCustomDataKey = "sap.ui.fl.appliedChanges";
 	FlexCustomData.failedChangesCustomDataKeyJs = "sap.ui.fl.failedChanges.js";
 	FlexCustomData.failedChangesCustomDataKeyXml = "sap.ui.fl.failedChanges.xml";
 	FlexCustomData.notApplicableChangesCustomDataKey = "sap.ui.fl.notApplicableChanges";
 
-	/**
-	 * Checks the custom data of the provided control for applied changes and returns the value or 'undefined'
-	 *
-	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
-	 *
-	 * @returns {string|undefined} Returns the custom data or 'undefined'
-	 */
-	FlexCustomData.sync.getAppliedCustomDataValue = function(oControl, oChange) {
-		var mCustomData = getCustomDataSync(oControl, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey));
-		return mCustomData.customDataValue;
-	};
+	function writeCustomData(oControl, sKey, sValue, mPropertyBag) {
+		var mCustomData = mPropertyBag.modifier.getCustomDataInfo(oControl, sKey);
+		if (!mCustomData.customData) {
+			return mPropertyBag.modifier.createAndAddCustomData(oControl, sKey, sValue, mPropertyBag.appComponent);
+		}
+		return Promise.resolve(mPropertyBag.modifier.setProperty(mCustomData.customData, "value", sValue));
+	}
+
+	function getCustomValueData(bSaveRevertData, oChange) {
+		var vRevertData = oChange.getRevertData();
+		if (bSaveRevertData && vRevertData !== undefined) {
+			return JSON.stringify(vRevertData);
+		}
+		return "true";
+	}
 
 	/**
 	 * Checks the custom data of the provided control for applied changes and returns the value or 'undefined'
@@ -58,13 +60,11 @@ sap.ui.define([
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 *
-	 * @returns {Promise<string|undefined>} Resolves the custom data or 'undefined'
+	 * @returns {string|undefined} Custom data or 'undefined'
 	 */
 	FlexCustomData.getAppliedCustomDataValue = function(oControl, oChange, oModifier) {
-		return getCustomDataAsync(oControl, oModifier, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey))
-			.then(function (mCustomData) {
-				return mCustomData.customDataValue;
-			});
+		var mCustomData = oModifier.getCustomDataInfo(oControl, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey));
+		return mCustomData.customDataValue;
 	};
 
 	/**
@@ -72,11 +72,12 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 *
 	 * @returns {object|undefined} Returns the revert data from the custom data as object or 'undefined'
 	 */
-	FlexCustomData.sync.getParsedRevertDataFromCustomData = function(oControl, oChange) {
-		var sCustomDataValue = FlexCustomData.sync.getAppliedCustomDataValue(oControl, oChange);
+	FlexCustomData.getParsedRevertDataFromCustomData = function(oControl, oChange, oModifier) {
+		var sCustomDataValue = FlexCustomData.getAppliedCustomDataValue(oControl, oChange, oModifier);
 		try {
 			return sCustomDataValue && JSON.parse(sCustomDataValue);
 		} catch (oError) {
@@ -86,90 +87,31 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks the custom data of the provided control. If there is a custom data value it gets parsed and returned as object
-	 *
-	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
-	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
-	 *
-	 * @returns {Promise<object>|object} Returns the revert data from the custom data as object or 'undefined'. The return value is wrapped in a promise when 'xml tree modifier' is used.
-	 */
-	FlexCustomData.getParsedRevertDataFromCustomData = function(oControl, oChange, oModifier) {
-		return FlexCustomData.getAppliedCustomDataValue(oControl, oChange, oModifier)
-			.then(function (sCustomDataValue) {
-				return sCustomDataValue && JSON.parse(sCustomDataValue);
-			});
-	};
-
-	/**
-	 * Checks the custom data of the provided control and returns 'true' if the notApplicable, applied or failed change key is there
-	 * Synchronous execution
-	 *
-	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
-	 *
-	 * @returns {boolean} Resolves <code>true</code> if the custom data is there.
-	 */
-	FlexCustomData.sync.hasChangeApplyFinishedCustomData = function (oControl, oChange) {
-		var aCustomData = FlUtils.getAggregation(oControl, "customData") || [];
-		var aCustomDataKeys = [
-			FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey),
-			FlexCustomData._getCustomDataKey(oChange, FlexCustomData.failedChangesCustomDataKeyJs),
-			FlexCustomData._getCustomDataKey(oChange, FlexCustomData.notApplicableChangesCustomDataKey)
-		];
-		return aCustomData.some(function (oCustomData) {
-			var sKey = FlUtils.getProperty(oCustomData, "key");
-			if (aCustomDataKeys.indexOf(sKey) > -1) {
-				return !!FlUtils.getProperty(oCustomData, "value");
-			}
-			return false;
-		});
-	};
-
-	/**
 	 * Checks the custom data of the provided control and returns 'true' if the notApplicable, applied or failed change key is there
 	 *
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change instance
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 *
-	 * @returns {Promise<boolean>} Resolves <code>true</code> if the custom data is there.
+	 * @returns {boolean} <code>true</code> if the custom data is there.
 	 */
 	FlexCustomData.hasChangeApplyFinishedCustomData = function(oControl, oChange, oModifier) {
-		return Promise.resolve()
-			.then(oModifier.getAggregation.bind(oModifier, oControl, "customData"))
-			.then(function (aCustomData) {
-				aCustomData = aCustomData || [];
-				var aCustomDataKeys = [
-					FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey),
-					FlexCustomData._getCustomDataKey(oChange, FlexCustomData.failedChangesCustomDataKeyJs),
-					FlexCustomData._getCustomDataKey(oChange, FlexCustomData.notApplicableChangesCustomDataKey)
-				];
-				return Promise.all(aCustomData.map(function(oCustomData) {
-					return Promise.resolve()
-						.then(oModifier.getProperty.bind(oModifier, oCustomData, "key"))
-						.then(function (sKey) {
-							if (aCustomDataKeys.indexOf(sKey) > -1) {
-								return oModifier.getProperty(oCustomData, "value");
-							}
-							return undefined;
-						})
-						.then(function (sValue) {
-							return !!sValue;
-						});
-				})).then(function (aValues) {
-					return aValues.includes(true);
-				});
-			});
-	};
-
-	function getCustomValueData(bSaveRevertData, oChange) {
-		var vRevertData = oChange.getRevertData();
-		if (bSaveRevertData && vRevertData !== undefined) {
-			return JSON.stringify(vRevertData);
+		var oAppliedCD = oModifier.getCustomDataInfo(oControl, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey));
+		if (oAppliedCD.customData) {
+			return true;
 		}
-		return "true";
-	}
+
+		var oFailedCD = oModifier.getCustomDataInfo(oControl, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.failedChangesCustomDataKeyJs));
+		if (oFailedCD.customData) {
+			return true;
+		}
+
+		var oNotApplicableCD = oModifier.getCustomDataInfo(oControl, FlexCustomData._getCustomDataKey(oChange, FlexCustomData.notApplicableChangesCustomDataKey));
+		if (oNotApplicableCD.customData) {
+			return true;
+		}
+		return false;
+	};
 
 	/**
 	 * Adds applied custom data to the control. Depending on whether the change is revertible,
@@ -188,7 +130,7 @@ sap.ui.define([
 	FlexCustomData.addAppliedCustomData = function(oControl, oChange, mPropertyBag, bSaveRevertData) {
 		var sCustomDataValue = getCustomValueData(bSaveRevertData, oChange);
 		var sCustomDataKey = FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey);
-		return writeCustomDataAsync(oControl, sCustomDataKey, sCustomDataValue, mPropertyBag);
+		return writeCustomData(oControl, sCustomDataKey, sCustomDataValue, mPropertyBag);
 	};
 
 	/**
@@ -206,7 +148,7 @@ sap.ui.define([
 	 */
 	FlexCustomData.addFailedCustomData = function(oControl, oChange, mPropertyBag, sIdentifier) {
 		var sCustomDataKey = FlexCustomData._getCustomDataKey(oChange, sIdentifier);
-		return writeCustomDataAsync(oControl, sCustomDataKey, "true", mPropertyBag);
+		return writeCustomData(oControl, sCustomDataKey, "true", mPropertyBag);
 	};
 
 	/**
@@ -215,31 +157,13 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl The Control that should be checked
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - The change instance
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
-	 */
-	FlexCustomData.sync.destroyAppliedCustomData = function(oControl, oChange, oModifier) {
-		var sKey = FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey);
-		var mCustomData = getCustomDataSync(oControl, sKey);
-		if (mCustomData.customData) {
-			oModifier.destroy(mCustomData.customData);
-		}
-	};
-
-	/**
-	 * Destroys the applied custom data for the given control
-	 *
-	 * @param {sap.ui.core.Control} oControl The Control that should be checked
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - The change instance
-	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
-	 * @return {Promise} resolves when the applied custom data is destroyed
 	 */
 	FlexCustomData.destroyAppliedCustomData = function(oControl, oChange, oModifier) {
 		var sKey = FlexCustomData._getCustomDataKey(oChange, FlexCustomData.appliedChangesCustomDataKey);
-		return getCustomDataAsync(oControl, oModifier, sKey)
-			.then(function (mCustomData) {
-				if (mCustomData.customData) {
-					oModifier.destroy(mCustomData.customData);
-				}
-			});
+		var mCustomData = oModifier.getCustomDataInfo(oControl, sKey);
+		if (mCustomData.customData) {
+			oModifier.destroy(mCustomData.customData);
+		}
 	};
 
 	/**
@@ -280,59 +204,6 @@ sap.ui.define([
 	FlexCustomData._getCustomDataKey = function(oChange, sIdentifier) {
 		return sIdentifier + "." + oChange.getId();
 	};
-
-	function writeCustomDataAsync(oControl, sKey, sValue, mPropertyBag) {
-		return getCustomDataAsync(oControl, mPropertyBag.modifier, sKey)
-			.then(function (mCustomData) {
-				if (!mCustomData.customData) {
-					return mPropertyBag.modifier.createAndAddCustomData(oControl, sKey, sValue, mPropertyBag.appComponent);
-				}
-				return mPropertyBag.modifier.setProperty(mCustomData.customData, "value", sValue);
-			});
-	}
-
-	function getCustomDataSync(oControl, sCustomDataKey) {
-		var aCustomData = FlUtils.getAggregation(oControl, "customData") || [];
-		var oReturn = {};
-		aCustomData.some(function (oCustomData) {
-			var sKey = FlUtils.getProperty(oCustomData, "key");
-			if (sKey === sCustomDataKey) {
-				oReturn.customData = oCustomData;
-				oReturn.customDataValue = FlUtils.getProperty(oCustomData, "value");
-				return true;
-			}
-			return false;
-		});
-		return oReturn;
-	}
-
-	function getCustomDataAsync(oControl, oModifier, sCustomDataKey) {
-		return Promise.resolve()
-			.then(oModifier.getAggregation.bind(oModifier, oControl, "customData"))
-			.then(function (aCustomData) {
-				aCustomData = aCustomData || [];
-				var oReturn = {};
-				return aCustomData.reduce(function (oPreviousPromise, oCustomData) {
-					return oPreviousPromise
-						.then(oModifier.getProperty.bind(oModifier, oCustomData, "key"))
-						.then(function (sKey) {
-							if (sKey === sCustomDataKey) {
-								oReturn.customData = oCustomData;
-								return oModifier.getProperty(oCustomData, "value");
-							}
-							return undefined;
-						})
-						.then(function (oCustomDataValue) {
-							if (oCustomDataValue) {
-								oReturn.customDataValue = oCustomDataValue;
-							}
-						});
-				}, Promise.resolve())
-				.then(function () {
-					return oReturn;
-				});
-			});
-	}
 
 	return FlexCustomData;
 }, /* bExport= */true);

@@ -594,6 +594,18 @@ sap.ui.define([
 		createAndAddCustomData: function(oControl, sCustomDataKey, sValue, oAppComponent) {},
 
 		/**
+		 * Checks the custom data created via the {@link sap.ui.core.util.reflection.BaseTreeModifier.js#createAndAddCustomData}.
+		 * If there is a custom data with the given key, an object with the following two properties is returned:
+		 * customData: CustomData attribute / object
+		 * customDataValue: Value of the CustomData
+		 *
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {string} sCustomDataKey - Key for the Custom Data
+		 * @returns {object} Information about the custom data or an empty object
+		 */
+		getCustomDataInfo: function(vControl, sCustomDataKey) {},
+
+		/**
 		 * Creates the control in the corresponding representation.
 		 *
 		 * @param {string} sClassName - Class name for the control (for example, <code>sap.m.Button</code>), ensures that the class is loaded (no synchronous requests are called)

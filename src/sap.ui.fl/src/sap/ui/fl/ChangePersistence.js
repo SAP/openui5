@@ -317,7 +317,7 @@ sap.ui.define([
 		return DependencyHandler.getOpenDependentChangesForControl(this._mChanges, JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent), oAppComponent);
 	};
 
-	function getInitalDependencyClone(oChange) {
+	function getInitialDependencyClone(oChange) {
 		var mInitialDependencies = merge({}, this._mChangesInitial.mDependencies);
 		return mInitialDependencies[oChange.getId()];
 	}
@@ -354,8 +354,8 @@ sap.ui.define([
 	 * @param {sap.ui.core.Component} oAppComponent Application component instance that is currently loading
 	 * @returns {object} Returns the mChanges object with the updated dependencies
 	 */
-	ChangePersistence.prototype.copyDependenciesFromInitialChangesMapSync = function(oChange, fnDependencyValidation, oAppComponent) {
-		var oInitialDependency = getInitalDependencyClone.call(this, oChange);
+	ChangePersistence.prototype.copyDependenciesFromInitialChangesMap = function(oChange, fnDependencyValidation, oAppComponent) {
+		var oInitialDependency = getInitialDependencyClone.call(this, oChange);
 		if (oInitialDependency) {
 			var aNewValidDependencies = [];
 			oInitialDependency.dependencies.forEach(function(sChangeId) {
@@ -368,39 +368,6 @@ sap.ui.define([
 			copyDependencies.call(this, oInitialDependency, aNewValidDependencies, oAppComponent, oChange);
 		}
 		return this._mChanges;
-	};
-
-	/**
-	 * This function copies the initial dependencies (before any changes got applied and dependencies got deleted) for the given change to the mChanges map
-	 * Also checks if the dependency is still valid in a callback
-	 * This function is used in the case that controls got destroyed and recreated
-	 *
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change whose dependencies should be copied
-	 * @param {function} fnDependencyValidation this function is called to check if the dependency is still valid
-	 * @param {sap.ui.core.Component} oAppComponent Application component instance that is currently loading
-	 * @returns {Promise} Resolves the mChanges object with the updated dependencies
-	 */
-	ChangePersistence.prototype.copyDependenciesFromInitialChangesMap = function(oChange, fnDependencyValidation, oAppComponent) {
-		var oInitialDependency = getInitalDependencyClone.call(this, oChange);
-		if (oInitialDependency) {
-			var aNewValidDependencies = [];
-			return oInitialDependency.dependencies.reduce(function (oPreviousPromise, sChangeId) {
-				return oPreviousPromise.then(function () {
-					return fnDependencyValidation(sChangeId);
-				}).then(function (bDependencyIsStillValid) {
-					if (bDependencyIsStillValid) {
-						this._mChanges.mDependentChangesOnMe[sChangeId] = this._mChanges.mDependentChangesOnMe[sChangeId] || [];
-						this._mChanges.mDependentChangesOnMe[sChangeId].push(oChange.getId());
-						aNewValidDependencies.push(sChangeId);
-					}
-				}.bind(this));
-			}.bind(this), Promise.resolve())
-			.then(function () {
-				copyDependencies.call(this, oInitialDependency, aNewValidDependencies, oAppComponent, oChange);
-				return this._mChanges;
-			}.bind(this));
-		}
-		return Promise.resolve(this._mChanges);
 	};
 
 	/**

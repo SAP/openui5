@@ -214,6 +214,21 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
+		getCustomDataInfo: function(oControl, sCustomDataKey) {
+			var oCustomData = oControl.attributes["custom.data.via.modifier:" + sCustomDataKey];
+			if (oCustomData) {
+				return {
+					customData: oCustomData,
+					customDataValue: oCustomData.value
+				};
+			} else {
+				return {};
+			}
+		},
+
+		/**
+		 * @inheritDoc
+		 */
 		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings, bAsync) {
 			var sId, sLocalName, oError;
 			if (!XmlTreeModifier.bySelector(oSelector, oAppComponent, oView)) {

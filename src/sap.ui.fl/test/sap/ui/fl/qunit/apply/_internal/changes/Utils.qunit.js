@@ -166,19 +166,19 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with already applied change", function(assert) {
-			sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData").returns(true);
-			assert.equal(ChangeUtils.checkIfDependencyIsStillValidSync({}, this.oModifier, {}, ""), false, "the dependency is not valid anymore");
+			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(true);
+			assert.equal(ChangeUtils.checkIfDependencyIsStillValid({}, this.oModifier, {}, ""), false, "the dependency is not valid anymore");
 		});
 
 		QUnit.test("with change currently being applied", function(assert) {
-			sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData").returns(false);
+			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(false);
 			this.oChange.startApplying();
-			assert.equal(ChangeUtils.checkIfDependencyIsStillValidSync({}, this.oModifier, {}, ""), false, "the dependency is not valid anymore");
+			assert.equal(ChangeUtils.checkIfDependencyIsStillValid({}, this.oModifier, {}, ""), false, "the dependency is not valid anymore");
 		});
 
 		QUnit.test("with change neither being applied not already applied", function(assert) {
-			sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData").returns(false);
-			assert.equal(ChangeUtils.checkIfDependencyIsStillValidSync({}, this.oModifier, {}, ""), true, "the dependency is still valid");
+			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(false);
+			assert.equal(ChangeUtils.checkIfDependencyIsStillValid({}, this.oModifier, {}, ""), true, "the dependency is still valid");
 		});
 	});
 

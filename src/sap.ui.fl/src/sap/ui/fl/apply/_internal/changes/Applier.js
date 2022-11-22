@@ -23,7 +23,7 @@ sap.ui.define([
 
 	var oLastPromise = new FlUtils.FakePromise();
 
-	function _checkControlAndDependentSelectorControls(oChange, mPropertyBag) {
+	function checkControlAndDependentSelectorControls(oChange, mPropertyBag) {
 		var oSelector = oChange.getSelector && oChange.getSelector();
 		if (!oSelector || (!oSelector.id && !oSelector.name)) {
 			return Promise.reject(Error("No selector in change found or no selector ID."));
@@ -54,91 +54,44 @@ sap.ui.define([
 			});
 	}
 
-	function _checkAndAdjustChangeStatusSync(oControl, oChange, mChangesMap, oFlexController, mPropertyBag) {
+	function isXmlModifier(mPropertyBag) {
+		return mPropertyBag.modifier.targets === "xmlTree";
+	}
+
+	function checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag) {
 		var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
 		var oModifier = mPropertyBag.modifier;
-		var bHasAppliedCustomData = !!FlexCustomData.sync.getAppliedCustomDataValue(mControl.control, oChange);
-		var bIsCurrentlyAppliedOnControl = bHasAppliedCustomData || FlexCustomData.sync.hasChangeApplyFinishedCustomData(mControl.control, oChange);
+		var bHasAppliedCustomData = !!FlexCustomData.getAppliedCustomDataValue(mControl.control, oChange, oModifier);
+		var bIsCurrentlyAppliedOnControl = FlexCustomData.hasChangeApplyFinishedCustomData(mControl.control, oChange, oModifier);
 		var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
+		var oAppComponent = mPropertyBag.appComponent;
 		if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
 			// if a change was already processed and is not applied anymore, then the control was destroyed and recreated.
 			// In this case we need to recreate/copy the dependencies if we are applying in JS
-			var fnCheckFunction = Utils.checkIfDependencyIsStillValidSync.bind(null, mPropertyBag.appComponent, oModifier, mChangesMap);
-			oFlexController._oChangePersistence.copyDependenciesFromInitialChangesMapSync(oChange, fnCheckFunction, mPropertyBag.appComponent);
+			if (!isXmlModifier(mPropertyBag)) {
+				var fnCheckFunction = Utils.checkIfDependencyIsStillValid.bind(null, oAppComponent, oModifier, mChangesMap);
+				oFlexController._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, fnCheckFunction, oAppComponent);
+			}
 			oChange.setInitialApplyState();
 		} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
 			// if a change is already applied on the control, but the status does not reflect that, the status has to be updated
 			// scenario: viewCache
 			if (bHasAppliedCustomData) {
 				// if the change was applied, set the revert data fetched from the custom data
-				oChange.setRevertData(FlexCustomData.sync.getParsedRevertDataFromCustomData(mControl.control, oChange));
+				oChange.setRevertData(FlexCustomData.getParsedRevertDataFromCustomData(mControl.control, oChange, oModifier));
 				oChange.markSuccessful();
 			} else {
 				oChange.markFailed();
 			}
+		} else if (bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
+			// both the change instance and the UI Control are already applied, so the change can be directly marked as finished
+			oChange.markSuccessful();
 		}
 	}
 
-	function _isXmlModifier(mPropertyBag) {
-		return mPropertyBag.modifier.targets === "xmlTree";
-	}
-
-	function _checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag) {
-		var bXmlModifier = _isXmlModifier(mPropertyBag);
-		var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
-		var oModifier = mPropertyBag.modifier;
-		return FlexCustomData.getAppliedCustomDataValue(mControl.control, oChange, oModifier)
-			.then(function(oAppliedCustomData) {
-				var bHasAppliedCustomData = !!oAppliedCustomData;
-				return Promise.all([
-					bHasAppliedCustomData,
-					(
-						bHasAppliedCustomData
-						|| FlexCustomData.hasChangeApplyFinishedCustomData(mControl.control, oChange, oModifier)
-					)
-				]);
-			})
-			.then(function(aCustomDataState) {
-				var bHasAppliedCustomData = aCustomDataState[0];
-				var bIsCurrentlyAppliedOnControl = aCustomDataState[1];
-				var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
-				var oModifier = mPropertyBag.modifier;
-				var oAppComponent = mPropertyBag.appComponent;
-				if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
-					var oPromise = new FlUtils.FakePromise();
-					// if a change was already processed and is not applied anymore, then the control was destroyed and recreated.
-					// In this case we need to recreate/copy the dependencies if we are applying in JS
-					if (!bXmlModifier) {
-						var fnCheckFunction = Utils.checkIfDependencyIsStillValid.bind(null, oAppComponent, oModifier, mChangesMap);
-						oPromise = oPromise.then(function () {
-							return oFlexController._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, fnCheckFunction, oAppComponent);
-						});
-					}
-					return oPromise.then(oChange.setInitialApplyState.bind(oChange));
-				} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
-					// if a change is already applied on the control, but the status does not reflect that, the status has to be updated
-					// scenario: viewCache
-					if (bHasAppliedCustomData) {
-						// if the change was applied, set the revert data fetched from the custom data
-						return FlexCustomData.getParsedRevertDataFromCustomData(oControl, oChange, oModifier)
-							.then(function (oParsedRevertDataFromCustomData) {
-								oChange.setRevertData(oParsedRevertDataFromCustomData);
-								oChange.markSuccessful();
-							});
-					}
-					oChange.markFailed();
-					return undefined;
-				} else if (bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
-					// both the change instance and the UI Control are already applied, so the change can be directly marked as finished
-					oChange.markSuccessful();
-				}
-				return undefined;
-			});
-	}
-
-	function _checkPreconditions(oChange, mPropertyBag) {
+	function checkPreconditions(oChange, mPropertyBag) {
 		var sErrorMessage;
-		if (_isXmlModifier(mPropertyBag) && oChange.getJsOnly()) {
+		if (isXmlModifier(mPropertyBag) && oChange.getJsOnly()) {
 			// change is not capable of xml modifier
 			// the change status has to be reset to initial
 			sErrorMessage = "Change cannot be applied in XML. Retrying in JS.";
@@ -150,7 +103,7 @@ sap.ui.define([
 		}
 	}
 
-	function _handleAfterApply(oChange, mControl, oInitializedControl, mPropertyBag) {
+	function handleAfterApply(oChange, mControl, oInitializedControl, mPropertyBag) {
 		return Promise.resolve()
 			.then(function () {
 				// changeHandler can return a different control, e.g. case where a visible UI control replaces the stashed control placeholder
@@ -166,7 +119,7 @@ sap.ui.define([
 			.then(function () {
 				// only save the revert data in the custom data when the change is being processed in XML,
 				// as it's only relevant for viewCache at the moment
-				return FlexCustomData.addAppliedCustomData(mControl.control, oChange, mPropertyBag, _isXmlModifier(mPropertyBag));
+				return FlexCustomData.addAppliedCustomData(mControl.control, oChange, mPropertyBag, isXmlModifier(mPropertyBag));
 			})
 			.then(function () {
 				// if a change was reverted previously remove the flag as it is not reverted anymore
@@ -176,8 +129,8 @@ sap.ui.define([
 			});
 	}
 
-	function _handleAfterApplyError(oError, oChange, mControl, mPropertyBag) {
-		var bXmlModifier = _isXmlModifier(mPropertyBag);
+	function handleAfterApplyError(oError, oChange, mControl, mPropertyBag) {
+		var bXmlModifier = isXmlModifier(mPropertyBag);
 		var oResult = {success: false, error: oError};
 
 		var sChangeId = oChange.getId();
@@ -209,7 +162,7 @@ sap.ui.define([
 			});
 	}
 
-	function _logApplyChangeError(oError, oChange) {
+	function logApplyChangeError(oError, oChange) {
 		var sChangeType = oChange.getChangeType();
 		var sTargetControlId = oChange.getSelector().id;
 		var fullQualifiedName = oChange.getNamespace() + oChange.getId() + "." + oChange.getFileType();
@@ -301,7 +254,7 @@ sap.ui.define([
 				: Utils.getChangeHandler(oChange, mControl, mPropertyBag);
 
 			return pHandlerPromise.then(function(oChangeHandler) {
-				_checkPreconditions(oChange, mPropertyBag);
+				checkPreconditions(oChange, mPropertyBag);
 				return oChangeHandler;
 			})
 
@@ -318,10 +271,10 @@ sap.ui.define([
 						return oChangeHandler.applyChange(oChange, mControl.control, mPropertyBag);
 					})
 					.then(function(oInitializedControl) {
-						return _handleAfterApply(oChange, mControl, oInitializedControl, mPropertyBag);
+						return handleAfterApply(oChange, mControl, oInitializedControl, mPropertyBag);
 					})
 					.catch(function(oError) {
-						return _handleAfterApplyError(oError, oChange, mControl, mPropertyBag);
+						return handleAfterApplyError(oError, oChange, mControl, mPropertyBag);
 					});
 				}
 
@@ -361,7 +314,7 @@ sap.ui.define([
 			};
 
 			aChangesForControl.forEach(function (oChange) {
-				_checkAndAdjustChangeStatusSync(oControl, oChange, mChangesMap, oFlexController, mPropertyBag);
+				checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag);
 				if (!oChange.isApplyProcessFinished() && !oChange._ignoreOnce) {
 					oChange.setQueuedForApply();
 				}
@@ -436,7 +389,7 @@ sap.ui.define([
 			return aChanges.reduce(function(oPreviousPromise, oChange) {
 				var oControl;
 				return oPreviousPromise
-					.then(_checkControlAndDependentSelectorControls.bind(null, oChange, mPropertyBag))
+					.then(checkControlAndDependentSelectorControls.bind(null, oChange, mPropertyBag))
 					.then(function (oReturnedControl) {
 						oControl = oReturnedControl;
 						var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
@@ -445,9 +398,8 @@ sap.ui.define([
 					.then(function (oChangeHandler) {
 						mPropertyBag.changeHandler = oChangeHandler;
 						oChange.setQueuedForApply();
-						return _checkAndAdjustChangeStatus(oControl, oChange, undefined, undefined, mPropertyBag);
-					})
-					.then(function () {
+						checkAndAdjustChangeStatus(oControl, oChange, undefined, undefined, mPropertyBag);
+
 						if (!oChange.isApplyProcessFinished()) {
 							if (typeof mPropertyBag.changeHandler.onAfterXMLChangeProcessing === "function") {
 								registerOnAfterXMLChangeProcessingHandler(
@@ -471,7 +423,7 @@ sap.ui.define([
 								mPropertyBag.failedSelectors.push(oDependentControlSelector);
 							}
 						});
-						_logApplyChangeError(oError, oChange);
+						logApplyChangeError(oError, oChange);
 					});
 			}, new FlUtils.FakePromise())
 			.then(function() {

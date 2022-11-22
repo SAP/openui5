@@ -124,7 +124,7 @@ sap.ui.define([
 					}
 				});
 			};
-			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMapSync");
+			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMap");
 
 			var fnResolve;
 			Applier.addPreConditionForInitialChangeApplying(new Promise(function(resolve) {
@@ -194,10 +194,10 @@ sap.ui.define([
 					}
 				});
 			};
-			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMapSync");
-			sandbox.stub(FlexCustomData.sync, "getAppliedCustomDataValue").returns(true);
-			sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData").returns(true);
-			sandbox.stub(FlexCustomData.sync, "getParsedRevertDataFromCustomData").returns(oRevertData);
+			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMap");
+			sandbox.stub(FlexCustomData, "getAppliedCustomDataValue").returns(true);
+			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(true);
+			sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData").returns(oRevertData);
 			var oMarkFinishedSpy0 = sandbox.spy(oChange0, "markFinished");
 			var oMarkFinishedSpy1 = sandbox.spy(oChange1, "markFinished");
 
@@ -226,14 +226,14 @@ sap.ui.define([
 					}
 				});
 			};
-			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMapSync");
-			sandbox.stub(FlexCustomData.sync, "getAppliedCustomDataValue")
+			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMap");
+			sandbox.stub(FlexCustomData, "getAppliedCustomDataValue")
 				.withArgs(this.oAnotherControl)
 				.returns(true);
-			sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData")
+			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData")
 				.withArgs(this.oAnotherControl)
 				.returns(true);
-			sandbox.stub(FlexCustomData.sync, "getParsedRevertDataFromCustomData")
+			sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData")
 				.withArgs(this.oAnotherControl)
 				.returns(oRevertData);
 			sandbox.stub(ChangeUtils, "getControlIfTemplateAffected").returns({
@@ -493,7 +493,7 @@ sap.ui.define([
 			return Applier.applyAllChangesForControl(fnGetChangesMap.bind(this), {}, this.oFlexController, oAppliedControl)
 				.then(function() {
 					// mock oAppliedChange applied on oAppliedControl successfully
-					sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData")
+					sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData")
 						.callThrough()
 						.withArgs(oAppliedControl, oAppliedChange)
 						.returns(true);
@@ -522,7 +522,7 @@ sap.ui.define([
 
 			this.oFlexController._oChangePersistence._mChangesInitial = merge({}, oDependencySetup);
 			this.oFlexController._oChangePersistence._mChanges = oDependencySetup;
-			sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData").returns(false);
+			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(false);
 
 			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, oControlField2)
 			.then(Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap, this.oAppComponent, this.oFlexController, oControlField1))
@@ -1021,7 +1021,7 @@ sap.ui.define([
 			}.bind(this));
 
 			return Applier.applyChangeOnControl(this.oChange, this.oControl, this.mPropertyBag).then(function() {
-				assert.ok(FlexCustomData.sync.hasChangeApplyFinishedCustomData(this.oControl, this.oChange, JsControlTreeModifier), "the change is applied");
+				assert.ok(FlexCustomData.hasChangeApplyFinishedCustomData(this.oControl, this.oChange, JsControlTreeModifier), "the change is applied");
 				assert.ok(this.oControl instanceof Text, "then the refreshed control was initialized in changeHandler.applyChange()");
 			}.bind(this));
 		});
@@ -1221,7 +1221,7 @@ sap.ui.define([
 				assert.strictEqual(oSetQueueSpy.callCount, 1, "the change was queued");
 
 				this.oChange.markFinished();
-				sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").resolves(true);
+				sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(true);
 
 				return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange]);
 			}.bind(this)).then(function() {
@@ -1330,8 +1330,8 @@ sap.ui.define([
 
 		QUnit.test("updates change status if change was already applied (viewCache)", function(assert) {
 			this.oApplyChangeOnControlStub.resolves({success: true});
-			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").resolves(true);
-			sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData").resolves({});
+			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(true);
+			sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData").returns({});
 			var oMarkFinishedSpy = sandbox.spy(this.oChange, "markFinished");
 
 			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange]).then(function() {
@@ -1343,7 +1343,7 @@ sap.ui.define([
 
 		QUnit.test("resets change status if change is not applied anymore", function(assert) {
 			this.oApplyChangeOnControlStub.resolves({success: true});
-			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").resolves(false);
+			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(false);
 			this.oChange.markFinished();
 			var oSetInitialStateStub = sandbox.stub(this.oChange, "setInitialApplyState");
 			var oCheckDependencyStub = sandbox.stub(ChangeUtils, "checkIfDependencyIsStillValid");
