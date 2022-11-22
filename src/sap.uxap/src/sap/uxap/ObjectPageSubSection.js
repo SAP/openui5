@@ -554,6 +554,8 @@ sap.ui.define([
 		this._getGrid().removeAllContent();
 		this._applyLayout(oObjectPageLayout);
 		this.refreshSeeMoreVisibility();
+
+		this.toggleStyleClass("sapUxAPObjectPageSubSectionStashed", this._aStashedControls.length ? true : false);
 	};
 
 	ObjectPageSubSection.prototype._applyLayout = function (oLayoutProvider) {
