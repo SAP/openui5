@@ -155,8 +155,7 @@
 						visible="{= ((${path: 'versions>/versioningEnabled', formatter: '.showRestore'}) &amp;&amp; ((${controls>/modeSwitcher} === 'visualization') || (${controls>/modeSwitcher} === 'adaptation')))}"
 						press=".restore"
 						type="Transparent"
-						icon="sap-icon://reset"
-						tooltip="{i18n>BTN_RESTORE}" >
+						text="{i18n>BTN_RESTORE}" >
 					<toolbar:layoutData>
 						<OverflowToolbarLayoutData priority="High" />
 					</toolbar:layoutData>
@@ -218,19 +217,10 @@
 			</content>
 		</OverflowToolbar>
 		<Button
-				id="sapUiRta_save"
-				type="Transparent"
-				press=".save"
-				enabled="{controls>/undoEnabled}"
-				tooltip="{i18n>BTN_SAVE}"
-				icon="sap-icon://save" >
-		</Button>
-		<Button
 				id="sapUiRta_exit"
 				type="Transparent"
 				press=".exit"
-				tooltip="{i18n>BTN_EXIT}"
-				icon="sap-icon://decline" >
+				text="{i18n>BTN_EXIT}" >
 		</Button>
 		<layoutData>
 			<FlexItemData growFactor="0" />
