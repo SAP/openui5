@@ -48,14 +48,6 @@ sap.ui.define([
 			//this delay avoid loading data for every subsections during scroll
 			this.LAZY_LOADING_DELAY = 200;  //ms.
 
-			//lazy loading fine tuning
-			//An extra non visible subsection will be loaded if the top of this subsection is at
-			//no more than LAZY_LOADING_EXTRA_PAGE_SIZE * page height from the bottom of the page.
-			this.LAZY_LOADING_EXTRA_PAGE_SIZE = 0.5;
-
-			// delayed lazy loading call to check if there's another extra subsection to load
-			this.LAZY_LOADING_EXTRA_SUBSECTION = this.LAZY_LOADING_DELAY * 5;
-
 			//number of subsections which should be preloaded :
 			//   - FirstRendering : for first loading
 			//   - ScrollToSection : default value when scrolling to a subsection
@@ -149,8 +141,6 @@ sap.ui.define([
 				iScrollPageBottom,
 				iPageHeight,
 				bShouldStick = this._iPreviousScrollTop >= (oHeightParams.iHeaderContentHeight), // iHeaderContentHeight
-				sExtraSubSectionId,
-				iExtraSubSectionTop = -1,
 				oSubSectionsToLoad = {},
 				oSubSectionsInView = {},
 				iTimeDifference,
@@ -215,27 +205,10 @@ sap.ui.define([
 						if (!oInfo.loaded) {
 							oSubSectionsToLoad[sId] = sId;
 						}
-						// Lazy loading will add an extra subsection :
-						//    the first (highest) subsection not yet visible (and not yet loaded)
-						//    top of this subsection must be close from page bottom (less than 0.5 page : LAZY_LOADING_EXTRA_PAGE_SIZE)
-					} else if (!oInfo.loaded && oInfo.positionTop > iScrollPageBottom &&
-						oInfo.positionTop < iScrollPageBottom + iPageHeight * this.LAZY_LOADING_EXTRA_PAGE_SIZE &&
-						(iExtraSubSectionTop == -1 || oInfo.positionTop < iExtraSubSectionTop)) {
-						iExtraSubSectionTop = oInfo.positionTop;
-						sExtraSubSectionId = sId;
 					}
 				}
 
 			}, this));
-
-			//add the extra subsection if:
-			//      - we have found one
-			//      - we have no visible subsections to load
-			if (iExtraSubSectionTop != -1 &&
-				isEmptyObject(oSubSectionsToLoad)) {
-				Log.debug("ObjectPageLayout :: lazyLoading", "extra section added : " + sExtraSubSectionId);
-				oSubSectionsToLoad[sExtraSubSectionId] = sExtraSubSectionId;
-			}
 
 			//Load the subsections
 			jQuery.each(oSubSectionsToLoad, jQuery.proxy(function (idx, sSectionId) {
@@ -262,15 +235,8 @@ sap.ui.define([
 				//sections will actually be loaded (no shift) if scroll stops suddenly.
 				this._sLazyLoadingTimer = setTimeout(this.doLazyLoading.bind(this), this.LAZY_LOADING_DELAY);
 			} else {
-				if (iExtraSubSectionTop) {
-					//An extra subsection has been found
-					//relaunch a delayed lazy loading call to check if there's another extra subsection to load
-					//We use a long delay (5* LAZY_LOADING_DELAY) to wait for current loading completion.
-					this._sLazyLoadingTimer = setTimeout(this.doLazyLoading.bind(this), this.LAZY_LOADING_EXTRA_SUBSECTION);
-				} else {
-					//reset the lazy loading timer
-					this._sLazyLoadingTimer = null;
-				}
+				//reset the lazy loading timer
+				this._sLazyLoadingTimer = null;
 			}
 		};
 
