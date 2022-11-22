@@ -597,10 +597,14 @@ sap.ui.define([
         }
         if (sId.lastIndexOf("editButton") === -1) {
             if (sId.lastIndexOf("cancelButton") !== -1) {
-                this._handleItemEditCancelation(oEvent, item);
+				if (item) {
+					this._handleItemEditCancelation(oEvent, item);
+				}
             } else if (oEvent.target.id.lastIndexOf("thumbnail") < 0 && oEvent.target.id.lastIndexOf("icon") < 0 &&
                 oEvent.target.id.lastIndexOf("deleteButton") < 0 && oEvent.target.id.lastIndexOf("fileNameEdit-inner") < 0) {
-                this._handleItemEditConfirmation(oEvent, item);
+                if (item) {
+					this._handleItemEditConfirmation(oEvent, item);
+				}
             }
         }
     };
@@ -754,7 +758,8 @@ sap.ui.define([
 				oListItem = oItems[oObject];
 			} else if (typeof oObject === 'object') { // the object itself is given or has just been retrieved
 				if (this.getList() && this.getList().getItems().length) {
-					oListItem = oObject._getListItem();
+					// listItem should not be created if destruction started.
+					oListItem = oObject.isDestroyStarted() ? oObject : oObject._getListItem();
 				}
 			}
             var oItem = this.getList().removeAggregation("items", oListItem, bSuppressInvalidate);
