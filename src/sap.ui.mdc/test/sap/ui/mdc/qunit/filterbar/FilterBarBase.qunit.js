@@ -3,9 +3,10 @@
 sap.ui.define([
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/FilterField",
-    "sap/ui/mdc/odata/TypeUtil"
+    "sap/ui/mdc/odata/TypeUtil",
+	"sap/ui/mdc/enum/FilterBarValidationStatus"
 ], function (
-	FilterBarBase, FilterField, TypeUtil
+	FilterBarBase, FilterField, TypeUtil, FilterBarValidationStatus
 ) {
 	"use strict";
 
@@ -638,7 +639,7 @@ sap.ui.define([
         this.oFilterBarBase.addFilterItem(oFilterField2);
 
 
-        this.oFilterBarBase._checkFilters();
+        this.oFilterBarBase.checkFilters();
         assert.equal(oFilterField1.getValueState(), "Error");
         assert.equal(oFilterField2.getValueState(), "Error");
 
@@ -687,6 +688,29 @@ sap.ui.define([
             }.bind(this));
         }.bind(this));
 
+    });
+
+
+    QUnit.test("Check the new 'validationState' handling ", function(assert){
+        var done = assert.async();
+
+        var oDelegate = {
+            determineValidationState: function(oControl) {
+                assert.equal(oControl, this.oFilterBarBase);
+                return 44;
+            }.bind(this),
+            visualizeValidationState: function(oControl, mMap) {
+                assert.equal(mMap.status, 44);
+                done();
+            }
+        };
+
+        sinon.stub(this.oFilterBarBase, "_hasRetrieveMetadataToBeCalled").returns(false);
+        sinon.stub(this.oFilterBarBase, "waitForInitialization").returns(Promise.resolve());
+        sinon.stub(this.oFilterBarBase, "awaitControlDelegate").returns(Promise.resolve(oDelegate));
+        this.oFilterBarBase._oDelegate = oDelegate;
+
+        this.oFilterBarBase.validate(true);
     });
 
 });

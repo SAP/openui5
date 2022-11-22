@@ -152,8 +152,31 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 					}
 
 					return oFilterInfo;
-				}
+				},
 
+				/**
+				 * Determines the required filter fields that have no value.
+				 *
+				 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the filter bar
+				 * @returns {string[]} Array containing the required field names without a value
+				 * If there are no such fields, or all required filters are filled, an empty array is returned.
+				 * @private
+				 * @ui5-restricted sap.ui.mdc, sap.fe
+				 * @MDC_PUBLIC_CANDIDATE
+				 */
+				getRequiredFieldNamesWithoutValues: function(oFilterBar) {
+					var aReqFiltersWithoutValue = [];
+					if (oFilterBar && oFilterBar._getRequiredPropertyNames && oFilterBar._getConditionModel) {
+						oFilterBar._getRequiredPropertyNames().forEach(function(sName) {
+							var aConditions = oFilterBar._getConditionModel().getConditions(sName);
+							if (!aConditions || aConditions.length === 0) {
+								aReqFiltersWithoutValue.push(sName);
+							}
+						});
+					}
+
+					return aReqFiltersWithoutValue;
+				}
 		};
 
 		return FilterUtil;

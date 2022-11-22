@@ -6,7 +6,7 @@
 // Delegate class used to help create content in the filterbar and fill relevant metadata
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
-sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate"], function(AggregationBaseDelegate) {
+sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarValidationStatus"], function(AggregationBaseDelegate, FilterBarValidationStatus) {
 	"use strict";
 	/**
 	 * @class Base Delegate for {@link sap.ui.mdc.FilterBar FilterBar}. Extend this object in your project to use all functionalites of the {@link sap.ui.mdc.FilterBar FilterBar}.
@@ -137,11 +137,63 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate"], function(AggregationBaseDe
 	 * This method is called when the 'Clear' button was pressed.
 	 *
 	 * @param {sap.ui.mdc.Control} oControl - The instance of a filter bar
-	 * @returns {Promise} Promise that is resolved once the action completes.
+	 * @returns {Promise} Promise that is resolved once the action completes
 	 */
 	FilterBarDelegate.clearFilters = function(oControl) {
 		return Promise.resolve();
     };
+
+	/**
+	 * A validator to evaluate the filter bar state.
+	 *
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of a <code>sap.ui.mdc.FilterBar</code>
+	 * @param {map} [mValidation] Object describing the validation result. This object is only provided when called from the {@link sap.ui.mdc.FilterBar FilterBar}
+	 * @param {string} [mValidation.status] Status of the validation {@link sap.ui.mdc.enum.FilterBarValidationStatus}
+	 * @returns {sap.ui.mdc.enum.FilterBarValidationStatus} The inner filter bar state
+	 */
+    FilterBarDelegate.determineValidationState = function(oFilterBar) {
+		 return oFilterBar.checkFilters();
+	};
+
+	/**
+	 * Visualizes the filter bar validation state.
+	 *
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of a <code>sap.ui.mdc.FilterBar</code>
+	 * @param {map} mValidation Describes the validation result. This object is only provided when called from the {@link sap.ui.mdc.FilterBar FilterBar}
+	 * @param {sap.ui.mdc.enum.FilterBarValidationStatus} mValidation.status of the validation as returned via {@link sap.ui.mdc.filterbar.FilterBarBase#checkValidationState checkValidationState}
+	 */
+    FilterBarDelegate.visualizeValidationState = function(oFilterBar, mValidation) {
+		 var sErrorMessage;
+
+		 if (mValidation.status === FilterBarValidationStatus.NoError) {
+			 return;
+		 }
+
+		 if (mValidation.status === FilterBarValidationStatus.RequiredHasNoValue) {
+			 sErrorMessage = oFilterBar.getText("filterbar.REQUIRED_CONDITION_MISSING");
+		 } else if (mValidation.status === FilterBarValidationStatus.FieldInErrorState ) {
+			 sErrorMessage = oFilterBar.getText("filterbar.VALIDATION_ERROR");
+		 }
+
+		 if (oFilterBar.getShowMessages() && !oFilterBar._isLiveMode()) {
+
+			 sap.ui.require(["sap/m/MessageBox", "sap/base/Log"], function (MessageBox, Log) {
+				 try {
+
+					 if (oFilterBar._bIsBeingDestroyed) {
+						 return;
+					 }
+					 MessageBox.error(sErrorMessage, {
+						 styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : "",
+						 onClose: oFilterBar.setFocusOnFirstErroneousField.bind(oFilterBar)
+					 });
+				 } catch (x) {
+					 Log.error(x.message);
+				 }
+			 });
+		 }
+	};
+
 
 	return FilterBarDelegate;
 });

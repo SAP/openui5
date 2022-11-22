@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enum/FieldDisplay'
-], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay) {
+	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enum/FieldDisplay', "sap/ui/mdc/enum/FilterBarValidationStatus"
+], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, FilterBarValidationStatus) {
 	"use strict";
 
 	var FilterBarBooksSampleDelegate = Object.assign({}, FilterBarDelegate);
@@ -93,17 +93,6 @@ sap.ui.define([
 
 			return aProperties;
 		});
-
-		// { name: "author_ID",
-		// groupLabel: "none",
-		// label: "Author ID",
-		// type: "Edm.Int32",
-		// baseType:new sap.ui.model.odata.type.Int32(),
-		// required: false,
-		// hiddenFilter: false,
-		// visible: true,
-		// maxConditions : -1,
-		// fieldHelp: "FHAuthor"}
 	};
 
 	FilterBarBooksSampleDelegate._createFilterField = function (oProperty, oFilterBar, mPropertyBag) {
@@ -118,7 +107,7 @@ sap.ui.define([
 		var sName = oProperty.path || oProperty.name;
 		var oFilterFieldPromise = FilterBarDelegate._createFilterField.apply(this, arguments);
 
-		oFilterFieldPromise.then(function (oFilterField) {
+		return oFilterFieldPromise.then(function (oFilterField) {
 
 			if (sName === "stock") {
 
@@ -139,12 +128,22 @@ sap.ui.define([
 			} else if (sName === "published") {
 				oModifier.setProperty(oFilterField, "defaultOperator", "RENAISSANCE");
 			}
+
+			return oFilterField;
 		});
-
-		return oFilterFieldPromise;
-
 	};
 
+	FilterBarBooksSampleDelegate.visualizeValidationState = function(oFilterBar, mValidation) {
+
+
+		var oView = oFilterBar._getView();
+		if (oView) {
+			var oDynamicPage = oView.byId("dynamicPage");
+			if (oDynamicPage && oDynamicPage.getHeaderExpanded()) {
+				FilterBarDelegate.visualizeValidationState.apply(this, arguments);
+			}
+		}
+	};
 
 	return FilterBarBooksSampleDelegate;
 });
