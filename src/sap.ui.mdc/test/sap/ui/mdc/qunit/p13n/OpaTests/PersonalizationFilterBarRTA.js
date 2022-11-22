@@ -86,7 +86,7 @@ sap.ui.define([
 
 	opaTest("Quit RTA", function(Given, When, Then){
 		//Quit RTA
-		When.onPageWithRTA.iExitRtaMode();
+		When.iPressButtonWithText("Save & Exit");
 
 		//Just to check that runtime Dialog opens again (no more overlays)
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);

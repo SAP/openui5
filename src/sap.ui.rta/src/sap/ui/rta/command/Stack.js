@@ -68,15 +68,7 @@ sap.ui.define([
 	var Stack = ManagedObject.extend("sap.ui.rta.command.Stack", {
 		metadata: {
 			library: "sap.ui.rta",
-			properties: {
-				/**
-				 * If the stack was saved at least once
-				 */
-				saved: {
-					type: "boolean",
-					defaultValue: false
-				}
-			},
+			properties: {},
 			aggregations: {
 				commands: {
 					type: "sap.ui.rta.command.BaseCommand",
