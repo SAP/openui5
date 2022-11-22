@@ -231,7 +231,10 @@ sap.ui.define([
 		SuccessScreen: "SuccessScreen",
 		NoMail: "NoMail",
 		NoSavedItems: "NoSavedItems",
-		NoTasks: "NoTasks"
+		NoTasks: "NoTasks",
+		UploadToCloud: "UploadToCloud",
+		NoDimensionsSet: "NoDimensionsSet",
+		AddDimensions: "AddDimensions"
 	};
 
 	IllustratedMessage.FALLBACK_TEXTS = {
