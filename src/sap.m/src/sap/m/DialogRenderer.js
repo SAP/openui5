@@ -50,7 +50,8 @@ sap.ui.define([
 			sState = oDialog.getState(),
 			bStretch = oDialog.getStretch(),
 			bStretchOnPhone = oDialog.getStretchOnPhone() && Device.system.phone,
-			oValueStateText = oDialog.getAggregation("_valueState");
+			oValueStateText = oDialog.getAggregation("_valueState"),
+			oFooter = oDialog.getFooter();
 
 		// write the HTML into the render manager
 		// the initial size of the dialog have to be 0, because if there is a large dialog content the initial size can be larger than the html's height (scroller)
@@ -85,7 +86,8 @@ sap.ui.define([
 		var bNoToolbarAndNoButtons = !oDialog._oToolbar && !oBeginButton && !oEndButton;
 		var bEmptyToolbarAndNoButtons = oDialog._oToolbar && oDialog._isToolbarEmpty() && !oBeginButton && !oEndButton;
 		var bHiddenFooter = oDialog._oToolbar && !oDialog._oToolbar.getVisible();
-		if (bNoToolbarAndNoButtons || bEmptyToolbarAndNoButtons || bHiddenFooter) {
+		var hasFooter = !bNoToolbarAndNoButtons && !bEmptyToolbarAndNoButtons && !bHiddenFooter || oFooter;
+		if (!hasFooter) {
 			oRM.class("sapMDialog-NoFooter");
 		}
 
@@ -226,13 +228,18 @@ sap.ui.define([
 			.close("div")
 			.close("section");
 
-		if (!bNoToolbarAndNoButtons && !bEmptyToolbarAndNoButtons && !bHiddenFooter) {
-			oDialog._oToolbar._applyContextClassFor("footer");
+		if (hasFooter) {
 			oRM.openStart("footer")
 				.class("sapMDialogFooter")
-				.openEnd()
-				.renderControl(oDialog._oToolbar)
-				.close("footer");
+				.openEnd();
+			if (oFooter) {
+				oFooter._applyContextClassFor("footer");
+				oRM.renderControl(oFooter);
+			} else {
+				oDialog._oToolbar._applyContextClassFor("footer");
+				oRM.renderControl(oDialog._oToolbar);
+			}
+			oRM.close("footer");
 		}
 
 		if (Device.system.desktop) {

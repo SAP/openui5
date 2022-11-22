@@ -3426,4 +3426,76 @@ sap.ui.define([
 
 		oStub.restore();
 	});
+
+	QUnit.module("Footer", {
+		beforeEach: function () {
+			this.oDialog = new Dialog({
+				content: new sap.ui.core.HTML({
+					content: '<div>Lipsum limple text</div>'
+				}),
+				buttons: [
+					new sap.m.Button({
+						text: "Accept"
+					}),
+					new sap.m.Button({
+						text: "Reject",
+						icon: "sap-icon://employee"
+					})
+				],
+				footer: new sap.m.Toolbar({
+					content: [new sap.m.Button({
+							icon: "sap-icon://error",
+							type: "Negative",
+							text: "2"
+						}),
+						new sap.m.Button({
+							type: "Emphasized",
+							text: "Accept",
+							press: function () {
+								this.getParent().getParent().close();
+							}
+						}),
+						new sap.m.Button({
+							text: "Reject"
+						})
+					]
+				})
+			});
+		},
+		afterEach: function () {
+			this.oDialog.destroy();
+		}
+	});
+
+	QUnit.test("Test Footer aggregation", function (assert) {
+		// Arrange
+
+		this.oDialog.open();
+		Core.applyChanges();
+
+		this.clock.tick(500);
+
+		// Act
+		this.oDialog._onResize();
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(this.oDialog.getAggregation("footer"), "Dialog has aggregation footer");
+
+		assert.notOk(this.oDialog.getAggregation("buttons")[0].getDomRef(), "Dialog does not have the first button from buttons aggregation rendered");
+		assert.notOk(this.oDialog.getAggregation("buttons")[1].getDomRef(), "Dialog does not have the second button from buttons aggregation rendered");
+
+		assert.ok(this.oDialog.getAggregation("footer").getDomRef().classList.contains("sapMFooter-CTX"), "Dialog footer is rendered with correct class");
+		assert.strictEqual(this.oDialog.getAggregation("footer").getContent()[0].getText(), "2", "Dialog footer has correct first button");
+		assert.strictEqual(this.oDialog.getAggregation("footer").getContent()[1].getText(), "Accept", "Dialog footer has correct second button");
+		assert.strictEqual(this.oDialog.getAggregation("footer").getContent()[2].getText(), "Reject", "Dialog footer has correct third button");
+
+		// Act
+		qutils.triggerKeydown(this.oDialog.getDomRef(), KeyCodes.ENTER, false, false, true);
+		this.clock.tick(500);
+
+		// Assert
+		assert.notOk(this.oDialog.isOpen(), "Dialog is closed after pressing Ctrl+Enter if footer has emphasized button");
+
+	});
 });
