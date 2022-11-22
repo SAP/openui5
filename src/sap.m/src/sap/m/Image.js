@@ -845,7 +845,8 @@ sap.ui.define([
 	 *
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
-	 * @returns {object} The <code>sap.m.Image</code> accessibility information
+	 * @returns {{role: string, type: string, description: string, focusable: boolean}}
+	 * The object contains the accessibility information for <code>sap.m.Image</code>
 	 */
 	Image.prototype.getAccessibilityInfo = function() {
 		var bHasPressListeners = this.hasListeners("press");
