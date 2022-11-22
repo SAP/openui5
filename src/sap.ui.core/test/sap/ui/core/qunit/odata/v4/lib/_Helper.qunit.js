@@ -4713,6 +4713,32 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("convertExpandSelectToPaths", function (assert) {
+		assert.deepEqual(_Helper.convertExpandSelectToPaths({}), []);
+		assert.deepEqual(_Helper.convertExpandSelectToPaths({
+				$select : ["foo", "bar"]
+			}),
+			["foo", "bar"]);
+		assert.deepEqual(_Helper.convertExpandSelectToPaths({
+				$expand : {foo : {}},
+				bar : "baz"
+			}),
+			[]);
+		assert.deepEqual(_Helper.convertExpandSelectToPaths({
+				$select : ["foo"],
+				$expand : {
+					bar : {
+						$select : ["baz", "qux"],
+						$expand : {
+							quux : {$select : ["quuux"]}
+						}
+					}
+				}
+			}),
+			["foo", "bar/baz", "bar/qux", "bar/quux/quuux"]);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("setLanguage", function (assert) {
 		assert.strictEqual(
 			// code under test

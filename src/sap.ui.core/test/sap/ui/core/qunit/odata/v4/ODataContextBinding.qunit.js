@@ -193,6 +193,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.bInheritExpandSelect, undefined);
 		assert.strictEqual(oBinding.oReturnValueContext, null);
+		assert.strictEqual(oBinding.bHasFetchedExpandSelectProperties, false);
 
 		assert.ok(oParentBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
 	});
@@ -495,6 +496,7 @@ sap.ui.define([
 				return undefined;
 			}
 
+			oBinding.bHasFetchedExpandSelectProperties = true;
 			this.mock(oBinding).expects("checkSuspended").withExactArgs(true);
 			if (oFixture.sTarget === "base") {
 				this.mock(oBinding).expects("fetchCache")
@@ -518,6 +520,7 @@ sap.ui.define([
 			// code under test
 			oBinding.setContext(oTargetContext);
 
+			assert.strictEqual(oBinding.bHasFetchedExpandSelectProperties, false);
 			if (oTargetContext) {
 				assert.strictEqual(oBinding.getBoundContext().getPath(),
 					"/EMPLOYEES(ID='2')/EMPLOYEE_2_TEAM");
@@ -1029,6 +1032,8 @@ sap.ui.define([
 			// never resolved, must be ignored
 			oBinding.oCachePromise = new SyncPromise(function () {});
 		}
+		this.mock(oBinding).expects("doFetchExpandSelectProperties").exactly(bCached ? 0 : 1)
+			.withExactArgs();
 		this.mock(oContext).expects("fetchValue")
 			.withExactArgs(sPath, sinon.match.same(oListener), sinon.match.same(bCached))
 			.returns(SyncPromise.resolve(oResult));
@@ -3197,6 +3202,7 @@ sap.ui.define([
 
 		oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {foo : "bar"});
 
+		oBinding.bHasFetchedExpandSelectProperties = true;
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getGroupId").never();
 		this.mock(oBinding).expects("setResumeChangeReason").never();
@@ -3222,6 +3228,7 @@ sap.ui.define([
 				assert.strictEqual(bDependentsRefreshed, true);
 			});
 
+		assert.strictEqual(oBinding.bHasFetchedExpandSelectProperties, false);
 		sinon.assert.callOrder(fnHasChangeListeners, fnFetchCache);
 		if (bHasChangeListeners) { // simulate fetchValue triggered by a property binding
 			oBinding.resolveRefreshPromise(Promise.resolve());
@@ -3250,6 +3257,7 @@ sap.ui.define([
 
 		oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {foo : "bar"});
 
+		oBinding.bHasFetchedExpandSelectProperties = true;
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
 		this.mock(oBinding).expects("refreshSuspended").withExactArgs(sinon.match.same(sGroupId));
 		this.mock(oBinding).expects("createReadGroupLock").never();
@@ -3264,6 +3272,7 @@ sap.ui.define([
 		return oBinding.refreshInternal(sPath, sGroupId, bCheckUpdate, bKeepCacheOnError)
 			.then(function () {
 				assert.strictEqual(bDependentsRefreshed, true);
+				assert.strictEqual(oBinding.bHasFetchedExpandSelectProperties, false);
 			});
 	});
 
@@ -5024,5 +5033,83 @@ sap.ui.define([
 			// code under test
 			oBinding.findContextForCanonicalPath("/BusinessPartner('2')"),
 			undefined);
+	});
+
+	//*********************************************************************************************
+[{$select : "~select~"}, {$expand : "~expand~"}].forEach(function (mParameters) {
+	QUnit.test("doFetchExpandSelectProperties", function (assert) {
+		var oBinding = this.bindContext("/SalesOrder('1')"),
+			oContext = {
+				fetchValue : function () {}
+			},
+			oContextMock = this.mock(oContext),
+			oFetchPromise1 = Promise.reject("~oError1~"),
+			oFetchPromise2 = Promise.reject("~oError2~"),
+			oHelperMock = this.mock(_Helper),
+			oModelMock = this.mock(this.oModel),
+			fnReporter1 = this.spy(),
+			fnReporter2 = this.spy();
+
+		this.oModel.bAutoExpandSelect = true;
+		oBinding.oContext = oContext;
+		oBinding.mParameters = mParameters;
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/path");
+		this.mock(this.oModel).expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(mParameters), true).returns("~mQueryOptions~");
+		oHelperMock.expects("convertExpandSelectToPaths").withExactArgs("~mQueryOptions~")
+			.returns(["p1", "p2"]);
+		oHelperMock.expects("buildPath").withExactArgs("/resolved/path", "p1")
+			.returns("/resolved/path/p1");
+		oContextMock.expects("fetchValue").withExactArgs("/resolved/path/p1")
+			.returns(oFetchPromise1);
+		oModelMock.expects("getReporter").returns(fnReporter1);
+		oHelperMock.expects("buildPath").withExactArgs("/resolved/path", "p2")
+			.returns("/resolved/path/p2");
+		oContextMock.expects("fetchValue").withExactArgs("/resolved/path/p2")
+			.returns(oFetchPromise2);
+		oModelMock.expects("getReporter").returns(fnReporter2);
+
+		// code under test
+		oBinding.doFetchExpandSelectProperties();
+
+		assert.strictEqual(oBinding.bHasFetchedExpandSelectProperties, true);
+
+		// code under test - nothing happens when called again
+		oBinding.doFetchExpandSelectProperties();
+
+		return Promise.all([
+			oFetchPromise1.catch(function () {}),
+			oFetchPromise2.catch(function () {})
+		]).then(function () {
+			sinon.assert.calledOnce(fnReporter1);
+			sinon.assert.calledWithExactly(fnReporter1, "~oError1~");
+			sinon.assert.calledOnce(fnReporter2);
+			sinon.assert.calledWithExactly(fnReporter2, "~oError2~");
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("doFetchExpandSelectProperties: no autoExpandSelect", function () {
+		var oBinding = this.bindContext("/SalesOrder('1')", null, {$select : "foo"});
+
+		this.oModel.bAutoExpandSelect = false;
+		this.mock(this.oModel).expects("buildQueryOptions").never();
+		this.mock(_Helper).expects("convertExpandSelectToPaths").never();
+
+		// code under test
+		oBinding.doFetchExpandSelectProperties();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doFetchExpandSelectProperties: no $expand/$select", function () {
+		var oBinding = this.bindContext("/SalesOrder('1')", null, {foo : "bar"});
+
+		this.oModel.bAutoExpandSelect = true;
+		this.mock(this.oModel).expects("buildQueryOptions").never();
+		this.mock(_Helper).expects("convertExpandSelectToPaths").never();
+
+		// code under test
+		oBinding.doFetchExpandSelectProperties();
 	});
 });
