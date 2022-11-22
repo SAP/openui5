@@ -82,7 +82,7 @@ sap.ui.define([
 				assert.deepEqual(this.oRegistry.getRegisteredChangeIds(), ["fooChange", "barChange", "draftChange"], "then the change ids are registered");
 				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 3, "then the changes are added to the registry");
 				assert.strictEqual(this.oRegistry.getRegisteredChange("fooChange").changeCategory, "fooCategory", "then the command categories are properly classified");
-				assert.deepEqual(this.oRegistry.getRegisteredChange("fooChange").changeStates, [ChangeStates.DIRTY, ChangeStates.DRAFT], "then the change state is properly classified (Dirty)");
+				assert.deepEqual(this.oRegistry.getRegisteredChange("fooChange").changeStates, ChangeStates.getDraftAndDirtyStates(), "then the change state is properly classified (Dirty & Draft)");
 				assert.deepEqual(this.oRegistry.getRegisteredChange("barChange").changeStates, [ChangeStates.ACTIVATED], "then the change state is properly classified (Activated)");
 				assert.deepEqual(this.oRegistry.getRegisteredChange("draftChange").changeStates, [ChangeStates.DRAFT], "then the change state is properly classified (Draft)");
 			}.bind(this));
@@ -174,7 +174,7 @@ sap.ui.define([
 				})
 				.onSecondCall()
 				.resolves();
-			var oSpy = sandbox.spy(this.oRegistry, "removeOutdatedRegisteredChanges");
+			var oRemoveOutdatedRegisteredChangesSpy = sandbox.spy(this.oRegistry, "removeOutdatedRegisteredChanges");
 			return Promise.all([
 				this.oRegistry.registerChange(createMockChange("fooChange"), "foo"),
 				this.oRegistry.registerChange(createMockChange("barChange"), "bar")
@@ -182,9 +182,27 @@ sap.ui.define([
 				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 2, "then the two changes are registered correctly");
 				this.oRegistry.removeOutdatedRegisteredChanges();
 			}.bind(this)).then(function () {
-				assert.ok(oSpy.calledOnce, "then the function was called only once");
+				assert.ok(oRemoveOutdatedRegisteredChangesSpy.calledOnce, "then the function was called only once");
 				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 1, "then only one change is registered");
 				assert.notOk(this.oRegistry.getAllRegisteredChanges()[0].visualizationInfo.updateRequired, "then the remaining change has no updateRequired flag");
+			}.bind(this));
+		});
+
+		QUnit.test("when a registered change has no displayElementId and should be removed from the registry", function (assert) {
+			ChangesWriteAPI.getChangeHandler.reset();
+			ChangesWriteAPI.getChangeHandler.resolves();
+			var oRemoveRegisteredChangesWithoutVizInfoSpy = sandbox.spy(this.oRegistry, "removeRegisteredChangesWithoutVizInfo");
+			return Promise.all([
+				this.oRegistry.registerChange(createMockChange("fooChange"), "foo"),
+				this.oRegistry.registerChange(createMockChange("barChange"), "bar")
+			]).then(function() {
+				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 2, "then the two changes are registered correctly");
+				this.oRegistry.getAllRegisteredChanges()[0].visualizationInfo.displayElementIds = [];
+				this.oRegistry.removeRegisteredChangesWithoutVizInfo();
+			}.bind(this)).then(function () {
+				assert.ok(oRemoveRegisteredChangesWithoutVizInfoSpy.calledOnce, "then the function was called only once");
+				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 1, "then only one change is registered");
+				assert.strictEqual(this.oRegistry.getAllRegisteredChanges()[0].visualizationInfo.displayElementIds.length, 1, "then the remaining change has a display element id");
 			}.bind(this));
 		});
 	});
