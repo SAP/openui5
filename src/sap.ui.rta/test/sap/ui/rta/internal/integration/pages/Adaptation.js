@@ -298,7 +298,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: function(oButton) {
-							return oButton.getParent() && oButton.getParent().getDomRef() && oButton.getParent().getDomRef().classList.contains("sapUiRtaToolbar")
+							return oButton.getParent().getDomRef && oButton.getParent().getDomRef() && oButton.getParent().getDomRef().classList.contains("sapUiRtaToolbar")
 								&& oButton.getParent().getDomRef().classList.contains("type_personalization")
 								&& oButton.getProperty("text") === oResources.getText("BTN_DONE");
 						},
