@@ -42,7 +42,7 @@ function(
 		// shortcut for sap.m.StepInputValidationMode
 		var StepInputValidationMode = library.StepInputValidationMode;
 
-		// shortcut fro sap.m.StepModes
+		// shortcut for sap.m.StepModes
 		var StepModeType = library.StepInputStepModeType;
 
 		/**
