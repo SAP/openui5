@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/rta/Utils",
 	"sap/ui/dt/OverlayRegistry",
 	"qunit/RtaQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/LabelEnablement"
 ], function (
 	RuntimeAuthoring,
+	RtaUtils,
 	OverlayRegistry,
 	RtaQunitUtils,
 	QUnitUtils,
@@ -102,6 +104,11 @@ sap.ui.define([
 				});
 		}
 
+		function stubShowMessageBoxOnRtaClose(oRta) {
+			return sandbox.stub(RtaUtils, "showMessageBox")
+			.resolves(oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
+		}
+
 		function fnPressRenameAndEnsureFunctionality(assert, oControl, oRenameItem, sText) {
 			var $fieldOverlay = this.oCompanyCodeFieldOverlay.$();
 
@@ -139,6 +146,7 @@ sap.ui.define([
 								}, this);
 							}.bind(this))
 						]).then(function () {
+							stubShowMessageBoxOnRtaClose(this.oRta);
 							this.oRta.stop().then(fnResolve);
 						}.bind(this));
 
@@ -187,6 +195,7 @@ sap.ui.define([
 										assert.equal(this.oBoundButton35Field.__label, oFieldToAdd.label, "the new field is the one that got deleted");
 										iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 										assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
+										stubShowMessageBoxOnRtaClose(this.oRta);
 										return this.oRta.stop();
 									}.bind(this))
 									.then(RtaQunitUtils.getNumberOfChangesForTestApp)
@@ -248,6 +257,7 @@ sap.ui.define([
 							var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 							assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 							oObserver.disconnect();
+							stubShowMessageBoxOnRtaClose(this.oRta);
 							this.oRta.stop()
 							.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 							.then(function (iNumberOfChanges) {
@@ -291,6 +301,7 @@ sap.ui.define([
 							assert.strictEqual(this.oVictim.getVisible(), false, " then field is not visible");
 							iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oVictim}).length;
 							assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+							stubShowMessageBoxOnRtaClose(this.oRta);
 							return this.oRta.stop();
 						}.bind(this))
 						.then(RtaQunitUtils.getNumberOfChangesForTestApp)
@@ -322,6 +333,7 @@ sap.ui.define([
 						assert.equal(this.oDatesGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
 						iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 						assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+						stubShowMessageBoxOnRtaClose(this.oRta);
 						return this.oRta.stop();
 					}.bind(this))
 					.then(RtaQunitUtils.getNumberOfChangesForTestApp)
@@ -384,6 +396,7 @@ sap.ui.define([
 							}, this);
 						}.bind(this))
 					]).then(function () {
+						stubShowMessageBoxOnRtaClose(this.oRta);
 						return this.oRta.stop();
 					}.bind(this))
 					.then(RtaQunitUtils.getNumberOfChangesForTestApp)
@@ -429,6 +442,7 @@ sap.ui.define([
 
 									iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 									assert.strictEqual(iDirtyChangesCount, 1, "then there are three dirty changes in the flex persistence");
+									stubShowMessageBoxOnRtaClose(this.oRta);
 									return this.oRta.stop();
 								}.bind(this))
 								.then(RtaQunitUtils.getNumberOfChangesForTestApp)
@@ -566,6 +580,7 @@ sap.ui.define([
 						oCore.applyChanges();
 						iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oCombinedElement}).length;
 						assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+						stubShowMessageBoxOnRtaClose(this.oRta);
 						return this.oRta.stop();
 					}.bind(this))
 					.then(RtaQunitUtils.getNumberOfChangesForTestApp)

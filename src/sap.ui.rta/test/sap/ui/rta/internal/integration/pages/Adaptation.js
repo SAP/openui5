@@ -204,6 +204,7 @@ sap.ui.define([
 								var oEditableFieldDomNode = oOverlayDOM.children[0];
 								return oEditableFieldDomNode;
 							}
+							return undefined;
 						},
 						actions: function(oEditableFieldDomNode) {
 							oEditableFieldDomNode.innerHTML = sNewLabel;
@@ -250,16 +251,36 @@ sap.ui.define([
 						errorMessage: "OK Button not found"
 					});
 				},
-				iExitRtaMode: function() {
+				iExitRtaMode: function(bDontSaveOnExit, bNoChanges) {
 					var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: function(oButton) {
-							return oButton.getDomRef().closest(".sapUiRtaToolbar") && oButton.getProperty("text") === oResources.getText("BTN_EXIT");
+							return oButton.getDomRef().closest(".sapUiRtaToolbar")
+								&& oButton.getId().includes("sapUiRta_exit");
 						},
 						actions: new Press(),
 						success: function(aButtons) {
-							Opa5.assert.equal(aButtons.length, 1, "'Save & Exit' button found");
+							Opa5.assert.equal(aButtons.length, 1, "'Exit' button found");
+							// If no changes were done, the "save changes" pop-up doesn't come up
+							if (bNoChanges) {
+								return undefined;
+							}
+							var sButtonTextKey = bDontSaveOnExit
+								? "BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"
+								: "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE";
+							return this.waitFor({
+								controlType: "sap.m.Button",
+								matchers: function(oButton) {
+									return oButton.getDomRef().closest(".sapUiRTABorder")
+										&& oButton.getProperty("text") === oResources.getText(sButtonTextKey);
+								},
+								actions: new Press(),
+								success: function(aButtons) {
+									Opa5.assert.ok(aButtons.length > 0,
+										"Messagebox closed with click on '" + oResources.getText(sButtonTextKey) + "' ");
+								}
+							});
 						}
 					});
 				},

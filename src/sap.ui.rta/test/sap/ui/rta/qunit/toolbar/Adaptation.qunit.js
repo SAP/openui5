@@ -93,8 +93,8 @@ sap.ui.define([
 				assert.deepEqual(oInitRangeSetStub.lastCall.args[3], [Adaptation.modes.MOBILE, Adaptation.modes.TABLET, Adaptation.modes.DESKTOP], "the fourth parameter is correct");
 				assert.equal(nCallCount, 1, "the handler was attached once");
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.DESKTOP, "the mode was correctly set");
-				assert.notOk(this.oToolbar.getControl("exit").getIcon(), "the exit button has no icon");
-				assert.ok(this.oToolbar.getControl("exit").getText(), "the exit button has text");
+				assert.strictEqual(this.oToolbar.getControl("exit").getIcon(), "sap-icon://decline", "the exit button has decline icon");
+				assert.strictEqual(this.oToolbar.getControl("restore").getIcon(), "sap-icon://reset", "the reset button has reset icon");
 				assert.equal(this.oToolbar.getControl("restore").getLayoutData().getPriority(), "High", "the layout data priority is correct");
 				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
 
@@ -112,8 +112,7 @@ sap.ui.define([
 			return createAndWaitForToolbar.call(this).then(function() {
 				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
-				assert.notOk(this.oToolbar.getControl("exit").getIcon(), "the exit button has no icon");
-				assert.ok(this.oToolbar.getControl("exit").getText(), "the exit button has text");
+				assert.strictEqual(this.oToolbar.getControl("exit").getIcon(), "sap-icon://decline", "the exit button has decline icon");
 			}.bind(this));
 		});
 
