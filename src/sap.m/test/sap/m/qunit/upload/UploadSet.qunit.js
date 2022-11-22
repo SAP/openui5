@@ -570,6 +570,22 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Test to avoid item creation for item in destruction phase", function(assert) {
+		var oItem = this.oUploadSet.getItems()[1];
+
+		var listItemSpy = this.spy(oItem, "_getListItem");
+
+		oItem._getDeleteButton().firePress();
+
+		// Close the dialog
+		var oDialog = oCore.byId(this.oUploadSet.getId() + "-deleteDialog");
+		oDialog.getButtons()[1].firePress();
+		oDialog.destroy();
+
+		// Assert
+		assert.ok(listItemSpy.notCalled, "UploadSetItem not created for item in destruction phase.");
+	});
+
 	QUnit.module("UploadSet general functionality", {
 		beforeEach: function () {
 			this.oUploadSet = new UploadSet("uploadSet", {

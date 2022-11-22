@@ -687,25 +687,26 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-        var oListItem,oItems;
-        Control.prototype.removeAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
-        if (sAggregationName === "items" || sAggregationName === "incompleteItems") {
+		var oListItem,oItems;
+		Control.prototype.removeAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+		if (sAggregationName === "items" || sAggregationName === "incompleteItems") {
 			if (typeof oObject === 'number') { // "oObject" is the index now
 				oItems = this.getItems();
 				oListItem = oItems[oObject];
 			} else if (typeof oObject === 'object') { // the object itself is given or has just been retrieved
 				if (this.getList() && this.getList().getItems().length) {
-					oListItem = oObject._getListItem();
+					// listItem should not be created if destruction started.
+					oListItem = oObject.isDestroyStarted() ? oObject : oObject._getListItem();
 				}
 			}
-            var oItem = this.getList().removeAggregation("items", oListItem, bSuppressInvalidate);
-            if (oItem && oObject) {
-                oItem.destroy();
+			var oItem = this.getList().removeAggregation("items", oListItem, bSuppressInvalidate);
+			if (oItem && oObject) {
+				oItem.destroy();
 				oObject.destroy();
-            }
-            this._refreshInnerListStyle();
-        }
-    };
+			}
+			this._refreshInnerListStyle();
+		}
+	};
 
 	UploadSet.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
 		if (sAggregationName === "items") {
