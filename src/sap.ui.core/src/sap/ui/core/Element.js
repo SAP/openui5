@@ -267,7 +267,7 @@ sap.ui.define([
 	 *     },
 	 *     dnd : { draggable: true, droppable: false },
 	 *     aggregations : {
-	 *       items : { type: 'sap.ui.core.Control', multiple : true, dnd : {draggable: false, dropppable: true, layout: "Horizontal" } },
+	 *       items : { type: 'sap.ui.core.Control', multiple : true, dnd : {draggable: false, droppable: true, layout: "Horizontal" } },
 	 *       header : {type : "sap.ui.core.Control", multiple : false, dnd : true },
 	 *     }
 	 *   }
