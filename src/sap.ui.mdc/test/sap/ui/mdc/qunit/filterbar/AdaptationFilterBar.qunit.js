@@ -456,6 +456,50 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Check 'FilterPanel' as inner layout and remove change event", function(assert){
+		var done = assert.async();
+		this.prepareTestSetup(false);
+
+		var oFilterPanel = oAdaptationFilterBar._oFilterBarLayout.getInner();
+
+		oAdaptationFilterBar.setP13nData({
+			items: [
+				{
+					name: "key1"
+				},
+				{
+					name: "key2"
+				},
+				{
+					name: "key3"
+				}
+			]
+		});
+
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		])
+		.then(function(){
+			oAdaptationFilterBar.createFilterFields().then(function(){
+
+				var oConditionChangeSpy = sinon.spy(oAdaptationFilterBar.getEngine(), "createChanges");
+
+				oFilterPanel.fireChange({
+					item: {
+						name: "key1"
+					},
+					reason: "Remove"
+				});
+
+				assert.ok(oConditionChangeSpy.calledOnce, "Conditions are removed once");
+
+				done();
+			});
+		});
+	});
+
 	QUnit.test("Check amount of search events triggered on multiple changes in one appliance", function(assert){
 		var done = assert.async(2);
 		this.prepareTestSetup(true);
