@@ -167,4 +167,9 @@ describe("sap.m.Wizard", function() {
 		});
 		expect(takeScreenshot(element(by.id("linear-wiz-progressNavigator")))).toLookAs("step-title-changed");
 	});
+
+	it("long titles should be clipped in the WizardProgressNavigator", function () {
+		element(by.id("long-step-title-wiz-sel")).click();
+		expect(takeScreenshot()).toLookAs("long-step-titles-clipped");
+	});
 });

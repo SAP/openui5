@@ -237,7 +237,6 @@ html.sap-phone .sapMWizardProgressNav {
 }
 
 .sapMWizardProgressNavStepTitle {
-	display: inline-block;
 	overflow: hidden;
 	max-width: 100%;
 	max-height: 2.875rem;
@@ -245,11 +244,13 @@ html.sap-phone .sapMWizardProgressNav {
 	font-size: @sapMFontMediumSize;
 	color: @sapUiGroupTitleTextColor;
 	vertical-align: middle;
+	display: -webkit-inline-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
 }
 
 .sapMWizardProgressNavStepTitleOptional {
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	-webkit-line-clamp: 1;
 	line-height: 100%;
 }
 
