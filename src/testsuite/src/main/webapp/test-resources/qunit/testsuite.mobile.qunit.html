@@ -1,38 +1,11 @@
+<!DOCTYPE html>
 <html>
- <head>
-  <title>Global Mobile QUnit TestSuite</title>
-  <script src="../../resources/sap/ui/qunit/qunit-redirect.js"></script>
- </head>
- <body>
-  <script>
-
-  /**
-   * Method that is called by the Selenium/QUnit framework to retrieve the test suites.
-   */
-  function suite() {
-    var suite = new top.jsUnitTestSuite();
-    var contextPath = "/" + window.location.pathname.split("/")[1];
-    // although this is a mobile test we should make sure that the Core and Layout works
-    // the "globalQUnitTestSuite" is set "true" by the global testsuite to avoid
-    // a duplicate execution
-    if (!top.globalQUnitTestSuite) {
-      suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuite.qunit.html");
-      suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/testsuite.qunit.html");
-      suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/testsuite.qunit.html");
-    }
-    // execute all the mobile QUnit tests
-    suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/testsuite.mobile.qunit.html");
-
-    // execute all "tnt" tests
-    suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/testsuite.mobile.qunit.html");
-
-    // execute all "f" tests
-    suite.addTestPage(contextPath + "/test-resources/sap/f/qunit/testsuite.qunit.html");
-
-    return suite;
-  }
-
-  </script>
- </body>
+	<head>
+		<meta charset="utf-8">
+		<base href="../../">
+		<title>Global Mobile QUnit TestSuite (OpenUI5 scope)</title>
+		<script src="resources/sap/ui/test/starter/createSuite.js"></script>
+	</head>
+	<body>
+	</body>
 </html>
-
