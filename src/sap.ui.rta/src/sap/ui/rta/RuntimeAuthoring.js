@@ -468,7 +468,6 @@ sap.ui.define([
 				}
 				var oFlexInfoSession = PersistenceWriteAPI.getResetAndPublishInfoFromSession(this.getRootControlInstance());
 				this.bInitialResetEnabled = !!oFlexInfoSession.isResetEnabled;
-				this.bInitialPublishEnabled = !!oFlexInfoSession.isPublishEnabled;
 
 				this._oSerializer = new LREPSerializer({commandStack: this.getCommandStack(), rootControl: this.getRootControl()});
 
@@ -1083,16 +1082,16 @@ sap.ui.define([
 			var bCanUndo = oCommandStack.canUndo();
 			var bCanRedo = oCommandStack.canRedo();
 			var bWasSaved = oCommandStack.getSaved();
-			var bTranslationRelevantDirtyChange = this._oToolbarControlsModel.getProperty("/translationVisible") &&
+			var bTranslationRelevantDirtyChange = this._oToolbarControlsModel.getProperty("/translation/visible") &&
 				TranslationAPI.hasTranslationRelevantDirtyChanges({layer: Layer.CUSTOMER, selector: this.getRootControlInstance()});
 
 			// TODO: move to the setter to the ChangesState
 			this._oVersionsModel.setDirtyChanges(PersistenceWriteAPI.hasDirtyChanges({selector: this.getRootControlInstance()}));
-			this._oToolbarControlsModel.setProperty("/undoEnabled", bCanUndo);
-			this._oToolbarControlsModel.setProperty("/redoEnabled", bCanRedo);
-			this._oToolbarControlsModel.setProperty("/publishEnabled", this.bInitialPublishEnabled || bCanUndo);
-			this._oToolbarControlsModel.setProperty("/restoreEnabled", this.bInitialResetEnabled || bCanUndo || bWasSaved);
-			this._oToolbarControlsModel.setProperty("/translationEnabled", this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange);
+			this._oToolbarControlsModel.setProperty("/undo/enabled", bCanUndo);
+			this._oToolbarControlsModel.setProperty("/redo/enabled", bCanRedo);
+			this._oToolbarControlsModel.setProperty("/save/enabled", bCanUndo);
+			this._oToolbarControlsModel.setProperty("/restore/enabled", this.bInitialResetEnabled || bCanUndo || bWasSaved);
+			this._oToolbarControlsModel.setProperty("/translation/enabled", this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange);
 		}
 		this.fireUndoRedoStackModified();
 	}
@@ -1171,7 +1170,7 @@ sap.ui.define([
 
 	function serializeAndSave(bActivateVersion, bCondenseAnyLayer) {
 		if (this.getShowToolbars()) {
-			this.bPersistedDataTranslatable = this._oToolbarControlsModel.getProperty("/translationEnabled");
+			this.bPersistedDataTranslatable = this._oToolbarControlsModel.getProperty("/translation/enabled");
 		}
 		var mPropertyBag = {
 			// Save changes on the current layer and discard dirty changes on other layers
@@ -1218,7 +1217,7 @@ sap.ui.define([
 		}).then(function() {
 			showMessageToast.call(this, "MSG_DRAFT_ACTIVATION_SUCCESS");
 			this.bInitialResetEnabled = true;
-			this._oToolbarControlsModel.setProperty("/restoreEnabled", true);
+			this._oToolbarControlsModel.setProperty("/restore/enabled", true);
 			this.getCommandStack().removeAllCommands();
 		}.bind(this))
 		.catch(function(oError) {
@@ -1346,7 +1345,7 @@ sap.ui.define([
 		}.bind(this));
 	}
 
-	function createToolsMenu(aButtonsVisibility) {
+	function createToolsMenu(mButtonsAvailability) {
 		if (!this.getDependent("toolbar")) {
 			var bUserLayer = this.getLayer() === Layer.USER;
 			var oProperties = {
@@ -1390,8 +1389,8 @@ sap.ui.define([
 			return Promise.all([oToolbar.onFragmentLoaded(), FeaturesAPI.isKeyUserTranslationEnabled(this.getLayer())])
 				.then(function(aArguments) {
 					var bTranslationAvailable = aArguments[1];
-					var bSaveAsAvailable = aButtonsVisibility.saveAsAvailable;
-					var bExtendedOverview = bSaveAsAvailable && RtaAppVariantFeature.isOverviewExtended();
+					var bAppVariantsAvailable = mButtonsAvailability.saveAsAvailable;
+					var bExtendedOverview = bAppVariantsAvailable && RtaAppVariantFeature.isOverviewExtended();
 					var oUriParameters = UriParameters.fromURL(window.location.href);
 					// the "Visualization" tab should not be visible if the "fiori-tools-rta-mode" URL-parameter is set to any value but "false"
 					var bVisualizationButtonVisible;
@@ -1399,23 +1398,54 @@ sap.ui.define([
 					this.bPersistedDataTranslatable = false;
 
 					this._oToolbarControlsModel = new JSONModel({
-						undoEnabled: false,
-						redoEnabled: false,
-						translationVisible: bTranslationAvailable,
-						translationEnabled: this.bPersistedDataTranslatable,
-						publishVisible: aButtonsVisibility.publishAvailable,
-						publishEnabled: this.bInitialPublishEnabled,
-						restoreEnabled: this.bInitialResetEnabled,
-						appVariantsOverviewVisible: bSaveAsAvailable && bExtendedOverview,
-						appVariantsOverviewEnabled: bSaveAsAvailable && bExtendedOverview,
-						saveAsVisible: bSaveAsAvailable,
-						contextBasedAdaptationVisible: aButtonsVisibility.contextBasedAdaptationAvailable,
-						saveAsEnabled: false,
-						manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
-						manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview,
 						modeSwitcher: this.getMode(),
-						visualizationButtonVisible: bVisualizationButtonVisible
+						undo: {
+							enabled: false
+						},
+						redo: {
+							enabled: false
+						},
+						save: {
+							enabled: false
+						},
+						translation: {
+							visible: bTranslationAvailable,
+							enabled: this.bPersistedDataTranslatable
+						},
+						appVariantMenu: {
+							visible: bAppVariantsAvailable,
+							enabled: bAppVariantsAvailable,
+							overview: {
+								visible: bAppVariantsAvailable && bExtendedOverview,
+								enabled: bAppVariantsAvailable && bExtendedOverview
+							},
+							manageApps: {
+								visible: bAppVariantsAvailable && !bExtendedOverview,
+								enabled: bAppVariantsAvailable && !bExtendedOverview
+							},
+							saveAs: {
+								visible: bAppVariantsAvailable,
+								enabled: bAppVariantsAvailable
+							}
+						},
+						restore: {
+							visible: !this._oVersionsModel.getProperty("/versioningEnabled"),
+							enabled: this.bInitialResetEnabled
+						},
+						contextBasedAdaptation: {
+							visible: mButtonsAvailability.contextBasedAdaptationAvailable,
+							enabled: mButtonsAvailability.contextBasedAdaptationAvailable
+						},
+						actionsMenuButton: {
+							enabled: true
+						},
+						visualizationButton: {
+							visible: bVisualizationButtonVisible,
+							enabled: bVisualizationButtonVisible
+						}
 					});
+
+					this._oVersionsModel.setProperty("/publishVersionVisible", mButtonsAvailability.publishAvailable);
 
 					var oTranslationPromise = new Promise(function(resolve) {
 						if (!bTranslationAvailable) {
@@ -1426,20 +1456,20 @@ sap.ui.define([
 						TranslationAPI.getSourceLanguages({selector: this.getRootControlInstance(), layer: this.getLayer()})
 							.then(function(aSourceLanguages) {
 								this.bPersistedDataTranslatable = aSourceLanguages.length > 0;
-								this._oToolbarControlsModel.setProperty("/translationEnabled", this.bPersistedDataTranslatable);
+								this._oToolbarControlsModel.setProperty("/translation/enabled", this.bPersistedDataTranslatable);
 							}.bind(this)).finally(resolve);
 					}.bind(this));
 
 					var oSaveAsPromise = new Promise(function(resolve) {
-						if (!bSaveAsAvailable) {
+						if (!bAppVariantsAvailable) {
 							resolve();
 							return;
 						}
 
 						RtaAppVariantFeature.isManifestSupported().then(function(bResult) {
-							this._oToolbarControlsModel.setProperty("/saveAsEnabled", bResult);
-							this._oToolbarControlsModel.setProperty("/appVariantsOverviewEnabled", bResult);
-							this._oToolbarControlsModel.setProperty("/manageAppsEnabled", bResult);
+							this._oToolbarControlsModel.setProperty("/appVariantMenu/saveAs/enabled", bResult);
+							this._oToolbarControlsModel.setProperty("/appVariantMenu/overview/enabled", bResult);
+							this._oToolbarControlsModel.setProperty("/appVariantMenu/manageApps/enabled", bResult);
 						}.bind(this)).finally(resolve);
 					}.bind(this));
 

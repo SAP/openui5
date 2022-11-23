@@ -1,6 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"../../RtaQunitUtils",
 	"sap/m/MessageBox",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
@@ -8,11 +9,11 @@ sap.ui.define([
 	"sap/ui/core/util/File",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/api/TranslationAPI",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/translation/Translation",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	RtaQunitUtils,
 	MessageBox,
 	Core,
 	Control,
@@ -20,7 +21,6 @@ sap.ui.define([
 	FileUtil,
 	Layer,
 	TranslationAPI,
-	JSONModel,
 	Adaptation,
 	Translation,
 	sinon
@@ -51,22 +51,9 @@ sap.ui.define([
 
 			this.oTranslation = new Translation({toolbar: this.oToolbar});
 
-			this.oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				translationEnabled: true,
-				translationAvailable: true,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
+			this.oToolbarControlsModel.setProperty("/translation/enabled", true);
+			this.oToolbarControlsModel.setProperty("/translation/visible", true);
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
 			sandbox.stub(TranslationAPI, "getSourceLanguages").resolves(["en-EN"]);

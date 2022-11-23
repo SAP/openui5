@@ -29,7 +29,6 @@ sap.ui.define([
 	var oCompCont;
 	var oView;
 
-
 	QUnit.module("Given RTA is started...", {
 		before: function () {
 			QUnit.config.fixture = null;
@@ -368,7 +367,6 @@ sap.ui.define([
 
 					assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
 					assert.strictEqual($editableField.find(document.activeElement).length, 1, " and focus is in it");
-
 					Promise.all([
 						new Promise(function (fnResolveOnCommandAdded) {
 							var oCommandStack = this.oRta.getCommandStack();

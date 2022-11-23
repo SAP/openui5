@@ -239,7 +239,7 @@ sap.ui.define([
 				assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
 				assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
 				assert.equal(this.oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
-				assert.equal(this.oRta.getToolbar().getModel("controls").getProperty("/restoreEnabled"), true, "RestoreEnabled is correctly set in Model");
+				assert.equal(this.oRta.getToolbar().getModel("controls").getProperty("/restore/enabled"), true, "RestoreEnabled is correctly set in Model");
 				assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
 				fnDone();
 			}.bind(this));
@@ -270,7 +270,7 @@ sap.ui.define([
 				assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
 				assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
 				assert.equal(this.oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
-				assert.equal(this.oRta.getToolbar().getModel("controls").getProperty("/restoreEnabled"), true, "RestoreEnabled is correctly set in Model");
+				assert.equal(this.oRta.getToolbar().getModel("controls").getProperty("/restore/enabled"), true, "RestoreEnabled is correctly set in Model");
 				assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
 				fnDone();
 			}.bind(this));

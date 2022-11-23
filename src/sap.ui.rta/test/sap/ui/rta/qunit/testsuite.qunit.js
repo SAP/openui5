@@ -643,6 +643,11 @@ sap.ui.define([
 			},
 			"toolbar/Adaptation": {
 				group: "Toolbar",
+				ui5: {
+					resourceroots: {
+						"sap.ui.rta.qunit": "test-resources/sap/ui/rta/qunit/"
+					}
+				},
 				coverage: {
 					only: ["sap/ui/rta/toolbar/Adaptation"]
 				}

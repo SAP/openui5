@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/core/Core",
@@ -28,6 +29,7 @@ sap.ui.define([
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
 	FakeLrepConnectorSessionStorage,
+	JSONModel,
 	QUnitUtils,
 	RuntimeAuthoring,
 	oCore,
@@ -250,6 +252,57 @@ sap.ui.define([
 
 	RtaQunitUtils.stubSapUiRequire = function() {
 		return FlQUnitUtils.stubSapUiRequire.apply(undefined, arguments);
+	};
+
+	RtaQunitUtils.showActionsMenu = function(oToolbar) {
+		return oToolbar.showActionsMenu({
+			getSource: function () {
+				return oToolbar.getControl("actionsMenu");
+			}
+		});
+	};
+
+	RtaQunitUtils.createToolbarControlsModel = function() {
+		return new JSONModel({
+			modeSwitcher: "adaptation",
+			undo: {
+				enabled: false
+			},
+			redo: {
+				enabled: false
+			},
+			save: {
+				enabled: false
+			},
+			restore: {
+				enabled: false
+			},
+			appVariantMenu: {
+				overview: {
+					visible: false,
+					enabled: false
+				},
+				saveAs: {
+					visible: false,
+					enabled: false
+				},
+				manageApps: {
+					visible: false,
+					enabled: false
+				}
+			},
+			contextBasedAdaptation: {
+				visible: false,
+				enabled: false
+			},
+			actionsMenuButton: {
+				enabled: true
+			},
+			visualizationButton: {
+				visible: false,
+				enabled: false
+			}
+		});
 	};
 
 	return RtaQunitUtils;
