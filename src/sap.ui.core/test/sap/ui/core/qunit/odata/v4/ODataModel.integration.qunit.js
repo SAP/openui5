@@ -46295,6 +46295,96 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: PATCHing a nested entity below an RVC fails. Check the resulting target path in the
+	// error message.
+	//
+	// BCP: 2270142577
+	QUnit.test("BCP: 2270142577", function (assert) {
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="artist" binding="{/Artists(ArtistID=\'1\',IsActiveEntity=true)}">\
+	<Text id="artistId" text="{ArtistID}"/>\
+</FlexBox>\
+<FlexBox id="form">\
+	<Input id="user" value="{DraftAdministrativeData/InProcessByUser}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='1',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity",
+				{ArtistID : "1", IsActiveEntity : true})
+			.expectChange("artistId", "1")
+			.expectChange("user");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oAction = oModel.bindContext("special.cases.EditAction(...)",
+					that.oView.byId("artist").getBindingContext());
+
+			that.expectRequest({
+				method : "POST",
+				url : "Artists(ArtistID='1',IsActiveEntity=true)/special.cases.EditAction",
+				payload : {}
+			}, {
+				ArtistID : "1",
+				IsActiveEntity : false
+			});
+
+			return Promise.all([
+				oAction.execute(),
+				that.waitForChanges(assert, "edit")
+			]);
+		}).then(function (aResults) {
+			that.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)"
+					+ "?$select=DraftAdministrativeData"
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
+					DraftAdministrativeData : {
+						DraftID : "2",
+						InProcessByUser : "JOHNDOE"
+					}
+				})
+				.expectChange("user", "JOHNDOE");
+
+			that.oView.byId("form").setBindingContext(aResults[0]);
+
+			return that.waitForChanges(assert, "bind RVC");
+		}).then(function () {
+			that.expectChange("user", "invalid")
+				.expectRequest({
+					method : "PATCH",
+					url : "Artists(ArtistID='1',IsActiveEntity=false)/DraftAdministrativeData",
+					payload : {InProcessByUser : "invalid"}
+				}, createErrorInsideBatch({
+					details : [{
+						message : "Invalid User",
+						target : "InProcessByUser",
+						"@Common.numericSeverity" : 4
+					}]
+				}))
+				.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}, {
+					message : "Invalid User",
+					persistent : true,
+					target : "/Artists(ArtistID='1',IsActiveEntity=false)/DraftAdministrativeData"
+						+ "/InProcessByUser",
+					type : "Error"
+				}]);
+
+			that.oLogMock.expects("error")
+				.withArgs("Failed to update path /Artists(ArtistID='1',IsActiveEntity=false)"
+					+ "/DraftAdministrativeData/InProcessByUser");
+
+			that.oView.byId("user").getBinding("value").setValue("invalid");
+
+			return that.waitForChanges(assert, "patch nested entity");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: ODLB#getAllCurrentContexts must not fire unnecessary change events and must not
 	// modify internal states of the binding. Calling ODLB#getLength afterwards works as expected.
 	//

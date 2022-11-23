@@ -609,7 +609,7 @@ sap.ui.define([
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
 				"TEAMS('TEAM_01')/TEAM_2_MANAGER", {"sap-client" : "111"}, false,
-				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func)
+				sinon.match.same(this.oModel.bSharedRequests), "TEAMS('TEAM_01')/TEAM_2_MANAGER")
 			.returns({});
 
 		// code under test
@@ -3763,34 +3763,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[true, false].forEach(function (bAutoExpandSelect, i) {
-		QUnit.test("doCreateCache, " + i, function (assert) {
-			var oBinding = this.bindContext("/EMPLOYEES('1')"),
-				oCache = {},
-				mCacheQueryOptions = {},
-				oCreateSingleExpectation,
-				sDeepResourcePath = "deep/resource/path",
-				fnGetOriginalResourcePath;
+	QUnit.test("doCreateCache, ", function (assert) {
+		var oBinding = this.bindContext("/EMPLOYEES('1')"),
+			oCache = {},
+			sDeepResourcePath = "deep/resource/path";
 
-			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
+		this.oModel.bAutoExpandSelect = "~bAutoExpandSelect~";
+		this.oModel.bSharedRequests = "~bSharedRequests~";
 
-			oCreateSingleExpectation = this.mock(_Cache).expects("createSingle")
-				.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES('1')",
-					sinon.match.same(mCacheQueryOptions), bAutoExpandSelect,
-					sinon.match.same(this.oModel.bSharedRequests), sinon.match.func)
-				.returns(oCache);
+		this.mock(_Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES('1')",
+				"~mCacheQueryOptions~", "~bAutoExpandSelect~", "~bSharedRequests~",
+				sDeepResourcePath)
+			.returns(oCache);
 
-			// code under test
-			assert.strictEqual(
-				oBinding.doCreateCache("EMPLOYEES('1')", mCacheQueryOptions, undefined,
-					sDeepResourcePath),
-				oCache);
-
-			fnGetOriginalResourcePath = oCreateSingleExpectation.args[0][5];
-
-			// code under test
-			assert.strictEqual(fnGetOriginalResourcePath(), sDeepResourcePath);
-		});
+		// code under test
+		assert.strictEqual(
+			oBinding.doCreateCache("EMPLOYEES('1')", "~mCacheQueryOptions~", undefined,
+				sDeepResourcePath),
+			oCache);
 	});
 
 	//*********************************************************************************************
