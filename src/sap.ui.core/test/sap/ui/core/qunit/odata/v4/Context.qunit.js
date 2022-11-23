@@ -3715,6 +3715,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resetChanges: throws error on transient context", function (assert) {
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.resetChanges();
+		}, new Error("Cannot reset a transient context: /path"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("resetKeepAlive", function (assert) {
 		var oBinding = {
 				checkKeepAlive : function () {}

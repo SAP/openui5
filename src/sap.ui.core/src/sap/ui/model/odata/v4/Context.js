@@ -1588,9 +1588,13 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise which is resolved without a defined result as soon as all changes in the context
 	 *   itself are canceled
-	 * @throws {Error}
-	 *   If the binding's root binding is suspended or if there is a change of this context which
-	 *   has been sent to the server and for which there is no response yet
+	 * @throws {Error} If
+	 * <ul>
+	 *   <li> the binding's root binding is suspended,
+	 *   <li> a change of this context has already been sent to the server and there is no response
+	 *     yet,
+	 *   <li> this context is transient and therefore should rather be reset via {@link #delete}.
+	 * </ul>
 	 *
 	 * @experimental As of version 1.109.0
 	 * @public
@@ -1599,6 +1603,10 @@ sap.ui.define([
 		var aPromises = this.oDeletePromise
 				? [this.oDeletePromise.catch(function () { /*already handled in #delete*/ })]
 				: [];
+
+		if (this.isTransient()) {
+			throw new Error("Cannot reset a transient context: " + this);
+		}
 
 		this.oBinding.checkSuspended();
 		this.oBinding.resetChangesForPath(this.sPath, aPromises);
