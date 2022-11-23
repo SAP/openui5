@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FlexObjectFactory,

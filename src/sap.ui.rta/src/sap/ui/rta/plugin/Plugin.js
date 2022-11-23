@@ -8,10 +8,9 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/rta/util/hasStableId"
-],
-function(
+], function(
 	Plugin,
 	ChangesWriteAPI,
 	OverlayRegistry,

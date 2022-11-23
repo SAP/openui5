@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/changeHandler/condenser/Classification",
-	'sap/ui/fl/changeHandler/JsControlTreeModifier'
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	Log,
 	CondenserClassification,

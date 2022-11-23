@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/changeHandler/condenser/Classification",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier"
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	LayerUtils,
 	CondenserClassification,

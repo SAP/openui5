@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/changeHandler/AddXML",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
-	"sap/ui/fl/changeHandler/XmlTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/m/HBox",
 	"sap/m/Button",
 	"sap/ui/core/Core"
