@@ -558,10 +558,22 @@ sap.ui.define([
 		if (aVisibleIndicators.length === 0) {
 			return;
 		}
+
+		var aVisibleIndicatorsOnScrollPosition = [];
 		aVisibleIndicators.forEach(function(oIndicator, iIndex) {
 			oIndicator.getDomRef().tabIndex = iIndex + 2;
+			// Indicators with posY < 0 are outside of the current scroll position
+			if (oIndicator.getPosY() > 0) {
+				aVisibleIndicatorsOnScrollPosition.push(oIndicator);
+			}
 		});
-		aVisibleIndicators[0].focus();
+		if (aVisibleIndicatorsOnScrollPosition.length > 0) {
+			// Indicators visible with the current scroll position get focus
+			// to avoid unexpected scrolling when visualization is started
+			aVisibleIndicatorsOnScrollPosition[0].focus();
+		} else {
+			aVisibleIndicators[0].focus();
+		}
 	};
 
 	ChangeVisualization.prototype._toggleRootOverlayClickHandler = function (bEnable) {
