@@ -1,21 +1,20 @@
 <mvc:View
-    xmlns="sap.m"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid"
 	xmlns:f="sap.f"
-    controllerName="sap.f.gridlist.controller.Main">
+	controllerName="sap.f.gridlist.controller.Main">
 
-    <f:GridList
+	<f:GridList
 		headerText="GridList with a basic layout"
 		items="{ path: '/' }">
 
-        <f:customLayout>
-            <grid:GridBasicLayout
+		<f:customLayout>
+			<grid:GridBasicLayout
 				gridTemplateColumns="repeat(auto-fit, 8rem)"
-
 				gridGap="0.25rem 0.25rem">
-            </grid:GridBasicLayout>
-        </f:customLayout>
+			</grid:GridBasicLayout>
+		</f:customLayout>
 
 		<CustomListItem>
 			<VBox height="100%">
@@ -28,9 +27,9 @@
 				</VBox>
 			</VBox>
 		</CustomListItem>
-    </f:GridList>
+	</f:GridList>
 
-    <f:GridList
+	<f:GridList
 		headerText="GridList with default grid layout"
 		items="{ path: '/' }">
 
@@ -45,5 +44,7 @@
 				</VBox>
 			</VBox>
 		</CustomListItem>
-    </f:GridList>
+	</f:GridList>
+
+	<f:GridList id="noItems" headerText="GridList with no items" />
 </mvc:View>
