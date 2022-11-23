@@ -371,6 +371,7 @@ sap.ui.define([
 		// (e.g. IconPool which includes font files from sap.ui.core base theme)
 		_ensureThemeRoot(sLibName, "base");
 
+		mAllLoadedLibraries[sLibName] = oLibThemingInfo;
 		if (Configuration.getValue('preloadLibCss').indexOf(sLibName) < 0) {
 			this.includeLibraryTheme(sLibName, oLibThemingInfo.variant, oLibThemingInfo);
 		}
@@ -394,7 +395,6 @@ sap.ui.define([
 		if (typeof sQuery === "object") {
 			// check for configured query parameters and use them
 			sQuery = getLibraryCssQueryParams(vQueryOrLibInfo);
-			mAllLoadedLibraries[sLibName] = vQueryOrLibInfo;
 		}
 
 		/*
@@ -617,6 +617,8 @@ sap.ui.define([
 			// fallback to legacy logic
 			sLibName = oLink.id.slice(13); // length of "sap-ui-theme-"
 		}
+
+		mAllLoadedLibraries[sLibName] = mAllLoadedLibraries[sLibName] || {};
 
 		if (iQueryIndex > -1) {
 			// Split href on query and/or fragment to check for the standard lib file prefix
