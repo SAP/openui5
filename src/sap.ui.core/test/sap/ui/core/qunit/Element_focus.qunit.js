@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/m/Input"
-], function(BusyIndicator, Button, Dialog, createAndAppendDiv, Input) {
+	"sap/m/Input",
+	"sap/m/Panel"
+], function(BusyIndicator, Button, Dialog, createAndAppendDiv, Input, Panel) {
 	"use strict";
 
 	QUnit.module("Focus Issue");
@@ -76,4 +77,166 @@ sap.ui.define([
 		}, 0);
 	});
 
+	QUnit.module("#isFocusable");
+
+	QUnit.test("Element isn't focusable when it's invisible", function(assert) {
+		var oUIArea = createAndAppendDiv("uiarea_focus");
+
+		var oInput = new Input();
+		oInput.placeAt("uiarea_focus");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
+
+		oInput.setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because it's invisible");
+
+		oInput.destroy();
+		oUIArea.remove();
+	});
+
+	QUnit.test("Element isn't focusable when it's busy", function(assert) {
+		var oUIArea = createAndAppendDiv("uiarea_focus");
+
+		var oInput = new Input();
+		oInput.placeAt("uiarea_focus");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
+
+		oInput.setBusy(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because it's busy");
+
+		oInput.destroy();
+		oUIArea.remove();
+	});
+
+	QUnit.test("Element isn't focusable when it's blocked", function(assert) {
+		var oUIArea = createAndAppendDiv("uiarea_focus");
+
+		var oInput = new Input();
+		oInput.placeAt("uiarea_focus");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
+
+		oInput.setBlocked(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because it's blocked");
+
+		oInput.destroy();
+		oUIArea.remove();
+	});
+
+	QUnit.test("Element isn't focusable when its parent is busy", function(assert) {
+		var oUIArea = createAndAppendDiv("uiarea_focus");
+
+		var oInput = new Input();
+		var oPanel = new Panel({
+			content: oInput
+		});
+		oPanel.placeAt("uiarea_focus");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!oPanel.isFocusable(), "Panel doesn't have focusable DOM element");
+		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
+
+		oInput.setBusy(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because its parent is busy");
+
+		oPanel.destroy();
+		oUIArea.remove();
+	});
+
+	QUnit.test("Element isn't focusable when its parent is blocked", function(assert) {
+		var oUIArea = createAndAppendDiv("uiarea_focus");
+
+		var oInput = new Input();
+		var oPanel = new Panel({
+			content: oInput
+		});
+		oPanel.placeAt("uiarea_focus");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!oPanel.isFocusable(), "Panel doesn't have focusable DOM element");
+		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
+
+		oInput.setBlocked(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because its parent is busy");
+
+		oPanel.destroy();
+		oUIArea.remove();
+	});
+
+	QUnit.test("Element isn't focusable when global BusyIndicator is open", function(assert) {
+		var oUIArea = createAndAppendDiv("uiarea_focus");
+
+		var oInput = new Input();
+		oInput.placeAt("uiarea_focus");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
+
+		BusyIndicator.show(0);
+		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because it's blocked");
+
+		BusyIndicator.hide();
+		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
+
+		oInput.destroy();
+		oUIArea.remove();
+	});
+
+	QUnit.test("Element isn't focusable when modal Popup is open", function(assert) {
+		var done = assert.async();
+		var oUIArea = createAndAppendDiv("uiarea_focus");
+
+		var oInput = new Input();
+		oInput.placeAt("uiarea_focus");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
+
+		var oDialog = new Dialog();
+		oDialog.attachAfterOpen(function() {
+			assert.ok(!oInput.isFocusable(), "The input control should be not focusable because modal popup is open");
+
+			oDialog.destroy();
+			oInput.destroy();
+			oUIArea.remove();
+			done();
+		});
+
+		oDialog.open();
+	});
+
+	QUnit.test("Element is focusable when modal Popup is open and it's in the modal popup", function(assert) {
+		var done = assert.async();
+		var oInput = new Input();
+		var oDialog = new Dialog({
+			content: oInput
+		});
+
+		oDialog.attachAfterOpen(function() {
+			assert.ok(oInput.isFocusable(), "The input control should now be focusable");
+
+			oDialog.attachAfterClose(function() {
+				oDialog.destroy();
+				done();
+			});
+
+			oDialog.close();
+		});
+
+		oDialog.open();
+	});
 });
