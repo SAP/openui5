@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModelEnhanceWith",
 	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	_omit,
@@ -24,7 +23,6 @@ sap.ui.define([
 	AddNewModelEnhanceWith,
 	AppDescriptorChange,
 	Log,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -44,9 +42,12 @@ sap.ui.define([
 	QUnit.module("Runtime: applyChange", {
 		beforeEach: function (assert) {
 			var done = assert.async();
-			jQuery.getJSON("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
-				.done(function(oTestApplierManifestResponse) {
-					this.oManifest = oTestApplierManifestResponse;
+			fetch("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
+				.then(function(oTestApplierManifestResponse) {
+					return oTestApplierManifestResponse.json();
+				})
+				.then(function(oTestApplierManifestResponseJSON) {
+					this.oManifest = oTestApplierManifestResponseJSON;
 					done();
 				}.bind(this));
 

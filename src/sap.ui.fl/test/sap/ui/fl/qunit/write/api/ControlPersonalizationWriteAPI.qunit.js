@@ -515,111 +515,107 @@ sap.ui.define([
 				}
 			});
 
-			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null, function(viewContent) {
-				var oViewPromise;
-				var MockComponent = UIComponent.extend("MockController", {
-					metadata: {
-						manifest: {
-							"sap.app": {
-								applicationVersion: {
-									version: "1.2.3"
-								},
-								id: "MockController"
-							}
+			var oViewPromise;
+			var MockComponent = UIComponent.extend("MockController", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
+							},
+							id: "MockController"
 						}
-					},
-					createContent: function() {
-						var oApp = new App(this.createId("mockapp"));
-						var oRootView;
-						oViewPromise = XMLView.create({
-							id: this.createId("root-mockview"),
-							definition: '<mvc:View id="mockview" xmlns:mvc="sap.ui.core.mvc"/>'
-						}).then(function(oView) {
-							oRootView = oView;
-							oApp.addPage(oView);
-							return oView.loaded();
-						}).then(function() {
-							return XMLView.create({
-								id: this.createId("mockview"),
-								definition: viewContent
-							});
-						}.bind(this)).then(function(oView) {
-							var oDialog = new Dialog("dialog", {
-								content: oView
-							});
-							oRootView.addDependent(oDialog);
-							oDialog.open();
-							return oView.loaded();
-						});
-						return oApp;
 					}
-				});
-				this.oComp = new MockComponent("testComponent");
-
-				oViewPromise.then(function() {
-					this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
-					this.oVariantModel = new VariantModel({
-						variantManagement: {
-							variants: []
-						}
-					}, {
-						flexController: this.oFlexController,
-						appComponent: this.oComp
+				},
+				createContent: function() {
+					var oApp = new App(this.createId("mockapp"));
+					var oRootView;
+					oViewPromise = XMLView.create({
+						id: this.createId("root-mockview"),
+						definition: '<mvc:View id="mockview" xmlns:mvc="sap.ui.core.mvc"/>'
+					}).then(function(oView) {
+						oRootView = oView;
+						oApp.addPage(oView);
+						return oView.loaded();
+					}).then(function() {
+						return XMLView.create({
+							id: this.createId("mockview"),
+							viewName: "test-resources.sap.ui.fl.qunit.testResources.VariantManagementTestApp"
+						});
+					}.bind(this)).then(function(oView) {
+						var oDialog = new Dialog("dialog", {
+							content: oView
+						});
+						oRootView.addDependent(oDialog);
+						oDialog.open();
+						return oView.loaded();
 					});
-					sandbox.stub(this.oVariantModel, "addChange");
-					return this.oVariantModel.initialize();
-				}.bind(this))
-				.then(function() {
-					this.oComp.setModel(this.oVariantModel, ControlVariantApplyAPI.getVariantModelName());
-					this.oCompContainer = new ComponentContainer({
-						component: this.oComp
-					}).placeAt("qunit-fixture");
+					return oApp;
+				}
+			});
+			this.oComp = new MockComponent("testComponent");
 
-					this.mMoveChangeData1 = {
-						selectorElement: Core.byId("testComponent---mockview--ObjectPageLayout"),
-						changeSpecificData: {
-							changeType: "moveControls",
-							movedElements: [{
-								id: "testComponent---mockview--ObjectPageSection1",
-								sourceIndex: 0,
-								targetIndex: 1
-							}],
-							source: {
-								id: "testComponent---mockview--ObjectPageLayout",
-								aggregation: "sections"
-							},
-							target: {
-								id: "testComponent---mockview--ObjectPageLayout",
-								aggregation: "sections"
-							}
+			oViewPromise.then(function() {
+				this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
+				this.oVariantModel = new VariantModel({
+					variantManagement: {
+						variants: []
+					}
+				}, {
+					flexController: this.oFlexController,
+					appComponent: this.oComp
+				});
+				sandbox.stub(this.oVariantModel, "addChange");
+				return this.oVariantModel.initialize();
+			}.bind(this)).then(function() {
+				this.oComp.setModel(this.oVariantModel, ControlVariantApplyAPI.getVariantModelName());
+				this.oCompContainer = new ComponentContainer({
+					component: this.oComp
+				}).placeAt("qunit-fixture");
+				this.mMoveChangeData1 = {
+					selectorElement: Core.byId("testComponent---mockview--ObjectPageLayout"),
+					changeSpecificData: {
+						changeType: "moveControls",
+						movedElements: [{
+							id: "testComponent---mockview--ObjectPageSection1",
+							sourceIndex: 0,
+							targetIndex: 1
+						}],
+						source: {
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
+						},
+						target: {
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
 						}
-					};
-					this.mMoveChangeData2 = {
-						selectorElement: Core.byId("testComponent---mockview--ObjectPageLayout"),
-						changeSpecificData: {
-							changeType: "moveControls",
-							movedElements: [{
-								id: "testComponent---mockview--ObjectPageSection3",
-								sourceIndex: 2,
-								targetIndex: 1
-							}],
-							source: {
-								id: "testComponent---mockview--ObjectPageLayout",
-								aggregation: "sections"
-							},
-							target: {
-								id: "testComponent---mockview--ObjectPageLayout",
-								aggregation: "sections"
-							}
+					}
+				};
+				this.mMoveChangeData2 = {
+					selectorElement: Core.byId("testComponent---mockview--ObjectPageLayout"),
+					changeSpecificData: {
+						changeType: "moveControls",
+						movedElements: [{
+							id: "testComponent---mockview--ObjectPageSection3",
+							sourceIndex: 2,
+							targetIndex: 1
+						}],
+						source: {
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
+						},
+						target: {
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
 						}
-					};
+					}
+				};
 
-					this.fnLogErrorStub = sandbox.stub(Log, "error");
-					this.fnApplyChangeSpy = sandbox.spy(this.oFlexController, "applyChange");
+				this.fnLogErrorStub = sandbox.stub(Log, "error");
+				this.fnApplyChangeSpy = sandbox.spy(this.oFlexController, "applyChange");
 
-					//registration is triggered by instantiation of XML View above
-					ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(done);
-				}.bind(this));
+				//registration is triggered by instantiation of XML View above
+				ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(done);
 			}.bind(this));
 		},
 		afterEach: function() {

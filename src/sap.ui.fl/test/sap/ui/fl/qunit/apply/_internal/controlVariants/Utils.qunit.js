@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	App,
@@ -17,8 +16,7 @@ sap.ui.define([
 	Core,
 	UIComponent,
 	VariantUtils,
-	FlexObjectFactory,
-	jQuery
+	FlexObjectFactory
 ) {
 	"use strict";
 
@@ -67,38 +65,35 @@ sap.ui.define([
 	QUnit.module("Given a view with variant management controls", {
 		before: function(assert) {
 			var done = assert.async();
-
-			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null, function(viewContent) {
-				var oViewPromise;
-				var MockComponent = UIComponent.extend("MockController", {
-					metadata: {
-						manifest: {
-							"sap.app": {
-								applicationVersion: {
-									version: "1.2.3"
-								}
+			var oViewPromise;
+			var MockComponent = UIComponent.extend("MockController", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							}
 						}
-					},
-					createContent: function() {
-						var oApp = new App(this.createId("mockapp"));
-						oViewPromise = XMLView.create({
-							id: this.createId("mockview"),
-							definition: viewContent
-						}).then(function(oView) {
-							oApp.addPage(oView);
-							return oView.loaded();
-						});
-						return oApp;
 					}
-				});
-				this.oComp = new MockComponent("testComponent2");
-				this.oCompContainer = new ComponentContainer("foo", {
-					component: this.oComp
-				}).placeAt("qunit-fixture");
+				},
+				createContent: function() {
+					var oApp = new App(this.createId("mockapp"));
+					oViewPromise = XMLView.create({
+						id: this.createId("mockview"),
+						viewName: "test-resources.sap.ui.fl.qunit.testResources.VariantManagementTestApp"
+					}).then(function(oView) {
+						oApp.addPage(oView);
+						return oView.loaded();
+					});
+					return oApp;
+				}
+			});
+			this.oComp = new MockComponent("testComponent2");
+			this.oCompContainer = new ComponentContainer("foo", {
+				component: this.oComp
+			}).placeAt("qunit-fixture");
 
-				oViewPromise.then(done);
-			}.bind(this));
+			oViewPromise.then(done);
 		},
 		after: function() {
 			this.oComp.destroy();
