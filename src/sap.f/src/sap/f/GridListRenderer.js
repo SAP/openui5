@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @override
 	 */
 	GridListRenderer.getNoDataAriaRole = function() {
-		return "option";
+		return "listitem";
 	};
 
 	/**

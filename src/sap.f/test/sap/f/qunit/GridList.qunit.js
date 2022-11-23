@@ -442,7 +442,7 @@ function (
 
 		// Assert
 		assert.ok($noDataItem.length, "No data item is rendered.");
-		assert.strictEqual($noDataItem.attr("role"), "option", "No data item has role option.");
+		assert.strictEqual($noDataItem.attr("role"), "listitem", "No data item has role listitem.");
 	});
 
 	QUnit.module("Keyboard handling", {

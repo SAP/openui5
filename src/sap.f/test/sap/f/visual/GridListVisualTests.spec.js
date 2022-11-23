@@ -1,4 +1,6 @@
+/* eslint-env node */
 /* global describe, it, element, by, takeScreenshot, browser, expect */
+var utils = require("../../../../../sap.ui.integration/test/sap/ui/integration/visual/cardVisualTestUtils");
 
 describe("sap.f.GridListVisualTests", function () {
 	"use strict";
@@ -27,6 +29,17 @@ describe("sap.f.GridListVisualTests", function () {
 			});
 
 		takePictureOfContent("0_general");
+	});
+
+	it("should visualize GridList with no items", function () {
+		utils.takePictureOfElement({
+			control: {
+				viewNamespace: "sap.f.gridlist.view.examples.",
+				viewName: "General",
+				interaction: "root",
+				id: "noItems"
+			}
+		}, "0_general_noItems");
 	});
 
 	it("should visualize GridList with breakpoints", function () {
