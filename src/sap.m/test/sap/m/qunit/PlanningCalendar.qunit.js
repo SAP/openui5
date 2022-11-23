@@ -987,7 +987,6 @@ sap.ui.define([
 	QUnit.module("rendering - 1Week View", {
 		beforeEach: function () {
 			this.oPC = createPlanningCalendar("PC3", new SearchField(), new Button());
-
 		},
 		afterEach: function () {
 			this.oPC.destroy();
@@ -1011,8 +1010,8 @@ sap.ui.define([
 
 		iVisibleIntervals = jQuery("#PC3-WeeksRow .sapUiCalItem").length;
 		assert.equal(iVisibleIntervals, 7, "days are 7");
-		oEndDate = CalendarUtils.getFirstDateOfWeek(oPCStartDate);
-		oEndDate.setDate(oEndDate.getUTCDate() + iVisibleIntervals - 1);
+		oEndDate = new Date(2015,0,4,8,0,0);
+
 		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
 
 		assert.equal(this.oPC.getVisibleIntervalsCount(), 7, "correct number of shown intervals");
@@ -1032,8 +1031,7 @@ sap.ui.define([
 		iVisibleIntervals = jQuery("#PC3-WeeksRow .sapUiCalItem").length;
 		assert.equal(iVisibleIntervals, 7, "days are 7");
 
-		oEndDate = CalendarUtils.getFirstDateOfWeek(oPCStartDate);
-		oEndDate.setDate(oEndDate.getUTCDate() + iVisibleIntervals - 1);
+		oEndDate = new Date(2015,0,4,8,0,0);
 		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
 
 		assert.equal(this.oPC.getVisibleIntervalsCount(), 7, "correct number of shown intervals");
@@ -3568,17 +3566,16 @@ sap.ui.define([
 		this.oPC2.setViewKey(CalendarIntervalType.Day);
 
 		var oStartDate = this.oPC2.getStartDate(),
-			oLastDay,
-			oComparisonDate = new Date(oStartDate.getTime());
+			oLastDay;
 
 		//Act
-		oComparisonDate.setDate(oComparisonDate.getDate() + 1);
+		oStartDate.setDate(oStartDate.getDate() + 1);
 		Core.applyChanges();
-		oLastDay = new Date(2016, 8, 12);
+		oLastDay = new Date(2016, 8, 12, 0, 0, 0);
 		this.oPC2.shiftToDate(oLastDay, false);
 
 		//Assert
-		assert.deepEqual(this.oPC2.getStartDate(), oComparisonDate, "Navigation via keyboard when in days view works");
+		assert.deepEqual(this.oPC2.getStartDate(), oStartDate, "Navigation via keyboard when in days view works");
 	});
 
 	QUnit.test("Navigation forward via keyboard right (outside the current visible area) and reaching the limit", function(assert) {
