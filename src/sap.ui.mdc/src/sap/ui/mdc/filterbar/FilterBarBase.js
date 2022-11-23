@@ -237,19 +237,19 @@ sap.ui.define([
 				filtersChanged: {
 					parameters: {
 						/**
-						 * indicates if the event is base on condition changes
+						 * Indicates if the event is based on condition changes
 						 */
 						conditionsBased: {
 							type: "boolean"
 						},
 						/**
-						 * display text for a collapsed header
+						 * Display text for a collapsed header
 						 */
 						filtersText: {
 							type: "string"
 						},
 						/**
-						 * display text for an expanded header
+						 * Display text for an expanded header
 						 */
 						filtersTextExpanded: {
 							type: "string"
@@ -458,11 +458,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * @typedef {object} sap.ui.mdc.State.XConditionValueRanges
+	 * @property {{string, string} | {integer, integer} | {float, float}} Range values for a condition
+	 */
+	/**
+	 * @typedef {object} sap.ui.mdc.State.XConditionValue
+	 * @property {string} Operator of the condition
+	 * @property {string[] | integer[] | float[] | boolean[] | sap.ui.mdc.State.XConditionValueRanges[]} Values of the condition
+	 */
+	/**
+	 * @typedef {object} sap.ui.mdc.State.XCondition
+	 * @property {string} Name of the condition
+	 * @property {sap.ui.mdc.State.XConditionValue[]} Values of the condition
+	 */
+	/**
+	 * @typedef {object} sap.ui.mdc.State
+	 * @property {sap.ui.mdc.State.XCondition[]} filter Describes the filter conditions
+	 * @property {string[]} items Describes the filter fields
+	 */
+	/**
 	 * Returns the externalized conditions of the inner condition model.
-	 * This method may only be called, once the <code>initialzed</code> is resolved.
-	 * <b>Note:</b> This API may return attributes corresponding to the <code>p13nMode</code> property configuration.
+	 * This method can only be called, once the <code>initialized</code> has been resolved.
+	 * <b>Note:</b> This API may return attributes related to the <code>p13nMode</code> property configuration.
 	 * @protected
-	 * @returns {object} object containing the current status of the FilterBarBase
+	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBarBase</code>
 	 */
 	FilterBarBase.prototype.getCurrentState = function() {
 		var oState = {};
