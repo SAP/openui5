@@ -2332,7 +2332,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#getEntryData
 	 */
 	ODataListBinding.prototype.getEntryData = function (oContext) {
-		return JSON.stringify(oContext.getValue()); // Note: avoids _Helper.publicClone
+		return _Helper.publicClone(oContext.getValue(), false, true);
 	};
 
 	/**

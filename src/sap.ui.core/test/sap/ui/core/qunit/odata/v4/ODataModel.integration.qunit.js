@@ -13018,10 +13018,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect mode for use with factory function to create a listBinding
+	// BCP: 2280173776: Do not fail if E.C.D. with bDetectUpdates is active and a context is
+	// created.
 	QUnit.test("Auto-$expand/$select: use factory function", function (assert) {
-		var that = this,
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			sView = '\
-<Table id="table" items="{\
+<Table id="table" growing="true" growingThreshold="5" items="{\
 		factory : \'.employeesListFactory\',\
 		parameters : {\
 			$select : \'AGE,ID\'\
@@ -13030,6 +13032,8 @@ sap.ui.define([
 	}">\
 	<columns><Column/></columns>\
 </Table>',
+			that = this,
+
 			oController = {
 				employeesListFactory : function (sID, oContext) {
 					var sAge,
@@ -13047,7 +13051,7 @@ sap.ui.define([
 				}
 			};
 
-		this.expectRequest("EMPLOYEES?$select=AGE,ID&$skip=0&$top=100", {
+		this.expectRequest("EMPLOYEES?$select=AGE,ID&$skip=0&$top=5", {
 				value : [
 					{AGE : 29, ID : "R2D2"},
 					{AGE : 36, ID : "C3PO"}
@@ -13055,8 +13059,13 @@ sap.ui.define([
 			})
 			.expectChange("text", ["R2D2", "36"]);
 
-		return this.createView(assert, sView, this.createTeaBusiModel({autoExpandSelect : true}),
-			oController);
+		return this.createView(assert, sView, oModel, oController).then(function () {
+			that.expectChange("text", ["42"]);
+
+			that.oView.byId("table").getBinding("items").create({AGE : 42});
+
+			return that.waitForChanges(assert);
+		});
 	});
 
 	//*********************************************************************************************
