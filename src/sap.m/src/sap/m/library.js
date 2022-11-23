@@ -292,6 +292,7 @@ sap.ui.define([
 			"sap.m.OverflowToolbar",
 			"sap.m.OverflowToolbarButton",
 			"sap.m.OverflowToolbarToggleButton",
+			"sap.m.OverflowToolbarMenuButton",
 			"sap.m.P13nColumnsPanel",
 			"sap.m.P13nGroupPanel",
 			"sap.m.P13nSelectionPanel",
