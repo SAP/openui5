@@ -529,14 +529,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("header", function (assert) {
-		assert.strictEqual(this.toolPage.$().find("header").length, 1, "header is rendered");
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 1, "header is rendered");
 	});
 
 	QUnit.test("header and subheader", function (assert) {
 		this.toolPage.setSubHeader(new ToolHeader());
 		Core.applyChanges();
 
-		assert.strictEqual(this.toolPage.$().find("header").length, 2, "header and subheader are rendered");
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 2, "header and subheader are rendered");
 	});
 
 	QUnit.test("set subheader visibility to true|false", function (assert) {
@@ -545,16 +545,16 @@ sap.ui.define([
 		this.toolPage.setSubHeader(oToolHeader);
 		Core.applyChanges();
 
-		assert.strictEqual(this.toolPage.$().find("header").length, 2, "header and subheader are rendered");
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 2, "header and subheader are rendered");
 
 		oToolHeader.setVisible(false);
 		Core.applyChanges();
 
-		assert.strictEqual(this.toolPage.$().find("header").length, 1, "subheader is not rendered");
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 1, "subheader is not rendered");
 
 		oToolHeader.setVisible(true);
 		Core.applyChanges();
-		assert.strictEqual(this.toolPage.$().find("header").length, 2, "header and subheader are rendered");
+		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 2, "header and subheader are rendered");
 	});
 
 	QUnit.test("set side navigation visibility to true|false", function (assert) {
