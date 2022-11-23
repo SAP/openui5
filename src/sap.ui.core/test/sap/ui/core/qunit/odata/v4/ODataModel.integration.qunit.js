@@ -3206,8 +3206,7 @@ sap.ui.define([
 			var oReturnValueContext = aResults[0];
 
 			that.expectChange("id2", "1")
-				// three late property requests (one had only a $expand, so SO_2_BP is selected too)
-				.expectRequest("SalesOrderList('1')?$select=Note,NoteLanguage,SO_2_BP"
+				.expectRequest("SalesOrderList('1')?$select=Note,NoteLanguage"
 					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,LegalForm)", {
 					Note : "Note #1",
 					NoteLanguage : "en",
@@ -3600,11 +3599,10 @@ sap.ui.define([
 			assert.strictEqual(oTable.getBinding("items").getCount(), undefined);
 			assert.strictEqual(oTable.getBinding("items").getLength(), 12);
 
-			// two late property requests (one had only a $expand, so EMPLOYEE_2_TEAM is selected)
 			that.expectRequest({
 					batchNo : 2,
 					url : "TEAMS('1')/TEAM_2_EMPLOYEES('2')?sap-client=123"
-						+ "&$select=AGE,EMPLOYEE_2_TEAM&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
+						+ "&$select=AGE&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
 						+ "$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))"
 				}, {
 					"@odata.etag" : "etag0",
@@ -12896,7 +12894,7 @@ sap.ui.define([
 			oContext = oTable.getItems()[0].getBindingContext();
 
 			// 'Budget' and 'Name' are added to the table row
-			that.expectRequest("TEAMS('TEAM_01')?$select=Budget,MANAGER_ID,Name,TEAM_2_MANAGER"
+			that.expectRequest("TEAMS('TEAM_01')?$select=Budget,MANAGER_ID,Name"
 					+ "&$expand=TEAM_2_MANAGER($select=ID,TEAM_ID)", {
 					Budget : "456",
 					MANAGER_ID : "Manager_01",
@@ -12913,7 +12911,7 @@ sap.ui.define([
 			// JIRA: CPOUI5ODATAV4-459
 			return that.setInvalidBudgetCurrency(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS('TEAM_02')?$select=Budget,MANAGER_ID,Name,TEAM_2_MANAGER"
+			that.expectRequest("TEAMS('TEAM_02')?$select=Budget,MANAGER_ID,Name"
 					+ "&$expand=TEAM_2_MANAGER($select=ID,TEAM_ID)", {
 					Budget : "789",
 					MANAGER_ID : "Manager_02",
@@ -12944,7 +12942,7 @@ sap.ui.define([
 					]
 				})
 				.expectChange("currency", ["UAH", "UAH"])
-				.expectRequest("TEAMS('TEAM_02')?$select=Budget,MANAGER_ID,Name,TEAM_2_MANAGER"
+				.expectRequest("TEAMS('TEAM_02')?$select=Budget,MANAGER_ID,Name"
 					+ "&$expand=TEAM_2_MANAGER($select=ID,TEAM_ID)", {
 					Budget : "123",
 					MANAGER_ID : "Manager_02",
@@ -26083,8 +26081,7 @@ sap.ui.define([
 
 			// two late property requests (one had only a $expand, so BestFriend is selected too)
 			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=false)"
-					+ "?$select=BestFriend,Name"
-					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+					+ "?$select=Name&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 					Name : "DJ Bobo",
 					BestFriend : {
 						ArtistID : "32",
@@ -37205,8 +37202,7 @@ sap.ui.define([
 				that.waitForChanges(assert, "* (@ _Publication)")
 			]);
 		}).then(function () {
-			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
-					+ "?$select=BestFriend,BestPublication"
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
 						+ ";$expand=BestFriend($select=ArtistID,IsActiveEntity,Name"
 							+ ";$expand=BestPublication($select=Price,PublicationID)))"
@@ -45418,7 +45414,7 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("MyFavoriteArtist?$select=ArtistID,BestFriend,Name"
+		this.expectRequest("MyFavoriteArtist?$select=ArtistID,Name"
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 				ArtistID : "42",
 				Name : "The Beatles",

@@ -4682,87 +4682,105 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("mergeGetRequests", function (assert) {
 		var oHelperMock = this.mock(_Helper),
-			oMergedQueryOptions = {},
 			aMergedRequests,
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
 			aRequests = [[
-				/* change set */
-			], {
+				// change set
+			], { // [1] other requests are merged into this one
 				url : "EntitySet1('42')?foo=bar",
 				$metaPath : "/EntitySet1",
 				$promise : {},
-				$queryOptions : {}
-			}, {
+				$queryOptions : {$select : ["p1"]}
+			}, { // [2] no query options -> no merge
 				url : "EntitySet1('42')?foo=bar",
 				$promise : {}
-			}, {
+			}, { // [3] merge with [1]
 				url : "EntitySet1('42')?foo=bar",
-				$queryOptions : {},
+				$queryOptions : {$select : ["p3"]},
 				$resolve : function () {}
-			}, {
+			}, { // [4] no query options -> no merge
 				url : "EntitySet1('42')?foo=bar"
-			}, {
+			}, { // [5] no matching URL -> no merge; no nav.prop. must be added to $select
 				url : "EntitySet3('42')",
 				$metaPath : "/EntitySet3",
-				$queryOptions : {}
-			}, {
+				$queryOptions : {$select : ["p5"], $expand : {np5 : null}}
+			}, { // [6] other requests are merged into this one incl. $mergeRequests
 				url : "EntitySet2('42')",
 				$mergeRequests : function () {},
 				$metaPath : "/EntitySet2",
 				$promise : {},
-				$queryOptions : {}
-			}, {
+				$queryOptions : {$select : ["p6"]}
+			}, { // [7] merge with [6] incl. $mergeRequests
 				url : "EntitySet2('42')",
-				$queryOptions : {},
 				$mergeRequests : function () {},
+				$queryOptions : {$select : ["p7"]},
 				$resolve : function () {}
-			}, {
+			}, { // [8] different owner -> no merge
 				url : "EntitySet1('42')?foo=bar",
 				$mergeRequests : function () { throw new Error("Do not call!"); },
 				$metaPath : "/EntitySet1",
 				$owner : "different",
-				$queryOptions : {}
+				$queryOptions : {$select : ["p8"]}
+			}, { // [9] other requests are merged into this one; nav.prop. added to $select
+				url : "EntitySet1('44')?foo=bar",
+				$metaPath : "/EntitySet1",
+				$promise : {},
+				$queryOptions : {$select : [], $expand : {np2 : null}}
+			}, { // [10] merge with [9]
+				url : "EntitySet1('44')?foo=bar",
+				$queryOptions : {$select : [], $expand : {np1 : null}},
+				$resolve : function () {}
 			}];
 
 		aRequests.iChangeSet = 1;
 		oHelperMock.expects("aggregateExpandSelect")
 			.withExactArgs(sinon.match.same(aRequests[1].$queryOptions),
 				sinon.match.same(aRequests[3].$queryOptions))
-			.returns(oMergedQueryOptions);
+			.callThrough(); // -> {$select : ["p1", "p3"]}
 		this.mock(aRequests[3]).expects("$resolve")
 			.withExactArgs(sinon.match.same(aRequests[1].$promise));
 		oHelperMock.expects("aggregateExpandSelect")
 			.withExactArgs(sinon.match.same(aRequests[6].$queryOptions),
 				sinon.match.same(aRequests[7].$queryOptions))
-			.returns(oMergedQueryOptions);
-		this.mock(aRequests[7]).expects("$mergeRequests")
-			.withExactArgs().returns("~aPaths~");
-		this.mock(aRequests[6]).expects("$mergeRequests")
-			.withExactArgs("~aPaths~");
+			.callThrough(); // -> {$select : ["p6", "p7"]}
+		this.mock(aRequests[7]).expects("$mergeRequests").withExactArgs().returns("~aPaths~");
+		this.mock(aRequests[6]).expects("$mergeRequests").withExactArgs("~aPaths~");
 		this.mock(aRequests[7]).expects("$resolve")
 			.withExactArgs(sinon.match.same(aRequests[6].$promise));
+		oHelperMock.expects("aggregateExpandSelect")
+			.withExactArgs(sinon.match.same(aRequests[9].$queryOptions),
+				sinon.match.same(aRequests[10].$queryOptions))
+			.callThrough(); // -> {$select : [], $expand : {np2 : null, np1 : null}}
+		this.mock(aRequests[10]).expects("$resolve")
+			.withExactArgs(sinon.match.same(aRequests[9].$promise));
 		oRequestorMock.expects("addQueryString")
 			.withExactArgs(aRequests[1].url, aRequests[1].$metaPath,
 				sinon.match.same(aRequests[1].$queryOptions))
-			.returns("EntitySet1('42')?$select=name");
+			.returns("EntitySet1('42')?$select=p1,p3");
 		oRequestorMock.expects("addQueryString")
 			.withExactArgs(aRequests[5].url, aRequests[5].$metaPath,
-				sinon.match.same(aRequests[5].$queryOptions))
-			.returns("EntitySet3('42')?$select=foo");
+				sinon.match.same(aRequests[5].$queryOptions)
+					.and(sinon.match({$select : ["p5"], $expand : {np5 : null}})))
+			.returns("EntitySet3('42')?$select=p5&expand=np5");
 		oRequestorMock.expects("addQueryString")
 			.withExactArgs(aRequests[6].url, aRequests[6].$metaPath,
 				sinon.match.same(aRequests[6].$queryOptions))
-			.returns("EntitySet2('42')?$select=birthdate");
+			.returns("EntitySet2('42')?$select=p6,p7");
 		oRequestorMock.expects("addQueryString")
 			.withExactArgs(aRequests[8].url, aRequests[8].$metaPath,
 				sinon.match.same(aRequests[8].$queryOptions))
-			.returns("EntitySet1('42')?$owner=different");
+			.returns("EntitySet1('42')?$select=p8");
+		oRequestorMock.expects("addQueryString")
+			.withExactArgs(aRequests[9].url, aRequests[9].$metaPath,
+				sinon.match.same(aRequests[9].$queryOptions)
+					.and(sinon.match({$select : ["np1"], $expand : {np1 : null, np2 : null}})))
+			.returns("EntitySet1('44')?$select=np1&$expand=np1,np2");
 
 		// code under test
 		aMergedRequests = oRequestor.mergeGetRequests(aRequests);
 
-		assert.strictEqual(aMergedRequests.length, 7);
+		assert.strictEqual(aMergedRequests.length, 8);
 		assert.strictEqual(aMergedRequests.iChangeSet, aRequests.iChangeSet);
 		assert.strictEqual(aMergedRequests[0], aRequests[0]);
 		assert.strictEqual(aMergedRequests[1], aRequests[1]);
@@ -4771,10 +4789,12 @@ sap.ui.define([
 		assert.strictEqual(aMergedRequests[4], aRequests[5]);
 		assert.strictEqual(aMergedRequests[5], aRequests[6]);
 		assert.strictEqual(aMergedRequests[6], aRequests[8]);
-		assert.strictEqual(aMergedRequests[1].url, "EntitySet1('42')?$select=name");
-		assert.strictEqual(aMergedRequests[4].url, "EntitySet3('42')?$select=foo");
-		assert.strictEqual(aMergedRequests[5].url, "EntitySet2('42')?$select=birthdate");
-		assert.strictEqual(aMergedRequests[6].url, "EntitySet1('42')?$owner=different");
+		assert.strictEqual(aMergedRequests[7], aRequests[9]);
+		assert.strictEqual(aMergedRequests[1].url, "EntitySet1('42')?$select=p1,p3");
+		assert.strictEqual(aMergedRequests[4].url, "EntitySet3('42')?$select=p5&expand=np5");
+		assert.strictEqual(aMergedRequests[5].url, "EntitySet2('42')?$select=p6,p7");
+		assert.strictEqual(aMergedRequests[6].url, "EntitySet1('42')?$select=p8");
+		assert.strictEqual(aMergedRequests[7].url, "EntitySet1('44')?$select=np1&$expand=np1,np2");
 	});
 
 	//*********************************************************************************************

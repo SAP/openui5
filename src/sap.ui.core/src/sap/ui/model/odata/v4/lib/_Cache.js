@@ -3199,7 +3199,7 @@ sap.ui.define([
 
 		mQueryOptions = _Helper.intersectQueryOptions(
 			Object.assign({}, this.mQueryOptions, this.mLateQueryOptions), aPaths,
-			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath, "", true);
+			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath, "");
 		if (!mQueryOptions) {
 			return SyncPromise.resolve(); // micro optimization: use *sync.* promise which is cached
 		}

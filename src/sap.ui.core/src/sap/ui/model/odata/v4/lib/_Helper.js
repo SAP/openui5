@@ -1592,8 +1592,6 @@ sap.ui.define([
 		 *   identifier may be appended
 		 * @param {string} [sPrefix=""]
 		 *   Optional prefix for navigation property meta paths used during recursion
-		 * @param {boolean} [bAllowEmptySelect]
-		 *   Whether an empty "$select" is allowed
 		 * @returns {object}
 		 *   The updated query options or <code>null</code> if no request is needed
 		 * @throws {Error}
@@ -1601,7 +1599,7 @@ sap.ui.define([
 		 *   collection-valued navigation property
 		 */
 		intersectQueryOptions : function (mCacheQueryOptions, aPaths, fnFetchMetadata,
-				sRootMetaPath, sPrefix, bAllowEmptySelect) {
+				sRootMetaPath, sPrefix) {
 			var aExpands = [],
 				mExpands = {},
 				mResult,
@@ -1693,9 +1691,6 @@ sap.ui.define([
 				// for a collection we already have the key in the resource path
 				_Helper.selectKeyProperties(mResult,
 					fnFetchMetadata(sRootMetaPath + "/").getResult());
-			} else if (!aSelects.length && !bAllowEmptySelect) {
-				// avoid $select= in URL, use any navigation property
-				mResult.$select = Object.keys(mExpands).slice(0, 1);
 			}
 			if (isEmptyObject(mExpands)) {
 				delete mResult.$expand;
