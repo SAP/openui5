@@ -54,3 +54,21 @@
 .sapMMenuBtn.sapMMenuBtnRegular:hover .sapMBtnInner.sapMBtnDefault::after {
 	color: @sapUiButtonActiveTextColor;
 }
+
+.sapMMenuBtnSplit .sapMSB:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnEmphasized.sapMBtnActive {
+	padding-right: 0.4375rem;
+	padding-left: 0.4375rem;
+
+	.sapMBtnContent {
+		position: relative;
+		top: -1px;
+		left: 0;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMMenuBtnSplit .sapMSB:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnEmphasized.sapMBtnActive {
+		padding-right: 0.3125rem;
+		padding-left: 0.3125rem;
+	}
+}
