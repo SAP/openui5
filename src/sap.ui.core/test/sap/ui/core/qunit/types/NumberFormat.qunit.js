@@ -3450,8 +3450,8 @@ sap.ui.define([
 
 	QUnit.test("Format option 'emptyString'", function (assert) {
 		var aMethods = ["getIntegerInstance", "getFloatInstance", "getPercentInstance", "getCurrencyInstance"],
-			aValues = [NaN, null, 0],
-			aCompareValues = [["NaN", null, "0"], [NaN, null, 0]],
+			aValues = ["", NaN, null, 0],
+			aCompareValues = [["", "NaN", null, "0"], ["", NaN, null, 0]],
 			aParseAsString = [true, false];
 
 		aMethods.forEach(function (sMethod, index) {
@@ -3487,6 +3487,23 @@ sap.ui.define([
 				});
 			});
 		});
+	});
+
+	QUnit.test("Format option 'emptyString' with  invalid value", function (assert) {
+		var oLogMock = sinon.mock(console).expects("assert")
+				.withExactArgs(false, "The format option 'emptyString' must be either '', 0, null, or NaN")
+				.exactly(4);
+		[
+			"getIntegerInstance",
+			"getFloatInstance",
+			"getPercentInstance",
+			"getCurrencyInstance"
+		].forEach(function (sMethod) {
+			// code under test
+			NumberFormat[sMethod]({emptyString: 5 });
+		});
+
+		oLogMock.verify();
 	});
 
 	QUnit.test("Percent format with custom pattern", function (assert) {
