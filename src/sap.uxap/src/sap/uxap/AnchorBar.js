@@ -363,7 +363,9 @@ sap.ui.define([
 			oSelectedSectionDomRef = oSelectedSection.getDomRef();
 
 			if (oSelectedSectionDomRef) {
-				oSelectedSectionDomRef.focus();
+				setTimeout(function () {
+					oSelectedSectionDomRef.focus();
+				}, 0);
 			}
 		} else {
 			Log.error("AnchorBar :: cannot find corresponding section", oSelectedItem.getKey());
