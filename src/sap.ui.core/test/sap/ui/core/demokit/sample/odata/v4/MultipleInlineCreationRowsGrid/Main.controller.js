@@ -163,16 +163,21 @@ sap.ui.define([
 			if (oContext.isInactive() === 1) {
 				oContext.resetChanges();
 				sap.ui.getCore().getMessageManager()
-					.removeMessages(that.mCreateActivateMessages[oContext.getPath()]);
+					.removeMessages(this.mCreateActivateMessages[oContext.getPath()]);
 				delete this.mCreateActivateMessages[oContext.getPath()];
 				this.messagePopover.navigateBack();
 			} else {
 				MessageBox.confirm(
 					"Do you really want to delete " + sEntity + " " + sObjectId + "?",
 					function (sCode) {
+						var oSelectedProduct;
+
 						if (sCode === "OK") {
 							oContext.delete("$auto");
-							if (sEntity === "product") {
+							oSelectedProduct = that.getView().byId("products").getSelectedItem();
+							// only close detail page if the deleted product was selected
+							if (sEntity === "product" && oSelectedProduct
+									&& oSelectedProduct.getBindingContext() === oContext) {
 								that.oUIModel.setProperty("/sLayout", LayoutType.OneColumn);
 							}
 						}
@@ -251,6 +256,14 @@ sap.ui.define([
 			this.getView().getModel().refresh();
 		},
 
+		onResetChangesForParts : function () {
+			this.resetChanges("Parts", "rows");
+		},
+
+		onResetChangesForProducts : function () {
+			this.resetChanges("Products", "items");
+		},
+
 		onSave : function () {
 			var oView = this.getView(),
 				oModel = oView.getModel();
@@ -294,6 +307,20 @@ sap.ui.define([
 			);
 			this.oUIModel.setProperty("/bSortPartsQuantity", oSortOrder.bDescending);
 			this.oUIModel.setProperty("/sSortPartsQuantityIcon", oSortOrder.sNewIcon);
+		},
+
+		resetChanges : function (sEntity, sBindingProperty) {
+			var oMessageManager = sap.ui.getCore().getMessageManager(),
+				that = this;
+
+			this.getView().byId(sEntity.toLowerCase()).getBinding(sBindingProperty).resetChanges();
+			Object.keys(this.mCreateActivateMessages).forEach(function (sKey) {
+				if (sKey.includes(sEntity + "($uid")) {
+					oMessageManager.removeMessages(that.mCreateActivateMessages[sKey]);
+					delete that.mCreateActivateMessages[sKey];
+				}
+			});
+			this.messagePopover.navigateBack();
 		},
 
 		setPartsContext : function (oContext) {

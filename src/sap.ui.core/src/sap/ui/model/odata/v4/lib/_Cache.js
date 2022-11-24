@@ -1732,7 +1732,11 @@ sap.ui.define([
 			} else if (isSubPath(sRequestPath, sPath)) {
 				for (i = aEntities.length - 1; i >= 0; i -= 1) {
 					sTransientGroup = _Helper.getPrivateAnnotation(aEntities[i], "transient");
-					if (!sTransientGroup.startsWith("$inactive.")) {
+					if (sTransientGroup.startsWith("$inactive.")) {
+						_Helper.resetInactiveEntity(that.mChangeListeners,
+							_Helper.getPrivateAnnotation(aEntities[i], "transientPredicate"),
+							aEntities[i]);
+					} else {
 						// this also cleans up that.mPostRequests
 						that.oRequestor.removePost(sTransientGroup, aEntities[i]);
 					}

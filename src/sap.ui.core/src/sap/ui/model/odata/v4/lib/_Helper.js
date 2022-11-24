@@ -1995,8 +1995,8 @@ sap.ui.define([
 		/**
 		 * Restores an entity and its POST body to the initial state which is read from a private
 		 * annotation. Key-value pairs are deleted if they are not in the initial state. Change
-		 * listeners are notified about the changed or deleted values, and the "inactive" flag is
-		 * reset to <code>true</code>.
+		 * listeners are notified about the changed or deleted values, and the "inactive" flag at
+		 * the entity and at its corresponding context is reset to <code>true</code>.
 		 *
 		 * @param {object} mChangeListeners - A map of change listeners by path
 		 * @param {string} sPath - The path to the entity; used to notify change listeners
@@ -2019,6 +2019,7 @@ sap.ui.define([
 			_Helper.updateAll(mChangeListeners, sPath, oEntity,
 				{"@$ui5.context.isInactive" : true}
 			);
+			_Helper.getPrivateAnnotation(oEntity, "context").setInactive();
 		},
 
 		/**
