@@ -159,4 +159,12 @@ describe("sap.m.Wizard", function() {
 
 		expect(takeScreenshot()).toLookAs("title-aligned-invalid-long-step");
 	});
+
+	it("changing the StepTitle should be reflected in the ProgressNavigator", function () {
+		element(by.id("fwd-wiz-sel")).click();
+		browser.executeScript(function() {
+			sap.ui.getCore().byId("linear-wiz-step1").setTitle("Test");
+		});
+		expect(takeScreenshot(element(by.id("linear-wiz-progressNavigator")))).toLookAs("step-title-changed");
+	});
 });

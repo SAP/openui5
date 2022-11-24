@@ -126,4 +126,25 @@ sap.ui.define(["sap/m/WizardStep", "sap/ui/core/Core"], function(WizardStep, oCo
 		// Cleanup
 		oControl.destroy();
 	});
+
+	QUnit.module("Title change");
+
+	QUnit.test("calling setTitle should call _updateProgressNavigator on the parent wizard control", function (assert) {
+		// Arrange
+		var oControl = new WizardStep(),
+			oSpy = this.spy();
+
+		this.stub(oControl, "_getWizardParent").returns({
+			_updateProgressNavigator: oSpy
+		});
+
+		// Act
+		oControl.setTitle("test");
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "Method _updateProgressNavigator was called once");
+
+		// Cleanup
+		oControl.destroy();
+	});
 });

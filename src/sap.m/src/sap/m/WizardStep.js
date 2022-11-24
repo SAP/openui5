@@ -204,6 +204,24 @@ sap.ui.define([
 
 		return this;
 	};
+
+	/**
+	 * Sets the title property of the WizardStep.
+	 * @param {string} sNewTitle The new WizardStep title.
+	 * @returns {sap.m.WizardStep} this instance for method chaining.
+	 * @public
+	 */
+	WizardStep.prototype.setTitle = function (sNewTitle) {
+		var oWizard = this._getWizardParent();
+
+		this.setProperty("title", sNewTitle);
+		if (oWizard) {
+			oWizard._updateProgressNavigator();
+		}
+
+		return this;
+	};
+
 	/**
 	 * setVisible shouldn't be used on wizard steps.
 	 * If you need to show/hide steps based on some condition - use the branching property instead.
