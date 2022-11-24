@@ -1022,36 +1022,23 @@ sap.ui.define([
 		}).getDomRef();
 	}
 
+	function startRta() {
+		this.oRta = new RuntimeAuthoring({
+			rootControl: oComp,
+			flexSettings: this.oFlexSettings
+		});
+		return RtaQunitUtils.clear()
+		.then(this.oRta.start.bind(this.oRta))
+		.then(function() {
+			this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
+			this.oChangeVisualization = this.oRta.getChangeVisualization();
+			this.oToolbar = this.oRta.getToolbar();
+		}.bind(this));
+	}
+
 	QUnit.module("Keyboard and focus handling", {
 		before: function() {
 			return oComponentPromise;
-		},
-		beforeEach: function(assert) {
-			var fnDone = assert.async();
-			prepareChanges([
-				createMockChange("testRename", "rename", "Comp1---idMain1--Label1"),
-				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2"),
-				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1")
-			]);
-			this.oRta = new RuntimeAuthoring({
-				rootControl: oComp,
-				flexSettings: this.oFlexSettings
-			});
-			RtaQunitUtils.clear()
-				.then(this.oRta.start.bind(this.oRta))
-				.then(function() {
-					this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
-					this.oChangeVisualization = this.oRta.getChangeVisualization();
-					this.oToolbar = this.oRta.getToolbar();
-					return startVisualization(this.oRta);
-				}.bind(this))
-				.then(function() {
-					return this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
-				}.bind(this))
-				.then(function() {
-					oCore.applyChanges();
-					fnDone();
-				});
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -1064,65 +1051,118 @@ sap.ui.define([
 			return Math.round(iValue * 1000) / 1000;
 		}
 		QUnit.test("when the visualization is started", function(assert) {
-			var aIndicators = collectIndicatorReferences();
-			var iYPosIndicator1 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].y + getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].height / 2);
-			var iXPosIndicator1 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].x);
-			var iYPosIndicator2 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].y + getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].height / 2);
-			var iXPosIndicator2 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].x);
-			assert.ok(
-				(iYPosIndicator1 === iYPosIndicator2) && (iXPosIndicator1 < iXPosIndicator2),
-				"When two indicators have the same Y-Position, the X-Position is used for sort" +
-				iYPosIndicator1 + iXPosIndicator1 + iYPosIndicator2 + iXPosIndicator2
-			);
+			prepareChanges([
+				createMockChange("testRename", "rename", "Comp1---idMain1--Label1"),
+				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2"),
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1")
+			]);
+			return startRta.call(this)
+			.then(startVisualization.bind(this, this.oRta))
+			.then(function() {
+				return this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
+			}.bind(this))
+			.then(function() {
+				oCore.applyChanges();
+				var aIndicators = collectIndicatorReferences();
+				var iYPosIndicator1 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].y + getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].height / 2);
+				var iXPosIndicator1 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].x);
+				var iYPosIndicator2 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].y + getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].height / 2);
+				var iXPosIndicator2 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].x);
+				assert.ok(
+					(iYPosIndicator1 === iYPosIndicator2) && (iXPosIndicator1 < iXPosIndicator2),
+					"When two indicators have the same Y-Position, the X-Position is used for sort" +
+					iYPosIndicator1 + iXPosIndicator1 + iYPosIndicator2 + iXPosIndicator2
+				);
 
-			assert.ok(
-				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").tabIndex < getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").tabIndex,
-				"the first indicator has lower tabIndex than the second one"
-			);
-			assert.ok(
-				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").tabIndex < getIndicatorForElement(aIndicators, "Comp1---idMain1--Label1").tabIndex,
-				"the second indicator has lower tabIndex than the third one"
-			);
-			// Overlay 1 has lowest x/y-position, thus should be focused first
-			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1"),
-				document.activeElement,
-				"the indicators are sorted and the first is focused"
-			);
+				assert.ok(
+					getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").tabIndex < getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").tabIndex,
+					"the first indicator has lower tabIndex than the second one"
+				);
+				assert.ok(
+					getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").tabIndex < getIndicatorForElement(aIndicators, "Comp1---idMain1--Label1").tabIndex,
+					"the second indicator has lower tabIndex than the third one"
+				);
+				// Overlay 1 has lowest x/y-position, thus should be focused first
+				assert.strictEqual(
+					getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1"),
+					document.activeElement,
+					"the indicators are sorted and the first is focused"
+				);
+			});
 		});
 
 		QUnit.test("when the visualization is started and an indicator is clicked", function(assert) {
 			var fnDone = assert.async();
-			var oChangeIndicator = collectIndicatorReferences()[0];
-			var iInitialTabindex = oChangeIndicator.getDomRef().getAttribute("tabindex");
-			var oOpenPopoverPromise = waitForMethodCall(oChangeIndicator, "setAggregation");
-			QUnitUtils.triggerEvent("click", oChangeIndicator.getDomRef());
+			var iInitialTabindex;
+			var oChangeIndicator;
+			prepareChanges([
+				createMockChange("testRename", "rename", "Comp1---idMain1--Label1"),
+				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2"),
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1")
+			]);
+			return startRta.call(this)
+			.then(startVisualization.bind(this, this.oRta))
+			.then(function() {
+				return this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
+			}.bind(this))
+			.then(function() {
+				oChangeIndicator = collectIndicatorReferences()[0];
+				iInitialTabindex = oChangeIndicator.getDomRef().getAttribute("tabindex");
+				var oOpenPopoverPromise = waitForMethodCall(oChangeIndicator, "setAggregation");
+				QUnitUtils.triggerEvent("click", oChangeIndicator.getDomRef());
 
-			oOpenPopoverPromise
-				.then(function() {
-					var oPopover = oChangeIndicator.getAggregation("_popover");
-					function onPopoverClosed() {
+				return oOpenPopoverPromise;
+			}).then(function() {
+				var oPopover = oChangeIndicator.getAggregation("_popover");
+				function onPopoverClosed() {
+					assert.strictEqual(
+						oChangeIndicator.getDomRef().getAttribute("tabindex"),
+						iInitialTabindex,
+						"then the original tab index is restored after the popover was closed"
+					);
+					fnDone();
+				}
+				oPopover.attachEventOnce("afterClose", onPopoverClosed);
+
+				function onPopoverOpened() {
+					// Trigger rerendering which will remove tab indices
+					oCore.applyChanges();
+					oPopover.close();
+				}
+
+				if (oPopover.isOpen()) {
+					onPopoverOpened();
+				} else {
+					oPopover.attachEventOnce("afterOpen", onPopoverOpened);
+				}
+			});
+		});
+		QUnit.test("when the visualization is started and application is scrolled down", function(assert) {
+			var fnDone = assert.async();
+			// Decrease fixture height to test scrolling
+			document.getElementById("qunit-fixture").style = "height: 600px; top: 0";
+			prepareChanges([
+				createMockChange("testRename", "rename", "Comp1---idMain1--rb2"),
+				createMockChange("testRenameBelow", "rename", "Comp1---idMain1--Label1")
+			]);
+			return startRta.call(this)
+			.then(function() {
+				var oScrollContainerOverlay = OverlayRegistry.getOverlay("Comp1---idMain1--mainPage");
+				oScrollContainerOverlay.getAggregationOverlays()[0].attachEventOnce("scrollSynced", function() {
+					startVisualization.call(this, this.oRta)
+					.then(function() {
+						var aIndicators = collectIndicatorReferences();
 						assert.strictEqual(
-							oChangeIndicator.getDomRef().getAttribute("tabindex"),
-							iInitialTabindex,
-							"then the original tab index is restored after the popover was closed"
+							getIndicatorForElement(aIndicators, "Comp1---idMain1--Label1"),
+							document.activeElement,
+							"the indicator inside the currently visible area is focused"
 						);
 						fnDone();
-					}
-					oPopover.attachEventOnce("afterClose", onPopoverClosed);
-
-					function onPopoverOpened() {
-						// Trigger rerendering which will remove tab indices
-						oCore.applyChanges();
-						oPopover.close();
-					}
-
-					if (oPopover.isOpen()) {
-						onPopoverOpened();
-					} else {
-						oPopover.attachEventOnce("afterOpen", onPopoverOpened);
-					}
-				});
+						document.getElementById("qunit-fixture").style = "height: 100%; top: auto";
+					});
+				}.bind(this));
+				document.getElementById("Comp1---idMain1--mainPage-cont").scroll({top: 800});
+			}.bind(this));
 		});
 	});
 
