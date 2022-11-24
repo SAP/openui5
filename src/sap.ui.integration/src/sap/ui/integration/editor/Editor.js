@@ -1493,6 +1493,10 @@ sap.ui.define([
 								case "group":
 									break;
 								case "object":
+									if (oItem.value && oItem.value !== "" && typeof oItem.value === "object") {
+										mResult[oItem.manifestpath] = oItem.value;
+									}
+									break;
 								case "object[]":
 									if (Array.isArray(oItem.value)) {
 										var aValue = deepClone(oItem.value, 500);

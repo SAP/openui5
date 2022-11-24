@@ -207,6 +207,8 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value");
+					var oSettings = this.oEditor.getCurrentSettings();
+					assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oTableToolbar = oTable.getToolbar();
@@ -246,6 +248,8 @@ sap.ui.define([
 					});
 					assert.equal(oTable.getSelectedIndices()[0], 0, "Table: SelectedIndices Value after table selection change");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value not change after table selection change");
+					oSettings = this.oEditor.getCurrentSettings();
+					assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value not change after table selection change");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
 					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
@@ -256,6 +260,8 @@ sap.ui.define([
 					});
 					assert.equal(oTable.getSelectedIndices()[0], 3, "Table: SelectedIndices Value after table selection change again");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value not change after table selection change again");
+					oSettings = this.oEditor.getCurrentSettings();
+					assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value not change after table selection change again");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
 					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
@@ -267,6 +273,8 @@ sap.ui.define([
 					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value after remove table selection");
 					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value after remove table selection");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value not change after remove table selection");
+					oSettings = this.oEditor.getCurrentSettings();
+					assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value not change after remove table selection");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
 					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
@@ -293,6 +301,8 @@ sap.ui.define([
 					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
 					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
+					oSettings = this.oEditor.getCurrentSettings();
+					assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], oField._getCurrentProperty("value"), "Editor: Field 1 setting value changed after selecting");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 					oSelectionCell1.setSelected(false);
 					oSelectionCell1.fireSelect({
@@ -302,6 +312,8 @@ sap.ui.define([
 					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after deselecting");
 					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after deselecting");
+					oSettings = this.oEditor.getCurrentSettings();
+					assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value removed after deselecting");
 					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
 					var oRow4 = oTable.getRows()[3];
@@ -316,11 +328,15 @@ sap.ui.define([
 					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
 					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
+					oSettings = this.oEditor.getCurrentSettings();
+					assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], oField._getCurrentProperty("value"), "Editor: Field 1 setting value changed after selecting again");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 
 					oRemoveValueButton.firePress();
 					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after clicking remove value button");
+					oSettings = this.oEditor.getCurrentSettings();
+					assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value removed after clicking remove value button");
 
 					var oLabel2 = this.oEditor.getAggregation("_formContent")[3];
 					var oField2 = this.oEditor.getAggregation("_formContent")[4];
@@ -331,6 +347,8 @@ sap.ui.define([
 						assert.equal(oLabel2.getText(), "Object properties defined: value from requested file", "Label 2: Has label text");
 						assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
 						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: Value");
+						oSettings = this.oEditor.getCurrentSettings();
+						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value");
 						oTable = oField2.getAggregation("_field");
 						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 2: Control is Table");
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
@@ -346,6 +364,8 @@ sap.ui.define([
 						});
 						assert.ok(oTable.getSelectedIndex() === 0 && oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndex and SelectedIndices Value after selection change");
 						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: Value not change");
+						oSettings = this.oEditor.getCurrentSettings();
+						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value not change");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 						oTable.setSelectedIndex(3);
 						oTable.fireRowSelectionChange({
@@ -354,6 +374,8 @@ sap.ui.define([
 						});
 						assert.ok(oTable.getSelectedIndex() === 3 && oTable.getSelectedIndices()[0] === 3, "Table: SelectedIndex and SelectedIndices Value after selection change again");
 						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: Value not change");
+						oSettings = this.oEditor.getCurrentSettings();
+						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value not change");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 						oTable.setSelectedIndex(-1);
 						oTable.fireRowSelectionChange({
@@ -362,6 +384,8 @@ sap.ui.define([
 						});
 						assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: SelectedIndex and SelectedIndices Value after remove table selection");
 						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: Value not change");
+						oSettings = this.oEditor.getCurrentSettings();
+						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value not change");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 
 						var oRow1 = oTable.getRows()[0];
@@ -376,6 +400,8 @@ sap.ui.define([
 						assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
 						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 						assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), {"text": "text1req", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
+						oSettings = this.oEditor.getCurrentSettings();
+						assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], oField2._getCurrentProperty("value"), "Editor: Field 2 setting value changed after selecting");
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 						oSelectionCell1.setSelected(false);
 						oSelectionCell1.fireSelect({
@@ -385,6 +411,8 @@ sap.ui.define([
 						assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after deselecting");
 						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
 						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: DT Value removed after deselecting");
+						oSettings = this.oEditor.getCurrentSettings();
+						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value removed after deselecting");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
 						var oRow4 = oTable.getRows()[3];
@@ -399,16 +427,22 @@ sap.ui.define([
 						assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
 						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 						assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), { "text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
+						oSettings = this.oEditor.getCurrentSettings();
+						assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], oField2._getCurrentProperty("value"), "Editor: Field 2 setting value changed after selecting");
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 						oRemoveValueButton.firePress();
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
 						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: DT Value removed after clicking remove value button");
+						oSettings = this.oEditor.getCurrentSettings();
+						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value removed after clicking remove value button");
 
 						wait().then(function () {
 							assert.ok(oLabel3.isA("sap.m.Label"), "Label 3: Form content contains a Label");
 							assert.equal(oLabel3.getText(), "Object properties defined: value from OData Request", "Label 3: Has label text");
 							assert.ok(oField3.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 3: Object Field");
 							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: Value");
+							oSettings = this.oEditor.getCurrentSettings();
+							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value");
 							oTable = oField3.getAggregation("_field");
 							assert.ok(oTable.isA("sap.ui.table.Table"), "Field 3: Control is Table");
 							assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
@@ -424,6 +458,8 @@ sap.ui.define([
 							});
 							assert.ok(oTable.getSelectedIndex() === 0 && oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndex and SelectedIndices Value after selection change");
 							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: Value not change");
+							oSettings = this.oEditor.getCurrentSettings();
+							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value not change");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 							oTable.setSelectedIndex(3);
 							oTable.fireRowSelectionChange({
@@ -432,6 +468,8 @@ sap.ui.define([
 							});
 							assert.ok(oTable.getSelectedIndex() === 3 && oTable.getSelectedIndices()[0] === 3, "Table: SelectedIndex and SelectedIndices Value after selection change again");
 							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: Value not change");
+							oSettings = this.oEditor.getCurrentSettings();
+							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value not change");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 							oTable.setSelectedIndex(-1);
 							oTable.fireRowSelectionChange({
@@ -440,6 +478,8 @@ sap.ui.define([
 							});
 							assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: SelectedIndex and SelectedIndices Value after remove table selection");
 							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: Value not change");
+							oSettings = this.oEditor.getCurrentSettings();
+							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value not change");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 
 							var oRow1 = oTable.getRows()[0];
@@ -454,6 +494,8 @@ sap.ui.define([
 							assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
 							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change");
+							oSettings = this.oEditor.getCurrentSettings();
+							assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], oField3._getCurrentProperty("value"), "Editor: Field 3 setting value not change after table selection change");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 							oSelectionCell1.setSelected(false);
 							oSelectionCell1.fireSelect({
@@ -463,6 +505,8 @@ sap.ui.define([
 							assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after deselecting");
 							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
 							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: DT Value removed after deselecting");
+							oSettings = this.oEditor.getCurrentSettings();
+							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value removed after deselecting");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
 							var oRow4 = oTable.getRows()[3];
@@ -477,14 +521,18 @@ sap.ui.define([
 							assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
 							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "d", "CompanyName": "C2 Company", "Country": "Country 4", "City": "City 4", "Address": "Address 4", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change again");
+							oSettings = this.oEditor.getCurrentSettings();
+							assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], oField3._getCurrentProperty("value"), "Editor: Field 3 setting value not change after table selection change again");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 							oRemoveValueButton.firePress();
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
 							assert.ok(!oField._getCurrentProperty("value"), "Field 3: DT Value removed after clicking remove value button");
+							oSettings = this.oEditor.getCurrentSettings();
+							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value removed after clicking remove value button");
 
 							resolve();
-						});
-					});
+						}.bind(this));
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
