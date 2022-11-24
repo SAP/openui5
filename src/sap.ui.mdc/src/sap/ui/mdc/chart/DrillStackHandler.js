@@ -80,7 +80,7 @@ sap.ui.define([
 			//subHeader: oSubHeader
 		});
 		var oList = new List({
-			noData: new IllustratedMessage({enableVerticalResponsiveness: true, title: MDCRb.getText("chart.NO_DRILLABLE_DIMENSION"), description: MDCRb.getText("chart.NO_DRILLABLE_DIMENSION_DESC"), illustrationType: MLibrary.IllustratedMessageType.BeforeSearch}),
+			noData: new IllustratedMessage({enableVerticalResponsiveness: true, title: MDCRb.getText("chart.NO_DRILLABLE_DIMENSION"), description: MDCRb.getText("chart.NO_DRILLABLE_DIMENSION_DESC"), illustrationType: MLibrary.IllustratedMessageType.NoDimensionsSet}),
 			mode: ListMode.SingleSelectMaster,
 			selectionChange: function(oControlEvent) {
 				var oListItem = oControlEvent.getParameter("listItem");
