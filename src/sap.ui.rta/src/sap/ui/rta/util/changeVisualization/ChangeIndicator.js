@@ -201,7 +201,6 @@ sap.ui.define([
 			sDescriptionText = oDescription.descriptionText;
 			sDescriptionTooltip = oDescription.descriptionTooltip || "";
 		} else {
-			sElementLabel = sElementLabel && "'" + sElementLabel + "'";
 			var sShortenedElementLabel = ChangeVisualizationUtils.shortenString(sElementLabel);
 			var sChangeTextKey = (
 				"TXT_CHANGEVISUALIZATION_CHANGE_"

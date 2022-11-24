@@ -608,7 +608,7 @@ sap.ui.define([
 				this.oChangeIndicator._oDetailModel.oData[0].description,
 				oRtaResourceBundle.getText(
 					"TXT_CHANGEVISUALIZATION_CHANGE_REMOVE",
-					"'TestButton'"
+					"TestButton"
 				),
 				"then the description is the previously used generic text"
 			);
