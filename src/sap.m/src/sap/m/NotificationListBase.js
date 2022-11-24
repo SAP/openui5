@@ -431,7 +431,10 @@ sap.ui.define([
 			var target = event.target;
 
 			switch (event.which) {
-				case KeyCodes.MINUS:
+				// Minus keys
+				// KeyCodes.MINUS is not returning 189
+				case 189:
+				case KeyCodes.NUMPAD_MINUS:
 				case KeyCodes.ARROW_LEFT:
 					if (target.classList.contains("sapMNLGroup")) {
 						this._collapse(event);
@@ -439,6 +442,7 @@ sap.ui.define([
 					}
 					break;
 				case KeyCodes.PLUS:
+				case KeyCodes.NUMPAD_PLUS:
 				case KeyCodes.ARROW_RIGHT:
 					if (target.classList.contains("sapMNLGroup")) {
 						this._expand(event);
