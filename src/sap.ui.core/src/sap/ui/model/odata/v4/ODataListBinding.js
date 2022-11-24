@@ -920,8 +920,9 @@ sap.ui.define([
 			that.fireEvent("createCompleted", {context : oContext, success : true});
 			sGroupId = that.getGroupId();
 			if (bSkipRefresh) {
-				return oContext.refreshDependentBindings(oContext.getPath().slice(1), sGroupId,
-					/*bCheckUpdate*/true);
+				oContext.refreshDependentBindings(oContext.getPath().slice(1), sGroupId,
+					/*bCheckUpdate*/true).catch(that.oModel.getReporter());
+				return; // do not wait for late property requests to be finished!
 			}
 			if (that.oModel.isApiGroup(sGroupId)) {
 				sGroupId = "$auto";

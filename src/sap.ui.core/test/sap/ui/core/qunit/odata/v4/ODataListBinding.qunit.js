@@ -4370,6 +4370,7 @@ sap.ui.define([
 			oGroupLock1 = {},
 			oLockGroupExpectation,
 			oPromise,
+			fnReporter = sinon.spy(),
 			that = this;
 
 		oBindingMock.expects("getUpdateGroupId").withExactArgs().returns("~update~");
@@ -4384,9 +4385,11 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(oCreateInCachePromise0));
 		oCreateInCachePromise0.then(function () {
 			that.mock(oContext0).expects("refreshDependentBindings")
-				.withExactArgs(sinon.match(/EMPLOYEES\(\$uid=.+\)/), "$auto", true);
+				.withExactArgs(sinon.match(/EMPLOYEES\(\$uid=.+\)/), "$auto", true)
+				.returns(SyncPromise.reject("~refreshDependentBindings failed~"));
 		});
 		this.mock(oContextPrototype).expects("fetchValue").twice().withExactArgs().resolves({});
+		this.mock(this.oModel).expects("getReporter").withExactArgs().twice().returns(fnReporter);
 
 		// code under test (create first entity, skip refresh)
 		oContext0 = oBinding.create(oInitialData0, true);
@@ -4409,7 +4412,8 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(oCreateInCachePromise1));
 		oCreateInCachePromise1.then(function () {
 			that.mock(oContext1).expects("refreshDependentBindings")
-				.withExactArgs(sinon.match(/EMPLOYEES\(\$uid=.+\)/), "$auto", true);
+				.withExactArgs(sinon.match(/EMPLOYEES\(\$uid=.+\)/), "$auto", true)
+				.returns(SyncPromise.resolve());
 		});
 
 		// code under test (create second entity, skip refresh)
@@ -4468,7 +4472,10 @@ sap.ui.define([
 			oPromise,
 			oContext0.created(),
 			oContext1.created()
-		]);
+		]).then(function () {
+			sinon.assert.calledOnce(fnReporter);
+			sinon.assert.calledWithExactly(fnReporter, "~refreshDependentBindings failed~");
+		});
 	});
 
 	//*********************************************************************************************
@@ -4932,7 +4939,7 @@ sap.ui.define([
 					}));
 			this.mock(oNewContext0).expects("getPath").withExactArgs().returns("");
 			this.mock(oNewContext0).expects("refreshDependentBindings")
-				.withExactArgs("", sinon.match.string, true).returns("");
+				.withExactArgs("", sinon.match.string, true).returns(SyncPromise.resolve());
 
 			// code under test
 			oContext0 = oBinding.create(undefined, true, aAtEnd[0]);
@@ -4975,7 +4982,7 @@ sap.ui.define([
 						}));
 				this.mock(oNewContext1).expects("getPath").withExactArgs().returns("");
 				this.mock(oNewContext1).expects("refreshDependentBindings")
-					.withExactArgs("", sinon.match.string, true).returns("");
+					.withExactArgs("", sinon.match.string, true).returns(SyncPromise.resolve());
 
 				// code under test
 				oContext1 = oBinding.create(undefined, true, aAtEnd[1]);

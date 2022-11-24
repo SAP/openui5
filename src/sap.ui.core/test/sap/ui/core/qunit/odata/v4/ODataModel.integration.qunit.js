@@ -7866,6 +7866,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create a sales order w/o key properties, enter a note, then submit the batch
+	//
+	// When using bSkipRefresh, the created() promise must not wait for that GET (BCP: 2270083632)
 	[false, true].forEach(function (bSkipRefresh) {
 		QUnit.test("Create with user input - bSkipRefresh: " + bSkipRefresh, function (assert) {
 			var oCreatedContext,
@@ -7873,6 +7875,7 @@ sap.ui.define([
 					autoExpandSelect : true,
 					updateGroupId : "update"
 				}),
+				fnResolve,
 				sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Input id="note" value="{Note}"/>\
@@ -7924,12 +7927,16 @@ sap.ui.define([
 				if (bSkipRefresh) {
 					// late property request for CompanyName
 					that.expectRequest("SalesOrderList('43')?$select=SO_2_BP"
-							+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
-							SO_2_BP : {
-								BusinessPartnerID : "456",
-								CompanyName : "ACM"
-							}
-						});
+							+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)",
+							new Promise(function (resolve) {
+								fnResolve = resolve.bind(null, {
+									SO_2_BP : {
+										BusinessPartnerID : "456",
+										CompanyName : "ACM"
+									}
+								});
+							})
+						);
 				} else {
 					that.expectRequest("SalesOrderList('43')?$select=BuyerID,Note,SalesOrderID"
 							+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
@@ -7941,9 +7948,9 @@ sap.ui.define([
 								CompanyName : "ACM"
 							}
 						})
-						.expectChange("note", ["fresh from server"]);
+						.expectChange("note", ["fresh from server"])
+						.expectChange("companyName", ["ACM"]);
 				}
-				that.expectChange("companyName", ["ACM"]);
 
 				return Promise.all([
 					oCreatedContext.created(),
@@ -7952,6 +7959,20 @@ sap.ui.define([
 				]);
 			}).then(function () {
 				assert.strictEqual(oCreatedContext.getProperty("BuyerID"), "24");
+				// Note: w/ bSkipRefresh, this is not available synchronously as soon as #created()
+				// is fulfilled (just like "createCompleted" event)
+				assert.strictEqual(oCreatedContext.getProperty("SO_2_BP/BusinessPartnerID"),
+					bSkipRefresh ? undefined : "456");
+
+				if (bSkipRefresh) {
+					that.expectChange("companyName", ["ACM"]);
+
+					fnResolve();
+
+					return that.waitForChanges(assert);
+				}
+			}).then(function () {
+				assert.strictEqual(oCreatedContext.getProperty("SO_2_BP/BusinessPartnerID"), "456");
 			});
 		});
 	});
