@@ -720,6 +720,11 @@ var oMenu22 = new sap.m.Menu({
                                     icon: "sap-icon://thumb-up",
                                     text: "Button",
                                     type: "Transparent"
+                                }),
+                                new sap.m.MenuButton({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "MenuButton but the text is too long",
+                                    type: "Transparent"
                                 })
                             ]
                         })
@@ -781,9 +786,32 @@ var oMenu22 = new sap.m.Menu({
                                     icon: "sap-icon://thumb-up",
                                     text: "Button",
                                     type: "Transparent"
+                                }),
+                                new sap.m.MenuButton({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "MenuButton but the text is too long",
+                                    type: "Transparent"
                                 })
                             ]
                         }).addStyleClass("sapContrast")
+                    ]
+                }), 
+                new sap.m.CustomListItem({
+                    id: "customListItem3",
+                    content: [
+                        new sap.m.Text({id:"textInListItem3", text:"MenuButtons in Overflowed List"}),
+                        new sap.m.OverflowToolbar({
+                            id: "overflowToolbarInListItem3",
+                            width: "50px",
+                            content: [
+                                new sap.m.MenuButton({
+                                    id: "menuButtonInOverflow",
+                                    icon: "sap-icon://thumb-up",
+                                    text: "MenuButton but the text is too long",
+                                    type: "Transparent"
+                                })
+                            ]
+                        })
                     ]
                 })
             ]
@@ -805,7 +833,7 @@ var oMenu22 = new sap.m.Menu({
             }),
             content: [
                 oVBox,
-                oList
+                oList, 
             ],
             footer: new sap.m.Bar({
                 contentMiddle: [
