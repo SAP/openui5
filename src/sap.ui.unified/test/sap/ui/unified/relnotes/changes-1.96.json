@@ -137,5 +137,21 @@
         ]
       }
     ]
+  },
+  "1.96.13": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "f910090b1e607b780129833439df7d7c2bd2a9d8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust day of the week announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004825022022"
+          }
+        ]
+      }
+    ]
   }
 }

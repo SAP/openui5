@@ -1242,5 +1242,73 @@
         ]
       }
     ]
+  },
+  "1.96.13": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "cdb00059e1ddb334973fc79ebea441e6df40fd5a",
+        "type": "FIX",
+        "text": " sap.m.StepInput: adjust input role",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270015355"
+          }
+        ]
+      },
+      {
+        "id": "b2238dd42aa627213ddc0e6d70605aca0bf1fd64",
+        "type": "FIX",
+        "text": " sap.m.Input: Pressing ESC now resets the proposed text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007258462022"
+          }
+        ]
+      },
+      {
+        "id": "01848a7c579192e481c2b198be69ce61437fd6b3",
+        "type": "FIX",
+        "text": " sap.m.Input: suggestionItemSelected is now fired correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270121964"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270121963"
+          }
+        ]
+      },
+      {
+        "id": "2dafc621689d6ae268aae4be39fa3c87d46f4bf2",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Selecting option with the same starting text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280107625"
+          }
+        ]
+      },
+      {
+        "id": "079ee2e1b4813b9058b84a4e123e6c6afcdd8a08",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Max sizes are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270068256"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270149659"
+          }
+        ]
+      }
+    ]
   }
 }

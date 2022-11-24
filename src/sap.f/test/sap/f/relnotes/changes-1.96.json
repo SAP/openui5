@@ -184,5 +184,25 @@
         ]
       }
     ]
+  },
+  "1.96.13": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "497500f351521de791e8f8c8b2ba14fd77e73109",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fix elements overlapping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280073506"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270025164"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -630,5 +630,43 @@
         ]
       }
     ]
+  },
+  "1.96.13": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "273780aad5f74afaf4bc1513d318e01972e8da0c",
+        "type": "FEATURE",
+        "text": " Prevent overwrite SAP themes from OS high contrast settings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007514032022"
+          }
+        ]
+      },
+      {
+        "id": "19096009fc063ea85ca17ddaf863787bacc7326d",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: introduce calendarWeekNumbering format option",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007627612021"
+          }
+        ]
+      },
+      {
+        "id": "27b97b5a4dd2f6edc85c8087889854e0fbac177c",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalTreeBindingAdapter: avoid loading data if not needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270125832"
+          }
+        ]
+      }
+    ]
   }
 }
