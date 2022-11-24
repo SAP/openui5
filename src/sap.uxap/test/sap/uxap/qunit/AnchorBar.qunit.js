@@ -662,33 +662,43 @@ sap.ui.define([
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			oSelect = oAnchorBar._getHierarchicalSelect(),
 			oDialog = oSelect.getAggregation("picker"),
-			oSelectedSection = this.oObjectPage.getSections()[0],
+			oSelectedSubSection = this.oObjectPage.getSections()[0].getSubSections()[0],
+			oSelectFocusSpy = this.spy(oSelect, "focus"),
+			oStubAppyFocus,
+			oStubDomRef,
 			clock = sinon.useFakeTimers(),
-			done = assert.async(),
-			oStub;
+			done = assert.async();
+
+			assert.expect(1);
 
 			oDialog.attachAfterOpen(function () {
-				oStub = this.stub(oSelectedSection, "getDomRef").callsFake(function () {
+				oStubDomRef = this.stub(oSelectedSubSection, "getDomRef").callsFake(function () {
 					return {
 						focus: function () {
-							assert.ok(true, "Section is focused");
+							assert.ok(oSelectFocusSpy.called, "Select focus is called before the SubSection is focused from AnchorBar");
+
+							// Clean up
+							oStubAppyFocus.restore();
+							oStubDomRef.restore();
 						}
 					};
 				});
-				oAnchorBar._onSelectChange({
-					getParameter: function () {
-						return oSelect.getItems()[0];
-					}
-				});
 
-				oStub.restore();
+				oSelectFocusSpy.reset();
+
+				// Act - selecting SubSection with Space key
+				QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+				QUnitUtils.triggerKeyup(oSelect.getDomRef(), KeyCodes.SPACE);
+
+				oStubDomRef.restore();
 				clock.restore();
 				done();
 			}.bind(this));
 
 		// Act - Open the picker
-		oSelect.focus();
+		oSelect.getDomRef().focus();
 		QUnitUtils.triggerKeydown(oSelect.getFocusDomRef(), KeyCodes.F4);
+		oStubAppyFocus = this.stub(sap.ui.getCore(), "getCurrentFocusedControlId").returns(oSelect.getFocusDomRef().id);
 		clock.tick(500);
 	});
 
