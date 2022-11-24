@@ -281,4 +281,10 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isNavigationEnabled", function(assert) {
+
+		assert.ok(oBool.isNavigationEnabled(), "navigation is enabled");
+
+	});
+
 });
