@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,browser,expect*/
+/*global describe,it,element,by,takeScreenshot,browser,expect,protractor*/
 
 describe("sap.ui.unified.CalendarVisual", function() {
 	"use strict";
@@ -22,6 +22,15 @@ describe("sap.ui.unified.CalendarVisual", function() {
 		expect(takeScreenshot(oCal)).toLookAs("082_multiple_day_selection_press_date2");
 		_pressDate(sCalId, "20150120"); // 2 and 22 selected, 20 focused
 		expect(takeScreenshot(oCal)).toLookAs("083_multiple_day_selection_press_date3");
+	});
+
+	it("should show calendar with current date button", function () {
+		_initCalendar("9");
+
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		expect(takeScreenshot(oCal)).toLookAs("today_button_focus");
 	});
 
 	function _initCalendar(sVersion) {
