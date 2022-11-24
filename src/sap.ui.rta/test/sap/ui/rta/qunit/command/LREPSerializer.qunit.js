@@ -732,6 +732,7 @@ sap.ui.define([
 			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 			var oRemoveCommand1;
 			var oRemoveCommand2;
+			var oRemoveStub;
 
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
@@ -763,9 +764,61 @@ sap.ui.define([
 					return PersistenceWriteAPI.save({selector: oMockedAppComponent, skipUpdateCache: true});
 				})
 
-				.then(this.oSerializer.clearCommandStack.bind(this.oSerializer))
+				.then(function() {
+					oRemoveStub = sandbox.stub(PersistenceWriteAPI, "remove");
+					return this.oSerializer.clearCommandStack();
+				}.bind(this))
 
 				.then(function() {
+					assert.ok(oRemoveStub.notCalled, "then 'remove' was not called");
+					assert.ok(true, "then the promise for LREPSerializer.clearCommandStack() gets resolved");
+					assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
+					fnAssertWrite(2);
+				}.bind(this));
+		});
+
+		QUnit.test("when the LREPSerializer.clearCommandStack gets called with bRemoveChanges = true", function(assert) {
+			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
+			var oRemoveCommand1;
+			var oRemoveCommand2;
+			var oRemoveStub;
+
+			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
+				removedElement: this.oInput1
+			}, this.oInputDesignTimeMetadata)
+
+				.then(function(oCommand) {
+					oRemoveCommand1 = oCommand;
+					return this.oCommandStack.pushAndExecute(oRemoveCommand1);
+				}.bind(this))
+
+				.then(CommandFactory.getCommandFor.bind(null, this.oInput2, "Remove", {
+					removedElement: this.oInput2
+				}, this.oInputDesignTimeMetadata))
+
+				.then(function(oCommand) {
+					oRemoveCommand2 = oCommand;
+					return this.oCommandStack.pushAndExecute(oRemoveCommand2);
+				}.bind(this))
+
+				.then(function() {
+					var aUIChanges = [oRemoveCommand1.getPreparedChange(), oRemoveCommand2.getPreparedChange()];
+					aUIChanges.forEach(function(oChange) {
+						var oFlexObjectMetadata = oChange.getFlexObjectMetadata();
+						oFlexObjectMetadata.namespace = "APP_VARIANT_NAMESPACE";
+						oFlexObjectMetadata.reference = "APP_VARIANT_REFERENCE";
+						oChange.setFlexObjectMetadata(oFlexObjectMetadata);
+					});
+
+					return PersistenceWriteAPI.save({selector: oMockedAppComponent, skipUpdateCache: true});
+				})
+
+				.then(function() {
+					oRemoveStub = sandbox.stub(PersistenceWriteAPI, "remove");
+					return this.oSerializer.clearCommandStack(true);
+				}.bind(this))
+				.then(function() {
+					assert.ok(oRemoveStub.called, "then 'remove' from PersistenceWriteAPI was called");
 					assert.ok(true, "then the promise for LREPSerializer.clearCommandStack() gets resolved");
 					assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
 					fnAssertWrite(2);

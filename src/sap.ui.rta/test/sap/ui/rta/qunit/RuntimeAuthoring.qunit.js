@@ -3,17 +3,17 @@
 sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/base/Log",
-	"sap/m/MessageToast",
+	"sap/m/MessageBox",
 	"sap/ui/core/Core",
 	"sap/ui/Device",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/Layer",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/command/CommandFactory",
@@ -24,17 +24,17 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	Log,
-	MessageToast,
+	MessageBox,
 	oCore,
 	Device,
 	DesignTimeMetadata,
 	OverlayRegistry,
 	DOMUtil,
 	KeyCodes,
-	SmartVariantManagementApplyAPI,
 	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
+	Layer,
 	QUnitUtils,
 	RTABaseCommand,
 	CommandFactory,
@@ -277,14 +277,42 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when saving RTA without exiting,", function(assert) {
+			var fnDone = assert.async();
+
+			function fnChecks() {
+				assert.ok(this.oRta, "RTA is still up and running");
+				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "command stack is cleared");
+				assert.strictEqual(jQuery(".sapUiRtaToolbar:visible").length, 1, "and the Toolbar is visible.");
+				assert.notOk(
+					this.oRta.getToolbar().getControl("save").getEnabled(),
+					"then the save button is disabled"
+				);
+				assert.ok(
+					this.oRta.getToolbar().getControl("restore").getEnabled(),
+					"then the reset button is enabled"
+				);
+				fnDone();
+			}
+
+			// Simulate pressing the "save" button
+			this.oRta.getToolbar().fireSave({
+				callback: fnChecks.bind(this)
+			});
+		});
+
 		QUnit.test("when trying to stop rta with error in saving changes,", function(assert) {
 			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.reject());
+			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox")
+			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
 
 			return this.oRta.stop(false).catch(function() {
 				assert.ok(true, "then the promise got rejected");
 				assert.ok(this.oRta, "RTA is still up and running");
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 command is still in the stack");
 				assert.equal(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), true, "and the Toolbar is visible.");
+				assert.strictEqual(oMessageBoxStub.callCount, 1, "then the messagebox is called once");
+				assert.strictEqual(oMessageBoxStub.getCall(0).args[1], "MSG_UNSAVED_CHANGES_ON_CLOSE", "then the expected messagebox is called");
 			}.bind(this));
 		});
 
@@ -300,15 +328,83 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("when stopping rta in personalization mode,", function(assert) {
+			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			var oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
+			var oMessageBoxSpy = sandbox.stub(RtaUtils, "showMessageBox");
+			sandbox.stub(this.oRta, "getLayer").returns(Layer.USER);
+
+			return this.oRta.stop(false, false)
+				.then(function() {
+					var oSavePropertyBag = oSaveSpy.getCall(0).args[0];
+					assert.ok(oSavePropertyBag.removeOtherLayerChanges, "then removeOtherLayerChanges is set to true");
+					assert.strictEqual(oSavePropertyBag.layer, Layer.USER, "then the layer is properly passed along");
+					assert.ok(oMessageBoxSpy.notCalled, "then the messagebox is not called (personalization always saves)");
+					assert.ok(oSerializeToLrepSpy.called, "then _serializeToLrep is called");
+				});
+		});
+
+		QUnit.test("when stopping rta with changes and choosing not to save them on the dialog,", function(assert) {
+			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox")
+			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"));
+
+			return this.oRta.stop(false)
+				.then(function() {
+					assert.strictEqual(oMessageBoxStub.getCall(0).args[1], "MSG_UNSAVED_CHANGES_ON_CLOSE", "then the expected messagebox is called");
+					assert.deepEqual(oMessageBoxStub.getCall(0).args[2], {
+						titleKey: "TIT_UNSAVED_CHANGES_ON_CLOSE",
+						actionKeys: ["BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE", "BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"],
+						emphasizedActionKey: "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE",
+						showCancel: true
+					}, "and the message box is called with the right parameters");
+					assert.ok(true, "then the promise got resolved");
+					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "command stack is cleared");
+					var mPropertyBag = {
+						oComponent: oComp,
+						selector: oComp,
+						invalidateCache: false,
+						currentLayer: this.oRta.getLayer(),
+						includeDirtyChanges: true
+					};
+					return PersistenceWriteAPI._getUIChanges(mPropertyBag);
+				}.bind(this))
+				.then(function(aChanges) {
+					assert.equal(aChanges.length, 0, "then all dirty changes are cleared");
+					return RtaQunitUtils.getNumberOfChangesForTestApp();
+				}).then(function(iNumOfChanges) {
+					assert.equal(iNumOfChanges, 0, "there is no change written");
+				});
+		});
+
+		QUnit.test("when stopping rta with changes and pressing cancel on the dialog,", function(assert) {
+			sandbox.stub(RtaUtils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
+
+			return this.oRta.stop(false)
+				.then(function() {
+					assert.ok(true, "then the promise gets resolved");
+					assert.ok(this.oRta, "RTA is still up and running");
+					assert.strictEqual(jQuery(".sapUiRtaToolbar:visible").length, 1, "and the Toolbar is visible.");
+					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 command is still in the stack");
+				}.bind(this))
+				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+				.then(function(iNumOfChanges) {
+					assert.equal(iNumOfChanges, 0, "there is no change written");
+				});
+		});
+
 		QUnit.test("when stopping rta with saving changes", function(assert) {
 			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
 			var oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
+			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox")
+			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
 
 			return this.oRta.stop()
 				.then(function() {
 					var oSavePropertyBag = oSaveSpy.getCall(0).args[0];
 					assert.ok(oSavePropertyBag.removeOtherLayerChanges, "then removeOtherLayerChanges is set to true");
 					assert.strictEqual(oSavePropertyBag.layer, this.oRta.getLayer(), "then the layer is properly passed along");
+					assert.strictEqual(oMessageBoxStub.callCount, 1, "then the messagebox is called once");
+					assert.strictEqual(oMessageBoxStub.getCall(0).args[1], "MSG_UNSAVED_CHANGES_ON_CLOSE", "then the expected messagebox is called");
 				}.bind(this))
 				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 				.then(function(iNumberOfChanges) {

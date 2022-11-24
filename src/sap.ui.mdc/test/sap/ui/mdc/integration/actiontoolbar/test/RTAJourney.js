@@ -267,7 +267,7 @@ sap.ui.define([
                 Then.onPageWithRTA.iShouldSeetheContextMenuEntries(["Rename", "Save View", "Save View As", "Manage Views", "Switch Views"]);
 
                 // Close RTA
-                When.onPageWithRTA.iExitRtaMode();
+                When.onPageWithRTA.iExitRtaMode(false, /*bNoChanges =*/true);
 
                 Then.iTeardownMyUIComponent();
             });

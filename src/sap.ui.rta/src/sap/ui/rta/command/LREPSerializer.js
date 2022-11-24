@@ -175,23 +175,33 @@ sap.ui.define([
 		}.bind(this))
 		.then(function() {
 			Log.info("UI adaptation successfully transfered changes to layered repository");
+			this.getCommandStack().setSaved(true);
 			this.getCommandStack().removeAllCommands();
 		}.bind(this));
 
 		return this._lastPromise;
 	};
 
-	LREPSerializer.prototype._triggerUndoChanges = function() {
+	LREPSerializer.prototype._triggerUndoChanges = function(bRemoveChanges) {
 		var oCommandStack = this.getCommandStack();
 		var aPromises = [];
 
 		var aCommands = oCommandStack.getAllExecutedCommands();
-		aCommands.forEach(function(oCommand) {
-			aPromises.push(oCommand.undo.bind(oCommand));
-		});
 
-		// The last command has to be undone first, therefore reversing is required
-		aPromises = aPromises.reverse();
+		if (bRemoveChanges) {
+			// Calling "undo" from the stack, the serializer is also informed of the
+			// command execution and clears the dirty changes from the persistence
+			aCommands.forEach(function() {
+				// Undo on the stack already starts from the last command
+				aPromises.push(oCommandStack.undo.bind(oCommandStack));
+			});
+		} else {
+			aCommands.forEach(function(oCommand) {
+				aPromises.push(oCommand.undo.bind(oCommand));
+			});
+			// The last command has to be undone first, therefore reversing is required
+			aPromises = aPromises.reverse();
+		}
 
 		return FlUtils.execPromiseQueueSequentially(aPromises, false, true);
 	};
@@ -201,18 +211,23 @@ sap.ui.define([
 	 * At this point command stack is not aware if the changes have been already booked for the new app variant.
 	 * Therefore if there shall be some UI changes present in command stack, we undo all the changes till the beginning.
 	 * In the last when user presses 'Save and Exit', there will be no change registered for the current app.
+	 * @param {boolean} bRemoveChanges if LREPSerializer should clear the dirty changes in the persistence
 	 * @returns {Promise} returns a promise with true or false
 	 */
-	LREPSerializer.prototype.clearCommandStack = function() {
+	LREPSerializer.prototype.clearCommandStack = function(bRemoveChanges) {
 		var oCommandStack = this.getCommandStack();
 
 		// Detach the event 'commandExecuted' here to stop the communication of LREPSerializer with Flex
-		oCommandStack.detachCommandExecuted(this.handleCommandExecuted.bind(this));
-		return this._triggerUndoChanges()
+		if (!bRemoveChanges) {
+			oCommandStack.detachCommandExecuted(this.handleCommandExecuted.bind(this));
+		}
+		return this._triggerUndoChanges(bRemoveChanges)
 		.then(function() {
 			oCommandStack.removeAllCommands();
 			// Attach the event 'commandExecuted' here to start the communication of LREPSerializer with Flex
-			oCommandStack.attachCommandExecuted(this.handleCommandExecuted.bind(this));
+			if (!bRemoveChanges) {
+				oCommandStack.attachCommandExecuted(this.handleCommandExecuted.bind(this));
+			}
 			return true;
 		}.bind(this));
 	};
