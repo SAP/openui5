@@ -1222,5 +1222,25 @@
         ]
       }
     ]
+  },
+  "1.96.14": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "6b62c712ea7f2f205ba802fde6c54eb22fcc54ca",
+        "type": "FIX",
+        "text": " sap.m.Button: adjusting self reference",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270101986"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280166158"
+          }
+        ]
+      }
+    ]
   }
 }

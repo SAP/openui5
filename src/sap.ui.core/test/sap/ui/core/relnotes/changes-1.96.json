@@ -614,5 +614,21 @@
         ]
       }
     ]
+  },
+  "1.96.14": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "eba0595f080d2002eff8cc200f51dec08168a0b8",
+        "type": "FIX",
+        "text": " ManagedObjectObserver: performance optimization for destroy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008610112022"
+          }
+        ]
+      }
+    ]
   }
 }
