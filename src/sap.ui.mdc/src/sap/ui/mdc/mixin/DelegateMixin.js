@@ -110,7 +110,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 	 * Loads and initializes the delegate module related to the enhanced control.
 	 *
 	 * @protected
-	 * @param {object} [oPreloadedModule] Preloaded delegate module
+	 * @param {sap.ui.mdc.BaseDelegate} [oPreloadedModule] Preloaded delegate module
 	 * @returns {Promise<sap.ui.mdc.BaseDelegate>} Returns a <code>Promise</code> that resolves the delegate module, if available
 	 */
 	DelegateMixin.initControlDelegate = function (oPreloadedModule) {
@@ -184,7 +184,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 	 * <b>Note:</b> <code>initControlDelegate</code> must be called to start the delegate initialization
 	 *
 	 * @protected
-	 * @returns {Promise} Returns a <code>Promise</code> reflecting the delegate initialization
+	 * @returns {Promise<sap.ui.mdc.BaseDelegate>} Returns a <code>Promise</code> reflecting the delegate initialization
 	 * @throws Throws an error if the delegate module is not available
 	 */
 	DelegateMixin.awaitControlDelegate = function () {
