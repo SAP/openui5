@@ -677,8 +677,7 @@ sap.ui.define([
 		}
 	});
 
-	// TODO Timezone Configuration: Unskip when re-enabling Configuration#setTimezone functionality
-	QUnit.skip("Read timezone from URL", function(assert) {
+	QUnit.test("Read timezone from URL", function(assert) {
 		// setup
 		browserUrl.change('?sap-ui-timezone=America/Los_Angeles');
 
@@ -686,11 +685,12 @@ sap.ui.define([
 		Configuration.setCore();
 
 		// verify results
-		assert.equal(Configuration.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
+		// TODO Timezone Configuration: expected test when re-enabling Configuration#setTimezone functionality
+		// assert.equal(Configuration.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
+		assert.equal(Configuration.getTimezone(), sLocalTimezone, 'sap-ui-timezone is not supported');
 	});
 
-	// TODO Timezone Configuration: Unskip when re-enabling Configuration#setTimezone functionality
-	QUnit.skip("Read timezone from URL sap-timezone", function(assert) {
+	QUnit.test("Read timezone from URL sap-timezone", function(assert) {
 		// setup
 		browserUrl.change('?sap-timezone=America/Los_Angeles');
 
@@ -700,10 +700,7 @@ sap.ui.define([
 		// verify results
 		assert.equal(Configuration.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
 
-	});
-
-	// TODO Timezone Configuration: Unskip when re-enabling Configuration#setTimezone functionality
-	QUnit.skip("Read invalid timezone from URL sap-timezone", function(assert) {
+		// repeat the test with an invalid timezone to reset _experimentalTimezone flag before executing other tests
 		// setup
 		browserUrl.change('?sap-timezone=invalid');
 
@@ -712,7 +709,6 @@ sap.ui.define([
 
 		// verify results
 		assert.equal(Configuration.getTimezone(), sLocalTimezone, "fallback to '" + sLocalTimezone + "'");
-
 	});
 
 	QUnit.module("SAP parameters", {
