@@ -568,6 +568,9 @@ sap.ui.define([
 		_Helper.setPrivateAnnotation(oEntityData, "transientPredicate", sTransientPredicate);
 		oEntityData["@$ui5.context.isTransient"] = true;
 		if (sGroupId.startsWith("$inactive.")) {
+			// keep initial data to allow resetting edited inactive rows
+			_Helper.setPrivateAnnotation(oEntityData, "initialData",
+				_Helper.publicClone(oEntityData, true));
 			oEntityData["@$ui5.context.isInactive"] = true;
 		} else {
 			this.iActiveElements += 1;
@@ -1682,7 +1685,7 @@ sap.ui.define([
 	 * Resets all pending changes below the given path.
 	 *
 	 * @param {string} [sPath]
-	 *   The path
+	 *   The relative path within the cache
 	 * @throws {Error}
 	 *   If there is a change which has been sent to the server and for which there is no response
 	 *   yet, or if the cache is shared
@@ -1707,10 +1710,23 @@ sap.ui.define([
 		});
 
 		Object.keys(this.mPostRequests).forEach(function (sRequestPath) {
-			var aEntities, sTransientGroup, i;
+			var aEntities = that.mPostRequests[sRequestPath],
+				sTransientGroup,
+				sTransientPredicate,
+				i;
 
-			if (isSubPath(sRequestPath, sPath)) {
-				aEntities = that.mPostRequests[sRequestPath];
+			if (sPath.startsWith("($uid=")) {
+				aEntities.forEach(function (oEntity) {
+					sTransientPredicate
+						= _Helper.getPrivateAnnotation(oEntity, "transientPredicate");
+
+					if (sTransientPredicate === sPath
+						&& oEntity["@$ui5.context.isInactive"] === 1) {
+						_Helper.resetInactiveEntity(that.mChangeListeners, sTransientPredicate,
+							oEntity);
+					}
+				});
+			} else if (isSubPath(sRequestPath, sPath)) {
 				for (i = aEntities.length - 1; i >= 0; i -= 1) {
 					sTransientGroup = _Helper.getPrivateAnnotation(aEntities[i], "transient");
 					if (!sTransientGroup.startsWith("$inactive.")) {
@@ -2096,6 +2112,7 @@ sap.ui.define([
 				_Helper.updateAll({}, sEntityPath, oPostBody, oUpdateData);
 				if (oEntity["@$ui5.context.isInactive"] && !bInactive) {
 					oUpdateData["@$ui5.context.isInactive"] = false;
+					_Helper.deletePrivateAnnotation(oEntity, "initialData");
 					that.iActiveElements += 1;
 					addToCount(that.mChangeListeners, "", that.aElements, 1);
 				}

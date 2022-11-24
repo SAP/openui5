@@ -3641,7 +3641,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resetChanges", function (assert) {
+[true, 1, false, undefined].forEach(function (bInactive) {
+	QUnit.test("resetChanges, bInactive= " + bInactive, function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
 				resetChangesForPath : function () {}
@@ -3655,6 +3656,7 @@ sap.ui.define([
 			}));
 
 		oContext.oDeletePromise = oDeletePromise;
+		oContext.bInactive = bInactive;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("resetChangesForPath")
 			.withExactArgs("/path", sinon.match.array)
@@ -3669,6 +3671,7 @@ sap.ui.define([
 		// code under test
 		oResetChangesPromise = oContext.resetChanges();
 
+		assert.strictEqual(oContext.bInactive, bInactive ? true : bInactive);
 		assert.ok(oResetChangesPromise instanceof Promise);
 
 		return oResetChangesPromise.then(function (oResult) {
@@ -3676,6 +3679,7 @@ sap.ui.define([
 			assert.strictEqual(oResult, undefined);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("resetChanges: w/o oDeletePromise", function () {
@@ -3693,16 +3697,22 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resetChanges: throws error on transient context", function (assert) {
+[undefined, false].forEach(function (bInactive) {
+	var sTitle = "resetChanges: throws error on transient but not inactive context, bInactive="
+		+ bInactive;
+
+	QUnit.test(sTitle, function (assert) {
 		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext).expects("isInactive").withExactArgs().returns(bInactive);
 
 		assert.throws(function () {
 			// code under test
 			oContext.resetChanges();
 		}, new Error("Cannot reset a transient context: /path"));
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("resetKeepAlive", function (assert) {

@@ -1992,6 +1992,35 @@ sap.ui.define([
 		},
 
 		/**
+		 * Restores an entity and its POST body to the initial state which is read from a private
+		 * annotation. Key-value pairs are deleted if they are not in the initial state. Change
+		 * listeners are notified about the changed or deleted values, and the "inactive" flag is
+		 * reset to <code>true</code>.
+		 *
+		 * @param {object} mChangeListeners - A map of change listeners by path
+		 * @param {string} sPath - The path to the entity; used to notify change listeners
+		 * @param {object} oEntity - The entity to be restored.
+		 */
+		resetInactiveEntity : function (mChangeListeners, sPath, oEntity) {
+			var oInitialData = _Helper.getPrivateAnnotation(oEntity, "initialData"),
+				oPostBody = _Helper.getPrivateAnnotation(oEntity, "postBody");
+
+			Object.keys(oPostBody).forEach(function (sKey) {
+				if (sKey in oInitialData) {
+					oEntity[sKey] = oPostBody[sKey] = oInitialData[sKey];
+				} else {
+					delete oPostBody[sKey];
+					delete oEntity[sKey];
+				}
+				_Helper.fireChange(mChangeListeners, sPath + "/" + sKey, oEntity[sKey]);
+			});
+
+			_Helper.updateAll(mChangeListeners, sPath, oEntity,
+				{"@$ui5.context.isInactive" : true}
+			);
+		},
+
+		/**
 		 * Resolves the "If-Match" header in the given map of request-specific headers.
 		 * For lazy determination of the ETag, the "If-Match" header may contain an object
 		 * containing the current ETag. If needed create a copy of the given map and replace the

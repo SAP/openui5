@@ -1616,7 +1616,8 @@ sap.ui.define([
 	 *   <li> the binding's root binding is suspended,
 	 *   <li> a change of this context has already been sent to the server and there is no response
 	 *     yet,
-	 *   <li> this context is transient and therefore should rather be reset via {@link #delete}.
+	 *   <li> this context is transient but not inactive and therefore should rather be reset via
+	 *     {@link #delete}.
 	 * </ul>
 	 *
 	 * @experimental As of version 1.109.0
@@ -1627,12 +1628,15 @@ sap.ui.define([
 				? [this.oDeletePromise.catch(function () { /*already handled in #delete*/ })]
 				: [];
 
-		if (this.isTransient()) {
+		if (this.isTransient() && !this.isInactive()) {
 			throw new Error("Cannot reset a transient context: " + this);
 		}
 
 		this.oBinding.checkSuspended();
 		this.oBinding.resetChangesForPath(this.sPath, aPromises);
+		if (this.bInactive === 1) {
+			this.bInactive = true;
+		}
 		return Promise.all(aPromises).then(function () {});
 	};
 

@@ -133,7 +133,7 @@ sap.ui.define([
 				pressCancel : function () {
 					Helper.pressButton(this, sViewName, "cancel");
 				},
-				pressDeletePartButton : function (iRow) {
+				pressResetOrDeletePartButton : function (iRow) {
 					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",

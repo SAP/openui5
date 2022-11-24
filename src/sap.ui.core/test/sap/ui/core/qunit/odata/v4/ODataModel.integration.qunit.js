@@ -45651,14 +45651,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario:
-	// - Two inactive inline creations rows
 	// - Attach to createActivate event and prevent activation if no "Team_Id" is given
-	// - Add "Name" to both inline creation rows -> stay inactive, hasPendingChanges = true for
-	//   binding and context
+	// - Two inactive inline creations rows. One with initial data
+	// - Add values to the inline creation rows, they stay inactive because "Team_Id" is missing.
+	//   hasPendingChanges returns true at ODLB and contexts
 	// - Add "Team_Id" to the first inline creation row -> row is activated and persisted
-	// - Delete second row -> all hasPendingChanges must return false
+	// - Reset changes on second context -> entered data is lost and initial data is restored
+	// - Add "Team_Id" to second context -> activation works as expected
 	//
 	// JIRA: CPOUI5ODATAV4-1582
+	// JIRA: CPOUI5ODATAV4-1867
 	QUnit.test("Creation Rows: Support for required properties", function (assert) {
 		var oBinding,
 			oContext1,
@@ -45666,18 +45668,32 @@ sap.ui.define([
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
-	<Text id="inactive" text="{= %{@$ui5.context.isInactive} }"/>\
 	<Input id="id" value="{Team_Id}"/>\
 	<Input id="name" value="{Name}"/>\
+	<Input id="budget" value="{Budget}"/>\
+	<Text id="inactive" text="{= %{@$ui5.context.isInactive} }"/>\
 </Table>',
 			that = this;
 
-		that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
-				value : [{Name : "Team #0", Team_Id : "TEAM_00"}]
-			})
-			.expectChange("id", ["TEAM_00"])
-			.expectChange("name", ["Team #0"])
-			.expectChange("inactive", [undefined]);
+		function checkStates(vInactiveCtx1, vInactiveCtx2, bChangesCtx1, bChangesCtx2,
+				bChangesBinding, bChangesBindingFlag, bChangesModel) {
+			// code under test
+			assert.strictEqual(oContext1.isInactive(), vInactiveCtx1);
+			assert.strictEqual(oContext2.isInactive(), vInactiveCtx2);
+
+			// code under test
+			assert.strictEqual(oContext1.hasPendingChanges(), bChangesCtx1);
+			assert.strictEqual(oContext2.hasPendingChanges(), bChangesCtx2);
+			assert.strictEqual(oBinding.hasPendingChanges(), bChangesBinding);
+			assert.strictEqual(oBinding.hasPendingChanges(true), bChangesBindingFlag);
+			assert.strictEqual(oModel.hasPendingChanges(), bChangesModel);
+		}
+
+		that.expectRequest("TEAMS?$select=Budget,Name,Team_Id&$skip=0&$top=100", {value : []})
+			.expectChange("id", [])
+			.expectChange("name", [])
+			.expectChange("budget", [])
+			.expectChange("inactive", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oBinding = that.oView.byId("table").getBinding("items");
@@ -45689,36 +45705,31 @@ sap.ui.define([
 				}
 			});
 
-			that.expectChange("id", [, "", ""])
-				.expectChange("name", [, "", ""])
-				.expectChange("inactive", [, true, true]);
+			that.expectChange("id", ["", ""])
+				.expectChange("name", ["", "Team #2 inactive"])
+				.expectChange("budget", [null, null])
+				.expectChange("inactive", [true, true]);
 
-			oContext1 = oBinding.create({}, true, true, /*bInactive*/true);
-			oContext2 = oBinding.create({}, true, true, /*bInactive*/true);
+			oContext1 = oBinding.create(undefined, true, true, /*bInactive*/true);
+			oContext2 = oBinding.create({Name : "Team #2 inactive"}, true, true, /*bInactive*/true);
 
-			assert.strictEqual(oContext1.isInactive(), true);
-			assert.strictEqual(oContext2.isInactive(), true);
+			// inactive: ctx1, ctx2; pendingChanges: ctx1, ctx2, ODLB, ODLB(true), ODM
+			checkStates(true, true, false, false, false, false, false, false);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			// no request is sent
-			that.expectChange("name", [, "Team #1", "Team #2"])
-				.expectChange("inactive", [, 1, 1]);
+			// no requests
+			that.expectChange("name", ["Team #1 edited", "Team #2 edited"])
+				.expectChange("budget", [, "5,000"])
+				.expectChange("inactive", [1, 1]);
 
 			// code under test
-			oContext1.setProperty("Name", "Team #1");
-			oContext2.setProperty("Name", "Team #2");
+			oContext1.setProperty("Name", "Team #1 edited");
+			oContext2.setProperty("Name", "Team #2 edited");
+			oContext2.setProperty("Budget", 5000);
 
-			assert.strictEqual(oContext1.isInactive(), 1);
-			assert.strictEqual(oContext2.isInactive(), 1);
-
-			// code under test
-			assert.ok(oContext1.hasPendingChanges());
-			assert.ok(oContext2.hasPendingChanges());
-			assert.ok(oBinding.hasPendingChanges());
-			assert.notOk(oBinding.hasPendingChanges(true));
-			// model does not care about inactive contexts
-			assert.notOk(oModel.hasPendingChanges());
+			// inactive: ctx1, ctx2; pendingChanges: ctx1, ctx2, ODLB, ODLB(true), ODM
+			checkStates(1, 1, true, true, true, false, false);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -45727,32 +45738,62 @@ sap.ui.define([
 					url : "TEAMS",
 					payload : {
 						Team_Id : "TEAM_01",
-						Name : "Team #1"
+						Name : "Team #1 edited"
 					}
 				}, {
 					Team_Id : "TEAM_01",
-					Name : "Team #1"
+					Budget : 0,
+					Name : "Team #1 persisted"
 				})
-				.expectChange("id", [, "TEAM_01"])
-				.expectChange("inactive", [, false]);
+				.expectChange("id", ["TEAM_01"])
+				.expectChange("name", ["Team #1 persisted", "Team #2 inactive"])
+				.expectChange("budget", ["0", null])
+				.expectChange("inactive", [false, true]);
 
 			// code under test
 			oContext1.setProperty("Team_Id", "TEAM_01");
+			oContext2.resetChanges();
 
-			assert.strictEqual(oContext1.isInactive(), false);
+			// ctx1 is now active but still transient
+			// inactive: ctx1, ctx2; pendingChanges: ctx1, ctx2, ODLB, ODLB(true), ODM
+			checkStates(false, true, true, false, true, false, true);
 
 			return Promise.all([
 				oContext1.created(),
-				oContext2.delete(),
-				checkCanceled(assert, oContext2.created()),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			that.expectRequest({
+				method : "POST",
+				url : "TEAMS",
+				payload : {
+					Team_Id : "TEAM_02",
+					Name : "Team #2 inactive"
+				}
+			}, {
+				Team_Id : "TEAM_02",
+				Budget : 0,
+				Name : "Team #2 persisted"
+			})
+			.expectChange("id", [, "TEAM_02"])
+			.expectChange("name", [, "Team #2 persisted"])
+			.expectChange("budget", [, "0"])
+			.expectChange("inactive", [, false]);
+
 			// code under test
-			assert.notOk(oContext1.hasPendingChanges());
-			assert.notOk(oBinding.hasPendingChanges());
-			assert.notOk(oBinding.hasPendingChanges(true));
-			assert.notOk(oModel.hasPendingChanges());
+			oContext2.setProperty("Team_Id", "TEAM_02");
+
+			// ctx2 is now active but still transient
+			// inactive: ctx1, ctx2; pendingChanges: ctx1, ctx2, ODLB, ODLB(true), ODM
+			checkStates(false, false, false, true, true, false, true);
+
+			return Promise.all([
+				oContext2.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// inactive: ctx1, ctx2; pendingChanges: ctx1, ctx2, ODLB, ODLB(true), ODM
+			checkStates(false, false, false, false, false, false, false);
 
 			return that.waitForChanges(assert);
 		});

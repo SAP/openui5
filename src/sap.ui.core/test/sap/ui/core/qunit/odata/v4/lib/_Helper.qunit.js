@@ -2323,6 +2323,34 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resetInactiveEntity", function (assert) {
+		var oEntity = {foo : "n/a", bar : "n/a", baz : "n/a", notIn : "postBody"},
+			oHelperMock = this.mock(_Helper),
+			oInitialData = {foo : "foo"},
+			oPostBody = {foo : "n/a", bar : "n/a", baz : "n/a"};
+
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oEntity), "initialData").returns(oInitialData);
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oEntity), "postBody").returns(oPostBody);
+
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~", "path/foo", "foo");
+		oHelperMock.expects("fireChange")
+			.withExactArgs("~mChangeListeners~", "path/bar", undefined);
+		oHelperMock.expects("fireChange")
+			.withExactArgs("~mChangeListeners~", "path/baz", undefined);
+
+		oHelperMock.expects("updateAll").withExactArgs("~mChangeListeners~", "path",
+			sinon.match.same(oEntity), {"@$ui5.context.isInactive" : true});
+
+		// code under test
+		_Helper.resetInactiveEntity("~mChangeListeners~", "path", oEntity);
+
+		assert.deepEqual(oEntity, {foo : "foo", notIn : "postBody"});
+		assert.deepEqual(oPostBody, {foo : "foo"});
+	});
+
+	//*********************************************************************************************
 	[{
 		mHeaders : {"If-Match" : {}},
 		mResolvedHeader : {}
