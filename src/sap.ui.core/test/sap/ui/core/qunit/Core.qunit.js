@@ -6,11 +6,12 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	'sap/ui/Device',
 	'sap/ui/core/Core',
+	'sap/ui/core/UIArea',
 	'sap/ui/core/Element',
 	'sap/ui/core/Configuration',
 	'sap/ui/core/theming/ThemeManager',
 	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, oCore, Element, Configuration, ThemeManager, createAndAppendDiv) {
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, oCore, UIArea, Element, Configuration, ThemeManager, createAndAppendDiv) {
 	"use strict";
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
@@ -103,10 +104,10 @@ sap.ui.define([
 		createAndAppendDiv("uiArea1");
 		var oUIArea = oCore.createUIArea("uiArea1");
 		assert.ok(!!oUIArea, "UIArea must be created and returned");
-		assert.ok(_providesPublicMethods(oUIArea, sap.ui.core.UIArea), "Expected instance of sap.ui.core.UIArea");
+		assert.ok(_providesPublicMethods(oUIArea, UIArea), "Expected instance of sap.ui.core.UIArea");
 		var oUIAreaCheck = oCore.getUIArea("uiArea1");
 		assert.ok(!!oUIAreaCheck, "UIArea must be returned");
-		assert.ok(_providesPublicMethods(oUIAreaCheck, sap.ui.core.UIArea), "Expected instance of sap.ui.core.UIArea");
+		assert.ok(_providesPublicMethods(oUIAreaCheck, UIArea), "Expected instance of sap.ui.core.UIArea");
 		assert.equal(oUIAreaCheck, oUIArea, "Returned UIArea must be the same as the one created before");
 	});
 
@@ -119,7 +120,7 @@ sap.ui.define([
 		oCore.setRoot("uiArea2", oButton);
 		var oUIAreaCheck = oCore.getUIArea("uiArea2");
 		assert.ok(oUIAreaCheck, "UIArea must be returned");
-		assert.ok(_providesPublicMethods(oUIAreaCheck, sap.ui.core.UIArea), "Expected instance of sap.ui.core.UIArea");
+		assert.ok(_providesPublicMethods(oUIAreaCheck, UIArea), "Expected instance of sap.ui.core.UIArea");
 	});
 
 	/**
