@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
-	"sap/base/util/uid",
 	"sap/base/Log",
 	"sap/m/Bar",
 	"sap/m/Button",
@@ -34,7 +33,6 @@ sap.ui.define([
 	isEmptyObject,
 	merge,
 	ObjectPath,
-	uid,
 	Log,
 	Bar,
 	Button,
@@ -142,7 +140,7 @@ sap.ui.define([
 				getText: sandbox.stub().returnsArg(0),
 				hasText: sandbox.stub().returns(true)
 			};
-			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").callsFake(function (sLibraryName) {
+			sandbox.stub(oCore, "getLibraryResourceBundle").callsFake(function (sLibraryName) {
 				if (sLibraryName === "sap.ui.layout" || sLibraryName === "sap.m") {
 					return oFakeLibBundle;
 				}
@@ -930,7 +928,7 @@ sap.ui.define([
 				getText: sandbox.stub().returnsArg(0),
 				hasText: sandbox.stub().returns(true)
 			};
-			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").callsFake(function (sLibraryName) {
+			sandbox.stub(oCore, "getLibraryResourceBundle").callsFake(function (sLibraryName) {
 				if (sLibraryName === "sap.ui.layout" || sLibraryName === "sap.m") {
 					return oFakeLibBundle;
 				}
@@ -958,7 +956,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has a reveal and addViaDelegate and the default delegate is not available", function (assert) {
-			sandbox.stub(sap.ui.getCore(), "loadLibrary").callsFake(function (sLibraryName) {
+			sandbox.stub(oCore, "loadLibrary").callsFake(function (sLibraryName) {
 				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), sLibraryName)) {
 					return Promise.reject();
 				}
@@ -989,20 +987,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has an instance-specific delegate and an unavailable default delegate", function (assert) {
-			sandbox.stub(sap.ui.getCore(), "loadLibrary").callsFake(function (sLibraryName) {
+			sandbox.stub(oCore, "loadLibrary").callsFake(function (sLibraryName) {
 				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), sLibraryName)) {
 					return Promise.reject();
 				}
 				return oCore.loadLibrary.wrappedMethod.apply(this, arguments);
 			});
 
-			var oRequireStub = sandbox.stub(sap.ui, "require");
-			oRequireStub
-				.withArgs(["path/to/instancespecific/delegate"])
-				.callsFake(function (sModuleName, fnCallback) {
-					fnCallback({ getPropertyInfo: function () {} });
-				});
-			oRequireStub.callThrough();
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: ["path/to/instancespecific/delegate"],
+				stub: { getPropertyInfo: function() {} }
+			}]);
 
 			return createOverlayWithAggregationActions.call(this, {
 				add: {

@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function (
 	ElementOverlay,
 	DesignTime,

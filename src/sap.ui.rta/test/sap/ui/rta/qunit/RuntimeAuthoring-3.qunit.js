@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/Button",
 	"sap/m/MessageBox",
-	"sap/m/MessageToast",
 	"sap/m/Page",
 	"sap/ui/base/EventProvider",
 	"sap/ui/base/Event",
@@ -17,14 +16,11 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
-	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/rta/api/startKeyUserAdaptation",
-	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/service/index",
 	"sap/ui/rta/RuntimeAuthoring",
@@ -39,7 +35,6 @@ sap.ui.define([
 	Log,
 	Button,
 	MessageBox,
-	MessageToast,
 	Page,
 	EventProvider,
 	Event,
@@ -50,14 +45,11 @@ sap.ui.define([
 	DtUtil,
 	KeyCodes,
 	FlexRuntimeInfoAPI,
-	SmartVariantManagementApplyAPI,
 	FlexControllerFactory,
 	PersistenceWriteAPI,
 	Layer,
 	FlUtils,
 	JSONModel,
-	startKeyUserAdaptation,
-	AppVariantFeature,
 	ReloadManager,
 	mServicesDictionary,
 	RuntimeAuthoring,
@@ -103,10 +95,10 @@ sap.ui.define([
 				bRtaIsStarted = true;
 			});
 
-			sandbox.stub(sap.ui, "require")
-				.callThrough()
-				.withArgs([sServiceLocation])
-				.callsArgWithAsync(1, oServiceSpy);
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: oServiceSpy
+			}]);
 
 			// setTimeout() is just to postpone start a little bit
 			setTimeout(function() {
@@ -163,19 +155,18 @@ sap.ui.define([
 			var oServiceSpy = sandbox.spy(function() {
 				return {};
 			});
-			var oServiceStub = sandbox.stub(sap.ui, "require")
-				.withArgs([sServiceLocation])
-				.callsArgWithAsync(1, oServiceSpy);
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: oServiceSpy
+			}]);
 
 			return this.oRta
 				.startService(sServiceName)
 				.then(function() {
-					assert.ok(oServiceStub.calledOnce);
 					assert.ok(oServiceSpy.calledOnce);
 					this.oRta.startService(sServiceName);
 				}.bind(this))
 				.then(function() {
-					assert.ok(oServiceStub.calledOnce);
 					assert.ok(oServiceSpy.calledOnce);
 				});
 		});
@@ -183,11 +174,12 @@ sap.ui.define([
 		QUnit.test("starting a service after failed initialization", function(assert) {
 			var sServiceName = Object.keys(mServicesDictionary).shift();
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
-			var oServiceStub = sandbox.stub(sap.ui, "require")
-				.withArgs([sServiceLocation])
-				.callsArgWithAsync(1, function() {
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: function() {
 					throw new Error("some error");
-				});
+				}
+			}]);
 
 			return this.oRta
 				.startService(sServiceName)
@@ -196,7 +188,6 @@ sap.ui.define([
 				})
 				.catch(function() {
 					assert.ok(true, "service successfully failed");
-					assert.ok(oServiceStub.calledOnce);
 					return this.oRta.startService(sServiceName);
 				}.bind(this))
 				.then(function() {
@@ -204,19 +195,18 @@ sap.ui.define([
 				})
 				.catch(function() {
 					assert.ok(true, "service successfully failed");
-					assert.ok(oServiceStub.calledOnce);
 				});
 		});
 
 		QUnit.test("starting a service with unknown status", function(assert) {
 			var sServiceName = Object.keys(mServicesDictionary).shift();
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
-			sandbox.stub(sap.ui, "require")
-				.withArgs([sServiceLocation])
-				.callsArgWithAsync(1, function() {
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: function() {
 					return {};
-				});
-
+				}
+			}]);
 			return this.oRta
 				.startService(sServiceName)
 				.then(function() {
@@ -255,10 +245,10 @@ sap.ui.define([
 					}
 				};
 			};
-
-			sandbox.stub(sap.ui, "require")
-				.withArgs([sServiceLocation])
-				.callsArgWithAsync(1, fnMockService);
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: fnMockService
+			}]);
 
 			return this.oRta
 				.startService(sServiceName)
@@ -291,9 +281,10 @@ sap.ui.define([
 			var oMockButton = new Button("mockButton");
 			var fnDtSynced;
 
-			sandbox.stub(sap.ui, "require")
-				.callThrough()
-				.withArgs([sServiceLocation]).callsArgWithAsync(1, fnMockService);
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: fnMockService
+			}]);
 
 			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime")
 				.callThrough()
@@ -341,9 +332,11 @@ sap.ui.define([
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
 			var oNetworkError = new Error("Some network error");
 
-			sandbox.stub(sap.ui, "require")
-				.withArgs([sServiceLocation])
-				.callsArgWithAsync(2, oNetworkError);
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: oNetworkError,
+				error: true
+			}]);
 
 			return this.oRta
 				.startService(sServiceName)
@@ -363,9 +356,10 @@ sap.ui.define([
 				return {};
 			});
 
-			sandbox.stub(sap.ui, "require")
-				.withArgs([sServiceLocation])
-				.callsArgWithAsync(1, oServiceSpy);
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: oServiceSpy
+			}]);
 
 			return this.oRta
 				.startService(sServiceName)
@@ -379,9 +373,10 @@ sap.ui.define([
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
 			var oServiceSpy = sandbox.spy();
 
-			sandbox.stub(sap.ui, "require")
-				.withArgs([sServiceLocation])
-				.callsArgWithAsync(1, oServiceSpy);
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: oServiceSpy
+			}]);
 
 			return this.oRta
 				.startService(sServiceName)
@@ -401,9 +396,10 @@ sap.ui.define([
 				throw oServiceError;
 			});
 
-			sandbox.stub(sap.ui, "require")
-				.withArgs([sServiceLocation])
-				.callsArgWithAsync(1, oServiceSpy);
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: oServiceSpy
+			}]);
 
 			return this.oRta
 				.startService(sServiceName)
@@ -430,9 +426,10 @@ sap.ui.define([
 				});
 			};
 
-			sandbox.stub(sap.ui, "require")
-				.withArgs([sServiceLocation])
-				.callsArgWithAsync(1, fnMockService);
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: fnMockService
+			}]);
 
 			return this.oRta
 				.startService(sServiceName)
@@ -454,44 +451,16 @@ sap.ui.define([
 			var sServiceName = Object.keys(mServicesDictionary).shift();
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
 			var fnMockService = function() {
-				return {};
-			};
-			var fnRevolveModule;
-
-			sandbox.stub(sap.ui, "require")
-				.withArgs([sServiceLocation])
-				.callsFake(function(aRequire, fnResolve) {
-					fnRevolveModule = fnResolve;
-				});
-
-			var oServicePromise = this.oRta
-				.startService(sServiceName)
-				.then(function() {
-					assert.ok(false, "this should never be called");
-				})
-				.catch(function() {
-					assert.ok(true, "rejected successfully");
-				});
-
-			this.oRta.destroy();
-			fnRevolveModule(fnMockService);
-
-			return oServicePromise;
-		});
-
-		QUnit.test("RTA instance is destroyed during async initialization", function(assert) {
-			var sServiceName = Object.keys(mServicesDictionary).shift();
-			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
-			var fnMockService = function() {
 				return new Promise(function(fnResolve) {
 					this.oRta.destroy();
 					fnResolve({});
 				}.bind(this));
 			}.bind(this);
 
-			sandbox.stub(sap.ui, "require")
-				.withArgs([sServiceLocation])
-				.callsArgWithAsync(1, fnMockService);
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: fnMockService
+			}]);
 
 			return this.oRta
 				.startService(sServiceName)
@@ -508,14 +477,15 @@ sap.ui.define([
 			var sServiceName = Object.keys(mServicesDictionary).shift();
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
 			var fnServicePublish;
-			sandbox.stub(sap.ui, "require")
-				.withArgs([sServiceLocation])
-				.callsArgWithAsync(1, function(oRta, fnPublish) {
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: function(oRta, fnPublish) {
 					fnServicePublish = fnPublish;
 					return {
 						events: ["eventName"]
 					};
-				});
+				}
+			}]);
 
 			return this.oRta
 				.startService(sServiceName)
@@ -558,9 +528,10 @@ sap.ui.define([
 				};
 			};
 
-			sandbox.stub(sap.ui, "require")
-				.withArgs([sServiceLocation])
-				.callsArgWithAsync(1, fnMockService);
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: [sServiceLocation],
+				stub: fnMockService
+			}]);
 
 			return this.oRta
 				.startService(sServiceName)

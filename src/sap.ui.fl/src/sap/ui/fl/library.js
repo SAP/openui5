@@ -9,9 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/Scenario",
 	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/core/Configuration",
-	// library dependency
+	// library dependencies
 	"sap/ui/core/library",
-	// library dependency
 	"sap/m/library"
 ], function(
 	RegistrationDelegator,

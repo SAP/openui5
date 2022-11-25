@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/AppVariantManager",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -25,6 +26,7 @@ sap.ui.define([
 	AppVariantUtils,
 	AppVariantManager,
 	AppVariantFactory,
+	FeaturesAPI,
 	Settings,
 	Layer,
 	FlUtils,
@@ -46,7 +48,6 @@ sap.ui.define([
 			getServiceAsync: function() {
 				return Promise.resolve({
 					toExternal: function() {
-						window.bUShellNavigationTriggered = true;
 					},
 					getHash: function() {
 						return "Action-somestring";
@@ -66,14 +67,13 @@ sap.ui.define([
 		sandbox.stub(FlUtils, "getUshellContainer").returns(oUshellContainerStub);
 	}
 
-	function simulateSystemConfig(bIsAtoAvailable, bIsAtoEnabled, bIsAppVariantSaveAsEnabled) {
+	function simulateSystemConfig(bIsAtoAvailable, bIsAtoEnabled) {
 		sandbox.stub(Settings, "getInstance").resolves(
 			new Settings({
 				isKeyUser: true,
 				isAtoAvailable: bIsAtoAvailable,
 				isAtoEnabled: bIsAtoEnabled,
-				isProductiveSystem: false,
-				isAppVariantSaveAsEnabled: bIsAppVariantSaveAsEnabled
+				isProductiveSystem: false
 			})
 		);
 	}
@@ -233,7 +233,7 @@ sap.ui.define([
 			assert.equal(RtaAppVariantFeature.isOverviewExtended(), false, "then the app variant overview is shown only for key user");
 		});
 
-		QUnit.test("when isSaveAsAvailable() is called for non FLP apps", function(assert) {
+		QUnit.test("when isSaveAsAvailable() is called and FeaturesAPI says no", function(assert) {
 			var oMockedDescriptorData = {
 				"sap.app": {
 					id: "BaseAppId"
@@ -241,18 +241,18 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
-			sap["ushell_abap"] = Object.assign({}, sap.ushell_abap, {
-				someKey: "someValue"
-			});
+			sandbox.stub(FeaturesAPI, "isSaveAsAvailable").resolves(false);
 
 			var oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
 
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
+			simulateSystemConfig(true, true);
+
 			return RtaAppVariantFeature.isSaveAsAvailable(oRootControl, Layer.CUSTOMER, oStack).then(function(bIsSaveAsAvailable) {
-				assert.equal(bIsSaveAsAvailable, false, "then the 'i' button is not visible");
-				assert.equal(oInboundInfoSpy.callCount, 0, "then the getInboundInfo is never called");
+				assert.equal(bIsSaveAsAvailable, false, "then the 'i' button is visible");
+				assert.equal(oInboundInfoSpy.callCount, 0, "then the getInboundInfo is not called");
 			});
 		});
 
@@ -264,61 +264,19 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
-			sap["ushell_abap"] = Object.assign({}, sap.ushell_abap, {
-				someKey: "someValue"
-			});
+			sandbox.stub(FeaturesAPI, "isSaveAsAvailable").resolves(true);
 
 			var oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
 
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
-			simulateSystemConfig(true, true, true);
+			simulateSystemConfig(true, true);
 
 			return RtaAppVariantFeature.isSaveAsAvailable(oRootControl, Layer.CUSTOMER, oStack).then(function(bIsSaveAsAvailable) {
 				assert.equal(bIsSaveAsAvailable, true, "then the 'i' button is visible");
 				assert.equal(oInboundInfoSpy.callCount, 1, "then the getInboundInfo is called once");
 				assert.equal(oInboundInfoSpy.getCall(0).args[0], undefined, "then the parameter passed is correct");
-			});
-		});
-
-		QUnit.test("when isSaveAsAvailable() is called for an ABAP steampunk system", function(assert) {
-			var oMockedDescriptorData = {
-				"sap.app": {
-					id: "BaseAppId"
-				}
-			};
-
-			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
-			sap["ushell_abap"] = Object.assign({}, sap.ushell_abap, {
-				someKey: "someValue"
-			});
-
-			simulateSystemConfig(true, true, false);
-
-			var oRootControl = new Control();
-			var oStack = new Stack();
-
-			return RtaAppVariantFeature.isSaveAsAvailable(oRootControl, Layer.CUSTOMER, oStack).then(function(bIsSaveAsAvailable) {
-				assert.equal(bIsSaveAsAvailable, false, "then the 'i' button is not visible");
-			});
-		});
-
-		QUnit.test("when isSaveAsAvailable() is called for standalone apps", function(assert) {
-			var oMockedDescriptorData = {
-				"sap.app": {
-					id: "BaseAppId"
-				}
-			};
-
-			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
-			simulateSystemConfig(true, true, true);
-
-			var oRootControl = new Control();
-			var oStack = new Stack();
-
-			return RtaAppVariantFeature.isSaveAsAvailable(oRootControl, Layer.CUSTOMER, oStack).then(function(bIsSaveAsAvailable) {
-				assert.equal(bIsSaveAsAvailable, false, "then the 'i' button is not visible");
 			});
 		});
 
@@ -341,15 +299,13 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
-			sap["ushell_abap"] = Object.assign({}, sap.ushell_abap, {
-				someKey: "someValue"
-			});
+			sandbox.stub(FeaturesAPI, "isSaveAsAvailable").resolves(true);
 
 			var oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
-			simulateSystemConfig(true, true, true);
+			simulateSystemConfig(true, true);
 
 			return RtaAppVariantFeature.isSaveAsAvailable(oRootControl, Layer.CUSTOMER, oStack).then(function(bIsSaveAsAvailable) {
 				assert.equal(bIsSaveAsAvailable, true, "then the 'i' button is visible");
@@ -389,16 +345,14 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
-			sap["ushell_abap"] = Object.assign({}, sap.ushell_abap, {
-				someKey: "someValue"
-			});
+			sandbox.stub(FeaturesAPI, "isSaveAsAvailable").resolves(true);
 
 			var oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
 
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
-			simulateSystemConfig(true, true, true);
+			simulateSystemConfig(true, true);
 
 			return RtaAppVariantFeature.isSaveAsAvailable(oRootControl, Layer.CUSTOMER, oStack).then(function(bIsSaveAsAvailable) {
 				assert.equal(bIsSaveAsAvailable, true, "then the 'i' button is visible");
@@ -409,12 +363,10 @@ sap.ui.define([
 
 	QUnit.module("Given that the ushell is stubbed", {
 		beforeEach: function() {
-			window.bUShellNavigationTriggered = false;
 			stubUshellContainer();
 		},
 		afterEach: function() {
 			sandbox.restore();
-			delete window.bUShellNavigationTriggered;
 		},
 		after: function() {
 			if (document.getElementById("sapUiBusyIndicator")) {
@@ -443,7 +395,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onDeleteFromOverviewDialog() method is called and failed", function(assert) {
-			simulateSystemConfig(true, true, true);
+			simulateSystemConfig(true, true);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
 			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
@@ -480,7 +432,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana Cloud with published catalogs", function(assert) {
-			simulateSystemConfig(true, true, true);
+			simulateSystemConfig(true, true);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
 			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
@@ -513,7 +465,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana Cloud with unpublished catalogs", function(assert) {
-			simulateSystemConfig(true, true, true);
+			simulateSystemConfig(true, true);
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
 			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
 
@@ -606,7 +558,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana Cloud from currently adapting app variant", function(assert) {
-			simulateSystemConfig(true, true, true);
+			simulateSystemConfig(true, true);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
 			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
@@ -640,14 +592,12 @@ sap.ui.define([
 
 	QUnit.module("Given that the ushell and an UIComponent is stubbed", {
 		beforeEach: function() {
-			window.bUShellNavigationTriggered = false;
 			stubUshellContainer();
 			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 		},
 		afterEach: function() {
 			sandbox.restore();
 			this.oAppComponent.destroy();
-			delete window.bUShellNavigationTriggered;
 		},
 		after: function() {
 			if (document.getElementById("sapUiBusyIndicator")) {
@@ -674,7 +624,7 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			simulateSystemConfig(true, true, true);
+			simulateSystemConfig(true, true);
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
@@ -778,7 +728,7 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			simulateSystemConfig(true, true, true);
+			simulateSystemConfig(true, true);
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
@@ -831,7 +781,7 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			simulateSystemConfig(true, true, true);
+			simulateSystemConfig(true, true);
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
@@ -886,7 +836,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
-			simulateSystemConfig(false, false, true);
+			simulateSystemConfig(false, false);
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
 
@@ -943,7 +893,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
-			simulateSystemConfig(true, true, true);
+			simulateSystemConfig(true, true);
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
 
@@ -1001,7 +951,7 @@ sap.ui.define([
 				messageKey: "MSG_SAVE_APP_VARIANT_FAILED"
 			};
 
-			simulateSystemConfig(true, true, true);
+			simulateSystemConfig(true, true);
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(this.oAppComponent);

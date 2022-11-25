@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	JsControlTreeModifier,
 	ComponentContainer,
@@ -29,7 +30,8 @@ sap.ui.define([
 	FakeLrepConnectorSessionStorage,
 	QUnitUtils,
 	RuntimeAuthoring,
-	oCore
+	oCore,
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -244,6 +246,10 @@ sap.ui.define([
 
 	RtaQunitUtils.createUIChange = function(oFileContent) {
 		return FlexObjectFactory.createFromFileContent(oFileContent);
+	};
+
+	RtaQunitUtils.stubSapUiRequire = function() {
+		return FlQUnitUtils.stubSapUiRequire.apply(undefined, arguments);
 	};
 
 	return RtaQunitUtils;

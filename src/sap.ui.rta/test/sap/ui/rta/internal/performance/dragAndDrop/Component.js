@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	UIComponent,
 	DtPerformanceTestUtil,
@@ -19,7 +20,8 @@ sap.ui.define([
 	CustomData,
 	VerticalLayout,
 	sinon,
-	oCore
+	oCore,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -102,9 +104,10 @@ sap.ui.define([
 					}
 				}
 			};
-			sinon.stub(sap.ui, "require")
-				.callThrough()
-				.withArgs(["rta/performance/HBox.designtime"]).callsArgWithAsync(1, mHBoxDesigntimeMetadata);
+			RtaQunitUtils.stubSapUiRequire(sinon, [{
+				name: ["rta/performance/HBox.designtime"],
+				stub: mHBoxDesigntimeMetadata
+			}]);
 
 			return oHBox;
 		}

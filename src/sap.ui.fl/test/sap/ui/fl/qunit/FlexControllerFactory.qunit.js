@@ -1,5 +1,6 @@
 sap.ui.define([
 	"sap/ui/core/Component",
+	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/changes/Applier",
@@ -9,12 +10,13 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/rta/api/startKeyUserAdaptation",
 	"sap/base/Log",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	Component,
+	Core,
 	FlexState,
 	ManifestUtils,
 	Applier,
@@ -24,10 +26,10 @@ sap.ui.define([
 	Layer,
 	Utils,
 	VariantModel,
-	startKeyUserAdaptation,
 	Log,
 	StorageUtils,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -372,7 +374,7 @@ sap.ui.define([
 				}
 			};
 
-			this.oLoadLibStub = sandbox.stub(sap.ui.getCore(), "loadLibrary").resolves();
+			this.oLoadLibStub = sandbox.stub(Core, "loadLibrary").resolves();
 		},
 		afterEach: function() {
 			window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
@@ -423,28 +425,33 @@ sap.ui.define([
 		QUnit.test("when a rta restart was triggered for the CUSTOMER layer", function(assert) {
 			sandbox.stub(Utils, "getUrlParameter").returns(Layer.CUSTOMER);
 			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", "MockCompName");
-			var fnStartRtaSpy = sandbox.spy(startKeyUserAdaptation);
-			var oRequireStub = sandbox.stub(sap.ui, "require").callsFake(function(aModules, fnCallback) {
-				fnCallback(fnStartRtaSpy);
-			});
+			var fnStartRtaStub = sandbox.stub();
+			FlQUnitUtils.stubSapUiRequire(sandbox, [
+				{
+					name: ["sap/ui/rta/api/startKeyUserAdaptation"],
+					stub: fnStartRtaStub
+				}
+			]);
 			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
 			this.oAppComponent.rootControlLoaded = sandbox.stub().resolves();
 			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
 				.then(function() {
 					assert.strictEqual(this.oLoadLibStub.callCount, 1, "rta library is requested");
-					assert.strictEqual(oRequireStub.withArgs(["sap/ui/rta/api/startKeyUserAdaptation"]).callCount, 1, "rta functionality is requested");
-					assert.strictEqual(fnStartRtaSpy.callCount, 1, "and rta is started");
-					assert.strictEqual(fnStartRtaSpy.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
+					assert.strictEqual(fnStartRtaStub.callCount, 1, "and rta is started");
+					assert.strictEqual(fnStartRtaStub.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
 				}.bind(this));
 		});
 
 		QUnit.test("when a rta restart was triggered for the CUSTOMER layer in a ushell scenario", function(assert) {
 			sandbox.stub(Utils, "getUrlParameter").returns(Layer.CUSTOMER);
-			var fnStartRtaSpy = sandbox.spy(startKeyUserAdaptation);
-			var oRequireStub = sandbox.stub(sap.ui, "require").callsFake(function(aModules, fnCallback) {
-				fnCallback(fnStartRtaSpy);
-			});
+			var fnStartRtaStub = sandbox.stub();
+			FlQUnitUtils.stubSapUiRequire(sandbox, [
+				{
+					name: ["sap/ui/rta/api/startKeyUserAdaptation"],
+					stub: fnStartRtaStub
+				}
+			]);
 			sandbox.stub(Utils, "getUshellContainer").returns({
 				getServiceAsync: function(sServiceName) {
 					if (sServiceName === "ShellNavigation") {
@@ -463,34 +470,35 @@ sap.ui.define([
 			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
 				.then(function() {
 					assert.equal(this.oLoadLibStub.callCount, 0, "rta library is not requested");
-					assert.equal(oRequireStub.withArgs(["sap/ui/rta/api/startKeyUserAdaptation"]).callCount, 0, "rta functionality is not requested");
-					assert.equal(fnStartRtaSpy.callCount, 0, "and rta is not started");
+					assert.equal(fnStartRtaStub.callCount, 0, "and rta is not started");
 				}.bind(this));
 		});
 
 		QUnit.test("when a rta restart was triggered for the CUSTOMER layer via a boolean flag", function(assert) {
 			sandbox.stub(Utils, "getUrlParameter").returns(Layer.CUSTOMER);
 			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", true);
-			var fnStartRtaSpy = sandbox.spy(startKeyUserAdaptation);
-			var oRequireStub = sandbox.stub(sap.ui, "require").callsFake(function(aModules, fnCallback) {
-				fnCallback(fnStartRtaSpy);
-			});
+			var fnStartRtaStub = sandbox.stub();
+			FlQUnitUtils.stubSapUiRequire(sandbox, [
+				{
+					name: ["sap/ui/rta/api/startKeyUserAdaptation"],
+					stub: fnStartRtaStub
+				}
+			]);
 			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
 			this.oAppComponent.rootControlLoaded = sandbox.stub().resolves();
 			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
 				.then(function() {
 					assert.strictEqual(this.oLoadLibStub.callCount, 1, "rta library is requested");
-					assert.strictEqual(oRequireStub.withArgs(["sap/ui/rta/api/startKeyUserAdaptation"]).callCount, 1, "rta functionality is requested");
-					assert.strictEqual(fnStartRtaSpy.callCount, 1, "and rta is started");
-					assert.strictEqual(fnStartRtaSpy.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
+					assert.strictEqual(fnStartRtaStub.callCount, 1, "and rta is started");
+					assert.strictEqual(fnStartRtaStub.getCall(0).args[0].rootControl, this.oAppComponent, "for the application component");
 				}.bind(this));
 		});
 
 		QUnit.test("when a rta restart was triggered for the CUSTOMER layer via a boolean flag but Root Control is not loaded", function(assert) {
 			sandbox.stub(Utils, "getUrlParameter").returns(Layer.CUSTOMER);
 			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", true);
-			var fnStartRtaSpy = sandbox.spy(startKeyUserAdaptation);
+			var fnStartRtaStub = sandbox.stub();
 			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
 			sandbox.stub(Utils, "getParsedURLHash").returns({params: {}});
 			var sError = "Root Control didn't load";
@@ -498,7 +506,7 @@ sap.ui.define([
 			return FlexControllerFactory.getChangesAndPropagate(this.oAppComponent, {})
 				.catch(function(oError) {
 					assert.equal(this.oLoadLibStub.callCount, 1, "rta library is requested");
-					assert.equal(fnStartRtaSpy.callCount, 0, "but rta is not started");
+					assert.equal(fnStartRtaStub.callCount, 0, "but rta is not started");
 					assert.equal(oError.message, sError, "and the promise is rejected with the right error");
 				}.bind(this));
 		});

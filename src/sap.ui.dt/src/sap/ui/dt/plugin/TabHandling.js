@@ -5,7 +5,8 @@
 sap.ui.define([
 	"sap/ui/dt/Plugin",
 	"sap/ui/dt/Overlay",
-	"sap/ui/dt/OverlayRegistry"
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dom/jquery/Selectors"
 ], function(
 	Plugin,
 	Overlay,
