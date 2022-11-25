@@ -10,11 +10,11 @@
 	box-shadow: 0 0 30px 2px fade(@sapUiContentShadowColor, 15);
 }
 
-.sapMMessageDialog.sapMPopup-CTX > header.sapMDialogTitle {
+.sapMMessageDialog.sapMPopup-CTX > header .sapMDialogTitleGroup {
 	background-color: lighten(@sapUiPageHeaderBackground, 5);
 }
 
-.sapMDialog > header.sapMDialogTitle .sapUiIcon {
+.sapMDialog > header .sapMDialogTitleGroup .sapUiIcon {
 	color: @sapUiContentIconColor;
 }
 
@@ -23,7 +23,7 @@ html.sap-desktop .sapMDialog > footer.sapMDialogActions {
 }
 
 .sapMDialogWarning > header {
-	&.sapMDialogTitle .sapUiIcon {
+	& .sapMDialogTitleGroup .sapUiIcon {
 		color: @sapUiCriticalText;
 	}
 
@@ -33,7 +33,7 @@ html.sap-desktop .sapMDialog > footer.sapMDialogActions {
 }
 
 .sapMDialogError > header {
-	&.sapMDialogTitle .sapUiIcon {
+	& .sapMDialogTitleGroup .sapUiIcon {
 		color: @sapUiNegativeText;
 	}
 
@@ -43,7 +43,7 @@ html.sap-desktop .sapMDialog > footer.sapMDialogActions {
 }
 
 .sapMDialogSuccess > header {
-	&.sapMDialogTitle .sapUiIcon {
+	& .sapMDialogTitleGroup .sapUiIcon {
 		color: @sapUiPositiveText;
 	}
 

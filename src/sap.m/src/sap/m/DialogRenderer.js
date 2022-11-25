@@ -167,23 +167,27 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
 				oRm.write('<span id="' + oControl.getId() + '-firstfe" tabindex="0" class="sapMDialogFirstFE"></span>');
 			}
 
-			if (oHeader) {
-				oHeader._applyContextClassFor("header");
-				oRm.write("<header");
-				oRm.addClass("sapMDialogTitle");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.renderControl(oHeader);
-				oRm.write("</header>");
-			}
+			if (oHeader || oSubHeader) {
+				oRm.write("<header>");
+				if (oHeader) {
+					oHeader._applyContextClassFor("header");
+					oRm.write("<div ");
+					oRm.addClass("sapMDialogTitleGroup");
+					oRm.writeClasses();
+					oRm.write(">");
+					oRm.renderControl(oHeader);
+					oRm.write("</div>");
+				}
 
-			if (oSubHeader) {
-				oSubHeader._applyContextClassFor("subheader");
-				oRm.write("<header");
-				oRm.addClass("sapMDialogSubHeader");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.renderControl(oSubHeader);
+				if (oSubHeader && oSubHeader.getVisible()) {
+					oSubHeader._applyContextClassFor("subheader");
+					oRm.write("<div ");
+					oRm.addClass("sapMDialogSubHeader");
+					oRm.writeClasses();
+					oRm.write(">");
+					oRm.renderControl(oSubHeader);
+					oRm.write("</div>");
+				}
 				oRm.write("</header>");
 			}
 

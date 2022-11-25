@@ -439,7 +439,7 @@ sap.ui.define([
 		var $Dialog = jQuery.sap.byId("dialog"),
 			$ScrollDiv = this.oDialog.$("scroll"),
 			oTitleDom = jQuery.sap.domById(this.oDialog.getId() + "-title"),
-			oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
+			oSubHeaderDom = $Dialog.children("header").children(".sapMDialogSubHeader")[0],
 			oIconDom = jQuery.sap.domById(this.oDialog.getId() + "-icon"),
 			oSearchField = sap.ui.getCore().byId("__field0").getFocusDomRef();
 		assert.ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
@@ -1071,7 +1071,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		var dialogTitleId = oDialog.$().find('header > .sapMBar .sapMTitle').attr('id');
+		var dialogTitleId = oDialog.$().find('header .sapMBar .sapMTitle').attr('id');
 		var subHeaderId = oDialog.$().find('.sapMDialogSubHeader > .sapMBar').attr('id');
 		var dialogAriaLabelledBy = oDialog.getAriaLabelledBy();
 		assert.strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogTitleId + ' ' + subHeaderId +
