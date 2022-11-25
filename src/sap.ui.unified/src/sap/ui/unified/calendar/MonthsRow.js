@@ -736,7 +736,7 @@ sap.ui.define([
 				}
 
 				if ($Target.hasClass("sapUiCalItem")) {
-					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymm.parse($Target.attr("data-sap-month"), this.getProperty("primaryCalendarType")));
+					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymm.parse($Target.attr("data-sap-month")));
 					oFocusedDate.setDate(1);
 				}
 
@@ -942,7 +942,7 @@ sap.ui.define([
 		// find out what day was focused
 		var $DomRef = jQuery(aDomRefs[iIndex]);
 
-		oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymm.parse($DomRef.attr("data-sap-month"), this.getProperty("primaryCalendarType")));
+		oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymm.parse($DomRef.attr("data-sap-month")));
 		oFocusedDate.setDate(1);
 		this.setDate(oFocusedDate.toLocalJSDate());
 
