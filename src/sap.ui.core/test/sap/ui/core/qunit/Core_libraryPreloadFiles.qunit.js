@@ -53,7 +53,6 @@ sap.ui.define([
 		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 		this.spy(XMLHttpRequest.prototype, 'open');
 		this.spy(sap.ui.require, 'load');
-		this.spy(jQuery.sap, 'require');
 		// TODO this.spy(Log, 'error');
 		// @evo-todo: ui5loader and Core.js use different loggers.
 		// This does not only make this test unnecessarily complex but also leads to redundant log entries. Should be cleaned up
