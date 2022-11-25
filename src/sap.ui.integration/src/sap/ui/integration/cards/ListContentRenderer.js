@@ -4,14 +4,12 @@
 
 sap.ui.define([
 	"./BaseContentRenderer",
-	"../library"
+	"../controls/ListContentItem"
 ], function (
 	BaseContentRenderer,
-	library
+	ListContentItem
 ) {
 	"use strict";
-
-	var AttributesLayoutType = library.AttributesLayoutType;
 
 	/**
 	 * ListContentRenderer renderer.
@@ -55,46 +53,32 @@ sap.ui.define([
 		return (iMinItems * fItemHeight) + "rem";
 	};
 
-	ListContentRenderer.getItemMinHeight = function (oConfiguration, oControl) {
+	ListContentRenderer.getItemMinHeight = function (oConfiguration, oContent) {
 		if (!oConfiguration || !oConfiguration.item) {
 			return 0;
 		}
 
-		var bIsCompact = this.isCompact(oControl),
+		var bIsCompact = this.isCompact(oContent),
 			oTemplate = oConfiguration.item,
-			fItemHeight = bIsCompact ? 1 : 1.125, // title height in "rem",
-			fVerticalPadding = bIsCompact ? 1 : 1.625, // vertical padding in "rem"
-			iAttrLength;
+			fItemHeight = bIsCompact ? 2 : 2.75, // single line item height in "rem",
+			fVerticalPadding = 0,
+			iLines = ListContentItem.getLinesCount(oTemplate);
 
-		if (oTemplate.icon && !oTemplate.description) {
-			fVerticalPadding = bIsCompact ? 0 : 0.75;
-			fItemHeight = 2;
-		}
-
-		if (oTemplate.description) {
+		if (iLines === 2) {
+			fItemHeight = 5;
+		} else if (iLines > 2) {
+			fItemHeight = iLines + (iLines - 1) * 0.5; // lines + gaps
 			fVerticalPadding = 2;
-			fItemHeight += bIsCompact ? 2 : 1.875;
-		}
-
-		if (oTemplate.attributes) {
-			fVerticalPadding = 2.25;
-			iAttrLength = oTemplate.attributes.length / 2;
-
-			if (oTemplate.attributesLayoutType === AttributesLayoutType.OneColumn) {
-				iAttrLength = oTemplate.attributes.length;
-			}
-
-			iAttrLength = Math.ceil(iAttrLength);
-			fItemHeight += iAttrLength * 1.5; // attribute row height in "rem"
-		}
-
-		if (oTemplate.chart) {
-			fItemHeight += 1; // chart height in "rem"
 		}
 
 		if (oTemplate.actionsStrip) {
-			fVerticalPadding = 1;
-			fItemHeight += bIsCompact ? 3 : 3.75; // actions strip height in "rem"
+			fItemHeight += bIsCompact ? 2 : 2.75; // actions strip height in "rem"
+			fVerticalPadding += 0.5;
+
+			if (iLines > 2) {
+				fItemHeight += 0.5; // top margin of the actions strip
+				fVerticalPadding = 1.5;
+			}
 		}
 
 		fItemHeight += fVerticalPadding;

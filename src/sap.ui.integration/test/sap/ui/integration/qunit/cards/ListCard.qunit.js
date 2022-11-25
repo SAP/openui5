@@ -733,13 +733,13 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assert
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrRow").length, 3, "3 attr rows are created.");
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrCell").length, 5, "5 attr cells are created.");
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrSecondCell").length, 2, "2 attr second cells are created.");
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrRow").length, 3, "3 attr rows are created.");
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrCell").length, 5, "5 attr cells are created.");
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrSecondCell").length, 2, "2 attr second cells are created.");
 
-			assert.strictEqual(oListItem2.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrRow").length, 5, "5 attr rows are created.");
-			assert.strictEqual(oListItem2.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrCell").length, 5, "5 attr cells are created.");
-			assert.notOk(oListItem2.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrSecondCell").length, "attr second cells are not created.");
+			assert.strictEqual(oListItem2.$().find(".sapUiIntLCIAttrRow").length, 5, "5 attr rows are created.");
+			assert.strictEqual(oListItem2.$().find(".sapUiIntLCIAttrCell").length, 5, "5 attr cells are created.");
+			assert.notOk(oListItem2.$().find(".sapUiIntLCIAttrSecondCell").length, "attr second cells are not created.");
 
 			done();
 		}.bind(this));
@@ -758,9 +758,9 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assert
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrRow").length, 2, "2 attr rows are created.");
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrCell").length, 3, "3 attr cells are created.");
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrSecondCell").length, 1, "1 attr second cells is created.");
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrRow").length, 2, "2 attr rows are created.");
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrCell").length, 3, "3 attr cells are created.");
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrSecondCell").length, 1, "1 attr second cells is created.");
 
 			done();
 		}.bind(this));
@@ -1025,6 +1025,7 @@ sap.ui.define([
 					},
 					"content": {
 						"item": {
+							"title": "item title",
 							"icon": {
 								"src": "{avatar}"
 							}

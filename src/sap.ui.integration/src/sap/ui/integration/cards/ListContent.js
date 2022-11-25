@@ -285,7 +285,6 @@ sap.ui.define([
 			oList = this._getList(),
 			bIsSkeleton = this.isSkeleton(),
 			mSettings = {
-				iconDensityAware: false,
 				title: mItem.title && (mItem.title.value || mItem.title),
 				description: mItem.description && (mItem.description.value || mItem.description),
 				highlight: mItem.highlight,
@@ -303,10 +302,10 @@ sap.ui.define([
 			mSettings.iconInitials = mItem.icon.initials || mItem.icon.text;
 			mSettings.iconVisible = mItem.icon.visible;
 
-			if (mSettings.title && mSettings.description) {
-				mSettings.iconSize = AvatarSize.S;
-			} else {
+			if (ListContentItem.getLinesCount(mItem) === 1) {
 				mSettings.iconSize = AvatarSize.XS;
+			} else {
+				mSettings.iconSize = AvatarSize.S;
 			}
 
 			mSettings.iconSize = mItem.icon.size || mSettings.iconSize;
@@ -420,7 +419,6 @@ sap.ui.define([
 		var oList = this._getList();
 		mItems.forEach(function (oItem) {
 			var oListItem = new ListContentItem({
-				iconDensityAware: false,
 				title: oItem.title ? oItem.title : "",
 				description: oItem.description ? oItem.description : "",
 				icon: oItem.icon ? oItem.icon : "",
