@@ -3,7 +3,9 @@
 /* Base theme                      */
 /* =============================== */
 
-@_sap_m_Carousel_BackgroundColor: @sapGroup_ContentBackground;
+@_sap_m_Carousel_BackgroundColorSolid: @sapUiGroupContentBackground;
+@_sap_m_Carousel_BackgroundColorTransparent: transparent;
+@_sap_m_Carousel_BackgroundColorTranslucent: @sapUiGroupContentBackground;
 @_sap_m_Carousel_MinWidth: 20rem;
 @_sap_m_Carousel_ControlsNoArrowsHeight: 2rem;
 @_sap_m_Carousel_NumericIndicatorTextColor: @sapUiContentLabelColor;
@@ -27,11 +29,22 @@
 @_sap_m_Carousel_FocusBorder: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 
 .sapMCrsl {
-	background-color: @_sap_m_Carousel_BackgroundColor;
 	position: relative;
 	overflow: hidden;
 	box-sizing: border-box;
 	min-width: @_sap_m_Carousel_MinWidth;
+}
+
+.sapMCrslBackground-Solid {
+	background-color: @_sap_m_Carousel_BackgroundColorSolid;
+}
+
+.sapMCrslBackground-Transparent {
+	background-color: @_sap_m_Carousel_BackgroundColorTransparent;
+}
+
+.sapMCrslBackground-Translucent {
+	background-color: @_sap_m_Carousel_BackgroundColorTranslucent;
 }
 
 .sapMCrslItem:focus {

@@ -1716,7 +1716,7 @@
 		},
 		{
 		  "id": "sap.m.sample.AvatarWithAffordance",
-		  "name": "Avatar With Visual Affordance",
+		  "name": "Avatar with Visual Affordance",
 		  "description": "This sample demonstrates different combinations of types, shapes, and sizes of the Avatar with visual affordance."
 		},
 		{
@@ -1731,7 +1731,7 @@
 		},
 		{
 		  "id": "sap.m.sample.MessagePageWithButtons",
-		  "name": "Message Page With FormattedText and Buttons",
+		  "name": "Message Page with FormattedText and Buttons",
 		  "description": "This sample displays the MessagePage with FormattedText and buttons."
 		},
 		{
@@ -1941,13 +1941,13 @@
 		},
 		{
 		  "id": "sap.m.sample.CarouselWithControls",
-		  "name": "Carousel With Controls",
+		  "name": "Carousel with Controls",
 		  "description": "With the Carousel a user can browse through multi-page content by swiping left or right."
 		},
 		{
 		  "id": "sap.m.sample.CarouselWithDisplayOptions",
-		  "name": "Carousel With Display Options",
-		  "description": "The Carousel have options for the arrows placement, page indicator placement and page indicator visibility."
+		  "name": "Carousel with Display Options",
+		  "description": "The Carousel has options for the arrows placement, page indicator placement and page indicator visibility."
 		},
 		{
 			"id": "sap.m.sample.CarouselWithMorePages",
@@ -1957,7 +1957,7 @@
 		{
 		  "id": "sap.m.sample.CarouselEmptyMessages",
 		  "name": "Carousel Without Pages",
-		  "description": "When the carousel have no pages loaded or provided illustrated message will be shown."
+		  "description": "When the carousel has no pages loaded or provided illustrated message will be shown."
 		},
 		{
 			"id": "sap.m.sample.ComparisonPattern",
@@ -2321,12 +2321,12 @@
 		},
 		{
 		  "id": "sap.m.sample.ObjectHeaderImage",
-		  "name": "Object Header - With Image",
+		  "name": "Object Header - with Image",
 		  "description": "An Object Header will also make space for an image if one is specified, via a URL for the 'icon' property. \nNote: This example shows the image inside ObjectHeader with the responsive property set to false. On phone in portrait mode, the image remains visible."
 		},
 		{
 		  "id": "sap.m.sample.ObjectHeaderCircleImage",
-		  "name": "Object Header - With Circle-shaped Image",
+		  "name": "Object Header - with Circle-shaped Image",
 		  "description": "An Object Header can set shape of the image by using 'imageShape' property. The shapes could be Square (by default) and Circle. \nNote: This example shows the image inside ObjectHeader with the responsive property set to true. On phone in portrait mode, the image is hidden."
 		},
 		{
@@ -2416,7 +2416,7 @@
 		},
 		{
 			"id": "sap.m.sample.DynamicDateRangeWithCustomOptions",
-			"name": "Dynamic Date Range With Custom Options (Experimental)",
+			"name": "Dynamic Date Range with Custom Options (Experimental)",
 			"description": "This example shows the Dynamic Date Range control with custom options for interval or date selection."
 		},
 		{
@@ -3259,7 +3259,7 @@
 		},
 		{
 		  "id": "sap.m.sample.PopoverNavCon",
-		  "name": "Popover With NavContainer",
+		  "name": "Popover with NavContainer",
 		  "description": "You can nest NavContainers in Popovers (and Dialogs) to navigate to further details in place."
 		},
 		{
@@ -3329,7 +3329,7 @@
 		},
 		{
 		  "id": "sap.m.sample.DialogConfirm",
-		  "name": "Dialog With Confirm Options",
+		  "name": "Dialog with Confirm Options",
 		  "description": "Creating a dialog with confirm and reject options that replaces the confirmDialog functionality."
 		},
 		{
@@ -3614,7 +3614,7 @@
 		},
 		{
 		  "id": "sap.m.sample.HeaderContainerOH",
-		  "name": "Header Container With Object Header",
+		  "name": "Header Container with Object Header",
 		  "description": "The Header Container combined with sap.m.ObjectHeader."
 		},
 		{

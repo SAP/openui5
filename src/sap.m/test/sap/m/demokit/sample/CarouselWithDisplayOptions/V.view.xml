@@ -21,7 +21,7 @@
 		</f:SimpleForm>
 
 		<HBox justifyContent="Center" renderType="Bare">
-			<Panel id="carouselContainer" height="650px">
+			<Panel id="carouselContainer" height="650px" backgroundDesign="Transparent">
 				<Carousel
 					id="carouselSample"
 					loop="true"
@@ -44,6 +44,13 @@
 			<RadioButtonGroup columns="2" select=".onPageIndicatorPlacementSelect">
 				<RadioButton text="Bottom" tooltip="Places the page indicator on the bottom of the carousel" />
 				<RadioButton text="Top" tooltip="Places the page indicator on the top of the carousel" />
+			</RadioButtonGroup>
+
+			<Label text="Carousel background design" />
+			<RadioButtonGroup columns="3" select=".onBackgroundDesignSelect">
+				<RadioButton text="Solid" tooltip="Chooses a Solid background for the carousel." />
+				<RadioButton text="Translucent" selected="true" tooltip="Chooses a Translucent background for the carousel (Default)." />
+				<RadioButton text="Transparent" tooltip="Chooses a Transparent background for the carousel." />
 			</RadioButtonGroup>
 
 			<Label text="Show page indicator" />

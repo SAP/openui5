@@ -12,6 +12,9 @@ sap.ui.define([
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
 
+	// shortcut for sap.m.CarouselBackgroundDesign
+	var CarouselBackgroundDesign = mobileLibrary.BackgroundDesign;
+
 	return Controller.extend("sap.m.sample.CarouselWithDisplayOptions.C", {
 
 		onInit: function () {
@@ -36,6 +39,15 @@ sap.ui.define([
 
 			if (sSelectedValue in PlacementType) {
 				oCarousel.setPageIndicatorPlacement(sSelectedValue);
+			}
+		},
+
+		onBackgroundDesignSelect: function (oEvent) {
+			var oCarousel = this.byId("carouselSample"),
+				sSelectedValue = oEvent.getSource().getSelectedButton().getText();
+
+			if (sSelectedValue in CarouselBackgroundDesign) {
+				oCarousel.setBackgroundDesign(sSelectedValue);
 			}
 		},
 

@@ -54,6 +54,29 @@
 			}
 		});
 
+		var backgroundDesignLabel = new sap.m.Label({
+			text : "Carousel background design"
+		});
+		var backgroundDesignSelect = new sap.m.Select('backgroundDesignSelect', {
+			items : [
+				new sap.ui.core.Item("backgroundDesignTranslucent", {
+					text : sap.m.BackgroundDesign.Translucent,
+					key : sap.m.BackgroundDesign.Translucent
+				}),
+				new sap.ui.core.Item("backgroundDesignSolid", {
+					text : sap.m.BackgroundDesign.Solid,
+					key : sap.m.BackgroundDesign.Solid
+				}),
+				new sap.ui.core.Item("backgroundDesignTransparent", {
+					text : sap.m.BackgroundDesign.Transparent,
+					key : sap.m.BackgroundDesign.Transparent
+				})
+			],
+			change : function (oEvent) {
+				carousel.setBackgroundDesign(oEvent.getParameter('selectedItem').getKey());
+			}
+		});
+
 		var pageIndicatorPlacementLabel = new sap.m.Label({
 			text : "Page indicator placement"
 		});
@@ -113,6 +136,8 @@
 				}),
 				arrowsPlacementLabel,
 				arrowsPlacementSelect,
+				backgroundDesignLabel,
+				backgroundDesignSelect,
 				pageIndicatorPlacementLabel,
 				pageIndicatorPlacementSelect,
 				showPageIndicatorLabel,

@@ -38,6 +38,9 @@ sap.ui.define([
 	// shortcut for sap.m.CarouselArrowsPlacement
 	var CarouselArrowsPlacement = mobileLibrary.CarouselArrowsPlacement;
 
+	// shortcut for sap.m.BackgroundDesign
+	var BackgroundDesign = mobileLibrary.BackgroundDesign;
+
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
 
@@ -141,6 +144,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.getPageIndicatorPlacement(), PlacementType.Bottom, "Default 'pageIndicatorPlacement' value is Bottom");
 		assert.strictEqual(this.oCarousel.getArrowsPlacement(), CarouselArrowsPlacement.Content, "Default 'arrowsPlacement' value is 'Content'");
 		assert.strictEqual(this.oCarousel.$("a").attr("href"), undefined, "Arrow's attribute href is not a link.");
+		assert.strictEqual(this.oCarousel.getBackgroundDesign(), BackgroundDesign.Translucent, "Default value for Background Design is 'Translucent'");
 	});
 
 	//================================================================================
@@ -342,6 +346,24 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.oCarousel.$().find('.sapMCrslHud').length, 0, "Arrows hud should not be rendered");
 		assert.strictEqual(this.oCarousel.$().find('.sapMCrslControls ').length, 1, "Arrows should be rendered in the 'controls' area");
+	});
+
+	QUnit.test("#setBackgroundDesign() to 'Solid'", function (assert) {
+		// Act
+		this.oCarousel.setBackgroundDesign(BackgroundDesign.Solid);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oCarousel.$().hasClass("sapMCrslBackground-Solid"), "Correct class for Solid Background should be set");
+	});
+
+	QUnit.test("#setBackgroundDesign() to 'Transparent'", function (assert) {
+		// Act
+		this.oCarousel.setBackgroundDesign(BackgroundDesign.Transparent);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oCarousel.$().hasClass("sapMCrslBackground-Transparent"), "Correct class for Transparent Background should be set");
 	});
 
 	QUnit.test("#_createScrollContainer() adds 'sapMCrsPage' class to each Page", function (assert) {

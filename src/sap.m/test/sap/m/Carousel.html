@@ -517,6 +517,43 @@
 			}
 		});
 
+		// Radio button group backgroundDesign
+
+		var oRBGroupBackgroundDesign =  new sap.m.RadioButtonGroup("RBBackgroundDesign");
+		oRBGroupBackgroundDesign.setColumns(3);
+
+		var oButtonSolid = new sap.m.RadioButton("RB-Solid");
+		oButtonSolid.setText("Solid");
+		oButtonSolid.setTooltip("Sets the carousel's background to Solid (Default)")
+		oRBGroupBackgroundDesign.addButton(oButtonSolid);
+
+		var oButtonTranslucent = new sap.m.RadioButton("RB-Translucent");
+		oButtonTranslucent.setText("Translucent");
+		oButtonTranslucent.setSelected(true);
+		oButtonTranslucent.setTooltip("Sets the carousel's background to Translucent")
+		oRBGroupBackgroundDesign.addButton(oButtonTranslucent);
+
+		var oButtonTransparent = new sap.m.RadioButton("RB-Transparent");
+		oButtonTransparent.setText("Transparent");
+		oButtonTransparent.setTooltip("Sets the carousel's background to Transparent")
+		oRBGroupBackgroundDesign.addButton(oButtonTransparent);
+
+		var oRBGroupBackgroundDesignLabel = new sap.m.Label({
+			text: "Background Design",
+			labelFor: oRBGroupBackgroundDesign
+		});
+		oRBGroupBackgroundDesign.attachSelect(function () {
+			var sSelectedValue = oRBGroupBackgroundDesign.getSelectedButton().getText();
+			if (sSelectedValue === "Solid") {
+				carousel.setBackgroundDesign(sap.m.BackgroundDesign.Solid);
+			} else if (sSelectedValue === "Translucent") {
+				carousel.setBackgroundDesign(sap.m.BackgroundDesign.Translucent);
+			} else if (sSelectedValue === "Transparent") {
+				carousel.setBackgroundDesign(sap.m.BackgroundDesign.Transparent);
+			}
+		})
+
+
 		// Radio button group showPageIndicator
 
 		var oRBGroupShowPageIndicator = new sap.m.RadioButtonGroup("RBShowPageIndicator");
@@ -655,6 +692,8 @@
 				oRBGroupArrowsPlacement,
 				oRBGroupPageIndicatorPlacementLabel,
 				oRBGroupPageIndicatorPlacement,
+				oRBGroupBackgroundDesignLabel,
+				oRBGroupBackgroundDesign,
 				oRBGroupShowPageIndicatorLabel,
 				oRBGroupShowPageIndicator,
 				new sap.m.Label({ text: "Loop", labelFor: "RBLoop" }),

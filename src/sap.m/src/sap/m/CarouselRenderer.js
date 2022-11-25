@@ -80,10 +80,11 @@ sap.ui.define([
 
 	CarouselRenderer._renderOpeningDiv = function (oRM, oCarousel) {
 		var sTooltip = oCarousel.getTooltip_AsString();
-
+		var sBackgroundDesign = "sapMCrslBackground-" + oCarousel.getBackgroundDesign();
 		//Outer carousel div
 		oRM.openStart("div", oCarousel)
 			.class("sapMCrsl")
+			.class(sBackgroundDesign)
 			.class("sapMCrslFluid") // sapMCrslFluid is originally from mobify-carousel
 			.style("width", oCarousel.getWidth())
 			.style("height", oCarousel.getHeight())

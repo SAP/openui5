@@ -126,4 +126,22 @@ describe("sap.m.Carousel", function() {
 
 		expect(takeScreenshot(myCarousel)).toLookAs("9_page_indicator_type");
 	});
+
+	// change carousel background design - solid
+	it("should change carousel's background design to solid", function() {
+		element(by.id("RB-Solid")).click();
+		_moveToCarousel();
+		forceTransitionComplete();
+
+		expect(takeScreenshot(myCarousel)).toLookAs("10_background_solid");
+	});
+
+	// change carousel background design - transparent
+	it("should change carousel's background design to transparent", function() {
+		element(by.id("RB-Transparent")).click();
+		_moveToCarousel();
+		forceTransitionComplete();
+
+		expect(takeScreenshot(myCarousel)).toLookAs("11_background_transparent");
+	});
 });

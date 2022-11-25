@@ -51,6 +51,9 @@ sap.ui.define([
 	// shortcut for sap.m.PlacementType
 	var PlacementType = library.PlacementType;
 
+	//shortcut for sap.m.BackgroundDesign
+	var BackgroundDesign = library.BackgroundDesign;
+
 	/**
 	 * Constructor for a new Carousel.
 	 *
@@ -149,7 +152,14 @@ sap.ui.define([
 				 * place the arrows on the sides of the carousel. Alternatively <code>sap.m.CarouselArrowsPlacement.PageIndicator</code> can
 				 * be used to place the arrows on the sides of the page indicator.
 				 */
-				arrowsPlacement : {type : "sap.m.CarouselArrowsPlacement", group : "Appearance", defaultValue : CarouselArrowsPlacement.Content}
+				arrowsPlacement : {type : "sap.m.CarouselArrowsPlacement", group : "Appearance", defaultValue : CarouselArrowsPlacement.Content},
+
+				/**
+				 * Defines the carousel's background design. Default is <code>sap.m.BackgroundDesign.Translucent</code>.
+				 * @public
+				 * @since 1.110
+				 */
+				backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Translucent}
 			},
 			defaultAggregation : "pages",
 			aggregations : {
