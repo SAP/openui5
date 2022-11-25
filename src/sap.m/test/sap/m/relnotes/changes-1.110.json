@@ -3,6 +3,48 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "a4d81dab4138efe6768cd53ba8178c407a17d2d2",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Vertical margin will always be set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008322262022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400008540262022"
+          }
+        ]
+      },
+      {
+        "id": "d7704e95e41b43ae644b1b98b0bfa4577449c6b9",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: add value help button label",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270187461"
+          }
+        ]
+      },
+      {
+        "id": "f6b5aa2e92bc1fddf476660bcf937262c6830753",
+        "type": "FIX",
+        "text": " sap.m.WizardStep: Update WizardProgressNavigator when step title is changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270189415"
+          }
+        ]
+      },
+      {
+        "id": "3849826757af25d4e572c9c6e483377ed7daef5a",
+        "type": "FIX",
+        "text": " sap.m.StepInput: fix minor typo fro -> for"
+      },
+      {
         "id": "22e16654ebda07d2a7b227ec5e38c0937f774a6b",
         "type": "FIX",
         "text": " sap.m.Dialog: Heading level is now 1",
@@ -10,6 +52,17 @@
           {
             "type": "BCP",
             "reference": "2270174202"
+          }
+        ]
+      },
+      {
+        "id": "465caebdeb3c11427cb6d96ac32e19d87e044103",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Duplicated banner regions removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007193702022"
           }
         ]
       },
@@ -40,6 +93,11 @@
         ]
       },
       {
+        "id": "0f0d80ee24e24229b2b25ebb52e6837fbe81051a",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: improve loadItems behaviour"
+      },
+      {
         "id": "14987768e01ea05bcbbd6828175f840882f6d4a1",
         "type": "FIX",
         "text": " sap.m.Tokenizer: Prevent token delete bubbling",
@@ -63,6 +121,17 @@
           {
             "type": "BCP",
             "reference": "2270181732"
+          }
+        ]
+      },
+      {
+        "id": "acc833b3f8bfb53a879acd4ea4eca5eb602635c0",
+        "type": "FIX",
+        "text": " sap.m.Fiori20Adapter: Ignore destroyed views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270146288"
           }
         ]
       },

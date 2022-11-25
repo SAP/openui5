@@ -3,6 +3,17 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "079a0e656d6f097918e402e78d696946e1b81dd7",
+        "type": "FIX",
+        "text": " GridTable: Resize Menu Button should not appear on Desktop",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280173047"
+          }
+        ]
+      },
+      {
         "id": "05977b6c131452b87c06a98191328e4c606d3910",
         "type": "FIX",
         "text": " TreeTable: Adjust tooltip of expand/collapse buttons",

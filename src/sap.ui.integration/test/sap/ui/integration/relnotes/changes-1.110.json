@@ -3,6 +3,17 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "5a0df2b8690d6fc10e95caebc79b1ae464df528e",
+        "type": "FIX",
+        "text": " Integration Cards: Loading state is now reset after manifest is changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270186561"
+          }
+        ]
+      },
+      {
         "id": "cdbd1308c7a8944224d5cde4f5d6e45fc5769e6d",
         "type": "FIX",
         "text": " Integration Cards: Initial value of Select filter is now correctly stored in the \"filters\" model",

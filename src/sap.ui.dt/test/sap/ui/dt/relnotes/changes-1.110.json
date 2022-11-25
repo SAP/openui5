@@ -14,6 +14,17 @@
         ]
       },
       {
+        "id": "bf9057eabe8dbf5924ae235dd90a5ffbeba5d119",
+        "type": "FIX",
+        "text": " sap.ui.rta - minimenu icons overlap - correction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270179901"
+          }
+        ]
+      },
+      {
         "id": "9241964e08069a65ef9b20f7b2e88508445186d0",
         "type": "FIX",
         "text": " sap.ui.rta - minimenu icons overlap",

@@ -3,6 +3,27 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "f184fc9fed25441776d4131702962180f7b3538b",
+        "type": "FIX",
+        "text": " mdc.FilterBar: correction for required field in value error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280175944"
+          }
+        ]
+      },
+      {
+        "id": "aaf635114508d728ab872e818ad6ccad53512012",
+        "type": "FEATURE",
+        "text": " sap.ui.rta - REVERT SaveAndExit button split into save and exit"
+      },
+      {
+        "id": "555e345c298ecd7977bb1bfacb0abe0a34b70fb5",
+        "type": "FEATURE",
+        "text": " sap.ui.rta - SaveAndExit button split into save and exit"
+      },
+      {
         "id": "3cf3b0f9b5d8c4cfd8c659175f5a1c3a041027f3",
         "type": "FEATURE",
         "text": " MDCTable: enable new ColumnMenu without UrlParameters"

@@ -3,6 +3,28 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "93e6c694e6360fe14b91f02e52018f4a8e73af46",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fixed focus outline on today button in Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270186037"
+          }
+        ]
+      },
+      {
+        "id": "1271605683702a6a23462d268986946236853ebf",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.MonthsRow: apply focus on a propper day",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008327852022"
+          }
+        ]
+      },
+      {
         "id": "e4de53e8602ce295b7931f7d92ce7d99fc9dc67b",
         "type": "FEATURE",
         "text": " sap.m.PlanningCalendar: secondaryCalendarType property introduced"
