@@ -313,19 +313,16 @@ sap.ui.define([
 		oDatePicker.destroy();
 	});
 
-	QUnit.test("icon does not have a tooltip", function (assert) {
+	QUnit.test("icon is properly configured", function (assert) {
 		// arrange
-		var oDatePicker = new DatePicker();
+		var oIcon = new DatePicker().getAggregation("_endIcon")[0];
 
 		// act
-		oDatePicker.placeAt("qunit-fixture");
-		oCore.applyChanges();
-
 		// assert
-		assert.notOk(oDatePicker.$("icon").control(0).getTooltip(), "icon tooltip is disabled");
-
-		// cleanup
-		oDatePicker.destroy();
+		assert.notOk(oIcon.getTooltip(), "icon has no tooltip");
+		assert.notOk(oIcon.getDecorative(), "icon isn't decorative");
+		assert.notOk(oIcon.getUseIconTooltip(), "icon doesn't have default tooltip");
+		assert.strictEqual(oIcon.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("OPEN_PICKER_TEXT") , "icon alt is present");
 	});
 
 	QUnit.test("Footer is correctly displayed on dekstop", function(assert) {

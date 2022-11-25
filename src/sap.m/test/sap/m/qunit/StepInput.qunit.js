@@ -84,6 +84,7 @@ sap.ui.define([
 			"the picker aggregation holds an instance of an icon");
 
 		assert.notOk(oIncrementButton.getTooltip(), "increment button should not have a tooltip");
+		assert.strictEqual(oIncrementButton.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("STEP_INPUT_INCREASE_BTN") , "Increase icon alt is present");
 
 		//act
 		oIncrementButton.firePress();
@@ -104,6 +105,7 @@ sap.ui.define([
 			"the step input _decrementButton aggregation holds an instance of an icon");
 
 		assert.notOk(oDecrementButton.getTooltip(), "decrement button should not have a tooltip");
+		assert.strictEqual(oDecrementButton.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("STEP_INPUT_DECREASE_BTN") , "Decrease icon alt is present");
 
 		//act
 		oDecrementButton.firePress();
