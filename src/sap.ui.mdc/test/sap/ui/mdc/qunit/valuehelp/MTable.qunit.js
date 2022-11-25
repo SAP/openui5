@@ -31,7 +31,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
-	"sap/ui/mdc/p13n/Engine",
+	"sap/m/p13n/Engine",
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment"
 ], function (
 		qutils,

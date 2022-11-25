@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"./BaseController",
+	"./SelectionController",
     "sap/ui/mdc/p13n/panels/ActionToolbarPanel",
     "sap/m/Column",
     "sap/ui/mdc/p13n/P13nBuilder"
@@ -13,15 +13,11 @@ sap.ui.define([
     var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
     var ActionToolbarController = BaseController.extend("saps.ui.mdc.p13n.subcontroller.ActionToolbarController");
 
-    ActionToolbarController.prototype.getUISettings = function() {
-        return {
-            title: oResourceBundle.getText("actiontoolbar.RTA_TITLE")
-        };
-    };
 
-    ActionToolbarController.prototype.getAdaptationUI = function(oPropertyHelper){
+    ActionToolbarController.prototype.initAdaptationUI = function(oPropertyHelper){
 
         var oSelectionPanel = new ActionToolbarPanel({
+            title: oResourceBundle.getText("actiontoolbar.RTA_TITLE"),
             showHeader: true
         });
         //oSelectionPanel.setEnableReorder(false);
@@ -52,9 +48,9 @@ sap.ui.define([
      */
      ActionToolbarController.prototype.mixInfoAndState = function(oPropertyHelper) {
         var aItemState = this.getCurrentState();
-        var mItemState = P13nBuilder.arrayToMap(aItemState);
+        var mItemState = this.arrayToMap(aItemState);
 
-        var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
             var oExisting = mItemState[oProperty.name];
             mItem.visible = !!oExisting;
             mItem.position = oExisting ? oExisting.position : -1;
@@ -62,7 +58,7 @@ sap.ui.define([
             return oProperty.visible;
         });
 
-        P13nBuilder.sortP13nData({
+        this.sortP13nData({
             visible: "visible",
             position: "position"
         }, oP13nData.items);

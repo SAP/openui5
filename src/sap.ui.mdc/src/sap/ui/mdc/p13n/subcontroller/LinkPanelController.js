@@ -4,7 +4,7 @@
 
 sap.ui.define([
     "sap/ui/mdc/p13n/P13nBuilder",
-	"./BaseController",
+	"./SelectionController",
     "sap/ui/mdc/p13n/panels/LinkSelectionPanel",
     "sap/m/library",
     "sap/m/MessageBox"
@@ -36,8 +36,9 @@ sap.ui.define([
         return this.getAdaptationControl().getItems().concat(this.getAdaptationControl());
     };
 
-    LinkPanelController.prototype.getAdaptationUI = function(oPropertyHelper) {
+    LinkPanelController.prototype.initAdaptationUI = function(oPropertyHelper) {
         var oSelectionPanel = new SelectionPanel({
+            title: oResourceBundle.getText("info.SELECTION_DIALOG_ALIGNEDTITLE"),
             showHeader: true,
             fieldColumn: oResourceBundle.getText("info.SELECTION_DIALOG_COLUMNHEADER_WITHOUT_COUNT"),
             enableCount: true,
@@ -115,7 +116,7 @@ sap.ui.define([
         var aItemState = this.getCurrentState();
         var mExistingLinkItems = P13nBuilder.arrayToMap(aItemState);
 
-        var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
 
             var oExistingLinkItem = mExistingLinkItems[oProperty.name];
             mItem.visible = oExistingLinkItem ? true : false;
@@ -130,7 +131,7 @@ sap.ui.define([
             return true;
         });
 
-        P13nBuilder.sortP13nData({
+        this.sortP13nData({
             visible: "visible",
             position: "position"
         }, oP13nData.items);

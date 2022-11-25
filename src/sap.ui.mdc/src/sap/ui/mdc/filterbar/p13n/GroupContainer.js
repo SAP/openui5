@@ -59,7 +59,7 @@ sap.ui.define([
 		return aFilterItems;
 	};
 
-	GroupContainer.prototype.update = function(oP13nData) {
+	GroupContainer.prototype.update = function(oAdaptationData) {
 		this.oLayout.restoreDefaults();
 	};
 

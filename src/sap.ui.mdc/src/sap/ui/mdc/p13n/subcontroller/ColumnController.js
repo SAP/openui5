@@ -3,17 +3,12 @@
  */
 
 sap.ui.define([
-	"./BaseController", "sap/m/p13n/SelectionPanel"
+	"./SelectionController", "sap/m/p13n/SelectionPanel"
 ], function (BaseController, SelectionPanel) {
     "use strict";
 
     var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-    var ColumnController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ColumnController", {
-        constructor: function() {
-			BaseController.apply(this, arguments);
-			this._bResetEnabled = true;
-		}
-    });
+    var ColumnController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ColumnController");
 
     ColumnController.prototype.getUISettings = function() {
         return {
@@ -34,18 +29,15 @@ sap.ui.define([
         return aItems;
     };
 
-    ColumnController.prototype.getAdaptationUI = function(oPropertyHelper){
-
+    ColumnController.prototype.createUI = function(oAdaptationData) {
         var oSelectionPanel = new SelectionPanel({
-            enableReorder: true,
             showHeader: true,
             enableCount: true,
+            title: oResourceBundle.getText("fieldsui.COLUMNS"),
             fieldColumn: oResourceBundle.getText("fieldsui.COLUMNS")
         });
-        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
-        oSelectionPanel.setP13nData(oAdaptationData.items);
-        this._oPanel = oSelectionPanel;
-        return Promise.resolve(oSelectionPanel);
+        oSelectionPanel.setEnableReorder(this._bReorderingEnabled);
+        return oSelectionPanel.setP13nData(oAdaptationData.items);
     };
 
     ColumnController.prototype.getChangeOperations = function() {

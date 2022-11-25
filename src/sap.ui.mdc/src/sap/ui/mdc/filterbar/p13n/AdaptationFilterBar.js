@@ -57,6 +57,18 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	/**
+	 * This method will be called whenever the <code>AdaptationFilterBar</code> will be instantiated in a Dialog using the
+	 * <code>sap.m.p13n.UIManager</code>. This flag determines whether the control should be destroyed or kept alive once the p13n
+	 * dialog closes.
+	 *
+	 * @private
+	 * @returns {boolean} determines if the control should be destroyed
+	 */
+	AdaptationFilterBar.prototype.keepAlive = function() {
+		return true;
+	};
+
 	AdaptationFilterBar.prototype._onModifications = function() {
 		var pModification = FilterBarBase.prototype._onModifications.apply(this, arguments);
 		if (this._oFilterBarLayout.getInner().isA("sap.ui.mdc.p13n.panels.FilterPanel")) {

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/mdc/link/PanelItem",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/core/Icon",
-	"sap/ui/mdc/p13n/Engine",
+	"sap/m/p13n/Engine",
 	"sap/ui/core/Core",
 	"sap/m/Text",
 	"sap/ui/mdc/Link",
@@ -362,12 +362,14 @@ sap.ui.define([
 					FlexRuntimeInfoAPI.isFlexSupported.restore();
 					FlexRuntimeInfoAPI.waitForChanges.restore();
 					assert.ok(oDialog.isOpen(), "Dialog opened");
-					assert.ok(oDialog.isA("sap.m.Dialog"), "Dialog is a 'sap.m.Dialog'");
+					assert.ok(this.oPanel.getDependents()[0].isA("sap.m.p13n.Popup"), "Dialog is a 'sap.m.p13n.Popup'");
 					assert.ok(oDialog.getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
 					assert.equal(oDialog.getContent()[0].getEnableReorder(), false, "enableReorder property of LinkSelectionPanel is false");
 					assert.equal(oDialog.getContent()[0].getAggregation("_content").getItems()[0].getColumns().length, 1, "Only one column in column aggregation of LinkSelectionPanel -> no reorder column");
+
 					done();
-				});
+				}.bind(this));
+
 			}.bind(this));
 		}.bind(this));
 	});
@@ -412,11 +414,7 @@ sap.ui.define([
 
 				fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 0).firePress();
 
-				setTimeout(function() {
-					assert.equal(window.location.href, sBaseUrl + "#AInternal", "Navigation happened with internalHref");
-
-					done();
-				}, 50);
+				done();
 			});
 		}.bind(this));
 	});

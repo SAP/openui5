@@ -465,11 +465,11 @@ function(
         this.oMDCChart.initialized().then(function(){
 
             var aMode = ['Item', 'Sort', 'Type', 'Filter'];
-            sinon.spy(this.oMDCChart.getEngine(),"registerAdaptation");
+            sinon.spy(this.oMDCChart.getEngine(),"register");
 
             this.oMDCChart._updateAdaptation(aMode);
 
-            assert.equal(this.oMDCChart.getEngine().registerAdaptation.getCall(0).args.length,2,"registerAdaptation correctly called");
+            assert.equal(this.oMDCChart.getEngine().register.getCall(0).args.length,2,"register correctly called");
 
             done();
         }.bind(this));

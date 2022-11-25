@@ -3,7 +3,7 @@
  */
 sap.ui.define([
     "sap/ui/mdc/ActionToolbar",
-    "sap/ui/mdc/p13n/Engine",
+    "sap/m/p13n/Engine",
     "../Util"
 ], function (ActionToolbar, Engine, Util) {
 	"use strict";

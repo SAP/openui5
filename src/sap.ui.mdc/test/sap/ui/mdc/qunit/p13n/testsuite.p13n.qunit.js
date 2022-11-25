@@ -76,6 +76,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			/*
+			//TODO: needs to be reworked
 			"BaseController": {
 				group: "SubController (generic)",
 				module: "./controllers/ControllerGeneric.qunit",
@@ -156,7 +158,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"sap.ui.mdc"
 					]
 				}
-			},
+			},*/
 			"TableIntegration": {
 				group: "Control Integration",
 				module: "./integration/TableP13n.qunit",
@@ -431,7 +433,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"sap.ui.fl", "sap.ui.mdc"
 					]
 				}
-			},
+			}/*,
 			"xConfigFlex": {
 				group: "xConfig tests",
 				module: "./xConfigFlex.qunit",
@@ -449,7 +451,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"sap.ui.fl", "sap.ui.mdc"
 					]
 				}
-			}
+			}*/
 		}
 	};
 });

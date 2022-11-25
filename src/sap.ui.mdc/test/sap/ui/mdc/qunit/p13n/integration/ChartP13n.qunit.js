@@ -1,6 +1,6 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/Chart", "sap/m/Button", "sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/core/Core"
+	"sap/m/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/Chart", "sap/m/Button", "sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/core/Core"
 ], function (Engine, MDCQUnitUtils, Chart, Button, Dimension, Measure, oCore) {
 	"use strict";
 	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");

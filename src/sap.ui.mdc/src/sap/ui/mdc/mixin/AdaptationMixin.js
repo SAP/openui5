@@ -4,7 +4,7 @@
 
 sap.ui.define(
     [
-        "sap/ui/mdc/p13n/Engine"
+        "sap/m/p13n/Engine"
 ],
     function (Engine) {
         "use strict";

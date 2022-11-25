@@ -34,18 +34,15 @@ sap.ui.define([
 			oTable.getInbuiltFilter().setVisibleFields(aPropertyNames);
 		}
 
-		return oTable.getEngine().uimanager.create(oTable, [sKey]).then(function(oDialog) {
-			var oContent = oDialog.removeContent(0);
-			oDialog.destroy();
-
-			this.setContent(oContent);
+		return oTable.getEngine().uimanager.create(oTable, [sKey]).then(function(aPanels) {
+			this.setContent(aPanels[0]);
 			this.setLabel(oController.getUISettings().title);
 
 			oController.update(oTable.getPropertyHelper());
 			oEngine.validateP13n(oTable, sKey, this.getContent());
 
 			this.changeButtonSettings({
-				reset: {visible: oController.getResetEnabled()}
+				reset: {visible: true}//TODO
 			});
 		}.bind(this));
 	};

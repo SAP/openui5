@@ -9,7 +9,7 @@ sap.ui.define([
 	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/ui/mdc/util/Common',
 	'sap/ui/mdc/enum/PersistenceMode',
-	'sap/ui/mdc/p13n/Engine',
+	'sap/m/p13n/Engine',
 	'sap/base/util/merge',
 	'sap/ui/mdc/p13n/StateUtil'
 ], function(

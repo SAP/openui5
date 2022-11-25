@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/FilterBar",
 	"./UnitTestMetadataDelegate",
 	"../QUnitUtils",
-	"sap/ui/mdc/p13n/Engine",
+	"sap/m/p13n/Engine",
 	"sap/ui/mdc/p13n/subcontroller/FilterController"
 ], function (
 	AdaptationFilterBar,
@@ -166,12 +166,19 @@ sap.ui.define([
 				}
 			});
 
-			var oController = new FilterController(this.oParent);
+			var oController = new FilterController({
+				control: this.oParent
+			});
 
 			oController.getCurrentState = function(){
 				return this.oParent.getFilterConditions();
 			}.bind(this);
-			Engine.getInstance().addController(oController, "Filter");
+
+			Engine.getInstance().register(this.oParent, {
+				controller: {
+					Filter: oController
+				}
+			});
 
 			oAdaptationFilterBar = new AdaptationFilterBar({
 				adaptationControl: this.oParent

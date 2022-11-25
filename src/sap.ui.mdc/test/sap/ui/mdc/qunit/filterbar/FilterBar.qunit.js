@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
 	"../QUnitUtils",
-	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler"
+	"test-resources/sap/m/qunit/p13n/TestModificationHandler"
 ], function (
 	QUnitUtils,
 	createAndAppendDiv,
@@ -311,7 +311,6 @@ sap.ui.define([
 			}
 		},
 		destroyTestObjects: function() {
-			oFilterBar.getEngine().destroy();
 			oFilterBar.destroy();
 			MDCQUnitUtils.restorePropertyInfos(oFilterBar);
 		}
@@ -344,6 +343,7 @@ sap.ui.define([
 			oPromise.then(function () {
 				assert.ok(!oFilterBar.getEngine().createChanges.called);
 				oFilterBar.getEngine().createChanges.restore();
+				oFilterBar.getEngine()._processChanges.restore();
 				done();
 			});
 		});
@@ -367,6 +367,7 @@ sap.ui.define([
 			oCM.addCondition("fieldPath1", Condition.createCondition("EQ", ["foo"]));
 			assert.ok(oFilterBar.getEngine().createChanges.called);
 			oFilterBar.getEngine().createChanges.restore();
+			oFilterBar.getEngine()._processChanges.restore();
 			done();
 		});
 	});
@@ -422,6 +423,7 @@ sap.ui.define([
 			oCM.addCondition("fieldPath1", Condition.createCondition("EQ", ["foo"]));
 			assert.ok(oFilterBar.getEngine().createChanges.called);
 			oFilterBar.getEngine().createChanges.restore();
+			oFilterBar.getEngine()._processChanges.restore();
 			done();
 		});
 	});
@@ -648,40 +650,38 @@ sap.ui.define([
 		oFilterBar.setP13nMode(["Value"]);
 
 		oFilterBar._waitForMetadata().then(function () {
-			oFilterBar.getEngine().initAdaptation(oFilterBar, "Filter", aPropertyInfo).then(function() {
+			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
+			assert.ok(oFilterBar.getControlDelegate());
+			var oPromise = oFilterBar.getControlDelegate().addItem("key", oFilterBar);
 
-				assert.ok(oFilterBar.getControlDelegate());
-				var oPromise = oFilterBar.getControlDelegate().addItem("key", oFilterBar);
+			oPromise.then(function (oFilterField) {
 
-				oPromise.then(function (oFilterField) {
+				var iCount = 0;
 
-					var iCount = 0;
+				var oTestHandler = TestModificationHandler.getInstance();
 
-					var oTestHandler = TestModificationHandler.getInstance();
+				oTestHandler.processChanges = function(aChanges){
+					iCount++;
+					FlexUtil.handleChanges(aChanges);
 
-					oTestHandler.processChanges = function(aChanges){
-						iCount++;
-						FlexUtil.handleChanges(aChanges);
+					if (iCount == 1) {
+						oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["foo"]));
+					}
 
-						if (iCount == 1) {
-							oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["foo"]));
-						}
+					if (iCount == 2) {
+						assert.equal(aResultingChanges.length, 3, "correct amount of changes created");
+						assert.ok(FlexUtil.handleChanges.calledTwice);
+						done();
+					}
 
-						if (iCount == 2) {
-							assert.equal(aResultingChanges.length, 3, "correct amount of changes created");
-							assert.ok(FlexUtil.handleChanges.calledTwice);
-							done();
-						}
+					return Promise.resolve(aChanges);
+				};
 
-						return Promise.resolve(aChanges);
-					};
+				oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
 
-					oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
-
-					oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
-				});
-
+				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
 			});
+
 		});
 	});
 
@@ -711,32 +711,30 @@ sap.ui.define([
 		oFilterBar.setP13nMode(["Value"]);
 
 		oFilterBar._waitForMetadata().then(function () {
-			oFilterBar.getEngine().initAdaptation(oFilterBar, "Filter", aPropertyInfo).then(function() {
+			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
+			assert.ok(oFilterBar.getControlDelegate());
+			var oPromise = oFilterBar.getControlDelegate().addItem("key", oFilterBar);
 
-				assert.ok(oFilterBar.getControlDelegate());
-				var oPromise = oFilterBar.getControlDelegate().addItem("key", oFilterBar);
+			oPromise.then(function (oFilterField) {
 
-				oPromise.then(function (oFilterField) {
+				var oTestHandler = TestModificationHandler.getInstance();
 
-					var oTestHandler = TestModificationHandler.getInstance();
+				oTestHandler.processChanges = function(aChanges){
+					assert.ok(aChanges);
+					assert.equal(aChanges.length, 1); // condition model does not know about filterExpression="Single"...
 
-					oTestHandler.processChanges = function(aChanges){
-						assert.ok(aChanges);
-						assert.equal(aChanges.length, 1); // condition model does not know about filterExpression="Single"...
+					assert.equal(aChanges[0].changeSpecificData.changeType, "addCondition");
+					assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters);
+					assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["conditions/in"]);
+					assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["conditions/in"], "INTEST");
+					done();
+					return Promise.resolve(aChanges);
+				};
 
-						assert.equal(aChanges[0].changeSpecificData.changeType, "addCondition");
-						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters);
-						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["conditions/in"]);
-						assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["conditions/in"], "INTEST");
-						done();
-						return Promise.resolve(aChanges);
-					};
+				oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
 
-					oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
+				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"], { "conditions/in": "INTEST" }));
 
-					oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"], { "conditions/in": "INTEST" }));
-
-				});
 			});
 		});
 	});
@@ -771,39 +769,38 @@ sap.ui.define([
 		oFilterBar.setP13nMode(["Value"]);
 
 		oFilterBar._waitForMetadata().then(function () {
-			oFilterBar.getEngine().initAdaptation(oFilterBar, "Filter", aPropertyInfo).then(function() {
+			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
 
-				assert.ok(oFilterBar.getControlDelegate());
+			assert.ok(oFilterBar.getControlDelegate());
 
-				var oPromise = oFilterBar.getControlDelegate().addItem("key", oFilterBar);
+			var oPromise = oFilterBar.getControlDelegate().addItem("key", oFilterBar);
 
-				oPromise.then(function (oFilterField) {
+			oPromise.then(function (oFilterField) {
 
-					var iCount = 0;
+				var iCount = 0;
 
-					var oTestHandler = TestModificationHandler.getInstance();
+				var oTestHandler = TestModificationHandler.getInstance();
 
-					oTestHandler.processChanges = function(aChanges){
-						iCount++;
-						FlexUtil.handleChanges(aChanges);
-						if (iCount === 2) {
-							assert.equal(aResultingChanges.length, 2, "correct amount of changes created");
+				oTestHandler.processChanges = function(aChanges){
+					iCount++;
+					FlexUtil.handleChanges(aChanges);
+					if (iCount === 2) {
+						assert.equal(aResultingChanges.length, 2, "correct amount of changes created");
 
-							assert.equal(aChanges[0].changeSpecificData.changeType, "addCondition");
-							assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition");
+						assert.equal(aChanges[0].changeSpecificData.changeType, "addCondition");
+						assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition");
 
 
-							assert.ok(FlexUtil.handleChanges.calledTwice);
-							done();
-						}
-						return Promise.resolve(aChanges);
-					};
+						assert.ok(FlexUtil.handleChanges.calledTwice);
+						done();
+					}
+					return Promise.resolve(aChanges);
+				};
 
-					oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
+				oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
 
-					oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
-					oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["foo"]));
-				});
+				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
+				oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["foo"]));
 			});
 		});
 	});
@@ -839,30 +836,29 @@ sap.ui.define([
 		sinon.stub(FlexUtil, 'handleChanges').callsFake(fnStoreChanges);
 
 		oFilterBar._waitForMetadata().then(function () {
-			oFilterBar.getEngine().initAdaptation(oFilterBar, "Filter", aPropertyInfo).then(function() {
+			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
 				oFilterBar._oInitialFiltersAppliedPromise.then(function () {
 
-					var oTestHandler = TestModificationHandler.getInstance();
+				var oTestHandler = TestModificationHandler.getInstance();
 
-					oTestHandler.processChanges = function(aChanges){
+				oTestHandler.processChanges = function(aChanges){
 
-						FlexUtil.handleChanges(aChanges);
+					FlexUtil.handleChanges(aChanges);
 
-						assert.equal(aResultingChanges.length, 1);
+					assert.equal(aResultingChanges.length, 1);
 
-						assert.equal(aResultingChanges[0].selectorElement, oFilterBar);
-						assert.equal(aResultingChanges[0].changeSpecificData.changeType, "addCondition");
-						assert.equal(aResultingChanges[0].changeSpecificData.content.name, "key");
-						assert.deepEqual(aResultingChanges[0].changeSpecificData.content.condition, { operator: "EQ", values: ["foo"], validated: undefined});
-						done();
-						return Promise.resolve(aChanges);
-					};
+					assert.equal(aResultingChanges[0].selectorElement, oFilterBar);
+					assert.equal(aResultingChanges[0].changeSpecificData.changeType, "addCondition");
+					assert.equal(aResultingChanges[0].changeSpecificData.content.name, "key");
+					assert.deepEqual(aResultingChanges[0].changeSpecificData.content.condition, { operator: "EQ", values: ["foo"], validated: undefined});
+					done();
+					return Promise.resolve(aChanges);
+				};
 
-					oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
+				oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
 
-					oFilterBar._getConditionModel().addCondition("key", oCondition1);
-					oFilterBar._getConditionModel().addCondition("key", oCondition2);
-				});
+				oFilterBar._getConditionModel().addCondition("key", oCondition1);
+				oFilterBar._getConditionModel().addCondition("key", oCondition2);
 			});
 		});
 	});
@@ -903,44 +899,43 @@ sap.ui.define([
 		oFilterBar.setP13nMode(["Value"]);
 
 		oFilterBar._waitForMetadata().then(function () {
-			oFilterBar.getEngine().initAdaptation(oFilterBar, "Filter", aPropertyInfo).then(function() {
-				assert.ok(oFilterBar.getControlDelegate());
-				var oPromise = oFilterBar.getControlDelegate().addItem("key", oFilterBar);
+			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
+			assert.ok(oFilterBar.getControlDelegate());
+			var oPromise = oFilterBar.getControlDelegate().addItem("key", oFilterBar);
 
-				oPromise.then(function (oFilterField) {
-					oFilterBar.getEngine().createChanges({
-						control: oFilterBar,
-						suppressAppliance: true,
-						key: "Filter",
-						state: {"key": [Condition.createCondition("EQ", ["foo"], { "in1": "IN1_TEST", "in2": "IN2_TEST" })]}
-					}).then(function(aChanges){
+			oPromise.then(function (oFilterField) {
+				oFilterBar.getEngine().createChanges({
+					control: oFilterBar,
+					suppressAppliance: true,
+					key: "Filter",
+					state: {"key": [Condition.createCondition("EQ", ["foo"], { "in1": "IN1_TEST", "in2": "IN2_TEST" })]}
+				}).then(function(aChanges){
+
+					assert.equal(aChanges.length, 1);
+
+					assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters);
+					assert.equal(Object.keys(aChanges[0].changeSpecificData.content.condition.inParameters).length, 2);
+					assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["in1"]);
+					assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["in1"], "IN1_TEST");
+					assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["in2"]);
+					assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["in2"], "IN2_TEST");
+
+					var oTestHandler = TestModificationHandler.getInstance();
+
+					oTestHandler.processChanges = function(aCallbackChanges){
 
 						assert.equal(aChanges.length, 1);
+						assert.equal(aCallbackChanges.length, 1);
 
-						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters);
-						assert.equal(Object.keys(aChanges[0].changeSpecificData.content.condition.inParameters).length, 2);
-						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["in1"]);
-						assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["in1"], "IN1_TEST");
-						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["in2"]);
-						assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["in2"], "IN2_TEST");
+						assert.equal(aCallbackChanges[0].changeSpecificData.changeType, "addCondition");
+						assert.ok(!aCallbackChanges[0].changeSpecificData.content.condition.inParameters);
+						done();
+						return Promise.resolve(aChanges);
+					};
 
-						var oTestHandler = TestModificationHandler.getInstance();
+					oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
 
-						oTestHandler.processChanges = function(aCallbackChanges){
-
-							assert.equal(aChanges.length, 1);
-							assert.equal(aCallbackChanges.length, 1);
-
-							assert.equal(aCallbackChanges[0].changeSpecificData.changeType, "addCondition");
-							assert.ok(!aCallbackChanges[0].changeSpecificData.content.condition.inParameters);
-							done();
-							return Promise.resolve(aChanges);
-						};
-
-						oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
-
-						oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
-					});
+					oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"]));
 				});
 			});
 		});
@@ -1024,6 +1019,7 @@ sap.ui.define([
 			oPromise.then(function () {
 				setTimeout(function () { // required for condition model....
 					assert.ok(oFilterBar._reportModelChange.calledOnce);
+					oFilterBar.getEngine()._processChanges.restore();
 					done();
 				}, 20);
 			});

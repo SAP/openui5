@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'./BaseController'
+	"./SelectionController"
 ], function (BaseController) {
 	"use strict";
 

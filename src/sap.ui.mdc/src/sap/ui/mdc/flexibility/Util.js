@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/mdc/util/loadModules",
-	"sap/ui/mdc/p13n/Engine"
+	"sap/m/p13n/Engine"
 ], function(loadModules, Engine) {
 	"use strict";
 

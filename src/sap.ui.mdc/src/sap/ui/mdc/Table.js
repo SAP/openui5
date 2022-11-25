@@ -996,12 +996,12 @@ sap.ui.define([
 			controller: {}
 		};
 		var mRegistryOptions = {
-			Column: ColumnController,
-			Sort: SortController,
-			Group: GroupController,
-			Filter: FilterController,
-			Aggregate: AggregateController,
-			ColumnWidth: ColumnWidthController
+			Column: new ColumnController({control: this}),
+			Sort: new SortController({control: this}),
+			Group: new GroupController({control: this}),
+			Filter: new FilterController({control: this}),
+			Aggregate: new AggregateController({control: this}),
+			ColumnWidth: new ColumnWidthController({control: this})
 		};
 
 		this.getActiveP13nModes().forEach(function(sMode){
@@ -1012,7 +1012,7 @@ sap.ui.define([
 			oRegisterConfig.controller["ColumnWidth"] = mRegistryOptions["ColumnWidth"];
 		}
 
-		this.getEngine().registerAdaptation(this, oRegisterConfig);
+		this.getEngine().register(this, oRegisterConfig);
 	};
 
 	function updateP13nSettings(oTable) {

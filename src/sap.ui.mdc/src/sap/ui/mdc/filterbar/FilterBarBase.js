@@ -288,9 +288,9 @@ sap.ui.define([
 
 		this._bPersistValues = false;
 
-		this.getEngine().registerAdaptation(this, {
+		this.getEngine().register(this, {
 			controller: {
-				Filter: FilterController
+				Filter: new FilterController({control: this})
 			}
 		});
 
