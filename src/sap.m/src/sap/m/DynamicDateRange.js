@@ -688,6 +688,10 @@ sap.ui.define([
 			var oPrevValue = this.getValue();
 			var bValid = sInputValue.trim() === "" || !!oVal;
 
+			if (this._isDateRange(oVal)) {
+				this._swapDates(oVal.values);
+			}
+
 			if (!bValid) {
 				this.setValue({ operator: "PARSEERROR", values: [oResourceBundle.getText("DDR_WRONG_VALUE"), sInputValue] });
 			} else {
@@ -695,6 +699,27 @@ sap.ui.define([
 			}
 
 			this.fireChange({ value: this.getValue(), prevValue: oPrevValue, valid: bValid });
+		};
+
+		/**
+		 * Checks if the <code>value</code> property operator corresponds to a date range.
+		 * @param {object} oValue The control value
+		 * @returns {boolean} True in case of a date range
+		 * @private
+		 */
+		DynamicDateRange.prototype._isDateRange = function(oValue) {
+			return Boolean(oValue && (oValue.operator === "DATERANGE" || oValue.operator === "DATETIMERANGE"));
+		};
+
+		/**
+		 * Swaps the start and end date of the value if the start date is after the end date.
+		 * @param {array} aValues The control value array
+		 * @private
+		 */
+		DynamicDateRange.prototype._swapDates = function(aValues) {
+			if (aValues.length > 1 && aValues[0].getTime() > aValues[1].getTime()) {
+				aValues.reverse();
+			}
 		};
 
 		DynamicDateRange.prototype._enhanceInputValue = function(sFormattedValue, oVal) {
@@ -994,6 +1019,10 @@ sap.ui.define([
 				aResultDates[i] = CalendarUtils._createUTCDate(this._convertDate(aValueDates[i], bTimezone), true);
 			}
 
+			if (this._isDateRange(oOutputValue)) {
+				this._swapDates(aResultDates);
+			}
+
 			if (aResultDates) {
 				if (this._oSelectedOption.getKey() === "FROMDATETIME" || this._oSelectedOption.getKey() === "TODATETIME"
 					|| this._oSelectedOption.getKey() === "FROM" || this._oSelectedOption.getKey() === "TO") {
@@ -1237,6 +1266,10 @@ sap.ui.define([
 				if (this._oOutput.values[i] instanceof Date) {
 					this._oOutput.values[i] = this._convertDate(aValueDates[i], sTimezone);
 				}
+			}
+
+			if (this._isDateRange(this._oOutput)) {
+				this._swapDates(this._oOutput.values);
 			}
 
 			var prevValue = this.getValue();

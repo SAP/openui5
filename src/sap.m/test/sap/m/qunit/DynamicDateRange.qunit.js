@@ -176,6 +176,46 @@ sap.ui.define([
 		assert.strictEqual(this.ddr._oInput.getValue(), "", "The set empty value is the correct value");
 	});
 
+	QUnit.test("Date ranges are handled properly", function(assert) {
+		// arrange
+		var oDDR = new DynamicDateRange(),
+			oFakeEvent = {
+				getParameter: function() {
+					return "Nov 15, 2022 - Nov 10, 2022";
+				}
+			},
+			oSwapDatesSpy = this.spy(oDDR, "_swapDates");
+
+		// act
+		oDDR._handleInputChange(oFakeEvent);
+		// assert
+		assert.ok(oSwapDatesSpy.calledOnce, "Dates are swapped on input change");
+
+		// act
+		this.stub(oDDR._oSelectedOption, "getValueHelpOutput").returns({
+			operator: "DATETIMERANGE",
+			values: [new Date(2022, 10, 15), new Date(2022, 10, 10)]
+		});
+		this.stub(oDDR, "_closePopup").returns(function() {});
+
+		oDDR._applyValue();
+		// assert
+		assert.ok(oSwapDatesSpy.calledTwice, "Dates are swapped on apply changes");
+
+		// act
+		this.stub(oDDR._oSelectedOption, "getValueHelpOutput").returns({
+			operator: "DATETIMERANGE",
+			values: [new Date(2022, 10, 15), new Date(2022, 10, 10)]
+		});
+		this.stub(oDDR, "_getDatesLabel").returns({
+			setText: function() {}
+		});
+
+		oDDR._updateDatesLabel();
+		// assert
+		assert.ok(oSwapDatesSpy.calledThrice, "Dates are swapped on for the label");
+	});
+
 	QUnit.module("CustomDynamicDateOption", {
 		beforeEach: function() {
 			this.ddr = new DynamicDateRange();
