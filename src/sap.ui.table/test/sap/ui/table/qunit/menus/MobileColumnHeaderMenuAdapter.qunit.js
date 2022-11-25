@@ -399,10 +399,10 @@ sap.ui.define([
 		var that = this;
 		var oTable = this.oTable;
 		var bOriginalPointerSupport = Device.support.pointer;
-		var bOriginalTouchSupport = Device.support.touch;
+		var bOriginalDesktopSupport = Device.support.desktop;
 
 		Device.support.pointer = false;
-		Device.support.touch = true;
+		Device.support.desktop = false;
 
 		return this.openColumnMenu(0).then(function() {
 			var oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
@@ -418,7 +418,7 @@ sap.ui.define([
 			assert.ok(oTable.$().hasClass("sapUiTableResizing") && oTable.$("rsz").hasClass("sapUiTableColRszActive"), "Resizing started");
 
 			Device.support.pointer = bOriginalPointerSupport;
-			Device.support.touch = bOriginalTouchSupport;
+			Device.support.desktop = bOriginalDesktopSupport;
 		});
 	});
 
