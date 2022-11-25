@@ -107,18 +107,7 @@ function(
 		/**
 		 * Margin on top and bottom of dialog
 		 */
-		var VERTICAL_MARGIN = Parameters.get({
-				name: "_sap_m_Dialog_VerticalMargin",
-				callback: function(sValue) {
-					VERTICAL_MARGIN = parseFloat(sValue);
-				}
-			});
-
-		if (VERTICAL_MARGIN) {
-			VERTICAL_MARGIN = parseFloat(VERTICAL_MARGIN);
-		} else {
-			VERTICAL_MARGIN = 3; // default value
-		}
+		var VERTICAL_MARGIN = 3; // default value
 
 		/**
 		* Constructor for a new Dialog.
@@ -538,6 +527,8 @@ function(
 		};
 
 		Dialog.prototype.onBeforeRendering = function () {
+			this._loadVerticalMargin();
+
 			var oHeader = this._getAnyHeader();
 
 			if (!Dialog._bPaddingByDefault && this.hasStyleClass("sapUiPopupWithPadding")) {
@@ -1774,6 +1765,26 @@ function(
 				return oRb.getText("DIALOG_HEADER_ARIA_DESCRIBEDBY_RESIZABLE");
 			}
 			return "";
+		};
+
+		/**
+		 * Returns the value of the Vertical Margin from the CSS parameter
+		 * @private
+		 */
+		Dialog.prototype._loadVerticalMargin = function () {
+			VERTICAL_MARGIN = Parameters.get({
+				name: "_sap_m_Dialog_VerticalMargin",
+				callback: function(sValue) {
+					VERTICAL_MARGIN = parseFloat(sValue);
+				}
+			});
+
+			if (VERTICAL_MARGIN) {
+				VERTICAL_MARGIN = parseFloat(VERTICAL_MARGIN);
+			} else {
+				VERTICAL_MARGIN = 3; // default value
+			}
+
 		};
 
 		/* =========================================================== */
