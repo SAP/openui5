@@ -412,9 +412,9 @@ function(
 				id: this.getId() + "-icon",
 				src: this.getIconSrc(),
 				noTabStop: true,
-				title: "",
 				decorative: false,
-				useIconTooltip: false
+				useIconTooltip: false,
+				alt: this._oResourceBundle.getText("OPEN_PICKER_TEXT")
 			});
 
 			// indicates whether the clock picker is still open
