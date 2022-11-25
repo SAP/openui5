@@ -1221,7 +1221,7 @@ function(
 		Dialog.prototype._calcMaxSizes = function () {
 			var oAreaDimensions = this._getAreaDimensions(),
 				$this = this.$(),
-				iHeaderHeight = $this.find(".sapMDialogTitle").height() || 0,
+				iHeaderHeight = $this.find(".sapMDialogTitleGroup").height() || 0,
 				iSubHeaderHeight = $this.find(".sapMDialogSubHeader").height() || 0,
 				iFooterHeight = $this.find("footer").height() || 0,
 				iHeightAsPadding = iHeaderHeight + iSubHeaderHeight + iFooterHeight,
@@ -1398,7 +1398,7 @@ function(
 				return null;
 			}
 
-			return this.$().find('header.sapMDialogTitle')[0];
+			return this.$().find('header .sapMDialogTitleGroup')[0];
 		};
 
 		/**
@@ -1881,7 +1881,7 @@ function(
 				return true;
 			}
 
-			return $target.hasClass('sapMDialogTitle');
+			return $target.hasClass('sapMDialogTitleGroup');
 		}
 
 		if (Device.system.desktop) {
