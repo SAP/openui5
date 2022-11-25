@@ -3,6 +3,17 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "f8eb2042766408839c0140edd7e6d6f6bd54e3e1",
+        "type": "FIX",
+        "text": " GridList: Corrected accessibility role in \"No Data\" message",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270187826"
+          }
+        ]
+      },
+      {
         "id": "bb7f83769d0baffd59e78029f77f5f144fb6b295",
         "type": "FIX",
         "text": " sap.f.SidePanel: fixed JS error in _getControlWidth() private method",

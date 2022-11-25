@@ -1,0 +1,18 @@
+{
+  "1.110.0": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "39a20161a0249204c6eb186ce65d87e1c20fd1db",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: fix RTA Remove action",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270127057"
+          }
+        ]
+      }
+    ]
+  }
+}

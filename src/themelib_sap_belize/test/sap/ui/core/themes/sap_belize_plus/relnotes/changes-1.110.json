@@ -3,6 +3,28 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "625397fef23ad393a89ae35063f677df79f520ee",
+        "type": "FIX",
+        "text": " \"72\" Font: update the unicode-range for forwarding from \"72\" to \"72-full\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270146751"
+          }
+        ]
+      },
+      {
+        "id": "465caebdeb3c11427cb6d96ac32e19d87e044103",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Duplicated banner regions removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007193702022"
+          }
+        ]
+      },
+      {
         "id": "3d223db14e2a60534f68ca1f73eae10142749603",
         "type": "FIX",
         "text": " sap.m.IconTabBar: Box shadow of the header overlapping fixed",

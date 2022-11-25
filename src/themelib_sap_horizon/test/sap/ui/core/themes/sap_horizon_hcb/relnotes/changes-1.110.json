@@ -3,6 +3,61 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "93e6c694e6360fe14b91f02e52018f4a8e73af46",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fixed focus outline on today button in Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270186037"
+          }
+        ]
+      },
+      {
+        "id": "81852ac893a657e622717f3b08c386360d208980",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: text no longer breaks on press",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270123986"
+          }
+        ]
+      },
+      {
+        "id": "845f0141ee42404e1dab1a073afd4319aa8f9988",
+        "type": "FIX",
+        "text": ": sap.ui.rta Horizon Theme fix for Segmented Button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270181881"
+          }
+        ]
+      },
+      {
+        "id": "625397fef23ad393a89ae35063f677df79f520ee",
+        "type": "FIX",
+        "text": " \"72\" Font: update the unicode-range for forwarding from \"72\" to \"72-full\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270146751"
+          }
+        ]
+      },
+      {
+        "id": "465caebdeb3c11427cb6d96ac32e19d87e044103",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Duplicated banner regions removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007193702022"
+          }
+        ]
+      },
+      {
         "id": "e4de53e8602ce295b7931f7d92ce7d99fc9dc67b",
         "type": "FEATURE",
         "text": " sap.m.PlanningCalendar: secondaryCalendarType property introduced"

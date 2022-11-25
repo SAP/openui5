@@ -3,6 +3,72 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "5f83694c9b93ee693c3794b6977703cabd2b8069",
+        "type": "FIX",
+        "text": " initTraces: Match URL correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270176966"
+          }
+        ]
+      },
+      {
+        "id": "9ad00e285b784428e5966787fddf2cf3a2d662eb",
+        "type": "FIX",
+        "text": " theming/ThemeManager: Fix preloadLibCss",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270189263"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500008388142022"
+          }
+        ]
+      },
+      {
+        "id": "ffde6ee0d79526c997fa9605bef9e556d9e46863",
+        "type": "FEATURE",
+        "text": " core/Element: check whether an Element can get focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270134535"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270144419"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280004700"
+          }
+        ]
+      },
+      {
+        "id": "36bcb2d1c25b9895274a6a4b93a0a7cf962697ed",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataContextBinding: message target for a failed PATCH of a nested entity below a return value context",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270142577"
+          }
+        ]
+      },
+      {
+        "id": "e84d351ad624751301313858f14a4b39e5368f9b",
+        "type": "FIX",
+        "text": " ManagedObjectObserver: performance optimization for destroy"
+      },
+      {
+        "id": "66bd740d93aaf187f698a7ee9ac0758694f8e1ea",
+        "type": "FIX",
+        "text": " sap.ui.test: Formatting corrected"
+      },
+      {
         "id": "4a8a827db6a3fbf9446ba9936db04ca84222626e",
         "type": "FEATURE",
         "text": " sap.ui.core.format.DateFormat: Support pattern symbol \"B\""
