@@ -3,8 +3,8 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/uxap/changeHandler/AddIFrameObjectPageLayout",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
-	"sap/ui/fl/changeHandler/XmlTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/ui/util/XMLHelper",

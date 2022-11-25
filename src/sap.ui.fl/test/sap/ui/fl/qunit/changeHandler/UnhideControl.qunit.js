@@ -5,10 +5,9 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/changeHandler/UnhideControl",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
-	"sap/ui/fl/changeHandler/XmlTreeModifier"
-],
-function(
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier"
+], function(
 	Control,
 	Element,
 	UIChange,
