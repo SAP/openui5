@@ -24,7 +24,7 @@ sap.ui.define([
 				oViewModel = new JSONModel({
 					busy : false,
 					hasUIChanges : false,
-					usernameEmpty : true,
+					usernameEmpty : false,
 					order : 0
 				});
 
@@ -70,14 +70,24 @@ sap.ui.define([
 		 * Delete an entry.
 		 */
 		onDelete : function () {
-			var oSelected = this.byId("peopleList").getSelectedItem();
+			var oContext,
+				oSelected = this.byId("peopleList").getSelectedItem(),
+				sUserName;
 
 			if (oSelected) {
-				oSelected.getBindingContext().delete("$auto").then(function () {
-					MessageToast.show(this._getText("deletionSuccessMessage"));
+				oContext = oSelected.getBindingContext();
+				sUserName = oContext.getProperty("UserName");
+				oContext.delete().then(function () {
+					MessageToast.show(this._getText("deletionSuccessMessage", sUserName));
 				}.bind(this), function (oError) {
-					MessageBox.error(oError.message);
-				});
+					this._setUIChanges();
+					if (oError.canceled) {
+						MessageToast.show(this._getText("deletionRestoredMessage", sUserName));
+						return;
+					}
+					MessageBox.error(oError.message + ": " + sUserName);
+				}.bind(this));
+				this._setUIChanges();
 			}
 		},
 
