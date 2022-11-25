@@ -1,28 +1,29 @@
 /* global QUnit*/
 
 sap.ui.define([
-	'sap/m/Button',
-	'sap/m/Label',
-	'sap/m/QuickViewPage',
-	'sap/ui/core/mvc/XMLView',
-	'sap/ui/core/util/reflection/JsControlTreeModifier',
+	"sap/m/Button",
+	"sap/m/Label",
+	"sap/m/QuickViewPage",
+	"sap/ui/base/Event",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Control",
+	"sap/ui/core/CustomData",
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/CustomData",
-	"sap/ui/base/Event",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/f/DynamicPageTitle" //used implicitly
-],
-function(
+], function(
 	Button,
 	Label,
 	QuickViewPage,
+	Event,
 	XMLView,
 	JsControlTreeModifier,
+	Control,
+	CustomData,
 	StashedControlSupport,
 	JSONModel,
-	CustomData,
-	Event,
 	sinon
 ) {
 	"use strict";
@@ -238,6 +239,15 @@ function(
 					assert.equal(oInsertAggregationStub.lastCall.args[2], "foo", "the new custom data control is passed");
 					assert.equal(oInsertAggregationStub.lastCall.args[3], 0, "the index is passed");
 				}.bind(this));
+		});
+
+		QUnit.test("createAndAddCustomData / getCustomDataInfo", function(assert) {
+			this.oControl = new Control();
+			return JsControlTreeModifier.createAndAddCustomData(this.oControl, "myKey", "myValue", this.oComponent).then(function() {
+				var oCustomData = JsControlTreeModifier.getCustomDataInfo(this.oControl, "myKey");
+				assert.ok(oCustomData.customData, "the custom data is returned");
+				assert.strictEqual(oCustomData.customDataValue, "myValue", "the custom data value is returned");
+			}.bind(this));
 		});
 
 		QUnit.test("the modifier is not invalidating controls for changes in custom data aggregation", function (assert) {

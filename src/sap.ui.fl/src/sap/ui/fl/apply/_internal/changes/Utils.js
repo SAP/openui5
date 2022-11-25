@@ -93,18 +93,11 @@ sap.ui.define([
 			});
 		},
 
-		checkIfDependencyIsStillValidSync: function(oAppComponent, oModifier, mChangesMap, sChangeId) {
-			var oChange = FlUtils.getChangeFromChangesMap(mChangesMap.mChanges, sChangeId);
-			var oControl = oModifier.bySelector(oChange.getSelector(), oAppComponent);
-			var bHasChangeApplyFinishedCustomData = FlexCustomData.sync.hasChangeApplyFinishedCustomData(oControl, oChange);
-			return isDependencyStillValid(oChange, bHasChangeApplyFinishedCustomData);
-		},
-
 		checkIfDependencyIsStillValid: function(oAppComponent, oModifier, mChangesMap, sChangeId) {
 			var oChange = FlUtils.getChangeFromChangesMap(mChangesMap.mChanges, sChangeId);
 			var oControl = oModifier.bySelector(oChange.getSelector(), oAppComponent);
-			return FlexCustomData.hasChangeApplyFinishedCustomData(oControl, oChange, oModifier)
-				.then(isDependencyStillValid.bind(null, oChange));
+			var bHasChangeApplyFinishedCustomData = FlexCustomData.hasChangeApplyFinishedCustomData(oControl, oChange, oModifier);
+			return isDependencyStillValid(oChange, bHasChangeApplyFinishedCustomData);
 		},
 
 		/**

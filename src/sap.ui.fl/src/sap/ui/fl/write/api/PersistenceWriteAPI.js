@@ -293,7 +293,7 @@ sap.ui.define([
 				oFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
 				// remove custom data for flex change
 				if (oElement) {
-					FlexCustomData.sync.destroyAppliedCustomData(oElement, mPropertyBag.change, JsControlTreeModifier);
+					FlexCustomData.destroyAppliedCustomData(oElement, mPropertyBag.change, JsControlTreeModifier);
 				}
 				// delete from flex persistence map
 				oFlexController.deleteChange(mPropertyBag.change, oAppComponent);

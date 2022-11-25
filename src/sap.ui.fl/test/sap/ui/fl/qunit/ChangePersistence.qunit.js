@@ -818,23 +818,15 @@ sap.ui.define([
 				return false;
 			}
 
-			return this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange0, dependencyValid)
-				.then(function (mUpdatedDependenciesMap) {
-					assert.deepEqual(mUpdatedDependenciesMap, mCurrentChangesMap, "no dependencies got copied");
-					return this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange1, dependencyValid);
-				}.bind(this))
-				.then(function (mUpdatedDependenciesMap) {
-					assert.deepEqual(mUpdatedDependenciesMap, mExpectedDependenciesMapAfterFirstChange, "all dependencies from change1 got copied");
-					return this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, dependencyInvalid);
-				}.bind(this))
-				.then(function (mUpdatedDependenciesMap) {
-					assert.deepEqual(mUpdatedDependenciesMap, mExpectedDependenciesMapAfterSecondChange, "no dependencies from change2 got copied");
-					return this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, dependencyValid);
-				}.bind(this))
-				.then(function (mUpdatedDependenciesMap) {
-					assert.deepEqual(mUpdatedDependenciesMap, mInitialChangesMap, "all dependencies from change2 got copied");
-					assert.deepEqual(mUpdatedDependenciesMap, this.oChangePersistence._mChanges, "the updated dependencies map is saved in the internal changes map");
-				}.bind(this));
+			this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange0, dependencyValid);
+			assert.deepEqual(this.oChangePersistence._mChanges, mCurrentChangesMap, "no dependencies got copied");
+			this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange1, dependencyValid);
+			assert.deepEqual(this.oChangePersistence._mChanges, mExpectedDependenciesMapAfterFirstChange, "all dependencies from change1 got copied");
+			this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, dependencyInvalid);
+			assert.deepEqual(this.oChangePersistence._mChanges, mExpectedDependenciesMapAfterSecondChange, "no dependencies from change2 got copied");
+			this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, dependencyValid);
+			assert.deepEqual(this.oChangePersistence._mChanges, mInitialChangesMap, "all dependencies from change2 got copied");
+			assert.deepEqual(this.oChangePersistence._mChanges, this.oChangePersistence._mChanges, "the updated dependencies map is saved in the internal changes map");
 		});
 
 		QUnit.test("deleteChanges with bRunTimeCreatedChange parameter set, shall remove the given change from the map", function(assert) {

@@ -491,7 +491,7 @@ sap.ui.define([
 				.withArgs(mPropertyBag.change.getSelector(), oAppComponent)
 				.returns(oElement);
 
-			var fnRemoveChangeStub = sandbox.stub(FlexCustomData.sync, "destroyAppliedCustomData");
+			var fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
 			var fnDeleteChangeStub = sandbox.stub();
 
 			mockFlexController(oAppComponent, { deleteChange: fnDeleteChangeStub });
@@ -515,7 +515,7 @@ sap.ui.define([
 
 			sandbox.stub(ChangesController, "getAppComponentForSelector");
 
-			var fnRemoveChangeStub = sandbox.stub(FlexCustomData.sync, "destroyAppliedCustomData");
+			var fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
 			var fnDeleteChangeStub = sandbox.stub();
 
 			mockFlexController(undefined, { deleteChange: fnDeleteChangeStub });
@@ -538,7 +538,7 @@ sap.ui.define([
 
 			sandbox.stub(ChangesController, "getAppComponentForSelector");
 
-			var fnRemoveChangeStub = sandbox.stub(FlexCustomData.sync, "destroyAppliedCustomData");
+			var fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
 			var fnDeleteChangeStub = sandbox.stub();
 
 			mockFlexController(undefined, { deleteChange: fnDeleteChangeStub });

@@ -31,19 +31,13 @@ sap.ui.define([
 	}
 
 	function revertAndDeleteChangeOnControl(oChange, oControl, mRevertProperties, mPropertyBag) {
-		return Reverter.revertChangeOnControl(oChange, oControl, mRevertProperties)
-			.then(function(vRevertResult) {
-				return FlexCustomData.destroyAppliedCustomData(vRevertResult || oControl, oChange, mPropertyBag.modifier)
-					.then(function () {
-						return !!vRevertResult;
-					});
-			})
-			.then(function(bSuccess) {
-				if (bSuccess) {
-					// TODO should be changed as soon as new flex persistence is in place
-					mPropertyBag.flexController._oChangePersistence._deleteChangeInMap(oChange);
-				}
-			});
+		return Reverter.revertChangeOnControl(oChange, oControl, mRevertProperties).then(function(vRevertResult) {
+			FlexCustomData.destroyAppliedCustomData(vRevertResult || oControl, oChange, mPropertyBag.modifier);
+			if (vRevertResult) {
+				// TODO should be changed as soon as new flex persistence is in place
+				mPropertyBag.flexController._oChangePersistence._deleteChangeInMap(oChange);
+			}
+		});
 	}
 
 	/**
