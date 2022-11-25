@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
+	"sap/ui/mdc/condition/ConditionValidateException",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Currency",
@@ -13,6 +14,7 @@ sap.ui.define([
 		ConditionsType,
 		Condition,
 		FilterOperatorUtil,
+		ConditionValidateException,
 		ConditionValidated,
 		IntegerType,
 		CurrencyType,
@@ -252,6 +254,8 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
+		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
+		assert.deepEqual(oException && oException.getConditions(), [oCondition], "exception conditions");
 
 		oException = undefined;
 		try {
@@ -260,6 +264,8 @@ sap.ui.define([
 			oException = e;
 		}
 		assert.ok(oException, "exception fired");
+		assert.notOk(oException && oException.getCondition(), "exception condition");
+		assert.deepEqual(oException && oException.getConditions(), "XXX", "exception conditions");
 
 	});
 
@@ -632,6 +638,8 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired if maxConditions=1 and only EQ operators");
+		assert.deepEqual(oException && oException.getCondition(), null, "exception condition");
+		assert.deepEqual(oException && oException.getConditions(), [], "exception conditions");
 
 		oConditionsType.setFormatOptions({valueType: oValueType, operators: [], maxConditions: 1});
 		oException = undefined;

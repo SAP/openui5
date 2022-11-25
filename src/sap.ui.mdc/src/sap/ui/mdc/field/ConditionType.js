@@ -13,6 +13,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/Operator',
 	'sap/ui/mdc/condition/Condition',
+	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/base/util/merge',
@@ -29,6 +30,7 @@ sap.ui.define([
 		FilterOperatorUtil,
 		Operator,
 		Condition,
+		ConditionValidateException,
 		BaseType,
 		ConditionValidated,
 		merge,
@@ -689,7 +691,7 @@ sap.ui.define([
 	 *	The condition to be validated
 	 * @returns {void|Promise}
 	 *	<code>undefined</code> or a <code>Promise</code> resolving with an undefined value
-	 * @throws {sap.ui.model.ValidateException}
+	 * @throws {sap.ui.mdc.condition.ConditionValidateException}
 	 *	If at least one of the values of the condition is not valid for the given data type; the message of the exception is
 	 *	language dependent as it may be displayed on the UI
 	 *
@@ -720,9 +722,9 @@ sap.ui.define([
 					} else {
 						oType.validateValue(null);
 					}
-				} catch (oError) {
-					if (oError instanceof ValidateException) {
-						throw oError;
+				} catch (oException) {
+					if (oException instanceof ValidateException) {
+						throw new ConditionValidateException(oException.message, oException.violatedConstraints, null);
 					} else {
 						//validation breaks with runtime error -> just ignore
 						//TODO: is this the right way?
@@ -735,7 +737,7 @@ sap.ui.define([
 
 		if (typeof oCondition !== "object" || !oCondition.operator || !oCondition.values ||
 				!Array.isArray(oCondition.values)) {
-			throw new ValidateException(this._oResourceBundle.getText("field.VALUE_NOT_VALID"));
+			throw new ConditionValidateException(this._oResourceBundle.getText("field.VALUE_NOT_VALID"), undefined, typeof oCondition === "object" ? merge({}, oCondition) : oCondition);
 		}
 
 		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
@@ -746,20 +748,28 @@ sap.ui.define([
 		}
 
 		if (!oOperator || aOperators.indexOf(oOperator.name) === -1) {
-			throw new ValidateException("No valid condition provided, Operator wrong.");
+			throw new ConditionValidateException("No valid condition provided, Operator wrong.", undefined, merge({}, oCondition));
 		}
 
 		try {
 			oOperator.validate(oCondition.values, oType, aCompositeTypes, iCompositePart);
 		} catch (oException) {
-			if (oException instanceof ValidateException && oOriginalType && !bCompositeType) {
-				// As internal yyyy-MM-dd is used as pattern for dates (times similar) the
-				// ValidateException might contain this as pattern. The user should see the pattern thats shown
-				// So try to validate date with the original type to get ValidateException with right pattern.
-				// Not for CompositeTypes as here the parts might have different configuartion what leads to different messages.
-				oOperator.validate(oCondition.values, oOriginalType, aCompositeTypes, iCompositePart);
+			try {
+				if (oException instanceof ValidateException && oOriginalType && !bCompositeType) {
+					// As internal yyyy-MM-dd is used as pattern for dates (times similar) the
+					// ValidateException might contain this as pattern. The user should see the pattern thats shown
+					// So try to validate date with the original type to get ValidateException with right pattern.
+					// Not for CompositeTypes as here the parts might have different configuartion what leads to different messages.
+					oOperator.validate(oCondition.values, oOriginalType, aCompositeTypes, iCompositePart);
+				}
+				throw oException;
+			} catch (oException) {
+				if (oException instanceof ValidateException) {
+					// add condition to exception to improve mapping in FieldBase handleValidationError
+					throw new ConditionValidateException(oException.message, oException.violatedConstraints, merge({}, oCondition));
+				}
+				throw oException;
 			}
-			throw oException;
 		}
 
 	};

@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/ValueHelp",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
+	"sap/ui/mdc/condition/ConditionValidateException",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/model/type/Integer",
@@ -28,6 +29,7 @@ sap.ui.define([
 		ValueHelp,
 		FilterOperatorUtil,
 		Operator,
+		ConditionValidateException,
 		ConditionValidated,
 		FieldDisplay,
 		IntegerType,
@@ -405,6 +407,7 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
+		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
 
 		oException = undefined;
 		try {
@@ -413,6 +416,7 @@ sap.ui.define([
 			oException = e;
 		}
 		assert.ok(oException, "exception fired");
+		assert.deepEqual(oException && oException.getCondition(), "XXX", "exception condition");
 
 		oException = undefined;
 		oCondition = Condition.createCondition("XX", [200]);
@@ -422,6 +426,7 @@ sap.ui.define([
 			oException = e;
 		}
 		assert.ok(oException, "exception fired");
+		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
 
 	});
 
@@ -495,6 +500,7 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		assert.ok(oException && oException.message.startsWith("Enter a date after 01.01.2000"), "Pattern of original date used in message");
+		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
 		assert.ok(oValueType.validateValue.calledWith(new Date(1900, 0, 1)), "validateValue of ValueType called with currentValue");
 		assert.ok(oOriginalType.validateValue.calledWith(new Date(1900, 0, 1)), "validateValue of originalDateType called with currentValue");
 
@@ -2304,6 +2310,7 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
+		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
 		assert.ok(oValueType.validateValue.calledWith([999999, "USD"]), "validateValue of ValueType called with currentValue");
 		assert.notOk(oOriginalType.validateValue.called, "validateValue of originalDateType not called");
 
@@ -2314,6 +2321,7 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
+		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
 		assert.ok(oUnitType.validateValue.calledWith([999999, "USD"]), "validateValue of UnitType called with currentValue");
 		assert.notOk(oOriginalType.validateValue.called, "validateValue of originalDateType not called");
 
@@ -2344,6 +2352,7 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
+		assert.notOk(oException && oException.getCondition(), "exception has no condition");
 
 	});
 
