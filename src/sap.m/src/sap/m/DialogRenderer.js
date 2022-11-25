@@ -166,22 +166,27 @@ sap.ui.define([
 				.close("span");
 		}
 
-		if (oHeader) {
-			oHeader._applyContextClassFor("header");
+		if (oHeader || oSubHeader) {
 			oRM.openStart("header")
-				.class("sapMDialogTitle")
-				.openEnd()
-				.renderControl(oHeader)
-				.close("header");
-		}
+				.openEnd();
+			if (oHeader) {
+				oHeader._applyContextClassFor("header");
+				oRM.openStart("div")
+					.class("sapMDialogTitleGroup")
+					.openEnd()
+					.renderControl(oHeader)
+					.close("div");
+			}
 
-		if (oSubHeader) {
-			oSubHeader._applyContextClassFor("subheader");
-			oRM.openStart("header")
-				.class("sapMDialogSubHeader")
-				.openEnd()
-				.renderControl(oSubHeader)
-				.close("header");
+			if (oSubHeader) {
+				oSubHeader._applyContextClassFor("subheader");
+				oRM.openStart("div")
+					.class("sapMDialogSubHeader")
+					.openEnd()
+					.renderControl(oSubHeader)
+					.close("div");
+			}
+			oRM.close("header");
 		}
 
 		if (oValueStateText) {

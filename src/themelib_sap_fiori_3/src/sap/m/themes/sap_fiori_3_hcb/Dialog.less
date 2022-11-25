@@ -23,7 +23,7 @@
 	background-color: @sapUiGroupContentBackground;
 }
 
-.sapMDialog > header.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
+.sapMDialog > header .sapMDialogTitleGroup .sapMDialogIcon.sapUiIcon {
 	font-size: 1rem;
 }
 
@@ -36,7 +36,12 @@
 	min-width: 4rem;
 }
 
-.sapMDialogTitle {
+.sapMDialog.sapMDialogWithSubHeader > header .sapMIBar,
+.sapMDialog > header .sapMIBar {
+	box-shadow: none;
+}
+
+.sapMDialogTitleGroup {
 	z-index: 3; // to hide the shadow from the header when there is sub-header
 }
 
@@ -68,7 +73,7 @@ html.sap-phone .sapMDialog {
 	}
 }
 
-.sapMDialogTitle, .sapMDialogSubHeader {
+.sapMDialogTitleGroup, .sapMDialogSubHeader {
 	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
 	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
 		&.sapMIBar {

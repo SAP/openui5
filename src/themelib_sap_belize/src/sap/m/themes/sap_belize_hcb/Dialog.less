@@ -3,12 +3,17 @@
 /* Belize High Contrast Black theme  */
 /* ================================= */
 
-.sapMMessageDialog.sapMPopup-CTX > header.sapMDialogTitle {
+.sapMMessageDialog.sapMPopup-CTX > header .sapMDialogTitleGroup {
 	background-color: @sapUiGroupContentBackground;
 }
 
-.sapMDialog > header.sapMDialogTitle .sapMBarMiddle > .sapMBarPH > .sapMTitle {
+.sapMDialog > header .sapMDialogTitleGroup .sapMBarMiddle > .sapMBarPH > .sapMTitle {
 	color: @sapUiPageHeaderTextColor;
+}
+
+.sapMDialog.sapMDialogWithSubHeader > header .sapMIBar,
+.sapMDialog > header .sapMIBar {
+	box-shadow: none;
 }
 
 .sapMDialog > footer.sapMDialogActions {

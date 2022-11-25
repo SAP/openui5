@@ -658,7 +658,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			// tap on the 'X' button
-			QunitUtils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogTitle .sapMBtn")[0]);
+			QunitUtils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogTitleGroup .sapMBtn")[0]);
 
 			// Asert
 			setTimeout(function () {

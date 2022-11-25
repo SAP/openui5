@@ -64,6 +64,13 @@
 					}
 				});
 
+			var oButtonToOpenDialogWithHeaderAndSubHeaderDragResize = new sap.m.Button({
+				text: "With Header and Subheader Drag And Resize",
+				press: function () {
+					oDialogResizeAndDragSubheader.open();
+				}
+			});
+
 			var oDialog1 = new sap.m.Dialog("dialog1", {
 				title: "World Domination",
 				icon: "sap-icon://employee",
@@ -787,6 +794,16 @@
 				visible: false
 			});
 
+			var subHeader1 = new sap.m.Bar({
+				contentMiddle: [
+					new sap.m.SearchField({
+						placeholder: "Search ...",
+						width: "100%"
+					})
+				],
+				visible: true
+			});
+
 			var oDialogWithSubheader = new sap.m.Dialog('subheaderDialog', {
 				title: "Dialog with invisible SubHeader",
 				content: new sap.m.Button('triggerSubheaderButton', {
@@ -804,6 +821,21 @@
 				endButton: new sap.m.Button('dialogWithSubheaderCancelButton', {
 					text: "Cancel", press: function () {
 						oDialogWithSubheader.close();
+					}
+				})
+			});
+
+			var oDialogResizeAndDragSubheader = new sap.m.Dialog({
+				title: "Dialog Resize And Drag",
+				draggable: true,
+				resizable: true,
+				subHeader: subHeader1,
+				content: new sap.ui.core.HTML({
+					content: '<div>Lipsum limple text</div>'
+				}),
+				endButton: new sap.m.Button({
+					text: "Cancel", press: function () {
+						oDialogResizeAndDrag.close();
 					}
 				})
 			});
@@ -1460,6 +1492,7 @@
 				}),
 				content: [
 					oButtonToOpenDialogWithHeaderAndSubHeader,
+					oButtonToOpenDialogWithHeaderAndSubHeaderDragResize,
 					new sap.m.Button('simpleDialogButton', {
 						text: "Simple Dialog",
 						width: _buttonWidth,
