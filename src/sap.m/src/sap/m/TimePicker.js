@@ -619,9 +619,10 @@ function(
 				sFormattedDate;
 
 			var oCurrentDateValue = this._getFormatter(true).parse(sInputValue) || oDateValue;
-			var sDisplayFormattedValue = this._getFormatter(true).format(oCurrentDateValue);
-
-			oClocks.setValue(sDisplayFormattedValue);
+			if (oCurrentDateValue) {
+				var sDisplayFormattedValue = this._getFormatter(true).format(oCurrentDateValue);
+				oClocks.setValue(sDisplayFormattedValue);
+			}
 
 			sFormattedDate = this._getPickerParser().format(oDateValue || new Date(),
 				Configuration.getTimezone());
