@@ -1446,5 +1446,21 @@
         ]
       }
     ]
+  },
+  "1.71.50": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "a7b80c5d250482aa2df50bb0e768120dc42786ce",
+        "type": "FIX",
+        "text": " sap.ui.core.(format.DateFormat|date.UniversalDate): Do not use Object.values, Array#includes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270177952"
+          }
+        ]
+      }
+    ]
   }
 }
