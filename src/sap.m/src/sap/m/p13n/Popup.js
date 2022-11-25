@@ -295,7 +295,7 @@ sap.ui.define([
 			content: this.getPanels().length > 1 ? this._getContainer() : this.getPanels()[0],
 			escapeHandler: function() {
 				this._onClose(oContainer, "Escape");
-			},
+			}.bind(this),
 			buttons: [
 				new Button(this.getId() + "-confirmBtn", {
 					text:  mDialogSettings.confirm && mDialogSettings.confirm.text ?  mDialogSettings.confirm.text : oResourceBundle.getText("p13n.POPUP_OK"),

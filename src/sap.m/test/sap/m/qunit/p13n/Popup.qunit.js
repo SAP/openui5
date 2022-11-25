@@ -247,6 +247,14 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Check escape handling", function(assert){
+
+		var fnEscapeHandler = this.oPopup._createContainer().getEscapeHandler();
+		assert.ok(fnEscapeHandler instanceof Function, "escape handling provided");
+		fnEscapeHandler();
+
+	});
+
 	QUnit.module("p13n.Popup add panels dynamically", {
 		getCustomPanelClass: function() {
 			return Control.extend("temp", {
