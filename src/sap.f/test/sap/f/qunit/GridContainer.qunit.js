@@ -339,7 +339,9 @@ function (
 		// Assert
 		assert.ok(this.oGrid.getDomRef(), "GridContainer is rendered");
 		assert.ok(this.oGrid.$().find("#tile1").length, "Item 1 is rendered");
+		assert.ok(this.oGrid.$().find("#tile1").parent().attr("id"), "Item 1's wrapper has ID created during rendering");
 		assert.ok(this.oGrid.$().find("#tile2").length, "Item 2 is rendered");
+		assert.ok(this.oGrid.$().find("#tile2").parent().attr("id"), "Item 2's wrapper has ID created during rendering");
 	});
 
 	QUnit.test("Add/remove items", function (assert) {
@@ -400,9 +402,12 @@ function (
 		// Assert
 		$grid = this.oGrid.$();
 		assert.strictEqual($grid.find("#tile1").length, 1, "Item 1 is inserted with index which is out of range");
+		assert.ok($grid.find("#tile1").attr("id"), "Item 1's wrapper has an ID created through insertItem");
 		assert.strictEqual($grid.find("#tile2").length, 1, "Item 2 is inserted with index which is out of range");
+		assert.ok($grid.find("#tile2").attr("id"), "Item 2's wrapper has an ID created through insertItem");
 		assert.strictEqual($grid.find("#tile3").length, 1, "Item 3 is inserted with index 1");
 		assert.strictEqual($grid.find("#tile3").parent().index(), 2, "Item 3 is inserted on correct location");
+		assert.ok($grid.find("#tile3").attr("id"), "Item 3's wrapper has an ID created through insertItem");
 
 		oItem1.destroy();
 		oItem2.destroy();
@@ -1507,6 +1512,24 @@ function (
 
 		// Assert
 		assert.ok(fnGetInstanceSpy.notCalled, "GridDragOver#getInstance() is not called during keyboard drag and drop.");
+	});
+
+	QUnit.test("Wrapper IDs are preserved after Drag&Drop operations", function (assert) {
+		// Arrange
+		var oFirstItem = this.oGrid.getItems()[0];
+		var sFirstItemWrapperId = oFirstItem.getDomRef().parentElement.id;
+		var oSecondItem = this.oGrid.getItems()[1];
+		var sSecondItemWrapperId = oSecondItem.getDomRef().parentElement.id;
+
+		var oFirstItemWrapper = oFirstItem.getDomRef().parentElement;
+
+		// Act
+		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_RIGHT, false, false, /**ctrl */ true );
+
+		Core.applyChanges();
+
+		assert.strictEqual(this.oDraggedControl.getDomRef().parentElement.id, sFirstItemWrapperId, "The dragged item wrapper's ID is preserved");
+		assert.strictEqual(this.oDroppedControl.getDomRef().parentElement.id, sSecondItemWrapperId, "The dropped item wrapper's ID is preserved");
 	});
 
 	QUnit.module("Keyboard Drag&Drop in RTL mode - suggested positions in different directions", {
