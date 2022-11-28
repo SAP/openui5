@@ -343,7 +343,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
-	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
+	 * @param {null|number|string} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
 	 *   is parsed as, and what is formatted as an empty string. The allowed values are "" (empty string),
 	 *   NaN, <code>null</code>, or 0.
 	 *   The 'format' and 'parse' functions are done in a symmetric way. For example, when this
@@ -436,9 +436,9 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
-	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
-	 *   is parsed as, and what is formatted as an empty string. The allowed values are only NaN,
-	 *   null or 0.
+	 * @param {null|number|string} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
+	 *   is parsed as, and what is formatted as an empty string. The allowed values are "" (empty string)
+	 *   NaN, <code>null</code>, or 0.
 	 *   The 'format' and 'parse' functions are done in a symmetric way. For example, when this
 	 *   parameter is set to NaN, an empty string is parsed as NaN, and NaN is formatted as an empty
 	 *   string.
@@ -572,7 +572,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
-	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
+	 * @param {null|number|string} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
 	 *   is parsed as, and what is formatted as an empty string. The allowed values are "" (empty string),
 	 *   NaN, <code>null</code>, or 0.
 	 *   The 'format' and 'parse' functions are done in a symmetric way. For example, when this
@@ -700,7 +700,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
-	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
+	 * @param {null|number|string} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
 	 *   is parsed as, and what is formatted as an empty string. The allowed values are "" (empty string),
 	 *   NaN, <code>null</code>, or 0.
 	 *   The 'format' and 'parse' functions are done in a symmetric way. For example, when this
@@ -797,7 +797,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
-	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
+	 * @param {null|number|string} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what an empty string
 	 *   is parsed as, and what is formatted as an empty string. The allowed values are "" (empty string),
 	 *   NaN, <code>null</code>, or 0.
 	 *   The 'format' and 'parse' functions are done in a symmetric way. For example, when this
@@ -895,8 +895,12 @@ sap.ui.define([
 				});
 			}
 			if (oFormatOptions.emptyString !== undefined) {
-				// eslint-disable-next-line no-self-compare -- check if it's NaN (only NaN doesn't equal to itself)
-				assert(oFormatOptions.emptyString === "" || oFormatOptions.emptyString === 0 || oFormatOptions.emptyString === null || /* check if it's NaN (only NaN doesn't equal to itself) */ oFormatOptions.emptyString !== oFormatOptions.emptyString, "The format option 'emptyString' must be either 0, null or NaN");
+				assert(oFormatOptions.emptyString === ""
+					|| oFormatOptions.emptyString === 0
+					|| oFormatOptions.emptyString === null
+					// eslint-disable-next-line no-self-compare -- check if it's NaN (only NaN doesn't equal to itself)
+					|| oFormatOptions.emptyString !== oFormatOptions.emptyString,
+					"The format option 'emptyString' must be either '', 0, null, or NaN");
 			}
 		}
 
