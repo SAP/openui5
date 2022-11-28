@@ -6348,7 +6348,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.oLogMock.expects("error").twice();
+			that.oLogMock.expects("error").withArgs("Not a (navigation) property: $count");
+			that.oLogMock.expects("error").withArgs("Failed to update path /SalesOrderList/$count");
 			that.expectMessages([{
 					message : "/SalesOrderList/$count: Not a (navigation) property: $count",
 					persistent : true,
@@ -7786,10 +7787,9 @@ sap.ui.define([
 					technical : true,
 					type : "Error"
 				}]);
-			that.oLogMock.expects("error")
+			that.oLogMock.expects("error").twice()
 				.withExactArgs("POST on 'SalesOrderList' failed; will be repeated automatically",
-					sinon.match(oError.error.message), sODLB)
-				.exactly(2);
+					sinon.match(oError.error.message), sODLB);
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to get contexts for " + sSalesOrderService + "SalesOrderList"
 					+ " with start index 0 and length 100", sinon.match(sPreviousFailed), sODLB);
@@ -11549,7 +11549,6 @@ sap.ui.define([
 				assert.strictEqual(iPatchSent, 1, "patchSent 1");
 				assert.strictEqual(iPatchCompleted, 0, "patchCompleted 0");
 
-				// don't care about other parameters
 				that.oLogMock.expects("error")
 					.withArgs("Failed to update path /SalesOrderList('42')/Note");
 
@@ -17902,7 +17901,9 @@ sap.ui.define([
 					type : "Error"
 				}]);
 
-			that.oLogMock.expects("error").twice(); // exact errors do not interest
+			that.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList('3')");
+			that.oLogMock.expects("error")
+				.withArgs(sinon.match.string, sinon.match(sPreviousFailed));
 
 			return Promise.all([
 				oContext3.delete("$auto").then(mustFail(assert), function () {}),
@@ -26004,9 +26005,9 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			var oMessageManager = sap.ui.getCore().getMessageManager();
+
 			// 4c. Patching a property via the wrong context must not succeed
 			// We're not interested in the exact errors, only in some failure
-
 			that.oLogMock.expects("error").twice();
 
 			return oReturnValueContext.getBinding().getBoundContext()
@@ -29135,7 +29136,6 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oPromise;
 
-			// don't care about other parameters
 			that.oLogMock.expects("error")
 				.withArgs("Failed to update path /SalesOrderList('42')/NetAmount");
 			that.oLogMock.expects("error")
@@ -30719,7 +30719,9 @@ sap.ui.define([
 			.expectChange("note", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.oLogMock.expects("error").twice(); // don't care about console here
+			that.oLogMock.expects("error").withArgs("Failed to refresh kept-alive elements");
+			that.oLogMock.expects("error")
+				.withArgs(sinon.match.string, sinon.match(sPreviousFailed));
 			that.expectRequest("SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID eq '42'",
 					createErrorInsideBatch())
 				// no response required
@@ -30793,7 +30795,11 @@ sap.ui.define([
 			that.oView.byId("detail").setBindingContext(oContext);
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.oLogMock.expects("error").twice(); // don't care about console here
+			that.oLogMock.expects("error").withArgs("Failed to get contexts for"
+				+ " /sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/SalesOrderList"
+				+ " with start index 0 and length 100");
+			that.oLogMock.expects("error")
+				.withArgs(sinon.match.string, sinon.match(sPreviousFailed));
 			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100",
 					createErrorInsideBatch())
 				.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID") // no reponse req.
@@ -30853,7 +30859,13 @@ sap.ui.define([
 			.expectChange("position", ["0010"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.oLogMock.expects("error").thrice(); // don't care about console here
+			that.oLogMock.expects("error").withArgs("Failed to read path /SalesOrderList('42')");
+			that.oLogMock.expects("error")
+				.withArgs(sinon.match.string, sinon.match(sPreviousFailed));
+			that.oLogMock.expects("error")
+				.withArgs("Failed to get contexts for /sap/opu/odata4/sap/zui5_testv4/default/sap"
+					+ "/zui5_epm_sample/0002/SalesOrderList('42')/SO_2_SOITEM"
+					+ " with start index 0 and length 100");
 			that.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,SalesOrderID"
 					+ "&$skip=0&$top=100",
 					createErrorInsideBatch({
@@ -30983,7 +30995,13 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "setBindingContext: R.V.C.");
 		}).then(function () {
-			that.oLogMock.expects("error").thrice(); // don't care about console here
+			that.oLogMock.expects("error").withArgs("Failed to get contexts for"
+				+ " /sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002"
+				+ "/SalesOrderList('1')/SO_2_SOITEM with start index 0 and length 100");
+			that.oLogMock.expects("error").withArgs("Failed to read path /SalesOrderList('1')"
+				+ "/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm(...)");
+			that.oLogMock.expects("error")
+				.withArgs("Failed to read path /SalesOrderList('1')/Note");
 			that.expectRequest("SalesOrderList('1')?$select=Messages,Note,SalesOrderID",
 					createErrorInsideBatch())
 				.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
@@ -31369,7 +31387,8 @@ sap.ui.define([
 						technical : true,
 						type : "Error"
 					}]);
-				that.oLogMock.expects("error"); // don't care about console here
+				that.oLogMock.expects("error")
+					.withArgs("Failed to update path /EMPLOYEES('3')/ROOM_ID");
 
 				oRoomIdBinding.setValue("42");
 
@@ -31459,7 +31478,10 @@ sap.ui.define([
 						technical : true,
 						type : "Error"
 					}]);
-				that.oLogMock.expects("error").twice(); // don't care about console here
+				that.oLogMock.expects("error")
+					.withArgs("Failed to update path /EMPLOYEES('3')/AGE");
+				that.oLogMock.expects("error")
+					.withArgs("Failed to update path /EMPLOYEES('3')/ROOM_ID");
 
 				oRoomIdBinding.setValue("23");
 				fnReject(oError);
@@ -31546,7 +31568,10 @@ sap.ui.define([
 						technical : true,
 						type : "Error"
 					}]);
-				that.oLogMock.expects("error").twice(); // don't care about console here
+				that.oLogMock.expects("error")
+					.withArgs("Failed to update path /EMPLOYEES('3')/AGE");
+				that.oLogMock.expects("error")
+					.withArgs("Failed to update path /EMPLOYEES('3')/ROOM_ID");
 
 				fnReject(createErrorInsideBatch());
 			}
@@ -32224,7 +32249,7 @@ sap.ui.define([
 </Table>';
 
 		this.oLogMock.restore();
-		this.stub(Log, "error"); // the exact errors do not interest
+		this.stub(Log, "error"); // the exact follow-up errors do not interest
 		this.expectMessages([{
 				message : "Could not load metadata: 500 Internal Server Error",
 				persistent : true,
@@ -34848,7 +34873,11 @@ sap.ui.define([
 					type : "Error"
 				}]);
 
-			that.oLogMock.expects("error"); // don't care about console here
+			that.oLogMock.expects("error")
+				.withArgs(sinon.match(function (sMessage) {
+					return normalizeUID(sMessage)
+						=== "Failed to update path /BusinessPartnerList($uid=...)/Address/City";
+				}));
 
 			oCreatedContext = that.oView.byId("table").getBinding("items").create({
 				Address : {City : "Heidelberg"}
@@ -35169,7 +35198,7 @@ sap.ui.define([
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to get contexts for " + sSalesOrderService + "SalesOrderList"
 					+ " with start index 1 and length 2",
-					sinon.match("request was not processed because the previous request failed"),
+					sinon.match(sPreviousFailed),
 					sODLB);
 
 			that.expectRequest({
@@ -35195,8 +35224,7 @@ sap.ui.define([
 				oTableBinding.getHeaderContext().requestSideEffects([{
 					$NavigationPropertyPath : ""
 				}]).then(mustFail(assert), function (oError0) {
-					assert.strictEqual(oError0.message,
-						"HTTP request was not processed because the previous request failed");
+					assert.strictEqual(oError0.message, sPreviousFailed);
 				}),
 				that.waitForChanges(assert, "repeat POST but fail again")
 			]);
@@ -36041,7 +36069,8 @@ sap.ui.define([
 					type : "Error"
 				}]);
 
-			that.oLogMock.expects("error");
+			that.oLogMock.expects("error")
+				.withArgs("Failed to update path /SalesOrderList('4711')/Note");
 
 			that.oView.byId("note").getBinding("value").setValue("modified");
 
