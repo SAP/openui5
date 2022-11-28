@@ -122,12 +122,12 @@ sap.ui.define([
 		// Left border
 		rm.openStart("div").class("sapUiMnuItmL").openEnd().close("div");
 
-		// icon/check column
-		rm.openStart("div").class("sapUiMnuItmIco").openEnd();
 		if (oItem.getIcon()) {
+			// icon/check column
+			rm.openStart("div").class("sapUiMnuItmIco").openEnd();
 			rm.icon(oItem.getIcon(), null, {title: null});
+			rm.close("div");
 		}
-		rm.close("div");
 
 		// Text filed column
 		rm.openStart("div", itemId + "-txt").class("sapUiMnuItmTxt").openEnd();
