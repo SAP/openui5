@@ -301,7 +301,11 @@ sap.ui.define([
 						return this;
 				}
 
-				if (this._isInScrollport(oElement, aOffset) && bSkipElementsInScrollport) {
+				// the visible part of the scrollport is positioned below the
+				// <code>this._iScrollPaddingTop</code>, so we offset that padding as well
+				aOffset[1] -= this._iScrollPaddingTop;
+
+				if (bSkipElementsInScrollport && this._isInScrollport(oElement, aOffset)) {
 					return this;
 				}
 
@@ -824,7 +828,7 @@ sap.ui.define([
 			_isInScrollport: function(oElement, aOffset) {
 				var oElementRect = oElement.getBoundingClientRect(),
 					oContainerRect = this._$Container[0].getBoundingClientRect(),
-					iContainerRectTop = oContainerRect.top - aOffset[1] + this._iScrollPaddingTop;
+					iContainerRectTop = oContainerRect.top - aOffset[1];
 
 				return Math.ceil(oElementRect.top) >= Math.floor(iContainerRectTop)
 					&& Math.floor(oElementRect.bottom) <= Math.ceil(oContainerRect.bottom);

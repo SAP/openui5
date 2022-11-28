@@ -3190,6 +3190,39 @@ function (
 		assert.ok(oUpdateMediaStyleSpy.notCalled, "Media styles were not changed");
 	});
 
+	QUnit.module("DynamicPage - ScrollToElement", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPage();
+			// each item spans the entire row
+			this.oDynamicPage.getContent().setDefaultSpan("XL12 L12 M12 S12");
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("ScrollToElement adds offset for sticky area", function(assert) {
+		var oItemToScrollTo = this.oDynamicPage.getContent().getContent()[20],
+			oItemDOMElement = oItemToScrollTo.getDomRef(),
+			oScrollContainer = this.oDynamicPage.$("contentWrapper").get(0),
+			iStrickyAreaHight,
+			iOffsetDiff;
+
+		// ensure the page is scrollable
+		this.oDynamicPage.getDomRef().style.height = "500px";
+
+		// Act
+		this.oDynamicPage.getScrollDelegate().scrollToElement(oItemDOMElement);
+
+		// Check
+		iStrickyAreaHight = parseInt(oScrollContainer.style.paddingTop);
+		iOffsetDiff = oItemDOMElement.getBoundingClientRect().top - oScrollContainer.getBoundingClientRect().top;
+
+		assert.ok(iOffsetDiff >= iStrickyAreaHight, "the element is in the visible area");
+	});
+
 	/* --------------------------- Accessibility -------------------------------------- */
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
