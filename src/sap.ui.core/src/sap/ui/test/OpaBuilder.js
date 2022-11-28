@@ -525,7 +525,7 @@ sap.ui.define(
         /**
          * Adds a group of matchers that requires only one of them to actually match. It is internally using {@link sap.ui.test.OpaBuilder.Matchers.some}.
          *
-         * @param [aMatchers=[{sap.ui.test.matchers.Matcher | function | Array | Object}]] aMatchers list of matchers were one must be met
+         * @param [aMatchers=[{sap.ui.test.matchers.Matcher | function | Array | Object}]] aMatchers list of matchers where one must be met
          * @returns {this} this OpaBuilder instance
          * @public
          */
