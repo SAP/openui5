@@ -290,7 +290,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 
 			aPathParts = window.location.pathname.split("/");
 			// useFakeServer is used only in explored.html and our testsuite
-			if (aPathParts[1].endsWith(".html") || aPathParts[1] === "test-resources") {
+			if (aPathParts[1].indexOf(".html") >= 0 || aPathParts[1] === "test-resources") {
 				sBase = "/test-resources/" + sBase + "/";
 			} else {
 				sBase = "/" + aPathParts[1] + "/test-resources/" + sBase + "/";
