@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/base/Log",
+	"sap/base/util/LoaderExtensions",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/Layer",
@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Log,
+	LoaderExtensions,
 	FlexObjectFactory,
 	States,
 	Layer,
@@ -391,6 +391,23 @@ sap.ui.define([
 				this.oFlexObject.getContent(),
 				"then the original file is not cloned"
 			);
+		});
+
+		QUnit.test("when a very deep FlexObject is updated", function (assert) {
+			return LoaderExtensions.loadResource({
+				dataType: "json",
+				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/DeepFlexObject.json"),
+				async: true
+			}).then(function(oDeepObject) {
+				this.oFlexObject = FlexObjectFactory.createFromFileContent(oDeepObject);
+				oDeepObject.packageName = "test";
+				this.oFlexObject.update(oDeepObject);
+				assert.strictEqual(
+					this.oFlexObject.getFlexObjectMetadata().packageName,
+					"test",
+					"then the object was updated properly"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("when trying to update the fileName/id", function(assert) {

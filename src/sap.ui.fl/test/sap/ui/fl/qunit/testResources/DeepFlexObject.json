@@ -1,0 +1,107 @@
+{
+		"fileName": "id_1472825930192_211_page",
+		"fileType": "change",
+		"changeType": "updateVariant",
+		"moduleName": "",
+		"reference": "ui.s2p.mm.poitem.monitors1.Component",
+		"packageName": "",
+		"content": {
+				"variantContent": {
+						"visualFilterPersistencyKey": {
+								"config": {
+										"DeliveryStatus": {
+												"shownInFilterBar": true,
+												"component": {
+														"type": "Donut",
+														"properties": {
+																"sortOrder": [{
+																		"Field": {
+																				"String": "NumberOfPurchaseOrderItems"
+																		},
+																		"Descending": {
+																				"Boolean": true
+																		}
+																}],
+																"measureField": "NumberOfPurchaseOrderItems",
+																"parentProperty": "DeliveryStatus"
+														}
+												}
+										},
+										"PlannedDeliveryDuration": {
+												"shownInFilterBar": true,
+												"component": {
+														"type": "Line",
+														"properties": {
+																"sortOrder": [{
+																		"Field": {
+																				"String": "PlannedDeliveryDuration"
+																		},
+																		"Descending": {
+																				"Boolean": false
+																		}
+																}],
+																"measureField": "NumberOfPurchaseOrderItems",
+																"parentProperty": "PlannedDeliveryDuration"
+														}
+												}
+										},
+										"PurchaseOrderItemStatus": {
+												"shownInFilterBar": true,
+												"component": {
+														"type": "Column",
+														"properties": {
+																"sortOrder": [{
+																		"Field": {
+																				"String": "NumberOfPurchaseOrderItems"
+																		},
+																		"Descending": {
+																				"Boolean": true
+																		}
+																}],
+																"measureField": "NumberOfPurchaseOrderItems",
+																"parentProperty": "PurchaseOrderItemStatus"
+														}
+												}
+										}
+								}
+						},
+						"chartPersistencyKey": {},
+						"tablePersistencyKey": {},
+						"compactFilterPersistencyKey": {
+								"filterbar": [{
+												"group": "",
+												"name": "$Parameter.P_DisplayCurrency",
+												"partOfCurrentVariant": true,
+												"visibleInFilterBar": true,
+												"visible": true
+										}
+								],
+								"filterBarVariant": "{\"PurchaseOrderDate\":{\"conditionTypeInfo\":{\"name\":\"sap.ui.comp.config.condition.DateRangeType\",\"data\":{\"operation\":\"TODAYFROMTO\",\"value1\":365,\"value2\":0,\"key\":\"PurchaseOrderDate\",\"calendarType\":\"Gregorian\"}},\"ranges\":[{\"operation\":\"BT\",\"value1\":\"2020-09-21T18:30:00.000Z\",\"value2\":\"2021-09-22T18:29:59.999Z\",\"exclude\":false,\"keyField\":\"PurchaseOrderDate\"}],\"items\":[]},\"IsCompleted\":\"false\"}"
+						}
+				}
+		},
+		"selector": {
+				"persistencyKey": "searchAnalyticalListPageVariant",
+				"variantId": "*standard*"
+		},
+		"layer": "VENDOR",
+		"texts": {},
+		"namespace": "apps/ui.s2p.mm.poitem.monitors1/changes/",
+		"projectId": "ui.s2p.mm.poitem.monitors1",
+		"creation": "2021-09-22T06:07:26.730Z",
+		"originalLanguage": "EN",
+		"support": {
+				"generator": "Change.createInitialFileContent",
+				"sapui5Version": "1.95.0-SNAPSHOT",
+				"service": "",
+				"user": "SAP",
+				"sourceChangeFileName": "",
+				"compositeCommand": "",
+				"command": ""
+		},
+		"oDataInformation": {},
+		"dependentSelector": {},
+		"jsOnly": false,
+		"variantReference": "",
+		"appDescriptorChange": false
+}

@@ -483,7 +483,7 @@ sap.ui.define([
 			}
 		};
 
-		Object.entries(deepClone(oFileContent)).forEach(function (aEntry) {
+		Object.entries(deepClone(oFileContent, 15)).forEach(function (aEntry) {
 			fnMapProperty(aEntry[0], aEntry[1]);
 		});
 		return mPropertyMap;
