@@ -122,12 +122,12 @@ sap.ui.define([
 		// Left border
 		rm.write("><div class=\"sapUiMnuItmL\"></div>");
 
-		// icon/check column
-		rm.write("<div class=\"sapUiMnuItmIco\">");
 		if (oItem.getIcon()) {
+			// icon/check column
+			rm.write("<div class=\"sapUiMnuItmIco\">");
 			rm.writeIcon(oItem.getIcon(), null, {title: null});
+			rm.write("</div>");
 		}
-		rm.write("</div>");
 
 		// Text filed column
 		rm.write("<div id=\"" + itemId + "-txt\" class=\"sapUiMnuItmTxt\">");
