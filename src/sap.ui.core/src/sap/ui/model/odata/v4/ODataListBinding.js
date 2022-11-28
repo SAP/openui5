@@ -2187,7 +2187,10 @@ sap.ui.define([
 	 * minus the {@link #sap.ui.model.data.v4.Context#delete deleted} entities. Otherwise, it is
 	 * <code>undefined</code>. The value is a number of type <code>Edm.Int64</code>. Since 1.91.0,
 	 * in case of data aggregation with group levels, the count is the leaf count on the server; it
-	 * is only determined if the <code>$count</code> system query option is given.
+	 * is only determined if the <code>$count</code> system query option is given. Since 1.110.0,
+	 * in case of a recursive hierarchy, the count is the number of nodes matching the current
+	 * filter and search criteria (if any) or the number of all nodes; it is only determined if the
+	 * <code>$count</code> system query option is given.
 	 *
 	 * The count is known to the binding in the following situations:
 	 * <ul>
@@ -2208,7 +2211,7 @@ sap.ui.define([
 	 * value.
 	 *
 	 * @returns {number|undefined}
-	 *   The count of elements or leaves, or <code>undefined</code> if the count or the header
+	 *   The count of elements (leaves, nodes) or <code>undefined</code> if the count or the header
 	 *   context is not available.
 	 *
 	 * @public

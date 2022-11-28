@@ -1123,6 +1123,39 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+["42", "1a"].forEach(function (sCount) {
+	QUnit.test("request: text/plain, $direct; $count=" + sCount, function (assert) {
+		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
+			oResponse = {
+				body : sCount,
+				messages : "~messages~",
+				resourcePath : "~resourcePath~"
+			};
+
+		this.mock(oRequestor).expects("convertResourcePath").withExactArgs("Employees")
+			.returns("~sResourcePath~");
+		this.mock(oRequestor).expects("sendRequest")
+			.withExactArgs("GET", "~sResourcePath~",
+				{"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"},
+				undefined, "~sResourcePath~")
+			.resolves(oResponse);
+		this.mock(oRequestor).expects("reportHeaderMessages")
+			.withExactArgs("~resourcePath~", "~messages~");
+		this.mock(oRequestor).expects("doConvertResponse").exactly(sCount === "42" ? 1 : 0)
+			.withExactArgs(42, undefined).returns("~result~");
+
+		// code under test
+		return oRequestor.request("GET", "Employees").then(function (oResult) {
+			assert.strictEqual(oResult, "~result~");
+			assert.strictEqual(sCount, "42");
+		}, function (_oError) {
+			// e.g. SyntaxError: Unexpected non-whitespace character after JSON at position 1
+			assert.strictEqual(sCount, "1a");
+		});
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("request: sOriginalPath, $direct", function () {
 		var sOriginalPath = "TEAM('0')/TEAM_2_EMPLOYEES",
 			oRequestor = _Requestor.create("/", oModelInterface);
