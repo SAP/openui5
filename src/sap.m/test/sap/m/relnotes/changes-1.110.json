@@ -3,6 +3,17 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "6ea26632d71b7f370c255d99bceb95026e36dd42",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: sample for visual test is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280179304"
+          }
+        ]
+      },
+      {
         "id": "a4d81dab4138efe6768cd53ba8178c407a17d2d2",
         "type": "FIX",
         "text": " sap.m.Dialog: Vertical margin will always be set correctly",
@@ -109,6 +120,17 @@
         ]
       },
       {
+        "id": "acc833b3f8bfb53a879acd4ea4eca5eb602635c0",
+        "type": "FIX",
+        "text": " sap.m.Fiori20Adapter: Ignore destroyed views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270146288"
+          }
+        ]
+      },
+      {
         "id": "b0d450277005e98513701a213b6280dcaa690275",
         "type": "FEATURE",
         "text": " sap.m.OverflowMenuButton: New control for OverflowToolbar"
@@ -121,17 +143,6 @@
           {
             "type": "BCP",
             "reference": "2270181732"
-          }
-        ]
-      },
-      {
-        "id": "acc833b3f8bfb53a879acd4ea4eca5eb602635c0",
-        "type": "FIX",
-        "text": " sap.m.Fiori20Adapter: Ignore destroyed views",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2270146288"
           }
         ]
       },
