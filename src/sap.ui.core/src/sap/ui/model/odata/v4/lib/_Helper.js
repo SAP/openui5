@@ -1365,6 +1365,29 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the list of predicates corresponding to the given list of contexts, or
+		 * <code>null</code if at least one predicate is missing.
+		 *
+		 * @param {sap.ui.model.odata.v4.Context[]} aContexts - A list of contexts
+		 * @returns {string[]|null} The corresponding list of predicates
+		 */
+		getPredicates : function (aContexts) {
+			var bMissingPredicate,
+				aPredicates = aContexts.map(getPredicate);
+
+			function getPredicate(oContext) {
+				var sPredicate = _Helper.getPrivateAnnotation(oContext.getValue(), "predicate");
+
+				if (!sPredicate) {
+					bMissingPredicate = true;
+				}
+				return sPredicate;
+			}
+
+			return bMissingPredicate ? null : aPredicates;
+		},
+
+		/**
 		 * Returns the index of the key predicate in the last segment of the given path.
 		 *
 		 * @param {string} sPath - The path

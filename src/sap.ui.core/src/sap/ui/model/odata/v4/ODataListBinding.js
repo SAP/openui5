@@ -2763,6 +2763,38 @@ sap.ui.define([
 	};
 
 	/**
+	 * Keeps only those contexts that were requested by a control last time, and all created
+	 * persisted or kept-alive contexts.
+	 *
+	 * @returns {sap.ui.model.odata.v4.Context[]} The list of kept contexts
+	 *
+	 * @see #getCurrentContexts
+	 */
+	ODataListBinding.prototype.keepOnlyVisibleContexts = function () {
+		var aContexts = this.aContexts.slice(0, this.iCreatedContexts).filter(function (oContext) {
+				// Note: cannot request side effects for transient contexts
+				return !oContext.getProperty("@$ui5.context.isTransient");
+			}).concat(
+				this.getCurrentContexts().filter(function (oContext) {
+					// Note: avoid duplicates for created contexts
+					return oContext && oContext.isTransient() === undefined;
+				})
+			),
+			that = this;
+
+		// add kept-alive contexts outside collection
+		Object.keys(this.mPreviousContextsByPath).forEach(function (sPath) {
+			var oContext = that.mPreviousContextsByPath[sPath];
+
+			if (oContext.isKeepAlive()) {
+				aContexts.push(oContext);
+			}
+		});
+
+		return aContexts;
+	};
+
+	/**
 	 * Notification from the cache that the collection has changed. Currently, only bindings with
 	 * bSharedRequest register at the cache and are notified when the cache has been reset.
 	 *
@@ -3248,13 +3280,9 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
 	 */
 	ODataListBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
-		var aContexts,
-			bMissingPredicate,
-			oModel = this.oModel,
+		var oModel = this.oModel,
 			aPredicates,
 			aPromises,
-			// since this is called from a context or a parent binding, the binding is resolved
-			iResolvedPathLength = this.oHeaderContext.getPath().length,
 			bSingle = oContext && oContext !== this.oHeaderContext,
 			that = this;
 
@@ -3293,29 +3321,18 @@ sap.ui.define([
 				+ " different batch group");
 		}
 
-		if (aPaths.indexOf("") < 0) {
-			if (bSingle) {
-				aContexts = [oContext];
-			} else {
-				aContexts = this.getCurrentContexts().filter(function (oContext0) {
-					return oContext0 && !oContext0.isTransient();
-				});
-				// add kept-alive contexts outside collection
-				Object.keys(this.mPreviousContextsByPath).forEach(function (sPath) {
-					var oContext0 = that.mPreviousContextsByPath[sPath];
+		if (this.oCache && this.oCache.getPendingRequestsPromise()) {
+			return this.oCache.getPendingRequestsPromise().then(function () {
+				// Note: This is quite early! Transient predicate not yet replaced inside path,
+				// #isTransient not yet updated etc. Be careful below!
+				return that.requestSideEffects(sGroupId, aPaths, oContext);
+			});
+		}
 
-					if (oContext0.isKeepAlive()) {
-						aContexts.push(oContext0);
-					}
-				});
-			}
-			aPredicates = aContexts.map(function (oContext) {
-				return oContext.getPath().slice(iResolvedPathLength);
-			});
-			bMissingPredicate = aPredicates.some(function (sPredicate) {
-				return sPredicate[0] !== "(";
-			});
-			if (!bMissingPredicate) {
+		if (aPaths.indexOf("") < 0) {
+			aPredicates
+				= _Helper.getPredicates(bSingle ? [oContext] : this.keepOnlyVisibleContexts());
+			if (aPredicates) {
 				aPromises = this.oCache
 					? [this.oCache.requestSideEffects(this.lockGroup(sGroupId), aPaths, aPredicates,
 						bSingle)]

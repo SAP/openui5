@@ -500,39 +500,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines the list of visible elements determined by the given predicates. All other
-	 * elements are replaced by placeholders (lazily).
-	 *
-	 * @param {string[]} aPredicates
-	 *   The key predicates of the elements to request side effects for
-	 * @returns {object[]}
-	 *   The list of visible elements
-	 *
-	 * @private
-	 * @see sap.ui.model.odata.v4.lib._CollectionCache#filterVisibleElements
-	 * @see sap.ui.model.odata.v4.lib._CollectionCache#requestSideEffects
-	 */
-	_AggregationCache.prototype.filterVisibleElements = function (aPredicates) {
-		var mPredicates = {}, // a set of the predicates (as map to true) to speed up the search
-			that = this;
-
-		aPredicates.forEach(function (sPredicate) {
-			mPredicates[sPredicate] = true;
-		});
-
-		return this.aElements.filter(function (oElement, i) {
-			var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
-
-			if (mPredicates[sPredicate]) {
-				_AggregationHelper.markSplicedStale(oElement);
-				return true; // keep and request
-			}
-
-			that.replaceByPlaceholder(i, oElement, sPredicate);
-		});
-	};
-
-	/**
 	 * Returns an array containing all current elements of this aggregation cache's flat list; the
 	 * array is annotated with the collection's $count. If there are placeholders, the corresponding
 	 * objects will be ignored and set to <code>undefined</code>.
@@ -598,6 +565,39 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.isDeletingInOtherGroup = function (_sGroupId) {
 		return false;
+	};
+
+	/**
+	 * Determines the list of elements determined by the given predicates. All other elements are
+	 * replaced by placeholders (lazily).
+	 *
+	 * @param {string[]} aPredicates
+	 *   The key predicates of the elements to request side effects for
+	 * @returns {object[]}
+	 *   The list of elements for the given predicates
+	 *
+	 * @private
+	 * @see sap.ui.model.odata.v4.lib._CollectionCache#keepOnlyGivenElements
+	 * @see sap.ui.model.odata.v4.lib._CollectionCache#requestSideEffects
+	 */
+	_AggregationCache.prototype.keepOnlyGivenElements = function (aPredicates) {
+		var mPredicates = {}, // a set of the predicates (as map to true) to speed up the search
+			that = this;
+
+		aPredicates.forEach(function (sPredicate) {
+			mPredicates[sPredicate] = true;
+		});
+
+		return this.aElements.filter(function (oElement, i) {
+			var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+
+			if (mPredicates[sPredicate]) {
+				_AggregationHelper.markSplicedStale(oElement);
+				return true; // keep and request
+			}
+
+			that.replaceByPlaceholder(i, oElement, sPredicate);
+		});
 	};
 
 	/**
