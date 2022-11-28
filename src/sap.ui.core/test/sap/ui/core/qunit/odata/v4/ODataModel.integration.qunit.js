@@ -42572,6 +42572,11 @@ sap.ui.define([
 					Messages : [{code : "foo"}]
 				});
 
+			assert.throws(function () {
+					// code under test CPOUI5ODATAV4-1880: Scenario (3), resetChanges throws error
+					oContext.resetChanges();
+				}, new Error("Cannot reset a transient context: " + oContext));
+
 			that.expectChange("code", "foo");
 
 			that.oView.setBindingContext(oContext);
@@ -46592,7 +46597,7 @@ sap.ui.define([
 			assert.ok(oBinding.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges());
 
-			return that.waitForChanges(assert, "patch entities");
+			return that.waitForChanges(assert, "patch + delete entities");
 		}).then(function () {
 			that.expectCanceledError("Failed to update path /SalesOrderList('1')/Note",
 					"Request canceled: PATCH SalesOrderList('1'); group: update")
