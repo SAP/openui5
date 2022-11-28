@@ -143,6 +143,12 @@ sap.ui.define([
 
 	};
 
+	Bool.prototype.isNavigationEnabled = function(iStep) {
+
+		return true; // always enable, even if items are created lately on opening or navigation
+
+	};
+
 	Bool.prototype._observeChanges = function(oChanges) {
 
 		if (oChanges.type === "property" && oChanges.name === "config") {
