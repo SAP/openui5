@@ -460,18 +460,21 @@ html[data-sap-ui-browser^='ff'] .sapMTableRowCustomFocus:focus > :not(.sapMListT
 }
 
 /* overwrite text control styles */
-.sapUiSizeCompact .sapMListTblCell {
+.sapMListTblCell {
 	.sapMLnk,
 	.sapMText,
 	.sapMLabel,
 	.sapMObjectNumber,
 	.sapMObjectIdentifier,
 	.sapMObjStatus {
-		vertical-align: middle;
 		line-height: 1.4;
 
 		.sapMObjStatusText .sapMObjStatusTitle {
 			line-height: inherit;
+		}
+
+		.sapUiSizeCompact & {
+			vertical-align: middle;
 		}
 	}
 }
