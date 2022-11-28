@@ -1453,7 +1453,7 @@ sap.ui.define([
 		}
 
 		if (!bValueIsNullOrUndefined) {
-			sNumber = this.convertToDecimal(vValue);
+			sNumber = LocaleData.convertToDecimal(vValue);
 		}
 
 		if (sNumber == "NaN") {
@@ -1983,59 +1983,6 @@ sap.ui.define([
 		}
 		return vResult;
 	};
-
-	/**
-	 * Convert to decimal representation
-	 * Floats larger than 1e+20 or smaller than 1e-6 are shown in exponential format,
-	 * but need to be converted to decimal format for further formatting
-	 *
-	 * @param {float} fValue float number e.g. 10.1
-	 * @return {string} decimal number
-	 * @private
-	 */
-	NumberFormat.prototype.convertToDecimal = function(fValue) {
-		var sValue = "" + fValue,
-			bNegative, sBase, iDecimalLength, iFractionLength, iExponent, iPos;
-		if (sValue.indexOf("e") == -1 && sValue.indexOf("E") == -1) {
-			return sValue;
-		}
-		var aResult = sValue.match(/^([+-]?)((\d+)(?:\.(\d+))?)[eE]([+-]?\d+)$/);
-		bNegative = aResult[1] == "-";
-		sBase = aResult[2].replace(/\./g,"");
-		iDecimalLength = aResult[3] ? aResult[3].length : 0;
-		iFractionLength = aResult[4] ? aResult[4].length : 0;
-		iExponent = parseInt(aResult[5]);
-
-		if (iExponent > 0) {
-			if (iExponent < iFractionLength) {
-				iPos = iDecimalLength + iExponent;
-				sValue = sBase.substr(0, iPos) + "." + sBase.substr(iPos);
-			} else {
-				sValue = sBase;
-				iExponent -= iFractionLength;
-				for (var i = 0; i < iExponent; i++) {
-					sValue += "0";
-				}
-			}
-		} else {
-			if (-iExponent < iDecimalLength) {
-				iPos = iDecimalLength + iExponent;
-				sValue = sBase.substr(0, iPos) + "." + sBase.substr(iPos);
-			} else {
-				sValue = sBase;
-				iExponent += iDecimalLength;
-				for (var i = 0; i > iExponent; i--) {
-					sValue = "0" + sValue;
-				}
-				sValue = "0." + sValue;
-			}
-		}
-		if (bNegative) {
-			sValue = "-" + sValue;
-		}
-		return sValue;
-	};
-
 
 	/**
 	 * Returns the scaling factor which is calculated based on the format options and the current locale being used.

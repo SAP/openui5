@@ -569,9 +569,6 @@ sap.ui.define([
 		});
 	});
 
-
-
-
 	QUnit.test("Currency Digits", function(assert) {
 
 		var oLocaleData = LocaleData.getInstance(
@@ -606,7 +603,7 @@ sap.ui.define([
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 	});
 
-	QUnit.module("Currencies");
+	QUnit.module("sap.ui.core.LocaleData");
 
 	QUnit.test("getCurrencySymbols", function(assert) {
 		Configuration.getFormatSettings().addCustomCurrencies({
@@ -623,8 +620,6 @@ sap.ui.define([
 
 		assert.strictEqual(oCurrencySymbols["BTC"], "Ƀ", "Custom currency symbol map contains the Bitcoin icon");
 	});
-
-	QUnit.module("Timezone Translation");
 
 	var aABAPUnsupportedIDs = [
 		"Etc/GMT",
@@ -765,9 +760,6 @@ sap.ui.define([
 		oStubIsValidTimezone.restore();
 	});
 
-	QUnit.module("Special Cases");
-
-
 	QUnit.test("getLenientNumberSymbols", function(assert) {
 		// unknown locale, en.json will be used
 		var oLocaleData = LocaleData.getInstance(new Locale("xx-XX"));
@@ -778,4 +770,144 @@ sap.ui.define([
 		assert.strictEqual(sMinusSymbols, "\x2d\u2010\u2012\u2013\u207b\u208b\u2212\u2796\ufe63\uff0d", "Should match the minus symbols default");
 		assert.strictEqual(sPlusSymbols, "\x2b\u207a\u208a\u2795\ufb29\ufe62\uff0b", "Should match the plus symbols default");
 	});
+
+	//*********************************************************************************************
+// See: https://unicode.org/reports/tr35/tr35-numbers.html#table-plural-operand-meanings
+[{
+	sNumber: "1",
+	sPluralRule: "one",
+	oOperands: {n: 1, i: 1, v: 0, w: 0, f: 0, t: 0, c: 0}
+}, {
+	sNumber: "12",
+	sPluralRule: "other",
+	oOperands: {n: 12, i: 12, v: 0, w: 0, f: 0, t: 0, c: 0}
+}, {
+	sNumber: "5000000",
+	sPluralRule: "many",
+	oOperands: {n: 5000000, i: 5000000, v: 0, w: 0, f: 0, t: 0, c: 0}
+}, {
+	sNumber: "5000000.0000",
+	sPluralRule: "other",
+	oOperands: {n: 5000000, i: 5000000, v: 4, w: 0, f: 0, t: 0, c: 0}
+}, {
+	sNumber: "5e6",
+	sPluralRule: "many",
+	oOperands: {n: 5000000, i: 5000000, v: 0, w: 0, f: 0, t: 0, c: 6}
+}, {
+	sNumber: "5.2e6",
+	sPluralRule: "many",
+	oOperands: {n: 5200000, i: 5200000, v: 0, w: 0, f: 0, t: 0, c: 6}
+}, {
+	sNumber: "5200000",
+	sPluralRule: "other",
+	oOperands: {n: 5200000, i: 5200000, v: 0, w: 0, f: 0, t: 0, c: 0}
+}, {
+	sNumber: "1.2E1",
+	sPluralRule: "other",
+	oOperands: {n: 12, i: 12, v: 0, w: 0, f: 0, t: 0, c: 1}
+}].forEach(function (oFixture, i) {
+	QUnit.test("Plural categories and operands, " + i, function (assert) {
+		var oLocaleData = LocaleData.getInstance(new Locale("es"));
+
+		this.mock(oLocaleData)
+			.expects("_get")
+			.withExactArgs("plurals")
+			.returns({
+				one: "n = 1",
+				many: "e = 0 and i != 0 and i % 1000000 = 0 and v = 0 or e != 0..5"
+			});
+
+		// code under test: check plural rule
+		assert.strictEqual(oLocaleData.getPluralCategory(oFixture.sNumber), oFixture.sPluralRule);
+
+		// code under test: check plural operands for number
+		// note: plural test function for "one" is always called as this is the first category
+		assert.deepEqual(oLocaleData._pluralTest.one(oFixture.sNumber).oOperands, oFixture.oOperands);
+	});
+});
+
+	//*********************************************************************************************
+// Tests from https://unicode.org/reports/tr35/tr35-numbers.html#table-plural-operand-meanings
+// with the following changes
+// - leave out the "e" operand, as this is a deprecated alias for "c" and code in LocaleData only uses "c"
+// - number literals containing "c" are changed to use "e" as this is the scientific notation in JavaScript
+[{
+	sNumber: "1",
+	oOperands: {n: 1, i: 1, v: 0, w: 0, f: 0, t: 0, c: 0}
+}, {
+	sNumber: "1.0",
+	oOperands: {n: 1, i: 1, v: 1, w: 0, f: 0, t: 0, c: 0}
+}, {
+	sNumber: "1.00",
+	oOperands: {n: 1, i: 1, v: 2, w: 0, f: 0, t: 0, c: 0}
+}, {
+	sNumber: "1.3",
+	oOperands: {n: 1.3, i: 1, v: 1, w: 1, f: 3, t: 3, c: 0}
+}, {
+	sNumber: "1.30",
+	oOperands: {n: 1.3, i: 1, v: 2, w: 1, f: 30, t: 3, c: 0}
+}, {
+	sNumber: "1.03",
+	oOperands: {n: 1.03, i: 1, v: 2, w: 2, f: 3, t: 3, c: 0}
+}, {
+	sNumber: "1.230",
+	oOperands: {n: 1.230, i: 1, v: 3, w: 2, f: 230, t: 23, c: 0}
+}, {
+	sNumber: "1200000",
+	oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 0}
+}, {
+	sNumber: "1.2e6",
+	oOperands: {n: 1200000, i: 1200000, v: 0, w: 0, f: 0, t: 0, c: 6}
+}, {
+	sNumber: "123e6",
+	oOperands: {n: 123000000, i: 123000000, v: 0, w: 0, f: 0, t: 0, c: 6}
+}, {
+	sNumber: "123e5",
+	oOperands: {n: 12300000, i: 12300000, v: 0, w: 0, f: 0, t: 0, c: 5}
+}, {
+	sNumber: "1200.50",
+	oOperands: {n: 1200.50, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 0}
+}, {
+	sNumber: "1.20050e3",
+	oOperands: {n: 1200.5, i: 1200, v: 2, w: 1, f: 50, t: 5, c: 3}
+}].forEach(function (oFixture, i) {
+	QUnit.test("Plural operands samples from Unicode page, " + i, function (assert) {
+		var oLocaleData = LocaleData.getInstance(new Locale("es"));
+
+		// set plural rule function for oLocaleData object
+		oLocaleData.getPluralCategory(oFixture.sNumber);
+
+		// code under test: check plural operands for number
+		// note: plural test function for "one" is always called as this is the first category
+		assert.deepEqual(oLocaleData._pluralTest.one(oFixture.sNumber).oOperands, oFixture.oOperands);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{vValue: 1, sResult : "1"},
+	{vValue: 1e-6, sResult : "0.000001"},
+	{vValue: 1e+20, sResult : "100000000000000000000"},
+	// exponent can be "e" in lower-case or upper-case
+	{vValue: "1.23e2", sResult : "123"},
+	{vValue: "1.23E2", sResult : "123"},
+	// positive exponent, exponent < fraction length
+	{vValue: "1.0123456789012345678901e+21", sResult : "1012345678901234567890.1"},
+	// positive exponent, exponent >= fraction length
+	{vValue: "1.0123e+21", sResult : "1012300000000000000000"},
+	{vValue: "1.012345678901234567890e+21", sResult : "1012345678901234567890"},
+	// negative exponent, abs(exponent) < integer length
+	{vValue: "12345678e-7", sResult : "1.2345678"},
+	// negative exponent, abs(exponent) >= integer length
+	{vValue: "12345e-7", sResult : "0.0012345"},
+	{vValue: "12.345e-7", sResult : "0.0000012345"},
+	// values with sign
+	{vValue: "-1.0123456789012345678901e+21", sResult : "-1012345678901234567890.1"},
+	{vValue: "+1.0123456789012345678901e+21", sResult : "1012345678901234567890.1"}
+].forEach(function (oFixture, i) {
+	QUnit.test("convertToDecimal, " + i, function (assert) {
+		// code under test
+		assert.strictEqual(LocaleData.convertToDecimal(oFixture.vValue), oFixture.sResult);
+	});
+});
 });

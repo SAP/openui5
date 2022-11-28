@@ -7,6 +7,10 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 	function(extend, BaseObject, CalendarType, Locale, assert, LoaderExtensions, Configuration) {
 	"use strict";
 
+	var rEIgnoreCase = /e/i,
+		rNumberInScientificNotation = /^([+-]?)((\d+)(?:\.(\d+))?)[eE]([+-]?\d+)$/,
+		rTrailingZeroes = /0+$/;
+
 	/**
 	 * Creates an instance of LocaleData for the given locale.
 	 *
@@ -511,7 +515,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		 * Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w/W), Day-Of-Week (E/e/c), Day (d/D),
 		 * Hour (h/H/k/K/), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)
 		 *
-		 * See http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
+		 * See https://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
 		 *
 		 * @param {string} sSkeleton the wanted skeleton format for the datetime pattern
 		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
@@ -580,7 +584,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		 * Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w/W), Day-Of-Week (E/e/c), Day (d/D),
 		 * Hour (h/H/k/K/), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)
 		 *
-		 * See http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
+		 * See https://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
 		 *
 		 * @param {string} sSkeleton the wanted skeleton format for the datetime pattern
 		 * @param {object|string} vGreatestDiff is either a string which represents the symbol matching the greatest difference in the two dates to format or an object which contains key-value pairs.
@@ -1093,7 +1097,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		 * $100,000.00
 		 * ($100,000.00)
 		 *
-		 * @see http://cldr.unicode.org/translation/numbers-currency/number-patterns
+		 * @see https://cldr.unicode.org/translation/numbers-currency/number-patterns
 		 *
 		 * @param {string} sContext the context of the currency pattern (standard or accounting)
 		 * @returns {string} The pattern
@@ -1875,13 +1879,23 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 					fnTest = this._parsePluralRule(oPlurals[sCategory]);
 					this._pluralTest[sCategory] = fnTest;
 				}
-				if (fnTest(sNumber)) {
+				if (fnTest(sNumber).bMatch) {
 					return sCategory;
 				}
 			}
 			return "other";
 		},
 
+		/**
+		 * Parses a language plural rule as specified in
+		 * https://unicode.org/reports/tr35/tr35-numbers.html#table-plural-operand-meanings
+		 *
+		 * @param {string} sRule The plural rule as a string
+		 * @returns {function(string)} A function to determine for a number given as string parameter if it matches the
+		 *   plural rule.
+		 *
+		 * @private
+		 */
 		_parsePluralRule: function(sRule) {
 
 			var OP_OR = "or",
@@ -1895,6 +1909,8 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 				OPD_T = "t",
 				OPD_V = "v",
 				OPD_W = "w",
+				OPD_C = "c",
+				OPD_E = "e",
 				RANGE = "..",
 				SEP = ",";
 
@@ -2000,6 +2016,14 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 					return function(o) {
 						return o.w;
 					};
+				} else if (accept(OPD_C)) {
+					return function(o) {
+						return o.c;
+					};
+				} else if (accept(OPD_E)) {
+					return function(o) {
+						return o.c; // c is an alias for e
+					};
 				} else {
 					throw new Error("Unknown operand: " + consume());
 				}
@@ -2032,31 +2056,80 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 				throw new Error("Not completely parsed");
 			}
 			return function(sValue) {
-				var iDotPos = sValue.indexOf("."),
-					sDecimal, sFraction, sFractionNoZeros, o;
+				var iDotPos, iExponent, sFraction, sFractionNoZeros, sInteger, o,
+					iExponentPos = sValue.search(rEIgnoreCase);
 
+				iExponent = iExponentPos < 0 ? 0 : parseInt(sValue.slice(iExponentPos + 1));
+				sValue = LocaleData.convertToDecimal(sValue);
+
+				iDotPos = sValue.indexOf(".");
 				if (iDotPos === -1) {
-					sDecimal = sValue;
+					sInteger = sValue;
 					sFraction = "";
 					sFractionNoZeros = "";
 				} else {
-					sDecimal = sValue.substr(0, iDotPos);
-					sFraction = sValue.substr(iDotPos + 1);
-					sFractionNoZeros = sFraction.replace(/0+$/, '');
+					sInteger = sValue.slice(0, iDotPos);
+					sFraction = sValue.slice(iDotPos + 1);
+					sFractionNoZeros = sFraction.replace(rTrailingZeroes, '');
 				}
 
 				o = {
 					n: parseFloat(sValue),
-					i: parseInt(sDecimal),
+					i: parseInt(sInteger),
 					v: sFraction.length,
 					w: sFractionNoZeros.length,
-					f: parseInt(sFraction),
-					t: parseInt(sFractionNoZeros)
+					f: sFraction === "" ? 0 : parseInt(sFraction),
+					t: sFractionNoZeros === "" ? 0 : parseInt(sFractionNoZeros),
+					c: iExponent
 				};
-				return fnOr(o);
+				return {bMatch: fnOr(o), oOperands: o};
 			};
 		}
 	});
+
+	/**
+	 * Returns the non-scientific (=decimal) notation of the given numeric value which does not contain an exponent
+	 * value.
+	 * For numbers with a magnitude (ignoring sign) greater than or equal to 1e+21 or less than 1e-6, a conversion is
+	 * required, as Number#toString formats these in scientific notation.
+	 *
+	 * @param {float|string} vValue
+	 *   A number such as 10.1 or a string containing a number based on radix 10
+	 * @return {string} The number in decimal notation
+	 *
+	 * @private
+	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toString#description
+	 */
+	LocaleData.convertToDecimal = function (vValue) {
+		var iIntegerLength, iExponent, iFractionLength, bNegative, iNewIntegerLength, aResult,
+			sValue = String(vValue);
+
+		if (!sValue.includes("e") && !sValue.includes("E")) {
+			return sValue;
+		}
+
+		aResult = sValue.match(rNumberInScientificNotation);
+		bNegative = aResult[1] === "-";
+		sValue = aResult[2].replace(".", "");
+		iIntegerLength = aResult[3] ? aResult[3].length : 0;
+		iFractionLength = aResult[4] ? aResult[4].length : 0;
+		iExponent = parseInt(aResult[5]);
+
+		iNewIntegerLength = iIntegerLength + iExponent;
+		if (iExponent > 0) {
+			sValue = iExponent < iFractionLength
+				? sValue.slice(0, iNewIntegerLength) + "." + sValue.slice(iNewIntegerLength)
+				: sValue = sValue.padEnd(iNewIntegerLength, "0");
+		} else {
+			sValue = -iExponent < iIntegerLength
+				? sValue = sValue.slice(0, iNewIntegerLength) + "." + sValue.slice(iNewIntegerLength)
+				: sValue = "0." + sValue.padStart(iFractionLength - iExponent, "0");
+		}
+		if (bNegative) {
+			sValue = "-" + sValue;
+		}
+		return sValue;
+	};
 
 	var mCLDRSymbolGroups = {
 		"Era": { field: "era", index: 0 },
