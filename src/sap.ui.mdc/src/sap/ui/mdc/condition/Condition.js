@@ -40,7 +40,6 @@ sap.ui.define([
 				/**
 				 * Condition object type defining the structure of a condition.
 				 *
-				 * @type {sap.ui.mdc.condition.ConditionObject}
 				 * @static
 				 * @constant
 				 * @typedef {object} sap.ui.mdc.condition.ConditionObject
