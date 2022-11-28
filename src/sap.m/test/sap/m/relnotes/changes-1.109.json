@@ -3,6 +3,17 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "89851ae7422ef9ae2b011747d54e2202eb8f216d",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Prevent token delete bubbling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270177308"
+          }
+        ]
+      },
+      {
         "id": "b0d450277005e98513701a213b6280dcaa690275",
         "type": "FEATURE",
         "text": " sap.m.OverflowMenuButton: New control for OverflowToolbar"
@@ -372,6 +383,17 @@
         ]
       },
       {
+        "id": "b5ec31ab70bdeec864e86ac526827d2ac9a4cdcc",
+        "type": "FIX",
+        "text": " sap.f.SemanticButton: Double reading fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180405499"
+          }
+        ]
+      },
+      {
         "id": "bdab696b401f59dd68d5d4be062777a09e47dda1",
         "type": "FIX",
         "text": " sap.m.NotificationListItem: stop invalidating when click \"Show More\" button",
@@ -407,17 +429,6 @@
         "id": "f7034d6d8b4ab1c7127b563daa5ee414ccc653f8",
         "type": "FEATURE",
         "text": " sap.m.PlanningCalendar: primaryCalendarType property introduced"
-      },
-      {
-        "id": "b5ec31ab70bdeec864e86ac526827d2ac9a4cdcc",
-        "type": "FIX",
-        "text": " sap.f.SemanticButton: Double reading fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180405499"
-          }
-        ]
       },
       {
         "id": "5c29816e29a1ad54ada402f6d6be8ed67e8aa347",

@@ -35,17 +35,6 @@
         ]
       },
       {
-        "id": "4e0616801f59da8f4676455e3124dd19128052ed",
-        "type": "FIX",
-        "text": " Integration Cards: Card paginator no longer throws error",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2270141550"
-          }
-        ]
-      },
-      {
         "id": "343881392d6a04faf3698eb7a6c28584ee29d61c",
         "type": "FIX",
         "text": " Integration Cards: List card height doesn't jump during pagination anymore",
@@ -53,6 +42,17 @@
           {
             "type": "BCP",
             "reference": "2270111417"
+          }
+        ]
+      },
+      {
+        "id": "4e0616801f59da8f4676455e3124dd19128052ed",
+        "type": "FIX",
+        "text": " Integration Cards: Card paginator no longer throws error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270141550"
           }
         ]
       },

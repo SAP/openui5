@@ -3,6 +3,17 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "8bbd28863fcab49c3835141400232f1c967b82ef",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: fixed JS error in _getControlWidth() private method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270187973"
+          }
+        ]
+      },
+      {
         "id": "ecd5a969b61817a9d03e084086a3355f707da4da",
         "type": "FIX",
         "text": " sap.f.GridList: Bottom border of 'More' button no longer sticks out",
@@ -90,17 +101,6 @@
         ]
       },
       {
-        "id": "502291a06af85b377fd074797e1544775993fd5b",
-        "type": "FIX",
-        "text": " sap.f.GridContainer: Padding no longer breaks keyboard navigation",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2280125231"
-          }
-        ]
-      },
-      {
         "id": "b5ec31ab70bdeec864e86ac526827d2ac9a4cdcc",
         "type": "FIX",
         "text": " sap.f.SemanticButton: Double reading fixed",
@@ -108,6 +108,17 @@
           {
             "type": "BCP",
             "reference": "2180405499"
+          }
+        ]
+      },
+      {
+        "id": "502291a06af85b377fd074797e1544775993fd5b",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Padding no longer breaks keyboard navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280125231"
           }
         ]
       },

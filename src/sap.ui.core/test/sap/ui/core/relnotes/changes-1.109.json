@@ -3,6 +3,17 @@
     "date": "November 2022",
     "notes": [
       {
+        "id": "f9add06953fafcf72c7fac7e7a5519f2e92f9aee",
+        "type": "FIX",
+        "text": " ManagedObjectObserver: performance optimization for destroy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008610112022"
+          }
+        ]
+      },
+      {
         "id": "4a8a827db6a3fbf9446ba9936db04ca84222626e",
         "type": "FEATURE",
         "text": " sap.ui.core.format.DateFormat: Support pattern symbol \"B\""
