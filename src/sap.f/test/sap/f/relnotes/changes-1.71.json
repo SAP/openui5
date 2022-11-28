@@ -212,5 +212,25 @@
         ]
       }
     ]
+  },
+  "1.71.52": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "4acda647ffeff7e1320bf1be43c2f8cb4d2e0fc6",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Restore automatic fitContent management",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270032047"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270031933"
+          }
+        ]
+      }
+    ]
   }
 }
