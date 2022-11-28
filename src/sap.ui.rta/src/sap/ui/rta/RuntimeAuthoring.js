@@ -903,6 +903,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Condenses the given changes and saves the result.
+	 * For the function to do anything at least two changes have to be passed.
+	 *
+	 * @param {object[]} aChanges - Array of flex object instances
+	 * @returns {Promise} Resolves when the save and condense is done
+	 * @private
+	 * @ui5-restricted Visual Editor
+	 */
+	RuntimeAuthoring.prototype.condenseAndSaveChanges = function(/* aChanges */) {
+		// for now there is no functionality to only consider passed changes during condensing, so the standard save functionality is triggered
+		return this._serializeToLrep.apply(this, arguments);
+	};
+
+	/**
 	 * Check for unsaved changes before leaving UI adaptation at runtime
 	 *
 	 * @returns {string} Returns the message to be displayed in the unsaved changes dialog

@@ -91,7 +91,7 @@ sap.ui.define([
 					}
 				}
 			});
-			// Create commmands
+			// Create commands
 			var oCommandFactory = new CommandFactory();
 			oCommandFactory.getCommandFor(oElement1, "Remove", {
 				removedElement: oElement1
@@ -458,6 +458,16 @@ sap.ui.define([
 				assert.strictEqual(aSavePropertyBag.draft, true, "the draft flag is set to true");
 				assert.strictEqual(aSavePropertyBag.condenseAnyLayer, true, "the condense flag is set to true");
 			});
+		});
+
+		QUnit.test("when calling condenseAndSaveChanges", function(assert) {
+			var oSerializeStub = sandbox.stub(this.oRta, "_serializeToLrep");
+			this.oRta.condenseAndSaveChanges(true);
+			assert.strictEqual(oSerializeStub.callCount, 1, "the serialize function was called once");
+			assert.strictEqual(oSerializeStub.lastCall.args[0], true, "the parameter is passed");
+			this.oRta.condenseAndSaveChanges(false);
+			assert.strictEqual(oSerializeStub.callCount, 2, "the serialize function was called once again");
+			assert.strictEqual(oSerializeStub.lastCall.args[0], false, "the parameter is passed");
 		});
 	});
 
