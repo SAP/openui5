@@ -8,7 +8,7 @@ sap.ui.define([
 
 	QUnit.module("Async dependency loading", {
 		beforeEach: function () {
-			window.sap.ui.test.testScriptForUnitTest = this.stub();
+			window.sapUiTestScriptForUnitTest = this.stub();
 
 			// spy loadLibrary calls directly on prototype as implementation bypasses Core facade
 			this.oLoadLibrariesSpy = this.spy(sap.ui.core.Core.prototype, "loadLibraries");
@@ -68,7 +68,7 @@ sap.ui.define([
 			// Check that the script are loaded in the correct and expected order
 			assert.ok(aScriptDomElements[0].src.includes("componentVariant_1"), "Script 'componentVariant_1_inheritedScript.js' defined in 'componentVariant/manifest.json' found in DOM");
 			//Check that the scripts are executed in the correct and expected order
-			assert.ok(window.sap.ui.test.testScriptForUnitTest.getCall(0).calledWithExactly(1), "Test stub was called with expected parameters while executing script 'componentVariant_1_inheritedScript.js'");
+			assert.ok(window.sapUiTestScriptForUnitTest.getCall(0).calledWithExactly(1), "Test stub was called with expected parameters while executing script 'componentVariant_1_inheritedScript.js'");
 
 			// Cleanup
 			oComponent.destroy();
@@ -108,9 +108,9 @@ sap.ui.define([
 			assert.ok(aScriptDomElements[1].src.includes("component4_1"), "Script 'component4_1_extendedScript.js' defined in 'component4/manifest.json' found in DOM");
 			assert.ok(aScriptDomElements[2].src.includes("component4_2"), "Script 'component4_2_extendedScript.js' defined in 'component4/manifest.json' found in DOM");
 			//Check that the scripts are executed in the correct and expected order
-			assert.ok(window.sap.ui.test.testScriptForUnitTest.getCall(0).calledWithExactly(1), "First call of test stub with expected parameters while executing script 'component3_1_extendedScript.js'");
-			assert.ok(window.sap.ui.test.testScriptForUnitTest.getCall(1).calledWithExactly(2), "Second call test stub with expected parameters while executing script 'component4_1_extendedScript.js'");
-			assert.ok(window.sap.ui.test.testScriptForUnitTest.getCall(2).calledWithExactly(3), "Third call test stub with expected parameters while executing script 'component4_2_extendedScript.js'");
+			assert.ok(window.sapUiTestScriptForUnitTest.getCall(0).calledWithExactly(1), "First call of test stub with expected parameters while executing script 'component3_1_extendedScript.js'");
+			assert.ok(window.sapUiTestScriptForUnitTest.getCall(1).calledWithExactly(2), "Second call test stub with expected parameters while executing script 'component4_1_extendedScript.js'");
+			assert.ok(window.sapUiTestScriptForUnitTest.getCall(2).calledWithExactly(3), "Third call test stub with expected parameters while executing script 'component4_2_extendedScript.js'");
 
 			var aCssDomElements = document.querySelectorAll("link[data-sap-ui-manifest-uid");
 			assert.strictEqual(aCssDomElements.length, 2, "Two CSS files with expected criteria found in DOM");

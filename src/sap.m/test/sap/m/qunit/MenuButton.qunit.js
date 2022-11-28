@@ -1097,7 +1097,7 @@ sap.ui.define([
 		assert.ok(oMenuButton.$().width() > 1, "width is greater than 1");
 
 		//act
-		oPopover.rerender();
+		oPopover.invalidate();
 		oCore.applyChanges();
 
 		// check width after rerendering

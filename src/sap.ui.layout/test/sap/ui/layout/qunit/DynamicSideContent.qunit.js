@@ -669,7 +669,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("After rerendering the visibility of the contents remains the same",function(assert) {
-		this._oDSC.rerender();
+		this._oDSC.invalidate();
+		oCore.applyChanges();
 		assert.ok(this._oDSC._MCVisible, "The main content is visible");
 		assert.notOk(this._oDSC._SCVisible, "The side content is not visible");
 	});

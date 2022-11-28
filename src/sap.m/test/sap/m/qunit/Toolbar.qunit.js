@@ -145,7 +145,7 @@ sap.ui.define([
 		assert.ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Transparent context has been removed again");
 
 		oTB.setDesign(ToolbarDesign.Info, true);
-		oTB.rerender();
+		oTB.invalidate();
 		Core.applyChanges();
 		assert.ok(oTB.$().hasClass("sapMTB-Info-CTX"), "Toolbar has now Info design.");
 		assert.ok(!oTB.$().hasClass("sapMTB-Transparent-CTX"), "Transparent context is not set");
@@ -462,8 +462,8 @@ sap.ui.define([
 	QUnit.test("_setEnableAccessibilty", function(assert) {
 		// Arrange
 		var oTB = new Toolbar({
-			content: [ new sap.m.Button(),
-				new sap.m.Button() ]
+			content: [ new Button(),
+				new Button() ]
 		});
 		oTB.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -826,7 +826,7 @@ sap.ui.define([
 		assert.strictEqual(oBtn.getDomRef().style.minWidth, sMinWidth, "After initial rendering minWidth is applied width layoutData");
 
 		// act
-		oBtn.rerender();
+		oBtn.invalidate();
 		Core.applyChanges();
 
 		// assert

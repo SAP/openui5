@@ -1,12 +1,12 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/m/ScrollBar",
+	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
-], function(ScrollBar, jQuery) {
+], function(ScrollBar, oCore, jQuery) {
 	"use strict";
 
-	var oCore = sap.ui.getCore(),
-		TESTS_DOM_CONTAINER = "qunit-fixture";
+	var TESTS_DOM_CONTAINER = "qunit-fixture";
 
 	QUnit.module("Initialise");
 
@@ -134,7 +134,8 @@ sap.ui.define([
 				"scroll position before re-rendering should be 5");
 
 		// Act
-		oSB.rerender();
+		oSB.invalidate();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSB.getScrollPosition(), 5,
@@ -151,7 +152,8 @@ sap.ui.define([
 		assertScrollRef();
 
 		// Act
-		oSB.rerender();
+		oSB.invalidate();
+		oCore.applyChanges();
 
 		// Assert
 		assertScrollRef();

@@ -118,14 +118,14 @@
 					<Image src="test-resources/sap/ui/documentation/sdk/images/HT-1112.jpg" />
 				</pages>
 			</Carousel>
-			<u:SplitContainer id="splitContainer" showSecondaryContent="true">
-				<u:secondaryContent>
+			<SplitContainer id="splitContainer">
+				<detailPages>
 					<Text text="Hello World!" />
-				</u:secondaryContent>
-				<u:content>
+				</detailPages>
+				<masterPages>
 					<List headerText="An Empty List" backgroundDesign="Translucent"/>
-				</u:content>
-			</u:SplitContainer>
+				</masterPages>
+			</SplitContainer>
 		</content>
 	</Page>
 </mvc:View>

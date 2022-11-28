@@ -1912,7 +1912,7 @@ sap.ui.define([
 			"The error annoucement state should be changed, when the control is on focus and there are dynamic changes");
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error makes control invalid");
 
-		oInput.rerender();
+		oInput.invalidate();
 		oCore.applyChanges();
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error is at the dom after rendering");

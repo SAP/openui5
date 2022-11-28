@@ -407,7 +407,7 @@ sap.ui.define([
 		"_ControlFinder": {
 			title: "QUnit Page for sap.ui.test._ControlFinder",
 			module: "./_ControlFinder.qunit"
-	},
+		},
 		"_LogCollector": {
 			title: "QUnit Page for sap.ui.test._LogCollector",
 			module: "./_LogCollector.qunit"

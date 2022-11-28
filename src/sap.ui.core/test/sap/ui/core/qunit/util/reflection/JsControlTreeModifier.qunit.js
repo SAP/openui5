@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Component",
 	"sap/ui/core/Control",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/StashedControlSupport",
@@ -20,6 +21,7 @@ sap.ui.define([
 	Event,
 	XMLView,
 	JsControlTreeModifier,
+	Component,
 	Control,
 	CustomData,
 	StashedControlSupport,
@@ -33,12 +35,8 @@ sap.ui.define([
 
 	QUnit.module("Using the JsControlTreeModifier...", {
 		beforeEach: function () {
-			this.oComponent = sap.ui.getCore().createComponent({
-				name: "sap.ui.test.other",
-				id: "testComponent"
-			});
 			var oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<HBox id="hbox1">' +
 					'<items>' +
 						'<Button id="button1" text="Button1" />' +
@@ -62,10 +60,19 @@ sap.ui.define([
 					'<Label id="label3" text="TestLabel3" />' +
 				'</HBox>' +
 			'</mvc:View>';
-			return XMLView.create({id: "testapp---view", definition: oXmlString})
-				.then(function(oXmlView) {
-					this.oXmlView = oXmlView;
-				}.bind(this));
+
+			return Component.create({
+				name: "sap.ui.test.other",
+				id: "testComponent"
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+				return XMLView.create({
+					id: "testapp---view",
+					definition: oXmlString
+				});
+			}.bind(this)).then(function(oXmlView) {
+				this.oXmlView = oXmlView;
+			}.bind(this));
 		},
 
 		afterEach: function () {
@@ -391,10 +398,12 @@ sap.ui.define([
 
 	QUnit.module("Given the JsControlTreeModifier...", {
 		beforeEach: function () {
-			this.oComponent = sap.ui.getCore().createComponent({
+			return Component.create({
 				name: "sap.ui.test.other",
 				id: "testComponent"
-			});
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oComponent.destroy();
@@ -660,10 +669,6 @@ sap.ui.define([
 
 	QUnit.module("Events", {
 		beforeEach: function () {
-			this.oComponent = sap.ui.getCore().createComponent({
-				name: "sap.ui.test.other",
-				id: "testComponent"
-			});
 			this.oButton = new Button();
 
 			this.oSpy1 = sandbox.spy();
@@ -671,6 +676,13 @@ sap.ui.define([
 
 			this.oSpy2 = sandbox.spy();
 			window.$sap__qunit_presshandler2 = this.oSpy2;
+
+			return Component.create({
+				name: "sap.ui.test.other",
+				id: "testComponent"
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oComponent.destroy();

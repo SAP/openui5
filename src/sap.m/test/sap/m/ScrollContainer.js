@@ -229,7 +229,7 @@ sap.ui.define([
 			}),
 			new Button({
 				text: "Rerender Page", press: function () {
-					oPage1.rerender();
+					oPage1.invalidate();
 				}
 			}),
 			oHorizontalLayout,

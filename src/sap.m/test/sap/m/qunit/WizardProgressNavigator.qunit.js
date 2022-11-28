@@ -419,7 +419,8 @@ sap.ui.define([
 		this.oProgressNavigator.nextStep();
 		this.oProgressNavigator.nextStep();
 		// we need to force rerendering as in normal case when moving from step to step the ProgressNavigator is rerendered
-		this.oProgressNavigator.rerender();
+		this.oProgressNavigator.invalidate();
+		oCore.applyChanges();
 
 		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 		assert.strictEqual($steps.eq(0).attr("aria-disabled"), undefined,

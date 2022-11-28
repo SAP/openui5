@@ -512,7 +512,8 @@ sap.ui.define([
 
 		QUnit.test("Restoring scrolling state after rendering", function(assert) {
 			assert.expect(1); // event should not be fired after rerendering
-			oPage2.rerender();
+			oPage2.invalidate();
+			oCore.applyChanges();
 			assert.equal(getScrollPos("mySecondPage"), -100, "Page 2 should be scrolled to position 100");
 		});
 

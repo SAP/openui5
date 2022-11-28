@@ -831,7 +831,8 @@ sap.ui.define([
 		oApp.setBackgroundColor("blue;5px solid red;");
 
 		// Act
-		oApp.rerender();
+		oApp.invalidate();
+		oCore.applyChanges();
 
 		// Check
 		assert.strictEqual(getBgDomElement(oApp).style.backgroundColor, '', "correct property value");

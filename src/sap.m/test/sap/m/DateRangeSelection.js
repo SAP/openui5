@@ -1,6 +1,8 @@
 sap.ui.define([
 	"sap/m/Bar",
 	"sap/m/Button",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/library",
@@ -15,6 +17,8 @@ sap.ui.define([
 ], function(
 	Bar,
 	Button,
+	Configuration,
+	oCore,
 	coreLibrary,
 	DateTypeRange,
 	unifiedLibrary,
@@ -56,7 +60,7 @@ sap.ui.define([
 
 		iEvent++;
 
-		var oText = sap.ui.getCore().byId("TextEvent");
+		var oText = oCore.byId("TextEvent");
 		oText.setText("Event " + iEvent + "\nId: " + oEvent.getSource().getId() + "\nFrom: " + sFrom + "\nTo: " + sTo + "\nvalid: " + bValid);
 		if (bValid) {
 			oDRS.setValueState(ValueState.None);
@@ -69,10 +73,10 @@ sap.ui.define([
 
 	function toggleSpecialDates(oEvent) {
 		var bPressed = oEvent.getParameter("pressed"),
-			oDRS = sap.ui.getCore().byId("DRS2");
+			oDRS = oCore.byId("DRS2");
 
 		if (!DateTypeRange) {
-		    sap.ui.getCore().loadLibrary("sap.ui.unified");
+		    oCore.loadLibrary("sap.ui.unified");
 		}
 		if (!oLegend) {
 			oLegend = new CalendarLegend("Legend1", {
@@ -188,7 +192,7 @@ sap.ui.define([
 	app.placeAt("body");
 
 	function handleTimezoneButtonPress(e) {
-		sap.ui.getCore().getConfiguration().setTimezone(e.getSource().getText());
-		sap.ui.getCore().byId("DRS12").setValue("");
+		Configuration.setTimezone(e.getSource().getText());
+		oCore.byId("DRS12").setValue("");
 	}
 });

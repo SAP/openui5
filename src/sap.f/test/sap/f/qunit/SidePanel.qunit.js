@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/f/SidePanel",
 	"sap/f/SidePanelItem",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
 	qutils,
@@ -25,7 +24,6 @@ sap.ui.define([
 	SidePanel,
 	SidePanelItem,
 	KeyCodes,
-	jQuery,
 	oCore
 ) {
 	"use strict";

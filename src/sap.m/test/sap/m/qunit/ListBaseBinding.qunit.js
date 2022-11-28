@@ -535,7 +535,8 @@ sap.ui.define([
 			sFocusedControlId = oList.$().find("input").eq(5).trigger("focus").attr("id");
 
 			// rerender list
-			oList.rerender();
+			oList.invalidate();
+			oCore.applyChanges();
 
 			setTimeout(function() {
 				// check focus after rerender

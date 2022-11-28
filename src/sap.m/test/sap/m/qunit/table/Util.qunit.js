@@ -1,5 +1,6 @@
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/m/List",
 	"sap/m/table/Util",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/model/odata/type/Boolean",
@@ -17,7 +18,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/model/odata/type/TimeOfDay"
-], function(Core, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay) {
+], function(Core, List, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay) {
 	"use strict";
 	/* global QUnit,sinon */
 
@@ -217,7 +218,7 @@ sap.ui.define([
 	QUnit.test("showSelectionLimitPopover & hideSelectionLimitPopover", function(assert) {
 		var done = assert.async();
 		var fnGetSelectAllPopoverSpy = sinon.spy(Util, "getSelectAllPopover");
-		var oElement = new sap.m.List();
+		var oElement = new List();
 		oElement.placeAt("qunit-fixture");
 		Core.applyChanges();
 		Util.showSelectionLimitPopover(10, oElement);

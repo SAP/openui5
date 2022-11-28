@@ -2826,7 +2826,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// act
-		oComboBox.rerender();
+		oComboBox.invalidate();
 		oCore.applyChanges();
 
 		// assert
@@ -10416,7 +10416,7 @@ sap.ui.define([
 
 		// act
 		oItem.bVisible = false;
-		oComboBox.rerender();
+		oComboBox.invalidate();
 		oCore.applyChanges();
 
 		// assert

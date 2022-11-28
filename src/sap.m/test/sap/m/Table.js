@@ -249,9 +249,8 @@ sap.ui.define([
 		change: function(oEvent) {
 			var sType = oEvent.getParameter("selectedItem").getKey();
 			oTable.getItems().forEach(function(oItem) {
-				oItem.setProperty("type", sType, true);
+				oItem.setProperty("type", sType);
 			});
-			oTable.rerender();
 		}
 	});
 

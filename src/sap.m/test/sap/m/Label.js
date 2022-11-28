@@ -1,34 +1,36 @@
 sap.ui.define([
+	"sap/m/App",
+	"sap/m/Input",
+	"sap/m/Label",
+	"sap/m/Page",
+	"sap/m/Select",
+	"sap/m/Switch",
+	"sap/m/Text",
+	"sap/m/Toolbar",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Item",
+	"sap/ui/layout/library",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/layout/VerticalLayout",
-	"sap/m/Label",
-	"sap/m/Text",
-	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/layout/library",
-	"sap/m/Input",
-	"sap/m/Page",
-	"sap/m/Toolbar",
-	"sap/m/Switch",
-	"sap/m/Select",
-	"sap/ui/core/Item",
-	"sap/m/App",
 	"sap/ui/util/Mobile"
 ], function(
+	App,
+	Input,
+	Label,
+	Page,
+	Select,
+	Switch,
+	MText,
+	Toolbar,
+	Configuration,
+	Item,
+	layoutLibrary,
+	VerticalLayout,
+	SimpleForm,
 	JSONModel,
 	ResourceModel,
-	VerticalLayout,
-	Label,
-	MText,
-	SimpleForm,
-	layoutLibrary,
-	Input,
-	Page,
-	Toolbar,
-	Switch,
-	Select,
-	Item,
-	App,
 	Mobile
 ) {
 	"use strict";
@@ -351,7 +353,7 @@ sap.ui.define([
 					customTextOn: "RTL",
 					customTextOff: "LTR",
 					change: function (oEvent) {
-						sap.ui.getCore().getConfiguration().setRTL(oEvent.getParameter("state"));
+						Configuration.setRTL(oEvent.getParameter("state"));
 					}
 				}),
 				new Switch("cozySwitch",{
@@ -390,7 +392,7 @@ sap.ui.define([
 					ariaLabelledBy: "localeSelectLbl",
 					change: function (oEvent) {
 						var sLanguage = oEvent.getParameter("selectedItem").getText();
-						sap.ui.getCore().getConfiguration().setLanguage(sLanguage);
+						Configuration.setLanguage(sLanguage);
 						oPage.invalidate();
 					}
 				})

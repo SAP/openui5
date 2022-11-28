@@ -1796,6 +1796,9 @@ sap.ui.define([
 				},
 				coverage: {
 					only: ["sap/m/VariantManagement"]
+				},
+				ui5: {
+					language: "en-US"
 				}
 			},
 			ViewSettingsDialog: {

@@ -4,14 +4,13 @@
 
 sap.ui.define([
 	"sap/ui/core/Element",
-	'sap/ui/mdc/field/FieldValueHelpTableWrapperBase',
+	"sap/ui/mdc/field/FieldValueHelpTableWrapperBase",
 	"sap/ui/mdc/util/loadModules",
 	"sap/base/util/deepEqual",
 	"sap/ui/mdc/library",
 	"sap/ui/mdc/enum/PersistenceMode",
 	"sap/m/p13n/Engine",
-	'sap/ui/mdc/condition/FilterConverter',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/mdc/condition/FilterConverter"
 	], function(
 		Element,
 		FieldValueHelpTableWrapperBase,
@@ -20,8 +19,7 @@ sap.ui.define([
 		library,
 		PersistenceMode,
 		Engine,
-		FilterConverter,
-		jQuery
+		FilterConverter
 	) {
 	"use strict";
 

@@ -145,7 +145,7 @@ sap.ui.define(["sap/ui/core/Core", "sap/base/util/LoaderExtensions", 'sap/base/s
 		try {
 			oTechData.sapUi5Version = {
 				version: sap.ui.getVersionInfo(),
-				path: sap.ui.resource("", "sap-ui-version.json")
+				path: sap.ui.require.toUrl("sap-ui-version.json")
 			};
 		} catch (ex) {
 			oTechData.sapUi5Version = null;

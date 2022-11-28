@@ -3,12 +3,14 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/base/Event",
+	"sap/ui/core/Component",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	XmlTreeModifier,
 	XMLHelper,
 	Event,
+	Component,
 	JSONModel,
 	sinon
 ) {
@@ -29,13 +31,8 @@ sap.ui.define([
 	QUnit.module("Using the XmlTreeModifier...", {
 		beforeEach: function () {
 
-			this.oComponent = sap.ui.getCore().createComponent({
-				name: "sap.ui.test.other",
-				id: "testComponent"
-			});
-
 			this.oXmlString =
-				'<mvc:View id="testComponent---myView" ' +
+				'<mvc:View ' +
 					'xmlns:mvc="sap.ui.core.mvc" ' +
 					'xmlns="sap.m" ' +
 					'xmlns:f="sap.f" ' +
@@ -103,7 +100,7 @@ sap.ui.define([
 			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
 
 			this.oXmlString2 =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:fl="sap.ui.fl" xmlns:core="sap.ui.core" xmlns="sap.m" >' +
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:fl="sap.ui.fl" xmlns:core="sap.ui.core" xmlns="sap.m" >' +
 				'<HBox id="hbox1">' +
 					'<items>' +
 						'<Button id="button1" text="Button1" />' +
@@ -133,6 +130,14 @@ sap.ui.define([
 				'</HBox>' +
 			'</mvc:View>';
 			this.oXmlView2 = XMLHelper.parse(this.oXmlString2, "application/xml").documentElement;
+
+			return Component.create({
+				name: "sap.ui.test.other",
+				id: "testComponent"
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+			}.bind(this));
+
 		},
 		afterEach: function () {
 			sandbox.restore();

@@ -12,6 +12,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/library',
 	'./SelectDialogBase',
+	'sap/ui/core/Element',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/InvisibleMessage',
 	'sap/ui/core/UIArea',
@@ -32,6 +33,7 @@ function(
 	library,
 	CoreLibrary,
 	SelectDialogBase,
+	Element,
 	InvisibleText,
 	InvisibleMessage,
 	UIArea,
@@ -1305,7 +1307,7 @@ function(
 	SelectDialog.prototype._getListItemsEventDelegates = function () {
 		var fnEventDelegate = function (oEvent) {
 
-			var oListItem = jQuery(oEvent.target).closest(".sapMLIB").control()[0];
+			var oListItem = Element.closestTo(jQuery(oEvent.target).closest(".sapMLIB")[0]);
 
 			if (oListItem._eventHandledByControl) {
 				return;

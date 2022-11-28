@@ -196,7 +196,7 @@ sap.ui.define([
 
 
 		//rerender the table
-		oTable.rerender();
+		oTable.invalidate();
 		oCore.applyChanges();
 
 		var labelAfterRender = oTable.getItems()[0].getCells()[2].$().text();
@@ -239,8 +239,8 @@ sap.ui.define([
 		};
 
 		//rerender the items
-		oFirstItem.rerender();
-		oSecondItem.rerender();
+		oFirstItem.invalidate();
+		oSecondItem.invalidate();
 		oCore.applyChanges();
 
 		var mAfterRendering = {

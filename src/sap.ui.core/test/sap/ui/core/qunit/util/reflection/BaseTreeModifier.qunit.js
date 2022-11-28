@@ -4,8 +4,10 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/BaseTreeModifier",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/ui/core/Component",
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/thirdparty/sinon-4"
@@ -14,8 +16,10 @@ function(
 	BaseTreeModifier,
 	JsControlTreeModifier,
 	XmlTreeModifier,
+	Component,
 	Control,
 	UIComponent,
+	XMLView,
 	ManagedObject,
 	XMLHelper,
 	sinon
@@ -25,15 +29,15 @@ function(
 	var sandbox = sinon.sandbox.create();
 
 	var XML_VIEW =
-	'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:form="sap.ui.layout.form">' +
-		'<form:SimpleForm id="testComponent---myView--myForm">' +
-			'<Title id="testComponent---myView--myGroup" />' +
-			'<Input id="testComponent---myView--myGroupElement" />' +
-		'</form:SimpleForm>' +
-	'</mvc:View>';
+		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:form="sap.ui.layout.form">' +
+			'<form:SimpleForm id="testComponent---myView--myForm">' +
+				'<Title id="testComponent---myView--myGroup" />' +
+				'<Input id="testComponent---myView--myGroupElement" />' +
+			'</form:SimpleForm>' +
+		'</mvc:View>';
 
 	var XML_VIEW2 =
-		'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
+		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 		'<HBox id="hbox1">' +
 			'<items>' +
 				'<Button id="button1" text="Button1" />' +
@@ -61,17 +65,17 @@ function(
 		oXmlNode.setAttribute("id", sFormNodeId);
 	};
 
-	QUnit.module("While handling xml views the BaseTreeModifier", {
+	QUnit.module("While handling xml views, the BaseTreeModifier", {
 		beforeEach: function () {
-			this.oComponent = sap.ui.getCore().createComponent({
+			return Component.create({
 				name: "sap.ui.test.other",
 				id: "testComponent"
-			});
-
-			this.oDOMParser = new DOMParser();
-			this.oXmlView = this.oDOMParser.parseFromString(XML_VIEW, "application/xml").documentElement;
-			this.oXmlView2 = this.oDOMParser.parseFromString(XML_VIEW2, "application/xml").documentElement;
-			return this.oXmlView;
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+				this.oDOMParser = new DOMParser();
+				this.oXmlView = this.oDOMParser.parseFromString(XML_VIEW, "application/xml").documentElement;
+				this.oXmlView2 = this.oDOMParser.parseFromString(XML_VIEW2, "application/xml").documentElement;
+			}.bind(this));
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -158,18 +162,19 @@ function(
 
 	QUnit.module("While handling js views the BaseTreeModifier", {
 		beforeEach: function () {
-			this.oComponent = sap.ui.getCore().createComponent({
+			return Component.create({
 				name: "sap.ui.test.other",
 				id: "testComponent"
-			});
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
 
-			this.oJsView = sap.ui.view({
-				type: sap.ui.core.mvc.ViewType.XML,
-				async: false, // test timing
-				viewContent : XML_VIEW,
-				id : this.oComponent.createId("myView")
-			});
-			return this.oJsView;
+				return XMLView.create({
+					definition : XML_VIEW,
+					id : this.oComponent.createId("myView")
+				});
+			}.bind(this)).then(function(oView) {
+				this.oJsView = oView;
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oComponent.destroy();
@@ -221,19 +226,20 @@ function(
 
 	QUnit.module("While handling js views (with extension points) the BaseTreeModifier", {
 		beforeEach: function () {
-			this.oComponent = sap.ui.getCore().createComponent({
+			return Component.create({
 				name: "sap.ui.test.other",
 				id: "testComponent"
-			});
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
 
-			this.oJsView = sap.ui.view({
-				type: sap.ui.core.mvc.ViewType.XML,
-				async: false, // test timing
-				viewContent : XML_VIEW2,
-				id : this.oComponent.createId("myView")
-			});
-			this.oHBox1 = this.oJsView.getContent()[0];
-			return this.oJsView;
+				return XMLView.create({
+					definition : XML_VIEW2,
+					id : this.oComponent.createId("myView")
+				});
+			}.bind(this)).then(function(oView) {
+				this.oJsView = oView;
+				this.oHBox1 = this.oJsView.getContent()[0];
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oComponent.destroy();

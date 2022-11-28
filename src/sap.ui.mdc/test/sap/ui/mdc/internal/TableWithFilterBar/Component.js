@@ -17,7 +17,7 @@ sap.ui.define([
 			}
 		}
 
-		var oUriParams = new UriParameters(window.location.href);
+		var oUriParams = UriParameters.fromQuery(window.location.search);
 		if (oUriParams.get("service") === "tenant") {
 			var sRandomString = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 			oDefaultManifest["sap.app"].dataSources.default.uri = "/tenant(" + sRandomString + ")/catalog-test/";

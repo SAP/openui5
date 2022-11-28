@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/ToolbarSpacer",
 	"sap/ui/table/Row",
-	"jquery.sap.sjax"
+	"sap/ui/thirdparty/jquery"
 ], function(Controller, JSONModel, MessageToast, ToolbarSpacer, TableRow, jQuery) {
 	"use strict";
 
@@ -46,10 +46,15 @@ sap.ui.define([
 		},
 
 		initSampleProductsModel: function() {
-			var oData = jQuery.sap.sjax({
+			var oData;
+			jQuery.ajax({
+				async: false,
 				url: sap.ui.require.toUrl("sap/ui/demo/mock/products.json"),
-				dataType: "json"
-			}).data;
+				dataType: "json",
+				success: function(oResponse) {
+					oData = oResponse;
+				}
+			});
 
 			// prepare and initialize the rank property
 			oData.ProductCollection.forEach(function(oProduct) {

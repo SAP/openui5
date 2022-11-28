@@ -837,7 +837,8 @@ sap.ui.define([
 
 		assert.equal(pageRenderCounter, 0, "no rendering should have happened yet");
 
-		Core.byId("page2").rerender();
+		Core.byId("page2").invalidate();
+		Core.applyChanges();
 		assert.equal(pageRenderCounter, 1, "one page rendering should have happened");
 
 		Core.byId("page2").addContent(new Button({text:"Button p2"}));

@@ -1,1 +1,2 @@
-sap.ui.test.testScriptForUnitTest(1);
+/*global sapUiTestScriptForUnitTest*/
+sapUiTestScriptForUnitTest(1);

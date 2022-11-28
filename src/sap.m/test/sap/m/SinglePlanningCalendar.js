@@ -706,7 +706,7 @@ sap.ui.define([
 					var bCompactMode = oEvent.getParameter("selectedItem").getText() === "Compact";
 
 					oPage.toggleStyleClass("sapUiSizeCompact", bCompactMode);
-					oPage.rerender();
+					oPage.invalidate();
 				}
 			})
 		],

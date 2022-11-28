@@ -738,7 +738,7 @@ sap.ui.define([
 
 		// act
 		oRadioButton.attachSelect(function () {
-			oRadioButton.rerender();
+			oRadioButton.invalidate();
 			Core.applyChanges();
 
 			// assertions

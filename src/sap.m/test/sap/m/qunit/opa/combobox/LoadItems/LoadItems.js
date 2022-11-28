@@ -4,6 +4,7 @@ sap.ui.getCore().attachInit(function () {
 	sap.ui.require([
 		"sap/m/Panel",
 		"sap/m/Text",
+		"sap/ui/core/Item",
 		"sap/ui/core/mvc/XMLView",
 		"sap/ui/core/mvc/Controller",
 		"sap/ui/model/odata/v2/ODataModel",
@@ -11,6 +12,7 @@ sap.ui.getCore().attachInit(function () {
 	], function (
 		Panel,
 		Text,
+		Item,
 		XMLView,
 		Controller,
 		ODataModel,
@@ -34,7 +36,7 @@ sap.ui.getCore().attachInit(function () {
 			bindToExisting: function () {
 				this.byId("c1").bindAggregation("items", {
 					path: "/Employees",
-					template: new sap.ui.core.Item({
+					template: new Item({
 						key: "{ID}",
 						text: "{Name}"
 					})

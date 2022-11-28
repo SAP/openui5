@@ -14,6 +14,8 @@ sap.ui.define([
 	"sap/m/Switch",
 	"sap/m/Text",
 	"sap/m/TextArea",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Core",
 	"sap/ui/core/Item",
 	"sap/ui/core/Title",
 	"sap/ui/layout/form/SimpleForm",
@@ -37,6 +39,8 @@ sap.ui.define([
 	Switch,
 	MText,
 	TextArea,
+	Configuration,
+	oCore,
 	Item,
 	Title,
 	SimpleForm,
@@ -96,7 +100,7 @@ sap.ui.define([
 	};
 	var oConfModel = new JSONModel();
 	oConfModel.setData(oConfData);
-	sap.ui.getCore().setModel(oConfModel);
+	oCore.setModel(oConfModel);
 	var fnPress = function(oEvent) {
 		MessageToast.show("The numeric content is pressed.");
 	};
@@ -354,8 +358,8 @@ sap.ui.define([
 	var bBtnEnabled = (window.innerWidth < 375) ? false : true;
 	var oSizeButton = new Button("size-button", {
 		press : function(oEvent) {
-			var sTheme = sap.ui.getCore().getConfiguration().getTheme();
-			sap.ui.getCore().applyTheme(sTheme);
+			var sTheme = Configuration.getTheme();
+			oCore.applyTheme(sTheme);
 			var url = window.location.href;
 			//Popup dimensions issue in chrome while using noopener: Chromium bug id=1011688
 			window.open(url, "", "height=900,width=370,top=0,left=0,toolbar=no,menubar=no,noopener,noreferrer");
