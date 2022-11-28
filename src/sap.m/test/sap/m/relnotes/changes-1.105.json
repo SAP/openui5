@@ -564,5 +564,29 @@
         ]
       }
     ]
+  },
+  "1.105.3": {
+    "date": "November 2022",
+    "notes": [
+      {
+        "id": "a5d5cc9d2a0d273ee765fa266f0dc6ca2d370434",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: All selected items are considered as selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008450442022"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270116285"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280165471"
+          }
+        ]
+      }
+    ]
   }
 }
