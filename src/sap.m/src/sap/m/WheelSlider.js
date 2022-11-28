@@ -101,7 +101,9 @@ sap.ui.define([
 			renderer: WheelSliderRenderer
 		});
 
-		var SCROLL_ANIMATION_DURATION = Configuration.getAnimation() ? 200 : 0;
+		var sAnimationMode = Configuration.getAnimationMode();
+		var bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+		var SCROLL_ANIMATION_DURATION = bUseAnimations ? 200 : 0;
 		var LABEL_HEIGHT = 32;
 		var ARROW_HEIGHT = 32;
 		var MAX_SCROLL_SPEED = 1.0; // px/ms
