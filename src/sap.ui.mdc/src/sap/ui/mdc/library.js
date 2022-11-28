@@ -672,7 +672,6 @@
 	 * If an item is requested using a description or key, an object with the following
 	 * properties is returned.
 	 *
-	 * @type {sap.ui.mdc.valuehelp.ValueHelpItem}
 	 * @static
 	 * @constant
 	 * @typedef {object} sap.ui.mdc.valuehelp.ValueHelpItem

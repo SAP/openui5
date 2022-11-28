@@ -95,7 +95,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate"], function(AggregationBaseDe
 	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
 	 * @returns {Promise<sap.ui.mdc.filterbar.PropertyInfo[]>} Once resolved, an array of property info objects is returned
 	 *
-	 * @typedef {sap.ui.mdc.filterbar.PropertyInfo} sap.ui.mdc.filterbar.PropertyInfo
+	 * @typedef {object} sap.ui.mdc.filterbar.PropertyInfo
 	 *
 	 * @property {string} path
 	 *   The identifier of the property

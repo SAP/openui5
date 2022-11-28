@@ -65,7 +65,6 @@ sap.ui.define([
 	/**
 	 * P13n <code>FilterItem</code> object type.
 	 *
-	 * @type {sap.ui.mdc.p13n.panels.FilterItem}
 	 * @static
 	 * @constant
 	 * @typedef {object} sap.ui.mdc.p13n.panels.FilterItem
