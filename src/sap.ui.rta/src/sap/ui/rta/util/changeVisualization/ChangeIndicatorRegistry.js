@@ -143,6 +143,18 @@ sap.ui.define([
 		return oChangeIndicators;
 	};
 
+	ChangeIndicatorRegistry.prototype.getRelevantChangesWithSelector = function () {
+		var oSelectors = this.getSelectorsWithRegisteredChanges();
+		var aRelevantChanges = [];
+		Object.keys(oSelectors).forEach(function(sSelectorId) {
+			var aRelevantChangesForSelector = oSelectors[sSelectorId].filter(function (oChange) {
+				return !oChange.dependent;
+			});
+			aRelevantChanges = aRelevantChanges.concat(aRelevantChangesForSelector);
+		});
+		return aRelevantChanges;
+	};
+
 	/**
 	 * Returns the registered change indicator for the given element ID.
 	 *
@@ -193,7 +205,7 @@ sap.ui.define([
 			}
 
 			if (oChange.getState() === "NEW") {
-				aChangeStates = [ChangeStates.DIRTY, ChangeStates.DRAFT];
+				aChangeStates = ChangeStates.getDraftAndDirtyStates();
 			} else if (aDraftChangesList && aDraftChangesList.includes(oChange.getId())) {
 				aChangeStates = [ChangeStates.DRAFT];
 			} else {
@@ -304,6 +316,18 @@ sap.ui.define([
 	ChangeIndicatorRegistry.prototype.removeOutdatedRegisteredChanges = function () {
 		this.getAllRegisteredChanges().forEach(function(oChange) {
 			if (oChange.visualizationInfo && oChange.visualizationInfo.updateRequired) {
+				this.removeRegisteredChange(oChange.change.getId());
+			}
+		}.bind(this));
+	};
+
+	/**
+	 * Removes changes without any displayElementIds from the registry so the change can be re-registered and
+	 * the visualizationInfo is updated => if an element is inside a dialog which hasnt been opened yet
+	 */
+	ChangeIndicatorRegistry.prototype.removeRegisteredChangesWithoutVizInfo = function () {
+		this.getAllRegisteredChanges().forEach(function(oChange) {
+			if (oChange.visualizationInfo && oChange.visualizationInfo.displayElementIds.length === 0) {
 				this.removeRegisteredChange(oChange.change.getId());
 			}
 		}.bind(this));

@@ -26,7 +26,7 @@
 			text="{visualizationModel>/popupInfoMessage}"
 			type="Information"
 			showIcon="true"
-			visible="{= ${visualizationModel>/hiddenChanges}.length > 0 }">
+			visible="{= ${visualizationModel>/sortedChanges/relevantHiddenChanges}.length > 0 }">
 			<link>
 				<Link text="{i18n>BUT_CHANGEVISUALIZATION_LEARNMORE}"
 					target="_blank"

@@ -49,6 +49,10 @@ sap.ui.define([
 		}
 	}
 
+	function _isOverlayVisible(oOverlay) {
+		return !oOverlay || !oOverlay.getDomRef() || !oOverlay.isVisible();
+	}
+
 	/**
 	 * @class
 	 * Root control for RTA change visualization.
@@ -147,34 +151,84 @@ sap.ui.define([
 		this._oChangeIndicatorRegistry.reset();
 	};
 
-	ChangeVisualization.prototype._updateVisualizationModelMenuData = function() {
-		var aAllRegisteredChanges = this._oChangeIndicatorRegistry.getAllRegisteredChanges();
-		var aHiddenChanges = this._oChangeVisualizationModel.getData().hiddenChanges;
-		var aHiddenChangeIds = aHiddenChanges.map(function(oHiddenChange) {
-			return oHiddenChange.id;
+	ChangeVisualization.prototype._determineChangeVisibility = function(aRegisteredIndependentChanges, aAllRelevantChanges, sVisualizedChangeState) {
+		function filterRelevantChanges(aChanges) {
+			return aChanges.filter(function(oChange) {
+				if (!sVisualizedChangeState || sVisualizedChangeState === "all" || oChange.changeStates.includes(sVisualizedChangeState)) {
+					return true;
+				}
+				return false;
+			});
+		}
+		// Array of all Hidden Changes
+		var aHiddenChanges = [];
+		// Array of all Visualized Changes
+		var aVisualizedChanges = [];
+
+		var bHasDraftChanges = false;
+		var bHasDirtyChanges = false;
+
+		var aAllRelevantChangeIds = aAllRelevantChanges.map(function(oChange) {
+			return oChange.id;
 		});
+
+		aRegisteredIndependentChanges.forEach(function (oChange) {
+			if (oChange.changeStates.includes(ChangeStates.DIRTY)) {
+				bHasDraftChanges = true;
+				bHasDirtyChanges = true;
+			} else if (oChange.changeStates.includes(ChangeStates.DRAFT)) {
+				bHasDraftChanges = true;
+			}
+
+			var oOverlay = OverlayRegistry.getOverlay(oChange.visualizationInfo.displayElementIds[0]);
+
+			if (!aAllRelevantChangeIds.includes(oChange.change.getId())) {
+				aHiddenChanges.push(oChange);
+			} else if (_isOverlayVisible(oOverlay)) {
+				aHiddenChanges.push(oChange);
+			} else {
+				aVisualizedChanges.push(oChange);
+			}
+		});
+		var aRelevantHiddenChanges = filterRelevantChanges(aHiddenChanges);
+		var aRelevantVisualizedChanges = filterRelevantChanges(aVisualizedChanges);
+		return {
+			relevantHiddenChanges: aRelevantHiddenChanges,
+			relevantVisualizedChanges: aRelevantVisualizedChanges,
+			hasDirtyChanges: bHasDirtyChanges,
+			hasDraftChanges: bHasDraftChanges
+		};
+	};
+
+	ChangeVisualization.prototype._updateVisualizationModelMenuData = function() {
+		// Get selected change state and change category
 		var sVisualizedChangeState = this._oChangeVisualizationModel.getData().changeState;
-		var aHiddenChangesPerChangeState = aHiddenChanges.filter(function (oHiddenChange) {
-			if (!sVisualizedChangeState || sVisualizedChangeState === "all") {
+
+		// Get all registered and relevant change ids
+		var aAllRegisteredChanges = this._oChangeIndicatorRegistry.getAllRegisteredChanges();
+		var aAllRelevantChanges = this._oChangeIndicatorRegistry.getRelevantChangesWithSelector();
+
+		// Filter allRegisteredChanges for independent changes and get the ids
+		var aRegisteredIndependentChanges = aAllRegisteredChanges.filter(function(oChange) {
+			if (!oChange.dependent) {
 				return true;
 			}
-			return oHiddenChange.changeStates.includes(sVisualizedChangeState);
+			return false;
 		});
-		var aVisualizedChanges = aAllRegisteredChanges.filter(function (oChange) {
-			var bIsChangeVisible = !aHiddenChangeIds.includes(oChange.change.getId());
-			if (!sVisualizedChangeState || sVisualizedChangeState === "all") {
-				return bIsChangeVisible;
-			}
-			return bIsChangeVisible && oChange.changeStates.includes(sVisualizedChangeState);
-		});
+
+		var oSortedChanges = this._determineChangeVisibility(
+			aRegisteredIndependentChanges,
+			aAllRelevantChanges,
+			sVisualizedChangeState
+		);
 		var aCommandData = Object.keys(ChangeCategories.getCategories()).map(function(sChangeCategoryName) {
 			var sTitle = this._getChangeCategoryLabel(
 				sChangeCategoryName,
-				this._getChangesForChangeCategory(sChangeCategoryName, aVisualizedChanges).length
+				this._getChangesForChangeCategory(sChangeCategoryName, oSortedChanges.relevantVisualizedChanges).length
 			);
 			return {
 				key: sChangeCategoryName,
-				count: this._getChangesForChangeCategory(sChangeCategoryName, aVisualizedChanges).length,
+				count: this._getChangesForChangeCategory(sChangeCategoryName, oSortedChanges.relevantVisualizedChanges).length,
 				title: sTitle,
 				icon: ChangeCategories.getIconForCategory(sChangeCategoryName)
 			};
@@ -182,19 +236,20 @@ sap.ui.define([
 
 		aCommandData.unshift({
 			key: ChangeCategories.ALL,
-			count: this._getChangesForChangeCategory(ChangeCategories.ALL, aVisualizedChanges).length,
-			title: this._getChangeCategoryLabel(ChangeCategories.ALL, this._getChangesForChangeCategory(ChangeCategories.ALL, aVisualizedChanges).length),
+			count: this._getChangesForChangeCategory(ChangeCategories.ALL, oSortedChanges.relevantVisualizedChanges).length,
+			title: this._getChangeCategoryLabel(ChangeCategories.ALL, this._getChangesForChangeCategory(ChangeCategories.ALL, oSortedChanges.relevantVisualizedChanges).length),
 			icon: ChangeCategories.getIconForCategory(ChangeCategories.ALL)
 		});
 
 		this._updateVisualizationModel({
 			changeCategories: aCommandData,
-			hasDraftChanges: this._oChangeVisualizationModel.getData().draftChanges.length > 0,
-			hasDirtyChanges: this._oChangeVisualizationModel.getData().dirtyChanges.length > 0,
+			hasDraftChanges: oSortedChanges.hasDraftChanges,
+			hasDirtyChanges: oSortedChanges.hasDirtyChanges,
 			popupInfoMessage: this._oTextBundle.getText(
 				"MSG_CHANGEVISUALIZATION_HIDDEN_CHANGES_INFO",
-				[aHiddenChangesPerChangeState.length]
-			)
+				[oSortedChanges.relevantHiddenChanges.length]
+			),
+			sortedChanges: oSortedChanges
 		});
 	};
 
@@ -350,7 +405,10 @@ sap.ui.define([
 
 	ChangeVisualization.prototype._updateChangeRegistry = function() {
 		return this._collectChanges().then(function(aChanges) {
+			// remove updated changes
 			this._oChangeIndicatorRegistry.removeOutdatedRegisteredChanges();
+			// remove changes with incomplete vizInfo
+			this._oChangeIndicatorRegistry.removeRegisteredChangesWithoutVizInfo();
 			var aRegisteredChangeIds = this._oChangeIndicatorRegistry.getRegisteredChangeIds();
 			var oCurrentChanges = aChanges
 				.filter(function(oChange) {
@@ -410,23 +468,7 @@ sap.ui.define([
 	ChangeVisualization.prototype._updateChangeIndicators = function() {
 		var oSelectors = this._oChangeIndicatorRegistry.getSelectorsWithRegisteredChanges();
 		var oIndicators = {};
-		var aVisualizedChanges = [];
-		var aActivatedChanges = [];
-		var aDraftChanges = [];
-		var aDirtyChanges = [];
-		var aHiddenChanges = [];
 		Object.keys(oSelectors).forEach(function(sSelectorId) {
-			oSelectors[sSelectorId].forEach(function (oChange) {
-				if (!oChange.dependent) {
-					if (oChange.changeStates.includes(ChangeStates.ACTIVATED)) {
-						aActivatedChanges.push(oChange.id);
-					} else if (oChange.changeStates.includes(ChangeStates.DIRTY)) {
-						aDirtyChanges.push(oChange.id);
-					} else if (oChange.changeStates.includes(ChangeStates.DRAFT)) {
-						aDraftChanges.push(oChange.id);
-					}
-				}
-			});
 			var aChangesOnIndicator = oSelectors[sSelectorId];
 			var aRelevantChanges = this._filterRelevantChanges(oSelectors[sSelectorId]);
 			var oOverlay = OverlayRegistry.getOverlay(sSelectorId);
@@ -443,22 +485,11 @@ sap.ui.define([
 					return false;
 				});
 			}
-			if (!oOverlay || !oOverlay.getDomRef() || !oOverlay.isVisible()) {
+			if (_isOverlayVisible(oOverlay)) {
 				// Change is not visible
-				aChangesOnIndicator.forEach(function (oChange) {
-					var aHiddenChangeIds = aHiddenChanges.map(function(oHiddenChange) {
-						return oHiddenChange.id;
-					});
-					if (!aHiddenChangeIds.includes(oChange.id)) {
-						aHiddenChanges.push(oChange);
-					}
-				});
 				return undefined;
 			}
 			var oOverlayPosition = oOverlay.getDomRef().getClientRects()[0] || { left: 0, top: 0 };
-			aRelevantChanges.forEach(function (oChange) {
-				aVisualizedChanges.push(oChange);
-			});
 			oIndicators[sSelectorId] = {
 				posX: parseInt(oOverlayPosition.left),
 				posY: parseInt(oOverlayPosition.top),
@@ -480,21 +511,10 @@ sap.ui.define([
 			!deepEqual(
 				oIndicators,
 				this._oChangeVisualizationModel.getData().content
-			) || !deepEqual(
-				aVisualizedChanges,
-				this._oChangeVisualizationModel.getData().visualizedChanges
-			) || !deepEqual(
-				aHiddenChanges,
-				this._oChangeVisualizationModel.getData().hiddenChanges
 			)
 		) {
 			this._updateVisualizationModel({
-				content: oIndicators,
-				visualizedChanges: aVisualizedChanges,
-				dirtyChanges: aDirtyChanges,
-				activatedChanges: aActivatedChanges,
-				draftChanges: aDraftChanges,
-				hiddenChanges: aHiddenChanges
+				content: oIndicators
 			});
 		}
 	};
