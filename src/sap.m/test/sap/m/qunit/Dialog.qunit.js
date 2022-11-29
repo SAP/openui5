@@ -3389,4 +3389,30 @@ sap.ui.define([
 
 		oStub.restore();
 	});
+
+	QUnit.test("Stretched dialog on Desktop, max height is recalculated when window is resized", function (assert) {
+		// Arrange
+		var oWindowDimensions = this.oDialog._getAreaDimensions(),
+			iNewWindowHeight = oWindowDimensions.height - 200;
+		this.oDialog.setStretch(true).open();
+		Core.applyChanges();
+
+		this.clock.tick(500);
+
+		var oStub = this.stub(this.oDialog, "_getAreaDimensions").returns(
+			Object.assign(
+				oWindowDimensions,
+				{ height: iNewWindowHeight }
+			)
+		);
+
+		// Act
+		this.oDialog._onResize();
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(this.oDialog.$().height() < iNewWindowHeight, "max-height of the dialog wasn't recalculated on resize of window");
+
+		oStub.restore();
+	});
 });
