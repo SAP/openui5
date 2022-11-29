@@ -617,7 +617,7 @@ sap.ui.define([
 						{creator: "_getDocumentationBlock", exists: oControlData.docuLink !== undefined},
 						{creator: "_getControlGithub", exists: bIsOpenUI5 && oControlData.resource && oEntityData.lib},
 						{creator: "_getUXGuidelinesBlock", exists: oControlData.uxGuidelinesLink !== undefined},
-						{creator: "_getExtendsBlock", exists: oControlData.isClass},
+						{creator: "_getExtendsBlock", exists: oControlData.isClass || oControlData.isTypedef && oControlData.isDerived},
 						{creator: "_getSubclassesBlock", exists: aSubClasses.length > 0},
 						{creator: "_getImplementsBlock", exists: oControlData.hasImplementsData},
 						{creator: "_getModuleBlock", exists: true},
