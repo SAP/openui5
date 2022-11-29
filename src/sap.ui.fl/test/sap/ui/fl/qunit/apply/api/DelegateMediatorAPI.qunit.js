@@ -316,10 +316,6 @@ sap.ui.define([
 				{
 					name: ["sap/ui/rta/enablement/TestDelegate"],
 					stub: oFakeWriteOnlyDelegate
-				},
-				{
-					name: "sap/ui/rta/enablement/TestDelegate",
-					stub: undefined
 				}
 			]);
 
