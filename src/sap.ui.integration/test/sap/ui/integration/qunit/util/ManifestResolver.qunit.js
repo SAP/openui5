@@ -352,6 +352,21 @@ sap.ui.define([
 			});
 	});
 
+	QUnit.test("Resolve with unreachable manifest", function (assert) {
+		// Arrange
+			var oCard = new SkeletonCard();
+			oCard.setManifest("UnreachableManifestUrl");
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(function (oRes) {
+
+				// Assert
+				assert.notOk(oRes["sap.card"].content.message.description === "", "The content contains a message description even when the manifest is unreachable.");
+				oCard.destroy();
+			});
+	});
+
 	QUnit.test("Resolve with data loading error", function (assert) {
 		// Arrange
 		var oManifest = {
