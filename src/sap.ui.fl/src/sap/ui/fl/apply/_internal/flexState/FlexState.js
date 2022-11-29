@@ -16,9 +16,10 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/fl/write/_internal/FlexInfoSession",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/_internal/FlexInfoSession"
+	"sap/ui/fl/requireAsync",
+	"sap/ui/fl/Utils"
 ], function(
 	_omit,
 	each,
@@ -33,9 +34,10 @@ sap.ui.define([
 	Loader,
 	ManifestUtils,
 	StorageUtils,
+	FlexInfoSession,
 	LayerUtils,
-	Utils,
-	FlexInfoSession
+	requireAsync,
+	Utils
 ) {
 	"use strict";
 
@@ -311,15 +313,12 @@ sap.ui.define([
 	// TODO: get rid of the following module dependencies as soon as the change state
 	// is migrated from changePersistenceFactory to the FlexState
 	function lazyLoadModules() {
-		return Promise.all([
-			Utils.requireAsync("sap/ui/fl/ChangePersistenceFactory")
-		])
-			.then(function(aModules) {
-				_oChangePersistenceFactory = aModules[0];
-			})
-			.catch(function(oError) {
-				Log.error("Error loading modules: " + oError.message);
-			});
+		return requireAsync("sap/ui/fl/ChangePersistenceFactory").then(function(oModule) {
+			_oChangePersistenceFactory = oModule;
+		})
+		.catch(function(oError) {
+			Log.error("Error loading modules: " + oError.message);
+		});
 	}
 
 	/**

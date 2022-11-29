@@ -5,13 +5,13 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/base/util/restricted/_pick",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/requireAsync",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	Log,
 	merge,
 	_pick,
-	flUtils,
+	requireAsync,
 	JsControlTreeModifier
 ) {
 	"use strict";
@@ -70,7 +70,7 @@ sap.ui.define([
 		var aPromises = [];
 		aDelegates.forEach(function (mDelegateInfo) {
 			aPromises.push(function (aLoadedDelegates) {
-				return flUtils.requireAsync(mDelegateInfo.name)
+				return requireAsync(mDelegateInfo.name)
 					.then(function (oDelegate) {
 						mDelegateInfo.instance = oDelegate || {};
 						aLoadedDelegates.push(mDelegateInfo);
