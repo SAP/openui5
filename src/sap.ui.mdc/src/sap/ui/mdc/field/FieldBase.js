@@ -2411,7 +2411,6 @@ sap.ui.define([
 									}
 									oFieldHelp.open(true);
 								}
-								_setAriaAttributes.call(this, true);
 								delete this._vLiveChangeValue;
 							}
 						}.bind(this), 300, { leading: false, trailing: true });
@@ -2596,7 +2595,6 @@ sap.ui.define([
 			var aConditions = this.getConditions();
 			_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
 			oFieldHelp.toggleOpen(false);
-			_setAriaAttributes.call(this, true); // if closed it will be set again on afterclose
 			if (!oFieldHelp.isFocusInHelp()) {
 				// need to reset bValueHelpRequested in Input, otherwise on focusout no change event and navigation don't work
 				var oContent = oEvent.getSource();
@@ -2822,6 +2820,8 @@ sap.ui.define([
 			sNewValue = vKey;
 		}
 
+		var bOpen = oFieldHelp.isOpen();
+
 		if (oContent && oContent.setDOMValue) {
 			if (!sDOMValue) {
 				if (this._getContentFactory().isMeasure() && this._getContentFactory().getUnitConditionsType() && this._oNavigateCondition) {
@@ -2838,7 +2838,7 @@ sap.ui.define([
 			if (oContent._doSelect) {
 				oContent._doSelect();
 			}
-			if (oFieldHelp.isOpen()) {
+			if (bOpen) {
 				oContent.removeStyleClass("sapMFocus"); // to have focus outline on navigated item only
 			}
 		}
@@ -2846,7 +2846,7 @@ sap.ui.define([
 		this._bPreventGetDescription = false; // back to default
 		this._getContentFactory().updateConditionType();
 
-		_setAriaAttributes.call(this, true, sItemId);
+		_setAriaAttributes.call(this, bOpen, sItemId);
 
 		this._bIgnoreInputValue = false; // use value for input
 		this.fireLiveChange({ value: sNewValue });
@@ -2873,6 +2873,12 @@ sap.ui.define([
 		var oFieldHelp = oEvent.getSource();
 		var aConditions = this.getConditions();
 		_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
+
+	}
+
+	function _handleFieldHelpOpened(oEvent) {
+
+		_setAriaAttributes.call(this, true);
 
 	}
 
@@ -2922,7 +2928,12 @@ sap.ui.define([
 			oFieldHelp.detachEvent("afterClose", _handleFieldHelpAfterClose, this); // TODO: remove
 			oFieldHelp.detachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
 			oFieldHelp.detachEvent("closed", _handleFieldHelpAfterClose, this);
-			this._bConnected = false;
+			if (oFieldHelp.isA("sap.ui.mdc.ValueHelp")) {
+				oFieldHelp.detachEvent("opened", _handleFieldHelpOpened, this);
+			} else {
+				oFieldHelp.detachEvent("open", _handleFieldHelpOpened, this); // as old FieldHelp has no opened event use open event. But this is also fires async there
+			}
+		this._bConnected = false;
 		}
 
 	}
@@ -2966,6 +2977,11 @@ sap.ui.define([
 				oFieldHelp.attachEvent("afterClose", _handleFieldHelpAfterClose, this); // TODO: remove
 				oFieldHelp.attachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
 				oFieldHelp.attachEvent("closed", _handleFieldHelpAfterClose, this);
+				if (oFieldHelp.isA("sap.ui.mdc.ValueHelp")) {
+					oFieldHelp.attachEvent("opened", _handleFieldHelpOpened, this);
+				} else {
+					oFieldHelp.attachEvent("open", _handleFieldHelpOpened, this); // as old FieldHelp has no opened event use open event. But this is also fires async there
+				}
 				var aConditions = this.getConditions();
 				_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
 
