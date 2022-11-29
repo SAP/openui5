@@ -19,6 +19,7 @@ sap.ui.define([
 
 	// shortcuts
 	var SelectionMode = library.SelectionMode;
+	var SelectionBehavior = library.SelectionBehavior;
 
 	var KNOWNCLICKABLECONTROLS = [
 		"sapMBtnBase", "sapMInputBase", "sapMLnk", "sapMSlt",
@@ -572,9 +573,9 @@ sap.ui.define([
 
 		initRowHovering: function(oTable) {
 			var $Table = oTable.$();
-			for (var i = 0; i < RowHoverHandler.ROWAREAS.length; i++) {
-				RowHoverHandler._initRowHoveringForArea(oTable, $Table, RowHoverHandler.ROWAREAS[i]);
-			}
+			RowHoverHandler.ROWAREAS.forEach(function(sRowArea) {
+				RowHoverHandler._initRowHoveringForArea(oTable, $Table, sRowArea);
+			});
 		},
 
 		_initRowHoveringForArea: function(oTable, $Table, sArea) {
@@ -586,11 +587,13 @@ sap.ui.define([
 		},
 
 		_onHover: function(oTable, $Table, sArea, oElem) {
-			var iIndex = $Table.find(sArea).index(oElem);
-			var oRow = oTable.getRows()[iIndex];
+			if ((oTable.getSelectionMode() !== SelectionMode.None && oTable.getSelectionBehavior() !== SelectionBehavior.RowSelector) || oTable.hasListeners("cellClick")) {
+				var iIndex = $Table.find(sArea).index(oElem);
+				var oRow = oTable.getRows()[iIndex];
 
-			if (oRow) {
-				oRow._setHovered(true);
+				if (oRow) {
+					oRow._setHovered(true);
+				}
 			}
 		},
 

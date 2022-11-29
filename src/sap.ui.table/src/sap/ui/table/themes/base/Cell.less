@@ -195,10 +195,21 @@
 		opacity: 0.3;
 		pointer-events: none;
 	}
+
+	&:not(.sapUiTableSelAllDisabled), &:not(.sapUiTableSelAllDisabled) .sapUiIcon {
+		cursor: pointer;
+	}
 }
 
 .sapUiTableHeaderDataCell {
 	padding: 7px 0;
+
+	&.sapUiTableHeaderCellActive {
+		cursor: pointer;
+		.sapMLabel, .sapMText, .sapUiIcon {
+			cursor: pointer;
+		}
+	}
 
 	&.sapUiTableHeaderCellActive:active {
 		// The active state background color and text color should not be applied if column reordering is in progress.

@@ -1145,6 +1145,8 @@ sap.ui.define([
 	QUnit.module("Row Hover Effect", {
 		beforeEach: function() {
 			createTables();
+			oTable.setSelectionBehavior("Row");
+			oTable.rerender();
 		},
 		afterEach: function() {
 			destroyTables();
@@ -1191,6 +1193,46 @@ sap.ui.define([
 		assert.ok(!getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on row header");
 		assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
 		assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
+	});
+
+	QUnit.test("Row Hover Effect depending on SelectionMode and SelectionBehavior", function(assert) {
+		oTable.setSelectionMode("None");
+		oTable.rerender();
+		getCell(0, 2).trigger("mouseover");
+		assert.ok(!getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+		assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
+		assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
+		getCell(0, 2).trigger("mouseout");
+		oTable.setSelectionBehavior("RowOnly");
+		oTable.rerender();
+		getCell(0, 2).trigger("mouseover");
+		assert.ok(!getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+		assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
+		assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
+		getCell(0, 2).trigger("mouseout");
+		oTable.setSelectionMode("MultiToggle");
+		oTable.setSelectionBehavior("Row");
+		oTable.rerender();
+		getCell(0, 2).trigger("mouseover");
+		assert.ok(getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on row header");
+		assert.ok(getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on fixed part of row");
+		assert.ok(getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "Hover effect on scroll part of row");
+		getCell(0, 2).trigger("mouseout");
+		oTable.setSelectionBehavior("RowOnly");
+		oTable.rerender();
+		getCell(0, 2).trigger("mouseover");
+		assert.ok(getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on row header");
+		assert.ok(getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on fixed part of row");
+		assert.ok(getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "Hover effect on scroll part of row");
+		getCell(0, 2).trigger("mouseout");
+		oTable.setSelectionMode("None");
+		oTable.setSelectionBehavior("RowSelector");
+		oTable.rerender();
+		oTable.attachCellClick(function(){});
+		getCell(0, 2).trigger("mouseover");
+		assert.ok(getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on row header");
+		assert.ok(getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on fixed part of row");
+		assert.ok(getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "Hover effect on scroll part of row");
 	});
 
 	QUnit.module("Helpers", {
