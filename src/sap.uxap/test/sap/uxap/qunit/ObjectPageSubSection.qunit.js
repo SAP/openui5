@@ -1663,9 +1663,9 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 				oPage.setSelectedSection(oSection2.getId());
 
 				// Assert
-				assert.strictEqual(oPage._bAllContentFitsContainer, false, "_bAllContentFitsContainer is 'true'");
+				assert.strictEqual(oPage._bAllContentFitsContainer, false, "_bAllContentFitsContainer is 'false'");
 				assert.strictEqual(oPage._bHeaderExpanded, false, "header is still snapped");
-				assert.ok(oToggleScrollingSpy.calledWith(true), "oToggleScrollingSpy called with 'true' - scrolling is supressed");
+				assert.ok(oToggleScrollingSpy.calledWith(true), "oToggleScrollingSpy called with 'true' - scrolling is enabled");
 				assert.ok(oPage._$opWrapper.scrollTop() >= oPage._getSnapPosition(), "header is snapped with scroll");
 				done();
 			}, this);
