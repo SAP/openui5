@@ -133,4 +133,31 @@ sap.ui.define([
 
 		});
 	});
+
+	QUnit.module("MTable");
+
+	opaTest("Considers filterconditions", function (Given, When, Then) {
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-5&maxconditions=1");
+		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "Sales Organization"});
+		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "Distribution Channel"});
+		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "Division"});
+
+		// 1030
+		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "Distribution Channel"}, "10", {keepFocus: true, clearTextFirst: true});
+		Then.onTheOPAPage.iShouldSeeValueHelpListItems(["Distribution Channel 10 for 1030"]);
+		When.onTheOPAPage.iToggleTheValueHelpListItem("Distribution Channel 10 for 1030");
+
+		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "Division"}, "02", {keepFocus: false, clearTextFirst: true});
+		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "Division"}, "Division 02 for 1030 10 (02)");
+
+		// 1010
+		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "Division"}, "", {keepFocus: false, clearTextFirst: true});
+		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "Sales Organization"}, "", {keepFocus: false, clearTextFirst: true});
+		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "Distribution Channel"}, "10", {keepFocus: true, clearTextFirst: true});
+		Then.onTheOPAPage.iShouldSeeValueHelpListItems(["Distribution Channel 10 for 1010"]);
+		When.onTheOPAPage.iToggleTheValueHelpListItem("Distribution Channel 10 for 1010");
+
+		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "Division"}, "02", {keepFocus: false, clearTextFirst: true});
+		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "Division"}, "Division 02 for 1010 10 (02)");
+	});
 });

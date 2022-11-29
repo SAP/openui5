@@ -545,8 +545,7 @@ sap.ui.define([
 		var oDelegate = this._getValueHelpDelegate();
 		var oDelegatePayload = this._getValueHelpDelegatePayload();
 
-		var sPromiseKey = ["loadItemForValue", sPath, sKeyPath, oConfig.parsedValue || oConfig.value, JSON.stringify(oConfig.context)].join("_");
-
+		var sPromiseKey = "loadItemForValue:" + JSON.stringify([sPath, sKeyPath, oConfig.parsedValue || oConfig.value, oConfig.context, oConditions]);
 
 		return this._retrievePromise(sPromiseKey, function () {
 			var oFilter = _createItemFilters.call(this, oConfig, oConditions);

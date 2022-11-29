@@ -785,7 +785,7 @@ sap.ui.define([
 	 * @param {string} [oConfig.conditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {boolean} [oConfig.caseSensitive] If set, the check is done case sensitive
 	 * @param {sap.ui.core.Control} oConfig.control Instance of the calling control
-	 * @returns {Promise<sap.ui.mdc.field.FieldHelpItem>} Promise returning object containing description, key, in and out parameters.
+	 * @returns {Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Promise returning object containing description, key, in and out parameters.
 	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
 	 *
 	 * @private
@@ -795,19 +795,11 @@ sap.ui.define([
 		// TODO: Discuss how we handle binding / typeahead changes ??
 		var oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
-			//TODO: determine values from Inparameters from BindingContext (If not given from outside)
-			var aPromiseKey = ["getItemForValue", oConfig.parsedValue || oConfig.value, JSON.stringify(oConfig.context), oConfig.oBindingContext && oConfig.oBindingContext.getPath()];
-			var sPromisekey = aPromiseKey.join("_");
-			return this._retrievePromise(sPromisekey, function () {
-				return this._retrieveDelegateContent(oTypeahead).then(function() {
-					oConfig.caseSensitive = oConfig.hasOwnProperty("caseSensitive") ? oConfig.caseSensitive : false; // If supported, search case insensitive
-					var pGetItemPromise = oTypeahead.getItemForValue(oConfig);
-					// pGetItemPromise.then(function (oResult) {
-					// 	_onConditionPropagation.call(this, PropagationReason.Info, oConfig);
-					// }.bind(this));
-					return pGetItemPromise;
-				}/*.bind(this)*/);
-			}.bind(this));
+			return this._retrieveDelegateContent(oTypeahead).then(function() {
+				oConfig.caseSensitive = oConfig.hasOwnProperty("caseSensitive") ? oConfig.caseSensitive : false; // If supported, search case insensitive
+				var pGetItemPromise = oTypeahead.getItemForValue(oConfig);
+				return pGetItemPromise;
+			});
 		} else {
 			// to return always a Promise
 			return Promise.reject("No Typeahead"); // TODO message - no translation needed, could only occur on wrng configuration, not on user interaction
