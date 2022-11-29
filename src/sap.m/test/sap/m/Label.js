@@ -379,17 +379,27 @@ sap.ui.define([
 
 						new Item({
 							key: "zh-CN",
-							text: "zh-CN"
+							text: "zh-CN (Simplified Chinese)"
 						}),
 
 						new Item({
 							key: "zh-TW",
-							text: "zh-TW"
+							text: "zh-TW (Traditional Chinese)"
+						}),
+
+						new Item({
+							key: "zh-Hans",
+							text: "zh-Hans (Simplified Chinese)"
+						}),
+
+						new Item({
+							key: "zh-Hant",
+							text: "zh-Hant (Traditional Chinese)"
 						})
 					],
 					ariaLabelledBy: "localeSelectLbl",
 					change: function (oEvent) {
-						var sLanguage = oEvent.getParameter("selectedItem").getText();
+						var sLanguage = oEvent.getParameter("selectedItem").getKey();
 						sap.ui.getCore().getConfiguration().setLanguage(sLanguage);
 						oPage.invalidate();
 					}
