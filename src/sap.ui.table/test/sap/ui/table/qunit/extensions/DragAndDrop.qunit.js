@@ -54,8 +54,9 @@ sap.ui.define([
 		return oJQueryDragEvent;
 	}
 
-	function triggerDragEvent(sType, oControl) {
+	function triggerDragEvent(sType, oControl, mTestParameters) {
 		var oEvent = createDragEvent(sType);
+		oEvent._mTestParameters = mTestParameters;
 		var oDomRef = oControl.getDomRef ? oControl.getDomRef() : oControl;
 		if (oDomRef) {
 			jQuery(oDomRef).trigger(oEvent);
@@ -573,6 +574,9 @@ sap.ui.define([
 		beforeEach: function() {
 			createTables();
 
+			this.oDragAndDropExtension = oTable._getDragAndDropExtension();
+			this.oDragAndDropExtension._debug();
+
 			this.oDDI = new DragDropInfo({
 				sourceAggregation: "columns",
 				targetAggregation: "columns",
@@ -590,10 +594,10 @@ sap.ui.define([
 
 	QUnit.test("Draggable", function(assert) {
 		var aColumns = oTable.getColumns();
-		assert.notOk(this.oDDI.isDraggable(aColumns[0]), "Columns are not draggable by default");
+		assert.notOk(this.oDDI.isDraggable(aColumns[1]), "Columns are not draggable by default");
 
 		this.oDDI.bIgnoreMetadataCheck = true;
-		assert.ok(this.oDDI.isDraggable(aColumns[0]), "Columns are now draggable");
+		assert.ok(this.oDDI.isDraggable(aColumns[1]), "Columns are now draggable");
 	});
 
 	QUnit.test("Droppable", function(assert) {
@@ -612,8 +616,9 @@ sap.ui.define([
 		this.oDDI.bIgnoreMetadataCheck = true;
 		oTable.rerender();
 
-		triggerDragEvent("dragstart", aColumns[0]);
-		triggerDragEvent("dragenter", aColumns[1]);
+		// move non-fixed columns
+		triggerDragEvent("dragstart", aColumns[1]);
+		triggerDragEvent("dragenter", aColumns[2]);
 		assert.equal(
 			document.querySelector(".sapUiDnDIndicator").getBoundingClientRect().height,
 			oTable.getDomRef("sapUiTableCnt").getBoundingClientRect().height,
@@ -632,5 +637,84 @@ sap.ui.define([
 		);
 
 		triggerDragEvent("drop", aColumns[2]);
+	});
+
+	QUnit.test("Draggable - TreeTable case", function(assert) {
+		var fnOriginalDragEnterHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragenter;
+		var aColumns = oTreeTable.getColumns();
+
+		oTreeTable.addDragDropConfig(this.oDDI);
+		this.oDDI.bIgnoreMetadataCheck = true;
+
+		oCore.applyChanges();
+		oTreeTable.rerender();
+
+		for (var i = 0; i < aColumns.length; i++) {
+			var oColumnRef = aColumns[i].getDomRef();
+			assert.equal(oColumnRef.getAttribute("draggable"), i == 0 ? null : "true", "Column " + i + " has correct value for draggable");
+			assert.equal(oColumnRef.getAttribute("data-sap-ui-draggable"), i == 0 ? null : "true", "Column " + i + " has correct value for data-sap-ui-draggable");
+		}
+
+		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = function(oEvent) {
+			fnOriginalDragEnterHandler.apply(oTreeTable, arguments);
+
+			var mParams = oEvent._mTestParameters;
+
+			if (mParams.bShouldMove) {
+				assert.notOk(oEvent.isMarked("NonDroppable"), "Column movable: Event is not marked as NonDroppable");
+			} else {
+				assert.ok(oEvent.isMarked("NonDroppable"), "Column not movable: Event is marked as NonDroppable");
+			}
+		};
+
+		triggerDragEvent("dragstart", aColumns[1]);
+		triggerDragEvent("dragenter", aColumns[0], {bShouldMove: false});
+
+		triggerDragEvent("dragstart", aColumns[1]);
+		triggerDragEvent("dragenter", aColumns[2], {bShouldMove: true});
+
+		triggerDragEvent("drop", aColumns[2]);
+		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = fnOriginalDragEnterHandler;
+	});
+
+	QUnit.test("Draggable - Fixed Columns", function(assert) {
+		var fnOriginalDragEnterHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragenter;
+		var aColumns = oTable.getColumns();
+		oTable.setFixedColumnCount(2);
+
+		this.oDDI.bIgnoreMetadataCheck = true;
+
+		oCore.applyChanges();
+		oTable.rerender();
+
+		for (var i = 0; i < aColumns.length; i++) {
+			var oColumnRef = aColumns[i].getDomRef();
+			assert.equal(oColumnRef.getAttribute("draggable"), i < 2 ? null : "true", "Column " + i + " has correct value for draggable");
+			assert.equal(oColumnRef.getAttribute("data-sap-ui-draggable"), i < 2 ? null : "true", "Column " + i + " has correct value for data-sap-ui-draggable");
+		}
+
+		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = function(oEvent) {
+			fnOriginalDragEnterHandler.apply(oTable, arguments);
+
+			var mParams = oEvent._mTestParameters;
+
+			if (mParams.bShouldMove) {
+				assert.notOk(oEvent.isMarked("NonDroppable"), "Column movable: Event is not marked as NonDroppable");
+			} else {
+				assert.ok(oEvent.isMarked("NonDroppable"), "Column not movable: Event is marked as NonDroppable");
+			}
+		};
+
+		triggerDragEvent("dragstart", aColumns[2]);
+		triggerDragEvent("dragenter", aColumns[1], {bShouldMove: false});
+
+		triggerDragEvent("dragstart", aColumns[2]);
+		triggerDragEvent("dragenter", aColumns[0], {bShouldMove: false});
+
+		triggerDragEvent("dragstart", aColumns[2]);
+		triggerDragEvent("dragenter", aColumns[3], {bShouldMove: true});
+
+		triggerDragEvent("drop", aColumns[2]);
+		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = fnOriginalDragEnterHandler;
 	});
 });

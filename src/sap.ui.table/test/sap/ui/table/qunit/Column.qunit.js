@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Item",
 	"sap/m/Button",
 	"sap/ui/core/Core",
-	'sap/ui/Device'
+	'sap/ui/Device',
+	"sap/ui/core/dnd/DragDropInfo"
 ], function(
 	TableQUnitUtils,
 	qutils,
@@ -37,7 +38,8 @@ sap.ui.define([
 	Item,
 	Button,
 	oCore,
-	Device
+	Device,
+	DragDropInfo
 ) {
 	"use strict";
 
@@ -86,6 +88,36 @@ sap.ui.define([
 		test(false, true, false, null);
 		test(false, false, false, null);
 		test(false, false, true, null);
+	});
+
+	QUnit.test("#isDragAllowed", function(assert) {
+		var oColumn = new Column({
+			label: new TableQUnitUtils.TestControl({text: "col2header"})
+		}),
+		dragDropInfo = new DragDropInfo({
+			sourceAggregation: "columns",
+			targetAggregation: "columns",
+			dropPosition: "Between",
+			enabled: true
+		}),
+		oTable = new Table({
+			columns: oColumn,
+			dragDropConfig: [dragDropInfo]
+		}),
+		oStubIsColumnMovable = sinon.stub(TableUtils.Column, "isColumnMovable");
+
+		oTable.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oStubIsColumnMovable.returns(true);
+		assert.ok(oColumn.isDragAllowed(dragDropInfo), "Dragging column is allowed");
+
+		oStubIsColumnMovable.returns(false);
+
+		assert.notOk(oColumn.isDragAllowed(dragDropInfo), "Dragging column is not allowed");
+
+		oTable.destroy();
+		oStubIsColumnMovable.restore();
 	});
 
 	QUnit.test("Cell content visibility settings", function(assert) {

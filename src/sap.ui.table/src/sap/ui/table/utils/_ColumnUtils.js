@@ -393,11 +393,13 @@ sap.ui.define([
 		 * Returns true if the column can be moved to another position.
 		 *
 		 * @param {sap.ui.table.Column} oColumn Column of the table.
+		 * @param {boolean} [bIgnoreReorderingProperty=false] Indicates whether the table's <code>enableColumnReordering</code> property
+		 * should be ignored for determining a movable column, regardless of whether it is enabled or not.
 		 * @returns {boolean} Whether the column can be moved to another position.
 		 */
-		isColumnMovable: function(oColumn) {
+		isColumnMovable: function(oColumn, bIgnoreReorderingProperty) {
 			var oTable = oColumn.getParent();
-			if (!oTable || !oTable.getEnableColumnReordering()) {
+			if (!oTable || (!oTable.getEnableColumnReordering() && !bIgnoreReorderingProperty)) {
 				// Column reordering is not active at all
 				return false;
 			}
@@ -451,12 +453,14 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.table.Column} oColumn Column of the table.
 		 * @param {int} iNewIndex the desired new index of the column in the current table setup.
+		 * @param {boolean} [bIgnoreReorderingProperty=false] Indicates whether the table's <code>enableColumnReordering</code> property
+		 * should be ignored for determining a movable column, regardless of whether it is enabled or not.
 		 * @returns {boolean} Whether the column can be moved to the desired position.
 		 */
-		isColumnMovableTo: function(oColumn, iNewIndex) {
+		isColumnMovableTo: function(oColumn, iNewIndex, bIgnoreReorderingProperty) {
 			var oTable = oColumn.getParent();
 
-			if (!oTable || iNewIndex === undefined || !ColumnUtils.isColumnMovable(oColumn)) {
+			if (!oTable || iNewIndex === undefined || !ColumnUtils.isColumnMovable(oColumn, bIgnoreReorderingProperty)) {
 				// Column is not movable at all
 				return false;
 			}

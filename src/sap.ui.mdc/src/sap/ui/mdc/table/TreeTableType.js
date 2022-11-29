@@ -40,7 +40,12 @@ sap.ui.define([
 		var aSupportedModes = GridTableType.prototype.getSupportedP13nModes.apply(this, arguments);
 
 		// TODO: This type does not support column reordering. See #getTableSettings for more info.
-		aSupportedModes.splice(aSupportedModes.indexOf(P13nMode.Column), 1);
+		// As the Column P13n dialog is still allowing movement of the first column, the option will be still disabled by default.
+		// For testing purposes the URL parameter can be set to true, to enable the Column P13n Dialog and Drag&Drop.
+		var oParams = new URLSearchParams(window.location.search);
+		if (oParams.get("sap-ui-xx-v4tree-p13n") !== "true") {
+			aSupportedModes.splice(aSupportedModes.indexOf(P13nMode.Column), 1);
+		}
 
 		return aSupportedModes;
 	};
@@ -92,10 +97,12 @@ sap.ui.define([
 			mTableSettings.selectionMode = "None";
 		}
 
-		// TODO: This type does not support column reordering.
-		//  The first column of the TreeTable must not be movable. This is the behavior standalone and in the SmartTable, it is missing in MDC.
-		mTableSettings.dragDropConfig[0].destroy();
-		delete mTableSettings.dragDropConfig;
+		// If URL parameter for p13n is not set to true, remove Drag&Drop capabilities for now
+		var oParams = new URLSearchParams(window.location.search);
+		if (oParams.get("sap-ui-xx-v4tree-p13n") !== "true") {
+			mTableSettings.dragDropConfig[0].destroy();
+			delete mTableSettings.dragDropConfig;
+		}
 
 		return mTableSettings;
 	};
