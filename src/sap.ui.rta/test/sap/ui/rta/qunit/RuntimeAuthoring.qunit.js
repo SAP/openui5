@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
@@ -42,7 +41,6 @@ sap.ui.define([
 	Stack,
 	RuntimeAuthoring,
 	RtaUtils,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -285,7 +283,7 @@ sap.ui.define([
 			function fnChecks() {
 				assert.ok(this.oRta, "RTA is still up and running");
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "command stack is cleared");
-				assert.strictEqual(jQuery(".sapUiRtaToolbar:visible").length, 1, "and the Toolbar is visible.");
+				assert.ok(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), "and the Toolbar is visible.");
 				assert.notOk(
 					this.oRta.getToolbar().getControl("save").getEnabled(),
 					"then the save button is disabled"
@@ -385,7 +383,7 @@ sap.ui.define([
 				.then(function() {
 					assert.ok(true, "then the promise gets resolved");
 					assert.ok(this.oRta, "RTA is still up and running");
-					assert.strictEqual(jQuery(".sapUiRtaToolbar:visible").length, 1, "and the Toolbar is visible.");
+					assert.ok(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), "and the Toolbar is visible.");
 					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 command is still in the stack");
 				}.bind(this))
 				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
