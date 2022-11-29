@@ -166,7 +166,7 @@ sap.ui.define([
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {{role: string, type: string, description: string, focusable: boolean, enabled: boolean}}
+	 * @returns {sap.ui.core.AccessibilityInfo}
 	 * The object contains the accessibility information of <code>sap.ui.commons.Link</code>
 	 * @protected
 	 */

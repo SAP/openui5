@@ -660,7 +660,7 @@ function(
 		 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
 		 *
 		 * @public
-		 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+		 * @returns {sap.m.OverflowToolbarConfig} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
 		 */
 		Select.prototype.getOverflowToolbarConfig = function() {
 
@@ -3151,7 +3151,8 @@ function(
 		 *
 		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 * @protected
-		 * @returns {object} The <code>sap.m.Select</code> accessibility information
+		 * @returns {sap.ui.core.AccessibilityInfo}
+		 * The object contains the accessibility information for <code>sap.m.Select</code>
 		 */
 		Select.prototype.getAccessibilityInfo = function() {
 			var aDescriptions = [],

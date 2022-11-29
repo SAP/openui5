@@ -695,7 +695,7 @@ function(
 	/**
 	 * Gets the available Bar contexts.
 	 *
-	 * @returns {Object} with all available contexts
+	 * @returns {sap.m.BarContexts} with all available contexts
 	 * @protected
 	 * @function
 	 * @since 1.65
