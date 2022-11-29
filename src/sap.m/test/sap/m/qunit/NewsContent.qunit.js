@@ -39,7 +39,8 @@ sap.ui.define([
 		// Arrange
 		var oSpy = sinon.spy(this.oNewsContent, "_setPointerOnContentText");
 		// Act
-		this.oNewsContent.rerender();
+		this.oNewsContent.invalidate();
+		oCore.applyChanges();
 		// Assert
 		assert.ok(document.getElementById("news-cnt"), "NewsContent was rendered successfully");
 		assert.ok(document.getElementById("news-cnt-content-text"), "Content text was rendered successfully");

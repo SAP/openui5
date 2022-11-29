@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	_omit,
@@ -31,7 +30,6 @@ sap.ui.define([
 	VerticalLayout,
 	ReloadManager,
 	RuntimeAuthoring,
-	jQuery,
 	sinon
 ) {
 	"use strict";

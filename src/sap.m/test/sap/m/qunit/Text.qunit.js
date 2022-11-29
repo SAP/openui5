@@ -301,7 +301,7 @@ sap.ui.define([
 			}
 		}, t5);
 
-		t5.rerender();
+		t5.invalidate();
 		Core.applyChanges();
 
 		assert.strictEqual(t5.$("inner").hasClass("sapMTextMaxLine"), true, "Text has correct class for synthetic MaxLine");

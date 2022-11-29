@@ -303,7 +303,7 @@ sap.ui.define([
 								oType = oTypeInstances[oSelectedItem.getKey()];
 
 							oBI.setType(oType, "string");
-							oDateTimeInput.rerender();
+							oDateTimeInput.invalidate();
 						}
 					})
 				]

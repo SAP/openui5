@@ -2,34 +2,38 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Bar",
 	"sap/m/Button",
+	"sap/m/DateTimePicker",
+	"sap/m/Input",
+	"sap/m/Label",
+	"sap/m/Page",
+	"sap/m/ToggleButton",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/library",
 	"sap/ui/unified/CalendarLegend",
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/Page",
-	"sap/m/Label",
-	"sap/m/DateTimePicker",
-	"sap/m/ToggleButton",
-	"sap/ui/model/type/DateTime",
-	"sap/m/Input"
+	"sap/ui/model/type/DateTime"
 ], function(
 	App,
 	Bar,
 	Button,
+	DateTimePicker,
+	Input,
+	Label,
+	Page,
+	ToggleButton,
+	Configuration,
+	oCore,
 	coreLibrary,
 	DateTypeRange,
 	unifiedLibrary,
 	CalendarLegend,
 	CalendarLegendItem,
 	JSONModel,
-	Page,
-	Label,
-	DateTimePicker,
-	ToggleButton,
-	DateTime,
-	Input
+	DateTime
 ) {
 	"use strict";
 
@@ -39,8 +43,8 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
-	sap.ui.getCore().attachInit(function() {
-		sap.ui.getCore().getConfiguration().setLanguage("en-US");
+	oCore.attachInit(function() {
+		Configuration.setLanguage("en-US");
 	});
 
 	var app = new App("myApp");
@@ -60,7 +64,7 @@ sap.ui.define([
 
 	function handleChange(oEvent){
 		var oDTP = oEvent.getSource();
-		var oInput = sap.ui.getCore().byId("I2");
+		var oInput = oCore.byId("I2");
 		var sValue = oEvent.getParameter("value");
 		var bValid = oEvent.getParameter("valid");
 		iEvent++;
@@ -72,12 +76,12 @@ sap.ui.define([
 		}
 	}
 
-	sap.ui.getCore().attachParseError(
+	oCore.attachParseError(
 			function(oEvent) {
 				var oElement = oEvent.getParameter("element");
 				var oValue = oEvent.getParameter('newValue');
 
-				var oInput = sap.ui.getCore().byId("I2");
+				var oInput = oCore.byId("I2");
 				oInput.setValue( "ParseError: Entered value: " + oValue);
 
 				if (oElement.setValueState) {
@@ -85,12 +89,12 @@ sap.ui.define([
 				}
 			});
 
-	sap.ui.getCore().attachValidationSuccess(
+	oCore.attachValidationSuccess(
 			function(oEvent) {
 				var oElement = oEvent.getParameter("element");
 				var oValue = oEvent.getParameter('newValue');
 
-				var oInput = sap.ui.getCore().byId("I2");
+				var oInput = oCore.byId("I2");
 				oInput.setValue( "ValidationSuccess: Entered value: " + oValue);
 
 				if (oElement.setValueState) {
@@ -100,7 +104,7 @@ sap.ui.define([
 
 	var handleFieldGroupValidation = function (oEvent) {
 		var oDTP = oEvent.getSource();
-		var oInput = sap.ui.getCore().byId("I2");
+		var oInput = oCore.byId("I2");
 		oInput.setValue("ValidateFieldGroup - Event: DateTimePicker " + oDTP.getId());
 	};
 
@@ -108,24 +112,21 @@ sap.ui.define([
 
 	function toggleSpecialDates(oEvent) {
 		var bPressed = oEvent.getParameter("pressed");
-		var oDTP = sap.ui.getCore().byId("DTP2");
-		if (!DateTypeRange) {
-		    sap.ui.getCore().loadLibrary("sap.ui.unified");
-		}
+		var oDTP = oCore.byId("DTP2");
 		if (!oLegend) {
 			oLegend = new CalendarLegend("Legend1", {
 				items: [
-						new CalendarLegendItem("T1", {type: CalendarDayType.Type01, text: "Typ 1"}),
-						new CalendarLegendItem("T2", {type: CalendarDayType.Type02, text: "Typ 2"}),
-						new CalendarLegendItem("T3", {type: CalendarDayType.Type03, text: "Typ 3"}),
-						new CalendarLegendItem("T4", {type: CalendarDayType.Type04, text: "Typ 4"}),
-						new CalendarLegendItem("T5", {type: CalendarDayType.Type05, text: "Typ 5"}),
-						new CalendarLegendItem("T6", {type: CalendarDayType.Type06, text: "Typ 6"}),
-						new CalendarLegendItem("T7", {type: CalendarDayType.Type07, text: "Typ 7"}),
-						new CalendarLegendItem("T8", {type: CalendarDayType.Type08, text: "Typ 8"}),
-						new CalendarLegendItem("T9", {type: CalendarDayType.Type09, text: "Typ 9"}),
-						new CalendarLegendItem("T10", {type: CalendarDayType.Type10, text: "Typ 10"})
-						]
+					new CalendarLegendItem("T1", {type: CalendarDayType.Type01, text: "Typ 1"}),
+					new CalendarLegendItem("T2", {type: CalendarDayType.Type02, text: "Typ 2"}),
+					new CalendarLegendItem("T3", {type: CalendarDayType.Type03, text: "Typ 3"}),
+					new CalendarLegendItem("T4", {type: CalendarDayType.Type04, text: "Typ 4"}),
+					new CalendarLegendItem("T5", {type: CalendarDayType.Type05, text: "Typ 5"}),
+					new CalendarLegendItem("T6", {type: CalendarDayType.Type06, text: "Typ 6"}),
+					new CalendarLegendItem("T7", {type: CalendarDayType.Type07, text: "Typ 7"}),
+					new CalendarLegendItem("T8", {type: CalendarDayType.Type08, text: "Typ 8"}),
+					new CalendarLegendItem("T9", {type: CalendarDayType.Type09, text: "Typ 9"}),
+					new CalendarLegendItem("T10", {type: CalendarDayType.Type10, text: "Typ 10"})
+				]
 			});
 			oDTP.setLegend(oLegend);
 		}
@@ -146,7 +147,7 @@ sap.ui.define([
 	oModel.setData({
 		dateValue: new Date()
 	});
-	sap.ui.getCore().setModel(oModel);
+	oCore.setModel(oModel);
 
 	var page1 = new Page("page1", {
 		title:"Mobile DateTimePicker",

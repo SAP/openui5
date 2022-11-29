@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
@@ -41,6 +42,7 @@ sap.ui.define([
 	Stack,
 	RuntimeAuthoring,
 	RtaUtils,
+	jQuery,
 	sinon
 ) {
 	"use strict";

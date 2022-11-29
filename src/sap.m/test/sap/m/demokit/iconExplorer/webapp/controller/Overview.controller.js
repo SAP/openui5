@@ -1,33 +1,35 @@
 sap.ui.define([
-	"sap/ui/demo/iconexplorer/controller/BaseController",
+	"sap/m/Label",
+	"sap/m/library",
+	"sap/m/MessageToast",
+	"sap/m/ToggleButton",
+	"sap/ui/Device",
+	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/Fragment",
 	"sap/ui/core/IconPool",
-	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/demo/iconexplorer/controller/BaseController",
 	"sap/ui/demo/iconexplorer/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/Device",
-	"sap/m/MessageToast",
-	"sap/m/Label",
-	"sap/m/ToggleButton",
-	"sap/m/library",
-	"sap/ui/core/theming/Parameters",
-	"sap/ui/core/Fragment",
-	"sap/ui/core/Core"
+	"sap/ui/model/json/JSONModel"
 ], function(
-	BaseController,
+	Label,
+	mobileLibrary,
+	MessageToast,
+	ToggleButton,
+	Device,
+	oCore,
+	Element,
+	Fragment,
 	IconPool,
-	JSONModel,
+	Parameters,
+	BaseController,
 	formatter,
 	Filter,
 	FilterOperator,
-	Device,
-	MessageToast,
-	Label,
-	ToggleButton,
-	mobileLibrary,
-	Parameters,
-	Fragment,
-	oCore
+	JSONModel
 ) {
 	"use strict";
 
@@ -173,7 +175,7 @@ sap.ui.define([
 							oRoot.addStyleClass("sapMLIBActive");
 							oRoot.removeStyleClass("sapMLIBHoverable");
 							if (!this._sNormalIconColor) {
-								this._sNormalIconColor = oRoot.$().find(".sapUiIcon").control(0).getColor();
+								this._sNormalIconColor = Element.closestTo(oRoot.$().find(".sapUiIcon")[0]).getColor();
 							}
 							oRoot.$().find(".sapUiVltCell > .sapUiIcon").control().forEach(function (oIcon) {
 								oIcon.setColor(Parameters.get("sapUiTextInverted"));

@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
@@ -29,6 +30,7 @@ sap.ui.define([
 	ManagedObjectObserver,
 	Control,
 	Core,
+	Element,
 	ResizeHandler,
 	Device,
 	KeyCodes,
@@ -983,11 +985,11 @@ sap.ui.define([
 				oEvent.preventDefault();
 			}
 
-			var oItem = jQuery(oEvent.target.firstChild).control()[0];
+			var oItem = Element.closestTo(oEvent.target.firstChild);
 
 			if (oItem) {
 				var oFocusDomRef = oItem.getFocusDomRef(),
-				oFocusControl = jQuery(oFocusDomRef).control()[0];
+				oFocusControl = Element.closestTo(oFocusDomRef);
 
 				if (oFocusControl && oFocusControl[sName]) {
 					oFocusControl[sName].call(oFocusControl, oEvent);
@@ -1028,7 +1030,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oItem = jQuery(oEvent.target.firstElementChild).control(0),
+		var oItem = Element.closestTo(oEvent.target.firstElementChild),
 			iLength = this.getItems().length,
 			iItemIndex = this.indexOfItem(oItem),
 			iInsertAt = -1,

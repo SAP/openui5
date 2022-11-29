@@ -1281,7 +1281,6 @@ sap.ui.define([
 
 		// act
 		oTokenizer.invalidate();
-		oTokenizer.rerender();
 		Core.applyChanges();
 
 		// assert

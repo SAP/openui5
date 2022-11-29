@@ -26,7 +26,7 @@ sap.ui.define([
 		var oFESRMeta = document.querySelector("meta[name=sap-ui-fesr]"),
 			sFESRMetaContent = oFESRMeta ? oFESRMeta.getAttribute("content") : undefined,
 			bActive =  !!sFESRMetaContent && sFESRMetaContent !== "false",
-			sUriParam = new UriParameters(window.location.search).get("sap-ui-fesr"),
+			sUriParam = UriParameters.fromQuery(window.location.search).get("sap-ui-fesr"),
 			sUrl = sFESRMetaContent && sFESRMetaContent !== "true" ? sFESRMetaContent : undefined;
 
 		if (sUriParam) {

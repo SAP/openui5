@@ -375,7 +375,7 @@ sap.ui.define([
 		aTimes[1].focus();
 
 		//Act
-		oCalendarTimeInt.rerender();
+		oCalendarTimeInt.invalidate();
 		oCore.applyChanges();
 
 		//Assert

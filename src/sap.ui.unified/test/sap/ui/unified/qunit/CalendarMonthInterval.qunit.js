@@ -234,7 +234,7 @@ sap.ui.define([
 		aMonths[1].focus();
 
 		//Act
-		oCalendarMonthInt.rerender();
+		oCalendarMonthInt.invalidate();
 		oCore.applyChanges();
 
 		//Assert

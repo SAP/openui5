@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/m/inputUtils/completeTextSelected",
 	"sap/ui/events/KeyCodes",
 	'sap/ui/core/InvisibleText',
-	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
 ],
@@ -40,8 +39,7 @@ function(
 	containsOrEquals,
 	completeTextSelected,
 	KeyCodes,
-	InvisibleText,
-	jQuery
+	InvisibleText
 ) {
 		"use strict";
 

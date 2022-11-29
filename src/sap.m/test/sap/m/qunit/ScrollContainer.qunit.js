@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/m/Image",
 	"sap/ui/core/Core",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/HTML",
 	"sap/m/App",
 	"sap/m/Page",
@@ -18,6 +19,7 @@ sap.ui.define([
 	ScrollContainer,
 	Image,
 	Core,
+	Configuration,
 	HTML,
 	App,
 	Page,
@@ -201,7 +203,8 @@ sap.ui.define([
 	QUnit.test("Rerendering after scrolling", function(assert) {
 		assert.expect(3);
 
-		oSC2.rerender();
+		oSC2.invalidate();
+		Core.applyChanges();
 
 		assert.equal(getScrollPos(oSC2.getId(), "left"), -110, "ScrollContainer 2 should be scrolled to position 110");
 		intEqual(oSC2._oScroller._scrollX, 110, "Internally stored x scrolling position should be 110");
@@ -539,7 +542,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press [CTRL] + [END] in RTL", function(assert) {
-		var oStub = this.stub(Core.getConfiguration(), "getRTL", function() { return true; }),
+		var oStub = this.stub(Configuration, "getRTL", function() { return true; }),
 			oSpy = this.spy(oSC5._oScroller, "_scrollTo");
 
 		qutils.triggerKeydown(oSC5.getDomRef(), "END", false, false, true);

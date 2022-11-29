@@ -2,12 +2,16 @@
 
 sap.ui.define([
 	"sap/ui/VersionInfo",
-	"sap/ui/support/supportRules/util/RuleValidator"
-], function (VersionInfo, RuleValidator) {
+	"sap/ui/support/supportRules/util/RuleValidator",
+	"sap/ui/support/library"
+], function (VersionInfo, RuleValidator, supportLibrary) {
 		"use strict";
 
-		var Audiences = sap.ui.support.Audiences,
-			Categories = sap.ui.support.Categories;
+		// shortcut for sap.ui.support.Categories
+		var Categories = supportLibrary.Categories;
+
+		// shortcut for sap.ui.support.Audiences
+		var Audiences = supportLibrary.Audiences;
 
 		function fnCreateRule() {
 			return {

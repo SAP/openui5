@@ -18,8 +18,7 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/mdc/enum/SelectType',
 	'sap/base/Log',
-	'sap/ui/core/Element',
-	'sap/ui/thirdparty/jquery'
+	'sap/ui/core/Element'
 ], function(
 	FilterableListContent,
 	Condition,
@@ -36,8 +35,7 @@ sap.ui.define([
 	merge,
 	SelectType,
 	Log,
-	Element,
-	jQuery
+	Element
 ) {
 	"use strict";
 

@@ -114,7 +114,8 @@ sap.ui.define([
 
 	QUnit.test("RangeSlider's Labels Width", function (assert) {
 		this.rangeSlider.setMax(10000000000000);
-		this.rangeSlider.rerender();
+		this.rangeSlider.invalidate();
+		oCore.applyChanges();
 
 		assert.equal(this.rangeSlider.$().find(".sapMSliderRangeLabel:eq(1)").width(), 120, "The end label should have 120px width when the value consists of 14 digits");
 
@@ -130,7 +131,7 @@ sap.ui.define([
 
 	QUnit.test("Memory leak on rerender", function (assert) {
 		var oldLabel = this.rangeSlider._oRangeLabel;
-		this.rangeSlider.rerender();
+		this.rangeSlider.invalidate();
 		oCore.applyChanges();
 		var newLabel = this.rangeSlider._oRangeLabel;
 		assert.equal(oldLabel, newLabel, "No new range label should be created on control rerendering");

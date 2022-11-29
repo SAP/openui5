@@ -1419,7 +1419,7 @@ sap.ui.define([
 			"2" : "Val4"
 		});
 		// rerendering required to display selected keys
-		oFF.rerender();
+		oFF.invalidate();
 		oCore.applyChanges();
 		assert.strictEqual(oButton.getText().indexOf("2") > -1, true, "Two items are displayed on the button");
 
@@ -1427,7 +1427,7 @@ sap.ui.define([
 			"4" : "Val4"
 		});
 		oFFL._search("Val2");
-		oFF.rerender();
+		oFF.invalidate();
 		oCore.applyChanges();
 		assert.strictEqual(oButton.getText().indexOf("Val4") > -1, true,
 				"Selected item isd isplayed on the button");
