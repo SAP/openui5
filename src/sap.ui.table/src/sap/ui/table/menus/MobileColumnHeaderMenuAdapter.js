@@ -362,7 +362,7 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._prepareQuickResize = function(oColumn) {
-		if (!Device.support.desktop && oColumn.getResizable()) {
+		if (!Device.system.desktop && oColumn.getResizable()) {
 			if (!this._oQuickResize) {
 				this._oQuickResize = this._createQuickResize(oColumn);
 			}
