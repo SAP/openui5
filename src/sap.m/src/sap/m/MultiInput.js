@@ -1465,7 +1465,7 @@ function(
 	MultiInput.prototype.forwardEventHandlersToSuggPopover = function (oSuggPopover) {
 		oSuggPopover.setShowSelectedPressHandler(this._handleShowSelectedPress.bind(this));
 		oSuggPopover.setOkPressHandler(this._handleConfirmation.bind(this, true));
-		oSuggPopover.setCancelPressHandler(this._handleCancelPress.bind(this));
+		oSuggPopover.setCancelPressHandler(this._revertPopupSelection.bind(this));
 	};
 
 	// Handles "Enter" key press and OK button press
@@ -1481,11 +1481,6 @@ function(
 
 		// Fire through the MultiInput Popup's input value and save it
 		this.onChange(oEvent, null, oPopupInput.getValue());
-	};
-
-	MultiInput.prototype._handleCancelPress  = function (oEvent) {
-		this._getSuggestionsPopover().getInput().setDOMValue(this.getLastValue());
-		this._closeSuggestionPopup();
 	};
 
 	MultiInput.prototype._handleShowSelectedPress  = function (oEvent) {

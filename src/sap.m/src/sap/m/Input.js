@@ -804,7 +804,7 @@ function(
 		}
 
 		this._sSelectedValue = sNewValue;
-
+		this.setSelectionUpdatedFromList(false);
 		this.updateInputField(sNewValue);
 
 		// don't continue if the input is destroyed after firing change event through updateInputField
@@ -1020,7 +1020,7 @@ function(
 		}
 
 		this._sSelectedValue = sNewValue;
-
+		this.setSelectionUpdatedFromList(false);
 		this.updateInputField(sNewValue);
 
 		// don't continue if the input is destroyed after firing change event through updateInputField
@@ -1028,12 +1028,13 @@ function(
 			return;
 		}
 
-		if (!(this.isMobileDevice() && this instanceof sap.m.MultiInput && this._isMultiLineMode)) {
+		if (!(this.isMobileDevice() && this.isA("sap.m.MultiInput") && this._isMultiLineMode)) {
 			this.setSelectionUpdatedFromList(false);
 			this._closeSuggestionPopup();
 		}
 
 		this._bSelectingItem = false;
+		this._resetTypeAhead();
 	};
 
 	/**
@@ -1360,9 +1361,9 @@ function(
 			oEvent.originalEvent._sapui_handledByControl = true;
 			this._sProposedItemText = null;
 			this.setSelectionUpdatedFromList(false);
-			this._closeSuggestionPopup();
+			this._revertPopupSelection();
 
-			// restore the initial value that was there before suggestion dialog
+			// revert autocompleted value on desktop
 			if (this._getTypedInValue() !== this.getValue()) {
 				this.setValue(this._getTypedInValue());
 			}
@@ -1457,13 +1458,13 @@ function(
 		}
 
 		// Inform InputBase to fire the change event on Input only when focus doesn't go into the suggestion popup
-		if (!bFocusInPopup) {
+		if (!bFocusInPopup && !this.isMobileDevice()) {
 			InputBase.prototype.onsapfocusleave.apply(this, arguments);
 		}
 
 		this.bValueHelpRequested = false;
 
-		if (!this._sProposedItemText && this.isMobileDevice()) {
+		if (!this._sProposedItemText || this.isMobileDevice()) {
 			return;
 		}
 
@@ -2780,7 +2781,23 @@ function(
 
 	Input.prototype.forwardEventHandlersToSuggPopover = function (oSuggPopover) {
 		oSuggPopover.setOkPressHandler(this._closeSuggestionPopup.bind(this));
-		oSuggPopover.setCancelPressHandler(this._closeSuggestionPopup.bind(this));
+		oSuggPopover.setCancelPressHandler(this._revertPopupSelection.bind(this));
+	};
+
+
+	Input.prototype._revertPopupSelection = function () {
+		var oSuggestionPopover = this._getSuggestionsPopover(),
+			oPopupInput = oSuggestionPopover && oSuggestionPopover.getInput();
+
+		this._sProposedItemText = null;
+		this.setSelectionUpdatedFromList(false);
+
+		// revert the typed in value on mobile to prevent change on close
+		if (this.isMobileDevice()) {
+			oPopupInput && oPopupInput.setDOMValue(this.getLastValue());
+		}
+
+		this._closeSuggestionPopup();
 	};
 
 	/**
@@ -2894,12 +2911,22 @@ function(
 						return;
 					}
 
+					var oSelectedItem = oList && oList.getSelectedItem();
+
+					if (this._sProposedItemText && oSelectedItem) {
+						this.setSelectionUpdatedFromList(true);
+					}
+
+					if (this.getSelectionUpdatedFromList()) {
+						this.updateSelectionFromList(oSelectedItem);
+					}
+
 					if (Table && !(oList instanceof Table)) {
 						oList.destroyItems();
 					} else {
 						oList.removeSelections(true);
 					}
-				})
+				}, this)
 				.attachAfterOpen(function () {
 					this._triggerSuggest(this.getValue());
 					this._refreshListItems();
@@ -2919,7 +2946,7 @@ function(
 		} else {
 			oPopover
 				.attachAfterClose(function() {
-					var oList = this._getSuggestionsPopover().getItemsContainer();
+					var oList = oSuggPopover.getItemsContainer();
 					var oSelectedItem = oList && oList.getSelectedItem();
 					var oDomRef = this.getDomRef();
 
