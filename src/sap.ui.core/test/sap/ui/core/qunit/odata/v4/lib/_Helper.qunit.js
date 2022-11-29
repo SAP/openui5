@@ -2587,7 +2587,7 @@ sap.ui.define([
 					$select : []
 				},
 				sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
-				mExpectedResult = {$expand : {"A/toN" : null, toN : null}, $select : ["A/toN"]},
+				mExpectedResult = {$expand : {"A/toN" : null, toN : null}, $select : []},
 				oType = {},
 				fnFetchMetadata = getFetchMetadata({
 					"/Me" : {},
@@ -2647,7 +2647,7 @@ sap.ui.define([
 				toA : null,
 				toC : null
 			},
-			$select : ["toA"], // avoid $select= in URL, use any navigation property
+			$select : [],
 			"sap-client" : "123"
 		}
 	}, {
@@ -2658,7 +2658,7 @@ sap.ui.define([
 				toC : null,
 				"D/E/toD" : {$select : ["d"]}
 			},
-			$select : ["toB"], // avoid $select= in URL, use any navigation property
+			$select : [],
 			"sap-client" : "123"
 		}
 	}, {
@@ -2669,7 +2669,7 @@ sap.ui.define([
 					$select : ["a"]
 				}
 			},
-			$select : ["toA"], // avoid $select= in URL, use any navigation property
+			$select : [],
 			"sap-client" : "123"
 		},
 		mSelectKeyProperties : {
@@ -2700,7 +2700,7 @@ sap.ui.define([
 					$select : ["g"]
 				}
 			},
-			$select : ["toE"], // avoid $select= in URL, use any navigation property
+			$select : [],
 			"sap-client" : "123"
 		},
 		mSelectKeyProperties : {
@@ -2731,7 +2731,7 @@ sap.ui.define([
 					$select : ["$count"]
 				}
 			},
-			$select : ["toA"], // avoid $select= in URL, use any navigation property
+			$select : [],
 			"sap-client" : "123"
 		}
 	}].forEach(function (o, i) {
@@ -2799,37 +2799,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("intersectQueryOptions with empty $select allowed", function (assert) {
-		var mCacheQueryOptions = {
-				$expand : {
-					toA : null
-				},
-				$select : ["A"],
-				"sap-client" : "123"
-			},
-			sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
-			fnFetchMetadata = getFetchMetadata({
-				"/Me" : {},
-				"/Me/toA" : "1"
-			});
-
-		assert.deepEqual(
-			// code under test
-			_Helper.intersectQueryOptions(mCacheQueryOptions, ["toA"], fnFetchMetadata, "/Me",
-				"", true),
-			{
-				$expand : {
-					toA : null
-				},
-				$select : [],
-				"sap-client" : "123"
-			});
-
-		assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions,
-			"unmodified");
-	});
-
-	//*********************************************************************************************
 	[false, true].forEach(function (bPrefix) {
 		var sPrefix = bPrefix ? "~" : undefined;
 
@@ -2849,7 +2818,7 @@ sap.ui.define([
 						toC : mCacheQueryOptions0,
 						"D/E/toD" : mCacheQueryOptions1
 					},
-					$select : ["toC"],
+					$select : [],
 					"sap-client" : "123"
 				},
 				oType = {},

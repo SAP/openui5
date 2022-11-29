@@ -1171,13 +1171,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Merges all GET requests that are marked as mergeable and have the same owner, resource path,
-	 * and query options besides $expand and $select. One request with the merged $expand and
-	 * $select is left in the queue and all merged requests get the response of this one remaining
-	 * request. For $mergeRequests, see parameter fnMergeRequests of {@link #request}.
+	 * Merges all GET requests that are marked as mergeable (via parameter mQueryOptions of
+	 * {@link #request}) and have the same owner, resource path, and query options besides $expand
+	 * and $select. One request with the merged $expand and $select is left in the queue and all
+	 * merged requests get the response of this one remaining request. For $mergeRequests, see
+	 * parameter fnMergeRequests of {@link #request}.
 	 *
 	 * @param {object[]} aRequests The batch queue
 	 * @returns {object[]} The adjusted batch queue
+	 *
+	 * @private
 	 */
 	_Requestor.prototype.mergeGetRequests = function (aRequests) {
 		var aResultingRequests = [],
@@ -1206,9 +1209,13 @@ sap.ui.define([
 			}
 		});
 		aResultingRequests.forEach(function (oRequest) {
-			if (oRequest.$queryOptions) {
-				oRequest.url
-					= that.addQueryString(oRequest.url, oRequest.$metaPath, oRequest.$queryOptions);
+			var mQueryOptions = oRequest.$queryOptions;
+
+			if (mQueryOptions) {
+				if (mQueryOptions.$expand && !mQueryOptions.$select.length) {
+					mQueryOptions.$select = Object.keys(mQueryOptions.$expand).sort().slice(0, 1);
+				}
+				oRequest.url = that.addQueryString(oRequest.url, oRequest.$metaPath, mQueryOptions);
 			}
 		});
 		aResultingRequests.iChangeSet = aRequests.iChangeSet;
@@ -1742,7 +1749,8 @@ sap.ui.define([
 	 * @param {object} [mQueryOptions]
 	 *   Query options if it is allowed to merge this request with another request having the same
 	 *   sResourcePath (only allowed for GET requests); the resulting resource path is the path from
-	 *   sResourcePath plus the merged query options; may only contain $expand and $select
+	 *   sResourcePath plus the merged query options; must contain $select (even if empty), may also
+	 *   contain $expand
 	 * @param {any} [vOwner]
 	 *   An additional precondition for the merging of GET requests: the owner must be identical.
 	 * @param {function(string[]):string[]} [fnMergeRequests]

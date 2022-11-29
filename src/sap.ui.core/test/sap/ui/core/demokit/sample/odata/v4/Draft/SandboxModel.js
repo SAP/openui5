@@ -20,7 +20,7 @@ sap.ui.define([
 				"Products?$count=true&$filter=IsActiveEntity%20eq%20false%20or%20SiblingEntity/IsActiveEntity%20eq%20null&$select=ID,IsActiveEntity,amount,categoryID,name&$orderby=ID&$skip=0&$top=5" : {
 					source : "Products.json"
 				},
-				"Products(ID=10,IsActiveEntity=true)?$select=DraftAdministrativeData,HasActiveEntity,HasDraftEntity,_Category&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
+				"Products(ID=10,IsActiveEntity=true)?$select=HasActiveEntity,HasDraftEntity&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
 					source : "Products_10_true.json"
 				},
 				"Products?$filter=(IsActiveEntity%20eq%20false%20or%20SiblingEntity/IsActiveEntity%20eq%20null)%20and%20ID%20eq%2010%20and%20IsActiveEntity%20eq%20true&$count=true&$top=0" : {
@@ -29,7 +29,7 @@ sap.ui.define([
 						value : []
 					}
 				},
-				"Products(ID=10,IsActiveEntity=true)?$select=DraftAdministrativeData,HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,_Category,amount,categoryID,name&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
+				"Products(ID=10,IsActiveEntity=true)?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,categoryID,name&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
 					source : "Products_10_true_full.json"
 				},
 				"Products(ID=10,IsActiveEntity=true)/_Parts?$count=true&$orderby=ID&$select=ID,description,quantity&$skip=0&$top=5" : [{
@@ -43,7 +43,7 @@ sap.ui.define([
 				"Products(ID=10,IsActiveEntity=false)/_Parts?$count=true&$orderby=ID&$select=ID,description,quantity&$skip=0&$top=5" : {
 					source : "Products_10_false_Parts.json"
 				},
-				"Products(ID=20,IsActiveEntity=false)?$select=DraftAdministrativeData,HasActiveEntity,HasDraftEntity,_Category&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
+				"Products(ID=20,IsActiveEntity=false)?$select=HasActiveEntity,HasDraftEntity&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
 					source : "Products_20_false.json"
 				},
 				"Products(ID=20,IsActiveEntity=false)/SiblingEntity?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,categoryID,name&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
@@ -52,7 +52,7 @@ sap.ui.define([
 				"Products(ID=20,IsActiveEntity=true)/_Parts?$count=true&$orderby=ID&$select=ID,description,quantity&$skip=0&$top=5" : {
 					source : "Products_20_true_Parts.json"
 				},
-				"Products(ID=30,IsActiveEntity=true)?$select=DraftAdministrativeData,HasActiveEntity,HasDraftEntity,_Category&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
+				"Products(ID=30,IsActiveEntity=true)?$select=HasActiveEntity,HasDraftEntity&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
 					source : "Products_30_true.json"
 				},
 				"Products(ID=30,IsActiveEntity=true)/_Parts?$count=true&$orderby=ID&$select=ID,description,quantity&$skip=0&$top=5" : {
@@ -61,11 +61,11 @@ sap.ui.define([
 						value : []
 					}
 				},
-				"Products(ID=40,IsActiveEntity=true)?$select=DraftAdministrativeData,HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,_Category,amount,categoryID,name&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
+				"Products(ID=40,IsActiveEntity=true)?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,categoryID,name&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
 					code : 500,
 					message : "Request intentionally failed"
 				},
-				"Products(ID=40,IsActiveEntity=true)?$select=DraftAdministrativeData,HasActiveEntity,HasDraftEntity,_Category&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
+				"Products(ID=40,IsActiveEntity=true)?$select=HasActiveEntity,HasDraftEntity&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
 					code : 500,
 					message : "Request intentionally failed"
 				},

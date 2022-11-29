@@ -9420,7 +9420,7 @@ sap.ui.define([
 					that.mock(_Helper).expects("intersectQueryOptions")
 						.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
-							"/TEAMS/Foo", "", true)
+							"/TEAMS/Foo", "")
 						.returns(mMergedQueryOptions);
 					oCache.beforeRequestSideEffects = function () {};
 					that.mock(oCache).expects("beforeRequestSideEffects")
@@ -9566,7 +9566,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				"/TEAMS/Foo", "", true)
+				"/TEAMS/Foo", "")
 			.returns(null); // "nothing to do"
 		oCache.beforeRequestSideEffects = function () {
 			throw new Error("Do not call!");
@@ -9681,7 +9681,7 @@ sap.ui.define([
 				oHelperMock.expects("intersectQueryOptions")
 					.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 						sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
-						"/TEAMS/Foo", "", true)
+						"/TEAMS/Foo", "")
 					.returns(mMergedQueryOptions);
 				that.mock(oCache).expects("filterVisibleElements").withExactArgs(["('c')"])
 					.returns([oCache.aElements[2]]);
@@ -9756,7 +9756,7 @@ sap.ui.define([
 					that.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 							sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
-							"/TEAMS/Foo", "", true)
+							"/TEAMS/Foo", "")
 						.returns(mMergedQueryOptions);
 					oCache.beforeRequestSideEffects = function () {};
 					oBeforeExpectation = that.mock(oCache).expects("beforeRequestSideEffects")
@@ -9837,7 +9837,7 @@ sap.ui.define([
 			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 					sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 					sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-					"/TEAMS/Foo", "", true)
+					"/TEAMS/Foo", "")
 				.returns(mIntersectedQueryOptions);
 			this.mock(oCache).expects("filterVisibleElements").withExactArgs(["('c')"])
 				.returns([oCache.aElements[0]]);
