@@ -48,7 +48,6 @@ sap.ui.define([
 		assert.equal(Configuration.getTheme(), "base", "theme");
 		assert.equal(toLower(Configuration.getLanguage()), toLower(defaultLocale()), "language");
 		assert.equal(Configuration.getAccessibility(), true, "accessibility");
-		assert.equal(Configuration.getAnimation(), true, "animation");
 		assert.equal(Configuration.getAnimationMode(), Configuration.AnimationMode.full, "animationMode");
 		assert.equal(Configuration.getRTL(), false, "rtl");
 		assert.equal(Configuration.getDebug(), false, "debug");
