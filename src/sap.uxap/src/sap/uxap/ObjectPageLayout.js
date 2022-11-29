@@ -3692,6 +3692,10 @@ sap.ui.define([
 	ObjectPageLayout.prototype._adjustHeaderBackgroundSize = function () {
 		// Update the background image size and position
 		var oHeaderTitle = this.getHeaderTitle();
+
+		/**
+		 * @deprecated Since version 1.40.1
+		 */
 		if (oHeaderTitle && oHeaderTitle.getHeaderDesign() == "Dark") {
 
 			if (!this._shouldPreserveHeaderInTitleArea()) {
@@ -3713,6 +3717,10 @@ sap.ui.define([
 	ObjectPageLayout.prototype._adjustHeaderTitleBackgroundPosition = function (iScrollTop) {
 
 		var oHeaderTitle = this.getHeaderTitle();
+
+		/**
+		 * @deprecated Since version 1.40.1
+		 */
 		if (oHeaderTitle && oHeaderTitle.getHeaderDesign() == "Dark") {
 			if (this._bStickyAnchorBar) {
 				oHeaderTitle.$().css("background-position", "0px " + ((this.iTotalHeaderSize - this.iHeaderTitleHeightStickied) * -1) + "px");
@@ -3882,6 +3890,9 @@ sap.ui.define([
 		var oHeader = this.getHeaderTitle(),
 			sDesign = library.ObjectPageHeaderDesign.Light;
 
+		/**
+		 * @deprecated Since version 1.40.1
+		 */
 		if (oHeader != null) {
 			sDesign = oHeader.getHeaderDesign();
 		}

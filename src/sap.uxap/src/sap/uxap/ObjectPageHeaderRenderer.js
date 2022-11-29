@@ -26,10 +26,12 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 				&& oParent.getHeaderContent().length > 0 && oParent.getShowHeaderContent()) ||
 			(oParent.getShowHeaderContent() && oParent.getShowTitleInHeaderContent()));
 
-		oRm.openStart("div", oControl)
-			.class('sapUxAPObjectPageHeader')
-			.class('sapUxAPObjectPageHeaderDesign-' + oControl.getHeaderDesign())
-			.openEnd();
+		oRm.openStart("div", oControl).class('sapUxAPObjectPageHeader');
+		/**
+		 * @deprecated Since version 1.40.1
+		 */
+		oRm.class('sapUxAPObjectPageHeaderDesign-' + oControl.getHeaderDesign());
+		oRm.openEnd();
 
 		// if a navigationBar has been provided display it
 		if (oNavigationBar) {
