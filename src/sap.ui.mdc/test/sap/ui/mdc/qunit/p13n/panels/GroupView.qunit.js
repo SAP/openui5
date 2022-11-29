@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/panels/GroupView",
 	"sap/ui/mdc/p13n/P13nBuilder",
 	"sap/m/VBox",
+	"sap/m/Input",
 	"sap/ui/core/Core"
-], function(GroupView, P13nBuilder, VBox, oCore) {
+], function(GroupView, P13nBuilder, VBox, Input, oCore) {
 	"use strict";
 
 	var aVisible = ["key1", "key2", "key3"];
@@ -144,4 +145,31 @@ sap.ui.define([
 		});
 
 	});
+
+	QUnit.test("Check labelFor reference on label (WITH acc children)", function(assert){
+        this.oGroupView.setItemFactory(function(oContext){
+
+            var oContainer = new VBox({
+                items: [
+                    new Input("testAccInput" + oContext.getProperty("name"), {})
+                ]
+            });
+
+            oContainer.getIdForLabel = function() {
+                return oContainer.getItems()[0].getId();
+            };
+
+            return oContainer;
+        });
+
+		this.oGroupView.setP13nData(this.oP13nData.itemsGrouped);
+		this.oGroupView.showFactory(true);
+		var aPanels = this.oGroupView.getPanels();
+		aPanels[0].getContent()[0].getItems().forEach(function(oInnerItem, iIndex){
+			var sKey = "key" + (iIndex + 1);
+			var sLabelFor = sap.ui.getCore().byId(oInnerItem.getContent()[0].getItems()[0].getLabelFor()).getIdForLabel();
+			assert.equal(sLabelFor, "testAccInput" + sKey, "Label for assocation points to children element");
+		});
+    });
+
 });

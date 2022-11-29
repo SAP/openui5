@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/core/Core",
+	"sap/m/Input",
 	"sap/base/util/merge"
-], function(SelectionPanel, VBox, sinon, oCore, merge) {
+], function(SelectionPanel, VBox, sinon, oCore, Input, merge) {
 	"use strict";
 
 	QUnit.module("API Tests", {
@@ -417,4 +418,32 @@ sap.ui.define([
 		assert.equal(aColumns.length, 1, "Reordering has been disabled --> only the fieldColumn is used");
 	});
 
+	QUnit.test("Check labelFor reference on label (WITH acc children)", function(assert){
+        this.oSelectionPanel.setItemFactory(function(oContext){
+
+            var oContainer = new VBox({
+                items: [
+                    new Input("testAccInput" + oContext.getProperty("name"), {})
+                ]
+            });
+
+            oContainer.getIdForLabel = function() {
+                return oContainer.getItems()[0].getId();
+            };
+
+            return oContainer;
+        });
+
+		this.oSelectionPanel.setP13nData(this.getTestData());
+		this.oSelectionPanel.showFactory(true);
+
+		var aItems = this.oSelectionPanel._oListControl.getItems();
+
+		aItems.forEach(function(oItem, iIndex){
+			var oLabel = oItem.getCells()[0].getItems()[0];
+			var sLabelFor = sap.ui.getCore().byId(oLabel.getLabelFor()).getIdForLabel();
+			var sKey = "key" + (iIndex + 1);
+			assert.equal(sLabelFor, "testAccInput" + sKey, "Label for assocation points to children element");
+		});
+    });
 });

@@ -45,6 +45,13 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
+				/**
+				* This factory function must return a single control instance of an input based control to provide custom filter capabilities.
+				* This control is then going to be added in the <code>GroupView</code> layout.
+				*
+				 * <b>Note:</b>: The <code>getIdForLabel</code> method can be imlplemented on the returned control instance
+				 * to return a focusable children control to provide the <code>labelFor</code> reference for the associated text.
+				*/
 				itemFactory: {
 					type: "function"
 				}
@@ -182,7 +189,8 @@ sap.ui.define([
 				//Add Factory Control + setLabelFor association (acc announcements)
 				if (oField) {
 					oItem.addContent(oField);
-					oItem.getContent()[0].getItems()[0].setLabelFor(oField.getId());
+					var oLabel = oItem.getContent()[0].getItems()[0];
+					oLabel.setLabelFor(oField);
 				}
 
 				//Remove Icon

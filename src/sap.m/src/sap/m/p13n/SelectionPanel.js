@@ -98,6 +98,9 @@ sap.ui.define([
 				/**
 				 * An optional callback that may be used to display additional custom content in each selectable item.
 				 * This factory can be toggled by executing the {@link sap.m.p13n.SelectionPanel#showFactory} method.
+				 *
+				 * <b>Note:</b>: The <code>getIdForLabel</code> method can be imlplemented on the returned control instance
+				 * to return a focusable children control to provide the <code>labelFor</code> reference for the associated text.
 				 */
 				itemFactory: {
 					type: "function"
@@ -130,7 +133,12 @@ sap.ui.define([
 	SelectionPanel.prototype._getListTemplate = function() {
 		var oColumnListItem = new ColumnListItem({
 			selected: "{" + this.P13N_MODEL + ">" + this.PRESENCE_ATTRIBUTE + "}",
-			type: ListType.Active,
+			type: {
+				path: this.P13N_MODEL + ">" + this.PRESENCE_ATTRIBUTE,
+				formatter: function(bSelected) {
+					return bSelected ? ListType.Active : ListType.Inactive;
+				}
+			},
 			cells: [
 				new VBox({
 					items: [
