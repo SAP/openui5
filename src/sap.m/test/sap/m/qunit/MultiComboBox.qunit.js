@@ -5291,7 +5291,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Focus should be set to the item for which a token have been focused", function(assert) {
-		// arrange
 		var oItem1 = new Item( { text: "1" }),
 			oItem2 = new Item( { text: "2" }),
 			oMultiComboBox = new MultiComboBox({
@@ -9638,4 +9637,126 @@ sap.ui.define([
 		// Clean
 		oMultiComboBox.destroy();
 	});
+	QUnit.test("The tokens are rendered in in the order they have been added in selectedKey after opening the picker", function (assert) {
+		var aTokens,
+			aItems = [
+				new Item({ text: "Item A", key: "A" }),
+				new Item({ text: "Item B", key: "B" }),
+				new Item({ text: "Item C", key: "C" }),
+				new Item({ text: "Item D", key: "D" }),
+				new Item({ text: "Item E", key: "E" })
+			], oMCB = new MultiComboBox({
+				width: "20rem",
+				items: aItems,
+				selectedKeys: ["D", "A", "E"]
+			});
+
+		oMCB.placeAt("MultiComboBoxContent");
+		Core.applyChanges();
+
+		this.clock.tick();
+
+		oMCB.open();
+
+		aTokens = oMCB.getAggregation("tokenizer").getTokens();
+
+		assert.equal(aTokens[0].getKey(), "D", "The first token is D");
+		assert.equal(aTokens[1].getKey(), "A", "The second token is A");
+		assert.equal(aTokens[2].getKey(), "E", "The third token is E");
+
+		// clean up
+		oMCB.destroy();
+
+		Core.applyChanges();
+	});
+
+	QUnit.test("The tokens are rendered in the order they have been added in selectectedItems after opening the picker", function (assert) {
+		var items = [new sap.ui.core.Item({
+			text : "Algeria"
+		}), new sap.ui.core.Item({
+			text : "Bulgaria"
+		}), new sap.ui.core.Item({
+			text : "Canada"
+		}), new sap.ui.core.Item({
+			text : "Denmark"
+		}), new sap.ui.core.Item({
+			text : "Estonia"
+		})];
+
+		var aSelection = [items[0], items[4], items[2], items[3], items[1]];
+		var aSelectedCountries = aSelection.map(function (itm) { return itm.getText(); });
+		var oMCB = new sap.m.MultiComboBox({
+			items : items,
+			selectedItems : aSelection
+			});
+
+		oMCB.placeAt("MultiComboBoxContent");
+		Core.applyChanges();
+
+		this.clock.tick();
+
+		oMCB.open();
+
+		var aTokens = oMCB.getAggregation("tokenizer").getTokens();
+		for (var i = 0; i < aTokens.length;  i++) {
+			assert.equal(aTokens[i].getText(), aSelectedCountries[i], "The txt of the item " + i + " should be " + aSelection[i].getText());
+		}
+
+		// clean up
+		oMCB.destroy();
+
+		Core.applyChanges();
+	});
+
+	QUnit.test("The order of selected items (tokens) from the user is preserved after re-opening the picker", function (assert) {
+		var selection = [4, 3, 2, 1, 0];
+		var aTokens,
+			aItems = [
+				new Item({ text: "Item A", key: '' }),
+				new Item({ text: "Item B", key:'Y' }),
+				new Item({ text: "Item C" }),
+				new Item({ text: "Item D", key:'X' }),
+				new Item({ text: "Item E", key: null})
+			], oMCB = new MultiComboBox({
+				width: "20rem",
+				items: aItems
+			});
+
+		oMCB.placeAt("MultiComboBoxContent");
+		Core.applyChanges();
+
+		this.clock.tick();
+
+		oMCB.open();
+		this.clock.tick();
+
+		selection.forEach(function (iPosition) {
+			oMCB._getList().setSelectedItem(oMCB._getList().getItems()[iPosition], true, true);
+			this.clock.tick(500);
+		}.bind(this));
+
+		Core.applyChanges();
+		this.clock.tick();
+
+		aTokens = oMCB.getAggregation("tokenizer").getTokens();
+
+		selection.forEach(function(iPosition, iIndex) {
+			assert.equal(aTokens[iIndex].getText(), aItems[iPosition].getText(), "Before close: The token is " + aItems[iPosition].getText());
+		});
+
+		oMCB.close();
+		Core.applyChanges();
+		this.clock.tick();
+
+		selection.forEach(function(iPosition, iIndex) {
+			assert.equal(aTokens[iIndex].getText(), aItems[iPosition].getText(), "After close: The token is " + aItems[iPosition].getText());
+		});
+
+		// clean up
+		oMCB.destroy();
+
+		Core.applyChanges();
+	});
+
+
 });
