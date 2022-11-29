@@ -16890,6 +16890,8 @@ sap.ui.define([
 			// avoid that the metadata request disturbs the timing
 			return oModel.getMetaModel().requestObject("/");
 		}).then(function () {
+			var oContext;
+
 			oBinding = that.oView.byId("table").getBinding("items");
 			oBinding.filter(new Filter("BusinessPartnerRole", FilterOperator.EQ, "01"))
 				.sort(new Sorter("CompanyName"))
@@ -16913,15 +16915,22 @@ sap.ui.define([
 						BusinessPartnerID : "0100000003"
 					}]
 				})
-				.expectChange("id", ["", "0100000002", "0100000003"]);
+				.expectChange("id", ["0100000099", "0100000002", "0100000003"]);
 
 			// code under test
 			oBinding.resume();
 
 			// code under test (CPOUI5ODATAV4-102)
-			oBinding.create();
+			oContext = oBinding.create({BusinessPartnerID : "0100000099"});
 
-			return that.waitForChanges(assert);
+			assert.strictEqual(oContext.getProperty("BusinessPartnerID"), undefined, "not now :-(");
+
+			return Promise.all([
+				oContext.requestProperty("BusinessPartnerID").then(function (sBusinessPartnerID) {
+					assert.strictEqual(sBusinessPartnerID, "0100000099", "but now :-)");
+				}),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			assertIndices(assert, oBinding.getCurrentContexts(), [-1, 0, 1]); // BCP: 2170049510
 		});
@@ -24137,17 +24146,17 @@ sap.ui.define([
 			// code under test
 			oXi.getBinding().getHeaderContext().requestSideEffects(["*"]);
 
+			// Note: side effect eventually destroys oBeta!
+			oBeta = null;
+
 			return that.waitForChanges(assert, "request side effects");
 		}).then(function () {
 			checkTable("after request side effects", assert, oTable, [
-				"/EMPLOYEES('0')",
-				"/EMPLOYEES('1')",
 				"/EMPLOYEES('2')",
 				"/EMPLOYEES('3')",
 				"/EMPLOYEES('4')",
 				"/EMPLOYEES('4.1')",
-				"/EMPLOYEES('4.1.1')",
-				"/EMPLOYEES('4.1.1.1')"
+				"/EMPLOYEES('4.1.1')"
 			], [
 				[undefined, 2, "2", "0", "Kappa #1", 156],
 				[undefined, 2, "3", "0", "Lambda #1", 157],
@@ -24157,12 +24166,6 @@ sap.ui.define([
 			], 8);
 
 			assert.strictEqual(oXi.getProperty("AGE"), 159);
-			// Note: Failed to drill-down into ('1')/AGE, invalid segment: ('1')
-			// assert.strictEqual(oBeta.getProperty("AGE"), undefined);
-			//TODO? Failed to drill-down into ('1')/AGE, invalid segment: ('1')
-			// oBeta.requestProperty("AGE").then(function (iAge) {
-			//     assert.strictEqual(iAge, 155);
-			// });
 
 			that.expectRequest("EMPLOYEES"
 					+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '4.1.1'),1)"
@@ -24182,8 +24185,6 @@ sap.ui.define([
 			return that.waitForChanges(assert, "scroll to the end");
 		}).then(function () {
 			checkTable("after scroll to the end", assert, oTable, [
-				"/EMPLOYEES('0')",
-				"/EMPLOYEES('1')",
 				"/EMPLOYEES('2')",
 				"/EMPLOYEES('3')",
 				"/EMPLOYEES('4')",
@@ -24227,6 +24228,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "scroll to the top");
 		}).then(function () {
+			oBeta = oTable.getRows()[1].getBindingContext();
+
 			checkTable("after scroll to the top", assert, oTable, [
 				"/EMPLOYEES('0')",
 				"/EMPLOYEES('1')",
@@ -24700,9 +24703,7 @@ sap.ui.define([
 				"/EMPLOYEES('0')",
 				"/EMPLOYEES('1')",
 				"/EMPLOYEES('1.1')",
-				"/EMPLOYEES('1.2')",
-				"/EMPLOYEES('2')",
-				"/EMPLOYEES('3')"
+				"/EMPLOYEES('1.2')"
 			], [
 				[true, 1, "0", "", "Alpha #1"],
 				[true, 2, "1", "0", "Beta #1"],
@@ -30040,8 +30041,8 @@ sap.ui.define([
 					}]
 				})
 				.expectChange("price", [, "5.11", "5.22"])
+				.expectChange("currency", [, "EUR", "EUR"])
 				.expectChange("inProcessByUser", [, "Charlie Brown", "Schroeder"]);
-				// Note: "currency" cells do not change
 
 			// Note: invisible, cached data was not updated and thus must be read again
 			oTable.setFirstVisibleRow(1);

@@ -2764,7 +2764,7 @@ sap.ui.define([
 
 	/**
 	 * Keeps only those contexts that were requested by a control last time, and all created
-	 * persisted or kept-alive contexts.
+	 * persisted or kept-alive contexts. All others are removed and later destroyed.
 	 *
 	 * @returns {sap.ui.model.odata.v4.Context[]} The list of kept contexts
 	 *
@@ -2790,6 +2790,19 @@ sap.ui.define([
 				aContexts.push(oContext);
 			}
 		});
+
+		// remove and later destroy others
+		this.aContexts.slice(this.iCreatedContexts, this.iCurrentBegin)
+			.forEach(function (oContext0, i) {
+				delete that.aContexts[that.iCreatedContexts + i];
+				that.destroyLater(oContext0);
+			});
+		if (this.iCurrentEnd >= this.iCreatedContexts) {
+			this.aContexts.slice(this.iCurrentEnd).forEach(that.destroyLater.bind(that));
+			if (this.aContexts.length > this.iCurrentEnd) {
+				this.aContexts.length = this.iCurrentEnd;
+			}
+		}
 
 		return aContexts;
 	};
