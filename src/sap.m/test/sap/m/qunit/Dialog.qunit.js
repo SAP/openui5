@@ -497,7 +497,7 @@ sap.ui.define([
 		var $Dialog = jQuery("#dialog"),
 			$ScrollDiv = this.oDialog.$("scroll"),
 			oTitleDom = this.oDialog.getDomRef("title"),
-			oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
+			oSubHeaderDom = $Dialog.children("header").children(".sapMDialogSubHeader")[0],
 			oIconDom = this.oDialog.getDomRef("icon"),
 			oSearchField = Core.byId("__field0").getFocusDomRef();
 		assert.ok(document.getElementById("dialog"), "dialog is rendered after it's opened.");
@@ -2985,7 +2985,7 @@ sap.ui.define([
 			},
 			fnAssertCorrectPaddingsAppliedOnBreakpoint = function (sBreakpoint) {
 				var sClass = "sapUi-Std-Padding" + sBreakpoint;
-				assert.ok(fnHasClass(".sapMDialogTitle .sapMIBar", sClass), "Header has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
+				assert.ok(fnHasClass(".sapMDialogTitleGroup .sapMIBar", sClass), "Header has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
 				assert.ok(fnHasClass(".sapMDialogSubHeader .sapMIBar", sClass), "Subheader has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
 				assert.ok(fnHasClass(".sapMDialogScrollCont", sClass), "Content section has correct responsive padding class applied on " + sBreakpoint + " breakpoint");
 				assert.ok(fnHasClass(".sapMDialogFooter .sapMIBar", sClass), "Buttons have correct responsive padding class applied on " + sBreakpoint + " breakpoint");
