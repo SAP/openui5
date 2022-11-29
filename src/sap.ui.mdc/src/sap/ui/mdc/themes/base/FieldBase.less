@@ -46,12 +46,12 @@
 	.sapUiMdcFieldBaseMoreFields{
 		min-width: calc(@_InputBase_Control_MinWidth_Compact ~" + 0.5rem + " @_InputBase_Control_OneIcon_MinWidth_Compact); /* to avoid wrapping of inner controls */
 	}
-	
+
 	.sapUiMdcFieldBaseMoreFields > *:first-child{
 		max-width: calc(~"100% - 0.5rem - " @_InputBase_Control_OneIcon_MinWidth_Compact); /* as input has a min-width, to not cut off unit */
 		min-width: @_InputBase_Control_MinWidth_Compact; /* as inner input has this min-width */
 	}
-	
+
 	.sapUiMdcFieldBaseMoreFields > *:nth-child(2){
 		min-width: calc(~"0.5rem + " @_InputBase_Control_OneIcon_MinWidth_Compact); /* As input has a min-width + padding */
 	}
@@ -92,4 +92,10 @@
 /* inside ToolBar */
 .sapUiMdcFieldBase.sapMBarChild {
 	line-height: 1rem;
+}
+
+/* inside Overflow toolbar menu */
+.sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll>div.sapUiMdcFieldBase  {
+    width: 100% !important;
+    max-width: 100% !important;
 }
