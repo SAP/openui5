@@ -21,12 +21,15 @@ sap.ui.define([
 	"sap/m/GenericTag",
 	"sap/m/Table",
 	"sap/m/Text",
+	"sap/m/ToggleButton",
 	"sap/m/OverflowToolbarButton",
+	"sap/m/OverflowToolbarToggleButton",
 	"sap/m/Slider",
 	"sap/m/MenuItem",
 	"sap/m/Menu",
 	"sap/m/Popover",
 	"sap/m/OverflowToolbarAssociativePopover",
+	"sap/m/OverflowToolbarAssociativePopoverControls",
 	"sap/m/MenuButton",
 	"sap/m/FlexItemData",
 	"sap/m/Title",
@@ -53,12 +56,15 @@ sap.ui.define([
 	GenericTag,
 	Table,
 	Text,
+	ToggleButton,
 	OverflowToolbarButton,
+	OverflowToolbarToggleButton,
 	Slider,
 	MenuItem,
 	Menu,
 	Popover,
 	OverflowToolbarAssociativePopover,
+	OverflowToolbarAssociativePopoverControls,
 	MenuButton,
 	FlexItemData,
 	Title,
@@ -3761,5 +3767,44 @@ sap.ui.define([
 		Object.keys(oResultPopover).forEach(function (sProperty) {
 			assert.notEqual(oResultAssociativePopover[sProperty], undefined, "Result object has property: " + sProperty);
 		});
+	});
+
+	QUnit.test("getControlConfig ToggleButton", function (assert) {
+		// Arrange
+		var oToggleButton = new ToggleButton(),
+			oConfig;
+
+		// Act
+		oConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oToggleButton);
+
+		// Assert
+		assert.strictEqual(oConfig.canOverflow, true, "ToggleButton can overflow");
+		assert.ok(oConfig.noInvalidationProps.indexOf("enabled") > -1, "ToggleButton does not invalidate on 'enabled' property change");
+		assert.ok(oConfig.noInvalidationProps.indexOf("pressed") > -1, "ToggleButton does not invalidate on 'type' property change");
+		assert.ok(oConfig.noInvalidationProps.indexOf("accesskey") > -1, "ToggleButton does not invalidate on 'accesskey' property change");
+		assert.ok(oConfig.listenForEvents.indexOf("press") > -1, "ToggleButton listens for 'press' event");
+
+		//Clean up
+		oToggleButton.destroy();
+	});
+
+	QUnit.test("getControlConfig OverflowToolbarToggleButton", function (assert) {
+		// Arrange
+		var oOverflowToolbarToggleButton = new OverflowToolbarToggleButton(),
+			oConfig;
+
+		// Act
+		oConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oOverflowToolbarToggleButton);
+
+		// Assert
+		assert.strictEqual(oConfig.canOverflow, true, "OverflowToolbarToggleButton can overflow");
+		assert.ok(oConfig.noInvalidationProps.indexOf("enabled") > -1, "OverflowToolbarToggleButton does not invalidate on 'enabled' property change");
+		assert.ok(oConfig.noInvalidationProps.indexOf("type") > -1, "OverflowToolbarToggleButton does not invalidate on 'enabled' property change");
+		assert.ok(oConfig.noInvalidationProps.indexOf("pressed") > -1, "OverflowToolbarToggleButton does not invalidate on 'type' property change");
+		assert.ok(oConfig.noInvalidationProps.indexOf("accesskey") > -1, "OverflowToolbarToggleButton does not invalidate on 'accesskey' property change");
+		assert.ok(oConfig.listenForEvents.indexOf("press") > -1, "OverflowToolbarToggleButton listens for 'press' event");
+
+		//Clean up
+		oOverflowToolbarToggleButton.destroy();
 	});
 });
