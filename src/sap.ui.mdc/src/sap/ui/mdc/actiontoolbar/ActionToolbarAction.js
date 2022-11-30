@@ -64,7 +64,7 @@ sap.ui.define([
     /**
 	 * Sets the behavior of the <code>ActionToolbarAction</code> inside an <code>OverflowToolbar</code> configuration.
 	 *
-	 * @public
+	 * @protected
 	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
 	 */
     ActionToolbarAction.prototype.getOverflowToolbarConfig = function() {
