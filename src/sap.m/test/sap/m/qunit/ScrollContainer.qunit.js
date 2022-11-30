@@ -310,6 +310,45 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Scrolling - bSkipElementsInScrollport API", function(assert) {
+
+		var oScrollContainer = new ScrollContainer("oSC", {
+			height: "200px",
+			width: "400px",
+			vertical: true,
+			content: [
+				new HTML({
+					content : "<div class=\"height100\">100px height div" +
+					"<div class=\"absoluteLeft0Top200\">" +
+					"<div class=\"absoluteLeft0Top200\" id=\"nestedPositioned\">XYZ</div>" +
+					"</div>" +
+					"</div>"
+				}),
+				this.oTestButton = new Button()
+			]
+		}),
+		bSkipElementsInScrollport = true;
+
+		// Act
+		oScrollContainer.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		oScrollContainer.scrollToElement(this.oTestButton, bSkipElementsInScrollport);
+
+		// Assert
+		assert.equal(getScrollPos(oScrollContainer.getId(), "top"), 0,
+		"ScrollContainer shouldn`t be scrolled when bSkipElementsInScrollport = true and the element is already visible in the scrollcontainer view port");
+
+		// Act
+		oScrollContainer.scrollToElement(this.oTestButton, bSkipElementsInScrollport);
+		// Assert
+		assert.equal(getScrollPos(oScrollContainer.getId(), "top"), -100, "ScrollContainer should be scrolled as expected without the aditional parameter.");
+
+		oScrollContainer.destroy();
+
+	});
+
+
 	QUnit.module("Overflow/Underflow", {
 		beforeEach: function () {
 			this.oScrollContainer = new ScrollContainer();
