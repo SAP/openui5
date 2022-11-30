@@ -242,6 +242,7 @@ sap.ui.define([
 	QUnit.test("open as aggregation", function(assert) {
 
 		oField.addDependent(oFieldHelp);
+		oField.setFieldGroupIds(["myFieldGroup"]);
 
 		var oPopover = oFieldHelp.getAggregation("_popover");
 		assert.notOk(oPopover, "No Popover initial created");
@@ -256,6 +257,7 @@ sap.ui.define([
 			assert.equal(oPopover._oOpenBy && oPopover._oOpenBy.getId(), "I1", "Popover opened by field");
 			assert.equal(iOpen, 1, "Open event fired");
 			assert.notOk(bOpenSuggest, "Open not as suggestion");
+			assert.deepEqual(oPopover._getFieldGroupIds(), ["myFieldGroup"], "FieldGroupIDs of Field used"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
 
 			oFieldHelp.close();
 			oClock.tick(iPopoverDuration); // fake closing time
@@ -267,6 +269,8 @@ sap.ui.define([
 
 	QUnit.test("open using connect (with async loading of Popover)", function(assert) {
 
+		oField.setFieldGroupIds(["myFieldGroup"]);
+		oField2.setFieldGroupIds(["myFieldGroup2"]);
 		var oStub = sinon.stub(sap.ui, "require");
 		oStub.withArgs("sap/m/Popover").onFirstCall().returns(undefined);
 		oStub.callThrough();
@@ -295,6 +299,7 @@ sap.ui.define([
 				var oScrollDelegate1 = oFieldHelp.getScrollDelegate();
 				var oScrollDelegate2 = oPopover.getScrollDelegate();
 				assert.equal(oScrollDelegate1, oScrollDelegate2, "oScrollDelegate of Popover used");
+				assert.deepEqual(oPopover._getFieldGroupIds(), ["myFieldGroup"], "FieldGroupIDs of Field used"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
 
 				oFieldHelp.connect(oField2);
 				assert.ok(oFieldHelp.isOpen(), "Field help sill opened");
@@ -308,6 +313,7 @@ sap.ui.define([
 
 				assert.ok(oPopover.isOpen(), "Field help opened");
 				assert.equal(oPopover._oOpenBy.getId(), "I2", "Popover opened by field2");
+				assert.deepEqual(oPopover._getFieldGroupIds(), ["myFieldGroup2"], "FieldGroupIDs of Field used"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
 
 				oFieldHelp.close();
 				oClock.tick(iPopoverDuration); // fake closing time

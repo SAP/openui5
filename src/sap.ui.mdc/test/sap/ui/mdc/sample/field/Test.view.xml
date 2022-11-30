@@ -150,6 +150,40 @@
 			<form:SimpleForm layout="ColumnLayout" editable="true"
 				labelSpanXL="5" labelSpanL="5" labelSpanM="4" columnsXL="3" columnsL="2" columnsM="1"
 				singleContainerFullSize="false" adjustLabelSpan="false">
+				<form:dependents>
+					<mdcField:FieldValueHelp id="IOFVH1"
+						title="Material"
+						filterFields="*MatrId,Text*"
+						keyPath="MatrId"
+						descriptionPath="Text">
+						<mdcField:outParameters>
+							<mdcField:OutParameter id="IOFVH1_Out-Unit" value="{MatrUnit}" helpPath="defaultUnit" mode="WhenEmpty"/>
+						</mdcField:outParameters>
+						<mdcField:FieldValueHelpMTableWrapper>
+							<m:Table items="{path: '/MaterialCollection'}" width="26rem">
+								<m:columns>
+									<m:Column>
+										<m:Label text="{/#Material/MatrId/@sap:label}"/>
+									</m:Column>
+									<m:Column>
+										<m:Label text="{/#Material/Text/@sap:label}"/>
+									</m:Column>
+									<m:Column>
+										<m:Label text="{/#Material/defaultUnit/@sap:label}"/>
+									</m:Column>
+								</m:columns>
+								<m:items>
+									<m:ColumnListItem type="Active">
+										<m:Text text="{MatrId}"></m:Text>
+										<m:Text text="{Text}"></m:Text>
+										<m:Text text="{defaultUnit}"></m:Text>
+									</m:ColumnListItem>
+								</m:items>
+							</m:Table>
+						</mdcField:FieldValueHelpMTableWrapper>
+					</mdcField:FieldValueHelp>
+				</form:dependents>
+
 				<c:Title text="standard help"></c:Title>
 
 				<m:Label text="Base fieldHelp"></m:Label>
@@ -711,39 +745,6 @@
 					submit="handleSubmit"
 					fieldHelp="IOFVH1"
 					fieldGroupIds="MyFieldGroup">
-					<mdc:dependents>
-							<mdcField:FieldValueHelp id="IOFVH1"
-								title="Material"
-								filterFields="*MatrId,Text*"
-								keyPath="MatrId"
-								descriptionPath="Text">
-								<mdcField:outParameters>
-									<mdcField:OutParameter id="IOFVH1_Out-Unit" value="{MatrUnit}" helpPath="defaultUnit" mode="WhenEmpty"/>
-								</mdcField:outParameters>
-								<mdcField:FieldValueHelpMTableWrapper>
-									<m:Table items="{path: '/MaterialCollection'}" width="26rem">
-										<m:columns>
-											<m:Column>
-												<m:Label text="{/#Material/MatrId/@sap:label}"/>
-											</m:Column>
-											<m:Column>
-												<m:Label text="{/#Material/Text/@sap:label}"/>
-											</m:Column>
-											<m:Column>
-												<m:Label text="{/#Material/defaultUnit/@sap:label}"/>
-											</m:Column>
-										</m:columns>
-										<m:items>
-											<m:ColumnListItem type="Active">
-												<m:Text text="{MatrId}"></m:Text>
-												<m:Text text="{Text}"></m:Text>
-												<m:Text text="{defaultUnit}"></m:Text>
-											</m:ColumnListItem>
-										</m:items>
-									</m:Table>
-								</mdcField:FieldValueHelpMTableWrapper>
-							</mdcField:FieldValueHelp>
-					</mdc:dependents>
 				</mdc:Field>
 
 				<m:Label text="{/#Product/MatrQuantity/@sap:label}"></m:Label>
@@ -1116,6 +1117,75 @@
 			<form:SimpleForm layout="ColumnLayout" editable="true"
 				labelSpanXL="5" labelSpanL="5" labelSpanM="4" columnsXL="3" columnsL="2" columnsM="1"
 				singleContainerFullSize="false" adjustLabelSpan="false">
+				<form:dependents>
+					<mdc:ValueHelp id="VH-IO1"
+						delegate="{name: 'sap/ui/mdc/sample/field/ValueHelp.delegate', payload: {out: [{path: 'defaultUnit', target: 'MatrUnit', mode: 'WhenEmpty'}]}}">
+						<mdc:typeahead>
+							<mdcValueHelp:Popover id="VH-IO1-Pop">
+								<mdcValueHelpContent:MTable id="VH-IO1-Pop-MTable"
+									title="Material"
+									filterFields="*MatrId,Text*"
+									keyPath="MatrId"
+									descriptionPath="Text"
+									caseSensitive="true"
+									useAsValueHelp="false">
+									<m:Table id="VH-IO1-Pop-Table" items="{path: '/MaterialCollection'}" width="26rem">
+										<m:columns>
+											<m:Column>
+												<m:Label text="{/#Material/MatrId/@sap:label}"/>
+											</m:Column>
+											<m:Column>
+												<m:Label text="{/#Material/Text/@sap:label}"/>
+											</m:Column>
+											<m:Column>
+												<m:Label text="{/#Material/defaultUnit/@sap:label}"/>
+											</m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem type="Active">
+												<m:Text text="{MatrId}"/>
+												<m:Text text="{Text}"/>
+												<m:Text text="{defaultUnit}"/>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</mdcValueHelpContent:MTable>
+							</mdcValueHelp:Popover>
+						</mdc:typeahead>
+						<mdc:dialog>
+							<mdcValueHelp:Dialog id="VH-IO1-Dialog" title="Material">
+								<mdcValueHelpContent:MTable id="VH-IO1-Dialog-MTable"
+									title="Material"
+									filterFields="*MatrId,Text*"
+									keyPath="MatrId"
+									descriptionPath="Text"
+									caseSensitive="true"
+									useAsValueHelp="false">
+									<m:Table id="VH-IO1-Dialog-Table" items="{path: '/MaterialCollection'}">
+										<m:columns>
+											<m:Column>
+												<m:Label text="{/#Material/MatrId/@sap:label}"/>
+											</m:Column>
+											<m:Column>
+												<m:Label text="{/#Material/Text/@sap:label}"/>
+											</m:Column>
+											<m:Column>
+												<m:Label text="{/#Material/defaultUnit/@sap:label}"/>
+											</m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem type="Active">
+												<m:Text text="{MatrId}"/>
+												<m:Text text="{Text}"/>
+												<m:Text text="{defaultUnit}"/>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</mdcValueHelpContent:MTable>
+							</mdcValueHelp:Dialog>
+						</mdc:dialog>
+					</mdc:ValueHelp>
+				</form:dependents>
 				<c:Title text="standard help"/>
 
 				<m:Label text="Empty ValueHelp"/>
@@ -1839,75 +1909,6 @@
 					submit="handleSubmit"
 					fieldHelp="VH-IO1"
 					fieldGroupIds="MyFieldGroup">
-					<mdc:dependents>
-						<mdc:ValueHelp id="VH-IO1"
-							delegate="{name: 'sap/ui/mdc/sample/field/ValueHelp.delegate', payload: {out: [{path: 'defaultUnit', target: 'MatrUnit', mode: 'WhenEmpty'}]}}">
-							<mdc:typeahead>
-								<mdcValueHelp:Popover id="VH-IO1-Pop">
-									<mdcValueHelpContent:MTable id="VH-IO1-Pop-MTable"
-										title="Material"
-										filterFields="*MatrId,Text*"
-										keyPath="MatrId"
-										descriptionPath="Text"
-										caseSensitive="true"
-										useAsValueHelp="false">
-										<m:Table id="VH-IO1-Pop-Table" items="{path: '/MaterialCollection'}" width="26rem">
-											<m:columns>
-												<m:Column>
-													<m:Label text="{/#Material/MatrId/@sap:label}"/>
-												</m:Column>
-												<m:Column>
-													<m:Label text="{/#Material/Text/@sap:label}"/>
-												</m:Column>
-												<m:Column>
-													<m:Label text="{/#Material/defaultUnit/@sap:label}"/>
-												</m:Column>
-											</m:columns>
-											<m:items>
-												<m:ColumnListItem type="Active">
-													<m:Text text="{MatrId}"/>
-													<m:Text text="{Text}"/>
-													<m:Text text="{defaultUnit}"/>
-												</m:ColumnListItem>
-											</m:items>
-										</m:Table>
-									</mdcValueHelpContent:MTable>
-								</mdcValueHelp:Popover>
-							</mdc:typeahead>
-							<mdc:dialog>
-								<mdcValueHelp:Dialog id="VH-IO1-Dialog" title="Material">
-									<mdcValueHelpContent:MTable id="VH-IO1-Dialog-MTable"
-										title="Material"
-										filterFields="*MatrId,Text*"
-										keyPath="MatrId"
-										descriptionPath="Text"
-										caseSensitive="true"
-										useAsValueHelp="false">
-										<m:Table id="VH-IO1-Dialog-Table" items="{path: '/MaterialCollection'}">
-											<m:columns>
-												<m:Column>
-													<m:Label text="{/#Material/MatrId/@sap:label}"/>
-												</m:Column>
-												<m:Column>
-													<m:Label text="{/#Material/Text/@sap:label}"/>
-												</m:Column>
-												<m:Column>
-													<m:Label text="{/#Material/defaultUnit/@sap:label}"/>
-												</m:Column>
-											</m:columns>
-											<m:items>
-												<m:ColumnListItem type="Active">
-													<m:Text text="{MatrId}"/>
-													<m:Text text="{Text}"/>
-													<m:Text text="{defaultUnit}"/>
-												</m:ColumnListItem>
-											</m:items>
-										</m:Table>
-									</mdcValueHelpContent:MTable>
-								</mdcValueHelp:Dialog>
-							</mdc:dialog>
-						</mdc:ValueHelp>
-					</mdc:dependents>
 				</mdc:Field>
 
 				<m:Label text="{/#Product/MatrQuantity/@sap:label}"/>
