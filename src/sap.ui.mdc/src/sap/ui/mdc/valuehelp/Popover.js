@@ -212,10 +212,6 @@ sap.ui.define([
 			this._oCurrentContent = aContents[0];
 			var oFooterContent = aContents[1];
 
-			// to prevent a Fieldgroup leave if opening control has fieldgroups, asign the fieldgroups to content
-			var oControl = this.getControl();
-			this._oCurrentContent.setFieldGroupIds(oControl.getFieldGroupIds());
-
 			if (oFooterContent && oPopover.getFooter() != oFooterContent && oFooterContent.isA && oFooterContent.isA("sap.m.Toolbar")) {
 				oPopover.setFooter(oFooterContent);
 				return oPopover;
