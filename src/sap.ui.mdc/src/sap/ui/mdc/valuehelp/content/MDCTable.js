@@ -64,11 +64,6 @@ sap.ui.define([
 
 		var _fireSelect = function (aConditions, bSelected) {
 			var sMultiSelectType = bSelected ? SelectType.Add : SelectType.Remove;
-
-			if (!bSelected && this._isSingleSelect()) {
-				sMultiSelectType = SelectType.Add;
-			}
-
 			this._fireSelect({type: sMultiSelectType, conditions: aConditions});
 		};
 
