@@ -108,6 +108,7 @@ function(
 				interfaces: [
 					"sap.ui.core.IFormContent",
 					"sap.m.IOverflowToolbarContent",
+					"sap.m.IToolbarInteractiveControl",
 					"sap.f.IShellBar"
 				],
 				library: "sap.m",
@@ -3026,6 +3027,19 @@ function(
 			}
 
 			return oInfo;
+		};
+
+		/**
+		 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+		 * Determines if the Control is interactive.
+		 *
+		 * @returns {boolean} If it is an interactive Control
+		 *
+		 * @private
+		 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+		 */
+		Select.prototype._getToolbarInteractive = function () {
+			return true;
 		};
 
 		/**

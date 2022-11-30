@@ -87,13 +87,14 @@ function(
 	 */
 	var Link = Control.extend("sap.m.Link", /** @lends sap.m.Link.prototype */ { metadata : {
 
-		interfaces : [
-			"sap.ui.core.IShrinkable",
-			"sap.ui.core.IFormContent"
-		],
-		library : "sap.m",
-		designtime: "sap/m/designtime/Link.designtime",
-		properties : {
+			interfaces : [
+				"sap.ui.core.IShrinkable",
+				"sap.ui.core.IFormContent",
+				"sap.m.IToolbarInteractiveControl"
+			],
+			library : "sap.m",
+			designtime: "sap/m/designtime/Link.designtime",
+			properties : {
 
 			/**
 			 * Defines the displayed link text.
@@ -419,6 +420,19 @@ function(
 		// Note: self-reference isn't needed in IE. Adding it would result in the link's text being read out twice.
 		return !bBrowserIsIE && !bAlreadyHasSelfReference &&
 			(aAriaLabelledBy.length > 0 || bHasReferencingLabels || bAllowEnhancingByParent);
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	Link.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
 	return Link;

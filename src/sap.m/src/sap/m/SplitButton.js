@@ -58,11 +58,12 @@ function(
 		 */
 		var SplitButton = Control.extend("sap.m.SplitButton", /** @lends sap.m.SplitButton.prototype */ { metadata : {
 
-			interfaces : [
-				"sap.m.IOverflowToolbarContent"
-			],
-			library : "sap.m",
-			properties : {
+				interfaces : [
+					"sap.m.IOverflowToolbarContent",
+					"sap.m.IToolbarInteractiveControl"
+				],
+				library : "sap.m",
+				properties : {
 
 				/**
 				 * Define the text of the button.
@@ -325,6 +326,17 @@ function(
 
 			return oConfig;
 		};
+
+	/**
+	 * Determines if it is interactive Control
+	 *
+	 * @private
+	 * @returns {boolean} If it is an interactive Control
+	 */
+	SplitButton.prototype._getToolbarInteractive = function () {
+		return true;
+	};
+
 
 		return SplitButton;
 	});

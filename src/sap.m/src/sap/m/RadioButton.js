@@ -93,14 +93,18 @@ function(
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/radio-button/ Radio Button}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var RadioButton = Control.extend("sap.m.RadioButton", /** @lends sap.m.RadioButton.prototype */ { metadata : {
-		interfaces : ["sap.ui.core.IFormContent"],
-		library : "sap.m",
-		properties : {
-			/**
-			 * Specifies if the radio button is disabled.
-			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+	var RadioButton = Control.extend("sap.m.RadioButton", /** @lends sap.m.RadioButton.prototype */ {
+		metadata : {
+			interfaces : [
+				"sap.ui.core.IFormContent",
+				"sap.m.IToolbarInteractiveControl"
+			],
+			library : "sap.m",
+			properties : {
+				/**
+				 * Specifies if the radio button is disabled.
+				 */
+				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
 			 * Specifies the select state of the radio button
@@ -612,6 +616,19 @@ function(
 				oControl.setSelected(false);
 			}
 		}
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	RadioButton.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
 	// Private properties setter generation

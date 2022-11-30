@@ -118,6 +118,9 @@ sap.ui.define([
 	 */
 	var VariantManagement = Control.extend("sap.ui.fl.variants.VariantManagement", /** @lends sap.ui.fl.variants.VariantManagement.prototype */ {
 		metadata: {
+			interfaces : [
+				"sap.m.IOverflowToolbarContent"
+			],
 			library: "sap.ui.fl",
 			designtime: "sap/ui/fl/designtime/variants/VariantManagement.designtime",
 			properties: {
@@ -1835,6 +1838,19 @@ sap.ui.define([
 		if (oModel) {
 			oModel.destroy();
 		}
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	VariantManagement.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
 	return VariantManagement;

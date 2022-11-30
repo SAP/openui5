@@ -55,9 +55,12 @@ function(
 		 */
 		var Switch = Control.extend("sap.m.Switch", /** @lends sap.m.Switch.prototype */ { metadata: {
 
-			interfaces: ["sap.ui.core.IFormContent"],
-			library: "sap.m",
-			properties: {
+				interfaces: [
+					"sap.ui.core.IFormContent",
+					"sap.m.IToolbarInteractiveControl"
+				],
+				library: "sap.m",
+				properties: {
 
 				/**
 				 * A boolean value indicating whether the switch is on or off.
@@ -455,5 +458,18 @@ function(
 			};
 		};
 
-		return Switch;
-	});
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	 Switch.prototype._getToolbarInteractive = function () {
+		return true;
+	};
+
+	return Switch;
+});

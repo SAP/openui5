@@ -24,26 +24,36 @@ sap.ui.define(['./BarInPageEnabler'],
 	ToolbarRenderer.render = BarInPageEnabler.prototype.render;
 
 	/**
+	 * Writes the accessibility state.
+	 * To be overwritten by subclasses.
+	 *
+	 * @private
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oToolbar An object representation of the control that should be rendered.
+	 */
+	ToolbarRenderer.writeAccessibilityState = function(oRm, oToolbar) {
+		var sRole = oToolbar._getAccessibilityRole(),
+			oAccInfo = {
+				role: sRole
+			};
+
+		if (!oToolbar.getAriaLabelledBy().length && sRole) {
+			oAccInfo.labelledby = oToolbar.getTitleId();
+		}
+
+		oRm.accessibilityState(oToolbar, oAccInfo);
+	};
+
+	/**
 	 * Add classes attributes and styles to the root tag
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oToolbar an object representation of the control that should be rendered
 	 */
 	ToolbarRenderer.decorateRootElement = function (oRm, oToolbar) {
-		var sAriaLabelledBy;
+		this.writeAccessibilityState(oRm, oToolbar);
 
 		oRm.class("sapMTB");
-
-		// ARIA
-		if (!oToolbar.getAriaLabelledBy().length) {
-			sAriaLabelledBy = oToolbar.getTitleId();
-		}
-
-		oRm.accessibilityState(oToolbar, {
-			role: oToolbar._getAccessibilityRole(),
-			labelledby: sAriaLabelledBy
-		});
-
 		oRm.class("sapMTBNewFlex");
 
 		if (oToolbar.getActive()) {

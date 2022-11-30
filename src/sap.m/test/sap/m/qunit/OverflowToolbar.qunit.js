@@ -26,7 +26,10 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/m/OverflowToolbarAssociativePopover",
 	"sap/m/MenuButton",
-	"sap/m/FlexItemData"
+	"sap/m/FlexItemData",
+	"sap/m/Title",
+	"sap/m/SegmentedButton",
+	"sap/ui/core/Core"
 ], function(
 	DomUnitsRem,
 	createAndAppendDiv,
@@ -51,7 +54,10 @@ sap.ui.define([
 	Popover,
 	OverflowToolbarAssociativePopover,
 	MenuButton,
-	FlexItemData
+	FlexItemData,
+	Title,
+	SegmentedButton,
+	oCore
 ) {
 	"use strict";
 
@@ -2934,6 +2940,153 @@ sap.ui.define([
 
 		// cleanup
 		fnIsRelativeWidth.restore();
+	});
+
+	QUnit.module("Accessibility");
+
+	QUnit.test("Aria attributes", function (assert) {
+		// arrange
+		var oOverflowTB = createOverflowToolbar(),
+			sExpectedAriaRoleDescription = sap.ui.getCore()
+				.getLibraryResourceBundle("sap.m")
+				.getText(oOverflowTB.constructor.ARIA_ROLE_DESCRIPTION);
+
+		// assert
+		assert.strictEqual(oOverflowTB.$().attr("aria-roledescription"), sExpectedAriaRoleDescription,  "aria-roledescription value is as expected");
+
+		// clean
+		oOverflowTB.destroy();
+	});
+
+	QUnit.test("Role attribute and aria-labelledby with interactive Controls", function (assert) {
+		// arrange
+		var oTitle = new Title({text: "Text"}),
+			aContent = [
+				oTitle,
+				new Button({text: "Button"})
+			],
+			oOverflowTB = createOverflowToolbar({}, aContent);
+
+		// assert
+		assert.strictEqual(oOverflowTB.$().attr("role"), undefined,
+			"OverflowToolbar does not have 'role' attribute, when there are less than two interactive Controls");
+		assert.strictEqual(oOverflowTB.$().attr("aria-labelledby"), undefined,
+			"Toolbar does not have 'aria-labelledby' attribute, when there are less than two interactive Controls");
+
+		// Act
+		oOverflowTB.addContent(new SegmentedButton());
+		oCore.applyChanges();
+
+		assert.strictEqual(oOverflowTB.$().attr("role"), "toolbar",
+			"OverflowToolbar hass'role' attribute, when there are at least two interactive Controls");
+		assert.strictEqual(oOverflowTB.$().attr("aria-labelledby"), oTitle.getId(),
+			"Toolbar has 'aria-labelledby' attribute, when there are at least two interactive Controls");
+
+		// clean
+		oOverflowTB.destroy();
+	});
+
+
+	QUnit.test("Role attribute and aria-labelledby with visible/not visible interactive Controls", function(assert) {
+		// Arrange + System under Test
+		var oTitle = new Title({text: "Text"}),
+			oBtn1 = new Button({visible: false, text: "Button 1"}),
+			aContent = [
+				oTitle,
+				oBtn1,
+				new Button({text: "Button"})
+			],
+			oOverflowTB = createOverflowToolbar({}, aContent);
+		oOverflowTB.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//Assert
+		assert.strictEqual(oOverflowTB.$().attr("role"), undefined,
+			"Toolbar does not have 'role' attribute, when there are less than two interactive Controls");
+		assert.strictEqual(oOverflowTB.$().attr("aria-labelledby"), undefined,
+			"Toolbar does not have 'aria-labelledby' attribute, when there are less than two interactive Controls");
+
+		//Act
+		oBtn1.setVisible(true);
+		oCore.applyChanges();
+
+		//Assert
+		assert.strictEqual(oOverflowTB.$().attr("role"), "toolbar",
+			"Toolbar has 'role' attribute, when there are at least two interactive Controls");
+		assert.strictEqual(oOverflowTB.$().attr("aria-labelledby"), oTitle.getId(),
+			"Toolbar has 'aria-labelledby' attribute, when there are at least two interactive Controls");
+
+		//Cleanup
+		oOverflowTB.destroy();
+	});
+
+	QUnit.test("Role attribute and aria-labelledby with overflowed (in Popover) Controls", function(assert) {
+		// Arrange + System under Test
+		var oTitle = new Title({text: "Text"}),
+			oBtn1 = new Button({
+				text: "Button 1"
+			}),
+			aContent = [
+				oTitle,
+				new Button({text: "Button"})
+			],
+			oOverflowTB = createOverflowToolbar({}, aContent);
+		oOverflowTB.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//Assert
+		assert.strictEqual(oOverflowTB.$().attr("role"), undefined,
+			"Toolbar does not have 'role' attribute, when there are less than two interactive Controls");
+		assert.strictEqual(oOverflowTB.$().attr("aria-labelledby"), undefined,
+			"Toolbar does not have 'aria-labelledby' attribute, when there are less than two interactive Controls");
+
+		//Act
+		oOverflowTB.addContent(oBtn1);
+		oCore.applyChanges();
+
+		//Assert
+		assert.strictEqual(oOverflowTB.$().attr("role"), "toolbar",
+			"Toolbar has 'role' attribute, when there are at least two interactive Controls");
+		assert.strictEqual(oOverflowTB.$().attr("aria-labelledby"), oTitle.getId(),
+			"Toolbar has 'aria-labelledby' attribute, when there are at least two interactive Controls");
+
+		//Cleanup
+		oOverflowTB.destroy();
+	});
+
+	QUnit.test("Role attribute and aria-labelledby with overflow button", function(assert) {
+		// Arrange + System under Test
+		var oTitle = new Title({text: "Text"}),
+			oBtn1 = new Button({
+				text: "Button 1"
+			}),
+			aContent = [
+				oTitle,
+				new Button(),
+				oBtn1
+			],
+			oOverflowTB = createOverflowToolbar({width: "1000px"}, aContent);
+		oOverflowTB.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//Assert
+		assert.strictEqual(oOverflowTB.$().attr("role"), "toolbar",
+			"Toolbar has 'role' attribute, when there are at least two interactive Controls");
+		assert.strictEqual(oOverflowTB.$().attr("aria-labelledby"), oTitle.getId(),
+			"Toolbar has 'aria-labelledby' attribute, when there are at least two interactive Controls");
+
+		//Act
+		oBtn1.setWidth("1000px");
+		oCore.applyChanges();
+
+		//Assert
+		assert.strictEqual(oOverflowTB.$().attr("role"), "toolbar",
+			"Toolbar has 'role' attribute, when there is one interactive Control + overflow button shown");
+		assert.strictEqual(oOverflowTB.$().attr("aria-labelledby"), oTitle.getId(),
+			"Toolbar has 'aria-labelledby' attribute, when there is one interactive Control + overflow button shown");
+
+		//Cleanup
+		oOverflowTB.destroy();
 	});
 
 	QUnit.module("Associative popover");
