@@ -177,6 +177,40 @@ describe("sap.m.Label", function() {
 		});
 	});
 
+	it("should visualize the Chinese language (Simplified Chinese zh-Hans)", function () {
+
+		var simpleForm = element(by.id("simpleForm"));
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function () {
+			changeLanguage("zh-Hans");
+			expect(takeScreenshot(simpleForm)).toLookAs('28_simpleForm_compact_zh_Hans');
+		});
+
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function () {
+			element(by.id('cozySwitch')).click();
+			changeLanguage("zh-Hans");
+			expect(takeScreenshot(simpleForm)).toLookAs('29_simpleForm_cozy_zh_Hans');
+		});
+
+		element(by.id('cozySwitch')).click();
+	});
+
+	it("should visualize the Chinese language (Traditional Chinese zh-Hant)", function () {
+
+		var simpleForm = element(by.id("simpleForm"));
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function () {
+			changeLanguage("zh-Hant");
+			expect(takeScreenshot(simpleForm)).toLookAs('30_simpleForm_compact_zh_Hant');
+		});
+
+		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function () {
+			element(by.id('cozySwitch')).click();
+			changeLanguage("zh-Hant");
+			expect(takeScreenshot(simpleForm)).toLookAs('31_simpleForm_cozy_zh_Hant');
+		});
+
+		element(by.id('cozySwitch')).click();
+	});
+
 	it("should visualize label with fixed width, asterisk and colon", function () {
 		var lbl = element(by.id('lblcolonrequired'));
 
