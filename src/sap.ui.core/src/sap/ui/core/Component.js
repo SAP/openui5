@@ -377,6 +377,43 @@ sap.ui.define([
 	});
 
 	/**
+	 * Creates a new subclass of class <code>sap.ui.core.Component</code> with name
+	 * <code>sClassName</code> and enriches it with the information contained in <code>oClassInfo</code>.
+	 *
+	 * <code>oClassInfo</code> might contain the same kind of information as described in
+	 * {@link sap.ui.base.ManagedObject.extend}, plus the <code>manifest</code> property in the 'metadata'
+	 * object literal, indicating that the component configuration should be read from a manifest.json file.
+	 *
+	 * @param {string} sClassName
+	 *            Qualified name of the newly created class
+	 * @param {object} [oClassInfo]
+	 *            Object literal with information about the class
+	 * @param {sap.ui.core.Component.MetadataOptions} [oClassInfo.metadata]
+	 *            The metadata object describing the class.
+	 *            See {@link sap.ui.core.Component.MetadataOptions MetadataOptions} for the values allowed in every extend.
+	 * @param {function} [FNMetaImpl=sap.ui.core.ComponentMetadata]
+	 *            Constructor function for the metadata object. If not given, it defaults to an
+	 *            internal subclass of <code>sap.ui.core.ComponentMetadata</code>.
+	 * @returns {function} The created class / constructor function
+	 * @name sap.ui.core.Component.extend
+	 * @function
+	 * @static
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.base.ManagedObject.MetadataOptions} sap.ui.core.Component.MetadataOptions
+	 *
+	 * The structure of the "metadata" object which is passed when inheriting from sap.ui.core.Component using its static "extend" method.
+	 * See {@link sap.ui.core.Component.extend} for details on its usage.
+	 *
+	 * @property {"json"} [manifest]  When set to the string literal "json", this property indicates that the component configuration
+	 *            should be read from a manifest.json file which is assumed to exist next to the Component.js file.
+	 *
+	 * @public
+	 */
+
+	/**
 	 * Executes the given callback function for each sap.ui.core.Element whose owner-component
 	 * has the given ID and which has no parent.
 	 * @param {function(sap.ui.core.Element, sap.ui.core.ID)} fn callback function

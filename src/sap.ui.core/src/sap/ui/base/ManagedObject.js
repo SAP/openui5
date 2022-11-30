@@ -596,12 +596,344 @@ sap.ui.define([
 	 */
 
 	/**
+	 * @typedef {sap.ui.base.Object.MetadataOptions} sap.ui.base.ManagedObject.MetadataOptions
+	 *
+	 * The structure of the "metadata" object which is passed when inheriting from sap.ui.base.ManagedObject using its static "extend" method.
+	 * See {@link sap.ui.base.ManagedObject.extend} for details on its usage.
+	 *
+	 * @property {string} [library]
+	 *     Name of the library that the new subclass should belong to. If the subclass is a control or element, it will
+	 *     automatically register with that library so that authoring tools can discover it.
+	 *     By convention, the name of the subclass should have the library name as a prefix, but subfolders are allowed,
+	 *     e.g. <code>sap.ui.layout.form.Form</code> belongs to library <code>sap.ui.layout</code>.
+	 *
+	 * @property {Object<string, string | sap.ui.base.ManagedObject.MetadataOptions.Property>} [properties]
+	 *     An object literal whose properties each define a new managed property in the ManagedObject subclass.
+	 *     The value can either be a simple string which then will be assumed to be the type of the new property or it can be
+	 *     an object literal with the following properties (see {@link sap.ui.base.ManagedObject.MetadataOptions.Property Property} for details):
+	 *     type, visibility, byValue, group, defaultValue, bindable, selector
+	 *     Property names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
+	 *     If an aggregation in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will
+	 *     be used as generic documentation of the aggregation.
+	 *
+	 *     For each public property 'foo', the following methods will be created by the "extend" method and will be added to the
+	 *     prototype of the subclass:
+	 *     <ul>
+	 *     <li>getFoo() - returns the current value of property 'foo'. Internally calls {@link #getProperty}</li>
+	 *     <li>setFoo(v) - sets 'v' as the new value of property 'foo'. Internally calls {@link #setProperty}</li>
+	 *     <li>bindFoo(c) - (only if property was defined to be 'bindable'): convenience function that wraps {@link #bindProperty}</li>
+	 *     <li>unbindFoo() - (only if property was defined to be 'bindable'): convenience function that wraps {@link #unbindProperty}</li>
+	 *     </ul>
+	 *     For hidden properties, no methods are generated.
+	 *
+	 * @property {string} [defaultProperty]
+	 *     When specified, the default property must match the name of one of the properties defined for the new subclass (either own or inherited).
+	 *     The named property can be used to identify the main property to be used for bound data. E.g. the value property of a field control.
+	 *
+	 * @property {Object<string, string | sap.ui.base.ManagedObject.MetadataOptions.Aggregation>} [aggregations]
+	 *     An object literal whose properties each define a new aggregation in the ManagedObject subclass.
+	 *     The value can either be a simple string which then will be assumed to be the type of the new aggregation or it can be
+	 *     an object literal with the following properties (see {@link sap.ui.base.ManagedObject.MetadataOptions.Aggregation Aggregation} for details):
+	 *     type, multiple, singularName, visibility, bindable, forwarding, selector.
+	 *     Aggregation names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
+	 *     The name for a hidden aggregations might start with an underscore.
+	 *     If an aggregation in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will
+	 *     be used as generic documentation of the aggregation.
+	 *
+	 *     For each public aggregation 'item' of cardinality 0..1, the following methods will be created by the "extend" method and will be added to the
+	 *     prototype of the subclass:
+	 *     <ul>
+	 *     <li>getItem() - returns the current value of aggregation 'item'. Internally calls {@link #getAggregation} with a default value of <code>undefined</code></li>
+	 *     <li>setItem(o) - sets 'o' as the new aggregated object in aggregation 'item'. Internally calls {@link #setAggregation}</li>
+	 *     <li>destroyItem(o) - destroy a currently aggregated object in aggregation 'item' and clears the aggregation. Internally calls {@link #destroyAggregation}</li>
+	 *     <li>bindItem(c) - (only if aggregation was defined to be 'bindable'): convenience function that wraps {@link #bindAggregation}</li>
+	 *     <li>unbindItem() - (only if aggregation was defined to be 'bindable'): convenience function that wraps {@link #unbindAggregation}</li>
+	 *     </ul>
+	 *     For a public aggregation 'items' of cardinality 0..n, the following methods will be created:
+	 *     <ul>
+	 *     <li>getItems() - returns an array with the objects contained in aggregation 'items'. Internally calls {@link #getAggregation} with a default value of <code>[]</code></li>
+	 *     <li>addItem(o) - adds an object as last element in the aggregation 'items'. Internally calls {@link #addAggregation}</li>
+	 *     <li>insertItem(o,p) - inserts an object into the aggregation 'items'. Internally calls {@link #insertAggregation}</li>
+	 *     <li>indexOfItem(o) - returns the position of the given object within the aggregation 'items'. Internally calls {@link #indexOfAggregation}</li>
+	 *     <li>removeItem(v) - removes an object from the aggregation 'items'. Internally calls {@link #removeAggregation}</li>
+	 *     <li>removeItems() - removes all objects from the aggregation 'items'. Internally calls {@link #removeAllAggregation}</li>
+	 *     <li>destroyItems() - destroy all currently aggregated objects in aggregation 'items' and clears the aggregation. Internally calls {@link #destroyAggregation}</li>
+	 *     <li>bindItems(c) - (only if aggregation was defined to be 'bindable'): convenience function that wraps {@link #bindAggregation}</li>
+	 *     <li>unbindItems() - (only if aggregation was defined to be 'bindable'): convenience function that wraps {@link #unbindAggregation}</li>
+	 *     </ul>
+	 *     For hidden aggregations, no methods are generated.
+	 *
+	 * @property {string} [defaultAggregation]
+	 *     When specified, the default aggregation must match the name of one of the aggregations defined for the new subclass (either own or inherited).
+	 *     The named aggregation will be used in contexts where no aggregation is specified. E,g. when an object in an XMLView embeds other objects without
+	 *     naming an aggregation, as in the following example:
+	 *     <pre>
+	 *      &lt;!-- assuming the defaultAggregation for Dialog is 'content' -->
+	 *      &lt;Dialog>
+	 *        &lt;Text/>
+	 *        &lt;Button/>
+	 *      &lt;/Dialog>
+	 *     </pre>
+	 *
+	 * @property {Object<string, string | sap.ui.base.ManagedObject.MetadataOptions.Association>} [associations]
+	 *     An object literal whose properties each define a new association of the ManagedObject subclass.
+	 *     The value can either be a simple string which then will be assumed to be the type of the new association or it can be
+	 *     an object literal with the following properties (see {@link sap.ui.base.ManagedObject.MetadataOptions.Association Association} for details): type, multiple, singularName, visibility
+	 *     Association names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
+	 *     If an association in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will
+	 *     be used as generic documentation of the association.
+	 *
+	 *     For each association 'ref' of cardinality 0..1, the following methods will be created by the "extend" method and will be added to the
+	 *     prototype of the subclass:
+	 *     <ul>
+	 *     <li>getRef() - returns the current value of association 'item'. Internally calls {@link #getAssociation} with a default value of <code>undefined</code></li>
+	 *     <li>setRef(o) - sets 'o' as the new associated object in association 'item'. Internally calls {@link #setAssociation}</li>
+	 *     </ul>
+	 *     For a public association 'refs' of cardinality 0..n, the following methods will be created:
+	 *     <ul>
+	 *     <li>getRefs() - returns an array with the objects contained in association 'items'. Internally calls {@link #getAssociation} with a default value of <code>[]</code></li>
+	 *     <li>addRef(o) - adds an object as last element in the association 'items'. Internally calls {@link #addAssociation}</li>
+	 *     <li>removeRef(v) - removes an object from the association 'items'. Internally calls {@link #removeAssociation}</li>
+	 *     <li>removeAllRefs() - removes all objects from the association 'items'. Internally calls {@link #removeAllAssociation}</li>
+	 *     </ul>
+	 *     For hidden associations, no methods are generated.
+	 *
+	 * @property {Object<string, string | sap.ui.base.ManagedObject.MetadataOptions.Event>} [events]
+	 *     An object literal whose properties each define a new event of the ManagedObject subclass.
+	 *     In this literal, the property names are used as event names and the values are object literals describing the respective event which can have the
+	 *     following properties (see {@link sap.ui.base.ManagedObject.MetadataOptions.Event Event} for details): allowPreventDefault, parameters
+	 *     Event names should use camelCase notation, start with a lower-case letter and only use characters from the set [a-zA-Z0-9_$].
+	 *     If an event in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will be used
+	 *     as generic documentation of the event.
+	 *
+	 *     For each event 'Some' the following methods will be created by the "extend" method and will be added to the
+	 *     prototype of the subclass:
+	 *     <ul>
+	 *     <li>attachSome(fn,o) - registers a listener for the event. Internally calls {@link #attachEvent}</li>
+	 *     <li>detachSome(fn,o) - deregisters a listener for the event. Internally calls {@link #detachEvent}</li>
+	 *     <li>fireSome() - fire the event. Internally calls {@link #fireEvent}</li>
+	 *     </ul>
+	 *
+	 * @property {string | boolean} [designtime]
+	 *     Name of a module that implements the designtime part. Alternatively <code>true</code> to indicate that the module's file is named *.designtime.js with
+	 *     the same base name as the class itself.
+	 *
+	 * @property {Object<string,any>} [specialSettings] Special settings are an experimental feature and MUST NOT BE DEFINED in controls or applications outside of the <code>sap.ui.core</code> library.
+	 *     There's no generic or general way how to set or get the values for special settings. For the same reason, they cannot be bound against a model.
+	 *     If there's a way for consumers to define a value for a special setting, it must be documented in the class that introduces the setting.
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.base.ManagedObject.MetadataOptions.Property
+	 *
+	 * An object literal describing a property of a class derived from <code>sap.ui.base.ManagedObject</code>.
+	 * See {@link sap.ui.base.ManagedObject.MetadataOptions MetadataOptions} for details on its usage.
+	 *
+	 * @property {string} type Type of the new property. Must either be one of the built-in types
+	 *     'string', 'boolean', 'int', 'float', 'object', 'function' or 'any', or a type created and registered with
+	 *     {@link sap.ui.base.DataType.createType} or an array type based on one of the previous types (e.g. 'int[]'
+	 *     or 'string[]', but not just 'array').
+	 * @property {"hidden" | "public"} [visibility="public"] Either 'hidden' or 'public', defaults to 'public'. Properties that
+	 *     belong to the API of a class must be 'public' whereas 'hidden' properties can only be used internally.
+	 *     Only public properties are accepted by the constructor or by <code>applySettings</code> or in declarative
+	 *     representations like an <code>XMLView</code>. Equally, only public properties are cloned.
+	 * @property {boolean} [byValue=false]
+	 *     If set to <code>true</code>, the property value will be {@link module:sap/base/util/deepClone deep cloned}
+	 *     on write and read operations to ensure that the internal value can't be modified by the outside. The property
+	 *     <code>byValue</code> is currently restricted to a <code>boolean</code> value. Other types are reserved for future
+	 *     use. Class definitions must only use boolean values for the flag (or omit it), but readers of ManagedObject
+	 *     metadata should handle any truthy value as <code>true</code> to be future safe.
+	 *     Note that using <code>byValue:true</code> has a performance impact on property access and therefore should be
+	 *     used carefully. It also doesn't make sense to set this option for properties with a primitive type (they have
+	 *     value semantic anyhow) or for properties with arrays of primitive types (they are already cloned
+	 *     with a less expensive implementation). Defaults to 'false'.
+	 * @property {"Accessibility" | "Appearance" | "Behavior" | "Data" | "Designtime" | "Dimension" | "Identification" | "Misc"} [group]
+	 *     A semantic grouping of the properties, intended to be used in design time tools.
+	 *     Allowed values are (case sensitive): Accessibility, Appearance, Behavior, Data, Designtime, Dimension, Identification, Misc
+	 * @property {any} [defaultValue] The default value for the property or null if there is no specific
+	 *     default value defined (the data type's default becomes the default value in this case, e.g. <code>false</code> for boolean and
+	 *     the empty string for type string). Omitting this property means the default value is <code>undefined</code>.
+	 * @property {boolean | "bindable"} [bindable=false] (Either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable'.)
+	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience.
+	 *     Despite its name, setting this flag is not mandatory to make the managed property bindable. The generic methods {@link #bindProperty} and
+	 *     {@link #unbindProperty} can always be used.
+	 * @property {string} [selector] Can be set to a valid CSS selector (as accepted by the
+	 *     {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector Element.prototype.querySelector}
+	 *     method). When set, it locates the DOM element that represents this property's value. It should only be set
+	 *     for properties that have a visual text representation in the DOM.
+	 *
+	 *     The purpose of the selector is to allow other framework parts or design time tooling to identify the DOM parts
+	 *     of a control or element that represent a specific property without knowing the control or element implementation
+	 *     in detail.
+	 *
+	 *     As an extension to the standard CSS selector syntax, the selector string can contain the placeholder <code>{id}</code>
+	 *     (multiple times). Before evaluating the selector in the context of an element or control, all occurrences of the
+	 *     placeholder have to be replaced by the (potentially escaped) ID of that element or control.
+	 *     In fact, any selector should start with <code>#{id}</code> to ensure that the query result is limited to the
+	 *     desired element or control.
+	 *
+	 *     <b>Note</b>: there is a convenience method {@link sap.ui.core.Element#getDomRefForSetting} that evaluates the
+	 *     selector in the context of a concrete element or control instance. It also handles the placeholder <code>{id}</code>.
+	 *     Only selected framework features may use that private method, it is not yet a public API and might be changed
+	 *     or removed in future versions of UI5. However, instead of maintaining the <code>selector</code> in the metadata,
+	 *     element and control classes can overwrite <code>getDomRefForSetting</code> and determine the DOM element
+	 *     dynamically.
+	 * @property {boolean} [deprecated=false] Flag that marks the property as deprecated (defaults to false). May lead to an additional warning
+	 *     log message at runtime when the property is still used. For the documentation, also add a <code>@deprecated</code> tag in the JSDoc,
+	 *     describing since when it is deprecated and what any alternatives are.
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.base.ManagedObject.MetadataOptions.Aggregation
+	 *
+	 * An object literal describing an aggregation of a class derived from <code>sap.ui.base.ManagedObject</code>.
+	 * See {@link sap.ui.base.ManagedObject.MetadataOptions MetadataOptions} for details on its usage.
+	 *
+	 * @property {string} [type='sap.ui.core.Control'] Type of the new aggregation. Must be the full global name of a ManagedObject subclass
+	 *     or a UI5 interface (in dot notation, e.g. 'sap.m.Button').
+	 * @property {boolean} [multiple=true] Whether the aggregation is a 0..1 (false) or a 0..n aggregation (true), defaults to true
+	 * @property {string} [singularName] Singular name for 0..n aggregations. For 0..n aggregations the name by convention should be the plural name.
+	 *     Methods affecting multiple objects in an aggregation will use the plural name (e.g. getItems(), whereas methods that deal with a single object will use
+	 *     the singular name (e.g. addItem). The framework knows a set of common rules for building the plural form of English nouns and uses these rules to determine
+	 *     a singular name on its own. If that name is wrong, a singluarName can be specified with this property.
+	 * @property {"hidden" | "public"} [visibility="public"] Either 'hidden' or 'public', defaults to 'public'. Aggregations that
+	 *     belong to the API of a class must be 'public' whereas 'hidden' aggregations typically are used for the
+	 *     implementation of composite classes (e.g. composite controls). Only public aggregations are accepted by
+	 *     the constructor or by <code>applySettings</code> or in declarative representations like an <code>XMLView</code>.
+	 *     Equally, only public aggregations are cloned.
+	 * @property {boolean | "bindable"} [bindable=false] (Either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable'.)
+	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience.
+	 *     Despite its name, setting this flag is not mandatory to make the managed aggregation bindable. The generic methods {@link #bindAggregation} and
+	 *     {@link #unbindAggregation} can always be used.
+	 * @property {object} [forwarding]
+	 *     If set, this defines a forwarding of objects added to this aggregation into an aggregation of another ManagedObject - typically to an inner control
+	 *     within a composite control.
+	 *     This means that all adding, removal, or other operations happening on the source aggregation are actually called on the target instance.
+	 *     All elements added to the source aggregation will be located at the target aggregation (this means the target instance is their parent).
+	 *     Both, source and target element will return the added elements when asked for the content of the respective aggregation.
+	 *     If present, the named (non-generic) aggregation methods will be called for the target aggregation.
+	 *     Aggregations can only be forwarded to non-hidden aggregations of the same or higher multiplicity (i.e. an aggregation with multiplicity "0..n" cannot be
+	 *     forwarded to an aggregation with multiplicity "0..1").
+	 *     The target aggregation must also be "compatible" to the source aggregation in the sense that any items given to the source aggregation
+	 *     must also be valid in the target aggregation (otherwise the target element will throw a validation error).
+	 *     If the forwarded elements use data binding, the target element must be properly aggregated by the source element to make sure all models are available there
+	 *     as well.
+	 *     The aggregation target must remain the same instance across the entire lifetime of the source control.
+	 *     Aggregation forwarding will behave unexpectedly when the content in the target aggregation is modified by other actors (e.g. by the target element or by
+	 *     another forwarding from a different source aggregation). Hence, this is not allowed.
+	 * @property {string} forwarding.aggregation The name of the aggregation on the target into which the objects shall be forwarded. The multiplicity of the target
+	 *     aggregation must be the same as the one of the source aggregation for which forwarding is defined.
+	 * @property {string} [forwarding.idSuffix] A string which is appended to the ID of <i>this</i> ManagedObject to construct the ID of the target ManagedObject. This is
+	 *     one of the two options to specify the target. This option requires the target instance to be created in the init() method of this ManagedObject and to be
+	 *     always available.
+	 * @property {string} [forwarding.getter] The name of the function on instances of this ManagedObject which returns the target instance. This second option
+	 *     to specify the target can be used for lazy instantiation of the target. Note that either idSuffix or getter must be given. Also note that the target
+	 *     instance returned by the getter must remain the same over the entire lifetime of this ManagedObject and the implementation assumes that all instances return
+	 *     the same type of object (at least the target aggregation must always be defined in the same class).
+	 * @property {boolean} [forwarding.forwardBinding] Whether any binding should happen on the forwarding target or not. Default if omitted is <code>false</code>,
+	 *     which means any bindings happen on the outer ManagedObject. When the binding is forwarded, all binding methods like updateAggregation, getBindingInfo,
+	 *     refreshAggregation etc. are called on the target element of the forwarding instead of being called on this element. The basic aggregation mutator methods
+	 *     (add/remove etc.) are only called on the forwarding target element. Without forwardBinding, they are called on this element, but forwarded to the forwarding
+	 *     target, where they actually modify the aggregation.
+	 * @property {string} [selector] Can be set to a valid CSS selector (as accepted by the
+	 *     {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector Element.prototype.querySelector}
+	 *     method). When set, it locates the DOM element that surrounds the aggregation's content. It should only be
+	 *     set for aggregations that have a visual representation in the DOM. A DOM element surrounding the aggregation's
+	 *     rendered content should be available in the DOM, even if the aggregation is empty or not rendered for some reason.
+	 *     In cases where this is not possible or not intended, <code>getDomRefForSetting</code> can be overridden, see below.
+	 *
+	 *     The purpose of the selector is to allow other framework parts like drag and drop or design time tooling to identify
+	 *     those DOM parts of a control or element that represent a specific aggregation without knowing the control or element
+	 *     implementation in detail.
+	 *
+	 *     As an extension to the standard CSS selector syntax, the selector string can contain the placeholder <code>{id}</code>
+	 *     (multiple times). Before evaluating the selector in the context of an element or control, all occurrences of the
+	 *     placeholder have to be replaced by the (potentially escaped) ID of that element or control.
+	 *     In fact, any selector should start with <code>#{id}</code> to ensure that the query result is limited to the
+	 *     desired element or control.
+	 *
+	 *     <b>Note</b>: there is a convenience method {@link sap.ui.core.Element#getDomRefForSetting} that evaluates the
+	 *     selector in the context of a concrete element or control instance. It also handles the placeholder <code>{id}</code>.
+	 *     Only selected framework features may use that private method, it is not yet a public API and might be changed
+	 *     or removed in future versions of UI5. However, instead of maintaining the <code>selector</code> in the metadata,
+	 *     element and control classes can overwrite <code>getDomRefForSetting</code> to calculate or add the appropriate
+	 *     DOM Element dynamically.
+	 * @property {boolean} [deprecated=false] Flag that marks the aggregation as deprecated (defaults to false). May lead to an additional warning
+	 *     log message at runtime when the aggregation is still used. For the documentation, also add a <code>@deprecated</code> tag in the JSDoc,
+	 *     describing since when it is deprecated and what any alternatives are.
+	 * @property {string[]} [altTypes] An optional list of alternative types that may be given instead of the main type. Alternative types
+	 *     may only be simple types, no descendants of ManagedObject. An example of altTypes being used is the 'tooltip' aggregation of
+	 *     <code>sap.ui.core.Element</code>, which accepts tooltip controls extending <code>sap.ui.core.TooltipBase</code> with their own renderer
+	 *     and design, as well as plain strings, which will simply be displayed using the browser's built-in tooltip functionality.
+	 * @property {boolean | object} [dnd=false]
+	 *     Only available for aggregations of a class extending <code>sap.ui.core.Element</code>, which is a subclass of <code>sap.ui.base.ManagedObject</code>!
+	 *     Defines draggable and droppable configuration of the aggregation.
+	 *     If the <code>dnd</code> property is of type Boolean, then the <code>draggable</code> and <code>droppable</code> configuration are both set to this Boolean value
+	 *     and the layout (in case of enabled dnd) is set to default ("Vertical").
+	 * @property {boolean} [dnd.draggable=false] Defines whether elements from this aggregation are draggable or not. The default value is <code>false</code>.
+	 * @property {boolean} [dnd.droppable=false] Defines whether the element is droppable (it allows being dropped on by a draggable element) or not. The default value is <code>false</code>.
+	 * @property {"Vertical" | "Horizontal"} [dnd.layout="Vertical"]  The arrangement of the items in this aggregation. This setting is recommended for the aggregation with multiplicity 0..n
+	 *     (<code>multiple: true</code>). Possible values are <code>Vertical</code> (e.g. rows in a table) and <code>Horizontal</code> (e.g. columns in a table). It is recommended
+	 *     to use <code>Horizontal</code> layout if the visual arrangement of the aggregation is two-dimensional.
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.base.ManagedObject.MetadataOptions.Association
+	 *
+	 * An object literal describing an association of a class derived from <code>sap.ui.base.ManagedObject</code>.
+	 * See {@link sap.ui.base.ManagedObject.MetadataOptions MetadataOptions} for details on its usage.
+	 *
+	 * @property {string} [type='sap.ui.core.Control'] Type of the new association
+	 * @property {boolean} [multiple=false] Whether the association is a 0..1 (false) or a 0..n association (true), defaults to false (0..1) for associations
+	 * @property {string} [singularName] Custom singular name. This is only relevant for 0..n associations where the association name should be defined in plural form
+	 *     and the framework tries to generate the singular form of it for certain places where it is needed. To do so, the framework knows
+	 *     a set of common rules for building the plural form of English nouns and uses these rules to determine
+	 *     a singular name on its own. If that name is wrong, a singularName can be specified with this property.
+	 *     E.g. for an association named <code>items</code>, methods affecting multiple objects in an association will use the plural name (<code>getItems()</code>),
+	 *     whereas methods that deal with a single object will automatically use the generated singular name (e.g. <code>addItem(...)</code>). However, the generated
+	 *     singular form for an association <code>news</code> would be <code>new</code>, which is wrong, so the singular name "news" would need to be set.
+	 * @property {"hidden" | "public"} [visibility="public"] Either 'hidden' or 'public', defaults to 'public'. Associations that
+	 *     belong to the API of a class must be 'public' whereas 'hidden' associations can only be used internally.
+	 *     Only public associations are accepted by the constructor or by <code>applySettings</code> or in declarative
+	 *     representations like an <code>XMLView</code>. Equally, only public associations are cloned.
+	 * @property {boolean} [deprecated=false] Flag that marks the association as deprecated (defaults to false). May lead to an additional warning
+	 *     log message at runtime when the association is still used. For the documentation, also add a <code>@deprecated</code> tag in the JSDoc,
+	 *     describing since when it is deprecated and what any alternatives are.
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.base.ManagedObject.MetadataOptions.Event
+	 *
+	 * An object literal describing an event of a class derived from <code>sap.ui.base.ManagedObject</code>.
+	 * See {@link sap.ui.base.ManagedObject.MetadataOptions MetadataOptions} for details on its usage.
+	 *
+	 * @property {boolean} [allowPreventDefault] Whether the event allows to prevented the default behavior of the event source
+	 * @property {Object<string, {type: string} | string>} [parameters] An object literal that describes the parameters of this event;
+	 *     the keys are the parameter names and the values are objects with a 'type' property that specifies the type of the respective parameter.
+	 * @property {boolean} [enableEventBubbling=false] whether event bubbling is enabled on this event. When <code>true</code> the event is also forwarded to the parent(s)
+	 *     of the object (see {@link sap.ui.base.EventProvider#getEventingParent}) until the bubbling of the event is stopped or no parent is available anymore.
+	 * @property {boolean} [deprecated=false] Flag that marks the event as deprecated (defaults to false). May lead to an additional warning
+	 *     log message at runtime when the event is still used. For the documentation, also add a <code>@deprecated</code> tag in the JSDoc,
+	 *     describing since when it is deprecated and what any alternatives are.
+	 *
+	 * @public
+	 */
+
+	/**
 	 * Defines a new subclass of ManagedObject with name <code>sClassName</code> and enriches it with
 	 * the information contained in <code>oClassInfo</code>.
 	 *
 	 * <code>oClassInfo</code> can contain the same information that {@link sap.ui.base.Object.extend} already accepts,
-	 * plus the following new properties in the 'metadata' object literal:
-	 *
+	 * plus the following new properties in the 'metadata' object literal
+	 * (see {@link sap.ui.base.ManagedObject.MetadataOptions MetadataOptions} for details on each of them):
 	 * <ul>
 	 * <li><code>library : <i>string</i></code></li>
 	 * <li><code>properties : <i>object</i></code></li>
@@ -610,10 +942,9 @@ sap.ui.define([
 	 * <li><code>defaultAggregation : <i>string</i></code></li>
 	 * <li><code>associations : <i>object</i></code></li>
 	 * <li><code>events : <i>object</i></code></li>
-	 * <li><code>specialSettings : <i>object</i></code>// this one is still experimental and not for public usage!</li>
+	 * <li><code>specialSettings : <i>object</i></code> // this one is still experimental and not for public usage!</li>
 	 * </ul>
 	 *
-	 * Each of these properties is explained in more detail lateron.
 	 *
 	 * Example:
 	 * <pre>
@@ -651,279 +982,11 @@ sap.ui.define([
 	 * }); // end of 'extend' call
 	 * </pre>
 	 *
-	 * Detailed explanation of properties<br>
-	 *
-	 *
-	 * <b>'library'</b> : <i>string</i><br>
-	 * Name of the library that the new subclass should belong to. If the subclass is a control or element, it will
-	 * automatically register with that library so that authoring tools can discover it.
-	 * By convention, the name of the subclass should have the library name as a prefix, but subfolders are allowed,
-	 * e.g. <code>sap.ui.layout.form.Form</code> belongs to library <code>sap.ui.layout</code>.
-	 *
-	 *
-	 * <b>'properties'</b> : <i>object</i><br>
-	 * An object literal whose properties each define a new managed property in the ManagedObject subclass.
-	 * The value can either be a simple string which then will be assumed to be the type of the new property or it can be
-	 * an object literal with the following properties
-	 * <ul>
-	 * <li><code>type: <i>string</i></code> type of the new property. Must either be one of the built-in types
-	 *     'string', 'boolean', 'int', 'float', 'object', 'function' or 'any', or a type created and registered with
-	 *     {@link sap.ui.base.DataType.createType} or an array type based on one of the previous types (e.g. 'int[]'
-	 *     or 'string[]', but not just 'array').</li>
-	 * <li><code>visibility: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Properties that
-	 *     belong to the API of a class must be 'public' whereas 'hidden' properties can only be used internally.
-	 *     Only public properties are accepted by the constructor or by <code>applySettings</code> or in declarative
-	 *     representations like an <code>XMLView</code>. Equally, only public properties are cloned.</li>
-	 * <li><code>byValue: <i>boolean</i></code> (either can be omitted or set to the boolean value <code>true</code>)
-	 *     If set to <code>true</code>, the property value will be {@link module:sap/base/util/deepClone deep cloned}
-	 *     on write and read operations to ensure that the internal value can't be modified by the outside. The property
-	 *     <code>byValue</code> is currently restricted to a <code>boolean</code> value. Other types are reserved for future
-	 *     use. Class definitions must only use boolean values for the flag (or omit it), but readers of ManagedObject
-	 *     metadata should handle any truthy value as <code>true</code> to be future safe.
-	 *     Note that using <code>byValue:true</code> has a performance impact on property access and therefore should be
-	 *     used carefully. It also doesn't make sense to set this option for properties with a primitive type (they have
-	 *     value semantic anyhow) or for properties with arrays of primitive types (they are already cloned
-	 *     with a less expensive implementation).
-	 * <li><code>group:<i>string</i></code> a semantic grouping of the properties, intended to be used in design time tools.
-	 *     Allowed values are (case sensitive): Accessibility, Appearance, Behavior, Data, Designtime, Dimension, Identification, Misc</li>
-	 * <li><code>defaultValue: <i>any</i></code> the default value for the property or null if there is no defaultValue.</li>
-	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable')
-	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience.
-	 *     Despite its name, setting this flag is not mandatory to make the managed property bindable. The generic methods {@link #bindProperty} and
-	 *     {@link #unbindProperty} can always be used. </li>
-	 * <li><code>selector: <i>string</i></code> Optional; can be set to a valid CSS selector (as accepted by the
-	 *     {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector Element.prototype.querySelector}
-	 *     method). When set, it locates the DOM element that represents this property's value. It should only be set
-	 *     for properties that have a visual text representation in the DOM.
-	 *
-	 *     The purpose of the selector is to allow other framework parts or design time tooling to identify the DOM parts
-	 *     of a control or element that represent a specific property without knowing the control or element implementation
-	 *     in detail.
-	 *
-	 *     As an extension to the standard CSS selector syntax, the selector string can contain the placeholder <code>{id}</code>
-	 *     (multiple times). Before evaluating the selector in the context of an element or control, all occurrences of the
-	 *     placeholder have to be replaced by the (potentially escaped) ID of that element or control.
-	 *     In fact, any selector should start with <code>#{id}</code> to ensure that the query result is limited to the
-	 *     desired element or control.
-	 *
-	 *     <b>Note</b>: there is a convenience method {@link sap.ui.core.Element#getDomRefForSetting} that evaluates the
-	 *     selector in the context of a concrete element or control instance. It also handles the placeholder <code>{id}</code>.
-	 *     Only selected framework features may use that private method, it is not yet a public API and might be changed
-	 *     or removed in future versions of UI5. However, instead of maintaining the <code>selector</code> in the metadata,
-	 *     element and control classes can overwrite <code>getDomRefForSetting</code> and determine the DOM element
-	 *     dynamically.</li>
-	 * </ul>
-	 * Property names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
-	 * If an aggregation in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will
-	 * be used as generic documentation of the aggregation.
-	 *
-	 * For each public property 'foo', the following methods will be created by the "extend" method and will be added to the
-	 * prototype of the subclass:
-	 * <ul>
-	 * <li>getFoo() - returns the current value of property 'foo'. Internally calls {@link #getProperty}</li>
-	 * <li>setFoo(v) - sets 'v' as the new value of property 'foo'. Internally calls {@link #setProperty}</li>
-	 * <li>bindFoo(c) - (only if property was defined to be 'bindable'): convenience function that wraps {@link #bindProperty}</li>
-	 * <li>unbindFoo() - (only if property was defined to be 'bindable'): convenience function that wraps {@link #unbindProperty}</li>
-	 * </ul>
-	 * For hidden properties, no methods are generated.
-	 *
-	 *
-	 * <b>'defaultProperty'</b> : <i>string</i><br>
-	 * When specified, the default property must match the name of one of the properties defined for the new subclass (either own or inherited).
-	 * The named property can be used to identify the main property to be used for bound data. E.g. the value property of a field control.
-	 *
-	 *
-	 * <b>'aggregations'</b> : <i>object</i><br>
-	 * An object literal whose properties each define a new aggregation in the ManagedObject subclass.
-	 * The value can either be a simple string which then will be assumed to be the type of the new aggregation or it can be
-	 * an object literal with the following properties
-	 * <ul>
-	 * <li><code>type: <i>string</i></code> type of the new aggregation. must be the full global name of a ManagedObject subclass or UI5 interface (in dot notation, e.g. 'sap.m.Button')</li>
-	 * <li><code>[multiple]: <i>boolean</i></code> whether the aggregation is a 0..1 (false) or a 0..n aggregation (true), defaults to true </li>
-	 * <li><code>[singularName]: <i>string</i></code>. Singular name for 0..n aggregations. For 0..n aggregations the name by convention should be the plural name.
-	 *     Methods affecting multiple objects in an aggregation will use the plural name (e.g. getItems(), whereas methods that deal with a single object will use
-	 *     the singular name (e.g. addItem). The framework knows a set of common rules for building plural form of English nouns and uses these rules to determine
-	 *     a singular name on its own. if that name is wrong, a singluarName can be specified with this property. </li>
-	 * <li><code>[visibility]: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Aggregations that
-	 *     belong to the API of a class must be 'public' whereas 'hidden' aggregations typically are used for the
-	 *     implementation of composite classes (e.g. composite controls). Only public aggregations are accepted by
-	 *     the constructor or by <code>applySettings</code> or in declarative representations like an <code>XMLView</code>.
-	 *     Equally, only public aggregations are cloned.</li>
-	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable')
-	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience.
-	 *     Despite its name, setting this flag is not mandatory to make the managed aggregation bindable. The generic methods {@link #bindAggregation} and
-	 *     {@link #unbindAggregation} can always be used. </li>
-	 * <li><code>forwarding: <i>object</i></code>
-	 *     If set, this defines a forwarding of objects added to this aggregation into an aggregation of another ManagedObject - typically to an inner control
-	 *     within a composite control.
-	 *     This means that all adding, removal, or other operations happening on the source aggregation are actually called on the target instance.
-	 *     All elements added to the source aggregation will be located at the target aggregation (this means the target instance is their parent).
-	 *     Both, source and target element will return the added elements when asked for the content of the respective aggregation.
-	 *     If present, the named (non-generic) aggregation methods will be called for the target aggregation.
-	 *     Aggregations can only be forwarded to non-hidden aggregations of the same or higher multiplicity (i.e. an aggregation with multiplicity "0..n" cannot be
-	 *     forwarded to an aggregation with multiplicity "0..1").
-	 *     The target aggregation must also be "compatible" to the source aggregation in the sense that any items given to the source aggregation
-	 *     must also be valid in the target aggregation (otherwise the target element will throw a validation error).
-	 *     If the forwarded elements use data binding, the target element must be properly aggregated by the source element to make sure all models are available there
-	 *     as well.
-	 *     The aggregation target must remain the same instance across the entire lifetime of the source control.
-	 *     Aggregation forwarding will behave unexpectedly when the content in the target aggregation is modified by other actors (e.g. by the target element or by
-	 *     another forwarding from a different source aggregation). Hence, this is not allowed.
-	 *     The forwarding configuration object defines the target of the forwarding. The available settings are:
-	 *     <ul>
-	 *         <li><code>idSuffix: <i>string</i></code>A string which is appended to the ID of <i>this</i> ManagedObject to construct the ID of the target ManagedObject. This is
-	 *             one of the two options to specify the target. This option requires the target instance to be created in the init() method of this ManagedObject and to be
-	 *             always available.</li>
-	 *         <li><code>getter: <i>string</i></code>The name of the function on instances of this ManagedObject which returns the target instance. This second option
-	 *             to specify the target can be used for lazy instantiation of the target. Note that either idSuffix or getter must be given. Also note that the target
-	 *             instance returned by the getter must remain the same over the entire lifetime of this ManagedObject and the implementation assumes that all instances return
-	 *             the same type of object (at least the target aggregation must always be defined in the same class).</li>
-	 *         <li><code>aggregation: <i>string</i></code>The name of the aggregation on the target into which the objects shall be forwarded. The multiplicity of the target
-	 *             aggregation must be the same as the one of the source aggregation for which forwarding is defined.</li>
-	 *         <li><code>[forwardBinding]: <i>boolean</i></code>Whether any binding should happen on the forwarding target or not. Default if omitted is <code>false</code>,
-	 *             which means any bindings happen on the outer ManagedObject. When the binding is forwarded, all binding methods like updateAggregation, getBindingInfo,
-	 *             refreshAggregation etc. are called on the target element of the forwarding instead of being called on this element. The basic aggregation mutator methods
-	 *             (add/remove etc.) are only called on the forwarding target element. Without forwardBinding, they are called on this element, but forwarded to the forwarding
-	 *             target, where they actually modify the aggregation.
-	 *         </li>
-	 *     </ul>
-	 * </li>
-	 * <li><code>selector: <i>string</i></code> Optional; can be set to a valid CSS selector (as accepted by the
-	 *     {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector Element.prototype.querySelector}
-	 *     method). When set, it locates the DOM element that surrounds the aggregation's content. It should only be
-	 *     set for aggregations that have a visual representation in the DOM. A DOM element surrounding the aggregation's
-	 *     rendered content should be available in the DOM, even if the aggregation is empty or not rendered for some reason.
-	 *     In cases where this is not possible or not intended, <code>getDomRefForSetting</code> can be overridden, see below.
-	 *
-	 *     The purpose of the selector is to allow other framework parts like drag and drop or design time tooling to identify
-	 *     those DOM parts of a control or element that represent a specific aggregation without knowing the control or element
-	 *     implementation in detail.
-	 *
-	 *     As an extension to the standard CSS selector syntax, the selector string can contain the placeholder <code>{id}</code>
-	 *     (multiple times). Before evaluating the selector in the context of an element or control, all occurrences of the
-	 *     placeholder have to be replaced by the (potentially escaped) ID of that element or control.
-	 *     In fact, any selector should start with <code>#{id}</code> to ensure that the query result is limited to the
-	 *     desired element or control.
-	 *
-	 *     <b>Note</b>: there is a convenience method {@link sap.ui.core.Element#getDomRefForSetting} that evaluates the
-	 *     selector in the context of a concrete element or control instance. It also handles the placeholder <code>{id}</code>.
-	 *     Only selected framework features may use that private method, it is not yet a public API and might be changed
-	 *     or removed in future versions of UI5. However, instead of maintaining the <code>selector</code> in the metadata,
-	 *     element and control classes can overwrite <code>getDomRefForSetting</code> to calculate or add the appropriate
-	 *     DOM Element dynamically.</li>
-	 *     </li>
-	 * </ul>
-	 * Aggregation names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
-	 * The name for a hidden aggregations might start with an underscore.
-	 * If an aggregation in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will
-	 * be used as generic documentation of the aggregation.
-	 *
-	 * For each public aggregation 'item' of cardinality 0..1, the following methods will be created by the "extend" method and will be added to the
-	 * prototype of the subclass:
-	 * <ul>
-	 * <li>getItem() - returns the current value of aggregation 'item'. Internally calls {@link #getAggregation} with a default value of <code>undefined</code></li>
-	 * <li>setItem(o) - sets 'o' as the new aggregated object in aggregation 'item'. Internally calls {@link #setAggregation}</li>
-	 * <li>destroyItem(o) - destroy a currently aggregated object in aggregation 'item' and clears the aggregation. Internally calls {@link #destroyAggregation}</li>
-	 * <li>bindItem(c) - (only if aggregation was defined to be 'bindable'): convenience function that wraps {@link #bindAggregation}</li>
-	 * <li>unbindItem() - (only if aggregation was defined to be 'bindable'): convenience function that wraps {@link #unbindAggregation}</li>
-	 * </ul>
-	 * For a public aggregation 'items' of cardinality 0..n, the following methods will be created:
-	 * <ul>
-	 * <li>getItems() - returns an array with the objects contained in aggregation 'items'. Internally calls {@link #getAggregation} with a default value of <code>[]</code></li>
-	 * <li>addItem(o) - adds an object as last element in the aggregation 'items'. Internally calls {@link #addAggregation}</li>
-	 * <li>insertItem(o,p) - inserts an object into the aggregation 'items'. Internally calls {@link #insertAggregation}</li>
-	 * <li>indexOfItem(o) - returns the position of the given object within the aggregation 'items'. Internally calls {@link #indexOfAggregation}</li>
-	 * <li>removeItem(v) - removes an object from the aggregation 'items'. Internally calls {@link #removeAggregation}</li>
-	 * <li>removeItems() - removes all objects from the aggregation 'items'. Internally calls {@link #removeAllAggregation}</li>
-	 * <li>destroyItems() - destroy all currently aggregated objects in aggregation 'items' and clears the aggregation. Internally calls {@link #destroyAggregation}</li>
-	 * <li>bindItems(c) - (only if aggregation was defined to be 'bindable'): convenience function that wraps {@link #bindAggregation}</li>
-	 * <li>unbindItems() - (only if aggregation was defined to be 'bindable'): convenience function that wraps {@link #unbindAggregation}</li>
-	 * </ul>
-	 * For hidden aggregations, no methods are generated.
-	 *
-	 *
-	 * <b>'defaultAggregation'</b> : <i>string</i><br>
-	 * When specified, the default aggregation must match the name of one of the aggregations defined for the new subclass (either own or inherited).
-	 * The named aggregation will be used in contexts where no aggregation is specified. E,g. when an object in an XMLView embeds other objects without
-	 * naming an aggregation, as in the following example:
-	 * <pre>
-	 *  &lt;!-- assuming the defaultAggregation for Dialog is 'content' -->
-	 *  &lt;Dialog>
-	 *    &lt;Text/>
-	 *    &lt;Button/>
-	 *  &lt;/Dialog>
-	 * </pre>
-	 *
-	 *
-	 * <b>'associations'</b> : <i>object</i><br>
-	 * An object literal whose properties each define a new association of the ManagedObject subclass.
-	 * The value can either be a simple string which then will be assumed to be the type of the new association or it can be
-	 * an object literal with the following properties
-	 * <ul>
-	 * <li><code>type: <i>string</i></code> type of the new association</li>
-	 * <li><code>multiple: <i>boolean</i></code> whether the association is a 0..1 (false) or a 0..n association (true), defaults to false(1) for associations</li>
-	 * <li><code>[singularName]: <i>string</i></code>. Singular name for 0..n associations. For 0..n associations the name by convention should be the plural name.
-	 *     Methods affecting multiple objects in an association will use the plural name (e.g. getItems(), whereas methods that deal with a single object will use
-	 *     the singular name (e.g. addItem). The framework knows a set of common rules for building plural form of English nouns and uses these rules to determine
-	 *     a singular name on its own. if that name is wrong, a singluarName can be specified with this property.</li>
-	 * <li><code>visibility: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Associations that
-	 *     belong to the API of a class must be 'public' whereas 'hidden' associations can only be used internally.
-	 *     Only public associations are accepted by the constructor or by <code>applySettings</code> or in declarative
-	 *     representations like an <code>XMLView</code>. Equally, only public associations are cloned.</li>
-	 * </ul>
-	 * Association names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
-	 * If an association in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will
-	 * be used as generic documentation of the association.
-	 *
-	 * For each association 'ref' of cardinality 0..1, the following methods will be created by the "extend" method and will be added to the
-	 * prototype of the subclass:
-	 * <ul>
-	 * <li>getRef() - returns the current value of association 'item'. Internally calls {@link #getAssociation} with a default value of <code>undefined</code></li>
-	 * <li>setRef(o) - sets 'o' as the new associated object in association 'item'. Internally calls {@link #setAssociation}</li>
-	 * </ul>
-	 * For a public association 'refs' of cardinality 0..n, the following methods will be created:
-	 * <ul>
-	 * <li>getRefs() - returns an array with the objects contained in association 'items'. Internally calls {@link #getAssociation} with a default value of <code>[]</code></li>
-	 * <li>addRef(o) - adds an object as last element in the association 'items'. Internally calls {@link #addAssociation}</li>
-	 * <li>removeRef(v) - removes an object from the association 'items'. Internally calls {@link #removeAssociation}</li>
-	 * <li>removeAllRefs() - removes all objects from the association 'items'. Internally calls {@link #removeAllAssociation}</li>
-	 * </ul>
-	 * For hidden associations, no methods are generated.
-	 *
-	 *
-	 * <b>'events'</b> : <i>object</i><br>
-	 * An object literal whose properties each define a new event of the ManagedObject subclass.
-	 * The value can either be a simple string which then will be assumed to be the type of the new association or it can be
-	 * an object literal with the following properties
-	 * <ul>
-	 * <li><code>allowPreventDefault: <i>boolean</i></code> whether the event allows to prevented the default behavior of the event source</li>
-	 * <li><code>parameters: <i>object</i></code> an object literal that describes the parameters of this event. </li>
-	 * </ul>
-	 * Event names should use camelCase notation, start with a lower-case letter and only use characters from the set [a-zA-Z0-9_$].
-	 * If an event in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will be used
-	 * as generic documentation of the event.
-	 *
-	 * For each event 'Some' the following methods will be created by the "extend" method and will be added to the
-	 * prototype of the subclass:
-	 * <ul>
-	 * <li>attachSome(fn,o) - registers a listener for the event. Internally calls {@link #attachEvent}</li>
-	 * <li>detachSome(fn,o) - deregisters a listener for the event. Internally calls {@link #detachEvent}</li>
-	 * <li>fireSome() - fire the event. Internally calls {@link #fireEvent}</li>
-	 * </ul>
-	 *
-	 *
-	 * <b>'specialSettings'</b> : <i>object</i><br>
-	 * Special settings are an experimental feature and MUST NOT BE DEFINED in controls or applications outside of the <code>sap.ui.core</code> library.
-	 * There's no generic or general way how to set or get the values for special settings. For the same reason, they cannot be bound against a model.
-	 * If there's a way for consumers to define a value for a special setting, it must be documented in the class that introduces the setting.
-	 *
-	 *
-	 *
-	 *
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with information about the class
-	 * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to <code>sap.ui.base.ManagedObjectMetadata</code>.
-	 * @return {function} the created class / constructor function
+	 * @param {string} sClassName Name of the class to be created
+	 * @param {object} [oClassInfo] Object literal with information about the class
+	 * @param {sap.ui.base.ManagedObject.MetadataOptions} [oClassInfo.metadata] The metadata object describing the class: properties, aggregations, events etc.
+	 * @param {function} [FNMetaImpl] Constructor function for the metadata object. If not given, it defaults to <code>sap.ui.base.ManagedObjectMetadata</code>.
+	 * @return {function} The created class / constructor function
 	 *
 	 * @public
 	 * @static
