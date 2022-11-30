@@ -129,10 +129,10 @@ sap.ui.define([
 	};
 
 	/**
+	 * This method is the central point of access to the DefaultProviderRegistry Singleton.
+	 *
 	 * @private
 	 * @ui5-restricted sap.m
-	 *
-	 * This method is the central point of access to the DefaultProviderRegistry Singleton.
 	 */
 	 DefaultProviderRegistry.getInstance = function(Engine) {
 		if (!oDefaultProviderRegistry) {

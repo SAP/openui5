@@ -16,7 +16,7 @@ sap.ui.define([
 	 * Constructor for a new StateHandlerRegistry.
 	 *
 	 * @class
-	 * @extends sap.ui.base.Object
+	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -82,10 +82,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * This method is the central point of access to the DefaultProviderRegistry Singleton.
+	 *
 	 * @private
 	 * @ui5-restricted sap.m
 	 *
-	 * This method is the central point of access to the DefaultProviderRegistry Singleton.
 	 * @returns {this} Returns the <code>StateHandlerRegistry</code> instance.
 	 */
 	StateHandlerRegistry.getInstance = function () {

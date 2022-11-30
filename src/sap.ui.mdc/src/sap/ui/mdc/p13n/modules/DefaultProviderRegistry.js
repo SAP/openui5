@@ -60,10 +60,10 @@ sap.ui.define([
 	};
 
 	/**
+	 * Attaches an element to a default persistence provider held inside the DefaultProviderRegistry for the given <code>PersistenceMode</code>
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 *
-	 * Attaches an element to a default persistence provider held inside the DefaultProviderRegistry for the given <code>PersistenceMode</code>
 	 *
 	 * @param {sap.ui.core.Element|string} vElement The control instance or an element id.
 	 * @param {sap.ui.mdc.enum.PersistenceMode} sPersistenceMode Desired persistence mode for the retrieved persistence provider
@@ -85,10 +85,10 @@ sap.ui.define([
 	};
 
 	/**
+	 * Detaches a control from any existing default persistence provider.
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 *
-	 * Detaches a control from any existing default persistence provider
 	 *
 	 * @param {sap.ui.mdc.Control|string} vControl The control instance or a control id.
 	 */
@@ -100,10 +100,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a promise resolving a default persistence provider for the given <code>Control</code> and <code>PersistenceMode</code>.
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 *
-	 * Returns a promise resolving a default persistence provider for the given <code>Control</code> and <code>PersistenceMode</code>.
 	 * @param {sap.ui.core.Element} oElement The element instance.
 	 * @param {sap.ui.mdc.enum.PersistenceMode} sPersistenceMode Desired persistence mode for the retrieved persistence provider
 	 * @returns {Promise} Returns a <code>Promise</code> returning a persistence provider instance, if possible
@@ -131,10 +132,10 @@ sap.ui.define([
 	};
 
 	/**
+	 * This method is the central point of access to the DefaultProviderRegistry Singleton.
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 *
-	 * This method is the central point of access to the DefaultProviderRegistry Singleton.
 	 */
 	 DefaultProviderRegistry.getInstance = function(oEngine) {
 		if (!oDefaultProviderRegistry) {

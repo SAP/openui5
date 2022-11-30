@@ -35,7 +35,7 @@ sap.ui.define([
 	 * @since 1.60
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	var TableDelegate = Object.assign({}, AggregationBaseDelegate);
 

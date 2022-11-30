@@ -43,6 +43,7 @@ sap.ui.define([
 	 */
 	var FilterPanel = QueryPanel.extend("sap.ui.mdc.p13n.panels.FilterPanel", {
 		metadata: {
+			library: "sap.ui.mdc",
 			properties: {
 				/**
 				 * A factory function that will be called whenever the user selects a new entry from the <code>ComboBox</code>.
@@ -59,7 +60,9 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: {}
+		renderer: {
+			apiVersion: 2
+		}
 	});
 
 	/**
@@ -77,13 +80,12 @@ sap.ui.define([
 
 	/**
 	 * Sets the personalization state of the panel instance.
-	 * @name sap.ui.mdc.p13n.panels.FilterPanel.setP13nData
+	 * @name sap.ui.mdc.p13n.panels.FilterPanel.prototype.setP13nData
 	 * @public
 	 * @function
 	 *
-	 * @param {sap.ui.mdc.p13n.panels.FilterItem} aP13nData An array containing the personalization state
-	 * @returns {sap.ui.mdc.p13n.panels.FilterPanel} The SortPanel instance
-	 *
+	 * @param {sap.ui.mdc.p13n.panels.FilterItem[]} aP13nData An array containing the personalization state
+	 * @returns {this} The FilterPanel instance
 	 */
 
 	FilterPanel.prototype.PRESENCE_ATTRIBUTE = "active";

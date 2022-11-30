@@ -1144,10 +1144,10 @@ sap.ui.define([
 	};
 
 	/**
+	 * This method is the central point of access to the Engine Singleton.
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 *
-	 * This method is the central point of access to the Engine Singleton.
 	 */
 	Engine.getInstance = function() {
 		if (!oEngine) {

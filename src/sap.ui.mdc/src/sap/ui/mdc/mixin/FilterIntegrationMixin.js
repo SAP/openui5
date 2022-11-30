@@ -173,7 +173,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.98
 	 */
 	FilterIntegrationMixin.rebind = function() {

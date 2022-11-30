@@ -57,7 +57,6 @@ sap.ui.define([
 	/**
 	 * P13n <code>GroupItem</code> object type.
 	 *
-	 * @type {sap.m.p13n.GroupItem}
 	 * @static
 	 * @constant
 	 * @typedef {object} sap.m.p13n.GroupItem

@@ -33,7 +33,7 @@ sap.ui.define([
 	 * @since 1.104
 	 * @alias sap.m.p13n.modules.UIManager
 	 */
-	var UIManager = BaseObject.extend("sap.m.p13n.UIManager", {
+	var UIManager = BaseObject.extend("sap.m.p13n.modules.UIManager", {
 		constructor: function(oAdaptationProvider) {
 
 			if (oUIManager) {
@@ -229,7 +229,7 @@ sap.ui.define([
 	 * @param {sap.m.AdaptationProvider} oAdaptationProvider Object implementing the <code>sap.m.AdaptationProvider</code> interface to provide personalization capabilites.
 	 */
 	UIManager._checkValidInterface = function(oAdaptationProvider) {
-		if (!oAdaptationProvider || !oAdaptationProvider.isA("sap.m.p13n.AdaptationProvider")){
+		if (!oAdaptationProvider || !oAdaptationProvider.isA("sap.m.p13n.modules.AdaptationProvider")){
 			throw Error("The UIManager singleton must not be accessed without an AdaptationProvider interface!");
 		}
 	};

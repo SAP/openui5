@@ -87,7 +87,9 @@ sap.ui.define([
 			this._bindListItems();
 
 		},
-		renderer: {}
+		renderer: {
+			apiVersion: 2
+		}
 	});
 
 	ChartItemPanel.prototype._setInnerLayout = function() {

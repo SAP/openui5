@@ -25,8 +25,8 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
-	 * @since TODO
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @since 1.109
 	 * @alias sap.ui.mdc.table.TreeTableType
 	 */
 

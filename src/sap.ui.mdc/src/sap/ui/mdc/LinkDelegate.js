@@ -40,10 +40,12 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 	 * If <code>oLinkType.type</code> is 1, the link is rendered as a link. When pressed the link triggers a direct navigation instead.
 	 * If <code>oLinkType.type</code> is 2, the link is rendered as a link and opens a popover (default).
 	 * @property {sap.ui.mdc.link.LinkItem} directLink Instance of {@link sap.ui.mdc.link.LinkItem} which is used for direct navigation
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	/**
 	 * Calculates and returns the type of link that is displayed.
-	 * @protected
+	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 * @param {Object} oPayload Payload of the <code>Link</code> given by the application
 	 * @returns {Promise} Once resolved, an object containing an initial {@link sap.ui.mdc.LinkDelegate.LinkType} and an optional <code>Promise</code> are returned

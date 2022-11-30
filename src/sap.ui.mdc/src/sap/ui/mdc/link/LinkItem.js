@@ -17,6 +17,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.58.0
 	 * @alias sap.ui.mdc.link.LinkItem
 	 */

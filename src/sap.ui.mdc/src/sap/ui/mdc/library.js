@@ -602,7 +602,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -610,7 +610,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -618,7 +618,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -626,7 +626,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -634,7 +634,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 *
@@ -642,7 +642,7 @@
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	*/
+	 */
 
 	/**
 	 * Opens the container
@@ -743,6 +743,7 @@
 	 * @name sap.ui.mdc.IxState
 	 * @interface
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 
 	/**
@@ -774,6 +775,8 @@
 	 *
 	 * @enum {string}
 	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.58
 	 */
 	thisLib.TableType = {
@@ -804,7 +807,7 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.62
 	 */
 	thisLib.TableP13nMode = {
@@ -846,7 +849,7 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.65
 	 */
 	thisLib.GrowingMode = {
@@ -877,7 +880,7 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.65
 	 */
 	thisLib.RowCountMode = {
@@ -973,7 +976,7 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.58
 	 */
 	thisLib.SelectionMode = {
@@ -1006,7 +1009,7 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.60
 	 */
 	thisLib.RowAction = {
@@ -1158,19 +1161,21 @@
 	};
 
 	/**
-	* @typedef {object} sap.ui.mdc.TypeConfig
-	* @property {string} [className] Model-specific data type
-	* @property {sap.ui.model.SimpleType} typeInstance Type instance for given data type
-	* @property {string} baseType Basic type category for given data type
-	* @private
-	*/
+	 * @typedef {object} sap.ui.mdc.TypeConfig
+	 * @property {string} [className] Model-specific data type
+	 * @property {sap.ui.model.SimpleType} typeInstance Type instance for given data type
+	 * @property {string} baseType Basic type category for given data type
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 
 	/**
-	* @typedef {object} sap.ui.mdc.DelegateConfig
-	* @property {string} name Delegate module path
-	* @property {*} payload Delegate payload
-	* @private
-	*/
+	 * @typedef {object} sap.ui.mdc.DelegateConfig
+	 * @property {string} name Delegate module path
+	 * @property {*} payload Delegate payload
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
 
 	/**
 	 * @namespace

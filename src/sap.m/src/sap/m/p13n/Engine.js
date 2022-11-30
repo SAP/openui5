@@ -56,9 +56,9 @@ sap.ui.define([
 	 * <li>{@link sap.m.p13n.modification.ModificationHandler ModificationHandler}: Used by default - this handler will not persist a state.</li>
 	 * </ul>
 	 *
-	 * @namespace
+	 * @class
 	 * @alias sap.m.p13n.Engine
-	 * @extends sap.m.p13n.AdaptationProvider
+	 * @extends sap.m.p13n.modules.AdaptationProvider
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
@@ -1241,10 +1241,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * This method is the central point of access to the Engine Singleton.
+	 *
 	 * @private
 	 * @ui5-restricted sap.m
 	 *
-	 * This method is the central point of access to the Engine Singleton.
 	 * @returns {sap.m.p13n.Engine} The Engine instance
 	 */
 	Engine.getInstance = function() {

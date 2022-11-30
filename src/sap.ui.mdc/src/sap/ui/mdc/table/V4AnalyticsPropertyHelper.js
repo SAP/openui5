@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 
 	/**

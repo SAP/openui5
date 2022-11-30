@@ -37,6 +37,7 @@ sap.ui.define(
 		};
 
 		/**
+		 * @class
 		 * Provides a caching mechanism for promises.
 		 * This API features Promise cancellation: resolve or reject handlers won't be called after removal of the promise, cache destruction or manual cancellation.
 		 * Destroying the cache will cancel all registered promises and delete references. Convenience methods for promise creation, wrapping and replacement are offered.
@@ -44,7 +45,6 @@ sap.ui.define(
 		 * @author SAP SE
 		 * @version ${version}
 		 * @alias sap.ui.mdc.util.PromiseCache
-		 * @namespace
 		 * @since 1.85.0
 		 * @private
 		 * @experimental
@@ -72,7 +72,7 @@ sap.ui.define(
 			 *
 			 * @protected
 			 * @param {string} [sName] Promise identifier
-			 * @param {function(oPromise,fnResolve,fnReject,fnRemove)|Promise} [fnCreate] creation method or pre-created promise
+			 * @param {function(Promise,function,function,function)|Promise} [fnCreate] creation method or pre-created promise
 			 * @returns {Promise<*>} Returns the newly created <code>Promise</code>
 			 */
 			add: function (sName, fnCreate) {
@@ -172,7 +172,7 @@ sap.ui.define(
 			 *
 			 * @protected
 			 * @param {string} sName Promise identifier
-			 * @param {function(oPromise,fnResolve,fnReject,fnRemove)|Promise<*>} [fnCreate] creation method or pre-created promise
+			 * @param {function(Promise,function,function,function)|Promise<*>} [fnCreate] creation method or pre-created promise
 			 * @returns {Promise} Returns the newly created <code>Promise</code>
 			 */
 			retrieve: function (sName, fnCreate) {
