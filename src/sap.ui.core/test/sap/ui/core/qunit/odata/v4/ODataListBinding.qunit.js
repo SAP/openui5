@@ -130,6 +130,7 @@ sap.ui.define([
 		 */
 		getCacheMock : function () {
 			var oCache = {
+					getPendingRequestsPromise : function () {},
 					isDeletingInOtherGroup : function () {},
 					read : function () {},
 					requestSideEffects : function () {},
@@ -7389,6 +7390,7 @@ sap.ui.define([
 
 		oBinding.iCurrentEnd = 42;
 		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs(sGroupId).returns(false);
+		oCacheMock.expects("getPendingRequestsPromise").withExactArgs().returns(null);
 
 		this.mock(oBinding).expects("lockGroup").never();
 		oCacheMock.expects("requestSideEffects").never();
@@ -7414,6 +7416,7 @@ sap.ui.define([
 			oGroupLock = {};
 
 		oCacheMock.expects("isDeletingInOtherGroup").never();
+		oCacheMock.expects("getPendingRequestsPromise").withExactArgs().returns(null);
 		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding).expects("refreshSingle")
@@ -7436,6 +7439,7 @@ sap.ui.define([
 			oContext = bHeader ? oBinding.getHeaderContext() : undefined;
 
 		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs("group").returns(true);
+		oCacheMock.expects("getPendingRequestsPromise").never();
 		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding).expects("refreshSingle").never();
 
@@ -7446,6 +7450,36 @@ sap.ui.define([
 			+ "batch group"));
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: wait for getPendingRequestsPromise()", function (assert) {
+		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
+			oBinding = bindList(this, "/Set"),
+			fnResolve,
+			oPendingRequestsPromise = new SyncPromise(function (resolve) {
+				fnResolve = resolve;
+			}),
+			oPromise;
+
+		oCacheMock.expects("isDeletingInOtherGroup").never();
+		oCacheMock.expects("getPendingRequestsPromise").twice().withExactArgs()
+			.returns(oPendingRequestsPromise);
+
+		// code under test
+		oPromise = oBinding.requestSideEffects("group", ["A"], "~oContext~");
+
+		assert.strictEqual(oPromise.isPending(), true);
+
+		this.mock(oBinding).expects("requestSideEffects")
+			.withExactArgs("group", ["A"], "~oContext~").returns("~result~");
+
+		// code under test
+		fnResolve();
+
+		return oPromise.then(function (vResult) {
+			assert.strictEqual(vResult, "~result~");
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: call refreshInternal for relative binding", function (assert) {
@@ -7494,16 +7528,11 @@ sap.ui.define([
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oBinding = bindList(this, "/Set"),
 			oCanceledError = new Error(),
-			oContext = bHeader
-				? oBinding.getHeaderContext()
-				: {getPath : function () { return "/Set('foo')"; }},
+			oContext = bHeader ? oBinding.getHeaderContext() : "~oContext~",
 			oError = new Error(),
 			sGroupId = "group",
 			oGroupLock = {},
 			oModelMock = this.mock(this.oModel),
-			oPreviousContext6,
-			oPreviousContext7,
-			oPreviousContext8,
 			aPaths = ["A"],
 			oPromise = SyncPromise.resolve(),
 			oResult,
@@ -7511,8 +7540,7 @@ sap.ui.define([
 
 		function expectVisitAndRefresh(aPromises) {
 			that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
-					sinon.match.same(aPaths), bHeader ? undefined : sinon.match.same(oContext),
-					aPromises)
+					sinon.match.same(aPaths), bHeader ? undefined : oContext, aPromises)
 				.callsFake(function (_sGroupId, _aPaths, _oContext, aPromises) {
 					aPromises.push(Promise.resolve());
 					aPromises.push(Promise.reject(oCanceledError));
@@ -7525,27 +7553,21 @@ sap.ui.define([
 		}
 
 		oCanceledError.canceled = true;
-		oBinding.createContexts(3, createData(9, 3, true, 9, true));
-		oBinding.iCurrentBegin = 3;
 		oBinding.iCurrentEnd = 6;
-		oBinding.mPreviousContextsByPath["('6')"] = oPreviousContext6 = oBinding.aContexts[6];
-		oBinding.mPreviousContextsByPath["('7')"] = oPreviousContext7 = oBinding.aContexts[7];
-		oBinding.mPreviousContextsByPath["('8')"] = oPreviousContext8 = oBinding.aContexts[8];
-		oBinding.aContexts.length = 5; // less than iCurrentEnd, this can happen due to a delete
 
 		oCacheMock.expects("isDeletingInOtherGroup").exactly(bHeader && bHasCache ? 1 : 0)
 			.withExactArgs(sGroupId).returns(false);
+		oCacheMock.expects("getPendingRequestsPromise").exactly(bHasCache ? 1 : 0).withExactArgs()
+			.returns(null);
+		this.mock(oBinding).expects("keepOnlyVisibleContexts").exactly(bHeader ? 1 : 0)
+			.withExactArgs().returns("~aContexts~");
+		this.mock(_Helper).expects("getPredicates")
+			.withExactArgs(bHeader ? "~aContexts~" : [oContext]).returns("~aPredicates~");
 		this.mock(oBinding).expects("lockGroup").exactly(bHasCache ? 1 : 0)
 			.withExactArgs(sGroupId).returns(oGroupLock);
-		this.mock(oPreviousContext6).expects("isKeepAlive").exactly(bHeader ? 1 : 0)
-			.returns(true);
-		this.mock(oPreviousContext7).expects("isKeepAlive").exactly(bHeader ? 1 : 0)
-			.returns(false);
-		this.mock(oPreviousContext8).expects("isKeepAlive").exactly(bHeader ? 1 : 0)
-			.returns(true);
 		oCacheMock.expects("requestSideEffects").exactly(bHasCache ? 1 : 0)
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths),
-				bHeader ? ["('3')", "('4')", "('6')", "('8')"] : ["('foo')"], !bHeader)
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), "~aPredicates~",
+				!bHeader)
 			.callsFake(function (_oGroupLock, _aPaths) {
 				expectVisitAndRefresh([oPromise]);
 
@@ -7581,64 +7603,26 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: transient context", function (assert) {
-		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
-			oBinding = bindList(this, "/Set"),
-			sGroupId = "group",
-			oGroupLock = {},
-			aPaths = ["A"],
-			oPromise = SyncPromise.resolve(),
-			that = this;
-
-		oBinding.createContexts(0, createData(1, 0, true, 1, true));
-		oBinding.aContexts.unshift({isTransient : function () {}});
-		oBinding.iCreatedContexts = 1;
-		oBinding.iCurrentBegin = 0;
-		oBinding.iCurrentEnd = 2;
-
-		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs(sGroupId).returns(false);
-		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
-		this.mock(oBinding.aContexts[0]).expects("isTransient").withExactArgs().returns(true);
-		this.mock(oBinding.aContexts[1]).expects("isTransient").withExactArgs().returns(false);
-		oCacheMock.expects("requestSideEffects")
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), ["('0')"],
-				undefined)
-			.callsFake(function (_oGroupLock, aPaths) {
-				that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
-						sinon.match.same(aPaths), undefined, [oPromise]);
-				that.mock(oBinding).expects("refreshDependentListBindingsWithoutCache")
-					.withExactArgs().resolves("~");
-
-				return oPromise;
-			});
-		this.mock(oBinding).expects("refreshInternal").never();
-
-		// code under test
-		return oBinding.requestSideEffects(sGroupId, aPaths).then(function (vValue) {
-			assert.strictEqual(vValue, "~",
-				"refreshDependentListBindingsWithoutCache finished");
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("requestSideEffects: fallback to refresh", function (assert) {
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oBinding = bindList(this, "/Set"),
 			oError = new Error(),
-			sGroupId = "group",
-			aPaths = ["A"];
+			sGroupId = "group";
 
-		oBinding.createContexts(3, createData(8, 3, true)); // no key predicates
-		oBinding.iCurrentBegin = 3;
 		oBinding.iCurrentEnd = 8;
 		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs(sGroupId).returns(false);
+		oCacheMock.expects("getPendingRequestsPromise").withExactArgs().returns(null);
+		this.mock(oBinding).expects("keepOnlyVisibleContexts").withExactArgs()
+			.returns("~aContexts~");
+		this.mock(_Helper).expects("getPredicates").withExactArgs("~aContexts~")
+			.returns(null); // no key predicates
 		this.mock(oBinding).expects("lockGroup").never();
 		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, false, true)
 			.rejects(oError);
 
 		// code under test
-		return oBinding.requestSideEffects(sGroupId, aPaths).then(function () {
+		return oBinding.requestSideEffects(sGroupId, ["A"]).then(function () {
 				assert.ok(false);
 			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
@@ -7654,6 +7638,7 @@ sap.ui.define([
 			oBinding = bindList(this, "/Set");
 
 		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs("group").returns(false);
+		oCacheMock.expects("getPendingRequestsPromise").withExactArgs().returns(null);
 		this.mock(oBinding).expects("lockGroup").never();
 		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding).expects("refreshInternal").never();
@@ -7720,6 +7705,81 @@ sap.ui.define([
 			oBinding.requestSideEffects("group", [/*aPaths*/], {/*oContext*/});
 		}, new Error(
 			"Must not request side effects for a context of a binding with $$aggregation"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("keepOnlyVisibleContexts", function (assert) {
+		var oBinding = this.bindList("/Set"),
+			oCreatedContext0 = { // in
+				getProperty : function () {}
+			},
+			oCreatedContext1 = { // out
+				getProperty : function () {}
+			},
+			oCreatedContext2 = { // in
+				getProperty : function () {},
+				isTransient : function () {}
+			},
+			oContext0 = { // in
+				isTransient : function () {}
+			},
+			oContext1 = { // out
+				isTransient : function () {}
+			},
+			oContext2 = { // in
+				isTransient : function () {}
+			},
+			oPreviousContext0 = { // in
+				isKeepAlive : function () {}
+			},
+			oPreviousContext1 = { // out
+				isKeepAlive : function () {}
+			},
+			oPreviousContext2 = { // in
+				isKeepAlive : function () {}
+			},
+			aResult;
+
+		oBinding.aContexts = [oCreatedContext0, oCreatedContext1, oCreatedContext2];
+		oBinding.iCreatedContexts = 3;
+		oBinding.mPreviousContextsByPath = {
+			foo : oPreviousContext0,
+			bar : oPreviousContext1,
+			baz : oPreviousContext2
+		};
+		this.mock(oBinding).expects("getCurrentContexts").withExactArgs()
+			.returns([oCreatedContext2, oContext0, oContext1, oContext2, undefined]);
+		this.mock(oCreatedContext0).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(false);
+		this.mock(oCreatedContext1).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(true);
+		this.mock(oCreatedContext2).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(false);
+		this.mock(oCreatedContext2).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext0).expects("isTransient").withExactArgs().returns(undefined);
+		this.mock(oContext1).expects("isTransient").withExactArgs().returns(false); // unrealistic
+		this.mock(oContext2).expects("isTransient").withExactArgs().returns(undefined);
+		this.mock(oPreviousContext0).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oPreviousContext1).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oPreviousContext2).expects("isKeepAlive").withExactArgs().returns(true);
+
+		// code under test
+		aResult = oBinding.keepOnlyVisibleContexts();
+
+		assert.deepEqual(aResult, [
+			oCreatedContext0,
+			oCreatedContext2,
+			oContext0,
+			oContext2,
+			oPreviousContext0,
+			oPreviousContext2
+		]);
+		assert.strictEqual(aResult[0], oCreatedContext0);
+		assert.strictEqual(aResult[1], oCreatedContext2);
+		assert.strictEqual(aResult[2], oContext0);
+		assert.strictEqual(aResult[3], oContext2);
+		assert.strictEqual(aResult[4], oPreviousContext0);
+		assert.strictEqual(aResult[5], oPreviousContext2);
 	});
 
 	//*********************************************************************************************

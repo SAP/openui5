@@ -209,6 +209,7 @@ sap.ui.define([
 		assert.deepEqual(oCache.mEditUrl2PatchPromise, {});
 		assert.deepEqual(oCache.mPostRequests, {});
 		assert.strictEqual(oCache.oPendingRequestsPromise, null);
+		assert.strictEqual(oCache.getPendingRequestsPromise(), null);
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
 		assert.strictEqual(oCache.bSentRequest, false);
@@ -3755,6 +3756,9 @@ sap.ui.define([
 		oPendingRequestsPromise = oCache.oPendingRequestsPromise;
 		assert.ok(oPendingRequestsPromise instanceof SyncPromise);
 		assert.strictEqual(oPendingRequestsPromise.$count, 1);
+
+		// code under test
+		assert.strictEqual(oCache.getPendingRequestsPromise(), oPendingRequestsPromise.getResult());
 
 		// code under test
 		oCache.addPendingRequest();
@@ -9192,15 +9196,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{ // no visible rows: discard everything except persistent created element
-		sExpectedKeys : "@",
-		iExpectedLength : 1,
-		sFilter : "key eq 'a-1'",
-		iLength : 0,
-		iStart : 4,
-		bTransientElement : false,
-		aValues : [{key : "@"}]
-	}, { // no visible rows: discard everything except transient created element
+	[{ // no visible rows: discard everything except transient created element
 		sExpectedKeys : "@",
 		iExpectedLength : 1,
 		iLength : 0,
@@ -9222,14 +9218,6 @@ sap.ui.define([
 		iStart : 0,
 		bTransientElement : true,
 		aValues : []
-	}, { // a single visible row (persistent created element is updated)
-		sExpectedKeys : "@a",
-		iExpectedLength : 2,
-		sFilter : "key eq 'a-1' or key eq 'a0'",
-		iLength : 1,
-		iStart : 1,
-		bTransientElement : false,
-		aValues : [{key : "a"}, {key : "@"}] // order doesn't matter
 	}, { // a single visible row (transient created element is kept)
 		sExpectedKeys : "@a",
 		iExpectedLength : 2,
@@ -9245,14 +9233,6 @@ sap.ui.define([
 		iLength : 1,
 		iStart : 3,
 		aValues : [{key : "d"}]
-	}, { // multiple visible rows including a persistent created element
-		sExpectedKeys : "@a",
-		iExpectedLength : 2,
-		sFilter : "key eq 'a-1' or key eq 'a0'",
-		iLength : 2,
-		iStart : 0,
-		bTransientElement : false,
-		aValues : [{key : "@"}, {key : "a"}]
 	}, { // multiple visible rows including a transient created element which is not part of GET
 		sExpectedKeys : "@a",
 		iExpectedLength : 2,
@@ -9290,25 +9270,9 @@ sap.ui.define([
 		iLength : undefined,
 		iStart : 1,
 		aValues : [{key : "b"}]
-	}, { // single row, requestSideEffects on non-transient created element
-		sExpectedKeys : "@abcdefghij",
-		iExpectedLength : 11,
-		sFilter : "key eq 'a-1'",
-		iLength : undefined,
-		iStart : 0,
-		bTransientElement : false,
-		aValues : [{key : "@"}]
-	}, { // single row, requestSideEffects on element from server, non-transient element untouched
-		sExpectedKeys : "@abcdefghij",
-		iExpectedLength : 11,
-		sFilter : "key eq 'a1'",
-		iLength : undefined,
-		iStart : 2,
-		bTransientElement : false,
-		aValues : [{key : "b"}]
 	}].forEach(function (oFixture, iFixtureIndex) {
 		QUnit.test("CollectionCache#requestSideEffects, " + iFixtureIndex, function (assert) {
-			var oCreatedElement, // undefined, transient or persistent
+			var oCreatedElement, // undefined or transient
 				iLength = oFixture.iLength,
 				iStart = oFixture.iStart,
 				// read at least 10, at most 26
@@ -9361,13 +9325,6 @@ sap.ui.define([
 							"sap-client" : "123"
 						},
 						sTransientPredicate = "($uid=id-1-23)",
-						oPersisted = {
-							"@$ui5._" : { // persistent
-								predicate : "('@')",
-								transientPredicate : sTransientPredicate
-							},
-							key : "@"
-						},
 						oResult = {value : oFixture.aValues},
 						bSingle = iLength === undefined,
 						oTransient = {
@@ -9387,14 +9344,11 @@ sap.ui.define([
 
 					aTestData[-1] = "@"; // predecessor of "A"
 					aPredicates = aTestData.map(function (sKey) { return "('" + sKey + "')"; });
-					if ("bTransientElement" in oFixture) { // add created element
-						oCreatedElement = oFixture.bTransientElement ? oTransient : oPersisted;
+					if (oFixture.bTransientElement) { // add transient element
+						oCreatedElement = oTransient;
 						aPredicates.unshift("('@')");
 						oCache.aElements.unshift(oCreatedElement);
 						oCache.aElements.$created = 1;
-						if (!oFixture.bTransientElement) {
-							oCache.aElements.$byPredicate["('@')"] = oCreatedElement;
-						}
 						oCache.aElements.$byPredicate[sTransientPredicate] = oCreatedElement;
 					} else {
 						oCache.aElements.$created = 0;
@@ -9428,7 +9382,7 @@ sap.ui.define([
 						.callsFake(function (mQueryOptions2) {
 							mQueryOptions2.foo = "baz";
 						});
-					that.mock(oCache).expects("filterVisibleElements").exactly(bSingle ? 0 : 1)
+					that.mock(oCache).expects("keepOnlyGivenElements").exactly(bSingle ? 0 : 1)
 						.withExactArgs(aPredicates).callThrough(); // too hard to refactor :-(
 					// Note: fetchTypes() would have been triggered by read() already
 					that.mock(oCache).expects("fetchTypes").withExactArgs()
@@ -9481,14 +9435,14 @@ sap.ui.define([
 								i;
 
 							if (oCreatedElement) {
-								// created elements are never discarded but updated
+								// transient elements are neither discarded nor updated
 								assert.strictEqual(oCache.aElements.$created, 1);
 								assert.strictEqual(oCache.aElements[0], oCreatedElement);
 								assert.strictEqual(
 									oCache.aElements.$byPredicate[sTransientPredicate],
 									oCreatedElement);
 								assert.strictEqual(oCache.aElements.$byPredicate["('@')"],
-									!oFixture.bTransientElement ? oCreatedElement : undefined);
+									undefined);
 							} else {
 								assert.strictEqual(oCache.aElements.$created, 0);
 							}
@@ -9571,7 +9525,7 @@ sap.ui.define([
 		oCache.beforeRequestSideEffects = function () {
 			throw new Error("Do not call!");
 		};
-		this.mock(oCache).expects("filterVisibleElements").never();
+		this.mock(oCache).expects("keepOnlyGivenElements").never();
 		this.mock(_Helper).expects("getKeyFilter").never();
 		this.mock(_Helper).expects("selectKeyProperties").never();
 		this.oRequestorMock.expects("buildQueryString").never();
@@ -9602,7 +9556,7 @@ sap.ui.define([
 				that.mock(oCache).expects("fetchTypes").withExactArgs()
 					.returns(SyncPromise.resolve(mTypeForMetaPath));
 				that.mock(_Helper).expects("intersectQueryOptions").returns({/*don't care*/});
-				that.mock(oCache).expects("filterVisibleElements").withExactArgs([])
+				that.mock(oCache).expects("keepOnlyGivenElements").withExactArgs([])
 					.returns([]);
 				that.mock(_Helper).expects("getKeyFilter").never();
 				that.mock(_Helper).expects("selectKeyProperties").never();
@@ -9618,7 +9572,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#filterVisibleElements: no data left", function (assert) {
+	QUnit.test("CollectionCache#keepOnlyGivenElements: no data left", function (assert) {
 		var sResourcePath = "TEAMS('42')/Foo",
 			oCache = this.createCache(sResourcePath),
 			oCacheMock = this.mock(oCache);
@@ -9633,7 +9587,7 @@ sap.ui.define([
 				oCacheMock.expects("drop").withExactArgs(4, "('e')");
 
 				// code under test
-				assert.deepEqual(oCache.filterVisibleElements([]), []);
+				assert.deepEqual(oCache.keepOnlyGivenElements([]), []);
 
 				assert.deepEqual(oCache.aElements, [], "all elements discarded");
 				assert.strictEqual(oCache.aElements.$count, 26, "$count is preserved");
@@ -9683,7 +9637,7 @@ sap.ui.define([
 						sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
 						"/TEAMS/Foo", "")
 					.returns(mMergedQueryOptions);
-				that.mock(oCache).expects("filterVisibleElements").withExactArgs(["('c')"])
+				that.mock(oCache).expects("keepOnlyGivenElements").withExactArgs(["('c')"])
 					.returns([oCache.aElements[2]]);
 				oHelperMock.expects("getKeyFilter")
 					.withExactArgs(sinon.match.same(oCache.aElements[2]), "/TEAMS/Foo",
@@ -9761,7 +9715,7 @@ sap.ui.define([
 					oCache.beforeRequestSideEffects = function () {};
 					oBeforeExpectation = that.mock(oCache).expects("beforeRequestSideEffects")
 						.withExactArgs(sinon.match.same(mMergedQueryOptions));
-					oFilterExpectation = that.mock(oCache).expects("filterVisibleElements")
+					oFilterExpectation = that.mock(oCache).expects("keepOnlyGivenElements")
 						.withExactArgs(["('c')"]).returns([oCache.aElements[2]]);
 					that.mock(_Helper).expects("getKeyFilter")
 						.withExactArgs(sinon.match.same(oCache.aElements[2]), "/TEAMS/Foo",
@@ -9839,7 +9793,7 @@ sap.ui.define([
 					sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 					"/TEAMS/Foo", "")
 				.returns(mIntersectedQueryOptions);
-			this.mock(oCache).expects("filterVisibleElements").withExactArgs(["('c')"])
+			this.mock(oCache).expects("keepOnlyGivenElements").withExactArgs(["('c')"])
 				.returns([oCache.aElements[0]]);
 			this.mock(_Helper).expects("getKeyFilter")
 				.withExactArgs(sinon.match.same(oCache.aElements[0]), "/TEAMS/Foo",
@@ -9908,47 +9862,6 @@ sap.ui.define([
 						]);
 					}
 				});
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("CollectionCache#requestSideEffects: wait for oPendingRequestsPromise",
-			function (assert) {
-		var oCache = this.createCache("Employees"),
-			oGroupLock = {},
-			aPaths = [],
-			fnResolve,
-			oPromise;
-
-		oCache.oPendingRequestsPromise = new SyncPromise(function (resolve) {
-			fnResolve = resolve;
-		});
-		this.mock(oCache).expects("fetchTypes").withExactArgs()
-			.returns(SyncPromise.resolve({})); // this call is allowed, it should be cheap
-		this.mock(_Helper).expects("intersectQueryOptions").never();
-		this.mock(_Helper).expects("hasPrivateAnnotation").never();
-		this.mock(_Helper).expects("getPrivateAnnotation").never();
-		this.mock(_Helper).expects("getKeyFilter").never();
-		this.mock(_Helper).expects("selectKeyProperties").never();
-		this.mock(this.oRequestor).expects("buildQueryString").never();
-		this.mock(this.oRequestor).expects("request").never();
-		this.mock(oCache).expects("visitResponse").never();
-		this.mock(_Helper).expects("updateExisting").never();
-
-		// code under test
-		oPromise = oCache.requestSideEffects(oGroupLock, aPaths, 2, 1);
-
-		assert.strictEqual(oPromise.isPending(), true);
-
-		this.mock(oCache).expects("requestSideEffects")
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), 2, 1)
-			.returns(42);
-
-		// code under test
-		fnResolve();
-
-		return oPromise.then(function (vResult) {
-			assert.strictEqual(vResult, 42);
 		});
 	});
 

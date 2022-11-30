@@ -3226,7 +3226,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("filterVisibleElements: empty", function (assert) {
+	QUnit.test("keepOnlyGivenElements: empty", function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
@@ -3237,11 +3237,11 @@ sap.ui.define([
 		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 
 		// code under test
-		assert.deepEqual(oCache.filterVisibleElements([]), []);
+		assert.deepEqual(oCache.keepOnlyGivenElements([]), []);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("filterVisibleElements", function (assert) {
+	QUnit.test("keepOnlyGivenElements", function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
@@ -3268,7 +3268,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(aElements[2]));
 
 		// code under test
-		aResult = oCache.filterVisibleElements(["('A')", "('C')"]);
+		aResult = oCache.keepOnlyGivenElements(["('A')", "('C')"]);
 
 		assert.strictEqual(aResult.length, 2);
 		assert.strictEqual(aResult[0], aElements[0]);

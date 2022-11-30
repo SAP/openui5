@@ -2030,6 +2030,34 @@ sap.ui.define([
 	//    set of (non-binding) parameter names" is unique.
 
 	//*********************************************************************************************
+[false, true].forEach(function (bMissingPredicate) {
+	QUnit.test("getPredicates: missing predicate = " + bMissingPredicate, function (assert) {
+		var aContexts = [{
+				getValue : function () {}
+			}, {
+				getValue : function () {}
+			}, {
+				getValue : function () {}
+			}],
+			oHelperMock = this.mock(_Helper);
+
+		this.mock(aContexts[0]).expects("getValue").withExactArgs().returns("~value0~");
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~value0~", "predicate")
+			.returns("('A')");
+		this.mock(aContexts[1]).expects("getValue").withExactArgs().returns("~value1~");
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~value1~", "predicate")
+			.returns(bMissingPredicate ? undefined : "('B')");
+		this.mock(aContexts[2]).expects("getValue").withExactArgs().returns("~value2~");
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~value2~", "predicate")
+			.returns("('C')");
+
+		// code under test
+		assert.deepEqual(_Helper.getPredicates(aContexts),
+			bMissingPredicate ? null : ["('A')", "('B')", "('C')"]);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("getPredicateIndex", function (assert) {
 		function success(sPath, sPredicate) {
 			assert.strictEqual(sPath.slice(_Helper.getPredicateIndex(sPath)), sPredicate);
