@@ -806,7 +806,14 @@ sap.ui.define([
 
 	// "animationmode" is the normalized value, the application still needs to use "animationMode".
 	var sAnimationModeConfigurationName = 'animationmode';
-	QUnit.module("Animation", {
+
+	/**
+	 * Tests the interaction between the legacy "animation" and the modern "animationMode" settings.
+	 * If only the legacy "animation" settings is given, the modern "animationMode" settings is
+	 * automatically set accordingly.
+	 * @deprecated As of version 1.110
+	 */
+	QUnit.module("[Legacy] Animation & AnimationMode interaction", {
 		beforeEach: function() {
 			window['sap-ui-config'] = window["sap-ui-config"] || {};
 			delete window["sap-ui-config"]['animation'];
@@ -835,16 +842,7 @@ sap.ui.define([
 		assert.equal(Configuration.getAnimationMode(), AnimationMode.basic, "Animation mode should switch to " + AnimationMode.basic + ".");
 	});
 
-	QUnit.test("Invalid animation mode", function(assert) {
-		window['sap-ui-config'][sAnimationModeConfigurationName] = "someuUnsupportedStringValue";
-		assert.throws(
-			function() { Configuration.setCore(); },
-			new Error("Unsupported Enumeration value for animationMode, valid values are: full, basic, minimal, none"),
-			"Unsupported value for animation mode should throw an error."
-		);
-	});
-
-	QUnit.test("Valid animation modes from enumeration", function(assert) {
+	QUnit.test("Valid animation modes from enumeration & side-effect on 'animation' setting", function(assert) {
 		for (var sAnimationModeKey in AnimationMode) {
 			if (AnimationMode.hasOwnProperty(sAnimationModeKey)) {
 				var sAnimationMode = AnimationMode[sAnimationModeKey];
@@ -860,7 +858,29 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.module("Animation runtime", {
+	QUnit.module("AnimationMode initial setting evaluation");
+
+	QUnit.test("Invalid animation mode", function(assert) {
+		window['sap-ui-config'][sAnimationModeConfigurationName] = "someuUnsupportedStringValue";
+		assert.throws(
+			function() { Configuration.setCore(); },
+			new Error("Unsupported Enumeration value for animationMode, valid values are: full, basic, minimal, none"),
+			"Unsupported value for animation mode should throw an error."
+		);
+	});
+
+	QUnit.test("Valid animation modes from enumeration", function(assert) {
+		for (var sAnimationModeKey in AnimationMode) {
+			if (AnimationMode.hasOwnProperty(sAnimationModeKey)) {
+				var sAnimationMode = AnimationMode[sAnimationModeKey];
+				window['sap-ui-config'][sAnimationModeConfigurationName] = sAnimationMode;
+				Configuration.setCore();
+				assert.equal(Configuration.getAnimationMode(), sAnimationMode, "Test for animation mode: " + sAnimationMode);
+			}
+		}
+	});
+
+	QUnit.module("AnimationMode changes at runtime", {
 		before: function () {
 			window["sap-ui-config"] = {};
 			Configuration.setCore(oRealCore);
