@@ -139,6 +139,10 @@ sap.ui.define([
 		var oManifest = oCard.getManifestEntry("/"),
 			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
+		if (oManifest === null) {
+			oManifest = {};
+		}
+
 		oManifest["sap.card"] = {
 			content: {
 				message: {
