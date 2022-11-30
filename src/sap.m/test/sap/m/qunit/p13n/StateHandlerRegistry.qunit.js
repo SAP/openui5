@@ -21,7 +21,7 @@ sap.ui.define([
 			function(oError) {
 				return (
 					oError instanceof Error &&
-					oError.message === "StateHandlerRegistry: This class is a singleton and should not be used without an AdaptationProvider. Please use 'sap.m.p13n.Engine.getInstance().stateHandlerRegistry' instead"
+					oError.message === "StateHandlerRegistry: This class is a singleton and should not be used without an AdaptationProvider. Please use 'Engine.getInstance().stateHandlerRegistry' instead"
 				);
 			},
 			"calling the constructor subsequently throws an error."

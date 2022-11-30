@@ -9,7 +9,7 @@ sap.ui.define([
 ], function (BaseObject, loadModules, Log) {
 	"use strict";
 
-	var ERROR_INSTANCING = "UIManager: This class is a singleton and should not be used without an AdaptationProvider. Please use 'sap.m.p13n.Engine.getInstance().uimanager' instead";
+	var ERROR_INSTANCING = "UIManager: This class is a singleton and should not be used without an AdaptationProvider. Please use 'Engine.getInstance().uimanager' instead";
 
 	//Singleton storage
 	var oUIManager;

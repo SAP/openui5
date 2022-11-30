@@ -22,9 +22,9 @@ sap.ui.define([
     var fConfigModified = function(oControl) {
         if (!oControl._bWaitForModificationChanges && oControl.isA) {
             oControl._bWaitForModificationChanges = true;
-            sap.m.p13n.Engine.getInstance().waitForChanges(oControl).then(function() {
+            Engine.getInstance().waitForChanges(oControl).then(function() {
                 delete oControl._bWaitForModificationChanges;
-                sap.m.p13n.Engine.getInstance().fireStateChange(oControl);
+                Engine.getInstance().fireStateChange(oControl);
             });
         }
 	};
@@ -69,7 +69,7 @@ sap.ui.define([
                 applyChange: function (oChange, oControl, mPropertyBag) {
 
                     return fnQueueChange(oControl, function(){
-                        return sap.m.p13n.Engine.getInstance().readXConfig(oControl, {
+                        return Engine.getInstance().readXConfig(oControl, {
                             propertyBag: mPropertyBag
                         })
                         .then(function(oPriorAggregationConfig) {
@@ -109,7 +109,7 @@ sap.ui.define([
                                 };
                             }
 
-                            return sap.m.p13n.Engine.getInstance().enhanceXConfig(oControl, oConfig);
+                            return Engine.getInstance().enhanceXConfig(oControl, oConfig);
                         })
                         .then(function() {
                             fConfigModified(oControl);
@@ -146,7 +146,7 @@ sap.ui.define([
                         };
                     }
 
-                    return sap.m.p13n.Engine.getInstance().enhanceXConfig(oControl, oConfig)
+                    return Engine.getInstance().enhanceXConfig(oControl, oConfig)
                     .then(function() {
                         oChange.resetRevertData();
                         fConfigModified(oControl);

@@ -5,8 +5,9 @@ sap.ui.define([
     "./ModificationHandler",
     "sap/m/p13n/FlexUtil",
     "sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
-    "sap/m/p13n/enum/PersistenceMode"
-], function(ModificationHandler, FlexUtil, FlexRuntimeInfoAPI, mode) {
+    "sap/m/p13n/enum/PersistenceMode",
+    "sap/m/p13n/modules/StateHandlerRegistry"
+], function(ModificationHandler, FlexUtil, FlexRuntimeInfoAPI, mode, StateHandlerRegistry) {
 	"use strict";
 
     var oFlexModificationHandler;
@@ -73,7 +74,7 @@ sap.ui.define([
             });
         }.bind(this))
         .then(function(){
-            sap.m.p13n.Engine.getInstance().fireStateChange(oControl);
+            StateHandlerRegistry.getInstance().fireStateChange(oControl);
         });
     };
 
