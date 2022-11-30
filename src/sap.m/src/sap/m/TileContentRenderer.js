@@ -108,7 +108,6 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile"],
 			bIsActionMode = oTile instanceof GenericTile && oTile.getMode() === GenericTileMode.ActionMode && oTile.getFrameType() === FrameType.TwoByOne,
 			sPriorityText = oControl.getPriorityText(),
 			bRenderPriority = bIsActionMode && oPriority && oPriority !== Priority.None && sPriorityText,
-			sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY"),
 			iMaxLines = (oPriority !== Priority.None && sPriorityText) ? 1 : 3; //if the Priority is present then the text should have 1 line else 3 lines in ActionMode
 
 		if (oContent) {
@@ -134,7 +133,7 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile"],
 				oRm.openStart("span", oControl.getId() + "-priority-value");
 				oRm.class("sapMTilePriorityValue");
 				oRm.openEnd();
-				oRm.text(sPriorityText + " " + sPriority);
+				oRm.text(sPriorityText);
 				oRm.close("span");
 				oRm.close("div");
 				oRm.close("div");
