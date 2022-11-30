@@ -343,6 +343,18 @@ sap.ui.define([
 		assert.ok(this.oTimePicker._getClocks().getShowCurrentTimeButton(), "Now button visibility is propagated to the clocks");
 	});
 
+	QUnit.test('No exception thrown when onBeforeOpen runs without set value', function (assert) {
+		this.stub(this.oTimePicker, "_getClocks").returns(
+			{
+				setValue: function () {},
+				_setTimeValues: function () {}
+			});
+
+		this.oTimePicker.onBeforeOpen();
+
+		assert.ok(true, "Еxception is not thrown when running onBeforeOpen without date value");
+	});
+
 	QUnit.module("Placeholder", {
 		beforeEach: function () {
 			// SUT
