@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
+	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
@@ -41,6 +42,7 @@ sap.ui.define([
 	Stack,
 	RuntimeAuthoring,
 	RtaUtils,
+	ReloadManager,
 	sinon
 ) {
 	"use strict";
@@ -317,10 +319,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when stopping rta without saving changes,", function(assert) {
-			return this.oRta.stop(true)
+			var oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
+			return this.oRta.stop(/*bSkipSave=*/true)
 				.then(function() {
 					assert.ok(true, "then the promise got resolved");
 					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 command is still in the stack");
+					assert.ok(oSerializeToLrepSpy.notCalled, "then 'serializeToLrep' was not called");
 				}.bind(this))
 				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 				.then(function(iNumOfChanges) {
@@ -345,6 +349,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when stopping rta with changes and choosing not to save them on the dialog,", function(assert) {
+			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			var oCheckReloadOnExitSpy = sandbox.spy(ReloadManager, "checkReloadOnExit");
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox")
 			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"));
 
@@ -359,6 +365,8 @@ sap.ui.define([
 					}, "and the message box is called with the right parameters");
 					assert.ok(true, "then the promise got resolved");
 					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "command stack is cleared");
+					assert.ok(oSaveSpy.called, "then save was called (to invalidate the cache)");
+					assert.ok(oCheckReloadOnExitSpy.calledBefore(oSaveSpy), "then the reload check happened before the save");
 					var mPropertyBag = {
 						oComponent: oComp,
 						selector: oComp,

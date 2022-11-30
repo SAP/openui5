@@ -609,15 +609,12 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.stop = function(bSkipSave, bSkipRestart) {
 		var bUserCancelled;
+		var oReloadInfo;
 		checkToolbarAndExecuteFunction.call(this, "setBusy", true);
 		return waitForPendingActions.call(this)
 			.then(function() {
 				var oCommandStack = this.getCommandStack();
 				var sLayer = this.getLayer();
-				if (sLayer === Layer.USER && !bSkipSave) {
-					// Personalization mode always saves on exit
-					return this._serializeToLrep();
-				}
 				if (sLayer !== Layer.USER && !bSkipSave && oCommandStack.canUndo()) {
 					return showSaveConfirmation()
 					.then(function (sAction) {
@@ -625,17 +622,19 @@ sap.ui.define([
 							bUserCancelled = true;
 							return Promise.reject();
 						}
-						return sAction === this._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE")
-							? this._serializeToLrep()
-							: this._oSerializer.clearCommandStack(/*bRemoveChanges = */true);
+						if (sAction === this._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE")) {
+							return this._oSerializer.clearCommandStack(/*bRemoveChanges = */true);
+						}
+						return undefined;
 					}.bind(this));
 				}
-				return Promise.resolve();
+				return undefined;
 			}.bind(this))
 			.then(function() {
 				if (bSkipRestart) {
 					return {};
 				}
+				//Reload check must happen before _serializeToLrep is called
 				return ReloadManager.checkReloadOnExit({
 					layer: this.getLayer(),
 					selector: this.getRootControlInstance(),
@@ -645,7 +644,15 @@ sap.ui.define([
 					changesNeedReloadPromise: this._bSavedChangesNeedReload ? Promise.resolve(true) : this._oSerializer.needsReload()
 				});
 			}.bind(this))
-			.then(function(oReloadInfo) {
+			.then(function(oReturn) {
+				oReloadInfo = oReturn;
+				if (!bSkipSave) {
+					// serializeToLrep has to be called even when no changes were made -> to invalidate cache
+					return this._serializeToLrep();
+				}
+				return undefined;
+			}.bind(this))
+			.then(function() {
 				checkToolbarAndExecuteFunction.call(this, "hide", bSkipSave);
 				this.fireStop();
 				if (!bSkipRestart) {
