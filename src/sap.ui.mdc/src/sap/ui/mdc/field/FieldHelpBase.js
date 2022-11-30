@@ -540,9 +540,6 @@ sap.ui.define([
 						oPopover.setInitialFocus(this._getControlForSuggestion());
 					}
 
-					// use FieldGropuIDs of field, to not leave group if focus moves to field help
-					oPopover.setFieldGroupIds(oField.getFieldGroupIds());
-
 					var fnOpen = function() {
 						if (this._bOpenAfterPromise) {
 							delete this._bOpenAfterPromise;
@@ -1496,6 +1493,19 @@ sap.ui.define([
 	// for compatibility reasons
 	FieldHelpBase.prototype.isNavigationEnabled = function() {
 		return true;
+	};
+
+	// overwrite standard logic of Element to use FieldGroups of connected Field for all content (children aggregations)
+	FieldHelpBase.prototype._getFieldGroupIds = function() {
+
+		var oField = this._getField();
+
+		if (oField) {
+			return oField.getFieldGroupIds();
+		} else {
+			return Element.prototype._getFieldGroupIds.apply(this, arguments);
+		}
+
 	};
 
 	return FieldHelpBase;
