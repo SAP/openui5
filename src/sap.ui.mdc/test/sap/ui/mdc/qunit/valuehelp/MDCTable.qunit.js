@@ -291,7 +291,7 @@ sap.ui.define([
 						assert.ok(oMdcTableWrapper._handleSelectionChange.calledThrice, "MDCTable _handleSelectionChange was called");
 						assert.ok(oMdcTableWrapper._fireSelect.calledTwice, "MDCTable _fireSelect was called");
 						assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
-							"type": "Add", // Single Select should always trigger "Add"
+							"type": "Remove", // Single Select should always trigger "Add"
 							"conditions": [
 								{
 									"operator": "EQ",
@@ -450,7 +450,7 @@ sap.ui.define([
 				assert.ok(oMdcTableWrapper._handleSelectionChange.calledThrice, "MDCTable _handleSelectionChange was called");
 				assert.ok(oMdcTableWrapper._fireSelect.calledThrice, "MDCTable _fireSelect was called");
 				assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
-					"type": "Add", // Single Select should always trigger "Add"
+					"type": "Remove", // Single Select should always trigger "Add"
 					"conditions": [
 						{
 							"operator": "EQ",

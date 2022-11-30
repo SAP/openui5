@@ -746,8 +746,8 @@ sap.ui.define([
 						assert.equal(iSelect, 1, "select event fired");
 						assert.deepEqual(aConditions, [Condition.createItemCondition("Y", "Text")], "select event conditions");
 						assert.equal(sType, SelectType.Set, "select event type");
-						assert.equal(iConfirm, 1, "ConfirmEvent fired");
-						assert.ok(bClose, "Close parameter set");
+						assert.equal(iConfirm, 0, "ConfirmEvent not fired");
+						assert.notOk(bClose, "Close parameter not set");
 
 						oContent2.destroy();
 						fnDone();
