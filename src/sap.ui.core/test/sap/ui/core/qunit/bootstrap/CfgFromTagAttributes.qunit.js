@@ -16,7 +16,7 @@ sap.ui.define([
 			assert.equal(Configuration.getTheme(), "fantasy", "theme");
 			assert.equal(Configuration.getLanguage(), "klingon", "language");
 			assert.equal(Configuration.getAccessibility(), true, "accessibility");
-			assert.equal(Configuration.getAnimation(), false, "animation");
+			assert.equal(Configuration.getAnimationMode(), Configuration.AnimationMode.minimal, "animation mode set to 'minimal'");
 			assert.equal(Configuration.getRTL(), true, "rtl");
 			assert.equal(Configuration.getDebug(), true, "debug");
 			assert.equal(Configuration.getValue("noConflict"), true, "noConflict");
