@@ -4363,13 +4363,13 @@ sap.ui.define([
 						}
 					}, 10);
 				}),
-				wait(100) // timeout
+				wait(200) // timeout
 			]).then(function() {
 				clearInterval(iIntervalId);
 			});
 		}).then(function() {
 			// # 1
-			assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
+			document.hasFocus() && assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 
 			// # 2
 			document.body.focus();
