@@ -54,6 +54,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.InvisibleMessageMode
 	var InvisibleMessageMode = CoreLibrary.InvisibleMessageMode;
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = CoreLibrary.TitleLevel;
+
 	/**
 	 * Constructor for a new TableSelectDialog.
 	 *
@@ -419,7 +422,7 @@ sap.ui.define([
 			titleAlignment: this.getTitleAlignment(),
 			contentMiddle: [
 				new Title(this.getId()  + "-dialog-title", {
-					level: "H2"
+					level: TitleLevel.H1
 				})
 			]
 		});

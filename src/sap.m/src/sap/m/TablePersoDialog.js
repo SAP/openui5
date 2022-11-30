@@ -25,7 +25,8 @@ sap.ui.define([
 	'sap/ui/model/FilterOperator',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/SearchField',
-	'sap/ui/core/Configuration'
+	'sap/ui/core/Configuration',
+	'sap/ui/core/library'
 ],
 	function(
 		Text,
@@ -49,7 +50,8 @@ sap.ui.define([
 		FilterOperator,
 		JSONModel,
 		SearchField,
-		Configuration
+		Configuration,
+		coreLibrary
 	) {
 	"use strict";
 
@@ -63,6 +65,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.WrappingType
 	var WrappingType = library.WrappingType;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 * The TablePersoDialog can be used to display and allow modification of personalization settings relating to a Table. It displays the columns of the table that it refers to by using
@@ -282,7 +287,8 @@ sap.ui.define([
 		var oHeader = new Bar({
 			contentLeft:
 				new Title(this.getId() + "-Dialog-title",{
-					text: this._oRb.getText("PERSODIALOG_COLUMNS_TITLE")
+					text: this._oRb.getText("PERSODIALOG_COLUMNS_TITLE"),
+					level: TitleLevel.H1
 				}),
 			contentRight: this._resetAllButton
 		});

@@ -22,6 +22,7 @@
 				<contentMiddle>
 					<Title
 						text="{i18n>BASE_EDITOR.JSON.TITLE}"
+						level="H1"
 					/>
 				</contentMiddle>
 			</Bar>

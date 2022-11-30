@@ -15,7 +15,8 @@
 				<ToolbarSpacer/>
 				<Title
 					id="title"
-					text="{i18n>TechInfo.DialogTitle}"/>
+					text="{i18n>TechInfo.DialogTitle}"
+					level="H1"/>
 				<ToolbarSpacer/>
 				<Button
 					class="sapUiTinyMarginBegin"
