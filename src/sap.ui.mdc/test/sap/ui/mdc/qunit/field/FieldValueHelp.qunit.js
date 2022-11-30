@@ -246,6 +246,8 @@ sap.ui.define([
 
 		oListBinding = oModel.bindList("/items");
 		oWrapper = new FieldValueHelpContentWrapperBase("W1");
+		oWrapper.addDependent(oDialogContent); // to have it in the control tree
+		oWrapper.addDependent(oSuggestContent); // to have it in the control tree
 		sinon.spy(oWrapper, "initialize");
 		sinon.stub(oWrapper, "getDialogContent").returns(oDialogContent);
 		sinon.stub(oWrapper, "getSuggestionContent").returns(oSuggestContent);
@@ -1041,6 +1043,7 @@ sap.ui.define([
 
 	QUnit.test("content display in suggestion", function(assert) {
 
+		oField.setFieldGroupIds(["myFieldGroup"]);
 		oFieldHelp.open(true);
 		oClock.tick(iPopoverDuration); // fake opening time
 
@@ -1055,9 +1058,11 @@ sap.ui.define([
 			assert.ok(oWrapper.fieldHelpOpen.calledWith(true), "fieldHelpOpen of Wrapper called");
 			assert.ok(oWrapper.getSuggestionContent.called, "Wrapper.getSuggestionContent is called");
 			assert.notOk(oWrapper.getDialogContent.called, "Wrapper.getDialogContent is not called");
+			assert.deepEqual(oPopover._getFieldGroupIds(), ["myFieldGroup"], "FieldGroupIDs of Field used in Popover"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
 			var oContent = oPopover._getAllContent()[0];
 			assert.ok(oContent, "Popover has content");
 			assert.equal(oContent.getId(), "SC1", "content is Popover content");
+			assert.deepEqual(oContent._getFieldGroupIds(), ["myFieldGroup"], "FieldGroupIDs of Field used in content"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
 			assert.equal(iDataUpdate, 1, "DataUpdate event fired");
 			assert.equal(oPopover.getInitialFocus(), "I1", "Initial focus on Field");
 			var oScrollDelegate1 = oFieldHelp.getScrollDelegate();
@@ -2017,6 +2022,7 @@ sap.ui.define([
 
 	QUnit.test("content display in dialog", function(assert) {
 
+		oField.setFieldGroupIds(["myFieldGroup"]);
 		oDialogContent.getScrollDelegate = function() {return "X";}; // Dummy for testing
 		oFieldHelp.open(false);
 		oClock.tick(iDialogDuration); // fake opening time
@@ -2033,11 +2039,14 @@ sap.ui.define([
 			assert.ok(oWrapper.fieldHelpOpen.calledWith(false), "fieldHelpOpen of Wrapper called");
 			assert.notOk(oWrapper.getSuggestionContent.called, "Wrapper.getSuggestionContent is  not called");
 			assert.ok(oWrapper.getDialogContent.called, "Wrapper.getDialogContent is called");
+			assert.deepEqual(oDialog._getFieldGroupIds(), ["myFieldGroup"], "FieldGroupIDs of Field used in Dialog"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
 			var oVHP = oDialog.getContent()[0];
 			assert.ok(oVHP, "Dialog has content");
+			assert.deepEqual(oVHP._getFieldGroupIds(), ["myFieldGroup"], "FieldGroupIDs of Field used in content"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
 			var oFilterBar = oFieldHelp.getAggregation("_filterBar");
 			assert.ok(oFilterBar, "Filterbar created");
 			assert.ok(oFilterBar.isA("sap.ui.mdc.filterbar.vh.FilterBar"), "Filterbar is VH-FilterBar");
+			assert.deepEqual(oFilterBar._getFieldGroupIds(), ["myFieldGroup"], "FieldGroupIDs of Field used in FilterBar"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
 			var oSearchField = oFilterBar && oFilterBar.getBasicSearchField();
 			assert.ok(oSearchField, "SearchField created");
 			assert.ok(oVHP.getShowFilterbar(), "FilterBar shown");
@@ -2048,10 +2057,12 @@ sap.ui.define([
 			assert.ok(oContent, "ValueHelpPanel has table assigned");
 			assert.equal(oContent.getId(), "DC1", "Content ID");
 			assert.notOk(oVHP._oDefineConditionPanel, "no DefineConditionPanel");
+			assert.deepEqual(oContent._getFieldGroupIds(), ["myFieldGroup"], "FieldGroupIDs of Field used in table"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
 			var aButtons = oDialog.getButtons();
 			assert.equal(aButtons.length, 2, "Dialog has 2 Buttons");
 			assert.equal(aButtons[0].getId(), "F1-H-ok", "Dialog has OK-Button");
 			assert.equal(aButtons[1].getId(), "F1-H-cancel", "Dialog has Cancel-Button");
+			assert.deepEqual(aButtons[0]._getFieldGroupIds(), ["myFieldGroup"], "FieldGroupIDs of Field used in Button"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
 			var oScrollDelegate = oFieldHelp.getScrollDelegate();
 			assert.equal(oScrollDelegate, "X", "oScrollDelegate of Dialog content used");
 		}

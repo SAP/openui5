@@ -1454,6 +1454,19 @@ sap.ui.define([
 
 	}
 
+	// overwrite standard logic of Element to use FieldGroups of connected Field for all content (children aggregations)
+	ValueHelp.prototype._getFieldGroupIds = function() {
+
+		var oControl = this.getControl();
+
+		if (oControl) {
+			return oControl.getFieldGroupIds();
+		} else {
+			return Element.prototype._getFieldGroupIds.apply(this, arguments);
+		}
+
+	};
+
 	PromiseMixin.call(ValueHelp.prototype);
 
 

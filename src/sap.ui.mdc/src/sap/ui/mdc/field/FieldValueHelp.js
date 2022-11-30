@@ -636,9 +636,6 @@ sap.ui.define([
 				// use FilterBar filters
 				_updateFiltersFromFilterBar.call(this);
 
-				// use FieldGropuIDs of field, to not leave group if focus moves to field help
-				oDialog.setFieldGroupIds(this._oField.getFieldGroupIds());
-
 				var oValueHelpPanel = oDialog.getContent()[0];
 				oValueHelpPanel.setShowTokenizer(this.getMaxConditions() !== 1 && !!oWrapper);
 				oValueHelpPanel.setFormatOptions(this._getFormatOptions());

@@ -252,10 +252,13 @@ sap.ui.define([
 
 	QUnit.test("connect", function(assert) {
 
+		oField.setFieldGroupIds(["myFieldGroup"]);
+		oField2.setFieldGroupIds(["myFieldGroup2"]);
 		oValueHelp.connect(oField, {test: "X"});
 		assert.equal(iDisconnect, 0, "Disconnect not fired");
 		assert.deepEqual(oValueHelp.getProperty("_config"), {test: "X"}, "Config stored");
 		assert.equal(oValueHelp._oControl, oField, "Field internally stored");
+		assert.deepEqual(oValueHelp._getFieldGroupIds(), ["myFieldGroup"], "FieldGroupIDs of Field used"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
 
 		oValueHelp.setConditions([Condition.createItemCondition("1", "Test")]);
 		oValueHelp.setFilterValue("A");
@@ -265,6 +268,7 @@ sap.ui.define([
 		assert.equal(oValueHelp.getFilterValue(), "", "FilterValue");
 		assert.deepEqual(oValueHelp.getProperty("_config"), {test: "Y"}, "Config stored");
 		assert.equal(oValueHelp._oControl, oField2, "Field internally stored");
+		assert.deepEqual(oValueHelp._getFieldGroupIds(), ["myFieldGroup2"], "FieldGroupIDs of Field used"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
 
 	});
 
@@ -307,6 +311,16 @@ sap.ui.define([
 			_initFields();
 		},
 		afterEach: _teardown
+	});
+
+	QUnit.test("connect", function(assert) {
+
+		oField.setFieldGroupIds(["myFieldGroup"]);
+		oField2.setFieldGroupIds(["myFieldGroup2"]);
+		oValueHelp.connect(oField, {test: "X"});
+		oValueHelp.connect(oField2, {test: "Y"});
+		assert.deepEqual(oContainer._getFieldGroupIds(), ["myFieldGroup2"], "FieldGroupIDs of Field used"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
+
 	});
 
 	QUnit.test("open", function(assert) {
@@ -791,6 +805,16 @@ sap.ui.define([
 			_initFields();
 		},
 		afterEach: _teardown
+	});
+
+	QUnit.test("connect", function(assert) {
+
+		oField.setFieldGroupIds(["myFieldGroup"]);
+		oField2.setFieldGroupIds(["myFieldGroup2"]);
+		oValueHelp.connect(oField, {test: "X"});
+		oValueHelp.connect(oField2, {test: "Y"});
+		assert.deepEqual(oContainer._getFieldGroupIds(), ["myFieldGroup2"], "FieldGroupIDs of Field used"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
+
 	});
 
 	QUnit.test("open", function(assert) {
