@@ -46,40 +46,6 @@ sap.ui.define([
 				constructor : constructor
 			});
 
-	/*
-	 * Fetches and formats the primitive value at the given path.
-	 *
-	 * @param {sap.ui.model.odata.v4.Context} oContext The context
-	 * @param {string} sPath The requested path, absolute or relative to this context
-	 * @param {boolean} [bExternalFormat]
-	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
-	 *   given property path that formats corresponding to the property's EDM type and constraints.
-	 * @param {boolean} [bCached]
-	 *   Whether to return cached values only and not trigger a request
-	 * @returns {sap.ui.base.SyncPromise} a promise on the formatted value
-	 */
-	function fetchPrimitiveValue(oContext, sPath, bExternalFormat, bCached) {
-		var oError,
-			aPromises = [oContext.fetchValue(sPath, null, bCached)],
-			sResolvedPath = oContext.oModel.resolve(sPath, oContext);
-
-		if (bExternalFormat) {
-			aPromises.push(
-				oContext.oModel.getMetaModel().fetchUI5Type(sResolvedPath));
-		}
-		return SyncPromise.all(aPromises).then(function (aResults) {
-			var oType = aResults[1],
-				vValue = aResults[0];
-
-			if (vValue && typeof vValue === "object") {
-				oError = new Error("Accessed value is not primitive: " + sResolvedPath);
-				oError.isNotPrimitive = true;
-				throw oError;
-			}
-			return bExternalFormat ? oType.formatValue(vValue, "string") : vValue;
-		});
-	}
-
 	//*********************************************************************************************
 	// Context
 	//*********************************************************************************************
@@ -605,6 +571,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * Fetches and formats the primitive value at the given path.
+	 *
+	 * @param {string} sPath The requested path, absolute or relative to this context
+	 * @param {boolean} [bExternalFormat]
+	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
+	 *   given property path that formats corresponding to the property's EDM type and constraints.
+	 * @param {boolean} [bCached]
+	 *   Whether to return cached values only and not trigger a request
+	 * @returns {sap.ui.base.SyncPromise} a promise on the formatted value
+	 *
+	 * @private
+	 */
+	Context.prototype.fetchPrimitiveValue = function (sPath, bExternalFormat, bCached) {
+		var oError,
+			aPromises = [this.fetchValue(sPath, null, bCached)],
+			sResolvedPath = this.oModel.resolve(sPath, this);
+
+		if (bExternalFormat) {
+			aPromises.push(
+				this.oModel.getMetaModel().fetchUI5Type(sResolvedPath));
+		}
+		return SyncPromise.all(aPromises).then(function (aResults) {
+			var oType = aResults[1],
+				vValue = aResults[0];
+
+			if (vValue && typeof vValue === "object") {
+				oError = new Error("Accessed value is not primitive: " + sResolvedPath);
+				oError.isNotPrimitive = true;
+				throw oError;
+			}
+			return bExternalFormat ? oType.formatValue(vValue, "string") : vValue;
+		});
+	};
+
+	/**
 	 * Delegates to the <code>fetchValue</code> method of this context's binding which requests
 	 * the value for the given path. A relative path is assumed to be relative to this context and
 	 * is reduced before accessing the cache if the model uses autoExpandSelect.
@@ -839,7 +840,7 @@ sap.ui.define([
 		var oError, oSyncPromise;
 
 		this.oBinding.checkSuspended();
-		oSyncPromise = fetchPrimitiveValue(this, sPath, bExternalFormat, true);
+		oSyncPromise = this.fetchPrimitiveValue(sPath, bExternalFormat, true);
 
 		if (oSyncPromise.isRejected()) {
 			oSyncPromise.caught();
@@ -1240,7 +1241,7 @@ sap.ui.define([
 			return that.oBinding.fetchIfChildCanUseCache(that, sPath, SyncPromise.resolve({}))
 				.then(function (sReducedPath) {
 					if (sReducedPath) {
-						return fetchPrimitiveValue(that, sReducedPath, bExternalFormat);
+						return that.fetchPrimitiveValue(sReducedPath, bExternalFormat);
 					}
 
 					Log.error("Not a valid property path: " + sPath, undefined, sClassName);
