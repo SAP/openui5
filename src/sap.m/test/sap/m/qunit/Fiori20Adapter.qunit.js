@@ -1411,7 +1411,52 @@ sap.ui.define([
 
 		oNestedNavC1.attachEventOnce("afterNavigate", checkAfterNavigateToPage2, this);
 		oNestedNavC1.to("nestedPage2");
+	});
 
+	QUnit.test("Destroyed navContainer page is ignored", function(assert) {
+		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+				sPageTitle,
+				oApp1 = new App({
+					pages: [new Page("page1", {title: "App1"}),
+							new Page("page2")]
+				}),
+				oApp2 = new App({
+					pages: new Page({title: "App2"})
+				}),
+				done = assert.async(),
+				fnTitleListener = function(oEvent) {
+					var oTitleInfo = oEvent.getParameter("oTitleInfo");
+					sPageTitle = oTitleInfo.text;
+				},
+				oSpy = this.spy(fnTitleListener);
+
+		// setup
+		this.oNavContainer.addPage(oApp1);
+		this.oNavContainer.addPage(oApp2);
+		Fiori20Adapter.attachViewChange(oSpy);
+
+		// precondition step 1: 1st app is adapted
+		Fiori20Adapter.traverse(oApp1, oAdaptOptions);
+		assert.equal(sPageTitle, "App1", "title of first app is identified");
+
+		// precondition step 2: 2nd app is adapted
+		Fiori20Adapter.traverse(oApp2, oAdaptOptions);
+		assert.equal(sPageTitle, "App2", "title of second app is identified");
+
+		// act: destroy 1st app and navigate inside 2nd app
+		oSpy.resetHistory();
+		oApp2.destroy();
+		oApp1.to("page2");
+
+		//assert
+		oApp1.attachAfterNavigate(function() {
+			// Assert
+			assert.equal(oSpy.callCount, 0, "destroyed view is ignored");
+
+			//cleanup
+			Fiori20Adapter.detachViewChange(oSpy);
+			done();
+		});
 	});
 
 	QUnit.module("Fiori2 adaptation of split container", {

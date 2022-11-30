@@ -7,11 +7,12 @@ sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/base/EventProvider',
 	'sap/ui/base/ManagedObjectObserver',
+	"sap/ui/core/Core",
 	'sap/ui/Device',
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(BaseObject, EventProvider, ManagedObjectObserver, Device, Log, jQuery) {
+	function(BaseObject, EventProvider, ManagedObjectObserver, Core, Device, Log, jQuery) {
 	"use strict";
 
 	var oEventProvider = new EventProvider(),
@@ -259,8 +260,9 @@ sap.ui.define([
 			oAdaptOptions: oAdaptOptions
 		}]);
 
-		if (this._getCurrentlyAdaptedTopViewId()) {
-			this._fireViewChange(this._getCurrentlyAdaptedTopViewId(), oAdaptOptions);
+		var sCurrentViewId = this._getCurrentlyAdaptedTopViewId();
+		if (sCurrentViewId && Core.byId(sCurrentViewId)) {
+			this._fireViewChange(sCurrentViewId, oAdaptOptions);
 		}
 	};
 
@@ -399,7 +401,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oOwnerViewId = this._getCurrentlyAdaptedTopViewId();
+		var oOwnerViewId = this._getCurrentlyAdaptedTopViewId(), sCurrentViewId;
 		var fnOnAdaptableContentChange = function(oEvent) {
 			var oChangedContent = oEvent.getParameter("adaptableContent");
 			this._setAsCurrentlyAdaptedTopViewId(oOwnerViewId); // restore the view context (so that any findings are saved as belonging to that view)
@@ -407,8 +409,9 @@ sap.ui.define([
 				oNode: oChangedContent,
 				oAdaptOptions: oAdaptOptions
 			}]);
-			if (this._getCurrentlyAdaptedTopViewId()) {
-				this._fireViewChange(this._getCurrentlyAdaptedTopViewId(), oAdaptOptions);
+			sCurrentViewId = this._getCurrentlyAdaptedTopViewId();
+			if (sCurrentViewId && Core.byId(sCurrentViewId)) {
+				this._fireViewChange(sCurrentViewId, oAdaptOptions);
 			}
 		}.bind(this);
 
@@ -429,15 +432,17 @@ sap.ui.define([
 		}
 
 		var fnOnNavigate = function(oEvent){
-			var oNode = oEvent.getParameter("to");
+			var sCurrentViewId,
+				oNode = oEvent.getParameter("to");
 			oAdaptOptions = this._applyRules(oAdaptOptions, oNode); //update the context-specific options
 
 			this._doBFS([{ // scan [for adaptable content] the newly added subtree
 				oNode: oNode,
 				oAdaptOptions: oAdaptOptions
 			}]);
-			if (this._getCurrentlyAdaptedTopViewId()) {
-				this._fireViewChange(this._getCurrentlyAdaptedTopViewId(), oAdaptOptions);
+			sCurrentViewId = this._getCurrentlyAdaptedTopViewId();
+			if (sCurrentViewId && Core.byId(sCurrentViewId)) {
+				this._fireViewChange(sCurrentViewId, oAdaptOptions);
 			}
 		}.bind(this);
 
@@ -453,6 +458,7 @@ sap.ui.define([
 		}
 
 		var oOwnerViewId = this._getCurrentlyAdaptedTopViewId(),
+			sCurrentViewId,
 			fnOnModifyAggregation = function(oChanges) {
 				var sMutation = oChanges.mutation,
 					oChild = oChanges.object;
@@ -464,8 +470,9 @@ sap.ui.define([
 							oNode: oControlToRescan ? oControlToRescan : oChild,
 							oAdaptOptions: oAdaptOptions
 						}]);
-						if (this._getCurrentlyAdaptedTopViewId()) {
-							this._fireViewChange(this._getCurrentlyAdaptedTopViewId(), oAdaptOptions);
+						sCurrentViewId = this._getCurrentlyAdaptedTopViewId();
+						if (sCurrentViewId && Core.byId(sCurrentViewId)) {
+							this._fireViewChange(sCurrentViewId, oAdaptOptions);
 						}
 				}
 			}.bind(this),
