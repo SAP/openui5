@@ -67,9 +67,9 @@
     "node": ">= 10"
   },
   "devDependencies": {
-    "@ui5/builder": "^2.11.7",
+    "@ui5/builder": "^2.11.9",
     "@ui5/project": "^2.6.0",
-    "@ui5/server": "^2.4.0",
+    "@ui5/server": "^2.4.1",
     "@ui5/tooling-webc": "0.1.2",
     "@ui5/webcomponents": "1.5.0",
     "@ui5/webcomponents-base": "1.5.0",
@@ -101,7 +101,7 @@
     "grunt-git": "^1.0.1",
     "grunt-jsdoc": "^2.2.1",
     "grunt-mocha-test": "^0.13.3",
-    "grunt-openui5": "^0.18.3",
+    "grunt-openui5": "^0.18.4",
     "grunt-text-replace": "^0.4.0",
     "grunt-timer": "^0.5.4",
     "js-yaml": "^3.13.1",
