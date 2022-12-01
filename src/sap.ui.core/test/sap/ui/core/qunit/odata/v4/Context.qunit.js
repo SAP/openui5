@@ -679,31 +679,66 @@ sap.ui.define([
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
 			.returns(SyncPromise.resolve(Promise.resolve(42)));
 
-		//code under test
+		// code under test
 		assert.strictEqual(oContext.getValue("bar"), undefined);
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getProperty", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/foo", 1);
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("fetchPrimitiveValue")
+			.withExactArgs("some/path", "~bExternalFormat~", true)
+			.returns(SyncPromise.resolve("~any~"));
+
+		// code under test
+		assert.strictEqual(oContext.getProperty("some/path", "~bExternalFormat~"), "~any~");
+	});
+
+	//*********************************************************************************************
 	[42, null].forEach(function (vResult) {
-		QUnit.test("getProperty: primitive result " + vResult, function (assert) {
-			var oBinding = {
-					checkSuspended : function () {}
-				},
-				oModel = {
+		QUnit.test("fetchPrimitiveValue: primitive result " + vResult, function (assert) {
+			var oModel = {
 					resolve : function () {}
 				},
-				oContext = Context.create(oModel, oBinding, "/foo"),
-				oSyncPromise = SyncPromise.resolve(vResult);
+				oContext = Context.create(oModel, {/*oBinding*/}, "/foo");
 
-			this.mock(oBinding).expects("checkSuspended").withExactArgs();
-			this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
-				.returns(oSyncPromise);
+			this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, undefined)
+				.returns(SyncPromise.resolve(vResult));
 			this.mock(oModel).expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
 				.returns("/foo/bar");
 
-			//code under test
-			assert.strictEqual(oContext.getProperty("bar"), vResult);
+			// code under test
+			assert.strictEqual(oContext.fetchPrimitiveValue("bar").getResult(), vResult);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchPrimitiveValue: structured result", function (assert) {
+		var oModel = {
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, {/*oBinding*/}, "/foo", 1),
+			oError,
+			oSyncPromise;
+
+		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, undefined)
+			.returns(SyncPromise.resolve({}));
+		this.mock(oModel).expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
+			.returns("/foo/bar");
+
+		// code under test
+		oSyncPromise = oContext.fetchPrimitiveValue("bar");
+
+		assert.strictEqual(oSyncPromise.isRejected(), true);
+		oError = oSyncPromise.getResult();
+		assert.strictEqual(oError.isNotPrimitive, true);
+		assert.strictEqual(oError.message, "Accessed value is not primitive: /foo/bar");
+		oSyncPromise.caught();
 	});
 
 	//*********************************************************************************************
@@ -711,22 +746,18 @@ sap.ui.define([
 		var oBinding = {
 				checkSuspended : function () {}
 			},
-			oModel = {
-				resolve : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/foo", 1),
-			oSyncPromise = SyncPromise.resolve({});
+			oContext = Context.create({/*oModel*/}, oBinding, "/foo", 1),
+			oError = new Error("Accessed value is not primitive: ~");
 
+		oError.isNotPrimitive = true;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
-			.returns(oSyncPromise);
-		this.mock(oModel).expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
-			.returns("~");
+		this.mock(oContext).expects("fetchPrimitiveValue").withExactArgs("bar", undefined, true)
+			.returns(SyncPromise.reject(oError));
 
-		//code under test
+		// code under test
 		assert.throws(function () {
 			oContext.getProperty("bar");
-		}, new Error("Accessed value is not primitive: ~"));
+		}, oError);
 	});
 
 	//*********************************************************************************************
@@ -746,7 +777,7 @@ sap.ui.define([
 		this.mock(oModel).expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
 			.returns("/foo/bar");
 
-		//code under test
+		// code under test
 		assert.strictEqual(oContext.getProperty("bar"), undefined);
 	});
 
@@ -763,10 +794,8 @@ sap.ui.define([
 
 		oError.$cached = true;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
+		this.mock(oContext).expects("fetchPrimitiveValue").withExactArgs("bar", undefined, true)
 			.returns(SyncPromise.reject(oError));
-		this.mock(oModel).expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
-			.returns("/foo/bar");
 
 		// code under test
 		assert.strictEqual(oContext.getProperty("bar"), undefined);
@@ -786,26 +815,23 @@ sap.ui.define([
 			oSyncPromise = SyncPromise.resolve(oPromise);
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
+		this.mock(oContext).expects("fetchPrimitiveValue").withExactArgs("bar", undefined, true)
 			.returns(oSyncPromise);
-		this.mock(oModel).expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
-			.returns("/foo/bar");
 		this.oLogMock.expects("warning")
 			.withExactArgs(sMessage, "bar", "sap.ui.model.odata.v4.Context");
 
 		return oPromise.catch(function () {
-			//code under test
+			// code under test
 			assert.strictEqual(oContext.getProperty("bar"), undefined);
 		});
 	});
 
 	//*********************************************************************************************
 	[true, false].forEach(function (bTypeIsResolved) {
-		QUnit.test("getProperty: external, bTypeIsResolved=" + bTypeIsResolved, function (assert) {
-			var oBinding = {
-					checkSuspended : function () {}
-				},
-				oMetaModel = {
+		var sTitle = "fetchPrimitiveValue: external, bTypeIsResolved=" + bTypeIsResolved;
+
+		QUnit.test(sTitle, function (assert) {
+			var oMetaModel = {
 					fetchUI5Type : function () {}
 				},
 				oModel = {
@@ -814,16 +840,16 @@ sap.ui.define([
 					},
 					resolve : function () {}
 				},
-				oContext = Context.create(oModel, oBinding, "/foo", 42),
+				oContext = Context.create(oModel, {/*oBinding*/}, "/foo", 42),
 				oType = {
 					formatValue : function () {}
 				},
 				oResolvedType = bTypeIsResolved ? oType : Promise.resolve(oType),
+				oResult,
 				oSyncPromiseType = SyncPromise.resolve(oResolvedType),
 				oSyncPromiseValue = SyncPromise.resolve(1234);
 
-			this.mock(oBinding).expects("checkSuspended").withExactArgs();
-			this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
+			this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, "~bCached~")
 				.returns(oSyncPromiseValue);
 			this.mock(oModel).expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
 				.returns("~");
@@ -834,9 +860,14 @@ sap.ui.define([
 					.returns("1,234");
 			}
 
-			//code under test
-			assert.strictEqual(oContext.getProperty("bar", true),
-				bTypeIsResolved ? "1,234" : undefined);
+			// code under test
+			oResult = oContext.fetchPrimitiveValue("bar", true, "~bCached~");
+
+			if (bTypeIsResolved) {
+				assert.strictEqual(oResult.getResult(), "1,234");
+			} else {
+				assert.ok(oResult.isPending());
+			}
 		});
 	});
 
@@ -851,8 +882,7 @@ sap.ui.define([
 				resolve : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/foo"),
-			oContextMock = this.mock(oContext),
-			oModelMock = this.mock(oModel);
+			oContextMock = this.mock(oContext);
 
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		oBindingMock.expects("fetchIfChildCanUseCache")
@@ -865,21 +895,18 @@ sap.ui.define([
 				return oPromise.isFulfilled() && isEmptyObject(oPromise.getResult());
 			}))
 			.resolves("/resolved/baz"); // no need to return a SyncPromise
-		oContextMock.expects("fetchValue")
-			.withExactArgs("/resolved/bar", null, undefined)
+		oContextMock.expects("fetchPrimitiveValue")
+			.withExactArgs("/resolved/bar", "~bExternalFormat~")
 			.resolves(42); // no need to return a SyncPromise
-		oModelMock.expects("resolve").withExactArgs("/resolved/bar", sinon.match.same(oContext))
-			.returns("/resolved/bar");
-		oContextMock.expects("fetchValue")
-			.withExactArgs("/resolved/baz", null, undefined)
+		oContextMock.expects("fetchPrimitiveValue")
+			.withExactArgs("/resolved/baz", "~bExternalFormat~")
 			.resolves(null); // no need to return a SyncPromise
-		oModelMock.expects("resolve").withExactArgs("/resolved/baz", sinon.match.same(oContext))
-			.returns("/resolved/baz");
 
-		//code under test
-		return oContext.requestProperty(["bar", "baz"]).then(function (aActual) {
-			assert.deepEqual(aActual, [42, null]);
-		});
+		// code under test
+		return oContext.requestProperty(["bar", "baz"], "~bExternalFormat~")
+			.then(function (aActual) {
+				assert.deepEqual(aActual, [42, null]);
+			});
 	});
 
 	//*********************************************************************************************
@@ -900,83 +927,9 @@ sap.ui.define([
 		this.oLogMock.expects("error").withExactArgs("Not a valid property path: bar", undefined,
 			"sap.ui.model.odata.v4.Context");
 
-		//code under test
+		// code under test
 		return oContext.requestProperty("bar").then(function (vActual) {
 			assert.strictEqual(vActual, undefined);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestProperty: structured result", function (assert) {
-		var oBinding = {
-				checkSuspended : function () {},
-				fetchIfChildCanUseCache : function () {}
-			},
-			oModel = {
-				resolve : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/foo", 1);
-
-		this.mock(oBinding).expects("fetchIfChildCanUseCache")
-			.withExactArgs(oContext, "bar", sinon.match(function (oPromise) {
-				return oPromise.isFulfilled() && isEmptyObject(oPromise.getResult());
-			}))
-			.resolves("/resolved/path"); // no need to return a SyncPromise
-		this.mock(oContext).expects("fetchValue")
-			.withExactArgs("/resolved/path", null, undefined)
-			.resolves({}); // no need to return a SyncPromise
-		this.mock(oModel).expects("resolve").withExactArgs("/resolved/path",
-				sinon.match.same(oContext))
-			.returns("/resolved/path");
-
-		//code under test
-		return oContext.requestProperty("bar").then(function () {
-			assert.ok(false);
-		}, function (oError) {
-			assert.strictEqual(oError.message, "Accessed value is not primitive: /resolved/path");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestProperty: external", function (assert) {
-		var oBinding = {
-				checkSuspended : function () {},
-				fetchIfChildCanUseCache : function () {}
-			},
-			oMetaModel = {
-				fetchUI5Type : function () {}
-			},
-			oModel = {
-				getMetaModel : function () {
-					return oMetaModel;
-				},
-				resolve : function () {}
-			},
-			oType = {
-				formatValue : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/foo", 42),
-			oSyncPromiseType = SyncPromise.resolve(Promise.resolve(oType)),
-			oSyncPromiseValue = SyncPromise.resolve(1234);
-
-		this.mock(oBinding).expects("fetchIfChildCanUseCache")
-			.withExactArgs(oContext, "bar", sinon.match(function (oPromise) {
-				return oPromise.isFulfilled() && isEmptyObject(oPromise.getResult());
-			}))
-			.resolves("/resolved/path"); // no need to return a SyncPromise
-		this.mock(oContext).expects("fetchValue").withExactArgs("/resolved/path", null, undefined)
-			.returns(oSyncPromiseValue);
-		this.mock(oModel).expects("resolve").withExactArgs("/resolved/path",
-				sinon.match.same(oContext))
-			.returns("/resolved/path");
-		this.mock(oMetaModel).expects("fetchUI5Type").withExactArgs("/resolved/path")
-			.returns(oSyncPromiseType);
-		this.mock(oType).expects("formatValue").withExactArgs(1234, "string")
-			.returns("1,234");
-
-		//code under test
-		return oContext.requestProperty("bar", true).then(function (oResult) {
-			assert.strictEqual(oResult, "1,234");
 		});
 	});
 
@@ -1009,7 +962,7 @@ sap.ui.define([
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
 
-		//code under test
+		// code under test
 		oPromise = oContext.requestCanonicalPath();
 
 		assert.ok(oPromise instanceof Promise);
@@ -1026,7 +979,7 @@ sap.ui.define([
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
 
-		//code under test
+		// code under test
 		assert.strictEqual(oContext.getCanonicalPath(), "/EMPLOYEES('1')");
 	});
 
@@ -1037,7 +990,7 @@ sap.ui.define([
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
 
-		//code under test
+		// code under test
 		assert.throws(function () {
 			oContext.getCanonicalPath();
 		}, new Error("Result pending"));
@@ -1051,7 +1004,7 @@ sap.ui.define([
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
 
-		//code under test
+		// code under test
 		assert.throws(function () {
 			oContext.getCanonicalPath();
 		}, oError);
