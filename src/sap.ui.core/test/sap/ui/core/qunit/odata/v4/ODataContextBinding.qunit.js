@@ -30,10 +30,7 @@ sap.ui.define([
 			this.oLogMock.expects("error").never();
 
 			// create ODataModel
-			this.oModel = new ODataModel({
-				serviceUrl : "/service/?sap-client=111",
-				synchronizationMode : "None"
-			});
+			this.oModel = new ODataModel({serviceUrl : "/service/?sap-client=111"});
 			this.oModel.bSharedRequests = {/*false,true*/};
 			this.oRequestorMock = this.mock(this.oModel.oRequestor);
 			// ensure that the requestor does not trigger requests

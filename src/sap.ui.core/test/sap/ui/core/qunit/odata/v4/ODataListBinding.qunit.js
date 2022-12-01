@@ -93,10 +93,7 @@ sap.ui.define([
 			this.oLogMock.expects("warning").never();
 
 			// create ODataModel
-			this.oModel = new ODataModel({
-				serviceUrl : "/service/?sap-client=111",
-				synchronizationMode : "None"
-			});
+			this.oModel = new ODataModel({serviceUrl : "/service/?sap-client=111"});
 			this.oModel.setSizeLimit(3);
 			// ensure that the requestor does not trigger requests
 			this.mock(this.oModel.oRequestor).expects("request").never();
@@ -3271,8 +3268,7 @@ sap.ui.define([
 		}, {
 			oModel : new ODataModel({
 				operationMode : OperationMode.Server,
-				serviceUrl : "/service/?sap-client=111",
-				synchronizationMode : "None"
+				serviceUrl : "/service/?sap-client=111"
 			}),
 			mParameters : {$orderby : "bar"},
 			queryOptions : {$orderby : "foo,bar", "sap-client" : "111"},
@@ -8240,7 +8236,6 @@ sap.ui.define([
 	QUnit.test("checkKeepAlive: sharedRequests from model", function (assert) {
 		var oModel = new ODataModel({
 				serviceUrl : "/service/?sap-client=111",
-				synchronizationMode : "None",
 				sharedRequests : true
 			}),
 			oBinding = oModel.bindList("/EMPLOYEES");

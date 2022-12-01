@@ -2799,8 +2799,7 @@ sap.ui.define([
 			var mClonedProductScope = clone(mProductScope),
 				oModel = new ODataModel({ // code under test
 					serviceUrl : "/a/b/c/d/e/",
-					supportReferences : bSupportReferences,
-					synchronizationMode : "None"
+					supportReferences : bSupportReferences
 				}),
 				sPath = "/tea_busi_product.v0001.Product",
 				sUrl = "/a/default/iwbep/tea_busi_product/0001/$metadata";
@@ -5181,10 +5180,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getAbsoluteServiceUrl", function (assert) {
-		var oModel = new ODataModel({
-				serviceUrl : "/Foo/DataService/",
-				synchronizationMode : "None"
-			}),
+		var oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 			oMetaModel = oModel.getMetaModel();
 
 		// code under test
@@ -5210,10 +5206,7 @@ sap.ui.define([
 		var sRelativePath = "../../../DataService/",
 			sAbsolutePath
 				= new URI(sRelativePath).absoluteTo(document.baseURI).pathname().toString(),
-			oModel = new ODataModel({
-				serviceUrl : sRelativePath,
-				synchronizationMode : "None"
-			});
+			oModel = new ODataModel({serviceUrl : sRelativePath});
 
 		// code under test
 		assert.strictEqual(oModel.getMetaModel()
@@ -5227,10 +5220,7 @@ sap.ui.define([
 		var mHeaders = {"Accept-Language" : "ab-CD", "X-CSRF-Token" : "xyz"},
 			oMapGetExpectation,
 			oMapSetExpectation,
-			oModel = new ODataModel({
-				serviceUrl : "/Foo/DataService/",
-				synchronizationMode : "None"
-			}),
+			oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 			oMetaModel = oModel.getMetaModel(),
 			oMetaModelMock = this.mock(oMetaModel),
 			oSharedModel;
@@ -5276,10 +5266,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getOrCreateSharedModel, undefined and false are the same in cache",
 			function (assert) {
-		var oModel = new ODataModel({
-				serviceUrl : "/Foo1/DataService/",
-				synchronizationMode : "None"
-			}),
+		var oModel = new ODataModel({serviceUrl : "/Foo1/DataService/"}),
 			oMetaModel = oModel.getMetaModel(),
 			oMetaModelMock = this.mock(oMetaModel),
 			oSharedModel;
@@ -5312,10 +5299,7 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var sAbsolutePath = "/" + uid() + "/", // circumvent caching
-				oModel = new ODataModel({
-					serviceUrl : "/Foo/DataService/",
-					synchronizationMode : "None"
-				}),
+				oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 				oSharedModel;
 
 			this.mock(oModel.getMetaModel()).expects("getAbsoluteServiceUrl")
@@ -5673,10 +5657,7 @@ sap.ui.define([
 			+ "'zui5_epm_sample.Product/Category' in /Foo/ValueListService"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchValueListMappings: " + oFixture.error, function (assert) {
-			var oModel = new ODataModel({
-					serviceUrl : "/Foo/DataService/",
-					synchronizationMode : "None"
-				}),
+			var oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 				oMetaModel = oModel.getMetaModel(),
 				oMetaModelMock = this.mock(oMetaModel),
 				oProperty = {},
@@ -5717,10 +5698,7 @@ sap.ui.define([
 			var oAnnotations = {
 					"@com.sap.vocabularies.Common.v1.Label" : "Country"
 				},
-				oModel = new ODataModel({
-					serviceUrl : "/Foo/DataService/",
-					synchronizationMode : "None"
-				}),
+				oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 				oMetaModelMock = this.mock(oModel.getMetaModel()),
 				oMapping = {
 					CollectionPath : "VH_CountrySet",
@@ -5766,10 +5744,7 @@ sap.ui.define([
 		sExpectedError : "No annotation 'com.sap.vocabularies.Common.v1.ValueListReferences'"
 	}].forEach(function (oFixture) {
 		QUnit.test("requestValueListInfo: " + oFixture.sExpectedError, function (assert) {
-			var oModel = new ODataModel({
-					serviceUrl : "/~/",
-					synchronizationMode : "None"
-				});
+			var oModel = new ODataModel({serviceUrl : "/~/"});
 
 			this.mock(oModel.getMetaModel()).expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(mScope));
@@ -5801,10 +5776,7 @@ sap.ui.define([
 				sMappingUrl1 = "../ValueListService1/$metadata",
 				sMappingUrl2 = "../ValueListService2/$metadata",
 				sMappingUrlBar = "../ValueListServiceBar/$metadata",
-				oModel = new ODataModel({
-					serviceUrl : "/Foo/DataService/",
-					synchronizationMode : "None"
-				}),
+				oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 				oMetaModelMock = this.mock(oModel.getMetaModel()),
 				oProperty = {
 					$kind : "Property"
@@ -5942,10 +5914,7 @@ sap.ui.define([
 ].forEach(function (sPropertyPath) {
 	QUnit.test("requestValueListInfo: bound action parameter " + sPropertyPath, function (assert) {
 		var sMappingUrl = "../ValueListService/$metadata",
-			oModel = new ODataModel({
-				serviceUrl : "/Foo/DataService/",
-				synchronizationMode : "None"
-			}),
+			oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 			oMetadata = {
 				$Annotations : {
 					"name.space.Action/Category" : {
@@ -6012,10 +5981,7 @@ sap.ui.define([
 	// --> need to identify action import before we Promise.all([this.requestObject()])
 	QUnit.skip("requestValueListInfo: action import parameter", function (assert) {
 		var sMappingUrl = "../ValueListService/$metadata",
-			oModel = new ODataModel({
-				serviceUrl : "/Foo/DataService/",
-				synchronizationMode : "None"
-			}),
+			oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 			oMetadata = {
 				$Annotations : {
 					"name.space.Action/Category" : {
@@ -6094,10 +6060,7 @@ sap.ui.define([
 						"value_list.VH_BusinessPartner/Country" : oAnnotations
 					}
 				},
-				oModel = new ODataModel({
-					serviceUrl : "/Foo/ValueListService/",
-					synchronizationMode : "None"
-				}),
+				oModel = new ODataModel({serviceUrl : "/Foo/ValueListService/"}),
 				oMetaModelMock = this.mock(oModel.getMetaModel()),
 				sPropertyPath = "/VH_BusinessPartnerSet('0100000000')/Country";
 
@@ -6153,10 +6116,7 @@ sap.ui.define([
 							"value_list.VH_BusinessPartner/Country" : oAnnotations
 						}
 					},
-					oModel = new ODataModel({
-						serviceUrl : "/Foo/ValueListService/",
-						synchronizationMode : "None"
-					}),
+					oModel = new ODataModel({serviceUrl : "/Foo/ValueListService/"}),
 					oMetaModel = oModel.getMetaModel(),
 					sPropertyPath = "/VH_BusinessPartnerSet('42')/Country";
 
@@ -6197,10 +6157,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestValueListInfo: property in cross-service reference", function (assert) {
 		var sMappingUrl = "../ValueListService/$metadata",
-			oModel = new ODataModel({
-				serviceUrl : "/Foo/DataService/",
-				synchronizationMode : "None"
-			}),
+			oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 			oMetaModelMock = this.mock(oModel.getMetaModel()),
 			oProperty = {
 				$kind : "Property"
@@ -6301,10 +6258,7 @@ sap.ui.define([
 						"zui5_epm_sample.Product/Category" : oAnnotations
 					}
 				},
-				oModel = new ODataModel({
-					serviceUrl : "/Foo/ValueListService/",
-					synchronizationMode : "None"
-				}),
+				oModel = new ODataModel({serviceUrl : "/Foo/ValueListService/"}),
 				oMetaModelMock = this.mock(oModel.getMetaModel()),
 				sPropertyPath = "/ProductList('HT-1000')/Category",
 				oValueListModel = {};
@@ -6336,10 +6290,7 @@ sap.ui.define([
 	QUnit.test("requestValueListInfo: ValueList with CollectionRoot in data service",
 			function (assert) {
 		var sMappingUrl = "../ValueListService/$metadata",
-			oModel = new ODataModel({
-				serviceUrl : "/Foo/DataService/",
-				synchronizationMode : "None"
-			}),
+			oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 			oMetaModelMock = this.mock(oModel.getMetaModel()),
 			oProperty = {
 				$kind : "Property"
@@ -6423,10 +6374,7 @@ sap.ui.define([
 						}
 					}
 				},
-				oModel = new ODataModel({
-					serviceUrl : "/Foo/DataService/",
-					synchronizationMode : "None"
-				}),
+				oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 				oMetaModelMock = this.mock(oModel.getMetaModel()),
 				sPropertyPath = "/ProductList('HT-1000')/Category",
 				oValueListModel = {id : "ValueListModel"}, // for deepEqual
@@ -6498,10 +6446,7 @@ sap.ui.define([
 					}
 				}
 			},
-			oModel = new ODataModel({
-				serviceUrl : "/Foo/DataService/",
-				synchronizationMode : "None"
-			}),
+			oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 			oMetaModelMock = this.mock(oModel.getMetaModel()),
 			sPropertyPath = "/ProductList('HT-1000')/Category",
 			fnResolve1,
@@ -7538,10 +7483,7 @@ forEach({
 		sPathInEntity : "ProductInfo/WeightMeasure"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("getUnitOrCurrencyPath, " + i, function (assert) {
-			var oModel = new ODataModel({
-					serviceUrl : sSampleServiceUrl,
-					synchronizationMode : "None"
-				}),
+			var oModel = new ODataModel({serviceUrl : sSampleServiceUrl}),
 				oMetaModel = oModel.getMetaModel(),
 				sPropertyPath = "/SalesOrderList('42')/SO_2_SOITEM('10')/" + oFixture.sPathInEntity,
 				oMetaContext = {};

@@ -69,7 +69,6 @@ sap.ui.define([
 			oModelV4 = new ODataModelV4({
 				annotationURI : sap.ui.require.toUrl(sResourcePath + "/annotationsV4.xml"),
 				serviceUrl : sUriV4,
-				synchronizationMode : "None",
 				updateGroupId : "EDMTypes"
 			});
 

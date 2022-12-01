@@ -203,10 +203,8 @@ sap.ui.define([
 		return repeatAsyncTest(10, function () {
 			var iStart = Date.now();
 
-			return new ODataModelV4({
-				serviceUrl : "/fake/v4/",
-				synchronizationMode : "None"
-			}).getMetaModel().requestObject("/").then(function () {
+			return new ODataModelV4({serviceUrl : "/fake/v4/"}).getMetaModel().requestObject("/")
+			.then(function () {
 				return {time: Date.now() - iStart};
 			});
 		}).then(function (oResult) {

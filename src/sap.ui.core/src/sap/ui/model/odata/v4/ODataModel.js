@@ -160,10 +160,12 @@ sap.ui.define([
 		 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives
 		 *   are supported in order to load schemas on demand from other $metadata documents and
 		 *   include them into the current service ("cross-service references").
-		 * @param {string} mParameters.synchronizationMode
-		 *   Controls synchronization between different bindings which refer to the same data for
+		 * @param {string} [mParameters.synchronizationMode]
+		 *   (Controls synchronization between different bindings which refer to the same data for
 		 *   the case data changes in one binding. Must be set to 'None' which means bindings are
-		 *   not synchronized at all; all other values are not supported and lead to an error.
+		 *   not synchronized at all; all other values are not supported and lead to an error.)
+		 *   @deprecated As of version 1.110.0, this parameter is optional; see also
+		 *   {@link topic:648e360fa22d46248ca783dc6eb44531 Data Reuse}
 		 * @param {string} [mParameters.updateGroupId]
 		 *   The group ID that is used for update requests. If no update group ID is specified,
 		 *   <code>mParameters.groupId</code> is used. Valid update group IDs are
@@ -254,7 +256,8 @@ sap.ui.define([
 		// do not pass any parameters to Model
 		Model.call(this);
 
-		if (!mParameters || mParameters.synchronizationMode !== "None") {
+		mParameters = mParameters || {};
+		if ("synchronizationMode" in mParameters && mParameters.synchronizationMode !== "None") {
 			throw new Error("Synchronization mode must be 'None'");
 		}
 		sODataVersion = mParameters.odataVersion || "4.0";

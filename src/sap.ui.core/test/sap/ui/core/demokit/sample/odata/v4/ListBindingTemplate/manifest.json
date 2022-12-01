@@ -62,8 +62,7 @@
 				"preload" : true,
 				"settings" : {
 					"autoExpandSelect" : true,
-					"earlyRequests" : true,
-					"synchronizationMode" : "None"
+					"earlyRequests" : true
 				},
 				"type" : "sap.ui.core.sample.odata.v4.ListBindingTemplate.SandboxModel",
 				"uriSettingName" : "serviceUrl"

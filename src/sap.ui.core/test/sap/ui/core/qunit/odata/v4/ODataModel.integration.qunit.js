@@ -957,8 +957,8 @@ sap.ui.define([
 		 *
 		 * @param {string} sServiceUrl The service URL
 		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance
-		 *   and potentially overwrite the parameters operationMode, serviceUrl, and
-		 *   synchronizationMode which are set by default
+		 *   and potentially overwrite the parameters operationMode and serviceUrl which are set by
+		 *   default
 		 * @param {map} mFixture
 		 *   The fixture. See {@link sap.ui.test.TestUtils.useFakeServer}
 		 * @returns {sap.ui.model.odata.v4.ODataModel} The model
@@ -966,8 +966,7 @@ sap.ui.define([
 		createModel : function (sServiceUrl, mModelParameters, mFixture) {
 			var mDefaultParameters = {
 					operationMode : OperationMode.Server,
-					serviceUrl : sServiceUrl,
-					synchronizationMode : "None"
+					serviceUrl : sServiceUrl
 				};
 
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit", mFixture, [/*aRegExps*/],
@@ -979,9 +978,7 @@ sap.ui.define([
 		/**
 		 * Creates a V4 OData model for V2 service <code>RMTSAMPLEFLIGHT</code>.
 		 *
-		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance
-		 *     and potentially overwrite the parameters operationMode, serviceUrl, and
-		 *     synchronizationMode which are set by default
+		 * @param {object} [mModelParameters] Map of parameters for model construction...
 		 * @returns {ODataModel} The model
 		 */
 		createModelForV2FlightService : function (mModelParameters) {
@@ -1010,9 +1007,7 @@ sap.ui.define([
 		/**
 		 * Creates a V4 OData model for V2 service <code>GWSAMPLE_BASIC</code>.
 		 *
-		 * @param {object} [mModelParameters] Map of parameters for model construction to enhance
-		 *     and potentially overwrite the parameters operationMode, serviceUrl, and
-		 *     synchronizationMode which are set by default
+		 * @param {object} [mModelParameters] Map of parameters for model construction...
 		 * @returns {ODataModel} The model
 		 */
 		createModelForV2SalesOrderService : function (mModelParameters) {

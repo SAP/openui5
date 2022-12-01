@@ -61,7 +61,6 @@
 					"earlyRequests" : true,
 					"groupId" : "$direct",
 					"operationMode" : "Server",
-					"synchronizationMode" : "None",
 					"updateGroupId" : "$direct"
 				},
 				"type" : "sap.ui.core.sample.odata.v4.Sticky.SandboxModel",

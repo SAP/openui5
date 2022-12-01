@@ -40,10 +40,7 @@ sap.ui.define([
 			this.oLogMock.expects("error").never();
 
 			// create ODataModel
-			this.oModel = new ODataModel({
-				serviceUrl : "/service/?sap-client=111",
-				synchronizationMode : "None"
-			});
+			this.oModel = new ODataModel({serviceUrl : "/service/?sap-client=111"});
 			this.mock(this.oModel.oRequestor).expects("request").never();
 		},
 
@@ -695,8 +692,7 @@ sap.ui.define([
 			},
 			oModel = new ODataModel({
 				autoExpandSelect : true,
-				serviceUrl : "/service/?sap-client=111",
-				synchronizationMode : "None"
+				serviceUrl : "/service/?sap-client=111"
 			}),
 			oContext = Context.create(oModel, oParentBinding, "/..."),
 			oBinding = oModel.bindProperty("relative", oContext),
@@ -1499,10 +1495,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("expression binding", function (assert) {
 		var oCacheMock = this.mock(_Cache),
-			oModel = new ODataModel({
-				serviceUrl : "/service/",
-				synchronizationMode : "None"
-			}),
+			oModel = new ODataModel({serviceUrl : "/service/"}),
 			oPromise = Promise.resolve("value"),
 			oTestControl = new TestControl({
 				text : "{= !${path:'@odata.etag',type:'sap.ui.model.odata.type.String'} }",
@@ -1771,7 +1764,7 @@ sap.ui.define([
 	//TODO enable this test again and restore the productive code from #1539070/1
 	QUnit.skip("setValue (absolute binding) via control or API", function (assert) {
 		var oControl,
-			oModel = new ODataModel({serviceUrl : "/", synchronizationMode : "None"}),
+			oModel = new ODataModel({serviceUrl : "/"}),
 			oPropertyBinding,
 			oPropertyBindingCacheMock,
 			fnRead = this.getPropertyCacheMock().expects("read");
@@ -1855,8 +1848,7 @@ sap.ui.define([
 			oError = new Error(sMessage),
 			oModel = new ODataModel({
 				groupId : "$direct",
-				serviceUrl : "/service/?sap-client=111",
-				synchronizationMode : "None"
+				serviceUrl : "/service/?sap-client=111"
 			}),
 			oPromise = Promise.reject(oError),
 			oPropertyBinding = oModel.bindProperty("/ProductList('0')/Name");

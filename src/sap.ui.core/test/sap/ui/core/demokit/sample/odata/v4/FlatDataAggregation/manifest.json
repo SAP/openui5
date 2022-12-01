@@ -58,8 +58,7 @@
 				"settings" : {
 					"autoExpandSelect" : false,
 					"earlyRequests" : true,
-					"operationMode" : "Server",
-					"synchronizationMode" : "None"
+					"operationMode" : "Server"
 				},
 				"type" : "sap.ui.core.sample.odata.v4.FlatDataAggregation.SandboxModel",
 				"uriSettingName" : "serviceUrl"

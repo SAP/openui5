@@ -70,8 +70,7 @@
 				"settings": {
 					"autoExpandSelect": true,
 					"earlyRequests": true,
-					"operationMode": "Server",
-					"synchronizationMode": "None"
+					"operationMode": "Server"
 				}
 			}
 		}

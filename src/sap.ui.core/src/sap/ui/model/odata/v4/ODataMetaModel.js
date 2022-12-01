@@ -2349,8 +2349,7 @@ sap.ui.define([
 				metadataUrlParams : this.sLanguage && {"sap-language" : this.sLanguage},
 				operationMode : OperationMode.Server,
 				serviceUrl : sUrl,
-				sharedRequests : true,
-				synchronizationMode : "None"
+				sharedRequests : true
 			});
 			mSharedModelByUrl.set(sCacheKey, oSharedModel);
 		}

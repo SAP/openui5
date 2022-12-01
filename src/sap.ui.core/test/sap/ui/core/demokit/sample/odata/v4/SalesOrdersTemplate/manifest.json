@@ -63,8 +63,7 @@
 				"dataSource" : "default",
 				"preload" : true,
 				"settings" : {
-					"earlyRequests" : true,
-					"synchronizationMode" : "None"
+					"earlyRequests" : true
 				},
 				"type" : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.SandboxModel",
 				"uriSettingName" : "serviceUrl"
