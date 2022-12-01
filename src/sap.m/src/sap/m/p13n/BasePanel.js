@@ -143,6 +143,13 @@ sap.ui.define([
 		this._oListControl.setMultiSelectMode("ClearAll");
 	};
 
+	BasePanel.prototype.onAfterRendering = function() {
+		if (!this._oResizeObserver) {
+			this._oResizeObserver = new ResizeObserver(this._onResize.bind(this));
+		}
+		this._oResizeObserver.observe(this.getDomRef());
+	};
+
 	/**
 	 * Can be overwritten if a different wrapping control is required for the inner content.
 	 */
@@ -331,6 +338,16 @@ sap.ui.define([
 		}
 
 		return this._oMoveBottomButton;
+	};
+
+	BasePanel.prototype._onResize = function(aResizeEntity) {
+		var oDomRect = aResizeEntity[0].contentRect;
+		if (this._oMoveTopBtn) {
+			this._oMoveTopBtn.setVisible(oDomRect.width > 400);
+		}
+		if (this._oMoveBottomButton) {
+			this._oMoveBottomButton.setVisible(oDomRect.width > 400);
+		}
 	};
 
 	BasePanel.prototype._createInnerListControl = function() {
@@ -677,6 +694,7 @@ sap.ui.define([
 
 	BasePanel.prototype.exit = function() {
 		Control.prototype.exit.apply(this, arguments);
+		this._oResizeObserver = null;
 		this._bFocusOnRearrange = null;
 		this._oHoveredItem = null;
 		this._oSelectionBindingInfo = null;
