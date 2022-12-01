@@ -175,7 +175,7 @@ sap.ui.define([
 		createSingle : function (sResourcePath, mQueryOptions, bPost) {
 			return _Cache.createSingle(this.oRequestor, sResourcePath, mQueryOptions,
 				/*bSortExpandSelect*/false, /*bSharedRequest*/false,
-				/*vOriginalResourcePath*/undefined, bPost);
+				/*sOriginalResourcePath*/undefined, bPost);
 		}
 	});
 
@@ -186,12 +186,12 @@ sap.ui.define([
 			oCache;
 
 		this.mock(_Cache.prototype).expects("setQueryOptions")
-			.withExactArgs(sinon.match.same(mQueryOptions))
+			.withExactArgs(sinon.match.same(mQueryOptions)).twice()
 			.callsFake(function () {
 				assert.strictEqual(this.bSortExpandSelect, "bSortExpandSelect");
 				assert.notOk(this.bSharedRequest);
 			});
-		this.mock(_Cache.prototype).expects("setResourcePath")
+		this.mock(_Cache.prototype).expects("setResourcePath").twice()
 			.withExactArgs(sResourcePath)
 			.callsFake(function () {
 				assert.notOk(this.bSharedRequest);
@@ -203,7 +203,7 @@ sap.ui.define([
 
 		assert.strictEqual(oCache.iActiveUsages, 1);
 		assert.deepEqual(oCache.mChangeListeners, {});
-		assert.strictEqual(oCache.vOriginalResourcePath, "original/resource/path");
+		assert.strictEqual(oCache.sOriginalResourcePath, "original/resource/path");
 		assert.strictEqual(oCache.iInactiveSince, Infinity);
 		assert.deepEqual(oCache.mChangeRequests, {});
 		assert.deepEqual(oCache.mEditUrl2PatchPromise, {});
@@ -221,6 +221,11 @@ sap.ui.define([
 			// code under test
 			oCache.getValue();
 		}, new Error("Unsupported operation"));
+
+		// code under test
+		oCache = new _Cache(this.oRequestor, sResourcePath, mQueryOptions, "bSortExpandSelect");
+
+		assert.strictEqual(oCache.sOriginalResourcePath, sResourcePath);
 	});
 
 	//*********************************************************************************************
@@ -365,7 +370,8 @@ sap.ui.define([
 		var that = this,
 			bAddDeleted = false,
 			mQueryOptions = {foo : "bar"},
-			oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')", mQueryOptions),
+			oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')", mQueryOptions, false,
+				"original/resource/path"),
 			sEtag = 'W/"19770724000000.0000000"',
 			aCacheData = [{}, {
 				"@$ui5._" : {
@@ -450,11 +456,11 @@ sap.ui.define([
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/EMPLOYEES", sinon.match.same(mQueryOptions), true)
 			.returns("?foo=bar");
-		this.mock(oCache).expects("getOriginalResourcePath").withExactArgs().returns("~");
 		this.oRequestorMock.expects("request")
 			.withExactArgs("DELETE", "Equipments('1')?foo=bar", "~oGroupLock~",
 				{"If-Match" : sinon.match.same(oFixture.oEntity || aCacheData[1])}, undefined,
-				undefined, sinon.match.func, undefined, "~" + (sPath && "/" + sPath) + "('1')")
+				undefined, sinon.match.func, undefined,
+				"original/resource/path" + (sPath && "/" + sPath) + "('1')")
 			.returns(oRequestPromise);
 		this.mock(_Helper).expects("addByPath")
 			.withExactArgs(sinon.match.same(oCache.mChangeRequests), sPath + "('1')",
@@ -2044,7 +2050,7 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var mQueryOptions = {},
 				oCache = new _Cache(this.oRequestor, "BusinessPartnerList",
-					mQueryOptions, true),
+					mQueryOptions, true, "original/resource/path"),
 				oCacheMock = this.mock(oCache),
 				oCacheUpdatePromise,
 				oEntity = {
@@ -2100,8 +2106,6 @@ sap.ui.define([
 			this.oRequestorMock.expects("buildQueryString")
 				.withExactArgs("/BusinessPartnerList", sinon.match.same(mQueryOptions), true)
 				.returns("?foo=bar");
-			// Note: in case of return value context, entity must have been read before!
-			oCacheMock.expects("getOriginalResourcePath").withExactArgs().returns("~original~");
 			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("group");
 			oStaticCacheMock.expects("makeUpdateData")
 				.withExactArgs(["Address", "City"], "Walldorf")
@@ -2115,7 +2119,7 @@ sap.ui.define([
 			this.oRequestorMock.expects("relocateAll")
 				.withExactArgs("$parked.group", "group", oEntityMatcher);
 			oHelperMock.expects("buildPath")
-				.withExactArgs("~original~", oFixture.sEntityPath)
+				.withExactArgs("original/resource/path", oFixture.sEntityPath)
 				.returns("~");
 			oRequestCall = this.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", "/~/BusinessPartnerList('0')?foo=bar",
@@ -3079,7 +3083,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Cache#visitResponse: reportStateMessages; single entity", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')"),
+		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')", {}, false,
+				"original/resource/path"),
 			aMessagesInBusinessPartner = [{/* any message object */}],
 			aMessagesSalesOrder = [{/* any message object */}],
 			aMessagesSalesOrderSchedules0 = [{/* any message object */}],
@@ -3132,9 +3137,8 @@ sap.ui.define([
 
 		// Note: no calls for null or empty array!
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs().exactly(4);
-		this.mock(oCache).expects("getOriginalResourcePath").withExactArgs().returns("~path~");
 		this.oModelInterfaceMock.expects("reportStateMessages")
-			.withExactArgs("~path~", mExpectedMessages, undefined);
+			.withExactArgs("original/resource/path", mExpectedMessages, undefined);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath);
@@ -3152,7 +3156,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("Cache#visitResponse: reportStateMessages; nested; to 1 navigation property",
 			function () {
-		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')"),
+		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')", {}, false,
+				"original/resource/path"),
 			aMessagesInBusinessPartner = [{/* any message object */}],
 			oData = {
 				messagesInBusinessPartner : aMessagesInBusinessPartner
@@ -3168,9 +3173,8 @@ sap.ui.define([
 			};
 
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
-		this.mock(oCache).expects("getOriginalResourcePath").withExactArgs().returns("~path~");
 		this.oModelInterfaceMock.expects("reportStateMessages")
-			.withExactArgs("~path~", mExpectedMessages, ["SO_2_BP"]);
+			.withExactArgs("original/resource/path", mExpectedMessages, ["SO_2_BP"]);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath, "/SalesOrderList/SO_2_BP", "SO_2_BP");
@@ -3178,7 +3182,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Cache#visitResponse: reportStateMessages; nested; collection entity", function () {
-		var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
+		var oCache = new _Cache(this.oRequestor, "SalesOrderList", {}, false,
+				"original/resource/path"),
 			aMessagesInBusinessPartner = [{/* any message object */}],
 			oData = {
 				messagesInBusinessPartner : aMessagesInBusinessPartner
@@ -3194,9 +3199,8 @@ sap.ui.define([
 			};
 
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
-		this.mock(oCache).expects("getOriginalResourcePath").withExactArgs().returns("~path~");
 		this.oModelInterfaceMock.expects("reportStateMessages")
-			.withExactArgs("~path~", mExpectedMessages, ["('0500000001')/SO_2_BP"]);
+			.withExactArgs("original/resource/path", mExpectedMessages, ["('0500000001')/SO_2_BP"]);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath, "/SalesOrderList/SO_2_BP",
@@ -3209,7 +3213,8 @@ sap.ui.define([
 			+ ", keep transient path: " + bKeepTransientPath;
 
 		QUnit.test(sTitle, function () {
-			var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
+			var oCache = new _Cache(this.oRequestor, "SalesOrderList", {}, false,
+					"original/resource/path"),
 				aMessages = [{/* any message object */}],
 				oData = {
 					Messages : aMessages,
@@ -3238,9 +3243,8 @@ sap.ui.define([
 			mExpectedMessages[sMessagePath] = aMessages;
 
 			this.mock(oCache).expects("checkSharedRequest").withExactArgs();
-			this.mock(oCache).expects("getOriginalResourcePath").withExactArgs().returns("~path~");
 			this.oModelInterfaceMock.expects("reportStateMessages")
-				.withExactArgs("~path~", mExpectedMessages, [sMessagePath]);
+				.withExactArgs("original/resource/path", mExpectedMessages, [sMessagePath]);
 
 			// code under test
 			oCache.visitResponse(oData, mTypeForMetaPath, "/SalesOrderList", sTransientPredicate,
@@ -3250,7 +3254,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Cache#visitResponse: reportStateMessages for new nested entity", function () {
-		var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
+		var oCache = new _Cache(this.oRequestor, "SalesOrderList", {}, false,
+				"original/resource/path"),
 			aMessages = [{/* any message object */}],
 			oData = {
 				ItemPosition : "42",
@@ -3276,9 +3281,8 @@ sap.ui.define([
 			};
 
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
-		this.mock(oCache).expects("getOriginalResourcePath").withExactArgs().returns("~path~");
 		this.oModelInterfaceMock.expects("reportStateMessages")
-			.withExactArgs("~path~", mExpectedMessages,
+			.withExactArgs("original/resource/path", mExpectedMessages,
 				["('0500000001')/SO_2_SOITEM(SalesOrderID='0500000001',ItemPosition='42')"]);
 
 		// code under test
@@ -3332,7 +3336,8 @@ sap.ui.define([
 				+ oFixture.iStart;
 
 		QUnit.test(sTitle, function () {
-			var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
+			var oCache = new _Cache(this.oRequestor, "SalesOrderList", {}, false,
+					"original/resource/path"),
 				sFirst,
 				oHelperMock = this.mock(_Helper),
 				aKeySegments = ["SalesOrderID"],
@@ -3401,9 +3406,9 @@ sap.ui.define([
 				.withExactArgs(oData.value[2], aMessagePathSegments)
 				.returns([]);
 			this.mock(oCache).expects("checkSharedRequest").withExactArgs().twice();
-			this.mock(oCache).expects("getOriginalResourcePath").withExactArgs().returns("~path~");
 			this.oModelInterfaceMock.expects("reportStateMessages")
-				.withExactArgs("~path~", mExpectedMessages, [sFirst, sSecond, sThird]);
+				.withExactArgs("original/resource/path", mExpectedMessages,
+					[sFirst, sSecond, sThird]);
 
 			// code under test
 			oCache.visitResponse(oData, mTypeForMetaPath, undefined, undefined, undefined,
@@ -3417,7 +3422,8 @@ sap.ui.define([
 				+ bPredicate;
 
 		QUnit.test(sTitle, function () {
-			var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
+			var oCache = new _Cache(this.oRequestor, "SalesOrderList", {}, false,
+					"original/resource/path"),
 				oHelperMock = this.mock(_Helper),
 				aMessages = [{/* any message object */}],
 				oData = {
@@ -3472,9 +3478,8 @@ sap.ui.define([
 				.withExactArgs(oData.value[0].SO_2_SOITEM[1], ["messages"])
 				.returns(aMessages);
 			this.mock(oCache).expects("checkSharedRequest").withExactArgs();
-			this.mock(oCache).expects("getOriginalResourcePath").withExactArgs().returns("~path~");
 			this.oModelInterfaceMock.expects("reportStateMessages")
-				.withExactArgs("~path~", mExpectedMessages,
+				.withExactArgs("original/resource/path", mExpectedMessages,
 					[bPredicate ? "('42')" : "5"]);
 
 			// code under test
@@ -3484,7 +3489,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#visitResponse: longtextUrl/media link, no context", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
+		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation", {}, false,
+				"original/resource/path"),
 			oData = {
 				id : "1",
 				"picture1@odata.mediaReadLink" : "img_1.jpg",
@@ -3508,9 +3514,8 @@ sap.ui.define([
 			};
 
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
-		this.mock(oCache).expects("getOriginalResourcePath").withExactArgs().returns("~path~");
 		this.oModelInterfaceMock.expects("reportStateMessages")
-			.withExactArgs("~path~", mExpectedMessages, undefined);
+			.withExactArgs("original/resource/path", mExpectedMessages, undefined);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath);
@@ -3521,7 +3526,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#visitResponse: longtextUrl/media link, single response", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
+		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation", {}, false,
+				"original/resource/path"),
 			oData = {
 				"@odata.context" : "../$metadata#foo",
 				id : "1",
@@ -3574,9 +3580,8 @@ sap.ui.define([
 			};
 
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs().exactly(4);
-		this.mock(oCache).expects("getOriginalResourcePath").withExactArgs().returns("~path~");
 		this.oModelInterfaceMock.expects("reportStateMessages")
-			.withExactArgs("~path~", mExpectedMessages, undefined);
+			.withExactArgs("original/resource/path", mExpectedMessages, undefined);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath);
@@ -3594,7 +3599,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#visitResponse: longtextUrl/media, collection response", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
+		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation", {}, false,
+				"original/resource/path"),
 			oData = {
 				"@odata.context" : "../$metadata#foo",
 				value : [{
@@ -3640,9 +3646,8 @@ sap.ui.define([
 			};
 
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs().thrice();
-		this.mock(oCache).expects("getOriginalResourcePath").withExactArgs().returns("~path~");
 		this.oModelInterfaceMock.expects("reportStateMessages")
-			.withExactArgs("~path~", mExpectedMessages, ["(1)"]);
+			.withExactArgs("original/resource/path", mExpectedMessages, ["(1)"]);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath, undefined, undefined, undefined, 0);
@@ -3664,7 +3669,8 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var sResourcePath = "OperationImport",
-			oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, false, false),
+			oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, false, false,
+				"original/resource/path"),
 			oData = {
 				messages : [{
 					message : "text"
@@ -3686,16 +3692,14 @@ sap.ui.define([
 		oCache.bSharedRequest = bSharedRequest;
 		oCache.sReportedMessagesPath = "~sReportedMessagesPath~";
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
-		this.mock(oCache).expects("getOriginalResourcePath").exactly(bSharedRequest ? 0 : 1)
-			.withExactArgs().returns("~path~");
 		this.oModelInterfaceMock.expects("reportStateMessages").exactly(bSharedRequest ? 0 : 1)
-			.withExactArgs("~path~", mExpectedMessages, undefined);
+			.withExactArgs("original/resource/path", mExpectedMessages, undefined);
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath);
 
 		if (!bSharedRequest) {
-			assert.strictEqual(oCache.sReportedMessagesPath, "~path~");
+			assert.strictEqual(oCache.sReportedMessagesPath, "original/resource/path");
 		}
 	});
 });
@@ -5437,7 +5441,7 @@ sap.ui.define([
 
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
-		assert.strictEqual(oCache.vOriginalResourcePath, "deep/resource/path");
+		assert.strictEqual(oCache.sOriginalResourcePath, "deep/resource/path");
 		assert.strictEqual(oCache.bSharedRequest, bSharedRequest ? true : undefined);
 		assert.strictEqual(oCache.iActiveElements, 0);
 	});
@@ -7165,7 +7169,7 @@ sap.ui.define([
 		// be friendly to V8
 		assert.ok(oCache instanceof _Cache);
 		assert.ok("sContext" in oCache);
-		assert.strictEqual(oCache.vOriginalResourcePath, "deep/resource/path");
+		assert.strictEqual(oCache.sOriginalResourcePath, "deep/resource/path");
 		assert.deepEqual(oCache.aElements, []);
 		assert.deepEqual(oCache.aElements.$byPredicate, {});
 		assert.ok("$count" in oCache.aElements);
@@ -10146,7 +10150,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
 		assert.strictEqual(oCache.bSharedRequest, "bSharedRequest");
-		assert.strictEqual(oCache.vOriginalResourcePath, "original/resource/path");
+		assert.strictEqual(oCache.sOriginalResourcePath, "original/resource/path");
 		assert.strictEqual(oCache.sMetaPath, "/meta/path");
 		assert.strictEqual(oCache.bPost, "bPost");
 		assert.strictEqual(oCache.bPosting, false);
@@ -10195,7 +10199,7 @@ sap.ui.define([
 			.returns(Promise.resolve(oExpectedResult).then(function () {
 				oPathExpectation = oCacheMock.expects("buildOriginalResourcePath")
 					.withExactArgs(sinon.match.same(oExpectedResult),
-						sinon.match.same(mTypeForMetaPath));
+						sinon.match.same(mTypeForMetaPath), "fnGetOriginalResourcePath");
 				oResponseExpectation = oCacheMock.expects("visitResponse")
 					.withExactArgs(sinon.match.same(oExpectedResult),
 						sinon.match.same(mTypeForMetaPath));
@@ -10220,7 +10224,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.getValue("foo"), undefined, "before fetchValue");
 		aPromises = [
 			oCache.fetchValue(oGroupLock1, undefined, fnDataRequested1, "~oListener1~",
-					bCreateOnDemand)
+					bCreateOnDemand, "fnGetOriginalResourcePath")
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
 				})
@@ -10467,12 +10471,14 @@ sap.ui.define([
 			.withExactArgs()
 			.resolves(mTypes);
 		oPathExpectation = this.mock(oCache).expects("buildOriginalResourcePath")
-			.withExactArgs(sinon.match.same(oReturnValue), sinon.match.same(mTypes));
+			.withExactArgs(sinon.match.same(oReturnValue), sinon.match.same(mTypes),
+				"fnGetOriginalResourcePath");
 		oResponseExpectation = this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oReturnValue), sinon.match.same(mTypes));
 
 		// code under test
-		return oCache.post(oGroupLock, /*oData*/null, oEntity, /*bIgnoreETag*/true)
+		return oCache.post(oGroupLock, /*oData*/null, oEntity, /*bIgnoreETag*/true,
+				undefined, "fnGetOriginalResourcePath")
 			.then(function (oResult) {
 				assert.strictEqual(oResult, oReturnValue);
 				assert.ok(oResponseExpectation.calledAfter(oPathExpectation));
@@ -11252,22 +11258,20 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("SingleCache#buildOriginalResourcePath: callback", function (assert) {
 		var oCache = _Cache.createSingle(this.oRequestor, "Entity('1')/my.Action", {}, false,
-				false, getOriginalResourcePath, false, "meta/path"),
+				false, "old/original/resource/path", false, "meta/path"),
 			oPredicateExpectation;
-
-		function getOriginalResourcePath(oValue) {
-			assert.strictEqual(oValue, "~oRootEntity~");
-			sinon.assert.called(oPredicateExpectation);
-			return "original/resource/path";
-		}
 
 		oPredicateExpectation = this.mock(oCache).expects("calculateKeyPredicate")
 			.withExactArgs("~oRootEntity~", "~mTypeForMetaPath~", "meta/path");
 
 		// code under test
-		oCache.buildOriginalResourcePath("~oRootEntity~", "~mTypeForMetaPath~");
+		oCache.buildOriginalResourcePath("~oRootEntity~", "~mTypeForMetaPath~", function (oValue) {
+			assert.strictEqual(oValue, "~oRootEntity~");
+			sinon.assert.called(oPredicateExpectation);
+			return "new/original/resource/path";
+		});
 
-		assert.strictEqual(oCache.vOriginalResourcePath, "original/resource/path");
+		assert.strictEqual(oCache.sOriginalResourcePath, "new/original/resource/path");
 	});
 
 	//*********************************************************************************************
@@ -11278,9 +11282,9 @@ sap.ui.define([
 		this.mock(oCache).expects("calculateKeyPredicate").never();
 
 		// code under test
-		oCache.buildOriginalResourcePath("~oRootEntity~", "~mTypeForMetaPath~");
+		oCache.buildOriginalResourcePath("~oRootEntity~", "~mTypeForMetaPath~", undefined);
 
-		assert.strictEqual(oCache.vOriginalResourcePath, "original/resource/path");
+		assert.strictEqual(oCache.sOriginalResourcePath, "original/resource/path");
 	});
 
 	//*********************************************************************************************
@@ -11917,21 +11921,6 @@ sap.ui.define([
 					"City@$ui5.updating" : true
 				}
 			});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getOriginalResourcePath", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "MANAGERS('42')"),
-			oEntity = {};
-
-		// code under test
-		assert.strictEqual(oCache.getOriginalResourcePath(oEntity), "MANAGERS('42')");
-
-		oCache = new _Cache(this.oRequestor, "MANAGERS('42')", undefined, undefined,
-			"original/resource/path");
-
-		// code under test
-		assert.strictEqual(oCache.getOriginalResourcePath(), "original/resource/path");
 	});
 
 	//*********************************************************************************************
