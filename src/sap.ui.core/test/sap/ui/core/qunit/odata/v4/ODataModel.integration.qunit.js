@@ -8164,6 +8164,11 @@ sap.ui.define([
 			} else if (i === 1) {
 				that.oModel.resetChanges();
 			} else if (i === 2) {
+				assert.throws(function () {
+					// code under test CPOUI5ODATAV4-1880: Scenario (3), resetChanges throws error
+					oCreatedContext.resetChanges();
+				}, new Error("Cannot reset a transient context: " + oCreatedContext));
+
 				return oCreatedContext.delete();
 			}
 		}
@@ -42618,11 +42623,6 @@ sap.ui.define([
 				oContext = oBinding.create({
 					Messages : [{code : "foo"}]
 				});
-
-			assert.throws(function () {
-					// code under test CPOUI5ODATAV4-1880: Scenario (3), resetChanges throws error
-					oContext.resetChanges();
-				}, new Error("Cannot reset a transient context: " + oContext));
 
 			that.expectChange("code", "foo");
 
