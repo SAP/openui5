@@ -1109,11 +1109,10 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.destroyLater = function (oContext) {
 		if (this.iCurrentEnd) {
-			// Add the context to mPreviousContextsByPath, although it definitely won't be reused.
-			// Then it is destroyed later, but only if there is a listener (iCurrentEnd is set by
-			// getContexts and mPreviousContextsByPath is only cleared when getContexts is called)
+			// Destroy later when the next #getContexts does not reuse it
 			this.mPreviousContextsByPath[oContext.getPath()] = oContext;
 		} else {
+			// There seems to be no listener (iCurrentEnd is set by #getContexts), destroy now
 			oContext.destroy();
 		}
 	};
