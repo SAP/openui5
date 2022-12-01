@@ -297,7 +297,9 @@ sap.ui.define([
 		Container.prototype._handleSelect.apply(this, arguments);
 
 		if (this.getProperty("_quickSelectEnabled") && this._isSingleSelect()) {
-			this.fireConfirm({close: true});
+			if (oEvent.getParameter("type") === "Add") {
+				this.fireConfirm({close: true});
+			}
 		}
 	};
 
