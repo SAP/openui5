@@ -418,6 +418,10 @@ sap.ui.define([
 					oUi5Metadata.associations = (oUi5Metadata.associations || []).concat(oControlData.borrowed.associations);
 				}
 
+				if (oControlData.borrowed.fields.length) {
+					oControlData.properties = (oControlData.properties || []).concat(oControlData.borrowed.fields);
+				}
+
 				// Filter and leave only visible elements
 				if (oControlData.properties) {
 					oControlData.properties = this.transformElements(oControlData.properties, fnIsAllowedMember, fnFormatName);
@@ -503,6 +507,7 @@ sap.ui.define([
 				oControlData.isFunction = oControlData.kind === "function";
 				oControlData.isClass = oControlData.kind === "class";
 				oControlData.isNamespace = oControlData.kind === "namespace";
+				oControlData.isTypedef = oControlData.kind === "typedef";
 				oControlData.isDerived = !!oControlData.extends;
 				oControlData.extendsText = oControlData.extends || this.NOT_AVAILABLE;
 				oControlData.sinceText = oControlData.since || this.NOT_AVAILABLE;
@@ -522,6 +527,7 @@ sap.ui.define([
 					aBaseClassProperties,
 					aBaseClassAggregations,
 					aBaseClassAssociations,
+					aBaseClassFields,
 					sBaseClass,
 					aBorrowChain,
 					aMethods,
@@ -532,6 +538,8 @@ sap.ui.define([
 					aAggregationNames,
 					aAssociations,
 					aAssociationNames,
+					aFields,
+					aFieldNames,
 					aInheritanceChain,
 					aRequiredLibs = [],
 					oSymbol;
@@ -542,7 +550,8 @@ sap.ui.define([
 						methods: [],
 						properties: [],
 						aggregations: [],
-						associations: []
+						associations: [],
+						fields: []
 					});
 				}
 
@@ -551,7 +560,8 @@ sap.ui.define([
 					events: [],
 					properties: [],
 					aggregations: [],
-					associations: []
+					associations: [],
+					fields: []
 				};
 				sBaseClass = oControlData.extends;
 
@@ -583,6 +593,12 @@ sap.ui.define([
 					return oAssociation.name;
 				});
 
+				// Get all field names
+				aFields = oControlData.properties || [];
+				aFieldNames = aFields.map(function (oField) {
+					return oField.name;
+				});
+
 				// Filter all borrowed methods and if some of them are overridden by the class
 				// we should exclude them from the borrowed methods list. BCP: 1780319087
 				var fnOverrideMethodFilter = function (item) {
@@ -602,6 +618,10 @@ sap.ui.define([
 
 				var fnOverrideAssociationFilter = function (item) {
 					return aAssociationNames.indexOf(item.name) === -1 && !item.borrowedFrom;
+				};
+
+				var fnOverrideFieldFilter = function (item) {
+					return aFieldNames.indexOf(item.name) === -1 && !item.borrowedFrom;
 				};
 
 				// Find all libs needed to resolve the inheritance chain
@@ -727,6 +747,12 @@ sap.ui.define([
 								.filter(fnOverrideAssociationFilter).map(fnPropAggrAssocMapper);
 							if (aBaseClassAssociations.length) {
 								aBorrowChain.associations = aBorrowChain.associations.concat(aBaseClassAssociations);
+							}
+
+							aBaseClassFields = (oBaseClass.properties || []).filter(fnVisibilityFilter)
+								.filter(fnOverrideFieldFilter).map(fnPropAggrAssocMapper);
+							if (aBaseClassFields.length) {
+								aBorrowChain.fields = aBorrowChain.fields.concat(aBaseClassFields);
 							}
 						}
 					});
