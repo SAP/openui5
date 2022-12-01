@@ -2772,11 +2772,13 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.keepOnlyVisibleContexts = function () {
 		var aContexts = this.aContexts.slice(0, this.iCreatedContexts).filter(function (oContext) {
-				// Note: cannot request side effects for transient contexts
+				// cannot request side effects for transient contexts
+				// Note: do not use #isTransient because #created() may not be resolved yet,
+				// although already persisted (timing issue, see caller)
 				return !oContext.getProperty("@$ui5.context.isTransient");
 			}).concat(
 				this.getCurrentContexts().filter(function (oContext) {
-					// Note: avoid duplicates for created contexts
+					// avoid duplicates for created contexts
 					return oContext && oContext.isTransient() === undefined;
 				})
 			),
