@@ -4363,7 +4363,7 @@ sap.ui.define([
 						}
 					}, 10);
 				}),
-				wait(200) // timeout
+				wait(100) // timeout
 			]).then(function() {
 				clearInterval(iIntervalId);
 			});
