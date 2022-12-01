@@ -240,6 +240,53 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Check 'ValueState' and 'ValueStateText' removal on cloning", function(assert){
+		var done = assert.async();
+		this.prepareTestSetup(true);
+
+		this.oAddStub.callsFake(this.addItem);
+
+		this.oParent.getFilterItems = function() {
+			return [
+				new FilterField({
+					valueState: "Error",
+					valueStateText: "Test Error",
+					conditions: "{$filters>/conditions/key1}"
+				})
+			];
+		};
+
+		oAdaptationFilterBar.setP13nData({
+			items: [
+				{
+					name: "key1"
+				},
+				{
+					name: "key2"
+				},
+				{
+					name: "key3"
+				}
+			]
+		});
+
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		])
+		.then(function(){
+			oAdaptationFilterBar.createFilterFields().then(function(){
+
+				var oClonedField = oAdaptationFilterBar.getFilterItems()[0];
+
+				assert.equal(oClonedField.getValueState(), "None", "ValueState is cleared during cloning");
+				assert.equal(oClonedField.getValueStateText(), "", "ValueStateText is cleared during cloning");
+				done();
+			});
+		});
+	});
+
 	QUnit.test("Created changes should always be externalized - Check String types", function(assert) {
 		var done = assert.async();
 		this.prepareTestSetup(true);
@@ -409,7 +456,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Test '_checkFunctionality' - check 'remove' hook executions", function(assert){
+	QUnit.test("Test '_checkExisting' - check 'remove' hook executions", function(assert){
 		var done = assert.async();
 		this.prepareTestSetup(true);
 
