@@ -2,9 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/p13n/subcontroller/FilterController", "sap/ui/mdc/p13n/subcontroller/AdaptFiltersController", "sap/ui/mdc/filterbar/p13n/GroupContainer", "sap/ui/mdc/filterbar/p13n/FilterColumnLayout", "sap/ui/mdc/filterbar/p13n/FilterGroupLayout","sap/ui/mdc/filterbar/p13n/TableContainer", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", "sap/base/util/merge", "sap/ui/core/Core", "sap/ui/mdc/enum/PersistenceMode"
-], function(FilterController, AdaptFiltersController, GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, Core, PersistenceMode) {
+	"sap/ui/core/library", "sap/ui/mdc/p13n/subcontroller/FilterController", "sap/ui/mdc/p13n/subcontroller/AdaptFiltersController", "sap/ui/mdc/filterbar/p13n/GroupContainer", "sap/ui/mdc/filterbar/p13n/FilterColumnLayout", "sap/ui/mdc/filterbar/p13n/FilterGroupLayout","sap/ui/mdc/filterbar/p13n/TableContainer", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", "sap/base/util/merge", "sap/ui/core/Core", "sap/ui/mdc/enum/PersistenceMode"
+], function(coreLibrary, FilterController, AdaptFiltersController, GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, Core, PersistenceMode) {
 	"use strict";
+
+	var ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Constructor for a new AdaptationFilterBar.
@@ -316,6 +318,11 @@ sap.ui.define([
 							this._mOriginalsForClone[oFilterField.getFieldPath()] = oFilterField;
 						}
 						oFieldForDialog = oFilterField.clone();
+
+						if (oFieldForDialog.getValueState() !== ValueState.None) {
+							oFieldForDialog.setValueState(ValueState.None);
+							oFieldForDialog.setValueStateText();
+						}
 					} else {
 						oFieldForDialog = oFilterField;
 					}
