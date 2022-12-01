@@ -29,10 +29,10 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
 		 */
 		ComboBoxBaseRenderer.getAccessibilityState = function (oControl) {
 			var mAccessibilityState = ComboBoxTextFieldRenderer.getAccessibilityState.call(this, oControl),
-				oList = oControl._getList();
+				oPicker = oControl.getPicker();
 
-			if (oList) {
-				mAccessibilityState.controls = oList.getId();
+			if (oPicker) {
+				mAccessibilityState.controls = oPicker.getId();
 			}
 			return mAccessibilityState;
 		};

@@ -858,8 +858,7 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.onBeforeOpen = function() {
 			ComboBoxBase.prototype.onBeforeOpen.apply(this, arguments);
-			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()],
-				oDomRef = this.getFocusDomRef();
+			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()];
 
 				this.setProperty("open", true);
 
@@ -868,13 +867,6 @@ sap.ui.define([
 			// and there is an {@link #loadItems} event listener attached, the items should be loaded
 			if (this.hasLoadItemsEventListeners() && !this.bProcessingLoadItemsEvent) {
 				this.loadItems();
-			}
-
-			if (oDomRef) {
-
-				// expose a parent/child contextual relationship to assistive technologies,
-				// notice that the "aria-controls" attribute is set when the popover opened.
-				oDomRef.setAttribute("aria-controls", this.getPicker().getId());
 			}
 
 			// call the hook to add additional content to the list
@@ -933,11 +925,6 @@ sap.ui.define([
 			var oDomRef = this.getFocusDomRef();
 
 			this.setProperty("open", false);
-
-			if (oDomRef) {
-				// notice that the "aria-controls" attribute is removed when the popover is closed.
-				oDomRef.removeAttribute("aria-controls");
-			}
 
 			if (document.activeElement === oDomRef) {
 				this.updateFocusOnClose();
