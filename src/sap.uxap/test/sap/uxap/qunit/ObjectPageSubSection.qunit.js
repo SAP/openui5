@@ -1332,10 +1332,13 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 
     QUnit.test("Test aria-labelledby attribute", function(assert) {
 		// Arrange
-		var oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
+		var oObjectPage = this.ObjectPageSectionView.byId("ObjectPageLayout"),
+			oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
 			sSubSectionWithoutTitleAriaLabelledBy = oSubSectionWithoutTitle.$().attr("aria-labelledby"),
 			oSubSectionWithTitle = this.ObjectPageSectionView.byId("subsection1"),
 			sSubSectionWithTitleAriaLabelledBy = oSubSectionWithTitle.$().attr("aria-labelledby"),
+			oPromotedSubSection = this.ObjectPageSectionView.byId("subsection8"),
+			sPromotedSubSectionAriaLabelledBy = oPromotedSubSection.$().attr("aria-labelledby"),
 			sSubSectionControlName = ObjectPageSubSectionClass._getLibraryResourceBundle().getText("SUBSECTION_CONTROL_NAME");
 
 		// Assert
@@ -1356,7 +1359,16 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 		// Assert
 		assert.strictEqual(Core.byId(sSubSectionWithTitleAriaLabelledBy).getText(),
 			sSubSectionControlName, "Subsection with hidden title should not not contain its title in aria-labelledby");
+		assert.strictEqual(Core.byId(sPromotedSubSectionAriaLabelledBy).getText().indexOf(oPromotedSubSection.getTitle()) === -1,
+			true, "Promoted Subsection title is properly labelled");
 
+		// Act
+		oObjectPage.setSubSectionLayout("TitleOnLeft");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(Core.byId(sPromotedSubSectionAriaLabelledBy).getText().indexOf(oPromotedSubSection.getTitle()) > -1,
+			true, "Promoted Subsection title is properly labelled");
 	});
 
 	QUnit.module("Title ID propagation");
