@@ -34,6 +34,15 @@ sap.ui.define(function() {
 				title: "QUnit page for Fast Keyboard Navigation (F6)",
 				autostart: false
 			},
+			FastNavigationWithWebComponents: {
+				title: "QUnit page for Fast Keyboard Navigation (F6) using Web Components",
+				autostart: false,
+				loader: {
+					paths: {
+						"sap/ui/fastnav": "test-resources/sap/ui/core/qunit/testdata/fastnavigation/"
+					}
+				}
+			},
 			FocusHandler: {
 				ui5: {
 					libs: "sap.m"
