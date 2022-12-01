@@ -8874,6 +8874,7 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper),
 			oPostBody = {},
 			oPostError = new Error(),
+			oRetryExpectation,
 			oRetryGroupLock = {getGroupId : function () {}},
 			sTransientPredicate = "($uid=id-1-23)",
 			oTransientPromiseWrapper,
@@ -8950,6 +8951,7 @@ sap.ui.define([
 							.withExactArgs(sinon.match.same(oPostError))
 							.callsFake(function () {
 								assert.ok(oRemovePendingRequestExpectation.called);
+								assert.ok(oRetryExpectation.called);
 							});
 
 						throw oPostError;
@@ -8960,7 +8962,7 @@ sap.ui.define([
 			.withExactArgs("updateGroup", sinon.match.same(oCache), true, true)
 			.returns(oRetryGroupLock);
 		// Note: fnCancel() would be called in this case, but we don't care here
-		this.oRequestorMock.expects("request")
+		oRetryExpectation = this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "Employees?sap-client=111", sinon.match.same(oRetryGroupLock),
 				null, sinon.match.same(oPostBody), sinon.match.func, sinon.match.func, undefined,
 				"Employees" + sTransientPredicate)
