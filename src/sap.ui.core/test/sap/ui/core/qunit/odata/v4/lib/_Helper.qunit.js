@@ -2314,8 +2314,8 @@ sap.ui.define([
 		QUnit.test("resolveIfMatchHeader: no clone - " + i, function (assert) {
 			var mResolvedHeaders;
 
-			// code under test
-			mResolvedHeaders = _Helper.resolveIfMatchHeader(oFixture.mHeaders);
+			// code under test (bIgnoreETag must not make a difference here)
+			mResolvedHeaders = _Helper.resolveIfMatchHeader(oFixture.mHeaders, true);
 
 			assert.strictEqual(mResolvedHeaders, oFixture.mHeaders);
 			assert.deepEqual(mResolvedHeaders, oFixture.mResolvedHeader);
@@ -2327,17 +2327,30 @@ sap.ui.define([
 		mHeaders : {"If-Match" : {}},
 		mResolvedHeader : {}
 	}, {
+		mHeaders : {"If-Match" : {}},
+		bIgnoreETag : true,
+		mResolvedHeader : {}
+	}, {
 		mHeaders : {"If-Match" : {"@odata.etag" : "foo"}},
 		mResolvedHeader : {"If-Match" : "foo"}
 	}, {
+		mHeaders : {"If-Match" : {"@odata.etag" : "foo"}},
+		bIgnoreETag : true,
+		mResolvedHeader : {"If-Match" : "*"}
+	}, {
 		mHeaders : {"If-Match" : {"@odata.etag" : ""}},
 		mResolvedHeader : {"If-Match" : ""}
+	}, {
+		mHeaders : {"If-Match" : {"@odata.etag" : ""}},
+		bIgnoreETag : true,
+		mResolvedHeader : {"If-Match" : "*"}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("resolveIfMatchHeader: copy on write - " + i, function (assert) {
 			var mResolvedHeaders;
 
 			// code under test
-			mResolvedHeaders = _Helper.resolveIfMatchHeader(oFixture.mHeaders);
+			mResolvedHeaders
+				= _Helper.resolveIfMatchHeader(oFixture.mHeaders, oFixture.bIgnoreETag);
 
 			assert.notStrictEqual(mResolvedHeaders, oFixture.mHeaders);
 			assert.deepEqual(mResolvedHeaders, oFixture.mResolvedHeader);

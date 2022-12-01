@@ -244,6 +244,9 @@ sap.ui.define([
 	 *   contains zero-based index of the change set within <code>aRequests</code> array.
 	 * @param {string} [sEpilogue]
 	 *   String that will be included in the epilogue
+	 * @param {boolean} [bIgnoreETag]
+	 *   Whether an entity's ETag should be actively ignored (If-Match:*) for PATCH requests;
+	 *   ignored if there is no ETag
 	 * @returns {object}
 	 *   The $batch request object with the following structure
 	 *   <ul>
@@ -254,7 +257,7 @@ sap.ui.define([
 	 *   If change sets are nested or an HTTP method other than GET, POST, PUT, PATCH, or DELETE is
 	 *   used
 	 */
-	function _serializeBatchRequest(aRequests, iChangeSetIndex, sEpilogue) {
+	function _serializeBatchRequest(aRequests, iChangeSetIndex, sEpilogue, bIgnoreETag) {
 		var sBatchBoundary = (iChangeSetIndex !== undefined ? "changeset_" : "batch_")
 				+ _Helper.uid(),
 			bIsChangeSet = iChangeSetIndex !== undefined,
@@ -279,7 +282,7 @@ sap.ui.define([
 					throw new Error("Change set must not contain a nested change set.");
 				}
 				aRequestBody = aRequestBody.concat(
-					_serializeBatchRequest(oRequest, iRequestIndex).body);
+					_serializeBatchRequest(oRequest, iRequestIndex, "", bIgnoreETag).body);
 			} else {
 				if (bIsChangeSet && !mAllowedChangeSetMethods[oRequest.method]) {
 					throw new Error("Invalid HTTP request method: " + oRequest.method
@@ -298,7 +301,7 @@ sap.ui.define([
 					sContentIdHeader,
 					"\r\n",
 					oRequest.method, " ", sUrl, " HTTP/1.1\r\n",
-					serializeHeaders(_Helper.resolveIfMatchHeader(oRequest.headers)),
+					serializeHeaders(_Helper.resolveIfMatchHeader(oRequest.headers, bIgnoreETag)),
 					"\r\n",
 					JSON.stringify(oRequest.body) || "", "\r\n");
 			}
@@ -350,17 +353,20 @@ sap.ui.define([
 		 * {@link sap.ui.model.odata.v4.ODataUtils.serializeBatchRequest} for more details.
 		 *
 		 * @param {object[]} aRequests
-		 *   An array consisting of request objects or arrays of request objects
+		 *   An array consisting of request objects or arrays of request objects:
+		 * @param {string} aRequests[].method
+		 *   The HTTP method; only "GET", "POST", "PUT", "PATCH", or "DELETE" are allowed
+		 * @param {string} aRequests[].url
+		 *   An absolute or relative URL
+		 * @param {object} aRequests[].headers
+		 *   A map of request headers
+		 * @param {object} aRequests[].body
+		 *   The request body
 		 * @param {string} [sEpilogue]
 		 *   A string that will be included in the epilogue (which acts like a comment)
-		 * @param {string} oRequest.method
-		 *   The HTTP method; only "GET", "POST", "PUT", "PATCH", or "DELETE" are allowed
-		 * @param {string} oRequest.url
-		 *   An absolute or relative URL
-		 * @param {object} oRequest.headers
-		 *   A map of request headers
-		 * @param {object} oRequest.body
-		 *   The request body
+		 * @param {boolean} [bIgnoreETag]
+		 *   Whether an entity's ETag should be actively ignored (If-Match:*) for PATCH requests;
+		 *   ignored if there is no ETag
 		 * @returns {object}
 		 *   An object containing the following properties:
 		 *   <ul>
@@ -374,8 +380,9 @@ sap.ui.define([
 		 * @throws {Error}
 		 *   If change sets are nested or an invalid HTTP method is used
 		 */
-		serializeBatchRequest : function (aRequests, sEpilogue) {
-			var oBatchRequest = _serializeBatchRequest(aRequests, undefined, sEpilogue);
+		serializeBatchRequest : function (aRequests, sEpilogue, bIgnoreETag) {
+			var oBatchRequest
+				= _serializeBatchRequest(aRequests, undefined, sEpilogue, bIgnoreETag);
 
 			return {
 				body : oBatchRequest.body.join(""),

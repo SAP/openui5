@@ -1021,7 +1021,8 @@ sap.ui.define([
 		 * @param {object} oSandbox
 		 *   a Sinon sandbox as created using <code>sinon.sandbox.create()</code>
 		 * @param {map} mFixture
-		 *   the fixture for {@link sap.ui.test.TestUtils.useFakeServer}.
+		 *   the fixture for {@link sap.ui.test.TestUtils.useFakeServer}, automatically run through
+		 *   {@link sap.ui.test.TestUtils.normalizeFixture}.
 		 * @param {string} [sSourceBase="sap/ui/core/qunit/odata/v4/data"]
 		 *   The base path for <code>source</code> values in the fixture. The path must be in the
 		 *   project's test folder, typically it should start with "sap".
@@ -1034,8 +1035,6 @@ sap.ui.define([
 		 * @see #.isRealOData
 		 */
 		setupODataV4Server : function (oSandbox, mFixture, sSourceBase, sFilterBase, aRegExps) {
-			var mResultingFixture = {};
-
 			if (this.isRealOData()) {
 				return;
 			}
@@ -1044,6 +1043,24 @@ sap.ui.define([
 			} else if (sFilterBase.slice(-1) !== "/") {
 				sFilterBase += "/";
 			}
+			TestUtils.useFakeServer(oSandbox, sSourceBase || "sap/ui/core/qunit/odata/v4/data",
+				TestUtils.normalizeFixture(mFixture, sFilterBase), aRegExps,
+				sFilterBase !== "/" ? sFilterBase : undefined);
+		},
+
+		/**
+		 * Normalizes the given fixture by adding method "GET" and prefix for relative filter URLs.
+		 *
+		 * @param {map} mFixture
+		 *   the fixture for {@link sap.ui.test.TestUtils.useFakeServer}.
+		 * @param {string} [sFilterBase="/"]
+		 *   A base path for relative filter URLs in <code>mFixture</code>.
+		 * @returns {map}
+		 *   The normalized fixture
+		 */
+		normalizeFixture : function (mFixture, sFilterBase) {
+			var mResultingFixture = {};
+
 			Object.keys(mFixture).forEach(function (sRequest) {
 				var aMatches = rRequestKey.exec(sRequest),
 					sMethod,
@@ -1061,8 +1078,8 @@ sap.ui.define([
 				}
 				mResultingFixture[sMethod + " " + sUrl] = mFixture[sRequest];
 			});
-			TestUtils.useFakeServer(oSandbox, sSourceBase || "sap/ui/core/qunit/odata/v4/data",
-				mResultingFixture, aRegExps, sFilterBase !== "/" ? sFilterBase : undefined);
+
+			return mResultingFixture;
 		},
 
 		/**

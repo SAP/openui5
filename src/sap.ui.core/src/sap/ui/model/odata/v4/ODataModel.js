@@ -321,6 +321,7 @@ sap.ui.define([
 			throw new Error("Value for sharedRequests must be true");
 		}
 		this.bSharedRequests = mParameters.sharedRequests === true;
+		this.bIgnoreETag = false;
 
 		// BEWARE: do not share mHeaders between _MetadataRequestor and _Requestor!
 		this.mHeaders = {"Accept-Language" : sLanguageTag};
@@ -344,6 +345,9 @@ sap.ui.define([
 			getMessagesByPath : this.getMessagesByPath.bind(this),
 			getOptimisticBatchEnabler : this.getOptimisticBatchEnabler.bind(this),
 			getReporter : this.getReporter.bind(this),
+			isIgnoreETag : function () {
+				return that.bIgnoreETag;
+			},
 			onCreateGroup : function (sGroupId) {
 				if (that.isAutoGroup(sGroupId)) {
 					that.addPrerenderingTask(that._submitBatch.bind(that, sGroupId, true));
@@ -2548,6 +2552,21 @@ sap.ui.define([
 		}
 
 		return sResolvedPath;
+	};
+
+	/**
+	 * Tells whether an entity's ETag should be actively ignored (If-Match:*) for PATCH requests.
+	 * Ignored if there is no ETag. Decided at the point in time when the PATCH is actually being
+	 * sent.
+	 *
+	 * @param {boolean} bIgnoreETag - Whether an entity's ETag should be actively ignored
+	 *
+	 * @private
+	 * @since 1.110.0
+	 * @ui5-restricted sap.fe
+	 */
+	ODataModel.prototype.setIgnoreETag = function (bIgnoreETag) {
+		this.bIgnoreETag = bIgnoreETag;
 	};
 
 	/**
