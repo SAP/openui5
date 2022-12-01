@@ -149,7 +149,7 @@ sap.ui.define([
 		assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
 
 		// find controls by ID
-		var btn = sap.ui.core.Fragment.byId("myXmlFrag", "btnInXmlFragment");
+		var btn = Fragment.byId("myXmlFrag", "btnInXmlFragment");
 		assert.ok(btn, "Button should be found by ID");
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
@@ -163,7 +163,7 @@ sap.ui.define([
 		assert.equal(id, "myXmlFrag1--layout", "Root control ID should be prefixed");
 
 		// find controls by ID
-		var oLayout = sap.ui.core.Fragment.byId("myXmlFrag1", "layout");
+		var oLayout = Fragment.byId("myXmlFrag1", "layout");
 		assert.ok(oLayout, "Layout should be found by ID");
 		assert.ok(oLayout instanceof HorizontalLayout, "Found object should be instance of layout");
 	});
@@ -220,7 +220,7 @@ sap.ui.define([
 		assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
 
 		// find controls by ID
-		var btn = sap.ui.core.Fragment.byId("myHtmlFrag", "btnInHtmlFragment");
+		var btn = Fragment.byId("myHtmlFrag", "btnInHtmlFragment");
 		assert.ok(btn, "Button should be found by ID");
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
@@ -238,7 +238,7 @@ sap.ui.define([
 		assert.equal(id, "myHtmlFrag1--layout", "Root control ID should be prefixed");
 
 		// find controls by ID
-		var oLayout = sap.ui.core.Fragment.byId("myHtmlFrag1", "layout");
+		var oLayout = Fragment.byId("myHtmlFrag1", "layout");
 		assert.ok(oLayout, "Layout should be found by ID");
 		assert.ok(oLayout instanceof HorizontalLayout, "Found object should be instance of layout");
 	});
@@ -290,7 +290,7 @@ sap.ui.define([
 		assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
 
 		// find controls by ID
-		var btn = sap.ui.core.Fragment.byId("myJsFrag", "btnInJsFragment");
+		var btn = Fragment.byId("myJsFrag", "btnInJsFragment");
 		assert.ok(btn, "Button should be found by ID");
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
@@ -305,7 +305,7 @@ sap.ui.define([
 		assert.equal(id, "myJsFrag1--layout", "Root control ID should be prefixed");
 
 		// find controls by ID
-		var oLayout = sap.ui.core.Fragment.byId("myJsFrag1", "layout");
+		var oLayout = Fragment.byId("myJsFrag1", "layout");
 		assert.ok(oLayout, "Layout should be found by ID");
 		assert.ok(oLayout instanceof HorizontalLayout, "Found object should be instance of layout");
 	});
@@ -451,7 +451,7 @@ sap.ui.define([
 		assert.equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
 
 		// find controls by ID
-		var btn = oXmlView.byId(sap.ui.core.Fragment.createId("xmlInXml", "btnInXmlFragment"));
+		var btn = oXmlView.byId(Fragment.createId("xmlInXml", "btnInXmlFragment"));
 		assert.ok(btn, "Button should be found by ID");
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
@@ -495,7 +495,7 @@ sap.ui.define([
 		assert.equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
 
 		// find controls by ID
-		var btn = oXmlView.byId(sap.ui.core.Fragment.createId("jsInXml", "btnInJsFragment"));
+		var btn = oXmlView.byId(Fragment.createId("jsInXml", "btnInJsFragment"));
 		assert.ok(btn, "Button should be found by ID");
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
@@ -544,7 +544,7 @@ sap.ui.define([
 		assert.equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
 
 		// find controls by ID
-		var btn = oXmlView.byId(sap.ui.core.Fragment.createId("htmlInXml", "btnInHtmlFragment"));
+		var btn = oXmlView.byId(Fragment.createId("htmlInXml", "btnInHtmlFragment"));
 		assert.ok(btn, "Button should be found by ID");
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
@@ -959,8 +959,8 @@ sap.ui.define([
 				assert.ok(oView.getContent()[4].getContent()[0].getId().endsWith("btnInJsFragment"), "oView contains a JS fragment without ID containing a button with ID");
 				assert.ok(oView.getContent()[5].getContent()[0].getId().endsWith("jsInXml--btnInJsFragment"), "oView contains a JS fragment with ID containing a button with ID");
 
-				assert.ok(oView.getContent()[6] instanceof sap.m.Dialog, "oView contains a Dialog");
-				assert.ok(oView.getContent()[7] instanceof sap.m.Button, "oView contains a Button");
+				assert.ok(oView.getContent()[6].isA("sap.m.Dialog"), "oView contains a Dialog");
+				assert.ok(oView.getContent()[7].isA("sap.m.Button"), "oView contains a Button");
 
 				oView.destroy();
 			}.bind(this));
@@ -1107,7 +1107,7 @@ sap.ui.define([
 			type: "CUSTOM",
 			name: "testdata.fragments.XMLTestFragmentNoController"
 		}).then(function (oControl) {
-			assert.ok(oControl instanceof sap.ui.layout.HorizontalLayout, "Correct fragment content loaded");
+			assert.ok(oControl.isA("sap.ui.layout.HorizontalLayout"), "Correct fragment content loaded");
 		});
 	});
 
