@@ -61,6 +61,11 @@ sap.ui.define([
         renderer: ActionToolbarActionRenderer
     });
 
+	ActionToolbarAction.prototype.getDomRef = function() {
+        // return the DomRef of the inner Action, otherwise the Overflow calculation does not work
+		return this.getAction() && this.getAction().getDomRef();
+	};
+
     /**
 	 * Sets the behavior of the <code>ActionToolbarAction</code> inside an <code>OverflowToolbar</code> configuration.
 	 *
@@ -68,13 +73,18 @@ sap.ui.define([
 	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
 	 */
     ActionToolbarAction.prototype.getOverflowToolbarConfig = function() {
-        var oConfig = {
-			canOverflow: true
-		};
-        oConfig.onBeforeEnterOverflow = this._onBeforeEnterOverflow.bind(this);
-        oConfig.onAfterExitOverflow = this._onAfterExitOverflow.bind(this);
+        if (this.getAction().getOverflowToolbarConfig) {
+            // use the Action OverflowToolbarConfig when exist
+            return this.getAction().getOverflowToolbarConfig && this.getAction().getOverflowToolbarConfig();
+        } else {
+            var oConfig = {
+                canOverflow: true
+            };
+            oConfig.onBeforeEnterOverflow = this._onBeforeEnterOverflow.bind(this);
+            oConfig.onAfterExitOverflow = this._onAfterExitOverflow.bind(this);
 
-		return oConfig;
+            return oConfig;
+        }
     };
 
     ActionToolbarAction.prototype._onBeforeEnterOverflow = function() {

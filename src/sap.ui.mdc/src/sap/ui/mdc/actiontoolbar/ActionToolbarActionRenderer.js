@@ -20,17 +20,12 @@ sap.ui.define([], function() {
 	 */
     ActionToolbarActionRenderer.render = function(rm, oActionToolbarAction) {
         var oAction = oActionToolbarAction.getAction();
-        var mAriaProps = { role: oAction && oAction.getAccessibilityInfo ? oAction.getAccessibilityInfo().role : "button" };
-
-        rm.openStart("div", oActionToolbarAction);
-
-        rm.accessibilityState(oActionToolbarAction, mAriaProps);
-
-        rm.openEnd();
-
-        rm.renderControl(oAction);
-
-        rm.close("div");
+        if (oAction) {
+            if (oActionToolbarAction.hasStyleClass("sapMBarChild")) {
+                oAction.addStyleClass("sapMBarChild");
+            }
+            rm.renderControl(oAction);
+        }
     };
 
     return ActionToolbarActionRenderer;
