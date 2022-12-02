@@ -82,8 +82,7 @@ sap.ui.define([
 
 	MessageStripUtilities.getAccessibilityState = function () {
 		return {
-			role: "note",
-			live: "assertive"
+			role: "note"
 		};
 	};
 

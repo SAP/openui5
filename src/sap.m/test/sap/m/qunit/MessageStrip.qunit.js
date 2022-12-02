@@ -398,13 +398,6 @@ sap.ui.define([
 		assert.strictEqual(role, "note", "role=note is present");
 	});
 
-	QUnit.test("Live region with aria-live should be present", function (assert) {
-		var msgStripDom = this.oMessageStrip.getDomRef(),
-			live = msgStripDom.getAttribute("aria-live");
-
-		assert.strictEqual(live, "assertive", "aria-live=asserive is present");
-	});
-
 	QUnit.test("Labelledby attribute", function (assert) {
 		//Arrange
 		var oMessageStrip = new MessageStrip({
