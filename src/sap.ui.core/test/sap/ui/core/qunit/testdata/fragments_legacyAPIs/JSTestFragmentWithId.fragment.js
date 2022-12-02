@@ -4,9 +4,9 @@ sap.ui.define([
 ], function(HorizontalLayout, Button) {
 	"use strict";
 
-	return {
+	sap.ui.jsfragment("testdata.fragments_legacyAPIs.JSTestFragmentWithId", {
 		createContent: function(oController) {
-			var oLayout = new HorizontalLayout();
+			var oLayout = new HorizontalLayout(this.createId("layout"));
 
 			var oButton = new Button(this.createId("btnInJsFragment"), {
 				text: "Hello JS World",
@@ -21,6 +21,6 @@ sap.ui.define([
 
 			return oLayout;
 		}
-	};
+	});
 
 });

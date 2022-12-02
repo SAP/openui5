@@ -7,6 +7,10 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			loader: {
 				paths: {
 					"testdata/fragments": "test-resources/sap/ui/core/qunit/testdata/fragments/", // fragments used in views
+
+					// @deprecated as of 1.110
+					"testdata/fragments_legacyAPIs": "test-resources/sap/ui/core/qunit/testdata/fragments_legacyAPIs/", // fragments used in views
+
 					"testdata/mvc": "test-resources/sap/ui/core/qunit/mvc/testdata", // used by async tests
 					"example/mvc": "test-resources/sap/ui/core/qunit/mvc/testdata", // used by sync tests
 					"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/" // used by sync tests
@@ -134,10 +138,28 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				title: "sap.ui.core.Fragment",
 				loader: {
 					paths: {
+						"my": "test-resources/sap/ui/core/qunit/testdata/fragments/views"
+					}
+				},
+				qunit: {
+					reorder: false
+				},
+				module: "test-resources/sap/ui/core/qunit/Fragment.qunit"
+			},
+			/**
+			 * @deprecated As of 1.110
+			 */
+			"Fragment_legacyAPIs": {
+				title: "sap.ui.core.Fragment - legacy APIs",
+				loader: {
+					paths: {
 						"my": "test-resources/sap/ui/core/qunit/fragment/"
 					}
 				},
-				module: "test-resources/sap/ui/core/qunit/Fragment.qunit"
+				qunit: {
+					reorder: false
+				},
+				module: "test-resources/sap/ui/core/qunit/Fragment_legacyAPIs.qunit"
 			},
 			"Fragment_unavoidablySync": {
 				title: "sap.ui.core.Fragment (sync)",

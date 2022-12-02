@@ -334,6 +334,12 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.110
+	 *
+	 * @TODO copy and remove sync Views/Fragments inside!
+	 *       Use Views/Fragments from testdata/fragments/... not "fragments_legacyAPIs"
+	 */
 	QUnit.test("Async rootView & nested fragments", function(assert) {
 		var done = assert.async();
 
@@ -341,7 +347,7 @@ sap.ui.define([
 			return UIComponent.extend("test.XMLTemplateProcessor3", {
 				metadata: {
 					rootView: {
-						viewName: "testdata/fragments/XMLViewWithXMLFragment",
+						viewName: "testdata/fragments_legacyAPIs/XMLViewWithXMLFragment",
 						type: "XML",
 						async: true
 					}
@@ -381,6 +387,12 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	/**
+	 * @deprecated As of version 1.110
+	 *
+	 * @TODO copy and remove sync Views/Fragments inside!
+	 *       Use Views/Fragments from testdata/fragments/... not "fragments_legacyAPIs"
+	 */
 	QUnit.test("Async XML rootView with HTML tags with nested XML view", function(assert) {
 		var done = assert.async();
 
@@ -388,7 +400,7 @@ sap.ui.define([
 			return UIComponent.extend("test.XMLTemplateProcessor4", {
 				metadata: {
 					rootView: {
-						viewName: "testdata/fragments/XMLViewWithHTML",
+						viewName: "testdata/fragments_legacyAPIs/XMLViewWithHTML",
 						type: "XML",
 						async: true
 					}
@@ -418,6 +430,12 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.110
+	 *
+	 * @TODO copy and remove sync Views/Fragments inside!
+	 *       Use Views/Fragments from testdata/fragments/... not "fragments_legacyAPIs"
+	 */
 	QUnit.test("Async XML rootView with HTML fragment with nested XML view", function(assert) {
 		var done = assert.async();
 
@@ -425,7 +443,7 @@ sap.ui.define([
 			return UIComponent.extend("test.XMLTemplateProcessor4", {
 				metadata: {
 					rootView: {
-						viewName: "testdata/fragments/XMLViewWithHTMLFragments",
+						viewName: "testdata/fragments_legacyAPIs/XMLViewWithHTMLFragments",
 						type: "XML",
 						async: true
 					}

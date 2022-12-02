@@ -1,10 +1,8 @@
 /*global QUnit */
-sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function(Controller) {
+sap.ui.define([], function() {
 	"use strict";
 
-	return Controller.extend("testdata.fragments.XMLViewController", {
+	sap.ui.controller("testdata.fragments_legacyAPIs.XMLViewController", {
 
 		onInit: function(oEvent) {
 

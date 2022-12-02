@@ -6,7 +6,4 @@
 	<core:Fragment fragmentName="testdata.fragments.JSTestFragment" type="JS" />
 	<core:Fragment id="jsInXml" fragmentName="testdata.fragments.JSTestFragment" type="JS" />
 
-	<core:Fragment fragmentName="testdata.fragments.HTMLTestFragment" type="HTML" />
-	<core:Fragment id="htmlInXml" fragmentName="testdata.fragments.HTMLTestFragment" type="HTML" />
-
 </mvc:View>
