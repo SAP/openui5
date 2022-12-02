@@ -72,4 +72,20 @@ sap.ui.define([
         assert.equal(oList.getItems()[1].getTitle(), "panel2", "tab correct text");
         assert.equal(oList.getItems()[2].getTitle(), "panel3", "tab correct text");
     });
+
+    QUnit.test("check texts in navigator control", function(assert){
+
+        var oWrapper = new Wrapper();
+
+        //add a panel with key & text
+        oWrapper.addPanel(new BasePanel(), "test1", "My Test 1");
+
+        //toggle to list layout
+        oWrapper.setListLayout(true);
+        oWrapper.switchView("test1");
+
+        //check nav button text
+        assert.equal(oWrapper._getNavBackBtn().getText(), "My Test 1");
+
+    });
 });
