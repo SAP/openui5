@@ -227,7 +227,7 @@ sap.ui.define([
 					oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
 					that.oModel = new JSONModel(oData);
 					that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
-					Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData, that);
+					Utils.merge(oAnnotations ? oAnnotations.getData() : {}, oData, that);
 					Measurement.end(sPerformanceLoad);
 				}
 

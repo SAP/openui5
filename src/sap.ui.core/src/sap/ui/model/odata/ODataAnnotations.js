@@ -88,14 +88,22 @@ sap.ui.define([
 	///////////////////////////////////////////////// Prototype Members ////////////////////////////////////////////////
 
 	/**
+	 * Returns the raw annotation data
+	 *
+	 * @private
+	 * @returns {object} the annotation data
+	 */
+	ODataAnnotations.prototype.getData = function() {
+		return this.oAnnotations;
+	};
+
+	/**
 	 * returns the raw annotation data
 	 *
 	 * @public
 	 * @returns {object} returns annotations data
 	 */
-	ODataAnnotations.prototype.getAnnotationsData = function() {
-		return this.oAnnotations;
-	};
+	ODataAnnotations.prototype.getAnnotationsData = ODataAnnotations.prototype.getData;
 
 	/**
 	 * Checks whether annotations from at least one source are available
