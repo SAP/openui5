@@ -262,7 +262,7 @@ sap.ui.define([
 	 * @name sap.ui.fl.connectors
 	 * @deprecated since 1.87. Use a implementing class in the {@link sap.ui.fl.write.api.connectors} namespace instead.
 	 * @private
-	 * @ui5-restricted SAPUI5 Visual Editor, UX Tools, sap.ui.fl
+	 * @ui5-restricted SAP Web IDE (Visual Editor), UX Tools, sap.ui.fl
 	 */
 
 	/**
@@ -302,7 +302,7 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.fl.write.api.connectors
 	 * @private
-	 * @ui5-restricted SAPUI5 Visual Editor, UX Tools, sap.ui.fl
+	 * @ui5-restricted SAP Web IDE (Visual Editor), UX Tools, sap.ui.fl
 	 */
 
 	/**

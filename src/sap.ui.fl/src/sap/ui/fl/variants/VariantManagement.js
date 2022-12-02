@@ -955,7 +955,7 @@ sap.ui.define([
 	/**
 	 * Retrieves the apply automatically state for a variant.
 	 * @private
-	 * @ui5-restricted sap.mdc
+	 * @ui5-restricted sap.ui.mdc
 	 * @param {object} oVariant the fl-variant object
 	 * @returns {boolean} apply automatically state
 	 */

@@ -23,7 +23,7 @@ sap.ui.define([
 	/**
 	 * @namespace sap.ui.test.generic.Utils
 	 * @private
-	 * @ui5-restricted Only for DIST layer libraries
+	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
 	var Utils = {
 		/**

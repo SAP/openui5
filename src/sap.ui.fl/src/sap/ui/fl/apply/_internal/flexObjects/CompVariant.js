@@ -32,7 +32,7 @@ sap.ui.define([
 	 * @since 1.103
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl sap.ui.comp
+	 * @ui5-restricted sap.ui.fl, sap.ui.comp
 	 */
 	var CompVariant = Variant.extend("sap.ui.fl.apply._internal.flexObjects.CompVariant", /** @lends sap.ui.fl.apply._internal.flexObjects.CompVariant.prototype */ {
 		metadata: {

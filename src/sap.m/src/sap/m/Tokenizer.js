@@ -510,7 +510,7 @@ sap.ui.define([
 	 * Toggles the popover.
 	 *
 	 * @private
-	 * @ui5-restricted for sap.m.MultiInput, sap.m.MultiComboBox
+	 * @ui5-restricted sap.m.MultiInput, sap.m.MultiComboBox
 	 */
 	Tokenizer.prototype._togglePopup = function (oPopover) {
 		var oOpenByDom,

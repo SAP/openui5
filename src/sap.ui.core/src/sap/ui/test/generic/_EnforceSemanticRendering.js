@@ -9,7 +9,7 @@ sap.ui.define([], function() {
 	/**
 	 * @namespace
 	 * @private
-	 * @ui5-restricted Only for DIST layer libraries
+	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
 	var _EnforceSemanticRendering = {
 		/**
@@ -19,7 +19,7 @@ sap.ui.define([], function() {
 		 * @returns {Promise<undefined>} Returns resovled Promise after all tests are executed
 		 *
 		 * @private
-		 * @ui5-restricted Only for DIST layer libraries
+		 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 		 */
 		run : function(mLibInfo) {
 			var sLib = mLibInfo.library;

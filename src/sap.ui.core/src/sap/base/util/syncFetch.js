@@ -49,7 +49,7 @@ sap.ui.define([
 	 *
 	 * @alias module:sap/base/util/syncFetch
 	 * @private
-	 * @ui5-restricted SAPUI5 Dist
+	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
 	function syncFetch(resource, init) {
 		return fetch(resource, init, {

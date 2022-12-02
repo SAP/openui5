@@ -10,7 +10,7 @@ sap.ui.define([], function () {
 	 *
 	 * @alias sap.ui.fl.Layer
 	 * @private
-	 * @ui5-restricted sap.ui.fl, sap.ui.rta, UX Tools, SAPUI5 Visual Editor
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta, UX Tools, SAP Web IDE (Visual Editor)
 	 * @enum {string}
 	 */
 	return {

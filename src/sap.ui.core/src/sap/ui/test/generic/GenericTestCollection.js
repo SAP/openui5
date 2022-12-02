@@ -33,14 +33,14 @@ sap.ui.define([], function() {
 	 *    Exception for known memory leak issues
 	 *
 	 * @private
-	 * @ui5-restricted Only for DIST layer libraries
+	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
 
 	/**
 	 * @namespace
 	 * @alias sap.ui.test.generic.GenericTestCollection
 	 * @private
-	 * @ui5-restricted Only for DIST layer libraries
+	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 * @since 1.100
 	 */
 	var GenericTestCollection = {
@@ -49,29 +49,34 @@ sap.ui.define([], function() {
 		 *
 		 * @enum {string}
 		 * @private
+		 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 		 */
 		ExcludeReason: {
 			/**
 			 * The property or aggregation can only be changed using a binding. Using setter is not allowed.
 			 * @private
+			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 			 */
 			OnlyChangeableViaBinding: "OnlyChangeableViaBinding",
 
 			/**
 			 * The property or aggregation can only be set on initialisation. Using setter is not allowed.
 			 * @private
+			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 			 */
 			NotChangeableAfterInit: "NotChangeableAfterInit",
 
 			/**
 			 * The property or aggregation can't be filled generically. Property/aggregation specific settings are needed.
 			 * @private
+			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 			 */
 			SetterNeedsSpecificSettings: "SetterNeedsSpecificSettings",
 
 			/**
 			 * The default value retrieved from getter can't be used for setting the value using the corresponding setter.
 			 * @private
+			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 			 */
 			CantSetDefaultValue: "CantSetDefaultValue"
 		},
@@ -80,51 +85,57 @@ sap.ui.define([], function() {
 		 *
 		 * @enum {string}
 		 * @private
+		 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 		 */
 		Test: {
 			/**
 			 * Test ControlMemoryLeaks
-			 * @protected
+			 * @private
+			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 			 */
 			ControlMemoryLeaks: "ControlMemoryLeaks",
 
 			/**
 			 * Test ControlRenderer
-			 * @protected
+			 * @private
+			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 			 */
 			ControlRenderer: "ControlRenderer",
 
 			/**
 			 * Test DuplicateIdCheck
-			 * @protected
+			 * @private
+			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 			 */
 			DuplicateIdCheck: "DuplicateIdCheck",
 
 			/**
 			 * Test EnforceSemanticRendering
-			 * @protected
+			 * @private
+			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 			 */
 			EnforceSemanticRendering: "EnforceSemanticRendering",
 
 			/**
 			 * Test SettersContextReturn
-			 * @protected
+			 * @private
+			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 			 */
 			SettersContextReturn: "SettersContextReturn"
 		},
 
 		/**
-		 * Create the testsuite config
+		 * Create the testsuite config.
 		 *
 		 * @param  {object} mConfig Map containing test parameters
 		 * @param  {string} mConfig.library The library name
 		 * @param  {object} mConfig.objectCapabilities The opt-out options per control
 		 * @param  {sap.ui.test.generic.GenericTestCollection.ObjectCapabilities} mConfig.objectCapabilities.anyName The controls capability options
 		 * @param  {sap.ui.test.generic.GenericTestCollection.Test[]} mConfig.skipTests List of tests which shouldn't be executed
-		 * @return {object} Returns the testsuite config object
+		 * @returns {object} Returns the testsuite config object
 		 *
 		 * @private
-		 * @ui5-restricted Only for DIST layer libraries
+		 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 		 * @since 1.100
 		 */
 		createTestsuiteConfig: function(mConfig) {

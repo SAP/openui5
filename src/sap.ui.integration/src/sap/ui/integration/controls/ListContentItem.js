@@ -34,7 +34,7 @@ sap.ui.define([
 	 *
 	 * @class
 	 *
-	 * @extends sap.m.StandardListItem
+	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}

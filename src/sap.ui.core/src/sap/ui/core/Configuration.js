@@ -1860,7 +1860,7 @@ sap.ui.define([
 		 * @returns {any} Value of the configuration parameter, will be of the type specified in M_SETTINGS
 		 *
 		 * @private
-	 	 * @ui5-restricted sap.ui.core.Core jquery.sap.global
+	 	 * @ui5-restricted sap.ui.core.Core, jquery.sap.global
 	 	 * @since 1.106
 		 */
 		getValue: function(sName) {
