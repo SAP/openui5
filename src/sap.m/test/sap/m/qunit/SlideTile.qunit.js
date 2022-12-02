@@ -1248,7 +1248,9 @@ var FrameType = library.FrameType;
 			assert.equal(oTileContentAreaProperties.marginTop, "4px", "Property set Correctly");
 		}
 		for (var i = 0; i < aGenericTile.length; i++ ) {
-			assert.ok(aGenericTile[i].ariaLabel.toLowerCase(), "Property set Correctly");
+			if (aGenericTile[i] && aGenericTile[i].arialabel){
+				assert.ok(aGenericTile[i].ariaLabel.toLowerCase(), "Property set Correctly");
+			}
 		}
 		for (var i = 0; i < aTileContentArea.length; i++ ) {
 			assert.ok(parseInt(getComputedStyle(aTileContentArea[i]).height), 114, "Property set Correctly");
@@ -1265,14 +1267,18 @@ var FrameType = library.FrameType;
 	});
 
 	QUnit.test("Border-Radius for the focus div when pressed", function(assert){
-		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
 		var done = assert.async();
 		this.applyTheme("sap_horizon", function() {
+			this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
+			oCore.applyChanges();
 			var slideTileDomRef = this.oSlideTile.getDomRef();
 			if (this.oSlideTile && slideTileDomRef && slideTileDomRef.classList && slideTileDomRef.classList.contains("sapMST")){
-			assert.equal(getComputedStyle(document.querySelector(".sapMST")).overflow,"hidden","Overflow property should be set as hidden");
+				assert.equal(getComputedStyle(document.querySelector(".sapMST")).overflow,"hidden","Overflow property should be set as hidden");
+				done();
+			} else {
+				assert.expect(0);
+				done();
 			}
-			done();
 		});
 	});
 
