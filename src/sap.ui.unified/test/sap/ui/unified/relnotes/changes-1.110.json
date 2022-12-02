@@ -1,7 +1,29 @@
 {
   "1.110.0": {
-    "date": "November 2022",
+    "date": "December 2022",
     "notes": [
+      {
+        "id": "66ae1c83e3239ee264f534beb0cbc58595f762cf",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fixed header width",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280179265"
+          }
+        ]
+      },
+      {
+        "id": "aadc0be94f546e747c8d41dfa7a3a215f7f7c8aa",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: unstable test is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270160496"
+          }
+        ]
+      },
       {
         "id": "93e6c694e6360fe14b91f02e52018f4a8e73af46",
         "type": "FIX",

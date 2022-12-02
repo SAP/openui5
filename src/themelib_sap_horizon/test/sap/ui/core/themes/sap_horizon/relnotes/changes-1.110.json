@@ -1,7 +1,56 @@
 {
   "1.110.0": {
-    "date": "November 2022",
+    "date": "December 2022",
     "notes": [
+      {
+        "id": "0c331a9fde2dc5b8afcb108cc0f5f6257544dddd",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: New BackgroundDesign property implemented"
+      },
+      {
+        "id": "36196ea6f0f51452ca6a6fa67a669001f8b41797",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Corrected padding of icon tab counter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270182024"
+          }
+        ]
+      },
+      {
+        "id": "eb992a9138c1e1a4d82d6a4d44b4dc3db0748d88",
+        "type": "FIX",
+        "text": " @sapUiChartTargetColor correction for dark themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007315792022"
+          }
+        ]
+      },
+      {
+        "id": "94d32693e5fa3cd120b6d6b4d5aa3bdfaa537611",
+        "type": "FIX",
+        "text": " Align ObjectStatus icon and text in Table cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270183264"
+          }
+        ]
+      },
+      {
+        "id": "3d284298cbb3e5de8370eb154efb552813c540a9",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: fixed hover jumping when default SplitButton is placed in Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270170194"
+          }
+        ]
+      },
       {
         "id": "93e6c694e6360fe14b91f02e52018f4a8e73af46",
         "type": "FIX",

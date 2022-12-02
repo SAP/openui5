@@ -1,7 +1,100 @@
 {
   "1.110.0": {
-    "date": "November 2022",
+    "date": "December 2022",
     "notes": [
+      {
+        "id": "0c331a9fde2dc5b8afcb108cc0f5f6257544dddd",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: New BackgroundDesign property implemented"
+      },
+      {
+        "id": "fd03d42c5b85cdcaf2f444a18a585bc816e88df4",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Error in console no longer appears",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270147414"
+          }
+        ]
+      },
+      {
+        "id": "dcbfec789ae6b3b7faf22c7f89ee69864df16315",
+        "type": "FIX",
+        "text": " sap.m.Label: Added selectors for simplified Chinese lang(zh-Hans) and traditional Chinese lang(zh-Hant)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280174524"
+          }
+        ]
+      },
+      {
+        "id": "8df676ffbb651a577aa07d79b03515ef749ae7ed",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: fix error on opening Popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280180459"
+          }
+        ]
+      },
+      {
+        "id": "740e60fde1bd48b024e3883a5443187115c46984",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: adjust date ranges",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270138349"
+          }
+        ]
+      },
+      {
+        "id": "dc3d67896be6481452f6214a4e8b214c82f3ec88",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: added ability to create appointments in RTL mode with D&D",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005237632022"
+          }
+        ]
+      },
+      {
+        "id": "94d32693e5fa3cd120b6d6b4d5aa3bdfaa537611",
+        "type": "FIX",
+        "text": " Align ObjectStatus icon and text in Table cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270183264"
+          }
+        ]
+      },
+      {
+        "id": "3d284298cbb3e5de8370eb154efb552813c540a9",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: fixed hover jumping when default SplitButton is placed in Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270170194"
+          }
+        ]
+      },
+      {
+        "id": "dd04e7f3af0a25a2e7708c7fe85bf2458ab102e0",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: Long title text is now clipped at two lines max",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270144665"
+          }
+        ]
+      },
       {
         "id": "6ea26632d71b7f370c255d99bceb95026e36dd42",
         "type": "FIX",
@@ -36,6 +129,28 @@
           {
             "type": "BCP",
             "reference": "2270187461"
+          }
+        ]
+      },
+      {
+        "id": "363ac236a89acd96199aa8242b752e5ea04c41ca",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Icon cannot be set dynamically",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270181787"
+          }
+        ]
+      },
+      {
+        "id": "aadc0be94f546e747c8d41dfa7a3a215f7f7c8aa",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: unstable test is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270160496"
           }
         ]
       },
