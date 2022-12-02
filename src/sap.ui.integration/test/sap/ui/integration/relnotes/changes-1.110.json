@@ -1,7 +1,18 @@
 {
   "1.110.0": {
-    "date": "November 2022",
+    "date": "December 2022",
     "notes": [
+      {
+        "id": "3dc8952d9b0e168bf9591c1f222eaacbbf202124",
+        "type": "FIX",
+        "text": " Integration Cards: Cases in which manifest is not reachable are properly handled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270186629"
+          }
+        ]
+      },
       {
         "id": "5a0df2b8690d6fc10e95caebc79b1ae464df528e",
         "type": "FIX",

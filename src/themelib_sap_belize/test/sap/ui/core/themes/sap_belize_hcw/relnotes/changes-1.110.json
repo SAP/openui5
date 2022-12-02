@@ -1,7 +1,34 @@
 {
   "1.110.0": {
-    "date": "November 2022",
+    "date": "December 2022",
     "notes": [
+      {
+        "id": "0c331a9fde2dc5b8afcb108cc0f5f6257544dddd",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: New BackgroundDesign property implemented"
+      },
+      {
+        "id": "94d32693e5fa3cd120b6d6b4d5aa3bdfaa537611",
+        "type": "FIX",
+        "text": " Align ObjectStatus icon and text in Table cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270183264"
+          }
+        ]
+      },
+      {
+        "id": "3d284298cbb3e5de8370eb154efb552813c540a9",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: fixed hover jumping when default SplitButton is placed in Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270170194"
+          }
+        ]
+      },
       {
         "id": "625397fef23ad393a89ae35063f677df79f520ee",
         "type": "FIX",
