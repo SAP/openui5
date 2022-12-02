@@ -217,10 +217,12 @@ sap.ui.define([
 				 * @since 1.60.0
 				 */
 				open: {
-					/**
-					 * If set, the field help is opened to display a suggestion
-					 */
-					suggestion: { type: "boolean" }
+					parameters: {
+						/**
+						 * If set, the field help is opened to display a suggestion
+						 */
+						suggestion: { type: "boolean" }
+					}
 				},
 
 				/**
