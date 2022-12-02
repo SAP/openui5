@@ -415,8 +415,14 @@ sap.ui.define([
 
 	GridContainer.prototype._onItemWrapperFocusIn = function (oEvent) {
 		var oFocusedDomRef = this._oItemNavigation.getFocusedDomRef(),
-			oControl = Element.closestTo(oFocusedDomRef.firstChild),
+			oControl,
 			sAccText;
+
+		if (!oFocusedDomRef || !oFocusedDomRef.firstChild) {
+			return;
+		}
+
+		oControl = Element.closestTo(oFocusedDomRef.firstChild);
 
 		if (!oControl || !oControl.getAriaRoleDescription) {
 			return;
@@ -636,9 +642,6 @@ sap.ui.define([
 		Device.resize.attachHandler(this._resizeDeviceHandler);
 
 		this._resizeItemHandler = this._resizeItem.bind(this);
-
-		// init the InvisibleMessage
-		InvisibleMessage.getInstance();
 	};
 
 	/**
@@ -711,6 +714,9 @@ sap.ui.define([
 		if (resizeListenerId) {
 			ResizeHandler.deregister(resizeListenerId);
 		}
+
+		// init the InvisibleMessage
+		InvisibleMessage.getInstance();
 
 		this._isRenderingFinished = false;
 		this._lastGridWidth = null;
