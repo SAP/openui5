@@ -214,9 +214,10 @@ sap.ui.define( [
 
 	QUnit.test("Desktop View Emulated from Mobile", function (assert) {
 		this.stub(Device, "system").value({desktop: true});
+		this.stub(Device.browser, "firefox").value(false);
 
 		if (window && window.navigator && window.navigator.pdfViewerEnabled) {
-            this.stub(navigator, "pdfViewerEnabled").value(false);
+            this.stub(window.navigator, "pdfViewerEnabled").value(false);
         }
 
 		oPDFViewer = TestUtils.createPdfViewer({
