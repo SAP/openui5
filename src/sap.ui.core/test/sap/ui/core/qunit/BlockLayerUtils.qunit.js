@@ -68,7 +68,25 @@ sap.ui.define([
 		assert.equal($button.css("position"), "fixed", "after setBusy(false) the position is still 'fixed'");
 	});
 
+	QUnit.module("Focus Handling");
 
+	QUnit.test("Return focus to the control when Block Layer has focus before it's removed", function (assert) {
+		var oButton = new Button({
+			text: "Press"
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oButton.setBusyIndicatorDelay(0);
+		oButton.setBusy(true);
+
+		var oBlockLayerDOM = oButton.getDomRef("busyIndicator");
+		oBlockLayerDOM.focus();
+
+		oButton.setBusy(false);
+		assert.ok(oButton.getDomRef().contains(document.activeElement));
+
+		oButton.destroy();
+	});
 
 	QUnit.module("Toggle setBlocked and setBusy", {
 		beforeEach : function(assert) {
