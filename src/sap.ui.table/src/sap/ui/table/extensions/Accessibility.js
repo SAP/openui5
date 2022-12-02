@@ -255,7 +255,7 @@ sap.ui.define([
 			var bHasRowHeader = TableUtils.hasRowHeader(oTable);
 			var bHasRowActions = TableUtils.hasRowActions(oTable);
 			var iColumnCount = TableUtils.getVisibleColumnCount(oTable) + (bHasRowHeader ? 1 : 0) + (bHasRowActions ? 1 : 0);
-			var iContentRowCount = TableUtils.isNoDataVisible(oTable) ? 0 : Math.max(oTable._getTotalRowCount(), oTable._getRowCounts().count);
+			var iContentRowCount = TableUtils.isNoDataVisible(oTable) ? 0 : Math.max(oTable._getTotalRowCount(), oTable._getRowCounts()._fullsize);
 
 			return {
 				columnCount: iColumnCount,

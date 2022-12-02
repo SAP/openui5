@@ -1630,6 +1630,44 @@ sap.ui.define([
 		oTable.setFirstVisibleRow(3);
 	});
 
+	QUnit.test("Row index and count", function(assert) {
+		var oAriaCount = oTable.getDomRef("ariacount");
+		var oNumberOfRows = oTable.getDomRef("rownumberofrows");
+		var oNumberOfColumns = oTable.getDomRef("colnumberofcols");
+
+		getCell(0, 0, true);
+		assert.equal(oAriaCount.textContent, TableUtils.getResourceText("TBL_DATA_ROWS_COLS", [9, 6]),
+			"Data cell in row 1 column 1: ariacount");
+		assert.equal(oNumberOfRows.textContent, TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [2, 9]),
+			"Data cell in row 1 column 1: rownumberofrows");
+		assert.equal(oNumberOfColumns.textContent, TableUtils.getResourceText("TBL_COL_COLCOUNT", [2, 6]),
+			"Data cell in row 1 column 1: colnumberofcols");
+
+		getCell(1, 1, true);
+		assert.equal(oAriaCount.textContent.trim(), "", "Data cell in row 2 column 2: ariacount");
+		assert.equal(oNumberOfRows.textContent, TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [3, 9]),
+			"Data cell in row 2 column 2: rownumberofrows");
+		assert.equal(oNumberOfColumns.textContent, TableUtils.getResourceText("TBL_COL_COLCOUNT", [3, 6]),
+			"Data cell in row 2 column 2: colnumberofcols");
+
+		getColumnHeader(0, true);
+		assert.equal(oAriaCount.textContent.trim(), "", "1st Column header cell: ariacount");
+		assert.equal(oNumberOfRows.textContent.trim(), "", "1st Column header cell: rownumberofrows");
+		assert.equal(oNumberOfColumns.textContent, TableUtils.getResourceText("TBL_COL_COLCOUNT", [2, 6]),
+			"1st Column header cell: colnumberofcols");
+
+		sinon.stub(oTable, "_getTotalRowCount").returns(1);
+		oTable.setVisibleRowCount(1);
+		oTable._bVariableRowHeightEnabled = true;
+		oTable.rerender();
+
+		getCell(0, 0, true);
+		assert.equal(oAriaCount.textContent.trim(), "", "Data cell in row 1 column 1: ariacount");
+		assert.equal(oNumberOfRows.textContent, TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [2, 2]),
+			"Data cell in row 1 column 1: rownumberofrows");
+		assert.equal(oNumberOfColumns.textContent.trim(), "", "Data cell in row 1 column 1: colnumberofcols");
+	});
+
 	QUnit.test("ARIA colindices", function(assert) {
 		var iNumberOfColumns = oTable._getVisibleColumns().length;
 		var $Elem, i;
