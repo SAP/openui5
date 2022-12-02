@@ -32,7 +32,6 @@ sap.ui.define([
 
 	sinon.config.useFakeTimers = false;
 
-
 	function attachEventHandler(oControl, iSkipCalls, fnHandler, that) {
 		var iCalled = 0;
 		var fnEventHandler = function() {
@@ -65,7 +64,6 @@ sap.ui.define([
 		}.bind(this));
 	}
 
-
 	function createColumn(mSettings) {
 		return new AnalyticalColumn({
 			grouped: mSettings.grouped || false,
@@ -86,7 +84,6 @@ sap.ui.define([
 			autoResizable: true
 		});
 	}
-
 
 	function createTable(mSettings) {
 
@@ -125,7 +122,6 @@ sap.ui.define([
 
 		return oTable;
 	}
-
 
 	//************** Test Code **************
 
@@ -480,7 +476,6 @@ sap.ui.define([
 
 		performTestAfterTableIsUpdated.call(this, doTest);
 	});
-
 
 	QUnit.module("AnalyticalTable with ODataModel v2", {
 		beforeEach: function() {
@@ -1004,7 +999,6 @@ sap.ui.define([
 			"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
 	});
 
-
 	QUnit.test("Pre-Check Menu Item Creation with Parent", function(assert) {
 
 		//######################################################################################################
@@ -1358,7 +1352,7 @@ sap.ui.define([
 				}
 			}
 		}, function(oTable) {
-			oTable.getBinding().getLength = function() {return 0;}; // It seems that the MockServer with the analytical fake service can't filter.
+			oTable.getBinding().getLength = function() { return 0; }; // It seems that the MockServer with the analytical fake service can't filter.
 			pDone = new Promise(function(resolve) {
 				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
 					TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
@@ -1447,7 +1441,7 @@ sap.ui.define([
 		fnGetBinding.returns({
 			getMetadata: function() {
 				return {
-					getName: function () {
+					getName: function() {
 						return undefined;
 					}
 				};

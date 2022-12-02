@@ -82,7 +82,6 @@ sap.ui.define([
 				**/
 				"showResetAll": {type: "boolean", defaultValue: true, since: "1.88"},
 
-
 				/**
 				 * Controls the behavior of the Reset button of the <code>TablePersoDialog</code>.<br>
 				 * The value must be specified in the constructor and cannot be set or modified later.<br>
@@ -176,7 +175,7 @@ sap.ui.define([
 		var oNewService = this.getPersoService();
 
 		// refresh data using new service if there was a new service set and a table was set
-		if (oNewService && oNewService !== oOldService && this._getTable() && (this.getAutoSave() || !oOldService )) {
+		if (oNewService && oNewService !== oOldService && this._getTable() && (this.getAutoSave() || !oOldService)) {
 			this.refresh();
 		}
 
@@ -224,7 +223,7 @@ sap.ui.define([
 			this._manageTableEventHandlers(oNewTable, true);
 
 			// only refresh if there is a service set and autoSave is on or no table was set before
-			if (this.getPersoService() && (this.getAutoSave() || !oOldTable )) {
+			if (this.getPersoService() && (this.getAutoSave() || !oOldTable)) {
 				this.refresh();
 			}
 		} else if (!oNewTable) {
@@ -502,7 +501,6 @@ sap.ui.define([
 			_open();
 		}
 	};
-
 
 	return TablePersoController;
 

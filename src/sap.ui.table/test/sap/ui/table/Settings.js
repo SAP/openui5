@@ -121,7 +121,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	}
 
 	TABLESETTINGS.treeTestData = {
-		root:{
+		root: {
 			name: "root",
 			description: "moep moep",
 			checked: false,
@@ -200,7 +200,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 					}
 				}
 			},
-			1:{
+			1: {
 				name: "Hip-Hop",
 				description: "Hip-Hop",
 				checked: true,
@@ -590,8 +590,8 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 				},
 				CELLSELECTIONPLUGIN: {
 					text: "Cell Selection Plugin",
-					value: function (oTable) {
-						var oPlugin = oTable.getDependents().find(function (oDependent) {
+					value: function(oTable) {
+						var oPlugin = oTable.getDependents().find(function(oDependent) {
 							return oDependent.isA("sap.m.plugins.CellSelector");
 						});
 						return oPlugin ? "CELLSELECTOR" : "NONE";
@@ -599,9 +599,9 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 					choice: {
 						NONE: {
 							text: "None",
-							action: function (oTable) {
+							action: function(oTable) {
 								var aDependents = oTable.getDependents(),
-									oPlugin = aDependents.find(function (oDependent) {
+									oPlugin = aDependents.find(function(oDependent) {
 										return oDependent.isA("sap.m.plugins.CellSelector");
 									});
 								oTable.removeDependent(oPlugin);
@@ -609,7 +609,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 						},
 						CELLSELECTOR: {
 							text: "Cell Selector",
-							action: function (oTable) {
+							action: function(oTable) {
 								oTable.addDependent(new CellSelector());
 							}
 						}
@@ -692,7 +692,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			text: "Scroll Settings (private)",
 			group: {
 				LARGEDATA: {
-					text:  "Large Data Scrolling",
+					text: "Large Data Scrolling",
 					value: function(oTable) {
 						return oTable._bLargeDataScrolling;
 					},
@@ -702,7 +702,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 					}
 				},
 				PIXELBASED: {
-					text:  "Pixel-Based Scrolling",
+					text: "Pixel-Based Scrolling",
 					value: function(oTable) {
 						return oTable._bVariableRowHeightEnabled;
 					},
@@ -803,7 +803,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 					oTable.setContextMenu(
 						new Menu({
 							items: [
-								new MenuItem({text : "{name}"})
+								new MenuItem({text: "{name}"})
 							]
 						})
 					);
@@ -929,7 +929,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 					},
 					selectedKey: "NONE",
 					choice: {
-						NAVIGATION : {
+						NAVIGATION: {
 							text: "Navigation",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATION";
@@ -951,7 +951,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 								switchRowActions(oTable, 1, oTemplate);
 							}
 						},
-						NAVIGATIONDELETE : {
+						NAVIGATIONDELETE: {
 							text: "Navigation & Delete",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATIONDELETE";
@@ -974,7 +974,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 								switchRowActions(oTable, 2, oTemplate);
 							}
 						},
-						NAVIGATIONCUSTOM : {
+						NAVIGATIONCUSTOM: {
 							text: "Navigation & Custom",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATIONCUSTOM";
@@ -997,7 +997,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 								switchRowActions(oTable, 2, oTemplate);
 							}
 						},
-						MULTI : {
+						MULTI: {
 							text: "Multiple Actions",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "MULTI";
@@ -1010,7 +1010,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 								switchRowActions(oTable, 2, oTemplate);
 							}
 						},
-						MULTI_ONE : {
+						MULTI_ONE: {
 							text: "Multiple Actions (1 Column)",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "MULTI_ONE";
@@ -1023,7 +1023,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 								switchRowActions(oTable, 1, oTemplate);
 							}
 						},
-						NONE : {
+						NONE: {
 							text: "No Actions",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NONE";
@@ -1188,7 +1188,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		if (oReopenTimer) {
 			clearTimeout(oReopenTimer);
 		}
-		oReopenTimer = setTimeout(function() {oReopenTimer = null;}, 800);
+		oReopenTimer = setTimeout(function() { oReopenTimer = null; }, 800);
 	}
 
 	function getValue(oAction, oControl) {
@@ -1278,7 +1278,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 						oSelectedItem._action(TABLESETTINGS.table);
 					}
 				};
-				for ( var item in oAction.choice) {
+				for (var item in oAction.choice) {
 					if (!oAction.choice[item].hidden && !oAction.choice[item].disabled) {
 						var oItem = new Item({
 							text: oAction.choice[item].text,

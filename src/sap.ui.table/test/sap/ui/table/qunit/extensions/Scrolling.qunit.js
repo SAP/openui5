@@ -189,7 +189,7 @@ sap.ui.define([
 		this.oTable.setVisibleRowCount(2);
 		this.oTable.setFixedRowCount(1);
 		this.oTable.rerender();
-		assert.strictEqual(oVSbComputedStyle.top,  TableUtils.BaseSize.sapUiSizeCozy + "px", "Fixed rows: Top position");
+		assert.strictEqual(oVSbComputedStyle.top, TableUtils.BaseSize.sapUiSizeCozy + "px", "Fixed rows: Top position");
 	});
 
 	QUnit.test("Vertical scrollbar height if variable row heights enabled", function(assert) {
@@ -991,7 +991,7 @@ sap.ui.define([
 							this._oFixedRowMode = new FixedRowMode({
 								rowCount: 10
 							});
-							this._oFixedRowMode.toString = function() {return "FixedRowMode";};
+							this._oFixedRowMode.toString = function() { return "FixedRowMode"; };
 							this._oFixedRowMode.renderCellContentStyles = function() {}; // Allow row mode to have variable row heights.
 						}
 
@@ -1006,7 +1006,7 @@ sap.ui.define([
 								minRowCount: 10,
 								maxRowCount: 10
 							});
-							this._oAutoRowMode.toString = function() {return "AutoRowMode";};
+							this._oAutoRowMode.toString = function() { return "AutoRowMode"; };
 							this._oAutoRowMode.renderCellContentStyles = function() {}; // Allow row mode to have variable row heights.
 						}
 
@@ -4961,7 +4961,7 @@ sap.ui.define([
 			}).then(oTable.qunit.$scrollVSbTo(9999999)).then(function() {
 				that.fakeODataBindingRefresh(9);
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
-				that.assertPosition(assert, 3, iScrollPosition,  iInnerScrollPosition - 150,
+				that.assertPosition(assert, 3, iScrollPosition, iInnerScrollPosition - 150,
 					sTitle + "ScrollTop = MAX; After binding length decreased (refresh)");
 
 				that.fakeODataBindingRefresh(10);
@@ -4972,7 +4972,7 @@ sap.ui.define([
 			}).then(oTable.qunit.$scrollVSbTo(9999999)).then(function() {
 				that.fakeODataBindingRefresh(11);
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
-				that.assertPosition(assert, iFirstVisibleRow, 89,  iInnerScrollPosition,
+				that.assertPosition(assert, iFirstVisibleRow, 89, iInnerScrollPosition,
 					sTitle + "ScrollTop = MAX; After binding length increased (refresh)");
 
 				that.fakeODataBindingRefresh(10);
@@ -5088,7 +5088,7 @@ sap.ui.define([
 			}).then(oTable.qunit.$scrollVSbTo(9999999)).then(function() {
 				that.fakeODataBindingRefresh(that.mDefaultSettings.bindingLength - 1);
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
-				that.assertPosition(assert, iFirstVisibleRow - 1, iScrollPosition - that.iBaseRowHeight,  0,
+				that.assertPosition(assert, iFirstVisibleRow - 1, iScrollPosition - that.iBaseRowHeight, 0,
 					sTitle + "ScrollTop = MAX; After binding length decreased (refresh)");
 
 				that.fakeODataBindingRefresh(that.mDefaultSettings.bindingLength);
@@ -5099,7 +5099,7 @@ sap.ui.define([
 			}).then(oTable.qunit.$scrollVSbTo(9999999)).then(function() {
 				that.fakeODataBindingRefresh(that.mDefaultSettings.bindingLength + 1);
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
-				that.assertPosition(assert, iFirstVisibleRow, iScrollPosition,  0,
+				that.assertPosition(assert, iFirstVisibleRow, iScrollPosition, 0,
 					sTitle + "ScrollTop = MAX; After binding length increased (refresh)");
 
 				that.fakeODataBindingRefresh(that.mDefaultSettings.bindingLength);
@@ -5343,7 +5343,7 @@ sap.ui.define([
 			}).then(oTable.qunit.$scrollVSbTo(9999999)).then(function() {
 				that.fakeODataBindingRefresh(iBindingLength - 1);
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
-				that.assertPosition(assert, iFirstVisibleRow - 1, iScrollPosition,  0,
+				that.assertPosition(assert, iFirstVisibleRow - 1, iScrollPosition, 0,
 					sTitle + "ScrollTop = MAX; After binding length decreased (refresh)");
 
 				that.fakeODataBindingRefresh(iBindingLength);
@@ -5354,7 +5354,7 @@ sap.ui.define([
 			}).then(oTable.qunit.$scrollVSbTo(9999999)).then(function() {
 				that.fakeODataBindingRefresh(iBindingLength + 1);
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
-				that.assertPosition(assert, iFirstVisibleRow, iScrollPosition - 1,  0,
+				that.assertPosition(assert, iFirstVisibleRow, iScrollPosition - 1, 0,
 					sTitle + "ScrollTop = MAX; After binding length increased (refresh)");
 
 				that.fakeODataBindingRefresh(iBindingLength);

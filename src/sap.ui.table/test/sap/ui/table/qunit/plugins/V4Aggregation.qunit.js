@@ -380,7 +380,7 @@ sap.ui.define([
 
 			this.oPlugin.setTotalSummaryOnTop(mTestData.totalSummaryOnTop);
 			this.oPlugin.setTotalSummaryOnBottom(mTestData.totalSummaryOnBottom);
-			this.stub(this.oPlugin, "getTableBinding").returns({setAggregation: function(){}});
+			this.stub(this.oPlugin, "getTableBinding").returns({setAggregation: function() {}});
 
 			var bFixedTopEnabled = this.oPlugin.getTotalSummaryOnTop() === "Fixed";
 			var bFixedBottomEnabled = this.oPlugin.getTotalSummaryOnBottom() === "Fixed";
@@ -444,7 +444,7 @@ sap.ui.define([
 				path: "prop3",
 				label: "Property 3",
 				groupingDetails: {
-					formatter: function(oContext, sPropertyName) {return "Property3 > " + sPropertyName;}
+					formatter: function(oContext, sPropertyName) { return "Property3 > " + sPropertyName; }
 				}
 			}]);
 

@@ -222,10 +222,10 @@ sap.ui.define([
 		oOldCustomLabel = oCustomLabel;
 		oCustomLabel = new TableQUnitUtils.TestControl({text: "newlabelinstance"});
 
-		oCustomLabel.setIsInColumnHeaderContext = function (bIsInColumnHeaderContext) {
+		oCustomLabel.setIsInColumnHeaderContext = function(bIsInColumnHeaderContext) {
 			oCustomLabel._isInColumnHeaderContext = !!bIsInColumnHeaderContext;
 		};
-		oOldCustomLabel.setIsInColumnHeaderContext = function (bIsInColumnHeaderContext) {
+		oOldCustomLabel.setIsInColumnHeaderContext = function(bIsInColumnHeaderContext) {
 			oOldCustomLabel._isInColumnHeaderContext = !!bIsInColumnHeaderContext;
 		};
 
@@ -733,12 +733,12 @@ sap.ui.define([
 
 			var oFreeTemplateClone = this.oColumn._getFreeTemplateClone(sTemplateType);
 
-			assert.strictEqual(oFreeTemplateClone, this.oCloneWithoutParentA,  sTemplateType + " type: Returned the first free template clone");
+			assert.strictEqual(oFreeTemplateClone, this.oCloneWithoutParentA, sTemplateType + " type: Returned the first free template clone");
 			assert.deepEqual(this.oColumn._mTemplateClones[sTemplateType], [
 				this.oCloneWithParent,
 				this.oCloneWithoutParentA,
 				this.oCloneWithoutParentB
-			],  sTemplateType + " type: The clone pool has been cleaned up");
+			], sTemplateType + " type: The clone pool has been cleaned up");
 		}
 	});
 
@@ -1326,7 +1326,7 @@ sap.ui.define([
 		this.openColumnMenu(0);
 	});
 
-	QUnit.test("aria-haspopup", function (assert) {
+	QUnit.test("aria-haspopup", function(assert) {
 		assert.equal(this.oColumn1.$().attr("aria-haspopup"), "dialog", "aria-haspopup was set correctly");
 	});
 

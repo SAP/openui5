@@ -349,7 +349,7 @@ sap.ui.define([
 					assert.equal(oEvent.getParameter("userInteraction"), true, sTestCase + ": Parameter userInteraction correct");
 					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
-					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, new Array(3)).map(function(c, i) {return i;}),
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, new Array(3)).map(function(c, i) { return i; }),
 						sTestCase + ": Parameter rowIndices correct");
 					assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
 					break;
@@ -358,7 +358,7 @@ sap.ui.define([
 					assert.equal(oEvent.getParameter("userInteraction"), true, sTestCase + ": Parameter userInteraction correct");
 					assert.equal(oEvent.getParameter("rowIndex"), -1, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), undefined, sTestCase + ": Parameter rowContext correct");
-					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, new Array(3)).map(function(c, i) {return i;}),
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, new Array(3)).map(function(c, i) { return i; }),
 						sTestCase + ": Parameter rowIndices correct");
 					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 					break;
@@ -367,7 +367,7 @@ sap.ui.define([
 					assert.equal(oEvent.getParameter("userInteraction"), false, sTestCase + ": Parameter userInteraction correct");
 					assert.equal(oEvent.getParameter("rowIndex"), 2, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(2), sTestCase + ": Parameter rowContext correct");
-					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, new Array(3)).map(function(c, i) {return i;}),
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, new Array(3)).map(function(c, i) { return i; }),
 						sTestCase + ": Parameter rowIndices correct");
 					assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
 					break;
@@ -376,7 +376,7 @@ sap.ui.define([
 					assert.equal(oEvent.getParameter("userInteraction"), false, sTestCase + ": Parameter userInteraction correct");
 					assert.equal(oEvent.getParameter("rowIndex"), -1, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), undefined, sTestCase + ": Parameter rowContext correct");
-					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, new Array(3)).map(function(c, i) {return i;}),
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, new Array(3)).map(function(c, i) { return i; }),
 						sTestCase + ": Parameter rowIndices correct");
 					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 					break;
@@ -1065,7 +1065,7 @@ sap.ui.define([
 		fnGetBinding.returns({
 			getMetadata: function() {
 				return {
-					getName: function () {
+					getName: function() {
 						return undefined;
 					}
 				};

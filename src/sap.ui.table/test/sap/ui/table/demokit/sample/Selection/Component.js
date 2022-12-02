@@ -4,7 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	return UIComponent.extend("sap.ui.table.sample.Selection.Component", {
-		metadata : {
+		metadata: {
 			manifest: "json"
 		}
 	});

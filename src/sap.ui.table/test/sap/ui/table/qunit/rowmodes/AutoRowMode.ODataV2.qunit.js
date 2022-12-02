@@ -21,7 +21,7 @@ sap.ui.define([
 
 			TableQUnitUtils.setDefaultSettings({
 				rowMode: new AutoRowMode(),
-				rows: {path : "/Products"},
+				rows: {path: "/Products"},
 				models: this.oDataModel
 			});
 
@@ -146,7 +146,7 @@ sap.ui.define([
 
 	QUnit.test("Initialization if metadata already loaded; Bound between initialization and rendering; threshold = 1", function(assert) {
 		var oTable = TableQUnitUtils.createTable({threshold: 1, rows: undefined}, function(oTable) {
-			oTable.bindRows({path : "/Products"});
+			oTable.bindRows({path: "/Products"});
 		});
 		var oGetContextsSpy = this.oGetContextsSpy;
 
@@ -169,7 +169,7 @@ sap.ui.define([
 		var oTable = TableQUnitUtils.createTable({threshold: 1, rows: undefined});
 		var oGetContextsSpy = this.oGetContextsSpy;
 
-		oTable.bindRows({path : "/Products"});
+		oTable.bindRows({path: "/Products"});
 
 		// refreshRows, auto rerender, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {
@@ -197,7 +197,7 @@ sap.ui.define([
 		});
 		var oGetContextsSpy = this.oGetContextsSpy;
 
-		oTable.bindRows({path : "/Products"});
+		oTable.bindRows({path: "/Products"});
 
 		// refreshRows, auto rerender, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {
@@ -226,7 +226,7 @@ sap.ui.define([
 		});
 		var oGetContextsSpy = this.oGetContextsSpy;
 
-		oTable.bindRows({path : "/Products"});
+		oTable.bindRows({path: "/Products"});
 
 		// refreshRows, auto rerender, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {

@@ -198,7 +198,6 @@ sap.ui.define([
 			});
 		}
 
-
 		if (!mRegistryData) {
 			return;
 		}

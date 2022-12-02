@@ -49,7 +49,7 @@ sap.ui.define([
 				 *
 				 * @since 1.48.0
 				 */
-				highlight : {type : "string", group : "Appearance", defaultValue : "None"},
+				highlight: {type: "string", group: "Appearance", defaultValue: "None"},
 
 				/**
 				 * Defines the semantics of the {@link sap.ui.table.RowSettings#setHighlight highlight} property for accessibility purposes. It is
@@ -57,7 +57,7 @@ sap.ui.define([
 				 *
 				 * @since 1.62
 				 */
-				highlightText : {type : "string", group : "Misc", defaultValue : ""},
+				highlightText: {type: "string", group: "Misc", defaultValue: ""},
 
 				/**
 				 * The navigated state of a row.
@@ -67,7 +67,7 @@ sap.ui.define([
 				 *
 				 * @since 1.72
 				 */
-				navigated : {type : "boolean", group : "Appearance", defaultValue : false}
+				navigated: {type: "boolean", group: "Appearance", defaultValue: false}
 			}
 		}
 	});

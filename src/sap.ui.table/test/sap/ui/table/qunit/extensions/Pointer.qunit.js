@@ -800,7 +800,7 @@ sap.ui.define([
 			$Cell.toggleClass(aKnownClickableControls[i], false);
 		}
 
-		oRowColCell.cell.getEnabled = function() {return false;};
+		oRowColCell.cell.getEnabled = function() { return false; };
 		$Cell = oRowColCell.cell.$();
 		var iStartCount = iSelectCount;
 		for (var i = 0; i < aKnownClickableControls.length; i++) {

@@ -10,13 +10,13 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.TableFreeze.Controller", {
 
-		onInit : function() {
+		onInit: function() {
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			this.getView().setModel(oJSONModel);
 		},
 
-		initSampleDataModel : function() {
+		initSampleDataModel: function() {
 			var oModel = new JSONModel();
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
@@ -57,19 +57,19 @@ sap.ui.define([
 			return oModel;
 		},
 
-		formatAvailableToObjectState : function(bAvailable) {
+		formatAvailableToObjectState: function(bAvailable) {
 			return bAvailable ? "Success" : "Error";
 		},
 
-		formatAvailableToIcon : function(bAvailable) {
+		formatAvailableToIcon: function(bAvailable) {
 			return bAvailable ? "sap-icon://accept" : "sap-icon://decline";
 		},
 
-		handleDetailsPress : function(oEvent) {
+		handleDetailsPress: function(oEvent) {
 			MessageToast.show("Details for product with id " + this.getView().getModel().getProperty("ProductId", oEvent.getSource().getBindingContext()));
 		},
 
-		buttonPress : function(oEvent) {
+		buttonPress: function(oEvent) {
 			var oView = this.getView(),
 				oTable = oView.byId("table1"),
 				sColumnCount = oView.byId("inputColumn").getValue() || 0,

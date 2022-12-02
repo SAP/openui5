@@ -893,7 +893,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getHeaderText", function(assert){
+	QUnit.test("getHeaderText", function(assert) {
 		assert.strictEqual(ColumnUtils.getColumnWidth(), null, "Returned null: No parameters passed");
 
 		oTable.removeAllColumns();
@@ -929,7 +929,7 @@ sap.ui.define([
 		assert.strictEqual(ColumnUtils.getHeaderText(aColumns[4]), "Name", "name, multiLabels, label are set -> returned the name");
 	});
 
-	QUnit.test("getHeaderLabel", function(assert){
+	QUnit.test("getHeaderLabel", function(assert) {
 		assert.strictEqual(ColumnUtils.getColumnWidth(), null, "Returned null: No parameters passed");
 
 		var oLabelA = new TableQUnitUtils.HeightTestControl(),

@@ -76,10 +76,10 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.table.Column
 	 */
-	var Column = Element.extend("sap.ui.table.Column", /** @lends sap.ui.table.Column.prototype */ { metadata : {
+	var Column = Element.extend("sap.ui.table.Column", /** @lends sap.ui.table.Column.prototype */ {metadata: {
 
-		library : "sap.ui.table",
-		properties : {
+		library: "sap.ui.table",
+		properties: {
 
 			/**
 			 * Width of the column in CSS units.
@@ -89,7 +89,7 @@ sap.ui.define([
 			 * <p>If a user adjusts the column width manually, the resulting value is always set in pixels.
 			 * In addition, other columns with width <code>auto</code> get a fixed minimum width and do not shrink after the resizing.
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+			width: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null},
 
 			/**
 			 * Defines the minimum width of a column in pixels.
@@ -100,7 +100,7 @@ sap.ui.define([
 			 *
 			 * @since 1.44.1
 			 */
-			minWidth : {type : "int", group : "Dimension", defaultValue : 0},
+			minWidth: {type: "int", group: "Dimension", defaultValue: 0},
 
 			/**
 			 * If the table is wider than the sum of widths of the visible columns, the columns will be
@@ -110,32 +110,32 @@ sap.ui.define([
 			 * @deprecated As of version 1.44 this property has no effect. Use the property <code>minWidth</code> in combination with the property
 			 * <code>width="auto"</code> instead.
 			 */
-			flexible : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true},
+			flexible: {type: "boolean", group: "Behavior", defaultValue: true, deprecated: true},
 
 			/**
 			 * If set to true, the column can be resized either using the resize bar (by mouse) or using
 			 * the keyboard (SHIFT + Left/Right Arrow keys)
 			 */
-			resizable : {type : "boolean", group : "Behavior", defaultValue : true},
+			resizable: {type: "boolean", group: "Behavior", defaultValue: true},
 
 			/**
 			 * Horizontal alignment of the column content. Controls with a text align do not inherit
 			 * the horizontal alignment. You have to set the text align directly on the template.
 			 */
-			hAlign : {type : "sap.ui.core.HorizontalAlign", group : "Appearance", defaultValue : HorizontalAlign.Begin},
+			hAlign: {type: "sap.ui.core.HorizontalAlign", group: "Appearance", defaultValue: HorizontalAlign.Begin},
 
 			/**
 			 * Indicates if the column is sorted. This property only controls if a sort indicator is displayed in the
 			 * column header - it does not trigger the sort function. The column can be sorted using {@link sap.ui.table.Table#sort}.
 			 */
-			sorted : {type : "boolean", group : "Appearance", defaultValue : false},
+			sorted: {type: "boolean", group: "Appearance", defaultValue: false},
 
 			/**
 			 * This property indicates the sort direction (Ascending or Descending). The corresponding icon will be
 			 * rendered if the property <code>sorted</code> is <code>true</code>
 			 * @see sap.ui.table.SortOrder (default value: "Ascending")
 			 */
-			sortOrder : {type : "sap.ui.table.SortOrder", group : "Appearance", defaultValue : SortOrder.Ascending},
+			sortOrder: {type: "sap.ui.table.SortOrder", group: "Appearance", defaultValue: SortOrder.Ascending},
 
 			/**
 			 * Specifies the binding property on which the column will sort.
@@ -146,13 +146,13 @@ sap.ui.define([
 			 *
 			 * A column menu entry for sorting can only be generated if the <code>sortProperty</code> is set.
 			 */
-			sortProperty : {type : "string", group : "Behavior", defaultValue : null},
+			sortProperty: {type: "string", group: "Behavior", defaultValue: null},
 
 			/**
 			 * Indicates if the column is filtered. This property only controls if a filter indicator is displayed in the
 			 * column header - it does not trigger the filter function. The column can be filtered using {@link sap.ui.table.Table#filter}.
 			 */
-			filtered : {type : "boolean", group : "Appearance", defaultValue : false},
+			filtered: {type: "boolean", group: "Appearance", defaultValue: false},
 
 			/**
 			 * Specifies the binding property on which the column shall be filtered.
@@ -164,7 +164,7 @@ sap.ui.define([
 			 * A column menu entry for filtering can only be generated if the <code>filterProperty</code> is set. The
 			 * default menu entry is a text input field.
 			 */
-			filterProperty : {type : "string", group : "Behavior", defaultValue : null},
+			filterProperty: {type: "string", group: "Behavior", defaultValue: null},
 
 			/**
 			 * Specifies the value of the filter as string (will be converted into the proper data type). It is possible
@@ -183,20 +183,20 @@ sap.ui.define([
 			 * 50..100       between
 			 * </pre>
 			 */
-			filterValue : {type : "string", group : "Behavior", defaultValue : null},
+			filterValue: {type: "string", group: "Behavior", defaultValue: null},
 
 			/**
 			 * Filter operator to use when filtering this column.
 			 * @see sap.ui.model.FilterOperator (default value: "Contains")
 			 */
-			filterOperator : {type : "string", group : "Behavior", defaultValue : null},
+			filterOperator: {type: "string", group: "Behavior", defaultValue: null},
 
 			/**
 			 * If this property is set, the default filter operator of the column is overridden.
 			 * By default <code>Contains</code> is used for string and <code>EQ</code> for other types. A valid
 			 * <code>sap.ui.model.FilterOperator</code> needs to be passed.
 			 */
-			defaultFilterOperator : {type : "string", group : "Behavior", defaultValue : null},
+			defaultFilterOperator: {type: "string", group: "Behavior", defaultValue: null},
 
 			/**
 			 * Type of filter. It is used to transform the search term into the specified type and should be the same as
@@ -212,36 +212,36 @@ sap.ui.define([
 			 *
 			 * @since 1.9.2
 			 */
-			filterType : {type : "any", group : "Misc", defaultValue : null},
+			filterType: {type: "any", group: "Misc", defaultValue: null},
 
 			/**
 			 * Indicates if the column is grouped.
 			 */
-			grouped : {type : "boolean", group : "Appearance", defaultValue : false},
+			grouped: {type: "boolean", group: "Appearance", defaultValue: false},
 
 			/**
 			 * Invisible controls are not rendered.
 			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
+			visible: {type: "boolean", group: "Appearance", defaultValue: true},
 
 			/**
 			 * The name of the column which is used for the text representation of this column, for example, in menus.
 			 * If not set, the text from the multiLabels aggregation or the label aggregation (in that order) is used as a fallback option.
 			 * @since 1.11.1
 			 */
-			name : {type : "string", group : "Appearance", defaultValue : null},
+			name: {type: "string", group: "Appearance", defaultValue: null},
 
 			/**
 			 * Defines if the filter menu entry is displayed
 			 * @since 1.13.0
 			 */
-			showFilterMenuEntry : {type : "boolean", group : "Appearance", defaultValue : true},
+			showFilterMenuEntry: {type: "boolean", group: "Appearance", defaultValue: true},
 
 			/**
 			 * Defines if the sort menu entries are displayed
 			 * @since 1.13.0
 			 */
-			showSortMenuEntry : {type : "boolean", group : "Appearance", defaultValue : true},
+			showSortMenuEntry: {type: "boolean", group: "Appearance", defaultValue: true},
 
 			/**
 			 * If this property is set, a span is applied for the header. When moving columns, all columns
@@ -255,7 +255,7 @@ sap.ui.define([
 			 * headerSpan = [2, 1] // for the second column
 			 * headerSpan = [1, 1] // or not set for the third column</code>
 			 */
-			headerSpan : {type : "any", group : "Behavior", defaultValue : 1},
+			headerSpan: {type: "any", group: "Behavior", defaultValue: 1},
 
 			/**
 			 * Enables auto-resizing of the column on double clicking the resize bar. The width is determined on the widest
@@ -266,24 +266,24 @@ sap.ui.define([
 			 * sap.ui.commons.Checkbox, sap.m.CheckBox</code>
 			 * @since 1.21.1
 			 */
-			autoResizable : {type : "boolean", group : "Behavior", defaultValue : false}
+			autoResizable: {type: "boolean", group: "Behavior", defaultValue: false}
 		},
-		defaultAggregation : "label",
-		aggregations : {
+		defaultAggregation: "label",
+		aggregations: {
 
 			/**
 			 * Label of the column which is displayed in the column header. This aggregation is for the standard behavior,
 			 * where you only want to display one single row header. If a string is supplied, a default label control will be
 			 * created. Which control this is depends on the loaded libraries.
 			 */
-			label : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
+			label: {type: "sap.ui.core.Control", altTypes: ["string"], multiple: false},
 
 			/**
 			 * Labels of the column which are displayed in the column header. Define a control for
 			 * each header row in the table. Use this aggregation if you want to use multiple headers per column.
 			 * @since 1.13.1
 			 */
-			multiLabels : {type : "sap.ui.core.Control", multiple : true, singularName : "multiLabel"},
+			multiLabels: {type: "sap.ui.core.Control", multiple: true, singularName: "multiLabel"},
 
 			/**
 			 * Template (cell renderer) of this column.
@@ -296,7 +296,7 @@ sap.ui.define([
 			 * Choose?}" in the documentation for more details. While it is technically possible to also use other controls, doing so might lead to
 			 * issues with regards to scrolling, alignment, condensed mode, screen reader support, and keyboard support.
 			 */
-			template : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
+			template: {type: "sap.ui.core.Control", altTypes: ["string"], multiple: false},
 
 			/*
 			 * Creation template (cell renderer) of this column. This template is used only to create the cells
@@ -310,7 +310,7 @@ sap.ui.define([
 			 * @private
 			 * @ui5-restricted sap.ui.mdc
 			 */
-			creationTemplate : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+			creationTemplate: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
 			/**
 			 * The menu used by the column. By default the {@link sap.ui.table.ColumnMenu} is used.
@@ -320,7 +320,7 @@ sap.ui.define([
 			 * To add a custom menu to a column, use the aggregation <code>menu</code> with a new instance of
 			 * <code>sap.ui.unified.Menu</code>.
 			 */
-			menu : {type : "sap.ui.unified.Menu", multiple : false}
+			menu: {type: "sap.ui.unified.Menu", multiple: false}
 		},
 		associations: {
 			/**
@@ -330,7 +330,7 @@ sap.ui.define([
 			 */
 			headerMenu: {type: "sap.ui.core.IColumnHeaderMenu", multiple: false, visibility: "hidden"}
 		},
-		events : {
+		events: {
 			/**
 			 * Fires before the column menu is opened.
 			 * @since 1.33.0
@@ -346,7 +346,6 @@ sap.ui.define([
 			}
 		}
 	}});
-
 
 	/** default filter type for the columns */
 	Column._DEFAULT_FILTER_TYPE = new StringType();
@@ -855,7 +854,6 @@ sap.ui.define([
 		this.sort(this.getSorted() && this.getSortOrder() === SortOrder.Ascending);
 	};
 
-
 	/**
 	 * Sorts the current column ascending or descending.
 	 *
@@ -1045,14 +1043,12 @@ sap.ui.define([
 				} else {
 					if (this.getDefaultFilterOperator()) {
 						sOperator = this.getDefaultFilterOperator();
-					} else {
-						if (bIsString) {
+					} else if (bIsString) {
 							// Due to compatibility reason we need to use Contains for Strings instead of EQ as default!!
 							sOperator = FilterOperator.Contains;
 						} else {
 							sOperator = FilterOperator.EQ;
 						}
-					}
 					sParsedValue = sValue.substr(0);
 				}
 				if (!sSecondaryParsedValue) {
@@ -1379,7 +1375,7 @@ sap.ui.define([
 	 * @returns {sap.ui.core.IColumnHeaderMenu | undefined} The column header menu instance
 	 * @private
 	 */
-	Column.prototype.getHeaderMenuInstance = function () {
+	Column.prototype.getHeaderMenuInstance = function() {
 		return Core.byId(this.getAssociation("headerMenu"));
 	};
 
@@ -1403,7 +1399,7 @@ sap.ui.define([
 			Object.keys(vValue).forEach(function(sSetting) {
 				if (aAllowedObjectKeys.includes(sSetting)) {
 					if (sSettingName != null) {
-						validateCellContentVisibilitySetting(vValue[sSetting],sSettingName + "." + sSetting, true);
+						validateCellContentVisibilitySetting(vValue[sSetting], sSettingName + "." + sSetting, true);
 					}
 				} else {
 					throw new Error("Unsupported setting '" + (sSettingName ? sSettingName + "." : "") + sSetting + "'");

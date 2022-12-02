@@ -44,12 +44,11 @@ sap.ui.define([
 	 * @alias sap.ui.table.ColumnMenu
 	 */
 	var ColumnMenu = Menu.extend("sap.ui.table.ColumnMenu", /** @lends sap.ui.table.ColumnMenu.prototype */ {
-		metadata : {
-			library : "sap.ui.table"
+		metadata: {
+			library: "sap.ui.table"
 		},
 		renderer: MenuRenderer
 	});
-
 
 	/**
 	 * Initialization of the ColumnMenu control
@@ -66,7 +65,6 @@ sap.ui.define([
 		this._oTable = null;
 	};
 
-
 	/**
 	 * Termination of the ColumnMenu control
 	 * @private
@@ -80,7 +78,6 @@ sap.ui.define([
 		this._oColumn = this._oTable = null;
 	};
 
-
 	/**
 	 * Event handler. Called when the theme is changed.
 	 * @private
@@ -90,7 +87,6 @@ sap.ui.define([
 			this._invalidate();
 		}
 	};
-
 
 	/**
 	 * Defines this object's new parent. If no new parent is given, the parent is
@@ -209,7 +205,6 @@ sap.ui.define([
 		}
 	};
 
-
 	/**
 	 * Adds the filter menu item to the menu.
 	 * @private
@@ -246,7 +241,6 @@ sap.ui.define([
 		}
 	};
 
-
 	/**
 	 * Adds the group menu item to the menu.
 	 * @private
@@ -278,7 +272,6 @@ sap.ui.define([
 			));
 		}
 	};
-
 
 	/**
 	 * Adds the freeze menu item to the menu.
@@ -316,7 +309,6 @@ sap.ui.define([
 		}
 	};
 
-
 	/**
 	 * Adds the column visibility menu item to the menu.
 	 * @private
@@ -336,7 +328,6 @@ sap.ui.define([
 			this._updateColumnVisibilityMenuItem();
 		}
 	};
-
 
 	/**
 	 * Factory method for the column visibility menu item.
@@ -375,7 +366,6 @@ sap.ui.define([
 		});
 	};
 
-
 	/**
 	 * Factory method for a menu item.
 	 * @param {string} sId the id of the menu item.
@@ -392,7 +382,6 @@ sap.ui.define([
 			select: fHandler || function() {}
 		});
 	};
-
 
 	/**
 	 * Factory method for a menu text field item.
@@ -413,7 +402,6 @@ sap.ui.define([
 			select: fHandler || function() {}
 		});
 	};
-
 
 	/**
 	 * Sets a new filter value into the filter field
@@ -482,7 +470,7 @@ sap.ui.define([
 		}
 
 		var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
-		if (!oSubmenu){
+		if (!oSubmenu) {
 			return;
 		}
 

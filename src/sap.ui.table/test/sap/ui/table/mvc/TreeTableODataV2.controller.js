@@ -255,7 +255,7 @@ sap.ui.define([
 					threshold: iBindingThreshold,
 					countMode: sCountMode,
 					operationMode: sOperationMode,
-					numberOfExpandedLevels: iInitialLevel == "" ?  0 : iInitialLevel,
+					numberOfExpandedLevels: iInitialLevel == "" ? 0 : iInitialLevel,
 					treeState: oTreeState,
 					//navigation: {orgHierarchyRoot: "toChildren", orgHierarchy: "toChildren"}
 					treeAnnotationProperties: bUseLocalMetadata ? {
@@ -304,11 +304,11 @@ sap.ui.define([
 		attachPerformanceTools: function(oTable) {
 			oTable.addDelegate({
 				onBeforeRendering: function() {
-					Measurement.start("onBeforeRendering","",["Render"]);
-					Measurement.start("rendering","",["Render"]);
+					Measurement.start("onBeforeRendering", "", ["Render"]);
+					Measurement.start("rendering", "", ["Render"]);
 				},
 				onAfterRendering: function() {
-					Measurement.start("onAfterRendering","",["Render"]);
+					Measurement.start("onAfterRendering", "", ["Render"]);
 				}
 			}, true);
 
@@ -335,12 +335,12 @@ sap.ui.define([
 				var iTableCreate = Math.round((iOverall - iRendering) * 1) / 1;
 				var iFactor = Math.round(iAfterRendering / iRendering * 100);
 
-				oViewModel.setProperty("/overall",iOverall);
-				oViewModel.setProperty("/onBeforeRendering",iBeforeRendering);
-				oViewModel.setProperty("/rendering",iRendering);
-				oViewModel.setProperty("/onAfterRendering",iAfterRendering);
-				oViewModel.setProperty("/tableCreate",iTableCreate);
-				oViewModel.setProperty("/factor",iFactor);
+				oViewModel.setProperty("/overall", iOverall);
+				oViewModel.setProperty("/onBeforeRendering", iBeforeRendering);
+				oViewModel.setProperty("/rendering", iRendering);
+				oViewModel.setProperty("/onAfterRendering", iAfterRendering);
+				oViewModel.setProperty("/tableCreate", iTableCreate);
+				oViewModel.setProperty("/factor", iFactor);
 
 				var oRenderResult = {
 						overall: iOverall,
@@ -379,7 +379,7 @@ sap.ui.define([
 			var iUpdateRowHeader = Math.round(getValue("duration", aJSMeasure[2]) * 1) / 1;
 			var iSyncColumnHeaders = Math.round(getValue("duration", aJSMeasure[3]) * 1) / 1;
 
-			oViewModel.setProperty("/createRows",iCreateRows);
+			oViewModel.setProperty("/createRows", iCreateRows);
 			oViewModel.setProperty("/updateTableContent", iUpdateTableContent);
 			oViewModel.setProperty("/updateRowHeader", iUpdateRowHeader);
 			oViewModel.setProperty("/syncColumnHeaders", iSyncColumnHeaders);
@@ -425,7 +425,7 @@ sap.ui.define([
 				title: 'Confirm',
 				type: 'Message',
 				content: [
-					new Text({ text: 'Please enter the key of a business entity (the value for the hierarchy-node-external-key-for annotated property value):' }),
+					new Text({text: 'Please enter the key of a business entity (the value for the hierarchy-node-external-key-for annotated property value):'}),
 					new TextArea('businessEntityValueTextArea', {
 						liveChange: function(oEvent) {
 							var sText = oEvent.getParameter('value');
@@ -809,7 +809,7 @@ sap.ui.define([
 					syncColumnHeadersAve + "\n";
 
 			var sFileName = "TreeTableODataV2PerformanceTestResults.csv";
-			var oBlob = new Blob([sCSV], { type: 'application/csv;charset=utf-8' });
+			var oBlob = new Blob([sCSV], {type: 'application/csv;charset=utf-8'});
 
 			if (navigator.appVersion.toString().indexOf('.NET') > 0) {
 				window.navigator.msSaveBlob(oBlob, sFileName);

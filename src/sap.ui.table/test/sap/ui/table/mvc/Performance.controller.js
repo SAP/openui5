@@ -171,7 +171,7 @@ sap.ui.define([
 				visibleRowCountMode: oSettings.visibleRowCountMode,
 				columns: this.createColumns(oSettings.columnCount)
 			});
-			this.createMeasure( "Table creation", "CreateTableStart");
+			this.createMeasure("Table creation", "CreateTableStart");
 
 			this.measureFunction(this.oTable, "onRowsUpdated");
 			this.measureFunction(this.oTable, "onRowsContentUpdated");

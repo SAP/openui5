@@ -52,35 +52,35 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.table.AnalyticalColumn
 	 */
-	var AnalyticalColumn = Column.extend("sap.ui.table.AnalyticalColumn", /** @lends sap.ui.table.AnalyticalColumn.prototype */ { metadata : {
+	var AnalyticalColumn = Column.extend("sap.ui.table.AnalyticalColumn", /** @lends sap.ui.table.AnalyticalColumn.prototype */ {metadata: {
 
-		library : "sap.ui.table",
-		properties : {
+		library: "sap.ui.table",
+		properties: {
 
 			/**
 			 * Defines the primary model property which is used inside the Column. In case of the analytical extension this means the property which is grouped by for dimensions or the property which is summed for measures.
 			 */
-			leadingProperty : {type : "string", group : "Misc", defaultValue : null},
+			leadingProperty: {type: "string", group: "Misc", defaultValue: null},
 
 			/**
 			 * If defined a sum for this column is calculated
 			 */
-			summed : {type : "boolean", group : "Misc", defaultValue : false},
+			summed: {type: "boolean", group: "Misc", defaultValue: false},
 
 			/**
 			 * Specifies that the dimension referred to by the column shall be included in the granularity of the data result. It allows a finer distinction between a visible/grouped/(included)inResult column.
 			 */
-			inResult : {type : "boolean", group : "Misc", defaultValue : false},
+			inResult: {type: "boolean", group: "Misc", defaultValue: false},
 
 			/**
 			 * Specifies whether the column is displayed within the table even if it is grouped or not. A grouped column has the same value for every rows within the group.
 			 */
-			showIfGrouped : {type : "boolean", group : "Appearance", defaultValue : false},
+			showIfGrouped: {type: "boolean", group: "Appearance", defaultValue: false},
 
 			/**
 			 * If the column is grouped, this formatter is used to format the value in the group header
 			 */
-			groupHeaderFormatter : {type : "function", group : "Behavior", defaultValue : null}
+			groupHeaderFormatter: {type: "function", group: "Behavior", defaultValue: null}
 		}
 	}});
 
@@ -317,7 +317,7 @@ sap.ui.define([
 			var oTable = this.getParent();
 			var oBinding = oTable.getBinding();
 			var oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
-			return  (oTable && oResultSet && oResultSet.findMeasureByPropertyName(this.getLeadingProperty())); // totals menu entry
+			return (oTable && oResultSet && oResultSet.findMeasureByPropertyName(this.getLeadingProperty())); // totals menu entry
 		}.bind(this);
 
 		return Column.prototype._menuHasItems.apply(this) || fnMenuHasItems();

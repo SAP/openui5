@@ -547,7 +547,7 @@ sap.ui.define([
 
 			// the table need to fetch the updated/changed contexts again, therefore requires the binding to fire a change event
 			oTable._mTimeouts.groupingFireBindingChange = oTable._mTimeouts.groupingFireBindingChange || window.setTimeout(
-				function() {oBinding._fireChange();}, 0);
+				function() { oBinding._fireChange(); }, 0);
 		},
 
 		/**

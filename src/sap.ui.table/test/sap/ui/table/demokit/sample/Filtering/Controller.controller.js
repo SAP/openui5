@@ -12,7 +12,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.Filtering.Controller", {
 
-		onInit : function() {
+		onInit: function() {
 			var oView = this.getView();
 
 			// set explored app's demo model on this sample
@@ -32,10 +32,10 @@ sap.ui.define([
 				var oTb = oView.byId("infobar");
 				oTb.addContent(new ToolbarSpacer());
 				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Filtering"));
-			}, function(oError){/*ignore*/});
+			}, function(oError) { /*ignore*/ });
 		},
 
-		initSampleDataModel : function() {
+		initSampleDataModel: function() {
 			var oModel = new JSONModel();
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
@@ -76,7 +76,7 @@ sap.ui.define([
 			return oModel;
 		},
 
-		_filter : function() {
+		_filter: function() {
 			var oFilter = null;
 
 			if (this._oGlobalFilter && this._oPriceFilter) {
@@ -90,7 +90,7 @@ sap.ui.define([
 			this.byId("table").getBinding().filter(oFilter, "Application");
 		},
 
-		filterGlobally : function(oEvent) {
+		filterGlobally: function(oEvent) {
 			var sQuery = oEvent.getParameter("query");
 			this._oGlobalFilter = null;
 
@@ -104,7 +104,7 @@ sap.ui.define([
 			this._filter();
 		},
 
-		filterPrice : function(oEvent) {
+		filterPrice: function(oEvent) {
 			var oColumn = oEvent.getParameter("column");
 			if (oColumn != this.byId("price")) {
 				return;
@@ -128,7 +128,7 @@ sap.ui.define([
 			var fValue = null;
 			try {
 				fValue = parseFloat(sValue, 10);
-			} catch (e){
+			} catch (e) {
 				// nothing
 			}
 
@@ -141,7 +141,7 @@ sap.ui.define([
 			}
 		},
 
-		clearAllFilters : function(oEvent) {
+		clearAllFilters: function(oEvent) {
 			var oTable = this.byId("table");
 
 			var oUiModel = this.getView().getModel("ui");
@@ -158,11 +158,11 @@ sap.ui.define([
 			}
 		},
 
-		toggleAvailabilityFilter : function(oEvent) {
+		toggleAvailabilityFilter: function(oEvent) {
 			this.byId("availability").filter(oEvent.getParameter("pressed") ? "X" : "");
 		},
 
-		formatAvailableToObjectState : function(bAvailable) {
+		formatAvailableToObjectState: function(bAvailable) {
 			return bAvailable ? "Success" : "Error";
 		}
 

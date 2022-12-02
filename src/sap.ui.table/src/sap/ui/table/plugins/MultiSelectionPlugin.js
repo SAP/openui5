@@ -45,9 +45,9 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @alias sap.ui.table.plugins.MultiSelectionPlugin
 	 */
-	var MultiSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.MultiSelectionPlugin", {metadata : {
+	var MultiSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.MultiSelectionPlugin", {metadata: {
 		library: "sap.ui.table",
-		properties : {
+		properties: {
 			/**
 			 * Number of indices which can be selected in a range.
 			 * Accepts positive integer values. If set to 0, the limit is disabled, and the Select All checkbox appears instead of the Deselect All
@@ -62,7 +62,7 @@ sap.ui.define([
 			 * In other cases, we recommend to set the limit to at least double the value of the {@link sap.ui.table.Table#getThreshold threshold}
 			 * property of the related <code>sap.ui.table.Table</code> control.
 			 */
-			limit : {type : "int", group : "Behavior", defaultValue : 200},
+			limit: {type: "int", group: "Behavior", defaultValue: 200},
 			/**
 			 * Enables notifications that are displayed once a selection has been limited.
 			 *
@@ -72,34 +72,34 @@ sap.ui.define([
 			/**
 			 * Show header selector
 			 */
-			showHeaderSelector : {type : "boolean", group : "Appearance", defaultValue : true},
+			showHeaderSelector: {type: "boolean", group: "Appearance", defaultValue: true},
 			/**
 			 * Selection mode of the plugin. This property controls whether single or multiple rows can be selected. It also influences the visual
 			 * appearance. When the selection mode is changed, the current selection is removed.
 			 */
-			selectionMode : {type : "sap.ui.table.SelectionMode", group : "Behavior", defaultValue : SelectionMode.MultiToggle}
+			selectionMode: {type: "sap.ui.table.SelectionMode", group: "Behavior", defaultValue: SelectionMode.MultiToggle}
 		},
-		events : {
+		events: {
 			/**
 			 * This event is fired when the selection is changed.
 			 */
-			selectionChange : {
-				parameters : {
+			selectionChange: {
+				parameters: {
 
 					/**
 					 * Array of indices whose selection has been changed (either selected or deselected)
 					 */
-					indices : {type : "int[]"},
+					indices: {type: "int[]"},
 
 					/**
 					 * Indicates whether the selection limit has been reached
 					 */
-					limitReached : {type : "boolean"},
+					limitReached: {type: "boolean"},
 
 					/**
 					 * Contains the data passed to the function that triggered the event
 					 */
-					customPayload : {type : "object"}
+					customPayload: {type: "object"}
 				}
 			}
 		}
@@ -350,7 +350,7 @@ sap.ui.define([
 			}
 		}
 
-		return loadMultipleContexts(oPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function () {
+		return loadMultipleContexts(oPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function() {
 			return {indexFrom: iIndexFrom, indexTo: iIndexTo};
 		});
 	}
@@ -555,8 +555,8 @@ sap.ui.define([
 		this._oNotificationPopover.close();
 	};
 
-	function loadMultipleContexts(oBinding, iStartIndex, iLength){
-		return new Promise(function(resolve){
+	function loadMultipleContexts(oBinding, iStartIndex, iLength) {
+		return new Promise(function(resolve) {
 			loadContexts(oBinding, iStartIndex, iLength, resolve);
 		});
 	}

@@ -64,10 +64,10 @@ sap.ui.define([
 	 * @see {@link topic:08197fa68e4f479cbe30f639cc1cd22c sap.ui.table}
 	 * @see {@link fiori:/analytical-table-alv/ Analytical Table}
 	 */
-	var AnalyticalTable = Table.extend("sap.ui.table.AnalyticalTable", /** @lends sap.ui.table.AnalyticalTable.prototype */ { metadata : {
+	var AnalyticalTable = Table.extend("sap.ui.table.AnalyticalTable", /** @lends sap.ui.table.AnalyticalTable.prototype */ {metadata: {
 
-		library : "sap.ui.table",
-		properties : {
+		library: "sap.ui.table",
+		properties: {
 
 			/**
 			 * Specifies if the total values should be displayed in the group headers or on bottom of the row. Does not affect the total sum.
@@ -87,7 +87,7 @@ sap.ui.define([
 			 *
 			 * @deprecated As of version 1.44, replaced by the <code>sumOnTop</code> binding parameter
 			 */
-			sumOnTop : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
+			sumOnTop: {type: "boolean", group: "Appearance", defaultValue: false, deprecated: true},
 
 			/**
 			 * Number of levels, which should be opened initially (on first load of data).
@@ -107,7 +107,7 @@ sap.ui.define([
 			 *
 			 * @deprecated As of version 1.44, replaced by the <code>numberOfExpandedLevels</code> binding parameter
 			 */
-			numberOfExpandedLevels : {type : "int", group : "Misc", defaultValue : 0, deprecated: true},
+			numberOfExpandedLevels: {type: "int", group: "Misc", defaultValue: 0, deprecated: true},
 
 			/**
 			 * The kind of auto expansion algorithm, e.g. optimized filter conditions, per level requests, ...
@@ -134,7 +134,7 @@ sap.ui.define([
 			 * Functions which is used to sort the column visibility menu entries e.g.: function(ColumnA, ColumnB) { return 0 = equals, <0 lower, >0
 			 * greater }; Other values than functions will be ignored.
 			 */
-			columnVisibilityMenuSorter : {type : "any", group : "Appearance", defaultValue : null},
+			columnVisibilityMenuSorter: {type: "any", group: "Appearance", defaultValue: null},
 
 			/**
 			 * Setting collapseRecursive to true means, that when collapsing a node all subsequent child nodes will also be collapsed.
@@ -154,13 +154,13 @@ sap.ui.define([
 			 *
 			 * @deprecated As of version 1.76, replaced by the <code>collapseRecursive</code> binding parameter
 			 */
-			collapseRecursive : {type: "boolean", defaultValue: true, deprecated: true},
+			collapseRecursive: {type: "boolean", defaultValue: true, deprecated: true},
 
 			/**
 			 * If dirty the content of the Table will be overlayed.
 			 * @deprecated As of version 1.21.2, replaced by {@link sap.ui.table.Table#setShowOverlay}
 			 */
-			dirty : {type : "boolean", group : "Appearance", defaultValue : null, deprecated: true}
+			dirty: {type: "boolean", group: "Appearance", defaultValue: null, deprecated: true}
 		},
 		designtime: "sap/ui/table/designtime/AnalyticalTable.designtime"
 	}, renderer: TableRenderer});
@@ -519,7 +519,7 @@ sap.ui.define([
 			var iIndex = that._iGroupedLevel - 1;
 
 			if (that._aGroupedColumns[iIndex]) {
-				var oGroupedColumn = that.getColumns().filter(function(oColumn){
+				var oGroupedColumn = that.getColumns().filter(function(oColumn) {
 					return that._aGroupedColumns[iIndex] === oColumn.getId();
 				})[0];
 
@@ -547,7 +547,7 @@ sap.ui.define([
 							bShowIfGrouped = oColumn.getShowIfGrouped();
 						oColumn.setShowIfGrouped(!bShowIfGrouped);
 
-						that.fireGroup({column: oColumn, groupedColumns: oColumn.getParent()._aGroupedColumns, type:( !bShowIfGrouped ? GroupEventType.showGroupedColumn : GroupEventType.hideGroupedColumn )});
+						that.fireGroup({column: oColumn, groupedColumns: oColumn.getParent()._aGroupedColumns, type: (!bShowIfGrouped ? GroupEventType.showGroupedColumn : GroupEventType.hideGroupedColumn)});
 					}
 				}
 			});
@@ -837,7 +837,7 @@ sap.ui.define([
 
 	AnalyticalTable.prototype._getColumn = function(vColumn) {
 		if (typeof vColumn === "string") {
-			var oColumn =  new AnalyticalColumn({
+			var oColumn = new AnalyticalColumn({
 				leadingProperty: vColumn,
 				template: vColumn,
 				managed: true

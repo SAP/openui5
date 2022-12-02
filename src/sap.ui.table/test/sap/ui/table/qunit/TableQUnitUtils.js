@@ -145,9 +145,9 @@ sap.ui.define([
 		wrapForRenderingDetection(oTable, "invalidate");
 		wrapForRenderingDetection(oTable, "rerender");
 	};
-	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.RefreshRows] = function() {this.fireRenderingTriggered();};
-	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.UpdateRows] = function() {this.fireRenderingTriggered();};
-	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.UnbindRows] = function() {this.fireRenderingTriggered();};
+	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.RefreshRows] = function() { this.fireRenderingTriggered(); };
+	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.UpdateRows] = function() { this.fireRenderingTriggered(); };
+	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.UnbindRows] = function() { this.fireRenderingTriggered(); };
 
 	HelperPlugin.prototype.onDeactivate = function(oTable) {
 		TableUtils.Hook.uninstall(oTable, this);
@@ -1721,11 +1721,11 @@ sap.ui.define([
 		var oRow = oTableInstance.getRows()[iRow];
 
 		TableUtils.Grouping.setToDefaultGroupMode(oTableInstance);
-		oRow.getType = function() {return oRow.Type.GroupHeader;};
-		oRow.getLevel = function() {return 1;};
-		oRow.isExpandable = function() {return true;};
-		oRow.isExpanded = function() {return true;};
-		oRow.isContentHidden = function() {return true;};
+		oRow.getType = function() { return oRow.Type.GroupHeader; };
+		oRow.getLevel = function() { return 1; };
+		oRow.isExpandable = function() { return true; };
+		oRow.isExpanded = function() { return true; };
+		oRow.isContentHidden = function() { return true; };
 
 		oTableInstance.rerender();
 		return new Promise(function(resolve) {
@@ -1742,8 +1742,8 @@ sap.ui.define([
 
 		var oRow = oTableInstance.getRows()[iRow];
 
-		oRow.getType = function() {return oRow.Type.Summary;};
-		oRow.getLevel = function() {return 1;};
+		oRow.getType = function() { return oRow.Type.Summary; };
+		oRow.getLevel = function() { return 1; };
 
 		oTableInstance.rerender();
 		return new Promise(function(resolve) {

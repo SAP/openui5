@@ -1244,7 +1244,7 @@ sap.ui.define([
 		var oCol = oTable.getColumns()[2];
 		oTable.setFixedColumnCount(1);
 		assert.equal(invalidationSpy.callCount, 1, "value is being invalidated");
-		oCol.setHeaderSpan([2,1]);
+		oCol.setHeaderSpan([2, 1]);
 		assert.equal(invalidationSpy.callCount, 2, "value is being invalidated");
 		oTable.removeColumn(oCol);
 		assert.equal(invalidationSpy.callCount, 3, "value is being invalidated");
@@ -1267,7 +1267,7 @@ sap.ui.define([
 		oTable.setFixedColumnCount(1);
 		assert.equal(aColumns[0]._iFixWidth, 200, "The _iFixWidth of the fixed column is set");
 
-		aColumns[0].setHeaderSpan([2,1]);
+		aColumns[0].setHeaderSpan([2, 1]);
 		oTable.setFixedColumnCount(1);
 		assert.equal(oTable.getComputedFixedColumnCount(), 2,
 			"The computed fixed column count is 2 because of the header span");
@@ -1289,8 +1289,8 @@ sap.ui.define([
 		oTable.setFixedColumnCount(1);
 
 		var oCol1 = new Column({
-			headerSpan: [3,1],
-			multiLabels: [new Label({text: "A"}),new Label({text: "AA"})],
+			headerSpan: [3, 1],
+			multiLabels: [new Label({text: "A"}), new Label({text: "AA"})],
 			template: new Label()
 		});
 		oTable.addColumn(oCol1);
@@ -1298,8 +1298,8 @@ sap.ui.define([
 		assert.equal(oTable.getRenderer().getLastFixedColumnIndex(oTable), 0, "The lastFixedColumIndex is correct");
 
 		var oCol2 = new Column({
-			headerSpan: [2,1],
-			multiLabels: [new Label({text: "A"}),new Label({text: "AB"})],
+			headerSpan: [2, 1],
+			multiLabels: [new Label({text: "A"}), new Label({text: "AB"})],
 			template: new Label()
 		});
 		oTable.addColumn(oCol2);
@@ -1307,8 +1307,8 @@ sap.ui.define([
 		assert.equal(oTable.getRenderer().getLastFixedColumnIndex(oTable), 1, "The lastFixedColumIndex is correct");
 
 		var oCol3 = new Column({
-			headerSpan: [1,1],
-			multiLabels: [new Label({text: "A"}),new Label({text: "AC"})],
+			headerSpan: [1, 1],
+			multiLabels: [new Label({text: "A"}), new Label({text: "AC"})],
 			template: new Label()
 		});
 		oTable.addColumn(oCol3);
@@ -2857,7 +2857,7 @@ sap.ui.define([
 					assert.equal(oEvent.getParameter("userInteraction"), true, sTestCase + ": Parameter userInteraction correct");
 					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
-					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i) {return i;}),
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i) { return i; }),
 						sTestCase + ": Parameter rowIndices correct");
 					assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
 					break;
@@ -2866,7 +2866,7 @@ sap.ui.define([
 					assert.equal(oEvent.getParameter("userInteraction"), true, sTestCase + ": Parameter userInteraction correct");
 					assert.equal(oEvent.getParameter("rowIndex"), -1, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), undefined, sTestCase + ": Parameter rowContext correct");
-					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i) {return i;}),
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i) { return i; }),
 						sTestCase + ": Parameter rowIndices correct");
 					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 					break;
@@ -2875,7 +2875,7 @@ sap.ui.define([
 					assert.equal(oEvent.getParameter("userInteraction"), false, sTestCase + ": Parameter userInteraction correct");
 					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
-					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i) {return i;}),
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i) { return i; }),
 						sTestCase + ": Parameter rowIndices correct");
 					assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
 					break;
@@ -2884,7 +2884,7 @@ sap.ui.define([
 					assert.equal(oEvent.getParameter("userInteraction"), false, sTestCase + ": Parameter userInteraction correct");
 					assert.equal(oEvent.getParameter("rowIndex"), -1, sTestCase + ": Parameter rowIndex correct");
 					assert.equal(oEvent.getParameter("rowContext"), undefined, sTestCase + ": Parameter rowContext correct");
-					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i) {return i;}),
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i) { return i; }),
 						sTestCase + ": Parameter rowIndices correct");
 					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 					break;
@@ -2940,7 +2940,7 @@ sap.ui.define([
 	QUnit.test("Select All on Binding Change", function(assert) {
 		var done = assert.async();
 		var oModel;
-		oTable.attachEventOnce("rowSelectionChange",function() {
+		oTable.attachEventOnce("rowSelectionChange", function() {
 			assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
 
 			oTable.attachEventOnce("rowsUpdated", function() {
@@ -4342,7 +4342,7 @@ sap.ui.define([
 					cancelable: true
 				});
 				oEvent.clipboardData = {
-					getData: function() {return sData;}
+					getData: function() { return sData; }
 				};
 				return oEvent;
 			} else {
@@ -4857,7 +4857,7 @@ sap.ui.define([
 		oBody.classList.add("sapUiSizeCozy");
 	});
 
-	QUnit.test("#_getTotalRowCount", function(assert){
+	QUnit.test("#_getTotalRowCount", function(assert) {
 		oTable.bindRows({path: "/modelData"});
 		assert.strictEqual(oTable._getTotalRowCount(), 200, "Binding#getLength defines the total row count in the table");
 
@@ -4924,7 +4924,7 @@ sap.ui.define([
 	QUnit.test("Destruction of the table if showNoData = true", function(assert) {
 		var oFakeRow = {
 			destroy: function() {},
-			getIndex: function() {return -1;}
+			getIndex: function() { return -1; }
 		};
 		var oFakeRowDestroySpy = sinon.spy(oFakeRow, "destroy");
 
@@ -4938,7 +4938,7 @@ sap.ui.define([
 	QUnit.test("Destruction of the table if showNoData = false", function(assert) {
 		var oFakeRow = {
 			destroy: function() {},
-			getIndex: function() {return -1;}
+			getIndex: function() { return -1; }
 		};
 		var oFakeRowDestroySpy = sinon.spy(oFakeRow, "destroy");
 
@@ -4953,7 +4953,7 @@ sap.ui.define([
 	QUnit.test("Destruction of the rows aggregation", function(assert) {
 		var oFakeRow = {
 			destroy: function() {},
-			getIndex: function() {return -1;}
+			getIndex: function() { return -1; }
 		};
 		var oFakeRowDestroySpy = sinon.spy(oFakeRow, "destroy");
 
@@ -5147,7 +5147,7 @@ sap.ui.define([
 			destroyTable();
 		},
 		testAppliedExtensions: function(assert, aExpectedExtensions) {
-			var aActualExtensions = oTable._aExtensions.map(function(oExt){
+			var aActualExtensions = oTable._aExtensions.map(function(oExt) {
 				return oExt.getMetadata()._sClassName;
 			});
 
@@ -5712,14 +5712,14 @@ sap.ui.define([
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
 	});
 
-	QUnit.test("Without columns and showNoData=true", function (assert) {
+	QUnit.test("Without columns and showNoData=true", function(assert) {
 		this.oTable.destroyColumns();
 		oCore.applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true);
 		this.assertNoContentMessage(assert, this.oTable, TableUtils.getResourceText("TBL_NO_COLUMNS"));
 	});
 
-	QUnit.test("Without columns and showNoData=false", function (assert) {
+	QUnit.test("Without columns and showNoData=false", function(assert) {
 		this.oTable.destroyColumns();
 		this.oTable.setShowNoData(false);
 		oCore.applyChanges();
