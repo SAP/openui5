@@ -97,9 +97,15 @@
 									enabled="{= %{@$ui5.context.isInactive} !== undefined}" />
 								<Input id="name" value="{name}"/>
 								<Input id="amount" value="{amount}"/>
-								<Button id="delete" enabled="{= !%{@$ui5.context.isInactive} }"
-									icon="sap-icon://delete" press="onDelete"
-									tooltip="Delete product"/>
+								<Button id="productDelete"
+									enabled="{= %{@$ui5.context.isInactive} !== true }"
+									icon="{= %{@$ui5.context.isInactive} === 1
+											? 'sap-icon://reset'
+											: 'sap-icon://delete' }"
+									press="onDelete"
+									tooltip="{= %{@$ui5.context.isInactive} === 1
+											? 'Reset'
+											: 'Delete Product' }"/>
 							</ColumnListItem>
 						</Table>
 					</f:beginColumnPages>
@@ -167,9 +173,14 @@
 								<t:Column width="4em">
 									<t:template>
 										<Button id="partDelete"
-											enabled="{= !%{@$ui5.context.isInactive} }"
-											icon="sap-icon://delete" press="onDelete"
-											tooltip="Delete part"/>
+											enabled="{= %{@$ui5.context.isInactive} !== true }"
+											icon="{= %{@$ui5.context.isInactive} === 1
+												? 'sap-icon://reset'
+												: 'sap-icon://delete' }"
+											press="onDelete"
+											tooltip="{= %{@$ui5.context.isInactive} === 1
+												? 'Reset'
+												: 'Delete Part' }"/>
 									</t:template>
 								</t:Column>
 							</t:columns>

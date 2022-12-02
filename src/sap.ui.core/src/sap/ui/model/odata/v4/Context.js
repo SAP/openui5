@@ -513,6 +513,8 @@ sap.ui.define([
 							.catch(that.oModel.getReporter());
 						if (oBinding.fireCreateActivate(that)) {
 							that.bInactive = false;
+						} else {
+							that.bInactive = 1;
 						}
 					}
 
@@ -984,14 +986,25 @@ sap.ui.define([
 	 * Returns whether this context is inactive. The result of this function can also be accessed
 	 * via instance annotation "@$ui5.context.isInactive" at the entity.
 	 *
-	 * @returns {boolean|undefined} <code>true</code> if this context is inactive,
-	 *   <code>false</code> if it was created in an inactive state and has been activated, and
+	 * Since 1.110.0, <code>1</code> is returned in case
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#event:createActivate activation} has been
+	 * prevented. Note that
+	 * <ul>
+	 *   <li> it is truthy: <code>!!1 === true</code>,
+	 *   <li> it is almost like <code>true</code>: <code>1 == true</code>,
+	 *   <li> but it can easily be distinguished: <code>1 !== true</code>,
+	 *   <li> and <code>if (oContext.isInactive()) {...}</code> treats inactive contexts the same,
+	 *     no matter whether activation has been prevented or not.
+	 * </ul>
+	 *
+	 * @returns {boolean|number|undefined} <code>true</code> if this context is inactive,
+	 *   <code>false</code> if it was created in an inactive state and has been activated,
+	 *   <code>1</code> in case activation has been prevented (since 1.110.0), and
 	 *   <code>undefined</code> otherwise.
 	 *
 	 * @public
 	 * @see #isTransient
 	 * @see sap.ui.model.odata.v4.ODataListBinding#create
-	 * @see sap.ui.model.odata.v4.ODataListBinding#event:createActivate
 	 * @since 1.98.0
 	 */
 	Context.prototype.isInactive = function () {

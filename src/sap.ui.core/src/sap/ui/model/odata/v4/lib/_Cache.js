@@ -2121,7 +2121,11 @@ sap.ui.define([
 				// When updating a transient entity, the above _Helper.updateAll has already updated
 				// the POST request.
 				// If the entity remains inactive, update the request, but keep it parked
-				if (sParkedGroup && !bInactive) {
+				if (bInactive) {
+					_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity,
+						{"@$ui5.context.isInactive" : 1}
+					);
+				} else if (sParkedGroup) {
 					_Helper.setPrivateAnnotation(oEntity, "transient", sTransientGroup);
 					that.oRequestor.relocate(sParkedGroup, oPostBody, sTransientGroup);
 				}

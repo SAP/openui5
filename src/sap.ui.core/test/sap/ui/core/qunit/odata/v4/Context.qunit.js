@@ -2832,6 +2832,7 @@ sap.ui.define([
 			oError = new Error("This call intentionally failed"),
 			oFireCreateActivateExpectation,
 			oGroupLock = {},
+			bInactive,
 			oMetaModel = {
 				fetchUpdateData : function () {},
 				getUnitOrCurrencyPath : function () {}
@@ -2855,6 +2856,8 @@ sap.ui.define([
 			that = this;
 
 		if (oInactive) {
+			bInactive = oInactive.activate ? false : 1;
+
 			assert.strictEqual(
 				// code under test
 				oContext.toString(),
@@ -2915,11 +2918,9 @@ sap.ui.define([
 						/*fnErrorCallback*/bSkipRetry ? undefined : sinon.match.func, "/edit/url",
 						"helper/path", "unit/or/currency/path",
 						sinon.match.same(bPatchWithoutSideEffects), /*fnPatchSent*/sinon.match.func,
-						/*fnIsKeepAlive*/sinon.match.func,
-						oInactive ? !oInactive.activate : undefined)
+						/*fnIsKeepAlive*/sinon.match.func, bInactive)
 					.callsFake(function () {
-						assert.strictEqual(oContext.isInactive(),
-							oInactive ? !oInactive.activate : undefined);
+						assert.strictEqual(oContext.isInactive(), bInactive);
 						return SyncPromise.resolve(
 							fnScenario(assert, that.mock(oModel), oBinding, oBindingMock,
 								/*fnErrorCallback*/arguments[3], /*fnPatchSent*/arguments[8],
