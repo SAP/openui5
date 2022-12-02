@@ -6,18 +6,19 @@
 sap.ui.define([
 	'../base/ManagedObject',
 	'./Component',
+	'./Element',
 	'sap/ui/core/mvc/ViewType',
 	'sap/ui/core/mvc/XMLProcessingMode',
 	'./UIComponentMetadata',
 	'./mvc/Controller',
 	'./mvc/View',
 	'sap/base/util/ObjectPath',
-	'sap/base/Log',
-	'sap/ui/core/Core' // to ensure correct behaviour of sap.ui.getCore()
+	'sap/base/Log'
 ],
 	function(
 		ManagedObject,
 		Component,
+		Element,
 		ViewType,
 		XMLProcessingMode,
 		UIComponentMetadata,
@@ -602,7 +603,7 @@ sap.ui.define([
 	 * @public
 	 */
 	UIComponent.prototype.byId = function(sId) {
-		return sap.ui.getCore().byId(this.createId(sId));
+		return Element.registry.get(this.createId(sId));
 	};
 
 	/**
