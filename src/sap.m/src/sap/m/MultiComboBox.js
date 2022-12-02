@@ -1376,7 +1376,14 @@ function(
 	 */
 	MultiComboBox.prototype.onBeforeOpen = function() {
 		ComboBoxBase.prototype.onBeforeOpen.apply(this, arguments);
-		var fnPickerTypeBeforeOpen = this["_onBeforeOpen" + this.getPickerType()];
+		var fnPickerTypeBeforeOpen = this["_onBeforeOpen" + this.getPickerType()],
+			oDomRef = this.getFocusDomRef();
+
+		if (oDomRef) {
+			// expose a parent/child contextual relationship to assistive technologies,
+			// notice that the "aria-controls" attribute is set when the popover opened.
+			oDomRef.setAttribute("aria-controls", this.getPicker().getId());
+		}
 
 		// add the active state to the MultiComboBox's field
 		this.addContent();

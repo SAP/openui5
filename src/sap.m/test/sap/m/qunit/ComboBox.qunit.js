@@ -10483,6 +10483,27 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("aria-controls attribute should be set when the picker is open for the first time", function (assert) {
+		//arrange
+		var oComboBox = new ComboBox();
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+
+		// assert
+		assert.notOk(oComboBox.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should not be set before picker creation');
+
+		//act
+		oComboBox.open();
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-controls"), oComboBox.getPicker().getId(), 'The "aria-controls" should be');
+
+		//clean up
+		oComboBox.destroy();
+	});
+
 	QUnit.test("It should add a hidden text to the Picker ", function (assert) {
 		var oItem = new Item({
 			key: "li",

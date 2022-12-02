@@ -5590,6 +5590,27 @@ sap.ui.define([
 		assert.notOk(sKeyShortcut, "'aria-keyshortcuts' attribute should not be presented.");
 	});
 
+	QUnit.test("aria-controls attribute should be set when the picker is open for the first time", function (assert) {
+		//arrange
+		var oMultiComboBox = new MultiComboBox();
+
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		oCore.applyChanges();
+
+		// assert
+		assert.notOk(oMultiComboBox.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should not be set before picker creation');
+
+		//act
+		oMultiComboBox.open();
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-controls"), oMultiComboBox.getPicker().getId(), 'The "aria-controls" should be');
+
+		//clean up
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("Tokens information should be read out", function(assert) {
 		var oItem1 = new Item({key: "Item1", text: "Item1"}),
 			oItem2 = new Item({key: "Item2", text: "Item2"}),
