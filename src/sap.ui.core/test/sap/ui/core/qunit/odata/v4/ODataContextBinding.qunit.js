@@ -2299,14 +2299,16 @@ sap.ui.define([
 			.withExactArgs(sPath, sinon.match.same(oOperationMetadata),
 				sinon.match.same(mParametersCopy), sinon.match.same(mQueryOptions), undefined)
 			.returns(sResourcePath);
-		oExpectation = this.mock(_Cache).expects("createSingle")
+		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
-				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, false,
+				sinon.match.same(this.oModel.bSharedRequests), undefined, false,
 				"/FunctionImport/@$ui5.overload/0/$ReturnType")
 			.returns(oSingleCache);
-		this.mock(oSingleCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
+		oExpectation = this.mock(oSingleCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(oGroupLock), "", undefined, undefined, false,
+				sinon.match.func)
+			.returns(oPromise);
 
 		assert.strictEqual(
 			// code under test
@@ -2349,14 +2351,16 @@ sap.ui.define([
 				sinon.match.same(oOperationMetadata), sinon.match.same(mParametersCopy),
 				sinon.match.same(mQueryOptions), sinon.match.same(fnGetEntity))
 			.returns(sResourcePath);
-		oExpectation = this.mock(_Cache).expects("createSingle")
+		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
-				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, false,
+				sinon.match.same(this.oModel.bSharedRequests), undefined, false,
 				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType/$Type")
 			.returns(oSingleCache);
-		this.mock(oSingleCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
+		oExpectation = this.mock(oSingleCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(oGroupLock), "", undefined, undefined, false,
+				sinon.match.func)
+			.returns(oPromise);
 
 		assert.strictEqual(
 			// code under test
@@ -2428,13 +2432,14 @@ sap.ui.define([
 			.withExactArgs(sPath, sinon.match.same(oOperationMetadata), "~mParametersCopy~",
 				"~mQueryOptions~", "~fnGetEntity~")
 			.returns("~sResourcePath~");
-		oExpectation = this.mock(_Cache).expects("createSingle")
+		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "~sResourcePath~",
 				"~mQueryOptions~", "~bAutoExpandSelect~",
-				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, false,
+				sinon.match.same(this.oModel.bSharedRequests), undefined, false,
 				"/Entity/ToTwin")
 			.returns(oSingleCache);
-		this.mock(oSingleCache).expects("fetchValue").withExactArgs("~oGroupLock~")
+		oExpectation = this.mock(oSingleCache).expects("fetchValue")
+			.withExactArgs("~oGroupLock~", "", undefined, undefined, false, sinon.match.func)
 			.returns("~oPromise~");
 
 		assert.strictEqual(
@@ -2481,15 +2486,15 @@ sap.ui.define([
 				sinon.match.same(oOperationMetadata), sinon.match.same(mParametersCopy),
 				sinon.match.same(mQueryOptions), undefined)
 			.returns(sResourcePath);
-		oExpectation = this.mock(_Cache).expects("createSingle")
+		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
-				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, true,
+				sinon.match.same(this.oModel.bSharedRequests), undefined, true,
 				"/ActionImport/@$ui5.overload/0/$ReturnType")
 			.returns(oSingleCache);
-		this.mock(oSingleCache).expects("post")
+		oExpectation = this.mock(oSingleCache).expects("post")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParametersCopy),
-				undefined, undefined, undefined)
+				undefined, undefined, undefined, sinon.match.func)
 			.returns(oPromise);
 
 		assert.strictEqual(
@@ -2551,15 +2556,15 @@ sap.ui.define([
 					sinon.match.same(mParametersCopy), sinon.match.same(mQueryOptions),
 					sinon.match.same(oEntity))
 				.returns(sResourcePath);
-			oExpectation = this.mock(_Cache).expects("createSingle")
+			this.mock(_Cache).expects("createSingle")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 					sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
-					sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, true,
+					sinon.match.same(this.oModel.bSharedRequests), undefined, true,
 					"/Entity/navigation/bound.Action/@$ui5.overload/0/$ReturnType/$Type")
 				.returns(oSingleCache);
-			this.mock(oSingleCache).expects("post")
+			oExpectation = this.mock(oSingleCache).expects("post")
 				.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParametersCopy),
-					sinon.match.same(oEntity), "~bIgnoreETag~", undefined)
+					sinon.match.same(oEntity), "~bIgnoreETag~", undefined, sinon.match.func)
 				.returns(oPromise);
 
 			assert.strictEqual(
@@ -2678,11 +2683,13 @@ sap.ui.define([
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mExpectedQueryOptions), sinon.match.same(bAutoExpandSelect),
-				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, false,
+				sinon.match.same(this.oModel.bSharedRequests), undefined, false,
 				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType/$Type")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
+			.withExactArgs(sinon.match.same(oGroupLock), "", undefined, undefined, false,
+				sinon.match.func)
+			.returns(oPromise);
 
 		assert.strictEqual(
 			// code under test
@@ -2822,11 +2829,11 @@ sap.ui.define([
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "ActionImport",
 				"~mQueryOptions~", false,
-				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, true,
+				sinon.match.same(this.oModel.bSharedRequests), undefined, true,
 				"/ActionImport/@$ui5.overload/0/$ReturnType")
 			.returns(oSingleCache);
 		oExpectation = this.mock(oSingleCache).expects("post")
-			.withExactArgs("~oGroupLock~", "~mParametersCopy~", undefined, false,
+			.withExactArgs("~oGroupLock~", "~mParametersCopy~", undefined, false, sinon.match.func,
 				sinon.match.func);
 
 		// code under test

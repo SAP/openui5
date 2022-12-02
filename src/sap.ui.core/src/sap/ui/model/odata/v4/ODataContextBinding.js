@@ -745,15 +745,16 @@ sap.ui.define([
 		sPath = oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata, mParameters,
 			this.mCacheQueryOptions, vEntity);
 		oCache = _Cache.createSingle(oRequestor, sPath, this.mCacheQueryOptions,
-			oModel.bAutoExpandSelect, oModel.bSharedRequests, getOriginalResourcePath, bAction,
+			oModel.bAutoExpandSelect, oModel.bSharedRequests, undefined, bAction,
 			sMetaPath);
 		this.oCache = oCache;
 		this.oCachePromise = SyncPromise.resolve(oCache);
 
 		return bAction
 			? oCache.post(oGroupLock, mParameters, vEntity, bIgnoreETag,
-				fnOnStrictHandlingFailed && onStrictHandling)
-			: oCache.fetchValue(oGroupLock);
+				fnOnStrictHandlingFailed && onStrictHandling, getOriginalResourcePath)
+			: oCache.fetchValue(oGroupLock, "", undefined, undefined, false,
+				getOriginalResourcePath);
 	};
 
 	/**

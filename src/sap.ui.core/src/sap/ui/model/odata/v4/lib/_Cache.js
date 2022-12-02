@@ -90,10 +90,8 @@ sap.ui.define([
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string;
 	 *   note that this flag can safely be ignored for all "new" features (after 1.47) which
 	 *   should just sort always
-	 * @param {string|function} [vOriginalResourcePath]
-	 *   The cache's original resource path to be used to build the target path for bound messages,
-	 *   or a function returning it; if it is not given or the function returns nothing,
-	 *   <code>sResourcePath</code> is used instead
+	 * @param {string} [sOriginalResourcePath=sResourcePath]
+	 *   The cache's original resource path to be used to build the target path for bound messages
 	 * @param {boolean} [bSharedRequest]
 	 *   If this parameter is set, the cache is read-only and modifying calls lead to an error.
 	 *
@@ -102,13 +100,13 @@ sap.ui.define([
 	 * @private
 	 */
 	function _Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			vOriginalResourcePath, bSharedRequest) {
+			sOriginalResourcePath, bSharedRequest) {
 		// the number of active usages of this cache (initially 1 because the first usage that
 		// creates the cache does not call #setActive)
 		this.iActiveUsages = 1;
 		this.mChangeListeners = {}; // map from path to an array of change listeners
 		this.mChangeRequests = {}; // map from path to an array of DELETE or PATCH promises
-		this.vOriginalResourcePath = vOriginalResourcePath;
+		this.sOriginalResourcePath = sOriginalResourcePath || sResourcePath;
 		// the point in time when the cache became inactive; active caches have Infinity so that
 		// they are always "newer"
 		this.iInactiveSince = Infinity;
@@ -209,7 +207,7 @@ sap.ui.define([
 			oRequestPromise = oGroupLock
 				? that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders, undefined,
 					undefined, /*onCancel*/function () {}, undefined,
-					_Helper.buildPath(that.getOriginalResourcePath(), sEntityPath))
+					_Helper.buildPath(that.sOriginalResourcePath, sEntityPath))
 				: SyncPromise.resolve();
 			_Helper.addByPath(that.mChangeRequests, sEntityPath, oRequestPromise);
 			return oRequestPromise.catch(function (oError) {
@@ -1167,20 +1165,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the cache's original resource path to be used to build the target path for bound
-	 * messages.
-	 *
-	 * @returns {string}
-	 *   The original resource path
-	 *
-	 * @private
-	 */
-	_Cache.prototype.getOriginalResourcePath = function () {
-		// If vOriginalResourcePath was a function, it has already been replaced by its result
-		return this.vOriginalResourcePath || this.sResourcePath;
-	};
-
-	/**
 	 * Gets the cache's resource path.
 	 *
 	 * @returns {string} The resource path
@@ -1985,7 +1969,7 @@ sap.ui.define([
 				}
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
 					mHeaders, oUpdateData, onSubmit, onCancel, /*sMetaPath*/ undefined,
-					_Helper.buildPath(that.getOriginalResourcePath(), sEntityPath),
+					_Helper.buildPath(that.sOriginalResourcePath, sEntityPath),
 					bAtFront, /*mQueryOptions*/ undefined, /*vOwner*/ undefined,
 					mergePatchRequests);
 				oPatchPromise.$isKeepAlive = fnIsKeepAlive;
@@ -2317,7 +2301,7 @@ sap.ui.define([
 			visitInstance(oRoot, sRootMetaPath || this.sMetaPath, sRootPath || "", sRequestUrl);
 		}
 		if (bHasMessages && !this.bSharedRequest) {
-			this.sReportedMessagesPath = this.getOriginalResourcePath();
+			this.sReportedMessagesPath = this.sOriginalResourcePath;
 			this.oRequestor.getModelInterface().reportStateMessages(this.sReportedMessagesPath,
 				mPathToODataMessages, aCachePaths);
 		}
@@ -3516,10 +3500,8 @@ sap.ui.define([
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @param {boolean} [bSharedRequest]
 	 *   If this parameter is set, the cache is read-only and modifying calls lead to an error.
-	 * @param {string|function} [vOriginalResourcePath]
-	 *   The cache's original resource path to be used to build the target path for bound messages,
-	 *   or a function returning it; if it is not given or the function returns nothing,
-	 *   <code>sResourcePath</code> is used instead
+	 * @param {string} [sOriginalResourcePath=sResourcePath]
+	 *   The cache's original resource path to be used to build the target path for bound messages
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, the initial request must be
 	 *   done via {@link #post}. {@link #fetchValue} expects to have cache data, but may trigger
@@ -3534,9 +3516,9 @@ sap.ui.define([
 	 * @private
 	 */
 	function _SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			bSharedRequest, vOriginalResourcePath, bPost, sMetaPath, bEmpty) {
+			bSharedRequest, sOriginalResourcePath, bPost, sMetaPath, bEmpty) {
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			vOriginalResourcePath, bSharedRequest);
+			sOriginalResourcePath, bSharedRequest);
 
 		this.sMetaPath = sMetaPath || this.sMetaPath; // overrides Cache c'tor
 		this.bPost = bPost;
@@ -3560,13 +3542,17 @@ sap.ui.define([
 	 *   The root entity
 	 * @param {object} mTypeForMetaPath
 	 *   A map from absolute meta path to entity type (as delivered by {@link #fetchTypes})
+	 * @param {function} [fnGetOriginalResourcePath]
+	 *   A function returning the cache's original resource path to be used to build the target path
+	 *   for bound messages
 	 *
 	 * @private
 	 */
-	_Cache.prototype.buildOriginalResourcePath = function (oRootEntity, mTypeForMetaPath) {
-		if (typeof this.vOriginalResourcePath === "function") {
+	_SingleCache.prototype.buildOriginalResourcePath = function (oRootEntity, mTypeForMetaPath,
+			fnGetOriginalResourcePath) {
+		if (fnGetOriginalResourcePath) {
 			this.calculateKeyPredicate(oRootEntity, mTypeForMetaPath, this.sMetaPath);
-			this.vOriginalResourcePath = this.vOriginalResourcePath(oRootEntity);
+			this.sOriginalResourcePath = fnGetOriginalResourcePath(oRootEntity);
 		}
 	};
 
@@ -3590,6 +3576,9 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the element. It is rejected if the request for the data
 	 *   failed.
+	 * @param {function(object):string} [fnGetOriginalResourcePath]
+	 *   A function returning the cache's original resource path to be used to build the target path
+	 *   for bound messages; it is called once with the response object as parameter
 	 * @throws {Error}
 	 *   If the cache is using POST but no POST request has been sent yet, or if group ID is
 	 *   '$cached' and the value is not cached (the error has a property <code>$cached = true</code>
@@ -3598,7 +3587,7 @@ sap.ui.define([
 	 * @public
 	 */
 	_SingleCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener,
-			bCreateOnDemand) {
+			bCreateOnDemand, fnGetOriginalResourcePath) {
 		var sResourcePath = this.sResourcePath + this.sQueryString,
 			that = this;
 
@@ -3614,7 +3603,7 @@ sap.ui.define([
 					fnDataRequested, undefined, this.sMetaPath),
 				this.fetchTypes()
 			]).then(function (aResult) {
-				that.buildOriginalResourcePath(aResult[0], aResult[1]);
+				that.buildOriginalResourcePath(aResult[0], aResult[1], fnGetOriginalResourcePath);
 				that.visitResponse(aResult[0], aResult[1]);
 				return aResult[0];
 			});
@@ -3667,6 +3656,9 @@ sap.ui.define([
 	 *   <code>true</code> the action is repeated w/o the preference, otherwise this function's
 	 *   result promise is rejected with an <code>Error</code> instance <code>oError</code> where
 	 *   <code>oError.canceled === true</code>.
+	 * @param {function(object):string} [fnGetOriginalResourcePath]
+	 *   A function returning the cache's original resource path to be used to build the target path
+	 *   for bound messages; it is called once with the response object as parameter
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the result of the request.
 	 * @throws {Error}
@@ -3676,7 +3668,7 @@ sap.ui.define([
 	 * @public
 	 */
 	_SingleCache.prototype.post = function (oGroupLock, oData, oEntity, bIgnoreETag,
-			fnOnStrictHandlingFailed) {
+			fnOnStrictHandlingFailed, fnGetOriginalResourcePath) {
 		var sGroupId,
 			mHeaders = oEntity
 				? {"If-Match" : bIgnoreETag && "@odata.etag" in oEntity ? "*" : oEntity}
@@ -3693,7 +3685,7 @@ sap.ui.define([
 					that.sResourcePath + that.sQueryString, oGroupLock0, mHeaders, oData),
 				that.fetchTypes()
 			]).then(function (aResult) {
-				that.buildOriginalResourcePath(aResult[0], aResult[1]);
+				that.buildOriginalResourcePath(aResult[0], aResult[1], fnGetOriginalResourcePath);
 				that.visitResponse(aResult[0], aResult[1]);
 				that.bPosting = false;
 
@@ -3902,7 +3894,7 @@ sap.ui.define([
 			this.oSingleton = mSingletonCacheByPath[sSingletonKey]
 				= new _SingleCache(oRequestor, sSingleton, mQueryOptions,
 					/*bSortExpandSelect*/ undefined, /*bSharedRequest*/ undefined,
-					/*vOriginalResourcePath*/ undefined, /*bPost*/ undefined,
+					/*sOriginalResourcePath*/ undefined, /*bPost*/ undefined,
 					/*sMetaPath*/ undefined, /*bEmpty*/ true);
 		}
 		this.sRelativePath = sResourcePath.split(sSingleton + "/")[1];
@@ -4096,10 +4088,8 @@ sap.ui.define([
 	 *   If this parameter is set, multiple requests for a cache using the same resource path might
 	 *   always return the same, shared cache. This cache is read-only, modifying calls lead to an
 	 *   error.
-	 * @param {string|function} [vOriginalResourcePath]
-	 *   The cache's original resource path to be used to build the target path for bound messages,
-	 *   or a function returning it; if it is not given or the function returns nothing,
-	 *   <code>sResourcePath</code> is used instead
+	 * @param {string} [sOriginalResourcePath=sResourcePath]
+	 *   The original resource path to be used to build the target path for bound messages
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may
 	 *   lead to a request, {@link #read} may only read from the cache; otherwise {@link #post}
@@ -4112,9 +4102,9 @@ sap.ui.define([
 	 * @public
 	 */
 	_Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			bSharedRequest, vOriginalResourcePath, bPost, sMetaPath) {
+			bSharedRequest, sOriginalResourcePath, bPost, sMetaPath) {
 		return new _SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			bSharedRequest, vOriginalResourcePath, bPost, sMetaPath);
+			bSharedRequest, sOriginalResourcePath, bPost, sMetaPath);
 	};
 
 	/**
