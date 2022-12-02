@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/mdc/link/LinkItem",
 	"sap/m/Button",
 	"sap/ui/mdc/Link",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(jQuery,
 	qutils,
 	Device,
@@ -26,7 +27,8 @@ sap.ui.define([
 	LinkItem,
 	Button,
 	Link,
-	oCore) {
+	oCore,
+	Element) {
 	"use strict";
 
 	var oMockServer;
@@ -274,7 +276,7 @@ sap.ui.define([
 				assert.equal(oField.$().find("a").length, 1);
 				assert.equal(sHref, null);
 				qutils.triggerEvent(Device.support.touch ? "tap" : "click", oField.$().find("a")[0], {
-					srcControl: jQuery(oField.$().find("a")[0]).control(0)
+					srcControl: Element.closestTo(oField.$().find("a")[0])
 				});
 			}, 100);
 		});
@@ -348,7 +350,7 @@ sap.ui.define([
 				assert.equal(oField.$().find("a").length, 1);
 				assert.equal(sHref, null);
 				qutils.triggerEvent(Device.support.touch ? "tap" : "click", oField.$().find("a")[0], {
-					srcControl: jQuery(oField.$().find("a")[0]).control(0)
+					srcControl: Element.closestTo(oField.$().find("a")[0])
 				});
 			}, 100);
 		});
@@ -381,7 +383,7 @@ sap.ui.define([
 				assert.equal(oField.$().find("a").length, 1);
 				assert.equal(sHref, null);
 				qutils.triggerEvent(Device.support.touch ? "tap" : "click", oField.$().find("a")[0], {
-					srcControl: jQuery(oField.$().find("a")[0]).control(0)
+					srcControl: Element.closestTo(oField.$().find("a")[0])
 				});
 			}, 100);
 		});
@@ -415,7 +417,7 @@ sap.ui.define([
 				assert.equal(oField.$().find("a").length, 1);
 				assert.equal(sHref, null);
 				qutils.triggerEvent(Device.support.touch ? "tap" : "click", oField.$().find("a")[0], {
-					srcControl: jQuery(oField.$().find("a")[0]).control(0)
+					srcControl: Element.closestTo(oField.$().find("a")[0])
 				});
 			}, 100);
 		});

@@ -225,7 +225,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 */
 	if ( fnClosestTo == null ) {
 		fnClosestTo = function(oElement) {
-			return jQuery(oElement).control(0);
+			return jQuery(oElement).control(0); // legacy-relevant: fallback for older UI5 versions
 		};
 	}
 
