@@ -45081,6 +45081,7 @@ sap.ui.define([
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
+	<Text id="inactive" text="{= %{@$ui5.context.isInactive} }"/>\
 	<Input id="id" value="{Team_Id}"/>\
 	<Input id="name" value="{Name}"/>\
 </Table>',
@@ -45090,7 +45091,8 @@ sap.ui.define([
 				value : [{Name : "Team #1", Team_Id : "TEAM_01"}]
 			})
 			.expectChange("id", ["TEAM_01"])
-			.expectChange("name", ["Team #1"]);
+			.expectChange("name", ["Team #1"])
+			.expectChange("inactive", [undefined]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oBinding = that.oView.byId("table").getBinding("items");
@@ -45103,19 +45105,27 @@ sap.ui.define([
 			});
 
 			that.expectChange("id", [, "", ""])
-				.expectChange("name", [, "", ""]);
+				.expectChange("name", [, "", ""])
+				.expectChange("inactive", [, true, true]);
 
 			oContext1 = oBinding.create({}, true, true, /*bInactive*/true);
 			oContext2 = oBinding.create({}, true, true, /*bInactive*/true);
 
+			assert.strictEqual(oContext1.isInactive(), true);
+			assert.strictEqual(oContext2.isInactive(), true);
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// no request is sent
-			that.expectChange("name", [, "Team #2", "Team #3"]);
+			that.expectChange("name", [, "Team #2", "Team #3"])
+				.expectChange("inactive", [, 1, 1]);
 
 			// code under test
 			oContext1.setProperty("Name", "Team #2");
 			oContext2.setProperty("Name", "Team #3");
+
+			assert.strictEqual(oContext1.isInactive(), 1);
+			assert.strictEqual(oContext2.isInactive(), 1);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -45130,10 +45140,13 @@ sap.ui.define([
 					Team_Id : "TEAM_02",
 					Name : "Team #2"
 				})
-				.expectChange("id", [, "TEAM_02"]);
+				.expectChange("id", [, "TEAM_02"])
+				.expectChange("inactive", [, false]);
 
 			// code under test
 			oContext1.setProperty("Team_Id", "TEAM_02");
+
+			assert.strictEqual(oContext1.isInactive(), false);
 
 			return Promise.all([
 				oContext1.created(),

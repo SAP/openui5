@@ -8780,6 +8780,10 @@ sap.ui.define([
 		}
 
 		this.mock(oUpdateGroupLock).expects("getGroupId").withExactArgs().returns("updateGroup");
+		oHelperMock.expects("updateAll").exactly(bStayInactive ? 1 : 0)
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
+				sinon.match.same(oCache.aElements[bAtEndOfCreated ? 1 : 0]),
+				{"@$ui5.context.isInactive" : 1}).callThrough();
 		this.oRequestorMock.expects("relocate").exactly(bInactive && !bStayInactive ? 1 : 0)
 			.withExactArgs("$inactive.updateGroup",
 				sinon.match.same(oCache.aElements[bAtEndOfCreated ? 1 : 0]["@$ui5._"].postBody),
@@ -8813,7 +8817,7 @@ sap.ui.define([
 		if (bInactive) {
 			assert.strictEqual(
 				oCache.aElements[bAtEndOfCreated ? 1 : 0]["@$ui5.context.isInactive"],
-				bStayInactive);
+				bStayInactive ? 1 : false, "isInactive");
 			assert.strictEqual(oCache.iActiveElements, bStayInactive ? 0 : 1);
 		} else {
 			assert.strictEqual(
