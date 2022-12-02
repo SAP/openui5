@@ -64,12 +64,13 @@ sap.ui.define([
 
 				/**
 				 * data type instance of the column. Can be used instead of the type, precision, scale and formatSettings properties
+				 *
+				 * @since 1.56
 				 */
 				typeInstance: {
 					type: "object",
 					group: "Misc",
-					defaultValue: null,
-					since: "1.56"
+					defaultValue: null
 				},
 
 				/**
@@ -93,12 +94,13 @@ sap.ui.define([
 				 * 		style: "medium" //"short" or "long"
 				 * }
 				 * </code></pre>
+				 *
+				 * @since 1.52
 				 */
 				formatSettings: {
 					type: "object",
 					group: "Misc",
-					defaultValue: null,
-					since: "1.52"
+					defaultValue: null
 				},
 
 				/**

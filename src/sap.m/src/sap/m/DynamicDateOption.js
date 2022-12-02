@@ -58,7 +58,7 @@ sap.ui.define([
 					 * the array items are "date" and "int". A date range is usually represented
 					 * with two consecutive "date" values.
 					 */
-					valueTypes: { type: "string[]", multiple: true }
+					valueTypes: { type: "string[]" }
 				}
 			}
 		});

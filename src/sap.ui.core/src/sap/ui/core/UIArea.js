@@ -224,12 +224,12 @@ sap.ui.define([
 				/**
 				 * Content that is displayed in the UIArea.
 				 */
-				content : {name : "content", type : "sap.ui.core.Control", multiple : true, singularName : "content"},
+				content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
 
 				/**
 				 * Dependent objects whose lifecycle is bound to the UIArea but which are not automatically rendered by the UIArea.
 				 */
-				dependents : {name : "dependents", type : "sap.ui.core.Control", multiple : true}
+				dependents : {type : "sap.ui.core.Control", multiple : true}
 			}
 		},
 

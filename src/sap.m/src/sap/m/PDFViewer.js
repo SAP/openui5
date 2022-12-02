@@ -154,7 +154,7 @@ sap.ui.define([
 								/**
 								 * The iframe element.
 								 */
-								target : {type: "any", defaultValue: null}
+								target : {type: "any"}
 							}
 						},
 						/**

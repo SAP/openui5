@@ -228,7 +228,7 @@ sap.ui.define([
 				* the <code>SemanticPage</code> header is in its collapsed (snapped) state.</li>
 				* </ul>
 				*/
-				titleHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "heading"}},
+				titleHeading: {type: "sap.ui.core.Control", multiple: false, forwarding: {getter: "_getTitle", aggregation: "heading"}},
 
 				/**
 				* The <code>titleExpandedHeading</code> is positioned in the <code>SemanticPage</code> title left area
@@ -241,7 +241,7 @@ sap.ui.define([
 				* <code>titleSnappedHeading</code> to switch content when the header switches state.
 				* @since 1.58
 				*/
-				titleExpandedHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "expandedHeading"}},
+				titleExpandedHeading: {type: "sap.ui.core.Control", multiple: false, forwarding: {getter: "_getTitle", aggregation: "expandedHeading"}},
 
 				/**
 				* The <code>titleSnappedHeading</code> is positioned in the <code>SemanticPage</code> title left area
@@ -260,7 +260,7 @@ sap.ui.define([
 				* </ul>
 				* @since 1.58
 				*/
-				titleSnappedHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "snappedHeading"}},
+				titleSnappedHeading: {type: "sap.ui.core.Control", multiple: false, forwarding: {getter: "_getTitle", aggregation: "snappedHeading"}},
 
 				/**
 				 * The <code>SemanticPage</code> breadcrumbs.
@@ -277,7 +277,7 @@ sap.ui.define([
 				 * </ul>
 				 * @since 1.52
 				 */
-				titleBreadcrumbs: {type: "sap.m.IBreadcrumbs", multiple: false, defaultValue: null, forwarding: {getter: "_getTitle", aggregation: "breadcrumbs"}},
+				titleBreadcrumbs: {type: "sap.m.IBreadcrumbs", multiple: false, forwarding: {getter: "_getTitle", aggregation: "breadcrumbs"}},
 
 				/**
 				 * The only content that is displayed in the <code>SemanticPage</code> title

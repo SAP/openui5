@@ -213,7 +213,7 @@ sap.ui.define([
 				 * @since 1.96
 				 * @experimental Since 1.96
 				*/
-				tileIcon: {type: "sap.ui.core.URI", multiple: false},
+				tileIcon: {type: "sap.ui.core.URI"},
 				/**
 				 * Background color of the GenericTile. Only applicable for IconMode.
 				 * @since 1.96

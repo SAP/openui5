@@ -48,7 +48,7 @@ sap.ui.define(['sap/ui/core/Element'],
 					/**
 					 * Describes the options in a radio button group.
  					 */
-					options: { type: "string[]", multiple: true, defaultValue: null }
+					options: { type: "string[]", defaultValue: null }
 				}
 			}
 		});
