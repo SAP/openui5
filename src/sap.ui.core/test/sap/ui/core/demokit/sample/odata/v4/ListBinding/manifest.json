@@ -57,7 +57,6 @@
 				"settings" : {
 					"earlyRequests" : true,
 					"operationMode" : "Server",
-					"synchronizationMode" : "None",
 					"updateGroupId" : "update"
 				},
 				"type" : "sap.ui.core.sample.odata.v4.ListBinding.SandboxModel",

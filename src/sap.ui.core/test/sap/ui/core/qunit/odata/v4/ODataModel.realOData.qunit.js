@@ -322,11 +322,7 @@ sap.ui.define([
 		}
 
 		// code under test
-		oModel = new ODataModel({
-			earlyRequests : true,
-			serviceUrl : sServiceUrl,
-			synchronizationMode : "None"
-		});
+		oModel = new ODataModel({earlyRequests : true, serviceUrl : sServiceUrl});
 
 		assert.ok(oFetchEntityContainerExpectation.alwaysCalledOn(oModel.getMetaModel()));
 	});
@@ -334,10 +330,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("Property access from ManagedObject w/o context binding", function (assert) {
 		var _ = TestUtils.setupODataV4Server(this._oSandbox, mFixture, undefined, sServiceUrl),
-			oModel = new ODataModel({
-				serviceUrl : sServiceUrl,
-				synchronizationMode : "None"
-			}), // this test uses $batch w/ $auto
+			oModel = new ODataModel({serviceUrl : sServiceUrl}), // this test uses $batch w/ $auto
 			oControl = new TestControl({models : oModel}),
 			done = assert.async();
 
@@ -357,10 +350,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.skip("Property access from ManagedObject w/ context binding", function (assert) {
 		var _ = TestUtils.setupODataV4Server(this._oSandbox, mFixture, undefined, sServiceUrl),
-			oModel = new ODataModel({
-				serviceUrl : sServiceUrl,
-				synchronizationMode : "None"
-			}),
+			oModel = new ODataModel({serviceUrl : sServiceUrl}),
 			oControl = new TestControl({models : oModel}),
 			done = assert.async();
 
@@ -386,10 +376,7 @@ sap.ui.define([
 
 	//*****************************************************************************************
 	QUnit.test("ODataContextBinding: Action import on navigation property", function () {
-		var oModel = new ODataModel({
-				serviceUrl : sServiceUrl,
-				synchronizationMode : "None"
-			}),
+		var oModel = new ODataModel({serviceUrl : sServiceUrl}),
 			oBinding = oModel.bindContext("EMPLOYEE_2_TEAM/"
 				+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam(...)"),
 			oParentBinding = oModel.bindContext("/EMPLOYEES('1')", null,
@@ -404,10 +391,7 @@ sap.ui.define([
 
 	//*****************************************************************************************
 	QUnit.test("ODataMetaModel: getValueListType, requestValueListInfo", function (assert) {
-		var oModel = new ODataModel({
-				serviceUrl : sSampleServiceUrl,
-				synchronizationMode : "None"
-			}),
+		var oModel = new ODataModel({serviceUrl : sSampleServiceUrl}),
 			oMetaModel = oModel.getMetaModel(),
 			sPropertyPath = "/ProductList('HT-1000')/Category";
 
@@ -426,10 +410,7 @@ sap.ui.define([
 
 	//*****************************************************************************************
 	QUnit.test("ODataMetaModel#requestValueListInfo: same model w/o reference", function (assert) {
-		var oModel = new ODataModel({
-				serviceUrl : sSampleServiceUrl,
-				synchronizationMode : "None"
-			}),
+		var oModel = new ODataModel({serviceUrl : sSampleServiceUrl}),
 			oMetaModel = oModel.getMetaModel(),
 			sPropertyPath = "/ProductList/0/CurrencyCode",
 			oValueListMetaModel;
@@ -455,10 +436,7 @@ sap.ui.define([
 
 	//*****************************************************************************************
 	QUnit.test("ODataPropertyBinding: PATCH an entity", function () {
-		var oModel = new ODataModel({
-				serviceUrl : sSampleServiceUrl,
-				synchronizationMode : "None"
-			}),
+		var oModel = new ODataModel({serviceUrl : sSampleServiceUrl}),
 			oControl = new TestControl({
 				models : oModel,
 				objectBindings : "/BusinessPartnerList('0100000000')",

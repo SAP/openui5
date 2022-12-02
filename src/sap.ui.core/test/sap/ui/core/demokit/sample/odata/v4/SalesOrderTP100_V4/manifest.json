@@ -63,7 +63,6 @@
 					"autoExpandSelect" : true,
 					"earlyRequests" : true,
 					"operationMode" : "Server",
-					"synchronizationMode" : "None",
 					"updateGroupId" : "UpdateGroup"
 				},
 				"type" : "sap.ui.core.sample.odata.v4.SalesOrderTP100_V4.SandboxModel",

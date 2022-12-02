@@ -53,8 +53,7 @@ sap.ui.define([
 		 */
 		createModel : function (sQuery, mParameters, bAllowPrerenderingTasks) {
 			var oModel = new ODataModel(Object.assign({}, mParameters, {
-					serviceUrl : sServiceUrl + (sQuery || ""),
-					synchronizationMode : "None"
+					serviceUrl : sServiceUrl + (sQuery || "")
 				}));
 
 			if (!bAllowPrerenderingTasks) {
@@ -69,27 +68,32 @@ sap.ui.define([
 		var oModel;
 
 		assert.throws(function () {
-			return new ODataModel();
+			return new ODataModel({synchronizationMode : undefined});
 		}, new Error("Synchronization mode must be 'None'"));
 		assert.throws(function () {
-			return new ODataModel({synchronizationMode : "None"});
+			return new ODataModel({synchronizationMode : "Nope"});
+		}, new Error("Synchronization mode must be 'None'"));
+		assert.throws(function () {
+			return new ODataModel();
 		}, new Error("Missing service root URL"));
 		assert.throws(function () {
-			return new ODataModel({serviceUrl : "/foo", synchronizationMode : "None"});
+			return new ODataModel({serviceUrl : "/foo"});
 		}, new Error("Service root URL must end with '/'"));
 		assert.throws(function () {
-			return new ODataModel({synchronizationMode : "None", useBatch : true});
+			return new ODataModel({useBatch : true});
 		}, new Error("Unsupported parameter: useBatch"));
 		assert.throws(function () {
-			return new ODataModel({operationMode : OperationMode.Auto, serviceUrl : "/foo/",
-				synchronizationMode : "None"});
+			return new ODataModel({operationMode : OperationMode.Auto, serviceUrl : "/foo/"});
 		}, new Error("Unsupported operation mode: Auto"), "Unsupported OperationMode");
 
 		this.mock(ODataModel.prototype).expects("initializeSecurityToken").never();
 		this.mock(_Requestor.prototype).expects("sendOptimisticBatch").never();
 
 		// code under test: operation mode Server must not throw an error
-		oModel = this.createModel("", {operationMode : OperationMode.Server});
+		oModel = this.createModel("", {
+			operationMode : OperationMode.Server,
+			synchronizationMode : "None" // deprecated and optional, but still allowed
+		});
 
 		assert.strictEqual(oModel.sOperationMode, OperationMode.Server);
 		assert.strictEqual(oModel.getServiceUrl(), sServiceUrl);
