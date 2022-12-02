@@ -515,6 +515,8 @@ sap.ui.define([
 				fnResolve(true);
 				return oEntityData;
 			}, function (oError) {
+				var oPromise;
+
 				if (oError.canceled) {
 					// for cancellation no error is reported via fnErrorCallback
 					throw oError;
@@ -523,17 +525,20 @@ sap.ui.define([
 					that.removePendingRequest();
 					fnResolve();
 				}
-				fnErrorCallback(oError);
 				if (that.fetchTypes().isRejected()) {
+					fnErrorCallback(oError); // Note: fires "createCompleted"
 					throw oError;
 				}
+
 				sGroupId = sGroupId.replace(rInactive, "");
 				sGroupId = that.oRequestor.getGroupSubmitMode(sGroupId) === "API"
 					? sGroupId
 					: "$parked." + sGroupId;
-
-				return request(sPostPath,
+				oPromise = request(sPostPath,
 					that.oRequestor.lockGroup(sGroupId, that, true, true));
+				fnErrorCallback(oError); // Note: fires "createCompleted"
+
+				return oPromise;
 			});
 		}
 

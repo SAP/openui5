@@ -7682,6 +7682,52 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A creation POST fails and the "createCompleted" event handler is used to
+	// immediately delete the transient row.
+	// BCP: 2280183921
+	QUnit.test("BCP: 2280183921: use createCompleted to delete after failure", function (assert) {
+		var oPromise,
+			that = this;
+
+		return this.createView(assert).then(function () {
+			var oBinding = that.oModel.bindList("/EMPLOYEES"),
+				oContext;
+
+			oBinding.attachCreateCompleted(function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("success"), false);
+
+				// code under test
+				oPromise = oEvent.getParameter("context").delete();
+			});
+
+			that.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES",
+					payload : {Name : "Anonymous"}
+				}, createErrorInsideBatch())
+				.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+			that.oLogMock.expects("error")
+				.withExactArgs("POST on 'EMPLOYEES' failed; will be repeated automatically",
+					sinon.match("Request intentionally failed"), sODLB);
+
+			oContext = oBinding.create({Name : "Anonymous"});
+
+			return Promise.all([
+				checkCanceled(assert, oContext.created()),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			return oPromise;
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Table creating new entities and rejected requestSideEffects for the complete table
 	// within the same $batch.
 	// Steps:
