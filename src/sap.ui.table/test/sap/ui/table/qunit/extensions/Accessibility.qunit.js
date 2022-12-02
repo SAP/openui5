@@ -1,4 +1,4 @@
-/*global QUnit, oTable, oTreeTable */
+/*global QUnit, oTable, oTreeTable, sinon */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
@@ -1473,6 +1473,43 @@ sap.ui.define([
 		}
 		oTable.attachEventOnce("_rowsUpdated", onAfterRowsUpdated);
 		oTable.setFirstVisibleRow(3);
+	});
+
+	QUnit.test("Row index and count", function(assert) {
+		var oAriaCount = oTable.getDomRef("ariacount");
+		var oNumberOfRows = oTable.getDomRef("rownumberofrows");
+		var oNumberOfColumns = oTable.getDomRef("colnumberofcols");
+
+		getCell(0, 0, true);
+		assert.equal(oAriaCount.textContent, TableUtils.getResourceText("TBL_DATA_ROWS_COLS", [8, 5]),
+			"Data cell in row 1 column 1: ariacount");
+		assert.equal(oNumberOfRows.textContent, TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [1, 8]),
+			"Data cell in row 1 column 1: rownumberofrows");
+		assert.equal(oNumberOfColumns.textContent, TableUtils.getResourceText("TBL_COL_COLCOUNT", [1, 5]),
+			"Data cell in row 1 column 1: colnumberofcols");
+
+		getCell(1, 1, true);
+		assert.equal(oAriaCount.textContent.trim(), "", "Data cell in row 2 column 2: ariacount");
+		assert.equal(oNumberOfRows.textContent, TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [2, 8]),
+			"Data cell in row 2 column 2: rownumberofrows");
+		assert.equal(oNumberOfColumns.textContent, TableUtils.getResourceText("TBL_COL_COLCOUNT", [2, 5]),
+			"Data cell in row 2 column 2: colnumberofcols");
+
+		getColumnHeader(0, true);
+		assert.equal(oAriaCount.textContent.trim(), "", "1st Column header cell: ariacount");
+		assert.equal(oNumberOfColumns.textContent, TableUtils.getResourceText("TBL_COL_COLCOUNT", [1, 5]),
+			"1st Column header cell: colnumberofcols");
+
+		sinon.stub(oTable, "_getTotalRowCount").returns(1);
+		oTable.setVisibleRowCount(1);
+		oTable._bVariableRowHeightEnabled = true;
+		oTable.rerender();
+
+		getCell(0, 0, true);
+		assert.equal(oAriaCount.textContent.trim(), "", "Data cell in row 1 column 1: ariacount");
+		assert.equal(oNumberOfRows.textContent, TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [1, 1]),
+			"Data cell in row 1 column 1: rownumberofrows");
+		assert.equal(oNumberOfColumns.textContent.trim(), "", "Data cell in row 1 column 1: colnumberofcols");
 	});
 
 	QUnit.test("ARIA colindices", function(assert) {
