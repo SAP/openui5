@@ -1228,7 +1228,7 @@ sap.ui.define([
 		oTable.setSelectionMode("None");
 		oTable.setSelectionBehavior("RowSelector");
 		oTable.rerender();
-		oTable.attachCellClick(function(){});
+		oTable.attachCellClick(function() {});
 		getCell(0, 2).trigger("mouseover");
 		assert.ok(getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on row header");
 		assert.ok(getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on fixed part of row");
