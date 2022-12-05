@@ -222,9 +222,6 @@ sap.ui.define([
 				 * <b>Note</b>: this event should never be executed programmatically. It is triggered internally by the filter bar after a <code>triggerSearch</code> is executed
 				 */
 				search: {
-					conditions: {
-						type: "object"
-					}
 				},
 
 				/**
@@ -238,14 +235,25 @@ sap.ui.define([
 				 * @param {string} oControlEvent.getParameters.filtersTextExpanded Contains the filter summary text for the expanded scenario
 				 */
 				filtersChanged: {
-					conditionsBased: {
-						type: "boolean"
-					},
-					filtersText: {
-						type: "string"
-					},
-					filtersTextExpanded: {
-						type: "string"
+					parameters: {
+						/**
+						 * indicates if the event is base on condition changes
+						 */
+						conditionsBased: {
+							type: "boolean"
+						},
+						/**
+						 * display text for a collapsed header
+						 */
+						filtersText: {
+							type: "string"
+						},
+						/**
+						 * display text for an expanded header
+						 */
+						filtersTextExpanded: {
+							type: "string"
+						}
 					}
 				}
 			}
