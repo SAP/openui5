@@ -666,7 +666,7 @@ sap.ui.define([
 		var oConfig = {
 			parsedValue: "I3",
 			value: "I3",
-			bindingContext: "BC",
+			bindingContext: {getPath: function () {return "BC";}},
 			conditionModel: undefined,
 			conditionModelName: undefined,
 			checkKey: true,
