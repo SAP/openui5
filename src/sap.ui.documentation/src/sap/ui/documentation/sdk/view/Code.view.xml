@@ -4,62 +4,148 @@
 		xmlns:core="sap.ui.core"
 		xmlns:l="sap.ui.layout"
 		xmlns="sap.m"
-		xmlns:ce="sap.ui.codeeditor" height="100%">
-	<Page
-			id="page"
-			showHeader="false"
-			showNavButton="true"
-			navButtonPress="onNavBack"
-			title="{/title}"
-			icon="img/144_iPad_Retina_Web_Clip.png"
-			enableScrolling="false">
-		<landmarkInfo>
-			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
-		</landmarkInfo>
-		<subHeader>
-			<Bar id="header" class="sapContrast sapContrastPlus">
-				<contentLeft>
-					<Button type="Back" press="onNavBack" tooltip="{i18n>CODE_BACK_BTN_TOOLTIP}"/>
-				</contentLeft>
-				<contentMiddle>
-					<Title text="{/title}"/>
-				</contentMiddle>
-				<contentRight>
-					<Button id="apiRefButton" text="{i18n>CODE_API_REFERENCE}" type="Emphasized" press="onAPIRefPress" visible="false"/>
-					<Button
-							class="sapUiHideOnPhone"
-							text="{i18n>CODE_DOWNLOAD_BTN}"
-							icon="sap-icon://download"
-							press="onDownload" />
-					<Button
-							class="sapUiVisibleOnlyOnPhone"
-							icon="sap-icon://download"
-							press="onDownload" />
-				</contentRight>
-			</Bar>
-		</subHeader>
-		<content>
-			<l:FixFlex>
-				<l:fixContent>
-					<IconTabHeader
-							id="tabHeader"
-							mode="Inline"
-							items="{/files}"
-							select="handleTabSelectEvent"
-							selectedKey="{/fileName}">
-						<items>
-							<IconTabFilter
-								key="{name}"
-								text="{name}"/>
-						</items>
-					</IconTabHeader>
-				</l:fixContent>
-				<l:flexContent>
-					<ce:CodeEditor
-						id="codeEditor"
-						editable="false" />
-				</l:flexContent>
-			</l:FixFlex>
-		</content>
-	</Page>
+		xmlns:fileEditor="sap.ui.documentation.sdk.controls" height="100%">
+	<l:ResponsiveSplitter id="splitView" height="100%">
+		<l:PaneContainer orientation="Horizontal">
+			<l:SplitPane id="previewPane" requiredParentWidth="1">
+				<Page
+					id="samplePageEdit"
+					showHeader="false"
+					showNavButton="true"
+					navButtonPress="onNavBack"
+					busyIndicatorDelay="0"
+					class="sapUiDocumentationSamplePage">
+				<landmarkInfo>
+					<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
+				</landmarkInfo>
+					<subHeader>
+						<Bar id="header" class="sapContrast sapContrastPlus">
+							<contentLeft>
+								<Button type="Back" press="onNavBack" tooltip="{i18n>SAMPLE_BACK_BTN_TOOLTIP}" enabled="{= ${/disableNavBack} === undefined }"/>
+							</contentLeft>
+							<contentMiddle>
+								<Title level="H1" text="{/title}" tooltip="{/title}"/>
+								<Button
+										id="warningSample"
+										icon="sap-icon://warning"
+										visible="{=${/showWarning}}"
+										tooltip="{i18n>SAMPLE_EDITED_TOOLTIP}"
+										class="sapUiExploredWarningIcon"
+										press="onWarningSample"/>
+							</contentMiddle>
+							<contentRight>
+								<Button
+										id="infoSample"
+										visible="{=${/details} !== undefined || ${/description} !== undefined}"
+										icon="sap-icon://hint"
+										tooltip="{i18n>SAMPLE_INFO_TOOLTIP}"
+										press="onInfoSample"/>
+
+								<Button id="apiRefButton" text="{i18n>SAMPLE_API_REFERENCE_BTN}" type="Emphasized" press="onAPIRefPress" visible="false"/>
+								<Button
+										id="prevSample"
+										icon="sap-icon://navigation-up-arrow"
+										class="sapUiHideOnPhone"
+										tooltip="{i18n>SAMPLE_PREV_BTN_TOOLTIP}"
+										enabled="{= ${/previousSampleId} !== undefined }"
+										press="onPreviousSample"/>
+								<Button
+										id="nextSample"
+										icon="sap-icon://navigation-down-arrow"
+										class="sapUiHideOnPhone"
+										tooltip="{i18n>SAMPLE_NEXT_BTN_TOOLTIP}"
+										enabled="{= ${/nextSampleId} !== undefined }"
+										press="onNextSample"/>
+								<Button
+										id="toggleFullScreenBtn"
+										icon="sap-icon://full-screen"
+										visible="{:= ${device>/system/desktop} ||
+													&#40; ${device>/system/tablet} &amp;&amp;
+													${device>/orientation/landscape} &#41; }"
+										tooltip="{i18n>SAMPLE_FULLSCREEN_BTN_TOOLTIP}"
+										press="onToggleFullScreen" />
+								<Button
+									id="toggleRTA"
+									icon="sap-icon://wrench"
+									class="sapUiHideOnPhone"
+									tooltip="{i18n>SAMPLE_ADAPT_BTN_TOOLTIP}"
+									enabled="false" />
+								<Button visible="{/showNewTab}"
+										id="newTab"
+										tooltip="{i18n>SAMPLE_NEW_TAB_BTN_TOOLTIP}"
+										icon="sap-icon://inspect"
+										press="onNewTab" />
+								<Button id="sampleSettings"
+										visible="{= ${/showSettings} &amp;&amp; !${/iframe} }"
+										icon="sap-icon://action-settings"
+										press="handleSettings" />
+							</contentRight>
+						</Bar>
+					</subHeader>
+				</Page>
+			</l:SplitPane>
+			<l:SplitPane id="editorPane" requiredParentWidth="1">
+				<Page
+					id="page"
+					showHeader="false"
+					showNavButton="true"
+					navButtonPress="onNavBack"
+					title="{/title}"
+					icon="img/144_iPad_Retina_Web_Clip.png"
+					enableScrolling="false">
+					<landmarkInfo>
+						<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
+					</landmarkInfo>
+					<subHeader>
+						<OverflowToolbar>
+							<Button
+								class="sapUiSmallMarginBegin"
+								text="Run"
+								type="Emphasized"
+								icon="sap-icon://media-play"
+								press="onRunPressed"
+								enabled="{settings>/editable}"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="High" />
+								</layoutData>
+							</Button>
+							<CheckBox text="Auto Run" selected="{settings>/autoRun}" enabled="{settings>/editable}">
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</CheckBox>
+							<ToolbarSpacer />
+							<Button
+								text="Clear all changes"
+								type="Emphasized"
+								press="onClearButtonPressed" />
+							<ToolbarSpacer />
+							<MenuButton id="downloadSampleButton" icon="sap-icon://download" tooltip="Download" text="Download" type="Transparent">
+								<menu>
+									<Menu>
+										<MenuItem text="All files as .zip" icon="sap-icon://attachment-zip-file" press="onDownload" />
+										<!-- <MenuItem text="All files as .zip" icon="sap-icon://attachment-zip-file" press="onDownloadZip" /> -->
+									</Menu>
+								</menu>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="High" />
+								</layoutData>
+							</MenuButton>
+							<Button class="orientationBtn" press="onChangeSplitterOrientation" tooltip="Change position" icon="sap-icon://header" type="Transparent">
+								<layoutData>
+									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</Button>
+						</OverflowToolbar>
+					</subHeader>
+					<fileEditor:FileEditor
+						id="fileEditor"
+						fileChange="onFileEditorFileChange"
+						fileSwitch="onFileSwitch"
+						visible="{= ${settings>/editorType} === 'text' }" />
+				</Page>
+			</l:SplitPane>
+		</l:PaneContainer>
+	</l:ResponsiveSplitter>
 </mvc:View>

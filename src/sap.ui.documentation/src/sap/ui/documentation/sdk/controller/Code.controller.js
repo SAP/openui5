@@ -2,277 +2,307 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	"sap/ui/documentation/sdk/controller/SampleBaseController",
-	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
-	"sap/ui/documentation/sdk/model/formatter",
-	"sap/ui/model/json/JSONModel",
-	"sap/base/util/merge",
-	"sap/ui/core/Component",
-	"sap/ui/core/Core"
-], function(SampleBaseController, ControlsInfo, formatter, JSONModel, merge, Component, Core) {
+sap.ui.define(
+	[
+		"sap/ui/documentation/sdk/controller/Sample.controller",
+		"../model/ExploreSettingsModel",
+		"sap/ui/core/Component",
+		"sap/ui/core/HTML",
+		"sap/ui/Device",
+		"sap/base/util/restricted/_debounce",
+		"sap/ui/model/odata/v4/lib/_MetadataRequestor",
+		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
+		"sap/ui/documentation/sdk/model/formatter"
+	],
+	function (
+		SampleController,
+		ExploreSettingsModel,
+		Component,
+		HTML,
+		Device,
+		_debounce,
+		_MetadataRequestor,
+		ControlsInfo,
+		formatter
+	) {
 		"use strict";
 
-		return SampleBaseController.extend("sap.ui.documentation.sdk.controller.Code", {
+		return SampleController.extend("sap.ui.documentation.sdk.controller.Code", {
+			constructor: function () {
+				this.onFileEditorFileChangeDebounced = _debounce(this.onFileEditorFileChangeDebounced, 500);
+			},
 
 			/**
 			 * Called when the controller is instantiated.
-			 * @public
 			 */
-			onInit : function () {
-				SampleBaseController.prototype.onInit.call(this);
+			onInit: function () {
+				SampleController.prototype.onInit.call(this);
 
-				this.oModel = new JSONModel();
-				this.getView().setModel(this.oModel);
+				this.getView().setModel(ExploreSettingsModel, "settings");
 
-				this.router = this.getRouter();
-				this.router.getRoute("code").attachPatternMatched(this.onRouteMatched, this);
-				this.router.getRoute("codeFile").attachPatternMatched(this.onRouteMatched, this);
+				this._fileEditor = this.byId("fileEditor");
+				this._fileEditor.attachBeforeFileChange(this.onBeforeFileChanged.bind(this));
+				this._fileEditor.attachFileChange(this.onFileEditorFileChangeDebounced.bind(this));
 
-				this._aFilesAvailable = [];
-
-				this._bFirstLoad = true;
-
-				this.bus = Core.getEventBus();
-				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
+				this._registerResize();
 			},
 
-			onDemoKitThemeChanged: function (sChannelId, sEventId, oData) {
-				this._updateCodeEditorTheme(oData.sThemeActive);
+			onExit: function () {
+				this._deregisterResize();
 			},
 
-			onRouteMatched: function (oEvt) {
-				var oArguments = oEvt.getParameter("arguments");
+			onBeforeFileChanged: function (oEvent) {
+				var sFile = oEvent.getParameter("sFile");
+				this._oChangedFile = {
+					sFile: sFile
+				};
+			},
 
-				this.showMasterSide();
+			onFileEditorFileChangeDebounced: function () {
+				var oModelData = this.oModel.getData();
+
+				if (this._oChangedFile) {
+					var sRef = sap.ui.require.toUrl((this._sId).replace(/\./g, "/"));
+					var sLocalStorageDKSamples = this._getChangedSamplesLocalStorage();
+					if (!sLocalStorageDKSamples) {
+						this._setChangedSamplesLocalStorage(JSON.stringify([this._sId]));
+					} else {
+						var aChangedDKSamples = JSON.parse(sLocalStorageDKSamples);
+
+						if (aChangedDKSamples.indexOf(this._sId) < 0) {
+							aChangedDKSamples.push(this._sId);
+							this._setChangedSamplesLocalStorage(JSON.stringify(aChangedDKSamples));
+						}
+					}
+					oModelData.showWarning = true;
+					this.oModel.setData(oModelData);
+
+					this._updateFileContent(sRef, this._oChangedFile.sFile, true);
+					this._oChangedFile = null;
+				}
+				if (ExploreSettingsModel.getProperty("/autoRun")) {
+					this._updateSample();
+				}
+			},
+
+			onFileSwitch: function (oEvent) {
+				ExploreSettingsModel.setProperty("/editable", oEvent.getParameter("editable"));
+			},
+
+			onRunPressed: function (oEvent) {
+				this._updateSample();
+			},
+
+			onClearButtonPressed: function (oEvent) {
+				var oFrame = document.getElementById("sampleFrameEdit"),
+					sLocalStorageDKSamples = this._getChangedSamplesLocalStorage(),
+					oModelData = this.oModel.getData(),
+					sRef = sap.ui.require.toUrl((this._sId).replace(/\./g, "/"));
+
+				if (sLocalStorageDKSamples) {
+					var aChangedDKSamples = JSON.parse(sLocalStorageDKSamples);
+					aChangedDKSamples.splice(aChangedDKSamples.indexOf(this._sId), 1);
+					this._setChangedSamplesLocalStorage(JSON.stringify(aChangedDKSamples));
+				}
+
+				oModelData.showWarning = false;
+				this.oModel.setData(oModelData);
+
+				this._getPage().setBusy(true);
+				oFrame.addEventListener("load", function() {
+					this._getPage().setBusy(false);
+				}.bind(this), {
+					once: true
+				});
+
+				Promise.allSettled(this._oData.files.map(function(file) {
+					return fetch(file.url, { method: "DELETE" });
+				}))
+					.then(function() {
+						this._fileEditor._setClearButtonPressed(true);
+						this._updateSample();
+						this._fileEditor._fetchContents();
+						this._oData.files.forEach(function (oFile) {
+							this._updateFileContent(sRef, oFile.name, true);
+						}, this);
+					}.bind(this));
+			},
+
+			onChangeSplitterOrientation: function (oEvent) {
+				//Toggles the value of splitter orientation
+				ExploreSettingsModel.setProperty("/splitViewVertically", !ExploreSettingsModel.getProperty("/splitViewVertically"));
+				var isOrientationVertical = ExploreSettingsModel.getProperty("/splitViewVertically");
+				this.getView()
+					.byId("splitView")
+					.getRootPaneContainer()
+					.setOrientation(isOrientationVertical ? "Vertical" : "Horizontal");
+			},
+
+			_attachPaternMatched: function () {
+				this.oRouter.getRoute("code").attachPatternMatched(this._onRouteMatched, this);
+				this.oRouter.getRoute("codeFile").attachPatternMatched(this._onRouteMatched, this);
+			},
+
+			_deregisterResize: function () {
+				Device.media.detachHandler(this._onResize, this);
+			},
+
+			_registerResize: function () {
+				Device.media.attachHandler(this._onResize, this);
+				this._onResize();
+			},
+
+			_onResize: function () {
+				var isOrientationVertical = ExploreSettingsModel.getProperty("/splitViewVertically"),
+					sRangeName = Device.media.getCurrentRange("StdExt").name;
+
+				if (sRangeName == "Tablet" || (sRangeName == "Phone" && !isOrientationVertical)) {
+					ExploreSettingsModel.setProperty("/splitViewVertically", true);
+					this.getView().byId("splitView").getRootPaneContainer().setOrientation("Vertical");
+				}
+			},
+
+			_onRouteMatched: function (oEvent) {
+				var oArguments = oEvent.getParameter("arguments");
 
 				this._sId = oArguments.sampleId;
 				this._sEntityId = oArguments.entityId;
 				this._sFileName = formatter.routeParamsToFilePath(oArguments);
+				this.byId("splitView").setBusy(true);
 
-				ControlsInfo.loadData().then(this._loadCode.bind(this));
+				ControlsInfo.loadData()
+					.then(function(oData) {
+						return Promise.all([
+							this._loadCode(oData),
+							this._loadSample(oData)
+						]);
+					}.bind(this))
+					.then(function(aResults) {
+						this._showCode(aResults[0]);
+					}.bind(this));
 			},
 
 			_loadCode: function (oData) {
-				var sFileName = this._sFileName,
-					oSample = oData.samples[this._sId]; // retrieve sample object
+				var sFileName = this._sFileName;
+				var oSample = oData.samples[this._sId]; // retrieve sample object
 
 				// If there is no sample or the context from the URL is for the wrong sample we redirect to not found page
 				// If you modify this expression please check with both class and tutorial which won't have a context.
 				if (!oSample || (oSample.contexts && !oSample.contexts[this._sEntityId])) {
 					this.onRouteNotFound();
-					return;
+					return Promise.reject();
 				}
 
 				// cache the data to be reused
 				if (!this._oData || oSample.id !== this._oData.id) {
 					// get component and data when sample is changed or nothing exists so far
-					this._createComponent().then(function (oComponent) {
+					return this._createComponent().then(function (oComponent) {
 						// create data object
-						var aPromises = [];
 						var oConfig = oComponent.getManifestEntry("/sap.ui5/config") || {};
 						this._oData = {
 							id: oSample.id,
 							title: "Code: " + oSample.name,
 							name: oSample.name,
 							stretch: oConfig.sample ? oConfig.sample.stretch : false,
-							files: [],
+							files:  oConfig.sample.files.map(function(sFile) {
+								return {
+									key: sFile,
+									name: sFile,
+									url: sap.ui.require.toUrl((oSample.id).replace(/\./g, "/")) + "/" + sFile
+								};
+							}),
 							iframe: oConfig.sample.iframe,
 							fileName: sFileName,
 							includeInDownload: oConfig.sample.additionalDownloadFiles,
 							customIndexHTML: oConfig.sample.customIndexHTML
 						};
 
-						// retrieve files
-						// (via the 'Orcish maneuver': Use XHR to retrieve and cache code)
-						if (oConfig.sample && oConfig.sample.files) {
-							var sRef = sap.ui.require.toUrl((oSample.id).replace(/\./g, "/"));
-							for (var i = 0; i < oConfig.sample.files.length; i++) {
-								var sFile = oConfig.sample.files[i];
-								aPromises.push(this._updateFileContent(sRef, sFile));
-
-								this._oData.files.push({
-									name: sFile
-								});
-								this._aFilesAvailable.push(sFile);
-							}
-						}
-						return Promise.all(aPromises);
-					}.bind(this)).then(this._showCode.bind(this, sFileName));
+						return this._oData;
+					}.bind(this));
 				} else {
 					this._oData.fileName = sFileName;
-					this._showCode(sFileName);
+					return Promise.resolve(this._oData);
 				}
-
 			},
 
-			_showCode: function(sFileName){
-				this.getAPIReferenceCheckPromise(this._sEntityId).then(function (bHasAPIReference) {
-					this.getView().byId("apiRefButton").setVisible(bHasAPIReference);
-				}.bind(this));
-
-				// set model data
-				this.oModel.setData(this._oData);
-
-				if (sFileName === undefined) {
-					sFileName = this._getInitialFileName();
+			_showCode: function (oCurrentSample) {
+				var bUseIFrame = !!oCurrentSample.useIFrame;
+				this._oCurrSample = oCurrentSample;
+				if (oCurrentSample.files) {
+					this._fileEditor.setFiles(oCurrentSample.files);
+				} else {
+					this.byId("splitView").setBusy(false);
 				}
 
-				if (this._aFilesAvailable.indexOf(sFileName) === -1) {
-					this.onRouteNotFound();
+				ExploreSettingsModel.setProperty("/useIFrame", bUseIFrame);
+				this.oModel.setProperty("/sample", oCurrentSample);
+
+				window.addEventListener("message", function (event) {
+					if (event.data === "sampleLoaded") {
+						this.byId("splitView").setBusy(false);
+					}
+				}.bind(this));
+			},
+
+			_createHTMLControl: function () {
+				return new HTML({
+					id : "sampleFrameEdit",
+					content : '<iframe src="' + this.sIFrameUrl + '" frameBorder="0" width="100%" height="100%"></iframe>'
+				});
+			},
+
+			_getPage: function () {
+				return this.byId("samplePageEdit");
+			},
+
+			onMessage: function(eMessage) {
+				if (eMessage.origin !== this.getOwnerComponent()._sSampleIframeOrigin) {
+					return;
+				}
+				if (eMessage.source !== (this._oHtmlControl.getDomRef() && this._oHtmlControl.getDomRef().contentWindow)) {
 					return;
 				}
 
-				// update <code>CodeEditor</code> content and the selected tab
-				this._updateCodeEditor(sFileName);
-
-				this._getTabHeader().setSelectedKey(sFileName);
-
-				// scroll to the top of the page
-				var page = this.byId("page");
-				page.scrollTo(0);
-
-				this.appendPageTitle(this.getModel().getProperty("/title"));
+				if (eMessage.data.type === "INIT") {
+					this.fnMessageInit(eMessage);
+				} else if (eMessage.data.type === "ERR") {
+					this.fnMessageError(eMessage);
+				} else if (eMessage.data.type === "LOAD") {
+					this.fnMessageLoad(eMessage);
+				}
 			},
 
-			_updateFileContent: function(sRef, sFile) {
-				return this.fetchSourceFile(sRef + "/" + sFile).then(function(vContent) {
-					this._oData.files.some(function(oFile) {
-						if (oFile.name === sFile) {
-							oFile.raw = vContent;
-							oFile.code = this._convertCodeToHtml(vContent);
-							return true;
-						}
-					}, this);
-					this.oModel.setData(this._oData);
-				}.bind(this));
-			},
-
-			onAPIRefPress: function () {
-				this.getRouter().navTo("apiId", {id: this._sEntityId});
-			},
-
-			onNavBack : function () {
-				this.router.navTo("sample", {
-					sampleId: this._sId,
-					entityId: this._sEntityId
-				});
-			},
-
-			_convertCodeToHtml : function (code) {
-				code = code.toString();
-
-				// Get rid of function around code
-				code = code.replace(/^function.+{/, "");
-
-				code = code.replace(/}[!}]*$/, "");
-
-				// Get rid of unwanted code if CODESNIP tags are used
-				code = code.replace(/^[\n\s\S]*\/\/\s*CODESNIP_START\n/, "");
-				code = code.replace(/\/\/\s*CODESNIP_END[\n\s\S]*$/, "");
-
-				// Improve indentation for display
-				code = code.replace(/\t/g, "  ");
-
-				return code;
-			},
-
-			handleTabSelectEvent: function(oEvent) {
-				var sFileName = oEvent.getParameter("selectedKey"),
-					oRouteParams = merge(formatter.filePathToRouteParams(sFileName), {
-					entityId: this._sEntityId,
+			onNavBack: function () {
+				this.oRouter.navTo("sample", {
+					entityId: this.entityId,
 					sampleId: this._sId
+				}, false);
+			},
+
+			onPreviousSample: function (oEvent) {
+				this.oRouter.navTo("code", {
+					entityId: this.entityId,
+					sampleId: this.oModel.getProperty("/previousSampleId")
 				});
-
-				this._bFirstLoad = false;
-				this.router.navTo("codeFile", oRouteParams, false);
 			},
 
-			_updateCodeEditor : function(sFileName) {
-				var oCodeEditor = this._getCodeEditor(),
-					oAceInstance = oCodeEditor.getInternalEditorInstance(),
-					oAceRenderer = oAceInstance.renderer;
-
-				// set the <code>CodeEditor</code> new code base and its type - xml, js, json or css.
-				oCodeEditor.setValue(this._getCode(sFileName));
-				oCodeEditor.setType(this._getFileType(sFileName));
-
-				// set the <code>CodeEditor</code> scroll pos to line 0
-				oAceInstance.gotoLine(/*line*/0, /*column*/0, /*animate*/false);
-
-				if (this._bFirstLoad) {
-					setTimeout(function(){
-						oAceRenderer.onResize();
-					}, 0);
-				}
-
-				this._updateCodeEditorTheme(Core.getConfiguration().getTheme().toLowerCase());
-			},
-
-			_updateCodeEditorTheme : function(sTheme) {
-				// coppied from the original CodeEditor file
-				var sEditorTheme = "tomorrow";
-				if (sTheme.indexOf("hcb") > -1) {
-					sEditorTheme = "chaos";
-				} else if (sTheme.indexOf("hcw") > -1) {
-					sEditorTheme = "github";
-				} else if (sTheme === "sap_fiori_3") {
-					sEditorTheme = "crimson_editor";
-				} else if (sTheme === "sap_fiori_3_dark" || sTheme === "sap_horizon_dark") {
-					sEditorTheme = "clouds_midnight";
-				}
-				this._getCodeEditor().setColorTheme(sEditorTheme);
-			},
-
-			_getCode : function (sFileName) {
-				var aFiles = this.getModel().getData().files,
-					sCode = "";
-
-				aFiles.forEach(function(oFile) {
-					if (oFile.name === sFileName) {
-						sCode = oFile.raw;
-						return true;
-					}
+			onNextSample: function (oEvent) {
+				this.oRouter.navTo("code", {
+					entityId: this.entityId,
+					sampleId: this.oModel.getProperty("/nextSampleId")
 				});
-
-				return sCode;
 			},
 
-			_getFileType : function (sFileName) {
-				var sFileExtension = sFileName.split('.').pop();
-				switch (sFileExtension) {
-					case "js":
-						return "javascript";
-					case "ts":
-						return "typescript";
-					case "feature":
-						return "text";
-					default:
-						return sFileExtension;
+			/**
+			 * Reflects changes in the code editor to the sample.
+			 * @param {string} sValue The value of the manifest.json file.
+			 */
+			_updateSample: function () {
+				var oFrame = document.getElementById("sampleFrameEdit");
+
+				if (oFrame.contentWindow && oFrame.contentWindow.sap) {
+					oFrame.contentWindow.location.reload();
 				}
-			},
-
-			_getInitialFileName : function() {
-				return (this._oData
-						&& this._oData.files
-						&& this._oData.files.length > 0
-						&& this._oData.files[0].name) || null;
-			},
-
-			_getCodeEditor : function() {
-				if (!this.oCodeEditor) {
-					this.oCodeEditor = this.byId("codeEditor");
-				}
-
-				return this.oCodeEditor;
-			},
-
-			_getTabHeader : function() {
-				if (!this.oTabHeader) {
-					this.oTabHeader = this.byId("tabHeader");
-				}
-
-				return this.oTabHeader;
 			},
 
 			_createComponent : function () {

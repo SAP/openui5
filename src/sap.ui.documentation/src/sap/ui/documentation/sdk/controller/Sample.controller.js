@@ -61,7 +61,8 @@ sap.ui.define([
 				var oConfiguration = Configuration;
 				SampleBaseController.prototype.onInit.call(this);
 
-				this.getRouter().getRoute("sample").attachPatternMatched(this._onSampleMatched, this);
+				this.oRouter = this.getRouter();
+				this._attachPaternMatched();
 
 				this.oModel = new JSONModel({
 					showNavButton : true,
@@ -69,12 +70,12 @@ sap.ui.define([
 					rtaLoaded: false,
 					density: this.getOwnerComponent().getContentDensityClass(),
 					rtl: oConfiguration.getRTL(),
-					theme: oConfiguration.getTheme()
+					theme: oConfiguration.getTheme(),
+					showWarning: false
 				});
 
 				this._sId = null; // Used to hold sample ID
 				this._sEntityId = null; // Used to hold entity ID for the sample currently shown
-				this.router = this.getRouter();
 
 				this.getView().setModel(this.oModel);
 
@@ -83,6 +84,10 @@ sap.ui.define([
 				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
 
 				this.getOwnerComponent()._sSampleIframeOrigin = ResourcesUtil.getConfig() !== "." ? ResourcesUtil.getResourceOrigin() : window.origin;
+			},
+
+			_attachPaternMatched: function () {
+				this.oRouter.getRoute("sample").attachPatternMatched(this._onSampleMatched, this);
 			},
 
 			/* =========================================================== */
@@ -108,7 +113,7 @@ sap.ui.define([
 				}
 
 				if (sampleForwardingConfig[this._sId]) {
-					return this.router.navTo("sample", {
+					return this.oRouter.navTo("sample", {
 						entityId: sampleForwardingConfig[this._sId].entityId,
 						sampleId: sampleForwardingConfig[this._sId].sampleId
 					}, true);
@@ -120,7 +125,7 @@ sap.ui.define([
 			},
 
 			_loadSample: function(oData) {
-				var oPage = this.byId("page"),
+				var oPage = this._getPage(),
 					oModelData = this.oModel.getData(),
 					oSample = oData.samples[this._sId],
 					oSampleContext;
@@ -170,6 +175,13 @@ sap.ui.define([
 				oModelData.details = oSample.details;
 				oModelData.description = oSample.description;
 				oModelData.showSettings = true;
+
+				var sLocalStorageDKSamples = this._getChangedSamplesLocalStorage();
+				if (sLocalStorageDKSamples && JSON.parse(sLocalStorageDKSamples).indexOf(oSample.id) > -1) {
+					oModelData.showWarning = true;
+				} else {
+					oModelData.showWarning = false;
+				}
 
 				this._createIframe()
 					.then(function (oSampleConfig) {
@@ -270,6 +282,14 @@ sap.ui.define([
 						resolve(this._oSettingsDialog);
 					}
 				}.bind(this));
+			},
+
+			_getChangedSamplesLocalStorage: function () {
+				return localStorage.getItem("dk_changed_samples");
+			},
+
+			_setChangedSamplesLocalStorage: function (oValue) {
+				localStorage.setItem("dk_changed_samples", oValue);
 			},
 
 			/**
@@ -410,8 +430,8 @@ sap.ui.define([
 				}.bind(this), 1000);
 			},
 
-			_updateFileContent: function(sRef, sFile) {
-				this.fetchSourceFile(sRef + "/" + sFile).then(function(vContent) {
+			_updateFileContent: function(sRef, sFile, bForceFetch) {
+				this.fetchSourceFile(sRef + "/" + sFile, undefined, bForceFetch).then(function(vContent) {
 					var aFiles = this.oModel.getProperty("/files");
 					aFiles.some(function(oFile) {
 						if (oFile.name === sFile) {
@@ -424,7 +444,7 @@ sap.ui.define([
 			},
 
 			onAPIRefPress: function () {
-				this.getRouter().navTo("apiId", {id: this.entityId});
+				this.oRouter.navTo("apiId", {id: this.entityId});
 			},
 
 			onNewTab: function () {
@@ -445,14 +465,14 @@ sap.ui.define([
 			},
 
 			onPreviousSample: function (oEvent) {
-				this.getRouter().navTo("sample", {
+				this.oRouter.navTo("sample", {
 					entityId: this.entityId,
 					sampleId: this.oModel.getProperty("/previousSampleId")
 				});
 			},
 
 			onNextSample: function (oEvent) {
-				this.getRouter().navTo("sample", {
+				this.oRouter.navTo("sample", {
 					entityId: this.entityId,
 					sampleId: this.oModel.getProperty("/nextSampleId")
 				});
@@ -472,6 +492,23 @@ sap.ui.define([
 					}.bind(this));
 				} else {
 					this._oPopover.openBy(oButton);
+				}
+			},
+
+			onWarningSample: function (oEvent) {
+				var oButton = oEvent.getSource();
+				if (!this._oWarningPopover) {
+					Fragment.load({
+						name: "sap.ui.documentation.sdk.view.samplesWarning",
+						controller: this
+					}).then(function (oPopover) {
+						// connect popover to the root view of this component (models, lifecycle)
+						this.getView().addDependent(oPopover);
+						this._oWarningPopover = oPopover;
+						this._oWarningPopover.openBy(oButton);
+					}.bind(this));
+				} else {
+					this._oWarningPopover.openBy(oButton);
 				}
 			},
 
@@ -511,24 +548,33 @@ sap.ui.define([
 						this._oHtmlControl.destroy();
 					}
 
-					this._oHtmlControl = new HTML({
-						id : "sampleFrame",
-						content : '<iframe src="' + this.sIFrameUrl + '" id="sampleFrame" frameBorder="0"></iframe>'
-					}).addEventDelegate({
-						onBeforeRendering: function () {
-							window.removeEventListener("message", this.onMessage.bind(this));
-						}.bind(this)
-					})
-					.addEventDelegate({
-						onAfterRendering: function () {
-							window.addEventListener("message",this.onMessage.bind(this));
-						}.bind(this)
-					});
+					this._oHtmlControl = this._createHTMLControl()
+						.addEventDelegate({
+							onBeforeRendering: function () {
+								window.removeEventListener("message", this.onMessage.bind(this));
+							}.bind(this)
+						})
+						.addEventDelegate({
+							onAfterRendering: function () {
+								window.addEventListener("message",this.onMessage.bind(this));
+							}.bind(this)
+						});
 
-					this.byId("page").removeAllContent();
-					this.byId("page").addContent(this._oHtmlControl);
+					this._getPage().removeAllContent();
+					this._getPage().addContent(this._oHtmlControl);
 
 				}.bind(this));
+			},
+
+			_createHTMLControl: function () {
+				return new HTML({
+					id : "sampleFrame",
+					content : '<iframe src="' + this.sIFrameUrl + '" id="sampleFrame" frameBorder="0"></iframe>'
+				});
+			},
+
+			_getPage: function () {
+				return this.byId("page");
 			},
 
 			onMessage: function(eMessage) {
@@ -634,11 +680,11 @@ sap.ui.define([
 			},
 
 			onNavBack : function (oEvt) {
-				this.getRouter().navTo("entity", { id : this.entityId });
+				this.oRouter.navTo("entity", { id : this.entityId });
 			},
 
 			onNavToCode : function (evt) {
-				this.getRouter().navTo("code", {
+				this.oRouter.navTo("code", {
 					entityId: this.entityId,
 					sampleId: this._sId
 				}, false);
@@ -675,7 +721,7 @@ sap.ui.define([
 
 					this.oModel.setData(oModelData, true);
 
-					this.getRouter().attachRouteMatched(function () {
+					this.oRouter.attachRouteMatched(function () {
 						if (this._oRTA) {
 							this._oRTA.destroy();
 							this._oRTA = null;
@@ -700,7 +746,7 @@ sap.ui.define([
 			onRouteNotFound: function() {
 				var sNotFoundTitle = this.getModel("i18n").getProperty("NOT_FOUND_SAMPLE_TITLE");
 
-				this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.SampleNotFound", "XML", false);
+				this.oRouter.myNavToWithoutHash("sap.ui.documentation.sdk.view.SampleNotFound", "XML", false);
 				setTimeout(this.appendPageTitle.bind(this, sNotFoundTitle));
 				return;
 			}

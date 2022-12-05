@@ -376,6 +376,14 @@ html[dir="rtl"] #CompactModeButtons, html[dir="rtl"] #RTLButtons {
 
 /* Public, For Samples */
 
+.sapMIBar .sapMBtn.sapUiExploredWarningIcon .sapMBtnInner.sapMBtnDefault .sapUiIcon,
+.sapMIBar .sapUiExploredWarningIcon.sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive) > .sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnDefault .sapUiIcon {
+	color: #e76500;
+}
+
+html.sap-desktop .sapUiExploredWarningIcon.sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator):before {
+	border-color: #e76500;
+}
 .sapUiExploredWarning {
 	padding : 1rem;
 	color : red;
@@ -1894,4 +1902,13 @@ html[dir="rtl"] .sapUiDemoKitTreeItemIcon {
 .surveyPopoverCustomPaddingBeginEnd {
 	padding-left: 1.5rem;
 	padding-right: 1.5rem;
+}
+
+.sapUiFileEditor {
+	display: flex;
+	flex-direction: column;
+}
+
+.sapUiFileEditor .sapUiFileEditorContent {
+	flex: 1;
 }

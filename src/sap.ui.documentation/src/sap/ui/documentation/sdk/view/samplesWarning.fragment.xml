@@ -1,0 +1,14 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:l="sap.ui.layout">
+	<Popover showHeader="false" placement="Bottom">
+		<content>
+			<l:VerticalLayout>
+				<l:content>
+					<MessageStrip showIcon="true" type="Warning" text="{i18n>SAMPLE_EDITED_WARNING}" />
+				</l:content>
+			</l:VerticalLayout>
+		</content>
+	</Popover>
+</core:FragmentDefinition>
