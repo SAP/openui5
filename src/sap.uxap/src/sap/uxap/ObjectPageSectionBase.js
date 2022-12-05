@@ -137,10 +137,11 @@ sap.ui.define([
 	ObjectPageSectionBase.prototype.onBeforeRendering = function () {
 		var sAriaLabeledBy = "ariaLabelledBy";
 
-		this.setInvisibleTextLabelValue(this._getTitle());
-
-		// call every time to clear old content
-		this.setAggregation(sAriaLabeledBy, this._getAriaLabelledBy(), true); // this is called onBeforeRendering, so suppress invalidate
+		if (!this.getAggregation(sAriaLabeledBy)) {
+			this.setAggregation(sAriaLabeledBy, this._getAriaLabelledBy(), true); // this is called onBeforeRendering, so suppress invalidate
+		} else {
+			this.updateInvisibleTextLabelValue();
+		}
 	};
 
 
@@ -361,18 +362,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the DOM Element that should get the focus.
-	 *
-	 * To be overwritten by the specific control method.
+	 * Performs the update of the invisible text label.
+	 * This method is called for example when the section title is changed.
 	 *
 	 * @return {this} this for chaining
 	 * @protected
 	 */
-	ObjectPageSectionBase.prototype.setInvisibleTextLabelValue = function (sValue) {
+	ObjectPageSectionBase.prototype.updateInvisibleTextLabelValue = function () {
 		var oAriaLabelledBy = this.getAggregation("ariaLabelledBy"),
-			sLabel = "";
-
-		sLabel = sValue || this.getSectionText();
+			sLabel = this._getAriaLabelledByText();
 
 		if (oAriaLabelledBy) {
 			sap.ui.getCore().byId(oAriaLabelledBy.getId()).setText(sLabel);
@@ -382,21 +380,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * provide a default aria-labeled by text
+	 * Returns the invisible text control with the label already set to be for to the ariaLabelledBy aggregation.
 	 * @private
 	 * @returns {*} sap.ui.core.InvisibleText
 	 */
 	ObjectPageSectionBase.prototype._getAriaLabelledBy = function () {
+		var sLabel = this._getAriaLabelledByText();
+		return this._getInvisibleText().setText(sLabel);
+	};
+
+	/**
+	 * Returns the label string for the section.
+	 * @private
+	 * @returns {string} aria-labeled by text
+	 */
+	ObjectPageSectionBase.prototype._getAriaLabelledByText = function () {
 		// Each section should be labelled as:
 		// 'titleName' - if the section has a title
 		// 'Section' - if it does not have a title or its hidden (for example, showTitle=false)
-
-		var sLabel = "",
-			sTitle = this._getShouldLabelTitle() && this._getTitle();
-
-		sLabel = sTitle || this.getSectionText();
-
-		return this._getInvisibleText().setText(sLabel);
+		var sTitle = this._getShouldLabelTitle() && this._getTitle();
+		return sTitle || this.getSectionText();
 	};
 
 	ObjectPageSectionBase.prototype._getInvisibleText = function () {
@@ -612,7 +615,7 @@ sap.ui.define([
 		this.setProperty("title", sValue, bSuppressInvalidate);
 		this._notifyObjectPageLayout();
 
-		this.setInvisibleTextLabelValue(sValue);
+		this.updateInvisibleTextLabelValue();
 
 		return this;
 	};
