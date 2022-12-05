@@ -1174,5 +1174,25 @@
         ]
       }
     ]
+  },
+  "1.102.12": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "d49dd9c3f5c70473d71dbf79c0ebaa0ac3ee7e0c",
+        "type": "FIX",
+        "text": " sap.m.Button: adjusting self reference",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270101986"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280166158"
+          }
+        ]
+      }
+    ]
   }
 }

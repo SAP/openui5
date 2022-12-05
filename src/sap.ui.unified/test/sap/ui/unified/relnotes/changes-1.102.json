@@ -196,5 +196,21 @@
         ]
       }
     ]
+  },
+  "1.102.12": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "aa0c31d5d164f71de751fe95a8c37886ceb351b3",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust calendar header's button height",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280145861"
+          }
+        ]
+      }
+    ]
   }
 }
