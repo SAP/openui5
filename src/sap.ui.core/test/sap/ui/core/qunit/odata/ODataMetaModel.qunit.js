@@ -865,6 +865,37 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("constructor: uses ODataAnnotations#getData", function (assert) {
+		var oDataMetaModel, fnResolve,
+			oAnnotations = {getData : function () {}},
+			oDataModel = {annotationsLoaded : function () {}},
+			oMetadata = {getServiceMetadata : function () {}};
+
+		this.mock(oDataModel).expects("annotationsLoaded").withExactArgs()
+			.returns(new Promise(function (resolve, reject) {
+				fnResolve = resolve;
+			}));
+
+		// code under test
+		oDataMetaModel = new ODataMetaModel(oMetadata, oAnnotations, oDataModel);
+
+		assert.ok(oDataMetaModel.oLoadedPromiseSync instanceof SyncPromise);
+		assert.notOk(oDataMetaModel.oLoadedPromiseSync.isFulfilled());
+
+		this.mock(oMetadata).expects("getServiceMetadata").withExactArgs()
+			.returns({foo : "bar"});
+		this.mock(oAnnotations).expects("getData").withExactArgs().returns("~annotationData");
+		this.mock(Utils).expects("merge")
+			.withExactArgs("~annotationData", /*copy of service metadata*/{foo : "bar"},
+				sinon.match.same(oDataMetaModel));
+
+		// code under test
+		fnResolve("~annotationLoaded");
+
+		return oDataMetaModel.oLoadedPromiseSync;
+	});
+
+	//*********************************************************************************************
 	QUnit.test("TestUtils.deepContains", function (assert) {
 		TestUtils.notDeepContains(null, {}, "null");
 		TestUtils.notDeepContains(undefined, {}, "undefined");

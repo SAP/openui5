@@ -153,9 +153,7 @@ sap.ui.define([
 	 * @returns {object} The annotation data
 	 * @deprecated As of version 1.37.0, only kept for compatibility with V1 API, use {@link #getData} instead.
 	 */
-	ODataAnnotations.prototype.getAnnotationsData = function() {
-		return this._mAnnotations;
-	};
+	ODataAnnotations.prototype.getAnnotationsData = ODataAnnotations.prototype.getData;
 
 	/**
 	 * Returns a map of custom headers that are sent with every request to an annotation URL.

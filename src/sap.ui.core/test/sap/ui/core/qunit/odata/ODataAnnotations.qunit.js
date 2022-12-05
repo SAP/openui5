@@ -2,10 +2,11 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/qunit/odata/data/ODataAnnotationsFakeService",
+	"sap/ui/model/odata/ODataAnnotations",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/util/XMLHelper"
-], function(Log, Configuration, fakeService, V1ODataModel, V2ODataModel, XMLHelper) {
+], function(Log, Configuration, fakeService, ODataAnnotations, V1ODataModel, V2ODataModel, XMLHelper) {
 	"use strict";
 
 	/*global QUnit, sinon */
@@ -1184,6 +1185,12 @@ sap.ui.define([
 
 	QUnit.module("Additional tests for fixed bugs");
 
+	QUnit.test("ODataAnnotations#getData", function (assert) {
+		var oODataAnnotations = new ODataAnnotations({annotationData : "~annotationData"});
+
+		assert.strictEqual(ODataAnnotations.prototype.getData, ODataAnnotations.prototype.getAnnotationsData);
+		assert.strictEqual(oODataAnnotations.getData(), "~annotationData");
+	});
 
 	QUnit.test("Apply Function", function(assert) {
 		assert.expect(12);

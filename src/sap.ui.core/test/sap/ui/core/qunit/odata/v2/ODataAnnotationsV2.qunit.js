@@ -749,6 +749,9 @@ sap.ui.define([
 
 	QUnit.test("Loading and accessing annotations", fnTestMisc1);
 
+	QUnit.test("ODataAnnotations#getAnnotationsData is alias of ODataAnnotations#getData", function (assert) {
+		assert.strictEqual(ODataAnnotations.prototype.getData, ODataAnnotations.prototype.getAnnotationsData);
+	});
 
 
 	QUnit.module("Annotation Test Cases for Bugfixes and Specification Changes");
