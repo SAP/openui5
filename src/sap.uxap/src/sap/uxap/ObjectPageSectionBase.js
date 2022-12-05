@@ -392,7 +392,7 @@ sap.ui.define([
 		// 'Section' - if it does not have a title or its hidden (for example, showTitle=false)
 
 		var sLabel = "",
-			sTitle = this._getShowTitle() && this._getTitle();
+			sTitle = this._getShouldLabelTitle() && this._getTitle();
 
 		sLabel = sTitle || this.getSectionText();
 
@@ -409,13 +409,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Getter for the visible state of the title.
-	 * This method is overwritten by property setter in inheriting controls.
+	 * Returns a boolean value indicating whether the title should be added to the section's aria label.
+	 * Aware of whether the subsection is promoted or not.
 	 *
-	 * @returns {boolean} true if the title is visible
+	 * @returns {boolean} true if title should be part of the label
 	 * @private
 	 */
-	ObjectPageSectionBase.prototype._getShowTitle = function () {
+	ObjectPageSectionBase.prototype._getShouldLabelTitle = function () {
 		return this.getShowTitle ? this.getShowTitle() : true;
 	};
 
