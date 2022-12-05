@@ -13,34 +13,12 @@
 /* global require */
 "use strict";
 
-var fs = require("fs");
-var pathModule = require("path");
+const {mkdirSync, writeFileSync} = require("fs");
 
-function mkdir(path) {
-	try {
-		fs.mkdirSync(path);
-	} catch (err) {
-		if ( err.code == "ENOENT" ) {
-			var slashIdx = path.lastIndexOf(pathModule.sep);
-			if ( slashIdx > 0 ) {
-				var parentPath = path.substring(0, slashIdx);
-				mkdir(parentPath);
-				mkdir(path);
-			} else {
-				throw err;
-			}
-		} else if ( err.code == "EEXIST" ) {
-			return;
-		} else {
-			throw err;
-		}
-	}
-}
-
-var NAME_PREFIX = "testlibs.";
-var _scenario = "";
-var _currentLibs = {};
-var _components = {};
+const NAME_PREFIX = "testlibs.";
+let _scenario = "";
+let _currentLibs = {};
+let _components = {};
 
 function scenario(s) {
 	_scenario = s + ".";
@@ -61,7 +39,7 @@ function makePath(lib) {
 }
 
 function makePredefine(code, module) {
-	return code.replace("sap.ui.define(", "sap.ui.predefine('" + module + "',");
+	return code.replace("sap.ui.define(", `sap.ui.predefine("${module}",`);
 }
 
 function makeLiteral(content) {
@@ -69,42 +47,32 @@ function makeLiteral(content) {
 }
 
 function makeLib(lib, dependencies) {
-	var code = [
-		"sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], function(Core, coreLib) {",
-		"	\"use strict\";",
-		"	sap.ui.getCore().initLibrary({",
-		"		name: '" + makeName(lib) + "',",
-		"		dependencies: [",
-		"		],",
-		"		noLibraryCSS: true",
-		"	});",
-		"	return " + makeName(lib) + "; // eslint-disable-line no-undef",
-		"});"
-	];
 
-	if ( dependencies ) {
-		for ( var i = 0, j = 5; i < dependencies.length; i++) {
-			var dep = dependencies[i];
-			if ( typeof dep === 'object' ) {
-				if ( dep.lazy ) {
-					continue;
-				}
-				dep = dep.name;
-			}
+	// only add non-lazy dependencies
+	const deps = dependencies
+		? dependencies.filter((dep) => typeof dep === "string" || !dep.lazy)
+		: [];
 
-			// add comma to the end of previous line
-			if (i > 0) {
-				code[j - 1] = code[j - 1] + ",";
-			}
-			code.splice(j++, 0, "\t\t\t'" + makeName(dep) + "'");
-		}
-	}
+	const code =
+`sap.ui.define([
+	"sap/ui/core/Core",
+	"sap/ui/core/library"
+], function(oCore) {
+	"use strict";
+	return oCore.initLibrary({
+		name: "${makeName(lib)}",
+		dependencies: [${deps.map((dep) => `
+			"${makeName(dep)}"`).join(",")}
+		],
+		noLibraryCSS: true
+	});
+});`;
 
-	return code.join('\n');
+	return code;
 }
 
 function makeManifest(lib, dependencies) {
-	var manifest = {
+	const manifest = {
 		"sap.ui5": {
 			"dependencies" : {
 				"libs": {
@@ -113,8 +81,7 @@ function makeManifest(lib, dependencies) {
 		}
 	};
 	if ( dependencies ) {
-		for ( var i = 0; i < dependencies.length; i++) {
-			var dep = dependencies[i];
+		dependencies.forEach((dep) => {
 			if ( typeof dep === 'string' ) {
 				dep = { name : dep };
 			}
@@ -122,14 +89,14 @@ function makeManifest(lib, dependencies) {
 				"minVersion": "1.0.0",
 				"lazy": dep.lazy || undefined
 			};
-		}
+		});
 	}
 	return JSON.stringify(manifest, null, "\t");
 }
 
 function makeLibPreloadJSON(lib, dependencies) {
 
-	var preloadJSON = {
+	const preloadJSON = {
 		"version":"2.0",
 		"name": makeName(lib) + ".library-preload",
 		"dependencies": undefined,
@@ -138,16 +105,15 @@ function makeLibPreloadJSON(lib, dependencies) {
 
 	if ( dependencies ) {
 		preloadJSON.dependencies = [];
-		for ( var i = 0; i < dependencies.length; i++) {
-			var dep = dependencies[i];
+		dependencies.forEach((dep) => {
 			if ( typeof dep === 'object' ) {
 				if ( dep.lazy ) {
-					continue;
+					return;
 				}
 				dep = dep.name;
 			}
 			preloadJSON.dependencies.push(makeName(dep) + ".library-preload");
-		}
+		});
 	}
 
 	preloadJSON.modules[makeModule(lib + ".library") + ".js"] = makeLib(lib, dependencies);
@@ -157,42 +123,37 @@ function makeLibPreloadJSON(lib, dependencies) {
 }
 
 function makeLibPreloadJS(lib, dependencies) {
-	var preloadJS = [];
-	var options;
+	const preloadJS = [];
+	const options = _components[lib];
 
-	preloadJS.push( makePredefine( makeLib(lib, dependencies), makeModule(lib + ".library")) );
-	if (_components[lib]) {
-		options = _components[lib];
-		preloadJS.push(makePredefine(options.code, makeModule(lib + "." + options.name + ".Component")));
+	preloadJS.push( makePredefine( makeLib(lib, dependencies), makeModule(`${lib}.library`)) );
+	if (options) {
+		preloadJS.push(makePredefine(options.code, makeModule(`${lib}.${options.name}.Component`)));
 	}
-	preloadJS.push("jQuery.sap.registerPreloadedModules({");
-	preloadJS.push("	\"version\":\"2.0\",");
-	preloadJS.push("	\"name\":\"" + makeName(lib) + "\",");
-	preloadJS.push("	\"modules\":{");
-
+	preloadJS.push("sap.ui.require.preload({");
 	if (options && options.manifest) {
-		preloadJS.push("		\"" + makeModule(lib + ".manifest") + ".json\":\"" + makeLiteral(makeManifest(lib, dependencies)) + "\",");
-		preloadJS.push("		\"" + makeModule(lib + "." + options.name + ".manifest") + ".json\":\"" + makeLiteral(JSON.stringify(options.manifest)) + "\"");
+		preloadJS.push(`	"${makeModule(`${lib}.manifest`)}.json":"${makeLiteral(makeManifest(lib, dependencies))}",`);
+		preloadJS.push(`	"${makeModule(`${lib}.${options.name}.manifest`)}.json":"${makeLiteral(JSON.stringify(options.manifest))}"`);
 	} else {
-		preloadJS.push("		\"" + makeModule(lib + ".manifest") + ".json\":\"" + makeLiteral(makeManifest(lib, dependencies)) + "\"");
+		preloadJS.push(`	"${makeModule(`${lib}.manifest`)}.json":"${makeLiteral(makeManifest(lib, dependencies))}"`);
 	}
-
-	preloadJS.push("	}");
 	preloadJS.push("});");
 
 	return preloadJS.join('\n');
 }
 
 function makeComponent(options) {
-	var path = options.owner + "." + options.name;
-	var code = [
-		"sap.ui.define(['sap/ui/core/UIComponent'], function(UIComponent) {",
-		"	\"use strict\";",
-		"	return UIComponent.extend(\"" + makeName(path + ".Component") + "\");",
-		"});"
-	];
+	const path = options.owner + "." + options.name;
 
-	var manifest = {
+	const code =
+`sap.ui.define([
+	"sap/ui/core/UIComponent"
+], function(UIComponent) {
+	"use strict";
+	return UIComponent.extend("${makeName(path)}.Component");
+});`;
+
+	const manifest = {
 		"_version": "1.12.0",
 		"sap.app": {
 			"id": makeName(path),
@@ -208,28 +169,26 @@ function makeComponent(options) {
 		manifest["sap.app"]["embeddedBy"] = options.embeddedBy;
 	}
 
-	code = code.join('\n');
 	options.code = code;
-
 	options.manifest = manifest;
 
 	_components[options.owner] = options;
 
-	mkdir(makePath(options.owner + "." + options.name));
+	mkdirSync(makePath(options.owner + "." + options.name), {recursive: true});
 
-	fs.writeFileSync(makePath(options.owner + "." + options.name) + "/Component.js", code);
-	fs.writeFileSync(makePath(options.owner + "." + options.name) + "/manifest.json", JSON.stringify(manifest, null, "\t"));
+	writeFileSync(makePath(options.owner + "." + options.name) + "/Component.js", code);
+	writeFileSync(makePath(options.owner + "." + options.name) + "/manifest.json", JSON.stringify(manifest, null, "\t"));
 }
 
 function makeLibWith(lib, features, dependencies) {
 	// build flat dep tree
-	var currentLib = _currentLibs[lib] = {
+	const currentLib = _currentLibs[lib] = {
 		name: lib,
 		flatDeps: []
 	};
 	if (dependencies) {
-		currentLib.deps = dependencies.map(function(dep) {
-			var isObject = typeof dep === 'object';
+		currentLib.deps = dependencies.map((dep) => {
+			const isObject = typeof dep === 'object';
 			return {
 				name: isObject ? dep.name : dep,
 				lazy: isObject ? dep.lazy : undefined
@@ -237,18 +196,18 @@ function makeLibWith(lib, features, dependencies) {
 		});
 	}
 
-	mkdir(makePath(lib));
+	mkdirSync(makePath(lib), {recursive: true});
 
-	fs.writeFileSync(makePath(lib) + "/library.js", makeLib(lib, dependencies));
+	writeFileSync(makePath(lib) + "/library.js", makeLib(lib, dependencies));
 
-	fs.writeFileSync(makePath(lib) + "/manifest.json", makeManifest(lib, dependencies));
+	writeFileSync(makePath(lib) + "/manifest.json", makeManifest(lib, dependencies));
 
 	if ( features && features.json ) {
-		fs.writeFileSync(makePath(lib) + "/library-preload.json", makeLibPreloadJSON(lib, dependencies));
+		writeFileSync(makePath(lib) + "/library-preload.json", makeLibPreloadJSON(lib, dependencies));
 	}
 
 	if ( features && features.js ) {
-		fs.writeFileSync(makePath(lib) + "/library-preload.js", makeLibPreloadJS(lib, dependencies));
+		writeFileSync(makePath(lib) + "/library-preload.js", makeLibPreloadJS(lib, dependencies));
 	}
 }
 
@@ -258,90 +217,81 @@ function flatten(libInfo, parents) {
 		parent.flatDeps.push(libInfo);
 	});
 
-	var lib = _currentLibs[libInfo.name];
+	const lib = _currentLibs[libInfo.name];
 	if (lib.deps) {
 		// go deeper
 		parents.push(lib);
-		lib.deps.forEach(function(childLib) {
-			flatten(childLib, parents);
-		});
+		lib.deps.forEach((childLib) => flatten(childLib, parents));
 		parents.pop();
 	}
 }
 
 function makeVersionInfo() {
-	var versionInfo = {
+	const versionInfo = {
 		libraries: [],
 		components: {}
 	};
 
-	var versionJson;
-
 	// resolve transitive dependencies
-	for (var libName in _currentLibs) {
-		flatten(_currentLibs[libName], []);
+	for (const currentLib of Object.values(_currentLibs)) {
+		flatten(currentLib, []);
 	}
 
-	var buildLibraryDependencyMap = function(dep) {
-		var depName = makeName(dep.name);
-		var libInfo = versionJson.manifestHints.dependencies.libs[depName];
-		// lib dep exists already, but is now not lazy anymore
-		if (libInfo) {
-			if (libInfo.lazy && !dep.lazy) {
-				delete libInfo.lazy;
-			}
-		} else {
-			// lib dependency does not exist yet
-			libInfo = {};
-			if (dep.lazy) {
-				libInfo.lazy = true;
-			}
-			versionJson.manifestHints.dependencies.libs[depName] = libInfo;
-		}
-	};
-
-	// libs
-	for (var currentLibKey in _currentLibs) {
-		var currentLib = _currentLibs[currentLibKey];
-		versionJson = {
-			name: makeName(currentLib.name)
+	function buildDependencyInfo(entity, dependencies) {
+		const propName = entity.owner ? "library" : "name";
+		const versionJson = {
+			[propName]: makeName(entity.owner || entity.name)
 		};
-		if (currentLib.flatDeps.length > 0) {
+
+		if (dependencies.length > 0) {
 			versionJson.manifestHints = {
 				dependencies: {
 					libs: {}
 				}
 			};
-			currentLib.flatDeps.forEach(buildLibraryDependencyMap);
+			dependencies.forEach((dep) => {
+				const depName = makeName(dep.name);
+				let libInfo = versionJson.manifestHints.dependencies.libs[depName];
+				if (libInfo) {
+					// lib dep exists already, but is now not lazy anymore
+					if (libInfo.lazy && !dep.lazy) {
+						delete libInfo.lazy;
+					}
+				} else {
+					// lib dependency does not exist yet
+					libInfo = {};
+					if (dep.lazy) {
+						libInfo.lazy = true;
+					}
+					versionJson.manifestHints.dependencies.libs[depName] = libInfo;
+				}
+			});
 		}
+
+		return versionJson;
+	}
+
+	// libs
+	for (const currentLib of Object.values(_currentLibs)) {
+		const versionJson = buildDependencyInfo(currentLib, currentLib.flatDeps);
 
 		versionInfo.libraries.push(versionJson);
 	}
 
 	// components
-	for (var currentCompKey in _components) {
-		var currentComp = _components[currentCompKey];
+	for (const currentComp of Object.values(_components)) {
 
-		versionJson = {
-			library: makeName(currentComp.owner),
-			manifestHints: {
-				dependencies: {
-					libs: {}
-				}
-			}
-		};
+		const ownerLib = _currentLibs[currentComp.owner];
+		let aCompDepsTransitive = [];
 
-		var ownerLib = _currentLibs[currentComp.owner];
-		var aCompDepsTransitive = [];
-
-		// reuse existing trans. dependencies
+		// reuse existing transitive dependencies
 		if (ownerLib.flatDeps) {
 			aCompDepsTransitive = ownerLib.flatDeps.slice();
 		}
 
-		currentComp.extraDependencies.forEach(function(extraDepKey) { // eslint-disable-line no-loop-func
+		currentComp.extraDependencies.forEach((extraDepKey) => { // eslint-disable-line no-loop-func
 			// look up transitive closure for the extra dependencies
-			var extraDep = _currentLibs[extraDepKey];
+			const extraDep = _currentLibs[extraDepKey];
 			if (extraDep) {
 				aCompDepsTransitive = aCompDepsTransitive.concat(extraDep.flatDeps);
 			}
@@ -350,12 +300,12 @@ function makeVersionInfo() {
 			});
 		});
 
-		aCompDepsTransitive.forEach(buildLibraryDependencyMap);
+		const versionJson = buildDependencyInfo(currentComp, aCompDepsTransitive);
 
 		versionInfo.components[makeName(currentComp.owner + "." + currentComp.name)] = versionJson;
 	}
 
-	fs.writeFileSync(makePath("") + "/sap-ui-version.json", JSON.stringify(versionInfo, null, '\t'));
+	writeFileSync(makePath("") + "/sap-ui-version.json", JSON.stringify(versionInfo, null, '\t'));
 }
 
 scenario("scenario1");

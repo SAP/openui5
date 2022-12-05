@@ -1,11 +1,13 @@
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], function(Core, coreLib) {
+sap.ui.define([
+	"sap/ui/core/Core",
+	"sap/ui/core/library"
+], function(oCore) {
 	"use strict";
-	sap.ui.getCore().initLibrary({
-		name: 'testlibs.scenario14.lib8',
+	return oCore.initLibrary({
+		name: "testlibs.scenario14.lib8",
 		dependencies: [
-			'testlibs.scenario14.lib1'
+			"testlibs.scenario14.lib1"
 		],
 		noLibraryCSS: true
 	});
-	return testlibs.scenario14.lib8; // eslint-disable-line no-undef
 });
