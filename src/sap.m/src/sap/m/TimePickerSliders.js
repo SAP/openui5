@@ -77,14 +77,14 @@ sap.ui.define([
 					 * The <code>displayFormat</code> comes from the browser language settings if not set explicitly.
 					 *
 					 */
-					displayFormat: {name: "displayFormat", type: "string", group: "Appearance"},
+					displayFormat: {type: "string", group: "Appearance"},
 
 					/**
 					 * Defines the text of the picker label.
 					 *
 					 * It is read by screen readers. It is visible only on phone.
 					 */
-					labelText: {name: "labelText", type: "string"},
+					labelText: {type: "string"},
 
 					/**
 					 * Sets the minutes slider step. If step is less than 1, it will be automatically converted back to 1.

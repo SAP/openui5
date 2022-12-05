@@ -80,11 +80,12 @@ sap.ui.define([
 
 			/**
 			 * This property defines if the toggler should be displayed the whole time when the NotificationBar is shown.
+			 *
+			 * @since 1.24.5
 			 */
 			alwaysShowToggler : {
 				type : "boolean",
-				defaultValue : false,
-				since : "1.24.5"
+				defaultValue : false
 			}
 		},
 		aggregations : {

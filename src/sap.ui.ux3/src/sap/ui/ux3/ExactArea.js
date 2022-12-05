@@ -73,7 +73,7 @@ sap.ui.define([
 	  metadata: {
 	    interfaces : ["sap.ui.commons.ToolbarItem"],
 	    properties : {
-	      text : {name : "text", type : "string", group : "Appearance", defaultValue : ''}
+	      text : {type : "string", group : "Appearance", defaultValue : ''}
 	    }
 	  }
 

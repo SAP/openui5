@@ -95,8 +95,7 @@ sap.ui.define([
 					 */
 					 open: {
 						type: "boolean",
-						defaultValue: false,
-						hidden: true
+						defaultValue: false
 					},
 
 					/**

@@ -165,25 +165,25 @@ sap.ui.define([
 				 * See the section {@link https://experience.sap.com/fiori-design-web/using-tooltips/ Using Tooltips}
 				 * in the Fiori Design Guideline.
 				 */
-				tooltip : {name : "tooltip", type : "sap.ui.core.TooltipBase", altTypes : ["string"], multiple : false},
+				tooltip : {type : "sap.ui.core.TooltipBase", altTypes : ["string"], multiple : false},
 
 				/**
 				 * Custom Data, a data structure like a map containing arbitrary key value pairs.
 				 */
-				customData : {name : "customData", type : "sap.ui.core.CustomData", multiple : true, singularName : "customData"},
+				customData : {type : "sap.ui.core.CustomData", multiple : true, singularName : "customData"},
 
 				/**
 				 * Defines the layout constraints for this control when it is used inside a Layout.
 				 * LayoutData classes are typed classes and must match the embedding Layout.
 				 * See VariantLayoutData for aggregating multiple alternative LayoutData instances to a single Element.
 				 */
-				layoutData : {name : "layoutData", type : "sap.ui.core.LayoutData", multiple : false, singularName : "layoutData"},
+				layoutData : {type : "sap.ui.core.LayoutData", multiple : false, singularName : "layoutData"},
 
 				/**
 				 * Dependents are not rendered, but their databinding context and lifecycle are bound to the aggregating Element.
 				 * @since 1.19
 				 */
-				dependents : {name : "dependents", type : "sap.ui.core.Element", multiple : true},
+				dependents : {type : "sap.ui.core.Element", multiple : true},
 
 				/**
 				 * Defines the drag-and-drop configuration.
@@ -191,7 +191,7 @@ sap.ui.define([
 				 *
 				 * @since 1.56
 				 */
-				dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"}
+				dragDropConfig : {type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"}
 			}
 		},
 

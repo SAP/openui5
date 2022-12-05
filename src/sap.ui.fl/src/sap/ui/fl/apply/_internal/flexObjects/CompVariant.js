@@ -59,16 +59,14 @@ sap.ui.define([
 				revertData: {
 					type: "sap.ui.base.ManagedObject", // "sap.ui.fl.apply._internal.flexObjects.CompVariantRevertData"
 					multiple: true,
-					singularName: "revertData",
-					defaultValue: []
+					singularName: "revertData"
 				},
 				/**
 				 * Changes belonging to the variant
 				 */
 				changes: {
 					type: "sap.ui.base.ManagedObject", // "sap.ui.fl.apply._internal.flexObjects.FlexObject"
-					multiple: true,
-					defaultValue: []
+					multiple: true
 				}
 			}
 		},

@@ -26,8 +26,7 @@ sap.ui.define([
 				revertInfo: {
 					type: "sap.ui.base.ManagedObject", // "sap.ui.fl.apply._internal.flexObjects.RevertData"
 					multiple: true,
-					singularName: "revertInfo",
-					defaultValue: []
+					singularName: "revertInfo"
 				}
 			}
 		}

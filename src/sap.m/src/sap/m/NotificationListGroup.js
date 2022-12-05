@@ -112,7 +112,7 @@ function(
 				 *
 				 *  @deprecated As of version 1.73
 				 */
-				authorPicture: {type: 'sap.ui.core.URI', multiple: false, deprecated: true},
+				authorPicture: {type: 'sap.ui.core.URI', deprecated: true},
 
 				/**
 				 * Determines the due date of the NotificationListGroup.

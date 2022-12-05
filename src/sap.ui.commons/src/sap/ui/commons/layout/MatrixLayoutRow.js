@@ -32,7 +32,6 @@ sap.ui.define(['sap/ui/commons/library', 'sap/ui/core/CustomStyleClassSupport', 
 
 		deprecated: true,
 		library : "sap.ui.commons",
-		aggregatingType : "MatrixLayout",
 		properties : {
 
 			/**

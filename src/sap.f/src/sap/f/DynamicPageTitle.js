@@ -167,7 +167,7 @@ sap.ui.define([
 				 * the <code>DynamicPageHeader</code> is in its collapsed (snapped) state.</li>
 				 * </ul>
 				 */
-				heading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null},
+				heading: {type: "sap.ui.core.Control", multiple: false},
 
 				/**
 				 * The <code>snappedHeading</code> is positioned in the <code>DynamicPageTitle</code> left area
@@ -187,7 +187,7 @@ sap.ui.define([
 				 *
 				 * @since 1.52
 				 */
-				snappedHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null},
+				snappedHeading: {type: "sap.ui.core.Control", multiple: false},
 
 				/**
 				 * The <code>expandedHeading</code> is positioned in the <code>DynamicPageTitle</code> left area
@@ -200,7 +200,7 @@ sap.ui.define([
 				 * <code>snappedHeading</code> to switch content when the header switches state.
 				 * @since 1.52
 				 */
-				expandedHeading: {type: "sap.ui.core.Control", multiple: false, defaultValue: null},
+				expandedHeading: {type: "sap.ui.core.Control", multiple: false},
 
 				/**
 				 * The <code>DynamicPageTitle</code> actions.

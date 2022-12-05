@@ -186,7 +186,7 @@ function(
 				 * @experimental Since 1.78. This aggregation is experimental and provides only limited functionality. Also the API might be changed in future.
 				 * @since 1.78
 				 */
-				formattedValueStateText: { type: "sap.m.FormattedText", multiple: false, defaultValue: null },
+				formattedValueStateText: { type: "sap.m.FormattedText", multiple: false },
 
 				/**
 				 * Clone of the <code>formattedValueStateText</code> aggregation created for the accessibility elements used
@@ -194,7 +194,7 @@ function(
 				 * @experimental Since 1.84. This aggregation is experimental and provides only limited functionality. Also the API might be changed in future.
 				 * @since 1.84
 				 */
-				_invisibleFormattedValueStateText: { type: "sap.m.FormattedText", multiple: false, visibility: "hidden", defaultValue: null },
+				_invisibleFormattedValueStateText: { type: "sap.m.FormattedText", multiple: false, visibility: "hidden" },
 
 				/**
 				 * Icons that will be placed after the input field
