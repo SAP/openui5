@@ -440,5 +440,36 @@
         ]
       }
     ]
+  },
+  "1.84.31": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "ae5517603df463fb146be07e933970624cb243a5",
+        "type": "FIX",
+        "text": "sap.m.TimesRow: getting a correct instance of a DateFormat",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007162242022"
+          }
+        ]
+      },
+      {
+        "id": "cdcadffad0171cde11c7e84f6db2f3fdec67f4a3",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Invalid attribute removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070407883"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280159254"
+          }
+        ]
+      }
+    ]
   }
 }

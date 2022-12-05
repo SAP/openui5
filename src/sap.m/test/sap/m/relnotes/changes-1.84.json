@@ -1599,5 +1599,47 @@
         ]
       }
     ]
+  },
+  "1.84.31": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "b194a281c0a381daa6752128a96a787a91359d0d",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Duplicated banner regions removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007193702022"
+          }
+        ]
+      },
+      {
+        "id": "ff6439ecf8eeddfd5c4678b5fb247fe41c222652",
+        "type": "FIX",
+        "text": " sap.m.Button: adjusting self reference",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270101986"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280166158"
+          }
+        ]
+      },
+      {
+        "id": "8566d88afd490db76773e0b476854a7d5a734f32",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: active and hovered stated properly visualized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180226616"
+          }
+        ]
+      }
+    ]
   }
 }

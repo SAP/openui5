@@ -697,5 +697,32 @@
         ]
       }
     ]
+  },
+  "1.84.31": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "ca3d9facc4297ea3f5777899e3442e710952a520",
+        "type": "FIX",
+        "text": " sap.ui.core.(format.DateFormat|date.UniversalDate): Do not use Object.values, Array#includes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270177952"
+          }
+        ]
+      },
+      {
+        "id": "fb15faf96cba6918102255a81fbe742f2635b1e7",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: introduce calendarWeekNumbering format option",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007627612021"
+          }
+        ]
+      }
+    ]
   }
 }

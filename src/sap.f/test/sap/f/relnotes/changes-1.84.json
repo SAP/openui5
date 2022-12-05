@@ -230,5 +230,25 @@
         ]
       }
     ]
+  },
+  "1.84.31": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "5afb19fcf8491d66cb50bc08ca3c9fb225243d77",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Restore automatic fitContent management",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270032047"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270031933"
+          }
+        ]
+      }
+    ]
   }
 }
