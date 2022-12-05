@@ -3,6 +3,7 @@
 sap.ui.define([
 	'sap/base/Log',
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
@@ -16,6 +17,7 @@ sap.ui.define([
 ], function(
 	Log,
 	Core,
+	Element,
 	coreLibrary,
 	QUnitUtils,
 	KeyCodes,
@@ -896,7 +898,7 @@ sap.ui.define([
 		assert.ok(this.navigationList._popover, "should save popover reference");
 
 		var $groupItem = jQuery('.sapTntNavLI .sapTntNavLIGroupItem').first();
-		var popover = $groupItem.closest('.sapMPopover').control()[0];
+		var popover = Element.closestTo($groupItem.closest('.sapMPopover')[0]);
 
 		var sExpectedAriaRoleDescription = Core.getLibraryResourceBundle("sap.tnt")
 			.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE");
