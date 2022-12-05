@@ -884,7 +884,6 @@ sap.ui.define([
 
 				var fDelayedFunction = function() {
 					this._validate(bFireSearch);
-					this._oValidationPromise = null;
 				};
 				setTimeout(fDelayedFunction.bind(this), 0);
 			}
@@ -1121,6 +1120,7 @@ sap.ui.define([
 		}.bind(this);
 
 		var fnCleanup = function() {
+			this._oValidationPromise = null;
 			this._fRejectedSearchPromise = null;
 			this._fResolvedSearchPromise = null;
 		}.bind(this);
