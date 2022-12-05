@@ -50,7 +50,6 @@ sap.ui.define([
 	});
 
 	var _libraryInfoSingleton;
-	var _oAppInfo;
 
 	var DocumentationLibraryInfo = LibraryInfo.extend("sap.ui.documentation.DocumentationLibraryInfo", {});
 
@@ -69,31 +68,31 @@ sap.ui.define([
 		});
 	};
 
-	thisLibrary._getAppInfo = function(fnCallback) {
-		var sUrl = sap.ui.require.toUrl("sap-ui-version.json");
-			sUrl = ResourcesUtil.getResourceOriginPath(sUrl);
-		if (_oAppInfo){
-			fnCallback(_oAppInfo);
+	thisLibrary._getAppInfo = function(fnCallback, sReqVersion) {
+		var sUrl;
+		if(sReqVersion){
+			sUrl = ResourcesUtil.getResourceOriginPath(`${sReqVersion}/resources/sap-ui-version.json`);
 		} else {
-			jQuery.ajax({
-				url: sUrl,
-				dataType: "json",
-				error: function(xhr, status, e) {
-					Log.error("failed to load library list from '" + sUrl + "': " + status + ", " + e);
-					fnCallback(null);
-				},
-				success : function(oAppInfo, sStatus, oXHR) {
-					if (!oAppInfo) {
-						Log.error("failed to load library list from '" + sUrl + "': " + sStatus + ", Data: " + oAppInfo);
-						fnCallback(null);
-						return;
-					}
-
-					_oAppInfo = oAppInfo;
-					fnCallback(oAppInfo);
-				}
-			});
+			sUrl = ResourcesUtil.getResourceOriginPath("resources/sap-ui-version.json");
 		}
+
+		jQuery.ajax({
+			url: sUrl,
+			dataType: "json",
+			error: function(xhr, status, e) {
+				Log.error("failed to load library list from '" + sUrl + "': " + status + ", " + e);
+				fnCallback(null);
+			},
+			success : function(oAppInfo, sStatus, oXHR) {
+				if (!oAppInfo) {
+					Log.error("failed to load library list from '" + sUrl + "': " + sStatus + ", Data: " + oAppInfo);
+					fnCallback(null);
+					return;
+				}
+
+				fnCallback(oAppInfo);
+			}
+		});
 	};
 
 	/**
@@ -175,7 +174,7 @@ sap.ui.define([
 				});
 				/*eslint-enable no-loop-func */
 			}
-		});
+		}, `${sReqVersion}.0`);
 	};
 
 	return thisLibrary;
