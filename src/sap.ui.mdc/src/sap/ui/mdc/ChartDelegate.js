@@ -30,7 +30,7 @@ sap.ui.define([
      * @param {int} iValue Value to zoom in
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.zoomIn = function (oMDCChart, iValue) {
     };
@@ -41,7 +41,7 @@ sap.ui.define([
      * @param {int} iValue value to zoom in
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.zoomOut = function (oMDCChart, iValue) {
     };
@@ -58,7 +58,7 @@ sap.ui.define([
      * @returns {ZoomState} Current <code>ZoomState</code> of the inner chart
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.getZoomState = function (oMDCChart) {
     };
@@ -117,7 +117,7 @@ sap.ui.define([
      * @returns {Promise} Promise that resolves with new MDC chart Item as parameter
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.addItem = function (sPropertyName, oMDCChart, mPropertyBag, sRole) {
     };
@@ -138,7 +138,7 @@ sap.ui.define([
      * @returns {object} Event handler for chartSelectionDetails
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.getInnerChartSelectionHandler = function (oMDCChart) {
     };
@@ -151,7 +151,7 @@ sap.ui.define([
      *
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.setLegendVisible = function (oMDCChart, bVisible) {
     };
@@ -180,7 +180,7 @@ sap.ui.define([
      * @param {int} iIndex the index to insert into
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.insertItemToInnerChart = function (oMDCChart, oMDCChartItem, iIndex) {
     };
@@ -193,7 +193,7 @@ sap.ui.define([
      * @param {sap.ui.mdc.chart.Item} oMDCChartItem Item to remove from the inner chart
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.removeItemFromInnerChart = function (oMDCChart, oMDCChartItem) {
     };
@@ -291,7 +291,7 @@ sap.ui.define([
      *
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements
+     * @ui5-restricted sap.fe
      */
     ChartDelegate.getAvailableChartTypes = function (oMDCChart) {
     };
@@ -500,14 +500,14 @@ sap.ui.define([
     ChartDelegate.fetchProperties = function (oMDCChart) {
     };
 
-     /**
+    /**
      * Adds/Removes the overlay shown above the inner chart.
      * @param {sap.ui.mdc.Chart} oMDCChart reference to the chart
      * @param {boolean} bShow <code>true</code> to show overlay, <code>false</code> to hide
      *
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.showOverlay = function(oMDCChart, bShow) {
 

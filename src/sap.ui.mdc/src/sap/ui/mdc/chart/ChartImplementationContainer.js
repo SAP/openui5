@@ -120,7 +120,7 @@ function (Control, Renderer, Core, jQuery
      * @returns {sap.ui.mdc.chart.ChartImplementationContainer} reference to <code>this</code> in order to allow method chaining
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartContainer.prototype.setContent = function(oContent) {
         this.setAggregation("content", oContent);
@@ -134,7 +134,7 @@ function (Control, Renderer, Core, jQuery
      * @returns {sap.ui.mdc.chart.ChartImplementationContainer} reference to <code>this</code> in order to allow method chaining
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartContainer.prototype.setNoDataContent = function(oContent) {
         this.setAggregation("noDataContent", oContent);
@@ -149,7 +149,7 @@ function (Control, Renderer, Core, jQuery
      * @returns {sap.ui.mdc.chart.ChartImplementationContainer} reference to <code>this</code> in order to allow method chaining
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartContainer.prototype.setChartNoDataContent = function(oContent) {
         this.setAssociation("chartNoDataContent", oContent);
@@ -163,7 +163,7 @@ function (Control, Renderer, Core, jQuery
      *
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartContainer.prototype.showOverlay = function(bShow) {
         var $this = this.$(), $overlay = $this.find(".sapUiMdcChartOverlay");
