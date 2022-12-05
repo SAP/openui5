@@ -351,7 +351,7 @@ sap.ui.define([
 		var $container = oPopupControl.$().find('.sapMPopoverCont');
 
 		if ($container[0] && !$container[0].style.height) {
-			$container[0].style.height = $container.height() + 'px';
+			$container[0].style.height = $container.outerHeight() + 'px';
 		}
 	};
 
