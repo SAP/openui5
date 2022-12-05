@@ -253,7 +253,7 @@ sap.ui.define([
 			}
 		}
 
-		return undefined;
+		return this._ariaText.getId();
 	};
 
 	/**

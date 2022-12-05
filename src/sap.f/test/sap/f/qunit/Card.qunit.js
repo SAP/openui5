@@ -357,6 +357,20 @@ function (
 
 	QUnit.module("Accessibility");
 
+	QUnit.test("Empty card", function (assert) {
+
+		// Arrange
+		var oCard = new Card();
+
+		// Act
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		assert.ok(oCard.getDomRef().getAttribute("aria-labelledby"), "aria-labelledby is set");
+
+		oCard.destroy();
+	});
+
 	QUnit.test("Header", function (assert) {
 
 		// Arrange
