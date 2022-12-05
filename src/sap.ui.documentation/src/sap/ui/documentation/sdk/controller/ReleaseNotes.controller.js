@@ -79,7 +79,7 @@ sap.ui.define([
 			_processLibInfo: function (aLibs, oLibInfos) {
 				var iReleaseNotes,
 					aReturnLibs = [],
-					iLength = aLibs.length,
+					iLength = Array.isArray(aLibs) ? aLibs.length : 0,
 					fnProcessLib,
 					i;
 
