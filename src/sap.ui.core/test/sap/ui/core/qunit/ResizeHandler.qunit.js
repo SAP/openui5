@@ -104,10 +104,8 @@ sap.ui.define([
 		assert.equal(oLogSpy.getCall(0).args[0], sLogMessage, "Calling the constructor should log an error");
 	});
 
-
-
 	/**
-	 * @deprecated
+	 * @deprecated As of version 1.110
 	 */
 	QUnit.module("[Compatibility] Legacy API");
 
