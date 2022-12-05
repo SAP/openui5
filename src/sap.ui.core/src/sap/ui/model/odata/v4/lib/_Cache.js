@@ -1227,7 +1227,7 @@ sap.ui.define([
 				? false // ignore transient elements on top level
 				: _Helper.hasPathPrefix(sRequestPath, sPath)
 					&& that.mPostRequests[sRequestPath].some(function (oEntityData) {
-						return !oEntityData["@$ui5.context.isInactive"];
+						return oEntityData["@$ui5.context.isInactive"] !== true;
 					});
 		});
 	};

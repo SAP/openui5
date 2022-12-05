@@ -997,6 +997,14 @@ sap.ui.define([
 			assert.strictEqual(hasPendingChangesForPath("foo"), false);
 			assert.strictEqual(hasPendingChangesForPath("foo/bar"), false);
 			assert.strictEqual(hasPendingChangesForPath("foo/bar/baz"), false);
+
+			oCache.mPostRequests["foo/bar('baz')"] = [{"@$ui5.context.isInactive" : 1}];
+
+			// code under test (only "inactive with prevented activation" entities)
+			assert.strictEqual(hasPendingChangesForPath(""), true);
+			assert.strictEqual(hasPendingChangesForPath("foo"), true);
+			assert.strictEqual(hasPendingChangesForPath("foo/bar"), true);
+			assert.strictEqual(hasPendingChangesForPath("foo/bar/baz"), false);
 		}
 	});
 		});
