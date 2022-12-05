@@ -3,6 +3,17 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "ec18047347271326dfbc6eb8885ef98e43843bcc",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#attachCreateCompleted: timing issue w/ Context#delete",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280183921"
+          }
+        ]
+      },
+      {
         "id": "5f83694c9b93ee693c3794b6977703cabd2b8069",
         "type": "FIX",
         "text": " initTraces: Match URL correctly",

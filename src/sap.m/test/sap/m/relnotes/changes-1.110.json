@@ -8,6 +8,17 @@
         "text": " sap.m.Carousel: New BackgroundDesign property implemented"
       },
       {
+        "id": "46321fa49cf654fe00d07c3e7f432b6bb5d1ad55",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: aria-controls attribute added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270147621"
+          }
+        ]
+      },
+      {
         "id": "fd03d42c5b85cdcaf2f444a18a585bc816e88df4",
         "type": "FIX",
         "text": " sap.m.TimePicker: Error in console no longer appears",
