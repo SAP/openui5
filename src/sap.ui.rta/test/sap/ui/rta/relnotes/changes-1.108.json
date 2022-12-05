@@ -19,5 +19,21 @@
         ]
       }
     ]
+  },
+  "1.108.2": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "035dda95ab0ad86a55d393d7620e40ea3fe4b156",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Duplicated banner regions removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007193702022"
+          }
+        ]
+      }
+    ]
   }
 }

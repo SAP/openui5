@@ -235,5 +235,47 @@
         ]
       }
     ]
+  },
+  "1.108.2": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "4dd38226fe82fdedebfde932a0d286ccf2fcc2ec",
+        "type": "FIX",
+        "text": " theming/ThemeManager: Fix preloadLibCss",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270189263"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500008388142022"
+          }
+        ]
+      },
+      {
+        "id": "80fcad7097807f5ba72f4c97ef32d44c46e04377",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataContextBinding: message target for a failed PATCH of a nested entity below a return value context",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270142577"
+          }
+        ]
+      },
+      {
+        "id": "8f3e65555a7e0a6d087f45e81e2459a9d50735e6",
+        "type": "FIX",
+        "text": " ManagedObjectObserver: performance optimization for destroy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008610112022"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -442,5 +442,69 @@
         ]
       }
     ]
+  },
+  "1.108.2": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "e3af9fedd8a890cc3fc1ad97c1e3a7d42414386c",
+        "type": "FIX",
+        "text": " p13n.Popover: fix vertical scrolling with only one panel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280181431"
+          }
+        ]
+      },
+      {
+        "id": "64fa2b935f73d76b0326f6051fb370c308a753c0",
+        "type": "FIX",
+        "text": " sap.m.Fiori20Adapter: Ignore destroyed views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270146288"
+          }
+        ]
+      },
+      {
+        "id": "9c9f4e667bb5a212c9957635496aec30197b5626",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Vertical margin will always be set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008322262022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400008540262022"
+          }
+        ]
+      },
+      {
+        "id": "c9e5ffa8e1ee03eb254c2a0dbf054214422145bc",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: add value help button label",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270187461"
+          }
+        ]
+      },
+      {
+        "id": "035dda95ab0ad86a55d393d7620e40ea3fe4b156",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Duplicated banner regions removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007193702022"
+          }
+        ]
+      }
+    ]
   }
 }

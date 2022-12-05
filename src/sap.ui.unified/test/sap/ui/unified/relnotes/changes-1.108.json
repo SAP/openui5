@@ -41,5 +41,21 @@
         ]
       }
     ]
+  },
+  "1.108.2": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "325596480659c3c99b161f1037da2901b3254225",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.MonthsRow: apply focus on a propper day",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008327852022"
+          }
+        ]
+      }
+    ]
   }
 }

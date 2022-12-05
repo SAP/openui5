@@ -88,5 +88,21 @@
         "text": " Integration Cards: Header can be hidden"
       }
     ]
+  },
+  "1.108.2": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "d26df553b590908d756040a62cac30ef327631b3",
+        "type": "FIX",
+        "text": " GridList: Corrected accessibility role in \"No Data\" message",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270187826"
+          }
+        ]
+      }
+    ]
   }
 }

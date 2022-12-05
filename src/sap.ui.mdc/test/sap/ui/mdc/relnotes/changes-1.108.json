@@ -91,5 +91,21 @@
         ]
       }
     ]
+  },
+  "1.108.2": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "71ad3b941354e39c008a6050bf53584f53d41315",
+        "type": "FIX",
+        "text": " FieldGroup is left if value help opens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007766102022"
+          }
+        ]
+      }
+    ]
   }
 }
