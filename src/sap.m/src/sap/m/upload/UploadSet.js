@@ -160,7 +160,7 @@ sap.ui.define([
 				 cloudFilePickerButtonText: {type: 'string', defaultValue: ""},
 				 /**
 				  * Lets the user upload entire files from directories and sub directories.
-				  * @since 1.107.
+				  * @since 1.107
 				  */
 				 directory: {type: "boolean", group: "Behavior", defaultValue: false}
 				},

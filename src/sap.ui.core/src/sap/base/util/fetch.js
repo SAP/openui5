@@ -48,7 +48,7 @@ sap.ui.define([], function () {
 	 * @interface
 	 * @alias sap.base.util.SimpleResponse
 	 * @private
-	 * @ui5-restricted SAPUI5 Dist
+	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
 	function SimpleResponse(xhr, PromiseImpl) {
 		var headers = parseHeaders(xhr.getAllResponseHeaders());
@@ -120,7 +120,7 @@ sap.ui.define([], function () {
 	 *
 	 * @alias module:sap/base/util/fetch
 	 * @private
-	 * @ui5-restricted SAPUI5 Dist
+	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */
 	function fetch(resource, init, _mImplementations) {
 		/**
@@ -215,7 +215,7 @@ sap.ui.define([], function () {
 	 *
 	 * @type {Object}
 	 * @private
-	 * @ui5-restricted SAPUI5 Dist
+	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 *
 	 */
 	fetch.ContentTypes = {

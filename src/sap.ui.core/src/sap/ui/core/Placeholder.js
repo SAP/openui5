@@ -36,7 +36,7 @@ sap.ui.define([
 	 * @alias sap.ui.core.Placeholder
 	 * @extends sap.ui.base.Object
 	 * @private
-	 * @ui5-restricted SAPUI5 Distribution libraries only
+	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 * @since 1.92
 	 */
 	var Placeholder = BaseObject.extend("sap.ui.core.Placeholder", /* @lends sap.ui.core.Placeholder.prototype */ {
@@ -139,7 +139,7 @@ sap.ui.define([
 	 * @param {function} fnProvider Provider function which provides the placeholder HTML file name
 	 *
 	 * @private
-	 * @ui5-restricted SAPUI5 Distribution libraries only
+	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 * @since 1.92
 	 */
 	Placeholder.registerProvider = function(fnProvider) {

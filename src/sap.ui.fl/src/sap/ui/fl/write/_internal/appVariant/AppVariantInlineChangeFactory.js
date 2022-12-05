@@ -916,7 +916,7 @@ sap.ui.define([
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
 	 *
 	 * @private
-	 * @ui5-restricted WebIDE
+	 * @ui5-restricted SAP Web IDE
 	 */
 	AppVariantInlineChangeFactory.create_ui5_setFlexExtensionPointEnabled = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "flexExtensionPointEnabled", "boolean");
@@ -958,7 +958,7 @@ sap.ui.define([
 	 * @return {Promise} Resolving when the descriptor inline change was created successfully (without back-end access)
 	 *
 	 * @private
-	 * @ui5-restricted WebIDE
+	 * @ui5-restricted SAP Web IDE
 	 */
 	 AppVariantInlineChangeFactory.create_fiori_setAbstract = function(mPropertyBag) {
 		Utils.checkParameterAndType(mPropertyBag.content, "abstract", "boolean");

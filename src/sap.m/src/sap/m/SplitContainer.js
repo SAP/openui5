@@ -2103,7 +2103,7 @@ function(
 	 * @param {string} mSettings.aggregation The aggregation name to decide on which column/container the placeholder should be shown
 	 *
 	 * @private
-	 * @ui5-restricted SAPUI5 Distribution libraries only
+	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 * @since 1.91
 	 */
 	SplitContainer.prototype.showPlaceholder = function(mSettings) {

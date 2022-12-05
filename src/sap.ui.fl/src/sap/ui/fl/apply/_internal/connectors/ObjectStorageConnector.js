@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @deprecated
 	 * @since 1.70
 	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal.Storage, sap.ui.fl.write._internal.Storage, WebIDE
+	 * @ui5-restricted sap.ui.fl.apply._internal.Storage, sap.ui.fl.write._internal.Storage, SAP Web IDE
 	 */
 	var ObjectStorageConnector = {
 		/**

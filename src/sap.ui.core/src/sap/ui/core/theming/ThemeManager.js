@@ -35,7 +35,7 @@ sap.ui.define([
 	 * It could happen that e.g. in onAfterRendering not all themes are available. In these cases the
 	 * check waits until the CSS is applied and fires an onThemeChanged event.
 	 *
-	 * @extends sap.ui.base.Object
+	 * @extends sap.ui.base.EventProvider
 	 * @since 1.10.0
 	 * @author SAP SE
 	 * @private

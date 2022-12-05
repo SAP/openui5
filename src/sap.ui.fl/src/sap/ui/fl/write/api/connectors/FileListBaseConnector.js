@@ -18,7 +18,7 @@ sap.ui.define([
 	 * The <code>loadFlexData</code> already ensures that all <code>sap.ui.fl</code>-internals are handled accordingly.
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.fl, SAPUI5 Visual Editor, UX Tools
+	 * @ui5-restricted sap.ui.fl, SAP Web IDE (Visual Editor), UX Tools
 	 * @abstract
 	 */
 	return {

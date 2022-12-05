@@ -2304,7 +2304,7 @@ sap.ui.define([
 	 * @param {object} mSettings Object containing the aggregation name
 	 * @param {string} mSettings.aggregation The aggregation name to decide on which column/container the placeholder should be shown
 	 * @private
-	 * @ui5-restricted SAPUI5 Distribution libraries only
+	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 * @since 1.91
 	 */
 	FlexibleColumnLayout.prototype.showPlaceholder = function(mSettings) {
