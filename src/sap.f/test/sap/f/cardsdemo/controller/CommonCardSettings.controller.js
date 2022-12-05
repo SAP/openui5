@@ -32,7 +32,17 @@ sap.ui.define([
 			}
 
 			return oParent;
-		}
+		},
+		onFormFactorChange: function () {
+			document.body.classList.toggle("sapUiSizeCompact");
 
+			this._oParentView
+				.findAggregatedObjects(true, function (e) {
+					return e.isA("sap.ui.integration.widgets.Card");
+				})
+				.forEach(function (oCard) {
+					oCard.refresh();
+				});
+		}
 	});
 });

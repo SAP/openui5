@@ -3,9 +3,16 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true"
 	controllerName="sap.f.cardsdemo.controller.CommonCardSettings">
-	<!-- Embed this view in the other views to display common settings -->
-	<!-- TODO: Put cozy/compact switch here -->
 	<VBox class="sapUiSmallMarginBegin">
+		<SegmentedButton
+				selectedKey="cozy"
+				selectionChange=".onFormFactorChange"
+				class="VizTestDensityBtn sapUiSmallMargin">
+			<items>
+				<SegmentedButtonItem text="Cozy" key="cozy" />
+				<SegmentedButtonItem text="Compact" key="compact" />
+			</items>
+		</SegmentedButton>
 		<HBox
 			renderType="Bare"
 			alignItems="Center">
