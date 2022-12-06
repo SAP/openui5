@@ -96,17 +96,18 @@ sap.ui.define([
 				 *
 				 * If "sap-skip-rules-issues=true" is set as an URI parameter, assertion result will be always positive.
 				 *
-				 * @param {Object} [options] The options used to configure an analysis.
+				 * @param {object} [options] The options used to configure an analysis.
 				 * @param {boolean} [options.failOnAnyIssues=true] Should the test fail or not if there are issues of any severity.
 				 * @param {boolean} [options.failOnHighIssues] Should the test fail or not if there are issues of high severity.
 				 * This parameter will override failOnAnyIssues if set.
 				 * @param {Array.<{libName:string, ruleId:string}>} [options.rules] The rules to check.
-				 * @param {Object} [options.executionScope] The execution scope of the analysis.
-				 * @param {Object} [options.metadata] The metadata that will be passed to the analyse method.
+				 * @param {object} [options.preset] This parameter allows for selection of subset of rules for the analysis
+				 * @param {object} [options.executionScope] The execution scope of the analysis.
 				 * @param {string} [options.executionScope.type=global] The type of the execution scope, one of 'global', 'subtree' or 'components'.
 				 * @param {string|string[]} [options.executionScope.selectors] The IDs of the components or the subtree.
+				 * @param {object} [options.metadata] The metadata that will be passed to the analysis.
 				 * @public
-				 * @returns {Promise} Promise.
+				 * @returns {Promise<{result: boolean, message: string, actual: string, expected: string}>} Promise.
 				 */
 				noRuleFailures: function(options) {
 					options = options || {};
@@ -164,7 +165,7 @@ sap.ui.define([
 				 * If "sap-skip-rules-issues=true" is set as an URI parameter, assertion result will be always positive.
 				 *
 				 * @public
-				 * @returns {Promise} Promise.
+				 * @returns {Promise<{result: boolean, message: string, actual: string, expected: object[]}>} Promise.
 				 */
 				getFinalReport: function () {
 					var ruleDeferred = jQuery.Deferred(),
@@ -198,14 +199,14 @@ sap.ui.define([
 				 * Stores analysis history (if such) as last element in window._$files array.
 				 * Accessing this array gives an opportunity to store this history in a file.
 				 *
-				 * @param {Object} [options] The options used to configure reporting.
+				 * @param {object} [options] The options used to configure reporting.
 				 * @param {sap.ui.support.HistoryFormats} [options.historyFormat] The format into which the history object will be converted.
 				 * @param {string} [options.fileName] The name of the file. It should have extension .support-assistant.json". Example: myfile.support-assistant.json
 				 *                                    <b>Note:</b> Extension ".support-assistant.json" will be appended automatically, if it is not already given.
 				 *                                    If only ".json" extension is given, it will be turned to ".support-assistant.json"
 				 *
 				 * @public
-				 * @returns {Promise} Promise.
+				 * @returns {Promise<{result: boolean, message: string, actual: boolean, expected: boolean}>} Promise.
 				 */
 				getReportAsFileInFormat: function (options) {
 					var oContext,

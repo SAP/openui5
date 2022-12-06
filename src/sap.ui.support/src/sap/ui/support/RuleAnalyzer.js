@@ -112,7 +112,7 @@ sap.ui.define([
 			 *
 			 * @public
 			 * @since 1.60
-			 * @param {object} oRule Settings for the new rule. For detailed information about its properties see {@link topic:eaeea19a991d46f29e6d8d8827317d0e Rule Property Values}
+			 * @param {sap.ui.support.RuleConfiguration} oRule Settings for the new rule. For detailed information about its properties see {@link topic:eaeea19a991d46f29e6d8d8827317d0e Rule Property Values}
 			 * @returns {string} Rule creation status. Possible values are "success" or description of why adding failed.
 			 */
 			addRule: function (oRule) {

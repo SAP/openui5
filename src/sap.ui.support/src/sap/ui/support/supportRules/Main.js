@@ -302,7 +302,7 @@ function (Log, ManagedObject, Element, Component, Analyzer, CoreFacade,
 	 * Analyzes all rules in the given execution scope.
 	 *
 	 * @private
-	 * @param {object} oExecutionScope The scope of the analysis
+	 * @param {{type: string}} oExecutionScope The scope of the analysis
 	 * @param {object|string|object[]} [vPresetOrRules=All rules] The preset or system preset ID or rules against which the analysis will be run
 	 * @param {object} [oMetadata] Metadata in custom format. Its only purpose is to be included in the analysis report.
 	 * @returns {Promise} Notifies the finished state by starting the Analyzer
