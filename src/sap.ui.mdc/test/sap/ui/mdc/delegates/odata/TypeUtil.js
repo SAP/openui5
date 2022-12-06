@@ -122,7 +122,7 @@ sap.ui.define([
 
 		internalizeValue: function (vValue, vType, oFormatOptions, oConstraints) {
 			var oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
-			if (this.getBaseType(oTypeInstance) === BaseType.Numeric) {
+			if (this.getBaseTypeForType(oTypeInstance) === BaseType.Numeric) {
 				if (typeof vValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
 					// INT64 and Decimal using string as internal value -> if for some reason a number comes in convert it to string
 					return vValue.toString(); // don't use type as this could have locale dependent parsing
@@ -133,7 +133,7 @@ sap.ui.define([
 
 		externalizeValue: function (vValue, vType, oFormatOptions, oConstraints) {
 			var oTypeInstance = this._normalizeType(vType, oFormatOptions, oConstraints);
-			if (this.getBaseType(oTypeInstance) === BaseType.Numeric) {
+			if (this.getBaseTypeForType(oTypeInstance) === BaseType.Numeric) {
 				if (typeof vValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
 					// INT64 and Decimal parsed always to string, if for some reason a number comes in -> convert to string, but don't use type at this might have locale dependent formatting
 					return vValue.toString();
