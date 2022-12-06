@@ -9557,4 +9557,40 @@ sap.ui.define([
 		// Clean
 		oMultiComboBox.destroy();
 	});
+
+	QUnit.test("Clear icon not be displayed initially if 'selectedKey' is declared before the suggestion items and there is a value initially set", function(assert) {
+		// Arrange
+		var oMultiComboBox = new MultiComboBox({
+			showClearIcon: true,
+			selectedKeys: ["AG"],
+			value: "Algeria",
+			items: [
+				new Item({
+					text: "Algeria"
+				}),
+
+				new Item({
+					text: "Argentina",
+					key: "AG"
+
+				}),
+				new Item({
+					text: "Australia"
+				}),
+
+				new Item({
+					text: "Germany"
+				})
+			]
+		});
+
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		Core.applyChanges();
+
+		// Act
+		assert.strictEqual(oMultiComboBox._getClearIcon().getVisible(), false, "The clear icon is hidden");
+
+		// Clean
+		oMultiComboBox.destroy();
+	});
 });

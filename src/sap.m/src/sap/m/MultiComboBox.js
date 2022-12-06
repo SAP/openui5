@@ -1283,6 +1283,12 @@ function(
 		if (this.getValueState() !== ValueState.Error) {
 			this._sInitialValueState = this.getValueState();
 		}
+
+		if (this.getShowClearIcon()) {
+			this._getClearIcon().setVisible(this.shouldShowClearIcon());
+		} else if (this._oClearIcon) {
+			this._getClearIcon().setVisible(false);
+		}
 	};
 
 	/**

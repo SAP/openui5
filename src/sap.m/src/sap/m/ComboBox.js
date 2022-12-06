@@ -484,6 +484,12 @@ sap.ui.define([
 				this.clearSelection();
 				this.setValue(sValue);
 			}
+
+			if (this.getShowClearIcon()) {
+				this._getClearIcon().setVisible(this.shouldShowClearIcon());
+			} else if (this._oClearIcon) {
+				this._getClearIcon().setVisible(false);
+			}
 		};
 
 		/**
