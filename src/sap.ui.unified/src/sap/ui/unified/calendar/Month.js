@@ -846,6 +846,9 @@ sap.ui.define([
 			i = 0,
 			oFocusedDate = this.getProperty("_focusedDate"),
 			bSelectionBetween = false,
+			oParent = this.getParent(),
+			iMonths = this._bCalendar && oParent.getMonths(),
+			bDifferentMonthDates,
 			oArrangedDates;
 
 		for (i = 0; i < aSelectedDates.length; i++) {
@@ -859,7 +862,9 @@ sap.ui.define([
 				oEndDate = oArrangedDates.endDate;
 			}
 
-			bSelectionBetween = this._isMarkingUnfinishedRangeAllowed() && oFocusedDate &&
+			bDifferentMonthDates = oFocusedDate && iMonths === 1 && oFocusedDate.getMonth() !== oStartDate.getMonth();
+
+			bSelectionBetween = this._isMarkingUnfinishedRangeAllowed() && oFocusedDate && !bDifferentMonthDates &&
 				(CalendarUtils._isBetween(oDate, oStartDate, oFocusedDate, true) || CalendarUtils._isBetween(oDate, oFocusedDate, oStartDate, true));
 
 			if (oStartDate && !oEndDate && oDate.isSame(oStartDate)) {
