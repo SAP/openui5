@@ -132,20 +132,24 @@ sap.ui.define([
 				 * This event is fired when an open action is invoked on an item.
 				 */
 				openPressed: {
-					/**
-					 * The item on which the open action has been invoked.
-					 */
-					item: {type: "sap.m.upload.UploadSetItem"},
+					 parameters: {
+						/**
+						* The item on which the open action has been invoked.
+						*/
+						item: {type: "sap.m.upload.UploadSetItem"}
+					},
 					allowPreventDefault: true
 				},
 				/**
 				 * This event is fired when a remove action is invoked on an item.
 				 */
 				removePressed: {
-					/**
-					 * The item on which the remove action was invoked.
-					 */
-					item: {type: "sap.m.upload.UploadSetItem"},
+					 parameters: {
+						/**
+						* The item on which the open action has been invoked.
+						*/
+						item: {type: "sap.m.upload.UploadSetItem"}
+					},
 					allowPreventDefault: true
 				}
 			}
