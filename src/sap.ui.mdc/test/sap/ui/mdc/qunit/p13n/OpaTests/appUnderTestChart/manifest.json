@@ -49,7 +49,6 @@
 				"preload": true,
 				"settings": {
 					"operationMode": "Server",
-					"synchronizationMode": "None",
 					"updateGroupId": "update"
 				}
 			}

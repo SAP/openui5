@@ -18,7 +18,6 @@
 			}, mModelOptions = {
 				serviceUrl: sUrl,
 				groupId: "$direct",
-				synchronizationMode: 'None',
 				autoExpandSelect: true,
 				operationMode: OperationMode.Server
 			}, oModel = new ODataModel(mModelOptions), oMetaModel = oModel.getMetaModel(), oView;

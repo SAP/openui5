@@ -45,8 +45,7 @@
 				"dataSource": "mainService",
 				"preload": true,
 				"settings": {
-					"operationMode": "Server",
-					"synchronizationMode": "None"
+					"operationMode": "Server"
 				}
 			}
 		}

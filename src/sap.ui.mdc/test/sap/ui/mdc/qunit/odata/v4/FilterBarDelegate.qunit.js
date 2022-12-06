@@ -32,7 +32,6 @@ sap.ui.define([
 		return new Promise(function(resolve, reject) {
 			var mModelOptions = {
 					serviceUrl: "/mdc.v4.FilterBarDelegate/",
-					synchronizationMode: 'None',
 					autoExpandSelect: true
 			};
 			resolve(new ODataModel(mModelOptions));

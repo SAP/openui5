@@ -74,7 +74,6 @@ sap.ui.define([
 
 			oVBox.setModel(new ODataModel({
 				serviceUrl: sProxyServiceUrl,
-				synchronizationMode: "None",
 				operationMode: "Server"
 			}));
 

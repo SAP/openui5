@@ -195,7 +195,6 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oModel = new ODataV4Model({
 				serviceUrl: "/MyService/",
-				synchronizationMode: "None",
 				operationMode: "Server"
 			});
 			this.oList = new List({

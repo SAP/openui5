@@ -122,7 +122,6 @@ sap.ui.define([
 			oTable.setVariant(oVariant);
 			oTable.setModel(new ODataModel({
 				serviceUrl: sProxyServiceUrl,
-				synchronizationMode: "None",
 				operationMode: "Server"
 			}));
 

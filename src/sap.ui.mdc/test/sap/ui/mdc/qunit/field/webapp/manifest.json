@@ -83,7 +83,6 @@
 				"uri": "http://localhost:8081/music/",
 				"settings": {
 					"autoExpandSelect": true,
-					"synchronizationMode": "None",
 					"operationMode": "Server",
 					"groupId": "$direct"
 				}

@@ -428,7 +428,6 @@
 		TABLESETTINGS.addServiceSettings(oTable, "TableODataV4ServiceSettings", function(mServiceSettings) {
 			oTable.setModel(new ODataModel({
 				serviceUrl: mServiceSettings.defaultProxyUrl,
-				synchronizationMode: "None",
 				operationMode: "Server",
 				autoExpandSelect: false
 			}));
