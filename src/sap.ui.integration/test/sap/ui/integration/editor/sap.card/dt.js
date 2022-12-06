@@ -603,7 +603,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"values": {
 							"data": {
 								"extension": {
-									"method": "getData"
+									"method": "getData",
+									"args": ["{items>boolean1/value}"]
 								},
 								"path": "/values"
 							},
