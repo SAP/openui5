@@ -582,13 +582,6 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 				icon: "sap-icon://person-placeholder",
 				content: [
 					new Button({
-						id: "change-theme",
-						text: "Change theme to sap_fiori_3",
-						press: function() {
-							sap.ui.getCore().applyTheme("sap_fiori_3");
-						}
-					}),
-					new Button({
 						id: "change-background-solid",
 						text: "Change theme and backgroundDesign to Solid",
 						press: function() {

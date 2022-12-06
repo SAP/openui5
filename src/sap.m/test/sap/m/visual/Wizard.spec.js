@@ -102,7 +102,6 @@ describe("sap.m.Wizard", function() {
 
 	it("should change background design", function () {
 		element(by.id("background-change-wiz-sel")).click();
-		element(by.id("change-theme")).click();
 		expect(takeScreenshot()).toLookAs("change-background-standard");
 
 		element(by.id("change-background-solid")).click();
