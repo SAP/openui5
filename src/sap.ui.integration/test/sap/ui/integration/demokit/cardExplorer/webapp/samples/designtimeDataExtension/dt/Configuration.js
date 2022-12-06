@@ -13,7 +13,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"values": {
 							"data": {
 								"extension": {
-									"method": "getData"
+									"method": "getData",
+									"args": ["{items>maxItems/value}"]
 								}
 							},
 							"item": {

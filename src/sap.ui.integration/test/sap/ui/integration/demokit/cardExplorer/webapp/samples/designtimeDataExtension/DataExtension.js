@@ -4,7 +4,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	var DataExtension = Extension.extend("card.explorer.extension.getData.DataExtension");
 
 	// should return a promise
-	DataExtension.prototype.getData = function () {
+	DataExtension.prototype.getData = function (iMaxItems) {
 		// Get information about trainings, trainers, and locations, then combine them in a way that it suitable for the card.
 		return Promise.all([
 			this.getAvailableTrainings(),

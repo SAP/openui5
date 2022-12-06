@@ -180,7 +180,8 @@
 		"values": {
 			"data": {
 				"extension": {
-					"method": "getData"
+					"method": "getData",
+					"args": ["{items>boolean1/value}"]
 				},
 				"path": "/values"
 			},

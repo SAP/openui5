@@ -4,7 +4,7 @@ sap.ui.define(["sap/ui/integration/editor/Extension"], function (Extension) {
 	var SharedExtension = Extension.extend("sap.ui.integration.editor.test.testLib.SharedExtension");
 
 	// should return a promise
-	SharedExtension.prototype.getData = function () {
+	SharedExtension.prototype.getData = function (bArgs1) {
 		// Get information about trainings, trainers, and locations, then combine them in a way that it suitable for the card.
 		return Promise.all([
 			this.getAvailableTrainings(),
