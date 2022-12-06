@@ -6,28 +6,31 @@
 
 // Provides class sap.ui.core.ResizeHandler
 sap.ui.define([
-	'sap/ui/base/Object',
 	"sap/base/Log",
-	"sap/ui/util/ActivityDetection",
+	"sap/ui/base/Object",
 	"sap/ui/core/IntervalTrigger",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/util/ActivityDetection"
 ],
-	function(BaseObject, Log, ActivityDetection, IntervalTrigger, jQuery) {
+	function(Log, BaseObject, IntervalTrigger, jQuery, ActivityDetection) {
 	"use strict";
 
 	// local logger, by default only logging errors
 	var log = Log.getLogger("sap.ui.core.ResizeHandler", Log.Level.ERROR);
 
+	// singleton instance
 	var oResizeHandler;
 
 	/**
-	 * The resize handling API provides firing of resize events on all browsers by regularly
-	 * checking the width and height of registered DOM elements or controls and firing events accordingly.
+	 * @class
+	 * Regularly checks the width and height of registered DOM elements or controls and fires
+	 * resize events to registered listeners when a change is detected.
 	 *
 	 * <b>Note</b>: The public usage of the constructor is deprecated since 1.103.0.
-	 * Please use the static module export directly.
+	 * Please use the static methods of the module export only and do not expect the module export
+	 * to be a class (do not subclass it, do not create instances, do not call inherited methods).
 	 *
-	 * @namespace
+	 * @hideconstructor
 	 * @alias sap.ui.core.ResizeHandler
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
@@ -47,9 +50,9 @@ sap.ui.define([
 
 			this.iIdCounter = 0;
 
-			this.fDestroyHandler = this.destroy.bind(this);
+			this.fnDestroyHandler = this.destroy.bind(this);
 
-			jQuery(window).on("unload", this.fDestroyHandler);
+			jQuery(window).on("unload", this.fnDestroyHandler);
 
 			ActivityDetection.attachActivate(initListener, this);
 
@@ -78,6 +81,7 @@ sap.ui.define([
 
 	/**
 	 * Destroy method of the Resize Handler.
+	 *
 	 * It unregisters the event handlers.
 	 *
 	 * @param {jQuery.Event} oEvent the event that initiated the destruction of the ResizeHandler
@@ -85,7 +89,7 @@ sap.ui.define([
 	 */
 	ResizeHandler.prototype.destroy = function(oEvent) {
 		ActivityDetection.detachActivate(initListener, this);
-		jQuery(window).off("unload", this.fDestroyHandler);
+		jQuery(window).off("unload", this.fnDestroyHandler);
 		this.aResizeListeners = [];
 		this.aSuspendedDomRefs = [];
 		clearListener.call(this);
@@ -95,11 +99,11 @@ sap.ui.define([
 	 * Attaches listener to resize event.
 	 *
 	 * @param {Element|sap.ui.core.Control} oRef the DOM reference or a control
-	 * @param {function} fHandler the event handler function
+	 * @param {function} fnHandler the event handler function
 	 * @returns {string} Registration-ID for later detaching.
 	 * @private
 	 */
-	ResizeHandler.prototype.attachListener = function(oRef, fHandler){
+	ResizeHandler.prototype.attachListener = function(oRef, fnHandler){
 		var bIsControl = BaseObject.isA(oRef, 'sap.ui.core.Control'),
 			bIsJQuery = oRef instanceof jQuery, // actually, jQuery objects are not allowed as oRef, as per the API documentation. But this happens in the wild.
 			oDom = bIsControl ? oRef.getDomRef() : oRef,
@@ -116,7 +120,7 @@ sap.ui.define([
 			dbg = String(oRef);
 		}
 
-		this.aResizeListeners.push({sId: sId, oDomRef: bIsControl ? null : oRef, oControl: bIsControl ? oRef : null, bIsJQuery: bIsJQuery, fHandler: fHandler, iWidth: iWidth, iHeight: iHeight, dbg: dbg});
+		this.aResizeListeners.push({sId: sId, oDomRef: bIsControl ? null : oRef, oControl: bIsControl ? oRef : null, bIsJQuery: bIsJQuery, fHandler: fnHandler, iWidth: iWidth, iHeight: iHeight, dbg: dbg});
 		log.debug("registered " + dbg);
 
 		initListener.call(this);
@@ -149,6 +153,7 @@ sap.ui.define([
 
 	/**
 	 * Check sizes of resize elements.
+	 *
 	 * @private
 	 */
 	ResizeHandler.prototype.checkSizes = function() {
@@ -222,7 +227,7 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {Element|sap.ui.core.Control} oRef The control or the DOM reference for which the given event handler should be registered (beside the window)
-	 * @param {function} fHandler
+	 * @param {function} fnHandler
 	 *             The event handler which should be called whenever the size of the given reference is changed.
 	 *             The event object is passed as first argument to the event handler. See the description of this function for more details about the available parameters of this event.
 	 * @returns {string|null}
@@ -230,8 +235,8 @@ sap.ui.define([
 	 *             If the UI5 framework is not yet initialized <code>null</code> is returned.
 	 * @public
 	 */
-	ResizeHandler.register = function(oRef, fHandler) {
-		return oResizeHandler.attachListener(oRef, fHandler);
+	ResizeHandler.register = function(oRef, fnHandler) {
+		return oResizeHandler.attachListener(oRef, fnHandler);
 	};
 
 	/**
@@ -261,10 +266,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Suspends indefinitely the execution of ResizeHandler listeners for the given DOM reference and its children
+	 * Suspends indefinitely the execution of ResizeHandler listeners for the given DOM reference and its children.
+	 *
 	 * @param {Element} oDomRef the DOM reference to suspend
 	 * @returns {boolean} Whether the <code>oDomRef</code> was successfully marked as suspended
 	 * @private
+	 * @ui5-restricted sap.ui.core, SAPUI5 Controls
 	 */
 	ResizeHandler.suspend = function(oDomRef) {
 		// Check if the dom ref is valid within the document
@@ -281,10 +288,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resumes the execution of ResizeHandler listeners for the given DOM reference
+	 * Resumes the execution of ResizeHandler listeners for the given DOM reference.
+	 *
 	 * @param {Element} oDomRef the DOM reference to resume
 	 * @returns {boolean} Whether resume for <code>oDomRef</code> was successful
 	 * @private
+	 * @ui5-restricted sap.ui.core, SAPUI5 Controls
 	 */
 	ResizeHandler.resume = function(oDomRef) {
 		var iIndex = oResizeHandler.aSuspendedDomRefs.indexOf(oDomRef);
@@ -338,6 +347,7 @@ sap.ui.define([
 	 *        Also note that each isSuspended() call registers the callback, but only if it was not found to be already registered.
 	 * @returns {boolean} Whether the <code>oDomRef</code> is suspended
 	 * @private
+	 * @ui5-restricted sap.ui.core, SAPUI5 Controls
 	 */
 	ResizeHandler.isSuspended = function(oDomRef, fnCallback) {
 		var vSuspended = oResizeHandler._isSuspended(oDomRef);
@@ -354,6 +364,36 @@ sap.ui.define([
 		return !!vSuspended;
 	};
 
+	/**
+	 * Returns a metadata object for class <code>sap.ui.core.ResizeHandler</code>.
+	 *
+	 * @returns {sap.ui.core.Metadata} Metadata object describing this class
+	 *
+	 * @function
+	 * @name sap.ui.core.ResizeHandler.getMetadata
+	 * @public
+	 * @deprecated Since version 1.110. As the class nature of ResizeHandler is deprecated since 1.103,
+	 *     the <code>getMetadata</code> method shouldn't be called either
+	 */
+
+	/**
+	 * Creates a new subclass of class <code>sap.ui.core.ResizeHandler</code>.
+	 *
+	 * @param {string} sClassName Name of the class being created
+	 * @param {object} [oClassInfo] Object literal with information about the class
+	 * @param {function} [FNMetaImpl] Constructor function for the metadata object; if not given, it defaults to the metadata implementation used by this class
+	 * @returns {function} Created class / constructor function
+	 *
+	 * @function
+	 * @name sap.ui.core.ResizeHandler.extend
+	 * @public
+	 * @deprecated Since version 1.110. As the class nature of ResizeHandler is deprecated since 1.103,
+	 *     the <code>extend</code> method shouldn't be called either
+	 */
+
+	/**
+	 * @private
+	 */
 	oResizeHandler = new ResizeHandler();
 
 	return ResizeHandler;
