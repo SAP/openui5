@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ValueListType",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils",
 	"sap/ui/util/XMLHelper",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
@@ -31,7 +32,7 @@ sap.ui.define([
 ], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text, Device,
 		EventProvider, SyncPromise, Configuration, Controller, View, Filter, FilterOperator,
 		FilterType, Sorter, OperationMode, AnnotationHelper, ODataListBinding, ODataModel,
-		ValueListType, TestUtils, XMLHelper) {
+		ValueListType, _Helper, TestUtils, XMLHelper) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
@@ -535,7 +536,7 @@ sap.ui.define([
 				return resolveLater(function () {
 					getGroupLocks().forEach(function (oGroupLock) {
 						assert.ok(false, "GroupLock remained: " + oGroupLock + "\n"
-							+ oGroupLock.sStack);
+							+ oGroupLock.$stack);
 					});
 
 					cleanup();
@@ -969,8 +970,9 @@ sap.ui.define([
 					serviceUrl : sServiceUrl
 				};
 
+			mFixture = TestUtils.normalizeFixture(mFixture, sServiceUrl);
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit", mFixture, [/*aRegExps*/],
-				/*sServiceUrl*/undefined, /*bStrict*/true);
+				sServiceUrl, /*bStrict*/true);
 
 			return new ODataModel(Object.assign(mDefaultParameters, mModelParameters));
 		},
@@ -1372,11 +1374,10 @@ sap.ui.define([
 				var oActualRequest = {
 						method : sMethod,
 						url : sUrl,
-						headers : mHeaders,
+						headers : _Helper.resolveIfMatchHeader(mHeaders),
 						payload : typeof vPayload === "string" ? JSON.parse(vPayload) : vPayload
 					},
 					oExpectedRequest = that.consumeExpectedRequest(oActualRequest),
-					sIfMatchValue,
 					oResponse,
 					mResponseHeaders,
 					bWaitForResponse = true;
@@ -1388,18 +1389,9 @@ sap.ui.define([
 					}
 				}
 
-				delete mHeaders["Accept"];
-				delete mHeaders["Accept-Language"];
-				delete mHeaders["Content-Type"];
-				// if "If-Match" is an object the "@odata.etag" property contains the etag
-				if (mHeaders["If-Match"] && typeof mHeaders["If-Match"] === "object") {
-					sIfMatchValue = mHeaders["If-Match"]["@odata.etag"];
-					if (sIfMatchValue === undefined) {
-						delete mHeaders["If-Match"];
-					} else {
-						mHeaders["If-Match"] = sIfMatchValue;
-					}
-				}
+				delete oActualRequest.headers["Accept"];
+				delete oActualRequest.headers["Accept-Language"];
+				delete oActualRequest.headers["Content-Type"];
 				if (oExpectedRequest) {
 					oResponse = oExpectedRequest.response;
 					if (typeof oResponse === "function") { // invoke "just in time"
@@ -1473,10 +1465,10 @@ sap.ui.define([
 				var oError,
 					oLock = fnLockGroup.apply(this, arguments);
 
-				if (!oLock.sStack) {
+				if (!oLock.$stack) {
 					oError = new Error();
 					if (oError.stack) {
-						oLock.sStack = oError.stack.split("\n").slice(2).join("\n");
+						oLock.$stack = oError.stack.split("\n").slice(2).join("\n");
 					}
 				}
 
@@ -1506,15 +1498,17 @@ sap.ui.define([
 
 			this.oModel = oModel === null ? null : oModel || this.createTeaBusiModel();
 			if (this.oModel && this.oModel.submitBatch) {
-				// stub request methods for the requestor prototype to also check requests from
-				// "hidden" model instances like the code list model...
-				this.mock(Object.getPrototypeOf(this.oModel.oRequestor)).expects("sendBatch")
-					.atLeast(0).callsFake(checkBatch);
-				this.mock(Object.getPrototypeOf(this.oModel.oRequestor)).expects("sendRequest")
-					.atLeast(0).callsFake(checkRequest);
-				// ...but keep following stubs even after test ends!
-				this.oModel.oRequestor.sendBatch = checkBatch;
-				this.oModel.oRequestor.sendRequest = checkRequest;
+				if (!this.oModel.$keepSend) {
+					// stub request methods for the requestor prototype to also check requests from
+					// "hidden" model instances like the code list model...
+					this.mock(Object.getPrototypeOf(this.oModel.oRequestor)).expects("sendBatch")
+						.atLeast(0).callsFake(checkBatch);
+					this.mock(Object.getPrototypeOf(this.oModel.oRequestor)).expects("sendRequest")
+						.atLeast(0).callsFake(checkRequest);
+					// ...but keep following stubs even after test ends!
+					this.oModel.oRequestor.sendBatch = checkBatch;
+					this.oModel.oRequestor.sendRequest = checkRequest;
+				}
 				fnLockGroup = this.oModel.oRequestor.lockGroup;
 				this.oModel.oRequestor.lockGroup = lockGroup;
 				fnReportError = this.oModel.reportError;
@@ -7141,27 +7135,145 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Modify a property, the server responds with 204 (No Content) on the PATCH request.
 	// Sample for this behavior: OData V4 TripPin service from odata.org
-	QUnit.test("Modify a property, server responds with 204 (No Content)", function (assert) {
-		var sView = '<FlexBox binding="{/EMPLOYEES(\'2\')}">\
+	//
+	// Tell the model to ignore the ETag, but no If-Match:* must be sent unless an ETag was present
+	// JIRA: CPOUI5ODATAV4-1894
+["$auto", "$direct"].forEach(function (sGroupId) {
+	[false, true].forEach(function (bETag) {
+	var sTitle = "Modify a property, server responds with 204 (No Content), group = " + sGroupId
+			+ ", w/ ETag = " + bETag;
+
+	QUnit.test(sTitle, function (assert) {
+		var fnResolve,
+			oPromise = new Promise(function (resolve) {
+				fnResolve = resolve;
+			}),
+			oModel = this.createModel(sTeaBusi, {groupId : sGroupId}, {
+				$metadata : {source : "odata/v4/data/metadata.xml"},
+				"EMPLOYEES('2')" : {
+					message : bETag
+					? {"@odata.etag" : "ETag", Name : "Jonathan Smith"}
+					: {Name : "Jonathan Smith"}
+				},
+				"PATCH EMPLOYEES('2')" : {
+					ifMatch : function (oRequest) {
+						if (bETag) {
+							assert.strictEqual(oRequest.requestHeaders["If-Match"], "*");
+							delete oRequest.requestHeaders["If-Match"];
+						}
+						assert.deepEqual(Object.keys(oRequest.requestHeaders).sort(),
+							sGroupId === "$direct"
+							? ["Accept", "Accept-Language", "Content-Type", "OData-MaxVersion",
+								"OData-Version", "X-CSRF-Token", "X-Requested-With"]
+							: ["Accept", "Accept-Language", "Content-Type"],
+							"no If-Match");
+						assert.strictEqual(oRequest.requestBody,
+							JSON.stringify({Name : "Jonathan Schmidt"}), "payload");
+						fnResolve();
+						return true;
+					}
+					// 204 No Content
+				}
+			}),
+			sView = '<FlexBox binding="{/EMPLOYEES(\'2\')}">\
 						<Input id="text" value="{Name}"/>\
 					</FlexBox>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES('2')", {Name : "Jonathan Smith"})
-			.expectChange("text", "Jonathan Smith");
+		oModel.$keepSend = true; // do not stub sendBatch/-Request
 
-		return this.createView(assert, sView).then(function () {
-			that.expectRequest({
-					method : "PATCH",
-					url : "EMPLOYEES('2')",
-					payload : {Name : "Jonathan Schmidt"}
-				}) // 204 No Content
-				.expectChange("text", "Jonathan Schmidt");
+		// this.expectRequest("EMPLOYEES('2')", {Name : "Jonathan Smith"});
+		this.expectChange("text", "Jonathan Smith");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// that.expectRequest({
+			//         method : "PATCH",
+			//         url : "EMPLOYEES('2')",
+			//         payload : {Name : "Jonathan Schmidt"}
+			//     }) // 204 No Content
+			that.expectChange("text", "Jonathan Schmidt");
+
+			// code under test
+			that.oModel.setIgnoreETag(true);
 
 			// code under test
 			that.oView.byId("text").getBinding("value").setValue("Jonathan Schmidt");
 
-			return that.waitForChanges(assert);
+			return Promise.all([
+				oPromise,
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Modify two properties in a single change set; tell the model to ignore the ETag.
+	// JIRA: CPOUI5ODATAV4-1894
+	QUnit.test("Modify two properties in a single change set, If-Match:*", function (assert) {
+		var fnResolve,
+			oPromise = new Promise(function (resolve) {
+				fnResolve = resolve;
+			}),
+			oModel = this.createModel(sTeaBusi, {}, {
+				$metadata : {source : "odata/v4/data/metadata.xml"},
+				"EMPLOYEES?$skip=0&$top=100" : {
+					message : {value : [{
+						"@odata.etag" : "etag0",
+						ID : "0",
+						Name : "Frederic Fall"
+					}, {
+						"@odata.etag" : "etag1",
+						ID : "1",
+						Name : "Jonathan Smith"
+					}]}
+				},
+				"PATCH EMPLOYEES('0')" : {
+					ifMatch : function (oRequest) {
+						assert.strictEqual(oRequest.requestHeaders["If-Match"], "*");
+						assert.strictEqual(oRequest.requestBody,
+							JSON.stringify({Name : "Frederick Fall"}), "payload");
+						return true;
+					}
+					// 204 No Content
+				},
+				"PATCH EMPLOYEES('1')" : {
+					ifMatch : function (oRequest) {
+						assert.strictEqual(oRequest.requestHeaders["If-Match"], "*");
+						assert.strictEqual(oRequest.requestBody,
+							JSON.stringify({Name : "Jonathan Schmidt"}), "payload");
+						fnResolve();
+						return true;
+					}
+					// 204 No Content
+				}
+			}),
+			sView = '<Table id="table" items="{/EMPLOYEES}">\
+						<Text id="name" text="{Name}"/>\
+					</Table>',
+			that = this;
+
+		oModel.$keepSend = true; // do not stub sendBatch/-Request
+
+		this.expectChange("name", ["Frederic Fall", "Jonathan Smith"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var aContexts = that.oView.byId("table").getBinding("items").getCurrentContexts();
+
+			// code under test
+			that.oModel.setIgnoreETag(true);
+
+			that.expectChange("name", ["Frederick Fall", "Jonathan Schmidt"]);
+
+			// code under test
+			aContexts[0].setProperty("Name", "Frederick Fall");
+			aContexts[1].setProperty("Name", "Jonathan Schmidt");
+
+			return Promise.all([
+				oPromise,
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 

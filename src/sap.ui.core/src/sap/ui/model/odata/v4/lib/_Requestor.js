@@ -1873,7 +1873,8 @@ sap.ui.define([
 		var oBatchRequest = _Batch.serializeBatchRequest(aRequests,
 				this.getGroupSubmitMode(sGroupId) === "Auto"
 					? "Group ID: " + sGroupId
-					: "Group ID (API): " + sGroupId
+					: "Group ID (API): " + sGroupId,
+				this.oModelInterface.isIgnoreETag()
 			);
 
 		return this.processOptimisticBatch(aRequests, sGroupId)
@@ -1951,7 +1952,8 @@ sap.ui.define([
 					headers : Object.assign({},
 						that.mPredefinedRequestHeaders,
 						that.mHeaders,
-						_Helper.resolveIfMatchHeader(mHeaders)),
+						_Helper.resolveIfMatchHeader(mHeaders,
+							that.oModelInterface.isIgnoreETag())),
 					method : sMethod
 				}).then(function (/*{object|string}*/vResponse, _sTextStatus, jqXHR) {
 					var sETag = jqXHR.getResponseHeader("ETag"),
@@ -2230,6 +2232,8 @@ sap.ui.define([
 	 *   A catch handler function expecting an <code>Error</code> instance. This function will call
 	 *   {@link sap.ui.model.odata.v4.ODataModel#reportError} if the error has not been reported
 	 *   yet
+	 * @param {function():boolean} oModelInterface.isIgnoreETag
+	 *   Tells whether an entity's ETag should be actively ignored (If-Match:*) for PATCH requests.
 	 * @param {function} oModelInterface.onCreateGroup
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group

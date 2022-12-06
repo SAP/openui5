@@ -448,6 +448,7 @@ sap.ui.define([
 					getMessagesByPath : "~fnGetMessagesByPath~",
 					getOptimisticBatchEnabler : "~fnGetOptimisticBatchEnabler~",
 					getReporter : "~fnGetReporter~",
+					isIgnoreETag : sinon.match.func,
 					onCreateGroup : sinon.match.func,
 					reportStateMessages : "~fnReportStateMessages~",
 					reportTransitionMessages : "~fnReportTransitionMessages~"
@@ -497,7 +498,11 @@ sap.ui.define([
 		assert.strictEqual(oExpectedBind8.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind9.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind10.firstCall.args[0], oModel);
-		assert.strictEqual(oExpectedCreate.firstCall.args[1], oModel.oInterface);
+		oModelInterface = oExpectedCreate.firstCall.args[1];
+		assert.strictEqual(oModelInterface, oModel.oInterface);
+
+		// code under test
+		assert.strictEqual(oModelInterface.isIgnoreETag(), false);
 
 		this.mock(oModel._submitBatch).expects("bind")
 			.withExactArgs(sinon.match.same(oModel), "$auto", true)
@@ -505,7 +510,6 @@ sap.ui.define([
 		this.mock(oModel).expects("addPrerenderingTask").withExactArgs(fnSubmitAuto);
 
 		// code under test - call onCreateGroup
-		oModelInterface = oExpectedCreate.firstCall.args[1];
 		oModelInterface.onCreateGroup("$auto");
 		oModelInterface.onCreateGroup("foo");
 
@@ -513,6 +517,11 @@ sap.ui.define([
 
 		// code under test - call fireSessionTimeout
 		oModelInterface.fireSessionTimeout();
+
+		// code under test
+		oModel.setIgnoreETag("~bIgnoreETag~");
+
+		assert.strictEqual(oModelInterface.isIgnoreETag(), "~bIgnoreETag~");
 	});
 });
 

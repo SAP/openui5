@@ -1999,10 +1999,13 @@ sap.ui.define([
 		 *
 		 * @param {object} [mHeaders]
 		 *   Map of request-specific headers.
+		 * @param {boolean} [bIgnoreETag]
+		 *   Whether the entity's ETag should be actively ignored (If-Match:*); ignored if there is
+		 *   no ETag or if "If-Match" does not contain an object
 		 * @returns {object}
 		 *   The map of request-specific headers with the resolved If-Match header.
 		 */
-		resolveIfMatchHeader : function (mHeaders) {
+		resolveIfMatchHeader : function (mHeaders, bIgnoreETag) {
 			var vIfMatchValue = mHeaders && mHeaders["If-Match"];
 
 			if (vIfMatchValue && typeof vIfMatchValue === "object") {
@@ -2011,7 +2014,7 @@ sap.ui.define([
 				if (vIfMatchValue === undefined) {
 					delete mHeaders["If-Match"];
 				} else {
-					mHeaders["If-Match"] = vIfMatchValue;
+					mHeaders["If-Match"] = bIgnoreETag ? "*" : vIfMatchValue;
 				}
 			}
 			return mHeaders;

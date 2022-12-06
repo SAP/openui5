@@ -25,6 +25,7 @@ sap.ui.define([
 			getGroupProperty : defaultGetGroupProperty,
 			getOptimisticBatchEnabler : function () {},
 			getReporter : function () {},
+			isIgnoreETag : function () {},
 			onCreateGroup : function () {},
 			reportStateMessages : function () {},
 			reportTransitionMessages : function () {}
@@ -478,14 +479,16 @@ sap.ui.define([
 					status : o.iStatus || 403
 				};
 
+			this.mock(oModelInterface).expects("isIgnoreETag").exactly(o.iRequests)
+				.withExactArgs().returns("~bIgnoreETag~");
+			oHelperMock.expects("resolveIfMatchHeader").exactly(o.iRequests)
+				.withExactArgs(sinon.match.same(mHeaders), "~bIgnoreETag~")
+				.returns(mResolvedHeaders);
 			oHelperMock.expects("createError")
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
 				.withExactArgs(sinon.match.same(oTokenRequiredResponse), "Communication error",
 					"/Service/foo", "original/path")
 				.returns(oError);
-			oHelperMock.expects("resolveIfMatchHeader").exactly(o.iRequests)
-				.withExactArgs(sinon.match.same(mHeaders))
-				.returns(mResolvedHeaders);
 
 			// With <code>bRequestSucceeds === false</code>, "request" always fails,
 			// with <code>bRequestSucceeds === true</code>, "request" always succeeds,
@@ -2402,8 +2405,10 @@ sap.ui.define([
 			this.mock(oRequestor).expects("getGroupSubmitMode")
 				.withExactArgs(sGroupId)
 				.returns(bSubmitModeIsAuto ? "Auto" : "API");
+			this.mock(oModelInterface).expects("isIgnoreETag").withExactArgs()
+				.returns("~bIgnoreETag~");
 			this.mock(_Batch).expects("serializeBatchRequest")
-				.withExactArgs(sinon.match.same(aBatchRequests), sEpilogue)
+				.withExactArgs(sinon.match.same(aBatchRequests), sEpilogue, "~bIgnoreETag~")
 				.returns(oBatchRequest);
 
 			this.mock(oRequestor).expects("processOptimisticBatch")
@@ -2444,8 +2449,9 @@ sap.ui.define([
 		this.mock(oRequestor).expects("getGroupSubmitMode")
 			.withExactArgs(sGroupId)
 			.returns("Auto");
+		this.mock(oModelInterface).expects("isIgnoreETag").withExactArgs().returns(false);
 		this.mock(_Batch).expects("serializeBatchRequest")
-			.withExactArgs(sinon.match.same(aBatchRequests), "Group ID: foo")
+			.withExactArgs(sinon.match.same(aBatchRequests), "Group ID: foo", false)
 			.returns("~oBatchRequest~");
 
 		this.mock(oRequestor).expects("processOptimisticBatch")

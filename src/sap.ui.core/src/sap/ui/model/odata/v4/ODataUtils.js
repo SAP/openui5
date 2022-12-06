@@ -259,22 +259,22 @@ sap.ui.define([
 			 *   requests need to be sent in scope of a change set. See example below. Change set
 			 *   requests are annotated with a property <code>$ContentID</code> containing the
 			 *   corresponding "Content-ID" header from the serialized batch request body.
-			 * @param {string} [sEpilogue]
-			 *   A string that will be included in the epilogue (which acts like a comment)
-			 * @param {string} oRequest.method
+			 * @param {string} aRequests[].method
 			 *   The HTTP method; only "GET", "POST", "PUT", "PATCH", or "DELETE" are allowed
-			 * @param {string} oRequest.url
+			 * @param {string} aRequests[].url
 			 *   An absolute or relative URL. If the URL contains a "Content-ID" reference, then the
 			 *   reference has to be specified as the zero-based index of the referenced request
 			 *   inside the change set. See example below.
-			 * @param {object} oRequest.headers
+			 * @param {object} aRequests[].headers
 			 *   A map of request headers. RFC-2047 encoding rules are not supported. Nevertheless
 			 *   non-US-ASCII values can be used. If the value of an "If-Match" header is an object,
 			 *   that object's ETag ("@odata.etag") is used instead.
-			 * @param {object} [oRequest.body]
+			 * @param {object} [aRequests[].body]
 			 *   The request body. If specified, the <code>oRequest.headers</code> map must contain
 			 *   a "Content-Type" header either without "charset" parameter or with "charset"
 			 *   parameter having value "UTF-8".
+			 * @param {string} [sEpilogue]
+			 *   A string that will be included in the epilogue (which acts like a comment)
 			 * @returns {object}
 			 *   An object containing the following properties:
 			 *   <ul>

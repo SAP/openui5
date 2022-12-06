@@ -479,6 +479,39 @@ sap.ui.define([
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
+		testTitle : "If-Match:*", ////////////////////////////////////////////////
+		expectedBoundaryIDs : ["id-0123456789012-345", "id-9876543210987-654"],
+		ignoreETag : true,
+		requests : [[
+			{
+				method : "PATCH",
+				url : "Employees('1')",
+				headers : {
+					"Content-Type" : "application/json",
+					"If-Match" : oEntity
+				},
+				body : {TEAM_ID : "TEAM_03"}
+			}
+		]],
+		$ContentIDs : [["0.0"]],
+		body : "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n"
+		+ "\r\n"
+		+ "--changeset_id-9876543210987-654\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:0.0\r\n"
+		+ "\r\n"
+		+ "PATCH Employees('1') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "If-Match:*\r\n"
+		+ "\r\n"
+		+ '{"TEAM_ID":"TEAM_03"}\r\n'
+		+ "--changeset_id-9876543210987-654--\r\n"
+		+ "--batch_id-0123456789012-345--\r\n",
+		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
+		"MIME-Version" : "1.0"
+	}, {
 		testTitle : "If-Match parameter is a string",
 		expectedBoundaryIDs : ["id-0123456789012-345", "id-9876543210987-654"],
 		requests : [[
@@ -513,6 +546,7 @@ sap.ui.define([
 	}, {
 		testTitle : "If-Match: @odata.etag is undefined",
 		expectedBoundaryIDs : ["id-0123456789012-345", "id-9876543210987-654"],
+		ignoreETag : true,
 		requests : [[
 			{
 				method : "PATCH",
@@ -597,7 +631,9 @@ sap.ui.define([
 					oHelperMock.expects("uid").returns("id-0123456789012-345");
 				}
 
-				oBatchRequest = _Batch.serializeBatchRequest(aRequests, oFixture.epilogue);
+				// code under test
+				oBatchRequest = _Batch.serializeBatchRequest(aRequests, oFixture.epilogue,
+					oFixture.ignoreETag);
 
 				assert.deepEqual(aRequests, oFixture.requests,
 					"aRequests remained unchanged, apart from $ContentID");
