@@ -109,7 +109,7 @@ sap.ui.define([
 	 *
 	 * @override
 	 * @public
-	 * @param {object} oVerticalScrolling Object that contains settings for Vertical scrolling.
+	 * @param {sap.ui.core.Scrolling} oVerticalScrolling Object that contains settings for Vertical scrolling.
 	 * @returns {this} <code>this</code> Control reference for chaining.
 	 */
 	AbsoluteLayout.prototype.setVerticalScrolling = function(oVerticalScrolling) {
@@ -121,7 +121,7 @@ sap.ui.define([
 	 *
 	 * @override
 	 * @public
-	 * @param {object} oHorizontalScrolling Object that contains settings for Horizontal scrolling.
+	 * @param {sap.ui.core.Scrolling} oHorizontalScrolling Object that contains settings for Horizontal scrolling.
 	 * @returns {this} <code>this</code> Control reference for chaining.
 	 */
 	AbsoluteLayout.prototype.setHorizontalScrolling = function(oHorizontalScrolling) {
@@ -133,7 +133,7 @@ sap.ui.define([
 	 *
 	 * @override
 	 * @public
-	 * @param {object} oPosition Element which must be positioned in the layout.
+	 * @param {sap.ui.core.Control} oPosition Element which must be positioned in the layout.
 	 * @param {int} iIndex Index of the element which is to be positioned.
 	 * @returns {this} <code>this</code> Control reference for chaining.
 	 */
@@ -151,7 +151,7 @@ sap.ui.define([
 	 *
 	 * @override
 	 * @public
-	 * @param {object} oPosition  Element which must be positioned in the layout.
+	 * @param {sap.ui.core.Control} oPosition  Element which must be positioned in the layout.
 	 * @returns {this} <code>this</code> Control reference for chaining.
 	 */
 	AbsoluteLayout.prototype.addPosition = function(oPosition) {
@@ -169,7 +169,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {any} vPosition  Element which must be removed from the positions element within the layout.
-	 * @returns {object} Removed element.
+	 * @returns {sap.ui.core.Control} Removed element.
 	 */
 	AbsoluteLayout.prototype.removePosition = function(vPosition) {
 		var bHasDomRef = !!this.getDomRef();
@@ -186,7 +186,7 @@ sap.ui.define([
 	 *
 	 * @override
 	 * @public
-	 * @returns {object} Removed elements.
+	 * @returns {sap.ui.core.Control[]} Removed elements.
 	 */
 	AbsoluteLayout.prototype.removeAllPositions = function() {
 		cleanup(this.getPositions());
@@ -242,7 +242,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Control} oContent
 	 *         The content to add; if empty, nothing is inserted.
-	 * @param {object} [oPos=\{left: "0px", right: "0px"\}]
+	 * @param {{left: string, right: string}} [oPos=\{left: "0px", right: "0px"\}]
 	 *         JSON-like object which defines the position of the child control in the layout.
 	 *         The object is expected to have one or more from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
 	 * @type this
@@ -264,7 +264,7 @@ sap.ui.define([
 	 * @param {int} iIndex
 	 *         The '0'-based index where the content shall be inserted at. For a negative value of iIndex, the content is inserted at position '0';
 	 *         for a value greater than the current size of the aggregation, the content is inserted at the last position.
-	 * @param {object} [oPos=\{left: "0px", right: "0px"\}]
+	 * @param {{left: string, right: string}} [oPos=\{left: "0px", right: "0px"\}]
 	 *         JSON-like object which defines the position of the child control in the layout.
 	 *         The object is expected to have one or more from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
 	 * @type this
@@ -281,7 +281,7 @@ sap.ui.define([
 	/**
 	 * Removes the given control and its corresponding position container from the aggregation named 'positions'.
 	 *
-	 * @param {object} oContent
+	 * @param {string|sap.ui.core.Control} vContent
 	 *         The content control to remove, its ID, or the index of the corresponding position container in the 'positions' aggregation.
 	 * @type sap.ui.core.Control
 	 * @public
@@ -356,7 +356,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Control} oControl
 	 *         The child control for which to change the position information; if empty or not aggregated, nothing is changed
-	 * @param {object} [oPos=\{left: "0px", right: "0px"\}]
+	 * @param {{left: string, right: string}} [oPos=\{left: "0px", right: "0px"\}]
 	 *         JSON-like object which defines the position of the child control in the layout.
 	 *         The object is expected to have one or more from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
 	 * @type boolean

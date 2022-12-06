@@ -141,7 +141,7 @@ sap.ui.define([
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {object} The accessibility info
+	 * @returns {{description: string}} The accessibility info
 	 * @protected
 	 */
 	TextView.prototype.getAccessibilityInfo = function() {
