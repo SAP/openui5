@@ -4172,7 +4172,7 @@ sap.ui.define([
 
 	QUnit.test("initial PC with two calendar types", function (assert) {
 		//Assert
-		assert.equal(this.oPC.getSecondaryCalendarType(), "Gregorian", "default value in PC is Gregorian (form CalendarType enum)");
+		assert.notOk(this.oPC.getSecondaryCalendarType(), "Default value for second calendar type in PC is undefined");
 		assert.notOk(this.oPC._getSecondaryCalendarType(), "If no second calendar type is explicitly set, it must be undefined");
 	});
 

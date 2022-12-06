@@ -9,6 +9,7 @@ sap.ui.define([
 		return Controller.extend("sap.m.sample.PlanningCalendar.Page", {
 
 			onInit: function () {
+				var oPrimarySecondaryType = this.byId("primaryCalendarTypeSelect");
 				// create model
 				var oModel = new JSONModel();
 				oModel.setData({
@@ -450,7 +451,7 @@ sap.ui.define([
 					]
 				});
 				this.getView().setModel(oModel);
-
+				oPrimarySecondaryType.setSelectedKey(this.byId("PC1").getPrimaryCalendarType());
 			},
 
 			handleAppointmentSelect: function (oEvent) {
@@ -476,7 +477,12 @@ sap.ui.define([
 			},
 
 			onCalendarSecondaryTypeSelect: function (oEvent) {
-				this.byId("PC1").setSecondaryCalendarType(oEvent.getParameters().selectedItem.getKey());
+				var sKey = oEvent.getParameters().selectedItem.getKey();
+				if (sKey === "None"){
+					this.byId("PC1").setSecondaryCalendarType(undefined);
+				} else {
+					this.byId("PC1").setSecondaryCalendarType(sKey);
+				}
 			}
 
 		});

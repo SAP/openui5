@@ -380,14 +380,15 @@ sap.ui.define([
 				 * If not set, the calendar type of the global configuration is used.
 				 * @since 1.108.0
 				 */
-				primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null},
+				primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
 
 				/**
-				 * If set, the days are also displayed in this calendar type
-				 * If not set, the dates are only displayed in the primary calendar type
+				 * If set, the days are also represented in this calendar type.
+				 * If not set, the dates are only represented in the primary calendar type.
+				 * Note: The second calendar type won't be represented in the DOM when this property is not set explicitly.
 				 * @since 1.109.0
 				 */
-				secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null},
+				secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
 
 				/**
 				 * Determines whether the selection of multiple appointments is enabled.
@@ -1519,11 +1520,6 @@ sap.ui.define([
 	 * @public
 	 */
 	PlanningCalendar.prototype.setSecondaryCalendarType = function (sSecondaryCalendarType) {
-		if (this.getProperty("primaryCalendarType") ===  sSecondaryCalendarType) {
-			return this;
-		}
-
-
 		this.setProperty("secondaryCalendarType", sSecondaryCalendarType);
 		this._bSecondaryCalendarTypeSet = true;
 		if (this._getHeader()) {
@@ -1536,7 +1532,7 @@ sap.ui.define([
 			this._oDatesRow.setSecondaryCalendarType(sSecondaryCalendarType);
 		}
 		if (this._oMonthsRow) {
-			this._oMonthsRow.setProperty("secondaryCalendarType", sSecondaryCalendarType);
+			this._oMonthsRow.setSecondaryCalendarType(sSecondaryCalendarType);
 		}
 		if (this._oWeeksRow) {
 			this._oWeeksRow.setSecondaryCalendarType(sSecondaryCalendarType);

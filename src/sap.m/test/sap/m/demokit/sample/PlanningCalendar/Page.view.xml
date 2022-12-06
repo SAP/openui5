@@ -15,14 +15,15 @@
 			showWeekNumbers="true">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
-				<Select change="onCalendarTypeSelect">
+				<Select id="primaryCalendarTypeSelect" change="onCalendarTypeSelect" selectedKey="None">
 					<core:Item key="Gregorian" text="Gregorian" />
 					<core:Item key="Islamic" text="Islamic" />
 					<core:Item key="Japanese" text="Japanese" />
 					<core:Item key="Persian" text="Persian" />
 					<core:Item key="Buddhist" text="Buddhist" />
 				</Select>
-				<Select change="onCalendarSecondaryTypeSelect">
+				<Select id="secondaryCalendarTypeSelect" change="onCalendarSecondaryTypeSelect" selectedKey="None">
+					<core:Item text="Select secondary caledar type" key="None" />
 					<core:Item key="Gregorian" text="Gregorian" />
 					<core:Item key="Islamic" text="Islamic" />
 					<core:Item key="Japanese" text="Japanese" />
