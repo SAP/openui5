@@ -1470,7 +1470,7 @@ sap.ui.define([
 				invalidateSpy.resetHistory();
 
 				var oNoData = new IllustratedMessage();
-				var fnOpenTableSettingsSpy = sinon.spy(TableSettings, "showPanel");
+				var fnOpenTableSettingsStub = sinon.stub(TableSettings, "showPanel");
 				this.oTable.setNoData(oNoData);
 
 				assert.ok(setNoDataSpy.returned(this.oTable));
@@ -1482,9 +1482,9 @@ sap.ui.define([
 				assert.notOk(this.oTable._oTable.getAggregation("_noColumnsMessage").getEnableVerticalResponsiveness());
 
 				this.oTable._oTable.getAggregation("_noColumnsMessage").getAdditionalContent()[0].firePress();
-				assert.ok(fnOpenTableSettingsSpy.calledOnce);
-				assert.ok(fnOpenTableSettingsSpy.calledWith(this.oTable, "Columns"));
-				fnOpenTableSettingsSpy.restore();
+				assert.ok(fnOpenTableSettingsStub.calledOnce);
+				assert.ok(fnOpenTableSettingsStub.calledWith(this.oTable, "Columns"));
+				fnOpenTableSettingsStub.restore();
 
 				oNoData.setTitle("Title");
 				oNoData.setDescription("Description");
@@ -3244,31 +3244,31 @@ sap.ui.define([
 			this.oTable.setP13nMode(["Column", "Sort"]);
 			Core.applyChanges();
 
-			var oTableSettingsShowPanelSpy = sinon.stub(TableSettings, "showPanel");
+			var oTableSettingsShowPanelStub = sinon.stub(TableSettings, "showPanel");
 
 			this.oTable._oP13nButton.firePress();
-			assert.ok(oTableSettingsShowPanelSpy.calledOnceWithExactly(this.oTable, "Columns"), "TableSettings.showPanel called");
-			oTableSettingsShowPanelSpy.reset();
+			assert.ok(oTableSettingsShowPanelStub.calledOnceWithExactly(this.oTable, "Columns"), "TableSettings.showPanel called");
+			oTableSettingsShowPanelStub.reset();
 
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.COMMA, false, false, true);
-			assert.ok(oTableSettingsShowPanelSpy.calledOnceWithExactly(this.oTable, "Columns"), "TableSettings.showPanel called");
-			oTableSettingsShowPanelSpy.reset();
+			assert.ok(oTableSettingsShowPanelStub.calledOnceWithExactly(this.oTable, "Columns"), "TableSettings.showPanel called");
+			oTableSettingsShowPanelStub.reset();
 
 			this.oTable._setShowP13nButton(false);
 			Core.applyChanges();
 
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.COMMA, false, false, true);
-			assert.ok(oTableSettingsShowPanelSpy.notCalled, "TableSettings.showPanel not called");
-			oTableSettingsShowPanelSpy.reset();
+			assert.ok(oTableSettingsShowPanelStub.notCalled, "TableSettings.showPanel not called");
+			oTableSettingsShowPanelStub.reset();
 
 			this.oTable.setP13nMode([]);
 			this.oTable._setShowP13nButton(true);
 			Core.applyChanges();
 
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.COMMA, false, false, true);
-			assert.ok(oTableSettingsShowPanelSpy.notCalled, "TableSettings.showPanel not called");
+			assert.ok(oTableSettingsShowPanelStub.notCalled, "TableSettings.showPanel not called");
 
-			oTableSettingsShowPanelSpy.restore();
+			oTableSettingsShowPanelStub.restore();
 		}.bind(this));
 	});
 
@@ -4304,7 +4304,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Press the filter info bar", function(assert) {
+	QUnit.test("Press the filter info bar & focus handling in edge cases", function(assert) {
 		var that = this;
 
 		this.oTable.addColumn(new Column({
@@ -4336,45 +4336,27 @@ sap.ui.define([
 		}).then(function() {
 			return that.waitForFilterInfoBarRendered();
 		}).then(function() {
-			var oTableSettingsShowPanelSpy = sinon.stub(TableSettings, "showPanel");
+			var oTableSettingsShowPanelStub = sinon.stub(TableSettings, "showPanel");
 			var oFilterInfoBar = that.getFilterInfoBar();
-			var iIntervalId;
 
 			oFilterInfoBar.firePress();
-			assert.ok(oTableSettingsShowPanelSpy.calledOnceWithExactly(that.oTable, "Filter", undefined), "TableSettings.showPanel call");
+			assert.ok(oTableSettingsShowPanelStub.calledOnceWithExactly(that.oTable, "Filter", undefined), "TableSettings.showPanel call");
 
-			that.oTable.setFilterConditions({
-				name: []
-			});
-
-			// # 1 - Simulate that the filter info bar is focused after being set to invisible, but before rendering.
+			// Simulate that the filter info bar is focused after being set to invisible, but before rendering.
 			// The focus should still be somewhere in the table after the filter info bar is hidden.
-
-			// # 2 - Simulate setting the focus when the filter dialog is closed and all filters have been removed.
-			// The filter info bar will be hidden in this case. The focus should still be somewhere in the table and not on the document body.
-
+			that.oTable.setFilterConditions({name: []});
 			oFilterInfoBar.focus();
+			Core.applyChanges();
+			assert.notOk(oFilterInfoBar.getDomRef(), "The filter info bar has no DOM reference");
+			assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 
-			return Promise.race([
-				new Promise(function(resolve) { // wait until the FilterInfoBar is hidden
-					iIntervalId = setInterval(function() {
-						if (!oFilterInfoBar.getDomRef()) {
-							resolve();
-						}
-					}, 10);
-				}),
-				wait(100) // timeout
-			]).then(function() {
-				clearInterval(iIntervalId);
-			});
-		}).then(function() {
-			// # 1
-			document.hasFocus() && assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
-
-			// # 2
+			// Simulate setting the focus when the filter dialog is closed and all filters have been removed.
+			// The filter info bar will be hidden in this case. The focus should still be somewhere in the table and not on the document body.
 			document.body.focus();
 			that.getFilterInfoBar().focus();
 			assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
+
+			oTableSettingsShowPanelStub.restore();
 		});
 	});
 
@@ -4571,25 +4553,6 @@ sap.ui.define([
 				assert.equal(oRowActionTemplateDestroySpy.callCount, 1, "Row action template was destroyed");
 			}
 		});
-
-		// TODO: Update
-		/* QUnit.test("Avoid unnecessary update", function(assert) {
-			var oTableInvalidationSpy = sinon.spy(this.oTable, "invalidate");
-			var oInnerTableInvalidationSpy = sinon.spy(this.oTable._oTable, "invalidate");
-
-			this.oTable.setRowAction();
-			assert.equal(oTableInvalidationSpy.callCount, 0, "Remove row actions if no actions exist: MDCTable was not invalidated");
-			assert.equal(oInnerTableInvalidationSpy.callCount, 0, "Remove row actions if no actions exist: The inner table was not invalidated");
-			oTableInvalidationSpy.reset();
-			oInnerTableInvalidationSpy.reset();
-
-			this.oTable.setProperty("rowAction", ["Navigation"], true);
-			this.oTable.setRowAction(["Navigation"]);
-			assert.equal(oTableInvalidationSpy.callCount, 0, "Set the same row action: MDCTable was not invalidated");
-			assert.equal(oInnerTableInvalidationSpy.callCount, 0, "Set the same row action: The inner table was not invalidated");
-			oTableInvalidationSpy.reset();
-			oInnerTableInvalidationSpy.reset();
-		}); */
 	});
 
 	QUnit.module("p13nMode", {
