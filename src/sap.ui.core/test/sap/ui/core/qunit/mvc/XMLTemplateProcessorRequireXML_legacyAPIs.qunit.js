@@ -1,17 +1,13 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	'sap/ui/core/Component',
-	'sap/ui/core/UIComponent',
-	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/core/mvc/View",
 	"sap/m/InstanceManager",
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/routing/HashChanger"
-], function(Component, UIComponent, XMLTemplateProcessor, View,
-	InstanceManager, Log, merge, JSONModel, XMLView, HashChanger) {
+], function(Component, View, InstanceManager, Log, merge, JSONModel, HashChanger) {
 	"use strict";
 
 	var TESTDATA_PREFIX = "testdata.xml-require";
@@ -26,7 +22,9 @@ sap.ui.define([
 			merge(oSettings, additionalViewSettings);
 		}
 
-		return View.create(oSettings);
+		return Promise.resolve().then(function() {
+			return sap.ui.xmlview(oSettings).loaded();
+		});
 	};
 
 	function createSpies(mSpies, oScope) {
@@ -36,70 +34,13 @@ sap.ui.define([
 		}, {});
 	}
 
-	QUnit.module("core:require validation");
-
-	QUnit.test("Throw error if core:require is defined with non-object", function(assert) {
-		var sView =
-			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core">' +
-				'<Panel id="panel" core:require="true">' +
-				'</Panel>' +
-			'</mvc:View>';
-
-		return XMLView.create({
-			definition: sView
-		}).catch(function(oError) {
-			assert.equal(oError.message, "core:require in XMLView can't be parsed to a valid object on Node: Panel");
-		});
-	});
-
-	QUnit.test("Throw error if core:require contains invalid identifier", function(assert) {
-		var aViews = [
-			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core">' +
-				'<Panel id="panel" core:require="{\'nested.name\': \'some/nested/path\'}">' +
-				'</Panel>' +
-			'</mvc:View>',
-			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core">' +
-				'<Panel id="panel" core:require="{\'nested/name\': \'some/nested/path\'}">' +
-				'</Panel>' +
-			'</mvc:View>',
-			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core">' +
-				'<Panel id="panel" core:require="{\'nested;name\': \'some/nested/path\'}">' +
-				'</Panel>' +
-			'</mvc:View>'
-		];
-
-		return aViews.reduce(function(oChain, sView) {
-			return oChain.then(function() {
-				return XMLView.create({
-					definition: sView
-				}).catch(function(oError) {
-					assert.ok(/^core:require in XMLView contains invalid identifier: 'nested[./;]name' on Node: Panel$/.test(oError.message));
-				});
-			});
-		}, Promise.resolve());
-	});
-
-	QUnit.test("Throw error if core:require contains non-string value", function(assert) {
-		var sView =
-			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core">' +
-				'<Panel id="panel" core:require="{\'module\': {path: \'some/good/path\'}}">' +
-				'</Panel>' +
-			'</mvc:View>';
-
-		return XMLView.create({
-			definition: sView
-		}).catch(function(oError) {
-			assert.equal(oError.message, "core:require in XMLView contains invalid value '[object Object]'under key 'module' on Node: Panel");
-		});
-	});
-
 	QUnit.module("core:require in XMLView");
 
 	[{
 		testDescription: "Parsing core:require in XMLView",
 		viewName: ".view.XMLTemplateProcessorAsync_require",
 		settings: {
-			async: {
+			sync: {
 				create: createView,
 				spies: {
 					getInstance: [HashChanger, "getInstance"]
@@ -179,7 +120,7 @@ sap.ui.define([
 		testDescription: "Parsing core:require in XMLView where required module is used in the bound 'content' aggregation",
 		viewName: ".view.XMLTemplateProcessorAsync_require_bind_content",
 		settings: {
-			async: {
+			sync: {
 				create: createView
 			}
 		},
@@ -246,7 +187,7 @@ sap.ui.define([
 		testDescription: "Error should be thrown when HTML nodes exist in the binding template of the bound 'content' aggregation",
 		viewName: ".view.XMLTemplateProcessorAsync_require_bind_content_html",
 		settings: {
-			async: {
+			sync: {
 				create: createView,
 				additionalViewSettings: {
 					id: "viewWithBoundContentHTML"
@@ -265,7 +206,7 @@ sap.ui.define([
 		testDescription: "Parsing core:require in fragment",
 		viewName: ".view.XMLTemplateProcessorAsync_fragment_require",
 		settings: {
-			async: {
+			sync: {
 				create: createView
 			}
 		},
@@ -302,7 +243,7 @@ sap.ui.define([
 		testDescription: "Parsing core:require in fragment without fragment node",
 		viewName: ".view.XMLTemplateProcessorAsync_fragment_require_control_root",
 		settings: {
-			async: {
+			sync: {
 				create: createView
 			}
 		},
@@ -336,7 +277,7 @@ sap.ui.define([
 		testDescription: "Parsing core:require in fragment with preprocessor enabled",
 		viewName: ".view.XMLTemplateProcessorAsync_fragment_require_control_root",
 		settings: {
-			async: {
+			sync: {
 				create: createView,
 				additionalViewSettings: {
 					preprocessors: {
@@ -375,7 +316,7 @@ sap.ui.define([
 		testDescription: "Parsing core:require in XMLView with fragment with missing definition in require context",
 		viewName: ".view.XMLTemplateProcessorAsync_fragment_insufficient_require",
 		settings: {
-			async: {
+			sync: {
 				create: createView,
 				spies: {
 					warning: [Log, "warning"]
@@ -390,7 +331,7 @@ sap.ui.define([
 		testDescription: "Parsing core:require in XMLView with fragment with missing definition in require context with preprocessors enabled",
 		viewName: ".view.XMLTemplateProcessorAsync_fragment_insufficient_require",
 		settings: {
-			async: {
+			sync: {
 				create: createView,
 				additionalViewSettings: {
 					preprocessors: {
@@ -411,7 +352,7 @@ sap.ui.define([
 		testDescription: "Parsing core:require in XMLView with fragment w/o require context",
 		viewName: ".view.XMLTemplateProcessorAsync_fragment_require_noRequire",
 		settings: {
-			async: {
+			sync: {
 				create: createView,
 				spies: {
 					warning: [Log, "warning"]
@@ -426,7 +367,7 @@ sap.ui.define([
 		testDescription: "Parsing core:require in XMLView with nested view and the require context isn't forwarded to nested view",
 		viewName: ".view.XMLTemplateProcessorAsync_require_nested",
 		settings: {
-			async: {
+			sync: {
 				create: createView,
 				spies: {
 					_create: [View, "_create"],
@@ -446,23 +387,11 @@ sap.ui.define([
 	}, {
 		testDescription: "Parsing core:require in ExtensionPoint",
 		settings: {
-			async: {
-				create: function () {
-					return Component.create({
-						name: TESTDATA_PREFIX + ".extension-points.Child"
-					}).then(function (oComponent) {
-						return oComponent.getRootControl().loaded();
-					});
-				},
-				spies: {
-					warning: [Log, "warning"]
-				}
-			},
 			sync: {
 				create: function () {
 					return sap.ui.component({
 						name: TESTDATA_PREFIX + ".extension-points.Child",
-						manifestUrl: sap.ui.require.toUrl("testdata/xml-require/extension-points/Child/manifest-sync-rootview.json"),
+						manifestUrl: sap.ui.require.toUrl("testdata/xml-require/extension-points/Child/manifest-sync-rootview_legacyAPIs.json"),
 						async: false
 					}).getRootControl().loaded();
 				},
@@ -503,9 +432,11 @@ sap.ui.define([
 		testDescription: "Parsing core:require in ExpressionBinding",
 		viewName: ".view.XMLTemplateProcessorAsync_require_expression",
 		settings: {
-			async: {
+			sync: {
 				create: createView,
-				spies: {}
+				spies: {
+					error: [Log, "error"]
+				}
 			}
 		},
 		runAssertions: function (oView, mSpies, assert, bAsync) {
@@ -545,17 +476,17 @@ sap.ui.define([
 			assert.strictEqual(oView.byId("type").getText(), "123.45678", "text is formatted with correct type");
 		}
 	}].forEach(function (oConfig) {
-		// Run async variant
-		QUnit.test(oConfig.testDescription + " - async", function(assert) {
+		// Run sync variant
+		QUnit.test(oConfig.testDescription + " - sync", function(assert) {
 			var that = this,
-				bAsync = true,
+				bAsync = false,
 				mSpies;
 
-			if (oConfig.settings.async.spies) {
-				mSpies = createSpies(oConfig.settings.async.spies, this);
+			if (oConfig.settings.sync.spies) {
+				mSpies = createSpies(oConfig.settings.sync.spies, this);
 			}
 
-			return oConfig.settings.async.create(oConfig.viewName, oConfig.settings.async.additionalViewSettings)
+			return oConfig.settings.sync.create(oConfig.viewName, oConfig.settings.sync.additionalViewSettings)
 				.then(function (oView) {
 					return oConfig.runAssertions.call(that, oView, mSpies, assert, bAsync);
 				}, function(oError) {
@@ -563,49 +494,6 @@ sap.ui.define([
 						oConfig.onRejection(assert, oError);
 					}
 				});
-		});
-	});
-
-	QUnit.test("core:require no async require for loaded modules", function(assert) {
-		// setup
-		sap.ui.define("test/never-seen-before", [], function() { return "module1"; });
-		var oRequireSpy = this.spy(sap.ui, "require"),
-			sXML =
-				'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core">' +
-					'<Panel id="panel" core:require="{' +
-						'\'mod1\': \'sap/ui/model/FilterOperator\',' +
-							'\'mod2\': \'test/never-seen-before\',' +
-								'\'mod3\': \'sap/ui/core/Core\'' +
-						'}" />' +
-				'</mvc:View>';
-
-		// act
-		return XMLView.create({
-			definition: sXML
-		}).then(function(oViewInstance1) {
-			// assert
-			assert.ok(oRequireSpy.calledWithExactly("sap/ui/model/FilterOperator"));
-			assert.ok(oRequireSpy.calledWithExactly("test/never-seen-before"));
-			assert.ok(oRequireSpy.calledWithExactly("sap/ui/core/Core"));
-			assert.ok(oRequireSpy.calledWith(["sap/ui/model/FilterOperator", "test/never-seen-before", "sap/ui/core/Core"]));
-
-			// cleanup
-			oViewInstance1.destroy();
-			oRequireSpy.resetHistory();
-
-			// act again
-			return XMLView.create({
-				definition: sXML
-			});
-		}).then(function(oViewInstance2) {
-			// assert again
-			assert.ok(oRequireSpy.calledWithExactly("sap/ui/model/FilterOperator"));
-			assert.ok(oRequireSpy.calledWithExactly("test/never-seen-before"));
-			assert.ok(oRequireSpy.calledWithExactly("sap/ui/core/Core"));
-			assert.ok(oRequireSpy.neverCalledWith(["sap/ui/model/FilterOperator", "test/never-seen-before", "sap/ui/core/Core"]));
-
-			// cleanup
-			oViewInstance2.destroy();
 		});
 	});
 });

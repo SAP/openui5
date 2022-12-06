@@ -2,8 +2,12 @@
 sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/JSONView",
+	"sap/ui/core/mvc/JSView",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/mvc/HTMLView",
 	"sap/ui/thirdparty/jquery"
-], function(ObjectPath, View, jQuery) {
+], function(ObjectPath, View, JSONView, JSView, XMLView, HTMLView, jQuery) {
 	"use strict";
 
 	// create content div
@@ -12,6 +16,14 @@ sap.ui.define([
 	document.body.appendChild(oDIV);
 
 	QUnit.module("Start-up");
+
+	QUnit.test("Check dependencies", function(assert) {
+		assert.expect(4);
+		assert.ok(JSONView, "sap.ui.core.mvc.JSONView must be defined");
+		assert.ok(JSView, "sap.ui.core.mvc.JSView must be defined");
+		assert.ok(XMLView, "sap.ui.core.mvc.XMLView must be defined");
+		assert.ok(HTMLView, "sap.ui.core.mvc.HTMLView must be defined");
+	});
 
 	function asyncTestsuite(sCaption, oConfig) {
 

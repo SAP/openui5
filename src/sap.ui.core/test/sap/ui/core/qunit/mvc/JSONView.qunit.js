@@ -1,23 +1,27 @@
 /*global sinon QUnit */
 sap.ui.define([
+	'sap/ui/base/ManagedObject',
 	'sap/ui/core/library',
-	'./AnyView.qunit',
-	'sap/ui/base/ManagedObject'
-], function(coreLibrary, testsuite, ManagedObject) {
+	'sap/ui/core/mvc/JSONView',
+	'sap/ui/core/mvc/View',
+	'./AnyView.qunit'
+], function (ManagedObject, coreLibrary, JSONView, View, testsuite) {
 	"use strict";
 
 	var ViewType = coreLibrary.mvc.ViewType;
 
 	var oConfig = {
-		viewClassName : "sap.ui.core.mvc.JSONView",
-		idsToBeChecked : ["myPanel", "Button1"]
+		viewClassName: "sap.ui.core.mvc.JSONView",
+		idsToBeChecked: ["myPanel", "Button1"]
 	};
 
-	testsuite(oConfig, "JSONView creation loading from file", function() {
-		return sap.ui.jsonview("example.mvc.test");
+	testsuite(oConfig, "JSONView creation loading from file", function () {
+		return JSONView.create({
+			viewName: "example.mvc.test"
+		});
 	});
 
-	testsuite(oConfig, "JSONView creation via JSON string", function() {
+	testsuite(oConfig, "JSONView creation via JSON string", function () {
 		var json = JSON.stringify({
 			"Type": "sap.ui.core.JSONView",
 			"controllerName": "example.mvc.test",
@@ -68,27 +72,38 @@ sap.ui.define([
 				}
 			]
 		});
-		return sap.ui.jsonview({viewContent:json});
+		return JSONView.create({ definition: json });
 	});
 
-	testsuite(oConfig, "JSONView creation via generic view factory", function() {
-		return sap.ui.view({type:ViewType.JSON,viewName:"example.mvc.test", viewData:{test:"testdata"}});
+	testsuite(oConfig, "JSONView creation via generic view factory", function () {
+		return View.create({ type: ViewType.JSON, viewName: "example.mvc.test", viewData: { test: "testdata" } });
 	}, true);
 
-	QUnit.test("JSONView should be able to resolve controller methods", function(assert) {
-		var oView = sap.ui.jsonview("example.mvc.test");
-		var oButtonWithBinding = oView.byId("ButtonWithBinding");
-		assert.ok(oButtonWithBinding, "button could be found");
-		var oBindingInfo = oButtonWithBinding.getBindingInfo("text");
-		assert.ok(oBindingInfo, "there should be a binding info for property 'text'");
-		assert.ok(typeof oBindingInfo.formatter === 'function', "formatter should have been resolved");
-		assert.ok(oBindingInfo.formatter(42) === 'formatted-42', "formatter should be the one form the controller"); // TODO test should involve instance
-		oView.destroy();
+	QUnit.module("JSONView.create factory", {});
+
+	QUnit.test("JSONView should be able to resolve controller methods", function (assert) {
+		return JSONView.create({
+			viewName: "example.mvc.test"
+		}).then(function (oView) {
+			assert.ok(oView, "View with viewName 'example.mvc.test' should be created successfully.");
+
+			var oButtonWithBinding = oView.byId("ButtonWithBinding");
+			assert.ok(oButtonWithBinding, "Content check - Button with id 'ButtonWithBinding' should be available.");
+			var oBindingInfo = oButtonWithBinding.getBindingInfo("text");
+			assert.ok(oBindingInfo, "there should be a binding info for property 'text'");
+			assert.ok(typeof oBindingInfo.formatter === 'function', "formatter should have been resolved");
+			assert.ok(oBindingInfo.formatter(42) === 'formatted-42', "formatter should be the one form the controller");
+
+			return oView;
+		}).then(function (oView) {
+			// cleanup
+			oView.destroy();
+		});
 	});
 
-	QUnit.test("JSONView: Aggregation Binding with value property", function(assert) {
+	QUnit.test("JSONView: Aggregation Binding with value property", function (assert) {
 		var done = assert.async();
-		sap.ui.require(["sap/ui/table/Table"], function(Table) {
+		sap.ui.require(["sap/ui/table/Table"], function (Table) {
 			var oExtractBindingInfoSpy = sinon.spy(ManagedObject.prototype, "extractBindingInfo");
 
 			var json = JSON.stringify({
@@ -112,17 +127,45 @@ sap.ui.define([
 				]
 			});
 
-			sap.ui.jsonview({ viewContent: json });
-			var aExtractBindingInfoCalls = oExtractBindingInfoSpy.getCalls();
+			JSONView.create({
+				definition: json
+			}).then(function (oView) {
+				assert.ok(oView, "View should be created successfully.");
 
-			for (var i = 0; i < aExtractBindingInfoCalls.length; i++) {
-				var oCall = aExtractBindingInfoCalls[i];
-				if (typeof oCall.args[0] === 'object' && oCall.args[0].Type) {
-					assert.equal(oCall.returnValue, undefined, "ManagedObject#extractBindingInfo should return undefined");
+				var aExtractBindingInfoCalls = oExtractBindingInfoSpy.getCalls();
+				for (var i = 0; i < aExtractBindingInfoCalls.length; i++) {
+					var oCall = aExtractBindingInfoCalls[i];
+					if (typeof oCall.args[0] === 'object' && oCall.args[0].Type) {
+						assert.equal(oCall.returnValue, undefined, "ManagedObject#extractBindingInfo should return undefined");
+					}
 				}
-			}
-			done();
+
+				return oView;
+			}).then(function (oView) {
+				// cleanup
+				oView.destroy();
+				done();
+			});
 		});
 	});
 
+	QUnit.module("View.create factory", {});
+
+	QUnit.test("JSONView creation via generic View.create factory", function(assert) {
+		return View.create({
+			type: ViewType.JSON,
+			viewName: "example.mvc.test",
+			viewData: {
+				test: "testdata"
+			}
+		}).then(function (oView) {
+			assert.ok(oView, "View with viewName 'example.mvc.test' should be created successfully.");
+			assert.ok(oView.byId("myPanel"), "Content check - Panel with id 'myPanel' should be available.");
+
+			return oView;
+		}).then(function (oView) {
+			// cleanup
+			oView.destroy();
+		});
+	});
 });

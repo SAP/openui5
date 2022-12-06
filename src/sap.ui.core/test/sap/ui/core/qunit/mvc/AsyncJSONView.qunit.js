@@ -4,51 +4,29 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/JSONView",
 	"sap/ui/base/ManagedObject",
-	"./AnyViewAsync.qunit",
 	"sap/base/Log",
 	"sap/ui/core/Configuration"
-], function(ResourceBundle, View, JSONView, ManagedObject, asyncTestsuite, Log, Configuration) {
+], function (ResourceBundle, View, JSONView, ManagedObject, Log, Configuration) {
 	"use strict";
 
-	// setup test config with generic factory
-	var oConfig = {
-		type : "JSON",
-		factory : function(bAsync) {
-			return sap.ui.view({
-				type : "JSON",
-				viewName : "testdata.mvc.Async",
-				async : bAsync
-			});
+	QUnit.module("JSONView.create Factory", {
+		beforeEach: function () {
+			this.oAfterInitSpy = sinon.spy(View.prototype, "fireAfterInit");
 		},
-		receiveSource : function(source) {
-			return JSON.stringify(source);
+		afterEach: function () {
+			this.oAfterInitSpy.restore();
 		}
-	};
-	asyncTestsuite("Generic View Factory", oConfig);
+	});
 
-	// switch factory function
-	oConfig.factory = function(bAsync) {
-		return sap.ui.jsonview({
-			viewName : "testdata.mvc.Async",
-			async : bAsync
-		});
-	};
-	asyncTestsuite("JSONView Factory", oConfig);
-
-	QUnit.test("Promise - loaded() for async view", function(assert) {
-		assert.expect(3);
-		var done = assert.async();
+	QUnit.test("asynchronous resource loading", function(assert) {
 		var that = this;
-		this.oLogMock = this.mock(Log);
-		this.oLogMock.expects("warning").never();
 
-		JSONView.create({
+		return JSONView.create({
 			viewName : "testdata.mvc.Async"
 		})
 		.then(function(oViewLoaded) {
 			assert.equal(that.oAfterInitSpy.callCount, 1, "AfterInit event fired before resolving");
 			assert.ok(oViewLoaded instanceof JSONView, "Views equal deeply");
-			done();
 		});
 	});
 

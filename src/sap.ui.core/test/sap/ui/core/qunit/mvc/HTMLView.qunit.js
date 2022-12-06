@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	'sap/ui/core/library',
-	'./AnyView.qunit'
+	'./AnyView_legacyAPIs.qunit'
 ], function(coreLibrary, testsuite) {
 	"use strict";
 

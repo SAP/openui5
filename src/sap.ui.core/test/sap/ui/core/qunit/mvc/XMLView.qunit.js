@@ -12,7 +12,7 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper',
 	'sap/m/Button',
 	'sap/m/Panel',
-	'./AnyView.qunit',
+	'./AnyView_legacyAPIs.qunit',
 	'sap/ui/thirdparty/jquery',
 	"sap/ui/core/Configuration"
 ], function(Log, ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, Configuration) {

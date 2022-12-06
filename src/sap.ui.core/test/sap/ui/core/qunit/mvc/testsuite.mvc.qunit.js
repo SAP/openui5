@@ -32,13 +32,37 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			AsyncJSONView: {
 				title: "QUnit Page for async sap.ui.core.mvc.JSONView"
 			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			AsyncJSONView_legacyAPIs: {
+				title: "QUnit Page for async sap.ui.core.mvc.JSONView - legacy APIs"
+			},
 			AsyncJSView: {
 				title: "QUnit Page for async sap.ui.core.mvc.JSView"
+			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			AsyncJSView_legacyAPIs: {
+				title: "QUnit Page for async sap.ui.core.mvc.JSView - legacy APIs"
 			},
 			AsyncXMLView: {
 				title: "QUnit Page for async sap.ui.core.mvc.XMLView"
 			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			AsyncXMLView_legacyAPIs: {
+				title: "QUnit Page for async sap.ui.core.mvc.XMLView - legacy APIs"
+			},
 			Controller: {
+				sinon: true
+			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			Controller_legacyAPIs: {
 				sinon: true
 			},
 			EventHandlerResolver: {
@@ -53,6 +77,13 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			},
 			JSONView: {
 				title: "QUnit Page for sap.ui.core.mvc.JSONView + sap.ui.core.mvc.Controller",
+				sinon: true
+			},
+			/**
+			 * @deprecated As of 1.110
+			 */
+			JSONView_legacyAPIs: {
+				title: "QUnit Page for sap.ui.core.mvc.JSONView + sap.ui.core.mvc.Controller - legacy APIs",
 				sinon: true
 			},
 			JSView: {
@@ -114,6 +145,17 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			},
 			XMLTemplateProcessorRequireXML: {
 				title: "QUnit Page for XMLTemplateProcessor - Require in XML",
+				loader: {
+					paths: {
+						"testdata": "test-resources/sap/ui/core/qunit/testdata"
+					}
+				}
+			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			XMLTemplateProcessorRequireXML_legacyAPIs: {
+				title: "QUnit Page for XMLTemplateProcessor - Require in XML - legacy APIs",
 				loader: {
 					paths: {
 						"testdata": "test-resources/sap/ui/core/qunit/testdata"

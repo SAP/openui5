@@ -3,97 +3,116 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/Device",
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/JSONView",
+	"sap/ui/core/mvc/JSView",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/mvc/HTMLView",
 	"sap/ui/qunit/QUnitUtils"
-], function(ObjectPath, Device, Controller, qutils) {
+], function(ObjectPath, Device, Controller, JSONView, JSView, XMLView, HTMLView, qutils) {
 	"use strict";
-
-	QUnit.config.reorder = false;
 
 	// create content div
 	var oDIV = document.createElement("div");
 	oDIV.id = "content";
 	document.body.appendChild(oDIV);
 
+	/*
+	 * an initial check to be executed before other MVC tests start
+	 */
+	QUnit.test("InitialCheck", function (assert) {
+		assert.expect(6);
+		assert.ok(Controller, "sap.ui.core.mvc.Controller must be defined");
+		assert.ok(JSONView, "sap.ui.core.mvc.JSONView must be defined");
+		assert.ok(JSView, "sap.ui.core.mvc.JSView must be defined");
+		assert.ok(XMLView, "sap.ui.core.mvc.XMLView must be defined");
+		assert.ok(HTMLView, "sap.ui.core.mvc.HTMLView must be defined");
+		assert.ok(sap.ui.controller, "sap.ui.controller must be defined");
+	});
+
 	function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 
 		var view;
-		var pView;
 
 		QUnit.module(sCaption);
 
 		QUnit.test("View Instantiation: default controller instantiation", function(assert) {
+			assert.expect(7);
+			// define View and place it onto the page
 			window.onInitCalled = false;
-			pView = fnViewFactory();
+			view = fnViewFactory();
+			assert.ok(view, "view must exist after creation");
+			var fnClass = ObjectPath.get(oConfig.viewClassName);
+			assert.ok(view instanceof fnClass, "view must be instance of " + oConfig.viewClassName);
+		});
 
-			return pView.then(function(oView) {
-				assert.expect(7);
-
-				view = oView;
-				assert.ok(view, "view must exist after creation");
-				var fnClass = ObjectPath.get(oConfig.viewClassName);
-				assert.ok(view instanceof fnClass, "view must be instance of " + oConfig.viewClassName);
-				return oView;
-			});
+		QUnit.test("View Instantiation: default controller instantiation - async", function(assert) {
+			assert.expect(7);
+			// define View and place it onto the page
+			window.onInitCalled = false;
+			view = fnViewFactory({async: true});
+			assert.ok(view, "view must exist after creation");
+			var fnClass = ObjectPath.get(oConfig.viewClassName);
+			assert.ok(view instanceof fnClass, "view must be instance of " + oConfig.viewClassName);
 		});
 
 		QUnit.test("Controller Instantiation", function(assert) {
-			return pView.then(function(oView) {
-				assert.expect(2);
-				var oController = oView.getController();
-				assert.ok(oController, "controller must exist after creation");
-				assert.ok(oController instanceof Controller, "controller must be instanceof sap.ui.core.mvc.Controller");
-			});
+			assert.expect(2);
+			var controller = view.getController();
+			assert.ok(controller, "controller must exist after creation");
+			assert.ok(controller instanceof Controller, "controller must be instanceof sap.ui.core.mvc.Controller");
 		});
 
 		QUnit.test("Lifecycle: onInit", function(assert) {
-			return pView.then(function(oView) {
-				assert.expect(1);
-				assert.ok(window.onInitCalled, "controller.onInit should be called by now");
-				window.onInitCalled = false;
-			});
+			assert.expect(1);
+			assert.ok(window.onInitCalled, "controller.onInit should be called by now");
+			window.onInitCalled = false;
 		});
 
 		QUnit.test("Lifecycle: onAfterRendering", function(assert) {
-			return pView.then(function(oView) {
-				assert.expect(6);
-				window.onAfterRenderingCalled = false;
+			assert.expect(6);
+			window.onAfterRenderingCalled = false;
+			view.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-				oView.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
+			function doCheck() {
 				assert.ok(window.onAfterRenderingCalled, "controller.onAfterRendering should be called by now");
 				window.onAfterRenderingCalled = false;
-			});
+			}
+
+			if (Device.browser.safari) {
+				var done = assert.async();
+				setTimeout(function() {
+					doCheck();
+					done();
+				}, 1000);
+			} else {
+				doCheck();
+			}
 		});
 
 		QUnit.test("SAPUI5 Rendering", function(assert) {
-			return pView.then(function(oView) {
-				assert.expect(oConfig.idsToBeChecked.length);
-				for (var i = 0; i < oConfig.idsToBeChecked.length; i++) {
-					var oDomRef = document.getElementById(oView.createId(oConfig.idsToBeChecked[i]));
-					assert.ok(oDomRef,  "Element " + oConfig.idsToBeChecked[i] + " rendered");
-				}
-			});
+			assert.expect(oConfig.idsToBeChecked.length);
+			for (var i = 0; i < oConfig.idsToBeChecked.length; i++) {
+				var oDomRef = document.getElementById(view.createId(oConfig.idsToBeChecked[i]));
+				assert.ok(oDomRef,  "Element " + oConfig.idsToBeChecked[i] + " rendered");
+			}
 		});
 
 		QUnit.test("Aggregation", function(assert) {
-			return pView.then(function(oView) {
-				assert.expect(1);
-				var oDomRef = document.getElementById(oView.createId("Button2"));
-				assert.ok(oDomRef,  "SAPUI5 Button rendered in aggregation");
-			});
+			assert.expect(1);
+			assert.expect(1);
+			var oDomRef = document.getElementById(view.createId("Button2"));
+			assert.ok(oDomRef,  "SAPUI5 Button rendered in aggregation");
 		});
 
 		QUnit.test("Child Views exists", function(assert) {
-			return pView.then(function(oView) {
-				assert.expect(3);
-				var oJSONView = document.getElementById(oView.createId("MyJSONView"));
-				assert.ok(oJSONView, "Child View (JSONView) should be rendered");
-				var oJSView = document.getElementById(oView.createId("MyJSView"));
-				assert.ok(oJSView, "Child View (JSView) should be rendered");
-				var oXMLView = document.getElementById(oView.createId("MyXMLView"));
-				assert.ok(oXMLView, "Child View (XMLView) should be rendered");
-			});
+			assert.expect(3);
+			var oJSONView = document.getElementById(view.createId("MyJSONView"));
+			assert.ok(oJSONView, "Child View (JSONView) should be rendered");
+			var oJSView = document.getElementById(view.createId("MyJSView"));
+			assert.ok(oJSView, "Child View (JSView) should be rendered");
+			var oXMLView = document.getElementById(view.createId("MyXMLView"));
+			assert.ok(oXMLView, "Child View (XMLView) should be rendered");
 		});
 
 		QUnit.test("Child Views content rendered", function(assert) {
@@ -218,28 +237,27 @@ sap.ui.define([
 		});
 
 		QUnit.test("Cloning: Event listeners are called on the correct controller instance", function(assert) {
-			return fnViewFactory().then(function(oView) {
-				assert.expect(12);
-				var oTmpl = oView, oClone;
-				if (!oTmpl.sViewName) {
-					// Cloning views created from string or object (via viewContent) currently fails for HTML and JSON views
-					//	We will address this in a separate change, until then we skip testing those cases
-					assert.expect(6);
-					assert.ok(true, "Skipping clone of views created from string of object");
-					return;
-				}
-				oClone = oTmpl.clone();
+			assert.expect(12);
+			var oTmpl, oClone;
+			oTmpl = fnViewFactory();
+			if (!oTmpl.sViewName) {
+				// Cloning views created from string or object (via viewContent) currently fails for HTML and JSON views
+				//	We will address this in a separate change, until then we skip testing those cases
+				assert.expect(6);
+				assert.ok(true, "Skipping clone of views created from string of object");
+				return;
+			}
+			oClone = oTmpl.clone();
 
-				oTmpl.fireBeforeRendering();
-				assert.ok(window.onBeforeRenderingCalled === oTmpl.getController(), "Event is called on correct controller instance");
+			oTmpl.fireBeforeRendering();
+			assert.ok(window.onBeforeRenderingCalled === oTmpl.getController(), "Event is called on correct controller instance");
 
-				oClone.fireBeforeRendering();
-				assert.ok(window.onBeforeRenderingCalled === oClone.getController(), "Event is called on correct controller instance");
+			oClone.fireBeforeRendering();
+			assert.ok(window.onBeforeRenderingCalled === oClone.getController(), "Event is called on correct controller instance");
 
-				// Cleanup
-				oTmpl.destroy();
-				oClone.destroy();
-			});
+			// Cleanup
+			oTmpl.destroy();
+			oClone.destroy();
 		});
 
 	}
