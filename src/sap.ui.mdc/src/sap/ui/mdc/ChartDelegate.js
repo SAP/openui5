@@ -51,6 +51,8 @@ sap.ui.define([
      * @typedef {object} ZoomState
      * @property {boolean} enabled <code>true</code> if zooming is enabled
      * @property {number} currentZoomLevel Current zoom level of the chart in percent (between 0 and 1)
+     * @private
+     * @ui5-restricted Fiori Elements, sap.ui.mdc
      */
     /**
      * Gets the current zooming information for the inner chart.
@@ -113,7 +115,7 @@ sap.ui.define([
      * @param {string} sPropertyName the name of the property added
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart to add the property to
      * @param {object} mPropertyBag the property bag containing useful information about the change
-     * @param {strring} sRole new role for given item (if available)
+     * @param {string} sRole new role for given item (if available)
      * @returns {Promise} Promise that resolves with new MDC chart Item as parameter
      * @experimental
      * @private
@@ -158,7 +160,7 @@ sap.ui.define([
 
     /**
      * Creates a sorter for a given property.
-     * @param {sap.ui.mdc.Chart.Item} oMDCItem MDC item for which a sorter is created
+     * @param {sap.ui.mdc.chart.Item} oMDCItem MDC item for which a sorter is created
      * @param {object} oSortProperty The sorting information
      *
      * @experimental
@@ -251,15 +253,17 @@ sap.ui.define([
     };
 
     /**
-     * @typedef {object} ChartTypeObject
+     * @typedef {object} sap.ui.mdc.ChartTypeObject
      * @property {string} key Unique key of the chart type
      * @property {string} icon URI for the icon for the current chart type
      * @property {string} text Name of the current chart type
      * @property {boolean} selected Whether the chart type is the one currently used
+     * @private
+     * @ui5-restricted sap.ui.mdc, Fiori Elements
      */
     /**
      * Returns the current chart type.
-     * @returns {ChartTypeObject} Information about the current chart type
+     * @returns {sap.ui.mdc.ChartTypeObject} Information about the current chart type
      * @throws Exception if inner chart is not initialized yet
      *
      * @experimental
@@ -271,7 +275,7 @@ sap.ui.define([
 
     /**
      * This function is used by P13n to determine which chart type supports which layout options.
-     * There might be chart tyoes that do not support certain layout options (for example, "Axis3").
+     * There might be chart types that do not support certain layout options (for example, "Axis3").
      * Layout configuration is defined as followed:
      * {
      *  key: string, //identifier for the chart type
@@ -287,7 +291,7 @@ sap.ui.define([
     /**
      * Gets the available chart types for the current state of the inner chart.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @returns {Array<ChartTypeObject>} Array containing the available chart types
+     * @returns {Array<sap.ui.mdc.ChartTypeObject>} Array containing the available chart types
      *
      * @experimental
      * @private
@@ -488,7 +492,7 @@ sap.ui.define([
     };
 
     /**
-     * Returns the relevant propery infos based on the metadata used with the MDC chart instance.
+     * Returns the relevant property infos based on the metadata used with the MDC chart instance.
      *
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @returns {array} Array of the property infos to be used within MDC chart

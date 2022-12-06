@@ -90,11 +90,6 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate"], function(AggregationBaseDe
     };
 
 	/**
-	 * Retrieves the relevant metadata for a given payload and returns the property info array.
-	 *
-	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
-	 * @returns {Promise<sap.ui.mdc.filterbar.PropertyInfo[]>} Once resolved, an array of property info objects is returned
-	 *
 	 * @typedef {object} sap.ui.mdc.filterbar.PropertyInfo
 	 *
 	 * @property {string} path
@@ -125,7 +120,14 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate"], function(AggregationBaseDe
 	 *   Defines if the filter supports multiple values <code>-1</code> or single values <code>1</code>
 	 *
 	 */
-	 FilterBarDelegate.fetchProperties = function(oControl) {
+
+	/**
+	 * Retrieves the relevant metadata for a given payload and returns the property info array.
+	 *
+	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
+	 * @returns {Promise<sap.ui.mdc.filterbar.PropertyInfo[]>} Once resolved, an array of property info objects is returned
+	 */
+	FilterBarDelegate.fetchProperties = function(oControl) {
 		return AggregationBaseDelegate.fetchProperties(oControl);
 	};
 

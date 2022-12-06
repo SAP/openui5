@@ -1132,7 +1132,7 @@ function(
 				 * @returns {string[]} an array with the supported filter operator names
 				 *
 				 * @private
-				 * @ui5-restricted ap.fe
+				 * @ui5-restricted sap.fe
 				 * @MDC_PUBLIC_CANDIDATE
 				 */
 				getOperatorsForType: function(sType) {

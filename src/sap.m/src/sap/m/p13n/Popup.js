@@ -28,7 +28,6 @@ sap.ui.define([
 	 * @class
 	 * This control can be used to show personalization-related content in different popup controls.
 	 *
-	 * @class
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE

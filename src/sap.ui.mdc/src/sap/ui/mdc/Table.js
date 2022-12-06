@@ -128,7 +128,7 @@ sap.ui.define([
 	 * @since 1.58
 	 * @alias sap.ui.mdc.Table
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	var Table = Control.extend("sap.ui.mdc.Table", {
 		metadata: {
@@ -701,7 +701,7 @@ sap.ui.define([
 	 * @returns {Promise} A <code>Promise</code> that resolves after the table has been initialized
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Table.prototype.initialized = function() {
 		return this._oTableReady.promise;
@@ -771,7 +771,7 @@ sap.ui.define([
 	 * @returns {Promise} A <code>Promise</code> that resolves after the table scrolls to the row with the given index
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Table.prototype.scrollToIndex = function(iIndex) {
 		if (typeof iIndex !== "number") {
@@ -793,7 +793,7 @@ sap.ui.define([
 	 * @returns {Promise} A <code>Promise</code> that resolves after the focus has been set
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Table.prototype.focusRow = function(iIndex, bFirstInteractiveElement) {
 		return this.scrollToIndex(iIndex).then(function() {
@@ -2157,7 +2157,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.Context[]} The selected contexts
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @experimental The API is subject to change.
 	 */
 	Table.prototype.getSelectedContexts = function() {
@@ -2169,7 +2169,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Table.prototype.clearSelection = function() {
 		this._bSelectionChangedByAPI = true;
@@ -2189,7 +2189,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether the table is bound
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Table.prototype.isTableBound = function() {
 		return this._getType().isTableBound();

@@ -157,7 +157,6 @@ sap.ui.define([
 	/**
 	 * P13n <code>Item</code> object type.
 	 *
-	 * @type {sap.m.p13n.Item}
 	 * @static
 	 * @constant
 	 * @typedef {object} sap.m.p13n.Item

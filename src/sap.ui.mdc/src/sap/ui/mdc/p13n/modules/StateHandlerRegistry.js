@@ -67,10 +67,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * This method is the central point of access to the DefaultProviderRegistry Singleton.
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 *
-	 * This method is the central point of access to the DefaultProviderRegistry Singleton.
 	 * @returns {this} Returns the <code>StateHandlerRegistry</code> instance.
 	 */
 	StateHandlerRegistry.getInstance = function () {

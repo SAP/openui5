@@ -127,7 +127,7 @@ sap.ui.define([
      * selected view.
      *
      * @param {function} fnItemFactory The factory function that is being called with the unique key.
-     *
+     * @returns {this}
      */
     AdaptFiltersPanel.prototype.setItemFactory = function(fnItemFactory) {
         this.setProperty("itemFactory", fnItemFactory);

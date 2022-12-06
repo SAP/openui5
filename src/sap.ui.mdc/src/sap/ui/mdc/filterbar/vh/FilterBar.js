@@ -66,6 +66,7 @@ sap.ui.define(
 			"sap.ui.mdc.filterbar.vh.FilterBar",
 			{
 				metadata: {
+					library: "sap.ui.mdc",
 					properties: {
 						delegate: {
 							type: "object",

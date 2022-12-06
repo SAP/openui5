@@ -479,7 +479,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 *
 	 */
 	UIManager.getInstance = function(oAdaptationProvider) {
 		if (!oUIManager) {

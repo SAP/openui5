@@ -15,8 +15,8 @@ sap.ui.define([
 	 * Constructor for a new <code>CollectiveSearchSelect</code>.
 	 * @param {string} [sId] - ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] - Initial settings for the new control
-	 * @class Can be used to manage the <code>CollectiveSearchSelect</code> contro search items.
-	 * @extends sap.ui.core.Control
+	 * @class Can be used to manage the <code>CollectiveSearchSelect</code> control search items.
+	 * @extends sap.m.VariantManagement
 	 * @constructor
 	 * @private
 	 * @ui5-restricted sap.ui.mdc

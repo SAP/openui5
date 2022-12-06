@@ -33,7 +33,7 @@ sap.ui.define([
          * @author SAP SE
          * @version ${version}
          * @constructor
-         * @experimental As of version ...
+         * @experimental As of version 1.88
          * @private
          * @ui5-restricted sap.fe
          * @MDC_PUBLIC_CANDIDATE

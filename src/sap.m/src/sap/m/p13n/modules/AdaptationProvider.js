@@ -16,13 +16,10 @@ sap.ui.define([
 	 * @private
      *
 	 * @ui5-restricted sap.m
-	 * @alias sap.m.p13n.AdaptationProvider
+	 * @alias sap.m.p13n.modules.AdaptationProvider
+	 * @extends sap.ui.base.Object
 	 */
-	var AdaptationProvider = BaseObject.extend("sap.m.p13n.AdaptationProvider", {
-		metadata: {
-			baseType : "sap.m.p13n.AdaptationProvider"
-		}
-	});
+	var AdaptationProvider = BaseObject.extend("sap.m.p13n.modules.AdaptationProvider");
 
 	/**
 	 * Initialize adaptation for a provided control instance, set of keys and properties

@@ -19,7 +19,7 @@ sap.ui.define(['sap/ui/model/ValidateException'],
 	 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition with validation error
 	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions Array of conditions including a condition with validation error
 	 *
-	 * @alias sap.ui.mdc.conditions.ConditionValidateException
+	 * @alias sap.ui.mdc.condition.ConditionValidateException
 	 * @class
 	 * @classdesc
 	 *   Instances of this exception are thrown when constraints of a type are violated.

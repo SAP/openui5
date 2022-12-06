@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @abstract
 	 * @experimental
 	 * @since 1.65

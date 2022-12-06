@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @class
 	 * The <code>SortController</code> entity serves as a base class to create personalization implementations that are specific to sorting.
 	 *
-	 * @extends sap.ui.base.Object
+	 * @extends sap.m.p13n.SelectionController
 	 *
 	 * @author SAP SE
 	 * @version ${version}

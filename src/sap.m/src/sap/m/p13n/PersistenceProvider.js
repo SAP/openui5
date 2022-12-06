@@ -12,9 +12,10 @@ sap.ui.define([
 	 * since any control that is a direct or indirect descendant of the provided <code>for</code> association is affected by this configuration.
 	 * For example, this controller can be used for <code>sap.ui.mdc</code> controls.
 	 *
+	 * @class
 	 * @private
 	 *
-	 * @experimental
+	 * @experimental Since 1.104.
 	 * @since 1.104
 	*/
 	var PersistenceProvider = CoreControl.extend("sap.m.p13n.PersistenceProvider", /** @lends sap.ui.mdc.p13n.PersistenceProvider.prototype */ {

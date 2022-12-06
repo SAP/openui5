@@ -52,7 +52,6 @@ sap.ui.define([
 	/**
 	 * P13n <code>SortItem</code> object type.
 	 *
-	 * @type {sap.m.p13n.SortItem}
 	 * @static
 	 * @constant
 	 * @typedef {object} sap.m.p13n.SortItem

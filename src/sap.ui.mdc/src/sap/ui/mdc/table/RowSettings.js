@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @experimental
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @alias sap.ui.mdc.table.RowSettings
 	 */
 
