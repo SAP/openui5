@@ -144,6 +144,8 @@
 											<items>
 												<MenuItem  key="light" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_LIGHT}" />
 												<MenuItem  key="dark" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_DARK}" />
+												<MenuItem  key="hcb" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_HCB}" />
+												<MenuItem  key="hcw" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_HCW}" />
 												<MenuItem  key="auto" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_AUTO}" />
 											</items>
 										</MenuItem>
