@@ -32,7 +32,7 @@ sap.ui.define([
      * @returns {array} Array of the property infos to be used within MDC chart
      * @experimental
      * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     * @ui5-restricted sap.fe, sap.ui.mdc
      */
      ChartDelegate.fetchProperties = function (oMDCChart) {
 

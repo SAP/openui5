@@ -232,7 +232,7 @@ sap.ui.define([
                     /**
                      * Specifies the chart metadata.<br>
                      * <b>Note</b>: This property must not be bound.<br>
-                     * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility/ Fiori Elements. Do not use it otherwise.
+                     * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility/ sap.fe. Do not use it otherwise.
                      *
                      * @since 1.99
                      */
@@ -392,7 +392,7 @@ sap.ui.define([
          *
          * @experimental
          * @private
-         * @ui5-restricted Fiori Elements
+         * @ui5-restricted sap.fe
          */
         Chart.prototype.setP13nMode = function(aMode) {
             var aSortedKeys = null;
@@ -473,7 +473,7 @@ sap.ui.define([
          *
          * @experimental
          * @private
-         * @ui5-restricted Fiori Elements
+         * @ui5-restricted sap.fe
          */
         Chart.prototype.getConditions = function() {
             //may only return conditions if the inner FilterBar has already been initialized
@@ -626,7 +626,7 @@ sap.ui.define([
          *
          * @experimental
          * @private
-         * @ui5-restricted Fiori Elements
+         * @ui5-restricted sap.fe
          */
         Chart.prototype.isFilteringEnabled = function () {
             return this.getP13nMode().indexOf("Filter") > -1;
@@ -883,7 +883,7 @@ sap.ui.define([
          *
          * @experimental
          * @private
-         * @ui5-restricted Fiori Elements, sap.ui.mdc
+         * @ui5-restricted sap.fe, sap.ui.mdc
          */
         Chart.prototype.setLegendVisible = function (bVisible) {
             this.setProperty("legendVisible", bVisible);
@@ -981,7 +981,7 @@ sap.ui.define([
          *
          * @experimental
          * @private
-         * @ui5-restricted Fiori Elements
+         * @ui5-restricted sap.fe
          *
          */
         Chart.prototype.getChartTypeInfo = function () {
@@ -1013,7 +1013,7 @@ sap.ui.define([
          *
          * @experimental
          * @private
-         * @ui5-restricted Fiori Elements
+         * @ui5-restricted sap.fe
          */
         Chart.prototype.getAvailableChartTypes = function () {
             return this.getControlDelegate().getAvailableChartTypes(this);
@@ -1045,7 +1045,7 @@ sap.ui.define([
          *
          * @experimental
          * @private
-         * @ui5-restricted Fiori Elements
+         * @ui5-restricted sap.fe
          */
         Chart.prototype.setNoData = function(oControl) {
             this.setAggregation("noData", oControl);
@@ -1204,15 +1204,15 @@ sap.ui.define([
         };
 
         /**
-		 * Callback for when fuilters changed
-		 * Activates the overlay on the MDC chart
-		 *
-		 * @param oEvent filter changed event
-		 *
-		 * @experimental
-		 * @private
-		 * @ui5-restricted Fiori Elements, sap.ui.mdc
-		 */
+         * Callback for when fuilters changed
+         * Activates the overlay on the MDC chart
+         *
+         * @param oEvent filter changed event
+         *
+         * @experimental
+         * @private
+         * @ui5-restricted sap.fe, sap.ui.mdc
+         */
 		Chart.prototype._onFiltersChanged = function(oEvent) {
 			if (this._bInnerChartReady && this.getControlDelegate() && this.getControlDelegate().getInnerChartBound(this) && oEvent.getParameter("conditionsBased")) {
 				this._renderOverlay(true);
@@ -1232,13 +1232,13 @@ sap.ui.define([
         };
 
         /**
-		 * Adds/Removes the overlay shown above the inner chart.
-		 * @param {boolean} bShow true to show overlay, false to hide
-		 *
-		 * @experimental
-		 * @private
-		 * @ui5-restricted Fiori Elements, sap.ui.mdc
-		 */
+         * Adds/Removes the overlay shown above the inner chart.
+         * @param {boolean} bShow true to show overlay, false to hide
+         *
+         * @experimental
+         * @private
+         * @ui5-restricted sap.fe, sap.ui.mdc
+         */
 		Chart.prototype._renderOverlay = function(bShow) {
 			try {
                 this.getControlDelegate().showOverlay(this, bShow);

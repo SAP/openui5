@@ -92,14 +92,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Shows popover to select chart type
-	 * @param oButton button opening the popover
-	 * @param oMDCChart the inner chart
-	 *
-	 * @experimental
-	 * @private
-	 * @ui5-restricted Fiori Elements, sap.ui.mdc
-	 */
+     * Shows popover to select chart type
+     * @param oButton button opening the popover
+     * @param oMDCChart the inner chart
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.fe, sap.ui.mdc
+     */
 	ChartTypeButton.prototype.displayChartTypes = function(oButton, oMDCChart) {
 		if (!oMDCChart || !oButton) {
 			return;
@@ -289,13 +289,13 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Closes the popover to select chart type
-	 *
-	 * @experimental
-	 * @private
-	 * @ui5-restricted Fiori Elements, sap.ui.mdc
-	 */
+    /**
+     * Closes the popover to select chart type
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.fe, sap.ui.mdc
+     */
 	ChartTypeButton.prototype.exit = function() {
 		OverflowToolbarButton.prototype.exit.apply(this, arguments);
 		if (this.oPopover) {
