@@ -200,7 +200,7 @@ function(
 	 *
 	 * @protected
 	 *
-	 * @returns {object} AccessibilityInfo of the <code>sap.m.Label</code>
+	 * @returns {{description: string, required: boolean}} AccessibilityInfo of the <code>sap.m.Label</code>
 	 */
 	Label.prototype.getAccessibilityInfo = function() {
 		var sDescription = this.getText();
@@ -235,7 +235,7 @@ function(
 	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
 	 *
 	 * @public
-	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+	 * @returns {{canOverflow: boolean, propsUnrelatedToSize: string[], onBeforeEnterOverflow: function, onAfterExitOverflow: function}} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
 	 */
 	Label.prototype.getOverflowToolbarConfig = function() {
 		var oConfig = {
