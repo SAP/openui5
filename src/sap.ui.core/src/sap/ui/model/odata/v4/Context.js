@@ -1083,8 +1083,9 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If the group ID is not valid, if this context has pending changes or does not represent a
 	 *   single entity (see {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext}), if the
-	 *   binding is not refreshable, if its root binding is suspended, or if the parameter
-	 *   <code>bAllowRemoval</code> is set for a context belonging to a context binding.
+	 *   binding is not refreshable or is a list binding with data aggregation, if its root binding
+	 *   is suspended, or if the parameter <code>bAllowRemoval</code> is set for a context belonging
+	 *   to a context binding.
 	 *
 	 * @public
 	 * @since 1.53.0
@@ -1286,6 +1287,9 @@ sap.ui.define([
 		var oPromise;
 
 		_Helper.checkGroupId(sGroupId);
+		if (this.oBinding.mParameters.$$aggregation) {
+			throw new Error("Cannot refresh " + this + " when using data aggregation");
+		}
 		this.oBinding.checkSuspended();
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot refresh entity due to pending changes: " + this);

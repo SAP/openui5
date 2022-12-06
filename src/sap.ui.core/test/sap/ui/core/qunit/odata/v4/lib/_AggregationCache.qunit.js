@@ -941,6 +941,22 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("calculateKeyPredicateRH: nested object", function (assert) {
+		var mTypeForMetaPath = {"/Artists" : {}};
+
+		this.mock(_Helper).expects("getKeyPredicate").never();
+		this.mock(_Helper).expects("setPrivateAnnotation").never();
+		this.mock(_Helper).expects("getKeyFilter").never();
+		this.mock(_AggregationHelper).expects("setAnnotations").never();
+
+		assert.strictEqual(
+			// code under test
+			_AggregationCache.calculateKeyPredicateRH(/*oGroupNode*/null, {/*oAggregation*/},
+				/*oElement*/null, mTypeForMetaPath, "/Artists/BestFriend"),
+			undefined);
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bAsync) {
 	QUnit.test("fetchValue: not $count; async = " + bAsync, function (assert) {
 		var oAggregation = {
@@ -1053,6 +1069,34 @@ sap.ui.define([
 			oCache.fetchValue("~oGroupLock~", "$count", "~fnDataRequested~", "~oListener~"),
 			"~promise~");
 	});
+
+	//*********************************************************************************************
+[{
+	oPromise : SyncPromise.resolve("~result~"),
+	vValue : "~result~"
+}, {
+	oPromise : new SyncPromise(function () {}), // not (yet) resolved
+	vValue : undefined
+}].forEach(function (oFixture, i) {
+	QUnit.test("getValue: " + i, function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X"
+			},
+			oCache;
+
+		// avoid trouble when creating 1st level cache
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
+		oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {});
+
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "some/path")
+			.returns(oFixture.oPromise);
+		this.mock(oFixture.oPromise).expects("caught").withExactArgs().exactly(i);
+
+		// code under test
+		assert.strictEqual(oCache.getValue("some/path"), oFixture.vValue);
+	});
+});
 
 	//*********************************************************************************************
 [{
