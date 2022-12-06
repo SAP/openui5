@@ -164,7 +164,7 @@ sap.ui.define([
 		 *   (Controls synchronization between different bindings which refer to the same data for
 		 *   the case data changes in one binding. Must be set to 'None' which means bindings are
 		 *   not synchronized at all; all other values are not supported and lead to an error.)
-		 *   @deprecated As of version 1.110.0, this parameter is optional; see also
+		 *   <b>deprecated:</b> As of version 1.110.0, this parameter is optional; see also
 		 *   {@link topic:648e360fa22d46248ca783dc6eb44531 Data Reuse}
 		 * @param {string} [mParameters.updateGroupId]
 		 *   The group ID that is used for update requests. If no update group ID is specified,
