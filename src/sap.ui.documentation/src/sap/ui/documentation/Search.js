@@ -38,7 +38,9 @@ sap.ui.define([
                      * Event which is fired when the user triggers a search.
                      */
                     toggle: {
-                        isOpen: {type: "boolean"}
+                        parameters: {
+                            isOpen: {type: "boolean"}
+                        }
                     },
                     search: {
                         parameters: {
