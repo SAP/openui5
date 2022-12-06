@@ -35,7 +35,6 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} [mPropertyBag.layer] - Layer
-		 * @param {string} [mPropertyBag.isComp=true] - Flag if the control owning the Component is the comp.VariantManagement
 		 * @returns {Promise<sap.ui.core.ComponentContainer>} Promise resolving with the ComponentContainer or nothing depending on the availability of the feature in the used back end
 		 * @private
 		 * @ui5-restricted sap.ui.comp, sap.ui.fl
@@ -45,7 +44,7 @@ sap.ui.define([
 				return Promise.resolve();
 			}
 			return Settings.getInstance().then(function(oSettings) {
-				return (mPropertyBag.isComp) ? oSettings.isContextSharingEnabledForComp() : oSettings.isContextSharingEnabled();
+				return oSettings.isContextSharingEnabled();
 			}).then(function(bIsEnabled) {
 				if (bIsEnabled) {
 					if (!oComponentContainer || oComponentContainer.bIsDestroyed) {

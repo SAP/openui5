@@ -38,8 +38,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("with connector that does not support context sharing", function(assert) {
 			var oSettings = {
-				isContextSharingEnabled: false,
-				isContextSharingEnabledForComp: false
+				isContextSharingEnabled: false
 			};
 			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSettings));
 
@@ -51,8 +50,7 @@ sap.ui.define([
 
 		QUnit.test("with connector and layer that support context sharing", function(assert) {
 			var oSettings = {
-				isContextSharingEnabled: true,
-				isContextSharingEnabledForComp: false
+				isContextSharingEnabled: true
 			};
 			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSettings));
 
@@ -63,37 +61,9 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("with connector and layer that does not support context sharing for comp", function(assert) {
-			var oSettings = {
-				isContextSharingEnabled: true,
-				isContextSharingEnabledForComp: false
-			};
-			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSettings));
-
-			return ContextSharingAPI.createComponent({layer: Layer.CUSTOMER, isComp: true}).then(function(oCompContainer) {
-				this.oCompCont = oCompContainer;
-				assert.equal(oCompContainer, undefined, "then component is undefined");
-			}.bind(this));
-		});
-
-		QUnit.test("with connector and layer that support context sharing for comp", function(assert) {
-			var oSettings = {
-				isContextSharingEnabled: true,
-				isContextSharingEnabledForComp: true
-			};
-			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSettings));
-
-			return ContextSharingAPI.createComponent({layer: Layer.CUSTOMER, isComp: true})
-				.then(renderComponentContainer.bind(this))
-				.then(function() {
-					assert.deepEqual(this.oCompCont.getComponentInstance().getSelectedContexts().role, [], "then component data for selected roles is correct");
-				}.bind(this));
-		});
-
 		QUnit.test("with connector and layer that support context sharing with duplicate create call", function(assert) {
 			var oSettings = {
-				isContextSharingEnabled: true,
-				isContextSharingEnabledForComp: false
+				isContextSharingEnabled: true
 			};
 			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSettings));
 

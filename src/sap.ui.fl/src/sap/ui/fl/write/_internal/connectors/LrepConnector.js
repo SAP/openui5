@@ -391,7 +391,6 @@ sap.ui.define([
 			return InitialUtils.sendRequest(sFeaturesUrl, "GET", {initialConnector: InitialConnector}).then(function (oResult) {
 				oResult.response.isVariantAdaptationEnabled = !!oResult.response.isPublicLayerAvailable;
 				oResult.response.isContextSharingEnabled = true;
-				oResult.response.isContextSharingEnabledForComp = true;
 				oResult.response.isLocalResetEnabled = true;
 				return oResult.response;
 			});
