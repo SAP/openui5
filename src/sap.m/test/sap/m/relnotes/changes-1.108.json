@@ -447,6 +447,28 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "a8d371e2754600eefe09d441141366cb6bba0c98",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: fixed dates label output",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270155500"
+          }
+        ]
+      },
+      {
+        "id": "b14cf02087b4c37a8b8cf487e4b5b7aac608cc05",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: added ability to create appointments in RTL mode with D&D",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005237632022"
+          }
+        ]
+      },
+      {
         "id": "e3af9fedd8a890cc3fc1ad97c1e3a7d42414386c",
         "type": "FIX",
         "text": " p13n.Popover: fix vertical scrolling with only one panel",
