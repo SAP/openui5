@@ -593,6 +593,8 @@ sap.ui.define([
 		};
 
 		oCache.fetchValue = function () {};
+		aCacheData.$count = 2; // ensure that count is not updated
+		this.mock(_Helper).expects("updateExisting").never();
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
 			.returns(SyncPromise.resolve(aCacheData));
@@ -9890,6 +9892,7 @@ sap.ui.define([
 			oDeleted = {"@$ui5.context.isDeleted" : true},
 			oActive = {"@$ui5.context.isInactive" : false}, // "inline creation row"
 			mChangeListeners = {
+				$count : "~listener~count~",
 				"($uid=id-1-23)/bar" : "~listener[]~2~",
 				"($uid=id-1-42)/baz" : "~listener[]~3~",
 				"('0')/a" : "~listener[]~4~",
@@ -10047,6 +10050,7 @@ sap.ui.define([
 			assert.strictEqual(oCache.oBackup, null);
 			assert.strictEqual(oCache.iActiveElements, 4);
 			assert.deepEqual(oCache.mChangeListeners, {
+				$count : "~listener~count~",
 				"($uid=id-0-0)/n/a" : "~listener[]~n/a~",
 				"($uid=id-0-1)/n/a" : "~listener[]~n/a~",
 				"($uid=id-0-2)/n/a" : "~listener[]~n/a~",

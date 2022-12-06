@@ -240,8 +240,10 @@ sap.ui.define([
 
 				delete oEntity["@$ui5.context.isDeleted"];
 				if (Array.isArray(vCacheData)) {
-					addToCount(that.mChangeListeners, sParentPath, vCacheData, 1);
 					iIndex = oDeleted.index;
+					if (iIndex !== undefined) {
+						addToCount(that.mChangeListeners, sParentPath, vCacheData, 1);
+					}
 					iDeletedIndex = vCacheData.$deleted.indexOf(oDeleted);
 					that.adjustIndexes(sParentPath, vCacheData, iIndex, 1, iDeletedIndex);
 					vCacheData.splice(iIndex, 0, oEntity);
@@ -3338,7 +3340,7 @@ sap.ui.define([
 		this.iLimit = Infinity;
 
 		Object.keys(mChangeListeners).forEach(function (sPath) {
-			if (aKeptElementPredicates.includes(sPath.split("/")[0])) {
+			if (sPath === "$count" || aKeptElementPredicates.includes(sPath.split("/")[0])) {
 				that.mChangeListeners[sPath] = mChangeListeners[sPath];
 			}
 		});

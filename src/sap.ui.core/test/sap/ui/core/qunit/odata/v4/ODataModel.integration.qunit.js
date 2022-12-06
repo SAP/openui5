@@ -18788,11 +18788,14 @@ sap.ui.define([
 	// Scenario: Deferred deletion of a context, then sort/filter/refresh the list, then reset the
 	// changes. The list must be refreshed to restore the deleted context in its right place.
 	// JIRA: CPOUI5ODATAV4-1639
+	// Also filter the deleted element out and observe $count (JIRA: CPOUI5ODATAV4-1873)
 [{
 	name : "sort",
 	reload : function (oBinding) {
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$orderby=SalesOrderID desc"
-				+ "&$filter=not (SalesOrderID eq '2')&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList?$count=true&$select=Note,SalesOrderID"
+				+ "&$orderby=SalesOrderID desc&$filter=not (SalesOrderID eq '2')"
+				+ "&$skip=0&$top=100", {
+				"@odata.count" : "2",
 				value : [
 					{"@odata.etag" : "etag3", Note : "Note 3", SalesOrderID : "3"},
 					{"@odata.etag" : "etag1", Note : "Note 1", SalesOrderID : "1"}
@@ -18804,8 +18807,9 @@ sap.ui.define([
 		oBinding.sort(new Sorter("SalesOrderID", true));
 	},
 	expectOnReset : function () {
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$orderby=SalesOrderID desc"
-				+ "&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList?$count=true&$select=Note,SalesOrderID"
+				+ "&$orderby=SalesOrderID desc&$skip=0&$top=100", {
+				"@odata.count" : "3",
 				value : [
 					{"@odata.etag" : "etag3", Note : "Note 3", SalesOrderID : "3"},
 					{"@odata.etag" : "etag2", Note : "Note 2", SalesOrderID : "2"},
@@ -18813,39 +18817,70 @@ sap.ui.define([
 				]
 			})
 			.expectChange("id", [, "2", "1"])
-			.expectChange("note", [, "Note 2", "Note 1"]);
+			.expectChange("note", [, "Note 2", "Note 1"])
+			.expectChange("count", "3");
 	}
 }, {
-	name : "filter",
+	name : "filter deleted",
 	reload : function (oBinding) {
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+		this.expectRequest("SalesOrderList?$count=true&$select=Note,SalesOrderID"
+				+ "&$filter=(SalesOrderID ne '2') and not (SalesOrderID eq '2')"
+				+ "&$skip=0&$top=100", {
+				"@odata.count" : "2",
+				value : [
+					{"@odata.etag" : "etag1", Note : "Note 1", SalesOrderID : "1"},
+					{"@odata.etag" : "etag3", Note : "Note 3", SalesOrderID : "3"}
+				]
+			});
+
+		oBinding.filter(new Filter("SalesOrderID", FilterOperator.NE, "2"));
+	},
+	expectOnReset : function () {
+		this.expectRequest("SalesOrderList?$count=true&$select=Note,SalesOrderID"
+				+ "&$filter=SalesOrderID ne '2'&$skip=0&$top=100", {
+				"@odata.count" : "2",
+				value : [
+					{"@odata.etag" : "etag1", Note : "Note 1", SalesOrderID : "1"},
+					{"@odata.etag" : "etag3", Note : "Note 3", SalesOrderID : "3"}
+				]
+			});
+	}
+}, {
+	name : "filter other",
+	reload : function (oBinding) {
+		this.expectRequest("SalesOrderList?$count=true&$select=Note,SalesOrderID"
 				+ "&$filter=(SalesOrderID gt '1') and not (SalesOrderID eq '2')"
 				+ "&$skip=0&$top=100", {
+				"@odata.count" : "1",
 				value : [
 					{"@odata.etag" : "etag3", Note : "Note 3", SalesOrderID : "3"}
 				]
 			})
 			.expectChange("id", ["3"])
-			.expectChange("note", ["Note 3"]);
+			.expectChange("note", ["Note 3"])
+			.expectChange("count", "1");
 
 		oBinding.filter(new Filter("SalesOrderID", FilterOperator.GT, "1"));
 	},
 	expectOnReset : function () {
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$filter=SalesOrderID gt '1'"
-				+ "&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList?$count=true&$select=Note,SalesOrderID"
+				+ "&$filter=SalesOrderID gt '1'&$skip=0&$top=100", {
+				"@odata.count" : "2",
 				value : [
 					{"@odata.etag" : "etag2", Note : "Note 2", SalesOrderID : "2"},
 					{"@odata.etag" : "etag3", Note : "Note 3", SalesOrderID : "3"}
 				]
 			})
 			.expectChange("id", ["2", "3"])
-			.expectChange("note", ["Note 2", "Note 3"]);
+			.expectChange("note", ["Note 2", "Note 3"])
+			.expectChange("count", "2");
 	}
 }, {
 	name : "refresh",
 	reload : function (oBinding) {
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+		this.expectRequest("SalesOrderList?$count=true&$select=Note,SalesOrderID"
 				+ "&$filter=not (SalesOrderID eq '2')&$skip=0&$top=100", {
+				"@odata.count" : "2",
 				value : [
 					{"@odata.etag" : "etag1*", Note : "Note 1*", SalesOrderID : "1"},
 					{"@odata.etag" : "etag3*", Note : "Note 3*", SalesOrderID : "3"}
@@ -18856,7 +18891,9 @@ sap.ui.define([
 		oBinding.refresh();
 	},
 	expectOnReset : function () {
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList?$count=true&$select=Note,SalesOrderID"
+				+ "&$skip=0&$top=100", {
+				"@odata.count" : "3",
 				value : [
 					{"@odata.etag" : "etag1*", Note : "Note 1*", SalesOrderID : "1"},
 					{"@odata.etag" : "etag2*", Note : "Note 2*", SalesOrderID : "2"},
@@ -18864,7 +18901,8 @@ sap.ui.define([
 				]
 			})
 			.expectChange("id", [, "2", "3"])
-			.expectChange("note", [, "Note 2*", "Note 3*"]);
+			.expectChange("note", [, "Note 2*", "Note 3*"])
+			.expectChange("count", "3");
 	}
 }].forEach(function (oFixture) {
 	QUnit.test("CPOUI5ODATAV4-1639: ODLB: deferred delete & " + oFixture.name, function (assert) {
@@ -18873,13 +18911,16 @@ sap.ui.define([
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oPromise,
 			sView = '\
-<Table id="list" items="{/SalesOrderList}">\
+<Text id="count" text="{header>$count}"/>\
+<Table id="list" items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}"/>\
 </Table>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList?$count=true&$select=Note,SalesOrderID"
+				+ "&$skip=0&$top=100", {
+				"@odata.count" : "3",
 				value : [
 					{"@odata.etag" : "etag1", Note : "Note 1", SalesOrderID : "1"},
 					{"@odata.etag" : "etag2", Note : "Note 2", SalesOrderID : "2"},
@@ -18887,13 +18928,22 @@ sap.ui.define([
 				]
 			})
 			.expectChange("id", ["1", "2", "3"])
-			.expectChange("note", ["Note 1", "Note 2", "Note 3"]);
+			.expectChange("note", ["Note 1", "Note 2", "Note 3"])
+			.expectChange("count");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectChange("id", [, "3"])
-				.expectChange("note", [, "Note 3"]);
+			that.expectChange("count", "3");
 
 			oBinding = that.oView.byId("list").getBinding("items");
+			that.oView.setModel(oModel, "header");
+			that.oView.byId("count").setBindingContext(oBinding.getHeaderContext(), "header");
+
+			return that.waitForChanges(assert, "count");
+		}).then(function () {
+			that.expectChange("id", [, "3"])
+				.expectChange("note", [, "Note 3"])
+				.expectChange("count", "2");
+
 			oContext = oBinding.getCurrentContexts()[1];
 			oPromise = oContext.delete("doNotSubmit");
 
@@ -18907,22 +18957,26 @@ sap.ui.define([
 				"Request canceled: DELETE SalesOrderList('2'); group: doNotSubmit");
 			oFixture.expectOnReset.call(that);
 
-			oBinding.resetChanges();
-
 			return Promise.all([
+				// code under test
+				oBinding.resetChanges(),
 				oPromise.then(mustFail, function (oError) {
 					assert.ok(oError.canceled);
 					assert.notOk(oContext.isDeleted());
-					// the cache is still waiting for the response
-					return oContext.requestProperty("SalesOrderID").then(function (sValue) {
-						assert.strictEqual(sValue, "2");
-					});
+					if (oFixture.name !== "filter deleted") {
+						// the cache is still waiting for the response
+						return oContext.requestProperty("SalesOrderID").then(function (sValue) {
+							assert.strictEqual(sValue, "2");
+						});
+					}
 				}),
 				that.waitForChanges(assert, "reset")
 			]);
 		}).then(function () {
-			assert.strictEqual(oContext.getBinding(), oBinding);
-			assert.strictEqual(oContext.getProperty("SalesOrderID"), "2");
+			if (oFixture.name !== "filter deleted") {
+				assert.strictEqual(oContext.getBinding(), oBinding);
+				assert.strictEqual(oContext.getProperty("SalesOrderID"), "2");
+			}
 		});
 	});
 });
