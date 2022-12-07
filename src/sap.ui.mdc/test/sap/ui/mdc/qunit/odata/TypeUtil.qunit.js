@@ -111,4 +111,32 @@ sap.ui.define([
 		assert.equal(oTypeConfig.baseType, BaseType.Date , "expected basetype returned");
 	});
 
+	QUnit.test("internalizeValue", function (assert) {
+		var oTypedValue = TypeUtil.internalizeValue(50, new ODataInt64()); //
+		assert.equal(oTypedValue, '50', "expected value returned");
+
+		oTypedValue = TypeUtil.internalizeValue('50', new ODataInt64());
+		assert.equal(oTypedValue, '50', "expected value returned");
+
+		oTypedValue = TypeUtil.internalizeValue(50, new ODataDecimal()); //
+		assert.equal(oTypedValue, '50', "expected value returned");
+
+		oTypedValue = TypeUtil.internalizeValue('50', new ODataDecimal());
+		assert.equal(oTypedValue, '50', "expected value returned");
+	});
+
+	QUnit.test("externalizeValue", function (assert) {
+		var oStringifiedValue = TypeUtil.externalizeValue(50, new ODataInt64());
+		assert.equal(oStringifiedValue, "50", "stringified value returned");
+
+		oStringifiedValue = TypeUtil.externalizeValue('50', new ODataInt64());
+		assert.equal(oStringifiedValue, "50", "stringified value returned");
+
+		oStringifiedValue = TypeUtil.externalizeValue(50, new ODataDecimal()); //
+		assert.equal(oStringifiedValue, '50', "expected value returned");
+
+		oStringifiedValue = TypeUtil.externalizeValue('50', new ODataDecimal());
+		assert.equal(oStringifiedValue, '50', "expected value returned");
+	});
+
 });
