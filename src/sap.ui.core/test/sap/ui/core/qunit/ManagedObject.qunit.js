@@ -1175,6 +1175,38 @@ sap.ui.define([
 		assert.equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
 	});
 
+	QUnit.test("Bind aggregation with Owner", function(assert) {
+		var oObjWithOwner = ManagedObject.runWithOwner(function() {
+			return new TestManagedObject();
+		}, "myOwnerComponent");
+
+		// template
+		oObjWithOwner.bindAggregation("subObjects", {
+			path: "/list",
+			template: new TestManagedObject("myTemplate")
+		});
+		var oBindingInfo = oObjWithOwner.getBindingInfo("subObjects");
+		var oClone = oBindingInfo.factory("myCloneId");
+
+		assert.equal(oClone._sOwnerId, "myOwnerComponent", "Owner Component ID is correctly propagated");
+		assert.equal(oClone.getId(), "myTemplate-myCloneId", "Clone has correct ID");
+
+		// factory given from outside
+		oObjWithOwner.bindAggregation("subObjects", {
+			path: "/list",
+			factory: function(id) {
+				return new TestManagedObject(id);
+			}
+		});
+		oBindingInfo = oObjWithOwner.getBindingInfo("subObjects");
+		oClone = oBindingInfo.factory("myTemplate-myCloneId");
+
+		assert.equal(oClone._sOwnerId, "myOwnerComponent", "Owner Component ID is correctly propagated");
+		assert.equal(oClone.getId(), "myTemplate-myCloneId", "Clone has correct ID");
+
+		oObjWithOwner.destroy();
+	});
+
 	QUnit.test("Bind aggregation reuse templates on updates", function(assert) {
 		var aOldObjects, aNewObjects;
 		oModel.setProperty("/changingList", [{

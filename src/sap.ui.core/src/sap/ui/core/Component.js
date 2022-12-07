@@ -196,31 +196,6 @@ sap.ui.define([
 
 	}
 
-
-	/**
-	 * Calls the function <code>fn</code> once and marks all ManagedObjects
-	 * created during that call as "owned" by the given ID.
-	 *
-	 * @param {function} fn Function to execute
-	 * @param {string} sOwnerId Id of the owner
-	 * @param {Object} [oThisArg=undefined] Value to use as <code>this</code> when executing <code>fn</code>
-	 * @return {any} result of function <code>fn</code>
-	 */
-	function runWithOwner(fn, sOwnerId, oThisArg) {
-
-		assert(typeof fn === "function", "fn must be a function");
-
-		var oldOwnerId = ManagedObject._sOwnerId;
-		try {
-			ManagedObject._sOwnerId = sOwnerId;
-			return fn.call(oThisArg);
-		} finally {
-			ManagedObject._sOwnerId = oldOwnerId;
-		}
-
-	}
-
-
 	/**
 	 * Creates and initializes a new Component with the given <code>sId</code> and
 	 * settings.
@@ -711,7 +686,7 @@ sap.ui.define([
 			throw new Error("Execute 'runAsOwner' on an inactive owner component is not supported. Component: '" +
 				this.getMetadata().getName() + "' with id '" + this.getId() + "'.");
 		}
-		return runWithOwner(fn, this.getId());
+		return ManagedObject.runWithOwner(fn, this.getId());
 	};
 
 	// ---- ----
@@ -2587,7 +2562,7 @@ sap.ui.define([
 					});
 				};
 				return loadDependenciesAndIncludes(oClass.getMetadata()).then(function () {
-					return runWithOwner(function() {
+					return ManagedObject.runWithOwner(function() {
 						return createInstance(oClass);
 					}, sCurrentOwnerId);
 				});
