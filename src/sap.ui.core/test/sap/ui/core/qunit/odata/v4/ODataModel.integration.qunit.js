@@ -41615,6 +41615,87 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario:
+	// - Read an artist as main object with publications and messages
+	// - Keep the first publication alive and show it in the subobject page
+	// - Filter the publications so that the kept-alive one drops out
+	// - See that its message is still active
+	QUnit.test("CPOUI5ODATAV4-1873: isKeepAlive, filter & messages", function (assert) {
+		var oBinding,
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{path : \'/Artists(ArtistID=\\\'A1\\\',IsActiveEntity=true)\',\
+		parameters : {$select : \'Messages\'}}">\
+	<Text id="id" text="{ArtistID}"/>\
+	<Table id="items" items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
+		<Text id="listPrice" text="{Price}"/>\
+	</Table>\
+</FlexBox>\
+<FlexBox id="subobjectPage">\
+	<Input id="price" value="{Price}"/>\
+</FlexBox>',
+			that = this;
+
+			this.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity,Messages", {
+					ArtistID : "1",
+					IsActiveEntity : true,
+					Messages : [{
+						message : "Just A Message",
+						numericSeverity : 1,
+						target : "_Publication('P1')/Price"
+					}]
+				})
+				.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=100", {
+					value : [
+						{PublicationID : "P1", Price : "7.99"},
+						{PublicationID : "P2", Price : "12.99"}
+					]
+				})
+				.expectChange("id", "1")
+				.expectChange("listPrice", ["7.99", "12.99"])
+				.expectChange("price")
+				.expectMessages([{
+					message : "Just A Message",
+					target :
+						"/Artists(ArtistID='A1',IsActiveEntity=true)/_Publication('P1')/Price",
+					type : "Success"
+				}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext;
+
+			oBinding = that.oView.byId("items").getBinding("items");
+			oContext = oBinding.getCurrentContexts()[0];
+			oContext.setKeepAlive(true);
+
+			that.expectChange("price", "7.99");
+
+			that.oView.byId("subobjectPage").setBindingContext(oContext);
+
+			return that.waitForChanges(assert, "setKeepAlive & subobject page");
+		}).then(function () {
+			return that.checkValueState(assert, "price", "Success", "Just A Message");
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$filter=Price gt 10.00&$skip=0&$top=100", {
+					value : [
+						{PublicationID : "P2", Price : "12.99"}
+					]
+				})
+				.expectChange("listPrice", ["12.99"]);
+
+			// code under test
+			oBinding.filter(new Filter("Price", FilterOperator.GT, "10.00"));
+
+			return that.waitForChanges(assert, "filter");
+		}).then(function () {
+			return that.checkValueState(assert, "price", "Success", "Just A Message");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Flexible Column Layout, ODataModel#getKeepAliveContext
 	// A list report and an object page are set up in different ways such that the object page shows
 	// an active entity visible in the list report, including a manually requested late property for
