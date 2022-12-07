@@ -37,7 +37,7 @@ sap.ui.define([
 	"sap/m/IllustratedMessageSize",
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/util/ParameterMap",
-	"sap/ui/performance/Measurement",
+	"sap/ui/integration/util/Measurement",
 	"sap/m/HBox",
 	"sap/m/library"
 ], function (
@@ -122,14 +122,6 @@ sap.ui.define([
 	var FlexAlignItems = mLibrary.FlexAlignItems;
 
 	var MODULE_PREFIX = "module:";
-
-	function measurementStartTime() {
-		if (performance && performance.now) {
-			return "Start since page load: " + performance.now();
-		}
-
-		return "";
-	}
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -691,12 +683,12 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.onAfterRendering = function () {
-		if (Measurement.getActive() && this._isManifestReady) {
-			if (!Measurement.getMeasurement(this._sPerformanceId + "firstRenderingWithStaticData").end) {
+		if (this._isManifestReady) {
+			if (!Measurement.hasEnded(this._sPerformanceId + "firstRenderingWithStaticData")) {
 				Measurement.end(this._sPerformanceId + "firstRenderingWithStaticData");
 			}
 
-			if (this._bDataReady && !Measurement.getMeasurement(this._sPerformanceId + "firstRenderingWithDynamicData").end) {
+			if (this._bDataReady && !Measurement.hasEnded(this._sPerformanceId + "firstRenderingWithDynamicData")) {
 				Measurement.end(this._sPerformanceId + "firstRenderingWithDynamicData");
 			}
 		}
@@ -842,9 +834,9 @@ sap.ui.define([
 			this._oCardManifest.destroy();
 		}
 
-		Measurement.start(this._sPerformanceId + "initManifest", "Load and initialize manifest. " + measurementStartTime());
-		Measurement.start(this._sPerformanceId + "firstRenderingWithStaticData", "First rendering with static data (includes initManifest). " + measurementStartTime());
-		Measurement.start(this._sPerformanceId + "firstRenderingWithDynamicData","First rendering with dynamic card level data (includes firstRenderingWithStaticData). " + measurementStartTime());
+		Measurement.start(this._sPerformanceId + "initManifest", "Load and initialize manifest.");
+		Measurement.start(this._sPerformanceId + "firstRenderingWithStaticData", "First rendering with static data (includes initManifest).");
+		Measurement.start(this._sPerformanceId + "firstRenderingWithDynamicData","First rendering with dynamic card level data (includes firstRenderingWithStaticData).");
 
 		this._oCardManifest = new CardManifest("sap.card", vManifest, sBaseUrl, this.getManifestChanges());
 

@@ -34,7 +34,13 @@ sap.ui.define([
 						'});'
 					},
 					{
-						title: "All Measurements for Specific Card",
+						title: "Native Markers for Specific Card",
+						code: 'performance.getEntriesByType("mark").filter(function (mark) {\n' +
+							'\treturn mark.name.includes("yourCardId") && mark.name.includes("UI5 Integration Cards");\n' +
+						'});'
+					},
+					{
+						title: "All UI5 Measurements for Specific Card",
 						code: 'sap.ui.requireSync(["sap/ui/performance/Measurement"]).filterMeasurements(function (measurement) {\n' +
 							'\treturn measurement.id.includes("yourCardId");\n' +
 						'});'
