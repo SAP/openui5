@@ -169,6 +169,14 @@ sap.ui.define([
 			assert.strictEqual(this.oSelectDialog.getBusyIndicatorDelay(), iDelay, 'The SelectDialog delay value should be ' + iDelay);
 		});
 
+		QUnit.test("Setting the placeholder property of internal SearchField control", function (assert) {
+			var sPlaceholderText = "Test placeholder";
+			this.oSelectDialog.setSearchPlaceholder(sPlaceholderText);
+
+			Core.applyChanges();
+			assert.strictEqual(this.oSelectDialog._oSearchField.getPlaceholder(), sPlaceholderText, "The SearchField's placeholder text should be " + sPlaceholderText);
+		});
+
 		QUnit.test("Setting of the Title", function (assert) {
 			this.oSelectDialog.setTitle("New title");
 			Core.applyChanges();

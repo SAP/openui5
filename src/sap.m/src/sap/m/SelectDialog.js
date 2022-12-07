@@ -222,7 +222,14 @@ function(
 			 * @since 1.72
 			 * @public
 			 */
-			titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
+			titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto},
+
+			/**
+			 * Allows overriding the default placeholder text. If not set, the word "Search" in the current local language or English will be used as a placeholder.
+			 * @since 1.110
+			 * @public
+			 */
+			searchPlaceholder: {type: "string", group: "Appearance"}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -732,6 +739,30 @@ function(
 	 */
 	SelectDialog.prototype.getNoDataText = function () {
 		return this._oList.getNoDataText();
+	};
+
+	/**
+	 * Set the internal SearchField's placeholder property
+	 * @override
+	 * @public
+	 * @param {string} sSearchPlaceholder The placeholder text
+	 * @returns {this} <code>this</code> pointer for chaining
+	 */
+	SelectDialog.prototype.setSearchPlaceholder = function (sSearchPlaceholder) {
+		this.setProperty("searchPlaceholder", sSearchPlaceholder);
+		this._oSearchField.setPlaceholder(sSearchPlaceholder);
+
+		return this;
+	};
+
+	/**
+	 * Get the internal SearchField's placeholder property
+	 * @override
+	 * @public
+	 * @returns {string} the current placeholder text
+	 */
+	SelectDialog.prototype.getSearchPlaceholder = function () {
+		return this._oSearchField.getPlaceholder();
 	};
 
 	/**
