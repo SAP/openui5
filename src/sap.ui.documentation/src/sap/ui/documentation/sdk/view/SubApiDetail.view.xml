@@ -54,7 +54,7 @@
 
 										<template:if test="{=${data>/deprecatedText} !== undefined}">
 											<m:MessageStrip
-												text="{/deprecatedText}"
+												text="{path : '/deprecatedText', formatter: '.formatter.formatMessageStripLinks'}"
 												type="Error"
 												showIcon="true"
 												showCloseButton="false"
@@ -295,7 +295,7 @@
 													</layout:HorizontalLayout>
 													<m:MessageStrip
 														visible="{=${deprecatedText} !== undefined}"
-														text="{deprecatedText}"
+														text="{path : 'deprecatedText', formatter: 'sap.ui.documentation.sdk.model.formatter.formatMessageStripLinks'}"
 														type="Error"
 														showIcon="true"
 														showCloseButton="false"
@@ -497,7 +497,7 @@
 												</layout:HorizontalLayout>
 												<template:if test="{=${event>deprecated} !== undefined}">
 													<m:MessageStrip
-														text="{event>deprecatedText}"
+														text="{path : 'event>deprecatedText', formatter: 'sap.ui.documentation.sdk.model.formatter.formatMessageStripLinks'}"
 														type="Error"
 														showIcon="true"
 														showCloseButton="false"
@@ -526,7 +526,7 @@
 																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 																	<m:MessageStrip
 																			visible="{=${parameter>deprecated} !== undefined}"
-																			text="{parameter>deprecatedText}"
+																			text="{path : 'parameter>deprecatedText', formatter: 'sap.ui.documentation.sdk.model.formatter.formatMessageStripLinks'}"
 																			type="Error"
 																			showIcon="true"
 																			showCloseButton="false"
@@ -614,9 +614,9 @@
 														<m:ObjectStatus visible="{=${method>since} !== undefined}" text="Since: {method>since}"/>
 													</layout:HorizontalLayout>
 													</m:FlexBox>
-													<template:if test="{=${method>deprecated} !== undefined}">
+													<template:if test="{=${method>deprecatedText} !== undefined}">
 														<m:MessageStrip
-															text="{method>deprecatedText}"
+															text="{ path: 'method>deprecatedText', formatter: 'sap.ui.documentation.sdk.model.formatter.formatMessageStripLinks' }"
 															type="Error"
 															showIcon="true"
 															showCloseButton="false"
