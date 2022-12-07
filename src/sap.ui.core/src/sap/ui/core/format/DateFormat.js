@@ -518,6 +518,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to ask for locale specific texts/settings
 	 * @param {object} [oInfo] Info information common to all instances of the created "type",
 	 *   e.g. default format options
+	 * @param {boolean} [bIsFallback=false] Whether this is a fallback format instance
 	 * @return {sap.ui.core.format.DateFormat} time instance of the DateFormat
 	 * @static
 	 * @private
@@ -527,7 +528,7 @@ sap.ui.define([
 	 *   <li>only one of the <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code> parameters was provided.</li>
 	 * </ul>
 	 */
-	DateFormat.createInstance = function(oFormatOptions, oLocale, oInfo) {
+	DateFormat.createInstance = function(oFormatOptions, oLocale, oInfo, bIsFallback) {
 		var aFallbackFormatOptions, oFormat, sPattern;
 
 		// Create an instance of the DateFormat
@@ -612,7 +613,7 @@ sap.ui.define([
 		}
 
 		// if the current format isn't a fallback format, create its fallback formats
-		if (!oFormat.oFormatOptions.fallback) {
+		if (!bIsFallback) {
 			aFallbackFormatOptions = oInfo.aFallbackFormatOptions;
 			// Add two fallback patterns for locale-dependent short format without delimiters
 			if (oInfo.bShortFallbackFormatOptions) {
@@ -723,10 +724,8 @@ sap.ui.define([
 				oFormatOptions.interval = true;
 			}
 			oFormatOptions.calendarType = sCalendarType;
-			// mark the current format as a fallback in order to avoid endless recursive call of function 'createInstance'
-			oFormatOptions.fallback = true;
 
-			return DateFormat.createInstance(oFormatOptions, oLocale, oInfo);
+			return DateFormat.createInstance(oFormatOptions, oLocale, oInfo, true);
 		});
 	};
 
