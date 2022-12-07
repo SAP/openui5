@@ -141,11 +141,10 @@ sap.ui.define([
 	 *   An entity with the ETag of the binding for which the deletion was requested. This is
 	 *   provided if the deletion is delegated from a context binding with empty path to a list
 	 *   binding. W/o a lock, this is ignored.
-	 * @param {function} [fnCallback]
-	 *   A function which is called immediately when an entity has been deleted from the cache, or
-	 *   when it was re-inserted due to an error; only used when deleting from an entity collection,
-	 *   the index of the entity and an offset (-1 for deletion, 1 for re-insertion) are passed as
-	 *   parameter
+	 * @param {function} fnCallback
+	 *  A function which is called immediately when an entity has been deleted from the cache, or
+	 *   when it was re-inserted; the index of the entity and an offset (-1 for deletion, 1 for
+	 *   re-insertion) are passed as parameter
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
@@ -178,6 +177,45 @@ sap.ui.define([
 				sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient"),
 				sTransientPredicate = _Helper.getPrivateAnnotation(oEntity, "transientPredicate");
 
+			/*
+			 * Cleans up after a cancel or failed request.
+			 */
+			function cleanUp() {
+				var iDeletedIndex;
+
+				_Helper.removeByPath(that.mChangeRequests, sEntityPath, oRequestPromise);
+
+				if (aMessages.length) {
+					oModelInterface.fireMessageChange({newMessages : aMessages});
+				}
+
+				delete oEntity["@$ui5.context.isDeleted"];
+				if (Array.isArray(vCacheData)) {
+					iIndex = oDeleted.index;
+					if (iIndex !== undefined) {
+						addToCount(that.mChangeListeners, sParentPath, vCacheData, 1);
+					}
+					iDeletedIndex = vCacheData.$deleted.indexOf(oDeleted);
+					that.adjustIndexes(sParentPath, vCacheData, iIndex, 1, iDeletedIndex);
+					vCacheData.splice(iIndex, 0, oEntity);
+					vCacheData.$deleted.splice(iDeletedIndex, 1);
+					if (sTransientPredicate) {
+						vCacheData.$created += 1;
+						if (!sParentPath) {
+							that.iActiveElements += 1;
+						}
+					}
+				}
+				if (that.iActiveUsages) {
+					fnCallback(iIndex, 1);
+				} else if (iIndex === undefined && that.reset) {
+					// an active cache must let the list binding reset to be told about kept-alive
+					// elements, an inactive cache however has no binding and no kept-alive
+					// elements
+					that.reset([]);
+				}
+			}
+
 			if (sTransientGroup) {
 				if (typeof sTransientGroup !== "string") {
 					throw new Error("No 'delete' allowed while waiting for server response");
@@ -199,14 +237,14 @@ sap.ui.define([
 				oDeleted = that.addDeleted(vCacheData, iIndex, sKeyPredicate, oGroupLock,
 					!!sTransientPredicate);
 				that.removeElement(vCacheData, iIndex, sKeyPredicate, sParentPath);
-				fnCallback(iIndex, -1);
 			}
+			fnCallback(iIndex, -1);
 			mHeaders = {"If-Match" : oETagEntity || oEntity};
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			// the existence of an onCancel callback causes a pending change in the requestor
 			oRequestPromise = oGroupLock
 				? that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders, undefined,
-					undefined, /*onCancel*/function () {}, undefined,
+					undefined, cleanUp, undefined,
 					_Helper.buildPath(that.sOriginalResourcePath, sEntityPath))
 				: SyncPromise.resolve();
 			_Helper.addByPath(that.mChangeRequests, sEntityPath, oRequestPromise);
@@ -215,6 +253,8 @@ sap.ui.define([
 					throw oError;
 				} // else: map 404 to 200
 			}).then(function () {
+				_Helper.removeByPath(that.mChangeRequests, sEntityPath, oRequestPromise);
+
 				if (Array.isArray(vCacheData)) {
 					vCacheData.$deleted.splice(vCacheData.$deleted.indexOf(oDeleted), 1);
 					delete vCacheData.$byPredicate[sKeyPredicate];
@@ -227,45 +267,14 @@ sap.ui.define([
 					oEntity["$ui5.deleted"] = true;
 				}
 			}, function (oError) {
-				var iDeletedIndex;
-
-				if (aMessages.length) {
-					if (!oError.canceled) {
-						aMessages = aMessages.filter(function (oMessage) {
-							return !oMessage.persistent;
-						});
-					}
-					oModelInterface.fireMessageChange({newMessages : aMessages});
+				if (!oError.canceled) {
+					aMessages = aMessages.filter(function (oMessage) {
+						return !oMessage.persistent;
+					});
+					cleanUp();
 				}
 
-				delete oEntity["@$ui5.context.isDeleted"];
-				if (Array.isArray(vCacheData)) {
-					iIndex = oDeleted.index;
-					if (iIndex !== undefined) {
-						addToCount(that.mChangeListeners, sParentPath, vCacheData, 1);
-					}
-					iDeletedIndex = vCacheData.$deleted.indexOf(oDeleted);
-					that.adjustIndexes(sParentPath, vCacheData, iIndex, 1, iDeletedIndex);
-					vCacheData.splice(iIndex, 0, oEntity);
-					vCacheData.$deleted.splice(iDeletedIndex, 1);
-					if (sTransientPredicate) {
-						vCacheData.$created += 1;
-						if (!sParentPath) {
-							that.iActiveElements += 1;
-						}
-					}
-					if (that.iActiveUsages) {
-						fnCallback(iIndex, 1);
-					} else if (iIndex === undefined) {
-						// an active cache must let the binding reset to be told about kept-alive
-						// elements, an inactive cache however has no binding and no kept-alive
-						// elements
-						that.reset([]);
-					}
-				}
 				throw oError;
-			}).finally(function () {
-				_Helper.removeByPath(that.mChangeRequests, sEntityPath, oRequestPromise);
 			});
 		});
 	};

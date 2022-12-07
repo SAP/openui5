@@ -303,6 +303,7 @@ sap.ui.define([
 					if (iOffset > 0) { // we're re-inserting
 						delete that.mPreviousContextsByPath[oContext.getPath()];
 						that.aContexts.splice(iIndex, 0, oContext);
+						oContext.oDeletePromise = null;
 					} else { // we're deleting
 						that.mPreviousContextsByPath[oContext.getPath()] = oContext;
 						that.aContexts.splice(iIndex, 1);
@@ -324,6 +325,7 @@ sap.ui.define([
 					});
 				} else if (iOffset > 0) { // trying to reinsert an element w/o index
 					bReset = true;
+					oContext.oDeletePromise = null;
 				} else if (that.bLengthFinal && !bDoNotRequestCount) {
 					// a kept-alive context is not in aContexts -> request the count
 					that.oCache.requestCount(

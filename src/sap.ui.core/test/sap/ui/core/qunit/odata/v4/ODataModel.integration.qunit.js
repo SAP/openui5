@@ -17809,10 +17809,10 @@ sap.ui.define([
 			return that.waitForChanges(assert, "deferred update & delete in one change set");
 		}).then(function () {
 			if (bReset) {
-				that.expectCanceledError("Failed to update path /SalesOrderList('1')/Note",
-					"Request canceled: PATCH SalesOrderList('1'); group: update");
 				that.expectCanceledError("Failed to delete /SalesOrderList('1')",
 					"Request canceled: DELETE SalesOrderList('1'); group: update");
+				that.expectCanceledError("Failed to update path /SalesOrderList('1')/Note",
+					"Request canceled: PATCH SalesOrderList('1'); group: update");
 				that.expectChange("note", "Note")
 					.expectMessages([oStateMessage, oTransitionMessage]);
 			} else {
@@ -17868,6 +17868,10 @@ sap.ui.define([
 			} else if (oFixture.resetViaBinding) {
 				oBinding.resetChanges();
 			}
+			// reset works synchronously, but a pending request is a pending change
+			assert.strictEqual(oModel.hasPendingChanges(), !bReset);
+			assert.strictEqual(oBinding.hasPendingChanges(), !bReset);
+			assert.strictEqual(oContext.hasPendingChanges(), !bReset);
 
 			return Promise.all([
 				oPromise.then(function () {
@@ -17879,6 +17883,10 @@ sap.ui.define([
 						: "Request intentionally failed");
 					assert.notOk(oContext.isDeleted());
 					assert.strictEqual(oContext.getProperty("SalesOrderID"), "1");
+					// in case of failure the PATCH is reinserted and remains a pending change
+					assert.strictEqual(oModel.hasPendingChanges(), !bReset);
+					assert.strictEqual(oBinding.hasPendingChanges(), !bReset);
+					assert.strictEqual(oContext.hasPendingChanges(), !bReset);
 				}),
 				oModel.submitBatch("update"),
 				that.waitForChanges(assert, oFixture.desc)
@@ -17962,6 +17970,7 @@ sap.ui.define([
 			oObjectPage,
 			oPromise2,
 			oPromise4,
+			bReset = oFixture.resetViaModel || oFixture.resetViaBinding,
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="list" growing="true" growingThreshold="5" \
@@ -18125,12 +18134,12 @@ sap.ui.define([
 					.expectRequest({method : "DELETE", url : "SalesOrderList('2')"})
 					.expectRequest({method : "DELETE", url : "SalesOrderList('4')"});
 			} else {
-				that.expectCanceledError("Failed to update path /SalesOrderList('2')/Note",
-					"Request canceled: PATCH SalesOrderList('2'); group: update");
 				that.expectCanceledError("Failed to delete /SalesOrderList('4')",
 					"Request canceled: DELETE SalesOrderList('4'); group: update");
 				that.expectCanceledError("Failed to delete /SalesOrderList('2')",
 					"Request canceled: DELETE SalesOrderList('2'); group: update");
+				that.expectCanceledError("Failed to update path /SalesOrderList('2')/Note",
+					"Request canceled: PATCH SalesOrderList('2'); group: update");
 				that.expectChange("listId", [, "2", "4"])
 					.expectChange("count", "18") // change handler of $count fired synchronously
 					.expectChange("count", "19")
@@ -18145,6 +18154,11 @@ sap.ui.define([
 			} else if (oFixture.resetViaBinding) {
 				oBinding.resetChanges();
 			}
+			// reset works synchronously, but a pending request is a pending change
+			assert.strictEqual(oModel.hasPendingChanges(), !bReset);
+			assert.strictEqual(oBinding.hasPendingChanges(), !bReset);
+			assert.strictEqual(oContext2.hasPendingChanges(), !bReset);
+			assert.strictEqual(oContext4.hasPendingChanges(), !bReset);
 
 			return Promise.all([
 				oPromise2.then(function () {
@@ -18153,6 +18167,7 @@ sap.ui.define([
 				}, function (oError) {
 					assert.notOk(oFixture.success);
 					assert.ok(oError.canceled);
+					assert.notOk(oContext2.hasPendingChanges());
 					assert.notOk(oContext2.isDeleted());
 					assert.strictEqual(oContext2.getProperty("SalesOrderID"), "2");
 
@@ -18170,6 +18185,7 @@ sap.ui.define([
 				}, function (oError) {
 					assert.notOk(oFixture.success);
 					assert.ok(oError.canceled);
+					assert.notOk(oContext4.hasPendingChanges());
 					assert.notOk(oContext4.isDeleted());
 					assert.strictEqual(oContext4.getProperty("SalesOrderID"), "4");
 				}),
@@ -18180,6 +18196,10 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getLength(), oFixture.success ? 17 : 19);
 			assert.notOk(oModel.hasPendingChanges());
 			assert.notOk(oBinding.hasPendingChanges());
+			if (!oFixture.success) { // otherwise they are destroyed
+				assert.notOk(oContext2.hasPendingChanges());
+				assert.notOk(oContext4.hasPendingChanges());
+			}
 		});
 	});
 });
@@ -18767,6 +18787,8 @@ sap.ui.define([
 				"Request canceled: DELETE SalesOrderList('2'); group: doNotSubmit");
 
 			oBinding.resetChanges();
+			assert.notOk(oRowContext.hasPendingChanges());
+			assert.notOk(oRowContext.isDeleted());
 
 			return Promise.all([
 				checkCanceled(assert, oRowPromise),
@@ -47238,10 +47260,10 @@ sap.ui.define([
 				that.waitForChanges(assert, "reset one patched entity")
 			]);
 		}).then(function () {
-			that.expectCanceledError("Failed to update path /SalesOrderList('3')/Note",
-					"Request canceled: PATCH SalesOrderList('3'); group: update")
-				.expectCanceledError("Failed to delete /SalesOrderList('3')",
+			that.expectCanceledError("Failed to delete /SalesOrderList('3')",
 					"Request canceled: DELETE SalesOrderList('3'); group: update")
+				.expectCanceledError("Failed to update path /SalesOrderList('3')/Note",
+					"Request canceled: PATCH SalesOrderList('3'); group: update")
 				.expectChange("note", [,, "Order 3"]);
 
 			return Promise.all([

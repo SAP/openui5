@@ -257,7 +257,13 @@ sap.ui.define([
 			oEmptyPathParentBinding.oReturnValueContext = null;
 		}
 		this._fireChange({reason : ChangeReason.Remove});
-		return this.deleteFromCache(oGroupLock, sEditUrl, "", null).then(function () {
+		return this.deleteFromCache(oGroupLock, sEditUrl, "", null,
+			function (_iIndex, iOffset) {
+				if (iOffset > 0) {
+					oEmptyPathParentContext.oDeletePromise = null;
+				}
+			}
+		).then(function () {
 			oEmptyPathParentContext.destroy();
 			if (oReturnValueContext) {
 				oReturnValueContext.destroy();
