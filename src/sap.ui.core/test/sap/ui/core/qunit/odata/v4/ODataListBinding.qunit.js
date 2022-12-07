@@ -4930,6 +4930,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("create: $$aggregation", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		oBinding.mParameters.$$aggregation = "~aggregation~";
+
+		assert.throws(function () {
+			// code under test
+			oBinding.create();
+		}, new Error("Cannot create in " + oBinding + " when using data aggregation"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("create: failure", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),

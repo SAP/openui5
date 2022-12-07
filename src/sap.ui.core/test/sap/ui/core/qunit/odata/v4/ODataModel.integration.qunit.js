@@ -19901,6 +19901,8 @@ sap.ui.define([
 	// predicates in case all key properties are available. Expect no unnecessary group levels in
 	// there!
 	// JIRA: CPOUI5ODATAV4-700
+	// Check that create, delete, refresh, and late property requests are not supported.
+	// JIRA: CPOUI5ODATAV4-1851
 	QUnit.test("Data Aggregation: leaves' key predicates", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -19943,12 +19945,54 @@ sap.ui.define([
 			.expectChange("salesOrderID", ["", "26", "25"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oTable = that.oView.byId("table");
+			var oPromise,
+				oTable = that.oView.byId("table"),
+				oBinding = oTable.getBinding("items"),
+				aCurrentContexts = oBinding.getCurrentContexts();
 
-			assert.deepEqual(oTable.getBinding("items").getCurrentContexts().map(getPath), [
+			assert.deepEqual(aCurrentContexts.map(getPath), [
 				"/SalesOrderList()",
 				"/SalesOrderList('26')", // SalesOrderID is the single key property!
 				"/SalesOrderList('25')"
+			]);
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-1851)
+				oBinding.create();
+			}, new Error("Cannot create in " + oBinding + " when using data aggregation"));
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-1851)
+				aCurrentContexts[1].delete();
+			}, new Error("Cannot delete " + aCurrentContexts[1] + " when using data aggregation"));
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-1851)
+				aCurrentContexts[1].requestRefresh();
+			}, new Error("Cannot refresh " + aCurrentContexts[1] + " when using data aggregation"));
+
+			that.expectChange("lifecycleStatus", [, "Z*"])
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('26')",
+					payload : {LifecycleStatus : "Z*"}
+				}, {GrossAmount : "1", LifecycleStatus : "*Z*", SalesOrderID : "26"})
+				.expectChange("lifecycleStatus", [, "*Z*"]);
+
+			// code under test (JIRA: CPOUI5ODATAV4-1851)
+			oPromise = aCurrentContexts[1].setProperty("LifecycleStatus", "Z*");
+
+			// Note: _Helper.isDataAggregation prevents mLateQueryOptions as intended
+			that.oLogMock.expects("error")
+				.withArgs("Failed to drill-down into (\'26\')/Note, invalid segment: Note");
+
+			return Promise.all([
+				oPromise,
+				// code under test (JIRA: CPOUI5ODATAV4-1851)
+				aCurrentContexts[1].requestProperty("Note").then(function (sNote) {
+					assert.strictEqual(sNote, undefined, "no late property request");
+				}),
+				that.waitForChanges(assert)
 			]);
 		});
 	});
@@ -23345,6 +23389,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1643
 	//
 	// Request various side effects that do not affect the hierarchy (JIRA: CPOUI5ODATAV4-1785).
+	// Check that create, delete, and refresh are not supported (JIRA: CPOUI5ODATAV4-1851).
 	QUnit.test("Recursive Hierarchy: root is leaf", function (assert) {
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oRoot,
@@ -23460,6 +23505,213 @@ sap.ui.define([
 				[undefined, 1, "0", "", "Team #01 (updated)"],
 				["", "", "", "", ""],
 				["", "", "", "", ""]
+			]);
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-1851)
+				oRoot.getBinding().create();
+			}, new Error("Cannot create in " + oRoot.getBinding()
+				+ " when using data aggregation"));
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-1851)
+				oRoot.delete();
+			}, new Error("Cannot delete " + oRoot + " when using data aggregation"));
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-1851)
+				oRoot.requestRefresh();
+			}, new Error("Cannot refresh " + oRoot + " when using data aggregation"));
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show a recursive hierarchy with a single root node, expand to show a single child.
+	// Edit non-hierarchy property with associated currency, also w/o sending a PATCH, for both root
+	// and child. Execute a bound action for both root and child to see that it updates the node.
+	// JIRA: CPOUI5ODATAV4-1851
+	QUnit.test("Recursive Hierarchy: edit w/ currency", function (assert) {
+		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+			oChild,
+			oChildAmountBinding,
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			oRoot,
+			oRootAmountBinding,
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{path : \'/EMPLOYEES\',\
+		parameters : {\
+			$$aggregation : {\
+				hierarchyQualifier : \'OrgChart\'\
+			}\
+		}}" threshold="0" visibleRowCount="2">\
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text text="{= %{@$ui5.node.level} }"/>\
+	<Text text="{ID}"/>\
+	<Text text="{MANAGER_ID}"/>\
+	<Input value="{SALARY/YEARLY_BONUS_AMOUNT}"/>\
+	<Text text="{SALARY/BONUS_CURR}"/>\
+	<Text text="{TEAM_ID}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				+ ",Levels=1)"
+				+ "&$select=DrillState,ID,MANAGER_ID,SALARY/BONUS_CURR,SALARY/YEARLY_BONUS_AMOUNT"
+				+ ",TEAM_ID"
+				+ "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "0",
+					MANAGER_ID : null,
+					SALARY : {
+						BONUS_CURR : "EUR",
+						YEARLY_BONUS_AMOUNT : "1234"
+					},
+					TEAM_ID : "TEAM_0"
+				}]
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oRootAmountBinding = oTable.getRows()[0].getCells()[4].getBinding("value");
+			oRoot = oRootAmountBinding.getContext();
+
+			checkTable("root is collapsed", assert, oTable, [
+				"/EMPLOYEES('0')"
+			], [
+				[false, 1, "0", "", "1,234", "EUR", "TEAM_0"],
+				["", "", "", "", "", "", ""]
+			]);
+
+			that.expectRequest("EMPLOYEES"
+				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
+				+ "&$select=DrillState,ID,MANAGER_ID,SALARY/BONUS_CURR,SALARY/YEARLY_BONUS_AMOUNT"
+				+ ",TEAM_ID"
+				+ "&$count=true&$skip=0&$top=2", {
+					"@odata.count" : 1,
+					value : [{
+						DrillState : "leaf",
+						ID : "1",
+						MANAGER_ID : "0",
+						SALARY : {
+							BONUS_CURR : "DEM",
+							YEARLY_BONUS_AMOUNT : "500"
+						},
+						TEAM_ID : "TEAM_1"
+					}]
+				});
+
+			oRoot.expand();
+
+			return that.waitForChanges(assert, "expand");
+		}).then(function () {
+			oChildAmountBinding = oTable.getRows()[1].getCells()[4].getBinding("value");
+			oChild = oChildAmountBinding.getContext();
+
+			checkTable("root is expanded", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')"
+			], [
+				[true, 1, "0", "", "1,234", "EUR", "TEAM_0"],
+				[undefined, 2, "1", "0", "500", "DEM", "TEAM_1"]
+			]);
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('0')",
+					payload : {
+						SALARY : {
+							BONUS_CURR : "EUR",
+							YEARLY_BONUS_AMOUNT : "2345"
+						}
+					}
+				}) // 204 No Content
+				.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					payload : {
+						SALARY : {
+							BONUS_CURR : "DEM",
+							YEARLY_BONUS_AMOUNT : "700"
+						}
+					}
+				}); // 204 No Content
+
+			// code under test
+			oRootAmountBinding.setValue("2345");
+			oChildAmountBinding.setValue("700");
+
+			return that.waitForChanges(assert, "PATCH");
+		}).then(function () {
+			checkTable("after editing", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')"
+			], [
+				[true, 1, "0", "", "2,345", "EUR", "TEAM_0"],
+				[undefined, 2, "1", "0", "700", "DEM", "TEAM_1"]
+			]);
+
+			// code under test
+			oRoot.setProperty("SALARY/YEARLY_BONUS_AMOUNT", "3456", null);
+			oChild.setProperty("SALARY/YEARLY_BONUS_AMOUNT", "900", null);
+
+			assert.strictEqual(oRootAmountBinding.getValue(), "3456");
+			assert.strictEqual(oChildAmountBinding.getValue(), "900");
+
+			that.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES('0')/" + sAction,
+					payload : {TeamID : "23"}
+				}, {
+					ID : "0",
+					MANAGER_ID : null,
+					SALARY : { // "side effect"
+						BONUS_CURR : "GBP",
+						YEARLY_BONUS_AMOUNT : "23.23"
+					},
+					TEAM_ID : "TEAM_23" // "side effect"
+				})
+				.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES('1')/" + sAction,
+					payload : {TeamID : "42"}
+				}, {
+					ID : "1",
+					MANAGER_ID : "0",
+					SALARY : { // "side effect"
+						BONUS_CURR : "USD",
+						YEARLY_BONUS_AMOUNT : "42.42"
+					},
+					TEAM_ID : "TEAM_42" // "side effect"
+				});
+
+			return Promise.all([
+				oModel.bindContext(sAction + "(...)", oRoot)
+					.setParameter("TeamID", "23")
+					.execute()
+					.then(function (oReturnValueContext) {
+						// Note: RVC has iGeneration === 2 instead of 0
+						assert.strictEqual(oReturnValueContext.getPath(), oRoot.getPath());
+					}),
+				oModel.bindContext(sAction + "(...)", oChild)
+					.setParameter("TeamID", "42")
+					.execute()
+					.then(function (oReturnValueContext) {
+						// Note: RVC has iGeneration === 2 instead of 0
+						assert.strictEqual(oReturnValueContext.getPath(), oChild.getPath());
+					}),
+				that.waitForChanges(assert, "action")
+			]);
+		}).then(function () {
+			checkTable("after action", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')"
+			], [
+				[true, 1, "0", "", "23.23", "GBP", "TEAM_23"],
+				[undefined, 2, "1", "0", "42.42", "USD", "TEAM_42"]
 			]);
 		});
 	});

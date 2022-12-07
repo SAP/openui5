@@ -837,6 +837,7 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> the binding's root binding is suspended,
 	 *     <li> a relative binding is unresolved,
+	 *     <li> data aggregation is used (see {@link #setAggregation}),
 	 *     <li> entities are created first at the end and then at the start,
 	 *     <li> <code>bAtEnd</code> is <code>true</code> and the binding does not know the final
 	 *       length,
@@ -862,8 +863,10 @@ sap.ui.define([
 		if (!sResolvedPath) {
 			throw new Error("Binding is unresolved: " + this);
 		}
-
 		this.checkSuspended();
+		if (this.mParameters.$$aggregation) {
+			throw new Error("Cannot create in " + this + " when using data aggregation");
+		}
 
 		bAtEnd = !!bAtEnd; // normalize to simplify comparisons
 		if (bAtEnd && !(this.bLengthFinal || this.mParameters.$count)) {

@@ -1680,7 +1680,8 @@ sap.ui.define([
 				getContext : function () { return null; },
 				isRelative : function () { return false; },
 				lockGroup : function () {},
-				refreshSingle : function () {}
+				refreshSingle : function () {},
+				mParameters : {}
 			},
 			oBindingMock = this.mock(oBinding),
 			oGroupLock = {},
@@ -1727,7 +1728,8 @@ sap.ui.define([
 					getContext : function () { return {}; },
 					isRelative : function () { return false; },
 					refreshReturnValueContext : function () {},
-					requestRefresh : function () {}
+					requestRefresh : function () {},
+					mParameters : {}
 				},
 				oBindingMock = this.mock(oBinding),
 				oModel = {
@@ -1780,10 +1782,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestRefresh: bAllowRemoval on bound context", function (assert) {
 		var oBinding = {
-				checkSuspended : function () {}
+				checkSuspended : function () {},
+				mParameters : {}
 			},
-			oModel = {},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
 
 		this.mock(_Helper).expects("checkGroupId").withExactArgs("myGroup");
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
@@ -1798,26 +1800,26 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestRefresh: invalid group", function (assert) {
 		var oBinding = {},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES", 42),
 			oError = new Error(),
-			sGroupId = "$foo",
-			oModel = {};
+			sGroupId = "$foo";
 
 		this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId).throws(oError);
 
 		assert.throws(function () {
 			// code under test
-			Context.create(oModel, oBinding, "/EMPLOYEES", 42).requestRefresh(sGroupId);
+			oContext.requestRefresh(sGroupId);
 		}, oError);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("requestRefresh: has pending changes", function (assert) {
 		var oBinding = {
-				checkSuspended : function () {}
+				checkSuspended : function () {},
+				mParameters : {}
 			},
-			sGroupId = "myGroup",
-			oModel = {},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
+			sGroupId = "myGroup";
 
 		this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
@@ -1827,6 +1829,24 @@ sap.ui.define([
 			// code under test
 			oContext.requestRefresh(sGroupId);
 		}, new Error("Cannot refresh entity due to pending changes: /EMPLOYEES('42')"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestRefresh: $$aggregation", function (assert) {
+		var oBinding = {
+				mParameters : {
+					$$aggregation : {}
+				}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42),
+			sGroupId = "myGroup";
+
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId);
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestRefresh(sGroupId);
+		}, new Error("Cannot refresh " + oContext + " when using data aggregation"));
 	});
 
 	//*********************************************************************************************

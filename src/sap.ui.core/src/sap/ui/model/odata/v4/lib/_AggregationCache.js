@@ -561,6 +561,20 @@ sap.ui.define([
 
 	/**
 	 * @override
+	 * @see sap.ui.model.odata.v4.lib._Cache#getValue
+	 */
+	_AggregationCache.prototype.getValue = function (sPath) {
+		var oSyncPromise;
+
+		oSyncPromise = this.fetchValue(_GroupLock.$cached, sPath);
+		if (oSyncPromise.isFulfilled()) {
+			return oSyncPromise.getResult();
+		}
+		oSyncPromise.caught();
+	};
+
+	/**
+	 * @override
 	 * @see sap.ui.model.odata.v4.lib._Cache#isDeletingInOtherGroup
 	 */
 	_AggregationCache.prototype.isDeletingInOtherGroup = function (_sGroupId) {
@@ -1052,8 +1066,13 @@ sap.ui.define([
 			bIsExpanded,
 			iLevel = 1,
 			sLimitedDescendantCountProperty = oAggregation.$LimitedDescendantCountProperty,
-			sPredicate = _Helper.getKeyPredicate(oElement, sMetaPath, mTypeForMetaPath);
+			sPredicate;
 
+		if (!(sMetaPath in mTypeForMetaPath)) {
+			return undefined; // nested object
+		}
+
+		sPredicate = _Helper.getKeyPredicate(oElement, sMetaPath, mTypeForMetaPath);
 		_Helper.setPrivateAnnotation(oElement, "predicate", sPredicate);
 		switch (oElement[sDrillStateProperty]) {
 			case "expanded":
