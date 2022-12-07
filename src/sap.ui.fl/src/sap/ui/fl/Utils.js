@@ -116,8 +116,8 @@ sap.ui.define([
 				// determine manifest out of found component
 				if (oComponent && oComponent.getMetadata) {
 					var oComponentMetaData = oComponent.getMetadata();
-					if (oComponentMetaData && oComponentMetaData.getManifest) {
-						return oComponentMetaData.getManifest();
+					if (oComponentMetaData && oComponentMetaData.getManifestObject) {
+						return oComponentMetaData.getManifestObject().getJson();
 					}
 				}
 			}
