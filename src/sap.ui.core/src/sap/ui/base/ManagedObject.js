@@ -40,6 +40,9 @@ sap.ui.define([
 	// shortcut for the sap.ui.core.ID type
 	var IDType;
 
+	// Binding info factory symbol
+	var BINDING_INFO_FACTORY_SYMBOL = Symbol("bindingInfoFactory");
+
 	/**
 	 * Constructs and initializes a managed object with the given <code>sId</code> and settings.
 	 *
@@ -1044,6 +1047,31 @@ sap.ui.define([
 			// always restore old preprocessor settings
 			this._fnIdPreprocessor = oOldPreprocessors.id;
 			this._fnSettingsPreprocessor = oOldPreprocessors.settings;
+		}
+
+	};
+
+	/**
+	 * Calls the function <code>fn</code> once and marks all ManagedObjects
+	 * created during that call as "owned" by the given ID.
+	 *
+	 * @param {function} fn Function to execute
+	 * @param {string} sOwnerId Id of the owner
+	 * @param {Object} [oThisArg=undefined] Value to use as <code>this</code> when executing <code>fn</code>
+	 * @return {any} result of function <code>fn</code>
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	 ManagedObject.runWithOwner = function(fn, sOwnerId, oThisArg) {
+
+		assert(typeof fn === "function", "fn must be a function");
+
+		var oldOwnerId = ManagedObject._sOwnerId;
+		try {
+			ManagedObject._sOwnerId = sOwnerId;
+			return fn.call(oThisArg);
+		} finally {
+			ManagedObject._sOwnerId = oldOwnerId;
 		}
 
 	};
@@ -3597,6 +3625,19 @@ sap.ui.define([
 
 		if (!(oBindingInfo.template || oBindingInfo.factory)) {
 			throw new Error("Missing template or factory function for aggregation " + sName + " of " + this + " !");
+		}
+
+		if (oBindingInfo.factory) {
+			// unwrap factory if alread wrapped (e.g. bindingInfo is shared)
+			var fnOriginalFactory = oBindingInfo.factory[BINDING_INFO_FACTORY_SYMBOL] || oBindingInfo.factory;
+
+			// wrap runWithOwner() call around the original factory function
+			var sOwnerId = this._sOwnerId;
+			oBindingInfo.factory = function(sId, oContext) {
+				// bind original factory with the two arguments: id and bindingContext
+				return ManagedObject.runWithOwner(fnOriginalFactory.bind(null, sId, oContext), sOwnerId);
+			};
+			oBindingInfo.factory[BINDING_INFO_FACTORY_SYMBOL] = fnOriginalFactory;
 		}
 
 		if (this._observer) {

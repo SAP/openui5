@@ -9,12 +9,13 @@ sap.ui.define([
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/model/type/String",
 	"sap/ui/core/Control",
+	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/Sorter",
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/base/strings/escapeRegExp",
 	"sap/base/util/isEmptyObject"
-], function(BindingInfo, BindingParser, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject) {
+], function(BindingInfo, BindingParser, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, Component, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject) {
 	"use strict";
 	var mObjects = {};
 
@@ -1173,6 +1174,95 @@ sap.ui.define([
 		this.obj.bindAggregation("subObjects", "/list", this.template);
 		assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
 		assert.equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+	});
+
+	QUnit.test("Bind aggregation with Owner", function(assert) {
+		var oObjWithOwner = ManagedObject.runWithOwner(function() {
+			return new TestManagedObject();
+		}, "myOwnerComponent");
+
+		// template
+		oObjWithOwner.bindAggregation("subObjects", {
+			path: "/list",
+			template: new TestManagedObject("myTemplate")
+		});
+		var oBindingInfo = oObjWithOwner.getBindingInfo("subObjects");
+		var oClone = oBindingInfo.factory("myCloneId");
+
+		assert.equal(Component.getOwnerIdFor(oClone), "myOwnerComponent", "Owner Component ID is correctly propagated");
+		assert.equal(oClone.getId(), "myTemplate-myCloneId", "Clone has correct ID");
+
+		oClone.destroy();
+
+		// factory given from outside
+		oObjWithOwner.bindAggregation("subObjects", {
+			path: "/list",
+			factory: function(id) {
+				return new TestManagedObject(id);
+			}
+		});
+		oBindingInfo = oObjWithOwner.getBindingInfo("subObjects");
+		oClone = oBindingInfo.factory("myTemplate-myCloneId");
+
+		assert.equal(Component.getOwnerIdFor(oClone), "myOwnerComponent", "Owner Component ID is correctly propagated");
+		assert.equal(oClone.getId(), "myTemplate-myCloneId", "Clone has correct ID");
+
+		oClone.destroy();
+
+		// switch owner
+		oObjWithOwner.bindAggregation("subObjects", {
+			path: "/list",
+			factory: function(id) {
+				return new TestManagedObject(id);
+			}
+		});
+		oBindingInfo = oObjWithOwner.getBindingInfo("subObjects");
+		oClone = oBindingInfo.factory("myTemplate-myCloneId");
+
+		assert.equal(Component.getOwnerIdFor(oClone), "myOwnerComponent", "Owner Component ID is correctly propagated");
+		assert.equal(oClone.getId(), "myTemplate-myCloneId", "Clone has correct ID");
+
+		oClone.destroy();
+
+		// new MO with different owner ID
+		var oObjWithDifferentOwner = ManagedObject.runWithOwner(function() {
+			return new TestManagedObject();
+		}, "myOwnerComponent2");
+
+		oObjWithDifferentOwner.bindAggregation("subObjects", {
+			path: "/list",
+			factory: oObjWithOwner.getBindingInfo("subObjects").factory
+		});
+
+		oBindingInfo = oObjWithDifferentOwner.getBindingInfo("subObjects");
+		oClone = oBindingInfo.factory("myTemplate2-myCloneId");
+
+		assert.equal(Component.getOwnerIdFor(oClone), "myOwnerComponent2", "Owner Component ID is correctly propagated via unwrapping");
+		assert.equal(oClone.getId(), "myTemplate2-myCloneId", "Clone has correct ID");
+
+		oClone.destroy();
+
+		// owner is already scoped by factory defined by application
+		oObjWithOwner.bindAggregation("subObjects", {
+			path: "/list",
+			factory: function(id) {
+				return ManagedObject.runWithOwner(function() {
+					return new TestManagedObject(id);
+				}, "myAppOwnerComponent");
+			}
+		});
+
+		oBindingInfo = oObjWithOwner.getBindingInfo("subObjects");
+		oClone = oBindingInfo.factory("myAppTemplate-myCloneId");
+
+		assert.equal(Component.getOwnerIdFor(oClone), "myAppOwnerComponent", "Original 'myAppOwnerComponent' is propagated to the clone");
+		assert.equal(oClone.getId(), "myAppTemplate-myCloneId", "Clone has correct ID");
+
+		oClone.destroy();
+
+		// cleanup
+		oObjWithOwner.destroy();
+		oObjWithDifferentOwner.destroy();
 	});
 
 	QUnit.test("Bind aggregation reuse templates on updates", function(assert) {
