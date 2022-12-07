@@ -247,11 +247,6 @@ sap.ui.define([
 			return;
 		}
 
-		// The links from the static documentation are already preprocessed at build-time
-		// to the correct format, so we do not need to adjust them here at run-time
-		if (window['sap-ui-documentation-static'] && oAnchorElement.classList.contains('sap-doc')) {
-			return;
-		}
 		sTarget = getHref(oAnchorElement);
 
 		bParsed = /^blob:/.test(sTarget)
@@ -303,11 +298,6 @@ sap.ui.define([
 			oUri;
 
 		if (oAnchorElement) {
-			// The links from the static documentation are already preprocessed at build-time
-			// to the correct format, so we do not need to adjust them here at run-time
-			if (window['sap-ui-documentation-static'] && oAnchorElement.classList.contains('sap-doc')) {
-				return;
-			}
 			sTargetHref = getHref(oAnchorElement);
 			bNewWindow = bCtrlHold || !getSameWindow(oAnchorElement);
 		}
@@ -677,7 +667,7 @@ sap.ui.define([
 	}
 
 	function isAnchorElement(oAnchorElement, bSameWindow) {
-		if (oAnchorElement && oAnchorElement.nodeName === "A") {
+		if (oAnchorElement && oAnchorElement.nodeName === "A" || oAnchorElement.nodeName === "AREA") {
 			return bSameWindow ? getSameWindow(oAnchorElement) : true;
 		}
 
