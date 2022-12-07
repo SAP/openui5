@@ -5,9 +5,5 @@ sap.ui.define([
 
 	return Controller.extend("sap.f.cardsdemo.controller.Footer", {
 
-		onFormFactorChange: function () {
-			document.getElementsByClassName("sapFGridContainer")[0].classList.toggle("sapUiSizeCompact");
-		}
-
 	});
 });

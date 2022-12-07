@@ -5,9 +5,5 @@ sap.ui.define([
 
 	return Controller.extend("sap.f.cardsdemo.controller.ComponentCard", {
 
-		onFormFactorChange: function () {
-			document.getElementsByClassName("sapMPanel")[0].classList.toggle("sapUiSizeCompact");
-		}
-
 	});
 });
