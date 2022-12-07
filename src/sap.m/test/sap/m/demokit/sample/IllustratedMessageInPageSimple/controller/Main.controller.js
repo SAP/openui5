@@ -5,25 +5,26 @@ sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap
 		var oIllustratedMessageSize = library.IllustratedMessageSize,
 			oIllustratedMessageType = library.IllustratedMessageType;
 
-		return Controller.extend("sap.m.sample.IllustratedMessageInPage.controller.Main", {
+		return Controller.extend("sap.m.sample.IllustratedMessageInPageSimple.controller.Main", {
 
 			onInit: function () {
 
 				var aIMISizeData = [],
 					aIMITypeData = [
-						{ key: oIllustratedMessageType.BeforeSearch, text: 'BeforeSearch'},
-						{ key: oIllustratedMessageType.NoSearchResults, text: 'NoSearchResults'},
-						{ key: oIllustratedMessageType.NoNotifications, text: 'NoNotifications'},
-						{ key: oIllustratedMessageType.NoMail, text: 'NoMail'},
-						{ key: oIllustratedMessageType.NoData, text: 'NoData'},
-						{ key: oIllustratedMessageType.NoEntries, text: 'NoEntries'},
-						{ key: oIllustratedMessageType.NoActivities, text: 'NoActivities'},
-						{ key: oIllustratedMessageType.NoTasks, text: 'NoTasks'},
-						{ key: oIllustratedMessageType.NoSavedItems, text: 'NoSavedItems'},
-						{ key: oIllustratedMessageType.UnableToLoad, text: 'UnableToLoad'},
-						{ key: oIllustratedMessageType.UnableToUpload, text: 'UnableToUpload'},
-						{ key: oIllustratedMessageType.SuccessBalloon, text: 'SuccessBalloon'},
-						{ key: oIllustratedMessageType.SuccessCheckMark, text: 'SuccessCheckMark'}
+						{ key: oIllustratedMessageType.SimpleBalloon, text: 'SimpleBalloon'},
+						{ key: oIllustratedMessageType.SimpleBell, text: 'SimpleBell'},
+						{ key: oIllustratedMessageType.SimpleCalendar, text: 'SimpleCalendar'},
+						{ key: oIllustratedMessageType.SimpleCheckMark, text: 'SimpleCheckMark'},
+						{ key: oIllustratedMessageType.SimpleConnection, text: 'SimpleConnection'},
+						{ key: oIllustratedMessageType.SimpleEmptyDoc, text: 'SimpleEmptyDoc'},
+						{ key: oIllustratedMessageType.SimpleEmptyList, text: 'SimpleEmptyList'},
+						{ key: oIllustratedMessageType.SimpleError, text: 'SimpleError'},
+						{ key: oIllustratedMessageType.SimpleMagnifier, text: 'SimpleMagnifier'},
+						{ key: oIllustratedMessageType.SimpleMail, text: 'SimpleMail'},
+						{ key: oIllustratedMessageType.SimpleNoSavedItems, text: 'SimpleNoSavedItems'},
+						{ key: oIllustratedMessageType.SimpleNotFoundMagnifier, text: 'SimpleNotFoundMagnifier'},
+						{ key: oIllustratedMessageType.SimpleReload, text: 'SimpleReload'},
+						{ key: oIllustratedMessageType.SimpleTask, text: 'SimpleTask'}
 					];
 
 				Object.keys(oIllustratedMessageSize).forEach(function (sKey) {
