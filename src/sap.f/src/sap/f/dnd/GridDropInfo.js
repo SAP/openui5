@@ -55,9 +55,9 @@ sap.ui.define([
 			 *
 			 * If not specified or if the function returns <code>null</code>, the indicator size will be calculated automatically.
 			 *
-			 * This callback will be called when the indicator is displayed, that happens during the drag over movement.
+			 * This callback will be called when the indicator is displayed, which happens during the drag over movement.
 			 *
-			 * The callback receives <code>draggedControl</code> as parameter and must return an object of type <code>{rows: <int>, columns: <int>}</code> or <code>null</code>.
+			 * The callback receives <code>draggedControl</code> as parameter and must return an object of type <code>{rows: int, columns: int}</code> or <code>null</code>.
 			 */
 			dropIndicatorSize: {
 				type: "function",
@@ -78,6 +78,45 @@ sap.ui.define([
 			 */
 		}
 	}});
+
+	/**
+	 * Sets a new value for property {@link #setDropIndicatorSize dropIndicatorSize}.
+	 *
+	 * A function which will define the desired drop indicator size. The drop indicator shows the user how the grid will rearrange after drop.
+	 * Use when custom size needs to be defined. For example when an item is dragged from outside a grid and is dropped over the grid.
+	 *
+	 * If not specified or if the function returns <code>null</code>, the indicator size will be calculated automatically.
+	 *
+	 * This callback will be called when the indicator is displayed, which happens during the drag over movement.
+	 *
+	 * The callback receives <code>draggedControl</code> as parameter and must return an object of type <code>{rows: int, columns: int}</code> or <code>null</code>.
+	 *
+	 * When called with a value of <code>null</code> or <code>undefined</code>, the default value of the property will be restored.
+	 *
+	 * @public
+	 * @method
+	 * @name sap.f.dnd.GridDropInfo#setDropIndicatorSize
+	 * @param {function(sap.ui.core.Control): ({rows: int, columns: int}|null)} [fnDropIndicatorSize] New value for property <code>dropIndicatorSize</code>
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+	 */
+
+	/**
+	 * Gets current value of property {@link #getDropIndicatorSize dropIndicatorSize}.
+	 *
+	 * A function which will define the desired drop indicator size. The drop indicator shows the user how the grid will rearrange after drop.
+	 * Use when custom size needs to be defined. For example, when an item is dragged from outside a grid and is dropped over the grid.
+	 *
+	 * If not specified or if the function returns <code>null</code>, the indicator size will be calculated automatically.
+	 *
+	 * This callback will be called when the indicator is displayed, which happens during the drag over movement.
+	 *
+	 * The callback receives <code>draggedControl</code> as parameter and must return an object of type <code>{rows: int, columns: int}</code> or <code>null</code>.
+	 *
+	 * @public
+	 * @method
+	 * @name sap.f.dnd.GridDropInfo#getDropIndicatorSize
+	 * @returns {function(sap.ui.core.Control): ({rows: int, columns: int}|null)|undefined} Value of property <code>dropIndicatorSize</code>
+	 */
 
 	GridDropInfo.prototype.isDroppable = function(oControl, oEvent) {
 		if (!this._shouldEnhance()) {

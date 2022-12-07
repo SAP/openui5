@@ -243,7 +243,7 @@ sap.ui.define([
 	 * those controls.
 	 *
 	 * @param {sap.ui.core.Control} oElement - The Control that gets rendered by the RenderManager
-	 * @param {object} mAriaProps - The mapping of "aria-" prefixed attributes
+	 * @param {{role: string, level: string}} mAriaProps - The mapping of "aria-" prefixed attributes
 	 * @protected
 	 */
 	 Header.prototype.enhanceAccessibilityState = function (oElement, mAriaProps) {
