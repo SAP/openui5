@@ -35,6 +35,21 @@
 
 .sapMLabel.sapMLabelRequired.sapMLabelShowColon:not(.sapMLabelWrapped) .sapMLabelTextWrapper {
 	max-width: calc(~"100% - 0.125rem - @{_sap_m_Label_AsteriskWidth} - @{_sap_m_Label_ColonWidth}");
+	&:lang(fr) {
+		max-width: calc(~"100% - 0.125rem - 1.125em - @{_sap_m_Label_AsteriskWidth} - @{_sap_m_Label_ColonWidth}");
+	}
+	&:lang(zh-TW) {
+		max-width: calc(~"100% - 0.125rem - 1.59em - @{_sap_m_Label_AsteriskWidth} - @{_sap_m_Label_ColonWidth}");
+	}
+	&:lang(zh-CN) {
+		max-width: calc(~"100% - 0.125rem - 1.59em - @{_sap_m_Label_AsteriskWidth} - @{_sap_m_Label_ColonWidth}");
+	}
+	&:lang(zh-Hans) {
+		max-width: calc(~"100% - 0.125rem - 1.59em - @{_sap_m_Label_AsteriskWidth} - @{_sap_m_Label_ColonWidth}");
+	}
+	&:lang(zh-Hant) {
+		max-width: calc(~"100% - 0.125rem - 1.59em - @{_sap_m_Label_AsteriskWidth} - @{_sap_m_Label_ColonWidth}");
+	}
 }
 
 .sapMLabelBold,
