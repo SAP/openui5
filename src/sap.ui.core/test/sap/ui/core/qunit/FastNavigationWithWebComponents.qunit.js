@@ -45,7 +45,7 @@ sap.ui.define([
 	createAndAppendDiv("content");
 
 	/* Helper functions and variables */
-	var bForward, oView;
+	var bForward, pView;
 	var fnHandleF6GroupNavigation = F6Navigation.handleF6GroupNavigation;
 
 	function triggerTestEvent(sTarget, bForward) {
@@ -94,15 +94,15 @@ sap.ui.define([
 				}
 				fnHandleF6GroupNavigation(oEvent, oSettings);
 			};
-			oView = XMLView.create({
+			pView = XMLView.create({
 				id: "xmlView",
 				viewName: "sap.ui.fastnav.view.FastNavigation"
-			}).then(function (oView) {
+			}).then(function(oView) {
 				oView.placeAt("content");
 				Core.applyChanges();
 				return oView;
 			});
-			return oView;
+			return pView;
 		},
 		after: function () {
 			F6Navigation.handleF6GroupNavigation = fnHandleF6GroupNavigation;
@@ -127,10 +127,20 @@ sap.ui.define([
 					});
 				});
 			};
-			return oView.then(function (oView) {
+			return pView.then(function (oView) {
 				// Set the focus to the last element in the list
-				oView.byId(aExpectedElements[aExpectedElements.length - 1].id).focus();
-				return aExpectedElements.reduce(executeTest, Promise.resolve());
+				var oControl = oView.byId(aExpectedElements[aExpectedElements.length - 1].id);
+
+				if (oControl.isA("sap.ui.webc.common.WebComponent")) {
+					// UI5 webcomponents have an internal promise that waits for the rendering before the focus can be set.
+					// This promise obviously resolves asynchronously even though the DOM is already rendered.
+					// In this case we have to wait for this Promise returned by the focus() call, before executing the assertions.
+					var oDomRef = oControl.getDomRef();
+					return aExpectedElements.reduce(executeTest, oDomRef.focus());
+				} else {
+					oControl.focus();
+					return aExpectedElements.reduce(executeTest, Promise.resolve());
+				}
 			});
 		});
 	}
@@ -176,5 +186,4 @@ sap.ui.define([
 	} while (bForward);
 
 	QUnit.start();
-
 });
