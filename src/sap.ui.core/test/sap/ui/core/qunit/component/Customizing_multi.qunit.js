@@ -198,89 +198,6 @@ sap.ui.define([
 		assert.equal(oFirstItem.getText(), "(Customer's replacement ListItem)", "First ListItem should be the customized one");
 	});
 
-	QUnit.module("Owner-Component Handling (Controller Extension) - synchronous", {
-		before: function() {
-			sap.ui.predefine("testdata/customizing/synchronous/sap/CompA/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-				return UIComponent.extend("testdata.customizing.synchronous.sap.CompA.Component", {
-					metadata: {
-						version : "1.0",
-						customizing: {
-							"sap.ui.controllerExtensions": {
-								"testdata.customizing.synchronous.sap.RootController": {
-									controllerName: "testdata.customizing.synchronous.sap.CompA.ext.Controller"
-								}
-							}
-						}
-					}
-				});
-			});
-
-			sap.ui.predefine("testdata/customizing/synchronous/sap/CompB/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-				return UIComponent.extend("testdata.customizing.synchronous.sap.CompB.Component", {
-					metadata: {
-						version : "1.0",
-						customizing: {
-							"sap.ui.controllerExtensions": {
-								"testdata.customizing.synchronous.sap.RootController": {
-									controllerName: "testdata.customizing.synchronous.sap.CompB.ext.Controller"
-								}
-							}
-						}
-					}
-				});
-			});
-
-			sap.ui.controller("testdata.customizing.synchronous.sap.RootController", {
-				getValue: function () {
-					return "ControllerRoot";
-				}
-			});
-
-			sap.ui.controller("testdata.customizing.synchronous.sap.CompA.ext.Controller", {
-				getValue: function () {
-					return "ControllerA";
-				}
-			});
-
-			sap.ui.controller("testdata.customizing.synchronous.sap.CompB.ext.Controller", {
-				getValue: function () {
-					return "ControllerB";
-				}
-			});
-		}
-	});
-
-	QUnit.test("Controller Extension of owner component is used", function(assert){
-		var oCompA = sap.ui.component({
-			id: "componentA",
-			name: "testdata.customizing.synchronous.sap.CompA",
-			manifest: false,
-			async: false
-		});
-
-		var oCompB = sap.ui.component({
-			id: "componentB",
-			name: "testdata.customizing.synchronous.sap.CompB",
-			manifest: false,
-			async: false
-		});
-
-		oCompB.runAsOwner(function() {
-			sap.ui.xmlview({
-				id: oCompB.createId("rootView"),
-				viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" controllerName="testdata.customizing.synchronous.sap.RootController">'
-				+ ' <core:Icon src="sap-icon://doctor"></core:Icon>'
-				+ ' </mvc:View>'
-			});
-		});
-
-		assert.strictEqual(oCompB.byId("rootView").getController().getValue(), "ControllerB", "The correct controller extension is used.");
-
-		oCompB.byId("rootView").destroy();
-		oCompA.destroy();
-		oCompB.destroy();
-	});
-
 	QUnit.module("Owner-Component Handling (Controller Extension) - asynchronous", {
 		before: function() {
 			sap.ui.define("testdata/customizing/asynchronous/sap/CompA/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
@@ -298,7 +215,7 @@ sap.ui.define([
 				});
 			});
 
-			sap.ui.predefine("testdata/customizing/asynchronous/sap/CompB/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.define("testdata/customizing/asynchronous/sap/CompB/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 				return UIComponent.extend("testdata.customizing.asynchronous.sap.CompB.Component", {
 					metadata: {
 						version : "1.0",
@@ -314,7 +231,7 @@ sap.ui.define([
 			});
 
 
-			sap.ui.predefine("testdata/customizing/asynchronous/sap/RootController.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
+			sap.ui.define("testdata/customizing/asynchronous/sap/RootController.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
 				return Controller.extend("testdata.customizing.asynchronous.sap.RootController", {
 					getValue: function () {
 						return "ControllerRoot";
@@ -322,7 +239,7 @@ sap.ui.define([
 				});
 			});
 
-			sap.ui.predefine("testdata/customizing/asynchronous/sap/CompA/ext/Controller.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
+			sap.ui.define("testdata/customizing/asynchronous/sap/CompA/ext/Controller.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
 				return {
 					getValue: function () {
 						return "ControllerA";
@@ -330,7 +247,7 @@ sap.ui.define([
 				};
 			});
 
-			sap.ui.predefine("testdata/customizing/asynchronous/sap/CompB/ext/Controller.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
+			sap.ui.define("testdata/customizing/asynchronous/sap/CompB/ext/Controller.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
 				return {
 					getValue: function () {
 						return "ControllerB";

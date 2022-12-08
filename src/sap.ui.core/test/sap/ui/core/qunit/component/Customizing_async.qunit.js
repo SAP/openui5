@@ -97,6 +97,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.110
+	 */
 	QUnit.test("SequentialLegacy - ExtensionPoint contains async View/Fragment", function(assert) {
 		// var sManifestUrl = sap.ui.require.toUrl("sap/ui/test/customizing/async/noInterface/customer/manifest.json");
 		var oRootComponent, oManualCreatedView;

@@ -106,11 +106,23 @@ sap.ui.define([
 		assert.equal(oController.originalSAPAction(), "ori", "originalSAPAction method of extended controller should return 'ori'");
 	});
 
-
-	QUnit.test("Controller Extension (sap.ui.controller)", function(assert) {
-		oComp.runAsOwner(function() {
+	/**
+	 * @deprecated As of version 1.110
+	 */
+	QUnit.test("Controller Extension (sap.ui.controller)", function (assert) {
+		oComp.runAsOwner(function () {
 			var oController = sap.ui.controller("testdata.customizing.sap.Sub2");
 			assert.ok(oController.isExtended === undefined, "Controller has not been extended with sap.ui.controller factory function!");
+		});
+	});
+
+	QUnit.test("Controller Extension (New Controller.create factory)", function(assert) {
+		return oComp.runAsOwner(function() {
+			return Controller.create({
+				name: "testdata.customizing.sap.Sub2"
+			}).then(function(oController) {
+				assert.ok(oController.isExtended === undefined, "Controller has not been extended with sap.ui.controller factory function!");
+			});
 		});
 	});
 

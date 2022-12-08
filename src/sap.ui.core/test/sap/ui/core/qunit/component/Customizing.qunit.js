@@ -131,10 +131,23 @@ sap.ui.define([
 		assert.equal(oController.originalSAPAction(), "ext", "originalSAPAction method of extended controller should return 'ext'");
 	});
 
-	QUnit.test("Controller Extension (sap.ui.controller)", function(assert) {
-		oComp.runAsOwner(function() {
+	/**
+	 * @deprecated As of version 1.110
+	 */
+	QUnit.test("Controller Extension (sap.ui.controller)", function (assert) {
+		oComp.runAsOwner(function () {
 			var oController = sap.ui.controller("testdata.customizing.sap.Sub2");
 			assert.ok(oController.isExtended, "Controller has been extended with sap.ui.controller factory function!");
+		});
+	});
+
+	QUnit.test("Controller Extension (New Controller.create factory)", function(assert) {
+		return oComp.runAsOwner(function() {
+			return Controller.create({
+				name: "testdata.customizing.sap.Sub2"
+			}).then(function(oController) {
+				assert.ok(oController.isExtended, "Controller has been extended correctly!");
+			});
 		});
 	});
 
@@ -291,7 +304,7 @@ sap.ui.define([
 
 		// Extension Provider module - used for sap.ui.mvc.Controller ExtensionProvider Tests
 		var that = this;
-		sap.ui.predefine("sap/my/async/ExtensionProvider", [], function() {
+		sap.ui.define("sap/my/async/ExtensionProvider", [], function() {
 			var ExtensionProvider = function() {};
 			ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId) {
 				if ( !(sControllerName == "testdata.customizing.sap.Sub2") ){
