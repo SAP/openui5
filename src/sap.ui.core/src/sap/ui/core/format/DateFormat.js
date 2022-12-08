@@ -803,10 +803,6 @@ sap.ui.define([
 				iLength++;
 			}
 
-			if (typeof sValue !== "string") {
-				sValue = sValue.toString();
-			}
-
 			return sValue.substr(0, iLength);
 		},
 
