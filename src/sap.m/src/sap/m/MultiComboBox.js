@@ -2151,6 +2151,8 @@ function(
 			onAfterRendering: this._onAfterRenderingTokenizer
 		}, this);
 
+		oTokenizer.setShouldRenderTabIndex(false);
+
 		return oTokenizer;
 	};
 

@@ -8519,6 +8519,27 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Tokenizer's _bShouldRenderTabIndex should be set to false and tabindex should not be rendered", function (assert) {
+		var oItem = new Item({key: "1", text: "1"}),
+			oMultiComboBox = new MultiComboBox({
+				selectedKeys: ["2", "3"],
+				items: [
+					oItem,
+					new Item({key: "2", text: "2"}),
+					new Item({key: "3", text: "3"}),
+					new Item({key: "4", text: "4"})
+				]
+			}).placeAt("MultiComboBoxContent");
+
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getAggregation("tokenizer")._bShouldRenderTabIndex, false, "_bShouldRenderTabIndex is correctly set to false");
+		assert.strictEqual(oMultiComboBox.getAggregation("tokenizer").getDomRef().hasAttribute("tabindex"), false, "tabindex is not rendered");
+
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("Should be able to sync predefined selectedKey", function (assert) {
 		var oItem = new Item({key: "1", text: "1"}),
 			oMultiComboBox = new MultiComboBox({

@@ -257,6 +257,8 @@ function(
 			this.updateAggregation("tokens");
 		};
 
+		oTokenizer.setShouldRenderTabIndex(false);
+
 		this.setAggregation("tokenizer", oTokenizer);
 
 		oTokenizer.getTokensPopup()
