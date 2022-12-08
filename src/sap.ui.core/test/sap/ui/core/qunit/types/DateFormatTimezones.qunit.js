@@ -1495,9 +1495,7 @@ sap.ui.define([
 				"M/d/yy",
 				"MMM d, y",
 				"yyyy-MM-dd",
-				"yyyyMMdd",
-				"MMddyyyy",
-				"MMddyy"
+				"yyyyMMdd"
 			], "Date only fallback patterns should match");
 
 			// Date with timezone
@@ -1512,9 +1510,7 @@ sap.ui.define([
 				"M/d/yy VV",
 				"MMM d, y VV",
 				"yyyy-MM-dd VV",
-				"yyyyMMdd VV",
-				"MMddyyyy VV",
-				"MMddyy VV"
+				"yyyyMMdd VV"
 			], "Date with timezone fallback patterns should match");
 
 			// Time only
