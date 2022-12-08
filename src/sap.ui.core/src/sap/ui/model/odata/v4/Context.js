@@ -928,7 +928,9 @@ sap.ui.define([
 	 * unresolved bindings (see {@link sap.ui.model.Binding#isResolved}) which were dependent on
 	 * this context at the time the pending change was created. This includes the context itself
 	 * being {@link #isTransient transient} or {@link #delete deleted} on the client, but not yet on
-	 * the server. Since 1.98.0, {@link #isInactive inactive} contexts are ignored.
+	 * the server. Since 1.98.0, {@link #isInactive inactive} contexts are ignored, unless their
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#event:createActivate activation} has been
+	 * prevented and therefore {@link #isInactive} returns <code>1</code>.
 	 *
 	 * @returns {boolean}
 	 *   Whether there are pending changes
@@ -937,7 +939,7 @@ sap.ui.define([
 	 * @since 1.53.0
 	 */
 	Context.prototype.hasPendingChanges = function () {
-		return this.isTransient()
+		return this.isTransient() && this.isInactive() !== true
 			|| this.oDeletePromise && this.oDeletePromise.isPending()
 			|| this.getBinding().hasPendingChangesForPath(this.sPath)
 			|| this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
