@@ -94,6 +94,8 @@ sap.ui.define([
 			DEMOKIT_DEFAULT_LANGUAGE = "en",
 			DEMOKIT_APPEARANCE_KEY_LIGHT = "light",
 			DEMOKIT_APPEARANCE_KEY_DARK = "dark",
+			DEMOKIT_APPEARANCE_KEY_HCB = "hcb",
+			DEMOKIT_APPEARANCE_KEY_HCW = "hcw",
 			DEMOKIT_APPEARANCE_KEY_AUTO = "auto",
 			DEMOKIT_APPEARANCE = Object.create(null),
 			DEMOKIT_CONFIGURATION_LANGUAGE = "language",
@@ -102,6 +104,8 @@ sap.ui.define([
 
 		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_LIGHT] = "sap_horizon";
 		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_DARK] = "sap_horizon_dark";
+		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_HCB] = "sap_horizon_hcb";
+		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_HCW] = "sap_horizon_hcw";
 		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_AUTO] = "sap_horizon"; // fallback if window.matchMedia is not supported
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
@@ -705,7 +709,7 @@ sap.ui.define([
 			 */
 			_updateAppearance: function(sKey) {
 				if (sKey === DEMOKIT_APPEARANCE_KEY_AUTO && this._bSupportsPrefersColorScheme) {
-					this._toggleLightOrDarkAppearance(window.matchMedia('(prefers-color-scheme: dark)').matches);
+						this._toggleLightOrDarkAppearance(window.matchMedia('(prefers-color-scheme: dark)').matches);
 					this._attachPrefersColorSchemeChangeListener();
 				} else {
 					Core.applyTheme(DEMOKIT_APPEARANCE[sKey]);
@@ -737,7 +741,7 @@ sap.ui.define([
 
 			/**
 			 * Attaches an event listener to the 'change' event of the prefers-color-scheme media.
-			 * Depending on the change and the last known appearance, the appearance of the Demo Kit is changed to light or dark.
+			 * Depending on the change and the last known appearance, the appearance of the Demo Kit is changed to light, dark, hcb or hcw.
 			 * @private
 			 */
 			_attachPrefersColorSchemeChangeListener: function() {
