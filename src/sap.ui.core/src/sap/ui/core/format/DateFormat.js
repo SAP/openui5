@@ -716,9 +716,6 @@ sap.ui.define([
 	 * Creates DateFormat instances based on the given format options. The created
 	 * instances are used as fallback formats of another DateFormat instances.
 	 *
-	 * All fallback format instances are marked with 'bIsFallback' to make it distinguishable
-	 * from the normal DateFormat instances.
-	 *
 	 * @param {Object[]} aFallbackFormatOptions the options for creating the fallback DateFormat
 	 * @param {sap.ui.core.CalendarType} sCalendarType the type of the current calendarType
 	 * @param {sap.ui.core.Locale} oLocale Locale to ask for locale specific texts/settings
@@ -751,9 +748,8 @@ sap.ui.define([
 			oFormatOptions.calendarType = sCalendarType;
 			// mark the current format as a fallback in order to avoid endless recursive call of function 'createInstance'
 			oFormatOptions.fallback = true;
-			var oFallbackFormat = DateFormat.createInstance(oFormatOptions, oLocale, oInfo);
-			oFallbackFormat.bIsFallback = true;
-			return oFallbackFormat;
+
+			return DateFormat.createInstance(oFormatOptions, oLocale, oInfo);
 		});
 	};
 
@@ -2740,8 +2736,7 @@ sap.ui.define([
 			}
 		}
 
-		// this instance is not the fallback instance therefore we call the fallback instances (which have this flag set to true)
-		if (!this.bIsFallback) {
+		if (this.aFallbackFormats) {
 			var vDate;
 
 			this.aFallbackFormats.every(function(oFallbackFormat) {
