@@ -30,7 +30,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.type.DateTimeOffset
 	 * @param {object} [oFormatOptions]
-	 *   Format options as defined in {@link sap.ui.core.format.DateFormat}
+	 *   Format options as defined in {@link sap.ui.core.format.DateFormat.getDateTimeInstance}
 	 * @param {object} [oConstraints]
 	 *   Constraints; {@link sap.ui.model.odata.type.DateTimeBase#validateValue validateValue}
 	 *   throws an error if any constraint is violated

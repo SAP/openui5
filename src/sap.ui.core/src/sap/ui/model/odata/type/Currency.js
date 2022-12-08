@@ -13,8 +13,8 @@ sap.ui.define([
 	 * Constructor for a <code>Currency</code> composite type.
 	 *
 	 * @param {object} [oFormatOptions]
-	 *   See parameter <code>oFormatOptions</code> of
-	 *   {@link sap.ui.model.type.Currency#constructor}. Format options are immutable, that is,
+	 *   Format options as defined in {@link sap.ui.core.format.NumberFormat.getCurrencyInstance}.
+	 *   Format options are immutable, that is,
 	 *   they can only be set once on construction. Format options that are not supported or have a
 	 *   different default are listed below. If the format option <code>showMeasure</code> is set to
 	 *   <code>false</code>, model messages for the currency code are not propagated to the control

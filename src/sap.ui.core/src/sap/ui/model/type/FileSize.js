@@ -25,7 +25,8 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @public
-	 * @param {object} [oFormatOptions] formatting options. Supports the same options as {@link sap.ui.core.format.FileSizeFormat.getInstance FileSizeFormat.getInstance}
+	 * @param {object} [oFormatOptions]
+	 *   Format options as defined in {@link sap.ui.core.format.FileSizeFormat.getInstance}
 	 * @param {object} [oFormatOptions.source] additional set of options used to create a second FileSizeFormat object for conversions between
 	 *           string values in the data source (e.g. model) and a numeric byte representation. This second format object is used to convert from a model string to numeric bytes before
 	 *           converting to string with the primary format object. Vice versa, this 'source' format is also used to format an already parsed
