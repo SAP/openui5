@@ -256,7 +256,7 @@ sap.ui.define([
 	 * @param {object} oConditionPayload Additional context information for this key
 	 * @param {sap.ui.core.Control} [oControl] Instance if the calling control
 	 * @param {sap.ui.model.Type} oType Type of the value
-	 * @returns {string|object|Promise} Description for key or object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
+	 * @returns {string|sap.ui.mdc.valuehelp.ValueHelpItem|Promise<string|sap.ui.mdc.valuehelp.ValueHelpItem>} Description for key or object containing description, key and payload. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.FormatException} if the description cannot be determined
 	 * @since: 1.78.0
 	 * @private
