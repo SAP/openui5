@@ -298,7 +298,7 @@ sap.ui.define(["sap/ui/mdc/util/TypeUtil"], function(TypeUtil) {
 				}
 			}
 
-			if (oSortRestrictions.AscendingOnlyProperties) {
+			if (oSortRestrictions.DescendingOnlyProperties) {
 				for (i = 0; i < oSortRestrictions.DescendingOnlyProperties; i++) {
 					sPropertyName = oSortRestrictions.DescendingOnlyProperties[i].$PropertyPath;
 					oSortRestrictionsInfo[sPropertyName] = {
