@@ -2005,8 +2005,11 @@ sap.ui.define([
 	 * Returns <code>true</code> if there are pending changes, which can be updates, created
 	 * entities (see {@link sap.ui.model.odata.v4.ODataListBinding#create}) or entity deletions
 	 * (see {@link sap.ui.model.odata.v4.Context#delete}) that have not yet been successfully sent
-	 * to the server. Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isInactive inactive}
-	 * contexts are ignored.
+	 * to the server. Those changes can be either sent via {@link #submitBatch} or reset via
+	 * {@link #resetChanges}. Since 1.98.0,
+	 * {@link sap.ui.model.odata.v4.Context#isInactive inactive} contexts are ignored, even when
+	 * their {@link sap.ui.model.odata.v4.ODataListBinding#event:createActivate activation} has been
+	 * prevented.
 	 *
 	 * @param {string} [sGroupId]
 	 *   A group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}, except group IDs
@@ -2495,6 +2498,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataModel#constructor
+	 * @see #hasPendingChanges
 	 * @since 1.39.0
 	 */
 	ODataModel.prototype.resetChanges = function (sGroupId) {
@@ -2587,7 +2591,7 @@ sap.ui.define([
 
 	/**
 	 * Getter for the optimistic batch enabler callback function; see
-	 * {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}.
+	 * {@link #setOptimisticBatchEnabler}.
 	 *
 	 *
 	 * @returns {function(string)}
@@ -2639,7 +2643,7 @@ sap.ui.define([
 	 *
 	 * @experimental As of version 1.100.0
 	 * @private
-	 * @see cleanUpOptimisticBatch
+	 * @see #cleanUpOptimisticBatch
 	 * @ui5-restricted sap.fe
 	 */
 	ODataModel.prototype.setOptimisticBatchEnabler = function (fnOptimisticBatchEnabler) {
@@ -2666,6 +2670,10 @@ sap.ui.define([
 	 * only a single change set is used; this method is useful to repeat failed updates or creates
 	 * (see {@link sap.ui.model.odata.v4.ODataListBinding#create}) together with all other requests
 	 * for the given group ID in one batch request.
+	 *
+	 * {@link #resetChanges} can be used to reset all pending changes instead. After that, or when
+	 * the promise returned by this method is fulfilled, {@link #hasPendingChanges} will not report
+	 * pending changes anymore.
 	 *
 	 * @param {string} sGroupId
 	 *   A valid group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}.
