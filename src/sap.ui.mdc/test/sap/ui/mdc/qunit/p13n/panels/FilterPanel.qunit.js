@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/mdc/p13n/panels/FilterPanel",
 	"sap/ui/core/Core",
+    "sap/m/VBox",
     "sap/m/Input"
-], function (FilterPanel, oCore, Input) {
+], function (FilterPanel, oCore, VBox, Input) {
 	"use strict";
 
     var getTestData = function() {
@@ -127,5 +128,45 @@ sap.ui.define([
             newValue: ""
         });
         assert.equal(oComboBox.getValueState(), "None", "The value state has been set as expected");
+    });
+
+    QUnit.test("Check labelFor reference on label (W/O getIdForLabel)", function(assert){
+        var aTestData = getTestData();
+        this.oFilterPanel.setP13nData(aTestData);
+
+        var sKey = "key2";
+
+        var oFieldBox = this.oFilterPanel._createRowContainer("Field 2", sKey);
+        var oFilterItem = this.oFilterPanel._createFactoryControl({name: sKey});
+        this.oFilterPanel._setLabelForOnBox(oFilterItem, oFieldBox);
+
+        assert.ok(oFieldBox.getItems()[0].getLabelFor(), "Set 'labelFor' reference on label control");
+    });
+
+    QUnit.test("Check labelFor reference on label (WITH getIdForLabel)", function(assert){
+        var aTestData = getTestData();
+        this.oFilterPanel.setP13nData(aTestData);
+
+        this.oFilterPanel.setItemFactory(function(sKey){
+            var oContainer = new VBox({
+                items: [
+                    new Input("testAccInput", {})
+                ]
+            });
+
+            oContainer.getIdForLabel = function() {
+                return oContainer.getItems()[0].getId();
+            };
+
+            return oContainer;
+        });
+
+        var sKey = "key2";
+
+        var oFieldBox = this.oFilterPanel._createRowContainer("Field 2", sKey);
+        var oFilterItem = this.oFilterPanel._createFactoryControl({name: sKey});
+        this.oFilterPanel._setLabelForOnBox(oFilterItem, oFieldBox);
+        var sLabelFor = sap.ui.getCore().byId(oFieldBox.getItems()[0].getLabelFor()).getIdForLabel();
+        assert.equal(sLabelFor, "testAccInput", "Correct 'labelFor' reference on label control");
     });
 });

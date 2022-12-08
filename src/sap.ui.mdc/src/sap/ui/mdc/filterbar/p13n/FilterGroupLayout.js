@@ -41,6 +41,10 @@ sap.ui.define(['sap/ui/core/Control'
 		this._sFieldPath = oFilterField.getFieldPath();
 	};
 
+	FilterGroupLayout.prototype.getIdForLabel = function () {
+		return this._oFilterField && this._oFilterField.getIdForLabel();
+	};
+
 	FilterGroupLayout.prototype.getAccessibilityInfo = function () {
 		return {
 			children: this.getItems()
