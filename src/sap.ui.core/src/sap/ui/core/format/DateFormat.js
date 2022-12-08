@@ -919,10 +919,25 @@ sap.ui.define([
 			};
 		},
 
-		checkValid: function (sType, bPartInvalid, oFormat) {
-			if (sType in oFormat.oRequiredParts && bPartInvalid) {
+		/**
+		 * Returns <code>false</code> if the given pattern symbol name is required and the value for that part is
+		 * invalid, otherwise <code>true</code> is returned.
+		 *
+		 * @param {string} sSymbolName
+		 *   A unique pattern symbol name
+		 * @param {boolean} bPartInvalid
+		 *   Whether the value for the given pattern symbol name is invalid
+		 * @param {sap.ui.core.format.DateFormat} oFormat
+		 *   The <code>DateFormat</code> instance
+		 * @returns {boolean}
+		 *   <code>false</code> if the given pattern symbol name is required and the value for that part is invalid,
+		 *   otherwise <code>true</code>
+		 */
+		checkValid: function (sSymbolName, bPartInvalid, oFormat) {
+			if (sSymbolName in oFormat.oRequiredParts && bPartInvalid) {
 				return false;
 			}
+			return true;
 		}
 	};
 
