@@ -639,8 +639,15 @@ function(
 		 * @private
 		 */
 		StepInput.prototype._changeValueWithStep = function (fMultiplier) {
-			var fNewValue,
+			var iMultiplier,
+				fNewValue,
 				fDelta;
+
+			// calculate precision multiplier
+			if (isNaN(this._iValuePrecision)) {
+				this._iValuePrecision = this._getNumberPrecision(this.getValue());
+			}
+			iMultiplier = Math.pow(10, Math.max(this.getDisplayValuePrecision(), this._iValuePrecision));
 
 			if (isNaN(this._fTempValue) || this._fTempValue === undefined) {
 				this._fTempValue = this.getValue();
@@ -652,6 +659,11 @@ function(
 
 			// calculate new value
 			fNewValue = fMultiplier !== 0 ? this._calculateNewValue(fMultiplier) : this._fTempValue;
+
+			// fix value precision
+			if (fMultiplier === 0) {
+				fNewValue = Math.round(fNewValue * iMultiplier) / iMultiplier;
+			}
 
 			// save new temp value
 			if (fMultiplier !== 0 || fDelta !== 0 || this._bDelayedEventFire) {
@@ -775,6 +787,18 @@ function(
 
 		};
 
+		/**
+		 * Returns the precision of a number.
+		 * @param {float} fNumber The number whose precision is to be obtained
+		 * @returns {int} the precision of the number passed as parameter
+		 *
+		 */
+		 StepInput.prototype._getNumberPrecision = function(fNumber) {
+			var aNumberParts = !isNaN(fNumber) && fNumber !== null ? fNumber.toString().split('.') : [];
+
+			return aNumberParts.length > 1 ? aNumberParts[1].length : 0;
+		};
+
 		StepInput.prototype.setValueState = function(sValueState) {
 			this._bValueStatePreset = true;
 			this.setProperty("valueState", sValueState);
@@ -791,6 +815,8 @@ function(
 		 */
 		StepInput.prototype.setValue = function (oValue) {
 			var oResult;
+
+			this._iValuePrecision = this._getNumberPrecision(oValue);
 
 			if (isNaN(oValue) || oValue === null) {
 				oValue = this._getDefaultValue(undefined, this._getMax(), this._getMin());

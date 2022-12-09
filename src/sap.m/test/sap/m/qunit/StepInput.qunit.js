@@ -2927,6 +2927,31 @@ sap.ui.define([
 		oStepInput.destroy();
 	});
 
+	QUnit.test("Returened value precision is correct when enter it manually", function (assert) {
+		// arrange
+		var oStepInput = new StepInput({
+				value: 1,
+				displayValuePrecision: 3
+			}),
+			oInput = oStepInput._getInput(),
+			sInputSuffix = "inner",
+			sEnteredValue = "0.001";
+
+		oStepInput.placeAt('qunit-fixture');
+		oCore.applyChanges();
+
+		// enter invalid value again
+		oInput.$(sInputSuffix).val(sEnteredValue);
+		oStepInput._change();
+		oCore.applyChanges();
+
+		// assert
+		assert.equal(oStepInput.getValue(), sEnteredValue, "Value precision is correct when enter value manually");
+
+		// cleanup
+		oStepInput.destroy();
+	});
+
 	QUnit.test("StepInput can be focused", function (assert) {
 		// arrange
 		var oStepInput = new StepInput();
