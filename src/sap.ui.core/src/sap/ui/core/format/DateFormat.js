@@ -536,10 +536,105 @@ sap.ui.define([
 	};
 
 	/**
-	 * Pattern elements
+	 * Creates a pattern symbol object containing all needed functions to be used for formatting and parsing.
+	 * Functions which are not given in <code>mParameters</code> are provided with a default implementation.
+	 *
+	 * @param {Object<string,any>} mParameters
+	 *   A parameters map for creating a pattern symbol
+	 * @param {string} mParameters.name
+	 *   An internal unique name describing this symbol
+	 * @param {function(Object<string, any>, sap.ui.core.date.UniversalDate, boolean, sap.ui.core.format.DateFormat,
+	 *     string): string} [mParameters.format]
+	 *   A function to format the symbol part based on a given date object
+	 * @param {function(string, Object<string, any>, sap.ui.core.format.DateFormat, object, string): object}
+	 *     [mParameters.parse]
+	 *   A function to parse the symbol part based on a given date string
+	 * @param {boolean|function(int): boolean} [mParameters.isNumeric]
+	 *   A boolean to describe, or a function to evaluate, whether the pattern symbol expects a
+	 *   numeric representation. For example pattern "MM" results in "02" and is therefore numeric,
+	 *   but "MMM" results in "Feb" which is not numeric.
+	 * @returns {{name: string, format: function, parse: function, isNumeric: function}}
+	 *   A pattern symbol object
+	 *
+	 * @private
+	 */
+	DateFormat._createPatternSymbol = function (mParameters) {
+		var fnIsNumeric = typeof mParameters.isNumeric === "function" && mParameters.isNumeric
+				// Default: false
+				|| function () { return mParameters.isNumeric || false; };
+
+		return {
+			name: mParameters.name,
+
+			/**
+			 * Formatter for a pattern symbol.
+			 *
+			 * @param {Object<string, any>} oField
+			 *   The date pattern field as parsed by {@link DateFormat#parseCldrDatePattern}
+			 * @param {sap.ui.core.date.UniversalDate} oDate
+			 *   The date object to format
+			 * @param {boolean} bUTC
+			 *   Whether the UTC option is set
+			 * @param {sap.ui.core.format.DateFormat} oFormat
+			 *   The <code>DateFormat</code> instance
+			 * @returns {string}
+			 *   The formatted date information for this date pattern part
+			 */
+			format: mParameters.format
+				// not supported, but reserved
+				|| function () { return ""; },
+
+			/**
+			 * Parser for a pattern symbol.
+			 *
+			 * @param {string} sValue
+			 *   The given input
+			 * @param {Object<string, any>} oPart
+			 *   The date pattern field as parsed by {@link DateFormat#parseCldrDatePattern}
+			 * @param {sap.ui.core.format.DateFormat} oFormat
+			 *   The <code>DateFormat</code> instance
+			 * @param {object} oConfig
+			 *   The configuration object for parsing the value
+			 * @param {object} oConfig.dateValue
+			 *   The already parsed date fields
+			 * @param {boolean} oConfig.exactLength
+			 *   Whether parsing with the exact length specified by {@link DateFormat#parseCldrDatePattern} is needed
+			 * @param {object[]} oConfig.formatArray
+			 *   The complete format array as parsed by {@link DateFormat#parseCldrDatePattern}
+			 * @param {int} oConfig.index
+			 *   The current index in the format array
+			 * @param {boolean} oConfig.strict
+			 *   Whether to disallow overflows for component values of a date (see
+			 *   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date).
+			 *   Note that the corresponding checks are just for number ranges which are possible <em>at max</em>
+			 *   without overflow; the check for day does not consider the month and year to compute the maximum
+			 *   number of days allowed.
+			 * @param {string} sTimezone
+			 *   The IANA timezone ID
+			 * @returns {object}
+			 *   The parsed date information for this date pattern part; could contain the property <code>valid</code>
+			 *   set to <code>false</code> if parsing was not successful
+			 */
+			parse: mParameters.parse
+				// not supported, but reserved
+				|| function () { return {}; },
+
+			/**
+			 * Evaluates whether this symbol has a numeric representation.
+			 *
+			 * @param {int} [iDigits] The number of repetitions of the pattern symbol, e.g. <code>3</code> for "aaa"
+			 * @returns {boolean} Whether this symbol has a numeric representation
+			 */
+			isNumeric: fnIsNumeric
+		};
+	};
+
+	/**
+	 * Provides functionality to format and parse a given pattern symbol.
+	 * @see https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table
 	 */
 	DateFormat.prototype.oSymbols = {
-		"": {
+		"": DateFormat._createPatternSymbol({
 			name: "text",
 			format: function(oField, oDate, bUTC, oFormat) {
 				return oField.value;
@@ -598,8 +693,8 @@ sap.ui.define([
 					};
 				}
 			}
-		},
-		"G": {
+		}),
+		"G": DateFormat._createPatternSymbol({
 			name: "era",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iEra = bUTC ? oDate.getUTCEra() : oDate.getEra();
@@ -629,8 +724,8 @@ sap.ui.define([
 					valid: oParseHelper.checkValid(oPart.type, true, oFormat)
 				};
 			}
-		},
-		"y": {
+		}),
+		"y": DateFormat._createPatternSymbol({
 			name: "year",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iYear = bUTC ? oDate.getUTCFullYear() : oDate.getFullYear();
@@ -648,15 +743,19 @@ sap.ui.define([
 				return sYear.padStart(oField.digits, "0");
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var sCalendarType = oFormat.oFormatOptions.calendarType;
-				var sPart;
+				var iExpectedDigits, sPart, bPartInvalid,
+					sCalendarType = oFormat.oFormatOptions.calendarType;
+
 				if (oPart.digits == 1) {
-					sPart = oParseHelper.findNumbers(sValue, 4);
+					iExpectedDigits = 4;
 				} else if (oPart.digits == 2) {
-					sPart = oParseHelper.findNumbers(sValue, 2);
+					iExpectedDigits = 2;
 				} else {
-					sPart = oParseHelper.findNumbers(sValue, oPart.digits);
+					iExpectedDigits = oPart.digits;
 				}
+				sPart = oParseHelper.findNumbers(sValue, iExpectedDigits);
+				bPartInvalid = sPart === ""
+					|| oConfig.exactLength && sPart.length !== iExpectedDigits;
 
 				var iYear = parseInt(sPart);
 				// Find the right century for two-digit years
@@ -675,12 +774,13 @@ sap.ui.define([
 				}
 				return {
 					length: sPart.length,
-					valid: oParseHelper.checkValid(oPart.type, sPart === "", oFormat),
+					valid: oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat),
 					year: iYear
 				};
-			}
-		},
-		"Y": {
+			},
+			isNumeric: true
+		}),
+		"Y": DateFormat._createPatternSymbol({
 			name: "weekYear",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var oWeek = bUTC ? oDate.getUTCWeek(oFormat.oLocale, oFormat.oFormatOptions.calendarWeekNumbering) : oDate.getWeek(oFormat.oLocale, oFormat.oFormatOptions.calendarWeekNumbering);
@@ -699,15 +799,20 @@ sap.ui.define([
 				return sWeekYear.padStart(oField.digits, "0");
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var sCalendarType = oFormat.oFormatOptions.calendarType;
-				var sPart;
+				var iExpectedDigits, sPart, bPartInvalid,
+					sCalendarType = oFormat.oFormatOptions.calendarType;
+
 				if (oPart.digits == 1) {
-					sPart = oParseHelper.findNumbers(sValue, 4);
+					iExpectedDigits = 4;
 				} else if (oPart.digits == 2) {
-					sPart = oParseHelper.findNumbers(sValue, 2);
+					iExpectedDigits = 2;
 				} else {
-					sPart = oParseHelper.findNumbers(sValue, oPart.digits);
+					iExpectedDigits = oPart.digits;
 				}
+				sPart = oParseHelper.findNumbers(sValue, iExpectedDigits);
+				bPartInvalid = sPart === ""
+					|| oConfig.exactLength && sPart.length !== iExpectedDigits;
+
 				var iYear = parseInt(sPart);
 				var iWeekYear;
 				// Find the right century for two-digit years
@@ -726,13 +831,14 @@ sap.ui.define([
 				}
 				return {
 					length: sPart.length,
-					valid: oParseHelper.checkValid(oPart.type, sPart === "", oFormat),
+					valid: oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat),
 					year: iYear,
 					weekYear: iWeekYear
 				};
-			}
-		},
-		"M": {
+			},
+			isNumeric: true
+		}),
+		"M": DateFormat._createPatternSymbol({
 			name: "month",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iMonth = bUTC ? oDate.getUTCMonth() : oDate.getMonth();
@@ -747,14 +853,18 @@ sap.ui.define([
 				}
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var aMonthsVariants = [oFormat.aMonthsWide, oFormat.aMonthsWideSt, oFormat.aMonthsAbbrev, oFormat.aMonthsAbbrevSt, oFormat.aMonthsNarrow, oFormat.aMonthsNarrowSt];
-				var bValid;
-				var iMonth;
-				var sPart;
+				var iMonth, sPart, bPartInvalid, bValid,
+					aMonthsVariants = [
+						oFormat.aMonthsWide, oFormat.aMonthsWideSt,
+						oFormat.aMonthsAbbrev, oFormat.aMonthsAbbrevSt,
+						oFormat.aMonthsNarrow, oFormat.aMonthsNarrowSt
+					];
 
 				if (oPart.digits < 3) {
 					sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-					bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
+					bPartInvalid = sPart === ""
+						|| oConfig.exactLength && sPart.length < 2;
+					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 					iMonth = parseInt(sPart) - 1;
 					if (oConfig.strict && (iMonth > 11 || iMonth < 0)) {
 						bValid = false;
@@ -777,9 +887,12 @@ sap.ui.define([
 					length: sPart ? sPart.length : 0,
 					valid: bValid
 				};
+			},
+			isNumeric: function (iDigits) {
+				return iDigits < 3;
 			}
-		},
-		"L": {
+		}),
+		"L": DateFormat._createPatternSymbol({
 			name: "monthStandalone",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iMonth = bUTC ? oDate.getUTCMonth() : oDate.getMonth();
@@ -794,14 +907,18 @@ sap.ui.define([
 				}
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var aMonthsVariants = [oFormat.aMonthsWide, oFormat.aMonthsWideSt, oFormat.aMonthsAbbrev, oFormat.aMonthsAbbrevSt, oFormat.aMonthsNarrow, oFormat.aMonthsNarrowSt];
-				var bValid;
-				var iMonth;
-				var sPart;
+				var iMonth, sPart, bPartInvalid, bValid,
+					aMonthsVariants = [
+						oFormat.aMonthsWide, oFormat.aMonthsWideSt,
+						oFormat.aMonthsAbbrev, oFormat.aMonthsAbbrevSt,
+						oFormat.aMonthsNarrow, oFormat.aMonthsNarrowSt
+					];
 
 				if (oPart.digits < 3) {
 					sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-					bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
+					bPartInvalid = sPart === ""
+						|| oConfig.exactLength && sPart.length < 2;
+					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 					iMonth = parseInt(sPart) - 1;
 					if (oConfig.strict && (iMonth > 11 || iMonth < 0)) {
 						bValid = false;
@@ -824,9 +941,12 @@ sap.ui.define([
 					length: sPart ? sPart.length : 0,
 					valid: bValid
 				};
+			},
+			isNumeric: function (iDigits) {
+				return iDigits < 3;
 			}
-		},
-		"w": {
+		}),
+		"w": DateFormat._createPatternSymbol({
 			name: "weekInYear",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var oWeek = bUTC ? oDate.getUTCWeek(oFormat.oLocale, oFormat.oFormatOptions.calendarWeekNumbering) : oDate.getWeek(oFormat.oLocale, oFormat.oFormatOptions.calendarWeekNumbering);
@@ -840,16 +960,16 @@ sap.ui.define([
 				return sWeek;
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var bValid;
-				var sPart;
-				var iWeek;
-				var iLength = 0;
+				var sPart, bPartInvalid, bValid, iWeek,
+					iLength = 0;
 
 				if (oPart.digits < 3) {
 					sPart = oParseHelper.findNumbers(sValue, 2);
 					iLength = sPart.length;
 					iWeek = parseInt(sPart) - 1;
-					bValid = oParseHelper.checkValid(oPart.type, !sPart, oFormat);
+					bPartInvalid = !sPart
+						|| oConfig.exactLength && iLength < 2;
+					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 				} else {
 					sPart = oFormat.oLocaleData.getCalendarWeek(oPart.digits === 3 ? "narrow" : "wide");
 					sPart = sPart.replace("{0}", "[0-9]+");
@@ -868,37 +988,30 @@ sap.ui.define([
 					valid: bValid,
 					week: iWeek
 				};
-			}
-		},
-		"W": {
-			name: "weekInMonth",
-			format: function(oField, oDate, bUTC, oFormat) {
-				// not supported
-				return "";
 			},
-			parse: function() {
-				return {};
+			isNumeric: function (iDigits) {
+				return iDigits < 3;
 			}
-		},
-		"D": {
-			name: "dayInYear",
-			format: function(oField, oDate, bUTC, oFormat) {
-
-			},
-			parse: function() {
-				return {};
-			}
-		},
-		"d": {
+		}),
+		"W": DateFormat._createPatternSymbol({
+			name: "weekInMonth"
+		}),
+		"D": DateFormat._createPatternSymbol({
+			name: "dayInYear"
+		}),
+		"d": DateFormat._createPatternSymbol({
 			name: "day",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iDate = bUTC ? oDate.getUTCDate() : oDate.getDate();
 				return String(iDate).padStart(oField.digits, "0");
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-				var bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
-				var iDay = parseInt(sPart);
+				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2)),
+					bPartInvalid = sPart === ""
+						|| oConfig.exactLength && sPart.length < 2,
+					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat),
+					iDay = parseInt(sPart);
+
 				if (oConfig.strict && (iDay > 31 || iDay < 1)) {
 					bValid = false;
 				}
@@ -907,9 +1020,10 @@ sap.ui.define([
 					length: sPart.length,
 					valid: bValid
 				};
-			}
-		},
-		"Q": {
+			},
+			isNumeric: true
+		}),
+		"Q": DateFormat._createPatternSymbol({
 			name: "quarter",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iQuarter = bUTC ? oDate.getUTCQuarter() : oDate.getQuarter();
@@ -924,14 +1038,14 @@ sap.ui.define([
 				}
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var bValid;
-				var iQuarter;
-				var sPart;
+				var sPart, bPartInvalid, iQuarter, bValid;
 				var aQuartersVariants = [oFormat.aQuartersWide, oFormat.aQuartersWideSt, oFormat.aQuartersAbbrev, oFormat.aQuartersAbbrevSt, oFormat.aQuartersNarrow, oFormat.aQuartersNarrowSt];
 
 				if (oPart.digits < 3) {
 					sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-					bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
+					bPartInvalid = sPart === ""
+						|| oConfig.exactLength && sPart.length < 2;
+					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 					iQuarter = parseInt(sPart) - 1;
 					if (oConfig.strict && iQuarter > 3) {
 						bValid = false;
@@ -955,9 +1069,12 @@ sap.ui.define([
 					quarter: iQuarter,
 					valid: bValid
 				};
+			},
+			isNumeric: function (iDigits) {
+				return iDigits < 3;
 			}
-		},
-		"q": {
+		}),
+		"q": DateFormat._createPatternSymbol({
 			name: "quarterStandalone",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iQuarter = bUTC ? oDate.getUTCQuarter() : oDate.getQuarter();
@@ -972,14 +1089,14 @@ sap.ui.define([
 				}
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var bValid;
-				var iQuarter;
-				var sPart;
+				var sPart, bPartInvalid, iQuarter, bValid;
 				var aQuartersVariants = [oFormat.aQuartersWide, oFormat.aQuartersWideSt, oFormat.aQuartersAbbrev, oFormat.aQuartersAbbrevSt, oFormat.aQuartersNarrow, oFormat.aQuartersNarrowSt];
 
 				if (oPart.digits < 3) {
 					sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-					bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
+					bPartInvalid = sPart === ""
+						|| oConfig.exactLength && sPart.length < 2;
+					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 					iQuarter = parseInt(sPart) - 1;
 					if (oConfig.strict && iQuarter > 3) {
 						bValid = false;
@@ -1003,19 +1120,15 @@ sap.ui.define([
 					quarter: iQuarter,
 					valid: bValid
 				};
-			}
-		},
-		"F": {
-			name: "dayOfWeekInMonth",
-			format: function(oField, oDate, bUTC, oFormat) {
-				// not supported
-				return "";
 			},
-			parse: function() {
-				return {};
+			isNumeric: function (iDigits) {
+				return iDigits < 3;
 			}
-		},
-		"E": {
+		}),
+		"F": DateFormat._createPatternSymbol({
+			name: "dayOfWeekInMonth"
+		}),
+		"E": DateFormat._createPatternSymbol({
 			name: "dayNameInWeek", //Day of week name, format style.
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iDay = bUTC ? oDate.getUTCDay() : oDate.getDay();
@@ -1044,8 +1157,8 @@ sap.ui.define([
 					}
 				}
 			}
-		},
-		"c": {
+		}),
+		"c": DateFormat._createPatternSymbol({
 			name: "dayNameInWeekStandalone",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iDay = bUTC ? oDate.getUTCDay() : oDate.getDay();
@@ -1073,23 +1186,26 @@ sap.ui.define([
 					}
 				}
 			}
-		},
-		"u": {
+		}),
+		"u": DateFormat._createPatternSymbol({
 			name: "dayNumberOfWeek",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iDay = bUTC ? oDate.getUTCDay() : oDate.getDay();
 				return oFormat._adaptDayOfWeek(iDay);
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var sPart = oParseHelper.findNumbers(sValue, oPart.digits);
+				var sPart = oParseHelper.findNumbers(sValue, oPart.digits),
+					bPartInvalid = oConfig.exactLength && sPart.length !== oPart.digits;
 
 				return {
 					dayNumberOfWeek: parseInt(sPart),
-					length: sPart.length
+					length: sPart.length,
+					valid: oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat)
 				};
-			}
-		},
-		"a": {
+			},
+			isNumeric: true
+		}),
+		"a": DateFormat._createPatternSymbol({
 			name: "amPmMarker",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iDayPeriod = bUTC ? oDate.getUTCDayPeriod() : oDate.getDayPeriod();
@@ -1127,19 +1243,19 @@ sap.ui.define([
 					length: iLength
 				};
 			}
-		},
-		"H": {
+		}),
+		"H": DateFormat._createPatternSymbol({
 			name: "hour0_23",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iHours = bUTC ? oDate.getUTCHours() : oDate.getHours();
 				return String(iHours).padStart(oField.digits, "0");
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var bValid;
-				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-				var iHours = parseInt(sPart);
-
-				bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
+				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2)),
+					iHours = parseInt(sPart),
+					bPartInvalid = sPart === ""
+						|| oConfig.exactLength && sPart.length < 2,
+					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 
 				if (oConfig.strict && iHours > 23) {
 					bValid = false;
@@ -1150,9 +1266,10 @@ sap.ui.define([
 					length: sPart.length,
 					valid: bValid
 				};
-			}
-		},
-		"k": {
+			},
+			isNumeric: true
+		}),
+		"k": DateFormat._createPatternSymbol({
 			name: "hour1_24",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iHours = bUTC ? oDate.getUTCHours() : oDate.getHours();
@@ -1161,11 +1278,11 @@ sap.ui.define([
 				return sHours.padStart(oField.digits, "0");
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var bValid;
-				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-				var iHours = parseInt(sPart);
-
-				bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
+				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2)),
+					iHours = parseInt(sPart),
+					bPartInvalid = sPart === ""
+						|| oConfig.exactLength && sPart.length < 2,
+					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 
 				if (iHours == 24) {
 					iHours = 0;
@@ -1179,9 +1296,10 @@ sap.ui.define([
 					length: sPart.length,
 					valid: bValid
 				};
-			}
-		},
-		"K": {
+			},
+			isNumeric: true
+		}),
+		"K": DateFormat._createPatternSymbol({
 			name: "hour0_11",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iHours = bUTC ? oDate.getUTCHours() : oDate.getHours();
@@ -1190,11 +1308,11 @@ sap.ui.define([
 				return sHours.padStart(oField.digits, "0");
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var bValid;
-				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-				var iHours = parseInt(sPart);
-
-				bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
+				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2)),
+					iHours = parseInt(sPart),
+					bPartInvalid = sPart === ""
+						|| oConfig.exactLength && sPart.length < 2,
+					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 
 				if (oConfig.strict && iHours > 11) {
 					bValid = false;
@@ -1205,9 +1323,10 @@ sap.ui.define([
 					length: sPart.length,
 					valid: bValid
 				};
-			}
-		},
-		"h": {
+			},
+			isNumeric: true
+		}),
+		"h": DateFormat._createPatternSymbol({
 			name: "hour1_12",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iHours = bUTC ? oDate.getUTCHours() : oDate.getHours();
@@ -1223,11 +1342,13 @@ sap.ui.define([
 				return sHours.padStart(oField.digits, "0");
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var bPM = oConfig.dateValue.pm;
-				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-				var iHours = parseInt(sPart);
+				var bPM = oConfig.dateValue.pm,
+					sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2)),
+					iHours = parseInt(sPart),
+					bPartInvalid = sPart === ""
+						|| oConfig.exactLength && sPart.length < 2,
+					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 
-				var bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
 
 				if (iHours == 12) {
 					iHours = 0;
@@ -1246,20 +1367,21 @@ sap.ui.define([
 					pm: bPM,
 					valid: bValid
 				};
-			}
-		},
-		"m": {
+			},
+			isNumeric: true
+		}),
+		"m": DateFormat._createPatternSymbol({
 			name: "minute",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iMinutes = bUTC ? oDate.getUTCMinutes() : oDate.getMinutes();
 				return String(iMinutes).padStart(oField.digits, "0");
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var bValid;
-				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-				var iMinutes = parseInt(sPart);
-
-				bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
+				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2)),
+					iMinutes = parseInt(sPart),
+					bPartInvalid = sPart === ""
+						|| oConfig.exactLength && sPart.length < 2,
+					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 
 				if (oConfig.strict && iMinutes > 59) {
 					bValid = false;
@@ -1270,20 +1392,22 @@ sap.ui.define([
 					minute: iMinutes,
 					valid: bValid
 				};
-			}
-		},
-		"s": {
+			},
+			isNumeric: true
+		}),
+		"s": DateFormat._createPatternSymbol({
 			name: "second",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iSeconds = bUTC ? oDate.getUTCSeconds() : oDate.getSeconds();
 				return String(iSeconds).padStart(oField.digits, "0");
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var bValid;
-				var sPart = oParseHelper.findNumbers(sValue, Math.max(oPart.digits, 2));
-				var iSeconds = parseInt(sPart);
-
-				bValid = oParseHelper.checkValid(oPart.type, sPart === "", oFormat);
+				var iExpectedDigits = Math.max(oPart.digits, 2),
+					sPart = oParseHelper.findNumbers(sValue, iExpectedDigits),
+					bPartInvalid = sPart === ""
+						|| oConfig.exactLength && sPart.length < iExpectedDigits,
+					iSeconds = parseInt(sPart),
+					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 
 				if (oConfig.strict && iSeconds > 59) {
 					bValid = false;
@@ -1294,9 +1418,10 @@ sap.ui.define([
 					second: iSeconds,
 					valid: bValid
 				};
-			}
-		},
-		"S": {
+			},
+			isNumeric: true
+		}),
+		"S": DateFormat._createPatternSymbol({
 			name: "fractionalsecond",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iMilliseconds = bUTC ? oDate.getUTCMilliseconds() : oDate.getMilliseconds();
@@ -1307,8 +1432,9 @@ sap.ui.define([
 				return sFractionalseconds;
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
-				var sPart = oParseHelper.findNumbers(sValue, oPart.digits);
-				var iLength = sPart.length;
+				var sPart = oParseHelper.findNumbers(sValue, oPart.digits),
+					iLength = sPart.length,
+					bPartInvalid = oConfig.exactLength && iLength < oPart.digits;
 
 				sPart = sPart.substr(0, 3);
 				sPart = sPart.padEnd(3, "0");
@@ -1317,11 +1443,13 @@ sap.ui.define([
 
 				return {
 					length: iLength,
-					millisecond: iMilliseconds
+					millisecond: iMilliseconds,
+					valid: oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat)
 				};
-			}
-		},
-		"z": {
+			},
+			isNumeric: true
+		}),
+		"z": DateFormat._createPatternSymbol({
 			name: "timezoneGeneral",
 			format: function(oField, oDate, bUTC, oFormat) {
 				//TODO getTimezoneLong and getTimezoneShort does not exist on Date object
@@ -1379,8 +1507,8 @@ sap.ui.define([
 					tzDiff: iTZDiff
 				};
 			}
-		},
-		"Z": {
+		}),
+		"Z": DateFormat._createPatternSymbol({
 			name: "timezoneRFC822",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iTZOffset = Math.abs(oDate.getTimezoneOffset());
@@ -1400,8 +1528,8 @@ sap.ui.define([
 			parse: function(sValue, oPart, oFormat, oConfig) {
 				return oParseHelper.parseTZ(sValue, false);
 			}
-		},
-		"X": {
+		}),
+		"X": DateFormat._createPatternSymbol({
 			name: "timezoneISO8601",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iTZOffset = Math.abs(oDate.getTimezoneOffset());
@@ -1431,7 +1559,7 @@ sap.ui.define([
 					return oParseHelper.parseTZ(sValue, true);
 				}
 			}
-		}
+		})
 	};
 
 	DateFormat.prototype._format = function(oJSDate, bUTC) {
@@ -1621,26 +1749,30 @@ sap.ui.define([
 	};
 
 	DateFormat.prototype._parse = function(sValue, aFormatArray, bUTC, bStrict) {
-		var iIndex = 0,
-			oPart, sSubValue, oResult;
+		var oNextPart, oPart, oPrevPart, oResult, sSubValue,
+			oDateValue = {
+				valid: true
+			},
+			iIndex = 0,
+			oParseConf = {
+				formatArray: aFormatArray,
+				dateValue: oDateValue,
+				strict: bStrict
+			},
+			that = this;
 
-		var oDateValue = {
-			valid: true
-		};
-
-		var oParseConf = {
-			formatArray: aFormatArray,
-			dateValue: oDateValue,
-			strict: bStrict
-		};
+		function getSymbol(oPart0) { return that.oSymbols[oPart0.symbol || ""]; }
+		function isNumeric(oPart0) { return !!oPart0 && getSymbol(oPart0).isNumeric(oPart0.digits); }
 
 		for (var i = 0; i < aFormatArray.length; i++) {
 			sSubValue = sValue.substr(iIndex);
 			oPart = aFormatArray[i];
-
+			oPrevPart = aFormatArray[i - 1];
+			oNextPart = aFormatArray[i + 1];
 			oParseConf.index = i;
+			oParseConf.exactLength = isNumeric(oPart) && (isNumeric(oPrevPart) || isNumeric(oNextPart));
 
-			oResult = this.oSymbols[oPart.symbol || ""].parse(sSubValue, oPart, this, oParseConf) || {} ;
+			oResult = getSymbol(oPart).parse(sSubValue, oPart, this, oParseConf) || {};
 
 			oDateValue = jQuery.extend(oDateValue, oResult);
 
