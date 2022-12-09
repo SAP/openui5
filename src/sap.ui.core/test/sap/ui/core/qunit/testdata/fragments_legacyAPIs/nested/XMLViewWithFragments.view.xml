@@ -1,0 +1,14 @@
+<mvc:View async="true" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" controllerName="testdata.fragments_legacyAPIs.XMLViewController" >
+
+	<core:Fragment fragmentName="testdata.fragments_legacyAPIs.XMLTestFragment" type="XML" />
+	<core:Fragment id="xmlInXml" fragmentName="testdata.fragments_legacyAPIs.XMLTestFragment" type="XML" />
+
+	<core:Fragment fragmentName="testdata.fragments_legacyAPIs.HTMLTestFragment" type="HTML" />
+	<core:Fragment id="htmlInXml" fragmentName="testdata.fragments_legacyAPIs.HTMLTestFragment" type="HTML" />
+
+	<core:Fragment fragmentName="testdata.fragments_legacyAPIs.JSTestFragment" type="JS" />
+	<core:Fragment id="jsInXml" fragmentName="testdata.fragments_legacyAPIs.JSTestFragment" type="JS" />
+
+	<core:Fragment fragmentName="testdata.fragments_legacyAPIs.nested.JSFragment_Level0" type="JS" />
+
+</mvc:View>

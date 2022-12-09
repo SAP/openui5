@@ -1,0 +1,4 @@
+<layout:HorizontalLayout xmlns:layout="sap.ui.layout" xmlns="sap.m">
+	<Button id="btnInXmlFragment" text="Hello XML World" press="doSomething"/>
+	<Button text="{/someText}" />
+</layout:HorizontalLayout>

@@ -1,10 +1,8 @@
 /*global QUnit */
-sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function(Controller) {
+sap.ui.define([], function() {
 	"use strict";
 
-	return Controller.extend("testdata.fragments.ownerPropagation.XMLViewController", {
+	sap.ui.controller("testdata.fragments_legacyAPIs.ownerPropagation.XMLViewController", {
 
 		onInit: function(oEvent) {
 			QUnit.config.current.assert.ok(this.getOwnerComponent(), "Controller.init: owner component is available.");

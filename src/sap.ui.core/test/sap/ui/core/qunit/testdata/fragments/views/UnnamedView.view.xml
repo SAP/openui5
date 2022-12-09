@@ -1,0 +1,9 @@
+<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout" controllerName="my.View">
+
+	<l:VerticalLayout>
+		<l:VerticalLayout>
+			<Fragment fragmentName="my.UnnamedFragment" type="XML" binding="{/person/manager}"/>
+		</l:VerticalLayout>
+	</l:VerticalLayout>
+
+</mvc:View>

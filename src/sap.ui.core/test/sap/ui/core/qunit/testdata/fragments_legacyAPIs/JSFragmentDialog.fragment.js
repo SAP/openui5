@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/Text"
 ], function(Button, Dialog, Text) {
 	"use strict";
-	return {
+	sap.ui.jsfragment("testdata.fragments_legacyAPIs.JSFragmentDialog", {
 		createContent: function(oController) {
 			var oDialog = new Dialog("jsDialog", {title: "JavaScript Fragment Dialog"});
 
@@ -19,5 +19,5 @@ sap.ui.define([
 
 			return oDialog;
 		}
-	};
+	});
 });

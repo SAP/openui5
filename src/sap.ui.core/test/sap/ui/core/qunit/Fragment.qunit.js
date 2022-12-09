@@ -2,20 +2,23 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/Core",
 	"sap/ui/core/Component",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Element",
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/m/Panel",
 	"sap/m/Button",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/mvc/JSView",
 	"sap/ui/core/mvc/Controller",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/thirdparty/jquery",
-	"my/TypedView"
-], function (Log, qutils, Component, Fragment, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, XMLView, Controller, LoaderExtensions, jQuery, TypedView) {
+	"sap/ui/thirdparty/jquery"
+], function (Log, qutils, Core, Component, Fragment, Element, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, View, XMLView, JSView, Controller, LoaderExtensions, jQuery) {
 	"use strict";
 
 	createAndAppendDiv(["content1", "content2", "content3", "content4", "binding"]);
@@ -30,59 +33,7 @@ sap.ui.define([
 
 	var oModel = new JSONModel();
 	oModel.setData(data);
-	sap.ui.getCore().setModel(oModel);
-
-	// inline JS Fragment definition
-
-	sap.ui.jsfragment("example.fragment.jstest", {
-		createContent: function(oController) {
-			var oJSFragBtn = new Button("jsfragbtn", {
-				text: "This is a JS Fragment",
-				press: oController.doSomething
-			});
-			return oJSFragBtn;
-		}
-	});
-
-	// View definition
-	sap.ui.jsview("example.fragment.test", {
-
-		getControllerName: function() {
-			return "example.fragment.test";
-		},
-
-		createContent: function(oController) {
-			var oPanel = new Panel(this.createId("myPanel"));
-
-			var oJsFragment = sap.ui.fragment("example.fragment.jstest", "JS", oController);
-			oPanel.addContent(oJsFragment);
-
-			var myXml = '<Button xmlns="sap.m" id="xmlfragbtn" text="This is an XML Fragment" press="doSomething"></Button>';
-			var oXmlFragment = sap.ui.xmlfragment({
-				fragmentContent: myXml
-			}, oController);
-			oPanel.addContent(oXmlFragment);
-
-			var myHtml = '<div id="htmlfragbtn" data-sap-ui-type="sap.m.Button" data-text="This is an HTML Fragment" data-press="doSomething"></div>';
-			var oHtmlFragment = sap.ui.htmlfragment({
-				fragmentContent: myHtml
-			}, oController);
-			oPanel.addContent(oHtmlFragment);
-
-			return [oPanel];
-		}
-	});
-
-	// Controller definition
-	sap.ui.controller("example.fragment.test", {
-
-		onInit: function() {},
-
-		doSomething: function(oEvent) {
-			QUnit.config.current.assert.ok(true, "Controller method 'doSomething' called");
-		}
-
-	});
+	Core.setModel(oModel);
 
 	function triggerClickEvent(sId) {
 		qutils.triggerEvent("mousedown", sId);
@@ -102,315 +53,233 @@ sap.ui.define([
 		}
 	});
 
-
-
 	QUnit.test("XML Fragment loaded from file", function(assert) {
-		var oFragment = sap.ui.xmlfragment("testdata.fragments.XMLTestFragment", this.oDummyController);
-		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		return Fragment.load({
+			fragmentName: "testdata.fragments.XMLTestFragment",
+			controller: this.oDummyController
+		}).then(function(oFragment) {
+			oFragment.placeAt("content1");
+			Core.applyChanges();
 
-		var id = oFragment.getId();
+			var id = oFragment.getId();
 
-		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
-		assert.ok(document.getElementById(id), "XML Fragment should be rendered");
+			assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
+			assert.ok(document.getElementById(id), "XML Fragment should be rendered");
 
-		var aContent = oFragment.getContent();
-		var btn1 = aContent[0];
-		var btn2 = aContent[1];
-		assert.equal(btn1.getId(), "btnInXmlFragment", "Button with given ID should have exactly this ID");
-		assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			var aContent = oFragment.getContent();
+			var btn1 = aContent[0];
+			var btn2 = aContent[1];
+			assert.equal(btn1.getId(), "btnInXmlFragment", "Button with given ID should have exactly this ID");
+			assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
 
-		// Data binding
-		assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
+			// Data binding
+			assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
 
-		// find controls by ID
-		var btn = sap.ui.getCore().byId("btnInXmlFragment");
-		assert.ok(btn, "Button should be found by ID");
-		assert.ok(btn instanceof Button, "Button should be found by ID");
+			// find controls by ID
+			var btn = Core.byId("btnInXmlFragment");
+			assert.ok(btn, "Button should be found by ID");
+			assert.ok(btn instanceof Button, "Button should be found by ID");
+		});
 	});
 
 	QUnit.test("XML Fragment loaded from file with given Fragment ID", function(assert) {
-		var oFragment = sap.ui.xmlfragment("myXmlFrag", "testdata.fragments.XMLTestFragment", this.oDummyController);
-		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		return Fragment.load({
+			id: "myXmlFrag",
+			fragmentName: "testdata.fragments.XMLTestFragment",
+			controller: this.oDummyController
+		}).then(function(oFragment) {
+			oFragment.placeAt("content1");
+			Core.applyChanges();
 
-		var id = oFragment.getId();
+			var id = oFragment.getId();
 
-		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
-		assert.ok(document.getElementById(id), "XML Fragment should be rendered");
+			assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
+			assert.ok(document.getElementById(id), "XML Fragment should be rendered");
 
-		var aContent = oFragment.getContent();
-		var btn1 = aContent[0];
-		var btn2 = aContent[1];
-		assert.equal(btn1.getId(), "myXmlFrag--btnInXmlFragment", "Button with given ID should have this ID with Fragment ID prefix");
-		assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			var aContent = oFragment.getContent();
+			var btn1 = aContent[0];
+			var btn2 = aContent[1];
+			assert.equal(btn1.getId(), "myXmlFrag--btnInXmlFragment", "Button with given ID should have this ID with Fragment ID prefix");
+			assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
 
-		// Data binding
-		assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
+			// Data binding
+			assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
 
-		// find controls by ID
-		var btn = Fragment.byId("myXmlFrag", "btnInXmlFragment");
-		assert.ok(btn, "Button should be found by ID");
-		assert.ok(btn instanceof Button, "Button should be found by ID");
+			// find controls by ID
+			var btn = Fragment.byId("myXmlFrag", "btnInXmlFragment");
+			assert.ok(btn, "Button should be found by ID");
+			assert.ok(btn instanceof Button, "Button should be found by ID");
+		});
 	});
 
 	QUnit.test("XML Fragment loaded from file with given Fragment ID and root control ID", function(assert) {
-		var oFragment = sap.ui.xmlfragment("myXmlFrag1", "testdata.fragments.XMLTestFragmentWithId", this.oDummyController);
-		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		return Fragment.load({
+			id: "myXmlFrag1",
+			fragmentName: "testdata.fragments.XMLTestFragmentWithId",
+			controller: this.oDummyController
+		}).then(function(oFragment) {
+			oFragment.placeAt("content1");
+			Core.applyChanges();
 
-		var id = oFragment.getId();
-		assert.equal(id, "myXmlFrag1--layout", "Root control ID should be prefixed");
+			var id = oFragment.getId();
+			assert.equal(id, "myXmlFrag1--layout", "Root control ID should be prefixed");
 
-		// find controls by ID
-		var oLayout = Fragment.byId("myXmlFrag1", "layout");
-		assert.ok(oLayout, "Layout should be found by ID");
-		assert.ok(oLayout instanceof HorizontalLayout, "Found object should be instance of layout");
+			// find controls by ID
+			var oLayout = Fragment.byId("myXmlFrag1", "layout");
+			assert.ok(oLayout, "Layout should be found by ID");
+			assert.ok(oLayout instanceof HorizontalLayout, "Found object should be instance of layout");
+		});
 	});
-
-
-	/**
-	 * @deprecated Since version 1.108
-	 */
-	QUnit.test("HTML Fragment loaded from file", function(assert) {
-		var oFragment = sap.ui.htmlfragment("testdata.fragments.HTMLTestFragment", this.oDummyController);
-		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
-
-		var id = oFragment.getId();
-
-		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
-		assert.ok(document.getElementById(id), "HTML Fragment should be rendered");
-
-		var aContent = oFragment.getContent();
-		var btn1 = aContent[0];
-		var btn2 = aContent[1];
-		assert.equal(btn1.getId(), "btnInHtmlFragment", "Button with given ID should have exactly this ID");
-		assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
-
-		// Data binding
-		assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
-
-		// find controls by ID
-		var btn = sap.ui.getCore().byId("btnInHtmlFragment");
-		assert.ok(btn, "Button should be found by ID");
-		assert.ok(btn instanceof Button, "Button should be found by ID");
-	});
-
-	/**
-	 * @deprecated Since version 1.108
-	 */
-	QUnit.test("HTML Fragment loaded from file with given Fragment ID", function(assert) {
-		var oFragment = sap.ui.htmlfragment("myHtmlFrag", "testdata.fragments.HTMLTestFragment", this.oDummyController);
-		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
-
-		var id = oFragment.getId();
-
-		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
-		assert.ok(document.getElementById(id), "HTML Fragment should be rendered");
-
-		var aContent = oFragment.getContent();
-		var btn1 = aContent[0];
-		var btn2 = aContent[1];
-		assert.equal(btn1.getId(), "myHtmlFrag--btnInHtmlFragment", "Button with given ID should have this ID with Fragment ID prefix");
-		assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
-
-		// Data binding
-		assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
-
-		// find controls by ID
-		var btn = Fragment.byId("myHtmlFrag", "btnInHtmlFragment");
-		assert.ok(btn, "Button should be found by ID");
-		assert.ok(btn instanceof Button, "Button should be found by ID");
-	});
-
-
-	/**
-	 * @deprecated Since version 1.108
-	 */
-	QUnit.test("HTML Fragment loaded from file with given Fragment ID and root control ID", function(assert) {
-		var oFragment = sap.ui.htmlfragment("myHtmlFrag1", "testdata.fragments.HTMLTestFragmentWithId", this.oDummyController);
-		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
-
-		var id = oFragment.getId();
-		assert.equal(id, "myHtmlFrag1--layout", "Root control ID should be prefixed");
-
-		// find controls by ID
-		var oLayout = Fragment.byId("myHtmlFrag1", "layout");
-		assert.ok(oLayout, "Layout should be found by ID");
-		assert.ok(oLayout instanceof HorizontalLayout, "Found object should be instance of layout");
-	});
-
-
 
 	QUnit.test("JS Fragment loaded from file", function(assert) {
-		var oFragment = sap.ui.jsfragment("testdata.fragments.JSTestFragment", this.oDummyController);
-		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		return Fragment.load({
+			fragmentName: "testdata.fragments.JSTestFragment",
+			type: "JS",
+			controller: this.oDummyController
+		}).then(function(oFragment) {
+			oFragment.placeAt("content1");
+			Core.applyChanges();
 
-		var id = oFragment.getId();
+			var id = oFragment.getId();
 
-		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
-		assert.ok(document.getElementById(id), "JS Fragment should be rendered");
+			assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
+			assert.ok(document.getElementById(id), "JS Fragment should be rendered");
 
-		var aContent = oFragment.getContent();
-		var btn1 = aContent[0];
-		var btn2 = aContent[1];
-		assert.equal(btn1.getId(), "btnInJsFragment", "Button with given ID should have exactly this ID");
-		assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			var aContent = oFragment.getContent();
+			var btn1 = aContent[0];
+			var btn2 = aContent[1];
+			assert.equal(btn1.getId(), "btnInJsFragment", "Button with given ID should have exactly this ID");
+			assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
 
-		// Data binding
-		assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
+			// Data binding
+			assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
 
-		// find controls by ID
-		var btn = sap.ui.getCore().byId("btnInJsFragment");
-		assert.ok(btn, "Button should be found by ID");
-		assert.ok(btn instanceof Button, "Button should be found by ID");
+			// find controls by ID
+			var btn = Core.byId("btnInJsFragment");
+			assert.ok(btn, "Button should be found by ID");
+			assert.ok(btn instanceof Button, "Button should be found by ID");
+		});
 	});
 
 	QUnit.test("JS Fragment loaded from file with given Fragment ID", function(assert) {
-		var oFragment = sap.ui.jsfragment("myJsFrag", "testdata.fragments.JSTestFragment", this.oDummyController);
-		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		return Fragment.load({
+			fragmentName: "testdata.fragments.JSTestFragment",
+			id: "myJsFrag",
+			type: "JS",
+			controller: this.oDummyController
+		}).then(function(oFragment) {
+			oFragment.placeAt("content1");
+			Core.applyChanges();
 
-		var id = oFragment.getId();
+			var id = oFragment.getId();
 
-		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
-		assert.ok(document.getElementById(id), "JS Fragment should be rendered");
+			assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
+			assert.ok(document.getElementById(id), "JS Fragment should be rendered");
 
-		var aContent = oFragment.getContent();
-		var btn1 = aContent[0];
-		var btn2 = aContent[1];
-		assert.equal(btn1.getId(), "myJsFrag--btnInJsFragment", "Button with given ID should have this ID with Fragment ID prefix");
-		assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			var aContent = oFragment.getContent();
+			var btn1 = aContent[0];
+			var btn2 = aContent[1];
+			assert.equal(btn1.getId(), "myJsFrag--btnInJsFragment", "Button with given ID should have this ID with Fragment ID prefix");
+			assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
 
-		// Data binding
-		assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
+			// Data binding
+			assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
 
-		// find controls by ID
-		var btn = Fragment.byId("myJsFrag", "btnInJsFragment");
-		assert.ok(btn, "Button should be found by ID");
-		assert.ok(btn instanceof Button, "Button should be found by ID");
+			// find controls by ID
+			var btn = Fragment.byId("myJsFrag", "btnInJsFragment");
+			assert.ok(btn, "Button should be found by ID");
+			assert.ok(btn instanceof Button, "Button should be found by ID");
+		});
 	});
 
-
 	QUnit.test("JS Fragment loaded from file with given Fragment ID and root control ID", function(assert) {
-		var oFragment = sap.ui.jsfragment("myJsFrag1", "testdata.fragments.JSTestFragmentWithId", this.oDummyController);
-		oFragment.placeAt("content1");
-		sap.ui.getCore().applyChanges();
+		return Fragment.load({
+			fragmentName: "testdata.fragments.JSTestFragmentWithId",
+			id: "myJsFrag1",
+			type: "JS",
+			controller: this.oDummyController
+		}).then(function(oFragment) {
+			oFragment.placeAt("content1");
+			Core.applyChanges();
 
-		var id = oFragment.getId();
-		assert.equal(id, "myJsFrag1--layout", "Root control ID should be prefixed");
+			var id = oFragment.getId();
+			assert.equal(id, "myJsFrag1--layout", "Root control ID should be prefixed");
 
-		// find controls by ID
-		var oLayout = Fragment.byId("myJsFrag1", "layout");
-		assert.ok(oLayout, "Layout should be found by ID");
-		assert.ok(oLayout instanceof HorizontalLayout, "Found object should be instance of layout");
+			// find controls by ID
+			var oLayout = Fragment.byId("myJsFrag1", "layout");
+			assert.ok(oLayout, "Layout should be found by ID");
+			assert.ok(oLayout instanceof HorizontalLayout, "Found object should be instance of layout");
+		});
 	});
 
 
 	QUnit.module("Inline Fragments");
 
-	QUnit.test("Inline Fragments within JSView", function(assert) {
-		assert.expect(10); // incl. Button click handler
-
-		// Inline Fragments preconditions
-		assert.ok(!document.getElementById("jsfragbtn"), "Fragment should not be rendered");
-		assert.ok(!document.getElementById("xmlfragbtn"), "Fragment should not be rendered");
-		assert.ok(!document.getElementById("htmlfragbtn"), "Fragment should not be rendered");
-
-		// JSView creation with Fragments used inside
-		var oViewWithFragments = sap.ui.jsview("myView", "example.fragment.test");
-		oViewWithFragments.placeAt("content2");
-		sap.ui.getCore().applyChanges();
-		assert.ok(document.getElementById("myView"), "JSView should be rendered");
-
-		// Inline JS Fragment
-		assert.ok(document.getElementById("jsfragbtn"), "Fragment should be rendered");
-		// Fragment knows Controller, Fragment calling Controller methods
-		triggerClickEvent("jsfragbtn");
-
-		// Inline XML Fragment
-		assert.ok(document.getElementById("xmlfragbtn"), "Fragment should be rendered");
-		// Fragment knows Controller, Fragment calling Controller methods
-		triggerClickEvent("xmlfragbtn");
-
-		// Inline HTML Fragment
-		assert.ok(document.getElementById("htmlfragbtn"), "Fragment should be rendered");
-		// Fragment knows Controller, Fragment calling Controller methods
-		triggerClickEvent("htmlfragbtn");
-
-		oViewWithFragments.destroy();
-	});
-
 	QUnit.test("Inline Fragments within Typed View", function(assert) {
-		assert.expect(10); // incl. Button click handler
+		assert.expect(7); // incl. Button click handler
 
 		// Inline Fragments preconditions
 		assert.ok(!document.getElementById("jsfragbtn"), "Fragment should not be rendered");
 		assert.ok(!document.getElementById("xmlfragbtn"), "Fragment should not be rendered");
-		assert.ok(!document.getElementById("htmlfragbtn"), "Fragment should not be rendered");
 
 		// JSView creation with Fragments used inside
-		var oViewWithFragments = new TypedView("myView");
-		oViewWithFragments.placeAt("content2");
-		sap.ui.getCore().applyChanges();
-		assert.ok(document.getElementById("myView"), "JSView should be rendered");
+		return View.create({
+			id: "myView",
+			viewName: "module:my/TypedView"
+		}).then(function (oViewWithFragments) {
+			oViewWithFragments.placeAt("content2");
+			Core.applyChanges();
+			assert.ok(document.getElementById("myView"), "JSView should be rendered");
 
-		// Inline JS Fragment
-		assert.ok(document.getElementById("jsfragbtn"), "Fragment should be rendered");
-		// Fragment knows Controller, Fragment calling Controller methods
-		triggerClickEvent("jsfragbtn");
+			// Inline JS Fragment
+			assert.ok(document.getElementById("jsfragbtn"), "Fragment should be rendered");
+			// Fragment knows Controller, Fragment calling Controller methods
+			triggerClickEvent("jsfragbtn");
 
-		// Inline XML Fragment
-		assert.ok(document.getElementById("xmlfragbtn"), "Fragment should be rendered");
-		// Fragment knows Controller, Fragment calling Controller methods
-		triggerClickEvent("xmlfragbtn");
+			// Inline XML Fragment
+			assert.ok(document.getElementById("xmlfragbtn"), "Fragment should be rendered");
+			// Fragment knows Controller, Fragment calling Controller methods
+			triggerClickEvent("xmlfragbtn");
 
-		// Inline HTML Fragment
-		assert.ok(document.getElementById("htmlfragbtn"), "Fragment should be rendered");
-		// Fragment knows Controller, Fragment calling Controller methods
-		triggerClickEvent("htmlfragbtn");
-
-		oViewWithFragments.destroy();
+			oViewWithFragments.destroy();
+		});
 	});
 
 	QUnit.module("Fragments referenced from XMLViews");
 
-	var oXmlView, oXmlFragmentInXmlView, oXmlFragmentWithIdInXmlView, oHtmlFragmentInXmlView,
-		oHtmlFragmentWithIdInXmlView, oJsFragmentInXmlView, oJsFragmentWithIdInXmlView;
+	var oXmlView, oXmlFragmentInXmlView, oXmlFragmentWithIdInXmlView,
+		oJsFragmentInXmlView, oJsFragmentWithIdInXmlView;
 
 	var DATABOUND_TEXT_IN_VIEW = "Text from Databinding in View";
 
 	QUnit.test("XMLView Rendering", function(assert) {
-		oXmlView = sap.ui.xmlview("testdata.fragments.XMLViewWithFragments");
-		oXmlView.placeAt("content3");
-		sap.ui.getCore().applyChanges();
+		return XMLView.create({
+			viewName: "testdata.fragments.XMLViewWithFragments"
+		}).then(function(oResult) {
+			oXmlView = oResult;
 
-		var data = {
-			someText: DATABOUND_TEXT_IN_VIEW
-		};
+			oXmlView.placeAt("content3");
+			Core.applyChanges();
 
-		var oModel = new JSONModel();
-		oModel.setData(data);
-		oXmlView.setModel(oModel);
+			var data = {
+				someText: DATABOUND_TEXT_IN_VIEW
+			};
 
-		sap.ui.getCore().applyChanges(); // update data binding in DOM
+			var oModel = new JSONModel();
+			oModel.setData(data);
+			oXmlView.setModel(oModel);
 
-		var aContent = oXmlView.getContent();
-		oXmlFragmentInXmlView = aContent[0];
-		oXmlFragmentWithIdInXmlView = aContent[1];
+			Core.applyChanges(); // update data binding in DOM
 
-		oJsFragmentInXmlView = aContent[2];
-		oJsFragmentWithIdInXmlView = aContent[3];
+			var aContent = oXmlView.getContent();
+			oXmlFragmentInXmlView = aContent[0];
+			oXmlFragmentWithIdInXmlView = aContent[1];
 
-		oHtmlFragmentInXmlView = aContent[4];
-		oHtmlFragmentWithIdInXmlView = aContent[5];
+			oJsFragmentInXmlView = aContent[2];
+			oJsFragmentWithIdInXmlView = aContent[3];
 
-
-		assert.ok(oXmlView.getDomRef(), "XMLView should be rendered");
+			assert.ok(oXmlView.getDomRef(), "XMLView should be rendered");
+		});
 	});
 
 
@@ -500,57 +369,6 @@ sap.ui.define([
 		assert.ok(btn instanceof Button, "Button should be found by ID");
 	});
 
-
-	/**
-	 * @deprecated Since version 1.108
-	 */
-	QUnit.test("HTML Fragment in XMLView", function(assert) {
-		assert.expect(8); // incl. Controller function on press
-
-		var id = oHtmlFragmentInXmlView.getId();
-		assert.ok(document.getElementById(id), "Fragment should be rendered");
-		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
-
-		var btn1id = oHtmlFragmentInXmlView.getContent()[0].getId();
-		assert.equal(btn1id, oXmlView.getId() + "--btnInHtmlFragment", "static Control ID inside Fragment should be prefixed by View ID");
-		triggerClickEvent(btn1id);
-
-		var btn2 = oHtmlFragmentInXmlView.getContent()[1];
-		assert.equal(btn2.getId().substr(0, 8), "__button", "Second Button ID should be generated, with no View prefix");
-		assert.equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
-
-		// find controls by ID
-		var btn = oXmlView.byId("btnInHtmlFragment");
-		assert.ok(btn, "Button should be found by ID");
-		assert.ok(btn instanceof Button, "Button should be found by ID");
-	});
-
-	/**
-	 * @deprecated Since version 1.108
-	 */
-	QUnit.test("HTML Fragment in XMLView with given Fragment ID", function(assert) {
-		assert.expect(8); // incl. Controller function on press
-
-		var id = oHtmlFragmentWithIdInXmlView.getId();
-		assert.ok(document.getElementById(id), "Fragment should be rendered");
-		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
-
-		var btn1id = oHtmlFragmentWithIdInXmlView.getContent()[0].getId();
-		assert.equal(btn1id, oXmlView.getId() + "--htmlInXml--btnInHtmlFragment", "static Control ID inside Fragment should be prefixed by View ID and Fragment ID");
-		triggerClickEvent(btn1id);
-
-		var btn2 = oHtmlFragmentWithIdInXmlView.getContent()[1];
-		assert.equal(btn2.getId().substr(0, 8), "__button", "Second Button ID should be generated, with no View prefix");
-		assert.equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
-
-		// find controls by ID
-		var btn = oXmlView.byId(Fragment.createId("htmlInXml", "btnInHtmlFragment"));
-		assert.ok(btn, "Button should be found by ID");
-		assert.ok(btn instanceof Button, "Button should be found by ID");
-	});
-
-
-
 	QUnit.module("Dialog Fragments");
 
 	var DATABOUND_TEXT_IN_DIALOG = "Text from Databinding in Dialog";
@@ -565,191 +383,119 @@ sap.ui.define([
 
 	QUnit.test("JS Fragment as Dialog", function(assert) {
 		var done = assert.async();
-		var oDialog = sap.ui.jsfragment("testdata.fragments.JSFragmentDialog", {
-			closeDialog: function() {
-				oDialog.close();
+
+		var pDialog = Fragment.load({
+			fragmentName: "testdata.fragments.JSFragmentDialog",
+			type: "JS",
+			controller: {
+				closeDialog: function() {
+					Element.registry.get("jsDialog").close();
+				}
 			}
 		});
 
-		assert.ok(!document.getElementById("jsDialog"), "Fragment should not yet be rendered");
-		oDialog.open();
-		assert.ok(document.getElementById("jsDialog"), "Fragment should be rendered now");
-
-		window.setTimeout(function() {
-			assert.ok(oDialog.isOpen(), "Dialog should be open now");
-
-			assert.equal(jQuery("#jsDialogTxt").text(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
-			oDialog.setModel(oDialogModel);
-			sap.ui.getCore().applyChanges();
-			assert.equal(jQuery("#jsDialogTxt").text(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
-
-			triggerClickEvent("jsDialogBtn"); // close it
+		return pDialog.then(function(oDialog) {
+			assert.ok(!document.getElementById("jsDialog"), "Fragment should not yet be rendered");
+			oDialog.open();
+			assert.ok(document.getElementById("jsDialog"), "Fragment should be rendered now");
 
 			window.setTimeout(function() {
-				assert.ok(!oDialog.isOpen(), "Dialog should be closed now");
-				oDialog.destroy();
+				assert.ok(oDialog.isOpen(), "Dialog should be open now");
 
-				done();
+				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
+				oDialog.setModel(oDialogModel);
+				Core.applyChanges();
+				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
+
+				triggerClickEvent("jsDialogBtn"); // close it
+
+				window.setTimeout(function() {
+					assert.ok(!oDialog.isOpen(), "Dialog should be closed now");
+					oDialog.destroy();
+
+					done();
+				}, 600);
 			}, 600);
-		}, 600);
-
+		});
 	});
 
 
 	QUnit.test("XML Fragment as Dialog", function(assert) {
 		var done = assert.async();
-		var oDialog = sap.ui.xmlfragment("testdata.fragments.XMLFragmentDialog", {
-			closeDialog: function() {
-				oDialog.close();
+
+		var pDialog = Fragment.load({
+			fragmentName: "testdata.fragments.XMLFragmentDialog",
+			controller: {
+				closeDialog: function() {
+					Element.registry.get("xmlDialog").close();
+				}
 			}
 		});
 
-		assert.ok(!document.getElementById("xmlDialog"), "Fragment should not yet be rendered");
-		oDialog.open();
-		assert.ok(document.getElementById("xmlDialog"), "Fragment should be rendered now");
-
-		window.setTimeout(function() {
-			assert.ok(oDialog.isOpen(), "Dialog should be open now");
-
-			assert.equal(jQuery("#xmlDialogTxt").text(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
-			oDialog.setModel(oDialogModel);
-			sap.ui.getCore().applyChanges();
-			assert.equal(jQuery("#xmlDialogTxt").text(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
-
-			triggerClickEvent("xmlDialogBtn"); // close it
+		return pDialog.then(function(oDialog){
+			assert.ok(!document.getElementById("xmlDialog"), "Fragment should not yet be rendered");
+			oDialog.open();
+			assert.ok(document.getElementById("xmlDialog"), "Fragment should be rendered now");
 
 			window.setTimeout(function() {
-				assert.ok(!oDialog.isOpen(), "Dialog should be closed now");
-				oDialog.destroy();
+				assert.ok(oDialog.isOpen(), "Dialog should be open now");
 
-				done();
+				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
+				oDialog.setModel(oDialogModel);
+				Core.applyChanges();
+				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
+
+				triggerClickEvent("xmlDialogBtn"); // close it
+
+				window.setTimeout(function() {
+					assert.ok(!oDialog.isOpen(), "Dialog should be closed now");
+					oDialog.destroy();
+
+					done();
+				}, 600);
 			}, 600);
-		}, 600);
-
-	});
-
-
-	/**
-	 * @deprecated Since version 1.108
-	 */
-	QUnit.test("HTML Fragment as Dialog", function(assert) {
-		var done = assert.async();
-		var oDialog = sap.ui.htmlfragment("testdata.fragments.HTMLFragmentDialog", {
-			closeDialog: function() {
-				oDialog.close();
-			}
 		});
-
-		assert.ok(!document.getElementById("htmlDialog"), "Fragment should not yet be rendered");
-		oDialog.open();
-		assert.ok(document.getElementById("htmlDialog"), "Fragment should be rendered now");
-
-		window.setTimeout(function() {
-			assert.ok(oDialog.isOpen(), "Dialog should be open now");
-
-			assert.equal(jQuery("#htmlDialogTxt").text(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
-			oDialog.setModel(oDialogModel);
-			sap.ui.getCore().applyChanges();
-			assert.equal(jQuery("#htmlDialogTxt").text(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
-
-			triggerClickEvent("htmlDialogBtn"); // close it
-
-			window.setTimeout(function() {
-				assert.ok(!oDialog.isOpen(), "Dialog should be closed now");
-				oDialog.destroy();
-
-				done();
-			}, 600);
-		}, 600);
-
 	});
-
-	/**
-	 * @deprecated Since version 1.108
-	 */
-	QUnit.test("HTML Fragment as Dialog Template", function(assert) {
-		assert.expect(6);
-		var done = assert.async();
-		var oDialog = sap.ui.htmlfragment("testdata.fragments.HTMLFragmentDialogTemplate", {
-			closeDialog: function() {
-				oDialog.close();
-			}
-		});
-
-		assert.strictEqual(oDialog.getId(), "myHtmlDialog", "HTMLDialog has the correct ID");
-		assert.strictEqual(oDialog.getContent().length, 2, "HTMLDialog has two controls in content aggregation");
-		assert.notOk(oDialog.getDomRef(), "HTMLDialog has no DomRef");
-
-		oDialog.attachAfterOpen(function (oEvent) {
-			assert.deepEqual(oDialog, oEvent.getSource(), "Dialog open");
-			assert.ok(oDialog.getDomRef(), "HTMLDialog has a DomRef");
-
-			oDialog.attachAfterClose(function () {
-				assert.notOk(oDialog.getDomRef(), "HTMLDialog has no DomRef");
-
-				oDialog.destroy();
-				done();
-			});
-
-			triggerClickEvent("htmlDialogBtn"); // close it
-		});
-
-		oDialog.open();
-	});
-
-
 
 	QUnit.module("Fragments with no Controller");
 
 	QUnit.test("XML Fragment loaded from file", function(assert) {
 		assert.expect(2);
-		var oFragment = sap.ui.xmlfragment("testdata.fragments.XMLTestFragmentNoController");
-		oFragment.placeAt("content4");
-		sap.ui.getCore().applyChanges();
+		return Fragment.load({
+			fragmentName: "testdata.fragments.XMLTestFragmentNoController"
+		}).then(function(oFragment) {
+			oFragment.placeAt("content4");
+			Core.applyChanges();
 
-		var id = oFragment.getId();
-		assert.ok(document.getElementById(id), "Fragment should be rendered");
+			var id = oFragment.getId();
+			assert.ok(document.getElementById(id), "Fragment should be rendered");
 
-		var aContent = oFragment.getContent();
-		var btn1 = aContent[0];
-		assert.equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			var aContent = oFragment.getContent();
+			var btn1 = aContent[0];
+			assert.equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
 
-		oFragment.destroy();
+			oFragment.destroy();
+		});
 	});
 
 	QUnit.test("JS Fragment loaded from file", function(assert) {
 		assert.expect(3); // including one check in the View' createContent method
-		var oFragment = sap.ui.jsfragment("testdata.fragments.JSTestFragmentNoController");
-		oFragment.placeAt("content4");
-		sap.ui.getCore().applyChanges();
+		return Fragment.load({
+			fragmentName: "testdata.fragments.JSTestFragmentNoController",
+			type: "JS"
+		}).then(function(oFragment) {
+			oFragment.placeAt("content4");
+			Core.applyChanges();
 
-		var id = oFragment.getId();
-		assert.ok(document.getElementById(id), "Fragment should be rendered");
+			var id = oFragment.getId();
+			assert.ok(document.getElementById(id), "Fragment should be rendered");
 
-		var aContent = oFragment.getContent();
-		var btn1 = aContent[0];
-		assert.equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			var aContent = oFragment.getContent();
+			var btn1 = aContent[0];
+			assert.equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
 
-		oFragment.destroy();
-	});
-
-	/**
-	 * @deprecated Since version 1.108
-	 */
-	QUnit.test("HTML Fragment loaded from file", function(assert) {
-		assert.expect(2);
-		var oFragment = sap.ui.htmlfragment("testdata.fragments.HTMLTestFragmentNoController");
-		oFragment.placeAt("content4");
-		sap.ui.getCore().applyChanges();
-
-		var id = oFragment.getId();
-		assert.ok(document.getElementById(id), "Fragment should be rendered");
-
-		var aContent = oFragment.getContent();
-		var btn1 = aContent[0];
-		assert.equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
-
-		oFragment.destroy();
+			oFragment.destroy();
+		});
 	});
 
 	QUnit.module("DataBinding", {
@@ -762,24 +508,33 @@ sap.ui.define([
 	});
 
 	QUnit.test("Unnamed Model", function(assert) {
-		sap.ui.xmlview("unnamedView", "my.UnnamedView").placeAt("binding");
-		sap.ui.getCore().applyChanges();
+		return XMLView.create({
+			id: "unnamedView",
+			viewName: "my.UnnamedView"
+		}).then(function(oView) {
+			oView.placeAt("binding");
+			Core.applyChanges();
 
-		var oLabel = sap.ui.getCore().byId("unnamedView--unnamedName");
-		assert.ok(oLabel.getText().indexOf("<Named>") == -1, "Binding of unnamed model set for 'name'");
-		oLabel = sap.ui.getCore().byId("unnamedView--unnamedPhone");
-		assert.ok(oLabel.getText().indexOf("<Named>") == -1, "Binding of unnamed model set for 'phone'");
-
+			var oLabel = Core.byId("unnamedView--unnamedName");
+			assert.ok(oLabel.getText().indexOf("<Named>") == -1, "Binding of unnamed model set for 'name'");
+			oLabel = Core.byId("unnamedView--unnamedPhone");
+			assert.ok(oLabel.getText().indexOf("<Named>") == -1, "Binding of unnamed model set for 'phone'");
+		});
 	});
 
 	QUnit.test("Named Model", function(assert) {
-		sap.ui.xmlview("namedView", "my.View").placeAt("binding");
-		sap.ui.getCore().applyChanges();
+		return XMLView.create({
+			id: "namedView",
+			viewName: "my.View"
+		}).then(function(oView) {
+			oView.placeAt("binding");
+			Core.applyChanges();
 
-		var oLabel = sap.ui.getCore().byId("namedView--namedName");
-		assert.ok(oLabel.getText().indexOf("<Named>") > -1, "Binding of named model set for 'name'");
-		oLabel = sap.ui.getCore().byId("namedView--namedPhone");
-		assert.ok(oLabel.getText().indexOf("<Named>") > -1, "Binding of named model set for 'phone'");
+			var oLabel = Core.byId("namedView--namedName");
+			assert.ok(oLabel.getText().indexOf("<Named>") > -1, "Binding of named model set for 'name'");
+			oLabel = Core.byId("namedView--namedPhone");
+			assert.ok(oLabel.getText().indexOf("<Named>") > -1, "Binding of named model set for 'phone'");
+		});
 	});
 
 	QUnit.module("Fragment.load API", {
@@ -798,29 +553,6 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated Since version 1.108
-	 */
-	QUnit.test("HTML Fragment loaded from file", function(assert) {
-		assert.expect(2);
-		return Fragment.load({
-			name: "testdata.fragments.HTMLTestFragmentNoController",
-			type: "HTML"
-		}).then(function(oFragment) {
-			oFragment.placeAt("content4");
-			sap.ui.getCore().applyChanges();
-
-			var id = oFragment.getId();
-			assert.ok(document.getElementById(id), "Fragment should be rendered");
-
-			var aContent = oFragment.getContent();
-			var btn1 = aContent[0];
-			assert.equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
-
-			oFragment.destroy();
-		});
-	});
-
 	QUnit.test("JS Fragment loaded from file with given Fragment ID", function(assert) {
 		assert.expect(8);
 		return Fragment.load({
@@ -830,7 +562,7 @@ sap.ui.define([
 			controller: this.oDummyController
 		}).then(function(oFragment) {
 			oFragment.placeAt("content1");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var id = oFragment.getId();
 
@@ -864,7 +596,7 @@ sap.ui.define([
 			controller: this.oDummyController
 		}).then(function(oFragment) {
 			oFragment.placeAt("content1");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var id = oFragment.getId();
 			assert.ok(document.getElementById(id), "XML Fragment should be rendered");
@@ -904,27 +636,31 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Load XML Fragment from file with nested fragments and a nested view containing fragments of type 'JS', 'HTML' and 'XML'", function (assert) {
+	QUnit.test("Load XML Fragment from file with nested fragments and a nested async view containing fragments of type 'JS' and 'XML'", function (assert) {
 		assert.expect(9);
 		return Fragment.load({
 			name: "testdata.fragments.nested.XMLFragment_Level0"
-		}).then(function (oFragment) {
-			assert.ok(oFragment, "Fragment should be loaded");
+		}).then(function (oView) {
+			assert.ok(oView, "Deepest nested View in Fragment chain should be created");
 			assert.equal(this.loadTemplatePromiseSpy.callCount, 3, "XMLTemplateProcessor.loadTemplatePromise should be called three times");
+
+			return oView.loaded();
+		}.bind(this)).then(function(oView) {
+			// expectations of template processor calls
 			assert.equal(this.parseTemplatePromiseSpy.callCount, 6, "XMLTemplateProcessor.loadTemplatePromise should be called six times");
 			assert.ok(this.parseTemplatePromiseSpy.getCall(0).args[2], "First call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
 			assert.ok(this.parseTemplatePromiseSpy.getCall(1).args[2], "Second call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
 			assert.ok(this.parseTemplatePromiseSpy.getCall(2).args[2], "Third call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
-			assert.notOk(this.parseTemplatePromiseSpy.getCall(3).args[2], "Fourth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=false");
-			assert.notOk(this.parseTemplatePromiseSpy.getCall(4).args[2], "Fifth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=false");
-			assert.notOk(this.parseTemplatePromiseSpy.getCall(5).args[2], "Sixth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=false");
+			assert.ok(this.parseTemplatePromiseSpy.getCall(3).args[2], "Fourth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+			assert.ok(this.parseTemplatePromiseSpy.getCall(4).args[2], "Fifth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+			assert.ok(this.parseTemplatePromiseSpy.getCall(5).args[2], "Sixth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
 
-			oFragment.destroy();
+			oView.destroy();
 		}.bind(this));
 	});
 
-	QUnit.test("Load XML View from file with nested fragments of type 'JS', 'HTML' and 'XML'", function (assert) {
-		assert.expect(25);
+	QUnit.test("Load XML View from file with nested fragments of type 'JS' and 'XML'", function (assert) {
+		assert.expect(21);
 		return XMLView.create({
 			viewName: "testdata.fragments.nested.XMLViewWithFragments"
 		}).then(function (oView) {
@@ -936,12 +672,10 @@ sap.ui.define([
 				assert.ok(this.parseTemplatePromiseSpy.getCall(1).args[2], "Second call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
 				assert.ok(this.parseTemplatePromiseSpy.getCall(2).args[2], "Third call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
 
-				assert.equal(this.loadResourceSpy.callCount, 5, "LoaderExtension.loadResource should be called five times (for the XML View, the nested XML Fragments and the nested HTML fragments)");
+				assert.equal(this.loadResourceSpy.callCount, 3, "LoaderExtension.loadResource should be called five times (for the XML View, the nested XML Fragments)");
 				assert.ok(this.loadResourceSpy.getCall(0).args[1].async, "First call of LoaderExtension.loadResource should be called with async=true");
 				assert.ok(this.loadResourceSpy.getCall(1).args[1].async, "Second call of LoaderExtension.loadResource should be called with async=true");
 				assert.ok(this.loadResourceSpy.getCall(2).args[1].async, "Third call of LoaderExtension.loadResource should be called with async=true");
-				assert.ok(this.loadResourceSpy.getCall(3).args[1].async, "Fourth call of LoaderExtension.loadResource should be called with async=true");
-				assert.ok(this.loadResourceSpy.getCall(4).args[1].async, "Fifth call of LoaderExtension.loadResource should be called with async=true");
 
 				var aCalls = this.requireSpy.getCalls().filter(function (oCall) {return oCall.args.length === 3 && oCall.args[0][0].endsWith("fragment");});
 				assert.equal(aCalls.length, 4, "sap.ui.require should be called two times with 3 arguments (for the JS fragment require)");
@@ -951,16 +685,14 @@ sap.ui.define([
 				assert.equal(aCalls[3].args[0][0], "testdata/fragments/nested/JSFragment_Level1.fragment", "Fourth call of sap.ui.require should be called with fragment name 'testdata/fragments/nested/JSFragment_Level1.fragment'");
 
 				// Spot check
-				assert.equal(oView.getContent().length, 8, "oView should contain 8 controls (6 layouts, 1 Button and 1 dialog)");
+				assert.equal(oView.getContent().length, 6, "oView should contain 8 controls (6 layouts, 1 Button and 1 dialog)");
 				assert.ok(oView.getContent()[0].getContent()[0].getId().endsWith("btnInXmlFragment"), "oView contains a XML fragment without ID containing a button with ID");
 				assert.ok(oView.getContent()[1].getContent()[0].getId().endsWith("xmlInXml--btnInXmlFragment"), "oView contains a XML fragment with ID containing a button with ID");
-				assert.ok(oView.getContent()[2].getContent()[0].getId().endsWith("btnInHtmlFragment"), "oView contains a HTML fragment without ID containing a button with ID");
-				assert.ok(oView.getContent()[3].getContent()[0].getId().endsWith("htmlInXml--btnInHtmlFragment"), "oView contains a HTML fragment with ID containing a button with ID");
-				assert.ok(oView.getContent()[4].getContent()[0].getId().endsWith("btnInJsFragment"), "oView contains a JS fragment without ID containing a button with ID");
-				assert.ok(oView.getContent()[5].getContent()[0].getId().endsWith("jsInXml--btnInJsFragment"), "oView contains a JS fragment with ID containing a button with ID");
+				assert.ok(oView.getContent()[2].getContent()[0].getId().endsWith("btnInJsFragment"), "oView contains a JS fragment without ID containing a button with ID");
+				assert.ok(oView.getContent()[3].getContent()[0].getId().endsWith("jsInXml--btnInJsFragment"), "oView contains a JS fragment with ID containing a button with ID");
 
-				assert.ok(oView.getContent()[6].isA("sap.m.Dialog"), "oView contains a Dialog");
-				assert.ok(oView.getContent()[7].isA("sap.m.Button"), "oView contains a Button");
+				assert.ok(oView.getContent()[4].isA("sap.m.Dialog"), "oView contains a Dialog");
+				assert.ok(oView.getContent()[5].isA("sap.m.Button"), "oView contains a Button");
 
 				oView.destroy();
 			}.bind(this));
@@ -1053,44 +785,6 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated Since version 1.108
-	 */
-	QUnit.test("Propagate owner component to Fragment (HTML)", function(assert) {
-		sap.ui.define("myComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("myComponent", {
-				metadata: {
-					manifest: {
-						"sap.app": {
-							"id": "myComponent"
-						}
-					}
-				}
-			});
-		});
-
-		return Component.create({
-			id: "myComponent",
-			name: "myComponent",
-			manifest: false
-		}).then(function(oComponent) {
-			return oComponent.runAsOwner(function() {
-				return Fragment.load({
-					name: "testdata.fragments.ownerPropagation.HTMLFragmentWithNestedXMLView",
-					type: "HTML"
-				}).then(function(oFragment) {
-					// the nested View inside the fragment tries to access the owner component. Without it the test would crash.
-					assert.ok(oFragment, "Fragment is loaded.");
-					assert.ok(oFragment.getController().getOwnerComponent(), "Owner component should be propagated correctly.");
-					assert.equal(oFragment.getController().getOwnerComponent().getId(), "myComponent", "Owner component should be propagated correctly.");
-
-					oFragment.destroy();
-					oComponent.destroy();
-				});
-			});
-		});
-	});
-
 	QUnit.test("Load fragment using own fragment type", function(assert) {
 		Fragment.registerType("CUSTOM", {
 			init: function () {
@@ -1153,40 +847,12 @@ sap.ui.define([
 			// In the async case if we encounter an error during XML processing, the processing is stopped (forcefully).
 			// We do not (yet) have a way to clean up any controls which have been created until the exception was raised.
 			/*
-			assert.equal(sap.ui.getCore().byId("panel"), null);
-			assert.equal(sap.ui.getCore().byId("button1"), null);
-			assert.equal(sap.ui.getCore().byId("button2"), null);
-			assert.equal(sap.ui.getCore().byId("button3"), null);
+			assert.equal(Core.byId("panel"), null);
+			assert.equal(Core.byId("button1"), null);
+			assert.equal(Core.byId("button2"), null);
+			assert.equal(Core.byId("button3"), null);
 			*/
 		});
-	});
-
-	QUnit.test("Sync XML Fragment from string with binding error", function(assert) {
-		var oFrag = sap.ui.xmlfragment({
-			id: "syncFragment",
-			fragmentContent:
-				'<Panel id="panel" xmlns="sap.m">'
-				+ '<Button id="button4"/>'
-				+ '<Button id="button5" text="{This should cause a parse error"/>'
-				+ '<Button id="button6"/>'
-				+ '</Panel>'
-		});
-
-		// check for error log
-		assert.ok(this.logSpy.calledOnce);
-		assert.deepEqual(
-			this.logSpy.getCall(0).args[0].message,
-			"Error found in Fragment (id: 'syncFragment').\n" +
-			"XML node: '<Button xmlns=\"sap.m\" id=\"button5\" text=\"{This should cause a parse error\"/>':\n" +
-			"SyntaxError: no closing braces found in '{This should cause a parse error' after pos:0",
-			"Correct SyntaxError is logged"
-		);
-
-		// broken controls created via the sync factory should still be available (for compatibility)
-		assert.equal(oFrag.getContent()[1].getId(), "syncFragment--button5", "Button with broken binding string is still available");
-
-		// clean up panel
-		oFrag.destroy();
 	});
 
 	QUnit.test("Asynchronous XML Fragment from string with duplicate id error", function(assert) {
