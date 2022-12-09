@@ -780,15 +780,9 @@ sap.ui.define([
 				oBinding,
 				oAggregationInfo = this.getMetadata().getAggregation(sName),
 				fnModelChangeHandler = function(oEvent){
-					var sOldOwnerId = ManagedObject._sOwnerId;
-					try {
-						ManagedObject._sOwnerId = that._sOwnerId;
-						oAggregationInfo.update(that, oEvent.getParameter("reason"), {
-							detailedReason: oEvent.getParameter("detailedReason")
-						});
-					} finally {
-						ManagedObject._sOwnerId = sOldOwnerId;
-					}
+					oAggregationInfo.update(that, oEvent.getParameter("reason"), {
+						detailedReason: oEvent.getParameter("detailedReason")
+					});
 				},
 				fnModelRefreshHandler = function(oEvent){
 					oAggregationInfo.refresh(that, oEvent.getParameter("reason"));

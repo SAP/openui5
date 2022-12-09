@@ -1049,6 +1049,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Calls the function <code>fn</code> once and marks all ManagedObjects
+	 * created during that call as "owned" by the given ID.
+	 *
+	 * @param {function} fn Function to execute
+	 * @param {string} sOwnerId Id of the owner
+	 * @param {Object} [oThisArg=undefined] Value to use as <code>this</code> when executing <code>fn</code>
+	 * @return {any} result of function <code>fn</code>
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	 ManagedObject.runWithOwner = function(fn, sOwnerId, oThisArg) {
+
+		assert(typeof fn === "function", "fn must be a function");
+
+		var oldOwnerId = ManagedObject._sOwnerId;
+		try {
+			ManagedObject._sOwnerId = sOwnerId;
+			return fn.call(oThisArg);
+		} finally {
+			ManagedObject._sOwnerId = oldOwnerId;
+		}
+
+	};
+
+	/**
 	 * Sets all the properties, aggregations, associations and event handlers as given in
 	 * the object literal <code>mSettings</code>. If a property, aggregation, etc.
 	 * is not listed in <code>mSettings</code>, then its value is not changed by this method.
@@ -3597,6 +3622,15 @@ sap.ui.define([
 
 		if (!(oBindingInfo.template || oBindingInfo.factory)) {
 			throw new Error("Missing template or factory function for aggregation " + sName + " of " + this + " !");
+		}
+
+		if (oBindingInfo.factory) {
+			var fnFactory = oBindingInfo.factory;
+			var sOwnerId = this._sOwnerId;
+			oBindingInfo.factory = function(sId, oContext) {
+				// bind original factory with the two arguments: id and bindingContext
+				return ManagedObject.runWithOwner(fnFactory.bind(null, sId, oContext), sOwnerId);
+			};
 		}
 
 		if (this._observer) {
