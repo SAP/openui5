@@ -893,7 +893,7 @@ sap.ui.define([
 		 */
 		parseTZ: function (sValue, bColonSeparated) {
 			var iLength = 0;
-			var iTZFactor = sValue.charAt(0) == "+" ? -1 : 1;
+			var iTZFactor = sValue.charAt(0) === "+" ? -1 : 1;
 			var sPart;
 
 			iLength++; //"+" or "-"
@@ -1123,12 +1123,12 @@ sap.ui.define([
 				var sYear = String(iYear);
 				var sCalendarType = oFormat.oFormatOptions.calendarType;
 
-				if (oField.digits == 2 && sYear.length > 2) {
+				if (oField.digits === 2 && sYear.length > 2) {
 					sYear = sYear.substr(sYear.length - 2);
 				}
 				// When parsing we assume dates less than 100 to be in the current/last century,
 				// so when formatting we have to make sure they are differentiable by prefixing with zeros
-				if (sCalendarType != CalendarType.Japanese && oField.digits == 1 && iYear < 100) {
+				if (sCalendarType !== CalendarType.Japanese && oField.digits === 1 && iYear < 100) {
 					sYear = sYear.padStart(4, "0");
 				}
 				return sYear.padStart(oField.digits, "0");
@@ -1137,9 +1137,9 @@ sap.ui.define([
 				var iExpectedDigits, sPart, bPartInvalid,
 					sCalendarType = oFormat.oFormatOptions.calendarType;
 
-				if (oPart.digits == 1) {
+				if (oPart.digits === 1) {
 					iExpectedDigits = 4;
-				} else if (oPart.digits == 2) {
+				} else if (oPart.digits === 2) {
 					iExpectedDigits = 2;
 				} else {
 					iExpectedDigits = oPart.digits;
@@ -1167,7 +1167,7 @@ sap.ui.define([
 				// current year: 2018
 				// 2018: 48 = 1948 (diff: 30)
 				// 2018: 47 = 2047 (diff: 29)
-				if (sCalendarType != CalendarType.Japanese && sPart.length <= 2) {
+				if (sCalendarType !== CalendarType.Japanese && sPart.length <= 2) {
 					var oCurrentDate = UniversalDate.getInstance(new Date(), sCalendarType),
 						iCurrentYear = oCurrentDate.getUTCFullYear(),
 						iCurrentCentury = Math.floor(iCurrentYear / 100),
@@ -1196,12 +1196,12 @@ sap.ui.define([
 				var sWeekYear = String(iWeekYear);
 				var sCalendarType = oFormat.oFormatOptions.calendarType;
 
-				if (oField.digits == 2 && sWeekYear.length > 2) {
+				if (oField.digits === 2 && sWeekYear.length > 2) {
 					sWeekYear = sWeekYear.substr(sWeekYear.length - 2);
 				}
 				// When parsing we assume dates less than 100 to be in the current/last century,
 				// so when formatting we have to make sure they are differentiable by prefixing with zeros
-				if (sCalendarType != CalendarType.Japanese && oField.digits == 1 && iWeekYear < 100) {
+				if (sCalendarType !== CalendarType.Japanese && oField.digits === 1 && iWeekYear < 100) {
 					sWeekYear = sWeekYear.padStart(4, "0");
 				}
 				return sWeekYear.padStart(oField.digits, "0");
@@ -1210,9 +1210,9 @@ sap.ui.define([
 				var iExpectedDigits, sPart, bPartInvalid,
 					sCalendarType = oFormat.oFormatOptions.calendarType;
 
-				if (oPart.digits == 1) {
+				if (oPart.digits === 1) {
 					iExpectedDigits = 4;
-				} else if (oPart.digits == 2) {
+				} else if (oPart.digits === 2) {
 					iExpectedDigits = 2;
 				} else {
 					iExpectedDigits = oPart.digits;
@@ -1224,7 +1224,7 @@ sap.ui.define([
 				var iYear = parseInt(sPart);
 				var iWeekYear = iYear;
 				// Find the right century for two-digit years
-				if (sCalendarType != CalendarType.Japanese && sPart.length <= 2) {
+				if (sCalendarType !== CalendarType.Japanese && sPart.length <= 2) {
 					var oCurrentDate = UniversalDate.getInstance(new Date(), sCalendarType),
 						iCurrentYear = oCurrentDate.getUTCFullYear(),
 						iCurrentCentury = Math.floor(iCurrentYear / 100),
@@ -1250,9 +1250,9 @@ sap.ui.define([
 			name: "month",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iMonth = oDate.getUTCMonth();
-				if (oField.digits == 3) {
+				if (oField.digits === 3) {
 					return oFormat.aMonthsAbbrev[iMonth];
-				} else if (oField.digits == 4) {
+				} else if (oField.digits === 4) {
 					return oFormat.aMonthsWide[iMonth];
 				} else if (oField.digits > 4) {
 					return oFormat.aMonthsNarrow[iMonth];
@@ -1304,9 +1304,9 @@ sap.ui.define([
 			name: "monthStandalone",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iMonth = oDate.getUTCMonth();
-				if (oField.digits == 3) {
+				if (oField.digits === 3) {
 					return oFormat.aMonthsAbbrevSt[iMonth];
-				} else if (oField.digits == 4) {
+				} else if (oField.digits === 4) {
 					return oFormat.aMonthsWideSt[iMonth];
 				} else if (oField.digits > 4) {
 					return oFormat.aMonthsNarrowSt[iMonth];
@@ -1437,9 +1437,9 @@ sap.ui.define([
 			name: "quarter",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iQuarter = oDate.getUTCQuarter();
-				if (oField.digits == 3) {
+				if (oField.digits === 3) {
 					return oFormat.aQuartersAbbrev[iQuarter];
-				} else if (oField.digits == 4) {
+				} else if (oField.digits === 4) {
 					return oFormat.aQuartersWide[iQuarter];
 				} else if (oField.digits > 4) {
 					return oFormat.aQuartersNarrow[iQuarter];
@@ -1488,9 +1488,9 @@ sap.ui.define([
 			name: "quarterStandalone",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iQuarter = oDate.getUTCQuarter();
-				if (oField.digits == 3) {
+				if (oField.digits === 3) {
 					return oFormat.aQuartersAbbrevSt[iQuarter];
-				} else if (oField.digits == 4) {
+				} else if (oField.digits === 4) {
 					return oFormat.aQuartersWideSt[iQuarter];
 				} else if (oField.digits > 4) {
 					return oFormat.aQuartersNarrowSt[iQuarter];
@@ -1544,9 +1544,9 @@ sap.ui.define([
 				var iDay = oDate.getUTCDay();
 				if (oField.digits < 4) {
 					return oFormat.aDaysAbbrev[iDay];
-				} else if (oField.digits == 4) {
+				} else if (oField.digits === 4) {
 					return oFormat.aDaysWide[iDay];
-				} else if (oField.digits == 5) {
+				} else if (oField.digits === 5) {
 					return oFormat.aDaysNarrow[iDay];
 				} else {
 					return oFormat.aDaysShort[iDay];
@@ -1574,9 +1574,9 @@ sap.ui.define([
 				var iDay = oDate.getUTCDay();
 				if (oField.digits < 4) {
 					return oFormat.aDaysAbbrevSt[iDay];
-				} else if (oField.digits == 4) {
+				} else if (oField.digits === 4) {
 					return oFormat.aDaysWideSt[iDay];
-				} else if (oField.digits == 5) {
+				} else if (oField.digits === 5) {
 					return oFormat.aDaysNarrowSt[iDay];
 				} else {
 					return oFormat.aDaysShortSt[iDay];
@@ -1871,7 +1871,7 @@ sap.ui.define([
 						|| oConfig.exactLength && sPart.length < 2,
 					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 
-				if (iHours == 24) {
+				if (iHours === 24) {
 					iHours = 0;
 				}
 				if (oConfig.strict && iHours > 23) {
@@ -1921,7 +1921,7 @@ sap.ui.define([
 
 				if (iHours > 12) {
 					sHours = String(iHours - 12);
-				} else if (iHours == 0) {
+				} else if (iHours === 0) {
 					sHours = "12";
 				} else {
 					sHours = String(iHours);
@@ -1937,7 +1937,7 @@ sap.ui.define([
 					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 
 
-				if (iHours == 12) {
+				if (iHours === 12) {
 					iHours = 0;
 					// change the PM only when it's not yet parsed
 					// 12:00 defaults to 12:00 PM
@@ -2055,7 +2055,7 @@ sap.ui.define([
 				var iHourOffset = Math.floor(iTZOffset / 60);
 				var iMinuteOffset = Math.floor(iTZOffset % 60);
 
-				if (!bUTC && iTZOffset != 0) {
+				if (!bUTC && iTZOffset !== 0) {
 					sTimeZone += (bPositiveOffset ? "-" : "+");
 					sTimeZone += String(iHourOffset).padStart(2, "0");
 					sTimeZone += ":";
@@ -2164,7 +2164,7 @@ sap.ui.define([
 				var iMinuteOffset = Math.floor(iTZOffset % 60);
 
 				var sTimeZone = "";
-				if (!bUTC && iTZOffset != 0) {
+				if (!bUTC && iTZOffset !== 0) {
 					sTimeZone += (bPositiveOffset ? "-" : "+");
 					sTimeZone += String(iHourOffset).padStart(2, "0");
 					if (oField.digits > 1 || iMinuteOffset > 0) {
@@ -2384,7 +2384,7 @@ sap.ui.define([
 		}
 
 		// Support Japanese Gannen instead of Ichinen for first year of the era
-		if (sCalendarType == CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
+		if (sCalendarType === CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
 			sResult = sResult.replace(/(^|[^\d])1年/g, "$1元年");
 		}
 
@@ -2808,7 +2808,7 @@ sap.ui.define([
 		}
 
 		// Support Japanese Gannen instead of Ichinen for first year of the era
-		if (sCalendarType == CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
+		if (sCalendarType === CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
 			sValue = sValue.replace(/元年/g, "1年");
 		}
 
@@ -2845,7 +2845,7 @@ sap.ui.define([
 			var aDateValues = this._parseInterval(sValue, sCalendarType, bUTC, bStrict, sTimezone);
 			var oJSDate1, oJSDate2;
 
-			if (aDateValues && aDateValues.length == 2) {
+			if (aDateValues && aDateValues.length === 2) {
 				var oDateValue1 = mergeWithoutOverwrite(aDateValues[0], aDateValues[1]);
 				var oDateValue2 = mergeWithoutOverwrite(aDateValues[1], aDateValues[0]);
 
@@ -2925,14 +2925,14 @@ sap.ui.define([
 		for (i = 0; i < sPattern.length; i++) {
 			var sCurChar = sPattern.charAt(i), sNextChar, sPrevChar, sPrevPrevChar;
 			if (bQuoted) {
-				if (sCurChar == "'") {
+				if (sCurChar === "'") {
 					sPrevChar = sPattern.charAt(i - 1);
 					sPrevPrevChar = sPattern.charAt(i - 2);
 					sNextChar = sPattern.charAt(i + 1);
 					// handle abc''def correctly
-					if (sPrevChar == "'" && sPrevPrevChar != "'") {
+					if (sPrevChar === "'" && sPrevPrevChar !== "'") {
 						bQuoted = false;
-					} else if (sNextChar == "'") {
+					} else if (sNextChar === "'") {
 						// handle 'abc''def' correctly
 
 						i += 1;
@@ -2942,7 +2942,7 @@ sap.ui.define([
 						continue;
 					}
 				}
-				if (sState == "text") {
+				if (sState === "text") {
 					oCurrentObject.value += sCurChar;
 				} else {
 					oCurrentObject = {
@@ -2954,11 +2954,11 @@ sap.ui.define([
 				}
 
 			} else {
-				if (sCurChar == "'") {
+				if (sCurChar === "'") {
 					bQuoted = true;
 				} else if (this.oSymbols[sCurChar]) {
 					sNewState = this.oSymbols[sCurChar].name;
-					if (sState == sNewState) {
+					if (sState === sNewState) {
 						oCurrentObject.digits++;
 					} else {
 						oCurrentObject = {
@@ -2980,7 +2980,7 @@ sap.ui.define([
 
 					}
 				} else {
-					if (sState == "text") {
+					if (sState === "text") {
 						oCurrentObject.value += sCurChar;
 					} else {
 						oCurrentObject = {
@@ -3079,7 +3079,7 @@ sap.ui.define([
 			iDiff, sPattern, iDiffSeconds;
 
 		iDiffSeconds = (oJSDate.getTime() - oToday.getTime()) / 1000;
-		if (this.oFormatOptions.relativeScale == "auto") {
+		if (this.oFormatOptions.relativeScale === "auto") {
 			sScale = this._getScale(iDiffSeconds, this.aRelativeScales);
 			sScale = fixScaleForMonths(oJSDate, oToday, sScale, iDiffSeconds);
 		}
@@ -3089,7 +3089,7 @@ sap.ui.define([
 		}
 
 		// For dates normalize to UTC to avoid issues with summer-/wintertime
-		if (sScale == "year" || sScale == "month" || sScale == "day") {
+		if (sScale === "year" || sScale === "month" || sScale === "day") {
 			oToday = new Date(Date.UTC(oToday.getUTCFullYear(), oToday.getUTCMonth(), oToday.getUTCDate()));
 
 			oDateUTC = new Date(0);
@@ -3103,7 +3103,7 @@ sap.ui.define([
 
 		iDiff = this._getDifference(sScale, [oToday, oJSDate]);
 
-		if (this.oFormatOptions.relativeScale != "auto" && (iDiff < aRange[0] || iDiff > aRange[1])) {
+		if (this.oFormatOptions.relativeScale !== "auto" && (iDiff < aRange[0] || iDiff > aRange[1])) {
 			//Relative parsing only in range +/- x days
 			return null;
 		}
