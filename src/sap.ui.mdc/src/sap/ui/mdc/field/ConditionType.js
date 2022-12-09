@@ -917,6 +917,9 @@ sap.ui.define([
 		if (oResult.outParameters) {
 			oCondition.outParameters = oResult.outParameters;
 		}
+		if (oResult.payload) {
+			oCondition.payload = oResult.payload;
+		}
 
 		return oCondition;
 
