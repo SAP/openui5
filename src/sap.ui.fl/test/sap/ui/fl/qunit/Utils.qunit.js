@@ -190,8 +190,12 @@ sap.ui.define([
 			var oComponentMock = {
 				getMetadata: function() {
 					return {
-						getManifest: function() {
-							return oAppDescriptor;
+						getManifestObject: function() {
+							return {
+								getJson: function() {
+									return oAppDescriptor;
+								}
+							};
 						}
 					};
 				}
