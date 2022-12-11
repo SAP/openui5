@@ -795,6 +795,8 @@ sap.ui.define([
 		};
 	}
 
+	thisLib.cssgrid = thisLib.cssgrid || {};
+
 	/**
 	 * @classdesc A string type that represents a grid track (the space between two grid lines)
 	 *
