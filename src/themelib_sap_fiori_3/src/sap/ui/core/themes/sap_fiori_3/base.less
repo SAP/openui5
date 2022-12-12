@@ -1,11 +1,11 @@
 // /**
-// * Copyright (c) 2012-2022 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine VERSION_UNKNOWN
-// * data:{"sModified":"2022-10-11T12:15:50Z"}
+// * Copyright (c) 2012-2020 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+// * Theming Engine 1.23011.0-20221202113725
+// * data:{"sModified":"2022-12-07T13:34:17Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_fiori_3/base.less (Version 11.1.44) *******************/
+/******************* FILE /Base/baseLib/sap_fiori_3/base.less (Version 11.1.48) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -122,7 +122,7 @@
 @sapNegativeTextColor: @sapNegativeColor;
 
 // [Tags "!Protected"]
-@sapCriticalTextColor: @sapCriticalColor;
+@sapCriticalTextColor: darken(@sapCriticalColor, 9);
 
 // [Tags "!Protected"]
 @sapPositiveTextColor: @sapPositiveColor;
@@ -443,7 +443,7 @@
 @sapFontSemiboldDuplexFamily: "72-SemiboldDuplex", "72-SemiboldDuplexfull", "72", "72full", Arial, Helvetica, sans-serif;
 
 // [Tags "!Protected"]
-@sapFontBlackFamily: "72Black", "72", "72full", Arial, Helvetica, sans-serif;
+@sapFontBlackFamily: "72Black", "72Blackfull","72", "72full", Arial, Helvetica, sans-serif;
 
 // [Tags "!Protected"]
 @sapFontHeaderFamily: @sapFontFamily;
@@ -2090,13 +2090,13 @@
 @sapLegendBackgroundColor20: lighten(@sapLegendColor20, 42);
 
 // [Tags "!Protected"]
-@sapChart_OrderedColor_1: #5899da;
+@sapChart_OrderedColor_1: #438cd5;
 
 // [Tags "!Protected"]
-@sapChart_OrderedColor_2: #e8743b;
+@sapChart_OrderedColor_2: #e66729;
 
 // [Tags "!Protected"]
-@sapChart_OrderedColor_3: #19a979;
+@sapChart_OrderedColor_3: #16976c;
 
 // [Tags "!Protected"]
 @sapChart_OrderedColor_4: #ed4a7b;
@@ -2105,7 +2105,7 @@
 @sapChart_OrderedColor_5: #945ecf;
 
 // [Tags "!Protected"]
-@sapChart_OrderedColor_6: #13a4b4;
+@sapChart_OrderedColor_6: #1193a2;
 
 // [Tags "!Protected"]
 @sapChart_OrderedColor_7: #525df4;
@@ -2117,7 +2117,7 @@
 @sapChart_OrderedColor_9: #6c8893;
 
 // [Tags "!Protected"]
-@sapChart_OrderedColor_10: #ee6868;
+@sapChart_OrderedColor_10: #ed5f5f;
 
 // [Tags "!Protected"]
 @sapChart_OrderedColor_11: #2f6497;
@@ -2126,10 +2126,10 @@
 @sapChart_Bad: #dc0d0e;
 
 // [Tags "!Protected"]
-@sapChart_Critical: #de890d;
+@sapChart_Critical: #cb7d0c;
 
 // [Tags "!Protected"]
-@sapChart_Good: #3fa45b;
+@sapChart_Good: #3c9d57;
 
 // [Tags "!Protected"]
 @sapChart_Neutral: #848f94;
