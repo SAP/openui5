@@ -794,20 +794,20 @@ function(
 	 * The navigation is done inside the master area if the page has been added,
 	 * otherwise, it tries to do the page navigation in the detail area.
 	 *
-	 * @param {string} sPageId
+	 * @param {string} pageId
 	 *         The screen to which we are navigating to. The ID or the control itself can be given.
      * @param {string} [transitionName=slide]
      *         The type of the transition/animation to apply. Options are "slide" (horizontal movement from the right), "baseSlide", "fade", "flip", and "show"
 	 *         and the names of any registered custom transitions.
 	 *
 	 *         None of the standard transitions is currently making use of any given transition parameters.
-	 * @param {object} oData
+	 * @param {object} [data]
 	 *         This optional object can carry any payload data which should be made available to the target page. The BeforeShow event on the target page will contain this data object as data property.
 	 *
 	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *
 	 *         When the transitionParameters object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
+	 * @param {object} [transitionParameters]
 	 *         This optional object can contain additional information for the transition function, like the DOM element which triggered the transition or the desired transition duration.
 	 *
 	 *         For a proper parameter order, the "data" parameter must be given when the transitionParameters parameter is used (it can be given as "null").
@@ -817,11 +817,11 @@ function(
 	 * @public
 	 * @since 1.10.0
 	 */
-	SplitContainer.prototype.to = function(pageId, transitionName, data, oTransitionParameters) {
+	SplitContainer.prototype.to = function(pageId, transitionName, data, transitionParameters) {
 		if (this._oMasterNav.getPage(pageId)) {
-			this._oMasterNav.to(pageId, transitionName, data, oTransitionParameters);
+			this._oMasterNav.to(pageId, transitionName, data, transitionParameters);
 		} else {
-			this._oDetailNav.to(pageId, transitionName, data, oTransitionParameters);
+			this._oDetailNav.to(pageId, transitionName, data, transitionParameters);
 		}
 	};
 
@@ -837,9 +837,9 @@ function(
 	 * The given backData object is available in the BeforeFirstShow, BeforeShow, and AfterShow event objects as data
 	 * property. The original "data" object from the "to" navigation is also available in these event objects.
 	 *
-	 * @param {string} sPageId
+	 * @param {string} pageId
 	 *         The screen to which is being navigated to. The ID or the control itself can be given.
-	 * @param {object} oBackData
+	 * @param {object} [backData]
 	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation.
 	 *         The event on the target page will contain this data object as backData property. (the original data from the to() navigation will still be available as data property).
 	 *
@@ -847,7 +847,7 @@ function(
 	 *         For back navigation this can be used, for example, when returning from a detail page to transfer any settings done there.
 	 *
 	 *         When the transitionParameters object is used, this data object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
+	 * @param {object} [transitionParameters]
 	 *         This optional object can give additional information to the transition function, like the DOM element, which triggered the transition or the desired transition duration.
 	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
 	 *
@@ -857,11 +857,11 @@ function(
 	 * @public
 	 * @since 1.10.0
 	 */
-	SplitContainer.prototype.backToPage = function(pageId, backData, oTransitionParameters) {
+	SplitContainer.prototype.backToPage = function(pageId, backData, transitionParameters) {
 		if (this._oMasterNav.getPage(pageId)) {
-			this._oMasterNav.backToPage(pageId, backData, oTransitionParameters);
+			this._oMasterNav.backToPage(pageId, backData, transitionParameters);
 		} else {
-			this._oDetailNav.backToPage(pageId, backData, oTransitionParameters);
+			this._oDetailNav.backToPage(pageId, backData, transitionParameters);
 		}
 	};
 
@@ -911,20 +911,20 @@ function(
 	/**
 	 * Navigates to a given master page.
 	 *
-	 * @param {string} sPageId
+	 * @param {string} pageId
 	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
-	 * @param {string} sTransitionName
+	 * @param {string} transitionName
 	 *         The type of the transition/animation to apply. Options are "slide" (horizontal movement from the right), "baseSlide", "fade", "flip", and "show"
 	 *         and the names of any registered custom transitions.
 	 *
 	 *         None of the standard transitions is currently making use of any given transition parameters.
-	 * @param {object} oData
+	 * @param {object} [data]
 	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page. The BeforeShow event on the target page will contain this data object as data property.
 	 *
 	 *         Use case: in scenarios where the entity triggering the navigation can't or shouldn't directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *
 	 *         When the transitionParameters object is used, this data object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
+	 * @param {object} [transitionParameters]
 	 *         Since version 1.7.1. This optional object can contain additional information for the transition function, like the DOM element, which triggered the transition or the desired transition duration.
 	 *
 	 *         For a proper parameter order, the data parameter must be given when the transitionParameters parameter is used (it can be given as "null").
@@ -933,15 +933,15 @@ function(
 	 *         The "show", "slide" and "fade" transitions do not use any parameter.
 	 * @public
 	 */
-	SplitContainer.prototype.toMaster = function(pageId, transitionName, data, oTransitionParameters) {
-		this._oMasterNav.to(pageId, transitionName, data, oTransitionParameters);
+	SplitContainer.prototype.toMaster = function(pageId, transitionName, data, transitionParameters) {
+		this._oMasterNav.to(pageId, transitionName, data, transitionParameters);
 	};
 
 
 	/**
 	 * Navigates back to the previous master page which is found in the history.
 	 *
-	 * @param {object} oBackData
+	 * @param {object} [backData]
 	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation.
 	 *         The event on the target page will contain this data object as backData property (the original data from the to() navigation will still be available as data property).
 	 *
@@ -949,7 +949,7 @@ function(
 	 *         For back navigation this can be used, for example, when returning from a detail page to transfer any settings done there.
 	 *
 	 *         When the transitionParameters object is used, this data object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
+	 * @param {object} [transitionParameters]
 	 *         This optional object can give additional information to the transition function, like the DOM element, which triggered the transition or the desired transition duration.
 	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
 	 *
@@ -958,31 +958,31 @@ function(
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
 	 */
-	SplitContainer.prototype.backMaster = function(backData, oTransitionParameters) {
-		this._oMasterNav.back(backData, oTransitionParameters);
+	SplitContainer.prototype.backMaster = function(backData, transitionParameters) {
+		this._oMasterNav.back(backData, transitionParameters);
 	};
 
-	SplitContainer.prototype.backMasterToPage = function(pageId, backData, oTransitionParameters) {
-		this._oMasterNav.backToPage(pageId, backData, oTransitionParameters);
+	SplitContainer.prototype.backMasterToPage = function(pageId, backData, transitionParameters) {
+		this._oMasterNav.backToPage(pageId, backData, transitionParameters);
 	};
 
 
 	/**
 	 * Navigates to a given detail page.
 	 *
-	 * @param {string} sPageId
-	 * @param {string} sTransitionName
+	 * @param {string} pageId Id of the page
+	 * @param {string} transitionName
 	 *         The type of the transition/animation to apply. Options are "slide" (horizontal movement from the right), "baseSlide", "fade", "flip", and "show"
 	 *         and the names of any registered custom transitions.
 	 *
 	 *         None of the standard transitions is currently making use of any given transition parameters.
-	 * @param {object} oData
+	 * @param {object} [data]
 	 *         This optional object can carry any payload data which should be made available to the target page. The BeforeShow event on the target page will contain this data object as data property.
 	 *
 	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *
 	 *         When the transitionParameters object is used, this data object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
+	 * @param {object} [transitionParameters]
 	 *         This optional object can contain additional information for the transition function, like the DOM element, which triggered the transition or the desired transition duration.
 	 *
 	 *         For a proper parameter order, the data parameter must be given when the transitionParameters parameter is used (it can be given as "null").
@@ -991,22 +991,22 @@ function(
 	 *         The "show", "slide" and "fade" transitions do not use any parameter.
 	 * @public
 	 */
-	SplitContainer.prototype.toDetail = function(pageId, transitionName, data, oTransitionParameters) {
-		this._oDetailNav.to(pageId, transitionName, data, oTransitionParameters);
+	SplitContainer.prototype.toDetail = function(pageId, transitionName, data, transitionParameters) {
+		this._oDetailNav.to(pageId, transitionName, data, transitionParameters);
 	};
 
 
 	/**
 	 * Navigates back to the previous detail page found in the history.
 	 *
-	 * @param {object} oBackData
+	 * @param {object} [backData]
 	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as backData property. (The original data from the to() navigation will still be available as data property.)
 	 *
 	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *         For back navigation this can be used, for example, when returning from a detail page to transfer any settings done there.
 	 *
 	 *         When the transitionParameters object is used, this data object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
+	 * @param {object} [transitionParameters]
 	 *         This optional object can give additional information to the transition function, like the DOM element, which triggered the transition or the desired transition duration.
 	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
 	 *
@@ -1015,12 +1015,12 @@ function(
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
 	 */
-	SplitContainer.prototype.backDetail = function(backData, oTransitionParameters) {
-		this._oDetailNav.back(backData, oTransitionParameters);
+	SplitContainer.prototype.backDetail = function(backData, transitionParameters) {
+		this._oDetailNav.back(backData, transitionParameters);
 	};
 
-	SplitContainer.prototype.backDetailToPage = function(pageId, backData, oTransitionParameters) {
-		this._oDetailNav.backToPage(pageId, backData, oTransitionParameters);
+	SplitContainer.prototype.backDetailToPage = function(pageId, backData, transitionParameters) {
+		this._oDetailNav.backToPage(pageId, backData, transitionParameters);
 	};
 
 
@@ -1029,14 +1029,14 @@ function(
 	 * NOTE: If already on the initial page, nothing happens.
 	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
 	 *
-	 * @param {object} oBackData
+	 * @param {object} [backData]
 	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
 	 *
 	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
 	 *
 	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
+	 * @param {object} [transitionParameters]
 	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
 	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
 	 *
@@ -1045,8 +1045,8 @@ function(
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
 	 */
-	SplitContainer.prototype.backToTopMaster = function(backData, oTransitionParameters) {
-		this._oMasterNav.backToTop(backData, oTransitionParameters);
+	SplitContainer.prototype.backToTopMaster = function(backData, transitionParameters) {
+		this._oMasterNav.backToTop(backData, transitionParameters);
 	};
 
 
@@ -1055,14 +1055,14 @@ function(
 	 * NOTE: If already on the initial page, nothing happens.
 	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
 	 *
-	 * @param {object} oBackData
+	 * @param {object} [backData]
 	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as backData property (the original data from the to() navigation will still be available as data property).
 	 *
 	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *         For back navigation this can be used, for example, when returning from a detail page to transfer any settings done there.
 	 *
 	 *         When the transitionParameters object is used, this data object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
+	 * @param {object} [transitionParameters]
 	 *         This optional object can give additional information to the transition function, like the DOM element, which triggered the transition or the desired transition duration.
 	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
 	 *
@@ -1071,8 +1071,8 @@ function(
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
 	 */
-	SplitContainer.prototype.backToTopDetail = function(backData, oTransitionParameters) {
-		this._oDetailNav.backToTop(backData, oTransitionParameters);
+	SplitContainer.prototype.backToTopDetail = function(backData, transitionParameters) {
+		this._oDetailNav.backToTop(backData, transitionParameters);
 	};
 
 	SplitContainer.prototype.addMasterPage = function(oPage) {

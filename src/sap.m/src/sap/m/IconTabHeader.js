@@ -235,6 +235,35 @@ sap.ui.define([
 	});
 
 	/**
+	 * Sets a new value for property {@link #setAriaTexts ariaTexts}.
+	 *
+	 * Specifies optional texts for the screen reader.
+	 *
+	 * The given object can contain the following keys: <code>headerLabel</code> - text to serve as a label for the header, <code>headerDescription</code> - text to serve as a description for the header.
+	 *
+	 * When called with a value of <code>null</code> or <code>undefined</code>, the default value of the property will be restored.
+	 *
+	 * @method
+	 * @param {{headerLabel: string, headerDescription: string}} [oAriaTexts] New value for property <code>ariaTexts</code>
+	 * @public
+	 * @name sap.m.IconTabHeader#setAriaTexts
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+	 */
+
+	/**
+	 * Gets current value of property {@link #getAriaTexts ariaTexts}.
+	 *
+	 * Specifies optional texts for the screen reader.
+	 *
+	 * The given object can contain the following keys: <code>headerLabel</code> - text to serve as a label for the header, <code>headerDescription</code> - text to serve as a description for the header.
+	 *
+	 * @method
+	 * @returns {{headerLabel: string, headerDescription: string}|null} Value of property <code>ariaTexts</code>
+	 * @public
+	 * @name sap.m.IconTabHeader#getAriaTexts
+	 */
+
+	/**
 	 * Library internationalization resource bundle.
 	 *
 	 * @type {module:sap/base/i18n/ResourceBundle}

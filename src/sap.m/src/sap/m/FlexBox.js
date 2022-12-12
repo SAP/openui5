@@ -303,7 +303,7 @@ function(
 	 * Gets the accessibility information.
 	 *
 	 * @protected
-	 * @returns {object} The accessibility information.
+	 * @returns {{children: sap.ui.core.Control[]}} The accessibility information.
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 */
 	FlexBox.prototype.getAccessibilityInfo = function() {

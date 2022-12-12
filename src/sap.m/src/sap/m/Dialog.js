@@ -443,6 +443,33 @@ function(
 			renderer: DialogRenderer
 		});
 
+		/**
+		 * Sets a new value for property {@link #setEscapeHandler escapeHandler}.
+		 *
+		 * This property expects a function with one parameter of type Promise. In the function, you should call either <code>resolve()</code> or <code>reject()</code> on the Promise object.
+		 * The function allows you to define custom behavior which will be executed when the Escape key is pressed. By default, when the Escape key is pressed, the dialog is immediately closed.
+		 *
+		 * When called with a value of <code>null</code> or <code>undefined</code>, the default value of the property will be restored.
+		 *
+		 * @method
+		 * @param {function({resolve: function, reject: function})} [fnEscapeHandler] New value for property <code>escapeHandler</code>
+		 * @public
+		 * @name sap.m.Dialog#setEscapeHandler
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+		 */
+
+		/**
+		 * Gets current value of property {@link #getEscapeHandler escapeHandler}.
+		 *
+		 * This property expects a function with one parameter of type Promise. In the function, you should call either <code>resolve()</code> or <code>reject()</code> on the Promise object.
+		 * The function allows you to define custom behavior which will be executed when the Escape key is pressed. By default, when the Escape key is pressed, the dialog is immediately closed.
+		 *
+		 * @method
+		 * @returns {function({resolve: function, reject: function})|null} Value of property <code>escapeHandler</code>
+		 * @public
+		 * @name sap.m.Dialog#getEscapeHandler
+		 */
+
 		ResponsivePaddingsEnablement.call(Dialog.prototype, {
 			header: {suffix: "header"},
 			subHeader: {selector: ".sapMDialogSubHeader .sapMIBar"},

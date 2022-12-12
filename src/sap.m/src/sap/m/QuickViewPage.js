@@ -135,7 +135,7 @@ sap.ui.define([
 				/**
 				 * Specifies the application which provides target and param configuration for cross-application navigation from the 'page header'.
 				 */
-				crossAppNavCallback : { type: "object", group: "Misc" },
+				crossAppNavCallback: { type: "object", group: "Misc" },
 
 				/**
 				 * Specifies the text displayed under the header of the content section.
@@ -177,6 +177,31 @@ sap.ui.define([
 		},
 		renderer: QuickViewPageRenderer
 	});
+
+	/**
+	 * Sets a new value for property {@link #setCrossAppNavCallback crossAppNavCallback}.
+	 *
+	 * Specifies the application which provides target and param configuration for cross-application navigation from the 'page header'.
+	 *
+	 * When called with a value of <code>null</code> or <code>undefined</code>, the default value of the property will be restored.
+	 *
+	 * @method
+	 * @param {function(): {target: object, params: object}} [oCrossAppNavCallback] New value for property <code>crossAppNavCallback</code>
+	 * @public
+	 * @name sap.m.QuickViewPage#setCrossAppNavCallback
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+	 */
+
+	/**
+	 * Gets current value of property {@link #getCrossAppNavCallback crossAppNavCallback}.
+	 *
+	 * Specifies the application which provides target and param configuration for cross-application navigation from the 'page header'.
+	 *
+	 * @method
+	 * @returns {function(): {target: object, params: object}} Value of property <code>crossAppNavCallback</code>
+	 * @public
+	 * @name sap.m.QuickViewPage#getCrossAppNavCallback
+	 */
 
 	QuickViewPage.prototype.init =  function() {
 		//see API docu for sap.ushell.services.CrossApplicationNavigation
