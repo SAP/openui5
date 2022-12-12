@@ -741,6 +741,9 @@ sap.ui.define([
 				}
 			},
 			// Team Gravity tests
+			/**
+			* @deprecated Since version 1.73
+			*/
 			"descriptorRelated/api/Api": {
 				group: "Descriptor related APIs",
 				coverage: {
