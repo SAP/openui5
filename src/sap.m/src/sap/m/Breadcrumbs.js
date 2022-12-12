@@ -70,7 +70,10 @@ sap.ui.define([
 	var Breadcrumbs = Control.extend("sap.m.Breadcrumbs", {
 		metadata: {
 			library: "sap.m",
-			interfaces: ["sap.m.IBreadcrumbs"],
+			interfaces: [
+				"sap.m.IBreadcrumbs",
+				"sap.m.IToolbarInteractiveControl"
+			],
 			designtime: "sap/m/designtime/Breadcrumbs.designtime",
 			properties: {
 
@@ -689,6 +692,19 @@ sap.ui.define([
 		this.removeDelegate(this._getItemNavigation());
 		this.invalidate(this);
 		return this;
+	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	 Breadcrumbs.prototype._getToolbarInteractive = function () {
+		return true;
 	};
 
 	// helper functions

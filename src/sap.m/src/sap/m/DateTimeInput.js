@@ -70,7 +70,9 @@ function(
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DateTimeInput = Control.extend("sap.m.DateTimeInput", /** @lends sap.m.DateTimeInput.prototype */ { metadata : {
-
+		interfaces : [
+			"sap.m.IToolbarInteractiveControl"
+		],
 		library : "sap.m",
 		deprecated: true,
 		designtime: "sap/m/designtime/DateTimeInput.designtime",
@@ -622,6 +624,20 @@ function(
 
 		return undefined;
 	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	DateTimeInput.prototype._getToolbarInteractive = function () {
+		return true;
+	};
+
 
 	function _getPicker(){
 
