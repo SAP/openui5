@@ -535,6 +535,9 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * @deprecated Since version 1.40.1
+	 */
 	ObjectPageHeader.prototype.setHeaderDesign = function (sHeaderDesign) {
 		this.setProperty("headerDesign", sHeaderDesign);
 		if (this.getParent()) {
