@@ -4,7 +4,6 @@
 sap.ui.define([
 	"sap/ui/mdc/field/ConditionType",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/field/FieldHelpBase",
 	"sap/ui/mdc/field/FieldBaseDelegate",
 	"sap/ui/mdc/ValueHelp",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
@@ -24,7 +23,6 @@ sap.ui.define([
 ], function (
 		ConditionType,
 		Condition,
-		FieldHelpBase,
 		FieldBaseDelegate,
 		ValueHelp,
 		FilterOperatorUtil,
@@ -190,6 +188,17 @@ sap.ui.define([
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "1", "Values entry");
+
+		// Default operator set in FormatOptions
+		oConditionType.setFormatOptions({operators: ["GT", "LT"], defaultOperatorName: "LT"});
+
+		oCondition = oConditionType.parseValue("Test");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "LT", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0], "Test", "Values entry");
 
 	});
 
@@ -640,7 +649,7 @@ sap.ui.define([
 
 	});
 
-	var oFieldHelp;
+	var oValueHelp;
 	var bAsyncCalled;
 	var fnAsync = function(oPromise) {
 		bAsyncCalled = true;
@@ -649,36 +658,47 @@ sap.ui.define([
 		}
 	};
 
-	QUnit.module("Key/Description using FieldHelpBase", {
+	QUnit.module("Key/Description using ValueHelp", {
 		beforeEach: function() {
-			oFieldHelp = new FieldHelpBase("FH1");
-			var oStub = sinon.stub(oFieldHelp, "getTextForKey");
-			oStub.withArgs("I1").returns("Item1");
-			oStub.withArgs("I2").returns({key: "i2", description: "Item 2", inParameters: {in1: "I2"}, outParameters: {out1: "I2"}});
-			oStub.withArgs("I3").returns("Item3");
-			oStub = sinon.stub(oFieldHelp, "getKeyForText");
-			oStub.withArgs("Item1").returns("I1");
-			oStub.withArgs("Item2").returns({key: "i2", description: "Item 2", inParameters: {in1: "I2"}, outParameters: {out1: "I2"}});
-			oStub.withArgs("Item3").returns("I3");
+			oValueHelp = new ValueHelp("VH1");
 			var fnGetItemsForValue = function(oConfig) {
 				if (oConfig.value === "I1" || oConfig.value === "Item1") {
-					return {key: "I1", description: "Item1"};
+					return Promise.resolve({key: "I1", description: "Item1"});
 				} else if (oConfig.value === "I2" || oConfig.value === "Item2") {
-					return {key: "i2", description: "Item 2", inParameters: {in1: "I2"}, outParameters: {out1: "I2"}};
+					return new Promise(function(fResolve, fReject) {
+						setTimeout(function () { // simulate request
+							fResolve({key: "i2", description: "Item 2", payload: {payload: "I2"}});
+						}, 0);
+					});
 				} else if (oConfig.value === "I3" || oConfig.value === "Item3") {
-					return {key: "I3", description: "Item3"};
+					return Promise.resolve({key: "I3", description: "Item3"});
+				} else if (oConfig.value === "XXX") {
+					return Promise.resolve(null);
 				} else if (oConfig.value === "YY") {
 					throw new Error("myError");
 				} else if (oConfig.value === "ZZZ") {
-					throw new ParseException("myParseException");
+					return Promise.reject(new oConfig.exception("myException"));
+				} else if (oConfig.value === "notUnique") {
+					var oException = new oConfig.exception("not Unique");
+					oException._bNotUnique = true;
+					return Promise.reject(oException);
+				} else if (oConfig.value === "Sync" || oConfig.value === "SyncCall") { // TODO: remove after FieldHelp removed completely
+					return {key: "Sync", description: "SyncCall", inParameters: {in1: "ISync"}, outParameters: {out1: "OSync"}};
+				} else if (oConfig.parsedValue === "") {
+					return Promise.resolve({key: "", description: "Empty"});
+				} else if (oConfig.parsedValue === null && oConfig.value === "") {
+					return Promise.resolve(null);
 				}
 				return null;
 			};
-			oStub = sinon.stub(oFieldHelp, "getItemForValue").callsFake(fnGetItemsForValue);
+			sinon.stub(oValueHelp, "getItemForValue").callsFake(fnGetItemsForValue);
+			sinon.stub(oValueHelp, "isValidationSupported").returns(true);
 
+			oValueType = new StringType(); // use odata-String type to parse "" to null -> so "" cannot be a value for typing
 			oConditionType = new ConditionType({
+				valueType: oValueType,
 				display: FieldDisplay.Description,
-				fieldHelpID: "FH1",
+				fieldHelpID: "VH1",
 				operators: ["EQ"],
 				asyncParsing: fnAsync,
 				delegate: FieldBaseDelegate,
@@ -689,10 +709,12 @@ sap.ui.define([
 			});
 		},
 		afterEach: function() {
-			oFieldHelp.destroy();
-			oFieldHelp = undefined;
+			oValueHelp.destroy();
+			oValueHelp = undefined;
 			oConditionType.destroy();
 			oConditionType = undefined;
+			oValueType.destroy();
+			oValueType = undefined;
 			bAsyncCalled = undefined;
 		}
 	});
@@ -719,31 +741,74 @@ sap.ui.define([
 
 	QUnit.test("Formatting: key -> description (from help)", function(assert) {
 
-		var oCondition = Condition.createCondition("EQ", ["I1"], undefined, undefined, ConditionValidated.Validated);
+		var oCondition = Condition.createCondition("EQ", ["Sync"], undefined, undefined, ConditionValidated.Validated);
+		var oConfig = { // to compare
+			value: "Sync",
+			parsedValue: "Sync",
+			dataType: oValueType,
+			checkKey: true,
+			checkDescription: false,
+			context: {inParameters: undefined, outParameters: undefined, payload: undefined},
+			bindingContext: "BC",
+			conditionModel: "CM",
+			conditionModelName: "Name",
+			control: "Control",
+			caseSensitive: true,
+			exception: FormatException
+		};
 		var sResult = oConditionType.formatValue(oCondition);
-		assert.equal(sResult, "Item1", "Result of formatting");
-		assert.ok(oFieldHelp.getTextForKey.calledWith("I1", undefined, undefined, "BC", "CM", "Name"), "getTextForKey called");
+		assert.equal(sResult, "SyncCall", "Result of formatting");
+		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
 
-		oConditionType.oFormatOptions.display = FieldDisplay.DescriptionValue; // fake setting directly
-		oCondition.values.push(undefined);
-		sResult = oConditionType.formatValue(oCondition);
-		assert.equal(sResult, "Item1 (I1)", "Result of formatting");
+		var fnDone = assert.async();
+		oCondition = Condition.createCondition("EQ", ["I1"], undefined, undefined, ConditionValidated.Validated);
+		var oPromise = oConditionType.formatValue(oCondition);
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(sDescription) {
+			assert.equal(sDescription, "Item1", "Result of formatting");
+			oConfig.value = "I1";
+			oConfig.parsedValue = "I1";
+			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
 
-		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
-		oCondition = Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated);
-		sResult = oConditionType.formatValue(oCondition);
-		assert.equal(sResult, "i2 (Item 2)", "Result of formatting");
+			oConditionType.oFormatOptions.display = FieldDisplay.DescriptionValue; // fake setting directly
+			oCondition.values.push(undefined);
+			oPromise = oConditionType.formatValue(oCondition);
+			assert.ok(oPromise instanceof Promise, "Promise returned");
+			oPromise.then(function(sDescription) {
+				assert.equal(sDescription, "Item1 (I1)", "Result of formatting");
 
-		oConditionType.oFormatOptions.preventGetDescription = true; // fake setting directly
-		sResult = oConditionType.formatValue(oCondition);
-		assert.equal(sResult, "I2", "Result of formatting");
+				oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
+				oCondition = Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated);
+				oPromise = oConditionType.formatValue(oCondition);
+				assert.ok(oPromise instanceof Promise, "Promise returned");
+				oPromise.then(function(sDescription) {
+					assert.equal(sDescription, "i2 (Item 2)", "Result of formatting");
+
+					// preventGetDescription -> no description is read
+					oConditionType.oFormatOptions.preventGetDescription = true; // fake setting directly
+					sResult = oConditionType.formatValue(oCondition);
+					assert.equal(sResult, "I2", "Result of formatting");
+					fnDone();
+				}).catch(function(oError) {
+					assert.notOk(true, "Promise Catch must not be called");
+					fnDone();
+				});
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch must not be called");
+				fnDone();
+			});
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
 
 	});
 
 	QUnit.test("Formatting: invalid key -> description (from help)", function(assert) {
 
-		oFieldHelp.getTextForKey.withArgs("X").throws(new FormatException("Value \"X\" does not exist."));
-		var oCondition = Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.Validated);
+		// test fallbacks without delegate
+		oConditionType.oFormatOptions.delegate = undefined; // fake setting directly
+		var oCondition = Condition.createCondition("EQ", ["YY"], undefined, undefined, ConditionValidated.Validated);
 		var oException;
 
 		try {
@@ -753,106 +818,38 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.equal(oException.message, "Value \"X\" does not exist.", "error text");
+		assert.equal(oException.message, "myError", "error text");
 
-	});
+		oCondition = Condition.createCondition("EQ", ["ZZZ"], undefined, undefined, ConditionValidated.Validated);
+		var oPromise;
+		oException = undefined;
+		try {
+			oPromise = oConditionType.formatValue(oCondition);
+		} catch (e) {
+			oException = e;
+		}
 
-	QUnit.test("Formatting: key -> description (from help) Async", function(assert) {
-
-		// test fallbacks without delegate
-		oConditionType.oFormatOptions.delegate = undefined; // fake setting directly
-		var oCondition = Condition.createCondition("EQ", ["I1"], undefined, undefined, ConditionValidated.Validated);
-		oFieldHelp.getTextForKey.restore();
-		var oStub = sinon.stub(oFieldHelp, "getTextForKey");
-
-		oStub.callsFake(function(vKey) {
-			var oPromise = new Promise(function(fResolve) {
-				setTimeout(function () { // simulate request
-					var vResult;
-					switch (vKey) {
-					case "I1":
-						vResult = "Item1";
-						break;
-
-					case "I2":
-						vResult = {key: "i2", description: "Item2"};
-						break;
-
-					case "I3":
-						vResult = "Item3";
-						break;
-
-					default:
-						break;
-					}
-
-					fResolve(vResult);
-				}, 0);
-			});
-			return oPromise;
-		});
-
-		var sResult = oConditionType.formatValue(oCondition);
-		assert.ok(sResult instanceof Promise, "Promise returned");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		assert.notOk(oException, "no exception fired");
 
 		var fnDone = assert.async();
-		sResult.then(function(sDescription) {
-			assert.equal(sDescription, "Item1", "Result of formatting");
+		oPromise.then(function(sDescription) {
+			assert.notOk(true, "Promise Then must not be called");
+			fnDone();
+		}).catch(function(oException) {
+			assert.ok(oException, "exception fired");
+			assert.ok(oException instanceof FormatException, "Error is a FormatException");
+			assert.equal(oException.message, "myException", "error text");
 
-			oCondition.values.push(undefined);
-			sResult = oConditionType.formatValue(oCondition);
-			assert.ok(sResult instanceof Promise, "Promise returned");
+			oValueHelp.setValidateInput(false); // invalid input is returned
+			oPromise = oConditionType.formatValue(oCondition);
+			assert.ok(oPromise instanceof Promise, "Promise returned");
 
-			sResult.then(function(sDescription) {
-				assert.equal(sDescription, "Item1", "Result of formatting");
-
-				oCondition = Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated);
-				sResult = oConditionType.formatValue(oCondition);
-				assert.ok(sResult instanceof Promise, "Promise returned");
-
-				sResult.then(function(sDescription) {
-					assert.equal(sDescription, "Item2", "Result of formatting");
-					fnDone();
-				});
-			});
-		});
-
-	});
-
-	QUnit.test("Formatting: key -> description (from help) with error Async", function(assert) {
-
-		var oCondition = Condition.createCondition("EQ", ["I1"], undefined, undefined, ConditionValidated.Validated);
-		oFieldHelp.getTextForKey.restore();
-		var oStub = sinon.stub(oFieldHelp, "getTextForKey");
-
-		oStub.callsFake(function(vKey) {
-			var oPromise = new Promise(function(fResolve, fReject) {
-				setTimeout(function () { // simulate request
-					try {
-						throw new FormatException("Cannot format value " + vKey);
-					} catch (oError) {
-						fReject(oError);
-					}
-				}, 0);
-			});
-			return oPromise;
-		});
-
-		var sResult = oConditionType.formatValue(oCondition);
-		assert.ok(sResult instanceof Promise, "Promise returned");
-
-		var fnDone = assert.async();
-		sResult.catch(function(oError) {
-			assert.ok(oError, "Error Fired");
-			assert.ok(oError instanceof FormatException, "Error is a FormatException");
-			assert.equal(oError.message, "Cannot format value I1", "Error message");
-
-			oFieldHelp.setValidateInput(false);
-			sResult = oConditionType.formatValue(oCondition);
-			assert.ok(sResult instanceof Promise, "Promise returned");
-
-			sResult.then(function(sDescription) {
-				assert.equal(sDescription, "I1", "Result of formatting");
+			oPromise.then(function(sDescription) {
+				assert.equal(sDescription, "ZZZ", "Result of formatting");
+				fnDone();
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch must not be called");
 				fnDone();
 			});
 		});
@@ -861,102 +858,180 @@ sap.ui.define([
 
 	QUnit.test("Parsing: description -> key", function(assert) {
 
-		var oCondition = oConditionType.parseValue("Item1");
+		var oCondition = oConditionType.parseValue("SyncCall");
 		assert.ok(oCondition, "Result returned");
 		assert.equal(typeof oCondition, "object", "Result is object");
 		assert.equal(oCondition.operator, "EQ", "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 2, "Values length");
-		assert.equal(oCondition.values[0], "I1", "Values entry0");
-		assert.equal(oCondition.values[1], "Item1", "Values entry1");
-		assert.notOk(oCondition.inParameters, "no in-parameters returned");
-		assert.notOk(oCondition.outParameters, "no out-parameters returned");
+		assert.equal(oCondition.values[0], "Sync", "Values entry0");
+		assert.equal(oCondition.values[1], "SyncCall", "Values entry1");
+		assert.deepEqual(oCondition.inParameters, {in1: "ISync"} , "in-parameters returned");
+		assert.deepEqual(oCondition.outParameters, {out1: "OSync"} , "out-parameters returned");
+		assert.notOk(oCondition.payload, "no payload returned");
 		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 		assert.notOk(bAsyncCalled, "asyncParsing function not called");
 
-		oCondition = oConditionType.parseValue("Item2");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 2, "Values length");
-		assert.equal(oCondition.values[0], "i2", "Values entry0");
-		assert.equal(oCondition.values[1], "Item 2", "Values entry1");
-		assert.deepEqual(oCondition.inParameters, {in1: "I2"} , "in-parameters returned");
-		assert.deepEqual(oCondition.outParameters, {out1: "I2"} , "out-parameters returned");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-		assert.notOk(bAsyncCalled, "asyncParsing function not called");
+		var fnDone = assert.async();
+		var oPromise =  oConditionType.parseValue("Item1");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(oCondition) {
+			assert.ok(oCondition, "Result returned");
+			assert.equal(typeof oCondition, "object", "Result is object");
+			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.ok(Array.isArray(oCondition.values), "values are array");
+			assert.equal(oCondition.values.length, 2, "Values length");
+			assert.equal(oCondition.values[0], "I1", "Values entry0");
+			assert.equal(oCondition.values[1], "Item1", "Values entry1");
+			assert.notOk(oCondition.inParameters, "no in-parameters returned");
+			assert.notOk(oCondition.outParameters, "no out-parameters returned");
+			assert.notOk(oCondition.payload, "no payload returned");
+			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+			assert.ok(bAsyncCalled, "asyncParsing function called");
+
+			bAsyncCalled = undefined;
+			var oPromise =  oConditionType.parseValue("Item2");
+			assert.ok(oPromise instanceof Promise, "Promise returned");
+			oPromise.then(function(oCondition) {
+				assert.ok(oCondition, "Result returned");
+				assert.equal(typeof oCondition, "object", "Result is object");
+				assert.equal(oCondition.operator, "EQ", "Operator");
+				assert.ok(Array.isArray(oCondition.values), "values are array");
+				assert.equal(oCondition.values.length, 2, "Values length");
+				assert.equal(oCondition.values[0], "i2", "Values entry0");
+				assert.equal(oCondition.values[1], "Item 2", "Values entry1");
+				assert.notOk(oCondition.inParameters, "no in-parameters returned");
+				assert.notOk(oCondition.outParameters, "no out-parameters returned");
+				assert.deepEqual(oCondition.payload, {payload: "I2"} , "payload returned");
+				assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+				assert.ok(bAsyncCalled, "asyncParsing function called");
+				fnDone();
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch must not be called");
+				fnDone();
+			});
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
 
 	});
 
 	QUnit.test("Parsing: key -> key and description", function(assert) {
 
 		// test fallbacks without delegate
+		var fnDone = assert.async();
 		oConditionType.oFormatOptions.delegate = undefined; // fake setting directly
-		var oCondition = oConditionType.parseValue("I2");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 2, "Values length");
-		assert.equal(oCondition.values[0], "i2", "Values entry0");
-		assert.equal(oCondition.values[1], "Item 2", "Values entry1");
-		assert.deepEqual(oCondition.inParameters, {in1: "I2"} , "in-parameters returned");
-		assert.deepEqual(oCondition.outParameters, {out1: "I2"} , "out-parameters returned");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+		var oPromise = oConditionType.parseValue("I2");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(oCondition) {
+			assert.ok(oCondition, "Result returned");
+			assert.equal(typeof oCondition, "object", "Result is object");
+			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.ok(Array.isArray(oCondition.values), "values are array");
+			assert.equal(oCondition.values.length, 2, "Values length");
+			assert.equal(oCondition.values[0], "i2", "Values entry0");
+			assert.equal(oCondition.values[1], "Item 2", "Values entry1");
+			assert.notOk(oCondition.inParameters, "no in-parameters returned");
+			assert.notOk(oCondition.outParameters, "no out-parameters returned");
+			assert.deepEqual(oCondition.payload, {payload: "I2"} , "payload returned");
+			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
 
 	});
 
-	QUnit.test("Parsing: key and description -> key and Description (from help)", function(assert) {
+	QUnit.test("Parsing: key and description -> key and Description", function(assert) {
 
 		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
 
-		var oCondition = oConditionType.parseValue("I2 (X)");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 2, "Values length");
-		assert.equal(oCondition.values[0], "i2", "Values entry0");
-		assert.equal(oCondition.values[1], "Item 2", "Values entry1");
-		assert.deepEqual(oCondition.inParameters, {in1: "I2"} , "in-parameters returned");
-		assert.deepEqual(oCondition.outParameters, {out1: "I2"} , "out-parameters returned");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-		assert.ok(oFieldHelp.getItemForValue.calledWith({value: "I2", parsedValue: "I2", dataType: oConditionType._oDefaultType, inParameters: undefined, outParameters: undefined, bindingContext: "BC", checkKey: true, checkDescription: true, conditionModel: "CM", conditionModelName: "Name", exception: ParseException, control: "Control"}), "getItemForValue called");
+		var fnDone = assert.async();
+		var oPromise = oConditionType.parseValue("I2 (X)");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(oCondition) {
+			assert.ok(oCondition, "Result returned");
+			assert.equal(typeof oCondition, "object", "Result is object");
+			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.ok(Array.isArray(oCondition.values), "values are array");
+			assert.equal(oCondition.values.length, 2, "Values length");
+			assert.equal(oCondition.values[0], "i2", "Values entry0");
+			assert.equal(oCondition.values[1], "Item 2", "Values entry1");
+			assert.notOk(oCondition.inParameters, "no in-parameters returned");
+			assert.notOk(oCondition.outParameters, "no out-parameters returned");
+			assert.deepEqual(oCondition.payload, {payload: "I2"} , "payload returned");
+			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+			var oConfig = { // to compare
+				value: "I2",
+				parsedValue: "I2",
+				dataType: oValueType,
+				checkKey: true,
+				checkDescription: true,
+				inParameters: undefined,
+				outParameters: undefined,
+				bindingContext: "BC",
+				conditionModel: "CM",
+				conditionModelName: "Name",
+				control: "Control",
+				exception: ParseException
+			};
+			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 
-		oCondition = oConditionType.parseValue("Item3");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 2, "Values length");
-		assert.equal(oCondition.values[0], "I3", "Values entry0");
-		assert.equal(oCondition.values[1], "Item3", "Values entry1");
-		assert.notOk(oCondition.inParameters, "no in-parameters returned");
-		assert.notOk(oCondition.outParameters, "no out-parameters returned");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+			oPromise = oConditionType.parseValue("Item3");
+			assert.ok(oPromise instanceof Promise, "Promise returned");
+			oPromise.then(function(oCondition) {
+				assert.ok(oCondition, "Result returned");
+				assert.equal(typeof oCondition, "object", "Result is object");
+				assert.equal(oCondition.operator, "EQ", "Operator");
+				assert.ok(Array.isArray(oCondition.values), "values are array");
+				assert.equal(oCondition.values.length, 2, "Values length");
+				assert.equal(oCondition.values[0], "I3", "Values entry0");
+				assert.equal(oCondition.values[1], "Item3", "Values entry1");
+				assert.notOk(oCondition.inParameters, "no in-parameters returned");
+				assert.notOk(oCondition.outParameters, "no out-parameters returned");
+				assert.notOk(oCondition.payload, "no payload returned");
+				assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 
-		oCondition = oConditionType.parseValue("x (Item2)");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 2, "Values length");
-		assert.equal(oCondition.values[0], "i2", "Values entry0");
-		assert.equal(oCondition.values[1], "Item 2", "Values entry1");
-		assert.deepEqual(oCondition.inParameters, {in1: "I2"} , "in-parameters returned");
-		assert.deepEqual(oCondition.outParameters, {out1: "I2"} , "out-parameters returned");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+				oPromise = oConditionType.parseValue("x (Item2)");
+				assert.ok(oPromise instanceof Promise, "Promise returned");
+				oPromise.then(function(oCondition) {
+					assert.ok(oCondition, "Result returned");
+					assert.equal(typeof oCondition, "object", "Result is object");
+					assert.equal(oCondition.operator, "EQ", "Operator");
+					assert.ok(Array.isArray(oCondition.values), "values are array");
+					assert.equal(oCondition.values.length, 2, "Values length");
+					assert.equal(oCondition.values[0], "i2", "Values entry0");
+					assert.equal(oCondition.values[1], "Item 2", "Values entry1");
+					assert.notOk(oCondition.inParameters, "no in-parameters returned");
+					assert.notOk(oCondition.outParameters, "no out-parameters returned");
+					assert.deepEqual(oCondition.payload, {payload: "I2"} , "payload returned");
+					assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+					fnDone();
+				}).catch(function(oError) {
+					assert.notOk(true, "Promise Catch must not be called");
+					fnDone();
+				});
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch must not be called");
+				fnDone();
+			});
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			fnDone();
+		});
 
 	});
 
-	QUnit.test("Parsing: key and description -> key and Description (from help) with error", function(assert) {
+	QUnit.test("Parsing: key and description -> key and Description with error", function(assert) {
 
 		// test fallbacks without delegate
 		oConditionType.oFormatOptions.delegate = undefined; // fake setting directly
 		var oType = new StringType({}, {maxLength: 2}); // use type to test invalid key is not checked for description
 		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
 		var oException;
+		var oPromise;
 		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
 
 		try {
@@ -967,62 +1042,82 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		assert.equal(oException && oException.message, "Value \"X\" does not exist.", "error text");
-		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
+		assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
-		oFieldHelp.getItemForValue.resetHistory();
+		oValueHelp.getItemForValue.resetHistory();
 		oException = null;
 
+		var fnDone = assert.async();
 		try {
-			oConditionType.parseValue("XXX");
+			oPromise = oConditionType.parseValue("XXX");
 		} catch (e) {
 			oException = e;
 		}
 
-		assert.ok(oException, "exception fired");
-		assert.equal(oException && oException.message, "Value \"XXX\" does not exist.", "error text");
-		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
+		assert.notOk(oException, "no exception fired");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(oCondition) {
+			assert.notOk(true, "Promise Then must not be called");
+			oType.destroy();
+			fnDone();
+		}).catch(function(oException) {
+			assert.ok(oException, "exception fired");
+			assert.ok(oException instanceof ParseException, "Error is a ParseException");
+			assert.equal(oException && oException.message, "Value \"XXX\" does not exist.", "error text");
+			assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
-		// test own error (like runtime error) just forwarded
-		oFieldHelp.getItemForValue.resetHistory();
-		oException = null;
-		try {
-			oConditionType.parseValue("YY");
-		} catch (e) {
-			oException = e;
-		}
+			// test own error (like runtime error) just forwarded
+			oValueHelp.getItemForValue.resetHistory();
+			oException = null;
+			try {
+				oConditionType.parseValue("YY");
+			} catch (e) {
+				oException = e;
+			}
 
-		assert.ok(oException, "exception fired");
-		assert.equal(oException && oException.message, "myError", "error text");
-		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
+			assert.ok(oException, "exception fired");
+			assert.equal(oException && oException.message, "myError", "error text");
+			assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
-		oFieldHelp.getItemForValue.resetHistory();
-		oException = null;
-		oConditionType.oFormatOptions.display = FieldDisplay.DescriptionValue; // fake setting directly
+			oValueHelp.getItemForValue.resetHistory();
+			oException = null;
+			oConditionType.oFormatOptions.display = FieldDisplay.DescriptionValue; // fake setting directly
 
-		try {
-			oConditionType.parseValue("X");
-		} catch (e) {
-			oException = e;
-		}
+			try {
+				oConditionType.parseValue("X");
+			} catch (e) {
+				oException = e;
+			}
 
-		assert.ok(oException, "exception fired");
-		assert.equal(oException.message, "Value \"X\" does not exist.", "error text");
-		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
+			assert.ok(oException, "exception fired");
+			assert.equal(oException.message, "Value \"X\" does not exist.", "error text");
+			assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
-		oFieldHelp.getItemForValue.resetHistory();
-		oException = null;
+			oValueHelp.getItemForValue.resetHistory();
+			oException = null;
 
-		try {
-			oConditionType.parseValue("XXX");
-		} catch (e) {
-			oException = e;
-		}
+			try {
+				oPromise = oConditionType.parseValue("XXX");
+			} catch (e) {
+				oException = e;
+			}
 
-		assert.ok(oException, "exception fired");
-		assert.equal(oException.message, "Value \"XXX\" does not exist.", "error text");
-		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
+			assert.notOk(oException, "no exception fired");
+			assert.ok(oPromise instanceof Promise, "Promise returned");
+			oPromise.then(function(oCondition) {
+				assert.notOk(true, "Promise Then must not be called");
+				oType.destroy();
+				fnDone();
+			}).catch(function(oException) {
+				assert.ok(oException, "exception fired");
+				assert.ok(oException instanceof ParseException, "Error is a ParseException");
+				assert.equal(oException.message, "Value \"XXX\" does not exist.", "error text");
+				assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
-		oType.destroy();
+				oType.destroy();
+				fnDone();
+			});
+		});
 
 	});
 
@@ -1040,10 +1135,10 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		assert.equal(oException && oException.message, "Value \"X\" does not exist.", "error text");
-		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
+		assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		// test own error (like runtime error) just forwarded
-		oFieldHelp.getItemForValue.resetHistory();
+		oValueHelp.getItemForValue.resetHistory();
 		oException = null;
 		try {
 			oConditionType.parseValue("YY");
@@ -1053,37 +1148,115 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		assert.equal(oException && oException.message, "myError", "error text");
-		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
-
-		// test own error (like runtime error) just forwarded
-		oFieldHelp.getItemForValue.resetHistory();
-		oException = null;
-		try {
-			oConditionType.parseValue("YY");
-		} catch (e) {
-			oException = e;
-		}
-
-		assert.ok(oException, "exception fired");
-		assert.equal(oException && oException.message, "myError", "error text");
-		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
+		assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		// test invalid key because of type validation
-		oFieldHelp.getItemForValue.resetHistory();
+		oValueHelp.getItemForValue.resetHistory();
 		oException = null;
+		var oPromise;
+		var fnDone = assert.async();
 		try {
-			oConditionType.parseValue("ZZZ");
+			oPromise = oConditionType.parseValue("ZZZ");
 		} catch (e) {
 			oException = e;
 		}
 
-		assert.ok(oException, "exception fired");
-		assert.equal(oException && oException.message, "myParseException", "error text");
-		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
+		assert.notOk(oException, "no exception fired");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(oCondition) {
+			assert.notOk(true, "Promise Then must not be called");
+			oType.destroy();
+			fnDone();
+		}).catch(function(oException) {
+			assert.ok(oException, "exception fired");
+			assert.ok(oException instanceof ParseException, "Error is a ParseException");
+			assert.equal(oException && oException.message, "myException", "error text");
+			assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
+
+			// test non-unique key because of type validation
+			oValueHelp.getItemForValue.resetHistory();
+			oException = null;
+			try {
+				oPromise = oConditionType.parseValue("notUnique");
+			} catch (e) {
+				oException = e;
+			}
+
+			assert.notOk(oException, "no exception fired");
+			assert.ok(oPromise instanceof Promise, "Promise returned");
+			oPromise.then(function(oCondition) {
+				assert.notOk(true, "Promise Then must not be called");
+				oType.destroy();
+				fnDone();
+			}).catch(function(oException) {
+				assert.ok(oException, "exception fired");
+				assert.ok(oException instanceof ParseException, "Error is a ParseException");
+				assert.equal(oException && oException.message, "not Unique", "error text");
+				assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
+				oType.destroy();
+				fnDone();
+			});
+		});
 
 	});
 
-	QUnit.test("Parsing: description -> key (from help) with default Operator", function(assert) {
+	QUnit.test("Parsing: description -> key with error and no inputValidation", function(assert) {
+
+		var fnDone = assert.async();
+		oValueHelp.setValidateInput(false);
+		var oPromise = oConditionType.parseValue("ZZZ");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+
+		oPromise.then(function(oCondition) {
+			assert.ok(true, "Promise Then must be called");
+			assert.equal(typeof oCondition, "object", "Result is object");
+			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.ok(Array.isArray(oCondition.values), "values are array");
+			assert.equal(oCondition.values.length, 1, "Values length");
+			assert.equal(oCondition.values[0], "ZZZ", "Values entry0");
+			assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
+
+			oPromise = oConditionType.parseValue("notUnique");
+			assert.ok(oPromise instanceof Promise, "Promise returned");
+
+			oPromise.then(function(oCondition) {
+				assert.ok(true, "Promise Then must be called");
+				assert.equal(typeof oCondition, "object", "Result is object");
+				assert.equal(oCondition.operator, "EQ", "Operator");
+				assert.ok(Array.isArray(oCondition.values), "values are array");
+				assert.equal(oCondition.values.length, 1, "Values length");
+				assert.equal(oCondition.values[0], "notUnique", "Values entry0");
+				assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
+
+				oConditionType.oFormatOptions.operators = []; // fake setting directly
+				oPromise = oConditionType.parseValue("=ZZZ");
+				assert.ok(oPromise instanceof Promise, "Promise returned");
+
+				oPromise.then(function(oCondition) {
+					assert.ok(true, "Promise Then must be called");
+					assert.equal(typeof oCondition, "object", "Result is object");
+					assert.equal(oCondition.operator, "EQ", "Operator");
+					assert.ok(Array.isArray(oCondition.values), "values are array");
+					assert.equal(oCondition.values.length, 1, "Values length");
+					assert.equal(oCondition.values[0], "ZZZ", "Values entry0");
+					assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
+					fnDone();
+				}).catch(function(oError) {
+					assert.notOk(true, "Promise must not fail");
+					fnDone();
+				});
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise must not fail");
+				fnDone();
+			});
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise must not fail");
+			fnDone();
+		});
+
+	});
+
+	QUnit.test("Parsing: description -> key with default Operator", function(assert) {
 
 		oConditionType.oFormatOptions.operators = ["EQ", "Contains"]; // fake setting directly
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
@@ -1095,51 +1268,81 @@ sap.ui.define([
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "X", "Values entry1");
-		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
+		assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
+		assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
-		// invalid default operator
-		oFieldHelp.getItemForValue.reset();
+		// default operator not allowed
+		oValueHelp.getItemForValue.resetHistory();
 		oConditionType.oFormatOptions.operators = ["GT", "EQ"]; // fake setting directly
-		oCondition = oConditionType.parseValue("X");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "GT", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 1, "Values length");
-		assert.equal(oCondition.values[0], "X", "Values entry1");
-		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
+		var fnDone = assert.async();
+		var oPromise = oConditionType.parseValue("ZZZ");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
 
-		// only one operator
-		oFieldHelp.getItemForValue.reset();
-		oConditionType.oFormatOptions.operators = ["EQ"]; // fake setting directly
-		var oException;
-		try {
-			oCondition = oConditionType.parseValue("X");
-		} catch (e) {
-			oException = e;
-		}
-		assert.ok(oException, "exception fired");
-		assert.equal(oException && oException.message, "Value \"X\" does not exist.", "error text");
-		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
+		oPromise.then(function(oCondition) {
+			assert.ok(oCondition, "Result returned");
+			assert.equal(typeof oCondition, "object", "Result is object");
+			assert.equal(oCondition.operator, "GT", "Operator");
+			assert.ok(Array.isArray(oCondition.values), "values are array");
+			assert.equal(oCondition.values.length, 1, "Values length");
+			assert.equal(oCondition.values[0], "ZZZ", "Values entry1");
+			assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
+			assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
-		// use EQ operator -> if invalid don't use as default
-		FilterOperatorUtil.getDefaultOperator.returns(FilterOperatorUtil.getOperator("EQ"));
-		oFieldHelp.getItemForValue.reset();
-		oException = undefined;
-		try {
-			oCondition = oConditionType.parseValue("X");
-		} catch (e) {
-			oException = e;
-		}
-		assert.ok(oException, "exception fired");
-		assert.equal(oException && oException.message, "Value \"X\" does not exist.", "error text");
-		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getKeyForText called");
+			// use EQ operator -> if invalid don't use as default
+			FilterOperatorUtil.getDefaultOperator.returns(FilterOperatorUtil.getOperator("EQ"));
+			oValueHelp.getItemForValue.resetHistory();
+			var oException;
+			try {
+				oPromise = oConditionType.parseValue("XXX");
+			} catch (e) {
+				oException = e;
+			}
+			assert.notOk(oException, "no exception fired");
+			assert.ok(oPromise instanceof Promise, "Promise returned");
+			oPromise.then(function(oCondition) {
+				assert.notOk(true, "Promise Then must not be called");
+				FilterOperatorUtil.getDefaultOperator.restore();
+				fnDone();
+			}).catch(function(oException) {
+				assert.ok(oException, "exception fired");
+				assert.ok(oException instanceof ParseException, "Error is a ParseException");
+				assert.equal(oException && oException.message, "Value \"XXX\" does not exist.", "error text");
+				assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
-		FilterOperatorUtil.getDefaultOperator.restore();
+				// only one operator
+				oValueHelp.getItemForValue.resetHistory();
+				oConditionType.oFormatOptions.operators = ["EQ"]; // fake setting directly
+				oException = undefined;
+				try {
+					oPromise = oConditionType.parseValue("XXX");
+				} catch (e) {
+					oException = e;
+				}
+				assert.notOk(oException, "no exception fired");
+				assert.ok(oPromise instanceof Promise, "Promise returned");
+				oPromise.then(function(oCondition) {
+					assert.notOk(true, "Promise Then must not be called");
+					FilterOperatorUtil.getDefaultOperator.restore();
+					fnDone();
+				}).catch(function(oException) {
+					assert.ok(oException, "exception fired");
+					assert.ok(oException instanceof ParseException, "Error is a ParseException");
+					assert.equal(oException && oException.message, "Value \"XXX\" does not exist.", "error text");
+					assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
+
+					FilterOperatorUtil.getDefaultOperator.restore();
+					fnDone();
+				});
+			});
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise must not fail");
+			FilterOperatorUtil.getDefaultOperator.restore();
+			fnDone();
+		});
 
 	});
 
-	QUnit.test("Parsing: description -> key (from help) with custom Operator", function(assert) {
+	QUnit.test("Parsing: description -> key with custom Operator", function(assert) {
 
 		var oOperator = new Operator({
 			name: "MyContains",
@@ -1175,354 +1378,95 @@ sap.ui.define([
 		oConditionType.oFormatOptions.operators = ["MyExclude", "MyContains", "MyInclude"]; // fake setting directly
 
 		// existing value
-		var oCondition = oConditionType.parseValue("Item3");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "MyInclude", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 1, "Values length");
-		assert.equal(oCondition.values[0], "I3", "Values entry0");
-		assert.notOk(oCondition.inParameters, "no in-parameters returned");
-		assert.notOk(oCondition.outParameters, "no out-parameters returned");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-
-		// not existing value
-		oCondition = oConditionType.parseValue("X");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "MyContains", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 1, "Values length");
-		assert.equal(oCondition.values[0], "X", "Values entry1");
-		assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
-
-		// exlude value
-		oCondition = oConditionType.parseValue("!=Item3");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "MyExclude", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 1, "Values length");
-		assert.equal(oCondition.values[0], "I3", "Values entry1");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-
-		delete FilterOperatorUtil.removeOperator("MyContains");
-		delete FilterOperatorUtil.removeOperator("MyInclude");
-		delete FilterOperatorUtil.removeOperator("MyExclude");
-
-	});
-
-	QUnit.test("Parsing: description -> key (from help) Async", function(assert) {
-
-		oFieldHelp.getItemForValue.restore();
-		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
-
-		oStub.callsFake(function(oConfig) {
-			var oPromise = new Promise(function(fResolve) {
-				setTimeout(function () { // simulate request
-					var vKey;
-					switch (oConfig.value) {
-					case "Item1":
-						vKey = "I1";
-						break;
-
-					case "Item2":
-						vKey = "I2";
-						break;
-
-					case "Item3":
-						vKey = "I3";
-						break;
-
-					default:
-						break;
-					}
-
-					var oResult;
-					if (vKey) {
-						oResult = {key: vKey, description: oConfig.value};
-					}
-					fResolve(oResult);
-				}, 0);
-			});
-			return oPromise;
-		});
-
-		var vResult = oConditionType.parseValue("Item2");
-		assert.ok(vResult instanceof Promise, "Promise returned");
-		assert.ok(bAsyncCalled, "asyncParsing function called");
-
 		var fnDone = assert.async();
-		vResult.then(function(oCondition) {
+		var oPromise = oConditionType.parseValue("Item3");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
-			assert.ok(Array.isArray(oCondition.values), "values are array");
-			assert.equal(oCondition.values.length, 2, "Values length");
-			assert.equal(oCondition.values[0], "I2", "Values entry0");
-			assert.equal(oCondition.values[1], "Item2", "Values entry1");
-			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-			fnDone();
-		});
-
-	});
-
-	QUnit.test("Parsing: key and description -> key and Description (from help) Async", function(assert) {
-
-		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
-		oFieldHelp.getItemForValue.restore();
-		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
-
-		oStub.callsFake(function(oConfig) {
-			var oPromise = new Promise(function(fResolve, fReject) {
-				setTimeout(function () { // simulate request
-					switch (oConfig.parsedValue) {
-					case "I1":
-						fResolve({key: oConfig.parsedValue, description: "Item1"});
-						break;
-
-					case "I2":
-						fResolve({key: "I2", description: "Item2", inParameters: {in1: "I2"}, outParameters: {out1: "I2"}});
-						break;
-
-					case "I3":
-					case "Item3":
-						fResolve({key: "I3", description: "Item3"});
-						break;
-
-					default:
-						fReject();
-					}
-				}, 0);
-			});
-			return oPromise;
-		});
-
-		var vResult = oConditionType.parseValue("I2 (X)");
-		assert.ok(vResult instanceof Promise, "Promise returned");
-
-		var fnDone = assert.async();
-		vResult.then(function(oCondition) {
-			assert.ok(oCondition, "Result returned");
-			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
-			assert.ok(Array.isArray(oCondition.values), "values are array");
-			assert.equal(oCondition.values.length, 2, "Values length");
-			assert.equal(oCondition.values[0], "I2", "Values entry0");
-			assert.equal(oCondition.values[1], "Item2", "Values entry1");
-			assert.deepEqual(oCondition.inParameters, {in1: "I2"} , "in-parameters returned");
-			assert.deepEqual(oCondition.outParameters, {out1: "I2"} , "out-parameters returned");
-			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-
-			vResult = oConditionType.parseValue("Item3");
-			assert.ok(vResult instanceof Promise, "Promise returned");
-
-			vResult.then(function(oCondition) {
-				assert.ok(oCondition, "Result returned");
-				assert.equal(typeof oCondition, "object", "Result is object");
-				assert.equal(oCondition.operator, "EQ", "Operator");
-				assert.ok(Array.isArray(oCondition.values), "values are array");
-				assert.equal(oCondition.values.length, 2, "Values length");
-				assert.equal(oCondition.values[0], "I3", "Values entry0");
-				assert.equal(oCondition.values[1], "Item3", "Values entry1");
-				assert.notOk(oCondition.inParameters, "no in-parameters returned");
-				assert.notOk(oCondition.outParameters, "no out-parameters returned");
-				assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch must not be called");
-				fnDone();
-			});
-		}).catch(function(oError) {
-			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
-		});
-
-	});
-
-	QUnit.test("Parsing: description -> key (from help) with error Async", function(assert) {
-
-		oFieldHelp.getItemForValue.restore();
-		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
-
-		oStub.callsFake(function(oConfig) {
-			var oPromise = new Promise(function(fResolve, fReject) {
-				var oException;
-				if (oConfig.value === "Item2") {
-					oException = new ParseException("Cannot parse value " + oConfig.value);
-				} else {
-					oException = new ParseException("not Unique " + oConfig.value);
-					oException._bNotUnique = true;
-				}
-				throw oException;
-			});
-			return oPromise;
-		});
-
-		var vResult = oConditionType.parseValue("Item2");
-		assert.ok(vResult instanceof Promise, "Promise returned");
-
-		var fnDone = assert.async();
-		vResult.then(function(oCondition) {
-			assert.notOk(true, "Promise Then must not be called");
-			fnDone();
-		}).catch(function(oError) {
-			assert.ok(oError, "Error Fired");
-			assert.ok(oError instanceof ParseException, "Error is a ParseException");
-			assert.equal(oError.message, "Cannot parse value Item2", "Error message");
-
-			vResult = oConditionType.parseValue("Item3");
-			assert.ok(vResult instanceof Promise, "Promise returned");
-
-			vResult.then(function(oCondition) {
-				assert.notOk(true, "Promise Then must not be called");
-				fnDone();
-			}).catch(function(oError) {
-				assert.ok(oError, "Error Fired");
-				assert.ok(oError instanceof ParseException, "Error is a ParseException");
-				assert.equal(oError.message, "not Unique Item3", "Error message");
-
-				oFieldHelp.setValidateInput(false);
-				vResult = oConditionType.parseValue("Item2");
-				assert.ok(vResult instanceof Promise, "Promise returned");
-
-				vResult.then(function(oCondition) {
-					assert.ok(true, "Promise Then must be called");
-					assert.equal(typeof oCondition, "object", "Result is object");
-					assert.equal(oCondition.operator, "EQ", "Operator");
-					assert.ok(Array.isArray(oCondition.values), "values are array");
-					assert.equal(oCondition.values.length, 1, "Values length");
-					assert.equal(oCondition.values[0], "Item2", "Values entry0");
-					assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
-
-					vResult = oConditionType.parseValue("Item3");
-					assert.ok(vResult instanceof Promise, "Promise returned");
-
-					vResult.then(function(oCondition) {
-						assert.ok(true, "Promise Then must be called");
-						assert.equal(typeof oCondition, "object", "Result is object");
-						assert.equal(oCondition.operator, "EQ", "Operator");
-						assert.ok(Array.isArray(oCondition.values), "values are array");
-						assert.equal(oCondition.values.length, 1, "Values length");
-						assert.equal(oCondition.values[0], "Item3", "Values entry0");
-						assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
-
-						oConditionType.oFormatOptions.operators = []; // fake setting directly
-						vResult = oConditionType.parseValue("=Item2");
-						assert.ok(vResult instanceof Promise, "Promise returned");
-
-						vResult.then(function(oCondition) {
-							assert.ok(true, "Promise Then must be called");
-							assert.equal(typeof oCondition, "object", "Result is object");
-							assert.equal(oCondition.operator, "EQ", "Operator");
-							assert.ok(Array.isArray(oCondition.values), "values are array");
-							assert.equal(oCondition.values.length, 1, "Values length");
-							assert.equal(oCondition.values[0], "Item2", "Values entry0");
-							assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
-							fnDone();
-						}).catch(function(oError) {
-							assert.notOk(true, "Promise must not fail");
-							fnDone();
-						});
-					}).catch(function(oError) {
-						assert.notOk(true, "Promise must not fail");
-						fnDone();
-					});
-				}).catch(function(oError) {
-					assert.notOk(true, "Promise must not fail");
-					fnDone();
-				});
-			});
-		});
-
-	});
-
-	QUnit.test("Parsing: description -> key (from help) with default Operator Async", function(assert) {
-
-		oConditionType.oFormatOptions.operators = []; // fake setting directly
-		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
-		oFieldHelp.getItemForValue.restore();
-		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
-
-		oStub.callsFake(function(oConfig) {
-			var oPromise = new Promise(function(fResolve, fReject) {
-				throw new ParseException("Cannot parse value " + oConfig.value);
-			});
-			return oPromise;
-		});
-
-		var vResult = oConditionType.parseValue("Item2");
-		assert.ok(vResult instanceof Promise, "Promise returned");
-
-		var fnDone = assert.async();
-		vResult.then(function(oCondition) {
-			assert.ok(oCondition, "Result returned");
-			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "Contains", "Operator");
+			assert.equal(oCondition.operator, "MyInclude", "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 1, "Values length");
-			assert.equal(oCondition.values[0], "Item2", "Values entry1");
-			assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
+			assert.equal(oCondition.values[0], "I3", "Values entry0");
+			assert.notOk(oCondition.inParameters, "no in-parameters returned");
+			assert.notOk(oCondition.outParameters, "no out-parameters returned");
+			assert.notOk(oCondition.payload, "no payload returned");
+			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 
-			FilterOperatorUtil.getDefaultOperator.restore();
-			fnDone();
+			// not existing value
+			oPromise = oConditionType.parseValue("XXX");
+			assert.ok(oPromise instanceof Promise, "Promise returned");
+			oPromise.then(function(oCondition) {
+				assert.ok(oCondition, "Result returned");
+				assert.equal(typeof oCondition, "object", "Result is object");
+				assert.equal(oCondition.operator, "MyContains", "Operator");
+				assert.ok(Array.isArray(oCondition.values), "values are array");
+				assert.equal(oCondition.values.length, 1, "Values length");
+				assert.equal(oCondition.values[0], "XXX", "Values entry1");
+				assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
+
+				// exlude value
+				oPromise = oConditionType.parseValue("!=Item3");
+				assert.ok(oPromise instanceof Promise, "Promise returned"); // Promise because validateInput is set to determine key
+				oPromise.then(function(oCondition) {
+					assert.ok(oCondition, "Result returned");
+					assert.equal(typeof oCondition, "object", "Result is object");
+					assert.equal(oCondition.operator, "MyExclude", "Operator");
+					assert.ok(Array.isArray(oCondition.values), "values are array");
+					assert.equal(oCondition.values.length, 1, "Values length");
+					assert.equal(oCondition.values[0], "I3", "Values entry1");
+					assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+
+					delete FilterOperatorUtil.removeOperator("MyContains");
+					delete FilterOperatorUtil.removeOperator("MyInclude");
+					delete FilterOperatorUtil.removeOperator("MyExclude");
+					fnDone();
+				}).catch(function(oError) {
+					assert.notOk(true, "Promise Catch must not be called");
+					delete FilterOperatorUtil.removeOperator("MyContains");
+					delete FilterOperatorUtil.removeOperator("MyInclude");
+					delete FilterOperatorUtil.removeOperator("MyExclude");
+					fnDone();
+				});
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch must not be called");
+				delete FilterOperatorUtil.removeOperator("MyContains");
+				delete FilterOperatorUtil.removeOperator("MyInclude");
+				delete FilterOperatorUtil.removeOperator("MyExclude");
+				fnDone();
+			});
 		}).catch(function(oError) {
 			assert.notOk(true, "Promise Catch must not be called");
-
-			FilterOperatorUtil.getDefaultOperator.restore();
+			delete FilterOperatorUtil.removeOperator("MyContains");
+			delete FilterOperatorUtil.removeOperator("MyInclude");
+			delete FilterOperatorUtil.removeOperator("MyExclude");
 			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: description (key entered) -> key (from help) Async", function(assert) {
+	QUnit.test("Parsing: description (key entered) -> key", function(assert) {
 
 		oConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
-		oFieldHelp.getItemForValue.restore();
-		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
-		oStub.callsFake(function(oConfig) {
-			var oPromise = new Promise(function(fResolve, fReject) {
-				setTimeout(function () { // simulate request
-					switch (oConfig.parsedValue) {
-					case "I1":
-						fResolve({key: oConfig.parsedValue, description: "Item1"});
-						break;
-
-					case "I2":
-						fResolve({key: oConfig.parsedValue, description: "Item2"});
-						break;
-
-					case "I3":
-						fResolve({key: oConfig.parsedValue, description: "Item3"});
-						break;
-
-					default:
-						fReject(new ParseException("Cannot parse value " + oConfig.parsedValue));
-					}
-				}, 0);
-			});
-			return oPromise;
-		});
-
-		var vResult = oConditionType.parseValue("I2");
-		assert.ok(vResult instanceof Promise, "Promise returned");
+		var oPromise = oConditionType.parseValue("I2");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
 
 		var fnDone = assert.async();
-		vResult.then(function(oCondition) {
+		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, "EQ", "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 2, "Values length");
-			assert.equal(oCondition.values[0], "I2", "Values entry0");
-			assert.equal(oCondition.values[1], "Item2", "Values entry1");
+			assert.equal(oCondition.values[0], "i2", "Values entry0");
+			assert.equal(oCondition.values[1], "Item 2", "Values entry1");
 			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 
-			vResult = oConditionType.parseValue("X");
-			assert.ok(vResult instanceof Promise, "Promise returned");
-			vResult.then(function(oCondition) {
+			oPromise = oConditionType.parseValue("XXX");
+			assert.ok(oPromise instanceof Promise, "Promise returned");
+			oPromise.then(function(oCondition) {
 				assert.notOk(true, "Promise Then must not be called");
 
 				FilterOperatorUtil.getDefaultOperator.restore();
@@ -1530,18 +1474,18 @@ sap.ui.define([
 			}).catch(function(oError) {
 				assert.ok(oError, "Error Fired");
 				assert.ok(oError instanceof ParseException, "Error is a ParseException");
-				assert.equal(oError.message, "Cannot parse value X", "Error message");
+				assert.equal(oError.message, "Value \"XXX\" does not exist.", "Error message");
 
 				oConditionType.oFormatOptions.operators = []; // fake setting directly
-				vResult = oConditionType.parseValue("X");
-				assert.ok(vResult instanceof Promise, "Promise returned");
-				vResult.then(function(oCondition) {
+				oPromise = oConditionType.parseValue("XXX");
+				assert.ok(oPromise instanceof Promise, "Promise returned");
+				oPromise.then(function(oCondition) {
 					assert.ok(oCondition, "Result returned");
 					assert.equal(typeof oCondition, "object", "Result is object");
 					assert.equal(oCondition.operator, "Contains", "Operator");
 					assert.ok(Array.isArray(oCondition.values), "values are array");
 					assert.equal(oCondition.values.length, 1, "Values length");
-					assert.equal(oCondition.values[0], "X", "Values entry1");
+					assert.equal(oCondition.values[0], "XXX", "Values entry1");
 					assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
 
 					FilterOperatorUtil.getDefaultOperator.restore();
@@ -1562,25 +1506,16 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: value only -> validation from help Async", function(assert) {
+	QUnit.test("Parsing: value only -> validation from help", function(assert) {
 
 		oConditionType.oFormatOptions.display = FieldDisplay.Value; // fake setting directly
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
-		oFieldHelp.getItemForValue.restore();
-		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
 
-		oStub.callsFake(function(oConfig) {
-			var oPromise = new Promise(function(fResolve, fReject) {
-				throw new ParseException("Cannot parse value " + oConfig.parsedValue);
-			});
-			return oPromise;
-		});
-
-		var vResult = oConditionType.parseValue("Item2");
-		assert.ok(vResult instanceof Promise, "Promise returned");
+		var oPromise = oConditionType.parseValue("ZZZ");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
 
 		var fnDone = assert.async();
-		vResult.then(function(oCondition) {
+		oPromise.then(function(oCondition) {
 			assert.notOk(true, "Promise Then must not be called");
 
 			FilterOperatorUtil.getDefaultOperator.restore();
@@ -1588,29 +1523,31 @@ sap.ui.define([
 		}).catch(function(oError) {
 			assert.ok(oError, "Error Fired");
 			assert.ok(oError instanceof ParseException, "Error is a ParseException");
-			assert.equal(oError.message, "Cannot parse value Item2", "Error message");
+			assert.equal(oError.message, "myException", "Error message");
 
 			oConditionType.oFormatOptions.operators = []; // fake setting directly
-			vResult = oConditionType.parseValue("Item2");
-			vResult.then(function(oCondition) {
+			oPromise = oConditionType.parseValue("ZZZ");
+			assert.ok(oPromise instanceof Promise, "Promise returned");
+			oPromise.then(function(oCondition) {
 				assert.ok(oCondition, "Result returned");
 				assert.equal(typeof oCondition, "object", "Result is object");
 				assert.equal(oCondition.operator, "Contains", "Operator");
 				assert.ok(Array.isArray(oCondition.values), "values are array");
 				assert.equal(oCondition.values.length, 1, "Values length");
-				assert.equal(oCondition.values[0], "Item2", "Values entry1");
+				assert.equal(oCondition.values[0], "ZZZ", "Values entry1");
 				assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
 
 				oConditionType.oFormatOptions.operators = ["EQ"]; // fake setting directly
-				oFieldHelp.setValidateInput(false);
-				vResult = oConditionType.parseValue("Item2");
-				vResult.then(function(oCondition) {
+				oValueHelp.setValidateInput(false);
+				oPromise = oConditionType.parseValue("ZZZ");
+				assert.ok(oPromise instanceof Promise, "Promise returned");
+				oPromise.then(function(oCondition) {
 					assert.ok(oCondition, "Result returned");
 					assert.equal(typeof oCondition, "object", "Result is object");
 					assert.equal(oCondition.operator, "EQ", "Operator");
 					assert.ok(Array.isArray(oCondition.values), "values are array");
 					assert.equal(oCondition.values.length, 1, "Values length");
-					assert.equal(oCondition.values[0], "Item2", "Values entry1");
+					assert.equal(oCondition.values[0], "ZZZ", "Values entry1");
 					assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
 
 					FilterOperatorUtil.getDefaultOperator.restore();
@@ -1633,22 +1570,27 @@ sap.ui.define([
 
 	QUnit.test("Parsing: empty string -> key and description", function(assert) {
 
-		oFieldHelp.getItemForValue.restore();
-		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
-			if (oConfig.parsedValue === "") {
-				return {key: "", description: "Empty"};
-			}
+		var oType = new StringType({parseKeepsEmptyString: true}, {nullable: false}); // use digsequencce to test internal format for check
+		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
+		var oPromise = oConditionType.parseValue("");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		var fnDone = assert.async();
+		oPromise.then(function(oCondition) {
+			assert.ok(oCondition, "Result returned");
+			assert.equal(typeof oCondition, "object", "Result is object");
+			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.ok(Array.isArray(oCondition.values), "values are array");
+			assert.equal(oCondition.values.length, 2, "Values length");
+			assert.equal(oCondition.values[0], "", "Values entry0");
+			assert.equal(oCondition.values[1], "Empty", "Values entry1");
+			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+			oType.destroy();
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			oType.destroy();
+			fnDone();
 		});
-
-		var oCondition = oConditionType.parseValue("");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 2, "Values length");
-		assert.equal(oCondition.values[0], "", "Values entry0");
-		assert.equal(oCondition.values[1], "Empty", "Values entry1");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 
 	});
 
@@ -1657,45 +1599,65 @@ sap.ui.define([
 		var oType = new StringType({}, {maxLength: 6, isDigitSequence: true, nullable: false}); // use digsequencce to test internal format for check
 		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
 
-		oFieldHelp.getItemForValue.restore();
-		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+		oValueHelp.getItemForValue.callsFake(function(oConfig) {
 			if (oConfig.parsedValue === "000000" && oConfig.value === "") {
-				return {key: "000000", description: "Empty"};
+				return Promise.resolve({key: "000000", description: "Empty"});
 			}
 		});
 
-		var oCondition = oConditionType.parseValue("");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 2, "Values length");
-		assert.equal(oCondition.values[0], "000000", "Values entry0");
-		assert.equal(oCondition.values[1], "Empty", "Values entry1");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+		var oPromise = oConditionType.parseValue("");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		var fnDone = assert.async();
+		oPromise.then(function(oCondition) {
+			assert.ok(oCondition, "Result returned");
+			assert.equal(typeof oCondition, "object", "Result is object");
+			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.ok(Array.isArray(oCondition.values), "values are array");
+			assert.equal(oCondition.values.length, 2, "Values length");
+			assert.equal(oCondition.values[0], "000000", "Values entry0");
+			assert.equal(oCondition.values[1], "Empty", "Values entry1");
+			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+			oType.destroy();
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			oType.destroy();
+			fnDone();
+		});
 
 	});
 
 	QUnit.test("Parsing: empty string -> key and description with not found", function(assert) {
 
-		oFieldHelp.getItemForValue.restore();
-		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+		var oType = new StringType({parseKeepsEmptyString: true}, {nullable: false}); // use digsequencce to test internal format for check
+		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
+		oValueHelp.getItemForValue.callsFake(function(oConfig) {
 			if (oConfig.parsedValue === "" && oConfig.value === "") {
-				throw new ParseException("not found");
+				return Promise.reject(new oConfig.exception("not found"));
 			}
 		});
 
 		var oException;
-		var oCondition;
+		var oPromise;
+		var fnDone = assert.async();
 
 		try {
-			oCondition = oConditionType.parseValue("");
+			oPromise = oConditionType.parseValue("");
 		} catch (e) {
 			oException = e;
 		}
 
 		assert.notOk(oException, "no exception fired");
-		assert.notOk(oCondition, "no condition returned");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(oCondition) {
+			assert.notOk(oCondition, "no condition returned");
+			oType.destroy();
+			fnDone();
+		}).catch(function(oException) {
+			assert.notOk(true, "Promise must not fail");
+			oType.destroy();
+			fnDone();
+		});
 
 	});
 
@@ -1704,171 +1666,72 @@ sap.ui.define([
 		var oType = new StringType({}, {maxLength: 6, isDigitSequence: true, nullable: false}); // use digsequencce to test internal format for check
 		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
 
-		oFieldHelp.getItemForValue.restore();
-		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+		oValueHelp.getItemForValue.callsFake(function(oConfig) {
 			if (oConfig.parsedValue === "000000" && oConfig.value === "") {
-				throw new ParseException("not found");
+				return Promise.reject(new oConfig.exception("not found"));
 			}
 		});
 
 		var oException;
-		var oCondition;
+		var oPromise;
+		var fnDone = assert.async();
 
 		try {
-			oCondition = oConditionType.parseValue("");
+			oPromise = oConditionType.parseValue("");
 		} catch (e) {
 			oException = e;
 		}
 
 		assert.notOk(oException, "no exception fired");
-		assert.notOk(oCondition, "no condition returned");
-
-	});
-
-	QUnit.test("Parsing: empty string -> key only", function(assert) {
-
-		oConditionType.oFormatOptions.display = FieldDisplay.Value; // fake setting directly
-		oFieldHelp.getItemForValue.restore();
-		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
-			if (oConfig.parsedValue === "" && oConfig.value === "") {
-				return {key: "", description: "Empty"};
-			}
-		});
-
-		var oCondition = oConditionType.parseValue("");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 2, "Values length");
-		assert.equal(oCondition.values[0], "", "Values entry0");
-		assert.equal(oCondition.values[1], "Empty", "Values entry1");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-
-		var oType = new StringType(); // use odata-String type to parse "" to null -> so "" cannot be a value for typing
-		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
-
-		oCondition = oConditionType.parseValue("");
-		assert.notOk(oCondition, "no result returned");
-
-		oType.destroy();
-
-	});
-
-	QUnit.test("Parsing: empty string -> key and description (Async)", function(assert) {
-
-		var vResult = oConditionType.parseValue("");
-		assert.equal(vResult, null, "null returned");
-
-		oFieldHelp.getItemForValue.restore();
-		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
-		var bExist = true;
-
-		oStub.callsFake(function(oConfig) {
-			var oPromise = new Promise(function(fResolve, fReject) {
-				setTimeout(function () { // simulate request
-					switch (oConfig.parsedValue) {
-					case "":
-						if (bExist) {
-							fResolve({key: "", description: "Empty"});
-						} else {
-							fResolve(null);
-						}
-						break;
-
-					default:
-						fReject(new ParseException("Cannot parse value " + oConfig.parsedValue));
-					}
-				}, 0);
-			});
-			return oPromise;
-		});
-
-		var fnDone = assert.async();
-		vResult = oConditionType.parseValue("");
-		assert.ok(vResult instanceof Promise, "Promise returned");
-		vResult.then(function(oCondition) {
-			assert.ok(oCondition, "Result returned");
-			assert.equal(typeof oCondition, "object", "Result is object");
-			assert.equal(oCondition.operator, "EQ", "Operator");
-			assert.ok(Array.isArray(oCondition.values), "values are array");
-			assert.equal(oCondition.values.length, 2, "Values length");
-			assert.equal(oCondition.values[0], "", "Values entry1");
-			assert.equal(oCondition.values[1], "Empty", "Values no entry2");
-			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-
-			bExist = false;
-			vResult = oConditionType.parseValue("");
-			assert.ok(vResult instanceof Promise, "Promise returned");
-			vResult.then(function(oCondition) {
-				assert.equal(oCondition, null, "null returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch must not be called");
-				fnDone();
-			});
-		}).catch(function(oError) {
-			assert.notOk(true, "Promise Catch must not be called");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(oCondition) {
+			assert.notOk(oCondition, "no condition returned");
+			oType.destroy();
+			fnDone();
+		}).catch(function(oException) {
+			assert.notOk(true, "Promise must not fail");
+			oType.destroy();
 			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: empty string -> key only (Async)", function(assert) {
+	QUnit.test("Parsing: empty string -> key only", function(assert) {
 
+		var oType = new StringType({parseKeepsEmptyString: true}, {nullable: false}); // use digsequencce to test internal format for check
+		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
 		oConditionType.oFormatOptions.display = FieldDisplay.Value; // fake setting directly
-		var vResult = oConditionType.parseValue("");
-		assert.equal(vResult, null, "null returned");
-
-		oFieldHelp.getItemForValue.restore();
-		var oStub = sinon.stub(oFieldHelp, "getItemForValue");
-		var bExist = true;
-
-		oStub.callsFake(function(oConfig) {
-			var oPromise = new Promise(function(fResolve, fReject) {
-				setTimeout(function () { // simulate request
-					switch (oConfig.parsedValue) {
-					case "":
-						if (bExist) {
-							fResolve({key: "", description: "Empty"});
-						} else {
-							fResolve(null);
-						}
-						break;
-
-					default:
-						fReject(new ParseException("Cannot parse value " + oConfig.parsedValue));
-					}
-				}, 0);
-			});
-			return oPromise;
-		});
 
 		var fnDone = assert.async();
-		vResult = oConditionType.parseValue("");
-		assert.ok(vResult instanceof Promise, "Promise returned");
-		vResult.then(function(oCondition) {
+		var oPromise = oConditionType.parseValue("");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(oCondition) {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, "EQ", "Operator");
 			assert.ok(Array.isArray(oCondition.values), "values are array");
 			assert.equal(oCondition.values.length, 2, "Values length");
-			assert.equal(oCondition.values[0], "", "Values entry1");
-			assert.equal(oCondition.values[1], "Empty", "Values no entry2");
+			assert.equal(oCondition.values[0], "", "Values entry0");
+			assert.equal(oCondition.values[1], "Empty", "Values entry1");
 			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 
-			bExist = false;
-			vResult = oConditionType.parseValue("");
-			assert.ok(vResult instanceof Promise, "Promise returned");
-			vResult.then(function(oCondition) {
-				assert.equal(oCondition, null, "null returned");
+			oType.destroy();
+			// use standard odata-String type to parse "" to null -> so "" cannot be a value for typing
+			oConditionType.oFormatOptions.valueType = oValueType; // fake setting directly
+			oValueHelp.getItemForValue.resetHistory();
+
+			oPromise = oConditionType.parseValue("");
+			assert.ok(oPromise instanceof Promise, "Promise returned");
+			oPromise.then(function(oCondition) {
+				assert.notOk(oCondition, "no result returned");
 				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch must not be called");
+			}).catch(function(oException) {
+				assert.notOk(true, "Promise must not fail");
 				fnDone();
 			});
-		}).catch(function(oError) {
-			assert.notOk(true, "Promise Catch must not be called");
+		}).catch(function(oException) {
+			assert.notOk(true, "Promise must not fail");
+			oType.destroy();
 			fnDone();
 		});
 
@@ -1974,20 +1837,33 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: unit from FieldHelp", function(assert) {
+	QUnit.test("Formatting: unit from ValueHelp", function(assert) {
 
-		oFieldHelp = new FieldHelpBase("FH1");
-		var oStub = sinon.stub(oFieldHelp, "getTextForKey");
-		oStub.withArgs("EUR").returns("Euro");
-		oUnitConditionType.oFormatOptions.fieldHelpID = "FH1"; // fake setting directly
+		oValueHelp = new ValueHelp("VH1");
+		sinon.stub(oValueHelp, "isValidationSupported").returns(true);
+		sinon.stub(oValueHelp, "getItemForValue").callsFake(function(oConfig) {
+			if (oConfig.parsedValue === "EUR") {
+				return Promise.resolve({key: "EUR", description: "Euro"});
+			}
+		});
+		oUnitConditionType.oFormatOptions.fieldHelpID = "VH1"; // fake setting directly
 		oUnitConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
 		var oCondition = Condition.createCondition("EQ", [[123.45, "EUR"]], undefined, undefined, ConditionValidated.Validated);
 
-		var sResult = oUnitConditionType.formatValue(oCondition);
-		assert.equal(sResult, "Euro", "Result of unit formatting");
-
-		oFieldHelp.destroy();
-		oFieldHelp = undefined;
+		var fnDone = assert.async();
+		var oPromise = oUnitConditionType.formatValue(oCondition);
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(sDescription) {
+			assert.equal(sDescription, "Euro", "Result of unit formatting");
+			oValueHelp.destroy();
+			oValueHelp = undefined;
+			fnDone();
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch must not be called");
+			oValueHelp.destroy();
+			oValueHelp = undefined;
+			fnDone();
+		});
 
 	});
 
@@ -2214,55 +2090,66 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: unit from FieldHelp", function(assert) {
+	QUnit.test("Parsing: unit from ValueHelp", function(assert) {
 
-		oFieldHelp = new FieldHelpBase("FH1", {validateInput: false}); // test invalid input returned if OK for Type
-		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
+		oValueHelp = new ValueHelp("VH1", {validateInput: false}); // test invalid input returned if OK for Type
+		sinon.stub(oValueHelp, "isValidationSupported").returns(true);
+		sinon.stub(oValueHelp, "getItemForValue").callsFake(function(oConfig) {
 			if (oConfig.value === "Euro") {
-				return {key: "EUR", description: "Euro"};
+				return Promise.resolve({key: "EUR", description: "Euro"});
 			} else if (oConfig.value === "USD" || oConfig.value === "X") {
-				throw new ParseException("Cannot parse value " + oConfig.parsedValue);
+				return Promise.reject(new oConfig.exception("Cannot parse value " + oConfig.parsedValue));
 			}
 		});
-		oUnitConditionType.oFormatOptions.fieldHelpID = "FH1"; // fake setting directly
+		oUnitConditionType.oFormatOptions.fieldHelpID = "VH1"; // fake setting directly
 		oUnitConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
 		oUnitType._aCurrentValue = [1, "USD"]; // fake existing value
 		oValueType._aCurrentValue = [1, "USD"]; // fake existing value
+		oOriginalType._aCurrentValue = [1, "USD"]; // fake existing value
 
-		var oCondition = oUnitConditionType.parseValue("Euro");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 1, "Values length");
-		assert.equal(oCondition.values[0].length, 2, "Values0 length");
-		assert.equal(oCondition.values[0][0], 1, "Values entry0");
-		assert.equal(oCondition.values[0][1], "EUR", "Values entry1");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+		var fnDone = assert.async();
+		var oPromise = oUnitConditionType.parseValue("Euro");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		oPromise.then(function(oCondition) {
+			assert.ok(oCondition, "Result returned");
+			assert.equal(typeof oCondition, "object", "Result is object");
+			assert.equal(oCondition.operator, "EQ", "Operator");
+			assert.ok(Array.isArray(oCondition.values), "values are array");
+			assert.equal(oCondition.values.length, 1, "Values length");
+			assert.equal(oCondition.values[0].length, 2, "Values0 length");
+			assert.equal(oCondition.values[0][0], 1, "Values entry0");
+			assert.equal(oCondition.values[0][1], "EUR", "Values entry1");
+			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 
-		oCondition = oUnitConditionType.parseValue("USD"); // valid currency for type but not for Help
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 1, "Values length");
-		assert.equal(oCondition.values[0].length, 2, "Values0 length");
-		assert.equal(oCondition.values[0][0], 1, "Values entry0");
-		assert.equal(oCondition.values[0][1], "USD", "Values entry1");
-		assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
+			oPromise = oUnitConditionType.parseValue("USD"); // valid currency for type but not for Help
+			assert.ok(oPromise instanceof Promise, "Promise returned");
+			oPromise.then(function(oCondition) {
+				assert.ok(oCondition, "Result returned");
+				assert.equal(typeof oCondition, "object", "Result is object");
+				assert.equal(oCondition.operator, "EQ", "Operator");
+				assert.ok(Array.isArray(oCondition.values), "values are array");
+				assert.equal(oCondition.values.length, 1, "Values length");
+				assert.equal(oCondition.values[0].length, 2, "Values0 length");
+				assert.equal(oCondition.values[0][0], 1, "Values entry0");
+				assert.equal(oCondition.values[0][1], "USD", "Values entry1");
+				assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
 
-		var oException;
+				var oException;
 
-		try {
-			oCondition = undefined;
-			oCondition = oUnitConditionType.parseValue("X"); // invalid currency
-		} catch (e) {
-			oException = e;
-		}
+				try {
+					oPromise = oUnitConditionType.parseValue("X"); // invalid currency
+				} catch (e) {
+					oException = e;
+				}
 
-		assert.notOk(oCondition, "No Result returned");
-		assert.ok(oException, "Exception returned");
-		assert.ok(oException instanceof ParseException, "Exception is a ParseException");
+				assert.notOk(oException, "no exception fired");
+				assert.ok(oPromise instanceof Promise, "Promise returned");
+				oPromise.then(function(oCondition) {
+					assert.notOk(true, "Promise Then must not be called");
+					fnDone();
+				}).catch(function(oException) {
+					assert.ok(oException, "Exception returned");
+					assert.ok(oException instanceof ParseException, "Exception is a ParseException");
 
 //		oCondition = oUnitConditionType.parseValue("");
 //		assert.ok(oCondition, "Result returned");
@@ -2274,8 +2161,22 @@ sap.ui.define([
 //		assert.ok(isNaN(oCondition.values[0][0]), "Values entry0"); // as number is cleared by type if unit is cleared
 //		assert.equal(oCondition.values[0][1], null, "Values entry1");
 
-		oFieldHelp.destroy();
-		oFieldHelp = undefined;
+					oValueHelp.destroy();
+					oValueHelp = undefined;
+					fnDone();
+				});
+			}).catch(function(oException) {
+				assert.notOk(true, "Promise must not fail");
+				oValueHelp.destroy();
+				oValueHelp = undefined;
+				fnDone();
+			});
+		}).catch(function(oException) {
+			assert.notOk(true, "Promise must not fail");
+			oValueHelp.destroy();
+			oValueHelp = undefined;
+			fnDone();
+		});
 
 	});
 
@@ -2400,18 +2301,53 @@ sap.ui.define([
 
 	});
 
+	var fResolve1;
+	var fReject1;
+	var oPromise1;
+	var fResolve2;
+	var fReject2;
+	var oPromise2;
+	var fResolve3;
+	var fReject3;
+	var oPromise3;
+
 	QUnit.module("multiple async requests", {
 		beforeEach: function() {
-			oFieldHelp = new FieldHelpBase("FH1");
-			var oStub = sinon.stub(oFieldHelp, "getTextForKey");
-			oStub.withArgs("S").returns("Sync Text");
-			oStub = sinon.stub(oFieldHelp, "getItemForValue");
-			oStub.withArgs("S").returns({key: "S", description: "Sync Text"});
-			oStub.withArgs("Sync Text").returns({key: "S", description: "Sync Text"});
+			oValueHelp = new ValueHelp("VH1");
+			sinon.stub(oValueHelp, "isValidationSupported").returns(true);
+			sinon.stub(oValueHelp, "getItemForValue").callsFake(function(oConfig) {
+				if (oConfig.value === "S" || oConfig.value === "Sync Text") {
+					return {key: "S", description: "Sync Text"};
+				} else if (oConfig.value === "1") {
+					if (!oPromise1) {
+						oPromise1 = new Promise(function(fResolve, fReject) {
+							fResolve1 = fResolve;
+							fReject1 = fReject;
+						});
+					}
+					return oPromise1;
+				} else if (oConfig.value === "2") {
+					if (!oPromise2) {
+						oPromise2 = new Promise(function(fResolve, fReject) {
+							fResolve2 = fResolve;
+							fReject2 = fReject;
+						});
+					}
+					return oPromise2;
+				} else if (oConfig.value === "3") {
+					if (!oPromise3) {
+						oPromise3 = new Promise(function(fResolve, fReject) {
+							fResolve3 = fResolve;
+							fReject3 = fReject;
+						});
+					}
+					return oPromise3;
+				}
+			});
 
 			oConditionType = new ConditionType({
 				display: FieldDisplay.Description,
-				fieldHelpID: "FH1",
+				fieldHelpID: "VH1",
 				operators: ["EQ", "GT"],
 				asyncParsing: fnAsync,
 				delegate: FieldBaseDelegate,
@@ -2421,31 +2357,24 @@ sap.ui.define([
 			});
 		},
 		afterEach: function() {
-			oFieldHelp.destroy();
-			oFieldHelp = undefined;
+			oValueHelp.destroy();
+			oValueHelp = undefined;
 			oConditionType.destroy();
 			oConditionType = undefined;
 			bAsyncCalled = undefined;
+			fResolve1 = undefined;
+			fReject1 = undefined;
+			oPromise1 = undefined;
+			fResolve2 = undefined;
+			fReject2 = undefined;
+			oPromise2 = undefined;
+			fResolve3 = undefined;
+			fReject3 = undefined;
+			oPromise3 = undefined;
 		}
 	});
 
 	QUnit.test("Formatting: multiple promises", function(assert) {
-
-		var fResolve1;
-		var oPromise1 = new Promise(function(fResolve, fReject) {
-			fResolve1 = fResolve;
-		});
-		var fResolve2;
-		var oPromise2 = new Promise(function(fResolve, fReject) {
-			fResolve2 = fResolve;
-		});
-		var fResolve3;
-		var oPromise3 = new Promise(function(fResolve, fReject) {
-			fResolve3 = fResolve;
-		});
-		oFieldHelp.getTextForKey.withArgs("1").returns(oPromise1);
-		oFieldHelp.getTextForKey.withArgs("2").returns(oPromise2);
-		oFieldHelp.getTextForKey.withArgs("3").returns(oPromise3);
 
 		var oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
 		var vResult1 = oConditionType.formatValue(oCondition);
@@ -2480,22 +2409,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Formatting: multiple promises with error on last call", function(assert) {
-
-		var fResolve1;
-		var oPromise1 = new Promise(function(fResolve, fReject) {
-			fResolve1 = fResolve;
-		});
-		var fResolve2;
-		var oPromise2 = new Promise(function(fResolve, fReject) {
-			fResolve2 = fResolve;
-		});
-		var fReject3;
-		var oPromise3 = new Promise(function(fResolve, fReject) {
-			fReject3 = fReject;
-		});
-		oFieldHelp.getTextForKey.withArgs("1").returns(oPromise1);
-		oFieldHelp.getTextForKey.withArgs("2").returns(oPromise2);
-		oFieldHelp.getTextForKey.withArgs("3").returns(oPromise3);
 
 		var oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
 		var vResult1 = oConditionType.formatValue(oCondition);
@@ -2534,7 +2447,7 @@ sap.ui.define([
 				assert.equal(sResult, "Text 2", "Result 2");
 
 				vResult3.then(function(sResult) {
-					assert.notOk(true, "Promise3 must not be resolved (as errot thrown)");
+					assert.notOk(true, "Promise3 must not be resolved (as error thrown)");
 					fnDone();
 				}).catch(function(oError) {
 					assert.ok(true, "Promise3 Catch called");
@@ -2552,22 +2465,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Formatting: multiple promises with error between", function(assert) {
-
-		var fReject1;
-		var oPromise1 = new Promise(function(fResolve, fReject) {
-			fReject1 = fReject;
-		});
-		var fReject2;
-		var oPromise2 = new Promise(function(fResolve, fReject) {
-			fReject2 = fReject;
-		});
-		var fResolve3;
-		var oPromise3 = new Promise(function(fResolve, fReject) {
-			fResolve3 = fResolve;
-		});
-		oFieldHelp.getTextForKey.withArgs("1").returns(oPromise1);
-		oFieldHelp.getTextForKey.withArgs("2").returns(oPromise2);
-		oFieldHelp.getTextForKey.withArgs("3").returns(oPromise3);
 
 		var oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
 		var vResult1 = oConditionType.formatValue(oCondition);
@@ -2623,17 +2520,6 @@ sap.ui.define([
 
 	QUnit.test("Formatting: multiple promises and call with given description", function(assert) {
 
-		var fResolve1;
-		var oPromise1 = new Promise(function(fResolve, fReject) {
-			fResolve1 = fResolve;
-		});
-		var fResolve2;
-		var oPromise2 = new Promise(function(fResolve, fReject) {
-			fResolve2 = fResolve;
-		});
-		oFieldHelp.getTextForKey.withArgs("1").returns(oPromise1);
-		oFieldHelp.getTextForKey.withArgs("2").returns(oPromise2);
-
 		var oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
 		var vResult1 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
@@ -2666,30 +2552,6 @@ sap.ui.define([
 
 	QUnit.test("Parsing: multiple promises", function(assert) {
 
-		var fResolve1;
-		var oPromise1 = new Promise(function(fResolve, fReject) {
-			fResolve1 = fResolve;
-		});
-		var fResolve2;
-		var oPromise2 = new Promise(function(fResolve, fReject) {
-			fResolve2 = fResolve;
-		});
-		var fResolve3;
-		var oPromise3 = new Promise(function(fResolve, fReject) {
-			fResolve3 = fResolve;
-		});
-		oFieldHelp.getItemForValue.restore();
-		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
-			if (oConfig.value === "1") {
-				return oPromise1;
-			} else if (oConfig.value === "2") {
-				return oPromise2;
-			} else if (oConfig.value === "3") {
-				return oPromise3;
-			}
-			return null;
-		});
-
 		var vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
 
@@ -2720,30 +2582,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Parsing: multiple promises with error on last call", function(assert) {
-
-		var fResolve1;
-		var oPromise1 = new Promise(function(fResolve, fReject) {
-			fResolve1 = fResolve;
-		});
-		var fResolve2;
-		var oPromise2 = new Promise(function(fResolve, fReject) {
-			fResolve2 = fResolve;
-		});
-		var fReject3;
-		var oPromise3 = new Promise(function(fResolve, fReject) {
-			fReject3 = fReject;
-		});
-		oFieldHelp.getItemForValue.restore();
-		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
-			if (oConfig.value === "1") {
-				return oPromise1;
-			} else if (oConfig.value === "2") {
-				return oPromise2;
-			} else if (oConfig.value === "3") {
-				return oPromise3;
-			}
-			return null;
-		});
 
 		var vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
@@ -2798,30 +2636,6 @@ sap.ui.define([
 
 	QUnit.test("Parsing: multiple promises with error between", function(assert) {
 
-		var fReject1;
-		var oPromise1 = new Promise(function(fResolve, fReject) {
-			fReject1 = fReject;
-		});
-		var fReject2;
-		var oPromise2 = new Promise(function(fResolve, fReject) {
-			fReject2 = fReject;
-		});
-		var fResolve3;
-		var oPromise3 = new Promise(function(fResolve, fReject) {
-			fResolve3 = fResolve;
-		});
-		oFieldHelp.getItemForValue.restore();
-		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
-			if (oConfig.value === "1") {
-				return oPromise1;
-			} else if (oConfig.value === "2") {
-				return oPromise2;
-			} else if (oConfig.value === "3") {
-				return oPromise3;
-			}
-			return null;
-		});
-
 		var vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
 
@@ -2873,24 +2687,6 @@ sap.ui.define([
 
 	QUnit.test("Parsing: multiple promises and sync parsing", function(assert) {
 
-		var fResolve1;
-		var oPromise1 = new Promise(function(fResolve, fReject) {
-			fResolve1 = fResolve;
-		});
-		var fResolve2;
-		var oPromise2 = new Promise(function(fResolve, fReject) {
-			fResolve2 = fResolve;
-		});
-		oFieldHelp.getItemForValue.restore();
-		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
-			if (oConfig.value === "1") {
-				return oPromise1;
-			} else if (oConfig.value === "2") {
-				return oPromise2;
-			}
-			return null;
-		});
-
 		var vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
 
@@ -2920,25 +2716,6 @@ sap.ui.define([
 
 	QUnit.test("Formatting and Parsing", function(assert) {
 
-		var fResolve1;
-		var oPromise1 = new Promise(function(fResolve, fReject) {
-			fResolve1 = fResolve;
-		});
-		var fResolve2;
-		var oPromise2 = new Promise(function(fResolve, fReject) {
-			fResolve2 = fResolve;
-		});
-		oFieldHelp.getTextForKey.withArgs("1").returns(oPromise1);
-		oFieldHelp.getItemForValue.restore();
-		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
-			if (oConfig.value === "1") {
-				return oPromise1;
-			} else if (oConfig.value === "2") {
-				return oPromise2;
-			}
-			return null;
-		});
-
 		var oCondition = Condition.createCondition("EQ", ["1"], undefined, undefined, ConditionValidated.Validated);
 		var vResult1 = oConditionType.formatValue(oCondition);
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
@@ -2966,25 +2743,6 @@ sap.ui.define([
 
 	QUnit.test("Parsing and Formatting", function(assert) {
 
-		var fResolve1;
-		var oPromise1 = new Promise(function(fResolve, fReject) {
-			fResolve1 = fResolve;
-		});
-		var fResolve2;
-		var oPromise2 = new Promise(function(fResolve, fReject) {
-			fResolve2 = fResolve;
-		});
-		oFieldHelp.getItemForValue.restore();
-		sinon.stub(oFieldHelp, "getItemForValue").callsFake(function(oConfig) {
-			if (oConfig.value === "1") {
-				return oPromise1;
-			} else if (oConfig.value === "2") {
-				return oPromise2;
-			}
-			return null;
-		});
-		oFieldHelp.getTextForKey.withArgs("2").returns(oPromise2);
-
 		var vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
 
@@ -3007,132 +2765,6 @@ sap.ui.define([
 			assert.notOk(true, "Promise Catch must not be called");
 			fnDone();
 		});
-
-	});
-
-	// Just test usage of API. Interaction is already tested with FieldHelpBase
-	var oValueHelp;
-	QUnit.module("Key/Description using ValueHelp", {
-		beforeEach: function() {
-			oValueHelp = new ValueHelp("VH1");
-			sinon.spy(oValueHelp, "getTextForKey");
-			sinon.spy(oValueHelp, "getKeyForText");
-			var fnGetItemsForValue = function(oConfig) {
-				if (oConfig.value === "I1" || oConfig.value === "Item1") {
-					return {key: "I1", description: "Item1"};
-				} else if (oConfig.value === "I2" || oConfig.value === "Item2") {
-					return {key: "i2", description: "Item 2", payload: {in1: "I2", out1: "I2"}};
-				} else if (oConfig.value === "I3" || oConfig.value === "Item3") {
-					return {key: "I3", description: "Item3"};
-				} else if (oConfig.value === "YY") {
-					throw new Error("myError");
-				} else if (oConfig.value === "ZZZ") {
-					throw new ParseException("myParseException");
-				}
-				return null;
-			};
-			sinon.stub(oValueHelp, "getItemForValue").callsFake(fnGetItemsForValue);
-			sinon.stub(oValueHelp, "isValidationSupported").returns(true);
-
-			oValueType = new StringType(); // use odata-String type to parse "" to null -> so "" cannot be a value for typing
-			oConditionType = new ConditionType({
-				valueType: oValueType,
-				display: FieldDisplay.Description,
-				fieldHelpID: "VH1",
-				operators: ["EQ"],
-				asyncParsing: fnAsync,
-				delegate: FieldBaseDelegate,
-				bindingContext: "BC", // just dummy to test forwarding to fieldHelp
-				conditionModel: "CM", // just dummy to test forwarding to fieldHelp
-				conditionModelName: "Name", // just dummy to test forwarding to fieldHelp
-				control: "Control" // just dummy to test forwarding to fieldHelp
-			});
-		},
-		afterEach: function() {
-			oValueHelp.destroy();
-			oValueHelp = undefined;
-			oConditionType.destroy();
-			oConditionType = undefined;
-			oValueType.destroy();
-			oValueType = undefined;
-			bAsyncCalled = undefined;
-		}
-	});
-
-	QUnit.test("Formatting: key -> description (from help)", function(assert) {
-
-		var oCondition = Condition.createCondition("EQ", ["I1"], undefined, undefined, ConditionValidated.Validated);
-		var oConfig = { // to compare
-			value: "I1",
-			parsedValue: "I1",
-			dataType: oValueType,
-			checkKey: true,
-			checkDescription: false,
-			context: {inParameters: undefined, outParameters: undefined, payload: undefined},
-			bindingContext: "BC",
-			conditionModel: "CM",
-			conditionModelName: "Name",
-			control: "Control",
-			caseSensitive: true,
-			exception: FormatException
-		};
-		var sResult = oConditionType.formatValue(oCondition);
-		assert.equal(sResult, "Item1", "Result of formatting");
-		assert.notOk(oValueHelp.getTextForKey.called, "getTextForKey not called");
-		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
-
-		oConditionType.oFormatOptions.delegate = undefined; // fake setting directly
-		oValueHelp.getItemForValue.resetHistory();
-		sResult = oConditionType.formatValue(oCondition);
-		assert.equal(sResult, "Item1", "Result of formatting");
-		assert.notOk(oValueHelp.getTextForKey.called, "getTextForKey not called");
-		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
-
-	});
-
-	QUnit.test("Parsing: key and description -> key and Description (from help)", function(assert) {
-
-		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
-
-		var oCondition = oConditionType.parseValue("I2 (X)");
-		var oConfig = { // to compare
-			value: "I2",
-			parsedValue: "I2",
-			dataType: oValueType,
-			checkKey: true,
-			checkDescription: true,
-			inParameters: undefined, // TODO: needed?
-			outParameters: undefined, // TODO: needed?
-			bindingContext: "BC",
-			conditionModel: "CM",
-			conditionModelName: "Name",
-			control: "Control",
-			exception: ParseException
-		};
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 2, "Values length");
-		assert.equal(oCondition.values[0], "i2", "Values entry0");
-		assert.equal(oCondition.values[1], "Item 2", "Values entry1");
-		assert.deepEqual(oCondition.payload, {in1: "I2", out1: "I2"} , "payload returned");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
-
-		oConditionType.oFormatOptions.delegate = undefined; // fake setting directly
-		oValueHelp.getItemForValue.resetHistory();
-		oCondition = oConditionType.parseValue("I2 (X)");
-		assert.ok(oCondition, "Result returned");
-		assert.equal(typeof oCondition, "object", "Result is object");
-		assert.equal(oCondition.operator, "EQ", "Operator");
-		assert.ok(Array.isArray(oCondition.values), "values are array");
-		assert.equal(oCondition.values.length, 2, "Values length");
-		assert.equal(oCondition.values[0], "i2", "Values entry0");
-		assert.equal(oCondition.values[1], "Item 2", "Values entry1");
-		assert.deepEqual(oCondition.payload, {in1: "I2", out1: "I2"} , "payload returned");
-		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
 
 	});
 

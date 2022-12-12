@@ -287,39 +287,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * This function returns which <code>FieldHelpBaseDelegate</code> is used
-	 * if a default field help (for example, for Boolean values) is created.
-	 *
-	 * @param {object} oPayload Payload for delegate
-	 * @returns {object} Delegate object with <code>name</code and <code>payload</code>
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @since 1.78.0
-	 */
-	FieldBaseDelegate.getDefaultFieldHelpBaseDelegate = function(oPayload) {
-
-		return {name: "sap/ui/mdc/field/FieldHelpBaseDelegate", payload: {}};
-
-	};
-
-	/**
-	 * This function returns which <code>FieldValueHelpDelegate</code> is used
-	 * if a default field help (for example, for defining conditions in </code>FilterField</code>)
-	 * is created.
-	 *
-	 * @param {object} oPayload Payload for delegate
-	 * @returns {object} Delegate object with <code>name</code and <code>payload</code>
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @since 1.78.0
-	 */
-	FieldBaseDelegate.getDefaultFieldValueHelpDelegate = function(oPayload) {
-
-		return {name: "sap/ui/mdc/field/FieldValueHelpDelegate", payload: {}};
-
-	};
-
-	/**
 	 * This function returns which <code>ValueHelpDelegate</code> is used
 	 * if a default field help (for example, for defining conditions in </code>FilterField</code>)
 	 * is created.

@@ -103,12 +103,6 @@ sap.ui.define([
 
 	};
 
-	ODataFieldBaseDelegate.getDefaultFieldValueHelpDelegate = function(oPayload) {
-
-		return {name: "sap/ui/mdc/odata/v4/FieldValueHelpDelegate", payload: {}};
-
-	};
-
 	ODataFieldBaseDelegate.getDefaultValueHelpDelegate = function(oPayload) {
 
 		return {name: "sap/ui/mdc/odata/v4/ValueHelpDelegate", payload: {}};
