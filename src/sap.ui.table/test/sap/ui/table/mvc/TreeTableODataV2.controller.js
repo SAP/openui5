@@ -19,9 +19,10 @@ sap.ui.define([
     "sap/ui/performance/Measurement",
     "sap/base/util/uid",
     "sap/base/security/encodeXML",
-    "sap/ui/core/syncStyleClass"
+    "sap/ui/core/syncStyleClass",
+	"sap/ui/core/Fragment"
 ], function(Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button, MessagePopover, MessageItem, oCore,
-			tableLibrary, MockServer, Filter, TreeTable, Column, ODataModel, HTML, Measurement, uid, encodeXML, syncStyleClass) {
+			tableLibrary, MockServer, Filter, TreeTable, Column, ODataModel, HTML, Measurement, uid, encodeXML, syncStyleClass, Fragment) {
 	"use strict";
 
 	// shortcut for sap.ui.table.VisibleRowCountMode
@@ -623,18 +624,24 @@ sap.ui.define([
 		 */
 		openClipboard: function() {
 			if (!this._oPasteDialog) {
-				this._oPasteDialog = sap.ui.xmlfragment("sap.ui.table.mvc.TreeTableODataV2Clipboard", this);
+				this._oPasteDialog = Fragment.load({
+					id: this.getView().getId(),
+					name: "sap.ui.table.mvc.TreeTableODataV2Clipboard",
+					controller: this
+				}).then(function(oPasteDialog) {
+					return oPasteDialog;
+				});
 			}
 
-			this._oPasteDialog.setModel(this._oClipboardModel);
+			this._oPasteDialog.then(function(oPasteDialog) {
+				oPasteDialog.setModel(this._oClipboardModel);
+				oPasteDialog.setMultiSelect(false);
+				oPasteDialog.setRememberSelections(false);
 
-			this._oPasteDialog.setMultiSelect(false);
+				syncStyleClass("sapUiSizeCompact", this.getView(), oPasteDialog);
 
-			this._oPasteDialog.setRememberSelections(false);
-
-			syncStyleClass("sapUiSizeCompact", this.getView(), this._oPasteDialog);
-
-			this._oPasteDialog.open();
+				oPasteDialog.open();
+			}.bind(this));
 		},
 
 		/**
