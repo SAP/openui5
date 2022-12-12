@@ -46,7 +46,7 @@ sap.ui.define(function() {
 					preload: "async" // enforce preloads in dev mode
 				}
 			},
-			"Component_unavoidablySync": {
+			Component_unavoidablySync: {
 				title: "QUnit test: Component (sync tests)",
 				ui5: {
 					libs: "sap.m",
@@ -54,13 +54,13 @@ sap.ui.define(function() {
 					preload: "sync"
 				}
 			},
-			"Component_containedInLibrary": {
+			Component_containedInLibrary: {
 				title: "QUnit test: Components contained in a Library",
 				ui5: {
 					preload: "async"
 				}
 			},
-			"Component_keepAlive": {
+			Component_keepAlive: {
 				title: "QUnit test: Component keepAlive",
 				ui5: {
 					language: "en"
@@ -96,14 +96,14 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
-			"Customizing_unavoidablySync": {
+			Customizing_unavoidablySync: {
 				title: "Customizing in general - sap.ui.core (sync tests)",
 				qunit: {
 					// Test makes assumptions about when CustomizingData is loaded
 					reorder: false
 				}
 			},
-			"Customizing_async": {
+			Customizing_async: {
 				title: "Async Customizing - sap.ui.core",
 				qunit: {
 					reorder: false
@@ -118,7 +118,7 @@ sap.ui.define(function() {
 					version: 4
 				}
 			},
-			"ExtensionPoint_unavoidablySync": {
+			ExtensionPoint_unavoidablySync: {
 				title: "ExtensionPoints with ExtensionProvider (sync tests)",
 				qunit: {
 					reorder: false
@@ -127,25 +127,25 @@ sap.ui.define(function() {
 					version: 4
 				}
 			},
-			"Customizing_disabled": {
+			Customizing_disabled: {
 				title: "Customizing in general - sap.ui.core (customizing disabled)",
 				ui5: {
 					"xx-disableCustomizing": true
 				}
 			},
-			"Customizing_multi": {
+			Customizing_multi: {
 				title: "Customizing in general - sap.ui.core"
 			},
 			Manifest: {
 				title: "QUnit tests: Component Manifest"
 			},
-			"Manifest_unavoidablySync": {
+			Manifest_unavoidablySync: {
 				title: "QUnit tests: Component Manifest (sync tests)"
 			},
 			Metadata: {
 				title: "QUnit tests: Component Metadata"
 			},
-			"Metadata_unavoidablySync": {
+			Metadata_unavoidablySync: {
 				title: "QUnit tests: Component Metadata (sync tests)"
 			},
 			Models: {
@@ -157,7 +157,7 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
-			"Models_unavoidablySync": {
+			Models_unavoidablySync: {
 				title: "QUnit tests: Component Models (sync tests)",
 				ui5: {
 					language: "en-US"
@@ -197,13 +197,13 @@ sap.ui.define(function() {
 					language: "en-US"
 				}
 			},
-			"Component_dependencyLoading": {
+			Component_dependencyLoading: {
 				title: "QUnit test: Dependency loading",
 				qunit: {
 					reorder: false
 				}
 			},
-			"Component_dependencyLoading_unavoidablySync": {
+			Component_dependencyLoading_unavoidablySync: {
 				title: "QUnit test: Dependency loading (sync tests)",
 				qunit: {
 					reorder: false

@@ -1,15 +1,16 @@
 sap.ui.define([
-	"sap/ui/thirdparty/URI",
-	"sap/ui/core/Component",
+	"require",
 	"sap/base/Log",
 	"sap/base/util/deepClone",
+	"sap/ui/VersionInfo",
+	"sap/ui/core/Component",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/_UrlResolver",
-	"require",
-	"sap/ui/core/Configuration"
-], function(URI, Component, Log, deepClone, _UrlResolver, require, Configuration) {
+	"sap/ui/thirdparty/URI"
+], function(require, Log, deepClone, VersionInfo, Component, Configuration, _UrlResolver, URI) {
 
 	"use strict";
-	/*global sinon, QUnit*/
+	/*global QUnit*/
 
 	/*
 	 * TEST INITIALIZATION
@@ -506,28 +507,20 @@ sap.ui.define([
 
 	QUnit.module("Component Metadata: Version Check", {
 		beforeEach: function() {
-			this.fnGetVersionInfo = sap.ui.getVersionInfo;
-			try {
-				this.oVersionInfo = this.fnGetVersionInfo();
-			} catch (e) {
-				// if no version info is there we fake it
-				this.oVersionInfo = {
-					version: sap.ui.version
-				};
-			}
-			sap.ui.getVersionInfo = function(mConfig) {
-				if (mConfig && mConfig.async) {
-					return new Promise(function(fnResolve, fnReject) {
-						fnResolve(this.oVersionInfo);
-					}.bind(this));
-				}
-				return this.oVersionInfo;
-			}.bind(this);
-			sinon.spy(Log, "warning");
+			return VersionInfo.load().then(function(oVersionInfo) {
+				this.oVersionInfo = sap.ui.getVersionInfo();
+				this.stub(sap.ui, "getVersionInfo").callsFake(function(mConfig) {
+					if (mConfig && mConfig.async) {
+						return new Promise(function(fnResolve, fnReject) {
+							fnResolve(this.oVersionInfo);
+						}.bind(this));
+					}
+					return this.oVersionInfo;
+				}.bind(this));
+				this.spy(Log, "warning");
+			}.bind(this));
 		},
 		afterEach: function() {
-			Log.warning.restore();
-			sap.ui.getVersionInfo = this.fnGetVersionInfo;
 		}
 	});
 
@@ -551,7 +544,7 @@ sap.ui.define([
 					assert.ok(!bFound, "Warning has not been reported!");
 				}
 				moduleTeardown.call(that);
-				sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+				sap.ui.require("sap/ui/test/v2version/Component").getMetadata()._bInitialized = false;
 				oDone();
 			}, 200);
 		});
@@ -571,7 +564,7 @@ sap.ui.define([
 				}
 				assert.ok(!bFound, "Warning has not been reported!");
 				moduleTeardown.call(that);
-				sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+				sap.ui.require("sap/ui/test/v2version/Component").getMetadata()._bInitialized = false;
 				oDone();
 			}, 200);
 		});
@@ -591,113 +584,144 @@ sap.ui.define([
 				}
 				assert.ok(!bFound, "Warning has not been reported!");
 				moduleTeardown.call(that);
-				sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+				sap.ui.require("sap/ui/test/v2version/Component").getMetadata()._bInitialized = false;
 				oDone();
 			}, 200);
 		});
 	});
 
 	// Test async loading of manifest files for component metadata
-	runManifestLoadingTests("manifestFirst", function(path, name) {
-		return {
+	function runManifestLoadingTests(sDescription, fnComponentFactory) {
+		QUnit.module("Component Metadata async loading of manifests: " + sDescription, {
+			before: function() {
+				return new Promise(function(resolve, reject) {
+					sap.ui.require([
+						"sap/ui/core/mvc/XMLView"
+					], function(XMLView) {
+						resolve();
+					}, reject);
+				});
+			}
+		});
+
+		QUnit.test("Async loading of manifests with component.json", function(assert) {
+			return fnComponentFactory("./testdata/inherit/manifest.json", "sap.ui.test.inherit").then(function(oComponent) {
+				assert.ok(oComponent instanceof Component, "Component has been created.");
+
+				assert.equal(
+					oComponent.getManifest().name,
+					"sap.ui.test.inherit.Component",
+					"Check name of the the main component"
+				);
+				assert.equal(
+					oComponent.getMetadata().getParent().getManifest().name,
+					"sap.ui.test.inherit.parent.Component",
+					"Check name of the inherited parent component"
+				);
+				oComponent.destroy();
+			});
+		});
+
+		QUnit.test("Async loading of manifests", function(assert) {
+			return fnComponentFactory("./testdata/inheritAsync/manifest.json", "sap.ui.test.inheritAsync").then(function(oComponent) {
+				assert.ok(oComponent instanceof Component, "Component has been created.");
+
+				assert.equal(
+					oComponent.getManifest().name,
+					"sap.ui.test.inheritAsync.Component",
+					"Check name of the the main component"
+				);
+				assert.equal(
+					oComponent.getMetadata().getParent().getManifest().name,
+					"sap.ui.test.inheritAsync.parentB.Component",
+					"Check name of the inherited parent component B"
+				);
+				assert.equal(
+					oComponent.getMetadata().getParent().getParent().getManifest().name,
+					"sap.ui.test.inheritAsync.parentA.Component",
+					"Check name of the inherited parent component A"
+				);
+				destroyComponent(oComponent);
+			});
+		});
+
+		QUnit.test("Async loading of manifests with missing manifest of parent metadata", function(assert) {
+			return fnComponentFactory("./testdata/inheritAsyncError/manifest.json", "sap.ui.test.inheritAsyncError").then(function(oComponent) {
+				assert.ok(oComponent instanceof Component, "Component has been created.");
+
+				var aLogEntries = Log.getLogEntries();
+				var result = aLogEntries.filter(function(oEntry){
+					return oEntry.message.indexOf(
+						"Failed to load component manifest from \"test-resources/sap/ui/core/qunit/component/testdata/inheritAsyncError/parentFAIL/manifest.json\""
+					) === 0;
+				});
+				assert.equal(result.length, 1, "Error: 'Failed to laod component manifest from...' was logged.");
+
+				assert.equal(
+					oComponent.getManifest().name,
+					"sap.ui.test.inheritAsyncError.Component",
+					"Check name of the the main component"
+				);
+				assert.equal(
+					oComponent.getMetadata().getParent().getManifest().name,
+					"sap.ui.test.inheritAsyncError.parentB.Component",
+					"Check name of the inherited parent component B"
+				);
+				assert.equal(
+					oComponent.getMetadata().getParent().getParent().getManifest().name,
+					"sap.ui.test.inheritAsyncError.parentFAIL.Component",
+					"Check name of the inherited parent component A"
+				);
+				destroyComponent(oComponent);
+			});
+		});
+	}
+
+
+	/**
+	 * @deprecated Since 1.56, sap.ui.component is deprecated
+	 */
+	runManifestLoadingTests("manifestFirst (legacy API)", function(path, name) {
+		return sap.ui.component({
 			name: name,
 			manifestFirst: true,
 			async: true
-		};
+		});
 	});
 
-	runManifestLoadingTests("manifest", function(path) {
-		return {
+	/**
+	 * @deprecated Since 1.56, sap.ui.component is deprecated
+	 */
+	runManifestLoadingTests("manifest URL (legacy API)", function(path) {
+		return sap.ui.component({
 			manifest: require.toUrl(path),
 			async: true
-		};
+		});
 	});
-	runManifestLoadingTests("manifestUrl", function(path) {
-		return {
+
+	/**
+	 * @deprecated Since 1.56, sap.ui.component is deprecated
+	 */
+	runManifestLoadingTests("manifestUrl (legacy API)", function(path) {
+		return sap.ui.component({
 			manifestUrl: require.toUrl(path),
 			async: true
-		};
+		});
 	});
 
-	function runManifestLoadingTests(sDescription, fnCreateConfig) {
-			sap.ui.require([
-				"sap/ui/core/mvc/XMLView"
-			], function (XMLView) {
-				QUnit.module("Component Metadata async loading of manifests: " + sDescription);
+	runManifestLoadingTests("manifest first", function(path, name) {
+		return Component.create({
+			name: name
+		});
+	});
 
-				QUnit.test("Async loading of manifests with component.json", function(assert) {
-					return sap.ui.component(fnCreateConfig("./testdata/inherit/manifest.json", "sap.ui.test.inherit")).then(function(oComponent) {
-						assert.ok(oComponent instanceof Component, "Component has been created.");
+	runManifestLoadingTests("manifest URL", function(path) {
+		return Component.create({
+			manifest: require.toUrl(path)
+		});
+	});
 
-						assert.equal(
-							oComponent.getManifest().name,
-							"sap.ui.test.inherit.Component",
-							"Check name of the the main component"
-						);
-						assert.equal(
-							oComponent.getMetadata().getParent().getManifest().name,
-							"sap.ui.test.inherit.parent.Component",
-							"Check name of the inherited parent component"
-						);
-						destroyComponent(oComponent);
-					});
-				});
 
-				QUnit.test("Async loading of manifests", function(assert) {
-					return sap.ui.component(fnCreateConfig("./testdata/inheritAsync/manifest.json", "sap.ui.test.inheritAsync")).then(function(oComponent) {
-						assert.ok(oComponent instanceof Component, "Component has been created.");
-
-						assert.equal(
-							oComponent.getManifest().name,
-							"sap.ui.test.inheritAsync.Component",
-							"Check name of the the main component"
-						);
-						assert.equal(
-							oComponent.getMetadata().getParent().getManifest().name,
-							"sap.ui.test.inheritAsync.parentB.Component",
-							"Check name of the inherited parent component B"
-						);
-						assert.equal(
-							oComponent.getMetadata().getParent().getParent().getManifest().name,
-							"sap.ui.test.inheritAsync.parentA.Component",
-							"Check name of the inherited parent component A"
-						);
-						destroyComponent(oComponent);
-					});
-				});
-
-				QUnit.test("Async loading of manifests with missing manifest of parent metadata", function(assert) {
-					return sap.ui.component(fnCreateConfig("./testdata/inheritAsyncError/manifest.json", "sap.ui.test.inheritAsyncError")).then(function(oComponent) {
-						assert.ok(oComponent instanceof Component, "Component has been created.");
-
-						var aLogEntries = Log.getLogEntries();
-						var result = aLogEntries.filter(function(oEntry){
-							return oEntry.message.indexOf(
-								"Failed to load component manifest from \"test-resources/sap/ui/core/qunit/component/testdata/inheritAsyncError/parentFAIL/manifest.json\""
-							) === 0;
-						});
-						assert.equal(result.length, 1, "Error: 'Failed to laod component manifest from...' was logged.");
-
-						assert.equal(
-							oComponent.getManifest().name,
-							"sap.ui.test.inheritAsyncError.Component",
-							"Check name of the the main component"
-						);
-						assert.equal(
-							oComponent.getMetadata().getParent().getManifest().name,
-							"sap.ui.test.inheritAsyncError.parentB.Component",
-							"Check name of the inherited parent component B"
-						);
-						assert.equal(
-							oComponent.getMetadata().getParent().getParent().getManifest().name,
-							"sap.ui.test.inheritAsyncError.parentFAIL.Component",
-							"Check name of the inherited parent component A"
-						);
-						destroyComponent(oComponent);
-					});
-				});
-			});
-	}
 
 	QUnit.module("Component Metadata async loading of manifests: manifest object");
 
@@ -742,8 +766,9 @@ sap.ui.define([
 				"Instance specific manifest entry should be available through component instance"
 			);
 			// the component's original manifest should also be loaded even if a manifest object is given
+			var InheritAsyncComponent = sap.ui.require("sap/ui/test/inheritAsync/Component");
 			assert.equal(
-				sap.ui.test.inheritAsync.Component.getMetadata().getManifestEntry("/sap.ui5/config/any/entry1"),
+				InheritAsyncComponent.getMetadata().getManifestEntry("/sap.ui5/config/any/entry1"),
 				"test",
 				"Instance specific manifest should not be reused for static manifest"
 			);
