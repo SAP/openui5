@@ -51,6 +51,17 @@ sap.ui.define([
 			}).finally(fnDone);
 	});
 
+	QUnit.test("Should generate selector for control in a view with stable ID, including also the viewName", function (assert) {
+		var fnDone = assert.async();
+
+		_ControlSelectorGenerator._generate({control: Element.closestTo("#myView form input"), includeAll: true})
+			.then(function (aSelector) {
+				var mViewIdSelector = aSelector[2][0];
+				assert.strictEqual(mViewIdSelector.viewId, "myView", "Should generate selector with viewID");
+				assert.strictEqual(mViewIdSelector.viewName, "myView", "Should generate selector with ViewName");
+			}).finally(fnDone);
+	});
+
 	QUnit.test("Should generate selector for control with stable ID in any view", function (assert) {
 		var fnDone = assert.async();
 		var $view = $(".sapUiView").filter(function (i, $elem) {

@@ -146,6 +146,7 @@ sap.ui.define([
                 };
             } else {
                 return {
+                    viewName: sViewName,
                     viewId: sViewId
                 };
             }
