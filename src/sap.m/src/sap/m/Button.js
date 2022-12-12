@@ -95,9 +95,12 @@ sap.ui.define([
 	 */
 	var Button = Control.extend("sap.m.Button", /** @lends sap.m.Button.prototype */ { metadata : {
 
-		interfaces : ["sap.ui.core.IFormContent"],
-		library : "sap.m",
-		properties : {
+			interfaces : [
+				"sap.ui.core.IFormContent",
+				"sap.m.IToolbarInteractiveControl"
+			],
+			library : "sap.m",
+			properties : {
 
 			/**
 			 * Determines the text of the <code>Button</code>.
@@ -903,6 +906,20 @@ sap.ui.define([
 	Button.prototype._getTitleAttribute = function(sDOMID) {
 		return this.getTooltip();
 	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	 Button.prototype._getToolbarInteractive = function () {
+		return true;
+	};
+
 
 	return Button;
 

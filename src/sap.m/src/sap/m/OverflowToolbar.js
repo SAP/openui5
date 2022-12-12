@@ -1139,6 +1139,21 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 *
+	 * @returns {number} Toolbar interactive Controls count
+	 * @private
+	 */
+	OverflowToolbar.prototype._getToolbarInteractiveControlsCount = function () {
+		var aInteractiveControlsRendered = this._getVisibleAndNonOverflowContent().filter(function(oControl) {
+			return this._getControlPriority(oControl) !== OverflowToolbarPriority.AlwaysOverflow
+				&& oControl.isA("sap.m.IToolbarInteractiveControl")
+				&& typeof (oControl._getToolbarInteractive) === "function" && oControl._getToolbarInteractive();
+		}, this);
+
+		return this._getOverflowButtonNeeded() ? aInteractiveControlsRendered.length + 1 : aInteractiveControlsRendered.length;
+	};
+
 	/***************************************AGGREGATIONS AND LISTENERS******************************************/
 
 	/**

@@ -64,9 +64,13 @@ sap.ui.define([
 		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/menu-button/ Menu Button}
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var MenuButton = Control.extend("sap.m.MenuButton", /** @lends sap.m.MenuButton.prototype */ { metadata : {
-			library : "sap.m",
-			properties : {
+		var MenuButton = Control.extend("sap.m.MenuButton", /** @lends sap.m.MenuButton.prototype */ {
+			metadata : {
+				interfaces : [
+					"sap.m.IToolbarInteractiveControl"
+				],
+				library : "sap.m",
+				properties : {
 				/**
 				 * Defines the text of the <code>MenuButton</code>.
 				 * <br/><b>Note:</b> In <code>Split</code> <code>buttonMode</code> with <code>useDefaultActionOnly</code>
@@ -81,7 +85,7 @@ sap.ui.define([
 				 * <b>Note:</b> Not all existing types are valid for the control. See {@link sap.m.ButtonType}
 				 * documentation.
 				 */
-				type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : ButtonType.Default},
+				 type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : ButtonType.Default},
 
 				/**
 				 * Defines the width of the <code>MenuButton</code>.
@@ -736,6 +740,19 @@ sap.ui.define([
 			if (oMenu) {
 				oOpeningMenuButton.$().attr("aria-controls", oMenu.getDomRefId());
 			}
+		};
+
+		/**
+		 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+		 * Determines if the Control is interactive.
+		 *
+		 * @returns {boolean} If it is an interactive Control
+		 *
+		 * @private
+		 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+		 */
+		MenuButton.prototype._getToolbarInteractive = function () {
+			return true;
 		};
 
 		/**
