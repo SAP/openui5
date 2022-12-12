@@ -954,18 +954,21 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("buildApply: recursive hierarchy", function (assert) {
+[0, 1, 2].forEach(function (iLevel) {
+	QUnit.test("buildApply: recursive hierarchy, iLevel=" + iLevel, function (assert) {
 		var oAggregation = {hierarchyQualifier : "X"};
 
 		this.mock(_AggregationHelper).expects("checkTypeof").never();
 		this.mock(_AggregationHelper).expects("buildApply4Hierarchy")
-			.withExactArgs(sinon.match.same(oAggregation), "~mQueryOptions~").returns("~result~");
+			.withExactArgs(sinon.match.same(oAggregation), "~mQueryOptions~", iLevel == 0)
+			.returns("~result~");
 
 		assert.strictEqual(
 			// code under test
-			_AggregationHelper.buildApply(oAggregation, "~mQueryOptions~"),
+			_AggregationHelper.buildApply(oAggregation, "~mQueryOptions~", iLevel),
 			"~result~");
 	});
+});
 
 	//*********************************************************************************************
 [{
@@ -1039,8 +1042,10 @@ sap.ui.define([
 	//*********************************************************************************************
 [undefined, 1, 2, 3].forEach(function (iExpandTo) {
 	[false, true].forEach(function (bStored) {
-		var sTitle = "buildApply4Hierarchy: top levels of nodes, $select, expandTo : " + iExpandTo
-				+ ", property paths already stored: " + bStored;
+		[false, true].forEach(function (bAllLevels) {
+			var sTitle = "buildApply4Hierarchy: top levels of nodes, $select, expandTo : "
+				+ iExpandTo + ", property paths already stored: " + bStored
+				+ ", all levels: " + bAllLevels;
 
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {
@@ -1050,13 +1055,42 @@ sap.ui.define([
 				$path : "/Foo"
 			},
 			oAggregationMock = this.mock(oAggregation),
+			oExpectedAggregation = iExpandTo > 1 ? {
+				expandTo : iExpandTo,
+				hierarchyQualifier : "X",
+				$path : "/Foo",
+				$DistanceFromRootProperty : "DistFromRoot",
+				$DrillStateProperty : "myDrillState",
+				$LimitedDescendantCountProperty : "LtdDescendant_Count"
+			} : {
+				expandTo : iExpandTo,
+				hierarchyQualifier : "X",
+				$path : "/Foo",
+				$DrillStateProperty : "myDrillState"
+			},
+			iExpectedLevels = iExpandTo || 1,
+			aExpectedSelect = iExpandTo > 1
+			? ["ID", "DistFromRoot", "LtdDescendant_Count", "myDrillState"]
+			: ["ID", "myDrillState"],
 			mQueryOptions = {
 				$select : ["ID"], //TODO auto-$select NodeProperty just like a key!
 				foo : "bar"
 			},
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
-		if (bStored) {
+		if (bAllLevels) {
+			iExpectedLevels = 9;
+			aExpectedSelect = ["ID", "DistFromRoot"];
+			oExpectedAggregation = {
+				expandTo : iExpandTo,
+				hierarchyQualifier : "X",
+				$path : "/Foo",
+				$DistanceFromRootProperty : "DistFromRoot"
+			};
+			if (bStored) {
+				oAggregation.$DistanceFromRootProperty = "DistFromRoot";
+			}
+		} else if (bStored) {
 			oAggregation.$DrillStateProperty = "myDrillState";
 			if (iExpandTo > 1) {
 				oAggregation.$DistanceFromRootProperty = "DistFromRoot";
@@ -1073,35 +1107,24 @@ sap.ui.define([
 				DrillStateProperty : {$PropertyPath : "myDrillState"},
 				LimitedDescendantCountProperty : {$PropertyPath : "LtdDescendant_Count"}
 			}));
+		oExpectedAggregation.$fetchMetadata = oAggregation.$fetchMetadata; // remember the mock(!)
 
-		// code under test
-		assert.deepEqual(_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions), {
+		assert.deepEqual(
+			// code under test
+			_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions, bAllLevels),
+			{
 				$apply : "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
-					+ ",HierarchyQualifier='X',NodeProperty='SomeNodeID',Levels=" + (iExpandTo || 1)
+					+ ",HierarchyQualifier='X',NodeProperty='SomeNodeID',Levels=" + iExpectedLevels
 					+ ")",
-				$select : iExpandTo > 1
-					? ["ID", "DistFromRoot", "LtdDescendant_Count", "myDrillState"]
-					: ["ID", "myDrillState"],
+				$select : aExpectedSelect,
 				foo : "bar"
 			});
 
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
-		assert.deepEqual(oAggregation, iExpandTo > 1 ? {
-			expandTo : iExpandTo,
-			hierarchyQualifier : "X",
-			$fetchMetadata : oAggregation.$fetchMetadata,
-			$path : "/Foo",
-			$DistanceFromRootProperty : "DistFromRoot",
-			$DrillStateProperty : "myDrillState",
-			$LimitedDescendantCountProperty : "LtdDescendant_Count"
-		} : {
-			expandTo : iExpandTo,
-			hierarchyQualifier : "X",
-			$fetchMetadata : oAggregation.$fetchMetadata,
-			$path : "/Foo",
-			$DrillStateProperty : "myDrillState"
-		});
+		assert.strictEqual(oAggregation.$fetchMetadata, oExpectedAggregation.$fetchMetadata);
+		assert.deepEqual(oAggregation, oExpectedAggregation);
 	});
+		});
 	});
 });
 
@@ -1151,7 +1174,7 @@ sap.ui.define([
 			}));
 
 		// code under test
-		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, mQueryOptions), {
+		assert.deepEqual(_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions), {
 				$apply : mFixture.sExpectedApply,
 				// no more $filter or $orderby!
 				$select : ["ID", "aDrillState"],

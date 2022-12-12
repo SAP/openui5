@@ -11,6 +11,8 @@
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="{header>$count} Ancestors"/>
+				<m:Button icon="sap-icon://excel-attachment" press="onExport"
+					tooltip="Export To Spreadsheet"/>
 				<m:ToolbarSpacer/>
 				<m:SearchField placeholder="Hobby contains..." search="onFilter"
 					value="{ui>/sFilter}" width="40%"/>

@@ -5115,7 +5115,8 @@ sap.ui.define([
 		this.mock(oCache).expects("getDownloadQueryOptions")
 			.withExactArgs(sinon.match.same(mQueryOptions)).returns(mDownloadQueryOptions);
 		this.mock(this.oRequestor).expects("buildQueryString")
-			.withExactArgs("~", sinon.match.same(mDownloadQueryOptions)).returns("?~query~");
+			.withExactArgs("~", sinon.match.same(mDownloadQueryOptions), false, true)
+			.returns("?~query~");
 
 		// code under test
 		assert.strictEqual(oCache.getDownloadUrl(""), "/~/resource/path?~query~");
@@ -5147,7 +5148,8 @@ sap.ui.define([
 		this.mock(oCache).expects("getDownloadQueryOptions")
 			.withExactArgs(sinon.match.same(mResultingQueryOptions)).returns(mDownloadQueryOptions);
 		this.mock(this.oRequestor).expects("buildQueryString")
-			.withExactArgs("~", sinon.match.same(mDownloadQueryOptions)).returns("?~query~");
+			.withExactArgs("~", sinon.match.same(mDownloadQueryOptions), false, true)
+			.returns("?~query~");
 
 		// code under test
 		assert.strictEqual(oCache.getDownloadUrl("cache/path", mCustomQueryOptions),

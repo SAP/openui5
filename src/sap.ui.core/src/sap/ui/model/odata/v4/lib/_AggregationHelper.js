@@ -277,7 +277,8 @@ sap.ui.define([
 			}
 
 			if (oAggregation.hierarchyQualifier) {
-				return _AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions);
+				return _AggregationHelper
+					.buildApply4Hierarchy(oAggregation, mQueryOptions, !iLevel);
 			}
 
 			mQueryOptions = Object.assign({}, mQueryOptions);
@@ -414,6 +415,8 @@ sap.ui.define([
 		 * @param {string[]} [mQueryOptions.$select]
 		 *   The value for a "$select" system query option; additional technical properties are
 		 *   added to the returned copy
+		 * @param {boolean} [bAllLevels]
+		 *   Whether to expand all levels
 		 * @returns {object}
 		 *   A map of key-value pairs representing the query string, including a value for the
 		 *   "$apply" system query option; it is a modified copy of <code>mQueryOptions</code>, with
@@ -421,7 +424,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		buildApply4Hierarchy : function (oAggregation, mQueryOptions) {
+		buildApply4Hierarchy : function (oAggregation, mQueryOptions, bAllLevels) {
 			var sApply = "",
 				sHierarchyQualifier = oAggregation.hierarchyQualifier,
 				sPath = oAggregation.$path,
@@ -489,14 +492,18 @@ sap.ui.define([
 				sApply += "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sPath
 					+ ",HierarchyQualifier='" + sHierarchyQualifier
 					+ "',NodeProperty='" + sNodeProperty
-					+ "',Levels=" + (oAggregation.expandTo || 1)
+					+ "',Levels=" + (bAllLevels ? 9 : oAggregation.expandTo || 1)
 					+ ")";
-				if (oAggregation.expandTo > 1) {
+				if (bAllLevels) {
+					select("DistanceFromRootProperty");
+				} else if (oAggregation.expandTo > 1) {
 					select("DistanceFromRootProperty");
 					select("LimitedDescendantCountProperty");
 				}
 			}
-			select("DrillStateProperty");
+			if (!bAllLevels) {
+				select("DrillStateProperty");
+			}
 			mQueryOptions.$apply = sApply;
 
 			return mQueryOptions;
