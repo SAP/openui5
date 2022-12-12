@@ -48,6 +48,12 @@
 			enableAutoColumnWidth="true"
 			paste="onPaste"
 			rowPress="onRowPress">
+		<mdc:dependents>
+			<plugins:CopyProvider id="copyProviderPlugin" extractData=".extractData" />
+		</mdc:dependents>
+		<mdc:actions>
+			<Button id="copyButton" icon="sap-icon://copy" press=".onCopyPress"/>
+		</mdc:actions>
 		<mdc:dataStateIndicator>
 			<plugins:DataStateIndicator id="dataStatePlugin" filter=".dataStateFilter" />
 		</mdc:dataStateIndicator>

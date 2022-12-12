@@ -103,8 +103,8 @@
 	oColumn = new sap.ui.table.Column(
 		{label: new sap.m.Text({text: "m.Text"}), template: oControl, width: "120px", sortProperty: "lastName", filterProperty: "lastName"});
 	oColumn.setAssociation("headerMenu",  oMenu);
-
 	oColumn.setCreationTemplate(new sap.m.Input({value: "{lastName}"}));
+	oColumn.data("clipboard", "lastName");
 	oTable.addColumn(oColumn);
 
 	// sap.m.Label
@@ -126,6 +126,7 @@
 			{label: new sap.m.Label({text: "m.Label"}), template: oControl, sortProperty: "name", filterProperty: "name", width: "6em"});
 	oColumn.setAssociation("headerMenu",  oMenu2);
 	oColumn.setCreationTemplate(new sap.m.Input({value: "{name}"}));
+	oColumn.data("clipboard", "name");
 	oTable.addColumn(oColumn);
 
 	// sap.m.ObjectStatus
@@ -136,7 +137,7 @@
 		sortProperty: "objStatusState",
 		filterProperty: "objStatusState",
 		width: "200px"
-	});
+	}).data("clipboard", "objStatusText");
 	oTable.addColumn(oColumn);
 
 	// sap.ui.core.Icon
@@ -147,23 +148,23 @@
 		template: oControl,
 		width: "80px",
 		hAlign: sap.ui.core.HorizontalAlign.Center
-	});
+	}).data("clipboard", "src");
 	oTable.addColumn(oColumn);
 
 	// sap.m.Button
 	oControl = new sap.m.Button({text: "{gender}", press: pressHandler});
-	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Button"}), template: oControl, width: "100px"});
+	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Button"}), template: oControl, width: "100px"}).data("clipboard", "gender");
 	oTable.addColumn(oColumn);
 
 	// sap.m.Input
 	oControl = new sap.m.Input({value: "{name}"});
-	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Input"}), template: oControl, width: "200px"});
+	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Input"}), template: oControl, width: "200px"}).data("clipboard", "name");
 	oColumn.setCreationTemplate(new sap.m.Text({text: "{name}"}));
 	oTable.addColumn(oColumn);
 
 	// sap.m.DatePicker
 	oControl = new sap.m.DatePicker({dateValue: "{birthdayDate}"});
-	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.DatePicker"}), template: oControl, width: "200px", filterProperty: "birthdayDate", filterType: new sap.ui.model.type.Date() });
+	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.DatePicker"}), template: oControl, width: "200px", filterProperty: "birthdayDate", filterType: new sap.ui.model.type.Date() }).data("clipboard", "birthdayDate");
 	oColumn.setCreationTemplate(new sap.m.DatePicker({dateValue: "{birthdayDate}"}));
 	oColumn.setAssociation("headerMenu",  new sap.m.table.columnmenu.Menu());
 	oTable.addColumn(oColumn);
@@ -207,7 +208,7 @@
 
 	// sap.m.Checkbox
 	oControl = new sap.m.CheckBox({selected: "{checked}", text: "{lastName}"});
-	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Checkbox"}), template: oControl, width: "50px"});
+	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Checkbox"}), template: oControl, width: "50px"}).data("clipboard", "checked");
 	oColumn.setCreationTemplate(new sap.m.HBox({items: [new sap.m.CheckBox({selected: "{checked}"}), new sap.m.Input({value: "{lastName}"})]}));
 	oTable.addColumn(oColumn);
 
@@ -220,12 +221,12 @@
 
 	// sap.m.Link
 	oControl = new sap.m.Link({href: "{href}", text: "{linkText}", press: pressHandler});
-	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Link"}), template: oControl, width: "150px"});
+	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Link"}), template: oControl, width: "150px"}).data("clipboard", "linkText");
 	oTable.addColumn(oColumn);
 
 	// sap.ui.unified.Currency
 	oControl = new sap.ui.unified.Currency({value: "{money}", currency: "{currency}"});
-	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "unified.Currency"}), template: oControl, width: "200px"});
+	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "unified.Currency"}), template: oControl, width: "200px"}).data("clipboard", "money");
 	oTable.addColumn(oColumn);
 
 	//sap.m.ProgressIndicator
