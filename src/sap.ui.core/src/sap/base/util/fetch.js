@@ -57,7 +57,7 @@ sap.ui.define([], function () {
 				value: headers
 			},
 			ok: {
-				value: xhr.status >= 200 && xhr.status < 300
+				value: xhr.status === 0 || (xhr.status >= 200 && xhr.status < 400)
 			},
 			status: {
 				value: xhr.status
