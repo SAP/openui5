@@ -14,6 +14,17 @@
         ]
       },
       {
+        "id": "424d45d4ef2e9bbedf20dc032823ac7ef37e3d04",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: fixed space before menu items without icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280155051"
+          }
+        ]
+      },
+      {
         "id": "aadc0be94f546e747c8d41dfa7a3a215f7f7c8aa",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: unstable test is fixed",
