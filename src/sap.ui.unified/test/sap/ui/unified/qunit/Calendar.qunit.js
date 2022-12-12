@@ -1963,6 +1963,32 @@ sap.ui.define([
 		oCal.destroy();
 	});
 
+	QUnit.test("interval selection when start date is in different month", function(assert) {
+		//arrange
+		var oCal = new Calendar({
+				intervalSelection: true,
+				months: 1
+			}),
+			oMonth;
+
+		oCal.displayDate(new Date(2022, 10, 1)); //2017, July 19
+		oCal.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		oMonth = oCal.getAggregation("month")[0];
+
+		// act
+		// simulate focusing of a date in current month (focusedDate = 2022-11-24)
+		oMonth.setProperty("_focusedDate", new CalendarDate(2022, 10, 24));
+		// select a date that is outside the current month (startDate of the interval selection = 2022-12-01)
+		oCal.addSelectedDate(new DateRange().setStartDate(new Date(2022, 11, 1)));
+
+		//assert - check if a date between focusedDate and startDate is eligible for marking as "between" date (for example 2022-11-26)
+		assert.equal(oMonth._checkDateSelected(new CalendarDate(2022, 10, 26)), 0, 'date between focusedDate and startDate is not marked as any kind of selected');
+
+		//clean
+		oCal.destroy();
+	});
+
 	QUnit.test("getFocusDomRef", function (assert) {
 		//arrange
 		var $selectedDate,
