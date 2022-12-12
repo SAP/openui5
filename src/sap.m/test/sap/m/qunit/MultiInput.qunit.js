@@ -406,7 +406,8 @@ sap.ui.define([
 
 
 	QUnit.test("tabindex of tokenizer in MultiInput", function(assert) {
-		assert.equal(!this.multiInput1.$().find(".sapMTokenizer").attr("tabindex"), true, "tokenizer has no tabindex if it is in MultiInput");
+		assert.equal(this.multiInput1.getAggregation("tokenizer")._bShouldRenderTabIndex, false, "_bShouldRenderTabIndex is set to false");
+		assert.equal(this.multiInput1.getAggregation("tokenizer").getDomRef().hasAttribute("tabindex"), false, "tokenizer has no tabindex if it is in MultiInput");
 	});
 
 	QUnit.test("test setEditable=false MultiInput with editable tokens", function(assert) {

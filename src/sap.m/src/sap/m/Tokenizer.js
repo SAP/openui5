@@ -252,6 +252,7 @@ sap.ui.define([
 		this.allowTextSelection(false);
 		this._oTokensWidthMap = {};
 		this._oIndicator = null;
+		this._bShouldRenderTabIndex = null;
 		this._oScroller = new ScrollEnablement(this, this.getId() + "-scrollContainer", {
 			horizontal : true,
 			vertical : false,
@@ -1492,6 +1493,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Method for handling the state for tabindex rendering
+	 *
+	 * @param {boolean} bShouldRenderTabIndex If tabindex should be rendered
+	 * @protected
+	 */
+	Tokenizer.prototype.setShouldRenderTabIndex = function (bShouldRenderTabIndex) {
+		this._bShouldRenderTabIndex = bShouldRenderTabIndex;
+	};
+
+	/**
+	 * Flag indicating if tabindex attribute should be rendered
+	 *
+	 * @returns {boolean} True if tabindex should be rendered and false if not
+	 * @protected
+	 */
+	Tokenizer.prototype.getEffectiveTabIndex = function () {
+		return this._bShouldRenderTabIndex === null ? !!this.getTokens().length : this._bShouldRenderTabIndex;
+	};
+
+	/**
 	 * Handle the focus event on the control.
 	 *
 	 * @param {jQuery.Event} oEvent The occuring event
@@ -1555,6 +1576,7 @@ sap.ui.define([
 		this._oTokensWidthMap = null;
 		this._oIndicator = null;
 		this._aTokenValidators = null;
+		this._bShouldRenderTabIndex = null;
 	};
 
 	/**

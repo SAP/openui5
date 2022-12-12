@@ -906,6 +906,36 @@ sap.ui.define([
 		assert.strictEqual(oTokenizer.getTokens()[0].getDomRef(), document.activeElement, "The navigation was successful.");
 	});
 
+	QUnit.test("Should render tabindex only if there are no tokens ", function(assert) {
+		// Arrange
+		var oTokenizer = new Tokenizer({}).placeAt("content");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oTokenizer.getDomRef().hasAttribute("tabindex"), false, "tabindex is not rendererd");
+
+		oTokenizer.addToken(new Token("token"));
+		Core.applyChanges();
+
+		assert.strictEqual(oTokenizer.getDomRef().hasAttribute("tabindex"), true, "tabindex is rendererd");
+
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("Should set _bShouldRenderTabIndex to false", function(assert) {
+		var oTokenizer = new Tokenizer({}).placeAt("content");
+
+		Core.applyChanges();
+
+		assert.strictEqual(oTokenizer._bShouldRenderTabIndex, null, "_bShouldRenderTabIndex is defined and asigned to null");
+
+		oTokenizer.setShouldRenderTabIndex(false);
+		Core.applyChanges();
+
+		assert.strictEqual(oTokenizer._bShouldRenderTabIndex, false, "_bShouldRenderTabIndex is not set");
+		oTokenizer.destroy();
+	});
+
 	QUnit.test("_selectRange(false)", function(assert) {
 		var oTokenizer = new Tokenizer().placeAt("content"),
 			aSelectedTokens,
