@@ -85,7 +85,8 @@ sap.ui.define([
 			library : "sap.m",
 			interfaces : [
 				 "sap.ui.core.IShrinkable",
-				 "sap.m.IHyphenation"
+				 "sap.m.IHyphenation",
+				 "sap.m.IToolbarInteractiveControl"
 			],
 			properties : {
 
@@ -318,6 +319,20 @@ sap.ui.define([
 
 		return iLevel;
 	};
+
+	/**
+	 * Required by the {@link sap.m.IToolbarInteractiveControl} interface.
+	 * Determines if the Control is interactive.
+	 *
+	 * @returns {boolean} If it is an interactive Control
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
+	 */
+	Title.prototype._getToolbarInteractive = function () {
+		return false;
+	};
+
 
 	// Add hyphenation to Title functionality
 	HyphenationSupport.mixInto(Title.prototype);
