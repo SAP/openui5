@@ -930,6 +930,25 @@
 				}
 			});
 
+			var oSelectDialog17 = new sap.m.SelectDialog("SelectDialog17", {
+				title: "Choose several World Domination companions",
+				noDataText: "Sorry, no world domination companions available",
+				contentWidth: "1000px",
+				searchPlaceholder: "Placeholder text"
+			});
+
+			// set model & bind Aggregation
+			oSelectDialog17.setModel(oModelList);
+			oSelectDialog17.bindAggregation("items", "/superheros", oItemTemplate);
+
+			var oButton17 = new sap.m.Button("Button17", {
+				text: "Select Dialog with custom placeholder",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+				press: function () {
+					// open dialog
+					oSelectDialog17.open();
+				}
+			});
 
 			var oPage = new sap.m.Page("page", {
 				title:"Mobile SelectDialog Control",
@@ -951,7 +970,8 @@
 							oButton13,
 							oButton14,
 							oButton15,
-							oButton16
+							oButton16,
+							oButton17
 						]
 					})
 				],
