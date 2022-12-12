@@ -528,8 +528,10 @@ sap.ui.define([
 	 * </ul>
 	 */
 	DateFormat.createInstance = function(oFormatOptions, oLocale, oInfo) {
+		var aFallbackFormatOptions, oFormat, sPattern;
+
 		// Create an instance of the DateFormat
-		var oFormat = Object.create(this.prototype);
+		oFormat = Object.create(this.prototype);
 
 		// Handle optional parameters
 		if ( oFormatOptions instanceof Locale ) {
@@ -611,48 +613,23 @@ sap.ui.define([
 
 		// if the current format isn't a fallback format, create its fallback formats
 		if (!oFormat.oFormatOptions.fallback) {
-			// If fallback DateFormats have not been created yet, do it now
-			if (!oInfo.oFallbackFormats) {
-				oInfo.oFallbackFormats = {};
+			aFallbackFormatOptions = oInfo.aFallbackFormatOptions;
+			// Add two fallback patterns for locale-dependent short format without delimiters
+			if (oInfo.bShortFallbackFormatOptions) {
+				sPattern = oInfo.getPattern(oFormat.oLocaleData, "short");
+				// add the options of fallback formats without delimiters to the fallback options array
+				aFallbackFormatOptions = aFallbackFormatOptions.concat(DateFormat._createFallbackOptionsWithoutDelimiter(sPattern));
 			}
-			// Store fallback formats per locale and calendar type
-			var sLocale = oLocale.toString(),
-				sCalendarType = oFormat.oFormatOptions.calendarType,
-				sKey = sLocale + "-" + sCalendarType,
-				sPattern,
-				aFallbackFormatOptions;
 
 			if (oFormat.oFormatOptions.pattern && oInfo.bPatternFallbackWithoutDelimiter) {
-				sKey = sKey + "-" + oFormat.oFormatOptions.pattern;
+				// create options of fallback formats by removing delimiters from the given pattern
+				// insert the new fallback format options to the front of the array
+				aFallbackFormatOptions = DateFormat._createFallbackOptionsWithoutDelimiter(oFormat.oFormatOptions.pattern).concat(aFallbackFormatOptions);
 			}
 
-			if (oFormat.oFormatOptions.interval) {
-				sKey = sKey + "-" + "interval";
-			}
-
-			var oFallbackFormats = oInfo.oFallbackFormats[sKey] ? Object.assign({}, oInfo.oFallbackFormats[sKey]) : undefined;
-
-			if (!oFallbackFormats) {
-				aFallbackFormatOptions = oInfo.aFallbackFormatOptions;
-				// Add two fallback patterns for locale-dependent short format without delimiters
-				if (oInfo.bShortFallbackFormatOptions) {
-					sPattern = oInfo.getPattern(oFormat.oLocaleData, "short");
-					// add the options of fallback formats without delimiters to the fallback options array
-					aFallbackFormatOptions = aFallbackFormatOptions.concat(DateFormat._createFallbackOptionsWithoutDelimiter(sPattern));
-				}
-
-				if (oFormat.oFormatOptions.pattern && oInfo.bPatternFallbackWithoutDelimiter) {
-					// create options of fallback formats by removing delimiters from the given pattern
-					// insert the new fallback format options to the front of the array
-					aFallbackFormatOptions = DateFormat._createFallbackOptionsWithoutDelimiter(oFormat.oFormatOptions.pattern).concat(aFallbackFormatOptions);
-				}
-
-				oFallbackFormats = DateFormat._createFallbackFormat(
-					aFallbackFormatOptions, sCalendarType, oLocale, oInfo, oFormat.oFormatOptions
-				);
-			}
-
-			oFormat.aFallbackFormats = oFallbackFormats;
+			oFormat.aFallbackFormats = DateFormat._createFallbackFormat(
+				aFallbackFormatOptions, oFormat.oFormatOptions.calendarType, oLocale, oInfo, oFormat.oFormatOptions
+			);
 		}
 
 		oFormat.oRequiredParts = oInfo.oRequiredParts;
