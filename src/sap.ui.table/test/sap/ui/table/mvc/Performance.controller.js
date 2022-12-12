@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement",
 	"sap/base/Log",
-	"sap/ui/core/Core"
-], function(Table, Column, library, Text, Label, Controller, JSONModel, Measurement, Log, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Fragment"
+], function(Table, Column, library, Text, Label, Controller, JSONModel, Measurement, Log, oCore, Fragment) {
 	"use strict";
 
 	var VisibleRowCountMode = library.VisibleRowCountMode;
@@ -67,12 +68,23 @@ sap.ui.define([
 		},
 
 		onSettingsPress: function(oEvent) {
+			var oView = this.getView(),
+				oSource = oEvent.getSource();
+
 			if (!this.oSettingsPopover) {
-				this.oSettingsPopover = sap.ui.xmlfragment("sap.ui.table.mvc.PerformanceSettings", this);
-				this.getView().addDependent(this.oSettingsPopover);
+				this.oSettingsPopover = Fragment.load({
+					id: oView.getId(),
+					name: "sap.ui.table.mvc.PerformanceSettings",
+					controller: this
+				}).then(function(oSettingsPopover) {
+					oView.addDependent(oSettingsPopover);
+					return oSettingsPopover;
+				});
 			}
 
-			this.oSettingsPopover.openBy(oEvent.getSource());
+			this.oSettingsPopover.then(function(oSettingsPopover) {
+				oSettingsPopover.openBy(oSource);
+			});
 		},
 
 		onSettingsPopoverClose: function() {
