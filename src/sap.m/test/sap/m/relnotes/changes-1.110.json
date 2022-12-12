@@ -3,6 +3,87 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "63cc488b4090092abb0d92aca6b180da8eb3440e",
+        "type": "FIX",
+        "text": " sap.m.StepInput: getValue() value precision now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270115454"
+          }
+        ]
+      },
+      {
+        "id": "cb37d142bb2928828eef146550b25ef943bc0963",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: override default state announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004825672022"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270139091"
+          }
+        ]
+      },
+      {
+        "id": "6d2a8798e29e724061abb0fd246ae6cf908b114a",
+        "type": "FIX",
+        "text": " sap.MultiComboBox: Don't display clearIcon when there is no value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270172883"
+          }
+        ]
+      },
+      {
+        "id": "67493d0799f2f8dbdf08f60b7a0e1de52a2f3c15",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: MenuButton with long text does not truncate in Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270165896"
+          }
+        ]
+      },
+      {
+        "id": "2bf8a9bd154a04dd4e938296461686da5b0f1708",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: inverted ObjectStatus parts align in compact and cozy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270183264"
+          }
+        ]
+      },
+      {
+        "id": "32fa22248447aa8ef7dfab86a83fec3e25c1d223",
+        "type": "FIX",
+        "text": " sap.m.QuickView: The unneeded scrollbar is removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270181883"
+          }
+        ]
+      },
+      {
+        "id": "f1c926575f9e4d3fd3311cbf7869796a7860a754",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Focus is now correct when text is not set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280182863"
+          }
+        ]
+      },
+      {
         "id": "0c331a9fde2dc5b8afcb108cc0f5f6257544dddd",
         "type": "FEATURE",
         "text": " sap.m.Carousel: New BackgroundDesign property implemented"

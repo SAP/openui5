@@ -3,9 +3,31 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "2bf8a9bd154a04dd4e938296461686da5b0f1708",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: inverted ObjectStatus parts align in compact and cozy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270183264"
+          }
+        ]
+      },
+      {
         "id": "0c331a9fde2dc5b8afcb108cc0f5f6257544dddd",
         "type": "FEATURE",
         "text": " sap.m.Carousel: New BackgroundDesign property implemented"
+      },
+      {
+        "id": "424d45d4ef2e9bbedf20dc032823ac7ef37e3d04",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: fixed space before menu items without icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280155051"
+          }
+        ]
       },
       {
         "id": "94d32693e5fa3cd120b6d6b4d5aa3bdfaa537611",

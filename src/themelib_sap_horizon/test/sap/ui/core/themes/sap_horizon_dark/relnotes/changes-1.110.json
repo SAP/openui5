@@ -3,6 +3,28 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "2bf8a9bd154a04dd4e938296461686da5b0f1708",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: inverted ObjectStatus parts align in compact and cozy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270183264"
+          }
+        ]
+      },
+      {
+        "id": "f1c926575f9e4d3fd3311cbf7869796a7860a754",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Focus is now correct when text is not set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280182863"
+          }
+        ]
+      },
+      {
         "id": "0c331a9fde2dc5b8afcb108cc0f5f6257544dddd",
         "type": "FEATURE",
         "text": " sap.m.Carousel: New BackgroundDesign property implemented"

@@ -3,6 +3,17 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "21e654e90a9c2e57302ebc402e19652c603f6209",
+        "type": "FIX",
+        "text": " sap.f.Card: Empty Card has a correct aria-labelledby attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280184391"
+          }
+        ]
+      },
+      {
         "id": "f8eb2042766408839c0140edd7e6d6f6bd54e3e1",
         "type": "FIX",
         "text": " GridList: Corrected accessibility role in \"No Data\" message",

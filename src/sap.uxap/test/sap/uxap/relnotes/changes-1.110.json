@@ -3,6 +3,28 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "d3aae013bc9b875dbc26eee0c4ac70242cd1ad38",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Fix failing QUnit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280188051"
+          }
+        ]
+      },
+      {
+        "id": "318a762c85839cdc97c4db158f994b3590ba90db",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Selecting Section with keyboard",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270113573"
+          }
+        ]
+      },
+      {
         "id": "39a20161a0249204c6eb186ce65d87e1c20fd1db",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: fix RTA Remove action",
