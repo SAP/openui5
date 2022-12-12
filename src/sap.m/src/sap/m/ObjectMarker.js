@@ -131,11 +131,12 @@ sap.ui.define([
 				 * Event is fired when the <code>ObjectMarker</code> is interactive and the user taps/clicks on it.
 				 */
 				press: {
-
-					/**
-					 * Type of the <code>ObjectMarker</code>.
-					 */
-					type: {type: "sap.m.ObjectMarkerType"}
+					parameters: {
+						/**
+						 * Type of the <code>ObjectMarker</code>.
+						 */
+						type: {type: "sap.m.ObjectMarkerType"}
+					}
 				}
 			},
 			dnd: { draggable: true, droppable: false }
@@ -306,7 +307,7 @@ sap.ui.define([
 		this._cleanup();
 	};
 
-	/*
+	/**
 	 * Intercepts <code>attachPress</code> to be able to re-render.
 	 * If <code>press</code> event is attached and the control is rendered as text, than the control will be
 	 * re-rendered as link.
@@ -328,7 +329,7 @@ sap.ui.define([
 		return this;
 	};
 
-	/*
+	/**
 	 * Intercepts <code>detachPress</code> to be able to re-render.
 	 * If <code>press</code> event is detached and the control is rendered as a link, than the control will be
 	 * re-rendered as a text.
