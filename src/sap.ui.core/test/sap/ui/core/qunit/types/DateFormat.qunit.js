@@ -4441,7 +4441,9 @@ sap.ui.define([
 	{pattern: "mmKK", inputWithExactLength: "1105", inputWithoutExactLength: "115"},
 	{pattern: "mmkk", inputWithExactLength: "1105", inputWithoutExactLength: "115"}
 ].forEach(function (oFixture) {
-	QUnit.test("Parsing w/o delimiters requires exact length for required parts; pattern: " + oFixture.pattern, function (assert) {
+	var sTitle = "Parsing w/o delimiters requires exact length for required parts; pattern: " + oFixture.pattern;
+
+	QUnit.test(sTitle, function (assert) {
 		var oDate,
 			oFormat = DateFormat.getDateTimeInstance({pattern: oFixture.pattern}, new Locale("de"));
 
@@ -4464,7 +4466,10 @@ sap.ui.define([
 	{pattern: "mmss", inputWithExactLength: "1105", inputWithoutExactLength: "115"},
 	{pattern: "ssSS", inputWithExactLength: "1150", inputWithoutExactLength: "115"}
 ].forEach(function (oFixture) {
-	QUnit.test("Parsing w/o delimiters does not require exact length for not required parts; pattern: " + oFixture.pattern, function (assert) {
+	var sTitle = "Parsing w/o delimiters does not require exact length for not required parts; pattern: "
+			+ oFixture.pattern;
+
+	QUnit.test(sTitle, function (assert) {
 		var oDate,
 			oFormat = DateFormat.getDateTimeInstance({pattern: oFixture.pattern}, new Locale("de"));
 
@@ -4480,7 +4485,8 @@ sap.ui.define([
 
 	//*****************************************************************************************************************
 	// note: unlike the other symbols, 'u' does not yet support formatting with 0 pad
-	QUnit.test("Parsing w/o delimiters does not require exact length for not required parts; symbol 'u' (special case)", function (assert) {
+	QUnit.test("Parsing w/o delimiters does not require exact length for not required parts; symbol 'u' (special case)",
+			function (assert) {
 		var oDate,
 			oFormat = DateFormat.getDateTimeInstance({pattern: "y wwuu"}, new Locale("de"));
 
