@@ -19,7 +19,7 @@ sap.ui.define(
 
 		function createModel(oSandbox, oConfig) {
 			TestUtils.setupODataV4Server(oSandbox, oConfig.mFixture, sSourceBase, oConfig.sServiceUrl);
-			return new ODataModel({ operationMode: OperationMode.Server, serviceUrl: oConfig.sServiceUrl, synchronizationMode: "None" });
+			return new ODataModel({ operationMode: OperationMode.Server, serviceUrl: oConfig.sServiceUrl });
 		}
 
 		function createModelWithSandbox(oConfig) {

@@ -888,7 +888,7 @@ sap.ui.define([
 		// fake oData binding - Don't use real logic
 		sinon.stub(oValueHelp, "getDelegate").returns({name: "sap/ui/mdc/odata/v4/FieldValueHelpDelegate", payload: {}});
 		sinon.stub(oValueHelp, "getControlDelegate").returns(FieldValueHelpDelegateV4);
-		var oDataModel = new ODataModel({synchronizationMode: "None", serviceUrl: "x/"});
+		var oDataModel = new ODataModel({serviceUrl: "x/"});
 		var oListBinding = new ODataListBinding(oDataModel, "/items");
 		oListBinding.aContexts = [];
 		sinon.stub(oListBinding, "initialize").returns(null);

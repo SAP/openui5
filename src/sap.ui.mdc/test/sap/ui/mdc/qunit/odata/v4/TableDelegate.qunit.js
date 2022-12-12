@@ -1241,7 +1241,6 @@ sap.ui.define([
 				dataProperty: "Name",
 				template: new Text({text: "Name"})
 			})).setModel(new ODataModel({
-				synchronizationMode: "None",
 				serviceUrl: "serviceUrl/",
 				operationMode: "Server"
 			}));

@@ -24,7 +24,6 @@ sap.ui.define([
 			var oModel = new ODataModel({
 				serviceUrl: sODataServiceUrl,
 				groupId: "$direct",
-				synchronizationMode: 'None',
 				autoExpandSelect: true,
 				operationMode: "Server"
 			});

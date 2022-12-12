@@ -35,7 +35,6 @@
 			"settings": {
 				"autoExpandSelect": true,
 				"operationMode": "Server",
-				"synchronizationMode": "None",
 				"updateGroupId": "booksGroup"
 			},
 			"type": "sap.ui.model.odata.v4.ODataModel"
