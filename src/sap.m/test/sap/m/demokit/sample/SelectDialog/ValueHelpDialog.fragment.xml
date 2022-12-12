@@ -5,6 +5,7 @@
 		noDataText="No Products Found"
 		title="Select Product"
 		search=".onSearch"
+		searchPlaceholder="Search Products"
 		confirm=".onValueHelpDialogClose"
 		cancel=".onValueHelpDialogClose"
 		showClearButton="true"

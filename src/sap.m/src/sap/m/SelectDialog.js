@@ -225,7 +225,7 @@ function(
 			titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto},
 
 			/**
-			 * Allows overriding the default placeholder text. If not set, the word "Search" in the current local language or English will be used as a placeholder.
+			 * Allows overriding the SearchField's default placeholder text. If not set, the word "Search" in the current local language or English will be used as a placeholder.
 			 * @since 1.110
 			 * @public
 			 */

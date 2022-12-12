@@ -5,6 +5,7 @@
 		noDataText="No Products Found"
 		title="Select Product"
 		search=".handleSearch"
+		searchPlaceholder="Search Products"
 		confirm=".handleValueHelpClose"
 		cancel=".handleValueHelpClose"
 		showClearButton="true"
