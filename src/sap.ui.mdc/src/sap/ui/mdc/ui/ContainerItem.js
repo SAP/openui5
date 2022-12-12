@@ -39,6 +39,13 @@ sap.ui.define(['sap/ui/core/Element'],
             key: {
                 type: "string",
                 defaultValue : null
+			},
+			/**
+			 * Text describing the provided content.
+			 */
+			text: {
+				type: "string",
+				defaultValue : null
 			}
 		},
 		aggregations: {

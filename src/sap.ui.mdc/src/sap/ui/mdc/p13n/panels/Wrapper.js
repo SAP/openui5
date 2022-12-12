@@ -151,6 +151,7 @@ sap.ui.define([
     Wrapper.prototype.addPanel = function (oPanel, sKey, sTab) {
         var oContainerItem = new ContainerItem({
             key: sKey,
+            text: sTab,
             content: oPanel
         });
 
@@ -164,7 +165,7 @@ sap.ui.define([
         this.oLayout.setShowHeader(sKey !== this.DEFAULT_KEY); //Don't show header in dafault view (avoid empty space),
         this._getTabBar().setSelectedKey(sKey);
         this._getNavBackBtn().setVisible(sKey !== this.DEFAULT_KEY);
-        this._getNavBackBtn().setText(sKey);
+        this._getNavBackBtn().setText((this.getView(sKey) && this.getView(sKey).getText()) || sKey);
     };
 
     Wrapper.prototype._addToNavigator = function (sKey, sText) {
