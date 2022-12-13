@@ -1310,5 +1310,32 @@
         ]
       }
     ]
+  },
+  "1.96.15": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "dd80a54b0bbac873b2d76293fdcc318bb2a485b4",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: added ability to create appointments in RTL mode with D&D",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005237632022"
+          }
+        ]
+      },
+      {
+        "id": "86d4b38bc534a35ceb1f0ed4d535e6749a802f9f",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Duplicated banner regions removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007193702022"
+          }
+        ]
+      }
+    ]
   }
 }

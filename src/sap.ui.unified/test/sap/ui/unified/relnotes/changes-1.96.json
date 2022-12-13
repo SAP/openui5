@@ -153,5 +153,21 @@
         ]
       }
     ]
+  },
+  "1.96.15": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "e33249150cabe139b8e2ada3caf3b05b794e6fb1",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: fixed space before menu items without icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280155051"
+          }
+        ]
+      }
+    ]
   }
 }

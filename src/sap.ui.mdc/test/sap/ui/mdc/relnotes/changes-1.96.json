@@ -95,5 +95,21 @@
         ]
       }
     ]
+  },
+  "1.96.15": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "228521c8b690a36c8b9cea9335888a0a66bd3689",
+        "type": "FIX",
+        "text": " FieldGroup is left if value help opens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007766102022"
+          }
+        ]
+      }
+    ]
   }
 }
