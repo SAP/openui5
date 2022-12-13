@@ -716,8 +716,6 @@ sap.ui.define([
 			assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
 
 			return vResult.then(function(vResult) {
-				assert.strictEqual(vResult, undefined, "Promise should have no fulfillment value");
-
 				// 1-3
 				assert.isLibLoaded('testlibs.scenario14.lib1');
 				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib1\/library-preload\.js$/));

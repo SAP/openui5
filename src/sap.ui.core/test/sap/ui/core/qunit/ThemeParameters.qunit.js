@@ -4,9 +4,10 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/Icon",
+	"sap/ui/core/Lib",
 	"sap/m/Bar",
 	"sap/ui/thirdparty/URI"
-], function(Parameters, Control, Element, Icon, Bar, URI) {
+], function(Parameters, Control, Element, Icon, Library, Bar, URI) {
 	"use strict";
 
 	QUnit.module("Parmeters.get");
@@ -108,7 +109,7 @@ sap.ui.define([
 		sap.ui.getCore().loadLibrary(sLib15Name);
 
 		// Link tags for recently loaded libs 15 and 16 shouldn't be available in DOM
-		var aAllLibrariesRequireCss = sap.ui.getCore().getAllLibrariesRequiringCss();
+		var aAllLibrariesRequireCss = Library.getAllInstancesRequiringCss();
 		document.querySelectorAll("link").forEach(function (oLink) {
 			if (oLink.id.includes(sLib15Name) || oLink.id.includes(sLib16Name)) {
 				assert.notOk("Link tag for lib 15 and 16 shouldn't be available synchronous");
@@ -118,7 +119,7 @@ sap.ui.define([
 		// Trigger loading of parameters.json for lib CSS which is not loaded
 		Parameters.get("sapUiThemeParamForLib14");
 		// Check that link tags are added in the corrct order
-		aAllLibrariesRequireCss = sap.ui.getCore().getAllLibrariesRequiringCss();
+		aAllLibrariesRequireCss = Library.getAllInstancesRequiringCss();
 		document.querySelectorAll("link").forEach(function (oLink) {
 			if (oLink.id.startsWith("sap-ui-theme-")) {
 				var sExpectedLinkId = aAllLibrariesRequireCss[i].variant ?
