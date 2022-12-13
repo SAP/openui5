@@ -112,7 +112,7 @@ sap.ui.define([
 			 * @private
 			 * @since 1.108.0
 			 */
-			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null},
+			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
 
 			/**
 			 * If set, the days are also displayed in this calendar type
@@ -120,7 +120,7 @@ sap.ui.define([
 			 * @private
 			 * @since 1.109.0
 			 */
-			 secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null}
+			 secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"}
 		},
 		aggregations : {
 

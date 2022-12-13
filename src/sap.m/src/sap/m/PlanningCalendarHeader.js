@@ -134,7 +134,7 @@ function(
 				 * @private
 				 * @since 1.108.0
 				 */
-				_primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null},
+				_primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
 
 				/**
 				 * If set, the days are also displayed in this calendar type
@@ -142,7 +142,7 @@ function(
 				 * @privates
 				 * @since 1.109.0
 				 */
-				_secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null}
+				_secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"}
 
 			},
 

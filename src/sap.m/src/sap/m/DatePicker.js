@@ -180,7 +180,7 @@ sap.ui.define([
 				 * If not set, the dates are only displayed in the primary calendar type
 				 * @since 1.34.1
 				 */
-				secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null},
+				secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
 
 				/**
 				 * Minimum date that can be shown and selected in the <code>DatePicker</code>. This must be a JavaScript date object.
