@@ -4251,8 +4251,11 @@ sap.ui.define([
 					oBinding.iActiveContexts = 1;
 					aPreviousContexts = oBinding.aContexts.slice();
 					assert.strictEqual(oBinding.getLength(), 6);
+					oContext1.oDeletePromise = "~oDeletePromise~";
 
 					arguments[4](2, -1); // now call the callback with the adjusted index
+
+					assert.strictEqual(oContext1.oDeletePromise, "~oDeletePromise~");
 
 					// expectations for then
 					oContext1Mock.expects("resetKeepAlive").exactly(bSuccess ? 1 : 0)
@@ -4293,6 +4296,8 @@ sap.ui.define([
 					if (bSuccess) {
 						fnResolve();
 					} else {
+						oContext1.oDeletePromise = "~oDeletePromise~";
+
 						oDeleteCall.args[0][4](2, 1); // call the callback for the re-insertion
 
 						// aContexts : [-1, 0, 2, undefined, 4] -> [-1, 0, 1, 2, undefined, 4]
@@ -4310,6 +4315,7 @@ sap.ui.define([
 						oBinding.aContexts.forEach(function (oContext, i) {
 							assert.strictEqual(oContext.getModelIndex(), i);
 						});
+						assert.strictEqual(oContext1.oDeletePromise, null);
 
 						fnReject("~oError~");
 					}
@@ -4364,6 +4370,7 @@ sap.ui.define([
 				},
 			oHelperMock = this.mock(_Helper),
 			oKeptAliveContext = {
+				oDeletePromise : "~oDeletePromise~",
 				iIndex : undefined,
 				created : function () { return undefined; },
 				getPath : function () { return "~contextPath~"; },
@@ -4432,9 +4439,13 @@ sap.ui.define([
 		// code under test - callback
 		oDeleteFromCacheExpectation.args[0][4](undefined, -1);
 
+		assert.strictEqual(oKeptAliveContext.oDeletePromise, "~oDeletePromise~");
+
 		if (oFixture.error) {
 			// code under test - callback for reinsertion
 			oDeleteFromCacheExpectation.args[0][4](undefined, 1);
+
+			assert.strictEqual(oKeptAliveContext.oDeletePromise, null);
 		}
 		return oPromise.then(function () {
 			assert.deepEqual(oBinding.aContexts, aContexts);

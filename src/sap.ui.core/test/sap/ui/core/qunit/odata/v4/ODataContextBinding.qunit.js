@@ -2982,6 +2982,7 @@ sap.ui.define([
 		var oBinding = this.bindContext(""),
 			oBindingMock = this.mock(oBinding),
 			oContext = Context.create(this.oModel, null, "/SalesOrders('42')"),
+			oExpectation,
 			oParent = {
 				_fireChange : function () {},
 				oElementContext : oContext,
@@ -2998,8 +2999,8 @@ sap.ui.define([
 		oBindingMock.expects("_findEmptyPathParentContext")
 			.withExactArgs(sinon.match.same(oBinding.oElementContext)).returns(oContext);
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
-		oBindingMock.expects("deleteFromCache")
-			.withExactArgs("~oGroupLock~", "SalesOrders('42')", "", null)
+		oExpectation = oBindingMock.expects("deleteFromCache")
+			.withExactArgs("~oGroupLock~", "SalesOrders('42')", "", null, sinon.match.func)
 			.returns(Promise.resolve().then(function () {
 				if (bSuccess) {
 					that.mock(oContext).expects("destroy").withExactArgs();
@@ -3015,6 +3016,18 @@ sap.ui.define([
 			{/*_oETagEntity*/}, "~bDoNotRequestCount~");
 
 		assert.strictEqual(oParent.oElementContext, null);
+
+		oContext.oDeletePromise = "~oDeletePromise~";
+
+		// code under test
+		oExpectation.args[0][4](undefined, -1);
+
+		assert.strictEqual(oContext.oDeletePromise, "~oDeletePromise~");
+
+		// code under test
+		oExpectation.args[0][4](undefined, 1);
+
+		assert.strictEqual(oContext.oDeletePromise, null);
 
 		return oPromise.then(function () {
 			assert.ok(bSuccess);
@@ -3074,7 +3087,7 @@ sap.ui.define([
 			.returns(oElementContext);
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
 		oBindingMock.expects("deleteFromCache")
-			.withExactArgs("~oGroupLock~", "SalesOrders('42')", "", null)
+			.withExactArgs("~oGroupLock~", "SalesOrders('42')", "", null, sinon.match.func)
 			.returns(Promise.resolve().then(function () {
 				if (oFixture.success) {
 					that.mock(oElementContext).expects("destroy").withExactArgs();
@@ -3134,7 +3147,7 @@ sap.ui.define([
 					oBinding.setContext(null);
 				});
 			this.mock(oBinding).expects("deleteFromCache")
-				.withExactArgs("myGroup", "EMPLOYEES('42')", "", null)
+				.withExactArgs("myGroup", "EMPLOYEES('42')", "", null, sinon.match.func)
 				.returns(Promise.resolve().then(function () {
 					if (bSuccess) {
 						that.mock(oElementContext).expects("destroy").withExactArgs();

@@ -354,7 +354,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
+[ // iStatus === -1 => The request is canceled
 	{bCreated : false, oEntity : undefined, iStatus : 200, sPath : ""},
 	{bCreated : true, oEntity : undefined, iStatus : 200, sPath : ""},
 	{bCreated : false, oEntity : undefined, iStatus : 404, sPath : ""},
@@ -362,6 +362,9 @@ sap.ui.define([
 	{bCreated : true, oEntity : undefined, iStatus : 500, sPath : "EMPLOYEE_2_EQUIPMENTS"},
 	{bCreated : true, oEntity : undefined, iStatus : 500, sPath : "", bMessagesToRestore : true},
 	{bCreated : false, oEntity : undefined, iStatus : 500, sPath : "", bInactive : true},
+	{bCreated : true, oEntity : undefined, iStatus : -1, sPath : "EMPLOYEE_2_EQUIPMENTS"},
+	{bCreated : true, oEntity : undefined, iStatus : -1, sPath : "", bMessagesToRestore : true},
+	{bCreated : false, oEntity : undefined, iStatus : -1, sPath : "", bInactive : true},
 	{bCreated : false, oEntity : {"@odata.etag" : "AnotherETag"}, iStatus : 200, sPath : ""}
 ].forEach(function (oFixture) {
 	QUnit.test("_Cache#_delete: from collection, status: " + oFixture.iStatus
@@ -381,41 +384,77 @@ sap.ui.define([
 				"@odata.etag" : sEtag
 			}, {}],
 			fnCallback = this.spy(),
+			oCountExpectation,
 			oDeleted = {index : "~insert~"},
 			oError = new Error(""),
 			oHelperMock = this.mock(_Helper),
+			oIndexExpectation,
 			oMessage1 = {code : "CODE1"},
 			oMessage2 = {code : "CODE2", persistent : true},
+			oMessageExpectation,
 			aMessages = oFixture.bMessagesToRestore ? [oMessage1, oMessage2] : [],
 			sPath = oFixture.sPath,
 			oPromise,
-			oRequestPromise = Promise.resolve().then(function () {
-				var iOnFailure = oFixture.iStatus === 500 ? 1 : 0;
+			oRequestExpectation,
+			oRequestPromise,
+			oSpliceExpectation,
+			bSuccess = oFixture.iStatus === 200 || oFixture.iStatus === 404;
 
-				if (oFixture.bInactive) {
-					oCache.iActiveUsages = 0;
+		function checkCleanedUp() {
+			assert.notOk("@$ui5.context.isDeleted" in aCacheData[1]);
+			assert.deepEqual(aCacheData.$deleted, ["a", "b", "c"]);
+			assert.strictEqual(aCacheData.$created, oFixture.bCreated ? 2 : 1);
+			assert.strictEqual(oCache.iActiveElements, oFixture.bCreated && !sPath ? 2 : 1);
+			if (oFixture.bInactive) {
+				sinon.assert.calledOnce(fnCallback);
+			} else {
+				sinon.assert.calledTwice(fnCallback);
+				sinon.assert.calledWithExactly(fnCallback.secondCall, "~insert~", 1);
+			}
+		}
+
+		oRequestPromise = Promise.resolve().then(function () {
+			var iOnFailure = bSuccess ? 0 : 1;
+
+			that.mock(_Helper).expects("removeByPath")
+				.withExactArgs(sinon.match.same(oCache.mChangeRequests), sPath + "('1')",
+					sinon.match.same(oRequestPromise));
+			if (oFixture.bInactive) {
+				oCache.iActiveUsages = 0;
+			}
+			oMessageExpectation = that.oModelInterfaceMock.expects("fireMessageChange")
+				.exactly(oFixture.bMessagesToRestore ? 1 : 0)
+				.withExactArgs({
+					newMessages : oFixture.iStatus < 0 ? [oMessage1, oMessage2] : [oMessage1]
+				});
+			aCacheData.$count = 2; // ensure that count is updated
+			oCountExpectation = oHelperMock.expects("updateExisting").exactly(iOnFailure)
+				.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath,
+					sinon.match.same(aCacheData), {$count : 3});
+			aCacheData.$created = 1;
+			oCache.iActiveElements = 1;
+			oSpliceExpectation = that.mock(aCacheData).expects("splice").exactly(iOnFailure)
+				.withExactArgs("~insert~", 0, sinon.match.same(aCacheData[1]));
+			oIndexExpectation = that.mock(oCache).expects("adjustIndexes").exactly(iOnFailure)
+				.withExactArgs(sPath, sinon.match.same(aCacheData), "~insert~", 1, 2);
+			if (oFixture.iStatus !== 200) {
+				if (oFixture.iStatus < 0) { // simulate the cancel
+					oError.canceled = true;
+
+					// code under test - call fnCancel
+					oRequestExpectation.args[0][6]();
+
+					if (oFixture.bMessagesToRestore) {
+						sinon.assert.called(oMessageExpectation);
+					}
+					sinon.assert.called(oCountExpectation);
+					sinon.assert.called(oSpliceExpectation);
+					sinon.assert.called(oIndexExpectation);
+					checkCleanedUp();
 				}
-				that.oModelInterfaceMock.expects("fireMessageChange")
-					.exactly(oFixture.bMessagesToRestore ? 1 : 0)
-					.withExactArgs({newMessages : [oMessage1]});
-				aCacheData.$count = 2; // ensure that count is updated
-				oHelperMock.expects("updateExisting").exactly(iOnFailure)
-					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath,
-						sinon.match.same(aCacheData), {$count : 3});
-				aCacheData.$created = 1;
-				oCache.iActiveElements = 1;
-				that.mock(aCacheData).expects("splice").exactly(iOnFailure)
-					.withExactArgs("~insert~", 0, sinon.match.same(aCacheData[1]));
-				that.mock(oCache).expects("adjustIndexes").exactly(iOnFailure)
-					.withExactArgs(sPath, sinon.match.same(aCacheData), "~insert~", 1, 2);
-				if (oFixture.iStatus !== 200) {
-					throw oError;
-				}
-			}).finally(function () {
-				that.mock(_Helper).expects("removeByPath")
-					.withExactArgs(sinon.match.same(oCache.mChangeRequests), sPath + "('1')",
-						sinon.match.same(oRequestPromise));
-			});
+				throw oError;
+			}
+		});
 
 		aCacheData.$byPredicate = {"('1')" : aCacheData[1]};
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
@@ -456,7 +495,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/EMPLOYEES", sinon.match.same(mQueryOptions), true)
 			.returns("?foo=bar");
-		this.oRequestorMock.expects("request")
+		oRequestExpectation = this.oRequestorMock.expects("request")
 			.withExactArgs("DELETE", "Equipments('1')?foo=bar", "~oGroupLock~",
 				{"If-Match" : sinon.match.same(oFixture.oEntity || aCacheData[1])}, undefined,
 				undefined, sinon.match.func, undefined,
@@ -476,22 +515,13 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(fnCallback, 1, -1);
 
 		return oPromise.then(function () {
-			assert.notStrictEqual(oFixture.iStatus, 500, "unexpected success");
+			assert.ok(bSuccess);
 			assert.deepEqual(aCacheData.$deleted, ["a", "b", "c"]);
 			assert.notOk("('1')" in aCacheData.$byPredicate);
 		}, function (oError0) {
-			assert.strictEqual(oFixture.iStatus, 500, JSON.stringify(oError0));
+			assert.notOk(bSuccess);
 			assert.strictEqual(oError0, oError);
-			assert.notOk("@$ui5.context.isDeleted" in aCacheData[1]);
-			assert.deepEqual(aCacheData.$deleted, ["a", "b", "c"]);
-			assert.strictEqual(aCacheData.$created, oFixture.bCreated ? 2 : 1);
-			assert.strictEqual(oCache.iActiveElements, oFixture.bCreated && !sPath ? 2 : 1);
-			if (oFixture.bInactive) {
-				sinon.assert.calledOnce(fnCallback);
-			} else {
-				sinon.assert.calledTwice(fnCallback);
-				sinon.assert.calledWithExactly(fnCallback.secondCall, "~insert~", 1);
-			}
+			checkCleanedUp();
 		});
 	});
 });
@@ -565,7 +595,7 @@ sap.ui.define([
 
 		// code under test
 		return oCache._delete(oGroupLock, "TEAMS('23')", "EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM",
-			null, undefined);
+			null, /*fnCallback*/function () {});
 	});
 });
 
@@ -10831,19 +10861,23 @@ sap.ui.define([
 	{lock : false, error : false},
 	{lock : true, error : false},
 	{lock : true, error : true},
-	{lock : true, error : true, canceled : true}
+	{lock : true, error : true, canceled : true},
+	{lock : true, error : true, inactive : true}
 ].forEach(function (oFixture) {
 	var sTitle = "SingleCache#_delete, followed by _fetchValue: root entity "
 			+ JSON.stringify(oFixture);
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createSingle("Employees('42')"),
+			fnCallback = sinon.spy(),
 			oData = {"@odata.etag" : 'W/"19770724000000.0000000"'},
 			oError = new Error(),
+			oExpectation,
 			oFetchGroupLock = {},
 			oMessage1 = {code : "CODE1"},
 			oMessage2 = {code : "CODE2", persistent : true},
 			aMessages = [oMessage1, oMessage2],
+			oPromise,
 			that = this;
 
 		this.oRequestorMock.expects("request")
@@ -10858,13 +10892,21 @@ sap.ui.define([
 				.withExactArgs("/Employees('42')", true).returns(aMessages);
 			that.oModelInterfaceMock.expects("fireMessageChange")
 				.withExactArgs({oldMessages : sinon.match.same(aMessages)});
-			that.oRequestorMock.expects("request").exactly(oFixture.lock ? 1 : 0)
+			oExpectation = that.oRequestorMock.expects("request").exactly(oFixture.lock ? 1 : 0)
 				.withExactArgs("DELETE", "Employees('42')", sinon.match.same(oDeleteGroupLock),
 					{"If-Match" : sinon.match.same(oEntity)},
 					undefined, undefined, sinon.match.func, undefined, "Employees('42')")
 				.returns(Promise.resolve().then(function () {
 					if (oFixture.error) {
-						oError.canceled = oFixture.canceled;
+						if (oFixture.canceled) {
+							oError.canceled = true;
+
+							// code under test - simulate cancel
+							oExpectation.args[0][6]();
+
+							sinon.assert.calledTwice(fnCallback);
+							sinon.assert.calledWithExactly(fnCallback, undefined, 1);
+						}
 						throw oError;
 					}
 				}));
@@ -10874,22 +10916,36 @@ sap.ui.define([
 				});
 
 			// code under test
-			return oCache._delete(oDeleteGroupLock, "Employees('42')", "", null, undefined)
-				.then(function () {
-					var oGroupLock = {unlock : function () {}};
+			oPromise = oCache._delete(oDeleteGroupLock, "Employees('42')", "", null, fnCallback);
 
-					assert.notOk(oFixture.error);
-					that.mock(oGroupLock).expects("unlock").withExactArgs();
+			sinon.assert.called(fnCallback);
+			sinon.assert.calledWithExactly(fnCallback, undefined, -1);
+			if (oFixture.inactive) {
+				oCache.iActiveUsages = 0;
+			}
 
-					oCache.fetchValue(oGroupLock).then(function () {
-						assert.ok(false);
-					}, function (oError) {
-						assert.strictEqual(oError.message, "Cannot read a deleted entity");
-					});
-				}, function (oError0) {
-					assert.ok(oFixture.error);
-					assert.strictEqual(oError0, oError);
+			return oPromise.then(function () {
+				var oGroupLock = {unlock : function () {}};
+
+				assert.notOk(oFixture.error);
+				that.mock(oGroupLock).expects("unlock").withExactArgs();
+
+				oCache.fetchValue(oGroupLock).then(function () {
+					assert.ok(false);
+				}, function (oError) {
+					assert.strictEqual(oError.message, "Cannot read a deleted entity");
 				});
+			}, function (oError0) {
+				assert.ok(oFixture.error);
+				assert.strictEqual(oError0, oError);
+
+				if (oFixture.inactive) {
+					sinon.assert.calledOnce(fnCallback);
+				} else {
+					sinon.assert.calledTwice(fnCallback);
+					sinon.assert.calledWithExactly(fnCallback, undefined, 1);
+				}
+			});
 		});
 	});
 });
