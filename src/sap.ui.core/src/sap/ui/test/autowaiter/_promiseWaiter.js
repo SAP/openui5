@@ -12,7 +12,7 @@ sap.ui.define([
 
 	var aPromises = [];
 	var OriginalPromise = window.Promise; // save it to avoid 'max call stack exceeded'
-	var aStaticMethods = ["resolve", "reject", "all", "race", "allSettled"];
+	var aStaticMethods = ["resolve", "reject", "all", "any", "race", "allSettled"];
 	var thenMicrotaskPromise;	// defined only during .then() call
 
 	var PromiseWaiter = WaiterBase.extend("sap.ui.test.autowaiter._promiseWaiter", {
