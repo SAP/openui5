@@ -1368,38 +1368,6 @@ sap.ui.define([
 			horizontal: false,
 			vertical: true
 		});
-
-		this._oScroller.setOnAfterScrollToElement(this._onAfterScrollToElement.bind(this));
-	};
-
-	/**
-	 * Offsets to the required scroll position.
-	 * The offset is the offset of the scroll container from the top of the content container.
-	 *
-	 * This is required because <code>sap.ui.code>ScrollEnablement.prototype.scrollToElement</code>
-	 * scrolls the element to the very top of the scroll container, regardless of the scroll container top-padding.
-	 *
-	 * @private
-	 */
-	ObjectPageLayout.prototype._onAfterScrollToElement = function () {
-		var iScrollTop = this._$opWrapper.scrollTop(),
-			bStickyAnchorBarBefore = this._bStickyAnchorBar,
-			iOffset;
-
-		// synchronously call the listener for the "scroll" event, to trigger any pending toggling of the header
-		this._onScroll({ target: { scrollTop: iScrollTop}});
-
-		// the <code>this._$contentContainer</code> is offset from the top of the scroll container
-		// with padding, in order to make space for the elements in the title area
-		iOffset = this._$contentContainer.get(0).offsetTop;
-
-		if (this._bStickyAnchorBar && !bStickyAnchorBarBefore && this._$opWrapper.scrollTop() === iScrollTop) {
-			// the offset in sticky mode is different from the offset in expanded mode
-			// where the difference is obtained from <code>this._getTitleHeightDelta()</code>
-			iOffset -= this._getTitleHeightDelta();
-		}
-
-		this._$opWrapper.scrollTop(iScrollTop - iOffset);
 	};
 
 	/**
@@ -2960,7 +2928,6 @@ sap.ui.define([
 		if (this._oScroller) {
 			this._oScroller.setScrollPaddingTop(iTitleHeight);
 		}
-
 
 		// (2) also make the area underneath the title invisible (using clip-path)
 		// to allow usage of *transparent background* of the title element
