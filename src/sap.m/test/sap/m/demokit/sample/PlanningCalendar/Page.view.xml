@@ -23,7 +23,7 @@
 					<core:Item key="Buddhist" text="Buddhist" />
 				</Select>
 				<Select id="secondaryCalendarTypeSelect" change="onCalendarSecondaryTypeSelect" selectedKey="None">
-					<core:Item text="Select secondary caledar type" key="None" />
+					<core:Item text="Select secondary calendar type" key="None" />
 					<core:Item key="Gregorian" text="Gregorian" />
 					<core:Item key="Islamic" text="Islamic" />
 					<core:Item key="Japanese" text="Japanese" />
