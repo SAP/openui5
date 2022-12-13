@@ -2,10 +2,6 @@
  * ${copyright}
  */
 
-/**
- * The IssueManager interface stores, groups and converts issues from the Core Object to a usable model by the Support Assistant.
- * Issues can be added only through the IssueManager using <code>addIssue</code> method.
- */
 sap.ui.define(["sap/base/util/deepExtend", "sap/ui/base/Object", "sap/ui/support/library", "sap/ui/support/supportRules/Constants"],
 	function (deepExtend, BaseObject, library, constants) {
 		"use strict";
@@ -54,15 +50,13 @@ sap.ui.define(["sap/base/util/deepExtend", "sap/ui/base/Object", "sap/ui/support
 		/**
 		 * @class
 		 * The IssueManager is used to store and export issues to the Support Assistant.
-		 * <h3>Overview</h3>
-		 * The IssueManager is used to store and export issues found by the Support Assistant.
+		 *
 		 * <h3>Usage</h3>
 		 * The IssueManager can be used as a static class and add issues using the <code>addIssue</code> method of both the IssueManager or the IssueManagerFacade.
-		 * @public
+		 * @private
 		 * @alias sap.ui.support.IssueManager
 		 */
 		var IssueManager = {
-
 
 			/**
 			 * Adds an issue to the list of issues found.
@@ -420,23 +414,27 @@ sap.ui.define(["sap/base/util/deepExtend", "sap/ui/base/Object", "sap/ui/support
 		};
 
 		/**
-		 * Creates an IssueManagerFacade.
-		 * @constructor
-		 * @private
-		 * @namespace
-		 * @alias sap.ui.support.IssueManagerFacade
+		 * @class
+		 * The IssueManagerFacade allows rule developers to add new issues.
+		 *
+		 * <h3>Usage</h3>
+		 * The IssueManagerFacade is passed as first argument to all rule check functions.
+		 *
+		 * @name sap.ui.support.IssueManagerFacade
 		 * @param {object} oRule Rule for the IssueManagerFacade
-		 * @returns {void}
+		 * @hideconstructor
+		 * @public
 		 */
 		var IssueManagerFacade = function (oRule) {
 			this.oRule = oRule;
 		};
 
 		/**
-		 * Adds issue to the IssueManager via the IssueManagerFacade.
+		 * Adds issue
+		 * @alias sap.ui.support.IssueManagerFacade#addIssue
 		 * @public
-		 * @param {object} oIssue Issue object to be added in the IssueManager
-		 * @returns {void}
+		 * @param {{severity: sap.ui.support.Severity, details: string, context: {id: string}}} oIssue Issue object to be added
+		 * @throws {Error} Will throw an error if some of the issue properties are invalid
 		 */
 		IssueManagerFacade.prototype.addIssue = function (oIssue) {
 			oIssue.rule = this.oRule;
