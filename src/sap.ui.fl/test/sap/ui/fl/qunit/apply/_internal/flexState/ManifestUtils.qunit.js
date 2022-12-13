@@ -315,6 +315,29 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getPreviewSectionFromAsyncHints(oAsyncHints), undefined, "nothing is returned");
 		});
 
+		QUnit.test("with filled async hints with multiple entries (one matching) given", function(assert) {
+			var oAsyncHints = {
+				requests: [
+					{
+						name: "sap.ui.fl.changes",
+						reference: "other.ref1",
+						cachebusterToken: "othertoken"
+					},
+					{
+						name: "sap.ui.fl.changes",
+						reference: sReference,
+						cachebusterToken: "token"
+					},
+					{
+						name: "sap.ui.fl.changes",
+						reference: "other.ref2",
+						cachebusterToken: "othertoken"
+					}
+				]
+			};
+			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints(sReference, oAsyncHints), "token", "the cachebusterToken is returned");
+		});
+
 		QUnit.test("with filled async hints given a preview is present", function(assert) {
 			var oPreview = {};
 			var oAsyncHints = {
