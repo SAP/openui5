@@ -430,7 +430,7 @@ sap.ui.define([
 				},
 				oBinding0 = {
 					oCache : {},
-					hasPendingChanges : function () {}
+					_hasPendingChanges : function () {}
 					// no hasPendingChangesInDependents
 				},
 				oBinding1 = {
@@ -450,9 +450,9 @@ sap.ui.define([
 			this.mock(oModel).expects("getDependentBindings")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns([oBinding0, oBinding1]);
-			this.mock(oBinding0).expects("hasPendingChanges").withExactArgs()
+			this.mock(oBinding0).expects("_hasPendingChanges").withExactArgs(false, true)
 				.returns(oFixture.aBindingHasPendingChanges[0]);
-			this.mock(oBinding1).expects("hasPendingChangesInDependents").withExactArgs()
+			this.mock(oBinding1).expects("hasPendingChangesInDependents").withExactArgs(false, true)
 				.exactly(oFixture.aBindingHasPendingChanges[0] ? 0 : 1)
 				.returns(oFixture.aBindingHasPendingChanges[1]);
 			this.mock(oModel).expects("withUnresolvedBindings")

@@ -962,8 +962,8 @@ sap.ui.define([
 			|| this.getBinding().hasPendingChangesForPath(this.sPath)
 			|| this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
 				return oDependentBinding.oCache
-					? oDependentBinding.hasPendingChanges()
-					: oDependentBinding.hasPendingChangesInDependents();
+					? oDependentBinding._hasPendingChanges(false, true)
+					: oDependentBinding.hasPendingChangesInDependents(false, true);
 			})
 			|| this.oModel.withUnresolvedBindings("hasPendingChangesInCaches", this.sPath.slice(1));
 	};

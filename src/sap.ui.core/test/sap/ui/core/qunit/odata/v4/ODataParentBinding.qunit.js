@@ -3104,8 +3104,10 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bIgnoreKeptAlive) {
-	var sTitle = "hasPendingChangesInDependents: bIgnoreKeptAlive = " + bIgnoreKeptAlive;
+[undefined, true].forEach(function (bIgnoreInactiveCaches) {
+	[false, true].forEach(function (bIgnoreKeptAlive) {
+	var sTitle = "hasPendingChangesInDependents: bIgnoreKeptAlive = " + bIgnoreKeptAlive
+		+ " bIgnoreInactiveCaches = " + bIgnoreInactiveCaches;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache1 = {
@@ -3180,7 +3182,7 @@ sap.ui.define([
 			oModelMock = this.mock(oBinding.oModel);
 
 		this.mock(oBinding).expects("getDependentBindings").exactly(9).withExactArgs()
-			.returns([oChild1, oChild2, oChild3, oChild4, oChild5]);
+			.returns([oChild1, oChild2, oChild3, oChild4, oChild5]); // for all C.U.T
 		oModelMock.expects("withUnresolvedBindings").never(); // this is overridden at the end...
 		// these are overridden by and by
 		// BEWARE: cannot override #never via #atLeast, only #exactly seems to work :-(
@@ -3199,78 +3201,156 @@ sap.ui.define([
 			.returns(true);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive), true);
+		assert.strictEqual(
+			oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive, bIgnoreInactiveCaches), true);
 
-		oCache1Mock.expects("hasPendingChangesForPath").exactly(8)
+		oCache1Mock.expects("hasPendingChangesForPath")
 			.withExactArgs("", false, bIgnoreTransient).returns(false);
-		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs(bIgnoreKeptAlive)
-			.returns(true);
+		oChild1Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(true);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive), true);
+		assert.strictEqual(
+			oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive, bIgnoreInactiveCaches), true);
 
-		oChild1Mock.expects("hasPendingChangesInDependents").exactly(7)
-			.withExactArgs(bIgnoreKeptAlive).returns(false);
-		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs(bIgnoreKeptAlive)
-			.returns(true);
+		oCache1Mock.expects("hasPendingChangesForPath")
+			.withExactArgs("", false, bIgnoreTransient).returns(false);
+		oChild1Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oChild2Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(true);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive), true);
+		assert.strictEqual(
+			oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive, bIgnoreInactiveCaches), true);
 
-		oChild2Mock.expects("hasPendingChangesInDependents").exactly(6)
-			.withExactArgs(bIgnoreKeptAlive).returns(false);
+		oCache1Mock.expects("hasPendingChangesForPath")
+			.withExactArgs("", false, bIgnoreTransient).returns(false);
+		oChild1Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oChild2Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
 		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive), true);
+		assert.strictEqual(
+			oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive, bIgnoreInactiveCaches), true);
 
-		oChild3Mock.expects("hasPendingChangesForPath").exactly(5)
-			.withExactArgs("").returns(false);
-		oCache3_1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
-
-		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive), true);
-
-		oCache3_1Mock.expects("hasPendingChangesForPath").exactly(4)
-			.withExactArgs("").returns(false);
-		oCache3_2Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
-
-		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive), true);
-
-		oCache3_2Mock.expects("hasPendingChangesForPath").exactly(3)
-			.withExactArgs("").returns(false);
-		oChild3Mock.expects("hasPendingChangesInDependents").withExactArgs(bIgnoreKeptAlive)
-			.returns(true);
+		oCache1Mock.expects("hasPendingChangesForPath")
+			.withExactArgs("", false, bIgnoreTransient).returns(false);
+		oChild1Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oChild2Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		if (!bIgnoreInactiveCaches) {
+			oCache3_1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
+		} else {
+			oChild3Mock.expects("hasPendingChangesInDependents")
+				.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(true);
+		}
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive), true);
+		assert.strictEqual(
+			oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive, bIgnoreInactiveCaches), true);
 
-		oChild3Mock.expects("hasPendingChangesInDependents").exactly(2)
-			.withExactArgs(bIgnoreKeptAlive).returns(false);
-		oCache4Mock.expects("hasPendingChangesForPath").exactly(2)
+		oCache1Mock.expects("hasPendingChangesForPath")
+			.withExactArgs("", false, bIgnoreTransient).returns(false);
+		oChild1Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oChild2Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		if (!bIgnoreInactiveCaches) {
+			oCache3_1Mock.expects("hasPendingChangesForPath")
+				.withExactArgs("").returns(false);
+			oCache3_2Mock.expects("hasPendingChangesForPath")
+				.withExactArgs("").returns(true);
+		} else {
+			oChild3Mock.expects("hasPendingChangesInDependents")
+				.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(true);
+		}
+
+		// code under test
+		assert.strictEqual(
+			oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive, bIgnoreInactiveCaches), true);
+
+		oCache1Mock.expects("hasPendingChangesForPath")
+			.withExactArgs("", false, bIgnoreTransient).returns(false);
+		oChild1Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oChild2Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		if (!bIgnoreInactiveCaches) {
+			oCache3_1Mock.expects("hasPendingChangesForPath")
+				.withExactArgs("").returns(false);
+			oCache3_2Mock.expects("hasPendingChangesForPath")
+				.withExactArgs("").returns(false);
+		}
+		oChild3Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(true);
+
+		// code under test
+		assert.strictEqual(
+			oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive, bIgnoreInactiveCaches), true);
+
+		oCache1Mock.expects("hasPendingChangesForPath")
+			.withExactArgs("", false, bIgnoreTransient).returns(false);
+		oChild1Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oChild2Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		if (!bIgnoreInactiveCaches) {
+			oCache3_1Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+			oCache3_2Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		}
+		oChild3Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oCache4Mock.expects("hasPendingChangesForPath")
 			.withExactArgs("", false, false).returns(false);
-		oChild4Mock.expects("hasPendingChangesInDependents").withExactArgs(false)
-			.returns(true);
+		oChild4Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(false, bIgnoreInactiveCaches).returns(true);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive), true);
+		assert.strictEqual(
+			oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive, bIgnoreInactiveCaches), true);
 
-		oChild4Mock.expects("hasPendingChangesInDependents").exactly(1)
-			.withExactArgs(false).returns(false);
-		oCache5Mock.expects("hasPendingChangesForPath").exactly(1)
+		oCache1Mock.expects("hasPendingChangesForPath")
+			.withExactArgs("", false, bIgnoreTransient).returns(false);
+		oChild1Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oChild2Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		if (!bIgnoreInactiveCaches) {
+			oCache3_1Mock.expects("hasPendingChangesForPath")
+				.withExactArgs("").returns(false);
+			oCache3_2Mock.expects("hasPendingChangesForPath")
+				.withExactArgs("").returns(false);
+		}
+		oChild3Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
+		oCache4Mock.expects("hasPendingChangesForPath")
+			.withExactArgs("", false, false).returns(false);
+		oChild4Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(false, bIgnoreInactiveCaches).returns(false);
+		oCache5Mock.expects("hasPendingChangesForPath")
 			.withExactArgs("", false, bIgnoreKeptAlive ? undefined : false).returns(false);
-		oChild5Mock.expects("hasPendingChangesInDependents").exactly(1)
-			.withExactArgs(bIgnoreKeptAlive).returns(false);
+		oChild5Mock.expects("hasPendingChangesInDependents")
+			.withExactArgs(bIgnoreKeptAlive, bIgnoreInactiveCaches).returns(false);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs()
 			.returns("/some/absolute/path");
 		oModelMock.expects("withUnresolvedBindings")
-			.withExactArgs("hasPendingChangesInCaches", "some/absolute/path")
-			.returns("~bResult~");
+			.withExactArgs("hasPendingChangesInCaches", "some/absolute/path").returns("~bResult~");
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive), "~bResult~");
+		assert.strictEqual(
+			oBinding.hasPendingChangesInDependents(bIgnoreKeptAlive, bIgnoreInactiveCaches),
+			"~bResult~");
 	});
+});
 });
 
 	//*********************************************************************************************
@@ -3307,7 +3387,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
 			.returns([oChild0, oChild1, oChild2]);
 		this.mock(oChild0).expects("hasPendingChangesForPath").withExactArgs("").returns(false);
-		this.mock(oChild0).expects("hasPendingChangesInDependents").withExactArgs(false)
+		this.mock(oChild0).expects("hasPendingChangesInDependents").withExactArgs(false, undefined)
 			.returns(false);
 		if (bIgnoreKeptAlive) {
 			this.mock(oContext0).expects("isKeepAlive").withExactArgs().returns(false);

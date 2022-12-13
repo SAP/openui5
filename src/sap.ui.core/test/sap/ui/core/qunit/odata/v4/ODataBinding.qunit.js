@@ -457,7 +457,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("hasPendingChanges", function (assert) {
+	QUnit.test("_hasPendingChanges", function (assert) {
 		var oBinding = new ODataBinding({
 				isResolved : function () {}
 			}),
@@ -469,7 +469,7 @@ sap.ui.define([
 		oBindingMock.expects("hasPendingChangesInDependents").never();
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChanges(), false);
+		assert.strictEqual(oBinding._hasPendingChanges(), false);
 
 		oBindingMock.expects("isResolved").withExactArgs().returns(true);
 		oBindingMock.expects("hasPendingChangesForPath").withExactArgs("", "~bIgnoreKeptAlive~")
@@ -477,16 +477,30 @@ sap.ui.define([
 		oBindingMock.expects("hasPendingChangesInDependents").never();
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChanges("~bIgnoreKeptAlive~"), true);
+		assert.strictEqual(oBinding._hasPendingChanges("~bIgnoreKeptAlive~",
+			"~bIgnoreInactiveCaches~"), true);
 
 		oBindingMock.expects("isResolved").withExactArgs().returns(true);
 		oBindingMock.expects("hasPendingChangesForPath").withExactArgs("", "~bIgnoreKeptAlive~")
 			.returns(false);
-		oBindingMock.expects("hasPendingChangesInDependents").withExactArgs("~bIgnoreKeptAlive~")
+		oBindingMock.expects("hasPendingChangesInDependents")
+			.withExactArgs("~bIgnoreKeptAlive~", "~bIgnoreInactiveCaches~")
 			.returns(bResult);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChanges("~bIgnoreKeptAlive~"), bResult);
+		assert.strictEqual(oBinding._hasPendingChanges("~bIgnoreKeptAlive~",
+			"~bIgnoreInactiveCaches~"), bResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChanges", function (assert) {
+		var oBinding = new ODataBinding();
+
+		this.mock(oBinding).expects("_hasPendingChanges").withExactArgs("~bIgnoreKeptAlive~")
+			.returns("~bResult~");
+
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChanges("~bIgnoreKeptAlive~"), "~bResult~");
 	});
 
 	//*********************************************************************************************

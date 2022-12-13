@@ -1053,7 +1053,8 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesInDependents
 	 */
-	ODataParentBinding.prototype.hasPendingChangesInDependents = function (bIgnoreKeptAlive0) {
+	ODataParentBinding.prototype.hasPendingChangesInDependents = function (bIgnoreKeptAlive0,
+			bIgnoreInactiveCaches) {
 		return this.getDependentBindings().some(function (oDependent) {
 			var oCache = oDependent.oCache,
 				bHasPendingChanges,
@@ -1076,7 +1077,7 @@ sap.ui.define([
 			} else if (oDependent.hasPendingChangesForPath("")) {
 				return true;
 			}
-			if (oDependent.mCacheByResourcePath) {
+			if (oDependent.mCacheByResourcePath && !bIgnoreInactiveCaches) {
 				bHasPendingChanges = Object.keys(oDependent.mCacheByResourcePath)
 					.some(function (sPath) {
 						var oCacheForPath = oDependent.mCacheByResourcePath[sPath];
@@ -1088,8 +1089,8 @@ sap.ui.define([
 					return true;
 				}
 			}
-			// Ask dependents, they might have no cache, but pending changes in mCacheByResourcePath
-			return oDependent.hasPendingChangesInDependents(bIgnoreKeptAlive);
+			return oDependent.hasPendingChangesInDependents(bIgnoreKeptAlive,
+				bIgnoreInactiveCaches);
 		})
 		|| this.oModel.withUnresolvedBindings("hasPendingChangesInCaches",
 				this.getResolvedPath().slice(1));
