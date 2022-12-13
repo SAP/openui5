@@ -4040,4 +4040,218 @@ sap.ui.define([
 					oFixture.formatted, "Format '" + oFixture.formatted + "'");
 			});
 		});
+
+	//*****************************************************************************************************************
+	QUnit.module("DateFormat", {
+		beforeEach: function () {
+			stubTimezone("Europe/Berlin");
+		},
+		afterEach: function () {
+			stubTimezone(null);
+		}
 	});
+
+	//*****************************************************************************************************************
+	QUnit.test("_createPatternSymbol", function (assert) {
+		// code under test: defaulting
+		var oSymbol = DateFormat._createPatternSymbol({});
+
+		assert.strictEqual(oSymbol.name, undefined);
+		assert.strictEqual(oSymbol.format(), "");
+		assert.deepEqual(oSymbol.parse(), {});
+		assert.strictEqual(oSymbol.isNumeric(), false);
+
+		// code under test: with args
+		oSymbol = DateFormat._createPatternSymbol({
+			name: "~name",
+			format: "~format",
+			parse: "~parse",
+			isNumeric: "~isNumeric"
+		});
+
+		assert.strictEqual(oSymbol.name, "~name");
+		assert.strictEqual(oSymbol.format, "~format");
+		assert.deepEqual(oSymbol.parse, "~parse");
+		assert.strictEqual(oSymbol.isNumeric(), "~isNumeric");
+
+		// code under test: with args, isNumeric as function
+		oSymbol = DateFormat._createPatternSymbol({isNumeric: function () { return "~foo"; }});
+
+		assert.strictEqual(oSymbol.isNumeric(), "~foo");
+	});
+
+	//*****************************************************************************************************************
+["y", "Y", "d", "u", "H", "k", "K", "h", "m", "s", "S"].forEach(function (sSymbol) {
+	QUnit.test("Pattern Symbol '" + sSymbol + "' #isNumeric=true", function (assert) {
+		var oFormat = DateFormat.getDateTimeInstance(),
+			oSymbol = oFormat.oSymbols[sSymbol];
+
+		// code under test
+		assert.strictEqual(oSymbol.isNumeric(/*not relevant*/), true);
+	});
+});
+
+	//*****************************************************************************************************************
+["", "G", "W", "D", "F", "E", "c", "a", "z", "Z", "X", "V"].forEach(function (sSymbol) {
+	QUnit.test("Pattern Symbol '" + sSymbol + "' #isNumeric=false", function (assert) {
+		var oFormat = DateFormat.getDateTimeInstance(),
+			oSymbol = oFormat.oSymbols[sSymbol];
+
+		// code under test
+		assert.strictEqual(oSymbol.isNumeric(/*not relevant*/), false);
+	});
+});
+
+	//*****************************************************************************************************************
+["M", "L", "w", "Q", "q"].forEach(function (sSymbol) {
+	QUnit.test("Pattern Symbol '" + sSymbol + "' #isNumeric, depends on symbol repetitions", function (assert) {
+		var oFormat = DateFormat.getDateTimeInstance(),
+			oSymbol = oFormat.oSymbols[sSymbol];
+
+		// code under test
+		assert.strictEqual(oSymbol.isNumeric(1), true);
+		assert.strictEqual(oSymbol.isNumeric(2), true);
+		assert.strictEqual(oSymbol.isNumeric(3), false);
+		assert.strictEqual(oSymbol.isNumeric(4), false);
+		assert.strictEqual(oSymbol.isNumeric(5), false);
+	});
+});
+
+	//*****************************************************************************************************************
+[{
+	pattern: "dd",
+	input: "11",
+	expected: [{symbol: "d", subValue: "11", exactLength: false}],
+	result: new Date(1970, 0, 11)
+}, {
+	pattern: "ddMM",
+	input: "1102",
+	expected: [{symbol: "d", subValue: "1102", exactLength: true}, {symbol: "M", subValue: "02", exactLength: true}],
+	result: new Date(1970, 1, 11)
+}, {
+	pattern: "dd-MM",
+	input: "11-02",
+	expected: [
+		{symbol: "d", subValue: "11-02", exactLength: false},
+		{symbol: "", subValue: "-02", exactLength: false},
+		{symbol: "M", subValue: "02", exactLength: false}
+	],
+	result: new Date(1970, 1, 11)
+}, {
+	pattern: "-ddMM",
+	input: "-1102",
+	expected: [
+		{symbol: "", subValue: "-1102", exactLength: false},
+		{symbol: "d", subValue: "1102", exactLength: true},
+		{symbol: "M", subValue: "02", exactLength: true}
+	],
+	result: new Date(1970, 1, 11)
+}, {
+	pattern: "ddMM-",
+	input: "1102-",
+	expected: [
+		{symbol: "d", subValue: "1102-", exactLength: true},
+		{symbol: "M", subValue: "02-", exactLength: true},
+		{symbol: "", subValue: "-", exactLength: false}
+	],
+	result: new Date(1970, 1, 11)
+}].forEach(function (oFixture) {
+	QUnit.test("_parse: determine exactLength for parse config; pattern: " + oFixture.pattern, function (assert) {
+		var mExpectedParts = {
+				"": {type: "text", value: "-"},
+				"d": {type: "day", symbol: "d", digits: 2},
+				"M": {type: "month", symbol: "M", digits: 2}
+			},
+			oFormat = DateFormat.getDateTimeInstance({pattern: oFixture.pattern}),
+			that = this;
+
+		oFixture.expected.forEach(function (oExpected) {
+			that.mock(oFormat.oSymbols[oExpected.symbol])
+				.expects("parse")
+				.withExactArgs(oExpected.subValue,
+					mExpectedParts[oExpected.symbol],
+					sinon.match.same(oFormat),
+					sinon.match.object.and(sinon.match.has("exactLength", oExpected.exactLength)),
+					"Europe/Berlin")
+				.callThrough();
+		});
+
+		// code under test
+		assert.deepEqual(oFormat.parse(oFixture.input), oFixture.result);
+	});
+});
+
+	//*****************************************************************************************************************
+	// note: the last pattern symbol is responsible for a failing 'exactLength' check
+[
+	{pattern: "MMdd", inputWithExactLength: "1105", inputWithoutExactLength: "115"},
+	{pattern: "ddMM", inputWithExactLength: "1105", inputWithoutExactLength: "115"},
+	{pattern: "MMyyyy", inputWithExactLength: "052001", inputWithoutExactLength: "0501"},
+	{pattern: "MMy", inputWithExactLength: "052001", inputWithoutExactLength: "0501"},
+	{pattern: "MMyy", inputWithExactLength: "0501", inputWithoutExactLength: "052001"},
+	{pattern: "MMYYYY", inputWithExactLength: "052001", inputWithoutExactLength: "0501"},
+	{pattern: "MMY", inputWithExactLength: "052001", inputWithoutExactLength: "0501"},
+	{pattern: "MMYY", inputWithExactLength: "0501", inputWithoutExactLength: "052001"},
+	{pattern: "mmHH", inputWithExactLength: "1105", inputWithoutExactLength: "115"},
+	{pattern: "mmhh", inputWithExactLength: "1105", inputWithoutExactLength: "115"},
+	{pattern: "mmKK", inputWithExactLength: "1105", inputWithoutExactLength: "115"},
+	{pattern: "mmkk", inputWithExactLength: "1105", inputWithoutExactLength: "115"}
+].forEach(function (oFixture) {
+	var sTitle = "Parsing w/o delimiters requires exact length for required parts; pattern: " + oFixture.pattern;
+
+	QUnit.test(sTitle, function (assert) {
+		var oDate,
+			oFormat = DateFormat.getDateTimeInstance({pattern: oFixture.pattern}, new Locale("de"));
+
+		// code under test: input with exact length is parsable
+		oDate = oFormat.parse(oFixture.inputWithExactLength);
+		assert.strictEqual(oFormat.format(oDate).toString(), oFixture.inputWithExactLength);
+
+		// code under test: input without exact length is not parsable
+		assert.strictEqual(oFormat.parse(oFixture.inputWithoutExactLength), null);
+	});
+});
+
+	//*****************************************************************************************************************
+[
+	{pattern: "ddLL", inputWithExactLength: "1105", inputWithoutExactLength: "115"},
+	{pattern: "yyqq", inputWithExactLength: "2203", inputWithoutExactLength: "223"},
+	{pattern: "yyQQ", inputWithExactLength: "2203", inputWithoutExactLength: "223"},
+	{pattern: "yyww", inputWithExactLength: "2203", inputWithoutExactLength: "223"},
+	{pattern: "HHmm", inputWithExactLength: "1105", inputWithoutExactLength: "115"},
+	{pattern: "mmss", inputWithExactLength: "1105", inputWithoutExactLength: "115"},
+	{pattern: "ssSS", inputWithExactLength: "1150", inputWithoutExactLength: "115"}
+].forEach(function (oFixture) {
+	var sTitle = "Parsing w/o delimiters does not require exact length for not required parts; pattern: "
+			+ oFixture.pattern;
+
+	QUnit.test(sTitle, function (assert) {
+		var oDate,
+			oFormat = DateFormat.getDateTimeInstance({pattern: oFixture.pattern}, new Locale("de"));
+
+		// code under test: input with exact length is parsable
+		oDate = oFormat.parse(oFixture.inputWithExactLength);
+		assert.strictEqual(oFormat.format(oDate).toString(), oFixture.inputWithExactLength);
+
+		// code under test: input without exact length is parsable and will be formatted into the exact length
+		oDate = oFormat.parse(oFixture.inputWithoutExactLength);
+		assert.strictEqual(oFormat.format(oDate).toString(), oFixture.inputWithExactLength);
+	});
+});
+
+	//*****************************************************************************************************************
+	// note: unlike the other symbols, 'u' does not yet support formatting with 0 pad
+	QUnit.test("Parsing w/o delimiters does not require exact length for not required parts; symbol 'u' (special case)",
+			function (assert) {
+		var oDate,
+			oFormat = DateFormat.getDateTimeInstance({pattern: "y wwuu"}, new Locale("de"));
+
+		// code under test
+		oDate = oFormat.parse("2022 0105");
+		assert.strictEqual(oFormat.format(oDate).toString(), "2022 015");
+
+		// code under test
+		oDate = oFormat.parse("2022 015");
+		assert.strictEqual(oFormat.format(oDate).toString(), "2022 015");
+	});
+});
