@@ -19,23 +19,21 @@ describe("sap.m.MenuButton", function() {
 	});
 
 	it('MenuButton has adequate initial width', function() {
-		var oMenuButton4 = element(by.id("mb4")),
-			oPopoverMenu;
+		var oPage = element(by.id("page0")),
+			oMenuButton4 = element(by.id("mb4"));
 
 		oMenuButton4.click();
-		oPopoverMenu = element(by.id("__menu7"));
 
-		expect(takeScreenshot(oPopoverMenu)).toLookAs('menubutton_initial_width_disabled_items');
+		expect(takeScreenshot(oPage)).toLookAs('menubutton_initial_width_disabled_items');
 	});
 
 	it('MenuButton correctly opens and focus a menu with enabled items', function() {
-		var oMenuButton = element(by.id("mb-toolbar")),
-			oPopoverMenu;
+		var oPage = element(by.id("page0")),
+			oMenuButton = element(by.id("mb-toolbar"));
 
 		oMenuButton.click();
-		oPopoverMenu = element(by.id("__menu7"));
 
-		expect(takeScreenshot(oPopoverMenu)).toLookAs('menubutton_menu_items_enabled');
+		expect(takeScreenshot(oPage)).toLookAs('menubutton_menu_items_enabled');
 	});
 
 	it('ManuButton correctly truncates long text in OverflowToolbar (Cozy)', function() {
