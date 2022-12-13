@@ -201,87 +201,6 @@ sap.ui.define([
 	asODataParentBinding(ODataContextBinding.prototype);
 
 	/**
-	 * Deletes the entity in <code>this.oElementContext</code>, identified by the edit URL.
-	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
-	 *   A lock for the group ID to be used for the DELETE request; w/o a lock, no DELETE is sent.
-	 *   For a transient entity, the lock is ignored (use NULL)!
-	 * @param {string} sEditUrl
-	 *   The entity's edit URL to be used for the DELETE request; w/o a lock, this is mostly
-	 *   ignored.
-	 * @param {sap.ui.model.odata.v4.Context} _oContext - ignored
-	 * @param {object} [_oETagEntity] - ignored
-	 * @param {boolean} [bDoNotRequestCount]
-	 *   Whether not to request the new count from the server; useful in case of
-	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
-	 *   unchanged; w/o a lock this should be true
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure.
-	 * @throws {Error}
-	 *   If the cache promise for this binding is not yet fulfilled, or if the cache is shared
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype._delete = function (oGroupLock, sEditUrl, _oContext, _oETagEntity,
-			bDoNotRequestCount) {
-		// In case the context binding has an empty path, the respective context in the parent
-		// needs to be removed as well. As there could be more levels of bindings pointing to the
-		// same entity, first go up the binding hierarchy and find the context pointing to the same
-		// entity in the highest level binding.
-		// In case that top binding is a list binding, perform the deletion from there but use the
-		// ETag of this binding.
-		// In case the top binding is a context binding, perform the deletion from here but destroy
-		// the context(s) in that uppermost binding. Note that no data may be available in the
-		// uppermost context binding and hence the deletion would not work there, BCP 1980308439.
-		var oEmptyPathParentContext = this._findEmptyPathParentContext(this.oElementContext),
-			oEmptyPathParentBinding = oEmptyPathParentContext.getBinding(),
-			oDeleteParentContext = oEmptyPathParentBinding.getContext(),
-			oReturnValueContext = oEmptyPathParentBinding.oReturnValueContext,
-			that = this;
-
-		// In case the uppermost parent reached with empty paths is a list binding, delete there.
-		if (!oEmptyPathParentBinding.execute) {
-			return this.fetchValue("", undefined, true).then(function (oEntity) {
-				// In the Cache, the request is generated with a reference to the entity data
-				// first. So, hand over the complete entity to have the ETag of the correct binding
-				// in the request.
-				return oEmptyPathParentContext._delete(oGroupLock, oEntity, bDoNotRequestCount);
-			});
-			// fetchValue will fail if the entity has not been read. The same happens with the
-			// deleteFromCache call below. In Context#delete the error is reported.
-		}
-
-		oEmptyPathParentBinding.oElementContext = null;
-		if (oReturnValueContext) {
-			oEmptyPathParentBinding.oReturnValueContext = null;
-		}
-		this._fireChange({reason : ChangeReason.Remove});
-		return this.deleteFromCache(oGroupLock, sEditUrl, "", null,
-			function (_iIndex, iOffset) {
-				if (iOffset > 0) {
-					oEmptyPathParentContext.oDeletePromise = null;
-				}
-			}
-		).then(function () {
-			oEmptyPathParentContext.destroy();
-			if (oReturnValueContext) {
-				oReturnValueContext.destroy();
-			}
-		}, function (oError) {
-			if (!oEmptyPathParentBinding.isRelative()
-					|| oDeleteParentContext === oEmptyPathParentBinding.getContext()) {
-				oEmptyPathParentBinding.oElementContext = oEmptyPathParentContext;
-				if (oReturnValueContext) {
-					oEmptyPathParentBinding.oReturnValueContext = oReturnValueContext;
-				}
-				that._fireChange({reason : ChangeReason.Add});
-			}
-			throw oError;
-		});
-	};
-
-	/**
 	 * Calls the OData operation that corresponds to this operation binding.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
@@ -761,6 +680,76 @@ sap.ui.define([
 				fnOnStrictHandlingFailed && onStrictHandling, getOriginalResourcePath)
 			: oCache.fetchValue(oGroupLock, "", undefined, undefined, false,
 				getOriginalResourcePath);
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#delete
+	 */
+	ODataContextBinding.prototype.delete = function (oGroupLock, sEditUrl, oContext, _oETagEntity,
+			bDoNotRequestCount) {
+		// In case the context binding has an empty path, the respective context in the parent
+		// needs to be removed as well. As there could be more levels of bindings pointing to the
+		// same entity, first go up the binding hierarchy and find the context pointing to the same
+		// entity in the highest level binding.
+		// In case that top binding is a list binding, perform the deletion from there but use the
+		// ETag of this binding.
+		// In case the top binding is a context binding, perform the deletion from here but destroy
+		// the context(s) in that uppermost binding. Note that no data may be available in the
+		// uppermost context binding and hence the deletion would not work there, BCP 1980308439.
+		var oEmptyPathParentContext = this._findEmptyPathParentContext(this.oElementContext),
+			oEmptyPathParentBinding = oEmptyPathParentContext.getBinding(),
+			oDeleteParentContext = oEmptyPathParentBinding.getContext(),
+			oReturnValueContext = oEmptyPathParentBinding.oReturnValueContext,
+			that = this;
+
+		function undelete() {
+			oEmptyPathParentContext.oDeletePromise = null;
+			oContext.oDeletePromise = null;
+		}
+
+		// In case the uppermost parent reached with empty paths is a list binding, delete there.
+		if (!oEmptyPathParentBinding.execute) {
+			// In the Cache, the request is generated with a reference to the entity data
+			// first. So, hand over the complete entity to have the ETag of the correct binding
+			// in the request.
+			// oEmptyPathParentContext is marked as deleted in delete(), mark oContext too
+			oContext.oDeletePromise = oEmptyPathParentBinding.delete(oGroupLock, sEditUrl,
+				oEmptyPathParentContext, oContext.getValue(), bDoNotRequestCount, undelete
+			);
+			return oContext.oDeletePromise;
+		}
+
+		oEmptyPathParentBinding.oElementContext = null;
+		if (oReturnValueContext) {
+			oEmptyPathParentBinding.oReturnValueContext = null;
+		}
+		this._fireChange({reason : ChangeReason.Remove});
+		// oEmptyPathParentContext is marked as deleted in doDelete(), mark oContext too
+		oContext.oDeletePromise = oEmptyPathParentContext.doDelete(oGroupLock, sEditUrl, "", null,
+			this, function (_iIndex, iOffset) {
+				if (iOffset > 0) {
+					undelete();
+				}
+			}
+		).then(function () {
+			oEmptyPathParentContext.destroy();
+			if (oReturnValueContext) {
+				oReturnValueContext.destroy();
+			}
+		}, function (oError) {
+			undelete();
+			if (!oEmptyPathParentBinding.isRelative()
+					|| oDeleteParentContext === oEmptyPathParentBinding.getContext()) {
+				oEmptyPathParentBinding.oElementContext = oEmptyPathParentContext;
+				if (oReturnValueContext) {
+					oEmptyPathParentBinding.oReturnValueContext = oReturnValueContext;
+				}
+				that._fireChange({reason : ChangeReason.Add});
+			}
+			throw oError;
+		});
+		return oContext.oDeletePromise;
 	};
 
 	/**

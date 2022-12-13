@@ -3904,7 +3904,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("onDelete: context", function (assert) {
 		var oBinding = new ODataParentBinding({
-				_delete : function () {},
+				delete : function () {},
 				findContextForCanonicalPath : function () {},
 				oModel : {
 					getDependentBindings : function () {}
@@ -3937,7 +3937,7 @@ sap.ui.define([
 			.returns([oDependentBinding1, oDependentBinding2]);
 		this.mock(oDependentBinding1).expects("resetChanges").withExactArgs().callsFake(reset);
 		this.mock(oDependentBinding2).expects("resetChanges").withExactArgs().callsFake(reset);
-		this.mock(oBinding).expects("_delete")
+		this.mock(oBinding).expects("delete")
 			.withExactArgs(null, "canonical/path", sinon.match.same(oContext))
 			.callsFake(function () {
 				assert.strictEqual(iResets, 3);

@@ -594,15 +594,45 @@ sap.ui.define([
 	};
 
 	/**
+	 * Deletes the entity identified by the edit URL.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group ID to be used for the DELETE request; w/o a lock, no DELETE is sent.
+	 *   For a transient entity, the lock is ignored (use NULL)!
+	 * @param {string} [sEditUrl]
+	 *   The entity's edit URL to be used for the DELETE request; only required with a lock
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context to be deleted
+	 * @param {object} [oETagEntity]
+	 *   An entity with the ETag of the binding for which the deletion was requested. This is
+	 *   provided if the deletion is delegated from a context binding with empty path to a list
+	 *   binding. W/o a lock, this is ignored.
+	 * @param {boolean} [bDoNotRequestCount]
+	 *   Whether not to request the new count from the server; useful in case of
+	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
+	 *   unchanged; w/o a lock this should be true
+	 * @param {function} fnUndelete
+	 *   A function to undelete the context (and poss. the context the deletion was delegated to)
+	 *   when the deletion failed or has been canceled
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure.
+	 * @throws {Error}
+	 *   If the cache promise for this binding is not yet fulfilled, or if the cache is shared
+	 *
+	 * @name sap.ui.model.odata.v4.ODataParentBinding#delete
+	 * @private
+	 */
+
+	/**
 	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
 	 * parent binding adjusting the path.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
 	 *   A lock for the group ID to be used for the DELETE request; w/o a lock, no DELETE is sent.
 	 *   For a transient entity, the lock is ignored (use NULL)!
-	 * @param {string} sEditUrl
-	 *   The entity's edit URL to be used for the DELETE request; w/o a lock, this is mostly
-	 *   ignored.
+	 * @param {string} [sEditUrl]
+	 *   The entity's edit URL to be used for the DELETE request; only required with a lock
 	 * @param {string} sPath
 	 *   The path of the entity relative to this binding
 	 * @param {object} [oETagEntity]
@@ -1113,7 +1143,7 @@ sap.ui.define([
 			this.oModel.getDependentBindings(oContext).forEach(function (oBinding) {
 				oBinding.resetChanges();
 			});
-			this._delete(null, sCanonicalPath.slice(1), oContext);
+			this.delete(null, sCanonicalPath.slice(1), oContext);
 		}
 	};
 

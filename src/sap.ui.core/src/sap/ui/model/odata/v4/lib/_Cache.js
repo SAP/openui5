@@ -224,9 +224,6 @@ sap.ui.define([
 				that.oRequestor.removePost(sTransientGroup, oEntity);
 				return undefined;
 			}
-			if (oEntity["@$ui5.context.isDeleted"]) {
-				throw new Error("Must not delete twice: " + sEditUrl);
-			}
 
 			aMessages = oModelInterface.getMessagesByPath(
 				_Helper.buildPath("/", that.sResourcePath, sEntityPath), true);

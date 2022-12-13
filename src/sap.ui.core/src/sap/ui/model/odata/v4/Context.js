@@ -100,41 +100,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Deletes the OData entity this context points to.
-	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
-	 *   A lock for the group ID to be used for the DELETE request; w/o a lock, no DELETE is sent.
-	 *   For a transient entity, the lock is ignored (use NULL)!
-	 * @param {object} [oETagEntity]
-	 *   An entity with the ETag of the binding for which the deletion was requested. This is
-	 *   provided if the deletion is delegated from a context binding with empty path to a list
-	 *   binding. W/o a lock, this is ignored.
-	 * @param {boolean} [bDoNotRequestCount]
-	 *   Whether not to request the new count from the server; useful in case of
-	 *   {@link #replaceWith} where it is known that the count remains unchanged; w/o a lock this
-	 *   should be true
-	 * @returns {Promise}
-	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure
-	 * @throws {Error}
-	 *   If the cache promise for this binding is not yet fulfilled, or if the cache is shared
-	 *
-	 * @private
-	 * @see sap.ui.model.odata.v4.Context#delete
-	 */
-	Context.prototype._delete = function (oGroupLock, oETagEntity, bDoNotRequestCount) {
-		var that = this;
-
-		if (!oGroupLock) {
-			return this.oBinding._delete(null, "n/a", this, null, true);
-		}
-		return this.fetchCanonicalPath().then(function (sCanonicalPath) {
-			return that.oBinding._delete(oGroupLock, sCanonicalPath.slice(1), that, oETagEntity,
-				bDoNotRequestCount);
-		});
-	};
-
-	/**
 	 * Adjusts this context's path by replacing the given transient predicate with the given
 	 * predicate. Recursively adjusts all child bindings.
 	 *
@@ -315,8 +280,8 @@ sap.ui.define([
 	 * @since 1.41.0
 	 */
 	Context.prototype.delete = function (sGroupId, bDoNotRequestCount/*, bRejectIfNotFound*/) {
-		var oGroupLock = null,
-			oModel = this.oModel,
+		var oEditUrlPromise,
+			oGroupLock = null,
 			that = this;
 
 		if (this.isDeleted()) {
@@ -334,37 +299,30 @@ sap.ui.define([
 			}
 		}
 		if (sGroupId === null) {
+			oEditUrlPromise = SyncPromise.resolve();
 			bDoNotRequestCount = true;
 		} else {
 			_Helper.checkGroupId(sGroupId);
+			oEditUrlPromise = this.fetchCanonicalPath().then(function (sCanonicalPath) {
+				return sCanonicalPath.slice(1);
+			});
 			oGroupLock = this.oBinding.lockGroup(sGroupId, true, true);
 		}
 
-		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.setContext(undefined);
-		});
-
-		this.oDeletePromise = this._delete(
-			oGroupLock, /*oETagEntity*/null, bDoNotRequestCount
-		).then(function () {
-			var sResourcePathPrefix = that.sPath.slice(1);
-
-			// Messages have been updated via _Cache#_delete; "that" is already destroyed; remove
-			// all dependent caches in all bindings
-			oModel.getAllBindings().forEach(function (oBinding) {
-				oBinding.removeCachesAndMessages(sResourcePathPrefix, true);
-			});
-		}).catch(function (oError) {
-			if (oGroupLock) {
-				oGroupLock.unlock(true);
-			}
-			oModel.reportError("Failed to delete " + that.getPath(), sClassName, oError);
-			that.oDeletePromise = null;
-			that.checkUpdate();
-			throw oError;
-		});
-
-		return Promise.resolve(this.oDeletePromise);
+		return Promise.resolve(
+			oEditUrlPromise.then(function (sEditUrl) {
+				return that.oBinding.delete(oGroupLock, sEditUrl, that, /*oETagEntity*/null,
+					bDoNotRequestCount, function () {
+						that.oDeletePromise = null;
+					}
+				);
+			}).catch(function (oError) {
+				if (oGroupLock) {
+					oGroupLock.unlock(true);
+				}
+				throw oError;
+			})
+		);
 	};
 
 	/**
@@ -400,6 +358,61 @@ sap.ui.define([
 		// context although the control still refers to it
 		this.oModel = undefined;
 		BaseContext.prototype.destroy.call(this);
+	};
+
+	/**
+	 * Deletes the OData entity this context points to.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group ID to be used for the DELETE request; w/o a lock, no DELETE is sent.
+	 *   For a transient entity, the lock is ignored (use NULL)!
+	 * @param {string} [sEditUrl]
+	 *   The entity's edit URL to be used for the DELETE request; only required with a lock
+	 * @param {string} sPath
+	 *   The path of the entity relative to this binding
+	 * @param {object} [oETagEntity]
+	 *   An entity with the ETag of the binding for which the deletion was requested. This is
+	 *   provided if the deletion is delegated from a context binding with empty path to a list
+	 *   binding. W/o a lock, this is ignored.
+	 * @param {sap.ui.model.odata.v4.ODataParentBinding} oBinding
+	 *   The binding to perform the deletion at
+	 * @param {function} fnCallback
+	 *  A function which is called immediately when an entity has been deleted from the cache, or
+	 *   when it was re-inserted; the index of the entity and an offset (-1 for deletion, 1 for
+	 *   re-insertion) are passed as parameter
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure
+	 *
+	 * @private
+	 * @see sap.ui.model.odata.v4.Context#delete
+	 */
+	Context.prototype.doDelete = function (oGroupLock, sEditUrl, sPath, oETagEntity, oBinding,
+			fnCallback) {
+		var oModel = this.oModel,
+			that = this;
+
+		this.oDeletePromise = oBinding.deleteFromCache(
+			oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback
+		).then(function () {
+			var sResourcePathPrefix = that.sPath.slice(1);
+
+			// Messages have been updated via _Cache#_delete; "that" is already destroyed; remove
+			// all dependent caches in all bindings
+			oModel.getAllBindings().forEach(function (oBinding) {
+				oBinding.removeCachesAndMessages(sResourcePathPrefix, true);
+			});
+		}).catch(function (oError) {
+			oModel.reportError("Failed to delete " + that.getPath(), sClassName, oError);
+			that.checkUpdate();
+			throw oError;
+		});
+
+		oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			oDependentBinding.setContext(undefined);
+		});
+
+		return this.oDeletePromise;
 	};
 
 	/**
@@ -1057,7 +1070,7 @@ sap.ui.define([
 	 * @param {object} oData
 	 *   The data to patch with
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise that is resolve without a result when the patch is done.
+	 *   A promise that is resolved without a result when the patch is done.
 	 *
 	 * @private
 	 */

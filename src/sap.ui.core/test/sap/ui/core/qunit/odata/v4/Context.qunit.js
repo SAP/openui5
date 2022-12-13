@@ -11,6 +11,8 @@ sap.ui.define([
 ], function (Log, isEmptyObject, SyncPromise, BaseContext, Context, _Helper) {
 	"use strict";
 
+	var sClassName = "sap.ui.model.odata.v4.Context";
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.Context", {
 		beforeEach : function () {
@@ -644,8 +646,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
 			.returns(SyncPromise.reject(oError));
-		this.mock(oModel).expects("reportError").withExactArgs("Unexpected error",
-			"sap.ui.model.odata.v4.Context", sinon.match.same(oError));
+		this.mock(oModel).expects("reportError").withExactArgs("Unexpected error", sClassName,
+			sinon.match.same(oError));
 
 		// code under test
 		assert.strictEqual(oContext.getValue("bar"), undefined);
@@ -821,8 +823,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchPrimitiveValue").withExactArgs("bar", undefined, true)
 			.returns(oSyncPromise);
-		this.oLogMock.expects("warning")
-			.withExactArgs(sMessage, "bar", "sap.ui.model.odata.v4.Context");
+		this.oLogMock.expects("warning").withExactArgs(sMessage, "bar", sClassName);
 
 		return oPromise.catch(function () {
 			// code under test
@@ -928,8 +929,8 @@ sap.ui.define([
 			}))
 			.resolves(undefined); // no need to return a SyncPromise
 		this.mock(oContext).expects("fetchValue").never();
-		this.oLogMock.expects("error").withExactArgs("Not a valid property path: bar", undefined,
-			"sap.ui.model.odata.v4.Context");
+		this.oLogMock.expects("error")
+			.withExactArgs("Not a valid property path: bar", undefined, sClassName);
 
 		// code under test
 		return oContext.requestProperty("bar").then(function (vActual) {
@@ -1058,163 +1059,118 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bTransient) {
-	["myGroup", null].forEach(function (sGroupId) {
-		var sTitle = "delete: success, transient = " + bTransient + ", sGroupId = " + sGroupId;
-
-		if (!bTransient && sGroupId === null) {
-			return;
-		}
-
-	QUnit.test(sTitle, function (assert) {
-		var aAllBindings = [
-				{removeCachesAndMessages : function () {}},
-				{removeCachesAndMessages : function () {}},
-				{removeCachesAndMessages : function () {}}
-			],
-			oBinding = {
+[
+	{transient : false, groupId : "myGroup"},
+	{transient : true, groupId : "myGroup"},
+	{transient : true, groupId : null}
+].forEach(function (oFixture) {
+	QUnit.test("delete: success " + JSON.stringify(oFixture), function (assert) {
+		var oBinding = {
 				checkSuspended : function () {},
+				delete : function () {},
 				lockGroup : function () {},
 				mParameters : {}
 			},
+			oContext = Context.create("~oModel~", oBinding, "/Foo/Bar('42')", 42,
+				oFixture.transient ? new SyncPromise(function () {}) : /*oCreatePromise*/undefined),
 			oDeletePromise,
-			aDependentBindings = [
-				{setContext : function () {}},
-				{setContext : function () {}}
-			],
-			oGroupLock = {
-				getGroupId : function () {}
-			},
-			oModel = {
-				getAllBindings : function () {},
-				getDependentBindings : function () {},
-				isApiGroup : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/Foo/Bar('42')", 42,
-					bTransient ? new SyncPromise(function () {}) : /*oCreatePromise*/undefined),
-			oPromise = SyncPromise.resolve(Promise.resolve()),
-			that = this;
+			oExpectation;
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(_Helper).expects("checkGroupId").exactly(bTransient ? 0 : 1)
+		this.mock(_Helper).expects("checkGroupId").exactly(oFixture.transient ? 0 : 1)
 			.withExactArgs("myGroup");
-		this.mock(oBinding).expects("lockGroup").exactly(bTransient ? 0 : 1)
-			.withExactArgs("myGroup", true, true).returns(oGroupLock);
-		this.mock(oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oContext)).returns(aDependentBindings);
-		this.mock(aDependentBindings[0]).expects("setContext").withExactArgs(undefined);
-		this.mock(aDependentBindings[1]).expects("setContext").withExactArgs(undefined);
-		this.mock(oContext).expects("_delete")
-			.withExactArgs(bTransient ? null : sinon.match.same(oGroupLock), null,
-				bTransient ? true : "~bDoNotRequestCount~")
-			.returns(oPromise);
-		oPromise.then(function () {
-			that.mock(oModel).expects("getAllBindings").withExactArgs().returns(aAllBindings);
-			that.mock(aAllBindings[0]).expects("removeCachesAndMessages")
-				.withExactArgs("Foo/Bar('42')", true);
-			that.mock(aAllBindings[1]).expects("removeCachesAndMessages")
-				.withExactArgs("Foo/Bar('42')", true);
-			that.mock(aAllBindings[2]).expects("removeCachesAndMessages")
-				.withExactArgs("Foo/Bar('42')", true);
-		});
+		this.mock(oContext).expects("fetchCanonicalPath").exactly(oFixture.transient ? 0 : 1)
+			.withExactArgs().returns(SyncPromise.resolve("/Bar('23')"));
+		this.mock(oBinding).expects("lockGroup").exactly(oFixture.transient ? 0 : 1)
+			.withExactArgs("myGroup", true, true).returns("~oGroupLock~");
+		oExpectation = this.mock(oBinding).expects("delete")
+			.withExactArgs(oFixture.transient ? null : "~oGroupLock~",
+				oFixture.transient ? undefined : "Bar('23')", sinon.match.same(oContext), null,
+				oFixture.transient ? true : "~bDoNotRequestCount~",
+				sinon.match.func)
+			.returns(SyncPromise.resolve(Promise.resolve()));
 
 		// code under test
-		oDeletePromise = oContext.delete(sGroupId, "~bDoNotRequestCount~");
+		oDeletePromise = oContext.delete(oFixture.groupId, "~bDoNotRequestCount~");
 
 		assert.ok(oDeletePromise instanceof Promise);
-		assert.ok(oContext.oDeletePromise.isPending());
-		assert.strictEqual(oContext.isDeleted(), true);
 
-		// code under test
-		assert.strictEqual(oContext.toString(), "/Foo/Bar('42')[42;deleted]");
+		oContext.oDeletePromise = "~oDeletePromise~";
 
-		return oDeletePromise.then(function () {
-			assert.strictEqual(oContext.isDeleted(), true);
-			assert.ok(oContext.oDeletePromise.isFulfilled());
-		}, function () {
-			assert.notOk(true);
-		});
-	});
+		// code under test - callback
+		oExpectation.args[0][5]();
+
+		assert.strictEqual(oContext.oDeletePromise, null);
+
+		return oDeletePromise;
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("delete: failure", function (assert) {
+["myGroup", null].forEach(function (sGroupId) {
+	QUnit.test("delete: oBinding.delete fails, sGroupId=" + sGroupId, function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
+				delete : function () {},
 				lockGroup : function () {},
 				mParameters : {}
 			},
-			oError = new Error(),
 			oGroupLock = {
-				getGroupId : function () {},
 				unlock : function () {}
 			},
-			oModel = {
-				getDependentBindings : function () {},
-				isApiGroup : function () {},
-				reportError : function () {}
+			oContext = Context.create("~oModel~", oBinding, "/Foo/Bar('42')");
+
+		oContext.bKeepAlive = true;
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(_Helper).expects("checkGroupId").exactly(sGroupId ? 1 : 0)
+			.withExactArgs("myGroup");
+		this.mock(oContext).expects("fetchCanonicalPath").exactly(sGroupId ? 1 : 0).withExactArgs()
+			.returns(SyncPromise.resolve("/EMPLOYEES('42')"));
+		this.mock(oBinding).expects("lockGroup").exactly(sGroupId ? 1 : 0)
+			.withExactArgs(sGroupId, true, true).returns(oGroupLock);
+		this.mock(oBinding).expects("delete")
+			.withExactArgs(sGroupId ? sinon.match.same(oGroupLock) : null,
+				sGroupId ? "EMPLOYEES('42')" : undefined, sinon.match.same(oContext), null,
+				sGroupId ? "~bDoNotRequestCount~" : true, sinon.match.func)
+			.returns(Promise.reject("~oError~"));
+		this.mock(oGroupLock).expects("unlock").exactly(sGroupId ? 1 : 0).withExactArgs(true);
+
+		// code under test
+		return oContext.delete(sGroupId, "~bDoNotRequestCount~").then(function () {
+			assert.notOk(true);
+		}, function (oError) {
+			assert.strictEqual(oError, "~oError~");
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("delete: fetchCanonicalPath fails", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {},
+				delete : function () {},
+				lockGroup : function () {},
+				mParameters : {}
 			},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
-			oContextMock = this.mock(oContext);
+			oContext = Context.create("~oModel~", oBinding, "/Foo/Bar('42')", 42),
+			oGroupLock = {
+				unlock : function () {}
+			};
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").withExactArgs("myGroup");
+		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
+			.returns(SyncPromise.reject("~oError~"));
 		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup", true, true)
 			.returns(oGroupLock);
-		oContextMock.expects("checkUpdate").never();
-		this.mock(oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oContext)).returns([]);
-		oContextMock.expects("_delete")
-			.withExactArgs(sinon.match.same(oGroupLock), null, "~bDoNotRequestCount~")
-			.returns(Promise.resolve().then(function () {
-				oContextMock.expects("checkUpdate").withExactArgs();
-				throw oError;
-			}));
+		this.mock(oBinding).expects("delete").never();
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
-		this.mock(oModel).expects("reportError")
-			.withExactArgs("Failed to delete /EMPLOYEES/42", "sap.ui.model.odata.v4.Context",
-				oError);
 
 		// code under test
 		return oContext.delete("myGroup", "~bDoNotRequestCount~").then(function () {
 			assert.notOk(true);
-		}, function (oError0) {
-			assert.strictEqual(oError0, oError);
-			assert.strictEqual(oContext.isDeleted(), false);
-			assert.strictEqual(oContext.oDeletePromise, null);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("delete: failure w/o lock", function (assert) {
-		var oBinding = {
-				checkSuspended : function () {},
-				mParameters : {}
-			},
-			oError = new Error(),
-			oModel = {
-				getDependentBindings : function () {},
-				reportError : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('1')", undefined);
-
-		oContext.bKeepAlive = true;
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oModel).expects("getDependentBindings")
-			.withExactArgs(sinon.match.same(oContext)).returns([]);
-		this.mock(oContext).expects("_delete").withExactArgs(null, null, true).rejects(oError);
-		this.mock(oContext).expects("checkUpdate").withExactArgs();
-		this.mock(oModel).expects("reportError")
-			.withExactArgs("Failed to delete /EMPLOYEES('1')",
-				"sap.ui.model.odata.v4.Context", oError);
-
-		// code under test
-		return oContext.delete(null, "~bDoNotRequestCount~").then(function () {
-			assert.notOk(true);
-		}, function (oError0) {
-			assert.ok(true);
-			assert.strictEqual(oError0, oError);
+		}, function (oError) {
+			assert.strictEqual(oError, "~oError~");
 		});
 	});
 
@@ -1305,7 +1261,6 @@ sap.ui.define([
 		var oContext = Context.create("~oModel~", "~oBinding~", "/EMPLOYEES/42", 42);
 
 		this.mock(oContext).expects("isDeleted").withExactArgs().thrice().returns(true);
-		this.mock(oContext).expects("_delete").never();
 
 		assert.throws(function () {
 			oContext.delete("myGroup");
@@ -1313,81 +1268,75 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_delete: success", function (assert) {
-		var oBinding = {
-				_delete : function () {}
+[false, true].forEach(function (bFailure) {
+	QUnit.test("doDelete: " + (bFailure ? "failure" : "success"), function (assert) {
+		var aAllBindings = [
+				{removeCachesAndMessages : function () {}},
+				{removeCachesAndMessages : function () {}}
+			],
+			oBinding = {
+				deleteFromCache : function () {}
 			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42);
+			aDependentBindings = [
+				{setContext : function () {}},
+				{setContext : function () {}}
+			],
+			oModel = {
+				getAllBindings : function () {},
+				getDependentBindings : function () {},
+				reportError : function () {}
+			},
+			oContext = Context.create(oModel, "~oBinding~", "/Foo/Bar('42')", 42),
+			oExpectation0,
+			oExpectation1,
+			oPromise,
+			that = this;
 
-		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
-			.returns(SyncPromise.resolve("/EMPLOYEES('1')"));
-		this.mock(oBinding).expects("_delete")
-			.withExactArgs("~oGroupLock~", "EMPLOYEES('1')", sinon.match.same(oContext),
-				"~oETagEntity~", "~bDoNotRequestCount~")
-			.returns("~result~");
+		this.mock(oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oContext)).returns(aDependentBindings);
+		oExpectation0 = this.mock(aDependentBindings[0]).expects("setContext")
+			.withExactArgs(undefined);
+		oExpectation1 = this.mock(aDependentBindings[1]).expects("setContext")
+			.withExactArgs(undefined);
+
+		this.mock(oBinding).expects("deleteFromCache")
+			.withExactArgs("~oGroupLock~", "~sEditUrl~", "~sPath~", "~oETagEntity~", "~fnCallback~")
+			.returns(SyncPromise.resolve(Promise.resolve()).then(function () {
+				that.mock(oModel).expects("getAllBindings").exactly(bFailure ? 0 : 1)
+					.withExactArgs().returns(aAllBindings);
+				that.mock(aAllBindings[0]).expects("removeCachesAndMessages")
+					.exactly(bFailure ? 0 : 1)
+					.withExactArgs("Foo/Bar('42')", true);
+				that.mock(aAllBindings[1]).expects("removeCachesAndMessages")
+					.exactly(bFailure ? 0 : 1)
+					.withExactArgs("Foo/Bar('42')", true);
+				that.mock(oModel).expects("reportError").exactly(bFailure ? 1 : 0)
+					.withExactArgs("Failed to delete /Foo/Bar('42')", sClassName, "~oError~");
+				that.mock(oContext).expects("checkUpdate").exactly(bFailure ? 1 : 0)
+					.withExactArgs();
+				if (bFailure) {
+					oContext.oModel = undefined; // simulate destruction
+					throw "~oError~";
+				}
+			}));
 
 		// code under test
-		return oContext._delete("~oGroupLock~", "~oETagEntity~", "~bDoNotRequestCount~")
-			.then(function (oResult) {
-				assert.strictEqual(oResult, "~result~");
-			});
-	});
+		oPromise = oContext.doDelete("~oGroupLock~", "~sEditUrl~", "~sPath~", "~oETagEntity~",
+			oBinding, "~fnCallback~");
 
-	//*********************************************************************************************
-	QUnit.test("_delete: no lock", function (assert) {
-		var oBinding = {
-				_delete : function () {}
-			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42);
+		assert.ok(oContext.oDeletePromise.isPending());
+		sinon.assert.called(oExpectation0);
+		sinon.assert.called(oExpectation1);
 
-		this.mock(oBinding).expects("_delete")
-			.withExactArgs(null, "n/a", sinon.match.same(oContext), null, true)
-			.returns("~result~");
-
-		assert.strictEqual(
-			// code under test
-			oContext._delete(undefined, "~oETagEntity~", "~bDoNotRequestCount~"),
-			"~result~");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_delete: failure", function (assert) {
-		var oBinding = {
-				_delete : function () {}
-			},
-			oError = new Error(),
-			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42);
-
-		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
-			.returns(SyncPromise.resolve("/EMPLOYEES('1')"));
-		this.mock(oBinding).expects("_delete")
-			.withExactArgs("~oGroupLock~", "EMPLOYEES('1')", sinon.match.same(oContext), undefined,
-				undefined)
-			.returns(Promise.reject(oError));
-
-		// code under test
-		return oContext._delete("~oGroupLock~").then(function () {
-			assert.ok(false);
-		}, function (oError0) {
-			assert.strictEqual(oError0, oError);
+		return oPromise.then(function () {
+			assert.notOk(bFailure);
+			assert.ok(oContext.oDeletePromise.isFulfilled());
+		}, function (oError) {
+			assert.ok(bFailure);
+			assert.strictEqual(oError, "~oError~");
 		});
 	});
-
-	//*********************************************************************************************
-	QUnit.test("_delete: failure in fetchCanonicalPath", function (assert) {
-		var oError = new Error(),
-			oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES/42", 42);
-
-		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
-			.returns(SyncPromise.reject(oError));
-
-		// code under test
-		return oContext._delete("~oGroupLock~").then(function () {
-			assert.ok(false);
-		}, function (oError0) {
-			assert.strictEqual(oError0, oError);
-		});
-	});
+});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bfnOnBeforeDestroy) {
@@ -2821,8 +2770,8 @@ sap.ui.define([
 	fnPatchSent();
 
 	oModelMock.expects("reportError").twice()
-		.withExactArgs("Failed to update path /resolved/data/path",
-			"sap.ui.model.odata.v4.Context", sinon.match.same(oError));
+		.withExactArgs("Failed to update path /resolved/data/path", sClassName,
+			sinon.match.same(oError));
 	oBindingMock.expects("firePatchCompleted").on(oBinding).withExactArgs(false);
 
 	// code under test: simulate retry; call fnErrorCallback and then fnPatchSent
@@ -3439,7 +3388,7 @@ sap.ui.define([
 			.withExactArgs("some/relative/path", sinon.match.same(oContext))
 			.returns("/resolved/path");
 		this.mock(oModel).expects("reportError")
-			.withExactArgs("Failed to update path /resolved/path", "sap.ui.model.odata.v4.Context",
+			.withExactArgs("Failed to update path /resolved/path", sClassName,
 				sinon.match.same(oError));
 
 		// code under test
@@ -3481,7 +3430,7 @@ sap.ui.define([
 			.withExactArgs("some/relative/path", sinon.match.same(oContext))
 			.returns("/resolved/path");
 		this.mock(oModel).expects("reportError")
-			.withExactArgs("Failed to update path /resolved/path", "sap.ui.model.odata.v4.Context",
+			.withExactArgs("Failed to update path /resolved/path", sClassName,
 				sinon.match.same(oError));
 
 		// code under test
