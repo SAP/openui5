@@ -112,6 +112,48 @@ sap.ui.define([
 			[{digits : 4, symbol : "a", type : "amPmMarker"}]);
 	});
 
+	//*********************************************************************************************
+	QUnit.test("Creation of fallback formatter", function (assert) {
+		var oFormat,
+			oFormatMock = this.mock(DateFormat),
+			oFormatOptions = {pattern: "~foo"},
+			oBaseFallbackFormatOptions = {
+				calendarType: "Gregorian",
+				showDate: undefined,
+				showTime: undefined,
+				showTimezone: undefined
+			},
+			oLocale = new Locale("en");
+
+
+		// prevents creation of additional fallback patterns
+		oFormatMock.expects("_createFallbackOptionsWithoutDelimiter").exactly(2).returns([]);
+		// creation of oFormat instance
+		oFormatMock.expects("createInstance")
+			.withExactArgs(sinon.match.same(oFormatOptions), sinon.match.same(oLocale),
+				sinon.match.same(DateFormat.oDateInfo))
+			.callThrough();
+		// creation of fallback formatter, see DateFormat.oDateInfo.aFallbackFormatOptions
+		[
+			{style: "short"}, {style: "medium"}, {pattern: "yyyy-MM-dd"}, {pattern: "yyyyMMdd", strictParsing: true}
+		].forEach(function (oOptions) {
+			Object.assign(oOptions, oBaseFallbackFormatOptions);
+			oFormatMock.expects("createInstance")
+				.withExactArgs(oOptions, sinon.match.same(oLocale), sinon.match.same(DateFormat.oDateInfo), true)
+				.callThrough();
+		});
+
+		// code under test
+		oFormat = DateFormat.getInstance(oFormatOptions, oLocale);
+
+		assert.strictEqual(oFormat.oFormatOptions.pattern, "~foo");
+		assert.strictEqual(oFormat.aFallbackFormats.length, 4);
+		assert.strictEqual(oFormat.aFallbackFormats[0].oFormatOptions.pattern, "M/d/yy");
+		assert.strictEqual(oFormat.aFallbackFormats[1].oFormatOptions.pattern, "MMM d, y");
+		assert.strictEqual(oFormat.aFallbackFormats[2].oFormatOptions.pattern, "yyyy-MM-dd");
+		assert.strictEqual(oFormat.aFallbackFormats[3].oFormatOptions.pattern, "yyyyMMdd");
+	});
+
 		QUnit.module("DateFormat format", {
 			beforeEach: function (assert) {
 				stubTimezone("Europe/Berlin");
