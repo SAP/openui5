@@ -28,8 +28,8 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	/**
-	 * @deprecated As of version 1.73
-	 */
+	* @deprecated Since version 1.73
+	*/
 	QUnit.module("DescriptorInlineChangeFactory", {
 		beforeEach: function() {
 			//define sandboxes and stubs explicitly for each modules
