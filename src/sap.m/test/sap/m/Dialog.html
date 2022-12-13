@@ -1503,6 +1503,63 @@
 				})
 			});
 
+
+			var oPopoverDialog = new sap.m.Dialog('popoverDialog', {
+				title: "Message Popover Dialog",
+				stretch: true,
+				content: new sap.ui.core.HTML({
+					content: '<div>Lipsum limple text</div>'
+				}),
+				footer: new sap.m.Toolbar({
+					content: [new sap.m.Button({
+							icon: "sap-icon://error",
+							type: "Negative",
+							text: "2",
+							press: function () {
+								oMessagePopover.toggle(this);
+							}
+						}),
+						new sap.m.Button({
+							text: "Accept",
+							type: "Accept",
+							press: function () {
+								oPopoverDialog.close();
+							}
+						}),
+						new sap.m.Button({
+							text: "Reject",
+							press: function () {
+								oPopoverDialog.close();
+							}
+						})
+					]
+				})
+			});
+			var oMessage = new sap.m.MessageItem({
+				type: 'Error',
+				title: 'Error message',
+				description: "Long Error Long Description ",
+				subtitle: 'Example of subtitle',
+				counter: 1
+			});
+
+			var oMessage2 = new sap.m.MessageItem({
+				type: 'Error',
+				title: 'Error message',
+				description: "Shorter Description ",
+				subtitle: 'Example',
+				counter: 1
+			});
+
+
+			var oMessagePopover = new sap.m.MessagePopover("mPopover", {
+				items: [oMessage, oMessage2],
+				activeTitlePress: function () {
+					sap.m.MessageToast.show('Active title is pressed');
+				},
+			})
+
+
 			//=================================================================
 
 			var page1 = new sap.m.Page("page1", {
@@ -2036,6 +2093,13 @@
 						ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 						press: function() {
 							oDialogWithAutoGrowTable.open();
+						}
+					}),
+					new sap.m.Button("buttonPopoverDialog", {
+						text: "Message Popover Dialog",
+						width: _buttonWidth,
+						press: function () {
+							oPopoverDialog.open();
 						}
 					})
 				]

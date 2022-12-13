@@ -339,9 +339,15 @@ function(
 
 					/**
 					 * Buttons can be added to the footer area of the Dialog through this aggregation. When this aggregation is set, any change to the <code>beginButton</code> and <code>endButton</code> has no effect anymore. Buttons which are inside this aggregation are aligned at the right side (left side in RTL mode) of the footer instead of in the middle of the footer.
+					 * The buttons aggregation can not be used together with the footer aggregation.
 					 * @since 1.21.1
 					 */
 					buttons: {type: "sap.m.Button", multiple: true, singularName: "button"},
+
+					/**
+					 * The footer of this dialog. It is always located at the bottom of the dialog. The footer aggregation can not  be used together with the buttons aggregation.
+					 */
+					footer: {type: "sap.m.Toolbar", multiple: false},
 
 					/**
 					 * The hidden aggregation for internal maintained <code>header</code>.
@@ -982,7 +988,15 @@ function(
 		 * @private
 		 */
 		 Dialog.prototype._findFirstPositiveButton = function () {
-			var aButtons = this.getButtons();
+			var aButtons;
+
+			if (this.getFooter()) {
+				aButtons = this.getFooter().getContent().filter(function (oItem) {
+					return oItem.isA("sap.m.Button");
+				});
+			} else {
+				aButtons = this.getButtons();
+			}
 
 			for (var i = 0; i < aButtons.length; i++) {
 				var oButton = aButtons[i];
@@ -1683,6 +1697,9 @@ function(
 		};
 
 		Dialog.prototype._createToolbarButtons = function () {
+			if (this.getFooter()) {
+				return;
+			}
 			var toolbar = this._getToolbar();
 			var buttons = this.getButtons();
 			var beginButton = this.getBeginButton();
