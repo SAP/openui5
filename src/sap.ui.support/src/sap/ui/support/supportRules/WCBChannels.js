@@ -17,7 +17,7 @@ function () {
 	 * @enum {string}
 	 * @name sap.ui.support.WCBChannels
 	 * @readonly
-	 * @protected
+	 * @private
 	 */
 	return /** @lends sap.ui.support.WCBChannels */ {
 		/**

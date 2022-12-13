@@ -222,5 +222,22 @@ sap.ui.define(["sap/ui/core/library"],
 		}
 	};
 
+	/**
+	 * Support Assistant rule configuration
+	 *
+	 * @typedef {object} sap.ui.support.RuleConfiguration
+	 * @property {string} id
+	 * @property {boolean} async
+	 * @property {string} title
+	 * @property {string} resolution
+	 * @property {string} minversion
+	 * @property {sap.ui.support.Categories[]} categories
+	 * @property {sap.ui.support.Audiences[]} audiences
+	 * @property {string} description
+	 * @property {string} resolutionurls
+	 * @property {string} check
+	 * @public
+	 */
+
 	return thisLib;
 });

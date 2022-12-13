@@ -30,7 +30,7 @@ function (Log, Version, library, storage, constants) {
 	 * The RuleSet is an interface used to create, update and delete rulesets.
 	 *
 	 * @class
-	 * @public
+	 * @private
 	 * @alias sap.ui.support.RuleSet
 	 * @author SAP SE
 	 * @version ${version}
@@ -64,7 +64,7 @@ function (Log, Version, library, storage, constants) {
 	/**
 	 * Gets all rules from the RuleSet.
 	 * @public
-	 * @returns {object} All rules within the current RuleSet
+	 * @returns {Object<string, sap.ui.support.RuleConfiguration>} All rules within the current RuleSet
 	 */
 	RuleSet.prototype.getRules = function () {
 		return this._mRules;
@@ -74,15 +74,15 @@ function (Log, Version, library, storage, constants) {
 	 * Updates rules from the RuleSet.
 	 * @public
 	 * @param {string} sRuleId Rule ID
-	 * @param {object} ORuleSettings Rule settings
+	 * @param {sap.ui.support.RuleConfiguration} oRuleSettings Rule settings
 	 * @returns {string} sRuleVerification Rule Verification status
 	 */
-	RuleSet.prototype.updateRule = function (sRuleId, ORuleSettings) {
-		var sRuleVerification = this._verifySettingsObject(ORuleSettings, true);
+	RuleSet.prototype.updateRule = function (sRuleId, oRuleSettings) {
+		var sRuleVerification = this._verifySettingsObject(oRuleSettings, true);
 
 		if (sRuleVerification === "success") {
 			delete this._mRules[sRuleId];
-			this._mRules[ORuleSettings.id] = ORuleSettings;
+			this._mRules[oRuleSettings.id] = oRuleSettings;
 		}
 
 		return sRuleVerification;
@@ -175,7 +175,8 @@ function (Log, Version, library, storage, constants) {
 	/**
 	 * Adds rules to RuleSet.
 	 * @public
-	 * @param {object} oSettings Settings object with rule information
+	 * @param {sap.ui.support.RuleConfiguration} oSettings Settings object with rule information
+	 * @param {{version: string}} oVersionInfo The version
 	 * @returns {string} sRuleVerificationStatus Verification status
 	 */
 	RuleSet.prototype.addRule = function (oSettings, oVersionInfo) {
@@ -208,7 +209,7 @@ function (Log, Version, library, storage, constants) {
 	/**
 	 * Remove rule from RuleSet.
 	 * @public
-	 * @param {object} oRule Rule object that will be removed
+	 * @param {sap.ui.support.RuleConfiguration} oRule Rule object that will be removed
 	 */
 	RuleSet.prototype.removeRule = function (oRule) {
 		if (this._mRules[oRule.id]) {
