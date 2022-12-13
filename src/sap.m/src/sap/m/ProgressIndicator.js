@@ -406,11 +406,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the <code>sap.m.ProgressIndicator</code>  accessibility information.
+	 * Returns the <code>sap.m.ProgressIndicator</code> accessibility information.
 	 *
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
-	 * @returns {object} The <code>sap.m.ProgressIndicator</code> accessibility information
+	 * @returns {sap.ui.core.AccessibilityInfo}
+	 * The object contains the accessibility information of <code>sap.m.ProgressIndicator</code>
 	 */
 	ProgressIndicator.prototype.getAccessibilityInfo = function() {
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),

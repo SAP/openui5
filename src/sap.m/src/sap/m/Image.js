@@ -845,7 +845,7 @@ sap.ui.define([
 	 *
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
-	 * @returns {{role: string, type: string, description: string, focusable: boolean}}
+	 * @returns {sap.ui.core.AccessibilityInfo}
 	 * The object contains the accessibility information for <code>sap.m.Image</code>
 	 */
 	Image.prototype.getAccessibilityInfo = function() {

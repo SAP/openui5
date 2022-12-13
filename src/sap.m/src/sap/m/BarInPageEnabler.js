@@ -80,8 +80,26 @@ sap.ui.define(['sap/ui/base/Object', 'sap/m/library', "sap/base/Log"],
 		},
 
 		/**
-		 * Gets the Bar contexts inside page.
-		 * @returns {Object} with all available contexts.
+		 * @typedef {object} sap.m.BarContexts
+		 * @description The object contains the Bar contexts inside page.
+		 * @property {sap.m.BarContext} [footer]
+		 * @property {sap.m.BarContext} [header]
+		 * @property {sap.m.BarContext} [subheader]
+		 * @protected
+		 */
+
+		/**
+		 * @typedef {object} sap.m.BarContext
+		 * @description The object contains the available parameters for Bar`s context (footer, header or subheader).
+		 * @property {string} [contextClass]
+		 * @property {string} [internalAriaLabel]
+		 * @property {string} [tag]
+		 * @protected
+		 */
+
+		/**
+		 *
+		 * @returns {sap.m.BarContexts} with all available contexts.
 		 * @protected
 		 */
 		getContext : function () {

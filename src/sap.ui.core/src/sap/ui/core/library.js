@@ -749,6 +749,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * The object contains accessibility information for a control.
+	 *
+	 * @typedef {object} sap.ui.core.AccessibilityInfo
+	 *
+	 * @property {string} [role]
+	 * 	The WAI-ARIA role which is implemented by the control.
+	 * @property {string} [type]
+	 * 	A translated text that represents the control type. Might correlate with the role.
+	 * @property {string} [description]
+	 * 	Describes the most relevant control state (e.g. the input's value) - it should be a translated text.
+	 * 	<b>Note:</b> The type and the enabled/editable state shouldn`t be handled here.
+	 * @property {boolean} [focusable]
+	 * 	Whether the control can get the focus.
+	 * @property {boolean | null} [enabled]
+	 * 	 Whether the control is enabled. If not relevant, it shouldn`t be set or <code>null</code> can be provided.
+	 * @property {boolean | null} [editable]
+	 * 	Whether the control is editable. If not relevant, it shouldn`t be set or <code>null</code> can be provided.
+	 * @property {boolean | null} [readonly]
+	 * 	Whether the control is readonly. If not relevant, it shouldn`t be set or <code>null</code> can be provided.
+	 * @property {sap.ui.core.Element[]} [children]
+	 * 	A list of elements or controls that are aggregated by the given control (e.g. when the control is a layout).
+	 * 	Primitive values in the list will be ignored.
+	 * 	<b>Note:</b> Children should only be provided when it is helpful to understand the accessibility context
+	 * 	(e.g. a form control shouldn`t provide details of its internals (fields, labels, ...) but a layout should).
+	 * @protected
+	 * @since 1.110
+	 */
+
+	/**
 	 * Configuration options for the colors of a progress bar.
 	 *
 	 * @enum {string}

@@ -2157,40 +2157,9 @@ sap.ui.define([
 
 	/**
 	 *
-	 *   Interface for controls which can have special behavior inside <code>sap.m.OverflowToolbar</code>.
-	 *   Controls that implement this interface must provide a <code>getOverflowToolbarConfig</code> method
-	 *   that accepts no arguments and returns an object with the following fields:
-	 *   <ul>
-	 *       <li><code>canOverflow</code> - A boolean that tells whether the control can move to the overflow menu or not.
-	 *
-	 *       <b>Note:</b> Even if <code>canOverflow</code> is set to <code>false</code>, the <code>propsUnrelatedToSize</code> field is taken into account,
-	 *       allowing to optimize the behavior of controls that do not need to overflow, but are used in an <code>sap.m.OverflowToolbar</code> regardless.</li>
-	 *
-	 *       <li><code>autoCloseEvents</code> - An array of strings, listing all of the control's events that should trigger the closing of the overflow menu, when fired.</li>
-	 *
-	 *       <li><code>invalidationEvents</code> - An array of strings, listing all of the control's events that should trigger the invalidation of the <code>sap.m.OverflowToolbar</code>, when fired.</li>
-	 *
-	 *       <li><code>propsUnrelatedToSize</code> - An array of strings, listing all of the control's properties that, when changed, should not cause the overflow toolbar to invalidate.
-	 *
-	 *       <b>Note:</b> By default <code>sap.m.OverflowToolbar</code> invalidates whenever any property of a child control changes. This is to ensure that whenever the size of a child control changes, the overflow toolbar's layout is recalculated.
-	 *       Some properties however do not affect control size, making it unnecessary to invalidate the overflow toolbar when they change. You can list them here for optimization purposes.</li>
-	 *
-	 *       <li><code>onBeforeEnterOverflow(oControl)</code> - A callback function that will be invoked before moving the control into the overflow menu. The control instance will be passed as an argument.
-	 *
-	 *       <b>Note:</b> The context of the function is not the control instance (use the <code>oControl</code> parameter for this purpose), but rather an internal helper object, associated with the current <code>sap.m.OverflowToolbar</code> instance.
-	 *       This object only needs to be manipulated in special cases (e.g. when you want to store state on it, rather than on the control instance).</li>
-	 *
-	 *       <li><code>onAfterExitOverflow(oControl)</code> - A callback function that will be invoked after taking the control out of the overflow menu (before moving it back to the toolbar itself). The control instance will be passed as an argument.
-	 *
-	 *       <b>Note:</b> See: <code>onBeforeEnterOverflow</code> for details about the function's context.</li>
-	 *
-	 *       <li><code>getCustomImportance()</code> - A function that, if provided, will be called to determine the priority of the control.
-	 *       This function must return a value of type <code>sap.m.OverflowToolbarPriority</code>. The string "Medium" is also accepted and interpreted as priority between <code>Low</code> and <code>High</code>.
-	 *
-	 *       <b>Note:</b> Normally priority in <code>sap.m.OverflowToolbar</code> is managed with the <code>priority</code> property of <code>sap.m.OverflowToolbarLayoutData</code>.
-	 *       However, some controls may have other means of defining priority, such as dedicated properties or other types of layout data for that purpose.
-	 *       In summary, implementing this function allows a control to override the default priority logic (<code>sap.m.OverflowToolbarLayoutData</code>) by providing its own.</li>
-	 *   </ul>
+	 * Interface for controls which can have special behavior inside <code>sap.m.OverflowToolbar</code>.
+	 * Controls that implement this interface must provide a <code>getOverflowToolbarConfig</code> method
+	 * that accepts no arguments and returns an object of type <code>sap.m.OverflowToolbarConfig</code>.
 	 *
 	 *   <b>Important:</b> In addition, the control can implement a CSS class, scoped with the <code>.sapMOverflowToolbarMenu-CTX</code> context selector, that will be applied whenever the control is inside the overflow menu.
 	 *   For example, to make your control take up the whole width of the overflow menu, you can add a context class to your control's base CSS file like this:
@@ -2967,6 +2936,39 @@ sap.ui.define([
 		Always : "Always"
 
 	};
+
+	/**
+	 * @typedef {object} sap.m.OverflowToolbarConfig
+	 * @description The object contains configuration information for the {@link sap.m.IOverflowToolbarContent} interface.
+	 *
+	 * @property {boolean} [canOverflow]
+	 * 	A boolean that tells whether the control can move to the overflow menu or not.
+	 * 	<b>Note:</b> Even if <code>canOverflow</code> is set to <code>false</code>, the <code>propsUnrelatedToSize</code> field is taken into account,
+	 * 	allowing to optimize the behavior of controls that do not need to overflow, but are used in an <code>sap.m.OverflowToolbar</code> regardless.
+	 * @property {string[]} [autoCloseEvents]
+	 * 	An array of strings, listing all of the control's events that should trigger the closing of the overflow menu, when fired.
+	 * @property {string[]} [invalidationEvents]
+	 * 	An array of strings, listing all of the control's events that should trigger the invalidation of the <code>sap.m.OverflowToolbar</code>, when fired.
+	 *	<b>Note:</b> By default <code>sap.m.OverflowToolbar</code> invalidates whenever any property of a child control changes. This is to ensure that whenever the size of a child control changes, the overflow toolbar's layout is recalculated.
+	 *  Some properties however do not affect control size, making it unnecessary to invalidate the overflow toolbar when they change. You can list them here for optimization purposes.
+	 * @property {string[]} [propsUnrelatedToSize]
+	 * 	An array of strings, listing all of the control's properties that, when changed, should not cause the overflow toolbar to invalidate.
+	 * @property {function} [onBeforeEnterOverflow]
+	 * 	A callback function that will be invoked before moving the control into the overflow menu. The control instance will be passed as an argument.
+	 *  <b>Note:</b> The context of the function is not the control instance (use the <code>oControl</code> parameter for this purpose), but rather an internal helper object, associated with the current <code>sap.m.OverflowToolbar</code> instance.
+	 *  This object only needs to be manipulated in special cases (e.g. when you want to store state on it, rather than on the control instance).
+	 * @property {function} [onAfterExitOverflow]
+	 * 	A callback function that will be invoked after taking the control out of the overflow menu (before moving it back to the toolbar itself). The control instance will be passed as an argument.
+	 *	<b>Note:</b> See: <code>onBeforeEnterOverflow</code> for details about the function's context.
+	 * @property {function} [getCustomImportance]
+	 * 	A function that, if provided, will be called to determine the priority of the control.
+	 *  This function must return a value of type <code>sap.m.OverflowToolbarPriority</code>. The string "Medium" is also accepted and interpreted as priority between <code>Low</code> and <code>High</code>.
+	 *  <b>Note:</b> Normally priority in <code>sap.m.OverflowToolbar</code> is managed with the <code>priority</code> property of <code>sap.m.OverflowToolbarLayoutData</code>.
+	 *  However, some controls may have other means of defining priority, such as dedicated properties or other types of layout data for that purpose.
+	 *  In summary, implementing this function allows a control to override the default priority logic (<code>sap.m.OverflowToolbarLayoutData</code>) by providing its own.
+	 * @public
+	 * @since 1.110
+	 */
 
 	/**
 	 * Marker interface for controls which are suitable as items for the ObjectHeader.
