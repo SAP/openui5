@@ -8,6 +8,18 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	 * P13n <code>Item</code> object type.
+	 *
+	 * @static
+	 * @constant
+	 * @typedef {object} sap.m.p13n.Item
+	 * @property {string} name The unique key of the item
+	 * @property {string} label The label describing the personalization item
+	 * @property {boolean} visible Defines the selection state of the personalization item
+	 * @public
+	 */
+
+	/**
 	 * Constructor for a new <code>BasePanel</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
@@ -82,17 +94,19 @@ sap.ui.define([
 				 * This event is fired if any change has been made within the <code>BasePanel</code> control.
 				 */
 				change: {
-					/**
-					 * The reason why the panel state has changed, for example, items have been added, removed, or moved.
-					 */
-					reason: {
-						type: "string"
-					},
-					/**
-					 * An object containing information about the specific item that has been changed.
-					 */
-					item: {
-						type: "sap.m.p13n.Item|sap.m.p13n.Item[]"
+					parameters: {
+						/**
+						 * The reason why the panel state has changed, for example, items have been added, removed, or moved.
+						 */
+						reason: {
+							type: "string"
+						},
+						/**
+						 * An object containing information about the specific item that has been changed.
+						 */
+						item: {
+							type: "sap.m.p13n.Item"
+						}
 					}
 				}
 			}
@@ -130,7 +144,7 @@ sap.ui.define([
 		this._oP13nModel.setSizeLimit(10000);
 		this.setModel(this._oP13nModel, this.P13N_MODEL);
 
-	    // list is necessary to set the template + model on
+		// list is necessary to set the template + model on
 		this._oListControl = this._createInnerListControl();
 
 		// Determines whether the rearranged item should be focused
@@ -159,18 +173,6 @@ sap.ui.define([
 			]
 		}));
 	};
-
-	/**
-	 * P13n <code>Item</code> object type.
-	 *
-	 * @static
-	 * @constant
-	 * @typedef {object} sap.m.p13n.Item
-	 * @property {string} name The unique key of the item
-	 * @property {string} label The label describing the personalization item
-	 * @property {boolean} visible Defines the selection state of the personalization item
-	 * @public
-	 */
 
 	/**
 	 * Sets the personalization state of the panel instance.

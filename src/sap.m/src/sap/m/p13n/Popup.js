@@ -90,11 +90,13 @@ sap.ui.define([
 				 * This event is fired after the dialog has been closed.
 				 */
 				close: {
-					/**
-					 * The corresponding reason for closing the dialog (Ok & Cancel).
-					 */
-					reason: {
-						type: "string"
+					parameters: {
+						/**
+						 * The corresponding reason for closing the dialog (Ok & Cancel).
+						 */
+						reason: {
+							type: "string"
+						}
 					}
 				}
 			}
