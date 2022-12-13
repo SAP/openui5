@@ -101,10 +101,12 @@ sap.ui.define([
 		var oUIArea = createAndAppendDiv("uiarea_focus");
 
 		var oInput = new Input();
+		oInput.setBusyIndicatorDelay(0);
 		oInput.placeAt("uiarea_focus");
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
+
 
 		oInput.setBusy(true);
 		sap.ui.getCore().applyChanges();
@@ -140,13 +142,14 @@ sap.ui.define([
 		var oPanel = new Panel({
 			content: oInput
 		});
+		oPanel.setBusyIndicatorDelay(0);
 		oPanel.placeAt("uiarea_focus");
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(!oPanel.isFocusable(), "Panel doesn't have focusable DOM element");
 		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
 
-		oInput.setBusy(true);
+		oPanel.setBusy(true);
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because its parent is busy");
@@ -168,7 +171,7 @@ sap.ui.define([
 		assert.ok(!oPanel.isFocusable(), "Panel doesn't have focusable DOM element");
 		assert.ok(oInput.isFocusable(), "The input control should now be focusable");
 
-		oInput.setBlocked(true);
+		oPanel.setBlocked(true);
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(!oInput.isFocusable(), "The input control should be not focusable because its parent is busy");
@@ -231,6 +234,46 @@ sap.ui.define([
 
 			oDialog.attachAfterClose(function() {
 				oDialog.destroy();
+				done();
+			});
+
+			oDialog.close();
+		});
+
+		oDialog.open();
+	});
+
+	QUnit.test("Element is focusable even when it's covered due to scrolling", function(assert) {
+		var done = assert.async();
+		var sContent =
+			"<div style='overflow-y: scroll; height: 400px; position:relative'>" +
+				"<div style='position: fixed; height: 100px; width: 100%'></div>" +
+				"<div id='uiarea11'></div>" +
+				"<div style='height: 3000px; margin-top: 100px'></div>" +
+				"<input id='input11' />" +
+			"</div>";
+
+		var oContainerDOM = createAndAppendDiv("container");
+		oContainerDOM.innerHTML = sContent;
+
+		var oInput = new Input();
+		oInput.placeAt("uiarea11");
+		sap.ui.getCore().applyChanges();
+
+		// focus the last <input> causes the "uiarea11" to scorlled out of the view port
+		document.getElementById("input11").focus();
+
+		assert.ok(oInput.isFocusable(), "Input control is still focusable");
+
+		var oDialog = new Dialog({ });
+
+		oDialog.attachAfterOpen(function() {
+			assert.notOk(oInput.isFocusable(), "The input control isn't focusable because it's blocked by the block layer");
+
+			oDialog.attachAfterClose(function() {
+				oDialog.destroy();
+				oInput.destroy();
+				oContainerDOM.remove();
 				done();
 			});
 
