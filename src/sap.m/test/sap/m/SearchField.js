@@ -108,8 +108,7 @@ sap.ui.define([
 							showRefreshButton: true,
 							search: onSearch,
 							liveChange: onLiveChange,
-							width: "100%",
-							refreshButtonTooltip: "Refresh"
+							width: "100%"
 						})
 					]
 				})
@@ -133,7 +132,6 @@ sap.ui.define([
 				placeholder: "selectOnFocus:false..",
 				selectOnFocus: false,
 				ariaLabelledBy: "SF2Label",
-				refreshButtonTooltip: "Reload",
 				search: function(event){
 					onSearch(event);
 					Log.debug("Page is invalidated");
@@ -154,7 +152,6 @@ sap.ui.define([
 				ariaLabelledBy: "SF3Label",
 				enabled: false,
 				showRefreshButton: true,
-				refreshButtonTooltip: "Reload",
 				search: onSearch,
 				liveChange: onLiveChange
 			}),
