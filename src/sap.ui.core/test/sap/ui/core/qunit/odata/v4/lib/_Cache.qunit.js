@@ -387,6 +387,7 @@ sap.ui.define([
 			oCountExpectation,
 			oDeleted = {index : "~insert~"},
 			oError = new Error(""),
+			oGroupLock = {getGroupId : function () {}},
 			oHelperMock = this.mock(_Helper),
 			oIndexExpectation,
 			oMessage1 = {code : "CODE1"},
@@ -480,7 +481,7 @@ sap.ui.define([
 		this.oModelInterfaceMock.expects("fireMessageChange")
 			.withExactArgs({oldMessages : sinon.match.same(aMessages)});
 		this.mock(oCache).expects("addDeleted")
-			.withExactArgs(sinon.match.same(aCacheData), 1, "('1')", "~oGroupLock~",
+			.withExactArgs(sinon.match.same(aCacheData), 1, "('1')", sinon.match.same(oGroupLock),
 				oFixture.bCreated)
 			.callsFake(function () {
 				bAddDeleted = true;
@@ -492,11 +493,14 @@ sap.ui.define([
 			.callsFake(function () {
 				assert.ok(bAddDeleted, "removeElement called after addDeleted");
 			});
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("~group~");
+		this.oRequestorMock.expects("relocateAll")
+			.withExactArgs("$parked.~group~", "~group~", sinon.match.same(aCacheData[1]));
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/EMPLOYEES", sinon.match.same(mQueryOptions), true)
 			.returns("?foo=bar");
 		oRequestExpectation = this.oRequestorMock.expects("request")
-			.withExactArgs("DELETE", "Equipments('1')?foo=bar", "~oGroupLock~",
+			.withExactArgs("DELETE", "Equipments('1')?foo=bar", sinon.match.same(oGroupLock),
 				{"If-Match" : sinon.match.same(oFixture.oEntity || aCacheData[1])}, undefined,
 				undefined, sinon.match.func, undefined,
 				"original/resource/path" + (sPath && "/" + sPath) + "('1')")
@@ -506,7 +510,7 @@ sap.ui.define([
 				sinon.match.same(oRequestPromise));
 
 		// code under test
-		oPromise = oCache._delete("~oGroupLock~", "Equipments('1')",
+		oPromise = oCache._delete(oGroupLock, "Equipments('1')",
 			(sPath && sPath + "/") + (oFixture.bCreated ? "-1" : "0"), oFixture.oEntity,
 			fnCallback);
 
@@ -566,7 +570,7 @@ sap.ui.define([
 					"@odata.etag" : sEtag
 				}
 			},
-			oGroupLock = bLock ? "~oGroupLock~" : null,
+			oGroupLock = bLock ? {getGroupId : function () {}} : null,
 			sPath = "Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM",
 			oUpdateData = {};
 
@@ -575,6 +579,10 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EQUIPMENT_2_EMPLOYEE")
 			.returns(SyncPromise.resolve(oCacheData));
 		if (bLock) {
+			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("~group~");
+			this.oRequestorMock.expects("relocateAll")
+				.withExactArgs("$parked.~group~", "~group~",
+					sinon.match.same(oCacheData["EMPLOYEE_2_TEAM"]));
 			this.oRequestorMock.expects("request")
 				.withExactArgs("DELETE", "TEAMS('23')", oGroupLock, {
 						"If-Match" : sinon.match.same(oCacheData["EMPLOYEE_2_TEAM"])

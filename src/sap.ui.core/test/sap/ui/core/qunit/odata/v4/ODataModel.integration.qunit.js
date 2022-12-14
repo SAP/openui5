@@ -31784,50 +31784,50 @@ sap.ui.define([
 	// Scenario: Automatic retry of failed PATCHes, along the lines of
 	// MIT.SalesOrderCreateRelative.html, but with $auto group
 	// JIRA: CPOUI5UISERVICESV3-1450
-	[function () {
-		var oStatusBinding = this.oView.byId("status").getBinding("value");
+	[function () { // Context#setProperty restarts only PATCHes for the same entity (other field)
+		var oStatusBinding = this.oView.byId("status0").getBinding("value");
 
-		this.expectChange("status", "Busy")
+		this.expectChange("status0", "Busy")
 			.expectRequest({
 				method : "PATCH",
 				url : "EMPLOYEES('3')",
-				headers : {"If-Match" : "ETag0"},
+				headers : {"If-Match" : "ETag3"},
 				payload : {
-					ROOM_ID : "42", // <-- retry
+					ROOM_ID : "31", // <-- retry
 					STATUS : "Busy"
 				}
 			}, {/* don't care */});
 
-		oStatusBinding.setValue("Busy"); // a different field is changed
-	}, function () {
-		var oRoomIdBinding = this.oView.byId("roomId").getBinding("value");
+		oStatusBinding.setValue("Busy");
+	}, function () { // Context#setProperty restarts only PATCHes for the same entity (same field)
+		var oRoomIdBinding = this.oView.byId("roomId0").getBinding("value");
 
-		this.expectChange("roomId", "23")
+		this.expectChange("roomId0", "32")
 			.expectRequest({
 				method : "PATCH",
 				url : "EMPLOYEES('3')",
-				headers : {"If-Match" : "ETag0"},
+				headers : {"If-Match" : "ETag3"},
 				payload : {
-					ROOM_ID : "23" // <-- new change wins over retry
+					ROOM_ID : "32" // <-- new change wins over retry
 				}
 			}, {/* don't care */});
 
-		oRoomIdBinding.setValue("23"); // the same field is changed again
-	}, function (assert) {
+		oRoomIdBinding.setValue("32");
+	}, function (assert) { // ODCB#execute restarts only PATCHes for the same entity
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
-			oRoomIdBinding = this.oView.byId("roomId").getBinding("value");
+			oRoomIdBinding = this.oView.byId("roomId0").getBinding("value");
 
 		this.expectRequest({
 				method : "PATCH",
 				url : "EMPLOYEES('3')",
-				headers : {"If-Match" : "ETag0"},
+				headers : {"If-Match" : "ETag3"},
 				payload : {
-					ROOM_ID : "42" // <-- retry
+					ROOM_ID : "31" // <-- retry
 				}
 			}, {/* don't care */})
 			.expectRequest({
 				method : "POST",
-				headers : {"If-Match" : "ETag0"},
+				headers : {"If-Match" : "ETag3"},
 				url : "EMPLOYEES('3')/" + sAction,
 				payload : {TeamID : "23"}
 			}, {/* don't care */});
@@ -31840,69 +31840,85 @@ sap.ui.define([
 				assert.strictEqual(oReturnValueContext, undefined,
 					"no R.V.C. w/o key predicate");
 			});
-/* eslint-disable no-tabs */
-// Note: "Cannot delete due to pending changes" --> this scenario is currently impossible
-//
-//	}, function () {
-//		var oRoomIdBinding = this.oView.byId("roomId").getBinding("text");
-//
-//		this.expectRequest({
-//				method : "PATCH",
-//				url : "EMPLOYEES('3')",
-//				headers : {"If-Match" : "ETag0"},
-//				payload : {
-//					ROOM_ID : "42" // <-- retry
-//				}
-//			}, {/* don't care */})
-//			.expectRequest({
-//				method : "DELETE",
-//				url : "EMPLOYEES('3')",
-//				headers : {"If-Match" : "ETag0"}
-//			});
-//
-//		return oRoomIdBinding.getContext().delete(); // DELETE also triggers retry
-/* eslint-enable no-tabs */
-	}, function (assert) {
+	}, function () { // CPOUI5ODATAV4-1932: Context#delete restarts only PATCHes for the same entity
+		var oRoomIdBinding = this.oView.byId("roomId0").getBinding("value");
+
+		this.expectChange("roomId0", null)
+			.expectChange("status0", null)
+			.expectRequest({
+				method : "PATCH",
+				url : "EMPLOYEES('3')",
+				headers : {"If-Match" : "ETag3"},
+				payload : {
+					ROOM_ID : "31" // <-- retry
+				}
+			}, {/* don't care */})
+			.expectRequest({
+				method : "DELETE",
+				url : "EMPLOYEES('3')",
+				headers : {"If-Match" : "*"}
+			});
+
+		return oRoomIdBinding.getContext().delete();
+	}, function () { // ODataModel#submitBatch restarts all PATCHes
 		this.expectRequest({
-			method : "PATCH",
-			url : "EMPLOYEES('3')",
-			headers : {"If-Match" : "ETag0"},
-			payload : {
-				ROOM_ID : "42" // <-- retry
-			}
-		}, {/* don't care */});
+				method : "PATCH",
+				url : "EMPLOYEES('3')",
+				headers : {"If-Match" : "ETag3"},
+				payload : {
+					ROOM_ID : "31" // <-- retry
+				}
+			}, {/* don't care */})
+			.expectRequest({
+				method : "PATCH",
+				url : "EMPLOYEES('4')",
+				headers : {"If-Match" : "ETag4"},
+				payload : {
+					ROOM_ID : "41" // <-- retry
+				}
+			}, {/* don't care */});
 
-		assert.strictEqual(this.oModel.hasPendingChanges(), true);
-		assert.strictEqual(this.oView.byId("form").getObjectBinding().hasPendingChanges(), true);
-
-		return this.oModel.submitBatch("$auto");
-	}, function (assert) {
-		assert.strictEqual(this.oModel.hasPendingChanges(), true);
-		assert.strictEqual(this.oView.byId("form").getObjectBinding().hasPendingChanges(), true);
-
-		this.expectChange("roomId", "2")
+		return this.oModel.submitBatch("$auto").then(function () {
+			return /*bAll*/true;
+		});
+	}, function (assert, oForm0Binding, oForm1Binding) {
+		// ODataModel#resetChanges removes all PATCHes
+		this.expectChange("roomId0", "30")
+			.expectChange("roomId1", "40")
 			.expectCanceledError("Failed to update path /EMPLOYEES('3')/ROOM_ID",
-				"Request canceled: PATCH EMPLOYEES('3'); group: $parked.$auto");
+				"Request canceled: PATCH EMPLOYEES('3'); group: $parked.$auto")
+			.expectCanceledError("Failed to update path /EMPLOYEES('4')/ROOM_ID",
+				"Request canceled: PATCH EMPLOYEES('4'); group: $parked.$auto");
 
 		// code under test
 		this.oModel.resetChanges("$auto");
 
 		assert.strictEqual(this.oModel.hasPendingChanges(), false);
-		assert.strictEqual(this.oView.byId("form").getObjectBinding().hasPendingChanges(), false);
+		assert.strictEqual(oForm0Binding.hasPendingChanges(), false);
+		assert.strictEqual(oForm1Binding.hasPendingChanges(), false);
 
-		return this.oModel.submitBatch("$auto");
-	}, function (assert) {
-		// failed PATCH is retried within the same $batch as the side effect
-		var oEmployeeBinding = this.oView.byId("form").getObjectBinding();
-
+		return this.oModel.submitBatch("$auto").then(function () {
+			return /*bAll*/true;
+		});
+	}, function (_assert, oForm0Binding) {
+		// Context#requestSideEffects restarts all PATCHes within the same $batch as the side effect
 		this.expectRequest({
 				batchNo : 2,
-				headers : {"If-Match" : "ETag0"},
+				headers : {"If-Match" : "ETag3"},
 				method : "PATCH",
 				payload : {
-					ROOM_ID : "42" // <-- retry
+					ROOM_ID : "31" // <-- retry
 				},
 				url : "EMPLOYEES('3')"
+			}, {/* don't care */})
+			.expectRequest({
+				batchNo : 2,
+				headers : {"If-Match" : "ETag4"},
+				method : "PATCH",
+				payload : {
+					ROOM_ID : "41" // <-- retry
+				},
+				url : "EMPLOYEES('4')"
 			}, {/* don't care */})
 			.expectRequest({
 				batchNo : 2,
@@ -31910,44 +31926,63 @@ sap.ui.define([
 			}, {
 				STATUS : "Busy"
 			})
-			.expectChange("status", "Busy");
+			.expectChange("status0", "Busy");
 
-		assert.strictEqual(this.oModel.hasPendingChanges(), true);
-		assert.strictEqual(oEmployeeBinding.hasPendingChanges(), true);
-
-		return Promise.all([
-			oEmployeeBinding.getBoundContext().requestSideEffects([{$PropertyPath : "STATUS"}]),
-			this.oModel.submitBatch("$auto")
-		]);
+		return oForm0Binding.getBoundContext().requestSideEffects([{$PropertyPath : "STATUS"}])
+			.then(function () {
+				return /*bAll*/true;
+			});
 	}].forEach(function (fnCodeUnderTest, i) {
 		QUnit.test("Later retry failed PATCHes for $auto, " + i, function (assert) {
-			var oModel = this.createTeaBusiModel({groupId : "$direct", updateGroupId : "$auto"}),
+			var oForm0Binding,
+				oForm1Binding,
+				oModel = this.createTeaBusiModel({groupId : "$direct", updateGroupId : "$auto"}),
 				sView = '\
-<FlexBox binding="{/EMPLOYEES(\'3\')}" id="form">\
-	<Input id="roomId" value="{ROOM_ID}"/>\
-	<Input id="status" value="{STATUS}"/>\
+<FlexBox binding="{/EMPLOYEES(\'3\')}" id="form0">\
+	<Input id="roomId0" value="{ROOM_ID}"/>\
+	<Input id="status0" value="{STATUS}"/>\
+</FlexBox>\
+<FlexBox binding="{/EMPLOYEES(\'4\')}" id="form1">\
+	<Input id="roomId1" value="{ROOM_ID}"/>\
 </FlexBox>',
 				that = this;
 
 			this.expectRequest("EMPLOYEES('3')", {
-					"@odata.etag" : "ETag0",
+					"@odata.etag" : "ETag3",
 					ID : "3",
-					ROOM_ID : "2",
+					ROOM_ID : "30",
 					STATUS : "Occupied"
 				})
-				.expectChange("roomId", "2")
-				.expectChange("status", "Occupied");
+				.expectRequest("EMPLOYEES('4')", {
+					"@odata.etag" : "ETag4",
+					ID : "4",
+					ROOM_ID : "40"
+				})
+				.expectChange("roomId0", "30")
+				.expectChange("roomId1", "40")
+				.expectChange("status0", "Occupied");
 
 			return this.createView(assert, sView, oModel).then(function () {
-				var oRoomIdBinding = that.oView.byId("roomId").getBinding("value");
+				var oRoomIdBinding0 = that.oView.byId("roomId0").getBinding("value"),
+					oRoomIdBinding1 = that.oView.byId("roomId1").getBinding("value");
 
-				that.expectChange("roomId", "42")
+				oForm0Binding = that.oView.byId("form0").getObjectBinding();
+				oForm1Binding = that.oView.byId("form1").getObjectBinding();
+
+				that.expectChange("roomId0", "31")
+					.expectChange("roomId1", "41")
 					.expectRequest({
 						method : "PATCH",
 						url : "EMPLOYEES('3')",
-						headers : {"If-Match" : "ETag0"},
-						payload : {ROOM_ID : "42"}
+						headers : {"If-Match" : "ETag3"},
+						payload : {ROOM_ID : "31"}
 					}, createErrorInsideBatch())
+					.expectRequest({
+						method : "PATCH",
+						url : "EMPLOYEES('4')",
+						headers : {"If-Match" : "ETag4"},
+						payload : {ROOM_ID : "41"}
+					}) // no response required
 					.expectMessages([{
 						code : "CODE",
 						message : "Request intentionally failed",
@@ -31957,15 +31992,28 @@ sap.ui.define([
 					}]);
 				that.oLogMock.expects("error")
 					.withArgs("Failed to update path /EMPLOYEES('3')/ROOM_ID");
+				that.oLogMock.expects("error")
+					.withArgs("Failed to update path /EMPLOYEES('4')/ROOM_ID");
 
-				oRoomIdBinding.setValue("42");
+				oRoomIdBinding0.setValue("31");
+				oRoomIdBinding1.setValue("41");
+
+				assert.ok(oModel.hasPendingChanges());
+				assert.ok(oForm0Binding.hasPendingChanges());
+				assert.ok(oForm1Binding.hasPendingChanges());
 
 				return that.waitForChanges(assert);
 			}).then(function () {
 				return Promise.all([
-					fnCodeUnderTest.call(that, assert),
+					fnCodeUnderTest.call(that, assert, oForm0Binding, oForm1Binding),
 					that.waitForChanges(assert)
 				]);
+			}).then(function (aResults) {
+				var bAll = aResults[0];
+
+				assert.strictEqual(oModel.hasPendingChanges(), !bAll);
+				assert.strictEqual(oForm0Binding.hasPendingChanges(), false);
+				assert.strictEqual(oForm1Binding.hasPendingChanges(), !bAll);
 			});
 		});
 	});
