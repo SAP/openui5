@@ -94,6 +94,8 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate"], function(AggregationBaseDe
 	 *
 	 * @property {string} path
 	 *   The identifier of the property
+	 * @property {string} [name]
+	 *   The alternative identifier of the property. Either path or name can be used; preference is on path.
 	 * @property {string} label
 	 *   The label of the identifier
 	 * @property {string} [tooltip]
@@ -104,9 +106,9 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate"], function(AggregationBaseDe
 	 *   Defines constraints for the data type of the property
 	 * @property {object} [formatOptions]
 	 *   Defines format options for the data type of the property
-	 * @property {string} group
+	 * @property {string} [group]
 	 *   The group identifier to which the property belongs
-	 * @property {string} groupLabel
+	 * @property {string} [groupLabel]
 	 *   The group name of the group identifier
 	 * @property {boolean} [caseSensitive = false]
 	 *   If <code>true</code> defines that the filter value will be treated as case-sensitive
