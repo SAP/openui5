@@ -2,19 +2,12 @@
 		xmlns="sap.m"
 		xmlns:mdc="sap.ui.mdc"
 		xmlns:mdcField="sap.ui.mdc.field"
-		xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
-		xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
+		xmlns:mdcv="sap.ui.mdc.valuehelp"
+		xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:form="sap.ui.layout.form"
 		controllerName="sap.ui.mdc.sample.FilterFieldTypes.Controller">
-
-	<MessageStrip
-		text="Outdated - example is not using the new ValueHelp"
-		type="Error"
-		showIcon="true"
-		class="sapUiMediumMarginBottom">
-	</MessageStrip>
 
 	<form:SimpleForm id="Form1" layout="ColumnLayout" editable="true">
 		<form:toolbar>
@@ -32,41 +25,62 @@
 			conditions="{cm>/conditions/title}"
 			display="ValueDescription"
 			maxConditions="-1"
-			fieldHelp="FVH1"
-			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}">
+			fieldHelp="VH1"
+			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
 			<mdc:dependents>
-				<mdcField:FieldValueHelp
-					id="FVH1"
-					title="Book Title"
-					filterFields="*ID*"
-					keyPath="ID"
-					descriptionPath="title"
-					showConditionPanel="true">
-					<mdcField:FieldValueHelpMTableWrapper id="FVH1-W">
-						<Table items='{path : "/Books"}' width="20rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
-							<columns>
-								<Column>
-									<header>
-										<Text text="ID" />
-									</header>
-								</Column>
-								<Column>
-									<header>
-										<Text text="Title" />
-									</header>
-								</Column>
-							</columns>
-							<items>
-								<ColumnListItem type="Active">
-									<cells>
-										<Text text="{ID}" />
-										<Text text="{title}" />
-									</cells>
-								</ColumnListItem>
-							</items>
-						</Table>
-					</mdcField:FieldValueHelpMTableWrapper>
-				</mdcField:FieldValueHelp>
+				<mdc:ValueHelp id="VH1"
+					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
+					<mdc:typeahead>
+						<mdcv:Popover id="VH1-Pop" title="Book Title">
+							<mdcvc:MTable id="VH1-Pop-Cont" keyPath="ID" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
+								<Table id="VH1-Pop-Table" items='{path : "/Books", length: 10}' width="20rem" mode="MultiSelect">
+									<columns>
+										<Column>
+											<header>
+												<Text text="ID" />
+											</header>
+										</Column>
+										<Column>
+											<header>
+												<Text text="Title" />
+											</header>
+										</Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Active">
+											<cells>
+												<Text text="{ID}" />
+												<Text text="{title}" />
+											</cells>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</mdcvc:MTable>
+						</mdcv:Popover>
+					</mdc:typeahead>
+					<mdc:dialog>
+						<mdcv:Dialog id="VH1-Dia" title="Book Title">
+							<mdcvc:MDCTable id="VH1-Dia-Cont" keyPath="ID" descriptionPath="title" filterFields="$search">
+								<mdc:Table id="VH1-Dia-Table" autoBindOnInit="true" selectionMode="Multi" p13nMode="Column,Sort" width="100%" height="100%"
+									delegate='\{"name": "delegates/odata/v4/TableDelegate", "payload": \{"collectionName": "Books"\}\}'
+									threshold="50">
+									<mdc:columns>
+										<mdc:table.Column id="ColId" header="ID" dataProperty="ID" initialIndex="1">
+											<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{ID}" editMode="Display"/>
+										</mdc:table.Column>
+										<mdc:table.Column id="ColTitle" header="Title" dataProperty="title" initialIndex="2">
+											<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{title}" editMode="Display"/>
+										</mdc:table.Column>
+									</mdc:columns>
+									<mdc:type>
+										<mdc:table.GridTableType rowCountMode="Auto"/>
+									</mdc:type>
+								</mdc:Table>
+							</mdcvc:MDCTable>
+							<mdcvc:Conditions id="VH1-Dia-Cond" label="Book Title"/>
+						</mdcv:Dialog>
+					</mdc:dialog>
+				</mdc:ValueHelp>
 			</mdc:dependents>
 		</mdc:FilterField>
 
@@ -78,14 +92,17 @@
 			dataTypeFormatOptions="{style: 'long'}"
 			dataTypeConstraints="{V4: true}"
 			maxConditions="-1"
-			fieldHelp="FVH2"
-			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" >
+			fieldHelp="VH2"
+			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' >
 			<mdc:dependents>
-				<mdcField:FieldValueHelp
-					id="FVH2"
-					title="Dates"
-					showConditionPanel="true">
-				</mdcField:FieldValueHelp>
+				<mdc:ValueHelp id="VH2"
+					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
+					<mdc:dialog>
+						<mdcv:Dialog title="Dates">
+							<mdcvc:Conditions label="Dates"/>
+						</mdcv:Dialog>
+					</mdc:dialog>
+				</mdc:ValueHelp>
 			</mdc:dependents>
 		</mdc:FilterField>
 
@@ -97,14 +114,17 @@
 			dataTypeFormatOptions=""
 			dataTypeConstraints=""
 			maxConditions="-1"
-			fieldHelp="FVH3"
-			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" >
+			fieldHelp="VH3"
+			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' >
 			<mdc:dependents>
-				<mdcField:FieldValueHelp
-					id="FVH3"
-					title="double Values"
-					showConditionPanel="true">
-				</mdcField:FieldValueHelp>
+				<mdc:ValueHelp id="VH3"
+					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
+					<mdc:dialog>
+						<mdcv:Dialog title="double Values">
+							<mdcvc:Conditions label="double Values"/>
+						</mdcv:Dialog>
+					</mdc:dialog>
+				</mdc:ValueHelp>
 			</mdc:dependents>
 		</mdc:FilterField>
 
@@ -119,14 +139,14 @@
 			maxConditions="1"
 			fieldHelp="VH4"
 			operators="EQ,BT,TODAY,YESTERDAY,TOMORROW,TODAYFROMTO,LASTDAYS,NEXTDAYS"
-			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" >
+			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' >
 			<mdc:dependents>
 				<mdc:ValueHelp id="VH4"
-					delegate="{name: 'delegates/odata/v4/ValueHelpDelegate', payload: {}}">
+					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:dialog>
-						<mdcValueHelp:Popover title="Dates">
-							<mdcValueHelpContent:Conditions label="Dates"/>
-						</mdcValueHelp:Popover>
+						<mdcv:Popover title="Dates">
+							<mdcvc:Conditions label="Dates"/>
+						</mdcv:Popover>
 					</mdc:dialog>
 				</mdc:ValueHelp>
 			</mdc:dependents>
@@ -141,7 +161,7 @@
 			dataTypeConstraints="{V4: true}"
 			maxConditions="1"
 			operators="EQ,BT,TODAY,YESTERDAY,TOMORROW,TODAYFROMTO,LASTDAYS,NEXTDAYS"
-			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" >
+			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' >
 		</mdc:FilterField>
 
 		<Label text="FilterField (Single Date)"></Label>
@@ -153,7 +173,7 @@
 			dataTypeConstraints="{V4: true}"
 			maxConditions="1"
 			operators="EQ"
-			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" >
+			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' >
 		</mdc:FilterField>
 
 		<Label text="FilterField (DateTime with Dynamic Date Range)"></Label>
@@ -165,7 +185,7 @@
 			dataTypeConstraints="{precision: 7, V4: true}"
 			maxConditions="1"
 			operators="EQ,BT,TODAY,YESTERDAY,TOMORROW,TODAYFROMTO,LASTDAYS,NEXTDAYS"
-			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" >
+			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' >
 		</mdc:FilterField>
 
 	</form:SimpleForm>

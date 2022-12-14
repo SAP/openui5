@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/mdc/TableDelegate",
+	"delegates/odata/v4/TableDelegate",
 	"sap/ui/core/Core",
 	"sap/ui/mdc/util/FilterUtil",
 	"delegates/odata/v4/util/DelegateUtil",

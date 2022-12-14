@@ -3,6 +3,8 @@
 		xmlns:mdc="sap.ui.mdc"
 		xmlns:mdcf="sap.ui.mdc.field"
 		xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+		xmlns:mdcv="sap.ui.mdc.valuehelp"
+		xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:form="sap.ui.layout.form"
@@ -12,31 +14,18 @@
 		<ToolbarSpacer/>
 	</OverflowToolbar>
 
-	<MessageStrip
-		text="Outdated - example is not using the new ValueHelp"
-		type="Error"
-		showIcon="true"
-		class="sapUiMediumMarginBottom">
-	</MessageStrip>
-
 	<mdc:FilterBar
 		id="FilterBar"
 		liveMode="false"
-		delegate="{name: 'sap/ui/mdc/sample/FilterBar/FilterBar.delegate', payload: {collectionName: 'Books'}}"
+		delegate='\{"name": "sap/ui/mdc/sample/FilterBar/FilterBar.delegate", "payload": \{"collectionName": "Books"\}\}'
 	>
 	<mdc:dependents>
-		<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH2" noDialog="false" keyPath="title" descriptionPath="title" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-			<mdcf:filterBar>
-				<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: 'Books'}}" >
-				<vhfb:filterItems>
-					<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions="{$filters>/conditions/title}" />
-				</vhfb:filterItems>
-				</vhfb:FilterBar>
-			</mdcf:filterBar>
-			<mdcf:suggestContent>
-				<mdcf:FieldValueHelpMTableWrapper>
-					<mdcf:table>
-						<Table items='{path : "/Books"}' width="20rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+		<mdc:ValueHelp id="VH2"
+			delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
+			<mdc:typeahead>
+				<mdcv:Popover id="VH2-Pop" title="Title">
+					<mdcvc:MTable id="VH2-Pop-Cont" keyPath="title" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
+						<Table id="VH2-Pop-Table" items='{path : "/Books", length: 10}' width="20rem">
 							<columns>
 								<Column>
 									<header>
@@ -52,73 +41,56 @@
 								</ColumnListItem>
 							</items>
 						</Table>
-					</mdcf:table>
-				</mdcf:FieldValueHelpMTableWrapper>
-			</mdcf:suggestContent>
-			<mdcf:dialogContent>
-				<mdcf:FieldValueHelpMdcTableWrapper>
-					<mdcf:table>
+					</mdcvc:MTable>
+				</mdcv:Popover>
+			</mdc:typeahead>
+			<mdc:dialog>
+				<mdcv:Dialog id="VH2-Dia" title="Title">
+					<mdcvc:MDCTable id="VH2-Dia-Cont" keyPath="title" descriptionPath="title" filterFields="$search">
+						<mdcvc:filterBar>
+							<vhfb:FilterBar id="VH2-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": "Books"\}\}' >
+								<vhfb:filterItems>
+									<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions="{$filters>/conditions/title}" />
+								</vhfb:filterItems>
+							</vhfb:FilterBar>
+						</mdcvc:filterBar>
 						<!-- TODO Warum brauchen wir den komplexen Table delegate und nicht einen generischen delegate wir für die Filterbar im VH? -->
-						<mdc:Table autoBindOnInit="true" id="FH4-mdc-gridtable"
-							width="30rem"
+						<mdc:Table id="VH2-Dia-Table" autoBindOnInit="true" width="100%" height="100%"
 							selectionMode="Multi"
-							delegate="{name: 'sap/ui/mdc/sample/FilterBar/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
+							delegate='\{"name": "sap/ui/mdc/sample/FilterBar/GridTable.delegate", "payload": \{"collectionName": "Books"\}\}' threshold="50">
 							<mdc:columns>
-								<mdc:table.Column id="id" header="ID" dataProperty="ID" initialIndex="1">
-									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+								<mdc:table.Column id="VH2-Dia-Table-ColId" header="ID" dataProperty="ID" initialIndex="1">
+									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{ID}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="title" header="Title" dataProperty="title" initialIndex="2">
-									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display"/>
+								<mdc:table.Column id="VH2-Dia-Table-ColIitle" header="Title" dataProperty="title" initialIndex="2">
+									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{title}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="descr" header="Description" dataProperty="descr" initialIndex="2">
-									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{descr}" editMode="Display"/>
+								<mdc:table.Column id="VH2-Dia-Table-ColDescr" header="Description" dataProperty="descr" initialIndex="3">
+									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{descr}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="pub" header="Published" dataProperty="published" initialIndex="2">
-									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{published}" editMode="Display"/>
+								<mdc:table.Column id="VH2-Dia-Table-ColPub" header="Published" dataProperty="published" initialIndex="4">
+									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{published}" editMode="Display"/>
 								</mdc:table.Column>
-								<mdc:table.Column id="genre" header="Genre" dataProperty="genre_code" initialIndex="2">
-									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{genre_code}" additionalValue="{genre/label}" editMode="Display"/>
+								<mdc:table.Column id="VH2-Dia-Table-ColGenre" header="Genre Code" dataProperty="genre_code" initialIndex="5">
+									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{genre_code}" additionalValue="{genre/label}" editMode="Display" display="Description"/>
 								</mdc:table.Column>
 							</mdc:columns>
 							<mdc:type>
 								<mdc:table.GridTableType rowCountMode="Auto"/>
 							</mdc:type>
 						</mdc:Table>
-					</mdcf:table>
-				</mdcf:FieldValueHelpMdcTableWrapper>
-			</mdcf:dialogContent>
-		</mdcf:FieldValueHelp>
+					</mdcvc:MDCTable>
+					<mdcvc:Conditions id="VH2-Dia-Cond" label="Book Title"/>
+				</mdcv:Dialog>
+			</mdc:dialog>
+		</mdc:ValueHelp>
 
-		<mdcf:FieldValueHelp
-			title="Author ID"
-			id="FH1"
-			noDialog="false"
-			keyPath="ID"
-			descriptionPath="name"
-			filterFields="$search"
-			showConditionPanel="true"
-			delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-			<mdcf:filterBar>
-				<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
-					<vhfb:basicSearchField>
-						<mdc:FilterField
-							delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
-							dataType= "Edm.String"
-							conditions= "{$filters>/conditions/$search}"
-							width="50%"
-							maxConditions="1"
-							placeholder="Search" />
-					</vhfb:basicSearchField>
-					<vhfb:filterItems>
-						<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
-						<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" />
-					</vhfb:filterItems>
-				</vhfb:FilterBar>
-			</mdcf:filterBar>
-			<mdcf:content>
-				<mdcf:FieldValueHelpMTableWrapper>
-					<mdcf:table>
-						<Table items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+		<mdc:ValueHelp id="VH1"
+			delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
+			<mdc:typeahead>
+				<mdcv:Popover id="VH1-Pop" title="Author ID">
+					<mdcvc:MTable id="VH1-Pop-Cont" keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+						<Table id="VH1-Pop-Table" items='{path : "/Authors", length: 10}' width="30rem">
 							<columns>
 								<Column width="5rem">
 									<header>
@@ -146,15 +118,57 @@
 								</ColumnListItem>
 							</items>
 						</Table>
-					</mdcf:table>
-				</mdcf:FieldValueHelpMTableWrapper>
-			</mdcf:content>
-		</mdcf:FieldValueHelp>
-
+					</mdcvc:MTable>
+				</mdcv:Popover>
+			</mdc:typeahead>
+			<mdc:dialog>
+				<mdcv:Dialog id="VH1-Dia" title="Author ID">
+					<mdcvc:MDCTable id="VH1-Dia-Cont" keyPath="ID" descriptionPath="name" filterFields="$search">
+						<mdcvc:filterBar>
+							<vhfb:FilterBar id="VH1-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+								<vhfb:basicSearchField>
+									<mdc:FilterField
+										delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+										dataType= "Edm.String"
+										conditions= "{$filters>/conditions/$search}"
+										width="50%"
+										maxConditions="1"
+										placeholder="Search" />
+								</vhfb:basicSearchField>
+								<vhfb:filterItems>
+									<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="ID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+									<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Name" conditions= "{$filters>/conditions/name}" />
+								</vhfb:filterItems>
+							</vhfb:FilterBar>
+						</mdcvc:filterBar>
+						<!-- TODO Warum brauchen wir den komplexen Table delegate und nicht einen generischen delegate wir für die Filterbar im VH? -->
+						<mdc:Table id="VH1-Dia-Table" autoBindOnInit="true" width="100%" height="100%"
+							selectionMode="Multi"
+							delegate='\{"name": "sap/ui/mdc/sample/FilterBar/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}' threshold="50">
+							<mdc:columns>
+								<mdc:table.Column id="VH1-Dia-Table-ColId" header="ID" dataProperty="ID" initialIndex="1">
+									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{ID}" editMode="Display"/>
+								</mdc:table.Column>
+								<mdc:table.Column id="VH1-Dia-Table-ColName" header="Name" dataProperty="name" initialIndex="2">
+									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{name}" editMode="Display"/>
+								</mdc:table.Column>
+								<mdc:table.Column id="VH1-Dia-Table-ColDateOfBirth" header="Date of Birth" dataProperty="dateOfBirth" initialIndex="2">
+									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{dateOfBirth}" editMode="Display"/>
+								</mdc:table.Column>
+							</mdc:columns>
+							<mdc:type>
+								<mdc:table.GridTableType rowCountMode="Auto"/>
+							</mdc:type>
+						</mdc:Table>
+					</mdcvc:MDCTable>
+					<mdcvc:Conditions id="VH1-Dia-Cond" label="Author ID"/>
+				</mdcv:Dialog>
+			</mdc:dialog>
+		</mdc:ValueHelp>
 	</mdc:dependents>
 
 	<mdc:basicSearchField>
-		<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
+		<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="field0"
 		dataType="Edm.String"
 		placeholder= "Search"
 		conditions="{$filters>/conditions/$search}"
@@ -164,22 +178,22 @@
 
 	<mdc:filterItems>
 		<mdc:FilterField
-			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 			id="ff1"
 			label="Author ID"
 			conditions="{$filters>/conditions/author_ID}"
 			dataType="Edm.Int32"
 			required="false"
-			fieldHelp="FH1"
+			fieldHelp="VH1"
 			display="DescriptionValue"
 			width="100%"/>
 
 		<mdc:FilterField
-			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 			id="ff2"
 			label="Title"
 			conditions="{$filters>/conditions/title}"
-			fieldHelp="FH2"
+			fieldHelp="VH2"
 			width="100%"/>
 
 	</mdc:filterItems>
