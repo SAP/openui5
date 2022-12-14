@@ -156,7 +156,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.type.Time
 	 * @param {object} [oFormatOptions]
-	 *   format options as defined in {@link sap.ui.core.format.DateFormat}
+	 *   Format options as defined in {@link sap.ui.core.format.DateFormat.getTimeInstance}
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated

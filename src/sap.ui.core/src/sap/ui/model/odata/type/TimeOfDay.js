@@ -88,7 +88,7 @@ sap.ui.define([
 	 * Constructor for an OData primitive type <code>Edm.TimeOfDay</code>.
 	 *
 	 * @param {object} [oFormatOptions]
-	 *   Format options as defined in {@link sap.ui.core.format.DateFormat}
+	 *   Format options as defined in {@link sap.ui.core.format.DateFormat.getTimeInstance}
 	 * @param {object} [oConstraints]
 	 *   Constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated

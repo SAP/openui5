@@ -26,7 +26,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.type.Byte
 	 * @param {object} [oFormatOptions]
-	 *   format options as defined in {@link sap.ui.core.format.NumberFormat}
+	 *   Format options as defined in {@link sap.ui.core.format.NumberFormat.getIntegerInstance}
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link sap.ui.model.odata.type.Int#validateValue validateValue} throws an
 	 *   error if any constraint is violated

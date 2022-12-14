@@ -26,8 +26,8 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.type.Int32
 	 * @param {object} [oFormatOptions]
-	 *   format options as defined in {@link sap.ui.core.format.NumberFormat}. In contrast to
-	 *   NumberFormat <code>groupingEnabled</code> defaults to <code>true</code>.
+	 *   Format options as defined in {@link sap.ui.core.format.NumberFormat.getIntegerInstance}.
+	 *   In contrast to NumberFormat <code>groupingEnabled</code> defaults to <code>true</code>.
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link sap.ui.model.odata.type.Int#validateValue validateValue} throws an
 	 *   error if any constraint is violated
