@@ -12,12 +12,12 @@
 				<Select change="onSelectSize" items="{/sizeTypes}">
 					<core:Item key="{key}" text="{text}"/>
 				</Select>
-				<Text text="{= ${/sSelectedSize} === 'Auto' ? 'IllustratedMessage will chose its size automatically according to its parent container width.' : 'Forced State. IllustratedMessage will keep its size even if the parent container width is changed.'}" />
+				<Text text="{= ${/sSelectedSize} === 'Auto' ? 'IllustratedMessage will choose its size automatically according to its parent container width.' : 'Forced State. IllustratedMessage will keep its size even if the parent container width is changed.'}" />
 			</VBox>
 			<VBox>
 				<Label text="Enable Vertical Responsiveness:"/>
 				<Switch change="onSwitchEVS" state="{/sSelectedEVS}"/>
-				<Text text="{= ${/sSelectedSize} === 'Auto' &amp;&amp; ${/sSelectedEVS} ? 'IllustratedMessage will chose its size automatically according to its parent container height.' : 'Forced State. IllustratedMessage will keep its size even if the parent container height is changed.'}" />
+				<Text text="{= ${/sSelectedSize} === 'Auto' &amp;&amp; ${/sSelectedEVS} ? 'IllustratedMessage will choose its size automatically according to its parent container height.' : 'Forced State. IllustratedMessage will keep its size even if the parent container height is changed.'}" />
 			</VBox>
 			<Label text="Illustration Type"/>
 			<Select change="onSelectType" items="{/typeTypes}">
