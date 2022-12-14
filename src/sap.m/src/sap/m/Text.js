@@ -482,7 +482,7 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 	 * Gets the accessibility information for the text.
 	 *
 	 * @protected
-	 * @returns {{description: string}} Accessibility information for the text.
+	 * @returns {sap.ui.core.AccessibilityInfo} Accessibility information for the text.
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 */
 	Text.prototype.getAccessibilityInfo = function () {
