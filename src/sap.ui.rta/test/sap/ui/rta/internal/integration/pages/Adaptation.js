@@ -35,8 +35,8 @@ sap.ui.define([
 			actions: {
 				iGoToMeArea: function() {
 					return this.waitFor({
-						id: "meAreaHeaderButton",
-						errorMessage: "Did not find the Me-Area",
+						id: "userActionsMenuHeaderButton",
+						errorMessage: "Did not find the User Action Menu",
 						actions: new Press()
 					});
 				},
