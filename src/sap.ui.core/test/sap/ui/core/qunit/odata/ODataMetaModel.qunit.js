@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/model/_Helper",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ClientContextBinding",
 	"sap/ui/model/Context",
@@ -24,7 +25,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/performance/Measurement",
 	"sap/ui/test/TestUtils"
-], function (Log, UriParameters, BindingParser, SyncPromise, InvisibleText, BindingMode,
+], function (Log, UriParameters, BindingParser, SyncPromise, InvisibleText, _Helper, BindingMode,
 		ClientContextBinding, Context, FilterProcessor, MetaModel, Model, JSONListBinding,
 		JSONModel, JSONPropertyBinding, JSONTreeBinding, CountMode, ODataMetaModel, ODataModel1,
 		Utils, ODataModel, Measurement, TestUtils) {
@@ -3751,6 +3752,7 @@ sap.ui.define([
 
 				assert.deepEqual(oFetchCodeListPromise.getResult(), oFixture.mExpectedCodeList);
 				assert.strictEqual(oFetchCodeListPromise.getResult(), mCode2Customizing);
+
 				// ensure that global cache is cleared
 				mCodeListUrl2Promise.clear();
 
@@ -4173,13 +4175,16 @@ sap.ui.define([
 		this.mock(oMetaModel).expects("fetchCodeList")
 			.withExactArgs("CurrencyCodes")
 			.returns("~codeList");
+		this.mock(_Helper).expects("merge")
+			.withExactArgs({}, "~codeList")
+			.returns("~codeListCopy");
 
 		// code under test
 		oCurrencyCodesPromise = oMetaModel.requestCurrencyCodes();
 
 		assert.ok(oCurrencyCodesPromise instanceof Promise);
 		return oCurrencyCodesPromise.then(function (oCodeList) {
-			assert.strictEqual(oCodeList, "~codeList");
+			assert.strictEqual(oCodeList, "~codeListCopy");
 		});
 	});
 
@@ -4192,13 +4197,16 @@ sap.ui.define([
 		this.mock(oMetaModel).expects("fetchCodeList")
 			.withExactArgs("UnitsOfMeasure")
 			.returns("~codeList");
+		this.mock(_Helper).expects("merge")
+			.withExactArgs({}, "~codeList")
+			.returns("~codeListCopy");
 
 		// code under test
 		oUnitsOfMeasurePromise = oMetaModel.requestUnitsOfMeasure();
 
 		assert.ok(oUnitsOfMeasurePromise instanceof Promise);
 		return oUnitsOfMeasurePromise.then(function (oCodeList) {
-			assert.strictEqual(oCodeList, "~codeList");
+			assert.strictEqual(oCodeList, "~codeListCopy");
 		});
 	});
 
