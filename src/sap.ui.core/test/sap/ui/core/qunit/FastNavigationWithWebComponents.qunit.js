@@ -129,18 +129,20 @@ sap.ui.define([
 			};
 			return pView.then(function (oView) {
 				// Set the focus to the last element in the list
-				var oControl = oView.byId(aExpectedElements[aExpectedElements.length - 1].id);
+				var oFocusableElement = oView.byId(aExpectedElements[aExpectedElements.length - 1].id);
 
-				if (oControl.isA("sap.ui.webc.common.WebComponent")) {
+				if (oFocusableElement.isA("sap.ui.webc.common.WebComponent")) {
 					// UI5 webcomponents have an internal promise that waits for the rendering before the focus can be set.
 					// This promise obviously resolves asynchronously even though the DOM is already rendered.
 					// In this case we have to wait for this Promise returned by the focus() call, before executing the assertions.
-					var oDomRef = oControl.getDomRef();
-					return aExpectedElements.reduce(executeTest, oDomRef.focus());
-				} else {
-					oControl.focus();
-					return aExpectedElements.reduce(executeTest, Promise.resolve());
+					oFocusableElement = oFocusableElement.getDomRef();
 				}
+
+				// if oFocusableElement is a UI5 Control, focus() returns undefined
+				// if oFocusableElement is a WebComponent, focus() returns either:
+				//    * a Promise if the DOM is not yet rendered
+				//    * or undefined if the DOM is already available
+				return aExpectedElements.reduce(executeTest, oFocusableElement.focus() || Promise.resolve());
 			});
 		});
 	}
