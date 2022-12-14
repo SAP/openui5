@@ -150,7 +150,7 @@ sap.ui.define([
 				assert.equal(oMenu.oHoveredItem.getId(), sExpectedId, "Correct item '" + sExpectedId + "' hovered:");
 			}
 		} else {
-			assert.ok(!oMenu.oHoveredItem, "Hovered Item not exists");
+			assert.ok(!oMenu.oHoveredItem, "Hovered Item doesn't exist");
 		}
 	};
 	var checkFocusedItem = function(sExpectedId, assert) {
@@ -303,8 +303,8 @@ sap.ui.define([
 		checkHoveredItem("item7", undefined, assert); /* disabled item I5 skipped */
 		checkFocusedItem("item7", assert);
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
-		checkHoveredItem("item3", undefined, assert);
-		checkFocusedItem("item3", assert);
+		checkHoveredItem("item7", undefined, assert);
+		checkFocusedItem("item7", assert);
 		closeAllMenusAndCheck(assert);
 	});
 
@@ -327,8 +327,8 @@ sap.ui.define([
 		checkHoveredItem("item7", undefined, assert);
 		checkFocusedItem("item7", assert);
 		qutils.triggerKeydown("menu2", "ARROW_DOWN", true);
-		checkHoveredItem("item3", undefined, assert);
-		checkFocusedItem("item3", assert);
+		checkHoveredItem("item7", undefined, assert);
+		checkFocusedItem("item7", assert);
 		closeAllMenusAndCheck(assert);
 	});
 
@@ -351,8 +351,8 @@ sap.ui.define([
 		checkHoveredItem("item7", undefined, assert);
 		checkFocusedItem("item7", assert);
 		qutils.triggerKeydown("menu2", "ARROW_DOWN", false, false, true);
-		checkHoveredItem("item3", undefined, assert);
-		checkFocusedItem("item3", assert);
+		checkHoveredItem("item7", undefined, assert);
+		checkFocusedItem("item7", assert);
 		closeAllMenusAndCheck(assert);
 	});
 
@@ -606,8 +606,8 @@ sap.ui.define([
 		checkHoveredItem("item7", undefined, assert);
 		checkFocusedItem("item7", assert);
 		qutils.triggerKeydown("menu2", "ARROW_DOWN");
-		checkHoveredItem("item3", undefined, assert);
-		checkFocusedItem("item3", assert);
+		checkHoveredItem("item7", undefined, assert);
+		checkFocusedItem("item7", assert);
 		closeAllMenusAndCheck(assert);
 	});
 
@@ -1312,7 +1312,7 @@ sap.ui.define([
 		var oItem = oMenu.getPreviousSelectableItem(1);
 		assert.ok(oItem === oItem1, "Previous selectable item of item 2 is item 1");
 		oItem = oMenu.getPreviousSelectableItem(0);
-		assert.ok(oItem === oItem2, "Previous selectable item of item 1 is item 2");
+		assert.ok(oItem === oItem1, "Previous selectable item of item 1 is item 2");
 		oMenu.destroy();
 	});
 
@@ -1328,7 +1328,7 @@ sap.ui.define([
 		var oItem = oMenu.getNextSelectableItem(0);
 		assert.ok(oItem === oItem2, "Previous selectable item of item 1 is item 2");
 		oItem = oMenu.getNextSelectableItem(1);
-		assert.ok(oItem === oItem1, "Previous selectable item of item 2 is item 1");
+		assert.ok(oItem === oItem2, "Previous selectable item of item 2 is item 1");
 		oMenu.destroy();
 	});
 
