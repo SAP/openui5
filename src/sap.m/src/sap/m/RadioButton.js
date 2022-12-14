@@ -448,7 +448,7 @@ function(
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
-	 * @returns {{ role: string, type: string, description: string, enabled: boolean, editable: boolean}} The <code>sap.m.RadioButton</code> accessibility information
+	 * @returns {sap.ui.core.AccessibilityInfo} The <code>sap.m.RadioButton</code> accessibility information
 	 */
 	RadioButton.prototype.getAccessibilityInfo = function() {
 		var oBundle = Core.getLibraryResourceBundle("sap.m");

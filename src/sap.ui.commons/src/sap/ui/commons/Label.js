@@ -200,7 +200,7 @@ sap.ui.define([
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {{description: string}} The accessibility info
+	 * @returns {sap.ui.core.AccessibilityInfo} The accessibility info
 	 * @protected
 	 */
 	Label.prototype.getAccessibilityInfo = function() {
