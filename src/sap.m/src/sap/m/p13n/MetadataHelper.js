@@ -13,7 +13,6 @@ sap.ui.define([
      * @class
 	 * @author SAP SE
 	 * @public
-     * @experimental Since 1.104.
 	 * @alias sap.m.p13n.MetadataHelper
      */
     var MetadataHelper = BaseObject.extend("sap.m.p13n.MetadataHelper", {

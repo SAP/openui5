@@ -26,7 +26,6 @@ sap.ui.define([
 	 * @alias sap.m.p13n.AbstractContainer
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.96.
 	 * @since 1.96
 	 *
 	 * @private

@@ -21,7 +21,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
-	 * @experimental
 	 * @since 1.104
 	 * @alias sap.m.p13n.GroupController
 	 */

@@ -25,7 +25,6 @@ sap.ui.define([
 	 * @public
 	 * @abstract
 	 *
-	 * @experimental Since 1.96.
 	 * @since 1.96
 	 * @alias sap.m.p13n.BasePanel
 	 */
