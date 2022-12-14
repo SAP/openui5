@@ -201,6 +201,15 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Setter for property <code>dateValue</code>.
+	 *
+	 * The date and time in DateTimeField as JavaScript Date object.
+	 *
+	 * @param {Date} oDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 */
 	DateTimeField.prototype.setDateValue = function (oDate) {
 
 		if (!this._isValidDate(oDate)) {

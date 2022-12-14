@@ -378,6 +378,13 @@ function(
 
 	};
 
+	/**
+	 * Setter for property <code>dateValue</code>.
+	 *
+	 * @param {Date} oDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 */
 	DateTimeInput.prototype.setDateValue = function(oDate) {
 
 		if (!this._isValidDate(oDate)) {
@@ -612,7 +619,7 @@ function(
 
 	/**
 	 * Returns the binding type pattern of 'value' property if such.
-	 * @return {*}
+	 * @returns {*}
 	 * @private
 	 **/
 	DateTimeInput.prototype._getBoundValueTypePattern = function() {

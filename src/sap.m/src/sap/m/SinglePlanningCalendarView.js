@@ -98,7 +98,7 @@ function (library, Log, Element) {
 	 * Should calculate the startDate which will be displayed in the <code>sap.m.SinglePlanningCalendar</code>
 	 * based on a given date.
 	 *
-	 * @param {object} oDate the given date
+	 * @param {Date} oDate A JavaScript Date
 	 * @public
 	 * @abstract
 	 */

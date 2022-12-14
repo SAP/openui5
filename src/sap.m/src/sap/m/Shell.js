@@ -105,7 +105,7 @@ sap.ui.define([
 					backgroundOpacity : {type : "float", group : "Appearance", defaultValue : 1},
 
 					/**
-					 * Sets the icon used for the mobile device home screen and the icon to be used for bookmarks by desktop browsers.
+					 * The icon used for the mobile device home screen and the icon to be used for bookmarks by desktop browsers.
 					 *
 					 * This property should be only set once, and as early as possible. Subsequent calls replace the previous icon settings and may lead to different behavior depending on the browser.
 					 *
@@ -246,6 +246,15 @@ sap.ui.define([
 			return this.setProperty("backgroundOpacity", fOpacity, true); // no rerendering - live opacity change looks cooler
 		};
 
+		/**
+		 * Sets the icon used for the mobile device home screen and the icon to be used for bookmarks by desktop browsers.
+		 * This property should be only set once, and as early as possible.
+		 *
+		 * See {@link module:sap/ui/util/Mobile.setIcons} for full documentation.
+		 *
+		 * @param {Object<string, string>} oIcons Icon given as a JS object holding icon URLs and other settings.
+		 * @returns {this} Reference to <code>this</code> for method chaining
+		 */
 		Shell.prototype.setHomeIcon = function(oIcons) {
 			this.setProperty("homeIcon", oIcons, true); // no rerendering
 			Mobile.setIcons(oIcons);
