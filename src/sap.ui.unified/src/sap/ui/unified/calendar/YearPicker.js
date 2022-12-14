@@ -211,7 +211,7 @@ sap.ui.define([
 	/**
 	 * Sets a date.
 	 * @param {Date} oDate a JavaScript date
-	 * @returns {this} <code>this</code> for method chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 */
 	YearPicker.prototype.setDate = function(oDate){
 		var oMaxYear = CalendarUtils._maxDate(this.getProperty("primaryCalendarType")).getYear(),
@@ -248,7 +248,7 @@ sap.ui.define([
 	};
 
 	/**
-	* @return {sap.ui.unified.calendar.CalendarDate} The date, representing the year
+	* @returns {sap.ui.unified.calendar.CalendarDate} The date, representing the year
 	* @private
 	*/
 	YearPicker.prototype._getDate = function(){
@@ -325,7 +325,7 @@ sap.ui.define([
 	/**
 	 * displays the next page
 	 *
-	 * @returns {this} <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
 	YearPicker.prototype.nextPage = function(){
@@ -339,7 +339,7 @@ sap.ui.define([
 	/**
 	 * displays the previous page
 	 *
-	 * @returns {this} <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
 	YearPicker.prototype.previousPage = function(){
@@ -465,10 +465,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * return the first date of the first rendered year
+	 * Return the first date of the first rendered year
 	 * <b>Note:</b> If the YearPicker is not rendered no date is returned
 	 *
-	 * @returns {object} JavaScript Date Object
+	 * @returns {Date} A JavaScript Date
 	 * @public
 	 * @since 1.38.0
 	 */
@@ -581,7 +581,7 @@ sap.ui.define([
 	 * Calculated which is the first year to be rendered and changes the given date to it if needed.
 	 *
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date to be checked whether it is outside min and max date
-	 * @return {sap.ui.unified.calendar.CalendarDate} The checked date or min or max date if the checked one is outside
+	 * @returns {sap.ui.unified.calendar.CalendarDate} The checked date or min or max date if the checked one is outside
 	 * @private
 	 */
 	YearPicker.prototype._checkFirstDate = function(oDate){

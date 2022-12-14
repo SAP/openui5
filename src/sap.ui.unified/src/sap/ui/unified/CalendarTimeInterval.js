@@ -410,7 +410,7 @@ sap.ui.define([
 
 	/**
 	 * Getter for monthPicker aggregation.
-	 * @return {object} The monthPicker control instance
+	 * @returns {sap.ui.unified.calendar.MonthPicker} The monthPicker control instance
 	 * @private
 	 */
 	CalendarTimeInterval.prototype._getMonthPicker = function () {
@@ -419,13 +419,18 @@ sap.ui.define([
 
 	/**
 	 * Getter for yearPicker aggregation.
-	 * @return {object} The yearPicker control instance
+	 * @returns {sap.ui.unified.calendar.YearPicker} The yearPicker control instance
 	 * @private
 	 */
 	CalendarTimeInterval.prototype._getYearPicker = function () {
 		return this.getAggregation("yearPicker");
 	};
 
+	/**
+	 * Sets start date of the interval.
+	 * @param {Date} oStartDate A JavaScript date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 */
 	CalendarTimeInterval.prototype.setStartDate = function(oStartDate){
 
 		CalendarUtils._checkJSDateObject(oStartDate);
@@ -531,7 +536,7 @@ sap.ui.define([
 	 * Sets the locale for the <code>CalendarTimeInterval</code>.
 	 * Only for internal use
 	 * @param {string} sLocale  New value for <code>locale</code>
-	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @private
 	 */
 	CalendarTimeInterval.prototype.setLocale = function(sLocale){
@@ -549,7 +554,7 @@ sap.ui.define([
 	/**
 	 * Gets the used locale for the <code>CalendarTimeInterval</code>
 	 * Only for internal use
-	 * @return {string} sLocale
+	 * @returns {string} sLocale
 	 * @private
 	 */
 	CalendarTimeInterval.prototype.getLocale = function(){
@@ -585,8 +590,8 @@ sap.ui.define([
 	/**
 	 * Sets the focused item of the <code>CalendarTimeInterval</code>.
 	 *
-	 * @param {object} oDate JavaScript date object for focused item.
-	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
+	 * @param {Date} oDate JavaScript date object for focused item
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
 	CalendarTimeInterval.prototype.focusDate = function(oDate){
@@ -612,8 +617,8 @@ sap.ui.define([
 	/**
 	 * Displays an item in the <code>CalendarTimeInterval</code> but doesn't set the focus.
 	 *
-	 * @param {object} oDate JavaScript date object for displayed item.
-	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
+	 * @param {Date} oDate JavaScript date object for displayed item.
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
 	CalendarTimeInterval.prototype.displayDate = function(oDate){
@@ -762,6 +767,11 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Set minimum date that can be shown and selected in the Calendar.
+	 * @param {Date} [oDate] Min date as a JS Date object
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 */
 	CalendarTimeInterval.prototype.setMinDate = function(oDate){
 		var oTimesRow,
 			iYear,
@@ -821,6 +831,11 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Set maximum date that can be shown and selected in the Calendar.
+	 * @param {Date} [oDate] Max date as a JS Date object
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 */
 	CalendarTimeInterval.prototype.setMaxDate = function(oDate){
 		var oTimesRow,
 			iYear,
@@ -1224,7 +1239,7 @@ sap.ui.define([
 	 * Shows an embedded day Picker.
 	 * This function assumes there is a "datesRow" aggregation.
 	 * So callers must take care.
-	 * @return {void}
+	 * @returns {void}
 	 * @private
 	 */
 	function _showDayPicker(){
@@ -1263,7 +1278,7 @@ sap.ui.define([
 	 * Shows an embedded month Picker.
 	 * This function assumes there is a "monthPicker" aggregation.
 	 * So callers must take care.
-	 * @return {void}
+	 * @returns {void}
 	 * @private
 	 */
 	function _showMonthPicker(){
@@ -1289,7 +1304,7 @@ sap.ui.define([
 	 * Shows an embedded year Picker.
 	 * This function assumes there is a "yearPicker" aggregation.
 	 * So callers must take care.
-	 * @return {void}
+	 * @returns {void}
 	 * @private
 	 */
 	function _showYearPicker(){
@@ -1321,7 +1336,7 @@ sap.ui.define([
 	 * This function assumes there is a "monthPicker" aggregation unless the bSkipMonthCheck flag is false.
 	 * So callers must take care.
 	 * @param {boolean} bSkipMonthCheck if month picker should be examined or not
-	 * @return {void}
+	 * @returns {void}
 	 * @private
 	 */
 	function _togglePrevNext(bSkipMonthCheck){
@@ -1425,7 +1440,7 @@ sap.ui.define([
 	 * Disable / Enable the next and previous button in the Header.
 	 * This function assumes there is a "yearPicker" aggregation.
 	 * So callers must take care.
-	 * @return {void}
+	 * @returns {void}
 	 * @private
 	 */
 	function _togglePrevNexYearPicker(){
@@ -1662,7 +1677,7 @@ sap.ui.define([
 	 * Handles day focus from the embedded day Picker.
 	 * This function assumes there is a "datesRow" aggregation.
 	 * So callers must take care.
-	 * @return {void}
+	 * @returns {void}
 	 * @private
 	 */
 	function _handleDateFocus(oEvent){
@@ -1685,7 +1700,7 @@ sap.ui.define([
 	 * Handles user selection of a month from the Month Picker.
 	 * This function assumes there is a "monthPicker" aggregation.
 	 * So callers must take care.
-	 * @return {void}
+	 * @returns {void}
 	 * @private
 	 */
 	function _handleSelectMonth(oEvent){
@@ -1713,7 +1728,7 @@ sap.ui.define([
 	 * Handles the user year selection.
 	 * This function assumes there is a "yearPicker" aggregation.
 	 * So callers must take care.
-	 * @return {void}
+	 * @returns {void}
 	 * @private
 	 */
 	function _handleSelectYear(oEvent){
@@ -1771,7 +1786,7 @@ sap.ui.define([
 	 * This function assumes there is a "datesRow" aggregation.
 	 * So callers must take care.
 	 * @param oDate
-	 * @return {void}
+	 * @returns {void}
 	 * @private
 	 */
 	function _setDateInDatesRow(oDate) {

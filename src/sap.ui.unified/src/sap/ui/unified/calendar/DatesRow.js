@@ -100,10 +100,10 @@ sap.ui.define([
 		return this._ariaRole ? this._ariaRole : "gridcell";
 	};
 
-	/*
+	/**
 	 * Sets a start date.
 	 * @param {Date} oStartDate A JavaScript date
-	 * @return {this} <code>this</code> for method chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 */
 	DatesRow.prototype.setStartDate = function(oStartDate){
 
@@ -149,8 +149,8 @@ sap.ui.define([
 	 * beginning with <code>startDate</code> and <code>days</code> days
 	 * So set this properties before setting the date.
 	 *
-	 * @param {object} oDate JavaScript date object for start date.
-	 * @returns {this} <code>this</code> to allow method chaining
+	 * @param {Date} oDate JavaScript date object for start date.
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
 	DatesRow.prototype.setDate = function(oDate){
@@ -173,8 +173,8 @@ sap.ui.define([
 	 * beginning with <code>startDate</code> and <code>days</code> days
 	 * So set this properties before setting the date.
 	 *
-	 * @param {object} oDate JavaScript date object for focused date.
-	 * @returns {this} <code>this</code> to allow method chaining
+	 * @param {Date} oDate JavaScript date object for focused date.
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
 	DatesRow.prototype.displayDate = function(oDate){
@@ -222,7 +222,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {int} oControlEvent The control event.
-	 * @returns {this} <code>this</code> to allow method chaining
 	 */
 	DatesRow.prototype._handleBorderReached = function(oControlEvent){
 

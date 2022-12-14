@@ -330,7 +330,7 @@ sap.ui.define([
 
 	/**
 	 * Formats a Java Script date object into a string representing a locale date according to the <code>formatPattern</code> property of the DatePicker instance
-	 * @param {object} date A Java Script date object to be formatted as string
+	 * @param {Date} date A Java Script date object to be formatted as string
 	 * @public
 	 * @name sap.ui.webc.main.DatePicker#formatValue
 	 * @function
