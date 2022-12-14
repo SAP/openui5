@@ -62,8 +62,8 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/supportRules/IssueManager","sap/u
 		 *
 		 * @public
 		 * @param {array} aRules Selected rules for execution
-		 * @param {object} oCoreFacade Metadata, Models, UI areas and Components of the Core object
-		 * @param {object} oExecutionScope selected execution scope from user in UI
+		 * @param {sap.ui.support.CoreFacade} oCoreFacade Metadata, Models, UI areas and Components of the Core object
+		 * @param {sap.ui.support.ExecutionScope} oExecutionScope selected execution scope from user in UI
 		 * @returns {Promise} When all rules are analyzed
 		 */
 		Analyzer.prototype.start = function (aRules, oCoreFacade, oExecutionScope) {

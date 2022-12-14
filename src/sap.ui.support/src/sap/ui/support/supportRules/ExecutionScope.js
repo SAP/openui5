@@ -134,22 +134,19 @@ sap.ui.define(
 		 *
 		 * <h3>Overview</h3>
 		 *
-		 * <code>ExecutionScope</code> is the third parameter of a rule check function.
-		 * It provides access to internal UI5 objects available for inspection.
+		 * The ExecutionScope provides access to internal UI5 objects available for inspection.
 		 * The <code>getElements</code> API method allows the user to select a specific subset of
 		 * elements valid for their case. It accepts one query object argument.
 		 *
 		 * <h3>Usage</h3>
+		 * The ExecutionScope is passed as third argument to all rule check functions.
 		 *
-		 * When a rule is executed, three parameters are passed: <code>oIssueManager</code>,
-		 * <code>oCoreFacade</code> and <code>oScope</code>.
-		 *
-		 * An <code>ExecutionScope</code> instance is passed to every call of a rule check function.
 		 * When you analyze your application, available objects are collected depending on the settings
 		 * passed to the Support Assistant at the moment when you start it.
 		 *
 		 * @public
 		 * @since 1.48
+		 * @hideconstructor
 		 * @alias sap.ui.support.ExecutionScope
 		 */
 		function ExecutionScope(core, context) {

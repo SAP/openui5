@@ -8,13 +8,12 @@ sap.ui.define([
 	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
 	"sap/ui/support/supportRules/ui/external/ElementTree",
-	"sap/ui/support/supportRules/IssueManager",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/ui/models/formatter",
 	"sap/ui/support/supportRules/Constants",
 	"sap/m/OverflowToolbarAssociativePopoverControls",
 	"sap/base/util/deepExtend"
-], function (BaseController, JSONModel, CommunicationBus, SharedModel, ElementTree, IssueManager, channelNames, formatter, constants, OverflowToolbarAssociativePopoverControls, deepExtend) {
+], function (BaseController, JSONModel, CommunicationBus, SharedModel, ElementTree, channelNames, formatter, constants, OverflowToolbarAssociativePopoverControls, deepExtend) {
 	"use strict";
 
 	var mIssueSettings = {
