@@ -154,6 +154,30 @@ sap.ui.define([
 		assert.strictEqual(oFormat.aFallbackFormats[3].oFormatOptions.pattern, "yyyyMMdd");
 	});
 
+	//*********************************************************************************************
+	QUnit.test("Prevent duplicate fallback formats", function (assert) {
+		var oFormat,
+			oFormatOptions = {},
+			oLocale = new Locale("en");
+
+		this.mock(DateFormat).expects("_createFallbackFormat")
+			.withExactArgs([
+					{pattern: "MMddyyyy", strictParsing: true},
+					{pattern: "MMddyy", strictParsing: true},
+					{style: "short"},
+					{style: "medium"},
+					{pattern: "yyyy-MM-dd"},
+					{pattern: "yyyyMMdd", strictParsing: true}
+				], "Gregorian", sinon.match.same(oLocale), sinon.match.same(DateFormat.oDateInfo),
+				/*oFormatOptions: copied+enhanced*/sinon.match.object)
+			.callThrough();
+
+		// code under test
+		oFormat = DateFormat.getInstance(oFormatOptions, oLocale);
+
+		assert.deepEqual(oFormat.aFallbackFormats.length, 6);
+	});
+
 		QUnit.module("DateFormat format", {
 			beforeEach: function (assert) {
 				stubTimezone("Europe/Berlin");

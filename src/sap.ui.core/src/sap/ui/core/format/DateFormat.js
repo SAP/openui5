@@ -628,6 +628,23 @@ sap.ui.define([
 				aFallbackFormatOptions = DateFormat._createFallbackOptionsWithoutDelimiter(oFormat.oFormatOptions.pattern).concat(aFallbackFormatOptions);
 			}
 
+			// remove duplicate format options (e.g. fallback format with same pattern is not needed twice)
+			aFallbackFormatOptions = aFallbackFormatOptions.reduce(function (aFallbacks, oOptions) {
+				var aKeys = Object.keys(oOptions),
+					bDuplicate = aFallbacks.some(function (oOptions0) {
+						return Object.keys(oOptions0).length === aKeys.length
+							&& aKeys.every(function (sKey) {
+								return oOptions0[sKey] === oOptions[sKey];
+							});
+					});
+
+				if (!bDuplicate) {
+					aFallbacks.push(oOptions);
+				}
+
+				return aFallbacks;
+			}, []);
+
 			oFormat.aFallbackFormats = DateFormat._createFallbackFormat(
 				aFallbackFormatOptions, oFormat.oFormatOptions.calendarType, oLocale, oInfo, oFormat.oFormatOptions
 			);
