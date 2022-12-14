@@ -120,6 +120,8 @@ sap.ui.define([
 		if (this._oCard) {
 			this._oCard._refreshActionsMenu();
 		}
+
+		return this;
 	};
 
 	/**
