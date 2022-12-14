@@ -81,6 +81,10 @@ sap.ui.define([
 				getServiceUrl : function () { return "/~/"; },
 				request : function () { throw new Error("must be mocked"); }
 			};
+
+			// avoid trouble when creating 1st level cache, or with #getDownloadUrl's callback
+			// to #getDownloadQueryOptions calling this
+			this.mock(_AggregationHelper).expects("buildApply4Hierarchy").atLeast(0).returns({});
 		}
 	});
 	//*********************************************************************************************
@@ -486,7 +490,7 @@ sap.ui.define([
 				hierarchyQualifier : "X"
 			},
 			oCache,
-			// oGetDownloadUrlExpectation,
+			oGetDownloadUrlExpectation,
 			mQueryOptions = {
 				$count : bCount,
 				$expand : {
@@ -501,9 +505,8 @@ sap.ui.define([
 			.returns(undefined);
 		this.mock(_MinMaxHelper).expects("createCache").never();
 		this.mock(_Cache).expects("create").never();
-		/*oGetDownloadUrlExpectation =*/
-		this.mock(_Cache.prototype).expects("getDownloadUrl").never();
-			// .withExactArgs("").returns("~downloadUrl~");
+		oGetDownloadUrlExpectation = this.mock(_Cache.prototype).expects("getDownloadUrl")
+			.withExactArgs("").returns("~downloadUrl~");
 		this.mock(_AggregationCache.prototype).expects("createGroupLevelCache")
 			.withExactArgs(null, false).returns("~firstLevelCache~");
 		this.mock(_ConcatHelper).expects("enhanceCache").never();
@@ -523,10 +526,10 @@ sap.ui.define([
 		assert.strictEqual(typeof oCache.read, "function");
 		// c'tor itself
 		assert.strictEqual(oCache.oAggregation, oAggregation);
-		assert.strictEqual(oCache.sDownloadUrl, "n/a", "~downloadUrl~");
-		assert.strictEqual(oCache.getDownloadUrl(""), "n/a", "~downloadUrl~"); // code under test
-		assert.strictEqual(oCache.toString(), "n/a", "~downloadUrl~"); // <-- code under test
-		// assert.ok(oGetDownloadUrlExpectation.alwaysCalledOn(oCache));
+		assert.strictEqual(oCache.sDownloadUrl, "~downloadUrl~");
+		assert.strictEqual(oCache.getDownloadUrl(""), "~downloadUrl~"); // code under test
+		assert.strictEqual(oCache.toString(), "~downloadUrl~"); // <-- code under test
+		assert.ok(oGetDownloadUrlExpectation.alwaysCalledOn(oCache));
 		assert.deepEqual(oCache.aElements, []);
 		assert.deepEqual(oCache.aElements.$byPredicate, {});
 		assert.ok("$count" in oCache.aElements);
@@ -719,12 +722,8 @@ sap.ui.define([
 				// $orderby : "~orderby~"
 				$select : ["~select~"]
 			},
-			oAggregationCache;
-
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oAggregationCache
-			= _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
+			oAggregationCache
+				= _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
 
 		if (oParentGroupNode) {
 			oParentGroupNode["@$ui5.node.level"] = 2;
@@ -1004,11 +1003,7 @@ sap.ui.define([
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
-			oCache;
-
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {});
+			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {});
 
 		this.mock(oCache.oFirstLevel).expects("fetchValue").never();
 		this.mock(oCache).expects("registerChangeListener").never();
@@ -1082,11 +1077,7 @@ sap.ui.define([
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
-			oCache;
-
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {});
+			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {});
 
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "some/path")
@@ -1227,12 +1218,9 @@ sap.ui.define([
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
-			oCache,
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oError = new Error();
 
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 		this.mock(oCache).expects("readCount").withExactArgs("~oGroupLock~")
 			.rejects(oError);
 		this.mock(oCache).expects("readFirst"); // don't care about more details here
@@ -1251,14 +1239,11 @@ sap.ui.define([
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
-			oCache,
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oGroupLock = {
 				getUnlockedCopy : function () {}
 			};
 
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 		oCache.oCountPromise = oCountPromise;
 		this.mock(oGroupLock).expects("getUnlockedCopy").never();
 		this.mock(this.oRequestor).expects("request").never();
@@ -1273,15 +1258,12 @@ sap.ui.define([
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
-			oCache,
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oError = new Error(),
 			oGroupLock = {
 				getUnlockedCopy : function () {}
 			};
 
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 		oCache.oCountPromise = {
 			$resolve : true // will not be called :-)
 		};
@@ -1314,17 +1296,14 @@ sap.ui.define([
 				hierarchyQualifier : "X",
 				search : oFixture.search
 			},
-			oCache,
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation,
+				{$filter : oFixture.$filter}),
 			oGroupLock = {
 				getUnlockedCopy : function () {}
 			},
 			fnResolve = sinon.spy(),
 			oResult;
 
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation,
-			{$filter : oFixture.$filter});
 		oCache.oCountPromise = {
 			$resolve : fnResolve
 		};
@@ -1856,18 +1835,14 @@ sap.ui.define([
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
-			oCache,
-			oCacheMock,
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oCacheMock = this.mock(oCache),
 			oGroupLock = {
 				getUnlockedCopy : function () {},
 				unlock : function () {}
 			},
 			oGroupLockMock = this.mock(oGroupLock);
 
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
-		oCacheMock = this.mock(oCache);
 		oCache.aElements = [
 			"~Alpha~",
 			_AggregationHelper.createPlaceholder(1, 1, "~oFirstLevelCache~"), // collapsed Beta
@@ -1932,7 +1907,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("readGap: success", function (assert) {
-		var oCache,
+		var oCache
+			= _AggregationCache.create(this.oRequestor, "~", "", {hierarchyQualifier : "X"}, {}),
 			oGroupLevelCache = {
 				getQueryOptions : function () {},
 				read : function () {},
@@ -1941,9 +1917,6 @@ sap.ui.define([
 			mQueryOptions = {$count : true, foo : "bar"},
 			aReadResult = [{}];
 
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", {hierarchyQualifier : "X"}, {});
 		oCache.aElements = [,, _AggregationHelper.createPlaceholder(1, 1, oGroupLevelCache)];
 
 		this.mock(oGroupLevelCache).expects("getQueryOptions").withExactArgs()
@@ -1969,7 +1942,8 @@ sap.ui.define([
 	"read: aElements has changed while reading"
 ].forEach(function (sTitle, i) {
 	QUnit.test(sTitle, function (assert) {
-		var oCache,
+		var oCache
+			= _AggregationCache.create(this.oRequestor, "~", "", {hierarchyQualifier : "X"}, {}),
 			oGroupLevelCache = {
 				getQueryOptions : function () { return {}; },
 				read : function () {}
@@ -1978,9 +1952,6 @@ sap.ui.define([
 			oReadResultFirstNode = {},
 			aReadResult = [oReadResultFirstNode, {}];
 
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", {hierarchyQualifier : "X"}, {});
 		oCache.aElements = [,,,
 			_AggregationHelper.createPlaceholder(1, 1, oGroupLevelCache),
 			_AggregationHelper.createPlaceholder(1, 2, oGroupLevelCache)];
@@ -2013,16 +1984,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("read: collapse before read has finished", function (assert) {
-		var oCache,
+		var oCache
+			= _AggregationCache.create(this.oRequestor, "~", "", {hierarchyQualifier : "X"}, {}),
 			oGroupLevelCache = {
 				getQueryOptions : function () { return {}; },
 				read : function () {}
 				// setQueryOptions : function () {}
 			};
 
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", {hierarchyQualifier : "X"}, {});
 		oCache.aElements = [,,,
 			_AggregationHelper.createPlaceholder(1, 1, oGroupLevelCache),
 			_AggregationHelper.createPlaceholder(1, 2, oGroupLevelCache)];
@@ -2051,7 +2020,8 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bAsync) {
 	QUnit.test("readGap: async=" + bAsync, function (assert) {
-		var oCache,
+		var oCache
+			= _AggregationCache.create(this.oRequestor, "~", "", {hierarchyQualifier : "X"}, {}),
 			oGroupLevelCache = {
 				getQueryOptions : function () { return {}; },
 				read : function () {}
@@ -2063,9 +2033,6 @@ sap.ui.define([
 				? SyncPromise.resolve(Promise.resolve(oReadResult))
 				: SyncPromise.resolve(oReadResult);
 
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", {hierarchyQualifier : "X"}, {});
 		oCache.aElements = [,,,
 			_AggregationHelper.createPlaceholder(1, 3, oGroupLevelCache),
 			_AggregationHelper.createPlaceholder(1, 4, oGroupLevelCache),
@@ -2642,7 +2609,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache,
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			bCollapseBottom = bUntilEnd || bSubtotalsAtBottom, // whether bottom line is affected
 			oCollapsed = {
 				"@$ui5.node.isExpanded" : false,
@@ -2698,9 +2665,6 @@ sap.ui.define([
 				delete aExpectedElements[1].A;
 			}
 		}
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").atMost(1).returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 		oCache.aElements = aElements.slice(); // simulate a read
 		oCache.aElements.$count = aElements.length;
 		oCache.aElements.$byPredicate = {
@@ -2797,7 +2761,7 @@ sap.ui.define([
 				expandTo : 3,
 				hierarchyQualifier : "X"
 			},
-			oCache,
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			aElements = [{
 				"@$ui5._" : {
 					descendants : 41,
@@ -2822,9 +2786,6 @@ sap.ui.define([
 			aSpliced = [aElements[1]],
 			i;
 
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 		oCache.aElements = aElements.slice(); // simulate a read
 		oCache.aElements.$byPredicate = {
 			"('0')" : aElements[0],
@@ -2872,7 +2833,7 @@ sap.ui.define([
 				expandTo : 2,
 				hierarchyQualifier : "X"
 			},
-			oCache,
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			aElements = [{
 				"@$ui5._" : {
 					descendants : 2,
@@ -2901,9 +2862,6 @@ sap.ui.define([
 				"@$ui5.node.level" : 1
 			}];
 
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 		oCache.aElements = aElements.slice(); // simulate a read
 		oCache.aElements.$byPredicate = {
 			"('0')" : aElements[0],
@@ -3097,20 +3055,58 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["a"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
-			mDownloadQueryOptions = {},
-			mQueryOptions = {};
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 
 		this.mock(_AggregationHelper).expects("filterOrderby")
-			.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oAggregation))
+			.withExactArgs("~mQueryOptions~", sinon.match.same(oAggregation))
 			.returns("~mFilteredQueryOptions~");
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation), "~mFilteredQueryOptions~", 0, true)
-			.returns(mDownloadQueryOptions);
+			.returns("~result~");
 
 		// code under test
-		assert.strictEqual(oCache.getDownloadQueryOptions(mQueryOptions), mDownloadQueryOptions);
+		assert.strictEqual(oCache.getDownloadQueryOptions("~mQueryOptions~"), "~result~");
 	});
+
+	//*********************************************************************************************
+[undefined, false, true].forEach(function (bCount) {
+	QUnit.test("getDownloadQueryOptions: recursive hierarchy, bCount=" + bCount, function (assert) {
+		var oAggregation = {hierarchyQualifier : "X"},
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			mQueryOptions = {
+				$expand : {EMPLOYEE_2_TEAM : null},
+				$filter : "age gt 40",
+				$orderby : "TEAM_ID desc",
+				$search : "OR",
+				$select : ["Name"],
+				foo : "bar",
+				"sap-client" : "123"
+			},
+			sQueryOptions;
+
+		if (bCount !== undefined) {
+			mQueryOptions.$count = bCount;
+		}
+		sQueryOptions = JSON.stringify(mQueryOptions);
+		this.mock(_AggregationHelper).expects("filterOrderby").never();
+		this.mock(_AggregationHelper).expects("buildApply")
+			.withExactArgs(sinon.match.same(oAggregation), {
+					$expand : {EMPLOYEE_2_TEAM : null},
+					$filter : "age gt 40",
+					$orderby : "TEAM_ID desc",
+					$search : "OR",
+					$select : ["Name"],
+					foo : "bar",
+					"sap-client" : "123"
+				}, 0, true)
+			.returns("~result~");
+
+		// code under test
+		assert.strictEqual(oCache.getDownloadQueryOptions(mQueryOptions), "~result~");
+
+		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptions, "unchanged");
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("getCreatedElements", function (assert) {
@@ -3168,7 +3164,7 @@ sap.ui.define([
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
-			oCache,
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			mQueryOptions = {
 				$apply : "A.P.P.L.E.", // dropped
 				$count : true,
@@ -3180,10 +3176,6 @@ sap.ui.define([
 				foo : "bar",
 				"sap-client" : "123"
 			};
-
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 
 		// code under test
 		oCache.beforeRequestSideEffects(mQueryOptions);
@@ -3205,7 +3197,7 @@ sap.ui.define([
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
-			oCache,
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oParentCache = {
 				drop : function () {}
 			},
@@ -3220,9 +3212,6 @@ sap.ui.define([
 			},
 			oHelperMock = this.mock(_Helper);
 
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 		oCache.aElements.$byPredicate = {
 			"('A')" : "~a~",
 			"('B')" : "~b~",
@@ -3274,11 +3263,7 @@ sap.ui.define([
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
-			oCache;
-
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 
 		// code under test
 		assert.deepEqual(oCache.keepOnlyGivenElements([]), []);
@@ -3290,7 +3275,7 @@ sap.ui.define([
 				hierarchyQualifier : "X"
 			},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
-			oCache,
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			aElements = [{
 				"@$ui5._" : {predicate : "('A')"}
 			}, {
@@ -3300,9 +3285,6 @@ sap.ui.define([
 			}],
 			aResult;
 
-		// avoid trouble when creating 1st level cache
-		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
-		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 		oCache.aElements = aElements.slice();
 		oAggregationHelperMock.expects("markSplicedStale")
 			.withExactArgs(sinon.match.same(aElements[0]));

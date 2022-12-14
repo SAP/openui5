@@ -1124,7 +1124,7 @@ sap.ui.define([
 			+ _Helper.buildPath(this.sResourcePath, sPath)
 			+ this.oRequestor.buildQueryString(
 				_Helper.buildPath(this.sMetaPath, _Helper.getMetaPath(sPath)),
-				this.getDownloadQueryOptions(mQueryOptions));
+				this.getDownloadQueryOptions(mQueryOptions), false, true);
 	};
 
 	/**

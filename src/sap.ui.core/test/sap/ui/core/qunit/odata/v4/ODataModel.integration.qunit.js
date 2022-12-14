@@ -23412,8 +23412,15 @@ sap.ui.define([
 	//
 	// Request various side effects that do not affect the hierarchy (JIRA: CPOUI5ODATAV4-1785).
 	// Check that create, delete, and refresh are not supported (JIRA: CPOUI5ODATAV4-1851).
+	//
+	// Additionally ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920)
 	QUnit.test("Recursive Hierarchy: root is leaf", function (assert) {
-		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+		var sExpectedDownloadUrl = sTeaBusi
+				+ "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				+ ",Levels=9)&$select=DistanceFromRoot,ID,MANAGER_ID"
+				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)",
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			oRoot,
 			oTable,
 			sView = '\
@@ -23466,15 +23473,22 @@ sap.ui.define([
 				["", "", "", "", ""]
 			]);
 
+			// code under test
+			assert.strictEqual(oRoot.getBinding().getDownloadUrl(), sExpectedDownloadUrl,
+				"JIRA: CPOUI5ODATAV4-1920");
+
 			that.expectRequest("EMPLOYEES('0')?$select=AGE", {AGE : 60});
 
 			return Promise.all([
 				// code under test
 				oRoot.requestProperty("AGE"),
+				// code under test
+				oRoot.getBinding().requestDownloadUrl(),
 				that.waitForChanges(assert, "late property")
 			]);
 		}).then(function (aResults) {
 			assert.strictEqual(aResults[0], 60);
+			assert.strictEqual(aResults[1], sExpectedDownloadUrl, "JIRA: CPOUI5ODATAV4-1920");
 
 			that.expectRequest("EMPLOYEES?$select=AGE,ID,MANAGER_ID&$filter=ID eq '0'", {
 					value : [{
@@ -23752,6 +23766,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1785
 	//
 	// Use $count (JIRA: CPOUI5ODATAV4-1855).
+	//
+	// Additionally ODLB#getDownloadUrl is tested w/ sort (JIRA: CPOUI5ODATAV4-1920)
 	QUnit.test("Recursive Hierarchy: expand to 2, collapse & expand root etc.", function (assert) {
 		var oCollapsed,
 			oListBinding,
@@ -23850,6 +23866,14 @@ sap.ui.define([
 					MANAGER_ID : "0",
 					Name : "Kappa"
 				}, "technical properties have been removed");
+
+			// code under test
+			assert.strictEqual(oListBinding.getDownloadUrl(), sTeaBusi + "EMPLOYEES"
+				+ "?$apply=orderby(AGE%20desc)"
+				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=9)"
+				+ "&$select=AGE,DistanceFromRoot,ID,MANAGER_ID,Name",
+				"JIRA: CPOUI5ODATAV4-1920");
 
 			that.expectChange("count", "24");
 
@@ -24094,6 +24118,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1675
 	//
 	// Use $count w/ $direct (JIRA: CPOUI5ODATAV4-1855).
+	//
+	// Additionally ODLB#getDownloadUrl is tested w/ filter/sort (JIRA: CPOUI5ODATAV4-1920)
 	QUnit.test("Recursive Hierarchy: expand root, w/ filter, search & orderby", function (assert) {
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
 			oTable,
@@ -24135,6 +24161,16 @@ sap.ui.define([
 			oListBinding = oTable.getBinding("rows");
 
 			assert.strictEqual(oListBinding.getCount(), 2, "count of nodes"); // code under test
+
+			// code under test
+			assert.strictEqual(oListBinding.getDownloadUrl(), sTeaBusi + "EMPLOYEES"
+				+ "?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager)/search(covfefe)"
+					+ ",keep%20start)"
+				+ "/orderby(AGE%20desc)"
+				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=9)"
+				+ "&$select=DistanceFromRoot,ID",
+				"JIRA: CPOUI5ODATAV4-1920");
 
 			that.expectChange("count", "2");
 

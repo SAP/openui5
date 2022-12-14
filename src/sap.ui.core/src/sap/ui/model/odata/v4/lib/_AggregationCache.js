@@ -54,9 +54,7 @@ sap.ui.define([
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
 
 		this.oAggregation = oAggregation;
-		this.sDownloadUrl = oAggregation.hierarchyQualifier
-			? "n/a"
-			: _Cache.prototype.getDownloadUrl.call(this, "");
+		this.sDownloadUrl = _Cache.prototype.getDownloadUrl.call(this, "");
 		this.aElements = [];
 		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined;
@@ -546,9 +544,16 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.lib._Cache#getDownloadQueryOptions
 	 */
 	_AggregationCache.prototype.getDownloadQueryOptions = function (mQueryOptions) {
-		return _AggregationHelper.buildApply(this.oAggregation,
-			_AggregationHelper.filterOrderby(mQueryOptions, this.oAggregation),
-			0, true);
+		if (this.oAggregation.hierarchyQualifier) {
+			if ("$count" in mQueryOptions) {
+				mQueryOptions = Object.assign({}, mQueryOptions); // shallow clone
+				delete mQueryOptions.$count;
+			}
+		} else {
+			mQueryOptions = _AggregationHelper.filterOrderby(mQueryOptions, this.oAggregation);
+		}
+
+		return _AggregationHelper.buildApply(this.oAggregation, mQueryOptions, 0, true);
 	};
 
 	/**
