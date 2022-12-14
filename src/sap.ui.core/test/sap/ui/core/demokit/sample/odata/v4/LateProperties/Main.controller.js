@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/base/util/UriParameters",
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/m/Dialog",
@@ -16,12 +17,13 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (Button, mobileLibrary, Dialog, Input, Label, MessageToast, Text, Controller, Title,
-		 SimpleForm, Sorter, ODataModel, TestUtils) {
+], function (UriParameters, Button, mobileLibrary, Dialog, Input, Label, MessageToast, Text,
+		Controller, Title, SimpleForm, Sorter, ODataModel, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
-	var ButtonType = mobileLibrary.ButtonType;
+	var ButtonType = mobileLibrary.ButtonType,
+		sOptimisticBatch = UriParameters.fromQuery(window.location.search).get("optimisticBatch");
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.LateProperties.Main", {
 		onCleanUpOptimisticBatchCache : function (oEvent) {
@@ -36,10 +38,10 @@ sap.ui.define([
 			}).catch();
 		},
 		onInit : function () {
-			var bOptimisticBatch = TestUtils.isOptimisticBatch(),
+			var bOptimisticBatch,
 				that = this;
 
-			if (bOptimisticBatch === undefined) {
+			if (sOptimisticBatch === null) {
 				// optimistic batch enabled via OPA
 				bOptimisticBatch = TestUtils.retrieveData("optimisticBatch");
 				if (TestUtils.retrieveData("addSorter")) {
@@ -47,6 +49,8 @@ sap.ui.define([
 					this.byId("SalesOrderList").getBinding("items").sort(
 						new Sorter("SalesOrderID", true));
 				}
+			} else {
+				bOptimisticBatch = sOptimisticBatch === "true";
 			}
 
 			if (bOptimisticBatch !== undefined) {

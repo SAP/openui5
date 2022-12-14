@@ -143,7 +143,7 @@ sap.ui.getCore().attachInit(function () {
 					appChanged : true,
 					enablerResult : true,
 					isFirstAppStart : false,
-					title : "OptimisticBatchEnabler returns true, 4rd start, app changed, response "
+					title : "OptimisticBatchEnabler returns true, 4th start, app changed, response "
 						+ "consumed"
 				});
 				Given.iStartMyUIComponent({

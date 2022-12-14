@@ -31,11 +31,7 @@ sap.ui.define([
 		mData = {},
 		rODataHeaders = /^(OData-Version|DataServiceVersion)$/,
 		bRealOData = sRealOData === "true" || sRealOData === "direct",
-		iRequestCount = 0,
 		fnOnRequest = null,
-		sOptimisticBatch = oUriParameters.get("optimisticBatch"),
-		bOptimisticBatch = sOptimisticBatch === null ? undefined : sOptimisticBatch === "true",
-		bSupportAssistant = oUriParameters.get("supportAssistant") === "true",
 		TestUtils;
 
 	if (bRealOData) {
@@ -138,38 +134,23 @@ sap.ui.define([
 		 * If the UI5 core is dirty, the function returns a promise that waits until the rendering
 		 * is finished.
 		 *
-		 * @returns {Promise|undefined}
-		 *   An optional promise that is resolved when the UI5 core is no longer dirty
+		 * @returns {Promise}
+		 *   A promise that is resolved when the UI5 core is no longer dirty
+		 *
+		 * @public
 		 */
 		awaitRendering : function () {
-			if (sap.ui.getCore().getUIDirty()) {
-				return new Promise(function (resolve) {
-					function check() {
-						if (sap.ui.getCore().getUIDirty()) {
-							setTimeout(check, 1);
-						} else {
-							resolve();
-						}
+			return new Promise(function (resolve) {
+				function check() {
+					if (sap.ui.getCore().getUIDirty()) {
+						setTimeout(check, 1);
+					} else {
+						resolve();
 					}
+				}
 
-					check();
-				});
-			}
-		},
-
-		/**
-		 * Checks that the given error is as expected.
-		 *
-		 * @param {object} assert - The QUnit "assert" object
-		 * @param {object} oError - The actual error instance
-		 * @param {function} fnConstructor - The expected error constructor
-		 * @param {string} sMessage - The expected error message
-		 * @throws {Error} - in case the given error is not as expected
-		 */
-		checkError : function (assert, oError, fnConstructor, sMessage) {
-			assert.strictEqual(oError.constructor, fnConstructor);
-			assert.strictEqual(oError.message, sMessage);
-			assert.strictEqual(oError.name, fnConstructor.name);
+				check();
+			});
 		},
 
 		/**
@@ -196,6 +177,7 @@ sap.ui.define([
 		 *
 		 * @see sap.ui.model.odata.v4.lib._Helper.createGetMethod
 		 * @see sap.ui.model.odata.v4.lib._Helper.createRequestMethod
+		 * @ui5-restricted sap.ui.model.odata.v4
 		 */
 		checkGetAndRequest: function (oTestContext, oTestee, assert, sMethodName, aArguments,
 				bThrow) {
@@ -266,6 +248,8 @@ sap.ui.define([
 		 *   actual value
 		 * @param {string} [sMessage]
 		 *   message text
+		 *
+		 * @public
 		 */
 		deepContains : function (oActual, oExpected, sMessage) {
 			pushDeeplyContains(oActual, oExpected, sMessage, true);
@@ -281,6 +265,8 @@ sap.ui.define([
 		 *   the actual value
 		 * @param {string} [sMessage]
 		 *   message text
+		 *
+		 * @public
 		 */
 		notDeepContains : function (oActual, oExpected, sMessage) {
 			pushDeeplyContains(oActual, oExpected, sMessage, false);
@@ -297,13 +283,13 @@ sap.ui.define([
 		 * POST requests ending on "/$batch" are handled automatically. They are expected to be
 		 * multipart-mime requests where each part is a DELETE, GET, PATCH, MERGE, or POST request.
 		 * The response has a multipart-mime message containing responses to these inner requests.
-		 * If an inner request is not a DELETE, a MERGE, a PATCH, or a POST and it is not found in
+		 * If an inner request is not a DELETE, a MERGE, a PATCH, or a POST, and it is not found in
 		 * the fixture, or its message is not JSON, it is responded with an error code.
 		 * The batch itself is always responded with code 200.
 		 *
 		 * "$batch" requests with an OData change set are supported, too. For each request in the
 		 * change set a response is searched in the fixture. As long as all responses are success
-		 * responses (code less than 400) a change set response is returned. Otherwise the first
+		 * responses (code less than 400) a change set response is returned. Otherwise, the first
 		 * error message is the response for the whole change set.
 		 *
 		 * All other POST requests with no matching response in the fixture are responded with code
@@ -359,6 +345,8 @@ sap.ui.define([
 		 *   Whether responses are created from the given fixture only, without defaults per method.
 		 * @returns {object}
 		 *   The SinonJS fake server instance
+		 *
+		 * @public
 		 */
 		useFakeServer : function (oSandbox, sBase, mFixture, aRegExps, sServiceUrl, bStrict) {
 			// a map from "method path" incl. service URL to a list of response objects with
@@ -377,7 +365,6 @@ sap.ui.define([
 				var oMultipart = multipart(sServiceBase, oRequest.requestBody),
 					mODataHeaders = getODataHeaders(oRequest);
 
-				iRequestCount += 1;
 				if (fnOnRequest) {
 					fnOnRequest(oRequest.requestBody);
 				}
@@ -743,7 +730,6 @@ sap.ui.define([
 			function respondFromFixture(oRequest) {
 				var oResponse = getResponseFromFixture(oRequest);
 
-				iRequestCount += 1;
 				if (fnOnRequest) {
 					fnOnRequest(oRequest.requestBody);
 				}
@@ -864,6 +850,8 @@ sap.ui.define([
 		 * @param {function} fnCodeUnderTest
 		 *   the code under test
 		 * @since 1.27.1
+		 *
+		 * @public
 		 */
 		withNormalizedMessages : function (fnCodeUnderTest) {
 			var oSandbox;
@@ -900,17 +888,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * @returns {boolean|undefined}
-		 *   <code>true</code> if optimistic batch should be used, <code>undefined</code> if not
-		 *   specified.
-		 */
-		isOptimisticBatch : function () {
-			return bOptimisticBatch;
-		},
-
-		/**
 		 * @returns {boolean}
 		 *   <code>true</code> if the real OData service is used.
+		 *
+		 * @public
 		 */
 		isRealOData : function () {
 			if (sRealOData === "proxy") {
@@ -920,31 +901,15 @@ sap.ui.define([
 		},
 
 		/**
-		 * @returns {boolean}
-		 *   <code>true</code> if the support assistant shall be used.
-		 */
-		isSupportAssistant : function () {
-			return bSupportAssistant;
-		},
-
-		/**
 		 * Returns the realOData query parameter so that it can be forwarded to an embedded test
 		 *
 		 * @returns {string}
 		 *  the realOData query parameter or "" if none was given
+		 *
+		 * @public
 		 */
 		getRealOData : function () {
 			return sRealOData ? "&realOData=" + sRealOData : "";
-		},
-
-		/**
-		 * Returns the number of server requests within {@link .useFakeServer} since the latest
-		 * {@link #resetRequestCount}.
-		 *
-		 * @returns {number} The number of requests
-		 */
-		getRequestCount : function () {
-			return iRequestCount;
 		},
 
 		/**
@@ -954,6 +919,8 @@ sap.ui.define([
 		 * Pass <code>null</code> to remove the listener.
 		 *
 		 * @param {function(string)} [fnCallback] - The function
+		 *
+		 * @ui5-restricted sap.ui.model.odata.v4
 		 */
 		onRequest : function (fnCallback) {
 			fnOnRequest = fnCallback;
@@ -976,13 +943,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Resets the counter for server requests within {@link .useFakeServer}.
-		 */
-		resetRequestCount : function () {
-			iRequestCount = 0;
-		},
-
-		/**
 		 * Returns the value which has been stored with the given key using {@link #setData} and
 		 * resets it.
 		 *
@@ -990,6 +950,8 @@ sap.ui.define([
 		 *   The key
 		 * @returns {object}
 		 *   The value
+		 *
+		 * @public
 		 */
 		retrieveData : function (sKey) {
 			var vValue = mData[sKey];
@@ -1006,6 +968,8 @@ sap.ui.define([
 		 *   The key
 		 * @param {object} vValue
 		 *   The value
+		 *
+		 * @public
 		 */
 		setData : function (sKey, vValue) {
 			mData[sKey] = vValue;
@@ -1032,6 +996,7 @@ sap.ui.define([
 		 * @param {object[]} [aRegExps]
 		 *   The regular expression array for {@link sap.ui.test.TestUtils.useFakeServer}
 		 *
+		 * @public
 		 * @see #.isRealOData
 		 */
 		setupODataV4Server : function (oSandbox, mFixture, sSourceBase, sFilterBase, aRegExps) {
