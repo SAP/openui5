@@ -1,19 +1,38 @@
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/base/i18n/ResourceBundle",
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
+	"sap/base/i18n/ResourceBundle",
+	"sap/base/util/deepExtend",
+	"sap/base/util/UriParameters",
 	"sap/ui/core/Component",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/UIComponentMetadata",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/xml/XMLModel",
 	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/model/xml/XMLModel",
 	"sap/ui/test/v2models/parent/CustomModel"
-], function(jQuery, ResourceBundle, UriParameters, Log, Component, Configuration) {
+], function(
+	Log,
+	ResourceBundle,
+	deepExtend,
+	UriParameters,
+	Component,
+	Configuration,
+	Manifest,
+	UIComponent,
+	UIComponentMetadata,
+	JSONModel,
+	ODataModelV1,
+	ODataModelV2,
+	ODataModelV4,
+	ResourceModel,
+	XMLModel,
+	CustomModel
+) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -99,15 +118,15 @@ sap.ui.define([
 		},
 		assertModelFromManifest: function(assert, options) {
 			var sComponentName = "sap.ui.core.test.component.models";
-			var oManifest = new sap.ui.core.Manifest(options.manifest, {
+			var oManifest = new Manifest(options.manifest, {
 				componentName: sComponentName,
 				baseUrl: "./path/to/manifest/manifest.json",
 				process: false
 			});
 
 			// deep clone is needed as manifest only returns a read-only copy (frozen object)
-			var oManifestDataSources = jQuery.extend(true, {}, oManifest.getEntry("/sap.app/dataSources"));
-			var oManifestModels = jQuery.extend(true, {}, oManifest.getEntry("/sap.ui5/models"));
+			var oManifestDataSources = deepExtend({}, oManifest.getEntry("/sap.app/dataSources"));
+			var oManifestModels = deepExtend({}, oManifest.getEntry("/sap.ui5/models"));
 
 			// 1. provide all model configs with a 'type'
 			var mAllModelConfigs = Component._findManifestModelClasses({
@@ -355,28 +374,28 @@ sap.ui.define([
 
 			// check if models are set on component (and save them internally)
 			this.assertModelInstances({
-				"": sap.ui.model.odata.v2.ODataModel,
-				"default-with-annotations": sap.ui.model.odata.v2.ODataModel,
-				"old-uri-syntax": sap.ui.model.odata.v2.ODataModel,
-				"ODataModel": sap.ui.model.odata.ODataModel,
-				"v2-ODataModel": sap.ui.model.odata.v2.ODataModel,
-				"invalid-annotations": sap.ui.model.odata.v2.ODataModel,
-				"v2-ODataModel-OtherOrigins": sap.ui.model.odata.v2.ODataModel,
-				"ODataV4Model": sap.ui.model.odata.v4.ODataModel,
-				"json": sap.ui.model.json.JSONModel,
-				"json-relative": sap.ui.model.json.JSONModel,
-				"json-relative-2": sap.ui.model.json.JSONModel,
-				"xml": sap.ui.model.xml.XMLModel,
-				"xml-relative": sap.ui.model.xml.XMLModel,
-				"resourceBundle-name": sap.ui.model.resource.ResourceModel,
-				"resourceBundle-legacy-uri": sap.ui.model.resource.ResourceModel,
-				"custom-uri-string": sap.ui.test.v2models.parent.CustomModel,
-				"custom-relative-uri-string": sap.ui.test.v2models.parent.CustomModel,
-				"custom-uri-string-with-settings": sap.ui.test.v2models.parent.CustomModel,
-				"custom-without-args": sap.ui.test.v2models.parent.CustomModel,
-				"custom-uri-setting-name": sap.ui.test.v2models.parent.CustomModel,
-				"custom-uri-setting-merge": sap.ui.test.v2models.parent.CustomModel,
-				"custom-uri-setting-already-defined": sap.ui.test.v2models.parent.CustomModel
+				"": ODataModelV2,
+				"default-with-annotations": ODataModelV2,
+				"old-uri-syntax": ODataModelV2,
+				"ODataModel": ODataModelV1,
+				"v2-ODataModel": ODataModelV2,
+				"invalid-annotations": ODataModelV2,
+				"v2-ODataModel-OtherOrigins": ODataModelV2,
+				"ODataV4Model": ODataModelV4,
+				"json": JSONModel,
+				"json-relative": JSONModel,
+				"json-relative-2": JSONModel,
+				"xml": XMLModel,
+				"xml-relative": XMLModel,
+				"resourceBundle-name": ResourceModel,
+				"resourceBundle-legacy-uri": ResourceModel,
+				"custom-uri-string": CustomModel,
+				"custom-relative-uri-string": CustomModel,
+				"custom-uri-string-with-settings": CustomModel,
+				"custom-without-args": CustomModel,
+				"custom-uri-setting-name": CustomModel,
+				"custom-uri-setting-merge": CustomModel,
+				"custom-uri-setting-already-defined": CustomModel
 			});
 
 			// destroy the component
@@ -1426,7 +1445,7 @@ sap.ui.define([
 			// unload not existing module to prevent different logs
 			// depending on cached 404 response or not
 			// (see "class-not-loaded" model in manifest below)
-			jQuery.sap.unloadResources("sap/ui/sample/model/MyModel.js", false, true);
+			sap.ui.loader._.unloadResources("sap/ui/sample/model/MyModel.js", false, true);
 
 			//setup fake server
 			var oManifest = this.oManifest = {
@@ -1640,7 +1659,7 @@ sap.ui.define([
 		var that = this,
 			iLoadResourceBundleAsync = 0,
 			fnJQuerySapResource = ResourceBundle.create,
-			jQuerySapResourcesStub = sinon.stub(ResourceBundle, "create").callsFake(function(mConfig) {
+			oResourceBundleCreateStub = sinon.stub(ResourceBundle, "create").callsFake(function(mConfig) {
 				if (mConfig.async) {
 					iLoadResourceBundleAsync++;
 					return Promise.reject();
@@ -1677,7 +1696,7 @@ sap.ui.define([
 			// check if all models got destroyed (uses the models from #assertModelInstances)
 			this.assertModelsDestroyed();
 
-			jQuerySapResourcesStub.restore();
+			oResourceBundleCreateStub.restore();
 		}.bind(this));
 	});
 
@@ -3728,8 +3747,11 @@ sap.ui.define([
 			// To keep reusing the same component for async and sync path tests,
 			// we need to unload the Component and remove the leftovers from the ComponentMetadata.
 			// This way all tests start fresh and actually load the Component again.
+			var TestComponent = sap.ui.require("sap/ui/test/v2models/ui5urls/Component");
+			if ( TestComponent ) {
+				delete TestComponent.getMetadata()._oManifest;
+			}
 			sap.ui.loader._.unloadResources('sap/ui/test/v2models/ui5urls/Component.js', true, true, true);
-			delete sap.ui.test.v2models.ui5Urls.Component.getMetadata()._oManifest;
 
 			// remove the previous path-configs/resource-roots
 			sap.ui.loader.config({

@@ -1,14 +1,26 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
-	"sap/ui/core/Component",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/UIComponentMetadata",
-	"sap/ui/core/Manifest",
-	"sap/ui/core/Configuration",
+	"sap/base/util/deepExtend",
 	"sap/base/util/Deferred",
-	"sap/base/util/LoaderExtensions"
-], function(jQuery, Log, Component, UIComponent, UIComponentMetadata, Manifest, Configuration, Deferred, LoaderExtensions) {
+	"sap/base/util/fetch",
+	"sap/base/util/LoaderExtensions",
+	"sap/ui/core/Component",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Manifest",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/UIComponentMetadata"
+], function(
+	Log,
+	deepExtend,
+	Deferred,
+	fetch,
+	LoaderExtensions,
+	Component,
+	Configuration,
+	Manifest,
+	UIComponent,
+	UIComponentMetadata
+) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -53,7 +65,9 @@ sap.ui.define([
 			}
 		});
 		// remove script tags for Component-preload.js modules (not an API)
-		jQuery("SCRIPT[data-sap-ui-module^='sap/test/']").remove();
+		document.querySelectorAll("SCRIPT[data-sap-ui-module^='sap/test/']").forEach(function(elem) {
+			elem.remove();
+		});
 	}
 
 
@@ -340,6 +354,23 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Component.create: 'asyncHints.preloadOnly' should be ignored", function(assert) {
+
+		sap.ui.loader.config({paths:{"sap/test01":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
+
+		return Component.create({
+			name: "sap.test01.mycomp",
+			asyncHints: {
+				preloadOnly: true // this should only be passed to "Component.load"!
+			}
+		}).then(function(oComponent) {
+			assert.ok(oComponent instanceof Component, "Component has been created.");
+		});
+	});
+
+	/**
+	 * @deprecated Since 1.56
+	 */
 	QUnit.test("sap.ui.component: 'asyncHints.preloadOnly' should be ignored", function(assert) {
 
 		sap.ui.loader.config({paths:{"sap/test":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
@@ -382,7 +413,7 @@ sap.ui.define([
 		this.loadScript.withArgs("scenario1/lib2/library-preload.js").returns( Promise.resolve(true) );
 		this.requireSpy.withArgs( ["scenario1/comp/Component"] ).callsArgWith(1, Component);
 
-		// first load with preloadOnly: true and check that none of the relvant modules have been required
+		// first load with preloadOnly: true and check that none of the relevant modules have been required
 		return Component.load({
 			name: "scenario1.comp",
 			asyncHints: {
@@ -587,13 +618,22 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("load component callback", function(assert) {
-		var done = assert.async();
+	QUnit.test("Hook _fnLoadComponentCallback", function(assert) {
 
-		jQuery.getJSON("test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json", function(oLoadedManifest) {
+		assert.expect(9); // ensure a complete test execution
+
+		var MANIFEST_URL = "test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json";
+
+		return fetch(MANIFEST_URL, {
+			headers: {
+				"Content-Type": fetch.ContentTypes.JSON
+			}
+		}).then(function(oResponse) {
+			return oResponse.json();
+		}).then(function(oOriginalManifest) {
 
 			var oConfig = {
-				manifest: "test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json",
+				manifest: MANIFEST_URL,
 				async: true,
 				asyncHints: {
 					libs: ["sap.ui.core"],
@@ -601,39 +641,44 @@ sap.ui.define([
 				}
 			};
 
-			var oStorage = {};
-
-			// check after the component was loaded
-			var fnCheckForModification = function (oComponent) {
-				var oOriginalManifest = oComponent.getManifest();
-				assert.deepEqual(oOriginalManifest, this.manifestInCallback.getJson(), "the manifest was passed as a copy");
-				done();
-			};
+			var manifestInCallback;
 
 			// install a manifest load callback hook
-			Component._fnLoadComponentCallback = function(oConfig, oManifest, oPassedConfig, oPassedManifest) {
+			Component._fnLoadComponentCallback = function(oPassedConfig, oPassedManifest) {
 
-				// only run callback once as it's also called when loading a component dependency
-				// TODO: consider rewriting this test
-				if (this.manifestInCallback) {
+				// ignore any call to the hook other than the one for the component under test
+				// (hook is also called when loading a component dependency)
+				if (oPassedConfig.manifest !== MANIFEST_URL) {
 					return;
 				}
 
 				assert.ok(true, "Component._fnLoadComponentCallback called!");
-				assert.deepEqual(oConfig, oPassedConfig, "the config was passed");
-				assert.notEqual(oConfig, oPassedConfig, "the passed config is a copy");
-				assert.deepEqual(oManifest, oPassedManifest.getRawJson(), "the manifest was passed");
-				return Promise.resolve().then(function() {
-					oPassedManifest.getJson().modification = "someModification";
-					this.manifestInCallback = oPassedManifest;
-				}.bind(this));
+				assert.deepEqual(oConfig, oPassedConfig, "a config was passed");
+				assert.notStrictEqual(oConfig, oPassedConfig, "the passed config is a copy");
+				assert.deepEqual(oOriginalManifest, oPassedManifest.getRawJson(),
+					"the passed raw manifest should have the same content as the original manifest");
+				assert.deepEqual(oOriginalManifest, oPassedManifest.getJson(),
+					"the passed manifest should have the same content as the original manifest");
 
-			}.bind(oStorage, oConfig, oLoadedManifest);
+				oPassedManifest.getJson().modification = "someModification";
+				assert.notDeepEqual(oOriginalManifest, oPassedManifest.getJson(),
+					"the passed manifest should no longer have the same content as the original manifest");
+				manifestInCallback = oPassedManifest;
+
+				return Promise.resolve();
+			};
 
 			// start test
-			var oComponentPromise = Component.create(oConfig);
-
-			oComponentPromise.then(fnCheckForModification.bind(oStorage));
+			return Component.create(oConfig).then(function(oComponent) {
+				// check after the component was loaded
+				var oFinalManifest = oComponent.getManifest();
+				assert.strictEqual(oFinalManifest, manifestInCallback.getJson(),
+					"the created component instance should use the modified manifest");
+				assert.equal(oFinalManifest.modification, "someModification",
+					"the used manifest should contain the modification");
+				assert.deepEqual(oOriginalManifest, manifestInCallback.getRawJson(),
+					"the raw manifest of the component instance should be the original manifest");
+			});
 		});
 	});
 
@@ -700,7 +745,7 @@ sap.ui.define([
 					"testlibs.scenario15.lib9"
 				]);
 
-				// lib10 is loaded with a seperate request and not part of the initial loadLibraries call
+				// lib10 is loaded with a separate request and not part of the initial loadLibraries call
 				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib10\/library-preload\.js$/));
 
 				// lib5 is not requested --> lazy: true

@@ -1,12 +1,12 @@
 sap.ui.define([
-	"sap/ui/core/Component",
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/UIComponentMetadata",
-	"sap/ui/core/mvc/View",
-	"sap/base/Log"
-], function(Component, ManagedObject, ComponentContainer, UIComponent, UIComponentMetadata, View, Log) {
+	"sap/ui/core/mvc/View"
+], function(Log, ManagedObject, Component, ComponentContainer, UIComponent, UIComponentMetadata, View) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -20,7 +20,7 @@ sap.ui.define([
 		beforeEach: function() {
 
 			// define the Component
-			sap.ui.predefine("my/test/Component", ["sap/ui/core/UIComponent", "sap/m/Button"], function(UIComponent, Button) {
+			sap.ui.define("my/test/Component", ["sap/ui/core/UIComponent", "sap/m/Button"], function(UIComponent, Button) {
 
 				return UIComponent.extend("my.test.Component", {
 
@@ -515,12 +515,12 @@ sap.ui.define([
 					"error/test": sap.ui.require.toUrl("test-resources/sap/ui/core/qunit/component/testdata/view/")
 				}
 			});
-			sap.ui.predefine("my/own/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.define("my/own/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("my.own.Component", {});
 
 			});
-			sap.ui.predefine("my/own/autoid/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.define("my/own/autoid/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("my.own.autoid.Component", {
 					metadata: {
@@ -529,7 +529,7 @@ sap.ui.define([
 				});
 
 			});
-			sap.ui.predefine("my/own/prefixid/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.define("my/own/prefixid/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("my.own.prefixid.Component", {
 					metadata: {
@@ -538,7 +538,7 @@ sap.ui.define([
 				});
 
 			});
-			sap.ui.predefine("my/own/missingViewType/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.define("my/own/missingViewType/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("my.own.missingViewType.Component", {
 					metadata: {
@@ -551,7 +551,7 @@ sap.ui.define([
 
 			});
 
-			sap.ui.predefine("error/test/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.define("error/test/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("error.test.Component", {
 					metadata: {
@@ -562,7 +562,7 @@ sap.ui.define([
 			});
 
 			// define a simple typed view
-			sap.ui.predefine("my/own/TypedView", ["sap/ui/core/mvc/View", "sap/ui/core/Icon"], function(View, Icon) {
+			sap.ui.define("my/own/TypedView", ["sap/ui/core/mvc/View", "sap/ui/core/Icon"], function(View, Icon) {
 				return View.extend("my.own.TypedView", {
 					createContent: function() {
 						return [new Icon({src: "sap-icon://accept" })];
@@ -571,7 +571,7 @@ sap.ui.define([
 			});
 
 			// defined the controller
-			sap.ui.predefine("my/own/Controller.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
+			sap.ui.define("my/own/Controller.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
 
 				return Controller.extend("my.own.Controller", {
 					doSomething: function() {}
@@ -908,7 +908,7 @@ sap.ui.define([
 			});
 		});
 
-		return sap.ui.component({
+		return Component.create({
 			name: "manifestModules.scenario1",
 			manifest: true
 		}).then(function(oInstance) {
@@ -941,7 +941,7 @@ sap.ui.define([
 		this.setRespondedManifest(oManifest, "scenario2");
 
 		var requireSpy = this.requireSpy;
-		sap.ui.predefine("manifestModules/scenario2/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		sap.ui.define("manifestModules/scenario2/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 			return UIComponent.extend("manifestModules.scenario2.Component", {
 				metadata: {
 					manifest: "json"
@@ -953,7 +953,7 @@ sap.ui.define([
 				}
 			});
 		});
-		sap.ui.predefine("someCustomRouter", ['sap/ui/core/routing/Router'], function(Router) {
+		sap.ui.define("someCustomRouter", ['sap/ui/core/routing/Router'], function(Router) {
 			return Router.extend("someCustomRouter", {});
 		});
 
@@ -975,7 +975,7 @@ sap.ui.define([
 		this.setRespondedManifest(oManifest, "scenario3");
 
 		var requireSpy = this.requireSpy;
-		sap.ui.predefine("manifestModules/scenario3/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		sap.ui.define("manifestModules/scenario3/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 			return UIComponent.extend("manifestModules.scenario3.Component", {
 				metadata: {
 					manifest: "json"
@@ -1026,7 +1026,7 @@ sap.ui.define([
 		this.setRespondedManifest(oManifest, "scenario4");
 
 		var logWarningSpy = this.logWarningSpy;
-		sap.ui.predefine("manifestModules/scenario4/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		sap.ui.define("manifestModules/scenario4/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 			return UIComponent.extend("manifestModules.scenario4.Component", {
 				metadata: {
 					manifest: "json"
@@ -1083,7 +1083,7 @@ sap.ui.define([
 		};
 		this.setRespondedManifest(oManifest, "scenario5");
 
-		sap.ui.predefine("manifestModules/scenario5/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		sap.ui.define("manifestModules/scenario5/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 			return UIComponent.extend("manifestModules.scenario5.Component", {
 				metadata: {
 					manifest: "json",
@@ -1124,7 +1124,7 @@ sap.ui.define([
 		};
 		this.setRespondedManifest(oManifest, "scenario6");
 
-		sap.ui.predefine("manifestModules/scenario6/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
+		sap.ui.define("manifestModules/scenario6/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
 			return UIComponent.extend("manifestModules.scenario6.Component", {
 				metadata: {
 					manifest: "json",
@@ -1159,6 +1159,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated Since 1.56
+	 */
 	QUnit.test("Component with async rootView creation - legacy factory", function(assert) {
 		assert.expect(1);
 
@@ -1195,7 +1198,7 @@ sap.ui.define([
 		};
 		this.setRespondedManifest(oManifest, "scenario7");
 
-		sap.ui.predefine("manifestModules/scenario7/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		sap.ui.define("manifestModules/scenario7/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 			return UIComponent.extend("manifestModules.scenario7.Component", {
 				metadata: {
 					manifest: "json",
@@ -1232,7 +1235,7 @@ sap.ui.define([
 		};
 		this.setRespondedManifest(oManifest, "scenario8");
 
-		sap.ui.predefine("manifestModules/scenario8/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
+		sap.ui.define("manifestModules/scenario8/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
 			return UIComponent.extend("manifestModules.scenario8.Component", {
 				metadata: {
 					manifest: "json",
@@ -1275,7 +1278,7 @@ sap.ui.define([
 		};
 		this.setRespondedManifest(oManifest, "scenario10");
 
-		sap.ui.predefine("manifestModules/scenario10/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
+		sap.ui.define("manifestModules/scenario10/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
 			return UIComponent.extend("manifestModules.scenario10.Component", {
 				metadata: {
 					manifest: "json",
@@ -1310,7 +1313,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Component with missing Init super call", function(assert) {
+	QUnit.test("Component with missing super.init(...) call", function(assert) {
 		assert.expect(3);
 		var oManifest = {
 			"sap.app" : {
@@ -1325,7 +1328,7 @@ sap.ui.define([
 		};
 		this.setRespondedManifest(oManifest, "scenario11");
 
-		sap.ui.predefine("manifestModules/scenario11/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
+		sap.ui.define("manifestModules/scenario11/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
 			return UIComponent.extend("manifestModules.scenario11.Component", {
 				metadata: {
 					manifest: "json"
@@ -1360,7 +1363,7 @@ sap.ui.define([
 		};
 		this.setRespondedManifest(oManifest, "scenario12");
 
-		sap.ui.predefine("manifestModules/scenario12/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
+		sap.ui.define("manifestModules/scenario12/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
 			return UIComponent.extend("manifestModules.scenario12.Component", {
 				metadata: {
 					manifest: "json"
@@ -1396,7 +1399,7 @@ sap.ui.define([
 		};
 		this.setRespondedManifest(oManifest, "scenario13");
 
-		sap.ui.predefine("manifestModules/scenario13/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View", "sap/m/Panel"], function(UIComponent, View, Panel) {
+		sap.ui.define("manifestModules/scenario13/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View", "sap/m/Panel"], function(UIComponent, View, Panel) {
 			return UIComponent.extend("manifestModules.scenario13.Component", {
 				metadata: {
 					manifest: "json"
@@ -1447,7 +1450,7 @@ sap.ui.define([
 		};
 		this.setRespondedManifest(oManifest, "scenario13");
 
-		sap.ui.predefine("manifestModules/scenario13/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View", "sap/m/Panel"], function(UIComponent, View, Panel) {
+		sap.ui.define("manifestModules/scenario13/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View", "sap/m/Panel"], function(UIComponent, View, Panel) {
 			return UIComponent.extend("manifestModules.scenario13.Component", {
 				metadata: {
 					manifest: "json"
@@ -1491,7 +1494,7 @@ sap.ui.define([
 
 	QUnit.module("catch up async rootView loaded promise", {
 		before: function() {
-			sap.ui.predefine("my/AsyncComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.define("my/AsyncComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 				return UIComponent.extend("my.AsyncComponent.Component", {
 					metadata: {
 						interfaces: ["sap.ui.core.IAsyncContentCreation"], // Needed to load JSView async
@@ -1506,7 +1509,7 @@ sap.ui.define([
 					}
 				});
 			});
-			sap.ui.predefine("my/AsyncJSView", ["sap/ui/core/mvc/View", "sap/m/Panel"], function(View, Panel) {
+			sap.ui.define("my/AsyncJSView", ["sap/ui/core/mvc/View", "sap/m/Panel"], function(View, Panel) {
 				return View.extend("my.AsyncJSView", {
 					createContent: function() {
 						return Promise.resolve(
