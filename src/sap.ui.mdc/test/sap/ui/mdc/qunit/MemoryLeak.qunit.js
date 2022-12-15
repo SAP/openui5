@@ -9,17 +9,19 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldBase",
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/FilterField",
-	"sap/ui/mdc/field/FieldValueHelp",
-	"sap/ui/mdc/field/ValueHelpPanel",
+	"sap/ui/mdc/field/FieldBaseDelegate", // make sure delegate is loaded
 	"sap/ui/mdc/field/DefineConditionPanel",
-	"sap/ui/mdc/field/FieldValueHelpMTableWrapper",
+	"sap/ui/mdc/field/FieldInput", // make sure inner control is loaded
+	"sap/ui/mdc/field/FieldMultiInput", // make sure inner control is loaded
+	"sap/ui/mdc/ValueHelp",
+	"sap/ui/mdc/valuehelp/Popover",
+	"sap/ui/mdc/valuehelp/Dialog",
+	"sap/ui/mdc/valuehelp/content/MTable",
+	"sap/ui/mdc/valuehelp/content/Conditions",
 	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
-	"sap/ui/mdc/field/FieldBaseDelegate", // make sure delegate is loaded
 	"sap/m/library",
-	"sap/m/Input", // make sure inner control is loaded
-	"sap/m/MultiInput", // make sure inner control is loaded
 	"sap/m/Popover",
 	"sap/m/Dialog",
 	"sap/m/Button",
@@ -29,25 +31,34 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/ScrollContainer",
+	"sap/m/VBox",
+	"sap/m/Panel",
+	"sap/m/Toolbar",
+	"sap/m/ToolbarSpacer",
+	"sap/m/ValueStateHeader",
+	"sap/ui/layout/FixFlex",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
+	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/core/Core"
 ], function (
 		MemoryLeakCheck,
 		FieldBase,
 		Field,
 		FilterField,
-		FieldValueHelp,
-		ValueHelpPanel,
+		FieldBaseDelegate,
 		DefineConditionPanel,
-		FieldValueHelpMTableWrapper,
+		FieldInput,
+		FieldMultiInput,
+		ValueHelp,
+		VHPopover,
+		VHDialog,
+		MTable,
+		VHConditions,
 		ConditionModel,
 		Condition,
 		FilterOperatorUtil,
-		FieldBaseDelegate,
 		mLibrary,
-		Input,
-		MultiInput,
 		Popover,
 		Dialog,
 		Button,
@@ -57,8 +68,15 @@ sap.ui.define([
 		Column,
 		ColumnListItem,
 		ScrollContainer,
+		VBox,
+		Panel,
+		Toolbar,
+		ToolbarSpacer,
+		ValueStateHeader,
+		FixFlex,
 		JSONModel,
 		StringType,
+		ResourceModel,
 		oCore
 	) {
 	"use strict";
@@ -97,7 +115,7 @@ sap.ui.define([
 		});
 	oCore.setModel(oModel);
 
-	MemoryLeakCheck.checkControl("FieldValueHelp Suggestion", function() {
+	MemoryLeakCheck.checkControl("ValueHelp Typeahead", function() {
 		// don't need to be really rendered or opened, just test if inner controls are cleared.
 		var oItemTemplate = new ColumnListItem({
 			type: "Active",
@@ -106,33 +124,39 @@ sap.ui.define([
 					new Text({text: "{additionalText}"})]
 		});
 
-		var oFieldHelp = new FieldValueHelp("FH1", {
-			content: new FieldValueHelpMTableWrapper({
-				table: new Table({
-					width: "26rem",
-					columns: [ new Column({header: new Label({text: "Id"})}),
-							   new Column({header: new Label({text: "Text"})}),
-							   new Column({header: new Label({text: "Info"})})],
-					items: {path: "/items", template: oItemTemplate}
-				})
-			}),
+		var oMTable = new MTable("VH1-MTable", {
+			table: new Table("VH1-Table", {
+				width: "26rem",
+				columns: [ new Column({header: new Label({text: "Id"})}),
+						new Column({header: new Label({text: "Text"})}),
+						new Column({header: new Label({text: "Info"})})],
+				items: {path: "/items", template: oItemTemplate}
+			})
+		});
+		var oPopover = new VHPopover("VH1-Pop", {
+			title: "Title",
 			filterFields: "text",
 			keyPath: "key",
 			descriptionPath: "text",
-			showConditionPanel: true,
-			title: "Title"
+			content: oMTable
+		});
+		var oValueHelp = new ValueHelp("VH1", {
+			typeahead: oPopover
 		});
 		var oField = new FilterField("F1", {
 			dataType: 'sap.ui.model.type.String', // set to prevent test to set dummy value
-			fieldHelp: "FH1",
-			dependents: [oFieldHelp, oItemTemplate]
+			fieldHelp: "VH1",
+			dependents: [oValueHelp, oItemTemplate]
 		});
-		// configure the Field
-		oFieldHelp.open(true);
+		// configure the Field und ValueHelp faking somme calls what would be triggered by opening (as Test canno be async here)
+		oField.onfocusin(); // to connect ValueHelp
+		oMTable.getContent(); // to create internal controls
+		oPopover._getContainer(); // to create internal controls
+		oValueHelp.open(true);
 		return oField;
 	});
 
-	MemoryLeakCheck.checkControl("FieldValueHelp Dialog", function() {
+	MemoryLeakCheck.checkControl("ValueHelp Dialog", function() {
 		// don't need to be really rendered or opened, just test if inner controls are cleared.
 		var oItemTemplate = new ColumnListItem({
 			type: "Active",
@@ -141,32 +165,37 @@ sap.ui.define([
 					new Text({text: "{additionalText}"})]
 		});
 
-		var oFieldHelp = new FieldValueHelp("FH1", {
-			content: new FieldValueHelpMTableWrapper({
-				table: new Table({
-					width: "26rem",
-					columns: [ new Column({header: new Label({text: "Id"})}),
-							   new Column({header: new Label({text: "Text"})}),
-							   new Column({header: new Label({text: "Info"})})],
-					items: {path: "/items", template: oItemTemplate}
-				})
-			}),
+		var oMTable = new MTable("VH1-MTable", {
+			table: new Table("VH1-Table", {
+				width: "26rem",
+				columns: [ new Column({header: new Label({text: "Id"})}),
+						new Column({header: new Label({text: "Text"})}),
+						new Column({header: new Label({text: "Info"})})],
+				items: {path: "/items", template: oItemTemplate}
+			})
+		});
+		var oDialog = new VHDialog("VH1-Dia", {
+			title: "Title",
 			filterFields: "text",
 			keyPath: "key",
 			descriptionPath: "text",
-			showConditionPanel: true,
-			title: "Title"
+			content: [oMTable, new VHConditions("VH1-Cond", {label: "Label"})]
+		});
+		var oValueHelp = new ValueHelp("VH1", {
+			dialog: oDialog
 		});
 		var oField = new FilterField("F1", {
 			dataType: 'sap.ui.model.type.String', // set to prevent test to set dummy value
 			conditions: [Condition.createItemCondition("I1"),
 						 Condition.createCondition("BT", ["A", "Z"])],
-			fieldHelp: "FH1",
-			dependents: [oFieldHelp, oItemTemplate]
+			fieldHelp: "VH1",
+			dependents: [oValueHelp, oItemTemplate]
 		});
-		// configure the Field
-		oField.onfocusin(); // to trigger connect
-		oFieldHelp.open(false);
+		// configure the Field und ValueHelp faking somme calls what would be triggered by opening (as Test canno be async here)
+		oField.onfocusin(); // to connect ValueHelp
+		oMTable.getContent(); // to create internal controls
+		oDialog._getContainer(); // to create internal controls
+		oValueHelp.open(true);
 		return oField;
 	});
 
