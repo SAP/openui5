@@ -40,6 +40,9 @@ sap.ui.define([
 	// shortcut for the sap.ui.core.ID type
 	var IDType;
 
+	// Binding info factory symbol
+	var BINDING_INFO_FACTORY_SYMBOL = Symbol("bindingInfoFactory");
+
 	/**
 	 * Constructs and initializes a managed object with the given <code>sId</code> and settings.
 	 *
@@ -3625,12 +3628,16 @@ sap.ui.define([
 		}
 
 		if (oBindingInfo.factory) {
-			var fnFactory = oBindingInfo.factory;
+			// unwrap factory if alread wrapped (e.g. bindingInfo is shared)
+			var fnOriginalFactory = oBindingInfo.factory[BINDING_INFO_FACTORY_SYMBOL] || oBindingInfo.factory;
+
+			// wrap runWithOwner() call around the original factory function
 			var sOwnerId = this._sOwnerId;
 			oBindingInfo.factory = function(sId, oContext) {
 				// bind original factory with the two arguments: id and bindingContext
-				return ManagedObject.runWithOwner(fnFactory.bind(null, sId, oContext), sOwnerId);
+				return ManagedObject.runWithOwner(fnOriginalFactory.bind(null, sId, oContext), sOwnerId);
 			};
+			oBindingInfo.factory[BINDING_INFO_FACTORY_SYMBOL] = fnOriginalFactory;
 		}
 
 		if (this._observer) {
