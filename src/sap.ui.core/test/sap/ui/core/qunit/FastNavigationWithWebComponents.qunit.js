@@ -180,7 +180,7 @@ sap.ui.define([
 		if (!bForward) {
 			// In case of F6 back navigation sort the array
 			// in opposite order
-			aExpectedElements.sort(function() { return -1; });
+			aExpectedElements.reverse();
 		}
 
 		testFastNavigation(aExpectedElements, bForward);
