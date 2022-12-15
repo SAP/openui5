@@ -9,9 +9,10 @@ sap.ui.define([
 	'sap/ui/test/Opa5',
 	'sap/ui/Device',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/test/_OpaLogger"
+	"sap/ui/test/_OpaLogger",
+	"sap/ui/test/_FocusListener"
 ],
-function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
+function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger, _FocusListener) {
 	"use strict";
 
 	/**
@@ -164,8 +165,10 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 		_tryOrSimulateFocusin: function ($DomRef, oControl) {
 			var oDomRef = $DomRef[0];
 			var bFireArtificialEvents = false;
+			var bSimulateFocusout = false;
 			var isAlreadyFocused = this._isFocused(oDomRef);
 			var bIsNewFF = Device.browser.firefox && Device.browser.version >= 60;
+			var oLastFocusedElement;
 
 			if (isAlreadyFocused || bIsNewFF) {
 				// 1. If the event is already focused, make sure onfocusin event of the control will be properly fired when executing this action,
@@ -184,6 +187,17 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 			if (bFireArtificialEvents) {
 				this.oLogger.debug("Control " + oControl + " could not be focused - maybe you are debugging?");
 
+				// since we are simulating a focus shift a *new* element
+				// ensure we need to simulate the focusout/blur of the *old* focused as well
+				// unless the *old* was already blurred in a previous step, so we check that as well:
+				oLastFocusedElement = _FocusListener.getLastFocusedElement();
+				bSimulateFocusout = oLastFocusedElement
+					&& oLastFocusedElement !== oDomRef
+					&& oLastFocusedElement !== _FocusListener.getLastBlurredElement();
+
+				if (bSimulateFocusout) {
+					this._simulateFocusout(oLastFocusedElement);
+				}
 				this._createAndDispatchFocusEvent("focusin", oDomRef);
 				this._createAndDispatchFocusEvent("focus", oDomRef);
 				this._createAndDispatchFocusEvent("activate", oDomRef);

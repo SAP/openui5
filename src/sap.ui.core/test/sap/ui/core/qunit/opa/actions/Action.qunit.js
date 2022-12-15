@@ -86,4 +86,27 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Artificial focus should synchronously trigger focusout for the old focused", function (assert) {
+		var oAction = new Action();
+		var async = assert.async();
+		var oInitiallyFocused = this.oMyControl;
+		var oNewlyFocused = new MyControl("myId2");
+
+		oNewlyFocused.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oInitiallyFocused.focus();
+		oInitiallyFocused.onsapfocusleave = sinon.spy();
+
+		setTimeout(function () {
+			oAction._tryOrSimulateFocusin(oAction.$(oNewlyFocused), oNewlyFocused);
+
+			setTimeout(function () {
+				sinon.assert.calledOnce(oInitiallyFocused.onsapfocusleave);
+				async();
+			}, 0);
+		}, 0);
+
+	});
+
 });
