@@ -1662,9 +1662,14 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/extension/myLib/SharedExtension.js',
-										name: 'SharedExtension.js',
-										key: 'SharedExtension.js'
+										url: '/samples/extension/shared/lib/library.js',
+										name: 'shared/lib/library.js',
+										key: 'shared/lib/library.js'
+									},
+									{
+										url: '/samples/extension/shared/lib/SharedExtension.js',
+										name: 'shared/lib/SharedExtension.js',
+										key: 'shared/lib/SharedExtension.js'
 									}
 								]
 							}

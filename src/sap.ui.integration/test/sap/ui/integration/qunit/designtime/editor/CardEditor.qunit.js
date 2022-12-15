@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/util/MockServer",
-	"./cards/DataExtensionImpl",
-	"./testLib/SharedExtension"
+	"./cards/DataExtensionImpl"
 ], function (
 	merge,
 	x,
@@ -31,8 +30,7 @@ sap.ui.define([
 	KeyCodes,
 	ResourceBundle,
 	MockServer,
-	DataExtensionImpl,
-	SharedExtension
+	DataExtensionImpl
 ) {
 	"use strict";
 
@@ -231,7 +229,7 @@ sap.ui.define([
 		"sap.ui5": {
 			"dependencies": {
 				"libs": {
-					"sap/ui/integration/cardeditor/test/testLib": {}
+					"sap.ui.integration.cardeditor.test.testLib": {}
 				}
 			}
 		},

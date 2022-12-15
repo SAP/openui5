@@ -226,6 +226,83 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 		});
 	});
 
+	QUnit.test("loadDependenciesAndIncludes method", function (assert) {
+		// Arrange
+		var done = assert.async();
+		sap.ui.loader.config({
+			paths: { "card/test/shared/lib": "test-resources/sap/ui/integration/qunit/testResources/sharedLib"}
+		});
+		var oManifest = new CardManifest("sap.card", {
+			"sap.ui5": {
+				"dependencies": {
+					"libs": {
+						"card.test.shared.lib": {}
+					}
+				}
+			},
+			"sap.card": {
+				"type": "Object",
+				"header": {
+					"title": "Title"
+				},
+				"content": {
+					"content": {
+						"groups": [{
+							"items": [
+								{
+									"id": "item1"
+								}
+							]
+						}]
+					}
+				}
+			}
+		});
+
+		// Act
+		oManifest.loadDependenciesAndIncludes()
+			.then(function () {
+				// Assert
+				assert.ok(true, "loadDependenciesAndIncludes promise is resolved");
+				assert.ok(sap.ui.require("card/test/shared/lib/library"), "card/test/shared/lib/library should be loaded");
+
+				done();
+			});
+	});
+
+	QUnit.test("loadDependenciesAndIncludes method when there are no dependencies listed", function (assert) {
+		// Arrange
+		var done = assert.async();
+		var oManifest = new CardManifest("sap.card", {
+			"sap.card": {
+				"type": "Object",
+				"header": {
+					"title": "Title"
+				},
+				"content": {
+					"content": {
+						"groups": [{
+							"items": [
+								{
+									"id": "item1"
+								}
+							]
+						}]
+					}
+				}
+			}
+		});
+
+		// Act
+		oManifest.loadDependenciesAndIncludes()
+			.then(function () {
+				// Assert
+				assert.ok(true, "loadDependenciesAndIncludes promise is resolved when there are no dependencies");
+
+				done();
+			});
+	});
+
 	QUnit.module("CardManifest - static methods");
 
 	QUnit.test("#_processPlaceholder", function (assert) {
@@ -322,7 +399,6 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 		// Cleanup
 		oLogSpy.restore();
 	});
-
 
 	QUnit.test("processParameters - parameters in the property, but not in the manifest", function (assert) {
 

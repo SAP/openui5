@@ -3,13 +3,15 @@
 		"type": "card",
 		"id": "card.explorer.extension.sharedExtension"
 	},
-	"dependencies": {
-		"libs": {
-			"sap.my.lib": {}
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"shared.lib": {}
+			}
 		}
 	},
 	"sap.card": {
-		"extension": "module:sap/my/lib/SharedExtension",
+		"extension": "module:shared/lib/SharedExtension",
 		"configuration": {
 			"parameters": {
 				"suffix": {

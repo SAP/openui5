@@ -1,7 +1,7 @@
 sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	"use strict";
 
-	var SharedExtension = Extension.extend("card.explorer.my.lib.SharedExtension");
+	var SharedExtension = Extension.extend("shared.lib.SharedExtension");
 
 	SharedExtension.prototype.init = function () {
 		Extension.prototype.init.apply(this, arguments);
