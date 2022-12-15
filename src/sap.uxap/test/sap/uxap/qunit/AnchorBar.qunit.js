@@ -669,6 +669,7 @@ sap.ui.define([
 
 							// Clean up
 							oStub.restore();
+							clock.restore();
 							done();
 					}
 				};
