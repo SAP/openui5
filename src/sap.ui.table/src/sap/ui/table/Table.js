@@ -228,8 +228,8 @@ sap.ui.define([
 			 *      column or grouping is disabled.</li>
 			 * </ul>
 			 *
-			 * @experimental As of 1.28. This feature has a limited functionality.
 			 * @see sap.ui.table.Table#setGroupBy
+			 * @deprecated As of version 1.110, this feature has a limited functionality and should not be used anymore.
 			 */
 			enableGrouping: {type: "boolean", group: "Behavior", defaultValue: false},
 
