@@ -1,4 +1,5 @@
 sap.ui.define([
+	'sap/ui/qunit/utils/createAndAppendDiv',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/UIComponentMetadata',
@@ -9,7 +10,7 @@ sap.ui.define([
 	'sap/base/util/LoaderExtensions',
 	'sap/ui/core/Manifest',
 	'sap/base/i18n/ResourceBundle'
-], function (Component, ComponentContainer, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle) {
+], function (createAndAppendDiv, Component, ComponentContainer, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -20,15 +21,7 @@ sap.ui.define([
 		});
 	}
 
-	// create necessary DOM fixture
-	function appendDIV(id) {
-		var div = document.createElement("div");
-		div.id = id;
-		document.body.appendChild(div);
-	}
-
-	appendDIV("comparea1");
-	appendDIV("comparea2");
+	createAndAppendDiv(["comparea1", "comparea2"]);
 
 	//******************************************************
 	//Test preparation for custom component configuration
@@ -378,7 +371,7 @@ sap.ui.define([
 	QUnit.test("Basic Test", function(assert){
 		// check that the layout has the reference to the component
 		var oLayout = this.oComp.byId("myLayout");
-		var sRefComponentId = oLayout._sOwnerId; // INTERNAL ONLY!
+		var sRefComponentId = Component.getOwnerIdFor(oLayout);
 		assert.equal(this.oComp.getId(), sRefComponentId, "The nested control has the correct component context");
 		// check the nested component having the ID of the parent component
 		var oNestedComponentContainer = this.oComp.byId("ContButton");
@@ -387,7 +380,7 @@ sap.ui.define([
 		assert.equal(sRefComponentId, Component.getOwnerIdFor(oNestedComponent), "The nested component has the correct component context");
 		// check the control in the nested component to have the correct component context
 		var oNestedControl = oNestedComponent.byId("mybutn");
-		assert.equal(sNestedComponentId, oNestedControl._sOwnerId, "The nested control has the correct component context"); // INTERNAL ONLY!
+		assert.equal(sNestedComponentId, Component.getOwnerIdFor(oNestedControl), "The nested control has the correct component context");
 	});
 
 	QUnit.module("Destruction");
