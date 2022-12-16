@@ -658,7 +658,7 @@ function(Press,
 		var done = assert.async();
 		var oPressAction = new Press();
 
-		$("div[title='Search']").on("click", function () {
+		$(".sapMSFS").on("click", function () {
 			assert.ok(true, "Executed press action on search icon");
 			done();
 		});
@@ -689,7 +689,7 @@ function(Press,
 
 		var oPressAction = new Press({idSuffix: "reset"});
 
-		$("div[title='Search']").on("click", function () {
+		$(".sapMSFR").on("click", function () {
 			assert.ok(true, "Executed press action on search button");
 			done();
 		});

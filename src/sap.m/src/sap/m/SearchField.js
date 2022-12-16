@@ -114,40 +114,42 @@ sap.ui.define([
 				placeholder : {type : "string", group : "Misc", defaultValue : null},
 
 				/**
-				 * Set to false to hide the magnifier icon.
+				 * Set to <code>false</code> to hide the magnifier icon.
 				 * @deprecated Since version 1.16.0.
 				 * This parameter is deprecated. Use "showSearchButton" instead.
 				 */
 				showMagnifier : {type : "boolean", group : "Misc", defaultValue : true, deprecated: true},
 
 				/**
-				 * Set to true to display a refresh button in place of the search icon. By pressing the refresh button or F5 key on keyboard, the user can reload the results list without changing the search string.
+				 * Set to <code>true</code> to display a refresh button in place of the search icon. By pressing the refresh button or F5 key on keyboard, the user can reload the results list without changing the search string.
+				 * Note: if "showSearchButton" property is set to <code>false</code>, both the search and refresh buttons are not displayed even if the "showRefreshButton" property is true.
 				 * @since 1.16
 				 */
 				showRefreshButton : {type : "boolean", group : "Behavior", defaultValue : false},
 
 				/**
-				 * Tooltip text of the refresh button. If it is not set, the  Default tooltip text is the word "Refresh" in the current local language (if supported) or in English. Tooltips are not displayed on touch devices.
+				 * Tooltip text of the refresh button. If it is not set, the Default tooltip text is the word "Refresh" in the current local language (if supported) or in English. Tooltips are not displayed on touch devices.
+				 * @deprecated Since version 1.110.0.
 				 * @since 1.16
 				 */
 				refreshButtonTooltip : {type : "string", group : "Misc", defaultValue : null},
 
 				/**
-				 * Set to true to show the search button with the magnifier icon.
-				 * If false, both the search and refresh buttons are not displayed even if the "showRefreshButton" property is true.
+				 * Set to <code>true</code> to show the search button with the magnifier icon.
+				 * If <code>false</code>, both the search and refresh buttons are not displayed even if the "showRefreshButton" property is <code>true</code>.
 				 * @since 1.23
 				 */
 				showSearchButton : {type : "boolean", group : "Behavior", defaultValue : true},
 
 				/**
-				 * If true, a <code>suggest</code> event is fired when user types in the input and when the input is focused.
+				 * If <code>true</code>, a <code>suggest</code> event is fired when user types in the input and when the input is focused.
 				 * On a phone device, a full screen dialog with suggestions is always shown even if the suggestions list is empty.
 				 * @since 1.34
 				 */
 				enableSuggestions : {type : "boolean", group : "Behavior", defaultValue : false},
 
 				/**
-				 * Normally, search text is selected for copy when the SearchField is focused by keyboard navigation. If an application re-renders the SearchField during the liveChange event, set this property to false to disable text selection by focus.
+				 * Normally, search text is selected for copy when the SearchField is focused by keyboard navigation. If an application re-renders the SearchField during the liveChange event, set this property to <code>false</code> to disable text selection by focus.
 				 * @since 1.20
 				 * @deprecated Since version 1.38.
 				 * This parameter is deprecated and has no effect in run time. The cursor position of a focused search field is restored after re-rendering automatically.
@@ -311,14 +313,11 @@ sap.ui.define([
 
 	SearchField.prototype.onBeforeRendering = function() {
 		this._unregisterEventListeners();
-		this._updateTranslations();
 		updateSuggestions(this);
 	};
 
 	SearchField.prototype.onAfterRendering = function() {
-
 		this._lastValue = this.getValue();
-		this._setToolTips();
 
 		// DOM element for the embedded HTML input:
 		var inputElement = this.getInputElement();
@@ -365,16 +364,6 @@ sap.ui.define([
 		}
 
 		Core.detachThemeChanged(this._handleThemeLoad, this);
-	};
-
-	SearchField.prototype._updateTranslations = function() {
-		var oRb = Core.getLibraryResourceBundle("sap.m");
-
-		SearchFieldRenderer.oSearchFieldToolTips = {
-			SEARCH_BUTTON_TOOLTIP: oRb.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"),
-			RESET_BUTTON_TOOLTIP: oRb.getText("SEARCHFIELD_RESET_BUTTON_TOOLTIP"),
-			REFRESH_BUTTON_TOOLTIP: oRb.getText("SEARCHFIELD_REFRESH_BUTTON_TOOLTIP")
-		};
 	};
 
 	/**
@@ -703,7 +692,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Highlights the background on focus and sets tooltips
+	 * Highlights the background on focus
 	 *
 	 * @param {object} oEvent jQuery event
 	 */
@@ -721,11 +710,10 @@ sap.ui.define([
 				this._bSuggestionSuppressed = false;
 			}
 		}
-		this._setToolTips(oEvent.type);
 	};
 
 	/**
-	 * Restores the background color on blur and sets tooltips
+	 * Restores the background color on blur
 	 *
 	 * @param {object} oEvent jQuery event
 	 */
@@ -735,41 +723,6 @@ sap.ui.define([
 
 		if (this._bSuggestionSuppressed) {
 			this._bSuggestionSuppressed = false; // void the reset button handling
-		}
-
-		this._setToolTips(oEvent.type);
-	};
-
-	/**
-	 * Sets the tooltip according to the current state of <code>sap.m.SearchField</code>
-	 *
-	 * @param {string} sTypeEvent type of event
-	 * @private
-	 */
-	SearchField.prototype._setToolTips = function(sTypeEvent) {
-
-		var $searchSelector = this.$("search"),
-			$resetSelector = this.$("reset");
-		// restore tooltip of the refresh button
-		if (this.getShowRefreshButton()) {
-			//onFocus: only search button is shown
-			if (sTypeEvent === "focus") {
-				$searchSelector.attr("title", SearchFieldRenderer.oSearchFieldToolTips.SEARCH_BUTTON_TOOLTIP);
-			} else if (sTypeEvent === "blur"){
-				//onBlur: 'Search' button becomes 'Refresh' button
-				var sRefreshToolTipValue = this.getRefreshButtonTooltip(),
-					sTooltip = sRefreshToolTipValue === "" ? SearchFieldRenderer.oSearchFieldToolTips.REFRESH_BUTTON_TOOLTIP : sRefreshToolTipValue;
-				if (sTooltip) {
-					$searchSelector.attr("title", sTooltip);
-				}
-			}
-		}
-
-		// "reset" button becomes "search" button on blur
-		if (this.getValue() === "" ) {
-			$resetSelector.attr("title", SearchFieldRenderer.oSearchFieldToolTips.SEARCH_BUTTON_TOOLTIP);
-		} else {
-			$resetSelector.attr("title", SearchFieldRenderer.oSearchFieldToolTips.RESET_BUTTON_TOOLTIP);
 		}
 	};
 
@@ -789,7 +742,6 @@ sap.ui.define([
 		}
 
 		this.setProperty("value", value, true);
-		this._setToolTips();
 		return this;
 	};
 
