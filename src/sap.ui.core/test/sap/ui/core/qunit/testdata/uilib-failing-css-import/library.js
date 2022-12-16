@@ -2,13 +2,14 @@
  * Initialization Code of library sap.ui.failingcssimport.testlib.
  */
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/core/library"
-], function() {
+	"sap/ui/core/Core",
+	"sap/ui/core/library",
+	"jquery.sap.global"
+], function(Core) {
 	"use strict";
 
 	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	return Core.initLibrary({
 		name : "sap.ui.failingcssimport.testlib",
 		version: "1.0.0",
 		dependencies : ["sap.ui.core"],
@@ -16,7 +17,4 @@ sap.ui.define([
 		controls: [],
 		elements: []
 	});
-
-	return sap.ui.failingcssimport.testlib;
-
 });
