@@ -43,6 +43,7 @@ sap.ui.define([
 	 * @abstract
 	 *
 	 * @private
+	 * @deprecated As of version 1.110, replaced by {@link sap.ui.mdc.valuehelp.Dialog Dialog}
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 */
 	var ValueHelpPanel = XMLComposite.extend("sap.ui.mdc.field.ValueHelpPanel", {

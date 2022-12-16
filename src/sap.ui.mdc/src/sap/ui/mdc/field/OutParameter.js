@@ -27,6 +27,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.66.0
+	 * @deprecated As of version 1.110, replaced by implementing {@link sap.ui.mdc.ValueHelpDelegate.onConditionPropagation ValueHelpDelegate.onConditionPropagation}
 	 * @alias sap.ui.mdc.field.OutParameter
 	 */
 	var OutParameter = InParameter.extend("sap.ui.mdc.field.OutParameter", /** @lends sap.ui.mdc.field.OutParameter.prototype */

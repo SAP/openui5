@@ -21,6 +21,7 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @experimental As of version 1.54
 	 * @since 1.54.0
+	 * @deprecated As of version 1.110, replaced by {@link sap.ui.mdc.ValueHelp ValueHelp}. Here custom Content can be created.
 	 * @alias sap.ui.mdc.field.CustomFieldHelp
 	 */
 	var CustomFieldHelp = FieldHelpBase.extend("sap.ui.mdc.field.CustomFieldHelp", /** @lends sap.ui.mdc.field.CustomFieldHelp.prototype */

@@ -80,6 +80,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.58.0
+	 * @deprecated As of version 1.110, replaced by {@link sap.ui.mdc.ValueHelp ValueHelp}
 	 * @alias sap.ui.mdc.field.FieldValueHelp
 	 */
 	var FieldValueHelp = FieldHelpBase.extend("sap.ui.mdc.field.FieldValueHelp", /** @lends sap.ui.mdc.field.FieldValueHelp.prototype */

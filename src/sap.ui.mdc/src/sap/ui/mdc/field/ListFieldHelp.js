@@ -43,6 +43,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.54.0
+	 * @deprecated As of version 1.110, replaced by {@link sap.ui.mdc.valuehelp.content.FixedList FixedList}
 	 * @alias sap.ui.mdc.field.ListFieldHelp
 	 */
 	var ListFieldHelp = FieldHelpBase.extend("sap.ui.mdc.field.ListFieldHelp", /** @lends sap.ui.mdc.field.ListFieldHelp.prototype */

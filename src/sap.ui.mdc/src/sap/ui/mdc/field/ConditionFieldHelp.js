@@ -39,6 +39,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.82.0
+	 * @deprecated As of version 1.110, replaced by {@link sap.ui.mdc.valuehelp.content.Conditions Conditions}
 	 * @alias sap.ui.mdc.field.ConditionFieldHelp
 	 */
 	var ConditionFieldHelp = FieldHelpBase.extend("sap.ui.mdc.field.ConditionFieldHelp", /** @lends sap.ui.mdc.field.ConditionFieldHelp.prototype */

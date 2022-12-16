@@ -50,6 +50,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental As of version 1.88
 	 * @since 1.88.0
+	 * @deprecated As of version 1.110, replaced by {@link sap.ui.mdc.base.FilterableListContent FilterableListContent}
 	 * @alias sap.ui.mdc.field.FieldValueHelpTableWrapperBase
 	 */
 	var FieldValueHelpTableWrapperBase = FieldValueHelpContentWrapperBase.extend("sap.ui.mdc.field.FieldValueHelpTableWrapperBase", /** @lends sap.ui.mdc.field.FieldValueHelpTableWrapperBase.prototype */

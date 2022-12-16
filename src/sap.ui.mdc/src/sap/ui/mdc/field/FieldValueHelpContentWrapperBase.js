@@ -27,6 +27,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @since 1.60.0
+	 * @deprecated As of version 1.110, replaced by {@link sap.ui.mdc.base.Content Content}
 	 * @alias sap.ui.mdc.field.FieldValueHelpContentWrapperBase
 	 */
 	var FieldValueHelpContentWrapperBase = Element.extend("sap.ui.mdc.field.FieldValueHelpContentWrapperBase", /** @lends sap.ui.mdc.field.FieldValueHelpContentWrapperBase.prototype */

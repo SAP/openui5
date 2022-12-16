@@ -38,6 +38,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.60.0
+	 * @deprecated As of version 1.110, replaced by {@link sap.ui.mdc.valuehelp.content.Bool Bool}
 	 * @alias sap.ui.mdc.field.BoolFieldHelp
 	 */
 	var BoolFieldHelp = FieldHelpBase.extend("sap.ui.mdc.field.BoolFieldHelp", /** @lends sap.ui.mdc.field.BoolFieldHelp.prototype */

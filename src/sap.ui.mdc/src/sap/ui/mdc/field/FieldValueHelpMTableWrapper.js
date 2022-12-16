@@ -39,6 +39,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.60.0
+	 * @deprecated As of version 1.110, replaced by {@link sap.ui.mdc.valuehelp.content.MTable MTable}
 	 * @alias sap.ui.mdc.field.FieldValueHelpMTableWrapper
 	 */
 	var FieldValueHelpMTableWrapper = FieldValueHelpTableWrapperBase.extend("sap.ui.mdc.field.FieldValueHelpMTableWrapper", /** @lends sap.ui.mdc.field.FieldValueHelpMTableWrapper.prototype */
