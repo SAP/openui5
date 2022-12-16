@@ -51,7 +51,8 @@ sap.ui.define([
 		],
 		elements: [
 			"sap.ui.integration.ActionDefinition",
-			"sap.ui.integration.Host"
+			"sap.ui.integration.Host",
+			"sap.ui.integration.Extension"
 		],
 		// define the custom elements that can be used in this library
 		customElements: {
