@@ -1,4 +1,4 @@
-/*global QUnit*/
+/*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/upload/UploadSet",
@@ -202,15 +202,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Allow Curly bracees in the fileName property", function (assert) {
-        //Arrange
-		this.oUploadSet.attachEventOnce("beforeItemAdded", function (oEvent) {
-			assert.ok(true, "beforeItemAdded event should have been called.");
-			assert.equal(oEvent.getParameter("item").getFileName(), "{newFile}.txt", "File name should be correct.");
-		});
-		this.oUploadSet.attachEventOnce("afterItemAdded", function (oEvent) {
-			assert.ok(true, "afterItemAdded event should have been called.");
-			assert.equal(oEvent.getParameter("item").getFileName(), "{newFile}.txt", "File name should be correct.");
-		});
+		//Arrange
+		var oBeforeItemAddedStub = sinon.stub(this.oUploadSet, "fireBeforeItemAdded").returns(true);
+		var oAfterItemAddedStub = sinon.stub(this.oUploadSet, "fireAfterItemAdded");
+
 		this.oUploadSet._onFileUploaderChange({
 			getParameter: function () {
 				return {
@@ -219,6 +214,16 @@ sap.ui.define([
 				};
 			}
 		});
+		assert.ok(oBeforeItemAddedStub.called, "beforeItemAdded event should have been called.");
+		if (oBeforeItemAddedStub.args && oBeforeItemAddedStub.args[0] && oBeforeItemAddedStub.args[0][0]) {
+			assert.ok(oBeforeItemAddedStub.calledWith(oBeforeItemAddedStub.args[0][0]), "Item is UploadSetItem");
+			assert.equal(oBeforeItemAddedStub.args[0][0].item.getFileName(), "{newFile}.txt", "File name should be correct.");
+		}
+		assert.ok(oAfterItemAddedStub.called, "afterItemAdded event should have been called.");
+		if (oAfterItemAddedStub.args && oAfterItemAddedStub.args[0] && oAfterItemAddedStub.args[0][0]) {
+			assert.ok(oAfterItemAddedStub.calledWith(oBeforeItemAddedStub.args[0][0]), "Item is UploadSetItem");
+			assert.equal(oAfterItemAddedStub.args[0][0].item.getFileName(), "{newFile}.txt", "File name should be correct.");
+		}
 	});
 
 	QUnit.test("No data rendering - with default text and description", function(assert) {
