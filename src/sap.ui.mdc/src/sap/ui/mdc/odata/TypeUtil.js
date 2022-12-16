@@ -12,15 +12,14 @@ sap.ui.define([
 	/**
 	 * Provides mapping functionality for model dependent data types to base types. Extend this object in your project to customize behaviour depending on model usage.
 	 * <b>Note:</b>
-	 * This is just a sample implementation and should not be used for productive usage.
 	 * This utility is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
-	 *
 	 * @namespace
 	 * @author SAP SE
 	 * @private
 	 * @experimental As of version 1.79
 	 * @since 1.79.0
 	 * @alias sap.ui.mdc.odata.TypeUtil
+	 * @deprecated This module should not be used and will be removed in future versions!
 	 */
 	var TypeUtil = Object.assign({}, BaseTypeUtil, {
 
