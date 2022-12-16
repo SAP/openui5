@@ -339,7 +339,7 @@ sap.ui.define([
 	QUnit.test("Relative URLs in parameters (legacy library)", function(assert) {
 
 		var expected = {
-			url1: sPath + "/testdata/legacy-uilib/img1.jpg",
+			url1: sPath + "/testdata/legacy-uilib_legacyAPIs/img1.jpg",
 			url2: {
 				plain: "none",
 				themeImage: null,
