@@ -372,6 +372,9 @@ sap.ui.define([
 	 * references to binding and model, so that the context cannot be used anymore; it keeps path
 	 * and index for debugging purposes.
 	 *
+	 * <b>BEWARE:</b> Do not call this function! The lifetime of an OData V4 context is completely
+	 * controlled by its binding.
+	 *
 	 * @public
 	 * @see sap.ui.base.Object#destroy
 	 * @since 1.41.0
