@@ -972,7 +972,7 @@ sap.ui.define([
 			this._oMinDate = CalendarDate.fromLocalJSDate(oDate, sPrimaryCalendarType);
 
 			var iYear = this._oMinDate.getYear();
-			CalendarUtils._checkYearInValidRange(iYear);
+			CalendarUtils._checkYearInValidRange(iYear, sPrimaryCalendarType);
 
 			if (this._oMaxDate.isBefore(this._oMinDate)) {
 				Log.warning("minDate > maxDate -> maxDate set to end of the month", this);
@@ -1010,7 +1010,7 @@ sap.ui.define([
 	Calendar.prototype.setMaxDate = function(oDate){
 
 		var aMonths = this.getAggregation("month"),
-			sPrimaryCalendarType,
+			sPrimaryCalendarType = this.getPrimaryCalendarType(),
 			iMaxYear;
 
 		if (deepEqual(oDate, this.getMaxDate())) {
@@ -1026,7 +1026,7 @@ sap.ui.define([
 			this._oMaxDate = CalendarDate.fromLocalJSDate(oDate, sPrimaryCalendarType);
 
 			var iYear = this._oMaxDate.getYear();
-			CalendarUtils._checkYearInValidRange(iYear);
+			CalendarUtils._checkYearInValidRange(iYear, sPrimaryCalendarType);
 
 			if (this._oMinDate.isAfter(this._oMaxDate)) {
 				Log.warning("maxDate < minDate -> minDate set to begin of the month", this);
@@ -2678,16 +2678,17 @@ sap.ui.define([
 	function _displayDate(oDate, bSkipFocus) {
 
 		var oCalDate,
+			sPrimaryCalendarType = this.getPrimaryCalendarType(),
 			iYear;
 
 		if (!oDate) {
 			return;
 		}
 
-		oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
+		oCalDate = CalendarDate.fromLocalJSDate(oDate, sPrimaryCalendarType);
 
 		iYear = oCalDate.getYear();
-		CalendarUtils._checkYearInValidRange(iYear);
+		CalendarUtils._checkYearInValidRange(iYear, sPrimaryCalendarType);
 
 		if (CalendarUtils._isOutside(oCalDate, this._oMinDate, this._oMaxDate)) {
 			throw new Error("Date must not be in valid range (minDate and maxDate); " + this);

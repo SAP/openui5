@@ -15,12 +15,13 @@
 sap.ui.define([
 	'sap/ui/core/date/UniversalDate',
 	'./CalendarDate',
+	'sap/ui/core/CalendarType',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/format/TimezoneUtil',
 	"sap/ui/core/Configuration"
 ],
-	function(UniversalDate, CalendarDate, Locale, LocaleData, TimezoneUtil, Configuration) {
+	function(UniversalDate, CalendarDate, CalendarType, Locale, LocaleData, TimezoneUtil, Configuration) {
 		"use strict";
 
 		// Static class
@@ -383,13 +384,17 @@ sap.ui.define([
 		};
 
 		/**
-		 * Checks if the given year is between of 1 and 9999 and throws year if its not.
+		 * Checks if the given year is between of 1 and 9999 in Gregorian calendar type
 		 * @param {int} iYear The year to be checked
+		 * @param {string} sCalendarType The calendar type of the year to be checked. If there is no calendar type provided, it will be taken from the Configuration.
 		 * @private
 		 */
-		CalendarUtils._checkYearInValidRange = function(iYear) {
-			if (typeof iYear !== "number" || iYear < 1 || iYear > 9999) {
-				throw new Error("Year must be in valid range (between year 0001 and year 9999).");
+		CalendarUtils._checkYearInValidRange = function(iYear, sCalendarType) {
+			var sConfigCalendarType = Configuration.getCalendarType(),
+				oMinDate = new CalendarDate(this._minDate(CalendarType.Gregorian), sCalendarType || sConfigCalendarType),
+				oMaxDate = new CalendarDate(this._maxDate(CalendarType.Gregorian), sCalendarType || sConfigCalendarType);
+			if (typeof iYear !== "number" || iYear < oMinDate.getYear() || iYear > oMaxDate.getYear()) {
+				throw new Error("Year must be in valid range (between year 0001 and year 9999 in Gregorian calendar type).");
 			}
 		};
 
