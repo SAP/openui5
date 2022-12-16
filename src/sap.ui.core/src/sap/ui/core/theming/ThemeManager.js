@@ -111,30 +111,12 @@ sap.ui.define([
 			mAllLoadedLibraries[oThemeManager._CUSTOMID] = {};
 		}
 
-		function checkAndRemoveStyle(sPrefix, sLib) {
-			var currentRes = ThemeHelper.checkStyle(sPrefix + sLib, true);
-			if (currentRes) {
-
-				// removes all old stylesheets (multiple could exist if theme change was triggered
-				// twice in a short timeframe) once the new stylesheet has been loaded
-				var aOldStyles = document.querySelectorAll("link[data-sap-ui-foucmarker='" + sPrefix + sLib + "']");
-				if (aOldStyles.length > 0) {
-					for (var i = 0, l = aOldStyles.length; i < l; i++) {
-						aOldStyles[i].remove();
-					}
-					Log.debug("ThemeManager: Old stylesheets removed for library: " + sLib);
-				}
-
-			}
-			return currentRes;
-		}
-
 		function checkLib(lib) {
 			var sStyleId = "sap-ui-theme-" + lib;
-			var currentRes = checkAndRemoveStyle("sap-ui-theme-", lib);
+			var currentRes = ThemeHelper.checkAndRemoveStyle({ prefix: "sap-ui-theme-", id: lib });
 			if (currentRes && document.getElementById("sap-ui-themeskeleton-" + lib)) {
 				// remove also the skeleton if present in the DOM
-				currentRes = checkAndRemoveStyle("sap-ui-themeskeleton-", lib);
+				currentRes = ThemeHelper.checkAndRemoveStyle({ prefix: "sap-ui-themeskeleton-", id: lib });
 			}
 			res = res && currentRes;
 			if (res) {
