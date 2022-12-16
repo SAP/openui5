@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Component",
-	"sap/ui/core/service/ServiceFactoryRegistry"
-], function(Log, Component, ServiceFactoryRegistry) {
+	"sap/ui/core/service/ServiceFactoryRegistry",
+	"sap/ui/core/service/ServiceFactory"
+], function(Log, Component, ServiceFactoryRegistry, ServiceFactory) {
 	"use strict";
 
 	sap.ui.define("my/Service", ["sap/ui/core/service/Service"], function(Service) {
@@ -507,7 +508,7 @@ sap.ui.define([
 
 			// register the Service Factories before component creation
 			ServiceFactoryRegistry.register("my.ServiceFactoryAlias", new my.ServiceFactory());
-			ServiceFactoryRegistry.register("invalid.ServiceFactoryAlias", new sap.ui.core.service.ServiceFactory());
+			ServiceFactoryRegistry.register("invalid.ServiceFactoryAlias", new ServiceFactory());
 			ServiceFactoryRegistry.register("lazy.ServiceFactoryAlias", new my.ServiceFactory());
 			ServiceFactoryRegistry.register("settings.ServiceFactoryAlias", new my.ServiceFactory());
 
