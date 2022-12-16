@@ -1457,6 +1457,20 @@ function (
 		assert.notOk(bIsExpandButtonVisible, "Expand Button isn't visible while Snapped wrapper isn't.");
 	});
 
+	QUnit.test("Expand button visibility on invalidation", function (assert) {
+		// Arrange
+		this.oDynamicPage.setHeaderExpanded(true);
+		oUtil.renderObject(this.oDynamicPage);
+
+		var oExpandButton = this.oDynamicPageTitle._getExpandButton();
+
+		// Act
+		this.oDynamicPage.setHeaderExpanded(false);
+		oExpandButton.invalidate();
+		// Assert
+		assert.ok(!oExpandButton.hasStyleClass("sapUiHidden"), "Expand button doesn`t have unrendered 'sapUiHidden' class");
+	});
+
 	QUnit.module("DynamicPage Title - Events", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPage();
