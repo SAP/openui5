@@ -32,6 +32,16 @@ sap.ui.define([
 				}),
 				oModel = this.getModel();
 
+			oModel.attachPropertyChange(function (oEvent) {
+				var mParameters = oEvent.getParameters();
+
+				Object.keys(mParameters).forEach(function (sProperty) {
+					mParameters[sProperty] = "" + mParameters[sProperty];
+				});
+				Log.debug("propertyChange", JSON.stringify(mParameters),
+					"sap.ui.core.sample.odata.v4.SalesOrders.Component");
+			});
+
 			// the same model can be accessed via two names to allow for different binding contexts
 			this.setModel(oModel, "headerContext");
 			this.setModel(oModel, "parameterContext");

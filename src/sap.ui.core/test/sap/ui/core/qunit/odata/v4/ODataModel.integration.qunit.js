@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
+	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
@@ -30,9 +31,9 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text, Device,
-		EventProvider, SyncPromise, Configuration, Controller, View, Filter, FilterOperator,
-		FilterType, Sorter, OperationMode, AnnotationHelper, ODataListBinding, ODataModel,
-		ValueListType, _Helper, TestUtils, XMLHelper) {
+		EventProvider, SyncPromise, Configuration, Controller, View, ChangeReason, Filter,
+		FilterOperator, FilterType, Sorter, OperationMode, AnnotationHelper, ODataListBinding,
+		ODataModel, ValueListType, _Helper, TestUtils, XMLHelper) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
@@ -7095,13 +7096,30 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Modify a property which does not belong to the parent binding's entity
+	//
+	// Additionally, observe the "propertyChange" event (JIRA: CPOUI5ODATAV4-1919)
 	QUnit.test("Modify a foreign property", function (assert) {
-		var sView = '\
+		var oContext,
+			iCount = 0,
+			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Input id="item" value="{SO_2_BP/CompanyName}"/>\
 </Table>',
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
+
+		// code under test
+		oModel.attachPropertyChange(function (oEvent) {
+			iCount += 1;
+			assert.strictEqual(oEvent.getSource(), oModel);
+			assert.deepEqual(oEvent.getParameters(), {
+				context : oContext,
+				path : "SO_2_BP/CompanyName",
+				reason : ChangeReason.Binding,
+				resolvedPath : "/SalesOrderList('0500000002')/SO_2_BP/CompanyName",
+				value : "Bar"
+			}, "JIRA: CPOUI5ODATAV4-1919");
+		});
 
 		this.expectRequest("SalesOrderList?$select=SalesOrderID"
 				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100", {
@@ -7117,6 +7135,10 @@ sap.ui.define([
 			.expectChange("item", ["Foo"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oCell = that.oView.byId("table").getItems()[0].getCells()[0];
+
+			oContext = oCell.getBindingContext();
+
 			that.expectRequest({
 					method : "PATCH",
 					url : "BusinessPartnerList('42')",
@@ -7125,10 +7147,12 @@ sap.ui.define([
 				}, {CompanyName : "Bar"})
 				.expectChange("item", ["Bar"]);
 
-			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
-				.setValue("Bar");
+			// code under test
+			oCell.getBinding("value").setValue("Bar");
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(iCount, 1, "propertyChange fired once");
 		});
 	});
 
