@@ -94,7 +94,10 @@ sap.ui.define([
 		var oTarget = this.oTargets.getTarget("myTarget");
 
 		// Assert
-		assert.strictEqual(oTarget._oOptions.viewName, "myView", "Did retrieve the correct Target");
+		assert.strictEqual(oTarget._oRawOptions.viewName, "myView", "Did retrieve the correct Target");
+		assert.strictEqual(oTarget._oOptions.name, "myView", "config is converted to the new format");
+		assert.strictEqual(oTarget._oOptions.type, "View", "config is converted to the new format");
+		assert.notOk(oTarget._oOptions.viewName, "config is converted to the new format");
 		assert.strictEqual(oTarget._oCache, this.oViews, "Did pass the views instance");
 	});
 
@@ -103,7 +106,10 @@ sap.ui.define([
 		var oTarget = this.oTargets.getTarget({name: "myTarget"});
 
 		// Assert
-		assert.strictEqual(oTarget._oOptions.viewName, "myView", "Did retrieve the correct Target");
+		assert.strictEqual(oTarget._oRawOptions.viewName, "myView", "Did retrieve the correct Target");
+		assert.strictEqual(oTarget._oOptions.name, "myView", "config is converted to the new format");
+		assert.strictEqual(oTarget._oOptions.type, "View", "config is converted to the new format");
+		assert.notOk(oTarget._oOptions.viewName, "config is converted to the new format");
 		assert.strictEqual(oTarget._oCache, this.oViews, "Did pass the views instance");
 	});
 
@@ -132,7 +138,10 @@ sap.ui.define([
 		var oChild = this.oTargets.getTarget("myChild");
 
 		// Assert
-		assert.strictEqual(oChild._oOptions.viewName, "myChildView", "Did retrieve the correct Target");
+		assert.strictEqual(oChild._oRawOptions.viewName, "myChildView", "Did retrieve the correct Target");
+		assert.strictEqual(oChild._oOptions.name, "myChildView", "config is converted to the new format");
+		assert.strictEqual(oChild._oOptions.type, "View", "config is converted to the new format");
+		assert.notOk(oChild._oOptions.viewName, "config is converted to the new format");
 		assert.strictEqual(oChild._oParent, this.oTargets.getTarget("myParent"), "The parent was correctly passed to the target");
 	});
 
@@ -185,7 +194,10 @@ sap.ui.define([
 		var oParent = this.oTargets.getTarget("myParent");
 
 		// Assert
-		assert.strictEqual(oParent._oOptions.viewName, "myParentView", "options stay the same");
+		assert.strictEqual(oParent._oRawOptions.viewName, "myParentView", "options stay the same");
+		assert.strictEqual(oParent._oOptions.name, "myParentView", "config is converted to the new format");
+		assert.strictEqual(oParent._oOptions.type, "View", "config is converted to the new format");
+		assert.notOk(oParent._oOptions.viewName, "config is converted to the new format");
 		// Check whether the error message is thrown
 		sinon.assert.calledWith(oStub, sinon.match(/myParent/), sinon.match(this.oTargets));
 	});
@@ -496,7 +508,7 @@ sap.ui.define([
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
 				aTargetNames.push(oParameters.name);
-				assert.propEqual(oParameters.config, deepExtend({}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig), "configuration should have been merged");
+				assert.propEqual(oParameters.config, that.oTargets.getTarget(oParameters.name)._oRawOptions, "configuration should have been merged");
 				assert.strictEqual(oParameters.view, that.oView, "view got passed to the event");
 				assert.strictEqual(oParameters.control, that.oShell, "control got passed to the event");
 				assert.strictEqual(oParameters.data, oData, "data was passed");
@@ -1110,7 +1122,7 @@ sap.ui.define([
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
 				aTargetNames.push(oParameters.name);
-				assert.propEqual(oParameters.config, deepExtend({}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig), "configuration should have been merged");
+				assert.propEqual(oParameters.config, that.oTargets.getTarget(oParameters.name)._oRawOptions, "configuration should have been merged");
 				assert.strictEqual(oParameters.view, that.oView, "view got passed to the event");
 				assert.strictEqual(oParameters.control, that.oApp, "control got passed to the event");
 				assert.strictEqual(oParameters.data, oData, "data was passed");

@@ -56,8 +56,6 @@ sap.ui.define([
 							oOptions.settings._routerHashChanger = oRouterHashChanger;
 						}
 
-						oOptions.id = oOptions.id || oTargetCreateInfo.componentId;
-
 						if (oOptions.usage) {
 							return oOwnerComponent.createComponent(oOptions);
 						} else {
