@@ -80,7 +80,8 @@ sap.ui.define([
 				value: {
 					model: "filters",
 					path: "/" + sKey
-				}
+				},
+				visible: mConfig.visible
 			});
 
 			oModel.setProperty("/" + sKey, oFilter.getValueForModel());

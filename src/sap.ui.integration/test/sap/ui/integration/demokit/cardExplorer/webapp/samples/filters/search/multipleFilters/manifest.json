@@ -28,7 +28,8 @@
 					"type": "Search",
 					"label": "Country",
 					"value": "France",
-					"placeholder": "Enter a country"
+					"placeholder": "Enter a country",
+					"visible": "{= ${filters>/shipper/value} === '3'}"
 				}
 			},
 			"destinations": {

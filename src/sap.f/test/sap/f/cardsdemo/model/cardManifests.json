@@ -2651,6 +2651,65 @@
 				}
 			}
 		},
+		"filterVisibleFalse": {
+			"sap.app": {
+				"id": "cardsdemo.filters.filterVisibleFalse",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"configuration": {
+					"parameters": {
+						"showFilters": {
+							"value": false,
+							"type": "boolean"
+						}
+					},
+					"filters": {
+						"f1": {
+							"visible": "{= Boolean(${filters>/f3/value}) }",
+							"type": "Select",
+							"value": 2,
+							"items": [
+								{ "key": 1, "title": "Option 1" },
+								{ "key": 2, "title": "Option 2" }
+							]
+						},
+						"f2": {
+							"visible": true,
+							"type": "DateRange",
+							"value": {
+								"option": "dateRange",
+								"values": ["1997-05-01", "1997-05-31"]
+							}
+						},
+						"f3": {
+							"visible": true,
+							"value": "some value",
+							"type": "Search"
+						}
+					}
+				},
+				"type": "List",
+				"header": {
+					"title": "Card with Hidden Filters"
+				},
+				"content": {
+					"maxItems": 2,
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": "{Name}",
+						"description": "{Description}"
+					}
+				}
+			}
+		},
 		"multipleFilters": {
 			"sap.app": {
 				"id": "cardsdemo.filters.multiplefilters",

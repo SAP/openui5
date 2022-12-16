@@ -35,6 +35,11 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
+			<w:Card id="filterVisibleFalse" manifest="{manifests>/filters/filterVisibleFalse}" baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
 		</f:GridContainer>
 		<Panel>
 			<Slider value="{settings>/cardWidth}"></Slider>

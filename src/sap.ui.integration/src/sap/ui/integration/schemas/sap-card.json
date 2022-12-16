@@ -2904,6 +2904,17 @@
               "pattern": "^[a-zA-Z0-9_\\.\\-/|@#]*$"
             }
           }
+        },
+        "visible": {
+          "description": "Determines whether the filter is visible",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },
@@ -3002,6 +3013,17 @@
               "nextYear"
             ]
           }
+        },
+        "visible": {
+          "description": "Determines whether the filter is visible",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },
@@ -3035,6 +3057,17 @@
         "placeholder": {
           "description": "The placeholder of the filter",
           "type": "string"
+        },
+        "visible": {
+          "description": "Determines whether the filter is visible",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },
