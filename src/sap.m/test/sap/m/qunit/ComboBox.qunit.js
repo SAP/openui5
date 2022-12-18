@@ -2296,6 +2296,7 @@ sap.ui.define([
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
 
 		// Assert
+		assert.ok(oComboBox.getProperty("_open"), "The open property should be updated.");
 		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), sExpectedActiveDescendantId, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 		// Cleanup
@@ -5036,6 +5037,9 @@ sap.ui.define([
 		oComboBox.focus();
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
+		// assert
+		assert.notOk(oComboBox.getProperty("_open"), "The open property should be updated.");
+
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 
@@ -5043,6 +5047,9 @@ sap.ui.define([
 		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow() method was called exactly once");
 
 		this.clock.tick(1000);
+
+		// assert
+		assert.ok(oComboBox.getProperty("_open"), "The open property should be updated.");
 		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "Control's picker pop-up is open");
 		assert.ok(oComboBox.isOpen(), "Control picker pop-up is open");
 

@@ -151,6 +151,16 @@ sap.ui.define([
 						type: "boolean",
 						group: "Misc",
 						defaultValue: false
+					},
+
+					/**
+					 * Indicates whether the picker is opened.
+					 * @private
+					 */
+					 _open: {
+						type: "boolean",
+						defaultValue: false,
+						visibility: "hidden"
 					}
 				},
 				associations: {
@@ -866,7 +876,7 @@ sap.ui.define([
 			ComboBoxBase.prototype.onBeforeOpen.apply(this, arguments);
 			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()];
 
-				this.setProperty("open", true);
+				this.setProperty("_open", true);
 
 			// the dropdown list can be opened by calling the .open() method (without
 			// any end user interaction), in this case if items are not already loaded
@@ -930,7 +940,7 @@ sap.ui.define([
 			ComboBoxBase.prototype.onBeforeClose.apply(this, arguments);
 			var oDomRef = this.getFocusDomRef();
 
-			this.setProperty("open", false);
+			this.setProperty("_open", false);
 
 			if (document.activeElement === oDomRef) {
 				this.updateFocusOnClose();
