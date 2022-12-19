@@ -142,6 +142,12 @@ html.sap-desktop .sapMGT:active .sapMGTFocusDiv {
 	opacity: 1;
 }
 
+.sapMGT.sapMGTBackgroundImage {
+	.sapMGTOverlay {
+		border-radius: 0.08rem;
+	}
+}
+
 .sapMGTOverlay > .sapUiLocalBusyIndicator > .sapUiLocalBusyIndicatorAnimation {
 	border: none;
 	box-shadow: none;
@@ -167,6 +173,7 @@ html.sap-desktop .sapMGT:not(.sapMGTStateDisabled,.sapMGTLineMode,.TwoByHalf.sap
 	border-color: transparent !important;
 	.sapMGTFocusDiv{
 		outline:solid 0.1875rem @sapTile_Interactive_BorderColor;
+		border-radius: inherit;
 	}
 }
 
