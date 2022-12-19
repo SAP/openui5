@@ -862,7 +862,7 @@ sap.ui.define([
 				oEndDate = oArrangedDates.endDate;
 			}
 
-			bDifferentMonthDates = oFocusedDate && iMonths === 1 && oFocusedDate.getMonth() !== oStartDate.getMonth();
+			bDifferentMonthDates = oFocusedDate && oStartDate && iMonths === 1 && oFocusedDate.getMonth() !== oStartDate.getMonth();
 
 			bSelectionBetween = this._isMarkingUnfinishedRangeAllowed() && oFocusedDate && !bDifferentMonthDates &&
 				(CalendarUtils._isBetween(oDate, oStartDate, oFocusedDate, true) || CalendarUtils._isBetween(oDate, oFocusedDate, oStartDate, true));
