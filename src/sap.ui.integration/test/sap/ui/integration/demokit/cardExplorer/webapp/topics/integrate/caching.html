@@ -12,7 +12,7 @@
 	<div class="topic">
 		<div class="content">
 
-			<h1>Caching</h1>
+			<h1 id="caching">Caching</h1>
 
 			<p>
 				Card's caching is the process of storing copy of the card's data in the browser's cache, so that it can be accessed by the card more quickly. This process is handled mainly by the host environment.
@@ -21,7 +21,6 @@
 			<h2 id="overview">
 				Overview
 			</h2>
-
 			<p>
 				The caching is available only if the host environment is prepared and can handle encrypted cache data and understands the cache headers.
 			</p>
@@ -37,9 +36,9 @@
 
 			<img src="../images/caching.png" alt="Caching Diagram" style="max-width: 100%; width: 800px;">
 
-			<h3 id="enableCaching">
+			<h2 id="enableCaching">
 				Enable Caching
-			</h3>
+			</h2>
 
 			<p>
 				After the host environment is prepared to enable the caching - call the useExperimentalCaching method on the host.
@@ -47,15 +46,15 @@
 oHost.useExperimentalCaching();</pre>
 			</p>
 
-			<h3>Service Worker</h3>
+			<h2 id="serviceWorker">Service Worker</h2>
 
 			<p>
 				The service worker should handle the fetch event and read the request headers sent by the card to provide the caching.
 			</p>
 
-			<h4 id="headers">
+			<h3 id="headers">
 				Cache Headers
-			</h4>
+			</h3>
 
 			<p>
 				The card sends the following cache headers in the request depending on its configuration.
@@ -107,9 +106,9 @@ oHost.useExperimentalCaching();</pre>
 				</table>
 			</div>
 
-			<h4 id="broadcasting">
+			<h3 id="broadcasting">
 				Broadcasting on New Data
-			</h4>
+			</h3>
 
 			<p>
 				When fresh data is fetched after revalidation, this should be broadcasted to the cards so that they can repeat the request.
@@ -121,13 +120,6 @@ oHost.useExperimentalCaching();</pre>
 	url: request.url
 }</pre>
 			</p>
-		</div>
-		<div class="navigation">
-			<h4>Table of Contents</h4>
-			<div><a href="#overview">Overview</a></div>
-			<div><a href="#enableCaching">Enable caching</a></div>
-			<div><a href="#headers">Cache headers</a></div>
-			<div><a href="#broadcasting">Broadcasting on new data</a></div>
 		</div>
 	</div>
 
