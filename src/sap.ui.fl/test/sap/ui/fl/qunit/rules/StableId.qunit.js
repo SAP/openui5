@@ -32,7 +32,9 @@ sap.ui.define([
 	oCore
 ) {
 	"use strict";
-
+	/**
+	 * @deprecated Since version 1.54. Due to <code>sap.ui.dt.ElementOverlay.getAggregationOverlays</code> deprecation
+	 */
 	QUnit.module("Base functionality for app component's root view", {
 		beforeEach: function (assert) {
 			var fnDone = assert.async();

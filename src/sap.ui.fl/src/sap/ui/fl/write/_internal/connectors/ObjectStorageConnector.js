@@ -16,7 +16,7 @@ sap.ui.define([
 	 *
 	 * @namespace sap.ui.fl.write._internal.connectors.ObjectStorageConnector
 	 * @since 1.70
-	 * @deprecated
+	 * @deprecated Since 1.84
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */

@@ -12,26 +12,28 @@ sap.ui.define([
 	"use strict";
 	return UIComponent.extend("sap.ui.fl.qunit.integration.testComponentComplex.Component", {
 		metadata: {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest: "json"
 		},
 		init: function() {
 			UIComponent.prototype.init.apply(this, arguments);
 		},
 		createContent: function () {
-			var oEmbedded = this.createComponent({
+			return this.createComponent({
 				usage: "myUsage",
 				id: this.createId("sap.ui.fl.qunit.integration.testComponentReuse"),
 				metadata: {
 					manifest: "json"
 				},
-				async: false
-			});
-			var oComponentContainer = new ComponentContainer(this.createId("myContainer"), {
-				propagateModel: true,
-				component: oEmbedded
-			});
+				async: true
+			}).then(function (oEmbedded) {
+				var oComponentContainer = new ComponentContainer(this.createId("myContainer"), {
+					propagateModel: true,
+					component: oEmbedded
+				});
 
-			return oComponentContainer;
+				return oComponentContainer;
+			}.bind(this));
 		}
 	});
 });

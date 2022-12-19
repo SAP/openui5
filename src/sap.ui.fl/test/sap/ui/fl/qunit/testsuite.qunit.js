@@ -779,6 +779,9 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/api/connectors/FileListBaseConnector"]
 				}
 			},
+			/**
+			 * @deprecated Since 1.84
+			 */
 			"write/api/connectors/ObjectStorageConnector": {
 				group: "Write API conntectors",
 				coverage: {
