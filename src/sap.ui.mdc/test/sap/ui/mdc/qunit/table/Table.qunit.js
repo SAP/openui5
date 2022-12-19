@@ -43,7 +43,8 @@ sap.ui.define([
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/mdc/table/RowActionItem",
 	"sap/ui/mdc/table/RowSettings",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/Deferred"
 ], function(
 	MDCQUnitUtils,
 	QUtils,
@@ -86,7 +87,8 @@ sap.ui.define([
 	ThemeParameters,
 	RowActionItem,
 	RowSettings,
-	jQuery
+	jQuery,
+	Deferred
 ) {
 	"use strict";
 
@@ -350,13 +352,56 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("rows binding - via metadataInfo", function(assert) {
-		return this.oTable._fullyInitialized().then(function() {
-			return MDCQUnitUtils.waitForBindingInfo(this.oTable);
-		}.bind(this)).then(function() {
-			assert.ok(this.oTable._oTable.isBound("rows"));
-			assert.strictEqual(this.oTable._oTable.getBindingInfo("rows").path, "/testPath");
-		}.bind(this));
+	QUnit.test("rows binding if modifications are supported and autoBindOnInit=true", function(assert) {
+		var oTable = this.oTable;
+		var oRebindSpy = sinon.spy(oTable, "rebind");
+		var oWaitForChanges = new Deferred();
+		var oWaitForChangesStub = sinon.stub(oTable.getEngine(), "waitForChanges");
+		var oIsModificationSupportedStub = sinon.stub(oTable.getEngine(), "isModificationSupported");
+
+		oIsModificationSupportedStub.withArgs(oTable).returns(true);
+		oWaitForChangesStub.withArgs(oTable).returns(oWaitForChanges.promise);
+
+		return oTable._fullyInitialized().then(function() {
+			assert.ok(oRebindSpy.notCalled, "Table#rebind not called during initialization");
+			setTimeout(function() {
+				oWaitForChanges.resolve();
+			}, 100);
+		}).then(function() {
+			assert.ok(oRebindSpy.notCalled, "Table#rebind not called after initialization");
+			return oWaitForChanges.promise;
+		}).then(function() {
+			assert.equal(oRebindSpy.callCount, 1, "Table#rebind called once after changes have been applied");
+			return MDCQUnitUtils.waitForBindingInfo(oTable);
+		}).then(function() {
+			assert.ok(oTable._oTable.isBound("rows"), "Table is bound");
+		}).finally(function() {
+			oWaitForChangesStub.restore();
+			oIsModificationSupportedStub.restore();
+		});
+	});
+
+	QUnit.test("rows binding if modifications are not supported and autoBindOnInit=true", function(assert) {
+		var oTable = this.oTable;
+		var oRebindSpy = sinon.spy(oTable, "rebind");
+		var oWaitForChanges = new Deferred();
+		var oIsModificationSupportedStub = sinon.stub(oTable.getEngine(), "isModificationSupported");
+
+		oIsModificationSupportedStub.withArgs(oTable).returns(false);
+
+		return oTable.initialized().then(function() {
+			assert.ok(oRebindSpy.notCalled, "Table#rebind not called during initialization");
+			setTimeout(function() {
+				oWaitForChanges.resolve();
+			}, 100);
+		}).then(function() {
+			assert.equal(oRebindSpy.callCount, 1, "Table#rebind called once after initialization");
+			return MDCQUnitUtils.waitForBindingInfo(oTable);
+		}).then(function() {
+			assert.ok(oTable._oTable.isBound("rows"), "Table is bound");
+		}).finally(function() {
+			oIsModificationSupportedStub.restore();
+		});
 	});
 
 	QUnit.test("Destroy", function(assert) {
