@@ -1,0 +1,18 @@
+{
+  "1.110.0": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "92497e6e387595bf5f3256cf64b966f73d145f50",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.FormElement: Prevent duplicate label creation by RTA Rename handler",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006650142022"
+          }
+        ]
+      }
+    ]
+  }
+}
