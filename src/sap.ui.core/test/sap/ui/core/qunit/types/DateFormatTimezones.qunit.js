@@ -1320,7 +1320,7 @@ sap.ui.define([
 			oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(new Locale("zh_CN"));
 
 			var sFormattedZH = oDateFormat.format(oDate, "America/New_York");
-			assert.equal(sFormattedZH, "美洲, 纽约 2021年10月12日 下午10:22:33", "New timezone should be be applied.");
+			assert.equal(sFormattedZH, "美洲, 纽约 2021年10月12日 22:22:33", "New timezone should be be applied.");
 
 			var oParsedDateZH = oDateFormat.parse(sFormattedZH, "America/New_York");
 			assert.deepEqual(oDate, oParsedDateZH[0], "dates match");

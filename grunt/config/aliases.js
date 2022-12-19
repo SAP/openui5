@@ -5,7 +5,7 @@ var path = require('path');
 var cldr = require('../../lib/cldr-openui5/lib/index.js');
 
 // CLDR version to be downloaded and generated
-var CLDR_VERSION = "35.1.0";
+var CLDR_VERSION = "41.0.0";
 
 module.exports = function(grunt, config) {
 

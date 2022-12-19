@@ -2,7 +2,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	"use strict";
 
 	/**
-	 * IANA timezone IDs extracted from TZMAP.DAT
+	 * IANA time zone IDs extracted from TZMAP.DAT, see note: 198411
+	 *
+	 * Goal is to support as much ABAP time zones as possible.
 	 * @type {string[]}
 	 */
 	var aABAPTimezoneIDs = [
@@ -467,13 +469,29 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	];
 
 	/**
-	 * TimezoneIDs which are not supported by the local browser
+	 * Time zone IDs which are not supported by the local browser. The local browser is using the TZ time zones. But
+	 * the versions of those TZ data files can differ from browser to browser. The differences in the TZ versions
+	 * between browsers can be checked by the Intl API.
+	 *
+	 * E.g:
+	 *
+	 * Expression in Google Chrome:
+	 * new Intl.DateTimeFormat("en-US", {timeZone: "Pacific/Kanton", timeZoneName: "long"}).format(new Date());
+	 *
+	 * Creates a new date object
+	 *
+	 * Expression in Safari Version < 15:
+	 * new Intl.DateTimeFormat("en-US", {timeZone: "Pacific/Kanton", timeZoneName: "long"}).format(new Date());
+	 *
+	 * The error: invalid time zone
+	 *
 	 * @type {string[]}
 	 */
 	var aUnsupportedBrowserTimezoneIDs = [];
 
 	/**
-	 * Safari version < 15 does not support timezone "Pacific/Kanton"
+	 * Safari version < 15 does not support time zone "Pacific/Kanton"
+	 * BCP: 2270093827
 	 */
 	if (Device.browser.safari && Device.browser.version < 15) {
 		aUnsupportedBrowserTimezoneIDs = ["Pacific/Kanton"];
@@ -481,8 +499,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 
 
 	/**
-	 * CLDR 35.1.0
-	 * as in timezoneNames.json
+	 * CLDR 41 time zone keys as in timezoneNames.json, e.g:
+	 * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-modern/main/en/timeZoneNames.json
+	 *
 	 * @type {string[]}
 	 */
 	var aCLDRTimezoneIDs = [
@@ -916,7 +935,13 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Pacific/Wallis"
 	];
 
-	// tz 2022a (excluding backzone)
+	/**
+	 * Version: tz 2022a (excluding backzone)
+	 * The IANA time zones are also available in a parsable format under:
+	 * https://github.com/eggert/tz
+	 *
+	 * @type {string[]}
+	 */
 	var aTzTimezoneIDs = [
 		"Africa/Abidjan",
 		"Africa/Accra",

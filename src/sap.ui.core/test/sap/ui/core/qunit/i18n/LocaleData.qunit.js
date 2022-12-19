@@ -405,7 +405,7 @@ sap.ui.define([
 		assert.equal(oLocaleData.getUnitDisplayName("duration-hour"), "Std.", "display name 'Std.' is correct");
 		assert.equal(oLocaleData.getUnitDisplayName("mass-gram"), "Gramm", "display name 'Gramm' is correct");
 		assert.equal(oLocaleData.getUnitDisplayName("light-lux"), "Lux", "display name 'Lux' is correct");
-		assert.equal(oLocaleData.getUnitDisplayName("length-light-year"), "Lichtjahre", "display name 'Lichtjahre' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("length-light-year"), "Lj", "display name 'Lj' is correct");
 		// unknown code
 		assert.equal(oLocaleData.getUnitDisplayName("foobar"), "", "display name 'foobar' is correct");
 
@@ -621,6 +621,7 @@ sap.ui.define([
 		assert.strictEqual(oCurrencySymbols["BTC"], "Ƀ", "Custom currency symbol map contains the Bitcoin icon");
 	});
 
+	// ABAP timezone IDs not supported by CLDR (yet).
 	var aABAPUnsupportedIDs = [
 		"Etc/GMT",
 		"Etc/GMT0",
@@ -653,8 +654,7 @@ sap.ui.define([
 		"Etc/GMT-13",
 		"Etc/GMT-14",
 		"Etc/Greenwich",
-		"Etc/Zulu",
-		"Pacific/Kanton"
+		"Etc/Zulu"
 	];
 
 	QUnit.test("getTimezoneTranslations ensure bijective mapping / consistency", function(assert) {
@@ -910,4 +910,27 @@ sap.ui.define([
 		assert.strictEqual(LocaleData.convertToDecimal(oFixture.vValue), oFixture.sResult);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getRelativePatterns: Unknown plural categories are not added to return value", function(assert) {
+		var oLocaleData = LocaleData.getInstance(new Locale("de"));
+
+		this.mock(oLocaleData).expects("getPluralCategories")
+			.withExactArgs()
+			.returns(["one", "other", "many"]);
+		this.mock(oLocaleData).expects("_get")
+			.withExactArgs("dateFields", "day-short")
+			.returns({
+				"relativeTime-type-future": {
+					"relativeTimePattern-count-one": "foo {0}",
+					"relativeTimePattern-count-other": "bar {0}"
+				}
+			});
+
+		// code under test
+		assert.deepEqual(oLocaleData.getRelativePatterns(["day"], "short"), [
+			{scale: "day", sign: 1, pattern: "foo {0}"},
+			{scale: "day", sign: 1, pattern: "bar {0}"}
+		]);
+	});
 });

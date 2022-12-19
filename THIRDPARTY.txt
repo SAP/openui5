@@ -185,7 +185,7 @@ License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/caja-html-sanitizer.js
 
-Component: Unicode Common Locale Data Repository, version: 35.1
+Component: Unicode Common Locale Data Repository, version: 41
 Copyright: 1991-2014 Unicode, Inc.
 License: Unicode-DFS-2015
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Unicode-DFS-2015.txt

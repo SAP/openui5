@@ -521,7 +521,7 @@ sap.ui.define([
 
 		var aScales = [
 			[undefined, undefined, undefined, undefined, undefined, undefined, "Mio.", "Mio.", "Mio.", "Mrd.", "Mrd.", "Mrd.", "Bio.", "Bio.", "Bio."],
-			[undefined, undefined, undefined, undefined, "万", "万", "万", "万", "亿", "亿", "亿", "亿", "兆", "兆", "兆"]
+			[undefined, undefined, undefined, undefined, "万", "万", "万", "万", "亿", "亿", "亿", "亿", "万亿", "万亿", "万亿"]
 		];
 
 		aLocales.forEach(function (sLocale, index) {
@@ -2629,15 +2629,15 @@ sap.ui.define([
 
 		var oLocale = new Locale("pl_PL");
 		var oFormat = NumberFormat.getUnitInstance(oLocale);
-		var aResult = oFormat.parse("1 234 567 mi/h");
+		var aResult = oFormat.parse("1 234 567 mile/h");
 		assert.ok(Array.isArray(aResult), "Unit parser should return an array");
 		assert.equal(aResult[0], 1234567, "Number is parsed correctly");
-		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mi/h\"");
+		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mili/h\"");
 
-		aResult = oFormat.parse("0,5 mi/h");
+		aResult = oFormat.parse("0,5 mile/h");
 		assert.ok(Array.isArray(aResult), "Unit parser should return an array");
 		assert.equal(aResult[0], 0.5, "Number is parsed correctly");
-		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mi/h	\"");
+		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mili/h	\"");
 
 	});
 
@@ -2646,15 +2646,15 @@ sap.ui.define([
 
 		var oLocale = new Locale("pl_PL");
 		var oFormat = NumberFormat.getUnitInstance({ style: "long" }, oLocale);
-		var aResult = oFormat.parse("123 tysiące mi/h");
+		var aResult = oFormat.parse("123 tysiące mile/h");
 		assert.ok(Array.isArray(aResult), "Unit parser should return an array");
 		assert.equal(aResult[0], 123000, "Number is parsed correctly");
-		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mi/h\"");
+		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mili/h\"");
 
-		aResult = oFormat.parse("500 mi/h");
+		aResult = oFormat.parse("500 mile/h");
 		assert.ok(Array.isArray(aResult), "Unit parser should return an array");
 		assert.equal(aResult[0], 500, "Number is parsed correctly");
-		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mi/h	\"");
+		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mili/h	\"");
 
 	});
 
@@ -4361,24 +4361,24 @@ sap.ui.define([
 			oUnitFormat = NumberFormat.getUnitInstance(oOptions, new Locale("ar"));
 
 			assert.equal(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "1,234,567.89 غالون إمبراطوري", "Format to '1,234,567.89 غالون إمبراطوري'");
-			assert.equal(oUnitFormat.format(1234567.89, "volume-fluid-ounce-imperial"), "1,234,567.89 fl oz Imp.", "Format to '1,234,567.89 fl oz Imp.'");
+			assert.equal(oUnitFormat.format(1234567.89, "volume-fluid-ounce-imperial"), "1,234,567.89 أونصة سائلة إمبراطورية", "Format to '1,234,567.89 أونصة سائلة إمبراطورية'");
 
 			// formatted
 			assert.deepEqual(oUnitFormat.parse("1,234,567.89 غالون إمبراطوري"), [1234567.89, "volume-gallon-imperial"], "Parse '1,234,567.89 غالون إمبراطوري'");
-			assert.deepEqual(oUnitFormat.parse("1,234,567.89 fl oz Imp."), [1234567.89, "volume-fluid-ounce-imperial"], "Parse '1,234,567.89 fl oz Imp.'");
+			assert.deepEqual(oUnitFormat.parse("1,234,567.89 أونصة سائلة إمبراطورية"), [1234567.89, "volume-fluid-ounce-imperial"], "Parse '1,234,567.89 أونصة سائلة إمبراطورية'");
 
 			// tolerated, as single separator with grouping base size (assumingly a grouping separator)
 			assert.deepEqual(oUnitFormat.parse("1234,567 غالون إمبراطوري"), [1234567, "volume-gallon-imperial"], "Parse '1234,567 غالون إمبراطوري'");
-			assert.deepEqual(oUnitFormat.parse("1234,567 fl oz Imp."), [1234567, "volume-fluid-ounce-imperial"], "Parse '1234,567 fl oz Imp.'");
+			assert.deepEqual(oUnitFormat.parse("1234,567 أونصة سائلة إمبراطورية"), [1234567, "volume-fluid-ounce-imperial"], "Parse '1234,567 أونصة سائلة إمبراطورية'");
 
 			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
 			assert.deepEqual(oUnitFormat.parse("123,4567 غالون إمبراطوري"), null, "Parse '123,4567 غالون إمبراطوري'");
-			assert.deepEqual(oUnitFormat.parse("123,4567 fl oz Imp."), null, "Parse '123,4567 fl oz Imp.'");
+			assert.deepEqual(oUnitFormat.parse("123,4567 أونصة سائلة إمبراطورية"), null, "Parse '123,4567 أونصة سائلة إمبراطورية'");
 
 			assert.deepEqual(oUnitFormat.parse("1234567.89 غالون إمبراطوري"), [1234567.89, "volume-gallon-imperial"], "Parse '1234567.89 غالون إمبراطوري'");
-			assert.deepEqual(oUnitFormat.parse("1234567.89 fl oz Imp."), [1234567.89, "volume-fluid-ounce-imperial"], "Parse '1234567.89 fl oz Imp.'");
+			assert.deepEqual(oUnitFormat.parse("1234567.89 أونصة سائلة إمبراطورية"), [1234567.89, "volume-fluid-ounce-imperial"], "Parse '1234567.89 أونصة سائلة إمبراطورية'");
 			assert.deepEqual(oUnitFormat.parse("1234,567.89 غالون إمبراطوري"), [1234567.89, "volume-gallon-imperial"], "Parse '1234,567.89 غالون إمبراطوري'");
-			assert.deepEqual(oUnitFormat.parse("1234,567.89 fl oz Imp."), [1234567.89, "volume-fluid-ounce-imperial"], "Parse '1234,567.89 fl oz Imp.'");
+			assert.deepEqual(oUnitFormat.parse("1234,567.89 أونصة سائلة إمبراطورية"), [1234567.89, "volume-fluid-ounce-imperial"], "Parse '1234,567.89 أونصة سائلة إمبراطورية'");
 		});
 
 		QUnit.test("Special cases Unit style=short with strictGroupingValidation=" + oOptions.strictGroupingValidation, function (assert) {
@@ -4421,23 +4421,23 @@ sap.ui.define([
 
 			assert.equal(oUnitFormat.format(1.2e+12, "volume-gallon-imperial"), "1.2\xa0ترليون غالون إمبراطوري", "Format to '1.2\xa0ترليون غالون إمبراطوري'");
 			assert.equal(oUnitFormat.format(1234567e+12, "volume-gallon-imperial"), "1,234,567\xa0ترليون غالون إمبراطوري", "Format to '1,234,567\xa0ترليون غالون إمبراطوري'");
-			assert.equal(oUnitFormat.format(1.2e+12, "volume-fluid-ounce-imperial"), "1.2\xa0ترليون fl oz Imp.", "Format to '1.2\xa0ترليون fl oz Imp.'");
-			assert.equal(oUnitFormat.format(1234567e+12, "volume-fluid-ounce-imperial"), "1,234,567\xa0ترليون fl oz Imp.", "Format to '1,234,567\xa0ترليون fl oz Imp.'");
+			assert.equal(oUnitFormat.format(1.2e+12, "volume-fluid-ounce-imperial"), "1.2\xa0ترليون أونصة سائلة إمبراطورية", "Format to '1.2\xa0ترليون أونصة سائلة إمبراطورية'");
+			assert.equal(oUnitFormat.format(1234567e+12, "volume-fluid-ounce-imperial"), "1,234,567\xa0ترليون أونصة سائلة إمبراطورية", "Format to '1,234,567\xa0ترليون أونصة سائلة إمبراطورية'");
 
 			// formatted
 			assert.deepEqual(oUnitFormat.parse("1.2\xa0ترليون غالون إمبراطوري"), [1.2e+12, "volume-gallon-imperial"], "Parse '1.2\xa0ترليون غالون إمبراطوري'");
 			assert.deepEqual(oUnitFormat.parse("1,234,567\xa0ترليون غالون إمبراطوري"), [1234567e+12, "volume-gallon-imperial"], "Parse '1,234,567\xa0ترليون غالون إمبراطوري'");
-			assert.deepEqual(oUnitFormat.parse("1.2\xa0ترليون fl oz Imp."), [1.2e+12, "volume-fluid-ounce-imperial"], "Parse '1.2\xa0ترليون fl oz Imp.'");
-			assert.deepEqual(oUnitFormat.parse("1,234,567\xa0ترليون fl oz Imp."), [1234567e+12, "volume-fluid-ounce-imperial"], "Parse '1,234,567\xa0ترليون fl oz Imp.'");
+			assert.deepEqual(oUnitFormat.parse("1.2\xa0ترليون أونصة سائلة إمبراطورية"), [1.2e+12, "volume-fluid-ounce-imperial"], "Parse '1.2\xa0ترليون أونصة سائلة إمبراطورية'");
+			assert.deepEqual(oUnitFormat.parse("1,234,567\xa0ترليون أونصة سائلة إمبراطورية"), [1234567e+12, "volume-fluid-ounce-imperial"], "Parse '1,234,567\xa0ترليون أونصة سائلة إمبراطورية'");
 
 			assert.deepEqual(oUnitFormat.parse("1,2\xa0ترليون غالون إمبراطوري"), null, "Parse '1,2\xa0ترليون غالون إمبراطوري'");
-			assert.deepEqual(oUnitFormat.parse("1,234567\xa0ترليون fl oz Imp."), null, "Parse '1,234567\xa0ترليون fl oz Imp.'");
+			assert.deepEqual(oUnitFormat.parse("1,234567\xa0ترليون أونصة سائلة إمبراطورية"), null, "Parse '1,234567\xa0ترليون أونصة سائلة إمبراطورية'");
 
 			// tolerated, as single separator with grouping base size (assumingly a grouping separator)
 			assert.deepEqual(oUnitFormat.parse("1234,567\xa0ترليون غالون إمبراطوري"), [1234567e+12, "volume-gallon-imperial"], "Parse '1234,567\xa0ترليون غالون إمبراطوري'");
 
 			assert.deepEqual(oUnitFormat.parse("1234567\xa0ترليون غالون إمبراطوري"), [1234567e+12, "volume-gallon-imperial"], "Parse '1234567\xa0ترليون غالون إمبراطوري'");
-			assert.deepEqual(oUnitFormat.parse("1234567\xa0ترليون fl oz Imp."), [1234567e+12, "volume-fluid-ounce-imperial"], "Parse '1234567\xa0ترليون fl oz Imp.'");
+			assert.deepEqual(oUnitFormat.parse("1234567\xa0ترليون أونصة سائلة إمبراطورية"), [1234567e+12, "volume-fluid-ounce-imperial"], "Parse '1234567\xa0ترليون أونصة سائلة إمبراطورية'");
 		});
 
 		QUnit.test("Special cases Unit showNumber/showMeasure with strictGroupingValidation=" + oOptions.strictGroupingValidation, function (assert) {

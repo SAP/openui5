@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "35.1.0",
-	"__buildtime": "2022-05-02T19:26:05.809Z",
+	"__version": "41.0.0",
+	"__buildtime": "2022-12-19T09:41:25.319Z",
 	"languages": {
 		"aa": "アファル語",
 		"ab": "アブハズ語",
@@ -33,6 +33,7 @@
 		"arp": "アラパホー語",
 		"arq": "アルジェリア・アラビア語",
 		"ars": "ナジュド地方・アラビア語",
+		"ars_alt-menu": "アラビア語（ナジュド地方）",
 		"arw": "アラワク語",
 		"ary": "モロッコ・アラビア語",
 		"arz": "エジプト・アラビア語",
@@ -106,6 +107,8 @@
 		"chr": "チェロキー語",
 		"chy": "シャイアン語",
 		"ckb": "中央クルド語",
+		"ckb_alt-menu": "クルド語（中央）",
+		"ckb_alt-variant": "クルド語（ソラニー）",
 		"co": "コルシカ語",
 		"cop": "コプト語",
 		"cps": "カピス語",
@@ -166,6 +169,7 @@
 		"ewo": "エウォンド語",
 		"ext": "エストレマドゥーラ語",
 		"fa": "ペルシア語",
+		"fa_AF": "ダリー語",
 		"fan": "ファング語",
 		"fat": "ファンティー語",
 		"ff": "フラ語",
@@ -397,7 +401,7 @@
 		"niu": "ニウーエイ語",
 		"njo": "アオ・ナガ語",
 		"nl": "オランダ語",
-		"nl_BE": "フレミッシュ語",
+		"nl_BE": "フラマン語",
 		"nmg": "クワシオ語",
 		"nn": "ノルウェー語(ニーノシュク)",
 		"nnh": "ンジエムブーン語",
@@ -455,6 +459,7 @@
 		"rap": "ラパヌイ語",
 		"rar": "ラロトンガ語",
 		"rgn": "ロマーニャ語",
+		"rhg": "ロヒンギャ語",
 		"rif": "リーフ語",
 		"rm": "ロマンシュ語",
 		"rn": "ルンディ語",
@@ -462,7 +467,6 @@
 		"ro_MD": "モルダビア語",
 		"rof": "ロンボ語",
 		"rom": "ロマーニー語",
-		"root": "ルート",
 		"rtm": "ロツマ語",
 		"ru": "ロシア語",
 		"rue": "ルシン語",
@@ -612,6 +616,7 @@
 		"yo": "ヨルバ語",
 		"yrl": "ニェエンガトゥ語",
 		"yue": "広東語",
+		"yue_alt-menu": "中国語 (広東語)",
 		"za": "チワン語",
 		"zap": "サポテカ語",
 		"zbl": "ブリスシンボル",
@@ -619,8 +624,11 @@
 		"zen": "ゼナガ語",
 		"zgh": "標準モロッコ タマジクト語",
 		"zh": "中国語",
+		"zh_alt-menu": "中国語 (標準語)",
 		"zh_Hans": "簡体中国語",
+		"zh_Hans-alt-long": "標準中国語 (簡体字)",
 		"zh_Hant": "繁体中国語",
+		"zh_Hant-alt-long": "標準中国語 (繁体字)",
 		"zu": "ズールー語",
 		"zun": "ズニ語",
 		"zxx": "言語的内容なし",
@@ -633,6 +641,7 @@
 		"Ahom": "Ahom",
 		"Arab": "アラビア文字",
 		"Arab-alt-variant": "ペルソ・アラビア文字",
+		"Aran": "ナスタアリーク体",
 		"Armi": "帝国アラム文字",
 		"Armn": "アルメニア文字",
 		"Avst": "アヴェスター文字",
@@ -653,12 +662,15 @@
 		"Cari": "カリア文字",
 		"Cham": "チャム文字",
 		"Cher": "チェロキー文字",
+		"Chrs": "Chrs",
 		"Cirt": "キアス文字",
 		"Copt": "コプト文字",
+		"Cpmn": "Cpmn",
 		"Cprt": "キプロス文字",
 		"Cyrl": "キリル文字",
 		"Cyrs": "古代教会スラブ語キリル文字",
 		"Deva": "デーバナーガリー文字",
+		"Diak": "Diak",
 		"Dogr": "Dogr",
 		"Dsrt": "デセレット文字",
 		"Dupl": "デュプロワエ式速記",
@@ -702,9 +714,11 @@
 		"Jurc": "女真文字",
 		"Kali": "カヤー文字",
 		"Kana": "カタカナ",
+		"Kawi": "Kawi",
 		"Khar": "カローシュティー文字",
 		"Khmr": "クメール文字",
 		"Khoj": "ホジャ文字",
+		"Kits": "Kits",
 		"Knda": "カンナダ文字",
 		"Kore": "韓国語の文字",
 		"Kpel": "クペレ文字",
@@ -740,6 +754,7 @@
 		"Mtei": "メイテイ文字",
 		"Mult": "Mult",
 		"Mymr": "ミャンマー文字",
+		"Nagm": "Nagm",
 		"Nand": "Nand",
 		"Narb": "古代北アラビア文字",
 		"Nbat": "ナバテア文字",
@@ -750,9 +765,10 @@
 		"Ogam": "オガム文字",
 		"Olck": "オルチキ文字",
 		"Orkh": "オルホン文字",
-		"Orya": "オリヤー文字",
+		"Orya": "オディア文字",
 		"Osge": "Osge",
 		"Osma": "オスマニア文字",
+		"Ougr": "Ougr",
 		"Palm": "パルミラ文字",
 		"Pauc": "パウ・チン・ハウ文字",
 		"Perm": "古ぺルム文字",
@@ -792,7 +808,7 @@
 		"Takr": "タークリー文字",
 		"Tale": "タイ・レ文字",
 		"Talu": "新タイ・ルー文字",
-		"Taml": "タミール文字",
+		"Taml": "タミル文字",
 		"Tang": "西夏文字",
 		"Tavt": "タイ・ヴェト文字",
 		"Telu": "テルグ文字",
@@ -803,14 +819,18 @@
 		"Thai": "タイ文字",
 		"Tibt": "チベット文字",
 		"Tirh": "ティルフータ文字",
+		"Tnsa": "Tnsa",
+		"Toto": "Toto",
 		"Ugar": "ウガリット文字",
 		"Vaii": "ヴァイ文字",
 		"Visp": "視話法",
+		"Vith": "Vith",
 		"Wara": "バラン・クシティ文字",
 		"Wcho": "Wcho",
 		"Wole": "ウォレアイ文字",
 		"Xpeo": "古代ペルシア文字",
 		"Xsux": "シュメール＝アッカド語楔形文字",
+		"Yezi": "Yezi",
 		"Yiii": "イ文字",
 		"Zanb": "Zanb",
 		"Zinh": "基底文字の種別を継承する結合文字",
@@ -819,7 +839,7 @@
 		"Zsym": "記号文字",
 		"Zxxx": "非表記",
 		"Zyyy": "共通文字",
-		"Zzzz": "未定義文字"
+		"Zzzz": "不明な文字"
 	},
 	"territories": {
 		"142": "アジア",
@@ -1011,7 +1031,6 @@
 		"MG": "マダガスカル",
 		"MH": "マーシャル諸島",
 		"MK": "北マケドニア",
-		"MK-alt-variant": "MK",
 		"ML": "マリ",
 		"MM": "ミャンマー (ビルマ)",
 		"MN": "モンゴル",
@@ -1121,8 +1140,8 @@
 		"VU": "バヌアツ",
 		"WF": "ウォリス・フツナ",
 		"WS": "サモア",
-		"XA": "XA",
-		"XB": "XB",
+		"XA": "疑似アクセント",
+		"XB": "疑似 BIDI",
 		"XK": "コソボ",
 		"YE": "イエメン",
 		"YT": "マヨット",
@@ -1165,6 +1184,7 @@
 				"Ehms": "aK:mm:ss (E)",
 				"EHms": "H:mm:ss (E)",
 				"Gy": "Gy年",
+				"GyMd": "Gy/M/d",
 				"GyMMM": "Gy年M月",
 				"GyMMMd": "Gy年M月d日",
 				"GyMMMEd": "Gy年M月d日(E)",
@@ -1710,6 +1730,7 @@
 				"Ehms": "aK:mm:ss (E)",
 				"EHms": "H:mm:ss (E)",
 				"Gy": "Gy年",
+				"GyMd": "GGGGGy/M/d",
 				"GyMMM": "Gy年M月",
 				"GyMMMd": "Gy年M月d日",
 				"GyMMMEd": "Gy年M月d日(E)",
@@ -2263,6 +2284,7 @@
 				"Ehms": "aK:mm:ss (E)",
 				"EHms": "H:mm:ss (E)",
 				"Gy": "Gy年",
+				"GyMd": "GGGGGy/M/d",
 				"GyMMM": "Gy年M月",
 				"GyMMMd": "Gy年M月d日",
 				"GyMMMEd": "Gy年M月d日(E)",
@@ -2837,6 +2859,7 @@
 				"Ehms": "aK:mm:ss (E)",
 				"EHms": "H:mm:ss (E)",
 				"Gy": "Gy年",
+				"GyMd": "GGGGGy/M/d",
 				"GyMMM": "Gy年M月",
 				"GyMMMd": "Gy年M月d日",
 				"GyMMMEd": "Gy年M月d日(E)",
@@ -3920,7 +3943,7 @@
 			"displayName": "年",
 			"relative-type--1": "昨年",
 			"relative-type-0": "今年",
-			"relative-type-1": "翌年",
+			"relative-type-1": "来年",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 年後"
 			},
@@ -3932,7 +3955,7 @@
 			"displayName": "年",
 			"relative-type--1": "昨年",
 			"relative-type-0": "今年",
-			"relative-type-1": "翌年",
+			"relative-type-1": "来年",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 年後"
 			},
@@ -3944,7 +3967,7 @@
 			"displayName": "年",
 			"relative-type--1": "昨年",
 			"relative-type-0": "今年",
-			"relative-type-1": "翌年",
+			"relative-type-1": "来年",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0}年後"
 			},
@@ -3992,7 +4015,7 @@
 			"displayName": "月",
 			"relative-type--1": "先月",
 			"relative-type-0": "今月",
-			"relative-type-1": "翌月",
+			"relative-type-1": "来月",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} か月後"
 			},
@@ -4004,7 +4027,7 @@
 			"displayName": "月",
 			"relative-type--1": "先月",
 			"relative-type-0": "今月",
-			"relative-type-1": "翌月",
+			"relative-type-1": "来月",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} か月後"
 			},
@@ -4016,7 +4039,7 @@
 			"displayName": "月",
 			"relative-type--1": "先月",
 			"relative-type-0": "今月",
-			"relative-type-1": "翌月",
+			"relative-type-1": "来月",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0}か月後"
 			},
@@ -4028,7 +4051,7 @@
 			"displayName": "週",
 			"relative-type--1": "先週",
 			"relative-type-0": "今週",
-			"relative-type-1": "翌週",
+			"relative-type-1": "来週",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 週間後"
 			},
@@ -4041,7 +4064,7 @@
 			"displayName": "週",
 			"relative-type--1": "先週",
 			"relative-type-0": "今週",
-			"relative-type-1": "翌週",
+			"relative-type-1": "来週",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 週間後"
 			},
@@ -4054,7 +4077,7 @@
 			"displayName": "週",
 			"relative-type--1": "先週",
 			"relative-type-0": "今週",
-			"relative-type-1": "翌週",
+			"relative-type-1": "来週",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0}週間後"
 			},
@@ -4494,7 +4517,7 @@
 			"Pontianak": "ポンティアナック",
 			"Pyongyang": "平壌",
 			"Qatar": "カタール",
-			"Qostanay": "Qostanay",
+			"Qostanay": "コスタナイ",
 			"Qyzylorda": "クズロルダ",
 			"Riyadh": "リヤド",
 			"Sakhalin": "サハリン",
@@ -4643,6 +4666,7 @@
 			"Guadalcanal": "ガダルカナル",
 			"Guam": "グアム",
 			"Honolulu": "ホノルル",
+			"Kanton": "Kanton",
 			"Kiritimati": "キリスィマスィ島",
 			"Kosrae": "コスラエ",
 			"Kwajalein": "クェゼリン",
@@ -4712,12 +4736,12 @@
 		"accounting": "¤#,##0.00;(¤#,##0.00)",
 		"currencySpacing": {
 			"beforeCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			},
 			"afterCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
@@ -4751,6 +4775,7 @@
 	"symbols-latn-percentSign": "%",
 	"symbols-latn-plusSign": "+",
 	"symbols-latn-minusSign": "-",
+	"symbols-latn-approximatelySign": "約",
 	"symbols-latn-exponential": "E",
 	"symbols-latn-superscriptingExponent": "×",
 	"symbols-latn-perMille": "‰",
@@ -4776,7 +4801,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
-		"XOF": "CFA",
+		"XOF": "F CFA",
 		"XPF": "CFPF"
 	},
 	"rtl": false,
@@ -4806,14 +4831,109 @@
 	},
 	"units": {
 		"short": {
+			"10p-1": {
+				"unitPrefixPattern": "d{0}"
+			},
+			"10p-2": {
+				"unitPrefixPattern": "c{0}"
+			},
+			"10p-3": {
+				"unitPrefixPattern": "m{0}"
+			},
+			"10p-6": {
+				"unitPrefixPattern": "μ{0}"
+			},
+			"10p-9": {
+				"unitPrefixPattern": "n{0}"
+			},
+			"10p-12": {
+				"unitPrefixPattern": "p{0}"
+			},
+			"10p-15": {
+				"unitPrefixPattern": "f{0}"
+			},
+			"10p-18": {
+				"unitPrefixPattern": "a{0}"
+			},
+			"10p-21": {
+				"unitPrefixPattern": "z{0}"
+			},
+			"10p-24": {
+				"unitPrefixPattern": "y{0}"
+			},
+			"10p1": {
+				"unitPrefixPattern": "da{0}"
+			},
+			"10p2": {
+				"unitPrefixPattern": "h{0}"
+			},
+			"10p3": {
+				"unitPrefixPattern": "k{0}"
+			},
+			"10p6": {
+				"unitPrefixPattern": "M{0}"
+			},
+			"10p9": {
+				"unitPrefixPattern": "G{0}"
+			},
+			"10p12": {
+				"unitPrefixPattern": "T{0}"
+			},
+			"10p15": {
+				"unitPrefixPattern": "P{0}"
+			},
+			"10p18": {
+				"unitPrefixPattern": "E{0}"
+			},
+			"10p21": {
+				"unitPrefixPattern": "Z{0}"
+			},
+			"10p24": {
+				"unitPrefixPattern": "Y{0}"
+			},
+			"1024p1": {
+				"unitPrefixPattern": "Ki{0}"
+			},
+			"1024p2": {
+				"unitPrefixPattern": "Mi{0}"
+			},
+			"1024p3": {
+				"unitPrefixPattern": "Gi{0}"
+			},
+			"1024p4": {
+				"unitPrefixPattern": "Ti{0}"
+			},
+			"1024p5": {
+				"unitPrefixPattern": "Pi{0}"
+			},
+			"1024p6": {
+				"unitPrefixPattern": "Ei{0}"
+			},
+			"1024p7": {
+				"unitPrefixPattern": "Zi{0}"
+			},
+			"1024p8": {
+				"unitPrefixPattern": "Yi{0}"
+			},
 			"per": {
 				"compoundUnitPattern": "{0}/{1}"
+			},
+			"power2": {
+				"compoundUnitPattern1": "{0}²",
+				"compoundUnitPattern1-count-other": "{0}²"
+			},
+			"power3": {
+				"compoundUnitPattern1": "{0}³",
+				"compoundUnitPattern1-count-other": "{0}³"
+			},
+			"times": {
+				"compoundUnitPattern": "{0}⋅{1}"
 			},
 			"acceleration-g-force": {
 				"displayName": "重力加速度",
 				"unitPattern-count-other": "{0} G"
 			},
-			"acceleration-meter-per-second-squared": {
+			"acceleration-meter-per-square-second": {
 				"displayName": "m/s²",
 				"unitPattern-count-other": "{0} m/s²"
 			},
@@ -4886,7 +5006,7 @@
 				"displayName": "金",
 				"unitPattern-count-other": "{0} 金"
 			},
-			"concentr-milligram-per-deciliter": {
+			"concentr-milligram-ofglucose-per-deciliter": {
 				"displayName": "ミリグラム毎デシリットル",
 				"unitPattern-count-other": "{0} mg/dL"
 			},
@@ -4894,7 +5014,11 @@
 				"displayName": "ミリモル毎リットル",
 				"unitPattern-count-other": "{0} mmol/L"
 			},
-			"concentr-part-per-million": {
+			"concentr-item": {
+				"displayName": "項目",
+				"unitPattern-count-other": "{0} 項目"
+			},
+			"concentr-permillion": {
 				"displayName": "ppm",
 				"unitPattern-count-other": "{0} ppm"
 			},
@@ -4918,7 +5042,7 @@
 				"displayName": "L/km",
 				"unitPattern-count-other": "{0} L/km"
 			},
-			"consumption-liter-per-100kilometers": {
+			"consumption-liter-per-100-kilometer": {
 				"displayName": "L/100km",
 				"unitPattern-count-other": "{0} L/100km"
 			},
@@ -4959,8 +5083,8 @@
 				"unitPattern-count-other": "{0} Mb"
 			},
 			"digital-kilobyte": {
-				"displayName": "kB",
-				"unitPattern-count-other": "{0} kB"
+				"displayName": "KB",
+				"unitPattern-count-other": "{0} KB"
 			},
 			"digital-kilobit": {
 				"displayName": "キロビット",
@@ -4977,6 +5101,10 @@
 			"duration-century": {
 				"displayName": "世紀",
 				"unitPattern-count-other": "{0} 世紀"
+			},
+			"duration-decade": {
+				"displayName": "十年",
+				"unitPattern-count-other": "{0} 十年"
 			},
 			"duration-year": {
 				"displayName": "年",
@@ -5073,6 +5201,10 @@
 				"displayName": "英熱量",
 				"unitPattern-count-other": "{0} BTU"
 			},
+			"energy-therm-us": {
+				"displayName": "米サーム",
+				"unitPattern-count-other": "{0} 米サーム"
+			},
 			"force-pound-force": {
 				"displayName": "重量ポンド",
 				"unitPattern-count-other": "{0} lbf"
@@ -5080,6 +5212,10 @@
 			"force-newton": {
 				"displayName": "ニュートン",
 				"unitPattern-count-other": "{0} N"
+			},
+			"force-kilowatt-hour-per-100-kilometer": {
+				"displayName": "kWh/100km",
+				"unitPattern-count-other": "{0} kWh/100km"
 			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
@@ -5096,6 +5232,42 @@
 			"frequency-hertz": {
 				"displayName": "Hz",
 				"unitPattern-count-other": "{0} Hz"
+			},
+			"graphics-em": {
+				"displayName": "em",
+				"unitPattern-count-other": "{0} em"
+			},
+			"graphics-pixel": {
+				"displayName": "ピクセル",
+				"unitPattern-count-other": "{0} px"
+			},
+			"graphics-megapixel": {
+				"displayName": "メガピクセル",
+				"unitPattern-count-other": "{0} MP"
+			},
+			"graphics-pixel-per-centimeter": {
+				"displayName": "ppcm",
+				"unitPattern-count-other": "{0} ppcm"
+			},
+			"graphics-pixel-per-inch": {
+				"displayName": "ppi",
+				"unitPattern-count-other": "{0} ppi"
+			},
+			"graphics-dot-per-centimeter": {
+				"displayName": "dpcm",
+				"unitPattern-count-other": "{0} dpcm"
+			},
+			"graphics-dot-per-inch": {
+				"displayName": "dpi",
+				"unitPattern-count-other": "{0} dpi"
+			},
+			"graphics-dot": {
+				"displayName": "ドット",
+				"unitPattern-count-other": "{0} ドット"
+			},
+			"length-earth-radius": {
+				"displayName": "R⊕",
+				"unitPattern-count-other": "{0} R⊕"
 			},
 			"length-kilometer": {
 				"displayName": "km",
@@ -5122,7 +5294,7 @@
 			},
 			"length-micrometer": {
 				"displayName": "マイクロメートル",
-				"unitPattern-count-other": "{0} µm"
+				"unitPattern-count-other": "{0} μm"
 			},
 			"length-nanometer": {
 				"displayName": "ナノメートル",
@@ -5190,6 +5362,14 @@
 				"displayName": "ルクス",
 				"unitPattern-count-other": "{0} lx"
 			},
+			"light-candela": {
+				"displayName": "cd",
+				"unitPattern-count-other": "{0} cd"
+			},
+			"light-lumen": {
+				"displayName": "lm",
+				"unitPattern-count-other": "{0} lm"
+			},
 			"light-solar-luminosity": {
 				"displayName": "太陽光度",
 				"unitPattern-count-other": "{0} L☉"
@@ -5214,7 +5394,7 @@
 			},
 			"mass-microgram": {
 				"displayName": "マイクログラム",
-				"unitPattern-count-other": "{0} µg"
+				"unitPattern-count-other": "{0} μg"
 			},
 			"mass-ton": {
 				"displayName": "米トン",
@@ -5254,6 +5434,10 @@
 				"displayName": "太陽質量",
 				"unitPattern-count-other": "{0} M☉"
 			},
+			"mass-grain": {
+				"displayName": "グレーン",
+				"unitPattern-count-other": "{0} グレーン"
+			},
 			"power-gigawatt": {
 				"displayName": "ギガワット",
 				"unitPattern-count-other": "{0} GW"
@@ -5278,21 +5462,21 @@
 				"displayName": "馬力",
 				"unitPattern-count-other": "{0} 馬力"
 			},
-			"pressure-hectopascal": {
-				"displayName": "hPa",
-				"unitPattern-count-other": "{0} hPa"
-			},
-			"pressure-millimeter-of-mercury": {
+			"pressure-millimeter-ofhg": {
 				"displayName": "水銀柱ミリメートル",
 				"unitPattern-count-other": "{0} mm Hg"
 			},
-			"pressure-pound-per-square-inch": {
+			"pressure-pound-force-per-square-inch": {
 				"displayName": "重量ポンド毎平方インチ",
 				"unitPattern-count-other": "{0} psi"
 			},
-			"pressure-inch-hg": {
+			"pressure-inch-ofhg": {
 				"displayName": "水銀柱インチ",
 				"unitPattern-count-other": "{0} inHg"
+			},
+			"pressure-bar": {
+				"displayName": "バール",
+				"unitPattern-count-other": "{0} bar"
 			},
 			"pressure-millibar": {
 				"displayName": "ミリバール",
@@ -5301,6 +5485,14 @@
 			"pressure-atmosphere": {
 				"displayName": "気圧",
 				"unitPattern-count-other": "{0} atm"
+			},
+			"pressure-pascal": {
+				"displayName": "パスカル",
+				"unitPattern-count-other": "{0} Pa"
+			},
+			"pressure-hectopascal": {
+				"displayName": "hPa",
+				"unitPattern-count-other": "{0} hPa"
 			},
 			"pressure-kilopascal": {
 				"displayName": "kPa",
@@ -5342,7 +5534,7 @@
 				"displayName": "K",
 				"unitPattern-count-other": "{0} K"
 			},
-			"torque-pound-foot": {
+			"torque-pound-force-foot": {
 				"displayName": "ポンドフィート",
 				"unitPattern-count-other": "{0} lbf⋅ft"
 			},
@@ -5391,7 +5583,7 @@
 			"volume-liter": {
 				"displayName": "リットル",
 				"unitPattern-count-other": "{0} L",
-				"perUnitPattern": "{0}/l"
+				"perUnitPattern": "{0}/L"
 			},
 			"volume-deciliter": {
 				"displayName": "デシリットル",
@@ -5462,6 +5654,34 @@
 			"volume-barrel": {
 				"displayName": "バレル",
 				"unitPattern-count-other": "{0} bbl"
+			},
+			"volume-dessert-spoon": {
+				"displayName": "中さじ",
+				"unitPattern-count-other": "中さじ {0}"
+			},
+			"volume-dessert-spoon-imperial": {
+				"displayName": "英デザートスプーン",
+				"unitPattern-count-other": "{0} 英デザートスプーン"
+			},
+			"volume-drop": {
+				"displayName": "滴",
+				"unitPattern-count-other": "{0} 滴"
+			},
+			"volume-dram": {
+				"displayName": "液量ドラム",
+				"unitPattern-count-other": "{0} 液量ドラム"
+			},
+			"volume-jigger": {
+				"displayName": "ジガー",
+				"unitPattern-count-other": "{0} ジガー"
+			},
+			"volume-pinch": {
+				"displayName": "つまみ",
+				"unitPattern-count-other": "{0} つまみ"
+			},
+			"volume-quart-imperial": {
+				"displayName": "英クォート",
+				"unitPattern-count-other": "{0} qt Imp."
 			},
 			"coordinateUnit": {
 				"displayName": "方位",
@@ -5624,5 +5844,8 @@
 			"_at": "12:00"
 		}
 	},
-	"calendarPreference": "gregorian japanese"
+	"calendarPreference": [
+		"gregorian",
+		"japanese"
+	]
 }

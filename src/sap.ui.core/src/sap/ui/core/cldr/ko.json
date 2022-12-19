@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "35.1.0",
-	"__buildtime": "2022-05-02T19:26:05.809Z",
+	"__version": "41.0.0",
+	"__buildtime": "2022-12-19T09:41:25.319Z",
 	"languages": {
 		"aa": "아파르어",
 		"ab": "압카즈어",
@@ -94,6 +94,8 @@
 		"chr": "체로키어",
 		"chy": "샤이엔어",
 		"ckb": "소라니 쿠르드어",
+		"ckb_alt-menu": "쿠르드어(소라니)",
+		"ckb_alt-variant": "쿠르드어(소라니)",
 		"co": "코르시카어",
 		"cop": "콥트어",
 		"cr": "크리어",
@@ -133,7 +135,7 @@
 		"el": "그리스어",
 		"elx": "엘람어",
 		"en": "영어",
-		"en_AU": "영어(호주)",
+		"en_AU": "영어(오스트레일리아)",
 		"en_CA": "영어(캐나다)",
 		"en_GB": "영어(영국)",
 		"en_GB-alt-short": "영어(영국)",
@@ -149,6 +151,7 @@
 		"eu": "바스크어",
 		"ewo": "이원도어",
 		"fa": "페르시아어",
+		"fa_AF": "다리어",
 		"fan": "팡그어",
 		"fat": "판티어",
 		"ff": "풀라어",
@@ -247,6 +250,7 @@
 		"kea": "크리올어",
 		"kfo": "코로어",
 		"kg": "콩고어",
+		"kgp": "kgp",
 		"kha": "카시어",
 		"kho": "호탄어",
 		"khq": "코이라 친니어",
@@ -289,6 +293,7 @@
 		"lfn": "링구아 프랑카 노바",
 		"lg": "간다어",
 		"li": "림버거어",
+		"lij": "lij",
 		"lkt": "라코타어",
 		"ln": "링갈라어",
 		"lo": "라오어",
@@ -409,13 +414,13 @@
 		"raj": "라자스탄어",
 		"rap": "라파뉴이",
 		"rar": "라로통가어",
+		"rhg": "로힝야어",
 		"rm": "로만시어",
 		"rn": "룬디어",
 		"ro": "루마니아어",
 		"ro_MD": "몰도바어",
 		"rof": "롬보어",
 		"rom": "집시어",
-		"root": "어근",
 		"ru": "러시아어",
 		"rue": "루신어",
 		"rup": "아로마니아어",
@@ -446,7 +451,7 @@
 		"shi": "타셸히트어",
 		"shn": "샨어",
 		"shu": "차디언 아라비아어",
-		"si": "스리랑카어",
+		"si": "싱할라어",
 		"sid": "시다모어",
 		"sk": "슬로바키아어",
 		"sl": "슬로베니아어",
@@ -542,15 +547,20 @@
 		"ybb": "옘바어",
 		"yi": "이디시어",
 		"yo": "요루바어",
+		"yrl": "yrl",
 		"yue": "광둥어",
+		"yue_alt-menu": "중국어(광둥어)",
 		"za": "주앙어",
 		"zap": "사포테크어",
 		"zbl": "블리스 심볼",
 		"zen": "제나가어",
 		"zgh": "표준 모로코 타마지트어",
 		"zh": "중국어",
+		"zh_alt-menu": "중국어(만다린)",
 		"zh_Hans": "중국어(간체)",
+		"zh_Hans-alt-long": "중국어(만다린, 간체)",
 		"zh_Hant": "중국어(번체)",
+		"zh_Hant-alt-long": "중국어(만다린, 번체)",
 		"zu": "줄루어",
 		"zun": "주니어",
 		"zxx": "언어 관련 내용 없음",
@@ -563,6 +573,7 @@
 		"Ahom": "Ahom",
 		"Arab": "아랍 문자",
 		"Arab-alt-variant": "페르소-아라비아 문자",
+		"Aran": "나스탈리크체",
 		"Armi": "아랍제국 문자",
 		"Armn": "아르메니아 문자",
 		"Avst": "아베스타 문자",
@@ -583,12 +594,15 @@
 		"Cari": "카리 문자",
 		"Cham": "칸 고어",
 		"Cher": "체로키 문자",
+		"Chrs": "Chrs",
 		"Cirt": "키르쓰",
 		"Copt": "콥트 문자",
+		"Cpmn": "Cpmn",
 		"Cprt": "키프로스 문자",
 		"Cyrl": "키릴 문자",
 		"Cyrs": "고대교회슬라브어 키릴문자",
 		"Deva": "데바나가리 문자",
+		"Diak": "Diak",
 		"Dogr": "Dogr",
 		"Dsrt": "디저렛 문자",
 		"Dupl": "듀플로이안 문자",
@@ -632,11 +646,13 @@
 		"Jurc": "줄첸 문자",
 		"Kali": "카야 리 문자",
 		"Kana": "가타카나",
+		"Kawi": "Kawi",
 		"Khar": "카로슈티 문자",
 		"Khmr": "크메르 문자",
 		"Khoj": "코즈키 문자",
+		"Kits": "Kits",
 		"Knda": "칸나다 문자",
-		"Kore": "한국어",
+		"Kore": "한국 문자",
 		"Kpel": "크펠레 문자",
 		"Kthi": "카이시 문자",
 		"Lana": "란나 문자",
@@ -670,6 +686,7 @@
 		"Mtei": "메이테이 마옉 문자",
 		"Mult": "Mult",
 		"Mymr": "미얀마 문자",
+		"Nagm": "Nagm",
 		"Nand": "Nand",
 		"Narb": "옛 북부 아라비아 문자",
 		"Nbat": "나바테아 문자",
@@ -683,6 +700,7 @@
 		"Orya": "오리야 문자",
 		"Osge": "Osge",
 		"Osma": "오스마니아 문자",
+		"Ougr": "Ougr",
 		"Palm": "팔미라 문자",
 		"Pauc": "Pauc",
 		"Perm": "고대 페름 문자",
@@ -693,7 +711,7 @@
 		"Phnx": "페니키아 문자",
 		"Plrd": "폴라드 표음 문자",
 		"Prti": "명문 파라티아 문자",
-		"Qaag": "Qaag",
+		"Qaag": "저지 문자",
 		"Rjng": "레장 문자",
 		"Rohg": "Rohg",
 		"Roro": "롱고롱고",
@@ -733,14 +751,18 @@
 		"Thai": "타이 문자",
 		"Tibt": "티베트 문자",
 		"Tirh": "티르후타 문자",
+		"Tnsa": "Tnsa",
+		"Toto": "Toto",
 		"Ugar": "우가리트 문자",
 		"Vaii": "바이 문자",
 		"Visp": "시화법",
+		"Vith": "Vith",
 		"Wara": "바랑 크시티 문자",
 		"Wcho": "Wcho",
 		"Wole": "울레아이",
 		"Xpeo": "고대 페르시아 문자",
 		"Xsux": "수메르-아카드어 설형문자",
+		"Yezi": "Yezi",
 		"Yiii": "이 문자",
 		"Zanb": "Zanb",
 		"Zinh": "구전 문자",
@@ -764,7 +786,7 @@
 		"001": "세계",
 		"002": "아프리카",
 		"003": "북아메리카",
-		"005": "남아메리카(남미)",
+		"005": "남아메리카",
 		"009": "오세아니아",
 		"011": "서부 아프리카",
 		"013": "중앙 아메리카",
@@ -783,7 +805,7 @@
 		"054": "멜라네시아",
 		"057": "미크로네시아 지역",
 		"061": "폴리네시아",
-		"AC": "어센션 섬",
+		"AC": "어센션섬",
 		"AD": "안도라",
 		"AE": "아랍에미리트",
 		"AF": "아프가니스탄",
@@ -836,7 +858,7 @@
 		"CM": "카메룬",
 		"CN": "중국",
 		"CO": "콜롬비아",
-		"CP": "클립퍼튼 섬",
+		"CP": "클리퍼턴섬",
 		"CR": "코스타리카",
 		"CU": "쿠바",
 		"CV": "카보베르데",
@@ -900,7 +922,7 @@
 		"ID": "인도네시아",
 		"IE": "아일랜드",
 		"IL": "이스라엘",
-		"IM": "맨 섬",
+		"IM": "맨섬",
 		"IN": "인도",
 		"IO": "영국령 인도양 식민지",
 		"IQ": "이라크",
@@ -941,7 +963,6 @@
 		"MG": "마다가스카르",
 		"MH": "마셜 제도",
 		"MK": "북마케도니아",
-		"MK-alt-variant": "MK",
 		"ML": "말리",
 		"MM": "미얀마",
 		"MN": "몽골",
@@ -979,7 +1000,7 @@
 		"PK": "파키스탄",
 		"PL": "폴란드",
 		"PM": "생피에르 미클롱",
-		"PN": "핏케언 섬",
+		"PN": "핏케언 제도",
 		"PR": "푸에르토리코",
 		"PS": "팔레스타인 지구",
 		"PS-alt-short": "팔레스타인",
@@ -988,7 +1009,7 @@
 		"PY": "파라과이",
 		"QA": "카타르",
 		"QO": "오세아니아 외곽",
-		"RE": "리유니온",
+		"RE": "레위니옹",
 		"RO": "루마니아",
 		"RS": "세르비아",
 		"RU": "러시아",
@@ -1036,7 +1057,7 @@
 		"UA": "우크라이나",
 		"UG": "우간다",
 		"UM": "미국령 해외 제도",
-		"UN": "유엔",
+		"UN": "국제연합",
 		"UN-alt-short": "유엔",
 		"US": "미국",
 		"US-alt-short": "미국",
@@ -1095,6 +1116,7 @@
 				"Ehms": "(E) a h:mm:ss",
 				"EHms": "(E) HH:mm:ss",
 				"Gy": "G y년",
+				"GyMd": "GGGGG y/M/d",
 				"GyMMM": "G y년 MMM",
 				"GyMMMd": "G y년 MMM d일",
 				"GyMMMEd": "G y년 MMM d일 (E)",
@@ -1647,10 +1669,11 @@
 				"Ehms": "E a h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y년",
-				"GyMMM": "G y년 MMM월",
-				"GyMMMd": "G y년 MMM월 d일",
-				"GyMMMEd": "G y년 MMM월 d일 (E)",
-				"GyMMMEEEEd": "G y년 MMM월 d일 EEEE",
+				"GyMd": "GGGGG y/M/d",
+				"GyMMM": "G y년 M월",
+				"GyMMMd": "G y년 M월 d일",
+				"GyMMMEd": "G y년 M월 d일 (E)",
+				"GyMMMEEEEd": "G y년 M월 d일 EEEE",
 				"h": "a h시",
 				"H": "H시",
 				"HHmmss": "HH:mm:ss",
@@ -1663,9 +1686,9 @@
 				"MEd": "M. d. (E)",
 				"MEEEEd": "M. d. EEEE",
 				"MMM": "LLL",
-				"MMMd": "MMM월 d일",
-				"MMMEd": "MMM월 d일 (E)",
-				"MMMEEEEd": "MMM월 d일 EEEE",
+				"MMMd": "M월 d일",
+				"MMMEd": "M월 d일 (E)",
+				"MMMEEEEd": "M월 d일 EEEE",
 				"MMMMd": "MMMM d일",
 				"ms": "mm:ss",
 				"y": "G y년",
@@ -1674,10 +1697,10 @@
 				"yyyyMd": "G y. M. d.",
 				"yyyyMEd": "G y. M. d. (E)",
 				"yyyyMEEEEd": "G y. M. d. EEEE",
-				"yyyyMMM": "G y년 MMM월",
-				"yyyyMMMd": "G y년 MMM월 d일",
-				"yyyyMMMEd": "G y년 MMM월 d일 (E)",
-				"yyyyMMMEEEEd": "G y년 MMM월 d일 EEEE",
+				"yyyyMMM": "G y년 M월",
+				"yyyyMMMd": "G y년 M월 d일",
+				"yyyyMMMEd": "G y년 M월 d일 (E)",
+				"yyyyMMMEEEEd": "G y년 M월 d일 EEEE",
 				"yyyyMMMM": "G y년 MMMM",
 				"yyyyQQQ": "G y년 QQQ",
 				"yyyyQQQQ": "G y년 QQQQ"
@@ -1731,21 +1754,21 @@
 					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"GyMMM": {
-					"G": "G y년 MMM ~ G y년 MMM",
-					"M": "G y년 MMM ~ y년 MMM",
-					"y": "G y년 MMM ~ y년 MMM"
+					"G": "G y년 M월 ~ G y년 M월",
+					"M": "G y년 M월 ~ y년 M월",
+					"y": "G y년 M월 ~ y년 M월"
 				},
 				"GyMMMd": {
-					"d": "G y년 MMM d일 ~ d일",
-					"G": "G y년 MMM d일 ~ y년 MMM d일",
-					"M": "G y년 MMM d일 ~ MMM d일",
-					"y": "G y년 MMM d일 ~ MMM y년 d일"
+					"d": "G y년 M월 d일 ~ d일",
+					"G": "G y년 M월 d일 ~ y년 M월 d일",
+					"M": "G y년 M월 d일 ~ M월 d일",
+					"y": "G y년 M월 d일 ~ y년 M월 d일"
 				},
 				"GyMMMEd": {
-					"d": "G y년 MMM d일 e요일 – MMM d일 e요일",
-					"G": "G y년 MMM d일 E요일 ~ G y년 MMM d일 E요일",
-					"M": "G y년 MMM d일 E요일 ~ MMM d일 E요일",
-					"y": "G y년 MMM d일 E요일 ~ y년 MMM d일 E요일"
+					"d": "G y년 M월 d일 e요일 – M월 d일 e요일",
+					"G": "G y년 M월 d일 E요일 ~ G y년 M월 d일 E요일",
+					"M": "G y년 M월 d일 E요일 ~ M월 d일 E요일",
+					"y": "G y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"h": {
 					"a": "a h시 ~ a h시",
@@ -1791,7 +1814,7 @@
 					"M": "M. d (E) ~ M. d (E)"
 				},
 				"MMM": {
-					"M": "MMM ~ MMM"
+					"M": "M월 ~ M월"
 				},
 				"MMMd": {
 					"d": "M월 d일 ~ d일",
@@ -2193,6 +2216,7 @@
 				"Ehms": "E a h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y년",
+				"GyMd": "GGGGG y/M/d",
 				"GyMMM": "G y년 MMM",
 				"GyMMMd": "G y년 MMM d일",
 				"GyMMMEd": "G y년 MMM d일 (E)",
@@ -2277,21 +2301,21 @@
 					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"GyMMM": {
-					"G": "G y년 MMM ~ G y년 MMM",
-					"M": "G y년 MMM ~ y년 MMM",
-					"y": "G y년 MMM ~ y년 MMM"
+					"G": "G y년 M월 ~ G y년 M월",
+					"M": "G y년 M월 ~ y년 M월",
+					"y": "G y년 M월 ~ y년 M월"
 				},
 				"GyMMMd": {
-					"d": "G y년 MMM d일 ~ d일",
-					"G": "G y년 MMM d일 ~ y년 MMM d일",
-					"M": "G y년 MMM d일 ~ MMM d일",
-					"y": "G y년 MMM d일 ~ MMM y년 d일"
+					"d": "G y년 M월 d일 ~ d일",
+					"G": "G y년 M월 d일 ~ y년 M월 d일",
+					"M": "G y년 M월 d일 ~ M월 d일",
+					"y": "G y년 M월 d일 ~ y년 M월 d일"
 				},
 				"GyMMMEd": {
-					"d": "G y년 MMM d일 e요일 – MMM d일 e요일",
-					"G": "G y년 MMM d일 E요일 ~ G y년 MMM d일 E요일",
-					"M": "G y년 MMM d일 E요일 ~ MMM d일 E요일",
-					"y": "G y년 MMM d일 E요일 ~ y년 MMM d일 E요일"
+					"d": "G y년 M월 d일 e요일 – M월 d일 e요일",
+					"G": "G y년 M월 d일 E요일 ~ G y년 M월 d일 E요일",
+					"M": "G y년 M월 d일 E요일 ~ M월 d일 E요일",
+					"y": "G y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"h": {
 					"a": "a h시 ~ a h시",
@@ -2337,7 +2361,7 @@
 					"M": "M. d (E) ~ M. d (E)"
 				},
 				"MMM": {
-					"M": "MMM ~ MMM"
+					"M": "M월 ~ M월"
 				},
 				"MMMd": {
 					"d": "M월 d일 ~ d일",
@@ -2760,10 +2784,11 @@
 				"Ehms": "E a h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y년",
-				"GyMMM": "G y년 MMM월",
-				"GyMMMd": "G y년 MMM월 d일",
-				"GyMMMEd": "G y년 MMM월 d일 (E)",
-				"GyMMMEEEEd": "G y년 MMM월 d일 EEEE",
+				"GyMd": "GGGGG y/M/d",
+				"GyMMM": "G y년 M월",
+				"GyMMMd": "G y년 M월 d일",
+				"GyMMMEd": "G y년 M월 d일 (E)",
+				"GyMMMEEEEd": "G y년 M월 d일 EEEE",
 				"h": "a h시",
 				"H": "H시",
 				"HHmmss": "HH:mm:ss",
@@ -2776,10 +2801,10 @@
 				"MEd": "M. d. (E)",
 				"MEEEEd": "M. d. EEEE",
 				"MMM": "LLL",
-				"MMMd": "MMM월 d일",
-				"MMMEd": "MMM월 d일 (E)",
-				"MMMEEEEd": "MMM월 d일 EEEE",
-				"MMMMd": "MMMM월 d일",
+				"MMMd": "M월 d일",
+				"MMMEd": "M월 d일 (E)",
+				"MMMEEEEd": "M월 d일 EEEE",
+				"MMMMd": "M월 d일",
 				"ms": "mm:ss",
 				"y": "G y년",
 				"yyyy": "G y년",
@@ -2787,11 +2812,11 @@
 				"yyyyMd": "G y. M. d.",
 				"yyyyMEd": "G y. M. d. (E)",
 				"yyyyMEEEEd": "G y. M. d. EEEE",
-				"yyyyMMM": "G y년 MMM월",
-				"yyyyMMMd": "G y년 MMM월 d일",
-				"yyyyMMMEd": "G y년 MMM월 d일 (E)",
-				"yyyyMMMEEEEd": "G y년 MMM월 d일 EEEE",
-				"yyyyMMMM": "G y년 MMMM월",
+				"yyyyMMM": "G y년 M월",
+				"yyyyMMMd": "G y년 M월 d일",
+				"yyyyMMMEd": "G y년 M월 d일 (E)",
+				"yyyyMMMEEEEd": "G y년 M월 d일 EEEE",
+				"yyyyMMMM": "G y년 M월",
 				"yyyyQQQ": "G y년 QQQ",
 				"yyyyQQQQ": "G y년 QQQQ"
 			},
@@ -2844,21 +2869,21 @@
 					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"GyMMM": {
-					"G": "G y년 MMM ~ G y년 MMM",
-					"M": "G y년 MMM ~ y년 MMM",
-					"y": "G y년 MMM ~ y년 MMM"
+					"G": "G y년 M월 ~ G y년 M월",
+					"M": "G y년 M월 ~ y년 M월",
+					"y": "G y년 M월 ~ y년 M월"
 				},
 				"GyMMMd": {
-					"d": "G y년 MMM d일 ~ d일",
-					"G": "G y년 MMM d일 ~ y년 MMM d일",
-					"M": "G y년 MMM d일 ~ MMM d일",
-					"y": "G y년 MMM d일 ~ MMM y년 d일"
+					"d": "G y년 M월 d일 ~ d일",
+					"G": "G y년 M월 d일 ~ y년 M월 d일",
+					"M": "G y년 M월 d일 ~ M월 d일",
+					"y": "G y년 M월 d일 ~ y년 M월 d일"
 				},
 				"GyMMMEd": {
-					"d": "G y년 MMM d일 e요일 – MMM d일 e요일",
-					"G": "G y년 MMM d일 E요일 ~ G y년 MMM d일 E요일",
-					"M": "G y년 MMM d일 E요일 ~ MMM d일 E요일",
-					"y": "G y년 MMM d일 E요일 ~ y년 MMM d일 E요일"
+					"d": "G y년 M월 d일 e요일 – M월 d일 e요일",
+					"G": "G y년 M월 d일 E요일 ~ G y년 M월 d일 E요일",
+					"M": "G y년 M월 d일 E요일 ~ M월 d일 E요일",
+					"y": "G y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"h": {
 					"a": "a h시 ~ a h시",
@@ -2904,7 +2929,7 @@
 					"M": "M. d (E) ~ M. d (E)"
 				},
 				"MMM": {
-					"M": "MMM ~ MMM"
+					"M": "M월 ~ M월"
 				},
 				"MMMd": {
 					"d": "M월 d일 ~ d일",
@@ -3306,6 +3331,7 @@
 				"Ehms": "E a h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y년",
+				"GyMd": "GGGGG y/M/d",
 				"GyMMM": "G y년 MMM",
 				"GyMMMd": "G y년 MMM d일",
 				"GyMMMEd": "G y년 MMM d일 (E)",
@@ -3390,21 +3416,21 @@
 					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"GyMMM": {
-					"G": "G y년 MMM ~ G y년 MMM",
-					"M": "G y년 MMM ~ y년 MMM",
-					"y": "G y년 MMM ~ y년 MMM"
+					"G": "G y년 M월 ~ G y년 M월",
+					"M": "G y년 M월 ~ y년 M월",
+					"y": "G y년 M월 ~ y년 M월"
 				},
 				"GyMMMd": {
-					"d": "G y년 MMM d일 ~ d일",
-					"G": "G y년 MMM d일 ~ y년 MMM d일",
-					"M": "G y년 MMM d일 ~ MMM d일",
-					"y": "G y년 MMM d일 ~ MMM y년 d일"
+					"d": "G y년 M월 d일 ~ d일",
+					"G": "G y년 M월 d일 ~ y년 M월 d일",
+					"M": "G y년 M월 d일 ~ M월 d일",
+					"y": "G y년 M월 d일 ~ y년 M월 d일"
 				},
 				"GyMMMEd": {
-					"d": "G y년 MMM d일 e요일 – MMM d일 e요일",
-					"G": "G y년 MMM d일 E요일 ~ G y년 MMM d일 E요일",
-					"M": "G y년 MMM d일 E요일 ~ MMM d일 E요일",
-					"y": "G y년 MMM d일 E요일 ~ y년 MMM d일 E요일"
+					"d": "G y년 M월 d일 e요일 – M월 d일 e요일",
+					"G": "G y년 M월 d일 E요일 ~ G y년 M월 d일 E요일",
+					"M": "G y년 M월 d일 E요일 ~ M월 d일 E요일",
+					"y": "G y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"h": {
 					"a": "a h시 ~ a h시",
@@ -3450,7 +3476,7 @@
 					"M": "M. d (E) ~ M. d (E)"
 				},
 				"MMM": {
-					"M": "MMM ~ MMM"
+					"M": "M월 ~ M월"
 				},
 				"MMMd": {
 					"d": "M월 d일 ~ d일",
@@ -4234,13 +4260,13 @@
 			"Hermosillo": "에르모시요",
 			"Indiana": {
 				"Indianapolis": "인디애나폴리스",
-				"Knox": "인디애나주 녹스",
-				"Marengo": "인디애나주, 마렝고",
+				"Knox": "인디애나주, 녹스",
+				"Marengo": "인디애나주, 머렝고",
 				"Petersburg": "인디애나주, 피츠버그",
-				"Tell_City": "인디아나주, 텔시티",
-				"Vevay": "비비",
-				"Vincennes": "인디아나주, 뱅센",
-				"Winamac": "인디아나주, 워너맥"
+				"Tell_City": "인디애나주, 텔시티",
+				"Vevay": "인디애나주, 비비",
+				"Vincennes": "인디애나주, 빈센스",
+				"Winamac": "인디애나주, 위너맥"
 			},
 			"Inuvik": "이누빅",
 			"Iqaluit": "이칼루이트",
@@ -4279,7 +4305,7 @@
 			"North_Dakota": {
 				"Beulah": "노스다코타주, 베라",
 				"Center": "중부, 노스다코타",
-				"New_Salem": "노스 다코타주, 뉴살렘"
+				"New_Salem": "노스다코타주, 뉴살렘"
 			},
 			"Nuuk": "고드호프",
 			"Ojinaga": "오히나가",
@@ -4307,10 +4333,10 @@
 			"Sitka": "싯카",
 			"St_Barthelemy": "생바르텔레미",
 			"St_Johns": "세인트존스",
-			"St_Kitts": "세인트 키츠",
-			"St_Lucia": "세인트 루시아",
-			"St_Thomas": "세인트 토마스",
-			"St_Vincent": "세인트 빈센트",
+			"St_Kitts": "세인트키츠",
+			"St_Lucia": "세인트루시아",
+			"St_Thomas": "세인트토마스",
+			"St_Vincent": "세인트빈센트",
 			"Swift_Current": "스위프트커런트",
 			"Tegucigalpa": "테구시갈파",
 			"Thule": "툴레",
@@ -4550,6 +4576,7 @@
 			"Guadalcanal": "과달카날",
 			"Guam": "괌",
 			"Honolulu": "호놀룰루",
+			"Kanton": "Kanton",
 			"Kiritimati": "키리티마티",
 			"Kosrae": "코스레",
 			"Kwajalein": "콰잘렌",
@@ -4619,12 +4646,12 @@
 		"accounting": "¤#,##0.00;(¤#,##0.00)",
 		"currencySpacing": {
 			"beforeCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			},
 			"afterCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
@@ -4658,6 +4685,7 @@
 	"symbols-latn-percentSign": "%",
 	"symbols-latn-plusSign": "+",
 	"symbols-latn-minusSign": "-",
+	"symbols-latn-approximatelySign": "~",
 	"symbols-latn-exponential": "E",
 	"symbols-latn-superscriptingExponent": "×",
 	"symbols-latn-perMille": "‰",
@@ -4683,7 +4711,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
-		"XOF": "CFA",
+		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
 	},
@@ -4714,14 +4742,109 @@
 	},
 	"units": {
 		"short": {
+			"10p-1": {
+				"unitPrefixPattern": "d{0}"
+			},
+			"10p-2": {
+				"unitPrefixPattern": "c{0}"
+			},
+			"10p-3": {
+				"unitPrefixPattern": "m{0}"
+			},
+			"10p-6": {
+				"unitPrefixPattern": "μ{0}"
+			},
+			"10p-9": {
+				"unitPrefixPattern": "n{0}"
+			},
+			"10p-12": {
+				"unitPrefixPattern": "p{0}"
+			},
+			"10p-15": {
+				"unitPrefixPattern": "f{0}"
+			},
+			"10p-18": {
+				"unitPrefixPattern": "a{0}"
+			},
+			"10p-21": {
+				"unitPrefixPattern": "z{0}"
+			},
+			"10p-24": {
+				"unitPrefixPattern": "y{0}"
+			},
+			"10p1": {
+				"unitPrefixPattern": "da{0}"
+			},
+			"10p2": {
+				"unitPrefixPattern": "h{0}"
+			},
+			"10p3": {
+				"unitPrefixPattern": "k{0}"
+			},
+			"10p6": {
+				"unitPrefixPattern": "M{0}"
+			},
+			"10p9": {
+				"unitPrefixPattern": "G{0}"
+			},
+			"10p12": {
+				"unitPrefixPattern": "T{0}"
+			},
+			"10p15": {
+				"unitPrefixPattern": "P{0}"
+			},
+			"10p18": {
+				"unitPrefixPattern": "E{0}"
+			},
+			"10p21": {
+				"unitPrefixPattern": "Z{0}"
+			},
+			"10p24": {
+				"unitPrefixPattern": "Y{0}"
+			},
+			"1024p1": {
+				"unitPrefixPattern": "Ki{0}"
+			},
+			"1024p2": {
+				"unitPrefixPattern": "Mi{0}"
+			},
+			"1024p3": {
+				"unitPrefixPattern": "Gi{0}"
+			},
+			"1024p4": {
+				"unitPrefixPattern": "Ti{0}"
+			},
+			"1024p5": {
+				"unitPrefixPattern": "Pi{0}"
+			},
+			"1024p6": {
+				"unitPrefixPattern": "Ei{0}"
+			},
+			"1024p7": {
+				"unitPrefixPattern": "Zi{0}"
+			},
+			"1024p8": {
+				"unitPrefixPattern": "Yi{0}"
+			},
 			"per": {
 				"compoundUnitPattern": "{0}/{1}"
+			},
+			"power2": {
+				"compoundUnitPattern1": "{0}²",
+				"compoundUnitPattern1-count-other": "{0}²"
+			},
+			"power3": {
+				"compoundUnitPattern1": "{0}³",
+				"compoundUnitPattern1-count-other": "{0}³"
+			},
+			"times": {
+				"compoundUnitPattern": "{0}⋅{1}"
 			},
 			"acceleration-g-force": {
 				"displayName": "g-force",
 				"unitPattern-count-other": "{0}G"
 			},
-			"acceleration-meter-per-second-squared": {
+			"acceleration-meter-per-square-second": {
 				"displayName": "m/s²",
 				"unitPattern-count-other": "{0}m/s²"
 			},
@@ -4794,7 +4917,7 @@
 				"displayName": "kt",
 				"unitPattern-count-other": "{0}kt"
 			},
-			"concentr-milligram-per-deciliter": {
+			"concentr-milligram-ofglucose-per-deciliter": {
 				"displayName": "mg/dL",
 				"unitPattern-count-other": "{0}mg/dL"
 			},
@@ -4802,7 +4925,11 @@
 				"displayName": "mmol/L",
 				"unitPattern-count-other": "{0}mmol/L"
 			},
-			"concentr-part-per-million": {
+			"concentr-item": {
+				"displayName": "항목",
+				"unitPattern-count-other": "{0}개 항목"
+			},
+			"concentr-permillion": {
 				"displayName": "ppm",
 				"unitPattern-count-other": "{0}ppm"
 			},
@@ -4826,7 +4953,7 @@
 				"displayName": "L/km",
 				"unitPattern-count-other": "{0}L/km"
 			},
-			"consumption-liter-per-100kilometers": {
+			"consumption-liter-per-100-kilometer": {
 				"displayName": "L/100km",
 				"unitPattern-count-other": "{0}L/100km"
 			},
@@ -4885,6 +5012,10 @@
 			"duration-century": {
 				"displayName": "C",
 				"unitPattern-count-other": "{0}C"
+			},
+			"duration-decade": {
+				"displayName": "dec",
+				"unitPattern-count-other": "{0}dec"
 			},
 			"duration-year": {
 				"displayName": "년",
@@ -4981,6 +5112,10 @@
 				"displayName": "Btu",
 				"unitPattern-count-other": "{0}Btu"
 			},
+			"energy-therm-us": {
+				"displayName": "미국 섬",
+				"unitPattern-count-other": "{0}섬"
+			},
 			"force-pound-force": {
 				"displayName": "lbf",
 				"unitPattern-count-other": "{0}lbf"
@@ -4988,6 +5123,10 @@
 			"force-newton": {
 				"displayName": "N",
 				"unitPattern-count-other": "{0}N"
+			},
+			"force-kilowatt-hour-per-100-kilometer": {
+				"displayName": "kWh/100km",
+				"unitPattern-count-other": "{0}kWh/100km"
 			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
@@ -5004,6 +5143,41 @@
 			"frequency-hertz": {
 				"displayName": "Hz",
 				"unitPattern-count-other": "{0}Hz"
+			},
+			"graphics-em": {
+				"displayName": "em",
+				"unitPattern-count-other": "{0}em"
+			},
+			"graphics-pixel": {
+				"displayName": "px",
+				"unitPattern-count-other": "{0}px"
+			},
+			"graphics-megapixel": {
+				"displayName": "MP",
+				"unitPattern-count-other": "{0}MP"
+			},
+			"graphics-pixel-per-centimeter": {
+				"displayName": "ppcm",
+				"unitPattern-count-other": "{0}ppcm"
+			},
+			"graphics-pixel-per-inch": {
+				"displayName": "ppi",
+				"unitPattern-count-other": "{0}ppi"
+			},
+			"graphics-dot-per-centimeter": {
+				"displayName": "dpcm",
+				"unitPattern-count-other": "{0}dpcm"
+			},
+			"graphics-dot-per-inch": {
+				"displayName": "dpi",
+				"unitPattern-count-other": "{0}dpi"
+			},
+			"graphics-dot": {
+				"unitPattern-count-other": "{0}dot"
+			},
+			"length-earth-radius": {
+				"displayName": "R⊕",
+				"unitPattern-count-other": "{0}R⊕"
 			},
 			"length-kilometer": {
 				"displayName": "km",
@@ -5029,8 +5203,8 @@
 				"unitPattern-count-other": "{0}mm"
 			},
 			"length-micrometer": {
-				"displayName": "µm",
-				"unitPattern-count-other": "{0}µm"
+				"displayName": "μm",
+				"unitPattern-count-other": "{0}μm"
 			},
 			"length-nanometer": {
 				"displayName": "nm",
@@ -5046,7 +5220,7 @@
 			},
 			"length-yard": {
 				"displayName": "yd",
-				"unitPattern-count-other": "{0}야드"
+				"unitPattern-count-other": "{0}yd"
 			},
 			"length-foot": {
 				"displayName": "ft",
@@ -5098,6 +5272,14 @@
 				"displayName": "lx",
 				"unitPattern-count-other": "{0}lx"
 			},
+			"light-candela": {
+				"displayName": "cd",
+				"unitPattern-count-other": "{0}cd"
+			},
+			"light-lumen": {
+				"displayName": "lm",
+				"unitPattern-count-other": "{0}lm"
+			},
 			"light-solar-luminosity": {
 				"displayName": "L☉",
 				"unitPattern-count-other": "{0}L☉"
@@ -5121,8 +5303,8 @@
 				"unitPattern-count-other": "{0}mg"
 			},
 			"mass-microgram": {
-				"displayName": "µg",
-				"unitPattern-count-other": "{0}µg"
+				"displayName": "μg",
+				"unitPattern-count-other": "{0}μg"
 			},
 			"mass-ton": {
 				"displayName": "tn",
@@ -5162,6 +5344,10 @@
 				"displayName": "M☉",
 				"unitPattern-count-other": "{0}M☉"
 			},
+			"mass-grain": {
+				"displayName": "grain",
+				"unitPattern-count-other": "{0}grain"
+			},
 			"power-gigawatt": {
 				"displayName": "GW",
 				"unitPattern-count-other": "{0}GW"
@@ -5186,21 +5372,21 @@
 				"displayName": "hp",
 				"unitPattern-count-other": "{0}hp"
 			},
-			"pressure-hectopascal": {
-				"displayName": "hPa",
-				"unitPattern-count-other": "{0}hPa"
-			},
-			"pressure-millimeter-of-mercury": {
+			"pressure-millimeter-ofhg": {
 				"displayName": "mmHg",
 				"unitPattern-count-other": "{0}mmHg"
 			},
-			"pressure-pound-per-square-inch": {
+			"pressure-pound-force-per-square-inch": {
 				"displayName": "psi",
 				"unitPattern-count-other": "{0}psi"
 			},
-			"pressure-inch-hg": {
+			"pressure-inch-ofhg": {
 				"displayName": "inHg",
 				"unitPattern-count-other": "{0}inHg"
+			},
+			"pressure-bar": {
+				"displayName": "bar",
+				"unitPattern-count-other": "{0}bar"
 			},
 			"pressure-millibar": {
 				"displayName": "mbar",
@@ -5209,6 +5395,14 @@
 			"pressure-atmosphere": {
 				"displayName": "atm",
 				"unitPattern-count-other": "{0}atm"
+			},
+			"pressure-pascal": {
+				"displayName": "Pa",
+				"unitPattern-count-other": "{0}Pa"
+			},
+			"pressure-hectopascal": {
+				"displayName": "hPa",
+				"unitPattern-count-other": "{0}hPa"
 			},
 			"pressure-kilopascal": {
 				"displayName": "kPa",
@@ -5250,7 +5444,7 @@
 				"displayName": "K",
 				"unitPattern-count-other": "{0}K"
 			},
-			"torque-pound-foot": {
+			"torque-pound-force-foot": {
 				"displayName": "lbf⋅ft",
 				"unitPattern-count-other": "{0}lbf⋅ft"
 			},
@@ -5327,7 +5521,7 @@
 			},
 			"volume-bushel": {
 				"displayName": "bu",
-				"unitPattern-count-other": "{0} bu"
+				"unitPattern-count-other": "{0}bu"
 			},
 			"volume-gallon": {
 				"displayName": "gal",
@@ -5370,6 +5564,34 @@
 			"volume-barrel": {
 				"displayName": "bbl",
 				"unitPattern-count-other": "{0}bbl"
+			},
+			"volume-dessert-spoon": {
+				"displayName": "dstspn",
+				"unitPattern-count-other": "{0}dstspn"
+			},
+			"volume-dessert-spoon-imperial": {
+				"displayName": "dstspn Imp",
+				"unitPattern-count-other": "{0}dstspn Imp"
+			},
+			"volume-drop": {
+				"displayName": "drop",
+				"unitPattern-count-other": "{0}drop"
+			},
+			"volume-dram": {
+				"displayName": "dram fluid",
+				"unitPattern-count-other": "{0}dram fl"
+			},
+			"volume-jigger": {
+				"displayName": "jigger",
+				"unitPattern-count-other": "{0}jigger"
+			},
+			"volume-pinch": {
+				"displayName": "pinch",
+				"unitPattern-count-other": "{0}pinch"
+			},
+			"volume-quart-imperial": {
+				"displayName": "qt Imp",
+				"unitPattern-count-other": "{0}qt Imp."
 			},
 			"coordinateUnit": {
 				"displayName": "쪽",
@@ -5532,5 +5754,8 @@
 			"_at": "12:00"
 		}
 	},
-	"calendarPreference": "gregorian dangi"
+	"calendarPreference": [
+		"gregorian",
+		"dangi"
+	]
 }

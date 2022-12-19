@@ -440,10 +440,10 @@ sap.ui.define([
 			assert.equal(oLocaleData.getDays("abbreviated")[0], "ned", "1st day abbreviated");
 			assert.equal(oLocaleData.getDays("narrow")[0], "n", "1st day narrow");
 			assert.equal(oLocaleData.getDays("short")[0], "ne", "1st day short");
-			assert.equal(oLocaleData.getDatePattern("medium"), "dd.MM.y.", "date pattern \"medium\"");
+			assert.equal(oLocaleData.getDatePattern("medium"), "d. M. y.", "date pattern \"medium\"");
 			assert.equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
 			assert.equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
-			assert.equal(oLocaleData.getCombinedDateTimePattern("medium", "short"), "dd.MM.y. HH:mm", "datetime pattern \"medium\", \"short\"");
+			assert.equal(oLocaleData.getCombinedDateTimePattern("medium", "short"), "d. M. y. HH:mm", "datetime pattern \"medium\", \"short\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("y"), "y.", "datetime format \"y\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("y", "Japanese"), "y. G", "datetime format \"y\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("yMMd"), "dd.MM.y.", "datetime format \"yMMd\"");
@@ -490,10 +490,10 @@ sap.ui.define([
 			assert.equal(oLocaleData.getDays("abbreviated")[0], "нед", "1st day abbreviated");
 			assert.equal(oLocaleData.getDays("narrow")[0], "н", "1st day narrow");
 			assert.equal(oLocaleData.getDays("short")[0], "не", "1st day short");
-			assert.equal(oLocaleData.getDatePattern("medium"), "dd.MM.y.", "date pattern \"medium\"");
+			assert.equal(oLocaleData.getDatePattern("medium"), "d. M. y.", "date pattern \"medium\"");
 			assert.equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
 			assert.equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
-			assert.equal(oLocaleData.getCombinedDateTimePattern("medium", "short"), "dd.MM.y. HH:mm", "datetime pattern \"medium\", \"short\"");
+			assert.equal(oLocaleData.getCombinedDateTimePattern("medium", "short"), "d. M. y. HH:mm", "datetime pattern \"medium\", \"short\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("y"), "y.", "datetime format \"y\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("y", "Japanese"), "y. G", "datetime format \"y\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("yMMd"), "dd.MM.y.", "datetime format \"yMMd\"");
@@ -539,7 +539,7 @@ sap.ui.define([
 			assert.equal(oLocaleData.getMonths("narrow")[0], "Я", "1st month narrow");
 			assert.equal(oLocaleData.getDays("wide")[0], "воскресенье", "1st day");
 			assert.equal(oLocaleData.getDays("abbreviated")[0], "вс", "1st day abbreviated");
-			assert.equal(oLocaleData.getDays("narrow")[0], "вс", "1st day narrow");
+			assert.equal(oLocaleData.getDays("narrow")[0], "В", "1st day narrow");
 			assert.equal(oLocaleData.getDays("short")[0], "вс", "1st day short");
 			assert.equal(oLocaleData.getDatePattern("medium"), "d MMM y 'г'.", "date pattern \"medium\"");
 			assert.equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
