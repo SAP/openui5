@@ -264,6 +264,9 @@ sap.ui.define([
 			}
 		}, 500);
 	}
+	/**
+	 * @deprecated Since version 1.77 due to deprecation of sync component creation
+	 */
 	QUnit.module("ExtensionPoints with sync and async view when component is created sync", {
 		before: createComponentAndContainer.bind(null, SYNC),
 		after: destroyComponentAndContainer.bind(null, SYNC)

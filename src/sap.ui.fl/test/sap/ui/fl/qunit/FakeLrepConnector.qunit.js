@@ -9,6 +9,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	/**
+	 * @deprecated Since version 1.70
+	 */
 	QUnit.module("Given a FakeLrepConnector", {
 		beforeEach: function () {
 			FakeLrepConnectorLocalStorage.disableFakeConnector();

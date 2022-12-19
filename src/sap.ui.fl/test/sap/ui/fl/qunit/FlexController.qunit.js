@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
 	"sap/base/util/deepClone",
-	"sap/ui/core/Core",
+	"sap/ui/core/Component",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
@@ -48,7 +48,7 @@ sap.ui.define([
 	JSONModel,
 	Log,
 	deepClone,
-	Core,
+	Component,
 	JsControlTreeModifier,
 	Manifest,
 	UIComponent,
@@ -59,13 +59,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	var oComponent = Core.createComponent({
-		name: "testComponent",
-		id: "testComponent",
-		metadata: {
-			manifest: "json"
-		}
-	});
+	var oComponent;
 
 	function getInitialChangesMap(mPropertyBag) {
 		mPropertyBag = mPropertyBag || {};
@@ -109,6 +103,17 @@ sap.ui.define([
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 			this.oControl = new Control("existingId");
 			this.oChange = FlexObjectFactory.createFromFileContent(labelChangeContent);
+			if (!oComponent) {
+				return Component.create({
+					name: "testComponent",
+					id: "testComponent",
+					metadata: {
+						manifest: "json"
+					}
+				}).then(function(oCreatedComponent) {
+					oComponent = oCreatedComponent;
+				});
+			}
 		},
 		afterEach: function() {
 			sandbox.restore();

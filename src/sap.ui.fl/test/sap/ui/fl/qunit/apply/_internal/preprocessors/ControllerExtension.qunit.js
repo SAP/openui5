@@ -92,6 +92,9 @@ sap.ui.define([
 			});
 		});
 
+		/**
+		 * @deprecated Since version 1.58 due to <code>sap.ui.base.Metadata.getPublicMethods</code> deprecation
+		 */
 		QUnit.test("When a component id is provided and one code extension with two methods is present", function(assert) {
 			var sModuleName = "sap/ui/fl/qunit/ControllerExtension/1.0.0/codeExtensions/firstCodeExt";
 			sap.ui.define(sModuleName, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) { // legacy-relevant: simulates a loaded code extension. no option to replace this regarding legacy free coding
@@ -164,6 +167,9 @@ sap.ui.define([
 			});
 		});
 
+		/**
+		 * @deprecated Since version 1.58 due to <code>sap.ui.base.Metadata.getAllPublicMethods</code> deprecation
+		 */
 		QUnit.test("apply multiple changes on different controllers", function (assert) {
 			// expect both extensions to be called
 			var done1 = assert.async();
