@@ -81,44 +81,65 @@ sap.ui.define([
 		return !!aCssRules && aCssRules.length > 0;
 	}
 
-	ThemeCheck.checkStyle = function(sId, bLog) {
-		var oStyle = document.getElementById(sId);
+	ThemeCheck.checkAndRemoveStyle = function(oParams) {
+		var sPrefix = oParams.prefix || "",
+			sLib = oParams.id;
 
-		try {
+		var checkStyle = function(sId, bLog) {
+			var oStyle = document.getElementById(sId);
 
-			var bNoLinkElement = false,
-				bLinkElementFinishedLoading = false,
-				bSheet = false,
-				bInnerHtml = false;
+			try {
 
-			// Check if <link> element is missing (e.g. misconfigured library)
-			bNoLinkElement = !oStyle;
+				var bNoLinkElement = false,
+					bLinkElementFinishedLoading = false,
+					bSheet = false,
+					bInnerHtml = false;
 
-			// Check if <link> element has finished loading (see jQuery.sap.includeStyleSheet)
-			bLinkElementFinishedLoading = !!(oStyle && (oStyle.getAttribute("data-sap-ui-ready") === "true" || oStyle.getAttribute("data-sap-ui-ready") === "false"));
+				// Check if <link> element is missing (e.g. misconfigured library)
+				bNoLinkElement = !oStyle;
 
-			// Check for "sheet" object and if rules are available
-			bSheet = !!(oStyle && oStyle.sheet && oStyle.sheet.href === oStyle.href && hasSheetCssRules(oStyle.sheet));
+				// Check if <link> element has finished loading (see sap/ui/dom/includeStyleSheet)
+				bLinkElementFinishedLoading = !!(oStyle && (oStyle.getAttribute("data-sap-ui-ready") === "true" || oStyle.getAttribute("data-sap-ui-ready") === "false"));
 
-			// Check for "innerHTML" content
-			bInnerHtml = !!(oStyle && oStyle.innerHTML && oStyle.innerHTML.length > 0);
+				// Check for "sheet" object and if rules are available
+				bSheet = !!(oStyle && oStyle.sheet && oStyle.sheet.href === oStyle.href && hasSheetCssRules(oStyle.sheet));
 
-			// One of the previous four checks need to be successful
-			var bResult = bNoLinkElement || bSheet || bInnerHtml || bLinkElementFinishedLoading;
+				// Check for "innerHTML" content
+				bInnerHtml = !!(oStyle && oStyle.innerHTML && oStyle.innerHTML.length > 0);
 
-			if (bLog) {
-				Log.debug("ThemeCheck: " + sId + ": " + bResult + " (noLinkElement: " + bNoLinkElement + ", sheet: " + bSheet + ", innerHtml: " + bInnerHtml + ", linkElementFinishedLoading: " + bLinkElementFinishedLoading + ")");
+				// One of the previous four checks need to be successful
+				var bResult = bNoLinkElement || bSheet || bInnerHtml || bLinkElementFinishedLoading;
+
+				if (bLog) {
+					Log.debug("ThemeCheck: " + sId + ": " + bResult + " (noLinkElement: " + bNoLinkElement + ", sheet: " + bSheet + ", innerHtml: " + bInnerHtml + ", linkElementFinishedLoading: " + bLinkElementFinishedLoading + ")");
+				}
+
+				return bResult;
+
+			} catch (e) {
+				if (bLog) {
+					Log.error("ThemeCheck: " + sId + ": Error during check styles '" + sId + "'", e);
+				}
 			}
 
-			return bResult;
+			return false;
+		};
 
-		} catch (e) {
-			if (bLog) {
-				Log.error("ThemeCheck: " + sId + ": Error during check styles '" + sId + "'", e);
+		var currentRes = checkStyle(sPrefix + sLib, true);
+		if (currentRes) {
+
+			// removes all old stylesheets (multiple could exist if theme change was triggered
+			// twice in a short timeframe) once the new stylesheet has been loaded
+			var aOldStyles = document.querySelectorAll("link[data-sap-ui-foucmarker='" + sPrefix + sLib + "']");
+			if (aOldStyles.length > 0) {
+				for (var i = 0, l = aOldStyles.length; i < l; i++) {
+					aOldStyles[i].remove();
+				}
+				Log.debug("ThemeCheck: Old stylesheets removed for library: " + sLib);
 			}
+
 		}
-
-		return false;
+		return currentRes;
 	};
 
 	function clear(oThemeCheck){
@@ -147,30 +168,12 @@ sap.ui.define([
 			mLibs[oThemeCheck._CUSTOMID] = {};
 		}
 
-		function checkAndRemoveStyle(sPrefix, sLib) {
-			var currentRes = ThemeCheck.checkStyle(sPrefix + sLib, true);
-			if (currentRes) {
-
-				// removes all old stylesheets (multiple could exist if theme change was triggered
-				// twice in a short timeframe) once the new stylesheet has been loaded
-				var aOldStyles = document.querySelectorAll("link[data-sap-ui-foucmarker='" + sPrefix + sLib + "']");
-				if (aOldStyles.length > 0) {
-					for (var i = 0, l = aOldStyles.length; i < l; i++) {
-						aOldStyles[i].parentNode.removeChild(aOldStyles[i]);
-					}
-					Log.debug("ThemeCheck: Old stylesheets removed for library: " + sLib);
-				}
-
-			}
-			return currentRes;
-		}
-
 		function checkLib(lib) {
 			var sStyleId = "sap-ui-theme-" + lib;
-			var currentRes = checkAndRemoveStyle("sap-ui-theme-", lib);
+			var currentRes = ThemeCheck.checkAndRemoveStyle({ prefix: "sap-ui-theme-", id: lib });
 			if (currentRes && document.getElementById("sap-ui-themeskeleton-" + lib)) {
 				// remove also the skeleton if present in the DOM
-				currentRes = checkAndRemoveStyle("sap-ui-themeskeleton-", lib);
+				currentRes = ThemeCheck.checkAndRemoveStyle({ prefix: "sap-ui-themeskeleton-", id: lib });
 			}
 			res = res && currentRes;
 			if (res) {
