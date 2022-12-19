@@ -42,6 +42,12 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/calendar/Cale
 		}
 	}});
 
+	/**
+	 * Set start date for a date range.
+	 * @param {Date} [oDate] A JavaScript date
+	 * @param {boolean} [bInvalidate] If true, <code>startDate</code> is not marked as changed
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 */
 	DateRange.prototype.setStartDate = function(oDate, bInvalidate){
 
 		if (oDate) {
@@ -57,6 +63,12 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/calendar/Cale
 
 	};
 
+	/**
+	 * Set end date for a date range.
+	 * @param {Date} [oDate] A JavaScript date
+	 * @param {boolean} [bInvalidate] If true, <code>endDate</code> is not marked as changed
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 */
 	DateRange.prototype.setEndDate = function(oDate, bInvalidate){
 
 		if (oDate) {

@@ -70,7 +70,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 * @override
 	 * @public
 	 * @param {sap.ui.core.Control} oControl A control used for filtering purposes
-	 * @return {this} this pointer for chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 */
 	ViewSettingsCustomItem.prototype.setCustomControl = function (oControl) {
 		this._control = oControl;
@@ -82,7 +82,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 * because this control is sometimes aggregated in other controls like a popover or a dialog.
 	 * @override
 	 * @public
-	 * @return {sap.ui.core.Control} oControl a control used for filtering purposes
+	 * @returns {sap.ui.core.Control} oControl a control used for filtering purposes
 	 */
 	ViewSettingsCustomItem.prototype.getCustomControl = function () {
 		return this._control;
@@ -93,7 +93,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 * @override
 	 * @param {int} iValue The new value for property filterCount
 	 * @public
-	 * @returns {this} this pointer for chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 */
 	ViewSettingsCustomItem.prototype.setFilterCount = function (iValue) {
 		this.setProperty("filterCount", iValue, true);
@@ -105,7 +105,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 * @override
 	 * @param {boolean} bValue The new value for property selected
 	 * @public
-	 * @returns {this} this pointer for chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 */
 	ViewSettingsCustomItem.prototype.setSelected = function (bValue) {
 		this.setProperty("selected", bValue, true);
@@ -117,7 +117,8 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 *
 	 * @param {string} [sIdSuffix] a suffix to be appended to the cloned object id
 	 * @param {string[]} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
-	 * @param {object} [oOptions] configuration object
+	 * @param {{cloneChildren: boolean, cloneBindings: boolean}} [oOptions] configuration object
+	 * 		{@link https://openui5.hana.ondemand.com/api/sap.ui.base.ManagedObject#methods/clone}
 	 * @returns {this} reference to the newly created clone
 	 * @public
 	 * @override
