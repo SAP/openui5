@@ -62,7 +62,7 @@ sap.ui.define([
 								var oToolbar = aToolbars[0];
 								// Get label of the GroupViewItem
 								this.waitFor({
-									controlType: "sap.m.Label",
+									controlType: "sap.m.Title",
 									matchers: new Ancestor(oToolbar, true),
 									success: function(aToolbarLabels) {
 										var oToolbarLabel = aToolbarLabels[0];

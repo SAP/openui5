@@ -30,7 +30,7 @@ sap.ui.define([
                 Opa5.assert.ok(oPopover,"P13n Container found");
                 aMatchers.push(new Ancestor(oPopover));
                 this.waitFor({
-                    controlType: "sap.m.Label",
+                    controlType: "sap.m.Title",
                     matchers: aMatchers,
                     success: function(aLabels){
                         this.waitFor({
