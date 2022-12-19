@@ -1570,6 +1570,7 @@ sap.ui.define([
 		assert.ok(document.getElementById("generic-tile-failed-overlay"), "Generic tile icon was rendered successfully");
 		assert.ok(document.getElementById("tile-cont-failed"), "TileContent was rendered successfully");
 		assert.ok(!document.getElementById("tile-cont-failed-footer-text"), "TileContent footer text was not rendered");
+		assert.equal(getComputedStyle(document.getElementById("generic-tile-failed-overlay")).opacity, "0.8","Overlay has been added successfully");
 
 		this.oGenericTile.setState("Loaded");
 		oCore.applyChanges();
@@ -1588,6 +1589,42 @@ sap.ui.define([
 		this.oGenericTile.setState("Failed");
 		oCore.applyChanges();
 		assert.ok(!this.oGenericTile.getTileContent()[0]._bRenderFooter, "bRenderFooter set to false");
+	});
+
+	QUnit.module("Rendering tests for Disabled state", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile("generic-tile-failed", {
+				state: LoadState.Disabled,
+				subheader: "Expenses By Region",
+				frameType: FrameType.OneByOne,
+				header: "Comparative Annual Totals",
+				headerImage: IMAGE_PATH + "female_BaySu.jpg",
+				tileContent: new TileContent("tile-cont-failed", {
+					unit: "EUR",
+					footer: "Current Quarter",
+					content: new NumericContent("numeric-cnt-failed", {
+						state: LoadState.Loading,
+						scale: "M",
+						indicator: DeviationIndicator.Up,
+						truncateValueTo: 4,
+						value: 20,
+						nullifyValue: true,
+						formatterValue: false,
+						valueColor: ValueColor.Good,
+						icon: "sap-icon://customer-financial-fact-sheet"
+					})
+				})
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("GenericTile in Disabled state rendered", function(assert) {
+		assert.equal(getComputedStyle(document.getElementById("generic-tile-failed-overlay")).opacity, "0.8","Overlay has been added successfully");
 	});
 
 	QUnit.module("GenericTileMode tests", {
