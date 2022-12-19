@@ -513,3 +513,25 @@ html.sap-desktop .sapMGT.sapMGTBackgroundImage:focus .sapMGTFocusDiv:after, html
 		border-bottom-right-radius: 0.87rem;
 	}
 }
+
+/******************* OVERLAYS AND HELPERS *******************/
+
+.sapMGTOverlay {
+	border-radius: inherit;
+}
+
+.sapMGT.sapMGTBackgroundImage {
+	.sapMGTOverlay {
+		border-radius: 0.9rem;
+	}
+	&.sapMGTStateFailed {
+		.sapMGTWithImageHoverOverlay {
+			border-radius: @sapTile_BorderCornerRadius;
+		}
+	}
+	&:active {
+		.sapMGTOverlay {
+			border-radius: 0.95rem;
+		}
+	}
+}

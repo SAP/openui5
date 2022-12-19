@@ -1385,17 +1385,9 @@ html[dir=rtl] .sapMGTLineMode {
 }
 
 /******************* OVERLAYS AND HELPERS *******************/
-.sapMGT.sapMGTStateFailed, .sapMGT.sapMGTStateDisabled {
-	.sapMTileCnt {
-		position: relative;
-
-		&:after {
-			.sapMGTOverlayMixin();
-			display: block;
-			content: "";
-			background-color: fade(@sapUiTileBackground, 80);
-		}
-	}
+.sapMGTOverlay {
+	.sapMGTOverlayMixin();
+	opacity: 0.8;
 }
 
 .sapMGT .sapMGTFocusDiv {

@@ -9,6 +9,14 @@
 	height: auto;
 }
 
+.sapMGT.sapMGTBackgroundImage.sapMGTStateFailed, .sapMGT.sapMGTBackgroundImage.sapMGTStateDisabled {
+
+	.sapMGTContent {
+		border-bottom-left-radius: inherit;
+		border-bottom-right-radius: inherit;
+	}
+}
+
 .sapMGT.sapMGTScopeActions.sapMGTBackgroundImage .sapMGTMoreIcon {
 	color: @sapUiContentContrastTextColor;
 }
@@ -208,6 +216,7 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 	right: 0;
 	left: 0;
 	bottom: 0;
+	border-radius: inherit;
 }
 
 html.sap-desktop .sapMGTWithoutImageHoverOverlay.sapMGTPressActive,
