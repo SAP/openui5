@@ -11,11 +11,12 @@ sap.ui.define([
 	"sap/ui/unified/DateTypeRange",
 	"sap/base/Log",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(CalendarLegend, CalendarLegendRenderer, CalendarLegendItem,
-	unifiedLibrary, DateRange, JSONModel, Calendar, DateTypeRange, Log, DateFormat, XMLView, jQuery, oCore) {
+	unifiedLibrary, DateRange, JSONModel, Calendar, DateTypeRange, Log, DateFormat, KeyCodes, XMLView, jQuery, oCore) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
@@ -376,4 +377,161 @@ sap.ui.define([
 			"When the given type does not match legend item's type, 'describedby' is correct");
 
 	});
+
+	QUnit.module("Calendar Legend Navigation", {
+		beforeEach: function () {
+			var aLegendTypes = [],
+				aSpecialDay,
+				sType,
+				oSpecialDate,
+				i,
+				aSpecialDays = [
+				["20140801", undefined, "Placeholder01", 1],
+				["20140821", undefined, "Placeholder01", 1],
+				["20140802", undefined, "Placeholder02", 2],
+				["20140803", undefined, "Placeholder02", 2],
+				["20140804", undefined, "Placeholder03", 3],
+				["20140814", undefined, "Placeholder03", 3],
+				["20140901", undefined, "Placeholder01", 1],
+				["20140902", undefined, "Placeholder02", 2],
+				["20140924", undefined, "Placeholder03", 3]
+			];
+
+			this.oLegend = new CalendarLegend();
+
+			this.oCalendar = new Calendar({
+				selectedDates: [new DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
+				months: 2,
+				legend: this.oLegend
+			});
+
+			for (i = 0; i < aSpecialDays.length; i++) {
+				aSpecialDay = aSpecialDays[i];
+				sType = "";
+				if (aSpecialDay[3] < 10) {
+					sType = "Type0" + aSpecialDay[3];
+				} else {
+					sType = "Type" + aSpecialDay[3];
+				}
+				oSpecialDate = new DateTypeRange({
+					startDate: oFormatYyyymmdd.parse(aSpecialDay[0]),
+					endDate: oFormatYyyymmdd.parse(aSpecialDay[1]),
+					type: sType,
+					tooltip: aSpecialDay[2]
+				});
+				this.oCalendar.addSpecialDate(oSpecialDate);
+				if (aLegendTypes.indexOf(sType) === -1) {
+					this.oLegend.addItem(new CalendarLegendItem({
+						text: aSpecialDay[2],
+						type: sType
+					}));
+					aLegendTypes.push(sType);
+				}
+			}
+
+			this.oCalendar.placeAt("qunit-fixture");
+			this.oLegend.placeAt("qunit-fixture");
+			oCore.applyChanges();
+
+		},
+		afterEach: function () {
+			this.oLegend.destroy();
+			this.oLegend = null;
+			this.oCalendar.destroy();
+			this.oCalendar = null;
+		}
+	});
+
+	QUnit.test("Calendar Legend items are focusable", function (assert) {
+		var	aStandardItems = this.oLegend.getAggregation("_standardItems"),
+			aLegendItems = this.oLegend.getItems();
+
+		// Act
+		aStandardItems[0].focus();
+
+		// Assert
+		assert.equal(document.activeElement.id, aStandardItems[0].getId(), "the first standard calendar legend item is focused");
+
+		// Act
+		aLegendItems[0].focus();
+
+		// Assert
+		assert.equal(document.activeElement.id, aLegendItems[0].getId(), "the first calendar legend item is focused");
+	});
+
+	QUnit.test("Filtering special dates in calendar", function (assert) {
+		var aLegendItems = this.oLegend.getItems(),
+			aStandardItems = this.oLegend.getAggregation("_standardItems"),
+			aMonths = this.oCalendar.getAggregation("month");
+
+		// Assert (no calendar legend items are focused and no filtered special day types)
+		assert.notOk(document.activeElement.classList.contains(".sapUiUnifiedLegendItem"), "there are no calendar legend items focused");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[0]).length, 2, "the first month in calendar shows 2 special dates from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[0]).length, 1, "the second month in calendar shows 1 special date from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[1]).length, 2, "the first month in calendar shows 2 special dates from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[1]).length, 1, "the second month in calendar shows 1 special date from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[2]).length, 2, "the first month in calendar shows 2 special dates from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[2]).length, 1, "the second month in calendar shows 1 special date from the third calendar legend type");
+
+		// Act (focus first standard calendar legend item)
+		aStandardItems[0].focus();
+		oCore.applyChanges();
+
+		// Assert (no filtered special day types)
+		assert.strictEqual(document.activeElement.id, aStandardItems[0].getId(), "the first standard legend item is focused");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[0]).length, 2, "the first month in calendar shows 2 special dates from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[0]).length, 1, "the second month in calendar shows 1 special date from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[1]).length, 2, "the first month in calendar shows 2 special dates from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[1]).length, 1, "the second month in calendar shows 1 special date from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[2]).length, 2, "the first month in calendar shows 2 special dates from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[2]).length, 1, "the second month in calendar shows 1 special date from the third calendar legend type");
+
+		// Act (focus first calendar legend item)
+		aLegendItems[0].focus();
+		oCore.applyChanges();
+
+		// Assert (filter first special day type)
+		assert.strictEqual(document.activeElement.id, aLegendItems[0].getId(), "the first calendar legend item is focused");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[0]).length, 2, "the first month in calendar shows 2 special dates from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[0]).length, 1, "the second month in calendar shows 1 special date from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[1]).length, 0, "the first month in calendar shows 0 special dates from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[1]).length, 0, "the second month in calendar shows 0 special date from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[2]).length, 0, "the first month in calendar shows 0 special dates from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[2]).length, 0, "the second month in calendar shows 0 special date from the third calendar legend type");
+
+		// Act (focus the calendar)
+		this.oCalendar.focus();
+		oCore.applyChanges();
+
+		// Assert (again no filtered special day types)
+		assert.notOk(document.activeElement.classList.contains(".sapUiUnifiedLegendItem"), "there are no calendar legend items focused");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[0]).length, 2, "the first month in calendar shows 2 special dates from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[0]).length, 1, "the second month in calendar shows 1 special date from the first calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[1]).length, 2, "the first month in calendar shows 2 special dates from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[1]).length, 1, "the second month in calendar shows 1 special date from the second calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[0], aLegendItems[2]).length, 2, "the first month in calendar shows 2 special dates from the third calendar legend type");
+		assert.strictEqual(getMonthDatesByLegendItem(aMonths[1], aLegendItems[2]).length, 1, "the second month in calendar shows 1 special date from the third calendar legend type");
+	});
+
+	QUnit.test("Accessibility attributes", function (assert) {
+		var oLegendDomRef = this.oLegend.getDomRef(),
+			aStandardItems = this.oLegend.getAggregation("_standardItems"),
+			aLegendItems = this.oLegend.getItems();
+
+		// Assert (Calendar Legend)
+		assert.strictEqual(oLegendDomRef.getAttribute("aria-label"), this.oLegend._getLegendAriaLabel(), "calendar legend has proper aria-label attribute");
+		assert.strictEqual(oLegendDomRef.getAttribute("role"), "listbox", "calendar legend has proper role attribute");
+
+		// Assert (Calendar Legend Items)
+		assert.strictEqual(aLegendItems[0].getDomRef().getAttribute("role"), "option", "calendar legend items have proper role attribute");
+		assert.strictEqual(parseInt(aStandardItems[0].getDomRef().getAttribute("aria-posinset")), 1, "first standard calendar legend item has proper role aria-posinset attribute");
+		assert.strictEqual(parseInt(aLegendItems[0].getDomRef().getAttribute("aria-posinset")), aStandardItems.length + 1, "first calendar legend item has proper role aria-posinset attribute");
+		assert.strictEqual(parseInt(aLegendItems[aLegendItems.length - 1].getDomRef().getAttribute("aria-posinset")), aStandardItems.length + aLegendItems.length, "last calendar legend item has proper role aria-posinset attribute");
+	});
+
+	// returns DOM references of all dates in a Month that are special dates of given Calendar Legend Item type
+	function getMonthDatesByLegendItem(oMonth, oLegendItem) {
+		return oMonth.getDomRef().querySelectorAll(".sapUiCalItem" + oLegendItem.getType());
+	}
+
 });

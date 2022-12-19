@@ -64,7 +64,8 @@
 					"sap.ui.unified.sample.CalendarMultipleMonth",
 					"sap.ui.unified.sample.CalendarCalendarType",
 					"sap.ui.unified.sample.CalendarMinMax",
-					"sap.ui.unified.sample.CalendarDateDeselection"
+					"sap.ui.unified.sample.CalendarDateDeselection",
+					"sap.ui.unified.sample.CalendarLegendNavigation"
 				]
 			},
 			{
@@ -185,6 +186,11 @@
 				"id": "sap.ui.unified.sample.CalendarDateDeselection",
 				"name": "Date deselection with shortcut for today",
 				"description": "An example of recommended implementation of deselection logic when the calendar is in single selection mode."
+			},
+			{
+				"id": "sap.ui.unified.sample.CalendarLegendNavigation",
+				"name": "Calendar with navigatable legend",
+				"description": "An example of adding navigatable legend to the calendar."
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarDateIntervalBasic",

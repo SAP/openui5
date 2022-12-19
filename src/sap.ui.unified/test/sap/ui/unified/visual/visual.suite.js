@@ -3,6 +3,7 @@
 module.exports = [
 	"CurrencyVisual.spec.js",
 	"CalendarTwoTypes.spec.js",
+	"CalendarLegendVisual.spec.js",
 	"CalendarVisual.spec.js",
 	"CalendarIntervalSelection.spec.js",
 	"CalendarKeyboardInteraction.spec.js",

@@ -9,10 +9,16 @@ sap.ui.define([
 	'./CalendarLegendRenderer',
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/unified/CalendarLegendItem"
+	"sap/ui/unified/CalendarLegendItem",
+	"sap/ui/core/Core",
+	"sap/ui/Device",
+	"sap/ui/core/delegate/ItemNavigation"
 ],
-	function(Control, library, CalendarLegendRenderer, Log, jQuery, CalendarLegendItem) {
+	function(Control, library, CalendarLegendRenderer, Log, jQuery, CalendarLegendItem, Core, Device, ItemNavigation) {
 	"use strict";
+
+	// Resource Bundle
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 
 	// shortcut for sap.ui.unified.CalendarDayType
 	var CalendarDayType = library.CalendarDayType;
@@ -28,6 +34,23 @@ sap.ui.define([
 	 *
 	 * @class
 	 * A legend for the Calendar Control. Displays special dates colors with their corresponding description. The aggregation specialDates can be set herefor.
+	 *
+	 * <h3>Calendar Legend Navigation</h3>
+	 *
+	 * If the Calendar Legend is associated with a <code>sap.ui.unified.Calendar</code> control, the users can navigate through the Calendar Legend items.
+	 * Only special dates related to the navigated legend's item type are displayed in the calendar grid.
+	 * <b>Note: </b> Standard calendar legend items (Today, Selected, Working Day and Non-Working Day) are also navigatable, but focusing them does
+	 * not affect the special dates display (all calendar special dates are displayed).
+	 *
+	 * <h3>Keyboard shortcuts (when the legend is navigatable)</h3>
+	 *
+	 * <ul>
+	 * <li>[Arrow Up], [Arrow Left] - Move to the previous calendar legend item</li>
+	 * <li>[Arrow Down], [Arrow Right] - Move to the next calendar legend item</li>
+	 * <li>[Home], [Page Up] - Move to the first calendar legend item</li>
+	 * <li>[End], [Page Down] - Move to the last calendar legend item</li>
+	 * </ul>
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -82,9 +105,17 @@ sap.ui.define([
 
 			//don't render standardItems unless it's a PC legend
 			this._bShouldRenderStandardItems = true;
+
+			this._oItemNavigation = null;
 		},
 		renderer: CalendarLegendRenderer
 	});
+
+	CalendarLegend.prototype.onAfterRendering = function () {
+		if (!Device.system.phone && this._oParentControl) {
+			this._initItemNavigation();
+		}
+	};
 
 	CalendarLegend.prototype.setStandardItems = function (aValues) {
 		var i;
@@ -108,6 +139,108 @@ sap.ui.define([
 		return this;
 	};
 
+	CalendarLegend.prototype._initItemNavigation = function() {
+		var aStandardItems = this.getAggregation("_standardItems") || [],
+			aLegendItems = this.getItems() || [],
+			aItems,
+			aItemsDomRef = [],
+			oItemDomRef,
+			oRootDomRef;
+
+		aItems = aStandardItems.concat(aLegendItems);
+
+		if (!aItems.length) {
+			return;
+		}
+
+		oRootDomRef = aItems[0].getDomRef().parentElement;
+
+		// find a collection of all legend items
+		aItems.forEach(function(oItem, iIndex) {
+			oItemDomRef = oItem.getFocusDomRef();
+			oItemDomRef.setAttribute("tabindex", "-1");
+			aItemsDomRef.push(oItemDomRef);
+		});
+
+		if (!this._oItemNavigation) {
+			this._oItemNavigation = new ItemNavigation()
+				.setCycling(false)
+				.attachEvent(ItemNavigation.Events.AfterFocus, this._onItemNavigationAfterFocus, this)
+				.attachEvent(ItemNavigation.Events.FocusLeave, this._onItemNavigationFocusLeave, this)
+				.setDisabledModifiers({
+					sapnext : ["alt", "meta", "ctrl"],
+					sapprevious : ["alt", "meta", "ctrl"],
+					saphome: ["alt", "meta", "ctrl"],
+					sapend: ["meta", "ctrl"]
+				});
+
+			this.addDelegate(this._oItemNavigation);
+		}
+
+		// reinitialize the ItemNavigation after rendering
+		this._oItemNavigation.setRootDomRef(oRootDomRef)
+			.setItemDomRefs(aItemsDomRef)
+			.setPageSize(aItems.length) // set the page size equal to the items number so when we press pageUp/pageDown to focus first/last tab
+			.setFocusedIndex(0);
+	};
+
+	CalendarLegend.prototype._onItemNavigationAfterFocus = function(oEvent) {
+		var oSource = oEvent.getSource(),
+			oLegendItemDomRef = oSource.getItemDomRefs()[oSource.getFocusedIndex()],
+			sType = Core.byId(oLegendItemDomRef.id).getType(),
+			oParent = this._getParent();
+
+		this._setSpecialDateTypeFilter(sType);
+		oParent && oParent.invalidate();
+	};
+
+	CalendarLegend.prototype._onItemNavigationFocusLeave = function(oEvent) {
+		var oParent = this._getParent();
+
+		this._setSpecialDateTypeFilter();
+		oParent && oParent.invalidate();
+	};
+
+	/**
+	 * Sets a special date type that should be filtered. Only dates with this type should be displayed as special.
+	 * @param {string} sType special date type that should be displayed only
+	 */
+	CalendarLegend.prototype._setSpecialDateTypeFilter = function(sType) {
+		this._sSpecialDateTypeFilter = sType || "";
+	};
+
+	/**
+	 * Returns a special date type that should be filtered.
+	 * @returns {string} special date type that should be displayed only.
+	 */
+	CalendarLegend.prototype._getSpecialDateTypeFilter = function() {
+		return this._sSpecialDateTypeFilter || "";
+	};
+
+	/**
+	 * Sets parent control of the Calendar Legend.
+	 * @param {sap.ui.core.Control} oControl parent control
+	 */
+	CalendarLegend.prototype._setParent = function(oControl) {
+		this._oParentControl = oControl;
+	};
+
+	/**
+	 * Returns parent control of the Calendar Legend.
+	 * @returns {sap.ui.core.Control} parent control
+	 */
+	CalendarLegend.prototype._getParent = function() {
+		return this._oParentControl;
+	};
+
+	/**
+	 * Returns aria-label text of the Calendar Legend.
+	 * @returns {string} aria-label text
+	 */
+	CalendarLegend.prototype._getLegendAriaLabel = function () {
+		return oResourceBundle.getText("LEGEND_ARIA_LABEL");
+	};
+
 	/**
 	 * Populates the standard items.
 	 * @param {string[]|sap.ui.unified.StandardCalendarLegendItem[]} aStandardItems array of items specified by their key
@@ -117,7 +250,6 @@ sap.ui.define([
 	 */
 	CalendarLegend.prototype._addStandardItems = function(aStandardItems, replace) {
 		var i,
-			rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 			sId = this.getId();
 
 		if (replace) {
@@ -126,7 +258,7 @@ sap.ui.define([
 
 		for (i = 0; i < aStandardItems.length; i++) {
 			var oItem = new CalendarLegendItem(sId + "-" + aStandardItems[i], {
-				text: rb.getText(CalendarLegend._Standard_Items_TextKeys[aStandardItems[i]])
+				text: oResourceBundle.getText(CalendarLegend._Standard_Items_TextKeys[aStandardItems[i]])
 			});
 			this.addAggregation("_standardItems", oItem);
 		}
