@@ -818,24 +818,50 @@ sap.ui.define([
 	 * @public
 	 */
 	Element.prototype.isFocusable = function() {
-		var oTarget = this;
-		while (oTarget) {
-			if ((oTarget.getBusy && oTarget.getBusy()) || (oTarget.getBlocked && oTarget.getBlocked())) {
-				return false;
-			}
-			oTarget = oTarget.getParent();
-		}
-
 		var oFocusDomRef = this.getFocusDomRef();
 
 		if (!oFocusDomRef) {
 			return false;
 		}
 
-		var oRect = oFocusDomRef.getBoundingClientRect();
-		var oTopDomRef = document.elementFromPoint(oRect.x, oRect.y);
+		var oCurrentDomRef = oFocusDomRef;
+		var oRect = oCurrentDomRef.getBoundingClientRect();
 
-		if (!oFocusDomRef.contains(oTopDomRef)) {
+		// find the first parent element whose position is within the current view port
+		// because document.elementsFromPoint can return meaningful DOM elements only when the given coordinate is
+		// within the current view port
+		while ((oRect.x < 0 || oRect.x > window.innerWidth ||
+			oRect.y < 0 || oRect.y > window.innerHeight)) {
+
+			if (oCurrentDomRef.assignedSlot) {
+				// assigned slot's bounding client rect has all properties set to 0
+				// therefore we jump to the slot's parentElement directly in the next "if...else if...else"
+				oCurrentDomRef = oCurrentDomRef.assignedSlot;
+			}
+
+			if (oCurrentDomRef.parentElement) {
+				oCurrentDomRef = oCurrentDomRef.parentElement;
+			} else if (oCurrentDomRef.parentNode && oCurrentDomRef.parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+				oCurrentDomRef = oCurrentDomRef.parentNode.host;
+			} else {
+				break;
+			}
+
+			oRect = oCurrentDomRef.getBoundingClientRect();
+		}
+
+		var aElements = document.elementsFromPoint(oRect.x, oRect.y);
+
+		var iFocusDomRefIndex = aElements.findIndex(function(oElement) {
+			return oElement.contains(oFocusDomRef);
+		});
+
+		var iBlockLayerIndex = aElements.findIndex(function(oElement) {
+			return oElement.classList.contains("sapUiBLy") || oElement.classList.contains("sapUiBlockLayer");
+		});
+
+		if (iBlockLayerIndex !== -1 && iFocusDomRefIndex > iBlockLayerIndex) {
+			// when block layer is visible and it's displayed over the Element's DOM
 			return false;
 		}
 
