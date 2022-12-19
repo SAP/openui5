@@ -235,6 +235,12 @@
 				sValue = sValue || "";
 				return (sValue.length * 10) % 100;
 			}
+		},
+		displayValue: {
+			path: "lastName", formatter: function(sValue) {
+				sValue = sValue || "";
+				return (sValue.length * 10) % 100;
+			}
 		}
 	});
 	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.ProgressIndicator"}), template: oControl, width: "150px"});
