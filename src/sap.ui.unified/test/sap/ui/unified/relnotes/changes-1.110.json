@@ -3,6 +3,28 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "8ad763509ba17a0be9978ff7d7de7fdbd194c246",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: default value for primary and secondary type has been removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "5123adbe8df00dba446f5324939087cedcf1aaa9",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: fixed interval selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270177246"
+          }
+        ]
+      },
+      {
         "id": "66ae1c83e3239ee264f534beb0cbc58595f762cf",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: fixed header width",

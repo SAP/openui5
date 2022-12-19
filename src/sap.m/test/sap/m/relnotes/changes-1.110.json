@@ -3,6 +3,99 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "950eb7d0b03f00a6b67ee85c51435545d2af8463",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Test is now stable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270160496"
+          }
+        ]
+      },
+      {
+        "id": "e7f7fa425451dff2a9ce33350488af01eb9e1a15",
+        "type": "FIX",
+        "text": " sap.m.Link: removed underline when there is no text and empty indicator is On",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270189935"
+          }
+        ]
+      },
+      {
+        "id": "3b1dbd6e45baea3a803d6beadf7ec6b648f26c71",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Unnecessary text glow on active overflow button removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280191475"
+          }
+        ]
+      },
+      {
+        "id": "e9b0744b51405b7106a59ad510fa679d11c42112",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fixed spelling mistake in example",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "218797ca8d7ce4fb5fad4ee88726d829568789d4",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Text clipping in Compact mode fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270057452"
+          }
+        ]
+      },
+      {
+        "id": "8ad763509ba17a0be9978ff7d7de7fdbd194c246",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: default value for primary and secondary type has been removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "3ba257436baaf3641bf4ec6654f2fa19def20184",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Render tabindex 0 in standalone mode only if there are tokens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270160325"
+          }
+        ]
+      },
+      {
+        "id": "53fd637359fc4167619ceacbdacc91f25dc06875",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: Press event has correct structure.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280185043"
+          }
+        ]
+      },
+      {
+        "id": "d1d41014c5bc575735b3a23e90578959d20b9a7c",
+        "type": "FEATURE",
+        "text": " sap.m.SelectDialog, sap.m.TableSelectDialog: New searchPlaceholder property implemented"
+      },
+      {
         "id": "63cc488b4090092abb0d92aca6b180da8eb3440e",
         "type": "FIX",
         "text": " sap.m.StepInput: getValue() value precision now works correctly",
@@ -25,6 +118,17 @@
           {
             "type": "BCP",
             "reference": "2270139091"
+          }
+        ]
+      },
+      {
+        "id": "283fbae6ffe84272f8ee7dbb7f1c12469c6b3efc",
+        "type": "FIX",
+        "text": " sap.m.Label: Asterisk is now visible when label is required and used outside of forms",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280188701"
           }
         ]
       },
@@ -80,6 +184,17 @@
           {
             "type": "BCP",
             "reference": "2280182863"
+          }
+        ]
+      },
+      {
+        "id": "429b9d09f3ee2d15c4d73bff619b4d3893211789",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Repetitive announcement avoided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270174763"
           }
         ]
       },

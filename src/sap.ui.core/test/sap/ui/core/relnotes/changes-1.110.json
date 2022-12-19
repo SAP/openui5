@@ -3,6 +3,22 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "e9b4420f08224b8b65f4e14f3b74155689b08b6f",
+        "type": "FIX",
+        "text": " sap.ui.test: Artificial focus events complemented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270156201"
+          }
+        ]
+      },
+      {
+        "id": "46fd3a67601948a6c04ad78c535f76cd7948348b",
+        "type": "FIX",
+        "text": " OPA can now test functionality with Promise.any"
+      },
+      {
         "id": "ec18047347271326dfbc6eb8885ef98e43843bcc",
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.ODataListBinding#attachCreateCompleted: timing issue w/ Context#delete",

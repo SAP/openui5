@@ -3,6 +3,17 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "6ced267e93991fa49238420f479598061144eba4",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Fix failing QUnits",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280193628"
+          }
+        ]
+      },
+      {
         "id": "d3aae013bc9b875dbc26eee0c4ac70242cd1ad38",
         "type": "FIX",
         "text": " sap.uxap.AnchorBar: Fix failing QUnit",
