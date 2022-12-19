@@ -2,6 +2,7 @@
  * ${copyright}
  */
 
+
 // Provides TablePersoDialog
 sap.ui.define([
 	'./Text',
@@ -222,10 +223,12 @@ sap.ui.define([
 			var aFields = this._oInnerTable.getModel("Personalization").getProperty("/aColumns");
 			var bButtonUpEnabled,bButtonDownEnabled;
 
-			if (!this._oSelectedItem){
+			if (!this._oSelectedItem || this._oInnerTable.getItems().length == 0){
 				//no item yet selected
 				bButtonUpEnabled = false;
 				bButtonDownEnabled = false;
+
+				this._oSelectedItem = null;
 			} else {
 				var iItemIndex = aFields.indexOf(this._oSelectedItem.getBindingContext("Personalization").getObject());
 				bButtonUpEnabled = iItemIndex > 0 ? true : false;
@@ -553,6 +556,20 @@ sap.ui.define([
 
 		this._fnUpdateArrowButtons.call(this);
 
+		if (this._oButtonDown.getEnabled() || this._oButtonUp.getEnabled()) {
+			if (!this._oButtonDown.getEnabled()) {
+				setTimeout(function() { // when button was disable, we need a timeout before setting the focus
+					this._oButtonUp && this._oButtonUp.focus();
+				}.bind(this), 0);
+			}
+			if (!this._oButtonUp.getEnabled()) {
+				setTimeout(function() { // when button was disable, we need a timeout before setting the focus
+					this._oButtonDown && this._oButtonDown.focus();
+				}.bind(this), 0);
+			}
+		} else {
+			this._oSearchField.focus();
+		}
 	};
 
 	/**
