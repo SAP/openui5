@@ -23,7 +23,6 @@ sap.ui.define([
 				isKeyUser: true,
 				isVersioningEnabled: false,
 				isContextSharingEnabled: true,
-				isContextSharingEnabledForComp: true,
 				isPublicLayerAvailable: false,
 				isLocalResetEnabled: true
 			};

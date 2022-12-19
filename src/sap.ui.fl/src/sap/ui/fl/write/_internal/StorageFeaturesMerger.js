@@ -26,7 +26,6 @@ sap.ui.define([
 		isPublicFlVariantEnabled: false,
 		isVariantPersonalizationEnabled: true,
 		isContextSharingEnabled: true,
-		isContextSharingEnabledForComp: true,
 		isAtoAvailable: false,
 		isAtoEnabled: false,
 		versioning: {},
@@ -69,9 +68,8 @@ sap.ui.define([
 					}
 				});
 				oResult.versioning = merge(oResult.versioning, _getVersioningFromResponse(oResponse));
-				if (oResponse.isContextSharingEnabled !== undefined && oResponse.isContextSharingEnabledForComp === undefined) {
+				if (oResponse.isContextSharingEnabled !== undefined) {
 					oResult.isContextSharingEnabled = oResponse.isContextSharingEnabled;
-					oResult.isContextSharingEnabledForComp = oResponse.isContextSharingEnabled;
 				}
 			});
 			return oResult;
