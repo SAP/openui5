@@ -58,7 +58,8 @@
 						{
 							"value": "Status Open",
 							"type": "Status",
-							"state": "Warning"
+							"state": "Warning",
+							"showStateIcon": true
 						},
 						{
 							"value": "Total Amount 1,000.00 USD"

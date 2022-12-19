@@ -140,8 +140,9 @@
 						{
 							"name": "Teico Inc.",
 							"description": "Sun Valley, Idaho",
-							"info": "2456",
+							"info": "Error 2456",
 							"infoState": "Error",
+							"showInfoStateIcon": true,
 							"attributes": [
 								{
 									"name": "Attribute 1",
@@ -171,8 +172,9 @@
 						},
 						{
 							"name": "Freshhh LTD.",
-							"info": "1264",
+							"info": "Warning 1264",
 							"infoState": "Warning",
+							"showInfoStateIcon": true,
 							"attributes": [
 								{
 									"name": "Attribute 1",
@@ -191,8 +193,9 @@
 						{
 							"name": "Lean Pulp",
 							"description": "Raymond, Callifornia",
-							"info": "236",
-							"infoState": "None",
+							"info": "Success 236",
+							"infoState": "Success",
+							"showInfoStateIcon": true,
 							"attributesLayoutType": "OneColumn",
 							"attributes": [
 								{
@@ -208,10 +211,18 @@
 									"state": "None"
 								}
 							]
+						},
+						{
+							"name": "Lean Pulp",
+							"description": "Raymond, Callifornia",
+							"info": "Information 236",
+							"infoState": "Information",
+							"showInfoStateIcon": true,
+							"attributesLayoutType": "OneColumn"
 						}
 					]
 				},
-				"maxItems": 3,
+				"maxItems": 4,
 				"item": {
 					"title": {
 						"value": "{name}"
@@ -220,8 +231,9 @@
 						"value": "{description}"
 					},
 					"info": {
-						"value": "{infoState}",
-						"state": "{infoState}"
+						"value": "{info}",
+						"state": "{infoState}",
+						"showStateIcon": "{showInfoStateIcon}"
 					},
 					"highlight": "{infoState}",
 					"attributesLayoutType": "{attributesLayoutType}",
@@ -618,28 +630,34 @@
 							"attributesLayoutType": "TwoColumns",
 							"attributes": [
 								{
-									"name": "Attribute 1",
-									"state": "Error"
+									"name": "Error",
+									"state": "Error",
+									"showStateIcon": true
 								},
 								{
-									"name": "Info 1",
-									"state": "Error"
+									"name": "Warning",
+									"state": "Warning",
+									"showStateIcon": true
 								},
 								{
-									"name": "Attribute 2",
-									"state": "Success"
+									"name": "Success",
+									"state": "Success",
+									"showStateIcon": true
 								},
 								{
-									"name": "Info 2",
-									"state": "Success"
+									"name": "Information",
+									"state": "Information",
+									"showStateIcon": true
 								},
 								{
 									"name": "Attribute 3",
-									"state": "None"
+									"state": "None",
+									"showStateIcon": true
 								},
 								{
 									"name": "Info 3",
-									"state": "None"
+									"state": "None",
+									"showStateIcon": true
 								}
 							]
 						},
@@ -713,27 +731,33 @@
 					"attributes": [
 						{
 							"value": "{attributes/0/name}",
-							"state": "{attributes/0/state}"
+							"state": "{attributes/0/state}",
+							"showStateIcon": "{attributes/0/showStateIcon}"
 						},
 						{
 							"value": "{attributes/1/name}",
-							"state": "{attributes/1/state}"
+							"state": "{attributes/1/state}",
+							"showStateIcon": "{attributes/1/showStateIcon}"
 						},
 						{
 							"value": "{attributes/2/name}",
-							"state": "{attributes/2/state}"
+							"state": "{attributes/2/state}",
+							"showStateIcon": "{attributes/2/showStateIcon}"
 						},
 						{
 							"value": "{attributes/3/name}",
-							"state": "{attributes/3/state}"
+							"state": "{attributes/3/state}",
+							"showStateIcon": "{attributes/3/showStateIcon}"
 						},
 						{
 							"value": "{attributes/4/name}",
-							"state": "{attributes/4/state}"
+							"state": "{attributes/4/state}",
+							"showStateIcon": "{attributes/4/showStateIcon}"
 						},
 						{
 							"value": "{attributes/5/name}",
-							"state": "{attributes/5/state}"
+							"state": "{attributes/5/state}",
+							"showStateIcon": "{attributes/5/showStateIcon}"
 						}
 					]
 				}

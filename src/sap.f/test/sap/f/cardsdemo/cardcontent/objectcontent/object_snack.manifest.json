@@ -119,6 +119,30 @@
 							"maxLines": 3,
 							"type": "Status",
 							"state": "Success"
+						},
+						{
+							"value": "Error",
+							"state": "Error",
+							"type": "Status",
+							"showStateIcon": true
+						},
+						{
+							"value": "Warning",
+							"state": "Warning",
+							"type": "Status",
+							"showStateIcon": true
+						},
+						{
+							"value": "Success",
+							"state": "Success",
+							"type": "Status",
+							"showStateIcon": true
+						},
+						{
+							"value": "Information",
+							"state": "Information",
+							"type": "Status",
+							"showStateIcon": true
 						}
 					]
 				},

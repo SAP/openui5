@@ -43,7 +43,8 @@
 						"RAM": "4 GB DDR3 RAM",
 						"HHD": "500 GB Hard Disc",
 						"OS": "Windows 8 Pro",
-						"OSState": "Success"
+						"OSState": "Success",
+						"OSStateShowStateIcon": true
 					},
 					{
 						"Name": "Notebook Basic 17",
@@ -54,7 +55,8 @@
 						"RAM": "4 GB DDR3 RAM",
 						"HHD": "500 GB Hard Disc",
 						"OS": "Windows 8 Pro",
-						"OSState": "Success"
+						"OSState": "Success",
+						"OSStateShowStateIcon": true
 					},
 					{
 						"Name": "Notebook Basic 19",
@@ -66,7 +68,8 @@
 						"HHD": "1000 GB Hard Disc",
 						"HHDState": "Success",
 						"OS": "Windows 8 Pro",
-						"OSState": "Success"
+						"OSState": "Success",
+						"OSStateShowStateIcon": true
 					}
 				]
 			},
@@ -94,7 +97,8 @@
 					},
 					{
 						"value": "{OS}",
-						"state": "{OSState}"
+						"state": "{OSState}",
+						"showStateIcon": "{OSStateShowStateIcon}"
 					}
 				]
 			}

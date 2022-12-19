@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/Avatar",
 	"sap/m/Link",
 	"sap/m/Label",
-	"sap/m/ObjectStatus",
+	"sap/ui/integration/controls/ObjectStatus",
 	"sap/m/ComboBox",
 	"sap/m/TextArea",
 	"sap/base/Log",
@@ -549,7 +549,8 @@ sap.ui.define([
 		var oControl = new ObjectStatus({
 			text: oItem.value,
 			visible: BindingHelper.reuse(vVisible),
-			state: oItem.state
+			state: oItem.state,
+			showStateIcon: oItem.showStateIcon
 		});
 
 		return oControl;

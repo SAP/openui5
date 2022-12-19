@@ -68,7 +68,7 @@
 
 			.sapUiIntLCIAttrSecondCell {
 				justify-content: flex-end;
-	
+
 				.sapMObjStatus {
 					text-align: end;
 				}
@@ -105,10 +105,18 @@
 }
 
 .sapUiIntLCIInfo {
+	display: flex;
 	font-size: @sapMFontMediumSize;
 	text-align: right;
 	margin-left: 1rem;
 	max-width: 40%;
+
+	.sapUiIntLCIInfoText {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		flex: 1;
+	}
 
 	&.sapUiIntLCIInfoNone {
 		color: @sapUiNeutralText;

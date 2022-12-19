@@ -108,6 +108,11 @@ sap.ui.define([
 				infoState: { type : "sap.ui.core.ValueState", group: "Misc", defaultValue: ValueState.None },
 
 				/**
+				 * Defines if info state icon should be shown.
+				 */
+				showInfoStateIcon: { type: "boolean", defaultValue: false },
+
+				/**
 				 * Defines the layout type of the attributes.
 				 */
 				attributesLayoutType: { type: "sap.ui.integration.AttributesLayoutType", defaultValue: AttributesLayoutType.TwoColumns }

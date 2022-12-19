@@ -57,7 +57,8 @@
 						{
 							"value": "Overdue by 20 days",
 							"type": "Status",
-							"state": "Error"
+							"state": "Error",
+							"showStateIcon": true
 						},
 						{
 							"value": "USD 10,000.00 was to be billed on 23rd August, 2021."

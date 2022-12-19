@@ -62,7 +62,9 @@ sap.ui.define([
 						"emailSubject": "Subject",
 						"website": "www.company_a.example.com",
 						"url": "http://www.company_a.example.com"
-					}
+					},
+					"showErrorStateIcon": true,
+					"showWarningStateIcon": false
 				}
 			},
 			"header": {
@@ -106,6 +108,18 @@ sap.ui.define([
 										}
 									}
 								]
+							},
+							{
+								"value": "Error value",
+								"state": "Error",
+								"type": "Status",
+								"showStateIcon": "{showErrorStateIcon}"
+							},
+							{
+								"value": "Warning value",
+								"state": "Warning",
+								"type": "Status",
+								"showStateIcon": "{showWarningStateIcon}"
 							}
 						]
 					},
@@ -747,7 +761,7 @@ sap.ui.define([
 			assert.equal(oHeader.getIconSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Woman_avatar_01.png", "Should have correct header icon source.");
 
 			// Group 1 assertions
-			assert.equal(aGroups[0].getItems().length, 9, "Should have 9 items.");
+			assert.equal(aGroups[0].getItems().length, 11, "Should have 11 items.");
 			assert.equal(aGroups[0].getItems()[0].getText(), oManifestContent.groups[0].title, "Should have correct group title.");
 			assert.equal(aGroups[0].getItems()[1].getText(), oManifestContent.groups[0].items[0].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[0].getItems()[2].getText(), oData.firstName, "Should have correct item value.");
@@ -755,6 +769,8 @@ sap.ui.define([
 			assert.equal(aGroups[0].getItems()[4].getText(), oData.lastName, "Should have correct item value.");
 			assert.equal(aGroups[0].getItems()[5].getText(), oManifestContent.groups[0].items[2].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[0].getItems()[6].getItems()[0].getText(), oData.phone, "Should have correct item value.");
+			assert.equal(aGroups[0].getItems()[9].getShowStateIcon(), oData.showErrorStateIcon, "Should have correct status icon value.");
+			assert.equal(aGroups[0].getItems()[10].getShowStateIcon(), oData.showWarningStateIcon, "Should have correct status icon value.");
 
 			// Group 2 assertions
 			assert.equal(aGroups[1].getItems().length, 2, "Should have 2 items.");

@@ -70,7 +70,8 @@
 						{
 							"value": "15,000.00 EUR",
 							"type": "Status",
-							"state": "Information"
+							"state": "Information",
+							"showStateIcon": true
 						},
 						{
 							"value": "For Ultra Jet Super Highspeed"
