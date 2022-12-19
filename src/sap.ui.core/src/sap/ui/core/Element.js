@@ -250,11 +250,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * @typedef {sap.ui.base.ManagedObject.MetadataOptions} sap.ui.core.Element.MetadataOptions
+	 *
+	 * The structure of the "metadata" object which is passed when inheriting from sap.ui.core.Element using its static "extend" method.
+	 * See {@link sap.ui.core.Element.extend} for details on its usage.
+	 *
+	 * @property {boolean | sap.ui.core.Element.MetadataOptions.DnD} [dnd=false]
+	 *     Defines draggable and droppable configuration of the element.
+	 *     The following boolean properties can be provided in the given object literal to configure drag-and-drop behavior of the element
+	 *     (see {@link sap.ui.core.Element.MetadataOptions.DnD DnD} for details): draggable, droppable
+	 *     If the <code>dnd</code> property is of type Boolean, then the <code>draggable</code> and <code>droppable</code> configuration are both set to this Boolean value.
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {object} sap.ui.core.Element.MetadataOptions.DnD
+	 *
+	 * An object literal configuring the drag&drop capabilities of a class derived from sap.ui.core.Element.
+	 * See {@link sap.ui.core.Element.MetadataOptions MetadataOptions} for details on its usage.
+	 *
+	 * @property {boolean} [draggable=false] Defines whether the element is draggable or not. The default value is <code>false</code>.
+	 * @property {boolean} [droppable=false] Defines whether the element is droppable (it allows being dropped on by a draggable element) or not. The default value is <code>false</code>.
+	 *
+	 * @public
+	 */
+
+	/**
 	 * Defines a new subclass of Element with the name <code>sClassName</code> and enriches it with
 	 * the information contained in <code>oClassInfo</code>.
 	 *
 	 * <code>oClassInfo</code> can contain the same information that {@link sap.ui.base.ManagedObject.extend} already accepts,
-	 * plus the following <code>dnd</code> property to configure drag-and-drop behavior in the metadata object literal:
+	 * plus the <code>dnd</code> property in the metadata object literal to configure drag-and-drop behavior
+	 * (see {@link sap.ui.core.Element.MetadataOptions MetadataOptions} for details). Objects describing aggregations can also
+	 * have a <code>dnd</code> property when used for a class extending <code>Element</code>
+	 * (see {@link sap.ui.base.ManagedObject.MetadataOptions.AggregationDnD AggregationDnD}).
 	 *
 	 * Example:
 	 * <pre>
@@ -274,27 +304,9 @@ sap.ui.define([
 	 * });
 	 * </pre>
 	 *
-	 * <h3><code>dnd</code> key as a metadata property</h3>
-	 *
-	 * <b>dnd</b>: <i>object|boolean</i><br>
-	 * Defines draggable and droppable configuration of the element.
-	 * The following keys can be provided via <code>dnd</code> object literal to configure drag-and-drop behavior of the element:
-	 * <ul>
-	 *  <li><code>[draggable=false]: <i>boolean</i></code> Defines whether the element is draggable or not. The default value is <code>false</code>.</li>
-	 *  <li><code>[droppable=false]: <i>boolean</i></code> Defines whether the element is droppable (it allows being dropped on by a draggable element) or not. The default value is <code>false</code>.</li>
-	 * </ul>
-	 * If <code>dnd</code> property is of type Boolean, then the <code>draggable</code> and <code>droppable</code> configuration are set to this Boolean value.
-	 *
-	 * <h3><code>dnd</code> key as an aggregation metadata property</h3>
-	 *
-	 * <b>dnd</b>: <i>object|boolean</i><br>
-	 * In addition to draggable and droppable configuration, the layout of the aggregation can be defined as a hint at the drop position indicator.
-	 * <ul>
-	 *  <li><code>[layout="Vertical"]: </code> The arrangement of the items in this aggregation. This setting is recommended for the aggregation with multiplicity 0..n (<code>multiple: true</code>). Possible values are <code>Vertical</code> (e.g. rows in a table) and <code>Horizontal</code> (e.g. columns in a table). It is recommended to use <code>Horizontal</code> layout if the arrangement is multidimensional.</li>
-	 * </ul>
-	 *
 	 * @param {string} sClassName Name of the class to be created
 	 * @param {object} [oClassInfo] Object literal with information about the class
+	 * @param {sap.ui.core.Element.MetadataOptions} [oClassInfo.metadata] the metadata object describing the class: properties, aggregations, events etc.
 	 * @param {function} [FNMetaImpl] Constructor function for the metadata object. If not given, it defaults to <code>sap.ui.core.ElementMetadata</code>.
 	 * @returns {function} Created class / constructor function
 	 *

@@ -209,8 +209,8 @@ sap.ui.define([
 	 *            Qualified name of the newly created class
 	 * @param {object} [oClassInfo]
 	 *            Object literal with information about the class
-	 * @param {object} [oClassInfo.metadata]
-	 *            See {@link sap.ui.core.Element.extend} for the values allowed in every extend.
+	 * @param {sap.ui.core.Component.MetadataOptions} [oClassInfo.metadata]
+	 *            The metadata object describing the class. See {@link sap.ui.core.Component.extend} for the values allowed in every extend.
 	 * @param {sap.ui.core.UIComponent.RoutingMetadata} [oClassInfo.metadata.routing]
 	 *            Since 1.16. An object containing the routing-relevant configurations, routes, targets, config.
 	 *
@@ -227,6 +227,7 @@ sap.ui.define([
 	 * @returns {function} The created class / constructor function
 	 * @name sap.ui.core.UIComponent.extend
 	 * @function
+	 * @static
 	 * @public
 	 */
 
