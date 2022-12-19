@@ -1976,14 +1976,22 @@ sap.ui.define([
 		oCore.applyChanges();
 		oMonth = oCal.getAggregation("month")[0];
 
-		// act
 		// simulate focusing of a date in current month (focusedDate = 2022-11-24)
 		oMonth.setProperty("_focusedDate", new CalendarDate(2022, 10, 24));
+
+		// act
+		// add empty date range (BCP: 2280197094)
+		oCal.addSelectedDate(new DateRange());
+
+		//assert - check if _checkDateSelected throws an error when date range is empty
+		assert.equal(oMonth._checkDateSelected(new CalendarDate(2022, 10, 26)), 0, "_checkDateSelected doesn't throw error when the selected dates range is empty");
+
+		// act
 		// select a date that is outside the current month (startDate of the interval selection = 2022-12-01)
-		oCal.addSelectedDate(new DateRange().setStartDate(new Date(2022, 11, 1)));
+		oCal.getSelectedDates()[0].setStartDate(new Date(2022, 11, 1));
 
 		//assert - check if a date between focusedDate and startDate is eligible for marking as "between" date (for example 2022-11-26)
-		assert.equal(oMonth._checkDateSelected(new CalendarDate(2022, 10, 26)), 0, 'date between focusedDate and startDate is not marked as any kind of selected');
+		assert.equal(oMonth._checkDateSelected(new CalendarDate(2022, 10, 26)), 0, "date between focusedDate and startDate is not marked as any kind of selected");
 
 		//clean
 		oCal.destroy();
