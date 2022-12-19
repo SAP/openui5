@@ -224,7 +224,7 @@ sap.ui.define([
 	};
 
 	CutPaste.prototype._getTargetZoneAggregation = function(oTargetOverlay) {
-		var aAggregationOverlays = oTargetOverlay.getAggregationOverlays();
+		var aAggregationOverlays = oTargetOverlay.getChildren();
 		var aPossibleTargetZones = aAggregationOverlays.filter(function(oAggregationOverlay) {
 			return oAggregationOverlay.isTargetZone();
 		});

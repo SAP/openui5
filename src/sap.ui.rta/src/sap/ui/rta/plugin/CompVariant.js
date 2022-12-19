@@ -265,7 +265,7 @@ sap.ui.define([
 	function changeContent(aOverlays) {
 		var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		var oElementOverlay = aOverlays[0];
-		var oControl = oElementOverlay.getElementInstance();
+		var oControl = oElementOverlay.getElement();
 		var oAction = this.getAction(oElementOverlay);
 		var oVariantManagementControl = oControl.getVariantManagement();
 		// the modified flag might be changed before the dialog is closed, so it has to be saved here already

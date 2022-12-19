@@ -268,7 +268,7 @@ function(
 			} else if (iIndex === aAggregationOverlays.length - 1) {
 				// get next sibling from next aggregation in the same parent
 				var oParent = oOverlay.getParentElementOverlay();
-				aAggregationOverlays = oParent.getAggregationOverlays();
+				aAggregationOverlays = oParent.getChildren();
 				for (iIndex = aAggregationOverlays.indexOf(oParentAggregationOverlay) + 1; iIndex < aAggregationOverlays.length; iIndex++) {
 					var aOverlays = aAggregationOverlays[iIndex].getChildren();
 					if (aOverlays.length) {
@@ -300,7 +300,7 @@ function(
 			} else if (iIndex === 0) {
 				// get previous sibling from previous aggregation in the same parent
 				var oParent = oOverlay.getParentElementOverlay();
-				aAggregationOverlays = oParent.getAggregationOverlays();
+				aAggregationOverlays = oParent.getChildren();
 				for (iIndex = aAggregationOverlays.indexOf(oParentAggregationOverlay) - 1; iIndex >= 0; iIndex--) {
 					var aOverlays = aAggregationOverlays[iIndex].getChildren();
 					if (aOverlays.length) {
@@ -378,7 +378,7 @@ function(
 	OverlayUtil.iterateOverlayElementTree = function(oElementOverlay, fnCallback) {
 		fnCallback(oElementOverlay);
 
-		oElementOverlay.getAggregationOverlays().forEach(function(oAggregationOverlay) {
+		oElementOverlay.getChildren().forEach(function(oAggregationOverlay) {
 			oAggregationOverlay.getChildren().forEach(function(oChildOverlay) {
 				this.iterateOverlayElementTree(oChildOverlay, fnCallback);
 			}, this);

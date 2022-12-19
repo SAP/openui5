@@ -11,9 +11,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	//preload simple form layouts to avoid async requests during test execution
 	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/layout/form/ResponsiveLayout",
+	"sap/ui/layout/form/ColumnLayout",
 	"sap/ui/layout/ResponsiveFlowLayoutData",
-	"sap/ui/layout/form/GridLayout",
 	"sap/ui/layout/form/GridContainerData",
 	"sap/ui/layout/form/GridElementData",
 	"sap/ui/layout/form/ResponsiveGridLayout",
@@ -175,8 +174,6 @@ sap.ui.define([
 	// shortcut for sap.ui.layout.form.SimpleFormLayout
 	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
-	parameterizedTest(SimpleFormLayout.ResponsiveLayout);
-	parameterizedTest(SimpleFormLayout.GridLayout);
 	parameterizedTest(SimpleFormLayout.ResponsiveGridLayout);
 	parameterizedTest(SimpleFormLayout.ColumnLayout);
 

@@ -489,7 +489,7 @@ sap.ui.define([
 	DragDrop.prototype._getAssociatedDomCopy = function(oOverlay) {
 		var oDomCopy = document.createElement("div");
 
-		oOverlay.getAggregationOverlays().forEach(function(oAggregationOverlay) {
+		oOverlay.getChildren().forEach(function(oAggregationOverlay) {
 			oAggregationOverlay.getChildren().forEach(function(oChildOverlay) {
 				var oChildDom = oChildOverlay.getAssociatedDomRef();
 				if (oChildDom) {

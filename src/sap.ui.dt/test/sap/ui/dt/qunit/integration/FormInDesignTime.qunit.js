@@ -13,9 +13,8 @@ sap.ui.define([
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/layout/form/FormLayout",
 	"sap/ui/layout/form/Form",
-	"sap/ui/layout/form/GridLayout",
 	"sap/ui/layout/form/ResponsiveGridLayout",
-	"sap/ui/layout/form/ResponsiveLayout"
+	"sap/ui/layout/form/ColumnLayout"
 ], function(
 	CheckBox,
 	Input,
@@ -29,9 +28,8 @@ sap.ui.define([
 	FormElement,
 	FormLayout,
 	Form,
-	GridLayout,
 	ResponsiveGridLayout,
-	ResponsiveLayout
+	ColumnLayout
 ) {
 	"use strict";
 
@@ -156,9 +154,9 @@ sap.ui.define([
 		this.oFormDesignTime.destroy();
 	};
 
-	QUnit.module("Given that overlays are created for a form with ResponsiveLayout with formContainers", {
+	QUnit.module("Given that overlays are created for a form with ColumnLayout with formContainers", {
 		beforeEach: function(assert) {
-			initFormWithGivenLayout.call(this, assert, new ResponsiveLayout());
+			initFormWithGivenLayout.call(this, assert, new ColumnLayout());
 		},
 
 		afterEach: function() {
@@ -186,19 +184,6 @@ sap.ui.define([
 	QUnit.module("Given that overlays are created for a form with FormLayout with formContainers", {
 		beforeEach: function(assert) {
 			initFormWithGivenLayout.call(this, assert, new FormLayout());
-		},
-		afterEach: function() {
-			cleanup.call(this);
-		}
-	}, function() {
-		QUnit.test("when rendering is finished overlays are visible and ...", function(assert) {
-			testFormHierarchyWithDesignTime.call(this, assert);
-		});
-	});
-
-	QUnit.module("Given that overlays are created for a form with GridLayout with formContainers", {
-		beforeEach: function(assert) {
-			initFormWithGivenLayout.call(this, assert, new GridLayout());
 		},
 		afterEach: function() {
 			cleanup.call(this);

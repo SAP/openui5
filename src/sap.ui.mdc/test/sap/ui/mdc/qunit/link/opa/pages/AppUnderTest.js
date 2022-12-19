@@ -49,7 +49,7 @@ sap.ui.require([
                             this.waitFor({
                                 controlType: "sap.ui.dt.ElementOverlay",
                                 matchers: function(oElementOverlay) {
-                                    return oElementOverlay.getElementInstance().getId() === oLink.getParent().getId();
+                                    return oElementOverlay.getElement().getId() === oLink.getParent().getId();
                                 },
                                 actions: [
                                     new Press(),

@@ -169,7 +169,7 @@ function(
 	 */
 	Plugin.prototype.callAggregationOverlayRegistrationMethods = function(oElementOverlay) {
 		if (this.registerAggregationOverlay) {
-			var aAggregationOverlays = oElementOverlay.getAggregationOverlays();
+			var aAggregationOverlays = oElementOverlay.getChildren();
 			aAggregationOverlays.forEach(this.registerAggregationOverlay.bind(this));
 		}
 	};
@@ -196,7 +196,7 @@ function(
 		}
 
 		if (this.deregisterAggregationOverlay) {
-			var aAggregationOverlays = oElementOverlay.getAggregationOverlays();
+			var aAggregationOverlays = oElementOverlay.getChildren();
 			aAggregationOverlays.forEach(this.deregisterAggregationOverlay.bind(this));
 		}
 	};

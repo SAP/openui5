@@ -4,7 +4,7 @@
 	xmlns:sap.ui.core.mvc="sap.ui.core.mvc">
 	<Page title="Title">
 		<content>
-			<f:SimpleForm id="SimpleForm0" layout="ResponsiveLayout">
+			<f:SimpleForm id="SimpleForm0" layout="ColumnLayout">
 				<f:content>
 					<core:Title text="Title of Group 0" id="Group0" />
 

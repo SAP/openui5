@@ -855,16 +855,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * TODO: remove method after all usage
-	 * Returns AggregationOverlays created for the public aggregations of the associated Element
-	 * @return {sap.ui.dt.AggregationOverlay[]} array of the AggregationOverlays
-	 * @deprecated
-	 */
-	ElementOverlay.prototype.getAggregationOverlays = function() {
-		return this.getAggregation("children") || [];
-	};
-
-	/**
 	 * Returns AggregationOverlay the public aggregations of the associated Element by aggregation name
 	 * @param {string} sAggregationName - Name of the aggregation
 	 * @param {string} sAggregationType - Type of the aggregation
