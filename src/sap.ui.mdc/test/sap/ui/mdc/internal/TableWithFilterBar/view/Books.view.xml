@@ -826,8 +826,16 @@
 								<Button type="Emphasized" text="Dummy Action 1" id="chartButton1" />
 							</mdcat:ActionToolbarAction>
 							<mdcat:ActionToolbarAction id="chartAction2">
-								<Button type="Emphasized" text="Dummy Action 2" id="chartButton2" />
+								<SegmentedButton id="SB1" >
+									<items>
+										<SegmentedButtonItem text="Dummy Act 2" />
+										<SegmentedButtonItem text="Dummy Act 3" />
+									</items>
+								</SegmentedButton>
 							</mdcat:ActionToolbarAction>
+							<!-- <mdcat:ActionToolbarAction id="chartAction3">
+								<SearchField id="mySearchAction" placeholder="Search" width="200px"/>
+							</mdcat:ActionToolbarAction> -->
 						</mdc:actions>
 						<mdc:items>
 							<mdcc:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
