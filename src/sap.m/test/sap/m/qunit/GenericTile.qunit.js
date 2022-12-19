@@ -1500,6 +1500,7 @@ sap.ui.define([
 		assert.ok(document.getElementById("numeric-cnt-failed-value"), "Value was rendered successfully");
 		assert.ok(document.querySelector(".sapMNCLoadingShimmer"), "Loading Shimmer present on 'Loading' state for NumericContent");
 
+		assert.equal(getComputedStyle(document.getElementById("generic-tile-failed-overlay")).opacity, "0.8","Overlay has been added successfully");
 		this.oGenericTile.setState("Loaded");
 		sap.ui.getCore().applyChanges();
 		assert.ok(document.getElementById("tile-cont-failed-footer-text"), "TileContent footer text was rendered successfully");
@@ -1518,6 +1519,42 @@ sap.ui.define([
 		this.oGenericTile.setState("Failed");
 		sap.ui.getCore().applyChanges();
 		assert.ok(!this.oGenericTile.getTileContent()[0]._bRenderFooter, "bRenderFooter set to false");
+	});
+
+	QUnit.module("Rendering tests for Disabled state", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile("generic-tile-failed", {
+				state: LoadState.Disabled,
+				subheader: "Expenses By Region",
+				frameType: FrameType.OneByOne,
+				header: "Comparative Annual Totals",
+				headerImage: IMAGE_PATH + "female_BaySu.jpg",
+				tileContent: new TileContent("tile-cont-failed", {
+					unit: "EUR",
+					footer: "Current Quarter",
+					content: new NumericContent("numeric-cnt-failed", {
+						state: LoadState.Loading,
+						scale: "M",
+						indicator: DeviationIndicator.Up,
+						truncateValueTo: 4,
+						value: 20,
+						nullifyValue: true,
+						formatterValue: false,
+						valueColor: ValueColor.Good,
+						icon: "sap-icon://customer-financial-fact-sheet"
+					})
+				})
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("GenericTile in Disabled state rendered", function(assert) {
+		assert.equal(getComputedStyle(document.getElementById("generic-tile-failed-overlay")).opacity, "0.8","Overlay has been added successfully");
 	});
 
 	QUnit.module("GenericTileMode tests", {
