@@ -50,7 +50,9 @@ sap.ui.define([
 			defaultAggregation: "template",
 			properties: {
 				/**
-				 * Width of the column.
+				 * Defines the width of the column.
+				 *
+				 * @since 1.80
 				 */
 				width: {
 					type: "sap.ui.core.CSSSize",
@@ -58,7 +60,9 @@ sap.ui.define([
 					defaultValue: null
 				},
 				/**
-				 * Minimum width of the column.
+				 * Defines the minimum width of the column.
+				 *
+				 * @since 1.80
 				 */
 				minWidth: {
 					type: "float",
@@ -66,14 +70,17 @@ sap.ui.define([
 					defaultValue: 8
 				},
 				/**
-				 * The column header text.
+				 * Defines the column header text.
+				 *
+				 * @since 1.80
 				 */
 				header: {
 					type: "string"
 				},
 				/**
 				 * Defines whether the column header is visible.
-				 * @since 1.78
+				 *
+				 * @since 1.80
 				 */
 				headerVisible: {
 					type: "boolean",
@@ -81,14 +88,23 @@ sap.ui.define([
 					defaultValue: true
 				},
 				/**
-				 * Horizontal alignment of the content.
+				 * Defines the horizontal alignment of the column content.
+				 *
+				 * @since 1.80
 				 */
 				hAlign: {
 					type: "sap.ui.core.HorizontalAlign",
 					defaultValue: "Begin"
 				},
 				/**
-				 * Importance of the column. It is used to show or hide the column based on the <code>Table</code> configuration.
+				 * Defines the column importance.
+				 *
+				 * The column importance is taken into consideration for calculating the <code>minScreenWidth</code>
+				 * property and for setting the <code>demandPopin</code> property of the column.
+				 * See {@link sap.m.Table#getAutoPopinMode} for more details, which is automatically set to <code>true</code>.
+				 *
+				 * @deprecated as of version 1.109, replaced with {@link sap.ui.mdc.table.ResponsiveColumnSettings#importance} <br/>
+				 * This property will be ignored whenever the {@link sap.ui.mdc.table.ResponsiveColumnSettings} are applied to the column.
 				 */
 				importance: {
 					type: "sap.ui.core.Priority",
@@ -104,7 +120,9 @@ sap.ui.define([
 					defaultValue: -1
 				},
 				/**
-				 * The data property related to the column.
+				 * Defines data property related to the column.
+				 *
+				 * @since 1.84
 				 */
 				dataProperty: {
 					type: "string"
@@ -130,10 +148,23 @@ sap.ui.define([
 				},
 				/**
 				 * <code>CreationRow</code> template.
+				 *
 				 * <b>Note:</b> Once the binding supports creating transient records, this aggregation will be removed.
 				 */
 				creationTemplate: {
 					type: "sap.ui.core.Control",
+					multiple: false
+				},
+				/**
+				 * Defines type-specific column settings based on the used {@link sap.ui.mdc.table.TableTypeBase}.
+				 *
+				 * <b>Note:</b> Once <code>sap.ui.mdc.table.ColumnSettings</code> are defined,
+				 * all properties provided by the <code>ColumnSettings</code> are automatically assigned to the column.
+				 *
+				 * @since 1.110
+				 */
+				extendedSettings: {
+					type: "sap.ui.mdc.table.ColumnSettings",
 					multiple: false
 				}
 			}
@@ -200,9 +231,42 @@ sap.ui.define([
 				autoPopinWidth: "{$this>/minWidth}",
 				hAlign: "{$this>/hAlign}",
 				header: this._getColumnHeaderLabel(),
-				importance: "{$this>/importance}",
+				importance: {
+					parts: [
+						{path: "$this>/importance"},
+						{path: "$this>/extendedSettings/importance"},
+						{path: "$this>/extendedSettings/@className"}
+					],
+					formatter: function(sLegacyImportance, sImportance, sClassName) {
+						if (sImportance && sClassName === "sap.ui.mdc.table.ResponsiveColumnSettings") {
+							return sImportance;
+						} else {
+							return sLegacyImportance;
+						}
+					}
+				},
 				popinDisplay: "Inline",
-				tooltip: "{$this>/tooltip}"
+				tooltip: "{$this>/tooltip}",
+				mergeDuplicates: {
+					parts: [
+						{path: "$this>/extendedSettings/mergeFunction"},
+						{path: "$this>/extendedSettings/@className"}
+					],
+					formatter: function(sMergeFunction, sClassName) {
+						return sMergeFunction && sClassName === "sap.ui.mdc.table.ResponsiveColumnSettings";
+					}
+				},
+				mergeFunctionName: {
+					parts: [
+						{path: "$this>/extendedSettings/mergeFunction"},
+						{path: "$this>/extendedSettings/@className"}
+					],
+					formatter: function(sMergeFunction, sClassName) {
+						if (sClassName === "sap.ui.mdc.table.ResponsiveColumnSettings") {
+							return sMergeFunction;
+						}
+					}
+				}
 			});
 		} else {
 			oColumn = GridTableType.createColumn(this.getId() + "-innerColumn", {
@@ -451,10 +515,10 @@ sap.ui.define([
 		}
 
 		var sWidth = vXConfig &&
-					 vXConfig.aggregations &&
-					 vXConfig.aggregations.columns &&
-					 vXConfig.aggregations.columns[sPropertyKey] &&
-					 vXConfig.aggregations.columns[sPropertyKey].width;
+			vXConfig.aggregations &&
+			vXConfig.aggregations.columns &&
+			vXConfig.aggregations.columns[sPropertyKey] &&
+			vXConfig.aggregations.columns[sPropertyKey].width;
 
 		this._oSettingsModel.setProperty("/p13nWidth", sWidth);
 	};

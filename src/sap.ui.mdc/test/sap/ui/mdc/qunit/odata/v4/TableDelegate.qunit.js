@@ -76,35 +76,6 @@ sap.ui.define([
 		return mState;
 	}
 
-	function poll(fnCheck, iTimeout) {
-		return new Promise(function(resolve, reject) {
-			if (fnCheck()) {
-				resolve();
-				return;
-			}
-
-			var iRejectionTimeout = setTimeout(function() {
-				clearInterval(iCheckInterval);
-				reject("Polling timeout");
-			}, iTimeout == null ? 100 : iTimeout);
-
-			var iCheckInterval = setInterval(function() {
-				if (fnCheck()) {
-					clearTimeout(iRejectionTimeout);
-					clearInterval(iCheckInterval);
-					resolve();
-				}
-			}, 10);
-		});
-	}
-
-	function waitForBindingInfo(oTable, iTimeout) {
-		return poll(function() {
-			var oInnerTable = oTable._oTable;
-			return oInnerTable && oInnerTable.getBindingInfo(oTable._isOfType(TableType.Table, true) ? "rows" : "items");
-		}, iTimeout);
-	}
-
 	function getQuickAction(oMenu, sType) {
 		var oQuickActionContainer = oMenu.getAggregation("_quickActions")[0];
 		if (!oQuickActionContainer) {
@@ -1177,7 +1148,7 @@ sap.ui.define([
 				fnOriginalUpdateBindingInfo(oTable, oBindingInfo);
 				oBindingInfo.parameters["$search"] = "Name";
 			};
-			return waitForBindingInfo(oTable);
+			return MDCQUnitUtils.waitForBindingInfo(oTable);
 		}).then(function() {
 			var oPlugin = oTable._oTable.getDependents()[0];
 			var oBindRowsSpy = sinon.spy(oTable._oTable, "bindRows");

@@ -1358,11 +1358,15 @@ sap.ui.define([
 	};
 
 	Table.prototype._onAfterTableCreated = function(bResult) {
-		this._oTableReady[bResult ? "resolve" : "reject"](this);
+		if (this._oTableReady) {
+			this._oTableReady[bResult ? "resolve" : "reject"](this);
+		}
 	};
 
 	Table.prototype._onAfterFullInitialization = function(bResult) {
-		this._oFullInitialize[bResult ? "resolve" : "reject"](this);
+		if (this._oFullInitialize) {
+			this._oFullInitialize[bResult ? "resolve" : "reject"](this);
+		}
 	};
 
 	Table.prototype._createContent = function() {

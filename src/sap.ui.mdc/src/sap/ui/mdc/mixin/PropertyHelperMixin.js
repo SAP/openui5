@@ -133,7 +133,11 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	 * @returns {Promise<sap.ui.mdc.util.PropertyHelper>} Returns a <code>Promise</code> that resolves with the property helper
 	 */
 	 PropertyHelperMixin.awaitPropertyHelper = function() {
-		return this._oPropertyHelperDeferred.promise;
+		if (this._oPropertyHelperDeferred){
+			return this._oPropertyHelperDeferred.promise;
+		} else {
+			return Promise.resolve();
+		}
 	};
 
 	/**
