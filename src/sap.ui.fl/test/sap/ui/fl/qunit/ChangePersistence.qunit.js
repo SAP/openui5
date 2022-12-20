@@ -2104,6 +2104,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
+				},
+				hasPersoConnector: function() {
+					return false;
 				}
 			});
 			setURLParameterForCondensing("true");
@@ -2122,6 +2125,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
+				},
+				hasPersoConnector: function() {
+					return false;
 				}
 			});
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
@@ -2165,6 +2171,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
+				},
+				hasPersoConnector: function() {
+					return false;
 				}
 			});
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
@@ -2208,6 +2217,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
+				},
+				hasPersoConnector: function() {
+					return false;
 				}
 			});
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
@@ -2251,6 +2263,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
+				},
+				hasPersoConnector: function() {
+					return false;
 				}
 			});
 			setURLParameterForCondensing("true");
@@ -2301,6 +2316,9 @@ sap.ui.define([
 					sandbox.stub(Settings, "getInstanceOrUndef").returns({
 						isCondensingEnabled: function() {
 							return true;
+						},
+						hasPersoConnector: function() {
+							return false;
 						}
 					});
 				}
@@ -2333,6 +2351,9 @@ sap.ui.define([
 					sandbox.stub(Settings, "getInstanceOrUndef").returns({
 						isCondensingEnabled: function() {
 							return true;
+						},
+						hasPersoConnector: function() {
+							return false;
 						}
 					});
 				}
@@ -2348,6 +2369,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
+				},
+				hasPersoConnector: function() {
+					return false;
 				}
 			});
 
@@ -2367,6 +2391,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
+				},
+				hasPersoConnector: function() {
+					return false;
 				}
 			});
 
@@ -2410,6 +2437,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
+				},
+				hasPersoConnector: function() {
+					return false;
 				}
 			});
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
@@ -2445,6 +2475,22 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("Shall save the dirty changes when adding two new changes with different layers with 2 requests when PersoConnector exists and return a promise", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: function() {
+					return true;
+				},
+				hasPersoConnector: function() {
+					return true;
+				}
+			});
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.USER, Layer.CUSTOMER);
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				assert.equal(this.oWriteStub.callCount, 2);
+				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
+			}.bind(this));
+		});
+
 		QUnit.test("Shall save the dirty changes when adding two new changes with different layers, not call the condenser and return a promise", function(assert) {
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.USER, Layer.CUSTOMER);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
@@ -2475,6 +2521,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
+				},
+				hasPersoConnector: function() {
+					return false;
 				}
 			});
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
@@ -2502,6 +2551,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
+				},
+				hasPersoConnector: function() {
+					return false;
 				}
 			});
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
@@ -2523,6 +2575,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
+				},
+				hasPersoConnector: function() {
+					return false;
 				}
 			});
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
@@ -2560,6 +2615,9 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
+				},
+				hasPersoConnector: function() {
+					return false;
 				}
 			});
 			var oDeleteSpy = sandbox.spy(this.oChangePersistence, "deleteChange");
