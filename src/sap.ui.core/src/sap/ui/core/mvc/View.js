@@ -61,11 +61,6 @@ sap.ui.define([
 	 * With method {@link #byId}, elements or controls can be found with their view-local ID.
 	 * Also see {@link topic:91f28be26f4d1014b6dd926db0e91070 "Support for Unique IDs"} in the documentation.
 	 *
-	 * <strong>Note: For Views defined using XML markup</strong>
-	 * On root level, you can only define content for the default aggregation, e.g. without adding the <code>&lt;content&gt;</code> tag.
-	 * If you want to specify content for another aggregation of a view like <code>dependents</code>, place it in a child
-	 * control's dependents aggregation or add it by using {@link sap.ui.core.mvc.XMLView.addDependent}.
-	 *
 	 * <h3>View Definition</h3>
 	 * A view can be defined by {@link sap.ui.core.mvc.View.extend extending} this class and implementing
 	 * the {@link #createContent} method. The method must return one or many root controls that will be
