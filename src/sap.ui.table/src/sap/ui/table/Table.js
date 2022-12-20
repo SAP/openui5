@@ -832,15 +832,17 @@ sap.ui.define([
 			 * @since 1.23.0
 			 */
 			customFilter: {
-				/**
-				 * The column instance on which the custom filter button was pressed.
-				 */
-				column: {type: "sap.ui.table.Column"},
+				parameters: {
+					/**
+					 * The column instance on which the custom filter button was pressed.
+					 */
+					column: {type: "sap.ui.table.Column"},
 
-				/**
-				 * Filter value.
-				 */
-				value: {type: "string"}
+					/**
+					 * Filter value.
+					 */
+					value: {type: "string"}
+				}
 			},
 
 			/**
@@ -850,10 +852,12 @@ sap.ui.define([
 			 * @protected
 			 */
 			firstVisibleRowChanged: {
-				/**
-				 * First visible row
-				 */
-				firstVisibleRow: {type: "int"}
+				parameters: {
+					/**
+					 * First visible row
+					 */
+					firstVisibleRow: {type: "int"}
+				}
 			},
 
 			/**
@@ -862,10 +866,12 @@ sap.ui.define([
 			 * @protected
 			 */
 			busyStateChanged: {
-				/**
-				 * busy state
-				 */
-				busy: {type: "boolean"}
+				parameters: {
+					/**
+					 * busy state
+					 */
+					busy: {type: "boolean"}
+				}
 			},
 
 			/**
