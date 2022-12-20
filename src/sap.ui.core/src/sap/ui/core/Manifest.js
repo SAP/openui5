@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions',
 	'sap/ui/core/Configuration',
+	'sap/ui/core/Lib',
 	'./_UrlResolver'
 ],
 	function(
@@ -31,6 +32,7 @@ sap.ui.define([
 		isPlainObject,
 		LoaderExtensions,
 		Configuration,
+		Library,
 		_UrlResolver
 	) {
 	"use strict";
@@ -523,7 +525,7 @@ sap.ui.define([
 					for (var sLib in mLibraries) {
 						if (!mLibraries[sLib].lazy) {
 							Log.info("Component \"" + sComponentName + "\" is loading library: \"" + sLib + "\"");
-							aPromises.push(sap.ui.getCore().loadLibrary(sLib, {async: bAsync}));
+							aPromises.push(Library._load(sLib, {sync: !bAsync}));
 						}
 					}
 				}

@@ -11,9 +11,10 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/Log",
 	"sap/base/util/fetch",
-	"sap/base/util/syncFetch"
+	"sap/base/util/syncFetch",
+	"sap/ui/core/Lib"
 ],
-	function(URI, ResourceBundle, Log, fetch, syncFetch) {
+	function(URI, ResourceBundle, Log, fetch, syncFetch, Library) {
 		"use strict";
 
 		/**
@@ -739,7 +740,7 @@ sap.ui.define([
 		// Lazy load core resource bundle
 		function getCoreResourceBundle() {
 			if (!oCoreResourceBundle) {
-				oCoreResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+				oCoreResourceBundle = Library.get("sap.ui.core").getResourceBundle();
 			}
 			return oCoreResourceBundle;
 		}

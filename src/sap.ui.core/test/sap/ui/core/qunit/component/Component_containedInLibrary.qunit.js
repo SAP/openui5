@@ -1,8 +1,9 @@
 /*global QUnit sinon */
 sap.ui.define([
 	"sap/ui/Global",
-	'sap/ui/core/Component'
-], function(Global, Component) {
+	"sap/ui/core/Component",
+	"sap/ui/core/Lib"
+], function(Global, Component, Library) {
 	"use strict";
 
 	function noop() {}
@@ -51,7 +52,7 @@ sap.ui.define([
 
 	QUnit.test("and bundled as part of the library-preload...", function(assert) {
 		var success = Promise.resolve();
-		var loadLibs = this.stub(sap.ui.getCore(), "loadLibraries").returns(success);
+		var loadLibs = this.stub(Library, "_load").returns(success);
 		var loadPreload = this.stub(sap.ui.loader._, "loadJSResourceAsync").returns(success);
 
 		return Component.create({

@@ -23,7 +23,8 @@ sap.ui.define([
 	'sap/base/util/JSTokenizer',
 	'sap/base/util/each',
 	'sap/base/util/isEmptyObject',
-	'sap/ui/core/Configuration'
+	'sap/ui/core/Configuration',
+	'sap/ui/core/Lib'
 ],
 function(
 	DataType,
@@ -44,7 +45,8 @@ function(
 	JSTokenizer,
 	each,
 	isEmptyObject,
-	Configuration
+	Configuration,
+	Library
 ) {
 	"use strict";
 
@@ -744,7 +746,7 @@ function(
 		 */
 		function findControlClass(sNamespaceURI, sLocalName) {
 			var sClassName;
-			var mLibraries = sap.ui.getCore().getLoadedLibraries();
+			var mLibraries = Library.all();
 			each(mLibraries, function(sLibName, oLibrary) {
 				if ( sNamespaceURI === oLibrary.namespace || sNamespaceURI === oLibrary.name ) {
 					sClassName = oLibrary.name + "." + ((oLibrary.tagNames && oLibrary.tagNames[sLocalName]) || sLocalName);

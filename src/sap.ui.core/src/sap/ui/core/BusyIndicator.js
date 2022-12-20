@@ -9,6 +9,7 @@ sap.ui.define([
 	'./Popup',
 	'./BusyIndicatorUtils',
 	'sap/ui/core/library',
+	'sap/ui/core/Lib',
 	"sap/ui/performance/trace/FESR",
 	"sap/ui/performance/trace/Interaction",
 	"sap/base/Log",
@@ -20,7 +21,8 @@ sap.ui.define([
 		EventProvider,
 		Popup,
 		BusyIndicatorUtils,
-		library,
+		coreLib,
+		Library,
 		FESR,
 		Interaction,
 		Log,
@@ -30,7 +32,7 @@ sap.ui.define([
 	"use strict";
 
 	//shortcut for sap.ui.core.BusyIndicatorSize
-	var BusyIndicatorSize = library.BusyIndicatorSize;
+	var BusyIndicatorSize = coreLib.BusyIndicatorSize;
 
 	/**
 	 * Provides methods to show or hide a waiting animation covering the whole
@@ -103,7 +105,7 @@ sap.ui.define([
 		oRootDomRef.id = this.sDOM_ID;
 
 		var oBusyContainer = document.createElement("div");
-		this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+		this._oResBundle = Library.get("sap.ui.core").getResourceBundle();
 		var sTitle = this._oResBundle.getText("BUSY_TEXT");
 		delete this._oResBundle;
 

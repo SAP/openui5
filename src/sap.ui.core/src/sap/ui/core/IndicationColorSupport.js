@@ -3,12 +3,12 @@
  */
 
 // Provides helper class IndicationColoreSupport
-sap.ui.define(['./library'],
-	function(library) {
+sap.ui.define(['./library', 'sap/ui/core/Lib'],
+	function(coreLib, Library) {
 	"use strict";
 
 	// shortcut for enum(s)
-	var IndicationColor = library.IndicationColor;
+	var IndicationColor = coreLib.IndicationColor;
 
 		/**
 		 * Helper functionality for indication color support.
@@ -26,7 +26,7 @@ sap.ui.define(['./library'],
 		var ensureTexts = function() {
 			if (!mTexts) { // initialize texts if required
 				mTexts = {};
-				var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+				var rb = Library.get("sap.ui.core").getResourceBundle();
 				mTexts[IndicationColor.Indication01] = rb.getText("INDICATION_STATE_INDICATION01");
 				mTexts[IndicationColor.Indication02] = rb.getText("INDICATION_STATE_INDICATION02");
 				mTexts[IndicationColor.Indication03] = rb.getText("INDICATION_STATE_INDICATION03");

@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectRegistry',
+	'sap/ui/core/Lib',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/thirdparty/URI',
 	'sap/ui/performance/trace/Interaction',
@@ -34,6 +35,7 @@ sap.ui.define([
 	merge,
 	ManagedObject,
 	ManagedObjectRegistry,
+	Library,
 	ResizeHandler,
 	URI,
 	Interaction,
@@ -3032,7 +3034,7 @@ sap.ui.define([
 						Array.prototype.push.apply(aLibs, oTransitiveDependencies.dependencies);
 
 						// load library preload for every transitive dependency
-						return sap.ui.getCore().loadLibraries( aLibs, { preloadOnly: true } ).catch(errorLogging(oTransitiveDependencies.library, true));
+						return Library._load( aLibs, { preloadOnly: true } ).catch(errorLogging(oTransitiveDependencies.library, true));
 					} else {
 						sPreloadName = sController.replace(/\./g, "/") + (http2 ? '-h2-preload.js' : '-preload.js'); // URN
 						return sap.ui.loader._.loadJSResourceAsync(sPreloadName).catch(errorLogging(sPreloadName, true));
@@ -3069,8 +3071,8 @@ sap.ui.define([
 				}
 				if (aLibs.length > 0) {
 					Log.info("Component \"" + sComponentName + "\" is loading libraries: \"" + aLibs.join(", ") + "\"");
-					fnCollect(sap.ui.getCore().loadLibraries(aLibs, {
-						async: bAsync
+					fnCollect(Library._load(aLibs, {
+						sync: !bAsync
 					}));
 				}
 			}
@@ -3162,7 +3164,7 @@ sap.ui.define([
 			if ( Array.isArray(hints.libs) ) {
 				libs = hints.libs.map(processOptions).filter(identity);
 				phase1Preloads.push(
-					sap.ui.getCore().loadLibraries( libs, { preloadOnly: true } )
+					Library._load( libs, { preloadOnly: true } )
 				);
 			}
 
@@ -3172,7 +3174,7 @@ sap.ui.define([
 			phase1Preloads = Promise.all( phase1Preloads );
 			if ( libs && !mOptions.preloadOnly ) {
 				phase1Preloads = phase1Preloads.then( function() {
-					return sap.ui.getCore().loadLibraries( libs );
+					return Library._load( libs );
 				});
 			}
 			collect( phase1Preloads );

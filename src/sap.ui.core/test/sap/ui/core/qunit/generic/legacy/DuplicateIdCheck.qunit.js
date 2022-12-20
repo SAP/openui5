@@ -13,11 +13,12 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Control",
 	"sap/ui/core/Item",
+	"sap/ui/core/Lib",
 	"sap/ui/commons/TextField",
 	"sap/m/Text",
 	"sap/ui/dom/includeStylesheet",
 	"require"
-], function (Log, ObjectPath, VersionInfo, DataType, Element, Control, Item, CommonsTextField, MobileText, includeStylesheet, require) {
+], function (Log, ObjectPath, VersionInfo, DataType, Element, Control, Item, Library, CommonsTextField, MobileText, includeStylesheet, require) {
 	"use strict";
 
 	var aKnownLibraries = [
@@ -178,7 +179,7 @@ sap.ui.define([
 	function loadAllAvailableLibraries() {
 
 		// We have a list of known libraries (in the bootstrap) that have to be checked. This list will be dynamically extended below with any new libraries. This static list here is just for fallback purposes.
-		var mLoadedLibraries = sap.ui.getCore().getLoadedLibraries();
+		var mLoadedLibraries = Library.all();
 
 		// Maybe libraries have been added, so discover what is available in order to also test them. But only do this when we are in sapui5.runtime layer, not when this test is executed in dist layer.
 		return VersionInfo.load().then(function(oInfo) {

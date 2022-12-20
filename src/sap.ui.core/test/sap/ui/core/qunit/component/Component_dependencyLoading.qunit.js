@@ -2,9 +2,8 @@
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/Lib",
-	"sap/ui/core/Manifest",
-	"sap/ui/core/Core" // provides sap.ui.core.Core
-], function (Component, LibraryLoader, Manifest) {
+	"sap/ui/core/Manifest"
+], function (Component, Library, Manifest) {
 	"use strict";
 
 	QUnit.module("Async dependency loading", {
@@ -12,8 +11,7 @@ sap.ui.define([
 			window.sapUiTestScriptForUnitTest = this.stub();
 
 			// spy loadLibrary calls directly on prototype as implementation bypasses Core facade
-			this.oLoadLibrariesSpy = this.spy(sap.ui.core.Core.prototype, "loadLibraries");
-			this.oLoadLibrarySpy = this.spy(sap.ui.core.Core.prototype, "loadLibrary");
+			this.oLoadLibrarySpy = this.spy(Library, "_load");
 			this.oLoadDependeciesAndIncludesSpy = this.spy(Manifest.prototype, "loadDependenciesAndIncludes");
 		},
 		afterEach: function (assert) {
@@ -32,9 +30,9 @@ sap.ui.define([
 				"Function loadDependenciesAndIncludes called three times (for sap.ui.core.Component, sap.ui.core.UIComponent and sap.ui.test.dependencyLoading.component1) with parameter bAsync = true");
 
 			// Check for the expected libraries to be loaded
-			assert.ok(this.oLoadLibrarySpy.calledTwice, "sap.ui.getCore().loadLibrary called twice");
-			assert.ok(this.oLoadLibrarySpy.getCall(0).calledWithExactly("sap.m", { async: true }), "First sap.ui.getCore().loadLibrary call with arguments: 'sap.m', { async: true }");
-			assert.ok(this.oLoadLibrarySpy.getCall(1).calledWithExactly("sap.tnt", { async: true }), "Second sap.ui.getCore().loadLibrary call with arguments: 'sap.tnt', { async: true }");
+			assert.ok(this.oLoadLibrarySpy.calledTwice, "Library._load() called twice");
+			assert.ok(this.oLoadLibrarySpy.getCall(0).calledWithExactly("sap.m", { sync: false }), "First Library._load() call with arguments: 'sap.m', { sync: false }");
+			assert.ok(this.oLoadLibrarySpy.getCall(1).calledWithExactly("sap.tnt", { sync: false }), "Second Library._load() call with arguments: 'sap.tnt', { sync: false }");
 
 			// Cleanup
 			oComponent.destroy();
@@ -51,12 +49,11 @@ sap.ui.define([
 				"Function loadDependenciesAndIncludes called three times (for sap.ui.core.Component, sap.ui.core.UIComponent and sap.ui.test.dependencyLoading.component1 with variant manifest) with parameter bAsync = true");
 
 			// Check for the expected libraries to be loaded
-			assert.ok(this.oLoadLibrariesSpy.calledOnce, "sap.ui.getCore().loadLibraries called thrice");
-			assert.ok(this.oLoadLibrariesSpy.getCall(0).calledWithExactly(["sap.m", "sap.ui.table"], { async: true }), "First sap.ui.getCore().loadLibraries call with arguments: '['sap.m', 'sap.ui.table'], { async: true }'==> preload dependencies");
+			assert.equal(this.oLoadLibrarySpy.callCount, 3, "Library._load() called 3 times");
+			assert.ok(this.oLoadLibrarySpy.getCall(0).calledWithExactly(["sap.m", "sap.ui.table"], { sync: false }), "First Library._load() call with arguments: '['sap.m', 'sap.ui.table'], { sync: false }'==> preload dependencies");
 
-			assert.ok(this.oLoadLibrarySpy.calledTwice, "sap.ui.getCore().loadLibrary called twice");
-			assert.ok(this.oLoadLibrarySpy.getCall(0).calledWithExactly("sap.m", { async: true }), "First sap.ui.getCore().loadLibrary call with arguments: 'sap.m', { async: true }");
-			assert.ok(this.oLoadLibrarySpy.getCall(1).calledWithExactly("sap.ui.table", { async: true }), "First sap.ui.getCore().loadLibrary call with arguments: 'sap.ui.table', { async: true }");
+			assert.ok(this.oLoadLibrarySpy.getCall(1).calledWithExactly("sap.m", { sync: false }), "Second Library._load() call with arguments: 'sap.m', { sync: false }");
+			assert.ok(this.oLoadLibrarySpy.getCall(2).calledWithExactly("sap.ui.table", { sync: false }), "Third Library._load() call with arguments: 'sap.ui.table', { sync: false }");
 
 			var aScriptDomElements = document.querySelectorAll("script[data-sap-ui-module$='inheritedScript.js']");
 			assert.strictEqual(aScriptDomElements.length, 1, "One script with expected criteria found in DOM");
@@ -80,13 +77,13 @@ sap.ui.define([
 				"Function loadDependenciesAndIncludes called five times (for sap.ui.core.Component, sap.ui.core.UIComponent, sap.ui.test.dependencyLoading.component1, sap.ui.test.dependencyLoading.component3 and sap.ui.test.dependencyLoading.component4) with parameter bAsync = true");
 
 			// Check for the expected libraries to be loaded
-			assert.ok(this.oLoadLibrarySpy.callCount, 6, "sap.ui.getCore().loadLibrary called six times");
-			assert.ok(this.oLoadLibrarySpy.getCall(0).calledWithExactly("sap.m", { async: true }), "First sap.ui.getCore().loadLibrary call with arguments: 'sap.m', { async: true }");
-			assert.ok(this.oLoadLibrarySpy.getCall(1).calledWithExactly("sap.tnt", { async: true }), "Second sap.ui.getCore().loadLibrary call with arguments: 'sap.tnt', { async: true }");
-			assert.ok(this.oLoadLibrarySpy.getCall(2).calledWithExactly("sap.m", { async: true }), "Third sap.ui.getCore().loadLibrary call with arguments: 'sap.m', { async: true }");
-			assert.ok(this.oLoadLibrarySpy.getCall(3).calledWithExactly("sap.ui.layout", { async: true }), "Fourth sap.ui.getCore().loadLibrary call with arguments: 'sap.ui.layout', { async: true }");
-			assert.ok(this.oLoadLibrarySpy.getCall(4).calledWithExactly("sap.m", { async: true }), "Fifth sap.ui.getCore().loadLibrary call with arguments: 'sap.m', { async: true }");
-			assert.ok(this.oLoadLibrarySpy.getCall(5).calledWithExactly("sap.ui.table", { async: true }), "Sixth sap.ui.getCore().loadLibrary call with arguments: 'sap.ui.table', { async: true }");
+			assert.ok(this.oLoadLibrarySpy.callCount, 6, "Library._load() called six times");
+			assert.ok(this.oLoadLibrarySpy.getCall(0).calledWithExactly("sap.m", { sync: false }), "First Library._load() call with arguments: 'sap.m', { sync: false }");
+			assert.ok(this.oLoadLibrarySpy.getCall(1).calledWithExactly("sap.tnt", { sync: false }), "Second Library._load() call with arguments: 'sap.tnt', { sync: false }");
+			assert.ok(this.oLoadLibrarySpy.getCall(2).calledWithExactly("sap.m", { sync: false }), "Third Library._load() call with arguments: 'sap.m', { sync: false }");
+			assert.ok(this.oLoadLibrarySpy.getCall(3).calledWithExactly("sap.ui.layout", { sync: false }), "Fourth Library._load() call with arguments: 'sap.ui.layout', { sync: false }");
+			assert.ok(this.oLoadLibrarySpy.getCall(4).calledWithExactly("sap.m", { sync: false }), "Fifth Library._load() call with arguments: 'sap.m', { sync: false }");
+			assert.ok(this.oLoadLibrarySpy.getCall(5).calledWithExactly("sap.ui.table", { sync: false }), "Sixth Library._load() call with arguments: 'sap.ui.table', { sync: false }");
 
 			var aScriptDomElements = document.querySelectorAll("script[data-sap-ui-module$='extendedScript.js']");
 			assert.strictEqual(aScriptDomElements.length, 3, "Three scripts with expected criteria found in DOM");
