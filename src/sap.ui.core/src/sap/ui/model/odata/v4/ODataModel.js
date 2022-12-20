@@ -66,6 +66,7 @@ sap.ui.define([
 			dataReceived : true,
 			dataRequested : true,
 			messageChange : true,
+			propertyChange : true,
 			sessionTimeout : true
 		},
 		mSupportedParameters = {
@@ -504,11 +505,30 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'propertyChange' event is not supported by this model.
+	 * The <code>propertyChange</code> event is fired whenever one of this model's property bindings
+	 * successfully {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue changes its value}
+	 * due to {@link sap.ui.model.BindingMode.TwoWay two-way} data binding. This does not apply to
+	 * {@link sap.ui.model.odata.v4.Context#setProperty} which represents controller code changes,
+	 * not user input.
+	 *
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters()
+	 * @param {sap.ui.model.Context} [oEvent.getParameters().context]
+	 *   The property binding's {@link sap.ui.model.Binding#getContext context}, if available
+	 * @param {string} oEvent.getParameters().path
+	 *   The property binding's {@link sap.ui.model.Binding#getPath path}
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
+	 *   The reason for the property change: always <code>sap.ui.model.ChangeReason.Binding</code>
+	 * @param {string} oEvent.getParameters().resolvedPath
+	 *   The property binding's {@link sap.ui.model.Binding#getResolvedPath resolved path}
+	 * @param {any} oEvent.getParameters().value
+	 *   The property binding's new
+	 *   {@link sap.ui.model.odata.v4.ODataPropertyBinding#getValue value}
 	 *
 	 * @event sap.ui.model.odata.v4.ODataModel#propertyChange
 	 * @public
-	 * @since 1.37.0
+	 * @see sap.ui.model.Model#propertyChange
+	 * @since 1.110.0
 	 */
 
 	/**

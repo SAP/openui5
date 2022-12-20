@@ -1831,6 +1831,7 @@ sap.ui.define([
 			// Note: w/o oContext, we cannot *test* that doSetProperty is never called
 			this.mock(this.oModel.oMetaModel).expects("fetchUpdateData").never();
 			this.mock(oPropertyBinding).expects("withCache").never();
+			this.mock(this.oModel).expects("hasListeners").never();
 
 			// code under test
 			assert.throws(function () {
@@ -1856,6 +1857,7 @@ sap.ui.define([
 		this.mock(oPropertyBinding.oCache).expects("update")
 			.withExactArgs("$direct", "Name", "foo", "ProductList('0')")
 			.returns(oPromise);
+		this.mock(this.oModel).expects("hasListeners").never();
 		this.oLogMock.expects("error").withExactArgs(sMessage, oError.stack, sClassName);
 
 		// code under test
@@ -1868,7 +1870,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 ["foo", null].forEach(function (vValue) {
-	var sTitle = "setValue (relative binding) via control, value : " + vValue;
+	[false, true].forEach(function (bHasListeners) {
+		var sTitle = "setValue (relative binding) via control, value : " + vValue
+			+ "; 'propertyChange' has listeners: " + bHasListeners;
 
 	QUnit.test(sTitle, function () {
 		var oParentBinding = this.oModel.bindContext("/BusinessPartnerList('0100000000')"),
@@ -1880,6 +1884,16 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").withExactArgs("up");
+		this.mock(this.oModel).expects("hasListeners").withExactArgs("propertyChange")
+			.returns(bHasListeners);
+		this.mock(this.oModel).expects("firePropertyChange").exactly(bHasListeners ? 1 : 0)
+			.withExactArgs({
+				context : oContext,
+				path : "Address/City",
+				reason : ChangeReason.Binding,
+				resolvedPath : "/BusinessPartnerList('0100000000')/Address/City",
+				value : vValue
+			});
 		this.mock(oBinding).expects("lockGroup").withExactArgs("up", true, true)
 			.returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
@@ -1888,6 +1902,7 @@ sap.ui.define([
 
 		// code under test
 		oBinding.setValue(vValue, "up");
+	});
 	});
 });
 
@@ -1907,6 +1922,15 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkSuspended").thrice().withExactArgs();
 		oContextMock.expects("doSetProperty").withExactArgs("Name", "foo", null)
 			.returns(SyncPromise.resolve());
+		oModelMock.expects("hasListeners").withExactArgs("propertyChange").returns(true);
+		oModelMock.expects("firePropertyChange")
+			.withExactArgs({
+				context : oContext,
+				path : "Name",
+				reason : ChangeReason.Binding,
+				resolvedPath : "/ProductList('HT-1000')/Name",
+				value : "foo"
+			});
 
 		// code under test
 		oBinding.setValue("foo");
@@ -1946,6 +1970,7 @@ sap.ui.define([
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("Name", "foo", sinon.match.same(oGroupLock))
 			.returns(oUpdatePromise);
+		this.mock(this.oModel).expects("hasListeners").never();
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to update path /ProductList('HT-1000')/Name", sClassName,
@@ -1968,6 +1993,7 @@ sap.ui.define([
 		this.mock(oPropertyBinding).expects("checkSuspended").withExactArgs();
 		assert.strictEqual(oPropertyBinding.vValue, undefined);
 		this.mock(oContext).expects("doSetProperty").never();
+		this.mock(this.oModel).expects("hasListeners").never();
 		this.mock(this.oModel).expects("reportError")
 			.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,
 				sinon.match({message : oError.message}));
@@ -1988,6 +2014,7 @@ sap.ui.define([
 		oPropertyBinding.vValue = "foo";
 		this.mock(oPropertyBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("doSetProperty").never();
+		this.mock(this.oModel).expects("hasListeners").never();
 
 		// code under test
 		oPropertyBinding.setValue("foo");
