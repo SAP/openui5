@@ -449,7 +449,10 @@
 			</Panel>
 
 			<Panel expandable="true" headerText="Panel with SmartForm with horizontal layout" width="auto" class="sapUiResponsiveMargin">
-				<smartForm:SmartForm id="SmartForm02" title="Smart Form with horizontal layout" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">
+				<smartForm:SmartForm id="SmartForm02" title="Smart Form with horizontal layout" editable="true" entityType="Header" ignoredFields="TransactionCode">
+					<smartForm:layout>
+						<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
+					</smartForm:layout>
 					<smartForm:Group id="SmartForm02Group01" label="SmartForm Group 01" >
 						<smartForm:GroupElement id="SmartForm02Group01.AccountingDocumentType" >
 							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocumentType}"/>
@@ -468,9 +471,10 @@
 			</Panel>
 
 			<Panel expandable="true" headerText="Smart Form with smartForm:Layout aggregation (gridDataSpan='L1 M1 S1')" width="auto" class="sapUiResponsiveMargin">
-				<smartForm:SmartForm id="SmartForm03" title="Smart Form with smartForm:Layout aggregation (gridDataSpan='L1 M1 S1')" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">
+				<smartForm:SmartForm id="SmartForm03" title="Smart Form with smartForm:Layout aggregation (gridDataSpan='L1 M1 S1')" editable="true" entityType="Header" ignoredFields="TransactionCode">
 					<smartForm:layout>
 						<smartForm:Layout gridDataSpan="L1 M1 S1" />
+						<smartForm:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
 					</smartForm:layout>
 					<smartForm:Group id="SmartForm03Group01" label="SmartForm Group 01" >
 						<smartForm:GroupElement id="SmartForm03Group01.AlternativeReferenceDocument" >

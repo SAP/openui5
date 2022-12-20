@@ -1,33 +1,35 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/rta/command/AddXMLAtExtensionPoint",
-	"sap/ui/rta/command/CompositeCommand",
-	"sap/ui/rta/command/AppDescriptorCommand",
-	"sap/ui/rta/plugin/AddXMLAtExtensionPoint",
+	"sap/ui/core/Core",
+	"sap/ui/core/Component",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/DesignTime",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/DesignTime",
-	"sap/ui/core/mvc/XMLView",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/rta/command/AddXMLAtExtensionPoint",
+	"sap/ui/rta/command/AppDescriptorCommand",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/command/CompositeCommand",
+	"sap/ui/rta/plugin/AddXMLAtExtensionPoint",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	CommandFactory,
-	AddXMLAtExtensionPointCommand,
-	CompositeCommand,
-	AppDescriptorCommand,
-	AddXMLAtExtensionPointPlugin,
+	oCore,
+	Component,
+	XMLView,
+	OverlayRegistry,
+	DesignTime,
 	Layer,
 	ManifestUtils,
 	Loader,
-	OverlayRegistry,
-	DesignTime,
-	XMLView,
-	sinon,
-	oCore
+	AddXMLAtExtensionPointCommand,
+	AppDescriptorCommand,
+	CommandFactory,
+	CompositeCommand,
+	AddXMLAtExtensionPointPlugin,
+	sinon
 ) {
 	"use strict";
 
@@ -58,7 +60,7 @@ sap.ui.define([
 	'</mvc:View>';
 
 	function createComponent() {
-		return oCore.createComponent({
+		return Component.create({
 			name: "testComponent",
 			id: "testComponent",
 			metadata: {
@@ -78,8 +80,11 @@ sap.ui.define([
 	}
 
 	function createBeforeEach() {
-		this.oComponent = createComponent();
-		return createAsyncView("myView", this.oComponent)
+		return createComponent()
+			.then(function(oComponent) {
+				this.oComponent = oComponent;
+				return createAsyncView("myView", oComponent);
+			}.bind(this))
 			.then(function (oXmlView) {
 				this.oXmlView = oXmlView;
 				this.oPanel = oXmlView.getContent()[0];
