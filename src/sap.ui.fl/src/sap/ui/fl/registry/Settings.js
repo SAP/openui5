@@ -351,6 +351,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether the personalization connector is used.
+	 *
+	 * @returns {boolean} <code>true</code> if personalization connector is used
+	 */
+	Settings.prototype.hasPersoConnector = function() {
+		return this._getBooleanProperty("hasPersoConnector");
+	};
+
+	/**
 	 * Checks whether change transport mechanism is available for the current system or not.
 	 *
 	 * @returns {boolean} <code>true</code> if transport of changes is available

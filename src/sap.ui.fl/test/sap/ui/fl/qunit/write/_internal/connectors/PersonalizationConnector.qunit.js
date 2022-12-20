@@ -147,7 +147,8 @@ sap.ui.define([
 
 		QUnit.test("given load features is called", function (assert) {
 			var mExpectedFeatures = {
-				isProductiveSystem: true
+				isProductiveSystem: true,
+				hasPersoConnector: true
 			};
 
 			return WritePersonalizationConnector.loadFeatures().then(function(oResponse) {
