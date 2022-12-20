@@ -194,6 +194,16 @@ sap.ui.define([
 	}
 
 	/**
+	 * Returns the given context's data object.
+	 *
+	 * @param {sap.ui.model.Context} oContext - A context
+	 * @returns {object} The context's data
+	 */
+	function getObject(oContext) {
+		return oContext.getObject();
+	}
+
+	/**
 	 * Returns the given context's path.
 	 *
 	 * @param {sap.ui.model.Context} oContext - A context
@@ -3244,7 +3254,7 @@ sap.ui.define([
 		return this.createView(assert).then(function () {
 			var oPromise;
 
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')");
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {ID : "1"});
 
 			oBinding = that.oModel.bindContext("/GetEmployeeByID(...)");
 			oBinding.setParameter("EmployeeID", "1");
@@ -3253,13 +3263,13 @@ sap.ui.define([
 
 			return Promise.all([oPromise, that.waitForChanges(assert)]);
 		}).then(function () {
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')");
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {ID : "1"});
 
 			oBinding.refresh();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("GetEmployeeByID(EmployeeID='2')");
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {ID : "2"});
 
 			return Promise.all([
 				oBinding.execute(),
@@ -7333,7 +7343,13 @@ sap.ui.define([
 					url : "EntitiesWithComplexKey(Key1='foo',Key2=42)",
 					headers : {"If-Match" : "ETag"},
 					payload : {Value : "New"}
-				}, {Value : "New"})
+				}, {
+					Key : {
+						P1 : "foo",
+						P2 : 42
+					},
+					Value : "New"
+				})
 				.expectChange("item", ["New"]);
 
 			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
@@ -7643,6 +7659,12 @@ sap.ui.define([
 					method : "PATCH",
 					url : "EntitiesWithComplexKey(Key1='p1',Key2=2)",
 					payload : {Value : "changed"}
+				}, {
+					Key : {
+						P1 : "p1",
+						P2 : 2
+					},
+					Value : "changed"
 				});
 
 			oBinding.setValue("changed");
@@ -12761,7 +12783,10 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			//TODO the query options for the function import are not enhanced
 			// that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {Name : "Jonathan Smith"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
+					ID : "1",
+					Name : "Jonathan Smith"
+				})
 				.expectChange("name", "Jonathan Smith");
 
 			return Promise.all([
@@ -14706,7 +14731,10 @@ sap.ui.define([
 
 			oFunctionBinding.refresh(); // MUST NOT trigger a request!
 
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {Name : "Jonathan Smith"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
+					ID : "1",
+					Name : "Jonathan Smith"
+				})
 				.expectChange("name", "Jonathan Smith");
 
 			return Promise.all([
@@ -14714,7 +14742,10 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {Name : "Frederic Fall"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
+					ID : "1",
+					Name : "Frederic Fall"
+				})
 				.expectChange("name", "Frederic Fall");
 			oFunctionBinding.refresh();
 
@@ -14724,7 +14755,10 @@ sap.ui.define([
 
 			oFunctionBinding.refresh(); // MUST NOT trigger a request!
 
-			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {Name : "Peter Burke"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {
+					ID : "2",
+					Name : "Peter Burke"
+				})
 				.expectChange("name", "Peter Burke");
 
 			return Promise.all([
@@ -14732,7 +14766,10 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {Name : "Jonathan Smith"})
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {
+					ID : "2",
+					Name : "Jonathan Smith"
+				})
 				.expectChange("name", "Jonathan Smith");
 			oFunctionBinding.refresh();
 
@@ -14769,6 +14806,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
+					ID : "1",
 					Name : "Frederic Fall"
 				})
 				.expectChange("name", "Frederic Fall");
@@ -14792,6 +14830,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("GetEmployeeByID(EmployeeID='2')?$select=ID,Name", {
+					ID : "2",
 					Name : "Jonathan Smith"
 				})
 				.expectChange("name", "Jonathan Smith");
@@ -15018,17 +15057,14 @@ sap.ui.define([
 			fnRespond2();
 
 			return oPromise2.then(function (aResult) {
-				assert.deepEqual(aResult.map(function (oContext) {
-					return oContext.getObject();
-				}), aValues.slice(1040, 1050), "2nd request may well overtake 1st one");
+				assert.deepEqual(aResult.map(getObject), aValues.slice(1040, 1050),
+					"2nd request may well overtake 1st one");
 			});
 		}).then(function () {
 			fnRespond1();
 
 			return oPromise1.then(function (aResult) {
-				assert.deepEqual(aResult.map(function (oContext) {
-					return oContext.getObject();
-				}), aValues.slice(1030, 1040));
+				assert.deepEqual(aResult.map(getObject), aValues.slice(1030, 1040));
 			});
 		});
 	});
@@ -20047,6 +20083,142 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Data aggregation which aggregates a key property (count number of sales orders per
+	// lifecycle status) via $$aggregation or directly via $apply. Expect no issues with duplicate
+	// key predicates.
+	// BCP: 2280187516
+[false, true].forEach(function (bApply) {
+	var sTitle = "Data Aggregation: aggregate a key property, use $apply: " + bApply;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = this.createSalesOrdersModel(),
+			mParameters = bApply
+			? {$apply : "groupby((LifecycleStatus),aggregate(SalesOrderID))"}
+			: {
+				$$aggregation : {
+					aggregate : {
+						SalesOrderID : {}
+					},
+					group : {
+						LifecycleStatus : {}
+					}
+				}
+			},
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			var oBinding = oModel.bindList("/SalesOrderList", null, [], [], mParameters);
+
+			that.expectRequest("SalesOrderList"
+					+ "?$apply=groupby((LifecycleStatus),aggregate(SalesOrderID))"
+					+ "&$skip=0&$top=10", {
+					value : [{
+						LifecycleStatus : "Z",
+						SalesOrderID : 1, "SalesOrderID@odata.type" : "#Int32"
+					}, {
+						LifecycleStatus : "Y",
+						SalesOrderID : 3, "SalesOrderID@odata.type" : "#Int32"
+					}, {
+						LifecycleStatus : "X",
+						SalesOrderID : 1, "SalesOrderID@odata.type" : "#Int32"
+					}]
+				});
+
+			return oBinding.requestContexts(0, 10);
+		}).then(function (aContexts) {
+			assert.notStrictEqual(aContexts[0], aContexts[2], "no duplicates");
+			assert.deepEqual(aContexts.map(getPath),
+				["/SalesOrderList/0", "/SalesOrderList/1", "/SalesOrderList/2"]);
+			assert.deepEqual(aContexts.map(getObject), [
+				{LifecycleStatus : "Z", SalesOrderID : 1, "SalesOrderID@odata.type" : "#Int32"},
+				{LifecycleStatus : "Y", SalesOrderID : 3, "SalesOrderID@odata.type" : "#Int32"},
+				{LifecycleStatus : "X", SalesOrderID : 1, "SalesOrderID@odata.type" : "#Int32"}
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Data aggregation which aggregates a key property (count number of sales orders per
+	// lifecycle status) via $$aggregation including a grand total. Expect no issues with duplicate
+	// key predicates.
+	// BCP: 2280187516
+	QUnit.test("Data Aggregation: aggregate a key property, w/ grand total", function (assert) {
+		var oModel = this.createSalesOrdersModel(),
+			mParameters = {
+				$$aggregation : {
+					aggregate : {
+						SalesOrderID : {grandTotal : true}
+					},
+					group : {
+						LifecycleStatus : {}
+					}
+				}
+			},
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			var oBinding = oModel.bindList("/SalesOrderList", null, [], [], mParameters);
+
+			that.expectRequest("SalesOrderList?$apply=concat(aggregate(SalesOrderID)"
+					+ ",groupby((LifecycleStatus),aggregate(SalesOrderID))"
+					+ "/concat(aggregate($count as UI5__count),top(9)))", {
+					value : [{
+						LifecycleStatus : null,
+						SalesOrderID : 5, "SalesOrderID@odata.type" : "#Int32"
+					}, {
+						UI5__count : "3", "UI5__count@odata.type" : "#Decimal"
+					}, {
+						LifecycleStatus : "Z",
+						SalesOrderID : 1, "SalesOrderID@odata.type" : "#Int32"
+					}, {
+						LifecycleStatus : "Y",
+						SalesOrderID : 3, "SalesOrderID@odata.type" : "#Int32"
+					}, {
+						LifecycleStatus : "X",
+						SalesOrderID : 1, "SalesOrderID@odata.type" : "#Int32"
+					}]
+				});
+
+			return oBinding.requestContexts(0, 10);
+		}).then(function (aContexts) {
+			assert.notStrictEqual(aContexts[0], aContexts[2], "no duplicates");
+			assert.deepEqual(aContexts.map(getPath), [
+				"/SalesOrderList()",
+				"/SalesOrderList(LifecycleStatus='Z')",
+				"/SalesOrderList(LifecycleStatus='Y')",
+				"/SalesOrderList(LifecycleStatus='X')"
+			]);
+			assert.deepEqual(aContexts.map(getObject), [{
+				"@$ui5.node.isExpanded" : true,
+				"@$ui5.node.isTotal" : true,
+				"@$ui5.node.level" : 0,
+				LifecycleStatus : null,
+				SalesOrderID : 5,
+				"SalesOrderID@odata.type" : "#Int32"
+			}, {
+				"@$ui5.node.isTotal" : false,
+				"@$ui5.node.level" : 1,
+				LifecycleStatus : "Z",
+				SalesOrderID : 1,
+				"SalesOrderID@odata.type" : "#Int32"
+			}, {
+				"@$ui5.node.isTotal" : false,
+				"@$ui5.node.level" : 1,
+				LifecycleStatus : "Y",
+				SalesOrderID : 3,
+				"SalesOrderID@odata.type" : "#Int32"
+			}, {
+				"@$ui5.node.isTotal" : false,
+				"@$ui5.node.level" : 1,
+				LifecycleStatus : "X",
+				SalesOrderID : 1,
+				"SalesOrderID@odata.type" : "#Int32"
+			}]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: sap.m.Table with aggregation and visual grouping.
 	// JIRA: CPOUI5ODATAV4-162
 	//
@@ -22797,9 +22969,7 @@ sap.ui.define([
 			var aContexts = aResults[0];
 
 			assert.strictEqual(oListBinding.getHeaderContext().getProperty("$count"), 26);
-			assert.deepEqual(aContexts.map(function (oContext) {
-				return oContext.getObject();
-			}), [{
+			assert.deepEqual(aContexts.map(getObject), [{
 				"@$ui5.node.isExpanded" : true,
 				"@$ui5.node.isTotal" : true,
 				"@$ui5.node.level" : 0,
@@ -22907,9 +23077,7 @@ sap.ui.define([
 			var aContexts = aResults[0];
 
 			assert.strictEqual(oListBinding.getHeaderContext().getProperty("$count"), 26);
-			assert.deepEqual(aContexts.map(function (oContext) {
-				return oContext.getObject();
-			}), [{
+			assert.deepEqual(aContexts.map(getObject), [{
 				"@$ui5.node.isExpanded" : true,
 				"@$ui5.node.isTotal" : true,
 				"@$ui5.node.level" : 0,

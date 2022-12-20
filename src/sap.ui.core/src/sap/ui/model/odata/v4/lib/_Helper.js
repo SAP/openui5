@@ -1310,7 +1310,7 @@ sap.ui.define([
 
 			aKeyProperties = aKeyProperties || mTypeForMetaPath[sMetaPath].$Key;
 			bFailed = aKeyProperties.some(function (vKey) {
-				var sKey, sKeyPath, sPropertyName, aSegments, oType, vValue;
+				var sKey, sKeyPath, oObject, sPropertyName, aSegments, oType, vValue;
 
 				if (typeof vKey === "string") {
 					sKey = sKeyPath = vKey;
@@ -1322,14 +1322,15 @@ sap.ui.define([
 					}
 				}
 				aSegments = sKeyPath.split("/");
+				// the last path segment is the name of the simple property
+				sPropertyName = aSegments.pop();
 
-				vValue = _Helper.drillDown(oInstance, aSegments);
-				if (vValue === undefined) {
+				oObject = _Helper.drillDown(oInstance, aSegments);
+				vValue = oObject[sPropertyName];
+				if (vValue === undefined || (sPropertyName + "@odata.type") in oObject) {
 					return true;
 				}
 
-				// the last path segment is the name of the simple property
-				sPropertyName = aSegments.pop();
 				// find the type containing the simple property
 				oType = mTypeForMetaPath[_Helper.buildPath(sMetaPath, aSegments.join("/"))];
 				vValue = _Helper.formatLiteral(vValue, oType[sPropertyName].$Type);

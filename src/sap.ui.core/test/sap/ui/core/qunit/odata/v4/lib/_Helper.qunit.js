@@ -1205,9 +1205,9 @@ sap.ui.define([
 				};
 
 			oHelperMock.expects("drillDown")
-				.withExactArgs(sinon.match.same(oEntityInstance), ["qux"]).returns("v1");
+				.withExactArgs(sinon.match.same(oEntityInstance), []).returns({qux : "v1"});
 			oHelperMock.expects("drillDown")
-				.withExactArgs(sinon.match.same(oEntityInstance), ["bar", "baz"]).returns("v2");
+				.withExactArgs(sinon.match.same(oEntityInstance), ["bar"]).returns({baz : "v2"});
 			oHelperMock.expects("formatLiteral").withExactArgs("v1", "Edm.String").returns("~1");
 			oHelperMock.expects("formatLiteral").withExactArgs("v2", "Edm.Int16").returns("~2");
 
@@ -1225,6 +1225,18 @@ sap.ui.define([
 				_Helper.getKeyProperties({}, "~path~", {"~path~" : {/*no $Key*/}}, bReturnAlias);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeyProperties: ...@odata.type", function (assert) {
+		this.mock(_Helper).expects("drillDown").withExactArgs("~oInstance~", [])
+			.returns({ID : 1, "ID@odata.type" : ""}); // exact type must not matter
+		// Note: ID's $Type inside mTypeForMetaPath must not play a role here!
+
+		assert.strictEqual(
+			// code under test
+			_Helper.getKeyProperties("~oInstance~", "~path~", {"~path~" : {$Key : ["ID"]}}),
+			undefined);
 	});
 
 	//*********************************************************************************************
