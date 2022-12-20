@@ -1862,6 +1862,9 @@ sap.ui.define([
 				if (!("@odata.count" in vResponse)) {
 					throw new Error('Missing "@odata.count" in response for ' + vRequest.method
 						+ " " + vRequest.url);
+				} else if (typeof vResponse["@odata.count"] !== "string") {
+					throw new Error('Unexpected "@odata.count" : ' + vResponse["@odata.count"]
+						+ " in response for " + vRequest.method + " " + vRequest.url);
 				}
 				aMatches = rTop.exec(vRequest.url);
 				if (aMatches) {
@@ -12655,7 +12658,7 @@ sap.ui.define([
 
 		this.expectRequest("EMPLOYEES?$count=true&$filter=TEAM_ID eq '77'&$select=ID,Name,TEAM_ID"
 				+ "&$skip=0&$top=100", {
-				"@odata.count" : 3,
+				"@odata.count" : "3",
 				value : [
 					{ID : "0", Name : "Frederic Fall", TEAM_ID : "77"},
 					{ID : "1", Name : "Jonathan Smith", TEAM_ID : "77"},
@@ -22727,7 +22730,7 @@ sap.ui.define([
 			that.expectRequest("BusinessPartners?$count=true&$search=covfefe&$apply"
 					+ "=filter(Name eq 'Foo')/search(tee)/groupby((Region),aggregate(SalesNumber))"
 					+ "&$filter=SalesNumber gt 0&$skip=0&$top=100", {
-					"@odata.count" : 0,
+					"@odata.count" : "0",
 					value : [
 						// ... (don't care)
 					]
@@ -23293,7 +23296,7 @@ sap.ui.define([
 
 			that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))&$count=true"
 					+ "&$skip=0&$top=100", {
-					"@odata.count" : 1,
+					"@odata.count" : "1",
 					value : [{LifecycleStatus : "Y"}]
 				})
 				.expectChange("grossAmount", [null])
@@ -23651,7 +23654,7 @@ sap.ui.define([
 				+ "&$select=DrillState,ID,MANAGER_ID,SALARY/BONUS_CURR,SALARY/YEARLY_BONUS_AMOUNT"
 				+ ",TEAM_ID"
 				+ "&$count=true&$skip=0&$top=2", {
-					"@odata.count" : 1,
+					"@odata.count" : "1",
 					value : [{
 						DrillState : "leaf",
 						ID : "1",
@@ -35071,7 +35074,7 @@ sap.ui.define([
 			.expectChange("soCurrencyCode", "EUR")
 			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$count=true"
 				+ "&$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=2", {
-				"@odata.count" : bEmpty ? 0 : 3,
+				"@odata.count" : bEmpty ? "0" : "3",
 				value : bEmpty ? [] : [{
 					ItemPosition : "10",
 					Note : "Foo",
@@ -35172,7 +35175,7 @@ sap.ui.define([
 					url : "SalesOrderList('1')/SO_2_SOITEM"
 						+ "?$count=true&$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=2"
 				}, { // ignored if !bSuccess; else bEmpty does not play a role anymore
-					"@odata.count" : 4,
+					"@odata.count" : "4",
 					value : aItems
 				});
 			if (bSuccess) {
@@ -35189,7 +35192,7 @@ sap.ui.define([
 								+ "&$filter=not (SalesOrderID eq '1' and ItemPosition eq '0')"
 								+ "&$top=0"
 						}, {
-							"@odata.count" : 4, ///... looks like it is
+							"@odata.count" : "4", ///... looks like it is
 							value : []
 						})
 						.expectChange("count", "5");
@@ -41354,7 +41357,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$count=true&$filter=GrossAmount lt 0"
 				+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2", {
-					"@odata.count" : 0,
+					"@odata.count" : "0",
 					value : []
 				});
 
