@@ -152,7 +152,10 @@ sap.ui.define([
 			}
 		}
 
-		if (oCellInfo.rowIndex === oTable.getRows().length - 1) {
+		if (oCellInfo.rowIndex === oTable.getRows().length - 1
+			|| (TableUtils.isVariableRowHeightEnabled(oTable) // ignore empty buffer row
+				&& oCellInfo.rowIndex === oTable.getRows().length - 2
+				&& oTable.getRows()[oCellInfo.rowIndex + 1].getRowBindingContext() === null)) {
 			// Leave the action mode when trying to navigate down on the last row.
 			if (!bActionMode && $ParentCell) {
 				$ParentCell.trigger("focus"); // A non-interactive element inside a cell is focused, focus the cell this element is inside.

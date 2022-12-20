@@ -106,7 +106,7 @@ sap.ui.define([
 		}).then(oTable.qunit.whenRenderingFinished).then(oTable.qunit.$resize({height: "400px"})).then(function() {
 			assert.ok(oHSb.offsetWidth > 0 && oHSb.offsetHeight > 0,
 				"Decrease visible rows so that vertical scrollbar appears: Horizontal scrollbar is visible");
-		});
+		}).then(oTable.qunit.resetSize);
 	});
 
 	// Test fails in Safari, skip until fixed
@@ -4842,7 +4842,7 @@ sap.ui.define([
 		return pTestSequence;
 	});
 
-	QUnit.only("Restore scroll position after changing the row count on resize; Small data; Fixed row heights", function(assert) {
+	QUnit.test("Restore scroll position after changing the row count on resize; Small data; Fixed row heights", function(assert) {
 		var that = this;
 		var oTable = this.createTable({
 			rowMode: this.mTestedRowModes.AutoRowMode.setMinRowCount(8)
