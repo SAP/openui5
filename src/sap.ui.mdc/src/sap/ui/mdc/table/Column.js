@@ -245,7 +245,7 @@ sap.ui.define([
 						}
 					}
 				},
-				popinDisplay: "Inline",
+				popinDisplay: "{= ${$this>/headerVisible} ? 'Inline' : 'WithoutHeader' }",
 				tooltip: "{$this>/tooltip}",
 				mergeDuplicates: {
 					parts: [
