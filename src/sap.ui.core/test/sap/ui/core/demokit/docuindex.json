@@ -262,8 +262,18 @@
 				"category" : "Data Binding",
 				"since" : "1.27",
 				"samples" : [
+					"sap.ui.core.sample.odata.types.v2.DateTime",
 					"sap.ui.core.sample.odata.types.v2.DateTimeOffset",
 					"sap.ui.core.sample.odata.types.v2.Time"
+				]
+			},
+			{
+				"id" : "sap.ui.model.odata.type.DateTime",
+				"name" : "DateTime Type (OData V2)",
+				"category" : "Data Binding",
+				"since" : "1.27",
+				"samples" : [
+					"sap.ui.core.sample.odata.types.v2.DateTime"
 				]
 			},
 			{
@@ -453,6 +463,11 @@
 			}
 		],
 		"samples" : [
+			{
+				"id": "sap.ui.core.sample.odata.types.v2.DateTime",
+				"name": "OData V2 Dates - Use sap.ui.model.odata.type.DateTime for Edm.DateTime",
+				"description": "This sample explains how to use the OData V2 Edm.DateTime type in SAPUI5 applications."
+			},
 			{
 				"id": "sap.ui.core.sample.odata.types.v2.DateTimeOffset",
 				"name": "OData V2 Timestamps - Use sap.ui.model.odata.type.DateTimeOffset for Edm.DateTimeOffset",

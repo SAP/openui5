@@ -1,0 +1,12 @@
+{
+	"d" : {
+			"__metadata" : {
+				"id" : "/sap/demo/ZUI5_EDM_TYPES/EdmTypesCollection('1')",
+				"uri" : "/sap/demo/ZUI5_EDM_TYPES/EdmTypesCollection('1')",
+				"type" : "com.sap.demo.EdmTypes"
+			},
+			"ID" : "1",
+			"Date" : "\/Date(1672444800000)\/",
+			"EndDate" : "\/Date(1680220800000)\/"
+	}
+}
