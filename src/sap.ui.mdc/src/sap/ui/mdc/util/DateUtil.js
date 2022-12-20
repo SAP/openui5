@@ -78,7 +78,8 @@ sap.ui.define([
 					var iYear = oDate.getUTCFullYear();
 					var iMonth = oDate.getUTCMonth() + 1;
 					var iDate = oDate.getUTCDate();
-					var sDate = iYear.toString() + ((iMonth < 10) ? "0" : "") + iMonth.toString() + ((iDate < 10) ? "0" : "") + iDate.toString();
+					var sYear = (iYear < 10 ? "0" : "") + (iYear < 100 ? "0" : "") + (iYear < 1000 ? "0" : "") + iYear.toString();
+					var sDate = sYear + ((iMonth < 10) ? "0" : "") + iMonth.toString() + ((iDate < 10) ? "0" : "") + iDate.toString();
 					var sPattern;
 					if (sBaseType && sBaseType === BaseType.DateTime) {
 						sPattern = "yyyyMMdd-HHmmssSSS";
