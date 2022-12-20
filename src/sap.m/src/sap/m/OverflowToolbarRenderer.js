@@ -23,6 +23,9 @@ sap.ui.define(["./library", 'sap/ui/core/Renderer', './ToolbarRenderer', "sap/m/
 			var bHasAlwaysOverflowVisibleContent  = false,
 				bHasAnyVisibleContent;
 
+			if (oToolbar.getActive()) {
+				rm.renderControl(oToolbar._getActiveButton());
+			}
 			oToolbar._getVisibleContent().forEach(function(oControl) {
 				BarInPageEnabler.addChildClassTo(oControl, oToolbar);
 

@@ -540,6 +540,21 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	color: @sapUiContentContrastIconColor;
 }
 
+/* Button, used as a focus dom ref for active toolbar */
+
+.sapUiSizeCompact .sapMTBActiveButton,
+.sapMTBActiveButton {
+	position: absolute;
+	left: -1000000px;
+	top: -1000000px;
+	width: 0;
+	height: 0;
+	opacity: 0;
+	z-index: -1;
+	overflow: hidden;
+	pointer-events: none;
+}
+
 /* ---------------------------------------------------------------------*/
 /* Transparent buttons looks like normal one in a header/footer.        */
 /* The following rules are overridden in a bar below:                   */

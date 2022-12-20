@@ -32,24 +32,9 @@ sap.ui.define(['./BarInPageEnabler'],
 	 * @param {sap.m.Toolbar} oToolbar An object representation of the control that should be rendered.
 	 */
 	ToolbarRenderer.writeAccessibilityState = function(oRm, oToolbar) {
-		var sRole = oToolbar._getAccessibilityRole(),
-			oAccInfo = {
-				role: sRole
-			};
+		var oAccInfo = {};
 
-		if (!oToolbar.getAriaLabelledBy().length && sRole) {
-			oAccInfo.labelledby = oToolbar.getTitleId();
-		}
-
-		if (oToolbar.getActive()) {
-			oAccInfo.haspopup = oToolbar.getAriaHasPopup();
-		}
-
-		if (oToolbar._sAriaRoleDescription && sRole) {
-			oAccInfo.roledescription = oToolbar._sAriaRoleDescription;
-		}
-
-		oRm.accessibilityState(oToolbar, oAccInfo);
+		oRm.accessibilityState(oToolbar, oToolbar.assignAccessibilityState(oAccInfo));
 	};
 
 	/**
@@ -59,17 +44,16 @@ sap.ui.define(['./BarInPageEnabler'],
 	 * @param {sap.m.Toolbar} oToolbar an object representation of the control that should be rendered
 	 */
 	ToolbarRenderer.decorateRootElement = function (oRm, oToolbar) {
-		this.writeAccessibilityState(oRm, oToolbar);
+		var bToolbarActive = oToolbar.getActive();
+		if (bToolbarActive) {
+			oRm.class("sapMTBActive");
+		} else {
+			this.writeAccessibilityState(oRm, oToolbar);
+			oRm.class("sapMTBInactive");
+		}
 
 		oRm.class("sapMTB");
 		oRm.class("sapMTBNewFlex");
-
-		if (oToolbar.getActive()) {
-			oRm.class("sapMTBActive");
-			oRm.attr("tabindex", "0");
-		} else {
-			oRm.class("sapMTBInactive");
-		}
 
 		oRm.class("sapMTB" + oToolbar.getStyle());
 		oRm.class("sapMTB-" + oToolbar.getActiveDesign() + "-CTX");
@@ -79,6 +63,9 @@ sap.ui.define(['./BarInPageEnabler'],
 	};
 
 	ToolbarRenderer.renderBarContent = function(rm, oToolbar) {
+		if (oToolbar.getActive()) {
+			rm.renderControl(oToolbar._getActiveButton());
+		}
 		oToolbar.getContent().forEach(function(oControl) {
 			BarInPageEnabler.addChildClassTo(oControl, oToolbar);
 			rm.renderControl(oControl);

@@ -331,7 +331,7 @@ sap.ui.define([
 			assert.ok(oSummaryBarText.getDomRef(), "Summary bar text should be rendered");
 			assert.ok(oSummaryBarText.getText(), "There should be text in the summary bar");
 
-			assert.strictEqual(oSummaryBar.$().attr("aria-labelledby"),
+			assert.strictEqual(oSummaryBar._getActiveButton().$().attr("aria-labelledby"),
 			oSummaryBarText.getId(), "aria-labelledby should consist of a filter's text");
 
 			testResetInSummaryBar(oFF, true, assert);
@@ -2482,23 +2482,6 @@ sap.ui.define([
 
 		// Assert
 		assert.equal(oFFFocusSpy.callCount, 0, "Focus method of the FacetFilter should not be called ontabnext");
-
-		// Cleanup
-		destroyFF(oFF);
-	});
-
-	QUnit.test("FacetFilter in Light mode has tabindex=0 only on a InfoBar inside it", function (assert) {
-		// Arrange
-		var oFF = new FacetFilter({
-			type: "Light"
-		});
-		oFF.placeAt("content");
-		oCore.applyChanges();
-
-		// Assert
-		assert.ok(!oFF.$().attr("tabindex"), "FF doesn't have tabindex");
-		assert.equal(oFF.$().children().attr("tabindex"), 0, "toolbar inside FF has tabindex 0");
-		assert.ok(!oFF.oItemNavigation, "ItemNavigation wasn't initialize for the FF Light mode");
 
 		// Cleanup
 		destroyFF(oFF);

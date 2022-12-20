@@ -263,6 +263,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	OverflowToolbar.prototype.enhanceAccessibilityState = function (oElement, mAriaProps) {
+		Toolbar.prototype.enhanceAccessibilityState.apply(this, arguments);
 		if (oElement === this.getAggregation("_overflowButton")) {
 			this._enhanceOverflowButtonAccessibility(mAriaProps);
 		}

@@ -3640,6 +3640,19 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("enhanceAccessibilityState method", function (assert) {
+		// arrange
+		var oOverflowTB = createOverflowToolbar(),
+			enhanceAccStub = sinon.stub(Toolbar.prototype, "enhanceAccessibilityState");
+
+		oOverflowTB.enhanceAccessibilityState();
+
+		assert.equal(enhanceAccStub.called, true, "enhanceAccessibilityState method was called on Toolbar control");
+
+		// clean
+		oOverflowTB.destroy();
+	});
+
 	QUnit.module("Special cases", {
 		beforeEach: function () {
 			sinon.config.useFakeTimers = false;

@@ -417,8 +417,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Active toolbar role", function(assert) {
-		// Arrange + System under Test
-		var oLabel = new Label({
+		var fnDone = assert.async(),
+
+		// Arrange
+		oLabel = new Label({
 			text : "Toolbar Label"
 		});
 		var oTB = new Toolbar({
@@ -428,9 +430,15 @@ sap.ui.define([
 		oTB.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		//Assert
-		assert.equal(oTB.$().attr("role"), "button", "Active toolbar should have role button");
+		assert.notOk(oTB.$().attr("role") === "button", "Active toolbar should not have role button");
 
+		//Act
+		oTB.focus();
+		setTimeout(function(){
+			//Assert
+			assert.ok(oTB.hasStyleClass("sapMTBFocused"), "Focused class is added to the toolbar container");
+			fnDone();
+		});
 		//Cleanup
 		oLabel.destroy();
 		oTB.destroy();
@@ -446,14 +454,14 @@ sap.ui.define([
 		Core.applyChanges();
 
 		//Assert
-		assert.equal(oToolbar.$().attr("aria-haspopup"), coreLibrary.aria.HasPopup.Dialog, "Active toolbar should have correct aria-haspopup");
+		assert.equal(oToolbar._getActiveButton().$().attr("aria-haspopup"), coreLibrary.aria.HasPopup.Dialog, "Active toolbar focus element should have correct aria-haspopup");
 
 		// Act
 		oToolbar.setActive(false);
 		Core.applyChanges();
 
 		//Assert
-		assert.equal(oToolbar.$().attr("aria-haspopup"), undefined, "Toolbar should not have aria-haspopup if active property is false");
+		assert.equal(oToolbar._getActiveButton().$().attr("aria-haspopup"), undefined, "Toolbar focus element should not have aria-haspopup if active property is false");
 
 		//Cleanup
 		oToolbar.destroy();
@@ -657,7 +665,7 @@ sap.ui.define([
 		QUtils.triggerEvent("tap", oLabel.getDomRef());
 		assert.strictEqual(fnPressSpy.callCount, 1, "Tap event from Label is triggered the press event of the active Toolbar");
 
-		QUtils.triggerKeydown(oTB.getDomRef(), "ENTER");
+		QUtils.triggerKeydown(oTB._getActiveButton().getDomRef(), "ENTER");
 		assert.strictEqual(fnPressSpy.callCount, 2, "Enter hotkey of the active Toolbar triggered press event");
 
 		//Cleanup
@@ -677,11 +685,11 @@ sap.ui.define([
 			});
 
 		//act
-		QUtils.triggerKeydown(oTB.getDomRef(), KeyCodes.SPACE);
+		QUtils.triggerKeydown(oTB._getActiveButton().getDomRef(), KeyCodes.SPACE);
 		//assert
 		assert.ok(fnPressSpy.notCalled, "Event is not fired onkeydown with SPACE key");
 		//act
-		QUtils.triggerKeyup(oTB.getDomRef(), KeyCodes.SPACE);
+		QUtils.triggerKeyup(oTB._getActiveButton().getDomRef(), KeyCodes.SPACE);
 		//assert
 		assert.ok(fnPressSpy.calledOnce, "Event is fired onkeyup with SPACE key");
 
