@@ -9,6 +9,8 @@
 			src="some/image/url.png"
 			alt="alternative text for image">
 		</Image>
+		<mvc:HTMLView
+			viewName="serializer.view.NestedHtmlView" />
 		<Label
 			id="label"
 			text="Label">

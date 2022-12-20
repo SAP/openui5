@@ -15,11 +15,11 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			ui5: {
 				noConflict: true,
-				"xx-waitForTheme" : "init"
+				"xx-waitForTheme": "init"
 			},
 			loader: {
 				paths: {
-					"sap/ui/core/sample" : "test-resources/sap/ui/core/demokit/sample",
+					"sap/ui/core/sample": "test-resources/sap/ui/core/demokit/sample",
 					"static": "test-resources/sap/ui/core/qunit/util/static/"
 				}
 			}
@@ -198,32 +198,45 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					}
 				}
 			},
-			ViewTemplate: {
-				autostart : false,
-				coverage : {
-					only : "[/odata/type/,ODataMetaModel,XMLPreprocessor,AnnotationHelper]"
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			ViewSerializer_legacyAPIs: {
+				ui5: {
+					libs: "sap.m"
 				},
-				module : [
+				loader: {
+					paths: {
+						"serializer/view": "test-resources/sap/ui/core/qunit/testdata/serializer_legacyAPIs/"
+					}
+				}
+			},
+			ViewTemplate: {
+				autostart: false,
+				coverage: {
+					only: "[/odata/type/,ODataMetaModel,XMLPreprocessor,AnnotationHelper]"
+				},
+				module: [
 					"sap/ui/core/sample/common/pages/Any",
 					"sap/ui/core/sample/ViewTemplate/scenario/Opa.qunit"
 				]
 			},
 			SyncPromise: {
-				coverage : {
-					only : "sap/ui/base/SyncPromise"
+				coverage: {
+					only: "sap/ui/base/SyncPromise"
 				}
 			},
 			TestUtils: {
-				coverage : {
-					only : "sap/ui/test/TestUtils"
+				coverage: {
+					only: "sap/ui/test/TestUtils"
 				},
-				module : [
+				module: [
 					"test-resources/sap/ui/test/qunit/TestUtils.qunit"
 				]
 			},
 			XMLPreprocessor: {
-				coverage : {
-					only : "sap/ui/core/util/XMLPreprocessor"
+				coverage: {
+					only: "sap/ui/core/util/XMLPreprocessor"
 				}
 			}
 
