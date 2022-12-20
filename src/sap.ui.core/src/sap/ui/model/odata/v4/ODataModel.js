@@ -422,7 +422,7 @@ sap.ui.define([
 	 * each 'dataRequested' event, a 'dataReceived' event is fired.
 	 *
 	 * If a back-end request is successful, the event has almost no parameters. For compatibility
-	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
+	 * with {@link sap.ui.model.Binding#event:dataReceived 'dataReceived'}, an event parameter
 	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
 	 * is not. For additional property requests, the absolute path to the entity is also available.
 	 *

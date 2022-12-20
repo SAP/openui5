@@ -496,7 +496,7 @@ sap.ui.define([
 	 * () {...})</code>).
 	 *
 	 * If back-end requests are successful, the event has almost no parameters. For compatibility
-	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
+	 * with {@link sap.ui.model.Binding#event:dataReceived 'dataReceived'}, an event parameter
 	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
 	 * is not. Use the binding's bound context via
 	 * {@link #getBoundContext oEvent.getSource().getBoundContext()} to access the response data.
