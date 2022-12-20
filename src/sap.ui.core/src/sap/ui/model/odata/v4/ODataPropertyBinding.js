@@ -142,7 +142,7 @@ sap.ui.define([
 	 * indicator or to process an error.
 	 *
 	 * If back-end requests are successful, the event has almost no parameters. For compatibility
-	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
+	 * with {@link sap.ui.model.Binding#event:dataReceived 'dataReceived'}, an event parameter
 	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
 	 * is not. Use {@link #getValue() oEvent.getSource().getValue()} to access the response data.
 	 * Note that controls bound to this data may not yet have been updated, meaning it is not safe

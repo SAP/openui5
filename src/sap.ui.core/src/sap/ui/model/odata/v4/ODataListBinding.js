@@ -490,7 +490,7 @@ sap.ui.define([
 	 *       changed,
 	 *     <li> {@link sap.ui.model.ChangeReason.Change Change} for other changes.
 	 *   </ul>
-	 *   Additionally each '{@link #event:refresh refresh}' event is followed by a 'change' event
+	 *   Additionally each {@link #event:refresh 'refresh'} event is followed by a 'change' event
 	 *   repeating the change reason when the requested data is available.
 	 * @param {string} oEvent.getParameters().detailedReason
 	 *   During automatic determination of $expand and $select, a "virtual" context is first added
@@ -562,7 +562,7 @@ sap.ui.define([
 	 * indicator or to process an error.
 	 *
 	 * If back-end requests are successful, the event has almost no parameters. For compatibility
-	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
+	 * with {@link sap.ui.model.Binding#event:dataReceived 'dataReceived'}, an event parameter
 	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
 	 * is not. Use the binding's contexts via
 	 * {@link #getCurrentContexts oEvent.getSource().getCurrentContexts()} to access the response
@@ -781,10 +781,10 @@ sap.ui.define([
 	 * also be used for group IDs with {@link sap.ui.model.odata.v4.SubmitMode.Auto} in order to
 	 * repeat the creation even if there is no update for the entity.
 	 *
-	 * Each time the data for the created entity is sent to the server, a {@link #event:createSent}
-	 * event is fired and each time the client receives a response for the creation, a
-	 * {@link #event:createCompleted} event is fired, independent of whether the creation was
-	 * successful or not.
+	 * Each time the data for the created entity is sent to the server, a
+	 * {@link #event:createSent 'createSent'} event is fired and each time the client receives a
+	 * response for the creation, a {@link #event:createCompleted 'createCompleted'} event is fired,
+	 * independent of whether the creation was successful or not.
 	 *
 	 * The initial data for the created entity can be supplied via the parameter
 	 * <code>oInitialData</code> and modified via property bindings. Properties that are not part of
@@ -828,7 +828,7 @@ sap.ui.define([
 	 *   <br>
 	 *   Since 1.98.0, when the first property updates happens, the context is no longer
 	 *   {@link sap.ui.model.odata.v4.Context#isInactive inactive} and the
-	 *   {@link sap.ui.model.odata.v4.ODataListBinding#event:createActivate createActivate} event
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#event:createActivate 'createActivate'} event
 	 *   is fired. While inactive, it does not count as a {@link #hasPendingChanges pending change}
 	 *   and does not contribute to the {@link #getCount count}.
 	 * @returns {sap.ui.model.odata.v4.Context}
@@ -1966,9 +1966,9 @@ sap.ui.define([
 	 * Returns already created binding contexts for all entities in this list binding for the range
 	 * determined by the given start index <code>iStart</code> and <code>iLength</code>.
 	 * If at least one of the entities in the given range has not yet been loaded, fires a
-	 * {@link #event:change} event on this list binding once these entities have been loaded
-	 * <b>asynchronously</b>. A further call to this method in the 'change' event handler with the
-	 * same index range then yields the updated array of contexts.
+	 * {@link #event:change 'change'} event on this list binding once these entities have been
+	 * loaded <b>asynchronously</b>. A further call to this method in the 'change' event handler
+	 * with the same index range then yields the updated array of contexts.
 	 *
 	 * @param {number} [iStart=0]
 	 *   The index where to start the retrieval of contexts
@@ -2230,9 +2230,10 @@ sap.ui.define([
 
 	/**
 	 * Returns the contexts that were requested by a control last time. Does not trigger a data
-	 * request. In the time between the {@link #event:dataRequested} event and the
-	 * {@link #event:dataReceived} event, the resulting array contains <code>undefined</code> at
-	 * those indexes where the data is not yet available or has been deleted.
+	 * request. In the time between the {@link #event:dataRequested 'dataRequested'} event and the
+	 * {@link #event:dataReceived 'dataReceived'} event, the resulting array contains
+	 * <code>undefined</code> at those indexes where the data is not yet available or has been
+	 * deleted.
 	 *
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The contexts
