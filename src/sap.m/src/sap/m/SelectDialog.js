@@ -1097,10 +1097,12 @@ function(
 				that._oList.destroyItems(); // fixes creating list items with duplicate ids
 				that._oList.setGrowing(false);
 				oBindings.filter([]);
-				that._oList.setGrowing(that.getGrowing());
+
 				that._oList.attachEventOnce("updateFinished", function () {
 					that._oSelectedItem = that._oList.getSelectedItem();
 					that._aSelectedItems = that._oList.getSelectedItems();
+
+					that._oList.setGrowing(that.getGrowing());
 
 					that._fireConfirmAndUpdateSelection();
 				});
