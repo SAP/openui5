@@ -265,7 +265,7 @@ sap.ui.define([
 			}
 		});
 
-		return aOutput.join(" . ").trim();
+		return aOutput.filter(Boolean).join(" . ").trim();
 	};
 
 	// update the aria-selected for the cells

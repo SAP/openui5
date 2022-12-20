@@ -444,7 +444,8 @@ function(
 		}
 
 		if (this.getContentAnnouncement) {
-			aOutput.push((this.getContentAnnouncement(oBundle) || "").trim());
+			var sContentAnnouncement = (this.getContentAnnouncement(oBundle) || "").trim();
+			sContentAnnouncement && aOutput.push(sContentAnnouncement);
 		}
 
 		if (sTooltip) {
