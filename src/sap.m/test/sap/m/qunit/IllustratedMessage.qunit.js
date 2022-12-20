@@ -191,6 +191,7 @@ function (
 		// Arrange
 		var oDescription,
 			sCurrDescrVal,
+			sEmptyString = '',
 			sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + this.oIllustratedMessage._sIllustrationType, null, true),
 			sTestDescrVal = "Test descr";
 
@@ -217,11 +218,25 @@ function (
 			"The default text for the current _sIllustrationType is no longer used as htmlText for the sap.m.FormattedText,"
 			+ "if there is description input from the app developer");
 		assert.strictEqual(sCurrDescrVal, sTestDescrVal, "The FormattedText is correctly set, if there is description input from the app developer");
+
+		// Act
+		this.oIllustratedMessage.setDescription(sEmptyString);
+		this.oIllustratedMessage.setEnableDefaultTitleAndDescription(false);
+		sCurrDescrVal = this.oIllustratedMessage._getDescription().getHtmlText();
+		Core.applyChanges();
+
+		// Assert
+		assert.notEqual(sCurrDescrVal, sDefaultText,
+			"The default text for the current _sIllustrationType is not used as text for the sap.m.FormattedText even if description is set to empty string,"
+			+ "if enableDefaultTitleAndDescription is false");
+		assert.strictEqual(sCurrDescrVal, sEmptyString, "The FormattedText is correctly set to empty string");
+		assert.strictEqual(oDescription.getDomRef(), null, "The description control instance is not rendered when no text is present");
 	});
 
 	QUnit.test("_getDescription - sap.m.Text", function (assert) {
 		// Arrange
 		var oDescription = this.oIllustratedMessage._getDescription(),
+			sEmptyString = '',
 			sCurrDescrVal = oDescription.getText(),
 			sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + this.oIllustratedMessage._sIllustrationType, null, true),
 			sTestDescrVal = "Test descr";
@@ -243,6 +258,19 @@ function (
 			"The default text for the current _sIllustrationType is no longer used as text for the sap.m.Text,"
 			+ "if there is description input from the app developer");
 		assert.strictEqual(sCurrDescrVal, sTestDescrVal, "The Text is correctly set, if there is description input from the app developer");
+
+		// Act
+		this.oIllustratedMessage.setDescription(sEmptyString);
+		this.oIllustratedMessage.setEnableDefaultTitleAndDescription(false);
+		sCurrDescrVal = this.oIllustratedMessage._getDescription().getText();
+		Core.applyChanges();
+
+		// Assert
+		assert.notEqual(sCurrDescrVal, sDefaultText,
+			"The default text for the current _sIllustrationType is not used as text for the sap.m.Text even if description is set to empty string,"
+			+ "if enableDefaultTitleAndDescription is false");
+		assert.strictEqual(sCurrDescrVal, sEmptyString, "The Text is correctly set to empty string");
+		assert.strictEqual(oDescription.getDomRef(), null, "The description control instance is not rendered when no text is present");
 	});
 
 	QUnit.test("_getIllustration", function (assert) {
@@ -262,6 +290,7 @@ function (
 	QUnit.test("_getTitle", function (assert) {
 		// Arrange
 		var sTitleText = this.oIllustratedMessage._getTitle().getText(),
+		sEmptyString = '',
 		sNewTitleVal = "Test title",
 		sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + this.oIllustratedMessage._sIllustrationType, null, true);
 
@@ -280,6 +309,19 @@ function (
 			"The default text for the current _sIllustrationType is no longer used as text for the Title,"
 			+ "if there is title input from the app developer");
 		assert.strictEqual(sTitleText, sNewTitleVal, "The Title is correctly set, if there is title input from the app developer");
+
+		// Act
+		this.oIllustratedMessage.setTitle(sEmptyString);
+		this.oIllustratedMessage.setEnableDefaultTitleAndDescription(false);
+		sTitleText = this.oIllustratedMessage._getTitle().getText();
+		Core.applyChanges();
+
+		// Assert
+		assert.notEqual(sTitleText, sDefaultText,
+			"The default text for the current _sIllustrationType is not used as text for the Title even if title is set to empty string,"
+			+ "if enableDefaultTitleAndDescription is false");
+		assert.strictEqual(sTitleText, sEmptyString, "The Title is correctly set to empty string");
+		assert.strictEqual(this.oIllustratedMessage._getTitle().getDomRef(), null, "The description control instance is not rendered when no text is present");
 	});
 
 	/* --------------------------- IllustratedMessage Private methods -------------------------------------- */
@@ -616,9 +658,9 @@ function (
 
 			sExpectedNewSymbolId = this.oIllustratedMessage._sIllustrationSet + "-" + sIdMedia + "-" + this.oIllustratedMessage._sIllustrationType;
 			sUseHrefValue = this.oIllustratedMessage
-                .getDomRef()
-                .querySelector("use")
-                .getAttribute("href");
+				.getDomRef()
+				.querySelector("use")
+				.getAttribute("href");
 
 			// Assert
 			if (sMedia === "BASE") {
@@ -626,7 +668,7 @@ function (
 				"symbolId ( " + sExpectedNewSymbolId + " ) of the IllustratedMessage's illustration is untouched according to the current media (" + sIdMedia + ")");
 
 				assert.notEqual(sUseHrefValue.replace("#", ""), sExpectedNewSymbolId,
-                "The new expected illustration symbol id " + sExpectedNewSymbolId + " IS NOT reflected in the reference to illustration via href: " + sUseHrefValue);
+				"The new expected illustration symbol id " + sExpectedNewSymbolId + " IS NOT reflected in the reference to illustration via href: " + sUseHrefValue);
 			} else {
 				assert.strictEqual(this.oIllustratedMessage._getIllustration()._sSymbolId, sExpectedNewSymbolId,
 				"symbolId ( " + sExpectedNewSymbolId + " ) of the IllustratedMessage's illustration is correctly set according to the current media (" + sIdMedia + ")");
