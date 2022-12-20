@@ -100,7 +100,11 @@ sap.ui.define([
 			return;
 		}
 
-		iNumberOfItems = this.getInnerList().getItems().length;
+		if (this.getInnerList().getItems) {
+			iNumberOfItems = this.getInnerList().getItems().length; // for the List and Table cards
+		} else {
+			iNumberOfItems = this.getInnerList().getContent().length; // for the Timeline card
+		}
 
 		iNewMinItems = Math.max(oLoadingPlaceholder.getMinItems(), iNumberOfItems);
 		oLoadingPlaceholder.setMinItems(iNewMinItems);
