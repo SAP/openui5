@@ -14,8 +14,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/HBox",
 	"sap/m/library",
-	"sap/base/util/merge"
-], function(BasePanel, Label, deepEqual, CustomListItem, List, Panel, Toolbar,Text, Icon, coreLibrary, HBox, mLibrary, merge) {
+	"sap/base/util/merge",
+	"sap/m/Title"
+], function(BasePanel, Label, deepEqual, CustomListItem, List, Panel, Toolbar,Text, Icon, coreLibrary, HBox, mLibrary, merge, Title) {
 	"use strict";
 
 
@@ -138,10 +139,9 @@ sap.ui.define([
 			headerToolbar: [
 				new Toolbar({
 					content: [
-						new Label({
+						new Title({
 							wrapping: true,
-							text: "{" + this.P13N_MODEL + ">groupLabel}",
-							design: "Bold"
+							text: "{" + this.P13N_MODEL + ">groupLabel}"
 						})
 					]
 				})
