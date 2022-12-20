@@ -237,7 +237,7 @@ sap.ui.define([
 		 * The function should return a Boolean value (true or false) which represents whether an item will be shown in the dropdown or not.
 		 *
 		 * @public
-		 * @param {function} fnFilter A callback function called when typing in a ComboBoxBase control or ancestor.
+		 * @param {function(string=, sap.ui.core.Item=, boolean=):boolean|undefined|function} fnFilter A callback function called when typing in a ComboBoxBase control or ancestor.
 		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @since 1.58
 		 */
@@ -1525,7 +1525,7 @@ sap.ui.define([
 		/**
 		 * Opens the <code>SuggestionsPopover</code> with the available items.
 		 *
-		 * @param {function} fnFilter Function to filter the items shown in the SuggestionsPopover
+		 * @param {function|undefined} fnFilter Function to filter the items shown in the SuggestionsPopover
 		 * @returns {void}
 		 *
 		 * @since 1.64

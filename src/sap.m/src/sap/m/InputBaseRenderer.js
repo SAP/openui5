@@ -351,7 +351,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 	 *
 	 * @protected
 	 * @param {sap.m.InputBase} oControl an object representation of the control.
-	 * @returns {Object}
+	 * @returns {sap.m.InputBaseAccessibilityState} Accessibility state object
 	 */
 	InputBaseRenderer.getAccessibilityState = function(oControl) {
 		var sAriaLabelledBy = this.getAriaLabelledBy(oControl),

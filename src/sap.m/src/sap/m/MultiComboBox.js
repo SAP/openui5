@@ -3439,7 +3439,7 @@ function(
 	 * Gets the accessibility info for the control
 	 *
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {object} The accessibility info
+	 * @returns {sap.ui.core.AccessibilityInfo} The accessibility info
 	 * @protected
 	 */
 	MultiComboBox.prototype.getAccessibilityInfo = function() {

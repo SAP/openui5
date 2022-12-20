@@ -778,6 +778,25 @@ sap.ui.define([
 	 */
 
 	/**
+	 * The object contains focus information for input controls.
+	 *
+	 * @typedef {object} sap.ui.core.FocusInfo
+	 *
+	 * @property {string} [id]
+	 * 	The ID of the focused control.
+	 * @property {int} [cursorPos]
+	 * 	The position of the cursor.
+	 * @property {int} [selectionStart]
+	 * 	The start position of selection.
+	 * @property {int} [selectionEnd]
+	 * 	The end position of selection.
+	 * @property {boolean | undefined} [preventScroll]
+	 * 	Prevents scrolling.
+	 * @protected
+	 * @since 1.111
+	 */
+
+	/**
 	 * Configuration options for the colors of a progress bar.
 	 *
 	 * @enum {string}

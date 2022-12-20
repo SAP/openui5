@@ -1362,7 +1362,7 @@ function(
 	 * In case of added token it will not reset the value.
 	 *
 	 * @protected
-	 * @param {object} oEvent Event object
+	 * @param {jQuery.Event} oEvent Event object
 	 * @param {object} [mParameters] Additional event parameters to be passed in to the change event handler if * the value has changed
 	 * @param {string} sNewValue Passed value on change
 	 * @returns {boolean|undefined} true when change event is fired
@@ -1394,7 +1394,7 @@ function(
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {object} The accessibility object
+	 * @returns {sap.ui.core.AccessibilityInfo} The accessibility object
 	 * @protected
 	 */
 	MultiInput.prototype.getAccessibilityInfo = function () {

@@ -1272,7 +1272,7 @@ function(
 	 * Sets a custom filter function for suggestions. The default is to check whether the first item text begins with the typed value. For one and two-value suggestions this callback function will operate on sap.ui.core.Item types, for tabular suggestions the function will operate on sap.m.ColumnListItem types.
 	 *
 	 * @public
-	 * @param {function} fnFilter The filter function is called when displaying suggestion items and has two input parameters: the first one is the string that is currently typed in the input field and the second one is the item that is being filtered. Returning true will add this item to the popup, returning false will not display it.
+	 * @param {function(string=, sap.ui.core.Item=, boolean=):boolean|undefined|function} fnFilter The filter function is called when displaying suggestion items and has two input parameters: the first one is the string that is currently typed in the input field and the second one is the item that is being filtered. Returning true will add this item to the popup, returning false will not display it.
 	 * @returns {this} this pointer for chaining
 	 * @since 1.16.1
 	 */
@@ -1310,7 +1310,7 @@ function(
 	 * Sets a custom result filter function for tabular suggestions to select the text that is passed to the input field. Default is to check whether the first cell with a "text" property begins with the typed value. For one value and two-value suggestions this callback function is not called.
 	 *
 	 * @public
-	 * @param {function} fnFilter The result function is called with one parameter: the sap.m.ColumnListItem that is selected. The function must return a result string that will be displayed as the input field's value.
+	 * @param {function(string=, sap.ui.core.Item=, boolean=):boolean|undefined|function} fnFilter The result function is called with one parameter: the sap.m.ColumnListItem that is selected. The function must return a result string that will be displayed as the input field's value.
 	 * @returns {this} this pointer for chaining
 	 * @since 1.21.1
 	 */
@@ -2566,7 +2566,7 @@ function(
 	 *
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
-	 * @returns {object} Accessibility information.
+	 * @returns {sap.ui.core.AccessibilityInfo} Accessibility information.
 	 */
 	Input.prototype.getAccessibilityInfo = function() {
 		var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
@@ -3116,7 +3116,7 @@ function(
 	 * Opens the <code>SuggestionsPopover</code> with the available items.
 	 * <b>Note:</b> When <code>valueHelpOnly</code> property is set to true, the <code>SuggestionsPopover</code> will not open.
 	 *
-	 * @param {function} fnFilter Function to filter the items shown in the SuggestionsPopover
+	 * @param {function|undefined} fnFilter Function to filter the items shown in the SuggestionsPopover
 	 * @returns {void}
 	 *
 	 * @since 1.64
