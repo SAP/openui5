@@ -2041,7 +2041,6 @@ sap.ui.define([
 	/**
 	 * Returns the number of tickmarks, which should be placed between labels.
 	 *
-	 * @param {object} mOptions The option array
 	 * @returns {int} The number of tickmarks
 	 *
 	 * @function
