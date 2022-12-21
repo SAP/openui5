@@ -298,6 +298,22 @@ sap.ui.define(
 			return this;
 		};
 
+		/**
+		 * Getter for the initial focusable <code>control</code> on the <code>FilterBar</code>.
+		 *
+		 * @returns {control} Control instance which could get the focus.
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
+		FilterBar.prototype.getInitialFocusedControl = function() {
+			var oCtrl = this.getBasicSearchField();
+			if (!oCtrl && this.getShowGoButton()) {
+				oCtrl = this._btnSearch;
+			}
+			return oCtrl;
+		};
+
 		return FilterBar;
 	}
 );

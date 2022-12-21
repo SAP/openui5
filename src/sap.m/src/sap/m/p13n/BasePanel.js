@@ -415,6 +415,18 @@ sap.ui.define([
 		return this._oSearchField;
 	};
 
+	/**
+	 * Getter for the initial focusable <code>control</code> on the panel.
+	 *
+	 * @returns {control} Control instance which could get the focus.
+	 *
+	 * @private
+	 * @ui5-restricted sap.m, sap.ui.mdc
+	 */
+	BasePanel.prototype.getInitialFocusedControl = function() {
+		return this._oSearchField;
+	};
+
 	BasePanel.prototype._setTemplate = function(oTemplate) {
 		oTemplate.setType("Active");
 		var oCurrentTemplate = this.getAggregation("_template");

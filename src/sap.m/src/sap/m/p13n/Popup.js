@@ -284,7 +284,19 @@ sap.ui.define([
 		var aPanels = this.getPanels();
 		var bUseContainer = aPanels.length > 1;
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+		var oInitialFocusedControl;
+		if (aPanels.length > 0) {
+			var oContent = aPanels[0];
+			oInitialFocusedControl = oContent.getInitialFocusedControl && oContent.getInitialFocusedControl();
+			if (!oInitialFocusedControl && bUseContainer) {
+				// focus at least the iconTabBar first item
+				oInitialFocusedControl = this._getContainer()._getTabBar().getItems()[0];
+			}
+		}
+
 		var oContainer = new Dialog(this.getId() + "-dialog", {
+			initialFocus: oInitialFocusedControl,
 			title: this.getTitle(),
 			horizontalScrolling: mDialogSettings.hasOwnProperty("horizontalScrolling") ? mDialogSettings.horizontalScrolling : false,
 			verticalScrolling: !bUseContainer,

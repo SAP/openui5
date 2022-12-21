@@ -600,6 +600,20 @@ sap.ui.define([
 				}
 			}
 			this.setProperty("inputOK", true, true); // do not invalidate whole DefineConditionPanel
+		},
+
+		/**
+		 * Getter for the initial focusable <code>control</code> on the <code>DefineConditionPanel</code>.
+		 *
+		 * @returns {control} Control instance which could get the focus.
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
+		getInitialFocusedControl: function() {
+			var oGrid = this.getAggregation("_content").getContent()[1];
+			var oCtrl = oGrid.getContent()[0]; // 0=Operator Field, 2=first Value Field which might not exist
+			return oCtrl;
 		}
 
 	});
