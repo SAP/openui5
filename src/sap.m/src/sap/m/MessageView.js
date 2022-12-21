@@ -1179,7 +1179,6 @@ sap.ui.define([
 	 */
 	MessageView.prototype._fnHandleForwardNavigation = function (oListItem, sTransiotionName) {
 		var oMessageItem = oListItem._oMessageItem,
-			aDetailsPageContent = this._detailsPage.getContent() || [],
 			asyncDescHandler = this.getAsyncDescriptionHandler();
 
 		this._previousIconTypeClass = this._previousIconTypeClass || "";
@@ -1189,7 +1188,7 @@ sap.ui.define([
 			messageTypeFilter: this._getCurrentMessageTypeFilter()
 		});
 
-		this._clearDetailsPage.call(this, aDetailsPageContent);
+		this._clearDetailsPage.call(this);
 
 		if (typeof asyncDescHandler === "function" && oMessageItem.getLongtextUrl()) {
 			// Set markupDescription to true as markup description should be processed as markup
@@ -1203,6 +1202,7 @@ sap.ui.define([
 			});
 
 			var proceed = function () {
+				this._clearDetailsPage.call(this);
 				this._detailsPage.setBusy(false);
 				this._navigateToDetails.call(this, oMessageItem, oListItem, sTransiotionName, true);
 			}.bind(this);
@@ -1256,8 +1256,8 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} aDetailsPageContent The details page content
 	 * @private
 	 */
-	MessageView.prototype._clearDetailsPage = function (aDetailsPageContent) {
-		aDetailsPageContent.forEach(function (oControl) {
+	MessageView.prototype._clearDetailsPage = function () {
+		this._detailsPage.getContent().forEach(function (oControl) {
 			oControl.destroy();
 		}, this);
 	};
