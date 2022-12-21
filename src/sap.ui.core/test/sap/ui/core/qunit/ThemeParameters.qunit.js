@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/Icon",
+	"sap/ui/dom/includeStylesheet",
 	"sap/m/Bar"
-], function(Parameters, Control, Element, Icon, Bar) {
+], function(Parameters, Control, Element, Icon, includeStylesheet, Bar) {
 	"use strict";
 
 	QUnit.module("Parmeters.get");
@@ -58,6 +59,25 @@ sap.ui.define([
 			return oResource.name.endsWith("themeParameters/lib" + sLibNumber + "/themes/sap_hcb/library-parameters.json");
 		});
 	}
+
+	function createLinkElement (sId, bBase) {
+		var sUrl = sap.ui.require.toUrl("test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters/lib15/themes/" + (bBase ? "base" : "sap_hcb") + "/library.css");
+		return includeStylesheet({
+			url: sUrl,
+			id: bBase ? sId : undefined
+		}).then(function () {
+			if (bBase) {
+				return;
+			}
+			Array.from(document.querySelectorAll("link")).forEach(function (oLink) {
+				if (!oLink.getAttribute("id") && oLink.getAttribute("href") === sUrl) {
+					oLink.setAttribute("data-sap-ui-foucmarker", sId);
+				}
+			});
+		});
+	}
+
+	QUnit.module("Parmeters.get (sync)");
 
 	QUnit.test("Read single parameters", function(assert) {
 		/* HCB theme was chosen because:
@@ -314,7 +334,28 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Dynamically Loaded Library (async)", function (assert) {
+	QUnit.test("Get parameter while CSS after themeChanged finished loading and before ThemeChecked processed themeChanged event", function(assert) {
+		var sPrefixedLibId = "sap-ui-theme-testlibs.themeParameters.lib15";
+
+		// Setup
+		Parameters.reset();
+		var oCssPromise1 = createLinkElement(sPrefixedLibId, true);
+		var oCssPromise2 = createLinkElement(sPrefixedLibId, false);
+		return Promise.all([oCssPromise1, oCssPromise2]).then(function() {
+			assert.strictEqual(Parameters.get("sapUiThemeParamForLib15"), "#fafafa", "Parameter 'sapUiThemeParamForLib15' has value: '#fafafa'");
+
+			// Cleanup
+			Array.from(document.querySelectorAll("link")).forEach(function (oLink) {
+				if (oLink.getAttribute("id") === sPrefixedLibId || oLink.getAttribute("data-sap-ui-foucmarker") === sPrefixedLibId) {
+					oLink.remove();
+				}
+			});
+		});
+	});
+
+	QUnit.module("Parmeters.get (async)");
+
+	QUnit.test("Dynamically Loaded Library", function (assert) {
 		var done = assert.async();
 		assert.equal(Parameters.get({
 			name: "sapUiAsyncThemeParamForLib5"
@@ -332,7 +373,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Read scoped parameters (async from testlibs.themeParameters.lib6)", function(assert) {
+	QUnit.test("Read scoped parameters (from testlibs.themeParameters.lib6)", function(assert) {
 		var oControl = new Control(), done = assert.async();
 
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib6");
@@ -361,7 +402,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Read multiple given parameters (async including undefined param name)", function(assert) {
+	QUnit.test("Read multiple given parameters (including undefined param name)", function(assert) {
 		var done = assert.async();
 		var oControl = new Control();
 		var aParams = ["sapUiMultipleAsyncThemeParamWithScopeForLib7", "sapUiMultipleAsyncThemeParamWithoutScopeForLib7", "sapUiNotExistingTestParam", "sapUiBaseColor"];
@@ -506,7 +547,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("After Theme Change: Using async Parameters.get", function(assert) {
+	QUnit.test("After Theme Change: Using Parameters.get", function(assert) {
 		var done = assert.async();
 		var fnContinue = function() {
 			sap.ui.getCore().detachThemeChanged(fnContinue);
@@ -534,6 +575,25 @@ sap.ui.define([
 
 		sap.ui.getCore().loadLibraries(["testlibs.themeParameters.lib13"]).then(function () {
 			sap.ui.getCore().attachThemeChanged(fnThemeChanged);
+		});
+	});
+
+	QUnit.test("Get parameter while CSS after themeChanged finished loading and before ThemeChecked processed themeChanged event", function(assert) {
+		var sPrefixedLibId = "sap-ui-theme-testlibs.themeParameters.lib15";
+
+		// Setup
+		Parameters.reset();
+		var oCssPromise1 = createLinkElement(sPrefixedLibId, true);
+		var oCssPromise2 = createLinkElement(sPrefixedLibId, false);
+		return Promise.all([oCssPromise1, oCssPromise2]).then(function() {
+			assert.strictEqual(Parameters.get({ name: "sapUiThemeParamForLib15" }), "#fafafa", "Parameter 'sapUiThemeParamForLib15' has value: '#fafafa'");
+
+			// Cleanup
+			Array.from(document.querySelectorAll("link")).forEach(function (oLink) {
+				if (oLink.getAttribute("id") === sPrefixedLibId || oLink.getAttribute("data-sap-ui-foucmarker") === sPrefixedLibId) {
+					oLink.remove();
+				}
+			});
 		});
 	});
 });

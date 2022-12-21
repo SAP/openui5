@@ -121,12 +121,12 @@ sap.ui.define([
 			});
 		}
 
-		function parseParameters(sId) {
+		function parseParameters(sId, bAsync) {
 			var oUrl = getThemeBaseUrlForId(sId);
 
-			var bThemeApplied = ThemeCheck.checkStyle(sId);
+			var bThemeApplied = ThemeCheck.checkAndRemoveStyle({ id: sId });
 
-			if (!bThemeApplied) {
+			if (!bThemeApplied && !bAsync) {
 				Log.warning("Parameters have been requested but theme is not applied, yet.", "sap.ui.core.theming.Parameters");
 			}
 
@@ -155,7 +155,11 @@ sap.ui.define([
 					}
 				}
 			}
-			return false; //could not parse parameters OR theme is not applied OR library has no parameters
+			// sync: return false if parameter could not be parsed OR theme is not applied OR library has no parameters
+			//       For sync path this triggers a sync library-parameters.json request as fallback
+			// async: always return bThemeApplied. Issues during parsing are not relevant for further processing because
+			//        there is no fallback as in the sync case
+			return bAsync ? bThemeApplied : false;
 		}
 
 		/**
@@ -301,9 +305,7 @@ sap.ui.define([
 
 				forEachStyleSheet(function (sId) {
 					if (bAsync) {
-						if (ThemeCheck.checkStyle(sId)) {
-							parseParameters(sId);
-						} else {
+						if (!parseParameters(sId, bAsync)) {
 							aParametersToLoad.push(sId);
 						}
 					} else {
@@ -319,10 +321,8 @@ sap.ui.define([
 			var aPendingThemes = [];
 
 			aParametersToLoad.forEach(function (sId) {
-				// Only parse parameters in case theme is already applied. Else keep parameter ID for later
-				if (ThemeCheck.checkStyle(sId)) {
-					parseParameters(sId);
-				} else {
+				// Try to parse parameters (in case theme is already applied). Else keep parameter ID for later
+				if (!parseParameters(sId, /*bAsync=*/true)) {
 					aPendingThemes.push(sId);
 				}
 			});
