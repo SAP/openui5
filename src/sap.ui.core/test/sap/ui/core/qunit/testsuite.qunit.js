@@ -74,6 +74,11 @@ sap.ui.define(function() {
 			designtime: {},
 			dnd: {},
 			generic: {},
+			/**
+			 * Generic testsuite exists in modern variant per library with its own "testsuite.generic.qunit.html".
+			 * Generic testsuite for Core library see entry above.
+			 * @deprecated As of 1.110
+			 */
 			"Legacy generic Testsuite": {
 				page: "test-resources/sap/ui/core/qunit/generic/legacy/testsuite.generic.qunit.html"
 			},
