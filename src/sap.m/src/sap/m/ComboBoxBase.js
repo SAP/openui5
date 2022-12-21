@@ -90,7 +90,7 @@ sap.ui.define([
 
 					/**
 					 * Indicates whether the picker is opened.
-					 *
+					 * @deprecated since version 1.110
 					 * @private
 					 */
 					 open: {
