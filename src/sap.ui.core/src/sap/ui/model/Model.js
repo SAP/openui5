@@ -563,7 +563,7 @@ sap.ui.define([
 	 *   The path of the property
 	 * @param {sap.ui.model.Context} [oEvent.getParameters.context]
 	 *   The binding context (if available)
-	 * @param {object} oEvent.getParameters.value
+	 * @param {any} oEvent.getParameters.value
 	 *   The current value of the property
 	 * @public
 	 * @since 1.40
