@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="com.sap.demo" xml:lang="en" sap:schema-version="1"
+			xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="EdmTypes" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="1" />
+				<Property Name="Timestamp" Type="Edm.DateTimeOffset" Precision="7"
+					sap:label="Time Stamp" />
+			</EntityType>
+			<EntityContainer Name="com_sap_demo_Entities" m:IsDefaultEntityContainer="true"
+				sap:supported-formats="atom json xlsx">
+				<EntitySet Name="EdmTypesCollection" EntityType="com.sap.demo.EdmTypes"
+					sap:content-version="1" />
+			</EntityContainer>
+			<atom:link rel="self" href="/sap/demo/ZUI5_EDM_TYPES/$metadata"
+				xmlns:atom="http://www.w3.org/2005/Atom" />
+			<atom:link rel="latest-version" href="/sap/demo/ZUI5_EDM_TYPES/$metadata"
+				xmlns:atom="http://www.w3.org/2005/Atom" />
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
