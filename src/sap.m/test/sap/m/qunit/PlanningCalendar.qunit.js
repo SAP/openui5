@@ -2685,6 +2685,18 @@ sap.ui.define([
 		oSelectedAppointment = undefined;
 	});
 
+	QUnit.test('Old event handlers are cleaned up before reattaching', function(assert) {
+		var row = oPC1.getRows()[0];
+		var oRowTimeline = _getRowTimeline(row);
+		var oDetachSpy = this.spy(oRowTimeline, 'detachEvent');
+		var oAttachSpy = this.spy(oRowTimeline, 'attachEvent');
+
+		oPC1._updateRowTimeline(row);
+
+		assert.ok(oAttachSpy.calledAfter(oDetachSpy), 'Attach is called after Detach.');
+
+	});
+
 	QUnit.test("appointmentSelect for group appointments", function(assert) {
 		// arrange
 		var oPC = createPlanningCalendar("PC9").placeAt("qunit-fixture"),

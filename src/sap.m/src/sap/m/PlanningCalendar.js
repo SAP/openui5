@@ -3558,10 +3558,10 @@ sap.ui.define([
 		oRowTimeline.setLegend(this.getLegend());
 		oRowTimeline.setAppointmentsVisualization(this.getAppointmentsVisualization());
 		oRowTimeline.setAppointmentHeight(this.getAppointmentHeight());
-		oRowTimeline.attachEvent("select", handleAppointmentSelect, this);
-		oRowTimeline.attachEvent("startDateChange", this._handleStartDateChange, this);
-		oRowTimeline.attachEvent("leaveRow", handleLeaveRow, this);
-		oRowTimeline.attachEvent("intervalSelect", handleIntervalSelect, this);
+		oRowTimeline.detachEvent("select", handleAppointmentSelect, this).attachEvent("select", handleAppointmentSelect, this);
+		oRowTimeline.detachEvent("startDateChange", this._handleStartDateChange, this).attachEvent("startDateChange", this._handleStartDateChange, this);
+		oRowTimeline.detachEvent("leaveRow", handleLeaveRow, this).attachEvent("leaveRow", handleLeaveRow, this);
+		oRowTimeline.detachEvent("intervalSelect", handleIntervalSelect, this).attachEvent("intervalSelect", handleIntervalSelect, this);
 
 		updateSelectAllCheckBox.call(this);
 
