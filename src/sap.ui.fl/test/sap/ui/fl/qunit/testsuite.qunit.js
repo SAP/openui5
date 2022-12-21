@@ -405,6 +405,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexState/FlexState"]
 				}
 			},
+			"apply/_internal/flexState/DataSelector": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/DataSelector"]
+				}
+			},
 			"apply/_internal/flexState/Loader": {
 				group: "Apply Internal",
 				coverage: {

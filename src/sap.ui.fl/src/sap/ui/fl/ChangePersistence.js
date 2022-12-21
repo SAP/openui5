@@ -494,6 +494,7 @@ sap.ui.define([
 		// don't add the same change twice
 		if (this._aDirtyChanges.indexOf(oNewChange) === -1) {
 			this._aDirtyChanges.push(oNewChange);
+			FlexState.addDirtyFlexObject(this._mComponent.name, oNewChange);
 		}
 		return oNewChange;
 	};
@@ -838,6 +839,7 @@ sap.ui.define([
 				return;
 			}
 			this._aDirtyChanges.splice(nIndexInDirtyChanges, 1);
+			FlexState.removeDirtyFlexObject(this._mComponent.name, oChange);
 			this._deleteChangeInMap(oChange, bRunTimeCreatedChange);
 			return;
 		}
@@ -852,6 +854,7 @@ sap.ui.define([
 
 		if (nIndexInDirtyChanges > -1) {
 			this._aDirtyChanges.splice(nIndexInDirtyChanges, 1);
+			FlexState.removeDirtyFlexObject(this._mComponent.name, oChange);
 		}
 		this._deleteChangeInMap(oChange);
 	};
@@ -970,7 +973,8 @@ sap.ui.define([
 		aChangesToBeRemoved.forEach(function (oChange) {
 			var nIndex = aDirtyChanges.indexOf(oChange);
 			aDirtyChanges.splice(nIndex, 1);
-		});
+			FlexState.removeDirtyFlexObject(this._mComponent.name, oChange);
+		}.bind(this));
 
 		return Promise.resolve(aChangesToBeRemoved);
 	};

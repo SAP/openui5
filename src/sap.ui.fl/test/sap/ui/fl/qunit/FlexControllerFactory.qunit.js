@@ -62,7 +62,7 @@ sap.ui.define([
 		QUnit.test("Obtains the componentId from component instance and propagates even if there are no changes for the component", function(assert) {
 			sandbox.stub(ChangePersistence.prototype, "loadChangesMapForComponent").resolves({});
 			sandbox.stub(Utils, "isApplicationComponent").returns(true);
-			var oClearStub = sandbox.stub(FlexState, "clearFilteredResponse");
+			var oClearStub = sandbox.stub(FlexState, "rebuildFilteredResponse");
 
 			var oComponent = {
 				getManifestObject: function() {

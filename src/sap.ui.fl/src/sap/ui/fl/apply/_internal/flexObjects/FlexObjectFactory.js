@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/ControllerExtensionChange",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
@@ -23,6 +24,7 @@ sap.ui.define([
 	ControllerExtensionChange,
 	FlexObject,
 	FlVariant,
+	States,
 	UIChange,
 	Layer,
 	LayerUtils,
@@ -98,9 +100,10 @@ sap.ui.define([
 	 *
 	 * @param {object} oFileContent - File content
 	 * @param {class} [ObjectClass] - Object class to be instantiated
+	 * @param {boolean} [bPersisted] - Whether to set the state to PERSISTED after creation
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} Created flex object
 	 */
-	FlexObjectFactory.createFromFileContent = function (oFileContent, ObjectClass) {
+	FlexObjectFactory.createFromFileContent = function (oFileContent, ObjectClass, bPersisted) {
 		var oNewFileContent = Object.assign({}, oFileContent);
 		var FlexObjectClass = ObjectClass || getFlexObjectClass(oNewFileContent);
 		if (!FlexObjectClass) {
@@ -120,6 +123,9 @@ sap.ui.define([
 			return mPropertyMap;
 		}, {});
 		var oFlexObject = new FlexObjectClass(mProperties);
+		if (bPersisted) {
+			oFlexObject.setState(States.LifecycleState.PERSISTED);
+		}
 		return oFlexObject;
 	};
 

@@ -145,7 +145,7 @@ sap.ui.define([
 			var sComponentId = oComponent.getId();
 			// TODO: remove this line when the maps and filtered response are always up to data
 			// Currently with the variants the maps are out of sync when the app gets loaded again without complete reload
-			FlexState.clearFilteredResponse(ManifestUtils.getFlexReferenceForControl(oComponent));
+			FlexState.rebuildFilteredResponse(ManifestUtils.getFlexReferenceForControl(oComponent));
 			var oReturnPromise = FlexState.initialize({
 				componentId: sComponentId,
 				asyncHints: vConfig.asyncHints
