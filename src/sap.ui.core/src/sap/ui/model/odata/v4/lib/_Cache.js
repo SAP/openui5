@@ -166,6 +166,7 @@ sap.ui.define([
 				oEntity = vDeleteProperty
 					? vCacheData[vCachePath] || vCacheData.$byPredicate[vCachePath]
 					: vCacheData, // deleting at root level
+				sGroupId,
 				aMessages,
 				mHeaders,
 				iIndex = typeof vCachePath === "number" ? vCachePath : undefined,
@@ -239,6 +240,11 @@ sap.ui.define([
 				that.removeElement(vCacheData, iIndex, sKeyPredicate, sParentPath);
 			}
 			fnCallback(iIndex, -1);
+			if (oGroupLock) {
+				sGroupId = oGroupLock.getGroupId();
+				// Note: there should be only *one* parked PATCH per entity, but we don't rely on it
+				that.oRequestor.relocateAll("$parked." + sGroupId, sGroupId, oEntity);
+			}
 			mHeaders = {"If-Match" : oETagEntity || oEntity};
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			// the existence of an onCancel callback causes a pending change in the requestor
