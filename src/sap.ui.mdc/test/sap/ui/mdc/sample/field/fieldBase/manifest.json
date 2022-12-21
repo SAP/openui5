@@ -1,7 +1,8 @@
 {
 	"sap.app" : {
 		"id" : "ProductCollection",
-		"version" : "1.0"
+		"version" : "1.0",
+		"type" : "application"
 	},
 
 	"sap.ui" : {
@@ -23,18 +24,18 @@
 			},
 			"type": "XML",
 			"viewName": "sap.ui.mdc.sample.field.fieldBase.Test",
+			"id": "MyView",
 			"height": "100%",
 			"async": true
 		},
 		"dependencies" : {
 			"minUI5Version" : "1.58.0",
 			"libs" : {
-				"sap.ui.core" : {
-					"minVersion" : "1.58.0"
-				},
-				"sap.m" : {
-					"minVersion" : "1.58.0"
-				}
+				"sap.ui.core" : {},
+				"sap.m" : {},
+				"sap.ui.layout" : {},
+				"sap.ui.mdc" : {},
+				"sap.ui.fl" : {"lazy" : false}
 			},
 			"components" : {}
 		}

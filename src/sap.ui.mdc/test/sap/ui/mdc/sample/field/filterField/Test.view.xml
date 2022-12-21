@@ -860,7 +860,7 @@
 										<mdcField:OutParameter id="IOFFVHRegion-Out-Country" value="{cm>/conditions/CountryId}" helpPath="countryId"/>
 									</mdcField:outParameters>
 									<mdcField:filterBar>
-										<vhfb:FilterBar
+										<vhfb:FilterBar delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'
 											liveMode= "true">
 											<mdc:FilterField
 												id="VHFFBTextFFCountry"
@@ -953,7 +953,7 @@
 											caseSensitive="true"
 											useAsValueHelp="false">
 											<mdcValueHelpContent:filterBar>
-												<vhfb:FilterBar id="VH-Region-FB" liveMode= "true">
+												<vhfb:FilterBar id="VH-Region-FB" liveMode= "true" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
 													<mdc:FilterField
 														id="VH-Region-FF-countryId"
 														label= "{/#Region/countryId/@sap:label}"
@@ -1060,7 +1060,7 @@
 							<mdcField:OutParameter id="IOFFVHCity_Out-Region" value="{cm>/conditions/RegionId}" helpPath="regionId" mode="Always"/>
 						</mdcField:outParameters>
 						<mdcField:filterBar>
-							<vhfb:FilterBar
+							<vhfb:FilterBar delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'
 								liveMode= "false">
 								<mdc:FilterField
 									id="VHFFBTextFFCountry2"
@@ -1214,7 +1214,7 @@
 									caseSensitive="true"
 									useAsValueHelp="false">
 									<mdcValueHelpContent:filterBar>
-										<vhfb:FilterBar id="VH-City-FB" liveMode= "true">
+										<vhfb:FilterBar id="VH-City-FB" liveMode= "true" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
 											<mdc:FilterField
 												id="VH-City-FF-countryId"
 												label= "{/#Region/countryId/@sap:label}"

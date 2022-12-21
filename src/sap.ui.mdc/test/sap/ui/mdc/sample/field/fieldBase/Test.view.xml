@@ -65,7 +65,7 @@
 											</mdcField:FieldValueHelpMTableWrapper>
 										</mdcField:content>
 										<mdcField:filterBar>
-											<vhfb:FilterBar id="FilterBar1" liveMode= "false">
+											<vhfb:FilterBar id="FilterBar1" liveMode= "false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
 												<mdc:FilterField id="FilterBar1-F1"
 													label="{/#Product/ProductId/@sap:label}"
 													conditions="{$filters>/conditions/ProductId}"
@@ -154,7 +154,7 @@
 														</m:items>
 													</m:Table>
 													<mdcValueHelpContent:filterBar>
-														<vhfb:FilterBar id="VH1-FilterBar" liveMode= "false">
+														<vhfb:FilterBar id="VH1-FilterBar" liveMode= "false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
 															<mdc:FilterField id="VH1-FilterBar-F1"
 																label="{/#Product/ProductId/@sap:label}"
 																conditions="{$filters>/conditions/ProductId}"
@@ -358,7 +358,7 @@
 														</m:items>
 													</m:Table>
 													<mdcValueHelpContent:filterBar>
-														<vhfb:FilterBar id="VH2-FilterBar" liveMode= "false">
+														<vhfb:FilterBar id="VH2-FilterBar" liveMode= "false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
 															<mdc:FilterField id="VH2-FilterBar-F1"
 																label="{/#Product/ProductId/@sap:label}"
 																conditions="{$filters>/conditions/ProductId}"
@@ -788,7 +788,7 @@
 											keyPath="countryId"
 											descriptionPath="text">
 											<mdcField:filterBar>
-												<vhfb:FilterBar id="FH-FB-Country"
+												<vhfb:FilterBar id="FH-FB-Country" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'
 													liveMode= "true">
 													<mdc:FilterField
 														id="FF-CountryText"
@@ -861,7 +861,7 @@
 														</m:items>
 													</m:Table>
 													<mdcValueHelpContent:filterBar>
-														<vhfb:FilterBar id="VH-FB-Country" liveMode= "true">
+														<vhfb:FilterBar id="VH-FB-Country" liveMode= "true" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
 															<mdc:FilterField
 																id="VH-FB-Country-CountryText"
 																label= "{/#Country/text/@sap:label}"
