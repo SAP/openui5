@@ -517,6 +517,10 @@ sap.ui.define([
 	 *   The property binding's {@link sap.ui.model.Binding#getContext context}, if available
 	 * @param {string} oEvent.getParameters().path
 	 *   The property binding's {@link sap.ui.model.Binding#getPath path}
+	 * @param {Promise} [oEvent.getParameters().promise]
+	 *   A promise on the outcome of the PATCH request, much like
+	 *   {@link sap.ui.model.odata.v4.Context#setProperty} provides it for
+	 *   <code>bRetry === true</code>; missing in case there is no PATCH
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
 	 *   The reason for the property change: always <code>sap.ui.model.ChangeReason.Binding</code>
 	 * @param {string} oEvent.getParameters().resolvedPath

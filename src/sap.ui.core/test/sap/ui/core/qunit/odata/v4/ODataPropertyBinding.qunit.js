@@ -1832,6 +1832,7 @@ sap.ui.define([
 			this.mock(this.oModel.oMetaModel).expects("fetchUpdateData").never();
 			this.mock(oPropertyBinding).expects("withCache").never();
 			this.mock(this.oModel).expects("hasListeners").never();
+			this.mock(this.oModel).expects("firePropertyChange").never();
 
 			// code under test
 			assert.throws(function () {
@@ -1858,6 +1859,7 @@ sap.ui.define([
 			.withExactArgs("$direct", "Name", "foo", "ProductList('0')")
 			.returns(oPromise);
 		this.mock(this.oModel).expects("hasListeners").never();
+		this.mock(this.oModel).expects("firePropertyChange").never();
 		this.oLogMock.expects("error").withExactArgs(sMessage, oError.stack, sClassName);
 
 		// code under test
@@ -1890,6 +1892,7 @@ sap.ui.define([
 			.withExactArgs({
 				context : oContext,
 				path : "Address/City",
+				promise : sinon.match.instanceOf(Promise),
 				reason : ChangeReason.Binding,
 				resolvedPath : "/BusinessPartnerList('0100000000')/Address/City",
 				value : vValue
@@ -1898,7 +1901,7 @@ sap.ui.define([
 			.returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("Address/City", sinon.match.same(vValue), sinon.match.same(oGroupLock))
-			.returns(SyncPromise.resolve());
+			.returns(SyncPromise.resolve(Promise.resolve()));
 
 		// code under test
 		oBinding.setValue(vValue, "up");
@@ -1927,6 +1930,7 @@ sap.ui.define([
 			.withExactArgs({
 				context : oContext,
 				path : "Name",
+				promise : undefined, // we're not async here
 				reason : ChangeReason.Binding,
 				resolvedPath : "/ProductList('HT-1000')/Name",
 				value : "foo"
@@ -1940,6 +1944,8 @@ sap.ui.define([
 		oModelMock.expects("reportError").withExactArgs(
 			"Failed to update path /ProductList('HT-1000')/Name", sClassName,
 			sinon.match.same(oIntentionallyFailedError));
+		oModelMock.expects("hasListeners").never(); // no event in case of sync failure
+		oModelMock.expects("firePropertyChange").never();
 
 		// code under test
 		oBinding.setValue("bar");
@@ -1960,7 +1966,8 @@ sap.ui.define([
 			oError = new Error("This call intentionally failed"),
 			oGroupLock = {unlock : function () {}},
 			oPropertyBinding = this.oModel.bindProperty("Name", oContext),
-			oUpdatePromise = Promise.reject(oError);
+			oRejectedPromise = Promise.reject(oError),
+			oUpdatePromise = SyncPromise.resolve(oRejectedPromise);
 
 		oPropertyBinding.vValue = "fromServer"; // simulate a read
 
@@ -1970,11 +1977,21 @@ sap.ui.define([
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("Name", "foo", sinon.match.same(oGroupLock))
 			.returns(oUpdatePromise);
-		this.mock(this.oModel).expects("hasListeners").never();
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to update path /ProductList('HT-1000')/Name", sClassName,
 			sinon.match.same(oError));
+		this.mock(this.oModel).expects("hasListeners").withExactArgs("propertyChange")
+			.returns(true);
+		this.mock(this.oModel).expects("firePropertyChange")
+			.withExactArgs({
+				context : oContext,
+				path : "Name",
+				promise : sinon.match.same(oRejectedPromise),
+				reason : ChangeReason.Binding,
+				resolvedPath : "/ProductList('HT-1000')/Name",
+				value : "foo"
+			});
 
 		// code under test
 		oPropertyBinding.setValue("foo", "up");
@@ -1994,6 +2011,7 @@ sap.ui.define([
 		assert.strictEqual(oPropertyBinding.vValue, undefined);
 		this.mock(oContext).expects("doSetProperty").never();
 		this.mock(this.oModel).expects("hasListeners").never();
+		this.mock(this.oModel).expects("firePropertyChange").never();
 		this.mock(this.oModel).expects("reportError")
 			.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,
 				sinon.match({message : oError.message}));
@@ -2015,6 +2033,7 @@ sap.ui.define([
 		this.mock(oPropertyBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("doSetProperty").never();
 		this.mock(this.oModel).expects("hasListeners").never();
+		this.mock(this.oModel).expects("firePropertyChange").never();
 
 		// code under test
 		oPropertyBinding.setValue("foo");
