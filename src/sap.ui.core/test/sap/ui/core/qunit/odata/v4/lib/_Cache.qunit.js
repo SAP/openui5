@@ -3388,19 +3388,10 @@ sap.ui.define([
 					"original/resource/path"),
 				sFirst,
 				oHelperMock = this.mock(_Helper),
-				aKeySegments = ["SalesOrderID"],
 				aMessagePathSegments = ["messagesInSalesOrder"],
 				aMessagesSalesOrder0 = [{/* any message object */}],
 				aMessagesSalesOrder1 = [{/* any message object */}],
-				oData = {
-					value : [{
-						messagesInSalesOrder : aMessagesSalesOrder0
-					}, {
-						messagesInSalesOrder : aMessagesSalesOrder1
-					}, {
-						messagesInSalesOrder : []
-					}]
-				},
+				oData = {value : [{}, {}, {}]},
 				mExpectedMessages = {},
 				sSecond,
 				sThird,
@@ -3417,9 +3408,6 @@ sap.ui.define([
 				};
 
 			if (oFixture.bPredicate) {
-				oData.value[0].SalesOrderID = "42";
-				oData.value[1].SalesOrderID = "43";
-				oData.value[2].SalesOrderID = "44";
 				sFirst = "('42')";
 				sSecond = "('43')";
 				sThird = "('44')";
@@ -3436,22 +3424,22 @@ sap.ui.define([
 			mExpectedMessages[sSecond].$count = 0;
 			mExpectedMessages[sSecond].$byPredicate = {}; // no key predicates
 			oHelperMock.expects("drillDown")
-				.withExactArgs(oData.value[0], aKeySegments)
-				.returns(oData.value[0].SalesOrderID);
+				.withExactArgs(sinon.match.same(oData.value[0]), [])
+				.returns(oFixture.bPredicate ? {SalesOrderID : "42"} : {});
 			oHelperMock.expects("drillDown")
-				.withExactArgs(oData.value[1], aKeySegments)
-				.returns(oData.value[1].SalesOrderID);
+				.withExactArgs(sinon.match.same(oData.value[1]), [])
+				.returns(oFixture.bPredicate ? {SalesOrderID : "43"} : {});
 			oHelperMock.expects("drillDown")
-				.withExactArgs(oData.value[2], aKeySegments)
-				.returns(oData.value[2].SalesOrderID);
+				.withExactArgs(sinon.match.same(oData.value[2]), [])
+				.returns(oFixture.bPredicate ? {SalesOrderID : "44"} : {});
 			oHelperMock.expects("drillDown")
-				.withExactArgs(oData.value[0], aMessagePathSegments)
+				.withExactArgs(sinon.match.same(oData.value[0]), aMessagePathSegments)
 				.returns(aMessagesSalesOrder0);
 			oHelperMock.expects("drillDown")
-				.withExactArgs(oData.value[1], aMessagePathSegments)
+				.withExactArgs(sinon.match.same(oData.value[1]), aMessagePathSegments)
 				.returns(aMessagesSalesOrder1);
 			oHelperMock.expects("drillDown")
-				.withExactArgs(oData.value[2], aMessagePathSegments)
+				.withExactArgs(sinon.match.same(oData.value[2]), aMessagePathSegments)
 				.returns([]);
 			this.mock(oCache).expects("checkSharedRequest").withExactArgs().twice();
 			this.oModelInterfaceMock.expects("reportStateMessages")
@@ -3511,14 +3499,14 @@ sap.ui.define([
 				= aMessages;
 
 			oHelperMock.expects("drillDown")
-				.withExactArgs(oData.value[0], ["SalesOrderID"])
-				.returns(oData.value[0].SalesOrderID);
+				.withExactArgs(sinon.match.same(oData.value[0]), [])
+				.returns(oData.value[0]);
 			oHelperMock.expects("drillDown")
-				.withExactArgs(oData.value[0].SO_2_SOITEM[0], ["SalesOrderItemID"])
-				.returns(oData.value[0].SO_2_SOITEM[0].SalesOrderItemID);
+				.withExactArgs(sinon.match.same(oData.value[0].SO_2_SOITEM[0]), [])
+				.returns(oData.value[0].SO_2_SOITEM[0]);
 			oHelperMock.expects("drillDown")
-				.withExactArgs(oData.value[0].SO_2_SOITEM[1], ["SalesOrderItemID"])
-				.returns(oData.value[0].SO_2_SOITEM[1].SalesOrderItemID);
+				.withExactArgs(sinon.match.same(oData.value[0].SO_2_SOITEM[1]), [])
+				.returns(oData.value[0].SO_2_SOITEM[1]);
 			oHelperMock.expects("drillDown")
 				.withExactArgs(oData.value[0].SO_2_SOITEM[0], ["messages"])
 				.returns([]);
