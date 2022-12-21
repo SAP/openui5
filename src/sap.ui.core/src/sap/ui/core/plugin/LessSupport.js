@@ -131,7 +131,7 @@
 					var ok = true;
 					var check;
 					for (var i = 0; i < aLibs.length; i++) {
-						check = ThemeHelper.checkStyle("less:" + aLibs[i], true);
+						check = ThemeHelper.checkAndRemoveStyle({ prefix: "less:", id: aLibs[i] });
 						if (check) {
 							jQuery(document.getElementById("sap-ui-theme-" + aLibs[i])).attr("data-sap-ui-ready", "true");
 						}
