@@ -143,8 +143,8 @@ sap.ui.define([
 		var oController = sap.ui.getCore().byId("customerComponent---mainView--sub2View").getController();
 		assert.ok(oController, "Extended Sub2 View should have a Controller");
 		assert.ok(oController.originalSAPAction, "Extended Sub2Sub controller should have an originalSAPAction method");
-		assert.ok(oController.customerAction, "Extended Sub2Sub controller should have a customerAction method");
-		assert.ok(oController.customerSubAction, "Extended Sub2Sub controller should have a customerSubAction method");
+		assert.ok(oController.extension.testdata.customizing.customersub.Sub2SubControllerExtension.customerAction, "Extended Sub2Sub controller should have a customerAction method");
+		assert.ok(oController.extension.testdata.customizing.customersub.Sub2SubControllerExtension.customerSubAction, "Extended Sub2Sub controller should have a customerSubAction method");
 		assert.equal(oController.originalSAPAction(), "ext", "originalSAPAction method of extended controller should return 'ext'");
 	});
 

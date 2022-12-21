@@ -4,7 +4,7 @@ sap.ui.define([
 ], function(Button, Fragment) {
 	"use strict";
 
-	sap.ui.jsfragment("samples.components.ext.customer.MultiRootFragment", {
+	sap.ui.jsfragment("samples.components.ext_legacyAPIs.customer.MultiRootFragment", {
 
 		createContent : function(oController) {
 			return [

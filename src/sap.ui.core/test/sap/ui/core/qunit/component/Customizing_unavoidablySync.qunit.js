@@ -18,9 +18,9 @@ sap.ui.define([
 		iStandardSub2ControllerCalled++;
 	};
 
-	var iCustomSub2ControllerCalled = 0;
+	var bCustomerActionCalled = false;
 	this.customSub2ControllerCalled = function() {
-		iCustomSub2ControllerCalled++;
+		bCustomerActionCalled = true;
 	};
 
 	var aLifeCycleCalls = this.aLifeCycleCalls = [];
@@ -85,11 +85,10 @@ sap.ui.define([
 
 			//First, destroy component, reset call collector array...
 			iStandardSub2ControllerCalled = 0;
-			iCustomSub2ControllerCalled = 0;
 			aLifeCycleCalls.length = 0; // clear call collection
 
 			var bOriginalSAPActionCalled = false;
-			var bCustomerActionCalled = false;
+			bCustomerActionCalled = false;
 			var that = this;
 
 			this.getControllerExtensions = function(sControllerName, sComponentId) {
@@ -127,7 +126,6 @@ sap.ui.define([
 							// trigger custom action
 							triggerButtonPress("theComponent---mainView--sub2View--customFrag1BtnWithCustAction");
 							assert.ok(bCustomerActionCalled, "ControllerExtension custom event handler 'customerAction' called!");
-							assert.equal(iCustomSub2ControllerCalled, 0, "Original event handler 'customerAction' is not called!");
 
 							setTimeout(function() {
 								oComp.destroy();
@@ -163,7 +161,7 @@ sap.ui.define([
 
 	QUnit.test("Register ExtensionProvider (sync)", function(assert) {
 
-		assert.expect(21);
+		assert.expect(20);
 
 		// test processing will be completed in onExit of the view extension
 		this.done = assert.async();

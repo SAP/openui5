@@ -5,10 +5,10 @@ sap.ui.define([
 ], function(Log, Controller, JSONModel) {
 	"use strict";
 
-	var MainController = Controller.extend("samples.components.ext.sap.Main", {
+	var MainController = Controller.extend("samples.components.ext_legacyAPIs.sap.Main", {
 
 		onInit : function () {
-			Log.info("samples.components.ext.sap.Main - onInit");
+			Log.info("samples.components.ext_legacyAPIs.sap.Main - onInit");
 
 			var model = new JSONModel();
 			model.setData({

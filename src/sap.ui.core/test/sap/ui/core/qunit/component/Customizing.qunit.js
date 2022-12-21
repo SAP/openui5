@@ -20,8 +20,10 @@ sap.ui.define([
 	};
 
 	var iCustomSub2ControllerCalled = 0;
+	var bCustomerActionCalled = false;
 	this.customSub2ControllerCalled = function() {
 		iCustomSub2ControllerCalled++;
+		bCustomerActionCalled = true;
 	};
 
 	var aLifeCycleCalls = this.aLifeCycleCalls = [];
@@ -127,26 +129,40 @@ sap.ui.define([
 		var oController = sap.ui.getCore().byId("theComponent---mainView--sub2View").getController();
 		assert.ok(oController, "Extended Sub2 View should have a Controller");
 		assert.ok(oController.originalSAPAction, "Extended Sub2 controller should have an originalSAPAction method");
-		assert.ok(oController.customerAction, "Extended Sub2 controller should have a customerAction method");
+		assert.ok(oController.extension.testdata.customizing.customer.Sub2ControllerExtension.customerAction, "Extended Sub2 controller should have a customerAction method");
 		assert.equal(oController.originalSAPAction(), "ext", "originalSAPAction method of extended controller should return 'ext'");
 	});
 
 	/**
 	 * @deprecated As of version 1.110
 	 */
-	QUnit.test("Controller Extension (sap.ui.controller)", function (assert) {
+	QUnit.test("Legacy Controller Extension applied with sap.ui.controller()", function (assert) {
 		oComp.runAsOwner(function () {
-			var oController = sap.ui.controller("testdata.customizing.sap.Sub2");
+			var oController = sap.ui.controller("testdata.customizing.sap.Sub2_legacyAPIs");
 			assert.ok(oController.isExtended, "Controller has been extended with sap.ui.controller factory function!");
 		});
 	});
 
-	QUnit.test("Controller Extension (New Controller.create factory)", function(assert) {
+	/**
+	 * @deprecated As of version 1.110
+	 */
+	QUnit.test("Legacy Controller Extension applied with Controller.create()", function(assert) {
+		return oComp.runAsOwner(function() {
+			return Controller.create({
+				name: "testdata.customizing.sap.Sub2_legacyAPIs"
+			}).then(function(oController) {
+				assert.ok(oController.isExtended, "Controller has been extended correctly!");
+			});
+		});
+	});
+
+	QUnit.test("Controller Extension applied with Controller.create()", function(assert) {
 		return oComp.runAsOwner(function() {
 			return Controller.create({
 				name: "testdata.customizing.sap.Sub2"
 			}).then(function(oController) {
-				assert.ok(oController.isExtended, "Controller has been extended correctly!");
+				// Note: Properties can't be extended via ControllerExtension as they are not part of the interface
+				assert.ok(oController._sapui_isExtended, "Controller has been extended correctly!");
 			});
 		});
 	});
@@ -213,7 +229,7 @@ sap.ui.define([
 			aLifeCycleCalls.length = 0; // clear call collection
 
 			var bOriginalSAPActionCalled = false;
-			var bCustomerActionCalled = false;
+			bCustomerActionCalled = false;
 			var that = this;
 
 			this.getControllerExtensions = function(sControllerName, sComponentId) {
@@ -251,7 +267,6 @@ sap.ui.define([
 							// trigger custom action
 							triggerButtonPress("theComponent---mainView--sub2View--customFrag1BtnWithCustAction");
 							assert.ok(bCustomerActionCalled, "ControllerExtension custom event handler 'customerAction' called!");
-							assert.equal(iCustomSub2ControllerCalled, 0, "Original event handler 'customerAction' is not called!");
 
 							setTimeout(function() {
 								oComp.destroy();
@@ -287,7 +302,7 @@ sap.ui.define([
 
 	QUnit.test("Register ExtensionProvider (async)", function(assert) {
 
-		assert.expect(21);
+		assert.expect(20);
 
 		// test processing will be completed in onExit of the view extension
 		this.done = assert.async();

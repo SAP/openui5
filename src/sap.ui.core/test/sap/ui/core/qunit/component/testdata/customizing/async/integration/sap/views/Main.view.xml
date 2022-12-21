@@ -1,4 +1,4 @@
-<mvc:View controllerName="samples.components.ext.sap.Main"
+<mvc:View controllerName="testdata.customizing.async.integration.sap.controller.Main"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc">
