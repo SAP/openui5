@@ -737,7 +737,10 @@ sap.ui.define([
 	Table.prototype._onApplyMessageFilter = function(oEvent) {
 		this._oMessageFilter = oEvent.getParameter("filter");
 		oEvent.preventDefault();
-		this._rebind();
+
+		if (this.isTableBound()) {
+			this.rebind();
+		}
 	};
 
 	/**
@@ -747,7 +750,10 @@ sap.ui.define([
 	Table.prototype._onClearMessageFilter = function(oEvent) {
 		this._oMessageFilter = null;
 		oEvent.preventDefault();
-		this._rebind();
+
+		if (this.isTableBound()) {
+			this.rebind();
+		}
 	};
 
 	Table.prototype._isOfType = function(sType, bIncludeSubTypes) {
@@ -867,9 +873,9 @@ sap.ui.define([
 		this.setAggregation("rowSettings", oRowSettings, true);
 		this._getType().updateRowSettings();
 
-		if (this._oTable) {
+		if (this.isTableBound()) {
 			this._bForceRebind = true;
-			this._rebind();
+			this.rebind();
 		}
 
 		return this;
@@ -1389,7 +1395,15 @@ sap.ui.define([
 			}
 
 			if (this.getAutoBindOnInit()) {
-				this.rebind();
+				var oEngine = this.getEngine();
+
+				if (oEngine.isModificationSupported(this)) {
+					oEngine.waitForChanges(this).then(function() {
+						this.rebind();
+					}.bind(this));
+				} else {
+					this.rebind();
+				}
 			}
 
 			return this.awaitPropertyHelper();
@@ -2182,9 +2196,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._registerInnerFilter = function(oFilter) {
-		oFilter.attachSearch(function() {
-			this._rebind();
-		}, this);
+		oFilter.attachSearch(this._rebind, this);
 	};
 
 	/**
