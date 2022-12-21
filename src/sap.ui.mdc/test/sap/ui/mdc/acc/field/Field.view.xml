@@ -4,6 +4,8 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcField="sap.ui.mdc.field"
 	xmlns:mdcVH="sap.ui.mdc.filterbar.vh"
+	xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+	xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
 	xmlns:l="sap.ui.layout"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:c="sap.ui.core">
@@ -31,32 +33,17 @@
 
 				<c:Title text="Parameters" level="H3"/>
 				<m:Label text="{/#Product/Status/@sap:label}"/>
-				<mdc:Field id="F-Status" value="{path: 'Status', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2}}" display="DescriptionValue" fieldHelp="FH-Status">
+				<mdc:Field id="F-Status" value="{path: 'Status', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2}}" display="DescriptionValue" fieldHelp="VH-Status">
 					<mdc:dependents>
-						<mdcField:FieldValueHelp id="FH-Status"
-							noDialog="true"
-							filterFields="*StatusId,Name*"
-							keyPath="StatusId"
-							descriptionPath="Name">
-							<mdcField:FieldValueHelpMTableWrapper id="F2-6-H-W">
-								<m:Table items="{path: '/StatusCollection'}" width="30rem">
-									<m:columns>
-										<m:Column>
-											<m:Label text="{/#Status/StatusId/@sap:label}"/>
-										</m:Column>
-										<m:Column width="10rem">
-											<m:Label text="{/#Status/Name/@sap:label}"/>
-										</m:Column>
-									</m:columns>
-									<m:items>
-										<m:ColumnListItem type="Active">
-											<m:Text text="{path: 'StatusId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2}}"/>
-											<m:Text text="{Name}"/>
-										</m:ColumnListItem>
-									</m:items>
-								</m:Table>
-							</mdcField:FieldValueHelpMTableWrapper>
-						</mdcField:FieldValueHelp>
+						<mdc:ValueHelp id="VH-Status">
+							<mdc:typeahead>
+								<mdcValueHelp:Popover id="VH-Status-Pop">
+									<mdcValueHelpContent:FixedList id="VH-Status-FL" useFirstMatch="false" items="{path: '/StatusCollection'}">
+										<mdcField:ListFieldHelpItem key="{StatusId}" text="{Name}" additionalText="{StatusId}" />
+									</mdcValueHelpContent:FixedList>
+								</mdcValueHelp:Popover>
+							</mdc:typeahead>
+						</mdc:ValueHelp>
 					</mdc:dependents>
 				</mdc:Field>
 
@@ -65,39 +52,74 @@
 					id="F-Material"
 					value="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"
 					display="ValueDescription"
-					fieldHelp="FH-Material">
+					fieldHelp="VH-Material">
 					<mdc:dependents>
-							<mdcField:FieldValueHelp id="FH-Material"
-								title="{/#Product/MatrId/@sap:label}"
-								filterFields="*MatrId,Text*"
-								keyPath="MatrId"
-								descriptionPath="Text">
-								<mdcField:outParameters>
-									<mdcField:OutParameter id="FH-Material_Out-Unit" value="{MatrUnit}" helpPath="defaultUnit" mode="WhenEmpty"/>
-								</mdcField:outParameters>
-								<mdcField:FieldValueHelpMTableWrapper>
-									<m:Table items="{path: '/MaterialCollection'}" width="26rem">
-										<m:columns>
-											<m:Column>
-												<m:Label text="{/#Material/MatrId/@sap:label}"/>
-											</m:Column>
-											<m:Column>
-												<m:Label text="{/#Material/Text/@sap:label}"/>
-											</m:Column>
-											<m:Column>
-												<m:Label text="{/#Material/defaultUnit/@sap:label}"/>
-											</m:Column>
-										</m:columns>
-										<m:items>
-											<m:ColumnListItem type="Active">
-												<m:Text text="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"/>
-												<m:Text text="{Text}"/>
-												<m:Text text="{defaultUnit}"/>
-											</m:ColumnListItem>
-										</m:items>
-									</m:Table>
-								</mdcField:FieldValueHelpMTableWrapper>
-							</mdcField:FieldValueHelp>
+						<mdc:ValueHelp id="VH-Material"
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"out": [\{"path": "defaultUnit", "target": "MatrUnit", "mode": "WhenEmpty"\}]\}\}'>
+							<mdc:typeahead>
+								<mdcValueHelp:Popover id="VH-Material-Pop">
+									<mdcValueHelpContent:MTable id="VH-Material-Pop-MTable"
+										title="{/#Product/MatrId/@sap:label}"
+										filterFields="*MatrId,Text*"
+										keyPath="MatrId"
+										descriptionPath="Text"
+										caseSensitive="true"
+										useAsValueHelp="false">
+										<m:Table id="VH-Material-Pop-Table" items="{path: '/MaterialCollection'}" width="26rem" mode="SingleSelectMaster">
+											<m:columns>
+												<m:Column>
+													<m:Label text="{/#Material/MatrId/@sap:label}"/>
+												</m:Column>
+												<m:Column>
+													<m:Label text="{/#Material/Text/@sap:label}"/>
+												</m:Column>
+												<m:Column>
+													<m:Label text="{/#Material/defaultUnit/@sap:label}"/>
+												</m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem type="Active">
+													<m:Text text="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"/>
+													<m:Text text="{Text}"/>
+													<m:Text text="{defaultUnit}"/>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
+									</mdcValueHelpContent:MTable>
+								</mdcValueHelp:Popover>
+							</mdc:typeahead>
+							<mdc:dialog>
+								<mdcValueHelp:Dialog id="VH-Material-Dialog" title="Material">
+									<mdcValueHelpContent:MTable id="VH-Material-Dialog-MTable"
+										title="{/#Product/MatrId/@sap:label}"
+										filterFields="*MatrId,Text*"
+										keyPath="MatrId"
+										descriptionPath="Text"
+										caseSensitive="true">
+										<m:Table id="VH-Material-Dialog-Table" items="{path: '/MaterialCollection'}" mode="SingleSelectMaster">
+											<m:columns>
+												<m:Column>
+													<m:Label text="{/#Material/MatrId/@sap:label}"/>
+												</m:Column>
+												<m:Column>
+													<m:Label text="{/#Material/Text/@sap:label}"/>
+												</m:Column>
+												<m:Column>
+													<m:Label text="{/#Material/defaultUnit/@sap:label}"/>
+												</m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem type="Active">
+													<m:Text text="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"/>
+													<m:Text text="{Text}"/>
+													<m:Text text="{defaultUnit}"/>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
+									</mdcValueHelpContent:MTable>
+								</mdcValueHelp:Dialog>
+							</mdc:dialog>
+						</mdc:ValueHelp>
 					</mdc:dependents>
 				</mdc:Field>
 
@@ -107,67 +129,96 @@
 					value="{parts: ['MatrQuantity', 'MatrUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.type.Unit'}"
 					placeholder="{/#Product/MatrQuantity/@sap:label}"
 					display="Value"
-					fieldHelp="FH-Quantity">
+					fieldHelp="VH-Quantity">
 					<mdc:dependents>
-							<mdcField:FieldValueHelp id="FH-Quantity"
-								title="{/#Product/MatrQuantity/@sap:label}"
-								keyPath="unit"
-								descriptionPath="text"
-								filterFields="*unit,text*">
-								<mdcField:inParameters>
-									<mdcField:InParameter id="FH-Quantity_In-Material" value="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}" helpPath="MatrId"/>
-								</mdcField:inParameters>
-								<mdcField:outParameters>
-									<mdcField:OutParameter id="FH-Quantity_Out-Material" value="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}" helpPath="MatrId"/>
-								</mdcField:outParameters>
-								<mdcField:filterBar>
-									<mdcVH:FilterBar
-										liveMode= "true">
-										<mdc:FilterField
-											id="VHFBMaterialFF"
-											label= "{/#ODataUnits/MatrId/@sap:label}"
-											editMode= "Editable"
-											display= "ValueDescription"
-											dataType="sap.ui.model.odata.type.String"
-											dataTypeConstraints="{maxLength: 1, nullable: false}"
-											dataTypeFormatOptions="{'parseKeepsEmptyString': true}"
-											width="100%"
-											conditions="{$filters>/conditions/MatrId}">
-										</mdc:FilterField>
-										<mdc:FilterField
-											id="VHFBTextFF"
-											label= "{/#ODataUnits/text/@sap:label}"
-											editMode= "Editable"
-											display= "ValueDescription"
-											dataType="sap.ui.model.type.String"
-											width="100%"
-											conditions="{$filters>/conditions/text}">
-										</mdc:FilterField>
-									</mdcVH:FilterBar>
-								</mdcField:filterBar>
-								<mdcField:FieldValueHelpMTableWrapper>
-									<m:Table items="{/weightODataUnits}" width="26rem">
-										<m:columns>
-											<m:Column width="10rem">
-												<m:Label text="{/#ODataUnits/MatrId/@sap:label}"/>
-											</m:Column>
-											<m:Column width="3rem">
-												<m:Label text="{/#ODataUnits/unit/@sap:label}"/>
-											</m:Column>
-											<m:Column >
-												<m:Label text="{/#ODataUnits/text/@sap:label}"/>
-											</m:Column>
-										</m:columns>
-										<m:items>
-											<m:ColumnListItem type="Active">
-												<m:Text text="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"/>
-												<m:Text text="{unit}"/>
-												<m:Text text="{text}"/>
-											</m:ColumnListItem>
-										</m:items>
-									</m:Table>
-								</mdcField:FieldValueHelpMTableWrapper>
-							</mdcField:FieldValueHelp>
+						<mdc:ValueHelp id="VH-Quantity"
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"in": [\{"path": "MatrId", "source": "MatrId"}], "out": [\{"path": "MatrId", "target": "MatrId"\}]\}\}'>
+							<mdc:typeahead>
+								<mdcValueHelp:Popover id="VH-Quantity-Pop">
+									<mdcValueHelpContent:MTable id="VH-Quantity-Pop-MTable"
+										keyPath="unit"
+										descriptionPath="text"
+										filterFields="*unit,text*"
+										caseSensitive="true"
+										useAsValueHelp="false">
+										<m:Table id="VH-Quantity-Pop-Table" items="{/weightODataUnits}" width="16rem" mode="SingleSelectMaster">
+											<m:columns>
+												<m:Column width="10rem">
+													<m:Label text="{/#ODataUnits/MatrId/@sap:label}"/>
+												</m:Column>
+												<m:Column width="3rem">
+													<m:Label text="{/#ODataUnits/unit/@sap:label}"/>
+												</m:Column>
+												<m:Column >
+													<m:Label text="{/#ODataUnits/text/@sap:label}"/>
+												</m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem type="Active">
+													<m:Text text="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"/>
+													<m:Text text="{unit}"/>
+													<m:Text text="{text}"/>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
+									</mdcValueHelpContent:MTable>
+								</mdcValueHelp:Popover>
+							</mdc:typeahead>
+							<mdc:dialog>
+								<mdcValueHelp:Dialog id="VH-Quantity-Dialog" title="{/#Product/MatrQuantity/@sap:label}">
+									<mdcValueHelpContent:MTable id="VH-Quantity-Dialog-MTable"
+										keyPath="unit"
+										descriptionPath="text"
+										filterFields="*unit,text*"
+										caseSensitive="true">
+										<m:Table id="VH-Quantity-Dialog-Table" items="{/weightODataUnits}" mode="SingleSelectMaster">
+											<m:columns>
+												<m:Column width="10rem">
+													<m:Label text="{/#ODataUnits/MatrId/@sap:label}"/>
+												</m:Column>
+												<m:Column width="3rem">
+													<m:Label text="{/#ODataUnits/unit/@sap:label}"/>
+												</m:Column>
+												<m:Column >
+													<m:Label text="{/#ODataUnits/text/@sap:label}"/>
+												</m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem type="Active">
+													<m:Text text="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"/>
+													<m:Text text="{unit}"/>
+													<m:Text text="{text}"/>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
+										<mdcValueHelpContent:filterBar>
+											<mdcVH:FilterBar id="VH-Quantity-FB" liveMode= "false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
+												<mdc:FilterField
+													id="VHFBMaterialFF"
+													label= "{/#ODataUnits/MatrId/@sap:label}"
+													editMode= "Editable"
+													display= "Value"
+													dataType="sap.ui.model.odata.type.String"
+													dataTypeConstraints='\{"maxLength": 1, "nullable": false\}'
+													dataTypeFormatOptions='\{"parseKeepsEmptyString": true\}'
+													width="100%"
+													conditions="{$filters>/conditions/MatrId}">
+												</mdc:FilterField>
+												<mdc:FilterField
+													id="VHFBTextFF"
+													label= "{/#ODataUnits/text/@sap:label}"
+													editMode= "Editable"
+													display= "Value"
+													dataType="sap.ui.model.type.String"
+													width="100%"
+													conditions="{$filters>/conditions/text}">
+												</mdc:FilterField>
+											</mdcVH:FilterBar>
+										</mdcValueHelpContent:filterBar>
+									</mdcValueHelpContent:MTable>
+								</mdcValueHelp:Dialog>
+							</mdc:dialog>
+						</mdc:ValueHelp>
 					</mdc:dependents>
 				</mdc:Field>
 			</form:SimpleForm>

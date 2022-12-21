@@ -1,7 +1,8 @@
 {
 	"sap.app" : {
 		"id" : "ProductCollection",
-		"version" : "1.0"
+		"version" : "1.0",
+		"type" : "application"
 	},
 
 	"sap.ui" : {
@@ -23,6 +24,7 @@
 			},
 			"type": "XML",
 			"viewName": "sap.ui.mdc.acc.field.Field",
+			"id": "MyView",
 			"height": "100%",
 			"async": true
 		},
@@ -34,6 +36,13 @@
 				},
 				"sap.m" : {
 					"minVersion" : "1.70.0"
+				},
+				"sap.ui.layout" : {
+					"minVersion" : "1.70.0"
+				},
+				"sap.ui.fl" : {
+					"minVersion" : "1.70.0",
+					"lazy" : false
 				}
 			},
 			"components" : {}
