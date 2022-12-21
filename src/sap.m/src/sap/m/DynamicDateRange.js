@@ -37,8 +37,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/Configuration',
-	'sap/ui/unified/calendar/CalendarUtils',
-	'sap/ui/dom/jquery/Focusable' // provides jQuery.fn.firstFocusableDomRef
+	'sap/ui/unified/calendar/CalendarUtils'
 ], function(
 		InvisibleText,
 		Element,
@@ -296,7 +295,15 @@ sap.ui.define([
 					 *
 					 * @since 1.105
 					 */
-					 hideInput: { type: "boolean", group: "Misc", defaultValue: false }
+					 hideInput: { type: "boolean", group: "Misc", defaultValue: false },
+
+					  /**
+					 * If set, the calendar week numbering is used for display.
+					 * If not set, the calendar week numbering of the global configuration is used.
+					 * @since 1.111.0
+					 */
+
+					calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 
 				},
 				aggregations: {
@@ -656,7 +663,7 @@ sap.ui.define([
 		 */
 		DynamicDateRange.prototype._addSuggestionItem = function(oSuggestValue) {
 			var bTimezone = this._checkFormatterUTCTimezone(oSuggestValue);
-			var aValueDates = DynamicDateUtil.toDates(oSuggestValue);
+			var aValueDates = DynamicDateUtil.toDates(oSuggestValue, this.getCalendarWeekNumbering());
 			var aResultingDates = [];
 			for (var i = 0; i < aValueDates.length; i++) {
 				aResultingDates[i] = this._convertDate(aValueDates[i], bTimezone);
@@ -755,7 +762,7 @@ sap.ui.define([
 
 		DynamicDateRange.prototype._toDatesString = function(oValue) {
 			var bTimezone = this._checkFormatterUTCTimezone(oValue);
-			var aValueDates = DynamicDateUtil.toDates(oValue);
+			var aValueDates = DynamicDateUtil.toDates(oValue, this.getCalendarWeekNumbering());
 			var aDates = [];
 			for (var i = 0; i < aValueDates.length; i++) {
 				aDates[i] = this._convertDate(aValueDates[i], bTimezone);
@@ -1014,7 +1021,7 @@ sap.ui.define([
 				aResultDates = [],
 				sFormattedDates;
 
-			var aValueDates = DynamicDateUtil.toDates(oOutputValue);
+			var aValueDates = DynamicDateUtil.toDates(oOutputValue, this.getCalendarWeekNumbering());
 
 			if (!oOutputValue || !oOutputValue.operator || !DynamicDateUtil.getOption(oOutputValue.operator)) {
 				return;
@@ -1266,7 +1273,7 @@ sap.ui.define([
 		DynamicDateRange.prototype._applyValue = function() {
 			this._oOutput = this._oSelectedOption.getValueHelpOutput(this);
 			var sTimezone = this._checkFormatterUTCTimezone(this._oOutput);
-			var aValueDates = DynamicDateUtil.toDates(this._oOutput);
+			var aValueDates = DynamicDateUtil.toDates(this._oOutput, this.getCalendarWeekNumbering());
 			for (var i = 0; i < aValueDates.length; i++) {
 				if (this._oOutput.values[i] instanceof Date) {
 					this._oOutput.values[i] = this._convertDate(aValueDates[i], sTimezone);
@@ -1419,12 +1426,13 @@ sap.ui.define([
 		 * Returns a date range from a provided object in the format of the DynamicDateRange's value.
 		 *
 		 * @param {object} oValue The provided value
+	 	 * @param {string} sCalendarWeekNumbering The type of calendar week numbering
 		 * @returns {Date[]} An array of two date objects - start and end date
 		 * @static
 		 * @public
 		 */
-		DynamicDateRange.toDates = function(oValue) {
-			return DynamicDateUtil.toDates(oValue).map(function (oDate) {
+		DynamicDateRange.toDates = function(oValue, sCalendarWeekNumbering) {
+			return DynamicDateUtil.toDates(oValue, sCalendarWeekNumbering).map(function (oDate) {
 				if (oDate instanceof Date) {
 					return oDate;
 				}

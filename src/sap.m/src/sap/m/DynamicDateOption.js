@@ -374,8 +374,11 @@ sap.ui.define([
 			return oControl;
 		};
 
-		DynamicDateOption.prototype._createDateTimeControl = function(oValue, iIndex, fnControlsUpdated) {
-			var oControl = new DateTimePicker({timezone: TimezoneUtil.getLocalTimezone()});
+		DynamicDateOption.prototype._createDateTimeControl = function(oValue, iIndex, fnControlsUpdated, bUTC, sCalendarWeekNumbering) {
+			var oControl = new DateTimePicker({
+				timezone: TimezoneUtil.getLocalTimezone(),
+				calendarWeekNumbering: sCalendarWeekNumbering
+			});
 
 			if (oValue && this.getKey() === oValue.operator) {
 				oControl.setDateValue(oValue.values[iIndex]);
@@ -390,9 +393,10 @@ sap.ui.define([
 			return oControl;
 		};
 
-		DynamicDateOption.prototype._createDateControl = function(oValue, iIndex, fnControlsUpdated, bUTC) {
+		DynamicDateOption.prototype._createDateControl = function(oValue, iIndex, fnControlsUpdated, bUTC, sCalendarWeekNumbering) {
 			var oControl = new Calendar({
-				width: "100%"
+				width: "100%",
+				calendarWeekNumbering: sCalendarWeekNumbering
 			});
 			var oInputControlValue;
 
@@ -420,9 +424,10 @@ sap.ui.define([
 		/**
 		 * Returns DateTimePicker PopupContent control (single "datetime" option)
 		 */
-		DynamicDateOption.prototype._createDateTimeInnerControl = function(oValue, iIndex, fnControlsUpdated, bUTC) {
+		DynamicDateOption.prototype._createDateTimeInnerControl = function(oValue, iIndex, fnControlsUpdated, bUTC, sCalendarWeekNumbering) {
 			var oControl = new DateTimePicker({
-					width: "100%"
+					width: "100%",
+					calendarWeekNumbering: sCalendarWeekNumbering
 				}),
 				oPopupContent;
 
@@ -469,10 +474,11 @@ sap.ui.define([
 			return oPopupContent;
 		};
 
-		DynamicDateOption.prototype._createDateRangeControl = function(oValue, iIndex, fnControlsUpdated, bUTC) {
+		DynamicDateOption.prototype._createDateRangeControl = function(oValue, iIndex, fnControlsUpdated, bUTC, sCalendarWeekNumbering) {
 			var oControl = new Calendar({
 				intervalSelection: true,
-				width: "100%"
+				width: "100%",
+				calendarWeekNumbering: sCalendarWeekNumbering
 			});
 			if (oValue && this.getKey() === oValue.operator) {
 				// a date range UI type maps to 2 consecutive date parameters from the value
