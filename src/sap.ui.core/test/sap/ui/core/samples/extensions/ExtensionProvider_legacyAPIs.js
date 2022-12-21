@@ -1,5 +1,4 @@
-sap.ui.define("sample/ExtensionProvider",
-		["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) {
+sap.ui.define([], function() {
 	"use strict";
 
 	//this is just an example, normally they would be a lookup in the component settings and flex changes for the component
@@ -16,6 +15,11 @@ sap.ui.define("sample/ExtensionProvider",
 						]);
 					});
 				});
+			} else {
+				return [
+					sap.ui.requireSync("sample/Oil.extension"),   // legacy-relevant: intentional sync path test
+					sap.ui.requireSync("sample/Retail.extension") // legacy-relevant: intentional sync path test
+				];
 			}
 		}
 	};
