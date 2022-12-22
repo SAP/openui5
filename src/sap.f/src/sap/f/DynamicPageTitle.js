@@ -1177,7 +1177,7 @@ sap.ui.define([
 	 */
 	DynamicPageTitle.prototype._toggleExpandButton = function (bToggle) {
 		this._setShowExpandButton(bToggle);
-		this._getExpandButton().$().toggleClass("sapUiHidden", !bToggle);
+		this._getExpandButton().toggleStyleClass("sapUiHidden", !bToggle);
 	};
 
 	/**

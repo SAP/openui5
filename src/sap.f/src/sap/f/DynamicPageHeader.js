@@ -281,7 +281,7 @@ sap.ui.define([
 		 */
 		DynamicPageHeader.prototype._toggleCollapseButton = function (bToggle) {
 			this._setShowCollapseButton(bToggle);
-			this._getCollapseButton().$().toggleClass("sapUiHidden", !bToggle);
+			this._getCollapseButton().toggleStyleClass("sapUiHidden", !bToggle);
 		};
 
 		/**
