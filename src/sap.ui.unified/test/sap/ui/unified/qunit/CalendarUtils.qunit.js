@@ -753,7 +753,7 @@ sap.ui.define([
 
 	QUnit.module("Handling year and date check");
 
-	QUnit.test("Check if Year is in the valid range", function (assert) {
+	QUnit.test("Check if Year is in the valid range (Gregorian calendar type)", function (assert) {
 
 		CalendarUtils._checkYearInValidRange(2017);
 		assert.ok(true, "year 2017 is in the correct range 1 - 9999");
@@ -777,6 +777,34 @@ sap.ui.define([
 		assert.throws(function () {
 			CalendarUtils._checkYearInValidRange("test");
 		}, "Year is not a number");
+	});
+
+	QUnit.test("Check if Year is in the valid range (Other calendar types)", function (assert) {
+
+		// year 1444 Islamic = 2022 Gregorian
+		CalendarUtils._checkYearInValidRange(1444, CalendarType.Islamic);
+		assert.ok(true, "Islamic year 1444 is in the correct range 1 - 9999 in Gregoran calendar type");
+
+		// year 9666 Islamic = 9999 Gregorian
+		CalendarUtils._checkYearInValidRange(9666, CalendarType.Islamic);
+		assert.ok(true, "Islamic year 9666 is in the correct range 1 - 9999 in Gregoran calendar type");
+
+		// year 1 Islamic = 622 Gregorian
+		CalendarUtils._checkYearInValidRange(1, CalendarType.Islamic);
+		assert.ok(true, "Islamic year 1 is in the correct range 1 - 9999 in Gregoran calendar type");
+
+		// year 2565 Buddhist = 2022 Gregorian
+		CalendarUtils._checkYearInValidRange(2565, CalendarType.Buddhist);
+		assert.ok(true, "Buddhist year 2565 is in the correct range 1 - 9999 in Gregoran calendar type");
+
+		// year 10542 Buddhist = 9999 Gregorian
+		CalendarUtils._checkYearInValidRange(10542, CalendarType.Buddhist);
+		assert.ok(true, "Buddhist year 9999 is in the correct range 1 - 9999 in Gregoran calendar type");
+
+		// year 543 Buddhist = 1 Gregorian
+		CalendarUtils._checkYearInValidRange(543, CalendarType.Buddhist);
+		assert.ok(true, "Buddhist year 543 is in the correct range 1 - 9999 in Gregoran calendar type");
+
 	});
 
 	QUnit.test("Check if the given date is valid JavaScript date object", function (assert) {
