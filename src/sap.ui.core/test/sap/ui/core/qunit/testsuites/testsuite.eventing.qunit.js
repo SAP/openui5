@@ -41,6 +41,9 @@ sap.ui.define(function() {
 					paths: {
 						"sap/ui/fastnav": "test-resources/sap/ui/core/qunit/testdata/fastnavigation/"
 					}
+				},
+				ui5: {
+					libs: "sap.ui.webc.main"
 				}
 			},
 			FocusHandler: {
