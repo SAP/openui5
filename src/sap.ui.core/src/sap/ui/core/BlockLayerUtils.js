@@ -71,7 +71,8 @@ sap.ui.define([
 
 			oBlockState = {
 				$parent: jQuery(oParentDomRef),
-				$blockLayer: jQuery(oBlockLayerDOM)
+				$blockLayer: jQuery(oBlockLayerDOM),
+				control: oControl
 			};
 
 			//check if the control has static position, if this is the case we need to change it,
@@ -110,6 +111,11 @@ sap.ui.define([
 
 			// deregister handlers and :before and :after tabbable spans
 			fnHandleInteraction.call(oBlockState, false);
+
+			// restore focus back to control when blocklayer currently has the focus
+			if (oBlockState.control && oBlockState.$blockLayer[0] && oBlockState.$blockLayer[0].contains(document.activeElement)) {
+				oBlockState.control.focus();
+			}
 
 			// remove blocklayer from dom
 			oBlockState.$blockLayer.remove();
