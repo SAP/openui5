@@ -999,7 +999,7 @@ sap.ui.define([
 		if (oDataType && typeof oDataType === "object") {
 			return oDataType.getMetadata().getName();
 		} else if (this.bDelegateInitialized) {
-			return this.getControlDelegate().getDataTypeClass(this.getPayload(), this.getDataType());
+			return this.getTypeUtil().getDataTypeClassName(this.getDataType());
 		} else {
 			return this.getDataType();
 		}

@@ -13,8 +13,27 @@ sap.ui.define([
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
 	"sap/m/DynamicDateUtil",
 	"sap/m/DynamicDateFormat",
-	"sap/m/library"
-], function(QUnit, DateTimeContent, Field, Text, FieldInput, FieldMultiInput, Token, DateTimePicker, DynamicDateRange, OperatorDynamicDateOption, DynamicDateRangeConditionsType, DynamicDateUtil, DynamicDateFormat, mobileLibrary) {
+	"sap/m/library",
+	"sap/ui/model/type/DateTime",
+	"sap/ui/model/odata/type/DateTimeWithTimezone"
+], function(
+	QUnit,
+	DateTimeContent,
+	Field,
+	Text,
+	FieldInput,
+	FieldMultiInput,
+	Token,
+	DateTimePicker,
+	DynamicDateRange,
+	OperatorDynamicDateOption,
+	DynamicDateRangeConditionsType,
+	DynamicDateUtil,
+	DynamicDateFormat,
+	mobileLibrary,
+	DateTimeType,
+	DateTimeWithTimezoneType
+) {
 	"use strict";
 
 	// shortcut for sap.m.StandardDynamicDateRangeKeys
