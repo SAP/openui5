@@ -21,6 +21,9 @@ sap.ui.define([
 	// shortcut for sap.m.ListKeyboardMode
 	var ListKeyboardMode = mLibrary.ListKeyboardMode;
 
+	// shortcut for sap.m.FlexJustifyContent
+	var FlexJustifyContent = mLibrary.FlexJustifyContent;
+
 	/**
 	 * Constructor for a new <code>FilterPanel</code>.
 	 *
@@ -144,6 +147,7 @@ sap.ui.define([
 
 	FilterPanel.prototype._createRemoveButton = function (bVisible) {
 		var oRemoveBtn = QueryPanel.prototype._createRemoveButton.apply(this, arguments);
+		oRemoveBtn.setJustifyContent(FlexJustifyContent.Start);//avoid remove button overlapping with input field
 		oRemoveBtn.setLayoutData(new GridData({
 			span: "XL1 L1 M1 S1"
 		}));
@@ -152,9 +156,9 @@ sap.ui.define([
 
 	FilterPanel.prototype._createRowContainer = function(sText, sKey) {
 		// var sKey = oSelect._key;
-		var oLabel = new Label({text: sText, showColon: true});
+		var oLabel = new Label({text: sText, showColon: true, wrapping: true});
 		var oFieldBox = new VBox({
-			items:[ oLabel.addStyleClass("sapUiTinyMarginTop").addStyleClass("sapUiTinyMarginBegin")]
+			items:[oLabel.addStyleClass("sapUiTinyMarginBegin")]
 		});
 		oFieldBox._key = sKey;
 		return oFieldBox;
