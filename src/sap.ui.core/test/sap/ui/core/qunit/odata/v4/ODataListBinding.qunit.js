@@ -4197,9 +4197,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bSuccess) {
+// undefined -> the reinsertion callback is not called because the binding already has another cache
+[undefined, false, true].forEach(function (bSuccess) {
 	[false, true].forEach(function (bCreated) { // the deleted context is created-persisted
-		var sTitle = "_delete: success=" + bSuccess + ", created=" + bCreated;
+		var sTitle = "delete: success=" + bSuccess + ", created=" + bCreated;
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES"),
@@ -4220,6 +4221,7 @@ sap.ui.define([
 				sPath = "1",
 				aPreviousContexts,
 				oPromise,
+				fnUndelete = sinon.spy(),
 				that = this;
 
 			oBinding.createContexts(0, aData.slice(0, 3));
@@ -4236,9 +4238,9 @@ sap.ui.define([
 			}
 			oBindingMock.expects("destroyPreviousContexts").never();
 			oContext1Mock.expects("resetKeepAlive").never();
-			oDeleteCall = oBindingMock.expects("deleteFromCache")
+			oDeleteCall = oContext1Mock.expects("doDelete")
 				.withExactArgs("myGroup", "EMPLOYEES('1')", sPath, sinon.match.same(oETagEntity),
-					sinon.match.func)
+					sinon.match.same(oBinding), sinon.match.func)
 				.callsFake(function () {
 					// Although delete works with existing cache data and the cache immediately
 					// calls back, it is yet possibly asynchronous (oCachePromise, fetchValue).
@@ -4251,11 +4253,10 @@ sap.ui.define([
 					oBinding.iActiveContexts = 1;
 					aPreviousContexts = oBinding.aContexts.slice();
 					assert.strictEqual(oBinding.getLength(), 6);
-					oContext1.oDeletePromise = "~oDeletePromise~";
 
-					arguments[4](2, -1); // now call the callback with the adjusted index
+					arguments[5](2, -1); // now call the callback with the adjusted index
 
-					assert.strictEqual(oContext1.oDeletePromise, "~oDeletePromise~");
+					sinon.assert.notCalled(fnUndelete);
 
 					// expectations for then
 					oContext1Mock.expects("resetKeepAlive").exactly(bSuccess ? 1 : 0)
@@ -4296,34 +4297,35 @@ sap.ui.define([
 					if (bSuccess) {
 						fnResolve();
 					} else {
-						oContext1.oDeletePromise = "~oDeletePromise~";
+						if (bSuccess === false) {
+							oDeleteCall.args[0][5](2, 1); // call the callback for the re-insertion
 
-						oDeleteCall.args[0][4](2, 1); // call the callback for the re-insertion
-
-						// aContexts : [-1, 0, 2, undefined, 4] -> [-1, 0, 1, 2, undefined, 4]
-						assert.strictEqual(oBinding.getLength(), 6);
-						assert.strictEqual(oBinding.aContexts.length, 6);
-						assert.strictEqual(oBinding.iCreatedContexts, 1);
-						assert.strictEqual(oBinding.iActiveContexts, 1);
-						assert.strictEqual(oBinding.aContexts[0], aPreviousContexts[0]);
-						assert.strictEqual(oBinding.aContexts[1], aPreviousContexts[1]);
-						assert.strictEqual(oBinding.aContexts[2], aPreviousContexts[2]);
-						assert.strictEqual(oBinding.aContexts[3], aPreviousContexts[3]);
-						assert.notOk(4 in oBinding.aContexts);
-						assert.strictEqual(oBinding.aContexts[5], aPreviousContexts[5]);
-						assert.notOk(oContext1.getPath() in oBinding.mPreviousContextsByPath);
-						oBinding.aContexts.forEach(function (oContext, i) {
-							assert.strictEqual(oContext.getModelIndex(), i);
-						});
-						assert.strictEqual(oContext1.oDeletePromise, null);
+							// aContexts : [-1, 0, 2, undefined, 4] -> [-1, 0, 1, 2, undefined, 4]
+							assert.strictEqual(oBinding.getLength(), 6);
+							assert.strictEqual(oBinding.aContexts.length, 6);
+							assert.strictEqual(oBinding.iCreatedContexts, 1);
+							assert.strictEqual(oBinding.iActiveContexts, 1);
+							assert.strictEqual(oBinding.aContexts[0], aPreviousContexts[0]);
+							assert.strictEqual(oBinding.aContexts[1], aPreviousContexts[1]);
+							assert.strictEqual(oBinding.aContexts[2], aPreviousContexts[2]);
+							assert.strictEqual(oBinding.aContexts[3], aPreviousContexts[3]);
+							assert.notOk(4 in oBinding.aContexts);
+							assert.strictEqual(oBinding.aContexts[5], aPreviousContexts[5]);
+							assert.notOk(oContext1.getPath() in oBinding.mPreviousContextsByPath);
+							oBinding.aContexts.forEach(function (oContext, i) {
+								assert.strictEqual(oContext.getModelIndex(), i);
+							});
+							sinon.assert.calledOnce(fnUndelete);
+							sinon.assert.calledWithExactly(fnUndelete);
+						}
 
 						fnReject("~oError~");
 					}
 				});
 
 			// code under test
-			oPromise = oBinding._delete("myGroup", "EMPLOYEES('1')", oContext1, oETagEntity,
-				"~bDoNotRequestCount~");
+			oPromise = oBinding.delete("myGroup", "EMPLOYEES('1')", oContext1, oETagEntity,
+				"~bDoNotRequestCount~", fnUndelete);
 
 			assert.strictEqual(oBinding.iDeletedContexts, 4);
 
@@ -4335,6 +4337,7 @@ sap.ui.define([
 				assert.notOk(bSuccess);
 				assert.strictEqual(oError, "~oError~");
 				assert.strictEqual(oBinding.iDeletedContexts, 3);
+				sinon.assert.calledWithExactly(fnUndelete); // might be called twice
 			});
 		});
 	});
@@ -4350,7 +4353,7 @@ sap.ui.define([
 	{lengthFinal : true, apiGroup : false, newMaxLength : 42},
 	{lengthFinal : true, apiGroup : true, newMaxLength : 41}
 ].forEach(function (oFixture) {
-	var sTitle = "_delete: kept-alive context not in the collection: " + JSON.stringify(oFixture);
+	var sTitle = "delete: kept-alive context not in the collection: " + JSON.stringify(oFixture);
 
 	// we assume 42 entities matching the filter plus 2 created entities
 	QUnit.test(sTitle, function (assert) {
@@ -4370,14 +4373,15 @@ sap.ui.define([
 				},
 			oHelperMock = this.mock(_Helper),
 			oKeptAliveContext = {
-				oDeletePromise : "~oDeletePromise~",
 				iIndex : undefined,
 				created : function () { return undefined; },
+				doDelete : function () {},
 				getPath : function () { return "~contextPath~"; },
 				resetKeepAlive : function () {}
 			},
 			iOldMaxLength = oFixture.lengthFinal ? 42 : Infinity,
 			oPromise,
+			fnUndelete = sinon.spy(),
 			that = this;
 
 		// simulate an active and an inactive created entity
@@ -4393,9 +4397,9 @@ sap.ui.define([
 		oBindingMock.expects("destroyPreviousContexts").never();
 		oHelperMock.expects("getRelativePath")
 			.withExactArgs("~contextPath~", "/EMPLOYEES").returns("~predicate~");
-		oDeleteFromCacheExpectation = oBindingMock.expects("deleteFromCache")
+		oDeleteFromCacheExpectation = this.mock(oKeptAliveContext).expects("doDelete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')", "~predicate~",
-				"oETagEntity", sinon.match.func)
+				"oETagEntity", sinon.match.same(oBinding), sinon.match.func)
 			.returns(oCountPromise.then(function () {
 				if (oFixture.error) {
 					that.mock(oBinding).expects("getKeepAlivePredicates").withExactArgs()
@@ -4412,8 +4416,8 @@ sap.ui.define([
 			}));
 
 		// code under test
-		oPromise = oBinding._delete(oGroupLock, "EMPLOYEES('1')", oKeptAliveContext, "oETagEntity",
-			oFixture.error || !oFixture.newMaxLength);
+		oPromise = oBinding.delete(oGroupLock, "EMPLOYEES('1')", oKeptAliveContext, "oETagEntity",
+			oFixture.error || !oFixture.newMaxLength, fnUndelete);
 
 		if (oGroupLock) {
 			this.mock(oGroupLock).expects("getGroupId").exactly(oFixture.newMaxLength ? 1 : 0)
@@ -4437,15 +4441,16 @@ sap.ui.define([
 			});
 
 		// code under test - callback
-		oDeleteFromCacheExpectation.args[0][4](undefined, -1);
+		oDeleteFromCacheExpectation.args[0][5](undefined, -1);
 
-		assert.strictEqual(oKeptAliveContext.oDeletePromise, "~oDeletePromise~");
+		sinon.assert.notCalled(fnUndelete);
 
 		if (oFixture.error) {
 			// code under test - callback for reinsertion
-			oDeleteFromCacheExpectation.args[0][4](undefined, 1);
+			oDeleteFromCacheExpectation.args[0][5](undefined, 1);
 
-			assert.strictEqual(oKeptAliveContext.oDeletePromise, null);
+			sinon.assert.called(fnUndelete);
+			sinon.assert.calledWithExactly(fnUndelete);
 		}
 		return oPromise.then(function () {
 			assert.deepEqual(oBinding.aContexts, aContexts);
@@ -4457,6 +4462,7 @@ sap.ui.define([
 		});
 	});
 });
+
 	//*********************************************************************************************
 	QUnit.test("create: callbacks and eventing", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
@@ -5277,24 +5283,24 @@ sap.ui.define([
 		// code under test - create a second entity without bAtEnd
 		oContext2 = oBinding.create(undefined);
 
-		oBindingMock.expects("deleteFromCache")
-			.callsArgWith(4, 0, -1) // the callback removing the context
+		this.mock(oContext1).expects("doDelete")
+			.callsArgWith(5, 0, -1) // the callback removing the context
 			.returns(SyncPromise.resolve());
 
 		// code under test
-		oBinding._delete(oGroupLock, "~", oContext1);
+		oBinding.delete(oGroupLock, "~", oContext1);
 
 		oBindingMock.expects("createInCache").returns(SyncPromise.resolve({}));
 
 		// code under test
 		oBinding.create(undefined, false, /*bAtEnd*/true);
 
-		oBindingMock.expects("deleteFromCache")
-			.callsArgWith(4, 0, -1) // the callback removing the context
+		this.mock(oContext2).expects("doDelete")
+			.callsArgWith(5, 0, -1) // the callback removing the context
 			.returns(SyncPromise.resolve());
 
 		// code under test
-		oBinding._delete(oGroupLock, "~", oContext2);
+		oBinding.delete(oGroupLock, "~", oContext2);
 
 		oBindingMock.expects("createInCache").returns(SyncPromise.resolve({}));
 
@@ -5322,18 +5328,18 @@ sap.ui.define([
 		oContext1 = oBinding.create(undefined, false, /*bAtEnd*/true);
 		oContext2 = oBinding.create(undefined, false, /*bAtEnd*/true);
 
-		oBindingMock.expects("deleteFromCache")
+		this.mock(oContext1).expects("doDelete")
 			.withArgs(sinon.match.same(oGroupLock), "~1")
-			.callsArgWith(4, 0, -1) // the callback removing the context
+			.callsArgWith(5, 0, -1) // the callback removing the context
 			.returns(SyncPromise.resolve(Promise.resolve()));
-		oBindingMock.expects("deleteFromCache")
+		this.mock(oContext2).expects("doDelete")
 			.withArgs(null, "~2")
-			.callsArgWith(4, 0, -1) // the callback removing the context
+			.callsArgWith(5, 0, -1) // the callback removing the context
 			.returns(SyncPromise.resolve(Promise)); // finish immediately
 
 		// code under test
-		oDeletePromise = oBinding._delete(oGroupLock, "~1", oContext1);
-		oBinding._delete(null, "~2", oContext2);
+		oDeletePromise = oBinding.delete(oGroupLock, "~1", oContext1);
+		oBinding.delete(null, "~2", oContext2);
 
 		assert.throws(function () {
 			// code under test - as long as a reinsertion is possible, bAtEnd must not be changed

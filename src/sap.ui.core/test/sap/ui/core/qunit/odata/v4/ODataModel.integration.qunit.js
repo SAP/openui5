@@ -2038,7 +2038,7 @@ sap.ui.define([
 								oBinding = oContext.getBinding();
 							}
 							vRow = oContext.getIndex();
-							if (vRow === undefined) {
+							if (oContext.isDeleted() || vRow === undefined) {
 								return sValue; // a deleted context w/o row
 							}
 						} else { // e.g. meta model
@@ -17597,12 +17597,17 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Delete an entity via a context binding with an empty path and $$ownRequest. The
 	// binding hierarchy is ODCB - ODCB. The top binding may or may not have read data on its own.
-	// BCP 1980308439
-	// JIRA CPOUI5UISERVICESV3-1917
-[true, false].forEach(function (bParentHasData) {
-	QUnit.test("delete context of binding with empty path and $$ownRequest (" + bParentHasData
-			+ ")", function (assert) {
+	// BCP: 1980308439
+	// JIRA: CPOUI5UISERVICESV3-1917
+	// JIRA: CPOUI5ODATAV4-1926: Use deferred delete and cancel; check isDeleted on both contexts
+[false, true].forEach(function (bParentHasData) {
+	[false, true].forEach(function (bReset) {
+		var sTitle = "delete context of binding with empty path and $$ownRequest (" + bParentHasData
+				+ "), bReset=" + bReset;
+
+	QUnit.test(sTitle, function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			oPromise,
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'0500000000\')}" id="form">'
 	+ (bParentHasData ? '<Text id="netAmount" text="{NetAmount}"/>' : "") + '\
@@ -17630,38 +17635,64 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContext = that.oView.byId("blackBinding").getBindingContext();
 
-			that.expectRequest({
-					headers : {"If-Match" : "ETag"},
-					method : "DELETE",
-					url : "SalesOrderList('0500000000')"
-				})
 			// Note: The value of the property binding is undefined because there is no
 			// explicit cache value for it, but the type's formatValue converts this to null.
-				.expectChange("note", null);
+			that.expectChange("note", null);
 			if (bParentHasData) {
 				that.expectChange("netAmount", null);
 			}
 
+			// code under test
+			oPromise = oContext.delete("update");
+
+			return that.waitForChanges(assert, "delete");
+		}).then(function () {
+			if (bReset) {
+				that.expectCanceledError("Failed to delete /SalesOrderList('0500000000')",
+					"Request canceled: DELETE SalesOrderList('0500000000'); group: update");
+
+				oModel.resetChanges("update");
+			} else {
+				that.expectRequest({
+					headers : {"If-Match" : "ETag"},
+					method : "DELETE",
+					url : "SalesOrderList('0500000000')"
+				});
+			}
+
 			return Promise.all([
-				// code under test
-				oContext.delete(),
-				that.waitForChanges(assert)
+				oPromise.then(function () {
+					assert.notOk(bReset);
+				}, function (oError) {
+					assert.ok(bReset);
+					assert.ok(oError.canceled);
+				}),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert, bReset ? "reset" : "submit")
 			]);
 		});
+	});
 	});
 });
 
 	//*********************************************************************************************
 	// Scenario: Delete an entity via a context binding with an empty path and $$ownRequest. The
-	// hierarchy is ODLB - ODCB - ODCB both ODCB with empty path. The deletion has to use the ETag
+	// hierarchy is ODLB - ODCB - ODCB, both ODCB with empty path. The deletion has to use the ETag
 	// of the context for which Context#delete is called.
-	// JIRA CPOUI5UISERVICESV3-1917
+	// JIRA: CPOUI5UISERVICESV3-1917
 	// JIRA: CPOUI5ODATAV4-1670: Use "If-Match: *" if a PATCH is in the same changeset
+	// JIRA: CPOUI5ODATAV4-1926: Use deferred delete and cancel; check isDeleted on both contexts
 [false, true].forEach(function (bChange) {
-	var sTitle = "delete context of binding with empty path, delegate to ODLB, change=" + bChange;
+	[false, true].forEach(function (bReset) {
+	var sTitle = "delete context of binding with empty path, delegate to ODLB, change=" + bChange
+			+ ", reset=" + bReset;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+		var oDeletedContext,
+			oDeletePromise,
+			oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "update"}),
+			oRowContext,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}">\
 	<Text id="lang" text="{NoteLanguage}"/>\
@@ -17706,37 +17737,81 @@ sap.ui.define([
 				.expectChange("netAmount", "10.00")
 				.expectChange("note", "Note");
 
-			oContextBinding.setContext(oListBinding.getCurrentContexts()[0]);
+			oRowContext = oListBinding.getCurrentContexts()[0];
+			oContextBinding.setContext(oRowContext);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			if (bChange) {
-				that.expectChange("note", "Note (changed)")
-					.expectRequest({
+				that.expectChange("note", "Note (changed)");
+
+				that.oView.byId("note").getBinding("value").setValue("Note (changed)");
+			}
+
+			that.expectChange("lang", ["en"])
+				.expectChange("netAmount", null)
+				.expectChange("note", null);
+
+			// code under test
+			oDeletedContext = that.oView.byId("form2").getBindingContext();
+			oDeletePromise = oDeletedContext.delete();
+
+			assert.ok(oRowContext.isDeleted());
+			assert.ok(oRowContext.hasPendingChanges());
+			// Note: The ODCB of "form2" is now unresolved, and oDeletedContext is destroyed,
+			// because oRowContext removed itself as parent during the deletion
+			assert.notOk(that.oView.byId("form2").getObjectBinding().isResolved());
+			assert.notOk(oDeletedContext.getModel());
+			assert.ok(oDeletedContext.isDeleted());
+			// assert.ok(oDeletedContext.hasPendingChanges());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			if (bReset) {
+				that.expectChange("lang", ["de", "en"]);
+
+				that.expectCanceledError("Failed to delete /SalesOrderList('0500000000')",
+					"Request canceled: DELETE SalesOrderList('0500000000'); group: update");
+				if (bChange) {
+					that.expectCanceledError(
+						"Failed to update path /SalesOrderList('0500000000')/Note",
+						"Request canceled: PATCH SalesOrderList('0500000000'); group: update");
+				}
+
+				// code under test (CPOUI5ODATAV4-1884)
+				oModel.resetChanges();
+
+				assert.notOk(oDeletedContext.isDeleted()); // nevertheless it is destroyed!
+				assert.notOk(oRowContext.isDeleted());
+				assert.notOk(oRowContext.hasPendingChanges());
+			} else {
+				if (bChange) {
+					that.expectRequest({
 						headers : {"If-Match" : "ETag4"},
 						method : "PATCH",
 						url : "SalesOrderList('0500000000')",
 						payload : {Note : "Note (changed)"}
 					});
+				}
+				that.expectRequest({
+						headers : {"If-Match" : bChange ? "*" : "ETag4"},
+						method : "DELETE",
+						url : "SalesOrderList('0500000000')"
+					});
 			}
-			that.expectRequest({
-					headers : {"If-Match" : bChange ? "*" : "ETag4"},
-					method : "DELETE",
-					url : "SalesOrderList('0500000000')"
-				})
-				.expectChange("lang", ["en"])
-				.expectChange("netAmount", null)
-				.expectChange("note", null);
 
-			if (bChange) {
-				that.oView.byId("note").getBinding("value").setValue("Note (changed)");
-			}
 			return Promise.all([
-				// code under test
-				that.oView.byId("form2").getBindingContext().delete(),
+				oModel.submitBatch("update"),
+				oDeletePromise.then(function () {
+					assert.notOk(bReset);
+				}, function (oError) {
+					assert.ok(bReset);
+					assert.ok(oError.canceled);
+				}),
 				that.waitForChanges(assert)
 			]);
 		});
+	});
 	});
 });
 
@@ -19215,6 +19290,111 @@ sap.ui.define([
 			}
 			assert.strictEqual(oItemsBinding.getCount(), 3);
 			assert.deepEqual(oItemsBinding.getAllCurrentContexts().map(getPath), aExpectedPaths);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Entity list and detail page with empty-path ODCB. Deferred deletion on the ODCB
+	// which delegates to the ODLB.
+	// JIRA: CPOUI5ODATAV4-1926
+[false, true].forEach(function (bReset) {
+	var sTitle = "CPOUI5ODATAV4-1926: deferred delete, delegate to ODLB, reset=" + bReset;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding,
+			oDetailPage,
+			oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "update"}),
+			oPageContext,
+			oPromise,
+			oRowContext,
+			sView = '\
+<Table id="list" items="{/SalesOrderList}">\
+	<Text id="listId" text="{SalesOrderID}"/>\
+</Table>\
+<FlexBox id="detailPage" binding="{}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1"},
+					{SalesOrderID : "2"}
+				]
+			})
+			.expectChange("listId", ["1", "2"])
+			.expectChange("id");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("list").getBinding("items");
+			oRowContext = oBinding.getCurrentContexts()[0];
+			oDetailPage = that.oView.byId("detailPage");
+
+			that.expectChange("id", "1");
+
+			oDetailPage.setBindingContext(oRowContext);
+
+			return that.waitForChanges(assert, "object page");
+		}).then(function () {
+			oPageContext = oDetailPage.getBindingContext();
+
+			that.expectChange("listId", ["2"])
+				.expectChange("id", null);
+
+			// code under test
+			oPromise = oPageContext.delete();
+			// Note: This must be done afterwards; it would destroy oPageContext otherwise.
+			// (oPageContext.delete() destroys it too; in both cases simply because the ODCB of the
+			// detail page becomes unresolved.)
+			oDetailPage.setBindingContext(null);
+
+			assert.notStrictEqual(oPageContext, oRowContext);
+			assert.ok(oPageContext.isDeleted(), "the deletion is started here");
+			assert.ok(oRowContext.isDeleted(), "the deletion is performed here");
+			assert.notOk(oPageContext.getModel(), "destroyed, the page binding became unresolved");
+
+			return that.waitForChanges(assert, "deferred delete");
+		}).then(function () {
+			if (bReset) {
+				that.expectCanceledError("Failed to delete /SalesOrderList('1')",
+					"Request canceled: DELETE SalesOrderList('1'); group: update");
+				that.expectChange("listId", ["1", "2"]);
+
+				// code under test
+				oModel.resetChanges("update");
+
+				assert.notOk(oPageContext.isDeleted());
+				assert.notOk(oRowContext.isDeleted());
+			} else {
+				that.expectRequest({
+						method : "DELETE",
+						url : "SalesOrderList('1')"
+					});
+			}
+
+			return Promise.all([
+				oPromise.then(function () {
+					assert.notOk(bReset);
+					assert.ok(oPageContext.isDeleted());
+					assert.ok(oRowContext.isDeleted());
+				}, function (oError) {
+					assert.ok(bReset);
+					assert.ok(oError.canceled);
+					assert.deepEqual(oBinding.getCurrentContexts().map(getPath),
+						["/SalesOrderList('1')", "/SalesOrderList('2')"]);
+					assert.strictEqual(oRowContext.getProperty("SalesOrderID"), "1");
+					assert.notOk(oPageContext.isDeleted());
+					assert.notOk(oRowContext.isDeleted());
+
+					that.expectChange("id", "1");
+
+					oDetailPage.setBindingContext(oRowContext);
+				}),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert, bReset ? "reset" : "submit")
+			]);
 		});
 	});
 });

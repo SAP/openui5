@@ -253,120 +253,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deletes the entity identified by the edit URL.
-	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
-	 *   A lock for the group ID to be used for the DELETE request; w/o a lock, no DELETE is sent.
-	 *   For a transient entity, the lock is ignored (use NULL)!
-	 * @param {string} sEditUrl
-	 *   The entity's edit URL to be used for the DELETE request; w/o a lock, this is mostly
-	 *   ignored.
-	 * @param {sap.ui.model.odata.v4.Context} oContext
-	 *   The context to be deleted
-	 * @param {object} [oETagEntity]
-	 *   An entity with the ETag of the binding for which the deletion was requested. This is
-	 *   provided if the deletion is delegated from a context binding with empty path to a list
-	 *   binding. W/o a lock, this is ignored.
-	 * @param {boolean} [bDoNotRequestCount]
-	 *   Whether not to request the new count from the server; useful in case of
-	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
-	 *   unchanged; w/o a lock this should be true
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure.
-	 * @throws {Error}
-	 *   If the cache promise for this binding is not yet fulfilled, or if the cache is shared
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype._delete = function (oGroupLock, sEditUrl, oContext, oETagEntity,
-			bDoNotRequestCount) {
-		// When deleting a context with negative index, iCreatedContexts et al. must be adjusted.
-		// However, when re-inserting, the context has lost its index. Beware: Do NOT use the
-		// created() promise, because doReplaceWith places a context w/o the promise here.
-		var bCreated = oContext.iIndex < 0,
-			sPath = oContext.iIndex === undefined
-				// context is not in aContexts -> use the predicate
-				? _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
-				: String(oContext.iIndex),
-			bReset = false,
-			that = this;
-
-		this.iDeletedContexts += 1;
-
-		return this.deleteFromCache(oGroupLock, sEditUrl, sPath, oETagEntity,
-			function (iIndex, iOffset) {
-				if (iIndex !== undefined) {
-					// An entity can only be deleted when its key predicate is known. So we can be
-					// sure to have key predicates and the contexts are related to entities and not
-					// rows. -> Shift them and adjust the indexes
-					if (iOffset > 0) { // we're re-inserting
-						delete that.mPreviousContextsByPath[oContext.getPath()];
-						that.aContexts.splice(iIndex, 0, oContext);
-						oContext.oDeletePromise = null;
-					} else { // we're deleting
-						that.mPreviousContextsByPath[oContext.getPath()] = oContext;
-						that.aContexts.splice(iIndex, 1);
-						oContext.iIndex = undefined;
-						// fire asynchronously so that multiple deletes only update the table once
-						Promise.resolve().then(function () {
-							that._fireChange({reason : ChangeReason.Remove});
-						});
-					}
-					if (bCreated) {
-						that.iCreatedContexts += iOffset;
-						that.iActiveContexts += iOffset;
-					} else {
-						// iMaxLength is the number of server rows w/o the created entities
-						that.iMaxLength += iOffset; // this doesn't change Infinity
-					}
-					that.aContexts.forEach(function (oContext0, i) {
-						oContext0.iIndex = i - that.iCreatedContexts;
-					});
-				} else if (iOffset > 0) { // trying to reinsert an element w/o index
-					bReset = true;
-					oContext.oDeletePromise = null;
-				} else if (that.bLengthFinal && !bDoNotRequestCount) {
-					// a kept-alive context is not in aContexts -> request the count
-					that.oCache.requestCount(
-						oGroupLock && !that.oModel.isApiGroup(oGroupLock.getGroupId())
-							? oGroupLock.getUnlockedCopy()
-							: that.lockGroup("$auto")
-					).then(function (iCount) {
-						var iOldMaxLength = that.iMaxLength;
-
-						that.iMaxLength = iCount - that.iActiveContexts;
-						// Note: Although we know that oContext is not in aContexts, a "change"
-						// event needs to be fired in order to notify the control about the new
-						// length, for example, to update the 'More' button or the scrollbar.
-						if (iOldMaxLength !== that.iMaxLength) {
-							that._fireChange({reason : ChangeReason.Remove});
-						}
-					});
-				}
-			}
-		).then(function () {
-			that.iDeletedContexts -= 1;
-			if (!that.iDeletedContexts && !that.iCreatedContexts) {
-				// all (created) contexts finally gone -> free to create at any end
-				that.bFirstCreateAtEnd = undefined;
-			}
-			oContext.resetKeepAlive();
-			oContext.iIndex = Context.VIRTUAL; // prevent further cache access via this context
-			that.destroyPreviousContextsLater([oContext.getPath()]);
-		}, function (oError) {
-			that.iDeletedContexts -= 1;
-			if (bReset) {
-				that.oCache.reset(that.getKeepAlivePredicates());
-				that.reset(ChangeReason.Change);
-			} else {
-				that._fireChange({reason : ChangeReason.Add});
-			}
-			throw oError;
-		});
-	};
-
-	/**
 	 * Adjusts the paths of all contexts of this binding by replacing the given transient predicate
 	 * with the given predicate. Recursively adjusts all child bindings.
 	 *
@@ -1066,6 +952,98 @@ sap.ui.define([
 			bChanged = true;
 		}
 		return bChanged;
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#delete
+	 */
+	ODataListBinding.prototype.delete = function (oGroupLock, sEditUrl, oContext, oETagEntity,
+			bDoNotRequestCount, fnUndelete) {
+		// When deleting a context with negative index, iCreatedContexts et al. must be adjusted.
+		// However, when re-inserting, the context has lost its index. Beware: Do NOT use the
+		// created() promise, because doReplaceWith places a context w/o the promise here.
+		var bCreated = oContext.iIndex < 0,
+			sPath = oContext.iIndex === undefined
+				// context is not in aContexts -> use the predicate
+				? _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
+				: String(oContext.iIndex),
+			bReset = false,
+			that = this;
+
+		this.iDeletedContexts += 1;
+
+		return oContext.doDelete(oGroupLock, sEditUrl, sPath, oETagEntity, this,
+			function (iIndex, iOffset) {
+				if (iIndex !== undefined) {
+					// An entity can only be deleted when its key predicate is known. So we can be
+					// sure to have key predicates and the contexts are related to entities and not
+					// rows. -> Shift them and adjust the indexes
+					if (iOffset > 0) { // we're re-inserting
+						delete that.mPreviousContextsByPath[oContext.getPath()];
+						that.aContexts.splice(iIndex, 0, oContext);
+						fnUndelete();
+					} else { // we're deleting
+						that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+						that.aContexts.splice(iIndex, 1);
+						oContext.iIndex = undefined;
+						// fire asynchronously so that multiple deletes only update the table once
+						Promise.resolve().then(function () {
+							that._fireChange({reason : ChangeReason.Remove});
+						});
+					}
+					if (bCreated) {
+						that.iCreatedContexts += iOffset;
+						that.iActiveContexts += iOffset;
+					} else {
+						// iMaxLength is the number of server rows w/o the created entities
+						that.iMaxLength += iOffset; // this doesn't change Infinity
+					}
+					that.aContexts.forEach(function (oContext0, i) {
+						oContext0.iIndex = i - that.iCreatedContexts;
+					});
+				} else if (iOffset > 0) { // trying to reinsert an element w/o index
+					bReset = true;
+					fnUndelete();
+				} else if (that.bLengthFinal && !bDoNotRequestCount) {
+					// a kept-alive context is not in aContexts -> request the count
+					that.oCache.requestCount(
+						oGroupLock && !that.oModel.isApiGroup(oGroupLock.getGroupId())
+							? oGroupLock.getUnlockedCopy()
+							: that.lockGroup("$auto")
+					).then(function (iCount) {
+						var iOldMaxLength = that.iMaxLength;
+
+						that.iMaxLength = iCount - that.iActiveContexts;
+						// Note: Although we know that oContext is not in aContexts, a "change"
+						// event needs to be fired in order to notify the control about the new
+						// length, for example, to update the 'More' button or the scrollbar.
+						if (iOldMaxLength !== that.iMaxLength) {
+							that._fireChange({reason : ChangeReason.Remove});
+						}
+					});
+				}
+			}
+		).then(function () {
+			that.iDeletedContexts -= 1;
+			if (!that.iDeletedContexts && !that.iCreatedContexts) {
+				// all (created) contexts finally gone -> free to create at any end
+				that.bFirstCreateAtEnd = undefined;
+			}
+			oContext.resetKeepAlive();
+			oContext.iIndex = Context.VIRTUAL; // prevent further cache access via this context
+			that.destroyPreviousContextsLater([oContext.getPath()]);
+		}, function (oError) {
+			that.iDeletedContexts -= 1;
+			fnUndelete();
+			if (bReset) {
+				that.oCache.reset(that.getKeepAlivePredicates());
+				that.reset(ChangeReason.Change);
+			} else {
+				that._fireChange({reason : ChangeReason.Add});
+			}
+			throw oError;
+		});
 	};
 
 	/**

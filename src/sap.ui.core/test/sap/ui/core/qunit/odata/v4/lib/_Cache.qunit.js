@@ -535,28 +535,6 @@ sap.ui.define([
 	//TODO do it anyway? what and when to return, result of remove vs. re-read?
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#_delete: from collection, must not delete twice", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
-			aCacheData = [{"@$ui5.context.isDeleted" : true}];
-
-		oCache.fetchValue = function () {};
-		this.mock(oCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "1/EMPLOYEE_2_EQUIPMENTS")
-			.returns(SyncPromise.resolve(aCacheData));
-		this.mock(_Cache).expects("from$skip")
-			.withExactArgs("0", sinon.match.same(aCacheData))
-			.returns(0);
-
-		// code under test
-		oCache._delete({}, "Equipments('0')", "1/EMPLOYEE_2_EQUIPMENTS/0")
-			.then(function () {
-				assert.ok(false);
-			}, function (oError) {
-				assert.strictEqual(oError.message, "Must not delete twice: Equipments('0')");
-			});
-	});
-
-	//*********************************************************************************************
 [false, true].forEach(function (bLock) {
 	QUnit.test("_Cache#_delete: nested entity" + (bLock ? "" : ", no lock"), function () {
 		var oCache = new _Cache(this.oRequestor, "Equipments(Category='foo',ID='0815')",
