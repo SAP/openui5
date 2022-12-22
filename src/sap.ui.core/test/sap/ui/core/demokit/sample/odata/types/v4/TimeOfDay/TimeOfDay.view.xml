@@ -1,0 +1,86 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.odata.types.v4.TimeOfDay.TimeOfDay"
+	xmlns="sap.m"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:layout="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<App>
+	<Page id="page" floatingFooter="true" showHeader="false"
+		title="Example how to use OData V4 Edm.TimeOfDay in SAPUI5 applications">
+	<VBox width="100%">
+		<form:SimpleForm class="sapUiResponsiveMargin" columnsL="1" columnsM="1" editable="true"
+				labelSpanL="3" labelSpanM="3" layout="ResponsiveGridLayout"
+				title="How to use OData V4 Edm.TimeOfDay type with SAPUI5 controls" width="auto">
+			<form:content>
+				<FormattedText htmlText="{json>/Description}" width="100%" />
+				<Label text="sap.m.Text" />
+				<!-- OData V4 determines the data types automatically if no type is given -->
+				<Text text="{TimeOfDay}" />
+				<Label text="sap.m.Input" />
+				<Input value="{TimeOfDay}" />
+				<Label text="sap.m.TimePicker" />
+				<TimePicker value="{TimeOfDay}" />
+				<Button text="Use JSON Model with sap.ui.model.odata.type.TimeOfDay Type"
+					press="onDialogOpen">
+					<layoutData>
+						<layout:GridData indent="XL3 L3 M3 S0" linebreak="true"
+							span="XL6 L6 M6 S12"/>
+					</layoutData>
+				</Button>
+			</form:content>
+		</form:SimpleForm>
+		<form:SimpleForm class="sapUiResponsiveMargin" columnsL="1" columnsM="1" editable="false"
+				labelSpanL="3" labelSpanM="3" layout="ResponsiveGridLayout" title="Model values"
+				width="auto">
+			<form:content>
+				<Label text="OData Model Value 'TimeOfDay'" />
+				<Text text="{
+						path: 'TimeOfDay',
+						formatter: '.formatTimeOfDay',
+						type: 'sap.ui.model.odata.type.String'
+					}" />
+				<Label text="'TimeOfDay' Value as URI Parameter Value" />
+				<Text text="{
+						path: 'TimeOfDay',
+						formatter: '.formatTimeOfDayAsURIParameter',
+						type: 'sap.ui.model.odata.type.String'
+					}" />
+				<Label text="JSON Model Value '/TimeOfDay'" />
+				<Text text="{path: 'json>/TimeOfDay', formatter: '.formatTimeOfDay'}" />
+				<Label text="Current Time Zone" />
+				<Text text="{path: 'json>/Timezone', formatter: '.formatTimezone'}" />
+			</form:content>
+		</form:SimpleForm>
+		<dependents>
+			<Dialog contentWidth="50em" id="dialog"
+				title="Use JSON Model with sap.ui.model.odata.type.TimeOfDay Type">
+				<buttons>
+					<Button press="onDialogTakeValues" text="OK"
+						tooltip="Transfer the values to the OData Model" />
+					<Button press="onDialogClose" text="Close" />
+				</buttons>
+				<form:SimpleForm columnsL="1" columnsM="1" editable="true"
+					labelSpanL="4" labelSpanM="4" layout="ResponsiveGridLayout">
+					<Label text="sap.m.Text" />
+					<Text text="{
+							path: 'json>TimeOfDay',
+							type: 'sap.ui.model.odata.type.TimeOfDay'
+						}" />
+					<Label text="sap.m.Input" />
+					<Input value="{
+							path: 'json>TimeOfDay',
+							type: 'sap.ui.model.odata.type.TimeOfDay'
+						}" />
+					<Label text="sap.m.TimePicker" />
+					<TimePicker value="{
+							path: 'json>TimeOfDay',
+							type: 'sap.ui.model.odata.type.TimeOfDay'
+						}" />
+				</form:SimpleForm>
+			</Dialog>
+		</dependents>
+	</VBox>
+	</Page>
+	</App>
+</mvc:View>

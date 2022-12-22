@@ -264,7 +264,19 @@
 				"samples" : [
 					"sap.ui.core.sample.odata.types.v2.DateTime",
 					"sap.ui.core.sample.odata.types.v2.DateTimeOffset",
-					"sap.ui.core.sample.odata.types.v2.Time"
+					"sap.ui.core.sample.odata.types.v2.Time",
+					"sap.ui.core.sample.odata.types.v4.Date",
+					"sap.ui.core.sample.odata.types.v4.DateTimeOffset",
+					"sap.ui.core.sample.odata.types.v4.TimeOfDay"
+				]
+			},
+			{
+				"id" : "sap.ui.model.odata.type.Date",
+				"name" : "Date Type (OData V4)",
+				"category" : "Data Binding",
+				"since" : "1.37",
+				"samples" : [
+					"sap.ui.core.sample.odata.types.v4.Date"
 				]
 			},
 			{
@@ -282,7 +294,8 @@
 				"category" : "Data Binding",
 				"since" : "1.27",
 				"samples" : [
-					"sap.ui.core.sample.odata.types.v2.DateTimeOffset"
+					"sap.ui.core.sample.odata.types.v2.DateTimeOffset",
+					"sap.ui.core.sample.odata.types.v4.DateTimeOffset"
 				]
 			},
 			{
@@ -292,6 +305,15 @@
 				"since" : "1.27",
 				"samples" : [
 					"sap.ui.core.sample.odata.types.v2.Time"
+				]
+			},
+			{
+				"id" : "sap.ui.model.odata.type.TimeOfDay",
+				"name" : "TimeOfDay Type (OData V4)",
+				"category" : "Data Binding",
+				"since" : "1.37",
+				"samples" : [
+					"sap.ui.core.sample.odata.types.v4.TimeOfDay"
 				]
 			},
 			{
@@ -477,6 +499,21 @@
 				"id": "sap.ui.core.sample.odata.types.v2.Time",
 				"name": "OData V2 Times - Use sap.ui.model.odata.type.Time for Edm.Time",
 				"description": "This sample explains how to use the OData V2 Edm.Time type in SAPUI5 applications."
+			},
+			{
+				"id": "sap.ui.core.sample.odata.types.v4.Date",
+				"name": "OData V4 Dates - Use sap.ui.model.odata.type.Date for Edm.Date",
+				"description": "This sample explains how to use the OData V4 Edm.Date type in SAPUI5 applications."
+			},
+			{
+				"id": "sap.ui.core.sample.odata.types.v4.DateTimeOffset",
+				"name": "OData V4 Timestamps - Use sap.ui.model.odata.type.DateTimeOffset for Edm.DateTimeOffset",
+				"description": "This sample explains how to use the OData V4 Edm.DateTimeOffset type in SAPUI5 applications."
+			},
+			{
+				"id": "sap.ui.core.sample.odata.types.v4.TimeOfDay",
+				"name": "OData V4 Times - Use sap.ui.model.odata.type.TimeOfDay for Edm.TimeOfDay",
+				"description": "This sample explains how to use the OData V4 Edm.TimeOfDay type in SAPUI5 applications."
 			},
 			{
 				"id": "sap.ui.core.sample.TypeDateAsDate",
