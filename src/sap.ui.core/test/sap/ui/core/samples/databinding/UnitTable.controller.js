@@ -1,11 +1,12 @@
 sap.ui.define([
+	"sap/base/util/fetch",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/core/Configuration"
-], function (Locale, LocaleData, Controller, JSONModel, NumberFormat, Configuration) {
+], function (fetch, Locale, LocaleData, Controller, JSONModel, NumberFormat, Configuration) {
 	"use strict";
 	return Controller.extend("sap.ui.core.samples.UnitTable", {
 
@@ -63,53 +64,58 @@ sap.ui.define([
 				{lastName: "Summer", name: "Paige", money: 5.67, currency: "EUR"}
 			];
 
-			var sUrl = "sap/ui/core/samples/UnitTable.meters.json";
-			var pLoadResource = jQuery.sap.loadResource(sUrl,{
-				dataType: "json",
-				async : true
+			var sUrl = sap.ui.require.toUrl("sap/ui/core/samples/UnitTable.meters.json");
+			var pLoadResource = fetch(sUrl, {
+				headers: {
+					"Accept": fetch.ContentTypes.JSON
+				}
 			});
 			var that = this;
-			pLoadResource.then(function(oResult) {
-				//data transformation
-				var aMeters = [];
-				var aMonths = [];
+			pLoadResource.then(function(oResponse) {
+				oResponse.json().then(function(oResult) {
 
-				var oMonths = {};
+					//data transformation
+					var aMeters = [];
+					var aMonths = [];
 
-				Object.keys(oResult).forEach(function(sKey) {
-					var oResultObj = oResult[sKey];
-					var sMeterName = oResultObj.name;
-					var oObj = {
-						decimals: oResultObj.decimals,
-						unit: oResultObj.unit,
-						name: sMeterName
-					};
-					oResultObj.data.forEach(function(oData) {
-						var sMonthKey = oData.name.toLowerCase();
-						oObj[sMonthKey] =  oData.value;
+					var oMonths = {};
 
-
-						oMonths[oData.name] = oMonths[oData.name] || {};
-						oMonths[oData.name][sMeterName] = {
-							value: oData.value,
+					Object.keys(oResult).forEach(function(sKey) {
+						var oResultObj = oResult[sKey];
+						var sMeterName = oResultObj.name;
+						var oObj = {
 							decimals: oResultObj.decimals,
-							unit: oResultObj.unit
+							unit: oResultObj.unit,
+							name: sMeterName
 						};
+						oResultObj.data.forEach(function(oData) {
+							var sMonthKey = oData.name.toLowerCase();
+							oObj[sMonthKey] =  oData.value;
 
+
+							oMonths[oData.name] = oMonths[oData.name] || {};
+							oMonths[oData.name][sMeterName] = {
+								value: oData.value,
+								decimals: oResultObj.decimals,
+								unit: oResultObj.unit
+							};
+
+						});
+
+						aMeters.push(oObj);
 					});
 
-					aMeters.push(oObj);
+					Object.keys(oMonths).forEach(function(sMonth) {
+						var oObj = oMonths[sMonth];
+						oObj.name = sMonth;
+						aMonths.push(oObj);
+					});
+
+
+					that.getView().setModel(new JSONModel({data:aMeters,size:aMeters.length}), "meters");
+					that.getView().setModel(new JSONModel({data:aMonths,size:aMonths.length}), "months");
 				});
 
-				Object.keys(oMonths).forEach(function(sMonth) {
-					var oObj = oMonths[sMonth];
-					oObj.name = sMonth;
-					aMonths.push(oObj);
-				});
-
-
-				that.getView().setModel(new JSONModel({data:aMeters,size:aMeters.length}), "meters");
-				that.getView().setModel(new JSONModel({data:aMonths,size:aMonths.length}), "months");
 			});
 
 			for (var i = 0; i < aItems.length; i++) {
