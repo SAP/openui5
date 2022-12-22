@@ -2815,6 +2815,35 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: requestElements on a list binding with only a property from a different entity, so
+	// that the $select is converted to a $expand. Ensure that $select does not become empty.
+	QUnit.test("BCP: 2280192214", function (assert) {
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table items="{path : \'/SalesOrderList\', parameters : {$select : \'SO_2_BP/CompanyName\'}}">\
+	<Text text="{SO_2_BP/BusinessPartnerID}"/>\
+</Table>',
+			that = this;
+
+		that.expectRequest("SalesOrderList?$select=SalesOrderID"
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100",
+				{value : []});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = oModel.bindList("/SalesOrderList", undefined, undefined, undefined,
+					{$select : ["SO_2_BP/BusinessPartnerID"]});
+
+			that.expectRequest("SalesOrderList?$select=SO_2_BP"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID)&$skip=0&$top=3",
+					{value : []}
+				);
+
+			// code under test
+			return oBinding.requestContexts(0, 3);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Request contexts from an ODataListBinding not bound to any control, request
 	// creation is async and submitBatch must wait for the request.
 	// JIRA: CPOUI5UISERVICESV3-1396
