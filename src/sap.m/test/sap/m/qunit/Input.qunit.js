@@ -7344,6 +7344,56 @@ sap.ui.define([
 		assert.strictEqual(fnGetVisisbleItems(this.oInput._getSuggestionsTable().getItems()).length, 1, "Only the matching items are visible");
 	});
 
+	QUnit.test("If suggestions hidden text is empty when there are no suggestions", function (assert) {
+		var oInput = new Input({ showSuggestion: true });
+
+		oInput.placeAt("content");
+		oCore.applyChanges();
+
+		oInput.showItems(function () { return true; });
+		this.clock.tick(400);
+		oCore.applyChanges();
+
+		oInput.focus();
+		oCore.applyChanges();
+
+		var sDescription = oInput.getDomRef("SuggDescr").innerText;
+
+		assert.strictEqual(sDescription, "", "Description is empty");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("If suggestions[tabular] hidden text is empty when there are no suggestions", function (assert) {
+		var oInput = new Input({ showSuggestion: true });
+		var oMessageBundle = oCore.getLibraryResourceBundle("sap.m");
+
+		oInput.addSuggestionColumn(new Column({ header: new Label({text: "Text"}) }));
+		oInput.addSuggestionRow(new ColumnListItem({
+			cells: [
+				new Text({text:"{value}"}),
+				new Text({text:"{key}"})
+			]
+		 }));
+
+		oInput.placeAt("content");
+		oCore.applyChanges();
+
+		oInput.showItems(function () { return true; });
+		this.clock.tick(400);
+		oCore.applyChanges();
+
+		oInput.focus();
+		oCore.applyChanges();
+
+		var sDescription = oInput.getDomRef("SuggDescr").innerText;
+		var sExpectedText = oMessageBundle.getText("INPUT_SUGGESTIONS_ONE_HIT");
+
+		assert.strictEqual(sDescription, sExpectedText, "Contains information about 1 item");
+
+		oInput.destroy();
+	});
+
 	QUnit.module("Dialog on mobile");
 
 	QUnit.test("Dialog elements", function (assert) {

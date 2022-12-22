@@ -1955,6 +1955,10 @@ function(
 		// In that case the second DOM update of the invisible text element
 		// do not occur if it is synchronous. BCP #2070466087
 		setTimeout(function () {
+			if (!this.getSuggestionItems().length && !this._hasTabularSuggestions()) {
+				return this.$("SuggDescr").text("");
+			}
+
 			// add items to list
 			if (iNumItems === 1) {
 				sAriaText = oRb.getText("INPUT_SUGGESTIONS_ONE_HIT");
