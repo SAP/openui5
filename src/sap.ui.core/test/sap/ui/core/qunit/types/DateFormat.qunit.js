@@ -2558,10 +2558,59 @@ sap.ui.define([
 				"only firstDayOfWeek is provided without minimalDaysInFirstWeek");
 		});
 
+		//******************************************************************************************
+		QUnit.test("central calendar week configuration", function (assert) {
+			// Fri Jan 01 2021
+			// local: de-DE -> ISO_8601
+			// firstDayOfWeek: 1
+			// minimalDaysInFirstWeek: 4
+			var oDate = UI5Date.getInstance(2021, 0, 1),
+				oDateFormat = DateFormat.getDateInstance({
+					pattern: "Y-w"
+				});
+			assert.strictEqual(oDateFormat.format(oDate), "2020-53");
+
+			// instance > locale
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w",
+				firstDayOfWeek: 0,
+				minimalDaysInFirstWeek: 1
+			});
+			assert.strictEqual(oDateFormat.format(oDate), "2021-1");
+
+			// configuration > locale
+			Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.WesternTraditional);
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w"
+			});
+			assert.strictEqual(oDateFormat.format(oDate), "2021-1");
+
+			// instance > configuration
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w",
+				firstDayOfWeek: 1,
+				minimalDaysInFirstWeek: 4
+			});
+			assert.strictEqual(oDateFormat.format(oDate), "2020-53");
+
+			// instance > instance deprecated > configuration
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w",
+				firstDayOfWeek: 0, // deprecated
+				minimalDaysInFirstWeek: 1, // deprecated
+				calendarWeekNumbering: CalendarWeekNumbering.ISO_8601 // must win over deprecated & configuration
+			});
+			assert.strictEqual(oDateFormat.format(oDate), "2020-53");
+
+			// reset central calendar week config
+			Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
+		});
+
 		QUnit.test("calendar week configuration precedence 2021", function (assert) {
 			// Fri Jan 01 2021
-			// firstDay: 4
-			// minDays: 1
+			// local: de-DE -> ISO_8601
+			// firstDayOfWeek: 1
+			// minimalDaysInFirstWeek: 4
 			var oDate = UI5Date.getInstance("2021-01-01T00:00:00Z");
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: "Y-w"
@@ -2595,8 +2644,9 @@ sap.ui.define([
 
 		QUnit.test("calendar week configuration precedence 2022", function (assert) {
 			// Sat Jan 01 2022
-			// firstDay: 4
-			// minDays: 1
+			// local: de-DE -> ISO_8601
+			// firstDayOfWeek: 1
+			// minimalDaysInFirstWeek: 4
 			var oDate = UI5Date.getInstance("2022-01-01T00:00:00Z");
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: "Y-w"
