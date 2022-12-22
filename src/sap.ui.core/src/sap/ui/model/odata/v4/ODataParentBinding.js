@@ -1447,22 +1447,26 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.updateAggregatedQueryOptions = function (mNewQueryOptions) {
 		var aAllKeys = Object.keys(mNewQueryOptions),
+			mAggregatedQueryOptions = this.mAggregatedQueryOptions,
 			that = this;
 
-		if (this.mAggregatedQueryOptions) {
-			aAllKeys = aAllKeys.concat(Object.keys(this.mAggregatedQueryOptions));
+		if (mAggregatedQueryOptions) {
+			aAllKeys = aAllKeys.concat(Object.keys(mAggregatedQueryOptions));
 			aAllKeys.forEach(function (sName) {
-				// if the aggregated query options are not initial any more, $select and $expand
+				// if the aggregated query options are not initial anymore, $select and $expand
 				// have already been merged
 				if (that.bAggregatedQueryOptionsInitial
 						|| sName !== "$select" && sName !== "$expand") {
 					if (mNewQueryOptions[sName] === undefined) {
-						delete that.mAggregatedQueryOptions[sName];
+						delete mAggregatedQueryOptions[sName];
 					} else {
-						that.mAggregatedQueryOptions[sName] = mNewQueryOptions[sName];
+						mAggregatedQueryOptions[sName] = mNewQueryOptions[sName];
 					}
 				}
 			});
+			if (mAggregatedQueryOptions.$select && !mAggregatedQueryOptions.$select.length) {
+				mAggregatedQueryOptions.$select = [Object.keys(mAggregatedQueryOptions.$expand)[0]];
+			}
 		}
 	};
 

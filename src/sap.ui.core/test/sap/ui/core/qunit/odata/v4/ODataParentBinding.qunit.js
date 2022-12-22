@@ -2425,6 +2425,11 @@ sap.ui.define([
 		initial : true,
 		current : {$select : ["foo"], $orderby : "bar"},
 		result : {$select : ["foo"], $orderby : "bar"}
+	}, {
+		aggregated : {},
+		initial : true,
+		current : {$select : [], $expand : {foo : {}, bar : {}}},
+		result : {$select : ["foo"], $expand : {foo : {}, bar : {}}}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("updateAggregatedQueryOptions " + i, function (assert) {
 			var oBinding = new ODataParentBinding({
