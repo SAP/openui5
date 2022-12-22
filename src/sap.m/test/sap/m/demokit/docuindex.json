@@ -1049,7 +1049,8 @@
 			"sap.m.sample.PlanningCalendarWithLegend",
 			"sap.m.sample.PlanningCalendarDnD",
 			"sap.m.sample.PlanningCalendarWithStickyHeader",
-			"sap.m.sample.PlanningCalendarRelativeViews"]
+			"sap.m.sample.PlanningCalendarRelativeViews",
+			"sap.m.sample.PlanningCalendarWeekNumbering"]
 		},
 		{
 			"id": "sap.m.SinglePlanningCalendar",
@@ -3724,7 +3725,12 @@
 			"id": "sap.m.sample.PlanningCalendarRelativeViews",
 			"name": "Planning Calendar - with relative views",
 			"description": "PlanningCalendar with relative views. The relative periods are not directly related to dates, but periods with pre-defined duration."
-		  },
+		},
+		{
+			"id": "sap.m.sample.PlanningCalendarWeekNumbering",
+			"name": "Planning Calendar - week numbering",
+			"description": "Demonstrates PlanningCalendar with different week numbering (only Date Picker, 1 Week and 1 Month views are affected)."
+		},
 		{
 		  "id": "sap.m.sample.SinglePlanningCalendar",
 		  "name": "Single Planning Calendar",

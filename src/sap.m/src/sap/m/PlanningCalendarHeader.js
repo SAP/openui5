@@ -20,6 +20,7 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CustomYearPicker',
 	'sap/ui/unified/calendar/IndexPicker',
 	'sap/ui/core/Configuration',
+	'sap/ui/core/date/CalendarWeekNumbering',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleText',
@@ -43,6 +44,7 @@ function(
 	CustomYearPicker,
 	IndexPicker,
 	Configuration,
+	CalendarWeekNumbering,
 	CalendarDate,
 	IconPool,
 	InvisibleText,
@@ -127,6 +129,13 @@ function(
 				 * Determines the additional text of the button which opens the calendar picker.
 				 */
 				pickerTextInSecondaryType : { type : "string", group : "Data" },
+
+				/**
+				 * Defines the calendar week numbering used for display.
+				 * @private
+				 * @since 1.110.0
+				 */
+				calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
 
 				/**
 				 * If set, the calendar type is used for display.
@@ -306,6 +315,7 @@ function(
 		});
 		oCalendarPicker = new Calendar(sOPHId + "-Cal", {
 			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_RANGE_PICKER"),
+			calendarWeekNumbering: this.getCalendarWeekNumbering(),
 			primaryCalendarType: sCalendarType
 		});
 		oCalendarPicker.attachEvent("select", this._handlePickerDateSelect, this);
@@ -359,6 +369,7 @@ function(
 					if (oPicker.displayDate) {
 						oPicker.displayDate(oDate);
 					}
+					oPicker.setCalendarWeekNumbering && oPicker.setCalendarWeekNumbering(this.getCalendarWeekNumbering());
 					this._openCalendarPickerPopup(oPicker);
 				}
 			}.bind(this)
