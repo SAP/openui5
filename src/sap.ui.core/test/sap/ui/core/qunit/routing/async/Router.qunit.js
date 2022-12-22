@@ -46,17 +46,6 @@ sap.ui.define([
 		return new (Function.prototype.bind.apply(Router, args))();
 	};
 
-	function createView (aContent, sId) {
-		var sXmlViewContent = aContent.join(''),
-				oViewOptions = {
-					id : sId,
-					viewContent: sXmlViewContent,
-					type: "XML"
-				};
-
-		return sap.ui.view(oViewOptions);
-	}
-
 	QUnit.module("State: initial, initialized and stopped", {
 		beforeEach: function(assert) {
 			this.oRouter = new Router({}, {async: true}, null, {});
@@ -411,12 +400,6 @@ sap.ui.define([
 				}
 			});
 
-		this.stub(router._oViews, "_getViewWithGlobalId").callsFake(function() {
-			return createView(
-					['<View xmlns="sap.ui.core.mvc">',
-						'</View>']);
-		});
-
 		var oParentRouteMatchedSpy = this.spy(router.getRoute("parent"), "_routeMatched");
 		var oChildRouteMatchedSpy = this.spy(router.getRoute("child"), "_routeMatched");
 
@@ -749,12 +732,6 @@ sap.ui.define([
 				pattern : "{foo}/{bar}"
 			} ]);
 
-		this.stub(router._oViews, "_getViewWithGlobalId").callsFake(function() {
-			return createView(
-					['<View xmlns="sap.ui.core.mvc">',
-						'</View>']);
-		});
-
 		var oRouteMatchedSpy = this.spy(router.getRoute("name"), "_routeMatched");
 
 		router.initialize();
@@ -816,12 +793,6 @@ sap.ui.define([
 					}
 				]
 			} ]);
-
-		this.stub(router._oViews, "_getViewWithGlobalId").callsFake(function() {
-			return createView(
-					['<View xmlns="sap.ui.core.mvc">',
-						'</View>']);
-		});
 
 		router.initialize();
 		router.attachBeforeRouteMatched(beforeMatched);
@@ -1296,7 +1267,7 @@ sap.ui.define([
 				targetControl: oShell.getId(),
 				targetAggregation: "content",
 				name : "name",
-				view : "myView",
+				view : "qunit/view/Async1",
 				viewType: "XML",
 				pattern : "view1"
 			}
@@ -1304,23 +1275,10 @@ sap.ui.define([
 
 		var oRouteMatchedSpy = this.spy(router.getRoute("name"), "_routeMatched");
 
-		var sXmlViewContent = [
-			'<View xmlns="sap.ui.core.mvc">',
-			'</View>'
-		].join('');
-
-		var oViewOptions = {
-			viewContent: sXmlViewContent,
-			type : "XML"
-		};
-
-		var oView = sap.ui.view(oViewOptions);
-
 		HashChanger.getInstance().setHash("view1");
 		oShell.placeAt("qunit-fixture");
 
 		//Act
-		router.setView("myView", oView);
 		router.initialize();
 
 		assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched has been called");
@@ -1340,6 +1298,9 @@ sap.ui.define([
 		HashChanger.getInstance().setHash("");
 
 		var oApp = new App();
+		var sId = "navContainer",
+			sId2 = "navContainer2",
+			sId3 = "navContainer3";
 
 		//Arrange System under Test
 		var router = fnCreateRouter([
@@ -1347,24 +1308,24 @@ sap.ui.define([
 				targetControl: oApp.getId(),
 				targetAggregation: "pages",
 				name : "name",
-				view : "myView",
-				viewType: "JS",
+				view : "qunit.router.view.MyView",
+				viewType: "XML",
 				pattern : "view1",
 				subroutes: [
 					{
-						targetControl: "navContainer",
+						targetControl: sId,
 						targetAggregation: "pages",
 						name : "subpage",
-						view : "subView",
-						viewType: "JS",
+						view : "qunit.router.view.SubView",
+						viewType: "XML",
 						pattern: "view1/view2",
 						subroutes: [
 							{
-								targetControl: "navContainer2",
+								targetControl: sId2,
 								targetAggregation: "pages",
 								name : "subsubpage",
-								view : "subView2",
-								viewType: "JS",
+								view : "qunit.router.view.SubView2",
+								viewType: "XML",
 								pattern: "foo"
 							}
 						]
@@ -1373,54 +1334,27 @@ sap.ui.define([
 			}
 		]);
 
-		var oNavContainer = new NavContainer("navContainer");
-		var oNavContainer2 = new NavContainer("navContainer2");
-		var oNavContainer3 = new NavContainer("navContainer3");
-
-		sap.ui.controller("myView", {});
-		sap.ui.controller("subView", {});
-		sap.ui.controller("subView2", {});
-		sap.ui.jsview("myView", {
-			createContent : function() {
-				return oNavContainer;
-			},
-			getController : function() {
-				return sap.ui.controller("myview");
-			}
-		});
-		sap.ui.jsview("subView", {
-			createContent : function() {
-				return oNavContainer2;
-			},
-			getController : function() {
-				return sap.ui.controller("subView");
-			}
-		});
-		sap.ui.jsview("subView2", {
-			createContent : function() {
-				return oNavContainer3;
-			},
-			getController : function() {
-				return sap.ui.controller("subView2");
-			}
-		});
 
 		var oRouteMatchedSpy = this.spy(router.getRoute("subsubpage"), "_routeMatched");
-
 		router.initialize();
-
 		oApp.placeAt("qunit-fixture");
 
 		//Act
 		HashChanger.getInstance().setHash("foo");
 
 		assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched has been called");
-
-		return  oRouteMatchedSpy.returnValues[0].then(function() {
+		return oRouteMatchedSpy.returnValues[0].then(function() {
 			//Assert
-			assert.strictEqual(oApp.getPages()[0].getContent()[0].getId(), oNavContainer.getId(), "oNavContainer is first page element in app");
-			assert.strictEqual(oNavContainer.getPages()[0].getContent()[0].getId(), oNavContainer2.getId(), "oNavContainer2 is first page element in oNavContainer");
-			assert.strictEqual(oNavContainer2.getPages()[0].getContent()[0].getId(), oNavContainer3.getId(), "oNavContainer3 is first page element in oNavContainer2");
+			var oView = oApp.getPages()[0];
+			var oNavContainer = oView.getContent()[0];
+			assert.strictEqual(oNavContainer.getId(), oView.createId(sId), "oNavContainer is first page element in app");
+
+			oView = oNavContainer.getPages()[0];
+			var oNavContainer2 = oView.getContent()[0];
+			assert.strictEqual(oNavContainer2.getId(), oView.createId(sId2), "oNavContainer2 is first page element in oNavContainer");
+
+			oView = oNavContainer2.getPages()[0];
+			assert.strictEqual(oView.getContent()[0].getId(), oView.createId(sId3), "oNavContainer3 is first page element in oNavContainer2");
 
 			//Cleanup
 			router.destroy();
@@ -1440,23 +1374,23 @@ sap.ui.define([
 				targetControl: oApp.getId(),
 				targetAggregation: "pages",
 				name : "splitContainerView",
-				view : "SplitContainerView",
-				viewType: "JS",
+				view : "qunit.router.view.SplitContainerView",
+				viewType: "XML",
 				subroutes: [
 					{
 						targetControl: "splitContainer",
 						targetAggregation: "masterPages",
 						name : "master",
-						view : "Master",
-						viewType: "JS",
+						view : "qunit.router.view.MasterView",
+						viewType: "XML",
 						pattern: "master",
 						subroutes: [
 							{
 								targetControl: undefined,
 								targetAggregation: "detailPages",
 								name : "detail",
-								view : "Detail",
-								viewType: "JS",
+								view : "qunit.router.view.DetailView",
+								viewType: "XML",
 								pattern: "detail"
 							}
 						]
@@ -1467,78 +1401,20 @@ sap.ui.define([
 				targetControl: oApp.getId(),
 				targetAggregation: "pages",
 				name : "navContainerView",
-				view : "NavContainerView",
-				viewType: "JS",
+				view : "qunit.router.view.NavContainerView",
+				viewType: "XML",
 				subroutes: [
 					{
 						targetControl: "navContainer",
 						targetAggregation: "pages",
 						name : "fullScreenPage",
-						view : "FullScreenPage",
-						viewType: "JS",
+						view : "qunit.router.view.FullScreenView",
+						viewType: "XML",
 						pattern: "fullScreen"
 					}
 				]
 			}
 		]);
-
-		var oNavContainer;
-		var oSplitContainer;
-		var oMasterContent = new Button();
-		var oDetailContent = new Button();
-		var oFullScreenContent = new Button();
-
-		sap.ui.controller("SplitContainerView", {});
-		sap.ui.controller("Master", {});
-		sap.ui.controller("Detail", {});
-		sap.ui.controller("NavContainerView", {});
-		sap.ui.controller("FullScreenPage", {});
-
-		sap.ui.jsview("NavContainerView", {
-			createContent : function() {
-				//simulate created ids
-				oNavContainer = new NavContainer(this.createId("navContainer"));
-				return oNavContainer;
-			},
-			getController : function() {
-				return sap.ui.controller("NavContainerView");
-			}
-		});
-		sap.ui.jsview("SplitContainerView", {
-			createContent : function() {
-				//simulate created ids
-				oSplitContainer =  new SplitContainer(this.createId("splitContainer"));
-				return oSplitContainer;
-			},
-			getController : function() {
-				return sap.ui.controller("SplitContainerView");
-			}
-		});
-		sap.ui.jsview("Master", {
-			createContent : function() {
-				return oMasterContent;
-			},
-			getController : function() {
-				return sap.ui.controller("Master");
-			}
-		});
-		sap.ui.jsview("Detail", {
-			createContent : function() {
-				return oDetailContent;
-			},
-			getController : function() {
-				return sap.ui.controller("Detail");
-			}
-		});
-		sap.ui.jsview("FullScreenPage", {
-			createContent : function() {
-				return oFullScreenContent;
-			},
-			getController : function() {
-				return sap.ui.controller("FullScreenPage");
-			}
-		});
-
 
 		var oDetailRouteMatchedSpy = this.spy(router.getRoute("detail"), "_routeMatched");
 		var oFullScreenRouteMatchedSpy = this.spy(router.getRoute("fullScreenPage"), "_routeMatched");
@@ -1555,9 +1431,23 @@ sap.ui.define([
 		return Promise.all([oDetailRouteMatchedSpy.returnValues[0], oFullScreenRouteMatchedSpy.returnValues[0]]).then(function() {
 			//Assert
 			assert.strictEqual(oApp.getPages().length, 2, "splitContainer and navContainer are added to App");
-			assert.strictEqual(oNavContainer.getPages()[0].getContent()[0].getId(), oFullScreenContent.getId(), "FullScreenContent is first page element in oNavContainer");
-			assert.strictEqual(oSplitContainer.getMasterPages()[0].getContent()[0].getId(), oMasterContent.getId(), "Master is first master-page element in oSplitContainer");
-			assert.strictEqual(oSplitContainer.getDetailPages()[0].getContent()[0].getId(), oDetailContent.getId(), "Detail is first detail-page element in oSplitContainer");
+
+			var oView = oApp.getPages()[0];
+			var oSplitContainer = oView.getContent()[0];
+			assert.strictEqual(oSplitContainer.getId(), oView.createId("splitContainer"), "splitContainer is first page element in oApp");
+
+			oView = oApp.getPages()[1];
+			var oNavContainer = oView.getContent()[0];
+			assert.strictEqual(oNavContainer.getId(), oView.createId("navContainer"), "navContainer is second page element in oApp");
+
+			oView = oNavContainer.getPages()[0];
+			assert.strictEqual(oView.getContent()[0].getId(), oView.createId("fullscreen"), "FullScreenContent is first page element in oNavContainer");
+
+			oView = oSplitContainer.getMasterPages()[0];
+			assert.strictEqual(oView.getContent()[0].getId(), oView.createId("master"), "Master is first master-page element in oSplitContainer");
+
+			oView = oSplitContainer.getDetailPages()[0];
+			assert.strictEqual(oView.getContent()[0].getId(), oView.createId("detail"), "Detail is first detail-page element in oSplitContainer");
 
 			//Cleanup
 			router.destroy();
@@ -1576,21 +1466,11 @@ sap.ui.define([
 				targetAggregation: "content",
 				name : "name",
 				viewId: "test-view",
-				view : "myView",
+				view : "qunit.router.view.FullScreenView",
 				pattern : "view1"
 			}
 		],{
-			viewType: "JS"
-		});
-
-		sap.ui.controller("myView", {});
-		sap.ui.jsview("myView", {
-			createContent : function() {
-				return new Button();
-			},
-			getController : function() {
-				return sap.ui.controller("myView");
-			}
+			viewType: "XML"
 		});
 
 		var oRouteMatchedSpy = this.spy(router.getRoute("name"), "_routeMatched");
@@ -1965,217 +1845,73 @@ sap.ui.define([
 	});
 
 	QUnit.test("TitleChanged event should be fired only once if title has binding", function(assert){
-		sap.ui.jsview("namespace.comp.RootView", {
-			createContent : function() {
-				return new Panel(this.createId("rootPanel"));
-			}
-		});
+		return Component.create({
+				name: "qunit.router.component.titleChanged.Parent"
+			})
+			.then(function(oComponent) {
+				this.oComponent = oComponent;
+				this.oRouter = oComponent.getRouter();
+				var oHomeRouteMatchedSpy = sinon.spy(this.oRouter.getRoute("home"), "_routeMatched");
+				this.oRouter.initialize();
 
-		sap.ui.jsview("namespace.comp.MyView1", {
-			createContent : function() {
-				return new Button({
-					text: "Home"
-				});
-			}
-		});
+				return oHomeRouteMatchedSpy.getCall(0).returnValue;
+			}.bind(this))
+			.then(function(){
+				this.oTitleChangedSpy = sinon.spy();
+				this.oRouter.attachTitleChanged(this.oTitleChangedSpy);
 
-		sap.ui.jsview("namespace.comp.MyView2", {
-			createContent: function () {
-				return new Button({
-					text: "ButtonMyView1"
-				});
-			}
-		});
+				var oSecondRouteMatchedSpy = sinon.spy(this.oRouter.getRoute("second"), "_routeMatched");
+				this.oRouter.navTo("second");
 
-		sap.ui.predefine("namespace/comp/GrandChildComponent/Component", ["sap/ui/core/UIComponent"], function (UIComponent) {
-			return UIComponent.extend("namespace.comp.GrandChildComponent", {
-				metadata: {
-					rootView: {
-						viewName: "namespace.comp.RootView",
-						type: "JS",
-						async: true
-					},
-					routing: {
-						config: {
-							async: true,
-							controlAggregation: "content",
-							controlId: "rootPanel",
-							viewType: "JS",
-							type: "View"
-						},
-						routes: [
-							{
-								pattern: "",
-								name: "view1",
-								target: "view1"
-							}, {
-								pattern: "view2",
-								name: "view2",
-								target: "view2"
-							}
-						],
-						targets: {
-							view1: {
-								name: "namespace.comp.MyView1",
-								title: "{/GrandChildComponentViewTitle}"
-							},
-							view2: {
-								name: "namespace.comp.MyView2",
-								title: "MyGrandChildView2Title"
-							}
-						}
-					}
-				},
-				init : function() {
-					UIComponent.prototype.init.apply(this, arguments);
-					this.setModel(new JSONModel({}));
-					this.getRouter().initialize();
-				}
-			});
-		});
+				return oSecondRouteMatchedSpy.getCall(0).returnValue;
+			}.bind(this))
+			.then(function () {
+				assert.strictEqual(this.oTitleChangedSpy.callCount, 0, "The title change event shouldn't fired, as title isn't resolved");
 
-		sap.ui.predefine("namespace/comp/ChildComponent/Component", ["sap/ui/core/UIComponent"], function (UIComponent) {
-			return UIComponent.extend("namespace.comp.ChildComponent", {
-				metadata: {
-					rootView: {
-						viewName: "namespace.comp.RootView",
-						type: "JS",
-						async: true
-					},
-					routing: {
-						config: {
-							async: true,
-							controlAggregation: "content",
-							controlId: "rootPanel",
-							viewType: "JS",
-							type: "View"
-						},
-						routes: [
-							{
-								pattern: "",
-								name: "view1",
-								target: "view1"
-							},
-							{
-								pattern: "view2",
-								name: "view2",
-								target: {
-									name: "view2",
-									prefix: "grandchild",
-									propagateTitle: true
-								}
-							}
-						],
-						targets: {
-							view1: {
-								name: "namespace.comp.MyView1",
-								title: "TitleView1"
-							},
-							view2: {
-								name: "namespace.comp.GrandChildComponent",
-								title: "GrandChildComponentTitle",
-								type: "Component",
-								options: { manifest: false }
-							}
-						}
-					}
-				},
-				init: function () {
-					UIComponent.prototype.init.apply(this, arguments);
-					this.setModel(new JSONModel({}));
-					this.getRouter().initialize();
-				}
-			});
-		});
-
-		var Component = UIComponent.extend("namespace.comp.Component", {
-			metadata : {
-				rootView: { viewName: "namespace.comp.RootView", type: "JS", async: true},
-				routing:  {
-					config: {
-						async: true,
-						viewType: "JS",
-						type: "View",
-						controlId: "rootPanel",
-						controlAggregation: "content"
-					},
-					routes: [
-						{ pattern: "", name: "home", target: "home"},
-						{ pattern: "second", name: "second", target: "second" },
-						{ pattern: "third", name: "third", target: { name: "third", prefix: "child", propagateTitle: true } }
-					],
-					targets: {
-						home: { name: "namespace.comp.MyView1", title: "Home"},
-						second: { name: "namespace.comp.MyView2", title: "{/secondViewTitle}"},
-						third: { name: "namespace.comp.ChildComponent", type: "Component", id: "childComponent", title: "ChildComponentTitle", options: { manifest: false } }
-					}
-				}
-			},
-			init: function(){
-				UIComponent.prototype.init.apply(this, arguments);
-				this.setModel(new JSONModel({}));
-			}
-		});
-
-		var oComponent = new Component();
-		var done = assert.async();
-		var oTitleChangedSpy = sinon.spy();
-
-		this.oRouter = oComponent.getRouter();
-
-		var oHomeRouteMatchedSpy = sinon.spy(this.oRouter.getRoute("home"), "_routeMatched");
-		var oSecondRouteMatchedSpy = sinon.spy(this.oRouter.getRoute("second"), "_routeMatched");
-
-		this.oRouter.initialize();
-
-		oHomeRouteMatchedSpy.getCall(0).returnValue.then(function(){
-			this.oRouter.attachTitleChanged(oTitleChangedSpy);
-			this.oRouter.navTo("second");
-
-			oSecondRouteMatchedSpy.getCall(0).returnValue.then(function () {
-				assert.strictEqual(oTitleChangedSpy.callCount, 0, "The title change event shouldn't fired, as title isn't resolved");
-
-				oComponent.getModel().setProperty("/secondViewTitle", "Foo");
-				assert.strictEqual(oTitleChangedSpy.callCount, 1, "The title change event should be fired the first time");
-				assert.strictEqual(oTitleChangedSpy.getCall(0).args[0].getParameter("title"), "Foo", "The title 'Foo' should be correct");
+				this.oComponent.getModel().setProperty("/secondViewTitle", "Foo");
+				assert.strictEqual(this.oTitleChangedSpy.callCount, 1, "The title change event should be fired the first time");
+				assert.strictEqual(this.oTitleChangedSpy.getCall(0).args[0].getParameter("title"), "Foo", "The title 'Foo' should be correct");
 
 				var oThirdRouteMatchedSpy = sinon.spy(this.oRouter.getRoute("third"), "_routeMatched");
 				this.oRouter.navTo("third");
-				oThirdRouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
-					assert.strictEqual(oTitleChangedSpy.callCount, 2, "The title change event should be fired the second time");
-					assert.strictEqual(oTitleChangedSpy.getCall(1).args[0].getParameter("title"), "TitleView1", "The title 'TitleView1' should be correct");
+				return oThirdRouteMatchedSpy.getCall(0).returnValue;
+			}.bind(this))
+			.then(function (oObject) {
+				assert.strictEqual(this.oTitleChangedSpy.callCount, 2, "The title change event should be fired the second time");
+				assert.strictEqual(this.oTitleChangedSpy.getCall(1).args[0].getParameter("title"), "TitleView1", "The title 'TitleView1' should be correct");
 
-					var oChildComponent = oObject.view.getComponentInstance();
-					var oChildRouter = oChildComponent.getRouter();
-					var oView1RouteMatchedSpy = sinon.spy(oChildRouter.getRoute("view2"), "_routeMatched");
+				var oChildComponent = oObject.view.getComponentInstance();
+				var oChildRouter = oChildComponent.getRouter();
+				var oView1RouteMatchedSpy = sinon.spy(oChildRouter.getRoute("view2"), "_routeMatched");
 
-					oChildRouter.navTo("view2");
-					oView1RouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
-						assert.strictEqual(oTitleChangedSpy.callCount, 2, "The title change event shouldn't fired, as title isn't resolved");
+				oChildRouter.navTo("view2");
+				return oView1RouteMatchedSpy.getCall(0).returnValue;
+			}.bind(this))
+			.then(function (oObject) {
+				assert.strictEqual(this.oTitleChangedSpy.callCount, 2, "The title change event shouldn't fired, as title isn't resolved");
 
-						var oGrandChildComponent = oObject.view.getComponentInstance();
+				this.oGrandChildComponent = oObject.view.getComponentInstance();
 
-						var oGrandChildRouter = oGrandChildComponent.getRouter();
-						var oGrandChildView2RouteMatchedSpy = sinon.spy(oGrandChildRouter.getRoute("view2"), "_routeMatched");
+				var oGrandChildRouter = this.oGrandChildComponent.getRouter();
+				var oGrandChildView2RouteMatchedSpy = sinon.spy(oGrandChildRouter.getRoute("view2"), "_routeMatched");
 
-						oGrandChildRouter.navTo("view2");
-						oGrandChildView2RouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
-							assert.strictEqual(oTitleChangedSpy.callCount, 3, "The title change event should be the third time");
-							assert.strictEqual(oTitleChangedSpy.getCall(2).args[0].getParameter("title"), "MyGrandChildView2Title", "The title 'MyGrandChildView2Title' should be correct");
+				oGrandChildRouter.navTo("view2");
+				return oGrandChildView2RouteMatchedSpy.getCall(0).returnValue;
+			}.bind(this))
+			.then(function(oObject) {
+				assert.strictEqual(this.oTitleChangedSpy.callCount, 3, "The title change event should be the third time");
+				assert.strictEqual(this.oTitleChangedSpy.getCall(2).args[0].getParameter("title"), "MyGrandChildView2Title", "The title 'MyGrandChildView2Title' should be correct");
 
-							oGrandChildComponent.getModel().setProperty("/GrandChildComponentViewTitle", "Bar");
-							setTimeout(function() {
-								assert.strictEqual(oTitleChangedSpy.callCount, 3, "The title change event shouldn't be fired as Router has navigated to a different route");
+				this.oGrandChildComponent.getModel().setProperty("/GrandChildComponentViewTitle", "Bar");
+				return new Promise(function(resolve, reject) {
+					setTimeout(function() {
+						assert.strictEqual(this.oTitleChangedSpy.callCount, 3, "The title change event shouldn't be fired as Router has navigated to a different route");
 
-								oSecondRouteMatchedSpy.restore();
-								oComponent.destroy();
-								done();
-							}, 0);
-						});
-					});
-				});
+						this.oComponent.destroy();
+						resolve();
+					}.bind(this), 0);
+				}.bind(this));
 			}.bind(this));
-		}.bind(this));
 	});
 
 	QUnit.module("component", {
@@ -2746,58 +2482,25 @@ sap.ui.define([
 	QUnit.module("nested components", {
 		beforeEach: function() {
 			hasher.setHash("");
-			var that = this;
-			this.fnInitRouter = function() {
-				UIComponent.prototype.init.apply(this, arguments);
-				this._router = this.getRouter();
-				this._router.initialize();
-			};
+			return Component.create({
+				name: "qunit.router.component.parentRoute.Parent",
+				id: "parent"
+			}).then(function(oComponent) {
+				var that = this;
+				this.oParentComponent = oComponent;
+				this.oParentComponent.getRouter().initialize();
 
-			var ParentComponent,
-				ChildComponent;
+				var oRootView = oComponent.getRootControl();
+				var oComponentContainer = oRootView.byId("container");
 
-			ParentComponent = UIComponent.extend("namespace.ParentComponent", {
-				metadata : {
-					routing:  {
-						config: {
-							async: true
-						},
-						routes: [
-							{
-								pattern: "category/{id}",
-								name: "category"
-							}
-						]
-					}
-				},
-				createContent: function() {
-					that.oChildComponent = new ChildComponent("child");
-					return sap.ui.jsview("view", {
-						content: that.oChildComponent
+				return new Promise(function(resolve, reject) {
+					oRootView.placeAt("qunit-fixture");
+					oComponentContainer.attachComponentCreated(function(oEvent) {
+						that.oChildComponent = oEvent.getParameter("component");
+						resolve();
 					});
-				},
-				init : that.fnInitRouter
-			});
-
-			ChildComponent = UIComponent.extend("namespace.ChildComponent", {
-				metadata : {
-					routing:  {
-						config: {
-							async: true
-						},
-						routes: [
-							{
-								pattern: "product/{id}",
-								name: "product",
-								parent: "namespace.ParentComponent:category"
-							}
-						]
-					}
-				},
-				init : that.fnInitRouter
-			});
-
-			this.oParentComponent = new ParentComponent("parent");
+				});
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oParentComponent.destroy();
@@ -2845,109 +2548,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("nesting for multiple components", function(assert) {
-		// This is a pretty extensive test to cover any number of components being nested.
-		// It covers also the scope of the previous test, but on a more generic level.
-
-		// Arrange
-		var that = this,
-			iNumberOfComponents = 3,
-			aComponents = [],
-			aComponentInstances = [],
-			aRoutes = [],
-			aRouteMatchedSpies = [],
-			aRouteMatchedEvents = [],
-			aRouteMatchedEventSpies = [],
-			aRoutePatternMatchedSpies = [],
-			// We declare components in a function to be able to cover any number
-			fnDeclareComponent = function(i, iDepth) {
-				var Component = UIComponent.extend("namespace.Component" + i, {
-					metadata : {
-						routing:  {
-							config: {
-								async: true
-							},
-							routes: [
-								{
-									pattern: "route" + i + "/{id}",
-									name: "route" + i,
-									// set no parent for the (root-) route
-									parent: (i != 0) ? "namespace.Component" + (( i - 1 ) + ":route" + ( i - 1 )) : undefined
-								}
-							]
-						}
-					},
-					createContent: function() {
-						// instantiate "child-"routes for all routes except the directly matched one
-						if (i < (iDepth - 1)) {
-							// store pointers to the instances for later usage
-							aComponentInstances[i + 1] = new aComponents[i + 1]("component" + (i + 1));
-							return sap.ui.jsview("view", {
-								content: aComponentInstances[i + 1]
-							});
-						}
-					},
-					init : that.fnInitRouter
-				});
-				aComponents.push(Component);
-			},
-			fnDeclareComponents = function(iDepth) {
-				for (var i = 0; i < iDepth; i++) {
-					fnDeclareComponent(i, iDepth);
-				}
-				return aComponents[0];
-			};
-
-		// start instantion
-		var Component = fnDeclareComponents(iNumberOfComponents);
-		aComponentInstances[0] = new Component("component0");
-
-		// Create spies and attach events for all component instances
-		aComponentInstances.forEach(function(oComponent, i) {
-			aRoutes[i] = oComponent.getRouter().getRoute("route" + i);
-			aRouteMatchedEventSpies[i] = sinon.spy(function(oEvent) {
-				// save the oEvent because EventProvider will overwrite it otherwise
-				aRouteMatchedEvents[i] = deepExtend({}, oEvent);
-			});
-			aRouteMatchedSpies[i] = sinon.spy(aRoutes[i], "_routeMatched");
-			aRoutePatternMatchedSpies[i] = sinon.spy();
-			aRoutes[i].attachMatched(aRouteMatchedEventSpies[i]);
-			aRoutes[i].attachPatternMatched(aRoutePatternMatchedSpies[i]);
-		});
-
-		var sHash = "";
-		for (var i = 0; i < iNumberOfComponents; i++) {
-			sHash += "/route" + i + "/0";
-		}
-
-		// Act
-		// remove the first slash as it will be implicitly added
-		hasher.setHash(sHash.substring(1));
-
-		var aPromises = aRouteMatchedSpies.map(function(oRouteMatchSpy) {
-			assert.strictEqual(oRouteMatchSpy.callCount, 1, "_routeMatched is called");
-			return oRouteMatchSpy.returnValues[0];
-		});
-
-		return Promise.all(aPromises).then(function() {
-			// Assert
-			aRouteMatchedEvents.forEach(function(oEvent, i, a) {
-				if (i === a.length - 1) {
-					assert.strictEqual(oEvent.getParameter("nestedRoute"), undefined, "no nested route is passed to the directly matched " + oEvent.getParameter("name"));
-					assert.strictEqual(aRoutePatternMatchedSpies[i].callCount, 1, "pattern matched has been fired for the directly matched " + oEvent.getParameter("name"));
-				} else {
-					assert.strictEqual(oEvent.getParameter("nestedRoute"), aRoutes[i + 1], aRoutes[i + 1] + " nested route is passed to " + oEvent.getParameter("name"));
-					assert.strictEqual(aRoutePatternMatchedSpies[i].callCount, 0, "pattern matched has not been fired for " + oEvent.getParameter("name"));
-				}
-			});
-
-			// CleanUp
-			aComponentInstances.forEach(function(oComponent) {
-				oComponent.destroy();
-			});
-		});
-	});
-
 	function resetBrowserHash() {
 		HashChanger.getInstance().fireHashChanged("");
 		hasher.setHash("");
@@ -2969,123 +2569,20 @@ sap.ui.define([
 		}
 	}
 
-	var count = 0;
 	QUnit.module("Router in nested component", {
 		beforeEach: function() {
 			this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
 			resetBrowserHash();
-			var that = this;
-			this.fnInitRouter = function() {
-				UIComponent.prototype.init.apply(this, arguments);
-				this._router = this.getRouter();
-				this._router.initialize();
-			};
 
-			sap.ui.jsview("rootView1", {
-				createContent : function() {
-					return new VBox(this.createId("box"), {
-						items: [
-							new ShellSubstitute(this.createId("shell"))
-						]
-					});
-				}
-			});
-
-			sap.ui.jsview("namespace1.footer" + count, {
-				createContent : function() {
-					return new Button({
-						text: "abc"
-					});
-				}
-			});
-
-			var ParentComponent;
-			ParentComponent = UIComponent.extend("namespace1.ParentComponent" + count, {
-				metadata : {
-					rootView: {
-						viewName: "rootView1",
-						type: "JS",
-						async: true
-					},
-					routing:  {
-						config: {
-							async: true
-						},
-						routes: [
-							{
-								pattern: "",
-								name: "home",
-								target: [ {
-									name: "home",
-									prefix: "child"
-								}, "footer"]
-							},
-							{
-								pattern: "category",
-								name: "category"
-							}
-						],
-						targets: {
-							home: {
-								name: "namespace1.ChildComponent" + count,
-								type: "Component",
-								clearControlAggregation: true,
-								controlId: "shell",
-								controlAggregation: "content",
-								options: {
-									manifest: false
-								}
-							},
-							footer: {
-								type: "View",
-								viewType: "JS",
-								name: "namespace1.footer" + count,
-								controlId: "box",
-								controlAggregation: "items"
-							}
-						}
-					}
-				},
-				init : that.fnInitRouter
-			});
-
-			this.oNestedRouteMatchedSpy = sinon.spy();
-
-			sap.ui.predefine("namespace1/ChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-				return UIComponent.extend("namespace1.ChildComponent" + count, {
-					metadata : {
-						routing:  {
-							config: {
-								async: true
-							},
-							routes: [
-								{
-									pattern: "product/{id}",
-									name: "product"
-								},
-								{
-									pattern: "",
-									name: "nestedHome"
-								}
-							]
-						}
-					},
-					init : function() {
-						UIComponent.prototype.init.apply(this, arguments);
-						var oRouter = this.getRouter();
-
-						oRouter.attachRouteMatched(that.oNestedRouteMatchedSpy);
-						oRouter.initialize();
-					}
-				});
-			});
-
-			this.oParentComponent = new ParentComponent("parent");
+			return Component.create({
+				name: "qunit.router.component.nestedComponent.Parent"
+			}).then(function(oComponent) {
+				this.oParentComponent = oComponent;
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oParentComponent.destroy();
 			this.oEventProviderStub.restore();
-			count++;
 		}
 	});
 
@@ -3098,17 +2595,16 @@ sap.ui.define([
 				var oContainer = that.oParentComponent.getRootControl(),
 					oShell = oContainer.byId("shell");
 				assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
-				assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+				assert.ok(oShell.getContent()[0] instanceof ComponentContainer, "A component container is added to the target aggregation");
 
 				var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-				assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
-				assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
+				assert.equal(oNestedComponent.getMetadata().getName(), "qunit.router.component.nestedComponent.Child.Component", "The correct component is loaded and instantiated");
 
-				var oEvent = that.oNestedRouteMatchedSpy.args[0][0];
-				assert.equal(oEvent.getParameter("name"), "nestedHome", "The route with empty string pattern is matched");
 				oNestedComponent.destroy();
 				resolve();
 			});
+
+			oRouter.initialize();
 		});
 	});
 
@@ -3125,6 +2621,7 @@ sap.ui.define([
 
 				resolve(oNestedComponent);
 			});
+			oRouter.initialize();
 		}).then(function(oNestedComponent) {
 			var oNestedRouter = oNestedComponent.getRouter();
 			var oNestedHomeRoute = oNestedRouter.getRoute("nestedHome");
@@ -3159,6 +2656,7 @@ sap.ui.define([
 			};
 
 			oRouter.getRoute("home").attachMatched(fnHomeMatched);
+			oRouter.initialize();
 		}).then(function(oNestedComponent) {
 			var oNestedRouter = oNestedComponent.getRouter();
 			var oNestedRouterStopSpy = sinon.spy(oNestedRouter, "stop");
@@ -3171,13 +2669,15 @@ sap.ui.define([
 			oRouter.navTo("category");
 			return oPromise;
 		}).then(function(oNestedComponent) {
-			var iOldCountNestedRouteMatched = that.oNestedRouteMatchedSpy.callCount;
 			var oNestedRouter = oNestedComponent.getRouter();
 			var oNestedRouterInitSpy = sinon.spy(oNestedRouter, "initialize");
+			var oNestedRouteMatchedSpy = sinon.spy();
+
+			oNestedRouter.getRoute("nestedHome").attachMatched(oNestedRouteMatchedSpy);
 			var oPromise = new Promise(function(resolve, reject) {
 				oRouter.getRoute("home").attachMatched(function() {
 					assert.equal(oNestedRouterInitSpy.callCount, 1, "The Router in nested component is initialized again");
-					assert.equal(that.oNestedRouteMatchedSpy.callCount - iOldCountNestedRouteMatched, 1, "Another routeMatched event is fired in the nested router");
+					assert.equal(oNestedRouteMatchedSpy.callCount, 1, "Another routeMatched event is fired in the nested router");
 					oNestedComponent.destroy();
 					resolve();
 				});
@@ -3187,144 +2687,32 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Should throw an error if a nested component has configured synchronous routing", function(assert){
-		var ParentComponent  = UIComponent.extend("namespace.asyc.ParentComponent", {
-			metadata: {
-				rootView: {
-					viewName: "rootView1",
-					type: "JS",
-					async: true
-				},
-				routing:  {
-					config: {
-						async: true
-					},
-					routes: [
-						{
-							pattern: "",
-							name: "home",
-							target: {
-								name: "home",
-								prefix: "child"
-							}
-						},
-						{
-							pattern: "category",
-							name: "category"
-						}
-					],
-					targets: {
-						home: {
-							name: "namespace.sync.ChildComponent",
-							type: "Component",
-							id: "syncChildComponent",
-							controlId: "shell",
-							controlAggregation: "content",
-							options: {
-								manifest: false
-							}
-						}
-					}
-				}
-			}
-		});
-
-		sap.ui.predefine("namespace/sync/ChildComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("namespace.sync.ChildComponent", {
-				metadata: {
-					routing:  {
-						config: {
-							async: false
-						},
-						routes: [
-							{
-								pattern: "product/{id}",
-								name: "product"
-							},
-							{
-								pattern: "",
-								name: "nestedHome"
-							}
-						]
-					}
-				},
-				init: function() {
-					UIComponent.prototype.init.apply(this, arguments);
-					var oRouter = this.getRouter();
-					oRouter.initialize();
-				}
-			});
-		});
-
-		var oParentComponent = new ParentComponent("asyncParent");
-		var oHomeRoute = oParentComponent.getRouter().getRoute("home");
-		var oHomeRouteMatchedSpy = sinon.spy(oHomeRoute, "_routeMatched");
-		var done = assert.async();
-
-		oParentComponent.getRouter().initialize();
-		assert.equal(oHomeRouteMatchedSpy.callCount, 1, "The home route should be matched once");
-		oHomeRouteMatchedSpy.getCall(0).returnValue.catch(function(oError){
-			assert.equal(oError.message, "The router of component 'asyncParent---syncChildComponent' which is loaded via the target 'home' is defined as synchronous which is not supported using as a nested component.", "The correct error should be thrown.");
-			done();
-		});
-	});
-
 	QUnit.test("Should suspend a dynamic displayed target when router navigates away from it - routeRelevant: true", function(assert) {
-		sap.ui.predefine("namespace1/DynamicChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("namespace1.DynamicChildComponent" + count, {
-				metadata : {
-					routing:  {
-						config: {
-							async: true
-						},
-						routes: [
-							{
-								pattern: "product/{id}",
-								name: "product"
-							},
-							{
-								pattern: "",
-								name: "nestedHome"
-							}
-						]
-					}
-				},
-				init : function() {
-					UIComponent.prototype.init.apply(this, arguments);
-					var oRouter = this.getRouter();
-
-					oRouter.initialize();
-				}
-			});
-		});
-
 		var that = this,
 			oRouter = this.oParentComponent.getRouter(),
-			sDynamicComponentName = "DynamicChildComponent" + count;
+			sDynamicComponentName = "DynamicChildComponent";
 
 		var oResetHashSpy = sinon.spy(oRouter.getHashChanger(), "resetHash");
+
+		oRouter.initialize();
 
 		return waitTillRouteMatched(oRouter, "home").then(function(oParams) {
 			var oContainer = that.oParentComponent.getRootControl(),
 				oShell = oContainer.byId("shell");
 			assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
-			assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+			assert.ok(oShell.getContent()[0] instanceof ComponentContainer, "A component container is added to the target aggregation");
 
 			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
-			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
+			assert.equal(oNestedComponent.getMetadata().getName(), "qunit.router.component.nestedComponent.Child.Component", "The correct component is loaded and instantiated");
 		})
 		// Step1: display dynamic component target
 		.then(function() {
 			// Add dynamic component target
 			oRouter.getTargets().addTarget(sDynamicComponentName, {
-				name: "namespace1.DynamicChildComponent" + count,
+				name: "qunit.router.component.nestedComponent.Child",
 				type: "Component",
 				controlId: "shell",
-				controlAggregation: "content",
-				options: {
-					manifest: false
-				}
+				controlAggregation: "content"
 			});
 
 			var fnDisplayed1 = function (oEvent) {
@@ -3373,11 +2761,10 @@ sap.ui.define([
 				var oContainer = that.oParentComponent.getRootControl(),
 					oShell = oContainer.byId("shell");
 				assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
-				assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+				assert.ok(oShell.getContent()[0] instanceof ComponentContainer, "A component container is added to the target aggregation");
 
 				var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-				assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
-				assert.equal(that.oNestedRouteMatchedSpy.callCount, 2, "Route is matched again inside the nested component");
+				assert.equal(oNestedComponent.getMetadata().getName(), "qunit.router.component.nestedComponent.Child.Component", "The correct component is loaded and instantiated");
 				assert.equal(mParam.targetSuspendSpy.callCount, 1, "Target#suspend shouldn't be called again");
 
 				oResetHashSpy.restore();
@@ -3387,77 +2774,40 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should suspend a dynamic displayed target and its parent when router navigates away from it - routeRelevant: true", function(assert) {
-		sap.ui.predefine("namespace1/DynamicChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("namespace1.DynamicChildComponent" + count, {
-				metadata : {
-					routing:  {
-						config: {
-							async: true
-						},
-						routes: [
-							{
-								pattern: "product/{id}",
-								name: "product"
-							},
-							{
-								pattern: "",
-								name: "nestedHome"
-							}
-						]
-					}
-				},
-				init : function() {
-					UIComponent.prototype.init.apply(this, arguments);
-					var oRouter = this.getRouter();
-
-					oRouter.initialize();
-				}
-			});
-		});
-
-		sap.ui.jsview("DynamicComponentTargetParent", {
-			createContent : function() {
-				return new VBox(this.createId("box"));
-			}
-		});
-
 		var that = this,
 			oRouter = this.oParentComponent.getRouter(),
-			sDynamicComponentName = "DynamicChildComponent" + count,
+			sDynamicComponentName = "DynamicChildComponent",
 			sParentTarget = sDynamicComponentName + "Parent";
 
 		var oResetHashSpy = sinon.spy(oRouter.getHashChanger(), "resetHash");
 
+		oRouter.initialize();
 		return waitTillRouteMatched(oRouter, "home").then(function(oParams) {
 			var oContainer = that.oParentComponent.getRootControl(),
 				oShell = oContainer.byId("shell");
 			assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
-			assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+			assert.ok(oShell.getContent()[0] instanceof ComponentContainer, "A component container is added to the target aggregation");
 
 			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
-			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
+			assert.equal(oNestedComponent.getMetadata().getName(), "qunit.router.component.nestedComponent.Child.Component", "The correct component is loaded and instantiated");
 		})
 		// Step1: display dynamic component target
 		.then(function() {
 			oRouter.getTargets().addTarget(sParentTarget, {
-				name: "DynamicComponentTargetParent",
+				name: "qunit.router.component.nestedComponent.Parent.view.DynamicComponentTargetContainer",
 				type: "View",
-				viewType: "JS",
+				viewType: "XML",
 				controlId: "shell",
 				controlAggregation: "content"
 			});
 
 			// Add dynamic component target
 			oRouter.getTargets().addTarget(sDynamicComponentName, {
-				name: "namespace1.DynamicChildComponent" + count,
+				name: "qunit.router.component.nestedComponent.Child",
 				type: "Component",
 				parent: sParentTarget,
 				controlId: "box",
-				controlAggregation: "items",
-				options: {
-					manifest: false
-				}
+				controlAggregation: "items"
 			});
 
 			var aDisplayedTargets = [];
@@ -3515,11 +2865,10 @@ sap.ui.define([
 				var oContainer = that.oParentComponent.getRootControl(),
 					oShell = oContainer.byId("shell");
 				assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
-				assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+				assert.ok(oShell.getContent()[0] instanceof ComponentContainer, "A component container is added to the target aggregation");
 
 				var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-				assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
-				assert.equal(that.oNestedRouteMatchedSpy.callCount, 2, "Route is matched again inside the nested component");
+				assert.equal(oNestedComponent.getMetadata().getName(), "qunit.router.component.nestedComponent.Child.Component", "The correct component is loaded and instantiated");
 
 				oResetHashSpy.restore();
 			});
@@ -3527,64 +2876,34 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should not suspend a dynamic displayed target when router navigates away from it - routeRelevant: false", function(assert) {
-		sap.ui.predefine("namespace1/DynamicChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("namespace1.DynamicChildComponent" + count, {
-				metadata : {
-					routing:  {
-						config: {
-							async: true
-						},
-						routes: [
-							{
-								pattern: "product/{id}",
-								name: "product"
-							},
-							{
-								pattern: "",
-								name: "nestedHome"
-							}
-						]
-					}
-				},
-				init : function() {
-					UIComponent.prototype.init.apply(this, arguments);
-					var oRouter = this.getRouter();
-
-					oRouter.initialize();
-				}
-			});
-		});
-
 		var that = this,
 			oRouter = this.oParentComponent.getRouter(),
-			sDynamicComponentName = "DynamicChildComponent" + count;
+			sDynamicComponentName = "DynamicChildComponent";
 
 		var oResetHashSpy = sinon.spy(oRouter.getHashChanger(), "resetHash");
 
 		var oDisplayEventSpy = that.spy();
 		oRouter.getTargets().attachDisplay(oDisplayEventSpy);
 
+		oRouter.initialize();
+
 		return waitTillRouteMatched(oRouter, "home").then(function(oParameters) {
 			var oContainer = that.oParentComponent.getRootControl(),
 				oShell = oContainer.byId("shell");
 			assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
-			assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+			assert.ok(oShell.getContent()[0] instanceof ComponentContainer, "A component container is added to the target aggregation");
 
 			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
-			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
+			assert.equal(oNestedComponent.getMetadata().getName(), "qunit.router.component.nestedComponent.Child.Component", "The correct component is loaded and instantiated");
 		})
 		// Step1: display dynamic component target
 		.then(function() {
 			// Add dynamic component target
 			oRouter.getTargets().addTarget(sDynamicComponentName, {
-				name: "namespace1.DynamicChildComponent" + count,
+				name: "qunit.router.component.nestedComponent.Child",
 				type: "Component",
 				controlId: "shell",
-				controlAggregation: "content",
-				options: {
-					manifest: false
-				}
+				controlAggregation: "content"
 			});
 
 			oDisplayEventSpy.resetHistory();
@@ -3626,11 +2945,10 @@ sap.ui.define([
 				var oContainer = that.oParentComponent.getRootControl(),
 					oShell = oContainer.byId("shell");
 				assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
-				assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+				assert.ok(oShell.getContent()[0] instanceof ComponentContainer, "A component container is added to the target aggregation");
 
 				var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-				assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
-				assert.equal(that.oNestedRouteMatchedSpy.callCount, 2, "Route is matched again inside the nested component");
+				assert.equal(oNestedComponent.getMetadata().getName(), "qunit.router.component.nestedComponent.Child.Component", "The correct component is loaded and instantiated");
 
 				assert.ok(oDisplayEventSpy.callCount > 0, "The event handler is called");
 				assert.equal(oDisplayEventSpy.getCall(0).args[0].getParameter("name"), "home", "Correct target is displayed");
@@ -3641,58 +2959,31 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should suspend a dynamic displayed target when router navigates away from it - routeRelevant: true, then routeRelevant: false", function (assert) {
-		sap.ui.predefine("namespace1/DynamicChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function (UIComponent) {
-			return UIComponent.extend("namespace1.DynamicChildComponent" + count, {
-				metadata: {
-					routing: {
-						config: {
-							async: true
-						},
-						routes: [
-							{
-								pattern: "product/{id}",
-								name: "product"
-							},
-							{
-								pattern: "",
-								name: "nestedHome"
-							}
-						]
-					}
-				},
-				init: function () {
-					UIComponent.prototype.init.apply(this, arguments);
-					var oRouter = this.getRouter();
-
-					oRouter.initialize();
-				}
-			});
-		});
-
 		var that = this,
 			oRouter = this.oParentComponent.getRouter(),
-			sDynamicComponentName = "DynamicChildComponent" + count;
+			sDynamicComponentName = "DynamicChildComponent";
 
 		var oResetHashSpy = sinon.spy(oRouter.getHashChanger(), "resetHash");
 
 		var oDisplayEventSpy = that.spy();
 		oRouter.getTargets().attachDisplay(oDisplayEventSpy);
 
+		oRouter.initialize();
+
 		return waitTillRouteMatched(oRouter, "home").then(function() {
 			var oContainer = that.oParentComponent.getRootControl(),
 				oShell = oContainer.byId("shell");
 			assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
-			assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+			assert.ok(oShell.getContent()[0] instanceof ComponentContainer, "A component container is added to the target aggregation");
 
 			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
-			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
+			assert.equal(oNestedComponent.getMetadata().getName(), "qunit.router.component.nestedComponent.Child.Component", "The correct component is loaded and instantiated");
 		})
 		// Step1: Display dynamic component target
 		.then(function() {
 			// Add dynamic component target
 			oRouter.getTargets().addTarget(sDynamicComponentName, {
-				name: "namespace1.DynamicChildComponent" + count,
+				name: "qunit.router.component.nestedComponent.Child",
 				type: "Component",
 				controlId: "shell",
 				controlAggregation: "content",
@@ -3766,59 +3057,29 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should initialize a dynamic displayed target when parent router is initialized without parsing the current hash", function(assert) {
-		sap.ui.predefine("namespace1/DynamicChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("namespace1.DynamicChildComponent" + count, {
-				metadata : {
-					routing:  {
-						config: {
-							async: true
-						},
-						routes: [
-							{
-								pattern: "product/{id}",
-								name: "product"
-							},
-							{
-								pattern: "",
-								name: "nestedHome"
-							}
-						]
-					}
-				},
-				init : function() {
-					UIComponent.prototype.init.apply(this, arguments);
-					var oRouter = this.getRouter();
-
-					oRouter.initialize();
-				}
-			});
-		});
-
 		var that = this,
 			oRouter = this.oParentComponent.getRouter(),
-			sDynamicComponentName = "DynamicChildComponent" + count;
+			sDynamicComponentName = "DynamicChildComponent";
+
+		oRouter.initialize();
 
 		return waitTillRouteMatched(oRouter, "home").then(function(oParams) {
 			var oContainer = that.oParentComponent.getRootControl(),
 				oShell = oContainer.byId("shell");
 			assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
-			assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+			assert.ok(oShell.getContent()[0] instanceof ComponentContainer, "A component container is added to the target aggregation");
 
 			var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-			assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
-			assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
+			assert.equal(oNestedComponent.getMetadata().getName(), "qunit.router.component.nestedComponent.Child.Component", "The correct component is loaded and instantiated");
 		})
 		// Step1: display dynamic component target
 		.then(function() {
 			// Add dynamic component target
 			oRouter.getTargets().addTarget(sDynamicComponentName, {
-				name: "namespace1.DynamicChildComponent" + count,
+				name: "qunit.router.component.nestedComponent.Child",
 				type: "Component",
 				controlId: "shell",
-				controlAggregation: "content",
-				options: {
-					manifest: false
-				}
+				controlAggregation: "content"
 			});
 
 			var fnDisplayed1 = function (oEvent) {
@@ -3861,119 +3122,40 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Router in nested component (edge cases)");
+
+	QUnit.test("Should throw an error if a nested component has configured synchronous routing", function(assert){
+		return Component.create({
+			name: "qunit.router.component.nestedComponentSync.Parent",
+			id: "asyncParent"
+		}).then(function(oParentComponent) {
+			var oHomeRoute = oParentComponent.getRouter().getRoute("home");
+			var oHomeRouteMatchedSpy = sinon.spy(oHomeRoute, "_routeMatched");
+
+			oParentComponent.getRouter().initialize();
+			assert.equal(oHomeRouteMatchedSpy.callCount, 1, "The home route should be matched once");
+			return oHomeRouteMatchedSpy.getCall(0).returnValue.catch(function(oError){
+				assert.equal(oError.message, "The router of component 'asyncParent---syncChildComponent' which is loaded via the target 'home' is defined as synchronous which is not supported using as a nested component.", "The correct error should be thrown.");
+			});
+		});
+	});
+
+
 	QUnit.module("Router in IAsyncContentCreation with nested component", {
 		beforeEach: function() {
 			this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
 			resetBrowserHash();
 			var that = this;
-			this.fnInitRouter = function() {
-				UIComponent.prototype.init.apply(this, arguments);
-				this._router = this.getRouter();
-				this._router.initialize();
-			};
 
-			sap.ui.jsview("rootView1", {
-				createContent : function() {
-					return new VBox(this.createId("box"), {
-						items: [
-							new ShellSubstitute(this.createId("shell"))
-						]
-					});
-				}
+			return Component.create({
+				name: "qunit.router.component.asyncContentCreation.Parent"
+			}).then(function(oComponent) {
+				that.oParentComponent = oComponent;
 			});
-
-			sap.ui.jsview("namespace1.footer" + count, {
-				createContent : function() {
-					return new Button({
-						text: "abc"
-					});
-				}
-			});
-
-			var ParentComponent;
-			ParentComponent = UIComponent.extend("namespace1.ParentComponent" + count, {
-				metadata : {
-					interfaces: ["sap.ui.core.IAsyncContentCreation"],
-					rootView: {
-						viewName: "rootView1",
-						type: "JS"
-					},
-					routing:  {
-						routes: [
-							{
-								pattern: "",
-								name: "home",
-								target: [ {
-									name: "home",
-									prefix: "child"
-								}, "footer"]
-							},
-							{
-								pattern: "category",
-								name: "category"
-							}
-						],
-						targets: {
-							home: {
-								name: "namespace1.ChildComponent" + count,
-								type: "Component",
-								clearControlAggregation: true,
-								controlId: "shell",
-								controlAggregation: "content",
-								options: {
-									manifest: false
-								}
-							},
-							footer: {
-								type: "View",
-								viewType: "JS",
-								name: "namespace1.footer" + count,
-								controlId: "box",
-								controlAggregation: "items"
-							}
-						}
-					}
-				},
-				init : that.fnInitRouter
-			});
-
-			this.oNestedRouteMatchedSpy = sinon.spy();
-
-			sap.ui.predefine("namespace1/ChildComponent" + count + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-				return UIComponent.extend("namespace1.ChildComponent" + count, {
-					metadata : {
-						routing:  {
-							config: {
-								async: true
-							},
-							routes: [
-								{
-									pattern: "product/{id}",
-									name: "product"
-								},
-								{
-									pattern: "",
-									name: "nestedHome"
-								}
-							]
-						}
-					},
-					init : function() {
-						UIComponent.prototype.init.apply(this, arguments);
-						var oRouter = this.getRouter();
-
-						oRouter.attachRouteMatched(that.oNestedRouteMatchedSpy);
-						oRouter.initialize();
-					}
-				});
-			});
-
-			this.oParentComponent = new ParentComponent("parent");
 		},
 		afterEach: function () {
 			this.oParentComponent.destroy();
 			this.oEventProviderStub.restore();
-			count++;
 		}
 	});
 
@@ -3981,19 +3163,18 @@ sap.ui.define([
 		var that = this,
 			oRouter = this.oParentComponent.getRouter();
 
+		oRouter.initialize();
+
 		return new Promise(function(resolve, reject) {
 			oRouter.getRoute("home").attachMatched(function() {
 				var oContainer = that.oParentComponent.getRootControl(),
 					oShell = oContainer.byId("shell");
 				assert.equal(oShell.getContent().length, 1, "The nested component is loaded and placed into the aggregation");
-				assert.ok(oShell.getContent()[0].isA("sap.ui.core.ComponentContainer"), "A component container is added to the target aggregation");
+				assert.ok(oShell.getContent()[0] instanceof ComponentContainer, "A component container is added to the target aggregation");
 
 				var oNestedComponent = oShell.getContent()[0].getComponentInstance();
-				assert.equal(oNestedComponent.getMetadata().getName(), "namespace1.ChildComponent" + count, "The correct component is loaded and instantiated");
-				assert.equal(that.oNestedRouteMatchedSpy.callCount, 1, "Route is matched once inside the nested component");
+				assert.equal(oNestedComponent.getMetadata().getName(), "qunit.router.component.asyncContentCreation.Child.Component", "The correct component is loaded and instantiated");
 
-				var oEvent = that.oNestedRouteMatchedSpy.args[0][0];
-				assert.equal(oEvent.getParameter("name"), "nestedHome", "The route with empty string pattern is matched");
 				oNestedComponent.destroy();
 				resolve();
 			});
@@ -4002,165 +3183,9 @@ sap.ui.define([
 
 	QUnit.module("navTo with nested components", {
 		beforeEach: function() {
-			this.buildNestedComponentStructure = function(level, suffix) {
-				this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
-				hasher.setHash("");
-				HashChanger.getInstance().fireHashChanged("");
-				var that = this;
-				this.fnInitRouter = function() {
-					UIComponent.prototype.init.apply(this, arguments);
-					this._router = this.getRouter();
-					this._router.initialize();
-				};
-
-				sap.ui.jsview("rootView1", {
-					createContent : function() {
-						return new ShellSubstitute(this.createId("shell"));
-					}
-				});
-
-				sap.ui.jsview("notFound", {
-					createContent : function() {
-						return new Button({
-							text: "Not Found"
-						});
-					}
-				});
-
-				var ParentComponent;
-
-				ParentComponent = UIComponent.extend("namespace." + suffix + ".ParentComponent", {
-					metadata : {
-						rootView: {
-							viewName: "rootView1",
-							type: "JS",
-							async: true
-						},
-						routing:  {
-							config: {
-								async: true
-							},
-							routes: [
-								{
-									pattern: "",
-									name: "home",
-									target: {
-										name: "home",
-										prefix: "child"
-									}
-								},
-								{
-									pattern: "category",
-									name: "category"
-								}
-							],
-							targets: {
-								home: {
-									name: "namespace." + suffix + ".ChildComponent0",
-									type: "Component",
-									controlId: "shell",
-									controlAggregation: "content",
-									options: {
-										manifest: false
-									}
-								},
-								notFound: {
-									name: "notFound",
-									type: "View",
-									viewType: "JS",
-									controlId: "shell",
-									controlAggregation: "content"
-								}
-							}
-						}
-					},
-					init : that.fnInitRouter
-				});
-
-				this.aNestedRouteMatchedSpies = [];
-				var aLoopBase = [];
-				Array.prototype.push.apply(aLoopBase, Array(level - 1));
-
-				aLoopBase.forEach(function(value, i) {
-					var oSpy = sinon.spy();
-					that.aNestedRouteMatchedSpies.push(oSpy);
-
-					var oMetadata;
-
-					if (i === level - 2) {
-						oMetadata = {
-							routing:  {
-								config: {
-									async: true
-								},
-								routes: [
-									{
-										pattern: "product/{id}",
-										name: "product"
-									},
-									{
-										pattern: "",
-										name: "nestedHome"
-									}
-								]
-							}
-						};
-					} else {
-						oMetadata = {
-							rootView: {
-								viewName: "rootView1",
-								type: "JS",
-								async: true
-							},
-							routing:  {
-								config: {
-									async: true
-								},
-								routes: [
-									{
-										pattern: "product/{id}",
-										name: "product",
-										target: {
-											name: "nestedComp",
-											prefix: "nestedComp" + (i + 1)
-										}
-									},
-									{
-										pattern: "",
-										name: "nestedHome"
-									}
-								],
-								targets: {
-									nestedComp: {
-										name: "namespace." + suffix + ".ChildComponent" + (i + 1),
-										type: "Component",
-										controlId: "shell",
-										controlAggregation: "content",
-										options: {
-											manifest: false
-										}
-									}
-								}
-							}
-						};
-					}
-
-					sap.ui.predefine("namespace/" + suffix + "/ChildComponent" + i + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-						return UIComponent.extend("namespace." + suffix + ".ChildComponent" + i, {
-							metadata : oMetadata,
-							init : function() {
-								UIComponent.prototype.init.apply(this, arguments);
-								var oRouter = this.getRouter();
-
-								oRouter.attachRouteMatched(oSpy);
-								oRouter.initialize();
-							}
-						});
-					});
-				});
-
-				this.oParentComponent = new ParentComponent("parent");
-			};
+			this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
+			hasher.setHash("");
+			HashChanger.getInstance().fireHashChanged("");
 		},
 		afterEach: function() {
 			this.oParentComponent.destroy();
@@ -4169,377 +3194,412 @@ sap.ui.define([
 	});
 
 	QUnit.test("Call navTo with specific route and parameter for nested component", function(assert) {
-		this.buildNestedComponentStructure(2, "NavTo2Levels");
+		return Component.create({
+			name: "qunit.router.component.2Levels.Parent"
+		}).then(function(oComponent) {
+			this.oParentComponent = oComponent;
 
-		var oRouter = this.oParentComponent.getRouter(),
-			iHomeRouteMatchCount = 0,
-			sId = "productA",
-			oNestedRouteInfo = {
-				home: {
-					route: "product",
-					parameters: {
-						id: sId
+			var oRouter = this.oParentComponent.getRouter(),
+				iHomeRouteMatchCount = 0,
+				sId = "productA",
+				oNestedRouteInfo = {
+					home: {
+						route: "product",
+						parameters: {
+							id: sId
+						}
 					}
-				}
-			},
-			oComponentContainer;
+				},
+				oComponentContainer;
 
-		var pHomeRouteMatched = new Promise(function(resolve, reject) {
-			var fnMatched = function(oEvent) {
-				this.detachMatched(fnMatched);
-
-				iHomeRouteMatchCount++;
-				var oControl = oEvent.getParameter("view");
-
-				if (oControl.isA("sap.ui.core.ComponentContainer")) {
-					oComponentContainer = oControl;
-					resolve(oControl.getComponentInstance());
-				}
-			};
-			oRouter.getRoute("home").attachMatched(fnMatched);
-		});
-
-		function navToRoute(oRouter, sRouteName, oData, oNestedData) {
-			return new Promise(function(resolve, reject) {
+			var pHomeRouteMatched = new Promise(function(resolve, reject) {
 				var fnMatched = function(oEvent) {
 					this.detachMatched(fnMatched);
 
-					resolve(oEvent.getParameters());
+					iHomeRouteMatchCount++;
+					var oControl = oEvent.getParameter("view");
+
+					if (oControl instanceof ComponentContainer) {
+						oComponentContainer = oControl;
+						resolve(oControl.getComponentInstance());
+					}
 				};
-
-				oRouter.getRoute(sRouteName).attachMatched(fnMatched);
-				oRouter.navTo(sRouteName, oData, oNestedData);
+				oRouter.getRoute("home").attachMatched(fnMatched);
 			});
-		}
 
-		return pHomeRouteMatched.then(function(oNestedComponent) {
-			assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
-			var oNestedRouter = oNestedComponent.getRouter();
+			function navToRoute(oRouter, sRouteName, oData, oNestedData) {
+				return new Promise(function(resolve, reject) {
+					var fnMatched = function(oEvent) {
+						this.detachMatched(fnMatched);
 
-			oRouter.navTo("home", {}, oNestedRouteInfo);
+						resolve(oEvent.getParameters());
+					};
 
-			function homeRouteMatchedOnRouter() {
-				assert.ok(false, "The home route shouldn't be matched again");
+					oRouter.getRoute(sRouteName).attachMatched(fnMatched);
+					oRouter.navTo(sRouteName, oData, oNestedData);
+				});
 			}
 
-			oRouter.getRoute("home").attachMatched(homeRouteMatchedOnRouter);
+			oRouter.initialize();
 
-			return new Promise(function(resolve, reject) {
-				oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
-					assert.equal(iHomeRouteMatchCount, 1, "home route is still matched only once");
+			return pHomeRouteMatched.then(function(oNestedComponent) {
+				assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
+				var oNestedRouter = oNestedComponent.getRouter();
 
-					var oParameters = oEvent.getParameter("arguments");
-					assert.equal(oParameters.id, sId, "correct route is matched with parameter");
+				oRouter.navTo("home", {}, oNestedRouteInfo);
 
-					// wait 100ms since the matched event from oRouter is fired after this call stack
-					// to guarantee that no further matched event is fired on the home route in oRouter
-					setTimeout(function() {
-						oRouter.getRoute("home").detachMatched(homeRouteMatchedOnRouter);
-						resolve();
-					}, 100);
+				function homeRouteMatchedOnRouter() {
+					assert.ok(false, "The home route shouldn't be matched again");
+				}
+
+				oRouter.getRoute("home").attachMatched(homeRouteMatchedOnRouter);
+
+				return new Promise(function(resolve, reject) {
+					oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
+						assert.equal(iHomeRouteMatchCount, 1, "home route is still matched only once");
+
+						var oParameters = oEvent.getParameter("arguments");
+						assert.equal(oParameters.id, sId, "correct route is matched with parameter");
+
+						// wait 100ms since the matched event from oRouter is fired after this call stack
+						// to guarantee that no further matched event is fired on the home route in oRouter
+						setTimeout(function() {
+							oRouter.getRoute("home").detachMatched(homeRouteMatchedOnRouter);
+							resolve();
+						}, 100);
+					});
 				});
+			}).then(function() {
+				return navToRoute(oRouter, "category");
+			}).then(function() {
+				return navToRoute(oRouter, "home", oNestedRouteInfo);
+			}).then(function(oParameters) {
+				assert.strictEqual(oParameters.view, oComponentContainer, "The same component container is reused");
 			});
-		}).then(function() {
-			return navToRoute(oRouter, "category");
-		}).then(function() {
-			return navToRoute(oRouter, "home", oNestedRouteInfo);
-		}).then(function(oParameters) {
-			assert.strictEqual(oParameters.view, oComponentContainer, "The same component container is reused");
-		});
+		}.bind(this));
 	});
 
 	QUnit.test("Call navTo with specific route and parameter for deep nested component", function(assert) {
-		this.buildNestedComponentStructure(3, "NavTo3Levels");
+		return Component.create({
+			name: "qunit.router.component.3Levels.Parent"
+		}).then(function(oComponent) {
+			this.oParentComponent = oComponent;
 
-		var that = this,
-			oRouter = this.oParentComponent.getRouter(),
-			iHomeRouteMatchCount = 0;
+			var that = this,
+				oRouter = this.oParentComponent.getRouter(),
+				iHomeRouteMatchCount = 0;
 
-		var pHomeRouteMatched = new Promise(function(resolve, reject) {
-			oRouter.getRoute("home").attachMatched(function() {
-				iHomeRouteMatchCount++;
-				var oContainer = that.oParentComponent.getRootControl(),
-					oShell = oContainer.byId("shell"),
-					oNestedComponent = oShell.getContent()[0].getComponentInstance();
+			var pHomeRouteMatched = new Promise(function(resolve, reject) {
+				oRouter.getRoute("home").attachMatched(function() {
+					iHomeRouteMatchCount++;
+					var oContainer = that.oParentComponent.getRootControl(),
+						oShell = oContainer.byId("shell"),
+						oNestedComponent = oShell.getContent()[0].getComponentInstance();
 
-				resolve(oNestedComponent);
-			});
-		});
-
-		return pHomeRouteMatched.then(function(oNestedComponent) {
-			assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
-			var oNestedRouter = oNestedComponent.getRouter(),
-				sId = "productA";
-
-			return new Promise(function(resolve, reject) {
-				oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
-					assert.equal(iHomeRouteMatchCount, 1, "home route is still matched only once");
-					var oParameters = oEvent.getParameter("arguments"),
-						aViews = oEvent.getParameter("views");
-
-					assert.equal(oParameters.id, sId, "correct route is matched with parameter");
-
-					assert.equal(aViews.length, 1, "A target instance is created");
-					assert.ok(aViews[0] instanceof sap.ui.core.ComponentContainer, "The target instance is an ComponentContainer");
-
-					var oNestedComponent = aViews[0].getComponentInstance(),
-						oRouter = oNestedComponent.getRouter();
-
-					var oGrandChildRouteMatchedSpy = that.aNestedRouteMatchedSpies[1];
-
-					assert.equal(oGrandChildRouteMatchedSpy.callCount, 1, "A Route is matched in the grand child router");
-					var oCall = oGrandChildRouteMatchedSpy.getCall(0);
-					assert.strictEqual(oCall.thisValue, oRouter, "The correct spy is taken");
-					assert.equal(oCall.args[0].getParameter("name"), "product", "The correct route is matched");
-
-					assert.ok(oRouter.isInitialized(), "The router in nested component is started");
-					assert.equal(oRouter._getLastMatchedRouteName(), "product", "The correct route is matched");
-
-					resolve();
+					resolve(oNestedComponent);
 				});
+			});
+
+			oRouter.initialize();
+
+			return pHomeRouteMatched.then(function(oNestedComponent) {
+				assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
+				var oNestedRouter = oNestedComponent.getRouter(),
+					sId = "productA";
+
+				return new Promise(function(resolve, reject) {
+					oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
+						assert.equal(iHomeRouteMatchCount, 1, "home route is still matched only once");
+						var oParameters = oEvent.getParameter("arguments"),
+							aViews = oEvent.getParameter("views");
+
+						assert.equal(oParameters.id, sId, "correct route is matched with parameter");
+
+						assert.equal(aViews.length, 1, "A target instance is created");
+						assert.ok(aViews[0] instanceof ComponentContainer, "The target instance is an ComponentContainer");
+
+						var oNestedComponent = aViews[0].getComponentInstance(),
+							oRouter = oNestedComponent.getRouter();
+
+
+						assert.ok(oRouter.isInitialized(), "The router in nested component is started");
+						assert.equal(oRouter._getLastMatchedRouteName(), "product", "The correct route is matched");
+
+						resolve();
+					});
+					oRouter.navTo("home", {}, {
+						home: {
+							route: "product",
+							parameters: {
+								id: sId
+							},
+							componentTargetInfo: {
+								nestedComp: {
+									route: "product",
+									parameters: {
+										id: sId + "-nested"
+									}
+								}
+							}
+						}
+					});
+				});
+			});
+		}.bind(this));
+	});
+
+	QUnit.test("navTo the same route after a manual Targets.display with a component should trigger routeMatched event", function(assert) {
+		return Component.create({
+			name: "qunit.router.component.2Levels.Parent"
+		}).then(function(oComponent) {
+			this.oParentComponent = oComponent;
+
+			var that = this,
+				oRouter = this.oParentComponent.getRouter(),
+				iHomeRouteMatchCount = 0;
+
+			var pHomeRouteMatched = new Promise(function(resolve, reject) {
+				var fnMatched = function() {
+					this.detachMatched(fnMatched);
+
+					iHomeRouteMatchCount++;
+					var oContainer = that.oParentComponent.getRootControl(),
+						oShell = oContainer.byId("shell"),
+						oControl = oShell.getContent()[0];
+
+					if (oControl instanceof ComponentContainer) {
+						resolve(oControl.getComponentInstance());
+					}
+				};
+				oRouter.getRoute("home").attachMatched(fnMatched);
+			});
+
+			oRouter.initialize();
+
+			return pHomeRouteMatched.then(function(oNestedComponent) {
+				assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
+
+				// display another target with in the top level router
+				// this should reset the hash in its RouterHashChanger in order to allow
+				// a navTo to the same route which is matched before displaying the notFound
+				return oRouter.getTargets().display("notFound").then(function() {
+					return oNestedComponent;
+				});
+			}).then(function(oNestedComponent) {
+				var oNestedRouter = oNestedComponent.getRouter(),
+					sId = "productA";
+
+				var oNestedRouterMatched = new Promise(function(resolve, reject) {
+					oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
+						var oParameters = oEvent.getParameter("arguments");
+						assert.equal(oParameters.id, sId, "correct route is matched with parameter");
+
+						resolve();
+					});
+				});
+
+				var oRouterMatched = new Promise(function(resolve, reject) {
+					oRouter.getRoute("home").attachMatched(function() {
+						assert.ok(true, "home route is matched again");
+						resolve();
+					});
+				});
+
 				oRouter.navTo("home", {}, {
 					home: {
 						route: "product",
 						parameters: {
 							id: sId
-						},
-						componentTargetInfo: {
-							nestedComp: {
-								route: "product",
-								parameters: {
-									id: sId + "-nested"
-								}
-							}
 						}
 					}
 				});
+
+				return Promise.all([oRouterMatched, oNestedRouterMatched]);
 			});
-		});
-	});
-
-	QUnit.test("navTo the same route after a manual Targets.display with a component should triger routeMatched event", function(assert) {
-		this.buildNestedComponentStructure(2, "NavTo2LevelsWithTargetDisplay");
-
-		var that = this,
-			oRouter = this.oParentComponent.getRouter(),
-			iHomeRouteMatchCount = 0;
-
-		var pHomeRouteMatched = new Promise(function(resolve, reject) {
-			var fnMatched = function() {
-				this.detachMatched(fnMatched);
-
-				iHomeRouteMatchCount++;
-				var oContainer = that.oParentComponent.getRootControl(),
-					oShell = oContainer.byId("shell"),
-					oControl = oShell.getContent()[0];
-
-				if (oControl.isA("sap.ui.core.ComponentContainer")) {
-					resolve(oControl.getComponentInstance());
-				}
-			};
-			oRouter.getRoute("home").attachMatched(fnMatched);
-		});
-
-		return pHomeRouteMatched.then(function(oNestedComponent) {
-			assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
-
-			// display another target with in the top level router
-			// this should reset the hash in its RouterHashChanger in order to allow
-			// a navTo to the same route which is matched before displaying the notFound
-			return oRouter.getTargets().display("notFound").then(function() {
-				return oNestedComponent;
-			});
-		}).then(function(oNestedComponent) {
-			var oNestedRouter = oNestedComponent.getRouter(),
-				sId = "productA";
-
-			var oNestedRouterMatched = new Promise(function(resolve, reject) {
-				oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
-					var oParameters = oEvent.getParameter("arguments");
-					assert.equal(oParameters.id, sId, "correct route is matched with parameter");
-
-					resolve();
-				});
-			});
-
-			var oRouterMatched = new Promise(function(resolve, reject) {
-				oRouter.getRoute("home").attachMatched(function() {
-					assert.ok(true, "home route is matched again");
-					resolve();
-				});
-			});
-
-			oRouter.navTo("home", {}, {
-				home: {
-					route: "product",
-					parameters: {
-						id: sId
-					}
-				}
-			});
-
-			return Promise.all([oRouterMatched, oNestedRouterMatched]);
-		});
+		}.bind(this));
 	});
 
 	QUnit.test("Suspend nested routers after switch to other route", function(assert) {
-		this.buildNestedComponentStructure(3, "NavTo3LevelsSwitch");
+		return Component.create({
+			name: "qunit.router.component.3Levels.Parent"
+		}).then(function(oComponent) {
+			this.oParentComponent = oComponent;
 
-		var that = this,
-			oRouter = this.oParentComponent.getRouter(),
-			iHomeRouteMatchCount = 0;
+			var that = this,
+				oRouter = this.oParentComponent.getRouter(),
+				iHomeRouteMatchCount = 0;
 
-		var pHomeRouteMatched = new Promise(function(resolve, reject) {
-			oRouter.getRoute("home").attachMatched(function() {
-				iHomeRouteMatchCount++;
-				var oContainer = that.oParentComponent.getRootControl(),
-					oShell = oContainer.byId("shell"),
-					oNestedComponent = oShell.getContent()[0].getComponentInstance();
+			this.aNestedRouteMatchedSpies = [];
 
-				resolve(oNestedComponent);
-			});
-		});
+			var pHomeRouteMatched = new Promise(function(resolve, reject) {
+				oRouter.getRoute("home").attachMatched(function() {
+					iHomeRouteMatchCount++;
+					var oContainer = that.oParentComponent.getRootControl(),
+						oShell = oContainer.byId("shell"),
+						oNestedComponent = oShell.getContent()[0].getComponentInstance();
 
-		return pHomeRouteMatched.then(function(oNestedComponent) {
-			assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
-			var oNestedRouter = oNestedComponent.getRouter(),
-				sId = "productA";
-
-			return new Promise(function(resolve, reject) {
-				oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
-					assert.equal(iHomeRouteMatchCount, 1, "home route is still matched only once");
-					var oParameters = oEvent.getParameter("arguments"),
-						aViews = oEvent.getParameter("views");
-
-					assert.equal(oParameters.id, sId, "correct route is matched with parameter");
-
-					assert.equal(aViews.length, 1, "A target instance is created");
-					assert.ok(aViews[0] instanceof sap.ui.core.ComponentContainer, "The target instance is an ComponentContainer");
-
-					var oNestedComponent = aViews[0].getComponentInstance(),
-						oRouter = oNestedComponent.getRouter();
-
-					assert.ok(oRouter.isInitialized(), "The router in nested component is started");
-					assert.equal(oRouter._getLastMatchedRouteName(), "product", "The correct route is matched");
-
-					resolve();
+					resolve(oNestedComponent);
 				});
-				oRouter.navTo("home", {}, {
-					home: {
-						route: "product",
-						parameters: {
-							id: sId
-						},
-						componentTargetInfo: {
-							nestedComp: {
-								route: "product",
-								parameters: {
-									id: sId + "-nested"
+			});
+
+			oRouter.initialize();
+
+			return pHomeRouteMatched.then(function(oNestedComponent) {
+				assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
+				var oNestedRouter = oNestedComponent.getRouter(),
+					sId = "productA";
+
+				var oRouteMatchedSpy = sinon.spy();
+				oNestedRouter.attachRouteMatched(oRouteMatchedSpy);
+				that.aNestedRouteMatchedSpies.push(oRouteMatchedSpy);
+
+				return new Promise(function(resolve, reject) {
+					oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
+						assert.equal(iHomeRouteMatchCount, 1, "home route is still matched only once");
+						var oParameters = oEvent.getParameter("arguments"),
+							aViews = oEvent.getParameter("views");
+
+						assert.equal(oParameters.id, sId, "correct route is matched with parameter");
+
+						assert.equal(aViews.length, 1, "A target instance is created");
+						assert.ok(aViews[0] instanceof ComponentContainer, "The target instance is an ComponentContainer");
+
+						var oNestedComponent = aViews[0].getComponentInstance(),
+							oRouter = oNestedComponent.getRouter();
+
+						var oRouteMatchedSpy = sinon.spy();
+						oRouter.attachRouteMatched(oRouteMatchedSpy);
+						that.aNestedRouteMatchedSpies.push(oRouteMatchedSpy);
+
+						assert.ok(oRouter.isInitialized(), "The router in nested component is started");
+						assert.equal(oRouter._getLastMatchedRouteName(), "product", "The correct route is matched");
+
+						resolve();
+					});
+					oRouter.navTo("home", {}, {
+						home: {
+							route: "product",
+							parameters: {
+								id: sId
+							},
+							componentTargetInfo: {
+								nestedComp: {
+									route: "product",
+									parameters: {
+										id: sId + "-nested"
+									}
 								}
 							}
 						}
-					}
-				});
-			});
-		}).then(function() {
-			return new Promise(function(resolve, reject) {
-				// switch to another route in the top level router
-				oRouter.getRoute("category").attachMatched(function(oEvent) {
-					that.aNestedRouteMatchedSpies.forEach(function(oSpy) {
-						assert.equal(oSpy.callCount, 0, "The nested routers are not matched again");
 					});
-					resolve();
 				});
-				// reset the call history of the routeMatched spies on the nested Routers
-				that.aNestedRouteMatchedSpies.forEach(function(oSpy) {
-					oSpy.resetHistory();
+			}).then(function() {
+				return new Promise(function(resolve, reject) {
+					// switch to another route in the top level router
+					oRouter.getRoute("category").attachMatched(function(oEvent) {
+						that.aNestedRouteMatchedSpies.forEach(function(oSpy) {
+							assert.equal(oSpy.callCount, 0, "The nested routers are not matched again");
+						});
+						resolve();
+					});
+					// reset the call history of the routeMatched spies on the nested Routers
+					that.aNestedRouteMatchedSpies.forEach(function(oSpy) {
+						oSpy.resetHistory();
+					});
+					oRouter.navTo("category");
 				});
-				oRouter.navTo("category");
 			});
-		});
+		}.bind(this));
+
 	});
 
 	QUnit.test("Suspend nested routers after parent Router stops, initialize the nested routers after parent router initlaizes without parsing the current hash", function(assert) {
-		this.buildNestedComponentStructure(3, "StopAndInitializeLevel3");
+		return Component.create({
+			name: "qunit.router.component.3Levels.Parent"
+		}).then(function(oComponent) {
+			this.oParentComponent = oComponent;
 
-		var that = this,
-			oRouter = this.oParentComponent.getRouter(),
-			iHomeRouteMatchCount = 0;
+			var that = this,
+				oRouter = this.oParentComponent.getRouter(),
+				iHomeRouteMatchCount = 0;
 
-		var pHomeRouteMatched = new Promise(function(resolve, reject) {
-			oRouter.getRoute("home").attachMatched(function() {
-				iHomeRouteMatchCount++;
-				var oContainer = that.oParentComponent.getRootControl(),
-					oShell = oContainer.byId("shell"),
-					oNestedComponent = oShell.getContent()[0].getComponentInstance();
+			var pHomeRouteMatched = new Promise(function(resolve, reject) {
+				oRouter.getRoute("home").attachMatched(function() {
+					iHomeRouteMatchCount++;
+					var oContainer = that.oParentComponent.getRootControl(),
+						oShell = oContainer.byId("shell"),
+						oNestedComponent = oShell.getContent()[0].getComponentInstance();
 
-				resolve(oNestedComponent);
-			});
-		});
-
-		return pHomeRouteMatched.then(function(oNestedComponent) {
-			assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
-			var oNestedRouter = oNestedComponent.getRouter(),
-				sId = "productA";
-
-			return new Promise(function(resolve, reject) {
-				oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
-					assert.equal(iHomeRouteMatchCount, 1, "home route is still matched only once");
-					var oParameters = oEvent.getParameter("arguments"),
-						aViews = oEvent.getParameter("views");
-
-					assert.equal(oParameters.id, sId, "correct route is matched with parameter");
-
-					assert.equal(aViews.length, 1, "A target instance is created");
-					assert.ok(aViews[0] instanceof sap.ui.core.ComponentContainer, "The target instance is an ComponentContainer");
-
-					var oDeepNestedComponent = aViews[0].getComponentInstance(),
-						oDeepNestedRouter = oDeepNestedComponent.getRouter();
-
-					assert.ok(oDeepNestedRouter.isInitialized(), "The router in nested component is started");
-					assert.equal(oDeepNestedRouter._getLastMatchedRouteName(), "product", "The correct route is matched");
-
-					resolve([oRouter, oNestedRouter, oDeepNestedRouter]);
+					resolve(oNestedComponent);
 				});
-				oRouter.navTo("home", {}, {
-					home: {
-						route: "product",
-						parameters: {
-							id: sId
-						},
-						componentTargetInfo: {
-							nestedComp: {
-								route: "product",
-								parameters: {
-									id: sId + "-nested"
+			});
+
+			oRouter.initialize();
+
+			return pHomeRouteMatched.then(function(oNestedComponent) {
+				assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
+				var oNestedRouter = oNestedComponent.getRouter(),
+					sId = "productA";
+
+				return new Promise(function(resolve, reject) {
+					oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
+						assert.equal(iHomeRouteMatchCount, 1, "home route is still matched only once");
+						var oParameters = oEvent.getParameter("arguments"),
+							aViews = oEvent.getParameter("views");
+
+						assert.equal(oParameters.id, sId, "correct route is matched with parameter");
+
+						assert.equal(aViews.length, 1, "A target instance is created");
+						assert.ok(aViews[0] instanceof ComponentContainer, "The target instance is an ComponentContainer");
+
+						var oDeepNestedComponent = aViews[0].getComponentInstance(),
+							oDeepNestedRouter = oDeepNestedComponent.getRouter();
+
+						assert.ok(oDeepNestedRouter.isInitialized(), "The router in nested component is started");
+						assert.equal(oDeepNestedRouter._getLastMatchedRouteName(), "product", "The correct route is matched");
+
+						resolve([oRouter, oNestedRouter, oDeepNestedRouter]);
+					});
+					oRouter.navTo("home", {}, {
+						home: {
+							route: "product",
+							parameters: {
+								id: sId
+							},
+							componentTargetInfo: {
+								nestedComp: {
+									route: "product",
+									parameters: {
+										id: sId + "-nested"
+									}
 								}
 							}
 						}
-					}
+					});
 				});
+			}).then(function(aRouterHierarchy) {
+				aRouterHierarchy[0].stop();
+
+				assert.ok(aRouterHierarchy[0].isStopped(), "top level router is stopped");
+				assert.ok(aRouterHierarchy[1].isStopped(), "nested router is stopped");
+				assert.ok(aRouterHierarchy[2].isStopped(), "deeply nested router is stopped");
+
+				var oNestedRouterInitializeSpy = that.spy(aRouterHierarchy[1], "initialize");
+				var oDeepNestedRouterInitializeSpy = that.spy(aRouterHierarchy[2], "initialize");
+
+				aRouterHierarchy[0].initialize(true);
+
+				assert.ok(aRouterHierarchy[0].isInitialized(), "top level router is initialized");
+				assert.ok(aRouterHierarchy[1].isInitialized(), "nested router is initialized");
+				assert.ok(aRouterHierarchy[2].isInitialized(), "deeply nested router is initialized");
+
+				assert.equal(oNestedRouterInitializeSpy.callCount, 1, "the method 'initialize' is called once");
+				assert.equal(oDeepNestedRouterInitializeSpy.callCount, 1, "the method 'initialize' is called once");
+
+				assert.equal(oNestedRouterInitializeSpy.getCall(0).args[0], true, "the method 'initialize' is called with parameter true");
+				assert.equal(oDeepNestedRouterInitializeSpy.getCall(0).args[0], true, "the method 'initialize' is called with parameter true");
 			});
-		}).then(function(aRouterHierarchy) {
-			aRouterHierarchy[0].stop();
-
-			assert.ok(aRouterHierarchy[0].isStopped(), "top level router is stopped");
-			assert.ok(aRouterHierarchy[1].isStopped(), "nested router is stopped");
-			assert.ok(aRouterHierarchy[2].isStopped(), "deeply nested router is stopped");
-
-			var oNestedRouterInitializeSpy = that.spy(aRouterHierarchy[1], "initialize");
-			var oDeepNestedRouterInitializeSpy = that.spy(aRouterHierarchy[2], "initialize");
-
-			aRouterHierarchy[0].initialize(true);
-
-			assert.ok(aRouterHierarchy[0].isInitialized(), "top level router is initialized");
-			assert.ok(aRouterHierarchy[1].isInitialized(), "nested router is initialized");
-			assert.ok(aRouterHierarchy[2].isInitialized(), "deeply nested router is initialized");
-
-			assert.equal(oNestedRouterInitializeSpy.callCount, 1, "the method 'initialize' is called once");
-			assert.equal(oDeepNestedRouterInitializeSpy.callCount, 1, "the method 'initialize' is called once");
-
-			assert.equal(oNestedRouterInitializeSpy.getCall(0).args[0], true, "the method 'initialize' is called with parameter true");
-			assert.equal(oDeepNestedRouterInitializeSpy.getCall(0).args[0], true, "the method 'initialize' is called with parameter true");
-		});
+		}.bind(this));
 	});
 
 	QUnit.module("Loading nested components through routing's targets with componentUsage settings", {
@@ -4603,218 +3663,13 @@ sap.ui.define([
 			this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
 			this.oTitleChangedSpy = sinon.spy();
 			hasher.setHash("");
-			// ===== parentComponent =====
-			sap.ui.jsview("parentRootView", {
-				createContent : function() {
-					return new Panel(this.createId("shell"));
-				}
-			});
-			sap.ui.jsview("parentView1", {
-				createContent : function() {
-					return new Button(this.createId("button"));
-				}
-			});
-			// ===== nestedComponent1 =====
-			sap.ui.jsview("nestedRootView1", {
-				createContent : function() {
-					return new Panel(this.createId("nestedShell1"));
-				}
-			});
-			sap.ui.jsview("nestedView1", {
-				createContent : function() {
-					return new Button(this.createId("button1"));
-				}
-			});
-			sap.ui.jsview("nestedView2", {
-				createContent : function() {
-					return new Button(this.createId("button2"));
-				}
-			});
-			// ===== nestedComponent2 =====
-			sap.ui.jsview("nestedRootView2", {
-				createContent : function() {
-					return new Panel(this.createId("nestedShell2"));
-				}
-			});
-			sap.ui.jsview("nestedView3", {
-				createContent : function() {
-					return new Button(this.createId("button3"));
-				}
-			});
-			sap.ui.jsview("nestedView4", {
-				createContent : function() {
-					return new Button(this.createId("button4"));
-				}
-			});
-			var ParentComponent;
-			ParentComponent = UIComponent.extend("namespace1.ParentComponent", {
-				metadata : {
-					rootView: {
-						viewName: "parentRootView",
-						type: "JS",
-						async: true
-					},
-					routing:  {
-						config: {
-							async: true,
-							controlId: "shell",
-							controlAggregation: "content",
-							propagateTitle: true
-						},
-						routes: [
-							{
-								pattern: "",
-								name: "home",
-								target: {
-									name: "home",
-									prefix: "child"
-								}
-							},
-							{
-								pattern: "second",
-								name: "second",
-								target: {
-									name: "second",
-									prefix: "child"
-								}
-							},
-							{
-								pattern: "view1",
-								name: "parentView1",
-								target: "parentView1"
 
-							}
-						],
-						targets: {
-							home: {
-								name: "namespace1.ChildComponent",
-								type: "Component",
-								id: "component1",
-								title: "{/titleComponent1}",
-								options: {
-									manifest: false
-								}
-							},
-							second: {
-								name: "namespace2.ChildComponent",
-								type: "Component",
-								id: "component2",
-								title: "TitleComponent2",
-								options: {
-									manifest: false
-								}
-							},
-							parentView1: {
-								name: "parentView1",
-								title: "TitleParentView1",
-								type: "View",
-								viewType: "JS"
-							}
-						}
-					}
-				}
-			});
-			this.oParentComponent = new ParentComponent("parent");
-
-			sap.ui.predefine("namespace1/ChildComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-				return UIComponent.extend("namespace1.ChildComponent", {
-					metadata : {
-						rootView: {
-							viewName: "nestedRootView1",
-							type: "JS",
-							async: true
-						},
-						routing:  {
-							config: {
-								async: true,
-								controlAggregation: "content",
-								controlId: "nestedShell1",
-								viewType : "JS",
-								type: "View"
-							},
-							routes: [
-								{
-									pattern: "",
-									name: "nestedView1",
-									target: {
-										name: "nestedView1"
-									}
-								},
-								{
-									pattern: "view2",
-									name: "nestedView2",
-									target: "nestedView2"
-								}
-							],
-							targets: {
-								nestedView1: {
-									name: "nestedView1",
-									title: "TitleNestedView1"
-								},
-								nestedView2: {
-									name: "nestedView2",
-									title: "TitleNestedView2"
-								}
-							}
-						}
-					},
-					init : function() {
-						UIComponent.prototype.init.apply(this, arguments);
-						this.setModel(new JSONModel({
-							titleComponent1: "Title defined in model"
-						}));
-						var oRouter = this.getRouter();
-						oRouter.initialize();
-					}
-				});
-			});
-			sap.ui.predefine("namespace2/ChildComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-				return UIComponent.extend("namespace2.ChildComponent", {
-					metadata : {
-						rootView: {
-							viewName: "nestedRootView2",
-							type: "JS",
-							async: true
-						},
-						routing:  {
-							config: {
-								async: true,
-								controlAggregation: "content",
-								controlId: "nestedShell2",
-								viewType : "JS",
-								type: "View"
-							},
-							routes: [
-								{
-									pattern: "",
-									name: "nestedView3",
-									target: "nestedView3"
-								},
-								{
-									pattern: "view2",
-									name: "nestedView4",
-									target: "nestedView4"
-								}
-							],
-							targets: {
-								nestedView3: {
-									name: "nestedView3",
-									title: "TitleNestedView3"
-								},
-								nestedView4: {
-									name: "nestedView4",
-									title: "TitleNestedView4"
-								}
-							}
-						}
-					},
-					init : function() {
-						UIComponent.prototype.init.apply(this, arguments);
-						var oRouter = this.getRouter();
-						oRouter.initialize();
-					}
-				});
-			});
+			return Component.create({
+				name: "qunit.router.component.eventOrder.Parent",
+				id: "parent"
+			}).then(function(oComponent) {
+				this.oParentComponent = oComponent;
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oParentComponent.destroy();
@@ -4843,8 +3698,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Propagate titleChange event from nested component", function(assert) {
-		var done = assert.async(),
-			that = this,
+		var that = this,
 			oParentRouter = this.oParentComponent.getRouter();
 
 		// Expected results
@@ -4932,36 +3786,36 @@ sap.ui.define([
 
 		oParentRouter.initialize();
 
-		oHomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
+		return oHomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
 			assert.equal(that.oTitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time");
 			assert.deepEqual(that.oTitleChangedSpy.getCall(0).args[0].getParameters(), oExpected1, "initialize(): titleChange event object should be correct");
 
 			var oNestedComponent1 = oObject.view.getComponentInstance(),
 				oNestedComponent1Router = oNestedComponent1.getRouter();
 
+			var oRoute = oNestedComponent1Router.getRoute("nestedView2");
+			var oRouteMatchedSpy = sinon.spy(oRoute, "_routeMatched");
 			oNestedComponent1Router.navTo("nestedView2");
+
+			return oRouteMatchedSpy.getCall(0).returnValue;
 		}).then(function() {
-			setTimeout(function() {
-				assert.equal(that.oTitleChangedSpy.callCount, 2, "navTo('nestedView2'): fireTitleChange should be called the two times");
-				assert.ok(that.oTitleChangedSpy.getCall(1).args[0].getParameters().propagated, "Navigation triggered by nested component, marked as propagated");
-				assert.deepEqual(that.oTitleChangedSpy.getCall(1).args[0].getParameters(), oExpected2, "navTo('nestedView2'): titleChange event object should be correct");
+			assert.equal(that.oTitleChangedSpy.callCount, 2, "navTo('nestedView2'): fireTitleChange should be called the two times");
+			assert.ok(that.oTitleChangedSpy.getCall(1).args[0].getParameters().propagated, "Navigation triggered by nested component, marked as propagated");
+			assert.deepEqual(that.oTitleChangedSpy.getCall(1).args[0].getParameters(), oExpected2, "navTo('nestedView2'): titleChange event object should be correct");
 
-				var oSecondRoute = oParentRouter.getRoute("second");
-				var oSecondRouteMatchedSpy = sinon.spy(oSecondRoute, "_routeMatched");
+			var oSecondRoute = oParentRouter.getRoute("second");
+			var oSecondRouteMatchedSpy = sinon.spy(oSecondRoute, "_routeMatched");
 
-				oParentRouter.navTo("second");
-				oSecondRouteMatchedSpy.getCall(0).returnValue.then(function() {
-					assert.equal(that.oTitleChangedSpy.callCount, 3, "navTo('second'): fireTitleChange should be called the three times");
-					assert.deepEqual(that.oTitleChangedSpy.getCall(2).args[0].getParameters(), oExpected3, "navTo('second'): titleChange event object should be correct");
+			oParentRouter.navTo("second");
+			return oSecondRouteMatchedSpy.getCall(0).returnValue.then(function() {
+				assert.equal(that.oTitleChangedSpy.callCount, 3, "navTo('second'): fireTitleChange should be called the three times");
+				assert.deepEqual(that.oTitleChangedSpy.getCall(2).args[0].getParameters(), oExpected3, "navTo('second'): titleChange event object should be correct");
+				var oParentView1Route = oParentRouter.getRoute("parentView1");
+				var oParentView1RouteMatchedSpy = sinon.spy(oParentView1Route, "_routeMatched");
 
-					var oParentView1Route = oParentRouter.getRoute("parentView1");
-					var oParentView1RouteMatchedSpy = sinon.spy(oParentView1Route, "_routeMatched");
-
-					oParentRouter.navTo("parentView1");
-					oParentView1RouteMatchedSpy.getCall(0).returnValue.then(function() {
-						assert.equal(oParentRouter.getTitleHistory().length, 3, "The number of history entries should be correct");
-						done();
-					});
+				oParentRouter.navTo("parentView1");
+				return oParentView1RouteMatchedSpy.getCall(0).returnValue.then(function() {
+					assert.equal(oParentRouter.getTitleHistory().length, 3, "The number of history entries should be correct");
 				});
 			});
 		});
@@ -4971,82 +3825,13 @@ sap.ui.define([
 		beforeEach: function () {
 			hasher.setHash("");
 
-			// ===== RootView of Parent Component =====
-			sap.ui.jsview("parentRootView", {
-				createContent : function() {
-					return new Panel(this.createId("shell"));
-				}
-			});
+			return Component.create({
+				name: "qunit.router.component.sharedRouter.Parent",
+				id: "parent"
+			}).then(function(oComponent) {
+				this.oParentComponent = oComponent;
+			}.bind(this));
 
-			// ===== View of home route of reuse router =====
-			sap.ui.jsview("reuseRooterView", {
-				createContent : function() {
-					return new Button(this.createId("button1"));
-				}
-			});
-
-			// ===== Root View of Child=====
-			sap.ui.jsview("childRootView", {
-				createContent : function() {
-					return new Panel(this.createId("childShell"));
-				}
-			});
-			var ParentComponent = UIComponent.extend("namespace.async.parent.ParentComponent", {
-				metadata: {
-					rootView: {
-						viewName: "parentRootView",
-						type: "JS",
-						async: true
-					},
-					routing: {
-						config: {
-							async: true,
-							propagateTitle: true
-						},
-						routes: [
-							{
-								pattern: "",
-								name: "home",
-								target: {
-									name: "home",
-									prefix: "child"
-								}
-							},
-							{
-								pattern: "second",
-								name: "second"
-							}
-						],
-						targets: {
-							home: {
-								name: "namespace.async.child.ChildComponent",
-								type: "Component",
-								id: "childComponent1",
-								title: "My Child Title",
-								controlId: "shell",
-								controlAggregation: "content",
-								options: {
-									manifest: false
-								}
-							}
-						}
-					}
-				}
-			});
-
-			sap.ui.predefine("namespace/async/child/ChildComponent/Component", ["sap/ui/core/UIComponent"], function (UIComponent) {
-				return UIComponent.extend("namespace.async.child.ChildComponent", {
-					metadata: {
-						rootView: {
-							viewName: "childRootView",
-							type: "JS",
-							async: true
-						}
-					}
-				});
-			});
-
-			this.oParentComponent = new ParentComponent("parent");
 		},
 		afterEach: function () {
 			this.oParentComponent.destroy();
@@ -5114,191 +3899,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("Configuration of title propagation", {
-		before: function() {
-			sap.ui.jsview("parentRootView", {
-				createContent : function() {
-					return new Panel(this.createId("shell"));
-				}
-			});
-			sap.ui.jsview("parentView1", {
-				createContent : function() {
-					return new Button(this.createId("button"));
-				}
-			});
-			// ===== nestedComponent1 =====
-			sap.ui.jsview("nestedRootView1", {
-				createContent : function() {
-					return new Panel(this.createId("nestedShell1"));
-				}
-			});
-			sap.ui.jsview("nestedView1", {
-				createContent : function() {
-					return new Button(this.createId("button1"));
-				}
-			});
-			sap.ui.jsview("nestedView2", {
-				createContent : function() {
-					return new Button(this.createId("button2"));
-				}
-			});
-			// ===== nestedComponent2 =====
-			sap.ui.jsview("nestedRootView2", {
-				createContent : function() {
-					return new Panel(this.createId("nestedShell2"));
-				}
-			});
-			sap.ui.jsview("nestedView3", {
-				createContent : function() {
-					return new Button(this.createId("button3"));
-				}
-			});
-			sap.ui.jsview("nestedView4", {
-				createContent : function() {
-					return new Button(this.createId("button4"));
-				}
-			});
-
-			// define nested component
-			sap.ui.predefine("namespace/nested/ChildComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-				return UIComponent.extend("namespace.nested.ChildComponent", {
-					metadata : {
-						rootView: {
-							viewName: "nestedRootView1",
-							type: "JS",
-							async: true
-						},
-						routing:  {
-							config: {
-								async: true,
-								controlAggregation: "content",
-								controlId: "nestedShell1",
-								viewType : "JS",
-								type: "View"
-							},
-							routes: [
-								{
-									pattern: "",
-									name: "nestedView1",
-									target: {
-										name: "nestedView1"
-									}
-								},
-								{
-									pattern: "view2",
-									name: "nestedView2",
-									target: "nestedView2"
-								}
-							],
-							targets: {
-								nestedView1: {
-									name: "nestedView1",
-									title: "TitleNestedView1"
-								},
-								nestedView2: {
-									name: "nestedView2",
-									title: "TitleNestedView2"
-								}
-							}
-						}
-					},
-					init : function() {
-						UIComponent.prototype.init.apply(this, arguments);
-						this.getRouter().initialize();
-					}
-				});
-			});
-
-			this._createParentComponent = function(iIndexNamespace, bPropagateTitleGlobal, bPropagateTitleOfRoute1, bPropagateTitleOfRoute2, iIndexNamespaceChild1, iIndexNamespaceChild2, iTargetTitleChild1, iTargetTitleChild2) {
-				return UIComponent.extend("namespace." + iIndexNamespace + ".ParentComponent", {
-					metadata : {
-						rootView: { viewName: "parentRootView", type: "JS",	async: true	},
-						routing:  {
-							config: {
-								async: true,
-								controlId: "shell",
-								controlAggregation: "content",
-								propagateTitle: bPropagateTitleGlobal
-							},
-							routes: [
-								{ pattern: "", name: "home", target: { name: "home", prefix: "child", propagateTitle: bPropagateTitleOfRoute1 } },
-								{ pattern: "second", name: "second", target: { name: "second", prefix: "child",	propagateTitle: bPropagateTitleOfRoute2	} },
-								{ pattern: "third", name: "third", target: { name: "home", prefix: "child", propagateTitle: false } },
-								{ pattern: "view1", name: "parentView1", target: "parentView1" }
-							],
-							targets: {
-								home: { name: "namespace." + iIndexNamespaceChild1 + ".ChildComponent", type: "Component", id: "component" + iIndexNamespaceChild1, title: iTargetTitleChild1 !== undefined ? iTargetTitleChild1 : "TitleComponent" + iIndexNamespaceChild1, options: { manifest: false } },
-								second: { name: "namespace." + iIndexNamespaceChild2 + ".ChildComponent", type: "Component", id: "component" + iIndexNamespaceChild2, title: iTargetTitleChild2 !== undefined ? iTargetTitleChild2 : "TitleComponent" + iIndexNamespaceChild2, options: { manifest: false } },
-								parentView1: { name: "parentView1", title: "TitleParentView1", type: "View", viewType: "JS" }
-							}
-						}
-					}
-				});
-			};
-
-			this._createChildWithGlobalTitlePropagation = function(iIndexNamespace, bPropagateTitleGlobal, bPropagateTitleOfNestedComponent) {
-				sap.ui.predefine("namespace/" + iIndexNamespace + "/ChildComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-					return UIComponent.extend("namespace." + iIndexNamespace + ".ChildComponent", {
-						metadata : {
-							rootView: {
-								viewName: "nestedRootView1",
-								type: "JS",
-								async: true
-							},
-							routing:  {
-								config: {
-									async: true,
-									controlAggregation: "content",
-									controlId: "nestedShell1",
-									viewType : "JS",
-									type: "View",
-									propagateTitle: bPropagateTitleGlobal
-								},
-								routes: [
-									{
-										pattern: "",
-										name: "nestedView1",
-										target: {
-											name: "nestedView1"
-										}
-									},
-									{
-										pattern: "view2",
-										name: "nestedView2",
-										target: "nestedView2"
-									},
-									{
-										pattern: "component",
-										name: "nestedComponent",
-										target: {
-											name: "nestedComponent",
-											prefix: "child",
-											propagateTitle: bPropagateTitleOfNestedComponent
-										}
-									}
-								],
-								targets: {
-									nestedView1: {
-										name: "nestedView1",
-										title: "TitleNestedView1"
-									},
-									nestedView2: {
-										name: "nestedView2",
-										title: "TitleNestedView2"
-									},
-									nestedComponent: {
-										name: "namespace.nested.ChildComponent", type: "Component", id: "componentNested", title: "TitleComponentNested", options: { manifest: false }
-									}
-								}
-							}
-						},
-						init : function() {
-							UIComponent.prototype.init.apply(this, arguments);
-							this.getRouter().initialize();
-						}
-					});
-				});
-			};
-		},
 		beforeEach: function() {
 			this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
 			hasher.setHash("");
@@ -5309,273 +3909,254 @@ sap.ui.define([
 	});
 
 	QUnit.test("Configuration of title propagation - Scenario 1", function(assert) {
-		var done = assert.async(),
-			oLevel0TitleChangedSpy = sinon.spy(),
-			ParentComponent = this._createParentComponent(
-				/*iIndexNamespace=*/4,
-				/*bGlobal=*/undefined,
-				/*bPropagateTitleOfRoute1=*/undefined,
-				/*bPropagateTitleOfRoute2=*/true,
-				/*iIndexNamespaceChild1=*/1,
-				/*iIndexNamespaceChild2=*/2);
+		return Component.create({
+			name: "qunit.router.component.titlePropagation.scenario1.Parent",
+			id: "parent"
+		}).then(function(oLevel0Component) {
+			var oLevel0Router = oLevel0Component.getRouter();
+			var oLevel0TitleChangedSpy = sinon.spy();
 
-		this._createChildWithGlobalTitlePropagation(1);
-		this._createChildWithGlobalTitlePropagation(2);
+			oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
 
-		var oLevel0Component = new ParentComponent("parent");
-		var oLevel0Router = oLevel0Component.getRouter();
+			var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
+			oLevel0Router.initialize();
 
-		oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
-
-		var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
-		oLevel0Router.initialize();
-
-		oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function () {
-			var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
-			assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
-			assert.equal(oTitleChangedEvent.getParameter("title"), "TitleComponent1", "initialize(): title 'TitleComponent1' should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("propagated"), false, "initialize(): titleChanged event isn't propagated from nested router");
-			assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
-			assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "initialize(): The nested history should be available");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 1, "initialize(): The nested history should have one entry");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "initialize(): The first nested history entry should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
-			assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0], {
-				title: "TitleComponent1",
-				hash: ""
-			}, "initialize(): The history of the nested history entry should be correct");
-
-			var oLevel0SecondRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("second"), "_routeMatched");
-			oLevel0Router.navTo("second");
-			oLevel0SecondRouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
-				oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(1).args[0];
-				assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('second'): fireTitleChange should be called the three times");
-				assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "navTo('second'): title 'TitleNestedView1' should be correct");
-				assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('second'): titleChanged event isn't propagated from nested router");
-				assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('second'): The history should have one entry");
-				assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "navTo('second'): The nested history should be available");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('second'): The nested history should have two entries");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "navTo('second'): The first entry should be correct");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 2, "navTo('second'): The history of the nested history entry should have one entry");
-				assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history, [{
+			return oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function () {
+				var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
+				assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
+				assert.equal(oTitleChangedEvent.getParameter("title"), "TitleComponent1", "initialize(): title 'TitleComponent1' should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("propagated"), false, "initialize(): titleChanged event isn't propagated from nested router");
+				assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
+				assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "initialize(): The nested history should be available");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 1, "initialize(): The nested history should have one entry");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "initialize(): The first nested history entry should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
+				assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0], {
 					title: "TitleComponent1",
 					hash: ""
-				},
-				{
-					title: "TitleComponent2",
-					hash: "second"
-				}], "navTo('second'): The nested history entries should be correct");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "navTo('second'): The history of the nested history entry should have one entry");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component2", "navTo('second'): The second nested history entry should be correct");
-				assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
-					title: "TitleNestedView1",
-					hash: ""
-				}, "navTo('second'): The history of the nested history entry should be correct");
+				}, "initialize(): The history of the nested history entry should be correct");
 
-				var oLevel1Component = oObject.view.getComponentInstance(),
-					oLevel1Router = oLevel1Component.getRouter();
-				var oLevel1ViewRouteMatchedSpy = sinon.spy(oLevel1Router.getRoute("nestedView2"), "_routeMatched");
-
-				oLevel1Component.getRouter().navTo("nestedView2");
-				oLevel1ViewRouteMatchedSpy.getCall(0).returnValue.then(function () {
-					oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(2).args[0];
-					assert.equal(oLevel0TitleChangedSpy.callCount, 3, "navTo('nestedView2'): fireTitleChange should be called the two times");
-					assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView2", "navTo('nestedView2'): title 'TitleNestedView2' should be correct");
-					assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('nestedView2'): titleChanged event is propagated from nested router");
-					assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('nestedView2'): The history should have one entry");
-					assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "navTo('nestedView2'): The nested history should be available");
-					assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('nestedView2'): The nested history should have two entries");
-					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "navTo('nestedView2'): The first nested history entry should be correct");
-					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 2, "navTo('nestedView2'): The history of the nested history entry should have two entries");
+				var oLevel0SecondRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("second"), "_routeMatched");
+				oLevel0Router.navTo("second");
+				return oLevel0SecondRouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
+					oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(1).args[0];
+					assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('second'): fireTitleChange should be called the three times");
+					assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "navTo('second'): title 'TitleNestedView1' should be correct");
+					assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('second'): titleChanged event isn't propagated from nested router");
+					assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('second'): The history should have one entry");
+					assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "navTo('second'): The nested history should be available");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('second'): The nested history should have two entries");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "navTo('second'): The first entry should be correct");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 2, "navTo('second'): The history of the nested history entry should have one entry");
 					assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history, [{
 						title: "TitleComponent1",
 						hash: ""
 					},
-					{
-						title: "TitleComponent2",
-						hash: "second"
-					}], "navTo('nestedView2'): The nested history entries should be correct");
-					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component2", "navTo('nestedView2'): The second nested history entry should be correct");
-					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 2, "navTo('nestedView2'): The history of the nested history entry should have two entries");
-					assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history, [{
+						{
+							title: "TitleComponent2",
+							hash: "second"
+						}], "navTo('second'): The nested history entries should be correct");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "navTo('second'): The history of the nested history entry should have one entry");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component2", "navTo('second'): The second nested history entry should be correct");
+					assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
 						title: "TitleNestedView1",
 						hash: ""
-					},
-					{
-						title: "TitleNestedView2",
-						hash: "view2"
-					}], "navTo('nestedView2'): The history of the nested history entry should be correct");
+					}, "navTo('second'): The history of the nested history entry should be correct");
 
-					oLevel0Component.destroy();
-					oLevel0HomeRouteMatchedSpy.restore();
-					oLevel1ViewRouteMatchedSpy.restore();
-					done();
+					var oLevel1Component = oObject.view.getComponentInstance(),
+						oLevel1Router = oLevel1Component.getRouter();
+					var oLevel1ViewRouteMatchedSpy = sinon.spy(oLevel1Router.getRoute("nestedView2"), "_routeMatched");
+
+					oLevel1Component.getRouter().navTo("nestedView2");
+					return oLevel1ViewRouteMatchedSpy.getCall(0).returnValue.then(function () {
+						oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(2).args[0];
+						assert.equal(oLevel0TitleChangedSpy.callCount, 3, "navTo('nestedView2'): fireTitleChange should be called the two times");
+						assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView2", "navTo('nestedView2'): title 'TitleNestedView2' should be correct");
+						assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('nestedView2'): titleChanged event is propagated from nested router");
+						assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('nestedView2'): The history should have one entry");
+						assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "navTo('nestedView2'): The nested history should be available");
+						assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('nestedView2'): The nested history should have two entries");
+						assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "navTo('nestedView2'): The first nested history entry should be correct");
+						assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 2, "navTo('nestedView2'): The history of the nested history entry should have two entries");
+						assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history, [{
+							title: "TitleComponent1",
+							hash: ""
+						},
+							{
+								title: "TitleComponent2",
+								hash: "second"
+							}], "navTo('nestedView2'): The nested history entries should be correct");
+						assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component2", "navTo('nestedView2'): The second nested history entry should be correct");
+						assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 2, "navTo('nestedView2'): The history of the nested history entry should have two entries");
+						assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history, [{
+							title: "TitleNestedView1",
+							hash: ""
+						},
+							{
+								title: "TitleNestedView2",
+								hash: "view2"
+							}], "navTo('nestedView2'): The history of the nested history entry should be correct");
+
+						oLevel0Component.destroy();
+						oLevel0HomeRouteMatchedSpy.restore();
+						oLevel1ViewRouteMatchedSpy.restore();
+					});
 				});
 			});
 		});
 	});
 
 	QUnit.test("Configuration of title propagation - Scenario 2", function(assert) {
-		var done = assert.async(),
-			oLevel0TitleChangedSpy = sinon.spy(),
-			ParentComponent = this._createParentComponent(
-				/*iIndexNamespace=*/2,
-				/*bPropagateTitleGlobal=*/undefined,
-				/*bPropagateTitleOfRoute1=*/true,
-				/*bPropagateTitleOfRoute2=*/undefined,
-				/*iIndexNamespaceChild1=*/3);
+		return Component.create({
+			name: "qunit.router.component.titlePropagation.scenario2.Parent",
+			id: "parent"
+		}).then(function(oLevel0Component) {
+			var oLevel0Router = oLevel0Component.getRouter();
+			var oLevel0TitleChangedSpy = sinon.spy();
+			var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
 
-		this._createChildWithGlobalTitlePropagation(
-			/*iIndexNamespace=*/3,
-			/*bPropagateTitleGlobal=*/false,
-			/*bPropagateTitleOfNestedComponent=*/true);
+			oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
+			oLevel0Router.initialize();
 
-		var oLevel0Component = new ParentComponent("parent");
-		var oLevel0Router = oLevel0Component.getRouter();
-		var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
+			return oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
+				assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
 
-		oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
-		oLevel0Router.initialize();
-
-		oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
-			assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
-
-			var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
-			assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "initialize(): The title information should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "initialize(): titleChanged event isn't propagated");
-			assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
-			assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "initialize(): The nested history information should be available");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "initialize(): The nested history should two one entry");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "initialize(): The first nested history entry has the correct owner");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component3", "initialize(): The second nested history entry has the correct owner");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
-			assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0], {
-				title: "TitleComponent3",
-				hash: ""
-			}, "initialize(): The nested history entries should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
-			assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
-				title: "TitleNestedView1",
-				hash: ""
-			}, "initialize(): The nested history entries should be correct");
-
-			var oLevel1Component = oObject.view.getComponentInstance();
-			var oLevel1Router = oLevel1Component.getRouter();
-			var oLevel1ViewRouteMatchedSpy = sinon.spy(oLevel1Router.getRoute("nestedView2"), "_routeMatched");
-			var oLevel1ComponentRouteMatchedSpy = sinon.spy(oLevel1Router.getRoute("nestedComponent"), "_routeMatched");
-			var oLevel1ComponentTitleChangedSpy = sinon.spy();
-			oLevel1Router.attachTitleChanged(oLevel1ComponentTitleChangedSpy);
-
-			oLevel1Router.navTo("nestedView2");
-			oLevel1ViewRouteMatchedSpy.getCall(0).returnValue.then(function () {
-				assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('nestedView2'): fireTitleChange should be called once");
-
-				oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(1).args[0];
-				assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView2", "navTo('nestedView2'): The title information should be correct");
-				assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('nestedView2'):titleChanged event should be propagated");
-				assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('nestedView2'): The history should have one entry");
-				assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "navTo('nestedView2'): The nested history should be available");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('nestedView2'): The nested history should have two entries");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "navTo('nestedView2'): The first nested history entry has the correct owner");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "navTo('nestedView2'): The history of the nested history entry should have one entry");
+				var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
+				assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "initialize(): The title information should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "initialize(): titleChanged event isn't propagated");
+				assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
+				assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "initialize(): The nested history information should be available");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "initialize(): The nested history should two one entry");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "initialize(): The first nested history entry has the correct owner");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component3", "initialize(): The second nested history entry has the correct owner");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
 				assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0], {
 					title: "TitleComponent3",
 					hash: ""
-				}, "navTo('nestedView2'): The nested history entries should be correct");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component3", "navTo('nestedView2'): The second nested history entry has the correct owner");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 2, "navTo('nestedView2'): The history of the nested history entry should have two entries");
-				assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history, [{
+				}, "initialize(): The nested history entries should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
+				assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
 					title: "TitleNestedView1",
 					hash: ""
-				},
-				{
-					title: "TitleNestedView2",
-					hash: "view2"
-				}], "navTo('nestedView2'): The nested history entries should be correct");
+				}, "initialize(): The nested history entries should be correct");
 
-				oLevel1Router.navTo("nestedComponent");
-				oLevel1ComponentRouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
-					// router of component at level 0 should not be triggered
-					assert.equal(oLevel0TitleChangedSpy.callCount, 3, "navTo('nestedComponent'): fireTitleChange should still be called once");
+				var oLevel1Component = oObject.view.getComponentInstance();
+				var oLevel1Router = oLevel1Component.getRouter();
+				var oLevel1ViewRouteMatchedSpy = sinon.spy(oLevel1Router.getRoute("nestedView2"), "_routeMatched");
+				var oLevel1ComponentRouteMatchedSpy = sinon.spy(oLevel1Router.getRoute("nestedComponent"), "_routeMatched");
+				var oLevel1ComponentTitleChangedSpy = sinon.spy();
+				oLevel1Router.attachTitleChanged(oLevel1ComponentTitleChangedSpy);
 
-					// router of component at level 1 should be triggered
-					assert.equal(oLevel1ComponentTitleChangedSpy.callCount, 2, "navTo('nestedComponent'): fireTitleChange should be called once");
-					var oLevel1TitleChangedEvent = oLevel1ComponentTitleChangedSpy.getCall(1).args[0];
+				oLevel1Router.navTo("nestedView2");
+				return oLevel1ViewRouteMatchedSpy.getCall(0).returnValue.then(function () {
+					assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('nestedView2'): fireTitleChange should be called once");
 
-					assert.equal(oLevel1TitleChangedEvent.getParameter("title"), "TitleNestedView1", "navTo('nestedComponent'): The title information should be correct");
-					assert.equal(oLevel1TitleChangedEvent.getParameter("propagated"), true, "navTo('nestedComponent'): titleChanged event isn't propagated from nested router");
-					assert.equal(oLevel1TitleChangedEvent.getParameter("history").length, 2, "navTo('nestedComponent'): The history should have two entries");
-					assert.ok(oLevel1TitleChangedEvent.getParameter("nestedHistory"), "navTo('nestedComponent'): The nested history should be available");
-					assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('nestedComponent'): The nested history should have two entries");
-					assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent---component3", "navTo('nestedComponent'): The first nested history entry has the correct owner");
-					assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[0].history.length, 3, "navTo('nestedComponent'): The history of the nested history entry should have two entries");
-					assert.deepEqual(oLevel1TitleChangedEvent.getParameter("nestedHistory")[0].history, [{
+					oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(1).args[0];
+					assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView2", "navTo('nestedView2'): The title information should be correct");
+					assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('nestedView2'):titleChanged event should be propagated");
+					assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('nestedView2'): The history should have one entry");
+					assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "navTo('nestedView2'): The nested history should be available");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('nestedView2'): The nested history should have two entries");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "navTo('nestedView2'): The first nested history entry has the correct owner");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "navTo('nestedView2'): The history of the nested history entry should have one entry");
+					assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0], {
+						title: "TitleComponent3",
+						hash: ""
+					}, "navTo('nestedView2'): The nested history entries should be correct");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component3", "navTo('nestedView2'): The second nested history entry has the correct owner");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 2, "navTo('nestedView2'): The history of the nested history entry should have two entries");
+					assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history, [{
 						title: "TitleNestedView1",
 						hash: ""
 					},
-					{
-						title: "TitleNestedView2",
-						hash: "view2"
-					},
-					{
-						title: "TitleComponentNested",
-						hash: "component"
-					}], "navTo('nestedComponent'): The nested history entries should be correct");
-					assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component3---componentNested", "navTo('nestedComponent'): The second nested history entry has the correct owner");
-					assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "navTo('nestedComponent'): The history of the nested history entry should have one entry");
-					assert.deepEqual(oLevel1TitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
-						title: "TitleNestedView1",
-						hash: ""
-					}, "navTo('nestedComponent'): The nested history entries should be correct");
+						{
+							title: "TitleNestedView2",
+							hash: "view2"
+						}], "navTo('nestedView2'): The nested history entries should be correct");
 
-					var oLevel2Component = oObject.view.getComponentInstance();
-					var oLevel2Router = oLevel2Component.getRouter();
-					var oLevel2RouteMatchedSpy = sinon.spy(oLevel2Router.getRoute("nestedView2"), "_routeMatched");
-
-					oLevel2Router.navTo("nestedView2");
-					oLevel2RouteMatchedSpy.getCall(0).returnValue.then(function () {
-
+					oLevel1Router.navTo("nestedComponent");
+					return oLevel1ComponentRouteMatchedSpy.getCall(0).returnValue.then(function (oObject) {
 						// router of component at level 0 should not be triggered
-						assert.equal(oLevel0TitleChangedSpy.callCount, 4, "fireTitleChange should still be called four times");
+						assert.equal(oLevel0TitleChangedSpy.callCount, 3, "navTo('nestedComponent'): fireTitleChange should still be called once");
 
 						// router of component at level 1 should be triggered
-						var oLevel1TitleChangedEvent = oLevel1ComponentTitleChangedSpy.getCall(2).args[0];
-						assert.equal(oLevel1ComponentTitleChangedSpy.callCount, 3, "navTo('nestedView2'): fireTitleChange should be called once");
-						assert.equal(oLevel1TitleChangedEvent.getParameter("propagated"), true, "navTo('nestedView2'): titleChanged event is propagated from nested router");
-						assert.equal(oLevel1TitleChangedEvent.getParameter("title"), "TitleNestedView2", "navTo('nestedView2'): titleChanged event is propagated from nested router");
-						assert.equal(oLevel1TitleChangedEvent.getParameter("history").length, 1, "navTo('nestedView2'): The history should have one entry");
-						assert.ok(oLevel1TitleChangedEvent.getParameter("nestedHistory"), "navTo('nestedView2'): The nested history should be available");
-						assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('nestedView2'): The nested history should have two entries");
-						assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent---component3", "navTo('nestedView2'): The first nested history entry has the correct owner");
-						assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[0].history.length, 3, "navTo('nestedView2'): The history of the nested history entry should have three entries");
+						assert.equal(oLevel1ComponentTitleChangedSpy.callCount, 2, "navTo('nestedComponent'): fireTitleChange should be called once");
+						var oLevel1TitleChangedEvent = oLevel1ComponentTitleChangedSpy.getCall(1).args[0];
+
+						assert.equal(oLevel1TitleChangedEvent.getParameter("title"), "TitleNestedView1", "navTo('nestedComponent'): The title information should be correct");
+						assert.equal(oLevel1TitleChangedEvent.getParameter("propagated"), true, "navTo('nestedComponent'): titleChanged event isn't propagated from nested router");
+						assert.equal(oLevel1TitleChangedEvent.getParameter("history").length, 2, "navTo('nestedComponent'): The history should have two entries");
+						assert.ok(oLevel1TitleChangedEvent.getParameter("nestedHistory"), "navTo('nestedComponent'): The nested history should be available");
+						assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('nestedComponent'): The nested history should have two entries");
+						assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent---component3", "navTo('nestedComponent'): The first nested history entry has the correct owner");
+						assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[0].history.length, 3, "navTo('nestedComponent'): The history of the nested history entry should have two entries");
 						assert.deepEqual(oLevel1TitleChangedEvent.getParameter("nestedHistory")[0].history, [{
 							title: "TitleNestedView1",
 							hash: ""
 						},
-						{
-							title: "TitleNestedView2",
-							hash: "view2"
-						},
-						{
-							title: "TitleComponentNested",
-							hash: "component"
-						}], "navTo('nestedView2'): The nested history entries should be correct");
-						assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component3---componentNested", "navTo('nestedView2'): The second nested history entry has the correct owner");
-						assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[1].history.length, 2, "navTo('nestedView2'): The history of the nested history entry should have two entries");
-						assert.deepEqual(oLevel1TitleChangedEvent.getParameter("nestedHistory")[1].history, [{
+							{
+								title: "TitleNestedView2",
+								hash: "view2"
+							},
+							{
+								title: "TitleComponentNested",
+								hash: "component"
+							}], "navTo('nestedComponent'): The nested history entries should be correct");
+						assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component3---componentNested", "navTo('nestedComponent'): The second nested history entry has the correct owner");
+						assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "navTo('nestedComponent'): The history of the nested history entry should have one entry");
+						assert.deepEqual(oLevel1TitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
 							title: "TitleNestedView1",
 							hash: ""
-						},
-						{
-							title: "TitleNestedView2",
-							hash: "view2"
-						}], "navTo('nestedView2'): The nested history entries should be correct");
+						}, "navTo('nestedComponent'): The nested history entries should be correct");
 
-						oLevel0Component.destroy();
-						oLevel0HomeRouteMatchedSpy.restore();
-						oLevel1ViewRouteMatchedSpy.restore();
-						oLevel2RouteMatchedSpy.restore();
-						done();
+						var oLevel2Component = oObject.view.getComponentInstance();
+						var oLevel2Router = oLevel2Component.getRouter();
+						var oLevel2RouteMatchedSpy = sinon.spy(oLevel2Router.getRoute("nestedView2"), "_routeMatched");
+
+						oLevel2Router.navTo("nestedView2");
+						return oLevel2RouteMatchedSpy.getCall(0).returnValue.then(function () {
+
+							// router of component at level 0 should not be triggered
+							assert.equal(oLevel0TitleChangedSpy.callCount, 4, "fireTitleChange should still be called four times");
+
+							// router of component at level 1 should be triggered
+							var oLevel1TitleChangedEvent = oLevel1ComponentTitleChangedSpy.getCall(2).args[0];
+							assert.equal(oLevel1ComponentTitleChangedSpy.callCount, 3, "navTo('nestedView2'): fireTitleChange should be called once");
+							assert.equal(oLevel1TitleChangedEvent.getParameter("propagated"), true, "navTo('nestedView2'): titleChanged event is propagated from nested router");
+							assert.equal(oLevel1TitleChangedEvent.getParameter("title"), "TitleNestedView2", "navTo('nestedView2'): titleChanged event is propagated from nested router");
+							assert.equal(oLevel1TitleChangedEvent.getParameter("history").length, 1, "navTo('nestedView2'): The history should have one entry");
+							assert.ok(oLevel1TitleChangedEvent.getParameter("nestedHistory"), "navTo('nestedView2'): The nested history should be available");
+							assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('nestedView2'): The nested history should have two entries");
+							assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent---component3", "navTo('nestedView2'): The first nested history entry has the correct owner");
+							assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[0].history.length, 3, "navTo('nestedView2'): The history of the nested history entry should have three entries");
+							assert.deepEqual(oLevel1TitleChangedEvent.getParameter("nestedHistory")[0].history, [{
+								title: "TitleNestedView1",
+								hash: ""
+							},
+								{
+									title: "TitleNestedView2",
+									hash: "view2"
+								},
+								{
+									title: "TitleComponentNested",
+									hash: "component"
+								}], "navTo('nestedView2'): The nested history entries should be correct");
+							assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component3---componentNested", "navTo('nestedView2'): The second nested history entry has the correct owner");
+							assert.equal(oLevel1TitleChangedEvent.getParameter("nestedHistory")[1].history.length, 2, "navTo('nestedView2'): The history of the nested history entry should have two entries");
+							assert.deepEqual(oLevel1TitleChangedEvent.getParameter("nestedHistory")[1].history, [{
+								title: "TitleNestedView1",
+								hash: ""
+							},
+								{
+									title: "TitleNestedView2",
+									hash: "view2"
+								}], "navTo('nestedView2'): The nested history entries should be correct");
+
+							oLevel0Component.destroy();
+							oLevel0HomeRouteMatchedSpy.restore();
+							oLevel1ViewRouteMatchedSpy.restore();
+							oLevel2RouteMatchedSpy.restore();
+						});
 					});
 				});
 			});
@@ -5583,252 +4164,227 @@ sap.ui.define([
 	});
 
 	QUnit.test("Configuration of title propagation - Scenario 3", function(assert) {
-		var done = assert.async(),
-		ParentComponent = this._createParentComponent(
-			1,
-			/*bGlobal=*/undefined,
-			/*bRoute1=*/true,
-			/*bRoute2=*/undefined, 5), oLevel0TitleChangedSpy = sinon.spy();
+		return Component.create({
+			name: "qunit.router.component.titlePropagation.scenario3.Parent",
+			id: "parent"
+		}).then(function(oLevel0Component) {
+			var oLevel0Router = oLevel0Component.getRouter();
+			var oLevel0TitleChangedSpy = sinon.spy();
 
-		this._createChildWithGlobalTitlePropagation(5);
+			oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
 
-		var oLevel0Component = new ParentComponent("parent");
-		var oLevel0Router = oLevel0Component.getRouter();
+			var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
+			var oLevel0ThirdRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("third"), "_routeMatched");
 
-		oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
+			oLevel0Router.initialize();
 
-		var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
-		var oLevel0ThirdRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("third"), "_routeMatched");
-
-		oLevel0Router.initialize();
-
-		oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
-			var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
-			assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
-			assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "initialize(): title 'TitleNestedView1' should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
-			assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "initialize(): titleChanged event isn't propagated from nested router");
-			assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "initialize(): The nested history should be available");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "initialize(): The nested history should have two entries");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "initialize(): The first nested history entry should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
-			assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0], {
-				title: "TitleComponent5",
-				hash: ""
-			}, "initialize(): The nested history entries should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component5", "initialize(): The first nested history entry should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
-			assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
-				title: "TitleNestedView1",
-				hash: ""
-			}, "initialize(): The nested history entries should be correct");
-
-			var oLevel1Component = oObject.view.getComponentInstance();
-			var oLevel1Router = oLevel1Component.getRouter();
-			var oLevel1View2RouteMatchedSpy = sinon.spy(oLevel1Router.getRoute("nestedView2"), "_routeMatched");
-
-			oLevel1Router.navTo("nestedView2");
-
-			oLevel1View2RouteMatchedSpy.getCall(0).returnValue.then(function(){
-				oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(1).args[0];
-				assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('nestedView2'): fireTitleChange should be called the first time - Component title");
-				assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView2", "navTo('nestedView2'): title 'TitleNestedView2' should be correct");
-				assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('nestedView2'): titleChanged event isn't propagated from nested router");
-				assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('nestedView2'): The history should have one entry");
-				assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "navTo('nestedView2'): The nested history should be available");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('nestedView2'): The nested history should have two entries");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "navTo('nestedView2'): The first nested history entry should be correct");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "navTo('nestedView2'): The history of the nested history entry should have one entry");
+			return oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
+				var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
+				assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
+				assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "initialize(): title 'TitleNestedView1' should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
+				assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "initialize(): titleChanged event isn't propagated from nested router");
+				assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "initialize(): The nested history should be available");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "initialize(): The nested history should have two entries");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "initialize(): The first nested history entry should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
 				assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0], {
 					title: "TitleComponent5",
 					hash: ""
-				}, "navTo('nestedView2'): The nested history entries should be correct");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component5", "navTo('nestedView2'): The first nested history entry should be correct");
-				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 2, "navTo('nestedView2'): The history of the nested history entry should have two entries");
-				assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history, [{
+				}, "initialize(): The nested history entries should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component5", "initialize(): The first nested history entry should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
+				assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
 					title: "TitleNestedView1",
 					hash: ""
-				},
-				{
-					title: "TitleNestedView2",
-					hash: "view2"
-				}], "navTo('nestedView2'): The nested history entries should be correct");
+				}, "initialize(): The nested history entries should be correct");
 
-				oLevel0Router.navTo("third");
-				oLevel0ThirdRouteMatchedSpy.getCall(0).returnValue.then(function(){
-					assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('third'): fireTitleChange shouldn't be called again");
+				var oLevel1Component = oObject.view.getComponentInstance();
+				var oLevel1Router = oLevel1Component.getRouter();
+				var oLevel1View2RouteMatchedSpy = sinon.spy(oLevel1Router.getRoute("nestedView2"), "_routeMatched");
 
-					var oRouterHashChanger = oLevel0Router.getHashChanger();
-					var oSetHashSpy = sinon.spy(oRouterHashChanger, "setHash");
+				oLevel1Router.navTo("nestedView2");
 
-					oLevel0Router.navTo("home", {}, {
-						home: {
-							route: "nestedView1"
-						}
-					});
-					oSetHashSpy.getCall(0).returnValue.then(function() {
-						oLevel0HomeRouteMatchedSpy.getCall(1).returnValue.then(function(){
+				return oLevel1View2RouteMatchedSpy.getCall(0).returnValue.then(function(){
+					oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(1).args[0];
+					assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('nestedView2'): fireTitleChange should be called the first time - Component title");
+					assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView2", "navTo('nestedView2'): title 'TitleNestedView2' should be correct");
+					assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('nestedView2'): titleChanged event isn't propagated from nested router");
+					assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('nestedView2'): The history should have one entry");
+					assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "navTo('nestedView2'): The nested history should be available");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('nestedView2'): The nested history should have two entries");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "navTo('nestedView2'): The first nested history entry should be correct");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "navTo('nestedView2'): The history of the nested history entry should have one entry");
+					assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0], {
+						title: "TitleComponent5",
+						hash: ""
+					}, "navTo('nestedView2'): The nested history entries should be correct");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component5", "navTo('nestedView2'): The first nested history entry should be correct");
+					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 2, "navTo('nestedView2'): The history of the nested history entry should have two entries");
+					assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history, [{
+						title: "TitleNestedView1",
+						hash: ""
+					},
+						{
+							title: "TitleNestedView2",
+							hash: "view2"
+						}], "navTo('nestedView2'): The nested history entries should be correct");
 
-							setTimeout(function(){
-								assert.equal(oLevel0TitleChangedSpy.callCount, 3, "navTo('home') and route 'nestedView1' on level 1: fireTitleChange should be called again");
+					oLevel0Router.navTo("third");
+					return oLevel0ThirdRouteMatchedSpy.getCall(0).returnValue.then(function(){
+						assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('third'): fireTitleChange shouldn't be called again");
 
-								oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(2).args[0];
-								assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('home'): titleChanged event is propagated from nested router");
-								assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "navTo('home'): title property should be set correctly");
-								assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "navTo('home'): The history should have two entries");
-								assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "navTo('home'): The nested history should be available");
-								assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('home'): The nested history should have two entries");
-								assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "navTo('home'): The first nested history entry should be correct");
-								assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "navTo('home'): The history of the nested history entry should have one entry");
-								assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history, [{
-									title: "TitleComponent5",
-									hash: ""
-								}], "navTo('home'): The nested history entries should be correct");
-								assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component5", "navTo('home'): The first nested history entry should be correct");
-								assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "navTo('home'): The history of the nested history entry should have two entries");
-								assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history, [{
-									title: "TitleNestedView1",
-									hash: ""
-								}], "navTo('home'): The nested history entries should be correct");
+						var oRouterHashChanger = oLevel0Router.getHashChanger();
+						var oSetHashSpy = sinon.spy(oRouterHashChanger, "setHash");
 
-								oLevel0Component.destroy();
-								oLevel0HomeRouteMatchedSpy.restore();
-								done();
-							}, 0);
+						oLevel0Router.navTo("home", {}, {
+							home: {
+								route: "nestedView1"
+							}
 						});
-					});
+						return oSetHashSpy.getCall(0).returnValue.then(function() {
+							return oLevel0HomeRouteMatchedSpy.getCall(1).returnValue.then(function(){
+								return new Promise(function(resolve, reject) {
+									setTimeout(function(){
+										assert.equal(oLevel0TitleChangedSpy.callCount, 3, "navTo('home') and route 'nestedView1' on level 1: fireTitleChange should be called again");
 
+										oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(2).args[0];
+										assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('home'): titleChanged event is propagated from nested router");
+										assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "navTo('home'): title property should be set correctly");
+										assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "navTo('home'): The history should have two entries");
+										assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "navTo('home'): The nested history should be available");
+										assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('home'): The nested history should have two entries");
+										assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "navTo('home'): The first nested history entry should be correct");
+										assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "navTo('home'): The history of the nested history entry should have one entry");
+										assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history, [{
+											title: "TitleComponent5",
+											hash: ""
+										}], "navTo('home'): The nested history entries should be correct");
+										assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component5", "navTo('home'): The first nested history entry should be correct");
+										assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "navTo('home'): The history of the nested history entry should have two entries");
+										assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history, [{
+											title: "TitleNestedView1",
+											hash: ""
+										}], "navTo('home'): The nested history entries should be correct");
+
+										oLevel0Component.destroy();
+										oLevel0HomeRouteMatchedSpy.restore();
+										resolve();
+									}, 0);
+								});
+							});
+						});
+
+					});
 				});
 			});
 		});
 	});
 
 	QUnit.test("Configuration of title propagation - Scenario 4: multiple targets with the same title", function(assert) {
-		var done = assert.async(),
-		oLevel0TitleChangedSpy = sinon.spy(),
-		ParentComponent = this._createParentComponent(
-			/*iIndexNamespace=*/4,
-			/*bGlobal=*/true,
-			/*bPropagateTitleOfRoute1=*/undefined,
-			/*bPropagateTitleOfRoute2=*/undefined,
-			/*iIndexNamespaceChild1=*/6,
-			/*iIndexNamespaceChild2=*/7,
-			/*iTargetTitleChild1*/"MyTargetTitle",
-			/*iTargetTitleChild2*/"MyTargetTitle");
+		return Component.create({
+			name: "qunit.router.component.titlePropagation.scenario4.Parent",
+			id: "parent"
+		}).then(function(oLevel0Component) {
+			var oLevel0Router = oLevel0Component.getRouter();
+			var oLevel0TitleChangedSpy = sinon.spy();
 
-		this._createChildWithGlobalTitlePropagation(6);
-		this._createChildWithGlobalTitlePropagation(7);
+			oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
 
-		var oLevel0Component = new ParentComponent("parent");
-		var oLevel0Router = oLevel0Component.getRouter();
+			var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
+			var oLevel0SecondRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("second"), "_routeMatched");
 
-		oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
+			oLevel0Router.initialize();
 
-		var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
-		var oLevel0SecondRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("second"), "_routeMatched");
+			return oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
+				assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
+				var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
+				assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "initialize(): title 'TitleNestedView1' should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
+				assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "initialize(): titleChanged event is propagated from nested router");
+				assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "initialize(): The nested history should be available");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "initialize(): The nested history should have two entries");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "initialize(): The first nested history entry should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
+				assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0], {
+					title: "MyTargetTitle",
+					hash: ""
+				}, "initialize(): The nested history entries should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component6", "initialize(): The first nested history entry should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
+				assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
+					title: "TitleNestedView1",
+					hash: ""
+				}, "initialize(): The nested history entries should be correct");
 
-		oLevel0Router.initialize();
-
-		oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
-			assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
-			var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
-			assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "initialize(): title 'TitleNestedView1' should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
-			assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "initialize(): titleChanged event is propagated from nested router");
-			assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "initialize(): The nested history should be available");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "initialize(): The nested history should have two entries");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "initialize(): The first nested history entry should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
-			assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0], {
-				title: "MyTargetTitle",
-				hash: ""
-			}, "initialize(): The nested history entries should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component6", "initialize(): The first nested history entry should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "initialize(): The history of the nested history entry should have one entry");
-			assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
-				title: "TitleNestedView1",
-				hash: ""
-			}, "initialize(): The nested history entries should be correct");
-
-			oLevel0Router.navTo("second");
-			oLevel0SecondRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
-				assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('second'): fireTitleChange should be called the second time - Component title");
-				try {
-					oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(1).args[0];
-					assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "navTo('second'): title 'TitleNestedView1' should be correct");
-					assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('second'): The history should have one entry");
-					assert.strictEqual(oTitleChangedEvent.getParameter("history")[0].title, "MyTargetTitle", "navTo('second'): The title of the first history entry should be 'MyTargetTitle'");
-					assert.strictEqual(oTitleChangedEvent.getParameter("history")[0].hash, "", "navTo('second'): The hash of the first history entry should be empty");
-					assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('second'): titleChanged event is propagated from nested router");
-					assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "navTo('second'): The nested history should be available");
-					assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('second'): The nested history should have two entries");
-					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "navTo('second'): The first nested history entry should be correct");
-					assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 2, "navTo('second'): The history of the nested history entry should have one entry");
-					assert.strictEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0].title, "MyTargetTitle", "navTo('second'): The title of the first history entry of the first nested history entry should be 'MyTargetTitle'");
-					assert.strictEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0].hash, "", "navTo('second'): The hash of the first history entry of the first nested history entry should be empty");
-					assert.strictEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[1].title, "MyTargetTitle", "navTo('second'): The title of the second history entry of the first nested history entry should be 'MyTargetTitle'");
-					assert.strictEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[1].hash, "second", "navTo('second'): The hash of the second history entry of the first nested history entry should be empty");
-				} finally {
-					oLevel0Component.destroy();
-					oLevel0HomeRouteMatchedSpy.restore();
-					done();
-				}
+				oLevel0Router.navTo("second");
+				return oLevel0SecondRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
+					assert.equal(oLevel0TitleChangedSpy.callCount, 2, "navTo('second'): fireTitleChange should be called the second time - Component title");
+					try {
+						oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(1).args[0];
+						assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "navTo('second'): title 'TitleNestedView1' should be correct");
+						assert.equal(oTitleChangedEvent.getParameter("history").length, 1, "navTo('second'): The history should have one entry");
+						assert.strictEqual(oTitleChangedEvent.getParameter("history")[0].title, "MyTargetTitle", "navTo('second'): The title of the first history entry should be 'MyTargetTitle'");
+						assert.strictEqual(oTitleChangedEvent.getParameter("history")[0].hash, "", "navTo('second'): The hash of the first history entry should be empty");
+						assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "navTo('second'): titleChanged event is propagated from nested router");
+						assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "navTo('second'): The nested history should be available");
+						assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "navTo('second'): The nested history should have two entries");
+						assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "navTo('second'): The first nested history entry should be correct");
+						assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 2, "navTo('second'): The history of the nested history entry should have one entry");
+						assert.strictEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0].title, "MyTargetTitle", "navTo('second'): The title of the first history entry of the first nested history entry should be 'MyTargetTitle'");
+						assert.strictEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[0].hash, "", "navTo('second'): The hash of the first history entry of the first nested history entry should be empty");
+						assert.strictEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[1].title, "MyTargetTitle", "navTo('second'): The title of the second history entry of the first nested history entry should be 'MyTargetTitle'");
+						assert.strictEqual(oTitleChangedEvent.getParameter("nestedHistory")[0].history[1].hash, "second", "navTo('second'): The hash of the second history entry of the first nested history entry should be empty");
+					} finally {
+						oLevel0Component.destroy();
+						oLevel0HomeRouteMatchedSpy.restore();
+					}
+				});
 			});
-
 		});
+
 	});
 
 	QUnit.test("Configuration of title propagation - Scenario 5: parent target has no title but nested component target - attach to event after initialize of the router", function(assert) {
-		var done = assert.async(),
-		oLevel0TitleChangedSpy = sinon.spy(),
-		ParentComponent = this._createParentComponent(
-			/*iIndexNamespace=*/5,
-			/*bGlobal=*/true,
-			/*bPropagateTitleOfRoute1=*/undefined,
-			/*bPropagateTitleOfRoute2=*/undefined,
-			/*iIndexNamespaceChild1=*/8,
-			/*iIndexNamespaceChild2=*/9,
-			/*iTargetTitleChild1*/null,
-			/*iTargetTitleChild2*/"MyTargetTitle");
+		return Component.create({
+			name: "qunit.router.component.titlePropagation.scenario5.Parent",
+			id: "parent"
+		}).then(function(oLevel0Component) {
+			var oLevel0Router = oLevel0Component.getRouter();
+			var oLevel0TitleChangedSpy = sinon.spy();
 
-		this._createChildWithGlobalTitlePropagation(8);
-		this._createChildWithGlobalTitlePropagation(9);
+			var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
+			var oFireTitleChangedSpy = sinon.spy(Router.prototype, "fireTitleChanged");
+			var oFireRouteMatchedSpy = sinon.spy(Router.prototype, "fireRouteMatched");
+			oLevel0Router.initialize();
 
-		var oLevel0Component = new ParentComponent("parent");
-		var oLevel0Router = oLevel0Component.getRouter();
+			oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
 
-		var oLevel0HomeRouteMatchedSpy = sinon.spy(oLevel0Router.getRoute("home"), "_routeMatched");
-		var oFireTitleChangedSpy = sinon.spy(Router.prototype, "fireTitleChanged");
-		var oFireRouteMatchedSpy = sinon.spy(Router.prototype, "fireRouteMatched");
-		oLevel0Router.initialize();
+			return oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
+				assert.equal(oFireRouteMatchedSpy.callCount, 2, "The method 'fireRouteMatched' is called twice");
+				assert.equal(oFireTitleChangedSpy.callCount, 2, "The method 'fireTitleChanged' is called twice");
+				assert.ok(oFireRouteMatchedSpy.getCall(1).calledBefore(oLevel0TitleChangedSpy.getCall(0)), "The route matched event is called before the title changed event");
+				assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
+				var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
+				assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "initialize(): title 'TitleNestedView1' should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
+				assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "initialize(): titleChanged event is propagated from nested router");
+				assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "initialize(): The nested history should be available");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "initialize(): The nested history should have two entries");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "initialize(): The first nested history entry should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 0, "The history of the first nested history entry should have no entries");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component8", "initialize(): The second nested history entry should be correct");
+				assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "initialize(): The history of the second nested history entry should have one entry");
+				assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
+					title: "TitleNestedView1",
+					hash: ""
+				}, "initialize(): The nested history entries should be correct");
 
-		oLevel0Router.attachTitleChanged(oLevel0TitleChangedSpy);
-
-		oLevel0HomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
-			assert.equal(oFireRouteMatchedSpy.callCount, 2, "The method 'fireRouteMatched' is called twice");
-			assert.equal(oFireTitleChangedSpy.callCount, 2, "The method 'fireTitleChanged' is called twice");
-			assert.ok(oFireRouteMatchedSpy.getCall(1).calledBefore(oLevel0TitleChangedSpy.getCall(0)), "The route matched event is called before the title changed event");
-			assert.equal(oLevel0TitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time - Component title");
-			var oTitleChangedEvent = oLevel0TitleChangedSpy.getCall(0).args[0];
-			assert.equal(oTitleChangedEvent.getParameter("title"), "TitleNestedView1", "initialize(): title 'TitleNestedView1' should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("history").length, 0, "initialize(): The history shouldn't have any entries");
-			assert.equal(oTitleChangedEvent.getParameter("propagated"), true, "initialize(): titleChanged event is propagated from nested router");
-			assert.ok(oTitleChangedEvent.getParameter("nestedHistory"), "initialize(): The nested history should be available");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory").length, 2, "initialize(): The nested history should have two entries");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].ownerComponentId, "parent", "initialize(): The first nested history entry should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[0].history.length, 0, "The history of the first nested history entry should have no entries");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].ownerComponentId, "parent---component8", "initialize(): The second nested history entry should be correct");
-			assert.equal(oTitleChangedEvent.getParameter("nestedHistory")[1].history.length, 1, "initialize(): The history of the second nested history entry should have one entry");
-			assert.deepEqual(oTitleChangedEvent.getParameter("nestedHistory")[1].history[0], {
-				title: "TitleNestedView1",
-				hash: ""
-			}, "initialize(): The nested history entries should be correct");
-
-			oLevel0Component.destroy();
-			oLevel0HomeRouteMatchedSpy.restore();
-			oFireTitleChangedSpy.restore();
-			oFireRouteMatchedSpy.restore();
-			done();
+				oLevel0Component.destroy();
+				oLevel0HomeRouteMatchedSpy.restore();
+				oFireTitleChangedSpy.restore();
+				oFireRouteMatchedSpy.restore();
+			});
 		});
 	});
 });

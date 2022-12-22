@@ -1,0 +1,44 @@
+{
+	"sap.app": {
+		"id": "qunit.router.component.nestedComponentSync.Parent",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.router.component.nestedComponentSync.Parent.view.RootView",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "home",
+					"target": {
+						"name": "home",
+						"prefix": "child"
+					}
+				},
+				{
+					"pattern": "category",
+					"name": "category"
+				}
+			],
+			"targets": {
+				"home": {
+					"name": "Child",
+					"path": "qunit.router.component.nestedComponentSync",
+					"type": "Component",
+					"id": "syncChildComponent",
+					"controlId": "shell",
+					"controlAggregation": "content"
+				}
+			}
+		}
+	}
+}
