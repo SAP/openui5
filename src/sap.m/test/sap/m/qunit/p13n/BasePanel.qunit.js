@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/base/Event",
 	"sap/m/MessageStrip",
-	"sap/ui/core/Core"
-], function (BasePanel, StandardListItem, sinon, Event, MessageStrip, oCore) {
+	"sap/ui/core/Core",
+	"sap/m/VBox"
+], function (BasePanel, StandardListItem, sinon, Event, MessageStrip, oCore, VBox) {
 	"use strict";
 
 	QUnit.module("BasePanel API tests", {
@@ -295,6 +296,32 @@ sap.ui.define([
 		afterEach: function() {
 			this.oBasePanel.destroy();
 		}
+	});
+
+	QUnit.test("move bottom/top button visibility for small screens", function(assert){
+		var done = assert.async();
+		var oPanel = new BasePanel();
+		var oVBox = new VBox({
+			width: "390px",
+			items: [
+				oPanel
+			]
+		});
+
+		oVBox.placeAt("qunit-fixture");
+
+		assert.notOk(oPanel._getMoveBottomButton().getVisible(), "Button is invisible on small screens");
+		assert.notOk(oPanel._getMoveTopButton().getVisible(), "Button is invisible on small screens");
+
+		oVBox.setWidth("420px");
+		oCore.applyChanges();
+
+		setTimeout(function(){
+			assert.ok(oPanel._getMoveBottomButton().getVisible(), "Button is invisible on small screens");
+			assert.ok(oPanel._getMoveTopButton().getVisible(), "Button is invisible on small screens");
+			done();
+		});
+
 	});
 
 	QUnit.test("Check change event reason 'SelectAll'", function(assert){
