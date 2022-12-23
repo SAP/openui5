@@ -6,10 +6,10 @@ sap.ui.define([
 ], function(Button, Text, JSView, VerticalLayout) {
 	"use strict";
 
-	sap.ui.jsview("testdata.customizing.sync.jsview.sap.Sub", {
+	sap.ui.jsview("testdata.customizing.sync_legacyAPIs.jsview.sap.Sub", {
 
 		getControllerName : function(){
-			return "testdata.customizing.sync.jsview.sap.Sub";
+			return "testdata.customizing.sync_legacyAPIs.jsview.sap.Sub";
 		},
 		createContent : function(oController) {
 			var that = this;

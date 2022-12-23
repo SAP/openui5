@@ -1,9 +1,10 @@
 sap.ui.define([
-	"sap/m/Button"
-], function(Button) {
+	"sap/m/Button",
+	"sap/ui/core/Fragment"
+], function(Button, Fragment) {
 	"use strict";
 
-	return {
+	sap.ui.jsfragment("testdata.customizing.sync_legacyAPIs.jsview.customer.MultiRootFragment", {
 
 		createContent : function(oController) {
 			return [
@@ -16,6 +17,6 @@ sap.ui.define([
 			];
 		}
 
-	};
+	});
 
 });

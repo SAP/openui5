@@ -3,12 +3,12 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("testdata.customizing.sync.jsview.sap.Component", {
+	var Component = UIComponent.extend("testdata.customizing.sync_legacyAPIs.jsview.sap.Component", {
 
 		metadata : {
 			version : "1.0",
 			rootView : {
-				viewName: "testdata.customizing.sync.jsview.sap.Main",
+				viewName: "testdata.customizing.sync_legacyAPIs.jsview.sap.Main",
 				type: "XML",
 				id: "mainView",
 				async: true

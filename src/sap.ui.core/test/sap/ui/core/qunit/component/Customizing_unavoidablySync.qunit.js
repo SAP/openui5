@@ -46,7 +46,7 @@ sap.ui.define([
 		before: function () {
 			// load and start the customized application
 			return Component.create({
-				name: "testdata.customizing.sync.jsview.customer",
+				name: "testdata.customizing.sync_legacyAPIs.jsview.customer",
 				id: "theComponent",
 				manifest: false
 			}).then(function(_oComp) {
