@@ -369,6 +369,11 @@
 				header: new sap.m.Text({
 					text : "ObjectStatus with icon"
 				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "ObjectStatus with enchanced text wrapping"
+				})
 			})
 		]
 	});
@@ -423,6 +428,15 @@
 					tooltip: "Alert",
 					inverted: "{inverted}"
 				})
+				,new sap.m.ObjectStatus({
+					title: "Some title",
+					text: "VeryLongTextToDemonstrateWrappingVeryLongTextToDemonstrateWrappingVeryLongTextToDemonstrateWrappingVeryLongTextToDemonstrateWrapping",
+					active : true,
+					inverted: "{inverted}",
+					press : function() {
+						new sap.m.MessageToast.show("you click me");
+					}
+				}).addStyleClass("sapMObjectStatusLongText"),
 			]
 		});
 
