@@ -53,7 +53,8 @@ sap.ui.define([
 							"SubCategoryId": "Notebooks",
 							"state": "Information",
 							"info": "27.45 EUR",
-							"infoState": "Success"
+							"infoState": "Success",
+							"showInfoStateIcon": true
 						},
 						{
 							"Name": "Notebook Basic 17",
@@ -82,7 +83,8 @@ sap.ui.define([
 					"highlight": "{state}",
 					"info": {
 						"value": "{info}",
-						"state": "{infoState}"
+						"state": "{infoState}",
+						"showStateIcon": "{showInfoStateIcon}"
 					}
 				}
 			}
@@ -582,6 +584,7 @@ sap.ui.define([
 							"HHD": "500 GB Hard Disc",
 							"OS": "Windows 8 Pro",
 							"OSState": "Success",
+							"OSShowStateIcon": true,
 							"AttributesLayoutType": "OneColumn"
 						},
 						{
@@ -623,7 +626,8 @@ sap.ui.define([
 						},
 						{
 							"value": "{OS}",
-							"state": "{OSState}"
+							"state": "{OSState}",
+							"showStateIcon": "{OSShowStateIcon}"
 						}
 					]
 				}
@@ -788,7 +792,7 @@ sap.ui.define([
 		this.oCard.setManifest(oManifest);
 	});
 
-	QUnit.test("List Card - attributes", function (assert) {
+	QUnit.test("List Card - info field", function (assert) {
 		// Arrange
 		var done = assert.async();
 
@@ -796,6 +800,28 @@ sap.ui.define([
 
 			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
 				oListItem2 = this.oCard.getCardContent().getAggregation("_content").getItems()[1];
+
+			Core.applyChanges();
+
+			assert.ok(oListItem1.$().find(".sapUiIntLCIInfo.sapUiIntLCIInfoShowIcon").length, "Status icon is shown");
+			assert.notOk(oListItem2.$().find(".sapUiIntLCIInfo.sapUiIntLCIInfoShowIcon").length, "Status icon is not shown");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_ListCard);
+	});
+
+	QUnit.test("List Card - attributes", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+
+			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
+				oListItem2 = this.oCard.getCardContent().getAggregation("_content").getItems()[1],
+				oListItem3 = this.oCard.getCardContent().getAggregation("_content").getItems()[2];
 
 			Core.applyChanges();
 
@@ -807,6 +833,9 @@ sap.ui.define([
 			assert.strictEqual(oListItem2.$().find(".sapUiIntLCIAttrRow").length, 5, "5 attr rows are created.");
 			assert.strictEqual(oListItem2.$().find(".sapUiIntLCIAttrCell").length, 5, "5 attr cells are created.");
 			assert.notOk(oListItem2.$().find(".sapUiIntLCIAttrSecondCell").length, "attr second cells are not created.");
+
+			assert.ok(oListItem2.$().find(".sapUiIntLCIAttrRow:nth-of-type(6) .sapMObjStatusShowIcon").length, "Status icon is shown");
+			assert.notOk(oListItem3.$().find(".sapUiIntLCIAttrRow:nth-of-type(4) .sapMObjStatusShowIcon").length, "Status icon is not shown");
 
 			done();
 		}.bind(this));

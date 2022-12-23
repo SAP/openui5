@@ -142,10 +142,19 @@ sap.ui.define([
 	ListContentItemRenderer.renderInfo = function (rm, oLI) {
 		rm.openStart("div")
 			.class("sapUiIntLCIInfo")
-			.class("sapUiIntLCIInfo" + oLI.getInfoState())
-			.openEnd();
+			.class("sapUiIntLCIInfo" + oLI.getInfoState());
 
-		rm.text(oLI.getInfo());
+		if (oLI.getShowInfoStateIcon()) {
+			rm.class("sapUiIntLCIInfoShowIcon");
+		}
+
+		rm.openEnd();
+
+		rm.openStart("span")
+			.class("sapUiIntLCIInfoText")
+			.openEnd()
+			.text(oLI.getInfo())
+			.close("span");
 
 		rm.close("div");
 	};

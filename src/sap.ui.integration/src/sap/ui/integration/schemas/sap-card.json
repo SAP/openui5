@@ -854,6 +854,17 @@
                     }
                 ]
             },
+            "showStateIcon": {
+              "description": "Defines if a default state icon is shown",
+              "oneOf": [
+                {
+                 "type": "boolean"
+                },
+                {
+                 "$ref": "#/definitions/simpleBinding"
+                }
+              ]
+            },
             "visible": {
               "description": "Visibility of the item",
               "oneOf": [
@@ -1542,6 +1553,17 @@
         "state": {
           "description": "The state color of the item",
           "$ref": "#/definitions/state"
+        },
+        "showStateIcon": {
+          "description": "Defines if a default state icon is shown",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         },
         "id": {
           "description": "ID for input fields",

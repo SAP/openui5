@@ -1,0 +1,41 @@
+/* =============================================== */
+/* CSS for control sap.ui.integration.controls/ObjectStatus */
+/* Base theme                                      */
+/* ================================================*/
+
+.sapUiIntCard {
+	.sapMObjStatus.sapMObjStatusShowIcon  .sapMObjStatusText {
+		display: inline;
+	}
+
+	.sapUiIntLCIInfo.sapUiIntLCIInfoShowIcon:before,
+	.sapMObjStatus.sapMObjStatusShowIcon:before {
+		font-size: 1rem;
+		font-family: 'SAP-icons';
+		padding-inline-end: 0.25rem;
+	}
+
+	.sapUiIntLCIInfoShowIcon.sapUiIntLCIInfoError:before,
+	.sapMObjStatusShowIcon.sapMObjStatusError:before {
+		color: @sapNegativeElementColor;
+		content: "\e1ec";
+	}
+
+	.sapUiIntLCIInfoShowIcon.sapUiIntLCIInfoWarning:before,
+	.sapMObjStatusShowIcon.sapMObjStatusWarning:before {
+		color: @sapCriticalElementColor;
+		content: "\e053";
+	}
+
+	.sapUiIntLCIInfoShowIcon.sapUiIntLCIInfoSuccess:before,
+	.sapMObjStatusShowIcon.sapMObjStatusSuccess:before {
+		color: @sapPositiveElementColor;
+		content: "\e1c1";
+	}
+
+	.sapUiIntLCIInfoShowIcon.sapUiIntLCIInfoInformation:before,
+	.sapMObjStatusShowIcon.sapMObjStatusInformation:before {
+		color: @sapInformativeElementColor;
+		content: "\e289";
+	}
+}

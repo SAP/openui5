@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/util/openWindow",
 	"sap/m/library",
 	"sap/m/List",
-	"sap/m/ObjectStatus",
+	"sap/ui/integration/controls/ObjectStatus",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
@@ -276,12 +276,14 @@ sap.ui.define([
 		var mItem = oConfiguration.item,
 			oList = this._getList(),
 			bIsSkeleton = this.isSkeleton(),
+			oObjectStatus,
 			mSettings = {
 				title: mItem.title && (mItem.title.value || mItem.title),
 				description: mItem.description && (mItem.description.value || mItem.description),
 				highlight: mItem.highlight,
 				info: mItem.info && mItem.info.value,
 				infoState: mItem.info && mItem.info.state,
+				showInfoStateIcon: mItem.info && mItem.info.showStateIcon,
 				attributes: []
 			};
 
@@ -310,12 +312,15 @@ sap.ui.define([
 
 		if (mItem.attributes) {
 			mItem.attributes.forEach(function (attr) {
-				mSettings.attributes.push(new ObjectStatus({
+				oObjectStatus = new ObjectStatus({
 					text: attr.value,
 					state: attr.state,
 					emptyIndicatorMode: EmptyIndicatorMode.On,
-					visible: attr.visible
-				}));
+					visible: attr.visible,
+					showStateIcon: attr.showStateIcon
+				});
+
+				mSettings.attributes.push(oObjectStatus);
 			});
 		}
 
