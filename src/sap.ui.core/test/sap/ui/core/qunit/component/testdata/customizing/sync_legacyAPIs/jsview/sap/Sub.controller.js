@@ -4,7 +4,7 @@ sap.ui.define([
 ], function(Log, Controller) {
 	"use strict";
 
-	return Controller.extend("testdata.customizing.sync.jsview.sap.Sub", {
+	return Controller.extend("testdata.customizing.sync_legacyAPIs.jsview.sap.Sub", {
 
 		onInit: function() {
 			Log.info("Sub Controller onInit()");

@@ -4,10 +4,10 @@ sap.ui.define([
 ], function(Log, Controller) {
 	"use strict";
 
-	var MainController = Controller.extend("testdata.customizing.sync.jsview.sap.Main", {
+	var MainController = Controller.extend("testdata.customizing.sync_legacyAPIs.jsview.sap.Main", {
 
 		onInit : function () {
-			Log.info("testdata.customizing.sync.jsview.sap.Main - onInit");
+			Log.info("testdata.customizing.sync_legacyAPIs.jsview.sap.Main - onInit");
 		}
 
 	});
