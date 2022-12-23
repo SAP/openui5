@@ -179,7 +179,14 @@ sap.ui.define([
 					 * Acceptable range is from 1 to 6.
 					 * @since 1.99
 					 */
-					scaleFactor: {type: "float", group: "Data", defaultValue: 1}
+					scaleFactor: {type: "float", group: "Data", defaultValue: 1},
+
+					/**
+			 	 	* If set, the calendar week numbering is used for display.
+					 * If not set, the calendar week numbering of the global configuration is used.
+					 * @since 1.110.0
+					 */
+					calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 				},
 				aggregations: {
 
@@ -347,7 +354,8 @@ sap.ui.define([
 				oDatesRow = new DatesRow(this.getId() + "-columnHeaders", {
 					showDayNamesLine: false,
 					showWeekNumbers: false,
-					startDate: oStartDate
+					startDate: oStartDate,
+					calendarWeekNumbering: this.getCalendarWeekNumbering()
 				}).addStyleClass("sapMSinglePCColumnHeader"),
 				iDelay = (60 - oStartDate.getSeconds()) * 1000,
 				sTimePattern = this._getCoreLocaleData().getTimePattern("medium");
@@ -399,6 +407,13 @@ sap.ui.define([
 			}
 
 			this._oInvisibleMessage = InvisibleMessage.getInstance();
+		};
+
+		SinglePlanningCalendarGrid.prototype.setCalendarWeekNumbering = function (sCalendarWeekNumbering){
+			this.setProperty("calendarWeekNumbering",sCalendarWeekNumbering);
+			var oDatesRow = this.getAggregation("_columnHeaders");
+			oDatesRow.setCalendarWeekNumbering(sCalendarWeekNumbering);
+			return this;
 		};
 
 		SinglePlanningCalendarGrid.prototype.onmousedown = function(oEvent) {

@@ -477,6 +477,96 @@ sap.ui.define([
 		assert.strictEqual(oErrorSpy.callCount, 1, "There is an error in the console when invalid value is passed.");
 		assert.strictEqual(oSPC.getFirstDayOfWeek(), -1, "The value is not set.");
 
+		oSPC.destroy();
+	});
+
+	QUnit.test("CalendarWeekNumbering - correct week day", function(assert) {
+		var sInitialWeekNumbering = "ISO_8601";
+		var sViewKey = "WeekView";
+		var oSPC = new SinglePlanningCalendar({
+				startDate: new Date(2015, 0, 1, 8),
+				views: [
+					new SinglePlanningCalendarWeekView("WeekView", {
+						key: "WeekView",
+						title: "Week View"
+					}),
+					new SinglePlanningCalendarMonthView("MonthView", {
+						key: "MonthView",
+						title: "Month View"
+					})
+				]
+			});
+
+		// Prepare
+		oSPC.placeAt("qunit-fixture");
+
+		// Act
+		oSPC.setSelectedView(sViewKey);
+		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
+		Core.applyChanges();
+
+		var oRow = oSPC.getAggregation("_grid").getAggregation("_columnHeaders"),
+			aHeaderDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
+
+		// Assert
+		assert.strictEqual(aHeaderDays.length, 7, "7 weekheaders rendered");
+		assert.strictEqual(oSPC.getViewByKey(sViewKey).getCalendarWeekNumbering(), sInitialWeekNumbering, sViewKey + "has proper calendarWeekNumbering after changing the SinglePlanningCalendar property");
+		assert.strictEqual(aHeaderDays[0].children[1].textContent, "Mon", "Monday is the first weekday for ISO_8601");
+
+		// Act
+		sInitialWeekNumbering = "MiddleEastern";
+		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
+		Core.applyChanges();
+		aHeaderDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
+
+		// Assert
+		assert.strictEqual(aHeaderDays.length, 7, "7 weekheaders rendered");
+		assert.strictEqual(oSPC.getViewByKey(sViewKey).getCalendarWeekNumbering(), sInitialWeekNumbering, sViewKey + "has proper calendarWeekNumbering after changing the SinglePlanningCalendar property");
+		assert.strictEqual(aHeaderDays[0].children[1].textContent, "Sat", "Saturday is the first weekday for MiddleEastern");
+
+		// Act
+		sInitialWeekNumbering = "WesternTraditional";
+		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
+		Core.applyChanges();
+		aHeaderDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
+
+		// Assert
+		assert.strictEqual(aHeaderDays.length, 7, "7 weekheaders rendered");
+		assert.strictEqual(oSPC.getViewByKey(sViewKey).getCalendarWeekNumbering(), sInitialWeekNumbering, sViewKey + "has proper calendarWeekNumbering after changing the SinglePlanningCalendar property");
+		assert.strictEqual(aHeaderDays[0].children[1].textContent, "Sun", "Sunday is the first weekday for WesternTraditional");
+
+		// Act
+		sInitialWeekNumbering = "ISO_8601";
+		sViewKey = "MonthView";
+		oSPC.setSelectedView(sViewKey);
+		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
+		Core.applyChanges();
+		aHeaderDays = oSPC.getDomRef().querySelectorAll(".sapUiCalWH");
+
+		// Assert
+		assert.strictEqual(aHeaderDays[0].textContent, "Mon", "Monday is the first weekday for ISO_8601");
+
+		// Act
+		sInitialWeekNumbering = "MiddleEastern";
+		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
+		Core.applyChanges();
+		aHeaderDays = oSPC.getDomRef().querySelectorAll(".sapUiCalWH");
+
+		// Assert
+		assert.strictEqual(aHeaderDays[0].textContent, "Sat", "Saturday is the first weekday for MiddleEastern");
+		assert.strictEqual(oSPC.getViewByKey(sViewKey).getCalendarWeekNumbering(), sInitialWeekNumbering, sViewKey + "has proper calendarWeekNumbering after changing the SinglePlanningCalendar property");
+
+		// Act
+		sInitialWeekNumbering = "WesternTraditional";
+		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
+		Core.applyChanges();
+		aHeaderDays = oSPC.getDomRef().querySelectorAll(".sapUiCalWH");
+
+		// Assert
+		assert.strictEqual(aHeaderDays[0].textContent, "Sun", "Saturday is the first weekday for WesternTraditional");
+		assert.strictEqual(oSPC.getViewByKey(sViewKey).getCalendarWeekNumbering(), sInitialWeekNumbering, sViewKey + "has proper calendarWeekNumbering after changing the SinglePlanningCalendar property");
+
+		oSPC.destroy();
 	});
 
 	QUnit.module("Events");

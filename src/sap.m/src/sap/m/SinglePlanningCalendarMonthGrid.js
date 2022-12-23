@@ -23,7 +23,10 @@ sap.ui.define([
 	'./SinglePlanningCalendarMonthGridRenderer',
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/InvisibleMessage',
-	'sap/ui/core/library'
+	'sap/ui/core/library',
+	"sap/ui/core/date/CalendarWeekNumbering",
+	"sap/ui/core/date/CalendarUtils",
+	"sap/ui/core/Configuration"
 	],
 	function (
 		Control,
@@ -45,7 +48,10 @@ sap.ui.define([
 		SinglePlanningCalendarMonthGridRenderer,
 		jQuery,
 		InvisibleMessage,
-		coreLibrary
+		coreLibrary,
+		CalendarWeekNumbering,
+		CalendarDateUtils,
+		Configuration
 	) {
 		"use strict";
 
@@ -114,7 +120,14 @@ sap.ui.define([
 					 *
 					 * @since 1.98
 					 */
-					firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1}
+					firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1},
+					/**
+			 		 * If set, the calendar week numbering is used for display.
+					 * If not set, the calendar week numbering of the global configuration is used.
+					 * Note: This property should not be used with firstDayOfWeek property.
+					 * @since 1.110.0
+					 */
+					calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 				},
 				aggregations: {
 
@@ -260,6 +273,10 @@ sap.ui.define([
 			this._oAppointmentsToRender = this._calculateAppointmentsNodes(oStartDate);
 			this._createAppointmentsDndPlaceholders(oStartDate);
 			this._oInvisibleMessage = InvisibleMessage.getInstance();
+
+			if (this.getFirstDayOfWeek() !== -1 && this.getCalendarWeekNumbering()) {
+				Log.warning("Both properties firstDayOfWeek and calendarWeekNumbering should not be used at the same time!");
+			}
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype.onAfterRendering = function() {
@@ -489,15 +506,13 @@ sap.ui.define([
 			var aDays = this._getVisibleDays(this.getStartDate()),
 				iColumns = this._getColumns(),
 				aResult = [],
-				sLocale = Core.getConfiguration().getFormatLocale().toString(),
-				oLocaleData = this._getCoreLocaleData();
+				sLocale = Core.getConfiguration().getFormatLocale().toString();
 
 			for (var i = 0; i < this._getRows(); i++) {
-				aResult.push(CalendarUtils.calculateWeekNumber(
-					aDays[i * iColumns].toUTCJSDate(),
-					aDays[i * iColumns].getYear(),
-					sLocale,
-					oLocaleData));
+				var oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: "Gregorian", calendarWeekNumbering: this.getCalendarWeekNumbering()}, new Locale(sLocale));
+				var iWeekNumber = Number(oDateFormat.format(aDays[i * iColumns].toUTCJSDate(), true));
+
+				aResult.push(iWeekNumber);
 			}
 
 			return aResult;
@@ -520,7 +535,18 @@ sap.ui.define([
 
 			oCalStartDate = CalendarDate.fromLocalJSDate(oStartDate);
 			iAPIFirstDayOfWeek = this.getFirstDayOfWeek();
-			iFirstDayOfWeek = iAPIFirstDayOfWeek > 0 ? iAPIFirstDayOfWeek : this._getCoreLocaleData().getFirstDayOfWeek();
+
+			if (iAPIFirstDayOfWeek < 0 || iAPIFirstDayOfWeek > 6) {
+				var oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(Configuration.getFormatSettings().getFormatLocale().toString()));
+
+				if (oWeekConfigurationValues) {
+					iFirstDayOfWeek = oWeekConfigurationValues.firstDayOfWeek;
+				} else {
+					var oLocaleData = this._getCoreLocaleData();
+					iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+				}
+			}
+
 
 			// determine weekday of first day in month
 			oFirstDay = new CalendarDate(oCalStartDate);
