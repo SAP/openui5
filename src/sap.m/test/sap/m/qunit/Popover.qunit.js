@@ -1747,7 +1747,8 @@ sap.ui.define([
 		var oPopover = new Popover(),
 				stubPopoverMaxContentWidth = sinon.stub(oPopover, "_getMaxContentWidth").returns(500),
 				stubPopoverMaxContentHeight = sinon.stub(oPopover, "_getMaxContentHeight").returns(400),
-				stubjQueryHeight = sinon.stub(jQuery.fn, "height").returns(300),
+				oElement = document.createElement("div"),
+				stubjQueryHeight = sinon.stub(oElement, "getBoundingClientRect").returns({ height: 300 }),
 				oExpectedDimensions = {
 					"max-width": "500px",
 					"max-height": "400px",
@@ -1755,7 +1756,7 @@ sap.ui.define([
 				};
 
 		var oContentDimensions = oPopover._getContentDimensionsCss({
-			_$content: jQuery()
+			_$content: jQuery(oElement)
 		});
 
 		assert.deepEqual(oContentDimensions, oExpectedDimensions, "Content dimensions should be right");
@@ -1772,14 +1773,15 @@ sap.ui.define([
 				}),
 				stubPopoverMaxContentWidth = sinon.stub(oPopover, "_getMaxContentWidth").returns(400),
 				stubPopoverMaxContentHeight = sinon.stub(oPopover, "_getMaxContentHeight").returns(400),
-				stubjQueryHeight = sinon.stub(jQuery.fn, "height").returns(300),
+				oElement = document.createElement("div"),
+				stubjQueryHeight = sinon.stub(oElement, "getBoundingClientRect").returns({ height: 300 }),
 				oExpectedDimensions = {
 					"max-width": "400px",
 					"height": "300px"
 				};
 
 		var oContentDimensions = oPopover._getContentDimensionsCss({
-			_$content: jQuery()
+			_$content: jQuery(oElement)
 		});
 
 		assert.deepEqual(oContentDimensions, oExpectedDimensions, "Content dimensions should be right");

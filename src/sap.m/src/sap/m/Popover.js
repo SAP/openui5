@@ -1905,7 +1905,7 @@ sap.ui.define([
 		 */
 		Popover.prototype._getContentDimensionsCss = function (oPosParams) {
 			var oCSS = {},
-				iActualContentHeight = oPosParams._$content.height(),
+				iActualContentHeight = oPosParams._$content[0].getBoundingClientRect().height,
 				iMaxContentWidth = this._getMaxContentWidth(oPosParams),
 				iMaxContentHeight = this._getMaxContentHeight(oPosParams);
 
