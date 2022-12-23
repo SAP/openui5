@@ -187,7 +187,9 @@ sap.ui.define([
 										control: oMDCChart,
 										key: "Type",
 										state: {
-											type: oObj.key
+											properties: {
+												chartType: oObj.key
+											}
 										}
 									});
 									/*

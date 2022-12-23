@@ -24,12 +24,16 @@ sap.ui.define([
 
     ChartTypeController.prototype.getDelta = function(mPropertyBag) {
 
-        var sNewType = mPropertyBag.changedState.type ? mPropertyBag.changedState.type : mPropertyBag.changedState.properties.chartType;
+        var sNewType;
+        if (mPropertyBag.changedState && mPropertyBag.changedState.properties) {
+            sNewType = mPropertyBag.changedState.properties.chartType;
+        }
+
         var sOldType = this.getAdaptationControl().getChartType();
 
         var aChartTypeChanges = [];
 
-        if (sNewType !== sOldType) {
+        if (sNewType && sNewType !== sOldType) {
             aChartTypeChanges = [{
                 selectorElement: mPropertyBag.control,
                 changeSpecificData: {
