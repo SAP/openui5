@@ -4,10 +4,11 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/Wizard",
 	"sap/m/WizardStep",
+	"sap/m/Button",
 	"sap/ui/base/ObjectPool",
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery"
-], function(Log, Core, Wizard, WizardStep, ObjectPool, library, jQuery) {
+], function(Log, Core, Wizard, WizardStep, Button, ObjectPool, library, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.PageBackgroundDesign
@@ -1229,5 +1230,37 @@ sap.ui.define([
 		assert.ok(oProgressDomStub.calledOnce, "The progress navigator's $ was  called once.");
 		assert.ok(oPrependSpy.calledOnce, "prependTo was called once.");
 		assert.strictEqual(oPrependSpy.firstCall.args[0][0], $WizardElement, "The sticky content was returned to the correct DOM element.");
+	});
+
+	QUnit.test("goToStep should consider bFocusFirstStepElement in Page Mode", function (assert) {
+		var oBtn = new Button();
+		var oSecondStep = new WizardStep({
+			validated: true,
+			title:"Step 2",
+			content:[
+				oBtn
+			]
+		});
+		var oWizard = new sap.m.Wizard({
+			renderMode: sap.m.WizardRenderMode.Page,
+			steps: [
+				new WizardStep({
+					title:"Step 1"
+				}),
+				oSecondStep
+			]
+		}).placeAt("qunit-fixture");
+
+		Core.applyChanges();
+
+		oWizard._activateStep(oSecondStep);
+		Core.applyChanges();
+
+		oWizard.goToStep(oSecondStep, true);
+
+		assert.strictEqual(document.activeElement, oBtn.getFocusDomRef(), "Button should be focused");
+
+		oBtn.destroy();
+		oWizard.destroy();
 	});
 });
