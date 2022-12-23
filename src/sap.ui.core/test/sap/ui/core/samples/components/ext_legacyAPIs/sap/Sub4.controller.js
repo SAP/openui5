@@ -5,7 +5,7 @@ sap.ui.define([
 ], function(Log, Controller, MessageToast) {
 	"use strict";
 
-	var Sub4Controller = Controller.extend("samples.components.ext.sap.Sub4", {
+	var Sub4Controller = Controller.extend("samples.components.ext_legacyAPIs.sap.Sub4", {
 
 		onInit: function() {
 			Log.info("Sub4 Controller onInit()");

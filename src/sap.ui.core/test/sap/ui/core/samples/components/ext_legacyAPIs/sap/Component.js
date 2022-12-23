@@ -3,12 +3,12 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("samples.components.ext.sap.Component", {
+	var Component = UIComponent.extend("samples.components.ext_legacyAPIs.sap.Component", {
 
 		metadata : {
 			version : "1.0",
 			rootView : {
-				viewName: "samples.components.ext.sap.Main",
+				viewName: "samples.components.ext_legacyAPIs.sap.Main",
 				type: "XML",
 				async: true
 			},

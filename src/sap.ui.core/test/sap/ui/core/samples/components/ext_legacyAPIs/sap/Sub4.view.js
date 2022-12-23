@@ -6,10 +6,10 @@ sap.ui.define([
 ], function(Button, Text, JSView, VerticalLayout) {
 	"use strict";
 
-	sap.ui.jsview("samples.components.ext.sap.Sub4", {
+	sap.ui.jsview("samples.components.ext_legacyAPIs.sap.Sub4", {
 
 		getControllerName : function(){
-			return "samples.components.ext.sap.Sub4";
+			return "samples.components.ext_legacyAPIs.sap.Sub4";
 		},
 
 		async: true,

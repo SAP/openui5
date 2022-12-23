@@ -5,7 +5,7 @@ sap.ui.define([
 ], function(Log, MessageToast/*, Controller*/) {
 	"use strict";
 
-	sap.ui.controller("samples.components.ext.customer.Sub2ControllerExtension", {
+	sap.ui.controller("samples.components.ext_legacyAPIs.customer.Sub2ControllerExtension", {
 
 		onInit: function() {
 			Log.info("Sub2ControllerExtension Controller onInit()");

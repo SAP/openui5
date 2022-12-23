@@ -6,7 +6,7 @@ sap.ui.define([
 ], function(Log, Controller, JSONModel, MessageToast) {
 	"use strict";
 
-	var Sub2Controller = Controller.extend("samples.components.ext.sap.Sub2", {
+	var Sub2Controller = Controller.extend("samples.components.ext_legacyAPIs.sap.Sub2", {
 
 		onInit: function() {
 			Log.info("Sub2 Controller onInit()");
