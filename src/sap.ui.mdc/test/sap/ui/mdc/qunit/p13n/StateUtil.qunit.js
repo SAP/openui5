@@ -440,6 +440,124 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("call 'applyExternalState' and trigger 'reset' afterwards (no key specified)", function(assert){
+		var done = assert.async();
+
+		var aItemState = [
+			{name: "String"},
+			{name: "Boolean"},
+			{name: "Date"}
+		];
+
+		var mFilterConditions = {
+			"String": [{ "operator": "Contains", "values": ["Test"] }],
+			"Boolean": [{ "operator": "EQ", "values": [true] }],
+			"Decimal":[{"operator":"EQ","values":["12.01"]}],
+			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+		};
+
+		var oExternalState = {
+			filter: mFilterConditions,
+			items: aItemState
+		};
+
+		// add some item and filter changes
+		StateUtil.applyExternalState(this.oFilterBar, oExternalState).then(function(aDirtyChanges){
+
+			assert.equal(this.oFilterBar.getFilterItems().length, 3, "Items created");
+
+			//no keys specified --> reset everything
+			StateUtil.resetState(this.oFilterBar).then(function(){
+
+				assert.equal(this.oFilterBar.getFilterItems().length, 0, "Items removed");
+				assert.deepEqual(this.oFilterBar.getFilterConditions().String, [],"Condition removed");
+				assert.deepEqual(this.oFilterBar.getFilterConditions().Boolean, [], "Condition removed");
+				assert.deepEqual(this.oFilterBar.getFilterConditions().Decimal, [], "Condition removed");
+				assert.deepEqual(this.oFilterBar.getFilterConditions().Date, [], "Condition removed");
+				done();
+			}.bind(this));
+
+		}.bind(this));
+	});
+
+
+	QUnit.test("call 'applyExternalState' and trigger 'resetState' afterwards (item key specified)", function(assert){
+		var done = assert.async();
+
+		var aItemState = [
+			{name: "String"},
+			{name: "Boolean"},
+			{name: "Date"}
+		];
+
+		var mFilterConditions = {
+			"String": [{ "operator": "Contains", "values": ["Test"] }],
+			"Boolean": [{ "operator": "EQ", "values": [true] }],
+			"Decimal":[{"operator":"EQ","values":["12.01"]}],
+			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+		};
+
+		var oExternalState = {
+			filter: mFilterConditions,
+			items: aItemState
+		};
+
+		// add some item and filter changes
+		StateUtil.applyExternalState(this.oFilterBar, oExternalState).then(function(aDirtyChanges){
+
+			assert.equal(this.oFilterBar.getFilterItems().length, 3, "Items created");
+
+			//Item key specified --> reset only items
+			StateUtil.resetState(this.oFilterBar, ["items"]).then(function(){
+
+				assert.equal(this.oFilterBar.getFilterItems().length, 0, "Items removed");
+				assert.deepEqual(this.oFilterBar.getFilterConditions(), mFilterConditions, "Items removed");
+				done();
+			}.bind(this));
+
+		}.bind(this));
+	});
+
+	QUnit.test("call 'applyExternalState' and trigger 'resetState' afterwards (filter key specified)", function(assert){
+		var done = assert.async();
+
+		var aItemState = [
+			{name: "String"},
+			{name: "Boolean"},
+			{name: "Date"}
+		];
+
+		var mFilterConditions = {
+			"String": [{ "operator": "Contains", "values": ["Test"] }],
+			"Boolean": [{ "operator": "EQ", "values": [true] }],
+			"Decimal":[{"operator":"EQ","values":["12.01"]}],
+			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+		};
+
+		var oExternalState = {
+			filter: mFilterConditions,
+			items: aItemState
+		};
+
+		// add some item and filter changes
+		StateUtil.applyExternalState(this.oFilterBar, oExternalState).then(function(aDirtyChanges){
+
+			assert.equal(this.oFilterBar.getFilterItems().length, 3, "Items created");
+
+			//Item key specified --> reset only items
+			StateUtil.resetState(this.oFilterBar, ["filter"]).then(function(){
+
+				assert.equal(this.oFilterBar.getFilterItems().length, 3, "Items removed");
+				assert.deepEqual(this.oFilterBar.getFilterConditions().String, [],"Condition removed");
+				assert.deepEqual(this.oFilterBar.getFilterConditions().Boolean, [], "Condition removed");
+				assert.deepEqual(this.oFilterBar.getFilterConditions().Decimal, [], "Condition removed");
+				assert.deepEqual(this.oFilterBar.getFilterConditions().Date, [], "Condition removed");
+				done();
+			}.bind(this));
+
+		}.bind(this));
+	});
+
 	QUnit.test("call 'applyExternalState' and remove existing items", function(assert){
 		var done = assert.async();
 

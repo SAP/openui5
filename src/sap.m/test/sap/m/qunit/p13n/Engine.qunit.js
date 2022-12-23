@@ -636,6 +636,7 @@ sap.ui.define([
 		oTest2Controller.getResetEnabled = function() {
 			return true;
 		};
+		Engine.getInstance().setActiveP13n(this.oControl, "Test2");
 
 		//trigger change creation
 		Engine.getInstance().reset(this.oControl, "Test2").then(function(){

@@ -131,6 +131,32 @@ sap.ui.define([
 		},
 
 		/**
+		 * Resets the state by discarding all personalization changes created. When using a <code>VariantManagement</control>, the state
+		 * is being reset to the currently selected variant. When using a <code>PersistenceProvider</code> control with its <code>mode</code>
+		 * property configured to </code>auto</code>, the state is reset as provided in the XML view.
+		 *
+		 * @param {sap.ui.mdc.Control} oControl The control instance to be reset
+		 * @param {string[]} [aStateKeys] The state keys that should be reset, refer to {@link sap.ui.mdc.p13n.StateUtil#applyExternalState} for available state keys. If no keys provided, all changes will be reset.
+		 *
+		 * @returns {Promise} <code>Promise</code> that resolves after the state has been reset
+		 */
+		resetState: function(oControl, aStateKeys) {
+
+			var mStateKeys, aInternalKeys;
+			if (aStateKeys) {
+				mStateKeys = aStateKeys.reduce(function(mMap, sStateKey){
+					mMap[sStateKey] = sStateKey;
+					return mMap;
+				}, {});
+				aInternalKeys = Object.keys(Engine.getInstance().internalizeKeys(oControl, mStateKeys));
+			} else {
+				aInternalKeys = Engine.getInstance().getRegisteredControllers(oControl);
+			}
+
+			return Engine.getInstance().reset(oControl, aInternalKeys);
+		},
+
+		/**
 		 * Creates a delta between two states.
 		 *
 		 * @private
