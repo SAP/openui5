@@ -158,4 +158,32 @@
 			state="Success"
 			icon="sap-icon://sys-enter-2" />
 	</l:VerticalLayout>
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<Label text="ObjectStatus with style sapMObjectStatusLarge applied" design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
+		<Table>
+			<columns>
+				<Column>
+					<Text text="ObjectStatus with default text wrapping"></Text>
+				</Column>
+				<Column>
+					<Text text="ObjectStatus with enchanced text wrapping via 'sapMObjectStatusLongText' CSS class"></Text>
+				</Column>
+			</columns>
+			<ColumnListItem>
+				<cells>
+					<ObjectStatus
+						class=""
+						title="Product status"
+						text="VeryLongTextToDemonstrateWrappingVeryLongTextToDemonstrateWrappingVeryLongTextToDemonstrateWrappingVeryLongTextToDemonstrateWrapping"/>
+
+					<ObjectStatus
+						class="sapMObjectStatusLongText"
+						title="Product status"
+						text="VeryLongTextToDemonstrateWrappingVeryLongTextToDemonstrateWrappingVeryLongTextToDemonstrateWrappingVeryLongTextToDemonstrateWrapping"/>
+				</cells>
+			</ColumnListItem>
+		</Table>
+	</l:VerticalLayout>
 </mvc:View>

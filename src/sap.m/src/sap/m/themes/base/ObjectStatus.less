@@ -30,6 +30,13 @@
 		height: inherit;
 		vertical-align: top;
 	}
+
+	&.sapMObjectStatusLongText{
+		.sapMObjStatusText {
+			word-break: break-all;
+		}
+	}
+
 	.sapMObjStatusTitle::after {
 		content: attr(data-colon);
 		white-space: pre;
