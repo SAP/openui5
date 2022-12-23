@@ -212,6 +212,15 @@ html.sap-desktop {
 		}
 	}
 
+	.sapMITHStartOverflow,
+	.sapMITHEndOverflow {
+		.sapMITBItem:not(.sapUiDnDDragging):focus:active {
+			&::after {
+				border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentContrastFocusColor;
+			}
+		}
+	}
+
 	.sapMITH.sapUiSizeCompact {
 
 		.sapMITBItem.sapMITBVertical:focus.sapMITBAll {
