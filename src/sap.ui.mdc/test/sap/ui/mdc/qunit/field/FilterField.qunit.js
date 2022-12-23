@@ -17,7 +17,10 @@ sap.ui.define([
 	"sap/ui/mdc/enum/BaseType",
 	"delegates/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/model/type/String", // make sure types are loaded
+	"sap/ui/model/type/Integer",
+	"sap/ui/model/type/Date"
 ], function (
 		jQuery,
 		qutils,
@@ -31,7 +34,10 @@ sap.ui.define([
 		BaseType,
 		FieldBaseDelegate,
 		KeyCodes,
-		oCore
+		oCore,
+		StringType,
+		IntegerType,
+		DateType
 	) {
 	"use strict";
 
