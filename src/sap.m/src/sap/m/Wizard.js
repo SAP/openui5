@@ -278,7 +278,7 @@ sap.ui.define([
 		 * @param {sap.m.WizardStep} oStep [optional] The step to be rendered.
 		 * @private
 		 */
-		Wizard.prototype._renderPageMode = function (oStep) {
+		Wizard.prototype._renderPageMode = function (oStep, bFocusFirstStepElement) {
 			var iCurrentStepIndex, oCurrentStep, oRenderManager;
 
 			if (this.getRenderMode() !== WizardRenderMode.Page) {
@@ -298,6 +298,10 @@ sap.ui.define([
 				this._updateStepTitleNumber(oCurrentStep, iCurrentStepIndex));
 			oRenderManager.flush(this.getDomRef("step-container"));
 			oRenderManager.destroy();
+
+			if (bFocusFirstStepElement) {
+				this._focusFirstStepElement(oStep);
+			}
 		};
 
 		/**
@@ -441,7 +445,7 @@ sap.ui.define([
 				return this;
 			} else if (this.getRenderMode() === WizardRenderMode.Page) {
 				fnUpdateProgressNavigator.call(this);
-				this._renderPageMode(oStep);
+				this._renderPageMode(oStep, bFocusFirstStepElement);
 
 				return this;
 			}
