@@ -365,6 +365,63 @@ sap.ui.define([
 		oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
+	QUnit.module("Visibility of filters", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+			Core.applyChanges();
+		}
+	});
+
+	QUnit.test("Changing visibility of filters hides the Filter Bar", function (assert) {
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oFilterBar = this.oCard.getAggregation("_filterBar");
+
+			assert.ok(oFilterBar.getDomRef(), "FilterBar is rendered in the card");
+
+			oFilterBar._getFilters().forEach(function (oFilter) {
+				oFilter.setVisible(false);
+			});
+			Core.applyChanges();
+
+			assert.notOk(oFilterBar.getDomRef(), "FilterBar is not rendered in the card when filters are not visible");
+
+			oFilterBar._getFilters()[0].setVisible(true);
+			Core.applyChanges();
+
+			assert.ok(oFilterBar.getDomRef(), "FilterBar is rendered again in the card");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter.json");
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("Setting visibility using parameter", function (assert) {
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oFilterBar = this.oCard.getAggregation("_filterBar"),
+				aFilters = oFilterBar._getFilters(),
+				oInvisibleFilter = aFilters.find(function (oFilter) { return oFilter.getKey() === "hiddenFilter"; });
+
+			assert.strictEqual(oInvisibleFilter.getVisible(), false, "filter is not visible");
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter.json");
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
 	QUnit.module("Dynamic filters", {
 		beforeEach: function () {
 			this.oCard = new Card({
