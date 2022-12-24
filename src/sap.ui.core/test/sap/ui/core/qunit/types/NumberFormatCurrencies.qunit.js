@@ -1066,6 +1066,27 @@ sap.ui.define([
 		oLogSpy.resetHistory();
 	});
 
+	//*****************************************************************************************************************
+	QUnit.test("Parse custom currency codes, containing different kind of white spaces", function (assert) {
+		var oFormat = getCurrencyInstance({
+				customCurrencies : {
+					"1XOF" : {digits : 2, symbol : "1F\u202fCFA"},
+					XOF : {digits : 2, symbol : "F\u202fCFA"},
+					XOF2 : {digits : 2, symbol : "F\u202fCFA2"}
+				}
+			}, new Locale("de"));
+
+		assert.deepEqual(oFormat.parse("2000 F CFA"), [2000, "XOF"]);
+		assert.deepEqual(oFormat.parse("2000 F\x0aCFA"), [2000, "XOF"]);
+		assert.deepEqual(oFormat.parse("2 Mio. F\x0aCFA"), [2000000, "XOF"]);
+		assert.deepEqual(oFormat.parse("2000 F CFA2"), [2000, "XOF2"]);
+		assert.deepEqual(oFormat.parse("2000 F\xa0CFA2"), [2000, "XOF2"]);
+		assert.deepEqual(oFormat.parse("2 Mio. F\xa0CFA2"), [2000000, "XOF2"]);
+		assert.deepEqual(oFormat.parse("2000 1F CFA"), [2000, "1XOF"]);
+		assert.deepEqual(oFormat.parse("2000 1F\xa0CFA"), [2000, "1XOF"]);
+		assert.deepEqual(oFormat.parse("2 Mio. 1F\xa0CFA"), [2000000, "1XOF"]);
+	});
+
 	QUnit.module("Custom currencies - Ambiguous currency information", {
 		afterEach: function() {
 			// reset global configuration
