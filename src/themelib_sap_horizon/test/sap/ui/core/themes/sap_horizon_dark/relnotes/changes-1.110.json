@@ -3,6 +3,17 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "5be7e4a9a845914475c83224f9cbb5b967d5020f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: visual alignment in date range selection mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280197911"
+          }
+        ]
+      },
+      {
         "id": "2bf8a9bd154a04dd4e938296461686da5b0f1708",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: inverted ObjectStatus parts align in compact and cozy",

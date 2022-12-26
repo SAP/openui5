@@ -3,6 +3,44 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "5be7e4a9a845914475c83224f9cbb5b967d5020f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: visual alignment in date range selection mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280197911"
+          }
+        ]
+      },
+      {
+        "id": "3059ba29660b79e5a69be96d6598fd0c2e9ed414",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: fixed minDate/maxDate year range checks for different calendar types",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280193071"
+          }
+        ]
+      },
+      {
+        "id": "9cc4d4ce9c1c7f9edbde7c552d53876517fc58f7",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: _checkDateSelected doesn't throw error when selected dates range is empty",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280197094"
+          }
+        ]
+      },
+      {
+        "id": "714d03ffd8bf1002ef1faf3eacea5c4b93b028aa",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Improve JS Docs for Accessibility Function"
+      },
+      {
         "id": "8ad763509ba17a0be9978ff7d7de7fdbd194c246",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: default value for primary and secondary type has been removed",

@@ -3,6 +3,17 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "988967dbd5189f39f5332d6025423b4c35ab975c",
+        "type": "FIX",
+        "text": " mdc/Table: suppress colon if there is no label in table pop-in",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280184009"
+          }
+        ]
+      },
+      {
         "id": "6aa18fa3e01869489439b136134b66a4466f52fe",
         "type": "FIX",
         "text": " FieldGroup is left if value help opens",

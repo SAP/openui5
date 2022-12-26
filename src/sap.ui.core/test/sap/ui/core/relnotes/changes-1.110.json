@@ -3,6 +3,44 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "46b5c3ba18685a4a8c46e821de8ef4001d6e6299",
+        "type": "FIX",
+        "text": " FastNavigation: Improve test stability"
+      },
+      {
+        "id": "b51b47ad2aa849d588c65dd6ae3feaf8f99ecc0a",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#requestContexts: empty $select remains when all entries were converted to $expand",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280192214"
+          }
+        ]
+      },
+      {
+        "id": "c2c479a491119486c05929c1a0412e9169e70779",
+        "type": "FIX",
+        "text": " theming/Parameters: Fix parameter parsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009129202022"
+          }
+        ]
+      },
+      {
+        "id": "64fe6f9dd8b2e0c62fcd936129178d64bd811cbc",
+        "type": "FIX",
+        "text": " core/BlockLayerUtils: return browser focus back to control before unblock",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270190904"
+          }
+        ]
+      },
+      {
         "id": "e9b4420f08224b8b65f4e14f3b74155689b08b6f",
         "type": "FIX",
         "text": " sap.ui.test: Artificial focus events complemented",

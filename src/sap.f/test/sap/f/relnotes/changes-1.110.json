@@ -3,6 +3,22 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "98fe76c95a473a17d44274fe0eefd934fed30e42",
+        "type": "FEATURE",
+        "text": " Integration cards: Filters can now be hidden"
+      },
+      {
+        "id": "bbada733c71e8e0eb40b87ee2c82097ae3f2fde9",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Expand button fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280185960"
+          }
+        ]
+      },
+      {
         "id": "21e654e90a9c2e57302ebc402e19652c603f6209",
         "type": "FIX",
         "text": " sap.f.Card: Empty Card has a correct aria-labelledby attribute",

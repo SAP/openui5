@@ -3,6 +3,60 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "7c6895e74d85db7f7e5c35ebb35c5c27cdefa42e",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: adoption of calendarWeekNumbering property"
+      },
+      {
+        "id": "89751f9a5b110529d61d701c07fa738111c7817e",
+        "type": "FIX",
+        "text": " sap.m.Popover: calculate correct height when toggled in horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270151515"
+          }
+        ]
+      },
+      {
+        "id": "545656d5c47e0df145fe51600e4030046d3a7617",
+        "type": "FIX",
+        "text": " sap.m.Input: Announcement after showItems prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270152018"
+          }
+        ]
+      },
+      {
+        "id": "540292b5959dafca82a854d13ac93dcf09e2ae5e",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: adoption of calendarWeekNumbering property"
+      },
+      {
+        "id": "11f0eca3238d911a545526ffe9facaff5e6860d7",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Chrome browser bug fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008389432022"
+          }
+        ]
+      },
+      {
+        "id": "53d487febe6c12f3c4ede4b473df49f4240a1ecc",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: select event handlers no longer stack.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280185751"
+          }
+        ]
+      },
+      {
         "id": "950eb7d0b03f00a6b67ee85c51435545d2af8463",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: Test is now stable",
@@ -34,6 +88,11 @@
             "reference": "2280191475"
           }
         ]
+      },
+      {
+        "id": "714d03ffd8bf1002ef1faf3eacea5c4b93b028aa",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Improve JS Docs for Accessibility Function"
       },
       {
         "id": "e9b0744b51405b7106a59ad510fa679d11c42112",
@@ -94,6 +153,17 @@
         "id": "d1d41014c5bc575735b3a23e90578959d20b9a7c",
         "type": "FEATURE",
         "text": " sap.m.SelectDialog, sap.m.TableSelectDialog: New searchPlaceholder property implemented"
+      },
+      {
+        "id": "9561312c2397593d143116c38c741870d1af8a28",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Destroy details right before the creation of the new ones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270177816"
+          }
+        ]
       },
       {
         "id": "63cc488b4090092abb0d92aca6b180da8eb3440e",

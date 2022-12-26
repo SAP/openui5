@@ -3,6 +3,11 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "714d03ffd8bf1002ef1faf3eacea5c4b93b028aa",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Improve JS Docs for Accessibility Function"
+      },
+      {
         "id": "92497e6e387595bf5f3256cf64b966f73d145f50",
         "type": "FIX",
         "text": " sap.ui.layout.form.FormElement: Prevent duplicate label creation by RTA Rename handler",

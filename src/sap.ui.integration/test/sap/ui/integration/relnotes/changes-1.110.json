@@ -3,6 +3,11 @@
     "date": "December 2022",
     "notes": [
       {
+        "id": "98fe76c95a473a17d44274fe0eefd934fed30e42",
+        "type": "FEATURE",
+        "text": " Integration cards: Filters can now be hidden"
+      },
+      {
         "id": "3dc8952d9b0e168bf9591c1f222eaacbbf202124",
         "type": "FIX",
         "text": " Integration Cards: Cases in which manifest is not reachable are properly handled",

@@ -1,0 +1,12 @@
+{
+  "1.110.0": {
+    "date": "December 2022",
+    "notes": [
+      {
+        "id": "714d03ffd8bf1002ef1faf3eacea5c4b93b028aa",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Improve JS Docs for Accessibility Function"
+      }
+    ]
+  }
+}
