@@ -1,0 +1,7 @@
+<mvc:View controllerName="testdata.customizing.sap.Sub6" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+
+	<Text text="SAP View 'Sub6':"></Text>
+
+	<Button text="Sub6 Button" press="originalSAPAction"></Button>
+
+</mvc:View>

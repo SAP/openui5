@@ -1,0 +1,4 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core">
+	<Button id="customButton1" xmlns="sap.m" text="This Button1 is in an Extension Fragment" />
+	<Button id="customButton2" xmlns="sap.m" text="This Button2 is in an Extension Fragment" />
+</core:FragmentDefinition>

@@ -1,0 +1,5 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Label text="This label and the following Button are within one multi-root extension Fragment:" />
+	<Button text="Still in the same Fragment" />
+	<Button id="btnToHide" text="Still in the same Fragment (but should not be visible!)" />
+</core:FragmentDefinition>

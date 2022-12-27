@@ -1,0 +1,40 @@
+{
+	"sap.ui5": {
+		"extends": {
+			"extensions": {
+				"sap.ui.viewExtensions": {
+					"testdata.customizing.async.noInterface.sap.views.Main": {
+						"ExtPoint1": {
+							"className": "sap.ui.core.mvc.View",
+							"viewName": "testdata.customizing.async.noInterface.customer.extensionPoints.ExtPoint1View",
+							"type": "XML",
+							"id": "extPoint1View"
+						},
+						"ExtPoint2": {
+							"className": "sap.ui.core.Fragment",
+							"fragmentName": "testdata.customizing.async.noInterface.customer.extensionPoints.ExtPoint2Fragment",
+							"type": "XML",
+							"id": "extPoint2Fragment"
+						}
+					},
+					"testdata.customizing.async.noInterface.customer.extensionPoints.ExtPoint2Fragment": {
+						"ExtPoint3": {
+							"className": "sap.ui.core.mvc.View",
+							"viewName": "testdata.customizing.async.noInterface.customer.extensionPoints.ExtPoint3View",
+							"type": "XML",
+							"id": "extPoint3View"
+						}
+					},
+					"testdata.customizing.async.noInterface.customer.extensionPoints.ExtPoint3View": {
+						"ExtPoint4": {
+							"className": "sap.ui.core.Fragment",
+							"fragmentName": "testdata.customizing.async.noInterface.customer.extensionPoints.ExtPoint4Fragment",
+							"type": "XML",
+							"id": "extPoint4Fragment"
+						}
+					}
+				}
+			}
+		}
+	}
+}

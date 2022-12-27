@@ -1,0 +1,9 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:layout="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<mvc:XMLView id="xmlView1" viewName="testdata.customizing.async.controllerReplacements.sap.views.XMLView1" />
+
+</mvc:View>

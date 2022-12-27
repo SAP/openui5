@@ -96,6 +96,22 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			Customizing_legacyAPIs: {
+				title: "Customizing in general - sap.ui.core",
+				qunit: {
+					// Test makes assumptions about when CustomizingData is loaded
+					reorder: false
+				},
+				loader: {
+					paths: {
+						// "testdata.customizing.*" namespace must point to _legacyAPIs folder
+						"testdata/customizing": "test-resources/sap/ui/core/qunit/component/testdata/customizing_legacyAPIs"
+					}
+				}
+			},
 			Customizing_unavoidablySync: {
 				title: "Customizing in general - sap.ui.core (sync tests)",
 				qunit: {

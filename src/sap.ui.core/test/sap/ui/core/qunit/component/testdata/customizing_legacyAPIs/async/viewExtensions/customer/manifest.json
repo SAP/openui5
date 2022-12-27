@@ -1,0 +1,31 @@
+{
+	"sap.ui5": {
+		"extends": {
+			"extensions": {
+				"sap.ui.viewExtensions": {
+					"testdata.customizing.async.viewExtensions.sap.views.Main": {
+						"ExtPoint1": {
+							"className": "sap.ui.core.mvc.View",
+							"viewName": "testdata.customizing.async.viewExtensions.customer.extensionPoints.ExtPoint1View",
+							"type": "XML",
+							"id": "extPoint1View"
+						},
+						"ExtPoint2": {
+							"className": "sap.ui.core.Fragment",
+							"fragmentName": "testdata.customizing.async.viewExtensions.customer.extensionPoints.ExtPoint2Fragment",
+							"type": "XML",
+							"id": "extPoint2Fragment"
+						}
+					}
+				},
+				"sap.ui.viewModifications": {
+					"testdata.customizing.async.viewExtensions.customer.extensionPoints.ExtPoint1View": {
+						"buttonExtPoint1_1": {
+							"visible": false
+						}
+					}
+				}
+			}
+		}
+	}
+}

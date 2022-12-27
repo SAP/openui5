@@ -1,0 +1,5 @@
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+
+	<Text id="customTextInCustomSub1" text="Custom View 'Sub1' - this one replaces the original SAP View 'Sub1'"></Text>
+
+</mvc:View>
