@@ -1,25 +1,27 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/util/XMLHelper",
-	"sap/ui/fl/changeHandler/BaseAddXml",
-	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/m/HBox",
+	"sap/ui/core/Component",
+	"sap/ui/core/Core",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/changeHandler/BaseAddXml",
+	"sap/ui/util/XMLHelper",
 	"sap/m/Button",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/m/HBox",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	XMLHelper,
-	BaseAddXml,
-	FlexObjectFactory,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	HBox,
+	Component,
+	oCore,
+	FlexObjectFactory,
+	BaseAddXml,
+	XMLHelper,
 	Button,
-	sinon,
-	oCore
+	HBox,
+	sinon
 ) {
 	"use strict";
 
@@ -263,33 +265,35 @@ sap.ui.define([
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChange.getContent());
 
 			// XMLTreeModifier specific beforeEach
-			this.oComponent = oCore.createComponent({
-				name: "testComponent",
-				id: "testComponent",
+			return Component.create({
+				name: "testComponentAsync",
+				id: "testComponentAsync",
 				metadata: {
 					manifest: "json"
 				}
-			});
-			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
-					'<HBox id="' + this.sHBoxId + '">' +
-						'<tooltip>' +	//0..1 aggregation
-							'<TooltipBase xmlns="sap.ui.core"></TooltipBase>' + //inline namespace as sap.ui.core is use case for not existing namespace
-						'</tooltip>' +
-						'<items>' +
-							'<Button id="button123"></Button>' + //content in default aggregation
-						'</items>' +
-					'</HBox>' +
-				'</mvc:View>';
-			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
-			this.oHBox = this.oXmlView.childNodes[0];
-			this.sAggregationType = "sap.ui.core.Control";
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+				this.oXmlString =
+					'<mvc:View id="testComponentAsync---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+						'<HBox id="' + this.sHBoxId + '">' +
+							'<tooltip>' +	//0..1 aggregation
+								'<TooltipBase xmlns="sap.ui.core"></TooltipBase>' + //inline namespace as sap.ui.core is use case for not existing namespace
+							'</tooltip>' +
+							'<items>' +
+								'<Button id="button123"></Button>' + //content in default aggregation
+							'</items>' +
+						'</HBox>' +
+					'</mvc:View>';
+				this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
+				this.oHBox = this.oXmlView.childNodes[0];
+				this.sAggregationType = "sap.ui.core.Control";
 
-			this.oPropertyBag = {
-				modifier: XmlTreeModifier,
-				view: this.oXmlView,
-				appComponent: this.oComponent
-			};
+				this.oPropertyBag = {
+					modifier: XmlTreeModifier,
+					view: this.oXmlView,
+					appComponent: this.oComponent
+				};
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oComponent.destroy();

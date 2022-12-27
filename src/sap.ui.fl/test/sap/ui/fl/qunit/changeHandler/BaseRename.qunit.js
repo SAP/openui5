@@ -1,45 +1,47 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/m/Button",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/changeHandler/BaseRename",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/Utils",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Button,
+	JsControlTreeModifier,
+	XmlTreeModifier,
+	Component,
 	UIChange,
 	BaseRename,
 	Base,
 	Utils,
-	JsControlTreeModifier,
-	XmlTreeModifier,
-	Button,
 	VerticalLayout,
 	JSONModel,
-	sinon,
-	oCore
+	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oComponent = oCore.createComponent({
-		name: "testComponent",
-		id: "testComponent"
-	});
-
-	var mPropertyBag = {modifier: JsControlTreeModifier, appComponent: oComponent};
-
 	QUnit.module("Given that a rename change handler for a button is created based on the BaseRename", {
+		before: function() {
+			return Component.create({
+				name: "testComponentAsync",
+				id: "testComponentAsync"
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+				this.mPropertyBag = {modifier: JsControlTreeModifier, appComponent: oComponent};
+			}.bind(this));
+		},
 		beforeEach: function() {
-			this.oButton = new Button(oComponent.createId("myButton"));
+			this.oButton = new Button(this.oComponent.createId("myButton"));
 
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
 
 			this.oBaseHandler = Base;
 
@@ -54,7 +56,7 @@ sap.ui.define([
 			});
 
 			this.oChange = new UIChange({
-				selector: JsControlTreeModifier.getSelector(this.oButton, oComponent)
+				selector: JsControlTreeModifier.getSelector(this.oButton, this.oComponent)
 			});
 			this.mSpecificChangeInfo = {
 				value: "Button New Text"
@@ -66,8 +68,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test('when completeChangeContent & applyChange with JsControlTreeModifier are called for default handler', function (assert) {
-			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
-				.then(this.oDefaultRenameChangeHandler.applyChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag)
+				.then(this.oDefaultRenameChangeHandler.applyChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oButton, this.mPropertyBag))
 				.then(function() {
 					assert.equal(this.oButton.getText(), this.mSpecificChangeInfo.value, "then the button text changes");
 				}.bind(this));
@@ -76,17 +78,17 @@ sap.ui.define([
 		QUnit.test('when completeChangeContent & applyChange with JsControlTreeModifier are called for default handler and then reverted', function (assert) {
 			var originalText = this.oButton.getText();
 
-			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
-				.then(this.oDefaultRenameChangeHandler.applyChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
-				.then(this.oDefaultRenameChangeHandler.revertChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag)
+				.then(this.oDefaultRenameChangeHandler.applyChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oButton, this.mPropertyBag))
+				.then(this.oDefaultRenameChangeHandler.revertChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oButton, this.mPropertyBag))
 				.then(function() {
 					assert.equal(this.oButton.getText(), originalText, "then the button text doesn't change");
 				}.bind(this));
 		});
 
 		QUnit.test('when completeChangeContent & applyChange with JsControlTreeModifier are called for special handler', function (assert) {
-			return this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
-				.then(this.oSpecialRenameChangeHandler.applyChange.bind(this.oSpecialRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
+			return this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag)
+				.then(this.oSpecialRenameChangeHandler.applyChange.bind(this.oSpecialRenameChangeHandler, this.oChange, this.oButton, this.mPropertyBag))
 				.then(function() {
 					assert.equal(this.oButton.getText(), this.mSpecificChangeInfo.value, "then the button text changes");
 				}.bind(this));
@@ -95,9 +97,9 @@ sap.ui.define([
 		QUnit.test('when completeChangeContent & applyChange with JsControlTreeModifier are called for special handler and then reverted', function (assert) {
 			var originalText = this.oButton.getText();
 
-			return this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
-				.then(this.oSpecialRenameChangeHandler.applyChange.bind(this.oSpecialRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
-				.then(this.oSpecialRenameChangeHandler.revertChange.bind(this.oSpecialRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
+			return this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag)
+				.then(this.oSpecialRenameChangeHandler.applyChange.bind(this.oSpecialRenameChangeHandler, this.oChange, this.oButton, this.mPropertyBag))
+				.then(this.oSpecialRenameChangeHandler.revertChange.bind(this.oSpecialRenameChangeHandler, this.oChange, this.oButton, this.mPropertyBag))
 				.then(function() {
 					assert.equal(this.oButton.getText(), originalText, "then the button text doesn't change");
 				}.bind(this));
@@ -106,8 +108,8 @@ sap.ui.define([
 		QUnit.test('when completeChangeContent & applyChange with JsControlTreeModifier and binding value are called', function (assert) {
 			this.mSpecificChangeInfo.value = "{i18n>textKey}";
 
-			return this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
-				.then(this.oSpecialRenameChangeHandler.applyChange.bind(this.oSpecialRenameChangeHandler, this.oChange, this.oButton, mPropertyBag))
+			return this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag)
+				.then(this.oSpecialRenameChangeHandler.applyChange.bind(this.oSpecialRenameChangeHandler, this.oChange, this.oButton, this.mPropertyBag))
 				.then(function() {
 					var oBindingInfo = this.oButton.getBindingInfo("text");
 					assert.equal(oBindingInfo.parts[0].path, "textKey", "property value binding path has changed as expected");
@@ -117,7 +119,7 @@ sap.ui.define([
 
 		QUnit.test('when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later', function (assert) {
 			this.myLayoutId = "myLayout";
-			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId), {
+			this.oLayout = new VerticalLayout(this.oComponent.createId(this.myLayoutId), {
 				content: [this.oButton]
 			});
 
@@ -137,7 +139,7 @@ sap.ui.define([
 			this.oXmlLayout = this.oXmlView.childNodes[0];
 			this.oXmlButton = this.oXmlLayout.childNodes[0].childNodes[0];
 
-			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag)
 				.then(this.oDefaultRenameChangeHandler.applyChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oXmlButton, {modifier: XmlTreeModifier}))
 				.then(function() {
 					assert.equal(this.oXmlButton.getAttribute("text"), this.mSpecificChangeInfo.value, "then the button text changes");
@@ -151,7 +153,7 @@ sap.ui.define([
 
 		QUnit.test('when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later in XML and JS (on button with binding)', function (assert) {
 			this.myLayoutId = "myLayout";
-			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId), {
+			this.oLayout = new VerticalLayout(this.oComponent.createId(this.myLayoutId), {
 				content: [this.oButton]
 			});
 			var oModel = new JSONModel({
@@ -175,7 +177,7 @@ sap.ui.define([
 			this.oXmlLayout = this.oXmlView.childNodes[0];
 			this.oXmlButton = this.oXmlLayout.childNodes[0].childNodes[0];
 
-			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag)
 				.then(this.oDefaultRenameChangeHandler.applyChange.bind(this.oDefaultRenameChangeHandler, this.oChange, this.oXmlButton, {modifier: XmlTreeModifier}))
 				.then(function() {
 					assert.equal(this.oXmlButton.getAttribute("text"), this.mSpecificChangeInfo.value, "then the button text changes");
@@ -199,14 +201,14 @@ sap.ui.define([
 		QUnit.test('when completeChangeContent is called without a value', function (assert) {
 			this.mSpecificChangeInfo.value = null;
 
-			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag)
 				.catch(function() {
 					assert.ok(true, "then an error is thrown");
 				});
 		});
 
 		QUnit.test('when completeChangeContent for default is called', function (assert) {
-			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag)
 				.then(function() {
 					assert.equal(this.oChange.getContent().originalControlType, "sap.m.Button", "then the original control type is stored in the change");
 					assert.equal(this.oChange.getText("newText"), this.mSpecificChangeInfo.value, "then text is stored with the default change property Name inside the translateable part of the change");
@@ -214,7 +216,7 @@ sap.ui.define([
 		});
 
 		QUnit.test('when completeChangeContent for special is called', function (assert) {
-			return this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+			return this.oSpecialRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag)
 				.then(function() {
 					assert.equal(this.oChange.getContent().originalControlType, "sap.m.Button", "then the original control type is stored in the change");
 					assert.equal(this.oChange.getText("buttonText"), this.mSpecificChangeInfo.value, "then text is stored with the default change property Name inside the translateable part of the change");
@@ -222,10 +224,10 @@ sap.ui.define([
 		});
 
 		QUnit.test('when getChangeVisualization is called', function (assert) {
-			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag)
+			return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag)
 				.then(function() {
 					this.oChange.setRevertData("Button Old Text");
-					return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
+					return this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
 				}.bind(this))
 				.then(function() {
 					var mVisualizationInfo = this.oDefaultRenameChangeHandler.getChangeVisualizationInfo(this.oChange);

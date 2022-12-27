@@ -1,23 +1,25 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/util/XMLHelper",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Component",
+	"sap/ui/core/Core",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
+	"sap/ui/util/XMLHelper",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	XMLHelper,
 	XMLView,
-	FlexObjectFactory,
-	AddXMLAtExtensionPoint,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	sinon,
-	oCore
+	Component,
+	oCore,
+	FlexObjectFactory,
+	AddXMLAtExtensionPoint,
+	XMLHelper,
+	sinon
 ) {
 	"use strict";
 
@@ -36,7 +38,7 @@ sap.ui.define([
 	sap.ui.require.preload(mPreloadedModules);
 
 	var sXmlString =
-		'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
+		'<mvc:View id="testComponentAsync---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
 			'<HBox id="hbox">' +
 				'<items>' +
 					'<core:ExtensionPoint name="ExtensionPoint1" />' +
@@ -72,7 +74,7 @@ sap.ui.define([
 			selector: {
 				name: sSelectorExtensionName || "extension",
 				viewSelector: {
-					id: "testComponent---myView",
+					id: "testComponentAsync---myView",
 					idIsLocal: false
 				}
 			},
@@ -94,17 +96,14 @@ sap.ui.define([
 	}
 
 	function createComponent() {
-		return oCore.createComponent({
-			name: "testComponent",
-			id: "testComponent",
-			metadata: {
-				manifest: "json"
-			}
+		return Component.create({
+			name: "testComponentAsync",
+			id: "testComponentAsync"
 		});
 	}
 
 	function createAsyncView(sViewName, oComponent) {
-		return oComponent.runAsOwner(function () {
+		return oComponent.runAsOwner(function() {
 			return XMLView.create({
 				id: sViewName,
 				definition: sXmlString,
@@ -156,16 +155,18 @@ sap.ui.define([
 			this.oChange2 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sSecondFragmentPath, "fragments/SecondFragment", "ExtensionPoint2");
 			this.oChange3 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sThirdFragmentPath, "fragments/ThirdFragment", "ExtensionPoint3");
 
-			this.oComponent = createComponent();
-			this.oXmlView = createXMLViewWithExtensionPoints();
-			this.oHBox = this.oXmlView.childNodes[0];
-			this.oPanel = this.oXmlView.childNodes[1];
-			this.oPanelWithoutStableId = this.oXmlView.childNodes[2];
-			this.oPropertyBag = {
-				modifier: XmlTreeModifier,
-				view: this.oXmlView,
-				appComponent: this.oComponent
-			};
+			return createComponent().then(function(oComponent) {
+				this.oComponent = oComponent;
+				this.oXmlView = createXMLViewWithExtensionPoints();
+				this.oHBox = this.oXmlView.childNodes[0];
+				this.oPanel = this.oXmlView.childNodes[1];
+				this.oPanelWithoutStableId = this.oXmlView.childNodes[2];
+				this.oPropertyBag = {
+					modifier: XmlTreeModifier,
+					view: this.oXmlView,
+					appComponent: this.oComponent
+				};
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oChange1.destroy();
@@ -267,7 +268,7 @@ sap.ui.define([
 			return this.oChangeHandler.applyChange(this.oChange1, this.oHBox, this.oPropertyBag)
 				.catch(function(oError) {
 					var sError = "AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name 'ExtensionPoint1' "
-						+ "or multiple Extension-Points available with the given name in the view (view.id='testComponent---myView'). "
+						+ "or multiple Extension-Points available with the given name in the view (view.id='testComponentAsync---myView'). "
 						+ "Multiple Extension-points with the same name in one view are not supported!";
 					assert.equal(oError.message, sError, "then the changehandler throws an appropriate Error");
 				});
@@ -278,8 +279,13 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oChangeHandler = AddXMLAtExtensionPoint;
-			this.oComponent = createComponent();
-			createAsyncView("myView", this.oComponent).then(function (oXmlView) {
+			return createComponent()
+			.then(function(oComponent) {
+				this.oComponent = oComponent;
+				return oComponent;
+			}.bind(this))
+			.then(createAsyncView.bind(undefined, "myView2"))
+			.then(function (oXmlView) {
 				this.oXmlView = oXmlView;
 				this.oPropertyBag = {
 					modifier: JsControlTreeModifier,
@@ -295,9 +301,9 @@ sap.ui.define([
 			}.bind(this));
 		},
 		afterEach: function() {
-			this.oComponent.destroy();
 			this.oXmlView.destroy();
 			sandbox.restore();
+			return this.oComponent.destroy();
 		}
 	}, function () {
 		QUnit.test("When applying changes on different extension points", function(assert) {
@@ -312,11 +318,11 @@ sap.ui.define([
 					var aHBoxItems = this.oHBox.getItems();
 					var aPanelContent = this.oPanel.getContent();
 					assert.equal(aHBoxItems.length, 3, "then there are three children of the HBox");
-					assert.equal(aHBoxItems[0].getId(), "myView--projectId.third_button", "then the control added last to the first extension point is on the first position behind the extension point.");
-					assert.equal(aHBoxItems[1].getId(), "myView--projectId.button", "then the control added first to the first extension point is on the last position behind the extension point.");
+					assert.equal(aHBoxItems[0].getId(), "myView2--projectId.third_button", "then the control added last to the first extension point is on the first position behind the extension point.");
+					assert.equal(aHBoxItems[1].getId(), "myView2--projectId.button", "then the control added first to the first extension point is on the last position behind the extension point.");
 					assert.equal(aPanelContent.length, 4, "then there are four children of the Panel");
-					assert.equal(aPanelContent[0].getId(), "myView--projectId.second_button", "then the control added to the second extension point is placed behind the second extension point.");
-					assert.equal(aPanelContent[1].getId(), "myView--label2", "then the control label is now on the second position.");
+					assert.equal(aPanelContent[0].getId(), "myView2--projectId.second_button", "then the control added to the second extension point is placed behind the second extension point.");
+					assert.equal(aPanelContent[1].getId(), "myView2--label2", "then the control label is now on the second position.");
 				}.bind(this));
 		});
 
@@ -326,14 +332,14 @@ sap.ui.define([
 				.then(function() {
 					var aPanelContent = this.oPanel.getContent();
 					assert.equal(aPanelContent.length, 2, "then there are two children of the Panel");
-					assert.equal(aPanelContent[0].getId(), "myView--label2", "then the label is still on the first position.");
-					assert.equal(aPanelContent[1].getId(), "myView--projectId.fourth_button", "then the control added to the second extension point is placed behind the fourth extension point.");
+					assert.equal(aPanelContent[0].getId(), "myView2--label2", "then the label is still on the first position.");
+					assert.equal(aPanelContent[1].getId(), "myView2--projectId.fourth_button", "then the control added to the second extension point is placed behind the fourth extension point.");
 				}.bind(this));
 		});
 
 		QUnit.test("When reverting one change with stable Id on extension point parent", function(assert) {
 			var mExpectedRevertData = [{
-				id: "myView--projectId.button",
+				id: "myView2--projectId.button",
 				aggregationName: "items"
 			}];
 			var oChange1 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint1");
@@ -341,21 +347,21 @@ sap.ui.define([
 				.then(function() {
 					var aHBoxItems = this.oHBox.getItems();
 					assert.equal(aHBoxItems.length, 2, "then there are two children of the HBox");
-					assert.equal(aHBoxItems[0].getId(), "myView--projectId.button", "then the button is added to the first extension point");
+					assert.equal(aHBoxItems[0].getId(), "myView2--projectId.button", "then the button is added to the first extension point");
 					assert.deepEqual(oChange1.getRevertData(), mExpectedRevertData, "and the revert data is available");
 					return this.oChangeHandler.revertChange(oChange1, this.oHBox, this.oPropertyBag);
 				}.bind(this))
 				.then(function() {
 					var aHBoxItems = this.oHBox.getItems();
 					assert.equal(aHBoxItems.length, 1, "after reversal there are again just one child in the parent control");
-					assert.equal(aHBoxItems[0].getId(), "myView--label1", "with the label again on first position");
+					assert.equal(aHBoxItems[0].getId(), "myView2--label1", "with the label again on first position");
 					assert.notOk(oChange1.hasRevertData(), "and the revert data got reset");
 				}.bind(this));
 		});
 
 		QUnit.test("When reverting one change without stable Id on extension point parent", function(assert) {
 			var mExpectedRevertData = [{
-				id: "myView--projectId.button",
+				id: "myView2--projectId.button",
 				aggregationName: "content"
 			}];
 			var oChange1 = createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint3");
@@ -363,14 +369,14 @@ sap.ui.define([
 				.then(function() {
 					var aPanelContent = this.oPanelWithoutStableId.getContent();
 					assert.equal(aPanelContent.length, 2, "then there are two children in the panel");
-					assert.equal(aPanelContent[0].getId(), "myView--projectId.button", "then the button is added to the first extension point");
+					assert.equal(aPanelContent[0].getId(), "myView2--projectId.button", "then the button is added to the first extension point");
 					assert.deepEqual(oChange1.getRevertData(), mExpectedRevertData, "and the revert data is available");
 					return this.oChangeHandler.revertChange(oChange1, this.oPanelWithoutStableId, this.oPropertyBag);
 				}.bind(this))
 				.then(function() {
 					var aPanelContent = this.oPanelWithoutStableId.getContent();
 					assert.equal(aPanelContent.length, 1, "after reversal there are again just one child in the parent control");
-					assert.equal(aPanelContent[0].getId(), "myView--label3", "with the label again on first position");
+					assert.equal(aPanelContent[0].getId(), "myView2--label3", "with the label again on first position");
 					assert.notOk(oChange1.hasRevertData(), "and the revert data got reset");
 				}.bind(this));
 		});
@@ -389,11 +395,15 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddXMLAtExtensionPoint Change Handler with JsControlTreeModifier - apply scenario", {
-		beforeEach: function(assert) {
-			var fnDone = assert.async();
+		beforeEach: function() {
 			this.oChangeHandler = AddXMLAtExtensionPoint;
-			this.oComponent = createComponent();
-			createAsyncView("myView", this.oComponent).then(function (oXmlView) {
+			return createComponent()
+			.then(function(oComponent) {
+				this.oComponent = oComponent;
+				return oComponent;
+			}.bind(this))
+			.then(createAsyncView.bind(undefined, "myView2"))
+			.then(function(oXmlView) {
 				this.oXmlView = oXmlView;
 				this.oPropertyBag = {
 					modifier: JsControlTreeModifier,
@@ -401,13 +411,12 @@ sap.ui.define([
 					appComponent: this.oComponent
 				};
 				this.oPanel = oXmlView.getContent()[1];
-				fnDone();
 			}.bind(this));
 		},
 		afterEach: function() {
-			this.oComponent.destroy();
 			this.oXmlView.destroy();
 			sandbox.restore();
+			return this.oComponent.destroy();
 		}
 	}, function() {
 		QUnit.test("When create and apply change with extension point information", function(assert) {
@@ -429,8 +438,8 @@ sap.ui.define([
 				.then(function() {
 					var aPanelContent = this.oPanel.getContent();
 					assert.equal(aPanelContent.length, 2, "then there are now two instead of three children in the Panel content. Default content musst be destroyed.");
-					assert.equal(aPanelContent[0].getId(), "myView--label2", "then the control label positioned first.");
-					assert.equal(aPanelContent[1].getId(), "myView--projectId.button", "then the control added to the fourth extension point is on the second position.");
+					assert.equal(aPanelContent[0].getId(), "myView2--label2", "then the control label positioned first.");
+					assert.equal(aPanelContent[1].getId(), "myView2--projectId.button", "then the control added to the fourth extension point is on the second position.");
 					assert.notOk(oGetExtensionPointInfoSpy.called, "then the modifier.getExtensionPointInfo function is not called");
 					assert.ok(oReadyStub.called, "then the ready function of extension point is called.");
 					assert.equal(oReadyStub.firstCall.args[0][0].getId(), aPanelContent[1].getId(), "then the added button is passed to the ready function.");

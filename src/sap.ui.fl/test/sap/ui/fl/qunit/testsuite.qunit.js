@@ -858,7 +858,7 @@ sap.ui.define([
 				},
 				ui5: {
 					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponentAsync: "test-resources/sap/ui/fl/qunit/testComponentAsync"
 					}
 				}
 			},
@@ -869,7 +869,7 @@ sap.ui.define([
 				},
 				ui5: {
 					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponentAsync: "test-resources/sap/ui/fl/qunit/testComponentAsync"
 					}
 				}
 			},
@@ -880,7 +880,7 @@ sap.ui.define([
 				},
 				ui5: {
 					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponentAsync: "test-resources/sap/ui/fl/qunit/testComponentAsync"
 					}
 				}
 			},
@@ -891,7 +891,7 @@ sap.ui.define([
 				},
 				ui5: {
 					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponentAsync: "test-resources/sap/ui/fl/qunit/testComponentAsync"
 					}
 				}
 			},
@@ -902,7 +902,7 @@ sap.ui.define([
 				},
 				ui5: {
 					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponentAsync: "test-resources/sap/ui/fl/qunit/testComponentAsync"
 					}
 				}
 			},
@@ -919,7 +919,7 @@ sap.ui.define([
 				},
 				ui5: {
 					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponentAsync: "test-resources/sap/ui/fl/qunit/testComponentAsync"
 					}
 				}
 			},
@@ -936,7 +936,7 @@ sap.ui.define([
 				},
 				ui5: {
 					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponentAsync: "test-resources/sap/ui/fl/qunit/testComponentAsync"
 					}
 				}
 			},
@@ -947,7 +947,7 @@ sap.ui.define([
 				},
 				ui5: {
 					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponentAsync: "test-resources/sap/ui/fl/qunit/testComponentAsync"
 					}
 				}
 			},
@@ -992,7 +992,7 @@ sap.ui.define([
 				},
 				ui5: {
 					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponentAsync: "test-resources/sap/ui/fl/qunit/testComponentAsync"
 					}
 				}
 			},

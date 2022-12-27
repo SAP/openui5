@@ -1,35 +1,39 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
-	"sap/ui/fl/changeHandler/UpdateIFrame",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/ui/fl/changeHandler/UpdateIFrame",
 	"sap/ui/fl/util/IFrame",
+	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
-	"sap/ui/fl/Utils"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	UIChange,
-	UpdateIFrame,
 	JsControlTreeModifier,
 	XmlTreeModifier,
+	Component,
+	UIChange,
+	UpdateIFrame,
 	IFrame,
+	Utils,
 	VerticalLayout,
 	JSONModel,
-	sinon,
-	Core,
-	Utils
+	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oComponent = Core.createComponent({
-		name: "testComponent",
-		id: "testComponent"
+	var oComponent;
+	var oComponentPromise = Component.create({
+		name: "testComponentAsync",
+		id: "testComponentAsync"
+	}).then(function(oComponentInstance) {
+		oComponent = oComponentInstance;
 	});
+
 	var sProtocol = "https";
 	var sOpenUI5Url = sProtocol + "://openu5/";
 	var sSapUI5Url = sProtocol + "://sapui5/";
@@ -39,6 +43,9 @@ sap.ui.define([
 	var mPropertyBag = {modifier: JsControlTreeModifier, appComponent: oComponent};
 
 	QUnit.module("Given that update change handlers for an IFrame is created", {
+		before: function() {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oIFrame = new IFrame(oComponent.createId("iframe"), {
 				width: sDefaultSize,
