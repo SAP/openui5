@@ -1,6 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"../RtaQunitUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/toolbar/Fiori",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ],
 function(
+	RtaQunitUtils,
 	jQuery,
 	JSONModel,
 	Fiori,
@@ -40,20 +42,7 @@ function(
 			this.oImage.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			this.oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 
 			sandbox.stub(RtaUtils, "getFiori2Renderer").returns({
 				getRootControl: function() {

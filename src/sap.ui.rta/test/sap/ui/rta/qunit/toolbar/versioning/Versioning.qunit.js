@@ -1,6 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"../../RtaQunitUtils",
 	"sap/m/Popover",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	RtaQunitUtils,
 	Popover,
 	Core,
 	Control,
@@ -53,16 +55,10 @@ sap.ui.define([
 			versioningEnabled: true,
 			versions: aVersions,
 			draftAvailable: true,
-			displayedVersion: Version.Number.Draft
+			displayedVersion: Version.Number.Draft,
+			publishVersionVisible: false
 		});
-		var oToolbarControlsModel = new JSONModel({
-			modeSwitcher: "adaptation",
-			saveAsVisible: false,
-			appVariantsOverviewVisible: false,
-			manageAppsVisible: false,
-			translationEnabled: false,
-			publishVisible: false
-		});
+		var oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 
 		var oToolbar = new Adaptation({
 			textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
@@ -173,7 +169,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("with publish available", function(assert) {
-			this.oToolbar.getModel("controls").setProperty("/publishVisible", true);
+			this.oToolbar.getModel("versions").setProperty("/publishVersionVisible", true);
 			return this.oToolbar.showVersionHistory(this.oEvent).then(function() {
 				var oList = this.oToolbar.getControl("versionHistoryDialog--versionList");
 				assert.ok(oList.getBindingInfo("items").groupHeaderFactory, "a grouping is in place");
@@ -269,7 +265,7 @@ sap.ui.define([
 		assert.strictEqual(oDiscardButton.getVisible(), mProperties.bDraft, "the discard button is visible");
 
 		var oPublishButton = this.oToolbar.getControl("publishVersion");
-		assert.strictEqual(oPublishButton.getVisible(), !mProperties.bDraft && mProperties.bPublish, "the discard button is visible");
+		assert.strictEqual(oPublishButton.getVisible(), !mProperties.bDraft && mProperties.bPublish, "the publish button is visible");
 	}
 
 	QUnit.module("Formatting of direct Toolbar content", {
@@ -352,7 +348,7 @@ sap.ui.define([
 
 		QUnit.test("for activated version with publish", function(assert) {
 			this.oToolbar.getModel("versions").setProperty("/displayedVersion", "2");
-			this.oToolbar.getModel("controls").setProperty("/publishVisible", true);
+			this.oToolbar.getModel("versions").setProperty("/publishVersionVisible", true);
 			checkFormatting.call(this, assert, {
 				versionText: this.oTextResources.getText("TIT_VERSION_1"),
 				bActiveStyleClass: false,
@@ -362,7 +358,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("for draft with publish", function(assert) {
-			this.oToolbar.getModel("controls").setProperty("/publishVisible", true);
+			this.oToolbar.getModel("versions").setProperty("/publishVersionVisible", true);
 			checkFormatting.call(this, assert, {
 				versionText: this.oTextResources.getText("TIT_DRAFT"),
 				bActiveStyleClass: false,

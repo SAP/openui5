@@ -3,23 +3,31 @@
  */
 
 sap.ui.define([
+	"require",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Popup",
+	"sap/ui/core/IconPool",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/rta/toolbar/contextBased/SaveAsContextBasedAdaptation",
 	"sap/ui/rta/toolbar/translation/Translation",
 	"sap/ui/rta/toolbar/versioning/Versioning",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Base",
+	"sap/ui/rta/Utils",
 	"sap/ui/Device",
 	"./AdaptationRenderer"
 ], function(
+	require,
 	Fragment,
+	Popup,
+	IconPool,
 	Version,
 	SaveAsContextBasedAdaptation,
 	Translation,
 	Versioning,
 	AppVariantFeature,
 	Base,
+	Utils,
 	Device,
 	AdaptationRenderer
 ) {
@@ -81,6 +89,28 @@ sap.ui.define([
 			}
 			Device.media.attachHandler(this._onSizeChanged, this, DEVICE_SET);
 		}.bind(this));
+
+		IconPool.registerFont({
+			collectionName: "BusinessSuiteInAppSymbols",
+			fontFamily: "BusinessSuiteInAppSymbols",
+			fontURI: require.toUrl("sap/ushell/themes/base/fonts/"),
+			lazy: true
+		});
+	};
+
+	Adaptation.prototype._hideElementsOnIntersection = function(aEntries) {
+		if (aEntries[0].intersectionRatio === 0) {
+			this._observeActionToolbarIntersection();
+			return;
+		}
+		// Actions toolbar is no longer fully visible
+		if (aEntries[0].intersectionRatio < 1) {
+			if (!this._mSizeLimits.switchToIcons) {
+				var iHiddenWidth = aEntries[0].boundingClientRect.width - aEntries[0].intersectionRect.width;
+				this._mSizeLimits.switchToIcons = window.innerWidth + iHiddenWidth;
+				this._switchToIcons();
+			}
+		}
 	};
 
 	Adaptation.prototype.onFragmentLoaded = function() {
@@ -126,8 +156,32 @@ sap.ui.define([
 		return this.getExtension("versioning", Versioning).openActivateVersionDialog(sDisplayedVersion);
 	};
 
-	Adaptation.prototype.showRestore = function (bVersioningEnabled) {
-		return !bVersioningEnabled;
+	Adaptation.prototype.showActionsMenu = function(oEvent) {
+		var oButton = oEvent.getSource();
+		if (!this._oActionsMenuFragment) {
+			return Fragment.load({
+				id: this.getId() + "_actionsMenu_fragment",
+				name: "sap.ui.rta.toolbar.ActionsMenu",
+				controller: {
+					openDownloadTranslationDialog: onOpenDownloadTranslationDialog.bind(this),
+					openUploadTranslationDialog: onOpenUploadTranslationDialog.bind(this),
+					manageApps: onManageAppsPressed.bind(this),
+					overviewForKeyUser: onOverviewForKeyUserPressed.bind(this),
+					overviewForDeveloper: onOverviewForDeveloperPressed.bind(this),
+					restore: this.eventHandler.bind(this, "Restore"),
+					formatSaveAsEnabled: formatSaveAsEnabled,
+					saveAs: onSaveAsPressed.bind(this),
+					saveAsContextBasedAdaptation: onSaveAsContextBasedAdaptation.bind(this)
+				}
+			}).then(function(oMenu) {
+				oMenu.addStyleClass(Utils.getRtaStyleClassName());
+				this.addDependent(oMenu);
+				oMenu.openBy(oButton, true, Popup.Dock.CenterTop, Popup.Dock.CenterBottom);
+				this._oActionsMenuFragment = oMenu;
+			}.bind(this));
+		}
+		this._oActionsMenuFragment.openBy(oButton, true, Popup.Dock.CenterTop, Popup.Dock.CenterBottom);
+		return Promise.resolve();
 	};
 
 	Adaptation.prototype._showButtonIcon = function(sButtonName, sIcon, sToolTipKey) {
@@ -197,23 +251,15 @@ sap.ui.define([
 				formatDiscardDraftVisible: this.formatDiscardDraftVisible.bind(this),
 				formatPublishVersionVisibility: this.formatPublishVersionVisibility.bind(this),
 				modeChange: this.eventHandler.bind(this, "ModeChange"),
-				openDownloadTranslationDialog: onOpenDownloadTranslationDialog.bind(this),
-				openUploadTranslationDialog: onOpenUploadTranslationDialog.bind(this),
 				undo: this.eventHandler.bind(this, "Undo"),
 				redo: this.eventHandler.bind(this, "Redo"),
 				openChangeCategorySelectionPopover: this.eventHandler.bind(this, "OpenChangeCategorySelectionPopover"),
-				manageApps: onManageAppsPressed.bind(this),
-				appVariantOverview: onOverviewPressed.bind(this),
-				saveAs: onSaveAsPressed.bind(this),
-				saveAsContextBasedAdaptation: onSaveAsContextBasedAdaptation.bind(this),
-				formatSaveAsEnabled: formatSaveAsEnabled,
-				restore: this.eventHandler.bind(this, "Restore"),
 				publishVersion: this.eventHandler.bind(this, "PublishVersion"),
 				save: this.eventHandler.bind(this, "Save"),
 				exit: this.eventHandler.bind(this, "Exit"),
 				formatVersionButtonText: this.formatVersionButtonText.bind(this),
 				showVersionHistory: this.showVersionHistory.bind(this),
-				showRestore: this.showRestore.bind(this)
+				showActionsMenu: this.showActionsMenu.bind(this)
 			}
 		});
 	};
@@ -242,10 +288,12 @@ sap.ui.define([
 		this.getExtension("adaptation", SaveAsContextBasedAdaptation).openAddAdaptationDialog(this.getRtaInformation().flexSettings.layer);
 	}
 
-	function onOverviewPressed(oEvent) {
-		var oItem = oEvent.getParameter("item");
-		var bTriggeredForKeyUser = oItem.getId().endsWith("keyUser");
-		return AppVariantFeature.onGetOverview(bTriggeredForKeyUser, this.getRtaInformation().flexSettings.layer);
+	function onOverviewForKeyUserPressed() {
+		return AppVariantFeature.onGetOverview(true, this.getRtaInformation().flexSettings.layer);
+	}
+
+	function onOverviewForDeveloperPressed() {
+		return AppVariantFeature.onGetOverview(false, this.getRtaInformation().flexSettings.layer);
 	}
 
 	function onManageAppsPressed() {
@@ -253,7 +301,12 @@ sap.ui.define([
 	}
 
 	Adaptation.prototype.getControl = function(sName) {
-		return sap.ui.getCore().byId(this.getId() + "_fragment--sapUiRta_" + sName);
+		var oControl = sap.ui.getCore().byId(this.getId() + "_fragment--sapUiRta_" + sName);
+		// Control is inside the ActionsMenu
+		if (!oControl && this._oActionsMenuFragment) {
+			oControl = sap.ui.getCore().byId(this._oActionsMenuFragment.getId().replace("sapUiRta_actions", "sapUiRta_") + sName);
+		}
+		return oControl;
 	};
 
 	return Adaptation;

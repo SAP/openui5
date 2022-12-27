@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/Version",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
@@ -41,6 +42,7 @@ sap.ui.define([
 	DesignTime,
 	FlexRuntimeInfoAPI,
 	Version,
+	VersionsAPI,
 	Settings,
 	ContextBasedAdaptationsAPI,
 	ControlPersonalizationWriteAPI,
@@ -193,7 +195,11 @@ sap.ui.define([
 			});
 			sandbox.stub(Settings, "getInstance").resolves(oSettingsInstance);
 
-			return this.oRta.start().then(function() {
+			return this.oRta.start()
+			.then(function() {
+				return RtaQunitUtils.showActionsMenu(this.oRta.getToolbar());
+			}.bind(this))
+			.then(function () {
 				assert.equal(this.oRta.getToolbar().getControl("restore").getVisible(), true, "then the Reset Button is still visible");
 			}.bind(this));
 		});
@@ -209,7 +215,11 @@ sap.ui.define([
 			};
 			var oSettingsInstance = new Settings(oSettings);
 			sandbox.stub(Settings, "getInstance").resolves(oSettingsInstance);
-			return this.oRta.start().then(function() {
+			return this.oRta.start()
+			.then(function() {
+				return RtaQunitUtils.showActionsMenu(this.oRta.getToolbar());
+			}.bind(this))
+			.then(function () {
 				assert.equal(this.oRta.getToolbar().getControl("restore").getVisible(), true, "then the Reset Button is visible");
 			}.bind(this));
 		});
@@ -517,21 +527,20 @@ sap.ui.define([
 			return this.oRta.start().then(function() {
 				assert.equal(document.querySelectorAll(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
 
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewEnabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewVisible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/manageAppsEnabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/manageAppsVisible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/saveAsEnabled"), false, "then the saveAs Button is not enabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/saveAsVisible"), false, "then the saveAs Button is not visible");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
 				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/modeSwitcher"), "adaptation", "then the mode is initially set to 'Adaptation'");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/publishEnabled"), false, "then the Publish Button is disabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/publishVisible"), false, "then the Publish Button is not visible");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/redoEnabled"), false, "then the redo is disabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/undoEnabled"), false, "then the undo is disabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/restoreEnabled"), false, "then the restore is disabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translationEnabled"), false, "then the translation button is disabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translationVisible"), false, "then the translation button is not visible");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/visualizationButtonVisible"), true, "then the visualization button is visible");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/redo/enabled"), false, "then the redo is disabled");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/undo/enabled"), false, "then the undo is disabled");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/restore/enabled"), false, "then the restore is disabled");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), false, "then the translation button is disabled");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), false, "then the translation button is not visible");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/visualizationButton/visible"), true, "then the visualization button is visible");
+				assert.equal(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
 
 				var oExpectedSettings = {
 					flexSettings: this.oFlexSettings,
@@ -553,8 +562,8 @@ sap.ui.define([
 			sandbox.stub(TranslationAPI, "getSourceLanguages").resolves([]);
 
 			return this.oRta.start().then(function() {
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translationVisible"), true, "then the Translate Button is visible");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translationEnabled"), false, "then the Translate Button is disabled");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), true, "then the Translate Button is visible");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), false, "then the Translate Button is disabled");
 			}.bind(this));
 		});
 
@@ -569,8 +578,8 @@ sap.ui.define([
 			sandbox.stub(TranslationAPI, "getSourceLanguages").resolves(["en"]);
 
 			return this.oRta.start().then(function() {
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translationVisible"), true, "then the Translate Button is visible");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translationEnabled"), true, "then the Translate Button is enabled");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), true, "then the Translate Button is visible");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), true, "then the Translate Button is enabled");
 			}.bind(this));
 		});
 
@@ -630,12 +639,13 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
 
 			return this.oRta.start().then(function() {
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewEnabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewVisible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/manageAppsEnabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/manageAppsVisible"), true, "then the 'AppVariant Overview' Icon Button is visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsEnabled"), false, "then the saveAs Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsVisible"), true, "then the saveAs Button is visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), true, "then the 'AppVariant Overview' Icon Button is visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
+				assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), true, "then the publish version button is not visible");
 			}.bind(this));
 		});
 
@@ -645,12 +655,20 @@ sap.ui.define([
 			sandbox.stub(AppVariantFeature, "isManifestSupported").resolves(false);
 
 			return this.oRta.start().then(function() {
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewEnabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewVisible"), true, "then the 'AppVariant Overview' Menu Button is visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/manageAppsEnabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/manageAppsVisible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsEnabled"), false, "then the saveAs Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsVisible"), true, "then the saveAs Button is visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), true, "then the 'AppVariant Overview' Menu Button is visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
+			}.bind(this));
+		});
+
+		QUnit.test("when RTA is started without versioning", function(assert) {
+			stubToolbarButtonsVisibility(false, true);
+			return this.oRta.start().then(function() {
+				assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionEnabled"), false, "then the publish version button is not enabled");
+				assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
 			}.bind(this));
 		});
 
@@ -670,12 +688,45 @@ sap.ui.define([
 			});
 
 			return this.oRta.start().then(function() {
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewEnabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewVisible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/manageAppsEnabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/manageAppsVisible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsEnabled"), false, "then the saveAs Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsVisible"), false, "then the saveAs Button is not visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
+			}.bind(this));
+		});
+
+		QUnit.test("when RTA is started without any buttons on the actions menu", function(assert) {
+			sandbox.stub(VersionsAPI, "initialize").callsFake(function() {
+				return VersionsAPI.initialize.wrappedMethod.apply(this, arguments)
+				.then(function (oModel) {
+					oModel.setProperty("/versioningEnabled", true);
+					return oModel;
+				});
+			});
+			stubToolbarButtonsVisibility(true, true);
+			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
+			sandbox.stub(FlexUtils, "getUShellService")
+			.callThrough()
+			.withArgs("AppLifeCycle")
+			.resolves({
+				getCurrentApplication: function() {
+					return {
+						homePage: true
+					};
+				}
+			});
+
+			return this.oRta.start().then(function() {
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
+				assert.strictEqual(this.oRta.getToolbar().getControl("actionsMenu").getVisible(), false, "then the actions menu button is not visible");
 			}.bind(this));
 		});
 
@@ -693,12 +744,12 @@ sap.ui.define([
 			});
 
 			return this.oRta.start().then(function() {
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewEnabled"), true, "then the 'AppVariant Overview' Menu Button is enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewVisible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/manageAppsEnabled"), true, "then the 'AppVariant Overview' Icon Button is enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/manageAppsVisible"), true, "then the 'AppVariant Overview' Icon Button is visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsEnabled"), true, "then the saveAs Button is enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsVisible"), true, "then the saveAs Button is visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), true, "then the 'AppVariant Overview' Menu Button is enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), true, "then the 'AppVariant Overview' Icon Button is enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), true, "then the 'AppVariant Overview' Icon Button is visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), true, "then the saveAs Button is enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
 			}.bind(this));
 		});
 
@@ -733,14 +784,14 @@ sap.ui.define([
 					assert.equal(this.oRta.bPersistedDataTranslatable, false, "no translation is present");
 
 					// simulate a translatable change was done
-					this.oRta._oToolbarControlsModel.setProperty("/translationEnabled", true);
+					this.oRta._oToolbarControlsModel.setProperty("/translation/enabled", true);
 
 					this.oRta.getToolbar().fireSave({
 						callback: resolve
 					});
 				}.bind(this));
 			}.bind(this)).then(function () {
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translationEnabled"), true, "the translation button is still enabled");
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), true, "the translation button is still enabled");
 				assert.strictEqual(this.oRta.bPersistedDataTranslatable, true, "the serialize function was called once");
 			}.bind(this));
 		});

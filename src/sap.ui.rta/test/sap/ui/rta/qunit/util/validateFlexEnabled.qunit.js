@@ -109,20 +109,7 @@ sap.ui.define([
 				rootControl: this.oComponent
 			});
 
-			this.oRta._oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oRta._oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 
 			return this.oRta.start();
 		},
@@ -233,20 +220,7 @@ sap.ui.define([
 				rootControl: this.oComponent
 			});
 
-			this.oRta._oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oRta._oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 
 			return this.oRta.start().then(function () {
 				Log.error.resetHistory();
@@ -338,20 +312,7 @@ sap.ui.define([
 				rootControl: this.oComponent
 			});
 
-			this.oRta._oToolbarControlsModel = new JSONModel({
-				undoEnabled: false,
-				redoEnabled: false,
-				publishVisible: false,
-				publishEnabled: false,
-				restoreEnabled: false,
-				appVariantsOverviewVisible: false,
-				appVariantsOverviewEnabled: false,
-				saveAsVisible: false,
-				saveAsEnabled: false,
-				manageAppsVisible: false,
-				manageAppsEnabled: false,
-				modeSwitcher: "adaptation"
-			});
+			this.oRta._oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 
 			return this.oRta.start().then(function () {
 				Log.error.resetHistory();

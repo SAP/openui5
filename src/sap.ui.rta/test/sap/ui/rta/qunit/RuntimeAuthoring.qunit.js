@@ -286,15 +286,19 @@ sap.ui.define([
 				assert.ok(this.oRta, "RTA is still up and running");
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "command stack is cleared");
 				assert.ok(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), "and the Toolbar is visible.");
+				var oToolbar = this.oRta.getToolbar();
 				assert.notOk(
-					this.oRta.getToolbar().getControl("save").getEnabled(),
+					oToolbar.getControl("save").getEnabled(),
 					"then the save button is disabled"
 				);
-				assert.ok(
-					this.oRta.getToolbar().getControl("restore").getEnabled(),
-					"then the reset button is enabled"
-				);
-				fnDone();
+				RtaQunitUtils.showActionsMenu(oToolbar)
+				.then(function () {
+					assert.ok(
+						oToolbar.getControl("restore").getEnabled(),
+						"then the reset button is enabled"
+					);
+					fnDone();
+				});
 			}
 
 			// Simulate pressing the "save" button
