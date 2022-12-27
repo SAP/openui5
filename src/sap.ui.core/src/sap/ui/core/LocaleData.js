@@ -8,6 +8,21 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 	"use strict";
 
 	var rEIgnoreCase = /e/i,
+		/*
+		* With the upgrade of the CLDR to version 41 some unit keys have changed.
+		* For compatibility reasons this map is used for formatting units.
+		* It maps a legacy unit key to its renamed key.
+		*/
+		mLegacyUnit2CurrentUnit = {
+			"acceleration-meter-per-second-squared": "acceleration-meter-per-square-second",
+			"concentr-milligram-per-deciliter": "concentr-milligram-ofglucose-per-deciliter",
+			"concentr-part-per-million": "concentr-permillion",
+			"consumption-liter-per-100kilometers": "consumption-liter-per-100-kilometer",
+			"pressure-millimeter-of-mercury": "pressure-millimeter-ofhg",
+			"pressure-pound-per-square-inch": "pressure-pound-force-per-square-inch",
+			"pressure-inch-hg": "pressure-inch-ofhg",
+			"torque-pound-foot": "torque-pound-force-foot"
+		},
 		rNumberInScientificNotation = /^([+-]?)((\d+)(?:\.(\d+))?)[eE]([+-]?\d+)$/,
 		rTrailingZeroes = /0+$/;
 
@@ -1701,7 +1716,12 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		 * @since 1.54
 		 */
 		getUnitFormat: function (sUnit) {
-			return this._get("units", "short", sUnit);
+			var oResult = this._get("units", "short", sUnit);
+
+			if (!oResult && mLegacyUnit2CurrentUnit[sUnit]) {
+				oResult = this._get("units", "short", mLegacyUnit2CurrentUnit[sUnit]);
+			}
+			return oResult;
 		},
 
 		/**

@@ -418,6 +418,48 @@ sap.ui.define([
 		assert.equal(oLocaleData.getUnitDisplayName("length-light-year"), "a. l.", "display name 'a. l.' is correct");
 	});
 
+	//*********************************************************************************************
+[
+	{sUnit: "acceleration-meter-per-square-second", oReturn: "m/s²"},
+	{sUnit: "fooBar", oReturn: undefined}
+].forEach(function (oFixture, i) {
+	QUnit.test("getUnitFormat without legacy unit mapping " + i, function(assert) {
+		var oLocaleData = LocaleData.getInstance(new Locale("en"));
+
+		this.mock(oLocaleData).expects("_get")
+			.withExactArgs("units", "short", oFixture.sUnit)
+			.returns(oFixture.oReturn);
+
+		assert.strictEqual(oLocaleData.getUnitFormat(oFixture.sUnit), oFixture.oReturn);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getUnitFormat with legacy unit mapping", function(assert) {
+		var oLocaleData = LocaleData.getInstance(new Locale("en")),
+			oLocaleDataMock = this.mock(oLocaleData);
+
+		oLocaleDataMock.expects("_get")
+			.withExactArgs("units", "short", "acceleration-meter-per-second-squared")
+			.returns(undefined);
+		oLocaleDataMock.expects("_get")
+			.withExactArgs("units", "short", "acceleration-meter-per-square-second")
+			.returns("~unitFormat");
+
+		assert.strictEqual(oLocaleData.getUnitFormat("acceleration-meter-per-second-squared"), "~unitFormat");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getUnitFormat legacy unit found without mapping", function(assert) {
+		var oLocaleData = LocaleData.getInstance(new Locale("en"));
+
+		this.mock(oLocaleData).expects("_get")
+			.withExactArgs("units", "short", "acceleration-meter-per-second-squared")
+			.returns("~unitFormat");
+
+		assert.strictEqual(oLocaleData.getUnitFormat("acceleration-meter-per-second-squared"), "~unitFormat");
+	});
+
 	QUnit.test("CustomLocaleData with getUnitFormats", function(assert) {
 		var oLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt"));
 
@@ -427,11 +469,16 @@ sap.ui.define([
 				"displayName": "kittens",
 				"unitPattern-count-one": "{0} kitten",
 				"unitPattern-count-other": "{0} kittens"
+			},
+			"acceleration-meter-per-second-squared": {
+				"displayName": "fooBar",
+				"unitPattern-count-other": "{0} bar"
 			}
 		});
 
 		oFormatSettings.setUnitMappings({
-			"CAT": "cats"
+			"CAT": "cats",
+			"fooBar": "acceleration-meter-per-second-squared"
 		});
 
 		assert.equal(oLocaleData.getUnitDisplayName("cats"), "kittens");
@@ -444,6 +491,14 @@ sap.ui.define([
 		assert.notOk(oLocaleData.getUnitFormat("CAT"), "not found as it does not take mapping into consideration");
 		assert.equal(oLocaleData.getUnitFromMapping("CAT"), "cats", "cats is the respective mapping");
 		assert.equal(oLocaleData.getResolvedUnitFormat("CAT").displayName, "kittens", "kittens is the displayName");
+		assert.strictEqual(oLocaleData.getUnitFromMapping("fooBar"), "acceleration-meter-per-second-squared",
+			"Mapped legacy unit to custom unit returns custom unit");
+		assert.strictEqual(oLocaleData.getUnitFormat("acceleration-meter-per-second-squared").displayName, "fooBar",
+			"Custom legacy unit returns custom unit");
+		assert.strictEqual(oLocaleData.getUnitFromMapping("concentr-milligram-per-deciliter"), undefined,
+			"Legacy unit is not found in custom unit mapping");
+		assert.strictEqual(oLocaleData.getUnitFormat("concentr-milligram-per-deciliter").displayName, "mg/dL",
+			"Legacy unit is mapped to new unit in CLDR");
 
 		//reset unit mappings
 		oFormatSettings.setUnitMappings();

@@ -1814,6 +1814,59 @@ sap.ui.define([
 		assert.deepEqual(oFormat.parse("C"), null);
 	});
 
+	//*********************************************************************************************
+[
+	{
+		sUnit: "acceleration-meter-per-square-second",
+		sLegacyUnit: "acceleration-meter-per-second-squared",
+		sUnitSymbol: "m/s²"
+	},
+	{
+		sUnit: "concentr-milligram-ofglucose-per-deciliter",
+		sLegacyUnit: "concentr-milligram-per-deciliter",
+		sUnitSymbol: "mg/dL"
+	},
+	{
+		sUnit: "concentr-permillion",
+		sLegacyUnit: "concentr-part-per-million",
+		sUnitSymbol: "ppm"
+	},
+	{
+		sUnit: "consumption-liter-per-100-kilometer",
+		sLegacyUnit: "consumption-liter-per-100kilometers",
+		sUnitSymbol: "L/100 km"
+	},
+	{
+		sUnit: "pressure-millimeter-ofhg",
+		sLegacyUnit: "pressure-millimeter-of-mercury",
+		sUnitSymbol: "mmHg"
+	},
+	{
+		sUnit: "pressure-pound-force-per-square-inch",
+		sLegacyUnit: "pressure-pound-per-square-inch",
+		sUnitSymbol: "psi"
+	},
+	{
+		sUnit: "pressure-inch-ofhg",
+		sLegacyUnit: "pressure-inch-hg",
+		sUnitSymbol: "inHg"
+	},
+	{
+		sUnit: "torque-pound-force-foot",
+		sLegacyUnit: "torque-pound-foot",
+		sUnitSymbol: "lbf\u22C5ft"
+	}
+].forEach(function (oFixture, i) {
+	QUnit.test("Format and parse units using legacy unit mapping " + i, function (assert) {
+		var oFormat = NumberFormat.getUnitInstance({}, new Locale("en")),
+			sFormatOutput = oFormat.format(3, oFixture.sLegacyUnit).toString();
+
+		assert.strictEqual(sFormatOutput, "3 " + oFixture.sUnitSymbol);
+		assert.deepEqual(oFormat.parse(sFormatOutput), [3, oFixture.sUnit]);
+
+	});
+});
+
 	QUnit.module("Unit Format using configuration", {
 		beforeEach: function (assert) {
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
