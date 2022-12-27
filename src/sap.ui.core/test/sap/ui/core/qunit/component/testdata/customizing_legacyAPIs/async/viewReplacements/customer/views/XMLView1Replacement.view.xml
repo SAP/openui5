@@ -1,0 +1,4 @@
+<!-- ViewReplacement for 'testdata.customizing.async.viewReplacements.sap.views.Main' -->
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+	<Text id="textXMLView1Replacement" text="My XMLView1Replacement Text" />
+</mvc:View>

@@ -1,0 +1,29 @@
+<mvc:View xmlns="sap.m"  xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml"
+	controllerName="testdata.customizing.sap.Sub2">
+
+	<core:ExtensionPoint name="extension1" />
+
+	<Button id="standardBtnWithStandardAction" text="This Button is in the standard View and triggers a Standard Action" press="originalSAPAction" />
+
+	<Text text="SAP View 'Sub2' - this one is extended by the customer and there should be a button after this text"></Text>
+
+	<core:ExtensionPoint name="extension2" />
+
+
+	<Panel id="panel">
+		<html:div id="htmlDiv">
+			<core:ExtensionPoint name="extension21" />
+		</html:div>
+	</Panel>
+
+	<core:ExtensionPoint name="extension3" />
+
+	<core:ExtensionPoint name="extension4" />
+
+	<Select id="lb" items="{/names}" showSecondaryValues="true">
+		<core:ExtensionPoint name="extension5">
+			<core:ListItem text="{name}" additionalText="(Original SAP ListItem)"/>
+		</core:ExtensionPoint>
+	</Select>
+
+</mvc:View>

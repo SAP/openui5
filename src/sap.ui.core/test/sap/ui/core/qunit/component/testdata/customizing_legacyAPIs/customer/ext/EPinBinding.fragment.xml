@@ -1,0 +1,25 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Panel id="supplier_panel" content="{path: 'Supplier', templateShareable:false}">
+		<Panel>
+			<Table id="product_table" items="{path: 'Products>', templateShareable:false}">
+				<columns>
+					<!-- Extends the Promotion table with extra columns -->
+					<core:ExtensionPoint name="Product_Table_Column_Ext"/>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<!-- Extends the Promotion table with extra cells -->
+							<core:ExtensionPoint name="Product_Table_Cell_Ext">
+								<Button id="TableRowButton" xmlns="sap.m" text="Table row Button from EP" />
+							</core:ExtensionPoint>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+			<core:ExtensionPoint name="Panel_Button_Ext">
+				<Button id="PanelButton" xmlns="sap.m" text="Panel Button from EP" />
+			</core:ExtensionPoint>
+		</Panel>
+	</Panel>
+</core:FragmentDefinition>

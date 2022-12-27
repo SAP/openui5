@@ -1,0 +1,11 @@
+<mvc:View xmlns="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:m="sap.m">
+	<m:Panel>
+		<m:Button id="mybuttonA" text="My Button A"/>
+		<ExtensionPoint name="EPDelayed">
+			<m:Button id="mybuttonB" text="My Button B"/>
+		</ExtensionPoint>
+		<m:Button id="mybuttonC" text="My Button C"/>
+	</m:Panel>
+</mvc:View>
