@@ -3,6 +3,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/i18n/ResourceBundle',
 	'sap/ui/core/library',
+	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/RenderManager',
@@ -12,10 +13,10 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper',
 	'sap/m/Button',
 	'sap/m/Panel',
-	'./AnyView_legacyAPIs.qunit',
+	'./AnyView.qunit',
 	'sap/ui/thirdparty/jquery',
 	"sap/ui/core/Configuration"
-], function(Log, ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, Configuration) {
+], function(Log, ResourceBundle, coreLibrary, Controller, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -57,39 +58,41 @@ sap.ui.define([
 
 	// run the full testset for a view loaded from a file
 	testsuite(oConfig, "XMLView creation loading from file", function() {
-		return sap.ui.xmlview("example.mvc.test");
+		return XMLView.create({
+			viewName: "example.mvc.test"
+		});
 	});
 
 	// run the full testset for a view created from a string
 	testsuite(oConfig, "XMLView creation via XML string", function() {
 		// let the XMLView parse the XML string
-		return sap.ui.xmlview({
-			viewContent: sViewXML
+		return XMLView.create({
+			definition: sViewXML
 		});
 	});
 
 	// run the full testset for a view created from an XML document
 	testsuite(oConfig, "XMLView creation via XML document", function() {
 		// parse the XML string and pass the XML document
-		return sap.ui.xmlview({
-			viewContent: XMLHelper.parse(sViewXML)
+		return XMLView.create({
+			definition: XMLHelper.parse(sViewXML)
 		});
 	});
 
 	// run the full testset for a view created from the root element of an XML document
 	testsuite(oConfig, "XMLView creation via XML node", function() {
 		// parse the XML string and pass the XML root element
-		return sap.ui.xmlview({
+		return XMLView.create({
 			xmlNode: XMLHelper.parse(sViewXML).documentElement
 		});
 	});
 
 	// run the full testset for a view created via the generic factory method
 	testsuite(oConfig, "XMLView creation using generic view factory", function() {
-		return sap.ui.view({
-			type:ViewType.XML,
-			viewName:"example.mvc.test",
-			viewData:{test:"testdata"}
+		return View.create({
+			type: ViewType.XML,
+			viewName: "example.mvc.test",
+			viewData: {test:"testdata"}
 		});
 	}, /* bCheckViewData = */ true);
 
@@ -106,25 +109,11 @@ sap.ui.define([
 	});
 
 	// Settings can be provided at the constructor call or in the according view source. View source wins.
-
-	QUnit.test("sync loading", function(assert) {
-		// although settings are provided here, the resulting view should have the setting stated in the view source
-		var oView = sap.ui.xmlview({
-			viewName: 'example.mvc.test',
-			displayBlock: false
-		});
-		assert.equal(oView.getDisplayBlock(), true, "DisplayBlock should be true");
-		oView.destroy();
-	});
-
 	QUnit.test("async loading", function(assert) {
-		var oView = sap.ui.xmlview({
+		return XMLView.create({
 			viewName: 'example.mvc.test',
-			async: true,
 			displayBlock: false
-		});
-		assert.equal(oView.getDisplayBlock(), false, "Displayblock should be false for the async-view stub");
-		return oView.loaded().then(function() {
+		}).then(function(oView) {
 			assert.equal(oView.getDisplayBlock(), true, "DisplayBlock should be true for the resolved async view");
 			oView.destroy();
 		});
@@ -243,246 +232,15 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("[sap.ui.xmlview] broken binding string, error on top-level", function(assert) {
-		var oView = sap.ui.xmlview({
-			id: "syncView1",
-			viewContent:
-			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:m='sap.m' xmlns:core='sap.ui.core'>" +
-			"    <m:Panel>" +
-			"       <m:Button id=\"brokenButtonInline\" text=\"{This should cause a parse error\"></m:Button>" +
-			"    </m:Panel>" +
-			"</mvc:View>"
-		});
-
-		// check for error log
-		assert.ok(this.logSpyError.calledOnce);
-		assert.strictEqual(
-			this.logSpyError.getCall(0).args[0].message,
-			"Error found in View (id: 'syncView1').\n" +
-			"XML node: '<m:Button xmlns:m=\"sap.m\" id=\"brokenButtonInline\" text=\"{This should cause a parse error\"/>':\n" +
-			"SyntaxError: no closing braces found in '{This should cause a parse error' after pos:0",
-			"Correct SyntaxError is logged"
-		);
-
-		// even "broken" controls should still be available (for compatibility)
-		assert.ok(oView.byId("brokenButtonInline"), "Button with broken binding is still created.");
-
-		// sync cases can be cleaned up
-		oView.destroy();
-	});
-
-	QUnit.test("[sap.ui.xmlview] broken binding string, error in nested Fragment", function(assert) {
-		var oView = sap.ui.xmlview({
-			id: "syncView2",
-			viewContent:
-			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:m='sap.m' xmlns:core='sap.ui.core'>" +
-			"    <m:Panel>" +
-			"       <core:Fragment id='innerFragment' fragmentName='testdata.fragments.XMLFragmentWithSyntaxErrors' type='XML'/>" +
-			"    </m:Panel>" +
-			"</mvc:View>"
-		});
-
-		// check for error log
-		assert.ok(this.logSpyError.calledOnce);
-		assert.deepEqual(
-			this.logSpyError.getCall(0).args[0].message,
-			"Error found in Fragment (id: 'syncView2--innerFragment').\n" +
-			"XML node: '<m:Button xmlns:m=\"sap.m\" id=\"brokenButton\" text=\"{This should cause a parse error\"/>':\n" +
-			"SyntaxError: no closing braces found in '{This should cause a parse error' after pos:0",
-			"Correct SyntaxError is logged"
-		);
-
-		// controls inside Fragment should still be available (for compatibility)
-		assert.ok(oView.byId("innerFragment--brokenButton"), "Button with broken binding is still created.");
-
-		// sync cases can be cleaned up
-		oView.destroy();
-	});
-
-	QUnit.test("[sap.ui.xmlview] error caused by missing function reference (property-type 'function')", function(assert) {
-		var oView = sap.ui.xmlview({
-			id: "syncView3",
-			viewContent:
-			'<mvc:View xmlns="sap.m" xmlns:mvc=\"sap.ui.core.mvc\" xmlns:html=\"http://www.w3.org/1999/xhtml\">' +
-			'<Dialog id="dialog" title="XML Fragment Dialog" escapeHandler="closeDialog">' +
-			'   <Text text="title" />                         ' +
-			'   <buttons>                                              ' +
-			'      <Button text="action!" press="doSomething" /> ' +
-			'      <Button text="stuff" /> ' +
-			'   </buttons>                                             ' +
-			'</Dialog>                                                 ' +
-			'</mvc:View>'
-		});
-
-		// check error log
-		assert.ok(this.logSpyError.calledOnce);
-		assert.deepEqual(
-			this.logSpyError.getCall(0).args[0].message,
-			"Error found in View (id: 'syncView3').\n" +
-			"XML node: '<Dialog xmlns=\"sap.m\" id=\"dialog\" title=\"XML Fragment Dialog\" escapeHandler=\"closeDialog\"/>':\n" +
-			"TypeError: The string 'closeDialog' couldn't be resolved to a function",
-			"Correct TypeError is logged"
-		);
-
-		// check warning log
-		assert.ok(
-			this.logSpyWarning.calledWithExactly("Event handler name 'doSomething' could not be resolved to an event handler function"),
-			"Correct warning for missing event-handler was logged"
-		);
-
-		// controls inside Fragment should still be available (for compatibility)
-		assert.equal(oView.byId("dialog").getButtons().length, 2, "Inner Controls are created.");
-
-		// sync cases can be cleaned up
-		oView.destroy();
-	});
-
-	QUnit.test("[sap.ui.xmlview=async] broken binding string, error on top-level", function(assert) {
-		return sap.ui.xmlview({
-			id: "syncView1",
-			async: true,
-			viewContent:
-			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:m='sap.m' xmlns:core='sap.ui.core'>" +
-			"    <m:Panel>" +
-			"       <m:Button id=\"brokenButtonInline\" text=\"{This should cause a parse error\"></m:Button>" +
-			"    </m:Panel>" +
-			"</mvc:View>"
-		}).loaded().then(function(oView){
-			// check for error log
-			assert.ok(this.logSpyError.calledOnce);
-			assert.strictEqual(
-				this.logSpyError.getCall(0).args[0].message,
-				"Error found in View (id: 'syncView1').\n" +
-				"XML node: '<m:Button xmlns:m=\"sap.m\" id=\"brokenButtonInline\" text=\"{This should cause a parse error\"/>':\n" +
-				"SyntaxError: no closing braces found in '{This should cause a parse error' after pos:0",
-				"Correct SyntaxError is logged"
-			);
-
-			// even "broken" controls should still be available (for compatibility)
-			assert.ok(oView.byId("brokenButtonInline"), "Button with broken binding is still created.");
-
-			// sync cases can be cleaned up
-			oView.destroy();
-		}.bind(this)).catch(function(){
-			assert.ok(false, "The error shouldn't be thrown, only logged.");
-		});
-	});
-
-	QUnit.test("[sap.ui.xmlview=async] broken binding string, error in nested Fragment", function(assert) {
-		return sap.ui.xmlview({
-			id: "syncView2",
-			async: true,
-			viewContent:
-			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:m='sap.m' xmlns:core='sap.ui.core'>" +
-			"    <m:Panel>" +
-			"       <core:Fragment id='innerFragment' fragmentName='testdata.fragments.XMLFragmentWithSyntaxErrors' type='XML'/>" +
-			"    </m:Panel>" +
-			"</mvc:View>"
-		}).loaded().then(function(oView){
-			// check for error log
-			assert.ok(this.logSpyError.calledOnce);
-			assert.deepEqual(
-				this.logSpyError.getCall(0).args[0].message,
-				"Error found in Fragment (id: 'syncView2--innerFragment').\n" +
-				"XML node: '<m:Button xmlns:m=\"sap.m\" id=\"brokenButton\" text=\"{This should cause a parse error\"/>':\n" +
-				"SyntaxError: no closing braces found in '{This should cause a parse error' after pos:0",
-				"Correct SyntaxError is logged"
-			);
-
-			// controls inside Fragment should still be available (for compatibility)
-			assert.ok(oView.byId("innerFragment--brokenButton"), "Button with broken binding is still created.");
-
-			// sync cases can be cleaned up
-			oView.destroy();
-		}.bind(this)).catch(function(){
-			assert.ok(false, "The error shouldn't be thrown, only logged.");
-		});
-	});
-
-	QUnit.test("[sap.ui.xmlview=async] error caused by missing function reference (property-type 'function')", function(assert) {
-		return sap.ui.xmlview({
-			id: "syncView3",
-			async: true,
-			viewContent:
-			'<mvc:View xmlns="sap.m" xmlns:mvc=\"sap.ui.core.mvc\" xmlns:html=\"http://www.w3.org/1999/xhtml\">' +
-			'<Dialog id="dialog" title="XML Fragment Dialog" escapeHandler="closeDialog">' +
-			'   <Text text="title" />                         ' +
-			'   <buttons>                                              ' +
-			'      <Button text="action!" press="doSomething" /> ' +
-			'      <Button text="stuff" /> ' +
-			'   </buttons>                                             ' +
-			'</Dialog>                                                 ' +
-			'</mvc:View>'
-		}).loaded().then(function(oView){
-			// check error log
-			assert.ok(this.logSpyError.calledOnce);
-			assert.deepEqual(
-				this.logSpyError.getCall(0).args[0].message,
-				"Error found in View (id: 'syncView3').\n" +
-				"XML node: '<Dialog xmlns=\"sap.m\" id=\"dialog\" title=\"XML Fragment Dialog\" escapeHandler=\"closeDialog\"/>':\n" +
-				"TypeError: The string 'closeDialog' couldn't be resolved to a function",
-				"Correct TypeError is logged"
-			);
-
-			// check warning log
-			assert.ok(
-				this.logSpyWarning.calledWithExactly("Event handler name 'doSomething' could not be resolved to an event handler function"),
-				"Correct warning for missing event-handler was logged"
-			);
-
-			// controls inside Fragment should still be available (for compatibility)
-			assert.equal(oView.byId("dialog").getButtons().length, 2, "Inner Controls are created.");
-
-			// sync cases can be cleaned up
-			oView.destroy();
-		}.bind(this)).catch(function(){
-			assert.ok(false, "The error shouldn't be thrown, only logged.");
-		});
-	});
-
 	QUnit.module("Preserve DOM");
-
-	QUnit.test("sync loading", function(assert) {
-
-		// load and place view, force rendering
-		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
-		sap.ui.getCore().applyChanges();
-
-		// check that DOM exists
-		var oElemPanel1 = oView.byId("myPanel").getDomRef();
-		var oElemTable1 = document.getElementById(oView.createId("localTableId"));
-		assert.ok(oElemPanel1, "DOM for myPanel should exist");
-		assert.ok(oElemTable1, "DOM for localTableId should exist");
-
-		// force a rerendering
-		oView.invalidate();
-		sap.ui.getCore().applyChanges();
-
-		// check that DOM has been preserved
-		var oPanel = oView.byId("myPanel");
-		var oElemPanel2 = oPanel.getDomRef();
-		var oElemTable2 = document.getElementById(oView.createId("localTableId"));
-		assert.ok(oElemPanel2, "DOM for myPanel should exist after rerendering");
-		assert.ok(oElemTable2, "DOM for localTableId should exist after rerendering");
-		assert.ok(oElemPanel1 !== oElemPanel2, "DOM for panel should differ"); // Note: this will fail if DOM patching becomes the default
-		assert.ok(oElemTable1 === oElemTable2, "DOM for table must not differ");
-
-		// check the preserved data attribute on the HTML nodes
-		var oSubView1 = oPanel.getContent()[2];
-		var oSubViewDomRef = oSubView1.getDomRef();
-		assert.ok(oSubViewDomRef, "SubView for HTML nodes is rendered");
-		assert.ok(oSubViewDomRef.hasAttribute("data-sap-ui-preserve"), "Dom Element has the preserve attribute set");
-
-		oView.destroy();
-		sap.ui.getCore().applyChanges();
-	});
 
 	QUnit.test("async loading", function(assert) {
 		var done = assert.async();
 
 		// load and place view, force rendering
-		var oView = sap.ui.xmlview({
+		var oView = View._create({
 			viewName: 'example.mvc.test',
+			type: ViewType.XML,
 			async: true
 		}).placeAt('content');
 		sap.ui.getCore().applyChanges();
@@ -540,34 +298,35 @@ sap.ui.define([
 	QUnit.test("with custom RenderManager", function(assert) {
 
 		// load view, embed it in a Panel and force rendering
-		var oView = sap.ui.xmlview('example.mvc.test');
-		var oPanel = new Panel({
-			text: "My View",
-			content: [oView]
-		}).placeAt('content');
-		sap.ui.getCore().applyChanges();
+		return XMLView.create({
+			viewName: 'example.mvc.test'
+		}).then(function(oView) {
+			var oPanel = new Panel({
+				text: "My View",
+				content: [oView]
+			}).placeAt('content');
+			sap.ui.getCore().applyChanges();
 
-		// check that DOM exists
-		var oElemViewBefore = oView.getDomRef();
-		assert.ok(oElemViewBefore, "DOM for view should exist");
+			// check that DOM exists
+			var oElemViewBefore = oView.getDomRef();
+			assert.ok(oElemViewBefore, "DOM for view should exist");
 
-		// simulate a rendering with a custom RenderManager
-		var oPanelContent = oPanel.getDomRef("content");
-		var rm = sap.ui.getCore().createRenderManager();
-		rm.renderControl(oView);
-		rm.flush(oPanelContent);
+			// simulate a rendering with a custom RenderManager
+			var oPanelContent = oPanel.getDomRef("content");
+			var rm = sap.ui.getCore().createRenderManager();
+			rm.renderControl(oView);
+			rm.flush(oPanelContent);
 
-		// check that DOM has been preserved
-		var oElemViewAfter = oView.getDomRef();
-		assert.ok(oElemViewBefore, "DOM for view should exist after rerendering");
-		assert.ok(oElemViewBefore === oElemViewAfter, "DOM must be the same");
+			// check that DOM has been preserved
+			var oElemViewAfter = oView.getDomRef();
+			assert.ok(oElemViewBefore, "DOM for view should exist after rerendering");
+			assert.ok(oElemViewBefore === oElemViewAfter, "DOM must be the same");
 
-		oPanel.destroy();
-		sap.ui.getCore().applyChanges();
+			oPanel.destroy();
+		});
 	});
 
 	QUnit.test("visible property", function(assert) {
-
 		var xmlview;
 
 		function check(bVisible, sMsgSuffix) {
@@ -613,135 +372,154 @@ sap.ui.define([
 
 		}
 
-		var iLayoutRendered = 0;
-		var oLayout = new VerticalLayout({
-			id: 'vLayout',
-			content: [
-				new Button({id: 'btnBefore', text:'Button Before'}),
-				xmlview = sap.ui.xmlview('xmlview', 'example.mvc.test'),
-				new Button({id: 'btnAfter', text:'Button After'})
-			]
+		return XMLView.create({
+			id: "xmlview",
+			viewName: 'example.mvc.test'
+		}).then(function(oView) {
+			xmlview = oView;
+
+			var iLayoutRendered = 0;
+			var oLayout = new VerticalLayout({
+				id: 'vLayout',
+				content: [
+					new Button({ id: 'btnBefore', text: 'Button Before' }),
+					xmlview,
+					new Button({ id: 'btnAfter', text: 'Button After' })
+				]
+			});
+			oLayout.addEventDelegate({
+				onAfterRendering: function () {
+					iLayoutRendered++;
+				}
+			});
+			oLayout.placeAt('content');
+
+			sap.ui.getCore().applyChanges();
+			check(true, " (after initial rendering)");
+			assert.equal(1, iLayoutRendered, "layout initially should have been rendered once");
+
+			xmlview.setVisible(false);
+			sap.ui.getCore().applyChanges();
+			check(false, " (after becoming invisible)");
+			assert.equal(1, iLayoutRendered, "layout still should have been rendered only once (after making the xmlview invisible)");
+
+			xmlview.setVisible(true);
+			sap.ui.getCore().applyChanges();
+			check(true, " (after becoming visible again)");
+			assert.equal(1, iLayoutRendered, "layout still should have been rendered only once (after making the xmlview visible again)");
+
+			oLayout.destroy();
 		});
-		oLayout.addEventDelegate({
-			onAfterRendering: function() {
-				iLayoutRendered++;
-			}
-		});
-		oLayout.placeAt('content');
-
-		sap.ui.getCore().applyChanges();
-		check(true, " (after initial rendering)");
-		assert.equal(1, iLayoutRendered, "layout initially should have been rendered once");
-
-		xmlview.setVisible(false);
-		sap.ui.getCore().applyChanges();
-		check(false, " (after becoming invisible)");
-		assert.equal(1, iLayoutRendered, "layout still should have been rendered only once (after making the xmlview invisible)");
-
-		xmlview.setVisible(true);
-		sap.ui.getCore().applyChanges();
-		check(true, " (after becoming visible again)");
-		assert.equal(1, iLayoutRendered, "layout still should have been rendered only once (after making the xmlview visible again)");
-
-		oLayout.destroy();
 	});
 
 	QUnit.test("invisible child", function(assert) {
 
 		// load and place view, force rendering
-		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content'),
-			oPanel = oView.byId("myPanel");
-		sap.ui.getCore().applyChanges();
+		return XMLView.create({
+			viewName: "example.mvc.test"
+		}).then(function(oView) {
+			oView.placeAt("content");
+			var oPanel = oView.byId("myPanel");
+			sap.ui.getCore().applyChanges();
 
-		// panel should be visible and have normal control DOM
-		assert.ok(oPanel.getDomRef() && !isInPreservedArea(oPanel.getDomRef()), "panel rendered (and not part of the preserve area())");
+			// panel should be visible and have normal control DOM
+			assert.ok(oPanel.getDomRef() && !isInPreservedArea(oPanel.getDomRef()), "panel rendered (and not part of the preserve area())");
 
-		// make only the panel invisible, force rendering
-		oPanel.setVisible(false);
-		sap.ui.getCore().applyChanges();
+			// make only the panel invisible, force rendering
+			oPanel.setVisible(false);
+			sap.ui.getCore().applyChanges();
 
-		// there should be no more DOM for the panel, but an invisible placeholder
-		assert.notOk(oPanel.getDomRef(), "panel should be hidden");
-		assert.ok(invisiblePlaceholder(oPanel), "invisible placeholder should exist for the panel");
+			// there should be no more DOM for the panel, but an invisible placeholder
+			assert.notOk(oPanel.getDomRef(), "panel should be hidden");
+			assert.ok(invisiblePlaceholder(oPanel), "invisible placeholder should exist for the panel");
 
-		// hide the view
-		oView.setVisible(false);
-		sap.ui.getCore().applyChanges();
+			// hide the view
+			oView.setVisible(false);
+			sap.ui.getCore().applyChanges();
 
-		// this should move it to the preserve area with all child controls incl. the invisible placeholder
-		assert.ok(oView.getDomRef() && isPreserved(oView.getDomRef()), "view has DOM and DOM is in preserved area");
-		assert.ok(invisiblePlaceholder(oPanel), "invisible placeholder still should exist for panel");
-		assert.ok(isInPreservedArea(invisiblePlaceholder(oPanel)), "invisible placeholder should be part of the preserve area");
+			// this should move it to the preserve area with all child controls incl. the invisible placeholder
+			assert.ok(oView.getDomRef() && isPreserved(oView.getDomRef()), "view has DOM and DOM is in preserved area");
+			assert.ok(invisiblePlaceholder(oPanel), "invisible placeholder still should exist for panel");
+			assert.ok(isInPreservedArea(invisiblePlaceholder(oPanel)), "invisible placeholder should be part of the preserve area");
 
-		// restore both, view and child control
-		oView.setVisible(true);
-		oPanel.setVisible(true);
-		sap.ui.getCore().applyChanges();
+			// restore both, view and child control
+			oView.setVisible(true);
+			oPanel.setVisible(true);
+			sap.ui.getCore().applyChanges();
 
-		// both view and child should have DOM, should not be in the preserve area and should have no placeholders
-		assert.ok(oView.getDomRef() && !isPreserved(oView.getDomRef()), "view has DOM and DOM is no longer in preserved area");
-		assert.notOk(dummyPlaceholder(oView), "view should have no more dummy placeholder");
-		assert.notOk(invisiblePlaceholder(oView), "view should have no more invisible placeholder");
-		assert.ok(oPanel.getDomRef() && !isInPreservedArea(oPanel.getDomRef()), "panel rendered after making it visible");
-		assert.notOk(dummyPlaceholder(oPanel), "panel should have no more dummy placeholder");
-		assert.notOk(invisiblePlaceholder(oPanel), "panel should have no more invisible placeholder");
+			// both view and child should have DOM, should not be in the preserve area and should have no placeholders
+			assert.ok(oView.getDomRef() && !isPreserved(oView.getDomRef()), "view has DOM and DOM is no longer in preserved area");
+			assert.notOk(dummyPlaceholder(oView), "view should have no more dummy placeholder");
+			assert.notOk(invisiblePlaceholder(oView), "view should have no more invisible placeholder");
+			assert.ok(oPanel.getDomRef() && !isInPreservedArea(oPanel.getDomRef()), "panel rendered after making it visible");
+			assert.notOk(dummyPlaceholder(oPanel), "panel should have no more dummy placeholder");
+			assert.notOk(invisiblePlaceholder(oPanel), "panel should have no more invisible placeholder");
 
-		// now make view and child visible in two different renderings
-		oView.setVisible(false);
-		oPanel.setVisible(false);
-		sap.ui.getCore().applyChanges();
-		oView.setVisible(true);
-		sap.ui.getCore().applyChanges();
+			// now make view and child visible in two different renderings
+			oView.setVisible(false);
+			oPanel.setVisible(false);
+			sap.ui.getCore().applyChanges();
+			oView.setVisible(true);
+			sap.ui.getCore().applyChanges();
 
-		// invisible control should still be invisible and invisible placeholder still should exist
-		assert.ok(oView.getDomRef() && !isPreserved(oView.getDomRef()), "view has DOM and DOM is no longer in preserved area");
-		assert.notOk(oPanel.getDomRef(), "panel not rendered");
-		assert.ok(invisiblePlaceholder(oPanel), "invisible placeholder should exist for invisible panel");
-		assert.notOk(dummyPlaceholder(oPanel), "dummy placeholder must not exists for invisible panel");
+			// invisible control should still be invisible and invisible placeholder still should exist
+			assert.ok(oView.getDomRef() && !isPreserved(oView.getDomRef()), "view has DOM and DOM is no longer in preserved area");
+			assert.notOk(oPanel.getDomRef(), "panel not rendered");
+			assert.ok(invisiblePlaceholder(oPanel), "invisible placeholder should exist for invisible panel");
+			assert.notOk(dummyPlaceholder(oPanel), "dummy placeholder must not exists for invisible panel");
 
-		// making the panel visible should also work
-		oPanel.setVisible(true);
-		sap.ui.getCore().applyChanges();
-		assert.ok(oPanel.getDomRef(), "panel rendered after making it visible");
-		assert.notOk(invisiblePlaceholder(oPanel), "invisible placeholder must not exist for visible panel");
-		assert.notOk(dummyPlaceholder(oPanel), "dummy placeholder must not exists for visible panel");
+			// making the panel visible should also work
+			oPanel.setVisible(true);
+			sap.ui.getCore().applyChanges();
+			assert.ok(oPanel.getDomRef(), "panel rendered after making it visible");
+			assert.notOk(invisiblePlaceholder(oPanel), "invisible placeholder must not exist for visible panel");
+			assert.notOk(dummyPlaceholder(oPanel), "dummy placeholder must not exists for visible panel");
 
-		oView.destroy();
-		sap.ui.getCore().applyChanges();
+			oView.destroy();
+		});
 	});
 
 	QUnit.test("Destroy removes preserved content from DOM", function(assert) {
 		// Because nobody else would do it
 
 		// load and place view, force rendering
-		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
-		sap.ui.getCore().applyChanges();
+		return XMLView.create({
+			viewName: 'example.mvc.test'
+		}).then(function(oView) {
+			oView.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-		var oDomRef = oView.getDomRef();
-		RenderManager.preserveContent(oDomRef, true);
+			var oDomRef = oView.getDomRef();
+			RenderManager.preserveContent(oDomRef, true);
 
-		oView.destroy();
+			oView.destroy();
 
-		assert.ok(!RenderManager.getPreserveAreaRef().hasChildNodes(), "Preserve area is empty");
+			assert.ok(!RenderManager.getPreserveAreaRef().hasChildNodes(), "Preserve area is empty");
+		});
+
 	});
 
 	QUnit.test("Destroy with 'KeepDom'-mode removes preservable flag from DOM ref", function(assert) {
 		// Otherwise view content of already destroyed views might get preserve and never destroyed
 
 		// load and place view, force rendering
-		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
-		sap.ui.getCore().applyChanges();
+		return XMLView.create({
+			viewName: 'example.mvc.test'
+		}).then(function(oView) {
+			oView.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-		var oDomRef = oView.getDomRef();
+			var oDomRef = oView.getDomRef();
 
-		oView.destroy("KeepDom");
-		RenderManager.preserveContent(oDomRef, true);
+			oView.destroy("KeepDom");
+			RenderManager.preserveContent(oDomRef, true);
 
-		assert.ok(!RenderManager.getPreserveAreaRef().hasChildNodes(), "Nothing got preserved");
+			assert.ok(!RenderManager.getPreserveAreaRef().hasChildNodes(), "Nothing got preserved");
 
-		// Cleanup
-		oDomRef = oView.getDomRef();
-		oDomRef.parentElement.removeChild(oDomRef);
+			// Cleanup
+			oDomRef = oView.getDomRef();
+			oDomRef.parentElement.removeChild(oDomRef);
+		});
 	});
 
 	QUnit.test("Directly Nested XMLViews", function(assert) {
@@ -781,55 +559,61 @@ sap.ui.define([
 		];
 
 		// load and place view, force rendering
-		var oView = sap.ui.xmlview("outer", { viewName: "nested.views.outer"}).placeAt('content');
-		sap.ui.getCore().applyChanges();
+		return XMLView.create({
+			id: "outer",
+			viewName: "nested.views.outer"
+		}).then(function(oView) {
+			oView.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-		expectedControls.forEach(function(sId) {
-			var oControl = sap.ui.getCore().byId(sId);
-			assert.ok(oControl, "control with id '" + sId + "' should exist");
-			assert.ok(oControl.getDomRef(), "control with id '" + sId + "' should have DOM");
-		});
+			expectedControls.forEach(function(sId) {
+				var oControl = sap.ui.getCore().byId(sId);
+				assert.ok(oControl, "control with id '" + sId + "' should exist");
+				assert.ok(oControl.getDomRef(), "control with id '" + sId + "' should have DOM");
+			});
 
-		// install delegates on each control to assert later that all have been rendered
-		var count = 0;
-		expectedControls.forEach(function(sId) {
-			var oControl = sap.ui.getCore().byId(sId);
-			oControl.addDelegate({
-				onBeforeRendering: function() {
-					count += 100;
-				},
-				onAfterRendering: function() {
-					count += 1;
-				}
+			// install delegates on each control to assert later that all have been rendered
+			var count = 0;
+			expectedControls.forEach(function(sId) {
+				var oControl = sap.ui.getCore().byId(sId);
+				oControl.addDelegate({
+					onBeforeRendering: function() {
+						count += 100;
+					},
+					onAfterRendering: function() {
+						count += 1;
+					}
+				});
+			});
+
+			// Act: force a re-rerendering of the outer view
+			oView.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			// Assert: everythging has been rendered again
+			assert.equal(count, 101 * expectedControls.length, "all controls should have participated in the rendering");
+			expectedControls.forEach(function(sId) {
+				var oControl = sap.ui.getCore().byId(sId);
+				assert.ok(oControl, "control with id '" + sId + "' should exist");
+				assert.ok(oControl.getDomRef(), "control with id '" + sId + "' should have DOM");
+				assert.notOk(document.getElementById(RenderManager.RenderPrefixes.Dummy + sId), "there should be no more Dummy-Element for id '" + sId + "'");
+				assert.notOk(document.getElementById(RenderManager.RenderPrefixes.Temporary + sId), "there should be no more Temporary-Element for id '" + sId + "'");
+			});
+
+			oView.destroy();
+			expectedControls.forEach(function(sId) {
+				var oControl = sap.ui.getCore().byId(sId);
+				assert.notOk(oControl, "control with id '" + sId + "' should no longer exist");
+				assert.notOk(document.getElementById(sId), "there should be no more DOM with id '" + sId + "'");
 			});
 		});
 
-		// Act: force a re-rerendering of the outer view
-		oView.invalidate();
-		sap.ui.getCore().applyChanges();
-
-		// Assert: everythging has been rendered again
-		assert.equal(count, 101 * expectedControls.length, "all controls should have participated in the rendering");
-		expectedControls.forEach(function(sId) {
-			var oControl = sap.ui.getCore().byId(sId);
-			assert.ok(oControl, "control with id '" + sId + "' should exist");
-			assert.ok(oControl.getDomRef(), "control with id '" + sId + "' should have DOM");
-			assert.notOk(document.getElementById(RenderManager.RenderPrefixes.Dummy + sId), "there should be no more Dummy-Element for id '" + sId + "'");
-			assert.notOk(document.getElementById(RenderManager.RenderPrefixes.Temporary + sId), "there should be no more Temporary-Element for id '" + sId + "'");
-		});
-
-		oView.destroy();
-		expectedControls.forEach(function(sId) {
-			var oControl = sap.ui.getCore().byId(sId);
-			assert.notOk(oControl, "control with id '" + sId + "' should no longer exist");
-			assert.notOk(document.getElementById(sId), "there should be no more DOM with id '" + sId + "'");
-		});
 
 	});
 
 	QUnit.module("Rendering", {
 		before: function() {
-			sap.ui.predefine("testdata/mvc/EmptyControl", ["sap/ui/core/Control"], function (Control) {
+			sap.ui.define("testdata/mvc/EmptyControl", ["sap/ui/core/Control"], function (Control) {
 				return Control.extend("testdata.mvc.EmptyControl", {
 					metadata: {},
 					renderer: {
@@ -878,9 +662,13 @@ sap.ui.define([
 					"XML node: '<test:Error xmlns:test=\"sap.ui.testlib\"/>':\n" +
 					"Cannot add direct child without default aggregation defined for control sap.ui.testlib.TestButton";
 
-		assert.throws(function() {
-			sap.ui.xmlview("erroneous_view_1", {viewContent:sXml});
-		}, Error(sError), "Must throw an error");
+		return XMLView.create({
+			id: "erroneous_view_1",
+			definition: sXml
+		}).catch(function(oError) {
+			assert.ok(oError, "Must reject with an error");
+			assert.equal(oError.message, sError, "Error with correct error message");
+		});
 	});
 
 	QUnit.test("Error in template - text in aggregation", function(assert) {
@@ -895,9 +683,13 @@ sap.ui.define([
 					"XML node: '\t\tError\t':\n" +
 					"Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed.";
 
-		assert.throws(function() {
-			sap.ui.xmlview("erroneous_view_2", {viewContent:sXml});
-		}, Error(sError), "Must throw an error");
+		return XMLView.create({
+			id: "erroneous_view_2",
+			definition: sXml
+		}).catch(function(oError) {
+			assert.ok(oError, "Must reject with an error");
+			assert.equal(oError.message, sError, "Error with correct error message");
+		});
 	});
 
 	QUnit.test("Error in controller", function(assert) {
@@ -907,14 +699,18 @@ sap.ui.define([
 			].join('');
 
 		// define erroneous controller
-		sap.ui.controller("example.mvc.test.error", {
+		Controller.extend("example.mvc.test.error", {
 			onInit: function() {
 				throw new Error("Controller error");
 			}
 		});
-		assert.throws(function() {
-			sap.ui.xmlview("erroneous_view_3", {viewContent:sXml});
-		}, Error("Controller error"), "Must throw an error");
+
+		return XMLView.create({
+			id: "erroneous_view_3",
+			definition: sXml
+		}).catch(function(oError) {
+			assert.ok(oError, "Must reject with an error");
+		});
 	});
 
 	// encoding
@@ -931,19 +727,23 @@ sap.ui.define([
 			'</mvc:View>'
 		].join('');
 
-		var view = sap.ui.xmlview("view", {viewContent:xmlWithHTMLFragment});
-		view.placeAt("content");
-		sap.ui.getCore().applyChanges();
 
-		assert.ok(jQuery("#view--valid1").length == 1, "DOM must contain view--valid1 element.");
-		assert.ok(jQuery("#view--valid2").length == 1, "DOM must contain view--valid2 element.");
-		assert.ok(jQuery("#broken1").length == 0, "DOM must not contain broken1 element.");
-		assert.ok(jQuery("#broken2").length == 0, "DOM must not contain broken2 element.");
-
+		return XMLView.create({
+			id: "view",
+			definition: xmlWithHTMLFragment
+		}).then(function(oView) {
+			oView.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			return oView;
+		}).then(function(oView) {
+			assert.ok(jQuery("#view--valid1").length == 1, "DOM must contain view--valid1 element.");
+			assert.ok(jQuery("#view--valid2").length == 1, "DOM must contain view--valid2 element.");
+			assert.ok(jQuery("#broken1").length == 0, "DOM must not contain broken1 element.");
+			assert.ok(jQuery("#broken2").length == 0, "DOM must not contain broken2 element.");
+		});
 	});
 
 	QUnit.test("DataBinding", function(assert) {
-
 		var oModel1 = new JSONModel({
 			booleanValue : true,
 			integerValue: 8015,
@@ -987,44 +787,59 @@ sap.ui.define([
 			'</mvc:View>'
 		].join('');
 
-		var oViewWithBindings1 = sap.ui.xmlview({viewContent:xmlWithBindings});
-		oViewWithBindings1.setModel(oModel1);
-		assert.equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().booleanValue, "Check 'enabled' property of button 'btn'");
-		assert.equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
-		assert.equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().integerValue, "Check 'width' property of button 'btn'");
-
-		var oViewWithBindings2 = sap.ui.xmlview({viewContent:xmlWithBindings});
-		oViewWithBindings2.setModel(oModel2);
-		assert.equal(oViewWithBindings2.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
-		assert.equal(oViewWithBindings2.byId("btn").getText(), oModel2.getData().stringValue, "Check 'text' property of button 'btn'");
-		assert.equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
-
-		var oViewWithNamedBindings = sap.ui.xmlview({viewContent:xmlWithNamedBindings});
-		oViewWithNamedBindings.setModel(oModel2);
-		oViewWithNamedBindings.setModel(oModel1, "model1");
-		oViewWithNamedBindings.setModel(oModel2, "model2");
-		assert.equal(oViewWithNamedBindings.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
-		assert.equal(oViewWithNamedBindings.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
-		assert.equal(oViewWithNamedBindings.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
-
-		var oViewWithElementBinding = sap.ui.xmlview({viewContent:xmlWithElementBinding});
-		oViewWithElementBinding.setModel(oModel1);
-		assert.equal(oViewWithElementBinding.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
-		assert.equal(oViewWithElementBinding.byId("btn").getText(), oModel1.getData().data.stringValue, "Check 'text' property of button 'btn'");
-		assert.equal(oViewWithElementBinding.byId("btn").getWidth(), oModel1.getData().data.integerValue, "Check 'width' property of button 'btn'");
-
-		var oViewWithoutBindings = sap.ui.xmlview({viewContent:xmlWithoutBindings});
-		oViewWithoutBindings.setModel(oModel1);
-		oViewWithoutBindings.setModel(oModel1, "model1");
-		oViewWithoutBindings.setModel(oModel2, "model2");
-		assert.equal(oViewWithoutBindings.byId("btn1").getText(), "The following set is empty: {}", "Check 'text' property of button 'btn1'");
-		assert.equal(oViewWithoutBindings.byId("btn2").getText(), "{} is an empty set", "Check 'text' property of button 'btn2'");
-		assert.equal(oViewWithoutBindings.byId("btn3").getText(), "The following array is empty: []", "Check 'text' property of button 'btn3'");
-		assert.equal(oViewWithoutBindings.byId("btn4").getText(), "[] is an empty array", "Check 'text' property of button 'btn4'");
+		return XMLView.create({
+			definition: xmlWithBindings
+		}).then(function (oViewWithBindings1) {
+			oViewWithBindings1.setModel(oModel1);
+			assert.equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().booleanValue, "Check 'enabled' property of button 'btn'");
+			assert.equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
+			assert.equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().integerValue, "Check 'width' property of button 'btn'");
+		})
+		.then(function() {
+			return XMLView.create({
+				definition: xmlWithBindings
+			}).then(function (oViewWithBindings2) {
+				oViewWithBindings2.setModel(oModel2);
+				assert.equal(oViewWithBindings2.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
+				assert.equal(oViewWithBindings2.byId("btn").getText(), oModel2.getData().stringValue, "Check 'text' property of button 'btn'");
+				assert.equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
+			});
+		}).then(function() {
+			return XMLView.create({
+				definition: xmlWithNamedBindings
+			}).then(function (oViewWithNamedBindings) {
+				oViewWithNamedBindings.setModel(oModel2);
+				oViewWithNamedBindings.setModel(oModel1, "model1");
+				oViewWithNamedBindings.setModel(oModel2, "model2");
+				assert.equal(oViewWithNamedBindings.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
+				assert.equal(oViewWithNamedBindings.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
+				assert.equal(oViewWithNamedBindings.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
+			});
+		}).then(function() {
+			return XMLView.create({
+				definition: xmlWithElementBinding
+			}).then(function (oViewWithElementBinding) {
+				oViewWithElementBinding.setModel(oModel1);
+				assert.equal(oViewWithElementBinding.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
+				assert.equal(oViewWithElementBinding.byId("btn").getText(), oModel1.getData().data.stringValue, "Check 'text' property of button 'btn'");
+				assert.equal(oViewWithElementBinding.byId("btn").getWidth(), oModel1.getData().data.integerValue, "Check 'width' property of button 'btn'");
+			});
+		}).then(function() {
+			return XMLView.create({
+				definition: xmlWithoutBindings
+			}).then(function (oViewWithoutBindings) {
+				oViewWithoutBindings.setModel(oModel1);
+				oViewWithoutBindings.setModel(oModel1, "model1");
+				oViewWithoutBindings.setModel(oModel2, "model2");
+				assert.equal(oViewWithoutBindings.byId("btn1").getText(), "The following set is empty: {}", "Check 'text' property of button 'btn1'");
+				assert.equal(oViewWithoutBindings.byId("btn2").getText(), "{} is an empty set", "Check 'text' property of button 'btn2'");
+				assert.equal(oViewWithoutBindings.byId("btn3").getText(), "The following array is empty: []", "Check 'text' property of button 'btn3'");
+				assert.equal(oViewWithoutBindings.byId("btn4").getText(), "[] is an empty array", "Check 'text' property of button 'btn4'");
+			});
+		});
 	});
 
 	QUnit.test("Custom Data", function(assert) {
-
 		var oModel = new JSONModel({
 			value : 'myValue'
 		});
@@ -1035,12 +850,14 @@ sap.ui.define([
 			'</mvc:View>'
 		].join('');
 
-		var oView = sap.ui.xmlview({viewContent:xmlWithBindings});
-		oView.setModel(oModel);
-		assert.equal(oView.byId("btn").data("myKey1"), "myValue1", "Check CustomData 'myKey1' of button 'btn'");
-		assert.equal(oView.byId("btn").data("myKey2"), oModel.getData().value, "Check CustomData 'myKey2' of button 'btn'");
-		assert.equal(oView.byId("btn").data("myKey3"), "formatted-" + oModel.getData().value, "Check CustomData 'myKey3' of button 'btn'");
-
+		return XMLView.create({
+			definition: xmlWithBindings
+		}).then(function(oView) {
+			oView.setModel(oModel);
+			assert.equal(oView.byId("btn").data("myKey1"), "myValue1", "Check CustomData 'myKey1' of button 'btn'");
+			assert.equal(oView.byId("btn").data("myKey2"), oModel.getData().value, "Check CustomData 'myKey2' of button 'btn'");
+			assert.equal(oView.byId("btn").data("myKey3"), "formatted-" + oModel.getData().value, "Check CustomData 'myKey3' of button 'btn'");
+		});
 	});
 
 	QUnit.module("View's root level settings");
@@ -1072,33 +889,6 @@ sap.ui.define([
 			assert.equal(oView.byId("btn").data("myKey2"), oModel.getData().value, "Check CustomData 'myKey2' of button 'btn'");
 			assert.equal(oView.byId("btn").data("myKey3"), "formatted-" + oModel.getData().value, "Check CustomData 'myKey3' of button 'btn'");
 		});
-	});
-
-	QUnit.test("Custom Data (legacy factory)", function(assert) {
-		var oModel = new JSONModel({
-			value : 'myValue'
-		});
-
-		var xmlWithBindings = [
-			'<mvc:View controllerName="example.mvc.test"',
-			'  xmlns:mvc="sap.ui.core.mvc"',
-			'  xmlns:test="sap.ui.testlib"',
-			'  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"',
-			'  app:myKey1="myValue1" app:myKey2="{/value}" app:myKey3="{path: \'/value\', formatter:\'.valueFormatter\'}">',
-			'  <test:TestButton id="btn" app:myKey1="myValue1" app:myKey2="{/value}" app:myKey3="{path: \'/value\', formatter:\'.valueFormatter\'}" />',
-			'</mvc:View>'
-		].join('');
-
-		var oView = sap.ui.xmlview({viewContent:xmlWithBindings});
-		oView.setModel(oModel);
-
-		assert.equal(oView.data("myKey1"), "myValue1", "Check CustomData 'myKey1' of the View");
-		assert.equal(oView.data("myKey2"), oModel.getData().value, "Check CustomData 'myKey2' of the View");
-		assert.equal(oView.data("myKey3"), "formatted-" + oModel.getData().value, "Check CustomData 'myKey3' of the View");
-		assert.equal(oView.byId("btn").data("myKey1"), "myValue1", "Check CustomData 'myKey1' of button 'btn'");
-		assert.equal(oView.byId("btn").data("myKey2"), oModel.getData().value, "Check CustomData 'myKey2' of button 'btn'");
-		assert.equal(oView.byId("btn").data("myKey3"), "formatted-" + oModel.getData().value, "Check CustomData 'myKey3' of button 'btn'");
-
 	});
 
 	QUnit.test("Named Aggregation", function(assert) {
@@ -1182,72 +972,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Named Aggregations (legacy factory)", function(assert) {
-		var sXmlWithNamedAggregations = [
-			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:html="http://www.w3.org/1999/xhtml">',
-			'  <mvc:content>',
-			'    <test:TestButton id="contentButton" />',
-			'    <html:div id="div1">test1</html:div>',
-			'  </mvc:content>',
-			'  <mvc:dependents>',
-			'    <test:TestButton id="dependentButton" />',
-			'    <html:div id="div2">test2</html:div>',
-			'    plain text node',
-			'    <core:Fragment id="innerFragment" fragmentName="testdata.fragments.XMLFragmentDialog" type="XML"/>',
-			'  </mvc:dependents>',
-			'</mvc:View>'
-		].join('');
-
-		var sXmlWithNamedDependents = [
-			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
-			'  <test:TestButton id="contentButton" />',
-			'  <mvc:dependents>',
-			'    <test:TestButton id="dependentButton" />',
-			'    <core:Fragment id="innerFragment" fragmentName="testdata.fragments.XMLFragmentDialog" type="XML"/>',
-			'  </mvc:dependents>',
-			'</mvc:View>'
-		].join('');
-
-		var sXmlWithWrongAggregation = [
-			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
-			'  <test:TestButton id="contentButton" />',
-			'  <mvc:wrong>',
-			'    <test:TestButton id="dependentButton" />',
-			'  </mvc:wrong>',
-			'</mvc:View>'
-		].join('');
-
-
-		var oView = sap.ui.xmlview("viewWithNamedAggregations", { viewContent: sXmlWithNamedAggregations });
-		oView.placeAt("content");
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(oView.byId("contentButton").getId(),"viewWithNamedAggregations--contentButton", "viewWithNamedAggregations: The button was added correctly");
-		assert.strictEqual(oView.getContent()[0].getId(),"viewWithNamedAggregations--contentButton", "viewWithNamedAggregations: The button was added correctly to content aggregation");
-		assert.strictEqual(oView.byId("dependentButton").getId(),"viewWithNamedAggregations--dependentButton", "viewWithNamedAggregations: The dependent button was added correctly");
-		assert.strictEqual(oView.getDependents()[0].getId(),"viewWithNamedAggregations--dependentButton", "viewWithNamedAggregations: The dependent button was added correctly to dependents aggregation");
-		assert.strictEqual(oView.getDependents()[1].getId(),"viewWithNamedAggregations--innerFragment--xmlDialog", "viewWithNamedAggregations: The dialog control from the dependent fragment was added correctly to dependents aggregation");
-
-		var oDiv1 = document.getElementById(oView.createId("div1"));
-		assert.ok(oDiv1, "XHTML element in 'content' aggregation is rendered");
-		assert.equal(oDiv1.childNodes.length, 1, "The div has one child");
-		assert.equal(oDiv1.childNodes[0].textContent, "test1", "The text content is correct");
-		assert.notOk(document.getElementById(oView.createId("div2")), "XHTML element in 'dependents' aggregation is NOT rendered");
-		assert.notOk(oDiv1.nextSibling.textContent.trim(), "HTML nodes or text nodes outside the content aggregation shouldn't be rendered");
-		oView.destroy();
-
-		oView = sap.ui.xmlview("xmlWithNamedDependents", { viewContent: sXmlWithNamedDependents });
-		assert.strictEqual(oView.byId("contentButton").getId(),"xmlWithNamedDependents--contentButton", "xmlWithNamedDependents: The button was added correctly");
-		assert.strictEqual(oView.getContent()[0].getId(),"xmlWithNamedDependents--contentButton", "xmlWithNamedDependents: The button was added correctly to content aggregation");
-		assert.strictEqual(oView.byId("dependentButton").getId(),"xmlWithNamedDependents--dependentButton", "xmlWithNamedDependents: The dependent button was added correctly");
-		assert.strictEqual(oView.getDependents()[0].getId(),"xmlWithNamedDependents--dependentButton", "xmlWithNamedDependents: The dependent button was added correctly to dependents aggregation");
-		assert.strictEqual(oView.getDependents()[1].getId(),"xmlWithNamedDependents--innerFragment--xmlDialog", "viewWithNamedAggregations: The dialog control from the dependent fragment was added correctly to dependents aggregation");
-		oView.destroy();
-
-		assert.throws(function() {
-			sap.ui.xmlview("xmlWithWrongAggregationLegacy", { viewContent: sXmlWithWrongAggregation });
-		}, /failed to load .{1}sap\/ui\/core\/mvc\/wrong\.js/, "xmlWithWrongAggregation: Error thrown for unknown aggregation");
-	});
-
 	QUnit.test("Error should be thrown when 'content' aggregation of View is bound and binding template contains HTML node", function(assert) {
 		var sXmlWithBoundContent = [
 			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:html="http://www.w3.org/1999/xhtml" ',
@@ -1272,33 +996,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Error should be thrown when 'content' aggregation of View is bound and binding template contains HTML node (legacy factory)", function(assert) {
-		var sXmlWithBoundContent = [
-			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:html="http://www.w3.org/1999/xhtml" ',
-			'  content="{path: \'/Supplier\', templateShareable:false}">',
-			'  <html:div id="div2">',
-			'    <core:Icon src="sap-icon://accept" />',
-			'  </html:div>',
-			'  <mvc:dependents>',
-			'    <test:TestButton id="dependentButton" />',
-			'    <core:Fragment id="innerFragment" fragmentName="testdata.fragments.XMLFragmentDialog" type="XML"/>',
-			'  </mvc:dependents>',
-			'</mvc:View>'
-		].join('');
-
-		var fnCreateViewSpy = sinon.spy(function() {
-			sap.ui.xmlview("xmlWithBoundContent", { viewContent: sXmlWithBoundContent });
-		});
-
-		try {
-			fnCreateViewSpy();
-		} catch (err) {
-			// do nothing
-		}
-
-		assert.equal(fnCreateViewSpy.getCall(0).exception.message, "Error found in View (id: 'xmlWithBoundContent').\nXML node: '<html:div xmlns:html=\"http://www.w3.org/1999/xhtml\" id=\"div2\"></html:div>':\nNo XHTML or SVG node is allowed because the 'content' aggregation is bound.", "Error thrown for having HTML nodes in the binding template of the bound 'content' aggregation");
-	});
-
 	QUnit.module("Preprocessor API", {
 		beforeEach: function() {
 			this.sViewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>';
@@ -1313,16 +1010,15 @@ sap.ui.define([
 				this.xml = XMLHelper.parse(this.sViewContent).documentElement;
 				return this.xml;
 			}.bind(this);
-			this.createView = function(bAsync) {
+			this.createView = function() {
 				var preprocessor = {
 					preprocessor: this.fnChangeSourcePreprocessor,
 					_syncSupport: true
 				};
-				return sap.ui.xmlview({
-					async: bAsync,
-					viewContent: this.sViewContent,
+				return XMLView.create({
+					definition: this.sViewContent,
 					preprocessors: {
-						xml:preprocessor,
+						xml: preprocessor,
 						viewxml: preprocessor
 					}
 				});
@@ -1375,29 +1071,9 @@ sap.ui.define([
 		}, TypeError, "TypeError thrown when registering for a view type other than XML");
 	});
 
-	QUnit.test("sync / no execution", function(assert) {
-		assert.expect(1);
-		var preprocessorSpy = sinon.spy();
-
-		sap.ui.xmlview({
-			viewContent: this.sViewContent,
-			preprocessors: {
-				xml: this.fnGetConfig(preprocessorSpy)
-			}
-		});
-
-		sinon.assert.notCalled(preprocessorSpy);
-	});
-
-	QUnit.test("sync: assignment of preprocessor results", function(assert) {
-		assert.expect(1);
-		var oView = this.createView();
-		assert.strictEqual(oView._xContent, this.xml, "Result was correctly assigned");
-	});
-
 	QUnit.test("async: assignment of preprocessor results", function(assert) {
 		assert.expect(1);
-		return this.createView(true).loaded().then(function(oView) {
+		return this.createView().then(function(oView) {
 			assert.strictEqual(oView._xContent, this.xml, "Result was correctly assigned");
 		}.bind(this));
 	});
@@ -1436,17 +1112,16 @@ sap.ui.define([
 			}
 		}
 
-		oView = sap.ui.xmlview({
-			viewContent: this.sViewContent,
-			preprocessors: oPreprocessors,
-			async: !bSync
+		oView = XMLView.create({
+			definition: this.sViewContent,
+			preprocessors: oPreprocessors
 		});
 
-		return bSync ? fnAssert() : oView.loaded().then(fnAssert);
+		return bSync ? fnAssert() : oView.then(fnAssert);
 	}
 
-	function testPreprocessorError(assert, bSync, sType) {
-		var oView, oPreprocessors = {}, error,
+	function testPreprocessorError(assert, sType) {
+		var oPreprocessors = {},
 			oError = new Error("preprocessor failed"),
 			preprocessorSpy = sinon.spy(function(vSource) {
 				throw oError;
@@ -1455,43 +1130,24 @@ sap.ui.define([
 				assert.strictEqual(e, oError, "error was processed");
 			};
 
-		assert.expect(1);
-
 		oPreprocessors[sType] = this.fnGetConfig(preprocessorSpy, true);
-
-		// synchronous case -> try/catch
-		try {
-			oView = sap.ui.xmlview({
-				viewContent: this.sViewContent,
-				preprocessors: oPreprocessors,
-				async: !bSync
-			});
-		} catch (_error) {
-			error = _error;
-		}
-
-		// async case -> Promise#catch
-		return bSync ? fnAssert(error) : oView.loaded().catch(fnAssert);
+		return XMLView.create({
+			definition: this.sViewContent,
+			preprocessors: oPreprocessors
+		}).catch(fnAssert);
 	}
 
 	jQuery.each(XMLView.PreprocessorType, function(sProp, sType) {
-		QUnit.test("sync - single preprocessor " + sType + " (compatible)", function(assert) {
-			testPreprocessor.call(this, assert, true, sType);
-		});
-		QUnit.test("sync - multiple preprocessors " + sType, function(assert) {
-			testPreprocessor.call(this, assert, true, sType, 2);
-		});
 		QUnit.test("async - single preprocessor " + sType + " (compatible)", function(assert) {
 			return testPreprocessor.call(this, assert, false, sType);
 		});
 		QUnit.test("async - multiple preprocessors " + sType, function(assert) {
 			return testPreprocessor.call(this, assert, false, sType, 2);
 		});
-		QUnit.test("sync - preprocessor error " + sType + " (compatible)", function(assert) {
-			testPreprocessorError.call(this, assert, true, sType);
-		});
+
 		QUnit.test("async - preprocessor error " + sType, function(assert) {
-			testPreprocessorError.call(this, assert, true, sType);
+			assert.expect(1);
+			return testPreprocessorError.call(this, assert, sType);
 		});
 	});
 

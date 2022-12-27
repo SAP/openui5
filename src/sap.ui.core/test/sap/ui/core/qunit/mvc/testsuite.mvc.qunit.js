@@ -93,6 +93,15 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			View: {
 				title: "QUnit Page for sap.ui.core.mvc.View"
 			},
+			/**
+			 * @deprecated As of 1.110
+			 */
+			XMLView_legacyAPIs: {
+				title: "QUnit Page for sap.ui.core.mvc.XMLView + sap.ui.core.mvc.Controller - legacy APIs",
+				qunit: {
+					reorder: false
+				}
+			},
 			XMLView: {
 				title: "QUnit Page for sap.ui.core.mvc.XMLView + sap.ui.core.mvc.Controller",
 				qunit: {
