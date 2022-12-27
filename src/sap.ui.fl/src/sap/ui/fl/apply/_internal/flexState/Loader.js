@@ -3,10 +3,12 @@
  */
 
 sap.ui.define([
+	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/Utils"
 ], function(
+	ManagedObject,
 	ManifestUtils,
 	ApplyStorage,
 	Utils
@@ -50,6 +52,26 @@ sap.ui.define([
 			});
 		}
 
+		return mFlexData;
+	}
+
+	function filterInvalidFileNames(mFlexData) {
+		[
+			"changes",
+			"variantChanges",
+			"variantDependentControlChanges",
+			"variantManagementChanges"
+		].forEach(function(sKey) {
+			mFlexData[sKey] = mFlexData[sKey].filter(function(oFlexItem) {
+				try {
+					var oTemporaryInstance = new ManagedObject(oFlexItem.fileName);
+				} catch (error) {
+					return false;
+				}
+				oTemporaryInstance.destroy();
+				return true;
+			});
+		});
 		return mFlexData;
 	}
 
@@ -117,7 +139,10 @@ sap.ui.define([
 				appDescriptor: mPropertyBag.manifest.getRawJson ? mPropertyBag.manifest.getRawJson() : mPropertyBag.manifest,
 				version: mPropertyBag.version,
 				allContexts: mPropertyBag.allContexts
-			}).then(migrateSelectorFlags.bind(undefined, isMigrationNeeded(mPropertyBag.manifest))).then(formatFlexData);
+			})
+			.then(filterInvalidFileNames.bind())
+			.then(migrateSelectorFlags.bind(undefined, isMigrationNeeded(mPropertyBag.manifest)))
+			.then(formatFlexData);
 		}
 	};
 });

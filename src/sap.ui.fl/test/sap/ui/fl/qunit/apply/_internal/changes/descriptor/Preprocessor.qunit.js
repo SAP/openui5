@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/Storage",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
 	"sap/ui/fl/Layer",
@@ -16,6 +17,7 @@ sap.ui.define([
 	AddLibrary,
 	FlexState,
 	Storage,
+	StorageUtils,
 	LrepConnector,
 	StaticFileConnector,
 	Layer,
@@ -87,7 +89,7 @@ sap.ui.define([
 				}
 			];
 
-			this.fnStorageStub.resolves({ appDescriptorChanges: aChanges });
+			this.fnStorageStub.resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), { appDescriptorChanges: aChanges }));
 
 			return Preprocessor.preprocessManifest(this.oManifest, this.oConfig).then(function() {
 				assert.equal(this.fnFlexStateSpy.callCount, 1, "FlexState was initialized once");
@@ -117,7 +119,7 @@ sap.ui.define([
 				}
 			];
 
-			this.fnStorageStub.resolves({ appDescriptorChanges: aChanges });
+			this.fnStorageStub.resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), { appDescriptorChanges: aChanges }));
 
 			return Preprocessor.preprocessManifest(this.oManifest, this.oConfig).then(function() {
 				assert.equal(this.fnFlexStateSpy.callCount, 1, "FlexState was initialized once");
@@ -173,8 +175,7 @@ sap.ui.define([
 			var oStorageLoadFlexData = sandbox.spy(Storage, "loadFlexData");
 			var oStorageCompleteFlexData = sandbox.spy(Storage, "completeFlexData");
 			var oStaticFileConnectorSpy = sandbox.spy(StaticFileConnector, "loadFlexData");
-			var oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves({
-				appDescriptorChanges: [],
+			var oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
 				changes: [
 					{
 						fileName: "id_1581069458324_200_propertyChange",
@@ -195,13 +196,8 @@ sap.ui.define([
 						variantReference: "",
 						appDescriptorChange: false
 					}
-				],
-				variants: [],
-				variantChanges: [],
-				variantDependentControlChanges: [],
-				variantManagementChanges: [],
-				ui2personalization: {}
-			});
+				]
+			}));
 
 			return Preprocessor.preprocessManifest(oManifest, this.oConfig)
 				.then(function() {

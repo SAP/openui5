@@ -1,40 +1,42 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
-	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
-	"sap/ui/core/Control",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/initial/_internal/Storage",
-	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/core/UIComponent",
-	"sap/base/util/UriParameters",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/base/util/LoaderExtensions",
+	"sap/base/util/UriParameters",
+	"sap/ui/core/Control",
+	"sap/ui/core/UIComponent",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
+	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
+	"sap/ui/fl/initial/_internal/Storage",
+	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	SmartVariantManagementApplyAPI,
-	SmartVariantManagementWriteAPI,
-	Control,
-	CompVariantState,
-	FlexState,
-	States,
-	InitialStorage,
-	WriteStorage,
-	Settings,
-	Layer,
-	ManifestUtils,
-	UIComponent,
-	UriParameters,
-	Utils,
-	LrepConnector,
 	LoaderExtensions,
+	UriParameters,
+	Control,
+	UIComponent,
+	States,
+	FlexState,
+	ManifestUtils,
+	SmartVariantManagementApplyAPI,
+	LrepConnector,
+	InitialStorage,
+	StorageUtils,
+	Settings,
+	CompVariantState,
+	WriteStorage,
+	SmartVariantManagementWriteAPI,
+	Layer,
+	Utils,
 	sinon
 ) {
 	"use strict";
@@ -349,7 +351,7 @@ sap.ui.define([
 					content: {}
 				}];
 				sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
-				sandbox.stub(InitialStorage, "loadFlexData").resolves({
+				sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
 					changes: [],
 					comp: {
 						compVariants: [],
@@ -372,7 +374,7 @@ sap.ui.define([
 						standardVariants: [],
 						defaultVariants: []
 					}
-				});
+				}));
 
 				return FlexState.clearAndInitialize({
 					reference: sReference,
@@ -429,7 +431,7 @@ sap.ui.define([
 				};
 
 				sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
-				sandbox.stub(InitialStorage, "loadFlexData").resolves({
+				sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
 					changes: [],
 					comp: {
 						compVariants: [],
@@ -453,7 +455,7 @@ sap.ui.define([
 						standardVariants: [],
 						defaultVariants: []
 					}
-				});
+				}));
 				sandbox.stub(Settings, "getInstanceOrUndef").returns({
 					isVersioningEnabled: function() {
 						return false;
@@ -741,7 +743,7 @@ sap.ui.define([
 					return sPersistencyKey;
 				};
 				testData.propertyBag.control = oControl;
-				sandbox.stub(InitialStorage, "loadFlexData").resolves({
+				sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
 					changes: [],
 					comp: {
 						variants: [testData.mockedVariant],
@@ -750,7 +752,7 @@ sap.ui.define([
 						defaultVariants: []
 					},
 					settings: {}
-				});
+				}));
 
 				return FlexState.clearAndInitialize({
 					reference: sReference,
@@ -869,10 +871,10 @@ sap.ui.define([
 				return sPersistencyKey;
 			};
 
-			var mFlexData = LoaderExtensions.loadResource({
+			var mFlexData = Object.assign(StorageUtils.getEmptyFlexDataResponse(), LoaderExtensions.loadResource({
 				dataType: "json",
 				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/apply/api/SmartVariantManagementAPI.loadVariantsTestSetup-flexData.json")
-			});
+			}));
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(mFlexData);
 			var oVariant;
@@ -905,7 +907,7 @@ sap.ui.define([
 			oControl.getPersistencyKey = function() {
 				return sPersistencyKey;
 			};
-			sandbox.stub(InitialStorage, "loadFlexData").resolves({
+			sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
 				changes: [],
 				comp: {
 					variants: [{
@@ -927,7 +929,7 @@ sap.ui.define([
 					standardVariants: [],
 					defaultVariants: []
 				}
-			});
+			}));
 
 			return FlexState.clearAndInitialize({
 				reference: sReference,

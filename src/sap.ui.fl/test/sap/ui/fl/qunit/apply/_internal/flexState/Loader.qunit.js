@@ -32,7 +32,7 @@ sap.ui.define([
 			this.oFlexDataResponse = {
 				changes: [
 					{
-						fileName: "1",
+						fileName: "c1",
 						selector: {
 							id: "ProductDetail--GeneralForm--generalForm",
 							idIsLocal: false
@@ -54,7 +54,7 @@ sap.ui.define([
 							}
 						}
 					}, {
-						fileName: "2",
+						fileName: "c2",
 						selector: {
 							id: "ProductDetail--GeneralForm--generalForm",
 							idIsLocal: true
@@ -68,7 +68,15 @@ sap.ui.define([
 							]
 						}
 					}, {
-						fileName: "3",
+						fileName: "c3",
+						selector: "ProductDetail--GeneralForm--generalForm",
+						dependentSelector: {
+							movedElements: [
+								"ProductDetail--GeneralForm--productLabel"
+							]
+						}
+					}, {
+						fileName: "4c",
 						selector: "ProductDetail--GeneralForm--generalForm",
 						dependentSelector: {
 							movedElements: [
@@ -174,7 +182,7 @@ sap.ui.define([
 				return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
 					var aChanges = oResult.changes.changes;
 					assert.equal(aChanges.length, 3, "three changes are loaded");
-					assert.equal(aChanges[0].fileName, "1", "the file name of the first change is correct - MUST BE THE SAME");
+					assert.equal(aChanges[0].fileName, "c1", "the file name of the first change is correct - MUST BE THE SAME");
 					assert.deepEqual(aChanges[0].selector, {
 						id: "ProductDetail--GeneralForm--generalForm",
 						idIsLocal: true
@@ -192,7 +200,7 @@ sap.ui.define([
 							idIsLocal: true
 						}
 					}, "the dependent selector of the first change is correct");
-					assert.equal(aChanges[1].fileName, "2", "the file name of the third change is correct");
+					assert.equal(aChanges[1].fileName, "c2", "the file name of the third change is correct");
 					assert.deepEqual(aChanges[1].selector, {
 						id: "ProductDetail--GeneralForm--generalForm",
 						idIsLocal: true
@@ -203,7 +211,7 @@ sap.ui.define([
 							idIsLocal: true
 						}]
 					}, "the dependent selector of the second change is correct");
-					assert.equal(aChanges[2].fileName, "3", "the file name of the forth change is correct - MUST BE THE SAME");
+					assert.equal(aChanges[2].fileName, "c3", "the file name of the forth change is correct - MUST BE THE SAME");
 					assert.deepEqual(aChanges[2].selector, {
 						id: "ProductDetail--GeneralForm--generalForm",
 						idIsLocal: true
@@ -229,7 +237,7 @@ sap.ui.define([
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
 				var aChanges = oResult.changes.changes;
 				assert.equal(aChanges.length, 3, "three changes are loaded");
-				assert.equal(aChanges[0].fileName, "1", "the file name of the first change is correct");
+				assert.equal(aChanges[0].fileName, "c1", "the file name of the first change is correct");
 				assert.deepEqual(aChanges[0].selector, {
 					id: "ProductDetail--GeneralForm--generalForm",
 					idIsLocal: false
@@ -247,7 +255,7 @@ sap.ui.define([
 						idIsLocal: false
 					}
 				}, "the dependent selector of the first change is correct");
-				assert.equal(aChanges[1].fileName, "2", "the file name of the second change is correct");
+				assert.equal(aChanges[1].fileName, "c2", "the file name of the second change is correct");
 				assert.deepEqual(aChanges[1].selector, {
 					id: "ProductDetail--GeneralForm--generalForm",
 					idIsLocal: true
@@ -258,7 +266,7 @@ sap.ui.define([
 						idIsLocal: true
 					}]
 				}, "the dependent selector of the second change is correct");
-				assert.equal(aChanges[2].fileName, "3", "the file name of the third change is correct");
+				assert.equal(aChanges[2].fileName, "c3", "the file name of the third change is correct");
 				assert.deepEqual(aChanges[2].selector, "ProductDetail--GeneralForm--generalForm", "the selector of the third change is correct");
 				assert.deepEqual(aChanges[2].dependentSelector, {
 					movedElements: ["ProductDetail--GeneralForm--productLabel"]
