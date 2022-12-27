@@ -17,9 +17,6 @@
 		<html:h2>JSView Extension Tests start below:</html:h2>
 		<mvc:View viewName="module:testdata/customizing/sap/Sub4Typed" />
 
-		<html:h2>HTML View Modification Tests start below:</html:h2>
-		<mvc:HTMLView viewName="testdata.customizing.sap.Sub5" />
-
 		<mvc:XMLView id="sub6View" viewName="testdata.customizing.sap.Sub6" />
 
 		<!-- This view's controller should get not get the instance-specific extensions of Sub6 -->

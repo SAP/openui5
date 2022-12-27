@@ -117,6 +117,12 @@ sap.ui.define(function() {
 				qunit: {
 					// Test makes assumptions about when CustomizingData is loaded
 					reorder: false
+				},
+				loader: {
+					paths: {
+						// "testdata.customizing.*" namespace must point to _legacyAPIs folder
+						"testdata/customizing": "test-resources/sap/ui/core/qunit/component/testdata/customizing_legacyAPIs"
+					}
 				}
 			},
 			Customizing_async: {
