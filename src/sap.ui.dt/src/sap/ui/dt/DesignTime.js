@@ -468,15 +468,6 @@ function (
 	};
 
 	/**
-	 * Returns array with current selected overlays
-	 * @return {sap.ui.dt.Overlay[]} selected overlays
-	 * @deprecated
-	 */
-	DesignTime.prototype.getSelection = function () {
-		return this.getSelectionManager().get();
-	};
-
-	/**
 	 * Returns the Selection Manager
 	 * @return {sap.ui.dt.SelectionManager} the instance of the Selection Manager
 	 * @public

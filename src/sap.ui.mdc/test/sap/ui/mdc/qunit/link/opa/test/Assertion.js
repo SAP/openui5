@@ -261,7 +261,7 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.ui.dt.ElementOverlay",
 				matchers: function(oOverlay) {
-					return oOverlay.getElementInstance() === oApp;
+					return oOverlay.getElement() === oApp;
 				},
 				success: function(oOverlay) {
 					Opa5.assert.ok(oOverlay[0].getVisible(), "The Overlay is shown.");

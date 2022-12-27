@@ -377,7 +377,7 @@ sap.ui.define([
 		}
 		var aAggregationNames = [];
 		if (mParents.parentOverlay) {
-			aAggregationNames = mParents.parentOverlay.getAggregationOverlays().filter(function(oAggregationOverlay) {
+			aAggregationNames = mParents.parentOverlay.getChildren().filter(function(oAggregationOverlay) {
 				return !oAggregationOverlay.getDesignTimeMetadata().isIgnored(mParents.parent);
 			}).map(function(oAggregationOverlay) {
 				return oAggregationOverlay.getAggregationName();

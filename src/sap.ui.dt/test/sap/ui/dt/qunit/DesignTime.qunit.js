@@ -251,7 +251,7 @@ sap.ui.define([
 			assert.ok(OverlayRegistry.getOverlay(this.oButton1), "overlay for button1 exists");
 			assert.ok(OverlayRegistry.getOverlay(this.oButton2), "overlay for button2 exists");
 
-			assert.strictEqual(this.oDesignTime.getSelection().length, 0, "and a new selection is created and initially empty");
+			assert.strictEqual(this.oDesignTime.getSelectionManager().get().length, 0, "and a new selection is created and initially empty");
 		});
 
 		QUnit.test("when an already created overlay is added as root", function(assert) {
@@ -266,7 +266,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when an Overlay is selected via overlay API and SelectionManager declines this selection", function (assert) {
-			assert.strictEqual(this.oDesignTime.getSelection().length, 0, "and a new selection is created and initially empty");
+			assert.strictEqual(this.oDesignTime.getSelectionManager().get().length, 0, "and a new selection is created and initially empty");
 			var oElementOverlay = OverlayRegistry.getOverlay(this.oButton1);
 			oElementOverlay.setSelectable(true);
 			this.oDesignTime.getSelectionManager().addValidator(function (aElementOverlays) {

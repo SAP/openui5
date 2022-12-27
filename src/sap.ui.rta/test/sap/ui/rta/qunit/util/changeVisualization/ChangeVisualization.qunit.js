@@ -1148,7 +1148,7 @@ sap.ui.define([
 			return startRta.call(this)
 			.then(function() {
 				var oScrollContainerOverlay = OverlayRegistry.getOverlay("Comp1---idMain1--mainPage");
-				oScrollContainerOverlay.getAggregationOverlays()[0].attachEventOnce("scrollSynced", function() {
+				oScrollContainerOverlay.getChildren()[0].attachEventOnce("scrollSynced", function() {
 					startVisualization.call(this, this.oRta)
 					.then(function() {
 						var aIndicators = collectIndicatorReferences();

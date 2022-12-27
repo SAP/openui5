@@ -207,7 +207,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ElementMover.prototype._iterateOverlayAggregations = function(oOverlay, fnStep, sAdditionalStyleClass, bAsync) {
-		var aAggregationOverlays = oOverlay.getAggregationOverlays();
+		var aAggregationOverlays = oOverlay.getChildren();
 		// if bAsync true the return value of fnStep should return promises
 		var aResultPromises = aAggregationOverlays.map(function(oAggregationOverlay) {
 			return fnStep(oAggregationOverlay, sAdditionalStyleClass);

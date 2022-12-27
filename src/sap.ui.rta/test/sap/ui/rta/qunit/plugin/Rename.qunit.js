@@ -693,7 +693,7 @@ sap.ui.define([
 			this.oInnerButtonOverlay.setSelectable(true);
 			this.oScrollContainer.getDomRef().scrollTo(100, 0);
 			triggerAndWaitForStartEdit(this.oRenamePlugin, this.oInnerButtonOverlay).then(function() {
-				this.oScrollContainerOverlay.getAggregationOverlays()[0].attachEventOnce("scrollSynced", function() {
+				this.oScrollContainerOverlay.getChildren()[0].attachEventOnce("scrollSynced", function() {
 					assert.deepEqual(
 						this.oRenamePlugin._$oEditableControlDomRef.offset(),
 						this.oRenamePlugin._$editableField.offset(),
