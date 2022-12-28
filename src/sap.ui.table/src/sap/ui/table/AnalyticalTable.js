@@ -53,7 +53,7 @@ sap.ui.define([
 	 * @class
 	 * Table which handles analytical OData backends. The AnalyticalTable only works with an AnalyticalBinding and
 	 * correctly annotated OData services. Please check on the SAP Annotations for OData Version 2.0 documentation for further details.
-	 * @see http://scn.sap.com/docs/DOC-44986
+	 * @see https://github.com/SAP/odata-vocabularies/blob/main/docs/v2-annotations.md
 	 *
 	 * @extends sap.ui.table.Table
 	 * @version ${version}
