@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/ui/core/Core",
+	"sap/ui/core/UIArea",
 	"sap/ui/layout/GridData",
 	"sap/ui/Device"
 ], function(
@@ -21,6 +22,7 @@ sap.ui.define([
 	Button,
 	library,
 	oCore,
+	UIArea,
 	GridData,
 	Device
 ) {
@@ -625,11 +627,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("Without parent", function (assert) {
+		var oStaticArea = UIArea.registry.get(oCore.getStaticAreaRef().id);
+		var oInvalidateSpy = sinon.spy(oStaticArea, "invalidate");
 		assert.notOk(this.oColumnMenu.getUIArea(), "Before opening, the menu has no connection to the UIArea");
 
 		this.oColumnMenu.openBy(this.oButton);
-		assert.ok(this.oColumnMenu.getUIArea(), "After opening, the menu has a connection to the UIArea");
-		assert.equal(this.oColumnMenu.getUIArea(), this.oColumnMenu.getParent(), "After opening, the UIArea is the parent");
+		var oMenuUIArea = this.oColumnMenu.getUIArea();
+		assert.ok(oMenuUIArea, "After opening, the menu has a connection to the UIArea");
+		assert.equal(oMenuUIArea, this.oColumnMenu.getParent(), "After opening, the UIArea is the parent");
+		assert.equal(oMenuUIArea, oStaticArea, "The menu is in the static area");
+
+		this.oColumnMenu.close();
+		this.clock.tick(500);
+
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(oInvalidateSpy.notCalled, "The UIArea is not invalidated when the Menu opens");
 	});
 
 	QUnit.test("With parent", function (assert) {

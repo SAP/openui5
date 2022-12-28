@@ -162,10 +162,6 @@ sap.ui.define([
 			return;
 		}
 
-		if (!this.getParent()) {
-			UIArea.registry.get(Core.getStaticAreaRef().id).addContent(this, true);
-		}
-
 		var oControl = oAnchor;
 		if (!(oAnchor instanceof Element)) {
 			oControl = Element.closestTo(oAnchor, true);
@@ -183,6 +179,11 @@ sap.ui.define([
 		}
 
 		this._initItemsContainer();
+
+		if (!this.getParent()) {
+			UIArea.registry.get(Core.getStaticAreaRef().id).addContent(this, true);
+		}
+
 		this._oPopover.openBy(oAnchor);
 
 		ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
