@@ -1,8 +1,11 @@
 sap.ui.define([
-	'sap/ui/core/mvc/JSView',
+	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/XMLView'
-], function(JSView, XMLView) {
+], function(View, XMLView) {
 	"use strict";
-	sap.ui.jsview("fixture.debug-mode.Main");
-	sap.ui.xmlview("fixture.debug-mode.Main");
+
+	return Promise.all([
+		View.create({ viewName: "module:fixture/debug-mode/view/Main.view" }),
+		XMLView.create({ viewName: "fixture.debug-mode.view.Main" })
+	]);
 });
