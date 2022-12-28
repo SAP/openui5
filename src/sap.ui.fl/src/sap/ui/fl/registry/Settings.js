@@ -242,8 +242,8 @@ sap.ui.define([
 	 */
 	Settings.prototype.isContextBasedAdaptationEnabled = function() {
 		var oUriParameters = UriParameters.fromQuery(window.location.search);
-		var isContextBasedAdaptationEnabled = oUriParameters.get("sap-ui-xx-rta-adaptations");
-		return isContextBasedAdaptationEnabled === "true" || this._getBooleanProperty("isContextBasedAdaptationEnabled");
+		var bIsContextBasedAdaptationEnabled = oUriParameters.get("sap-ui-xx-rta-adaptations");
+		return bIsContextBasedAdaptationEnabled === "true" || this._getBooleanProperty("isAdaptationEnabled");
 	};
 
 	/**

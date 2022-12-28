@@ -508,6 +508,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/fl/apply/_internal/ChangesController"]
 				}
 			},
+			"write/api/ContextBasedAdaptationsAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/ContextBasedAdaptationsAPI"]
+				}
+			},
 			"write/api/ContextSharingAPI": {
 				group: "Write API",
 				coverage: {

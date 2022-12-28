@@ -49,6 +49,7 @@ sap.ui.define([
 				if (bIsEnabled) {
 					if (!oComponentContainer || oComponentContainer.bIsDestroyed) {
 						var oComponent = new ContextSharingComponent("contextSharing");
+						oComponent.showMessageStrip(true);
 						oComponent.setSelectedContexts({role: []});
 						oComponentContainer = new ComponentContainer("contextSharingContainer", {component: oComponent});
 					}

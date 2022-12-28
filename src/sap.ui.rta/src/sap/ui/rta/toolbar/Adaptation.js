@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/ui/core/IconPool",
 	"sap/ui/fl/write/api/Version",
-	"sap/ui/rta/toolbar/contextBased/SaveAsContextBasedAdaptation",
+	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
+	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
 	"sap/ui/rta/toolbar/translation/Translation",
 	"sap/ui/rta/toolbar/versioning/Versioning",
 	"sap/ui/rta/appVariant/Feature",
@@ -22,7 +23,8 @@ sap.ui.define([
 	Popup,
 	IconPool,
 	Version,
-	SaveAsContextBasedAdaptation,
+	SaveAsAdaptation,
+	ManageAdaptations,
 	Translation,
 	Versioning,
 	AppVariantFeature,
@@ -68,7 +70,6 @@ sap.ui.define([
 				activate: {},
 				discardDraft: {},
 				switchVersion: {},
-				saveAsContextBasedAdaptation: {},
 				openChangeCategorySelectionPopover: {}
 			}
 		}
@@ -170,8 +171,7 @@ sap.ui.define([
 					overviewForDeveloper: onOverviewForDeveloperPressed.bind(this),
 					restore: this.eventHandler.bind(this, "Restore"),
 					formatSaveAsEnabled: formatSaveAsEnabled,
-					saveAs: onSaveAsPressed.bind(this),
-					saveAsContextBasedAdaptation: onSaveAsContextBasedAdaptation.bind(this)
+					saveAs: onSaveAsPressed.bind(this)
 				}
 			}).then(function(oMenu) {
 				oMenu.addStyleClass(Utils.getRtaStyleClassName());
@@ -254,6 +254,8 @@ sap.ui.define([
 				undo: this.eventHandler.bind(this, "Undo"),
 				redo: this.eventHandler.bind(this, "Redo"),
 				openChangeCategorySelectionPopover: this.eventHandler.bind(this, "OpenChangeCategorySelectionPopover"),
+				saveAsAdaptation: onSaveAsAdaptation.bind(this),
+				manageAdaptations: onManageAdaptations.bind(this),
 				publishVersion: this.eventHandler.bind(this, "PublishVersion"),
 				save: this.eventHandler.bind(this, "Save"),
 				exit: this.eventHandler.bind(this, "Exit"),
@@ -284,8 +286,12 @@ sap.ui.define([
 		AppVariantFeature.onSaveAs(true, true, this.getRtaInformation().flexSettings.layer, null);
 	}
 
-	function onSaveAsContextBasedAdaptation() {
-		this.getExtension("adaptation", SaveAsContextBasedAdaptation).openAddAdaptationDialog(this.getRtaInformation().flexSettings.layer);
+	function onSaveAsAdaptation() {
+		this.getExtension("contextBasedSaveAs", SaveAsAdaptation).openAddAdaptationDialog(this.getRtaInformation().flexSettings.layer);
+	}
+
+	function onManageAdaptations() {
+		this.getExtension("contextBasedManage", ManageAdaptations).openManageAdaptationDialog();
 	}
 
 	function onOverviewForKeyUserPressed() {

@@ -975,6 +975,290 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given Storage when contextBasedAdaptation.create is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and a context-based adaptations is returned", function(assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "LrepConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
+			]);
+
+			var oContextBasedAdaptation = {
+				id: "<Adaptation ID>",
+				reference: "<app id>",
+				versionId: "<Draft version Id>",
+				title: "",
+				description: "",
+				contexts: {
+					"<context type 1>": ["<context type value 1 for type 1>", "<context type value n for type 1>"],
+					"<context type 2>": ["<context type value 1 for type 2>", "<context type value m for type 2>"]
+				},
+				createdBy: "MAXMUSTERMANN",
+				createdAt: "2022-05-12T12:18:31.5922020Z",
+				changedBy: "MAXMUSTERMANN",
+				changedAt: "2022-05-12T12:18:31.5922020Z"
+			};
+			sandbox.stub(WriteUtils, "sendRequest").resolves({response: oContextBasedAdaptation, status: 201});
+
+			return Storage.contextBasedAdaptation.create(mPropertyBag).then(function (oReturnedContextBasedAdaptation) {
+				assert.deepEqual(oReturnedContextBasedAdaptation.response, oContextBasedAdaptation);
+				assert.equal(oReturnedContextBasedAdaptation.status, 201);
+			});
+		});
+
+		QUnit.test("and a context-based adaptation is not returned", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "LrepConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
+			]);
+
+			sandbox.stub(WriteUtils, "sendRequest").rejects({status: 404});
+
+			return Storage.contextBasedAdaptation.create(mPropertyBag)
+			.catch(function (oRejectedRepose) {
+				assert.equal(oRejectedRepose.status, 404);
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the connector JsObjectConnector", function(assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector"}
+			]);
+
+			return Storage.contextBasedAdaptation.create(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.create is not implemented", "then the rejection message is passed");
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the NeoLrepConnector", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "NeoLrepConnector"}]);
+
+			return Storage.contextBasedAdaptation.create(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.create is not implemented", "then the rejection message is passed");
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the KeyUserConnector", function(assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector"}
+			]);
+
+			return Storage.contextBasedAdaptation.create(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.create is not implemented", "then the rejection message is passed");
+			});
+		});
+	});
+
+	QUnit.module("Given Storage when contextBasedAdaptation.reorder is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and a list of context-based adaptations is reorderd", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "LrepConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
+			]);
+
+			sandbox.stub(WriteUtils, "sendRequest").resolves({response: "", status: 200});
+
+			return Storage.contextBasedAdaptation.reorder(mPropertyBag).then(function (oReturnedContextBasedAdaptations) {
+				assert.equal(oReturnedContextBasedAdaptations.status, 200);
+			});
+		});
+
+		QUnit.test("and the reorder of context-based adaptation is failing", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "LrepConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
+			]);
+
+			sandbox.stub(WriteUtils, "sendRequest").rejects({status: 404});
+
+			return Storage.contextBasedAdaptation.reorder(mPropertyBag)
+			.catch(function (oRejectedRepose) {
+				assert.equal(oRejectedRepose.status, 404);
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the connector JsObjectConnector", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{connector: "JsObjectConnector"}]);
+
+			return Storage.contextBasedAdaptation.reorder(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.reorder is not implemented", "then the rejection message is passed");
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the NeoLrepConnector", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{connector: "NeoLrepConnector"}]);
+
+			return Storage.contextBasedAdaptation.reorder(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.reorder is not implemented", "then the rejection message is passed");
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the KeyUserConnector", function(assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector"}
+			]);
+
+			return Storage.contextBasedAdaptation.reorder(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.reorder is not implemented", "then the rejection message is passed");
+			});
+		});
+	});
+
+	QUnit.module("Given Storage when contextBasedAdaptation.load is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and a list of context-based adaptations is returned", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "LrepConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
+			]);
+
+			var aContextBasedAdaptations = {
+				adaptations: [
+					{
+						id: "<adaptationId1>",
+						contexts: {
+							"<context type 1>": ["<context type value 1 for type 1>", "<context type value n for type 1>"],
+							"<context type 2>": ["<context type value 1 for type 2>", "<context type value m for type 2>"]
+						},
+						title: "",
+						description: "",
+						createdBy: "MAXMUSTERMANN",
+						createdAt: "2022-05-12T12:18:31.5922020Z",
+						changedBy: "MAXMUSTERMANN",
+						changedAt: "2022-05-12T12:18:31.5922020Z"
+					}
+				]
+			};
+			sandbox.stub(InitialUtils, "sendRequest").resolves({response: aContextBasedAdaptations});
+
+			return Storage.contextBasedAdaptation.load(mPropertyBag).then(function (oReturnedContextBasedAdaptations) {
+				assert.deepEqual(oReturnedContextBasedAdaptations, aContextBasedAdaptations);
+			});
+		});
+
+		QUnit.test("and loading of context-based adaptation is failing", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "LrepConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
+			]);
+
+			sandbox.stub(WriteUtils, "sendRequest").rejects({status: 404});
+
+			return Storage.contextBasedAdaptation.load(mPropertyBag)
+			.catch(function (oRejectedRepose) {
+				assert.equal(oRejectedRepose.status, 404);
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the connector JsObjectConnector", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector"}
+			]);
+
+			return Storage.contextBasedAdaptation.load(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.load is not implemented", "then the rejection message is passed");
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the NeoLrepConnector", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{connector: "NeoLrepConnector"}]);
+
+			return Storage.contextBasedAdaptation.load(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.load is not implemented", "then the rejection message is passed");
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the KeyUserConnector", function(assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector"}
+			]);
+
+			return Storage.contextBasedAdaptation.load(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.load is not implemented", "then the rejection message is passed");
+			});
+		});
+	});
+
 	QUnit.module("Given Storage when versions.load is called", {
 		afterEach: function() {
 			sandbox.restore();

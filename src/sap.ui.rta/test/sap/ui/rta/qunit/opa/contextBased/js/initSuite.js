@@ -13,13 +13,13 @@ sap.ui.require([
 		new App({
 			pages: [
 				new Page({
-					title: "App Context Dialog",
+					title: "Context-Based Adaptation",
 					enableScrolling: true,
 					content: [
 						new ComponentContainer({
-							name: "sap.ui.rta.appcontext",
+							name: "sap.ui.rta.contextBased",
 							settings: {
-								id: "AppContextDialog"
+								id: "ContextBasedAdaptationContainer"
 							},
 							manifest: true
 						})

@@ -1,13 +1,13 @@
 {
 	"sap.app": {
-		"id": "sap.ui.rta.appContext",
+		"id": "sap.ui.rta.contextBased",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.ui.rta.appcontext.Page",
+			"viewName": "sap.ui.rta.contextBased.Page",
 			"type": "XML",
 			"async": true
 		},

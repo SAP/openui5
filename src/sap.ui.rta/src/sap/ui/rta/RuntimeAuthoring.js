@@ -1153,15 +1153,6 @@ sap.ui.define([
 		}
 	}
 
-	function onSaveAsContextBasedAdaptation(oEvent) {
-		var mPropertyBag = {
-			parameters: oEvent.mParameters,
-			control: this.getRootControlInstance(),
-			layer: this.getLayer()
-		};
-		return ContextBasedAdaptationsAPI.create(mPropertyBag);
-	}
-
 	function saveOnly(oEvent) {
 		var fnCallback = oEvent.getParameter("callback") || function() {};
 		return this.save()
@@ -1367,7 +1358,6 @@ sap.ui.define([
 				oProperties.activate = onActivate.bind(this);
 				oProperties.discardDraft = onDiscardDraft.bind(this);
 				oProperties.switchVersion = onSwitchVersion.bind(this);
-				oProperties.saveAsContextBasedAdaptation = onSaveAsContextBasedAdaptation.bind(this);
 				oProperties.openChangeCategorySelectionPopover = this.getChangeVisualization
 					? this.getChangeVisualization().openChangeCategorySelectionPopover.bind(this.getChangeVisualization())
 					: function() {};

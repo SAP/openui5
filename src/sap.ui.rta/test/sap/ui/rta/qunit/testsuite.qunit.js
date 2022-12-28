@@ -394,6 +394,13 @@ sap.ui.define([
 				}
 			},
 
+			// Opa Testsuite
+			"opa/testsuite": {
+				title: "Opa Testsuite",
+				group: "Opa Testsuite",
+				page: "test-resources/sap/ui/rta/qunit/opa/testsuite.opa.qunit.html"
+			},
+
 			// Plugins
 			"plugin/additionalElements/AddElementsDialog": {
 				group: "Plugin",

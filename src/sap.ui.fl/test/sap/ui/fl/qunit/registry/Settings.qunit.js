@@ -26,6 +26,7 @@ sap.ui.define([
 				isVariantPersonalizationEnabled: true,
 				isAppVariantSaveAsEnabled: false,
 				isContextSharingEnabled: false,
+				isContextBasedAdaptationEnabled: false,
 				isCondensingEnabled: false,
 				features: {
 					addField: [Layer.CUSTOMER, Layer.VENDOR],
@@ -68,6 +69,12 @@ sap.ui.define([
 			assert.equal(this.cut._oSettings.isContextSharingEnabled, false);
 			var bIsContextSharingEnabled = this.cut.isContextSharingEnabled();
 			assert.equal(bIsContextSharingEnabled, false);
+		});
+
+		QUnit.test("isContextBasedAdaptationEnabled", function(assert) {
+			assert.equal(this.cut._oSettings.isContextBasedAdaptationEnabled, false);
+			var bIsContextBasedAdaptationEnabled = this.cut.isContextBasedAdaptationEnabled();
+			assert.equal(bIsContextBasedAdaptationEnabled, false);
 		});
 
 		QUnit.test("isCondensingEnabled", function(assert) {
