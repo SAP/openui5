@@ -133,29 +133,6 @@ sap.ui.define([
 		assert.equal(oController.originalSAPAction(), "ext", "originalSAPAction method of extended controller should return 'ext'");
 	});
 
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.test("Legacy Controller Extension applied with sap.ui.controller()", function (assert) {
-		oComp.runAsOwner(function () {
-			var oController = sap.ui.controller("testdata.customizing.sap.Sub2_legacyAPIs");
-			assert.ok(oController.isExtended, "Controller has been extended with sap.ui.controller factory function!");
-		});
-	});
-
-	/**
-	 * @deprecated As of version 1.110
-	 */
-	QUnit.test("Legacy Controller Extension applied with Controller.create()", function(assert) {
-		return oComp.runAsOwner(function() {
-			return Controller.create({
-				name: "testdata.customizing.sap.Sub2_legacyAPIs"
-			}).then(function(oController) {
-				assert.ok(oController.isExtended, "Controller has been extended correctly!");
-			});
-		});
-	});
-
 	QUnit.test("Controller Extension applied with Controller.create()", function(assert) {
 		return oComp.runAsOwner(function() {
 			return Controller.create({

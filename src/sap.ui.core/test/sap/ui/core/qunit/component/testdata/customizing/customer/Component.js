@@ -142,12 +142,6 @@ sap.ui.define([
 				},
 
 				"sap.ui.controllerExtensions": {
-					/**
-					 * @deprecated As of 1.110
-					 */
-					"testdata.customizing.sap.Sub2_legacyAPIs": {
-						"controllerName": "testdata.customizing.customer.Sub2ControllerExtension_legacyAPIs"
-					},
 					"testdata.customizing.sap.Sub2": {
 						"controllerName": "testdata.customizing.customer.Sub2ControllerExtension"
 					},
