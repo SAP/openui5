@@ -444,17 +444,48 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the event elementModified is thrown with aggregation change", function(assert) {
+			var fnDone = assert.async();
 			var oSetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "setRelevantOverlays");
 			var oGetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "getRelevantOverlays");
 			var oFindAllOverlaysInContainerStub = sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
+
+			// Element modified callback is async due to debouncing, make sure to wait for both plugins
+			// to start editable evaluation as a workaround
+			var oEvaluateEditableStub = sandbox.stub(Plugin.prototype, "evaluateEditable")
+				.callThrough()
+				.onSecondCall()
+				.callsFake(function() {
+					oEvaluateEditableStub.wrappedMethod.apply(this.oRemovePlugin, arguments);
+					assert.strictEqual(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
+					assert.strictEqual(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
+					assert.strictEqual(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
+					assert.strictEqual(this.oLayoutOverlay.getRelevantOverlays().length, 4, "then four overlays are relevant");
+					fnDone();
+				}.bind(this));
+
 			this.oLayoutOverlay.fireElementModified({
 				type: "removeAggregation",
 				name: "content"
 			});
-			assert.equal(oFindAllOverlaysInContainerStub.callCount, 1, "then findAllOverlaysInContainer is only called once");
-			assert.equal(oSetRelevantSpy.callCount, 2, "then setRelevantOverlays is called twice");
-			assert.equal(oGetRelevantSpy.callCount, 2, "then getRelevantOverlays is called twice");
-			assert.equal(this.oLayoutOverlay.getRelevantOverlays().length, 4, "then four overlays are relevant");
+		});
+
+		QUnit.test("when the elementModified event is thrown multiple times in a row", function(assert) {
+			var fnDone = assert.async();
+			var oEvaluateEditableStub = sandbox.stub(this.oRenamePlugin, "evaluateEditable")
+				.callsFake(function() {
+					oEvaluateEditableStub.wrappedMethod.apply(this.oRemovePlugin, arguments);
+					assert.ok(oEvaluateEditableStub.calledOnce, "then the evaluation is only executed once");
+					fnDone();
+				}.bind(this));
+
+			this.oLayoutOverlay.fireElementModified({
+				type: "removeAggregation",
+				name: "content"
+			});
+			this.oLayoutOverlay.fireElementModified({
+				type: "removeAggregation",
+				name: "content"
+			});
 		});
 
 		QUnit.test("when the event elementModified is thrown with afterRendering", function(assert) {
