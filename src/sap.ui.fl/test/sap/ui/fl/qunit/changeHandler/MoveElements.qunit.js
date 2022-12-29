@@ -1,39 +1,45 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"sap/ui/fl/changeHandler/MoveElements",
-	"sap/ui/fl/Utils",
 	"sap/m/Button",
 	"sap/m/ObjectAttribute",
 	"sap/m/ObjectHeader",
-	"sap/ui/layout/VerticalLayout",
-	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/ui/fl/changeHandler/MoveElements",
+	"sap/ui/fl/Utils",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	MoveElements,
-	Utils,
 	Button,
 	ObjectAttribute,
 	ObjectHeader,
-	VerticalLayout,
-	UIChange,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	sinon,
-	oCore
+	Component,
+	UIChange,
+	MoveElements,
+	Utils,
+	VerticalLayout,
+	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oComponent = oCore.createComponent({
-		name: "testComponent",
-		id: "testComponent"
+	var oComponent;
+	var oComponentPromise = Component.create({
+		name: "testComponentAsync",
+		id: "testComponentAsync"
+	}).then(function(oComponentInstance) {
+		oComponent = oComponentInstance;
 	});
 
 	QUnit.module("Given a Move Elements Change Handler", {
+		before: function() {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			// Test Setup:
 			// VerticalLayout

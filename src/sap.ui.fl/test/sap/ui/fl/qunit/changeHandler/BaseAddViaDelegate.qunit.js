@@ -1,29 +1,29 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"sap/ui/fl/changeHandler/BaseAddViaDelegate",
-	"sap/ui/fl/apply/api/DelegateMediatorAPI",
-	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
-	"sap/ui/fl/Utils",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/ui/fl/apply/api/DelegateMediatorAPI",
+	"sap/ui/fl/changeHandler/BaseAddViaDelegate",
+	"sap/ui/fl/Utils",
 	"sap/ui/layout/form/Form",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	BaseAddViaDelegate,
-	DelegateMediatorAPI,
-	UIChange,
-	Utils,
 	JsControlTreeModifier,
+	Component,
+	UIChange,
+	DelegateMediatorAPI,
+	BaseAddViaDelegate,
+	Utils,
 	Form,
-	sinon,
-	oCore
+	sinon
 ) {
 	"use strict";
 
 	function createChangeHandler (bSkipCreateLayout) {
 		return BaseAddViaDelegate.createAddViaDelegateChangeHandler({
-			addProperty: function () {},
+			addProperty: function() {},
 			aggregationName: "formElements",
 			parentAlias: "parentFormContainer",
 			fieldSuffix: "-field",
@@ -33,22 +33,26 @@ sap.ui.define([
 	}
 
 	var sandbox = sinon.createSandbox();
-	var oComponent = oCore.createComponent({
-		name: "testComponent",
-		id: "testComponent"
-	});
-	var mPropertyBag = {modifier: JsControlTreeModifier, appComponent: oComponent};
-	var mSpecificChangeInfo = {
-		newControlId: "someControlId",
-		bindingPath: "some/binding/path",
-		parentId: "testForm",
-		index: 0
-	};
 
 	QUnit.module("sap.ui.fl.changeHandler.BaseAddViaDelegate - Condensing", {
-		beforeEach: function () {
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-			sandbox.stub(DelegateMediatorAPI, "getDelegateForControl").callsFake(function () {
+		before: function() {
+			return Component.create({
+				name: "testComponentAsync",
+				id: "testComponentAsync"
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+				this.mPropertyBag = {modifier: JsControlTreeModifier, appComponent: oComponent};
+				this.mSpecificChangeInfo = {
+					newControlId: "someControlId",
+					bindingPath: "some/binding/path",
+					parentId: "testForm",
+					index: 0
+				};
+			}.bind(this));
+		},
+		beforeEach: function() {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
+			sandbox.stub(DelegateMediatorAPI, "getDelegateForControl").callsFake(function() {
 				return Promise.resolve({instance: this.oDelegate});
 			}.bind(this));
 
@@ -60,24 +64,24 @@ sap.ui.define([
 			});
 
 			this.oChange = new UIChange({
-				selector: JsControlTreeModifier.getSelector(this.oForm, oComponent)
+				selector: JsControlTreeModifier.getSelector(this.oForm, this.oComponent)
 			});
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oForm.destroy();
 			delete this.oDelegate;
 			delete this.oChange;
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when a change handler skips layout creation", function (assert) {
+	}, function() {
+		QUnit.test("when a change handler skips layout creation", function(assert) {
 			var oChangeHandler = createChangeHandler(true);
 			this.oDelegate = {
-				createLayout: function () {}
+				createLayout: function() {}
 			};
-			oChangeHandler.completeChangeContent(this.oChange, mSpecificChangeInfo, mPropertyBag);
+			oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
 
-			return oChangeHandler.getCondenserInfo(this.oChange, mPropertyBag).then(function (oCondenserInfo) {
+			return oChangeHandler.getCondenserInfo(this.oChange, this.mPropertyBag).then(function(oCondenserInfo) {
 				assert.notEqual(
 					oCondenserInfo,
 					undefined,
@@ -86,12 +90,12 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when a delegate doesn't create a custom layout", function (assert) {
+		QUnit.test("when a delegate doesn't create a custom layout", function(assert) {
 			var oChangeHandler = createChangeHandler(false);
 			this.oDelegate = {};
-			oChangeHandler.completeChangeContent(this.oChange, mSpecificChangeInfo, mPropertyBag);
+			oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
 
-			return oChangeHandler.getCondenserInfo(this.oChange, mPropertyBag).then(function (oCondenserInfo) {
+			return oChangeHandler.getCondenserInfo(this.oChange, this.mPropertyBag).then(function(oCondenserInfo) {
 				assert.notEqual(
 					oCondenserInfo,
 					undefined,
@@ -100,14 +104,14 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when a delegate creates a custom layout", function (assert) {
+		QUnit.test("when a delegate creates a custom layout", function(assert) {
 			var oChangeHandler = createChangeHandler(false);
 			this.oDelegate = {
-				createLayout: function () {}
+				createLayout: function() {}
 			};
-			oChangeHandler.completeChangeContent(this.oChange, mSpecificChangeInfo, mPropertyBag);
+			oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
 
-			return oChangeHandler.getCondenserInfo(this.oChange, mPropertyBag).then(function (oCondenserInfo) {
+			return oChangeHandler.getCondenserInfo(this.oChange, this.mPropertyBag).then(function(oCondenserInfo) {
 				assert.strictEqual(
 					oCondenserInfo,
 					undefined,
@@ -117,7 +121,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

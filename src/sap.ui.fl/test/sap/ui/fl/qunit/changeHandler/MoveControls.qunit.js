@@ -9,14 +9,14 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Bar,
 	Button,
@@ -26,14 +26,14 @@ sap.ui.define([
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	ComponentContainer,
+	Component,
 	UIComponent,
 	XMLTemplateProcessor,
 	MoveControlsHandler,
 	UIChange,
 	Utils,
 	VerticalLayout,
-	sinon,
-	oCore
+	sinon
 ) {
 	"use strict";
 
@@ -44,9 +44,12 @@ sap.ui.define([
 	var myButtonId = "myButton";
 
 	var sandbox = sinon.createSandbox();
-	var oComponent = oCore.createComponent({
-		name: "testComponent",
-		id: "testComponent"
+	var oComponent;
+	var oComponentPromise = Component.create({
+		name: "testComponentAsync",
+		id: "testComponentAsync"
+	}).then(function(oComponentInstance) {
+		oComponent = oComponentInstance;
 	});
 
 	function getSingleMoveChangeContent(bIdIsLocal, sObjectAttributeId, sObjectHeaderId, sLayoutId) {
@@ -169,6 +172,9 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a Move Controls Change Handler on jsControlTree", {
+		before: function() {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			// Test Setup:
 			// VerticalLayout
@@ -688,6 +694,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a Move Controls Change Handler on xmlControlTree", {
+		before: function() {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			// Test Setup:
 			// VerticalLayout
@@ -847,6 +856,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a control with move over different aggregations", {
+		before: function() {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			// Test Setup:
 			// Bar

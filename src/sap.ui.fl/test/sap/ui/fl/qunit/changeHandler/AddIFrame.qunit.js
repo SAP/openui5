@@ -1,25 +1,27 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/util/XMLHelper",
-	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/changeHandler/AddIFrame",
+	"sap/m/Button",
+	"sap/m/HBox",
+	"sap/ui/core/mvc/View",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/core/mvc/View",
-	"sap/m/HBox",
-	"sap/m/Button",
-	"sap/ui/core/Core"
+	"sap/ui/core/Component",
+	"sap/ui/core/Core",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/changeHandler/AddIFrame",
+	"sap/ui/util/XMLHelper"
 ], function(
-	XMLHelper,
-	FlexObjectFactory,
-	AddIFrame,
+	Button,
+	HBox,
+	View,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	View,
-	HBox,
-	Button,
-	oCore
+	Component,
+	Core,
+	FlexObjectFactory,
+	AddIFrame,
+	XMLHelper
 ) {
 	"use strict";
 
@@ -50,7 +52,7 @@ sap.ui.define([
 			};
 
 			var oChangeJson = {
-				reference: "sap.ui.fl.qunit.changeHander.AddIFrame",
+				reference: "sap.ui.fl.qunit.changeHandler.AddIFrame",
 				selector: mExpectedSelector,
 				changeType: "addIFrame",
 				fileName: "AddIFrameChange",
@@ -114,7 +116,7 @@ sap.ui.define([
 
 			var oChangeJson = {
 				selector: mExpectedSelector,
-				reference: "sap.ui.fl.qunit.changeHander.AddIFrame",
+				reference: "sap.ui.fl.qunit.changeHandler.AddIFrame",
 				changeType: "addIFrame",
 				fileName: "AddIFrameChange",
 				projectId: "projectId"
@@ -142,7 +144,7 @@ sap.ui.define([
 			});
 
 			this.oHBox.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			this.mPropertyBag = {
 				modifier: JsControlTreeModifier,
@@ -211,22 +213,18 @@ sap.ui.define([
 	QUnit.module("Given a AddIFrame Change Handler with XMLTreeModifier", {
 		beforeEach: function() {
 			this.oChangeHandler = AddIFrame;
-
 			this.sHBoxId = "hbx";
-
 			var mExpectedSelector = {
 				id: this.sHBoxId,
 				type: "sap.uxap.ObjectPageLayout"
 			};
-
 			var oChangeJson = {
 				selector: mExpectedSelector,
-				reference: "sap.ui.fl.qunit.changeHander.AddIFrame",
+				reference: "sap.ui.fl.qunit.changeHandler.AddIFrame",
 				changeType: "AddIFrame",
 				fileName: "AddIFrameChange",
 				projectId: "projectId"
 			};
-
 			this.mChangeSpecificContent = {
 				targetAggregation: "items",
 				baseId: "test",
@@ -242,31 +240,30 @@ sap.ui.define([
 			this.oChange = FlexObjectFactory.createFromFileContent(oChangeJson);
 
 			// XMLTreeModifier specific beforeEach
-			this.oComponent = oCore.createComponent({
-				name: "testComponent",
-				id: "testComponent",
-				metadata: {
-					manifest: "json"
-				}
-			});
-			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
-				'<HBox id="' + this.sHBoxId + '">' +
-				'<items>' +
-				'<Button />' +
-				'</items>' +
-				'</HBox>' +
-				'</mvc:View>';
-			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
-			this.oHBox = this.oXmlView.childNodes[0];
+			return Component.create({
+				name: "testComponentAsync",
+				id: "testComponentAsync"
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+				this.oXmlString =
+					'<mvc:View id="testComponentAsync---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+					'<HBox id="' + this.sHBoxId + '">' +
+					'<items>' +
+					'<Button />' +
+					'</items>' +
+					'</HBox>' +
+					'</mvc:View>';
+				this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
+				this.oHBox = this.oXmlView.childNodes[0];
 
-			this.mPropertyBag = {
-				modifier: XmlTreeModifier,
-				view: this.oXmlView,
-				appComponent: this.oComponent
-			};
+				this.mPropertyBag = {
+					modifier: XmlTreeModifier,
+					view: this.oXmlView,
+					appComponent: this.oComponent
+				};
 
-			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
+				this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oComponent.destroy();
