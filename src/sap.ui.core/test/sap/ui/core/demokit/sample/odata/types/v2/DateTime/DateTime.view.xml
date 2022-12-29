@@ -1,0 +1,124 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.odata.types.v2.DateTime.DateTime"
+	xmlns="sap.m"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:layout="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<App>
+	<Page id="page" floatingFooter="true" showHeader="false"
+		title="Example how to use OData V2 Edm.DateTime in SAPUI5 applications">
+	<VBox width="100%">
+		<form:SimpleForm class="sapUiResponsiveMargin" columnsL="1" columnsM="1" editable="true"
+				labelSpanL="3" labelSpanM="3" layout="ResponsiveGridLayout"
+				title="How to use OData V2 Edm.DateTime type with SAPUI5 Controls" width="auto">
+			<form:content>
+				<FormattedText htmlText="{json>/Description}" width="100%" />
+				<Label text="sap.m.Text" />
+				<Text text="{
+						constraints : {displayFormat : 'Date'},
+						path : 'Date',
+						type : 'sap.ui.model.odata.type.DateTime'
+					}" />
+				<Label text="sap.m.Input" />
+				<Input value="{
+						constraints : {displayFormat : 'Date'},
+						path : 'Date',
+						type : 'sap.ui.model.odata.type.DateTime'
+					}" />
+				<Label text="sap.m.DatePicker" />
+				<DatePicker value="{
+						constraints : {displayFormat : 'Date'},
+						path : 'Date',
+						type : 'sap.ui.model.odata.type.DateTime'
+					}" />
+				<Label text="sap.m.DateRangeSelection" />
+				<DateRangeSelection value="{
+						formatOptions : {UTC : true},
+						parts : [{
+							constraints : {displayFormat : 'Date'},
+							path : 'Date',
+							type : 'sap.ui.model.odata.type.DateTime'
+						}, {
+							constraints : {displayFormat : 'Date'},
+							path : 'EndDate',
+							type : 'sap.ui.model.odata.type.DateTime'
+						}],
+						type : 'sap.ui.model.type.DateInterval'
+					}" />
+				<Button text="Use JSON Model with sap.ui.model.odata.type.DateTime Type"
+					press="onDialogOpen">
+					<layoutData>
+						<layout:GridData indent="XL3 L3 M3 S0" linebreak="true"
+							span="XL6 L6 M6 S12"/>
+					</layoutData>
+				</Button>
+			</form:content>
+		</form:SimpleForm>
+		<form:SimpleForm class="sapUiResponsiveMargin" columnsL="1" columnsM="1" editable="false"
+				labelSpanL="3" labelSpanM="3" layout="ResponsiveGridLayout" title="Model values"
+				width="auto">
+			<form:content>
+				<Label text="OData Model Value 'Date'" />
+				<Text text="{path: 'Date', formatter: '.formatDate'}" />
+				<Label text="'Date' Value as URI Parameter Value" />
+				<Text text="{path: 'Date', formatter: '.formatDateAsURIParameter'}" />
+				<Label text="OData Model Value 'EndDate'" />
+				<Text text="{path: 'EndDate', formatter: '.formatDate'}" />
+				<Label text="JSON Model Value '/Date'" />
+				<Text text="{path: 'json>/Date', formatter: '.formatDate'}" />
+				<Label text="JSON Model Value '/EndDate" />
+				<Text text="{path: 'json>/EndDate', formatter: '.formatDate'}" />
+				<Label text="Current Time Zone" />
+				<Text text="{path: 'json>/Timezone', formatter: '.formatTimezone'}" />
+			</form:content>
+		</form:SimpleForm>
+		<dependents>
+			<Dialog contentWidth="50em" id="dialog"
+				title="Use JSON Model with sap.ui.model.odata.type.DateTime Type">
+				<buttons>
+					<Button press="onDialogTakeValues" text="OK"
+						tooltip="Transfer the values to the OData Model" />
+					<Button press="onDialogClose" text="Close" />
+				</buttons>
+				<form:SimpleForm columnsL="1" columnsM="1" editable="true"
+					labelSpanL="4" labelSpanM="4" layout="ResponsiveGridLayout">
+					<Label text="sap.m.Text" />
+					<Text text="{
+							constraints : {displayFormat : 'Date'},
+							path : 'json>Date',
+							type : 'sap.ui.model.odata.type.DateTime'
+						}" />
+					<Label text="sap.m.Input" />
+					<Input value="{
+							constraints : {displayFormat : 'Date'},
+							path : 'json>Date',
+							type : 'sap.ui.model.odata.type.DateTime'
+						}" />
+					<Label text="sap.m.DatePicker" />
+					<DatePicker value="{
+							constraints : {displayFormat : 'Date'},
+							path : 'json>Date',
+							type : 'sap.ui.model.odata.type.DateTime'
+						}" />
+					<Label text="sap.m.DateRangeSelection" />
+					<DateRangeSelection value="{
+							formatOptions : {UTC : true},
+							parts : [{
+								constraints : {displayFormat : 'Date'},
+								path : 'json>Date',
+								type : 'sap.ui.model.odata.type.DateTime'
+							}, {
+								constraints : {displayFormat : 'Date'},
+								path : 'json>EndDate',
+								type : 'sap.ui.model.odata.type.DateTime'
+							}],
+							type : 'sap.ui.model.type.DateInterval'
+						}" />
+				</form:SimpleForm>
+			</Dialog>
+		</dependents>
+	</VBox>
+	</Page>
+	</App>
+</mvc:View>
