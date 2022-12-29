@@ -1078,11 +1078,14 @@ sap.ui.define([
 
 	QUnit.test("Destruction of the column", function(assert) {
 		var oDestroyTemplateClonesSpy = sinon.spy(this.oColumn, "_destroyTemplateClones");
+		var oUnlinkSpy = sinon.spy(ColumnHeaderMenuAdapter, "unlink");
 
 		this.oColumn.destroy();
 
-		assert.ok(oDestroyTemplateClonesSpy.calledOnce, "Column#_destroyTemplateClones was called once when destroying the column");
-		assert.ok(oDestroyTemplateClonesSpy.calledWithExactly(), "Column#_destroyTemplateClones was called with the correct type information");
+		assert.ok(oDestroyTemplateClonesSpy.calledOnceWithExactly(), "Column#_destroyTemplateClones was called once with the correct arguments");
+		assert.ok(oUnlinkSpy.calledOnceWithExactly(this.oColumn), "ColumnHeaderMenuAdapter.unlink is called once with the correct arguments");
+		oDestroyTemplateClonesSpy.restore();
+		oUnlinkSpy.restore();
 	});
 
 	QUnit.module("Column Visibility Submenu", {
@@ -1284,7 +1287,6 @@ sap.ui.define([
 
 	QUnit.test("_openHeaderMenu", function(assert) {
 		var done = assert.async();
-		assert.expect(6);
 		var oColumn = this.oColumn1;
 		var oActivateSpy = sinon.spy(ColumnHeaderMenuAdapter, "activateFor");
 		var oUnlinkSpy = sinon.spy(ColumnHeaderMenuAdapter, "unlink");
@@ -1292,22 +1294,23 @@ sap.ui.define([
 
 		oHeaderMenu.attachBeforeOpen(function() {
 			setTimeout(function() {
-				assert.ok(oColumn._isMenuOpen(), "The ColumnMenu is open");
+				assert.ok(oColumn._isHeaderMenuOpen(), "The ColumnMenu is open");
 				oColumn.destroy();
-				assert.ok(oUnlinkSpy.calledOnce, "unlink is called");
-				assert.ok(oUnlinkSpy.calledWithExactly(oColumn), "unlink is called with the correct parameter");
+				assert.ok(oUnlinkSpy.calledOnceWithExactly(oColumn), "ColumnHeaderMenuAdapter.unlink is called once with the correct arguments");
+				oUnlinkSpy.restore();
 				done();
 			}, 200);
 		});
 
-		assert.ok(!oColumn._isMenuOpen(), "the ColumnMenu is not open");
+		assert.expect(4);
+		assert.ok(!oColumn._isHeaderMenuOpen(), "the ColumnMenu is not open");
 
 		this.openColumnMenu(0);
-		assert.ok(oActivateSpy.calledOnce, "activateFor is called");
-		assert.ok(oActivateSpy.calledWithExactly(oColumn), "activateFor is called with the correct parameters");
+		assert.ok(oActivateSpy.calledOnceWithExactly(oColumn), "ColumnHeaderMenuAdapter.activateFor is called once with the correct arguments");
+		oActivateSpy.restore();
 	});
 
-	QUnit.test("_isMenuOpen", function(assert) {
+	QUnit.test("_isHeaderMenuOpen", function(assert) {
 		var done = assert.async();
 		assert.expect(3);
 		var oColumn = this.oColumn1;
@@ -1315,14 +1318,13 @@ sap.ui.define([
 
 		oHeaderMenu.attachBeforeOpen(function() {
 			setTimeout(function() {
-				var oIsOpenSpy = sinon.spy(oHeaderMenu, "isOpen");
-				assert.ok(oColumn._isMenuOpen(), "The ColumnMenu is open");
-				assert.ok(oIsOpenSpy.calledOnce);
+				assert.ok(oColumn._isHeaderMenuOpen(), "The ColumnMenu is open");
 				done();
 			}, 200);
 		});
 
-		assert.ok(!oColumn._isMenuOpen(), "The ColumnMenu is not open");
+		assert.expect(2);
+		assert.ok(!oColumn._isHeaderMenuOpen(), "The ColumnMenu is not open");
 		this.openColumnMenu(0);
 	});
 

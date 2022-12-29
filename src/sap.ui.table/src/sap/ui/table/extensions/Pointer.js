@@ -725,9 +725,8 @@ sap.ui.define([
 
 			if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {
 				var oPointerExtension = this._getPointerExtension();
-				var oColumn = this.getColumns()[oCellInfo.columnIndex];
 
-				if (oPointerExtension._bShowMenu && !oColumn._isMenuOpen()) {
+				if (oPointerExtension._bShowMenu) {
 					TableUtils.Menu.openContextMenu(this, oEvent.target);
 					delete oPointerExtension._bShowMenu;
 				}
@@ -772,7 +771,7 @@ sap.ui.define([
 			var oPointerExtension = this._getPointerExtension();
 
 			if (oPointerExtension._bShowDefaultMenu) {
-				oEvent.setMarked("handledByPointerExtension");
+				oEvent.setMarked("sapUiTableHandledByPointerExtension");
 				delete oPointerExtension._bShowDefaultMenu;
 
 			} else if (oPointerExtension._bShowMenu) {
@@ -781,11 +780,11 @@ sap.ui.define([
 				if (bContextMenuOpened) {
 					oEvent.preventDefault(); // To prevent opening the default browser context menu.
 				}
-				oEvent.setMarked("handledByPointerExtension");
+				oEvent.setMarked("sapUiTableHandledByPointerExtension");
 				delete oPointerExtension._bShowMenu;
 
 			} else if (oPointerExtension._bHideMenu) {
-				oEvent.setMarked("handledByPointerExtension");
+				oEvent.setMarked("sapUiTableHandledByPointerExtension");
 				oEvent.preventDefault(); // To prevent opening the default browser context menu.
 				delete oPointerExtension._bHideMenu;
 			}

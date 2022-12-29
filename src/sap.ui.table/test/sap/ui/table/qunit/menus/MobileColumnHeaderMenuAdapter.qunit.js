@@ -108,6 +108,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 		closeMenu: function(oMenu) {
+			oMenu.close();
 			return new Promise(function(resolve) {
 				if (!oMenu._oPopover.isOpen()) {
 					resolve();
@@ -131,10 +132,11 @@ sap.ui.define([
 
 	QUnit.test("Menu entries", function(assert) {
 		var that = this;
+		var oColumn, oMenu;
 
 		return this.openColumnMenu(0).then(function() {
-			var oColumn = that.oTable.getColumns()[0];
-			var oMenu = oColumn.getHeaderMenuInstance();
+			oColumn = that.oTable.getColumns()[0];
+			oMenu = oColumn.getHeaderMenuInstance();
 
 			var oQuickSort = that.getQuickAction(oMenu, "QuickSort");
 			var oQuickSortItems = oQuickSort.getItems();
@@ -163,11 +165,11 @@ sap.ui.define([
 			assert.equal(aQuickFreezeContent.length, 1, "Quick freeze content count");
 			assert.ok(aQuickFreezeContent[0].isA("sap.m.Button"), "Quick freeze content is a sap.m.Button");
 			assert.equal(aQuickFreezeContent[0].getText(), TableUtils.getResourceText("TBL_FREEZE"), "Quick freeze button text");
-		}).then(function() {
+
 			return that.openColumnMenu(1);
 		}).then(function() {
-			var oColumn = that.oTable.getColumns()[1];
-			var oMenu = oColumn.getHeaderMenuInstance();
+			oColumn = that.oTable.getColumns()[1];
+			oMenu = oColumn.getHeaderMenuInstance();
 
 			var oQuickSort = that.getQuickAction(oMenu, "QuickSort");
 			var oQuickSortItems = oQuickSort.getItems();
@@ -196,17 +198,21 @@ sap.ui.define([
 			assert.equal(aQuickFreezeContent.length, 1, "Quick freeze content count");
 			assert.ok(aQuickFreezeContent[0].isA("sap.m.Button"), "Quick freeze content is a sap.m.Button");
 			assert.equal(aQuickFreezeContent[0].getText(), TableUtils.getResourceText("TBL_FREEZE"), "Quick freeze button text");
-		}).then(function() {
-			that.oColumn1.setShowSortMenuEntry(false);
-			that.oColumn1.setShowFilterMenuEntry(false);
-			that.oTable.setEnableColumnFreeze(false);
-			return that.openColumnMenu(0);
-		}).then(function() {
-			var oColumn = that.oTable.getColumns()[0];
-			var oMenu = oColumn.getHeaderMenuInstance();
 
-			assert.notOk(that.getQuickAction(oMenu, "QuickSort"), "No Quick Sort");
-			assert.notOk(that.getQuickAction(oMenu, "QuickAction"), "No Quick Filter and no Column Freeze");
+			return that.closeMenu(oMenu);
+		}).then(function() {
+			that.oColumn2.setShowSortMenuEntry(false);
+			that.oColumn2.setShowFilterMenuEntry(false);
+			that.oTable.setEnableColumnFreeze(false);
+
+			return that.openColumnMenu(1);
+		}).then(function() {
+			oColumn = that.oTable.getColumns()[1];
+			oMenu = oColumn.getHeaderMenuInstance();
+
+			assert.notOk(that.getQuickAction(oMenu, "QuickSort").getVisible(), "No Quick Sort");
+			assert.notOk(that.getQuickAction(oMenu, "QuickAction")[0].getVisible(), "No Quick Filter");
+			assert.notOk(that.getQuickAction(oMenu, "QuickAction")[1].getVisible(), "No Column Freeze");
 		});
 	});
 

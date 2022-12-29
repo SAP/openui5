@@ -158,7 +158,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Menu.prototype.openBy = function(oAnchor) {
-		if (this.isOpen()) {
+		if (this.isOpen() && oAnchor === this._oIsOpenBy) {
 			return;
 		}
 
@@ -185,6 +185,7 @@ sap.ui.define([
 		}
 
 		this._oPopover.openBy(oAnchor);
+		this._oIsOpenBy = oAnchor;
 
 		ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
 	};
@@ -206,7 +207,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether the menu is open.
 	 */
 	Menu.prototype.isOpen = function () {
-		return this._oPopover && this._oPopover.isOpen();
+		return this._oPopover ? this._oPopover.isOpen() : false;
 	};
 
 	/**
@@ -216,10 +217,10 @@ sap.ui.define([
 	 */
 	Menu.prototype.close = function () {
 		this._previousView = null;
-		if (this._oPopover) {
+		if (this._oPopover && this._oPopover.isOpen()) {
 			this._oPopover.close();
+			ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 		}
-		ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 	};
 
 	Menu.prototype.exit = function () {
@@ -229,6 +230,9 @@ sap.ui.define([
 		}
 		if (this._oItemsContainer) {
 			delete this._oItemsContainer;
+		}
+		if (this._oIsOpenBy) {
+			delete this._oIsOpenBy;
 		}
 		ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 	};
@@ -616,7 +620,7 @@ sap.ui.define([
 
 			// Create content
 			var aControls = [];
-			var aContent = oQuickAction.getContent();
+			var aContent = oQuickAction.getContent() || [];
 
 			aContent.forEach(function(oItem, iIndex) {
 				var oGridData, sSpan, sIndent, oControl;
