@@ -2,6 +2,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Component",
+	"sap/ui/core/Core",
 	"sap/ui/core/UIComponent",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/Layer",
@@ -13,13 +14,13 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/core/Core",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	JsControlTreeModifier,
 	ComponentContainer,
 	Component,
+	Core,
 	UIComponent,
 	KeyCodes,
 	Layer,
@@ -31,7 +32,6 @@ sap.ui.define([
 	JSONModel,
 	QUnitUtils,
 	RuntimeAuthoring,
-	oCore,
 	FlexTestAPI,
 	FlQUnitUtils
 ) {
@@ -46,7 +46,7 @@ sap.ui.define([
 
 	RtaQunitUtils.renderTestModuleAt = function(sNamespace, sDomId) {
 		disableRtaRestart();
-		var oComp = oCore.createComponent({
+		var oComp = Component.create({
 			name: "sap.ui.rta.qunitrta",
 			id: "Comp1",
 			settings: {
@@ -59,13 +59,13 @@ sap.ui.define([
 		var oCompCont = new ComponentContainer({
 			component: oComp
 		}).placeAt(sDomId);
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		return oCompCont;
 	};
 
 	RtaQunitUtils.clear = function (oElement, bRevert) {
-		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || oCore.getComponent("Comp1");
+		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || Component.get("Comp1");
 		var aCustomerChanges;
 
 		return FlexState.initialize({
@@ -112,7 +112,7 @@ sap.ui.define([
 
 	RtaQunitUtils.renderTestAppAtAsync = function(sDomId) {
 		disableRtaRestart();
-		oCore.getConfiguration().setFlexibilityServices([{
+		Core.getConfiguration().setFlexibilityServices([{
 			connector: "SessionStorageConnector"
 		}]);
 
@@ -136,7 +136,7 @@ sap.ui.define([
 			})
 			.then(function(oComponentContainer) {
 				oComponentContainer.placeAt(sDomId);
-				oCore.applyChanges();
+				Core.applyChanges();
 
 				return oComponentContainer;
 			});
@@ -165,7 +165,7 @@ sap.ui.define([
 			})
 			.then(function(oComponentContainer) {
 				oComponentContainer.placeAt(sDomId);
-				oCore.applyChanges();
+				Core.applyChanges();
 				return oComponentContainer;
 			});
 	};

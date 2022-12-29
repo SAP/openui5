@@ -1,49 +1,52 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/rta/plugin/DragDrop",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/OverlayUtil",
-	"sap/ui/dt/Util",
-	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/dt/plugin/ElementMover",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/m/List",
+	"sap/m/Button",
+	"sap/m/Bar",
 	"sap/m/CustomListItem",
+	"sap/m/List",
 	"sap/ui/comp/smartform/SmartForm",
 	"sap/ui/comp/smartform/Group",
 	"sap/ui/comp/smartform/GroupElement",
-	"sap/ui/layout/VerticalLayout",
-	"sap/m/Button",
-	"sap/m/Bar",
+	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Core",
+	"sap/ui/dt/plugin/ElementMover",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/Util",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/plugin/DragDrop",
+	"sap/ui/thirdparty/sinon-4"
+
 ], function(
-	CommandFactory,
-	DragDropPlugin,
-	OverlayRegistry,
-	OverlayUtil,
-	DtUtil,
-	DesignTime,
-	ElementDesignTimeMetadata,
-	DtElementMover,
-	ChangesWriteAPI,
-	List,
+	Button,
+	Bar,
 	CustomListItem,
+	List,
 	SmartForm,
 	Group,
 	GroupElement,
-	VerticalLayout,
-	Button,
-	Bar,
+	Component,
 	ComponentContainer,
+	Core,
+	DtElementMover,
+	DesignTime,
+	ElementDesignTimeMetadata,
+	OverlayRegistry,
+	OverlayUtil,
+	DtUtil,
+	ChangesWriteAPI,
+	VerticalLayout,
 	JSONModel,
-	sinon,
-	oCore
+	CommandFactory,
+	DragDropPlugin,
+	sinon
 ) {
 	"use strict";
 
@@ -92,7 +95,7 @@ sap.ui.define([
 		// One model with EntityType01, EntityType02 (default) and EntityTypeNav + one i18n model ("i18n")
 		before: function() {
 			QUnit.config.fixture = null;
-			var oComp = oCore.createComponent({
+			return Component.create({
 				name: "sap.ui.rta.test.additionalElements",
 				id: "Comp1",
 				settings: {
@@ -101,14 +104,16 @@ sap.ui.define([
 						useSessionStorage: true
 					}
 				}
-			});
-
-			this.oCompCont = new ComponentContainer({
-				component: oComp
-			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
-			return oComp.oView.then(function() {
-				this.oView = oCore.byId("Comp1---idMain1");
+			})
+			.then(function(oComponent) {
+				this.oCompCont = new ComponentContainer({
+					component: oComponent
+				}).placeAt("qunit-fixture");
+				Core.applyChanges();
+				return oComponent.oView;
+			}.bind(this))
+			.then(function() {
+				this.oView = Core.byId("Comp1---idMain1");
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},
@@ -126,7 +131,7 @@ sap.ui.define([
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				oCore.applyChanges();
+				Core.applyChanges();
 				var oNavGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[0];
 				var oOtherGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1];
 				var oBoundGroupElement = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1].getGroupElements()[0];
@@ -251,7 +256,7 @@ sap.ui.define([
 			this.oDragDropPlugin.setCommandFactory(oCommandFactory);
 
 			this.oLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -262,11 +267,11 @@ sap.ui.define([
 
 			var done = assert.async();
 			this.oDesignTime.attachEventOnce("synced", function() {
-				oCore.applyChanges();
+				Core.applyChanges();
 
-				this.oGroup1 = oCore.byId("group1");
-				this.oGroup2 = oCore.byId("group2");
-				this.oGroup3 = oCore.byId("form1").getGroups()[1];
+				this.oGroup1 = Core.byId("group1");
+				this.oGroup2 = Core.byId("group2");
+				this.oGroup3 = Core.byId("form1").getGroups()[1];
 
 				this.oGroup1AggrOverlay = OverlayRegistry.getOverlay(this.oGroup1).getAggregationOverlay("formElements");
 				this.oGroup2AggrOverlay = OverlayRegistry.getOverlay(this.oGroup2).getAggregationOverlay("formElements");
@@ -340,7 +345,7 @@ sap.ui.define([
 			});
 
 			this.oLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			// create designtime
 			this.oDesignTime = new DesignTime({
@@ -443,7 +448,7 @@ sap.ui.define([
 			});
 
 			this.oOuterLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			// create designtime
 			this.oDesignTime = new DesignTime({
@@ -525,7 +530,7 @@ sap.ui.define([
 			});
 
 			this.oSmartForm1.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			// stub designtime metadata
 			var oSmartFormPropagation = fnCreatePropagateRelevantContainerObj(true);
@@ -657,7 +662,7 @@ sap.ui.define([
 			});
 
 			this.oBar.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			// stub designtime metadata
 			var oBarMetadata = new ElementDesignTimeMetadata({
@@ -768,7 +773,7 @@ sap.ui.define([
 			});
 
 			this.oBar.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			// stub designtime metadata
 			var oBarMetadata = new ElementDesignTimeMetadata({
@@ -871,7 +876,7 @@ sap.ui.define([
 				content: [this.oBoundList]
 			});
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			Core.applyChanges();
 
 			this.oDragDropPlugin = new DragDropPlugin({
 				commandFactory: new CommandFactory()
