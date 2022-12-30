@@ -230,7 +230,7 @@ sap.ui.define([
 			qutils.triggerMouseEvent(aContent[0].getId(), "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(aContent[0].getId(), "click");
 
-			assert.ok(oColumnSortSpy.calledOnceWithExactly(false, true), "Column#sort is called once with the correct parameters");
+			assert.ok(oColumnSortSpy.calledOnceWithExactly(false, false), "Column#sort is called once with the correct parameters");
 			return that.closeMenu(oMenu);
 		}).then(function() {
 			that.oColumn1.setShowSortMenuEntry(false);

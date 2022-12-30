@@ -207,7 +207,7 @@ sap.ui.define([
 				if (sSortOrder === CoreLibrary.SortOrder.None) {
 					this._oColumn._unsort();
 				} else {
-					this._oColumn.sort(sSortOrder === CoreLibrary.SortOrder.Descending, true);
+					this._oColumn.sort(sSortOrder === CoreLibrary.SortOrder.Descending, false);
 				}
 			}, this]
 		});
