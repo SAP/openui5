@@ -1814,7 +1814,7 @@ sap.ui.define([
 		});
 
 		// Act
-		this.oMultiInput._handleCancelPress();
+		this.oMultiInput._revertPopupSelection();
 		this.clock.tick(500);
 
 		sOpenState = oSuggestionsDialog.getPopover().oPopup.getOpenState();
@@ -1840,7 +1840,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Act
-		this.oMultiInput._handleCancelPress();
+		this.oMultiInput._revertPopupSelection();
 		this.clock.tick(500);
 
 		sOpenState = oSuggestionsDialog.getPopover().oPopup.getOpenState();
@@ -1869,12 +1869,42 @@ sap.ui.define([
 
 		// Act
 		oSuggestionsDialog.getInput().setValue("new value");
-		this.oMultiInput._handleCancelPress();
+		this.oMultiInput._revertPopupSelection();
 		this.clock.tick(500);
 
 		// Assert
 		assert.strictEqual(this.oMultiInput.getValue(), 'test', "The last confirmed value is still set");
 		assert.strictEqual(bChangeFired, undefined, "The change event is not fired");
+	});
+
+	QUnit.test("Pressing the close button should not tokenize the value", function (assert) {
+		// Setup
+		var bChangeFired, oFakeKeydown, oCloseButton,
+			oSuggestionsDialog = this.oMultiInput._getSuggestionsPopover();
+
+		// Arrange
+		this.oMultiInput.addSuggestionItem(new Item({key: "1", text: "Item"}));
+		this.oMultiInput.attachChange(function() {
+			bChangeFired = true;
+		});
+		this.oMultiInput.setValue("test");
+		Core.applyChanges();
+
+		oSuggestionsDialog.getPopover().open();
+		oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
+		oCloseButton = oSuggestionsDialog.getPopover().getCustomHeader().getContentRight()[0];
+
+		// Act
+		oSuggestionsDialog.getInput()._$input.trigger("focus").trigger(oFakeKeydown).val("I").trigger("input");
+		this.clock.tick(500);
+
+		oCloseButton.firePress();
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(this.oMultiInput.getValue(), 'test', "The last confirmed value is still set");
+		assert.strictEqual(bChangeFired, undefined, "The change event is not fired");
+		assert.notOk(this.oMultiInput.getAggregation("tokenizer").getTokens().length, "The new value is not tokenized");
 	});
 
 	QUnit.test("Pressing the OK button should tokenize the value if there is validation", function (assert) {
