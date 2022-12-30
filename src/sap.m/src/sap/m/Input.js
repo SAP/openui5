@@ -2706,7 +2706,22 @@ function(
 
 	Input.prototype.forwardEventHandlersToSuggPopover = function (oSuggPopover) {
 		oSuggPopover.setOkPressHandler(this._closeSuggestionPopup.bind(this));
-		oSuggPopover.setCancelPressHandler(this._closeSuggestionPopup.bind(this));
+		oSuggPopover.setCancelPressHandler(this._revertPopupSelection.bind(this));
+	};
+
+
+	Input.prototype._revertPopupSelection = function () {
+		var oPopupInput = this._oSuggPopover && this._oSuggPopover._oPopupInput;
+
+		this._sProposedItemText = null;
+		this._oSuggPopover._oProposedItem = null;
+
+		// revert the typed in value on mobile to prevent change on close
+		if (this.isMobileDevice()) {
+			oPopupInput && oPopupInput.setDOMValue(this.getLastValue());
+		}
+
+		this._closeSuggestionPopup();
 	};
 
 	/**

@@ -687,7 +687,7 @@ sap.ui.define([
 		var oSuggPopover, oSpy, oPopupInput;
 
 		oInput.setModel(oModel);
-		oSuggPopover = oInput._getSuggestionsPopover();
+		oSuggPopover = oInput._oSuggPopover;
 		oSuggPopover._bDoTypeAhead = true;
 
 		oInput.placeAt("content");
@@ -696,7 +696,7 @@ sap.ui.define([
 		oInput.onfocusin();
 		oSuggPopover._oPopover.open();
 
-		oPopupInput = oSuggPopover._getInput();
+		oPopupInput = oSuggPopover._oPopupInput;
 
 		oPopupInput._$input.trigger("focus").val("t").trigger("input");
 		this.clock.tick(300);
@@ -6513,6 +6513,152 @@ sap.ui.define([
 		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on OK press.");
 
 		this.oInput.destroy();
+	});
+
+	QUnit.test("Close button should revert user input on mobile dialog", function (assert) {
+		// arrange
+		var oCloseButton, oSuggPopoverInput, oSuggPopover, oFakeKeydown,
+			oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
+		this.stub(Device, "system", oSystem);
+
+		var oInput = new Input({
+			showSuggestion: true,
+			value: "test",
+			suggestionItems: [
+				new Item({
+					key: "1",
+					text: "Item 1"
+				})
+			]
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oInput._openSuggestionsPopover();
+		this.clock.tick(500);
+
+		oSuggPopover = oInput._oSuggPopover;
+		oSuggPopoverInput = oSuggPopover._oPopupInput;
+		oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
+
+		oCloseButton = oSuggPopover._oPopover.getCustomHeader().getContentRight()[0];
+
+		// act
+		oSuggPopoverInput._$input.trigger("focus").trigger(oFakeKeydown).val("I").trigger("input");
+		this.clock.tick(500);
+
+		oCloseButton.firePress();
+		this.clock.tick(500);
+
+		// assert
+		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on closee button press.");
+		assert.strictEqual(oInput.getValue(), "test", "The value is reverted when close button is pressed");
+
+		// cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("OK button should confirm user input on mobile dialog", function (assert) {
+		// arrange
+		var oOKButton, oSuggPopoverInput, oSuggPopover, oFakeKeydown,
+			oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
+		this.stub(Device, "system", oSystem);
+
+		var oInput = new Input({
+			showSuggestion: true,
+			value: "test",
+			suggestionItems: [
+				new Item({
+					key: "1",
+					text: "Item 1"
+				})
+			]
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oInput._openSuggestionsPopover();
+		this.clock.tick(500);
+
+		oSuggPopover = oInput._oSuggPopover;
+		oSuggPopoverInput = oSuggPopover._oPopupInput;
+		oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
+		oOKButton = oSuggPopover._oPopover.getBeginButton();
+
+		// act
+		oSuggPopoverInput._$input.trigger("focus").trigger(oFakeKeydown).val("I").trigger("input");
+		this.clock.tick(500);
+
+		oOKButton.firePress();
+		this.clock.tick(400);
+
+		// assert
+		assert.strictEqual(oInput.getValue(), "Item 1", "The input value is updated.");
+		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on OK button press.");
+
+		// clean up
+		oInput.destroy();
+	});
+
+	QUnit.test("Tabular: Close button should revert user input on mobile dialog", function (assert) {
+		// arrange
+		var oCloseButton, oSuggPopoverInput, oSuggPopover, oFakeKeydown,
+			oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
+		this.stub(Device, "system", oSystem);
+
+		var oInput = new Input({
+			showSuggestion: true,
+			value: "test",
+			suggestionColumns: [
+				new Column({})
+			],
+			suggestionRows: [
+				new ColumnListItem({
+					cells: [
+						new Text({text:"Item"})
+					]
+				})
+			]
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oInput._openSuggestionsPopover();
+		this.clock.tick(500);
+
+		oSuggPopover = oInput._oSuggPopover;
+		oSuggPopoverInput = oSuggPopover._oPopupInput;
+		oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
+		oCloseButton = oSuggPopover._oPopover.getCustomHeader().getContentRight()[0];
+
+		// act
+		oSuggPopoverInput._$input.trigger("focus").trigger(oFakeKeydown).val("I").trigger("input");
+		this.clock.tick(500);
+
+		oCloseButton.firePress();
+		this.clock.tick(500);
+
+		// assert
+		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on closee button press.");
+		assert.strictEqual(oInput.getValue(), "test", "The value is reverted when close button is pressed");
+
+		// cleanup
+		oInput.destroy();
 	});
 
 	QUnit.module("selectedKey vs. value behavior", {

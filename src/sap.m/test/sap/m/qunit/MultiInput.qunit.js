@@ -1689,7 +1689,7 @@ sap.ui.define([
 		});
 
 		// Act
-		this.oMultiInput._handleCancelPress();
+		this.oMultiInput._revertPopupSelection();
 
 		sOpenState = oSuggestionsDialog._oPopover.oPopup.getOpenState();
 
@@ -1714,7 +1714,7 @@ sap.ui.define([
 		oSuggestionsDialog._oPopupInput.setValue("test");
 
 		// Act
-		this.oMultiInput._handleCancelPress();
+		this.oMultiInput._revertPopupSelection();
 
 		sOpenState = oSuggestionsDialog._oPopover.oPopup.getOpenState();
 
@@ -1742,11 +1742,42 @@ sap.ui.define([
 
 		// Act
 		oSuggestionsDialog._oPopupInput.setValue("new value");
-		this.oMultiInput._handleCancelPress();
+		this.oMultiInput._revertPopupSelection();
 
 		// Assert
 		assert.strictEqual(this.oMultiInput.getValue(), 'test', "The last confirmed value is still set");
 		assert.strictEqual(bChangeFired, undefined, "The change event is not fired");
+	});
+
+
+	QUnit.test("Pressing the close button should not tokenize the value", function (assert) {
+		// Setup
+		var bChangeFired, oFakeKeydown, oCloseButton,
+			oSuggestionsDialog = this.oMultiInput._oSuggPopover;
+
+		// Arrange
+		this.oMultiInput.addSuggestionItem(new Item({key: "1", text: "Item"}));
+		this.oMultiInput.attachChange(function() {
+			bChangeFired = true;
+		});
+		this.oMultiInput.setValue("test");
+		Core.applyChanges();
+
+		oSuggestionsDialog._oPopover.open();
+		oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
+		oCloseButton = oSuggestionsDialog._oPopover.getCustomHeader().getContentRight()[0];
+
+		// Act
+		oSuggestionsDialog._oPopupInput._$input.trigger("focus").trigger(oFakeKeydown).val("I").trigger("input");
+		this.clock.tick(500);
+
+		oCloseButton.firePress();
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(this.oMultiInput.getValue(), 'test', "The last confirmed value is still set");
+		assert.strictEqual(bChangeFired, undefined, "The change event is not fired");
+		assert.notOk(this.oMultiInput.getAggregation("tokenizer").getTokens().length, "The new value is not tokenized");
 	});
 
 	QUnit.test("Pressing the OK button should tokenize the value if there is validation", function (assert) {
