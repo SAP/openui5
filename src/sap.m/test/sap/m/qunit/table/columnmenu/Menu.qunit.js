@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Item",
 	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/Button",
+	"sap/m/Dialog",
 	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/core/UIArea",
@@ -22,6 +23,7 @@ sap.ui.define([
 	Item,
 	ActionItem,
 	Button,
+	Dialog,
 	library,
 	oCore,
 	UIArea,
@@ -204,38 +206,6 @@ sap.ui.define([
 		var oIsOpenSpy = sinon.spy(this.oColumnMenu._oPopover, "isOpen");
 		this.oColumnMenu.isOpen();
 		assert.ok(oIsOpenSpy.calledOnce, "isOpen method of the popover is called");
-	});
-
-	QUnit.test("Open popover by a control/Close when another control is clicked", function (assert) {
-		this.createMenu(true, true, true, true);
-		this.oColumnMenu.openBy(this.oButton);
-		assert.ok(this.oColumnMenu.isOpen());
-		assert.notOk(this.oColumnMenu._oPopover.getShowHeader());
-
-		QUnitUtils.triggerEvent("mousedown", this.oButton1.getId());
-		this.clock.tick(1000);
-		assert.notOk(this.oColumnMenu.isOpen());
-	});
-
-	QUnit.test("Open popover by a control/Close when the same control is clicked", function (assert) {
-		this.createMenu(true, true, true, true);
-		this.oColumnMenu.openBy(this.oButton);
-		assert.ok(this.oColumnMenu.isOpen());
-
-		QUnitUtils.triggerEvent("mousedown", this.oButton.getId());
-		this.clock.tick(1000);
-		assert.notOk(this.oColumnMenu.isOpen());
-	});
-
-	QUnit.test("Open popover by an HTMLElement/Close when another element is clicked", function (assert) {
-		this.createMenu(true, true, true, true);
-		this.oColumnMenu.openBy(this.oButton.getDomRef());
-		assert.ok(this.oColumnMenu.isOpen());
-		assert.notOk(this.oColumnMenu._oPopover.getShowHeader());
-
-		QUnitUtils.triggerEvent("mousedown", "content");
-		this.clock.tick(1000);
-		assert.notOk(this.oColumnMenu.isOpen());
 	});
 
 	QUnit.test("Open popup on mobile", function (assert) {
@@ -809,5 +779,78 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton.getDomRef());
 		assert.ok(this.oColumnMenu.isOpen(), "The column menu is already open");
 		assert.ok(!oOpenSpy.called, "Popover.openBy is not called");
+	});
+
+	QUnit.module("Auto close behavior", {
+		beforeEach: function () {
+			this.oColumnMenu = new Menu({
+				quickActions: [
+					new QuickAction({label: "test", content: new Button({text: "button"})})
+				]
+			});
+			this.oButton = new Button();
+			this.oButton.placeAt("qunit-fixture");
+			this.oButton1 = new Button();
+			this.oButton1.placeAt("content");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oColumnMenu.destroy();
+			this.oButton.destroy();
+			this.oButton1.destroy();
+		}
+	});
+
+	QUnit.test("Open popover by a control/Close when another control is clicked", function(assert) {
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu.isOpen());
+		assert.notOk(this.oColumnMenu._oPopover.getShowHeader());
+
+		QUnitUtils.triggerEvent("mousedown", this.oButton1.getId());
+		this.clock.tick(1000);
+		assert.notOk(this.oColumnMenu.isOpen());
+	});
+
+	QUnit.test("Open popover by a control/Close when the same control is clicked", function(assert) {
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu.isOpen());
+
+		QUnitUtils.triggerEvent("mousedown", this.oButton.getId());
+		this.clock.tick(1000);
+		assert.notOk(this.oColumnMenu.isOpen());
+	});
+
+	QUnit.test("Open popover by an HTMLElement/Close when another element is clicked", function(assert) {
+		this.oColumnMenu.openBy(this.oButton.getDomRef());
+		assert.ok(this.oColumnMenu.isOpen());
+		assert.notOk(this.oColumnMenu._oPopover.getShowHeader());
+
+		QUnitUtils.triggerEvent("mousedown", "content");
+		this.clock.tick(1000);
+		assert.notOk(this.oColumnMenu.isOpen());
+	});
+
+	QUnit.test("Auto close behavior when the menu is open within a dialog", function(assert) {
+		var oButton1 = new Button();
+		var oButton2 = new Button();
+		var oDialog = new Dialog({
+			content: [oButton1, oButton2]
+		});
+
+		oDialog.placeAt("content");
+		oCore.applyChanges();
+
+		oDialog.open();
+		this.oColumnMenu.openBy(oButton1);
+		assert.ok(this.oColumnMenu.isOpen());
+		QUnitUtils.triggerEvent("mousedown", this.oColumnMenu.getId());
+		assert.ok(this.oColumnMenu.isOpen());
+		QUnitUtils.triggerEvent("mousedown", oButton2.getId());
+		this.clock.tick(1000);
+		assert.notOk(this.oColumnMenu.isOpen());
+
+		oDialog.destroy();
+		oButton1.destroy();
+		oButton2.destroy();
 	});
 });
