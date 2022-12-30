@@ -43,7 +43,7 @@ sap.ui.define([
 	var sViewXML;
 	var pViewXMLLoaded = Promise.resolve(
 		jQuery.ajax({
-			url: sap.ui.require.toUrl("example/mvc/test.view.xml"),
+			url: sap.ui.require.toUrl("example/mvc_legacyAPIs/test.view.xml"),
 			dataType: "text"
 		})
 	).then(function(sResult) {
@@ -57,7 +57,7 @@ sap.ui.define([
 
 	// run the full testset for a view loaded from a file
 	testsuite(oConfig, "XMLView creation loading from file", function() {
-		return sap.ui.xmlview("example.mvc.test");
+		return sap.ui.xmlview("example.mvc_legacyAPIs.test");
 	});
 
 	// run the full testset for a view created from a string
@@ -88,7 +88,7 @@ sap.ui.define([
 	testsuite(oConfig, "XMLView creation using generic view factory", function() {
 		return sap.ui.view({
 			type:ViewType.XML,
-			viewName:"example.mvc.test",
+			viewName:"example.mvc_legacyAPIs.test",
 			viewData:{test:"testdata"}
 		});
 	}, /* bCheckViewData = */ true);
@@ -110,7 +110,7 @@ sap.ui.define([
 	QUnit.test("sync loading", function(assert) {
 		// although settings are provided here, the resulting view should have the setting stated in the view source
 		var oView = sap.ui.xmlview({
-			viewName: 'example.mvc.test',
+			viewName: 'example.mvc_legacyAPIs.test',
 			displayBlock: false
 		});
 		assert.equal(oView.getDisplayBlock(), true, "DisplayBlock should be true");
@@ -119,7 +119,7 @@ sap.ui.define([
 
 	QUnit.test("async loading", function(assert) {
 		var oView = sap.ui.xmlview({
-			viewName: 'example.mvc.test',
+			viewName: 'example.mvc_legacyAPIs.test',
 			async: true,
 			displayBlock: false
 		});
@@ -347,7 +347,7 @@ sap.ui.define([
 	QUnit.test("sync loading", function(assert) {
 
 		// load and place view, force rendering
-		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
+		var oView = sap.ui.xmlview('example.mvc_legacyAPIs.test').placeAt('content');
 		sap.ui.getCore().applyChanges();
 
 		// check that DOM exists
@@ -384,7 +384,7 @@ sap.ui.define([
 
 		// load and place view, force rendering
 		var oView = sap.ui.xmlview({
-			viewName: 'example.mvc.test',
+			viewName: 'example.mvc_legacyAPIs.test',
 			async: true
 		}).placeAt('content');
 		sap.ui.getCore().applyChanges();
@@ -442,7 +442,7 @@ sap.ui.define([
 	QUnit.test("with custom RenderManager", function(assert) {
 
 		// load view, embed it in a Panel and force rendering
-		var oView = sap.ui.xmlview('example.mvc.test');
+		var oView = sap.ui.xmlview('example.mvc_legacyAPIs.test');
 		var oPanel = new Panel({
 			text: "My View",
 			content: [oView]
@@ -520,7 +520,7 @@ sap.ui.define([
 			id: 'vLayout',
 			content: [
 				new Button({id: 'btnBefore', text:'Button Before'}),
-				xmlview = sap.ui.xmlview('xmlview', 'example.mvc.test'),
+				xmlview = sap.ui.xmlview('xmlview', 'example.mvc_legacyAPIs.test'),
 				new Button({id: 'btnAfter', text:'Button After'})
 			]
 		});
@@ -551,7 +551,7 @@ sap.ui.define([
 	QUnit.test("invisible child", function(assert) {
 
 		// load and place view, force rendering
-		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content'),
+		var oView = sap.ui.xmlview('example.mvc_legacyAPIs.test').placeAt('content'),
 			oPanel = oView.byId("myPanel");
 		sap.ui.getCore().applyChanges();
 
@@ -616,7 +616,7 @@ sap.ui.define([
 		// Because nobody else would do it
 
 		// load and place view, force rendering
-		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
+		var oView = sap.ui.xmlview('example.mvc_legacyAPIs.test').placeAt('content');
 		sap.ui.getCore().applyChanges();
 
 		var oDomRef = oView.getDomRef();
@@ -631,7 +631,7 @@ sap.ui.define([
 		// Otherwise view content of already destroyed views might get preserve and never destroyed
 
 		// load and place view, force rendering
-		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
+		var oView = sap.ui.xmlview('example.mvc_legacyAPIs.test').placeAt('content');
 		sap.ui.getCore().applyChanges();
 
 		var oDomRef = oView.getDomRef();
@@ -896,7 +896,7 @@ sap.ui.define([
 		});
 
 		var xmlWithBindings = [
-			'<mvc:View controllerName="example.mvc.test" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">',
+			'<mvc:View controllerName="example.mvc_legacyAPIs.test" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">',
 			'  <test:TestButton id="btn" app:myKey1="myValue1" app:myKey2="{/value}" app:myKey3="{path: \'/value\', formatter:\'.valueFormatter\'}" />',
 			'</mvc:View>'
 		].join('');
@@ -917,7 +917,7 @@ sap.ui.define([
 		});
 
 		var xmlWithBindings = [
-			'<mvc:View controllerName="example.mvc.test"',
+			'<mvc:View controllerName="example.mvc_legacyAPIs.test"',
 			'  xmlns:mvc="sap.ui.core.mvc"',
 			'  xmlns:test="sap.ui.testlib"',
 			'  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"',

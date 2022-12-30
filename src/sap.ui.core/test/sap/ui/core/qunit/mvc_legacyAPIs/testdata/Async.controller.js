@@ -1,10 +1,10 @@
-sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function (Controller) {
+(function() {
 	"use strict";
 
-	return Controller.extend("testdata.mvc.Async", {
-		onInit: function () {
+	sap.ui.controller("testdata.mvc_legacyAPIs.Async", {
+
+
+		onInit: function() {
 			this.myLayout = this.getView().byId("Layout");
 
 			this.showDetailsLink = this.getView().byId("showMore");
@@ -13,7 +13,8 @@ sap.ui.define([
 			this.hideMore();
 		},
 
-		showMore: function (oEvent) {
+
+		showMore: function(oEvent) {
 			for (var i = 1; i < 4; i++) {
 				this.getView().byId("More" + i).setVisible(true);
 				this.getView().byId("TFMore" + i).setVisible(true);
@@ -22,7 +23,7 @@ sap.ui.define([
 			this.hideDetailsLink.setVisible(true);
 		},
 
-		hideMore: function (oEvent) {
+		hideMore: function(oEvent) {
 			for (var i = 1; i < 4; i++) {
 				this.getView().byId("More" + i).setVisible(false);
 				this.getView().byId("TFMore" + i).setVisible(false);
@@ -31,4 +32,5 @@ sap.ui.define([
 			this.hideDetailsLink.setVisible(false);
 		}
 	});
-});
+
+}());

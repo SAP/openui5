@@ -1,4 +1,4 @@
-<mvc:View controllerName="example.mvc.test" xmlns:m="sap.m"
+<mvc:View controllerName="example.mvc_legacyAPIs.test" xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc" xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:svg="http://www.w3.org/2000/svg"
 	displayBlock="true">
@@ -24,9 +24,10 @@
 				<!-- this comment should be ignored -->
 			</m:Button>
 			<m:CheckBox text="HEY named aggregation!" />
-			<mvc:JSView id="MyJSView" viewName="module:example/mvc/TypedView2"></mvc:JSView>
-			<mvc:XMLView id="MyXMLView" viewName="example.mvc.test2"></mvc:XMLView>
-			<mvc:XMLView id="MyHTMLView" viewName="example.mvc.test2" controllerName="example.mvc.test"></mvc:XMLView>
+			<mvc:JSONView id="MyJSONView" viewName="example.mvc_legacyAPIs.test2"></mvc:JSONView>
+			<mvc:JSView id="MyJSView" viewName="example.mvc_legacyAPIs.test2"></mvc:JSView>
+			<mvc:XMLView id="MyXMLView" viewName="example.mvc_legacyAPIs.test2"></mvc:XMLView>
+			<mvc:XMLView id="MyHTMLView" viewName="example.mvc_legacyAPIs.test2" controllerName="example.mvc_legacyAPIs.test"></mvc:XMLView>
 		</m:content>
 	</m:Panel>
 </mvc:View>

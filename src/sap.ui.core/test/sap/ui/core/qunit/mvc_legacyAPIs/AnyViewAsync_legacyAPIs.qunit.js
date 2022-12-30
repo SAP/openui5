@@ -35,7 +35,7 @@ sap.ui.define([
 
 		// preload the view source
 		jQuery.ajax({
-			url : sap.ui.require.toUrl("testdata/mvc/Async.view." + sType),
+			url : sap.ui.require.toUrl("testdata/mvc_legacyAPIs/Async.view." + sType),
 			success : function(data) {
 				sSource = oConfig.receiveSource(data);
 			},

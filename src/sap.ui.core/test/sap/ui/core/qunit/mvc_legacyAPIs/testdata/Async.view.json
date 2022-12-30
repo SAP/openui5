@@ -1,6 +1,6 @@
 {
 	"Type": "sap.ui.core.mvc.JSONView",
-	"controllerName": "testdata.mvc.Async",
+	"controllerName": "testdata.mvc_legacyAPIs.Async",
 	"content": [
 		{
 			"Type": "sap.m.Image",

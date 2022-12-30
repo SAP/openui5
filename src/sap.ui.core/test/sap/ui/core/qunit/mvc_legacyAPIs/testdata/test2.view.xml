@@ -1,0 +1,9 @@
+<mvc:View controllerName="example.mvc_legacyAPIs.test" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+	<Panel>
+		<Label id="Label1" text="Label" labelFor="Button1" />
+		<Button id="Button1" text="HEY default aggregation!" press="doIt"></Button>
+		<content>
+			<Button id="Button2" text="HEY named aggregation!" press="doIt"></Button>
+		</content>
+	</Panel>
+</mvc:View>

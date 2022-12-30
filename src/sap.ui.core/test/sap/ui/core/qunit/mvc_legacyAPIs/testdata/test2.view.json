@@ -1,5 +1,5 @@
 {	"Type": "sap.ui.core.JSONView",
-	"controllerName":"example.mvc.test",
+	"controllerName":"example.mvc_legacyAPIs.test",
 	"content": [{
 		"Type":"sap.m.Panel",
 		"id":"myPanel",
