@@ -994,7 +994,11 @@ sap.ui.define([
 
 		} else if ($Target.hasClass("sapUiTableCtrlAfter")) {
 			if (!TableUtils.isNoDataVisible(this)) {
-				restoreFocusOnLastFocusedDataCell(this, oEvent);
+				if (this._getRowMode().getHideEmptyRows && this._getRowMode().getHideEmptyRows()) {
+					setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
+				} else {
+					restoreFocusOnLastFocusedDataCell(this, oEvent);
+				}
 			}
 		}
 
@@ -1269,7 +1273,9 @@ sap.ui.define([
 			}
 
 		} else if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
-			if (TableUtils.isNoDataVisible(this)) {
+			if (this.getCreationRow() && this.getCreationRow().getVisible() && !TableUtils.hasData(this)) {
+				forwardFocusToTabDummy(this, "sapUiTableCtrlAfter");
+			} else if (TableUtils.isNoDataVisible(this)) {
 				this.$("noDataCnt").trigger("focus");
 				oEvent.preventDefault();
 			} else if (this.getRows().length > 0) {

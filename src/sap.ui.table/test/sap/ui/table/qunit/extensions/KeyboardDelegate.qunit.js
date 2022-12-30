@@ -10,12 +10,14 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
+	"sap/ui/table/CreationRow",
+	"sap/ui/table/rowmodes/FixedRowMode",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selector ":sapTabbable"
-], function(TableQUnitUtils, qutils, TableUtils, KeyboardDelegate, Device, F6Navigation, library, Table, Column, KeyCodes, JSONModel, jQuery, oCore) {
+], function(TableQUnitUtils, qutils, TableUtils, KeyboardDelegate, Device, F6Navigation, library, Table, Column, CreationRow, FixedRowMode, KeyCodes, JSONModel, jQuery, oCore) {
 	"use strict";
 
 	var createTables = window.createTables;
@@ -879,6 +881,41 @@ sap.ui.define([
 		simulateTabEvent(oElem);
 		oElem = checkFocus(document.getElementById("Focus2"), assert);
 
+		simulateTabEvent(oElem, true);
+		checkFocus(getColumnHeader(0), assert);
+	});
+
+	QUnit.test("CreationRow when hideEmptyRows is set to true", function(assert) {
+		var oElem, oCreationRow, oInput, oApplyButton;
+
+		oTable.unbindRows();
+		oTable.setVisibleRowCount(5);
+		oTable.setAggregation("rowMode", new FixedRowMode({
+			hideEmptyRows: true
+		}));
+		oTable.getColumns()[0].setCreationTemplate(new TestInputControl({text: "test"}));
+		oCreationRow = new CreationRow();
+		oTable.setCreationRow(oCreationRow);
+		oCore.applyChanges();
+
+		oElem = checkFocus(getColumnHeader(0, true), assert);
+		simulateTabEvent(oElem);
+
+		oInput = KeyboardDelegate._getFirstInteractiveElement(oTable.getCreationRow())[0];
+		oElem = checkFocus(oInput, assert);
+		simulateTabEvent(oElem);
+
+		oApplyButton = document.getElementById(oCreationRow.getId() + "-applyBtn");
+		oElem = checkFocus(oApplyButton, assert);
+		simulateTabEvent(oElem);
+
+		oElem = checkFocus(document.getElementById("Focus2"), assert);
+		simulateTabEvent(oElem, true);
+
+		oElem = checkFocus(oApplyButton, assert);
+		simulateTabEvent(oElem, true);
+
+		oElem = checkFocus(oInput, assert);
 		simulateTabEvent(oElem, true);
 		checkFocus(getColumnHeader(0), assert);
 	});

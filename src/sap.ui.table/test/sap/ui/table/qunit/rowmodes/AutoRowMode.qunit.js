@@ -383,34 +383,58 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Hide empty rows");
+	QUnit.module("Hide empty rows", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				columns: [
+					new Column({template: new HeightTestControl({height: "1px"})}),
+					new Column({template: new HeightTestControl({height: "1px"})})
+				],
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
 
 	QUnit.test("Initialize with hideEmptyRows=false", function(assert) {
-		var oDisableNoData = sinon.spy(AutoRowMode.prototype, "disableNoData");
-		var oEnableNoData = sinon.spy(AutoRowMode.prototype, "enableNoData");
-		var oRowMode = new AutoRowMode();
+		var oDisableNoDataSpy = sinon.spy(AutoRowMode.prototype, "disableNoData");
+		var oEnableNoDataSpy = sinon.spy(AutoRowMode.prototype, "enableNoData");
+		var oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
 
-		assert.ok(oDisableNoData.notCalled, "#disableNoData was not called");
-		assert.ok(oEnableNoData.notCalled, "#enableNoData was not called");
+		this.oTable.setAggregation("rowMode", new AutoRowMode({
+			hideEmptyRows: false
+		}));
 
-		oDisableNoData.restore();
-		oEnableNoData.restore();
-		oRowMode.destroy();
+		assert.ok(oDisableNoDataSpy.notCalled, "#disableNoData was not called");
+		assert.ok(oEnableNoDataSpy.calledOnce, "#enableNoData was called once");
+		assert.notOk(this.oTable.getRowMode().isNoDataDisabled(), "NoData is enabled");
+		assert.ok(oTableInvalidateSpy.calledOnce, "Table is invalidated");
+
+		oDisableNoDataSpy.restore();
+		oEnableNoDataSpy.restore();
+		oTableInvalidateSpy.restore();
 	});
 
 	QUnit.test("Initialize with hideEmptyRows=true", function(assert) {
-		var oDisableNoData = sinon.spy(AutoRowMode.prototype, "disableNoData");
-		var oEnableNoData = sinon.spy(AutoRowMode.prototype, "enableNoData");
-		var oRowMode = new AutoRowMode({
+		var oDisableNoDataSpy = sinon.spy(AutoRowMode.prototype, "disableNoData");
+		var oEnableNoDataSpy = sinon.spy(AutoRowMode.prototype, "enableNoData");
+		var oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+
+		this.oTable.setAggregation("rowMode", new AutoRowMode({
 			hideEmptyRows: true
-		});
+		}));
 
-		assert.equal(oDisableNoData.callCount, 1, "#disableNoData was called once");
-		assert.ok(oEnableNoData.notCalled, "#enableNoData was not called");
+		assert.ok(oDisableNoDataSpy.calledOnce, "#disableNoData was called once");
+		assert.ok(oEnableNoDataSpy.notCalled, "#enableNoData was not called");
+		assert.ok(this.oTable.getRowMode().isNoDataDisabled(), "NoData is disabled");
+		assert.ok(oTableInvalidateSpy.calledOnce, "Table is invalidated");
 
-		oDisableNoData.restore();
-		oEnableNoData.restore();
-		oRowMode.destroy();
+		oDisableNoDataSpy.restore();
+		oEnableNoDataSpy.restore();
+		oTableInvalidateSpy.restore();
 	});
 
 	QUnit.test("Change 'hideEmptyRows' property", function(assert) {
