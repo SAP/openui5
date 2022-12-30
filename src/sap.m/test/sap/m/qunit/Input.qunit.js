@@ -5464,6 +5464,70 @@ sap.ui.define([
 		oInput = null;
 	});
 
+	QUnit.test("Autocomplete with dynamic loading of items on mobile", function (assert) {
+		var oPopover;
+		var oPopupInput;
+		var oSystem = {
+			desktop : false,
+			phone : true,
+			tablet : false
+		};
+
+		this.stub(Device, "system", oSystem);
+
+		var oData = {
+			items: [
+				{key: "key1", value: "test1"},
+				{key: "key2", value: "test2"},
+				{key: "key3", value: "test3"},
+				{key: "key4", value: "test4"},
+				{key: "key5", value: "test5"},
+				{key: "key6", value: "test6"},
+				{key: "key7", value: "test7"},
+				{key: "key8", value: "test8"},
+				{key: "key9", value: "test9"}
+			]
+		};
+		var oModel = new sap.ui.model.json.JSONModel();
+		var oInput = new sap.m.Input("dynamic-input", {
+			showSuggestion: true,
+			filterSuggests: false,
+			suggestionItems: {
+				path: "/items",
+				template: new sap.ui.core.Item({key: "{key}", text: "{value}"})
+			},
+			suggest: function (oEvent) {
+				var aItems = oData.items.filter(function(oItem) {
+					return oItem.value.includes(oEvent.getParameter("suggestValue").slice(0, 5));
+				});
+
+				setTimeout(function () {
+					oModel.setData({
+						items: aItems
+					});
+				}, 0);
+			}
+		});
+
+
+		oInput.setModel(oModel);
+		oInput.placeAt('content');
+		oCore.applyChanges();
+
+		oPopover = oInput._getSuggestionsPopover();
+		oPopupInput = oPopover.getInput();
+
+		oPopover.getPopover().open();
+		this.clock.tick(300);
+
+		oPopupInput._$input.trigger("focus").trigger("keydown").val("t").trigger("input");
+		this.clock.tick(300);
+
+		assert.strictEqual(oPopupInput.getSelectedText(), "est1", "Type ahead is performed");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Autocomplete should keep cursor on place when there are no suggestions", function (assert) {
 		// Arrange
 		var oInput = new Input({

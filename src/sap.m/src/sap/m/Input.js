@@ -2204,6 +2204,8 @@ function(
 			value: "",
 			selectedItem: null
 		};
+		var oListDelegate;
+		var oList = oInput._getSuggestionsPopover() && oInput._getSuggestionsPopover().getItemsContainer();
 
 		// check if typeahead is already performed
 		if ((oInput && oInput.getValue().toLowerCase()) === (this._getProposedItemText() && this._getProposedItemText().toLowerCase())) {
@@ -2227,6 +2229,26 @@ function(
 				}
 				return bHasTabularSuggestions ? oInput._getRowResultFunction()(oItem) : oItem.getText();
 			};
+
+		// If there are no items yet - perform the type-ahead on a later stage.
+		// Attach a listener to the list for when they are available, in case they are being dynamically loaded.
+		if (this.isMobileDevice() && oList && !aItems.length) {
+			oListDelegate = {
+				onBeforeRendering: function() {
+					if (oList.getItems().length) {
+						this._handleTypeAhead(oInput);
+					}
+				},
+				onAfterRendering: function() {
+					if (oList.getItems().length) {
+						oList.removeDelegate(oListDelegate);
+					}
+				}
+			};
+			oList.addDelegate(oListDelegate, this);
+
+			return;
+		}
 
 		var aItemsToSelect = typeAhead(sValue, this, aItems, function (oItem) {
 			return this._formatTypedAheadValue(fnExtractText(oItem));
