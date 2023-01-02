@@ -156,7 +156,6 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 			this.fireDisplay({
 				view : oView,
 				control : oControl,
-				config : this._oOptions,
 				data: vData
 			});
 

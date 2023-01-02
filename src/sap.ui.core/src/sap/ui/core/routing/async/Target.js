@@ -43,7 +43,7 @@ sap.ui.define([
 		 *
 		 * @param {*} [vData] An object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
 		 * @param {Promise} oSequencePromise Promise chain for resolution in the correct order
-		 * @param {object} [oTargetCreateInfo] Additional information  for the component creation. Currently the object only contains the prefix for the routerHashChanger
+		 * @param {object} [oTargetCreateInfo] Additional information for the component creation.
 		 * @returns {Promise} Resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it rejects with error information
 		 * @private
 		 */
@@ -122,18 +122,14 @@ sap.ui.define([
 		},
 
 		/**
-		 * Retrieves addional target creation info based on the target type.
+		 * Retrieves additional target creation info based on the target type.
 		 *
-		 * @param {object} oTargetCreateInfo Additional information for the target creation.
-		 *  Currently the object only contains the prefix for the routerHashChanger
 		 * @return {object} Merged target creation info object
 		 */
-		_getCreateOptions: function(oTargetCreateInfo) {
+		_getCreateOptions: function() {
 			var sName = this._getEffectiveObjectName(this._oOptions.name),
 				oOptions = this._oOptions,
 				oCreateOptions;
-
-				oTargetCreateInfo = oTargetCreateInfo || {};
 
 			switch (oOptions.type) {
 				case "View":
@@ -145,6 +141,8 @@ sap.ui.define([
 					};
 					break;
 				case "Component":
+					oOptions.id = oOptions.id || ManagedObjectMetadata.uid("uicomponent");
+
 					oCreateOptions = { id: oOptions.id };
 
 					if (oOptions.usage) {
@@ -169,14 +167,14 @@ sap.ui.define([
 		 * instance directly if it's already loaded and returns a Promise during the loading of the target instance
 		 * while the "_load" function always returns a promise no matter whether the target instance is loaded or not.
 		 *
-		 * @param {object} [oTargetCreateInfo] Additional information for the component creation. Currently the object
-		 *  only contains the prefix for the routerHashChanger
+		 * @param {object} [oTargetCreateInfo] Additional information for the component creation.
 		 * @returns {sap.ui.core.mvc.View|sap.ui.core.UIComponent|Promise} The target instance when it's already loaded
 		 *  or a promise which resolves with the target instance during the loading of the target instance
 		 * @private
 		 */
 		_get: function(oTargetCreateInfo) {
-			var oCreateOptions = this._getCreateOptions(oTargetCreateInfo);
+			var oCreateOptions = this._getCreateOptions();
+
 
 			return this._oCache._get(oCreateOptions, this._oOptions.type,
 				// Hook in the route for deprecated global view id, it has to be supported to stay compatible
@@ -186,8 +184,7 @@ sap.ui.define([
 		/**
 		 * Loads the object from TargetCache.
 		 *
-		 * @param {object} [oTargetCreateInfo] Additional information for the component creation. Currently the object
-		 *  only contains the prefix for the routerHashChanger
+		 * @param {object} [oTargetCreateInfo] Additional information for the component creation.
 		 * @return {Promise} A promise which resolves with the loaded object of this Target
 		 * @private
 		 */
@@ -214,14 +211,14 @@ sap.ui.define([
 		/**
 		 * Load the target and wait for the first <code>routeMatched</code> event if it's a Component target
 		 *
-		 * @param {object} oTargetCreateInfo The corresponding target create info
+		 * @param {object} oTargetCreateInfo The additional information for the component target creation.
 		 * @return {Promise} Promise resolving with the loaded target object and the promise that waits for the
 		 *  <code>routeMatched</code> event in case of a Component target
 		 * @private
 		 */
 		load: function(oTargetCreateInfo) {
 			return this._load(oTargetCreateInfo)
-				.then(function (oLoadedTarget) {
+				.then(function(oLoadedTarget) {
 					return {
 						object: oLoadedTarget,
 						nestedComponentReady: this.waitForComponentTarget({
@@ -423,7 +420,7 @@ sap.ui.define([
 
 			if (bIsComponentTarget) {
 				var oOwnerComponent = this._oCache._oComponent;
-				var sComponentContainerId = oTargetCreateInfo.componentId + "-container";
+				var sComponentContainerId = oOptions.id + "-container";
 
 				oObject = (oOwnerComponent && oOwnerComponent.byId(sComponentContainerId))
 					|| sap.ui.getCore().byId(sComponentContainerId);
@@ -460,7 +457,7 @@ sap.ui.define([
 			if (oPlaceholderConfig.container && !oTargetCreateInfo.repeatedRoute) {
 				oPlaceholderConfig.aggregation = this._oOptions.controlAggregation;
 
-				var oCreateOptions = this._getCreateOptions(oTargetCreateInfo);
+				var oCreateOptions = this._getCreateOptions();
 				var oCachedObject = this._oCache.fetch(oCreateOptions, this._oOptions.type);
 
 				if (oCachedObject && bIsComponentTarget) {
@@ -500,7 +497,7 @@ sap.ui.define([
 		 * @param {object} [vData] an object that will be passed to the display event in the data property. If the
 		 * 		target has parents, the data will also be passed to them.
 		 * @param {Promise} oSequencePromise Promise chain for resolution in the correct order
-		 * @param {object} oTargetCreateInfo Additional information  for the component creation. Currently the object only contains the prefix for the routerHashChanger
+		 * @param {object} oTargetCreateInfo Additional information for the component creation.
 		 * @return {Promise} resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it rejects with an error message
 		 * @private
 		 */
@@ -520,10 +517,6 @@ sap.ui.define([
 			}
 
 			oTargetCreateInfo = oTargetCreateInfo || {};
-
-			if (bIsComponentTarget) {
-				oTargetCreateInfo.componentId = oOptions.id || ManagedObjectMetadata.uid("uicomponent");
-			}
 
 			if ((oOptions.name || oOptions.usage) && oOptions.type) {
 				// target loading
@@ -639,7 +632,6 @@ sap.ui.define([
 							view : oObject.isA("sap.ui.core.mvc.View") ? oObject : undefined,
 							object: oObject,
 							control : oContainerControl,
-							config : that._oOptions,
 							data: vData,
 							routeRelevant: oTargetCreateInfo.routeRelevant
 						});

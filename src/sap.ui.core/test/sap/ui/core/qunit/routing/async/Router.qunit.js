@@ -4171,43 +4171,58 @@ sap.ui.define([
 	QUnit.test("Call navTo with specific route and parameter for nested component", function(assert) {
 		this.buildNestedComponentStructure(2, "NavTo2Levels");
 
-		var that = this,
-			oRouter = this.oParentComponent.getRouter(),
-			iHomeRouteMatchCount = 0;
-
-		var pHomeRouteMatched = new Promise(function(resolve, reject) {
-			var fnMatched = function() {
-				this.detachMatched(fnMatched);
-
-				iHomeRouteMatchCount++;
-				var oContainer = that.oParentComponent.getRootControl(),
-					oShell = oContainer.byId("shell"),
-					oControl = oShell.getContent()[0];
-
-				if (oControl.isA("sap.ui.core.ComponentContainer")) {
-					resolve(oControl.getComponentInstance());
-				}
-			};
-			oRouter.getRoute("home").attachMatched(fnMatched);
-		});
-
-		return pHomeRouteMatched.then(function(oNestedComponent) {
-			assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
-			var oNestedRouter = oNestedComponent.getRouter(),
-				sId = "productA";
-
-			oRouter.navTo("home", {}, {
+		var oRouter = this.oParentComponent.getRouter(),
+			iHomeRouteMatchCount = 0,
+			sId = "productA",
+			oNestedRouteInfo = {
 				home: {
 					route: "product",
 					parameters: {
 						id: sId
 					}
 				}
-			});
+			},
+			oComponentContainer;
 
-			oRouter.getRoute("home").attachMatched(function() {
-				assert.ok(false, "The home route shouldn't be matched again");
+		var pHomeRouteMatched = new Promise(function(resolve, reject) {
+			var fnMatched = function(oEvent) {
+				this.detachMatched(fnMatched);
+
+				iHomeRouteMatchCount++;
+				var oControl = oEvent.getParameter("view");
+
+				if (oControl.isA("sap.ui.core.ComponentContainer")) {
+					oComponentContainer = oControl;
+					resolve(oControl.getComponentInstance());
+				}
+			};
+			oRouter.getRoute("home").attachMatched(fnMatched);
+		});
+
+		function navToRoute(oRouter, sRouteName, oData, oNestedData) {
+			return new Promise(function(resolve, reject) {
+				var fnMatched = function(oEvent) {
+					this.detachMatched(fnMatched);
+
+					resolve(oEvent.getParameters());
+				};
+
+				oRouter.getRoute(sRouteName).attachMatched(fnMatched);
+				oRouter.navTo(sRouteName, oData, oNestedData);
 			});
+		}
+
+		return pHomeRouteMatched.then(function(oNestedComponent) {
+			assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
+			var oNestedRouter = oNestedComponent.getRouter();
+
+			oRouter.navTo("home", {}, oNestedRouteInfo);
+
+			function homeRouteMatchedOnRouter() {
+				assert.ok(false, "The home route shouldn't be matched again");
+			}
+
+			oRouter.getRoute("home").attachMatched(homeRouteMatchedOnRouter);
 
 			return new Promise(function(resolve, reject) {
 				oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
@@ -4219,10 +4234,17 @@ sap.ui.define([
 					// wait 100ms since the matched event from oRouter is fired after this call stack
 					// to guarantee that no further matched event is fired on the home route in oRouter
 					setTimeout(function() {
+						oRouter.getRoute("home").detachMatched(homeRouteMatchedOnRouter);
 						resolve();
 					}, 100);
 				});
 			});
+		}).then(function() {
+			return navToRoute(oRouter, "category");
+		}).then(function() {
+			return navToRoute(oRouter, "home", oNestedRouteInfo);
+		}).then(function(oParameters) {
+			assert.strictEqual(oParameters.view, oComponentContainer, "The same component container is reused");
 		});
 	});
 
