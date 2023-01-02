@@ -8,8 +8,8 @@
 				<Button text="Cache:"/>
 				<Button text="no"/>
 			</HBox>
-			<mvc:View id="detailPageView"
-						viewName="module:sap/ui/core/qunit/mvc/viewprocessing/ViewProcessingRec"></mvc:View>
+			<mvc:JSView id="detailPageView"
+						viewName="sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingRec_legacyAPIs"></mvc:JSView>
 
 			<core:Icon src="sap-icon://lateness" size="7em"/>
 		</VBox>

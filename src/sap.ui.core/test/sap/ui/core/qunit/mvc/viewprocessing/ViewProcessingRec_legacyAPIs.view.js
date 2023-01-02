@@ -1,4 +1,4 @@
-sap.ui.jsview("sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingRec", {
+sap.ui.jsview("sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingRec_legacyAPIs", {
 
 	createContent: function() {
 		"use strict";

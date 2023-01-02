@@ -133,6 +133,17 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			"viewprocessing/ViewProcessing_legacyAPIs": {
+				title: "QUnit Page for sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing - legacy APIs",
+				loader: {
+					paths: {
+						"sap/ui/core/qunit/mvc/viewprocessing": "test-resources/sap/ui/core/qunit/mvc/viewprocessing/"
+					}
+				}
+			},
 			XMLTemplateProcessor: {
 				title: "QUnit Page for XMLTemplateProcessor (sync)",
 				loader: {

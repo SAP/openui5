@@ -2,7 +2,6 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/UIArea",
 	"sap/ui/core/UIComponent",
 	'sap/ui/core/Component',
@@ -15,7 +14,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/XMLProcessingMode",
 	"sap/ui/core/StashedControlSupport"
-], function(JSONModel, View, Controller, UIArea, UIComponent, Component, ComponentContainer, Label, Panel, HBox, MyGlobal, SyncPromise, XMLView, XMLProcessingMode, StashedControlSupport) {
+], function(JSONModel, View, UIArea, UIComponent, Component, ComponentContainer, Label, Panel, HBox, MyGlobal, SyncPromise, XMLView, XMLProcessingMode, StashedControlSupport) {
 
 	"use strict";
 
@@ -31,34 +30,32 @@ sap.ui.define([
 		var sClassName = sComponentName + ".Component";
 		var sModuleName = sClassName.replace(/\./g, "/");
 
-		sap.ui.define(sModuleName, function() {
+		sap.ui.predefine(sModuleName, function() {
 			return UIComponent.extend(sClassName, {
-				metadata: {
-					interfaces: ["sap.ui.core.IAsyncContentCreation"]
-				},
 				createContent: function() {
 
 					var oView = fnViewFactory();
 
-					oView.then(fnViewLoadedCallback.bind(null, oView, this));
+					oView.loaded().then(fnViewLoadedCallback.bind(null, oView, this));
 					return oView; //do it like fiori elements and add it later
 				}
 			});
 		});
 
-		return Component.create({
+		return sap.ui.component({
 			name: sComponentName
 		});
 	}
 
 	//use counter to avoid duplicate id issues
 	var iCounter = 0;
-	function testViewFactoryFn() {
+	function testViewFactoryFn(bAsync, sProcessingMode) {
 		return function(sViewId, sViewName, oController) {
-			return XMLView.create({
-				id: (sViewId + "async" + (iCounter++)),
+			return sap.ui.xmlview(sViewId + (bAsync ? "async" : "sync") + (iCounter++), {
+				async: bAsync,
 				viewName: sViewName,
-				controller: oController
+				controller: oController,
+				processingMode: sProcessingMode
 			});
 		};
 	}
@@ -78,14 +75,14 @@ sap.ui.define([
 			}
 		};
 
-		Controller.extend(sControllerName, oControllerImpl);
+		sap.ui.controller(sControllerName, oControllerImpl);
 
 		return oControllerImpl;
 	}
 
-	function viewProcessingTests() {
+	function viewProcessingTests(bAsyncView, sProcessingMode) {
 
-		QUnit.module("XMLView", {
+		QUnit.module("XMLView " + (bAsyncView ? "async" : "sync") + (sProcessingMode ? " with " + sProcessingMode + " processing" : ""), {
 			beforeEach: function() {
 				var fnOldSyncPromiseAll = SyncPromise.all;
 				MyGlobal.reset();
@@ -94,7 +91,7 @@ sap.ui.define([
 						 return oRes.reverse();
 					 });
 				});
-				this.viewFactory = testViewFactoryFn();
+				this.viewFactory = testViewFactoryFn(bAsyncView, sProcessingMode);
 				this._cleanup = [];
 				this.renderSync = function(ctrl) {
 					this._cleanup.push(ctrl);
@@ -130,16 +127,12 @@ sap.ui.define([
 		 * check that all aggregations are created in the correct order
 		 */
 		QUnit.test("Simple Aggregation order with async view", function(assert) {
-			// view
-			var pView = this.viewFactory("myViewSimpleAggrs", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingSimpleAggregations");
 
-			return pView.then(function(oView) {
-				this.renderSync(
-					new HBox({
-						renderType: "Bare",
-						items: pView
-					})
-				);
+			// view
+			var oView = this.viewFactory("myViewSimpleAggrs", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingSimpleAggregations");
+
+			var p = oView.loaded().then(function() {
+
 				// check if the order in which the aggregations are written to the respective map is stable
 				// This is necessary because:
 				// controls, flexibility and OPA rely on a stable iteration order of the aggregations itself (NOT its content!)
@@ -158,7 +151,16 @@ sap.ui.define([
 					[oView.byId("InnerButton122")],
 					"alternative content contains 'InnerButton122'");
 
-			}.bind(this));
+			});
+
+			this.renderSync(
+				new HBox({
+					renderType: "Bare",
+					items: oView
+				})
+			);
+
+			return p;
 		});
 
 
@@ -168,15 +170,10 @@ sap.ui.define([
 		QUnit.test("Aggregation order with async view", function(assert) {
 
 			// view
-			var pView = this.viewFactory("myViewAggrs", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingManyAggregations");
+			var oView = this.viewFactory("myViewAggrs", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingManyAggregations");
 
-			return pView.then(function(oView) {
-				this.renderSync(
-					new HBox({
-						renderType: "Bare",
-						items: oView
-					})
-				);
+			var p = oView.loaded().then(function() {
+
 				// check if the order in which the aggregations are written to the respective map is stable
 				// This is necessary because:
 				// controls, flexibility and OPA rely on a stable iteration order of the aggregations itself (NOT its content!)
@@ -217,7 +214,16 @@ sap.ui.define([
 					[oView.byId("InnerButton1"),oView.byId("InnerButton2"),oView.byId("InnerButton3"),oView.byId("InnerButton4")],
 					"Elements are in correct order within bottomControls aggregation");
 
-			}.bind(this));
+			});
+
+			this.renderSync(
+				new HBox({
+					renderType: "Bare",
+					items: oView
+				})
+			);
+
+			return p;
 		});
 
 
@@ -225,23 +231,20 @@ sap.ui.define([
 		 * check that all aggregations are created in the correct order
 		 */
 		QUnit.test("ExtensionPoint with async view tests", function(assert) {
+
 			// view
-			var pView = this.viewFactory("myViewEP", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingExtensionPoint");
+			var oView = this.viewFactory("myViewEP", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingExtensionPoint");
+
 
 			var getText = function(oCtrl) {
 				return oCtrl.getText();
 			};
 
-			return pView.then(function(oView) {
-				this.renderSync(
-					new HBox({
-						renderType: "Bare",
-						items: oView
-					})
-				);
+			var p = oView.loaded().then(function() {
 
 				var mySimpleAggregationsControl = oView.byId("ep");
 				assert.notOk(mySimpleAggregationsControl, "ExtensionPoint should not be present, only its controls");
+
 
 				assert.deepEqual(oView.getContent().map(getText), [
 					"test-ext-1",
@@ -257,7 +260,17 @@ sap.ui.define([
 					"test-ext-3",
 					"test-ext-4"],
 					"there should be all 5 texts contained in the correct order");
-			}.bind(this));
+
+			});
+
+			this.renderSync(
+				new HBox({
+					renderType: "Bare",
+					items: oView
+				})
+			);
+
+			return p;
 		});
 
 
@@ -265,42 +278,45 @@ sap.ui.define([
 		 * check that all events are properly called within controller and that the view is correctly connected
 		 */
 		QUnit.test("controller event test", function(assert) {
-			var done = assert.async();
 
 			// controller
 			var oControllerImpl = testControllerImplFactory(assert, "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing");
-			oControllerImpl.onAfterRendering = function () {
-				var oView = this.getView();
-				assert.ok(oView, "oView is present in onAfterRendering");
-				assert.ok(oView.byId("Panel"), "Panel is present within view");
-			};
+
+			var pAfterRenderingController = new Promise(function(resolve){
+				oControllerImpl.onAfterRendering = function() {
+					var oView = this.getView();
+					assert.ok(oView, "oView is present in onAfterRendering");
+					assert.ok(oView.byId("Panel"), "Panel is present within view");
+					resolve();
+				};
+			});
 
 			var fnOnInitSpy = this.spy(oControllerImpl, "onInit");
 			var fnOnAfterRenderingSpy = this.spy(oControllerImpl, "onAfterRendering");
 
-			Controller.extend("sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing", oControllerImpl);
+			sap.ui.controller("sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing", oControllerImpl);
 
-			Controller.create({
-				name: "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing"
-			}).then(function (oController) {
-				// view
-				var pView = this.viewFactory("myViewWithController", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing", oController);
-
-				pView.then(function (oView) {
-					this.renderSync(
-						new HBox({
-							renderType: "Bare",
-							items: oView
-						})
-					);
-					assert.equal(fnOnInitSpy.callCount, 1, "Init was called once");
-					assert.equal(fnOnAfterRenderingSpy.callCount, 1, "onAfterRendering was called once");
-					done();
-				}.bind(this));
-			}.bind(this));
-
+			var oController = sap.ui.controller("sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing");
 			assert.equal(fnOnAfterRenderingSpy.callCount, 0, "onAfterRendering is not called initially");
 			assert.equal(fnOnInitSpy.callCount, 0, "onInit is not called initially");
+
+
+			// view
+			var oView = this.viewFactory("myViewWithController", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessing", oController);
+
+			this.renderSync(
+				new HBox({
+					renderType: "Bare",
+					items: oView
+				})
+			);
+
+			//check that respective functions were called
+			return Promise.all([oView.loaded(), pAfterRenderingController]).then(function() {
+				assert.equal(fnOnInitSpy.callCount, 1, "Init was called once");
+				assert.equal(fnOnAfterRenderingSpy.callCount, 1, "onAfterRendering was called once");
+			});
+
 		});
 
 
@@ -310,27 +326,27 @@ sap.ui.define([
 		QUnit.test("Bad control processing", function(assert) {
 
 			// view
-			var pView = this.viewFactory("myViewBadControl", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingBadControl");
+			var oView = this.viewFactory("myViewBadControl", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingBadControl");
 
-			return pView.then(function(oView) {
-				this.renderSync(oView);
+			this.renderSync(oView);
 
+			return oView.loaded().then(function() {
 				var myBadControl = oView.byId("myBadControl");
 				assert.ok(myBadControl, "BadControl is present within view");
-			}.bind(this));
+			});
 		});
 
 
 		/**
 		 * Test setting the ._sOwnerId for asynchronously loaded components within stacked views.
 		 * Controls should have the correct owner ID.
-		 * (Component which contains a Typed View which contains XMLViews)
+		 * (Component which contains a JSView which contains XMLViews)
 		 */
-		QUnit.test("Owner component setting for Controls with Typed View", function(assert) {
+		QUnit.test("Owner component setting for Controls with JSView", function(assert) {
 
 			var iNumberOfComponents = 3;
 
-			//@see ViewProcessingRec.view.js
+			//@see ViewProcessingRec_legacyAPIs.view.js
 			var iNumberOfSubViews = 2;
 
 			var iCnt = 0;
@@ -356,20 +372,91 @@ sap.ui.define([
 				fnCheckDone();
 			};
 
-			function fnAssertions(pView, oComponentContext) {
-				pView.then(function(oView) {
-					var oPanel = oView.byId("Panel");
-					assert.ok(oPanel, "panel is present within " + oView.getId());
-					assert.equal(Component.getOwnerIdFor(oPanel), oComponentContext.getId(), "Propagation of owner component to view creation works!");
-				});
+			function fnAssertions(oView, oComponentContext) {
+				var oPanel = oView.byId("Panel");
+				assert.ok(oPanel, "panel is present within " + oView.getId());
+				assert.equal(Component.getOwnerIdFor(oPanel), oComponentContext.getId(), "Propagation of owner component to view creation works!");
 			}
 
 			//create async xml view
 			for (var i = 0; i < iNumberOfComponents; i++) {
-				var fnViewFactory = this.viewFactory.bind(null, "async" + "view" + i, "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingRecWithTypedView");
 
-				testComponentFactory("my.test.typedview." + "async" + "." + i, fnViewFactory, fnAssertions);
+				var fnViewFactory = this.viewFactory.bind(null, (bAsyncView ? "async" : "sync") + sProcessingMode + "view" + i, "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingRec_legacyAPIs");
+
+				testComponentFactory("my.test." + (bAsyncView ? "async" : "sync") + sProcessingMode + "." + i, fnViewFactory, fnAssertions);
+
 			}
+
+		});
+
+		/**
+		 * Test setting the ._sOwnerId for asynchronously loaded components within stacked views.
+		 * Controls should have the correct owner ID.
+		 * (Component which contains a Typed View which contains XMLViews)
+		 */
+		QUnit.test("Owner component setting for Controls with Typed View", function(assert) {
+
+			var iNumberOfComponents = 3;
+
+			//@see ViewProcessingRec_legacyAPIs.view.js
+			var iNumberOfSubViews = 2;
+
+			var iCnt = 0;
+			// test processing will be completed in onExit of the view extension
+			var done = assert.async();
+			function fnCheckDone() {
+				if (++iCnt === iNumberOfComponents * iNumberOfSubViews) {
+					done();
+				}
+			}
+
+			window._test_fnCallbackSubInit = function() {
+				var oParent = this.getParent();
+				while (oParent) {
+					var newParent = oParent.getParent();
+					// leave out UIArea as it gets always the first owner component id when #placeAt is called
+					if (newParent) {
+						assert.ok(oParent._sOwnerId, "OwnerId is set for parent control");
+						assert.equal(oParent._sOwnerId, this._sOwnerId, "OwnerId matches parent");
+					}
+					oParent = newParent;
+				}
+				fnCheckDone();
+			};
+
+			function fnAssertions(oView, oComponentContext) {
+				var oPanel = oView.byId("Panel");
+				assert.ok(oPanel, "panel is present within " + oView.getId());
+				assert.equal(Component.getOwnerIdFor(oPanel), oComponentContext.getId(), "Propagation of owner component to view creation works!");
+			}
+
+			//create async xml view
+			for (var i = 0; i < iNumberOfComponents; i++) {
+
+				var fnViewFactory = this.viewFactory.bind(null, (bAsyncView ? "async" : "sync") + sProcessingMode + "view" + i, "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingRecWithTypedView_legacyAPIs");
+
+				testComponentFactory("my.test.typedview." + (bAsyncView ? "async" : "sync") + sProcessingMode + "." + i, fnViewFactory, fnAssertions);
+
+			}
+
+		});
+
+		QUnit.test("Owner component setting for nested Sync View in Async View", function(assert) {
+			var done = assert.async();
+
+			function fnAssertions(oView, oComponentContext) {
+				// Owner-Component for ASYNC View
+				assert.equal(Component.getOwnerIdFor(oView), oComponentContext.getId(), "Owner Component for Async View is correct.");
+
+				// Owner-Component for SYNC View
+				assert.equal(Component.getOwnerIdFor(oView.byId("nestedView")), oComponentContext.getId(), "Owner Component for Sync View in Async View is correct.");
+
+				done();
+			}
+
+			var fnViewFactory = this.viewFactory.bind(null, (bAsyncView ? "async" : "sync") + sProcessingMode + "view_x", "sap.ui.core.qunit.mvc.viewprocessing.NestingView");
+
+			testComponentFactory("TheBest." + (bAsyncView ? "async" : "sync") + sProcessingMode, fnViewFactory, fnAssertions);
 
 		});
 
@@ -387,7 +474,8 @@ sap.ui.define([
 					"rootView": {
 						"viewName": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent.Main",
 						"type": "XML",
-						"async": "true",
+						"async": bAsyncView,
+						"processingMode": sProcessingMode,
 						"id": "app"
 					}
 				}
@@ -444,21 +532,30 @@ sap.ui.define([
 				done();
 			};
 
-			Component.create({
-				name:"sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child"
-			}).then(function(oComponent) {
-				oComponent.getRootControl().loaded().then(function(oView) {
-					fnAssertions(oComponent, oView);
+			if (bAsyncView) {
+				Component.create({
+					name:"sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child"
+				}).then(function(oComponent) {
+					oComponent.getRootControl().loaded().then(function(oView) {
+						fnAssertions(oComponent, oView);
+					});
 				});
-			});
+			} else {
+				var oComponent = sap.ui.component({
+					name:"sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child"
+				});
+				sap.ui.getCore().applyChanges();
+				fnAssertions(oComponent, oComponent.getRootControl());
+			}
+
 		});
 
 		QUnit.test("Owner component setting for stashed control", function(assert) {
 			var done = assert.async();
 
-			var sComponentName = "sap.ui.core.qunit.mvc.viewprocessing.StashedControl";
+			var sComponentName = "sap.ui.core.qunit.mvc.viewprocessing.StashedControl" + bAsyncView + sProcessingMode;
 
-			sap.ui.define((sComponentName + ".Component").replace(/\./g, "/"), ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.predefine((sComponentName + ".Component").replace(/\./g, "/"), ["sap/ui/core/UIComponent"], function(UIComponent) {
 				return UIComponent.extend(sComponentName + ".Component", { });
 			});
 
@@ -473,7 +570,8 @@ sap.ui.define([
 					"rootView": {
 						"viewName": "sap.ui.core.qunit.mvc.viewprocessing.StashedControl.Main",
 						"type": "XML",
-						"async": "true",
+						"async": bAsyncView,
+						"processingMode": sProcessingMode,
 						"id": "app"
 					}
 				}
@@ -561,14 +659,25 @@ sap.ui.define([
 				done();
 			};
 
-			Component.create({
-				name: sComponentName,
-				manifest: oManifest
-			}).then(function(oComponent) {
-				oComponent.getRootControl().loaded().then(function(oView) {
-					fnAssertions(oComponent, oView);
+			if (bAsyncView) {
+				Component.create({
+					name: sComponentName,
+					manifest: oManifest
+				}).then(function(oComponent) {
+					oComponent.getRootControl().loaded().then(function(oView) {
+						fnAssertions(oComponent, oView);
+					});
 				});
-			});
+			} else {
+				var oComponent = sap.ui.component({
+					name: sComponentName,
+					manifest: oManifest,
+					async: false
+				});
+				sap.ui.getCore().applyChanges();
+				fnAssertions(oComponent, oComponent.getRootControl());
+			}
+
 		});
 	}
 
@@ -576,5 +685,16 @@ sap.ui.define([
 	 * test execution
 	 */
 	// asynchronous -> processingMode is set to "SequentialLegacy"
-	viewProcessingTests();
+	viewProcessingTests(true);
+	// per default async=true leads to processingMode "SequentialLegacy".
+	// Overriding the processingMode to "Sequential" leads to the same behaviour as using the new (XML)View.create factory
+	viewProcessingTests(true, XMLProcessingMode.Sequential);
+
+	// synchronous -> processingMode is set to <code>undefined</code>
+	viewProcessingTests(false);
+	// should not change behaviour as "Sequential" only works in conjunction with async true
+	viewProcessingTests(false, XMLProcessingMode.Sequential);
+	// should not change behaviour as "SequentialLegacy" only works in conjunction with async true
+	viewProcessingTests(false, XMLProcessingMode.SequentialLegacy);
+
 });
