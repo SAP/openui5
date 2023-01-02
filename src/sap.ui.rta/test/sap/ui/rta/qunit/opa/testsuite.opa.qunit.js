@@ -23,9 +23,11 @@ sap.ui.define(function () {
 			module: "./../{name}.qunit"
 		},
 		tests: {
-			// AppContexts
-			"opa/appContext/integration/AppContextDialogJourney": {
-				title: "AppContexts"
+			"opa/contextBased/integration/ManageAdaptationsDialogJourney": {
+				title: "Manage Context-Based Adaptation"
+			},
+			"opa/contextBased/integration/SaveAsAdaptationDialogJourney": {
+				title: "SaveAs Context-Based Adaptation"
 			}
 		}
 	};

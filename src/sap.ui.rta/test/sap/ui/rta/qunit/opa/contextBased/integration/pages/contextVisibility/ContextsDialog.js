@@ -2,16 +2,16 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/EnterText"
-], function (
+], function(
 	Opa5,
 	Press,
 	EnterText
 ) {
 	"use strict";
 	Opa5.createPageObjects({
-		onTheAppContextRoleDialogPage: {
+		onTheSelectRoleDialogPage: {
 			actions: {
-				iEnterRoleTitle: function (sRoleTitle) {
+				iEnterRoleTitle: function(sRoleTitle) {
 					this.waitFor({
 						id: "contextSharing---ContextVisibility--selectContexts-searchField",
 						searchOpenDialogs: true,
@@ -29,8 +29,8 @@ sap.ui.define([
 						})
 					});
 				},
-				iSelectRoleByName: function (sRoleTitle) {
-					this.waitFor({
+				iSelectRoleByName: function(sRoleTitle) {
+					return this.waitFor({
 						controlType: "sap.m.CheckBox",
 						viewId: "contextSharing---ContextVisibility",
 						properties: {
@@ -50,8 +50,8 @@ sap.ui.define([
 						}
 					});
 				},
-				iSelectRoles: function () {
-					this.waitFor({
+				iSelectRoles: function() {
+					return this.waitFor({
 						id: "contextSharing---ContextVisibility--selectContexts-ok",
 						searchOpenDialogs: true,
 						actions: new Press({
@@ -61,17 +61,17 @@ sap.ui.define([
 				}
 			},
 			assertions: {
-				iShouldSeeRoleDialog: function () {
+				iShouldSeeSelectRoleDialog: function() {
 					return this.waitFor({
 						id: "contextSharing---ContextVisibility--selectContexts-dialog-title",
 						searchOpenDialogs: true,
-						success: function (vControls) {
+						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
 							Opa5.assert.strictEqual(oControl.getText(), "Select Roles", "I see role dialog");
 						}
 					});
 				},
-				iShouldSeeRoleTitle: function (sRoleTitle) {
+				iShouldSeeRoleTitle: function(sRoleTitle) {
 					return this.waitFor({
 						controlType: "sap.m.StandardListItem",
 						viewId: "contextSharing---ContextVisibility",
@@ -79,7 +79,7 @@ sap.ui.define([
 							title: sRoleTitle
 						},
 						searchOpenDialogs: true,
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "I see role title: " + sRoleTitle);
 						}
 					});

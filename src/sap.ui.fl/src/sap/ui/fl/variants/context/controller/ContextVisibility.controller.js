@@ -62,7 +62,6 @@ sap.ui.define([
 	return Controller.extend("sap.ui.fl.variants.context.controller.ContextVisibility", {
 		onInit: function() {
 			this.oSelectedContextsModel = this.getView().getModel("selectedContexts");
-			this.oSelectedContextsModel.setProperty("/showMessageStrip", true);
 			this.oContextsModel = this.getView().getModel("contexts");
 			this.oI18n = this.getView().getModel("i18n").getResourceBundle();
 		},

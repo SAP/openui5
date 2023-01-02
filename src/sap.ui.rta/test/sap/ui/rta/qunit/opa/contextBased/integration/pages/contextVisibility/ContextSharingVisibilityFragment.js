@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/EnterText"
-], function (
+], function(
 	Opa5,
 	Press
 ) {
@@ -10,7 +10,7 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheContextSharingVisibilityFragmentPage: {
 			actions: {
-				iClickOnAddRoleButton: function () {
+				iClickOnAddRoleButton: function() {
 					return this.waitFor({
 						id: "contextSharing---ContextVisibility--addContextsButton",
 						searchOpenDialogs: true,
@@ -19,7 +19,7 @@ sap.ui.define([
 						})
 					});
 				},
-				iClickOnRemoveRoleButton: function (sRoleTitle) {
+				iClickOnRemoveRoleButton: function(sRoleTitle) {
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						viewId: "contextSharing---ContextVisibility",
@@ -41,7 +41,7 @@ sap.ui.define([
 						}
 					});
 				},
-				iClickOnRemoveAllRolesButton: function () {
+				iClickOnRemoveAllRolesButton: function() {
 					return this.waitFor({
 						id: "contextSharing---ContextVisibility--removeAllButton",
 						searchOpenDialogs: true,
@@ -52,25 +52,33 @@ sap.ui.define([
 				}
 			},
 			assertions: {
-				iShouldNotSeeSelectedRolesSection: function () {
+				iShouldNotSeeMessageStrip: function() {
 					return this.waitFor({
-						success: function () {
+						success: function() {
+							var bExists = (Opa5.getJQuery()("#contextSharing---ContextVisibility--visibilityMessageStrip-content").length > 0);
+							Opa5.assert.ok(!bExists, "Control does not exist");
+						}
+					});
+				},
+				iShouldNotSeeSelectedRolesSection: function() {
+					return this.waitFor({
+						success: function() {
 							var bExists = (Opa5.getJQuery()("#contextSharing---ContextVisibility--selectedContextsList").length > 0);
 							Opa5.assert.ok(!bExists, "Control does not exist");
 						}
 					});
 				},
-				iShouldSeeSelectedRolesSection: function () {
+				iShouldSeeSelectedRolesSection: function() {
 					return this.waitFor({
 						id: "contextSharing---ContextVisibility--selectedContextsList",
 						searchOpenDialogs: true,
-						success: function (vControls) {
+						success: function(vControls) {
 							var oControl = vControls[0] || vControls;
 							Opa5.assert.ok(oControl.getVisible(), "I see correct role radio selection button selected");
 						}
 					});
 				},
-				iShouldSeeSelectedRoles: function (sRoleTitle) {
+				iShouldSeeSelectedRole: function(sRoleTitle) {
 					return this.waitFor({
 						controlType: "sap.m.StandardListItem",
 						viewId: "contextSharing---ContextVisibility",
@@ -78,20 +86,20 @@ sap.ui.define([
 							title: sRoleTitle
 						},
 						searchOpenDialogs: true,
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "I see role title: " + sRoleTitle);
 						}
 					});
 				},
-				iShouldSelectedRoleCount: function (iExpectedRoleLength) {
+				iShouldSelectedRoleCount: function(iExpectedRoleLength) {
 					return this.waitFor({
 						controlType: "sap.m.StandardListItem",
 						viewId: "contextSharing---ContextVisibility",
 						ancestor: {
 							id: "contextSharing---ContextVisibility--restrictedToolbar"
 						},
-						success: function (aControls) {
-							Opa5.assert.equal(aControls.length, iExpectedRoleLength, "I see expected assigned app context role count of " + iExpectedRoleLength);
+						success: function(aControls) {
+							Opa5.assert.equal(aControls.length, iExpectedRoleLength, "I see expected assigned context role count of " + iExpectedRoleLength);
 						}
 					});
 				}

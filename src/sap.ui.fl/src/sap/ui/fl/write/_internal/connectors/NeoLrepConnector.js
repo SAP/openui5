@@ -59,6 +59,12 @@ sap.ui.define([
 		contextBasedAdaptation: {
 			create: function() {
 				return Promise.reject("contextBasedAdaptation.create is not implemented");
+			},
+			reorder: function() {
+				return Promise.reject("contextBasedAdaptation.reorder is not implemented");
+			},
+			load: function() {
+				return Promise.reject("contextBasedAdaptation.load is not implemented");
 			}
 		},
 		loadFeatures: function (mPropertyBag) {

@@ -6,14 +6,14 @@
 		resizable="true"
 		draggable="true"
 		title="{i18n>SAC_DIALOG_HEADER}">
-		<Panel id="saveContextBasedAdaptation-information-panel">
+		<Panel id="saveAdaptation-information-panel">
 			<Toolbar id="toolbar">
 				<Label id="label"
 					text="Information"
 					design="Bold">
 				</Label>
 			</Toolbar>
-			<form:Form id="saveContextBasedAdaptation-form"
+			<form:Form id="saveAdaptation-form"
 				editable="true">
 				<form:layout>
 					<form:ResponsiveGridLayout labelSpanXL="3"
@@ -34,13 +34,13 @@
 					<form:formElements>
 						<form:FormElement >
 							<form:label>
-								<Label id="saveContextBasedAdaptation-title-label"
+								<Label id="saveAdaptation-title-label"
 									text="{i18n>APP_DIALOG_TITLE_TEXT}"
 									textAlign="Left"
 									required="true">
 								</Label>
 							</form:label>
-							<Input id="saveContextBasedAdaptation-title-input"
+							<Input id="saveAdaptation-title-input"
 								value="{/title}"
 								valueLiveUpdate="true"
 								liveChange=".onAdaptationTitleChange"
@@ -49,31 +49,35 @@
 						</form:FormElement>
 						<form:FormElement >
 							<form:label>
-								<Label id="saveContextBasedAdaptation-rank-label"
+								<Label id="saveAdaptation-rank-label"
 									text="{i18n>CLM_HEADER_PRIORITY}"
 									textAlign="Left"
 									required="true">
 								</Label>
 							</form:label>
-							<Select id="saveContextBasedAdaptation-rank-select"
-								selectedKey="{/selected}">
-							</Select>
+								<Select
+									id="saveAdaptation-rank-select"
+									forceSelection="true"
+									selectedKey="{prioritySelectionModel>/selected}"
+									items="{prioritySelectionModel>/priority}"
+									change=".onPriorityChange">
+									<core:Item key="{prioritySelectionModel>key}" text="{prioritySelectionModel>title}" />
+								</Select>
 						</form:FormElement>
 					</form:formElements>
 				</form:FormContainer>
 			</form:Form>
 		</Panel>
 		<beginButton>
-			<Button id="saveContextBasedAdaptation-saveButton"
+			<Button id="saveAdaptation-saveButton"
 				type="Emphasized"
-				text="{i18n>APP_VARIANT_DIALOG_SAVE}"
-				press=".onSaveAsContextBasedAdaptation"/>
+				text="{i18n>APP_CTX_DIALOG_SAVE}"
+				press=".onSaveAsAdaptation"/>
 		</beginButton>
 		<endButton>
-			<Button id="saveContextBasedAdaptation-cancelButton"
-				type="Emphasized"
-				text="{i18n>SAVE_AS_APP_VARIANT_DIALOG_CANCEL}"
-				press=".onCancelContextBasedAdaptationDialog"/>
+			<Button id="saveAdaptation-cancelButton"
+				text="{i18n>APP_CTX_DIALOG_CANCEL}"
+				press=".onCancelAdaptationDialog"/>
 		</endButton>
 	</Dialog>
 </core:FragmentDefinition>

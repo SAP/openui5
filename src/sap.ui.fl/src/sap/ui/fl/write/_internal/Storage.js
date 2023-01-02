@@ -409,8 +409,17 @@ sap.ui.define([
 		create: function(mPropertyBag) {
 			return _getWriteConnectors()
 				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.create", mPropertyBag));
+		},
+		reorder: function(mPropertyBag) {
+			return _getWriteConnectors()
+				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.reorder", mPropertyBag));
+		},
+		load: function(mPropertyBag) {
+			return _getWriteConnectors()
+				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.load", mPropertyBag));
 		}
 	};
+
 	Storage.versions = {
 		/**
 		 * Loads the versions for a given application and layer.

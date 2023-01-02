@@ -491,19 +491,6 @@ sap.ui.define([
 						});
 				});
 		});
-
-		QUnit.test("when saveAsContextBasedAdaptation event is fired from the toolbar", function(assert) {
-			var fnDone = assert.async();
-			var oParams = {foo: "bar"};
-			sandbox.stub(ContextBasedAdaptationsAPI, "create").callsFake(function(mPropertyBag) {
-				assert.strictEqual(mPropertyBag.control.getId(), "someId", "the correct root control is passed");
-				assert.strictEqual(mPropertyBag.layer, this.oRta.getLayer(), "the correct layer is passed");
-				assert.deepEqual(mPropertyBag.parameters, oParams, "the parameters from the event are passed");
-				fnDone();
-			}.bind(this));
-
-			this.oRta.getToolbar().fireEvent("saveAsContextBasedAdaptation", oParams);
-		});
 	});
 
 	QUnit.module("Toolbar handling", {
