@@ -130,12 +130,17 @@
 		// add a QUnit configuration option in the Toolbar to enable/disable
 		// client-side instrumentation via blanket (done manually because in
 		// this case blanket will not be loaded and executed)
-		QUnit.config.urlConfig.push({
-			id: "coverage",
-			label: "Enable coverage",
-			tooltip: "Enable code coverage."
+		var bHasCoverageCheckbox = QUnit.config.urlConfig.some(function (oConf) {
+			return oConf.id === "coverage";
 		});
 
+		if (!bHasCoverageCheckbox) {
+			QUnit.config.urlConfig.push({
+				id: "coverage",
+				label: "Enable coverage",
+				tooltip: "Enable code coverage."
+			});
+		}
 	}
 
 })();

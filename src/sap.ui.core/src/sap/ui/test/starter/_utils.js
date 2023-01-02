@@ -121,7 +121,10 @@ sap.ui.define([
 		coverage: {
 			only: null,
 			never: null,
-			branchTracking: false
+			branchTracking: false,
+			// TODO: Set to "auto", once consumer libraries set it explicitly to blanket and the grace period
+			// for adoption ends
+			instrumenter: "blanket" // blanket, istanbul, auto (default)
 		},
 		ui5: {
 			bindingSyntax: 'complex',

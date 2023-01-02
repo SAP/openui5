@@ -11,8 +11,9 @@
 
 sap.ui.define([
 	"sap/base/util/UriParameters",
+	"sap/base/util/fetch",
 	"./_utils"
-], function(UriParameters, utils) {
+], function(UriParameters, fetch, utils) {
 	"use strict";
 
 	// shortcut for Object.prototype.hasOwnProperty.call(obj, prop)
@@ -227,32 +228,117 @@ sap.ui.define([
 			});
 		}
 
-		pCoverage = pQUnit.then(function() {
-			if ( QUnit.urlParams.coverage ) {
-				// when coverage has been activated in a QUnit page via checkbox,
-				// then load blanket, configure it, then load the QUnit plugin
-				return requireP("sap/ui/thirdparty/blanket").then(function() {
-					if ( oConfig.coverage && window.blanket ) {
-						if (oConfig.coverage.only != null) {
-							window.blanket.options("sap-ui-cover-only", oConfig.coverage.only);
-						}
-						if (oConfig.coverage.never != null) {
-							window.blanket.options("sap-ui-cover-never", oConfig.coverage.never);
-						}
-						if (oConfig.coverage.branchTracking) {
-							window.blanket.options("branchTracking", true);
-						}
+		pCoverage = pQUnit
+			.then(function () {
+				// QUnit.urlParams.coverage is a "boolean" queryString, if present in the url, regardless of the value,
+				// then it should be treated as truthy value. Otherwise, it'd be simply undefined.
+				if ( QUnit.urlParams.coverage === undefined ) {
+					return {};
+				}
+
+				if ( oConfig.coverage.instrumenter === "blanket") {
+					return { instrumenter: "blanket" };
+				}
+
+				return fetch("/.ui5/coverage/ping").then(function (oData) {
+					if (oData.status >= 400 && oConfig.coverage.instrumenter !== "istanbul") {
+						// Default fallback to blanket.
+						// Instrumenter is either not defined explicitly or set to "auto" and the middleware is not available
+						return { instrumenter: "blanket" };
+					} else if ( oData.status >= 400 ) {
+						// There's no middleware and the instrumenter is "istanbul"
+						return { instrumenter: null, error: "Istanbul is set as instrumenter, but there's no middleware" };
+					} else {
+						// There's a middleware available and the instrumenter is either "auto" or "istanbul"
+						return { instrumenter: "istanbul" };
 					}
-					return requireP("sap/ui/qunit/qunit-coverage");
-				}).then(function() {
-					// when coverage is active, qunit-coverage sets autostart to true again
-					QUnit.config.autostart = false;
 				});
-			} else {
-				// otherwise load only the QUnit plugin
-				return requireP(["sap/ui/qunit/qunit-coverage"]);
-			}
-		}).then(function() {
+			})
+			.then(function(oSettings) {
+				if ( !oSettings.instrumenter ) {
+					return oSettings;
+				}
+
+				// Blanket coverage requires sync loading of the assets.
+				// By default the assets are being loaded asynchronously and we'd need to enforce reload in order to configure
+				// properly the _configureLoader.js
+				if (
+					(QUnit.urlParams["coverage-mode"] || oSettings.instrumenter === "blanket") &&
+					QUnit.urlParams["coverage-mode"] !== oSettings.instrumenter
+				) {
+					var oCoverageUrl = new URL(window.location.href);
+					// Needs to be explicitly reset as the URL builder creates ..&coverage=&..
+					// and this gets resolved to a variable coverage === "", which leads to a falsy value
+					oCoverageUrl.searchParams.set("coverage", "true");
+					oCoverageUrl.searchParams.set("coverage-mode", oSettings.instrumenter);
+
+					window.location = oCoverageUrl.toString();
+				}
+
+				return oSettings;
+			})
+			.then(function(oSettings) {
+				if ( oSettings.instrumenter === "blanket" ) {
+					// when coverage has been activated in a QUnit page via checkbox,
+					// then load blanket, configure it, then load the QUnit plugin
+					return requireP("sap/ui/thirdparty/blanket").then(function() {
+						if ( oConfig.coverage && window.blanket ) {
+							if (oConfig.coverage.only != null) {
+								window.blanket.options("sap-ui-cover-only", oConfig.coverage.only);
+							}
+							if (oConfig.coverage.never != null) {
+								window.blanket.options("sap-ui-cover-never", oConfig.coverage.never);
+							}
+							if (oConfig.coverage.branchTracking) {
+								window.blanket.options("branchTracking", true);
+							}
+						}
+						return requireP("sap/ui/qunit/qunit-coverage");
+					}).then(function() {
+						// when coverage is active, qunit-coverage sets autostart to true again
+						QUnit.config.autostart = false;
+					});
+				} else if (oSettings.instrumenter === "istanbul") {
+					return requireP("sap/ui/qunit/qunit-coverage-istanbul").then(function() {
+						var _adjustFilters = function(filter) {
+							return Array.isArray(filter) ?
+								JSON.stringify(filter) : filter;
+						};
+						if (oConfig.coverage) {
+							var oScript = document.querySelector('script[src$="qunit/qunit-coverage-istanbul.js"]');
+							if (oScript) {
+								if (oConfig.coverage.only != null) {
+									oScript.setAttribute("data-sap-ui-cover-only", _adjustFilters(oConfig.coverage.only));
+								}
+								if (oConfig.coverage.never != null) {
+									oScript.setAttribute("data-sap-ui-cover-never", _adjustFilters(oConfig.coverage.never));
+								}
+							}
+						}
+					});
+				} else  if (oSettings.instrumenter === null && oSettings.error) { // No middleware
+					QUnit.test("There's an error with the instrumentation setup or configuration", function (assert) {
+						assert.ok(false, oSettings.error);
+					});
+				 }
+			})
+			.then(function() {
+				// add a QUnit configuration option in the Toolbar to enable/disable
+				// client-side instrumentation
+				var bHasCoverageCheckbox = QUnit.config.urlConfig.some(function (oConf) {
+					return oConf.id === "coverage";
+				});
+
+				if (!bHasCoverageCheckbox) {
+					QUnit.config.urlConfig.push({
+						id: "coverage",
+						label: "Enable coverage",
+						tooltip: "Enable code coverage."
+					});
+				}
+			});
+
+		pCoverage = pCoverage.then(function() {
 			// QUnit option CSP
 			if ( QUnit.urlParams["sap-ui-xx-csp-policy"] ) {
 				document.addEventListener("securitypolicyviolation", onCSPViolation);
