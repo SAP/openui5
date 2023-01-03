@@ -102,7 +102,7 @@
 	});
 	oColumn = new sap.ui.table.Column(
 		{label: new sap.m.Text({text: "m.Text"}), template: oControl, width: "120px", sortProperty: "lastName", filterProperty: "lastName"});
-	oColumn.setAssociation("headerMenu",  oMenu);
+	oColumn.setHeaderMenu(oMenu);
 	oColumn.setCreationTemplate(new sap.m.Input({value: "{lastName}"}));
 	oColumn.data("clipboard", "lastName");
 	oTable.addColumn(oColumn);
@@ -124,7 +124,7 @@
 	});
 	oColumn = new sap.ui.table.Column(
 			{label: new sap.m.Label({text: "m.Label"}), template: oControl, sortProperty: "name", filterProperty: "name", width: "6em"});
-	oColumn.setAssociation("headerMenu",  oMenu2);
+	oColumn.setHeaderMenu(oMenu2);
 	oColumn.setCreationTemplate(new sap.m.Input({value: "{name}"}));
 	oColumn.data("clipboard", "name");
 	oTable.addColumn(oColumn);
@@ -166,7 +166,7 @@
 	oControl = new sap.m.DatePicker({dateValue: "{birthdayDate}"});
 	oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.DatePicker"}), template: oControl, width: "200px", filterProperty: "birthdayDate", filterType: new sap.ui.model.type.Date() }).data("clipboard", "birthdayDate");
 	oColumn.setCreationTemplate(new sap.m.DatePicker({dateValue: "{birthdayDate}"}));
-	oColumn.setAssociation("headerMenu",  new sap.m.table.columnmenu.Menu());
+	oColumn.setHeaderMenu(new sap.m.table.columnmenu.Menu());
 	oTable.addColumn(oColumn);
 
 	// sap.m.Select

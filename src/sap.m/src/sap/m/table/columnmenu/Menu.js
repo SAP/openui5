@@ -118,6 +118,7 @@ sap.ui.define([
 				 * Fired before the column menu is opened
 				 */
 				beforeOpen: {
+					allowPreventDefault : true,
 					parameters : {
 						/**
 						 * The element for which the menu is opened. If it is an <code>HTMLElement</code>, the closest control is passed for this event
@@ -156,29 +157,42 @@ sap.ui.define([
 	 * Opens the popover at the specified target.
 	 *
 	 * @param {sap.ui.core.Control | HTMLElement} oAnchor This is the control or HTMLElement where the popover is placed.
+	 * @param {boolean} [bSuppressEvent] Whether to suppress the beforeOpen event.
 	 * @public
 	 */
-	Menu.prototype.openBy = function(oAnchor) {
+	Menu.prototype.openBy = function(oAnchor, bSuppressEvent) {
 		if (this.isOpen() && oAnchor === this._oIsOpenBy) {
 			return;
 		}
 
+		var bExecuteDefault = true;
 		var oControl = oAnchor;
 		if (!(oAnchor instanceof Element)) {
 			oControl = Element.closestTo(oAnchor, true);
 		}
 
-		this.fireBeforeOpen({
-			openBy: oControl
-		});
+		if (!bSuppressEvent) {
+			bExecuteDefault = this.fireBeforeOpen({
+				openBy: oControl
+			});
+		}
+
+		if (!bExecuteDefault) {
+			return;
+		}
 
 		this._initPopover();
-		this._createQuickActionGrids();
+
+		if (this._oQuickActionContainer) {
+			this._oQuickActionContainer.destroy();
+			this._oQuickActionContainer = null;
+		}
+		this._initQuickActionContainer();
+
 		if (this._oItemsContainer) {
 			this._oItemsContainer.destroy();
 			this._oItemsContainer = null;
 		}
-
 		this._initItemsContainer();
 
 		if (!this.getParent()) {
@@ -187,7 +201,6 @@ sap.ui.define([
 
 		this._oPopover.openBy(oAnchor);
 		this._oIsOpenBy = oAnchor;
-
 		ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
 	};
 
@@ -569,15 +582,15 @@ sap.ui.define([
 		oListItem && oListItem.setVisible(bVisible);
 	};
 
-	Menu.prototype._createQuickActionGrids = function () {
+	Menu.prototype._initQuickActionContainer = function () {
 		var oFormContainer;
 
-		if (this._oForm) {
-			oFormContainer = this._oForm.getFormContainers()[0];
+		if (this._oQuickActionContainer) {
+			oFormContainer = this._oQuickActionContainer.getFormContainers()[0];
 			oFormContainer.destroyFormElements();
 		} else {
 			oFormContainer = new FormContainer();
-			this._oForm = new Form({
+			this._oQuickActionContainer = new Form({
 				layout: new ResponsiveGridLayout({
 					breakpointM: 600,
 					labelSpanXL: 4,
@@ -591,12 +604,12 @@ sap.ui.define([
 				editable: true,
 				formContainers: oFormContainer
 			});
-			this._oForm.addStyleClass("sapMTCMenuQAForm");
-			this._oForm.addEventDelegate({
+			this._oQuickActionContainer.addStyleClass("sapMTCMenuQAForm");
+			this._oQuickActionContainer.addEventDelegate({
 				onAfterRendering: function() {
 					this.getDomRef().classList.remove("sapUiFormLblColon");
 				}
-			}, this._oForm);
+			}, this._oQuickActionContainer);
 		}
 
 		this._getAllEffectiveQuickActions().forEach(function(oQuickAction) {
@@ -650,7 +663,7 @@ sap.ui.define([
 			oFormContainer.addFormElement(new FormElement({label: oLabel, fields: aControls}));
 		}, this);
 
-		this.addDependent(this._oForm);
+		this.addDependent(this._oQuickActionContainer);
 	};
 
 	return Menu;

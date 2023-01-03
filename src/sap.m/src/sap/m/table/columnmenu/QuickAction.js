@@ -28,7 +28,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @since 1.110
-	 * @experimental
 	 *
 	 * @alias sap.m.table.columnmenu.QuickAction
 	 */

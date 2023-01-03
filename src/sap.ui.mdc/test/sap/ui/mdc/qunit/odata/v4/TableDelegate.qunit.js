@@ -89,9 +89,8 @@ sap.ui.define([
 	}
 
 	function openColumnMenu(oTable, iColumnIndex) {
-		oTable._oTable.fireEvent("columnSelect", {
-			column: oTable._oTable.getColumns()[iColumnIndex]
-		});
+		var oColumn = oTable._oTable.getColumns()[iColumnIndex];
+		Core.byId(oColumn.getHeaderMenu()).openBy(oColumn);
 
 		return oTable._fullyInitialized().then(function() {
 			return oTable.propertiesFinalized();
@@ -369,7 +368,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Allowed analytics on column header and tableDelegate API's", function(assert) {
-		var fColumnPressSpy = sinon.spy(this.oTable, "_onColumnPress");
 		var oTable = this.oTable;
 		var oPlugin, oQuickAction, fSetAggregationSpy;
 
@@ -403,7 +401,6 @@ sap.ui.define([
 
 			return openColumnMenu(oTable, 0);
 		}).then(function() {
-			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
 			oQuickAction = getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup");
 			assert.ok(oQuickAction, "The first column has a quick group");
 			assert.equal(oQuickAction.getItems().length, 1, "The quick group has one item");
@@ -412,7 +409,6 @@ sap.ui.define([
 
 			return openColumnMenu(oTable, 2);
 		}).then(function() {
-			assert.strictEqual(fColumnPressSpy.callCount, 2, "Third Column pressed");
 			oQuickAction = getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup");
 			assert.strictEqual(oQuickAction.getItems().length, 2, "The last column has complex property with list of two items");
 
@@ -463,17 +459,13 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Grouping enabled on column press", function(assert) {
+	QUnit.test("Grouping enabled on column menu open", function(assert) {
 		var oTable = this.oTable;
 		var done = assert.async();
-		var fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
 
 		oTable._fullyInitialized().then(function() {
 			return openColumnMenu(oTable, 0);
 		}).then(function() {
-			assert.ok(fColumnPressSpy.calledOnce, "First column pressed");
-			fColumnPressSpy.restore();
-
 			 oTable._fullyInitialized().then(function() {
 				var oPlugin = oTable._oTable.getDependents()[0];
 				var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
@@ -503,17 +495,13 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Aggregation enabled on column press", function(assert) {
+	QUnit.test("Aggregation enabled on column menu open", function(assert) {
 		var oTable = this.oTable;
-		var fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
 		var done = assert.async();
 
 		oTable._fullyInitialized().then(function() {
 			return openColumnMenu(oTable, 1);
 		}).then(function() {
-			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
-			fColumnPressSpy.restore();
-
 			oTable._fullyInitialized().then(function() {
 				var oDelegate = oTable.getControlDelegate();
 				var oPlugin = oTable._oTable.getDependents()[0];
@@ -545,13 +533,10 @@ sap.ui.define([
 
 	QUnit.test("Grouping and Aggregation on two columns", function(assert) {
 		var oTable = this.oTable;
-		var fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
 		var done = assert.async();
 
 		oTable._fullyInitialized().then(function() {
 			return openColumnMenu(oTable, 0);
-		}).then(function() {
-			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
 		}).then(function() {
 			var oDelegate = oTable.getControlDelegate();
 			var oPlugin = oTable._oTable.getDependents()[0];
@@ -573,7 +558,6 @@ sap.ui.define([
 					search: undefined
 				}), "Plugin#setAggregationInfo call");
 
-				fColumnPressSpy.restore();
 				fSetAggregationSpy.restore();
 				oDelegate.rebind = fnRebind;
 
@@ -582,8 +566,6 @@ sap.ui.define([
 					var oPlugin = oTable._oTable.getDependents()[0];
 					var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 					var fnRebind = oDelegate.rebind;
-
-					assert.ok(fColumnPressSpy.calledOnce, "Second Column pressed");
 
 					oDelegate.rebind = function () {
 						fnRebind.apply(this, arguments);
@@ -600,7 +582,6 @@ sap.ui.define([
 							search: undefined
 						}), "Plugin#setAggregationInfo call");
 
-						fColumnPressSpy.restore();
 						fSetAggregationSpy.restore();
 						oDelegate.rebind = fnRebind;
 						done();
@@ -904,13 +885,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check column header for analytics buttons", function(assert) {
-		var fColumnPressSpy = sinon.spy(this.oTable, "_onColumnPress");
 		var oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
 			return openColumnMenu(oTable, 0);
 		}).then(function() {
-			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
 			assert.ok(getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup"), "The first column has group menu item");
 			assert.notOk(getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal"), "The first column doesn't have an aggregate menu item");
 		});

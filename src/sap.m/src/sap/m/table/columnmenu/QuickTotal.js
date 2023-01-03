@@ -20,8 +20,8 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new <code>QuickTotal</code>
 	 *
 	 * @class
-	 * The <code>QuickTotal</code> class is used for quick totalling for the <code>sap.m.table.columnmenu.Menu</code>.
-	 * It can be used to specify control- and application-specific quick actions for totalling.
+	 * The <code>QuickTotal</code> class is used for quick totaling for the <code>sap.m.table.columnmenu.Menu</code>.
+	 * It can be used to specify control- and application-specific quick actions for totaling.
 	 *
 	 * @extends sap.m.table.columnmenu.QuickActionBase
 	 *

@@ -1259,12 +1259,12 @@ sap.ui.define([
 			this.oColumn1 = TableQUnitUtils.createTextColumn();
 			this.oColumn1.setSortProperty("F");
 			this.oColumn1.setFilterProperty("F");
-			this.oColumn1.setAssociation("headerMenu", this.oMenu1);
+			this.oColumn1.setHeaderMenu(this.oMenu1);
 
 			this.oColumn2 = TableQUnitUtils.createTextColumn();
 			this.oColumn2.setSortProperty("G");
 			this.oColumn2.setFilterProperty("G");
-			this.oColumn2.setAssociation("headerMenu", this.oMenu2);
+			this.oColumn2.setHeaderMenu(this.oMenu2);
 
 			this.oTable = TableQUnitUtils.createTable({
 				columns: [this.oColumn1, this.oColumn2]

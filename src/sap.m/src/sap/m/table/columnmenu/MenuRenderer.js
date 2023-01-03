@@ -61,7 +61,7 @@ sap.ui.define([], function () {
 		oRm.attr("aria-labelledby", oMenu.getId() + "-actionContainerDescription");
 		oRm.openEnd();
 
-		oRm.renderControl(oMenu._oForm);
+		oRm.renderControl(oMenu._oQuickActionContainer);
 
 		oRm.close("div");
 	};

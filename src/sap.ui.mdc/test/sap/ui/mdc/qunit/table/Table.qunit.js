@@ -269,14 +269,14 @@ sap.ui.define([
 			assert.equal(aMDCColumns[0].getHeader(), aInnerColumns[0].getLabel().getText());
 			assert.equal(aInnerColumns[0].getLabel().getText(), "Test", "column0: label is correct");
 			assert.equal(aInnerColumns[0].getMinWidth(), 136, "column0: minWidth is correct");
-			assert.ok(aInnerColumns[0]._menuHasItems(), "columnSelect event enabled always");
+
 			assert.equal(aInnerColumns[1].getLabel().getText(), "Test1", "column1: label is correct");
 			assert.equal(aInnerColumns[1].getMinWidth(), 134, "column1: minWidth is correct");
-			assert.ok(aInnerColumns[1]._menuHasItems(), "columnSelect event enabled always");
+
 			assert.ok(aInnerColumns[1].getLabel().getLabel().isRequired(), "column1: is required");
 			assert.equal(aInnerColumns[2].getLabel().getText(), "Test2", "column1: label is correct");
 			assert.equal(aInnerColumns[2].getMinWidth(), 128, "column2: minWidth is correct (default value)");
-			assert.ok(aInnerColumns[2]._menuHasItems(), "columnSelect event enabled always");
+
 			assert.equal(aInnerColumns[0].getTemplate().getText(), "Test", "column0: template is correct");
 			assert.equal(aInnerColumns[0].getTemplate().getWrapping(), false, "column0: template wrapping is disabled");
 			assert.equal(aInnerColumns[0].getTemplate().getRenderWhitespace(), false, "column0: template renderWhitespace is disabled");
@@ -2099,55 +2099,6 @@ sap.ui.define([
 						});
 						resolve();
 					}.bind(this));
-				}.bind(this));
-			}.bind(this));
-		}.bind(this));
-	});
-
-	QUnit.test("No ColumnHeaderPopover for NonSortable property", function(assert) {
-		var done = assert.async();
-		var fColumnPressSpy = sinon.spy(this.oTable, "_onColumnPress");
-
-		// Add a column with dataProperty
-		this.oTable.addColumn(new Column({
-			header: "test",
-			dataProperty: "test",
-			template: new Text()
-		}));
-
-		// Add a column without dataProperty (hence not sortable)
-		this.oTable.addColumn(new Column({
-			header: "test2",
-			template: new Text()
-		}));
-
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
-			{
-				name: "test",
-				sortable: false
-			}
-		]);
-
-		this.oTable.initialized().then(function() {
-			sap.ui.require([
-				"sap/ui/mdc/table/TableSettings"
-			], function(TableSettings) {
-				var oInnerColumn = this.oTable._oTable.getColumns()[0];
-
-				this.oTable.setP13nMode([
-					"Sort"
-				]);
-
-
-				// Simulate click on sortable column
-				this.oTable._oTable.fireEvent("columnSelect", {
-					column: oInnerColumn
-				});
-
-				this.oTable.awaitPropertyHelper().then(function() {
-					assert.ok(!this.oTable._oPopover, "No ColumnHeaderPopover as for NonSortable Property");
-					fColumnPressSpy.restore();
-					done();
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
@@ -5341,9 +5292,7 @@ sap.ui.define([
 			assert.ok(oTable._oTable.getDependents()[0].getEnabled(), "Enabling column resize enables the ColumnResizer plugin");
 			assert.strictEqual(getInnerColumnLabel(oTable.getColumns()[0]).getWrapping(), false, "Wrapping disabled on column label control");
 
-			oTable._oTable.fireEvent("columnPress", {
-				column: oTable._oTable.getColumns()[0]
-			});
+			oTable._oColumnHeaderMenu.openBy(oTable._oTable.getColumns()[0]);
 			return oTable._fullyInitialized().then(function() {
 				return oTable.finalizePropertyHelper();
 			});
