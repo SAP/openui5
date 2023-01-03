@@ -13,10 +13,10 @@
 				"files": [
 					"webapp/view/Detail.view.xml",
 					"webapp/view/FlexibleColumnLayout.view.xml",
-					"webapp/view/Master.view.xml",
+					"webapp/view/List.view.xml",
 					"webapp/controller/Detail.controller.js",
 					"webapp/controller/FlexibleColumnLayout.controller.js",
-					"webapp/controller/Master.controller.js",
+					"webapp/controller/List.controller.js",
 					"webapp/Component.js",
 					"webapp/index.html",
 					"webapp/manifest.json",

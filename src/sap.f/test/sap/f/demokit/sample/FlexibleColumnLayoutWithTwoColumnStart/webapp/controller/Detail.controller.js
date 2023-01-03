@@ -12,7 +12,7 @@ sap.ui.define([
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oModel = this.getOwnerComponent().getModel();
 
-			this.oRouter.getRoute("master").attachPatternMatched(this._onProductMatched, this);
+			this.oRouter.getRoute("list").attachPatternMatched(this._onProductMatched, this);
 			this.oRouter.getRoute("detail").attachPatternMatched(this._onProductMatched, this);
 			this.oRouter.getRoute("detailDetail").attachPatternMatched(this._onProductMatched, this);
 
@@ -47,7 +47,7 @@ sap.ui.define([
 		},
 		handleClose: function () {
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/closeColumn");
-			this.oRouter.navTo("master", {layout: sNextLayout});
+			this.oRouter.navTo("list", {layout: sNextLayout});
 		},
 		_onProductMatched: function (oEvent) {
 			this._product = oEvent.getParameter("arguments").product || this._product || "0";

@@ -6,7 +6,7 @@
 				lastColumnLabel="Test Label for Last Column"/>
 		</landmarkInfo>
 		<beginColumnPages>
-			<mvc:XMLView id="beginView" async="true" viewName="sap.f.sample.FlexibleColumnLayoutLandmarkInfo.view.Master"/>
+			<mvc:XMLView id="beginView" async="true" viewName="sap.f.sample.FlexibleColumnLayoutLandmarkInfo.view.List"/>
 		</beginColumnPages>
 	</FlexibleColumnLayout>
 </mvc:View>

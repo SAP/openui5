@@ -8,7 +8,7 @@
 				lastColumnForwardArrowLabel="Custom Label For Last Column Forward Arrow"/>
 		</landmarkInfo>
 		<beginColumnPages>
-			<mvc:XMLView id="beginView" async="true" viewName="sap.f.sample.FlexibleColumnLayoutLandmarkInfoArrow.view.Master"/>
+			<mvc:XMLView id="beginView" async="true" viewName="sap.f.sample.FlexibleColumnLayoutLandmarkInfoArrow.view.List"/>
 		</beginColumnPages>
 	</FlexibleColumnLayout>
 </mvc:View>

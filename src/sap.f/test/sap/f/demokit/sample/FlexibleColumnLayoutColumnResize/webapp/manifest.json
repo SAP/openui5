@@ -35,23 +35,23 @@
 			"routes": [
 				{
 					"pattern": ":section:",
-					"name": "master",
+					"name": "list",
 					"target": [
-						"master"
+						"list"
 					]
 				},
 				{
 					"pattern": "detail/{layout}",
 					"name": "detail",
 					"target": [
-						"master",
+						"list",
 						"detail"
 					]
 				}
 			],
 			"targets": {
-				"master": {
-					"name": "Master",
+				"list": {
+					"name": "List",
 					"controlAggregation": "beginColumnPages"
 				},
 				"detail": {

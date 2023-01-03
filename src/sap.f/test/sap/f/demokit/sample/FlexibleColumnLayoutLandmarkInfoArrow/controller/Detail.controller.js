@@ -8,7 +8,7 @@ sap.ui.define([
 			this.bus = this.getOwnerComponent().getEventBus();
 		},
 		handleNavigateToFirstColumn: function () {
-			this.bus.publish("flexible", "setMasterPage");
+			this.bus.publish("flexible", "setListPage");
 		},
 		handleNavigateToLastColumn: function () {
 			this.bus.publish("flexible", "setDetailDetailPage");

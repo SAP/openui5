@@ -15,7 +15,7 @@ sap.ui.define([
 		},
 		handleClose: function () {
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/closeColumn");
-			this.oRouter.navTo("master", {layout: sNextLayout});
+			this.oRouter.navTo("list", {layout: sNextLayout});
 		}
 	});
 });
