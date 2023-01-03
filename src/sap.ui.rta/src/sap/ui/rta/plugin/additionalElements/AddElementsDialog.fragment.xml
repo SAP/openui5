@@ -20,6 +20,7 @@
 			<Toolbar>
 				<SearchField
 					width="100%"
+					showSearchButton="false"
 					liveChange="._updateModelFilter"/>
 				<Button
 					text=""
