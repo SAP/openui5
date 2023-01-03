@@ -431,7 +431,11 @@ sap.ui.define([
 						id: sId,
 						viewName: sViewName,
 						success: function() {
-							Opa5.assert.equal(FlexTestAPI.getNumberOfChanges("SessionStorage", sReference), iCount, "the number of changes is correct");
+							Opa5.assert.strictEqual(
+								FlexTestAPI.getNumberOfChangesSynchronous("SessionStorage", sReference),
+								iCount,
+								"the number of changes is correct"
+							);
 						},
 						errorMessage: "The app is still busy.."
 					});
