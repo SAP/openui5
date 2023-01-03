@@ -1029,13 +1029,14 @@ sap.ui.define([
 
 			case CalendarIntervalType.Day:
 			case CalendarIntervalType.Week:
-				var fnIntervalLabelFormatter = this._getView(sViewKey).getIntervalLabelFormatter();
+				var fnIntervalLabelFormatter = this._getRelativeInfo().intervalLabelFormatter;
 
 				if (this.isRelative()) {
 					var iBeginning = this.calcIntervalOffset(this.getStartDate());
 					var iEnding = this.calcIntervalOffset(this.getEndDate()) - this.calcIntervalOffset(this.getStartDate());
 					sBeginningResult = fnIntervalLabelFormatter ? fnIntervalLabelFormatter(iBeginning) : iBeginning;
-					sEndResult = fnIntervalLabelFormatter ? fnIntervalLabelFormatter(iBeginning + iEnding - 1) : iBeginning + iEnding;
+					var iEndingParameter = this._getRelativeInfo().iIntervalSize === 1 ? iBeginning + iEnding : iBeginning + iEnding - 1;
+					sEndResult = fnIntervalLabelFormatter ? fnIntervalLabelFormatter(iEndingParameter) : iBeginning + iEnding;
 				} else {
 					oDateFormat = DateFormat.getDateInstance({ format: "yMMMMd", calendarType: this.getPrimaryCalendarType() });
 					sBeginningResult = oDateFormat.format(oStartDate);
