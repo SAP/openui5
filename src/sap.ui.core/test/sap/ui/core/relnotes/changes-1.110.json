@@ -1,6 +1,6 @@
 {
   "1.110.0": {
-    "date": "December 2022",
+    "date": "January 2023",
     "notes": [
       {
         "id": "46b5c3ba18685a4a8c46e821de8ef4001d6e6299",
@@ -37,6 +37,17 @@
           {
             "type": "BCP",
             "reference": "2270190904"
+          }
+        ]
+      },
+      {
+        "id": "f05615dbc72f3cfd57978ee51aebd8ec10ed71a1",
+        "type": "FIX",
+        "text": " core.routing: create default 'id' for component target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111427"
           }
         ]
       },

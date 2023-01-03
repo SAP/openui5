@@ -1,7 +1,44 @@
 {
   "1.110.0": {
-    "date": "December 2022",
+    "date": "January 2023",
     "notes": [
+      {
+        "id": "a227e1978b314eeed681250d9ff8ce151c7ed1cb",
+        "type": "FIX",
+        "text": " sap.m.Input: Type-ahead with dynamic suggestions on mobile enabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270170232"
+          }
+        ]
+      },
+      {
+        "id": "2aca7f7323184233711eb41faad2d4e1ec772f5a",
+        "type": "FIX",
+        "text": " sap.m.Input: Dynamic suggestions on mobile corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270170231"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170315279"
+          }
+        ]
+      },
+      {
+        "id": "76ae27eb91c61a50d5a68cf6f2f53de426d0f15c",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Focus first focusable element in Page Mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280190179"
+          }
+        ]
+      },
       {
         "id": "7c6895e74d85db7f7e5c35ebb35c5c27cdefa42e",
         "type": "FEATURE",
@@ -15,6 +52,17 @@
           {
             "type": "BCP",
             "reference": "2270151515"
+          }
+        ]
+      },
+      {
+        "id": "8678e18bddd249a670e521ae1333f3082c22de03",
+        "type": "FIX",
+        "text": " sap.m.Table: Table content mixup when grouping and growing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270165132"
           }
         ]
       },
