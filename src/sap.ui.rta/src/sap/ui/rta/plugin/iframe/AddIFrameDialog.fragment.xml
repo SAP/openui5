@@ -84,8 +84,13 @@
 						<items>
 							<Label id="sapUiRtaAddIFrameDialog_ParametersLabel" text="{/text/parametersLabel}" labelFor="sapUiRtaAddIFrameDialog_ParameterTable"
 								   class="sapUiRtaAddIFrameDialogParametersLabel" design="Bold"/>
-							<SearchField id="sapUiRtaAddIFrameDialog_ParametersSearch" ariaLabelledBy="sapUiRtaAddIFrameDialog_ParameterSearchLabel"
-										 class="sapUiRtaAddIFrameDialogParametersSearch" search="onSearch" />
+							<SearchField
+								id="sapUiRtaAddIFrameDialog_ParametersSearch" 
+								ariaLabelledBy="sapUiRtaAddIFrameDialog_ParameterSearchLabel"
+								class="sapUiRtaAddIFrameDialogParametersSearch" 
+								liveChange="onLiveChange"
+								showSearchButton="false"
+							/>
 							<ScrollContainer height="12rem" vertical="true" >
 								<Table id="sapUiRtaAddIFrameDialog_ParameterTable" items="{/parameters/value}" ariaLabelledBy="sapUiRtaAddIFrameDialog_ParametersLabel"
 									   class="sapUiSizeCompact sapUiRtaAddIFrameDialogParameterTable" sticky="ColumnHeaders">

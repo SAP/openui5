@@ -127,11 +127,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * Event handler for search
+		 * Event handler for live change on the parameter search field
 		 * @param {sap.ui.base.Event} oEvent - Event
 		 */
-		onSearch: function(oEvent) {
-			var oFilter = new Filter("label", FilterOperator.Contains, oEvent.getParameter("query"));
+		onLiveChange: function(oEvent) {
+			var oFilter = new Filter("label", FilterOperator.Contains, oEvent.getParameter("newValue"));
 			var oBinding = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_ParameterTable").getBinding("items");
 			oBinding.filter([oFilter]);
 		},
