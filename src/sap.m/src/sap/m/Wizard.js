@@ -245,7 +245,7 @@ sap.ui.define([
 		Wizard.prototype.onBeforeRendering = function () {
 			var oStep = this._getStartingStep();
 
-			if (!this._isMinStepCountReached() || this._isMaxStepCountExceeded()) {
+			if (!this._isStepCountInRange()) {
 				Log.error("The Wizard is supposed to handle from 3 to 8 steps.");
 			}
 
@@ -587,7 +587,7 @@ sap.ui.define([
 		 * @public
 		 */
 		Wizard.prototype.addStep = function (oWizardStep) {
-			if (this._isMaxStepCountExceeded()) {
+			if (this._isMaxStepCountReached()) {
 				Log.error("The Wizard is supposed to handle up to 8 steps.");
 				return this;
 			}
@@ -909,7 +909,7 @@ sap.ui.define([
 		 * @returns {boolean} True if the max step count is reached
 		 * @private
 		 */
-		Wizard.prototype._isMaxStepCountExceeded = function () {
+		Wizard.prototype._isMaxStepCountReached = function () {
 			var iStepCount = this._getStepCount();
 
 			if (this.getEnableBranching()) {
@@ -920,14 +920,18 @@ sap.ui.define([
 		};
 
 		/**
-		 * Checks whether the minimum step count is reached.
-		 * @returns {boolean} True if the min step count is reached
+		 * Checks if steps count is in the valid range
+		 * @returns {boolean} True if the step count is in the valid range
 		 * @private
 		 */
-		Wizard.prototype._isMinStepCountReached = function () {
+		Wizard.prototype._isStepCountInRange = function () {
 			var iStepCount = this._getStepCount();
 
-			return iStepCount >= Wizard.CONSTANTS.MINIMUM_STEPS;
+			if (iStepCount < Wizard.CONSTANTS.MINIMUM_STEPS || (!this.getEnableBranching() && iStepCount > Wizard.CONSTANTS.MAXIMUM_STEPS)) {
+				return false;
+			}
+
+			return true;
 		};
 
 		/**
