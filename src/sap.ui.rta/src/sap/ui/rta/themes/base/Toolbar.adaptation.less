@@ -269,33 +269,31 @@
 	}
 }
 
+.sapUiRtaIconAndDraftToolbar {
+	// fit-content is required for the intersection observer
+	width: fit-content;
+	justify-content: flex-start;
+}
+
+.sapUiRtaActionsToolbar {
+	// fit-content is required for the intersection observer
+	width: fit-content;
+	justify-content: flex-end;
+}
+
 // the default hbox width which is set via the element properties must be overruled
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarIconAndDraftSection,
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarActionsSection,
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarIconAndDraftSection,
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarActionsSection {
+.sapUiRtaToolbarIconAndDraftSection,
+.sapUiRtaToolbarActionsSection {
+	// display grid is required so the toolbar is positioned on the end into the section hbox
+	display: grid;
 	width: ~"calc(50% - 12.5rem) !important"; //200px
 }
 
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaVersionButton,
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaVersionButton {
-	max-width: ~"calc(90% - 10rem)"; //160px
+.sapUiRtaVersionButton {
+	max-width: 12.5rem; //200px
+	min-width: 3rem; //48px
 }
 
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaVersionButton {
-	max-width: ~"calc(100% - 6.25rem)"; //100px
-}
-
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarDesktop .sapUiRtaToolbarSwitcherSection,
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarTablet .sapUiRtaToolbarSwitcherSection {
-	width: 25rem !important; //400px
-}
-
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarIconAndDraftSection,
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarActionsSection {
-	width: ~"calc(50% - 4.375rem) !important"; //70px
-}
-
-.sapUiMedia-sapUiRtaToolbar-sapUiRtaToolbarMobile .sapUiRtaToolbarSwitcherSection {
-	width: 8.75rem !important; //140px
+.sapUiRtaToolbarSwitcherSection {
+	width: auto;
 }

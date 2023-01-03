@@ -1,143 +1,37 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/m/Button",
 	"sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core",
 	"sap/ui/fl/write/api/Version",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
+	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Adaptation",
-	"sap/ui/Device",
+	"sap/ui/rta/toolbar/Base",
+	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Button,
 	RtaQunitUtils,
 	Core,
 	Version,
+	VersionsAPI,
 	Layer,
+	VerticalLayout,
 	JSONModel,
 	AppVariantFeature,
 	Adaptation,
-	Device,
+	BaseToolbar,
+	RuntimeAuthoring,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-
-	function createAndWaitForToolbar() {
-		this.oToolbar = new Adaptation({
-			textResources: Core.getLibraryResourceBundle("sap.ui.rta")
-		});
-		document.getElementById("qunit-fixture").style.width = "1600px";
-		this.oToolbar.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		this.oToolbar.setModel(this.oVersionsModel, "versions");
-		this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-		this.oToolbar.animation = false;
-
-		return this.oToolbar._pFragmentLoaded.then(function() {
-			return this.oToolbar.show();
-		}.bind(this));
-	}
-
-	QUnit.module("Different Screen Sizes", {
-		beforeEach: function() {
-			this.oVersionsModel = new JSONModel({
-				versioningEnabled: false,
-				versions: [],
-				draftAvailable: false
-			});
-			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
-			this.oGetCurrentRangeStub = sandbox.stub(Device.media, "getCurrentRange");
-		},
-		afterEach: function() {
-			this.oToolbar.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when the toolbar gets initially shown in desktop mode (>= 900px) and then rerendered in the other 2 modes", function(assert) {
-			var oInitRangeSetStub = sandbox.stub(Device.media, "initRangeSet");
-			// the 'calledOnceWithMatch' function is not yet available in the current sinon versions
-			// and the toolbar does not exist in time to only stub the call from the toolbar
-			var nCallCount = 0;
-			sandbox.stub(Device.media, "attachHandler").callsFake(function(fnHandler, oContext, sName) {
-				if (sName === "sapUiRtaToolbar") {
-					nCallCount++;
-				}
-			});
-			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.DESKTOP});
-
-			return createAndWaitForToolbar.call(this)
-			.then(function() {
-				assert.equal(oInitRangeSetStub.callCount, 1, "our range set was initialized");
-				assert.equal(oInitRangeSetStub.lastCall.args[0], "sapUiRtaToolbar", "the first parameter is correct");
-				assert.deepEqual(oInitRangeSetStub.lastCall.args[1], [900, 1200], "the second parameter is correct");
-				assert.equal(oInitRangeSetStub.lastCall.args[2], "px", "the third parameter is correct");
-				assert.deepEqual(oInitRangeSetStub.lastCall.args[3], [Adaptation.modes.MOBILE, Adaptation.modes.TABLET, Adaptation.modes.DESKTOP], "the fourth parameter is correct");
-				assert.equal(nCallCount, 1, "the handler was attached once");
-				assert.equal(this.oToolbar.sMode, Adaptation.modes.DESKTOP, "the mode was correctly set");
-				assert.strictEqual(this.oToolbar.getControl("exit").getIcon(), "sap-icon://decline", "the exit button has decline icon");
-				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
-
-				return RtaQunitUtils.showActionsMenu(this.oToolbar);
-			}.bind(this))
-			.then(function () {
-				assert.strictEqual(this.oToolbar.getControl("restore").getIcon(), "sap-icon://reset", "the reset button has reset icon");
-				this.oToolbar._onSizeChanged({name: Adaptation.modes.TABLET});
-				assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
-
-				this.oToolbar._onSizeChanged({name: Adaptation.modes.MOBILE});
-				assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
-			}.bind(this));
-		});
-
-		QUnit.test("when the toolbar gets initially shown in tablet mode (between 900px and 1200px)", function(assert) {
-			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.TABLET});
-
-			return createAndWaitForToolbar.call(this).then(function() {
-				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
-				assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
-				assert.strictEqual(this.oToolbar.getControl("exit").getIcon(), "sap-icon://decline", "the exit button has decline icon");
-			}.bind(this));
-		});
-
-		QUnit.test("when the draft is set to visible and toolbar gets initially shown in tablet mode (between 900px and 1200px)", function(assert) {
-			this.oVersionsModel.setProperty("/versioningEnabled", true);
-			this.oVersionsModel.setProperty("/draftAvailable", true);
-			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.TABLET});
-
-			return createAndWaitForToolbar.call(this).then(function() {
-				assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is shown");
-				assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
-			}.bind(this));
-		});
-
-		QUnit.test("when the toolbar gets initially shown in mobile mode (< 900px)", function(assert) {
-			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.MOBILE});
-
-			return createAndWaitForToolbar.call(this).then(function() {
-				assert.notOk(this.oToolbar.getControl("versionButton").getVisible(), "the version button is hidden");
-				assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
-				assert.ok(this.oToolbar.getControl("exit").getIcon(), "the exit button has an icon");
-				assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
-			}.bind(this));
-		});
-
-		QUnit.test("when the draft is set to visible and the toolbar gets initially shown in mobile mode (< 900px)", function(assert) {
-			this.oVersionsModel.setProperty("/versioningEnabled", true);
-			this.oVersionsModel.setProperty("/draftAvailable", true);
-			this.oGetCurrentRangeStub.returns({name: Adaptation.modes.MOBILE});
-
-			return createAndWaitForToolbar.call(this).then(function() {
-				assert.ok(this.oToolbar.getControl("versionButton").getVisible(), "the version button is visible");
-				assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
-				assert.ok(this.oToolbar.getControl("exit").getIcon(), "the exit button has an icon");
-				assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
-			}.bind(this));
-		});
-	});
 
 	QUnit.module("Versions Model binding & formatter for the restore button", {
 		before: function () {
@@ -390,6 +284,170 @@ sap.ui.define([
 			return this.oToolbar.show()
 			.then(function() {
 				assert.notOk(this.oToolbar.getControl("visualizationSwitcherButton").getVisible(), "visualizationSwitcherButton is not visible");
+			}.bind(this));
+		});
+	});
+
+	function createAndStartRTA() {
+		this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
+		var oButton = new Button("testButton");
+		this.oContainer = new VerticalLayout({
+			id: this.oComponent.createId("myVerticalLayout"),
+			content: [oButton],
+			width: "100%"
+		});
+		this.oContainer.placeAt("qunit-fixture");
+		this.oRta = new RuntimeAuthoring({
+			rootControl: this.oContainer,
+			flexSettings: {
+				developerMode: false
+			}
+		});
+		return this.oRta.start()
+		.then(function() {
+			this.oToolbar = this.oRta.getToolbar();
+		}.bind(this));
+	}
+
+	QUnit.module("Different screen sizes and common buttons", {
+		beforeEach: function() {
+			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
+			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
+				this.placeAt("qunit-fixture");
+			});
+			var oVersionsModel = new JSONModel({
+				versioningEnabled: true
+			});
+			oVersionsModel.setDirtyChanges = function() {};
+			sandbox.stub(VersionsAPI, "initialize").resolves(oVersionsModel);
+		},
+		afterEach: function() {
+			this.oContainer.destroy();
+			this.oComponent.destroy();
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when the toolbar gets initially shown in a wide window (1200px)", function(assert) {
+			document.getElementById("qunit-fixture").style.width = "1200px";
+			return createAndStartRTA.call(this)
+			.then(function() {
+				var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
+				var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
+				var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
+				assert.strictEqual(
+					oAdaptationSwitcherButton.getText(),
+					this.oTextResources.getText("BTN_ADAPTATION"),
+					"the adaptation button shows the right text"
+				);
+				assert.strictEqual(
+					oNavigationSwitcherButton.getText(),
+					this.oTextResources.getText("BTN_NAVIGATION"),
+					"the navigation button shows the right text"
+				);
+				assert.strictEqual(
+					oVisualizationSwitcherButton.getText(),
+					this.oTextResources.getText("BTN_VISUALIZATION"),
+					"the visualization button shows the right text"
+				);
+				assert.strictEqual(this.oToolbar.getControl("save").getIcon(), "sap-icon://save", "the save button has save icon");
+				assert.notOk(this.oToolbar.getControl("save").getText(), "the save button has no text");
+				assert.strictEqual(this.oToolbar.getControl("exit").getIcon(), "sap-icon://decline", "the exit button has decline icon");
+				assert.notOk(this.oToolbar.getControl("exit").getText(), "the exit button has no text");
+				return RtaQunitUtils.showActionsMenu(this.oToolbar);
+			}.bind(this))
+			.then(function () {
+				assert.strictEqual(this.oToolbar.getControl("restore").getIcon(), "sap-icon://reset", "the reset button has reset icon");
+			}.bind(this));
+		});
+
+		QUnit.test("when the toolbar gets initially shown in a narrow window (600px)", function(assert) {
+			var fnDone = assert.async();
+			document.getElementById("qunit-fixture").style.width = "600px";
+			var oSwitchIconsStub = sandbox.stub(Adaptation.prototype, "_switchToIcons")
+			.callsFake(function() {
+				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
+				var oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
+				var oNavigationSwitcherButton = this.oToolbar.getControl("navigationSwitcherButton");
+				var oVisualizationSwitcherButton = this.oToolbar.getControl("visualizationSwitcherButton");
+				assert.strictEqual(
+					oAdaptationSwitcherButton.getText(),
+					"",
+					"the adaptation button has no text"
+				);
+				assert.strictEqual(
+					oNavigationSwitcherButton.getText(),
+					"",
+					"the navigation button has no text"
+				);
+				assert.strictEqual(
+					oVisualizationSwitcherButton.getText(),
+					"",
+					"the visualization button has no text"
+				);
+				assert.strictEqual(
+					oAdaptationSwitcherButton.getIcon(),
+					"sap-icon://wrench",
+					"the adaptation button has the right icon"
+				);
+				assert.strictEqual(
+					oNavigationSwitcherButton.getIcon(),
+					"sap-icon://explorer",
+					"the navigation button has the right icon"
+				);
+				assert.strictEqual(
+					oVisualizationSwitcherButton.getIcon(),
+					"sap-icon://show",
+					"the visualization button has the right icon"
+				);
+				fnDone();
+			}.bind(this));
+			return createAndStartRTA.call(this);
+		});
+
+		QUnit.test("when the toolbar gets initially shown in a wide window (1200px), then reduced to 600px and then expanded to 1600px", function(assert) {
+			var fnDone = assert.async();
+			document.getElementById("qunit-fixture").style.width = "1200px";
+
+			var fnCheckIcon = function() {
+				assert.strictEqual(
+					this.oAdaptationSwitcherButton.getText(),
+					"",
+					"the adaptation button has no text"
+				);
+				assert.strictEqual(
+					this.oAdaptationSwitcherButton.getIcon(),
+					"sap-icon://wrench",
+					"the adaptation button has an icon"
+				);
+			};
+
+			var fnCheckText = function() {
+				assert.strictEqual(
+					this.oAdaptationSwitcherButton.getText(),
+					this.oTextResources.getText("BTN_ADAPTATION"),
+					"the adaptation button shows text"
+				);
+			};
+
+			var oSwitchIconsStub = sandbox.stub(Adaptation.prototype, "_switchToIcons")
+			.callsFake(function() {
+				oSwitchIconsStub.wrappedMethod.apply(this.oToolbar, arguments);
+				fnCheckIcon.call(this);
+				var oSwitchTextsStub = sandbox.stub(Adaptation.prototype, "_switchToTexts").callsFake(function() {
+					oSwitchTextsStub.wrappedMethod.apply(this.oToolbar, arguments);
+					fnCheckText.call(this);
+					fnDone();
+				}.bind(this));
+				document.getElementById("qunit-fixture").style.width = "1200px";
+				window.dispatchEvent(new Event('resize'));
+			}.bind(this));
+
+			return createAndStartRTA.call(this)
+			.then(function() {
+				this.oAdaptationSwitcherButton = this.oToolbar.getControl("adaptationSwitcherButton");
+				fnCheckText.call(this);
+				document.getElementById("qunit-fixture").style.width = "600px";
 			}.bind(this));
 		});
 	});

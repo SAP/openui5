@@ -74,7 +74,8 @@ function(
 					this._checkLogoSize(oLogo, iWidth, iHeight);
 				}
 
-				this.getControl("iconSpacer").setWidth("10%");
+				this.getControl("iconSpacer").setWidth("8px");
+				this._iLogoWidth = iWidth + 8;
 
 				// first control is the left HBox
 				this.getControl("iconBox").addItem(
@@ -89,6 +90,9 @@ function(
 		}.bind(this));
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	Fiori.prototype.hide = function () {
 		return Adaptation.prototype.hide.apply(this, arguments)
 		.then(function () {
@@ -107,6 +111,47 @@ function(
 				"but actual is " + iNaturalWidth + "x" + iNaturalHeight
 			].join(" "));
 		}
+	};
+
+	Fiori.prototype._restoreHiddenElements = function() {
+		if (this._iLogoVisibilityLimit && window.innerWidth > this._iLogoVisibilityLimit) {
+			this._setLogoVisibility(true);
+			delete this._iLogoVisibilityLimit;
+		}
+		Adaptation.prototype._restoreHiddenElements.apply(this);
+	};
+
+	Fiori.prototype._hideElementsOnIntersection = function(sSectionName, aEntries) {
+		var bWiderThanLogo;
+
+		if (aEntries[0].intersectionRatio === 0) {
+			this.adjustToolbarSectionWidths();
+			this._observeIntersections();
+			return;
+		}
+		if (aEntries[0].intersectionRatio < 1) {
+			if (
+				!this._iLogoVisibilityLimit
+				&& sSectionName === Adaptation.LEFT_SECTION
+			) {
+				var iHiddenWidth = aEntries[0].boundingClientRect.width - aEntries[0].intersectionRect.width;
+				bWiderThanLogo = iHiddenWidth > this._iLogoWidth;
+				this._iLogoVisibilityLimit = this._calculateWindowWidth(aEntries);
+				this._setLogoVisibility(false);
+				if (bWiderThanLogo) {
+					Adaptation.prototype._hideElementsOnIntersection.apply(this, arguments);
+				}
+				return;
+			}
+		}
+		Adaptation.prototype._hideElementsOnIntersection.apply(this, arguments);
+	};
+
+	Fiori.prototype._setLogoVisibility = function(bVisible) {
+		var oIconBox = this.getControl("iconBox");
+		var oIconSpacer = this.getControl("iconSpacer");
+		oIconBox.setVisible(bVisible);
+		oIconSpacer.setVisible(bVisible);
 	};
 
 	Fiori.prototype.destroy = function () {

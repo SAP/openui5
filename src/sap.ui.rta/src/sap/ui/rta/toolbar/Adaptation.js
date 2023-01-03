@@ -3,10 +3,8 @@
  */
 
 sap.ui.define([
-	"require",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Popup",
-	"sap/ui/core/IconPool",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
@@ -15,13 +13,10 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/Utils",
-	"sap/ui/Device",
 	"./AdaptationRenderer"
 ], function(
-	require,
 	Fragment,
 	Popup,
-	IconPool,
 	Version,
 	SaveAsAdaptation,
 	ManageAdaptations,
@@ -30,7 +25,6 @@ sap.ui.define([
 	AppVariantFeature,
 	Base,
 	Utils,
-	Device,
 	AdaptationRenderer
 ) {
 	"use strict";
@@ -75,43 +69,28 @@ sap.ui.define([
 		}
 	});
 
-	Adaptation.modes = {
-		MOBILE: "sapUiRtaToolbarMobile",
-		TABLET: "sapUiRtaToolbarTablet",
-		DESKTOP: "sapUiRtaToolbarDesktop"
-	};
+	Adaptation.LEFT_SECTION = "toolbarIconAndDraftSection";
+	Adaptation.MIDDLE_SECTION = "toolbarSwitcherSection";
+	Adaptation.RIGHT_SECTION = "toolbarActionsSection";
 
-	var DEVICE_SET = "sapUiRtaToolbar";
+	// Size of three icons + spacing in pixels
+	var SWITCHER_ICON_WIDTH = 124;
 
 	Adaptation.prototype.init = function() {
-		this._pFragmentLoaded = Base.prototype.init.apply(this, arguments).then(function() {
-			if (!Device.media.hasRangeSet(DEVICE_SET)) {
-				Device.media.initRangeSet(DEVICE_SET, [900, 1200], "px", [Adaptation.modes.MOBILE, Adaptation.modes.TABLET, Adaptation.modes.DESKTOP]);
-			}
-			Device.media.attachHandler(this._onSizeChanged, this, DEVICE_SET);
+		this._mSizeLimits = {
+			switchToIcons: undefined
+		};
+		this._pFragmentLoaded = Base.prototype.init.apply(this, arguments)
+		.then(function() {
+			this._onResize = this._onResize.bind(this);
+			window.addEventListener("resize", this._onResize);
+			this._aIntersectionObservers = [];
 		}.bind(this));
-
-		IconPool.registerFont({
-			collectionName: "BusinessSuiteInAppSymbols",
-			fontFamily: "BusinessSuiteInAppSymbols",
-			fontURI: require.toUrl("sap/ushell/themes/base/fonts/"),
-			lazy: true
-		});
 	};
 
-	Adaptation.prototype._hideElementsOnIntersection = function(aEntries) {
-		if (aEntries[0].intersectionRatio === 0) {
-			this._observeActionToolbarIntersection();
-			return;
-		}
-		// Actions toolbar is no longer fully visible
-		if (aEntries[0].intersectionRatio < 1) {
-			if (!this._mSizeLimits.switchToIcons) {
-				var iHiddenWidth = aEntries[0].boundingClientRect.width - aEntries[0].intersectionRect.width;
-				this._mSizeLimits.switchToIcons = window.innerWidth + iHiddenWidth;
-				this._switchToIcons();
-			}
-		}
+	Adaptation.prototype._calculateWindowWidth = function(aEntries) {
+		var iSectionWidth = aEntries[0].intersectionRect.width;
+		return (iSectionWidth * 2) + this._iSwitcherToolbarWidth + 80/*toolbar padding*/;
 	};
 
 	Adaptation.prototype.onFragmentLoaded = function() {
@@ -119,13 +98,102 @@ sap.ui.define([
 	};
 
 	Adaptation.prototype.exit = function() {
-		Device.media.detachHandler(this._onSizeChanged, this, DEVICE_SET);
+		window.removeEventListener("resize", this._onResize);
+		this._aIntersectionObservers.forEach(function(oInstersectionObserver) {
+			oInstersectionObserver.disconnect();
+		});
 		Base.prototype.exit.apply(this, arguments);
 	};
 
+	Adaptation.prototype._restoreHiddenElements = function() {
+		delete this._iOnResizeAnimationFrame;
+		// Restore texts when window gets wide enough again
+		if (window.innerWidth > this._mSizeLimits.switchToIcons) {
+			this._switchToTexts();
+			delete this._mSizeLimits.switchToIcons;
+		}
+	};
+
+	Adaptation.prototype._onResize = function () {
+		if (this._iOnResizeAnimationFrame) {
+			window.cancelAnimationFrame(this._iOnResizeAnimationFrame);
+		}
+		this._iOnResizeAnimationFrame = window.requestAnimationFrame(this._restoreHiddenElements.bind(this));
+	};
+
+	Adaptation.prototype.initialAdjustToolbarSectionWidths = function() {
+		var nModeSwitcherWidth = this.getControl("modeSwitcher").getDomRef().getBoundingClientRect().width;
+		// Size of switcher with texts depends on language; needs to be calculated on start
+		this._iSwitcherToolbarWidthWithTexts = nModeSwitcherWidth + 16;
+		this._iSwitcherToolbarWidth = this._iSwitcherToolbarWidthWithTexts;
+		this.adjustToolbarSectionWidths();
+	};
+
+	Adaptation.prototype.adjustToolbarSectionWidths = function() {
+		// The middle section (switcher) is used as base for the other calculations
+		this.getControl(Adaptation.MIDDLE_SECTION).setWidth((this._iSwitcherToolbarWidth) + "px");
+		[Adaptation.LEFT_SECTION, Adaptation.RIGHT_SECTION].forEach(function(sSectionName) {
+			this.getControl(sSectionName).getDomRef().style.setProperty(
+				"width",
+				"calc(50% - " + Math.ceil(this._iSwitcherToolbarWidth / 2) + "px)",
+				"important"
+			);
+		}.bind(this));
+	};
+
+	// The intersection observers check if the sections are being overlapped (visibility < 100%)
+	// to adjust the toolbar appearance, like changing the mode switcher buttons to icons-only
+	Adaptation.prototype._observeIntersections = function() {
+		this._aIntersectionObservers.forEach(function(oInstersectionObserver) {
+			oInstersectionObserver.disconnect();
+		});
+		[Adaptation.LEFT_SECTION, Adaptation.RIGHT_SECTION].forEach(function(sSectionName) {
+			var oIntersectionObserver = this._createIntersectionObserver(sSectionName);
+			this._observeToolbarIntersection(sSectionName, oIntersectionObserver);
+			this._aIntersectionObservers.push(oIntersectionObserver);
+		}.bind(this));
+	};
+
+	// Parameter sSectionName is used by the Fiori toolbar method
+	Adaptation.prototype._hideElementsOnIntersection = function(sSectionName, aEntries) {
+		if (aEntries[0].intersectionRatio === 0) {
+			this.adjustToolbarSectionWidths();
+			this._observeIntersections();
+			return;
+		}
+
+		// Section is no longer fully visible
+		if (aEntries[0].intersectionRatio < 1) {
+			if (!this._mSizeLimits.switchToIcons) {
+				this._mSizeLimits.switchToIcons = this._calculateWindowWidth(aEntries);
+				this._switchToIcons();
+			}
+		}
+	};
+
+	Adaptation.prototype._createIntersectionObserver = function(sSectionName) {
+		return new IntersectionObserver(
+			this._hideElementsOnIntersection.bind(this, sSectionName),
+			{
+				threshold: 1,
+				root: this.getControl(sSectionName).getDomRef()
+			}
+		);
+	};
+
+	Adaptation.prototype._observeToolbarIntersection = function(sSectionName, oInstersectionObserver) {
+		var oHBox = this.getControl(sSectionName);
+		oHBox.getItems().map(function(oItem) {
+			var oItemDomRef = oItem.getDomRef();
+			oInstersectionObserver.observe(oItemDomRef);
+		});
+	};
+
 	Adaptation.prototype.show = function() {
-		this._onSizeChanged(Device.media.getCurrentRange(DEVICE_SET), true);
-		return Base.prototype.show.apply(this, arguments);
+		return Base.prototype.show.call(this, this.initialAdjustToolbarSectionWidths.bind(this))
+			.then(function() {
+				this._observeIntersections();
+			}.bind(this));
 	};
 
 	function setButtonProperties(sButtonName, sIcon, sTextKey, sToolTipKey) {
@@ -193,47 +261,21 @@ sap.ui.define([
 	};
 
 	Adaptation.prototype._switchToIcons = function() {
-		var oIconBox = this.getControl("iconBox");
-		var oIconSpacer = this.getControl("iconSpacer");
-
-		oIconBox.setVisible(false);
-		oIconSpacer.setVisible(false);
 		this._showButtonIcon("adaptationSwitcherButton", "sap-icon://wrench", "BTN_ADAPTATION");
 		this._showButtonIcon("navigationSwitcherButton", "sap-icon://explorer", "BTN_NAVIGATION");
 		this._showButtonIcon("visualizationSwitcherButton", "sap-icon://show", "BTN_VISUALIZATION");
+
+		this._iSwitcherToolbarWidth = SWITCHER_ICON_WIDTH;
+		this.adjustToolbarSectionWidths();
 	};
 
 	Adaptation.prototype._switchToTexts = function () {
-		var oIconBox = this.getControl("iconBox");
-		var oIconSpacer = this.getControl("iconSpacer");
-
-		oIconBox.setVisible(true);
-		oIconSpacer.setVisible(true);
 		this._showButtonText("adaptationSwitcherButton", "BTN_ADAPTATION");
 		this._showButtonText("navigationSwitcherButton", "BTN_NAVIGATION");
 		this._showButtonText("visualizationSwitcherButton", "BTN_VISUALIZATION");
-	};
 
-	Adaptation.prototype._onSizeChanged = function(mParams, bInitial) {
-		if (mParams) {
-			var sMode = mParams.name;
-			this.sMode = sMode;
-
-			switch (sMode) {
-				case Adaptation.modes.MOBILE:
-					this._switchToIcons();
-					break;
-				case Adaptation.modes.TABLET:
-				case Adaptation.modes.DESKTOP:
-					// this is already defined in the view
-					if (!bInitial) {
-						this._switchToTexts();
-					}
-					break;
-				default:
-				// no default
-			}
-		}
+		this._iSwitcherToolbarWidth = this._iSwitcherToolbarWidthWithTexts;
+		this.adjustToolbarSectionWidths();
 	};
 
 	/**
@@ -313,6 +355,16 @@ sap.ui.define([
 			oControl = sap.ui.getCore().byId(this._oActionsMenuFragment.getId().replace("sapUiRta_actions", "sapUiRta_") + sName);
 		}
 		return oControl;
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	Adaptation.prototype.hide = function() {
+		this._aIntersectionObservers.forEach(function(oInstersectionObserver) {
+			oInstersectionObserver.disconnect();
+		});
+		return Base.prototype.hide.apply(this, arguments);
 	};
 
 	return Adaptation;
