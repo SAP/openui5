@@ -2,16 +2,17 @@
 <html>
 	<head>
 		<meta charset="UTF-8" >
-		<title>Custom Bootstrap Code</title>
+		<title>Minimal Bootstrap Code (legacy APIs)</title>
 		<script src="../../shared-config.js"></script>
 
-		<!-- custom bootstrap code starts here -->
-		<script src="../../../../../../resources/../test-resources/sap/ui/core/qunit/bootstrap/fancyboot.js"
+		<!-- minimal bootstrap code starts here -->
+		<script src="../../../../../../resources/ui5loader.js"></script>
+		<script src="../../../../../../resources/ui5loader-autoconfig.js"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m,sap.ui.layout"
 			data-sap-ui-compatversion="edge">
 		</script>
-		<!-- end of custom bootstrap code -->
+		<!-- end of minimal bootstrap code -->
 
 		<link  href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen" />
 		<script src="../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
@@ -19,7 +20,7 @@
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"
 			data-cover-flags="branchTracking">
 		</script>
-		<script src="BootstrapWithCustomScript.qunit.js"></script>
+		<script src="BootstrapMinimal_legacyAPIs.qunit.js"></script>
 	</head>
 	<body>
 		<div id="qunit"></div>

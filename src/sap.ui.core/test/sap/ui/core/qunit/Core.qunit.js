@@ -5,13 +5,15 @@ sap.ui.define([
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/ObjectPath',
 	'sap/ui/Device',
+	'sap/ui/base/Interface',
 	'sap/ui/core/Core',
 	'sap/ui/core/UIArea',
 	'sap/ui/core/Element',
 	'sap/ui/core/Configuration',
+	'sap/ui/core/RenderManager',
 	'sap/ui/core/theming/ThemeManager',
 	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, oCore, UIArea, Element, Configuration, ThemeManager, createAndAppendDiv) {
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, oCore, UIArea, Element, Configuration, RenderManager, ThemeManager, createAndAppendDiv) {
 	"use strict";
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
@@ -63,7 +65,35 @@ sap.ui.define([
 	QUnit.test("facade", function(assert) {
 		assert.notStrictEqual(sap.ui.getCore(), oRealCore, "Facade should be different from the implementation");
 		assert.notOk(sap.ui.getCore() instanceof oRealCore.constructor, "Facade should not be an instance of sap.ui.core.Core");
+		assert.ok(sap.ui.getCore() instanceof Interface, "Facade should be an instance of sap.ui.base.Interface");
 		assert.strictEqual(sap.ui.getCore(), sap.ui.getCore(), "consecutive calls to sap.ui.getCore() should return the exact same facade");
+
+		var aMethodNames = oRealCore.getMetadata().getAllPublicMethods(),
+			oCoreInterface = sap.ui.getCore(),
+			i;
+
+		for ( i = 0; i < aMethodNames.length; i++ ) {
+			assert.ok(oCoreInterface[aMethodNames[i]] !== undefined, "expected interface method should actually exist: " + aMethodNames[i]);
+		}
+
+		for ( i in oCoreInterface ) {
+			assert.ok(aMethodNames.indexOf(i) >= 0, "actual method should be part of expected interface: " + i);
+		}
+	});
+
+	QUnit.test("CreateRenderManager", function(assert) {
+		var oRenderManager = new RenderManager();
+
+		assert.notStrictEqual(oCore.createRenderManager, undefined, "function createRenderManager on sap.ui.core.Core instance must be defined");
+
+		var oCoreRenderManager = oCore.createRenderManager();
+		assert.deepEqual(Object.keys(oCoreRenderManager), Object.keys(oRenderManager.getInterface()), "calling createRenderManager on Core instance must deliver the RenderManager interface");
+		oCoreRenderManager.destroy();
+	});
+
+	QUnit.test("GetConfiguration", function(assert) {
+		assert.notStrictEqual(oCore.getConfiguration, undefined, "function getConfiguration on sap.ui.core.Core instance must be defined");
+		assert.ok(oCore.getConfiguration() === Configuration, "calling getConfiguration on Core instance must deliver the Configuration singleton");
 	});
 
 	QUnit.test("repeated instantiation", function(assert) {

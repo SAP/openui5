@@ -94,9 +94,12 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
-			"Bootstrap": {
-				group: "Bootstrap",
-				title: "Test Page for the SAPUI5 Bootstrap functionality"
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			"Bootstrap_legacyAPIs": {
+				group: "Bootstrap (legacy APIs)",
+				title: "Test Page for the SAPUI5 Bootstrap functionality (legacy APIs)"
 			},
 			"BootstrapCustomBootTaskPreloadCss": {
 				group: "Bootstrap",
@@ -135,9 +138,23 @@ sap.ui.define(function() {
 					libs: "sap.m,sap.ui.layout"
 				}
 			},
-			"BootstrapPreload": {
-				group: "Bootstrap",
-				title: "Test Page for Bootstrap with preload=sync",
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			"BootstrapMinimal_legacyAPIs": {
+				group: "Bootstrap (legacy APIs)",
+				page: "test-resources/sap/ui/core/qunit/bootstrap/BootstrapMinimal_legacyAPIs.qunit.html",
+				title: "Minimal Bootstrap Code (legacy APIs)",
+				ui5: {
+					libs: "sap.m,sap.ui.layout"
+				}
+			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			"BootstrapPreloadSync_legacyAPIs": {
+				group: "Bootstrap (legacy APIs)",
+				title: "Test Page for Bootstrap with preload=sync (legacy APIs)",
 				ui5: {
 					libs: ["sap.ui.layout", "sap.m", "sap.ui.table"],
 					preload: "sync"
@@ -145,7 +162,7 @@ sap.ui.define(function() {
 				qunit: {
 					reorder: false
 				},
-				module: "./BootstrapPreload.qunit"
+				module: "./BootstrapPreload_legacyAPIs.qunit"
 			},
 			"BootstrapPreloadAsync": {
 				group: "Bootstrap",
@@ -157,6 +174,20 @@ sap.ui.define(function() {
 					reorder: false
 				},
 				module: "./BootstrapPreload.qunit"
+			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			"BootstrapPreloadAsync_legacyAPIs": {
+				group: "Bootstrap (legacy APIs)",
+				title: "Test Page for Bootstrap with preload=async (legacy APIs)",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.m", "sap.ui.table"]
+				},
+				qunit: {
+					reorder: false
+				},
+				module: "./BootstrapPreload_legacyAPIs.qunit"
 			},
 			"BootstrapPreloadAuto": {
 				group: "Bootstrap",
@@ -170,6 +201,21 @@ sap.ui.define(function() {
 				beforeBootstrap: "./BootstrapPreloadAuto.beforeBootstrap.qunit",
 				module: "./BootstrapPreload.qunit"
 			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			"BootstrapPreloadAuto_legacyAPIs": {
+				group: "Bootstrap (legacy APIs)",
+				title: "Test Page for Bootstrap with preload=auto (legacy APIs)",
+				ui5: {
+					libs: ["sap.ui.layout", "sap.m", "sap.ui.table"]
+				},
+				qunit: {
+					reorder: false
+				},
+				beforeBootstrap: "./BootstrapPreloadAuto.beforeBootstrap.qunit",
+				module: "./BootstrapPreload_legacyAPIs.qunit"
+			},
 			"BootstrapWithCustomBootTask": {
 				group: "Bootstrap",
 				title: "Test Page for Bootstrap with a Custom Boot Task",
@@ -179,10 +225,13 @@ sap.ui.define(function() {
 				},
 				beforeBootstrap: "./BootstrapWithCustomBootTask.beforeBootstrap.qunit"
 			},
-			"BootstrapWithCustomScript": {
-				group: "Bootstrap",
-				page: "test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithCustomScript.qunit.html",
-				title: "Custom Bootstrap Code",
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			"BootstrapWithCustomScript_legacyAPIs": {
+				group: "Bootstrap (legacy APIs)",
+				page: "test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithCustomScript_legacyAPIs.qunit.html",
+				title: "Custom Bootstrap Code (legacy APIs)",
 				ui5: {
 					libs: "sap.m,sap.ui.layout"
 				}
@@ -195,10 +244,32 @@ sap.ui.define(function() {
 					libs: "sap.m,sap.ui.layout"
 				}
 			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			"BootstrapWithNoJQuery-without-jquery-ui-position_legacyAPIs": {
+				group: "Bootstrap (legacy APIs)",
+				page: "test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithNoJQuery-without-jquery-ui-position_legacyAPIs.qunit.html",
+				title: "Custom Bootstrap Code (legacy APIs)",
+				ui5: {
+					libs: "sap.m,sap.ui.layout"
+				}
+			},
 			"BootstrapWithNoJQuery": {
 				group: "Bootstrap",
 				page: "test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithNoJQuery.qunit.html",
 				title: "Custom Bootstrap Code",
+				ui5: {
+					libs: "sap.m,sap.ui.layout"
+				}
+			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			"BootstrapWithNoJQuery_legacyAPIs": {
+				group: "Bootstrap (legacy APIs)",
+				page: "test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithNoJQuery_legacyAPIs.qunit.html",
+				title: "Custom Bootstrap Code (legacy APIs)",
 				ui5: {
 					libs: "sap.m,sap.ui.layout"
 				}
@@ -211,10 +282,32 @@ sap.ui.define(function() {
 					libs: "sap.m"
 				}
 			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			"BootstrapWithinBody_legacyAPIs": {
+				group: "Bootstrap (legacy APIs)",
+				page: "test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithinBody_legacyAPIs.qunit.html",
+				title: "Test Page for Bootstrap within Body (legacy APIs)",
+				ui5: {
+					libs: "sap.m"
+				}
+			},
 			"BootstrapWithinHead": {
 				group: "Bootstrap",
 				page: "test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithinHead.qunit.html",
 				title: "Test Page for Bootstrap within Head",
+				ui5: {
+					libs: "sap.m"
+				}
+			},
+			/**
+			 * @deprecated As of version 1.110
+			 */
+			"BootstrapWithinHead_legacyAPIs": {
+				group: "Bootstrap (legacy APIs)",
+				page: "test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithinHead_legacyAPIs.qunit.html",
+				title: "Test Page for Bootstrap within Head (legacy APIs)",
 				ui5: {
 					libs: "sap.m"
 				}

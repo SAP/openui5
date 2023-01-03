@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Control",
+	"sap/ui/core/Core",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/Element",
 	"sap/ui/core/HTML",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/base/Log",
 	"sap/ui/core/Configuration"
-], function(Device, Control, RenderManager, Element, HTML, IconPool, XMLView, jQuery, encodeXML, createAndAppendDiv, Log, Configuration) {
+], function(Device, Control, Core, RenderManager, Element, HTML, IconPool, XMLView, jQuery, encodeXML, createAndAppendDiv, Log, Configuration) {
 	"use strict";
 
 	// prepare DOM
@@ -218,13 +219,11 @@ sap.ui.define([
 	 * @deprecated Since version 0.15.0.
 	 */
 	QUnit.test("Core.getRenderManager", function(assert) {
-		var c = sap.ui.getCore();
-		assert.notStrictEqual(c.getRenderManager(), c.getRenderManager(), "Core.getRenderManager should always returns a new RenderManager instance");
+		assert.notStrictEqual(Core.getRenderManager(), Core.getRenderManager(), "Core.getRenderManager should always returns a new RenderManager instance");
 	});
 
 	QUnit.test("Core.createRenderManager", function(assert) {
-		var c = sap.ui.getCore();
-		assert.notStrictEqual(c.createRenderManager(), c.createRenderManager(), "Core.createRenderManager should always return a new RenderManager instance");
+		assert.notStrictEqual(Core.createRenderManager(), Core.createRenderManager(), "Core.createRenderManager should always return a new RenderManager instance");
 	});
 
 	QUnit.module("Interfaces");
@@ -243,15 +242,19 @@ sap.ui.define([
 	var aNonRendererFunctions = ["render", "flush", "destroy"];
 
 	QUnit.test("Full Interface", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager();
+		var rm = new RenderManager().getInterface();
 		var aAllFunctions = aInterfaceMethods.concat(aNonRendererFunctions);
+
+		for (var i = 0; i < aInterfaceMethods.length; i++) {
+			assert.ok(rm[aAllFunctions[i]] !== undefined, "expected interface method should actually exist: " + aInterfaceMethods[i]);
+		}
 		for (var s in rm) {
 			assert.ok(aAllFunctions.indexOf(s) >= 0, "Full Interface provides function '" + s + "'.");
 		}
 	});
 
 	QUnit.test("Renderer Interface", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager();
+		var rm = new RenderManager().getInterface();
 		var oControl0 = new TestControl("TestContr0");
 		fnCheckRendererInterface = function(rmIf) {
 			for (var s in rmIf) {
@@ -688,7 +691,7 @@ sap.ui.define([
 
 	QUnit.module("Writer API: Semantic Syntax (DOM) Assertions", {
 		beforeEach: function() {
-			this.oRM = sap.ui.getCore().createRenderManager();
+			this.oRM = new RenderManager().getInterface();
 			this.oAssertionSpy = this.spy(console, "assert");
 		},
 		afterEach: function() {
@@ -896,7 +899,7 @@ sap.ui.define([
 
 		// nested
 		this.oRM.openStart("div");
-			var oRM = sap.ui.getCore().createRenderManager();
+			var oRM = new RenderManager().getInterface();
 			oRM.voidStart("img").voidEnd();
 			oRM.destroy();
 		this.oRM.openEnd();
@@ -918,7 +921,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.render (Initial Rendering)", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager(),
+		var rm = new RenderManager().getInterface(),
 			pDone;
 
 		//Initial Rendering
@@ -933,7 +936,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.render (Rerendering to same parent DOM node)", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager(),
+		var rm = new RenderManager().getInterface(),
 			pDone;
 
 		//Rerendering to same parent DOM node
@@ -946,7 +949,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.render (Move to different parent DOM node)", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager(),
+		var rm = new RenderManager().getInterface(),
 			pDone;
 
 		//Move to different parent DOM node
@@ -960,7 +963,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.flush(Initial Rendering)", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager(),
+		var rm = new RenderManager().getInterface(),
 			pDone;
 
 		//Initial Rendering
@@ -978,7 +981,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.flush(Rerendering to same parent DOM node)", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager(),
+		var rm = new RenderManager().getInterface(),
 			pDone;
 
 		//Rerendering to same parent DOM node
@@ -996,7 +999,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.flush(Move to different parent DOM node)", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager(),
+		var rm = new RenderManager().getInterface(),
 			pDone;
 
 		//Move to different parent DOM node
@@ -1014,7 +1017,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.flush(insert at certain position)", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager(),
+		var rm = new RenderManager().getInterface(),
 			done = assert.async();
 
 		rm.renderControl(aControls[5]);
@@ -1028,7 +1031,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.flush(insert at certain position < 0)", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager(),
+		var rm = new RenderManager().getInterface(),
 			done = assert.async();
 
 		rm.renderControl(aControls[6]);
@@ -1042,7 +1045,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.flush(insert at certain position > #items)", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager(),
+		var rm = new RenderManager().getInterface(),
 			done = assert.async();
 
 		rm.renderControl(aControls[7]);
@@ -1061,7 +1064,7 @@ sap.ui.define([
 
 		oCtrl1.placeAt("area5");
 		oCtrl2.placeAt("area5");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oCtrl1.doBeforeRendering = function() {
 			oCtrl2.rerender();
@@ -1083,7 +1086,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager writeIcon with Icon URL", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager();
+		var rm = new RenderManager().getInterface();
 		var oIconInfo = IconPool.getIconInfo("wrench");
 		rm.writeIcon(oIconInfo.uri, ["classA", "classB"], {
 			id: "icon1",
@@ -1108,7 +1111,7 @@ sap.ui.define([
 
 		jQueryById("area6").empty();
 
-		rm = sap.ui.getCore().createRenderManager();
+		rm = new RenderManager().getInterface();
 		oIconInfo = IconPool.getIconInfo("calendar");
 		rm.writeIcon(oIconInfo.uri, ["classA", "classB"], {
 			id: "icon1",
@@ -1135,7 +1138,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager writeIcon with Icon URL. aria-label and aria-labelledby are set to null", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager();
+		var rm = new RenderManager().getInterface();
 		var oIconInfo = IconPool.getIconInfo("wrench");
 		rm.writeIcon(oIconInfo.uri, [], {
 			id: "icon1",
@@ -1157,7 +1160,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager writeIcon with Icon URL and aria-labelledby", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager();
+		var rm = new RenderManager().getInterface();
 		var oIconInfo = IconPool.getIconInfo("wrench");
 		rm.writeIcon(oIconInfo.uri, [], {
 			id: "icon1",
@@ -1189,7 +1192,7 @@ sap.ui.define([
 			return oRes;
 		});
 
-		var rm = sap.ui.getCore().createRenderManager();
+		var rm = new RenderManager().getInterface();
 		var oIconInfo = IconPool.getIconInfo("wrench");
 		rm.writeIcon(oIconInfo.uri, [], {
 			id: "icon1"
@@ -1210,7 +1213,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager writeIcon with Image URL", function(assert) {
-		var rm = sap.ui.getCore().createRenderManager(),
+		var rm = new RenderManager().getInterface(),
 			sImgURL = sap.ui.require.toUrl("sap/ui/core/themes/base/img/Busy.gif");
 			rm.writeIcon(sImgURL, ["classA", "classB"], {
 			id: "img1",
@@ -1232,7 +1235,7 @@ sap.ui.define([
 
 		jQueryById("area7").empty();
 
-		rm = sap.ui.getCore().createRenderManager();
+		rm = new RenderManager().getInterface();
 		rm.writeIcon(sImgURL, ["classA", "classB"], {
 			id: "img1",
 			role: "",
@@ -1275,7 +1278,7 @@ sap.ui.define([
 
 		// rendering should not lead to an error
 		oControl.placeAt("area8");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oControl.destroy();
 
 		// check the error message
@@ -1337,7 +1340,7 @@ sap.ui.define([
 	QUnit.test("Render visible control", function(assert) {
 		var oControl = new TestControl("testVisible");
 		oControl.placeAt("testArea");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oDomRef = document.getElementById("testVisible"),
 			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
@@ -1347,13 +1350,13 @@ sap.ui.define([
 		assert.ok(!oInvisbleRef, "Invisible DOM reference doesn't exist");
 
 		oControl.destroy();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	});
 
 	QUnit.test("Render invisible control", function(assert) {
 		var oControl = new TestControl("testVisible", {visible: false});
 		oControl.placeAt("testArea");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oDomRef = document.getElementById("testVisible"),
 			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
@@ -1363,19 +1366,19 @@ sap.ui.define([
 		assert.ok(oInvisbleRef instanceof HTMLElement, "Invisible DOM reference is an HTML element");
 
 		oControl.destroy();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	});
 
 	QUnit.test("Render control made visible in onBeforeRendering", function(assert) {
 		var oControl = new TestControl("testVisible", {visible: false});
 		oControl.placeAt("testArea");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oControl.doBeforeRendering = function() {
 			this.setVisible(true);
 		};
 		oControl.rerender();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oDomRef = document.getElementById("testVisible"),
 			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
@@ -1385,19 +1388,19 @@ sap.ui.define([
 		assert.ok(!oInvisbleRef, "Invisible DOM reference doesn't exist");
 
 		oControl.destroy();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	});
 
 	QUnit.test("Render control made invisible in onBeforeRendering", function(assert) {
 		var oControl = new TestControl("testVisible", {visible: true});
 		oControl.placeAt("testArea");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oControl.doBeforeRendering = function() {
 			this.setVisible(false);
 		};
 		oControl.rerender();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oDomRef = document.getElementById("testVisible"),
 			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
@@ -1407,7 +1410,7 @@ sap.ui.define([
 		assert.ok(oInvisbleRef instanceof HTMLElement, "Invisible DOM reference is an HTML element");
 
 		oControl.destroy();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	});
 
 	/**
@@ -1455,7 +1458,7 @@ sap.ui.define([
 		},
 		setTheLuckyOneAndRender: function(value) {
 			this.setProperty("theLuckyOne", value, true);
-			var oRM = sap.ui.getCore().createRenderManager();
+			var oRM = new RenderManager().getInterface();
 			this.getMetadata().getRenderer().renderContent(oRM, this);
 			oRM.flush(this.getDomRef("content"));
 			oRM.destroy();
@@ -1484,7 +1487,7 @@ sap.ui.define([
 			var oContainer = this.oContainer;
 			// initially show view 1. view 2 has not been rendered yet
 			oContainer.placeAt("area9");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(oView1.getDomRef(), "view1 should have DOM");
 			assert.ok(oView1.bOutput, "view1 should be marked with bOutput");
 			assert.notOk(RenderManager.isPreservedContent(oView1.getDomRef()), "DOM of view1 should not be in preserve area");
@@ -1531,7 +1534,7 @@ sap.ui.define([
 			// use normal invalidation
 			this.oContainer.setTheLuckyOne(value);
 			// and force re-rendering
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		}.bind(this));
 	});
 
@@ -1549,7 +1552,7 @@ sap.ui.define([
 			// use normal invalidation
 			this.oContainer.setTheLuckyOne(value);
 			// and force re-rendering
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		}.bind(this));
 	});
 
@@ -1578,7 +1581,7 @@ sap.ui.define([
 
 		// act 1: initial rendering
 		oContainer.placeAt("area9");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert 1: HTML1 rendered, HTML2 not yet rendered
 		assert.ok(oHtml1.getDomRef() && !RenderManager.isPreservedContent(oHtml1.getDomRef()),
@@ -1588,7 +1591,7 @@ sap.ui.define([
 
 		// act 2: switch rendered control
 		oContainer.setTheLuckyOne(1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oHtml2.$().append("<span></span>");
 		oHtml2.$().append("<span></span>");
 		oHtml2.$().append("<span></span>");
@@ -1604,7 +1607,7 @@ sap.ui.define([
 
 		// act 3: switch again
 		oContainer.setTheLuckyOne(0);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert 3: HTML1 rendered, HTML2 not rendered, but preserved
 		assert.ok(oHtml1.getDomRef() && !RenderManager.isPreservedContent(oHtml1.getDomRef()),
@@ -1616,7 +1619,7 @@ sap.ui.define([
 
 		// act 4: switch again
 		oContainer.setTheLuckyOne(1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert 3: HTML1 not rendered but preserved, HTML2 rendered incl. dynamic modifications
 		assert.ok(oHtml1.getDomRef() && RenderManager.isPreservedContent(oHtml1.getDomRef()),

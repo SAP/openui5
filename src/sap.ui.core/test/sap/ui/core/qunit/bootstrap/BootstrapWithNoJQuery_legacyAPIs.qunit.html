@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8" >
+		<title>Custom Bootstrap Code (legacy APIs)</title>
+		<script src="../../shared-config.js"></script>
+
+		<!-- nojQuery bootstrap code starts here -->
+		<script src="../../../../../../resources/sap/ui/thirdparty/jquery.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/jqueryui/jquery-ui-position.js"></script>
+		<script src="BootstrapWithNoJQuery.beforeBootstrap.qunit.js"></script>
+		<script src="../../../../../../resources/sap-ui-core-nojQuery.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m,sap.ui.layout"
+			data-sap-ui-compatversion="edge">
+		</script>
+		<!-- end of nojQuery bootstrap code -->
+
+		<link  href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen" />
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+			data-cover-flags="branchTracking">
+		</script>
+		<script src="BootstrapWithNoJQuery_legacyAPIs.qunit.js"></script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>

@@ -17,7 +17,7 @@
 	window["sap-ui-config"] = window["sap-ui-config"] || {};
 	window["sap-ui-config"]["xx-bootTask"] = function(callback) {
 		testresults.bHookCalled = true;
-		testresults.bSapUiCoreExists = window.sap && sap.ui && typeof sap.ui.getCore === "function";
+		testresults.bSapUiCoreExists = typeof sap.ui.getCore === "function";
 		if ( testresults.bSapUiCoreExists ) {
 			testresults.bApplyThemeExists = typeof sap.ui.getCore().applyTheme === "function";
 			testresults.sThemeBefore = sap.ui.getCore().getConfiguration().getTheme();

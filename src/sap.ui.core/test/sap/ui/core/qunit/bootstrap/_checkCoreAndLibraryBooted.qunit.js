@@ -2,31 +2,43 @@
 (function() {
 	"use strict";
 
-	QUnit.test("Check Core Functionality", function(assert) {
+	QUnit.test("Check Existance of Core", function(assert) {
+		assert.expect(6);
+		var done = assert.async();
+
+		var aExpectedLibraries = ["sap.m"];
+		var aConfigurationModules = sap.ui.getCore().getConfiguration().getValue("modules");
+		var oLoadedLibraries = sap.ui.getCore().getLoadedLibraries();
+		var sExpectedLibrary, sLoadedLibrary, aDependendLibraries = [];
+
 		/* check that SAPUI5 has been loaded */
-		assert.ok(jQuery, "jQuery has been loaded");
 		assert.ok(jQuery.sap, "jQuery.sap namespace exists");
-		assert.ok(window.sap, "sap namespace exists");
-		assert.ok(sap.ui, "sap.ui namespace exists");
-		assert.ok(typeof sap.ui.getCore === "function", "sap.ui.getCore exists");
 		assert.ok(sap.ui.getCore(), "sap.ui.getCore() returns a value");
 
-		assert.deepEqual(sap.ui.core.Configuration.getValue("modules"), [ "sap.m.library" ], "Libraries");
-	});
+		var id = document.querySelector("html").getAttribute("data-sap-ui-browser");
+		sap.ui.require(["sap/ui/Device"], function (Device) {
+			if ( Device.browser.name ) {
+				assert.strictEqual(id, Device.browser.name + Device.browser.versionStr, "browser is known: data-sap-ui-browser should have been set and must not be empty");
+			} else {
+				assert.ok(!id, "browser is unknown: data-sap-ui-browser should not have been set (or empty)");
+			}
+			done();
+		});
 
-	QUnit.test("Check boot() has run", function(assert) {
-
-		var id = jQuery("html").attr("data-sap-ui-browser");
-		if ( sap.ui.Device.browser.name ) {
-			assert.ok(typeof id === "string" && id, "browser is known: data-sap-ui-browser should have been set and must not be empty");
-		} else {
-			assert.ok(!id, "browser is unknown: data-sap-ui-browser should not have been set (or empty)");
+		for (sLoadedLibrary in oLoadedLibraries) {
+			if (!aDependendLibraries.includes(sLoadedLibrary) && !aExpectedLibraries.includes(sLoadedLibrary)) {
+				// Don't collect duplicates and only collect dependend libraries which are not already expected
+				aDependendLibraries.push(sLoadedLibrary);
+			}
 		}
 
-		assert.ok(jQuery.sap.getObject("sap.m"), "lib namespace exists");
-		assert.ok(sap.ui.lazyRequire._isStub("sap.m.Button"), "Control from lib is available at least as lazy stub");
-		new sap.m.Button();
-		assert.ok(typeof sap.m.Button.prototype.attachPress === "function", "control lazily loaded initialized");
+		for (var i = 0; i < aExpectedLibraries.length; i++) {
+			sExpectedLibrary = aExpectedLibraries[i];
+			assert.strictEqual(sExpectedLibrary + ".library", aConfigurationModules[i], "'" +  sExpectedLibrary + "' is part of sap.ui.core.Configuration property 'module'");
+			assert.ok(oLoadedLibraries[sExpectedLibrary], "'" +  sExpectedLibrary + "' is registered as loadedLibrary within Core");
+		}
+
+		assert.strictEqual(aExpectedLibraries.concat(aDependendLibraries).length, Object.keys(oLoadedLibraries).length, "Only libraries declared in bootstrap including their dependencies are loaded");
 	});
 
 }());
