@@ -2440,6 +2440,8 @@ sap.ui.define([
 		this.oPopover._includeScrollWidth();
 		// assert
 		assert.ok(true, "Should not throw an error when there is no dom ref");
+
+		document.getElementById("content").style.height = "auto";
 	});
 
 	// include stylesheet and let test starter wait for it
