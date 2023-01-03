@@ -210,6 +210,7 @@ function updateAdminContentLayerCard() {
 	settings.push(admin, content);
 	target.innerHTML = createCardEditorTag("cardEditorAdminContent", settings, "content", "", undefined, "bottom");
 }
+
 function updateAdminContentTranslationLayerCard() {
 	var target = document.getElementById("admincontenttranslation");
 	if (!target) return;
@@ -221,4 +222,32 @@ function updateAdminContentTranslationLayerCard() {
 	settings.push(admin, content, translation);
 	var sLanguage = this._sTranslationLanguageForAllMode || "ru";
 	target.innerHTML = createCardEditorTag("cardEditorAdminContentTranslation", settings, "translation", sLanguage);
+}
+
+function showEditorInDialog(oButton) {
+	sap.ui.require(["sap/m/Dialog", "sap/ui/integration/designtime/editor/CardEditor"], function (Dialog, CardEditor) {
+		var oCard = {
+			"manifest": "manifest.json",
+			"host": "host",
+			"baseUrl": baseUrl
+		};
+		var oCardEditor = new CardEditor({
+			card: oCard
+		});
+		var oSeparateEditorDialog= new Dialog({
+			title: "Card Editor In Dailog",
+			contentWidth: "600px",
+			//contentHeight: "400px",
+			resizable: true,
+			content: oCardEditor,
+			endButton: new sap.m.Button({
+				text: "Close",
+				press: function () {
+					oSeparateEditorDialog.destroyContent();
+					oSeparateEditorDialog.close();
+				}
+			})
+		});
+		oSeparateEditorDialog.open();
+	});
 }
