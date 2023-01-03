@@ -1586,7 +1586,7 @@ sap.ui.define([
 		]);
 		Core.applyChanges();
 
-		oSpy = sinon.spy(oMI, "_manageListsVisibility");
+		oSpy = this.spy(oMI, "_manageListsVisibility");
 
 		oMultiInput1 = new MultiInput({
 			showValueHelp: true,
@@ -1598,6 +1598,7 @@ sap.ui.define([
 		// Act
 		oMI.ontap(oFakeEvent);
 		this.clock.tick(1);
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(oSpy.called, "_manageListsVisibility is called");
@@ -1605,18 +1606,18 @@ sap.ui.define([
 
 		// Act
 		oMI._getSuggestionsPopoverPopup().close();
-		oSpy.restore();
+		this.clock.tick(500);
+		Core.applyChanges();
 
-		oSpy1 = sinon.spy(oMultiInput1, "_manageListsVisibility");
+		oSpy1 = this.spy(oMultiInput1, "_manageListsVisibility");
 		oMultiInput1.ontap(oFakeEvent);
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(oSpy1.called, "_manageListsVisibility is called");
 		assert.ok(oSpy1.calledWith(false), "Suggestions list is visible.");
 
 		// Cleanup
-		oSpy.restore();
-		oSpy1.restore();
 		oMI.destroy();
 		oMultiInput1.destroy();
 	});
@@ -1727,6 +1728,8 @@ sap.ui.define([
 
 		assert.strictEqual(document.activeElement, oMI.getFocusDomRef(), "Multi Input should be focused");
 		assert.ok(oSpy.called, "Popover should be closed");
+
+		oMI.destroy();
 	});
 
 	QUnit.test("Add tokens on mobile", function(assert) {
@@ -1946,6 +1949,8 @@ sap.ui.define([
 		// Act
 		oSuggestionsDialog.getInput().setValue("another value");
 		this.oMultiInput._handleConfirmation(oEventMock);
+		this.clock.tick(300);
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMultiInput.getValue(), '', "The new value is tokenized");
@@ -1973,6 +1978,9 @@ sap.ui.define([
 
 		// Act
 		this.oMultiInput._handleConfirmation(oEventMock);
+		this.clock.tick(300);
+		Core.applyChanges();
+
 		sOpenState = oSuggestionsDialog.getPopover().oPopup.getOpenState();
 
 		// Assert
@@ -1989,10 +1997,11 @@ sap.ui.define([
 
 		// Act
 		oSuggestionsDialog.getPopover().open();
-		this.clock.tick();
+		this.clock.tick(300);
 
 		// Act
 		this.oMultiInput._handleConfirmation(true, oEventMock);
+		this.clock.tick(300);
 		sOpenState = oSuggestionsDialog.getPopover().oPopup.getOpenState();
 
 		// Assert
@@ -2006,7 +2015,7 @@ sap.ui.define([
 
 		// Act
 		this.oMultiInput._getSuggestionsPopoverPopup().open();
-		this.clock.tick();
+		this.clock.tick(300);
 
 		oPickerTextFieldDomRef = oSuggestionsDialog.getInput().getFocusDomRef();
 		this.oMultiInput.attachChange(function(oEvent) {
@@ -2016,7 +2025,7 @@ sap.ui.define([
 		// Act
 		qutils.triggerCharacterInput(oPickerTextFieldDomRef, "test");
 		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
-		this.clock.tick();
+		this.clock.tick(300);
 
 		sOpenState = this.oMultiInput._getSuggestionsPopoverPopup().oPopup.getOpenState();
 
@@ -2033,13 +2042,13 @@ sap.ui.define([
 
 		// Act
 		oSuggestionsDialog.getPopover().open();
-		this.clock.tick();
+		this.clock.tick(300);
 
 		oPickerTextFieldDomRef = oSuggestionsDialog.getInput().getFocusDomRef();
 
 		// Act
 		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
-		this.clock.tick();
+		this.clock.tick(300);
 
 		sOpenState = oSuggestionsDialog.getPopover().oPopup.getOpenState();
 
@@ -2585,6 +2594,8 @@ sap.ui.define([
 
 		// Assert
 		assert.notOk(sKeyShortcut, "'aria-keyshortcuts' attribute should not be presented.");
+
+		oMultiInput.destroy();
 	});
 
 	QUnit.test("Placeholder opacity", function(assert) {
@@ -2801,7 +2812,7 @@ sap.ui.define([
 
 		// act
 		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
-		this.clock.tick(1);
+		this.clock.tick(300);
 
 		// assert
 		oSelectedItemsList = oTokenizer.getTokensPopup().getContent()[0];
@@ -2865,6 +2876,7 @@ sap.ui.define([
 
 		// Act
 		oTokenizer._handleListItemDelete(oFakeEvent);
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oListRemoveItemSpy.callCount, 0, "List item was not removed.");
@@ -2938,7 +2950,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		oTokenizer.getTokensPopup().close();
-		this.clock.tick(500);
+		this.clock.tick(300);
 
 		// Assert
 		assert.strictEqual(this.multiInput.getAggregation("tokenizer").getRenderMode(), TokenizerRenderMode.Narrow, "The tokenizer is in Narrow mode");
@@ -3108,6 +3120,7 @@ sap.ui.define([
 		// Close the popup before destroying so it has a place to return the focus to prevent exceptions in IE.
 		oTokenizer._togglePopup(oTokenizer.getTokensPopup());
 		Core.applyChanges();
+		this.clock.tick(300);
 
 		// Clean
 		oDeleteStub.restore();
