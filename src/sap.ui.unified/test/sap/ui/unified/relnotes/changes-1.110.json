@@ -1,7 +1,12 @@
 {
   "1.110.0": {
-    "date": "December 2022",
+    "date": "January 2023",
     "notes": [
+      {
+        "id": "4d41d6a1a1d4e0eb4050aeffcce4320a75ebe764",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.MonthPicker: Tests are now stable"
+      },
       {
         "id": "5be7e4a9a845914475c83224f9cbb5b967d5020f",
         "type": "FIX",
