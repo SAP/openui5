@@ -486,23 +486,20 @@ sap.ui.define([
 
 			this.MP._iMinMonth = 3;
 			this.MP._iMaxMonth = 8;
+			this.MP._setYear(2022);
 
 			this.MP.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
 			// Act
 			this.MP._markInterval(oIntervalStartDate, oIntervalEndDate);
-
 			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
-
 			// Assert
 			assert.strictEqual(aItemsMarkedAsBetween.length, 4, "4 months inside the interval");
 
 			// Act
 			this.MP._markInterval(oBeforeStartDate, oIntervalEndDate);
-
 			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
-
 			// Assert
 			assert.strictEqual(aItemsMarkedAsBetween.length, 4, "4 months inside the interval");
 
