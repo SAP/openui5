@@ -298,5 +298,23 @@
 			emphasized="false"
 			state="None" />
 
+
+		<Label text="ObjectNumber wrapped via sapMObjectNumberLongText" class="sapUiSmallMarginTop" design="Bold" />
+		<Panel
+			backgroundDesign="Transparent"
+			width="100px">
+			<content>
+				<ObjectNumber
+				class="sapMObjectNumberLongText"
+				active="true"
+				binding="{/ProductCollection/5}"
+				press="onPress"
+				number="12345678901234567890"
+				unit="{CurrencyCode}"
+				emphasized="false"
+				state="None" />
+			</content>
+		</Panel>
+
 	</l:VerticalLayout>
 </mvc:View>
