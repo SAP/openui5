@@ -74,7 +74,7 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile"],
 			oRm.openStart("div", oControl.getId() + "-failed-icon");
 			oRm.class("sapMTileCntFtrFldIcn");
 			oRm.openEnd();
-			oRm.renderControl(oControl.getParent()._oWarningIcon);
+			oRm.renderControl(oControl.getParent()._oErrorIcon);
 			oRm.close("div");
 			oRm.openStart("div", oControl.getId() + "-failed-text");
 			oRm.class("sapMTileCntFtrFldTxt");

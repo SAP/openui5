@@ -261,11 +261,11 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 	GenericTileLineModeRenderer._renderFailedIcon = function(oRm, oControl) {
 		if (oControl.getState() === LoadState.Failed) {
 			if (oControl._isCompact()) {
-				oControl._oWarningIcon.setSize("1.25rem");
+				oControl._oErrorIcon.setSize("1.25rem");
 			} else {
-				oControl._oWarningIcon.setSize("1.375rem");
+				oControl._oErrorIcon.setSize("1.375rem");
 			}
-			oRm.renderControl(oControl._oWarningIcon.addStyleClass("sapMGTLineModeFailedIcon"));
+			oRm.renderControl(oControl._oErrorIcon.addStyleClass("sapMGTLineModeFailedIcon"));
 		}
 	};
 
