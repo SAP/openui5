@@ -72,7 +72,13 @@
 		"config": {
 			"docuPath": "./docs/topics/",
 			"exploredURI": "./",
-			"topicHtmlMainDivId": "d4h5-main-container"
+			"topicHtmlMainDivId": "d4h5-main-container",
+			"preservedContent": [
+				{
+					"className": "shortdesc",
+					"preservedTags": ["code"]
+				}
+			]
 		},
 		"routing": {
 			"config": {

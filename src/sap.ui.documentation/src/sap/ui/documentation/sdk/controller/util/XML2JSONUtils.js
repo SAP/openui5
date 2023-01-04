@@ -3,29 +3,52 @@
  */
 
 sap.ui.define(["sap/ui/thirdparty/jquery"],
-	function(jQuery) {
+	function (jQuery) {
 		"use strict";
 
 		function buildDocuJSON(xml, oConfig) {
 			var xmlDom = xml2dom(xml, oConfig);
 			var aSingles = ["topictitle1", "shortdesc"];
+			var aPreservedSingles = oConfig.preservedContent && oConfig.preservedContent.length
+				&& oConfig.preservedContent.map(function (e) { return e.className; });
 
-			var processSingleNode = function(className, xmlDOMObj) {
+			var getPreservedTags = function (className) {
+				var preservedTags;
+
+				oConfig.preservedContent.forEach(function (item) {
+					if (item.className === className) {
+						preservedTags = item.preservedTags;
+					}
+				});
+
+				return preservedTags;
+			};
+
+			var getNodeText = function (className, nodeHTML) {
+				var bIsNodePreserved = aPreservedSingles && aPreservedSingles.indexOf(className) > -1;
+
+				if (bIsNodePreserved) {
+					return jQuery("<div></div>").html(removeHTMLTags(nodeHTML, getPreservedTags(className))).html();
+				}
+
+				return jQuery("<div></div>").html(removeHTMLTags(nodeHTML)).text();
+			};
+
+			var processSingleNode = function (className, xmlDOMObj) {
 				var oXMLDOM = xmlDOMObj || xmlDom;
 				var oNodes = oXMLDOM.getElementsByClassName(className);
+
 				if (oNodes.length === 0) {
 					return '';
 				}
-				var nodeText = jQuery("<div></div>").html(removeHTMLTags(oNodes[0].innerHTML)).text();
+
+				var nodeHTML = oNodes[0].innerHTML,
+					nodeText = getNodeText(className, nodeHTML);
+
 				return oNodes && oNodes.length > 0 && ("innerHTML" in oNodes[0]) && nodeText || '';
 			};
 
-			var removeHTMLTags = function(txt) {
-				return txt.replace(/<[^>]*>/g, " ")
-						.replace(/\s{2,}/g, ' ');
-			};
-
-			var fixImgLocation = function(element) {
+			var fixImgLocation = function (element) {
 				var images = element.querySelectorAll("img");
 
 				for (var i = 0; i < images.length; i++) {
@@ -39,7 +62,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"],
 				return element.innerHTML;
 			};
 
-			var processSections = function() {
+			var processSections = function () {
 				/* "Invalid DOM Elements" (ones that should not be added to the body) are:
 					- all scripts
 					- element with class topictitle1 (this is used as title)
@@ -70,11 +93,11 @@ sap.ui.define(["sap/ui/thirdparty/jquery"],
 
 				fixImgLocation(wrapperContainer);
 
-				json['html'] =  wrapperContainer.innerHTML;
+				json['html'] = wrapperContainer.innerHTML;
 			};
 
 			var json = {}, mdEditLink;
-			aSingles.forEach(function(singleNode, idx){
+			aSingles.forEach(function (singleNode, idx) {
 				json[singleNode] = processSingleNode(singleNode);
 			});
 
@@ -102,10 +125,39 @@ sap.ui.define(["sap/ui/thirdparty/jquery"],
 			}
 		}
 
+		/**
+		 * Removes HTML tags from a string, except for those specified in the preservedTags array.
+		 * @param {string} txt - The input string.
+		 * @param {string[]} [preservedTags] - An optional array of HTML tags to preserve.
+		 * @return {string} The input string with HTML tags removed.
+		 */
+		function removeHTMLTags(txt, preservedTags) {
+			if (preservedTags === undefined || preservedTags.length === 0) {
+				return removeAllHTMLTags(txt);
+			}
+
+			return txt.replace(/<\/?([^>]+)>/g, function (match, tag) {
+				if (preservedTags.indexOf(tag) === -1) {
+					return '';
+				}
+				return match;
+			}).replace(/\s{2,}/g, ' ');
+		}
+
+		/**
+		 * Removes all HTML tags from a string.
+		 * @param {string} txt - The input string.
+		 * @return {string} The input string with all HTML tags removed.
+		 */
+		function removeAllHTMLTags(txt) {
+			return txt.replace(/<[^>]*>/g, ' ').replace(/\s{2,}/g, ' ');
+		}
+
 		return {
-			DomXml2JSON : buildDocuJSON,
+			DomXml2JSON: buildDocuJSON,
 			XML2DOM: xml2dom,
-			XML2JSON: buildDocuJSON
+			XML2JSON: buildDocuJSON,
+			removeHTMLTags: removeHTMLTags
 		};
 
 	});

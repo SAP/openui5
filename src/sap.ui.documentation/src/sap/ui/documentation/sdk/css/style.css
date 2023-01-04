@@ -318,6 +318,10 @@ html.sap-desktop .sapContrast.sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpan
 	font-family: "72Black", "72Blackfull", "72", "72full", Arial, Helvetica, sans-serif;
 }
 
+.sapUiDocumentationTopicSubtitle code {
+	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
 .sapUiMedia-Std-Phone .sapUiDocumentationTopicTitle {
 	font-size: 1.5rem;
 }
@@ -328,11 +332,13 @@ html.sap-desktop .sapContrast.sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpan
 	padding-right: 2rem;
 }
 
-.sapUiTheme-sap_horizon .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent .sapMText {
+.sapUiTheme-sap_horizon .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent .sapMText,
+.sapUiTheme-sap_horizon .sapFDynamicPageHeaderWithContent .sapUiDocumentationTopicSubtitle {
 	color: #556b82;
 }
 
-.sapUiTheme-sap_horizon_dark .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent .sapMText {
+.sapUiTheme-sap_horizon_dark .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent .sapMText,
+.sapUiTheme-sap_horizon_dark .sapFDynamicPageHeaderWithContent .sapUiDocumentationTopicSubtitle {
 	color: #8396a8;
 }
 
