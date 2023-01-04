@@ -1,11 +1,9 @@
-(function() {
+sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 	"use strict";
 
-	sap.ui.controller("sap.ui.core.mvctest.controller.Dummy", {
-
-		onInit: function() {
+	return Controller.extend("sap.ui.core.mvctest.controller.Dummy", {
+		onInit: function () {
 			// Do nothing
 		}
 	});
-
-}());
+});

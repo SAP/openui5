@@ -1,7 +1,7 @@
-(function() {
+sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 	"use strict";
 
-	sap.ui.controller("sap.ui.core.mvctest.controller.Product", {
+	return Controller.extend("sap.ui.core.mvctest.controller.Product", {
 
 		onInit: function() {
 			this.myLayout = this.byId("Layout");
@@ -33,4 +33,4 @@
 		}
 	});
 
-}());
+});
