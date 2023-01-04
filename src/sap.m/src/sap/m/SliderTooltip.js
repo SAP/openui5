@@ -109,6 +109,7 @@ function(
 		});
 
 		SliderTooltip.prototype.init = function () {
+			SliderTooltipBase.prototype.init.apply(this, arguments);
 			this._oValueStateMessage = new ValueStateMessage(this);
 
 			this._fLastValidValue = 0;
