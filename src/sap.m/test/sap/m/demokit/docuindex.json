@@ -265,7 +265,9 @@
 			"sap.m.sample.ComboBoxFilteringStartsWith",
 			"sap.m.sample.ComboBoxGrouping",
 			"sap.m.sample.ComboBoxValidation",
-			"sap.m.sample.ComboBoxClearIcon"
+			"sap.m.sample.ComboBoxClearIcon",
+			"sap.m.sample.ComboBoxWrapping"
+
 		  ]
 		},
 		{
@@ -671,7 +673,8 @@
 			"sap.m.sample.InputValueUpdate",
 			"sap.m.sample.InputKeyValue",
 			"sap.m.sample.InputKeyValueTabularSuggestions",
-			"sap.m.sample.InputGrouping"
+			"sap.m.sample.InputGrouping",
+			"sap.m.sample.InputWrapping"
 		  ]
 		},
 		{
@@ -1210,7 +1213,8 @@
 			"sap.m.sample.MultiComboBoxTwoColumnsLayout",
 			"sap.m.sample.MultiComboBoxGrouping",
 			"sap.m.sample.MultiComboBoxSelectAll",
-			"sap.m.sample.MultiComboBoxClearIcon"
+			"sap.m.sample.MultiComboBoxClearIcon",
+			"sap.m.sample.MultiComboBoxWrapping"
 		  ]
 		},
 		{
@@ -1293,7 +1297,8 @@
 			"sap.m.sample.MultiInputGrouping",
 			"sap.m.sample.MultiInputValueHelp",
 			"sap.m.sample.MultiInputValueStates",
-			"sap.m.sample.MultiInputModelUpdate"
+			"sap.m.sample.MultiInputModelUpdate",
+			"sap.m.sample.MultiInputWrapping"
 		  ]
 		},
 		{
@@ -1793,6 +1798,11 @@
 			"id": "sap.m.sample.ComboBoxClearIcon",
 			"name": "ComboBox - Clear Icon",
 			"description": "The combo box control can show 'clear' icon, which when pressed will remove the user's input and selected key."
+		},
+		{
+			"id": "sap.m.sample.ComboBoxWrapping",
+			"name": "ComboBox - Suggestions wrapping",
+			"description": "Suggestions wrap automatically when longer then the dropdown width"
 		},
 		{
 		  "id": "sap.m.sample.DateRangeSelection",
@@ -2618,6 +2628,11 @@
 			"description": "The multi combo box control can show 'clear' icon, which when pressed will remove the user's input."
 		},
 		{
+			"id": "sap.m.sample.MultiComboBoxWrapping",
+			"name": "MultiComboBox - Suggestions wrapping",
+			"description": "Suggestions wrap automatically when longer then the dropdown width"
+		},
+		{
 			"id": "sap.m.sample.p13n.Container",
 			"name": "p13n.Container usage in a Dialog/Popover",
 			"description": "Dialog & Popover with a sap.m.P13nContainer as content."
@@ -2696,6 +2711,11 @@
 			"id": "sap.m.sample.MultiInputModelUpdate",
 			"name": "MultiInput - Model update",
 			"description": "This sample illustrates how the model bound to the MultiInput can be updated upon token creation or deletion."
+		},
+		{
+			"id": "sap.m.sample.MultiInputWrapping",
+			"name": "MultiInput - Suggestions wrapping",
+			"description": "Suggestions wrap automatically when longer then the dropdown width"
 		},
 		{
 			"id": "sap.m.sample.NumericContentDifColors",
@@ -2911,6 +2931,11 @@
 		  "id": "sap.m.sample.InputGrouping",
 		  "name": "Input - Grouping of items",
 		  "description": "Items in the Input could be grouped by a property"
+		},
+		{
+			"id": "sap.m.sample.InputWrapping",
+			"name": "Input - Suggestions wrapping",
+			"description": "Suggestions wrap automatically when longer then the dropdown width"
 		},
 		{
 		  "id": "sap.m.sample.ListToolbar",

@@ -76,9 +76,10 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 /* ListItem                       */
 /* ------------------------------ */
 
-.sapMMultiComboBoxItem .sapMCb {
-	height: 2.5rem;
-	line-height: 2.5rem;
+.sapMMultiComboBoxItem.sapMSLIWrapping .sapMCb {
+	height: 2.4375rem;
+	line-height: 2.4375rem;
+	margin-top: 0;
 }
 
 .sapMMultiComboBoxPicker {
@@ -94,9 +95,10 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 
 /* Compact size */
 .sapUiSizeCompact {
-	.sapMMultiComboBoxItem .sapMCb {
+	.sapMLIB.sapMMultiComboBoxItem.sapMSLIWrapping > .sapMCb{
 		height: 2rem;
 		line-height: 2rem;
+		margin-top: 0;
 	}
 
 	/* handle min-width calculation */

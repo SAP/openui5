@@ -249,6 +249,23 @@ describe('sap.m.MultiComboBox', function() {
 		});
 	});
 
+	// MultiComboBox - Suggestions wrapping
+	it("Should visualize MultiComboBox with long suggestions", function() {
+		browser.executeScript('document.getElementById("multiComboBoxWrapping").scrollIntoView()').then(function() {
+			var oMultiComboBoxArrow = element(by.id("multiComboBoxWrapping-arrow"));
+
+			// Should show wrapping suggestions
+			oMultiComboBoxArrow.click();
+			expect(takeScreenshot()).toLookAs("wrapping_suggestions_visible");
+
+			// Should focus the first suggestion
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot()).toLookAs("wrapping_first_suggestion_focused");
+
+			oMultiComboBoxArrow.click();
+		});
+	});
+
 	//MultiComboBox Compact Mode
 	it("should select Compact mode", function(){
 		element(by.id("compactMode")).click();

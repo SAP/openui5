@@ -192,4 +192,38 @@ describe("sap.m.InputVisualTests", function() {
 			expect(takeScreenshot()).toLookAs("suggestion_separators_are_not_visible");
 		});
 	});
+
+	it("Should visualize Input with long suggestions", function () {
+		var oInput = element(by.id("inputWrapping"));
+
+		browser.executeScript("document.getElementById('inputWrapping').scrollIntoView()").then(function () {
+			oInput.click();
+
+			// Should show wrapping suggestions
+			browser.actions().sendKeys("I").perform();
+			expect(takeScreenshot()).toLookAs("wrapping_suggestions_visible");
+
+			// Should focus the first suggestion
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot()).toLookAs("wrapping_first_suggestion_focused");
+
+			// Should close the dropdown
+			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+		});
+	});
+
+	it("Should visualize Input with long suggestions", function () {
+		var oInput = element(by.id("inputSecondaryValue"));
+
+		browser.executeScript("document.getElementById('inputSecondaryValue').scrollIntoView()").then(function () {
+			oInput.click();
+
+			// Should show two columns suggestions
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot()).toLookAs("two_columns_filtered");
+
+			// Should close the dropdown
+			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+		});
+	});
 });

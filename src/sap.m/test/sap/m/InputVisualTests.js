@@ -7,6 +7,7 @@ sap.ui.require([
 	"sap/m/ColumnListItem",
 	"sap/ui/core/VariantLayoutData",
 	"sap/ui/core/Item",
+	"sap/ui/core/ListItem",
 	"sap/m/Button",
 	"sap/m/Title",
 	"sap/m/ToolbarSpacer",
@@ -30,6 +31,7 @@ sap.ui.require([
 		ColumnListItem,
 		VariantLayoutData,
 		Item,
+		ListItem,
 		Button,
 		Title,
 		ToolbarSpacer,
@@ -364,6 +366,26 @@ sap.ui.require([
 		oTabularSeparatorsInput.setModel(oModel);
 		oTabularSeparatorsInput.bindAggregation("suggestionRows", "/tabularSuggestionItems", oSuggestionRowTemplate);
 
+		var oLongSuggestionsInput = new sap.m.Input("inputWrapping", {
+			width: "300px",
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({key: "key1", text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}),
+				new Item({key: "key2", text: "Item with very long text, wrapping enabled and wrapCharLimit set to а very large number in order to make the whole text always visible, taking as much space as needed."}),
+				new Item({key: "key3", text: "Item that not wrap"})
+			]
+		});
+
+		var oSecondaryValueInput = new sap.m.Input("inputSecondaryValue", {
+			width: "300px",
+			showSuggestion: true,
+			suggestionItems: [
+				new ListItem({key: "key1", text: "Audio/Video Cable Kit - 4m", additionalText: "Titanium"}),
+				new ListItem({key: "key2", text: "Copymaster", additionalText: "Alpha Printers"}),
+				new ListItem({key: "key3", text: "Laser Allround", additionalText: "Alpha Printers"})
+			]
+		});
+
 		var oCustomCssButton = new Button("customCssButton",{
 			text: "Toggle custom CSS for visual test",
 			press: function() {
@@ -494,7 +516,11 @@ sap.ui.require([
 						new Label({text: "Input with startSuggestions = 2", labelFor: "inputStartSuggestions"}),
 						oStartSuggestionsInput,
 						new Label({text: "Input with tabular suggestion separators", labelFor: "inputWithTabularSuggestionSeparators"}),
-						oTabularSeparatorsInput
+						oTabularSeparatorsInput,
+						new Label({text: "Input with long suggestions", labelFor: "inputWrapping"}),
+						oLongSuggestionsInput,
+						new Label({text: "Input with two columns layout", labelFor: "inputSecondaryValue"}),
+						oSecondaryValueInput
 					]
 				})
 

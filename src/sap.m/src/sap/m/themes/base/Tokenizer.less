@@ -112,3 +112,26 @@ html.sap-desktop .sapMTokenizer:focus {
 .sapMTokenizerScrollContainerNoVisibleTokens {
 	display: none;
 }
+
+.sapMTokenizerTokensPopup {
+	.sapMListUl > .sapMLIB.sapMSLIWrapping {
+		min-height: 2.5rem;
+	}
+
+	.sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv {
+		padding: 0.25rem 0;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMTokenizerTokensPopup,
+	&.sapMTokenizerTokensPopup {
+		.sapMListUl > .sapMLIB.sapMSLIWrapping {
+			min-height: 2rem;
+		}
+
+		.sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv {
+			padding: 0.25rem 0;
+		}
+	}
+}

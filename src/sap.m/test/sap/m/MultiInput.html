@@ -888,7 +888,6 @@
 
 					// MultiInput with suggestions
 					var aData2 = [
-						{ text: "Long Suggestions Item 1: Cras at eros eleifend, fringilla lectus eu, luctus justo. Mauris vehicula ac dui quis finibus. Curabitur vel auctor mi. Morbi pulvinar consectetur tortor sit amet luctus. Nullam condimentum justo sit amet diam malesuada, eu rutrum lorem facilisis." },
 						{ text: "Long Suggestions Item 2: Quisque sollicitudin libero id aliquam accumsan. Pellentesque a pellentesque lectus. Nullam consequat quam dapibus diam vulputate, iaculis sollicitudin lorem bibendum. Curabitur nec massa vel sem molestie euismod. Curabitur suscipit velit malesuada vulputate tristique. " },
 						{ text: "Long Suggestions Item 3: Phasellus lobortis tempor elit, quis ultrices ante hendrerit vel. Nam convallis sit amet ligula lacinia eleifend. Sed tincidunt pharetra ipsum. Aliquam euismod vestibulum elit in finibus." },
 						{ text: "Long Suggestions Item 4: Ut vehicula, velit et rhoncus cursus, eros augue ornare ipsum, nec pulvinar nunc orci ut justo. Vivamus eget nisi interdum, faucibus eros et, pulvinar tortor. Maecenas imperdiet porttitor orci ac dignissim. Phasellus lacinia blandit elit. In sollicitudin tristique orci nec varius." }
@@ -954,6 +953,17 @@
 							new Token({ text: "Morbi pulvinar consectetur tortor sit amet luctus. Nullam condimentum justo sit amet diam malesuada, eu rutrum lorem facilisis." }),
 							new Token({ text: "Pellentesque a pellentesque lectus. Nullam consequat quam dapibus diam vulputate, iaculis sollicitudin lorem bibendum." }),
 							new Token({ text: "Lorem ipsum" })
+						]
+					});
+
+					// MultiInput with long suggestions
+					oMultiInputWrapping = new MultiInput("mi-wrapping", {
+						placeholder: "MultiInput with wrapping",
+						width: "50%",
+						suggestionItems: [
+							new sap.ui.core.Item({key: "1", text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}),
+							new sap.ui.core.Item({key: "2", text: "Item with very long text, wrapping enabled and wrapCharLimit set to а very large number in order to make the whole text always visible, taking as much space as needed."}),
+							new sap.ui.core.Item({key: "3", text:  "Item that not wrap"}),
 						]
 					});
 
@@ -1038,6 +1048,8 @@
 							oSuggMultiInputPopoverWidth,
 							new Label("placeholderLabel", {text: "MultiInput with nMore and placeholder", width:"100%", labelFor: "mi-placeholder"}),
 							oPlaceholderMultiInput,
+							new Label("wrappingLabel", {text: "MultiInput with suggestions wrapping", width:"100%", labelFor: "mi-wrapping"}),
+							oMultiInputWrapping
 						]
 					}).addStyleClass("sapUiContentPadding");
 
