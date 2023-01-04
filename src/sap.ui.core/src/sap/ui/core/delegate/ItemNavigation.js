@@ -142,9 +142,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * The 'beforeFocus' event is fired before the actual item is focused.
+	 * The <code>BeforeFocus</code> event is fired before the actual item is focused.
+	 * Listeners may prevent the focus by calling the <code>preventDefault</code> method on the event object.
 	 *
-	 * @name sap.ui.core.delegate.ItemNavigation#beforeFocus
+	 * @name sap.ui.core.delegate.ItemNavigation#BeforeFocus
 	 * @event
 	 * @param {int} index Index of the item
 	 * @param {jQuery.Event} event Event that leads to the focus change
@@ -152,10 +153,10 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'afterFocus' event is fired after the actual item is focused.
+	 * The <code>AfterFocus</code> event is fired after the actual item is focused.
 	 * The control can register to this event and react on the focus change.
 	 *
-	 * @name sap.ui.core.delegate.ItemNavigation#afterFocus
+	 * @name sap.ui.core.delegate.ItemNavigation#AfterFocus
 	 * @event
 	 * @param {int} index Index of the item
 	 * @param {jQuery.Event} event Event that leads to the focus change
@@ -163,12 +164,12 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'borderReached' event is fired if the border of the items is reached and
+	 * The <code>BorderReached</code> event is fired if the border of the items is reached and
 	 * no cycling is used, meaning an application can react on this.
 	 *
 	 * For example if the first item is focused and the Arrow Left key is pressed.
 	 *
-	 * @name sap.ui.core.delegate.ItemNavigation#borderReached
+	 * @name sap.ui.core.delegate.ItemNavigation#BorderReached
 	 * @event
 	 * @param {int} index Index of the item
 	 * @param {jQuery.Event} event Event that leads to the focus change
@@ -176,10 +177,10 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'focusAgain' event is fired if the current focused item is focused again
+	 * The <code>FocusAgain</code> event is fired if the current focused item is focused again
 	 * (e.g. click again on focused item.)
 	 *
-	 * @name sap.ui.core.delegate.ItemNavigation#focusAgain
+	 * @name sap.ui.core.delegate.ItemNavigation#FocusAgain
 	 * @event
 	 * @param {int} index Index of the item
 	 * @param {jQuery.Event} event Event that leads to the focus change
@@ -187,9 +188,9 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'focusLeave' event fired if the focus is set outside the control handled by the <code>ItemNavigation</code>.
+	 * The <code>FocusLeave</code> event fired if the focus is set outside the control handled by the <code>ItemNavigation</code>.
 	 *
-	 * @name sap.ui.core.delegate.ItemNavigation#focusLeave
+	 * @name sap.ui.core.delegate.ItemNavigation#FocusLeave
 	 * @event
 	 * @param {int} index Index of the item
 	 * @param {jQuery.Event} event Event that leads to the focus change
@@ -573,10 +574,13 @@ sap.ui.define([
 			return;
 		}
 
-		this.fireEvent(ItemNavigation.Events.BeforeFocus, {
+		if (!this.fireEvent(ItemNavigation.Events.BeforeFocus, {
 			index: iIndex,
 			event: oEvent
-		});
+		}, /* bAllowPreventDefault */ true)) {
+			Log.info("Focus prevented on ID: " + this.aItemDomRefs[this.iFocusedIndex].id, "focusItem", "ItemNavigation");
+			return;
+		}
 
 		this.setFocusedIndex(iIndex);
 		this.bISetFocus = true;
