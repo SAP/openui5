@@ -381,12 +381,10 @@ sap.ui.define([
 				}
 			};
 
-			var oManifestJSView = {
+			var oManifestTypedView = {
 				"sap.ui5" : {
 					"rootView" : {
-						"async": true,
-						"viewName" : "error.test.JSView",
-						"type" : "JS"
+						"viewName" : "module:error/test/JSView.view"
 					}
 				}
 			};
@@ -505,7 +503,7 @@ sap.ui.define([
 				{
 					"Content-Type": "application/json"
 				},
-				JSON.stringify(oManifestJSView)
+				JSON.stringify(oManifestTypedView)
 			]);
 
 			// define the Components
@@ -555,6 +553,7 @@ sap.ui.define([
 
 				return UIComponent.extend("error.test.Component", {
 					metadata: {
+						interfaces: ["sap.ui.core.IAsyncContentCreation"],
 						manifest: "json"
 					}
 				});
@@ -589,9 +588,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("UIComponent that no error is logged for View-Types other than XML when processingMode is set", function(assert) {
-		var oSpy = sinon.spy(ManagedObject.prototype, "applySettings");
-
+	QUnit.test("UIComponent with Typed-View as Root Control", function(assert) {
 		return Component.create({
 			name: "error.test"
 		}).then(function (oComponent) {
@@ -601,15 +598,11 @@ sap.ui.define([
 
 			sap.ui.getCore().applyChanges();
 
-			assert.ok(oSpy.calledWith({
-				async: true,
-				viewName: "error.test.JSView",
-				type: "JS"
-			}));
+			var oRootControl = oComponent.getRootControl();
+			assert.equal(oRootControl.getViewName(), "module:error/test/JSView.view", "The correct view is displayed!");
 
 			oComponentContainer.destroy();
 			oComponent.destroy();
-			oSpy.restore();
 		});
 	});
 

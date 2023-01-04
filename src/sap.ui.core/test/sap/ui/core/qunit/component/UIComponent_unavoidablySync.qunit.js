@@ -300,7 +300,7 @@ sap.ui.define([
 				"sap.ui5" : {
 					"rootView" : {
 						"async": true,
-						"viewName" : "error.test.JSView",
+						"viewName" : "error.test.JSView_legacyAPIs",
 						"type" : "JS"
 					}
 				}
@@ -519,7 +519,7 @@ sap.ui.define([
 
 		assert.ok(oSpy.calledWith({
 			async: true,
-			viewName: "error.test.JSView",
+			viewName: "error.test.JSView_legacyAPIs",
 			type: "JS"
 		}));
 
