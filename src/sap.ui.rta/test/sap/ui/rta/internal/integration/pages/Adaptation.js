@@ -5,9 +5,10 @@ sap.ui.define([
 	"sap/ui/test/actions/Drag",
 	"sap/ui/test/actions/Drop",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"test-resources/sap/ui/fl/api/FlexTestAPI"
+	"sap/ui/fl/FakeLrepConnectorLocalStorage"
 ], function(
 	Opa5,
 	PropertyStrictEquals,
@@ -15,9 +16,10 @@ sap.ui.define([
 	Drag,
 	Drop,
 	QUnitUtils,
+	FakeLrepConnectorSessionStorage,
 	KeyCodes,
 	oCore,
-	FlexTestAPI
+	FakeLrepConnectorLocalStorage
 ) {
 	"use strict";
 
@@ -330,7 +332,7 @@ sap.ui.define([
 							return !(Opa5.getJQuery()(".sapUiRtaToolbar").length > 0);
 						},
 						success: function() {
-							FlexTestAPI.clearStorage("LocalStorage");
+							FakeLrepConnectorLocalStorage.forTesting.synchronous.clearAll();
 						}
 					});
 				},
@@ -339,7 +341,7 @@ sap.ui.define([
 					window.sessionStorage.removeItem("sap.ui.rta.restart.USER");
 				},
 				clearChangesFromSessionStorage: function() {
-					FlexTestAPI.clearStorage("SessionStorage");
+					FakeLrepConnectorSessionStorage.forTesting.synchronous.clearAll();
 				}
 			},
 
@@ -400,7 +402,7 @@ sap.ui.define([
 						id: "shell-header",
 						success: function(oToolbar) {
 							Opa5.assert.ok(oToolbar.getVisible(), "the FLP Toolbar is shown");
-							Opa5.assert.equal(FlexTestAPI.getNumberOfChangesSynchronous("SessionStorage", sReference), iCount, "the number of changes is correct");
+							Opa5.assert.equal(FakeLrepConnectorSessionStorage.forTesting.synchronous.getNumberOfChanges(sReference), iCount, "the number of changes is correct");
 						},
 						errorMessage: "the FLP-Toolbar was not found"
 					});
@@ -431,11 +433,7 @@ sap.ui.define([
 						id: sId,
 						viewName: sViewName,
 						success: function() {
-							Opa5.assert.strictEqual(
-								FlexTestAPI.getNumberOfChangesSynchronous("SessionStorage", sReference),
-								iCount,
-								"the number of changes is correct"
-							);
+							Opa5.assert.equal(FakeLrepConnectorSessionStorage.forTesting.synchronous.getNumberOfChanges(sReference), iCount, "the number of changes is correct");
 						},
 						errorMessage: "The app is still busy.."
 					});
