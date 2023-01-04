@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/uid",
+	"sap/base/util/UriParameters",
 	"sap/m/ColumnListItem",
 	"sap/m/CustomListItem",
 	"sap/m/FlexBox",
@@ -30,8 +31,8 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text, Device,
-		EventProvider, SyncPromise, Configuration, Controller, View, ChangeReason, Filter,
+], function (Log, uid, UriParameters, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text,
+		Device, EventProvider, SyncPromise, Configuration, Controller, View, ChangeReason, Filter,
 		FilterOperator, FilterType, Sorter, OperationMode, AnnotationHelper, ODataListBinding,
 		ODataModel, ValueListType, _Helper, TestUtils, XMLHelper) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
@@ -49,8 +50,16 @@ sap.ui.define([
 		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		rSkip = /&\$skip=(\d+)/, // $skip=<number>
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+		// the timeout for the tests and for waitForChanges in millseconds, 0 = keep defaults
+		iTestTimeout = parseInt(UriParameters.fromQuery(window.location.search).get("timeout")),
 		rTop = /&\$top=(\d+)/, // $top=<number>
 		rTransientPredicate = /\(\$uid=[-\w]+\)/g;
+
+	if (isNaN(iTestTimeout)) {
+		iTestTimeout = 0;
+	} else {
+		iTestTimeout *= 1000;
+	}
 
 	/**
 	 * Asserts that the given contexts have the expected indices, both internally and from a view
@@ -471,7 +480,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel.integration", {
-		beforeEach : function () {
+		beforeEach : function (assert) {
+			if (iTestTimeout) {
+				assert.timeout(iTestTimeout);
+			}
 			// We use a formatter to check for property changes. However before the formatter is
 			// called, the value is passed through the type's formatValue
 			// (see PropertyBinding#_toExternalValue). Ensure that this result is predictable.
@@ -2096,15 +2108,15 @@ sap.ui.define([
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @param {string} [sTitle] Title for this section of a test
-		 * @param {number} [iTimeout=3000] The timeout time in milliseconds
+		 * @param {number} [iWaitTimeout=3000] The timeout time in milliseconds
 		 * @returns {Promise} A promise that is resolved when all requests have been responded and
 		 *   all expected values for controls have been set
 		 */
-		waitForChanges : function (assert, sTitle, iTimeout) {
+		waitForChanges : function (assert, sTitle, iWaitTimeout) {
 			var oPromise,
 				that = this;
 
-			iTimeout = iTimeout || 3000;
+			iWaitTimeout = Math.max(iWaitTimeout, iTestTimeout) || 3000;
 			oPromise = new SyncPromise(function (resolve) {
 				that.resolve = resolve;
 				// After three seconds everything should have run through
@@ -2113,7 +2125,7 @@ sap.ui.define([
 					if (oPromise.isPending()) {
 						resolve(true);
 					}
-				}, iTimeout);
+				}, iWaitTimeout);
 				that.checkFinish();
 			}).then(function (bTimeout) {
 				var sControlId, aExpectedValuesPerRow, i, j;
@@ -2151,7 +2163,7 @@ sap.ui.define([
 				assert.strictEqual(that.aExpectedEvents.length, 0, "no missing events");
 				that.checkMessages(assert);
 				assert.ok(!bTimeout, "waitForChanges(" + (sTitle || "") + "): "
-					+ (bTimeout ? "Timeout (" + iTimeout + " ms)" : "Done")
+					+ (bTimeout ? "Timeout (" + iWaitTimeout + " ms)" : "Done")
 					+ " *".repeat(50));
 			});
 
