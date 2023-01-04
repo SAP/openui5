@@ -221,7 +221,46 @@ sap.ui.define([
 			this.oWizard.addStep(new WizardStep());
 		}
 
-		assert.strictEqual(this.oSpies.error.calledOnce, true, "Wizard should log error when maximum allowed steps are exceeded.");
+		assert.ok(this.oSpies.error.calledOnce, "Wizard should log error when maximum allowed steps are exceeded.");
+	});
+
+	QUnit.test("Validate min step count inside onBeforeRendering", function (assert) {
+		var oWizard = new Wizard({
+			id: "wizard::id",
+			steps: [ new WizardStep(), new WizardStep()]
+		});
+
+		oWizard.placeAt("qunit-fixture");
+
+		Core.applyChanges();
+
+		assert.ok(this.oSpies.error.calledOnce, "Wizard should log error when minimum allowed step number is not met.");
+
+		oWizard.addStep(new WizardStep());
+
+		assert.ok(this.oSpies.error.calledOnce, "Wizard should not log an error again as the minimum allowed step number is reached");
+
+		oWizard.destroy();
+	});
+
+	QUnit.test("Validate max step count inside onBeforeRendering", function (assert) {
+		var oWizard = new Wizard({
+			id: "wizard::id",
+			steps: [ new WizardStep(), new WizardStep(), new WizardStep(), new WizardStep(),
+				new WizardStep(), new WizardStep(), new WizardStep(), new WizardStep()]
+		});
+
+		oWizard.placeAt("qunit-fixture");
+
+		Core.applyChanges();
+
+		assert.notOk(this.oSpies.error.calledOnce, "Wizard should not log error when max allowed step number is reached.");
+
+		oWizard.addStep(new WizardStep());
+
+		assert.ok(this.oSpies.error.calledOnce, "Wizard should log an error as the maximum allowed step number is exceeded");
+
+		oWizard.destroy();
 	});
 
 	QUnit.test("DestroySteps() empties the steps aggregation", function (assert) {
