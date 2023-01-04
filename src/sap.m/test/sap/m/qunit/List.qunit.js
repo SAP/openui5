@@ -2253,6 +2253,10 @@ sap.ui.define([
 			assert.equal(sAccText, aState.join(" . "), sDescription + ": '" + sAccText + "'");
 		}
 
+		var oList = new List({
+			items: [oItem]
+		});
+
 		aState = [sContent, oRb.getText("LIST_ITEM_NOT_SELECTED")];
 		check("Content only");
 
@@ -2336,6 +2340,16 @@ sap.ui.define([
 		oItem.setSelected(false);
 		aState = [sContent, oRb.getText("LIST_ITEM_NOT_SELECTED")];
 		check("Enhanced Selection (Item Selectable, Not Selected): Content + Not Selected");
+
+		oList.applyAriaRole("listbox");
+
+		aState = [sContent];
+		check("Don't announce the 'not selected' status of legacy list");
+
+		oList.applyAriaRole("list");
+
+		aState = [sContent, oRb.getText("LIST_ITEM_NOT_SELECTED")];
+		check("Announce the 'not selected' status");
 
 		oItem.destroy();
 	});

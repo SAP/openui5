@@ -2828,7 +2828,7 @@ sap.ui.define([
 			assert.strictEqual(oList.isGrouped(), true, "Grouping enabled");
 			assert.strictEqual(oList.getAccessibilityStates(), oBundle.getText("LIST_MULTISELECTABLE") + " . " + oBundle.getText("LIST_GROUPED") + " . ", "Punctuation added to Multi SelectMode");
 
-			assert.strictEqual(oListItem.getAccessibilityInfo().description, "Title . Description . Not Selected",  "Content annoucement for Standard List Item with Punctuation" );
+			assert.strictEqual(oList.getItems()[0].getAccessibilityInfo().description, "Title . Description . Not Selected",  "Content annoucement for Standard List Item with Punctuation" );
 			oListItem.setSelected(true);
 			oListItem.setHighlight("Information");
 			oListItem.setNavigated(true);
