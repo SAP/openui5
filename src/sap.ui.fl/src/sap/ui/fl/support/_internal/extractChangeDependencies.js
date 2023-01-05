@@ -26,7 +26,7 @@ sap.ui.define([
 	 */
 	function getAppComponentInstance(sComponentName) {
 		var oCorrectAppComponent;
-		var aComponentContainers = jQuery.find(".sapUiComponentContainer");
+		var aComponentContainers = document.querySelector(".sapUiComponentContainer");
 		aComponentContainers.some(function(oComponentContainerDomRef) {
 			var oComponentContainer = sap.ui.getCore().byId(oComponentContainerDomRef.id);
 			var oAppComponent = oComponentContainer && oComponentContainer.getComponentInstance();
@@ -133,6 +133,10 @@ sap.ui.define([
 	}
 
 	return function (oChangePersistence) {
+		if (!oChangePersistence) {
+			return;
+		}
+
 		var oExport = {
 			sVersion: "1",
 			bIsInvestigationExport: true,
