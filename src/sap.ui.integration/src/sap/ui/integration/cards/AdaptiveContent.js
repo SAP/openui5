@@ -64,13 +64,6 @@ sap.ui.define([
 			this.setComponentsReady(false);
 			this._bAdaptiveCardElementsReady = false;
 			this._setupCardContent();
-
-			Core.attachThemeChanged(function () {
-				if (this.getDomRef()) {
-					this._adjustHostConfig();
-					this.invalidate();
-				}
-			}.bind(this));
 		};
 
 		AdaptiveContent.prototype.onAfterRendering = function () {
@@ -172,6 +165,13 @@ sap.ui.define([
 
 		AdaptiveContent.prototype.getConfiguration = function () {
 			return this._oCardConfig;
+		};
+
+		AdaptiveContent.prototype.onThemeChanged = function () {
+			if (this.getDomRef()) {
+				this._adjustHostConfig();
+				this.invalidate();
+			}
 		};
 
 		/**
