@@ -1,0 +1,10 @@
+<mvc:View
+	controllerName="cards.performance.controller.Main"
+	xmlns ="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:cssgrid="sap.ui.layout.cssgrid">
+	<f:GridContainer id="cardsContainer" class="sapUiSmallMargin">
+	</f:GridContainer>
+</mvc:View>
