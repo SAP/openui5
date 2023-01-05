@@ -33,35 +33,30 @@
 			<h2 id="tabindex">
 				Tabindex
 			</h2>
-			<p>HTML Elements like buttons, links, inputs and others, can receive focus.</p>
+			<p>HTML elements like buttons, links, inputs and others, can receive focus.</p>
 			<br>
 			<button>Press Tab</button>
-			<br>
-			<p>However, the button described using ARIA roles will not receive focus.</p>
 			<pre class="lang-html">
-&lt;div role="button"&gt;Save&lt;/div&gt;</pre>
-			<br>
-			<div role="button" class="button">Press Tab</div>
+&lt;button&gt;Press Tab&lt;/button&gt;</pre>
 			<br>
 			<p>
-				As you can see the div with role button does not accept focus, so you need the attribute <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex" target="_blank">tabindex</a> for this case.
-				The tabindex global attribute indicates that the element can be focused, and where it participates in sequential keyboard navigation (usually with the <b>Tab</b> key, hence the name).
+				Some HTML elements do not receive focus by default. To make such elements focusable, you can use the
+				<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex" target="_blank">tabindex</a> global attribute.
+				This attribute indicates that the element can be focused, and where it participates in sequential keyboard navigation (usually with the <b>Tab</b> key, hence the name).
+				An example for usage of the tabindex in real scenario is when a custom widget with role combobox needs to be created.
 			</p>
 			<pre class="lang-html">
-&lt;div role="button" tabindex="0"&gt;Save&lt;/div&gt;</pre>
-			<div role="button" tabindex="0" class="button">Press Tab</div>
+&lt;div role="combobox" tabindex="0" ...&gt; ... &lt;/div&gt;</pre>
 			<br>
 			<p>
-				Now the button is focusable. A negative value of the tabindex,
-				means that the element is not reachable via sequential keyboard navigation.
-				In this case it's useful to create accessible widgets with JavaScript.
+				When using tabindex with value -1 you can prevent an interactive element
+				to be focused. This might be used in specific scenarios.
+				For example, it is used in the design of the Input control,
+				where the icons container has a tabindex -1 as there are
+				other keyboard means how to activate the functionally with
+				keyboard and we want to optimize the tab chain.
 			</p>
 			<br>
-			<pre class="lang-html">
-&lt;div role="button" tabindex="-1"&gt;Save&lt;/div&gt;</pre>
-			<div role="button" tabindex="-1" class="button">Press Tab</div>
-			<br>
-			<p>The button is no longer focusable.</p>
 		</div>
 		<div class="navigation">
 			<h4>Table of Contents</h4>
