@@ -196,6 +196,7 @@ sap.ui.define([
 			oSlider = aSliders[iIndex];
 
 			if (!oSlider.getVisible()) {
+				oSlider.destroy();
 				continue;
 			}
 
@@ -347,8 +348,7 @@ sap.ui.define([
 
 	QUnit.test("_handlesLabels aggregation", function (assert) {
 		// arrange & act
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-			oBoundleCalledStub = this.stub(oResourceBundle, "getText"),
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m"),
 			oSlider = new Slider(),
 			aLabels = oSlider.getAggregation("_handlesLabels"),
 			oSliderWithTickmarks = new Slider({enableTickmarks: true}),
@@ -367,20 +367,21 @@ sap.ui.define([
 		oSlider.placeAt("content");
 		oSliderWithTickmarks.placeAt("content");
 		oSliderWithLables.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var sInvisibleTextId = oSliderWithLables.getDomRef("handle").getAttribute("aria-labelledby");
 
 		// assert
 		assert.strictEqual(aLabels.length, 1, "Label for handles should be added as an aggregation");
-		assert.ok(oBoundleCalledStub.calledWith("SLIDER_HANDLE"), "Text should be regarding the handle");
+		assert.strictEqual(oResourceBundle.getText("SLIDER_HANDLE"), oSlider.getAggregation("_handlesLabels")[0].getText(), "Text should be regarding the handle");
 		assert.strictEqual(oSlider.getDomRef("handle").getAttribute("aria-labelledby"), aLabels[0].getId());
 		assert.strictEqual(oSliderWithTickmarks.getDomRef("handle").getAttribute("aria-labelledby"), aTickmarksLabels[0].getId());
 		assert.ok(document.getElementById(sInvisibleTextId), "The InvisibleText is rendered");
 
-
 		// cleanup
 		oSlider.destroy();
+		oSliderWithTickmarks.destroy();
+		oSliderWithLables.destroy();
 	});
 
 	QUnit.test("Aria labels forwarding to handle", function (assert) {
@@ -803,6 +804,7 @@ sap.ui.define([
 
 		// act
 		oSlider.setValue(50);
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "50");
@@ -1331,6 +1333,7 @@ sap.ui.define([
 
 		// act
 		oSlider.setValue(5);
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oSlider.getDomRef("handle").hasAttribute("title"));
@@ -1370,6 +1373,7 @@ sap.ui.define([
 
 		// act
 		oSlider.setValue(5);
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getDomRef("handle").hasAttribute("title"), false);
@@ -1418,6 +1422,7 @@ sap.ui.define([
 			targetTouches: oTouches,
 			srcControl: oSlider
 		});
+		Core.applyChanges();
 
 		this.clock.tick(1);
 
@@ -1461,6 +1466,7 @@ sap.ui.define([
 			targetTouches: oTouches,
 			srcControl: oSlider
 		});
+		Core.applyChanges();
 
 		for (var i = 51; i <= 100; i++) {
 
@@ -1470,6 +1476,7 @@ sap.ui.define([
 				targetTouches: oTouches,
 				pageX: i
 			}, '_on');
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSlider.getValue(), i);
@@ -1478,6 +1485,7 @@ sap.ui.define([
 		qutils.triggerTouchEvent("touchend", oSlider.getDomRef(), {
 			targetTouches: oTouches
 		}, '_on');
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 100);
@@ -1649,6 +1657,8 @@ sap.ui.define([
 
 			// act
 			qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_RIGHT, false, false, /* Ctrl key */ true);
+			Core.applyChanges();
+			this.clock.tick(500);
 
 			// assert
 			assert.strictEqual(oSlider.getValue(), mOptions.expectedValue, "The slider value must be increased to " + mOptions.expectedValue);
@@ -1877,6 +1887,8 @@ sap.ui.define([
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.HOME);
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.HOME);
+		Core.applyChanges();
+		this.clock.tick(500);
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 0);
@@ -1943,6 +1955,8 @@ sap.ui.define([
 		// Assert
 		assert.ok(oEventSpyPreventDefault.callCount === 0, "The method is skipped and the event went to the global KH");
 		assert.ok(oEventSpySetMarked.callCount === 0, "The method is skipped and the event went to the global KH");
+
+		oRangeSlider.destroy();
 	});
 
 	/* ------------------------------ */
@@ -1977,6 +1991,7 @@ sap.ui.define([
 		assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
 
 		// cleanup
+		oSlider.getAggregation("_tooltipContainer").hide();
 		oSlider.destroy();
 	});
 
@@ -2001,6 +2016,7 @@ sap.ui.define([
 
 		// act
 		oSlider.onkeydown(fnFakeEvent);
+		this.clock.tick(200);
 
 		// assert
 		assert.ok(preventDefaultSpy.calledOnce, "Prevent default should be called once.");
@@ -2028,7 +2044,7 @@ sap.ui.define([
 
 		// arrange
 		this.oSlider.setEnableTickmarks(true);
-		this.oSlider.placeAt("content");
+		oPage.addContent(this.oSlider);
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -2335,6 +2351,8 @@ sap.ui.define([
 
 			// assert
 			assert.notOk(oLeftTooltip.hasClass("sapMSliderTooltipNotEditable"), "'sapMSliderTooltipNotEditable' class should not be applied");
+
+			this.oSlider.getAggregation("_tooltipContainer").hide();
 		});
 	});
 
@@ -2363,6 +2381,7 @@ sap.ui.define([
 		assert.strictEqual(sAriaLabel, oRb.getText("SLIDER_INPUT_LABEL"), "'aria-label' attribute should be presented");
 
 		// clean
+		oSlider.getAggregation("_tooltipContainer").hide();
 		oSlider.destroy();
 	});
 
@@ -2389,7 +2408,7 @@ sap.ui.define([
 		assert.strictEqual(sKeyShortcut, "F2", "The 'aria-keyshortcuts' attribute should be presented with appropriate value");
 
 		// act
-		oSlider.focus();
+		oSlider.onfocusin();
 		this.clock.tick(1);
 
 		// assert
@@ -2405,6 +2424,7 @@ sap.ui.define([
 		assert.notOk(sKeyShortcut, "The 'aria-keyshortcuts' attribute should not be presented");
 
 		// cleanup
+		oSlider.getAggregation("_tooltipContainer").hide();
 		oSlider.destroy();
 	});
 
@@ -2566,6 +2586,7 @@ sap.ui.define([
 		assert.strictEqual(oSliderTooltip.oInvisibleMessage, null, "InvisibleMessage object is cleaned");
 
 		// Clean
+		oSlider.getAggregation("_tooltipContainer").hide();
 		oSlider.destroy();
 	});
 
