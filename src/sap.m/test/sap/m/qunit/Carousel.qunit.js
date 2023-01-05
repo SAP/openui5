@@ -2094,6 +2094,19 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 	});
 
+	QUnit.test("After setActivePage() the active page indexes are updated - BCP: 2280200416", function (assert) {
+		// assert
+		assert.deepEqual(this.oCarousel._aAllActivePagesIndexes, [0, 1, 2], "Active pages indexes are initially correct");
+
+		// act
+		this.oCarousel.setActivePage("page2");
+
+		// assert
+		assert.deepEqual(this.oCarousel._aAllActivePagesIndexes, [1, 2, 3], "Active pages indexes are updated");
+
+		forceTransitionComplete(this.oCarousel);
+	});
+
 	QUnit.test("Attributes of active page are correctly set on initial rendering,s when multiple pages are displayed", function (assert) {
 		// arrange
 		var oPage2 = new Page();

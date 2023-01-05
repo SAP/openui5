@@ -486,8 +486,8 @@ sap.ui.define([
 			return;
 		}
 
-		var sNewActivePageId = this.getPages()[iNextSlide - 1].getId();
-		this._updateActivePages(sNewActivePageId);
+		this._sNewActivePageId = this.getPages()[iNextSlide - 1].getId();
+		this._updateActivePages(this._sNewActivePageId);
 
 		this.fireBeforePageChanged({
 			activePages: this._aAllActivePagesIndexes
@@ -748,6 +748,7 @@ sap.ui.define([
 		}
 
 		this.setAssociation("activePage", sPageId, true);
+		this._updateActivePages(this._sNewActivePageId ? this._sNewActivePageId : sPageId);
 
 		return this;
 	};
