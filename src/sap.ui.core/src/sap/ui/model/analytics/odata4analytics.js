@@ -3685,6 +3685,8 @@ sap.ui.define([
 		 *            sPropertyName The name of the property bound in the condition
 		 * @param {sap.ui.model.analytics.odata4analytics.SortOrder}
 		 *            sSortOrder sorting order used for the condition
+		 * @param {boolean} bIgnoreIfAlreadySorted
+		 *   If there is already a sorter for that property, ignore this call.
 		 * @throws Exception
 		 *             if the property is unknown, not sortable or already added as
 		 *             sorter
@@ -3694,14 +3696,16 @@ sap.ui.define([
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.SortExpression#addSorter
 		 */
-		addSorter : function(sPropertyName, sSortOrder) {
+		addSorter : function(sPropertyName, sSortOrder, bIgnoreIfAlreadySorted) {
 			var oProperty = this._oEntityType.findPropertyByName(sPropertyName);
 			if (oProperty == null) {
 				throw "Cannot add sort condition for unknown property name " + sPropertyName; // TODO
 			}
 			var oExistingSorterEntry = this._containsSorter(sPropertyName);
 			if (oExistingSorterEntry != null) {
-				oExistingSorterEntry.sorter.order = sSortOrder;
+				if (!bIgnoreIfAlreadySorted) {
+					oExistingSorterEntry.sorter.order = sSortOrder;
+				}
 				return this;
 			}
 			var aSortablePropertyNames = this._oEntityType.getSortablePropertyNames();
