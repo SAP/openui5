@@ -33,6 +33,9 @@ describe("sap.m.MessagePopover", function () {
 	it("should open MessagePopover", function () {
 		element(by.id("mPopoverButton")).click();
 		expect(takeScreenshot(element(by.id(_resolvePopover())))).toLookAs("mpopover");
+
+		// close
+		element(by.id("mPopoverButton")).click();
 	});
 
 	it("toggles MessagePopover", function () {
@@ -45,7 +48,7 @@ describe("sap.m.MessagePopover", function () {
 		// open again
 		element(by.id("mPopoverButton")).click();
 
-		expect(takeScreenshot(element(by.id(_resolvePopover())))).toLookAs("togggled-mpopover");
+		expect(takeScreenshot(element(by.id(_resolvePopover())))).toLookAs("toggled-mpopover");
 	});
 
 	["error", "warning", "success", "information", "all"].forEach(function (sMessageType) {
