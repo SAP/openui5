@@ -88,7 +88,7 @@ sap.ui.define([
 				assert.deepEqual(oResponse, {response: "something"}, "correct response is returned");
 				assert.equal(oStubSendRequest.callCount, 3, "there are 3 requests sent in total");
 				assert.ok(oStubSendRequest.getCall(0).calledWith(sUrl, sMethod, mPropertyBag), "first request has correct parameters");
-				assert.ok(oStubSendRequest.getCall(1).calledWith(sTokenUrl, "HEAD"), "second request has correct parameters");
+				assert.ok(oStubSendRequest.getCall(1).calledWith(sTokenUrl, "HEAD", {initialConnector: {}}), "second request has correct parameters, existing token removed from initial connector");
 				assert.ok(oStubSendRequest.getCall(2).calledWith(sUrl, sMethod, mPropertyBag), "third request has correct parameters");
 			});
 		});
@@ -114,7 +114,7 @@ sap.ui.define([
 				assert.equal(oError.status, 500, "correct error is returned");
 				assert.equal(oStubSendRequest.callCount, 3, "there are 3 requests sent in total");
 				assert.ok(oStubSendRequest.getCall(0).calledWith(sUrl, sMethod, mPropertyBag), "first request has correct parameters");
-				assert.ok(oStubSendRequest.getCall(1).calledWith(sTokenUrl, "HEAD"), "second request has correct parameters");
+				assert.ok(oStubSendRequest.getCall(1).calledWith(sTokenUrl, "HEAD", {initialConnector: {}}), "second request has correct parameters");
 				assert.ok(oStubSendRequest.getCall(2).calledWith(sUrl, sMethod, mPropertyBag), "third request has correct parameters");
 			});
 		});
@@ -136,11 +136,11 @@ sap.ui.define([
 			oStubSendRequest.onCall(1).rejects({status: 500});
 			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function (oError) {
 				assert.equal(oError.status, 500, "correct error is returned");
-				assert.equal(mPropertyBag.initialConnector.xsrfToken, "oldToken", "new token is not passed in the second sendRequest");
-				assert.equal(oInitialConnector.xsrfToken, "oldToken", "new token is not stored in apply connector");
+				assert.equal(mPropertyBag.initialConnector.xsrfToken, undefined, "new token is not passed in the second sendRequest");
+				assert.equal(oInitialConnector.xsrfToken, undefined, "token is removed from apply connector");
 				assert.equal(oStubSendRequest.callCount, 2, "there are 2 requests sent in total");
 				assert.ok(oStubSendRequest.getCall(0).calledWith(sUrl, sMethod, mPropertyBag), "first request has correct parameters");
-				assert.ok(oStubSendRequest.getCall(1).calledWith(sTokenUrl, "HEAD"), "second request has correct parameters");
+				assert.ok(oStubSendRequest.getCall(1).calledWith(sTokenUrl, "HEAD", {initialConnector: {}}), "second request has correct parameters");
 			});
 		});
 	});
