@@ -8062,7 +8062,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}),
 			oTable,
 			sView = '\
-<t:AnalyticalTable id="table" rows="{path : \'/Items\', parameters : {useBatchRequests : true}}"\
+<t:AnalyticalTable id="table" rows="{path : \'/Items\',\
+		parameters : {useBatchRequests : true}, sorter : {path : \'AccountingDocumentItem\', descending : true}}"\
 		threshold="10" visibleRowCount="2">\
 	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocumentItem"\
 		template="AccountingDocumentItem"/>\
@@ -8088,6 +8089,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return aItems;
 		}
+		this.oLogMock.expects("warning")
+			.withExactArgs("Applying sorters to groups is only possible with auto expand mode 'Sequential';"
+				+ " current mode is: Bundled",
+				"/Items", "sap.ui.model.analytics.AnalyticalBinding", undefined)
+			.atLeast(1);
 
 		this.expectRequest({
 				encodeRequestUri : false,
@@ -8108,7 +8114,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				encodeRequestUri : false,
 				requestUri : "Items" // Data and Count Request
 					+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,Currency"
-					+ "&$orderby=AccountingDocumentItem%20asc&$top=11&$inlinecount=allpages"
+					+ "&$orderby=AccountingDocumentItem%20desc&$top=11&$inlinecount=allpages"
 			}, {
 				__count : "550",
 				results : getItems(11)
@@ -8129,7 +8135,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					encodeRequestUri : false,
 					requestUri : "Items"
 						+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,"
-						+ "Currency&$orderby=AccountingDocumentItem%20asc&$skip=11&$top=6"
+						+ "Currency&$orderby=AccountingDocumentItem%20desc&$skip=11&$top=6"
 				}, {
 					results : getItems(6)
 				});
@@ -8148,7 +8154,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					encodeRequestUri : false,
 					requestUri : "Items"
 						+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,Currency"
-						+ "&$orderby=AccountingDocumentItem%20asc&$skip=90&$top=21"
+						+ "&$orderby=AccountingDocumentItem%20desc&$skip=90&$top=21"
 				}, {
 					results : getItems(21)
 				});
@@ -8167,7 +8173,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					encodeRequestUri : false,
 					requestUri : "Items"
 						+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,Currency"
-						+ "&$orderby=AccountingDocumentItem%20asc&$skip=84&$top=6"
+						+ "&$orderby=AccountingDocumentItem%20desc&$skip=84&$top=6"
 				}, {
 					results : getItems(6)
 				});
@@ -8819,6 +8825,79 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				["A1", "B0", "", "1"],
 				["A1", "B0", "C0", "1"],
 				["A2", "", "", "1"]
+			]);
+		});
+	});
+
+	//*****************************************************************************************************************
+	// Scenario: When sorting in an analytic table, and the "autoExpandMode" is set to "Sequential", the column is
+	// sorted in the desired order.
+	// BCP: 2380000530
+	QUnit.test("AnalyticalBinding: sort for grouped columns when autoExpandMode = 'Sequential'",
+			function (assert) {
+		var oTable,
+			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
+			sView = '\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="Customer" template="Customer"/>\
+	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
+		template="AmountInCompanyCodeCurrency"/>\
+</t:AnalyticalTable>',
+		that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectHeadRequest()
+				.expectRequest({ // count request
+					encodeRequestUri : false,
+					requestUri : "Items?$select=CompanyCode,Customer&$top=0&$inlinecount=allpages"
+				}, {__count : "20", results : []})
+				.expectRequest({ // first level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+					+ "$select=CompanyCode,AmountInCompanyCodeCurrency,Currency&"
+					+ "$orderby=CompanyCode%20desc&$top=14&$inlinecount=allpages"
+				}, {
+					results : [
+						getFarCustomerLineItem("A3"),
+						getFarCustomerLineItem("A2"),
+						getFarCustomerLineItem("A1"),
+						getFarCustomerLineItem("A0")
+					]
+				})
+				.expectRequest({ // grand total request
+					encodeRequestUri : false,
+					requestUri : "Items?$select=AmountInCompanyCodeCurrency,Currency&$top=100&$inlinecount=allpages"
+				}, {
+					__count : 1,
+					results : [{
+						__metadata : {uri : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items(grandTotal)"},
+						AmountInCompanyCodeCurrency : "140",
+						Currency : "USD"
+					}]
+				});
+
+			// bind it lately otherwise table resets numberOfExpandedLevels to 0
+			oTable.bindRows({
+				path : "/Items",
+				parameters : {
+					autoExpandMode : "Sequential",
+					numberOfExpandedLevels : 0,
+					provideGrandTotals : false,
+					useBatchRequests : true
+				},
+				sorter : [new Sorter("CompanyCode", true)]
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(getTableContent(oTable), [
+				["A3", "", "1"],
+				["A2", "", "1"],
+				["A1", "", "1"],
+				["A0", "", "1"]
 			]);
 		});
 	});

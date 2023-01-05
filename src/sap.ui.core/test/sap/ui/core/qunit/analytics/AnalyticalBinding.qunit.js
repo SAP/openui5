@@ -2582,26 +2582,37 @@ sap.ui.define([
 
 			setupAnalyticalBinding(2, {}, function (oBinding) {
 				var oBindingMock = sinon.mock(oBinding),
-				aGroupingSorters = [{
-					sPath : "fooGrouping", bDescending : true
-				}, {
-					sPath : "barGrouping", bDescending : false
-				}],
-				oSortExpression = { addSorter : function () {} },
-				oSortExpressionMock = sinon.mock(oSortExpression),
-				oExpectation0 = oSortExpressionMock.expects("addSorter")
-					.withExactArgs("fooExternal", odata4analytics.SortOrder.Descending),
-				oExpectation1 = oSortExpressionMock.expects("addSorter")
-					.withExactArgs("barExternal", odata4analytics.SortOrder.Ascending),
-				oExpectation2 = oSortExpressionMock.expects("addSorter")
-					.withExactArgs("fooGrouping", odata4analytics.SortOrder.Descending),
-				oExpectation3 = oSortExpressionMock.expects("addSorter")
-					.withExactArgs("barGrouping", odata4analytics.SortOrder.Ascending);
+					aGroupingSorters = [{
+						sPath : "fooGrouping", bDescending : false
+					}, {
+						sPath : "barGrouping", bDescending : false
+					}],
+					oSortExpression = { addSorter : function () {} },
+					oSortExpressionMock = sinon.mock(oSortExpression),
+					// from aSorter - bIgnoreIfAlreadySorted has to be false always
+					oExpectation0 = oSortExpressionMock.expects("addSorter")
+						.withExactArgs("fooExternal", odata4analytics.SortOrder.Descending,
+							false),
+					oExpectation1 = oSortExpressionMock.expects("addSorter")
+						.withExactArgs("barExternal", odata4analytics.SortOrder.Ascending,
+							false),
+					oExpectation2 = oSortExpressionMock.expects("addSorter")
+						.withExactArgs("fooGrouping", odata4analytics.SortOrder.Descending,
+							false),
+					// from aGroupingSorters - must not overwrite sort order of aSorter properties
+					oExpectation3 = oSortExpressionMock.expects("addSorter")
+						.withExactArgs("fooGrouping", odata4analytics.SortOrder.Ascending,
+							bApplySortersToGroups),
+					oExpectation4 = oSortExpressionMock.expects("addSorter")
+						.withExactArgs("barGrouping", odata4analytics.SortOrder.Ascending,
+							bApplySortersToGroups);
 
 				oBinding.aSorter = [{
 					sPath : "fooExternal", bDescending : true
 				}, {
 					sPath : "barExternal", bDescending : false
+				}, {
+					sPath : "fooGrouping", bDescending : true
 				}];
 				oBindingMock.expects("_canApplySortersToGroups")
 					.withExactArgs()
@@ -2611,15 +2622,17 @@ sap.ui.define([
 				oBinding._addSorters(oSortExpression, aGroupingSorters);
 
 				assert.ok(oExpectation0.calledBefore(oExpectation1),
-					"fooExternal before barExternal");
-				assert.ok(oExpectation2.calledBefore(oExpectation3),
+					"aSorter: fooExternal before barExternal");
+				assert.ok(oExpectation1.calledBefore(oExpectation2),
+					"aSorter: barExternal before barExternal");
+				assert.ok(oExpectation3.calledBefore(oExpectation4),
 					"fooGrouping before barGrouping");
 				if (bApplySortersToGroups) {
-					assert.ok(oExpectation1.calledBefore(oExpectation2),
-						"barExternal before fooGrouping");
+					assert.ok(oExpectation2.calledBefore(oExpectation3),
+						"aSorters before aGroupingSorters");
 				} else {
-					assert.ok(oExpectation3.calledBefore(oExpectation0),
-						"barGrouping before fooExternal");
+					assert.ok(oExpectation4.calledBefore(oExpectation0),
+						"aGroupingSorters before aSorters");
 				}
 
 				oBindingMock.verify();
