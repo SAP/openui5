@@ -789,7 +789,6 @@ sap.ui.define([
 				counter: oMessageItem.getCounter(),
 				icon: this._mapIcon(sType),
 				infoState: this._mapInfoState(sType),
-				info: "\r", // There should be a content in the info property in order to use the info states
 				type: listItemType,
 				messageType: oMessageItem.getType(),
 				activeTitle: oMessageItem.getActiveTitle(),
