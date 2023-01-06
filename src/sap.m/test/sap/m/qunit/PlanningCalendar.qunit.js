@@ -1112,7 +1112,21 @@ sap.ui.define([
 						intervalsM: 8,
 						intervalsL: 1
 			});
+			this.oRelativeView2 = new PlanningCalendarView({
+				key: "test2",
+						intervalType: "Day",
+						relative: true,
+						description: "Project in Days",
+						intervalSize: 1,
+						intervalLabelFormatter: function(iIntervalIndex) {
+							return "Day " + (iIntervalIndex + 1);
+						},
+						intervalsS: 4,
+						intervalsM: 8,
+						intervalsL: 1
+			});
 			this.oPC.addView(this.oRelativeView);
+			this.oPC.addView(this.oRelativeView2);
 			this.oPC.setViewKey("test");
 		},
 		afterEach: function () {
@@ -1133,6 +1147,49 @@ sap.ui.define([
 		iVisibleIntervals = jQuery("#PC3-DatesRow-customintervals .sapUiCalItem").length;
 		assert.equal(iVisibleIntervals, 8, "week are 8");
 		assert.equal(this.oPC.getVisibleIntervalsCount(), 8, "correct number of shown intervals");
+	});
+
+	QUnit.module("Size of views - relativeView",{
+		beforeEach: function () {
+			this.oPC = createPlanningCalendar("PC3", new SearchField(), new Button());
+			this.oPC.setBuiltInViews(["Day", "Hour"]);
+			this.oPC.setMinDate(this.oPC.getStartDate());
+			this.oPC.setMaxDate(this.oPC.getStartDate());
+			this.oRelativeView = new PlanningCalendarView({
+				key: "test",
+						intervalType: "Day",
+						relative: true,
+						description: "Project in Days",
+						intervalSize: 1,
+						intervalLabelFormatter: function(iIntervalIndex) {
+							return "Day " + (iIntervalIndex + 1);
+						},
+						intervalsS: 4,
+						intervalsM: 8,
+						intervalsL: 1
+			});
+			this.oPC.addView(this.oRelativeView);
+			this.oPC.setViewKey("test");
+		},
+		afterEach: function () {
+			this.oPC.destroy();
+		},
+		prepareTest: function (sTargetElementId) {
+			this.oPC.placeAt(sTargetElementId);
+			Core.applyChanges();
+		}
+	});
+
+	QUnit.test("checks for the number of days on small screen in relative period and header button", function(assert) {
+		var iVisibleIntervals;
+		//Arrange
+		this.prepareTest("smallUiArea");
+		//Assert
+		assert.ok(this.oPC.isRelative(), "Relative period is active");
+		iVisibleIntervals = jQuery("#PC3-DatesRow-customintervals .sapUiCalItem").length;
+		assert.strictEqual(iVisibleIntervals, 8, "days are 8");
+		assert.strictEqual(this.oPC._getHeader()._oPickerBtn.getText(), "Day 1 - Day 8");
+		assert.strictEqual(this.oPC.getVisibleIntervalsCount(), 8, "correct number of shown intervals");
 	});
 
 	QUnit.module("Setters", {
