@@ -1091,6 +1091,10 @@ function(
 						$dialogContent.css({"padding-right" : ""});
 						this._iLastWidthAndHeightWithScroll = null;
 					}
+				} else if (!this._hasVerticalScrollbar() || !bMinWidth) {
+					$dialog.removeClass("sapMDialogVerticalScrollIncluded");
+					$dialogContent.css({"padding-right" : ""});
+					this._iLastWidthAndHeightWithScroll = null;
 				}
 			}
 
