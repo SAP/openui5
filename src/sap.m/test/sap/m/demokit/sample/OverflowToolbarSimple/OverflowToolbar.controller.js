@@ -1,8 +1,9 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
+	'sap/m/MessageToast',
 	'sap/ui/model/json/JSONModel'
 ],
-	function(Controller, JSONModel) {
+	function(Controller, MessageToast, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.OverflowToolbarSimple.OverflowToolbar", {
@@ -27,6 +28,10 @@ sap.ui.define([
 			this.byId("otb8").setWidth(iValue + "%");
 			this.byId("otb9").setWidth(iValue + "%");
 			this.byId("otb10").setWidth(iValue + "%");
+		},
+
+		shareAction: function () {
+			MessageToast.show("Share action\n".repeat(42));
 		}
 	});
 });

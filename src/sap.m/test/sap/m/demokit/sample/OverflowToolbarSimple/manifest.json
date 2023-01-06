@@ -24,6 +24,11 @@
 					"manifest.json"
 				]
 			}
+		},
+		"commands": {
+			"Share": {
+				"shortcut": "Ctrl+E"
+			}
 		}
 	}
 }

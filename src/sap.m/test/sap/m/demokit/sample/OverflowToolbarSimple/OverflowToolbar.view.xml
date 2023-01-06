@@ -4,6 +4,14 @@
 	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
 
+	<mvc:dependents>
+		<core:CommandExecution
+				command="Share"
+				enabled="true"
+				execute=".shareAction"
+			/>
+	</mvc:dependents>
+
 	<MessageStrip
 		class="sapUiTinyMargin"
 		text="Use this slider to resize the toolbars and observe their behaviour."
@@ -32,6 +40,7 @@
 		<Button text="Paste" type="Transparent"/>
 		<Button text="Undo" type="Transparent"/>
 		<Button text="Redo" type="Transparent"/>
+		<Button text="Share" press="cmd:Share" type="Transparent"/>
 	</OverflowToolbar>
 
 	<Label/>
