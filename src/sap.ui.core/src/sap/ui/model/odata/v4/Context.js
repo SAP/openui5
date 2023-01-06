@@ -408,9 +408,11 @@ sap.ui.define([
 			throw oError;
 		});
 
-		oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.setContext(undefined);
-		});
+		if (oGroupLock && this.oModel.isApiGroup(oGroupLock.getGroupId())) {
+			oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+				oDependentBinding.setContext(undefined);
+			});
+		}
 
 		return this.oDeletePromise;
 	};

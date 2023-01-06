@@ -1284,14 +1284,20 @@ sap.ui.define([
 			oModel = {
 				getAllBindings : function () {},
 				getDependentBindings : function () {},
+				isApiGroup : function () {},
 				reportError : function () {}
 			},
 			oContext = Context.create(oModel, "~oBinding~", "/Foo/Bar('42')", 42),
 			oExpectation0,
 			oExpectation1,
+			oGroupLock = {
+				getGroupId : function () {}
+			},
 			oPromise,
 			that = this;
 
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("~groupID~");
+		this.mock(oModel).expects("isApiGroup").withExactArgs("~groupID~").returns(true);
 		this.mock(oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oContext)).returns(aDependentBindings);
 		oExpectation0 = this.mock(aDependentBindings[0]).expects("setContext")
@@ -1300,7 +1306,8 @@ sap.ui.define([
 			.withExactArgs(undefined);
 
 		this.mock(oBinding).expects("deleteFromCache")
-			.withExactArgs("~oGroupLock~", "~sEditUrl~", "~sPath~", "~oETagEntity~", "~fnCallback~")
+			.withExactArgs(sinon.match.same(oGroupLock), "~sEditUrl~", "~sPath~", "~oETagEntity~",
+				"~fnCallback~")
 			.returns(SyncPromise.resolve(Promise.resolve()).then(function () {
 				that.mock(oModel).expects("getAllBindings").exactly(bFailure ? 0 : 1)
 					.withExactArgs().returns(aAllBindings);
@@ -1321,7 +1328,7 @@ sap.ui.define([
 			}));
 
 		// code under test
-		oPromise = oContext.doDelete("~oGroupLock~", "~sEditUrl~", "~sPath~", "~oETagEntity~",
+		oPromise = oContext.doDelete(oGroupLock, "~sEditUrl~", "~sPath~", "~oETagEntity~",
 			oBinding, "~fnCallback~");
 
 		assert.ok(oContext.oDeletePromise.isPending());
@@ -1335,6 +1342,34 @@ sap.ui.define([
 			assert.ok(bFailure);
 			assert.strictEqual(oError, "~oError~");
 		});
+	});
+});
+
+	//*********************************************************************************************
+[null, {getGroupId : function () {}}].forEach(function (oGroupLock) {
+	QUnit.test("doDelete: no groupLock, no API group", function () {
+		var oBinding = {
+				deleteFromCache : function () {}
+			},
+			oModel = {
+				getAllBindings : function () {},
+				isApiGroup : function () {}
+			},
+			oContext = Context.create(oModel, "~oBinding~", "/Foo/Bar('42')", 42);
+
+		this.mock(oBinding).expects("deleteFromCache")
+			.withExactArgs(sinon.match.same(oGroupLock), "~sEditUrl~", "~sPath~", "~oETagEntity~",
+				"~fnCallback~")
+			.returns(SyncPromise.resolve());
+		if (oGroupLock) {
+			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("~groupID~");
+			this.mock(oModel).expects("isApiGroup").withExactArgs("~groupID~").returns(false);
+		}
+		this.mock(oModel).expects("getAllBindings").withExactArgs().returns([]);
+
+		// code under test
+		return oContext.doDelete(oGroupLock, "~sEditUrl~", "~sPath~", "~oETagEntity~",
+			oBinding, "~fnCallback~");
 	});
 });
 

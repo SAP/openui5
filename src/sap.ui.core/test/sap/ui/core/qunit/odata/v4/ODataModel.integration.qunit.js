@@ -46187,8 +46187,10 @@ sap.ui.define([
 	// Scenario: Main & dependent detail table. Create inactive rows for the detail table.
 	// Deleting the parent contexts works although there are inactive rows in dependent binding.
 	// JIRA: CPOUI5ODATAV4-1468
+	// For non-deferred deletion, the context's dependent bindings stay resolved (BCP: 2380002990)
 	QUnit.test("delete parent context, inactive rows are in dependent binding", function (assert) {
 		var oContext,
+			oDeletePromise,
 			oDetailTable,
 			oDetailBinding,
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
@@ -46242,6 +46244,37 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to delete /SalesOrderList('42')",
+					sinon.match("Request intentionally failed"), sContext);
+
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('42')"
+				}, createErrorInsideBatch())
+				.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}])
+				.expectChange("salesOrderId", ["42"]); // happens via context restauration on error
+
+			// code under test
+			oDeletePromise = oContext.delete();
+
+			assert.strictEqual(
+				that.oView.byId("mainTable").getBinding("items").getCurrentContexts().length, 0);
+			assert.strictEqual(oDetailBinding.getContext(), oContext); // BCP: 2380002990
+
+			return Promise.all([
+				oDeletePromise.then(mustFail(assert), function (oError) {
+					assert.strictEqual(oError.message, "Request intentionally failed");
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
 			that.expectRequest({
 					method : "DELETE",
 					url : "SalesOrderList('42')"
@@ -46250,7 +46283,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				that.oView.byId("mainTable").getBinding("items").getCurrentContexts()[0].delete(),
+				oContext.delete(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
