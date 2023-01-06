@@ -28,6 +28,15 @@
 												<Button id="dummy" text="Dummy button" />
 												<Button id="ReBind" text="Rebind to correct Path" press=".bindToExisting"/>
 										</VBox>
+										<HBox>
+											<ComboBox id="c2" value="test">
+												<items>
+													<core:Item text="Inline Item 1" />
+													<core:Item text="Inline Item 2" />
+												</items>
+											</ComboBox>
+											<Button id="updateItems" text="Bind Items" press=".updateItems" />
+									</HBox>
 								</Page>
 						</App>
 
