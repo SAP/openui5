@@ -168,7 +168,7 @@ sap.ui.define([
 		};
 
 		AdaptiveContent.prototype.onThemeChanged = function () {
-			if (this.getDomRef()) {
+			if (this.getDomRef() && AdaptiveCards) {
 				this._adjustHostConfig();
 				this.invalidate();
 			}
