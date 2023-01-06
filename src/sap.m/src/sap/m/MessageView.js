@@ -1111,7 +1111,7 @@ sap.ui.define([
 
 				// first check if there is a class attribute and enrich it with 'sapMMsgViewItemDisabledLink'
 				// else, add proper class
-				var sClasses = "sapMMsgViewItemDisabledLink sapMMsgViewItemPendingLink";
+				var sClasses = "sapMMsgViewItemDisabledLink sapMMsgViewItemPendingLink sapMLnk";
 				var indexOfClass = attrs.indexOf("class");
 				if (indexOfClass > -1) {
 					attrs[indexOfClass + 1] += sClasses;
