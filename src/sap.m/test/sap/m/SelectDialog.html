@@ -931,6 +931,34 @@
 			});
 
 
+			var oSelectDialog18 = new sap.m.SelectDialog("SelectDialog18", {
+					title: "SelectDialog with delayed binding",
+					multiSelect: true,
+					contentWidth: "777px",
+					contentHeight: "500px"
+				});
+
+			var oButton18 = new sap.m.Button("Button18", {
+					text: "Open SelectDialog with delayed binding",
+					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+					press: function () {
+						// bind aggregation with filters
+						oSelectDialog18.bindAggregation("items", {
+							path: "/Products",
+							template: oProductItemTemplate
+						});
+
+						// open dialog
+						oSelectDialog18.open("id_1");
+
+						setTimeout(function () {
+							// initiate model
+							var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, true);
+							oSelectDialog18.setModel(oModel);
+						}, 500);
+					}
+				});
+
 			var oPage = new sap.m.Page("page", {
 				title:"Mobile SelectDialog Control",
 				content:[
@@ -951,7 +979,13 @@
 							oButton13,
 							oButton14,
 							oButton15,
+<<<<<<< HEAD   (3b1c5d Merge "[FIX] sap.ui.fl - Remove invalid csrf in case of 403 )
 							oButton16
+=======
+							oButton16,
+							oButton17,
+							oButton18
+>>>>>>> CHANGE (5d2f67 [INTERNAL] sap.m.SelectDialog: Empty list is now focusable)
 						]
 					})
 				],

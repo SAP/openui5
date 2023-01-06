@@ -1037,6 +1037,7 @@ function(
 		this._oList.getItems().forEach(function (oItem) {
 			oItem.addEventDelegate(this._getListItemsEventDelegates());
 		}, this);
+
 	};
 
 	/**
