@@ -371,12 +371,23 @@ sap.ui.define([
 		this._oInvisibleText = new InvisibleText(this.getId() + "-ariaText");
 		this.setAggregation("_invisibleText", this._oInvisibleText, true);
 
-		this._oWarningIcon = new Icon(this.getId() + "-warn-icon", {
-			src: "sap-icon://notification",
+		this._oErrorIcon = new Icon(this.getId() + "-warn-icon", {
+			src: "sap-icon://error",
 			size: "1.375rem"
 		});
 
-		this._oWarningIcon.addStyleClass("sapMGTFtrFldIcnMrk");
+		this._oErrorIcon.addStyleClass("sapMGTFtrFldIcnMrk");
+		 //If parameter is not available synchronously it will be available through callback
+
+		var sErrorIconColor = Parameters.get({
+			name: "sapNegativeTextColor",
+			callback: function(sErrorIconColor) {
+				this._oErrorIcon.setColor(sErrorIconColor);
+			}.bind(this)
+        });
+        if (sErrorIconColor) {
+            this._oErrorIcon.setColor(sErrorIconColor);
+        }
 
 		this._oBusy = new HTML(this.getId() + "-overlay");
 		this._oBusy.setBusyIndicatorDelay(0);
@@ -564,7 +575,7 @@ sap.ui.define([
 		//stop any currently running queue
 		this._clearAnimationUpdateQueue();
 
-		this._oWarningIcon.destroy();
+		this._oErrorIcon.destroy();
 		if (this._oImage) {
 			this._oImage.destroy();
 		}

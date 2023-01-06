@@ -498,7 +498,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 				oRm.openStart("div", oControl.getId() + "-failed-icon");
 				oRm.class("sapMGenericTileFtrFldIcn");
 				oRm.openEnd();
-				oRm.renderControl(oControl._oWarningIcon);
+				oRm.renderControl(oControl._oErrorIcon);
 				oRm.close("div");
 
 				if (!oControl._isInActionScope() && !oControl._bShowActionsView) {

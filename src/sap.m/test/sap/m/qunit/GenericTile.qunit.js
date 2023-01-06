@@ -1591,6 +1591,12 @@ sap.ui.define([
 		assert.ok(!this.oGenericTile.getTileContent()[0]._bRenderFooter, "bRenderFooter set to false");
 	});
 
+	QUnit.test("GenericTile error icon check in Failed state", function(assert) {
+		this.oGenericTile.setState("Failed");
+		oCore.applyChanges();
+		assert.equal(this.oGenericTile._oErrorIcon.getSrc(),"sap-icon://error","Icon in failed state should match with error icon");
+	});
+
 	QUnit.module("Rendering tests for Disabled state", {
 		beforeEach: function() {
 			this.oGenericTile = new GenericTile("generic-tile-failed", {
