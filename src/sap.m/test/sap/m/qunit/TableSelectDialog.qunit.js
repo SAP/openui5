@@ -956,7 +956,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		assert.strictEqual(this.oTableSelectDialog._oSearchField.getFocusDomRef(), document.activeElement, 'SearchField should be focused if there are no items in the table');
+		assert.strictEqual(this.oTableSelectDialog._oTable.getItemsContainerDomRef().firstChild, document.activeElement, 'The table should be focused even if there are no items in the table');
 	});
 
 	QUnit.test("InitialFocus when there are rows in the TableSelectDialog's table", function (assert){
@@ -997,7 +997,8 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		assert.strictEqual(this.oTableSelectDialog._oSearchField.getFocusDomRef(), document.activeElement, 'SearchField should be focused when items appear later');
+		assert.strictEqual(this.oTableSelectDialog._oDialog.getContent()[1].getItems()[0].getFocusDomRef(), document.activeElement, 'First row should be focused when items appear later');
+
 	});
 
 	/********************************************************************************/
@@ -1087,7 +1088,6 @@ sap.ui.define([
 
 	QUnit.module("Clear functionality", {
 		beforeEach : function () {
-			sinon.config.useFakeTimers = true;
 			var aData = [];
 			for (var i = 0; i < 50; i++) {
 				aData.push({text : "Item" + i, selected : i === 3});
@@ -1158,7 +1158,6 @@ sap.ui.define([
 
 		},
 		afterEach : function () {
-			sinon.config.useFakeTimers = false;
 			this.oTableSelectDialogClearButton.destroy();
 			this.oTableSelectDialogClearButton1.destroy();
 			this.oTable1 = null;
@@ -1170,7 +1169,6 @@ sap.ui.define([
 		this.oTableSelectDialogClearButton.open();
 
 		oCore.applyChanges();
-		this.clock.tick(500);
 
 		assert.equal(this.oTableSelectDialogClearButton._getClearButton().getEnabled(), true, 'Clear button should be enabled');
 	});
@@ -1179,7 +1177,6 @@ sap.ui.define([
 		this.oTableSelectDialogClearButton1.open();
 
 		oCore.applyChanges();
-		this.clock.tick(500);
 
 		assert.equal(this.oTableSelectDialogClearButton1._getClearButton().getEnabled(), false, 'Clear button should be disabled');
 	});
@@ -1189,7 +1186,6 @@ sap.ui.define([
 		this.oTableSelectDialogClearButton.open();
 
 		oCore.applyChanges();
-		this.clock.tick(500);
 
 		assert.equal(this.oTableSelectDialogClearButton._getClearButton().getEnabled(), true, 'Clear button should be enabled');
 
@@ -1203,7 +1199,6 @@ sap.ui.define([
 		this.oTableSelectDialogClearButton1.open();
 
 		oCore.applyChanges();
-		this.clock.tick(500);
 
 		assert.equal(this.oTableSelectDialogClearButton1._getClearButton().getEnabled(), false, 'Clear button should be disabled');
 
@@ -1217,7 +1212,6 @@ sap.ui.define([
 		this.oTableSelectDialogClearButton.open();
 
 		oCore.applyChanges();
-		this.clock.tick(500);
 
 		assert.equal(this.oTableSelectDialogClearButton._getClearButton().getEnabled(), true, 'Clear button should be enabled');
 
@@ -1232,7 +1226,6 @@ sap.ui.define([
 		this.oTableSelectDialogClearButton.open();
 
 		oCore.applyChanges();
-		this.clock.tick(500);
 
 		assert.equal(this.oTableSelectDialogClearButton.getTitle(), "Title", 'Title of TableSelectDialog should be "Title"');
 		assert.equal(this.oTableSelectDialogClearButton._oDialog.getTitle(), "Title", 'Title of Dialog  should be "Title"');
@@ -1242,7 +1235,6 @@ sap.ui.define([
 	QUnit.test("After clear is preset the focus should be returned to the search field", function(assert) {
 		this.oTableSelectDialogClearButton.open();
 		oCore.applyChanges();
-		this.clock.tick(500);
 
 		this.oTableSelectDialogClearButton._getClearButton().firePress();
 		assert.equal(document.activeElement.getAttribute("id"), this.oTableSelectDialogClearButton._oDialog.getId(), 'After selection is clear the focus should be returned to the TableSelectDialog"');
@@ -1252,7 +1244,6 @@ sap.ui.define([
 	QUnit.test("After clear is preset the focus should be returned to the search field", function(assert) {
 		this.oTableSelectDialogClearButton.open();
 		oCore.applyChanges();
-		this.clock.tick(500);
 
 		this.oTableSelectDialogClearButton._getClearButton().firePress();
 		assert.equal(document.activeElement.getAttribute("id"), this.oTableSelectDialogClearButton._oDialog.getId(), 'After selection is clear the focus should be returned to the TableSelectDialog"');
@@ -1262,7 +1253,6 @@ sap.ui.define([
 	QUnit.test("Disable already enabled clear button and then enable it again", function(assert) {
 		this.oTableSelectDialogClearButton.open();
 		oCore.applyChanges();
-		this.clock.tick(500);
 
 		var oCustomHeader = this.oTableSelectDialogClearButton._oDialog.getCustomHeader();
 
@@ -1283,7 +1273,6 @@ sap.ui.define([
 	QUnit.test("Disable already enabled clear button and then enabled", function(assert) {
 		this.oTableSelectDialogShowClearNot.open();
 		oCore.applyChanges();
-		this.clock.tick(500);
 
 		var oCustomHeader = this.oTableSelectDialogShowClearNot._oDialog.getCustomHeader();
 		assert.equal(oCustomHeader.getContentRight().length,  0, 'Clear button is not created');
@@ -1317,9 +1306,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oTableSelectDialog._oSearchField.getDomRef().id, KeyCodes.ESCAPE);
 
 		oCore.applyChanges();
-		this.clock.tick(500);
 		oTableSelectDialog._oDialog.close();
-		this.clock.tick(500);
 		oTableSelectDialog.destroy();
 	});
 
