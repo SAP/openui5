@@ -2758,6 +2758,28 @@ sap.ui.define([
 		this.oDialog.open();
 	});
 
+	QUnit.test("When the content of the dialog is changed and scrollbar is not needed the 'sapMDialogVerticalScrollIncluded' class should be removed (all browsers except Chrome) BCP: 2270156416", function(assert) {
+		var done = assert.async();
+
+		this.oDialog.attachAfterOpen(function () {
+			if (!Device.browser.chrome) {
+				assert.ok(this.oDialog.$().hasClass("sapMDialogVerticalScrollIncluded"),  "Initially the class is added");
+			}
+
+			// remove the list and add new one with only one item (no need of vertical scrollbar)
+			this.oDialog.destroyContent();
+			this.oDialog.addContent(new List({ items: [new StandardListItem({title: "Item 1"})]}));
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.notOk(this.oDialog.$().hasClass("sapMDialogVerticalScrollIncluded"),  "Class is successfully removed");
+
+			done();
+		}.bind(this));
+
+		this.oDialog.open();
+	});
+
 	QUnit.module("Dialog with specific tool bar design");
 
 	QUnit.test("Toolbar with design - Info", function(assert) {
