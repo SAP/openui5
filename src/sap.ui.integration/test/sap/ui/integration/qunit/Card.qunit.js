@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/cards/filters/SelectFilter",
 	"sap/ui/integration/util/DataProvider",
+	"sap/ui/integration/util/Manifest",
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/library",
 	"sap/ui/core/Core",
@@ -34,6 +35,7 @@ sap.ui.define([
 		Header,
 		Filter,
 		DataProvider,
+		CardManifest,
 		Utils,
 		library,
 		Core,
@@ -1225,40 +1227,6 @@ sap.ui.define([
 
 			this.oCard._destroyManifest();
 			this.oCard.createManifest(oManifest_ListCard);
-		});
-
-		QUnit.test("setManifest with and without translated texts", function (assert) {
-
-			var done = assert.async(),
-				oLoadI18nSpy = sinon.spy(CoreManifest.prototype, "_loadI18n");
-
-			// Arrange
-			this.oCard.attachEventOnce("_ready", function () {
-
-				Core.applyChanges();
-
-				// Assert
-				assert.ok(oLoadI18nSpy.notCalled, "translation file is not fetched");
-
-				// Arrange
-				this.oCard.attachEventOnce("_ready", function () {
-
-					Core.applyChanges();
-
-					// Assert
-					assert.ok(oLoadI18nSpy.called, "translation file is fetched");
-
-					// Clean up
-					oLoadI18nSpy.restore();
-					done();
-				});
-
-				this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json");
-
-			}.bind(this));
-
-			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
 		QUnit.test("Manifest works if it has very deep structure", function (assert) {
@@ -4534,5 +4502,89 @@ sap.ui.define([
 			oCard.setManifest(oManifest_TableCard);
 			Core.applyChanges();
 		});
+
+		QUnit.module("Card manifest initialization", {
+			beforeEach: function () {
+				this.oCard = new Card();
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("setManifest with and without translated texts", function (assert) {
+			var done = assert.async(),
+				oLoadI18nSpy = this.spy(CoreManifest.prototype, "_loadI18n");
+
+			// Arrange
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(oLoadI18nSpy.notCalled, "translation file is not fetched");
+
+				// Arrange
+				this.oCard.attachEventOnce("_ready", function () {
+					Core.applyChanges();
+
+					// Assert
+					assert.ok(oLoadI18nSpy.called, "translation file is fetched");
+
+					// Clean up
+					done();
+				});
+
+				this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json");
+
+			}.bind(this));
+
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+		});
+
+		QUnit.test("Dependencies that are listed in the manifest are loaded", function (assert) {
+			// Arrange
+			var done = assert.async();
+			var oLoadDepsSpy = this.stub(CardManifest.prototype, "loadDependenciesAndIncludes").resolves();
+
+			this.oCard.attachEventOnce("_ready", function () {
+				// Assert
+				assert.ok(oLoadDepsSpy.calledOnce, "Manifest#loadDependenciesAndIncludes should be called");
+				assert.ok(this.oCard.getCardContent(), "The card content should be created");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.loadDependenciesAndIncludes"
+				},
+				"sap.ui5": {
+					"dependencies": {
+						"libs": {
+							"card.test.shared.lib": {}
+						}
+					}
+				},
+				"sap.card": {
+					"type": "Object",
+					"header": {
+						"title": "Title"
+					},
+					"content": {
+						"groups": [{
+							"items": [
+								{
+									"id": "item1"
+								}
+							]
+						}]
+					}
+				}
+			});
+		});
+
 	}
 );

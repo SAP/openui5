@@ -109,7 +109,7 @@ sap.ui.define([
 			// Simulate library location for the shared extension
 			sap.ui.loader.config({
 				paths: {
-					"sap/my/lib": sap.ui.require.toUrl("sap/ui/demo/cardExplorer/samples/extension/myLib")
+					"shared/lib": sap.ui.require.toUrl("sap/ui/demo/cardExplorer/samples/extension/shared/lib")
 				}
 			});
 		},

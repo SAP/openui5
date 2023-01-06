@@ -817,7 +817,7 @@ sap.ui.define([
 	 * Instantiates a Card Manifest and applies it.
 	 *
 	 * @private
-	 * @param {Object|string} vManifest The manifest URL or the manifest JSON.
+	 * @param {object|string} vManifest The manifest URL or the manifest JSON.
 	 * @param {string} sBaseUrl The base URL of the manifest.
 	 */
 	Card.prototype.createManifest = function (vManifest, sBaseUrl) {
@@ -842,6 +842,13 @@ sap.ui.define([
 
 		this._oCardManifest
 			.load(mOptions)
+			.then(function () {
+				if (this.isDestroyed()) {
+					throw new Error(CARD_DESTROYED_ERROR);
+				}
+
+				return this._oCardManifest.loadDependenciesAndIncludes();
+			}.bind(this))
 			.then(function () {
 				if (this.isDestroyed()) {
 					throw new Error(CARD_DESTROYED_ERROR);

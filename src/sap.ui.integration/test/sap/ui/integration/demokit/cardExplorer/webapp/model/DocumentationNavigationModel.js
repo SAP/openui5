@@ -14,6 +14,12 @@ sap.ui.define([
 				key: 'gettingStarted'
 			},
 			{
+				title: 'Card Manifest',
+				icon: 'sap-icon://syntax',
+				target: 'learnDetail',
+				key: 'cardManifest'
+			},
+			{
 				title: 'Card Headers',
 				icon: 'sap-icon://header',
 				target: 'learnDetail',
