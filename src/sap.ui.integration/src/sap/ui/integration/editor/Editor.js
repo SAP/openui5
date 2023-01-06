@@ -27,7 +27,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Popup",
 	"sap/base/i18n/ResourceBundle",
-	"sap/ui/integration/editor/EditorResourceBundles",
 	"sap/ui/dom/includeStylesheet",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/theming/Parameters",
@@ -70,7 +69,6 @@ sap.ui.define([
 	Log,
 	Popup,
 	ResourceBundle,
-	EditorResourceBundles,
 	includeStylesheet,
 	LoaderExtensions,
 	Parameters,
@@ -1039,11 +1037,7 @@ sap.ui.define([
 				this._manifestModel = new JSONModel(oManifestJson);
 				this._isManifestReady = true;
 				this.fireManifestReady();
-				var vI18n = this._oEditorManifest.get("/sap.app/i18n");
-				var sResourceBundleURL = this.getBaseUrl() + vI18n;
-				if (vI18n && EditorResourceBundles.getResourceBundleURL() !== sResourceBundleURL) {
-					EditorResourceBundles.setResourceBundleURL(sResourceBundleURL);
-				}
+				this._createResourceBundlesForMultiTranslation();
 				//use the translations
 				this._loadDefaultTranslations();
 				//add a context model
@@ -1055,6 +1049,55 @@ sap.ui.define([
 					this._initInternal();
 				}.bind(this));
 			}.bind(this));
+	};
+
+	/**
+	 * Create the Resource Bundles for Multi Translation
+	 */
+	Editor.prototype._createResourceBundlesForMultiTranslation = function () {
+		var vI18n = this._oEditorManifest.get("/sap.app/i18n");
+		var sResourceBundleURL;
+		var aSupportedLocales;
+		if (typeof vI18n === "string") {
+			sResourceBundleURL = this.getBaseUrl() + vI18n;
+		} else if (typeof vI18n === "object") {
+			if (vI18n.bundleUrl) {
+				sResourceBundleURL = this.getBaseUrl() + vI18n.bundleUrl;
+			}
+			if (vI18n.supportedLocales) {
+				aSupportedLocales = vI18n.supportedLocales;
+			}
+		}
+		this._aResourceBundles = [];
+		//according to the language list, load each resource bundle
+		for (var p in Editor._oLanguages) {
+			var oResourceBundleTemp;
+			if (sResourceBundleURL) {
+				var aFallbacks = [p];
+				if (p.indexOf("-") > -1) {
+					aFallbacks.push(p.substring(0, p.indexOf("-")));
+				}
+				//add en into fallbacks
+				if (!aFallbacks.includes("en")) {
+					aFallbacks.push("en");
+				}
+				oResourceBundleTemp = ResourceBundle.create({
+					url: sResourceBundleURL,
+					async: false,
+					locale: p,
+					supportedLocales: aFallbacks
+				});
+			}
+			var oResourceBundleObject = {
+				"language": Editor._oLanguages[p],
+				"resourceBundle": oResourceBundleTemp,
+				"isSupportedLocale": true
+			};
+			if (Array.isArray(aSupportedLocales) && !aSupportedLocales.includes(p) && !aSupportedLocales.includes(p.replace('-', '_'))) {
+				oResourceBundleObject.isSupportedLocale = false;
+			}
+			this._aResourceBundles[p] = oResourceBundleObject;
+		}
 	};
 
 	/**
@@ -1267,10 +1310,10 @@ sap.ui.define([
 			this._loadDefaultTranslations();
 		}
 		this.setProperty("language", sValue, bSuppress);
-		if (!Editor._languages[this._language]) {
+		if (!Editor._oLanguages[this._language]) {
 			this._language = this._language.split("-")[0];
 		}
-		if (!Editor._languages[this._language]) {
+		if (!Editor._oLanguages[this._language]) {
 			Log.warning("The language: " + sValue + " is currently unknown, some UI controls might show " + sValue + " instead of the language name.");
 		}
 		return this;
@@ -2070,6 +2113,7 @@ sap.ui.define([
 		if (oConfig.layout) {
 			oField._layout = oConfig.layout;
 		}
+		oField._aResourceBundles = this._aResourceBundles;
 		oField.setAssociation("_messageStrip", MessageStripId);
 		return oField;
 	};
@@ -2584,10 +2628,10 @@ sap.ui.define([
 			origLangFieldConfig.editable = false;
 			origLangFieldConfig.required = false;
 			//if has value transaltions, get value via language setting in core
-			if (!Editor._languages[sLanguage] && sLanguage.indexOf("-") > -1) {
+			if (!Editor._oLanguages[sLanguage] && sLanguage.indexOf("-") > -1) {
 				sLanguage = sLanguage.substring(0, sLanguage.indexOf("-"));
 			}
-			if (Editor._languages[sLanguage]) {
+			if (Editor._oLanguages[sLanguage]) {
 				var sTranslateText = this.getTranslationValueInTexts(sLanguage, oConfig.manifestpath);
 				if (sTranslateText) {
 					origLangFieldConfig.value = sTranslateText;
@@ -2691,40 +2735,34 @@ sap.ui.define([
 	 * Returns the current language specific text for a given key or "" if no translation for the key exists
 	 */
 	Editor.prototype._getCurrentLanguageSpecificText = function (sKey) {
-		var sLanguage = this._language;
-		if (this._oTranslationBundle) {
-			var sText = this._oTranslationBundle.getText(sKey, [], true);
-			if (sText === undefined) {
-				return "";
-			}
-			return sText;
-		}
-		if (!sLanguage) {
-			return "";
-		}
-		var vI18n = this._oEditorManifest.get("/sap.app/i18n");
-		if (!vI18n) {
-			return "";
-		}
-		if (typeof vI18n === "string") {
-			var aFallbacks = [sLanguage];
-			if (sLanguage.indexOf("-") > -1) {
-				aFallbacks.push(sLanguage.substring(0, sLanguage.indexOf("-")));
+		if (!this._oTranslationBundle && this._language) {
+			var aFallbacks = [];
+			if (this._language.indexOf("-") > -1) {
+				aFallbacks.push(this._language.substring(0, this._language.indexOf("-")));
 			}
 			//add en into fallbacks
 			if (!aFallbacks.includes("en")) {
 				aFallbacks.push("en");
 			}
-			// load the ResourceBundle relative to the manifest
-			this._oTranslationBundle = ResourceBundle.create({
-				url: this.getBaseUrl() + vI18n,
-				async: false,
-				locale: sLanguage,
-				supportedLocales: aFallbacks,
-				fallbackLocale: "en"
-			});
-
-			return this._getCurrentLanguageSpecificText(sKey);
+			if (this._aResourceBundles[this._language] && this._aResourceBundles[this._language].isSupportedLocale) {
+				this._oTranslationBundle = this._aResourceBundles[this._language];
+			} else {
+				for (var i = 0; i < aFallbacks.length; i++) {
+					if (this._aResourceBundles[aFallbacks[i]] && this._aResourceBundles[aFallbacks[i]].isSupportedLocale) {
+						this._oTranslationBundle = this._aResourceBundles[aFallbacks[i]];
+						break;
+					}
+				}
+			}
+		}
+		if (this._oTranslationBundle && this._oTranslationBundle.resourceBundle) {
+			var sText = this._oTranslationBundle.resourceBundle.getText(sKey, [], true);
+			if (sText === undefined) {
+				return "";
+			}
+			return sText;
+		} else {
+			return "";
 		}
 	};
 
@@ -2783,7 +2821,7 @@ sap.ui.define([
 					translatable: true,
 					expandable: false,
 					expanded: true,
-					label: this._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[sLanguage]
+					label: this._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[sLanguage]
 				});
 			}
 			for (var n in aItems) {
@@ -3343,7 +3381,7 @@ sap.ui.define([
 		}
 	};
 	//map of language strings in their actual language representation, initialized in Editor.init
-	Editor._languages = {};
+	Editor._oLanguages = {};
 
 	//theming from parameters to css valiables if css variables are not turned on
 	//find out if css vars are turned on
@@ -3392,7 +3430,7 @@ sap.ui.define([
 			failOnError: false,
 			async: true
 		}).then(function (o) {
-			Editor._languages = o;
+			Editor._oLanguages = o;
 		});
 	};
 

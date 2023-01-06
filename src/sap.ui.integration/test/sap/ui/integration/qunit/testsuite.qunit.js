@@ -2387,6 +2387,42 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"editor/i18nAsObject/Basic": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/i18nAsObject/Negative": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/i18nAsObject/MultiLanguages01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/i18nAsObject/MultiLanguages02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/editor/CardEditor": {
 				group: "Runtime Editor for Card",
 				coverage: {

@@ -2044,7 +2044,7 @@ sap.ui.define([
                     assert.ok(this.oEditor.isReady(), "Editor is ready");
                     var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
@@ -2108,7 +2108,7 @@ sap.ui.define([
                     assert.ok(this.oEditor.isReady(), "Editor is ready");
                     var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
@@ -2175,7 +2175,7 @@ sap.ui.define([
                     assert.ok(this.oEditor.isReady(), "Editor is ready");
                     var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
@@ -2690,7 +2690,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
@@ -2983,7 +2983,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
@@ -3046,7 +3046,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
@@ -3112,7 +3112,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
@@ -3175,7 +3175,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
@@ -3240,7 +3240,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
@@ -3309,7 +3309,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 

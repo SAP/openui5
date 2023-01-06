@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/merge",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/integration/editor/EditorResourceBundles",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/dom/includeStylesheet",
@@ -23,7 +22,6 @@ sap.ui.define([
 	JSONModel,
 	merge,
 	ResourceModel,
-	EditorResourceBundles,
 	LoaderExtensions,
 	Parameters,
 	includeStylesheet,
@@ -190,11 +188,7 @@ sap.ui.define([
 		this._manifestModel = new JSONModel(oManifestJson);
 		this._isManifestReady = true;
 		this.fireManifestReady();
-		var vI18n = this._oEditorManifest.get("/sap.app/i18n");
-		var sResourceBundleURL = this.getBaseUrl() + vI18n;
-		if (vI18n && EditorResourceBundles.getResourceBundleURL() !== sResourceBundleURL) {
-			EditorResourceBundles.setResourceBundleURL(sResourceBundleURL);
-		}
+		this._createResourceBundlesForMultiTranslation();
 		//add a context model
 		this._createContextModel();
 		if (this._oEditorManifest && this._oEditorManifest.getResourceBundle()) {
@@ -295,62 +289,6 @@ sap.ui.define([
 			}
 		}
 	};
-
-	//map of language strings in their actual language representation, initialized in CardEditor.init
-	CardEditor._languages = {};
-
-	//theming from parameters to CSS variables if CSS variables are not turned on
-	//find out if CSS vars are turned on
-	CardEditor._appendThemeVars = function () {
-		var aVars = [
-			"sapUiButtonHoverBackground",
-			"sapUiBaseBG",
-			"sapUiContentLabelColor",
-			"sapUiTileSeparatorColor",
-			"sapUiHighlight",
-			"sapUiListSelectionBackgroundColor",
-			"sapUiNegativeText",
-			"sapUiCriticalText",
-			"sapUiPositiveText",
-			"sapUiChartScrollbarBorderColor"
-		];
-		var mParams = Parameters.get({
-			name: aVars,
-			callback: function (_params) {
-			   // this will only be called if params weren’t available synchronously
-			}
-		});
-		if (mParams) {
-			for (var n in mParams) {
-				document.body.style.setProperty("--" + n, mParams[n]);
-			}
-		}
-	};
-
-	//initializes global settings
-	CardEditor.init = function () {
-		this.init = function () { }; //replace self
-
-		//add theming variables if CSS vars are not turned on
-		//if (!window.getComputedStyle(document.documentElement).getPropertyValue('--sapBackgroundColor')) {
-		CardEditor._appendThemeVars();
-		Core.attachThemeChanged(function () {
-			CardEditor._appendThemeVars();
-		});
-		//}
-
-		var sCssURL = sap.ui.require.toUrl("sap.ui.integration.editor.css.Editor".replace(/\./g, "/") + ".css");
-		includeStylesheet(sCssURL);
-		LoaderExtensions.loadResource("sap/ui/integration/editor/languages.json", {
-			dataType: "json",
-			failOnError: false,
-			async: true
-		}).then(function (o) {
-			CardEditor._languages = o;
-		});
-	};
-
-	CardEditor.init();
 
 	return CardEditor;
 });

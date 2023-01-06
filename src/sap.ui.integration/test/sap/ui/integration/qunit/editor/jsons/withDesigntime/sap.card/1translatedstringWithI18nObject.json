@@ -1,0 +1,25 @@
+{
+	"sap.app": {
+		"id": "test.sample",
+		"i18n": {
+			"bundleUrl": "../i18n/i18n.properties",
+			"supportedLocales": [
+				"",
+				"fr",
+				"en"
+			],
+			"fallbackLocale": "en"
+		}
+	},
+	"sap.card": {
+		"designtime": "designtime/1stringtrans",
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"stringParameter": {
+					"value": "StringLabelTrans Value"
+				}
+			}
+		}
+	}
+}

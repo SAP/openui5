@@ -227,7 +227,7 @@ function updateAdminContentTranslationLayerCard() {
 function showEditorInDialog(oButton) {
 	sap.ui.require(["sap/m/Dialog", "sap/ui/integration/designtime/editor/CardEditor"], function (Dialog, CardEditor) {
 		var oCard = {
-			"manifest": "manifest.json",
+			"manifest": "manifest_i18n.json",
 			"host": "host",
 			"baseUrl": baseUrl
 		};
@@ -236,7 +236,7 @@ function showEditorInDialog(oButton) {
 		});
 		var oSeparateEditorDialog= new Dialog({
 			title: "Card Editor In Dailog",
-			contentWidth: "600px",
+			contentWidth: "680px",
 			//contentHeight: "400px",
 			resizable: true,
 			content: oCardEditor,

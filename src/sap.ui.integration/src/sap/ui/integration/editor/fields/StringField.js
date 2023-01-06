@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/base/util/restricted/_debounce",
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/integration/editor/EditorResourceBundles",
 	"sap/base/util/deepClone",
 	"sap/ui/model/Sorter",
 	"sap/m/GroupHeaderListItem",
@@ -45,7 +44,6 @@ sap.ui.define([
 	_debounce,
 	Core,
 	JSONModel,
-	EditorResourceBundles,
 	deepClone,
 	Sorter,
 	GroupHeaderListItem,
@@ -336,7 +334,6 @@ sap.ui.define([
 	//get origin values in i18n files
 	StringField.prototype.getOriginTranslatedValues = function(oConfig) {
 		var aOriginTranslatedValues = [];
-		var aEditorResourceBundles = EditorResourceBundles.getInstance();
 		//get translation key of the value
 		var sKey;
 		if (oConfig._translatedDefaultPlaceholder && oConfig._translatedDefaultPlaceholder.startsWith("{i18n>") && oConfig._translatedDefaultPlaceholder.endsWith("}")) {
@@ -344,8 +341,8 @@ sap.ui.define([
 		} else if (oConfig._translatedDefaultPlaceholder && oConfig._translatedDefaultPlaceholder.startsWith("{{") && oConfig._translatedDefaultPlaceholder.endsWith("}}")) {
 			sKey = oConfig._translatedDefaultPlaceholder.substring(2, oConfig._translatedDefaultPlaceholder.length - 2);
 		}
-		for (var p in aEditorResourceBundles) {
-			var oResourceBundleTemp = aEditorResourceBundles[p];
+		for (var p in this._aResourceBundles) {
+			var oResourceBundleTemp = this._aResourceBundles[p];
 			var sTranslatedValue = "";
 			var sOriginValue = "";
 			if (sKey && oResourceBundleTemp) {
