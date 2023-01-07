@@ -11,15 +11,13 @@
 				showIcons="true"
 				uploadEnabled="true"
 				terminationEnabled="true"
-				fileTypes="txt,doc,png"
 				maxFileNameLength="30"
 				maxFileSize="200"
-				mediaTypes="text/plain,application/msword,image/png"
 				uploadUrl="../../../../upload"
 				items="{path: '/items', templateShareable: false}"
 				mode="MultiSelect"
 				cloudFilePickerEnabled="true"
-				cloudFilePickerServiceUrl="/sap/opu/odata4/sap/ui_cmis_myfiles_04/srvd/sap/cmis_myfiles/0001/">
+				cloudFilePickerServiceUrl="/sap/opu/odata4/sap/ui_cmis_myfiles_04/srvd/sap/cmis_myfiles/0001/?sap-client=325">
 			<upload:toolbar>
 				<OverflowToolbar>
 					<ToolbarSpacer/>

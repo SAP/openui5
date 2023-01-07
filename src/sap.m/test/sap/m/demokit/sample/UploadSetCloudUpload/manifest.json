@@ -23,7 +23,11 @@
 					"Page.view.xml",
 					"Page.controller.js",
 					"items.json",
-					"manifest.json"
+					"manifest.json",
+					"mockserver/metadata.xml",
+					"mockserver/FileShares.json",
+					"mockserver/FileShareItems.json",
+					"mockserver/mockServer.js"
 				]
 			}
 		}
