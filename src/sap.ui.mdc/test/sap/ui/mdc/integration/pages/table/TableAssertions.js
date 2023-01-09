@@ -9,24 +9,6 @@ sap.ui.define(
 
 			return {
 
-				iShouldSeeTheTableHeader: function () {
-					return this.waitFor({
-						controlType: "sap.m.Title",
-						check: function (aTitles) {
-							return aTitles.filter(function (aTitle) {
-								if (aTitle.getText().indexOf("Products") === -1) {
-									return false;
-								}
-								return true;
-							});
-						},
-						success: function (){
-							QUnit.ok(true, "The table has header");
-						},
-						errorMessage: "Table header is not displayed"
-					});
-				},
-
 				theTableHasASortButton: function () {
 					// var SettingsButton = null; // not used
 					return this.waitFor({

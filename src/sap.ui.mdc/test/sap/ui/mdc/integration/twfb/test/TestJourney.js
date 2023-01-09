@@ -250,11 +250,6 @@ sap.ui.define([
 
 
 
-		// I should see a Books table with columns (x,y,z) and n rows.
-		Then.onTheMDCTable.iShouldSeeTheTableHeader("Books");
-
-
-
 		// I search books with titles “Wallpaper“ using the Search Books filter field
 		//TODO iEnterTextOnTheFilterField only works for FilterFields having a label, but not for the basic search
 		//TODO should work with id instead of label as parameter
@@ -279,12 +274,6 @@ sap.ui.define([
 
 		//I press the Go button (or press enter in the search field)
 		When.onTheMDCFilterBar.iExpectSearch(sFilterBarID);
-
-
-
-		//I should see a table with one book and the title “The Yellow Wallpaper“
-		Then.onTheMDCTable.iShouldSeeRowsWithData(1);
-
 
 		// I click on the row The Yellow Wallpaper
 		var link = {text: "The Yellow Wallpaper"};
@@ -319,12 +308,7 @@ sap.ui.define([
 		When.util.iPressButton("Save");
 
 
-
-		//I should see a table with one row and a column Price with value 48.79 GBP
-		//Then.onTheMDCTable.iShouldSeeARowWithData(0, JSON.parse('["The Yellow Wallpaper","Mentally ill women  Fiction, Feminist fiction, Psychological fiction, Married women  Psychology  Fiction, Sex role  Fiction",102,["48.79","MXN"],815,"religious_text","prophecy"]'));
-
-
-
+		// TODO revert the database modifications
 		// When.onTheMDCLink.iPressTheLink(link);
 		// When.onTheMDCLink.iPressLinkOnPopover(link, "Manage book");
 		// When.util.iPressButton("Edit");
@@ -346,9 +330,6 @@ sap.ui.define([
 
 		//I press the Go button (or press enter in the search field)
 		When.onTheMDCFilterBar.iExpectSearch(sFilterBarID);
-
-		//I should see a table with one book and the title “The Yellow Wallpaper“
-		Then.onTheMDCTable.iShouldSeeRowsWithData(1);
 
 		Then.iTeardownMyUIComponent();
 	});

@@ -207,6 +207,7 @@ sap.ui.define([
 		 * @property {string[]} values Filter values for the given operator
 		 * @property {string} inputControl <code>Control</code> that is used as input for the value
 		 */
+
 		/**
 		 * OPA5 test action
 		 * 1. Opens the personalization dialog of a given chart.

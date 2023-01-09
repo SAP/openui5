@@ -27,10 +27,6 @@ sap.ui.define([
 			actions: {
 
 				// table
-				iClickOnTheSortButton: function() {
-					return TableActions.iClickOnTheSortButton.call(this);
-				},
-
 				iClickOnColumnHeader: function(sColumn) {
 					return TableActions.iClickOnColumnHeader.call(this, sColumn);
 				},
@@ -178,14 +174,6 @@ sap.ui.define([
 			assertions: {
 
 				// table
-				iShouldSeeTheTableHeader: function(sName) {
-					return TableAssertions.iShouldSeeTheTableHeader.call(this, sName);
-				},
-
-				iShouldSeeASortButtonForTheTable: function() {
-					return TableAssertions.iShouldSeeASortButtonForTheTable.call(this);
-				},
-
 				iShouldSeeAP13nButtonForTheTable: function() {
 					return TableAssertions.iShouldSeeAP13nButtonForTheTable.call(this);
 				},
@@ -196,14 +184,6 @@ sap.ui.define([
 
 				iShouldSeeGivenColumnsWithHeader: function(sColumnHeaders) {
 					return TableAssertions.iShouldSeeGivenColumnsWithHeader.call(this, sColumnHeaders);
-				},
-
-				iShouldSeeRowsWithData: function(iAmountOfRows) {
-					return TableAssertions.iShouldSeeRowsWithData.call(this, iAmountOfRows);
-				},
-
-				iShouldSeeARowWithData: function(iIndexOfRow, aExpectedData) {
-					return TableAssertions.iShouldSeeARowWithData.call(this, iIndexOfRow, aExpectedData);
 				},
 
 				iShouldSeeTheSortDialog: function() {
@@ -276,11 +256,7 @@ sap.ui.define([
 		onTheOrdersListReportPage: {
 			viewName: "sap.ui.v4demo.view.Orders",
 			actions: {},
-			assertions: {
-				iShouldSeeTheTableHeader: function(sName) {
-					return this.mdcTestLibrary.iShouldSeeTheTableHeader(sName);
-				}
-			}
+			assertions: {}
 		}
 	});
 

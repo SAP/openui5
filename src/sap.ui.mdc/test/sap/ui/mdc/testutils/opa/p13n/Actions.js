@@ -311,28 +311,7 @@ sap.ui.define([
 	};
 
 	var iAddGroupConfiguration = function(oGroupPanel, oGroupConfiguration) {
-		return iChangeSelectOnPanel.call(this, oGroupPanel, oGroupConfiguration.key, {
-			success: function(oSelect) {
-				if (oGroupConfiguration.showFieldAsColumn !== undefined) {
-					this.waitFor({
-						controlType: "sap.m.CustomListItem",
-						matchers: new Descendant(oSelect, false),
-						success: function(aCustomListItems) {
-							var aCustomListItem = aCustomListItems[0];
-							this.waitFor({
-								controlType: "sap.m.CheckBox",
-								matchers: new Ancestor(aCustomListItem),
-								actions: function(oCheckBox) {
-									if (oCheckBox.getSelected() !== oGroupConfiguration.showFieldAsColumn) {
-										new Press().executeOn(oCheckBox);
-									}
-								}
-							});
-						}
-					});
-				}
-			}
-		});
+		return iChangeSelectOnPanel.call(this, oGroupPanel, oGroupConfiguration.key);
 	};
 
 	var iAddSortConfiguration = function(oSortPanel, oSortConfiguration) {
@@ -675,6 +654,7 @@ sap.ui.define([
 		 * @property {string} key Key of the value that is the result of the personalization
 		 * @property {string} role Role of the given value
 		 */
+
 		/**
 		 * OPA5 test action
 		 * 1. Opens the personalization dialog of a given chart.
@@ -989,6 +969,7 @@ sap.ui.define([
 		 * @property {string[]} values Filter values for the given operator
 		 * @property {string} inputControl <code>Control</code> that is used as input for the value
 		 */
+
 		/**
 		 * OPA5 test action
 		 * 1. Opens the personalization dialog of a given chart.
@@ -1030,8 +1011,8 @@ sap.ui.define([
 		/**
 		 * @typedef {object} GroupPersonalizationConfiguration
 		 * @property {string} key of the item that is the result of the personalization
-		 * @property {boolean} showFieldAsColumn Determines if the "Show Field as Column" checkbox is to be checked
 		 */
+
 		/**
 		 * Opa5 test action:
 		 * 1. Opens the personalization dialog of a given control.
@@ -1079,6 +1060,7 @@ sap.ui.define([
 		 * @property {string} key Key of the item that is the result of the personalization
 		 * @property {boolean} descending Determines whether the sort direction is descending
 		 */
+
 		/**
 		 * OPA5 test action
 		 * 1. Opens the personalization dialog of a given chart.
