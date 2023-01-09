@@ -6,7 +6,8 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:variants="sap.ui.fl.variants"
 		xmlns:unified="sap.ui.unified"
-		controllerName="sap.ui.mdc.sample.controller.Controller">
+		xmlns:plugins="sap.m.plugins"
+		controllerName="sap.ui.mdc.sample.GridTable.Controller">
 	<OverflowToolbar>
 		<ToolbarSpacer/>
 		<Button text="Table Settings" press="onGridTableSettingsPress" />
@@ -83,6 +84,12 @@
 		<mdc:creationRow>
 			<mdcTable:CreationRow visible="false" apply="sap.m.MessageToast.show('Apply fired')"/>
 		</mdc:creationRow>
+		<mdc:dependents>
+			<plugins:CopyProvider id="copyProviderPlugin" extractData=".extractData" />
+		</mdc:dependents>
+		<mdc:actions>
+			<Button id="copyButton" icon="sap-icon://copy" press=".onCopyPress"/>
+		</mdc:actions>
 		<mdc:quickFilter>
 			<SegmentedButton id="quickFilter" selectedKey="open" visible="false">
 				<items>

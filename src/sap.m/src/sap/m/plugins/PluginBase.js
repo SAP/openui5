@@ -103,7 +103,9 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 			vPlugin = vPlugin.getMetadata().getName();
 		}
 
-		return oControl.findElements(false, function(oElement) {
+		return oControl.getDependents().filter(function(oDependent) {
+			return oDependent.isA(vPlugin);
+		})[0] || oControl.findElements(false, function(oElement) {
 			return oElement.isA(vPlugin);
 		})[0];
 	};
@@ -149,10 +151,11 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	 * @param {any} [vParam1] The first parameter if the sKey configuration is a type of function
 	 * @param {any} [vParam2] The second parameter if the sKey configuration is a type of function
 	 * @param {any} [vParam3] The third parameter if the sKey configuration is a type of function
+	 * @param {any} [vParam4] The fourth parameter if the sKey configuration is a type of function
 	 * @returns {*} The plugin configuration of the control, otherwise undefined
 	 * @protected
 	 */
-	PluginBase.prototype.getConfig = function(sKey, vParam1, vParam2, vParam3) {
+	PluginBase.prototype.getConfig = function(sKey, vParam1, vParam2, vParam3, vParam4) {
 		var oControl = this.getControl();
 		if (!oControl) {
 			return;
@@ -163,7 +166,7 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 		var mPluginConfig = mPluginControlConfigs[sPluginName] || {};
 		var mControlConfig = mPluginConfig[sControlName] || {};
 		var fnReturn = function(mConfig) {
-			return (typeof mConfig[sKey] == "function") ? mConfig[sKey].call(mConfig, vParam1, vParam2, vParam3) : mConfig[sKey];
+			return (typeof mConfig[sKey] == "function") ? mConfig[sKey].call(mConfig, vParam1, vParam2, vParam3, vParam4) : mConfig[sKey];
 		};
 
 		if (sKey in mControlConfig) {

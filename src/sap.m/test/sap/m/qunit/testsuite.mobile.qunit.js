@@ -2273,6 +2273,18 @@ sap.ui.define([
 			"plugins/ColumnResizer": {
 				title: "Test Page for sap.m.plugins.ColumnResizer"
 			},
+			"plugins/CopyProvider": {
+				title: "Test Page for sap.m.plugins.CopyProvider",
+				sinon: {
+					version: 'edge'
+				},
+				ui5: {
+					libs: ["sap.m", "sap.ui.table", "sap.ui.mdc"]
+				},
+				coverage: {
+					only: ["sap/m/plugins/CopyProvider"]
+				}
+			},
 			"plugins/PasteProvider": {
 				title: "Test Page for sap.m.plugins.PasteProvider",
 				ui5: {

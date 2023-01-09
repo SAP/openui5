@@ -715,6 +715,10 @@ sap.ui.define([
 		return this._oTable || this._oFullInitialize.promise;
 	};
 
+	Table.prototype.getCopyProviderPluginOwner = function() {
+		return this._oTable || this._oFullInitialize.promise;
+	};
+
 	Table.prototype.setDataStateIndicator = function(oDataStateIndicator) {
 		this._handleDataStateEvents(this.getDataStateIndicator(), "detach");
 		this.setAggregation("dataStateIndicator", oDataStateIndicator, true);

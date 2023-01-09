@@ -11,8 +11,10 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Text",
-	"sap/ui/thirdparty/jquery"
-], function (Core, qutils, KeyCodes, CellSelector, GridTable, GridColumn, JSONModel, Text, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/core/util/MockServer"
+], function (Core, qutils, KeyCodes, CellSelector, GridTable, GridColumn, JSONModel, Text, jQuery, ODataModel, MockServer) {
 	"use strict";
 
 	function getData() {
@@ -326,6 +328,7 @@ sap.ui.define([
 			assert.ok(aRows.length, "Rows are rendered");
 
 			var oSelectCellsSpy = sinon.spy(this._oCellSelector, "_selectCells");
+			var oGetContextsSpy = sinon.spy(this._oTable.getBinding("rows"), "getContexts");
 
 			// Select third cell in second row
 			var oCellRefA = getCell(this._oTable, 1, 2);
@@ -339,6 +342,7 @@ sap.ui.define([
 			// Select whole column
 			qutils.triggerKeydown(oCellRefA, KeyCodes.SPACE, false, false, true);
 			assert.ok(oSelectCellsSpy.calledOnce, "CellSelector's _selectCells method called");
+			assert.ok(oGetContextsSpy.notCalled, "getContexs is not called for the ClientListBiding");
 
 			for (var iRows = 0; iRows < iPages; iRows++) {
 				var iLastRow = (this._oTable.getFirstVisibleRow() + aRows.length - 1) < iTotalRows ?  (this._oTable.getFirstVisibleRow() + aRows.length - 1) : iTotalRows;
@@ -366,6 +370,7 @@ sap.ui.define([
 			}
 
 			oSelectCellsSpy.restore();
+			oGetContextsSpy.restore();
 		}.bind(this));
 	});
 
@@ -716,5 +721,55 @@ sap.ui.define([
 
 			oMousePosStub.restore();
 		}.bind(this));
+	});
+
+	QUnit.test("RangeLimit Property - getSelectionRange/getSelectedRowContexts APIs", function (assert) {
+		var done = assert.async();
+		var sServiceURI = "/service/";
+		var oMockServer = new MockServer({ rootUri : sServiceURI });
+		oMockServer.simulate("test-resources/sap/m/qunit/data/metadata.xml", "test-resources/sap/m/qunit/data");
+		oMockServer.start();
+
+		var oCellSelector = new CellSelector({ rangeLimit: 15 });
+		var oTable = new GridTable({
+			threshold: 5,
+			visibleRowCount: 5,
+			columns: [
+				{ template: "ProductId" },
+				{ template: "Name" },
+				{ template: "Category" }
+			],
+			rows: "{/Products}",
+			models: new ODataModel(sServiceURI, true),
+			dependents: oCellSelector
+		}).placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		oTable.attachEventOnce("rowsUpdated", function() {
+			var oBinding = oTable.getBinding("rows");
+			var oGetContextsSpy = sinon.spy(oBinding, "getContexts");
+			assert.ok(oBinding.getLength() > oCellSelector.getRangeLimit());
+
+			var oCell = getCell(oTable, 1, 0); // first cell of first row
+			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+			qutils.triggerKeydown(oCell, KeyCodes.END, true /* Shift */); // select all cells to the end of the first row
+			assert.equal(oBinding.getAllCurrentContexts().length, oTable.getThreshold() + oTable.getVisibleRowCount());
+
+			qutils.triggerKeydown(oCell, KeyCodes.SPACE, false, false, true /* Ctrl */); // enlarge selection to all rows and cells
+			assert.equal(oGetContextsSpy.callCount, 1);
+			assert.ok(oGetContextsSpy.calledWithExactly(0, oCellSelector.getRangeLimit(), 0, true));
+			assert.deepEqual(oCellSelector.getSelectionRange(), {from: {rowIndex: 0, colIndex: 0}, to: {rowIndex: Infinity, colIndex: 2}});
+
+			oBinding.attachEventOnce("dataReceived", setTimeout.bind(0, function() {
+				assert.equal(oBinding.getAllCurrentContexts().length, oCellSelector.getRangeLimit());
+				assert.equal(oCellSelector.getSelectedRowContexts().length, oCellSelector.getRangeLimit());
+				assert.deepEqual(oCellSelector.getSelectedRowContexts(), oBinding.getAllCurrentContexts().slice(0, oCellSelector.getRangeLimit()));
+
+				oGetContextsSpy.restore();
+				oMockServer.destroy();
+				oTable.destroy();
+				done();
+			}));
+		});
 	});
 });

@@ -373,14 +373,14 @@ sap.ui.define([
 				wrapping: true,
 				wrappingType: "Hyphenated"
 			})
-		}),
+		}).data("clipboard", "lastName"),
 		new Column({
 			header : new Label({
 				text : "FirstName",
 				wrapping: true,
 				wrappingType: "Hyphenated"
 			})
-		}),
+		}).data("clipboard", "name"),
 		new Column({
 			hAlign: "Center",
 			header : new Label({
@@ -388,7 +388,7 @@ sap.ui.define([
 				wrapping: true,
 				wrappingType: "Hyphenated"
 			})
-		}),
+		}).data("clipboard", "checked"),
 		new Column({
 			header : new Link({
 				text : "Website",
@@ -397,7 +397,7 @@ sap.ui.define([
 			minScreenWidth : "XXLarge",
 			popinDisplay : "Inline",
 			demandPopin : true
-		}),
+		}).data("clipboard", "linkText"),
 		new Column({
 			hAlign: "Center",
 			header : new Label({
@@ -406,7 +406,7 @@ sap.ui.define([
 				wrappingType: "Hyphenated"
 			}),
 			minScreenWidth : "Phone"
-		}),
+		}).data("clipboard", "src"),
 		new Column({
 			header : new Label({
 				text : "Rating",
@@ -416,7 +416,7 @@ sap.ui.define([
 			minScreenWidth : "Tablet",
 			popinDisplay : "WithoutHeader",
 			demandPopin : true
-		}),
+		}).data("clipboard", "rating"),
 		new Column({
 			header : new Label({
 				text : "Birthday",
@@ -426,7 +426,7 @@ sap.ui.define([
 			minScreenWidth: "800px",
 			popinDisplay : "Inline",
 			demandPopin : true
-		}),
+		}).data("clipboard", "birthday"),
 		new Column({
 			hAlign: "End",
 			header : new Label({
@@ -438,7 +438,7 @@ sap.ui.define([
 			minScreenWidth : "Desktop",
 			popinDisplay : "Inline",
 			demandPopin : true
-		})
+		}).data("clipboard", "money")
 	];
 	aColumns[0].setAssociation("headerMenu", oMenu.getId());
 
@@ -536,6 +536,11 @@ sap.ui.define([
 		infoToolbar : oTableInfo,
 		swipeContent : oSwipe,
 		columns : aColumns,
+		dependents: new sap.m.plugins.CopyProvider({
+			extractData: function(oContext, oColumn) {
+				return oContext.getProperty(oColumn.data("clipboard"));
+			}
+		}),
 		selectionChange : function(e) {
 			MessageToast.show("selection is changed");
 		},

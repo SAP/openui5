@@ -60,7 +60,22 @@ sap.ui.define([
 	var CellSelector = PluginBase.extend("sap.m.plugins.CellSelector", {
 		metadata: {
 			library: "sap.m",
-			properties: {},
+			properties: {
+				/**
+				 * For the {@link sap.ui.table.Table} control, defines the number of row contexts that needs to be retrived from the binding
+				 * when the range selection (e.g. enhancing the cell selection block to cover all rows of a column) is triggered by the user.
+				 * This helps to make the contexts already available for the user actions after the cell selection (e.g. copy to clipboard).
+				 * This property accepts positive integer values.
+				 * <b>Note:</b> To avoid performance problems, the <code>rangeLimit</code> should only be set higher than the default value of 200 in the following cases:
+				 * <ul>
+				 *     <li>With client-side models</li>
+				 *     <li>With server-side models if they are used in client mode</li>
+				 *     <li>If the entity set is small</li>
+				 * </ul>
+				 * In other cases, it is recommended to set the <code>rangeLimit</code> to at least double the value of the {@link sap.ui.table.Table#getThreshold threshold} property.
+				 */
+				rangeLimit: {type: "int", group: "Behavior", defaultValue: 200}
+			},
 			events: {}
 		}
 	});
@@ -112,34 +127,48 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieve the cells for the current selection.
+	 * Returns the cell selection range.
+	 * The value <code>Infinity</code> in <code>rowIndex</code> meant for until the limit is reached.
 	 *
 	 * Note: This method is subject to change.
-	 * @returns {Object} contains the selected cells in each selected row
+	 * @returns {{from: {rowIndex: int, colIndex: int}, to: {rowIndex: int, colIndex: int}}  The range of the selection
 	 * @private
-	 * @experimental Since 1.104
+	 * @experimental Since 1.110
+	 * @ui5-restricted sap.m.plugins.CopyProvider
 	 */
-	CellSelector.prototype.getSelectedCells = function () {
+	CellSelector.prototype.getSelectionRange = function () {
 		if (!this._bSelecting) {
-			return {};
+			return null;
 		}
-		var oNormalizedBounds = getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
 
-		var oSelection = {};
-		for (var iRow = oNormalizedBounds.from.rowIndex; iRow < oNormalizedBounds.to.rowIndex; iRow++) {
-			var oRowContext = this.getConfig("contextByIndex", this.getControl(), iRow), aColumns = [];
-			for (var iCol = oNormalizedBounds.from.colIndex; iCol < oNormalizedBounds.to.colIndex; iCol++) {
-				var oColumn = this.getConfig("columnByIndex", this.getControl(), iCol);
-				if (oColumn) {
-					aColumns.push(iCol);
-				}
-			}
-			oSelection[iRow] = {
-				rowContext: oRowContext,
-				columnIndices: aColumns
-			};
+		var mSelectionRange = getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
+		if (isNaN(mSelectionRange.from.rowIndex) || isNaN(mSelectionRange.to.rowIndex)) {
+			return null;
 		}
-		return oSelection;
+
+		var iMaxColumnIndex = this.getConfig("getVisibleColumns", this.getControl()).length - 1;
+		mSelectionRange.from.colIndex = Math.max(mSelectionRange.from.colIndex, 0);
+		mSelectionRange.to.colIndex = Math.min(mSelectionRange.to.colIndex, iMaxColumnIndex);
+		mSelectionRange.from.rowIndex = Math.max(mSelectionRange.from.rowIndex, 0);
+		return mSelectionRange;
+	};
+
+	/**
+	 * Returns the row binding context of the current selection.
+	 *
+	 * Note: This method is subject to change.
+	 * @returns {sap.ui.model.Context[]} The binding context of selected rows
+	 * @private
+	 * @experimental Since 1.110
+	 * @ui5-restricted sap.m.plugins.CopyProvider
+	 */
+	CellSelector.prototype.getSelectedRowContexts = function () {
+		var mSelectionRange = this.getSelectionRange();
+		if (!mSelectionRange) {
+			return [];
+		}
+
+		return this.getConfig("rowContexts", this.getControl(), mSelectionRange.from.rowIndex, mSelectionRange.to.rowIndex, this.getRangeLimit());
 	};
 
 	CellSelector.prototype.onsapspace = function (oEvent) {
@@ -262,17 +291,10 @@ sap.ui.define([
 			// CTRL+SHIFT+A: Clear Selection
 			if (isKeyCombination(oEvent, KeyCodes.A, true, true)) {
 				this.clearSelection();
+				oEvent.preventDefault();
+				oEvent.setMarked();
 			}
-			oEvent.preventDefault();
-			oEvent.setMarked();
 		}
-	};
-
-	CellSelector.prototype.onkeyup = function (oEvent) {
-		if (!this._bSelecting) {
-			return;
-		}
-		oEvent.setMarked();
 	};
 
 	// Mouse Navigation
@@ -548,6 +570,10 @@ sap.ui.define([
 		if (!mDrawableBounds.from || !mDrawableBounds.to) {
 			// If there are no drawable bounds, do not continue.
 			return;
+		}
+
+		if (mBounds.to.rowIndex == Infinity) {
+			this.getConfig("loadContexts", this.getControl(), mBounds.from.rowIndex, this.getRangeLimit());
 		}
 
 		var oBorderOptions = this._getBorderOptions(mBounds, mDrawableBounds);
@@ -893,6 +919,16 @@ sap.ui.define([
 				oSelectionPlugin.detachEvent(sEvent, oPlugin.clearSelection, oPlugin);
 			},
 			/**
+			 * Get visible columns of the table.
+			 * @param {sap.ui.table.Table} oTable table instance
+			 * @returns {sap.ui.table.Column[]} array of visible columns
+			 */
+			getVisibleColumns: function (oTable) {
+				return oTable.getColumns().filter(function (oColumn) {
+					return oColumn.getDomRef();
+				});
+			},
+			/**
 			 * Checks if the selection is enabled for the control.
 			 * @param {sap.ui.core.Control} oControl control instance
 			 * @returns {boolean} is selection enabled or not
@@ -911,7 +947,7 @@ sap.ui.define([
 			getCellRef: function (oTable, mPosition) {
 				var oRow = this._getRowByIndex(oTable, mPosition.rowIndex);
 				if (oRow) {
-					var oColumn = this._getColumns(oTable)[mPosition.colIndex];
+					var oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
 					var oCell = oColumn && oRow.getCells()[mPosition.colIndex];
 					if (oCell) {
 						return oCell.$().closest(this.selectableCells)[0];
@@ -939,7 +975,7 @@ sap.ui.define([
 				var aRows = oTable.getRows();
 				return {
 					from: {rowIndex: aRows[0].getIndex(), colIndex: 0},
-					to: {rowIndex: aRows[aRows.length - 1].getIndex(), colIndex: this._getColumns(oTable).length - 1}
+					to: {rowIndex: aRows[aRows.length - 1].getIndex(), colIndex: this.getVisibleColumns(oTable).length - 1}
 				};
 			},
 			/**
@@ -987,19 +1023,19 @@ sap.ui.define([
 				mBounds.from.colIndex = Math.max(mBounds.from.colIndex, 0);
 
 				mBounds.to.rowIndex = Math.min(mBounds.to.rowIndex, iBindingLength);
-				mBounds.to.colIndex = Math.min(mBounds.to.colIndex, this._getColumns(oTable).length - 1);
+				mBounds.to.colIndex = Math.min(mBounds.to.colIndex, this.getVisibleColumns(oTable).length - 1);
 
 				var aCells = [];
 
 				// Replace MIN/MAX with according number for focus object
 				if (oOptions && oOptions.info) {
 					oOptions.info.focus.rowIndex = Math.min(Math.max(oOptions.info.focus.rowIndex, 0), iBindingLength);
-					oOptions.info.focus.colIndex = Math.min(Math.max(oOptions.info.focus.colIndex, 0), this._getColumns(oTable).length - 1);
+					oOptions.info.focus.colIndex = Math.min(Math.max(oOptions.info.focus.colIndex, 0), this.getVisibleColumns(oTable).length - 1);
 					this._focusCell(oTable, oOptions.info.focus, oOptions.info.direction);
 				}
 
 				// If table is in Single Selection Mode, only select the row with focus in it
-				if (mBounds.from.colIndex === 0 && mBounds.to.colIndex === (this._getColumns(oTable).length - 1) && oTable.getSelectionMode() == "Single") {
+				if (mBounds.from.colIndex === 0 && mBounds.to.colIndex === (this.getVisibleColumns(oTable).length - 1) && oTable.getSelectionMode() == "Single") {
 					mBounds.from.rowIndex = mSelectionBounds.from.rowIndex = oOptions.info.focus.rowIndex;
 					mBounds.to.rowIndex = mSelectionBounds.to.rowIndex = oOptions.info.focus.rowIndex;
 				}
@@ -1031,13 +1067,45 @@ sap.ui.define([
 			 * @returns {int} column index
 			 */
 			colIndex: function (oTable, oCellDomRef) {
-				return this._getColumns(oTable).indexOf(Core.byId(oCellDomRef.getAttribute("data-sap-ui-colid")));
+				return this.getVisibleColumns(oTable).indexOf(Core.byId(oCellDomRef.getAttribute("data-sap-ui-colid")));
 			},
-			contextByIndex: function(oTable, iRowIndex) {
-				return oTable.getContextByIndex(iRowIndex);
+			/**
+			 * Loads contexts according to the provided parameters without changing the binding's state.
+			 *
+			 * @param {sap.ui.table.Table} oTable The Table instance
+			 * @param {int} iStartIndex The index where to start the retrieval of contexts
+			 * @param {int} iLength The number of contexts to retrieve beginning from the start index.
+			 */
+			loadContexts: function(oTable, iStartIndex, iLength) {
+				var oBinding = oTable.getBinding("rows");
+				if (!oBinding || oBinding.isA("sap.ui.model.ClientListBinding")) {
+					return;
+				}
+
+				oBinding.getContexts(Math.max(0, iStartIndex), Math.max(1, iLength), 0, true);
+			},
+			/**
+			 * Retrieves the row contexts of the table according to the specified parameters.
+			 * @param {sap.ui.table.Table} oTable The table instance
+			 * @param {int} iFromIndex The start index
+			 * @param {int} iToIndex The end index
+			 * @param {int} iLimit The range limit
+			 * @returns {sap.ui.model.Context[]} A portion of the row binding contexts
+			 */
+			rowContexts: function(oTable, iFromIndex, iToIndex, iLimit) {
+				if (iToIndex == Infinity) {
+					var iMaxIndex = oTable.getBinding("rows").getAllCurrentContexts().length - 1;
+					iToIndex = Math.min(iToIndex, iFromIndex + iLimit - 1, iMaxIndex);
+				}
+
+				var aContexts = [];
+				for (var i = iFromIndex; i <= iToIndex; i++) {
+					aContexts.push(oTable.getContextByIndex(i));
+				}
+				return aContexts;
 			},
 			columnByIndex: function(oTable, iColIndex) {
-				var oColumn = this._getColumns(oTable)[iColIndex];
+				var oColumn = this.getVisibleColumns(oTable)[iColIndex];
 				if (!oColumn.getVisible()) {
 					return;
 				}
@@ -1045,7 +1113,7 @@ sap.ui.define([
 			},
 			isNavigatableCell: function (oTable, mPosition) {
 				if ((mPosition.rowIndex < 0 || mPosition.rowIndex >= oTable.getBinding("rows").getLength()
-					|| mPosition.colIndex < 0 || mPosition.colIndex >= this._getColumns(oTable).length)
+					|| mPosition.colIndex < 0 || mPosition.colIndex >= this.getVisibleColumns(oTable).length)
 					&& !(mPosition.rowIndex == -Infinity || mPosition.rowIndex == Infinity
 					|| mPosition.colIndex == -Infinity || mPosition.colIndex == Infinity)) {
 					return false;
@@ -1090,16 +1158,6 @@ sap.ui.define([
 					}
 				}
 				oCellRef &&	oCellRef.focus();
-			},
-			/**
-			 * Get visible columns of the table.
-			 * @param {sap.ui.table.Table} oTable table instance
-			 * @returns {sap.ui.table.Column[]} array of visible columns
-			 */
-			_getColumns: function (oTable) {
-				return oTable.getColumns().filter(function (oColumn) {
-					return oColumn.getDomRef();
-				});
 			},
 			/**
 			 * Retrieve a row by its index.

@@ -450,6 +450,7 @@ sap.ui.define([
 			"sap.m.ViewSettingsItem",
 			"sap.m.plugins.CellSelector",
 			"sap.m.plugins.ColumnResizer",
+			"sap.m.plugins.CopyProvider",
 			"sap.m.plugins.DataStateIndicator",
 			"sap.m.plugins.PasteProvider",
 			"sap.m.plugins.PluginBase",
