@@ -66,6 +66,12 @@ sap.ui.define([
 		return this.getAction() && this.getAction().getDomRef();
 	};
 
+	ActionToolbarAction.prototype.getLayoutData = function() {
+		var oLayoutData = Control.prototype.getLayoutData.apply(this);
+		// return the LayoutData of the inner Action if there is no LayoutData set
+		return oLayoutData ? oLayoutData : this.getAction() && this.getAction().getLayoutData();
+	};
+
 	/**
 	 * Sets the behavior of the <code>ActionToolbarAction</code> inside an <code>OverflowToolbar</code> configuration.
 	 *
