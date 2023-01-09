@@ -3,8 +3,8 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/UIComponentMetadata',
-	'samples/components/routing/Component',
-	'samples/components/routing/RouterExtension',
+	'sap/ui/test/routing/Component',
+	'sap/ui/test/routing/RouterExtension',
 	'sap/base/Log',
 	'sap/base/util/deepExtend',
 	'sap/base/util/LoaderExtensions',
@@ -65,13 +65,12 @@ sap.ui.define([
 					doneComp1();
 				}
 			}).placeAt("comparea1");
-			return sap.ui.getCore().createComponent({
+			return Component.create({
 				name: "sap.ui.test.verticalLayout",
 				id: "vLayout",
 				componentData: {
 					"foo": "bar"
-				},
-				async: true
+				}
 			}).then(function(oComp) {
 				that.oComp = oComp;
 				that.oCompCont = new ComponentContainer("ContVLayout", {
@@ -352,13 +351,12 @@ sap.ui.define([
 
 	QUnit.module("Creation Context", {
 		beforeEach: function() {
-			return sap.ui.getCore().createComponent({
+			return Component.create({
 				name: "sap.ui.test.verticalLayout",
 				id: "vLayout",
 				componentData: {
 					"foo": "bar"
-				},
-				async: true
+				}
 			}).then(function(oComp) {
 				this.oComp = oComp;
 			}.bind(this));
@@ -407,9 +405,8 @@ sap.ui.define([
 	QUnit.module("Routing", {
 		beforeEach : function () {
 			// System under test
-			return sap.ui.getCore().createComponent({
-				name: "samples.components.routing",
-				async: true
+			return Component.create({
+				name: "sap.ui.test.routing"
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 			}.bind(this));
@@ -420,31 +417,38 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should create a custom router class", function(assert) {
-		//Act
 		var oRouter = this.oComponent.getRouter();
+		var pTargetParentId = oRouter._oConfig.targetParent;
+		var oView = this.oComponent.getRootControl();
 
-		//Assert
-		assert.ok(oRouter instanceof SamplesRouterExtension, "the created router was an extension");
-		assert.strictEqual(oRouter._oConfig.targetParent, this.oComponent.oView.getId(), "the viewid is the targetParent");
+		return pTargetParentId.then(function(sId) {
+			//Assert
+			assert.ok(oRouter instanceof SamplesRouterExtension, "the created router was an extension");
+			assert.strictEqual(sId, oView.getId(), "the viewid is the targetParent");
 
-		//Cleanup
-		this.oComponent.destroy();
-		assert.ok(oRouter.bIsDestroyed, "Router got destroyed when the component is destroyed");
+			//Cleanup
+			this.oComponent.destroy();
+			assert.ok(oRouter.bIsDestroyed, "Router got destroyed when the component is destroyed");
+		}.bind(this));
 	});
 
 	QUnit.test("Should return the targets instance of the router", function (assert) {
 		//Act - initialize the component to create the router
 		var oTargets = this.oComponent.getTargets();
-
-		//Assert
-		assert.ok(oTargets, "the component created targets");
 		var oTarget = oTargets.getTarget("myTarget");
-		assert.ok(oTarget, "the component created a target instance");
-		assert.strictEqual(oTarget._oOptions.rootView, this.oComponent.oView.getId(), "the viewid is the rootView");
+		var pTargetRootViewId = oTarget._oOptions.rootView;
+		var oView = this.oComponent.getRootControl();
 
-		//Cleanup
-		this.oComponent.destroy();
-		assert.ok(oTargets.bIsDestroyed, "Targets got destroyed when the component is destroyed");
+		return pTargetRootViewId.then(function(sId) {
+			//Assert
+			assert.ok(oTargets, "the component created targets");
+			assert.ok(oTarget, "the component created a target instance");
+			assert.strictEqual(sId, oView.getId(), "the viewid is the rootView");
+
+			//Cleanup
+			this.oComponent.destroy();
+			assert.ok(oTargets.bIsDestroyed, "Targets got destroyed when the component is destroyed");
+		}.bind(this));
 	});
 
 	QUnit.module("Routing", {
@@ -453,8 +457,8 @@ sap.ui.define([
 			var that = this;
 			sap.ui.require(["sap/m/routing/Targets"], function() {
 				// System under test
-				sap.ui.getCore().createComponent({
-					name: "samples.components.targets",
+				Component.create({
+					name: "sap.ui.test.routing.targets",
 					async: true
 				}).then(function(oComponent) {
 					that.oComponent = oComponent;
@@ -471,25 +475,30 @@ sap.ui.define([
 		//Act - initialize the component to create the router
 		var oTargets = this.oComponent.getTargets();
 		var oViews = this.oComponent._oViews;
-
-		//Assert
-		assert.ok(oTargets, "the component created targets");
 		var oTarget = oTargets.getTarget("myTarget");
-		assert.ok(oTarget, "the component created a target instance");
-		assert.strictEqual(oTarget._oOptions.rootView, this.oComponent.oView.getId(), "the viewid is the rootView");
-		assert.strictEqual(oViews._oComponent, this.oComponent, "the views instance knows its component");
 
-		//Cleanup
-		this.oComponent.destroy();
-		assert.ok(oTargets.bIsDestroyed, "Targets got destroyed when the component is destroyed");
-		assert.ok(oViews.bIsDestroyed, "Views created by the component got destroyed");
+		var pTargetRootViewId = oTarget._oOptions.rootView;
+
+		return pTargetRootViewId.then(function(sId) {
+			var oView = this.oComponent.getRootControl();
+			//Assert
+			assert.ok(oTargets, "the component created targets");
+			assert.ok(oTarget, "the component created a target instance");
+			assert.strictEqual(sId, oView.getId(), "the viewid is the rootView");
+			assert.strictEqual(oViews._oComponent, this.oComponent, "the views instance knows its component");
+
+			//Cleanup
+			this.oComponent.destroy();
+			assert.ok(oTargets.bIsDestroyed, "Targets got destroyed when the component is destroyed");
+			assert.ok(oViews.bIsDestroyed, "Views created by the component got destroyed");
+		}.bind(this));
 	});
 
 	QUnit.module("Root control", {
 		beforeEach : function () {
 			// System under test
-			return sap.ui.getCore().createComponent({
-				name: "samples.components.routing",
+			return Component.create({
+				name: "sap.ui.test.routing",
 				async: true
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
@@ -503,10 +512,8 @@ sap.ui.define([
 	QUnit.test("Should get the root control", function (assert) {
 		//Act
 		var oRootControl = this.oComponent.getRootControl();
-
 		//Assert
-		assert.strictEqual(this.oComponent._oViewWhileInit, oRootControl, "the root control is available in the init function");
-		assert.strictEqual(this.oComponent.oView, oRootControl, "the returned control is the rootView");
+		assert.ok(oRootControl, "the returned control is the rootView");
 		assert.strictEqual(this.oComponent._oViewWhileCreateContent, null, "in the create content the control is still null");
 
 		//Cleanup

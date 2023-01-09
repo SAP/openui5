@@ -4,7 +4,7 @@ sap.ui.define([
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/UIComponent',
 	'sap/ui/core/UIComponentMetadata',
-	'samples/components/routing/RouterExtension',
+	'sap/ui/test/routing/RouterExtension',
 	'sap/base/util/deepExtend'
 ], function (createAndAppendDiv, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesRouterExtension, deepExtend) {
 
@@ -204,7 +204,7 @@ sap.ui.define([
 		beforeEach : function () {
 			// System under test
 			this.oComponent = sap.ui.getCore().createComponent({
-				name: "samples.components.routing"
+				name: "sap.ui.test.routing_legacyAPIs"
 			});
 		},
 		afterEach: function() {
@@ -247,7 +247,7 @@ sap.ui.define([
 			sap.ui.require(["sap/m/routing/Targets"], function() {
 				// System under test
 				that.oComponent = sap.ui.getCore().createComponent({
-					name: "samples.components.targets"
+					name: "sap.ui.test.routing_legacyAPIs.targets"
 				});
 				done();
 			});
@@ -279,7 +279,7 @@ sap.ui.define([
 		beforeEach : function () {
 			// System under test
 			this.oComponent = sap.ui.getCore().createComponent({
-				name: "samples.components.routing"
+				name: "sap.ui.test.routing_legacyAPIs"
 			});
 		},
 		afterEach: function() {

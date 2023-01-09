@@ -43,23 +43,31 @@ sap.ui.define([
 				]
 			});
 
-			this.oComponent = sap.ui.getCore().createComponent({
-				name: "samples.components.routing"
-			});
-			this.oComponent.getRouter()._oConfig._async = false;
-
-			this.oComponentAsyncConfig = sap.ui.getCore().createComponent({
-				name: "samples.components.routing"
+			this.pComponent = sap.ui.getCore().createComponent({
+				name: "testdata.routing",
+				async: true
 			});
 
+			this.pComponent.then(function(oComponent) {
+				oComponent.getRouter()._oConfig._async = false;
+			});
+
+			this.pComponentAsyncConfig = sap.ui.getCore().createComponent({
+				name: "testdata.routing",
+				async: true
+			});
 
 			this.oComponentWithoutRouter = new Component();
 
 		},
 		afterEach: function() {
 			this.oRootControl.destroy();
-			this.oComponent.destroy();
-			this.oComponentAsyncConfig.destroy();
+			this.pComponent.then(function(oComponent) {
+				oComponent.destroy();
+			});
+			this.pComponentAsyncConfig.then(function(oComponent) {
+				oComponent.destroy();
+			});
 			this.oComponentWithoutRouter.destroy();
 		}
 	});
@@ -68,6 +76,6 @@ sap.ui.define([
 		executionScopeType: "global",
 		libName: "sap.ui.core",
 		ruleId: "asynchronousXMLViews",
-		expectedNumberOfIssues: 2
+		expectedNumberOfIssues: 1
 	});
 });

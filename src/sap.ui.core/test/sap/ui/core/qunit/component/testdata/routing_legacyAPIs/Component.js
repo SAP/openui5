@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"./RouterExtension",
+	"../routing/RouterExtension",
 	"sap/m/Button",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/Controller",
@@ -13,7 +13,7 @@ sap.ui.define([
 
 
 	// new Component
-	var Component = UIComponent.extend("samples.components.routing.Component", {
+	var Component = UIComponent.extend("sap.ui.test.routing_legacyAPIs.Component", {
 
 		metadata : {
 			routing : {
@@ -41,18 +41,18 @@ sap.ui.define([
 		},
 
 		createContent : function () {
-			Controller.extend("samples.components.routing.TestController", {});
-			sap.ui.jsview("samples.components.routing.TestView", {
+			Controller.extend("sap.ui.test.routing_legacyAPIs.TestController", {});
+			sap.ui.jsview("sap.ui.test.routing_legacyAPIs.TestView", {
 				createContent : function() {
 					return new Button();
 				},
 				getController : function() {
-					return sap.ui.controller("samples.components.routing.TestController");
+					return sap.ui.controller("sap.ui.test.routing_legacyAPIs.TestController");
 				}
 			});
 
 			this._oViewWhileCreateContent = this.getRootControl();
-			this.oView = sap.ui.jsview("samples.components.routing.TestView");
+			this.oView = sap.ui.jsview("sap.ui.test.routing_legacyAPIs.TestView");
 			return this.oView;
 		}
 	});
