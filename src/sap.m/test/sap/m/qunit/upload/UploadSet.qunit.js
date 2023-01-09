@@ -876,6 +876,43 @@ sap.ui.define([
 		assert.equal(this.oUploadSet.getList().getItems().length, 1, "List Item removed successfully");
 	});
 
+	QUnit.test("Remove all aggregations destroys complete list and also main list aggregation", function (assert) {
+
+		//Arrange
+		var oItem = this.oUploadSet.getItems()[0];
+		this.oUploadSet.insertIncompleteItem(oItem);
+
+		this.spy(this.oUploadSet, "removeAllAggregation");
+
+		oCore.applyChanges();
+
+		//Assert
+		assert.equal(this.oUploadSet.getIncompleteItems().length, 1, "incomplete items list has one item");
+
+		//Act
+		this.oUploadSet.removeAllIncompleteItems();
+		oCore.applyChanges();
+
+		//Assert
+		assert.ok(this.oUploadSet.removeAllAggregation.called, "Custom RemoveAllAggregation method called to destroy list aggragtion of current aggragtion to be destroyed");
+		assert.equal(this.oUploadSet.getIncompleteItems(), 0, "incomplete items are empty");
+		var oList = this.oUploadSet.getList().getAggregation("incompleteItems");
+		assert.equal(oList && oList.getAggregation("incompleteItems"), null, "incomplete items aggreagtions are destroyed from the list binding.");
+
+		//Assert
+		assert.equal(this.oUploadSet.getList().getItems().length, 1, "UploadSet has two list items");
+
+		//Act
+		this.oUploadSet.removeAllItems();
+		oCore.applyChanges();
+
+		//Assert
+		assert.ok(this.oUploadSet.removeAllAggregation.called, "Custom RemoveAllAggregation method called to destroy list aggragtion of current aggragtion to be destroyed");
+		var oListUploadSet = this.oUploadSet.getList();
+		assert.equal(oListUploadSet && oListUploadSet.getItems() && oListUploadSet.getItems().length, 0, "List Items destroyed sucessfully");
+		assert.equal(oListUploadSet && oListUploadSet.getAggregation("items") && oListUploadSet.getAggregation("items").length, 0, "Items aggreagtions are destroyed from list binding.");
+	});
+
 	QUnit.module("Drag and drop", {
 		beforeEach: function () {
 			this.$RootNode = jQuery(document.body);
