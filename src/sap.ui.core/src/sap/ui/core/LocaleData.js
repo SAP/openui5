@@ -1390,11 +1390,15 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 						oTimeEntry = oScale[sEntry];
 						iSign = sEntry.substr(18) === "past" ? -1 : 1;
 						aPluralCategories.forEach(function(sKey) { // eslint-disable-line no-loop-func
-							aPatterns.push({
-								scale: sScale,
-								sign: iSign,
-								pattern: oTimeEntry["relativeTimePattern-count-" + sKey]
-							});
+							var sPattern = oTimeEntry["relativeTimePattern-count-" + sKey];
+
+							if (sPattern) {
+								aPatterns.push({
+									scale: sScale,
+									sign: iSign,
+									pattern: sPattern
+								});
+							}
 						});
 					}
 				}
@@ -1812,9 +1816,8 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		 * @since 1.28.6
 		 */
 		getPreferredCalendarType: function() {
-			var sCalendarPreference = this._get("calendarPreference"),
-				aCalendars = sCalendarPreference ? sCalendarPreference.split(" ") : [],
-				sCalendarName, sType, i;
+			var sCalendarName, sType, i,
+				aCalendars = this._get("calendarPreference") || [];
 
 			for ( i = 0 ; i < aCalendars.length ; i++ ) {
 				// No support for calendar subtypes (islamic) yet, so ignore part after -

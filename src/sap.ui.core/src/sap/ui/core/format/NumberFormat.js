@@ -45,10 +45,9 @@ sap.ui.define([
 	});
 
 	var rDigit = /\d/,
-		// Not matching Sc (currency symbol) characters: https://www.unicode.org/reports/tr44/#General_Category_Values
-		rNotS = /[^\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6]/,
-		// Not matching Z (separator) characters: https://www.unicode.org/reports/tr44/#General_Category_Values
-		rNotZ = /[^\u0020\xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/,
+		// Not matching Sc (currency symbol) and Z (separator) characters
+		// https://www.unicode.org/reports/tr44/#General_Category_Values
+		rNotSAndNotZ = /[^\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6\u0020\xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/,
 		// Regex for matching the number placeholder in pattern
 		rNumPlaceHolder = /0+(\.0+)?/,
 		// Regex for checking that the given string only consists of '0' characters
@@ -1661,10 +1660,7 @@ sap.ui.define([
 			var sPlaceHolder = "\u00a4",
 				mRegex = {
 					"[:digit:]": rDigit,
-					"[:^S:]": rNotS,
-					"[[:^S:]&[:^Z:]]": {
-						test: function (s) { return rNotS.test(s) && rNotZ.test(s); }
-					}
+					"[[:^S:]&[:^Z:]]": rNotSAndNotZ
 				},
 				iMeasureStart = sPattern.indexOf(sPlaceHolder),
 				// determine whether the number is before the measure or after it by comparing the position of measure placeholder with half of the length of the pattern string

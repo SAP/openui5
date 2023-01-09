@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "35.1.0",
-	"__buildtime": "2022-05-02T19:26:05.809Z",
+	"__version": "41.0.0",
+	"__buildtime": "2022-12-19T09:41:25.319Z",
 	"languages": {
 		"aa": "афарский",
 		"ab": "абхазский",
@@ -23,11 +23,12 @@
 		"ang": "староанглийский",
 		"anp": "ангика",
 		"ar": "арабский",
-		"ar_001": "литературный арабский",
+		"ar_001": "арабский литературный",
 		"arc": "арамейский",
 		"arn": "мапуче",
 		"arp": "арапахо",
 		"ars": "недждийский арабский",
+		"ars_alt-menu": "арабская (недждийский)",
 		"arw": "аравакский",
 		"as": "ассамский",
 		"asa": "асу",
@@ -88,7 +89,9 @@
 		"chp": "чипевьян",
 		"chr": "чероки",
 		"chy": "шайенский",
-		"ckb": "сорани",
+		"ckb": "центральнокурдский",
+		"ckb_alt-menu": "курдский (сорани)",
+		"ckb_alt-variant": "центральнокурдский",
 		"co": "корсиканский",
 		"cop": "коптский",
 		"cr": "кри",
@@ -144,6 +147,7 @@
 		"eu": "баскский",
 		"ewo": "эвондо",
 		"fa": "персидский",
+		"fa_AF": "дари",
 		"fan": "фанг",
 		"fat": "фанти",
 		"ff": "фулах",
@@ -238,6 +242,7 @@
 		"kea": "кабувердьяну",
 		"kfo": "коро",
 		"kg": "конго",
+		"kgp": "kgp",
 		"kha": "кхаси",
 		"kho": "хотанский",
 		"khq": "койра чиини",
@@ -278,6 +283,7 @@
 		"lez": "лезгинский",
 		"lg": "ганда",
 		"li": "лимбургский",
+		"lij": "lij",
 		"lkt": "лакота",
 		"ln": "лингала",
 		"lo": "лаосский",
@@ -333,14 +339,14 @@
 		"my": "бирманский",
 		"mye": "миене",
 		"myv": "эрзянский",
-		"mzn": "мазендеранский",
+		"mzn": "мазандеранский",
 		"na": "науру",
 		"nan": "миньнань",
 		"nap": "неаполитанский",
 		"naq": "нама",
 		"nb": "норвежский букмол",
 		"nd": "северный ндебеле",
-		"nds": "нижнегерманский",
+		"nds": "нижненемецкий",
 		"nds_NL": "нижнесаксонский",
 		"ne": "непальский",
 		"new": "неварский",
@@ -396,13 +402,13 @@
 		"raj": "раджастхани",
 		"rap": "рапануйский",
 		"rar": "раротонга",
+		"rhg": "рохинджа",
 		"rm": "романшский",
 		"rn": "рунди",
 		"ro": "румынский",
 		"ro_MD": "молдавский",
 		"rof": "ромбо",
 		"rom": "цыганский",
-		"root": "праязык",
 		"ru": "русский",
 		"rup": "арумынский",
 		"rw": "киньяруанда",
@@ -527,15 +533,20 @@
 		"ybb": "йемба",
 		"yi": "идиш",
 		"yo": "йоруба",
+		"yrl": "yrl",
 		"yue": "кантонский",
+		"yue_alt-menu": "кантонский",
 		"za": "чжуань",
 		"zap": "сапотекский",
 		"zbl": "блиссимволика",
 		"zen": "зенагский",
 		"zgh": "тамазигхтский",
 		"zh": "китайский",
+		"zh_alt-menu": "севернокитайский",
 		"zh_Hans": "китайский, упрощенное письмо",
+		"zh_Hans-alt-long": "севернокитайский, упрощенное письмо",
 		"zh_Hant": "китайский, традиционное письмо",
+		"zh_Hant-alt-long": "севернокитайский, традиционное письмо",
 		"zu": "зулу",
 		"zun": "зуньи",
 		"zxx": "нет языкового материала",
@@ -548,6 +559,7 @@
 		"Ahom": "Ahom",
 		"Arab": "арабица",
 		"Arab-alt-variant": "персидско-арабская",
+		"Aran": "насталик",
 		"Armi": "арамейская",
 		"Armn": "армянская",
 		"Avst": "авестийская",
@@ -568,12 +580,15 @@
 		"Cari": "карийская",
 		"Cham": "чамская",
 		"Cher": "чероки",
+		"Chrs": "Chrs",
 		"Cirt": "кирт",
 		"Copt": "коптская",
+		"Cpmn": "Cpmn",
 		"Cprt": "кипрская",
 		"Cyrl": "кириллица",
 		"Cyrs": "старославянская",
 		"Deva": "деванагари",
+		"Diak": "Diak",
 		"Dogr": "Dogr",
 		"Dsrt": "дезерет",
 		"Dupl": "дуплоянская скоропись",
@@ -607,7 +622,7 @@
 		"Hluw": "лувийские иероглифы",
 		"Hmng": "пахау хмонг",
 		"Hmnp": "Hmnp",
-		"Hrkt": "катакана или хирагана",
+		"Hrkt": "катакана и хирагана",
 		"Hung": "старовенгерская",
 		"Inds": "хараппская (письменность долины Инда)",
 		"Ital": "староитальянская",
@@ -617,9 +632,11 @@
 		"Jurc": "чжурчжэньская",
 		"Kali": "кайа",
 		"Kana": "катакана",
+		"Kawi": "Kawi",
 		"Khar": "кхароштхи",
 		"Khmr": "кхмерская",
 		"Khoj": "ходжики",
+		"Kits": "Kits",
 		"Knda": "каннада",
 		"Kore": "корейская",
 		"Kpel": "кпелле",
@@ -655,6 +672,7 @@
 		"Mtei": "манипури",
 		"Mult": "Mult",
 		"Mymr": "мьянманская",
+		"Nagm": "Nagm",
 		"Nand": "Nand",
 		"Narb": "северноаравийское",
 		"Nbat": "набатейская",
@@ -668,6 +686,7 @@
 		"Orya": "ория",
 		"Osge": "Osge",
 		"Osma": "османская",
+		"Ougr": "Ougr",
 		"Palm": "пальмиры",
 		"Pauc": "Pauc",
 		"Perm": "древнепермская",
@@ -678,7 +697,7 @@
 		"Phnx": "финикийская",
 		"Plrd": "поллардовская фонетика",
 		"Prti": "парфянская",
-		"Qaag": "Qaag",
+		"Qaag": "зоджи",
 		"Rjng": "реджангская",
 		"Rohg": "Rohg",
 		"Roro": "ронго-ронго",
@@ -718,14 +737,18 @@
 		"Thai": "тайская",
 		"Tibt": "тибетская",
 		"Tirh": "тирхута",
+		"Tnsa": "Tnsa",
+		"Toto": "Toto",
 		"Ugar": "угаритская",
 		"Vaii": "вайская",
 		"Visp": "видимая речь",
+		"Vith": "Vith",
 		"Wara": "варанг-кшити",
 		"Wcho": "Wcho",
 		"Wole": "волеаи",
 		"Xpeo": "староперсидская",
 		"Xsux": "шумеро-аккадская клинопись",
+		"Yezi": "Yezi",
 		"Yiii": "и",
 		"Zanb": "Zanb",
 		"Zinh": "унаследованная",
@@ -815,7 +838,7 @@
 		"CG-alt-variant": "Республика Конго",
 		"CH": "Швейцария",
 		"CI": "Кот-д’Ивуар",
-		"CI-alt-variant": "Берег Слоновой Кости",
+		"CI-alt-variant": "Кот-д’Ивуар",
 		"CK": "Острова Кука",
 		"CL": "Чили",
 		"CM": "Камерун",
@@ -926,7 +949,6 @@
 		"MG": "Мадагаскар",
 		"MH": "Маршалловы Острова",
 		"MK": "Северная Македония",
-		"MK-alt-variant": "MK",
 		"ML": "Мали",
 		"MM": "Мьянма (Бирма)",
 		"MN": "Монголия",
@@ -1079,7 +1101,8 @@
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "y 'г'. G",
-				"GyMMM": "LLL y G",
+				"GyMd": "dd.MM.y GGGGG",
+				"GyMMM": "LLL y 'г'. G",
 				"GyMMMd": "d MMM y 'г'. G",
 				"GyMMMEd": "E, d MMM y 'г'. G",
 				"h": "h a",
@@ -1376,13 +1399,13 @@
 					"сб"
 				],
 				"narrow": [
-					"вс",
-					"пн",
-					"вт",
-					"ср",
-					"чт",
-					"пт",
-					"сб"
+					"В",
+					"П",
+					"В",
+					"С",
+					"Ч",
+					"П",
+					"С"
 				],
 				"short": [
 					"вс",
@@ -1613,6 +1636,7 @@
 				"Ehms": "ccc, h:mm:ss a",
 				"EHms": "ccc HH:mm:ss",
 				"Gy": "y 'г'. G",
+				"GyMd": "dd.MM.y G",
 				"GyMMM": "LLL y 'г'. G",
 				"GyMMMd": "d MMM y 'г'. G",
 				"GyMMMEd": "E, d MMM y 'г'. G",
@@ -1903,13 +1927,13 @@
 					"сб"
 				],
 				"narrow": [
-					"вс",
-					"пн",
-					"вт",
-					"ср",
-					"чт",
-					"пт",
-					"сб"
+					"В",
+					"П",
+					"В",
+					"С",
+					"Ч",
+					"П",
+					"С"
 				],
 				"short": [
 					"вс",
@@ -2137,6 +2161,7 @@
 				"Ehms": "ccc, h:mm:ss a",
 				"EHms": "ccc HH:mm:ss",
 				"Gy": "y 'г'. G",
+				"GyMd": "dd.MM.y G",
 				"GyMMM": "LLL y 'г'. G",
 				"GyMMMd": "d MMM y 'г'. G",
 				"GyMMMEd": "E, d MMM y 'г'. G",
@@ -2435,13 +2460,13 @@
 					"сб"
 				],
 				"narrow": [
-					"вс",
-					"пн",
-					"вт",
-					"ср",
-					"чт",
-					"пт",
-					"сб"
+					"В",
+					"П",
+					"В",
+					"С",
+					"Ч",
+					"П",
+					"С"
 				],
 				"short": [
 					"вс",
@@ -2681,6 +2706,7 @@
 				"Ehms": "ccc, h:mm:ss a",
 				"EHms": "ccc HH:mm:ss",
 				"Gy": "y 'г'. G",
+				"GyMd": "dd.MM.y G",
 				"GyMMM": "LLL y 'г'. G",
 				"GyMMMd": "d MMM y 'г'. G",
 				"GyMMMEd": "E, d MMM y 'г'. G",
@@ -2971,13 +2997,13 @@
 					"сб"
 				],
 				"narrow": [
-					"вс",
-					"пн",
-					"вт",
-					"ср",
-					"чт",
-					"пт",
-					"сб"
+					"В",
+					"П",
+					"В",
+					"С",
+					"Ч",
+					"П",
+					"С"
 				],
 				"short": [
 					"вс",
@@ -3205,6 +3231,7 @@
 				"Ehms": "ccc, h:mm:ss a",
 				"EHms": "ccc HH:mm:ss",
 				"Gy": "y 'г'. G",
+				"GyMd": "dd.MM.y G",
 				"GyMMM": "LLL y 'г'. G",
 				"GyMMMd": "d MMM y 'г'. G",
 				"GyMMMEd": "E, d MMM y 'г'. G",
@@ -3495,13 +3522,13 @@
 					"сб"
 				],
 				"narrow": [
-					"вс",
-					"пн",
-					"вт",
-					"ср",
-					"чт",
-					"пт",
-					"сб"
+					"В",
+					"П",
+					"В",
+					"С",
+					"Ч",
+					"П",
+					"С"
 				],
 				"short": [
 					"вс",
@@ -3905,7 +3932,7 @@
 			"displayName": "нед.",
 			"relative-type--1": "на пр. нед.",
 			"relative-type-0": "на эт. нед.",
-			"relative-type-1": "на след. неделе",
+			"relative-type-1": "на след. нед.",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} нед.",
 				"relativeTimePattern-count-few": "+{0} нед.",
@@ -4003,32 +4030,32 @@
 			"displayName": "ч",
 			"relative-type-0": "в этот час",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "через {0} ч.",
-				"relativeTimePattern-count-few": "через {0} ч.",
-				"relativeTimePattern-count-many": "через {0} ч.",
-				"relativeTimePattern-count-other": "через {0} ч."
+				"relativeTimePattern-count-one": "через {0} ч",
+				"relativeTimePattern-count-few": "через {0} ч",
+				"relativeTimePattern-count-many": "через {0} ч",
+				"relativeTimePattern-count-other": "через {0} ч"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} ч. назад",
-				"relativeTimePattern-count-few": "{0} ч. назад",
-				"relativeTimePattern-count-many": "{0} ч. назад",
-				"relativeTimePattern-count-other": "{0} ч. назад"
+				"relativeTimePattern-count-one": "{0} ч назад",
+				"relativeTimePattern-count-few": "{0} ч назад",
+				"relativeTimePattern-count-many": "{0} ч назад",
+				"relativeTimePattern-count-other": "{0} ч назад"
 			}
 		},
 		"hour-narrow": {
 			"displayName": "ч",
 			"relative-type-0": "в этот час",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} ч.",
-				"relativeTimePattern-count-few": "+{0} ч.",
-				"relativeTimePattern-count-many": "+{0} ч.",
-				"relativeTimePattern-count-other": "+{0} ч."
+				"relativeTimePattern-count-one": "+{0} ч",
+				"relativeTimePattern-count-few": "+{0} ч",
+				"relativeTimePattern-count-many": "+{0} ч",
+				"relativeTimePattern-count-other": "+{0} ч"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "-{0} ч.",
-				"relativeTimePattern-count-few": "-{0} ч.",
-				"relativeTimePattern-count-many": "-{0} ч.",
-				"relativeTimePattern-count-other": "-{0} ч."
+				"relativeTimePattern-count-one": "-{0} ч",
+				"relativeTimePattern-count-few": "-{0} ч",
+				"relativeTimePattern-count-many": "-{0} ч",
+				"relativeTimePattern-count-other": "-{0} ч"
 			}
 		},
 		"minute-wide": {
@@ -4067,16 +4094,16 @@
 			"displayName": "мин",
 			"relative-type-0": "в эту минуту",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} мин.",
-				"relativeTimePattern-count-few": "+{0} мин.",
-				"relativeTimePattern-count-many": "+{0} мин.",
-				"relativeTimePattern-count-other": "+{0} мин."
+				"relativeTimePattern-count-one": "+{0} мин",
+				"relativeTimePattern-count-few": "+{0} мин",
+				"relativeTimePattern-count-many": "+{0} мин",
+				"relativeTimePattern-count-other": "+{0} мин"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "-{0} мин.",
-				"relativeTimePattern-count-few": "-{0} мин.",
-				"relativeTimePattern-count-many": "-{0} мин.",
-				"relativeTimePattern-count-other": "-{0} мин."
+				"relativeTimePattern-count-one": "-{0} мин",
+				"relativeTimePattern-count-few": "-{0} мин",
+				"relativeTimePattern-count-many": "-{0} мин",
+				"relativeTimePattern-count-other": "-{0} мин"
 			}
 		},
 		"second-wide": {
@@ -4276,7 +4303,7 @@
 			"La_Paz": "Ла-Пас",
 			"Lima": "Лима",
 			"Los_Angeles": "Лос-Анджелес",
-			"Lower_Princes": "Лоуэр-Принсес-Куортер",
+			"Lower_Princes": "Лоуэр-Принс-Куотер",
 			"Maceio": "Масейо",
 			"Managua": "Манагуа",
 			"Manaus": "Манаус",
@@ -4306,7 +4333,7 @@
 			"Nuuk": "Нуук",
 			"Ojinaga": "Охинага",
 			"Panama": "Панама",
-			"Pangnirtung": "Пангниртунг",
+			"Pangnirtung": "Пангниртанг",
 			"Paramaribo": "Парамарибо",
 			"Phoenix": "Финикс",
 			"Port-au-Prince": "Порт-о-Пренс",
@@ -4572,6 +4599,7 @@
 			"Guadalcanal": "Гуадалканал",
 			"Guam": "Гуам",
 			"Honolulu": "Гонолулу",
+			"Kanton": "Кантон",
 			"Kiritimati": "Киритимати",
 			"Kosrae": "Косрае",
 			"Kwajalein": "Кваджалейн",
@@ -4713,12 +4741,12 @@
 		"accounting": "#,##0.00 ¤",
 		"currencySpacing": {
 			"beforeCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			},
 			"afterCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
@@ -4788,6 +4816,7 @@
 	"symbols-latn-percentSign": "%",
 	"symbols-latn-plusSign": "+",
 	"symbols-latn-minusSign": "-",
+	"symbols-latn-approximatelySign": "≈",
 	"symbols-latn-exponential": "E",
 	"symbols-latn-superscriptingExponent": "×",
 	"symbols-latn-perMille": "‰",
@@ -4818,7 +4847,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
-		"XOF": "CFA",
+		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "XXXX"
 	},
@@ -4849,8 +4878,106 @@
 	},
 	"units": {
 		"short": {
+			"10p-1": {
+				"unitPrefixPattern": "д{0}"
+			},
+			"10p-2": {
+				"unitPrefixPattern": "с{0}"
+			},
+			"10p-3": {
+				"unitPrefixPattern": "м{0}"
+			},
+			"10p-6": {
+				"unitPrefixPattern": "мк{0}"
+			},
+			"10p-9": {
+				"unitPrefixPattern": "н{0}"
+			},
+			"10p-12": {
+				"unitPrefixPattern": "п{0}"
+			},
+			"10p-15": {
+				"unitPrefixPattern": "ф{0}"
+			},
+			"10p-18": {
+				"unitPrefixPattern": "а{0}"
+			},
+			"10p-21": {
+				"unitPrefixPattern": "з{0}"
+			},
+			"10p-24": {
+				"unitPrefixPattern": "и{0}"
+			},
+			"10p1": {
+				"unitPrefixPattern": "да{0}"
+			},
+			"10p2": {
+				"unitPrefixPattern": "г{0}"
+			},
+			"10p3": {
+				"unitPrefixPattern": "к{0}"
+			},
+			"10p6": {
+				"unitPrefixPattern": "М{0}"
+			},
+			"10p9": {
+				"unitPrefixPattern": "Г{0}"
+			},
+			"10p12": {
+				"unitPrefixPattern": "Т{0}"
+			},
+			"10p15": {
+				"unitPrefixPattern": "П{0}"
+			},
+			"10p18": {
+				"unitPrefixPattern": "Э{0}"
+			},
+			"10p21": {
+				"unitPrefixPattern": "З{0}"
+			},
+			"10p24": {
+				"unitPrefixPattern": "И{0}"
+			},
+			"1024p1": {
+				"unitPrefixPattern": "Ки{0}"
+			},
+			"1024p2": {
+				"unitPrefixPattern": "Ми{0}"
+			},
+			"1024p3": {
+				"unitPrefixPattern": "Ги{0}"
+			},
+			"1024p4": {
+				"unitPrefixPattern": "Ти{0}"
+			},
+			"1024p5": {
+				"unitPrefixPattern": "Пи{0}"
+			},
+			"1024p6": {
+				"unitPrefixPattern": "Эи{0}"
+			},
+			"1024p7": {
+				"unitPrefixPattern": "Зи{0}"
+			},
+			"1024p8": {
+				"unitPrefixPattern": "Йи{0}"
+			},
 			"per": {
 				"compoundUnitPattern": "{0}/{1}"
+			},
+			"power2": {
+				"compoundUnitPattern1": "{0}²",
+				"compoundUnitPattern1-count-other": "{0}²"
+			},
+			"power3": {
+				"compoundUnitPattern1": "{0}³",
+				"compoundUnitPattern1-count-one": "{0}³",
+				"compoundUnitPattern1-count-few": "{0}³",
+				"compoundUnitPattern1-count-many": "{0}³",
+				"compoundUnitPattern1-count-other": "{0}³"
+			},
+			"times": {
+				"compoundUnitPattern": "{0}⋅{1}"
 			},
 			"acceleration-g-force": {
 				"displayName": "g",
@@ -4859,7 +4986,7 @@
 				"unitPattern-count-many": "{0} g",
 				"unitPattern-count-other": "{0} g"
 			},
-			"acceleration-meter-per-second-squared": {
+			"acceleration-meter-per-square-second": {
 				"displayName": "м/с²",
 				"unitPattern-count-one": "{0} м/с²",
 				"unitPattern-count-few": "{0} м/с²",
@@ -4933,12 +5060,12 @@
 				"perUnitPattern": "{0}/см²"
 			},
 			"area-square-mile": {
-				"displayName": "миля²",
-				"unitPattern-count-one": "{0} миля²",
-				"unitPattern-count-few": "{0} миля²",
-				"unitPattern-count-many": "{0} миля²",
-				"unitPattern-count-other": "{0} миля²",
-				"perUnitPattern": "{0}/миля²"
+				"displayName": "ми²",
+				"unitPattern-count-one": "{0} ми²",
+				"unitPattern-count-few": "{0} ми²",
+				"unitPattern-count-many": "{0} ми²",
+				"unitPattern-count-other": "{0} ми²",
+				"perUnitPattern": "{0}/ми²"
 			},
 			"area-acre": {
 				"displayName": "акр.",
@@ -4983,7 +5110,7 @@
 				"unitPattern-count-many": "{0} кар",
 				"unitPattern-count-other": "{0} кар"
 			},
-			"concentr-milligram-per-deciliter": {
+			"concentr-milligram-ofglucose-per-deciliter": {
 				"displayName": "мг/дл",
 				"unitPattern-count-one": "{0} мг/дл",
 				"unitPattern-count-few": "{0} мг/дл",
@@ -4997,7 +5124,14 @@
 				"unitPattern-count-many": "{0} ммоль/л",
 				"unitPattern-count-other": "{0} ммоль/л"
 			},
-			"concentr-part-per-million": {
+			"concentr-item": {
+				"displayName": "объекты",
+				"unitPattern-count-one": "{0} объект",
+				"unitPattern-count-few": "{0} объекта",
+				"unitPattern-count-many": "{0} объектов",
+				"unitPattern-count-other": "{0} объекта"
+			},
+			"concentr-permillion": {
 				"displayName": "ppm",
 				"unitPattern-count-one": "{0} ppm",
 				"unitPattern-count-few": "{0} ppm",
@@ -5039,7 +5173,7 @@
 				"unitPattern-count-many": "{0} л/км",
 				"unitPattern-count-other": "{0} л/км"
 			},
-			"consumption-liter-per-100kilometers": {
+			"consumption-liter-per-100-kilometer": {
 				"displayName": "л/100 км",
 				"unitPattern-count-one": "{0} л/100 км",
 				"unitPattern-count-few": "{0} л/100 км",
@@ -5047,18 +5181,18 @@
 				"unitPattern-count-other": "{0} л/100 км"
 			},
 			"consumption-mile-per-gallon": {
-				"displayName": "миль/гал",
-				"unitPattern-count-one": "{0} миля/галл.",
-				"unitPattern-count-few": "{0} мили/галл.",
-				"unitPattern-count-many": "{0} миль/галл.",
-				"unitPattern-count-other": "{0} мили/галл."
+				"displayName": "ми/ам. гал",
+				"unitPattern-count-one": "{0} ми/ам. гал",
+				"unitPattern-count-few": "{0} ми/ам. гал",
+				"unitPattern-count-many": "{0} ми/ам. гал",
+				"unitPattern-count-other": "{0} ми/ам. гал"
 			},
 			"consumption-mile-per-gallon-imperial": {
 				"displayName": "мили/имп. гал",
 				"unitPattern-count-one": "{0} миля/имп. гал",
 				"unitPattern-count-few": "{0} мили/имп. гал",
 				"unitPattern-count-many": "{0} миль/имп. гал",
-				"unitPattern-count-other": "{0} мили/имп. галл."
+				"unitPattern-count-other": "{0} мили/имп. гал"
 			},
 			"digital-petabyte": {
 				"displayName": "ПБ",
@@ -5144,6 +5278,13 @@
 				"unitPattern-count-many": "{0} в.",
 				"unitPattern-count-other": "{0} в."
 			},
+			"duration-decade": {
+				"displayName": "10-летие",
+				"unitPattern-count-one": "{0} 10-летие",
+				"unitPattern-count-few": "{0} 10-летия",
+				"unitPattern-count-many": "{0} 10-летий",
+				"unitPattern-count-other": "{0} 10-летия"
+			},
 			"duration-year": {
 				"displayName": "г.",
 				"unitPattern-count-one": "{0} г.",
@@ -5177,27 +5318,27 @@
 				"perUnitPattern": "{0}/д"
 			},
 			"duration-hour": {
-				"displayName": "ч.",
-				"unitPattern-count-one": "{0} ч.",
-				"unitPattern-count-few": "{0} ч.",
-				"unitPattern-count-many": "{0} ч.",
-				"unitPattern-count-other": "{0} ч.",
+				"displayName": "ч",
+				"unitPattern-count-one": "{0} ч",
+				"unitPattern-count-few": "{0} ч",
+				"unitPattern-count-many": "{0} ч",
+				"unitPattern-count-other": "{0} ч",
 				"perUnitPattern": "{0}/ч"
 			},
 			"duration-minute": {
 				"displayName": "мин",
-				"unitPattern-count-one": "{0} мин.",
-				"unitPattern-count-few": "{0} мин.",
-				"unitPattern-count-many": "{0} мин.",
-				"unitPattern-count-other": "{0} мин.",
+				"unitPattern-count-one": "{0} мин",
+				"unitPattern-count-few": "{0} мин",
+				"unitPattern-count-many": "{0} мин",
+				"unitPattern-count-other": "{0} мин",
 				"perUnitPattern": "{0}/мин"
 			},
 			"duration-second": {
-				"displayName": "сек.",
-				"unitPattern-count-one": "{0} сек.",
-				"unitPattern-count-few": "{0} сек.",
-				"unitPattern-count-many": "{0} сек.",
-				"unitPattern-count-other": "{0} сек.",
+				"displayName": "с",
+				"unitPattern-count-one": "{0} с",
+				"unitPattern-count-few": "{0} с",
+				"unitPattern-count-many": "{0} с",
+				"unitPattern-count-other": "{0} с",
 				"perUnitPattern": "{0}/c"
 			},
 			"duration-millisecond": {
@@ -5264,11 +5405,11 @@
 				"unitPattern-count-other": "{0} кал"
 			},
 			"energy-foodcalorie": {
-				"displayName": "кал",
-				"unitPattern-count-one": "{0} кал",
-				"unitPattern-count-few": "{0} кал",
-				"unitPattern-count-many": "{0} кал",
-				"unitPattern-count-other": "{0} кал"
+				"displayName": "ккал",
+				"unitPattern-count-one": "{0} ккал",
+				"unitPattern-count-few": "{0} ккал",
+				"unitPattern-count-many": "{0} ккал",
+				"unitPattern-count-other": "{0} ккал"
 			},
 			"energy-kilojoule": {
 				"displayName": "кДж",
@@ -5305,9 +5446,19 @@
 				"unitPattern-count-many": "{0} БТЕ",
 				"unitPattern-count-other": "{0} БТЕ"
 			},
+			"energy-therm-us": {
+				"displayName": "терм США",
+				"unitPattern-count-one": "{0} терм США",
+				"unitPattern-count-few": "{0} терма США",
+				"unitPattern-count-many": "{0} термов США",
+				"unitPattern-count-other": "{0} терма США"
+			},
 			"force-pound-force": {
-				"displayName": "lbf",
-				"unitPattern-count-other": "{0} lbf"
+				"displayName": "фнт-с",
+				"unitPattern-count-one": "{0} фнт-с",
+				"unitPattern-count-few": "{0} фнт-с",
+				"unitPattern-count-many": "{0} фнт-с",
+				"unitPattern-count-other": "{0} фнт-с"
 			},
 			"force-newton": {
 				"displayName": "Н",
@@ -5315,6 +5466,13 @@
 				"unitPattern-count-few": "{0} Н",
 				"unitPattern-count-many": "{0} Н",
 				"unitPattern-count-other": "{0} Н"
+			},
+			"force-kilowatt-hour-per-100-kilometer": {
+				"displayName": "кВт⋅ч/100 км",
+				"unitPattern-count-one": "{0} кВт⋅ч/100 км",
+				"unitPattern-count-few": "{0} кВт⋅ч/100 км",
+				"unitPattern-count-many": "{0} кВт⋅ч/100 км",
+				"unitPattern-count-other": "{0} кВт⋅ч/100 км"
 			},
 			"frequency-gigahertz": {
 				"displayName": "ГГц",
@@ -5343,6 +5501,66 @@
 				"unitPattern-count-few": "{0} Гц",
 				"unitPattern-count-many": "{0} Гц",
 				"unitPattern-count-other": "{0} Гц"
+			},
+			"graphics-em": {
+				"displayName": "эм",
+				"unitPattern-count-one": "{0} эм",
+				"unitPattern-count-few": "{0} эм",
+				"unitPattern-count-many": "{0} эм",
+				"unitPattern-count-other": "{0} эм"
+			},
+			"graphics-pixel": {
+				"displayName": "пкс",
+				"unitPattern-count-one": "{0} пкс",
+				"unitPattern-count-few": "{0} пкс",
+				"unitPattern-count-many": "{0} пкс",
+				"unitPattern-count-other": "{0} пкс"
+			},
+			"graphics-megapixel": {
+				"displayName": "Мпкс",
+				"unitPattern-count-one": "{0} Мпкс",
+				"unitPattern-count-few": "{0} Мпкс",
+				"unitPattern-count-many": "{0} Мпкс",
+				"unitPattern-count-other": "{0} Мпкс"
+			},
+			"graphics-pixel-per-centimeter": {
+				"displayName": "пкс/см",
+				"unitPattern-count-one": "{0} пкс/см",
+				"unitPattern-count-few": "{0} пкс/см",
+				"unitPattern-count-many": "{0} пкс/см",
+				"unitPattern-count-other": "{0} пкс/см"
+			},
+			"graphics-pixel-per-inch": {
+				"displayName": "пкс/дюйм",
+				"unitPattern-count-one": "{0} пкс/дюйм",
+				"unitPattern-count-few": "{0} пкс/дюйм",
+				"unitPattern-count-many": "{0} пкс/дюйм",
+				"unitPattern-count-other": "{0} пкс/дюйм"
+			},
+			"graphics-dot-per-centimeter": {
+				"displayName": "тчк/см",
+				"unitPattern-count-one": "{0} тчк/см",
+				"unitPattern-count-few": "{0} тчк/см",
+				"unitPattern-count-many": "{0} тчк/см",
+				"unitPattern-count-other": "{0} тчк/см"
+			},
+			"graphics-dot-per-inch": {
+				"displayName": "тчк/дюйм",
+				"unitPattern-count-one": "{0} тчк/дюйм",
+				"unitPattern-count-few": "{0} тчк/дюйм",
+				"unitPattern-count-many": "{0} тчк/дюйм",
+				"unitPattern-count-other": "{0} тчк/дюйм"
+			},
+			"graphics-dot": {
+				"displayName": "тчк",
+				"unitPattern-count-one": "{0} тчк",
+				"unitPattern-count-few": "{0} тчк",
+				"unitPattern-count-many": "{0} тчк",
+				"unitPattern-count-other": "{0} тчк"
+			},
+			"length-earth-radius": {
+				"displayName": "R⊕",
+				"unitPattern-count-other": "{0} R⊕"
 			},
 			"length-kilometer": {
 				"displayName": "км",
@@ -5404,11 +5622,11 @@
 				"unitPattern-count-other": "{0} пм"
 			},
 			"length-mile": {
-				"displayName": "мили",
-				"unitPattern-count-one": "{0} миля",
-				"unitPattern-count-few": "{0} мили",
-				"unitPattern-count-many": "{0} миль",
-				"unitPattern-count-other": "{0} мили"
+				"displayName": "ми",
+				"unitPattern-count-one": "{0} ми",
+				"unitPattern-count-few": "{0} ми",
+				"unitPattern-count-many": "{0} ми",
+				"unitPattern-count-other": "{0} ми"
 			},
 			"length-yard": {
 				"displayName": "ярд.",
@@ -5469,18 +5687,18 @@
 				"unitPattern-count-other": "{0} мор. сажени"
 			},
 			"length-nautical-mile": {
-				"displayName": "мор. мили",
-				"unitPattern-count-one": "{0} мор. миля",
-				"unitPattern-count-few": "{0} мор. мили",
-				"unitPattern-count-many": "{0} мор. миль",
-				"unitPattern-count-other": "{0} мор. мили"
+				"displayName": "мор. ми",
+				"unitPattern-count-one": "{0} мор. ми",
+				"unitPattern-count-few": "{0} мор. ми",
+				"unitPattern-count-many": "{0} мор. ми",
+				"unitPattern-count-other": "{0} мор. ми"
 			},
 			"length-mile-scandinavian": {
-				"displayName": "ск. мил.",
-				"unitPattern-count-one": "{0} ск. мил.",
-				"unitPattern-count-few": "{0} ск. мил.",
-				"unitPattern-count-many": "{0} ск. мил.",
-				"unitPattern-count-other": "{0} ск. мил."
+				"displayName": "ск. ми",
+				"unitPattern-count-one": "{0} ск. ми",
+				"unitPattern-count-few": "{0} ск. ми",
+				"unitPattern-count-many": "{0} ск. ми",
+				"unitPattern-count-other": "{0} ск. ми"
 			},
 			"length-point": {
 				"displayName": "пкт",
@@ -5503,11 +5721,22 @@
 				"unitPattern-count-many": "{0} лк",
 				"unitPattern-count-other": "{0} лк"
 			},
+			"light-candela": {
+				"displayName": "кд",
+				"unitPattern-count-one": "{0} кд",
+				"unitPattern-count-few": "{0} кд",
+				"unitPattern-count-many": "{0} кд",
+				"unitPattern-count-other": "{0} кд"
+			},
+			"light-lumen": {
+				"displayName": "лм",
+				"unitPattern-count-one": "{0} лм",
+				"unitPattern-count-few": "{0} лм",
+				"unitPattern-count-many": "{0} лм",
+				"unitPattern-count-other": "{0} лм"
+			},
 			"light-solar-luminosity": {
 				"displayName": "L☉",
-				"unitPattern-count-one": "{0} L☉",
-				"unitPattern-count-few": "{0} L☉",
-				"unitPattern-count-many": "{0} L☉",
 				"unitPattern-count-other": "{0} L☉"
 			},
 			"mass-metric-ton": {
@@ -5562,12 +5791,12 @@
 				"unitPattern-count-other": "{0} стоуна"
 			},
 			"mass-pound": {
-				"displayName": "фунт.",
-				"unitPattern-count-one": "{0} фунт.",
-				"unitPattern-count-few": "{0} фунт.",
-				"unitPattern-count-many": "{0} фунт.",
-				"unitPattern-count-other": "{0} фунт.",
-				"perUnitPattern": "{0}/фунт"
+				"displayName": "фнт",
+				"unitPattern-count-one": "{0} фнт",
+				"unitPattern-count-few": "{0} фнт",
+				"unitPattern-count-many": "{0} фнт",
+				"unitPattern-count-other": "{0} фнт",
+				"perUnitPattern": "{0}/фнт"
 			},
 			"mass-ounce": {
 				"displayName": "унц.",
@@ -5600,17 +5829,18 @@
 			},
 			"mass-earth-mass": {
 				"displayName": "M⊕",
-				"unitPattern-count-one": "{0} M⊕",
-				"unitPattern-count-few": "{0} M⊕",
-				"unitPattern-count-many": "{0} M⊕",
 				"unitPattern-count-other": "{0} M⊕"
 			},
 			"mass-solar-mass": {
 				"displayName": "M☉",
-				"unitPattern-count-one": "{0} M☉",
-				"unitPattern-count-few": "{0} M☉",
-				"unitPattern-count-many": "{0} M☉",
 				"unitPattern-count-other": "{0} M☉"
+			},
+			"mass-grain": {
+				"displayName": "гран",
+				"unitPattern-count-one": "{0} гран",
+				"unitPattern-count-few": "{0} грана",
+				"unitPattern-count-many": "{0} гранов",
+				"unitPattern-count-other": "{0} грана"
 			},
 			"power-gigawatt": {
 				"displayName": "ГВт",
@@ -5648,39 +5878,39 @@
 				"unitPattern-count-other": "{0} мВт"
 			},
 			"power-horsepower": {
-				"displayName": "л.с.",
-				"unitPattern-count-one": "{0} л.с.",
-				"unitPattern-count-few": "{0} л.с.",
-				"unitPattern-count-many": "{0} л.с.",
-				"unitPattern-count-other": "{0} л.с."
+				"displayName": "л. с.",
+				"unitPattern-count-one": "{0} л. с.",
+				"unitPattern-count-few": "{0} л. с.",
+				"unitPattern-count-many": "{0} л. с.",
+				"unitPattern-count-other": "{0} л. с."
 			},
-			"pressure-hectopascal": {
-				"displayName": "гПа",
-				"unitPattern-count-one": "{0} гПа",
-				"unitPattern-count-few": "{0} гПа",
-				"unitPattern-count-many": "{0} гПа",
-				"unitPattern-count-other": "{0} гПа"
-			},
-			"pressure-millimeter-of-mercury": {
+			"pressure-millimeter-ofhg": {
 				"displayName": "мм рт. ст.",
 				"unitPattern-count-one": "{0} мм рт. ст.",
 				"unitPattern-count-few": "{0} мм рт. ст.",
 				"unitPattern-count-many": "{0} мм рт. ст.",
 				"unitPattern-count-other": "{0} мм рт. ст."
 			},
-			"pressure-pound-per-square-inch": {
+			"pressure-pound-force-per-square-inch": {
 				"displayName": "ф. на дюйм²",
-				"unitPattern-count-one": "{0} ф./дюйм²",
-				"unitPattern-count-few": "{0} ф./дюйм²",
-				"unitPattern-count-many": "{0} ф./дюйм²",
-				"unitPattern-count-other": "{0} ф./дюйм²"
+				"unitPattern-count-one": "{0} ф/дюйм²",
+				"unitPattern-count-few": "{0} ф/дюйм²",
+				"unitPattern-count-many": "{0} ф/дюйм²",
+				"unitPattern-count-other": "{0} ф/дюйм²"
 			},
-			"pressure-inch-hg": {
+			"pressure-inch-ofhg": {
 				"displayName": "д. рт. ст.",
 				"unitPattern-count-one": "{0} д. рт. ст.",
 				"unitPattern-count-few": "{0} д. рт. ст.",
 				"unitPattern-count-many": "{0} д. рт. ст.",
 				"unitPattern-count-other": "{0} д. рт. ст."
+			},
+			"pressure-bar": {
+				"displayName": "бар",
+				"unitPattern-count-one": "{0} бар",
+				"unitPattern-count-few": "{0} бар",
+				"unitPattern-count-many": "{0} бар",
+				"unitPattern-count-other": "{0} бар"
 			},
 			"pressure-millibar": {
 				"displayName": "мбар",
@@ -5695,6 +5925,20 @@
 				"unitPattern-count-few": "{0} атм",
 				"unitPattern-count-many": "{0} атм",
 				"unitPattern-count-other": "{0} атм"
+			},
+			"pressure-pascal": {
+				"displayName": "Па",
+				"unitPattern-count-one": "{0} Па",
+				"unitPattern-count-few": "{0} Па",
+				"unitPattern-count-many": "{0} Па",
+				"unitPattern-count-other": "{0} Па"
+			},
+			"pressure-hectopascal": {
+				"displayName": "гПа",
+				"unitPattern-count-one": "{0} гПа",
+				"unitPattern-count-few": "{0} гПа",
+				"unitPattern-count-many": "{0} гПа",
+				"unitPattern-count-other": "{0} гПа"
 			},
 			"pressure-kilopascal": {
 				"displayName": "кПа",
@@ -5725,11 +5969,11 @@
 				"unitPattern-count-other": "{0} м/с"
 			},
 			"speed-mile-per-hour": {
-				"displayName": "мили/час",
-				"unitPattern-count-one": "{0} миля/час",
-				"unitPattern-count-few": "{0} мили/час",
-				"unitPattern-count-many": "{0} миль/час",
-				"unitPattern-count-other": "{0} мили/час"
+				"displayName": "ми/ч",
+				"unitPattern-count-one": "{0} ми/ч",
+				"unitPattern-count-few": "{0} ми/ч",
+				"unitPattern-count-many": "{0} ми/ч",
+				"unitPattern-count-other": "{0} ми/ч"
 			},
 			"speed-knot": {
 				"displayName": "уз",
@@ -5754,10 +5998,10 @@
 			},
 			"temperature-fahrenheit": {
 				"displayName": "°F",
-				"unitPattern-count-one": "{0}°F",
-				"unitPattern-count-few": "{0}°F",
-				"unitPattern-count-many": "{0}°F",
-				"unitPattern-count-other": "{0}°F"
+				"unitPattern-count-one": "{0} °F",
+				"unitPattern-count-few": "{0} °F",
+				"unitPattern-count-many": "{0} °F",
+				"unitPattern-count-other": "{0} °F"
 			},
 			"temperature-kelvin": {
 				"displayName": "K",
@@ -5766,7 +6010,7 @@
 				"unitPattern-count-many": "{0} K",
 				"unitPattern-count-other": "{0} K"
 			},
-			"torque-pound-foot": {
+			"torque-pound-force-foot": {
 				"displayName": "фнт-фт",
 				"unitPattern-count-one": "{0} фнт-фт",
 				"unitPattern-count-few": "{0} фнт-фт",
@@ -5804,11 +6048,11 @@
 				"perUnitPattern": "{0}/см³"
 			},
 			"volume-cubic-mile": {
-				"displayName": "миля³",
-				"unitPattern-count-one": "{0} миля³",
-				"unitPattern-count-few": "{0} мили³",
-				"unitPattern-count-many": "{0} миль³",
-				"unitPattern-count-other": "{0} мили³"
+				"displayName": "ми³",
+				"unitPattern-count-one": "{0} ми³",
+				"unitPattern-count-few": "{0} ми³",
+				"unitPattern-count-many": "{0} ми³",
+				"unitPattern-count-other": "{0} ми³"
 			},
 			"volume-cubic-yard": {
 				"displayName": "ярд³",
@@ -5896,16 +6140,19 @@
 				"unitPattern-count-other": "{0} акрофут."
 			},
 			"volume-bushel": {
-				"displayName": "bu",
-				"unitPattern-count-other": "{0} bu"
+				"displayName": "буш.",
+				"unitPattern-count-one": "{0} буш.",
+				"unitPattern-count-few": "{0} буш.",
+				"unitPattern-count-many": "{0} буш.",
+				"unitPattern-count-other": "{0} буш."
 			},
 			"volume-gallon": {
-				"displayName": "гал.",
-				"unitPattern-count-one": "{0} гал.",
-				"unitPattern-count-few": "{0} гал.",
-				"unitPattern-count-many": "{0} гал.",
-				"unitPattern-count-other": "{0} гал.",
-				"perUnitPattern": "{0}/гал"
+				"displayName": "ам. гал.",
+				"unitPattern-count-one": "{0} ам. гал.",
+				"unitPattern-count-few": "{0} ам. гал.",
+				"unitPattern-count-many": "{0} ам. гал.",
+				"unitPattern-count-other": "{0} ам. гал.",
+				"perUnitPattern": "{0}/ам. гал"
 			},
 			"volume-gallon-imperial": {
 				"displayName": "имп. гал.",
@@ -5916,39 +6163,39 @@
 				"perUnitPattern": "{0}/имп. гал"
 			},
 			"volume-quart": {
-				"displayName": "кварт.",
-				"unitPattern-count-one": "{0} кварт.",
-				"unitPattern-count-few": "{0} кварт.",
-				"unitPattern-count-many": "{0} кварт.",
-				"unitPattern-count-other": "{0} кварт."
+				"displayName": "ам. кварт.",
+				"unitPattern-count-one": "{0} ам. кварт.",
+				"unitPattern-count-few": "{0} ам. кварт.",
+				"unitPattern-count-many": "{0} ам. кварт.",
+				"unitPattern-count-other": "{0} ам. кварт."
 			},
 			"volume-pint": {
-				"displayName": "пинт.",
-				"unitPattern-count-one": "{0} пинт.",
-				"unitPattern-count-few": "{0} пинт.",
-				"unitPattern-count-many": "{0} пинт.",
-				"unitPattern-count-other": "{0} пинт."
+				"displayName": "ам. пинт.",
+				"unitPattern-count-one": "{0} ам. пинт.",
+				"unitPattern-count-few": "{0} ам. пинт.",
+				"unitPattern-count-many": "{0} ам. пинт.",
+				"unitPattern-count-other": "{0} ам. пинт."
 			},
 			"volume-cup": {
-				"displayName": "чаш.",
-				"unitPattern-count-one": "{0} чаш.",
-				"unitPattern-count-few": "{0} чаш.",
-				"unitPattern-count-many": "{0} чаш.",
-				"unitPattern-count-other": "{0} чаш."
+				"displayName": "ам. чаш.",
+				"unitPattern-count-one": "{0} ам. чаш.",
+				"unitPattern-count-few": "{0} ам. чаш.",
+				"unitPattern-count-many": "{0} ам. чаш.",
+				"unitPattern-count-other": "{0} ам. чаш."
 			},
 			"volume-fluid-ounce": {
-				"displayName": "жидк. унц.",
-				"unitPattern-count-one": "{0} жидк. унц.",
-				"unitPattern-count-few": "{0} жидк. унц.",
-				"unitPattern-count-many": "{0} жидк. унц.",
-				"unitPattern-count-other": "{0} жидк. унц."
+				"displayName": "ам. жидк. унц.",
+				"unitPattern-count-one": "{0} ам. жидк. унц.",
+				"unitPattern-count-few": "{0} ам. жидк. унц.",
+				"unitPattern-count-many": "{0} ам. жидк. унц.",
+				"unitPattern-count-other": "{0} ам. жидк. унц."
 			},
 			"volume-fluid-ounce-imperial": {
-				"displayName": "англ. жидк. унц.",
-				"unitPattern-count-one": "{0} англ. жидк. унц.",
-				"unitPattern-count-few": "{0} англ. жидк. унц.",
-				"unitPattern-count-many": "{0} англ. жидк. унц.",
-				"unitPattern-count-other": "{0} англ. жидк. унц."
+				"displayName": "имп. жидк. унц.",
+				"unitPattern-count-one": "{0} имп. жидк. унц.",
+				"unitPattern-count-few": "{0} имп. жидк. унц.",
+				"unitPattern-count-many": "{0} имп. жидк. унц.",
+				"unitPattern-count-other": "{0} имп. жидк. унц."
 			},
 			"volume-tablespoon": {
 				"displayName": "ст. л.",
@@ -5970,6 +6217,55 @@
 				"unitPattern-count-few": "{0} барр.",
 				"unitPattern-count-many": "{0} барр.",
 				"unitPattern-count-other": "{0} барр."
+			},
+			"volume-dessert-spoon": {
+				"displayName": "дес. л.",
+				"unitPattern-count-one": "{0} дес. л.",
+				"unitPattern-count-few": "{0} дес. л.",
+				"unitPattern-count-many": "{0} дес. л.",
+				"unitPattern-count-other": "{0} дес. л."
+			},
+			"volume-dessert-spoon-imperial": {
+				"displayName": "имп. дес. л.",
+				"unitPattern-count-one": "{0} имп. дес. л.",
+				"unitPattern-count-few": "{0} имп. дес. л.",
+				"unitPattern-count-many": "{0} имп. дес. л.",
+				"unitPattern-count-other": "{0} имп. дес. л."
+			},
+			"volume-drop": {
+				"displayName": "кап.",
+				"unitPattern-count-one": "{0} кап.",
+				"unitPattern-count-few": "{0} кап.",
+				"unitPattern-count-many": "{0} кап.",
+				"unitPattern-count-other": "{0} кап."
+			},
+			"volume-dram": {
+				"displayName": "жидк. др.",
+				"unitPattern-count-one": "{0} жидк. др.",
+				"unitPattern-count-few": "{0} жидк. др.",
+				"unitPattern-count-many": "{0} жидк. др.",
+				"unitPattern-count-other": "{0} жидк. др."
+			},
+			"volume-jigger": {
+				"displayName": "джиггер",
+				"unitPattern-count-one": "{0} джиггер",
+				"unitPattern-count-few": "{0} джиггера",
+				"unitPattern-count-many": "{0} джиггеров",
+				"unitPattern-count-other": "{0} джиггера"
+			},
+			"volume-pinch": {
+				"displayName": "щепот.",
+				"unitPattern-count-one": "{0} щепот.",
+				"unitPattern-count-few": "{0} щепот.",
+				"unitPattern-count-many": "{0} щепот.",
+				"unitPattern-count-other": "{0} щепот."
+			},
+			"volume-quart-imperial": {
+				"displayName": "имп. кварт.",
+				"unitPattern-count-one": "{0} имп. кварт.",
+				"unitPattern-count-few": "{0} имп. кварт.",
+				"unitPattern-count-many": "{0} имп. кварт.",
+				"unitPattern-count-other": "{0} имп. кварт."
 			},
 			"coordinateUnit": {
 				"displayName": "направление",
@@ -6150,7 +6446,7 @@
 			"_from": "12:00"
 		},
 		"evening1": {
-			"_before": "24:00",
+			"_before": "22:00",
 			"_from": "18:00"
 		},
 		"midnight": {
@@ -6162,7 +6458,7 @@
 		},
 		"night1": {
 			"_before": "04:00",
-			"_from": "00:00"
+			"_from": "22:00"
 		},
 		"noon": {
 			"_at": "12:00"

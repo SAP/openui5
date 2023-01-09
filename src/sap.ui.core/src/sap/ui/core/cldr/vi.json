@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "35.1.0",
-	"__buildtime": "2022-05-02T19:26:05.809Z",
+	"__version": "41.0.0",
+	"__buildtime": "2022-12-19T09:41:25.319Z",
 	"languages": {
 		"aa": "Tiếng Afar",
 		"ab": "Tiếng Abkhazia",
@@ -103,6 +103,8 @@
 		"chr": "Tiếng Cherokee",
 		"chy": "Tiếng Cheyenne",
 		"ckb": "Tiếng Kurd Miền Trung",
+		"ckb_alt-menu": "Tiếng Kurd Miền Trung",
+		"ckb_alt-variant": "Tiếng Kurd Sorani",
 		"co": "Tiếng Corsica",
 		"cop": "Tiếng Coptic",
 		"cps": "Tiếng Capiznon",
@@ -163,6 +165,7 @@
 		"ewo": "Tiếng Ewondo",
 		"ext": "Tiếng Extremadura",
 		"fa": "Tiếng Ba Tư",
+		"fa_AF": "Tiếng Dari",
 		"fan": "Tiếng Fang",
 		"fat": "Tiếng Fanti",
 		"ff": "Tiếng Fulah",
@@ -217,7 +220,7 @@
 		"hif": "Tiếng Fiji Hindi",
 		"hil": "Tiếng Hiligaynon",
 		"hit": "Tiếng Hittite",
-		"hmn": "Tiếng Hmông",
+		"hmn": "Tiếng H’Mông",
 		"ho": "Tiếng Hiri Motu",
 		"hr": "Tiếng Croatia",
 		"hsb": "Tiếng Thượng Sorbia",
@@ -265,6 +268,7 @@
 		"kea": "Tiếng Kabuverdianu",
 		"kfo": "Tiếng Koro",
 		"kg": "Tiếng Kongo",
+		"kgp": "kgp",
 		"kha": "Tiếng Khasi",
 		"kho": "Tiếng Khotan",
 		"khq": "Tiếng Koyra Chiini",
@@ -305,6 +309,7 @@
 		"lez": "Tiếng Lezghian",
 		"lg": "Tiếng Ganda",
 		"li": "Tiếng Limburg",
+		"lij": "lij",
 		"lkt": "Tiếng Lakota",
 		"ln": "Tiếng Lingala",
 		"lo": "Tiếng Lào",
@@ -339,7 +344,7 @@
 		"mgh": "Tiếng Makhuwa-Meetto",
 		"mgo": "Tiếng Meta’",
 		"mh": "Tiếng Marshall",
-		"mi": "Tiếng Maori",
+		"mi": "Tiếng Māori",
 		"mic": "Tiếng Micmac",
 		"min": "Tiếng Minangkabau",
 		"mk": "Tiếng Macedonia",
@@ -426,13 +431,13 @@
 		"raj": "Tiếng Rajasthani",
 		"rap": "Tiếng Rapanui",
 		"rar": "Tiếng Rarotongan",
+		"rhg": "Tiếng Rohingya",
 		"rm": "Tiếng Romansh",
 		"rn": "Tiếng Rundi",
 		"ro": "Tiếng Romania",
 		"ro_MD": "Tiếng Moldova",
 		"rof": "Tiếng Rombo",
 		"rom": "Tiếng Romany",
-		"root": "Tiếng Root",
 		"ru": "Tiếng Nga",
 		"rup": "Tiếng Aromania",
 		"rw": "Tiếng Kinyarwanda",
@@ -528,7 +533,7 @@
 		"udm": "Tiếng Udmurt",
 		"ug": "Tiếng Uyghur",
 		"uga": "Tiếng Ugaritic",
-		"uk": "Tiếng Ucraina",
+		"uk": "Tiếng Ukraina",
 		"umb": "Tiếng Umbundu",
 		"und": "Ngôn ngữ không xác định",
 		"ur": "Tiếng Urdu",
@@ -556,15 +561,20 @@
 		"ybb": "Tiếng Yemba",
 		"yi": "Tiếng Yiddish",
 		"yo": "Tiếng Yoruba",
+		"yrl": "yrl",
 		"yue": "Tiếng Quảng Đông",
+		"yue_alt-menu": "Tiếng Trung (Tiếng Quảng Đông)",
 		"za": "Tiếng Choang",
 		"zap": "Tiếng Zapotec",
 		"zbl": "Ký hiệu Blissymbols",
 		"zen": "Tiếng Zenaga",
 		"zgh": "Tiếng Tamazight Chuẩn của Ma-rốc",
 		"zh": "Tiếng Trung",
+		"zh_alt-menu": "Tiếng Trung (Phổ thông)",
 		"zh_Hans": "Tiếng Trung (Giản thể)",
+		"zh_Hans-alt-long": "Tiếng Trung Phổ thông (Giản thể)",
 		"zh_Hant": "Tiếng Trung (Phồn thể)",
+		"zh_Hant-alt-long": "Tiếng Trung Phổ thông (Phồn thể)",
 		"zu": "Tiếng Zulu",
 		"zun": "Tiếng Zuni",
 		"zxx": "Không có nội dung ngôn ngữ",
@@ -577,6 +587,7 @@
 		"Ahom": "Ahom",
 		"Arab": "Chữ Ả Rập",
 		"Arab-alt-variant": "Chữ Ba Tư-Ả Rập",
+		"Aran": "Chữ Nastaliq",
 		"Armi": "Chữ Imperial Aramaic",
 		"Armn": "Chữ Armenia",
 		"Avst": "Chữ Avestan",
@@ -584,7 +595,7 @@
 		"Bamu": "Chữ Bamum",
 		"Bass": "Chữ Bassa Vah",
 		"Batk": "Chữ Batak",
-		"Beng": "Chữ Bangladesh",
+		"Beng": "Chữ Bangla",
 		"Bhks": "Bhks",
 		"Blis": "Chữ Blissymbols",
 		"Bopo": "Chữ Bopomofo",
@@ -597,12 +608,15 @@
 		"Cari": "Chữ Caria",
 		"Cham": "Chữ Chăm",
 		"Cher": "Chữ Cherokee",
+		"Chrs": "Chrs",
 		"Cirt": "Chữ Cirth",
 		"Copt": "Chữ Coptic",
+		"Cpmn": "Cpmn",
 		"Cprt": "Chứ Síp",
 		"Cyrl": "Chữ Kirin",
 		"Cyrs": "Chữ Kirin Slavơ Nhà thờ cổ",
 		"Deva": "Chữ Devanagari",
+		"Diak": "Diak",
 		"Dogr": "Dogr",
 		"Dsrt": "Chữ Deseret",
 		"Dupl": "Chữ tốc ký Duployan",
@@ -613,7 +627,7 @@
 		"Elym": "Elym",
 		"Ethi": "Chữ Ethiopia",
 		"Geok": "Chữ Khutsuri Georgia",
-		"Geor": "Chữ Gruzia",
+		"Geor": "Chữ Georgia",
 		"Glag": "Chữ Glagolitic",
 		"Gong": "Gong",
 		"Gonm": "Gonm",
@@ -622,8 +636,8 @@
 		"Grek": "Chữ Hy Lạp",
 		"Gujr": "Chữ Gujarati",
 		"Guru": "Chữ Gurmukhi",
-		"Hanb": "Chữ Hanb",
-		"Hang": "Chữ Hangul",
+		"Hanb": "Chữ Hán có chú âm",
+		"Hang": "Chữ Hàn",
 		"Hani": "Chữ Hán",
 		"Hano": "Chữ Hanunoo",
 		"Hans": "Giản thể",
@@ -646,9 +660,11 @@
 		"Jurc": "Chữ Jurchen",
 		"Kali": "Chữ Kayah Li",
 		"Kana": "Chữ Katakana",
+		"Kawi": "Kawi",
 		"Khar": "Chữ Kharoshthi",
 		"Khmr": "Chữ Khơ-me",
 		"Khoj": "Chữ Khojki",
+		"Kits": "Kits",
 		"Knda": "Chữ Kannada",
 		"Kore": "Chữ Hàn Quốc",
 		"Kpel": "Chữ Kpelle",
@@ -684,6 +700,7 @@
 		"Mtei": "Chữ Meitei Mayek",
 		"Mult": "Mult",
 		"Mymr": "Chữ Myanmar",
+		"Nagm": "Nagm",
 		"Nand": "Nand",
 		"Narb": "Chữ Bắc Ả Rập cổ",
 		"Nbat": "Chữ Nabataean",
@@ -697,6 +714,7 @@
 		"Orya": "Chữ Odia",
 		"Osge": "Osge",
 		"Osma": "Chữ Osmanya",
+		"Ougr": "Ougr",
 		"Palm": "Chữ Palmyrene",
 		"Pauc": "Pauc",
 		"Perm": "Chữ Permic cổ",
@@ -707,7 +725,7 @@
 		"Phnx": "Chữ Phoenicia",
 		"Plrd": "Ngữ âm Pollard",
 		"Prti": "Chữ Parthia Văn bia",
-		"Qaag": "Qaag",
+		"Qaag": "Chữ Zawgyi",
 		"Rjng": "Chữ Rejang",
 		"Rohg": "Rohg",
 		"Roro": "Chữ Rongorongo",
@@ -747,14 +765,18 @@
 		"Thai": "Chữ Thái",
 		"Tibt": "Chữ Tây Tạng",
 		"Tirh": "Chữ Tirhuta",
+		"Tnsa": "Tnsa",
+		"Toto": "Toto",
 		"Ugar": "Chữ Ugarit",
 		"Vaii": "Chữ Vai",
 		"Visp": "Tiếng nói Nhìn thấy được",
+		"Vith": "Vith",
 		"Wara": "Chữ Varang Kshiti",
 		"Wcho": "Wcho",
 		"Wole": "Chữ Woleai",
 		"Xpeo": "Chữ Ba Tư cổ",
 		"Xsux": "Chữ hình nêm Sumero-Akkadian",
+		"Yezi": "Yezi",
 		"Yiii": "Chữ Di",
 		"Zanb": "Zanb",
 		"Zinh": "Chữ Kế thừa",
@@ -793,9 +815,9 @@
 		"034": "Nam Á",
 		"035": "Đông Nam Á",
 		"039": "Nam Âu",
-		"053": "Úc và New Zealand",
+		"053": "Australasia",
 		"054": "Melanesia",
-		"057": "Vùng Micronesian",
+		"057": "Vùng Micronesia",
 		"061": "Polynesia",
 		"AC": "Đảo Ascension",
 		"AD": "Andorra",
@@ -887,7 +909,7 @@
 		"GB": "Vương quốc Anh",
 		"GB-alt-short": "Vương quốc Anh",
 		"GD": "Grenada",
-		"GE": "Gruzia",
+		"GE": "Georgia",
 		"GF": "Guiana thuộc Pháp",
 		"GG": "Guernsey",
 		"GH": "Ghana",
@@ -955,7 +977,6 @@
 		"MG": "Madagascar",
 		"MH": "Quần đảo Marshall",
 		"MK": "Bắc Macedonia",
-		"MK-alt-variant": "MK",
 		"ML": "Mali",
 		"MM": "Myanmar (Miến Điện)",
 		"MN": "Mông Cổ",
@@ -1027,8 +1048,8 @@
 		"SV": "El Salvador",
 		"SX": "Sint Maarten",
 		"SY": "Syria",
-		"SZ": "Swaziland",
-		"SZ-alt-variant": "SZ",
+		"SZ": "Eswatini",
+		"SZ-alt-variant": "Swaziland",
 		"TA": "Tristan da Cunha",
 		"TC": "Quần đảo Turks và Caicos",
 		"TD": "Chad",
@@ -1051,7 +1072,6 @@
 		"UG": "Uganda",
 		"UM": "Các tiểu đảo xa của Hoa Kỳ",
 		"UN": "Liên hiệp quốc",
-		"UN-alt-short": "Liên hiệp quốc",
 		"US": "Hoa Kỳ",
 		"US-alt-short": "Hoa Kỳ",
 		"UY": "Uruguay",
@@ -1060,13 +1080,13 @@
 		"VC": "St. Vincent và Grenadines",
 		"VE": "Venezuela",
 		"VG": "Quần đảo Virgin thuộc Anh",
-		"VI": "Quần đảo Virgin thuộc Mỹ",
+		"VI": "Quần đảo Virgin thuộc Hoa Kỳ",
 		"VN": "Việt Nam",
 		"VU": "Vanuatu",
 		"WF": "Wallis và Futuna",
 		"WS": "Samoa",
-		"XA": "XA",
-		"XB": "XB",
+		"XA": "Pseudo-Accents",
+		"XB": "Pseudo-Bidi",
 		"XK": "Kosovo",
 		"YE": "Yemen",
 		"YT": "Mayotte",
@@ -1108,6 +1128,7 @@
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "y G",
+				"GyMd": "dd/MM/y GGGGG",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "dd MMM, y G",
 				"GyMMMEd": "E, dd/MM/y G",
@@ -1597,12 +1618,12 @@
 			}
 		},
 		"era-wide": {
-			"0": "Trước CN",
-			"1": "sau CN"
+			"0": "Trước Thiên Chúa",
+			"1": "Sau Công Nguyên"
 		},
 		"era-abbreviated": {
 			"0": "Trước CN",
-			"1": "sau CN"
+			"1": "Sau CN"
 		},
 		"era-narrow": {
 			"0": "tr. CN",
@@ -1641,6 +1662,7 @@
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "y G",
+				"GyMd": "dd/MM/y GGGGG",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM, y G",
 				"GyMMMEd": "E, d MMM, y G",
@@ -2165,6 +2187,7 @@
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "y G",
+				"GyMd": "dd/MM/y GGGGG",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM, y G",
 				"GyMMMEd": "E, d MMM, y G",
@@ -2709,6 +2732,7 @@
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "y G",
+				"GyMd": "dd/MM/y GGGGG",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM, y G",
 				"GyMMMEd": "E, d MMM, y G",
@@ -3233,6 +3257,7 @@
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "y G",
+				"GyMd": "dd/MM/y GGGGG",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM, y G",
 				"GyMMMEd": "E, d MMM, y G",
@@ -3893,9 +3918,9 @@
 		"day-short": {
 			"displayName": "Ngày",
 			"relative-type--2": "Hôm kia",
-			"relative-type--1": "Hôm qua",
-			"relative-type-0": "Hôm nay",
-			"relative-type-1": "Ngày mai",
+			"relative-type--1": "hôm qua",
+			"relative-type-0": "hôm nay",
+			"relative-type-1": "ngày mai",
 			"relative-type-2": "Ngày kia",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "sau {0} ngày nữa"
@@ -3907,9 +3932,9 @@
 		"day-narrow": {
 			"displayName": "Ngày",
 			"relative-type--2": "Hôm kia",
-			"relative-type--1": "Hôm qua",
-			"relative-type-0": "Hôm nay",
-			"relative-type-1": "Ngày mai",
+			"relative-type--1": "hôm qua",
+			"relative-type-0": "hôm nay",
+			"relative-type-1": "ngày mai",
 			"relative-type-2": "Ngày kia",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "sau {0} ngày nữa"
@@ -4307,7 +4332,7 @@
 			"Pontianak": "Pontianak",
 			"Pyongyang": "Bình Nhưỡng",
 			"Qatar": "Qatar",
-			"Qostanay": "Qostanay",
+			"Qostanay": "Kostanay",
 			"Qyzylorda": "Qyzylorda",
 			"Riyadh": "Riyadh",
 			"Sakhalin": "Sakhalin",
@@ -4456,6 +4481,7 @@
 			"Guadalcanal": "Guadalcanal",
 			"Guam": "Guam",
 			"Honolulu": "Honolulu",
+			"Kanton": "Kanton",
 			"Kiritimati": "Kiritimati",
 			"Kosrae": "Kosrae",
 			"Kwajalein": "Kwajalein",
@@ -4525,12 +4551,12 @@
 		"accounting": "#,##0.00 ¤",
 		"currencySpacing": {
 			"beforeCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			},
 			"afterCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
@@ -4564,6 +4590,7 @@
 	"symbols-latn-percentSign": "%",
 	"symbols-latn-plusSign": "+",
 	"symbols-latn-minusSign": "-",
+	"symbols-latn-approximatelySign": "~",
 	"symbols-latn-exponential": "E",
 	"symbols-latn-superscriptingExponent": "×",
 	"symbols-latn-perMille": "‰",
@@ -4580,7 +4607,7 @@
 		"HKD": "HK$",
 		"ILS": "₪",
 		"INR": "₹",
-		"JPY": "JP¥",
+		"JPY": "¥",
 		"KRW": "₩",
 		"MXN": "MX$",
 		"NZD": "NZ$",
@@ -4590,7 +4617,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
-		"XOF": "CFA",
+		"XOF": "F CFA",
 		"XPF": "CFPF"
 	},
 	"rtl": false,
@@ -4620,20 +4647,115 @@
 	},
 	"units": {
 		"short": {
+			"10p-1": {
+				"unitPrefixPattern": "d{0}"
+			},
+			"10p-2": {
+				"unitPrefixPattern": "c{0}"
+			},
+			"10p-3": {
+				"unitPrefixPattern": "m{0}"
+			},
+			"10p-6": {
+				"unitPrefixPattern": "μ{0}"
+			},
+			"10p-9": {
+				"unitPrefixPattern": "n{0}"
+			},
+			"10p-12": {
+				"unitPrefixPattern": "p{0}"
+			},
+			"10p-15": {
+				"unitPrefixPattern": "f{0}"
+			},
+			"10p-18": {
+				"unitPrefixPattern": "a{0}"
+			},
+			"10p-21": {
+				"unitPrefixPattern": "z{0}"
+			},
+			"10p-24": {
+				"unitPrefixPattern": "y{0}"
+			},
+			"10p1": {
+				"unitPrefixPattern": "da{0}"
+			},
+			"10p2": {
+				"unitPrefixPattern": "h{0}"
+			},
+			"10p3": {
+				"unitPrefixPattern": "k{0}"
+			},
+			"10p6": {
+				"unitPrefixPattern": "M{0}"
+			},
+			"10p9": {
+				"unitPrefixPattern": "G{0}"
+			},
+			"10p12": {
+				"unitPrefixPattern": "T{0}"
+			},
+			"10p15": {
+				"unitPrefixPattern": "P{0}"
+			},
+			"10p18": {
+				"unitPrefixPattern": "E{0}"
+			},
+			"10p21": {
+				"unitPrefixPattern": "Z{0}"
+			},
+			"10p24": {
+				"unitPrefixPattern": "Y{0}"
+			},
+			"1024p1": {
+				"unitPrefixPattern": "Ki{0}"
+			},
+			"1024p2": {
+				"unitPrefixPattern": "Mi{0}"
+			},
+			"1024p3": {
+				"unitPrefixPattern": "Gi{0}"
+			},
+			"1024p4": {
+				"unitPrefixPattern": "Ti{0}"
+			},
+			"1024p5": {
+				"unitPrefixPattern": "Pi{0}"
+			},
+			"1024p6": {
+				"unitPrefixPattern": "Ei{0}"
+			},
+			"1024p7": {
+				"unitPrefixPattern": "Zi{0}"
+			},
+			"1024p8": {
+				"unitPrefixPattern": "Yi{0}"
+			},
 			"per": {
 				"compoundUnitPattern": "{0}/{1}"
+			},
+			"power2": {
+				"compoundUnitPattern1": "{0}²",
+				"compoundUnitPattern1-count-other": "{0}²"
+			},
+			"power3": {
+				"compoundUnitPattern1": "{0}³",
+				"compoundUnitPattern1-count-other": "{0}³"
+			},
+			"times": {
+				"compoundUnitPattern": "{0}⋅{1}"
 			},
 			"acceleration-g-force": {
 				"displayName": "lực g",
 				"unitPattern-count-other": "{0} G"
 			},
-			"acceleration-meter-per-second-squared": {
+			"acceleration-meter-per-square-second": {
 				"displayName": "m/s²",
 				"unitPattern-count-other": "{0} m/s²"
 			},
 			"angle-revolution": {
-				"displayName": "rev",
-				"unitPattern-count-other": "{0} rev"
+				"displayName": "vòng",
+				"unitPattern-count-other": "{0} vòng"
 			},
 			"angle-radian": {
 				"displayName": "rad",
@@ -4700,7 +4822,7 @@
 				"displayName": "kt",
 				"unitPattern-count-other": "{0} kt"
 			},
-			"concentr-milligram-per-deciliter": {
+			"concentr-milligram-ofglucose-per-deciliter": {
 				"displayName": "mg/dL",
 				"unitPattern-count-other": "{0} mg/dL"
 			},
@@ -4708,7 +4830,11 @@
 				"displayName": "mmol/L",
 				"unitPattern-count-other": "{0} mmol/L"
 			},
-			"concentr-part-per-million": {
+			"concentr-item": {
+				"displayName": "mục",
+				"unitPattern-count-other": "{0} mục"
+			},
+			"concentr-permillion": {
 				"displayName": "ppm",
 				"unitPattern-count-other": "{0} ppm"
 			},
@@ -4732,9 +4858,9 @@
 				"displayName": "l/km",
 				"unitPattern-count-other": "{0} l/km"
 			},
-			"consumption-liter-per-100kilometers": {
-				"displayName": "L/100km",
-				"unitPattern-count-other": "{0} L/100km"
+			"consumption-liter-per-100-kilometer": {
+				"displayName": "l/100km",
+				"unitPattern-count-other": "{0} l/100km"
 			},
 			"consumption-mile-per-gallon": {
 				"displayName": "mpg",
@@ -4791,6 +4917,10 @@
 			"duration-century": {
 				"displayName": "thế kỷ",
 				"unitPattern-count-other": "{0} thế kỷ"
+			},
+			"duration-decade": {
+				"displayName": "thập kỷ",
+				"unitPattern-count-other": "{0} thập kỷ"
 			},
 			"duration-year": {
 				"displayName": "năm",
@@ -4863,10 +4993,6 @@
 				"displayName": "cal",
 				"unitPattern-count-other": "{0} cal"
 			},
-			"energy-foodcalorie": {
-				"displayName": "Cal",
-				"unitPattern-count-other": "{0} Cal"
-			},
 			"energy-kilojoule": {
 				"displayName": "kJ",
 				"unitPattern-count-other": "{0} kJ"
@@ -4887,6 +5013,10 @@
 				"displayName": "BTU",
 				"unitPattern-count-other": "{0} Btu"
 			},
+			"energy-therm-us": {
+				"displayName": "therm Mỹ",
+				"unitPattern-count-other": "{0} therm Mỹ"
+			},
 			"force-pound-force": {
 				"displayName": "pound-lực",
 				"unitPattern-count-other": "{0} lbf"
@@ -4894,6 +5024,10 @@
 			"force-newton": {
 				"displayName": "newton",
 				"unitPattern-count-other": "{0} N"
+			},
+			"force-kilowatt-hour-per-100-kilometer": {
+				"displayName": "kWh/100km",
+				"unitPattern-count-other": "{0} kWh/100km"
 			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
@@ -4910,6 +5044,42 @@
 			"frequency-hertz": {
 				"displayName": "Hz",
 				"unitPattern-count-other": "{0} Hz"
+			},
+			"graphics-em": {
+				"displayName": "em",
+				"unitPattern-count-other": "{0} em"
+			},
+			"graphics-pixel": {
+				"displayName": "px",
+				"unitPattern-count-other": "{0} px"
+			},
+			"graphics-megapixel": {
+				"displayName": "megapixel",
+				"unitPattern-count-other": "{0} MP"
+			},
+			"graphics-pixel-per-centimeter": {
+				"displayName": "ppcm",
+				"unitPattern-count-other": "{0} ppcm"
+			},
+			"graphics-pixel-per-inch": {
+				"displayName": "ppi",
+				"unitPattern-count-other": "{0} ppi"
+			},
+			"graphics-dot-per-centimeter": {
+				"displayName": "dpcm",
+				"unitPattern-count-other": "{0} dpcm"
+			},
+			"graphics-dot-per-inch": {
+				"displayName": "dpi",
+				"unitPattern-count-other": "{0} dpi"
+			},
+			"graphics-dot": {
+				"displayName": "chấm",
+				"unitPattern-count-other": "{0} chấm"
+			},
+			"length-earth-radius": {
+				"displayName": "R⊕",
+				"unitPattern-count-other": "{0} R⊕"
 			},
 			"length-kilometer": {
 				"displayName": "km",
@@ -4935,8 +5105,8 @@
 				"unitPattern-count-other": "{0} mm"
 			},
 			"length-micrometer": {
-				"displayName": "µm",
-				"unitPattern-count-other": "{0} µm"
+				"displayName": "μm",
+				"unitPattern-count-other": "{0} μm"
 			},
 			"length-nanometer": {
 				"displayName": "nm",
@@ -5004,6 +5174,14 @@
 				"displayName": "lx",
 				"unitPattern-count-other": "{0} lx"
 			},
+			"light-candela": {
+				"displayName": "cd",
+				"unitPattern-count-other": "{0} cd"
+			},
+			"light-lumen": {
+				"displayName": "lm",
+				"unitPattern-count-other": "{0} lm"
+			},
 			"light-solar-luminosity": {
 				"displayName": "độ sáng của mặt trời",
 				"unitPattern-count-other": "{0} L☉"
@@ -5027,8 +5205,8 @@
 				"unitPattern-count-other": "{0} mg"
 			},
 			"mass-microgram": {
-				"displayName": "µg",
-				"unitPattern-count-other": "{0} µg"
+				"displayName": "μg",
+				"unitPattern-count-other": "{0} μg"
 			},
 			"mass-ton": {
 				"displayName": "tn",
@@ -5049,12 +5227,12 @@
 				"perUnitPattern": "{0}/oz"
 			},
 			"mass-ounce-troy": {
-				"displayName": "oz t",
-				"unitPattern-count-other": "{0} oz t"
+				"displayName": "ozt",
+				"unitPattern-count-other": "{0} ozt"
 			},
 			"mass-carat": {
-				"displayName": "CD",
-				"unitPattern-count-other": "{0} CD"
+				"displayName": "cara",
+				"unitPattern-count-other": "{0} CT"
 			},
 			"mass-dalton": {
 				"displayName": "dalton",
@@ -5067,6 +5245,10 @@
 			"mass-solar-mass": {
 				"displayName": "trọng lượng mặt trời",
 				"unitPattern-count-other": "{0} M☉"
+			},
+			"mass-grain": {
+				"displayName": "gren",
+				"unitPattern-count-other": "{0} gren"
 			},
 			"power-gigawatt": {
 				"displayName": "GW",
@@ -5092,21 +5274,21 @@
 				"displayName": "hp",
 				"unitPattern-count-other": "{0} hp"
 			},
-			"pressure-hectopascal": {
-				"displayName": "hPa",
-				"unitPattern-count-other": "{0} hPa"
-			},
-			"pressure-millimeter-of-mercury": {
+			"pressure-millimeter-ofhg": {
 				"displayName": "mm Hg",
 				"unitPattern-count-other": "{0} mm Hg"
 			},
-			"pressure-pound-per-square-inch": {
+			"pressure-pound-force-per-square-inch": {
 				"displayName": "psi",
 				"unitPattern-count-other": "{0} psi"
 			},
-			"pressure-inch-hg": {
+			"pressure-inch-ofhg": {
 				"displayName": "inHg",
 				"unitPattern-count-other": "{0} inHg"
+			},
+			"pressure-bar": {
+				"displayName": "bar",
+				"unitPattern-count-other": "{0} bar"
 			},
 			"pressure-millibar": {
 				"displayName": "mbar",
@@ -5115,6 +5297,14 @@
 			"pressure-atmosphere": {
 				"displayName": "atm",
 				"unitPattern-count-other": "{0} atm"
+			},
+			"pressure-pascal": {
+				"displayName": "Pa",
+				"unitPattern-count-other": "{0} Pa"
+			},
+			"pressure-hectopascal": {
+				"displayName": "hPa",
+				"unitPattern-count-other": "{0} hPa"
 			},
 			"pressure-kilopascal": {
 				"displayName": "kPa",
@@ -5156,7 +5346,7 @@
 				"displayName": "K",
 				"unitPattern-count-other": "{0} K"
 			},
-			"torque-pound-foot": {
+			"torque-pound-force-foot": {
 				"displayName": "lbf⋅ft",
 				"unitPattern-count-other": "{0} lbf⋅ft"
 			},
@@ -5238,7 +5428,7 @@
 			"volume-gallon": {
 				"displayName": "gal",
 				"unitPattern-count-other": "{0} gal",
-				"perUnitPattern": "{0}/gal"
+				"perUnitPattern": "{0}/gal Mỹ"
 			},
 			"volume-gallon-imperial": {
 				"displayName": "gal Anh",
@@ -5255,27 +5445,55 @@
 			},
 			"volume-cup": {
 				"displayName": "c",
-				"unitPattern-count-other": "{0} c"
+				"unitPattern-count-other": "{0} tách"
 			},
 			"volume-fluid-ounce": {
 				"displayName": "fl oz",
 				"unitPattern-count-other": "{0} fl oz"
 			},
 			"volume-fluid-ounce-imperial": {
-				"displayName": "Oz",
-				"unitPattern-count-other": "{0} fl oz Imp."
+				"displayName": "fl oz Anh",
+				"unitPattern-count-other": "{0} fl oz Anh"
 			},
 			"volume-tablespoon": {
 				"displayName": "thìa xúp",
-				"unitPattern-count-other": "{0} tbsp"
+				"unitPattern-count-other": "{0} thìa xúp"
 			},
 			"volume-teaspoon": {
 				"displayName": "tsp",
-				"unitPattern-count-other": "{0} tsp"
+				"unitPattern-count-other": "{0} thìa cà phê"
 			},
 			"volume-barrel": {
 				"displayName": "thùng",
 				"unitPattern-count-other": "{0} thùng"
+			},
+			"volume-dessert-spoon": {
+				"displayName": "thìa tráng miệng",
+				"unitPattern-count-other": "{0} thìa tm"
+			},
+			"volume-dessert-spoon-imperial": {
+				"displayName": "thìa tráng miệng Anh",
+				"unitPattern-count-other": "{0} thìa tm Anh"
+			},
+			"volume-drop": {
+				"displayName": "giọt",
+				"unitPattern-count-other": "{0} giọt"
+			},
+			"volume-dram": {
+				"displayName": "dram chất lỏng",
+				"unitPattern-count-other": "{0} dram fl"
+			},
+			"volume-jigger": {
+				"displayName": "jigger",
+				"unitPattern-count-other": "{0} jigger"
+			},
+			"volume-pinch": {
+				"displayName": "nhúm",
+				"unitPattern-count-other": "{0} nhúm"
+			},
+			"volume-quart-imperial": {
+				"displayName": "lít Anh",
+				"unitPattern-count-other": "{0} lít Anh"
 			},
 			"coordinateUnit": {
 				"displayName": "hướng",
@@ -5288,7 +5506,7 @@
 	},
 	"lenient-scope-number": {
 		"minusSign": "-‒⁻₋−➖﹣－",
-		"commaSign": ",،٫、︐︑﹐﹑，､",
+		"commaSign": ",،٫⹁、︐︑﹐﹑，､",
 		"plusSign": "+⁺₊➕﬩﹢＋"
 	},
 	"currencyFormat-sap-short": {

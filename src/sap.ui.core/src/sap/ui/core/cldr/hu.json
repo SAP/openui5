@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "35.1.0",
-	"__buildtime": "2022-05-02T19:26:05.809Z",
+	"__version": "41.0.0",
+	"__buildtime": "2022-12-19T09:41:25.319Z",
 	"languages": {
 		"aa": "afar",
 		"ab": "abház",
@@ -23,11 +23,12 @@
 		"ang": "óangol",
 		"anp": "angika",
 		"ar": "arab",
-		"ar_001": "modern szabányos arab",
+		"ar_001": "modern szabványos arab",
 		"arc": "arámi",
 		"arn": "mapucse",
 		"arp": "arapaho",
 		"ars": "nedzsdi arab",
+		"ars_alt-menu": "arab, nedzsdi",
 		"arw": "aravak",
 		"as": "asszámi",
 		"asa": "asu",
@@ -89,6 +90,8 @@
 		"chr": "cseroki",
 		"chy": "csejen",
 		"ckb": "közép-ázsiai kurd",
+		"ckb_alt-menu": "közép-ázsiai kurd",
+		"ckb_alt-variant": "kurd, szoráni",
 		"co": "korzikai",
 		"cop": "kopt",
 		"cr": "krí",
@@ -131,9 +134,9 @@
 		"en_AU": "ausztrál angol",
 		"en_CA": "kanadai angol",
 		"en_GB": "brit angol",
-		"en_GB-alt-short": "angol (UK)",
+		"en_GB-alt-short": "brit angol",
 		"en_US": "amerikai angol",
-		"en_US-alt-short": "angol (USA)",
+		"en_US-alt-short": "amerikai angol",
 		"enm": "közép angol",
 		"eo": "eszperantó",
 		"es": "spanyol",
@@ -144,6 +147,7 @@
 		"eu": "baszk",
 		"ewo": "evondo",
 		"fa": "perzsa",
+		"fa_AF": "dari",
 		"fan": "fang",
 		"fat": "fanti",
 		"ff": "fulani",
@@ -192,7 +196,7 @@
 		"he": "héber",
 		"hi": "hindi",
 		"hil": "ilokano",
-		"hit": "hittite",
+		"hit": "hettita",
 		"hmn": "hmong",
 		"ho": "hiri motu",
 		"hr": "horvát",
@@ -238,6 +242,7 @@
 		"kea": "kabuverdianu",
 		"kfo": "koro",
 		"kg": "kongo",
+		"kgp": "kgp",
 		"kha": "kaszi",
 		"kho": "kotanéz",
 		"khq": "kojra-csíni",
@@ -278,6 +283,7 @@
 		"lez": "lezg",
 		"lg": "ganda",
 		"li": "limburgi",
+		"lij": "ligur",
 		"lkt": "lakota",
 		"ln": "lingala",
 		"lo": "lao",
@@ -396,13 +402,13 @@
 		"raj": "radzsasztáni",
 		"rap": "rapanui",
 		"rar": "rarotongai",
+		"rhg": "rohingja",
 		"rm": "rétoromán",
 		"rn": "kirundi",
 		"ro": "román",
 		"ro_MD": "moldvai",
 		"rof": "rombo",
 		"rom": "roma",
-		"root": "ősi",
 		"ru": "orosz",
 		"rup": "aromán",
 		"rw": "kinyarvanda",
@@ -505,7 +511,7 @@
 		"uz": "üzbég",
 		"vai": "vai",
 		"ve": "venda",
-		"vi": "vietnami",
+		"vi": "vietnámi",
 		"vo": "volapük",
 		"vot": "votják",
 		"vun": "vunjo",
@@ -526,15 +532,20 @@
 		"ybb": "jemba",
 		"yi": "jiddis",
 		"yo": "joruba",
+		"yrl": "yrl",
 		"yue": "kantoni",
+		"yue_alt-menu": "kantoni kínai",
 		"za": "zsuang",
 		"zap": "zapoték",
 		"zbl": "Bliss jelképrendszer",
 		"zen": "zenaga",
 		"zgh": "marokkói tamazight",
 		"zh": "kínai",
+		"zh_alt-menu": "mandarin",
 		"zh_Hans": "egyszerűsített kínai",
+		"zh_Hans-alt-long": "kínai (egyszerűsített)",
 		"zh_Hant": "hagyományos kínai",
+		"zh_Hant-alt-long": "kínai (hagyományos)",
 		"zu": "zulu",
 		"zun": "zuni",
 		"zxx": "nincs nyelvészeti tartalom",
@@ -546,6 +557,7 @@
 		"Ahom": "Ahom",
 		"Arab": "Arab",
 		"Arab-alt-variant": "Perzsa-arab",
+		"Aran": "Nasztalik",
 		"Armi": "Birodalmi arámi",
 		"Armn": "Örmény",
 		"Avst": "Avesztán",
@@ -566,11 +578,14 @@
 		"Cari": "Kari",
 		"Cham": "Csám",
 		"Cher": "Cseroki",
+		"Chrs": "Chrs",
 		"Copt": "Kopt",
+		"Cpmn": "Cpmn",
 		"Cprt": "Ciprusi",
 		"Cyrl": "Cirill",
 		"Cyrs": "Óegyházi szláv cirill",
 		"Deva": "Devanagári",
+		"Diak": "Diak",
 		"Dogr": "Dogr",
 		"Dsrt": "Deseret",
 		"Dupl": "Dupl",
@@ -590,7 +605,7 @@
 		"Grek": "Görög",
 		"Gujr": "Gudzsaráti",
 		"Guru": "Gurmuki",
-		"Hanb": "Hanb",
+		"Hanb": "Han bopomofóval",
 		"Hang": "Hangul",
 		"Hani": "Han",
 		"Hano": "Hanunoo",
@@ -613,9 +628,11 @@
 		"Jpan": "Japán",
 		"Kali": "Kajah li",
 		"Kana": "Katakana",
+		"Kawi": "Kawi",
 		"Khar": "Kharoshthi",
 		"Khmr": "Khmer",
 		"Khoj": "Khoj",
+		"Kits": "Kits",
 		"Knda": "Kannada",
 		"Kore": "Koreai",
 		"Kthi": "Kaithi",
@@ -649,6 +666,7 @@
 		"Mtei": "Meitei mayek",
 		"Mult": "Mult",
 		"Mymr": "Burmai",
+		"Nagm": "Nagm",
 		"Nand": "Nand",
 		"Narb": "Narb",
 		"Nbat": "Nbat",
@@ -661,6 +679,7 @@
 		"Orya": "Oriya",
 		"Osge": "Osge",
 		"Osma": "Oszmán",
+		"Ougr": "Ougr",
 		"Palm": "Palm",
 		"Pauc": "Pauc",
 		"Perm": "Ópermikus",
@@ -671,7 +690,7 @@
 		"Phnx": "Főniciai",
 		"Plrd": "Pollard fonetikus",
 		"Prti": "Feliratos parthian",
-		"Qaag": "Qaag",
+		"Qaag": "Zawgyi",
 		"Rjng": "Redzsang",
 		"Rohg": "Rohg",
 		"Roro": "Rongorongo",
@@ -683,11 +702,11 @@
 		"Sgnw": "Jelírás",
 		"Shaw": "Shaw ábécé",
 		"Shrd": "Shrd",
-		"Sidd": "Sidd",
+		"Sidd": "Sziddham",
 		"Sind": "Sind",
 		"Sinh": "Szingaléz",
-		"Sogd": "Sogd",
-		"Sogo": "Sogo",
+		"Sogd": "Szogd",
+		"Sogo": "Ószogd",
 		"Sora": "Sora",
 		"Soyo": "Soyo",
 		"Sund": "Szundanéz",
@@ -711,13 +730,17 @@
 		"Thai": "Thai",
 		"Tibt": "Tibeti",
 		"Tirh": "Tirh",
+		"Tnsa": "Tnsa",
+		"Toto": "Toto",
 		"Ugar": "Ugari",
 		"Vaii": "Vai",
 		"Visp": "Látható beszéd",
+		"Vith": "Vith",
 		"Wara": "Wara",
 		"Wcho": "Wcho",
 		"Xpeo": "Óperzsa",
 		"Xsux": "Ékírásos suméro-akkád",
+		"Yezi": "Yezi",
 		"Yiii": "Ji",
 		"Zanb": "Zanb",
 		"Zinh": "Származtatott",
@@ -800,14 +823,14 @@
 		"BZ": "Belize",
 		"CA": "Kanada",
 		"CC": "Kókusz (Keeling)-szigetek",
-		"CD": "Kongó - Kinshasa",
+		"CD": "Kongó – Kinshasa",
 		"CD-alt-variant": "Kongó (KDK)",
 		"CF": "Közép-afrikai Köztársaság",
-		"CG": "Kongó - Brazzaville",
+		"CG": "Kongó – Brazzaville",
 		"CG-alt-variant": "Kongó (Köztársaság)",
 		"CH": "Svájc",
 		"CI": "Elefántcsontpart",
-		"CI-alt-variant": "CI",
+		"CI-alt-variant": "Elefántcsontpart",
 		"CK": "Cook-szigetek",
 		"CL": "Chile",
 		"CM": "Kamerun",
@@ -918,9 +941,8 @@
 		"MG": "Madagaszkár",
 		"MH": "Marshall-szigetek",
 		"MK": "Észak-Macedónia",
-		"MK-alt-variant": "MK",
 		"ML": "Mali",
-		"MM": "Mianmar (Burma)",
+		"MM": "Mianmar",
 		"MN": "Mongólia",
 		"MO": "Makaó",
 		"MO-alt-short": "Makaó",
@@ -958,7 +980,7 @@
 		"PM": "Saint-Pierre és Miquelon",
 		"PN": "Pitcairn-szigetek",
 		"PR": "Puerto Rico",
-		"PS": "Palesztin Terület",
+		"PS": "Palesztin Autonómia",
 		"PS-alt-short": "Palesztina",
 		"PT": "Portugália",
 		"PW": "Palau",
@@ -991,7 +1013,7 @@
 		"SX": "Sint Maarten",
 		"SY": "Szíria",
 		"SZ": "Szváziföld",
-		"SZ-alt-variant": "SZ",
+		"SZ-alt-variant": "Eswatini",
 		"TA": "Tristan da Cunha",
 		"TC": "Turks- és Caicos-szigetek",
 		"TD": "Csád",
@@ -1071,6 +1093,7 @@
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y.",
+				"GyMd": "GGGGG y. MM. dd.",
 				"GyMMM": "G y. MMM",
 				"GyMMMd": "G y. MMM d.",
 				"GyMMMEd": "G y. MMM d., E",
@@ -1613,6 +1636,7 @@
 				"Ehms": "E h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y.",
+				"GyMd": "GGGGG y/MM/dd",
 				"GyMMM": "G y. MMM",
 				"GyMMMd": "G y. MMM d.",
 				"GyMMMEd": "G y. MMM d., E",
@@ -2146,6 +2170,7 @@
 				"Ehms": "E h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y.",
+				"GyMd": "GGGGG y/MM/dd",
 				"GyMMM": "G y. MMM",
 				"GyMMMd": "G y. MMM d.",
 				"GyMMMEd": "G y. MMM d., E",
@@ -2699,6 +2724,7 @@
 				"Ehms": "E h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y.",
+				"GyMd": "GGGGG y/MM/dd",
 				"GyMMM": "G y. MMM",
 				"GyMMMd": "G y. MMM d.",
 				"GyMMMEd": "G y. MMM d., E",
@@ -3232,6 +3258,7 @@
 				"Ehms": "E h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y.",
+				"GyMd": "GGGGG y/MM/dd",
 				"GyMMM": "G y. MMM",
 				"GyMMMd": "G y. MMM d.",
 				"GyMMMEd": "G y. MMM d., E",
@@ -3984,7 +4011,7 @@
 			}
 		},
 		"hour-narrow": {
-			"displayName": "óra",
+			"displayName": "ó",
 			"relative-type-0": "ebben az órában",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} óra múlva",
@@ -4020,7 +4047,7 @@
 			}
 		},
 		"minute-narrow": {
-			"displayName": "perc",
+			"displayName": "p",
 			"relative-type-0": "ebben a percben",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} perc múlva",
@@ -4056,7 +4083,7 @@
 			}
 		},
 		"second-narrow": {
-			"displayName": "másodperc",
+			"displayName": "mp",
 			"relative-type-0": "most",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} másodperc múlva",
@@ -4312,7 +4339,7 @@
 			"Aqtau": "Aktau",
 			"Aqtobe": "Aktöbe",
 			"Ashgabat": "Asgabat",
-			"Atyrau": "Atyrau",
+			"Atyrau": "Atirau",
 			"Baghdad": "Bagdad",
 			"Bahrain": "Bahrein",
 			"Baku": "Baku",
@@ -4418,7 +4445,7 @@
 		},
 		"Etc": {
 			"UTC": "UTC",
-			"Universal": "egyezményes koordinált világidő"
+			"Universal": "koordinált világidő"
 		},
 		"Europe": {
 			"Amsterdam": "Amszterdam",
@@ -4512,6 +4539,7 @@
 			"Guadalcanal": "Guadalcanal",
 			"Guam": "Guam",
 			"Honolulu": "Honolulu",
+			"Kanton": "Kanton",
 			"Kiritimati": "Kiritimati-sziget",
 			"Kosrae": "Kosrae-szigetek",
 			"Kwajalein": "Kwajalein-zátony",
@@ -4605,12 +4633,12 @@
 		"accounting": "#,##0.00 ¤",
 		"currencySpacing": {
 			"beforeCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			},
 			"afterCurrency": {
-				"currencyMatch": "[:^S:]",
+				"currencyMatch": "[[:^S:]&[:^Z:]]",
 				"surroundingMatch": "[:digit:]",
 				"insertBetween": " "
 			}
@@ -4656,6 +4684,7 @@
 	"symbols-latn-percentSign": "%",
 	"symbols-latn-plusSign": "+",
 	"symbols-latn-minusSign": "-",
+	"symbols-latn-approximatelySign": "~",
 	"symbols-latn-exponential": "E",
 	"symbols-latn-superscriptingExponent": "×",
 	"symbols-latn-perMille": "‰",
@@ -4666,7 +4695,7 @@
 		"HUF": "Ft",
 		"JPY": "¥",
 		"XAF": "FCFA",
-		"XOF": "CFA",
+		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
 	},
@@ -4697,15 +4726,112 @@
 	},
 	"units": {
 		"short": {
+			"10p-1": {
+				"unitPrefixPattern": "d{0}"
+			},
+			"10p-2": {
+				"unitPrefixPattern": "c{0}"
+			},
+			"10p-3": {
+				"unitPrefixPattern": "m{0}"
+			},
+			"10p-6": {
+				"unitPrefixPattern": "μ{0}"
+			},
+			"10p-9": {
+				"unitPrefixPattern": "n{0}"
+			},
+			"10p-12": {
+				"unitPrefixPattern": "p{0}"
+			},
+			"10p-15": {
+				"unitPrefixPattern": "f{0}"
+			},
+			"10p-18": {
+				"unitPrefixPattern": "a{0}"
+			},
+			"10p-21": {
+				"unitPrefixPattern": "z{0}"
+			},
+			"10p-24": {
+				"unitPrefixPattern": "y{0}"
+			},
+			"10p1": {
+				"unitPrefixPattern": "da{0}"
+			},
+			"10p2": {
+				"unitPrefixPattern": "h{0}"
+			},
+			"10p3": {
+				"unitPrefixPattern": "k{0}"
+			},
+			"10p6": {
+				"unitPrefixPattern": "M{0}"
+			},
+			"10p9": {
+				"unitPrefixPattern": "G{0}"
+			},
+			"10p12": {
+				"unitPrefixPattern": "T{0}"
+			},
+			"10p15": {
+				"unitPrefixPattern": "P{0}"
+			},
+			"10p18": {
+				"unitPrefixPattern": "E{0}"
+			},
+			"10p21": {
+				"unitPrefixPattern": "Z{0}"
+			},
+			"10p24": {
+				"unitPrefixPattern": "Y{0}"
+			},
+			"1024p1": {
+				"unitPrefixPattern": "Ki{0}"
+			},
+			"1024p2": {
+				"unitPrefixPattern": "Mi{0}"
+			},
+			"1024p3": {
+				"unitPrefixPattern": "Gi{0}"
+			},
+			"1024p4": {
+				"unitPrefixPattern": "Ti{0}"
+			},
+			"1024p5": {
+				"unitPrefixPattern": "Pi{0}"
+			},
+			"1024p6": {
+				"unitPrefixPattern": "Ei{0}"
+			},
+			"1024p7": {
+				"unitPrefixPattern": "Zi{0}"
+			},
+			"1024p8": {
+				"unitPrefixPattern": "Yi{0}"
+			},
 			"per": {
 				"compoundUnitPattern": "{0}/{1}"
+			},
+			"power2": {
+				"compoundUnitPattern1": "{0}²",
+				"compoundUnitPattern1-count-one": "{0}²",
+				"compoundUnitPattern1-count-other": "{0}²"
+			},
+			"power3": {
+				"compoundUnitPattern1": "{0}³",
+				"compoundUnitPattern1-count-one": "{0}³",
+				"compoundUnitPattern1-count-other": "{0}³"
+			},
+			"times": {
+				"compoundUnitPattern": "{0}⋅{1}"
 			},
 			"acceleration-g-force": {
 				"displayName": "g gyorsulás",
 				"unitPattern-count-one": "{0} G",
 				"unitPattern-count-other": "{0} G"
 			},
-			"acceleration-meter-per-second-squared": {
+			"acceleration-meter-per-square-second": {
 				"displayName": "m/s²",
 				"unitPattern-count-one": "{0} m/s²",
 				"unitPattern-count-other": "{0} m/s²"
@@ -4787,14 +4913,14 @@
 			},
 			"area-dunam": {
 				"displayName": "dunam",
-				"unitPattern-count-one": "{0} dunam",
 				"unitPattern-count-other": "{0} dunam"
 			},
 			"concentr-karat": {
 				"displayName": "kt",
+				"unitPattern-count-one": "{0} kt",
 				"unitPattern-count-other": "{0} kt"
 			},
-			"concentr-milligram-per-deciliter": {
+			"concentr-milligram-ofglucose-per-deciliter": {
 				"displayName": "mg/dl",
 				"unitPattern-count-one": "{0} mg/dl",
 				"unitPattern-count-other": "{0} mg/dl"
@@ -4804,7 +4930,11 @@
 				"unitPattern-count-one": "{0} mmol/l",
 				"unitPattern-count-other": "{0} mmol/l"
 			},
-			"concentr-part-per-million": {
+			"concentr-item": {
+				"displayName": "item",
+				"unitPattern-count-other": "{0} item"
+			},
+			"concentr-permillion": {
 				"displayName": "részecske/millió",
 				"unitPattern-count-one": "{0} ppm",
 				"unitPattern-count-other": "{0} ppm"
@@ -4821,12 +4951,10 @@
 			},
 			"concentr-permyriad": {
 				"displayName": "‱",
-				"unitPattern-count-one": "{0}‱",
 				"unitPattern-count-other": "{0}‱"
 			},
 			"concentr-mole": {
 				"displayName": "mol",
-				"unitPattern-count-one": "{0} mol",
 				"unitPattern-count-other": "{0} mol"
 			},
 			"consumption-liter-per-kilometer": {
@@ -4834,7 +4962,7 @@
 				"unitPattern-count-one": "{0} l/km",
 				"unitPattern-count-other": "{0} l/km"
 			},
-			"consumption-liter-per-100kilometers": {
+			"consumption-liter-per-100-kilometer": {
 				"displayName": "l/100 km",
 				"unitPattern-count-one": "{0} l/100 km",
 				"unitPattern-count-other": "{0} l/100km"
@@ -4909,6 +5037,11 @@
 				"unitPattern-count-one": "{0} sz.",
 				"unitPattern-count-other": "{0} sz."
 			},
+			"duration-decade": {
+				"displayName": "dek",
+				"unitPattern-count-one": "{0} dek",
+				"unitPattern-count-other": "{0} dek"
+			},
 			"duration-year": {
 				"displayName": "év",
 				"unitPattern-count-one": "{0} év",
@@ -4934,22 +5067,22 @@
 				"perUnitPattern": "{0}/nap"
 			},
 			"duration-hour": {
-				"displayName": "h",
-				"unitPattern-count-one": "{0} h",
-				"unitPattern-count-other": "{0} h",
-				"perUnitPattern": "{0}/h"
+				"displayName": "ó",
+				"unitPattern-count-one": "{0} ó",
+				"unitPattern-count-other": "{0} ó",
+				"perUnitPattern": "{0}/ó"
 			},
 			"duration-minute": {
-				"displayName": "min",
-				"unitPattern-count-one": "{0} min",
-				"unitPattern-count-other": "{0} min",
-				"perUnitPattern": "{0}/min"
+				"displayName": "p",
+				"unitPattern-count-one": "{0} p",
+				"unitPattern-count-other": "{0} p",
+				"perUnitPattern": "{0}/p"
 			},
 			"duration-second": {
-				"displayName": "s",
-				"unitPattern-count-one": "{0} s",
-				"unitPattern-count-other": "{0} s",
-				"perUnitPattern": "{0}/s"
+				"displayName": "mp",
+				"unitPattern-count-one": "{0} mp",
+				"unitPattern-count-other": "{0} mp",
+				"perUnitPattern": "{0}/mp"
 			},
 			"duration-millisecond": {
 				"displayName": "ms",
@@ -5018,23 +5151,29 @@
 			},
 			"energy-electronvolt": {
 				"displayName": "eV",
-				"unitPattern-count-one": "{0} eV",
 				"unitPattern-count-other": "{0} eV"
 			},
 			"energy-british-thermal-unit": {
 				"displayName": "Btu",
-				"unitPattern-count-one": "{0} Btu",
 				"unitPattern-count-other": "{0} Btu"
+			},
+			"energy-therm-us": {
+				"displayName": "USA therm",
+				"unitPattern-count-one": "{0} USA therm",
+				"unitPattern-count-other": "{0} USA therm"
 			},
 			"force-pound-force": {
 				"displayName": "lbf",
-				"unitPattern-count-one": "{0} lbf",
 				"unitPattern-count-other": "{0} lbf"
 			},
 			"force-newton": {
 				"displayName": "N",
-				"unitPattern-count-one": "{0} N",
 				"unitPattern-count-other": "{0} N"
+			},
+			"force-kilowatt-hour-per-100-kilometer": {
+				"displayName": "kWh/100 km",
+				"unitPattern-count-one": "{0} kWh/100 km",
+				"unitPattern-count-other": "{0} kWh/100 km"
 			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
@@ -5055,6 +5194,41 @@
 				"displayName": "Hz",
 				"unitPattern-count-one": "{0} Hz",
 				"unitPattern-count-other": "{0} Hz"
+			},
+			"graphics-em": {
+				"displayName": "em",
+				"unitPattern-count-one": "{0} em",
+				"unitPattern-count-other": "{0} em"
+			},
+			"graphics-pixel": {
+				"displayName": "képpont",
+				"unitPattern-count-other": "{0} px"
+			},
+			"graphics-megapixel": {
+				"displayName": "megapixel",
+				"unitPattern-count-other": "{0} MP"
+			},
+			"graphics-pixel-per-centimeter": {
+				"displayName": "ppcm",
+				"unitPattern-count-other": "{0} ppcm"
+			},
+			"graphics-pixel-per-inch": {
+				"displayName": "ppi",
+				"unitPattern-count-other": "{0} ppi"
+			},
+			"graphics-dot-per-centimeter": {
+				"displayName": "dpcm",
+				"unitPattern-count-one": "{0} dpcm",
+				"unitPattern-count-other": "{0} ppcm"
+			},
+			"graphics-dot": {
+				"displayName": "képpont",
+				"unitPattern-count-one": "{0} képpont",
+				"unitPattern-count-other": "{0} képpont"
+			},
+			"length-earth-radius": {
+				"displayName": "R⊕",
+				"unitPattern-count-other": "{0} R⊕"
 			},
 			"length-kilometer": {
 				"displayName": "km",
@@ -5085,9 +5259,9 @@
 				"unitPattern-count-other": "{0} mm"
 			},
 			"length-micrometer": {
-				"displayName": "µm",
-				"unitPattern-count-one": "{0} µm",
-				"unitPattern-count-other": "{0} µm"
+				"displayName": "μm",
+				"unitPattern-count-one": "{0} μm",
+				"unitPattern-count-other": "{0} μm"
 			},
 			"length-nanometer": {
 				"displayName": "nm",
@@ -5137,12 +5311,14 @@
 				"unitPattern-count-other": "{0} CsE"
 			},
 			"length-furlong": {
-				"displayName": "fur",
+				"displayName": "furlong",
+				"unitPattern-count-one": "{0} fur",
 				"unitPattern-count-other": "{0} fur"
 			},
 			"length-fathom": {
-				"displayName": "fm",
-				"unitPattern-count-other": "{0} fth"
+				"displayName": "öl",
+				"unitPattern-count-one": "{0} öl",
+				"unitPattern-count-other": "{0} öl"
 			},
 			"length-nautical-mile": {
 				"displayName": "nmi",
@@ -5161,7 +5337,6 @@
 			},
 			"length-solar-radius": {
 				"displayName": "Nap-sugár",
-				"unitPattern-count-one": "{0} R☉",
 				"unitPattern-count-other": "{0} R☉"
 			},
 			"light-lux": {
@@ -5169,9 +5344,16 @@
 				"unitPattern-count-one": "{0} lx",
 				"unitPattern-count-other": "{0} lx"
 			},
+			"light-candela": {
+				"displayName": "cd",
+				"unitPattern-count-other": "{0} cd"
+			},
+			"light-lumen": {
+				"displayName": "lm",
+				"unitPattern-count-other": "{0} lm"
+			},
 			"light-solar-luminosity": {
 				"displayName": "L☉",
-				"unitPattern-count-one": "{0} L☉",
 				"unitPattern-count-other": "{0} L☉"
 			},
 			"mass-metric-ton": {
@@ -5197,9 +5379,9 @@
 				"unitPattern-count-other": "{0} mg"
 			},
 			"mass-microgram": {
-				"displayName": "µg",
-				"unitPattern-count-one": "{0} µg",
-				"unitPattern-count-other": "{0} µg"
+				"displayName": "μg",
+				"unitPattern-count-one": "{0} μg",
+				"unitPattern-count-other": "{0} μg"
 			},
 			"mass-ton": {
 				"displayName": "tn",
@@ -5234,18 +5416,20 @@
 			},
 			"mass-dalton": {
 				"displayName": "Da",
-				"unitPattern-count-one": "{0} Da",
 				"unitPattern-count-other": "{0} Da"
 			},
 			"mass-earth-mass": {
 				"displayName": "M⊕",
-				"unitPattern-count-one": "{0} M⊕",
 				"unitPattern-count-other": "{0} M⊕"
 			},
 			"mass-solar-mass": {
 				"displayName": "M☉",
-				"unitPattern-count-one": "{0} M☉",
 				"unitPattern-count-other": "{0} M☉"
+			},
+			"mass-grain": {
+				"displayName": "grain",
+				"unitPattern-count-one": "{0} grain",
+				"unitPattern-count-other": "{0} grain"
 			},
 			"power-gigawatt": {
 				"displayName": "GW",
@@ -5277,25 +5461,24 @@
 				"unitPattern-count-one": "{0} LE",
 				"unitPattern-count-other": "{0} LE"
 			},
-			"pressure-hectopascal": {
-				"displayName": "hPa",
-				"unitPattern-count-one": "{0} hPa",
-				"unitPattern-count-other": "{0} hPa"
+			"pressure-millimeter-ofhg": {
+				"displayName": "Hgmm",
+				"unitPattern-count-one": "{0} Hgmm",
+				"unitPattern-count-other": "{0} Hgmm"
 			},
-			"pressure-millimeter-of-mercury": {
-				"displayName": "mm Hg",
-				"unitPattern-count-one": "{0} mm Hg",
-				"unitPattern-count-other": "{0} mm Hg"
-			},
-			"pressure-pound-per-square-inch": {
+			"pressure-pound-force-per-square-inch": {
 				"displayName": "psi",
 				"unitPattern-count-one": "{0} psi",
 				"unitPattern-count-other": "{0} psi"
 			},
-			"pressure-inch-hg": {
+			"pressure-inch-ofhg": {
 				"displayName": "inHg",
 				"unitPattern-count-one": "{0} inHg",
 				"unitPattern-count-other": "{0} inHg"
+			},
+			"pressure-bar": {
+				"displayName": "bar",
+				"unitPattern-count-other": "{0} bar"
 			},
 			"pressure-millibar": {
 				"displayName": "mbar",
@@ -5307,14 +5490,22 @@
 				"unitPattern-count-one": "{0} atm",
 				"unitPattern-count-other": "{0} atm"
 			},
+			"pressure-pascal": {
+				"displayName": "Pa",
+				"unitPattern-count-one": "{0} Pa",
+				"unitPattern-count-other": "{0} Pa"
+			},
+			"pressure-hectopascal": {
+				"displayName": "hPa",
+				"unitPattern-count-one": "{0} hPa",
+				"unitPattern-count-other": "{0} hPa"
+			},
 			"pressure-kilopascal": {
 				"displayName": "kPa",
-				"unitPattern-count-one": "{0} kPa",
 				"unitPattern-count-other": "{0} kPa"
 			},
 			"pressure-megapascal": {
 				"displayName": "MPa",
-				"unitPattern-count-one": "{0} MPa",
 				"unitPattern-count-other": "{0} MPa"
 			},
 			"speed-kilometer-per-hour": {
@@ -5357,9 +5548,8 @@
 				"unitPattern-count-one": "{0} K",
 				"unitPattern-count-other": "{0} K"
 			},
-			"torque-pound-foot": {
+			"torque-pound-force-foot": {
 				"displayName": "lbf⋅ft",
-				"unitPattern-count-one": "{0} lbf⋅ft",
 				"unitPattern-count-other": "{0} lbf⋅ft"
 			},
 			"torque-newton-meter": {
@@ -5451,8 +5641,9 @@
 				"unitPattern-count-other": "{0} ac ft"
 			},
 			"volume-bushel": {
-				"displayName": "bu",
-				"unitPattern-count-other": "{0} bu"
+				"displayName": "véka",
+				"unitPattern-count-one": "{0} véka",
+				"unitPattern-count-other": "{0} véka"
 			},
 			"volume-gallon": {
 				"displayName": "gal",
@@ -5505,6 +5696,41 @@
 				"displayName": "hordó",
 				"unitPattern-count-one": "{0} hordó",
 				"unitPattern-count-other": "{0} hordó"
+			},
+			"volume-dessert-spoon": {
+				"displayName": "desszertkanál",
+				"unitPattern-count-one": "{0} desszertkanál",
+				"unitPattern-count-other": "{0} desszertkanál"
+			},
+			"volume-dessert-spoon-imperial": {
+				"displayName": "bir. desszertkanál",
+				"unitPattern-count-one": "{0} bir. desszertkanál",
+				"unitPattern-count-other": "{0} bir. desszertkanál"
+			},
+			"volume-drop": {
+				"displayName": "csepp",
+				"unitPattern-count-one": "{0} csepp",
+				"unitPattern-count-other": "{0} csepp"
+			},
+			"volume-dram": {
+				"displayName": "fluid dram",
+				"unitPattern-count-one": "{0} fl dram",
+				"unitPattern-count-other": "{0} fl dram"
+			},
+			"volume-jigger": {
+				"displayName": "adagolópohár",
+				"unitPattern-count-one": "{0} adagolópohár",
+				"unitPattern-count-other": "{0} adagolópohár"
+			},
+			"volume-pinch": {
+				"displayName": "csipet",
+				"unitPattern-count-one": "{0} csipet",
+				"unitPattern-count-other": "{0} csipet"
+			},
+			"volume-quart-imperial": {
+				"displayName": "bir. qt",
+				"unitPattern-count-one": "{0} bir. qt",
+				"unitPattern-count-other": "{0} bir. qt"
 			},
 			"coordinateUnit": {
 				"displayName": "irány",
