@@ -409,6 +409,10 @@ sap.ui.define([
 			this._oChangeIndicatorRegistry.removeOutdatedRegisteredChanges();
 			// remove changes with incomplete vizInfo
 			this._oChangeIndicatorRegistry.removeRegisteredChangesWithoutVizInfo();
+			// remove all registered changes after versions activation
+			if (this._oChangeVisualizationModel.getData().displayedVersion !== "0") {
+				this._oChangeIndicatorRegistry.reset();
+			}
 			var aRegisteredChangeIds = this._oChangeIndicatorRegistry.getRegisteredChangeIds();
 			var oCurrentChanges = aChanges
 				.filter(function(oChange) {
@@ -426,7 +430,6 @@ sap.ui.define([
 			difference(aRegisteredChangeIds, aCurrentChangeIds).forEach(function(sChangeIdToRemove) {
 				this._oChangeIndicatorRegistry.removeRegisteredChange(sChangeIdToRemove);
 			}.bind(this));
-
 			var aPromises = [];
 			// Register missing changes
 			difference(aCurrentChangeIds, aRegisteredChangeIds).forEach(function(sChangeIdToAdd) {
@@ -624,14 +627,17 @@ sap.ui.define([
 	ChangeVisualization.prototype.triggerModeChange = function(oRootControl, oToolbar) {
 		this.oMenuButton = oToolbar.getControl("toggleChangeVisualizationMenuButton");
 		this.oRootOverlay = OverlayRegistry.getOverlay(oRootControl);
-		if (oToolbar.getModel("versions")) {
-			this.setVersionsModel(oToolbar);
+		this.setVersionsModel(oToolbar);
+		if (this.oVersionsModel && this.oVersionsModel.getData().versioningEnabled) {
 			this._updateVisualizationModel({
-				versioningAvailable: this.oVersionsModel.getData().versioningEnabled
+				versioningAvailable: this.oVersionsModel.getData().versioningEnabled,
+				displayedVersion: this.oVersionsModel.getData().displayedVersion
 			});
 		} else {
+			// no versioning available, setting draft version id for caching to be working
 			this._updateVisualizationModel({
-				versioningAvailable: false
+				versioningAvailable: false,
+				displayedVersion: "0"
 			});
 		}
 

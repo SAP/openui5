@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
+	"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/apply/_internal/changes/Utils",
@@ -23,6 +24,7 @@ sap.ui.define([
 	sinon,
 	QUnitUtils,
 	ChangeVisualization,
+	ChangeIndicatorRegistry,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
 	ChangesUtils,
@@ -1163,6 +1165,60 @@ sap.ui.define([
 				}.bind(this));
 				document.getElementById("Comp1---idMain1--mainPage-cont").scroll({top: 800});
 			}.bind(this));
+		});
+	});
+	QUnit.module("On Version Change", {
+		before: function() {
+			return oComponentPromise;
+		},
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
+			prepareChanges([
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1")
+			]);
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp,
+				flexSettings: this.oFlexSettings
+			});
+			RtaQunitUtils.clear()
+				.then(this.oRta.start.bind(this.oRta))
+				.then(function() {
+					this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
+					this.oChangeVisualization = this.oRta.getChangeVisualization();
+					this.oToolbar = this.oRta.getToolbar();
+					fnDone();
+				}.bind(this));
+		},
+		afterEach: function() {
+			this.oRta.destroy();
+			sandbox.restore();
+			return RtaQunitUtils.clear();
+		}
+	}, function() {
+		QUnit.test("when a new version has been activated", function(assert) {
+			var fnDone = assert.async();
+			var oResetSpy = sandbox.spy(ChangeIndicatorRegistry.prototype, "reset");
+			var oVersionsModelStub = sandbox.stub(ChangeVisualization.prototype, "setVersionsModel");
+			oVersionsModelStub.callsFake(function() {
+				this.oChangeVisualization.oVersionsModel = {
+					getData: function() {
+						return {
+							versioningEnabled: true,
+							displayedVersion: 2
+						};
+					}
+				};
+			}.bind(this));
+			this.oRta.setMode("visualization");
+			waitForMethodCall(this.oToolbar, "setModel")
+				.then(function() {
+					return this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
+				}.bind(this))
+				.then(function() {
+					oCore.applyChanges();
+					assert.ok(oResetSpy.called, "then changeIndicatorRegistry gets resetted");
+					fnDone();
+				});
 		});
 	});
 
