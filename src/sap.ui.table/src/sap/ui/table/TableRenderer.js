@@ -21,6 +21,8 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		Center: "center"
 	};
 
+	var bFirstColumnHeaderRendered;
+
 	/**
 	 * Table renderer.
 	 *
@@ -40,6 +42,9 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 	TableRenderer.render = function(rm, oTable) {
 		// Clear cashed header row count
 		delete oTable._iHeaderRowCount;
+
+		// Reset the flag per rendering
+		bFirstColumnHeaderRendered = false;
 
 		mFlexCellContentAlignment.Left = oTable._bRtlMode ? "flex-end" : "flex-start";
 		mFlexCellContentAlignment.Right = oTable._bRtlMode ? "flex-start" : "flex-end";
@@ -890,6 +895,10 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 				rm.style("width", oColParam.width);
 				rm.attr("data-sap-ui-headcolindex", iCol);
 				rm.attr("data-sap-ui-colid", oColumn.getId());
+				if (!bFirstColumnHeaderRendered) {
+					rm.class("sapUiTableFirstColumnHeader");
+					bFirstColumnHeaderRendered = true;
+				}
 				rm.openEnd();
 				if (iStartRow == 0 && TableUtils.getHeaderRowCount(oTable) == 0 && !bHeader) {
 					if (oColumn.getMultiLabels().length > 0) {

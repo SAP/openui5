@@ -213,6 +213,9 @@ sap.ui.define([
 
 		assert.ok(parseFloat(ccw([[new Byte(), {gap: 10}]])) > 12, "Gap taken into account 10rem gap + 1rem padding + ~1rem Byte width ");
 		assert.equal(ccw([[new Byte(), {gap: 10, maxWidth: 5}]]), OuterWidth(5), "Gap and maxWidth taken into account");
+
+		assert.equal(ccw([[Str(10), {maxWidth: 3}], [Str(10), {maxWidth: 2}]], "", {treeColumn: true}), OuterWidth(8.5), "Type related settings for the tree column");
+		assert.equal(ccw([[Str(10), {maxWidth: 3}], [Str(10), {maxWidth: 2}]], "", {maxWidth: 5, treeColumn: true}), OuterWidth(5), "Column maxWidth taken into account for the treeColumn");
 	});
 
 	QUnit.test("showSelectionLimitPopover & hideSelectionLimitPopover", function(assert) {
