@@ -472,6 +472,23 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
+
+	QUnit.test("stateAnnouncementText", function(assert) {
+		//Prepare
+		var oOS = new ObjectStatus();
+
+		//Act
+		oOS.setStateAnnouncementText("Test");
+
+		//Assert
+		assert.strictEqual(oOS.getStateAnnouncementText(), "Test", "stateAnnouncementText is properly set");
+
+		//Act
+		oOS.setStateAnnouncementText(null);
+		assert.strictEqual(oOS.getStateAnnouncementText(), undefined, "stateAnnouncementText is undefined");
+
+	});
+
 	QUnit.module("Screen reader ARIA support");
 
 	QUnit.test("General ARIA attributes", function (assert) {
@@ -482,17 +499,55 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		//Act
-		assert.strictEqual(oObjectStatus.$().attr("aria-roledescription"), oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS"),
-			"Custom control name is in aria-roledescription");
+		//Assert
 		assert.notOk(oObjectStatus.$().children(":last-child").attr("aria-hidden"), "hidden element doesn't have aria-hidden attribute");
 
 		//Cleanup
 		oObjectStatus.destroy();
 	});
 
+	QUnit.test("Aria role attribute", function (assert) {
+		//Arrange
+		var oObjectStatus = new ObjectStatus({text: "test", active: true});
+
+		oObjectStatus.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//Act
+		//Assert
+		assert.strictEqual(
+			oObjectStatus.getDomRef().getAttribute("aria-roledescription"),
+			oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ACTIVE"),
+			"Proper roledescription added");
+
+		//Cleanup
+		oObjectStatus.destroy();
+	});
+
+	QUnit.test("State announcement text", function (assert) {
+		//Arrange
+		var oObjectStatus = new ObjectStatus({text: "test", state: ValueState.Error});
+
+		//Act
+		//Assert
+		assert.strictEqual(oObjectStatus._getStateText(oObjectStatus.getState()), "Invalid entry", "Proper state announcement text applied");
+
+		//Act
+		oObjectStatus.setStateAnnouncementText("");
+		//Assert
+		assert.strictEqual(oObjectStatus._getStateText(oObjectStatus.getState()), "", "State announcement text applied override to empty string");
+
+		//Act
+		oObjectStatus.setStateAnnouncementText("test");
+		//Assert
+		assert.strictEqual(oObjectStatus._getStateText(oObjectStatus.getState()), "test", "State announcement text applied override to non empty string");
+
+		//Cleanup
+		oObjectStatus.destroy();
+	});
+
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oControl = new ObjectStatus({text: "Text", title: "Title", tooltip: "Tooltip"}),
-			sCustomControlName = oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS");
+		var oControl = new ObjectStatus({text: "Text", title: "Title", tooltip: "Tooltip"});
 
 		assert.ok(!!oControl.getAccessibilityInfo, "ObjectStatus has a getAccessibilityInfo function");
 
@@ -500,7 +555,7 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, undefined, "AriaRole");
 		assert.strictEqual(oInfo.type, undefined, "Type");
-		assert.strictEqual(oInfo.description, "Title Text  Tooltip " + sCustomControlName, "Description");
+		assert.strictEqual(oInfo.description, "Title Text  Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, undefined, "Focusable");
 		assert.strictEqual(oInfo.enabled, undefined, "Enabled");
 		assert.strictEqual(oInfo.editable, undefined, "Editable");
@@ -509,11 +564,16 @@ sap.ui.define([
 		oControl.setTitle("");
 		oInfo = oControl.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, "Text " + ValueStateSupport.getAdditionalText(oControl.getState()) + " " +
-			oControl.getTooltip() + " " + sCustomControlName, "Description");
+			oControl.getTooltip(), "Description");
 
 		oControl.setText("").setTitle("").setTooltip("").setState("None");
 		oInfo = oControl.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, "", "Description is empty if no text, title, tooltip or state are provided");
+
+		oControl.setActive(true);
+		oControl.setText("test");
+		oInfo = oControl.getAccessibilityInfo();
+		assert.strictEqual(oInfo.description,  oControl.getText() + " " + oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ACTIVE"), "Role-description is applied");
 
 		oControl.destroy();
 	});
@@ -533,23 +593,6 @@ sap.ui.define([
 		assert.equal(oObjectStatus.$().attr("role"), "button", "Active ObjectStatus has button role");
 
 		// Clean up
-		oObjectStatus.destroy();
-	});
-
-	QUnit.test("Inactive ObjectStatus specific ARIA", function (assert) {
-		// Arrange
-		var oObjectStatus = new ObjectStatus({
-			title: "Title",
-			text: "Contract #D1234567890"
-		});
-
-		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-		// Assert
-		assert.equal(oObjectStatus.$().attr("role"), "group", "Inactive ObjectStatus has group role");
-
-		// Cleanup
 		oObjectStatus.destroy();
 	});
 
