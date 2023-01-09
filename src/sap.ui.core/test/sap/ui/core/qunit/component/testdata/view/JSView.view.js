@@ -1,7 +1,10 @@
-sap.ui.define(["sap/m/Button"], function (Button) {
+sap.ui.define([
+	"sap/m/Button",
+	"sap/ui/core/mvc/View"
+], function (Button, View) {
 	"use strict";
 
-	sap.ui.jsview("error.test.JSView", {
+	return View.extend("error.test.JSView", {
 		createContent: function (oController) {
 			return new Button({
 				text: "click me"
