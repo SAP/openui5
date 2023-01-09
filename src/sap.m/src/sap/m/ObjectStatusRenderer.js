@@ -2,17 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupport', 'sap/ui/core/InvisibleText', 'sap/ui/core/library'],
-	function(ValueStateSupport, IndicationColorSupport, InvisibleText, coreLibrary) {
+sap.ui.define(['sap/ui/core/library'],
+	function(coreLibrary) {
 	"use strict";
 
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
-
-	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
-
 
 	/**
 	 * ObjectStatus renderer.
@@ -37,22 +33,18 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 			oRm.openEnd();
 		} else {
 
-			var sState = oObjStatus.getState();
-			var bInverted = oObjStatus.getInverted();
-			var sTextDir = oObjStatus.getTextDirection();
-			var oCore = sap.ui.getCore();
-			var bPageRTL = oCore.getConfiguration().getRTL();
-			var oAccAttributes = {
-				roledescription: oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS")
-			};
-			var sValueStateText;
-			var accValueText;
+			var sState = oObjStatus.getState(),
+				sStateText = oObjStatus._getStateText(sState),
+				bInverted = oObjStatus.getInverted(),
+				sTextDir = oObjStatus.getTextDirection(),
+				bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
+				oAccAttributes = {},
+				sTooltip = oObjStatus.getTooltip_AsString();
 
 			if (sTextDir === TextDirection.Inherit) {
 				sTextDir = bPageRTL ? TextDirection.RTL : TextDirection.LTR;
 			}
 
-			var sTooltip = oObjStatus.getTooltip_AsString();
 			if (sTooltip) {
 				oRm.attr("title", sTooltip);
 			}
@@ -67,8 +59,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 				oRm.class("sapMObjStatusActive");
 				oRm.attr("tabindex", "0");
 				oAccAttributes.role = "button";
-			} else {
-				oAccAttributes.role = "group";
+				oAccAttributes.roledescription = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ACTIVE");
 			}
 
 			oRm.accessibilityState(oObjStatus, oAccAttributes);
@@ -121,23 +112,14 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 			if (oObjStatus._isActive()) {
 				oRm.close("span");
 			}
-			/* ARIA adding hidden node in span element */
-			if (sState != ValueState.None) {
-				sValueStateText = ValueStateSupport.getAdditionalText(sState);
-				if (sValueStateText) {
-					accValueText = sValueStateText;
-				} else {
-					accValueText = IndicationColorSupport.getAdditionalText(sState);
-				}
-				if (accValueText) {
-					oRm.openStart("span", oObjStatus.getId() + "sapSRH");
-					oRm.class("sapUiPseudoInvisibleText");
-					oRm.openEnd();
-					oRm.text(accValueText);
-					oRm.close("span");
-				}
-			}
 
+			if (sStateText) {
+				oRm.openStart("span", oObjStatus.getId() + "sapSRH");
+				oRm.class("sapUiPseudoInvisibleText");
+				oRm.openEnd();
+				oRm.text(sStateText);
+				oRm.close("span");
+			}
 		}
 
 		oRm.close("div");

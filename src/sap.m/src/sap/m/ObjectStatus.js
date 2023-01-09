@@ -104,12 +104,21 @@ sap.ui.define([
 			 * Determines the direction of the text, not including the title.
 			 * Available options for the text direction are LTR (left-to-right) and RTL (right-to-left). By default the control inherits the text direction from its parent control.
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+
+			/**
+			 * Еnables overriding of the default state announcement.
+			 *
+			 * @since 1.110
+			 */
+			stateAnnouncementText : {type : "string", group : "Misc"}
 		},
 		associations : {
 
 			/**
 			 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
+			 *
+			 * <b>Note:</b> The additional description will take effect only if <code>active</code> property is set to <code>true</code>.
 			 */
 			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}
 		},
@@ -123,6 +132,23 @@ sap.ui.define([
 		},
 		dnd: { draggable: true, droppable: false }
 	}});
+
+	/**
+	 * Returns a text compliant to the sap.m.ObjectStatus control instance state
+	 *
+	 * @private
+	 * @param {string} sState the propety state value.
+	 * @returns {string} The text compliant to the control state
+	 */
+	ObjectStatus.prototype._getStateText = function(sState) {
+		if (sState !== ValueState.None && this.isPropertyInitial("stateAnnouncementText")) {
+			return ValueStateSupport.getAdditionalText(sState)
+					? ValueStateSupport.getAdditionalText(sState)
+					: IndicationColorSupport.getAdditionalText(sState);
+		}
+
+		return !this.isPropertyInitial("stateAnnouncementText") ? this.getStateAnnouncementText() : "";
+	};
 
 	/**
 	 * Called when the control is destroyed.
@@ -248,7 +274,9 @@ sap.ui.define([
 	 * @protected
 	 */
 	ObjectStatus.prototype.getAccessibilityInfo = function() {
-		var sState = ValueStateSupport.getAdditionalText(this.getState()),
+		var sState = this.isPropertyInitial("stateAnnouncementText")
+						? ValueStateSupport.getAdditionalText(this.getState())
+						: this.getStateAnnouncementText(),
 			sDescription;
 
 		if (this.getState() != ValueState.None) {
@@ -262,9 +290,11 @@ sap.ui.define([
 			(this.getTooltip() || "")
 		).trim();
 
-		return {
-			description: sDescription + (sDescription ? " " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS") : "")
-		};
+		sDescription = this._isActive()
+			? sDescription + (sDescription ? " " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ACTIVE") : "")
+			: sDescription;
+
+		return { description: sDescription };
 	};
 
 	ObjectStatus.prototype._isClickable = function(oEvent) {
