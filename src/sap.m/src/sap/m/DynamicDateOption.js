@@ -94,7 +94,7 @@ sap.ui.define([
 		 * getValueHelpUITypes is not enough to define the UI.
 		 *
 		 * @param {sap.m.DynamicDateRange} oControl The control instance
-		 * @param {function} fnControlsUpdated A callback invoked when any of the created controls updates its value
+		 * @param {function(sap.ui.base.Event)} fnControlsUpdated A callback invoked when any of the created controls updates its value
 		 * @returns {sap.ui.core.Control[]} An array with the option's value help UI controls
 		 * @public
 		 */
@@ -187,10 +187,10 @@ sap.ui.define([
 
 		/**
 		 * Gets the value help controls' output values and
-		 * converts them to a DynamicDateRange value.
+		 * converts them to a <code>sap.m.DynamicDateRangeValue</code>.
 		 *
 		 * @param {sap.m.DynamicDateRange} oControl The control instance
-		 * @returns {object} A DynamicDateRange value
+		 * @returns {sap.m.DynamicDateRangeValue} A <code>sap.m.DynamicDateRangeValue</code>
 		 * @public
 		 */
 		DynamicDateOption.prototype.getValueHelpOutput = function(oControl) {
@@ -279,7 +279,7 @@ sap.ui.define([
 		/**
 		 * Formats the option's value to a string.
 		 *
-		 * @param {object} oValue A DynamicDateRange value
+		 * @param {sap.m.DynamicDateRangeValue} oValue A <code>sap.m.DynamicDateRangeValue</code>
 		 * @returns {string} A string representing this option's value
 		 * @public
 		 */
@@ -288,10 +288,10 @@ sap.ui.define([
 		};
 
 		/**
-		 * Parses a string to a DynamicDateRange value.
+		 * Parses a string to a <code>sap.m.DynamicDateRangeValue</code>.
 		 *
 		 * @param {string} sValue An input string
-		 * @returns {object} This option's DynamicDateRange value
+		 * @returns {sap.m.DynamicDateRangeValue} This parsed value
 		 * @public
 		 */
 		DynamicDateOption.prototype.parse = function(sValue) {
@@ -301,7 +301,7 @@ sap.ui.define([
 		/**
 		 * Calculates an absolute date range from the options relative value.
 		 *
-		 * @param {object} oValue A DynamicDateRange value
+		 * @param {sap.m.DynamicDateRangeValue} oValue A <code>sap.m.DynamicDateRangeValue</code>
 		 * @returns {sap.ui.core.date.UniversalDate[]} A couple of dates marking the start and the end of the range
 		 * @public
 		 */

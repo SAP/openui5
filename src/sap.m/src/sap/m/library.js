@@ -1201,6 +1201,23 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * @typedef {object} sap.m.DynamicDateRangeValue
+	 * @description Defines the <code>value</code> property of the DynamicDateRange control.
+	 * 		The object has two properties:
+	 * 			'operator' - a string, the key of a DynamicDateOption
+	 * 			'values' - an array of parameters for the same option
+	 * see {@link sap.m.DynamicDateRange}
+	 *
+	 * @property {string} operator
+	 * 		The key of a DynamicDateOption.
+	 * @property {Array<Date|int|string|any>} values
+	 * 		An array of parameters for the same option.
+	 *
+	 * @public
+	 * @since 1.111
+	 */
+
 
 	/**
 	 * FacetFilterList data types.

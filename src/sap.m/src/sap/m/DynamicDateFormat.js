@@ -97,9 +97,21 @@ sap.ui.define([
 		}
 
 		/**
+		 * @typedef {object} sap.m.DynamicDateFormatOptions
+		 * @description Object which defines the format options
+		 *
+		 * @param {sap.ui.core.Locale} [oFormatOptions.oLocale] Formatter locale
+		 * @param {sap.ui.core.LocaleData} [oFormatOptions.oLocaleData] Locale-specific data, such as, date formats, number formats, and currencies
+		 * @param {Object<string, object>} [oFormatOptions.oOriginalFormatOptions] Default format options
+		 *
+		 * @public
+		 * @since 1.111
+		 */
+
+		/**
 		 * Get an instance of the DynamicDateFormat which can be used for formatting.
 		 *
-		 * @param {object} [oFormatOptions] Object which defines the format options
+		 * @param {sap.m.DynamicDateFormatOptions} [oFormatOptions] Object which defines the format options
 		 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 		 * @return {sap.m.DynamicDateFormat} Instance of the DynamicDateFormat
 		 * @public
@@ -120,7 +132,7 @@ sap.ui.define([
 		/**
 		 * Create an instance of the DynamicDateFormat.
 		 *
-		 * @param {object} [oFormatOptions] Object which defines the format options
+		 * @param {sap.m.DynamicDateFormatOptions} [oFormatOptions] Object which defines the format options
 		 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 		 * @return {sap.m.DynamicDateFormat} Instance of the DynamicDateFormat
 		 * @private
@@ -166,7 +178,7 @@ sap.ui.define([
 		/**
 		 * Formats a list according to the given format options.
 		 *
-		 * @param {object} oObj The value to format
+		 * @param {sap.m.DynamicDateRangeValue} oObj The value to format
 		 * @param {boolean} bSkipCustomFormatting If set to <code>true</code> the formatter does not format to the equivalent user-friendly string. Instead, the formatter uses the specified option key and parameters.
 		 * @return {string} The formatted output value.
 		 * @public
@@ -239,7 +251,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sValue String value to be parsed
 		 * @param {string} sKey String value of the key we will parse for
-		 * @return {object} The parsed output value
+		 * @return {sap.m.DynamicDateRangeValue[]} The parsed output value
 		 * @public
 		 */
 		DynamicDateFormat.prototype.parse = function(sValue, sKey) {

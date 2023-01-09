@@ -209,7 +209,7 @@ sap.ui.define([
 
 		/**
 		 * Opens the <code>Menu</code> next to the given control.
-		 * @param {object} oControl The control that defines the position for the menu
+		 * @param {sap.ui.core.Control} oControl The control that defines the position for the menu
 		 * @param {boolean} bWithKeyboard Whether the menu is opened with a shortcut or not
 		 * @param {sap.ui.core.Dock} [sDockMy=sap.ui.core.Popup.Dock.BeginTop] The reference docking location
 		 * of the <code>Menu</code> for positioning the menu on the screen
@@ -302,7 +302,7 @@ sap.ui.define([
 			this._initMenuForItems(this.getItems());
 		};
 
-		/*
+		/**
 		 * Allows for any custom function to be called back when accessibility attributes
 		 * of underlying menu are about to be rendered.
 		 * The function is called once per MenuItem
@@ -310,7 +310,7 @@ sap.ui.define([
 		 * @param {function} fn The callback function
 		 * @private
 		 * @ui5-restricted ObjectPageLayoutABHelper
-		 * @returns void
+		 * @returns {void}
 		 */
 		Menu.prototype._setCustomEnhanceAccStateFunction = function(fn) {
 			this._fnEnhanceUnifiedMenuAccState = fn;

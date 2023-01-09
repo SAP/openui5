@@ -189,13 +189,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Parses a string to an array of objects in the DynamicDateRange's value format.
+	 * Parses a string to an array of objects of type <code>sap.m.DynamicDateRangeValue</code>.
 	 * Uses the provided formatter.
 	 *
 	 * @param {string} sValue The string to be parsed
 	 * @param {sap.m.DynamicDateFormat} oFormatter A dynamic date formatter
-	 * @param {array} aOptionKeys array of option names
-	 * @returns {object[]} An array of value objects in the DynamicDateRange's value format
+	 * @param {string[]} aOptionKeys array of option names
+	 * @returns {sap.m.DynamicDateRangeValue[]} An array of <code>sap.m.DynamicDateRangeValue</code> objects
 	 * @static
 	 * @public
 	 */
