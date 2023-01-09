@@ -268,6 +268,14 @@ sap.ui.define([
 			selector: oControl
 		};
 
+		if (aKeys) {
+			var aChangeTypes = [];
+			aKeys.forEach(function(sKey){
+				aChangeTypes = aChangeTypes.concat(Object.values(this.getController(oControl, sKey).getChangeOperations()));
+			}.bind(this));
+			oResetConfig.changeTypes = [].concat.apply([], aChangeTypes);
+		}
+
 		var oModificationSetting = this._determineModification(oControl);
 		return oModificationSetting.handler.reset(oResetConfig, oModificationSetting.payload).then(function(){
 			this.stateHandlerRegistry.fireChange(oControl);
@@ -275,7 +283,9 @@ sap.ui.define([
 			return this.initAdaptation(oControl, aKeys).then(function(oPropertyHelper){
 				aKeys.forEach(function(sKey){
 					var oController = this.getController(oControl, sKey);
-					oController.update(oPropertyHelper);
+					if (this.hasActiveP13n(oControl)) {
+						oController.update(oPropertyHelper);
+					}
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
