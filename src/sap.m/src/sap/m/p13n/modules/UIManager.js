@@ -76,7 +76,7 @@ sap.ui.define([
 
 					//if there is no title provided and only one panel created, use it's title as the Popup title
 					var sTitle;
-					if (!mSettings.title && aPanelKeys.length === 1) {
+					if (!mSettings.title && aPanelKeys.length === 1 && aInitializedPanels.length > 0) {
 						sTitle = aInitializedPanels[0].getTitle();
 					} else {
 						sTitle = mSettings.title || oResourceBundle.getText("p13n.VIEW_SETTINGS");
