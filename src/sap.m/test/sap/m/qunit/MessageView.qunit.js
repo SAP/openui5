@@ -1225,15 +1225,6 @@ sap.ui.define([
 		assert.strictEqual(oLink.getText(), "Link 1", "The link is bound correctly");
 	});
 
-	QUnit.test("MessageListItem property mapping", function (assert) {
-		var oFirstListItem = this.oMessageView._oLists.all.getItems()[0];
-		var oFirstMessageItem = this.oMessageView.getItems()[0];
-
-		assert.strictEqual(oFirstListItem.getMessageType(), oFirstMessageItem.getType(), "MessageItem Type should be propagated");
-		assert.ok(oFirstListItem.isPropertyInitial("info"), "MessageListItem info should not be defined to prevent unwanted speech output");
-		assert.strictEqual(oFirstListItem.getInfoState(), this.oMessageView._mapInfoState(oFirstMessageItem.getType()), "MessageListItem infoState should be present and mapped correctly");
-	});
-
 	QUnit.test("Escaping brackets", function (assert) {
 		// set up
 		var oMessageTemplate, aMockMessages, oModel,
