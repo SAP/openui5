@@ -8,20 +8,11 @@ sap.ui.require(["sap/base/util/fetch"], function (fetch) {
 
 	// check for the existence of a wellknown debug source as indicator for optimized sources
 	var bDebugModules = false;
-	var pHTMLDbgResponse = fetch('../../../../../../resources/sap/ui/core/HTML-dbg.js', {
+	fetch('../../../../../../resources/sap/ui/core/HTML-dbg.js', {
 		method: 'HEAD'
-	});
-	// check whether code base has preload bundles available
-	var bHasPreloadBundles = false;
-	var pPreloadResponse = fetch('../../../../../../resources/sap/m/library-preload.js', {
-		method: 'HEAD'
-	});
-
-	Promise.all([pHTMLDbgResponse, pPreloadResponse]).then(function (aPromiseResults) {
-		var oHTMLDbgResponse = aPromiseResults[0], oPreloadResponse = aPromiseResults[1];
+	}).then(function (oHTMLDbgResponse) {
 		bDebugModules = !!oHTMLDbgResponse.ok;
-		bHasPreloadBundles = !!oPreloadResponse.ok;
-
+	}).finally(function () {
 		/*
 		 * Check whether the current environment allows to run the test.
 		 *
@@ -205,18 +196,24 @@ sap.ui.require(["sap/base/util/fetch"], function (fetch) {
 
 		QUnit[off]("Control Code", function(assert) {
 			var done = assert.async();
+			var bPreloadActive = false;
 
-			var preloadActive = bHasPreloadBundles && hasRequest('sap/m/library-preload.js');
-			if ( preloadActive ) {
-				assert.ok(!!sap.ui.loader._.getModuleState('sap/m/Table.js'), "Table resource should be in status 'loaded' (as preloads are active)");
-			}
-			assert.ok(sap.ui.require('sap/m/Table') === undefined, "Table must not have been required yet");
-			sap.ui.require(['sap/m/Table'], function(Table) {
-				assert.ok(!!Table, "Table module should have been required");
-				if ( preloadActive ) {
-					assert.ok(!hasRequest('sap/m/Table'), "table should not have been requested as individual resource (as preloads are active)");
+			fetch('../../../../../../resources/sap/m/library-preload.js', {
+				method: 'HEAD'
+			}).then(function (oPreloadResponse) {
+				bPreloadActive = !!oPreloadResponse.ok && hasRequest('sap/m/library-preload.js');
+			}).finally(function () {
+				if ( bPreloadActive ) {
+					assert.ok(!!sap.ui.loader._.getModuleState('sap/m/Table.js'), "Table resource should be in status 'loaded' (as preloads are active)");
 				}
-				done();
+				assert.ok(sap.ui.require('sap/m/Table') === undefined, "Table must not have been required yet");
+				sap.ui.require(['sap/m/Table'], function(Table) {
+					assert.ok(!!Table, "Table module should have been required");
+					if ( bPreloadActive ) {
+						assert.ok(!hasRequest('sap/m/Table'), "table should not have been requested as individual resource (as preloads are active)");
+					}
+					done();
+				});
 			});
 		});
 
