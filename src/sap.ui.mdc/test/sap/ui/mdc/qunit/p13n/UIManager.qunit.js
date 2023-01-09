@@ -1,6 +1,6 @@
 /* global QUnit*/
 sap.ui.define([
-	"sap/ui/mdc/p13n/AdaptationProvider",
+	"sap/m/p13n/modules/AdaptationProvider",
 	"sap/ui/mdc/p13n/UIManager",
 	"sap/ui/mdc/Control",
 	"sap/ui/core/Core"

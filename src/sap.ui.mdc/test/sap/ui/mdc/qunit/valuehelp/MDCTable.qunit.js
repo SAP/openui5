@@ -28,7 +28,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
-	"sap/ui/mdc/p13n/Engine",
+	"sap/m/p13n/Engine",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/ResponsiveTableType"

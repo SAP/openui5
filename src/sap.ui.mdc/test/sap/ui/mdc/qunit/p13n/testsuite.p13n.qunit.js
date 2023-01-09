@@ -40,15 +40,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			// Whether to call QUnit.start() when the test setup is done
 		},
 		tests: {
-			"FlexModificationHandler": {
-				group: "Modification Handling",
-				module: "./modification/FlexModificationHandler.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
 			"PersistenceProvider": {
 				group: "Silent Persistence",
 				module: "./PersistenceProvider.qunit",
@@ -58,98 +49,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
-			"Engine": {
-				group: "Engine",
-				module: "./Engine.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"DefaultProviderRegistry": {
-				group: "Silent Persistence",
-				module: "./modules/DefaultProviderRegistry.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
 			/*
-			//TODO: needs to be reworked
-			"BaseController": {
-				group: "SubController (generic)",
-				module: "./controllers/ControllerGeneric.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"SortController": {
-				group: "SubController (generic)",
-				module: "./controllers/ControllerGeneric.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"GroupController": {
-				group: "SubController (generic)",
-				module: "./controllers/ControllerGeneric.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"ColumnController": {
-				group: "SubController (generic)",
-				module: "./controllers/ControllerGeneric.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"FilterController": {
-				group: "SubController (generic)",
-				module: "./controllers/ControllerGeneric.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"FilterController2": {
-				group: "SubController (specific)",
-				module: "./controllers/FilterController.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"AdaptFiltersController": {
-				group: "SubController (generic)",
-				module: "./controllers/ControllerGeneric.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"ActionToolbarController": {
-				group: "SubController (generic)",
-				module: "./controllers/ControllerGeneric.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
 			"LinkPanelController": {
 				group: "SubController (generic)",
 				module: "./controllers/ControllerGeneric.qunit",
@@ -252,15 +152,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"ChangeContent": {
 				group: "P13n Logic",
 				module: "./ChangeContent.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"StateHandlerRegistry": {
-				group: "state handling",
-				module: "./modules/StateHandlerRegistry.qunit",
 				ui5: {
 					libs: [
 						"sap.ui.mdc"
@@ -433,25 +324,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"sap.ui.fl", "sap.ui.mdc"
 					]
 				}
-			}/*,
-			"xConfigFlex": {
-				group: "xConfig tests",
-				module: "./xConfigFlex.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.fl", "sap.ui.mdc"
-					]
-				}
-			},
-			"xConfigAPI": {
-				group: "xConfig tests",
-				module: "./modules/xConfigAPI.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.fl", "sap.ui.mdc"
-					]
-				}
-			}*/
+			}
 		}
 	};
 });
