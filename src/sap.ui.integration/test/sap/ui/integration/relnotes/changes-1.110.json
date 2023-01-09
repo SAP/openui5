@@ -3,6 +3,11 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "1fc22b6078b7755d43b086b04fa732ea7ffbe479",
+        "type": "FEATURE",
+        "text": " Integration Cards: Load libraries from dependencies list in the manifest"
+      },
+      {
         "id": "98fe76c95a473a17d44274fe0eefd934fed30e42",
         "type": "FEATURE",
         "text": " Integration cards: Filters can now be hidden"

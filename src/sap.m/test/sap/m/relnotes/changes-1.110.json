@@ -3,6 +3,66 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "59ded9c3f85dd9dd3e96c3d6a59afa9f5bbcb3a6",
+        "type": "FIX",
+        "text": " sap.m.MessageView: List Item speech output improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270182409"
+          }
+        ]
+      },
+      {
+        "id": "1165ee62de0e649d10246c45855f8de8a3ace366",
+        "type": "FIX",
+        "text": " sap.m.Carousel: after setActivePage() the active page indexes are updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280200416"
+          }
+        ]
+      },
+      {
+        "id": "b15843b3dcbf69d9e7c8f35bc93f446cbbe77855",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Improve link stylings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280186310"
+          }
+        ]
+      },
+      {
+        "id": "2314a65a9e02a6d350fef8b7da8b8fa9b259b43f",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus Add CSS class for in-word StatusText wrapping"
+      },
+      {
+        "id": "ea2659ab9dac8129bc443c6a2a27d4b37e2e2a9a",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Wizard step count validation corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280199827"
+          }
+        ]
+      },
+      {
+        "id": "8c832d5c433069ed1ca477d6e70d56114a21e700",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Relative view now works with single day",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270167043"
+          }
+        ]
+      },
+      {
         "id": "a227e1978b314eeed681250d9ff8ce151c7ed1cb",
         "type": "FIX",
         "text": " sap.m.Input: Type-ahead with dynamic suggestions on mobile enabled",
