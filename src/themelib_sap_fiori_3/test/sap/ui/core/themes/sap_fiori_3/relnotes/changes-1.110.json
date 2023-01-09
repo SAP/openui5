@@ -3,6 +3,17 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "b15843b3dcbf69d9e7c8f35bc93f446cbbe77855",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Improve link stylings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280186310"
+          }
+        ]
+      },
+      {
         "id": "5be7e4a9a845914475c83224f9cbb5b967d5020f",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: visual alignment in date range selection mode",

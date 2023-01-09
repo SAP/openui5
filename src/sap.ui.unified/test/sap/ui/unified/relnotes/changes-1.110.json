@@ -3,6 +3,11 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "7d7ad142daed732c6833c32e250c1240edd3ec92",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.MonthPicker: adjust failing unit tests"
+      },
+      {
         "id": "4d41d6a1a1d4e0eb4050aeffcce4320a75ebe764",
         "type": "FIX",
         "text": " sap.ui.unified.calendar.MonthPicker: Tests are now stable"
