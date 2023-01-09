@@ -1035,6 +1035,7 @@ sap.ui.define([
 			that.destroyPreviousContextsLater([oContext.getPath()]);
 		}, function (oError) {
 			that.iDeletedContexts -= 1;
+			// if the cache has become inactive, the callback is not called -> undelete here
 			fnUndelete();
 			if (bReset) {
 				that.oCache.reset(that.getKeepAlivePredicates());

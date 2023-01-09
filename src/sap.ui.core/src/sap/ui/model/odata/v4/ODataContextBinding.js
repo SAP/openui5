@@ -687,7 +687,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#delete
 	 */
 	ODataContextBinding.prototype.delete = function (oGroupLock, sEditUrl, oContext, _oETagEntity,
-			bDoNotRequestCount) {
+			bDoNotRequestCount, fnUndelete) {
 		// In case the context binding has an empty path, the respective context in the parent
 		// needs to be removed as well. As there could be more levels of bindings pointing to the
 		// same entity, first go up the binding hierarchy and find the context pointing to the same
@@ -704,8 +704,8 @@ sap.ui.define([
 			that = this;
 
 		function undelete() {
+			fnUndelete();
 			oEmptyPathParentContext.oDeletePromise = null;
-			oContext.oDeletePromise = null;
 		}
 
 		// In case the uppermost parent reached with empty paths is a list binding, delete there.
@@ -738,6 +738,7 @@ sap.ui.define([
 				oReturnValueContext.destroy();
 			}
 		}, function (oError) {
+			// if the cache has become inactive, the callback is not called -> undelete here
 			undelete();
 			if (!oEmptyPathParentBinding.isRelative()
 					|| oDeleteParentContext === oEmptyPathParentBinding.getContext()) {

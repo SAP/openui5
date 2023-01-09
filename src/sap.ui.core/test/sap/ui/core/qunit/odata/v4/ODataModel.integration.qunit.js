@@ -17628,7 +17628,7 @@ sap.ui.define([
 	// binding hierarchy is ODCB - ODCB. The top binding may or may not have read data on its own.
 	// BCP: 1980308439
 	// JIRA: CPOUI5UISERVICESV3-1917
-	// JIRA: CPOUI5ODATAV4-1926: Use deferred delete and cancel; check isDeleted on both contexts
+	// Use deferred delete and cancel; check isDeleted on both contexts (JIRA: CPOUI5ODATAV4-1926)
 [false, true].forEach(function (bParentHasData) {
 	[false, true].forEach(function (bReset) {
 		var sTitle = "delete context of binding with empty path and $$ownRequest (" + bParentHasData
@@ -17709,8 +17709,8 @@ sap.ui.define([
 	// hierarchy is ODLB - ODCB - ODCB, both ODCB with empty path. The deletion has to use the ETag
 	// of the context for which Context#delete is called.
 	// JIRA: CPOUI5UISERVICESV3-1917
-	// JIRA: CPOUI5ODATAV4-1670: Use "If-Match: *" if a PATCH is in the same changeset
-	// JIRA: CPOUI5ODATAV4-1926: Use deferred delete and cancel; check isDeleted on both contexts
+	// Use "If-Match: *" if a PATCH is in the same changeset (JIRA: CPOUI5ODATAV4-1670)
+	// Use deferred delete and cancel; check isDeleted on both contexts (JIRA: CPOUI5ODATAV4-1926)
 [false, true].forEach(function (bChange) {
 	[false, true].forEach(function (bReset) {
 	var sTitle = "delete context of binding with empty path, delegate to ODLB, change=" + bChange
