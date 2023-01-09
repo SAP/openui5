@@ -10,26 +10,27 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new QuickTotalItem.
+	 * Constructor for a new <code>QuickTotalItem</code>.
 	 *
-	 * @param {string} [sId] ID for the new QuickTotalItem, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new QuickTotalItem
+	 * @param {string} [sId] ID for the new <code>QuickTotalItem</code>, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new <code>QuickTotalItem</code>
 	 *
 	 * @class
-	 * This element serves as a quick total item.
-	 * It can be used to specify control- and application specific quick total items.
+	 * The <code>QuickTotalItem</code> class is used for items for the <code>sap.m.table.columnmenu.QuickTotal</code>.
+	 * It can be used to specify control- and application-specific items for totalling.
 	 *
 	 * @extends sap.m.table.columnmenu.QuickActionItem
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @experimental
+	 * @public
+	 * @since 1.110
 	 *
 	 * @alias sap.m.table.columnmenu.QuickTotalItem
 	 */
 	var QuickTotalItem = QuickActionItem.extend("sap.m.table.columnmenu.QuickTotalItem", {
+
 		metadata: {
 			library: "sap.m",
 			properties: {

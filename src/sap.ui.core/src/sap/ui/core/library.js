@@ -1744,7 +1744,7 @@ sap.ui.define([
 
 	/**
 	 * Opens the menu using the column header.
-	 * @param {sap.ui.core.Control} oControl Specifies the control where the menu is placed.
+	 * @param {sap.ui.core.Control|HTMLElement} oAnchor Specifies the element where the menu is placed.
 	 *
 	 * @public
 	 * @function

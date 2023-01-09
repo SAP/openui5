@@ -59,33 +59,34 @@ sap.ui.define([
 	var Category = library.table.columnmenu.Category;
 
 	/**
-	 * Constructor for a new Menu.
+	 * Constructor for a new <code>Menu</code>.
 	 *
-	 * @param {string} [sId] ID for the new Menu, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new Menu
+	 * @param {string} [sId] ID for the new <code>Menu</code>, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new <code>Menu</code>
 	 *
 	 * @class
-	 * This Menu is a popover, intended to be used by a table.
-	 * It serves as a entry point for the table personalization via the column headers.
-	 * The Menu is separated into two sections: quick actions and menu items.
+	 * The <code>Menu</code> control is a popover, intended to be used by a table.
+	 * It serves as an entry point for the table personalization via the column headers.
+	 * The menu is separated into two sections: quick actions and menu items.
 	 *
 	 * The top section of the popover contains contextual quick actions for the column the menu was triggered from.
-	 * The lower section contains menu items, which consist of generic and global table settings.
+	 * The lower section contains menu items related to generic and global table settings.
 	 *
 	 * There are control- and application-specific quick actions and menu items.
-	 * Applications are able to add their own quick actions, actions and items.
+	 * Applications can add their own quick actions and items.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @experimental
+	 * @public
+	 * @since 1.110
 	 *
 	 * @alias sap.m.table.columnmenu.Menu
 	 */
 	var Menu = Control.extend("sap.m.table.columnmenu.Menu", {
+
 		metadata: {
 			library: "sap.m",
 			interfaces: ["sap.ui.core.IColumnHeaderMenu"],
@@ -114,12 +115,12 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * Fires before the column menu is opened
+				 * Fired before the column menu is opened
 				 */
 				beforeOpen: {
 					parameters : {
 						/**
-						 * The element for which the menu is opened. If it is an <code>HTMLElement</code> the closest control is passed for this event
+						 * The element for which the menu is opened. If it is an <code>HTMLElement</code>, the closest control is passed for this event
 						 * (if it exists).
 						 */
 						openBy : {type : "sap.ui.core.Element"}
@@ -154,7 +155,7 @@ sap.ui.define([
 	/**
 	 * Opens the popover at the specified target.
 	 *
-	 * @param {sap.ui.core.Control | HTMLElement} oAnchor This is the control or HTMLElement, where the popover will be placed at.
+	 * @param {sap.ui.core.Control | HTMLElement} oAnchor This is the control or HTMLElement where the popover is placed.
 	 * @public
 	 */
 	Menu.prototype.openBy = function(oAnchor) {
@@ -193,7 +194,7 @@ sap.ui.define([
 	/**
 	 * Returns the <code>sap.ui.core.aria.HasPopup<\code> type of the menu.
 	 *
-	 * @returns {sap.ui.core.aria.HasPopup} <code>sap.ui.core.aria.HasPopup<\code> type of the menu
+	 * @returns {sap.ui.core.aria.HasPopup} <code>sap.ui.core.aria.HasPopup</code> type of the menu
 	 * @public
 	 * @since 1.98.0
 	 */
@@ -202,7 +203,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns true when the menu is open, otherwise it returns false.
+	 * Determines whether the menu is open.
 	 *
 	 * @returns {boolean} Whether the menu is open.
 	 */

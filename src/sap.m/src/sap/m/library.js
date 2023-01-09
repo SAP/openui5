@@ -4121,14 +4121,40 @@ sap.ui.define([
 	 * Categories of column menu entries.
 	 *
 	 * @enum {string}
-	 * @private
+	 * @public
+	 * @since 1.110
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.table.columnmenu.Category = {
+
+		/**
+		 * Sort category
+		 * @public
+		 */
 		Sort: "Sort",
+
+		/**
+		 * Filter category
+		 * @public
+		 */
 		Filter: "Filter",
+
+		/**
+		 * Group category
+		 * @public
+		 */
 		Group: "Group",
+
+		/**
+		 * Aggregate category
+		 * @public
+		 */
 		Aggregate: "Aggregate",
+
+		/**
+		 * Generic category
+		 * @public
+		 */
 		Generic: "Generic"
 	};
 

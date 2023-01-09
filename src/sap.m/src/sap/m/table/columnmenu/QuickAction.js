@@ -12,27 +12,28 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new QuickAction.
+	 * Constructor for a new <code>QuickAction</code>.
 	 *
-	 * @param {string} [sId] ID for the new QuickAction, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new QuickAction
+	 * @param {string} [sId] ID for the new <code>QuickAction</code>, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new <code>QuickAction</code>
 	 *
 	 * @class
-	 * The QuickAction serves as a quick action for sap.m.table.columnmenu.Menu.
-	 * It can be used to specify control- and application specific quick actions.
+	 * The <code>QuickAction</code> class is used for quick actions for the <code>sap.m.table.columnmenu.Menu</code>.
+	 * It can be used to specify control- and application-specific quick actions.
 	 *
 	 * @extends sap.m.table.columnmenu.QuickActionBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @since 1.99
+	 * @public
+	 * @since 1.110
 	 * @experimental
 	 *
 	 * @alias sap.m.table.columnmenu.QuickAction
 	 */
 	var QuickAction = QuickActionBase.extend("sap.m.table.columnmenu.QuickAction", {
+
 		metadata: {
 			library: "sap.m",
 			properties: {
@@ -41,7 +42,7 @@ sap.ui.define([
 				 */
 				label: {type: "string", defaultValue: ""},
 				/**
-				 * Defines the category. In the menu, all <code>QuickActions</code> are implicitly ordered by their category.
+				 * Defines the category. In the menu all <code>QuickActions</code> are implicitly ordered by their category.
 				 */
 				category: {type: "sap.m.table.columnmenu.Category", defaultValue: library.table.columnmenu.Category.Generic}
 			},
