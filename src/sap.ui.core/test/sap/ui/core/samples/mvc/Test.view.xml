@@ -12,9 +12,6 @@
 		<content>
 			<Button id="button" text="Button in named aggregation"></Button>
 			<html:div>HTML div in named aggregation<Button press="doIt" text="Button in DIV (named content)"></Button></html:div>
-	<!-- 	<mvc:XMLView viewName="sap.ui.core.mvctest.Dev2"></mvc:XMLView>
-			<mvc:JSView viewName="sap.ui.core.mvctest.Dev"></mvc:JSView>-->
 		</content>
 	</Panel><html:br/>
-	<!-- <core:HTML content="&lt;span&gt;I am a HTML control with a button: &lt;/span&gt;&lt;button&gt;Press Me!&lt;/button&gt;"></core:HTML>-->
 </mvc:View>
