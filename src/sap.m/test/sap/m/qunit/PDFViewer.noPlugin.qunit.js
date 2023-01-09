@@ -48,6 +48,10 @@ sap.ui.define([
 			return jQuery(".sapMPDFViewerContent").length === 1 || jQuery(".sapMPDFViewerEmbeddedContent").length === 1;
 		};
 
+		var fnIsErrorContentDisplayed = function () {
+			return jQuery(".sapMPDFViewerEmbeddedContent").length === 1;
+		};
+
 		var checkSubstituteContent = function () {
 			assert.ok(oPdfViewer.$("overflowToolbar").length === 1, "Toolbar is displayed");
 			assert.ok(oPdfViewer.$("overflowToolbar-title").length === 1, "Title is displayed");
@@ -69,6 +73,11 @@ sap.ui.define([
 			oPdfViewer.setShowDownloadButton(false);
 			oPdfViewer.rerender();
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode always");
+
+			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
+			TestUtils.rerender();
+			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Embedded, "Set displayType to Embedded mode");
+			assert.ok(fnIsErrorContentDisplayed(), "Error Content is displayed in Embedded mode when pdf plugin is disabled");
 
 			done();
 		};
