@@ -44,7 +44,8 @@ sap.ui.define([
 		}
 	});
 
-	var rDigit = /\d/,
+	var rAllWhiteSpaces = /\s/g,
+		rDigit = /\d/,
 		// Not matching Sc (currency symbol) and Z (separator) characters
 		// https://www.unicode.org/reports/tr44/#General_Category_Values
 		rNotSAndNotZ = /[^\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6\u0020\xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/,
@@ -1885,7 +1886,7 @@ sap.ui.define([
 
 		// remove all white spaces because when grouping separator is a non-breaking space (russian and french for example)
 		// user will not input it this way. Also white spaces or grouping separator can be ignored by determining the value
-		sValue = sValue.replace(/\s/g, "");
+		sValue = sValue.replace(rAllWhiteSpaces, "");
 
 		oShort = getNumberFromShortened(sValue, this.oLocaleData, bIndianCurrency);
 		if (oShort) {
@@ -2793,6 +2794,7 @@ sap.ui.define([
 			if (!sCurSymbol) {
 				continue;
 			}
+			sCurSymbol = sCurSymbol.replace(rAllWhiteSpaces, "\u0020");
 			if (sValue.indexOf(sCurSymbol) >= 0 && sSymbol.length <= sCurSymbol.length) {
 				sCode = sCurCode;
 				bDuplicate = false;
@@ -2852,7 +2854,7 @@ sap.ui.define([
 	 */
 	function parseNumberAndCurrency(oConfig) {
 		var aIsoMatches,
-			sValue = oConfig.value;
+			sValue = oConfig.value.replace(rAllWhiteSpaces, "\u0020");
 
 		// Search for known symbols (longest match)
 		// no distinction between default and custom currencies
