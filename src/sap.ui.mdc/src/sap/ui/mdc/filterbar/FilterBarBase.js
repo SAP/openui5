@@ -645,7 +645,8 @@ sap.ui.define([
 			this._handleAssignedFilterNames(false);
 		}
 
-		if (this.getLiveMode() || mReportSettings.triggerSearch) {
+		if (this.getLiveMode() || mReportSettings.triggerSearch || this._bExecuteOnSelect) {
+			this._bExecuteOnSelect = false;
 			this.triggerSearch();
 		} else if (mReportSettings.recheckMissingRequired) {
 			this._recheckMissingRequiredFields();
@@ -1771,7 +1772,7 @@ sap.ui.define([
 			this._bIgnoreChanges = false;
 			this._reportModelChange({
 				triggerFilterUpdate: true,
-				triggerSearch: this._bExecuteOnSelect
+				triggerSearch: false
 			});
 			this._bInitialFiltersApplied = true;
 			this._fResolveInitialFiltersApplied();
@@ -1817,13 +1818,13 @@ sap.ui.define([
 			this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch = true;
 		}
 
-		return this.awaitPendingModification().then(function(){
+		return this.awaitPendingModification().then(function(aChangesProcessed){
 			//clean-up fields in error state
 			this._cleanUpAllFilterFieldsInErrorState();
 
-			// ensure that the initial filters are applied --> only trigger search & validate
-			// _onModifications updates the filters & fires filtersChanged
-			if (this._bInitialFiltersApplied) {
+			// ensure that the initial filters are applied --> only trigger search & validate when no filterbar changes exists.
+			// Filterbar specific changes will be handled via _onModifications.
+			if (this._bInitialFiltersApplied && (aChangesProcessed.length === 0)) {
 				this._reportModelChange({
 					triggerFilterUpdate: false,
 					triggerSearch: this._bExecuteOnSelect
