@@ -9,13 +9,15 @@
   "sap.ui5": {
 	"rootView": {
 	  "viewName": "sap.ui.mdc.sample.FilterBar.View",
+	  "id": "MyView",
 	  "type": "XML",
 	  "async": true
 	},
 	"dependencies": {
 	  "libs": {
 		"sap.m": {},
-		"sap.ui.table": {}
+		"sap.ui.table": {},
+		"sap.ui.fl" : {"lazy" : false}
 	  }
 	},
 	"config": {

@@ -9,6 +9,7 @@
   "sap.ui5": {
 	"rootView": {
 	  "viewName": "sap.ui.mdc.sample.FilterFieldTypes.View",
+	  "id": "MyView",
 	  "type": "XML",
 	  "async": true
 	},
@@ -16,7 +17,8 @@
 	  "libs": {
 		"sap.m": {},
 		"sap.ui.mdc": {},
-		"sap.ui.table": {}
+		"sap.ui.table": {},
+		"sap.ui.fl" : {"lazy" : false}
 	  }
 	},
 	"config": {

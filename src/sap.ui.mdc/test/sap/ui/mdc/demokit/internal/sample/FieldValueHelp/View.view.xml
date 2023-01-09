@@ -3,6 +3,8 @@
 		xmlns:mdc="sap.ui.mdc"
 		xmlns:mdcf="sap.ui.mdc.field"
 		xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+		xmlns:mdcv="sap.ui.mdc.valuehelp"
+		xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:form="sap.ui.layout.form"
@@ -12,55 +14,50 @@
 		<ToolbarSpacer/>
 	</OverflowToolbar>
 
-	<MessageStrip
-		text="Outdated - example is not using the new ValueHelp"
-		type="Error"
-		showIcon="true"
-		class="sapUiMediumMarginBottom">
-	</MessageStrip>
-
 	<form:SimpleForm layout="ColumnLayout" editable="true">
 		<core:Title text="Field"></core:Title>
 
 		<Label text="List" />
-		<mdc:Field id="F1" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="FH1" display="DescriptionValue" editMode="Editable" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}">
+		<mdc:Field id="F1" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="VH1" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
 			<mdc:dependents>
-				<mdcf:ListFieldHelp
-					id="FH1"
-					items="{path: '/Authors'}" >
-					<core:ListItem key="{ID}" text="{name}"/>
-				</mdcf:ListFieldHelp>
+				<mdc:ValueHelp id="VH1"
+					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
+					<mdc:typeahead>
+						<mdcv:Popover>
+							<mdcvc:FixedList items="{/Authors}" useAsValueHelp="true">
+								<mdcf:ListFieldHelpItem key="{ID}" text="{name}"/>
+							</mdcvc:FixedList>
+						</mdcv:Popover>
+					</mdc:typeahead>
+				</mdc:ValueHelp>
 			</mdc:dependents>
 		</mdc:Field>
 
 		<Label text="List with additionalText (select-like)" />
-		<mdc:Field id="F2" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="FH2" display="DescriptionValue" editMode="Editable" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}">
+		<mdc:Field id="F2" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="VH2" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
 			<mdc:dependents>
-				<mdcf:ListFieldHelp
-					id="FH2"
-					filterList="false"
-					useFirstMatch="true"
-					items="{path: '/Authors'}" >
-					<core:ListItem key="{ID}" text="{name}" additionalText="{ID}"/>
-				</mdcf:ListFieldHelp>
+				<mdc:ValueHelp id="VH2"
+					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
+					<mdc:typeahead>
+						<mdcv:Popover id="VH2-Pop">
+							<mdcvc:FixedList id="VH2-FL" items="{/Authors}" useAsValueHelp="true" filterList="false" useFirstMatch="true">
+								<mdcf:ListFieldHelpItem key="{ID}" text="{name}" additionalText="{ID}"/>
+							</mdcvc:FixedList>
+						</mdcv:Popover>
+					</mdc:typeahead>
+				</mdc:ValueHelp>
 			</mdc:dependents>
 		</mdc:Field>
 
 		<Label text="Combobox (Suggest)" />
-		<mdc:Field id="F3" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="FH3" display="DescriptionValue" editMode="Editable" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}">
+		<mdc:Field id="F3" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="VH3" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
 			<mdc:dependents>
-				<mdcf:FieldValueHelp
-					id="FH3"
-					noDialog="true"
-					title="Author"
-					filterFields="$search"
-					keyPath="ID"
-					descriptionPath="name"
-					delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-					<mdcf:content>
-						<mdcf:FieldValueHelpMTableWrapper>
-							<mdcf:table>
-								<Table items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+				<mdc:ValueHelp id="VH3"
+					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
+					<mdc:typeahead>
+						<mdcv:Popover id="VH3-Pop" title="Author">
+							<mdcvc:MTable id="VH3-Pop-Cont" keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="true">
+								<Table id="VH3-Pop-Table" items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectMaster">
 									<columns>
 										<Column width="5rem">
 											<header>
@@ -88,41 +85,22 @@
 										</ColumnListItem>
 									</items>
 								</Table>
-							</mdcf:table>
-						</mdcf:FieldValueHelpMTableWrapper>
-					</mdcf:content>
-				</mdcf:FieldValueHelp>
+							</mdcvc:MTable>
+						</mdcv:Popover>
+					</mdc:typeahead>
+				</mdc:ValueHelp>
 			</mdc:dependents>
 		</mdc:Field>
 
-		<Label text="ValueHelp using mTableWrapper" />
-		<mdc:Field id="F4" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="FH4" display="DescriptionValue" editMode="Editable" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}">
+		<Label text="ValueHelp using mTable in dialog" />
+		<mdc:Field id="F4" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="VH4" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
 			<mdc:dependents>
-				<mdcf:FieldValueHelp
-					id="FH4"
-					noDialog="false"
-					title="Author"
-					filterFields="$search"
-					keyPath="ID"
-					descriptionPath="name"
-					delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-					<mdcf:filterBar>
-						<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}" >
-							<vhfb:filterItems>
-								<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType="Edm.Int32"  conditions="{$filters>/conditions/ID}"/>
-								<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}"/>
-								<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Date of Birth" dataType="Edm.Date" maxConditions="-1" conditions="{$filters>/conditions/dateOfBirth}" fieldHelp="FH2-2">
-									<mdc:dependents>
-										<mdcf:FieldValueHelp id="FH2-2" title="Date of Birth" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
-									</mdc:dependents>
-								</mdc:FilterField>
-							</vhfb:filterItems>
-						</vhfb:FilterBar>
-					</mdcf:filterBar>
-					<mdcf:content>
-						<mdcf:FieldValueHelpMTableWrapper>
-							<mdcf:table>
-								<Table items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+				<mdc:ValueHelp id="VH4"
+					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
+					<mdc:typeahead>
+						<mdcv:Popover id="VH4-Pop" title="Author">
+							<mdcvc:MTable id="VH4-Pop-Cont" keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+								<Table id="VH4-Pop-Table" items='{path : "/Authors", length: 10}' width="30rem" mode="SingleSelectMaster">
 									<columns>
 										<Column width="5rem">
 											<header>
@@ -150,36 +128,75 @@
 										</ColumnListItem>
 									</items>
 								</Table>
-							</mdcf:table>
-						</mdcf:FieldValueHelpMTableWrapper>
-					</mdcf:content>
-				</mdcf:FieldValueHelp>
+							</mdcvc:MTable>
+						</mdcv:Popover>
+					</mdc:typeahead>
+					<mdc:dialog>
+						<mdcv:Dialog id="VH4-Dia" title="Author">
+							<mdcvc:MTable id="VH4-Dia-Cont" keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+								<mdcvc:filterBar>
+									<vhfb:FilterBar id="VH4-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+										<vhfb:filterItems>
+											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="ID" dataType="Edm.Int32"  conditions="{$filters>/conditions/ID}"/>
+											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Name" conditions="{$filters>/conditions/name}"/>
+											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Date of Birth" dataType="Edm.Date" maxConditions="-1" conditions="{$filters>/conditions/dateOfBirth}" fieldHelp="VH2-2">
+												<mdc:dependents>
+													<mdc:ValueHelp id="VH2-2" delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
+														<mdc:dialog>
+															<mdcv:Dialog title="Date of Birth">
+																<mdcvc:Conditions label="Date of Birth"/>
+															</mdcv:Dialog>
+														</mdc:dialog>
+													</mdc:ValueHelp>
+												</mdc:dependents>
+											</mdc:FilterField>
+										</vhfb:filterItems>
+									</vhfb:FilterBar>
+								</mdcvc:filterBar>
+								<Table id="VH4-Dia-Table" items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectMaster">
+									<columns>
+										<Column width="5rem">
+											<header>
+												<Text text="ID" />
+											</header>
+										</Column>
+										<Column>
+											<header>
+												<Text text="Name" />
+											</header>
+										</Column>
+										<Column width="9rem">
+											<header>
+												<Text text="Date of Birth" />
+											</header>
+										</Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Active">
+											<cells>
+												<Text text="{ID}" />
+												<Text text="{name}" />
+												<Text text="{dateOfBirth}" />
+											</cells>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</mdcvc:MTable>
+						</mdcv:Dialog>
+					</mdc:dialog>
+				</mdc:ValueHelp>
 			</mdc:dependents>
 		</mdc:Field>
 
-		<Label text="ValueHelp using m/mdcTableWrapper" />
-		<mdc:Field id="F5" fieldHelp="FH5" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" display="DescriptionValue" editMode="Editable" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}">
+		<Label text="ValueHelp using mdcTable in dialog" />
+		<mdc:Field id="F5" fieldHelp="VH5" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" display="DescriptionValue" editMode="Editable" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
 			<mdc:dependents>
-				<mdcf:FieldValueHelp
-					filterFields="$search"
-					title="Author"
-					id="FH5"
-					noDialog="false"
-					keyPath="ID"
-					descriptionPath="name"
-					delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-					<mdcf:filterBar>
-						<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}" >
-							<vhfb:filterItems>
-								<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType="Edm.Int32" conditions="{$filters>/conditions/ID}"/>
-								<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}"/>
-							</vhfb:filterItems>
-						</vhfb:FilterBar>
-					</mdcf:filterBar>
-					<mdcf:suggestContent>
-						<mdcf:FieldValueHelpMTableWrapper>
-							<mdcf:table>
-								<Table items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+				<mdc:ValueHelp id="VH5"
+					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
+					<mdc:typeahead>
+						<mdcv:Popover id="VH5-Pop" title="Author">
+							<mdcvc:MTable id="VH5-Pop-Cont" keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+								<Table id="VH5-Pop-Table" items='{path : "/Authors", length: 10}' width="30rem" mode="SingleSelectMaster">
 									<columns>
 										<Column width="5rem">
 											<header>
@@ -207,38 +224,44 @@
 										</ColumnListItem>
 									</items>
 								</Table>
-							</mdcf:table>
-						</mdcf:FieldValueHelpMTableWrapper>
-					</mdcf:suggestContent>
-					<mdcf:dialogContent>
-						<mdcf:FieldValueHelpMdcTableWrapper>
-							<mdcf:table>
-								<mdc:Table autoBindOnInit="true" id="FF5-gridtable" width="30rem" selectionMode="Single" p13nMode="Column,Sort"
-									delegate="{name: 'sap/ui/mdc/sample/FieldValueHelp/GridTable.delegate', payload: {collectionName: 'Authors'}}"
+							</mdcvc:MTable>
+						</mdcv:Popover>
+					</mdc:typeahead>
+					<mdc:dialog>
+						<mdcv:Dialog id="VH5-Dia" title="Author">
+							<mdcvc:MDCTable id="VH5-Dia-Cont" keyPath="ID" descriptionPath="name" filterFields="$search">
+								<mdcvc:filterBar>
+									<vhfb:FilterBar id="VH5-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+										<vhfb:filterItems>
+											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="ID" dataType="Edm.Int32"  conditions="{$filters>/conditions/ID}"/>
+											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Name" conditions="{$filters>/conditions/name}"/>
+										</vhfb:filterItems>
+									</vhfb:FilterBar>
+								</mdcvc:filterBar>
+								<mdc:Table id="VH5-Dia-Table" autoBindOnInit="true" selectionMode="SingleMaster" p13nMode="Column,Sort" width="100%" height="100%"
+									delegate='\{"name": "sap/ui/mdc/sample/FieldValueHelp/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 									threshold="50">
-
 									<mdc:columns>
-										<mdc:table.Column id="id" header="ID" dataProperty="ID" initialIndex="1">
-											<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+										<mdc:table.Column id="VH5-Dia-ColId" header="ID" dataProperty="ID" initialIndex="1">
+											<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{ID}" editMode="Display"/>
 										</mdc:table.Column>
-										<mdc:table.Column id="name" header="Name" dataProperty="name" initialIndex="2">
-											<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="Display"/>
+										<mdc:table.Column id="VH5-Dia-ColName" header="Name" dataProperty="name" initialIndex="2">
+											<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{name}" editMode="Display"/>
 										</mdc:table.Column>
-										<mdc:table.Column id="dateofBirth" header="Date of Birth" dataProperty="descr" initialIndex="2">
-											<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{dateOfBirth}" editMode="Display"/>
+										<mdc:table.Column id="VH5-Dia-ColDateofBirth" header="Date of Birth" dataProperty="dateOfBirth" initialIndex="2">
+											<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{dateOfBirth}" editMode="Display"/>
 										</mdc:table.Column>
 									</mdc:columns>
 									<mdc:type>
 										<mdc:table.GridTableType rowCountMode="Auto"/>
 									</mdc:type>
 								</mdc:Table>
-							</mdcf:table>
-						</mdcf:FieldValueHelpMdcTableWrapper>
-					</mdcf:dialogContent>
-				</mdcf:FieldValueHelp>
+							</mdcvc:MDCTable>
+						</mdcv:Dialog>
+					</mdc:dialog>
+				</mdc:ValueHelp>
 			</mdc:dependents>
 		</mdc:Field>
-
 
 	</form:SimpleForm>
 </mvc:View>

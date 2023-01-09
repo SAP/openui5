@@ -181,6 +181,33 @@ sap.ui.define([
 		}
 
 		oBindingInfo.filters = new Filter(aFilters, true);
+
+		// select In- and OutParameter values
+		var oVHPayload = oMDCTable.getParent().getParent().getParent().getPayload();
+		if (oVHPayload) {
+			var aInParameters = oVHPayload.inParameters || [];
+			var aOutParameters = oVHPayload.outParameters || [];
+			var sContentId = oMDCTable.getParent().getId();
+			var aProperties = [];
+			aInParameters.forEach(function(oInParameter) {
+				if (sContentId.endsWith(oInParameter.contentId)) {
+					aProperties.push(oInParameter.target);
+				}
+			});
+			aOutParameters.forEach(function(oOutParameter) {
+				if (sContentId.endsWith(oOutParameter.contentId) && aProperties.indexOf(oOutParameter.target) < 0) {
+					aProperties.push(oOutParameter.target);
+				}
+			});
+
+			if (aProperties.length > 0) {
+				if (!oBindingInfo.parameters) {
+					oBindingInfo.parameters = {};
+				}
+				oBindingInfo.parameters.$select = aProperties;
+			}
+		}
+
 	};
 
 	ODataTableDelegate.getFilterDelegate = function() {
