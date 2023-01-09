@@ -161,7 +161,7 @@
 	<l:VerticalLayout
 		class="sapUiContentPadding"
 		width="100%">
-		<Label text="ObjectStatus with style sapMObjectStatusLarge applied" design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
+		<Label text="ObjectStatus with and without sapMObjectStatusLongText CSS class" design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
 		<Table>
 			<columns>
 				<Column>
