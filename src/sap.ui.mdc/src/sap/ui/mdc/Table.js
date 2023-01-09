@@ -1869,7 +1869,7 @@ sap.ui.define([
 	 * returns an initialized <code>ExportHandler</code> instance. The
 	 * instance will be cached for subsequent calls.
 	 *
-	 * @returns {Promise} Promise that resolves with an initialized <code>ExportHandler</code> instance
+	 * @returns {Promise<sap.ui.export.ExportHandler>} Promise that resolves with an initialized <code>ExportHandler</code> instance
 	 * @private
 	 */
 	Table.prototype._getExportHandler = function() {
