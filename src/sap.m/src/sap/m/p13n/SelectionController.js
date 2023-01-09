@@ -30,7 +30,6 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @public
-	 * @experimental Since 1.104. Please note that the API of this control is not yet finalized!
 	 * @alias sap.m.p13n.SelectionController
 	 */
 	var SelectionController = BaseObject.extend("sap.m.p13n.SelectionController",{

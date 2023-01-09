@@ -24,7 +24,6 @@ sap.ui.define(['sap/ui/core/Element'],
 		 * @alias sap.m.p13n.AbstractContainerItem
 		 * @author SAP SE
 		 * @version ${version}
-		 * @experimental Since 1.96.
 	 	 * @since 1.96
 		 * @ui5-restricted
 		 */

@@ -13,9 +13,8 @@ sap.ui.define([
 	 * For example, this controller can be used for <code>sap.ui.mdc</code> controls.
 	 *
 	 * @class
-	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 *
-	 * @experimental Since 1.104.
 	 * @since 1.104
 	*/
 	var PersistenceProvider = CoreControl.extend("sap.m.p13n.PersistenceProvider", /** @lends sap.ui.mdc.p13n.PersistenceProvider.prototype */ {
