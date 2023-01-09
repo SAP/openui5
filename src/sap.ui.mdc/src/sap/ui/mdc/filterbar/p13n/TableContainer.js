@@ -84,5 +84,9 @@ sap.ui.define([
 		this._oTable = null;
 	};
 
+	TableContainer.prototype.getInitialFocusedControl = function() {
+		return this.oLayout.getInitialFocusedControl && this.oLayout.getInitialFocusedControl();
+	};
+
 	return TableContainer;
 });

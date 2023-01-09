@@ -81,6 +81,10 @@ sap.ui.define([
 		return pModification;
 	};
 
+	AdaptationFilterBar.prototype.getInitialFocusedControl = function() {
+		return this._oFilterBarLayout.getInitialFocusedControl();
+	};
+
 	AdaptationFilterBar.prototype.applySettings = function() {
 		FilterBarBase.prototype._applySettings.apply(this, arguments);
 		this._waitForAdaptControlAndPropertyHelper().then(function() {

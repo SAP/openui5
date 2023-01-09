@@ -349,6 +349,10 @@ sap.ui.define([
 		return oItem && oItem.getBindingContext(sModelName);
 	};
 
+	FilterableListContent.prototype.getInitialFocusedControl = function() {
+		return this._getPriorityFilterBar().getInitialFocusedControl();
+	};
+
 	FilterableListContent.prototype._getTypesForConditions = function (oConditions) {
 		var oDelegate = this._getValueHelpDelegate();
 		var oDelegatePayload = this._getValueHelpDelegatePayload();

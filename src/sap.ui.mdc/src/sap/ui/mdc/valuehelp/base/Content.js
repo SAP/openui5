@@ -277,6 +277,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Getter for the initial focusable <code>control</code> on the panel.
+	 *
+	 * @returns {control} Control instance which could get the focus.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Content.prototype.getInitialFocusedControl = function() {
+		return null;
+	};
+
+	/**
 	 * Called if the content will be hidden.
 	 *
 	 * @private

@@ -73,5 +73,9 @@ sap.ui.define([
 		IFilterContainer.prototype.exit.apply(this, arguments);
 	};
 
+	GroupContainer.prototype.getInitialFocusedControl = function() {
+		return this.oLayout._getSearchField && this.oLayout._getSearchField();
+	};
+
 	return GroupContainer;
 });

@@ -714,6 +714,16 @@ sap.ui.define([
 
 			var fnRenderContent = function () {
 				this._renderSelectedContent(this._sInitialContentKey, function () {
+
+					var oCurrentContent = this.getContent().find(function (oContent) {
+						return oContent.getId() === this.getProperty("_selectedContentKey");
+					}.bind(this));
+
+					var oInitialFocusedControl = oCurrentContent.getInitialFocusedControl();
+					if (oInitialFocusedControl) {
+						oDialog.setInitialFocus(oInitialFocusedControl);
+					}
+
 					oDialog.open();
 					this.getContent().forEach(function (oContent) {
 						oContent.onContainerOpen();
