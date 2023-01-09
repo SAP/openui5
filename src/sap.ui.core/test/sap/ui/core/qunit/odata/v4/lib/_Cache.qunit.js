@@ -1173,6 +1173,47 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#resetChangesForPath: inactive contexts", function () {
+		var oPostBody = [
+			{"@$ui5._" : {transient : "update"}},
+			{"@$ui5._" : {transient : "$inactive.foo", transientPredicate : "($uid=123-3)"}},
+			{"@$ui5._" : {transient : "$inactive.foo", transientPredicate : "($uid=123-3)"},
+				"@$ui5.context.isInactive" : 1},
+			{"@$ui5._" : {transient : "$inactive.foo", transientPredicate : "($uid=123-3)"},
+				"@$ui5.context.isInactive" : true},
+			{"@$ui5._" : {transient : "$inactive.foo", transientPredicate : "($uid=4711)"},
+				"@$ui5.context.isInactive" : 1}
+			],
+			oCache = new _Cache(this.oRequestor, "TEAMS"),
+			oCacheMock = this.mock(oCache);
+
+		oCache.mPostRequests = {"foo/bar" : oPostBody};
+
+		oCacheMock.expects("checkSharedRequest").withExactArgs();
+		this.mock(_Helper).expects("resetInactiveEntity")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "($uid=123-3)", oPostBody[2]);
+		this.mock(this.oRequestor).expects("removePost").never();
+
+		// code under test
+		oCache.resetChangesForPath("($uid=123-3)");
+
+		oCacheMock.expects("checkSharedRequest").withExactArgs();
+
+		// code under test
+		oCache.resetChangesForPath("(");
+
+		oCacheMock.expects("checkSharedRequest").withExactArgs();
+
+		// code under test
+		oCache.resetChangesForPath("/foo/bar($uid=");
+
+		oCacheMock.expects("checkSharedRequest").withExactArgs();
+
+		// code under test
+		oCache.resetChangesForPath("~");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_Cache#setActive", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS");
 
@@ -8775,6 +8816,7 @@ sap.ui.define([
 		if (bInactive) {
 			assert.deepEqual(oCache.aElements[bAtEndOfCreated ? 1 : 0], {
 				"@$ui5._" : {
+					initialData : {},
 					postBody : {},
 					transient : "$inactive.updateGroup",
 					transientPredicate : sTransientPredicate
@@ -8832,6 +8874,9 @@ sap.ui.define([
 
 		if (bInactive) {
 			assert.strictEqual(
+				_Helper.hasPrivateAnnotation(oCache.aElements[bAtEndOfCreated ? 1 : 0],
+					"initialData"), bStayInactive);
+			assert.strictEqual(
 				oCache.aElements[bAtEndOfCreated ? 1 : 0]["@$ui5.context.isInactive"],
 				bStayInactive ? 1 : false, "isInactive");
 			assert.strictEqual(oCache.iActiveElements, bStayInactive ? 0 : 1);
@@ -8846,6 +8891,54 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache: create inactive entity with initial data", function (assert) {
+		var oCache = _Cache.create(this.oRequestor, "Employees"),
+			oCanceledError = new Error(),
+			oCreateGroupLock = {getGroupId : function () {}},
+			oEntityDataCleaned = {foo : "bar"},
+			oHelperMock = this.mock(_Helper),
+			oInitialData = {foo : "bar"},
+			sTransientPredicate = "($uid=id-1-23)";
+
+		oCanceledError.canceled = true;
+
+		this.mock(oCreateGroupLock).expects("getGroupId")
+			.withExactArgs().returns("$inactive.updateGroup");
+		oHelperMock.expects("publicClone")
+			.withExactArgs(sinon.match.same(oInitialData), true).returns(oEntityDataCleaned);
+		oHelperMock.expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oEntityDataCleaned), "postBody",
+				sinon.match(oEntityDataCleaned));
+		oHelperMock.expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oEntityDataCleaned), "transientPredicate",
+				sTransientPredicate);
+		oHelperMock.expects("publicClone")
+			.withExactArgs(sinon.match.same(oEntityDataCleaned), true).returns("~oInitialData~");
+		oHelperMock.expects("setPrivateAnnotation")
+			.withExactArgs({"@$ui5.context.isTransient" : true, foo : "bar"}, "initialData",
+				"~oInitialData~");
+		oHelperMock.expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oEntityDataCleaned), "transient",
+				"$inactive.updateGroup");
+
+		// rejecting the promise to make the test easier / skip irrelevant parts
+		this.oRequestorMock.expects("request")
+			.withExactArgs("POST", "Employees", sinon.match.same(oCreateGroupLock), null,
+				sinon.match.object, sinon.match.func, sinon.match.func, undefined,
+				"Employees" + sTransientPredicate)
+			.rejects(oCanceledError);
+
+		// code under test
+		oCache.create(oCreateGroupLock, SyncPromise.resolve("Employees"), "",
+				sTransientPredicate, oInitialData)
+			.then(function () {
+				assert.ok(false, "Unexpected success");
+			}, function (oError) {
+				assert.strictEqual(oError, oCanceledError);
+			});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: create entity, canceled", function (assert) {

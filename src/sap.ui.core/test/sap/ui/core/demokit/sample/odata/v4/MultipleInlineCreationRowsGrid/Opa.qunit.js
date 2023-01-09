@@ -67,6 +67,14 @@ sap.ui.getCore().attachInit(function () {
 						message : "ID must not be empty",
 						type : sap.ui.core.MessageType.Warning
 					}]);
+					// reset edited inactive row
+					When.onTheObjectPage.pressResetOrDeletePartButton(1);
+					Then.onTheObjectPage.checkPart(1, "", "Inactive", "");
+					When.onTheObjectPage.enterPartDescription(1, "Part 99");
+					Then.onTheMessagePopover.checkMessages([{
+						message : "ID must not be empty",
+						type : sap.ui.core.MessageType.Warning
+					}]);
 					When.onTheObjectPage.enterPartId(1, "99", bSubmitModeAPI);
 					Then.onTheObjectPage.checkPartsLength(6);
 					Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 4 Parts");
@@ -104,7 +112,7 @@ sap.ui.getCore().attachInit(function () {
 						Then.onTheObjectPage.checkPart(2, "101", "Persisted");
 
 						// delete row 2
-						When.onTheObjectPage.pressDeletePartButton(2);
+						When.onTheObjectPage.pressResetOrDeletePartButton(2);
 						When.onTheObjectPage.confirmDeletion();
 						Then.onTheObjectPage.checkPartsLength(6);
 						Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 4 Parts");
@@ -121,7 +129,7 @@ sap.ui.getCore().attachInit(function () {
 						Then.onTheObjectPage.checkPart(2, "101", "Persisted");
 
 						// delete row 2
-						When.onTheObjectPage.pressDeletePartButton(3);
+						When.onTheObjectPage.pressResetOrDeletePartButton(3);
 						When.onTheObjectPage.confirmDeletion();
 						Then.onTheObjectPage.checkPartsLength(7);
 						Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 5 Parts");
@@ -175,6 +183,14 @@ sap.ui.getCore().attachInit(function () {
 						message : "ID must not be empty",
 						type : sap.ui.core.MessageType.Warning
 					}]);
+					// reset edited inactive row
+					When.onTheObjectPage.pressResetOrDeletePartButton(3);
+					Then.onTheObjectPage.checkPart(3, "", "Inactive", "");
+					When.onTheObjectPage.enterPartDescription(3, "Part 99");
+					Then.onTheMessagePopover.checkMessages([{
+						message : "ID must not be empty",
+						type : sap.ui.core.MessageType.Warning
+					}]);
 					When.onTheObjectPage.enterPartId(3, "99", bSubmitModeAPI);
 					Then.onTheObjectPage.checkPartsLength(6);
 					Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 4 Parts");
@@ -210,7 +226,7 @@ sap.ui.getCore().attachInit(function () {
 						Then.onTheObjectPage.checkPart(5, "101", "Persisted");
 
 						// delete row 6
-						When.onTheObjectPage.pressDeletePartButton(5);
+						When.onTheObjectPage.pressResetOrDeletePartButton(5);
 						When.onTheObjectPage.confirmDeletion();
 						Then.onTheObjectPage.checkPartsLength(6);
 						Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 4 Parts");
@@ -230,7 +246,7 @@ sap.ui.getCore().attachInit(function () {
 						Then.onTheObjectPage.checkPart(3, "222", "Transient");
 						Then.onTheObjectPage.checkPart(4, "", "Inactive");
 						Then.onTheObjectPage.checkPart(5, "", "Inactive");
-						When.onTheObjectPage.pressDeletePartButton(3);
+						When.onTheObjectPage.pressResetOrDeletePartButton(3);
 						When.onTheObjectPage.confirmDeletion();
 						Then.onTheObjectPage.checkPartsLength(5);
 						Then.onTheObjectPage.checkPart(3, "", "Inactive");
@@ -244,7 +260,7 @@ sap.ui.getCore().attachInit(function () {
 						Then.onTheObjectPage.checkPart(7, "", "Inactive");
 
 						// delete row 5
-						When.onTheObjectPage.pressDeletePartButton(4);
+						When.onTheObjectPage.pressResetOrDeletePartButton(4);
 						When.onTheObjectPage.confirmDeletion();
 						Then.onTheObjectPage.checkPartsLength(7);
 						Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 5 Parts");

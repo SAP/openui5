@@ -113,26 +113,27 @@ sap.ui.define([
 		onActivate : function (oEvent) {
 			var oBinding = oEvent.getSource(),
 				oContext = oEvent.getParameter("context"),
+				oMessage = this.mCreateActivateMessages[oContext.getPath()],
 				oMessageManager = sap.ui.getCore().getMessageManager(),
 				that = this;
 
-			this.mMessages = this.mMessages || [];
-
 			if (!oContext.getProperty("ID")) {
-				// do not activate row if no ID is given
+				// do not activate context if no ID is given
 				oEvent.preventDefault();
-
-				this.mMessages[oContext.getPath()] = new Message({
-					message : "ID must not be empty",
-					type : sap.ui.core.MessageType.Warning,
-					technical : true,
-					processor : oContext.getModel(),
-					target : oContext.getPath() + "/ID"
-				});
-				oMessageManager.addMessages(this.mMessages[oContext.getPath()]);
+				if (!oMessage) {
+					oMessage = this.mCreateActivateMessages[oContext.getPath()] = new Message({
+						message : "ID must not be empty",
+						type : sap.ui.core.MessageType.Warning,
+						technical : true,
+						processor : oContext.getModel(),
+						target : oContext.getPath() + "/ID"
+					});
+				}
+				oMessageManager.addMessages(oMessage);
 			} else {
-				oMessageManager.removeMessages(this.mMessages[oContext.getPath()]);
-				that.messagePopover.close();
+				oMessageManager.removeMessages(oMessage);
+				delete this.mCreateActivateMessages[oContext.getPath()];
+				this.messagePopover.navigateBack();
 
 				setTimeout(function () { // there are sporadic issues without using setTimeout
 					if (oBinding.getPath() === "/Products") {
@@ -156,17 +157,29 @@ sap.ui.define([
 		onDelete : function (oEvent) {
 			var oContext = oEvent.getSource().getBindingContext(),
 				sEntity = oContext.getBinding().getPath() === "/Products" ? "product" : "part",
-				sObjectId = oContext.getProperty("ID");
+				sObjectId = oContext.getProperty("ID"),
+				that = this;
 
-			MessageBox.confirm(
-				"Do you really want to delete " + sEntity + " " + sObjectId + "?",
-				function (sCode) {
-					if (sCode === "OK") {
-						oContext.delete("$auto");
-					}
-				},
-				"Confirm Deletion"
-			);
+			if (oContext.isInactive() === 1) {
+				oContext.resetChanges();
+				sap.ui.getCore().getMessageManager()
+					.removeMessages(that.mCreateActivateMessages[oContext.getPath()]);
+				delete this.mCreateActivateMessages[oContext.getPath()];
+				this.messagePopover.navigateBack();
+			} else {
+				MessageBox.confirm(
+					"Do you really want to delete " + sEntity + " " + sObjectId + "?",
+					function (sCode) {
+						if (sCode === "OK") {
+							oContext.delete("$auto");
+							if (sEntity === "product") {
+								that.oUIModel.setProperty("/sLayout", LayoutType.OneColumn);
+							}
+						}
+					},
+					"Confirm Deletion"
+				);
+			}
 		},
 
 		onExit : function () {
@@ -188,11 +201,7 @@ sap.ui.define([
 				"sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.legacy")
 				|| oSearchParams.get("legacy");
 
-			oSelectRowCount.setSelectedItem(oSelectRowCount.getItems().find(function (oItem) {
-				// noinspection EqualityComparisonWithCoercionJS
-				return oItem.getKey() == iEmptyRowCount;
-			}));
-
+			this.mCreateActivateMessages = [];
 			this.initMessagePopover("showMessages");
 			this.oUIModel = new JSONModel({
 				sActivity : "",
@@ -203,6 +212,8 @@ sap.ui.define([
 				bSortPartsQuantity : true,
 				sSortPartsQuantityIcon : ""
 			});
+
+			oSelectRowCount.setSelectedKey("" + iEmptyRowCount);
 
 			oView.setModel(this.oUIModel, "ui");
 			oView.setModel(oModel, "headerContext0");
