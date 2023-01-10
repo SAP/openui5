@@ -1,0 +1,445 @@
+{
+  "@odata.context": "../../$metadata#FileShareItems",
+  "@odata.metadataEtag": "W/\"20220721182137\"",
+  "value": [
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "0ACGgV1bbQGeXUk9PVA",
+      "ParentFileShareItem": "GoogleConnectorEntry",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "My Drive",
+      "CreatedByUser": "tester_em_go@sapworkspace.com",
+      "CreationDateTime": "2022-04-07T10:51:47.823Z",
+      "LastChangedByUser": "tester_em_go@sapworkspace.com",
+      "LastChangeDateTime": "2022-04-07T10:51:47.823Z",
+      "isDocumentCreationAllowed": true,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "SharedDrives",
+      "ParentFileShareItem": "GoogleConnectorEntry",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "Shared drives",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-26T08:46:05.556Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-26T08:46:05.556Z",
+      "isDocumentCreationAllowed": false,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL2",
+      "FileShareItem": "SharedWithMe",
+      "ParentFileShareItem": "GoogleConnectorEntry",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "Shared with me",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-26T08:46:05.556Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-26T08:46:05.556Z",
+      "isDocumentCreationAllowed": false,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    }
+  ],
+  "fileShareItemsChildrenValue": [
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1rHDDG7dKR6xrhpztP2gQVzgWwjtQyElz",
+      "ParentFileShareItem": "0ACGgV1bbQGeXUk9PVA",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "Folder Name 1",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-25T06:51:11.669Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-25T06:51:12.411Z",
+      "isDocumentCreationAllowed": true,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1yVdxnYwWCz_XBr0YM62VOiPtIUw50Kul",
+      "ParentFileShareItem": "0ACGgV1bbQGeXUk9PVA",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "Folder Name 2",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-22T10:44:23.72Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-22T10:44:24.39Z",
+      "isDocumentCreationAllowed": true,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1K5CMMH53x186qXOi0eQpqXqdjWIsbGKd",
+      "ParentFileShareItem": "0ACGgV1bbQGeXUk9PVA",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "Folder Name 3",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-22T10:34:10.531Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-22T10:34:11.64Z",
+      "isDocumentCreationAllowed": true,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1li5RUwc5YbNducZUup1j83ICBcA15pe9",
+      "ParentFileShareItem": "0ACGgV1bbQGeXUk9PVA",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "Folder Name 4",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-22T10:30:41.423Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-22T10:30:42.197Z",
+      "isDocumentCreationAllowed": true,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1fLxKmQe3tL4DzuTBp1KIb9Z9tfuvrZvM",
+      "ParentFileShareItem": "0ACGgV1bbQGeXUk9PVA",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "Folder Name 5",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-22T10:28:07.88Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-22T10:28:07.854Z",
+      "isDocumentCreationAllowed": true,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1ai8eEXnGkDYVgAt-_QBsetnltMXtIz5C",
+      "ParentFileShareItem": "0ACGgV1bbQGeXUk9PVA",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "Folder Name 6",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-22T10:16:58.826Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-22T10:16:59.56Z",
+      "isDocumentCreationAllowed": true,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1DA_9xZbrl_vEe6TFvcT0ceSM3JDym1tC",
+      "ParentFileShareItem": "TestFolder7",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "Folder Name 7",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-22T10:13:58.826Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-22T10:13:59.937Z",
+      "isDocumentCreationAllowed": true,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1eE3Ivpn3jO3pGfqR6N2g0xGte3PQXOKq",
+      "ParentFileShareItem": "0ACGgV1bbQGeXUk9PVA",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "Folder Name 8",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-22T09:33:30.302Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-22T09:33:31.74Z",
+      "isDocumentCreationAllowed": true,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1hL2fvONeh_86hcjY89fYCHLCpypgdCUE",
+      "ParentFileShareItem": "0ACGgV1bbQGeXUk9PVA",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "Folder Name 9",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-22T09:15:42.898Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-22T09:15:43.682Z",
+      "isDocumentCreationAllowed": true,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "19gKwShIPT8lM6LQGisG1aGKhV0USObk6",
+      "ParentFileShareItem": "0ACGgV1bbQGeXUk9PVA",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "Folder Name 10",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-22T09:14:33.779Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-22T09:14:34.272Z",
+      "isDocumentCreationAllowed": true,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1VghqkiAj9H4QL5Ex9NRh2nMMPAjZLAhE",
+      "ParentFileShareItem": "0ACGgV1bbQGeXUk9PVA",
+      "FileShareItemKind": "folder",
+      "FileShareItemName": "ReadOnlyFolder",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-25T03:30:53.775Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-25T03:30:54.499Z",
+      "isDocumentCreationAllowed": false,
+      "FileShareItemContent@odata.mediaContentType": null,
+      "FileShareItemContentType": "",
+      "FileShareItemContentSize": "0",
+      "FileShareItemContentLink": "",
+      "__CreateByAssociationControl": {
+        "_Children": true
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1uhBvR_kJB7FfgmQhTkawriBnxq-KkPUX6RQG9tRW8tA",
+      "ParentFileShareItem": "",
+      "FileShareItemKind": "document",
+      "FileShareItemName": "FileName1",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-21T15:07:01.238Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-21T15:07:04.322Z",
+      "isDocumentCreationAllowed": false,
+      "FileShareItemContent@odata.mediaContentType": "application/vnd.google-apps.spreadsheet",
+      "FileShareItemContentType": "application/vnd.google-apps.spreadsheet",
+      "FileShareItemContentSize": "6244",
+      "FileShareItemContentLink": "https://docs.google.com/spreadsheets/d/1uhBvR_kJB7FfgmQhTkawriBnxq-KkPUX6RQG9tRW8tA",
+      "__CreateByAssociationControl": {
+        "_Children": false
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1arYA1qjaGHvKWWn1eAl26XPDlQnR5UKjOnFPqE7gViI",
+      "ParentFileShareItem": "",
+      "FileShareItemKind": "document",
+      "FileShareItemName": "FileName2",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-21T15:05:22.398Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-21T15:05:25.465Z",
+      "isDocumentCreationAllowed": false,
+      "FileShareItemContent@odata.mediaContentType": "application/vnd.google-apps.spreadsheet",
+      "FileShareItemContentType": "application/vnd.google-apps.spreadsheet",
+      "FileShareItemContentSize": "6244",
+      "FileShareItemContentLink": "https://docs.google.com/spreadsheets/d/1arYA1qjaGHvKWWn1eAl26XPDlQnR5UKjOnFPqE7gViI",
+      "__CreateByAssociationControl": {
+        "_Children": false
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1Hn8kpkJ1bqw33h9x-mz1ZYdHZL0Fb1Q9YuYFqaGPmr4",
+      "ParentFileShareItem": "",
+      "FileShareItemKind": "document",
+      "FileShareItemName": "FileName3",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-21T15:07:55.796Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-21T15:08:15.11Z",
+      "isDocumentCreationAllowed": false,
+      "FileShareItemContent@odata.mediaContentType": "application/vnd.google-apps.spreadsheet",
+      "FileShareItemContentType": "application/vnd.google-apps.spreadsheet",
+      "FileShareItemContentSize": "6244",
+      "FileShareItemContentLink": "https://docs.google.com/spreadsheets/d/1Hn8kpkJ1bqw33h9x-mz1ZYdHZL0Fb1Q9YuYFqaGPmr4",
+      "__CreateByAssociationControl": {
+        "_Children": false
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1QoYsjPbCIHI28pSP8r_TTZDDZhR_cladqjiDEwrBEh4",
+      "ParentFileShareItem": "",
+      "FileShareItemKind": "document",
+      "FileShareItemName": "FileName4",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-21T14:57:12.533Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-21T14:57:15.469Z",
+      "isDocumentCreationAllowed": false,
+      "FileShareItemContent@odata.mediaContentType": "application/vnd.google-apps.spreadsheet",
+      "FileShareItemContentType": "application/vnd.google-apps.spreadsheet",
+      "FileShareItemContentSize": "6239",
+      "FileShareItemContentLink": "https://docs.google.com/spreadsheets/d/1QoYsjPbCIHI28pSP8r_TTZDDZhR_cladqjiDEwrBEh4",
+      "__CreateByAssociationControl": {
+        "_Children": false
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    },
+    {
+      "FileShare": "ZPERSONAL",
+      "FileShareItem": "1_BkhWd11fQ_mz4qBZUh8N-pFgD7PQB6hb_H5GikfoRA",
+      "ParentFileShareItem": "",
+      "FileShareItemKind": "document",
+      "FileShareItemName": "FileName5",
+      "CreatedByUser": "tester_em_go",
+      "CreationDateTime": "2022-07-22T11:32:33.94Z",
+      "LastChangedByUser": "tester_em_go",
+      "LastChangeDateTime": "2022-07-22T11:32:37.934Z",
+      "isDocumentCreationAllowed": false,
+      "FileShareItemContent@odata.mediaContentType": "application/vnd.google-apps.spreadsheet",
+      "FileShareItemContentType": "application/vnd.google-apps.spreadsheet",
+      "FileShareItemContentSize": "1538",
+      "FileShareItemContentLink": "https://docs.google.com/spreadsheets/d/1_BkhWd11fQ_mz4qBZUh8N-pFgD7PQB6hb_H5GikfoRA",
+      "__CreateByAssociationControl": {
+        "_Children": false
+      },
+      "__EntityControl": {
+        "Deletable": true,
+        "Updatable": true
+      }
+    }
+  ]
+}
