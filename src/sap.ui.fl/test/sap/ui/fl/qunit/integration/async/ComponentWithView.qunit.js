@@ -293,6 +293,9 @@ sap.ui.define([
 				.returns({
 					getCurrentControlVariantIds: function () {
 						return ["currentVariantReferenceInitial"];
+					},
+					getVariantManagementControlIds: function() {
+						return [];
 					}
 				});
 
@@ -340,11 +343,17 @@ sap.ui.define([
 				.onFirstCall().returns({
 					getCurrentControlVariantIds: function () {
 						return ["currentVariantReferenceInitial"];
+					},
+					getVariantManagementControlIds: function() {
+						return [];
 					}
 				})
 				.onSecondCall().returns({
 					getCurrentControlVariantIds: function () {
 						return ["currentVariantReferenceChanged"];
+					},
+					getVariantManagementControlIds: function() {
+						return [];
 					}
 				});
 
@@ -391,6 +400,9 @@ sap.ui.define([
 				.returns({
 					getCurrentControlVariantIds: function () {
 						return ["currentVariantReferenceInitial"];
+					},
+					getVariantManagementControlIds: function() {
+						return [];
 					}
 				});
 
