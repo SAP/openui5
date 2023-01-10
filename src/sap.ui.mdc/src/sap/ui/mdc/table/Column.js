@@ -103,7 +103,7 @@ sap.ui.define([
 				 * property and for setting the <code>demandPopin</code> property of the column.
 				 * See {@link sap.m.Table#getAutoPopinMode} for more details, which is automatically set to <code>true</code>.
 				 *
-				 * @deprecated as of version 1.109, replaced with {@link sap.ui.mdc.table.ResponsiveColumnSettings#importance} <br/>
+				 * @deprecated as of version 1.110, replaced with {@link sap.ui.mdc.table.ResponsiveColumnSettings#importance} <br/>
 				 * This property will be ignored whenever the {@link sap.ui.mdc.table.ResponsiveColumnSettings} are applied to the column.
 				 */
 				importance: {
