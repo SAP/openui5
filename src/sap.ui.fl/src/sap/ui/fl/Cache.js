@@ -120,7 +120,20 @@ function(
 			.then(function(sCacheKey) {
 				// concat current control variant ids to cachekey if available
 				var oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
-				var aCurrentControlVariantIds = oVariantModel ? oVariantModel.getCurrentControlVariantIds() : [];
+				if (!oVariantModel) {
+					return sCacheKey;
+				}
+				// If there are no changes, the standard variant is created after the variant management control is instantiated
+				// When the cache key is calculated before this happens, the standard variant id is unknown
+				// To avoid inconsistencies between page load and navigation scenarios, all standard variants are filtered
+				var aVariantManagementControlIds = oVariantModel.getVariantManagementControlIds();
+				var aCurrentControlVariantIds = oVariantModel.getCurrentControlVariantIds()
+					.filter(function(sVariantId) {
+						// FIXME: The standard variant flag should be part of the variant instance
+						// This can be changed once the variant data selector is ready
+						// For now rely on the fact that standard variants have the same name as the vm control
+						return !aVariantManagementControlIds.includes(sVariantId);
+					});
 				return _concatControlVariantIdWithCacheKey(sCacheKey, aCurrentControlVariantIds.join("-"));
 			});
 	};

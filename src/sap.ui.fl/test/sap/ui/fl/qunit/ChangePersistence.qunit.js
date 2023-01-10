@@ -107,6 +107,9 @@ sap.ui.define([
 					return {
 						getCurrentControlVariantIds: function() {
 							return [];
+						},
+						getVariantManagementControlIds: function() {
+							return [];
 						}
 					};
 				}

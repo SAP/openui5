@@ -449,6 +449,9 @@ sap.ui.define([
 					return {
 						getCurrentControlVariantIds: function() {
 							return [sControlVariantId1, sControlVariantId2];
+						},
+						getVariantManagementControlIds: function() {
+							return [];
 						}
 					};
 				}
@@ -477,6 +480,9 @@ sap.ui.define([
 					return {
 						getCurrentControlVariantIds: function() {
 							return [sControlVariantId];
+						},
+						getVariantManagementControlIds: function() {
+							return [];
 						}
 					};
 				}
@@ -489,6 +495,35 @@ sap.ui.define([
 				assert.ok(sCacheKey, "then cachekey is returned");
 				assert.equal(sCacheKey, sCacheKeyResult, "then cachekey is trimmed and extended by control variant id");
 			});
+		});
+
+		QUnit.test("getCacheKey is called and cache entry and standard + custom variant ids are available", function(assert) {
+			var sControlVariantId1 = "myStandardVariant";
+			var sControlVariantId2 = "myCustomVariant";
+			var sCacheKeyResult = "<NoTag-" + sControlVariantId2 + ">";
+			var mComponentMock = {
+				name: sComponentName
+			};
+			var oAppComponentMock = {
+				getModel: function() {
+					return {
+						getCurrentControlVariantIds: function() {
+							return [sControlVariantId1, sControlVariantId2];
+						},
+						getVariantManagementControlIds: function() {
+							return [sControlVariantId1, "myStandardVariant2"]; // Standard variant has same name as vm control
+						}
+					};
+				}
+			};
+			var oEntry = _createEntryMap({something: "1"});
+			this.oGetStorageResponseStub.resolves(oEntry);
+
+			return Cache.getCacheKey(mComponentMock, oAppComponentMock)
+				.then(function(sCacheKey) {
+					assert.ok(sCacheKey, "then cachekey is returned");
+					assert.strictEqual(sCacheKey, sCacheKeyResult, "then the standard variants are filtered from the cache key");
+				});
 		});
 	});
 
