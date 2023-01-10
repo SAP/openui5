@@ -188,7 +188,10 @@ sap.ui.define([
 		var sAffectedAggregation = mControlMeta.aggregation;
 		var sAggregationName = sAffectedAggregation ? sAffectedAggregation : oControlMetadata.getDefaultAggregation().name;
 		var oConfig = oExistingConfig || {};
-		oConfig.aggregations = {};
+
+		if (!oConfig.hasOwnProperty("aggregations")) {
+			oConfig.aggregations = {};
+		}
 
 		if (!oConfig.aggregations.hasOwnProperty(sAggregationName)) {
 			if (oControlMetadata.hasAggregation(sAggregationName)) {
