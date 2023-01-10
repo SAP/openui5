@@ -5,10 +5,11 @@ sap.ui.define([
 	'sap/ui/core/message/Message',
 	'sap/ui/core/library',
 	'sap/ui/core/Core',
+	"sap/ui/dom/isBehindOtherElement",
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/Element'
-], function(MessagePopover, MessageItem, MessageToast, Message, coreLibrary, Core, Controller, JSONModel, Element) {
+], function(MessagePopover, MessageItem, MessageToast, Message, coreLibrary, Core, isBehindOtherElement, Controller, JSONModel, Element) {
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType
@@ -51,8 +52,12 @@ sap.ui.define([
 					if (oControl) {
 						oPage.scrollToElement(oControl.getDomRef(), 200, [0, -100]);
 						setTimeout(function(){
+							var bIsBehindOtherElement = isBehindOtherElement(oControl.getDomRef());
+							if (bIsBehindOtherElement) {
+								this.close();
+							}
 							oControl.focus();
-						}, 300);
+						}.bind(this), 300);
 					}
 				},
 				items: {
@@ -235,7 +240,7 @@ sap.ui.define([
 				oRequiredNameInput = this.oView.byId("formContainer").getItems()[4].getContent()[2],
 				oNumericZipInput = this.oView.byId("formContainer").getItems()[5].getContent()[7],
 				oEmailInput = this.oView.byId("formContainer").getItems()[6].getContent()[13],
-				iWeeklyHours = this.oView.byId("formContainerEmployment").getItems()[0].getContent()[13];
+				iWeeklyHours = this.oView.byId("formContainerEmployment").getItems()[0].getContent()[6];
 
 			oButton.setVisible(true);
 			oRequiredNameInput.setValue("");
