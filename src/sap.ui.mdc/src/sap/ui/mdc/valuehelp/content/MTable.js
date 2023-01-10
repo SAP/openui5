@@ -122,8 +122,7 @@ sap.ui.define([
 			var aConditions = this.getConditions();
 			var bHideSelection = this._isSingleSelect() && !FilterableListContent.prototype._isSingleSelect.apply(this); // if table is in single selection but Fild allows multiple values, don't select items
 
-			for (var iId in aItems) {
-				var oItem = aItems[iId];
+			aItems.forEach(function(oItem) {
 				var bSelected = bHideSelection ? false : this._isItemSelected(oItem, aConditions);
 				oItem.setSelected(bSelected);
 				if (this._oTable.indexOfItem(oItem) === this._iNavigateIndex) {
@@ -131,7 +130,7 @@ sap.ui.define([
 				} else {
 					oItem.removeStyleClass("sapMLIBFocused").removeStyleClass("sapMListFocus");
 				}
-			}
+			}.bind(this));
 		}
 	}
 	MTable.prototype.applyFilters = function(sFieldSearch) {
