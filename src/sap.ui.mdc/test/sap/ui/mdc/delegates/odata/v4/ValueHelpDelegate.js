@@ -64,8 +64,8 @@ sap.ui.define([
 	};
 
 	ODataV4ValueHelpDelegate.executeFilter = function(oPayload, oListBinding, iRequestedItems) {
-		oListBinding.getContexts(0, iRequestedItems); // TODO: Clarify, why this is necessary -> without getContexts, sap.fe opa tests fail
-		return this.checkListBindingPending(oPayload, oListBinding, iRequestedItems).then(function () {
+		oListBinding.getContexts(0, iRequestedItems);
+		return Promise.resolve(this.checkListBindingPending(oPayload, oListBinding, iRequestedItems)).then(function () {
 			return oListBinding;
 		});
 	};
