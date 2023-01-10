@@ -16,7 +16,7 @@ sap.ui.define([
 	 *
 	 * @class
 	 * The <code>ActionItem</code> class is used for action items for the <code>sap.m.table.columnmenu.Menu</code>.
-	 * This faceless class can be used to specify control- and application-specific items that should solely serve as actions.
+	 * It can be used to specify control- and application-specific items that should solely serve as actions.
 	 *
 	 * @extends sap.m.table.columnmenu.ItemBase
 	 *
@@ -34,11 +34,11 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * Defines the label that is used for the item.
+				 * Defines the label that is used for the action item.
 				 */
 				label: {type: "string"},
 				/**
-				 * Defines the icon for the menu item.
+				 * Defines the icon for the action item.
 				 */
 				icon: {type: "sap.ui.core.URI"}
 			},
