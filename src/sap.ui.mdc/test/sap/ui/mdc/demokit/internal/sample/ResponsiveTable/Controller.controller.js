@@ -85,11 +85,11 @@ sap.ui.define([
 			var oColumn = this.byId("onlyTableView--mdcTable--Category");
 
 			if (oEvent.getParameter("state")) {
-				oColumn.setTypeSettings(new ResponsiveColumnSettings({
+				oColumn.setExtendedSettings(new ResponsiveColumnSettings({
 					mergeFunction: "getText"
 				}));
 			} else {
-				oColumn.destroyTypeSettings();
+				oColumn.destroyExtendedSettings();
 			}
 		},
 
