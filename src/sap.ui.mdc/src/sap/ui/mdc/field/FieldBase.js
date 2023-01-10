@@ -2252,19 +2252,43 @@ sap.ui.define([
 								}
 							}
 
-							var vOpenByTyping = this.hasOwnProperty("_bOpenByTyping") ? this._bOpenByTyping : oFieldHelp.isTypeaheadSupported();
-							var oFocusedElement = document.activeElement;
-							if (this._bConnected && this._getContent()[0] && vOpenByTyping /*&& !(vOpenByTyping instanceof Promise)*/ && //TODO: isTypeaheadsupported always returns a promise now
-								oFocusedElement && (containsOrEquals(this.getDomRef(), oFocusedElement))) { // only if still connected and focussed
-								if (!this._sFilterValue && oFieldHelp.isOpen()) {
-									oFieldHelp.close(); // close if no filter
-								} else if (this._sFilterValue) {
-									oFieldHelp.setFilterValue(this._sFilterValue);
-									if (this.getMaxConditionsForHelp() === 1 && oFieldHelp.getConditions().length > 0) {
-										// While single-suggestion no item is selected
-										oFieldHelp.setConditions([]);
+							var _handleTypeahead = function () {
+								var oFocusedElement = document.activeElement;
+								if (oFocusedElement && (containsOrEquals(this.getDomRef(), oFocusedElement))) { // only if still connected and focussed
+									var bIsNew = oFieldHelp.isA("sap.ui.mdc.ValueHelp");
+									var bIsFHOpen = oFieldHelp.isOpen();
+									if (!bIsNew && !this._sFilterValue && bIsFHOpen) {
+										oFieldHelp.close(); // close if no filter
+									} else if (bIsNew || this._sFilterValue) {
+										oFieldHelp.setFilterValue(this._sFilterValue);
+										if (this.getMaxConditionsForHelp() === 1 && oFieldHelp.getConditions().length > 0) {
+											// While single-suggestion no item is selected
+											oFieldHelp.setConditions([]);
+										}
+										if (!bIsFHOpen) {
+											/*
+												sap.ui.mdc.ValueHelp can only be "asked" to open a typeahead by a connected control.
+												It will then decide on actual opening after content initialization via ValueHelpDelegate.showTypeahead which can be customized by applications.
+												An already open typeahead content will consult showTypeahead again on any every filtervalue update and eventually close.
+											*/
+											oFieldHelp.open(true);
+										}
 									}
-									oFieldHelp.open(true);
+									_setAriaAttributes.call(this, true);
+									delete this._vLiveChangeValue;
+								}
+							}.bind(this);
+
+							if (this._bConnected && this._getContent()[0]) {
+								if (oFieldHelp.isA("sap.ui.mdc.ValueHelp")) {
+									oFieldHelp.isTypeaheadSupported().then(function (bTypeahead) {
+										return !!bTypeahead && _handleTypeahead();
+									});
+								} else {
+									var vOpenByTyping = this.hasOwnProperty("_bOpenByTyping") ? this._bOpenByTyping : oFieldHelp.isTypeaheadSupported();
+									if (vOpenByTyping) {
+										_handleTypeahead();
+									}
 								}
 								delete this._vLiveChangeValue;
 							}

@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/mdc/ValueHelpDelegate",
+	"./ValueHelpODataV2.delegate",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/base/util/merge",
@@ -61,7 +61,7 @@ sap.ui.define([
 
 		var oConditions = {};
 
-		if (oPayload.in) {
+		if (oPayload.in && oControl) {
 			var oContext;
 			var oCM;
 			if (oControl.isA("sap.ui.mdc.FilterField")) {

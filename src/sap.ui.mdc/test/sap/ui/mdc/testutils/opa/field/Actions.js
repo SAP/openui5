@@ -8,14 +8,16 @@ sap.ui.define([
 	"./waitForField",
 	"../Utils",
 	"sap/ui/events/KeyCodes",
-	"../actions/TriggerEvent"
+	"../actions/TriggerEvent",
+	'sap/ui/test/actions/Press'
 ], function(
 	Opa5,
 	EnterText,
 	waitForField,
 	Utils,
 	KeyCodes,
-	TriggerEvent
+	TriggerEvent,
+	Press
 ) {
     "use strict";
 

@@ -304,6 +304,16 @@
 	 */
 
 	/**
+	 * Defines if the typeahead content desires opening the typeahead whenever a user clicks on a connected control
+	 *
+	 * @name sap.ui.mdc.valuehelp.ITypeaheadContent.shouldOpenOnClick
+	 * @method
+	 * @returns {boolean} True if typeahead can open
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
+	 */
+
+	/**
 	 * The focus visualization of the field help needs to be removed as the user starts typing into the source control.
 	 * @name sap.ui.mdc.valuehelp.ITypeaheadContent.removeFocus
 	 * @method
@@ -484,6 +494,16 @@
 	 * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.shouldOpenOnNavigate
 	 * @method
 	 * @returns {boolean} True if value help shall open as valuehelp
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 */
+
+	/**
+	 * Defines if the typeahead container desires to be opened whenever a user clicks on a connected control
+	 *
+	 * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.shouldOpenOnClick
+	 * @method
+	 * @returns {boolean} True if value help shall open on click
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */

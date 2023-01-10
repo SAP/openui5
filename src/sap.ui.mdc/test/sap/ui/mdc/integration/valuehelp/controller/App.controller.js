@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/Core"
-], function (Controller, ConditionModel, JSONModel, Dialog, Button, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Filter, UriParameters, URI, Fragment, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/mdc/ValueHelpDelegate"
+], function (Controller, ConditionModel, JSONModel, Dialog, Button, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Filter, UriParameters, URI, Fragment, oCore, ValueHelpDelegate) {
 	"use strict";
 
 	function _updateParams(mParams) {
@@ -27,13 +28,15 @@ sap.ui.define([
 	}
 
 	var aAllViews = [
+		{path: "sap.ui.v4demo.view.Typeahead", text: "Explore: Controlled Open State for Typeahead", maxConditions: 1, maxConditionsToggleEnabled: true},
 		{path: "sap.ui.v4demo.view.SingleSelect", text: "Explore: ValueHelp Examples SingleSelect", maxConditions: 1, maxConditionsToggleEnabled: false},
 		{path: "sap.ui.v4demo.view.MultiSelect", text: "Explore: ValueHelp Examples MultiSelect", maxConditions: -1, maxConditionsToggleEnabled: false},
 		{path: "sap.ui.v4demo.view.OPA-1", text: "OPA: Standard Configuration (Single)", maxConditions: 1},
 		{path: "sap.ui.v4demo.view.OPA-2", text: "OPA: Standard Configuration (Multi)", maxConditions: -1},
 		{path: "sap.ui.v4demo.view.OPA-3", text: "OPA: Define Conditions Popover", maxConditions: -1},
 		{path: "sap.ui.v4demo.view.OPA-4", text: "OPA: Dialog with Default FilterBar Configuration", maxConditions: 1},
-		{path: "sap.ui.v4demo.view.OPA-5", footer: "sap.ui.v4demo.view.OPA-5-Footer",  text: "OPA: ValueHelps With Complex Keys", maxConditions: -1, maxConditionsToggleEnabled: true}
+		{path: "sap.ui.v4demo.view.OPA-5", footer: "sap.ui.v4demo.view.OPA-5-Footer",  text: "OPA: ValueHelps With Complex Keys", maxConditions: -1, maxConditionsToggleEnabled: true},
+		{path: "sap.ui.v4demo.view.OPA-6", text: "OPA: Popover.opensOnClick", maxConditions: 1}
 
 	];
 
@@ -41,9 +44,6 @@ sap.ui.define([
 		onInit: function () {
 
 			oCore.getMessageManager().registerObject(this.getView(), true);
-
-			//var oDefaultModel = this.getView().getModel();
-			//oDefaultModel.setSizeLimit(100000);
 
 			this.oParams = UriParameters.fromQuery(location.search);
 			var oParamSuspended = this.oParams.get("suspended");
@@ -108,9 +108,15 @@ sap.ui.define([
 					{key: "02", text: "Division 02 for 1020 20", salesOrganization: "1020", distributionChannel: "20"},
 					{key: "02", text: "Division 02 for 1030 10", salesOrganization: "1030", distributionChannel: "10"},
 					{key: "02", text: "Division 02 for 1030 20", salesOrganization: "1030", distributionChannel: "20"}
-				]
+				],
 
 				// Relevant for SalesOrganization Fragment END
+
+
+				// Relevant for Typeahead Fragment BEG
+				showTypeahead: 'function (oPayload, oContent) {\n\tif (!oContent || (oContent.isA("sap.ui.mdc.valuehelp.base.FilterableListContent") && !oContent.getFilterValue())) { // Do not show non-existing content or suggestions without filterValue\n\t\treturn false;\n\t} else if (oContent.isA("sap.ui.mdc.valuehelp.base.ListContent")) { // All List-like contents should have some data to show\n\t\tvar oListBinding = oContent.getListBinding();\n\t\tvar iLength = oListBinding && oListBinding.getAllCurrentContexts().length;\n\t\treturn iLength > 0;\n\t}\n\treturn true; // All other content should be shown by default\n};',
+				opensOnClick: false
+				// Relevant for Typeahead Fragment END
 
 			});
 
@@ -120,7 +126,6 @@ sap.ui.define([
 			if (oSelectedView.footer) {
 				this.setFooterFragment(sSelectedView);
 			}
-
 		},
 
 		setFragment: function (sFragment, sFragmentController) {
@@ -172,6 +177,14 @@ sap.ui.define([
 				"maxconditions": iMaxConditions
 			});
 
+		},
+
+		// Relevant for Typeahead Fragment END
+
+		onOpensOnClickChange: function (oEvent) {
+			this.oJSONModel.setProperty("opensOnClick", !!oEvent.getParameter("state"));
 		}
+
+		// Relevant for Typeahead Fragment END
 	});
 });

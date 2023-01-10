@@ -48,6 +48,18 @@ sap.ui.define([
 				"sap.ui.core.PopupInterface"
 			],
 			properties: {
+				/**
+				 * Controls the possibility to open this popover container by clicking on a connected control, even if no content enforces it.
+				 *
+				 * <b>Note:</b> By default, a typeahead is only shown to provide suggestions when users enter input in a connected control.
+				 * This property enables scenarios, where popovers need to be shown earlier (e. g. recommendations or recently entered values)
+				 * Please also see {@link sap.ui.mdc.ValueHelpDelegate.showTypahead showTypahead}
+	 			 * @since 1.110.0
+				 */
+				opensOnClick: {
+					type: "boolean",
+					defaultValue: false
+				}
 			},
 			defaultAggregation: "content"
 		}
@@ -234,7 +246,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	Popover.prototype._open = function (oPopover) {
+	Popover.prototype._open = function (oPopover, bTypeahead) {
 		if (oPopover.isOpen()) {
 			return;
 		}
@@ -242,7 +254,13 @@ sap.ui.define([
 		Container.prototype._open.apply(this, arguments);
 
 		var oContent = this._getContent();
-		Promise.resolve(oContent && oContent.onBeforeShow(true)).then(function () {
+		Promise.resolve(oContent && oContent.onBeforeShow(true)).then(function () {// onBeforeShow should guarantee filtering is done, when we observe the table in showTypeahead
+			var oDelegate = this.getValueHelpDelegate();
+			var oPayload = this.getValueHelpDelegatePayload();
+			return Promise.resolve(bTypeahead ? oDelegate.showTypeahead(oPayload, oContent) : true).then(function (bShowTypeahead) {
+				return bShowTypeahead ? Promise.resolve(bShowTypeahead) : Promise.reject(bShowTypeahead);
+			});
+		}.bind(this)).then(function () {
 			var oControl = this.getControl();
 			var oTarget = oControl && oControl.getFocusElementForValueHelp ? oControl.getFocusElementForValueHelp(this.isTypeahead()) : oControl;
 
@@ -253,6 +271,13 @@ sap.ui.define([
 				}
 				oPopover.openBy(oTarget);
 			}
+		}.bind(this)).catch(function (oError) {
+			this._cancelPromise("open");
+
+			if (oError && oError instanceof Error) { // Re-throw actual errors
+				throw oError;
+			}
+
 		}.bind(this));
 	};
 
@@ -366,7 +391,7 @@ sap.ui.define([
 	Popover.prototype.shouldOpenOnClick = function() {
 
 		var oContent = this._getContent();
-		return !!oContent && oContent.shouldOpenOnClick();
+		return this.isPropertyInitial("opensOnClick") ? !!oContent && oContent.shouldOpenOnClick() : this.getOpensOnClick(); //If opensOnClick is not explicitly set,  the content's preference is used instead.
 
 	};
 

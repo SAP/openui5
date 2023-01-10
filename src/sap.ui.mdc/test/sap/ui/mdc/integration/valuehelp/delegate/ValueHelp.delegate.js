@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	'sap/ui/mdc/ValueHelpDelegate',
 	"delegates/odata/v4/ValueHelpDelegate",
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enum/ConditionValidated',
@@ -13,6 +14,7 @@ sap.ui.define([
 	'sap/ui/model/FilterOperator',
 	"sap/ui/model/FilterType"
 ], function(
+	BaseValueHelpDelegate,
 	ODataV4ValueHelpDelegate,
 	Condition,
 	ConditionValidated,
@@ -338,32 +340,19 @@ sap.ui.define([
 		return iCount;
 	};
 
-	ValueHelpDelegate.checkListBindingPending = function (oDelegatePayload, oListBinding, oListBindingInfo) {
+	ValueHelpDelegate.checkListBindingPending = function (oDelegatePayload, oListBinding, iRequestedItems) {
 		// Additional support for JSON Model
 		if (oListBinding && oListBinding.getModel().getMetadata().getName() === 'sap.ui.model.json.JSONModel') {
-			return false;
+			return BaseValueHelpDelegate.checkListBindingPending(oDelegatePayload, oListBinding, iRequestedItems);
 		}
-		return ODataV4ValueHelpDelegate.checkListBindingPending(oDelegatePayload, oListBinding, oListBindingInfo);
+		return ODataV4ValueHelpDelegate.checkListBindingPending(oDelegatePayload, oListBinding, iRequestedItems);
 	};
 
-	ValueHelpDelegate.executeFilter = function(oPayload, oListBinding, oFilter, iRequestedItems) {
-		// Additional support for JSON Model
-		if (oListBinding && oListBinding.getModel().getMetadata().getName() === 'sap.ui.model.json.JSONModel') {
-			oListBinding.initialize();
-			oListBinding.filter(oFilter, FilterType.Application);
-			return Promise.resolve(oListBinding);
-		}
-		return ODataV4ValueHelpDelegate.executeFilter(oPayload, oListBinding, oFilter, iRequestedItems);
-	};
-
-	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer, sContentId) {
-		// TODO: Remove testcode for visibility changes on contents
-		/* if (oContainer.getId() === '__dialog0' && !oContainer.isOpen()) {
-			var secondTableWrapper = Core.byId("__mdctable1");
-			if (secondTableWrapper) {
-				secondTableWrapper.setVisible(!secondTableWrapper.getVisible());
-			}
-		} */
+	ODataV4ValueHelpDelegate.executeFilter = function(oPayload, oListBinding, iRequestedItems) {
+		oListBinding.getContexts(0, iRequestedItems); // trigger request. not all entries needed, we only need to know if there is one, none or more
+		return this.checkListBindingPending(oPayload, oListBinding, iRequestedItems).then(function () {
+			return oListBinding;
+		});
 	};
 
 	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {

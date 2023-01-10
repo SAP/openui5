@@ -181,6 +181,16 @@ sap.ui.define([
 		iMaxConditions = -1;
 	};
 
+	var _fakeV4Binding = function (oListBinding) {
+		oListBinding = oListBinding || oTable.getBinding("items");
+		oListBinding.requestContexts = function() { return Promise.resolve([]);};
+		oListBinding.changeParameters = function() {};
+		oListBinding.mParameters = {};
+		oListBinding.getRootBinding = function () { return undefined;};
+		oListBinding.suspend = function() {};
+		oListBinding.resume = function() {};
+	};
+
 	QUnit.module("Typeahead", {
 		beforeEach: function() {
 			bIsTypeahead = true;
@@ -310,6 +320,8 @@ sap.ui.define([
 	QUnit.test("Filtering without $search", function(assert) {
 
 		var oListBinding = oTable.getBinding("items");
+		_fakeV4Binding(oListBinding);
+
 		sinon.spy(oListBinding, "filter");
 		oMTable.onBeforeShow(); // filtering should happen only if open
 
@@ -340,14 +352,15 @@ sap.ui.define([
 	QUnit.test("Filtering for InParameters", function(assert) {
 
 		var oListBinding = oTable.getBinding("items");
+		_fakeV4Binding(oListBinding);
 		sinon.spy(oListBinding, "filter");
 		var oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
 		var oInPromise = Promise.resolve({inValue: [oCondition]});
-		sinon.stub(ValueHelpDelegate, "getInitialFilterConditions").returns(oInPromise);
+		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
 		oMTable.onBeforeShow(true); // to trigger filtering
 
-		assert.ok(ValueHelpDelegate.getInitialFilterConditions.calledWith({x: "X"}, oMTable, "Control"), "ValueHelpDelegate.getInitialFilterConditions called");
+		assert.ok(ValueHelpDelegate.getFilterConditions.calledWith({x: "X"}, oMTable), "ValueHelpDelegate.getFilterConditions called");
 
 		var fnDone = assert.async();
 		oInPromise.then(function() {
@@ -364,7 +377,7 @@ sap.ui.define([
 			assert.equal(aItems.length, 1, "number of items");
 			assert.equal(aItems[0].getCells()[0].getText(), "I3", "Key of item");
 
-			ValueHelpDelegate.getInitialFilterConditions.restore();
+			ValueHelpDelegate.getFilterConditions.restore();
 			fnDone();
 		});
 
@@ -373,31 +386,23 @@ sap.ui.define([
 	QUnit.test("Filtering using $search", function(assert) {
 
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
-		sinon.spy(ValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
-		sinon.spy(ValueHelpDelegateV4, "executeSearch"); //test V4 logic
-		sinon.stub(ValueHelpDelegateV4, "adjustSearch").withArgs({x: "X"}, true, "X").returns("x"); //test V4 logic
-		ValueHelpDelegateV4.adjustSearch.callThrough();
+		sinon.spy(ValueHelpDelegateV4, "updateBinding"); //test V4 logic
 
 		var oListBinding = oTable.getBinding("items");
+		_fakeV4Binding(oListBinding);
 		sinon.spy(oListBinding, "filter");
-		oListBinding.changeParameters = function(oParameters) {}; // just fake V4 logic
 		sinon.spy(oListBinding, "changeParameters");
 		oListBinding.suspend(); // check for resuming
 
 		oMTable.setFilterFields("$search");
 		oMTable.setFilterValue("X");
-		assert.ok(ValueHelpDelegateV4.isSearchSupported.called, "ValueHelpDelegateV4.isSearchSupported called");
-		assert.ok(ValueHelpDelegateV4.adjustSearch.called, "ValueHelpDelegateV4.adjustSearch called");
-		assert.ok(ValueHelpDelegateV4.adjustSearch.calledWith({x: "X"}, true, "X"), "ValueHelpDelegateV4.adjustSearch called parameters");
-		assert.ok(ValueHelpDelegateV4.executeSearch.called, "ValueHelpDelegateV4.executeSearch called");
-		assert.ok(ValueHelpDelegateV4.executeSearch.calledWith({x: "X"}, oListBinding, "x"), "ValueHelpDelegateV4.executeSearch called parameters");
-		assert.ok(oListBinding.changeParameters.calledWith({$search: "x"}), "ListBinding.changeParameters called with search string");
+		assert.ok(ValueHelpDelegateV4.updateBinding.called, "ValueHelpDelegateV4.updateBinding called");
+		assert.ok(ValueHelpDelegateV4.updateBinding.calledWith({x: "X"}, oListBinding), "ValueHelpDelegateV4.updateBinding called parameters");
+		assert.ok(oListBinding.changeParameters.calledWith({$search: "X"}), "ListBinding.changeParameters called with search string");
 		assert.notOk(oListBinding.isSuspended(), "ListBinding is resumed");
 
 		oContainer.getValueHelpDelegate.restore();
-		ValueHelpDelegateV4.isSearchSupported.restore();
-		ValueHelpDelegateV4.executeSearch.restore();
-		ValueHelpDelegateV4.adjustSearch.restore();
+		ValueHelpDelegateV4.updateBinding.restore();
 
 	});
 
@@ -466,7 +471,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue: check for key - match", function(assert) {
 
-		sinon.spy(ValueHelpDelegate, "getInitialFilterConditions");
+		sinon.spy(ValueHelpDelegate, "getFilterConditions");
 		sinon.stub(ValueHelpDelegate, "createConditionPayload").callsFake(function(oPayload, oContent, aValues, oContext) {
 			if (aValues && aValues[0] === "I3") {
 				return {inParameters: {inValue: "3"}, outParameters: null};
@@ -486,6 +491,8 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
+		_fakeV4Binding();
+
 		var oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
@@ -493,14 +500,14 @@ sap.ui.define([
 			var fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
-				assert.ok(ValueHelpDelegate.getInitialFilterConditions.calledWith({x: "X"}, oMTable, "MyControl"), "ValueHelpDelegate.getInitialFilterConditions called");
+				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith({x: "X"}, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}, outParameters: null}}, "Item returned");
-				ValueHelpDelegate.getInitialFilterConditions.restore();
+				ValueHelpDelegate.getFilterConditions.restore();
 				ValueHelpDelegate.createConditionPayload.restore();
 				fnDone();
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				ValueHelpDelegate.getInitialFilterConditions.restore();
+				ValueHelpDelegate.getFilterConditions.restore();
 				ValueHelpDelegate.createConditionPayload.restore();
 				fnDone();
 			});
@@ -520,7 +527,7 @@ sap.ui.define([
 
 		var oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
 		var oInPromise = Promise.resolve({inValue: [oCondition]});
-		sinon.stub(ValueHelpDelegate, "getInitialFilterConditions").returns(oInPromise);
+		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
 		sinon.stub(ValueHelpDelegate, "createConditionPayload").callsFake(function(oPayload, oContent, aValues, oContext) {
 			if (aValues && aValues[0] === "I3") {
@@ -541,21 +548,24 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
+		_fakeV4Binding();
+
 		var oPromise = oMTable.getItemForValue(oConfig);
+
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
 			var fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
-				assert.ok(ValueHelpDelegate.getInitialFilterConditions.calledWith({x: "X"}, oMTable, "MyControl"), "ValueHelpDelegate.getInitialFilterConditions called");
+				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith({x: "X"}, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}, outParameters: null}}, "Item returned");
-				ValueHelpDelegate.getInitialFilterConditions.restore();
+				ValueHelpDelegate.getFilterConditions.restore();
 				ValueHelpDelegate.createConditionPayload.restore();
 				fnDone();
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				ValueHelpDelegate.getInitialFilterConditions.restore();
+				ValueHelpDelegate.getFilterConditions.restore();
 				ValueHelpDelegate.createConditionPayload.restore();
 				fnDone();
 			});
@@ -588,6 +598,8 @@ sap.ui.define([
 			exception: ParseException,
 			control: "MyControl"
 		};
+
+		_fakeV4Binding();
 
 		var oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
@@ -622,8 +634,10 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
-		sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
-		oTable.getItems.callThrough();
+/* 		sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
+ */		//oTable.getItems.callThrough();
+
+		_fakeV4Binding();
 
 		var oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
@@ -654,7 +668,7 @@ sap.ui.define([
 
 		var oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
 		var oInPromise = Promise.resolve({inValue: [oCondition]});
-		sinon.stub(ValueHelpDelegate, "getInitialFilterConditions").returns(oInPromise);
+		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
 		sinon.stub(ValueHelpDelegate, "createConditionPayload").callsFake(function(oPayload, oContent, aValues, oContext) {
 			var oData = oContext.getObject();
@@ -676,8 +690,10 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
-		sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
-		oTable.getItems.callThrough();
+		/* sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
+		oTable.getItems.callThrough(); */
+
+		_fakeV4Binding();
 
 		var oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
@@ -686,12 +702,12 @@ sap.ui.define([
 			var fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
-				assert.ok(ValueHelpDelegate.getInitialFilterConditions.calledWith({x: "X"}, oMTable, "MyControl"), "ValueHelpDelegate.getInitialFilterConditions called");
+				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith({x: "X"}, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}}}, "Item returned");
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
 			}).finally(function () {
-				ValueHelpDelegate.getInitialFilterConditions.restore();
+				ValueHelpDelegate.getFilterConditions.restore();
 				ValueHelpDelegate.createConditionPayload.restore();
 				fnDone();
 			});
@@ -713,6 +729,8 @@ sap.ui.define([
 			exception: ParseException,
 			control: "MyControl"
 		};
+
+		_fakeV4Binding();
 
 		var oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
@@ -746,6 +764,8 @@ sap.ui.define([
 			exception: ParseException,
 			control: "MyControl"
 		};
+
+		_fakeV4Binding();
 
 		var oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
@@ -787,6 +807,8 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
+		_fakeV4Binding();
+
 		var oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
@@ -819,8 +841,10 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
-		sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
-		oTable.getItems.callThrough();
+		/* sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
+		oTable.getItems.callThrough(); */
+
+		_fakeV4Binding();
 
 		var oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
@@ -854,6 +878,8 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
+		_fakeV4Binding();
+
 		var oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
@@ -886,8 +912,10 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
-		sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
-		oTable.getItems.callThrough();
+		/* sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
+		oTable.getItems.callThrough(); */
+
+		_fakeV4Binding();
 
 		var oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
@@ -923,6 +951,8 @@ sap.ui.define([
 			exception: ParseException,
 			control: "MyControl"
 		};
+
+		_fakeV4Binding();
 
 		try {
 			oMTable.getItemForValue(oConfig);
@@ -972,6 +1002,8 @@ sap.ui.define([
 			assert.equal(oLocalConfig, oConfig, "getFilterConditions receives correct config");
 			return 	{"inValue": [{operator: "EQ", values: ["b"], validated: "NotValidated"}]};
 		});
+
+		_fakeV4Binding();
 
 		var oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
@@ -1186,6 +1218,9 @@ sap.ui.define([
 		var oSorter = new Sorter("group", false, true);
 		oTable.bindItems({path: '/items', suspended: true, sorter: oSorter, template: oItemTemplate});
 		var oListBinding = oTable.getBinding("items");
+
+
+
 		iNavigate = 0;
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
@@ -1201,6 +1236,9 @@ sap.ui.define([
 		oModel.checkUpdate(true); // force model update
 		sinon.stub(oListBinding, "getLength").onFirstCall().returns(undefined); // to fake pending binding
 		oListBinding.getLength.callThrough();
+
+		_fakeV4Binding();
+
 		oMTable.navigate(1);
 		var fnDone = assert.async();
 		setTimeout( function(){ // as waiting for Promise
@@ -1250,6 +1288,8 @@ sap.ui.define([
 		oTable.bindItems({path: '/items', suspended: true, sorter: oSorter, template: oItemTemplate});
 		var oListBinding = oTable.getBinding("items");
 
+		_fakeV4Binding(oListBinding);
+
 		var oScrollContainer = new ScrollContainer(); // to test scrolling
 		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
 		oContainer._getUIAreaForContent = function() {
@@ -1259,6 +1299,8 @@ sap.ui.define([
 		oCore.applyChanges();
 		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
 		sinon.spy(oTable, "scrollToIndex");
+
+		_fakeV4Binding();
 
 		iNavigate = 0;
 		oNavigateCondition = undefined;
@@ -1271,11 +1313,13 @@ sap.ui.define([
 			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
 		});
 
+
 		oMTable.setConditions([]);
 		oMTable.onShow(); // to simulate Open
 		oModel.checkUpdate(true); // force model update
 		sinon.stub(oListBinding, "getLength").onFirstCall().returns(undefined); // to fake pending binding
 		oListBinding.getLength.callThrough();
+
 		oMTable.navigate(1);
 		var fnDone = assert.async();
 		setTimeout( function(){ // as waiting for Promise

@@ -123,8 +123,9 @@ sap.ui.define([
 		return iCount;
 	};
 
-
-	// has navigate method ?
+	ListContent.prototype.getListBinding = function () {
+		throw new Error("ListContent: Every listcontent must implement this method.");
+	};
 
 	return ListContent;
 

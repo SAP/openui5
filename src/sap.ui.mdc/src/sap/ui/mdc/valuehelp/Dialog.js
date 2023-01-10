@@ -764,12 +764,12 @@ sap.ui.define([
 			oGroupSelectPromise = this._retrieveGroupSelect();
 			aNecessaryPromises.push(oGroupSelectPromise);
 		}
-		var bAlreadyShown = !this._mAlreadyShownContents[sNextContentId];
+		var bInitial = !this._mAlreadyShownContents[sNextContentId];
 
 		return Promise.all(aNecessaryPromises).then(function () {
 			this._bindContent(oNextContent);
 		}.bind(this)).then(function () {
-			return Promise.resolve(oNextContent.onBeforeShow(bAlreadyShown));
+			return Promise.resolve(oNextContent.onBeforeShow(bInitial));
 		}).then(function () {
 			this._mAlreadyShownContents[sNextContentId] = true;
 			this.setProperty("_selectedContentKey", sNextContentId);
@@ -792,7 +792,7 @@ sap.ui.define([
 			}
 
 			return this._retrievePromise("open").then(function () {
-				oNextContent.onShow(bAlreadyShown);
+				oNextContent.onShow(bInitial);
 				return oNextContent;
 			});
 		}.bind(this));

@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"../ValueHelp.delegate"
+	"../ValueHelp.delegate",
+	"sap/ui/model/FilterType"
 ], function(
-	BaseValueHelpDelegate
+	BaseValueHelpDelegate,
+	FilterType
 ) {
 	"use strict";
 
@@ -20,6 +22,13 @@ sap.ui.define([
 		}
 
 		return oConditions;
+	};
+
+	ValueHelpDelegate.updateBinding = function(oPayload, oListBinding, oBindingInfo) {	// JSON Binding in this example
+		oListBinding.filter(oBindingInfo.filters, FilterType.Application);
+		if (oListBinding.isSuspended()) {
+			oListBinding.resume();
+		}
 	};
 
 	return ValueHelpDelegate;

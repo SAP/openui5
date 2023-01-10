@@ -51,6 +51,9 @@ sap.ui.define([
 		getTypeahead: function () {
 			return oPopover;
 		},
+		getPayload: function () {
+			return undefined;
+		},
 		getDialog: function () {
 			return null;
 		},
@@ -470,9 +473,19 @@ sap.ui.define([
 
 	QUnit.test("shouldOpenOnClick", function(assert) {
 
-		sinon.stub(oContent, "shouldOpenOnClick").returns(true);
-		assert.ok(oPopover.shouldOpenOnClick(), "shouldOpenOnClick");
+		sinon.stub(oContent, "shouldOpenOnClick");
+
+		oContent.shouldOpenOnClick.returns(true);
+		assert.ok(oPopover.shouldOpenOnClick(), "shouldOpenOnClick enabled by content");
 		assert.ok(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content called");
+
+		oPopover.setOpensOnClick(true);
+		assert.ok(oPopover.shouldOpenOnClick(), "shouldOpenOnClick enabled by container property");
+		assert.notOk(oContent.shouldOpenOnClick.calledTwice, "shouldOpenOnClick of Content not called, when opensOnClick is set");
+
+		oPopover.setOpensOnClick(false);
+		assert.notOk(oPopover.shouldOpenOnClick(), "shouldOpenOnClick disabled by container property");
+		assert.notOk(oContent.shouldOpenOnClick.calledTwice, "shouldOpenOnClick of Content not called, when opensOnClick is set");
 
 	});
 

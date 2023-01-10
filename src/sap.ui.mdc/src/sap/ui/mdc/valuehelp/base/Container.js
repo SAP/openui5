@@ -255,19 +255,20 @@ sap.ui.define([
 	 * Opens the container
 	 *
 	 * @param {Promise} oValueHelpContentPromise Promise for content request
+ 	 * @param {boolean} bTypeahead Flag indicating whether the container is opened as type-ahead or dialog-like help
 	 * @returns {Promise} This promise resolves after the container completely opened.
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
-	Container.prototype.open = function (oValueHelpContentPromise) {
+	Container.prototype.open = function (oValueHelpContentPromise, bTypeahead) {
 		if (!this.isOpening()) {
 			var oOpenPromise = this._addPromise("open");
 			return Promise.all([this._getContainer(), oValueHelpContentPromise]).then(function (aResults) {
 				return this._placeContent(aResults[0]);
 			}.bind(this)).then(function(oContainer) {
 				if (!oOpenPromise.isCanceled()) {
-					this._open(oContainer);
+					this._open(oContainer, bTypeahead);
 				}
 				return oOpenPromise;
 			}.bind(this));
@@ -297,7 +298,7 @@ sap.ui.define([
 		return oContainer;
 	};
 
-	Container.prototype._open = function (oContainer) {
+	Container.prototype._open = function (oContainer, bTypeahead) {
 
 		var aContent = this.getContent();
 		for (var i = 0; i < aContent.length; i++) { // for Dialog overwrite to only bind shown content

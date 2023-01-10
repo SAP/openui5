@@ -218,9 +218,10 @@ sap.ui.define([
 			this._iNavigateIndex = -1;
 		}
 		var oList = _getList.call(this);
+		var oListBinding = this.getListBinding();
+
 		if (oList) {
-			var oBinding = oList.getBinding("items");
-			oBinding.update();
+			oListBinding.update();
 			oList.updateItems();
 			oList.invalidate();
 			_updateSelection.call(this); // to update selection
@@ -359,6 +360,7 @@ sap.ui.define([
 
 	FixedList.prototype._handleFilterValueUpdate = function(oChanges) {
 		_updateFilter.call(this);
+		ListContent.prototype._handleFilterValueUpdate.apply(this, arguments);
 	};
 
 	FixedList.prototype.removeFocus = function() {
@@ -570,6 +572,11 @@ sap.ui.define([
 
 		this._iNavigateIndex = -1; // initially nothing is navigated
 
+	};
+
+	FixedList.prototype.getListBinding = function () {
+		var oList = _getList.call(this);
+		return oList && oList.getBinding("items");
 	};
 
 	return FixedList;

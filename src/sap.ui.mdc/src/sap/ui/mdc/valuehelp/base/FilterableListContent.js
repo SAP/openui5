@@ -128,8 +128,10 @@ sap.ui.define([
 	};
 
 	FilterableListContent.prototype._handleFilterValueUpdate = function (oChanges) {
-		if (this.isContainerOpen()) { // TODO: only visible content if multiple contens on dialog
-			this.applyFilters(this._getPriorityFilterValue());
+		if (this.isContainerOpening() || this.isContainerOpen()) {
+			Promise.resolve(this.applyFilters()).finally(function () {
+				ListContent.prototype._handleFilterValueUpdate.apply(this, arguments);
+			}.bind(this));
 		}
 	};
 
@@ -139,7 +141,7 @@ sap.ui.define([
 		return oDelegate ? oDelegate.reduceIFilterConditions(oPayload, this, oConditions) : oConditions;
 	};
 
-	FilterableListContent.prototype.applyFilters = function (sSearch) {
+	FilterableListContent.prototype.applyFilters = function () {
 
 	};
 
@@ -240,7 +242,7 @@ sap.ui.define([
 	FilterableListContent.prototype._handleSearch = function (oEvent) {
 		var oFilterBar = oEvent.getSource();
 		this._setLocalFilterValue(oFilterBar.getSearch());
-		this.applyFilters(this._getPriorityFilterValue());
+		this.applyFilters();
 
 	};
 
@@ -336,10 +338,6 @@ sap.ui.define([
 		return this._oCollectiveSearchSelect && this._oCollectiveSearchSelect.getSelectedItemKey();
 	};
 
-	FilterableListContent.prototype.getListBinding = function () {
-		throw new Error("FilterableListContent: Every filterable listcontent must implement this method.");
-	};
-
 	FilterableListContent.prototype._getListBindingInfo = function () {
 		throw new Error("FilterableListContent: Every filterable listcontent must implement this method.");
 	};
@@ -417,6 +415,20 @@ sap.ui.define([
 		}
 	};
 
+	FilterableListContent.prototype._applyFiltersIfNecessary = function () {
+		var oListBinding = this.getListBinding();
+		var oListBindingInfo = this._getListBindingInfo();
+		var bBindingSuspended = oListBinding && oListBinding.isSuspended();
+		var bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
+
+		if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) { // in dialog case do not resume suspended table on opening
+			return undefined;
+		}
+
+		// apply filters before opening
+		return this.applyFilters();
+	};
+
 	FilterableListContent.prototype.onBeforeShow = function(bInitial) {
 		if (bInitial) {
 			var oDelegate = this._getValueHelpDelegate();
@@ -424,8 +436,8 @@ sap.ui.define([
 				this._oInitialFilterConditions = oConditions;
 
 				var oFilterBar = this._getPriorityFilterBar();
-				if (oFilterBar) {
-					var sFilterFields =  this.getFilterFields();
+				if (oFilterBar) { // apply initial conditions to filterbar if existing
+					var sFilterFields = this.getFilterFields();
 					var oNewConditions = merge({}, this._oInitialFilterConditions), oStateBefore;
 					return Promise.resolve(!oNewConditions[sFilterFields] && StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
 						oStateBefore = oState;
@@ -435,28 +447,13 @@ sap.ui.define([
 					})).then(function (oStateDiff) {
 						_addSearchConditionToConditionMap(oStateDiff.filter, sFilterFields, this._getPriorityFilterValue(), oStateBefore.filter);
 						return StateUtil.applyExternalState(oFilterBar, oStateDiff);
-					}.bind(this));
+					}.bind(this)).then(this._applyFiltersIfNecessary.bind(this));
+				} else {
+					return this._applyFiltersIfNecessary();
 				}
 			}.bind(this));
 		}
 		return undefined;
-	};
-
-	FilterableListContent.prototype.onShow = function (bInitial) {
-		ListContent.prototype.onShow.apply(this, arguments);
-
-		if (bInitial) {
-			var oListBinding = this.getListBinding();
-			var oListBindingInfo = this._getListBindingInfo();
-			var bBindingSuspended = oListBinding && oListBinding.isSuspended();
-			var bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
-
-			if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) {
-				return; // in dialog case do not resume suspended table on opening
-			}
-
-			this.applyFilters(this._getPriorityFilterValue());
-		}
 	};
 
 	FilterableListContent.prototype._fireSelect = function (oChange) {

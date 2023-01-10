@@ -1191,7 +1191,7 @@
 				<m:Label text="Empty ValueHelp"/>
 				<mdc:Field id="F6-1" value="{SupplierName}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="F6-1-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-1-H"></mdc:ValueHelp>
+						<mdc:ValueHelp id="F6-1-H" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}"></mdc:ValueHelp>
 					</mdc:dependents>
 				</mdc:Field>
 
@@ -1225,7 +1225,7 @@
 				<m:Label text="using FixedList"/>
 				<mdc:Field id="F6-4" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="F6-4-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-4-H">
+						<mdc:ValueHelp id="F6-4-H" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-4-H-Pop">
 									<mdcValueHelpContent:FixedList id="F6-4-H-FL" useFirstMatch="false" items="{path: '/ProductCollection'}" >
@@ -1242,7 +1242,7 @@
 				<m:Label text="Select-like usage"/>
 				<mdc:Field id="F6-Select" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="F6-Select-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-Select-H">
+						<mdc:ValueHelp id="F6-Select-H" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-Select-H-Pop">
 									<mdcValueHelpContent:FixedList id="F6-Select-H-FL" filterList="false" useFirstMatch="true" items="{path: '/ProductCollection'}" >
@@ -1257,7 +1257,7 @@
 				<m:Label text="Grouped List"/>
 				<mdc:Field id="F6-Group" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" fieldHelp="F6-Group-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-Group-H">
+						<mdc:ValueHelp id="F6-Group-H" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-Group-H-Pop">
 									<mdcValueHelpContent:FixedList id="F6-Group-H-FL" useFirstMatch="false" groupable="true" items="{path: '/ProductCollection'}" >
@@ -1273,7 +1273,7 @@
 				<m:Label text="mTable without dialog"/>
 				<mdc:Field id="F6-6" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="F6-6-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-6-H">
+						<mdc:ValueHelp id="F6-6-H" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-6-H-Pop">
 									<mdcValueHelpContent:MTable id="F6-6-H-MTable"
@@ -1314,7 +1314,7 @@
 				<m:Label text="Grouped table"/>
 				<mdc:Field id="F6-6b" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" fieldHelp="F6-6b-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-6b-H">
+						<mdc:ValueHelp id="F6-6b-H" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-6b-H-Pop">
 									<mdcValueHelpContent:MTable id="F6-6b-H-MTable"
@@ -1360,7 +1360,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH1">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH1">
+						<mdc:ValueHelp id="VH1" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH1-Pop">
 									<mdcValueHelpContent:MTable id="VH1-Pop-MTable"
@@ -1536,7 +1536,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH-7d">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-7d" validateInput="false">
+						<mdc:ValueHelp id="VH-7d" validateInput="false" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
 							<mdc:dialog>
 								<mdcValueHelp:Dialog id="VH-7d-Dialog">
 									<mdcValueHelpContent:MTable id="VH-7d-Dialog-MTable"
@@ -1585,7 +1585,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH-7f">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-7f" validateInput="false">
+						<mdc:ValueHelp id="VH-7f" validateInput="false" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-7f-Pop">
 									<mdcValueHelpContent:MTable id="VH-7f-Pop-MTable"
@@ -1645,7 +1645,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH-Currency">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-Currency">
+						<mdc:ValueHelp id="VH-Currency" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Currency-Pop">
 									<mdcValueHelpContent:FixedList id="VH-Currency-FL" useFirstMatch="false" items="{/currencies}" >
@@ -1677,7 +1677,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH-Currency2">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-Currency2">
+						<mdc:ValueHelp id="VH-Currency2" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Currency2-Pop">
 									<mdcValueHelpContent:FixedList id="VH-Currency2-FL" useFirstMatch="false" items="{/currencies}" >
@@ -1714,7 +1714,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH-WeightUnit">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-WeightUnit">
+						<mdc:ValueHelp id="VH-WeightUnit" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-WeightUnit-Pop">
 									<mdcValueHelpContent:FixedList id="VH-WeightUnit-FL" useFirstMatch="false" items="{/weightUnits}" >
@@ -1746,7 +1746,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH-WeightUnit1">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-WeightUnit1">
+						<mdc:ValueHelp id="VH-WeightUnit1" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-WeightUnit1-Pop">
 									<mdcValueHelpContent:FixedList id="VH-WeightUnit1-FL" useFirstMatch="false" items="{/weightODataUnits}">
@@ -1876,7 +1876,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH-WeightUnit2">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-WeightUnit2">
+						<mdc:ValueHelp id="VH-WeightUnit2" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-WeightUnit2-Pop">
 									<mdcValueHelpContent:FixedList id="VH-WeightUnit2-FL" useFirstMatch="false" items="{/weightODataUnits}">

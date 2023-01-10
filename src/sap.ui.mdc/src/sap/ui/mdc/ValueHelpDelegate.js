@@ -9,11 +9,15 @@
 sap.ui.define([
 	"sap/ui/mdc/BaseDelegate",
 	"sap/ui/model/FilterType",
-	"sap/ui/mdc/enum/ConditionValidated"
+	"sap/ui/mdc/enum/ConditionValidated",
+	'sap/ui/mdc/condition/Condition',
+	'sap/ui/mdc/condition/FilterConverter'
 ], function(
 	BaseDelegate,
 	FilterType,
-	ConditionValidated
+	ConditionValidated,
+	Condition,
+	FilterConverter
 ) {
 	"use strict";
 
@@ -70,17 +74,79 @@ sap.ui.define([
 	};
 
 	/**
-	 * Executes a search in a <code>ListBinding</code>.
+	 * Controls if a typeahead should be opened or closed
+	 *
 	 *
 	 * @param {object} oPayload Payload for delegate
-	 * @param {sap.ui.model.ListBinding} oListBinding ListBinding
-	 * @param {string} sSearch Search string
-	 * @returns {Promise} Promise that is resolved if search is executed
+ 	 * @param {sap.ui.mdc.valuehelp.base.Content} oContent ValueHelp content requesting conditions configuration
+ 	 * @returns {Promise|Boolean} Boolean or Promise resolving to a boolean indicating the desired behavior
 	 * @private
+	 * @since 1.110.0
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	ValueHelpDelegate.showTypeahead = function (oPayload, oContent) {
+		if (!oContent || (oContent.isA("sap.ui.mdc.valuehelp.base.FilterableListContent") && !oContent.getFilterValue())) { // Do not show non-existing content or suggestions without filterValue
+			return false;
+		} else if (oContent.isA("sap.ui.mdc.valuehelp.base.ListContent")) { // All List-like contents should have some data to show
+			var oListBinding = oContent.getListBinding();
+			var iLength = oListBinding && oListBinding.getAllCurrentContexts().length;
+			return iLength > 0;
+		}
+		return true; // All other content should be shown by default
+	};
+
+	/**
+	 * Adjustable filtering for list-based contents
+	 *
+
+	 *
+	 * @param {object} oPayload Payload for delegate
+ 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent ValueHelp content requesting conditions configuration
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the list to the model
+	 * @private
+	 * @since 1.110.0
+	 *
+	 * @MDC_PUBLIC_CANDIDATE
+	 */
+	ValueHelpDelegate.updateBindingInfo = function(oPayload, oContent, oBindingInfo) {
+		oBindingInfo.parameters = {};
+		oBindingInfo.filters = [];
+
+		var sFilterFields = oContent.getFilterFields();
+		var sFieldSearch = oContent._getPriorityFilterValue();
+		var oFilterBar = oContent._getPriorityFilterBar();
+		var oConditions = oFilterBar ? oFilterBar.getInternalConditions() : oContent._oInitialFilterConditions || {};
+
+		if (!oFilterBar && sFieldSearch && sFilterFields && sFilterFields !== "$search") {
+			// add condition for Search value
+			var oCondition = Condition.createCondition("Contains", [sFieldSearch], undefined, undefined, ConditionValidated.NotValidated);
+			oConditions[sFilterFields] = [oCondition];
+		}
+
+		var oConditionTypes = oConditions && oContent._getTypesForConditions(oConditions);
+		var oFilter = oConditions && FilterConverter.createFilters( oConditions, oConditionTypes, undefined, oContent.getCaseSensitive());
+
+		if (oFilter) {
+			oBindingInfo.filters = [oFilter];
+		}
+	};
+
+	/**
+	 * Executes a filter in a <code>ListBinding</code> and resumes it, if suspended.
+	 *
+	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.model.ListBinding} oListBinding List binding
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the list to the model
+	 * @private
+	 * @since 1.110.0
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
-	ValueHelpDelegate.executeSearch = function(oPayload, oListBinding, sSearch) {
-		return Promise.resolve();
+	ValueHelpDelegate.updateBinding = function(oPayload, oListBinding, oBindingInfo) {
+		oListBinding.filter(oBindingInfo.filters, FilterType.Application);
+		if (oListBinding.isSuspended()) {
+			oListBinding.resume();
+		}
 	};
 
 	/**
@@ -95,12 +161,11 @@ sap.ui.define([
 	 * @since 1.97.0
 	 * @private
 	 * @ui5-restricted sap.fe
+ 	 * @deprecated (since 1.110.0) - replaced by {@link sap.ui.mdc.ValueHelpDelegate.updateBinding}
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	 ValueHelpDelegate.adjustSearch = function(oPayload, bTypeahead, sSearch) {
-
 		return sSearch;
-
 	};
 
 	/**
@@ -108,49 +173,13 @@ sap.ui.define([
 	 *
 	 * @param {object} oPayload Payload for delegate
 	 * @param {sap.ui.model.ListBinding} oListBinding List binding
-	 * @param {sap.ui.model.Filter} oFilter Filter
 	 * @param {int} iRequestedItems Number of requested items
 	 * @returns {Promise<sap.ui.model.ListBinding>} Promise that is resolved if search is executed
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
-	ValueHelpDelegate.executeFilter = function(oPayload, oListBinding, oFilter, iRequestedItems) {
-
-		if (oListBinding.isA("sap.ui.model.json.JSONListBinding")) { // TODO: find way unique for all ListBindings
-			oListBinding.filter(oFilter, FilterType.Application);
-			return Promise.resolve(oListBinding);
-		} else { // oData V2
-			var fnResolve;
-			var fnCallback = function() {
-				fnResolve(oListBinding);
-			};
-			oListBinding.attachEventOnce("dataReceived", fnCallback);
-			oListBinding.initialize();
-			oListBinding.filter(oFilter, FilterType.Application);
-			oListBinding.getContexts(0, iRequestedItems); // trigger request. not all entries needed, we only need to know if there is one, none or more
-			return new Promise(function(fResolve, fReject) {
-				fnResolve = fResolve;
-			});
-		}
-
-	};
-
-	/**
-	 * Checks if at least one <code>PropertyBinding</code> is waiting for an update.
-	 * As long as the value has not been set for <code>PropertyBinding</code>,
-	 * <code>ValueHelp</code> needs to wait.
-	 *
-	 * This check is used when selecting the description for a key if in parameters are used.
-	 * The description can only be determined if the values of the in parameters are known.
-	 *
-	 * @param {object} oPayload Payload for delegate
-	 * @param {sap.ui.model.PropertyBinding[]} aBindings <code>PropertyBinding</code> array to check
-	 * @returns {null|Promise} <code>Promise</code> that is resolved once every <code>PropertyBinding</code> has been updated
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 */
-	ValueHelpDelegate.checkBindingsPending = function(oPayload, aBindings) {
-		return null;
+	ValueHelpDelegate.executeFilter = function(oPayload, oListBinding, iRequestedItems) {
+		return Promise.resolve(oListBinding);
 	};
 
 	/**
@@ -160,13 +189,18 @@ sap.ui.define([
 	 *
 	 * @param {object} oPayload Payload for delegate
 	 * @param {sap.ui.model.ListBinding} oListBinding <code>ListBinding</code> to check
-	 * @param {object} oListBindingInfo <code>ListBindingInfo</code> to check
+	 * @param {int} iRequestedItems Number of requested items
 	 * @returns {boolean|Promise<boolean>} <code>Promise</code> that is resolved once <code>ListBinding</code> has been updated
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
-	ValueHelpDelegate.checkListBindingPending = function(oPayload, oListBinding, oListBindingInfo) {
-		return false;
+	ValueHelpDelegate.checkListBindingPending = function(oPayload, oListBinding, iRequestedItems) {
+		if (!oListBinding || oListBinding.isSuspended()) {
+			return false;
+		}
+		return Promise.resolve(oListBinding.getContexts(0, iRequestedItems)).then(function(aContexts) {
+			return aContexts.length === 0;
+		});
 	};
 
 	//  InOut =====
