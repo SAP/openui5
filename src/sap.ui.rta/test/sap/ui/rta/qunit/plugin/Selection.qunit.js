@@ -494,6 +494,15 @@ sap.ui.define([
 			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is still not set after Mouse-over event");
 		});
 
+		QUnit.test("Invoking Mouse-Over on an Overlay when a plugin is busy", function (assert) {
+			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			sandbox.stub(this.oDesignTime, "getBusyPlugins").returns(["busy-plugin"]);
+			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "initially the CSS class is not set");
+			var oMouseEvent = new Event("mouseover");
+			oOverlay.getDomRef().dispatchEvent(oMouseEvent);
+			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is still not set after Mouse-over event");
+		});
+
 		QUnit.test("When 'Editable' changes to false on an hovered Overlay", function (assert) {
 			var fnDone = assert.async();
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
@@ -525,12 +534,6 @@ sap.ui.define([
 		QUnit.test("When the method _checkDeveloperMode is called and Developermode is false", function (assert) {
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			assert.notOk(this.oSelectionPlugin._checkDeveloperMode(oOverlay, {}), "_checkDeveloperMode returns false");
-		});
-
-		QUnit.test("Check isActive when selection is active but some plugins are in 'busy' state", function(assert) {
-			this.oSelectionPlugin.setIsActive(true);
-			sandbox.stub(this.oDesignTime, "getBusyPlugins").returns(["busy-plugin"]);
-			assert.notOk(this.oSelectionPlugin.getIsActive(), "then 'false' is returned");
 		});
 	});
 

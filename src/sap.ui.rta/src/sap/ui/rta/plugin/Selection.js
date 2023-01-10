@@ -132,17 +132,6 @@ function (
 	};
 
 	/**
-	 * Gets the value of the isActive property.
-	 * When set to <code>true</code>, then additional check for busy plugnis is triggered.
-	 * @return {boolean} bValue - <code>false</code> if inactive or some busy plugins available.
-	 */
-	Selection.prototype.getIsActive = function() {
-		return this.getProperty("isActive")
-			&& this.getDesignTime()
-			&& !this.getDesignTime().getBusyPlugins().length;
-	};
-
-	/**
 	 * Register an overlay
 	 *
 	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay object
@@ -322,7 +311,11 @@ function (
 	 */
 	Selection.prototype._onMouseover = function(oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
-		if (!this.getIsActive()) {
+		// due to some timing issues the mouseover event callback can be triggered during drag&drop
+		if (
+			!this.getIsActive()
+			|| (this.getDesignTime() && this.getDesignTime().getBusyPlugins().length)
+		) {
 			// Propagation should be stopped at the root overlay to prevent the selection of the underlying elements
 			if (oOverlay.isRoot()) {
 				preventEventDefaultAndPropagation(oEvent);
