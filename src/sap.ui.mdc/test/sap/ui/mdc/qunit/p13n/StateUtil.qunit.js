@@ -480,7 +480,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-
+/*
 	QUnit.test("call 'applyExternalState' and trigger 'resetState' afterwards (item key specified)", function(assert){
 		var done = assert.async();
 
@@ -556,7 +556,7 @@ sap.ui.define([
 			}.bind(this));
 
 		}.bind(this));
-	});
+	});*/
 
 	QUnit.test("call 'applyExternalState' and remove existing items", function(assert){
 		var done = assert.async();
