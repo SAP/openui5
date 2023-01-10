@@ -99,6 +99,18 @@ sap.ui.define([
 			throw new Error("No control defined for content mode " + sContentMode);
 		},
 		/**
+		 * Determines if formatting of all conditions to a single value is supported for a {@link sap.ui.mdc.enum.ContentMode}.
+		 * @param {sap.ui.mdc.enum.ContentMode} sContentMode The given content mode
+		 * @returns {boolean} If set, the conditions will not be formatted (MultiInput value-property case)
+		 */
+		getNoFormatting: function(sContentMode) {
+			if (sContentMode === ContentMode.EditMultiValue) {
+				return true;
+			} else {
+				return false;
+			}
+		},
+		/**
 		 * Creates the suitable controls for the given content mode and returns the control instances.
 		 * @param {sap.ui.mdc.field.content.ContentFactory} oContentFactory The content factory that calls this function
 		 * @param {sap.ui.mdc.enum.ContentMode} sContentMode a given content mode
@@ -162,7 +174,6 @@ sap.ui.define([
 			});
 
 			oInput._setPreferUserInteraction(true);
-			oContentFactory.setBoundProperty("value");
 			oContentFactory.setAriaLabelledBy(oInput);
 
 			return [oInput];
@@ -178,6 +189,7 @@ sap.ui.define([
 			var Input = aControlClasses[0];
 			var Token = aControlClasses[1];
 			var oConditionType = oContentFactory.getConditionType();
+			var oConditionsType = oContentFactory.getConditionsType();
 			var oToken = new Token(sId + "-token", {
 				text: {
 					path: '$field>',
@@ -186,6 +198,7 @@ sap.ui.define([
 			});
 
 			var oMultiInput = new Input(sId, {
+				value: { path: "$field>/conditions", type: oConditionsType }, // only for parsing
 				placeholder: "{$field>/placeholder}",
 				textAlign: "{$field>/textAlign}",
 				textDirection: "{$field>/textDirection}",
@@ -242,7 +255,6 @@ sap.ui.define([
 			});
 
 			oTextArea._setPreferUserInteraction(true);
-			oContentFactory.setBoundProperty("value");
 			oContentFactory.setAriaLabelledBy(oTextArea);
 
 			return [oTextArea];
@@ -266,7 +278,6 @@ sap.ui.define([
 				tooltip: "{$field>/tooltip}",
 				emptyIndicatorMode: EmptyIndicatorMode.Auto
 			});
-			oContentFactory.setBoundProperty("text");
 
 			return [oText];
 		},
@@ -288,7 +299,6 @@ sap.ui.define([
 				tooltip: "{$field>/tooltip}",
 				emptyIndicatorMode: EmptyIndicatorMode.Auto
 			});
-			oContentFactory.setBoundProperty("text");
 
 			return [oExpandableText];
 		},

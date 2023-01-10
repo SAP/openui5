@@ -108,6 +108,20 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Formatting: array of conditions with noFormatting", function(assert) {
+
+		oConditionsType.setFormatOptions({operators: ["EQ"], maxConditions: -1, noFormatting: true});
+		var oCondition1 = Condition.createCondition("EQ", ["Test1"]);
+		var oCondition2 = Condition.createCondition("EQ", ["Test2"]);
+		var sResult = oConditionsType.formatValue([oCondition1, oCondition2]);
+		assert.equal(sResult, "", "Result of formatting");
+
+		oConditionsType.setFormatOptions({operators: ["EQ"], maxConditions: -1, noFormatting: true, keepValue: "A"});
+		sResult = oConditionsType.formatValue([oCondition1, oCondition2]);
+		assert.equal(sResult, "A", "Result of formatting with keepValue");
+
+	});
+
 	QUnit.test("Parsing: simple String", function(assert) {
 
 		var aConditions = oConditionsType.parseValue("Test");
@@ -180,16 +194,34 @@ sap.ui.define([
 
 	QUnit.test("Parsing: maxConditions > 1", function(assert) {
 
-		oConditionsType.setFormatOptions({operators: ["EQ"], maxConditions: -1});
+		var aCompareConditions = [Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+		var aConditions = [];
+		oConditionsType.setFormatOptions({operators: ["EQ"], maxConditions: 2, getConditions: function() {return aConditions;}, noFormatting: true});
+
+		aConditions = oConditionsType.parseValue("X");
+		assert.deepEqual(aConditions, aCompareConditions, "Result returned");
+
+		aCompareConditions.push(Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated, undefined));
+		aConditions = oConditionsType.parseValue("Y");
+		assert.deepEqual(aConditions, aCompareConditions, "Result returned");
+
 		var oException;
 
 		try {
-			oConditionsType.parseValue("X");
+			aConditions = oConditionsType.parseValue("X");
 		} catch (e) {
 			oException = e;
 		}
 
 		assert.ok(oException, "exception fired");
+
+		aCompareConditions.push(Condition.createCondition("EQ", ["Z"], undefined, undefined, ConditionValidated.NotValidated, undefined));
+		aCompareConditions.splice(0, 1);
+		aConditions = oConditionsType.parseValue("Z");
+		assert.deepEqual(aConditions, aCompareConditions, "Result returned");
+
+		aConditions = oConditionsType.parseValue(""); // simulate user removes wrong value
+		assert.deepEqual(aConditions, aCompareConditions, "Result returned");
 
 	});
 
@@ -504,23 +536,63 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Parsing: maxConditions > 1", function(assert) {
+
+		var aCompareConditions = [Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined),
+								  Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+		var aConditions = [Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+		oConditionsType.setFormatOptions({operators: ["EQ"], maxConditions: -1, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
+
+		var oStub = sinon.stub(oConditionsType._oConditionType, "parseValue");
+
+		oStub.callsFake(function(sText) {
+				var oPromise = new Promise(function(fResolve) {
+					setTimeout(function () { // simulate request
+						fResolve(Condition.createCondition("EQ", [sText], undefined, undefined, ConditionValidated.NotValidated, undefined));
+					}, 0);
+				});
+				return oPromise;
+		});
+
+		var vResult = oConditionsType.parseValue("Y");
+		assert.ok(vResult instanceof Promise, "Promise returned");
+		assert.ok(bAsyncCalled, "asyncParsing function called");
+
+		var fnDone = assert.async();
+		vResult.then(function(aConditions) {
+			assert.deepEqual(aConditions, aCompareConditions, "Result returned");
+			fnDone();
+		});
+
+	});
+
 	var oUnitConditionsType;
 	var oUnitType;
+	var oOriginalType;
 
 	QUnit.module("currency type", {
 		beforeEach: function() {
 			var oCondition1 = Condition.createCondition("EQ", [[1.23, "EUR"]]);
 			var oCondition2 = Condition.createCondition("BT", [[1, "EUR"], [2, "EUR"]]);
+			var aConditions = [oCondition1, oCondition2];
+			oOriginalType = new CurrencyType();
 			oValueType = new CurrencyType({showMeasure: false});
 			oUnitType = new CurrencyType({showNumber: false});
-			oConditionsType = new ConditionsType({valueType: oValueType, maxConditions: -1});
+			oConditionsType = new ConditionsType({
+				valueType: oValueType,
+				maxConditions: -1,
+				originalDateType: oOriginalType,
+				additionalType: oUnitType,
+				getConditions: function() {return aConditions;}
+			});
 			oUnitConditionsType = new ConditionsType({
 				valueType: oUnitType,
 				operators: ["EQ"],
 				hideOperator: true,
-				originalDateType: oValueType,
+				originalDateType: oOriginalType,
+				additionalType: oValueType,
 				maxConditions: 1,
-				getConditions: function() {return [oCondition1, oCondition2];}
+				getConditions: function() {return aConditions;}
 			});
 		},
 		afterEach: function() {
@@ -532,6 +604,8 @@ sap.ui.define([
 			oValueType = undefined;
 			oUnitType.destroy();
 			oUnitType = undefined;
+			oOriginalType.destroy();
+			oOriginalType = undefined;
 		}
 	});
 
@@ -611,6 +685,30 @@ sap.ui.define([
 		assert.deepEqual(aConditions[1].inParameters, oNavigateCondition.inParameters, "Condition 1: inParameters");
 		assert.deepEqual(aConditions[1].outParameters, oNavigateCondition.outParameters, "Condition 1: outParameters");
 		assert.deepEqual(aConditions[1].payload, oNavigateCondition.payload, "Condition 1: payload");
+
+	});
+
+	QUnit.test("Parsing: maxConditions > 1", function(assert) {
+
+		oUnitType._aCurrentValue = [1, "USD"]; // fake existing value
+		oValueType._aCurrentValue = [1, "USD"]; // fake existing value
+		oOriginalType._aCurrentValue = [1, "USD"]; // fake existing value
+		var aConditions = oUnitConditionsType.oFormatOptions.getConditions();
+		var aCompareConditions = [aConditions[0], aConditions[1], Condition.createCondition("EQ", [[9.99, "USD"]], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+
+		aConditions = oConditionsType.parseValue("9.99");
+		assert.deepEqual(aConditions, aCompareConditions, "Result returned");
+
+		oUnitType._aCurrentValue = undefined; // fake initial value
+		oValueType._aCurrentValue = undefined; // fake initial value
+		oOriginalType._aCurrentValue = undefined; // fake initial value
+		oUnitConditionsType.oFormatOptions.getConditions = function() {return [];};
+		aCompareConditions = [Condition.createCondition("EQ", [[7.77, "EUR"]], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+
+		aConditions = oUnitConditionsType.parseValue("EUR");
+		oConditionsType.oFormatOptions.getConditions = function() {return aConditions;};
+		aConditions = oConditionsType.parseValue("7.77");
+		assert.deepEqual(aConditions, aCompareConditions, "Result returned");
 
 	});
 

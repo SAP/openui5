@@ -61,6 +61,7 @@ sap.ui.define([
 	ContentFactory.prototype.init = function() {
 		this._oContentTypeClass;
 		this._sOperator;
+		this._bNoFormatting = false;
 	};
 
 	ContentFactory.prototype.exit = function() {
@@ -96,6 +97,8 @@ sap.ui.define([
 		var aControlNames = oContentType.getControlNames(sContentMode, this._sOperator);
 		var oLoadModulesPromise;
 
+		this.setNoFormatting(oContentType.getNoFormatting(sContentMode));
+
 		if (aControlNames.every(function(sControlName) {
 			return !sControlName;
 		})
@@ -110,6 +113,7 @@ sap.ui.define([
 				})
 				.then(function(aControls) {
 					if (this.getField() && !this.getField()._bIsBeingDestroyed) {
+						this.updateConditionType(); // to make sure to have current FormatOptions if Condition(s)Type already exist
 						return oContentType.create(this, sContentMode, this._sOperator, aControls, sId);
 					} else {
 						return [];
@@ -240,18 +244,6 @@ sap.ui.define([
 
 	ContentFactory.prototype.getHandleContentPress = function() {
 		return this._fnHandleContentPress;
-	};
-
-	/**
-	 * Defines to which property the field value is bound.
-	 * @param {string} sBoundProperty the name of the property.
-	 */
-	ContentFactory.prototype.setBoundProperty = function(sBoundProperty) {
-		this._sBoundProperty = sBoundProperty;
-	};
-
-	ContentFactory.prototype.getBoundProperty = function() {
-		return this._sBoundProperty;
 	};
 
 	ContentFactory.prototype.setAriaLabelledBy = function(oContent) {
@@ -485,6 +477,13 @@ sap.ui.define([
 				this._oUnitConditionsType.setFormatOptions(oFormatOptions);
 			}
 		}
+	};
+
+	ContentFactory.prototype.setNoFormatting = function(bNoFormatting) {
+		this._bNoFormatting = bNoFormatting;
+	};
+	ContentFactory.prototype.getNoFormatting = function() {
+		return this._bNoFormatting;
 	};
 
 	return ContentFactory;

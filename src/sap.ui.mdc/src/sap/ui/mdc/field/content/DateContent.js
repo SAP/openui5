@@ -92,7 +92,6 @@ sap.ui.define([
 
 			oDatePicker._setPreferUserInteraction(true);
 			oContentFactory.setAriaLabelledBy(oDatePicker);
-			oContentFactory.setBoundProperty("value");
 
 			return [oDatePicker];
 		},
@@ -124,7 +123,6 @@ sap.ui.define([
 
 			oDateRangeSelection._setPreferUserInteraction(true);
 			oContentFactory.setAriaLabelledBy(oDateRangeSelection);
-			oContentFactory.setBoundProperty("value");
 
 			return [oDateRangeSelection];
 		},
@@ -223,7 +221,6 @@ sap.ui.define([
 				change: oContentFactory.getHandleContentChange()
 			});
 
-			oContentFactory.setBoundProperty("value");
 			oContentFactory.setAriaLabelledBy(DynamicDateRange);
 
 			return [oDynamicDateRange];

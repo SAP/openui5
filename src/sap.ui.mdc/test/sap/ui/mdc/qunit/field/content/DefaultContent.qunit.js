@@ -120,6 +120,7 @@ sap.ui.define([
 			createFunction: "createEditMultiValue",
 			bindings: [
 				{
+					value: "$field>/conditions",
 					placeholder: "$field>/placeholder",
 					textAlign: "$field>/textAlign",
 					textDirection: "$field>/textDirection",
@@ -247,6 +248,17 @@ sap.ui.define([
 		assert.deepEqual(DefaultContent.getControlNames("EditMultiLine"), ["sap/m/TextArea"], "Correct default controls returned for ContentMode 'EditMultiLine'");
 		assert.deepEqual(DefaultContent.getControlNames("EditOperator"), [null], "Correct default controls returned for ContentMode 'EditOperator'");
 		assert.deepEqual(DefaultContent.getControlNames("EditForHelp"), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for ContentMode 'EditForHelp'");
+	});
+
+	QUnit.test("getNoFormatting", function(assert) {
+		assert.notOk(DefaultContent.getNoFormatting("Display"), "Display");
+		assert.notOk(DefaultContent.getNoFormatting("DisplayMultiValue"), "DisplayMultiValue");
+		assert.notOk(DefaultContent.getNoFormatting("DisplayMultiLine"), "DisplayMultiLine");
+		assert.notOk(DefaultContent.getNoFormatting("Edit"), "Edit");
+		assert.ok(DefaultContent.getNoFormatting("EditMultiValue"), "EditMultiValue");
+		assert.notOk(DefaultContent.getNoFormatting("EditMultiLine"), "EditMultiLine");
+		assert.notOk(DefaultContent.getNoFormatting("EditOperator"), "EditOperator");
+		assert.notOk(DefaultContent.getNoFormatting("EditForHelp"), "EditForHelp");
 	});
 
 	QUnit.module("Content creation", {

@@ -51,7 +51,6 @@ sap.ui.define([
 			}
 
 			oContentFactory.setAriaLabelledBy(oLink);
-			oContentFactory.setBoundProperty("text");
 
 			return [oLink];
 		},
