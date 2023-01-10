@@ -1,4 +1,8 @@
 /*global QUnit */
+
+QUnit.config.autostart = false;
+QUnit.config.reorder = false;
+
 sap.ui.require(["sap/base/util/fetch"], function (fetch) {
 	"use strict";
 
@@ -95,9 +99,6 @@ sap.ui.require(["sap/base/util/fetch"], function (fetch) {
 			}
 			return aResourcesToCheck.length === 0;
 		}
-
-		QUnit.config.autostart = false;
-		QUnit.config.reorder = false;
 
 		// ---- precondition ---------------------------------------------
 
