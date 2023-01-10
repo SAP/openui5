@@ -284,6 +284,11 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Setter <code>date</code> value.
+	 * @param {Date} oDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 */
 	TimesRow.prototype.setDate = function(oDate){
 
 		_changeDate.call(this, oDate, false);
@@ -292,6 +297,11 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Returns a Date in UTC timezone from local timezone
+	 * @returns {sap.ui.core.date.UniversalDate} Date in UTC timezone
+	 * @private
+	 */
 	TimesRow.prototype._getDate = function(){
 
 		if (!this._oUTCDate) {
@@ -302,6 +312,11 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Sets start date, as JavaScript Date object of the row.
+	 * @param {Date} oStartDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 */
 	TimesRow.prototype.setStartDate = function(oStartDate){
 
 		CalendarUtils._checkJSDateObject(oStartDate);
@@ -326,6 +341,11 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Returns the start of the corresponding interval date.
+	 * @returns {sap.ui.core.date.UniversalDate} Date in UTC timezone
+	 * @private
+	 */
 	TimesRow.prototype._getStartDate = function(){
 
 		if (!this._oUTCStartDate) {
@@ -337,10 +357,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Displays the given date without setting the focus
+	 * Displays the given date without setting the focus.
 	 *
-	 * @param {object} oDate JavaScript Date object for focused date.
-	 * @returns {this} <code>this</code> to allow method chaining
+	 * @param {Date} oDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */
 	TimesRow.prototype.displayDate = function(oDate){
@@ -609,7 +629,7 @@ sap.ui.define([
 
 	/*
 	 * Checks if a date is selected and what kind of selected
-	 * @return {int} iSelected 0: not selected; 1: single day selected, 2: interval start, 3: interval end, 4: interval between, 5: one day interval (start = end)
+	 * @returns {int} iSelected 0: not selected; 1: single day selected, 2: interval start, 3: interval end, 4: interval between, 5: one day interval (start = end)
 	 * @private
 	 */
 	TimesRow.prototype._checkDateSelected = function(oDate){
@@ -673,7 +693,7 @@ sap.ui.define([
 	/*
 	 * gets the type of a single date checking the specialDates aggregation
 	 * the first hit is used
-	 * @return {object} date type and tooltip defined in CalendarDayType
+	 * @returns {object} date type and tooltip defined in CalendarDayType
 	 * @private
 	 */
 	TimesRow.prototype._getDateType = function(oDate){
@@ -725,7 +745,7 @@ sap.ui.define([
 	/*
 	 * Checks if a time is enabled
 	 * the min. and max. date of the CalendarTimeInterval are used
-	 * @return {boolean} Flag if enabled
+	 * @returns {boolean} Flag if enabled
 	 * @private
 	 */
 	TimesRow.prototype._checkTimeEnabled = function(oDate){
@@ -880,7 +900,7 @@ sap.ui.define([
 	 * Checks if a date is focusable in the current rendered output.
 	 * This means that if it is not rendered, it is not focusable.
 	 *
-	 * @param {object} oDate JavaScript Date object for focused date.
+	 * @param {Date} oDate JavaScript Date object for focused date.
 	 * @returns {boolean} flag if focusable
 	 * @public
 	 */
@@ -913,7 +933,7 @@ sap.ui.define([
 	* when focus is being restored back (e.g. after rerendering), we focus the needed DOM element (in this case hour)
 	*
 	* @param {object} oInfo the focus info
-	* @returns {this} <code>this</code> for method chaining.
+	* @returns {this} Reference to <code>this</code> for method chaining
 	*/
 	TimesRow.prototype.applyFocusInfo = function(oInfo){
 		this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex());
@@ -1289,7 +1309,7 @@ sap.ui.define([
 	/*
 	 * Getter for the time's preferred hour symbol. Possible options are h|H|k|K.
 	 * @param {string} sTimeFormatShort Hours time format
-	 * @return {string} Hours pattern.
+	 * @returns {string} Hours pattern.
 	 * @private
 	 */
 	function _getPreferredHourSymbol(sTimeFormatShort){

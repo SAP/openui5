@@ -406,6 +406,11 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Set start date of the interval
+	 * @param {Date} oStartDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 */
 	CalendarDateInterval.prototype.setStartDate = function(oStartDate){
 
 		CalendarUtils._checkJSDateObject(oStartDate);
@@ -455,11 +460,11 @@ sap.ui.define([
 	};
 
 	// needs to be overwritten because differently implemented in Calendar
-	/*
+	/**
 	 * Gets current value of property startDate.
 	 *
 	 * Start date of the Interval
-	 * @returns {object} JavaScript date object for property startDate
+	 * @returns {Date} JavaScript date object for property <code>startDate</code>
 	 */
 	CalendarDateInterval.prototype.getStartDate = function(){
 
@@ -583,7 +588,7 @@ sap.ui.define([
 	 *
 	 * @protected
 	 * @param {int} iMonths How many months to be displayed
-	 * @returns {this} <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 */
 	CalendarDateInterval.prototype.setMonths = function(iMonths){
 
@@ -602,7 +607,7 @@ sap.ui.define([
 	 *
 	 * @protected
 	 * @param {int} [iFirstDayOfWeek] First day of the week
-	 * @returns {this} <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 */
 	CalendarDateInterval.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){
 
@@ -617,7 +622,7 @@ sap.ui.define([
 	/**
 	* Focuses given date.
 	* @param {Date} oDate a JavaScript date
-	* @returns {this} <code>this</code> for method chaining
+	* @returns {this} Reference to <code>this</code> for method chaining
 	*/
 	CalendarDateInterval.prototype.focusDate = function(oDate){
 
