@@ -167,8 +167,10 @@ sap.ui.define([
 				handleItemPress: function (oEvent) {
 				},
 				handleSelectionChange: function (oEvent) {
+					var bIsMultiSelectionPlugin = oEvent.getSource().isA('sap.ui.table.plugins.MultiSelectionPlugin');
+					var oParameters = oEvent.getParameters();
 
-					if (this._bScrolling || this._bBusy) {
+					if (bIsMultiSelectionPlugin ? oParameters._internalTrigger : !oParameters.userInteraction) { // Ignore internal events
 						return;
 					}
 
@@ -351,19 +353,11 @@ sap.ui.define([
 		_updateSelectionThrottled.call(this);
 	};
 	MDCTable.prototype._handleUpdateFinished = function (oEvent) {
-
-		this._bScrolling = false;
 		_updateSelectionThrottled.call(this);
 	};
-
 
 	MDCTable.prototype._handleFirstVisibleRowChanged = function (oEvent) {
-		this._bScrolling = true;
 		_updateSelectionThrottled.call(this);
-	};
-
-	MDCTable.prototype._handleBusyStateChanged = function (oEvent) {
-		this._bBusy = oEvent.getParameter("busy");
 	};
 
 	var handleInnerTable = function (oInnerTable, sMutation) {
@@ -378,7 +372,6 @@ sap.ui.define([
 				oInnerTable.detachEvent("rowSelectionChange", this._handleSelectionChange, this);
 				oInnerTable.detachEvent("rowsUpdated", this._handleUpdateFinished, this);
 				oInnerTable.detachEvent("firstVisibleRowChanged", this._handleFirstVisibleRowChanged, this);
-				oInnerTable.detachEvent("busyStateChanged", this._handleBusyStateChanged, this);
 				if (this._oUITableSelectionPlugin) {
 					this._oUITableSelectionPlugin.detachEvent("selectionChange", this._handleSelectionChange, this);
 				}
@@ -397,7 +390,6 @@ sap.ui.define([
 				oInnerTable.attachEvent("rowSelectionChange", this._handleSelectionChange, this);
 				oInnerTable.attachEvent("rowsUpdated", this._handleUpdateFinished, this);
 				oInnerTable.attachEvent("firstVisibleRowChanged", this._handleFirstVisibleRowChanged, this);
-				oInnerTable.attachEvent("busyStateChanged", this._handleBusyStateChanged, this);
 				this._oUITableSelectionPlugin = oInnerTable.getPlugins().find(function (oPlugin) {
 					return oPlugin.isA("sap.ui.table.plugins.SelectionPlugin");
 				});
@@ -648,8 +640,6 @@ sap.ui.define([
 			"_oScrollContainer",
 			"_oTableHelper",
 			"_bSelectionIsUpdating",
-			"_bScrolling",
-			"_bBusy",
 			"_sTableType",
 			"_oUITableSelectionPlugin",
 			"_oTable",

@@ -383,22 +383,26 @@ sap.ui.define([
 
 		return oContentPromise.then(function (oContent) {
 			return oMdcTableWrapper._retrievePromise("listBinding").then(function () {
-				var oSelectionPlugin = oTable._oTable._getSelectionPlugin();
 
-				oMdcTableWrapper._bScrolling = true;
-
-				oSelectionPlugin.setSelectedIndex(2).then(function () {
-					assert.ok(oMdcTableWrapper._handleSelectionChange.called, "MDCTable _handleSelectionChange was called");
-					assert.notOk(oMdcTableWrapper._fireSelect.called, "MDCTable _fireSelect was not called as table is scrolling.");
-
-					oMdcTableWrapper._bScrolling = false;
-					oMdcTableWrapper._bBusy = true;
-
-					return oSelectionPlugin.setSelectedIndex(0).then(function () {
-						assert.ok(oMdcTableWrapper._handleSelectionChange.called, "MDCTable _handleSelectionChange was called");
-						assert.notOk(oMdcTableWrapper._fireSelect.called, "MDCTable _fireSelect was not called as table is busy.");
-					});
+				oTable._oTable._getSelectionPlugin().fireSelectionChange({
+					rowIndices: [2],
+					limitReached: false,
+					_internalTrigger: true
 				});
+
+				assert.ok(oMdcTableWrapper._handleSelectionChange.called, "MDCTable _handleSelectionChange was called");
+				assert.notOk(oMdcTableWrapper._fireSelect.called, "MDCTable _fireSelect wasn't called as multiselectionplugin selectionchangeevent is not user induced");
+
+				oTable._oTable.fireRowSelectionChange({
+					rowIndex: 2,
+					rowContext: oTable._oTable.getContextByIndex(2),
+					rowIndices: [2],
+					selectAll: false,
+					userInteraction: false
+				});
+
+				assert.ok(oMdcTableWrapper._handleSelectionChange.calledTwice, "MDCTable _handleSelectionChange was called");
+				assert.notOk(oMdcTableWrapper._fireSelect.called, "MDCTable _fireSelect wasn't called as table rowselectionevent is not user induced");
 			});
 		});
 	});
