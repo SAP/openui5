@@ -3989,7 +3989,7 @@ sap.ui.define([
 			assert.ok(check(aColumns[11].getHeader(), parseFloat(getInnerColumnWidth(aColumns[11])) - fPadding, 0), "The header is not truncated and the column width is as wide as the header");
 
 			// 12th column. required "*" is added to column
-			assert.ok(check("Yes *", parseFloat(getInnerColumnWidth(aColumns[12])) - fPadding - 0.125 /* subtract padding from marker */));
+			assert.ok(check("Yes*", parseFloat(getInnerColumnWidth(aColumns[12])) - fPadding - 0.125 /* subtract padding from marker */), "Heaeder has correct width when using 'required' property");
 		}.bind(this));
 	});
 

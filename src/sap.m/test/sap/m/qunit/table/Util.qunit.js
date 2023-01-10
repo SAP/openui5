@@ -159,7 +159,10 @@ sap.ui.define([
 			Core.notifyContentDensityChanged();
 			done();
 		};
+		var sFontRequired = ThemeParameters.get({ name: "sapMFontLargeSize" }) || "normal";
+
 		assert.equal(Util.calcHeaderWidth("Header"), Util.measureText("Header"), "Column header width calculation without parameters");
+		assert.equal(Util.calcHeaderWidth("Header", 2, 19, 2, true), Util.measureText("Header") + Util.measureText("*", sFontRequired) + 0.125, "Column header width calculation with required parameter");
 		assert.equal(Util.calcHeaderWidth("Header", 11, 10), 10, "fContentWidth > iMaxWidth");
 		assert.equal(Util.calcHeaderWidth("Hea", 2, 0, 4), 4, "iMinWidth > iHeaderLength");
 		assert.equal(Util.calcHeaderWidth("He", 3, 0, 5), 5, "fContentWidth > iHeaderLength");

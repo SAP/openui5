@@ -151,22 +151,35 @@ sap.ui.define([
 	 * @param {float} [fContentWidth] The calculated width of the cell in rem
 	 * @param {int} [iMaxWidth=19] The maximum header width in rem
 	 * @param {int} [iMinWidth=2] The minimum header width in rem
+	 * @param {boolean} [bRequired=false] Determines whether the given column header is marked as required
 	 * @returns {float} The calculated header width in rem
 	 * @private
+	 * @ui5-restricted sap.ui.comp
 	 */
 	Util.calcHeaderWidth = (function() {
 		var sHeaderFont = "";
+		var sRequiredFont = "";
 		var fnGetHeaderFont = function() {
 			if (!sHeaderFont) {
 				sHeaderFont = [ThemeParameters.get({ name: "sapUiColumnHeaderFontWeight" }) || "normal", sDefaultFont].join(" ");
 			}
 			return sHeaderFont;
 		};
+		var fnGetRequiredFont = function() {
+			if (!sRequiredFont) {
+				sRequiredFont = [ThemeParameters.get({ name: "sapMFontLargeSize" }) || "normal", sDefaultFont].join(" ");
+			}
+			return sRequiredFont;
+		};
 
-		Core.attachThemeChanged(function() { sHeaderFont = ""; });
+		Core.attachThemeChanged(function() {
+			sHeaderFont = "";
+			sRequiredFont = "";
+		});
 
-		return function(sHeader, fContentWidth, iMaxWidth, iMinWidth) {
+		return function(sHeader, fContentWidth, iMaxWidth, iMinWidth, bRequired) {
 			var iHeaderLength = sHeader.length;
+			var fRequired = 0;
 			iMaxWidth = iMaxWidth || 19;
 			iMinWidth = iMinWidth || 2;
 
@@ -176,8 +189,14 @@ sap.ui.define([
 			if (iMinWidth > iHeaderLength) {
 				return iMinWidth;
 			}
+
+			if (bRequired) {
+				fRequired = 0.125 /* margin */ + Util.measureText("*", fnGetRequiredFont());
+			}
+
 			if (!fContentWidth) {
-				return Util.measureText(sHeader, fnGetHeaderFont());
+				var fHeaderWidth = Util.measureText(sHeader, fnGetHeaderFont());
+				return fHeaderWidth + fRequired;
 			}
 
 			fContentWidth = Math.max(fContentWidth, iMinWidth);
@@ -193,7 +212,7 @@ sap.ui.define([
 
 			var fHeaderWidthDiff = Math.max(0, fOrigHeaderWidth - fMaxHeaderWidth);
 			var fHeaderWidth = (fHeaderWidthDiff < 0.15) ? fOrigHeaderWidth : fMaxHeaderWidth + fHeaderWidthDiff * (1 - 1 / fContentWidth) / Math.E;
-			return fHeaderWidth;
+			return fHeaderWidth + fRequired;
 		};
 	})();
 
@@ -255,9 +274,8 @@ sap.ui.define([
 		}, 0);
 
 		if (sHeader) {
-			fHeaderWidth = Util.calcHeaderWidth(sHeader, (mSettings.truncateLabel ? fContentWidth : 0), iMaxWidth, iMinWidth);
+			fHeaderWidth = Util.calcHeaderWidth(sHeader, (mSettings.truncateLabel ? fContentWidth : 0), iMaxWidth, iMinWidth, mSettings.required);
 			fHeaderWidth += mSettings.headerGap ? (8 /* padding */ + 14 /* icon width */) / fBaseFontSize : 0;
-			fHeaderWidth += mSettings.required ? parseFloat(ThemeParameters.get({ name: "sapMFontLargeSize" })) + 0.125 /* margin-left */: 0; // required marker
 		}
 
 		fContentWidth = Math.max(iMinWidth, fContentWidth, fHeaderWidth);
