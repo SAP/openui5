@@ -19,6 +19,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldHelpBase
 	 * @experimental As of version 1.77
 	 * @since 1.77.0
+	 * @deprecated As of version 1.110, replaced by {@link sap.ui.mdc.ValueHelpDelegate ValueHelpDelegate}
 	 * @alias sap.ui.mdc.field.FieldHelpBaseDelegate
 	 */
 	var FieldHelpBaseDelegate = {

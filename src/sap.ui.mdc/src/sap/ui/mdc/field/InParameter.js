@@ -25,6 +25,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.66.0
+	 * @deprecated As of version 1.110, replaced by implementing {@link sap.ui.mdc.ValueHelpDelegate.getFilterConditions ValueHelpDelegate.getFilterConditions}
 	 * @alias sap.ui.mdc.field.InParameter
 	 */
 	var InParameter = Element.extend("sap.ui.mdc.field.InParameter", /** @lends sap.ui.mdc.field.InParameter.prototype */

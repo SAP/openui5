@@ -23,6 +23,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp, sap.ui.mdc.field.FieldValueHelpMTableWrapper
 	 * @experimental As of version 1.77
 	 * @since 1.77.0
+	 * @deprecated As of version 1.110, replaced by {@link sap.ui.mdc.ValueHelpDelegate ValueHelpDelegate}
 	 * @alias sap.ui.mdc.field.FieldValueHelpDelegate
 	 */
 	var FieldValueHelpDelegate = Object.assign({}, FieldHelpBaseDelegate);

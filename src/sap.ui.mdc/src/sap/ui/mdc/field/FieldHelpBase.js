@@ -44,6 +44,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.54.0
+	 * @deprecated As of version 1.110, replaced by {@link sap.ui.mdc.ValueHelp ValueHelp}
 	 * @alias sap.ui.mdc.field.FieldHelpBase
 	 */
 	var FieldHelpBase = Element.extend("sap.ui.mdc.field.FieldHelpBase", /** @lends sap.ui.mdc.field.FieldHelpBase.prototype */

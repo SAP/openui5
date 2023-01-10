@@ -37,6 +37,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc
   	 * @experimental
 	 * @since 1.88.0
+	 * @deprecated As of version 1.110, replaced by {@link sap.ui.mdc.valuehelp.content.MDCTable MDCTable}. UITable not longer supported stand-alone.
 	 * @alias sap.ui.mdc.field.FieldValueHelpUITableWrapper
 	 */
 	var FieldValueHelpUITableWrapper = FieldValueHelpTableWrapperBase.extend("sap.ui.mdc.field.FieldValueHelpUITableWrapper", /** @lends sap.ui.mdc.field.FieldValueHelpUITableWrapper.prototype */
