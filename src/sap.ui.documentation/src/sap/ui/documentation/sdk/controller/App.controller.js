@@ -1179,8 +1179,8 @@ sap.ui.define([
 					bPhoneSize = oViewModel.getProperty("/bPhoneSize");
 
 				// Version switch should not be shown on phone sizes or when no versions are found
-				oViewModel.setProperty("/bShowVersionSwitchInHeader", !bPhoneSize && !!this._aNeoAppVersions);
-				oViewModel.setProperty("/bShowVersionSwitchInMenu", bPhoneSize && !!this._aNeoAppVersions);
+				oViewModel.setProperty("/bShowVersionSwitchInHeader", !bPhoneSize && !!this._aNeoAppVersions.length);
+				oViewModel.setProperty("/bShowVersionSwitchInMenu", bPhoneSize && !!this._aNeoAppVersions.length);
 			},
 
 			_createVersionDialog: function () {
@@ -1722,6 +1722,7 @@ sap.ui.define([
 							this._updateVersionSwitchVisibility();
 							this.getModel("versionData").setProperty("/latestVersion", this._aNeoAppVersions[0].version);
 						} else {
+							this._aNeoAppVersions = [];
 							Log.warning("No multi-version environment detected");
 						}
 					}.bind(this),
