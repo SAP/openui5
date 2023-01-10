@@ -2993,6 +2993,7 @@ sap.ui.define([
 				isRelative : function () { return false; }
 			},
 			oPromise,
+			fnUndelete = sinon.spy(),
 			that = this;
 
 		oBindingMock.expects("fetchCache"); // so that setContext does not stumble over the mocks
@@ -3016,7 +3017,7 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oBinding.delete("~oGroupLock~", "SalesOrders('42')", oContext, "~oETagEntity~",
-			"~bDoNotRequestCount~");
+			"~bDoNotRequestCount~", fnUndelete);
 
 		assert.strictEqual(oParent.oElementContext, null);
 		assert.ok(oContext.oDeletePromise.isPending());
@@ -3027,6 +3028,7 @@ sap.ui.define([
 		oExpectation.args[0][5](undefined, -1);
 
 		assert.strictEqual(oParentContext.oDeletePromise, "~oDeletePromise~");
+		sinon.assert.notCalled(fnUndelete);
 		assert.ok(oContext.oDeletePromise.isPending());
 
 		if (bSuccess === false) {
@@ -3034,7 +3036,8 @@ sap.ui.define([
 			oExpectation.args[0][5](undefined, 1);
 
 			assert.strictEqual(oParentContext.oDeletePromise, null);
-			assert.strictEqual(oContext.oDeletePromise, null);
+			sinon.assert.calledOnce(fnUndelete);
+			sinon.assert.calledWithExactly(fnUndelete);
 		}
 
 		return oPromise.then(function () {
@@ -3045,7 +3048,7 @@ sap.ui.define([
 			assert.strictEqual(oError, "~Error~");
 			assert.strictEqual(oParent.oElementContext, oParentContext);
 			assert.strictEqual(oParentContext.oDeletePromise, null);
-			assert.strictEqual(oContext.oDeletePromise, null);
+			sinon.assert.calledWithExactly(fnUndelete);
 		});
 	});
 });
@@ -3063,7 +3066,8 @@ sap.ui.define([
 				// no #execute
 			},
 			oPromise,
-			oRowContext = Context.create(this.oModel, null, "/SalesOrders('42')");
+			oRowContext = Context.create(this.oModel, null, "/SalesOrders('42')"),
+			fnUndelete = sinon.spy();
 
 		this.mock(oBinding).expects("fetchCache");
 		oBinding.setContext(oRowContext);
@@ -3080,7 +3084,7 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oBinding.delete("~oGroupLock~", "SalesOrders('42')", oContext, "~oETagEntity~",
-				"~bDoNotRequestCount~"
+				"~bDoNotRequestCount~", fnUndelete
 			).then(function (oDeleteResult) {
 				assert.strictEqual(oDeleteResult, "~oResult~");
 
@@ -3090,7 +3094,8 @@ sap.ui.define([
 				// code under test - callback
 				oExpectation.args[0][5]();
 
-				assert.strictEqual(oContext.oDeletePromise, null);
+				sinon.assert.calledOnce(fnUndelete);
+				sinon.assert.calledWithExactly(fnUndelete);
 				assert.strictEqual(oRowContext.oDeletePromise, null);
 			});
 
@@ -3134,7 +3139,7 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oBinding.delete("~oGroupLock~", "SalesOrders('42')", {/*_oContext*/},
-			{/*_oETagEntity*/}, "~bDoNotRequestCount~");
+			{/*_oETagEntity*/}, "~bDoNotRequestCount~", function () {});
 
 		assert.strictEqual(oBinding.oElementContext, null);
 		if ("newContext" in oFixture) {
@@ -3204,7 +3209,9 @@ sap.ui.define([
 				}));
 
 			// code under test
-			return oBinding.delete("myGroup", "EMPLOYEES('42')", {/*oContext*/}).then(function () {
+			return oBinding.delete("myGroup", "EMPLOYEES('42')", {/*oContext*/},
+				/*oETagEntity*/null, /*bDoNotRequestCount*/false, /*fnUndelete*/function () {}
+			).then(function () {
 				assert.ok(bSuccess);
 
 				that.mock(oBinding).expects("createRefreshPromise").never();
