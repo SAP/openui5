@@ -4987,7 +4987,8 @@ sap.ui.define([
 		var oBinding = this.bindContext("/SalesOrder('1')/SO_2_BP"),
 			sCanonicalPath = bMatch ? "/BusinessPartner('2')" : "/BusinessPartner('3')";
 
-		this.mock(oBinding.oElementContext).expects("getValue").withExactArgs()
+		this.mock(oBinding.oElementContext).expects("getValue")
+			.withExactArgs("/SalesOrder('1')/SO_2_BP")
 			.returns({"@$ui5._" : {predicate : "1"}});
 		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.resolve(sCanonicalPath));
@@ -5019,13 +5020,15 @@ sap.ui.define([
 			sCanonicalPath = bMatch ? "/BusinessPartner('2')" : "/BusinessPartner('3')",
 			oReturnValueContext = {
 				fetchCanonicalPath : function () {},
+				getPath : function () {},
 				getValue : function () {}
 			};
 
 		oBinding.oReturnValueContext = oReturnValueContext;
 		this.mock(oBinding.oElementContext).expects("getValue").never();
 		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").never();
-		this.mock(oBinding.oReturnValueContext).expects("getValue").withExactArgs()
+		this.mock(oReturnValueContext).expects("getPath").withExactArgs().returns("~");
+		this.mock(oBinding.oReturnValueContext).expects("getValue").withExactArgs("~")
 			.returns({"@$ui5._" : {predicate : "1"}});
 		this.mock(oReturnValueContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.resolve(sCanonicalPath));
@@ -5041,7 +5044,8 @@ sap.ui.define([
 	QUnit.test("findContextForCanonicalPath: fetchCanonicalPath fails", function (assert) {
 		var oBinding = this.bindContext("/SalesOrder('1')/SO_2_BP");
 
-		this.mock(oBinding.oElementContext).expects("getValue").withExactArgs()
+		this.mock(oBinding.oElementContext).expects("getValue")
+			.withExactArgs("/SalesOrder('1')/SO_2_BP")
 			.returns({"@$ui5._" : {predicate : "1"}});
 		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.reject(new Error()));
@@ -5056,7 +5060,8 @@ sap.ui.define([
 	QUnit.test("findContextForCanonicalPath: no entity data in cache", function (assert) {
 		var oBinding = this.bindContext("/SalesOrder('1')/SO_2_BP");
 
-		this.mock(oBinding.oElementContext).expects("getValue").withExactArgs().returns(undefined);
+		this.mock(oBinding.oElementContext).expects("getValue")
+			.withExactArgs("/SalesOrder('1')/SO_2_BP").returns(undefined);
 		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").never();
 
 		assert.strictEqual(
@@ -5069,7 +5074,8 @@ sap.ui.define([
 	QUnit.test("findContextForCanonicalPath: no key predicate", function (assert) {
 		var oBinding = this.bindContext("/SalesOrder('1')/SO_2_BP");
 
-		this.mock(oBinding.oElementContext).expects("getValue").withExactArgs().returns({});
+		this.mock(oBinding.oElementContext).expects("getValue")
+			.withExactArgs("/SalesOrder('1')/SO_2_BP").returns({});
 		this.mock(oBinding.oElementContext).expects("fetchCanonicalPath").never();
 
 		assert.strictEqual(
