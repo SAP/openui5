@@ -907,7 +907,7 @@ sap.ui.define([
 						}
 						oEventParams[ItemNavigationHomeEnd.BorderReachedDirection] = sDirection;
 					}
-					ItemNavigation.prototype.fireEvent.apply(this, arguments);
+					return ItemNavigation.prototype.fireEvent.apply(this, arguments);
 				};
 			}
 		});
