@@ -702,7 +702,9 @@ sap.ui.define([
 		this.fireSelectionChange({
 			rowIndices: aRowIndices,
 			limitReached: this.isLimitReached(),
-			customPayload: typeof this._oCustomEventPayloadTmp === "object" ? this._oCustomEventPayloadTmp : null
+			customPayload: typeof this._oCustomEventPayloadTmp === "object" ? this._oCustomEventPayloadTmp : null,
+			// _internalTrigger restricted for sap.ui.comp.valuehelpdialog.ValueHelpDialog and sap.ui.mdc.valuehelp.content.MDCTable
+			_internalTrigger: oEvent.getParameter("_internalTrigger")
 		});
 	};
 
