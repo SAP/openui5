@@ -75,6 +75,7 @@ function(
 	 * @param {string} mComponent.name - Name of the component
 	 * @param {object} [mPropertyBag] - Contains additional data needed for reading changes
 	 * @param {string} [mPropertyBag.componentId] - ID of the current component, needed if bInvalidataCache is set
+	 * @param {string} [mPropertyBag.version] - Number of the version being processed
 	 * @param {boolean} bInvalidateCache - should the cache be invalidated
 	 * @returns {Promise} resolves with the change file for the given component, either from cache or back end
 	 */

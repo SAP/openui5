@@ -646,8 +646,8 @@ sap.ui.define([
 			.then(function(oReturn) {
 				oReloadInfo = oReturn;
 				if (!bSkipSave) {
-					// serializeToLrep has to be called even when no changes were made -> to invalidate cache
-					return this._serializeToLrep();
+					// serializeToLrep has to be called on exit even when no changes were made -> to invalidate cache
+					return this._serializeToLrep(/*bCondenseAnyLayer=*/false, /*bIsExit=*/true);
 				}
 				return undefined;
 			}.bind(this))
@@ -896,16 +896,16 @@ sap.ui.define([
 	// ---- API ----
 
 	// this function is used to save in the Visual Editor
-	RuntimeAuthoring.prototype._serializeToLrep = function(bCondenseAnyLayer) {
+	RuntimeAuthoring.prototype._serializeToLrep = function(bCondenseAnyLayer, bIsExit) {
 		// when saving a change that requires a reload, the information has to be cached
 		// to do the reload when exiting UI Adaptation as then the change will not be available anymore
 		if (!this._bSavedChangesNeedReload) {
 			return this._oSerializer.needsReload().then(function(bReloadNeeded) {
 				this._bSavedChangesNeedReload = bReloadNeeded;
-				return serializeAndSave.call(this, undefined, bCondenseAnyLayer);
+				return serializeAndSave.call(this, undefined, bCondenseAnyLayer, bIsExit);
 			}.bind(this));
 		}
-		return serializeAndSave.call(this, undefined, bCondenseAnyLayer);
+		return serializeAndSave.call(this, undefined, bCondenseAnyLayer, bIsExit);
 	};
 
 	/**
@@ -1159,18 +1159,29 @@ sap.ui.define([
 			.then(fnCallback);
 	}
 
-	function serializeAndSave(bActivateVersion, bCondenseAnyLayer) {
+	function serializeAndSave(bActivateVersion, bCondenseAnyLayer, bIsExit) {
 		if (this.getShowToolbars()) {
 			this.bPersistedDataTranslatable = this._oToolbarControlsModel.getProperty("/translation/enabled");
 		}
+
 		var mPropertyBag = {
-			// Save changes on the current layer and discard dirty changes on other layers
-			saveAsDraft: this._oVersionsModel.getProperty("/versioningEnabled") && this.getLayer() === Layer.CUSTOMER,
 			layer: this.getLayer(),
 			removeOtherLayerChanges: true,
-			version: bActivateVersion ? this._oVersionsModel.getProperty("/displayedVersion") : undefined,
 			condenseAnyLayer: bCondenseAnyLayer
 		};
+
+		if (this._oVersionsModel.getProperty("/versioningEnabled")) {
+			var sVersion = bActivateVersion ? this._oVersionsModel.getProperty("/displayedVersion") : undefined;
+
+			// If a draft is being processed, saving without exiting must retrieve the updated state of the draft version
+			if (!sVersion) {
+				sVersion = bIsExit ? undefined : Version.Number.Draft;
+			}
+			mPropertyBag.version = sVersion;
+
+			// Save changes on the current layer and discard dirty changes on other layers
+			mPropertyBag.saveAsDraft = this.getLayer() === Layer.CUSTOMER;
+		}
 
 		return this._oSerializer.saveCommands(mPropertyBag);
 	}

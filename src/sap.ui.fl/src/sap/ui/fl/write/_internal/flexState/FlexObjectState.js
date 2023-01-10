@@ -170,9 +170,10 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
-	 * @param {boolean} mPropertyBag.invalidateCache - Flag if the cache should be invalidated
-	 * @param {boolean} mPropertyBag.includeCtrlVariants - Flag if control variant changes should be included
-	 * @param {boolean} mPropertyBag.includeDirtyChanges - Flag if dirty UI changes should be included
+	 * @param {boolean} [mPropertyBag.invalidateCache] - Flag if the cache should be invalidated
+	 * @param {boolean} [mPropertyBag.includeCtrlVariants] - Flag if control variant changes should be included
+	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Flag if dirty UI changes should be included
+	 * @param {boolean} [mPropertyBag.version] - The version for which the objects are retrieved
 	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
 	 */
 	FlexObjectState.getFlexObjects = function (mPropertyBag) {
@@ -236,6 +237,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.cacheKey] - Key to validate the cache entry stored on client side
 	 * @param {boolean} [mPropertyBag.invalidateCache] - Indicates whether the cache is to be invalidated
 	 * @param {boolean} [mPropertyBag.removeOtherLayerChanges=false] - Whether to remove changes on other layers before saving
+	 * @param {boolean} [mPropertyBag.version] - Version for which the objects are saved
 	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
 	 */
 	FlexObjectState.saveFlexObjects = function(mPropertyBag) {

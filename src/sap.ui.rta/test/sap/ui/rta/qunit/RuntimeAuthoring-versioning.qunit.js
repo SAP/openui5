@@ -249,6 +249,13 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when save is called on Draft without leaving RTA", function(assert) {
+			return this.oRta.save()
+			.then(function() {
+				assert.strictEqual(this.oSaveStub.args[0][0].version, Version.Number.Draft, "then saveCommands is called with draft version");
+			}.bind(this));
+		});
+
 		QUnit.test("when onActivate is called on an older version with backend draft", function(assert) {
 			var fnDone = assert.async();
 			var sVersionTitle = "aVersionTitle";

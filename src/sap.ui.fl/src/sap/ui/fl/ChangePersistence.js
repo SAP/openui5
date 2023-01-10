@@ -176,6 +176,7 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.includeCtrlVariants] - Indicates that control variant changes shall be included
 	 * @param {string} [mPropertyBag.cacheKey] Key to validate the cache entry stored on client side
 	 * @param {sap.ui.core.Component} [mPropertyBag.component] - Component instance
+	 * @param {string} [mPropertyBag.version] Number of the version to retrieve changes for
 	 * @param {boolean} bInvalidateCache - should the cache be invalidated
 	 * @returns {Promise} Promise resolving with an array of changes
 	 * @public

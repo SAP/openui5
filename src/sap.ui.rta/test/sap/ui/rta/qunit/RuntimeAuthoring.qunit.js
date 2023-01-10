@@ -439,9 +439,14 @@ sap.ui.define([
 							"then the change keeps its revert data"
 						);
 						assert.strictEqual(
-							oSerializeToLrepSpy.args[0].length,
-							0,
-							"then '_serializeToLrep' was called without 'bCondenseAnyLayer' parameter"
+							oSerializeToLrepSpy.args[0][0],
+							false,
+							"then '_serializeToLrep' was called with 'bCondenseAnyLayer' parameter equal to false"
+						);
+						assert.strictEqual(
+							oSerializeToLrepSpy.args[0][1],
+							true,
+							"then '_serializeToLrep' was called with 'bIsExit' parameter equal to true"
 						);
 					});
 				}.bind(this));
