@@ -389,9 +389,15 @@ sap.ui.define([
 					this._oHeaderLayoutUtil = {
 
 						_getControlSampleBlock: function (oControlData, oEntityData) {
+							var sStereotype = oControlData && oControlData['ui5-metadata'] && oControlData['ui5-metadata'].stereotype || '';
+							if (typeof sStereotype === 'string' && sStereotype.length > 0) {
+								// stereotype with starting capital char and spacer at the end
+								sStereotype = sStereotype.charAt(0).toUpperCase() + sStereotype.slice(1) + ' ';
+							}
+
 							return _getHBox({
 								items: [
-									_getLabel({design: "Bold", text: "Control Sample:"}),
+									_getLabel({design: "Bold", text: sStereotype + "Sample:"}),
 									_getLink({
 										emphasized: true,
 										text: oEntityData.sample,
