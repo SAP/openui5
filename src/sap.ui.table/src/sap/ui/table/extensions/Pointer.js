@@ -174,9 +174,11 @@ sap.ui.define([
 			var iLocationX = ExtensionHelper._getEventPosition(oEvent, this).x;
 			var oColumn = this._getVisibleColumns()[this._iLastHoveredVisibleColumnIndex];
 			var $RelevantColumnElement = this.$().find("th[data-sap-ui-colid=\"" + oColumn.getId() + "\"]"); // Consider span and multi-header
-			var iColumnWidth = $RelevantColumnElement.width(); // the content width of the column without padding and border
+			var iColumnWidth = $RelevantColumnElement[0].offsetWidth; // the width of the column with padding and border
+			var iInnerWidth = $RelevantColumnElement.width(); // the content width of the column without padding and border
+			var iPaddingAndBorder = iColumnWidth - iInnerWidth;
 			var iDeltaX = iLocationX - ($RelevantColumnElement.offset().left + (this._bRtlMode ? 0 : iColumnWidth));
-			var iCalculatedColumnWidth = Math.round(iColumnWidth + iDeltaX * (this._bRtlMode ? -1 : 1));
+			var iCalculatedColumnWidth = Math.round(iColumnWidth + iDeltaX * (this._bRtlMode ? -1 : 1)) - iPaddingAndBorder;
 			var iNewColumnWidth = Math.max(iCalculatedColumnWidth, TableUtils.Column.getMinColumnWidth());
 
 			ColumnResizeHelper._resizeColumn(this, this._iLastHoveredVisibleColumnIndex, this._bColumnResizerMoved ? iNewColumnWidth : null);

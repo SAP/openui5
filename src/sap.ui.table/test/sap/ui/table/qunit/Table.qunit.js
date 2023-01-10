@@ -1235,8 +1235,9 @@ sap.ui.define([
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed .sapUiTableCtrlCol th").length, 2, "Fixed table has 3 Columns");
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th").length, 6, "Scroll table has 7 Columns");
-		assert.equal($table.find(".sapUiTableFirstColumnHeader").length, 1, "Table has a single sapUiTableFirstColumnHeader class");
-		assert.equal($table.find(".sapUiTableFirstColumnHeader")[0], $table.find("th")[0], "sapUiTableFirstColumnHeader class is set on the first th element");
+		assert.equal($table.find(".sapUiTableFirstVisibleColumnTH").length, 2, "Table has two sapUiTableFirstVisibleColumnTH class");
+		assert.equal($table.find(".sapUiTableFirstVisibleColumnTH")[0], $table.find(".sapUiTableCHA th")[0], "sapUiTableFirstVisibleColumnTH class is set on the first th element of header table");
+		assert.equal($table.find(".sapUiTableFirstVisibleColumnTH")[1], $table.find(".sapUiTableCCnt th")[0], "sapUiTableFirstVisibleColumnTH class is set on the first th element of content table");
 		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css("margin-left"), getExpectedHScrollLeftMargin(3),
 			"Horizontal scrollbar has correct left margin");
 	});

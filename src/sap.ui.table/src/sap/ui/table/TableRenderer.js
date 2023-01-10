@@ -21,8 +21,6 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		Center: "center"
 	};
 
-	var bFirstColumnHeaderRendered;
-
 	/**
 	 * Table renderer.
 	 *
@@ -42,9 +40,6 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 	TableRenderer.render = function(rm, oTable) {
 		// Clear cashed header row count
 		delete oTable._iHeaderRowCount;
-
-		// Reset the flag per rendering
-		bFirstColumnHeaderRendered = false;
 
 		mFlexCellContentAlignment.Left = oTable._bRtlMode ? "flex-end" : "flex-start";
 		mFlexCellContentAlignment.Right = oTable._bRtlMode ? "flex-start" : "flex-end";
@@ -851,6 +846,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		var iCol;
 		var oColumn;
 		var bRenderDummyColumn = !bFixedTable && iEndColumn > iStartColumn;
+		var aVisibleColumns = oTable._getVisibleColumns();
 
 		for (iCol = iStartColumn; iCol < iEndColumn; iCol++) {
 			oColumn = aCols[iCol];
@@ -895,9 +891,8 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 				rm.style("width", oColParam.width);
 				rm.attr("data-sap-ui-headcolindex", iCol);
 				rm.attr("data-sap-ui-colid", oColumn.getId());
-				if (!bFirstColumnHeaderRendered) {
-					rm.class("sapUiTableFirstColumnHeader");
-					bFirstColumnHeaderRendered = true;
+				if (oColumn === aVisibleColumns[0]) {
+					rm.class("sapUiTableFirstVisibleColumnTH");
 				}
 				rm.openEnd();
 				if (iStartRow == 0 && TableUtils.getHeaderRowCount(oTable) == 0 && !bHeader) {
@@ -922,8 +917,6 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		rm.close("thead");
 
 		rm.openStart("tbody").openEnd();
-
-		var aVisibleColumns = oTable._getVisibleColumns();
 
 		// render the table rows
 		var aRows = oTable.getRows();

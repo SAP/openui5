@@ -435,6 +435,7 @@
  * Another alternative would be rendering a dummy 0.5rem width column. While this can solve the
  * API and DOM column width difference, changing the table layout might be expensive.
  */
-.sapUiTable:not(.sapUiTableRowSelectors,.sapUiTableRowHighlights) .sapUiTableFirstColumnHeader {
-	padding-left: .5rem;
+.sapUiTable:not(.sapUiTableRowSelectors,.sapUiTableRowHighlights) .sapUiTableFirstVisibleColumnTH {
+	padding-left: .25rem;
+	padding-right: .25rem;
 }
