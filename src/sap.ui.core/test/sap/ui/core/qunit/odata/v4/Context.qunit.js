@@ -3304,7 +3304,8 @@ sap.ui.define([
 				getUnlockedCopy : function () {},
 				unlock : function () {}
 			},
-			fnReporter = sinon.spy();
+			fnReporter = sinon.spy(),
+			oResult;
 
 		oContextMock.expects("isTransient").withExactArgs().returns(true);
 		oContextMock.expects("doSetProperty")
@@ -3335,8 +3336,11 @@ sap.ui.define([
 		});
 
 		// code under test
-		return oContext.doSetProperty("~sPath~", "~vValue~", oGroupLock, "~bSkipRetry~")
-			.then(function (vResult) {
+		oResult = oContext.doSetProperty("~sPath~", "~vValue~", oGroupLock, "~bSkipRetry~");
+
+		assert.ok(oResult instanceof SyncPromise, "@returns {sap.ui.base.SyncPromise}");
+
+		return oResult.then(function (vResult) {
 				assert.strictEqual(vResult, "~result~");
 				sinon.assert.calledOnce(fnReporter);
 				sinon.assert.calledWithExactly(fnReporter, oError);

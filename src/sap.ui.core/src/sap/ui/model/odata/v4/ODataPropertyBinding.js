@@ -719,9 +719,9 @@ sap.ui.define([
 	/**
 	 * Sets the new current value and updates the cache. If the value cannot be accepted or cannot
 	 * be updated on the server, an error is logged to the console and added to the message manager
-	 * as a technical message. On success, a
+	 * as a technical message. Unless preconditions fail synchronously, a
 	 * {@link sap.ui.model.odata.v4.ODataModel#event:propertyChange 'propertyChange'} event is
-	 * fired.
+	 * fired and provides a promise on the outcome of the asynchronous operation.
 	 *
 	 * @param {any} vValue
 	 *   The new value which must be primitive
@@ -746,6 +746,7 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.setValue = function (vValue, sGroupId) {
 		var oGroupLock,
+			oPromise,
 			sResolvedPath = this.getResolvedPath(),
 			that = this;
 
@@ -775,23 +776,23 @@ sap.ui.define([
 				return; // do not update this.vValue!
 			}
 			oGroupLock = this.bNoPatch ? null : this.lockGroup(sGroupId, true, true);
-			this.oContext.doSetProperty(this.sPath, vValue, oGroupLock)
-				.then(function () {
-					if (that.oModel.hasListeners("propertyChange")) {
-						that.oModel.firePropertyChange({
-							context : that.oContext,
-							path : that.sPath,
-							reason : ChangeReason.Binding,
-							resolvedPath : sResolvedPath,
-							value : vValue
-						});
-					} // else: do not construct parameter object in vain
-				}, function (oError) {
-					if (oGroupLock) {
-						oGroupLock.unlock(true);
-					}
-					reportError(oError);
+			oPromise = this.oContext.doSetProperty(this.sPath, vValue, oGroupLock);
+			oPromise.catch(function (oError) {
+				if (oGroupLock) {
+					oGroupLock.unlock(true);
+				}
+				reportError(oError);
+			});
+			if (!oPromise.isRejected() && that.oModel.hasListeners("propertyChange")) {
+				that.oModel.firePropertyChange({
+					context : that.oContext,
+					path : that.sPath,
+					promise : oPromise.isPending() ? oPromise.getResult() : undefined,
+					reason : ChangeReason.Binding,
+					resolvedPath : sResolvedPath,
+					value : vValue
 				});
+			} // else: do not construct parameter object in vain
 		}
 	};
 

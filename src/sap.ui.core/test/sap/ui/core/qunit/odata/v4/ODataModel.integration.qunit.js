@@ -7137,30 +7137,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Modify a property which does not belong to the parent binding's entity
+	// Scenario: Modify a property which does not belong to the parent binding's entity, but is
+	// related via a navigation property.
 	//
 	// Additionally, observe the "propertyChange" event (JIRA: CPOUI5ODATAV4-1919)
-	QUnit.test("Modify a foreign property", function (assert) {
+	QUnit.test("JIRA: CPOUI5ODATAV4-1919", function (assert) {
 		var oContext,
 			iCount = 0,
+			bDone,
+			oPromise,
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Input id="item" value="{SO_2_BP/CompanyName}"/>\
 </Table>',
-			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel({
+					autoExpandSelect : true,
+					updateGroupId : "update"
+				}),
 			that = this;
 
 		// code under test
 		oModel.attachPropertyChange(function (oEvent) {
+			var mParameters = oEvent.getParameters();
+
 			iCount += 1;
 			assert.strictEqual(oEvent.getSource(), oModel);
-			assert.deepEqual(oEvent.getParameters(), {
+			oPromise = mParameters.promise;
+			delete mParameters.promise; // hide from deepEqual
+			assert.deepEqual(mParameters, {
 				context : oContext,
 				path : "SO_2_BP/CompanyName",
 				reason : ChangeReason.Binding,
 				resolvedPath : "/SalesOrderList('0500000002')/SO_2_BP/CompanyName",
 				value : "Bar"
 			}, "JIRA: CPOUI5ODATAV4-1919");
+
+			oPromise.then(function () {
+				bDone = true;
+			});
 		});
 
 		this.expectRequest("SalesOrderList?$select=SalesOrderID"
@@ -7181,19 +7195,31 @@ sap.ui.define([
 
 			oContext = oCell.getBindingContext();
 
+			that.expectChange("item", ["Bar"]);
+
+			// code under test
+			oCell.getBinding("value").setValue("Bar");
+
+			assert.strictEqual(iCount, 1, "propertyChange fired sync");
+
+			return that.waitForChanges(assert, "setValue");
+		}).then(function () {
+			assert.notOk(bDone, "not yet PATCHed");
+
 			that.expectRequest({
 					method : "PATCH",
 					url : "BusinessPartnerList('42')",
 					headers : {"If-Match" : "ETag"},
 					payload : {CompanyName : "Bar"}
-				}, {CompanyName : "Bar"})
-				.expectChange("item", ["Bar"]);
+				}, {CompanyName : "Bar"});
 
-			// code under test
-			oCell.getBinding("value").setValue("Bar");
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				oPromise,
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert, "submitBatch")
+			]);
 		}).then(function () {
+			assert.ok(bDone);
 			assert.strictEqual(iCount, 1, "propertyChange fired once");
 		});
 	});
@@ -11138,7 +11164,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Error response for a change set without contend-ID
+	// Scenario: Error response for a change set without content-ID
 	// Without target $<content-ID> in the error response we can not assign the error to the
 	// right request -> all requests in the change set are rejected with the same error;
 	// the error is logged for each request in the change set, but it is reported only once to
@@ -32398,13 +32424,19 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Immediate retry of failed PATCHes; make sure that order is preserved
 	// JIRA: CPOUI5UISERVICESV3-1450
+	//
+	// Additionally, observe the "propertyChange" event (JIRA: CPOUI5ODATAV4-1919)
 	["$auto", "group"].forEach(function (sUpdateGroupId) {
 		QUnit.test("Immediately retry failed PATCHes for " + sUpdateGroupId, function (assert) {
 			var oAgeBinding,
+				iCount = 0,
 				oModel = this.createTeaBusiModel({updateGroupId : sUpdateGroupId}),
-				oPromise,
+				oPatchPromise1,
+				oPatchPromise2,
+				mParameters,
 				fnReject,
 				oRoomIdBinding,
+				oSubmitPromise,
 				sView = '\
 <FlexBox binding="{/EMPLOYEES(\'3\')}">\
 	<Input id="age" value="{AGE}"/>\
@@ -32412,6 +32444,13 @@ sap.ui.define([
 	<Input id="status" value="{STATUS}"/>\
 </FlexBox>',
 				that = this;
+
+			// code under test
+			oModel.attachPropertyChange(function (oEvent) {
+				iCount += 1;
+				mParameters = oEvent.getParameters();
+				assert.strictEqual(oEvent.getSource(), oModel);
+			});
 
 			this.expectRequest("EMPLOYEES('3')", {
 					"@odata.etag" : "ETag0",
@@ -32443,15 +32482,29 @@ sap.ui.define([
 					}));
 
 				oAgeBinding.setValue(67); // Happy Birthday!
+
+				assert.strictEqual(iCount, 1, "propertyChange fired sync");
+				assert.strictEqual(mParameters.resolvedPath, "/EMPLOYEES('3')/AGE");
+				oPatchPromise1 = mParameters.promise;
+
 				oRoomIdBinding.setValue("42");
-				oPromise = oModel.submitBatch("group");
+
+				assert.strictEqual(iCount, 2, "propertyChange fired sync");
+				assert.strictEqual(mParameters.resolvedPath, "/EMPLOYEES('3')/ROOM_ID");
+				oPatchPromise2 = mParameters.promise;
+
+				oSubmitPromise = oModel.submitBatch("group");
 
 				return that.waitForChanges(assert);
 			}).then(function () {
-				var oError = createErrorInsideBatch();
+				that.expectChange("roomId", "23");
 
-				that.expectChange("roomId", "23")
-					.expectRequest({
+				oRoomIdBinding.setValue("23");
+
+				assert.strictEqual(iCount, 3, "propertyChange fired sync");
+				assert.strictEqual(mParameters.resolvedPath, "/EMPLOYEES('3')/ROOM_ID");
+
+				that.expectRequest({
 						method : "PATCH",
 						url : "EMPLOYEES('3')",
 						headers : {"If-Match" : "ETag0"},
@@ -32476,12 +32529,14 @@ sap.ui.define([
 				that.oLogMock.expects("error")
 					.withArgs("Failed to update path /EMPLOYEES('3')/ROOM_ID");
 
-				oRoomIdBinding.setValue("23");
-				fnReject(oError);
+				fnReject(createErrorInsideBatch());
 
 				return Promise.all([
-					oPromise,
+					oSubmitPromise,
 					oModel.submitBatch("group"),
+					oPatchPromise1, // retry succeeds
+					oPatchPromise2, // retry succeeds
+					mParameters.promise,
 					that.waitForChanges(assert)
 				]);
 			}).then(function () {
@@ -32497,8 +32552,12 @@ sap.ui.define([
 
 				oStatusBinding.setValue("Busy"); // a different field is changed
 
+				assert.strictEqual(iCount, 4, "propertyChange fired sync");
+				assert.strictEqual(mParameters.resolvedPath, "/EMPLOYEES('3')/STATUS");
+
 				return Promise.all([
 					oModel.submitBatch("group"),
+					mParameters.promise,
 					that.waitForChanges(assert)
 				]);
 			});
@@ -36729,8 +36788,12 @@ sap.ui.define([
 	// Scenario: hasPendingChanges and resetChanges work even while late child bindings are trying
 	// to reuse the parent binding's cache.
 	// JIRA: CPOUI5UISERVICESV3-1981, CPOUI5UISERVICESV3-1994
+	//
+	// Additionally, observe the "propertyChange" event and cancellation of its promise
+	// JIRA: CPOUI5ODATAV4-1919
 	QUnit.test("hasPendingChanges + resetChanges work for late child bindings", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			oPromise,
 			sView = '\
 <Table id="orders" items="{path : \'/SalesOrderList\', parameters : {\
 		$expand : {\
@@ -36746,6 +36809,11 @@ sap.ui.define([
 	<Text id="itemNote" text="{Note}"/>\
 </Table>',
 			that = this;
+
+		// code under test
+		oModel.attachPropertyChange(function (oEvent) {
+			oPromise = oEvent.getParameter("promise");
+		});
 
 		this.expectRequest("SalesOrderList"
 				+ "?$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)"
@@ -36773,6 +36841,8 @@ sap.ui.define([
 
 			oOrdersTable.getItems()[0].getCells()[0].getBinding("value").setValue("SO_1 changed");
 
+			assert.ok(oPromise, "propertyChange fired sync");
+
 			// code under test
 			assert.ok(oOrdersBinding.hasPendingChanges());
 
@@ -36793,6 +36863,7 @@ sap.ui.define([
 					// code under test
 					assert.notOk(oOrdersBinding.hasPendingChanges());
 				}),
+				checkCanceled(assert, oPromise),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -47036,7 +47107,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: A property is changed twice. The first change is using the automatic retry feature
+	// Scenario: A property is changed twice. The first change is using the automatic retry feature,
 	// the second is not. The changes are not submitted, they are canceled via #resetChanges. The
 	// initial state should be present again.
 	// JIRA: CPOUI5ODATAV4-1603

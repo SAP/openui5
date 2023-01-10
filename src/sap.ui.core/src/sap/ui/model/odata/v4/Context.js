@@ -461,7 +461,7 @@ sap.ui.define([
 				this.doSetProperty(sPath, vValue, null, true, true) // early UI update
 					.catch(this.oModel.getReporter());
 
-				return oPromise.then(function (bSuccess) {
+				return SyncPromise.resolve(oPromise).then(function (bSuccess) {
 					// in case of success, wait until creation is completed because context path's
 					// key predicate is adjusted
 					return bSuccess && that.created();
