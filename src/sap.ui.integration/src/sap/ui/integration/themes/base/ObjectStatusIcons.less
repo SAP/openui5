@@ -4,13 +4,20 @@
 /* ================================================*/
 
 .sapUiIntCard {
-	.sapMObjStatus.sapMObjStatusShowIcon  .sapMObjStatusText {
-		display: inline;
+	.sapMObjStatus.sapMObjStatusShowIcon {
+		display: inline-flex;
+		align-items: center;
+
+		.sapMObjStatusText {
+			min-width: 0;
+			flex: 1;
+		}
 	}
 
 	.sapUiIntLCIInfo.sapUiIntLCIInfoShowIcon:before,
 	.sapMObjStatus.sapMObjStatusShowIcon:before {
 		font-size: 1rem;
+		line-height: 1;
 		font-family: 'SAP-icons';
 		padding-inline-end: 0.25rem;
 	}
