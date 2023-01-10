@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/QuickActionContainer",
 	"sap/m/table/columnmenu/Item",
+	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/ui/core/Core",
@@ -19,6 +20,7 @@ sap.ui.define([
 	QuickAction,
 	QuickActionContainer,
 	Item,
+	ActionItem,
 	Button,
 	library,
 	oCore,
@@ -147,7 +149,7 @@ sap.ui.define([
 			var aQuickActions = [new QuickAction({label: sText, content: new Button({text: sText})})];
 			var aPQuickActions = [new QuickAction({label: sText, content: new Button({text: sText})})];
 			var aItems = [
-				new Item({label: sText, content: new Button({text: sText})}),
+				new ActionItem({label: sText, press: function() {}}),
 				new Item({label: sText, content: new Button({text: sText})})
 			];
 			var aPItems = [new Item({label: sText, content: new Button({text: sText})})];

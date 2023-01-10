@@ -485,6 +485,7 @@ sap.ui.define([
 			"sap.m.semantic.SortAction",
 			"sap.m.semantic.SortSelect",
 			"sap.m.table.columnmenu.Entry",
+			"sap.m.table.columnmenu.ActionItem",
 			"sap.m.table.columnmenu.Item",
 			"sap.m.table.columnmenu.ItemBase",
 			"sap.m.table.columnmenu.QuickAction",
