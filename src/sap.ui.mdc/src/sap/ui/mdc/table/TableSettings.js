@@ -9,9 +9,9 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/m/OverflowToolbarButton", "sap/m/library", "sap/m/MenuButton", "sap/ui/core/library", 	"sap/ui/Device", "sap/ui/core/ShortcutHintsMixin", "sap/ui/core/theming/Parameters"
+	"sap/m/OverflowToolbarButton", "sap/m/library", "sap/m/OverflowToolbarMenuButton", "sap/ui/core/library", 	"sap/ui/Device", "sap/ui/core/ShortcutHintsMixin", "sap/ui/core/theming/Parameters"
 
-], function(OverflowToolbarButton, MLibrary, MenuButton, CoreLibrary, Device, ShortcutHintsMixin, ThemeParameters) {
+], function(OverflowToolbarButton, MLibrary, OverflowToolbarMenuButton, CoreLibrary, Device, ShortcutHintsMixin, ThemeParameters) {
 	"use strict";
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
@@ -68,8 +68,9 @@ sap.ui.define([
 				this._loadResourceBundle();
 			}
 			var sButtonType = ThemeParameters.get({name: "_sap_ui_mdc_table_Table_ExportButtonType"});
-			var oMenuButton = new MenuButton(sIdPrefix + "-export", {
+			var oMenuButton = new OverflowToolbarMenuButton(sIdPrefix + "-export", {
 				icon: "sap-icon://excel-attachment",
+				text: oRb.getText("table.QUICK_EXPORT"),
 				tooltip: oRb.getText("table.EXPORT_BUTTON_TEXT"),
 				type: MLibrary.ButtonType[sButtonType],
 				buttonMode: MLibrary.MenuButtonMode.Split,

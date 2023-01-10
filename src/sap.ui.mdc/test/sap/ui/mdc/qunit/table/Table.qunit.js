@@ -2927,6 +2927,7 @@ sap.ui.define([
 		}).then(function() {
 			assert.ok(oTable._oExportButton, "Export button exists after initialization with toolbar actions");
 			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
+			assert.ok(oTable._oExportButton.isA("sap.m.OverflowToolbarMenuButton"), "Export button is an OverflowToolbarMenuButton");
 			assert.ok(oTable._oExportButton.getVisible(), "Export button is visible");
 		}).finally(function() {
 			oTable.getControlDelegate().isExportSupported.restore();
