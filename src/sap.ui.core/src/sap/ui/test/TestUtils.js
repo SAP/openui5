@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Core" // provides sap.ui.getCore()
-], function (Log, merge, UriParameters, SyncPromise, jQuery) {
+], function (Log, merge, UriParameters, SyncPromise, jQuery, Library) {
 	"use strict";
 	/*global QUnit, sinon */
 	// Note: The dependency to Sinon.JS has been omitted deliberately. Most test files load it via
@@ -810,7 +811,8 @@ sap.ui.define([
 		 * If a test is wrapped by this function, you can test that locale-dependent texts are
 		 * created as expected, but avoid checking against the real message text. The function
 		 * ensures that every message retrieved using
-		 * <code>sap.ui.getCore().getLibraryResourceBundle().getText()</code> consists of the key
+		 * <code>sap.ui.getCore().getLibraryResourceBundle().getText()</code> or
+		 * <code>sap.ui.core.Lib#getResourceBundle().getText()</code> consists of the key
 		 * followed by all parameters referenced in the bundle's text in order of their numbers.
 		 *
 		 * The function uses <a href="http://sinonjs.org/docs/">Sinon.js</a> and expects that it
@@ -863,22 +865,24 @@ sap.ui.define([
 			}
 
 			try {
-				var oCore = sap.ui.getCore(),
-					fnGetBundle = oCore.getLibraryResourceBundle;
+				var fnGetBundle = Library.prototype._loadResourceBundle;
 
-				oSandbox.stub(oCore, "getLibraryResourceBundle").returns({
-					getText : function (sKey, aArgs) {
-						var sResult = sKey,
-							sText = fnGetBundle.call(oCore).getText(sKey),
-							i;
+				oSandbox.stub(Library.prototype, "_loadResourceBundle").callsFake(function() {
+					var oResourceBundle = fnGetBundle.apply(this, [arguments[0], true /* sync */]);
+					return {
+						getText : function (sKey, aArgs) {
+							var sResult = sKey,
+								sText = oResourceBundle.getText(sKey),
+								i;
 
-						for (i = 0; i < 10; i += 1) {
-							if (sText.indexOf("{" + i + "}") >= 0) {
-								sResult += " " + (i >= aArgs.length ? "{" + i + "}" : aArgs[i]);
+							for (i = 0; i < 10; i += 1) {
+								if (sText.indexOf("{" + i + "}") >= 0) {
+									sResult += " " + (i >= aArgs.length ? "{" + i + "}" : aArgs[i]);
+								}
 							}
+							return sResult;
 						}
-						return sResult;
-					}
+					};
 				});
 
 				fnCodeUnderTest.apply(this);

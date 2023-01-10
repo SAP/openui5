@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	'sap/base/strings/escapeRegExp',
 	'sap/base/util/merge',
-	'sap/base/util/isPlainObject'
+	'sap/base/util/isPlainObject',
+	'sap/ui/core/Lib'
 ],
 function(
 	DataType,
@@ -21,7 +22,8 @@ function(
 	ObjectPath,
 	escapeRegExp,
 	merge,
-	isPlainObject
+	isPlainObject,
+	Library
 ) {
 	"use strict";
 
@@ -1793,7 +1795,7 @@ function(
 		//preload the designtime data for the library
 		var sLibrary = oMetadata.getLibraryName(),
 			sPreload = sap.ui.getCore().getConfiguration().getPreload(),
-			oLibrary = sap.ui.getCore().getLoadedLibraries()[sLibrary];
+			oLibrary = Library.all()[sLibrary];
 		if (oLibrary && oLibrary.designtime) {
 			var oPromise;
 			if (sPreload === "async" || sPreload === "sync") {

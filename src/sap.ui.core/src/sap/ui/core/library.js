@@ -7,11 +7,11 @@
  */
 sap.ui.define([
 	'sap/ui/base/DataType',
+	'sap/ui/core/Lib',
 	'sap/ui/core/mvc/ViewType', // provides sap.ui.core.mvc.ViewType
-	'./CalendarType', // provides sap.ui.core.CalendarType
-	'./Core' // provides sap.ui.getCore()
+	'./CalendarType' // provides sap.ui.core.CalendarType
 ],
-	function(DataType, ViewType) {
+	function(DataType, Library, ViewType) {
 	"use strict";
 
 	/**
@@ -27,8 +27,8 @@ sap.ui.define([
 	 * @since 0.8
 	 * @public
 	 */
-	 var thisLib = sap.ui.getCore().initLibrary({
-		 name : "sap.ui.core",
+	 var thisLib = Library.init({
+		 name: "sap.ui.core",
 		 version: "${version}",
 		 designtime: "sap/ui/core/designtime/library.designtime",
 		 types: [

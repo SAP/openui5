@@ -6,8 +6,9 @@
 sap.ui.define([
 	'sap/ui/events/jquery/EventTriggerHook',
 	"sap/base/Log",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery"
-], function(EventTriggerHook, Log, jQuery) {
+], function(EventTriggerHook, Log, Library, jQuery) {
 	"use strict";
 
 	/**
@@ -128,7 +129,7 @@ sap.ui.define([
 	 * @private
 	 */
 	BlockLayerUtils.addAriaAttributes = function(oDOM) {
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+		var oResourceBundle = Library.get("sap.ui.core").getResourceBundle();
 
 		oDOM.setAttribute("role", "progressbar");
 		oDOM.setAttribute("aria-valuemin", "0");

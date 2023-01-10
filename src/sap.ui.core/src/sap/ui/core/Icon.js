@@ -11,6 +11,7 @@ sap.ui.define([
 	'./InvisibleText',
 	'./library',
 	"./IconRenderer",
+	"./Lib",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/base/util/each"
@@ -23,6 +24,7 @@ sap.ui.define([
 		InvisibleText,
 		library,
 		IconRenderer,
+		Library,
 		KeyCodes,
 		Log,
 		each
@@ -580,7 +582,7 @@ sap.ui.define([
 
 		return {
 			role: bHasPressListeners ? "button" : "img",
-			type: sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText(bHasPressListeners ? "ACC_CTR_TYPE_BUTTON" : "ACC_CTR_TYPE_IMAGE"),
+			type: Library.get("sap.ui.core").getResourceBundle().getText(bHasPressListeners ? "ACC_CTR_TYPE_BUTTON" : "ACC_CTR_TYPE_IMAGE"),
 			description: this.getAlt() || this.getTooltip_AsString() || (oIconInfo ? oIconInfo.text || oIconInfo.name : ""),
 			focusable: bHasPressListeners
 		};

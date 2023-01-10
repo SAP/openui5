@@ -3,7 +3,7 @@
  */
 
 /* global QUnit */
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 	"use strict";
 
 	/**
@@ -26,7 +26,7 @@ sap.ui.define([], function() {
 			var aExcludes = mLibInfo.excludes || [];
 
 			return new Promise(function(res, rej) {
-				sap.ui.getCore().loadLibrary(sLib, { async: true }).then(function(library) {
+				Library.load(sLib).then(function(library) {
 					var aControls = (library && library.controls) || [];
 					var aPromises = [];
 

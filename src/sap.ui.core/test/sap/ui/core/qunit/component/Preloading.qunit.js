@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/Component",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/UIComponentMetadata"
@@ -17,6 +18,7 @@ sap.ui.define([
 	LoaderExtensions,
 	Component,
 	Configuration,
+	Library,
 	Manifest,
 	UIComponent,
 	UIComponentMetadata
@@ -514,8 +516,7 @@ sap.ui.define([
 
 			// Create spies
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
-			this.oLoadLibrariesSpy = sinon.spy(sap.ui.getCore(), "loadLibraries");
-			this.oLoadLibrarySpy = sinon.spy(sap.ui.getCore(), "loadLibrary");
+			this.oLoadLibrarySpy = sinon.spy(Library, "_load");
 			this.oManifestLoad = sinon.spy(Manifest, "load");
 		},
 		afterEach: function() {
@@ -523,7 +524,6 @@ sap.ui.define([
 
 			// Restore spies
 			this.oLogWarningSpy.restore();
-			this.oLoadLibrariesSpy.restore();
 			this.oLoadLibrarySpy.restore();
 			this.oManifestLoad.restore();
 
@@ -548,12 +548,12 @@ sap.ui.define([
 
 			// Verify that all expected libraries have been prelaoded
 			// "sap.test.lib3" is declared as "lazy" and shouldn't get preloaded initially
-			sinon.assert.calledWithExactly(this.oLoadLibrariesSpy,
+			sinon.assert.calledWithExactly(this.oLoadLibrarySpy,
 			[
 				"sap.test.lib2",
 				"sap.test.lib4"
 			], {
-				async: true
+				sync: false
 			});
 
 			// Verify that all expected components have been preloaded
@@ -593,8 +593,8 @@ sap.ui.define([
 
 			// Verify that all expected libraries have been preloaded
 			// "sap.test.lib3" is declared as "lazy" and shouldn't get preloaded initially
-			sinon.assert.calledWithExactly(this.oLoadLibrarySpy, "sap.test.lib2", { async: true});
-			sinon.assert.calledWithExactly(this.oLoadLibrarySpy, "sap.test.lib4", { async: true});
+			sinon.assert.calledWithExactly(this.oLoadLibrarySpy, "sap.test.lib2", { sync: false });
+			sinon.assert.calledWithExactly(this.oLoadLibrarySpy, "sap.test.lib4", { sync: false });
 
 			// Verify that all expected components have been preloaded
 			assert.ok(hasBeenLoadedAndExecuted("sap/test/manifestcomp/Component-preload.js"));
@@ -714,7 +714,7 @@ sap.ui.define([
 			this.spy(sap.ui, 'require');
 			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 
-			var loadLibrariesSpy = this.spy(sap.ui.getCore(), 'loadLibraries');
+			var loadLibrariesSpy = this.spy(Library, '_load');
 
 			this.spy(LoaderExtensions, 'loadResource');
 
@@ -825,7 +825,7 @@ sap.ui.define([
 	QUnit.test("[library IS loaded]: NO 'Component-preload.js' is loaded, NO warning is logged", function(assert) {
 		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 
-		return sap.ui.getCore().loadLibrary("testlibs.scenario16.embeddingLib", { async: true }).then(function() {
+		return Library.load("testlibs.scenario16.embeddingLib").then(function() {
 			return Component.create({
 				name: "testlibs.scenario16.embeddingLib.embeddedComponent"
 			}).then(function(oComponent) {

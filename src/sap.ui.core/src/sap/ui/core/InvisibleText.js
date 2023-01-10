@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/base/security/encodeXML",
 	"./Configuration",
 	"./Control",
+	"./Lib",
 	"./library" // ensure loading of CSS
-], function(Log, encodeXML, Configuration, Control) {
+], function(Log, encodeXML, Configuration, Control, Library) {
 	"use strict";
 
 
@@ -176,15 +177,18 @@ sap.ui.define([
 	 * @public
 	 */
 	InvisibleText.getStaticId = function(sLibrary, sTextKey) {
-		var sTextId = "", sKey, oBundle, oText;
+		var sTextId = "", sKey, oBundle, oText, oLibrary;
 
 		if ( Configuration.getAccessibility() && sTextKey ) {
 			// Note: identify by lib and text key, not by text to avoid conflicts after a language change
 			sKey = sLibrary + "|" + sTextKey;
 			sTextId = mTextIds[sKey];
 			if ( sTextId == null ) {
-				oBundle = sap.ui.getCore().getLibraryResourceBundle(sLibrary);
-				oText = new InvisibleText().setText( oBundle.getText(sTextKey) );
+				oLibrary = Library.get(sLibrary);
+				if (oLibrary) {
+					oBundle = oLibrary.getResourceBundle();
+				}
+				oText = new InvisibleText().setText(oBundle ? oBundle.getText(sTextKey) : sTextKey);
 				oText.toStatic();
 				sTextId = mTextIds[sKey] = oText.getId();
 				// A potential component-owner ID is unwanted for InvisibleTexts since its DOM is cached
@@ -202,7 +206,7 @@ sap.ui.define([
 			sKey, p, oBundle, oText;
 		for ( sKey in mTextIds ) {
 			p = sKey.indexOf('|');
-			oBundle = oCore.getLibraryResourceBundle(sKey.slice(0, p));
+			oBundle = Library.get(sKey.slice(0, p)).getResourceBundle();
 			oText = oCore.byId(mTextIds[sKey]);
 			oText && oText.setText(oBundle.getText(sKey.slice(p + 1)));
 		}

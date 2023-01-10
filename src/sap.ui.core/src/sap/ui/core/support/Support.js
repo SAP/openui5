@@ -3,15 +3,23 @@
  */
 
 // Provides the basic UI5 support functionality
-sap.ui.define(['sap/ui/base/EventProvider', './Plugin', "sap/base/util/UriParameters", "sap/ui/thirdparty/jquery", "sap/base/Log", "sap/base/security/encodeURL"],
-	function(
-		EventProvider,
-		Plugin,
-		UriParameters,
-		jQuery,
-		Log,
-		encodeURL
-	) {
+sap.ui.define([
+	"sap/ui/base/EventProvider",
+	"./Plugin",
+	"sap/base/util/UriParameters",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
+	"sap/base/security/encodeURL",
+	"sap/ui/core/Lib"
+], function (
+	EventProvider,
+	Plugin,
+	UriParameters,
+	jQuery,
+	Log,
+	encodeURL,
+	Library
+) {
 	"use strict";
 
 	/*global document, localStorage, window */
@@ -84,7 +92,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', "sap/base/util/UriParame
 							});
 						}
 
-						sap.ui.getCore().loadLibraries(aLibs, true).then(function() {
+						Library._load(aLibs).then(function() {
 							jQuery(function(){
 								Support.initPlugins(that, true).then(function() {
 									that.sendEvent(mEvents.SETUP);
