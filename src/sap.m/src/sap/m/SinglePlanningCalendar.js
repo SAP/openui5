@@ -555,7 +555,7 @@ function(
 	 * Called when the navigation toolbar changes its width or height.
 	 *
 	 * @param oEvent The resize event
-	 * @returns {this} <code>this</code> for chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._onHeaderResize = function (oEvent) {
@@ -595,6 +595,12 @@ function(
 		return this;
 	};
 
+	/**
+	 * Sets the start date of the grid.
+	 * @param {Date} oDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 */
 	SinglePlanningCalendar.prototype.setStartDate = function (oDate) {
 		this.setProperty("startDate", oDate);
 		this._alignColumns();
@@ -645,7 +651,7 @@ function(
 	/**
 	 * Applies or removes sticky classes based on <code>stickyMode</code>'s value.
 	 *
-	 * @returns {this} <code>this</code> for chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._toggleStickyClasses = function () {
@@ -661,7 +667,7 @@ function(
 	 * Makes sure that the column headers are offset in such a way, that they are positioned right
 	 * after the navigation toolbar.
 	 *
-	 * @returns {this} <code>this</code> for chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._adjustColumnHeadersTopOffset = function () {
@@ -856,7 +862,7 @@ function(
 	/**
 	 * Returns the ManagedObjectObserver for the views
 	 *
-	 * @return {sap.ui.base.ManagedObjectObserver} the views observer object
+	 * @returns {sap.ui.base.ManagedObjectObserver} the views observer object
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._getViewsObserver = function () {
@@ -998,7 +1004,7 @@ function(
 	 * Switches the visibility of the SegmentedButton in the _header and aligns the columns in the grid after an
 	 * operation (add, insert, remove, removeAll, destroy) with the views is performed.
 	 *
-	 * @returns {this} this for method chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._alignView = function () {
@@ -1098,7 +1104,7 @@ function(
 	 * If the SinglePlanningCalendar has only one view added to its view aggregation, the button is not visible.
 	 * Otherwise, it is displayed in the _header.
 	 *
-	 * @returns {this} this for method chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._switchViewButtonVisibility = function () {
@@ -1113,7 +1119,7 @@ function(
 	/**
 	 * Attaches handlers to the events in the _header aggregation.
 	 *
-	 * @returns {this} this for method chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._attachHeaderEvents = function () {
@@ -1150,7 +1156,7 @@ function(
 	/**
 	 * Attaches handlers to the events in the _grid aggregation.
 	 *
-	 * @returns {this} this for method chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._attachGridEvents = function () {
@@ -1510,7 +1516,7 @@ function(
 	 * @param {string} sHandler the handler ID
 	 * @param {Object} oObject
 	 * @param {Function} fnHandler
-	 * @returns {this} <code>this</code> for chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._registerResizeHandler = function (sHandler, oObject, fnHandler) {
@@ -1524,7 +1530,7 @@ function(
 	/**
 	 * De-registers resize handler.
 	 * @param {string} sHandler the handler ID
-	 * @returns {this} <code>this</code> for chaining
+	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._deRegisterResizeHandler = function (sHandler) {

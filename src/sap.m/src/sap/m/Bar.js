@@ -476,7 +476,7 @@ sap.ui.define([
 	/**
 	 * Gets the available Bar contexts from the BarInPageEnabler and adds the additional contexts from BarInAnyContentEnabler.
 	 *
-	 * @returns {Object} with all available contexts
+	 * @returns {sap.m.BarContexts} with all available contexts
 	 */
 	BarInAnyContentEnabler.prototype.getContext = function() {
 		var oParentContexts = BarInPageEnabler.prototype.getContext.call();
@@ -491,7 +491,7 @@ sap.ui.define([
 	/**
 	 * Gets the available Bar contexts.
 	 *
-	 * @returns {Object} with all available contexts
+	 * @returns {sap.m.BarContexts} with all available contexts
 	 * @protected
 	 * @function
 	 */

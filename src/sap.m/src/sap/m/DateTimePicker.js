@@ -808,7 +808,7 @@ sap.ui.define([
 	/**
 	 * Tries to parse the value to see if it is a timezone only string.
 	 * @param {string} sValue A value string
-	 * @return {string|null} An empty string indicating success or null
+	 * @returns {string|null} An empty string indicating success or null
 	 * @private
 	 */
 	DateTimePicker.prototype._fallbackParse = function(sValue) {
@@ -1044,7 +1044,7 @@ sap.ui.define([
 	 * @name sap.m.DateTimePicker#getDateValue
 	 * @function
 	 * @public
-	 * @returns {object}
+	 * @returns {Date} A JavaScript Date
 	 * @since 1.102
 	 */
 
