@@ -673,6 +673,44 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_ObjectCardFormElementsWithValidationNoDataNoBinding = {
+		"sap.app": {
+			"id": "test.cards.object.card5",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Object",
+			"header": {
+				"icon": {
+					"src": "sap-icon://product"
+				},
+				"title": "PR255 - MacBook Purchase",
+				"subTitle": "Procurement Purchase Requisition"
+			},
+			"content": {
+				"groups": [
+					{
+						"alignment": "Stretch",
+						"items": [
+							{
+								"id": "name",
+								"label": "Name",
+								"type": "TextArea",
+								"rows": 1,
+								"placeholder": "Name",
+								"validations": [
+									{
+										"required": true
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		}
+	};
+
 	var oManifest_ObjectCardFormElementsSpecialValue = {
 		"sap.app": {
 			"id": "test.cards.object.card5",
@@ -2312,6 +2350,33 @@ sap.ui.define([
 		});
 
 		oCard.setManifest(oManifest_ObjectCardFormElementsWithValidation);
+		Core.applyChanges();
+	});
+
+	QUnit.test("Controls validation when no data and no binding", function (assert) {
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			assert.deepEqual(oCard.getModel("messages").getData(),
+				{
+					"hasErrors": true,
+					"hasWarnings": false,
+					"records": [
+						{
+							"bindingPath": "/name",
+							"message": "Field is required. Please enter a text.",
+							"type": "Error"
+						}
+					]
+				}, "messages model is correct");
+
+			done();
+		});
+
+		oCard.setManifest(oManifest_ObjectCardFormElementsWithValidationNoDataNoBinding);
 		Core.applyChanges();
 	});
 

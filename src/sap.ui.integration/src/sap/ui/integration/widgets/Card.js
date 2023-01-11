@@ -667,7 +667,6 @@ sap.ui.define([
 
 		var oCardContent = this.getCardContent();
 		if (oCardContent && oCardContent.isA("sap.ui.integration.cards.BaseContent")) {
-
 			oCardContent.setDesign(this.getDesign());
 		}
 
@@ -932,12 +931,15 @@ sap.ui.define([
 	 * @returns {boolean} if all of the controls validated successfully; otherwise, false
 	 */
 	Card.prototype.validateControls = function () {
-		var oCardContent = this.getCardContent();
-		if (oCardContent) {
-			oCardContent.validateControls();
-		}
-
+		this._validateContentControls(true);
 		return !this.getModel("messages").getProperty("/hasErrors");
+	};
+
+	Card.prototype._validateContentControls = function (bShowValueState) {
+		var oCardContent = this.getCardContent();
+		if (oCardContent && oCardContent.isA("sap.ui.integration.cards.BaseContent")) {
+			oCardContent.validateControls(bShowValueState);
+		}
 	};
 
 	/**
@@ -2542,6 +2544,7 @@ sap.ui.define([
 	Card.prototype._onReady = function () {
 		this._bReady = true;
 		this._setActionButtonsEnabled(true);
+		this._validateContentControls();
 		this.fireEvent("_ready");
 		this._fireStateChanged();
 	};
