@@ -11,7 +11,7 @@ sap.ui.define([
 	return Controller.extend("sap.f.sample.FlexibleColumnLayoutLandmarkInfoArrow.controller.FlexibleColumnLayout", {
 		onInit: function () {
 			this.bus = this.getOwnerComponent().getEventBus();
-			this.bus.subscribe("flexible", "setMasterPage", this.setMasterPage, this);
+			this.bus.subscribe("flexible", "setListPage", this.setListPage, this);
 			this.bus.subscribe("flexible", "setDetailPage", this.setDetailPage, this);
 			this.bus.subscribe("flexible", "setDetailDetailPage", this.setDetailDetailPage, this);
 
@@ -19,12 +19,12 @@ sap.ui.define([
 		},
 
 		onExit: function () {
-			this.bus.unsubscribe("flexible", "setMasterPage", this.setMasterPage, this);
+			this.bus.unsubscribe("flexible", "setListPage", this.setListPage, this);
 			this.bus.unsubscribe("flexible", "setDetailPage", this.setDetailPage, this);
 			this.bus.unsubscribe("flexible", "setDetailDetailPage", this.setDetailDetailPage, this);
 		},
 
-		setMasterPage: function () {
+		setListPage: function () {
 			this.oFlexibleColumnLayout.setLayout(LayoutType.OneColumn);
 		},
 

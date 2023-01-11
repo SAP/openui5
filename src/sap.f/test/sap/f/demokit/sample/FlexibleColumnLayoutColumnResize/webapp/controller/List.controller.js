@@ -7,14 +7,14 @@ sap.ui.define([
 	// shortcut for sap.f.LayoutType
 	var LT = fioriLibrary.LayoutType;
 
-	return Controller.extend("sap.f.FlexibleColumnLayoutColumnResize.controller.Master", {
+	return Controller.extend("sap.f.FlexibleColumnLayoutColumnResize.controller.List", {
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oObjectPage = this.getView().byId("ObjectPageLayout");
 			this.oFCL = this.getOwnerComponent().getFCL();
 			this.bFirstRendering = true;
 
-			this.oRouter.getRoute("master").attachPatternMatched(this._onMasterMatched, this);
+			this.oRouter.getRoute("list").attachPatternMatched(this._onListMatched, this);
 
 			this.oObjectPage.attachNavigate(this._updateUrlOnNavigate, this);
 
@@ -28,7 +28,7 @@ sap.ui.define([
 			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1);
 			this.oRouter.navTo("detail", {layout: oNextUIState.layout});
 		},
-		_onMasterMatched: function(oEvent) {
+		_onListMatched: function(oEvent) {
 			this.iSectionIndex = parseInt(oEvent.getParameter("arguments").section);
 
 			if (this.bFirstRendering) {
@@ -39,7 +39,7 @@ sap.ui.define([
 		_updateUrlOnNavigate: function(oEvent) {
 			var oSection = oEvent.getParameter("section"),
 				iSectionIndex = this.oObjectPage.indexOfSection(oSection);
-			this.oRouter.navTo("master", { section: iSectionIndex});
+			this.oRouter.navTo("list", { section: iSectionIndex});
 		},
 		_scrollToIndexedSection: function() {
 			var oSection;

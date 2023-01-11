@@ -1,7 +1,6 @@
-<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="flexiblecolumnlayoutHighlighting.Master" height="100%">
-	<Page id="masterPage" title="Master page">
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="flexiblecolumnlayout.List" height="100%">
+	<Page id="listPage" title="List page">
 
-		<SearchField search="onSearchFieldSearch"/>
 		<Table id="idProductsTable"
 			   inset="false"
 		>
@@ -38,7 +37,7 @@
 				</Column>
 			</columns>
 			<items>
-				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
 					<cells>
 						<ObjectIdentifier
 								title="Name"
@@ -56,7 +55,7 @@
 								unit="EUR" />
 					</cells>
 				</ColumnListItem>
-				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
 					<cells>
 						<ObjectIdentifier
 								title="Name"
@@ -74,25 +73,7 @@
 								unit="USD" />
 					</cells>
 				</ColumnListItem>
-				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
-					<cells>
-						<ObjectIdentifier
-								title="Name"
-								text="ProductId"/>
-						<Text
-								text="SupplierName" />
-						<Text
-								text="Width x Depth x Height DimUnit" />
-						<ObjectNumber
-								number="123"
-								unit="WeightUnit"
-								state="Success" />
-						<ObjectNumber
-								number="445"
-								unit="USD" />
-					</cells>
-				</ColumnListItem>
-				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
 					<cells>
 						<ObjectIdentifier
 								title="Name"
@@ -110,7 +91,7 @@
 								unit="USD" />
 					</cells>
 				</ColumnListItem>
-				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
 					<cells>
 						<ObjectIdentifier
 								title="Name"
@@ -128,7 +109,7 @@
 								unit="USD" />
 					</cells>
 				</ColumnListItem>
-				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
 					<cells>
 						<ObjectIdentifier
 								title="Name"
@@ -146,7 +127,7 @@
 								unit="USD" />
 					</cells>
 				</ColumnListItem>
-				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
 					<cells>
 						<ObjectIdentifier
 								title="Name"
@@ -164,7 +145,7 @@
 								unit="USD" />
 					</cells>
 				</ColumnListItem>
-				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
 					<cells>
 						<ObjectIdentifier
 								title="Name"
@@ -182,7 +163,7 @@
 								unit="USD" />
 					</cells>
 				</ColumnListItem>
-				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
 					<cells>
 						<ObjectIdentifier
 								title="Name"
@@ -200,7 +181,7 @@
 								unit="USD" />
 					</cells>
 				</ColumnListItem>
-				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
 					<cells>
 						<ObjectIdentifier
 								title="Name"
@@ -218,7 +199,7 @@
 								unit="USD" />
 					</cells>
 				</ColumnListItem>
-				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
 					<cells>
 						<ObjectIdentifier
 								title="Name"
@@ -236,7 +217,7 @@
 								unit="USD" />
 					</cells>
 				</ColumnListItem>
-				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
 					<cells>
 						<ObjectIdentifier
 								title="Name"
@@ -254,7 +235,25 @@
 								unit="USD" />
 					</cells>
 				</ColumnListItem>
-				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
+					<cells>
+						<ObjectIdentifier
+								title="Name"
+								text="ProductId"/>
+						<Text
+								text="SupplierName" />
+						<Text
+								text="Width x Depth x Height DimUnit" />
+						<ObjectNumber
+								number="123"
+								unit="WeightUnit"
+								state="Success" />
+						<ObjectNumber
+								number="445"
+								unit="USD" />
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleListPress">
 					<cells>
 						<ObjectIdentifier
 								title="Name"
@@ -276,5 +275,3 @@
 		</Table>
 	</Page>
 </mvc:View>
-
-

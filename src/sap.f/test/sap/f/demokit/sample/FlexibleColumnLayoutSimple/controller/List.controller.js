@@ -4,11 +4,11 @@ sap.ui.define([
 ], function (Controller, MessageToast) {
 	"use strict";
 
-	return Controller.extend("sap.f.sample.FlexibleColumnLayoutSimple.controller.Master", {
+	return Controller.extend("sap.f.sample.FlexibleColumnLayoutSimple.controller.List", {
 		onInit: function () {
 			this.bus = this.getOwnerComponent().getEventBus();
 		},
-		handleMasterPress: function () {
+		handleListPress: function () {
 			MessageToast.show("Loading mid column...");
 			this.bus.publish("flexible", "setDetailPage");
 		}

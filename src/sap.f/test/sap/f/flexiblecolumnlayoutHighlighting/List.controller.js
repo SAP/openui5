@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (Controller, Highlighter) {
 	"use strict";
 
-	return Controller.extend("flexiblecolumnlayoutHighlighting.Master", {
+	return Controller.extend("flexiblecolumnlayoutHighlighting.List", {
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
 		},
@@ -22,7 +22,7 @@ sap.ui.define([
 		onSearchFieldSearch: function (oEvent) {
 			this.highlighter.highlight(oEvent.getSource().getValue());
 		},
-		handleMasterPress: function () {
+		handleListPress: function () {
 			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1);
 			this.oRouter.navTo("detail", {layout: oNextUIState.layout});
 		},

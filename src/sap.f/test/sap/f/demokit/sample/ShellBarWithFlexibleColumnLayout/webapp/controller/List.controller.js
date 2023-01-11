@@ -8,14 +8,10 @@ sap.ui.define([
 ], function (JSONModel, Controller, Filter, FilterOperator, Sorter, MessageBox) {
 	"use strict";
 
-	return Controller.extend("sap.f.FlexibleColumnLayoutWithTwoColumnStart.controller.Master", {
+	return Controller.extend("sap.f.ShellBarWithFlexibleColumnLayout.controller.List", {
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this._bDescendingSort = false;
-
-			this.oRouter.getRoute("master").attachPatternMatched(this._onProductMatched, this);
-			this.oRouter.getRoute("detail").attachPatternMatched(this._onProductMatched, this);
-			this.oRouter.getRoute("detailDetail").attachPatternMatched(this._onProductMatched, this);
 		},
 		onListItemPress: function (oEvent) {
 			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1),
@@ -51,13 +47,6 @@ sap.ui.define([
 				oSorter = new Sorter("Name", this._bDescendingSort);
 
 			oBinding.sort(oSorter);
-		},
-
-		_onProductMatched: function (oEvent) {
-			var sProduct = oEvent.getParameter("arguments").product || this._product || "0",
-				oTable = this.byId("productsTable");
-
-			oTable.getItems()[oTable.getBinding("items").aIndices.indexOf(+sProduct)].setSelected(true);
 		}
 	});
 });

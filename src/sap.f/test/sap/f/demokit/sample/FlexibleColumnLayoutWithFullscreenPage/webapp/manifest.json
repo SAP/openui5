@@ -35,9 +35,9 @@
 			"routes": [
 				{
 					"pattern": ":layout:",
-					"name": "master",
+					"name": "list",
 					"target": [
-						"master"
+						"list"
 					]
 				},
 				{
@@ -66,8 +66,8 @@
 				}
 			],
 			"targets": {
-				"master": {
-					"name": "Master",
+				"list": {
+					"name": "List",
 					"controlAggregation": "beginColumnPages"
 				},
 				"detail": {

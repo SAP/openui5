@@ -8,7 +8,7 @@ sap.ui.define([
 	// shortcut for sap.f.LayoutType
 	var LayoutType = fioriLibrary.LayoutType;
 
-	return Controller.extend("sap.f.FlexibleColumnLayoutWithFullscreenPage.controller.Master", {
+	return Controller.extend("sap.f.FlexibleColumnLayoutWithFullscreenPage.controller.List", {
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this._bDescendingSort = false;

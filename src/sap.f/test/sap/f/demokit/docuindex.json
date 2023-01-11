@@ -68,7 +68,7 @@
 		  "samplesAsSteps": [
 			"Setting Up the Initial App",
 			"Creating an Empty Flexible Column Layout",
-			"Using Dynamic Page for the Master View",
+			"Using Dynamic Page for the List View",
 			"Adding a Detail Page",
 			"Using Object Page Layout as a Detail Page",
 			"Adding a Floating Footer",
@@ -78,7 +78,7 @@
 			"Adding More Pages",
 			"Using the Flexible Column Layout Semantic Helper",
 			"Starting with Two Columns",
-			"Setting the Master-Detail Pattern"
+			"Setting the List-Detail Pattern"
 		  ]
 		},
 		{

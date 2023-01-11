@@ -41,16 +41,16 @@
 				},
 				{
 					"pattern": ":layout:",
-					"name": "master",
+					"name": "list",
 					"target": [
-						"master"
+						"list"
 					]
 				},
 				{
 					"pattern": "detail/{product}/{layout}",
 					"name": "detail",
 					"target": [
-						"master",
+						"list",
 						"detail"
 					]
 				},
@@ -58,15 +58,15 @@
 					"pattern": "detailDetail/{product}/{supplier}/{layout}",
 					"name": "detailDetail",
 					"target": [
-						"master",
+						"list",
 						"detail",
 						"detailDetail"
 					]
 				}
 			],
 			"targets": {
-				"master": {
-					"name": "Master",
+				"list": {
+					"name": "List",
 					"controlAggregation": "beginColumnPages"
 				},
 				"detail": {

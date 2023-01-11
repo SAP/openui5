@@ -3,7 +3,7 @@ sap.ui.define([
 ], function (Controller) {
 	"use strict";
 
-	return Controller.extend("sap.f.sample.FlexibleColumnLayoutLandmarkInfo.controller.Master", {
+	return Controller.extend("sap.f.sample.FlexibleColumnLayoutLandmarkInfoArrow.controller.List", {
 		onInit: function () {
 			this.bus = this.getOwnerComponent().getEventBus();
 		},

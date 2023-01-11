@@ -40,10 +40,10 @@ sap.ui.define([
 	 * must be currently shown in which column, according to UX guidelines, as well as to what layout clicking them should lead.
 	 *
 	 * Calling <code>getNextUIState(2)</code> will return information about the expected layout and action buttons if the
-	 * application should display three views (master-detail-detail), based on the current state.
+	 * application should display three views (list-detail-detail), based on the current state.
 	 *
 	 * Similarly, calling <code>getNextUIState(0)</code> will return information about the expected layout and action buttons
-	 * if the application should display the initial view only (master), based on the current state.
+	 * if the application should display the initial view only (list), based on the current state.
 	 *
 	 * For more information, see {@link sap.f.FlexibleColumnLayoutSemanticHelper#getCurrentUIState} and {@link sap.f.FlexibleColumnLayoutSemanticHelper#getNextUIState}
 	 *
@@ -307,8 +307,8 @@ sap.ui.define([
 	/**
 	 * Returns an object, describing the state that the control will have after navigating to a different view level.
 	 *
-	 * @param {int} iNextLevel - the view level that should be represented. 0 means initial (master only), 1 - master-detail,
-	 * 2 - master-detail-detail, 3 and above - subsequent views
+	 * @param {int} iNextLevel - the view level that should be represented. 0 means initial (list only), 1 - list-detail,
+	 * 2 - list-detail-detail, 3 and above - subsequent views
 	 *
 	 * @public
 	 * @returns {sap.f.FlexibleColumnLayoutSemanticHelper.UIState} The object describing the next UI state

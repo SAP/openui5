@@ -8,7 +8,7 @@ sap.ui.define([
 ], function (JSONModel, Controller, Filter, FilterOperator, Sorter, MessageBox) {
 	"use strict";
 
-	return Controller.extend("sap.f.FlexibleColumnLayoutWithOneColumnStart.controller.Master", {
+	return Controller.extend("sap.f.FlexibleColumnLayoutWithOneColumnStart.controller.List", {
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this._bDescendingSort = false;

@@ -57,7 +57,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Implements the master-detail-detail paradigm by displaying up to three pages in separate columns.
+	 * Implements the list-detail-detail paradigm by displaying up to three pages in separate columns.
 	 *
 	 * <h3>Overview</h3>
 	 *
