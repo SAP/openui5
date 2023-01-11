@@ -34918,6 +34918,60 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Delete an entity via the model. This must not stumble over bindings below a not-yet
+	// destroyed context of an ODLB which is already unresolved (kept in mPreviousContextsByPath),
+	// JIRA: CPOUI5ODATAV4-1941
+	QUnit.test("CPOUI5ODATAV4-1941: ODM#delete: parked context", function (assert) {
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
+<Table id="table" items="{SalesOrderList}">\
+	<Text id="order" text="{SalesOrderID}"/>\
+</Table>\
+<FlexBox id="objectPage" binding="{SO_2_BP}">\
+	<Text id="bp" text="{BusinessPartnerID}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("order", [])
+			.expectChange("bp");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100",
+					{value : [{SalesOrderID : "SO1"}]})
+				.expectChange("order", ["SO1"]);
+
+			oTable = that.oView.byId("table");
+			oTable.setBindingContext(oModel.createBindingContext("/"));
+
+			return that.waitForChanges(assert, "bind");
+		}).then(function () {
+			that.expectRequest("SalesOrderList('SO1')?$select=SO_2_BP"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID)",
+					{SO_2_BP : {BusinessPartnerID : "BP1"}})
+				.expectChange("bp", "BP1");
+
+			that.oView.byId("objectPage").setBindingContext(
+				oTable.getItems()[0].getBindingContext());
+
+			return that.waitForChanges(assert, "object page");
+		}).then(function () {
+			oTable.setBindingContext(null);
+
+			that.expectRequest({
+					method : "DELETE",
+					headers : {"If-Match" : "*"},
+					url : "ProductList('P1')"
+				});
+
+			return Promise.all([
+				oModel.delete("/ProductList('P1')"),
+				that.waitForChanges(assert, "unbind & delete")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Declarative event handlers can refer to property bindings.
 	// JIRA: CPOUI5UISERVICESV3-1912
 	QUnit.test("Declarative event handlers", function (assert) {
