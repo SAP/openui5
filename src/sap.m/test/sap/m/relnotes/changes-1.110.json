@@ -3,6 +3,79 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "622da460880d077eba88eef53aadfe90152ed4d0",
+        "type": "FEATURE",
+        "text": " sap.m.ViewSettingsDialog: Improve JS Docs for Typescript Definiton Files"
+      },
+      {
+        "id": "834880c263d4de1e3f8f77450a4ef176b9951939",
+        "type": "FEATURE",
+        "text": " sap.m.Bar: Improve JS Docs for Typescript Definition files"
+      },
+      {
+        "id": "4cf30949c26022cdf2ddd26402bab79f9b7f9d94",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: OData V4 data is now handled correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280193741"
+          }
+        ]
+      },
+      {
+        "id": "dcc21db8545a2588cdd629719cb571bc2de51895",
+        "type": "FIX",
+        "text": " sap.m.Table: Loading indictor should covered whole table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280189028"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380002744"
+          }
+        ]
+      },
+      {
+        "id": "7de2bf95019b92a7050db662e689a71ce001495d",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus - ObjectStatus sample label is now correct."
+      },
+      {
+        "id": "504182c11cfc414b35de9c96bd6cac0358c1436d",
+        "type": "FEATURE",
+        "text": " m.plugins.CopyProvider: Copy table rows to clipboard provided"
+      },
+      {
+        "id": "ec4e4a3f9b4bf74254faa134ad20facfb7878ce5",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectNumber Add support for numberText wrapping.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270143414"
+          }
+        ]
+      },
+      {
+        "id": "1202faf6954ab6b809003292e1e1e42d2dd6f1cb",
+        "type": "FIX",
+        "text": " sap.m.MessageView: List Item speech output improved"
+      },
+      {
+        "id": "bbb7bd532a627e5efad7fbac314af95faa4cc6f1",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar cellpress event fires on today",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280180478"
+          }
+        ]
+      },
+      {
         "id": "59ded9c3f85dd9dd3e96c3d6a59afa9f5bbcb3a6",
         "type": "FIX",
         "text": " sap.m.MessageView: List Item speech output improved",
