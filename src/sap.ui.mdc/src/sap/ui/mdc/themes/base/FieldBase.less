@@ -5,55 +5,42 @@
 	vertical-align: top;
 }
 
-.sapUiMdcFieldBaseMoreFields{
-	min-width: 6.9rem; /* to avoid wrapping of inner controls */
-}
-
-.sapUiMdcFieldBaseMoreFields > *{
-	padding-left: 0.5rem;
-}
-
 /* TODO: how to reuse from sap.m? */
 @_sap_m_InputBase_InnerMinWidth: 3rem;
 @_sap_m_InputBaseWrapper_Sum_Border: 0.125rem;
-@_sap_m_InputBase_IconWidth: 2.375rem;
 @_InputBase_Control_MinWidth: round((@_sap_m_InputBase_InnerMinWidth + @_sap_m_InputBaseWrapper_Sum_Border), 2);
-@_InputBase_Control_OneIcon_MinWidth: round((@_InputBase_Control_MinWidth + @_sap_m_InputBase_IconWidth), 2);
 @_sap_m_InputBase_InnerMinWidth_Compact: 2rem;
-@_sap_m_InputBase_Compact_IconWidth: 2rem;
 @_InputBase_Control_MinWidth_Compact: round((@_sap_m_InputBase_InnerMinWidth_Compact + @_sap_m_InputBaseWrapper_Sum_Border), 2);
-@_InputBase_Control_OneIcon_MinWidth_Compact: round((@_InputBase_Control_MinWidth_Compact + @_sap_m_InputBase_Compact_IconWidth), 2);
+@sap_ui_mdc_Field_UnitMinWidth: 5.3rem; /* as defined for SmartField - to avoid truncation of 3-letter currencies or units*/
+@sap_ui_mdc_Field_UnitMinWidth_Compact: 5rem; /* as defined for SmartField - to avoid truncation of 3-letter currencies or units*/
 
+/* In the moment only 2 parts are supported. ValueHelp is only allowed on the last control. If more controls needed inside, CSS might be changed. */
 .sapUiMdcFieldBaseMoreFields{
-	min-width: calc(@_InputBase_Control_MinWidth ~" + 0.5rem + " @_InputBase_Control_OneIcon_MinWidth); /* to avoid wrapping of inner controls */
-}
-
-.sapUiMdcFieldBaseMoreFields > *{
-	padding-left: 0.5rem;
+	min-width: calc(@_InputBase_Control_MinWidth ~" + 0.5rem + " @sap_ui_mdc_Field_UnitMinWidth); /* to avoid wrapping of inner controls */
 }
 
 .sapUiMdcFieldBaseMoreFields > *:first-child{
-	padding-left: 0;
-	max-width: calc(~"100% - 0.5rem - " @_InputBase_Control_OneIcon_MinWidth); /* as input has a min-width, to not cut off unit */
+	max-width: calc(~"100% - 0.5rem - " @sap_ui_mdc_Field_UnitMinWidth); /* as input has a min-width, to not cut off unit */
 	min-width: @_InputBase_Control_MinWidth; /* as inner input has this min-width */
 }
 
-.sapUiMdcFieldBaseMoreFields > *:nth-child(2){
-	min-width: calc(~"0.5rem + " @_InputBase_Control_OneIcon_MinWidth); /* As input has a min-width + padding */
+.sapUiMdcFieldBaseMoreFields > *:last-child{
+	padding-left: 0.5rem;
+	min-width: calc(~"0.5rem + " @sap_ui_mdc_Field_UnitMinWidth); /* As input has a min-width + padding */
 }
 
 .sapUiSizeCompact {
 	.sapUiMdcFieldBaseMoreFields{
-		min-width: calc(@_InputBase_Control_MinWidth_Compact ~" + 0.5rem + " @_InputBase_Control_OneIcon_MinWidth_Compact); /* to avoid wrapping of inner controls */
+		min-width: calc(@_InputBase_Control_MinWidth_Compact ~" + 0.5rem + " @sap_ui_mdc_Field_UnitMinWidth_Compact); /* to avoid wrapping of inner controls */
 	}
 
 	.sapUiMdcFieldBaseMoreFields > *:first-child{
-		max-width: calc(~"100% - 0.5rem - " @_InputBase_Control_OneIcon_MinWidth_Compact); /* as input has a min-width, to not cut off unit */
+		max-width: calc(~"100% - 0.5rem - " @sap_ui_mdc_Field_UnitMinWidth_Compact); /* as input has a min-width, to not cut off unit */
 		min-width: @_InputBase_Control_MinWidth_Compact; /* as inner input has this min-width */
 	}
 
-	.sapUiMdcFieldBaseMoreFields > *:nth-child(2){
-		min-width: calc(~"0.5rem + " @_InputBase_Control_OneIcon_MinWidth_Compact); /* As input has a min-width + padding */
+	.sapUiMdcFieldBaseMoreFields > *:last-child{
+		min-width: calc(~"0.5rem + " @sap_ui_mdc_Field_UnitMinWidth_Compact); /* As input has a min-width + padding */
 	}
 }
 
