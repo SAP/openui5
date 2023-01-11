@@ -87,7 +87,7 @@
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(aMockMessages);
 
-		var oMessageTemplate = new sap.m.MessagePopoverItem({
+		var oMessageTemplate = new sap.m.MessageItem({
 			type: "{type}",
 			title: "{title}",
 			description: "{description}",
@@ -178,7 +178,7 @@
 				_oBackButton.setVisible(true);
 			},
 			items: [
-				new sap.m.MessagePopoverItem("mv-item1", {
+				new sap.m.MessageItem("mv-item1", {
 					type: "Error",
 					title: "Error message",
 					description: "First Error message description"

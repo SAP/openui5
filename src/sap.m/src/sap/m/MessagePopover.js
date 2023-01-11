@@ -106,7 +106,7 @@ function(
 					 * You can use this function in order to validate the description before displaying it.
 					 * @callback sap.m.MessagePopover~asyncDescriptionHandler
 					 * @param {object} config A single parameter object
-					 * @param {MessagePopoverItem} config.item Reference to respective MessagePopoverItem instance
+					 * @param {MessageItem} config.item Reference to respective MessageItem instance
 					 * @param {object} config.promise Object grouping a promise's reject and resolve methods
 					 * @param {function} config.promise.resolve Method to resolve promise
 					 * @param {function} config.promise.reject Method to reject promise
@@ -151,7 +151,6 @@ function(
 					 */
 					items: {
 						type: "sap.m.MessageItem",
-						altTypes: ["sap.m.MessagePopoverItem"],
 						multiple: true,
 						singularName: "item",
 						forwarding: {
@@ -223,7 +222,7 @@ function(
 							/**
 							 * Refers to the <code>MessagePopover</code> item that is being presented.
 							 */
-							item: {type: "sap.m.MessagePopoverItem"},
+							item: {type: "sap.m.MessageItem"},
 							/**
 							 * Refers to the type of messages being shown.
 							 */

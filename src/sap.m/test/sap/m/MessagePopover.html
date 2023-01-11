@@ -91,7 +91,7 @@
 			var oModel = new sap.ui.model.json.JSONModel();
 			oModel.setData(aMockMessages);
 
-			var oMessageTemplate = new sap.m.MessagePopoverItem({
+			var oMessageTemplate = new sap.m.MessageItem({
 				type: "{type}",
 				title: "{title}",
 				groupName: "{groupName}",
@@ -317,7 +317,7 @@
 						width: "230px",
 						layoutData: new sap.ui.core.LayoutData({span: "S2 M2 L2"}),
 						press: function () {
-							var message = new sap.m.MessagePopoverItem({
+							var message = new sap.m.MessageItem({
 								type: core.byId("msg-type-select").getSelectedKey(),
 								title: core.byId("msg-title-input").getValue(),
 								description: core.byId("msg-description-input").getValue()
