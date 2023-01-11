@@ -3,6 +3,11 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "69f8804af52f1e293a077e04261029a64ae8d905",
+        "type": "FEATURE",
+        "text": " CLDR: Upgrade to version 41.0.0"
+      },
+      {
         "id": "46b5c3ba18685a4a8c46e821de8ef4001d6e6299",
         "type": "FIX",
         "text": " FastNavigation: Improve test stability"

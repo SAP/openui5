@@ -3,6 +3,16 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "42c3a8e42cf97eb393ccb3e10d104de006abba1b",
+        "type": "FIX",
+        "text": " mdc.FilterBarBase: optimize search after variant appliance"
+      },
+      {
+        "id": "504182c11cfc414b35de9c96bd6cac0358c1436d",
+        "type": "FEATURE",
+        "text": " m.plugins.CopyProvider: Copy table rows to clipboard provided"
+      },
+      {
         "id": "988967dbd5189f39f5332d6025423b4c35ab975c",
         "type": "FIX",
         "text": " mdc/Table: suppress colon if there is no label in table pop-in",
