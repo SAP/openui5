@@ -27,7 +27,7 @@
 					"data/EdmTypesV2.json",
 					"manifest.json",
 					"Component.js",
-					"Sandbox.js"
+					"SandboxModel.js"
 				]
 			}
 		},
@@ -49,14 +49,9 @@
 					"earlyTokenRequest": true,
 					"persistTechnicalMessages": true
 				},
-				"type": "sap.ui.model.odata.v2.ODataModel",
+				"type": "sap.ui.core.sample.odata.types.v2.DateTimeOffset.SandboxModel",
 				"uriSettingName": "serviceUrl"
 			}
-		},
-		"resources": {
-			"js": [{
-				"uri": "Sandbox.js"
-			}]
 		},
 		"rootView": {
 			"viewName": "sap.ui.core.sample.odata.types.v2.DateTimeOffset.DateTimeOffset",
