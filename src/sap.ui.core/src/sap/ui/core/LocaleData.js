@@ -2348,7 +2348,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 					} else if ( value === null ) {
 						// 'null' is used by the delta tooling as a marker that a value must not be taken form the fallback
 						delete obj[name];
-					} else if ( typeof value === 'object' && typeof fallbackValue === 'object' ) {
+					} else if ( typeof value === 'object' && typeof fallbackValue === 'object' && !Array.isArray(value) ) {
 						// both values are objects, merge them recursively
 						merge(value, fallbackValue);
 					}
