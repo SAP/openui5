@@ -6,6 +6,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/library",
 	"sap/ui/mdc/MultiValueField",
+	"sap/ui/mdc/ValueHelp",
+	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/EditMode",
 	"sap/ui/mdc/enum/FieldDisplay",
@@ -16,7 +18,6 @@ sap.ui.define([
 	"sap/ui/mdc/field/MultiValueFieldItem",
 	"sap/ui/mdc/field/TokenizerDisplay",
 	"sap/ui/mdc/field/TokenDisplay",
-	"sap/ui/mdc/field/FieldHelpBase",
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/m/ExpandableText",
@@ -39,6 +40,8 @@ sap.ui.define([
 	qutils,
 	library,
 	MultiValueField,
+	ValueHelp,
+	ValueHelpDelegate,
 	Condition,
 	EditMode,
 	FieldDisplay,
@@ -49,7 +52,6 @@ sap.ui.define([
 	MultiValueFieldItem,
 	TokenizerDisplay,
 	TokenDisplay,
-	FieldHelpBase,
 	Label,
 	Text,
 	ExpandableText,
@@ -293,7 +295,7 @@ sap.ui.define([
 				oModel.setProperty("/items", aItems);
 				oModel.checkUpdate(true, false);
 			});
-			var oFieldHelp = new FieldHelpBase("F1-H");
+			var oFieldHelp = new ValueHelp("F1-H");
 			oField = new MultiValueField("F1", {
 				editMode: EditMode.Editable,
 				display: FieldDisplay.Description,

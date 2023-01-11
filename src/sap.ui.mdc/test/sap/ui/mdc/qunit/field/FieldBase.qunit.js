@@ -6,17 +6,16 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/field/FieldBase",
-	"sap/ui/mdc/field/FieldHelpBase",
 	"sap/ui/mdc/ValueHelp",
+	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/valuehelp/Popover",
 	"sap/ui/mdc/valuehelp/Dialog",
+	"sap/ui/mdc/valuehelp/base/Content",
 	"sap/ui/mdc/valuehelp/content/Bool",
 	"sap/ui/mdc/valuehelp/content/Conditions",
 	"sap/ui/mdc/field/FieldInfoBase",
 	"delegates/odata/v4/FieldBaseDelegate", // to test V4 logic too
 	"delegates/odata/v4/ValueHelpDelegate",
-	"sap/ui/mdc/field/FieldHelpBaseDelegate",
-	"sap/ui/mdc/field/FieldValueHelpDelegate",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
 	"sap/ui/mdc/field/TokenizerDisplay",
@@ -74,17 +73,16 @@ sap.ui.define([
 	jQuery,
 	qutils,
 	FieldBase,
-	FieldHelpBase,
 	ValueHelp,
+	ValueHelpDelegate,
 	Popover,
 	Dialog,
+	Content,
 	Bool,
 	Conditions,
 	FieldInfoBase,
 	FieldBaseDelegate,
-	ValueHelpDelegate,
-	FieldHelpBaseDelegate,
-	FieldValueHelpDelegate,
+	ValueHelpDelegateV4,
 	FieldInput,
 	FieldMultiInput,
 	TokenizerDisplay,
@@ -2716,8 +2714,9 @@ sap.ui.define([
 
 	QUnit.module("FieldHelp without key", {
 		beforeEach: function() {
-			var oFieldHelp = new FieldHelpBase("F1-H", {validateInput: false});
-			sinon.stub(oFieldHelp, "isUsableForValidation").returns(false);
+			var oFieldHelp = new ValueHelp("F1-H", {validateInput: false});
+			sinon.stub(oFieldHelp, "isValidationSupported").returns(false);
+			sinon.stub(oFieldHelp, "getIcon").returns("sap-icon://sap-ui5");
 
 			oField = new FieldBase("F1", {
 				conditions: "{cm>/conditions/Name}",
@@ -2760,7 +2759,7 @@ sap.ui.define([
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
-		sinon.spy(oFieldHelp, "onFieldChange");
+		sinon.spy(oFieldHelp, "onControlChange");
 		sinon.spy(oFieldHelp, "attachEvent");
 		oCore.applyChanges();
 		sinon.spy(oFieldHelp, "connect");
@@ -2780,7 +2779,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent.getShowValueHelp(), "valueHelp enabled");
 		var oIcon = oContent.getAggregation("_endIcon", [])[1];
-		assert.equal(oIcon && oIcon.getSrc(), "sap-icon://slim-arrow-down", "ValueHelpIcon set");
+		assert.equal(oIcon && oIcon.getSrc(), "sap-icon://sap-ui5", "ValueHelpIcon set");
 		assert.equal(oField.getFocusElementForValueHelp(true), oContent, "For Typeahead mode Content control is focus element");
 		assert.equal(oField.getFocusElementForValueHelp(false), oIcon, "For Dialog mode icon is focus element");
 
@@ -2792,9 +2791,9 @@ sap.ui.define([
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0].values[0], "Hello", "condition value");
 		assert.equal(aConditions[0].operator, "EQ", "condition operator");
-		assert.ok(oFieldHelp.onFieldChange.calledOnce, "onFieldChange called on FieldHelp");
+		assert.ok(oFieldHelp.onControlChange.calledOnce, "onControlChange called on FieldHelp");
 
-		oFieldHelp.fireNavigate({ value: "Navigate", key: "Y" });
+		oFieldHelp.fireNavigated({ condition: Condition.createItemCondition("Y", "Navigate") });
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
@@ -2803,13 +2802,13 @@ sap.ui.define([
 		assert.equal(oContent._$input.val(), "Navigate (Y)", "Field shown value");
 
 		sinon.spy(oContent, "focus");
-		oFieldHelp.fireNavigate({ value: undefined, key: undefined, leaveFocus: true });
+		oFieldHelp.fireNavigated({ condition: undefined, leaveFocus: true });
 		assert.equal(iLiveCount, 1, "LiveChange Event not fired");
 		assert.equal(oContent._$input.val(), "Navigate (Y)", "Field shown value");
 		assert.ok(oContent.focus.called, "focus set on content");
 
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-		assert.ok(oFieldHelp.onFieldChange.calledTwice, "onFieldChange called on FieldHelp");
+		assert.ok(oFieldHelp.onControlChange.calledTwice, "onControlChange called on FieldHelp");
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 2, "two conditions in Codition model");
 		assert.equal(aConditions[1].values[0], "Y", "condition value[0]");
@@ -2842,7 +2841,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent.getShowValueHelp(), "valueHelp enabled");
 		var oIcon = oContent.getAggregation("_endIcon", [])[0];
-		assert.equal(oIcon && oIcon.getSrc(), "sap-icon://slim-arrow-down", "ValueHelpIcon set");
+		assert.equal(oIcon && oIcon.getSrc(), "sap-icon://sap-ui5", "ValueHelpIcon set");
 
 		// simulate select event to see if field is updated
 		var oCondition = Condition.createCondition("EQ", ["Hello"], undefined, undefined, ConditionValidated.Validated);
@@ -2878,7 +2877,7 @@ sap.ui.define([
 
 		// check navigation
 		iCount = 0; iLiveCount = 0; sLiveValue = undefined;
-		oFieldHelp.fireNavigate({ value: "Navigate", key: "Y" });
+		oFieldHelp.fireNavigated({ condition: Condition.createItemCondition("Y", "Navigate") });
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		assert.equal(sLiveValue, "Y", "liveChange event value");
 		aConditions = oCM.getConditions("Name");
@@ -2911,9 +2910,12 @@ sap.ui.define([
 	QUnit.test("focus of value help", function(assert) {
 
 		var oIconContent = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }); // just dummy handler to make Icon focusable
+		var oVHContent = new Content("C1");
+		sinon.stub(oVHContent, "getContent").returns(Promise.resolve(oIconContent));
+		sinon.stub(oVHContent, "isFocusInHelp").returns(true);
+		var oVHPopover = new Popover("P1", {content: oVHContent});
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
-		sinon.stub(oFieldHelp, "isFocusInHelp").returns(true);
-		oFieldHelp._setContent(oIconContent);
+		oFieldHelp.setDialog(oVHPopover);
 
 		oField.focus(); // as FieldHelp is connected with focus
 
@@ -2925,39 +2927,40 @@ sap.ui.define([
 		sinon.spy(oContent, "onsapfocusleave");
 		sinon.spy(oContent, "preventChangeOnFocusLeave");
 
-		var oClock = sinon.useFakeTimers();
-
 		oVHIcon.firePress();
 
-		assert.ok(oContent.onsapfocusleave.called, "onsapfocusleave on Input called");
-		assert.ok(oContent.preventChangeOnFocusLeave.returnValues[0], "preventChangeOnFocusLeave on Input returns true");
-		oContent.onsapfocusleave.reset();
-		oContent.preventChangeOnFocusLeave.reset();
+		var fnDone = assert.async();
+		setTimeout(function() { // to wait for promises in ValueHelp and open Popover
+			assert.ok(oContent.onsapfocusleave.called, "onsapfocusleave on Input called");
+			assert.ok(oContent.preventChangeOnFocusLeave.returnValues[0], "preventChangeOnFocusLeave on Input returns true");
+			oContent.onsapfocusleave.reset();
+			oContent.preventChangeOnFocusLeave.reset();
 
-		oClock.tick(400); // fake opening time
+			var oPopover = oVHPopover.getAggregation("_container");
+			assert.ok(oPopover.isOpen(), "Popover isOpen");
+			assert.ok(containsOrEquals(oPopover.getDomRef(), document.activeElement), "Focus is on FieldHelp");
 
-		var oPopover = oFieldHelp.getAggregation("_popover");
-		assert.ok(oPopover.isOpen(), "Popover isOpen");
-		oClock.tick(0); // // in IE11 the focus is set async
-		assert.ok(containsOrEquals(oPopover.getDomRef(), document.activeElement), "Focus is on FieldHelp");
+			oFieldHelp.close();
+			setTimeout(function() { // to wait for promises in ValueHelp and close Popover
+				assert.ok(containsOrEquals(oField.getDomRef(), document.activeElement), "Focus is on Field");
+				oVHContent.isFocusInHelp.returns(false);
+				sinon.stub(oVHPopover, "isTypeahead").returns(true); // as focus stays in field only in typeahead case
+				oField.focus(); // as FieldHelp is connected with focus
+				oVHIcon.firePress();
 
-		oFieldHelp.close();
-		oClock.tick(400); // fake closing time
+				setTimeout(function() { // to wait for promises in ValueHelp and open Popover
+					assert.notOk(oContent.onsapfocusleave.called, "onsapfocusleave on Input NOT called");
+					assert.notOk(oContent.bValueHelpRequested, "bValueHelpRequested not set on Input");
+					assert.ok(oPopover.isOpen(), "Popover isOpen");
+					assert.ok(containsOrEquals(oField.getDomRef(), document.activeElement), "Focus is on Field");
 
-		assert.ok(containsOrEquals(oField.getDomRef(), document.activeElement), "Focus is on Field");
-		oFieldHelp.isFocusInHelp.returns(false);
-		oField.focus(); // as FieldHelp is connected with focus
-		oVHIcon.firePress();
-		assert.notOk(oContent.onsapfocusleave.called, "onsapfocusleave on Input NOT called");
-		assert.notOk(oContent.bValueHelpRequested, "bValueHelpRequested not set on Input");
-
-		oClock.tick(400); // fake opening time
-		assert.ok(oPopover.isOpen(), "Popover isOpen");
-		assert.ok(containsOrEquals(oField.getDomRef(), document.activeElement), "Focus is on Field");
-
-		oFieldHelp.close();
-		oClock.tick(400); // fake closing time
-		oClock.restore();
+					oFieldHelp.close();
+					setTimeout(function() { // to wait for promises in ValueHelp and close Popover
+						fnDone();
+					}, 400);
+				}, 400);
+			}, 400);
+		}, 400);
 
 	});
 
@@ -2966,148 +2969,169 @@ sap.ui.define([
 		oField.setDisplay(FieldDisplay.DescriptionValue);
 
 		var oIconContent = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }); // just dummy handler to make Icon focusable
+		var oVHContent = new Content("C1");
+		sinon.stub(oVHContent, "getContent").returns(Promise.resolve(oIconContent));
+		var oVHPopover = new Popover("P1", {content: oVHContent});
+		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		oFieldHelp.setTypeahead(oVHPopover);
+		sinon.stub(oFieldHelp, "isTypeaheadSupported").returns(Promise.resolve(true));
+		sinon.spy(oFieldHelp, "skipOpening");
+		var fnResolve;
+		var oPromise = new Promise(function(fResolve, fReject) {
+			fnResolve = fResolve;
+		});
+		sinon.stub(ValueHelpDelegate, "retrieveContent").returns(oPromise);
 		var oAlternateFocusTarget = new FieldBase("F4");
-
 		oAlternateFocusTarget.placeAt("content");
 		oCore.applyChanges();
-
-		var oFieldHelp = oCore.byId(oField.getFieldHelp());
-		sinon.stub(oFieldHelp, "openByTyping").returns(true);
 
 		oField.focus();
 
 		var aContent = oField.getAggregation("_content"),
 		oContent = aContent && aContent.length > 0 && aContent[0];
-
-		var oClock = sinon.useFakeTimers();
 		oContent._$input.val("I12");
 		oContent.fireLiveChange({ value: "I12" });
-		oClock.tick(400); // fake time to open field help
 
-		var oPopover = oFieldHelp.getAggregation("_popover");
-		assert.ok(oFieldHelp._bOpenIfContent, "_bOpenIfContent is true");
-		oAlternateFocusTarget.focus();
-		oFieldHelp._setContent(oIconContent);
-		oCore.applyChanges();
-		assert.notOk(oPopover.isOpen(), "Popover should not open due to focus loss");
-		oAlternateFocusTarget.destroy();
+		var fnDone = assert.async();
+		setTimeout(function() { // to wait for promises in ValueHelp and open Popover
+			var oPopover = oVHPopover.getAggregation("_container");
+			assert.notOk(oPopover.isOpen(), "Popover is not open");
+			oAlternateFocusTarget.focus();
+			fnResolve();
+			oCore.applyChanges();
+			setTimeout(function() { // to wait for promises in ValueHelp and open Popover
+				assert.notOk(oPopover.isOpen(), "Popover should not open due to focus loss");
+				assert.ok(oFieldHelp.skipOpening.called, "Opening of ValueHelp skipped");
 
-		oFieldHelp.close();
-		oClock.tick(400); // fake closing time
-		oClock.restore();
+				oFieldHelp.close();
+				setTimeout(function() { // to wait for promises in ValueHelp and close Popover
+					oAlternateFocusTarget.destroy();
+					ValueHelpDelegate.retrieveContent.restore();
+					fnDone();
+				}, 400);
+			}, 400);
+		}, 400);
 
 	});
 
-	QUnit.test("openByClick - FieldHelp should open on focus", function (assert) {
+	QUnit.test("shouldOpenOnClick - FieldHelp should open on focus", function (assert) {
 
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
 
-		sinon.stub(oFieldHelp, "openByClick").returns(true);
+		sinon.stub(oFieldHelp, "shouldOpenOnClick").returns(true);
 		sinon.spy(oFieldHelp, "open");
 
 		oField.focus();
 		var oInnerField = oField.getAggregation("_content")[0];
 		qutils.triggerEvent("tap", oInnerField.getId());
 
-		assert.ok(oFieldHelp.openByClick.calledOnce, "openByClick called once");
+		assert.ok(oFieldHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick called once");
 		assert.ok(oFieldHelp.open.calledOnce, "open called once");
 
 
 		//do the same test with openByClick(false) and the open should not be called
-		oFieldHelp.openByClick.resetHistory();
-		oFieldHelp.openByClick.returns(false);
+		oFieldHelp.shouldOpenOnClick.resetHistory();
+		oFieldHelp.shouldOpenOnClick.returns(false);
 		oFieldHelp.open.resetHistory();
 
 		oField.focus();
 		qutils.triggerEvent("tap", oInnerField.getId());
 
-		assert.ok(oFieldHelp.openByClick.calledOnce, "openByClick called once");
+		assert.ok(oFieldHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick called once");
 		assert.notOk(oFieldHelp.open.calledOnce, "open not called");
 
 		oFieldHelp.close();
 	});
 
-	QUnit.test("Opening FieldHelp after openByTyping-Promise is resolved", function (assert) {
+	QUnit.test("Opening FieldHelp after isTypeaheadSupported-Promise is resolved", function (assert) {
 
 		var oIconContent = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }); // just dummy handler to make Icon focusable
+		var oVHContent = new Content("C1");
+		sinon.stub(oVHContent, "getContent").returns(Promise.resolve(oIconContent));
+		var oVHPopover = new Popover("P1", {content: oVHContent});
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		oFieldHelp.setTypeahead(oVHPopover);
 		var fnResolve;
 		var oPromise = new Promise(function(fResolve, fReject) {
 			fnResolve = fResolve;
 		});
-		oFieldHelp._setContent(oIconContent);
 
-		sinon.stub(oFieldHelp, "openByTyping").returns(oPromise);
+		sinon.stub(oFieldHelp, "isTypeaheadSupported").returns(oPromise);
 		sinon.spy(oFieldHelp, "open");
 
 		oField.focus();
 
-		var oClock = sinon.useFakeTimers();
 		var aContent = oField.getAggregation("_content"),
 		oContent = aContent && aContent.length > 0 && aContent[0];
 
 		oContent._$input.val("I");
 		oContent.fireLiveChange({ value: "I" });
-		assert.ok(oFieldHelp.openByTyping.calledOnce, "openByTyping called once");
-		oFieldHelp.openByTyping.returns(false); // return Promise only initally
-		oFieldHelp.openByTyping.resetHistory();
+		assert.ok(oFieldHelp.isTypeaheadSupported.calledOnce, "isTypeaheadSupported called once");
+		// oFieldHelp.isTypeaheadSupported.returns(Promise.resolve(false));
+		oFieldHelp.isTypeaheadSupported.resetHistory();
 
-		oClock.tick(400); // fake time to open trigger
-		assert.ok(oFieldHelp.openByTyping.calledOnce, "openByTyping called once in throttle interval");
-		assert.notOk(oFieldHelp.open.called, "oFieldHelp not opened");
-		assert.equal(oFieldHelp.getFilterValue(), "", "no FilterValue");
-
-		oFieldHelp.openByTyping.resetHistory();
-		oFieldHelp.openByTyping.returns(true);
-		fnResolve(true);
 		var fnDone = assert.async();
-		oPromise.then(function() {
-			oClock.tick(400); // fake time to open trigger
-			assert.ok(oField._bOpenByTyping, "Promise result stored in Field"); // calles while open again to check focus
-			assert.ok(oFieldHelp.open.called, "oFieldHelp opened");
-			assert.equal(oFieldHelp.getFilterValue(), "I", "FilterValue set");
+		setTimeout(function() { // to wait for promises in ValueHelp and open Popover
+			assert.ok(oFieldHelp.isTypeaheadSupported.calledOnce, "isTypeaheadSupported called once in throttle interval");
+			assert.notOk(oFieldHelp.open.called, "oFieldHelp not opened");
+			assert.equal(oFieldHelp.getFilterValue(), "", "no FilterValue");
 
-			oFieldHelp.close();
-			oClock.tick(400); // fake closing time
-			oClock.restore();
-			fnDone();
-		});
+			oFieldHelp.isTypeaheadSupported.resetHistory();
+			// oFieldHelp.isTypeaheadSupported.returns(true);
+			fnResolve(true);
+			oPromise.then(function() {
+				setTimeout(function() { // to wait for promises in ValueHelp and open Popover
+					assert.ok(oField._bOpenByTyping, "Promise result stored in Field"); // calles while open again to check focus
+					assert.ok(oFieldHelp.open.called, "oFieldHelp opened");
+					assert.equal(oFieldHelp.getFilterValue(), "I", "FilterValue set");
+
+					oFieldHelp.close();
+					setTimeout(function() { // to wait for promises in ValueHelp and close Popover
+						fnDone();
+					});
+				}, 400);
+			}, 400);
+		}, 400);
 
 	});
 
 	QUnit.test("Closing FieldHelp on escape key", function (assert) {
 
 		var oIconContent = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }); // just dummy handler to make Icon focusable
+		var oVHContent = new Content("C1");
+		sinon.stub(oVHContent, "getContent").returns(Promise.resolve(oIconContent));
+		var oVHPopover = new Popover("P1", {content: oVHContent});
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
-		oFieldHelp._setContent(oIconContent);
+		oFieldHelp.setDialog(oVHPopover);
 
 		oField.focus(); // as FieldHelp is connected with focus
 
-		var oClock = sinon.useFakeTimers();
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 
 		// simulate value help request to see if FieldHelp opens
 		oContent.fireValueHelpRequest();
-		oClock.tick(400); // fake time to open trigger
-		assert.ok(oFieldHelp.isOpen(), "FieldHelp open");
+		var fnDone = assert.async();
+		setTimeout(function() { // to wait for promises in ValueHelp and open Popover
+			assert.ok(oFieldHelp.isOpen(), "FieldHelp open");
 
-		oContent._$input.val("I12");
-		oContent.fireLiveChange({ value: "I12" }); // to check if no reopen after throttle
-		oContent.fireLiveChange({ value: "I12", escPressed: true });
-		oClock.tick(400); // fake time to open, close or reopen field help
+			oContent._$input.val("I12");
+			oContent.fireLiveChange({ value: "I12" }); // to check if no reopen after throttle
+			oContent.fireLiveChange({ value: "I12", escPressed: true });
+			setTimeout(function() { // to wait for promises in ValueHelp and close Popover
+				assert.notOk(oFieldHelp.isOpen(), "FieldHelp closed");
 
-		assert.notOk(oFieldHelp.isOpen(), "FieldHelp closed");
-
-		// open again to test escape without LiveChange event
-		oContent.fireValueHelpRequest();
-		oClock.tick(400); // fake time to open trigger
-		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ESCAPE, false, false, false);
-		oClock.tick(400); // fake time to close trigger
-
-		assert.notOk(oFieldHelp.isOpen(), "FieldHelp closed");
-
-		oClock.restore();
+				// open again to test escape without LiveChange event
+				oContent.fireValueHelpRequest();
+				setTimeout(function() { // to wait for promises in ValueHelp and open Popover
+					qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ESCAPE, false, false, false);
+					setTimeout(function() { // to wait for promises in ValueHelp and close Popover
+						assert.notOk(oFieldHelp.isOpen(), "FieldHelp closed");
+						fnDone();
+					}, 400);
+				}, 400);
+			}, 400);
+		}, 400);
 
 	});
 
@@ -3115,24 +3139,24 @@ sap.ui.define([
 	var bAsync = false;
 	QUnit.module("FieldHelp with key", {
 		beforeEach: function() {
-			var oFieldHelp = new FieldHelpBase("F1-H");
-			sinon.stub(oFieldHelp, "openByTyping").returns(true); // to simulate suggestion
-			var oStub = sinon.stub(oFieldHelp, "getTextForKey");
-			oStub.withArgs("I1").returns("Item1");
-			//			oStub.withArgs("I2").returns("Item2");
-			oStub.withArgs("I3").returns("Item3");
-			oStub = sinon.stub(oFieldHelp, "getKeyForText");
-			oStub.withArgs("Item1").returns("I1");
-			//			oStub.withArgs("Item2").returns("I2");
-			oStub.withArgs("Item3").returns("I3");
+			var oFieldHelp = new ValueHelp("F1-H", {validateInput: false});
+			sinon.stub(oFieldHelp, "isValidationSupported").returns(true); // otherwise it will not be taken to determine key or description
+			sinon.stub(oFieldHelp, "getIcon").returns("sap-icon://sap-ui5");
+			sinon.stub(oFieldHelp, "getAriaAttributes").returns({ // fake attributes. Real attributes tested in ValueHelp unit tests
+				contentId: "Test",
+				role: "combobox",
+				roleDescription: undefined,
+				ariaHasPopup: "listbox",
+				valueHelpEnabled: true
+			});
 
-			var fnGetItemsForValue = function(oConfig) {
+			var fnGetItemForValue = function(oConfig) {
 				vGetItemsForValue = oConfig.value;
 				var oResult = null;
 				if (oConfig.value === "I1" || oConfig.value === "Item1") {
 					oResult = {key: "I1", description: "Item1"};
 				} else if (oConfig.value === "I2" || oConfig.value === "Item2") {
-					oResult = {key: "I2", description: "Item2"};
+					// oResult = {key: "I2", description: "Item2"};
 				} else if (oConfig.value === "I3" || oConfig.value === "Item3") {
 					oResult = {key: "I3", description: "Item3"};
 				}
@@ -3144,12 +3168,12 @@ sap.ui.define([
 					return oResult;
 				}
 			};
-			oStub = sinon.stub(oFieldHelp, "getItemForValue").callsFake(fnGetItemsForValue);
+			sinon.stub(oFieldHelp, "getItemForValue").callsFake(fnGetItemForValue);
 			sinon.spy(oFieldHelp, "navigate");
 			sinon.spy(oFieldHelp, "open");
 			sinon.spy(oFieldHelp, "close");
 			sinon.spy(oFieldHelp, "fireDisconnect");
-			sinon.spy(oFieldHelp, "onFieldChange");
+			sinon.spy(oFieldHelp, "onControlChange");
 
 			oField = new FieldBase("F1", {
 				conditions: "{cm>/conditions/Name}",
@@ -3204,7 +3228,21 @@ sap.ui.define([
 		oField.setMaxConditions(2);
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
 		oFieldHelp.setValidateInput(false); // to show keys if not found in help
-		assert.ok(oFieldHelp.getTextForKey.calledWith("I2"), "getTextForKey called");
+		var oConfig = {
+			parsedValue: "I2",
+			value: "I2",
+			caseSensitive: true,
+			checkKey: true,
+			checkDescription: false,
+			context: {inParameters: undefined, outParameters: undefined, payload: undefined},
+			control: oField,
+			dataType: oField._getContentFactory().retrieveDataType(),
+			exception: FormatException,
+			bindingContext: undefined,
+			conditionModel: oCM,
+			conditionModelName: "cm"
+		};
+		assert.ok(oFieldHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 		oField.setDisplay(FieldDisplay.DescriptionValue);
 		oCore.applyChanges();
 		oField.focus(); // as FieldHelp is connected with focus
@@ -3215,17 +3253,7 @@ sap.ui.define([
 		var oToken = aTokens[0];
 		assert.equal(oToken && oToken.getText(), "I2", "Text on token is key, as FieldHelp has no description yet");
 
-		var iCallCount = oFieldHelp.getTextForKey.callCount;
-		oFieldHelp.getTextForKey.withArgs("I2").returns("Item2");
-		oFieldHelp.getKeyForText.withArgs("Item2").returns("I2");
-
-		oIcon.focus(); //to have focus somewhere else as field is not updated while typing
-		oFieldHelp.fireDataUpdate();
-		assert.ok(oFieldHelp.getTextForKey.callCount > iCallCount, "getTextForKey called again");
-		assert.ok(oFieldHelp.getTextForKey.calledWith("I2"), "getTextForKey Key");
-		aTokens = oContent.getTokens ? oContent.getTokens() : [];
-		oToken = aTokens[0];
-		assert.equal(oToken && oToken.getText(), "Item2 (I2)", "Text on token is taken from FieldHelp");
+		// no check for DataUpdate as ValueHelp waits in Promise until content or data are loaded
 
 		// simulate value help request to see if FieldHelp opens
 		oField.focus();
@@ -3239,6 +3267,7 @@ sap.ui.define([
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I2", "selected item set as condition");
 
 		// simulate select event to see if field is updated
+		oFieldHelp.getItemForValue.resetHistory();
 		var oCondition = Condition.createItemCondition("I3", "Item3");
 		oFieldHelp.fireSelect({ conditions: [oCondition], add: false, close: false });
 		assert.equal(iCount, 1, "Change Event fired once");
@@ -3249,15 +3278,15 @@ sap.ui.define([
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I3", "condition value");
 		assert.equal(aConditions[0] && aConditions[0].values[1], "Item3", "condition description");
 		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
-		assert.notOk(oFieldHelp.getKeyForText.called, "getKeyForText not called");
-		assert.ok(oFieldHelp.onFieldChange.called, "onFieldChange called on FieldHelp");
+		assert.notOk(oFieldHelp.getItemForValue.called, "getItemForValue not called");
+		assert.ok(oFieldHelp.onControlChange.called, "onControlChange called on FieldHelp");
 		assert.equal(oContent.getDOMValue(), "I", "value still shown in inner control");
 
 		// simulate Enter & close: Filter value must be removed but no change fired.
 		iCount = 0;
 		sValue = ""; bValid = undefined;
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-		oFieldHelp.fireAfterClose(); // as normally Enter triggers close, but here not really open
+		oFieldHelp.fireClosed(); // as normally Enter triggers close, but here not really open
 		assert.equal(iCount, 0, "Change Event not fired");
 		assert.equal(oContent.getDOMValue(), "", "no value shown in inner control");
 		assert.equal(oContent.getProperty("value"), "", "no value set in inner control"); // as getValue returns DomValue, not property
@@ -3265,6 +3294,7 @@ sap.ui.define([
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 
 		// simulate select event to see if field is updated
+		oFieldHelp.getItemForValue.resetHistory();
 		iCount = 0;
 		sValue = ""; bValid = undefined;
 		sinon.stub(oField._oContentFactory._oConditionsType, "parseValue").throws(new ParseException("Error"));
@@ -3276,17 +3306,18 @@ sap.ui.define([
 		assert.equal(iCount, 1, "Change Event fired once");
 		assert.ok(bValid, "Change event valid");
 		aConditions = oCM.getConditions("Name");
-		assert.equal(aConditions.length, 1, "two condition in Codition model");
+		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I3", "condition value");
 		assert.equal(aConditions[0] && aConditions[0].values[1], "Item3", "condition description");
 		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
-		assert.notOk(oFieldHelp.getKeyForText.called, "getKeyForText not called");
+		assert.notOk(oFieldHelp.getItemForValue.called, "getItemForValue not called");
 		assert.equal(oContent.getDOMValue(), "", "value not longer shown in inner control");
 		assert.equal(oField.getValueState(), "None", "No ValueState");
 		assert.equal(oField.getValueStateText(), "", "No ValueStateText");
 		assert.notOk(oField._bParseError, "no parse error");
 
 		// simulate select event with close to see if field is updated
+		oFieldHelp.getItemForValue.resetHistory();
 		oCondition = Condition.createItemCondition("I1", "Item1");
 		iCount = 0;
 		sValue = ""; bValid = undefined;
@@ -3305,7 +3336,7 @@ sap.ui.define([
 		assert.equal(aConditions[1] && aConditions[1].values[0], "I1", "condition value");
 		assert.equal(aConditions[1] && aConditions[1].values[1], "Item1", "condition description");
 		assert.equal(aConditions[1] && aConditions[1].operator, "EQ", "condition operator");
-		assert.notOk(oFieldHelp.getKeyForText.called, "getKeyForText not called");
+		assert.notOk(oFieldHelp.getItemForValue.called, "getItemForValue not called");
 		assert.equal(oContent.getDOMValue(), "", "no value shown in inner control");
 		assert.equal(oContent.getProperty("value"), "", "no value set in inner control"); // as getValue returns DomValue, not property
 		assert.equal(oField.getValueState(), "None", "No ValueState"); // after updating conditions valueStae should be cleared
@@ -3326,14 +3357,11 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		// only key, no description and async formatting
-		oFieldHelp.getTextForKey.reset();
-		oFieldHelp.getTextForKey.withArgs("I3").returns(
-				new Promise(function(fnResolve) {
-					fnResolve("Item3");
-				}));
+		bAsync = true;
 
 		oField.focus(); // as FieldHelp is connected with focus
 
+		oFieldHelp.getItemForValue.resetHistory();
 		var oCondition = Condition.createItemCondition("I2", "Item2");
 		oFieldHelp.fireSelect({ conditions: [oCondition], add: true });
 		assert.equal(iCount, 0, "No Change Event fired");
@@ -3342,9 +3370,10 @@ sap.ui.define([
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I2", "condition value");
 		assert.equal(aConditions[0] && aConditions[0].values[1], "Item2", "condition description");
 		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
-		assert.notOk(oFieldHelp.getTextForKey.called, "getTextForKey not called");
+		assert.notOk(oFieldHelp.getItemForValue.called, "getItemForValue not called");
 		assert.equal(oContent.getDOMValue(), "Item2", "value shown in inner control");
 
+		oFieldHelp.getItemForValue.resetHistory();
 		iCount = 0;
 		sValue = ""; bValid = undefined;
 		oCondition = Condition.createCondition("EQ", ["I3"], undefined, undefined, ConditionValidated.Validated);
@@ -3359,7 +3388,21 @@ sap.ui.define([
 		var fnDone = assert.async();
 		setTimeout(function() { // as text is updated async
 			assert.equal(oContent.getDOMValue(), "Item3", "value shown in inner control");
-			assert.ok(oFieldHelp.getTextForKey.called, "getTextForKey called");
+			var oConfig = {
+				parsedValue: "I3",
+				value: "I3",
+				caseSensitive: true,
+				checkKey: true,
+				checkDescription: false,
+				context: {inParameters: undefined, outParameters: undefined, payload: undefined},
+				control: oField,
+				dataType: oField._getContentFactory().retrieveDataType(),
+				exception: FormatException,
+				bindingContext: undefined,
+				conditionModel: oCM,
+				conditionModelName: "cm"
+			};
+			assert.ok(oFieldHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 			fnDone();
 		}, 0);
 
@@ -3470,7 +3513,12 @@ sap.ui.define([
 	QUnit.test("keyboard support on open FieldHelp", function(assert) {
 
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
-		sinon.stub(oFieldHelp, "isOpen").returns(true);
+		var oVHContent = new Content("C1");
+		var oVHPopover = new Popover("P1", {content: oVHContent});
+		oFieldHelp.setTypeahead(oVHPopover);
+		sinon.stub(oVHContent, "isNavigationEnabled").returns(true);
+		sinon.stub(oVHPopover, "isOpen").returns(true);
+		sinon.stub(oVHPopover, "getUseAsValueHelp").returns(false);
 
 		oField.focus(); // as FieldHelp is connected with focus
 		var aContent = oField.getAggregation("_content");
@@ -3518,6 +3566,7 @@ sap.ui.define([
 
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
 		sinon.stub(oFieldHelp, "isOpen").returns(true);
+		sinon.stub(oFieldHelp, "isNavigationEnabled").returns(true);
 
 		oField.focus(); // as FieldHelp is connected with focus
 		var aContent = oField.getAggregation("_content");
@@ -3534,7 +3583,7 @@ sap.ui.define([
 		assert.ok(oContent.onsapprevious.notCalled, "onsapprevious not called on content control");
 
 		var oCondition = Condition.createItemCondition("I3", "Item 3");
-		oFieldHelp.fireNavigate({ value: "Item 3", key: "I3", condition: oCondition });
+		oFieldHelp.fireNavigated({ condition: oCondition });
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		var aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
@@ -3542,22 +3591,22 @@ sap.ui.define([
 		assert.equal(oContent._$input.val(), "Item 3", "Field shown value");
 
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-		assert.ok(oFieldHelp.onFieldChange.called, "onFieldChange called on FieldHelp");
+		assert.ok(oFieldHelp.onControlChange.called, "onControlChange called on FieldHelp");
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 2, "two conditions in Codition model");
 		assert.equal(aConditions[1] && aConditions[1].values[0], "I3", "condition value");
 		assert.equal(aConditions[1] && aConditions[1].values[1], "Item 3", "condition description");
 
 		iLiveCount = 0;
-		oFieldHelp.getTextForKey.resetHistory();
+		oFieldHelp.getItemForValue.resetHistory();
 		oCondition = Condition.createItemCondition("X");
 		oCondition.validated = ConditionValidated.Validated;
-		oFieldHelp.fireNavigate({ value: undefined, key: "X", condition: oCondition });
+		oFieldHelp.fireNavigated({ condition: oCondition });
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 2, "condition in Codition model not changed");
 		assert.equal(oContent._$input.val(), "X", "Field shown value");
-		assert.ok(oFieldHelp.getTextForKey.notCalled, "no request for description triggered");
+		assert.ok(oFieldHelp.getItemForValue.notCalled, "no request for description triggered");
 
 		// no navigation in non-editable field
 		oFieldHelp.navigate.resetHistory();
@@ -3579,6 +3628,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
 		sinon.stub(oFieldHelp, "isOpen").returns(true);
+		sinon.stub(oFieldHelp, "isNavigationEnabled").returns(true);
 		oCore.applyChanges();
 
 		oField.focus(); // as FieldHelp is connected with focus
@@ -3603,7 +3653,8 @@ sap.ui.define([
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.END, false, false, false);
 		assert.ok(oFieldHelp.navigate.calledWith(9999), "navigate called");
 
-		oFieldHelp.fireNavigate({ value: "Item 3", key: "I3" });
+		var oCondition = Condition.createItemCondition("I3", "Item 3");
+		oFieldHelp.fireNavigated({ condition: oCondition });
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		var aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
@@ -3612,7 +3663,7 @@ sap.ui.define([
 		assert.notOk(oContent.hasStyleClass("sapMFocus"), "Focus outline removed");
 
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-		assert.ok(oFieldHelp.onFieldChange.called, "onFieldChange called on FieldHelp");
+		assert.ok(oFieldHelp.onControlChange.called, "onControlChange called on FieldHelp");
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one conditions in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I3", "condition value");
@@ -3629,8 +3680,12 @@ sap.ui.define([
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
-		sinon.stub(oFieldHelp, "isOpen").returns(false);
-		sinon.stub(oFieldHelp, "isNavigationEnabled").returns(true);
+		var oVHContent = new Content("C1");
+		var oVHPopover = new Popover("P1", {content: oVHContent});
+		oFieldHelp.setTypeahead(oVHPopover);
+		sinon.stub(oVHContent, "isNavigationEnabled").returns(true);
+		sinon.stub(oVHPopover, "isOpen").returns(false);
+		sinon.stub(oVHPopover, "getUseAsValueHelp").returns(true); // simulate ComboBox case
 		oCore.applyChanges();
 
 		oField.focus(); // as FieldHelp is connected with focus
@@ -3643,7 +3698,7 @@ sap.ui.define([
 
 		// no additionTest for navigation events needed as same as for open value help
 
-		oFieldHelp.isNavigationEnabled.returns(false);
+		oVHContent.isNavigationEnabled.returns(false);
 		oFieldHelp.navigate.reset();
 
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
@@ -3659,53 +3714,65 @@ sap.ui.define([
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oVHContent = new Content("C1");
+		var oVHPopover = new Popover("P1", {content: oVHContent});
+		oFieldHelp.setTypeahead(oVHPopover);
+		sinon.stub(oFieldHelp, "isTypeaheadSupported").returns(Promise.resolve(true));
 		oFieldHelp.setConditions([Condition.createItemCondition("I1", "Item1")]); // should stay on multi-value-suggestion
 		oCore.applyChanges();
 		sinon.spy(oFieldHelp, "initBeforeOpen");
 
-		var oClock = sinon.useFakeTimers();
+
+		var fnDone = assert.async();
 		oField.focus(); // as FieldHelp is connected with focus
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent._$input.val("i");
 		oContent.fireLiveChange({ value: "I" });
-		oClock.tick(400); // fake time to open field help
 
-		assert.equal(oFieldHelp.getFilterValue(), "I", "FilterValue set");
-		assert.equal(oFieldHelp.getConditions().length, 1, "One condition set on FieldHelp");
-		assert.ok(oFieldHelp.open.called, "open called");
-		assert.ok(oFieldHelp.open.calledWith, true, "open called as Suggestion");
-		assert.ok(oFieldHelp.initBeforeOpen.calledOnce, "initBeforeOpen called once");
+		setTimeout(function() { // to wait for Promises and opening
+			assert.equal(oFieldHelp.getFilterValue(), "I", "FilterValue set");
+			assert.equal(oFieldHelp.getConditions().length, 1, "One condition set on FieldHelp");
+			assert.ok(oFieldHelp.open.called, "open called");
+			assert.ok(oFieldHelp.open.calledWith, true, "open called as Suggestion");
+			assert.ok(oFieldHelp.initBeforeOpen.calledOnce, "initBeforeOpen called once");
 
-		oContent._$input.val("=A");
-		oContent.fireLiveChange({ value: "=A" });
-		oClock.tick(400); // fake time to open field help
+			oContent._$input.val("=A");
+			oContent.fireLiveChange({ value: "=A" });
 
-		assert.equal(oFieldHelp.getFilterValue(), "A", "FilterValue set");
-		assert.ok(oFieldHelp.initBeforeOpen.calledOnce, "initBeforeOpen called once");
+			setTimeout(function() { // to wait for Promises and opening
+				assert.equal(oFieldHelp.getFilterValue(), "A", "FilterValue set");
+				assert.ok(oFieldHelp.initBeforeOpen.calledOnce, "initBeforeOpen called once");
 
-		oContent._$input.val("=X");
-		oContent.fireLiveChange({ value: "=X" });
-		oClock.tick(400); // fake time to open field help
+				oContent._$input.val("=X");
+				oContent.fireLiveChange({ value: "=X" });
 
-		assert.equal(oFieldHelp.getFilterValue(), "X", "FilterValue set");
+				setTimeout(function() { // to wait for Promises and opening
+					assert.equal(oFieldHelp.getFilterValue(), "X", "FilterValue set");
 
-		oContent._$input.val("B (C)");
-		oContent.fireLiveChange({ value: "B (C)" });
-		oClock.tick(400); // fake time to open field help
+					oContent._$input.val("B (C)");
+					oContent.fireLiveChange({ value: "B (C)" });
 
-		assert.equal(oFieldHelp.getFilterValue(), "C B", "FilterValue set");
+					setTimeout(function() { // to wait for Promises and opening
+						assert.equal(oFieldHelp.getFilterValue(), "C B", "FilterValue set");
 
-		sinon.stub(oFieldHelp, "isOpen").returns(true); // as it not really opens without content
-		oContent._$input.val("");
-		oContent.fireLiveChange({ value: "" });
-		oClock.tick(400); // fake time to close field help
-		assert.ok(oFieldHelp.close.called, "close called");
-		oFieldHelp.isOpen.restore();
+						sinon.stub(oFieldHelp, "isOpen").returns(true); // as it not really opens without content
+						sinon.stub(ValueHelpDelegate, "showTypeahead").returns(false); // to fake closing on empty input
+						oContent._$input.val("");
+						oContent.fireLiveChange({ value: "" });
 
-		oFieldHelp.close(); // to be sure
-		oClock.tick(400); // fake closing time
-		oClock.restore();
+						setTimeout(function() { // to wait for Promises and closing
+							assert.ok(oFieldHelp.close.called, "close called");
+							oFieldHelp.isOpen.restore();
+							ValueHelpDelegate.showTypeahead.restore();
+
+							oFieldHelp.close(); // to be sure
+							fnDone();
+						}, 400);
+					}, 400);
+				}, 400);
+			}, 400);
+		}, 400);
 
 	});
 
@@ -3713,30 +3780,36 @@ sap.ui.define([
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oVHContent = new Content("C1");
+		var oVHPopover = new Popover("P1", {content: oVHContent});
+		oFieldHelp.setTypeahead(oVHPopover);
+		sinon.stub(oFieldHelp, "isTypeaheadSupported").returns(Promise.resolve(true));
 		oFieldHelp.setConditions([Condition.createItemCondition("I1", "Item1")]); // should stay on multi-value-suggestion
 		oCore.applyChanges();
 		sinon.spy(oFieldHelp, "initBeforeOpen");
 
-		var oClock = sinon.useFakeTimers();
+		var fnDone = assert.async();
 		oField.focus(); // as FieldHelp is connected with focus
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent._$input.val("i");
 		oContent.fireLiveChange({ value: "I" });
-		oClock.tick(400); // fake time to open field help
 
-		oFieldHelp.fireSwitchToValueHelp();
-		oClock.tick(400); // fake time to open  and close field help
+		setTimeout(function() { // to wait for Promises and opening
+			oFieldHelp.fireSwitchToValueHelp();
+			setTimeout(function() { // to wait for Promises and opening and closing
+				assert.equal(oFieldHelp.getFilterValue(), "I", "FilterValue set");
+				assert.equal(oFieldHelp.getConditions().length, 1, "One condition set on FieldHelp");
+				assert.ok(oFieldHelp.open.called, "open called");
+				assert.ok(oFieldHelp.open.calledWith, false, "open called as ValueHelp");
+				assert.ok(oFieldHelp.initBeforeOpen.calledOnce, "initBeforeOpen called once");
 
-		assert.equal(oFieldHelp.getFilterValue(), "I", "FilterValue set");
-		assert.equal(oFieldHelp.getConditions().length, 1, "One condition set on FieldHelp");
-		assert.ok(oFieldHelp.open.called, "open called");
-		assert.ok(oFieldHelp.open.calledWith, false, "open called as ValueHelp");
-		assert.ok(oFieldHelp.initBeforeOpen.calledOnce, "initBeforeOpen called once");
-
-		oFieldHelp.close();
-		oClock.tick(400); // fake closing time
-		oClock.restore();
+				oFieldHelp.close();
+				setTimeout(function() { // to wait for closing
+					fnDone();
+				}, 400);
+			}, 400);
+		}, 400);
 
 	});
 
@@ -3752,7 +3825,21 @@ sap.ui.define([
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 		assert.equal(oFieldHelp.getFilterValue(), "", "FilterValue reset");
-		assert.equal(vGetItemsForValue, "Item1", "getItemForValue called");
+		var oConfig = {
+			parsedValue: "Item1",
+			value: "Item1",
+			checkKey: true,
+			checkDescription: true,
+			control: oField,
+			dataType: oField._getContentFactory().retrieveDataType(),
+			exception: ParseException,
+			bindingContext: undefined,
+			conditionModel: oCM,
+			conditionModelName: "cm",
+			inParameters: undefined,
+			outParameters: undefined
+		};
+		assert.ok(oFieldHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 		var aConditions = oFieldHelp.getConditions();
 		assert.equal(aConditions.length, 2, "Condition set on FieldHelp");
 		assert.equal(aConditions[1] && aConditions[1].values[0], "I1", "selected item set as condition");
@@ -3760,13 +3847,14 @@ sap.ui.define([
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 2, "two conditions in Codition model");
 		assert.equal(aConditions[1] && aConditions[1].values[0], "I1", "condition value");
-		assert.ok(oFieldHelp.onFieldChange.called, "onFieldChange called on FieldHelp");
+		assert.ok(oFieldHelp.onControlChange.called, "onControlChange called on FieldHelp");
 
 	});
 
 	QUnit.test("invalid input", function(assert) {
 
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		oFieldHelp.setValidateInput(true);
 		var fnDone = assert.async();
 		oField.focus(); // as FieldHelp is connected with focus
 		var aContent = oField.getAggregation("_content");
@@ -3774,7 +3862,21 @@ sap.ui.define([
 		oContent._$input.val("=Invalid");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
-		assert.equal(vGetItemsForValue, "Invalid", "getItemForValue called");
+		var oConfig = {
+			parsedValue: "Invalid",
+			value: "Invalid",
+			checkKey: true,
+			checkDescription: true,
+			control: oField,
+			dataType: oField._getContentFactory().retrieveDataType(),
+			exception: ParseException,
+			bindingContext: undefined,
+			conditionModel: oCM,
+			conditionModelName: "cm",
+			inParameters: undefined,
+			outParameters: undefined
+		};
+		assert.ok(oFieldHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 		setTimeout(function() { // to wait for update of valueState via Model
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
@@ -3789,7 +3891,7 @@ sap.ui.define([
 			aConditions = oCM.getConditions("Name");
 			assert.equal(aConditions.length, 1, "one condition in Codition model");
 			assert.equal(aConditions[0] && aConditions[0].values[0], "I2", "condition value");
-			assert.notOk(oFieldHelp.onFieldChange.called, "onFieldChange not called on FieldHelp");
+			assert.notOk(oFieldHelp.onControlChange.called, "onControlChange not called on FieldHelp");
 
 			// allow "invalid" entry
 			iCount = 0; sId = null; sValue = null; bValid = null;
@@ -3809,7 +3911,7 @@ sap.ui.define([
 				aConditions = oCM.getConditions("Name");
 				assert.equal(aConditions.length, 2, "two conditions in Codition model");
 				assert.equal(aConditions[1] && aConditions[1].values[0], "Unknown", "condition value");
-				assert.ok(oFieldHelp.onFieldChange.calledOnce, "onFieldChange called on FieldHelp");
+				assert.ok(oFieldHelp.onControlChange.calledOnce, "onControlChange called on FieldHelp");
 
 				fnDone();
 			}, 0);
@@ -3823,6 +3925,7 @@ sap.ui.define([
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		oFieldHelp.setValidateInput(true);
 
 		var fnDone = assert.async();
 		oField.focus(); // as FieldHelp is connected with focus
@@ -3831,7 +3934,21 @@ sap.ui.define([
 		oContent._$input.val("Invalid");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
-		assert.equal(vGetItemsForValue, "Invalid", "getItemForValue called");
+		var oConfig = {
+			parsedValue: "Invalid",
+			value: "Invalid",
+			checkKey: true,
+			checkDescription: true,
+			control: oField,
+			dataType: oField._getContentFactory().retrieveDataType(),
+			exception: ParseException,
+			bindingContext: undefined,
+			conditionModel: oCM,
+			conditionModelName: "cm",
+			inParameters: undefined,
+			outParameters: undefined
+		};
+		assert.ok(oFieldHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
@@ -3876,8 +3993,6 @@ sap.ui.define([
 	QUnit.test("one FieldHelp on 2 Fields", function(assert) {
 
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
-		oFieldHelp.getTextForKey.withArgs("I2").returns("Item2");
-		oFieldHelp.getKeyForText.withArgs("Item2").returns("I2");
 
 		var oCM2 = new ConditionModel();
 		var oCondition = Condition.createCondition("EQ", ["I3"]);
@@ -3911,7 +4026,8 @@ sap.ui.define([
 		assert.equal(aConditions.length, 1, "one condition in Codition model of second Field");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I3", "condition value");
 
-		oFieldHelp.fireNavigate({ value: "Item2", key: "I2" });
+		oCondition = Condition.createItemCondition("I2", "Item2");
+		oFieldHelp.fireNavigated({ condition: oCondition });
 		assert.equal(oContent._$input.val(), "Item2", "Field shown value");
 		assert.equal(oContent2._$input.val(), "", "Field2 show no value");
 
@@ -3927,7 +4043,8 @@ sap.ui.define([
 		assert.equal(aConditions.length, 1, "one condition in Codition model of second Field");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I1", "condition value");
 
-		oFieldHelp.fireNavigate({ value: "Item3", key: "I3" });
+		oCondition = Condition.createItemCondition("I3", "Item3");
+		oFieldHelp.fireNavigated({ condition: oCondition });
 		assert.equal(oContent._$input.val(), "", "Field shows no value");
 		assert.equal(oContent2._$input.val(), "Item3", "Field2 shown value");
 
@@ -3965,7 +4082,7 @@ sap.ui.define([
 			assert.equal(aTokens.length, 2, "MultiInput has two Tokens");
 			var oToken = aTokens[1];
 			assert.equal(oToken && oToken.getText(), "Item3", "Text on token set");
-			assert.ok(oFieldHelp.onFieldChange.calledOnce, "onFieldChange called on FieldHelp");
+			assert.ok(oFieldHelp.onControlChange.calledOnce, "onControlChange called on FieldHelp");
 			assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
 
 			oSubmitPromise.then(function(vResult) {
@@ -4009,7 +4126,7 @@ sap.ui.define([
 			assert.equal(aConditions[0].values[0], "I3", "condition value");
 			assert.equal(aConditions[0].values[1], "Item3", "condition value");
 			assert.equal(aConditions[0].operator, "EQ", "condition operator");
-			assert.ok(oFieldHelp.onFieldChange.calledOnce, "onFieldChange called on FieldHelp");
+			assert.ok(oFieldHelp.onControlChange.calledOnce, "onControlChange called on FieldHelp");
 			assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
 			fnDone();
 		}).catch(function(oException) {
@@ -4046,7 +4163,7 @@ sap.ui.define([
 			assert.equal(aConditions[0].values[0], "I3", "condition value");
 			assert.equal(aConditions[0].values[1], "Item3", "condition value");
 			assert.equal(aConditions[0].operator, "EQ", "condition operator");
-			assert.ok(oFieldHelp.onFieldChange.notCalled, "onFieldChange not called on FieldHelp");
+			assert.ok(oFieldHelp.onControlChange.notCalled, "onControlChange not called on FieldHelp");
 			assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
 			fnDone();
 		}).catch(function(oException) {
@@ -4060,6 +4177,7 @@ sap.ui.define([
 
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator("Contains")); // fake contains as default operator
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		oFieldHelp.setValidateInput(true);
 
 		var fnGetItemsForValue = function(oConfig) {
 			vGetItemsForValue = oConfig.value;
@@ -4096,7 +4214,7 @@ sap.ui.define([
 		}).catch(function(oException) {
 			assert.ok(true, "Promise must be rejected");
 			assert.equal(oException.message, "InvalidValue");
-			assert.notOk(oFieldHelp.onFieldChange.called, "onFieldChange not called on FieldHelp");
+			assert.notOk(oFieldHelp.onControlChange.called, "onControlChange not called on FieldHelp");
 			setTimeout(function() { // for model update
 				setTimeout(function() { // for ManagedObjectModel update
 					assert.equal(oContent.getValueState(), "Error", "ValueState set");
@@ -4166,7 +4284,7 @@ sap.ui.define([
 
 											// validation error
 											iCount = 0; sId = null; sValue = null; bValid = null; oPromise = null;
-											oFieldHelp.onFieldChange.resetHistory();
+											oFieldHelp.onControlChange.resetHistory();
 											oContent._$input.val("=Item9");
 											qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 											assert.equal(iCount, 1, "change event fired once");
@@ -4180,7 +4298,7 @@ sap.ui.define([
 											}).catch(function(oException) {
 												assert.ok(true, "Promise must be rejected");
 												assert.ok(oException.message.startsWith("Enter a valid value"));
-												assert.notOk(oFieldHelp.onFieldChange.called, "onFieldChange not called on FieldHelp");
+												assert.notOk(oFieldHelp.onControlChange.called, "onControlChange not called on FieldHelp");
 												setTimeout(function() { // for model update
 													setTimeout(function() { // for ManagedObjectModel update
 														assert.equal(oContent.getValueState(), "Error", "ValueState set");
@@ -4224,6 +4342,7 @@ sap.ui.define([
 		oField.setMaxConditions(1);
 		oCore.applyChanges();
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		oFieldHelp.setValidateInput(true);
 		var fnGetItemsForValue = function(oConfig) {
 			vGetItemsForValue = oConfig.value;
 			if (oConfig.value === "Invalid") {
@@ -4262,7 +4381,7 @@ sap.ui.define([
 		}).catch(function(oException) {
 			assert.ok(true, "Promise must be rejected");
 			assert.equal(oException.message, "InvalidValue");
-			assert.notOk(oFieldHelp.onFieldChange.called, "onFieldChange not called on FieldHelp");
+			assert.notOk(oFieldHelp.onControlChange.called, "onControlChange not called on FieldHelp");
 			setTimeout(function() { // for model update
 				setTimeout(function() { // for ManagedObjectModel update
 					assert.equal(oContent.getValueState(), "Error", "ValueState set");
@@ -4302,7 +4421,7 @@ sap.ui.define([
 
 								// validation error
 								iCount = 0; sId = null; sValue = null; bValid = null; oPromise = null;
-								oFieldHelp.onFieldChange.resetHistory();
+								oFieldHelp.onControlChange.resetHistory();
 								oContent._$input.val("Item9");
 								qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 								assert.equal(iCount, 1, "change event fired once");
@@ -4314,7 +4433,7 @@ sap.ui.define([
 								}).catch(function(oException) {
 									assert.ok(true, "Promise must be rejected");
 									assert.ok(oException.message.startsWith("Enter a valid value"));
-									assert.notOk(oFieldHelp.onFieldChange.called, "onFieldChange not called on FieldHelp");
+									assert.notOk(oFieldHelp.onControlChange.called, "onControlChange not called on FieldHelp");
 									setTimeout(function() { // for model update
 										setTimeout(function() { // for ManagedObjectModel update
 											assert.equal(oContent.getValueState(), "Error", "ValueState set");
@@ -4329,7 +4448,7 @@ sap.ui.define([
 
 											// empty key is invalid value
 											iCount = 0; sId = null; sValue = null; bValid = null; oPromise = null;
-											oFieldHelp.onFieldChange.resetHistory();
+											oFieldHelp.onControlChange.resetHistory();
 											oContent._$input.val("");
 											qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 											assert.equal(iCount, 1, "change event fired once");
@@ -4341,7 +4460,7 @@ sap.ui.define([
 											}).catch(function(oException) {
 												assert.ok(true, "Promise must be rejected");
 												assert.equal(oException.message, "NoNull");
-												assert.notOk(oFieldHelp.onFieldChange.called, "onFieldChange not called on FieldHelp");
+												assert.notOk(oFieldHelp.onControlChange.called, "onControlChange not called on FieldHelp");
 												setTimeout(function() { // for model update
 													setTimeout(function() { // for ManagedObjectModel update
 														assert.equal(oContent.getValueState(), "Error", "ValueState set");
@@ -4395,13 +4514,17 @@ sap.ui.define([
 		assert.ok($FocusDomRef.attr("aria-describedby") && $FocusDomRef.attr("aria-describedby").search(sValueHelpEnabledID) >= 0, "ValueHelpEnabled text set");
 
 		// open FieldHelp
-		var oClock = sinon.useFakeTimers();
-		sinon.stub(oFieldHelp, "getContentId").returns("Test");
-		sinon.stub(oFieldHelp, "getRoleDescription").returns("RoleDescription");
+		oFieldHelp.getAriaAttributes.returns({ // fake attributes. Real attributes tested in ValueHelp unit tests
+			contentId: "Test",
+			role: "combobox",
+			roleDescription: "RoleDescription",
+			ariaHasPopup: "listbox",
+			valueHelpEnabled: false
+		});
 		oVHIcon.firePress();
 		sinon.stub(oFieldHelp, "isOpen").returns(true);
+		oFieldHelp.fireOpened();
 		oCore.applyChanges();
-		oClock.tick(400); // fake opening time
 		assert.equal($FocusDomRef.attr("role"), "combobox", "Open: Role Combobox set");
 		assert.equal($FocusDomRef.attr("aria-roledescription"), "RoleDescription", "Open: Role Description set - from FieldHelp");
 		assert.equal($FocusDomRef.attr("aria-haspopup"), "listbox", "Open: aria-haspopup set");
@@ -4410,10 +4533,8 @@ sap.ui.define([
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
 		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Open: aria-activedescendant not set");
 
-		sinon.stub(oFieldHelp, "getValueHelpEnabled").returns(false); // fake no dialog
 		oFieldHelp.close();
-		oClock.tick(400); // fake closing time
-		oFieldHelp.fireAfterClose();
+		oFieldHelp.fireClosed();
 		oCore.applyChanges();
 
 		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "Closed: aria-expanded set to false");
@@ -4421,15 +4542,13 @@ sap.ui.define([
 		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Closed: aria-activedescendant not set");
 		assert.notOk($FocusDomRef.attr("aria-describedby") && $FocusDomRef.attr("aria-describedby").search(sValueHelpEnabledID) >= 0, "ValueHelpEnabled text not set");
 
-		oFieldHelp.fireNavigate({ value: "Item 3", key: "I3", itemId: "ItemId"});
+		oFieldHelp.fireNavigated({ condition: Condition.createItemCondition("I3", "Item 3"), itemId: "ItemId"});
 		oCore.applyChanges();
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Navigation: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Navigation: aria-controls set");
 		assert.equal($FocusDomRef.attr("aria-activedescendant"), "ItemId", "Navigation: aria-activedescendant set");
 
 		oFieldHelp.close();
-		oClock.tick(400); // fake closing time
-		oClock.restore();
 
 		oField.setFieldHelp();
 		oCore.applyChanges();
@@ -4466,20 +4585,23 @@ sap.ui.define([
 		assert.ok($FocusDomRef.attr("aria-describedby") && $FocusDomRef.attr("aria-describedby").search(sValueHelpEnabledID) >= 0, "ValueHelpEnabled text set");
 
 		// open FieldHelp
-		var oClock = sinon.useFakeTimers();
-		sinon.stub(oFieldHelp, "getContentId").returns("Test");
+		oFieldHelp.getAriaAttributes.returns({ // fake attributes. Real attributes tested in ValueHelp unit tests
+			contentId: "Test",
+			role: "combobox",
+			roleDescription: "RoleDescription",
+			ariaHasPopup: "listbox",
+			valueHelpEnabled: false
+		});
 		oVHIcon.firePress();
 		sinon.stub(oFieldHelp, "isOpen").returns(true);
+		oFieldHelp.fireOpened();
 		oCore.applyChanges();
-		oClock.tick(400); // fake opening time
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Open: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
 		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Open: aria-activedescendant not set");
 
-		sinon.stub(oFieldHelp, "getValueHelpEnabled").returns(false); // fake no dialog
 		oFieldHelp.close();
-		oClock.tick(400); // fake closing time
-		oFieldHelp.fireAfterClose();
+		oFieldHelp.fireClosed();
 		oCore.applyChanges();
 
 		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "Closed: aria-expanded set to false");
@@ -4487,15 +4609,13 @@ sap.ui.define([
 		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Closed: aria-activedescendant not set");
 		assert.notOk($FocusDomRef.attr("aria-describedby") && $FocusDomRef.attr("aria-describedby").search(sValueHelpEnabledID) >= 0, "ValueHelpEnabled text not set");
 
-		oFieldHelp.fireNavigate({ value: "Item 3", key: "I3", itemId: "ItemId"});
+		oFieldHelp.fireNavigated({ condition: Condition.createItemCondition("I3", "Item 3"), itemId: "ItemId"});
 		oCore.applyChanges();
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Navigation: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Navigation: aria-controls set");
 		assert.equal($FocusDomRef.attr("aria-activedescendant"), "ItemId", "Navigation: aria-activedescendant set");
 
 		oFieldHelp.close();
-		oClock.tick(400); // fake closing time
-		oClock.restore();
 
 		oField.setFieldHelp();
 		oCore.applyChanges();
@@ -4511,11 +4631,13 @@ sap.ui.define([
 	QUnit.test("aria attributes on single Field with only typeahed", function(assert) {
 
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
-		sinon.stub(oFieldHelp, "getIcon").returns(null); // no icon
-		sinon.stub(oFieldHelp, "getAriaAttributes").callsFake(function (iMaxConditions) {
-			var mAttributes = oFieldHelp.getAriaAttributes.wrappedMethod.call(oFieldHelp, arguments);
-			mAttributes.role = null;
-			return mAttributes;
+		oFieldHelp.getIcon.returns(null); // no icon
+		oFieldHelp.getAriaAttributes.returns({ // fake attributes. Real attributes tested in ValueHelp unit tests
+			contentId: "Test",
+			role: null,
+			roleDescription: undefined,
+			ariaHasPopup: "listbox",
+			valueHelpEnabled: false
 		});
 		oField.setFieldHelp(); // to retrigger check for icon
 		oField.setFieldHelp(oFieldHelp);
@@ -4545,6 +4667,11 @@ sap.ui.define([
 	QUnit.test("external control", function(assert) {
 
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oVHContent = new Content("C1");
+		var oVHPopover = new Popover("P1", {content: oVHContent});
+		sinon.stub(oVHPopover, "getUseAsValueHelp").returns(true); // simulate ComboBox case
+		sinon.stub(oFieldHelp, "isTypeaheadSupported").returns(Promise.resolve(true));
+		oFieldHelp.setTypeahead(oVHPopover);
 		var oConditionsType = new ConditionsType();
 		var oInput = new Input("I1", {value: {path: '$field>/conditions', type: oConditionsType}});
 
@@ -4554,36 +4681,41 @@ sap.ui.define([
 
 		oField.focus(); // as FieldHelp is connected with focus
 
-		var oClock = sinon.useFakeTimers();
-
+		var fnDone = assert.async();
 		assert.ok(oInput.getShowValueHelp(), "Input has value help");
 		assert.equal(oInput.getValueHelpIconSrc(), oFieldHelp.getIcon(), "ValueHelpIcon set");
 		oInput._$input.val("I");
 		oInput.fireLiveChange({ value: "I" });
 
-		oClock.tick(400); // fake time to open trigger
-		assert.ok(oFieldHelp.open.calledWith(true), "oFieldHelp opened as suggestion");
-		assert.equal(oFieldHelp.getFilterValue(), "I", "FilterValue set");
+		setTimeout(function() { // to wait for Promises and opening
+			setTimeout(function() { // second timeout because poipover opens async
+				assert.ok(oFieldHelp.open.calledWith(true), "oFieldHelp opened as suggestion");
+				assert.equal(oFieldHelp.getFilterValue(), "I", "FilterValue set");
 
-		oFieldHelp.open.reset();
-		oFieldHelp.close();
-		oClock.tick(400); // fake time to close trigger
+				oFieldHelp.open.reset();
+				oFieldHelp.close();
+				setTimeout(function() { // to wait for Promises and close
+					oInput.fireValueHelpRequest();
+					setTimeout(function() { // to wait for Promises and opening
+						assert.ok(oFieldHelp.open.calledWith(false), "oFieldHelp opened as value help");
 
-		oInput.fireValueHelpRequest();
-		oClock.tick(400); // fake time to open trigger
-		assert.ok(oFieldHelp.open.calledWith(false), "oFieldHelp opened as value help");
-
-		oFieldHelp.close();
-		oClock.tick(400); // fake time to close trigger
-
-		oClock.restore();
+						oFieldHelp.close();
+						setTimeout(function() { // to wait for Promises and close
+							fnDone();
+						}, 400);
+					}, 400);
+				}, 400);
+			}, 400);
+		}, 400);
 
 	});
 
 	QUnit.module("FieldHelp for currency", {
 		beforeEach: function() {
-			var oFieldHelp = new FieldHelpBase("F1-H");
-			sinon.stub(oFieldHelp, "openByTyping").returns(true); // to simulate suggestion
+			var oFieldHelp = new ValueHelp("F1-H", {validateInput: true});
+			sinon.stub(oFieldHelp, "isValidationSupported").returns(true); // otherwise it will not be taken to determine key or description
+			sinon.stub(oFieldHelp, "isTypeaheadSupported").returns(Promise.resolve(true)); // to simulate suggestion
+			sinon.stub(oFieldHelp, "getIcon").returns("sap-icon://sap-ui5");
 
 			oField = new FieldBase("F1", {
 				dataType: "sap.ui.model.type.Currency",
@@ -4760,7 +4892,7 @@ sap.ui.define([
 						qutils.triggerKeydown(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 						assert.equal(iCount, 1, "Change Event fired");
 						assert.ok(oPromise, "Promise returned");
-						fnResolve({key: "USD", description: "$", inParameters: {inTest: "X"}, outParameters: {outTest: "Y"}});
+						fnResolve({key: "USD", description: "$", payload: {payloadTest: "X"}});
 
 						oPromise.then(function(vResult) {
 							assert.ok(vResult, "Promise resolved");
@@ -4769,11 +4901,12 @@ sap.ui.define([
 							assert.equal(aConditions[0].values[0][0], 123.45, "condition value0");
 							assert.equal(aConditions[0].values[0][1], "USD", "condition value1");
 							assert.equal(aConditions[0].operator, "EQ", "condition operator");
-							assert.ok(aConditions[0].hasOwnProperty("inParameters"), "Condition has in-partameters");
-							assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
-							assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
+							assert.notOk(aConditions[0].hasOwnProperty("inParameters"), "Condition has no in-partameters");
+							assert.notOk(aConditions[0].hasOwnProperty("outParameters"), "Condition has no out-partameters");
+							assert.ok(aConditions[0].hasOwnProperty("payload"), "Condition has payload");
+							assert.equal(aConditions[0].payload.payloadTest, "X", "Payload-parameter value");
 							setTimeout(function() { // update of Input
-								assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
+								assert.equal(aConditions[0].payload.payloadTest, "X", "Payload-parameter value");
 
 								// validation error
 								iCount = 0; oPromise = undefined;
@@ -4791,7 +4924,7 @@ sap.ui.define([
 								qutils.triggerKeydown(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 								assert.equal(iCount, 1, "Change Event fired");
 								assert.ok(oPromise, "Promise returned");
-								fnResolve({key: "JPY", description: "¥", inParameters: {inTest: "O"}, outParameters: {outTest: "P"}});
+								fnResolve({key: "JPY", description: "¥", payload: {payloadTest: "O"}});
 
 								oPromise.then(function(vResult) {
 									assert.notOk(vResult, "Promise must not be resolved");
@@ -4805,11 +4938,12 @@ sap.ui.define([
 									assert.equal(aConditions[0].values[0][0], 123.45, "condition value0");
 									assert.equal(aConditions[0].values[0][1], "USD", "condition value1");
 									assert.equal(aConditions[0].operator, "EQ", "condition operator");
-									assert.ok(aConditions[0].hasOwnProperty("inParameters"), "Condition has in-partameters");
-									assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
-									assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
+									assert.notOk(aConditions[0].hasOwnProperty("inParameters"), "Condition has no in-partameters");
+									assert.notOk(aConditions[0].hasOwnProperty("outParameters"), "Condition has no out-partameters");
+									assert.ok(aConditions[0].hasOwnProperty("payload"), "Condition has payload");
+									assert.equal(aConditions[0].payload.payloadTest, "X", "Payload-parameter value");
 									setTimeout(function() { // update of Input
-										assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
+										assert.equal(aConditions[0].payload.payloadTest, "X", "Payload-parameter value");
 
 										fnDone();
 									}, 0);
@@ -4840,7 +4974,7 @@ sap.ui.define([
 		var oContent2 = aContent && aContent.length > 1 && aContent[1];
 
 		oContent2.focus(); // as FieldHelp is connected with focus
-		oFieldHelp.fireNavigate({ value: "EUR", key: "EUR" });
+		oFieldHelp.fireNavigated({ condition: Condition.createItemCondition("EUR", "EUR"), itemId: "ItemId"});
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		assert.equal(oContent1._$input.val(), "123.45", "number-Field shown value");
 		assert.equal(oContent2._$input.val(), "EUR", "currency-Field shown value");
@@ -4850,36 +4984,43 @@ sap.ui.define([
 	QUnit.test("filtering for currency", function(assert) {
 
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+		var oVHContent = new Content("C1");
+		var oVHPopover = new Popover("P1", {content: oVHContent});
+		sinon.stub(oVHPopover, "getUseAsValueHelp").returns(true); // simulate ComboBox case
+		oFieldHelp.setTypeahead(oVHPopover);
 		oFieldHelp.setConditions([Condition.createItemCondition("EUR", "EUR")]); // to test clearing on filtering
 		oCore.applyChanges();
 
 		var aContent = oField.getAggregation("_content");
 		var oContent1 = aContent && aContent.length > 0 && aContent[0];
 		var oContent2 = aContent && aContent.length > 1 && aContent[1];
-		var oClock = sinon.useFakeTimers();
+		var fnDone = assert.async();
 		oContent2.focus(); // as FieldHelp is connected with focus
 		oContent2._$input.val("E");
 		oContent2.fireLiveChange({ value: "E" });
-		oClock.tick(400); // fake time to open field help
+		setTimeout(function() { // to wait for Promises and opening
+			assert.equal(oFieldHelp.getFilterValue(), "E", "FilterValue set");
+			assert.equal(oFieldHelp.getConditions().length, 0, "no Conditions on FieldHelp");
+			oContent1._$input.val("2");
+			oContent1.fireLiveChange({ value: "2" });
+			setTimeout(function() { // to wait for Promises and opening
+				assert.equal(oFieldHelp.getFilterValue(), "E", "FilterValue not changed");
 
-		assert.equal(oFieldHelp.getFilterValue(), "E", "FilterValue set");
-		assert.equal(oFieldHelp.getConditions().length, 0, "no Conditions on FieldHelp");
-		oContent1._$input.val("2");
-		oContent1.fireLiveChange({ value: "2" });
-		oClock.tick(400); // fake time to open field help
-
-		assert.equal(oFieldHelp.getFilterValue(), "E", "FilterValue not changed");
-
-		oFieldHelp.close();
-		oClock.tick(400); // fake closing time
-		oClock.restore();
+				oFieldHelp.close();
+				setTimeout(function() { // to wait for Promises and closing
+					fnDone();
+				}, 400);
+			}, 400);
+		}, 400);
 
 	});
 
 	QUnit.module("FieldHelp for currency with multi-value", {
 		beforeEach: function() {
-			var oFieldHelp = new FieldHelpBase("F1-H");
-			sinon.stub(oFieldHelp, "openByTyping").returns(true); // to simulate suggestion
+			var oFieldHelp = new ValueHelp("F1-H", {validateInput: true});
+			sinon.stub(oFieldHelp, "isValidationSupported").returns(true); // otherwise it will not be taken to determine key or description
+			sinon.stub(oFieldHelp, "isTypeaheadSupported").returns(Promise.resolve(true)); // to simulate suggestion
+			sinon.stub(oFieldHelp, "getIcon").returns("sap-icon://sap-ui5");
 
 			oField = new FieldBase("F1", {
 				dataType: "sap.ui.model.type.Currency",
@@ -4986,8 +5127,8 @@ sap.ui.define([
 		var oContent2 = aContent && aContent.length > 1 && aContent[1];
 
 		oContent2.focus(); // as FieldHelp is connected with focus
-		var oCondition = Condition.createCondition("EQ", ["EUR", "EUR"], {inTest: "X"}, {outTest: "Y"});
-		oFieldHelp.fireNavigate({ value: "EUR", key: "EUR", condition: oCondition });
+		var oCondition = Condition.createCondition("EQ", ["EUR", "EUR"], {inTest: "X"}, {outTest: "Y"}, ConditionValidated.Validated, {payloadTest: "Z"});
+		oFieldHelp.fireNavigated({ condition: oCondition });
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		assert.equal(oContent1.getDOMValue(), "", "value in inner number-control");
 		assert.equal(oContent2.getDOMValue(), "EUR", "value in inner unit-control");
@@ -5002,6 +5143,8 @@ sap.ui.define([
 		assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
 		assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition0 has out-partameters");
 		assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
+		assert.ok(aConditions[0].hasOwnProperty("payload"), "Condition0 has payload");
+		assert.equal(aConditions[0].payload.payloadTest, "Z", "Payload value");
 		assert.equal(aConditions[1].values[0][0], 100, "condition1 value0-number");
 		assert.equal(aConditions[1].values[0][1], "EUR", "condition1 value0-unit");
 		assert.equal(aConditions[1].values[1][0], 200, "condition1 value1-number");
@@ -5011,11 +5154,13 @@ sap.ui.define([
 		assert.equal(aConditions[1].inParameters.inTest, "X", "In-parameter value");
 		assert.ok(aConditions[1].hasOwnProperty("outParameters"), "Condition1 has out-partameters");
 		assert.equal(aConditions[1].outParameters.outTest, "Y", "Out-parameter value");
+		assert.ok(aConditions[0].hasOwnProperty("payload"), "Condition0 has payload");
+		assert.equal(aConditions[0].payload.payloadTest, "Z", "Payload value");
 
 		setTimeout(function() { // wait for Model update
 			oCM.removeAllConditions();
 			setTimeout(function() { // wait for Model update
-				oFieldHelp.fireNavigate({ value: "EUR", key: "EUR", condition: oCondition });
+				oFieldHelp.fireNavigated({ condition: oCondition });
 				qutils.triggerKeydown(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 				aConditions = oCM.getConditions("Price");
 				assert.equal(aConditions.length, 1, "one condition in Codition model");
@@ -5026,6 +5171,8 @@ sap.ui.define([
 				assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
 				assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition0 has out-partameters");
 				assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
+				assert.ok(aConditions[0].hasOwnProperty("payload"), "Condition0 has payload");
+				assert.equal(aConditions[0].payload.payloadTest, "Z", "Payload value");
 
 				fnDone();
 			}, 0);
@@ -5035,23 +5182,21 @@ sap.ui.define([
 
 	QUnit.module("FieldHelp with \"\" as key", {
 		beforeEach: function() {
-			var oFieldHelp = new FieldHelpBase("F1-H");
-			sinon.stub(oFieldHelp, "openByTyping").returns(true); // to simulate suggestion
-			var oStub = sinon.stub(oFieldHelp, "getTextForKey");
-			oStub.withArgs("").returns("Empty");
-			oStub.withArgs("I1").returns("Item1");
-			oStub.withArgs("I2").returns("Item2");
-			oStub = sinon.stub(oFieldHelp, "getKeyForText");
-			oStub.withArgs("Empty").returns("");
-			oStub.withArgs("Item1").returns("I1");
-			oStub.withArgs("Item2").returns("I2");
-			oStub = sinon.stub(oFieldHelp, "getItemForValue");
-			oStub.withArgs("").returns({key: "", description: "Empty"});
-			oStub.withArgs("I1").returns({key: "I1", description: "Item1"});
-			oStub.withArgs("I2").returns({key: "I2", description: "Item2"});
-			oStub.withArgs("Empty").returns({key: "", description: "Empty"});
-			oStub.withArgs("Item1").returns({key: "I1", description: "Item1"});
-			oStub.withArgs("Item2").returns({key: "I2", description: "Item2"});
+			var oFieldHelp = new ValueHelp("F1-H", {validateInput: true});
+			sinon.stub(oFieldHelp, "isValidationSupported").returns(true); // otherwise it will not be taken to determine key or description
+			sinon.stub(oFieldHelp, "isTypeaheadSupported").returns(Promise.resolve(true)); // to simulate suggestion
+			sinon.stub(oFieldHelp, "getIcon").returns("sap-icon://sap-ui5");
+			var fnGetItemForValue = function(oConfig) {
+				vGetItemsForValue = oConfig.value;
+				if (oConfig.value === "" || oConfig.value === "Empty") {
+					return {key: "", description: "Empty"};
+				} else if (oConfig.value === "I1" || oConfig.value === "Item1") {
+					return {key: "I1", description: "Item1"};
+				} else if (oConfig.value === "I2" || oConfig.value === "Item2") {
+					return {key: "I2", description: "Item2"};
+				}
+			};
+			sinon.stub(oFieldHelp, "getItemForValue").callsFake(fnGetItemForValue);
 
 			oField = new FieldBase("F1", {
 				dataType: "sap.ui.model.odata.type.String",
@@ -5121,7 +5266,7 @@ sap.ui.define([
 		oField.focus(); // as FieldHelp is connected with focus
 
 		var oCondition = Condition.createCondition("EQ", ["", "Empty"]);
-		oFieldHelp.fireNavigate({key: "", value: "Empty", condition: oCondition});
+		oFieldHelp.fireNavigated({condition: oCondition});
 
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 		assert.equal(oContent.getValue(), "Empty");

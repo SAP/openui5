@@ -10,9 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
-	"sap/ui/mdc/field/BoolFieldHelp", // don't want to test async loading in Field here
 	"sap/ui/mdc/field/FieldBaseDelegate", // bring back to default one
-	"sap/ui/mdc/field/FieldHelpBaseDelegate",
 	"sap/ui/mdc/field/FieldInput", // don't want to test async loading in Field here
 	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/mdc/enum/ConditionValidated",
@@ -39,9 +37,7 @@ sap.ui.define([
 		Condition,
 		FilterOperatorUtil,
 		Operator,
-		BoolFieldHelp,
 		FieldBaseDelegate,
-		FieldHelpBaseDelegate,
 		FieldInput,
 		BaseType,
 		ConditionValidated,
