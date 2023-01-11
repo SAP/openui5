@@ -68,39 +68,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Maps the Edm type names to real type names
-	 *
-	 * If a real type has already been defined, this type is returned.
-	 *
-	 * @param {object} oPayload Payload for delegate
-	 * @param {string} sType Given EDM type
-	 * @returns {string} Data type name
-	 * @private
-	 * @deprecated please use sap.ui.mdc.util.TypeUtil.getDataTypeClass instead
-	 */
-	FieldBaseDelegate.getDataTypeClass = function(oPayload, sType) {
-		return TypeUtil.getDataTypeClassName(sType);
-	};
-
-	/**
-	 * To know what control is rendered the <code>Field</code> or </code>FilterField</code>
-	 * needs to know if the type represents a date, a number or something else in a normalized way.
-	 *
-	 * As default <code>string</code> is returned.
-	 *
-	 * @param {object} oPayload Payload for delegate
-	 * @param {string} sType Given type
-	 * @param {object} oFormatOptions Used <code>FormatOptions</code>
-	 * @param {object} oConstraints Used <code>Constraints</code>
-	 * @returns {sap.ui.mdc.condition.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
-	 * @private
-	 * @deprecated please use sap.ui.mdc.util.TypeUtil.getBaseType instead
-	 */
-	FieldBaseDelegate.getBaseType = function(oPayload, sType, oFormatOptions, oConstraints) {
-		return TypeUtil.getBaseType(sType, oFormatOptions, oConstraints);
-	};
-
-	/**
 	 * If the <code>Field</code> control is used, the used data type might come from the binding.
 	 * In V4-unit or currency case it might need to be formatted once.
 	 * To initialize the internal type later on, the currencies must be returned.

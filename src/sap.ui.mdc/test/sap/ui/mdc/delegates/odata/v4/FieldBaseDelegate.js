@@ -32,38 +32,6 @@ sap.ui.define([
 	 */
 	var ODataFieldBaseDelegate = Object.assign({}, FieldBaseDelegate);
 
-	/**
-	 * Maps the Edm type names to real type names
-	 *
-	 * If a real type has already been defined, this type is returned.
-	 *
-	 * @param {object} oPayload Payload for delegate
-	 * @param {string} sType Given EDM type
-	 * @returns {string} Data type name
-	 * @deprecated please use sap.ui.mdc.odata.v4.TypeUtil.getDataTypeClass instead
-	 */
-	ODataFieldBaseDelegate.getDataTypeClass = function(oPayload, sType) {
-		return TypeUtil.getDataTypeClassName(sType);
-	};
-
-	/**
-	 * To know what control is rendered the <code>Field</code> or </code>FilterField</code>
-	 * needs to know if the type represents a date, a number or something else in a normalized way.
-	 *
-	 * As default <code>string</code> is returned.
-	 *
-	 * @param {object} oPayload Payload for delegate
-	 * @param {string} sType Given type
-	 * @param {object} oFormatOptions Used <code>FormatOptions</code>
-	 * @param {object} oConstraints Used <code>Constraints</code>
-	 * @returns {sap.ui.mdc.condition.BaseType} output <code>Date</code>, <code>DateTime</code> or <code>Time</code>...
- 	 * @deprecated please use sap.ui.mdc.odata.v4.TypeUtil.getBaseType instead
-	 */
-	ODataFieldBaseDelegate.getBaseType = function(oPayload, sType, oFormatOptions, oConstraints) {
-		return TypeUtil.getBaseType(sType, oFormatOptions, oConstraints);
-	};
-
-
 	ODataFieldBaseDelegate.initializeTypeFromBinding = function(oPayload, oType, vValue) {
 
 		// V4 Unit and Currency types have a map with valid units and create an internal customizing for it.
