@@ -3009,7 +3009,7 @@
 		},
 		{
 		  "id": "sap.m.sample.TableViewSettingsDialog",
-		  "name": "Table - View Settings & Context Menu",
+		  "name": "Table - View Settings & Menus",
 		  "description": "The View Settings Dialog is standard UI pattern for specifying sorting, grouping and filtering. For a table it should be triggered by a button in the table header with the 'drop-down-list' icon. The active filter should be shown with the table's info bar. This example also shows the context menu for the items in the Table control."
 		},
 		{

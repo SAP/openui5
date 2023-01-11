@@ -46,6 +46,7 @@ sap.ui.define([
 				 */
 				category: {type: "sap.m.table.columnmenu.Category", defaultValue: library.table.columnmenu.Category.Generic}
 			},
+			defaultAggregation : "content",
 			aggregations: {
 				/**
 				 * Defines the content that is shown for the quick action.

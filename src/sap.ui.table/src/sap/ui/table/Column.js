@@ -326,7 +326,7 @@ sap.ui.define([
 			/**
 			 * The menu that can be opened by the header element of this column.
 			 *
-			 * @since 1.104
+			 * @since 1.110
 			 */
 			headerMenu: {type: "sap.ui.core.IColumnHeaderMenu", multiple: false}
 		},
@@ -1378,7 +1378,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Column.prototype.getHeaderMenuInstance = function() {
-		return Core.byId(this.getAssociation("headerMenu"));
+		return Core.byId(this.getHeaderMenu());
 	};
 
 	function validateCellContentVisibilitySettings(mSettings) {

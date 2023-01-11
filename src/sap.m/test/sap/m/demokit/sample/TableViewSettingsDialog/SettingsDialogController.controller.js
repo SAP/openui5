@@ -6,14 +6,26 @@ sap.ui.define([
 		'sap/ui/model/json/JSONModel',
 		'sap/m/Menu',
 		'sap/m/MenuItem',
+		'sap/m/MessageToast',
 		'sap/ui/core/Fragment',
 		'./Formatter'
-	], function(Controller, Device , Filter, Sorter, JSONModel, Menu, MenuItem, Fragment /*, Formatter*/) {
+	], function(Controller, Device , Filter, Sorter, JSONModel, Menu, MenuItem, MessageToast, Fragment /*, Formatter*/) {
 	"use strict";
 
 	var SettingsDialogController = Controller.extend("sap.m.sample.TableViewSettingsDialog.SettingsDialogController", {
 
 		onInit: function () {
+			var oView = this.getView();
+
+			Fragment.load({
+				id: this.getView().getId(),
+				name: "sap.m.sample.TableViewSettingsDialog.ColumnMenu",
+				controller: this
+			}).then(function(oMenu) {
+				oView.addDependent(oMenu);
+				return oMenu;
+			});
+
 			// Keeps reference to any of the created sap.m.ViewSettingsDialog-s in this sample
 			this._mViewSettingsDialogs = {};
 
@@ -171,6 +183,10 @@ sap.ui.define([
 				oToggleButton.setTooltip("Enable Custom Context Menu");
 				this.byId("idProductsTable").destroyContextMenu();
 			}
+		},
+
+		onActionItemPress: function() {
+			MessageToast.show('Action Item Pressed');
 		}
 	});
 

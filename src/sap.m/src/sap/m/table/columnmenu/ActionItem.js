@@ -45,8 +45,11 @@ sap.ui.define([
 			events: {
 				/**
 				 * This event is fired when the action item is pressed.
+				 * The default behavior can be prevented by the application, in which case the menu will not close.
 				 */
-				press: {}
+				press: {
+					allowPreventDefault : true
+				}
 			}
 		}
 	});
@@ -56,7 +59,9 @@ sap.ui.define([
 	 */
 	ActionItem.prototype.onPress = function (oEvent) {
 		oEvent.preventDefault();
-		this.firePress();
+		if (this.firePress()) {
+			this.getMenu().close();
+		}
 	};
 
 	ActionItem.prototype.getContent = function () {

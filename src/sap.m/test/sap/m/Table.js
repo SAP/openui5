@@ -57,7 +57,7 @@ sap.ui.define([
 	DatePicker,
 	Table,
 	ColumnMenuItem,
-	ColumnMenuMenu,
+	ColumnMenu,
 	ColumnMenuQuickAction,
 	Page
 ) {
@@ -357,7 +357,7 @@ sap.ui.define([
 		]
 	});
 
-	var oMenu = new ColumnMenuMenu({
+	var oMenu = new ColumnMenu({
 		quickActions: [
 			new ColumnMenuQuickAction({label: "Quick Action A", content: new Button({text: "Execute"})})
 		],
@@ -440,7 +440,7 @@ sap.ui.define([
 			demandPopin : true
 		}).data("clipboard", "money")
 	];
-	aColumns[0].setAssociation("headerMenu", oMenu.getId());
+	aColumns[0].setHeaderMenu(oMenu.getId());
 
 	var oTemplate = new ColumnListItem({
 		vAlign: "Middle",

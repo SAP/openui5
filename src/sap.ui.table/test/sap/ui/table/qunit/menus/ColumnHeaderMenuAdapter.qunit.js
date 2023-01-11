@@ -65,8 +65,8 @@ sap.ui.define([
 			this.oMenu2 = new TestMenu();
 			this.oColumn1 = new Column();
 			this.oColumn2 = new Column();
-			this.oColumn1.addAssociation("headerMenu", this.oMenu1.getId());
-			this.oColumn2.addAssociation("headerMenu", this.oMenu2.getId());
+			this.oColumn1.setHeaderMenu(this.oMenu1.getId());
+			this.oColumn2.setHeaderMenu(this.oMenu2.getId());
 			this.oTable = TableQUnitUtils.createTable({
 				columns: [this.oColumn1, this.oColumn2]
 			});

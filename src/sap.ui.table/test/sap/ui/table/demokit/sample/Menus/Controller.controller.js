@@ -9,10 +9,12 @@ sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
+	"sap/m/table/columnmenu/Menu",
+	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/ToolbarSpacer",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
-], function(Log, Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, Popup, MenuM, MenuItemM, ToolbarSpacer, jQuery, Device) {
+], function(Log, Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, Popup, MenuM, MenuItemM, ColumnMenu, ActionItem, ToolbarSpacer, jQuery, Device) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Menus.Controller", {
@@ -151,6 +153,48 @@ sap.ui.define([
 				}));
 			} else {
 				this.byId("table").destroyContextMenu();
+			}
+		},
+
+		onSwitchHeaderMenu: function(oEvent) {
+			var bUseHeaderMenu = oEvent.getSource().getState();
+
+			if (bUseHeaderMenu) {
+				this.oMenu = new ColumnMenu();
+				this.byId("name").setHeaderMenu(this.oMenu.getId());
+				this.byId("productId").setHeaderMenu(this.oMenu.getId());
+
+				this.oCustomMenu = new ColumnMenu({
+					items: [
+						new ActionItem({
+							label: "My custom menu entry",
+							press: [function(oEvent) {
+								this.onQuantityCustomItemSelect(oEvent);
+							}, this]
+						}),
+						new ActionItem({
+							label: "Sort",
+							icon: "sap-icon://sort",
+							press: [function(oEvent) {
+								this.onQuantitySort(oEvent);
+							}, this]
+						})
+					]
+				});
+				this.byId("quantity").setHeaderMenu(this.oCustomMenu.getId());
+			} else {
+				this.byId("name").setHeaderMenu(null);
+				this.byId("productId").setHeaderMenu(null);
+				this.byId("quantity").setHeaderMenu(null);
+			}
+		},
+
+		onExit: function() {
+			if (this.oMenu) {
+				this.oMenu.destroy();
+			}
+			if (this.oCustomMenu) {
+				this.oCustomMenu.destroy();
 			}
 		}
 
