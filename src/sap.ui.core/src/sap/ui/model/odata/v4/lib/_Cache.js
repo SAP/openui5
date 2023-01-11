@@ -828,7 +828,7 @@ sap.ui.define([
 	 *   The path of the requested property relative to oResource; this property is requested from
 	 *   the server. For annotations, except client annotations, the annotated property is requested
 	 *   from the server.
-	 * @returns {sap.ui.base.SyncPromise|boolean}
+	 * @returns {Promise|boolean}
 	 *   A promise resolving w/o any result if the requested property is an expected late property,
 	 *   or a <code>boolean</code> value if it is not; it rejects with an error if the GET request
 	 *   failed, or if the key predicate or the ETag has changed. The returned <code>boolean</code>
@@ -1912,7 +1912,7 @@ sap.ui.define([
 	 * @param {boolean} [bInactive]
 	 *   If <code>true</code>, the cache and the POST request will be updated, but the entity stays
 	 *   inactive
-	 * @returns {Promise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise for the PATCH request (resolves with <code>undefined</code>); rejected in case of
 	 *   cancellation or if no <code>fnErrorCallback</code> is given
 	 * @throws {Error} If the cache is shared
@@ -3032,7 +3032,7 @@ sap.ui.define([
 	 * @param {function(string,number)} fnOnRemove
 	 *   A function which is called with predicate and index if a kept-alive or created element does
 	 *   no longer exist after refresh; the index is undefined for a non-created element
-	 * @returns {sap.ui.base.SyncPromise|undefined}
+	 * @returns {Promise|undefined}
 	 *   A promise resolving without a defined result, or rejecting with an error if the refresh
 	 *   fails, or <code>undefined</code> if there are no kept-alive elements.
 	 * @throws {Error}
@@ -3797,7 +3797,7 @@ sap.ui.define([
 	 *   because they may have changed due to side effects of a previous update
 	 * @param {string} [sResourcePath=this.sResourcePath]
 	 *   A resource path relative to the service URL; it must not contain a query string
-	 * @returns {Promise|sap.ui.base.SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
 	 *   effects fails.
 	 * @throws {Error} If the side effects require a $expand, if group ID is '$cached' (the error

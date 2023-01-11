@@ -825,7 +825,7 @@ sap.ui.define([
 	 * @param {string} sMetaPath
 	 *   The meta path of the resource + navigation or key path (which may lead to an entity or
 	 *   complex type)
-	 * @returns {SyncPromise<object>}
+	 * @returns {sap.ui.base.SyncPromise<object>}
 	 *   A promise resolving with the type
 	 */
 	 _Requestor.prototype.fetchType = function (mTypeForMetaPath, sMetaPath) {
@@ -2141,7 +2141,7 @@ sap.ui.define([
 	 */
 	_Requestor.prototype.waitForBatchResponseReceived = function (sGroupId) {
 		// Note: this currently works only in case there is at least one change request already
-		return this.mBatchQueue[sGroupId][0][0].$promise;
+		return SyncPromise.resolve(this.mBatchQueue[sGroupId][0][0].$promise);
 	};
 
 	/**

@@ -7481,7 +7481,7 @@ sap.ui.define([
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oBinding = bindList(this, "/Set"),
 			fnResolve,
-			oPendingRequestsPromise = new SyncPromise(function (resolve) {
+			oPendingRequestsPromise = new Promise(function (resolve) {
 				fnResolve = resolve;
 			}),
 			oPromise;
