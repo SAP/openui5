@@ -91,7 +91,8 @@ sap.ui.define([
             /**add beginning**/
             this._oTitle = new Title(oMDCChart.getId() + "-title", {
                 text: oMDCChart.getHeader(),
-                level: oMDCChart.getHeaderLevel()
+                level: oMDCChart.getHeaderLevel(),
+                width: oMDCChart.getHeaderVisible() ? undefined : "0px"
             });
             this.addBegin(this._oTitle);
 
@@ -347,6 +348,12 @@ sap.ui.define([
 
         ChartToolbar.prototype._setHeaderLevel = function(sHeaderLevel) {
             this._oTitle.setLevel(sHeaderLevel);
+        };
+
+        ChartToolbar.prototype.setHeaderVisible = function(bVisible) {
+            if (this._oTitle) {
+                this._oTitle.setWidth(bVisible ? undefined : "0px");
+            }
         };
 
         return ChartToolbar;

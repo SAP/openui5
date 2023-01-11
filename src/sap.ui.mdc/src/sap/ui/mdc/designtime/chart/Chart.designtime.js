@@ -83,6 +83,9 @@ sap.ui.define([
 			},
 			headerLevel : {
 				ignore: false
+			},
+			headerVisible : {
+				ignore: false
 			}
 		},
 		aggregations: {
