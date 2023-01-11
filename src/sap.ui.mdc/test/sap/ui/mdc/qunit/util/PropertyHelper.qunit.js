@@ -89,37 +89,30 @@ sap.ui.define([
 		}, new Error("Invalid property definition: Properties do not have unique names."));
 	});
 
-	QUnit.skip("Properties with an invalid name", function(assert) {
-		assert.throws(function() {
-			new PropertyHelper([{
-				name: "0foo",
-				label: "bar"
-			}]);
-		}, "Error thrown");
-		assert.throws(function() {
-			new PropertyHelper([{
-				name: "foo#",
-				label: "bar"
-			}]);
-		}, "Error thrown");
-	});
-
 	QUnit.test("Unknown attribute", function(assert) {
 		new PropertyHelper([{
 			name: "foo",
 			label: "bar",
+			dataType: "String",
 			foo: "bar"
 		}]).destroy();
 		assert.equal(this.logWarning.callCount, 1, "Warning logged if an attribute is unknown");
 
-		this.logWarning.reset();
+		this.logWarning.resetHistory();
 		new PropertyHelper([{
 			name: "foo",
 			label: "bar",
-			typeConfig: {
+			dataType: "String",
+			additionalAttribute: {
 				doesNotExist: true
 			}
-		}]).destroy();
+		}], null, {
+			additionalAttribute: {
+				type: {
+					exists: {type: "string"}
+				}
+			}
+		}).destroy();
 		assert.equal(this.logWarning.callCount, 1, "Warning logged if a deeply nested attribute is unknown");
 	});
 
@@ -127,6 +120,7 @@ sap.ui.define([
 		new _PropertyHelper([{
 			name: "foo",
 			label: "bar",
+			dataType: "String",
 			filterable: true
 		}]).destroy();
 		assert.equal(this.logWarning.callCount, 1, "Warning logged if a default attribute is set that is not allowed to be set");
@@ -134,20 +128,23 @@ sap.ui.define([
 
 	QUnit.test("Missing mandatory attribute", function(assert) {
 		new PropertyHelper([{
-			label: "foo"
+			label: "foo",
+			dataType: "String"
 		}]).destroy();
 		assert.equal(this.logWarning.callCount, 1, "Warning logged if 'name' is missing");
 
-		this.logWarning.reset();
+		this.logWarning.resetHistory();
 		new PropertyHelper([{
-			name: "foo"
+			name: "foo",
+			dataType: "String"
 		}]).destroy();
 		assert.equal(this.logWarning.callCount, 1, "Warning logged if 'label' is missing");
 
-		this.logWarning.reset();
+		this.logWarning.resetHistory();
 		new PropertyHelper([{
 			name: "foo",
 			label: "bar",
+			dataType: "String",
 			additionalAttribute: {}
 		}], null, {
 			additionalAttribute: {
@@ -202,6 +199,7 @@ sap.ui.define([
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: true,
+				dataType: "String",
 				label: "label"
 			}]);
 		}, "Error thrown if the value has an incorrect type");
@@ -210,7 +208,8 @@ sap.ui.define([
 			new PropertyHelper([{
 				name: "foo",
 				label: "bar",
-				typeConfig: true
+				dataType: "String",
+				exportSettings: true
 			}]);
 		}, "Error thrown if the value of a complex object attribute has an incorrect type");
 
@@ -218,10 +217,17 @@ sap.ui.define([
 			new PropertyHelper([{
 				name: "foo",
 				label: "bar",
-				typeConfig: {
-					className: true
+				dataType: "String",
+				additionalAttribute: {
+					bar: true
 				}
-			}]);
+			}], null, {
+				additionalAttribute: {
+					type: {
+						bar: {type: "string"}
+					}
+				}
+			});
 		}, "Error thrown if the value of a deeply nested attribute has an incorrect type");
 
 		assert.throws(function() {
@@ -522,7 +528,8 @@ sap.ui.define([
 	QUnit.test("Complex property with an attribute that is not allowed", function(assert) {
 		new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}, {
 			name: "complexProperty",
 			label: "Complex property",
@@ -553,7 +560,8 @@ sap.ui.define([
 	QUnit.test("Complex property with nested attribute including attributes that are not allowed for complex properties", function(assert) {
 		new PropertyHelper([{
 			name: "propA",
-			label: "prop A"
+			label: "prop A",
+			dataType: "String"
 		}, {
 			name: "propB",
 			label: "prop B",
@@ -647,7 +655,8 @@ sap.ui.define([
 	QUnit.test("Missing mandatory attribute", function(assert) {
 		new PropertyHelper([{
 			name: "foo",
-			label: "bar"
+			label: "bar",
+			dataType: "String"
 		}], null, {
 			additionalAttribute: {type: "string", mandatory: true}
 		}).destroy();
@@ -657,7 +666,8 @@ sap.ui.define([
 	QUnit.test("Complex property with an attribute that is not allowed", function(assert) {
 		new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}, {
 			name: "complexProperty",
 			label: "Complex property",
@@ -683,20 +693,18 @@ sap.ui.define([
 				exportSettings: {},
 				caseSensitive: true,
 				maxConditions: -1,
-				typeConfig: null
+				formatOptions: null,
+				constraints: null
 			};
 			var mComplexDefaults = {
 				propertyInfos: [],
 				visible: true,
 				sortable: false,
 				filterable: false,
-				path: null,
 				group: "",
 				groupLabel: "",
 				tooltip: "",
-				exportSettings: {},
-				maxConditions: null,
-				typeConfig: null
+				exportSettings: {}
 			};
 			var aExpectedWithDefaults = aExpected.map(function(oProperty) {
 				if ("propertyInfos" in oProperty) {
@@ -713,7 +721,8 @@ sap.ui.define([
 	QUnit.test("Basic defaults", function(assert) {
 		var aPropertyInfos = [{
 			name: "prop",
-			label: "prop"
+			label: "prop",
+			dataType: "String"
 		}, {
 			name: "complexProperty",
 			label: "Complex property",
@@ -724,7 +733,8 @@ sap.ui.define([
 
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
-			label: "prop"
+			label: "prop",
+			dataType: "String"
 		}, {
 			name: "complexProperty",
 			label: "Complex property",
@@ -739,6 +749,7 @@ sap.ui.define([
 		var aPropertyInfos = [{
 			name: "propA",
 			label: "Property A",
+			dataType: "String",
 			unit: "unit",
 			additionalAttribute: "attr",
 			additionalComplexAttribute: {
@@ -747,6 +758,7 @@ sap.ui.define([
 		}, {
 			name: "propB",
 			label: "Property B",
+			dataType: "String",
 			unit: "unit"
 		}, {
 			name: "complexPropA",
@@ -758,7 +770,8 @@ sap.ui.define([
 			propertyInfos: ["propA"]
 		}, {
 			name: "unit",
-			label: "Unit"
+			label: "Unit",
+			dataType: "String"
 		}];
 		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
 			additionalAttribute: {
@@ -782,6 +795,7 @@ sap.ui.define([
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "propA",
 			label: "Property A",
+			dataType: "String",
 			unit: "unit",
 			additionalAttribute: "attr",
 			additionalComplexAttribute: {
@@ -791,6 +805,7 @@ sap.ui.define([
 		}, {
 			name: "propB",
 			label: "Property B",
+			dataType: "String",
 			unit: "unit",
 			additionalAttribute: "AttributeDefault",
 			additionalComplexAttribute: null,
@@ -808,6 +823,7 @@ sap.ui.define([
 		}, {
 			name: "unit",
 			label: "Unit",
+			dataType: "String",
 			additionalAttribute: "AttributeDefault",
 			additionalComplexAttribute: null,
 			additionalDefaultWithDeepPath: ""
@@ -819,7 +835,8 @@ sap.ui.define([
 	QUnit.test("Complex settings object not set", function(assert) {
 		var aPropertyInfos = [{
 			name: "prop",
-			label: "prop"
+			label: "prop",
+			dataType: "String"
 		}];
 		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
 			additionalAttribute: {
@@ -832,6 +849,7 @@ sap.ui.define([
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
 			label: "prop",
+			dataType: "String",
 			additionalAttribute: null
 		}]);
 
@@ -842,6 +860,7 @@ sap.ui.define([
 		var aPropertyInfos = [{
 			name: "prop",
 			label: "prop",
+			dataType: "String",
 			additionalAttribute: undefined
 		}];
 		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
@@ -855,6 +874,7 @@ sap.ui.define([
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
 			label: "prop",
+			dataType: "String",
 			additionalAttribute: null
 		}]);
 
@@ -865,6 +885,7 @@ sap.ui.define([
 		var aPropertyInfos = [{
 			name: "prop",
 			label: "prop",
+			dataType: "String",
 			additionalAttribute: null
 		}];
 		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
@@ -878,6 +899,7 @@ sap.ui.define([
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
 			label: "prop",
+			dataType: "String",
 			additionalAttribute: null
 		}]);
 
@@ -888,19 +910,23 @@ sap.ui.define([
 		var oPropertyHelper = new PropertyHelper([{
 			name: "complexProp",
 			label: "Complex property",
+			dataType: "String",
 			propertyInfos: ["prop"]
 		}, {
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}]);
 
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "complexProp",
 			label: "Complex property",
+			dataType: "String",
 			propertyInfos: ["prop"]
 		}, {
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}]);
 
 		oPropertyHelper.destroy();
@@ -910,13 +936,15 @@ sap.ui.define([
 		var oPropertyHelper = new PropertyHelper([{
 			name: "propA",
 			label: "Property A",
+			dataType: "String",
 			foo: {},
 			bar: {
 				props: ["propB"]
 			}
 		}, {
 			name: "propB",
-			label: "Property B"
+			label: "Property B",
+			dataType: "String"
 		}], null, {
 			foo: {
 				type: {
@@ -933,11 +961,13 @@ sap.ui.define([
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "propA",
 			label: "Property A",
+			dataType: "String",
 			foo: {props: ["propB"]},
 			bar: {props: ["propB"]}
 		}, {
 			name: "propB",
 			label: "Property B",
+			dataType: "String",
 			foo: null,
 			bar: null
 		}]);
@@ -949,10 +979,12 @@ sap.ui.define([
 		var oPropertyHelper = new PropertyHelper([{
 			name: "propA",
 			label: "Property A",
+			dataType: "String",
 			foo: "propB"
 		}, {
 			name: "propB",
 			label: "Property B",
+			dataType: "String",
 			foo: "propA"
 		}], null, {
 			foo: {type: "PropertyReference"}
@@ -961,10 +993,12 @@ sap.ui.define([
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "propA",
 			label: "Property A",
+			dataType: "String",
 			foo: "propB"
 		}, {
 			name: "propB",
 			label: "Property B",
+			dataType: "String",
 			foo: "propA"
 		}]);
 
@@ -975,6 +1009,7 @@ sap.ui.define([
 		var oPropertyHelper = new PropertyHelper([{
 			name: "prop",
 			label: "Property",
+			dataType: "String",
 			baz: "prop2"
 		}, {
 			name: "complexProp",
@@ -985,7 +1020,8 @@ sap.ui.define([
 			}
 		}, {
 			name: "prop2",
-			label: "Property 2"
+			label: "Property 2",
+			dataType: "String"
 		}], null, {
 			foo: {
 				type: {
@@ -1017,7 +1053,8 @@ sap.ui.define([
 	QUnit.test("Propagation of 'allowed for complex property' to child attributes", function(assert){
 		var oPropertyHelper = new PropertyHelper([{
 			name: "prop",
-			label: "prop"
+			label: "prop",
+			dataType: "String"
 		}, {
 			name: "complexProp",
 			label: "Complex property",
@@ -1040,6 +1077,7 @@ sap.ui.define([
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
 			label: "prop",
+			dataType: "String",
 			foo: {
 				bar: {
 					propA: "XYZ",
@@ -1061,7 +1099,8 @@ sap.ui.define([
 	QUnit.test("Prevent propagation of 'allowed for complex property' to child attributes", function(assert){
 		var oPropertyHelper = new PropertyHelper([{
 			name: "prop",
-			label: "prop"
+			label: "prop",
+			dataType: "String"
 		}, {
 			name: "complexProp",
 			label: "Complex property",
@@ -1079,6 +1118,7 @@ sap.ui.define([
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
 			label: "prop",
+			dataType: "String",
 			foo: {
 				bar: "XYZ"
 			}
@@ -1094,6 +1134,7 @@ sap.ui.define([
 		var aPropertyInfos = [{
 			name: "propX",
 			label: "prop X",
+			dataType: "String",
 			foo: {
 				bar: null,
 				lot: undefined
@@ -1109,6 +1150,7 @@ sap.ui.define([
 		}, {
 			name: "propK",
 			label: "prop K",
+			dataType: "String",
 			foo: {
 				bar: {
 					propA: null,
@@ -1119,6 +1161,7 @@ sap.ui.define([
 		}, {
 			name: "propZ",
 			label: "prop Z",
+			dataType: "String",
 			foo: null
 		}, {
 			name: "propJ",
@@ -1146,6 +1189,7 @@ sap.ui.define([
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "propX",
 			label: "prop X",
+			dataType: "String",
 			foo: {
 				bar: null,
 				lot: ""
@@ -1164,6 +1208,7 @@ sap.ui.define([
 		}, {
 			name: "propK",
 			label: "prop K",
+			dataType: "String",
 			foo: {
 				bar: {
 					propA: "XYZ",
@@ -1174,6 +1219,7 @@ sap.ui.define([
 		}, {
 			name: "propZ",
 			label: "prop Z",
+			dataType: "String",
 			foo: {
 				bar: {
 					propA: "XYZ",
@@ -1198,7 +1244,8 @@ sap.ui.define([
 	QUnit.test("Not modifying original property infos", function(assert) {
 		var aPropertyInfos = [{
 			name: "prop",
-			label: "prop"
+			label: "prop",
+			dataType: "String"
 		}, {
 			name: "complexProperty",
 			label: "Complex property",
@@ -1208,7 +1255,8 @@ sap.ui.define([
 
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
-			label: "prop"
+			label: "prop",
+			dataType: "String"
 		}, {
 			name: "complexProperty",
 			label: "Complex property",
@@ -1217,7 +1265,8 @@ sap.ui.define([
 
 		assert.deepEqual(aPropertyInfos, [{
 			name: "prop",
-			label: "prop"
+			label: "prop",
+			dataType: "String"
 		}, {
 			name: "complexProperty",
 			label: "Complex property",
@@ -1265,6 +1314,7 @@ sap.ui.define([
 		var aPropertyInfos = [{
 			name: "prop",
 			label: "prop",
+			dataType: "String",
 			exportSettings: {
 				label: "exportLabel",
 				width: 10
@@ -1288,6 +1338,7 @@ sap.ui.define([
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
 			label: "prop",
+			dataType: "String",
 			exportSettings: {
 				label: "exportLabel",
 				width: 10
@@ -1304,7 +1355,8 @@ sap.ui.define([
 	QUnit.test("Cloning of non-enumerable attributes", function(assert) {
 		var aPropertyInfos = [{
 			name: "prop",
-			label: "prop"
+			label: "prop",
+			dataType: "String"
 		}];
 		Object.defineProperty(aPropertyInfos[0], "foo", {
 			value: "bar"
@@ -1313,7 +1365,8 @@ sap.ui.define([
 
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
-			label: "prop"
+			label: "prop",
+			dataType: "String"
 		}], "Cloned property infos");
 		assert.notOk(oPropertyHelper.getProperties()[0].hasOwnProperty("foo"), "The non-enumerable attribute was not cloned");
 

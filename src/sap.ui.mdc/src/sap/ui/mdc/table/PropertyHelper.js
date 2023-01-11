@@ -16,6 +16,33 @@ sap.ui.define([
 	/**
 	 * @typedef {sap.ui.mdc.util.PropertyInfo} sap.ui.mdc.table.PropertyInfo
 	 *
+	 * An object literal describing a data property in the context of an {@link sap.ui.mdc.Table}.
+	 *
+	 * When specifying the <code>PropertyInfo</code> objects in the {@link sap.ui.mdc.Table#getPropertyInfo propertyInfo} property, the
+	 * following attributes need to be specified:
+	 * <ul>
+	 *   <li><code>name</code></li>
+	 *   <li><code>path</code></li>
+	 *   <li><code>dataType</code></li>
+	 *   <li><code>formatOptions</code></li>
+	 *   <li><code>constraints</code></li>
+	 *   <li><code>maxConditions</code></li>
+	 *   <li><code>caseSensitive</code></li>
+	 *   <li><code>visualSettings.widthCalculation</code></li>
+	 *   <li><code>propertyInfos</code></li>
+	 *   <li><code>groupable</code></li>
+	 *   <li><code>key</code></li>
+	 *   <li><code>unit</code></li>
+	 *   <li><code>text</code></li>
+	 * </ul>
+	 *
+	 * If the property is complex, the following attributes need to be specified:
+	 * <ul>
+	 *   <li><code>name</code></li>
+	 *   <li><code>visualSettings.widthCalculation</code></li>
+	 *   <li><code>propertyInfos</code> (all referenced properties must be specified)</li>
+	 * </ul>
+	 *
 	 * @property {boolean} [filterable=true]
 	 *   Defines whether a property is filterable.
 	 * @property {boolean} [sortable=true]
@@ -48,7 +75,7 @@ sap.ui.define([
 	 *   Whether the label should be trucated or not
 	 * @property {boolean} [visualSettings.widthCalculation.verticalArrangement=false]
 	 *   Whether the referenced properties are arranged vertically
-	 * @property {sap.ui.mdc.util.PropertyHelper[]} [visualSettings.widthCalculation.excludeProperties]
+	 * @property {string[]} [visualSettings.widthCalculation.excludeProperties]
 	 *   A list of invisible referenced property names
 	 * @property {string[]} [propertyInfos]
 	 *   The availability of this property makes the <code>PropertyInfo</code> a complex <code>PropertyInfo</code>. Provides a list of related
@@ -211,11 +238,12 @@ sap.ui.define([
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
 		PropertyHelperBase.prototype.prepareProperty.apply(this, arguments);
 
-		if (!oProperty.typeConfig && oProperty.dataType){
-			var oFormatOptions = oProperty.formatOptions ? oProperty.formatOptions : null;
-			var oConstraints = oProperty.constraints ? oProperty.constraints : {};
-
-			oProperty.typeConfig = this.getParent().getControlDelegate().getTypeUtil().getTypeConfig(oProperty.dataType, oFormatOptions, oConstraints);
+		// The typeConfig is required for internal processes like column width calculation and filter handling.
+		// TODO: The typeConfig can still provided by the user for legacy reasons. Once migration is completed, always create the typeConfig based
+		//  on the provided dataType.
+		if (!oProperty.isComplex() && !oProperty.typeConfig && oProperty.dataType && this.getParent()) {
+			var oTypeUtil = this.getParent().getControlDelegate().getTypeUtil();
+			oProperty.typeConfig = oTypeUtil.getTypeConfig(oProperty.dataType, oProperty.formatOptions, oProperty.constraints);
 		}
 
 		Object.defineProperty(oProperty, "getGroupableProperties", {
