@@ -201,7 +201,7 @@ sap.ui.define([
 			 *
 			 * @since 1.98.0
 			 */
-			headerMenu: {type: "sap.ui.core.IColumnHeaderMenu", multiple: false, visibility: "hidden"}
+			headerMenu: {type: "sap.ui.core.IColumnHeaderMenu", multiple: false}
 		},
 		designtime: "sap/m/designtime/Column.designtime"
 	}});
