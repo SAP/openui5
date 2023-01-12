@@ -10,7 +10,7 @@
 	<App>
 	<Page id="page" floatingFooter="true" showHeader="false">
 		<Toolbar design="Transparent">
-			<Label design="Bold" labelFor="favoriteProduct" text="Favorite product:">
+			<Label design="Bold" labelFor="favoriteProduct" text="Favorite Product:">
 				<layoutData>
 					<ToolbarLayoutData shrinkable="false"/>
 				</layoutData>
@@ -36,7 +36,7 @@
 				press="produceTechnicalError" tooltip="Provoke read error"/>
 			<ToolbarSpacer/>
 			<Label design="Bold" id="favoriteProductId::Label" labelFor="favoriteProductId"
-				text="Favorite product ID:">
+				text="Favorite Product ID:">
 				<layoutData>
 					<ToolbarLayoutData shrinkable="false"/>
 				</layoutData>
@@ -50,16 +50,16 @@
 				id="setBindingContext" press="onSetBindingContext"
 				tooltip="Get favorite product ID"/>
 			<ToolbarSpacer/>
-			<Button press="onRefreshAll" id="refreshAll" text="Refresh all"/>
+			<Button press="onRefreshAll" id="refreshAll" text="Refresh All"/>
 			<Button enabled="false"
 				icon="{:= ${ui>/bRealOData} ? 'sap-icon://building' : 'sap-icon://record' }"
-				tooltip="{:= ${ui>/bRealOData} ? 'real OData service' : 'mock OData service' }"
+				tooltip="{:= ${ui>/bRealOData} ? 'Real OData Service' : 'Mock OData Service' }"
 				type="Transparent"/>
-			<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
+			<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show Messages"
 				press="onToggleMessagePopover" text="{ui>/iMessages}"
 				type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 			<dependents>
-				<Dialog id="createSalesOrderDialog" title="Create New Sales Order">
+				<Dialog id="createSalesOrderDialog" title="Create Sales Order">
 					<buttons>
 						<Button id="confirmCreateSalesOrder" text="OK"
 							press="onCloseSalesOrderDialog" type="Accept"/>
@@ -70,7 +70,7 @@
 						<!-- TODO Q: derive maxLength from type's constraints?! A: SmartField?! -->
 						<Input id="BuyerID::new"
 							maxLength="10"
-							placeholder="Enter Buyer ID starting with '0'..."
+							placeholder="Enter buyer ID starting with '0'..."
 							showSuggestion="true"
 							suggestionItems="{path : '/BusinessPartnerList', suspended : true}"
 							type="Text"
@@ -137,7 +137,7 @@
 			<headerToolbar>
 				<Toolbar id="salesOrderListToolbar">
 					<Title id="salesOrderListTitle" level="H2"
-						text="{$count} New Sales Orders ({/SalesOrderList/$count} overall)">
+						text="{$count} New Sales Orders ({/SalesOrderList/$count} Overall)">
 						<layoutData>
 							<ToolbarLayoutData shrinkable="false"/>
 						</layoutData>
@@ -212,7 +212,7 @@
 								<form:SimpleForm ariaLabelledBy="SimulateDiscountDialog"
 										editable="true" id="SimulateDiscountResult"
 										layout="ResponsiveGridLayout">
-									<Label text="Calculated Gross Amount"/>
+									<Label text="Calculated gross amount"/>
 									<Input id="SimulateDiscountResult::Result" value="{value}"
 										editable="false"/>
 								</form:SimpleForm>
@@ -325,7 +325,7 @@
 									<Button icon="sap-icon://sys-cancel-2"
 										id="closeSalesOrderSchedules"
 										press="onCloseSalesOrderSchedules" text="Close"
-										tooltip="Close dialog"/>
+										tooltip="Close Dialog"/>
 								</buttons>
 								<Table id="SO_2_SCHDL" items="{path : 'SO_2_SCHDL',
 											parameters : {$$ownRequest : true}}"
@@ -435,7 +435,7 @@
 						<Button enabled="{ui>/bRealOData}" icon="sap-icon://trend-up"
 							id="increaseSalesOrderItemsQuantity"
 							press="onIncreaseSalesOrderItemsQuantity"
-							tooltip="Increase all Sales Order Items' Quantities by 1"/>
+							tooltip="Increase all sales order items' quantities by 1"/>
 						<Label labelFor="itemFilter" text="Filter"/>
 						<Select change="onFilterMessages" id="itemFilter"
 							items="{ui>/itemFilter}" selectedKey="Show all">

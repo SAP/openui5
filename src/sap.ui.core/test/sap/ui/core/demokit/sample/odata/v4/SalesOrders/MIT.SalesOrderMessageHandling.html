@@ -35,6 +35,7 @@
 			<li>Enter the value "HEADER_MESSAGE" in the <code>Note</code> input field for the
 				sales order with the ID <code>0500000000</code>.</li>
 			<li>Press the <code>Save sales orders</code> button in the <code>New Sales Orders</code>
+				table.
 			</li>
 			<li><b>Check:</b> The <code>Note</code> field is highlighted as a success.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
@@ -75,7 +76,7 @@
 			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
 				<code>0500000001</code> still has a colored border.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> A popover is diplayed containing 1 messages.</li>
+			<li><b>Check:</b> A popover is displayed containing 1 message.</li>
 			<li>Close the message popover.</li>
 			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
 				<code>0500000001</code>.</li>
@@ -133,7 +134,7 @@
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
 				<code>2</code>.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> A popover is diplayed containing 2 messages: a warning message with
+			<li><b>Check:</b> A popover is displayed containing 2 messages: a warning message with
 				the text "Enter customer reference if available" and an error message with the text
 				"Minimum order quantity is 2".</li>
 			<li>Close the message popover.</li>
@@ -147,7 +148,7 @@
 			<li>In the row for sales order ID <code>0500000004</code>, enter the value
 				<code>RAISE_ERROR</code> in the <code>Note</code> input field.</li>
 			<li>Press the <code>Save sales orders</code> button in the <code>New Sales Orders
-			  </code> table</li>
+				</code> table</li>
 			<li><b>Check:</b> The message popover is opened and you got an error regarding the
 				invalid <code>Note</code> value.</li>
 			<li>Click on the message "Property `Note` value `RAISE_ERROR` not allowed!" to get to
@@ -166,7 +167,7 @@
 			<li>Enter a different value in the <code>Note</code> input field for sales order ID
 				<code>0500000004</code>.</li>
 			<li>Press the <code>Save sales orders</code> button in the <code>New Sales Orders</code>
-				</li>
+				table.</li>
 			<li><b>Check:</b> The error is no longer raised.</li>
 		</ol>
 		<h4>POST scenario</h4>
@@ -187,7 +188,7 @@
 				highlighted below/beside the input field.</li>
 			<li>Close the message popover.</li>
 			<li><b>Check:</b> The <code>Note</code> error state indicator is gone.</li>
-			<li>Enter a value greater then 0 in the <code>Quantity</code> input field.</li>
+			<li>Enter a value greater than 0 in the <code>Quantity</code> input field.</li>
 			<li>Press the <code>Save sales order</code> button in the
 				<code>Sales Order Details</code> section.</li>
 			<li>Confirm the success popup.</li>
@@ -242,13 +243,14 @@
 			<li><b>Check:</b> The row of the sales order with the ID <code>0500000006</code> is
 				highlighted as an error.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> A popover is displayed containing 4 messages:</li>
-			<ul>
-				<li>a warning message with the text "Enter customer reference if available"</li>
-				<li>an error message with the text "Minimum order quantity is 2"</li>
-				<li>a warning "Enter a Note" and</li>
-				<li>another error message with the text "Minimum order quantity is 2".</li>
-			</ul>
+			<li><b>Check:</b> A popover is displayed containing 4 messages:
+				<ul>
+					<li>a warning message with the text "Enter customer reference if available"</li>
+					<li>an error message with the text "Minimum order quantity is 2"</li>
+					<li>a warning "Enter a Note" and</li>
+					<li>another error message with the text "Minimum order quantity is 2".</li>
+				</ul>
+			</li>
 			<li>Close the message popover.</li>
 			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
 				<code>0500000006</code>.</li>

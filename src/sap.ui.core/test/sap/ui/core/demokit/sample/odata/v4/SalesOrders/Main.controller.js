@@ -262,7 +262,7 @@ sap.ui.define([
 			var oContext = this.byId("SO_2_BP::detail").getBindingContext();
 
 			oContext.delete(oContext.getModel().getGroupId()).then(function () {
-				MessageBox.success("Deleted Business Partner");
+				MessageBox.success("Deleted business partner");
 			});
 		},
 
@@ -333,7 +333,7 @@ sap.ui.define([
 			Promise.all(aPromises).then(function () {
 				oTable.removeSelections();
 				oUiModel.setProperty("/bScheduleSelected", false);
-				MessageBox.success("Deleted " + aPromises.length + " Sales Order Schedule(s)");
+				MessageBox.success("Deleted " + aPromises.length + " sales order schedule(s)");
 			});
 		},
 
