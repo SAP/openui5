@@ -367,10 +367,10 @@ function(
 
 			height = Math.min(SelectionDetails._POPOVER_MAX_HEIGHT, height);
 			oPopover._oControl._deregisterContentResizeHandler();
-
+			var bAnimationMode = Configuration.getAnimationMode() !== Configuration.AnimationMode.none;
 			$PopoverContent.animate({
 				"height": Math.min(height, iMaxHeight)
-			}, Configuration.getAnimation() ? 100 : 0, function() {
+			}, bAnimationMode ? 100 : 0, function() {
 				oPopover.setProperty("contentHeight", height + "px", true);
 				oPopover._oControl._registerContentResizeHandler();
 			});

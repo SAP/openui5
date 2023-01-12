@@ -632,7 +632,7 @@ sap.ui.define([
 		this.oSelectionDetails.setAggregation("_popover", this.oPopover, true);
 
 		this.oPopover.openBy(this.oSelectionDetails);
-		var oGetAnimationStub = sinon.stub(oCore.getConfiguration(), "getAnimation").returns(false);
+		var oGetAnimationModeStub = sinon.stub(oCore.getConfiguration(), "getAnimationMode").returns("none");
 
 		var oRegisterSpy = sinon.spy(this.oPopover._oControl, "_registerContentResizeHandler");
 		var oDeregisterSpy = sinon.spy(this.oPopover._oControl, "_deregisterContentResizeHandler");
@@ -646,7 +646,7 @@ sap.ui.define([
 
 		//Cleanup
 		Device.system.phone = bOriginalPhone;
-		oGetAnimationStub.restore();
+		oGetAnimationModeStub.restore();
 	});
 
 	QUnit.test("Successive forward and backward navigation results in the first page being opened", function(assert) {
