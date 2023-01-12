@@ -616,9 +616,9 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context|sap.ui.model.odata.v4.Context} [oContext=this.oContext]
 	 *   A context; if omitted, the binding's context is used
-	 * @returns {SyncPromise} A promise resolving with the resource path or <code>undefined</code>
-	 *   for an unresolved binding. If computation of the canonical path fails, the promise is
-	 *   rejected.
+	 * @returns {sap.ui.base.SyncPromise} A promise resolving with the resource path or
+	 *   <code>undefined</code> for an unresolved binding. If computation of the canonical path
+	 *   fails, the promise is rejected.
 	 *
 	 * @private
 	 */

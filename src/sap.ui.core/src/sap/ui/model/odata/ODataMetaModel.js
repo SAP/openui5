@@ -530,7 +530,7 @@ sap.ui.define([
 	 * @param {string} sTerm
 	 *   The unqualified name of the term from the <code>com.sap.vocabularies.CodeList.v1</code>
 	 *   vocabulary used to annotate the entity container, e.g. "CurrencyCodes" or "UnitsOfMeasure"
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving with the customizing, which is a map from the code key to an object
 	 *   with the following properties:
 	 *   <ul>

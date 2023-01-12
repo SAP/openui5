@@ -4406,14 +4406,21 @@ sap.ui.define([
 
 	//*****************************************************************************************
 	QUnit.test("waitForBatchResponseReceived", function (assert) {
-		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
+			oSyncPromise;
 
 		oRequestor.mBatchQueue = {
-			myGroup : [[{$promise : "~promise~"}]]
+			myGroup : [[{$promise : Promise.resolve("~result~")}]]
 		};
 
 		// code under test
-		assert.strictEqual(oRequestor.waitForBatchResponseReceived("myGroup"), "~promise~");
+		oSyncPromise = oRequestor.waitForBatchResponseReceived("myGroup");
+
+		assert.ok(oSyncPromise.isPending());
+
+		return oSyncPromise.then(function (vResult) {
+			assert.strictEqual(vResult, "~result~");
+		});
 	});
 
 	//*****************************************************************************************

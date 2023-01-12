@@ -745,7 +745,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with;
 	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy} still needs to be called!
-	 * @returns {sap.ui.base.SyncPromise|undefined}
+	 * @returns {Promise|undefined}
 	 *   A promise resolving without a defined result when the read is finished, or rejecting in
 	 *   case of an error; <code>undefined</code> in case no count needs to be read
 	 * @throws {Error}

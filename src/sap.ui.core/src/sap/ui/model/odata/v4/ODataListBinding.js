@@ -3322,7 +3322,7 @@ sap.ui.define([
 		}
 
 		if (this.oCache && this.oCache.getPendingRequestsPromise()) {
-			return this.oCache.getPendingRequestsPromise().then(function () {
+			return SyncPromise.resolve(this.oCache.getPendingRequestsPromise()).then(function () {
 				// Note: This is quite early! Transient predicate not yet replaced inside path,
 				// #isTransient not yet updated etc. Be careful below!
 				return that.requestSideEffects(sGroupId, aPaths, oContext);
