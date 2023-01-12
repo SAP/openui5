@@ -98,22 +98,32 @@ sap.ui.define([
     QUnit.test("check reaction to the FilterField 'submit' event", function(assert){
         var oFilterField = new FilterField();
         sinon.stub(this.oFilterBarBase, "triggerSearch");
-        sinon.stub(this.oFilterBarBase, "getPropertyInfoSet").returns([]);
-        sinon.stub(this.oFilterBarBase, "initialized").returns(Promise.resolve());
 
         assert.ok(!oFilterField.hasListeners("submit"));
 
+        var fPromiseResolved;
+        var oPromise = new Promise(function(resolve) {
+            fPromiseResolved = resolve;
+        });
         this.oFilterBarBase.addFilterItem(oFilterField);
+
+        var fCallback = function(oEvent) {
+            setTimeout(function() { fPromiseResolved(); }, 100);
+        };
+
+        oFilterField.attachSubmit(fCallback);
 
         assert.ok(oFilterField.hasListeners("submit"));
 
         assert.ok(!this.oFilterBarBase.triggerSearch.called);
         oFilterField.fireSubmit({promise: Promise.resolve()});
 
-        return this.oFilterBarBase.initialized().then(function() {
+        return oPromise.then(function() {
             assert.ok(this.oFilterBarBase.triggerSearch.calledOnce);
 
+            oFilterField.detachSubmit(fCallback);
             this.oFilterBarBase.removeFilterItem(oFilterField);
+
             assert.ok(!oFilterField.hasListeners("submit"));
 
             oFilterField.destroy();
@@ -125,7 +135,6 @@ sap.ui.define([
     QUnit.test("check reaction to the basic search 'submit' event", function(assert){
         var oFilterField = new FilterField();
         sinon.stub(this.oFilterBarBase, "triggerSearch");
-        sinon.stub(this.oFilterBarBase, "waitForInitialization").returns(Promise.resolve());
 
         assert.ok(!oFilterField.hasListeners("submit"));
 
@@ -315,10 +324,14 @@ sap.ui.define([
     QUnit.test("Check _handleFilterItemSubmit", function(assert){
         sinon.stub(this.oFilterBarBase, "triggerSearch");
 
+        var fCallBack = function() {
+            setTimeout(fnSubmitPromiseResolve, 100);
+        };
+
         var fnSubmitPromiseResolve = null;
         var oSubmitPromise = new Promise(function(resolve, reject) { fnSubmitPromiseResolve = resolve; });
         var oEvent = {
-            getParameter: function() { fnSubmitPromiseResolve(); return oSubmitPromise; }
+            getParameter: function() { fCallBack(); return Promise.resolve(); }
         };
 
         var done = assert.async();
