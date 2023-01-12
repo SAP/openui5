@@ -9968,6 +9968,39 @@ sap.ui.define([
 
 		QUnit.module("Accessibility");
 
+		QUnit.test("Referencing labels enhancing", function(assert) {
+			// system under test
+			var oSpy = this.spy(Select.prototype, "_handleReferencingLabels"),
+				oSpyHandler = this.spy(Select.prototype, "focus"),
+				oLabel = new Label({
+					text: "referencing label",
+					labelFor: 'selectTest1'
+				}),
+				oItemA = new Item({key: "Item1", text: "Item1"}),
+				oItemB = new Item({key: "Item2", text: "Item2"}),
+				oSelect = new Select('selectTest1', {
+					items: [oItemA, oItemB],
+					forceSelection: false
+				});
+
+			// act
+			oLabel.placeAt("content");
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			// assert
+			assert.ok(oSpy.called, "Enhancing function is called on onAfterRendering");
+
+			qutils.triggerEvent("tap", oLabel.getId());
+
+			// assert
+			assert.ok(oSpyHandler.calledOnce, "Handler function is called");
+
+			// cleanup
+			oLabel.destroy();
+			oSelect.destroy();
+		});
+
 		QUnit.test("Should have correct value for aria-activedescendant after invalidation", function (assert) {
 			var oItemA = new Item({key: "Item1", text: "Item1"}),
 				oItemB = new Item({key: "Item2", text: "Item2"}),
