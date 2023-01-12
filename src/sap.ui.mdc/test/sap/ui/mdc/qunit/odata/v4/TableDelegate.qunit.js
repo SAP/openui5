@@ -92,6 +92,10 @@ sap.ui.define([
 		oTable._oTable.fireEvent("columnSelect", {
 			column: oTable._oTable.getColumns()[iColumnIndex]
 		});
+
+		return oTable._fullyInitialized().then(function() {
+			return oTable.propertiesFinalized();
+		});
 	}
 
 	QUnit.module("Initialization", {
@@ -397,22 +401,18 @@ sap.ui.define([
 				search: undefined
 			}), "Plugin#setAggregationInfo call");
 
-			openColumnMenu(oTable, 0);
-
-			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
-			return oTable._fullyInitialized();
+			return openColumnMenu(oTable, 0);
 		}).then(function() {
+			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
 			oQuickAction = getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup");
 			assert.ok(oQuickAction, "The first column has a quick group");
 			assert.equal(oQuickAction.getItems().length, 1, "The quick group has one item");
 			oQuickAction = getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal");
 			assert.ok(oQuickAction, "The first column has a quick total");
 
-			openColumnMenu(oTable, 2);
-
-			assert.strictEqual(fColumnPressSpy.callCount, 2, "Third Column pressed");
-			return oTable._fullyInitialized();
+			return openColumnMenu(oTable, 2);
 		}).then(function() {
+			assert.strictEqual(fColumnPressSpy.callCount, 2, "Third Column pressed");
 			oQuickAction = getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup");
 			assert.strictEqual(oQuickAction.getItems().length, 2, "The last column has complex property with list of two items");
 
@@ -468,9 +468,9 @@ sap.ui.define([
 		var done = assert.async();
 		var fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
 
-		 oTable._fullyInitialized().then(function() {
-			openColumnMenu(oTable, 0);
-
+		oTable._fullyInitialized().then(function() {
+			return openColumnMenu(oTable, 0);
+		}).then(function() {
 			assert.ok(fColumnPressSpy.calledOnce, "First column pressed");
 			fColumnPressSpy.restore();
 
@@ -508,9 +508,9 @@ sap.ui.define([
 		var fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
 		var done = assert.async();
 
-		 oTable._fullyInitialized().then(function() {
-			openColumnMenu(oTable, 1);
-
+		oTable._fullyInitialized().then(function() {
+			return openColumnMenu(oTable, 1);
+		}).then(function() {
 			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
 			fColumnPressSpy.restore();
 
@@ -549,70 +549,68 @@ sap.ui.define([
 		var done = assert.async();
 
 		oTable._fullyInitialized().then(function() {
-			openColumnMenu(oTable, 0);
-
+			return openColumnMenu(oTable, 0);
+		}).then(function() {
 			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
+		}).then(function() {
+			var oDelegate = oTable.getControlDelegate();
+			var oPlugin = oTable._oTable.getDependents()[0];
+			var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
+			var fnRebind = oDelegate.rebind;
 
-			oTable._fullyInitialized().then(function() {
-				var oDelegate = oTable.getControlDelegate();
-				var oPlugin = oTable._oTable.getDependents()[0];
-				var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-				var fnRebind = oDelegate.rebind;
+			oDelegate.rebind = function () {
+				fnRebind.apply(this, arguments);
+				assert.ok(fSetAggregationSpy.calledOnceWithExactly({
+					visible: ["Name", "Country"],
+					groupLevels: ["Name"],
+					grandTotal: [],
+					subtotals: [],
+					columnState: createColumnStateIdMap(oTable, [
+						{subtotals: false, grandTotal: false},
+						{subtotals: false, grandTotal: false},
+						{subtotals: false, grandTotal: false}
+					]),
+					search: undefined
+				}), "Plugin#setAggregationInfo call");
 
-				oDelegate.rebind = function () {
-					fnRebind.apply(this, arguments);
-					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: ["Name", "Country"],
-						groupLevels: ["Name"],
-						grandTotal: [],
-						subtotals: [],
-						columnState: createColumnStateIdMap(oTable, [
-							{subtotals: false, grandTotal: false},
-							{subtotals: false, grandTotal: false},
-							{subtotals: false, grandTotal: false}
-						]),
-						search: undefined
-					}), "Plugin#setAggregationInfo call");
+				fColumnPressSpy.restore();
+				fSetAggregationSpy.restore();
+				oDelegate.rebind = fnRebind;
 
-					fColumnPressSpy.restore();
-					fSetAggregationSpy.restore();
-					oDelegate.rebind = fnRebind;
-
-					openColumnMenu(oTable, 1);
+				openColumnMenu(oTable, 1).then(function() {
+					var oDelegate = oTable.getControlDelegate();
+					var oPlugin = oTable._oTable.getDependents()[0];
+					var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
+					var fnRebind = oDelegate.rebind;
 
 					assert.ok(fColumnPressSpy.calledOnce, "Second Column pressed");
 
-					return oTable._fullyInitialized().then(function() {
-						var oDelegate = oTable.getControlDelegate();
-						var oPlugin = oTable._oTable.getDependents()[0];
-						var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-						var fnRebind = oDelegate.rebind;
+					oDelegate.rebind = function () {
+						fnRebind.apply(this, arguments);
+						assert.ok(fSetAggregationSpy.calledOnceWithExactly({
+							visible: ["Name", "Country"],
+							groupLevels: ["Name"],
+							grandTotal: ["Country"],
+							subtotals: ["Country"],
+							columnState: createColumnStateIdMap(oTable, [
+								{subtotals: false, grandTotal: false},
+								{subtotals: true, grandTotal: true},
+								{subtotals: true, grandTotal: true}
+							]),
+							search: undefined
+						}), "Plugin#setAggregationInfo call");
 
-						oDelegate.rebind = function () {
-							fnRebind.apply(this, arguments);
-							assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-								visible: ["Name", "Country"],
-								groupLevels: ["Name"],
-								grandTotal: ["Country"],
-								subtotals: ["Country"],
-								columnState: createColumnStateIdMap(oTable, [
-									{subtotals: false, grandTotal: false},
-									{subtotals: true, grandTotal: true},
-									{subtotals: true, grandTotal: true}
-								]),
-								search: undefined
-							}), "Plugin#setAggregationInfo call");
+						fColumnPressSpy.restore();
+						fSetAggregationSpy.restore();
+						oDelegate.rebind = fnRebind;
+						done();
+					};
 
-							fColumnPressSpy.restore();
-							fSetAggregationSpy.restore();
-							oDelegate.rebind = fnRebind;
-							done();
-						};
-						getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal").getContent()[0].firePress();
-					});
-				};
-				getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup").getContent()[0].firePress();
-			});
+					getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal").getContent()[0].firePress();
+				});
+			};
+
+			getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup").getContent()[0].firePress();
 		});
 	});
 
@@ -621,8 +619,7 @@ sap.ui.define([
 		var oDelegate, oPlugin, fSetAggregationSpy, fnRebind;
 
 		return oTable._fullyInitialized().then(function() {
-			openColumnMenu(oTable, 0);
-			return oTable._fullyInitialized();
+			return openColumnMenu(oTable, 0);
 		}).then(function() {
 			oDelegate = oTable.getControlDelegate();
 			oPlugin = oTable._oTable.getDependents()[0];
@@ -654,8 +651,7 @@ sap.ui.define([
 			});
 
 		}).then(function() {
-			openColumnMenu(oTable, 0);
-			return oTable._fullyInitialized();
+			return openColumnMenu(oTable, 0);
 		}).then(function() {
 			fSetAggregationSpy.reset();
 
@@ -912,12 +908,9 @@ sap.ui.define([
 		var oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
-			openColumnMenu(oTable, 0);
-
-			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
-
-			return oTable._fullyInitialized();
+			return openColumnMenu(oTable, 0);
 		}).then(function() {
+			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
 			assert.ok(getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup"), "The first column has group menu item");
 			assert.notOk(getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal"), "The first column doesn't have an aggregate menu item");
 		});

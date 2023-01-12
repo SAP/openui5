@@ -3,8 +3,8 @@
 /*eslint max-nested-callbacks: [2, 20]*/
 
 sap.ui.define(
-    ["sap/ui/mdc/mixin/AdaptationMixin", "sap/ui/core/Control"],
-    function (AdaptationMixin, Control) {
+    ["sap/ui/mdc/mixin/AdaptationMixin", "sap/ui/mdc/mixin/DelegateMixin", "sap/ui/core/Control"],
+    function (AdaptationMixin, DelegateMixin, Control) {
         "use strict";
 
         var TestClass;
@@ -26,6 +26,9 @@ sap.ui.define(
             });
 
             AdaptationMixin.call(TestClass.prototype);
+
+			// AdaptationMixin creates an AdaptationFilterBar that doesn't work properly without DelegateMixin
+			DelegateMixin.call(TestClass.prototype);
 
             TestClass.prototype.awaitPropertyHelper = function() {
                 return Promise.resolve({});

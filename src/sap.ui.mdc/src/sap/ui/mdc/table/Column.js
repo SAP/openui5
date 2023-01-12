@@ -498,9 +498,11 @@ sap.ui.define([
 		var oPropertyHelper = oTable.getPropertyHelper();
 
 		if (oPropertyHelper) {
-			this._oSettingsModel.setProperty("/calculatedWidth", oPropertyHelper.calculateColumnWidth(this));
+			oPropertyHelper.calculateColumnWidth(this).then(function(sWidth) {
+				this._oSettingsModel.setProperty("/calculatedWidth", sWidth);
+			}.bind(this));
 		} else {
-			oTable.awaitPropertyHelper().then(this._calculateColumnWidth.bind(this));
+			oTable._fullyInitialized().then(this._calculateColumnWidth.bind(this));
 		}
 	};
 

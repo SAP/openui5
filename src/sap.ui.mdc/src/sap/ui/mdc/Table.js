@@ -395,6 +395,18 @@ sap.ui.define([
 					type: "boolean",
 					group: "Behavior",
 					defaultValue: false
+				},
+
+				/**
+				 * Specifies the table metadata.<br>
+				 * <b>Note</b>: This property must not be bound.<br>
+				 * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility / Fiori Elements. Do not use it otherwise.
+				 *
+				 * @since 1.110
+				 */
+				propertyInfo: {
+					type: "object",
+					defaultValue: []
 				}
 			},
 			aggregations: {
@@ -669,6 +681,9 @@ sap.ui.define([
 
 		// indicates whether binding the table is inevitable or not
 		this._bForceRebind = true;
+
+		this._setPropertyHelperClass(PropertyHelper);
+		this._setupPropertyInfoStore("propertyInfo");
 	};
 
 	/**
@@ -690,7 +705,6 @@ sap.ui.define([
 			Control.prototype.applySettings.call(this, mEarlySettings, oScope);
 		}
 
-		this._setPropertyHelperClass(PropertyHelper);
 		Control.prototype.applySettings.call(this, mSettings, oScope);
 		this.initControlDelegate();
 	};
@@ -963,6 +977,13 @@ sap.ui.define([
 	};
 
 	Table.prototype._onModifications = function() {
+		if (!this.isPropertyHelperFinal()) {
+			this._bFinalzingPropertiesOnModification = true;
+			this.finalizePropertyHelper().then(function() {
+				delete this._bFinalzingPropertiesOnModification;
+			}.bind(this));
+		}
+
 		this.getColumns().forEach(function(oColumn) {
 			oColumn._onModifications();
 		});
@@ -1397,10 +1418,15 @@ sap.ui.define([
 		this.setAggregation("_content", this._oTable);
 		this._onAfterTableCreated(true); // Resolve any pending promise if table exists
 
-		var pTableInit = this.initialized().then(function() {
-			this.initPropertyHelper();
+		Promise.all([
+			this.getPropertyInfo().length === 0 ? this.finalizePropertyHelper() : this.awaitPropertyHelper(),
+			this._pDelegatePreInit,
+			this.initialized()
+		]).then(function() {
+			delete this._pDelegatePreInit;
 
-			// add this to the micro task execution queue to enable consumers to handle this correctly
+			// Add this to the micro task execution queue to enable consumers to handle this correctly.
+			// For example to add a binding context between the initialized promise and binding the rows.
 			var oCreationRow = this.getCreationRow();
 			if (oCreationRow) {
 				oCreationRow.update();
@@ -1418,14 +1444,6 @@ sap.ui.define([
 				}
 			}
 
-			return this.awaitPropertyHelper();
-		}.bind(this));
-
-		Promise.all([
-			pTableInit,
-			this._pDelegatePreInit
-		]).then(function() {
-			delete this._pDelegatePreInit;
 			this._bFullyInitialized = true;
 			this._onAfterFullInitialization(true);
 		}.bind(this)).catch(function(oError) {
@@ -1799,6 +1817,8 @@ sap.ui.define([
 		var aColumns = this.getColumns();
 
 		return this._fullyInitialized().then(function() {
+			return this.finalizePropertyHelper();
+		}.bind(this)).then(function() {
 			var oPropertyHelper = this.getPropertyHelper();
 			var aSheetColumns = [];
 
@@ -2017,6 +2037,8 @@ sap.ui.define([
 		var oColumn = mPropertyBag.column;
 
 		this._fullyInitialized().then(function() {
+			return this.finalizePropertyHelper();
+		}.bind(this)).then(function() {
 			if (!this._oColumnHeaderMenu) {
 				this._oQuickActionContainer = new QuickActionContainer({table: this});
 				this._oItemContainer = new ItemContainer({table: this});
@@ -2270,7 +2292,6 @@ sap.ui.define([
 	/**
 	 * Defines the rows/items aggregation binding
 	 *
-	 * @returns {Promise} A <code>Promise</code> that resolves when the rows are bound
 	 * @private
 	 */
 	Table.prototype.bindRows = function() {
@@ -2278,27 +2299,36 @@ sap.ui.define([
 			return;
 		}
 
+		if (this._bFinalzingPropertiesOnModification) {
+			this.propertiesFinalized().then(function() {
+				this.bindRows();
+			}.bind(this));
+			return;
+		}
+
 		var oBindingInfo = {};
 
 		this.getControlDelegate().updateBindingInfo(this, oBindingInfo);
 
-		if (oBindingInfo.path) {
-			this._oTable.setShowOverlay(false);
-			if (this._oRowTemplate) {
-				oBindingInfo.template = this._oRowTemplate;
-			} else {
-				delete oBindingInfo.template;
-			}
-
-			Table._addBindingListener(oBindingInfo, "dataRequested", this._onDataRequested.bind(this));
-			Table._addBindingListener(oBindingInfo, "dataReceived", this._onDataReceived.bind(this));
-			Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
-
-			this._updateColumnsBeforeBinding();
-			this.getControlDelegate().updateBinding(this, oBindingInfo, this._bForceRebind ? null : this.getRowBinding());
-			this._updateInnerTableNoData();
-			this._bForceRebind = false;
+		if (!oBindingInfo.path) {
+			return;
 		}
+
+		if (this._oRowTemplate) {
+			oBindingInfo.template = this._oRowTemplate;
+		} else {
+			delete oBindingInfo.template;
+		}
+
+		Table._addBindingListener(oBindingInfo, "dataRequested", this._onDataRequested.bind(this));
+		Table._addBindingListener(oBindingInfo, "dataReceived", this._onDataReceived.bind(this));
+		Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
+
+		this._oTable.setShowOverlay(false);
+		this._updateColumnsBeforeBinding();
+		this.getControlDelegate().updateBinding(this, oBindingInfo, this._bForceRebind ? null : this.getRowBinding());
+		this._updateInnerTableNoData();
+		this._bForceRebind = false;
 	};
 
 	/**

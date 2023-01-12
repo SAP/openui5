@@ -36,9 +36,7 @@ sap.ui.define([
 			return Promise.resolve(null);
 		}
 
-		return oTable.awaitPropertyHelper().then(function(oPropertyHelper) {
-			var oProperty = oPropertyHelper.getProperty(sPropertyName);
-
+		return oTable._getPropertyByNameAsync(sPropertyName).then(function(oProperty) {
 			if (!oProperty) {
 				return null;
 			}

@@ -154,6 +154,12 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	AdaptationFilterBar.prototype.finalizePropertyHelper = function() {
+		return this._oAdaptationControlPromise.then(function() {
+			return this._getAdaptationControlInstance().finalizePropertyHelper();
+		}.bind(this));
+	};
+
 	AdaptationFilterBar.prototype.getTypeUtil = function() {
 		if (!this._getAdaptationControlInstance()) {
 			throw new Error("No adaptation control assigned yet.");
@@ -190,7 +196,6 @@ sap.ui.define([
 
 		return this._oAdaptationControlPromise.then(function() {
 			return this._getAdaptationControlInstance().awaitPropertyHelper().then(function(oPropertyHelper) {
-				this._oMetadataAppliedPromise = Promise.resolve();
 				if (!this._getAdaptationControlInstance().isPropertyHelperFinal()) {
 					return this.finalizePropertyHelper();
 				}
@@ -198,6 +203,10 @@ sap.ui.define([
 				return FilterBarBase.prototype._retrieveMetadata.apply(this, arguments);
 			}.bind(this));
 		}.bind(this));
+	};
+
+	AdaptationFilterBar.prototype.isControlDelegateInitialized = function() {
+		return this._getAdaptationControlInstance().isControlDelegateInitialized();
 	};
 
 	AdaptationFilterBar.prototype.createConditionChanges = function() {

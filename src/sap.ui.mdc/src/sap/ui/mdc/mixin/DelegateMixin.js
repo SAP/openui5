@@ -132,6 +132,16 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 	};
 
 	/**
+	 * Checks whether the delegate module related to the enhanced control is loaded.
+	 *
+	 * @protected
+	 * @returns {boolean} Whether the delegate module is loaded
+	 */
+	DelegateMixin.isControlDelegateInitialized = function() {
+		return this.bDelegateInitialized;
+	};
+
+	/**
 	 * Returns the payload object set for the delegate property.
 	 *
 	 * @protected
@@ -219,6 +229,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 
 		// additional methods
 		this.awaitControlDelegate = DelegateMixin.awaitControlDelegate;
+		this.isControlDelegateInitialized = DelegateMixin.isControlDelegateInitialized;
 		this.getControlDelegate = DelegateMixin.getControlDelegate;
 		this.getPayload = DelegateMixin.getPayload;
 		this.getTypeUtil = DelegateMixin.getTypeUtil;

@@ -113,7 +113,6 @@ sap.ui.define([
 
 		//Init parent
 		this.oTestTable.initialized().then(function(){
-			assert.notOk(this.oAdaptationFilterBar.getPropertyHelper(), "PropertyHelper not expected");
 			this.oTestTable.awaitPropertyHelper().then(function(oPropertyHelper){
 				assert.deepEqual(this.oAdaptationFilterBar.getPropertyHelper(), oPropertyHelper, "PropertyHelper has been passed from the Parent");
 				done();

@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/library",
 	"sap/m/Text",
 	"sap/m/plugins/ColumnResizer"
 ], function(
@@ -13,15 +14,30 @@ sap.ui.define([
 	Table,
 	GridTableType,
 	Column,
+	library,
 	Text,
 	ColumnResizer
 ) {
 	"use strict";
 
+	var TableType = library.TableType;
 	var sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
+
 	function wait(iMilliseconds) {
 		return new Promise(function(resolve) {
 			setTimeout(resolve, iMilliseconds);
+		});
+	}
+
+	function openColumnMenu(oTable, iColumnIndex) {
+		var sEvent = oTable._isOfType(TableType.Table, true) ? "columnSelect" : "columnPress";
+
+		oTable._oTable.fireEvent(sEvent, {
+			column: oTable._oTable.getColumns()[iColumnIndex]
+		});
+
+		return oTable._fullyInitialized().then(function() {
+			return oTable.propertiesFinalized();
 		});
 	}
 
@@ -190,14 +206,10 @@ sap.ui.define([
 
 	QUnit.test("Responsive table - Resize on touch devices", function(assert) {
 		var oTable = this.oTable;
-		var oInnerColumn;
 
-		return oTable._fullyInitialized().then(function () {
+		return oTable._fullyInitialized().then(function() {
 			sinon.stub(ColumnResizer, "_isInTouchMode").returns(true);
-			oInnerColumn = oTable._oTable.getColumns()[0];
-			oTable._oTable.fireEvent("columnPress", {
-				column: oInnerColumn
-			});
+			return openColumnMenu(oTable, 0);
 		}).then(function() {
 			var oQuickAction = oTable._oQuickActionContainer.getQuickActions()[0];
 			assert.equal(oQuickAction.getLabel(), "", "label is empty");
@@ -268,7 +280,7 @@ sap.ui.define([
 			oTable.setP13nMode([
 				"Sort", "Group"
 			]);
-			oTable._onColumnPress({column: oTable.getColumns()[0]});
+			return openColumnMenu(oTable, 0);
 		}).then(function() {
 			oTable._getSortedProperties = function() {
 				return [{ name: "test", Descending: false }];
@@ -338,7 +350,7 @@ sap.ui.define([
 			oTable.getSupportedP13nModes = function() {
 				return ["Sort", "Filter", "Group"];
 			};
-			oTable._onColumnPress({column: oTable.getColumns()[0]});
+			return openColumnMenu(oTable, 0);
 		}).then(function() {
 			var aItems = oTable._oItemContainer.getItems();
 

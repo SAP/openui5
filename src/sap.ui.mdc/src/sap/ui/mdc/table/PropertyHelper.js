@@ -211,6 +211,13 @@ sap.ui.define([
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
 		PropertyHelperBase.prototype.prepareProperty.apply(this, arguments);
 
+		if (!oProperty.typeConfig && oProperty.dataType){
+			var oFormatOptions = oProperty.formatOptions ? oProperty.formatOptions : null;
+			var oConstraints = oProperty.constraints ? oProperty.constraints : {};
+
+			oProperty.typeConfig = this.getParent().getControlDelegate().getTypeUtil().getTypeConfig(oProperty.dataType, oFormatOptions, oConstraints);
+		}
+
 		Object.defineProperty(oProperty, "getGroupableProperties", {
 			value: function() {
 				return oProperty.getSimpleProperties().filter(function(oProperty) {
@@ -336,22 +343,25 @@ sap.ui.define([
 	 * Calculates the width of the provided column based on the <code>visualSettings</code> of the relevant <code>PropertyInfo</code>.
 	 *
 	 * @param {sap.ui.mdc.table.Column} oMDCColumn The <code>Column</code> instance for which to set the width
-	 * @returns {sap.ui.core.CSSSize | null} The calculated width, or <code>null</code> if calculation wasn't possible
+	 * @returns Promise<sap.ui.core.CSSSize | null> A promise that resolves with the calculated width, or <code>null</code> if calculation wasn't
+	 * possible
 	 */
 	PropertyHelper.prototype.calculateColumnWidth = function(oMDCColumn) {
 		var sPropertyName = oMDCColumn.getDataProperty();
-		var oProperty = this.getProperty(sPropertyName);
+		var oTable = oMDCColumn.getTable();
 
-		if (!oProperty) {
-			return null;
-		}
+		return oTable._getPropertyByNameAsync(sPropertyName).then(function(oProperty) {
+			if (!oProperty) {
+			  return null;
+			}
 
-		var mPropertyInfoVisualSettings = oProperty.visualSettings;
-		if (mPropertyInfoVisualSettings && mPropertyInfoVisualSettings.widthCalculation === null) {
-			return null;
-		}
+			var mPropertyInfoVisualSettings = oProperty.visualSettings;
+			if (mPropertyInfoVisualSettings && mPropertyInfoVisualSettings.widthCalculation === null) {
+				return null;
+			}
 
-		return this._calcColumnWidth(oProperty, oMDCColumn);
+			return this._calcColumnWidth(oProperty, oMDCColumn);
+		}.bind(this));
 	};
 
 	/**
