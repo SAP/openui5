@@ -3130,25 +3130,10 @@ function(
 
 		oList.destroyItems();
 
-		if (!this._oListItemEnterEventDelegate) {
-			this._oListItemEnterEventDelegate = {
-				onsapenter: function(oEvent) {
-					// If ListItem is already selected,
-					// prevent its de-selection, according to Keyboard Handling Specification.
-					if (oEvent.srcControl.isSelected()) {
-						oEvent.setMarked();
-					}
-				}
-			};
-		}
-
 		for ( var i = 0, oListItem, aItemsLength = aItems.length; i < aItemsLength; i++) {
 			// add a private property to the added item containing a reference
 			// to the corresponding mapped item
 			oListItem = this._mapItemToListItem(aItems[i]);
-
-			// add the sap enter event delegate
-			oListItem.addDelegate(this._oListItemEnterEventDelegate, true, this, true);
 
 			// add the mapped item type of sap.m.StandardListItem to the list
 			// do not prevent invalidation as invalidations will stack
@@ -3350,7 +3335,6 @@ function(
 		}
 
 		this._oRbC = null;
-		this._oListItemEnterEventDelegate = null;
 		this.oValueStateNavDelegate = null;
 
 		this._sInitialValueState = null;
