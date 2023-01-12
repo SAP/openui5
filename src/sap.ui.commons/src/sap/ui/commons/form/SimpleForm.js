@@ -5,13 +5,14 @@
 // Provides control sap.ui.commons.form.SimpleForm.
 sap.ui.define([
  'sap/ui/commons/library',
+ 'sap/ui/layout/library',
  'sap/ui/layout/form/SimpleForm',
  './SimpleFormRenderer'
 ],
-	function(library, LayoutSimpleForm, SimpleFormRenderer) {
+	function(library, layoutLibrary, LayoutSimpleForm, SimpleFormRenderer) {
 	"use strict";
 
-
+	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	/**
 	 * Constructor for a new form/SimpleForm.
@@ -34,35 +35,22 @@ sap.ui.define([
 	var SimpleForm = LayoutSimpleForm.extend("sap.ui.commons.form.SimpleForm", /** @lends sap.ui.commons.form.SimpleForm.prototype */ { metadata : {
 
 		deprecated : true,
-		library : "sap.ui.commons"
-	}});
-
-	/* Overwrite to have right "since" in there */
-
-	/**
-	* Getter for property <code>layout</code>.
-	* The FormLayout that is used to render the SimpleForm
-	*
-	* Default value is <code>ResponsiveLayout</code>
-	*
-	* @return {sap.ui.commons.form.SimpleFormLayout} the value of property <code>layout</code>
-	* @public
-	* @since 1.14
-	* @name sap.ui.commons.form.SimpleForm#getLayout
-	* @function
-	*/
-	/**
-	* Setter for property <code>layout</code>.
-	*
-	* Default value is <code>ResponsiveLayout</code>
-	*
-	* @param {sap.ui.commons.form.SimpleFormLayout} oLayout new value for property <code>layout</code>
-	* @return {this} <code>this</code> to allow method chaining
-	* @public
-	* @since 1.14
-	* @name sap.ui.commons.form.SimpleForm#setLayout
-	* @function
-	*/
+		library : "sap.ui.commons",
+		properties : {
+			/**
+			 * The <code>FormLayout</code> that is used to render the <code>SimpleForm</code>.
+			 *
+			 * We recommend using the <code>GridLayout</code> for rendering a <code>SimpleForm</code> in <code>sap.ui.commons</code> library,
+			 * as responsive layouts are not designed for this library.
+			 *
+			 * <b>Note</b> If possible, set the <code>layout</code> before adding content to prevent calculations for the default layout.
+			 *
+			 * <b>Note</b> The <code>ResponsiveLayout</code> has been deprecated and must no longer be used.
+			 * @since 1.14
+			 */
+			layout : {type : "sap.ui.layout.form.SimpleFormLayout", group : "Misc", defaultValue : SimpleFormLayout.ResponsiveLayout} // overwrite to keep old default and @since
+		}
+		}});
 
 	return SimpleForm;
 
