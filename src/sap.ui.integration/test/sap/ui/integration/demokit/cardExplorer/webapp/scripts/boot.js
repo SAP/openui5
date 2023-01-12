@@ -20,6 +20,7 @@ window.addEventListener("load", function () {
 	aNodes.push('<link rel="stylesheet" href="' + sRes + 'sap/ui/documentation/sdk/thirdparty/highlight.js/styles.css">');
 	aNodes.push('<script src="' + sRes + 'sap/ui/documentation/sdk/thirdparty/highlight.js/highlight.js"></script>');
 	aNodes.push('<script src="' + sWebApp + 'scripts/topic.js"></script>');
+	aNodes.push('<script src="' + sWebApp + 'scripts/generateNavMenu.js"></script>');
 
 	function afterLoad() {
 		iLoadedCnt++;

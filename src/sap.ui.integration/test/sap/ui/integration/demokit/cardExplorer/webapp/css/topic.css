@@ -75,6 +75,30 @@
 	width: 10rem;
 }
 
+.navigation [data-indent='0'] {
+	padding-left: 0;
+}
+
+.navigation [data-indent='1'] {
+	padding-left: 0.5rem;
+}
+
+.navigation [data-indent='2'] {
+	padding-left: 1rem;
+}
+
+.navigation [data-indent='3'] {
+	padding-left: 1.5rem;
+}
+
+.navigation [data-indent='4'] {
+	padding-left: 2rem;
+}
+
+.navigation [data-indent='5'] {
+	padding-left: 2.5rem;
+}
+
 /* table styles */
 
 .topic table {
