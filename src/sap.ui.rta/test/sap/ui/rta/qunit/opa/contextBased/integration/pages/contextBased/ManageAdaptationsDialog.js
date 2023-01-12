@@ -3,13 +3,15 @@ sap.ui.define([
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/Drag",
 	"sap/ui/test/actions/Drop",
-	"sap/ui/test/matchers/Ancestor"
+	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/actions/EnterText"
 ], function(
 	Opa5,
 	Press,
 	Drag,
 	Drop,
-	Ancestor
+	Ancestor,
+	EnterText
 ) {
 	"use strict";
 	Opa5.createPageObjects({
@@ -182,6 +184,34 @@ sap.ui.define([
 							idSuffix: "BDI-content"
 						})
 					});
+				},
+				iSearchFor: function (sSearchString) {
+					return this.waitFor({
+						controlType: "sap.m.SearchField",
+						searchOpenDialogs: true,
+						actions: new EnterText({
+							text: sSearchString
+						}),
+						success: function (vControls) {
+							var oControl = vControls[0] || vControls;
+							Opa5.assert.equal(oControl.getValue(), sSearchString);
+						},
+						errorMessage: "SearchField was not found"
+					});
+				},
+				iClearTheSearchField: function () {
+					return this.waitFor({
+						controlType: "sap.m.SearchField",
+						searchOpenDialogs: true,
+						actions: new EnterText({
+							text: ""
+						}),
+						success: function (vControls) {
+							var oControl = vControls[0] || vControls;
+							Opa5.assert.equal(oControl.getValue(), "", "SearchField is cleared");
+						},
+						errorMessage: "SearchField is not cleared"
+					});
 				}
 			},
 			assertions: {
@@ -255,6 +285,93 @@ sap.ui.define([
 							} else {
 								Opa5.assert.strictEqual(oControl.getAggregation("tooltip").length > 0, true, "I see the save button with tooltip");
 							}
+						}
+					});
+				},
+				iShouldSeeTheDefaultContextTable: function (bIsVisible) {
+					return this.waitFor({
+						controlType: "sap.m.Dialog",
+						i18NText: {
+							propertyName: "title",
+							key: "MANAGE_ADAPTATIONS_DIALOG_HEADER"
+						},
+						searchOpenDialogs: true,
+						success: function (vDialogControl) {
+							var oDialogControl = vDialogControl[0] || vDialogControl;
+							var aTables = oDialogControl.getAggregation("content");
+							Opa5.assert.equal(aTables.length, 2, "Dialog should have 2 tables");
+							var oDefaultTable = aTables.find(function(oTable) { return oTable.getId().endsWith("defaultContext"); });
+							Opa5.assert.ok(oDefaultTable, "Default context table with id='defaultContext' exists");
+							Opa5.assert.equal(oDefaultTable.getVisible(), bIsVisible, "The visibility of default context table should be:" + bIsVisible);
+						}
+					});
+				},
+				iShouldSeeTheEnablementOfMoveUpButton: function (bIsEnabled) {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						enabled: false,
+						properties: {
+							icon: "sap-icon://navigation-up-arrow"
+						},
+						searchOpenDialogs: true,
+						success: function (vControls) {
+							var oControl = vControls[0] || vControls;
+							Opa5.assert.equal(oControl.getEnabled(), bIsEnabled, "The enablement of the move up button should be: " + bIsEnabled);
+						}
+					});
+				},
+				iShouldSeeTheEnablementOfMoveDownButton: function (bIsEnabled) {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						enabled: false,
+						properties: {
+							icon: "sap-icon://navigation-down-arrow"
+						},
+						searchOpenDialogs: true,
+						success: function (vControls) {
+							var oControl = vControls[0] || vControls;
+							Opa5.assert.equal(oControl.getEnabled(), bIsEnabled, "The enablement of the move Down button should be: " + bIsEnabled);
+						}
+					});
+				},
+				iShouldSeeTheEnablementOfDragAndDrop: function (bIsEnabled) {
+					return this.waitFor({
+						controlType: "sap.m.Table",
+						bindingPath: {
+							path: "",
+							propertyPath: "/adaptations",
+							modelName: "contextBased"
+						},
+						searchOpenDialogs: true,
+						success: function (vControls) {
+							var oManageAdaptationsTable = vControls[0] || vControls;
+							var oDragAndDropConfig = oManageAdaptationsTable.getDragDropConfig()[0];
+							Opa5.assert.ok(oDragAndDropConfig, "Drag&Drop config for table with id='manageAdaptationsTable' exists");
+							Opa5.assert.equal(oDragAndDropConfig.getEnabled(), bIsEnabled, "The enablement of the drag&drop should be: " + bIsEnabled);
+						}
+					});
+				},
+				iShouldSeeEmptySearchField: function () {
+					return this.waitFor({
+						controlType: "sap.m.SearchField",
+						searchOpenDialogs: true,
+						success: function (vControls) {
+							var oControl = vControls[0] || vControls;
+							Opa5.assert.equal(oControl.getValue(), "", "Search field is empty");
+						}
+					});
+				},
+				iShouldSeeDefaultApplicationTitle: function (sExpectedTitle) {
+					return this.waitFor({
+						controlType: "sap.m.Text",
+						i18NText: {
+							propertyName: "text",
+							key: "TXT_DEFAULT_APP"
+						},
+						searchOpenDialogs: true,
+						success: function (vControls) {
+							var oControl = vControls[0] || vControls;
+							Opa5.assert.strictEqual(oControl.getText(), sExpectedTitle);
 						}
 					});
 				}

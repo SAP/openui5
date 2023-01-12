@@ -28,6 +28,9 @@ sap.ui.define(function () {
 			},
 			"opa/contextBased/integration/SaveAsAdaptationDialogJourney": {
 				title: "SaveAs Context-Based Adaptation"
+			},
+			"opa/contextBased/integration/SearchContextBasedAdaptationDialogJourney": {
+				title: "Search Bar Context-Based Adaptation"
 			}
 		}
 	};
