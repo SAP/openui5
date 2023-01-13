@@ -89,19 +89,21 @@ sap.ui.define([
 	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantSwitch.prototype.undo = function() {
-		var sOldVariantReference = this.getSourceVariantReference();
+		var sSourceVariantReference = this.getSourceVariantReference();
 		var oAppComponent = this._getAppComponent();
 
-		if (this.getDiscardVariantContent()) {
-			return this.oModel.addAndApplyChangesOnVariant(this._aSourceVariantDirtyChanges)
-			.then(function() {
-				this._aSourceVariantDirtyChanges = null;
-				this.oModel.checkUpdate(true);
-				return this._updateModelVariant(sOldVariantReference, oAppComponent);
-			}.bind(this));
-		}
-
-		return this._updateModelVariant(sOldVariantReference, oAppComponent);
+		return this._updateModelVariant(sSourceVariantReference, oAppComponent)
+		.then(function() {
+			// When discarding, dirty changes on source variant need to be applied AFTER the switch
+			if (this.getDiscardVariantContent()) {
+				return this.oModel.addAndApplyChangesOnVariant(this._aSourceVariantDirtyChanges)
+				.then(function() {
+					this._aSourceVariantDirtyChanges = null;
+					this.oModel.checkUpdate(true);
+				}.bind(this));
+			}
+			return undefined;
+		}.bind(this));
 	};
 
 	ControlVariantSwitch.prototype._updateModelVariant = function(sVariantReference, oAppComponent) {
