@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (Log, CalendarType, Configuration, Control, DateFormat, FormatException,
+], function (Log, CalendarType, Configuration, Control, UI5Date, DateFormat, FormatException,
 		ParseException, ValidateException, DateType, ODataType, TestUtils) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */ //no ESLint warning for TODO list
@@ -27,8 +28,14 @@ sap.ui.define([
 	 *   parseValue to check for a parse exception
 	 */
 	function checkError(assert, oType, oValue, sReason, sAction) {
-		var fnExpectedException;
+		var oUI5DateMock = this.mock(UI5Date);
+
 		TestUtils.withNormalizedMessages(function () {
+			var fnExpectedException,
+				iYear = UI5Date.getInstance().getFullYear();
+
+			oUI5DateMock.expects("getInstance").withExactArgs().callThrough();
+
 			try {
 				if (sAction === "parseValue") {
 					fnExpectedException = ParseException;
@@ -40,10 +47,12 @@ sap.ui.define([
 				assert.ok(false);
 			} catch (e) {
 				assert.ok(e instanceof fnExpectedException, sReason + ": exception");
-				assert.strictEqual(e.message, "EnterDate Dec 31, " + new Date().getFullYear(),
+				assert.strictEqual(e.message, "EnterDate Dec 31, " + iYear,
 					sReason + ": message");
 			}
 		});
+
+		oUI5DateMock.restore();
 	}
 
 	//*********************************************************************************************
@@ -117,13 +126,22 @@ sap.ui.define([
 		{i : "2014-11-27", t : "string", o : "Nov 27, 2014"},
 		{i : "2014-11-34", t : "string", o : "2014-11-34"},
 		{i : new Date(Date.UTC(2014, 10, 27)), t : "string", o : "Nov 27, 2014"},
-		{i : "2014-11-27", t : "object", o : new Date(2014, 10, 27)},
-		{i : new Date(Date.UTC(2014, 10, 27)), t : "object", o : new Date(2014, 10, 27)}
+		{i : "2014-11-27", t : "object", o : UI5Date.getInstance(2014, 10, 27)},
+		{i : new Date(Date.UTC(2014, 10, 27)), t : "object", o : UI5Date.getInstance(2014, 10, 27)}
 	].forEach(function (oFixture) {
 		QUnit.test("format value", function (assert) {
 			var oType = new DateType();
 			assert.deepEqual(oType.formatValue(oFixture.i, oFixture.t), oFixture.o, oFixture.i);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format value uses UI5Date", function (assert) {
+		var oType = new DateType();
+
+		this.mock(UI5Date).expects("getInstance").withExactArgs(2014, 10, 27).returns("~ui5Date");
+
+		assert.strictEqual(oType.formatValue(new Date(Date.UTC(2014, 10, 27)), "object"), "~ui5Date");
 	});
 
 	//*********************************************************************************************
@@ -197,7 +215,7 @@ sap.ui.define([
 		assert.strictEqual(oType.parseValue(null, "foo"), null, "null is always accepted");
 		assert.strictEqual(oType.parseValue("", "string"), null, "empty string becomes null");
 		assert.deepEqual(oType.parseValue("Nov 1, 715", "string"), "0715-11-01", "valid date");
-		assert.deepEqual(oType.parseValue(new Date(2014, 9, 27), "object"), "2014-10-27");
+		assert.deepEqual(oType.parseValue(UI5Date.getInstance(2014, 9, 27), "object"), "2014-10-27");
 
 		["int", "float", "boolean"].forEach(function (sType) {
 			try {
@@ -211,8 +229,8 @@ sap.ui.define([
 			}
 		});
 
-		checkError(assert, oType, "foo", "not a date", "parseValue");
-		checkError(assert, oType, "Feb 29, 2015", "invalid date", "parseValue");
+		checkError.call(this, assert, oType, "foo", "not a date", "parseValue");
+		checkError.call(this, assert, oType, "Feb 29, 2015", "invalid date", "parseValue");
 
 		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
 			.returns("string");
@@ -229,7 +247,7 @@ sap.ui.define([
 		oConstraints.nullable = false;
 		oType = new DateType({}, oConstraints);
 
-		checkError(assert, oType, null, "nullable: false", "validateValue");
+		checkError.call(this, assert, oType, null, "nullable: false", "validateValue");
 
 		try {
 			oType.validateValue("foo");

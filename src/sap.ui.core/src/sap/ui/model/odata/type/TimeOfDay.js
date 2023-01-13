@@ -6,12 +6,13 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/extend",
 	"sap/ui/core/CalendarType",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/ODataType"
-], function (Log, extend, CalendarType, DateFormat, FormatException, ParseException,
+], function (Log, extend, CalendarType, UI5Date, DateFormat, FormatException, ParseException,
 		ValidateException, ODataType) {
 	"use strict";
 
@@ -150,7 +151,7 @@ sap.ui.define([
 	 *   The target type, may be "any", "object" (since 1.69.0), "string", or a type with one of
 	 *   these types as its {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information
-	 * @returns {Date|string}
+	 * @returns {Date|module:sap/ui/core/date/UI5Date|string}
 	 *   The formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   are formatted to <code>null</code>
 	 * @throws {sap.ui.model.FormatException}
@@ -182,7 +183,7 @@ sap.ui.define([
 				oDate = this.getModelFormat().parse(sValue);
 				if (oDate) {
 					if (sPrimitiveType === "object") {
-						return new Date(1970, 0, 1, oDate.getUTCHours(), oDate.getUTCMinutes(),
+						return UI5Date.getInstance(1970, 0, 1, oDate.getUTCHours(), oDate.getUTCMinutes(),
 							oDate.getUTCSeconds());
 					}
 					return getUiFormat(this).format(oDate);

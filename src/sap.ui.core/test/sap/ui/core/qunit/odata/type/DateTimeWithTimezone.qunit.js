@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/_Helper",
 	"sap/ui/model/CompositeType",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/test/TestUtils"
-], function (Log, Configuration, DateFormat, _Helper, CompositeType, FormatException,
+], function (Log, Configuration, UI5Date, DateFormat, _Helper, CompositeType, FormatException,
 		ParseException, DateTimeWithTimezone, DecimalType, StringType, TestUtils) {
 	/*global sinon, QUnit*/
 	/*eslint max-nested-callbacks: 0*/
@@ -679,9 +680,10 @@ sap.ui.define([
 	messageKey : "EnterDateTime"
 }].forEach(function (oFixture, i) {
 	QUnit.test("_getErrorMessage: #" + i, function (assert) {
-		var oDemoDate = new Date(Date.UTC(new Date().getFullYear(), 11, 31, 23, 59, 58)),
+		var oDemoDate = new Date(Date.UTC(UI5Date.getInstance().getFullYear(), 11, 31, 23, 59, 58)),
 			oType = new DateTimeWithTimezone(oFixture.formatOptions);
 
+		this.mock(UI5Date).expects("getInstance").withExactArgs().callThrough();
 		this.mock(oType).expects("formatValue")
 			.withExactArgs([oDemoDate, "America/New_York"], "string")
 			.returns("~formattedTime");
