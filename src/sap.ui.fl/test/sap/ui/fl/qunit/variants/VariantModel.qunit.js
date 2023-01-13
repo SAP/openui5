@@ -964,7 +964,7 @@ sap.ui.define([
 					fileName: "variant0",
 					variantManagementReference: "variantMgmtId1",
 					variantReference: "",
-					reference: "Dummy.Component",
+					reference: "Dummy",
 					layer: Layer.CUSTOMER,
 					title: "Text for TextDemo",
 					author: ""
@@ -1776,7 +1776,7 @@ sap.ui.define([
 				variantReference: "variant0",
 				layer: Layer.CUSTOMER,
 				support: {},
-				reference: "test.Component",
+				reference: "test",
 				packageName: "MockPackageName"
 			});
 			var oChange1 = FlexObjectFactory.createFromFileContent({
@@ -1784,7 +1784,7 @@ sap.ui.define([
 				selector: {id: "abc123"},
 				variantReference: "variant0",
 				layer: Layer.USER,
-				reference: "test.Component"
+				reference: "test"
 			});
 			this.oSourceVariant = {
 				instance: createVariant({
@@ -2287,7 +2287,7 @@ sap.ui.define([
 	QUnit.module("Given a variant management control in personalization mode", {
 		beforeEach: function() {
 			return FlexState.initialize({
-				reference: "MockController.Component",
+				reference: "MockController",
 				componentId: "testComponent",
 				componentData: {},
 				manifest: {}

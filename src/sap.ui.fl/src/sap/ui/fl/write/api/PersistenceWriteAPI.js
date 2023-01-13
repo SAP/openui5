@@ -285,7 +285,7 @@ sap.ui.define([
 				}
 				// descriptor change
 				if (isDescriptorChange(mPropertyBag.change)) {
-					var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oAppComponent);
+					var oDescriptorFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
 					oDescriptorFlexController.deleteChange(mPropertyBag.change, oAppComponent);
 					return undefined;
 				}

@@ -711,7 +711,7 @@ sap.ui.define([
 			RuntimeAuthoring.enableRestart(sLayer, {});
 			var sRestartingComponent = window.sessionStorage.getItem("sap.ui.rta.restart." + sLayer);
 			assert.ok(RuntimeAuthoring.needsRestart(sLayer), "then restart is needed");
-			assert.equal(sRestartingComponent, "fixture.application.Component", "and the component ID is set with an added .Component");
+			assert.equal(sRestartingComponent, "fixture.application", "and the component ID is set");
 		});
 
 		QUnit.test("when enabling and disabling restart", function(assert) {

@@ -87,7 +87,7 @@ sap.ui.define([
 				variants: aVariants
 			})
 			.then(function (oResponse) {
-				assert.deepEqual(FlexState.getInitialNonFlCompVariantData("sap.ui.core.Component"), {variantManagement1: oExternalDataStored}, "external data is stored correctly");
+				assert.deepEqual(FlexState.getInitialNonFlCompVariantData("sap.ui.core"), {variantManagement1: oExternalDataStored}, "external data is stored correctly");
 				var oStandardVariant = oResponse.standardVariant;
 				assert.equal(oStandardVariant.getVariantId(), "*standard*", "the first is the standard variant passed");
 				assert.equal(oStandardVariant.getText("variantName"), sStandardVariantTitle, "with the passed title");
@@ -218,7 +218,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 		},
 		afterEach: function() {
-			FlexState.clearState("sap.ui.core.Component");
+			FlexState.clearState("sap.ui.core");
 			this.oControl.destroy();
 			this.oAppComponent.destroy();
 			sandbox.restore();
@@ -286,7 +286,7 @@ sap.ui.define([
 				});
 
 				// clear state created in the beforeEach
-				FlexState.clearState("sap.ui.core.Component");
+				FlexState.clearState("sap.ui.core");
 				// simulate FlexState initialization
 				return SmartVariantManagementApplyAPI.loadVariants({control: this.oControl, standardVariant: {}})
 					.then(function () {

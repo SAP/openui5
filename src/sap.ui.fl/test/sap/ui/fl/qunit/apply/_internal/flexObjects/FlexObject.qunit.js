@@ -98,7 +98,7 @@ sap.ui.define([
 		QUnit.test("constructor - when reference is set and projectId is missing", function(assert) {
 			var oFlexObject = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
-				reference: "sap.ui.demoapps.rta.fiorielements.Component"
+				reference: "sap.ui.demoapps.rta.fiorielements"
 			});
 			assert.strictEqual(
 				oFlexObject.getFlexObjectMetadata().projectId,

@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
 	"sap/ui/fl/Layer",
-	"sap/base/util/includes",
 	"sap/base/util/merge",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/fl/registry/Settings"
@@ -22,7 +21,6 @@ sap.ui.define([
 	Utils,
 	Log,
 	Layer,
-	includes,
 	merge,
 	_omit,
 	Settings
@@ -135,60 +133,31 @@ sap.ui.define([
 	}
 
 	function _getDirtyDescrChanges(vSelector) {
-		var oDescriptorFlexControllerPersistence = ChangesController.getDescriptorFlexControllerInstance(vSelector)._oChangePersistence;
-		if (oDescriptorFlexControllerPersistence) {
-			var aDescrChanges = oDescriptorFlexControllerPersistence.getDirtyChanges();
-			aDescrChanges = aDescrChanges.slice();
-			return aDescrChanges;
-		}
-		return [];
-	}
-
-	function _getDirtyUIChanges(vSelector) {
 		var oFlexControllerPersistence = ChangesController.getFlexControllerInstance(vSelector)._oChangePersistence;
-		if (oFlexControllerPersistence) {
-			var aUIChanges = oFlexControllerPersistence.getDirtyChanges();
-			aUIChanges = aUIChanges.slice();
-			return aUIChanges;
+		if (!oFlexControllerPersistence) {
+			return [];
 		}
-		return [];
+		return oFlexControllerPersistence.getDirtyChanges().filter(function(oChange) {
+			return DescriptorChangeTypes.getChangeTypes().includes(oChange.getChangeType());
+		});
 	}
 
-	function _arePersistenciesTheSame(vSelector) {
+	function _getDirtyChanges(vSelector) {
 		var oFlexControllerPersistence = ChangesController.getFlexControllerInstance(vSelector)._oChangePersistence;
-		var oDescriptorFlexControllerPersistence = ChangesController.getDescriptorFlexControllerInstance(vSelector)._oChangePersistence;
-		// If the base application is already an app variant, the references and both persistences are same
-		return oFlexControllerPersistence === oDescriptorFlexControllerPersistence;
-	}
-
-	function _reactOnChangesBasedOnPersistences(vSelector, bArePersistencesEqual, oAppVariant) {
-		var aDescrChanges = [];
-		if (bArePersistencesEqual) {
-			_getDirtyDescrChanges(vSelector).forEach(function(oChange) {
-				// UI and Descriptor changes need to be separated here so as to perform different operations on changes
-				if (includes(DescriptorChangeTypes.getChangeTypes(), oChange.getChangeType())) {
-					aDescrChanges.push(oChange);
-				} else {
-					_moveChangesToNewFlexReference(oChange, oAppVariant);
-				}
-			});
-		} else {
-			_getDirtyUIChanges(vSelector).forEach(function(oChange) {
-				_moveChangesToNewFlexReference(oChange, oAppVariant);
-			});
-
-			aDescrChanges = _getDirtyDescrChanges(vSelector);
+		if (!oFlexControllerPersistence) {
+			return [];
 		}
-
-		return aDescrChanges;
+		var aChanges = oFlexControllerPersistence.getDirtyChanges();
+		aChanges = aChanges.slice();
+		return aChanges;
 	}
 
 	function _deleteDescrChangesFromPersistence(vSelector) {
 		// In case of app variant, both persistences hold descriptor changes and have to be removed from one of the persistences
 		_getDirtyDescrChanges(vSelector).forEach(function(oChange) {
-			if (includes(DescriptorChangeTypes.getChangeTypes(), oChange.getChangeType())) {
+			if (DescriptorChangeTypes.getChangeTypes().includes(oChange.getChangeType())) {
 				// In case there are UI changes, they will be sent to the backend in the last resolved promise and will be removed from the persistence
-				ChangesController.getDescriptorFlexControllerInstance(vSelector)._oChangePersistence.deleteChange(oChange);
+				ChangesController.getFlexControllerInstance(vSelector)._oChangePersistence.deleteChange(oChange);
 			}
 		});
 	}
@@ -213,7 +182,6 @@ sap.ui.define([
 		saveAs: function(mPropertyBag) {
 			var oAppVariantClosure;
 			var oAppVariantResultClosure;
-			var bArePersistencesEqual = false;
 
 			return AppVariantFactory.prepareCreate(mPropertyBag)
 				.then(function(oAppVariant) {
@@ -224,8 +192,15 @@ sap.ui.define([
 					return _setTransportAndPackageInfoForAppVariant(oAppVariantClosure, oTransportInfo);
 				})
 				.then(function() {
-					bArePersistencesEqual = _arePersistenciesTheSame(mPropertyBag.selector);
-					var aDescrChanges = _reactOnChangesBasedOnPersistences(mPropertyBag.selector, bArePersistencesEqual, oAppVariantClosure);
+					var aDescrChanges = [];
+					_getDirtyChanges(mPropertyBag.selector).forEach(function(oChange) {
+						// UI and Descriptor changes need to be separated here so as to perform different operations on changes
+						if (DescriptorChangeTypes.getChangeTypes().includes(oChange.getChangeType())) {
+							aDescrChanges.push(oChange);
+						} else {
+							_moveChangesToNewFlexReference(oChange, oAppVariantClosure);
+						}
+					});
 					return _getInlineChangesFromDescrChanges(aDescrChanges);
 				})
 				.then(function(aAllInlineChanges) {
@@ -241,22 +216,15 @@ sap.ui.define([
 				})
 				.then(function(oResult) {
 					oAppVariantResultClosure = merge({}, oResult);
-
-					if (bArePersistencesEqual) {
-						_deleteDescrChangesFromPersistence(mPropertyBag.selector);
-					}
+					_deleteDescrChangesFromPersistence(mPropertyBag.selector);
 
 					var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
 
-					var aUIChanges = _getDirtyUIChanges(mPropertyBag.selector);
+					var aUIChanges = _getDirtyChanges(mPropertyBag.selector); //after removing descr changes, all remaining dirty changes are UI changes
 					if (aUIChanges.length) {
 						// Save the dirty UI changes to backend => firing PersistenceWriteApi.save
 						return oFlexController.saveAll(ChangesController.getAppComponentForSelector(mPropertyBag.selector), true)
 							.catch(function(oError) {
-								if (bArePersistencesEqual) {
-									_deleteDescrChangesFromPersistence(mPropertyBag.selector);
-								}
-
 								// Delete the inconsistent app variant if the UI changes failed to save
 								return this.deleteAppVariant({
 									id: mPropertyBag.id
@@ -271,10 +239,6 @@ sap.ui.define([
 					return Promise.resolve();
 				}.bind(this))
 				.then(function() {
-					//Reference Application Usecase: Since the UI changes have been successfully saved, the descriptor inline changes will now be removed from persistence
-					if (!bArePersistencesEqual) {
-						_deleteDescrChangesFromPersistence(mPropertyBag.selector);
-					}
 					return oAppVariantResultClosure;
 				})
 				.catch(function(oError) {
@@ -315,7 +279,7 @@ sap.ui.define([
 				.then(function() {
 					var aDescrChanges = [];
 					_getDirtyDescrChanges(mPropertyBag.selector).forEach(function(oChange) {
-						if (includes(DescriptorChangeTypes.getChangeTypes(), oChange.getChangeType())) {
+						if (DescriptorChangeTypes.getChangeTypes().includes(oChange.getChangeType())) {
 							aDescrChanges.push(oChange);
 						}
 					});
