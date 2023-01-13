@@ -36,14 +36,14 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core"], function(PluginBase, Core) {
 			/**
 			 * Callback function to extract the cell data that is copied to the clipboard.
 			 *
-			 * @callback sap.m.plugins.CopyProvider~extractDataHandler
+			 * @callback sap.m.plugins.CopyProvider.extractDataHandler
 			 * @param {sap.ui.model.Context|sap.m.ColumnListItem} oContextOrRow The binding context of the selected row or the row instance if there is no binding
 			 * @param {sap.m.Column|sap.ui.table.Column|sap.ui.mdc.table.Column} oColumn The related column instance of selected cells
 			 * @returns {*|Array.<*>|undefined|null} The cell data to be copied or array of cell data to be split into different cells in the clipboard. <code>undefined</code> or <code>null</code> to exclude the cell from copying.
 			 * @public
 			 */
 			/**
-			 * Defines a {@link sap.m.plugins.CopyProvider~extractDataHandler callback function} that gets called for each selected cell to extract the cell data that is copied to the clipboard.
+			 * Defines a {@link sap.m.plugins.CopyProvider.extractDataHandler callback function} that gets called for each selected cell to extract the cell data that is copied to the clipboard.
 			 *
 			 * The callback function gets called with the binding context of the selected row and the column instance parameters.<br>
 			 * For the <code>sap.ui.table.Table</code> control, the row context parameter can also be the context of an unselectable row in case of a range selection, for example the context of grouping or sub-total row.<br>
@@ -66,13 +66,13 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core"], function(PluginBase, Core) {
 			/**
 			 * Callback function to exclude certain contexts from being copied to the clipboard.
 			 *
-			 * @callback sap.m.plugins.CopyProvider~excludeContextHandler
+			 * @callback sap.m.plugins.CopyProvider.excludeContextHandler
 			 * @param {sap.ui.model.Context|sap.m.ColumnListItem} oContextOrRow The binding context of the selected row or the row instance if there is no binding
-			 * @returns {Boolean} <code>true</code> to exclude the context, <code>false</code> otherwise
+			 * @returns {boolean} <code>true</code> to exclude the context, <code>false</code> otherwise
 			 * @public
 			 */
 			/**
-			 * Defines a {@link sap.m.plugins.CopyProvider~excludeContextHandler callback function} which gets called to exclude certain contexts from being copied to the clipboard.
+			 * Defines a {@link sap.m.plugins.CopyProvider.excludeContextHandler callback function} which gets called to exclude certain contexts from being copied to the clipboard.
 			 *
 			 * This callback function gets called with the binding context or the row instance if there is no binding.
 			 * Return <code>true</code> to exclude the context, <code>false</code> otherwise.
