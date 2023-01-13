@@ -1,9 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/base/EventProvider",
-	"sap/base/Log",
 	"sap/base/strings/formatMessage",
-	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/routing/Target",
 	"sap/ui/core/routing/Views",
 	"sap/ui/model/json/JSONModel",
@@ -13,45 +12,37 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/thirdparty/hasher"
-], function(EventProvider, Log, formatMessage, View, Target, Views, JSONModel, App, Panel, Component, UIComponent, ComponentContainer, hasher) {
+], function(EventProvider, formatMessage, XMLView, Target, Views, JSONModel, App, Panel, Component, UIComponent, ComponentContainer, hasher) {
 	"use strict";
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
 	var ShellSubstitute = Panel;
 
-	function createView (aContent, sId, bAsync) {
+	function createView(aContent, sId, pDelayed) {
 		var sXmlViewContent = aContent.join(''),
 			oViewOptions = {
 				id : sId,
-				viewContent: sXmlViewContent,
-				type: "XML",
-				async: !!bAsync
+				definition: sXmlViewContent
 			};
-		var oView = sap.ui.view(oViewOptions);
 
-		if (bAsync instanceof Promise) {
-			var pLoaded = bAsync;
-			pLoaded = pLoaded.then(function() {
-				return oView;
-			});
+		var pView = XMLView.create(oViewOptions);
 
-			return {
-				loaded: function() {
-					return pLoaded;
-				}
-			};
-		} else {
+		return pView.then(function(oView) {
+			if (pDelayed) {
+				oView.loaded = function() {
+					return pDelayed.then(function() {
+						return oView;
+					});
+				};
+			}
 			return oView;
-		}
+		});
 	}
 
 	QUnit.module("views - creation", {
 		beforeEach: function () {
 			this.oShell = new ShellSubstitute();
 			this.oViews = new Views({async: true});
-			this.oView = createView(
-					['<View xmlns="sap.ui.core.mvc">',
-						'</View>']);
 
 			// System under test + Arrange
 			this.oTarget = new Target(
@@ -67,6 +58,12 @@ sap.ui.define([
 				},
 				this.oViews
 			);
+			return createView([
+				'<View xmlns="sap.ui.core.mvc">',
+				'</View>'
+			]).then(function(oView) {
+				this.oView = oView;
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oShell.destroy();
@@ -157,29 +154,30 @@ sap.ui.define([
 	QUnit.test("Should clear a target aggregation", function (assert) {
 		// Arrange
 		var oExistingView = this.oView,
-			oView = createView(['<View xmlns="sap.ui.core.mvc">', '</View>']);
+			pView = createView(['<View xmlns="sap.ui.core.mvc">', '</View>']);
 
-		this.stub(this.oViews, "_getView").callsFake(function () {
-			return oView;
-		});
+		return pView.then(function(oView) {
+			this.stub(this.oViews, "_getView").callsFake(function () {
+				return oView;
+			});
 
-		this.oTarget._oOptions.clearControlAggregation = true;
-		this.oShell.addContent(oExistingView);
+			this.oTarget._oOptions.clearControlAggregation = true;
+			this.oShell.addContent(oExistingView);
 
-		// Act
-		var oDisplayed = this.oTarget.display();
+			// Act
+			var oDisplayed = this.oTarget.display();
 
-		return oDisplayed.then(function() {
-			// Assert
-			assert.strictEqual(this.oShell.getContent().length, 1, "only one button is inside of the Shell");
-			assert.strictEqual(this.oShell.getContent()[0], oView, "it is the displayed button");
-			//TODO: Should we destroy in this case? Is it a regression if we do so?
-			//assert.ok(oExistingButton.bIsDestroyed, "the button got destroyed");
+			return oDisplayed.then(function() {
+				// Assert
+				assert.strictEqual(this.oShell.getContent().length, 1, "only one button is inside of the Shell");
+				assert.strictEqual(this.oShell.getContent()[0], oView, "it is the displayed button");
+				//TODO: Should we destroy in this case? Is it a regression if we do so?
+				//assert.ok(oExistingButton.bIsDestroyed, "the button got destroyed");
 
-			// Cleanup
-			oView.destroy();
+				// Cleanup
+				oView.destroy();
+			}.bind(this));
 		}.bind(this));
-
 	});
 
 	QUnit.test("Should return a rejected promise if the target view can't be loaded", function (assert) {
@@ -431,64 +429,16 @@ sap.ui.define([
 	QUnit.module("component - ComponentContainer integration", {
 		beforeEach: function(assert) {
 			hasher.setHash("");
-			this.fnInitRouter = function() {
-				UIComponent.prototype.init.apply(this, arguments);
-				this.getRouter().initialize();
-			};
 
-			sap.ui.jsview("root", {
-				createContent : function() {
-					return new ShellSubstitute(this.createId("shell"));
-				}
-			});
-
-			this.Component = UIComponent.extend("namespace.RootComponent", {
-				metadata : {
-					routing:  {
-						config: {
-							async: true
-						},
-						routes: [
-							{
-								pattern: "",
-								name: "home",
-								target: {
-									name: "home",
-									prefix: "nested"
-								}
-							}
-						],
-						targets: {
-							home: {
-								name: "namespace.NestedComponent",
-								id: "nestedComponent",
-								type: "Component",
-								controlId: "shell",
-								controlAggregation: "content",
-								options: {
-									manifest: false
-								},
-								containerOptions: {
-									option:true,
-									width: "90%"
-								}
-							}
-						}
-					}
-				},
-				createContent: function() {
-					return sap.ui.jsview("root");
-				},
-				init : this.fnInitRouter
-			});
-
-
-			sap.ui.predefine("namespace/NestedComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-				this.nestedComponent = UIComponent.extend("namespace.NestedComponent");
-				return this.nestedComponent;
+			return Component.create({
+				name: "qunit.target.component.componentContainer.Parent",
+				id: "rootComponent"
+			}).then(function(oComponent) {
+				this.rootComponent = oComponent;
 			}.bind(this));
 		},
 		afterEach: function () {
+			this.rootComponent.destroy();
 			hasher.setHash("");
 		}
 	});
@@ -497,14 +447,14 @@ sap.ui.define([
 		this.oContainerOptions = undefined;
 		var oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
 		var oComponentContainerSettingsSpy = this.spy(ComponentContainer.prototype, "applySettings");
-		var oComponent = new this.Component("rootComponent");
+		var oComponent = this.rootComponent;
 		var oRouter = oComponent.getRouter();
 
 		assert.ok(oRouter);
 
 		return new Promise(function(resolve) {
 			oRouter.getRoute("home").attachMatched(resolve);
-			oRouter.navTo("home");
+			oRouter.initialize();
 		}).then(function(oEvent) {
 			sinon.assert.calledWithMatch(oComponentContainerSettingsSpy, sinon.match({
 				height: "100%",
@@ -527,7 +477,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("suspend a component target which doesn't have router", function(assert) {
-		var oComponent = new this.Component("rootComponent");
+		var oComponent = this.rootComponent;
 		var oRouter = oComponent.getRouter();
 		var oTarget = oRouter.getTarget("home");
 
@@ -535,6 +485,7 @@ sap.ui.define([
 
 		return new Promise(function(resolve) {
 			oRouter.getRoute("home").attachMatched(resolve);
+			oRouter.initialize();
 		}).then(function() {
 			try {
 				oTarget.suspend();
@@ -547,18 +498,7 @@ sap.ui.define([
 
 	QUnit.module("target parent and children", {
 		beforeEach: function () {
-			this.oParentView = createView(
-					['<View xmlns="sap.ui.core.mvc" xmlns:m="sap.m">',
-						'<m:Panel id="myShell">',  // use sap.m.Panel as a lightweight substitute for sap.ui.ux3.Shell
-						'</m:Panel>',
-					'</View>'], "parent");
-
-			this.oChildView = createView(
-					['<View xmlns="sap.ui.core.mvc">',
-					'</View>']);
-
 			this.oViews = new Views({async: true});
-			this.oViews.setView("child", this.oChildView);
 
 			// System under test + Arrange
 			this.oTarget = new Target(
@@ -571,6 +511,22 @@ sap.ui.define([
 				},
 				this.oViews
 			);
+
+			var pParentView = createView(
+					['<View xmlns="sap.ui.core.mvc" xmlns:m="sap.m">',
+						'<m:Panel id="myShell">',  // use sap.m.Panel as a lightweight substitute for sap.ui.ux3.Shell
+						'</m:Panel>',
+					'</View>'], "parent");
+
+			var pChildView = createView(
+					['<View xmlns="sap.ui.core.mvc">',
+					'</View>']);
+
+			return Promise.all([pParentView, pChildView]).then(function(aViews) {
+				this.oParentView = aViews[0];
+				this.oChildView = aViews[1];
+				this.oViews.setView("child", this.oChildView);
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oParentView.destroy();
@@ -603,37 +559,38 @@ sap.ui.define([
 			pLoaded = new Promise(function(resolve, reject) {
 				fnResolve = resolve;
 			}),
-			oRootViewStub = createView(
+			pRootView = createView(
 				['<View xmlns="sap.ui.core.mvc" xmlns:m="sap.m">',
 					'<m:Panel id="myShell">', // use sap.m.Panel as a lightweight substitute for sap.ui.ux3.Shell
 					'</m:Panel>',
 				'</View>'], "rootView", pLoaded),
-			oRootView;
+			pDisplayed;
 
-		// Arrange
-		this.oTarget._oOptions.rootView = "rootView";
+		return pRootView.then(function(oRootView) {
+			// Arrange
+			this.oTarget._oOptions.rootView = "rootView";
+			// Act
+			pDisplayed = this.oTarget.display();
 
-		// Act
-		var oDisplayed = this.oTarget.display();
+			return new Promise(function(resolve, reject) {
+				setTimeout(function() {
+					var oShell = oRootView.byId("myShell");
+					// Assert
+					assert.equal(oShell.getContent().length, 0, "the target view isn't added as content yet");
 
-		oRootViewStub.loaded().then(function(oView) {
-			oRootView = oView;
-
-			oRootView.loaded().then(function() {
-				var oShell = oRootView.byId("myShell");
-				// Assert
-				assert.equal(oShell.getContent().length, 0, "the target view isn't added as content yet");
+					resolve(oRootView);
+				}, 100);
 			});
-		});
+		}.bind(this)).then(function(oRootView) {
+			fnResolve();
 
-		fnResolve();
+			return pDisplayed.then(function() {
+				var oShell = oRootView.byId("myShell");
 
-		return oDisplayed.then(function() {
-			var oShell = oRootView.byId("myShell");
-
-			// Assert
-			assert.strictEqual(oShell.getContent().length, 1, "something was placed inside the shell");
-			assert.strictEqual(oShell.getContent()[0], this.oChildView, "it is the child view");
+				// Assert
+				assert.strictEqual(oShell.getContent().length, 1, "something was placed inside the shell");
+				assert.strictEqual(oShell.getContent()[0], this.oChildView, "it is the child view");
+			}.bind(this));
 		}.bind(this));
 	});
 
@@ -692,9 +649,6 @@ sap.ui.define([
 	QUnit.module("display event", {
 		beforeEach: function () {
 			this.oShell = new ShellSubstitute();
-			this.oView =  createView(
-					['<View xmlns="sap.ui.core.mvc">',
-						'</View>']);
 
 			this.oConfig = {
 				key: "myTarget",
@@ -713,6 +667,13 @@ sap.ui.define([
 					this.oConfig,
 					this.oViews
 			);
+
+			return createView([
+				'<View xmlns="sap.ui.core.mvc">',
+				'</View>'
+			]).then(function(oView) {
+				this.oView = oView;
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oShell.destroy();
@@ -779,9 +740,6 @@ sap.ui.define([
 	QUnit.module("titleChanged event", {
 		beforeEach: function () {
 			this.oApp = new App();
-			this.oView =  createView(
-					['<View xmlns="sap.ui.core.mvc">',
-						'</View>']);
 
 			this.oConfig = {
 				key: "myTarget",
@@ -794,8 +752,14 @@ sap.ui.define([
 			};
 
 			this.oViews = new Views({async: true});
-			this.oViews.setView("bar.foo", this.oView);
 
+			return createView([
+				'<View xmlns="sap.ui.core.mvc">',
+				'</View>'
+			]).then(function(oView) {
+				this.oView = oView;
+				this.oViews.setView("bar.foo", this.oView);
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oApp.destroy();

@@ -8,6 +8,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			page: "test-resources/sap/ui/core/qunit/routing/RoutingTest.qunit.html?test={name}",
 			loader: {
 				paths: {
+					"qunit/target": "./fixture/target",
 					"qunit/view": "./fixture",
 					"test/routing/target": "./fixture",
 					"testdata": "../testdata"

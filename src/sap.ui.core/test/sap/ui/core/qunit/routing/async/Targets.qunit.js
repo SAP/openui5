@@ -1,6 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/routing/Targets",
 	"sap/ui/core/routing/Views",
 	"sap/ui/core/routing/Router",
@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Panel",
 	"sap/ui/model/json/JSONModel"
-], function(View, Targets, Views, Router, Log, deepExtend, ModuleHook, App, Panel, JSONModel){
+], function(XMLView, Targets, Views, Router, Log, deepExtend, ModuleHook, App, Panel, JSONModel){
 	"use strict";
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
@@ -385,19 +385,15 @@ sap.ui.define([
 		var sXmlViewContent = aContent.join(''),
 			oViewOptions = {
 				id : sId,
-				viewContent: sXmlViewContent,
-				type: "XML"
+				definition: sXmlViewContent
 			};
 
-		return sap.ui.view(oViewOptions);
+		return XMLView.create(oViewOptions);
 	}
 
 	QUnit.module("display event", {
 		beforeEach: function () {
 			this.oShell = new ShellSubstitute();
-			this.oView = createView(
-					['<View xmlns="sap.ui.core.mvc">',
-						'</View>']);
 
 			this.oDefaultConfig = {
 				viewName: "foo",
@@ -425,6 +421,13 @@ sap.ui.define([
 				views: this.oViews,
 				config: this.oDefaultConfig
 			});
+
+			return createView([
+				'<View xmlns="sap.ui.core.mvc">',
+				'</View>'
+			]).then(function(oView) {
+				this.oView = oView;
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oShell.destroy();
@@ -831,9 +834,6 @@ sap.ui.define([
 	QUnit.module("titleChanged event", {
 		beforeEach: function () {
 			this.oApp = new App();
-			this.oView = createView(
-					['<View xmlns="sap.ui.core.mvc">',
-						'</View>']);
 
 			this.oDefaultConfig = {
 				viewPath: "bar",
@@ -872,6 +872,13 @@ sap.ui.define([
 				views: this.oViews,
 				config: this.oDefaultConfig
 			});
+
+			return createView([
+				'<View xmlns="sap.ui.core.mvc">',
+				'</View>'
+			]).then(function(oView) {
+				this.oView = oView;
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oApp.destroy();
@@ -1149,9 +1156,6 @@ sap.ui.define([
 	QUnit.module("titleChanged with binding and context change", {
 		beforeEach: function () {
 			this.oApp = new App();
-			this.oView = createView(
-					['<View xmlns="sap.ui.core.mvc">',
-						'</View>']);
 
 			this.oDefaultConfig = {
 				viewPath: "bar",
@@ -1170,10 +1174,6 @@ sap.ui.define([
 
 			this.oViews = new Views({async: true});
 
-			this.stub(this.oViews, "_getView").callsFake(function () {
-				return this.oView;
-			}.bind(this));
-
 			// System under test + Arrange
 			this.oTargets = new Targets({
 				targets: this.oTargetsConfig,
@@ -1191,6 +1191,17 @@ sap.ui.define([
 			});
 
 			this.oApp.setModel(this.oModel);
+
+			return createView([
+				'<View xmlns="sap.ui.core.mvc">',
+				'</View>'
+			]).then(function(oView) {
+				this.oView = oView;
+
+				this.stub(this.oViews, "_getView").callsFake(function () {
+					return this.oView;
+				}.bind(this));
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oApp.destroy();
