@@ -302,6 +302,9 @@ sap.ui.define([
 				.then(function(_oComp) {
 					this.oComponent = _oComp;
 					return this.oComponent.runAsOwner(function() {
+						if (sap.ui.getCore().byId("myView")) {
+							sap.ui.getCore().byId("myView").destroy();
+						}
 						return XMLView.create({
 							id: "myView",
 							definition: sXmlString,
