@@ -127,11 +127,9 @@ sap.ui.define([
 		constructor: function() {
 			this._oDetailModel = new JSONModel();
 			this._oDetailModel.setDefaultBindingMode("OneWay");
-
-			Control.prototype.constructor.apply(this, arguments);
-
 			this._fnHoverTrue = this._toggleHoverStyleClasses.bind(this, true);
 			this._fnHoverFalse = this._toggleHoverStyleClasses.bind(this, false);
+			Control.prototype.constructor.apply(this, arguments);
 			// is needed to prevent that multiple events listeners are attached
 			// to the same overlay because setVisible is called multiple times
 			this._bEventAttachedToElement = false;

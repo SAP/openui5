@@ -162,6 +162,9 @@ sap.ui.define([
 					);
 					var sDate = aItems[0].getCells()[2].getText();
 					assert.strictEqual(sDate, "myTime", "then a relative date string is displayed correctly");
+
+					this.oChangeIndicator.exit();
+					assert.notOk(this.oChangeIndicator.getAggregation("_popover"), "then the popover was destroyed");
 				}.bind(this));
 		});
 
@@ -435,18 +438,34 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a change indicator is created and is hovered", function(assert) {
+			var oChangeIndicatorElement = this.oChangeIndicator.getDomRef();
+			var oOverlay = sap.ui.getCore().byId(this.oChangeIndicator.getOverlayId());
 			this.oChangeIndicator.getModel().setData({
 				changes: [
 					createMockChange("someChangeId", this.oButton.getId(), "move", "move")
 				]
 			});
-			var oOverlay = sap.ui.getCore().byId(this.oChangeIndicator.getOverlayId());
-			this.oChangeIndicator._fnHoverTrue();
+
+			function onMouseOver() {
+				assert.ok(
+					oOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
+					"then the overlay has the correct style class"
+				);
+			}
+
+			function onMouseOut() {
+				assert.notOk(
+					oOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
+					"then the style class was removed"
+				);
+			}
+
 			oCore.applyChanges();
-			assert.ok(
-				oOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
-				"then the overlay has the correct style class"
-			);
+			oChangeIndicatorElement.addEventListener("mouseover", onMouseOver.bind(this));
+			oChangeIndicatorElement.dispatchEvent(new MouseEvent("mouseover"));
+
+			oChangeIndicatorElement.addEventListener("mouseout", onMouseOut.bind(this));
+			oChangeIndicatorElement.dispatchEvent(new MouseEvent("mouseout"));
 		});
 
 		QUnit.test("when a change indicator is focused before it is rendered", function(assert) {
@@ -578,6 +597,37 @@ sap.ui.define([
 				),
 				"then the description is the previously used generic text"
 			);
+		});
+
+		QUnit.test("when a change indicator is hidden", function(assert) {
+			sandbox.stub(DateFormat, "getDateTimeInstance")
+				.callThrough()
+				.withArgs({ relative: "true" })
+				.returns({
+					format: function() { return "myTime"; }
+				});
+			var mPayload = {
+				originalLabel: "BeforeValue",
+				newLabel: "AfterValue"
+			};
+
+			this.oChangeIndicator.getModel().setData({
+				changes: [createMockChange("someChangeId", this.oButton.getId(), "rename", "rename", mPayload)]
+			});
+
+			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
+
+			oCore.applyChanges();
+			assert.ok(this.oChangeIndicator.getVisible(), "then the indicator is visible");
+			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
+
+			return oOpenPopoverPromise
+			.then(function() {
+				this.oChangeIndicator.setVisible(false);
+				assert.notOk(this.oChangeIndicator.getVisible(), "then the indicator is not visible");
+				this.oChangeIndicator.setVisible(true);
+				assert.ok(this.oChangeIndicator.getVisible(), "then the indicator is visible");
+			}.bind(this));
 		});
 	});
 
