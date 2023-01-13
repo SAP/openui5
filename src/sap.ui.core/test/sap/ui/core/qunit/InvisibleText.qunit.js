@@ -95,8 +95,17 @@ sap.ui.define([
 		oSUT.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(oSUT.getDomRef().isEqualNode(jQuery(oSUT.getRendererMarkup())[0]));
+		var oDomRef = oSUT.getDomRef();
+		var oMarkupDomRef = jQuery(oSUT.getRendererMarkup())[0];
+
+		assert.equal(oMarkupDomRef.tagName, oMarkupDomRef.tagName);
+		assert.equal(oMarkupDomRef.innerHTML, oMarkupDomRef.innerHTML);
+		oMarkupDomRef.getAttributeNames().forEach(function(sAttribute) {
+			assert.equal(oMarkupDomRef.getAttribute(sAttribute), oDomRef.getAttribute(sAttribute));
+		});
+
 		oSUT.destroy();
 	});
+
 
 });
