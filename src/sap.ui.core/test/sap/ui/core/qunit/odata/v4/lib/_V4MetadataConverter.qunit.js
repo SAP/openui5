@@ -27,13 +27,28 @@ sap.ui.define([
 	 *   the XML snippet; it will be inserted below an <Edmx> element
 	 * @param {object} oExpected
 	 *   the expected JSON object
+	 * @param {object} [oExpectedNoAnnotations]
+	 *   the expected JSON object w/o annotations (for tests with "ignoreAnnotationsFromMetadata",
+	 *   so to say)
 	 */
-	function testConversion(assert, sXmlSnippet, oExpected) {
+	function testConversion(assert, sXmlSnippet, oExpected, oExpectedNoAnnotations) {
 		var oXML = xml(assert, sEdmx + sXmlSnippet + "</edmx:Edmx>"),
 			oResult = new _V4MetadataConverter().convertXMLMetadata(oXML);
 
 		oExpected.$Version = "4.0";
 		assert.deepEqual(oResult, oExpected);
+
+		if (oExpectedNoAnnotations || oExpected["foo."] && oExpected["foo."].$Annotations) {
+			// ignoreAnnotationsFromMetadata
+			oResult = new _V4MetadataConverter().convertXMLMetadata(oXML, "n/a", true);
+
+			if (oExpectedNoAnnotations) {
+				oExpectedNoAnnotations.$Version = "4.0";
+			} else {
+				oExpected["foo."].$Annotations = {};
+			}
+			assert.deepEqual(oResult, oExpectedNoAnnotations || oExpected);
+		}
 	}
 
 	/**
@@ -835,6 +850,29 @@ sap.ui.define([
 				"foo.ComplexType" : {
 					$kind : "ComplexType"
 				}
+			}, { // ignoreAnnotationsFromMetadata
+				"foo." : {
+					$kind : "Schema",
+					$Annotations : {}
+				},
+				"foo.EntityType" : {
+					$kind : "EntityType",
+					Property : {
+						$kind : "Property",
+						$Type : "Edm.String"
+					},
+					NavigationProperty : {
+						$kind : "NavigationProperty",
+						$Type : "foo.Target",
+						$ReferentialConstraint : {
+							p : "r"
+						},
+						$OnDelete : "a"
+					}
+				},
+				"foo.ComplexType" : {
+					$kind : "ComplexType"
+				}
 			});
 	});
 
@@ -1086,6 +1124,10 @@ sap.ui.define([
 						"@foo.Term" : "Reference"
 					}
 				}
+			}, { // ignoreAnnotationsFromMetadata
+				$Reference : {
+					"qux/$metadata" : {}
+				}
 			});
 	});
 
@@ -1118,6 +1160,14 @@ sap.ui.define([
 							"@foo.Term1@foo.Term2" : "Annotation"
 						}
 					}
+				},
+				"foo.ComplexType" : {
+					$kind : "ComplexType"
+				}
+			}, { // ignoreAnnotationsFromMetadata
+				"foo." : {
+					$kind : "Schema",
+					$Annotations : {}
 				},
 				"foo.ComplexType" : {
 					$kind : "ComplexType"

@@ -76,6 +76,7 @@ sap.ui.define([
 			groupId : true,
 			groupProperties : true,
 			httpHeaders : true,
+			ignoreAnnotationsFromMetadata : true,
 			metadataUrlParams : true,
 			odataVersion : true,
 			operationMode : true,
@@ -130,6 +131,11 @@ sap.ui.define([
 		 *   since 1.51.0
 		 * @param {object} [mParameters.httpHeaders]
 		 *   Map of HTTP header names to their values, see {@link #changeHttpHeaders}
+		 * @param {boolean} [mParameters.ignoreAnnotationsFromMetadata]
+		 *   Whether to ignore all annotations from service metadata and "cross-service references";
+		 *   only the value <code>true</code> is allowed. Only annotations from annotation files
+		 *   (see parameter "annotationURI") are loaded. This parameter is not inherited by value
+		 *   list models. @experimental as of version 1.111.0
 		 * @param {object} [mParameters.metadataUrlParams]
 		 *   Additional map of URL parameters used specifically for $metadata requests. Note that
 		 *   "sap-context-token" applies only to the service's root $metadata, but not to
@@ -326,6 +332,10 @@ sap.ui.define([
 		}
 		this.bSharedRequests = mParameters.sharedRequests === true;
 		this.bIgnoreETag = false;
+		if ("ignoreAnnotationsFromMetadata" in mParameters
+			&& mParameters.ignoreAnnotationsFromMetadata !== true) {
+			throw new Error("Value for ignoreAnnotationsFromMetadata must be true");
+		}
 
 		// BEWARE: do not share mHeaders between _MetadataRequestor and _Requestor!
 		this.mHeaders = {"Accept-Language" : sLanguageTag};
@@ -333,7 +343,8 @@ sap.ui.define([
 
 		mQueryParams = Object.assign({}, mUriParameters, mParameters.metadataUrlParams);
 		this.oMetaModel = new ODataMetaModel(
-			_MetadataRequestor.create(this.mMetadataHeaders, sODataVersion, mQueryParams),
+			_MetadataRequestor.create(this.mMetadataHeaders, sODataVersion,
+				mParameters.ignoreAnnotationsFromMetadata, mQueryParams),
 			this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 			mParameters.supportReferences, mQueryParams["sap-language"]);
 		this.oInterface = {

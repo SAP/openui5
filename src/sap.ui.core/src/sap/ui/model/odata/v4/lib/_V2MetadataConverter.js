@@ -694,7 +694,11 @@ sap.ui.define([
 			}
 		}
 
-		if (this.schema.$Annotations) {
+		if (this.bIgnoreAnnotations) {
+			if (Object.keys(this.convertedV2Annotations).length) {
+				this.schema.$Annotations = {};
+			}
+		} else if (this.schema.$Annotations) {
 			this.mergeAnnotations(this.convertedV2Annotations, this.schema.$Annotations);
 		} else if (Object.keys(this.convertedV2Annotations).length > 0) {
 			this.schema.$Annotations = this.convertedV2Annotations;
@@ -1364,6 +1368,9 @@ sap.ui.define([
 
 			vHere = that.getOrCreateObject(
 				that.result[_Helper.namespace(sPropertyPath) + "."], "$Annotations");
+			if (that.bIgnoreAnnotations) {
+				return; // $Annotations should exist, but remain empty
+			}
 			vHere = that.getOrCreateObject(vHere, sPropertyPath);
 			if (!(sUnitAnnotation in vHere)) { // existing V4 annotations won't be overridden
 				vHere[sUnitAnnotation] = {$Path : sUnitPath};

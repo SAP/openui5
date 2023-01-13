@@ -112,7 +112,7 @@ sap.ui.define([
 		this.mock(Configuration).expects("getStatisticsEnabled")
 			.withExactArgs().returns(bStatistics);
 		this.mock(_MetadataRequestor).expects("create")
-			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", bStatistics
+			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined, bStatistics
 				? {"sap-client" : "279", "sap-statistics" : true}
 				: {"sap-client" : "279"})
 			.returns(oMetadataRequestor);
@@ -147,7 +147,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("metadataUrlParams", function (assert) {
+	QUnit.test("ignoreAnnotationsFromMetadata, metadataUrlParams", function (assert) {
 		var oModel,
 			mUriParameters = {
 				"sap-client" : "279",
@@ -157,7 +157,7 @@ sap.ui.define([
 		this.mock(ODataModel.prototype).expects("buildQueryOptions")
 			.withExactArgs({}, false, true).returns(mUriParameters);
 		this.mock(_MetadataRequestor).expects("create")
-			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", {
+			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", true, {
 				"sap-client" : "279",
 				"sap-context-token" : "20200716120000",
 				"sap-language" : "EN"
@@ -169,6 +169,7 @@ sap.ui.define([
 
 		// code under test
 		oModel = this.createModel("", {
+			ignoreAnnotationsFromMetadata : true,
 			metadataUrlParams : {
 				"sap-context-token" : "20200716120000",
 				"sap-language" : "EN"
@@ -200,6 +201,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("ignoreAnnotationsFromMetadata", function (assert) {
+		[false, 0, "", undefined, 1, "X"].forEach(function (vValue) {
+			assert.throws(function () {
+				this.createModel("", {ignoreAnnotationsFromMetadata : vValue});
+			}, new Error("Value for ignoreAnnotationsFromMetadata must be true"));
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("supportReferences", function () {
 		this.createModel("", {supportReferences : false});
 	});
@@ -224,7 +234,8 @@ sap.ui.define([
 					checkHeaderNames : function () {}
 				});
 			fnMetadataRequestorCreateSpy = this.mock(_MetadataRequestor).expects("create")
-				.withExactArgs({"Accept-Language" : "ab-CD"}, sODataVersion, sinon.match.object)
+				.withExactArgs({"Accept-Language" : "ab-CD"}, sODataVersion, undefined,
+					sinon.match.object)
 				.returns({});
 
 			// code under test

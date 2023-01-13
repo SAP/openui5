@@ -41,6 +41,11 @@ sap.ui.define([
 			oResult = new _V2MetadataConverter().convertXMLMetadata(oXML, "/foo/bar/$metadata");
 
 		assert.deepEqual(oResult["GWSAMPLE_BASIC."].$Annotations, oExpected);
+
+		// code under test ("ignoreAnnotationsFromMetadata")
+		oResult = new _V2MetadataConverter().convertXMLMetadata(oXML, "/foo/bar/$metadata", true);
+
+		assert.deepEqual(oResult["GWSAMPLE_BASIC."].$Annotations, {});
 	}
 
 	/**
@@ -73,7 +78,9 @@ sap.ui.define([
 	 *   property that is given must exist with the exact value (deepEqual), but there may be others
 	 */
 	function testConversionForInclude(assert, sXmlSnippet, oExpected, bSubset) {
-		var sProperty,
+		var bIgnoreAnnotations,
+			aKeysWithAnnotations = [],
+			sProperty,
 			oXML = xml(assert, sEdmx + sXmlSnippet + "</edmx:Edmx>"),
 			oResult = new _V2MetadataConverter().convertXMLMetadata(oXML, "/foo/bar/$metadata");
 
@@ -88,6 +95,26 @@ sap.ui.define([
 		} else {
 			oExpected.$Version = "4.0";
 			assert.deepEqual(oResult, oExpected);
+		}
+
+		Object.keys(oExpected).forEach(function (sKey) {
+			if (oExpected[sKey].$Annotations) {
+				oExpected[sKey].$Annotations = {};
+				aKeysWithAnnotations.push(sKey);
+				bIgnoreAnnotations = true;
+			}
+		});
+		if (bIgnoreAnnotations) { // ignoreAnnotationsFromMetadata
+			oResult = new _V2MetadataConverter()
+				.convertXMLMetadata(oXML, "/foo/bar/$metadata", true);
+
+			if (bSubset) {
+				aKeysWithAnnotations.forEach(function (sKey) {
+					assert.deepEqual(oResult[sKey].$Annotations, {});
+				});
+			} else {
+				assert.deepEqual(oResult, oExpected);
+			}
 		}
 	}
 
@@ -935,10 +962,10 @@ sap.ui.define([
 						</EntityType>\
 					</Schema>";
 
-			// there are no $annotations yet at the schema so mergeAnnotations is not called
+			// there are no $Annotations yet at the schema so mergeAnnotations is not called
 			this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
-			// no expectedAnnotationsV4 so there is no need for $annotations at the schema
+			// no expectedAnnotationsV4 so there is no need for $Annotations at the schema
 			if (!oFixture.expectedAnnotationsV4) {
 				delete oExpectedResult["GWSAMPLE_BASIC.0001."].$Annotations;
 			}
@@ -1029,7 +1056,7 @@ sap.ui.define([
 		var sTitle = "convert: V2 annotation at Property: " + oFixture.v2Semantics;
 
 		QUnit.test("convert sap:semantics=" + sTitle, function (assert) {
-			// there are no $annotations yet at the schema so mergeAnnotations is not called
+			// there are no $Annotations yet at the schema so mergeAnnotations is not called
 			this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 			testAnnotationConversion(assert, '\
@@ -1044,7 +1071,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to contact", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1104,7 +1131,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=tel, email to Contact", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1134,7 +1161,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=tel with type to Contact", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1162,7 +1189,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=email with type to Contact", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1192,10 +1219,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=email with unsupported type", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Unsupported semantic type: foo", undefined, sClassName);
 
 		testAnnotationConversion(assert, '\
@@ -1218,10 +1245,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=email with un/supported type", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Unsupported semantic type: foo", undefined, sClassName);
 
 		testAnnotationConversion(assert, '\
@@ -1247,7 +1274,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to Event", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1281,7 +1308,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to Task", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1305,7 +1332,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to Message", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1331,7 +1358,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to Contact, Event, Task, Message", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -1521,12 +1548,12 @@ sap.ui.define([
 					}
 				};
 
-			// no expectedAnnotationsV4 so there is no need for $annotations at the schema
+			// no expectedAnnotationsV4 so there is no need for $Annotations at the schema
 			if (!oFixture.expectedAnnotationsV4) {
 				delete oExpectedResult["GWSAMPLE_BASIC."].$Annotations;
 			}
 			if (oFixture.message) {
-				this.oLogMock.expects("warning")
+				this.oLogMock.expects("warning").twice()
 					.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 						oFixture.message, sClassName);
 			}
@@ -1821,7 +1848,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* from mV2toV4SimpleSemantics", function (assert) {
-		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		// there are no $Annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		testAnnotationConversion(assert, '\
@@ -2068,29 +2095,29 @@ sap.ui.define([
 				}
 			};
 
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
 				"sap:filterable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sClassName);
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
 				"sap:filter-restriction at property 'GWSAMPLE_BASIC.0001.Address/Street'",
 				sClassName);
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
 				"sap:required-in-filter at property 'GWSAMPLE_BASIC.0001.Address/Street'",
 				sClassName);
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
 				"sap:sortable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sClassName);
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 				"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property"
 				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictA'", sClassName);
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 				"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property"
 				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictB'", sClassName);
-		this.oLogMock.expects("warning")
+		this.oLogMock.expects("warning").twice()
 			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 				'Unsupported sap:filter-restriction="unsupported" at property'
 				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/FilterRestrictionUnsupported'",
@@ -2252,17 +2279,17 @@ sap.ui.define([
 				}
 			};
 
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("warning").twice().withExactArgs(
 			"Unsupported sap:semantics at sap:unit='InvalidUnit';"
 			+ " expected 'currency-code' or 'unit-of-measure'",
 			"GWSAMPLE_BASIC.0001.Product/Width", sClassName);
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("warning").twice().withExactArgs(
 			"Path 'MissingUnit/Foo' for sap:unit cannot be resolved",
 			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1", sClassName);
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("warning").twice().withExactArgs(
 			"Path 'Parts/MissingUnit/Foo' for sap:unit cannot be resolved",
 			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit0", sClassName);
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("warning").twice().withExactArgs(
 			"Unsupported annotation 'sap:semantics'",
 			sinon.match(/<Property.*sap:semantics="invalid".*\/>/),
 			sClassName);
@@ -2346,8 +2373,8 @@ sap.ui.define([
 			"Duplicate qualified name duplicates.GetDefaults",
 			"Duplicate qualified name duplicates.Container"
 		].forEach(function (sWarning) {
-			that.oLogMock.expects("warning").withExactArgs(sWarning, undefined,
-				"sap.ui.model.odata.v4.lib._MetadataConverter");
+			that.oLogMock.expects("warning").twice()
+				.withExactArgs(sWarning, undefined, "sap.ui.model.odata.v4.lib._MetadataConverter");
 		});
 
 		testConversion(assert, '\
