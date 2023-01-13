@@ -64,7 +64,8 @@ sap.ui.define([], function() {
 				year: "numeric",
 				timeZone: sTimezone,
 				timeZoneName: 'short',
-				era: 'narrow'
+				era: 'narrow',
+				weekday: "short"
 			};
 			var oInstance = new Intl.DateTimeFormat("en-US", oOptions);
 
@@ -149,15 +150,16 @@ sap.ui.define([], function() {
 	 * @param {Date} oDate The date which should be converted.
 	 * @param {string} sTargetTimezone The target IANA timezone ID, e.g <code>"Europe/Berlin"</code>
 	 * @returns {{
-	 *     month: string,
 	 *     day: string,
-	 *     year: string,
-	 *     hour: string,
-	 *     minute: string,
-	 *     second: string,
 	 *     era: string,
 	 *     fractionalSecond: string,
-	 *     timeZoneName: string
+	 *     hour: string,
+	 *     minute: string,
+	 *     month: string,
+	 *     second: string,
+	 *     timeZoneName: string,
+	 *     weekday: string,
+	 *     year: string
 	 * }} An object containing the date and time fields considering the target time zone.
 	 * @private
 	 */

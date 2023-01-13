@@ -57,6 +57,11 @@ sap.ui.define(function() {
 					only : "sap/base/i18n/ResourceBundle"
 				}
 			},
+			"UI5Date": {
+				coverage : {
+					only : "sap/ui/core/date/UI5Date"
+				}
+			},
 			"UniversalDate": {
 				coverage : {
 					only : "sap/ui/core/date/UniversalDate"
