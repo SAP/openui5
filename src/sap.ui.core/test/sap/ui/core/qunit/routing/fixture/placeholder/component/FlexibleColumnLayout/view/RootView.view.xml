@@ -1,0 +1,3 @@
+<mvc:View xmlns="sap.f" xmlns:mvc="sap.ui.core.mvc">
+	<FlexibleColumnLayout id="flexibleColumnLayout"></FlexibleColumnLayout>
+</mvc:View>

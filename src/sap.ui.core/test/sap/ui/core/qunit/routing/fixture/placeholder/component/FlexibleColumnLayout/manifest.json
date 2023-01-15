@@ -1,0 +1,87 @@
+{
+	"sap.app": {
+		"id": "qunit.placeholder.component.FlexibleColumnLayout",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.placeholder.component.FlexibleColumnLayout.view.RootView",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"async": true,
+				"controlId": "flexibleColumnLayout",
+				"routerClass": "sap.f.routing.Router",
+				"viewType": "XML",
+				"path": "qunit.placeholder.component.FlexibleColumnLayout.view"
+			},
+			"routes": [{
+				"pattern": "",
+				"name": "home",
+				"target": ["target1", "target2", "target3"]
+			},
+			{
+				"pattern": "route1",
+				"name": "route1",
+				"target": ["target4", "targetAutoCloseFalse"]
+			}],
+			"targets": {
+				"target1": {
+					"controlAggregation": "beginColumnPages",
+					"id": "sampleView",
+					"name": "SampleView",
+					"type": "View",
+					"placeholder": {
+						"autoClose": false,
+						"html": "my/placeholder.fragment.html"
+					}
+				},
+				"target2": {
+					"controlAggregation": "midColumnPages",
+					"id": "sampleView2",
+					"name": "SampleView2",
+					"type": "View",
+					"placeholder": {
+						"autoClose": true,
+						"html": "my/placeholder.fragment.html"
+					}
+				},
+				"target3": {
+					"controlAggregation": "endColumnPages",
+					"id": "sampleView3",
+					"name": "SampleView3",
+					"type": "View",
+					"placeholder": {
+						"autoClose": true,
+						"html": "my/placeholder.fragment.html"
+					}
+				},
+				"target4": {
+					"controlAggregation": "midColumnPages",
+					"id": "sampleView5",
+					"name": "SampleView5",
+					"type": "View",
+					"placeholder": {
+						"autoClose": true,
+						"html": "my/placeholder.fragment.html"
+					}
+				},
+				"targetAutoCloseFalse": {
+					"controlAggregation": "endColumnPages",
+					"id": "sampleView4",
+					"name": "SampleView4",
+					"type": "View",
+					"placeholder": {
+						"autoClose": false,
+						"html": "my/placeholder1.fragment.html"
+					}
+				}
+			}
+		}
+
+	}
+}

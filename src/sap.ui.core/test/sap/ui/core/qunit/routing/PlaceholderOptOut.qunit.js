@@ -31,97 +31,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("xx-placeholder config set to 'false", function(assert) {
-		// sample js views
-		sap.ui.predefine("sap/ui/sample/navigationContainer/NavContainerView", ["sap/ui/core/mvc/View", "sap/m/NavContainer"],
-			function(View, NavContainer) {
-			return View.extend("sap.ui.sample.navigationContainer.NavContainerView", {
-				createContent: function() {
-					return new NavContainer(this.createId("navContainer"));
-				}
-			});
-		});
-
-		sap.ui.predefine("sap/ui/sample/navigationContainer/sampleView", ["sap/ui/core/mvc/View", "sap/m/Panel"],
-			function(View, Panel) {
-			return View.extend("sap.ui.sample.navigationContainer.sampleView", {
-				createContent: function() {
-					return new Panel(this.createId("panel"));
-				}
-			});
-		});
-
-		sap.ui.predefine("sap/ui/sample/navigationContainer/sampleView2", ["sap/ui/core/mvc/View", "sap/m/Panel"],
-			function(View, Panel) {
-			return View.extend("sap.ui.sample.navigationContainer.sampleView2", {
-				createContent: function() {
-					return new Panel(this.createId("panel"));
-				}
-			});
-		});
-
-		// sample component with navigation container
-		sap.ui.predefine("sap/ui/sample/navigationcontainer/Component", [], function() {
-			return UIComponent.extend("sap.ui.sample.navigationcontainer", {
-				metadata : {
-					rootView: {
-						viewName: "module:sap/ui/sample/navigationContainer/NavContainerView",
-						async: true
-					},
-					routing: {
-						config: {
-							async: true,
-							controlId: "navContainer",
-							controlAggregation: "pages",
-							routerClass: "sap.m.routing.Router",
-							viewType: "JS"
-						},
-						routes: [{
-							pattern: ":?query:",
-							name: "home",
-							target: {
-								name: "home",
-								placeholder: {
-									autoClose: true,
-									html: "my/placeholder.fragment.html"
-								}
-							}
-						},
-						{
-							pattern: "route1",
-							name: "route1",
-							target: {
-								name: "target1",
-								placeholder: {
-									autoClose: false,
-									html: "my/placeholder.fragment.html"
-								}
-							}
-						}],
-						targets: {
-							home: {
-								name: "module:sap/ui/sample/navigationContainer/sampleView",
-								type: "View",
-								id: "sampleView"
-							},
-							target1: {
-								name: "module:sap/ui/sample/navigationContainer/sampleView2",
-								type: "View",
-								id: "sampleView2"
-							}
-						}
-					}
-				}
-			});
-		});
-
+	QUnit.test("xx-placeholder config set to 'false'", function(assert) {
 		var oNavConShowPlaceholderSpy = sinon.spy(NavContainer.prototype, "showPlaceholder");
 		var oMTargetHandlerSpy = sinon.spy(MTargetHandler.prototype, "showPlaceholder");
 
 		var oRouter;
 		var oComponentContainer = new ComponentContainer({
 			async: true,
-			name: "sap.ui.sample.navigationcontainer"
+			name: "qunit.placeholder.component.NavContainerOptOut"
 		});
 
 		oComponentContainer.placeAt("qunit-fixture");
