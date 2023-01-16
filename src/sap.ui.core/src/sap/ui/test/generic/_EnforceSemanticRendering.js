@@ -46,11 +46,11 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 										oInfo.version = Object.prototype.hasOwnProperty.call(oRenderer, "apiVersion") ? oRenderer.apiVersion : 1;
 
 										if (aExcludes.includes(sClass)) {
-											if (oInfo.version == 2) {
+											if (oInfo.version == 1) {
+												oInfo.skip = true;
+											} else {
 												oInfo.wrongExclude = true;
 												oInfo.description = "defined in the excludes";
-											} else { // version 1
-												oInfo.skip = true;
 											}
 										}
 									} else {
@@ -93,7 +93,7 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 								if (oInfo.wrongExclude) {
 									assert.ok(false, "The control '" + oInfo.control + "' is maintained in the exclude configuration, but its renderer is configured with apiVersion 2.");
 								} else {
-									assert.equal(oInfo.version, 2, "Semantic Rendering enabled.");
+									assert.notEqual(oInfo.version, 1, "Semantic Rendering enabled.");
 								}
 							});
 						});

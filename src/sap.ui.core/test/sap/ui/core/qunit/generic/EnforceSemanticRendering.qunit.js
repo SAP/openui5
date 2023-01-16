@@ -52,7 +52,7 @@ sap.ui.define([
 		testControl: function(oClassInfo, assert) {
 			var oRenderer = oClassInfo.fnClass.getMetadata().getRenderer(),
 				iApiVersion = Object.prototype.hasOwnProperty.call(oRenderer, "apiVersion") ? oRenderer.apiVersion : 1;
-			assert.equal(iApiVersion, 2, "Semantic Rendering enabled for control " + oClassInfo.className);
+			assert.notEqual(iApiVersion, 1, "Semantic Rendering enabled for control " + oClassInfo.className);
 		}
 	});
 

@@ -183,15 +183,14 @@ sap.ui.define([
 	QUnit.module("test measure rendering");
 
 	QUnit.test("render Button", function(assert) {
-		assert.expect(5);
+		assert.expect(4);
 		var oButton = new Button("B1",{text:"Test"});
 		oButton.placeAt("target1");
 		sap.ui.getCore().applyChanges();
 		var aMeasurements = jQuery.sap.measure.getAllMeasurements();
 		assert.ok(aMeasurements.length > 0, "Number of measurements > 0");
 
-		var oMeasurement = jQuery.sap.measure.getMeasurement("B1---renderControl");
-		assert.ok(oMeasurement, "Measurement for Button renderer found");
+		var oMeasurement = jQuery.sap.measure.getMeasurement("B1---AfterRendering");
 		oMeasurement = jQuery.sap.measure.getMeasurement("B1---AfterRendering");
 		assert.ok(oMeasurement, "Measurement for Button AfterRendering found");
 		oMeasurement = jQuery.sap.measure.getMeasurement("renderPendingUIUpdates");
