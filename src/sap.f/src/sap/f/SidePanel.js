@@ -1249,9 +1249,11 @@ sap.ui.define([
 
 	SidePanel.prototype._onTouchStart = function(oEvent) {
 		oEvent.preventDefault();
-		this.getDomRef().querySelector(".sapFSPSplitterBar").classList.add("sapFSPSplitterActive");
-		this._bResizeStarted = true;
-		this._iStartPositionX = oEvent.touches ? oEvent.touches[0].pageX : oEvent.pageX;
+		if (oEvent.button === 0 || oEvent.type === "touchstart") {
+			this.getDomRef().querySelector(".sapFSPSplitterBar").classList.add("sapFSPSplitterActive");
+			this._bResizeStarted = true;
+			this._iStartPositionX = oEvent.touches ? oEvent.touches[0].pageX : oEvent.pageX;
+		}
 	};
 
 	SidePanel.prototype._onTouchEnd = function(oEvent) {
@@ -1321,6 +1323,7 @@ sap.ui.define([
 	SidePanel.prototype._showResizeContextMenu = function(oEvent) {
 		var oContextMenu = this._getContextMenu();
 
+		this._bResizeStarted = false;
 		(this._bContextMenuFromSplitter && oContextMenu.openBy(this.getDomRef().querySelector(".sapFSPSplitterBarGrip"))) || oContextMenu.openAsContextMenu(oEvent, this);
 	};
 
