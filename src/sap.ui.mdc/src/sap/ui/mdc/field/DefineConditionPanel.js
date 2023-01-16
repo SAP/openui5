@@ -32,8 +32,7 @@ sap.ui.define([
 	'sap/m/Panel',
 	'sap/base/Log',
 	'sap/ui/core/InvisibleMessage',
-	'sap/ui/thirdparty/jquery',
-	'sap/ui/mdc/field/ListFieldHelp' // must be loaded before creating of specificMonth operator control in filterOperatorUtil
+	'sap/ui/thirdparty/jquery'
 ], function(
 		Control,
 		ManagedObjectObserver,

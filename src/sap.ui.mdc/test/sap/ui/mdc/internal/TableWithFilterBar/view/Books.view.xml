@@ -414,14 +414,6 @@
 										   			{contentId:'container-v4demo---books--subGenreTypeAhead', path:['classification_code', 'genre_code']}
 													]
 								}}">
-								<!-- <mdc:inParameters>
-									<mdcf:InParameter id="IOFFVHSub-In-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
-									<mdcf:InParameter id="IOFFVHSub-In-Genre" value="{$filters>/conditions/genre_code}" helpPath="genre_code" />
-								</mdc:inParameters>
-								<mdc:outParameters>
-									<mdcf:OutParameter id="IOFFVHSub-Out-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
-									<mdcf:OutParameter id="IOFFVHSub-Out-Genre" value="{$filters>/conditions/genre_code}" helpPath="genre_code" />
-								</mdc:outParameters> -->
 								<mdc:typeahead>
 									<mdcv:Popover title="Sub Genre">
 										<mdcvc:MTable id="subGenreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
@@ -535,16 +527,6 @@
 													]
 
 								}}">
-								<!-- <mdc:inParameters>
-									<mdcf:InParameter id="IOFFVHDetail-In-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
-									<mdcf:InParameter id="IOFFVHDetail-In-Genre" value="{$filters>/conditions/genre_code}" helpPath="genre_code" />
-									<mdcf:InParameter id="IOFFVHDetail-In-SubGenre" value="{$filters>/conditions/subgenre_code}" helpPath="subgenre_code" />
-								</mdc:inParameters>
-								<mdc:outParameters>
-									<mdcf:OutParameter id="IOFFVHDetail-Out-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
-									<mdcf:OutParameter id="IOFFVHDetail-Out-Genre" value="{$filters>/conditions/genre_code}" helpPath="genre_code" />
-									<mdcf:OutParameter id="IOFFVHDetail-Out-SubGenre" value="{$filters>/conditions/subgenre_code}" helpPath="subgenre_code" />
-								</mdc:outParameters> -->
 								<mdc:typeahead>
 									<mdcv:Popover title="Detail Genre">
 										<mdcvc:MTable id="detailGenreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
@@ -901,14 +883,6 @@
 													{contentId:'container-v4demo---books--FHSubGenreSingle-MTable', source:'classification_code', target:'classification_code'}
 												  ]
 								}}">
-								<!-- <mdc:inParameters>
-									<mdcf:InParameter id="IOFFVHSub-In-Class-Single" value="{classification_code}" helpPath="classification_code" />
-									<mdcf:InParameter id="IOFFVHSub-In-Genre-Single" value="{genre_code}" helpPath="genre_code" />
-								</mdc:inParameters>
-								<mdc:outParameters>
-									<mdcf:OutParameter id="IOFFVHSub-Out-Class-Single" value="{classification_code}" helpPath="classification_code" />
-									<mdcf:OutParameter id="IOFFVHSub-Out-Genre-Single" value="{genre_code}" helpPath="genre_code" />
-								</mdc:outParameters> -->
 								<mdc:typeahead>
 									<mdcv:Popover id="FHSubGenreSingle-Popover" title="Sub Genre">
 										<mdcvc:MTable id="FHSubGenreSingle-MTable" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="true">
@@ -956,12 +930,6 @@
 													{contentId:'container-v4demo---books--FHSubGenreSingle-MTable', source:'classification_code', target:'classification_code'}
   												  ]
 								}}">
-								<!-- <mdc:inParameters>
-									<mdcf:InParameter id="IOFFVHGenre-In-Class-Single" value="{classification_code}" helpPath="classification_code" />
-								</mdc:inParameters>
-								<mdc:outParameters>
-									<mdcf:OutParameter id="IOFFVHGenre-Out-Class-Single" value="{classification_code}" helpPath="classification_code" />
-								</mdc:outParameters> -->
 								<mdc:typeahead>
 									<mdcv:Popover id="FHGenreSingle-Popover" title="Genre">
 										<mdcvc:MTable id="FHGenreSingle-MTable" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="true">
@@ -1011,12 +979,6 @@
 							payloadInfos: [{contentId:'container-v4demo---books--genre', path:'classification_code'},
 										   {contentId:'container-v4demo---books--genreTypeAhead', path:'classification_code'}]
 					}}">
-					<!-- <mdc:inParameters>
-						<mdcf:InParameter id="IOFFVHGenre-In-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
-					</mdc:inParameters>
-					<mdc:outParameters>
-						<mdcf:OutParameter id="IOFFVHGenre-Out-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
-					</mdc:outParameters> -->
 					<mdc:typeahead>
 						<mdcv:Popover title="Genre">
 							<mdcvc:MTable id="genreTypeAhead" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="false">

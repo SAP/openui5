@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/ui/mdc/enum/EditMode",
 	"sap/m/library",
 	"sap/m/MessageToast",
-	"sap/ui/mdc/field/FieldHelpBaseDelegate",
 	"sap/ui/core/Core"
-], function(Controller, Filter, FilterOperator, JSONModel, Condition, EditMode, mobileLibrary, MessageToast, FieldHelpBaseDelegate, oCore) {
+], function(Controller, Filter, FilterOperator, JSONModel, Condition, EditMode, mobileLibrary, MessageToast, oCore) {
 	"use strict";
 
 	var ButtonType = mobileLibrary.ButtonType;
@@ -53,45 +52,6 @@ sap.ui.define([
 								   ]
 			});
 			this.getView().setModel(oViewModel, "view");
-
-			// fake own delegate implementation
-			FieldHelpBaseDelegate.contentRequest = function(oPayload, oFieldHelp, bSuggestion, oProperties) {
-				if (oFieldHelp === this.getView().byId("FVH-CollSearch")) {
-					var sKey = !bSuggestion && oProperties && oProperties.collectiveSearchKey;
-					var oTable;
-					var oFilterBar;
-
-					switch (sKey) {
-					case "1":
-						oTable = this.getView().byId("FVH-CollSearch-T1");
-						oFilterBar = this.getView().byId("FVH-CollSearch-FB1");
-						break;
-
-					case "2":
-						oTable = this.getView().byId("FVH-CollSearch-T2");
-						oFilterBar = this.getView().byId("FVH-CollSearch-FB2");
-						break;
-
-					default:
-						oTable = this.getView().byId("FVH-CollSearch-T1");
-						oFilterBar = this.getView().byId("FVH-CollSearch-FB1");
-					break;
-					}
-
-					var oWrapper = oFieldHelp.getContent();
-					var oCurrentTable = oWrapper.getTable();
-					var oCurrentFilterBar = oFieldHelp.getFilterBar();
-					if (oTable !== oCurrentTable) {
-						oWrapper.setTable(oTable);
-						oWrapper.addDependent(oCurrentTable);
-					}
-					if (oFilterBar !== oCurrentFilterBar) {
-						oFieldHelp.setFilterBar(oFilterBar);
-						oFieldHelp.addDependent(oCurrentFilterBar);
-					}
-				}
-			}.bind(this);
-
 		},
 
 		handleChange: function(oEvent) {

@@ -122,15 +122,15 @@ sap.ui.define([
 	 * checked to determine the key and description.
 	 *
 	 * @param {object} oPayload Payload for delegate
-	 * @param {sap.ui.mdc.field.FieldHelpBase} oFieldHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
 	 * @returns {boolean} If <code>true</code>, the input is checked
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since: 1.78.0
 	 */
-	FieldBaseDelegate.isInputValidationEnabled = function(oPayload, oFieldHelp) {
+	FieldBaseDelegate.isInputValidationEnabled = function(oPayload, oValueHelp) {
 
-		if (oFieldHelp && oFieldHelp.isValidationSupported()) {
+		if (oValueHelp && oValueHelp.isValidationSupported()) {
 			return true;
 		} else {
 			return false;
@@ -143,16 +143,16 @@ sap.ui.define([
 	 * is not found in the field help or custom logic is accepted.
 	 *
 	 * @param {object} oPayload Payload for delegate
-	 * @param {sap.ui.mdc.field.FieldHelpBase} oFieldHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
 	 * @returns {boolean} If <code>true</code>, invalid input is accepted
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since: 1.78.0
 	 */
-	FieldBaseDelegate.isInvalidInputAllowed = function(oPayload, oFieldHelp) {
+	FieldBaseDelegate.isInvalidInputAllowed = function(oPayload, oValueHelp) {
 
-		if (oFieldHelp) {
-			return !oFieldHelp.getValidateInput();
+		if (oValueHelp) {
+			return !oValueHelp.getValidateInput();
 		} else {
 			return true;
 		}
@@ -175,7 +175,7 @@ sap.ui.define([
 	 * If the item cannot be determined, a corresponding <code>ParseException<code> is thrown.
 	 *
 	 * @param {object} oPayload Payload for delegate
-	 * @param {sap.ui.mdc.field.FieldHelpBase} oFieldHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
 	 * @param {object} [oConfig] Configuration
 	 * @param {any} oConfig.value Value as entered by user
 	 * @param {any} oConfig.parsedValue Value parsed by data type to fit the data type of the key
@@ -192,10 +192,10 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	FieldBaseDelegate.getItemForValue = function(oPayload, oFieldHelp, oConfig) {
+	FieldBaseDelegate.getItemForValue = function(oPayload, oValueHelp, oConfig) {
 
-		if (oFieldHelp) {
-			return oFieldHelp.getItemForValue(oConfig);
+		if (oValueHelp) {
+			return oValueHelp.getItemForValue(oConfig);
 		}
 
 	};
@@ -213,7 +213,7 @@ sap.ui.define([
 	 * If the description cannot be determined, a corresponding <code>FormatException<code> is thrown.
 	 *
 	 * @param {object} oPayload Payload for delegate
-	 * @param {sap.ui.mdc.field.FieldHelpBase} oFieldHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
 	 * @param {any} vKey Key
 	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.)
 	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.)
@@ -230,26 +230,22 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	FieldBaseDelegate.getDescription = function(oPayload, oFieldHelp, vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName, oConditionPayload, oControl, oType) {
-		if (oFieldHelp && oFieldHelp.isA("sap.ui.mdc.ValueHelp")) {
-			var oConfig = {
-				value: vKey,
-				parsedValue: vKey,
-				dataType: oType,
-				context: {inParameters: oInParameters, outParameters: oOutParameters, payload: oConditionPayload},
-				bindingContext: oBindingContext,
-				conditionModel: oConditionModel,
-				conditionModelName: sConditionModelName,
-				checkKey: true,
-				checkDescription: false,
-				caseSensitive: true, // case sensitive as used to get description for known key
-				exception: FormatException,
-				control: oControl
-			};
-			return oFieldHelp.getItemForValue(oConfig);
-		} else if (oFieldHelp) {
-			return oFieldHelp.getTextForKey(vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName);
-		}
+	FieldBaseDelegate.getDescription = function(oPayload, oValueHelp, vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName, oConditionPayload, oControl, oType) {
+		var oConfig = {
+			value: vKey,
+			parsedValue: vKey,
+			dataType: oType,
+			context: {inParameters: oInParameters, outParameters: oOutParameters, payload: oConditionPayload},
+			bindingContext: oBindingContext,
+			conditionModel: oConditionModel,
+			conditionModelName: sConditionModelName,
+			checkKey: true,
+			checkDescription: false,
+			caseSensitive: true, // case sensitive as used to get description for known key
+			exception: FormatException,
+			control: oControl
+		};
+		return oValueHelp && oValueHelp.getItemForValue(oConfig);
 
 	};
 

@@ -14,9 +14,6 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/mdc/enum/SelectType",
-	"sap/ui/mdc/enum/OutParameterMode",
-	"sap/ui/mdc/field/InParameter",
-	"sap/ui/mdc/field/OutParameter",
 	"sap/ui/core/Icon",
 	"sap/ui/model/Context",
 	"sap/ui/model/FormatException",
@@ -37,9 +34,6 @@ sap.ui.define([
 		Operator,
 		ConditionValidated,
 		SelectType,
-		OutParameterMode,
-		InParameter,
-		OutParameter,
 		Icon,
 		Context,
 		FormatException,
@@ -126,7 +120,6 @@ sap.ui.define([
 		aSelectConditions = undefined;
 		bSelectAdd = undefined;
 		bSelectClose = undefined;
-//		FieldHelpBase._init();
 		iNavigate = 0;
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;

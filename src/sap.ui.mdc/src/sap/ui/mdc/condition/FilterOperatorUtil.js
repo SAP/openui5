@@ -1225,7 +1225,7 @@ function(
 				 * @returns {sap.ui.mdc.condition.Operator} Operator object
 				 *
 				 * @private
-				 * @ui5-restricted sap.ui.mdc.Field, sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType, sap.ui.mdc.field.FieldHelpBase
+				 * @ui5-restricted sap.ui.mdc.Field, sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType, sap.ui.mdc.valuehelp.base.Content
 				 */
 				getEQOperator: function(aOperators) {
 

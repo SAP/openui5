@@ -147,12 +147,6 @@
 							payloadInfos: [{contentId:'container-v4demo---authors--regions', path:'country_code'},
 										   {contentId:'container-v4demo---authors--regionsTypeAhead', path:'country_code'}]
 						}}">
-						<!-- <mdc:inParameters>
-							<mdcf:InParameter id="IOFFVHRegion-In-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
-						</mdc:inParameters>
-						<mdc:outParameters>
-							<mdcf:OutParameter id="IOFFVHRegion-Out-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
-						</mdc:outParameters> -->
 						<mdc:typeahead>
 							<mdcv:Popover>
 								<mdcvc:MTable id="regionsTypeAhead" keyPath="code" descriptionPath="text" filterFields="$search">
@@ -222,12 +216,6 @@
 							outParameters: [{source: 'country_code', target: 'country_code', mode:'Always', valueHelpId: 'IOFFVHCountry'}],
 							payloadInfos: [{contentId:'container-v4demo---authors--regionsFH', path:'country_code'}]
 						}}">
-						<!-- <mdc:inParameters>
-							<mdcf:InParameter id="IOFFVHRegionFH-In-Country" value="{$filters>/conditions/country_code}" helpPath="country_code"/>
-						</mdc:inParameters>
-						<mdc:outParameters>
-							<mdcf:OutParameter id="IOFFVHRegionFH-Out-Country" value="{$filters>/conditions/country_code}" helpPath="country_code"/>
-						</mdc:outParameters> -->
 						<mdc:typeahead>
 							<mdcv:Popover>
 								<mdcvc:MTable id="regionsFH" keyPath="code" descriptionPath="text" filterFields="$search">
@@ -271,14 +259,6 @@
 										   {contentId:'container-v4demo---authors--citiesTypeAhead', path:['country_code', 'region_code']}
 										   ]
 						}}">
-						<!-- <mdc:inParameters>
-							<mdcf:InParameter id="IOFFVHCity_In-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
-							<mdcf:InParameter id="IOFFVHCity_In-Region" value="{$filters>/conditions/regionOfOrigin_code}" helpPath="region_code" />
-						</mdc:inParameters>
-						<mdc:outParameters>
-							<mdcf:OutParameter id="IOFFVHCity_Out-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" mode="Always" />
-							<mdcf:OutParameter id="IOFFVHCity_Out-Region" value="{$filters>/conditions/regionOfOrigin_code}" helpPath="region_code" mode="Always" />
-						</mdc:outParameters> -->
 						<mdc:typeahead>
 							<mdcv:Popover>
 							<mdcvc:MTable id="citiesTypeAhead" keyPath="city" descriptionPath="text" filterFields="$search">

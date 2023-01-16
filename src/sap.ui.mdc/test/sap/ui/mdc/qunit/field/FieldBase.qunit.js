@@ -320,7 +320,7 @@ sap.ui.define([
 		assert.ok(oDialog && oDialog instanceof Dialog, "Dialog used");
 		var aDialogContent = oDialog && oDialog.getContent()[0];
 		assert.ok(aDialogContent && aDialogContent instanceof Conditions, "ConditionPanel used");
-		assert.deepEqual(oFieldHelp.getDelegate(), {name: "sap/ui/mdc/ValueHelpDelegate", payload: {}}, "base delegate used on FieldValueHelp");
+		assert.deepEqual(oFieldHelp.getDelegate(), {name: "sap/ui/mdc/ValueHelpDelegate", payload: {}}, "base delegate used on ValueHelp");
 
 		var oSuggestControl = oField.getControlForSuggestion();
 		assert.equal(oSuggestControl, oContent, "inner control is used for suggestion");

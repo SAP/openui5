@@ -154,25 +154,5 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 		}
 	};
 
-//	if (EnvHelper.isSapUI5) {
-//		mConfig = merge({}, mConfig, {
-//			tests: {
-//				"FieldValueHelpOPATests": {
-//					loader: {
-//						paths: {
-//							"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
-//							"sap/ui/v4demo": "test-resources/sap/ui/mdc/qunit/field/opa/valuehelp"
-//						}
-//					},
-//					qunit: {
-//						reorder: false
-//					},
-//					autostart: false, // tests are added asynchronously because the V4 server needs to be found first
-//					module: "test-resources/sap/ui/mdc/qunit/field/opa/valuehelp/opaTests.qunit"
-//				}
-//			}
-//		});
-//	}
-
 	return mConfig;
 });

@@ -112,12 +112,6 @@
 													payloadInfos: [{contentId:'container-v4demo---authordetails--regions', path:'country_code'},
 										   							{contentId:'container-v4demo---authordetails--regionsTypeAhead', path:'country_code'}]
 												}}">
-												<!-- <mdc:inParameters>
-													<mdcf:InParameter id="IOFFVHRegion-In-Country" value="{countryOfOrigin_code}" helpPath="country_code" />
-												</mdc:inParameters>
-												<mdc:outParameters>
-													<mdcf:OutParameter id="IOFFVHRegion-Out-Country" value="{countryOfOrigin_code}" helpPath="country_code" />
-												</mdc:outParameters> -->
 												<mdc:typeahead>
 													<mdcv:Popover id="IOFFVHRegion-Pop">
 														<mdcvc:MTable id="regionsTypeAhead" keyPath="code" descriptionPath="text" filterFields="$search">
@@ -204,14 +198,6 @@
 													payloadInfos: [{contentId:'container-v4demo---authordetails--cities', path:['country_code', 'region_code']},
 										   							{contentId:'container-v4demo---authordetails--citiesTypeAhead', path:['country_code', 'region_code']}]
 												}}">
-												<!-- <mdc:inParameters>
-													<mdcf:InParameter id="IOFFVHCity_In-Country" value="{countryOfOrigin_code}" helpPath="country_code" />
-													<mdcf:InParameter id="IOFFVHCity_In-Region" value="{regionOfOrigin_code}" helpPath="region_code" />
-												</mdc:inParameters>
-												<mdc:outParameters>
-													<mdcf:OutParameter id="IOFFVHCity_Out-Country" value="{countryOfOrigin_code}" helpPath="country_code" mode="Always" />
-													<mdcf:OutParameter id="IOFFVHCity_Out-Region" value="{regionOfOrigin_code}" helpPath="region_code" mode="Always" />
-												</mdc:outParameters> -->
 												<mdc:typeahead>
 													<mdcv:Popover id="IOFFVHCity-Pop">
 													<mdcvc:MTable id="citiesTypeAhead" keyPath="city" descriptionPath="text" filterFields="$search">

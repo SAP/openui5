@@ -1020,25 +1020,21 @@ sap.ui.define([
 		if (oDelegate) {
 			return oDelegate.getDescription(oPayload, oFieldHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, oConditionModel, sConditionModelName, oCondition.payload, oControl, oType);
 		} else if (oFieldHelp) {
-			if (oFieldHelp.isA("sap.ui.mdc.ValueHelp")) {
-				var oConfig = {
-					value: vKey,
-					parsedValue: vKey,
-					dataType: oType,
-					context: {inParameters: oCondition.inParameters, outParameters: oCondition.outParameters, payload: oCondition.payload},
-					bindingContext: oBindingContext,
-					conditionModel: oConditionModel,
-					conditionModelName: sConditionModelName,
-					checkKey: true,
-					checkDescription: false,
-					caseSensitive: true, // case sensitive as used to get description for known key
-					exception: FormatException,
-					control: oControl
-				};
-				return oFieldHelp.getItemForValue(oConfig);
-			} else {
-				return oFieldHelp.getTextForKey(vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, oConditionModel, sConditionModelName);
-			}
+			var oConfig = {
+				value: vKey,
+				parsedValue: vKey,
+				dataType: oType,
+				context: {inParameters: oCondition.inParameters, outParameters: oCondition.outParameters, payload: oCondition.payload},
+				bindingContext: oBindingContext,
+				conditionModel: oConditionModel,
+				conditionModelName: sConditionModelName,
+				checkKey: true,
+				checkDescription: false,
+				caseSensitive: true, // case sensitive as used to get description for known key
+				exception: FormatException,
+				control: oControl
+			};
+			return oFieldHelp.getItemForValue(oConfig);
 		}
 
 	}

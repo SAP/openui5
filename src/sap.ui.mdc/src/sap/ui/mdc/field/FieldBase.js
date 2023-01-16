@@ -893,7 +893,7 @@ sap.ui.define([
 	 *
 	 * @returns {string} fieldPath of the field
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldHelpBase
+	 * @ui5-restricted sap.ui.mdc.filterbar.FilterBarBase
 	 */
 	FieldBase.prototype.getFieldPath = function() {
 
@@ -1246,7 +1246,6 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.core.Control} Control for value help
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldHelpBase
 	 */
 	 FieldBase.prototype.getControlForSuggestion = function() {
 
@@ -1263,7 +1262,17 @@ sap.ui.define([
 
 	};
 
-	FieldBase.prototype.getFocusElementForValueHelp = function(bTypahead) {
+	/**
+	 * Returns the control the value help should focus (or popover should open on)
+	 *
+	 * In the case that number and unit are shown in different controls, this is the unit control, not the number control.
+	 *
+	 * @param {boolean} bTypeahead Flag that determines whether value help is opened for type-ahead or for complex help
+	 * @returns {sap.ui.core.Control} Control for value help
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Container
+	 */
+	FieldBase.prototype.getFocusElementForValueHelp = function(bTypeahead) {
 		var oSuggestControl = this.getControlForSuggestion();
 		var aIcons = oSuggestControl && oSuggestControl.getMetadata().getAllPrivateAggregations()._endIcon && oSuggestControl.getAggregation("_endIcon", []);
 		var oIcon;
@@ -1275,7 +1284,7 @@ sap.ui.define([
 				}
 			}
 		}
-		return bTypahead || !oIcon ? oSuggestControl : oIcon;
+		return bTypeahead || !oIcon ? oSuggestControl : oIcon;
 	};
 
 	/**
@@ -1284,7 +1293,6 @@ sap.ui.define([
 	 *
 	 * @returns {int} maxConditions used for valueHelp
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldHelpBase
 	 */
 	FieldBase.prototype.getMaxConditionsForHelp = function() {
 
@@ -2255,24 +2263,19 @@ sap.ui.define([
 							var _handleTypeahead = function () {
 								var oFocusedElement = document.activeElement;
 								if (oFocusedElement && (containsOrEquals(this.getDomRef(), oFocusedElement))) { // only if still connected and focussed
-									var bIsNew = oFieldHelp.isA("sap.ui.mdc.ValueHelp");
 									var bIsFHOpen = oFieldHelp.isOpen();
-									if (!bIsNew && !this._sFilterValue && bIsFHOpen) {
-										oFieldHelp.close(); // close if no filter
-									} else if (bIsNew || this._sFilterValue) {
-										oFieldHelp.setFilterValue(this._sFilterValue);
-										if (this.getMaxConditionsForHelp() === 1 && oFieldHelp.getConditions().length > 0) {
-											// While single-suggestion no item is selected
-											oFieldHelp.setConditions([]);
-										}
-										if (!bIsFHOpen) {
-											/*
-												sap.ui.mdc.ValueHelp can only be "asked" to open a typeahead by a connected control.
-												It will then decide on actual opening after content initialization via ValueHelpDelegate.showTypeahead which can be customized by applications.
-												An already open typeahead content will consult showTypeahead again on any every filtervalue update and eventually close.
-											*/
-											oFieldHelp.open(true);
-										}
+									oFieldHelp.setFilterValue(this._sFilterValue);
+									if (this.getMaxConditionsForHelp() === 1 && oFieldHelp.getConditions().length > 0) {
+										// While single-suggestion no item is selected
+										oFieldHelp.setConditions([]);
+									}
+									if (!bIsFHOpen) {
+										/*
+											sap.ui.mdc.ValueHelp can only be "asked" to open a typeahead by a connected control.
+											It will then decide on actual opening after content initialization via ValueHelpDelegate.showTypeahead which can be customized by applications.
+											An already open typeahead content will consult showTypeahead again on any every filtervalue update and eventually close.
+										*/
+										oFieldHelp.open(true);
 									}
 									_setAriaAttributes.call(this, true);
 									delete this._vLiveChangeValue;
@@ -2280,16 +2283,9 @@ sap.ui.define([
 							}.bind(this);
 
 							if (this._bConnected && this._getContent()[0]) {
-								if (oFieldHelp.isA("sap.ui.mdc.ValueHelp")) {
-									oFieldHelp.isTypeaheadSupported().then(function (bTypeahead) {
-										return !!bTypeahead && _handleTypeahead();
-									});
-								} else {
-									var vOpenByTyping = this.hasOwnProperty("_bOpenByTyping") ? this._bOpenByTyping : oFieldHelp.isTypeaheadSupported();
-									if (vOpenByTyping) {
-										_handleTypeahead();
-									}
-								}
+								oFieldHelp.isTypeaheadSupported().then(function (bTypeahead) {
+									return !!bTypeahead && _handleTypeahead();
+								});
 								delete this._vLiveChangeValue;
 							}
 						}.bind(this), 300, { leading: false, trailing: true });
@@ -2804,11 +2800,7 @@ sap.ui.define([
 			oFieldHelp.detachEvent("afterClose", _handleFieldHelpAfterClose, this); // TODO: remove
 			oFieldHelp.detachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
 			oFieldHelp.detachEvent("closed", _handleFieldHelpAfterClose, this);
-			if (oFieldHelp.isA("sap.ui.mdc.ValueHelp")) {
-				oFieldHelp.detachEvent("opened", _handleFieldHelpOpened, this);
-			} else {
-				oFieldHelp.detachEvent("open", _handleFieldHelpOpened, this); // as old FieldHelp has no opened event use open event. But this is also fires async there
-			}
+			oFieldHelp.detachEvent("opened", _handleFieldHelpOpened, this);
 		this._bConnected = false;
 		}
 
@@ -2853,11 +2845,7 @@ sap.ui.define([
 				oFieldHelp.attachEvent("afterClose", _handleFieldHelpAfterClose, this); // TODO: remove
 				oFieldHelp.attachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
 				oFieldHelp.attachEvent("closed", _handleFieldHelpAfterClose, this);
-				if (oFieldHelp.isA("sap.ui.mdc.ValueHelp")) {
-					oFieldHelp.attachEvent("opened", _handleFieldHelpOpened, this);
-				} else {
-					oFieldHelp.attachEvent("open", _handleFieldHelpOpened, this); // as old FieldHelp has no opened event use open event. But this is also fires async there
-				}
+				oFieldHelp.attachEvent("opened", _handleFieldHelpOpened, this);
 				var aConditions = this.getConditions();
 				_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
 
@@ -2947,7 +2935,6 @@ sap.ui.define([
 	 *
 	 * @returns {object} formatOptions of the field
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldHelpBase
 	 */
 	FieldBase.prototype._getFormatOptions = function() {
 

@@ -37,30 +37,6 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
                 group: "Testsuite",
                 page: "test-resources/sap/ui/mdc/qunit/field/content/testsuite.fieldcontent.qunit.html"
             },
-			/**
-			 * @deprecated since 1.110
-			 */
-			"BoolFieldHelp": {
-                module: "./BoolFieldHelp.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/field]"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
-			/**
-			 * @deprecated since 1.110
-			 */
-			"ConditionFieldHelp": {
-                module: "./ConditionFieldHelp.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/field]"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
             "ConditionType": {
                 module: "./ConditionType.qunit"
 			},
@@ -90,18 +66,6 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 					qunitBridge: true
 				}
 			},
-			/**
-			 * @deprecated since 1.110
-			 */
-			"FieldHelp": {
-				module: "./FieldHelp.qunit",
-				ui5: {
-					animationMode: "none"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
 			"FieldInfoBase": {
 				module: "./FieldInfoBase.qunit",
 				coverage: {
@@ -112,77 +76,9 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 				module: "./FieldInfo.qunit",
 				sinon: false
 			},
-			/**
-			 * @deprecated since 1.110
-			 */
-			"FieldValueHelp": {
-				module: "./FieldValueHelp.qunit",
-				ui5: {
-					animationMode: "none"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
-			/**
-			 * @deprecated since 1.110
-			 */
-			"FieldValueHelpMTableWrapper": {
-				module: "./FieldValueHelpMTableWrapper.qunit",
-				ui5: {
-					animationMode: "none"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
-			/**
-			 * @deprecated since 1.110
-			 */
-			"FieldValueHelpUITableWrapper": {
-				group: "Field",
-				module: "./FieldValueHelpUITableWrapper.qunit",
-				ui5: {
-					animationMode: "none"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
-			/**
-			 * @deprecated since 1.110
-			 */
-			"FieldValueHelpMdcTableWrapper": {
-				group: "Field",
-				module: "./FieldValueHelpMdcTableWrapper.qunit",
-				ui5: {
-					animationMode: "none"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
 			"FilterField": {
 				module: "./FilterField.qunit",
 				sinon: true
-			},
-			/**
-			 * @deprecated since 1.110
-			 */
-			"ListFieldHelp": {
-				module: "./ListFieldHelp.qunit",
-				sinon: {
-					qunitBridge: true
-				}
-			},
-			/**
-			 * @deprecated since 1.110
-			 */
-			"ValueHelpPanel": {
-				module: "./ValueHelpPanel.qunit",
-				coverage: {
-					only: "[sap/ui/mdc/field]"
-				}
 			},
 			"MultiValueField": {
 				module: "./MultiValueField.qunit",
@@ -191,28 +87,12 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 		}
 	};
 
-	if (EnvHelper.isSapUI5) {
-		mConfig = merge({}, mConfig, {
-			tests: {
-				/**
-				 * @deprecated since 1.110
-				 */
-				"FieldValueHelpOPATests": {
-					loader: {
-						paths: {
-							"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
-							"sap/ui/v4demo": "test-resources/sap/ui/mdc/qunit/field/opa/valuehelp"
-						}
-					},
-					qunit: {
-						reorder: false
-					},
-					autostart: false, // tests are added asynchronously because the V4 server needs to be found first
-					module: "test-resources/sap/ui/mdc/qunit/field/opa/valuehelp/opaTests.qunit"
-				}
-			}
-		});
-	}
+	// if (EnvHelper.isSapUI5) {
+	// 	mConfig = merge({}, mConfig, {
+	// 		tests: {
+	// 		}
+	// 	});
+	// }
 
 	return mConfig;
 });

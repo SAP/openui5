@@ -102,31 +102,17 @@ sap.ui.define([
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField._getOperators = fnGetOperators; // fake Field
-			oBaseField = oView.byId("FB1-vh");
-			oBaseField._fireChange = fnFireChange;
-			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField._getOperators = fnGetOperators; // fake Field
 			oBaseField = oView.byId("FB2");
-			oBaseField._fireChange = fnFireChange;
-			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField._getOperators = fnGetOperators; // fake Field
-			oBaseField = oView.byId("FB2-vh");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField._getOperators = fnGetOperators; // fake Field
 			oBaseField = oView.byId("FB3");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField = oView.byId("FB3-vh");
-			oBaseField._fireChange = fnFireChange;
-			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB4");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB5");
-			oBaseField._fireChange = fnFireChange;
-			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField = oView.byId("FB5-vh");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB6");
@@ -161,22 +147,13 @@ sap.ui.define([
 			oBaseField = oView.byId("FB11");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField = oView.byId("FB11-vh");
-			oBaseField._fireChange = fnFireChange;
-			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB12");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB13");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField = oView.byId("FB13-vh");
-			oBaseField._fireChange = fnFireChange;
-			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB14");
-			oBaseField._fireChange = fnFireChange;
-			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField = oView.byId("FB14-vh");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB15");
@@ -195,10 +172,6 @@ sap.ui.define([
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField._getOperators = fnGetOperators; // fake Field
-			oBaseField = oView.byId("FB18-vh");
-			oBaseField._fireChange = fnFireChange;
-			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField._getOperators = fnGetOperators; // fake Field
 			oBaseField = oView.byId("FB19");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
@@ -209,9 +182,6 @@ sap.ui.define([
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField = oView.byId("FB-Country");
-			oBaseField._fireChange = fnFireChange;
-			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField = oView.byId("FB-Country-vh");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 
@@ -256,10 +226,6 @@ sap.ui.define([
 			FilterOperatorUtil.addOperator(oMyOperator);
 
 			oBaseField = oView.byId("FB-MatrId");
-			oBaseField._fireChange = fnFireChange;
-			oBaseField.attachEvent("change", this.handleChange, this);
-			oBaseField._getOperators = function() {return ["GT", "LT", "myEQ", "myNE"];};
-			oBaseField = oView.byId("FB-MatrId-vh");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
 			oBaseField._getOperators = function() {return ["GT", "LT", "myEQ", "myNE"];};
@@ -469,26 +435,9 @@ sap.ui.define([
 			}
 		},
 
-		toggleFH: function(oEvent) {
-			var oView = this.getView();
-			var oField = oView.byId("FB-MatrId");
-			var bPressed = oEvent.getParameter("pressed");
-			if (bPressed) {
-				var aConditions = oField.getConditions();
-				if (aConditions.length > 1) {
-					oField.setConditions([aConditions[0]]); // clear conditions as ListFieldHelp only allows one
-				}
-				oField.setMaxConditions(1);
-				oField.setFieldHelp(oView.byId("LFH-MatrId"));
-			} else {
-				oField.setFieldHelp(oView.byId("FVH-MatrId"));
-				oField.setMaxConditions(-1);
-			}
-		},
-
 		toggleVH: function(oEvent) {
 			var oView = this.getView();
-			var oField = oView.byId("FB-MatrId-vh");
+			var oField = oView.byId("FB-MatrId");
 			var bPressed = oEvent.getParameter("pressed");
 			if (bPressed) {
 				var aConditions = oField.getConditions();
