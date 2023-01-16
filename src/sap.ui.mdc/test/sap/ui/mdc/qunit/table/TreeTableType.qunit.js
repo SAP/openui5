@@ -89,6 +89,7 @@ sap.ui.define([
 		var oTable = this.createTable();
 
 		assert.deepEqual(oTable.getType().getSupportedP13nModes(), [
+			P13nMode.Column,
 			P13nMode.Sort,
 			P13nMode.Filter,
 			P13nMode.Group, // The delegate is responsible to forbid this

@@ -3,16 +3,13 @@
  */
 
 sap.ui.define([
-	"./GridTableType",
-	"../library"
+	"./GridTableType"
 ], function(
-	GridTableType,
-	library
+	GridTableType
 ) {
 	"use strict";
 
 	var InnerTable;
-	var P13nMode = library.TableP13nMode;
 
 	/**
 	 * Constructor for a new <code>TreeTableType</code>.
@@ -35,20 +32,6 @@ sap.ui.define([
 			library: "sap.ui.mdc"
 		}
 	});
-
-	TreeTableType.prototype.getSupportedP13nModes = function() {
-		var aSupportedModes = GridTableType.prototype.getSupportedP13nModes.apply(this, arguments);
-
-		// TODO: This type does not support column reordering. See #getTableSettings for more info.
-		// As the Column P13n dialog is still allowing movement of the first column, the option will be still disabled by default.
-		// For testing purposes the URL parameter can be set to true, to enable the Column P13n Dialog and Drag&Drop.
-		var oParams = new URLSearchParams(window.location.search);
-		if (oParams.get("sap-ui-xx-v4tree-p13n") !== "true") {
-			aSupportedModes.splice(aSupportedModes.indexOf(P13nMode.Column), 1);
-		}
-
-		return aSupportedModes;
-	};
 
 	TreeTableType.prototype.loadModules = function() {
 		if (InnerTable) {
@@ -95,13 +78,6 @@ sap.ui.define([
 			mTableSettings.plugins[0].destroy();
 			delete mTableSettings.plugins;
 			mTableSettings.selectionMode = "None";
-		}
-
-		// If URL parameter for p13n is not set to true, remove Drag&Drop capabilities for now
-		var oParams = new URLSearchParams(window.location.search);
-		if (oParams.get("sap-ui-xx-v4tree-p13n") !== "true") {
-			mTableSettings.dragDropConfig[0].destroy();
-			delete mTableSettings.dragDropConfig;
 		}
 
 		return mTableSettings;

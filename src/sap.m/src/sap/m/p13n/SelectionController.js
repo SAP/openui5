@@ -38,6 +38,13 @@ sap.ui.define([
 
             this._oAdaptationControl = mSettings.control;
 
+            /**
+             * The 'stableKeys' can be provided in the constructor to exclude the keys from the p13n UI, while still respecting them in the
+             * delta logic. For instance by ignoring the first column of a TreeTable in the p13n dialog while still not removing this column
+             * on closing the dialog.
+             */
+            this._aStableKeys = mSettings.stableKeys || [];
+
             if (!this._oAdaptationControl) {
                 throw new Error("Always provide atleast a 'control' configuration when creating a new p13n controller!");
             }
@@ -169,6 +176,15 @@ sap.ui.define([
             ? mPropertyBag.changedState.filter(fnFilterUnselected) :
             this._getFilledArray(mPropertyBag.existingState, mPropertyBag.changedState, sPresenceAttribute).filter(fnFilterUnselected);
 
+        this._aStableKeys.forEach(function(sKey, iIndex){
+            var mExistingState = this.arrayToMap(this.getCurrentState());
+            var mNewState = this.arrayToMap(aNewStatePrepared);
+            var iStableIndex = mExistingState[sKey] || (iIndex - 1);
+
+            if (!mNewState.hasOwnProperty(sKey)) {
+                aNewStatePrepared.splice(iStableIndex, 0,mExistingState[sKey]);
+            }
+        }.bind(this));
         mPropertyBag.changedState = aNewStatePrepared;
 
         //Example: Dialog Ok --> don't trigger unnecessary flex change processing
@@ -359,7 +375,7 @@ sap.ui.define([
             var oExisting = mItemState[oProperty.name || oProperty.key];
             mItem.visible = this._fSelector ? this._fSelector(oProperty) : (!!oExisting);
             mItem.position =  oExisting ? oExisting.position : -1;
-            return !(oProperty.visible === false);
+            return !(oProperty.visible === false || (this._aStableKeys.indexOf(oProperty.name || oProperty.key) > -1));
         }.bind(this));
 
         this.sortP13nData({
