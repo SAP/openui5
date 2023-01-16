@@ -31,6 +31,9 @@ sap.ui.define([
 				.returns({
 					getBindingNamespaces: function () {
 						return {};
+					},
+					removeActiveLoadingProvider: function () {
+
 					}
 				});
 			this.oTimelineContent.setConfiguration({
