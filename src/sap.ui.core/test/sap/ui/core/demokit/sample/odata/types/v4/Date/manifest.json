@@ -27,7 +27,7 @@
 					"data/EdmTypesV4.json",
 					"manifest.json",
 					"Component.js",
-					"Sandbox.js"
+					"SandboxModel.js"
 				]
 			}
 		},
@@ -51,14 +51,9 @@
 					"operationMode": "Server",
 					"updateGroupId": "UpdateGroup"
 				},
-				"type": "sap.ui.model.odata.v4.ODataModel",
+				"type": "sap.ui.core.sample.odata.types.v4.Date.SandboxModel",
 				"uriSettingName": "serviceUrl"
 			}
-		},
-		"resources": {
-			"js": [{
-				"uri": "Sandbox.js"
-			}]
 		},
 		"rootView": {
 			"viewName": "sap.ui.core.sample.odata.types.v4.Date.Date",

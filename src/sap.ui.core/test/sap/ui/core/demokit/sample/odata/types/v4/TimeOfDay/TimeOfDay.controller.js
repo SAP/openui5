@@ -27,11 +27,11 @@ sap.ui.define([
 			Timezone: Configuration.getTimezone()
 		}),
 
-		formatTime: function (vValue) {
+		formatTimeOfDay: function (vValue) {
 			return vValue ? "\"" + vValue + "\"" : "<null>";
 		},
 
-		formatTimeAsURIParameter: function (vValue) {
+		formatTimeOfDayAsURIParameter: function (vValue) {
 			return vValue ? ODataUtils.formatLiteral(vValue, "Edm.TimeOfDay") : "<null>";
 		},
 
