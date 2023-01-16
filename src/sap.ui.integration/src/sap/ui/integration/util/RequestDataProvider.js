@@ -162,7 +162,7 @@ sap.ui.define([
 			"dataType": sDataType,
 			"data": vData,
 			"headers": mHeaders,
-			"timeout": 15000,
+			"timeout": oRequestConfig.timeout !== undefined ? oRequestConfig.timeout : 15000,
 			"xhrFields": {
 				"withCredentials": !!oRequestConfig.withCredentials
 			}

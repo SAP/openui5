@@ -301,6 +301,11 @@
 					"pattern": "measurements",
 					"name": "measurements",
 					"target": "measurements"
+				},
+				{
+					"pattern": "requests",
+					"name": "requests",
+					"target": "requests"
 				}
 			],
 			"targets": {
@@ -531,6 +536,11 @@
 				"measurements": {
 					"id": "measurements",
 					"name": "CardMeasurements",
+					"level": 1
+				},
+				"requests": {
+					"id": "requests",
+					"name": "Requests",
 					"level": 1
 				}
 			}

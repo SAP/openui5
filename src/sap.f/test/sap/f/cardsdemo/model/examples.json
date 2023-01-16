@@ -259,5 +259,11 @@
 		"description": "Get an overview of which card lifecycle events are measured.\nNote: this page is not optimized and the results should not be taken into account",
 		"route": "measurements",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Data Requests",
+		"description": "Play around with data requests.",
+		"route": "requests",
+		"group": "Other Card Examples"
 	}
 ]
