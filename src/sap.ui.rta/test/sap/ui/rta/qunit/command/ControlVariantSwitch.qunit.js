@@ -29,7 +29,7 @@ sap.ui.define([
 			}).then(function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(oInitializedModel);
-				this.fnUpdateCurrentVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
+				this.oUpdateCurrentVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant").resolves();
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -52,8 +52,8 @@ sap.ui.define([
 					return oSwitchCommand.execute();
 				})
 				.then(function() {
-					assert.equal(this.fnUpdateCurrentVariantStub.callCount, 1, "then updateCurrentVariant after execute command is called once");
-					assert.deepEqual(this.fnUpdateCurrentVariantStub.getCall(0).args[0], {
+					assert.equal(this.oUpdateCurrentVariantStub.callCount, 1, "then updateCurrentVariant after execute command is called once");
+					assert.deepEqual(this.oUpdateCurrentVariantStub.getCall(0).args[0], {
 						variantManagementReference: this.sVariantManagementReference,
 						newVariantReference: oSwitchCommandData.targetVariantReference,
 						appComponent: this.oMockedAppComponent
@@ -63,8 +63,8 @@ sap.ui.define([
 					return oSwitchCommand.undo();
 				})
 				.then(function() {
-					assert.equal(this.fnUpdateCurrentVariantStub.callCount, 2, "then updateCurrentVariant after undo command is called once again");
-					assert.deepEqual(this.fnUpdateCurrentVariantStub.getCall(1).args[0], {
+					assert.equal(this.oUpdateCurrentVariantStub.callCount, 2, "then updateCurrentVariant after undo command is called once again");
+					assert.deepEqual(this.oUpdateCurrentVariantStub.getCall(1).args[0], {
 						variantManagementReference: this.sVariantManagementReference,
 						newVariantReference: oSwitchCommandData.sourceVariantReference,
 						appComponent: this.oMockedAppComponent
@@ -110,9 +110,9 @@ sap.ui.define([
 				})
 				.then(function() {
 					assert.deepEqual(oSwitchCommand._aSourceVariantDirtyChanges, aDirtyChanges, "then the dirty changes are retrieved correctly");
-					assert.equal(this.fnUpdateCurrentVariantStub.callCount, 1, "then updateCurrentVariant after execute command is called once");
+					assert.equal(this.oUpdateCurrentVariantStub.callCount, 1, "then updateCurrentVariant after execute command is called once");
 					assert.ok(oCheckUpdateStub.calledOnce, "then the model is synchronized");
-					assert.deepEqual(this.fnUpdateCurrentVariantStub.getCall(0).args[0], {
+					assert.deepEqual(this.oUpdateCurrentVariantStub.getCall(0).args[0], {
 						variantManagementReference: this.sVariantManagementReference,
 						newVariantReference: oSwitchCommandData.targetVariantReference,
 						appComponent: this.oMockedAppComponent
@@ -125,12 +125,13 @@ sap.ui.define([
 					assert.deepEqual(oAddAndApplyChangesStub.getCall(0).args[0], aDirtyChanges, "then the changes are applied again");
 					assert.deepEqual(oSwitchCommand._aSourceVariantDirtyChanges, null, "then the dirty changes are cleared on the command");
 					assert.ok(oCheckUpdateStub.calledTwice, "then the model is synchronized again");
-					assert.equal(this.fnUpdateCurrentVariantStub.callCount, 2, "then updateCurrentVariant after undo command is called once again");
-					assert.deepEqual(this.fnUpdateCurrentVariantStub.getCall(1).args[0], {
+					assert.equal(this.oUpdateCurrentVariantStub.callCount, 2, "then updateCurrentVariant after undo command is called once again");
+					assert.deepEqual(this.oUpdateCurrentVariantStub.getCall(1).args[0], {
 						variantManagementReference: this.sVariantManagementReference,
 						newVariantReference: oSwitchCommandData.sourceVariantReference,
 						appComponent: this.oMockedAppComponent
 					}, "then updateCurrentVariant after undo command is called with the correct parameters");
+					assert.ok(this.oUpdateCurrentVariantStub.calledBefore(oAddAndApplyChangesStub), "then the variant is updated before the dirty changes are applied");
 				}.bind(this));
 		});
 
@@ -147,13 +148,13 @@ sap.ui.define([
 					return oSwitchCommand.execute();
 				})
 				.then(function() {
-					assert.equal(this.fnUpdateCurrentVariantStub.callCount, 0, "then updateCurrentVariant after execute command is not called");
+					assert.equal(this.oUpdateCurrentVariantStub.callCount, 0, "then updateCurrentVariant after execute command is not called");
 				}.bind(this))
 				.then(function() {
 					return oSwitchCommand.undo();
 				})
 				.then(function() {
-					assert.equal(this.fnUpdateCurrentVariantStub.callCount, 0, "then updateCurrentVariant after undo command is not called");
+					assert.equal(this.oUpdateCurrentVariantStub.callCount, 0, "then updateCurrentVariant after undo command is not called");
 				}.bind(this))
 				.catch(function (oError) {
 					assert.ok(false, 'catch must never be called - Error: ' + oError);
