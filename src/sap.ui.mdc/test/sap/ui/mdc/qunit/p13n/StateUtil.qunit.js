@@ -1410,6 +1410,33 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Ceck in case the position explicitly changed through an insert", function(assert) {
+
+		var done = assert.async();
+
+		StateUtil.diffState(this.oTable, {
+			items: [{
+				name: "Single"
+			},{
+				name: "Decimal"
+			}]
+		}, {
+			items: [{
+				name: "String"
+			},{
+				name: "Single"
+			},{
+				name: "Decimal"
+			}]
+		})
+		.then(function(oStateDiff){
+			assert.equal(oStateDiff.items[0].name, "String", "The state diff includes the added item");
+			assert.equal(oStateDiff.items[0].position, 0, "The state diff includes the position for the added item");
+			done();
+		});
+
+	});
+
 	QUnit.test("Ceck only diff returned between two different states", function(assert) {
 
 		var done = assert.async();

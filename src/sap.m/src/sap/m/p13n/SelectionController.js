@@ -429,14 +429,20 @@ sap.ui.define([
     SelectionController.prototype.changesToState = function(aChanges) {
 
         var aState = [];
+        var aCurrentState = this.getCurrentState();
 
         aChanges.forEach(function(oChange){
             var oStateDiffContent = merge({}, oChange.changeSpecificData.content);
             var iIndex = oStateDiffContent.index;
             delete oStateDiffContent.index;
 
-            //set the position attribute in case to an explicit move
-            if (oChange.changeSpecificData.changeType === this.getChangeOperations()["move"]) {
+            //set the position attribute in case the index is explicitly provided
+            var iCurrentIndex = aCurrentState.indexOf(aCurrentState.find(function(oItem){
+                return oItem.name === oStateDiffContent.name;
+            }));
+
+            //set the position in case its explicitly provided and different to the current position
+            if (iIndex !== undefined && iIndex !== iCurrentIndex) {
                 oStateDiffContent.position = iIndex;
             }
 
