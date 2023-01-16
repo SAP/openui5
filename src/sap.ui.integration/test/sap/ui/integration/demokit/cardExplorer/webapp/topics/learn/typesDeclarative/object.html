@@ -177,6 +177,7 @@
 								<li>"IconGroup" (experimental since 1.100) - see <a href="#iconGroupProperties">Additional Properties for ObjectGroupItem of type IconGroup</a></li>
 								<li>"ComboBox" (experimental since 1.104) - see <a href="#comboBoxProperties">Additional Properties for ObjectGroupItem of type ComboBox</a></li>
 								<li>"TextArea" (experimental since 1.104) - see <a href="#textAreaProperties">Additional Properties for ObjectGroupItem of type TextArea</a></li>
+								<li>"RatingIndicator" (experimental since 1.111) - see <a href="#ratingIndicatorProperties">Additional Properties for ObjectGroupItem of type RatingIndicator</a></li>
 							</ul>
 						</td>
 						<td>1.15.0</td>
@@ -891,6 +892,50 @@
 					</tr>
 				</table>
 			</div>
+
+			<h4 id="ratingIndicatorProperties">RatingIndicator Properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>maxValue</td>
+						<td>number</td>
+						<td>5</td>
+						<td>No</td>
+						<td>The number of displayed rating symbols.</td>
+						<td>1.51</td>
+						<td>1.111</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>number</td>
+						<td>0</td>
+						<td>No</td>
+						<td>The indicated value of the rating.</td>
+						<td>1.51</td>
+						<td>1.111</td>
+					</tr>
+					<tr>
+						<td>visualMode</td>
+						<td><a data-demokit-href="#/api/sap.m.RatingIndicatorVisualMode" target="_blank">sap.m.RatingIndicatorVisualMode</a></td>
+						<td>"Half"</td>
+						<td>No</td>
+						<td>Defines how float values are visualized: Full (values are rounded to the nearest integer value (e.g. 1.7 -> 2)) or  Half (values are rounded to the nearest half value (e.g. 1.7 -> 1.5))</td>
+						<td>1.51</td>
+						<td>1.111</td>
+					</tr>
+				</table>
+			</div>
+
+
 			<h2 id="example">Example</h2>
 			<p>Define the type and data for the card:
 			</p>

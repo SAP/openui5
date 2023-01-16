@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/m/Avatar",
 	"sap/m/Link",
 	"sap/m/Label",
+	"sap/m/RatingIndicator",
 	"sap/ui/integration/controls/ObjectStatus",
 	"sap/m/ComboBox",
 	"sap/m/TextArea",
@@ -48,6 +49,7 @@ sap.ui.define([
 	Avatar,
 	Link,
 	Label,
+	RatingIndicator,
 	ObjectStatus,
 	ComboBox,
 	TextArea,
@@ -458,6 +460,9 @@ sap.ui.define([
 			case "TextArea":
 				oControl = this._createTextAreaItem(oItem, vVisible, oLabel, sPath);
 				break;
+			case "RatingIndicator":
+				oControl = this._createRatingIndicatorItem(oItem, vVisible);
+				break;
 
 			// deprecated types
 			case "link":
@@ -800,6 +805,19 @@ sap.ui.define([
 			onAfterRendering: fnUpdateValue
 		});
 		this._prepareValidationControl(oControl, oItem, "liveChange", sPath);
+
+		return oControl;
+	};
+
+	ObjectContent.prototype._createRatingIndicatorItem = function (oItem, vVisible) {
+		var oControl = new RatingIndicator({
+			editable: false,
+			displayOnly: true,
+			maxValue: oItem.maxValue,
+			value: oItem.value,
+			visualMode: oItem.visualMode,
+			visible: BindingHelper.reuse(vVisible)
+		});
 
 		return oControl;
 	};

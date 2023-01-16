@@ -154,6 +154,11 @@
 									}
 								}
 							]
+						},
+						{
+							"label": "Rating",
+							"type": "RatingIndicator",
+							"value": 3.5
 						}
 					]
 				},
