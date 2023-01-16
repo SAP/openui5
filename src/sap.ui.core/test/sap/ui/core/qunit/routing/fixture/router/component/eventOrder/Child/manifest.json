@@ -1,0 +1,49 @@
+{
+	"sap.app": {
+		"id": "qunit.router.component.eventOrder.Child",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.router.component.eventOrder.Child.view.RootView",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"async": true,
+				"controlAggregation": "content",
+				"controlId": "nestedShell1",
+				"viewType" : "XML",
+				"type": "View",
+				"path": "qunit.router.component.eventOrder.Child.view"
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "nestedView1",
+					"target": {
+						"name": "nestedView1"
+					}
+				},
+				{
+					"pattern": "view2",
+					"name": "nestedView2",
+					"target": "nestedView2"
+				}
+			],
+			"targets": {
+				"nestedView1": {
+					"name": "NestedView1",
+					"title": "TitleNestedView1"
+				},
+				"nestedView2": {
+					"name": "NestedView2",
+					"title": "TitleNestedView2"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,25 @@
+{
+	"sap.app": {
+		"id": "qunit.router.component.asyncContentCreation.Child",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"routing": {
+			"config": {
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "product/{id}",
+					"name": "product"
+				},
+				{
+					"pattern": "",
+					"name": "nestedHome"
+				}
+			]
+		}
+	}
+}

@@ -1,0 +1,46 @@
+{
+	"sap.app": {
+		"id": "qunit.router.component.sharedRouter.Parent",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.router.component.sharedRouter.Parent.view.RootView",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"async": true,
+				"propagateTitle": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "home",
+					"target": {
+						"name": "home",
+						"prefix": "child"
+					}
+				},
+				{
+					"pattern": "second",
+					"name": "second"
+				}
+			],
+			"targets": {
+				"home": {
+					"name": "Child",
+					"path": "qunit.router.component.sharedRouter",
+					"type": "Component",
+					"id": "childComponent1",
+					"title": "My Child Title",
+					"controlId": "shell",
+					"controlAggregation": "content"
+				}
+			}
+		}
+	}
+}

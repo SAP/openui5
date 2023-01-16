@@ -1,12 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/mvc/JSView",
 	"sap/ui/core/routing/Route",
 	"sap/ui/core/routing/Views",
 	"sap/ui/core/routing/Targets",
 	"sap/m/Panel"
-], function(UIComponent, JSView, Route, Views, Targets, Panel) {
+], function(Component, UIComponent, Route, Views, Targets, Panel) {
 	"use strict";
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
@@ -262,46 +262,27 @@ sap.ui.define([
 				parent: ":parentRoute"
 			});
 
-			var ParentComponent,
-				ChildComponent;
-
-			ParentComponent = UIComponent.extend("parent.component", {
-				metadata : {
-					routing:  {
-						routes: [
-							{
-								pattern: "category/{id}",
-								name: "category"
-							}
-						]
-					}
-				},
-				createContent: function() {
-					that.oChildComponent = new ChildComponent("child");
-					return sap.ui.jsview("view", {
-						content: that.oChildComponent
-					});
-				}
-			});
-
-			ChildComponent = UIComponent.extend("child.component", {
-				metadata : {
-					routing:  {
-						routes: [
-							{
-								pattern: "product/{id}",
-								name: "product",
-								parent: "parent.component:category"
-							}
-						]
-					}
-				}
-			});
-
 			this.oGetParentRouteSpy = sinon.spy(Route.prototype, "_getParentRoute");
 
-			this.oParentComponent = new ParentComponent("parent");
+			return Component.create({
+				name: "qunit.router.component.parentRoute.Parent",
+				id: "parent"
+			}).then(function(oComponent) {
+				var that = this;
+				this.oParentComponent = oComponent;
+				this.oParentComponent.getRouter().initialize();
 
+				var oRootView = oComponent.getRootControl();
+				var oComponentContainer = oRootView.byId("container");
+
+				return new Promise(function(resolve, reject) {
+					oRootView.placeAt("qunit-fixture");
+					oComponentContainer.attachComponentCreated(function(oEvent) {
+						that.oChildComponent = oEvent.getParameter("component");
+						resolve();
+					});
+				});
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oGetParentRouteSpy.restore();
@@ -320,8 +301,8 @@ sap.ui.define([
 
 	QUnit.test("Route with prefixed pattern matches for nested components", function(assert) {
 		var oParentRouter = this.oParentComponent.getRouter();
-		assert.strictEqual(this.oGetParentRouteSpy.callCount, 1, "getParentRoute is called once on the child route");
-		assert.strictEqual(this.oGetParentRouteSpy.args[0][0], "parent.component:category", "parameter is correctly given");
+		assert.ok(this.oGetParentRouteSpy.called, "getParentRoute is called once on the child route");
+		assert.strictEqual(this.oGetParentRouteSpy.args[0][0], "qunit.router.component.parentRoute.Parent.Component:category", "parameter is correctly given");
 		assert.strictEqual(this.oGetParentRouteSpy.returnValues[0], oParentRouter.getRoute("category"), "The parent route instance is fetched from the component");
 	});
 

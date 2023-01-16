@@ -1,0 +1,70 @@
+{
+	"sap.app": {
+		"id": "qunit.router.component.eventOrder.Parent",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.router.component.eventOrder.Parent.view.RootView",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"async": true,
+				"controlId": "shell",
+				"controlAggregation": "content",
+				"propagateTitle": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "home",
+					"target": {
+						"name": "home",
+						"prefix": "child"
+					}
+				},
+				{
+					"pattern": "second",
+					"name": "second",
+					"target": {
+						"name": "second",
+						"prefix": "child"
+					}
+				},
+				{
+					"pattern": "view1",
+					"name": "parentView1",
+					"target": "parentView1"
+
+				}
+			],
+			"targets": {
+				"home": {
+					"name": "Child",
+					"path": "qunit.router.component.eventOrder",
+					"type": "Component",
+					"id": "component1",
+					"title": "{/titleComponent1}"
+				},
+				"second": {
+					"name": "Child1",
+					"path": "qunit.router.component.eventOrder",
+					"type": "Component",
+					"id": "component2",
+					"title": "TitleComponent2"
+				},
+				"parentView1": {
+					"name": "ParentView1",
+					"viewType": "XML",
+					"type": "View",
+					"path": "qunit.router.component.eventOrder.Parent.view",
+					"title": "TitleParentView1"
+				}
+			}
+		}
+	}
+}

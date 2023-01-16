@@ -1,0 +1,27 @@
+{
+	"sap.app": {
+		"id": "qunit.router.component.parentRoute.Child",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.router.component.parentRoute.Child.view.RootView",
+			"type": "XML",
+			"async": true
+		},
+		"routing": {
+			"config": {
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "product/{id}",
+					"name": "product",
+					"parent": "qunit.router.component.parentRoute.Parent.Component:category"
+				}
+			]
+		}
+	}
+}

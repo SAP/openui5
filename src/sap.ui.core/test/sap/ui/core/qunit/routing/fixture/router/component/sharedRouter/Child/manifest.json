@@ -1,0 +1,15 @@
+{
+	"sap.app": {
+		"id": "qunit.router.component.sharedRouter.Child",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.router.component.sharedRouter.Child.view.RootView",
+			"type": "XML",
+			"async": true
+		}
+	}
+}
