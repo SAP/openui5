@@ -372,5 +372,13 @@ sap.ui.define([
             }
         };
 
+        /**
+         * @private
+         * @ui5-restricted sap.ui.mdc
+         */
+        ChartToolbar.prototype.getSettingsButton = function() {
+            return this._oSettingsBtn;
+        };
+
         return ChartToolbar;
     });

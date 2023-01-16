@@ -43,6 +43,20 @@ sap.ui.define([
             fnExecuteOnRebind();
         };
         oSomeInstance.isFilteringEnabled = function(){ return bInbuiltEnabled;};
+        oSomeInstance.getFilterConditions = function(){return {conditionA : ["abc"], conditionB: ["def"]};};
+        oSomeInstance.getPropertyHelper = function() {
+            return {
+                getProperty : function(sPropName){
+                    if (sPropName === "conditionA") {
+                        return {label: "ABC"};
+                    } else if (sPropName === "conditionB") {
+                        return {label: "DEF"};
+                    }
+
+                    return undefined;
+                }
+            };
+        };
 
         return oSomeInstance;
     };
@@ -287,5 +301,20 @@ sap.ui.define([
 		assert.ok(oOnFiltersChanged.notCalled, "Fired 'filtersChanged' event on previously associated filter: _onFiltersChanged is not called");
 		assert.ok(oOnFilterSearch.notCalled, "Fired 'search' event on previously associated filter: _onFilterSearch is not called");
 	});
+
+    QUnit.test("Filter label functionality", function(assert) {
+        //Arrange
+        oSomeInstance = fnCreateValidInstance();
+
+        //Act
+        var aLabels = oSomeInstance._getLabelsFromFilterConditions();
+
+        //Assert
+        assert.equal(aLabels.length, 2, "Expected two filter labels");
+        assert.equal(aLabels[0], "ABC", "Correct first label returned");
+        assert.equal(aLabels[1], "DEF", "Correct second label returned");
+
+
+    });
 
 });

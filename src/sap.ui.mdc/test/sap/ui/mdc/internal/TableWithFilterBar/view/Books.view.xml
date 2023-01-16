@@ -745,6 +745,7 @@
                     "kind": "Groupable",
                     "visible": true,
                     "type": "Edm.String",
+					"dataType": "String",
                     "group": "",
                     "groupLabel": "",
                     "caseSensitive": true
@@ -778,6 +779,7 @@
                 "kind": "Aggregatable",
                 "visible": true,
                 "type": "Edm.String",
+				"dataType": "String",
                 "group": "",
                 "groupLabel": "",
                 "caseSensitive": true

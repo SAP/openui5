@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core"
-], function (Core) {
+	"sap/ui/core/Core",
+	"sap/base/Log"
+], function (Core, Log) {
 	"use strict";
 
 	/**
@@ -219,11 +220,36 @@ sap.ui.define([
 
 	};
 
+	FilterIntegrationMixin._getLabelsFromFilterConditions = function() {
+		var aLabels = [];
+
+		if (this.getFilterConditions) {
+			var aFilterConditions = this.getFilterConditions();
+			Object.keys(aFilterConditions).forEach(function(oConditionKey){
+
+				if (!aFilterConditions[oConditionKey] || aFilterConditions[oConditionKey].length < 1) {
+					return;
+				}
+
+				var sLabel = this.getPropertyHelper().getProperty(oConditionKey) ? this.getPropertyHelper().getProperty(oConditionKey).label : null;
+
+				if (sLabel) {
+					aLabels.push(sLabel);
+				} else {
+					Log.error("No valid property found for filter with key " + oConditionKey + ". Check your metadata.");
+				}
+			}.bind(this));
+		}
+
+		return aLabels;
+	};
+
 	return function () {
 
         this.setFilter = FilterIntegrationMixin.setFilter;
 		this._validateFilter = FilterIntegrationMixin._validateFilter;
         this.rebind = FilterIntegrationMixin.rebind;
+		this._getLabelsFromFilterConditions = FilterIntegrationMixin._getLabelsFromFilterConditions;
 	};
 
 });
