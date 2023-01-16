@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/core/Core",
+	"sap/ui/core/Component",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	jQuery,
@@ -19,6 +20,7 @@ sap.ui.define([
 	ObjectPageSection,
 	XMLHelper,
 	oCore,
+	Component,
 	FlexTestAPI
 ) {
 	"use strict";
@@ -190,40 +192,37 @@ sap.ui.define([
 				content : this.mChangeSpecificContent
 			};
 
-			this.oComponent = oCore.createComponent({
-				name: "testComponent",
-				id: "testComponent",
-				metadata: {
-					manifest: "json"
-				}
-			});
-			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap">' +
-				'<ObjectPageLayout id="' + this.sObjectPageLayoutId + '">' +
-				'<sections>' +
-				'<ObjectPageSection />' +
-				'</sections>' +
-				'</ObjectPageLayout>' +
-				'</mvc:View>';
-			this.oXmlView = XMLHelper.parse(this.oXmlString).documentElement;
-			this.oObjectPageLayout = this.oXmlView.childNodes[0];
-
-			this.mPropertyBag = {
-				modifier: XmlTreeModifier,
-				view: this.oXmlView,
-				appComponent: this.oComponent
-			};
-
 			this.oTempObjectPageLayout = new ObjectPageLayout("foo", {
 				sections: []
 			});
+			return Component.create({
+				name: "testComponent",
+				manifest: false
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+				this.oXmlString =
+					'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap">' +
+					'<ObjectPageLayout id="' + this.sObjectPageLayoutId + '">' +
+					'<sections>' +
+					'<ObjectPageSection />' +
+					'</sections>' +
+					'</ObjectPageLayout>' +
+					'</mvc:View>';
+				this.oXmlView = XMLHelper.parse(this.oXmlString).documentElement;
+				this.oObjectPageLayout = this.oXmlView.childNodes[0];
 
-			return FlexTestAPI.createFlexObject({
-				appComponent: this.oComponent,
-				changeSpecificData: this.mSpecificChangeData,
-				selector: this.oTempObjectPageLayout
-			}).then(function(oChange) {
-				this.oChange = oChange;
+				this.mPropertyBag = {
+					modifier: XmlTreeModifier,
+					view: this.oXmlView,
+					appComponent: this.oComponent
+				};
+				return FlexTestAPI.createFlexObject({
+					appComponent: this.oComponent,
+					changeSpecificData: this.mSpecificChangeData,
+					selector: this.oTempObjectPageLayout
+				}).then(function(oChange) {
+					this.oChange = oChange;
+				}.bind(this));
 			}.bind(this));
 		},
 		afterEach : function() {

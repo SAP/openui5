@@ -493,7 +493,8 @@ sap.ui.define([
 				ui5: {
 					resourceroots: {
 						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-					}
+					},
+					"xx-designMode": false //Legacy free test of sap.ui.controller
 				}
 			},
 			"write/api/AppVariantWriteAPI": {
@@ -707,7 +708,8 @@ sap.ui.define([
 				ui5: {
 					resourceroots: {
 						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-					}
+					},
+					"xx-designMode": false //Legacy free test of sap.ui.controller
 				}
 			},
 			"write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory": {

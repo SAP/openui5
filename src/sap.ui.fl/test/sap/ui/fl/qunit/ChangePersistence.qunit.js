@@ -82,6 +82,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			sandbox.restore();
+			this._oComponentInstance.destroy();
 			aControls.forEach(function(control) {
 				control.destroy();
 			});
@@ -1767,6 +1768,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 		afterEach: function() {
+			this._oAppComponentInstance.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -2080,6 +2082,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oServer.restore();
 			sandbox.restore();
+			this._oComponentInstance.destroy();
 			Cache._entries = {};
 		}
 	}, function() {
