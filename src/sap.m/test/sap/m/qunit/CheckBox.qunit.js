@@ -1184,6 +1184,43 @@ sap.ui.define([
 		oCheckBox.destroy();
 	});
 
+	// test that ariaLabelledBy includes the external label's id when the labelFor is set and there is value in the text property
+	QUnit.test("AriaLabelledBy", function (assert) {
+		// system under test
+		var oLabel = new Label({
+				text: "referencing label",
+				labelFor: 'cbTest1'
+			}),
+			oCheckBox = new CheckBox({
+				id: 'cbTest1'
+			}),
+			oCbLabel,
+			sAriaLabelledBy;
+
+		// act
+		oLabel.placeAt("content");
+		oCheckBox.placeAt("content");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oCheckBox.getDomRef().getAttribute("aria-labelledby"), oLabel.getId(), "AriaLabelledBy includes the external label's id");
+
+		// act
+		oCheckBox.setText("Test");
+		Core.applyChanges();
+
+		sAriaLabelledBy = oCheckBox.getDomRef().getAttribute("aria-labelledby");
+		oCbLabel = oCheckBox.getAggregation("_label");
+
+		// assert
+		assert.ok(sAriaLabelledBy.includes(oLabel.getId()), "AriaLabelledBy includes the external label's id");
+		assert.ok(sAriaLabelledBy.includes(oCbLabel.getId()), "AriaLabelledBy includes the internal label's id");
+
+		// cleanup
+		oLabel.destroy();
+		oCheckBox.destroy();
+	});
+
 	QUnit.test("getAccessibilityInfo", function (assert) {
 		var oControl = new CheckBox({ text: "Text" });
 		assert.ok(!!oControl.getAccessibilityInfo, "CheckBox has a getAccessibilityInfo function");
