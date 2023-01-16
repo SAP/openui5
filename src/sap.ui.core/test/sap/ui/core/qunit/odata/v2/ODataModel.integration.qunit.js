@@ -6693,13 +6693,19 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: Messages returned by a function import for an entity contained in a relative
 	// collection get the correct full target.
 	// JIRA: CPOUI5MODELS-230
+	//
+	// The location response header for the function import may contain encoded characters like
+	// "%2A" for "*". These characters are decoded on importing an entity when the entity key
+	// derived from __metadata.uri in the response is normalized. Normalization also has to be done
+	// for the entity key in the location header so that messages have the correct full target.
+	// BCP: 2270118627
 	QUnit.test("Messages: function import for relative list entry; w/ location", function (assert) {
 		var oModel = createSalesOrdersModelMessageScope(),
-			oNoteError = this.createResponseMessage("('1')/Note"),
+			oNoteError = this.createResponseMessage("('1*')/Note"),
 			oToItem10NoteError = this.createResponseMessage(
-				"('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/Note"),
+				"('1*')/ToLineItems(SalesOrderID='1*',ItemPosition='10')/Note"),
 			oItem10NoteError = cloneODataMessage(oToItem10NoteError,
-				"(SalesOrderID='1',ItemPosition='10')/Note"),
+				"(SalesOrderID='1*',ItemPosition='10')/Note"),
 			sView = '\
 <FlexBox binding="{/BusinessPartnerSet(\'100\')}">\
 	<Table items="{ToSalesOrders}">\
@@ -6720,14 +6726,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				requestUri : "BusinessPartnerSet('100')/ToSalesOrders?$skip=0&$top=100"
 			}, {
 				results : [{
-					__metadata : {uri : "SalesOrderSet('1')"},
-					SalesOrderID : "1"
+					__metadata : {uri : "SalesOrderSet('1%2A')"},
+					SalesOrderID : "1*"
 				}]
 			}, {"sap-message" : getMessageHeader([oNoteError, oToItem10NoteError])})
 			.expectMessage(oNoteError, "/SalesOrderSet", "/BusinessPartnerSet('100')/ToSalesOrders")
 			.expectMessage(oItem10NoteError, "/SalesOrderLineItemSet",
-				"/BusinessPartnerSet('100')/ToSalesOrders('1')/ToLineItems")
-			.expectValue("soID", ["1"]);
+				"/BusinessPartnerSet('100')/ToSalesOrders('1*')/ToLineItems")
+			.expectValue("soID", ["1*"]);
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
@@ -6735,32 +6741,32 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			var oPromise,
 				oGrossAmountError = that.createResponseMessage("GrossAmount"),
 				oToItem20QuantityError = that.createResponseMessage(
-					"ToLineItems(SalesOrderID='1',ItemPosition='20')/Quantity"),
+					"ToLineItems(SalesOrderID='1*',ItemPosition='20')/Quantity"),
 				oItem20QuantityError = cloneODataMessage(oToItem20QuantityError,
-					"(SalesOrderID='1',ItemPosition='20')/Quantity");
+					"(SalesOrderID='1*',ItemPosition='20')/Quantity");
 
 			that.expectRequest({
 					encodeRequestUri : false,
 					headers : {"sap-message-scope" : "BusinessObject"},
 					method : "POST",
-					requestUri : "SalesOrder_Confirm?SalesOrderID='1'"
+					requestUri : "SalesOrder_Confirm?SalesOrderID='1*'"
 				}, {
-					__metadata : {uri : "SalesOrderSet('1')"},
-					SalesOrderID : "1"
+					__metadata : {uri : "SalesOrderSet('1%2A')"},
+					SalesOrderID : "1*"
 				}, {
-					location : "/SalesOrderSrv/SalesOrderSet('1')",
+					location : "/SalesOrderSrv/SalesOrderSet('1%2A')",
 					"sap-message" : getMessageHeader([oGrossAmountError, oToItem20QuantityError])
 				})
-				.expectMessage(oGrossAmountError, "/SalesOrderSet('1')/",
-					"/BusinessPartnerSet('100')/ToSalesOrders('1')/", true)
+				.expectMessage(oGrossAmountError, "/SalesOrderSet('1*')/",
+					"/BusinessPartnerSet('100')/ToSalesOrders('1*')/", true)
 				.expectMessage(oItem20QuantityError, "/SalesOrderLineItemSet",
-					"/BusinessPartnerSet('100')/ToSalesOrders('1')/ToLineItems");
+					"/BusinessPartnerSet('100')/ToSalesOrders('1*')/ToLineItems");
 
 			oPromise = oModel.callFunction("/SalesOrder_Confirm", {
 				method : "POST",
 				refreshAfterChange : false,
 				urlParameters : {
-					SalesOrderID : "1"
+					SalesOrderID : "1*"
 				}
 			});
 

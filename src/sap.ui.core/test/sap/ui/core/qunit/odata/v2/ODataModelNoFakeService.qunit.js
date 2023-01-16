@@ -1513,23 +1513,31 @@ sap.ui.define([
 }, {
 	functionMetadata : true,
 	headers : {location : "/service/new/function/target"},
+	normalizeKey : {
+		input : "/new/function/target",
+		output : "/normalized/function/target"
+	},
 	result : {
 		// functionTarget is updated by the new canonical path sliced out of locationHeader;
 		// locationHeader and functionTarget do not match -> no deep path calculation; deepPath is
 		// set to updated functionTarget
-		deepPath : "/new/function/target",
-		functionTarget : "/new/function/target"
+		deepPath : "/normalized/function/target",
+		functionTarget : "/normalized/function/target"
 	}
 }, {
 	functionMetadata : true,
 	headers : {location : "/http/service/new/function/target"},
+	normalizeKey : {
+		input : "/new/function/target",
+		output : "/normalized/function/target"
+	},
 	result : {
 		// functionTarget is updated by the new canonical path sliced out of locationHeader;
 		// oModel.sServiceUrl is not a starting position of the locationHeader;
 		// locationHeader and functionTarget do not match -> no deep path calculation; deepPath is
 		// set to updated functionTarget
-		deepPath : "/new/function/target",
-		functionTarget : "/new/function/target"
+		deepPath : "/normalized/function/target",
+		functionTarget : "/normalized/function/target"
 	}
 }, {
 	getDeepPathForCanonicalPath : {
@@ -1538,6 +1546,10 @@ sap.ui.define([
 	},
 	functionMetadata : true,
 	headers : {location : "/service/function/target"},
+	normalizeKey : {
+		input : "/function/target",
+		output : "/function/target"
+	},
 	result : {
 		// deepPath cannot be updated until getDeepPathForCanonicalPath returns a value; deepPath is
 		// set to functionTarget which is updated by the calculated canonical path
@@ -1551,6 +1563,10 @@ sap.ui.define([
 	},
 	functionMetadata : true,
 	headers : {location : "/service/function/target"},
+	normalizeKey : {
+		input : "/function/target",
+		output : "/function/target"
+	},
 	result : {
 		// deepPath and functionTarget are updated
 		deepPath : "/new/deep/path",
@@ -1586,6 +1602,10 @@ sap.ui.define([
 	contentID2KeyAndDeepPath : {},
 	functionMetadata : true,
 	headers : {location : "/service/different/function/target"},
+	normalizeKey : {
+		input : "/different/function/target",
+		output : "/different/function/target"
+	},
 	result : {
 		// deepPath is updated by calling adjustDeepPath; parameter mParameters.deepPath is taken
 		// from sCanonicalPath (oRequest.functionTarget) which is sliced out of the headers location
@@ -1610,6 +1630,10 @@ sap.ui.define([
 	},
 	functionMetadata : true,
 	headers : {location : "/service/function/target"},
+	normalizeKey : {
+		input : "/function/target",
+		output : "/function/target"
+	},
 	result : {
 		// deepPath is updated by calling adjustDeepPath; parameter mParameters.deepPath is taken
 		// from sDeepPath which is calculated using getDeepPathForCanonicalPath
@@ -1662,6 +1686,13 @@ sap.ui.define([
 		oModelMock.expects("decreaseLaundering").withExactArgs("normalizedPath1", "requestData");
 		oModelMock.expects("_decreaseDeferredRequestCount")
 			.withExactArgs(sinon.match.same(oRequest));
+		if (oFixture.normalizeKey) {
+			this.mock(ODataUtils).expects("_normalizeKey")
+				.withExactArgs(oFixture.normalizeKey.input)
+				.returns(oFixture.normalizeKey.output);
+		} else {
+			this.mock(ODataUtils).expects("_normalizeKey").never();
+		}
 		if (oFixture.getDeepPathForCanonicalPath) {
 			oModelMock.expects("getDeepPathForCanonicalPath")
 				.withExactArgs(oFixture.getDeepPathForCanonicalPath.inputParam)
