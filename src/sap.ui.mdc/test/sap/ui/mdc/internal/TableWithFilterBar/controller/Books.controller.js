@@ -26,6 +26,10 @@ sap.ui.define([
 			});
 		},
 
+		onSearch: function(oEvent) {
+			Log.info("--> 'search' reason: " + oEvent.getParameter("reason"));
+		},
+
 		onStateChanged: function(oEvent) {
 
 			var oView = this.getView();

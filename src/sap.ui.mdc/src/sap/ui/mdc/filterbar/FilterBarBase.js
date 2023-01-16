@@ -18,6 +18,7 @@ sap.ui.define([
 	'sap/ui/mdc/util/IdentifierUtil',
 	'sap/ui/mdc/util/FilterUtil',
 	"sap/ui/mdc/filterbar/PropertyHelper",
+	"sap/ui/mdc/enum/ReasonMode",
 	"sap/ui/mdc/enum/FilterBarValidationStatus",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/m/library",
@@ -41,6 +42,7 @@ sap.ui.define([
 		IdentifierUtil,
 		FilterUtil,
 		PropertyHelper,
+		ReasonMode,
 		FilterBarValidationStatus,
 		ControlVariantApplyAPI,
 		mLibrary,
@@ -225,6 +227,20 @@ sap.ui.define([
 				 * <b>Note</b>: this event should never be executed programmatically. It is triggered internally by the filter bar after a <code>triggerSearch</code> is executed
 				 */
 				search: {
+					/**
+					 * Indicates the initial reason for the search. This can either be:<br>
+					 * <ul>
+					 *     <li><code>{@link sap.ui.mdc.enum.ReasonMode.Variant}</code>: Search is triggered based on variant settings</li>
+					 *     <li><code>{@link sap.ui.mdc.enum.ReasonMode.Enter}</code>: Search is triggered based on pressing Enter in a filter field</li>
+					 *     <li><code>{@link sap.ui.mdc.enum.ReasonMode.Go}</code>: Search is triggered based on pressing the Go button</li>
+					 *     <li><code>{@link sap.ui.mdc.enum.ReasonMode.Unclear}</code>: Any other reasons for the search</li>
+					 * </ul>
+					 *
+					 * @since 1.111.0
+					 */
+					reason: {
+						type: "sap.ui.mdc.enum.ReasonMode"
+					}
 				},
 
 				/**
@@ -849,6 +865,9 @@ sap.ui.define([
 	FilterBarBase.prototype.onSearch = function(oEvent) {
 		if (!this._bSearchPressed) {
 			this._bSearchPressed = true;
+
+			this._sReason = ReasonMode.Go;
+
 			this.triggerSearch().then(function() {
 				this._bSearchPressed = false;
 			}.bind(this), function(){
@@ -1005,6 +1024,8 @@ sap.ui.define([
 
 		var oPromise = oEvent.getParameter("promise");
 		if (oPromise) {
+
+			this._sReason = ReasonMode.Enter;
 
 			oPromise.then(function() {
 				var oWaitPromises = (this._aOngoingChangeAppliance && (this._aOngoingChangeAppliance.length > 0)) ? this._aOngoingChangeAppliance.slice() : [Promise.resolve()];
@@ -1168,7 +1189,12 @@ sap.ui.define([
 	 FilterBarBase.prototype._checkAndNotify = function(bFireSearch, vRetErrorState) {
 		 var fnCheckAndFireSearch = function() {
 			 if (bFireSearch) {
-				 this.fireSearch();
+					var oObj = {
+						reason: this._sReason ? this._sReason : ReasonMode.Unclear
+					};
+					this._sReason = ReasonMode.Unclear;
+
+					this.fireSearch(oObj);
 			 }
 		 }.bind(this);
 
@@ -1843,6 +1869,8 @@ sap.ui.define([
 	FilterBarBase.prototype._handleVariantSwitch = function(oVariant) {
 
 		this._bExecuteOnSelect = this._getExecuteOnSelectionOnVariant(oVariant);
+
+		this._sReason = this._bExecuteOnSelect ? ReasonMode.Variant : ReasonMode.Unclear;
 
 		this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch = false;
 		if (oVariant.hasOwnProperty("createScenario") && (oVariant.createScenario === "saveAs")) {
