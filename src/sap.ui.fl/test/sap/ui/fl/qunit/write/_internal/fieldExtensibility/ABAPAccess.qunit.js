@@ -160,13 +160,13 @@ sap.ui.define([
 			var done = assert.async();
 			oSandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("name");
 			oSandbox.stub(Settings, "getInstance").resolves({
-				isModelS: function() {
+				isAtoEnabled: function() {
 					return true;
 				}
 			});
 
 			return ABAPAccess.isExtensibilityEnabled().then(function(bExtensibilityEnabled) {
-				assert.equal(bExtensibilityEnabled, true, "the function returns the value if isModelS");
+				assert.equal(bExtensibilityEnabled, true, "the function returns the value if isAtoEnabled");
 				done();
 			});
 		});

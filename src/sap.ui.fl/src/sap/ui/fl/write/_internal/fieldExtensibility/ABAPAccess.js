@@ -66,7 +66,7 @@ sap.ui.define([
 			return Promise.resolve(false);
 		}
 		return Settings.getInstance(sComponentName).then(function(oSettings) {
-			return oSettings.isModelS();
+			return oSettings.isAtoEnabled();
 		});
 	};
 
