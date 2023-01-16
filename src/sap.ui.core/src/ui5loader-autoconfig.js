@@ -22,6 +22,7 @@
 
 	var ui5loader = window.sap && window.sap.ui && window.sap.ui.loader,
 		oCfg = window['sap-ui-config'] || {},
+		oParams = new URLSearchParams(window.location.search),
 		sBaseUrl, bNojQuery,
 		aScripts, rBootScripts, i,
 		oBootstrapScript, sBootstrapUrl, bExposeAsAMDLoader = false;
@@ -82,10 +83,10 @@
 		} catch (e) { /* no warning, as this will happen on every startup, depending on browser settings */ }
 
 		/*
-		* Determine whether sap-bootstrap-debug is set, run debugger statement
-		* to allow early debugging in browsers with broken dev tools
-		*/
-		if (/sap-bootstrap-debug=(true|x|X)/.test(location.search)) {
+		 * Determine whether sap-bootstrap-debug is set, run debugger statement
+		 * to allow early debugging in browsers with broken dev tools
+		 */
+		if (/^(true|x|X)$/.test(oParams.get("sap-bootstrap-debug"))) {
 			/*eslint-disable no-debugger */
 			debugger;
 			/*eslint-enable no-debugger */
@@ -111,8 +112,7 @@
 	 */
 	(function() {
 		// check URI param
-		var mUrlMatch = /(?:^|\?|&)sap-ui-debug=([^&]*)(?:&|$)/.exec(window.location.search),
-			vDebugInfo = mUrlMatch && decodeURIComponent(mUrlMatch[1]);
+		var vDebugInfo = oParams.get("sap-ui-debug");
 
 		// check local storage
 		try {
@@ -143,9 +143,9 @@
 		window["sap-ui-debug"] = vDebugInfo;
 
 		// check for optimized sources by testing variable names in a local function
-		// (check for native API ".location" to make sure that the function's source can be retrieved)
+		// (check for native API ".getAttribute" to make sure that the function's source can be retrieved)
 		window["sap-ui-optimized"] = window["sap-ui-optimized"] ||
-			(/\.location/.test(_getOption) && !/oBootstrapScript/.test(_getOption));
+			(/\.getAttribute/.test(_getOption) && !/oBootstrapScript/.test(_getOption));
 
 		if ( window["sap-ui-optimized"] && vDebugInfo ) {
 			// if current sources are optimized and any debug sources should be used, enable the "-dbg" suffix
@@ -224,9 +224,9 @@
 
 	function _getOption(name, defaultValue, pattern) {
 		// check for an URL parameter ...
-		var match = window.location.search.match(new RegExp("(?:^\\??|&)sap-ui-" + name + "=([^&]*)(?:&|$)"));
-		if ( match && (pattern == null || pattern.test(match[1])) ) {
-			return match[1];
+		var urlValue = oParams.get("sap-ui-" + name);
+		if ( urlValue != null && (pattern == null || pattern.test(urlValue)) ) {
+			return urlValue;
 		}
 		// ... or an attribute of the bootstrap tag
 		var attrValue = oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-" + name.toLowerCase());
@@ -254,6 +254,9 @@
 			async: true
 		});
 	}
+
+	// Note: loader converts any NaN value to a default value
+	ui5loader._.maxTaskDuration = _getOption("xx-maxLoaderTaskDuration");
 
 	// support legacy switch 'noLoaderConflict', but 'amdLoader' has higher precedence
 	bExposeAsAMDLoader = _getBooleanOption("amd", !_getBooleanOption("noLoaderConflict", true));
