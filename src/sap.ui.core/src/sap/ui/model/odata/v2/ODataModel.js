@@ -4275,7 +4275,8 @@ sap.ui.define([
 					sHeadersLocation = oResponse.headers.location;
 					iPos = sHeadersLocation.lastIndexOf(this.sServiceUrl);
 					if (iPos > -1) {
-						sCanonicalPath = sHeadersLocation.slice(iPos + this.sServiceUrl.length);
+						sCanonicalPath = ODataUtils._normalizeKey(
+							sHeadersLocation.slice(iPos + this.sServiceUrl.length));
 						if (oRequest.functionTarget === sCanonicalPath) {
 							sDeepPath = this.getDeepPathForCanonicalPath(sCanonicalPath);
 							if (sDeepPath) {
