@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/demo/iconexplorer/controller/ErrorHandler",
 	"sap/ui/core/IconPool",
 	"sap/ui/VersionInfo",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/documentation/sdk/controller/util/ConfigUtil"
 ], function(
 	UIComponent,
 	Device,
@@ -19,7 +20,8 @@ sap.ui.define([
 	ErrorHandler,
 	IconPool,
 	VersionInfo,
-	oCore
+	oCore,
+	ConfigUtil
 ) {
 	"use strict";
 
@@ -135,6 +137,13 @@ sap.ui.define([
 			return this._oIconsLoadedPromise;
 		},
 
+		getConfigUtil: function() {
+			if (!this._oConfigUtil) {
+				this._oConfigUtil = new ConfigUtil(this);
+			}
+			return this._oConfigUtil;
+		},
+
 		/**
 		 * The component is destroyed by UI5 automatically.
 		 * In this method, the ErrorHandler is destroyed.
@@ -147,6 +156,9 @@ sap.ui.define([
 			this._pCookiesComponent && this._pCookiesComponent.then(function(oCookiesMgmtComponent) {
 				oCookiesMgmtComponent.destroy();
 			});
+
+			this._oConfigUtil.destroy();
+			this._oConfigUtil = null;
 
 			// call the base component's destroy function
 			UIComponent.prototype.destroy.apply(this, arguments);

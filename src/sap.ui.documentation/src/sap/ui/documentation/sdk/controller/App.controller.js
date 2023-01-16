@@ -29,7 +29,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Toolbar",
 	"sap/ui/documentation/sdk/util/Resources",
-	'sap/base/util/LoaderExtensions'
+	'sap/base/util/LoaderExtensions',
+	"sap/ui/documentation/sdk/controller/util/ThemePicker"
 ], function(
 	KeyCodes,
 	jQuery,
@@ -57,7 +58,8 @@ sap.ui.define([
 	Button,
 	Toolbar,
 	ResourcesUtil,
-	LoaderExtensions
+	LoaderExtensions,
+	ThemePicker
 ) {
 		"use strict";
 
@@ -92,21 +94,9 @@ sap.ui.define([
 			CHANGE_SETTINGS_TEXT = "settings",
 			CHANGE_COOKIE_PREFERENCES_TEXT = "cookie_preferences",
 			DEMOKIT_DEFAULT_LANGUAGE = "en",
-			DEMOKIT_APPEARANCE_KEY_LIGHT = "light",
-			DEMOKIT_APPEARANCE_KEY_DARK = "dark",
-			DEMOKIT_APPEARANCE_KEY_HCB = "hcb",
-			DEMOKIT_APPEARANCE_KEY_HCW = "hcw",
-			DEMOKIT_APPEARANCE_KEY_AUTO = "auto",
-			DEMOKIT_APPEARANCE = Object.create(null),
 			DEMOKIT_CONFIGURATION_LANGUAGE = "language",
 			DEMOKIT_CONFIGURATION_APPEARANCE = "appearance",
 			SITEMAP = "sitemap";
-
-		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_LIGHT] = "sap_horizon";
-		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_DARK] = "sap_horizon_dark";
-		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_HCB] = "sap_horizon_hcb";
-		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_HCW] = "sap_horizon_hcw";
-		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_AUTO] = "sap_horizon"; // fallback if window.matchMedia is not supported
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			formatter: globalFormatter,
@@ -165,7 +155,10 @@ sap.ui.define([
 					"<a href='https://sdk.openui5.org/1.71.46/'>https://sdk.openui5.org/1.71.46/</a>"
 				});
 
-				var oComponent = this.getOwnerComponent();
+				var oComponent = this.getOwnerComponent(),
+					oController = this;
+
+				ThemePicker.init(oController);
 
 				this.MENU_LINKS_MAP = {
 					"legal": "https://www.sap.com/corporate/en/legal/impressum.html",
@@ -222,10 +215,6 @@ sap.ui.define([
 				this._sLocalStorageNewsName = this._oConfigUtil.LOCAL_STORAGE_NAMES['OLD_NEWS_IDS'];
 
 				NewsInfo.prepareNewsData(this._oConfigUtil);
-
-				this._bSupportsPrefersColorScheme = !!(window.matchMedia &&
-					(window.matchMedia('(prefers-color-scheme: dark)').matches ||
-					window.matchMedia('(prefers-color-scheme: light)').matches));
 
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));
 				this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
@@ -474,7 +463,7 @@ sap.ui.define([
 					}.bind(this));
 				} else if (sTargetText === CHANGE_VERSION_TEXT) {
 					this.onChangeVersionButtonPress();
-				} else if (DEMOKIT_APPEARANCE[sTargetText]) {
+				} else if (ThemePicker._getTheme()[sTargetText]) {
 					this._updateAppearance(sTargetText);
 				} else if (sTarget === SITEMAP) {
 					this.onSiteMapPress();
@@ -705,67 +694,13 @@ sap.ui.define([
 			 * If the keyword is "auto" the appearance will be updated to light or dark depending on the
 			 * user's OS settings.
 			 * @param {string} sKey the appearance keyword
+			 * @param {object} oComponent the component where the theme will be changed
 			 * @private
 			 */
 			_updateAppearance: function(sKey) {
-				if (sKey === DEMOKIT_APPEARANCE_KEY_AUTO && this._bSupportsPrefersColorScheme) {
-						this._toggleLightOrDarkAppearance(window.matchMedia('(prefers-color-scheme: dark)').matches);
-					this._attachPrefersColorSchemeChangeListener();
-				} else {
-					Core.applyTheme(DEMOKIT_APPEARANCE[sKey]);
-				}
-
-				this._sLastKnownAppearanceKey = sKey;
-
-				this.bus.publish("themeChanged", "onDemoKitThemeChanged", {sThemeActive: DEMOKIT_APPEARANCE[sKey]});
-
-				if (this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1") {
-					this._oConfigUtil.setCookie(DEMOKIT_CONFIGURATION_APPEARANCE, sKey);
-				}
+				var oComponent = this;
+				ThemePicker._updateAppearance(sKey, oComponent);
 			},
-
-			/**
-			 * Toggles the appearance of the Demo Kit to light or dark depending on the incoming argument.
-			 * @param {boolean} bIsDark whether the new appearance should be dark
-			 * @private
-			 */
-			_toggleLightOrDarkAppearance: function (bIsDark) {
-				if (bIsDark) {
-					// dark mode
-					Core.applyTheme(DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_DARK]);
-				} else {
-					// light mode or unsupported prefers-color-scheme
-					Core.applyTheme(DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_LIGHT]);
-				}
-			},
-
-			/**
-			 * Attaches an event listener to the 'change' event of the prefers-color-scheme media.
-			 * Depending on the change and the last known appearance, the appearance of the Demo Kit is changed to light, dark, hcb or hcw.
-			 * @private
-			 */
-			_attachPrefersColorSchemeChangeListener: function() {
-				var that = this;
-
-				if (!this._bAttachedPrefersColorSchemeChangeListener) {
-					var oQuery = window.matchMedia('(prefers-color-scheme: dark)');
-					var toggleAppearance = function(e) {
-						if (that._sLastKnownAppearanceKey === DEMOKIT_APPEARANCE_KEY_AUTO) {
-							that._toggleLightOrDarkAppearance(e.matches);
-							that.bus.publish("themeChanged", "onDemoKitThemeChanged", {
-								sThemeActive: DEMOKIT_APPEARANCE[e.matches ? DEMOKIT_APPEARANCE_KEY_DARK : DEMOKIT_APPEARANCE_KEY_LIGHT]
-							});
-						}
-					};
-					if (oQuery.addEventListener) {
-						oQuery.addEventListener('change', toggleAppearance);
-					} else { // Safari 13 and older only supports deprecated MediaQueryList.addListener
-						oQuery.addListener(toggleAppearance);
-					}
-					this._bAttachedPrefersColorSchemeChangeListener = true;
-				}
-			},
-
 			/**
 			 * Creates configuration for the application regarding the URI input.
 			 * @private
@@ -792,7 +727,7 @@ sap.ui.define([
 					if (sConf === DEMOKIT_CONFIGURATION_LANGUAGE) {
 						Core.getConfiguration().setLanguage(DEMOKIT_DEFAULT_LANGUAGE);
 					} else if (sConf === DEMOKIT_CONFIGURATION_APPEARANCE) {
-						this._updateAppearance(DEMOKIT_APPEARANCE_KEY_AUTO);
+						this._updateAppearance(ThemePicker._getTheme().auto);
 					}
 				}, this);
 
