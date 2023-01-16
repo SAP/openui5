@@ -132,15 +132,22 @@ sap.ui.define([
 	 * Handler for when data is changed.
 	 */
 	ObjectContent.prototype.onDataChanged = function () {
+		var oCard = this.getCardInstance();
+
 		if (!this._hasData()) {
-			this.getParent()._handleError("No items available", true);
+			oCard._handleError("No items available", true);
 		}
 
-		this._validateInputFields(false);
+		if (oCard.isReady()) {
+			this._validateInputFields(false);
+		}
 	};
 
-	ObjectContent.prototype.validateControls = function () {
-		this._validateInputFields(true);
+	/**
+	 * @inheritdoc
+	 */
+	ObjectContent.prototype.validateControls = function (bShowValueState) {
+		this._validateInputFields(bShowValueState);
 	};
 
 	ObjectContent.prototype._validationControlChanged = function (oEvent) {

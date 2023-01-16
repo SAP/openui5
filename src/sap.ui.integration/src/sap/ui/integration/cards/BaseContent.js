@@ -656,9 +656,10 @@ sap.ui.define([
 
 	/**
 	* @private
-	* @ui5-restricted
- 	*/
-	BaseContent.prototype.validateControls = function () { };
+	* @ui5-restricted sap.ui.integration
+	* @param {boolean} bShowValueState Defines if the input controls should display their value state
+	 */
+	BaseContent.prototype.validateControls = function (bShowValueState) { };
 
 	BaseContent.prototype.getCardInstance = function () {
 		return Core.byId(this.getCard());

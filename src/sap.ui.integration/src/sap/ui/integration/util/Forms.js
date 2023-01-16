@@ -107,6 +107,8 @@ sap.ui.define([
 					oResourceBundle = oCard.getModel("i18n").getResourceBundle(),
 					oExtension = oCard.getAggregation("_extension"),
 					oItem = oControl._oItem,
+					oBindingContext = oControl.getBindingContext(),
+					sBindingPath = oBindingContext ? oBindingContext.getPath() : "",
 					sInputType,
 					oValidator,
 					oValidationValue,
@@ -124,7 +126,7 @@ sap.ui.define([
 					return;
 				}
 
-				aResolvedValidations = BindingResolver.resolveValue(oItem.validations, oControl, oControl.getBindingContext().getPath());
+				aResolvedValidations = BindingResolver.resolveValue(oItem.validations, oControl, sBindingPath);
 
 				sInputType = _getInputType(oItem);
 				oValidator = Validators[sInputType];
