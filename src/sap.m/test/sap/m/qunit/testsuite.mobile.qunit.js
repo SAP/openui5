@@ -1312,6 +1312,9 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			SelectDialogOData: {
+				title: "QUnit Page for sap.m.SelectDialog"
+			},
 			SelectList: {
 				title: "Test Page for sap.m.SelectList",
 				sinon: {
