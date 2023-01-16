@@ -5932,6 +5932,30 @@ sap.ui.define([
 		assert.notOk(oSelectItemStub.called, "selection should not be called");
 	});
 
+	QUnit.test("onsapenter should deselect already selected item", function(assert) {
+		var oFirstListItem;
+		var oMultiComboBox = new MultiComboBox({
+			selectedKeys: ["GER"],
+			items: [
+				new Item({
+					key: "GER",
+					text: "Germany"
+				})
+			]
+		});
+
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		Core.applyChanges();
+
+		oMultiComboBox.open();
+		oFirstListItem = oMultiComboBox._getList().getItems()[0].getDomRef();
+
+		qutils.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oFirstListItem, KeyCodes.ENTER);
+
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 0, "The item is deselected");
+	});
+
 	QUnit.test("onsaptabprevious should select the highlighted item", function (assert) {
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectedKeys().length, 0, "No items should be selected");
