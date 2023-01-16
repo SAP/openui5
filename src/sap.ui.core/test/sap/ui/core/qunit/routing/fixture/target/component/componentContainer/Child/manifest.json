@@ -1,0 +1,15 @@
+{
+	"sap.app": {
+		"id": "qunit.target.component.componentContainer.Child",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.target.component.componentContainer.Child.view.RootView",
+			"type": "XML",
+			"async": true
+		}
+	}
+}
