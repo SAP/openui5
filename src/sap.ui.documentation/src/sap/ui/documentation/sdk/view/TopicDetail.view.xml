@@ -41,9 +41,9 @@
 		</title>
 
 		<header>
-			<DynamicPageHeader pinnable="fale">
+			<DynamicPageHeader pinnable="false">
 				<content>
-					<m:Text text="{/shortdesc}"/>
+					<m:FormattedText htmlText="{/shortdesc}" class="sapUiDocumentationTopicSubtitle"></m:FormattedText>
 				</content>
 			</DynamicPageHeader>
 		</header>
