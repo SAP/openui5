@@ -664,13 +664,6 @@ sap.ui.define([
 
 	FilterBarBase.prototype._addConditionChange = function(pConditionState) {
 
-		if (!this._oApplyingChanges) {
-			this._fResolveApplyingChanges = undefined;
-			this._oApplyingChanges = new Promise(function(resolve) {
-				this._fResolveApplyingChanges  = resolve;
-			}.bind(this));
-		}
-
 		this._aOngoingChangeAppliance.push(this.getEngine().createChanges({
 			control: this,
 			applySequentially: true,
@@ -1029,8 +1022,12 @@ sap.ui.define([
 
 		var oPromise = oEvent.getParameter("promise");
 		if (oPromise) {
+
 			oPromise.then(function() {
-				this.triggerSearch();
+				var oWaitPromises = (this._aOngoingChangeAppliance && (this._aOngoingChangeAppliance.length > 0)) ? this._aOngoingChangeAppliance.slice() : [Promise.resolve()];
+				Promise.all(oWaitPromises).then(function() {
+					this.triggerSearch();
+				}.bind(this));
 			}.bind(this)).catch(function(oEx) {
 				Log.error(oEx);
 			});
@@ -1403,17 +1400,27 @@ sap.ui.define([
 			// --> no filter changes have been done
 			return Promise.resolve();
 		}
+
+
+		var fResolveApplyingChanges;
+
+		if (!this._oApplyingChanges) {
+			this._oApplyingChanges = new Promise(function(resolve) {
+				fResolveApplyingChanges  = resolve;
+			});
+		}
+
 		return this._setXConditions(this.getFilterConditions()).then(function(){
+
 			this._reportModelChange({
 				triggerSearch: false,
 				triggerFilterUpdate: true,
 				recheckMissingRequired: true
 			});
 
-			if (this._oApplyingChanges) {
-				this._fResolveApplyingChanges();
-				this._oApplyingChanges = null;
-			}
+			fResolveApplyingChanges();
+			this._oApplyingChanges = null;
+
 		}.bind(this));
 	};
 
