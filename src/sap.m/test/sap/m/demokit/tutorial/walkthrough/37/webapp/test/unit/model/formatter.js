@@ -21,11 +21,11 @@ sap.ui.define([
 	QUnit.test("Should return the translated texts", function (assert) {
 
 		// Arrange
-		var oViewStub = {
+		var oComponentStub = {
 			getModel: this.stub().withArgs("i18n").returns(this._oResourceModel)
 		};
 		var oControllerStub = {
-			getView: this.stub().returns(oViewStub)
+			getOwnerComponent: function() { return oComponentStub; }
 		};
 
 		// System under test

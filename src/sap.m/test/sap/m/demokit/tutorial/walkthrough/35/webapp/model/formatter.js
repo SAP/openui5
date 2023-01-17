@@ -4,7 +4,7 @@ sap.ui.define([], function () {
 	return {
 
 		statusText: function (sStatus) {
-			var oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 
 			switch (sStatus) {
 				case "A":
