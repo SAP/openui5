@@ -226,4 +226,34 @@ sap.ui.define([
 		oField2.destroy();
 
 	});
+
+	QUnit.test("check 'getDelta' when rearranging an index - absolute appliance set to false", function(assert){
+
+		var oAdaptationControl = this.oSelectionController.getAdaptationControl();
+
+		var oField1 = new Control("fieldA");
+		var oField2 = new Control("fieldB");
+		var oField3 = new Control("fieldC");
+		oAdaptationControl.addDependent(oField1);
+		oAdaptationControl.addDependent(oField2);
+		oAdaptationControl.addDependent(oField3);
+
+		var aChanges = this.oSelectionController.getDelta({
+			control: oAdaptationControl,
+			deltaAttributes: ["key"],
+			changeOperations: this.oSelectionController.getChangeOperations(),
+			existingState: this.oSelectionController.getCurrentState(),
+			changedState: [{key: "fieldC", label: "Field C", position: 0},
+			{key: "fieldB", label: "Field B", position: 1}],
+			propertyInfo: this.initHelper().getProperties()
+		});
+
+		assert.equal(aChanges.length, 2, "Returned value is an array of change objects");
+		assert.equal(aChanges[0].changeSpecificData.changeType, "moveItem", "Returned value is of correct type");
+		assert.equal(aChanges[1].changeSpecificData.changeType, "moveItem", "Returned value is of correct type");
+
+		oField1.destroy();
+		oField2.destroy();
+
+	});
 });

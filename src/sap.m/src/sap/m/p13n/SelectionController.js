@@ -402,9 +402,8 @@ sap.ui.define([
 		var aNewItemsPrepared = merge([], aPreviousItems);
 		var aNewItemState = merge([], aNewItems);
 
-		var mExistingItems = this.arrayToMap(aPreviousItems);
-
 		aNewItemState.forEach(function (oItem) {
+            var mExistingItems = this.arrayToMap(aNewItemsPrepared);
 			var oExistingItem = mExistingItems[oItem.key];
 			if (!oItem.hasOwnProperty(sRemoveProperty) || oItem[sRemoveProperty]) {
 				var iNewPosition = oItem.position;
@@ -421,7 +420,7 @@ sap.ui.define([
 			} else if (oExistingItem) {//check if exists before delete
 				aNewItemsPrepared[oExistingItem.position][sRemoveProperty] = false;
 			}
-		});
+		}.bind(this));
 
 		return aNewItemsPrepared;
 	};
