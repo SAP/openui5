@@ -260,4 +260,45 @@ function (
 		assert.ok($oDomRef.hasClass("sapFDynamicPageHeaderTranslucent"), "Should have sapFDynamicPageHeaderTranslucent class");
 		assert.strictEqual(oDynamicPageHeader.getBackgroundDesign(), "Translucent", "Should have backgroundDesign property = 'Translucent'");
 	});
+
+	QUnit.test("Sets icon to 'sap-icon://pushpin-on' when theme is 'Horizon'", function (assert) {
+		// Arrange
+		var oHeader = this.oDynamicPage.getHeader(),
+			pinButton = oHeader._getPinButton();
+
+		this.applyTheme = function(sTheme, fnCallback) {
+			this.sRequiredTheme = sTheme;
+			if (Core.getConfiguration().getTheme() === this.sRequiredTheme && Core.isThemeApplied()) {
+				if (typeof fnCallback === "function") {
+					fnCallback.bind(this)();
+					fnCallback = undefined;
+				}
+			} else {
+				Core.attachThemeChanged(fnThemeApplied.bind(this));
+				Core.applyTheme(sTheme);
+			}
+
+			function fnThemeApplied(oEvent) {
+				Core.detachThemeChanged(fnThemeApplied);
+				if (Core.getConfiguration().getTheme() === this.sRequiredTheme && Core.isThemeApplied()) {
+					if (typeof fnCallback === "function") {
+						fnCallback.bind(this)();
+						fnCallback = undefined;
+					}
+				} else {
+					setTimeout(fnThemeApplied.bind(this, oEvent), 1500);
+				}
+			}
+		};
+
+		// Act
+		var done = assert.async();
+		this.applyTheme("sap_horizon", function () {
+
+			// Assert
+			assert.strictEqual(pinButton.getIcon(), "sap-icon://pushpin-on", "Icon is set to 'sap-icon://pushpin-on'");
+
+			done();
+		});
+  });
 });
