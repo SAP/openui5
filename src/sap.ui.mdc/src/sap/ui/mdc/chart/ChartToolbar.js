@@ -96,8 +96,8 @@ sap.ui.define([
             this.addBegin(this._oTitle);
 
             /** variant management */
-            if (oMDCChart.getVariant()){
-                this.addVariantManagement(oMDCChart.getVariant());
+            if (oMDCChart.getAggregation("variant")){
+                this.addVariantManagement(oMDCChart.getAggregation("variant"));
             }
 
             /**add end **/
@@ -280,6 +280,10 @@ sap.ui.define([
             if (oSelectionHandler && oMDCChart.getShowSelectionDetails()) {
                 this._oChartSelectionDetails.attachSelectionHandler(oSelectionHandler.eventId, oSelectionHandler.listener);
             }
+        };
+
+        ChartToolbar.prototype._getVariantReference = function() {
+            return this._oVariantManagement;
         };
 
         ChartToolbar.prototype._getZoomEnablement = function (oMDCChart) {
