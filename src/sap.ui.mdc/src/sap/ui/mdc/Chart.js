@@ -1283,5 +1283,10 @@ sap.ui.define([
             return this;
         };
 
+        Chart.prototype.getVariant = function() {
+            var oToolbar = this.getAggregation("_toolbar");
+            return oToolbar  ? oToolbar._getVariantReference() : this.getAggregation("variant");
+        };
+
         return Chart;
     });

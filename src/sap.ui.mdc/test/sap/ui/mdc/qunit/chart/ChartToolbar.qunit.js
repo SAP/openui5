@@ -182,12 +182,14 @@ function(
 			assert.ok(oToolbar._oVariantManagement, "Variant management exist in toolbar");
 			assert.equal(oToolbar.getBetween().length, 1, "Between Actions of Toolbar have 1 entry");
 			assert.equal(oToolbar.getBetween()[0], oVM, "Action in between is variant management");
+			assert.equal(oToolbar._getVariantReference(), oVM, "Variant reference was set correctly");
 
 			oVM = new VariantManagement("mgmnt-2", {"for": "IDChart"});
 			oToolbar.addVariantManagement(oVM);
 			assert.ok(oToolbar._oVariantManagement, "Variant management exist in toolbar");
 			assert.equal(oToolbar.getBetween().length, 1, "Between Actions of Toolbar have 1 entry");
 			assert.equal(oToolbar.getBetween()[0], oVM, "Action in between is the new variant management");
+			assert.equal(oToolbar._getVariantReference(), oVM, "Variant reference was set correctly");
 
             done();
 		}.bind(this));
