@@ -19,7 +19,8 @@ sap.ui.define(function () {
 				title: "QUnit Tests for 'async XML Views' rules",
 				loader: {
 					paths: {
-						"samples/components/routing": "test-resources/sap/ui/core/samples/components/routing/"
+						"samples/components/routing": "test-resources/sap/ui/core/samples/components/routing/",
+						"testdata": "test-resources/sap/ui/core/qunit/rule/testdata"
 					}
 				}
 			},
