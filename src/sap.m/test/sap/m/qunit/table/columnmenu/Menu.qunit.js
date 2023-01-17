@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/UIArea",
 	"sap/ui/layout/GridData",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/dom/containsOrEquals"
 ], function(
 	QUnitUtils,
 	createAndAppendDiv,
@@ -28,7 +29,8 @@ sap.ui.define([
 	oCore,
 	UIArea,
 	GridData,
-	Device
+	Device,
+	containsOrEquals
 ) {
 	"use strict";
 	// Test setup
@@ -217,6 +219,16 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu._oPopover.getShowHeader(), "Header is shown on mobile");
 	});
 
+	QUnit.test("Form containers are created on open and destroyed on close", function(assert) {
+		this.createMenu(true, true, true, true);
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length);
+
+		var oDestroyFormElementsSpy = sinon.spy(this.oColumnMenu._oQuickActionContainer, "destroyFormContainers");
+		this.oColumnMenu.close();
+		assert.ok(oDestroyFormElementsSpy.calledOnce);
+	});
+
 	QUnit.test("Check hidden header and footer in default view", function (assert) {
 		this.createMenu(false);
 		this.oColumnMenu.openBy(this.oButton);
@@ -316,6 +328,53 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[2].getId());
+	});
+
+	QUnit.test("Check focus when quick actions are reused in menus", function(assert) {
+		var clock = sinon.useFakeTimers();
+		var oMenu = new Menu({
+			quickActions: [
+				new QuickAction({
+					label: "A",
+					content: new Button({text: "Execute A"})
+				})
+			]
+		});
+		var oMenu1 = new Menu({
+			quickActions: [
+				new QuickAction({
+					label: "B",
+					content: new Button({text: "Execute B"})
+				})
+			]
+		});
+		var oReuseQuickAction = new QuickAction({label: sText, content: new Button({text: sText})});
+		var oReuseQuickActionContainer = new QuickActionContainer();
+
+		this.oButton.attachPress(function() {
+			oMenu.removeAllAggregation("_quickActions");
+			oReuseQuickActionContainer.addQuickAction(oReuseQuickAction);
+			oMenu.addAggregation("_quickActions", oReuseQuickActionContainer);
+			oMenu.openBy(this);
+		});
+		this.oButton.addDependent(oMenu);
+
+		this.oButton1.attachPress(function () {
+			oMenu1.removeAllAggregation("_quickActions");
+			oReuseQuickActionContainer.addQuickAction(oReuseQuickAction);
+			oMenu1.addAggregation("_quickActions", oReuseQuickActionContainer);
+			oMenu1.openBy(this);
+		});
+		this.oButton1.addDependent(oMenu1);
+		oCore.applyChanges();
+
+		this.oButton.firePress();
+		clock.tick(1000);
+		assert.ok(containsOrEquals(oMenu.getDomRef(), document.activeElement));
+
+		this.oButton1.firePress();
+		clock.tick(1000);
+		assert.ok(containsOrEquals(oMenu1.getDomRef(), document.activeElement));
 	});
 
 	QUnit.test("Check visibility", function (assert) {
