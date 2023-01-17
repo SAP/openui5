@@ -841,6 +841,120 @@ sap.ui.define([
 		this.oObjectPage.placeAt("qunit-fixture");
 	});
 
+	QUnit.test("AnchorBar scrolled to tab on sapright, when tab is not visible", function (assert) {
+		// arrange
+		var oPage = this.oObjectPage,
+			done = assert.async(),
+			oAnchorBar,
+			aAnchors,
+			oSpyForceScroll,
+			oSpyScrollerScroll,
+			oEvent,
+			fnOnDomReady = function() {
+				oAnchorBar = oPage.getAggregation("_anchorBar");
+				aAnchors = oAnchorBar.getContent();
+				oSpyForceScroll = this.spy(oAnchorBar, "_forceScrollIfNeeded");
+				oSpyScrollerScroll = this.spy(oAnchorBar._oScroller, "scrollTo");
+				oEvent = {
+					target: {
+						id: aAnchors[10].getId()
+					},
+					preventDefault: function () {}
+				};
+
+				//act
+				oAnchorBar.onsapright(oEvent);
+
+				// assert
+				assert.ok(oSpyForceScroll.calledWith(aAnchors[11]), "_forceScrollIfNeeded is called with next AnchorBar tab");
+				assert.ok(oSpyScrollerScroll.calledOnce, "Scroller scrollTo is called");
+
+				// clean up
+				done();
+			};
+
+		assert.expect(2);
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady.bind(this));
+		this.oObjectPage.placeAt("qunit-fixture");
+	});
+
+	QUnit.test("AnchorBar not scrolled to tab on sapright, when tab is fully visible", function (assert) {
+		// arrange
+		var oPage = this.oObjectPage,
+			done = assert.async(),
+			oAnchorBar,
+			aAnchors,
+			oSpyScrollerScroll,
+			oEvent,
+			fnOnDomReady = function() {
+				oAnchorBar = oPage.getAggregation("_anchorBar");
+				aAnchors = oAnchorBar.getContent();
+				oSpyScrollerScroll = this.spy(oAnchorBar._oScroller, "scrollTo");
+				oEvent = {
+					target: {
+						id: aAnchors[2].getId()
+					},
+					preventDefault: function () {}
+				};
+
+				//act
+				oAnchorBar.onsapright(oEvent);
+
+				// assert
+				assert.notOk(oSpyScrollerScroll.calledOnce, "Scroller scrollTo is not called");
+
+				// clean up
+				done();
+			};
+
+		assert.expect(1);
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady.bind(this));
+		this.oObjectPage.placeAt("qunit-fixture");
+	});
+
+	QUnit.test("AnchorBar scrolled to tab on sapleft, when tab is not visible", function (assert) {
+		// arrange
+		var oPage = this.oObjectPage,
+			oSection = oPage.getSections()[10],
+			done = assert.async(),
+			oAnchorBar,
+			aAnchors,
+			oSpyForceScroll,
+			oSpyScrollerScroll,
+			oEvent,
+			fnOnDomReady = function() {
+				oAnchorBar = oPage.getAggregation("_anchorBar");
+				aAnchors = oAnchorBar.getContent();
+				oSpyForceScroll = this.spy(oAnchorBar, "_forceScrollIfNeeded");
+				oEvent = {
+					target: {
+						id: aAnchors[1].getId()
+					},
+					preventDefault: function () {}
+				};
+
+				//act
+				oPage.scrollToSection(oSection.getId(), 0, null, true);
+				oSpyScrollerScroll = this.spy(oAnchorBar._oScroller, "scrollTo");
+
+				setTimeout(function () {
+					// act
+
+					oAnchorBar.onsapleft(oEvent);
+					// assert
+					assert.ok(oSpyForceScroll.calledWith(aAnchors[0]), "_forceScrollIfNeeded is called with previous AnchorBar tab");
+					assert.ok(oSpyScrollerScroll.calledOnce, "Scroller scrollTo is called");
+
+					// clean up
+					done();
+				}, 300);
+			};
+
+		assert.expect(2);
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady.bind(this));
+		this.oObjectPage.placeAt("qunit-fixture");
+	});
+
 	QUnit.module("Content", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 2;
