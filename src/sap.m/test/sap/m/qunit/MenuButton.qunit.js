@@ -651,10 +651,11 @@ sap.ui.define([
 			oCore.applyChanges();
 		},
 		afterEach: function () {
-			this.sut.destroy();
-			this.sut = null;
+			this.oMenu.close();
 			this.oMenu.destroy();
 			this.oMenu = null;
+			this.sut.destroy();
+			this.sut = null;
 		}
 	});
 
@@ -815,6 +816,59 @@ sap.ui.define([
 		assert.ok(fnHandleButtonPress.calledWith(oProps), "Button press handler invoked after 'onsapshow' event.");
 
 		fnStopPropagationSpy.restore();
+	});
+
+	QUnit.test("Menu opens again when opened by SPACE after closing by ESCAPE or TAB", function(assert) {
+		var oEvent = new jQuery.Event(),
+			oButton = this.sut.getAggregation('_button'),
+			oMenu;
+
+		// Act
+		oButton.focus();
+		oEvent.which = KeyCodes.SPACE;
+		oButton.onkeydown(oEvent);
+		oButton.onkeyup(oEvent);
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(jQuery('.sapMMenu').length, 1, "Opened control is visible after SPACE is clicked");
+
+		// Act
+		oEvent.which = KeyCodes.ESCAPE;
+		oMenu = this.sut.getMenu()._getMenu();
+		oMenu.onsapescape(oEvent);
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(jQuery('.sapMMenu').length, 0, "Menu is closed after ESCAPE is pressed");
+
+		// Act
+		oButton.focus();
+		oEvent.which = KeyCodes.SPACE;
+		oButton.onkeydown(oEvent);
+		oButton.onkeyup(oEvent);
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(jQuery('.sapMMenu').length, 1, "Opened control is visible after SPACE is clicked");
+
+		// Act
+		oEvent.which = KeyCodes.TAB;
+		oMenu = this.sut.getMenu()._getMenu();
+		oMenu.onsaptabnext(oEvent);
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(jQuery('.sapMMenu').length, 0, "Menu is closed after TAB is pressed");
+
+		oButton.focus();
+		oEvent.which = KeyCodes.SPACE;
+		oButton.onkeydown(oEvent);
+		oButton.onkeyup(oEvent);
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(jQuery('.sapMMenu').length, 1, "Opened control is visible after SPACE is clicked");
 	});
 
 	QUnit.test("Open and close if the menu contains only disabled items", function(assert) {

@@ -503,11 +503,17 @@ sap.ui.define([
 
 		MenuButton.prototype._menuClosed = function() {
 			var oButtonControl = this._getButtonControl(),
-				bOpeningMenuButton = oButtonControl;
+				bOpeningMenuButton = oButtonControl,
+				oMenu = this.getMenu(),
+				bHasInternalMenu = oMenu && oMenu._getMenu && oMenu._getMenu();
 
 			if (this._isSplitButton()) {
 				oButtonControl.setArrowState(false);
 				bOpeningMenuButton = oButtonControl._getArrowButton();
+			}
+
+			if (bHasInternalMenu && oMenu._getMenu()._bLeavingMenu){
+				this._bPopupOpen = false;
 			}
 
 			bOpeningMenuButton.$().removeAttr("aria-controls");
