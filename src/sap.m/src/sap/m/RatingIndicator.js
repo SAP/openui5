@@ -942,7 +942,7 @@ sap.ui.define([
 	/* =========================================================== */
 
 	/**
- 	 * @returns {object} Current accessibility state of the control
+ 	 * @returns {{role: string, type: string, description: string, focusable: boolean, enabled: boolean, editable: boolean}} Current accessibility state of the control
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */
