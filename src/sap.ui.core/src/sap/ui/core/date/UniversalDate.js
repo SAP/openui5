@@ -6,20 +6,12 @@
 sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/core/Configuration',
-	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	'./_Calendars',
 	'./CalendarUtils',
-	'./CalendarWeekNumbering'
-], function(
-	BaseObject,
-	Configuration,
-	Locale,
-	LocaleData,
-	_Calendars,
-	CalendarUtils,
-	CalendarWeekNumbering
-) {
+	'./CalendarWeekNumbering',
+	'./UI5Date'
+], function(BaseObject, Configuration, LocaleData, _Calendars, CalendarUtils, CalendarWeekNumbering, UI5Date) {
 	"use strict";
 
 
@@ -30,10 +22,13 @@ sap.ui.define([
 	 * The UniversalDate is the base class of calendar date instances. It contains the static methods to create calendar
 	 * specific instances.
 	 *
-	 * The member variable <code>this.oDate</code> contains the JS Date object, which is the source value of the date information.
-	 * The prototype is containing getters and setters of the JS Date and is delegating them to the internal date object.
-	 * Implementations for specific calendars may override methods needed for their specific calendar (e.g. getYear
-	 * and getEra for Japanese emperor calendar);
+	 * The member variable <code>this.oDate</code> contains a date instance
+	 * (either JavaScript Date or <code>module:sap/ui/core/date/UI5Date</code>) which considers the
+	 * configured time zone wherever JavaScript Date uses the local browser time zone; see
+	 * {@link module:sap/ui/core/date/UI5Date#getInstance}. This is the source value of the date
+	 * information. The prototype contains getters and setters of the Date and is delegating them
+	 * to the internal date object. Implementations for specific calendars may override methods
+	 * needed for their specific calendar (e.g. getYear and getEra for Japanese emperor calendar).
 	 *
 	 * @private
 	 * @ui5-restricted
@@ -56,6 +51,10 @@ sap.ui.define([
 	};
 
 	UniversalDate.prototype.createDate = function(clDate, aArgs) {
+		if (clDate === Date) {
+			return UI5Date.getInstance.apply(null, aArgs);
+		}
+
 		switch (aArgs.length) {
 			case 0: return new clDate();
 			// new Date(new Date()) is officially not supported
@@ -71,25 +70,29 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns an instance of Date, based on the calendar type from the configuration, or as explicitly
-	 * defined by parameter. The object provides all methods also known on the JavaScript Date object.
+	 * Returns an instance of UniversalDate, based on the calendar type from the configuration, or as explicitly
+	 * defined by parameter. The object contains getters and setters of the JavaScript Date and is delegating them
+	 * to an internal date object.
 	 *
-	 * Note: Prefer this method over calling <code>new UniversalDate</code> with an instance of <code>Date</code>
+	 * Note: Prefer this method over calling <code>new UniversalDate</code> with an instance of <code>Date</code>.
 	 *
-	 * @param {Date|sap.ui.core.date.UniversalDate} [oDate] JavaScript date object, defaults to <code>new Date()</code>
-	 * @param {sap.ui.core.CalendarType} [sCalendarType] The calendar type, defaults to <code>sap.ui.getCore().getConfiguration().getCalendarType()</code>
-	 * @returns {sap.ui.core.date.UniversalDate} The date instance
+	 * @param {Date|module:sap/ui/core/date/UI5Date|sap.ui.core.date.UniversalDate} [oDate]
+	 *   The date object, defaults to <code>UI5Date.getInstance()</code>
+	 * @param {sap.ui.core.CalendarType} [sCalendarType]
+	 *   The calendar type, defaults to <code>sap.ui.getCore().getConfiguration().getCalendarType()</code>
+	 * @returns {sap.ui.core.date.UniversalDate}
+	 *   An instance of <code>UniversalDate</code>
+	 *
 	 * @public
 	 */
 	UniversalDate.getInstance = function(oDate, sCalendarType) {
 		var clDate, oInstance;
+
 		if (oDate instanceof UniversalDate) {
 			oDate = oDate.getJSDate();
-		} else if (!oDate) {
-			oDate = new Date();
 		}
 
-		if (isNaN(oDate.getTime())) {
+		if (oDate && isNaN(oDate.getTime())) {
 			throw new Error("The given date object is invalid");
 		}
 
@@ -98,8 +101,9 @@ sap.ui.define([
 		}
 		clDate = UniversalDate.getClass(sCalendarType);
 		oInstance = Object.create(clDate.prototype);
-		oInstance.oDate = oDate;
+		oInstance.oDate = oDate ? UI5Date.getInstance(oDate) : UI5Date.getInstance();
 		oInstance.sCalendarType = sCalendarType;
+
 		return oInstance;
 	};
 
@@ -133,9 +137,9 @@ sap.ui.define([
 	});
 
 	/**
-	 * Returns the JS date object representing the current calendar date value.
+	 * Returns the date object representing the current calendar date value.
 	 *
-	 * @returns {Date} The JS date object representing the current calendar date value
+	 * @returns {Date|module:sap/ui/core/date/UI5Date} The date object representing the current calendar date value
 	 * @public
 	 */
 	UniversalDate.prototype.getJSDate = function() {
@@ -547,7 +551,7 @@ sap.ui.define([
 	};
 
 	UniversalDate.getCurrentEra = function(sCalendarType) {
-		var oNow = new Date();
+		var oNow = UI5Date.getInstance();
 		return this.getEraByDate(sCalendarType, oNow.getFullYear(), oNow.getMonth(), oNow.getDate());
 	};
 
