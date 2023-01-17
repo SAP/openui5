@@ -217,30 +217,6 @@ sap.ui.define([
 				"my/placeholder1.fragment.html":"<div id='myPlaceholder1'></div>"
 			});
 
-			sap.ui.jsview("sampleView", {
-				createContent : function() {
-					return new Panel(this.createId("panel"));
-				}
-			});
-
-			sap.ui.jsview("sampleView2", {
-				createContent : function() {
-					return new Panel(this.createId("panel"));
-				}
-			});
-
-			sap.ui.jsview("sampleView3", {
-				createContent : function() {
-					return new Panel(this.createId("panel"));
-				}
-			});
-
-			sap.ui.jsview("sampleView4", {
-				createContent : function() {
-					return new Panel(this.createId("panel"));
-				}
-			});
-
 			sap.ui.jsview("sampleView5", {
 				createContent : function() {
 					return new Panel(this.createId("panel"));
@@ -253,78 +229,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("NavContainer", function(assert) {
-		var oNavContainer;
-		// sample js views
-		sap.ui.jsview("navContainerView", {
-			createContent : function() {
-				oNavContainer = new NavContainer(this.createId("navContainer"));
-				return oNavContainer;
-			}
-		});
-
-		// sample component with navigation container
-		sap.ui.predefine("sap/ui/sample/navigationcontainer/Component", [], function() {
-			return UIComponent.extend("sap.ui.sample.navigationcontainer", {
-				metadata : {
-					rootView: {
-						viewName: "navContainerView",
-						type: "JS",
-						async: true
-					},
-					routing: {
-						config: {
-							async: true,
-							controlId: "navContainer",
-							controlAggregation: "pages",
-							routerClass: "sap.m.routing.Router",
-							viewType: "JS"
-						},
-						routes: [{
-							pattern: ":?query:",
-							name: "home",
-							target: {
-								name: "home",
-								placeholder: {
-									autoClose: true,
-									html: "my/placeholder.fragment.html"
-								}
-							}
-						},
-						{
-							pattern: "route1",
-							name: "route1",
-							target: {
-								name: "target1",
-								placeholder: {
-									autoClose: false,
-									html: "my/placeholder.fragment.html"
-								}
-							}
-						}],
-						targets: {
-							home: {
-								name: "sampleView",
-								type: "View",
-								id: "sampleView"
-							},
-							target1: {
-								name: "sampleView2",
-								type: "View",
-								id: "sampleView2"
-							}
-						}
-					}
-				}
-			});
-		});
-
 		var oNavConShowPlaceholderSpy = sinon.spy(NavContainer.prototype, "showPlaceholder"),
 			oNavConHidePlaceholderSpy = sinon.spy(NavContainer.prototype, "hidePlaceholder");
 
 		var oRouter;
 		var oComponentContainer = new ComponentContainer({
 			async: true,
-			name: "sap.ui.sample.navigationcontainer"
+			name: "qunit.placeholder.component.NavContainer"
 		});
 
 		oComponentContainer.placeAt("qunit-fixture");
@@ -342,17 +253,29 @@ sap.ui.define([
 			return new Promise(function(resolve, reject) {
 				// Need to wait for routeMatched in order to get the content of the NavContainer created
 				oRouter.attachEventOnce("routeMatched", function (oEvent) {
-					// Need to wait for the onAfterShow because of the rendering for the NavContainer
-					oNavContainer.getPages()[0].addEventDelegate({
-						"onAfterShow":  function(oEvent) {
-							assert.equal(oNavConShowPlaceholderSpy.callCount, 1, "NavContainer.showPlaceholder should be called");
-							assert.equal(oNavConHidePlaceholderSpy.callCount, 1, "NavContainer.hidePlaceholder should be called");
+					var oNavContainer = oEvent.getParameter("targetControl");
+					var oPage = oNavContainer.getPages()[0];
 
-							oNavConShowPlaceholderSpy.resetHistory();
-							oNavConHidePlaceholderSpy.resetHistory();
-							resolve(oNavContainer);
-						}
-					});
+					if (oPage.getDomRef()) {
+						assert.equal(oNavConShowPlaceholderSpy.callCount, 1, "NavContainer.showPlaceholder should be called");
+						assert.equal(oNavConHidePlaceholderSpy.callCount, 1, "NavContainer.hidePlaceholder should be called");
+
+						oNavConShowPlaceholderSpy.resetHistory();
+						oNavConHidePlaceholderSpy.resetHistory();
+						resolve(oNavContainer);
+					} else {
+						// Need to wait for the onAfterShow because of the rendering for the NavContainer
+						oPage.addEventDelegate({
+							"onAfterShow":  function(oEvent) {
+								assert.equal(oNavConShowPlaceholderSpy.callCount, 1, "NavContainer.showPlaceholder should be called");
+								assert.equal(oNavConHidePlaceholderSpy.callCount, 1, "NavContainer.hidePlaceholder should be called");
+
+								oNavConShowPlaceholderSpy.resetHistory();
+								oNavConHidePlaceholderSpy.resetHistory();
+								resolve(oNavContainer);
+							}
+						});
+					}
 				});
 			});
 		}).then(function(oNavContainer) {
@@ -393,92 +316,6 @@ sap.ui.define([
 	QUnit.test("SplitContainer", function(assert) {
 		var oSplitApp;
 
-		// sample js views
-		sap.ui.jsview("splitAppView", {
-			createContent : function() {
-				oSplitApp = new SplitApp(this.createId("splitApp"));
-				return oSplitApp;
-			}
-		});
-
-		// sample component with split container
-		sap.ui.predefine("sap/ui/sample/splitContainer/Component", [], function() {
-			return UIComponent.extend("sap.ui.sample.splitContainer", {
-				metadata : {
-					rootView: {
-						viewName: "splitAppView",
-						type: "JS",
-						async: true
-					},
-					routing: {
-						config: {
-							async: true,
-							controlId: "splitApp",
-							routerClass: "sap.m.routing.Router",
-							viewType: "JS"
-						},
-						routes: [{
-							pattern: "",
-							name: "home",
-							target: ["home", "target1"]
-						},
-						{
-							pattern: "route1",
-							name: "route1",
-							target: ["home", "target2"]
-						},
-						{
-							pattern: "route2",
-							name: "route2",
-							target: ["home", "targetAutoCloseFalse"]
-						}],
-						targets: {
-							home: {
-								controlAggregation: "masterPages",
-								id: "sampleView",
-								name: "sampleView",
-								type: "View",
-								placeholder: {
-									autoClose: true,
-									html: "my/placeholder.fragment.html"
-								}
-							},
-							target1: {
-								controlAggregation: "detailPages",
-								id: "sampleView2",
-								name: "sampleView2",
-								type: "View",
-								placeholder: {
-									autoClose: true,
-									html: "my/placeholder.fragment.html"
-								}
-							},
-							target2: {
-								controlAggregation: "detailPages",
-								id: "sampleView3",
-								name: "sampleView3",
-								type: "View",
-								placeholder: {
-									autoClose: true,
-									html: "my/placeholder.fragment.html"
-								}
-							},
-							targetAutoCloseFalse: {
-								controlAggregation: "detailPages",
-								id: "sampleView4",
-								name: "sampleView4",
-								type: "View",
-								placeholder: {
-									autoClose: false,
-									html: "my/placeholder.fragment.html"
-								}
-							}
-						}
-					}
-				}
-			});
-		});
-
 		// spies creation
 		var oSplitAppShowPlaceholderSpy = sinon.spy(SplitApp.prototype, "showPlaceholder");
 		var oSplitAppNeedPlaceholderSpy = sinon.spy(SplitApp.prototype, "needPlaceholder");
@@ -490,7 +327,7 @@ sap.ui.define([
 		var oRouter;
 		var oComponentContainer = new ComponentContainer({
 			async: true,
-			name: "sap.ui.sample.splitContainer"
+			name: "qunit.placeholder.component.SplitContainer"
 		});
 
 		oComponentContainer.placeAt("qunit-fixture");
@@ -502,6 +339,8 @@ sap.ui.define([
 				resolve(oEvent.getParameter("component"));
 			});
 		}).then(function(oComponent) {
+			oSplitApp = oComponent.getRootControl().byId("splitApp");
+
 			// Create master and detail spy because as long as SplitApp is not renderer the hidePlaceholder is not called
 			// on SplitApp but it's called on the NavContainer of the corresponding master and detail page
 			oSplitAppMasterHidePlaceholderSpy = sinon.spy(oSplitApp.getAggregation("_navMaster"), "hidePlaceholder");
@@ -516,12 +355,17 @@ sap.ui.define([
 			return new Promise(function(resolve, reject) {
 				// Need to wait for routeMatched in order to get the content of the NavContainer created
 				oRouter.attachEventOnce("routeMatched", function (oEvent) {
-					// Need to wait for the onAfterShow because of the rendering for the NavContainer
-					oSplitApp.getDetailPages()[0].addEventDelegate({
-						"onAfterShow":  function(oEvent) {
-							resolve(oSplitApp);
-						}
-					});
+					var oDetailPage = oSplitApp.getDetailPages()[0];
+					if (oDetailPage.getDomRef()) {
+						resolve(oSplitApp);
+					} else {
+						// Need to wait for the onAfterShow because of the rendering for the NavContainer
+						oDetailPage.addEventDelegate({
+							"onAfterShow":  function(oEvent) {
+								resolve(oSplitApp);
+							}
+						});
+					}
 				});
 			});
 
@@ -536,7 +380,8 @@ sap.ui.define([
 			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(0).args[0], "masterPages", "SplitApp.needPlaceholder should be called only on 'masterPages' aggregation");
 			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(1).args[0], "detailPages", "SplitApp.needPlaceholder should be called only on 'detailPages' aggregation");
 
-			// hidePlaceholder is called on inner NavContainers as SplitApp is not rendered yet
+			// hidePlaceholder
+			assert.equal(oSplitAppHidePlaceholderSpy.callCount, 2, "SplitApp.hidePlaceholder should be called twice");
 			assert.equal(oSplitAppMasterHidePlaceholderSpy.callCount, 1, "Master SplitApp.hidePlaceholder should be called once");
 			assert.equal(oSplitAppDetailHidePlaceholderSpy.callCount, 1, "Detail SplitApp.hidePlaceholder should be called once");
 
@@ -545,6 +390,7 @@ sap.ui.define([
 
 			oSplitAppShowPlaceholderSpy.resetHistory();
 			oSplitAppNeedPlaceholderSpy.resetHistory();
+			oSplitAppHidePlaceholderSpy.resetHistory();
 			oSplitAppMasterHidePlaceholderSpy.resetHistory();
 			oSplitAppDetailHidePlaceholderSpy.resetHistory();
 			oHomeDisplayed.resetHistory();
@@ -628,96 +474,6 @@ sap.ui.define([
 
 	QUnit.test("FlexibleColumnLayout", function(assert) {
 		var oFlexColumnLayout;
-		// sample js views
-		sap.ui.jsview("flexibleColumnLayoutView", {
-			createContent : function() {
-				oFlexColumnLayout = new FlexibleColumnLayout(this.createId("flexibleColumnLayout"));
-				return oFlexColumnLayout;
-			}
-		});
-
-		// sample component with FlexibleColumnLayout
-		sap.ui.predefine("sap/ui/sample/flexibleColumnLayout/Component", [], function() {
-			return UIComponent.extend("sap.ui.sample.flexibleColumnLayout", {
-				metadata : {
-					rootView: {
-						viewName: "flexibleColumnLayoutView",
-						type: "JS",
-						async: true
-					},
-					routing: {
-						config: {
-							async: true,
-							controlId: "flexibleColumnLayout",
-							routerClass: "sap.f.routing.Router",
-							viewType: "JS"
-						},
-						routes: [{
-							pattern: "",
-							name: "home",
-							target: ["target1", "target2", "target3"]
-						},
-						{
-							pattern: "route1",
-							name: "route1",
-							target: ["target4", "targetAutoCloseFalse"]
-						}],
-						targets: {
-							target1: {
-								controlAggregation: "beginColumnPages",
-								id: "sampleView",
-								name: "sampleView",
-								type: "View",
-								placeholder: {
-									autoClose: false,
-									html: "my/placeholder.fragment.html"
-								}
-							},
-							target2: {
-								controlAggregation: "midColumnPages",
-								id: "sampleView2",
-								name: "sampleView2",
-								type: "View",
-								placeholder: {
-									autoClose: true,
-									html: "my/placeholder.fragment.html"
-								}
-							},
-							target3: {
-								controlAggregation: "endColumnPages",
-								id: "sampleView3",
-								name: "sampleView3",
-								type: "View",
-								placeholder: {
-									autoClose: true,
-									html: "my/placeholder.fragment.html"
-								}
-							},
-							target4: {
-								controlAggregation: "midColumnPages",
-								id: "sampleView5",
-								name: "sampleView5",
-								type: "View",
-								placeholder: {
-									autoClose: true,
-									html: "my/placeholder.fragment.html"
-								}
-							},
-							targetAutoCloseFalse: {
-								controlAggregation: "endColumnPages",
-								id: "sampleView4",
-								name: "sampleView4",
-								type: "View",
-								placeholder: {
-									autoClose: false,
-									html: "my/placeholder1.fragment.html"
-								}
-							}
-						}
-					}
-				}
-			});
-		});
 
 		// spies creation
 		var oFlexLayoutShowPlaceholderSpy = sinon.spy(FlexibleColumnLayout.prototype, "showPlaceholder");
@@ -728,7 +484,7 @@ sap.ui.define([
 		var oRouter;
 		var oComponentContainer = new ComponentContainer({
 			async: true,
-			name: "sap.ui.sample.flexibleColumnLayout"
+			name: "qunit.placeholder.component.FlexibleColumnLayout"
 		});
 
 		oComponentContainer.placeAt("qunit-fixture");
@@ -741,6 +497,7 @@ sap.ui.define([
 			});
 		}).then(function(oComponent) {
 			oRouter = oComponent.getRouter();
+			oFlexColumnLayout = oComponent.getRootControl().byId("flexibleColumnLayout");
 
 			var oTarget1 = oRouter.getTarget("target1");
 			oTarget1.attachDisplay(oTargetDisplayed);
@@ -751,12 +508,17 @@ sap.ui.define([
 			return new Promise(function(resolve, reject) {
 				// Need to wait for routeMatched in order to get the content of the NavContainer created
 				oRouter.attachEventOnce("routeMatched", function (oEvent) {
-					// Need to wait for the onAfterShow because of the rendering for the NavContainer
-					oFlexColumnLayout._getBeginColumn().getPages()[0].addEventDelegate({
-						"onAfterShow":  function(oEvent) {
-							resolve(oFlexColumnLayout);
-						}
-					});
+					var oPage = oFlexColumnLayout._getBeginColumn().getPages()[0];
+					if (oPage.getDomRef()) {
+						resolve(oFlexColumnLayout);
+					} else {
+						// Need to wait for the onAfterShow because of the rendering for the NavContainer
+						oPage.addEventDelegate({
+							"onAfterShow":  function(oEvent) {
+								resolve(oFlexColumnLayout);
+							}
+						});
+					}
 				});
 			});
 		}).then(function(oFlexColumnLayout) {
