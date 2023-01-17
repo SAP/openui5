@@ -11,10 +11,10 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/RuntimeAuthoring",
+	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	JsControlTreeModifier,
@@ -29,10 +29,10 @@ sap.ui.define([
 	FlexState,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
-	FakeLrepConnectorSessionStorage,
 	JSONModel,
 	QUnitUtils,
 	RuntimeAuthoring,
+	FlexTestAPI,
 	FlQUnitUtils
 ) {
 	"use strict";
@@ -107,11 +107,7 @@ sap.ui.define([
 	};
 
 	RtaQunitUtils.getNumberOfChangesForTestApp = function () {
-		return FakeLrepConnectorSessionStorage.forTesting.getNumberOfChanges("sap.ui.rta.qunitrta.Component");
-	};
-
-	RtaQunitUtils.spySessionStorageWrite = function(sandbox, assert) {
-		return FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+		return FlexTestAPI.getNumberOfStoredChanges("SessionStorage", "sap.ui.rta.qunitrta.Component");
 	};
 
 	RtaQunitUtils.renderTestAppAtAsync = function(sDomId) {
