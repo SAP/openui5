@@ -22,8 +22,14 @@ sap.ui.define(function() {
 					libs: "sap.ui.core"
 				}
 			},
-			"sap.ui.Global": {
+			/**
+			 * @deprecated As of version 1.111
+			 */
+			"sap.ui.Global_legacyAPIs": {
 				title: "sap.ui.Global"
+			},
+			"VersionInfo": {
+				title: "VersionInfo"
 			},
 			/**
 			 * @deprecated since 1.58
