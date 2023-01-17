@@ -1,12 +1,14 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary',
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Arrangements",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/AppUnderTestMDCTable"
 ], function(
+	/** @type sap.base.Log */ Log,
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.opaQunit */ opaTest,
 	/** @type sap.ui.test.Opa5 */ TestLibrary,
@@ -73,35 +75,43 @@ sap.ui.define([
 		Then.onTheAppUnderTestMDCTable.iShouldSeeTheP13nButton(sTableId);
 	});
 
-	opaTest("The table should have the export button", function(Given, When, Then) {
-		Then.onTheAppUnderTestMDCTable.iShouldSeeTheExportMenuButton(sTableId);
-	});
-
-	//opaTests related to the excel export
-	opaTest("Export to Excel via quick export", function(Given, When, Then) {
-		When.onTheAppUnderTestMDCTable.iPressQuickExportButton(sTableId);
-		Then.onTheAppUnderTestMDCTable.iShouldSeeExportProcessDialog();
-	});
-
-	opaTest("Export to Excel via menu", function(Given, When, Then) {
-		When.onTheAppUnderTestMDCTable.iPressExportMenuButton(sTableId);
-		Then.onTheAppUnderTestMDCTable.iShouldSeeExportMenu();
-		When.onTheAppUnderTestMDCTable.iPressExportButtonInMenu();
-		Then.onTheAppUnderTestMDCTable.iShouldSeeExportProcessDialog();
-	});
-
-	opaTest("Export to Excel via Export as...", function(Given, When, Then) {
-		When.onTheAppUnderTestMDCTable.iPressExportMenuButton(sTableId);
-		When.onTheAppUnderTestMDCTable.iPressExportAsButtonInMenu();
-		Then.onTheAppUnderTestMDCTable.iShouldSeeExportSettingsDialog();
-		When.onTheAppUnderTestMDCTable.iFillInExportSettingsDialog(sTableId, {
-			fileName: "Products List",
-			fileType: "XLSX",
-			includeFilterSettings: true,
-			splitCells: true
+	/* ================================================================ */
+	/* opaTests related to the excel export                             */
+	/*                                                                  */
+	/* THESE TESTS ARE SKIPPED IF NO sap.ui.export LIBRARY IS AVAILABLE */
+	/* ================================================================ */
+	if (sap.ui.getCore().getLoadedLibraries().hasOwnProperty("sap.ui.export")) {
+		opaTest("The table should have the export button", function(Given, When, Then) {
+			Then.onTheAppUnderTestMDCTable.iShouldSeeTheExportMenuButton(sTableId);
 		});
-		Then.onTheAppUnderTestMDCTable.iShouldSeeExportProcessDialog();
-	});
+
+		opaTest("Export to Excel via quick export", function(Given, When, Then) {
+			When.onTheAppUnderTestMDCTable.iPressQuickExportButton(sTableId);
+			Then.onTheAppUnderTestMDCTable.iShouldSeeExportProcessDialog();
+		});
+
+		opaTest("Export to Excel via menu", function(Given, When, Then) {
+			When.onTheAppUnderTestMDCTable.iPressExportMenuButton(sTableId);
+			Then.onTheAppUnderTestMDCTable.iShouldSeeExportMenu();
+			When.onTheAppUnderTestMDCTable.iPressExportButtonInMenu();
+			Then.onTheAppUnderTestMDCTable.iShouldSeeExportProcessDialog();
+		});
+
+		opaTest("Export to Excel via Export as...", function(Given, When, Then) {
+			When.onTheAppUnderTestMDCTable.iPressExportMenuButton(sTableId);
+			When.onTheAppUnderTestMDCTable.iPressExportAsButtonInMenu();
+			Then.onTheAppUnderTestMDCTable.iShouldSeeExportSettingsDialog();
+			When.onTheAppUnderTestMDCTable.iFillInExportSettingsDialog(sTableId, {
+				fileName: "Products List",
+				fileType: "XLSX",
+				includeFilterSettings: true,
+				splitCells: true
+			});
+			Then.onTheAppUnderTestMDCTable.iShouldSeeExportProcessDialog();
+		});
+	} else {
+		Log.warning("sap.ui.export not available", "Export tests are skipped, ensure sap.ui.export is loaded to execute them");
+	}
 
 	/* =========================================================== */
 	/* opaTests when tableType is ResponsiveTableType              */
