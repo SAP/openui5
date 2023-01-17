@@ -899,7 +899,7 @@ sap.ui.define([
 
 		this._moveAnchorBarToContentArea();
 		this._moveHeaderToContentArea();
-		this._scrollTo(0, 0, 0);
+		this._scrollTo(0, 0);
 		this._bHeaderExpanded = true;
 		this._adjustHeaderHeights(); // call synchonously (before resize notification) to avoid visual flickering
 		this._updateToggleHeaderVisualIndicators();
@@ -1887,7 +1887,8 @@ sap.ui.define([
 	ObjectPageLayout.prototype._adjustLayoutAndUxRules = function () {
 
 		var sSelectedSectionId,
-			oSelectedSection;
+			oSelectedSection,
+			sSectionBaseIdToScrollTo;
 
 		//in case we have added a section or subSection which change the ux rules
 		Log.debug("ObjectPageLayout :: _requestAdjustLayout", "refreshing ux rules");
@@ -1911,10 +1912,18 @@ sap.ui.define([
 			if (this.getEnableLazyLoading() && this._oLazyLoading) {
 				this._oLazyLoading.doLazyLoading();
 			}
-			// if the current scroll position is not at the selected section OR the ScrollEnablement is still scrolling due to an animation
-			if (!this._isClosestScrolledSection(sSelectedSectionId) || (this._oScroller._$Container && this._oScroller._$Container.is(":animated"))) {
+			// if the current scroll position is not at the selected section
+			// OR the ScrollEnablement is still scrolling due to an animation
+			if (!this._isClosestScrolledSection(sSelectedSectionId) || this._hasOngoingScrollToSection()) {
+				// restart any ongoing scroll as the target scroll position may have changed due to the DOM changes
+				// (i.e. a section above the target section may have been added/removed from DOM)
+				sSectionBaseIdToScrollTo = sSelectedSectionId;
+				if (oSelectedSection.indexOfSubSection(this.oCore.byId(this.getOngoingScrollToSectionBaseId())) > -1) {
+					// keep the target section of the ongoing scroll only if it is within the selectedSection
+					sSectionBaseIdToScrollTo = this.getOngoingScrollToSectionBaseId();
+				}
 				// then change the selection to match the correct section
-				this.scrollToSection(sSelectedSectionId, null, 0, false, true /* redirect scroll */);
+				this.scrollToSection(sSectionBaseIdToScrollTo, null, 0, false, true /* redirect scroll */);
 			}
 		}
 	};
@@ -1928,6 +1937,12 @@ sap.ui.define([
 			oSection = ObjectPageSection._getClosestSection(oSectionBase);
 
 		return oSection && (sSectionId === oSection.getId());
+	};
+
+	ObjectPageLayout.prototype._hasOngoingScrollToSection = function (sSectionId) {
+		return this._oScroller._$Container
+			&& this._oScroller._$Container.is(":animated")
+			&& this.getOngoingScrollToSectionBaseId();
 	};
 
 	ObjectPageLayout.prototype._setSelectedSectionId = function (sSelectedSectionId) {
@@ -2013,7 +2028,10 @@ sap.ui.define([
 			oTargetSubSection,
 			bAnimationsEnabled = (Configuration.getAnimationMode()
 				!== Configuration.AnimationMode.none),
-			bSuppressLazyLoadingDuringScroll;
+			bAnimatedScroll,
+			bSuppressLazyLoadingDuringScroll,
+			onBeforeScroll,
+			onAfterScroll;
 
 		if (!this.getDomRef()){
 			Log.warning("scrollToSection can only be used after the ObjectPage is rendered", this);
@@ -2082,6 +2100,7 @@ sap.ui.define([
 		this._requestAdjustLayout(true);
 
 		iDuration = this._computeScrollDuration(iDuration, oSection);
+		bAnimatedScroll = bAnimationsEnabled && iDuration > 0;
 
 		var iScrollTo = this._computeScrollPosition(oSection);
 
@@ -2120,8 +2139,21 @@ sap.ui.define([
 			}
 
 			// explicitly suppress lazy-loading to avoid loading of intermediate sections during scroll on slow machines
-			bSuppressLazyLoadingDuringScroll = bAnimationsEnabled && iDuration && this.getEnableLazyLoading();
-			this._scrollTo(iScrollTo, iDuration, bSuppressLazyLoadingDuringScroll);
+			bSuppressLazyLoadingDuringScroll = bAnimatedScroll && this.getEnableLazyLoading() && this._oLazyLoading;
+
+			onBeforeScroll = function(sId, bAnimatedScroll, bSuppressLazyLoadingDuringScroll) {
+				bAnimatedScroll && this.setOngoingScrollToSectionBaseId(sId);
+				bSuppressLazyLoadingDuringScroll && this._oLazyLoading.suppress();
+			}.bind(this, sId, bAnimatedScroll, bSuppressLazyLoadingDuringScroll);
+
+			onAfterScroll = function(sId) {
+				if (sId === this.getOngoingScrollToSectionBaseId()) {
+					this.setOngoingScrollToSectionBaseId(null);
+					this._resumeLazyLoading();
+				}
+			}.bind(this, sId);
+
+			this._scrollTo(iScrollTo, iDuration, onBeforeScroll, onAfterScroll);
 
 			if (bIsTabClicked) {
 				this.fireNavigate({
@@ -2268,6 +2300,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Set for reference the destination (sub)section of any ongoing animated scroll
+	 * triggered from <code>scrollToSection</code>
+	 * @param {string | null} sSectionBaseId
+	 * @private
+	 */
+	ObjectPageLayout.prototype.setOngoingScrollToSectionBaseId = function (sSectionBaseId) {
+		this.sOngoingScrollToSectionBaseId = sSectionBaseId;
+	};
+
+	/**
+	 * Get the destination (sub)section of the ongoing animated scroll
+	 * triggered from <code>scrollToSection</code>
+	 * @returns {string | null}
+	 * @private
+	 */
+	ObjectPageLayout.prototype.getOngoingScrollToSectionBaseId = function () {
+		return this.sOngoingScrollToSectionBaseId;
+	};
+
+	/**
 	 * Clear the destination section of the ongoing scroll
 	 * When this one is null, then the page will process all intermediate sections [during the scroll to some Y position]
 	 * and select each one in sequence
@@ -2280,10 +2332,11 @@ sap.ui.define([
 	 * Scroll to the y position in dom
 	 * @param y the position in pixel
 	 * @param time the animation time
-	 * @param bSuppressLazyLoadingDuringScroll flag if lazyLoading should be suppressed during the scroll
+	 * @param fnScrollStartCallback function to call when the scroll is triggered
+	 * @param fnScrollEndCallback function to call when the scroll ends either with success or failure/cancelation
 	 * @private
 	 */
-	ObjectPageLayout.prototype._scrollTo = function (y, time, bSuppressLazyLoadingDuringScroll) {
+	ObjectPageLayout.prototype._scrollTo = function (y, time, fnScrollStartCallback, fnScrollEndCallback) {
 		if (this._oScroller && this._bDomReady && !this._bSuppressScroll) {
 			Log.debug("ObjectPageLayout :: scrolling to " + y);
 
@@ -2291,12 +2344,8 @@ sap.ui.define([
 				this._toggleHeader(true);
 			}
 
-			if (bSuppressLazyLoadingDuringScroll && this._oLazyLoading) {
-				this._oLazyLoading.suppress();
-				this._oScroller.scrollTo(0, y, time, this._resumeLazyLoading.bind(this));
-			} else {
-				this._oScroller.scrollTo(0, y, time);
-			}
+			fnScrollStartCallback && fnScrollStartCallback();
+			this._oScroller.scrollTo(0, y, time, fnScrollEndCallback);
 		}
 		return this;
 	};

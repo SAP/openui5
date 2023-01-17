@@ -1037,6 +1037,35 @@ function(Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, Object
 		});
 	});
 
+	QUnit.test("requestAdjustLayoutAndUxRules during animated scroll to subSection", function (assert) {
+
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oTargetSection = oObjectPage.getSections()[2],
+			sTargetSectionId = oTargetSection.getId(),
+			sTargetSubSectionId = oTargetSection.getSubSections()[0].getId(),
+			oScrollSpy = this.spy(oObjectPage, "scrollToSection"),
+			done = assert.async();
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			oObjectPage.setSelectedSection(sTargetSectionId);
+
+			// scroll to a subSection of the selectedSection
+			oObjectPage.scrollToSection(sTargetSubSectionId);
+
+			this.stub(oObjectPage, "_isClosestScrolledSection").callsFake(function (sSectionId) {
+				return sSectionId === sTargetSectionId;
+			});
+			this.stub(oObjectPage._oScroller._$Container, "is").callsFake(function (sCondition) {
+				return sCondition === ":animated";
+			});
+			oScrollSpy.reset();
+			oObjectPage._adjustLayoutAndUxRules();
+			assert.ok(oScrollSpy.calledOnceWith(sTargetSubSectionId), "correct scrolled section");
+			done();
+		}.bind(this));
+	});
+
 	QUnit.module("ObjectPage scrolling without view");
 
 	QUnit.test("auto-scroll on resize of last section", function (assert) {
