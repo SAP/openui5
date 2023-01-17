@@ -56,8 +56,8 @@ sap.ui.define([
 	 * An <code>IllustratedMessage</code> is a recommended combination of a solution-oriented message,
 	 * an engaging illustration, and conversational tone to better communicate an empty or a success state
 	 * than just show a message alone.
-	 * Empty states are moments in the user experience where there’s no data to display.
-	 * Success states are occasions to celebrate and reward a user’s special accomplishment or the completion of an important task.
+	 * Empty states are moments in the user experience where there's no data to display.
+	 * Success states are occasions to celebrate and reward a user's special accomplishment or the completion of an important task.
 	 *
 	 * The <code>IllustratedMessage</code> control is meant to be used inside container controls,
 	 * for example a <code>Card</code>, a <code>Dialog</code>, or a <code>Page</code>.
@@ -97,13 +97,21 @@ sap.ui.define([
 				/**
 				 * Defines the description displayed below the title.
 				 *
-				 * If there is no initial input from the app developer and the default illustration set is being used,
+				 * If there is no initial input from the app developer, <code>enableDefaultTitleAndDescription</code> is <code>true</code> and the default illustration set is being used,
 				 * a default description for the current illustration type is going to be displayed. The default
 				 * description is stored in the <code>sap.m</code> resource bundle.
 				 *
 				 * @since 1.98
 				 */
 				description : {type : "string", group : "Misc", defaultValue : ""},
+
+				/**
+				 * Defines whether the default title and description should be used when the input for their respective part is empty
+				 * and the default illustration set is being used. Title and description are stored in the <code>sap.m</code> resource bundle.
+				 *
+				 * @since 1.111
+				 */
+				enableDefaultTitleAndDescription: { type: "boolean", group: "Appearance", defaultValue: true },
 
 				/**
 				 * Defines whether the value set in the <code>description</code> property is displayed
@@ -152,8 +160,9 @@ sap.ui.define([
 				/**
 				 * Defines the title that is displayed below the illustration.
 				 *
-				 * If there is no initial input from the app developer and the default illustration set is being used,
-				 * a default title is displayed corresponding to the current <code>illustrationType</code>.
+				 * If there is no initial input from the app developer, <code>enableDefaultTitleAndDescription</code> is <code>true</code> and the default illustration set is being used,
+				 * a default title is displayed corresponding to the current <code>illustrationType</code>. The default
+				 * title is stored in the <code>sap.m</code> resource bundle.
 				 *
 				 * @since 1.98
 				 */
@@ -373,6 +382,32 @@ sap.ui.define([
 	};
 
 	/**
+	 * Helper method which decides if the title should be rendered.
+	 * When it's empty it shouldn't take space in the DOM.
+	 * @private
+	 * @returns {boolean} whether or not the title should be rendered
+	 */
+	IllustratedMessage.prototype._shouldRenderTitle = function () {
+		return this._getTitle().getText().length !== 0;
+	};
+
+	/**
+	 * Helper method which decides if the description should be rendered.
+	 * When it's empty it shouldn't take space in the DOM.
+	 * @private
+	 * @returns {boolean} whether or not the description should be rendered
+	 */
+	IllustratedMessage.prototype._shouldRenderDescription = function () {
+		var oDescription = this._getDescription();
+
+		if (this.getEnableFormattedText()) {
+			return oDescription.getHtmlText().length !== 0;
+		} else {
+			return oDescription.getText().length !== 0;
+		}
+	};
+
+	/**
 	 * Gets the correct aggregation for the description.
 	 * If the enableFormattedText property is true, the function returns
 	 * sap.m.FormattedText. If it's false, it returns sap.m.Text.
@@ -384,9 +419,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets content of the _formattedText aggregation.
+	 * Gets content of the formattedText aggregation.
 	 * @private
-	 * @returns {sap.m.FormattedText}
+	 * @returns {sap.m.FormattedText} The sap.m.FormattedText control instance
 	 */
 	IllustratedMessage.prototype._getFormattedText = function () {
 		var sDescription = this.getDescription(),
@@ -397,20 +432,20 @@ sap.ui.define([
 			this.setAggregation("_formattedText", oFormattedText);
 		}
 
-		if (sDescription) {
-			oFormattedText.setHtmlText(sDescription);
-		} else {
+		if (!sDescription && this.getEnableDefaultTitleAndDescription()) {
 			// Use default text for the description if applicable
 			oFormattedText.setHtmlText(this._getDefaultDescription());
+		} else {
+			oFormattedText.setHtmlText(sDescription);
 		}
 
 		return oFormattedText;
 	};
 
 	/**
-	 * Gets content of the _illustration aggregation.
+	 * Gets content of the illustration aggregation.
 	 * @private
-	 * @returns {sap.m.Illustration}
+	 * @returns {sap.m.Illustration} The sap.m.Illustration control instance
 	 */
 	IllustratedMessage.prototype._getIllustration = function () {
 		var oIllustration = this.getAggregation("_illustration");
@@ -431,7 +466,7 @@ sap.ui.define([
 	/**
 	 * Gets content of the _text aggregation.
 	 * @private
-	 * @returns {sap.m.Text}
+	 * @returns {sap.m.Text} The sap.m.Text control instance
 	 */
 	IllustratedMessage.prototype._getText = function () {
 		var sDescription = this.getDescription(),
@@ -442,11 +477,11 @@ sap.ui.define([
 			this.setAggregation("_text", oText);
 		}
 
-		if (sDescription) {
-			oText.setText(sDescription);
-		} else {
+		if (!sDescription && this.getEnableDefaultTitleAndDescription()) {
 			// Use default text for the description if applicable
 			oText.setText(this._getDefaultDescription());
+		} else {
+			oText.setText(sDescription);
 		}
 
 		return oText;
@@ -455,7 +490,7 @@ sap.ui.define([
 	/**
 	 * Gets content of the _title aggregation.
 	 * @private
-	 * @returns {sap.m.Title}
+	 * @returns {sap.m.Title} The sap.m.Title control instance
 	 */
 	IllustratedMessage.prototype._getTitle = function () {
 		var sTitle = this.getTitle(),
@@ -466,11 +501,11 @@ sap.ui.define([
 			this.setAggregation("_title", oTitle);
 		}
 
-		if (sTitle) {
-			oTitle.setText(sTitle);
-		} else {
+		if (!sTitle && this.getEnableDefaultTitleAndDescription()) {
 			// Use default text for the title if applicable
 			oTitle.setText(this._getDefaultTitle());
+		} else {
+			oTitle.setText(sTitle);
 		}
 
 		return oTitle;
@@ -525,6 +560,7 @@ sap.ui.define([
 
 	/**
 	 * Caches the <code>IllustratedMessage</code> illustration set and illustration type in private instance variables.
+	 * @param {string} sValue The Set-Type pair which should be stored
 	 * @private
 	 */
 	IllustratedMessage.prototype._updateInternalIllustrationSetAndType = function (sValue) {
@@ -536,7 +572,7 @@ sap.ui.define([
 
 	/**
 	 * Handles the resize event of the <code>IllustratedMessage</code>.
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	IllustratedMessage.prototype._onResize = function (oEvent) {
@@ -578,7 +614,7 @@ sap.ui.define([
 
 	/**
 	 * It puts the appropriate classes on the control based on the current media size.
-	 * @param {string} sCurrentMedia
+	 * @param {string} sCurrentMedia The media currently being used
 	 * @private
 	 */
 	IllustratedMessage.prototype._updateMediaStyle = function (sCurrentMedia) {
@@ -684,8 +720,8 @@ sap.ui.define([
 	/**
 	 * Registers resize handler.
 	 * @param {string} sHandler the handler ID
-	 * @param {Object} oObject
-	 * @param {Function} fnHandler
+	 * @param {Object} oObject object on which the resize handler is being registered
+	 * @param {Function} fnHandler the callback function for each resize
 	 * @private
 	 */
 	IllustratedMessage.prototype._registerResizeHandler = function (sHandler, oObject, fnHandler) {
