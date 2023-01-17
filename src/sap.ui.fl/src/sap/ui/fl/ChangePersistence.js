@@ -608,7 +608,14 @@ sap.ui.define([
 		if (aDirtyChanges.length) {
 			var aRequests = getRequests(aDirtyChanges);
 			var aStates = getStates(aDirtyChanges);
-			return aStates.length === 1 && aRequests.length === 1 && aStates[0] === States.LifecycleState.NEW;
+			var bCheckLayer = true;
+			if (Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().hasPersoConnector()) {
+				// Created public fl-Variant as default variant will created public and user changes
+				// no single request can be used, because CF needs PersoConnector and KeyuserConntector
+				var aLayers = getLayers(aDirtyChanges);
+				bCheckLayer = aLayers.length === 1;
+			}
+			return aStates.length === 1 && aRequests.length === 1 && aStates[0] === States.LifecycleState.NEW && bCheckLayer;
 		}
 		return true;
 	}
@@ -803,6 +810,19 @@ sap.ui.define([
 		});
 
 		return aStates;
+	}
+
+	function getLayers(aDirtyChanges) {
+		var aLayers = [];
+
+		aDirtyChanges.forEach(function(oChange) {
+			var sLayer = oChange.getLayer();
+			if (aLayers.indexOf(sLayer) === -1) {
+				aLayers.push(sLayer);
+			}
+		});
+
+		return aLayers;
 	}
 
 	function prepareDirtyChanges(aDirtyChanges) {

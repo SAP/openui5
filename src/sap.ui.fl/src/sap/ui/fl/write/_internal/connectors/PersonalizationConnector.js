@@ -17,7 +17,8 @@ sap.ui.define([
 	var API_VERSION = "/v1";
 
 	var FEATURES = {
-		isProductiveSystem: true
+		isProductiveSystem: true,
+		hasPersoConnector: true
 	};
 
 	/**
