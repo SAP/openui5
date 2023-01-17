@@ -67,7 +67,7 @@ sap.ui.define([
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
-	 * @returns {object} An object with the accessibilty infos for this control
+	 * @returns {{children: sap.ui.core.Control[]}} An object with the accessibilty infos for this control
 	 */
 	VerticalLayout.prototype.getAccessibilityInfo = function() {
 		return {children: this.getContent()};
