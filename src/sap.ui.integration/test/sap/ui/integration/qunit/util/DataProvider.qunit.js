@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/base/Log",
 	"sap/ui/integration/Host",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ], function (
 	Core,
 	DataProviderFactory,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Card,
 	Log,
 	Host,
-	jQuery
+	jQuery,
+	Configuration
 ) {
 	"use strict";
 
@@ -999,6 +1001,93 @@ sap.ui.define([
 			assert.strictEqual(oXhr.requestHeaders["x-test"], "test", "Headers are modified");
 
 			oXhr.respond(200, {}, "");
+			done();
+		});
+
+		oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("Host can modify request", function (assert) {
+		var done = assert.async(),
+			oDataProvider = this.oDataProviderFactory.create({
+				request: {
+					url: "/test/url"
+				}
+			}),
+			oHost = new Host(),
+			oExpectedCard = new Card();
+
+		assert.expect(3);
+
+		oDataProvider.setHost(oHost);
+		oDataProvider.setCard(oExpectedCard);
+
+		oHost.modifyRequest = function (mRequest, mSettings, oCard) {
+			assert.strictEqual(mSettings.request["url"], "/test/url", "Settings in modifyRequest are correct.");
+			assert.strictEqual(oExpectedCard, oCard, "Expected card is sent to modifyRequest.");
+
+			mRequest.url += "?test=test";
+
+			return mRequest;
+		};
+
+		this.oServer.respondWith("GET", "/test/url?test=test", function (oXhr) {
+			assert.ok(true, "Request url is modified");
+
+			oXhr.respond(200, {}, "");
+			done();
+		});
+
+		oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("Query param sap-statistics=true is passed to each request if enabled", function (assert) {
+		var done = assert.async(),
+			oDataProvider = this.oDataProviderFactory.create({
+				request: {
+					url: "/test/url"
+				}
+			}),
+			oHost = new Host(),
+			fnStubStatisticsEnabled = sinon.stub(Configuration, "getStatisticsEnabled").callsFake(function () {
+				return true;
+			});
+
+		assert.expect(1);
+
+		oDataProvider.setHost(oHost);
+
+		this.oServer.respondWith("GET", "/test/url?sap-statistics=true", function (oXhr) {
+			assert.ok(true, "Query parameter sap-statistics=true is included in request");
+
+			oXhr.respond(200, {}, "");
+
+			// restore statistics enabled value
+			fnStubStatisticsEnabled.restore();
+			done();
+		});
+
+		oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("Query param sap-statistics=true is not passed if not enabled", function (assert) {
+		var done = assert.async(),
+			oDataProvider = this.oDataProviderFactory.create({
+				request: {
+					url: "/test/url"
+				}
+			}),
+			oHost = new Host();
+
+		assert.expect(1);
+
+		oDataProvider.setHost(oHost);
+
+		this.oServer.respondWith("GET", "/test/url", function (oXhr) {
+			assert.ok(true, "Query parameter sap-statistics=true is included in request");
+
+			oXhr.respond(200, {}, "");
+
 			done();
 		});
 

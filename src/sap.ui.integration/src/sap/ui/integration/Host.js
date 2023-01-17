@@ -3,11 +3,13 @@
  */
 sap.ui.define([
 	"sap/ui/integration/library",
-	'sap/ui/core/Element'
+	"sap/ui/core/Element",
+	"sap/ui/core/Configuration"
 ], function (library,
-			 Element) {
+			 Element,
+			 Configuration) {
 		"use strict";
-		/*global navigator*/
+		/*global navigator, URL*/
 
 		/**
 		 * Constructor for a new <code>Host</code>.
@@ -387,7 +389,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Modify request headers before sending a data request.
+		 * Modifies the card HTTP data request headers before sending.
 		 * Override if you need to change the default headers behavior, including cache headers.
 		 * @param {map} mHeaders The current map of headers.
 		 * @param {map} mSettings The map of request settings defined in the card manifest.
@@ -403,6 +405,31 @@ sap.ui.define([
 			}
 
 			return mHeaders;
+		};
+
+		/**
+		 * Modifies the card HTTP data request before sending.
+		 * Override if you need to change the default data request behavior.
+		 * @param {map} mRequest The current request. In format for jQuery.ajax function.
+		 * @param {map} mSettings The map of request settings defined in the card manifest.
+		 * @param {sap.ui.integration.widgets.Card} [oCard] Optional. The card for which the request is made.
+		 * @returns {map} The modified request.
+		 * @private
+		 * @ui5-restricted
+	 	 * @experimental Since 1.109. The API might change.
+		 */
+		Host.prototype.modifyRequest = function (mRequest, mSettings, oCard) {
+			var oUrl;
+
+			if (Configuration.getStatisticsEnabled()) {
+				oUrl = new URL(mRequest.url, window.location.href);
+
+				// add statistics parameter to every request (supported only on Gateway servers)
+				oUrl.searchParams.set("sap-statistics", "true");
+				mRequest.url = oUrl.href;
+			}
+
+			return mRequest;
 		};
 
 		/**
