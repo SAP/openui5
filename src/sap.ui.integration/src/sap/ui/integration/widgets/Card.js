@@ -1142,6 +1142,15 @@ sap.ui.define([
 			return;
 		}
 
+		this.refreshAllData();
+		this.resetPaginator();
+	};
+
+	/*
+	* @private
+	* @ui5-restricted sap.ui.integration
+	* */
+	Card.prototype.refreshAllData = function () {
 		var oHeader = this.getCardHeader(),
 			oContent = this.getCardContent(),
 			oFilterBar = this.getAggregation("_filterBar");
@@ -1163,8 +1172,6 @@ sap.ui.define([
 		if (oFilterBar) {
 			oFilterBar.refreshData();
 		}
-
-		this.resetPaginator();
 	};
 
 	/**

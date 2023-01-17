@@ -140,6 +140,65 @@ sap.ui.define([
 		}
 	};
 
+	var oManifestServerSideNoBindings = {
+		"sap.app": {
+			"id": "test2"
+		},
+		"sap.card": {
+			"type": "List",
+			"configuration": {
+				"parameters": {
+					"top": {
+						"value": 5,
+						"type": "integer"
+					}
+				}
+			},
+			"data": {
+				"request": {
+					"url": "/fakeService/getProducts",
+					"method": "GET",
+					"parameters": {
+						"$format": "json",
+						"$count": true,
+						"$skip": 2,
+						"$top": 5
+					}
+				},
+				"path": "/value"
+			},
+			"header": {
+				"title": "Products",
+				"subTitle": "In Stock Information",
+				"icon": {
+					"src": "sap-icon://product"
+				},
+				"status": {
+					"text": {
+						"format": {
+							"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+							"parts": [
+								"parameters>/visibleItems",
+								"/@odata.count"
+							]
+						}
+					}
+				}
+			},
+			"content": {
+				"item": {
+					"title": "{ProductName}"
+				}
+			},
+			"footer": {
+				"paginator": {
+					"totalCount": "{/@odata.count}",
+					"pageSize": "{parameters>/top/value}"
+				}
+			}
+		}
+	};
+
 	var oManifestNoData = {
 		"sap.app": {
 			"id": "test.card.NoData"
@@ -420,6 +479,39 @@ sap.ui.define([
 		});
 
 		oCard.setManifest(oManifestServerSide);
+	});
+
+	QUnit.test("Pagination - server side without bindings", function (assert) {
+		var done = assert.async();
+		var oCard = this.oCard;
+
+		oCard.attachEventOnce("_ready", function () {
+			Core.applyChanges();
+
+			var oPaginator = oCard.getCardFooter().getPaginator(),
+				oList = oCard.getCardContent().getInnerList();
+
+			assert.ok(oPaginator, "paginator is created");
+			assert.strictEqual(oPaginator.getPageNumber(), 0, "page number is correct");
+			assert.strictEqual(oPaginator.getPageSize(), 5, "page size is correct");
+			assert.strictEqual(oPaginator.getPageCount(), 16, "page count is correct");
+
+			assert.strictEqual(oList.getItems().length, oPaginator.getPageSize(), "list items number is correct");
+
+			oCard.attachEventOnce("_contentDataChange", function () {
+				Core.applyChanges();
+
+				assert.strictEqual(oCard.getCardContent().getInnerList().getItems().length, oPaginator.getPageSize(), "list items number is correct");
+				assert.strictEqual(oList.getItems()[0].getTitle(), "Name 2", "same page is shown");
+
+				oCard.destroy();
+				done();
+			});
+
+			oPaginator.next();
+		});
+
+		oCard.setManifest(oManifestServerSideNoBindings);
 	});
 
 	QUnit.test("Page is reset after data is refreshed", function (assert) {
