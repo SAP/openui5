@@ -526,6 +526,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.111
+	 */
 	QUnit.test("Delayed Extension Point with generic factory (async=true)", function(assert){
 		var oView  = sap.ui.xmlview({
 			viewName: "testdata.customizing.customer.ext.DelayedEP",
