@@ -246,7 +246,6 @@ sap.ui.define([
 					return this.mdcTestLibrary.iShouldSeeTheSaveVariantDialog();
 				},
 
-				//TODO ????? ValueHelp actions and assertions are missing
 				// value help
 				iShouldSeeTheValueHelpDialog: function(sTitle) {
 					return this.mdcTestLibrary.iShouldSeeTheValueHelpDialog(sTitle);

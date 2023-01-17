@@ -150,7 +150,7 @@ sap.ui.define([
                 return oWaiters.forValueHelp({success: function (oValueHelp) {
                     var oActiveValueHelpContent = _getActiveValueHelpContent(oValueHelp);
                     var oTable = oActiveValueHelpContent && oActiveValueHelpContent.getTable && oActiveValueHelpContent.getTable(); // we search for some kind of table based content
-                    return oActiveValueHelpContent ? oScope.waitFor({
+                    return oActiveValueHelpContent && oTable ? oScope.waitFor({
                         controlType: oTable.getMetadata().getName(),
                         matchers: [
                             new Ancestor(oActiveValueHelpContent, false)
@@ -162,7 +162,7 @@ sap.ui.define([
                             return oConfig && oConfig.success ? oConfig.success.call(oScope, aResult[0]) : aResult[0];
                         },
                         errorMessage: "No valuehelp content is visible"
-                    }) : Promise.reject("No valuehelp content is visible");
+                    }) : Promise.reject("No valuehelp content is visible / No list for given content available");
                 }}, sValueHelpId);
             },
 

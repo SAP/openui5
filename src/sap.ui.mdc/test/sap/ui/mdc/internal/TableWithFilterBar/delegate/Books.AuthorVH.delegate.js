@@ -23,7 +23,9 @@ sap.ui.define([
 		var bMultiSelect = oValueHelp.getMaxConditions() === -1;
 
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Dialog") &&
-			["container-v4demo---books--FH1-Dialog-MDCTable_withCountry", "container-v4demo---books--FH1-Dialog-MDCTable_default"].indexOf(sContentId) >= 0 ) {
+			["books--FH1-Dialog-MDCTable_withCountry", "books--FH1-Dialog-MDCTable_default"].find(function (sValidContentId) { // different namespace in opa
+				return sContentId.indexOf(sValidContentId) >= 0;
+			}) ) {
 
 			var oCurrentTable = oCurrentContent.getTable();
 			if (oCurrentTable) {

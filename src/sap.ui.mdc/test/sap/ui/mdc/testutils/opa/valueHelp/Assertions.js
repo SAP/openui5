@@ -52,6 +52,22 @@ sap.ui.define(["./doWait", "sap/ui/test/matchers/Ancestor"
                     }
                 }
             }, sValueHelp);
+        },
+        iShouldSeeValueHelpToken: function (sValue, sValueHelp) {
+            return doWait(this).forValueHelpDialog({
+                success: function(oDialog) {
+                    return this.waitFor({
+                        controlType: "sap.m.Token",
+                        matchers: new Ancestor(oDialog.getParent()),
+                        properties: {
+                            text: sValue
+                        },
+                        success: function (aTokens) {
+                            QUnit.assert.ok(aTokens[0], "Found requested token with text '" + sValue + "'");
+                        }
+                    });
+                }
+            }, sValueHelp);
         }
     };
 });
