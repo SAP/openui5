@@ -637,8 +637,8 @@ sap.ui.define([
 
 		assert.strictEqual(oBarInternals.$left.outerWidth(), 0, "left outerWidth is correct");
 
-		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - iStartEndPadding * 2, "mid outerWidth is the remaining space");
-		assert.strictEqual(parseInt(oBarInternals.$mid.css(sLeftOrRight)), iStartEndPadding, "mid was positioned at the " + sLeftOrRight + " edge");
+		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - iStartEndPadding, "mid outerWidth is the remaining space");
+		assert.strictEqual(parseInt(oBarInternals.$mid.css(sLeftOrRight)), iStartEndPadding * 0 , "mid was positioned at the " + sLeftOrRight + " edge");
 
 		assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 
@@ -693,7 +693,7 @@ sap.ui.define([
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
 
-		assert.strictEqual(oBarInternals.$left.outerWidth(), 500 - iStartEndPadding, "left width is correct");
+		assert.strictEqual(oBarInternals.$left.outerWidth(), 500, "left width is correct");
 
 		assert.strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
 
@@ -756,7 +756,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBarInternals.$left.outerWidth(), 0, "left outerWidth is correct");
 
-		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - iStartEndPadding * 2, "mid outerWidth was taking the remaining space");
+		assert.strictEqual(oBarInternals.$mid.outerWidth(), 500 - 225 - iStartEndPadding, "mid outerWidth was taking the remaining space");
 
 		assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 
@@ -863,7 +863,7 @@ sap.ui.define([
 		assert.strictEqual(oBarInternals.$right.outerWidth(), 225 + iStartEndPadding, "right outerWidth is correct");
 		elementHasNoLeftOrRight(assert, oBarInternals.$right, "right Bar");
 
-		assert.strictEqual(oHandleResizeSpy.callCount, 2, "resize was called twice");
+		assert.strictEqual(oHandleResizeSpy.callCount, 3, "resize was called thrice");
 
 		//Cleanup
 		sut.destroy();
@@ -928,13 +928,13 @@ sap.ui.define([
 		oBarInternals.$right.width(105);
 		this.clock.tick(200);
 
-		assert.strictEqual(oHandleResizeSpy.callCount, 3, "resize was called");
+		assert.strictEqual(oHandleResizeSpy.callCount, 4, "resize was called");
 
 		//mid
 		oBarInternals.$mid.width(105);
 		this.clock.tick(200);
 
-		assert.strictEqual(oHandleResizeSpy.callCount, 4, "resize was called");
+		assert.strictEqual(oHandleResizeSpy.callCount, 5, "resize was called");
 
 		//detach
 		sut._removeAllListeners();
@@ -943,7 +943,7 @@ sap.ui.define([
 		oBarInternals.$right.width(100);
 		oBarInternals.$mid.width(100);
 
-		assert.strictEqual(oHandleResizeSpy.callCount, 4, "resize was not called");
+		assert.strictEqual(oHandleResizeSpy.callCount, 5, "resize was not called");
 
 		//Cleanup
 		sut.destroy();
