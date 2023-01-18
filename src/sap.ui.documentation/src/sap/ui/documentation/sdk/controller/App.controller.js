@@ -1643,6 +1643,41 @@ sap.ui.define([
 				});
 			},
 
+			_getCurrentYear: function () {
+				return new Date().getFullYear();
+			},
+
+			_getCurrentQuarter: function () {
+				var oDate = new Date(),
+					iMonth = oDate.getMonth(),
+					iQuarter = Math.floor(iMonth / 3) + 1;
+
+				return iQuarter;
+			},
+
+			/**
+			 * Filters versions in the given JSON object that have passed their end of cloud maintenance date.
+			 * @function
+			 * @param {Object} oVersionOverviewJson - A JSON object containing version information.
+			 * @returns {Array} An array of versions that have not passed their end of cloud maintenance date.
+			 */
+			_filterVersionsPastEOCP: function (oVersionOverviewJson) {
+				var aVersions = oVersionOverviewJson.patches;
+
+				return aVersions.filter(function (oVersion) {
+					var sVersionEOCP = oVersion.extended_eocp || oVersion.eocp || "",
+						iQuarter = Number(sVersionEOCP.substring(1, 2)),
+						iYear = Number(sVersionEOCP.substring(3));
+
+					if (!sVersionEOCP) {
+						return true;
+					}
+
+					return iYear > this._getCurrentYear() ||
+						iYear === this._getCurrentYear() && iQuarter >= this._getCurrentQuarter();
+				}.bind(this));
+			},
+
 			_processVersionOverview: function(oVersionOverviewJson) {
 				var aVersions = oVersionOverviewJson.versions,
 					aResult = [];
@@ -1710,11 +1745,20 @@ sap.ui.define([
 					// Success
 					function(oValues) {
 						var aNeoAppVersions = this._processNeoAppJSON(oValues[0]),
-							aHiddenValues = this._processVersionOverview(oValues[1]);
+							aHiddenValues = this._processVersionOverview(oValues[1]),
+							aFilteredVersionsEOCP = this._filterVersionsPastEOCP(oValues[1]);
 
 						if (Array.isArray(aNeoAppVersions)) {
 							aNeoAppVersions = aNeoAppVersions.filter(function(oVersion) {
 								return aHiddenValues.indexOf(oVersion.version) === -1;
+							});
+
+							// Filters "aNeoAppVersions" array by removing elements
+							// that don't have a matching version in "aFilteredVersionsEOCP" array.
+							aNeoAppVersions = aNeoAppVersions.filter(function(oVersion) {
+								return aFilteredVersionsEOCP.find(function(oFilteredVersion) {
+									return oFilteredVersion.version === oVersion.version;
+								});
 							});
 
 							this._aNeoAppVersions = aNeoAppVersions;
