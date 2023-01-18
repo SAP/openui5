@@ -63,11 +63,11 @@ sap.ui.define([
 	}
 
 	function setTextAndTriggerEnterOnEditableField(oPlugin, sText) {
-		oPlugin._$oEditableControlDomRef.text(sText);
-		oPlugin._$editableField.text(oPlugin._$oEditableControlDomRef.text());
+		oPlugin._oEditableControlDomRef.textContent = sText;
+		oPlugin._oEditableField.textContent = oPlugin._oEditableControlDomRef.textContent;
 		var oEvent = new Event("keydown");
 		oEvent.keyCode = KeyCodes.ENTER;
-		oPlugin._$editableField.get(0).dispatchEvent(oEvent);
+		oPlugin._oEditableField.dispatchEvent(oEvent);
 	}
 
 	QUnit.module("Given a designTime and ControlVariant plugin are instantiated", {

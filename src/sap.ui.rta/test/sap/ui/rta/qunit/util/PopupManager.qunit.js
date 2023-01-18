@@ -464,7 +464,7 @@ sap.ui.define([
 			this.oPopover.oPopup.setAutoClose(true); /* Required to re-activate to check the number of calls to Popup.prototype._addFocusEventListeners()*/
 			this.oPopover.attachAfterOpen(function() {
 				var oPopup = this.oPopover.oPopup;
-				var vPopupElement = oPopup._$().get(0);
+				var vPopupElement = oPopup.getContent().getDomRef();
 
 				this.oRta.getPopupManager().fnOriginalPopupOnAfterRendering = oPopup.onAfterRendering;
 				this.oPopover.oPopup.onAfterRendering = null;

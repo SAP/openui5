@@ -26,7 +26,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 					return {
 						changeType: "rename",
 						domRef: function (oControl) {
-							return oControl.$("title-inner")[0];
+							return oControl.getDomRef().querySelector("[id*='title-inner']");
 						}
 					};
 				}
@@ -87,7 +87,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 				rename: {
 					changeType: "rename",
 					domRef: function (oControl) {
-						return oControl.$().find(".sapMBtnContent")[0];
+						return oControl.getDomRef().querySelector(".sapMBtnContent");
 					}
 				},
 				reveal: {
@@ -165,7 +165,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 						changeType: "rename",
 						domRef: ".sapUxAPObjectPageSubSectionHeaderTitle",
 						isEnabled: function (oElement) {
-							return oElement.$("headerTitle").get(0) !== undefined;
+							return oElement.getDomRef().querySelector("[id*='headerTitle']") !== null;
 						}
 					};
 				}
@@ -211,7 +211,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 						changeType: "rename",
 						domRef: ".sapUxAPObjectPageSectionTitle",
 						isEnabled: function (oElement) {
-							return oElement.getShowTitle();
+							return oElement.getDomRef().querySelector("[id*='title']") !== null;
 						}
 					};
 				}
@@ -242,7 +242,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 			aggregations: {
 				sections: {
 					domRef: function(oElement) {
-						return oElement.$("sectionsContainer").get(0);
+						return oElement.getDomRef().querySelector("[id*='sectionsContainer']");
 					},
 					childNames: {
 						singular: function() {
@@ -270,7 +270,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 				},
 				headerContent: {
 					domRef: function(oElement) {
-						return oElement.$("headerContent").get(0);
+						return oElement.getDomRef().querySelector("[id*='headerContent']");
 					},
 					actions: {
 						move: function(oElement) {
@@ -286,7 +286,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 				aggregations: ["sections", "headerContent"]
 			}, {
 				domRef: function(oElement) {
-					return oElement.$("vertSB-sb").get(0);
+					return oElement.getDomRef().querySelector("[id*='vertSB-sb']");
 				}
 			}],
 			templates: {

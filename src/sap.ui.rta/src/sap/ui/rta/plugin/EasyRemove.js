@@ -47,8 +47,8 @@ sap.ui.define([
 			oOverlay.addStyleClass("sapUiRtaPersDelete");
 		}
 
-		//TODO: check this, this makes no sense; length is always 0
-		if (oOverlay.hasStyleClass("sapUiRtaPersDelete") && oOverlay.$().children(".sapUiRtaPersDeleteClick").length <= 0) {
+		var aChildren = Array.from(oOverlay.getDomRef().querySelectorAll(":scope > .sapUiRtaPersDeleteClick"));
+		if (oOverlay.hasStyleClass("sapUiRtaPersDelete") && aChildren.length === 0) {
 			var onDeletePressed = function(oOverlay) {
 				this.handler([oOverlay]);
 			}.bind(this);

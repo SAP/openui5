@@ -174,7 +174,7 @@ sap.ui.define([
 		QUnit.test("when the Resize plugin is unregistered and registered again for an Overlay", function(assert) {
 			function checkEventHandlerCalled(sEventName, oStub, iCallCount) {
 				if (sEventName === "mouseleave") {
-					this.oColumn0Overlay.$().trigger(sEventName); // "mouseleave" event is not triggered using "dispatchEvent"
+					this.oColumn0Overlay.getDomRef().dispatchEvent(new Event("mouseout"));
 				} else {
 					this.oColumn0Overlay.getDomRef().dispatchEvent(new Event(sEventName));
 				}
@@ -241,7 +241,7 @@ sap.ui.define([
 			assert.strictEqual(this.oResizePlugin.getHandle(), oHandle, "then the handle is properly set on the plugin");
 
 			var oRemoveHandleSpy = sandbox.spy(this.oResizePlugin.getHandle(), "remove");
-			this.oColumn0Overlay.$().trigger("mouseleave"); // "mouseleave" event is not triggered using "dispatchEvent"
+			this.oColumn0Overlay.getDomRef().dispatchEvent(new Event("mouseout"));
 			assert.ok(oRemoveHandleSpy.called, "on mouse leave, the handle is removed");
 			this.oColumn0OverlayDomElement.dispatchEvent(new Event("mousemove"));
 			aHandle = this.oColumn0OverlayDomElement.getElementsByClassName("sapUiRtaResizeHandle");

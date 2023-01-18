@@ -109,16 +109,15 @@ sap.ui.define([
 		}
 
 		function fnPressRenameAndEnsureFunctionality(assert, oControl, oRenameItem, sText) {
-			var $fieldOverlay = this.oCompanyCodeFieldOverlay.$();
+			var oFieldOverlay = this.oCompanyCodeFieldOverlay.getDomRef();
 
 			return new Promise(function(fnResolve) {
 				oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function (sChannel, sEvent, mParams) {
 					if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
-						var $editableField = $fieldOverlay.find(".sapUiRtaEditableField");
+						var aEditableFields = Array.from(oFieldOverlay.querySelectorAll(".sapUiRtaEditableField"));
 
-						assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
-						assert.strictEqual($editableField.find(document.activeElement).length, 1, " and focus is in it");
-
+						assert.strictEqual(aEditableFields.length, 1, " then the rename input field is rendered");
+						assert.ok(aEditableFields[0].contains(document.activeElement), " and focus is in it");
 						Promise.all([
 							new Promise(function (fnResolveOnCommandAdded) {
 								var oCommandStack = this.oRta.getCommandStack();
@@ -138,8 +137,8 @@ sap.ui.define([
 								oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function (sChannel, sEvent, mParams) {
 									if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
 										assert.strictEqual(document.activeElement, this.oCompanyCodeFieldOverlay.getDomRef(), " and focus is on field overlay");
-										$editableField = $fieldOverlay.find(".sapUiRtaEditableField");
-										assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
+										var aEditableFields = Array.from(oFieldOverlay.querySelectorAll(".sapUiRtaEditableField"));
+										assert.strictEqual(aEditableFields.length, 0, " and the editable field is removed from dom");
 										fnResolveWhenRenamed();
 									}
 								}, this);
@@ -149,8 +148,10 @@ sap.ui.define([
 							this.oRta.stop().then(fnResolve);
 						}.bind(this));
 
+						var oEvent = new Event("keydown");
+						oEvent.keyCode = KeyCodes.ENTER;
 						document.activeElement.innerHTML = sText;
-						QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, false, false);
+						document.activeElement.dispatchEvent(oEvent);
 					}
 				}, this);
 				QUnitUtils.triggerEvent("click", oRenameItem.getDomRef());
@@ -357,16 +358,16 @@ sap.ui.define([
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			this.oDatesGroupOverlay.focus();
-			var $groupOverlay = this.oDatesGroupOverlay.$();
+			var oGroupOverlay = this.oDatesGroupOverlay.getDomRef();
 
 			var fnDone = assert.async();
 
 			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function (sChannel, sEvent, mParams) {
 				if (mParams.overlay === this.oDatesGroupOverlay) {
-					var $editableField = $groupOverlay.find(".sapUiRtaEditableField");
+					var aEditableFields = Array.from(oGroupOverlay.querySelectorAll(".sapUiRtaEditableField"));
 
-					assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
-					assert.strictEqual($editableField.find(document.activeElement).length, 1, " and focus is in it");
+					assert.strictEqual(aEditableFields.length, 1, " then the rename input field is rendered");
+					assert.strictEqual(aEditableFields[0].contains(document.activeElement), true, " and focus is in it");
 					Promise.all([
 						new Promise(function (fnResolveOnCommandAdded) {
 							var oCommandStack = this.oRta.getCommandStack();
@@ -387,8 +388,8 @@ sap.ui.define([
 							oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function (sChannel, sEvent, mParams) {
 								if (mParams.overlay === this.oDatesGroupOverlay) {
 									assert.strictEqual(this.oDatesGroupOverlay.getDomRef(), document.activeElement, " and focus is on group overlay");
-									$editableField = $groupOverlay.find(".sapUiRtaEditableField");
-									assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
+									aEditableFields = Array.from(oGroupOverlay.querySelectorAll(".sapUiRtaEditableField"));
+									assert.strictEqual(aEditableFields.length, 0, " and the editable field is removed from dom");
 									fnResolveWhenRenamed();
 								}
 							}, this);
@@ -403,13 +404,15 @@ sap.ui.define([
 					})
 					.then(fnDone);
 
+					var oEvent = new Event("keydown");
+					oEvent.keyCode = KeyCodes.ENTER;
 					document.activeElement.innerHTML = "Test";
-					QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, false, false);
+					document.activeElement.dispatchEvent(oEvent);
 				}
 			}, this);
 
-			$groupOverlay.trigger("click");
-			$groupOverlay.trigger("click");
+			oGroupOverlay.click();
+			oGroupOverlay.click();
 		});
 
 		QUnit.test("when adding a SimpleForm Field via context menu (expanded context menu) - reveal", function(assert) {
