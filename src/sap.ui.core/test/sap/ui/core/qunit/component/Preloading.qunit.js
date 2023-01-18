@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/UIComponentMetadata"
+	"sap/ui/core/UIComponentMetadata",
+	"sap/ui/VersionInfo"
 ], function(
 	Log,
 	deepExtend,
@@ -21,7 +22,8 @@ sap.ui.define([
 	Library,
 	Manifest,
 	UIComponent,
-	UIComponentMetadata
+	UIComponentMetadata,
+	VersionInfo
 ) {
 
 	"use strict";
@@ -293,11 +295,6 @@ sap.ui.define([
 
 		var oServer = this._oSandbox.useFakeServer();
 		oServer.autoRespond = true;
-		oServer.xhr.useFilters = true;
-		oServer.xhr.addFilter(function(method, url) {
-			return url !== "/anylocation/manifest.json?sap-language=EN";
-		});
-
 		oServer.respondWith("GET", "/anylocation/manifest.json?sap-language=EN", [
 			200,
 			{
@@ -689,6 +686,22 @@ sap.ui.define([
 					"testlibs": "test-resources/sap/ui/core/qunit/testdata/libraries"
 				}
 			});
+
+			return LoaderExtensions.loadResource({
+				dataType: "json",
+				url: sap.ui.require.toUrl("testlibs/scenario15/sap-ui-version.json"),
+				async: true
+			}).then(function(oVersionInfo) {
+				this.oServer = this._oSandbox.useFakeServer();
+				this.oServer.autoRespond = true;
+				this.oServer.respondWith("GET", sap.ui.require.toUrl("sap-ui-version.json"), [
+					200,
+					{
+						"Content-Type": "application/json"
+					},
+					JSON.stringify(oVersionInfo)
+				]);
+			}.bind(this));
 		},
 		afterEach: function() {
 			sap.ui.loader.config({
@@ -699,18 +712,11 @@ sap.ui.define([
 		}
 	});
 
-
 	/**
 	 * Library Preload Scenario 15
 	 */
 	QUnit.test("Load library-preload.js instead of Component-preload.js when the Component.js is included in a library preload", function(assert) {
-		return LoaderExtensions.loadResource({
-			dataType: "json",
-			url: sap.ui.require.toUrl("testlibs/scenario15/sap-ui-version.json"),
-			async: true
-		}).then(function(versioninfo) {
-			sap.ui.versioninfo = versioninfo;
-
+		return VersionInfo.load().then(function() {
 			this.spy(sap.ui, 'require');
 			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 
