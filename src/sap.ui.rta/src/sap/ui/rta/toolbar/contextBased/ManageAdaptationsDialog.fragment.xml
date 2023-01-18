@@ -5,6 +5,9 @@
 	<Dialog
 		resizable="true"
 		draggable="true"
+		contentWidth="830px"
+		contentHeight="450px"
+		setHorizontalScrolling="false"
 		title="{i18n>MANAGE_ADAPTATIONS_DIALOG_HEADER}">
 		<Table id="manageAdaptationsTable"
 			showNoData="false"
@@ -52,6 +55,18 @@
 					hAlign="Left">
 					<Text text="{i18n>CLM_HEADER_CONTEXT}" />
 				</Column>
+				<Column minScreenWidth="tablet"
+					demandPopin="true"
+					popinDisplay="Inline"
+					hAlign="Left">
+					<Text text="{i18n>CLM_HEADER_ADAPTATIONS_CREATED_ON}" />
+				</Column>
+				<Column minScreenWidth="tablet"
+					demandPopin="true"
+					popinDisplay="Inline"
+					hAlign="Left">
+					<Text text="{i18n>CLM_HEADER_ADAPTATIONS_CHANGED_ON}" />
+				</Column>
 				<Column width="7rem"
 					minScreenWidth="tablet"
 					demandPopin="true"
@@ -80,6 +95,8 @@
 						</CustomListItem>
 						<Text text="{ parts: ['contextBased>contexts/role'], formatter: '.formatContextColumnCell'}"
 							tooltip="{ parts: ['contextBased>contexts/role'], formatter: '.formatContextColumnTooltip'}" />
+						<Text text="{ parts: ['contextBased>createdBy', 'contextBased>createdAt'], formatter: '.formatCreatedChangedOnColumnCell'}"/>
+						<Text text="{ parts: ['contextBased>changedBy', 'contextBased>changedAt'], formatter: '.formatCreatedChangedOnColumnCell'}"/>		
 						<MenuButton text="{i18n>CLM_HEADER_ADAPTATIONS_ACTIONS}">
 							<menu>
 								<Menu itemSelected="onMenuAction">

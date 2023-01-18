@@ -139,9 +139,9 @@ sap.ui.define([
 						title: "German Admin",
 						description: "ACH Admin for Germany",
 						createdBy: "Test User 1",
-						createdAt: "May 25, 2022",
+						createdAt: "2022-05-25T07:30:32Z",
 						changedBy: "Test User 1",
-						changedAt: "May 27, 2022"
+						changedAt: "2022-05-27T08:30:32Z"
 					},
 					{
 						id: "id-1591275572835-1",
@@ -151,9 +151,9 @@ sap.ui.define([
 						title: "DLM Copilot",
 						description: "DLM copilot contexts for Europe",
 						createdBy: "Test User 2",
-						createdAt: "May 17, 2022",
+						createdAt: "2022-05-17T09:30:32Z",
 						changedBy: "Test User 2",
-						changedAt: "SEPTEMBER 07, 2022"
+						changedAt: "2022-09-07T10:30:32Z"
 					}]
 				});
 				this.aPriorityList = [
