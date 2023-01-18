@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 sap.ui.define([
 	"sap/m/p13n/PersistenceProvider",
 	"sap/ui/mdc/enum/PersistenceMode", //TODO Change this
@@ -63,6 +63,17 @@ sap.ui.define([
 	QUnit.test("inner VM cleanup", function(assert){
 		this.oPP.destroy();
 		assert.ok(!this.oPP._oVM, "Inner VM cleaned up");
+	});
+
+	QUnit.test("Check triggers for reinitalization in transient mode", function(assert){
+
+		var oTransientVM = oCore.byId(this.oPP.getId() + "--vm");
+		var oReinitializationSpy = sinon.spy(oTransientVM, "reinitialize");
+		var oUpdateModelSpy = sinon.spy(oTransientVM, "setModel");
+		this.oPP.reinitialize();
+
+		assert.ok(oReinitializationSpy.calledOnce);
+		assert.ok(oUpdateModelSpy.calledOnce);
 	});
 
 	QUnit.test("When the type s set to transient, the for association needs to be propagated to the inner VM", function(assert){
