@@ -928,26 +928,26 @@ sap.ui.define([
 
 			// check if models are set on component (and save them internally)
 			this.assertModelInstances({
-				"": sap.ui.model.odata.v2.ODataModel,
-				"default-with-annotations": sap.ui.model.odata.v2.ODataModel,
-				"old-uri-syntax": sap.ui.model.odata.v2.ODataModel,
-				"ODataModel": sap.ui.model.odata.ODataModel,
-				"v2-ODataModel": sap.ui.model.odata.v2.ODataModel,
-				"invalid-annotations": sap.ui.model.odata.v2.ODataModel,
-				"json": sap.ui.model.json.JSONModel,
-				"json-relative": sap.ui.model.json.JSONModel,
-				"json-relative-2": sap.ui.model.json.JSONModel,
-				"xml": sap.ui.model.xml.XMLModel,
-				"xml-relative": sap.ui.model.xml.XMLModel,
-				"resourceBundle-name": sap.ui.model.resource.ResourceModel,
-				"resourceBundle-legacy-uri": sap.ui.model.resource.ResourceModel,
-				"custom-uri-string": sap.ui.test.v2models.parent.CustomModel,
-				"custom-relative-uri-string": sap.ui.test.v2models.parent.CustomModel,
-				"custom-uri-string-with-settings": sap.ui.test.v2models.parent.CustomModel,
-				"custom-without-args": sap.ui.test.v2models.parent.CustomModel,
-				"custom-uri-setting-name": sap.ui.test.v2models.parent.CustomModel,
-				"custom-uri-setting-merge": sap.ui.test.v2models.parent.CustomModel,
-				"custom-uri-setting-already-defined": sap.ui.test.v2models.parent.CustomModel
+				"": ODataModelV2,
+				"default-with-annotations": ODataModelV2,
+				"old-uri-syntax": ODataModelV2,
+				"ODataModel": ODataModelV1,
+				"v2-ODataModel": ODataModelV2,
+				"invalid-annotations": ODataModelV2,
+				"json": JSONModel,
+				"json-relative": JSONModel,
+				"json-relative-2": JSONModel,
+				"xml": XMLModel,
+				"xml-relative": XMLModel,
+				"resourceBundle-name": ResourceModel,
+				"resourceBundle-legacy-uri": ResourceModel,
+				"custom-uri-string": CustomModel,
+				"custom-relative-uri-string": CustomModel,
+				"custom-uri-string-with-settings": CustomModel,
+				"custom-without-args": CustomModel,
+				"custom-uri-setting-name": CustomModel,
+				"custom-uri-setting-merge": CustomModel,
+				"custom-uri-setting-already-defined": CustomModel
 			});
 
 			// destroy the component
@@ -1021,8 +1021,8 @@ sap.ui.define([
 
 			// check if models are set on component (and save them internally)
 			this.assertModelInstances({
-				"i18n": sap.ui.model.resource.ResourceModel,
-				"sfapi": sap.ui.model.odata.ODataModel
+				"i18n": ResourceModel,
+				"sfapi": ODataModelV1
 			});
 
 			// destroy the component
@@ -1143,7 +1143,7 @@ sap.ui.define([
 
 			// check if models are set on component (and save them internally)
 			this.assertModelInstances({
-				"ODataModel": sap.ui.model.odata.v2.ODataModel
+				"ODataModel": ODataModelV2
 			});
 
 			// destroy the component
@@ -1173,7 +1173,7 @@ sap.ui.define([
 
 			// check if models are set on component (and save them internally)
 			this.assertModelInstances({
-				"ODataV2Consumption": sap.ui.model.odata.v4.ODataModel
+				"ODataV2Consumption": ODataModelV4
 			});
 
 			// destroy the component
@@ -1373,26 +1373,26 @@ sap.ui.define([
 
 			// check if models are set on component (and save them internally)
 			this.assertModelInstances({
-				"": sap.ui.model.odata.v2.ODataModel,
-				"default-with-annotations": sap.ui.model.odata.v2.ODataModel,
-				"old-uri-syntax": sap.ui.model.odata.v2.ODataModel,
-				"ODataModel": sap.ui.model.odata.ODataModel,
-				"v2-ODataModel": sap.ui.model.odata.v2.ODataModel,
-				"invalid-annotations": sap.ui.model.odata.v2.ODataModel,
-				"json": sap.ui.model.json.JSONModel,
-				"json-relative": sap.ui.model.json.JSONModel,
-				"json-relative-2": sap.ui.model.json.JSONModel,
-				"xml": sap.ui.model.xml.XMLModel,
-				"xml-relative": sap.ui.model.xml.XMLModel,
-				"resourceBundle-name": sap.ui.model.resource.ResourceModel,
-				"resourceBundle-legacy-uri": sap.ui.model.resource.ResourceModel,
-				"custom-uri-string": sap.ui.test.v2models.parent.CustomModel,
-				"custom-relative-uri-string": sap.ui.test.v2models.parent.CustomModel,
-				"custom-uri-string-with-settings": sap.ui.test.v2models.parent.CustomModel,
-				"custom-without-args": sap.ui.test.v2models.parent.CustomModel,
-				"custom-uri-setting-name": sap.ui.test.v2models.parent.CustomModel,
-				"custom-uri-setting-merge": sap.ui.test.v2models.parent.CustomModel,
-				"custom-uri-setting-already-defined": sap.ui.test.v2models.parent.CustomModel
+				"": ODataModelV2,
+				"default-with-annotations": ODataModelV2,
+				"old-uri-syntax": ODataModelV2,
+				"ODataModel": ODataModelV1,
+				"v2-ODataModel": ODataModelV2,
+				"invalid-annotations": ODataModelV2,
+				"json": JSONModel,
+				"json-relative": JSONModel,
+				"json-relative-2": JSONModel,
+				"xml": XMLModel,
+				"xml-relative": XMLModel,
+				"resourceBundle-name": ResourceModel,
+				"resourceBundle-legacy-uri": ResourceModel,
+				"custom-uri-string": CustomModel,
+				"custom-relative-uri-string": CustomModel,
+				"custom-uri-string-with-settings": CustomModel,
+				"custom-without-args": CustomModel,
+				"custom-uri-setting-name": CustomModel,
+				"custom-uri-setting-merge": CustomModel,
+				"custom-uri-setting-already-defined": CustomModel
 			});
 
 			// destroy the component
@@ -1638,13 +1638,13 @@ sap.ui.define([
 			assert.deepEqual(this.oComponent.getManifest(), this.oManifest, "Manifest matches the manifest behind manifestUrl");
 
 			this.assertModelInstances({
-				"odata1": sap.ui.model.odata.v2.ODataModel,
-				"odata2": sap.ui.model.odata.v2.ODataModel,
-				"odata3": sap.ui.model.odata.v2.ODataModel,
-				"json1": sap.ui.model.json.JSONModel,
-				"json2": sap.ui.model.json.JSONModel,
-				"i18n1": sap.ui.model.resource.ResourceModel,
-				"i18n2": sap.ui.model.resource.ResourceModel
+				"odata1": ODataModelV2,
+				"odata2": ODataModelV2,
+				"odata3": ODataModelV2,
+				"json1": JSONModel,
+				"json2": JSONModel,
+				"i18n1": ResourceModel,
+				"i18n2": ResourceModel
 			});
 
 			// destroy the component
@@ -1682,13 +1682,13 @@ sap.ui.define([
 			assert.equal(this.modelSpy.resource.callCount, 2, "ResourceModels should be created (during Component instantiation)");
 
 			this.assertModelInstances({
-				"odata1": sap.ui.model.odata.v2.ODataModel,
-				"odata2": sap.ui.model.odata.v2.ODataModel,
-				"odata3": sap.ui.model.odata.v2.ODataModel,
-				"json1": sap.ui.model.json.JSONModel,
-				"json2": sap.ui.model.json.JSONModel,
-				"i18n1": sap.ui.model.resource.ResourceModel,
-				"i18n2": sap.ui.model.resource.ResourceModel
+				"odata1": ODataModelV2,
+				"odata2": ODataModelV2,
+				"odata3": ODataModelV2,
+				"json1": JSONModel,
+				"json2": JSONModel,
+				"i18n1": ResourceModel,
+				"i18n2": ResourceModel
 			});
 
 			this.oComponent.destroy();
@@ -1758,13 +1758,13 @@ sap.ui.define([
 			assert.deepEqual(this.oComponent.getManifest(), this.oManifest, "Manifest matches the manifest behind manifestUrl");
 
 			this.assertModelInstances({
-				"odata1": sap.ui.model.odata.v2.ODataModel,
-				"odata2": sap.ui.model.odata.v2.ODataModel,
-				"odata3": sap.ui.model.odata.v2.ODataModel,
-				"json1": sap.ui.model.json.JSONModel,
-				"json2": sap.ui.model.json.JSONModel,
-				"i18n1": sap.ui.model.resource.ResourceModel,
-				"i18n2": sap.ui.model.resource.ResourceModel
+				"odata1": ODataModelV2,
+				"odata2": ODataModelV2,
+				"odata3": ODataModelV2,
+				"json1": JSONModel,
+				"json2": JSONModel,
+				"i18n1": ResourceModel,
+				"i18n2": ResourceModel
 			});
 
 			// destroy the component
@@ -1839,13 +1839,13 @@ sap.ui.define([
 			});
 
 			this.assertModelInstances({
-				"odata1": sap.ui.model.odata.v2.ODataModel,
-				"odata2": sap.ui.model.odata.v2.ODataModel,
-				"odata3": sap.ui.model.odata.v2.ODataModel,
-				"json1": sap.ui.model.json.JSONModel,
-				"json2": sap.ui.model.json.JSONModel,
-				"i18n1": sap.ui.model.resource.ResourceModel,
-				"i18n2": sap.ui.model.resource.ResourceModel
+				"odata1": ODataModelV2,
+				"odata2": ODataModelV2,
+				"odata3": ODataModelV2,
+				"json1": JSONModel,
+				"json2": JSONModel,
+				"i18n1": ResourceModel,
+				"i18n2": ResourceModel
 			});
 
 			// destroy the component
