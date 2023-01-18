@@ -543,7 +543,9 @@ sap.ui.define([
 		}
 
 		var oListItem = new StandardListItem({
-			selected: true
+			selected: true,
+			wrapping: true,
+			wrapCharLimit: 10000
 		}).data("tokenId", oToken.getId());
 
 		oListItem.setTitle(oToken.getText());

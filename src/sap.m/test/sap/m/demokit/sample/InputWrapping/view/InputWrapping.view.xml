@@ -1,0 +1,20 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Label text="Product" labelFor="wrappingInput" />
+		<Input
+			id="wrappingInput"
+			placeholder="Enter product"
+			showSuggestion="true"
+			width="50%">
+			<suggestionItems>
+				<core:Item key="1" text='Wireless DSL/ Repeater and Print Server Lorem ipsum dolar st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor incidunt ut labore et dolore magna aliquyam erat, diam nonumy eirmod tempor individunt ut labore et dolore magna aliquyam erat, sed justo et ea rebum.' />
+				<core:Item key="2" text='7" Widescreen Portable DVD Player w MP3, consetetur sadipscing, sed diam nonumy eirmod tempor invidunt ut labore et dolore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergen, no sea takimata. Tortor pretium viverra suspendisse potenti nullam.' />
+				<core:Item key="3" text='Portable DVD Player with 9" LCD Monitor' />
+			</suggestionItems>
+		</Input>
+	</l:VerticalLayout>
+</mvc:View>

@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser*/
+/*global describe,it,element,by,takeScreenshot,expect,browser, protractor*/
 
 describe("sap.m.ComboBox", function() {
 	"use strict";
@@ -34,6 +34,8 @@ describe("sap.m.ComboBox", function() {
 		var twoColumnArrow = element(by.id("box_two_column-arrow"));
 		twoColumnArrow.click();
 		expect(takeScreenshot()).toLookAs("two_column_fullscreen");
+		browser.actions().sendKeys("A").perform();
+		expect(takeScreenshot()).toLookAs("two_column_filtered");
 		twoColumnArrow.click();
 	});
 
@@ -103,6 +105,25 @@ describe("sap.m.ComboBox", function() {
 		browser.executeScript('document.getElementById("box_error").scrollIntoView()').then(function() {
 			comboBoxError.click();
 			expect(takeScreenshot(comboBoxError)).toLookAs("error");
+		});
+	});
+
+	// check ComboBox - Suggestions wrapping
+	it("should open ComboBox - Suggestions wrapping", function() {
+		var comboBoxWrapping = element(by.id("comboBoxWrapping"));
+		browser.executeScript('document.getElementById("comboBoxWrapping").scrollIntoView()').then(function() {
+			comboBoxWrapping.click();
+
+			// Should show wrapping suggestions - first focused
+			browser.actions().sendKeys(protractor.Key.F4).perform();
+			expect(takeScreenshot()).toLookAs("wrapping_suggestions_visible");
+
+			// Should focus the second suggestion
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot()).toLookAs("wrapping_second_suggestion_focused");
+
+			// Should close the dropdown
+			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 		});
 	});
 });

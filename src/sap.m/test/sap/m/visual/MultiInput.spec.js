@@ -196,6 +196,8 @@ describe('sap.m.MultiInput', function() {
 				browser.actions().sendKeys("S").perform();
 
 				expect(takeScreenshot()).toLookAs("suggestions_popover_margins");
+
+				browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 			});
 		});
 
@@ -213,6 +215,25 @@ describe('sap.m.MultiInput', function() {
 
 				element(by.id("mi-long-sugg-small-width")).click();
 				expect(takeScreenshot()).toLookAs("multiinput_placeholder_blur");
+			});
+		});
+
+		it("Should visualize MultiInput with long suggestions", function () {
+			var oWrappingMultiInput = element(by.id("mi-wrapping"));
+
+			browser.executeScript("document.getElementById('mi-wrapping').scrollIntoView()").then(function () {
+				oWrappingMultiInput.click();
+
+				// Should show wrapping suggestions
+				browser.actions().sendKeys("I").perform();
+				expect(takeScreenshot()).toLookAs("wrapping_suggestions_visible");
+
+				// Should focus the first suggestion
+				browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+				expect(takeScreenshot()).toLookAs("wrapping_first_suggestion_focused");
+
+				// Should close the dropdown
+				browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 			});
 		});
 });
