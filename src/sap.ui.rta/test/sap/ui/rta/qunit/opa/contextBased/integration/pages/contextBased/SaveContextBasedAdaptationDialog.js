@@ -91,6 +91,20 @@ sap.ui.define([
 						}
 					});
 				},
+				iShouldSeeContextBasedAdaptationTitleValueState: function(valueState, valueStateText) {
+					return this.waitFor({
+						controlType: "sap.m.Input",
+						labelFor: {
+							text: "Title"
+						},
+						searchOpenDialogs: true,
+						success: function(vControls) {
+							var oControl = vControls[0] || vControls;
+							Opa5.assert.strictEqual(oControl.getValueState(), valueState, "I see input value state " + valueState);
+							Opa5.assert.strictEqual(oControl.getValueStateText(), valueStateText, "I see value state text " + valueStateText);
+						}
+					});
+				},
 				iShouldSeeSelectedContextBasedAdaptationPriority: function(sRoleText) {
 					return this.waitFor({
 						controlType: "sap.m.Select",

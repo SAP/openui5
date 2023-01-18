@@ -71,7 +71,7 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.isContextSharing] Indicator whether this is a request for context sharing
 	 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped. This is S4/Hana specific flag passed by only Smart Business
 	 * @param {boolean} [mPropertyBag.isCondensingEnabled] Indicator whether this is a request for condensing
-	 * @param {boolean} [mPropertyBag.isContextBasedAdaptationEnabled] Indicator whether this is an context-based adaptation
+	 * @param {boolean} [mPropertyBag.isContextBasedAdaptationEnabled] Indicator whether this is a context-based adaptation
 	 * @param {boolean} [mPropertyBag.parentVersion] Indicates if changes should be written as a draft and on which version the changes should be based on
 	 * @private
 	 * @returns {Promise} Promise resolves as soon as the writing was completed

@@ -1,6 +1,7 @@
 /* global QUnit */
 sap.ui.define(
 	[
+		"sap/ui/core/ValueState",
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/Opa5",
 		"./pages/contextBased/SaveContextBasedAdaptationDialog",
@@ -8,7 +9,7 @@ sap.ui.define(
 		"./pages/contextVisibility/ContextSharingVisibilityFragment",
 		"./pages/AppPage"
 	],
-	function(opaTest, Opa5) {
+	function(ValueState, opaTest, Opa5) {
 		"use strict";
 
 		var arrangements = new Opa5({
@@ -41,6 +42,7 @@ sap.ui.define(
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(false);
 			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle("Hello World");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle("Hello World");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitleValueState(ValueState.None, "");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(false);
 		});
 
@@ -74,6 +76,7 @@ sap.ui.define(
 		opaTest("Should again add necessary adaptation values", function(Given, When, Then) {
 			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle("Hello World");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle("Hello World");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitleValueState(ValueState.None, "");
 			When.onTheAddAdaptationDialogPage.iClickAndSelectPriorityForAdaptation(1);
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSelectedContextBasedAdaptationPriority("Insert after 'German Admin' (Priority '2')");
 			When.onTheContextSharingVisibilityFragmentPage.iClickOnAddRoleButton();
@@ -89,6 +92,7 @@ sap.ui.define(
 		opaTest("Should delete and then add mandatory title", function(Given, When, Then) {
 			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle("");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle("");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitleValueState(ValueState.Error, "Please enter a title.");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(false);
 			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle("Hello World");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle("Hello World");
@@ -105,6 +109,24 @@ sap.ui.define(
 			When.onTheSelectRoleDialogPage.iSelectRoleByName("/TEST/ROLE/HGWRTS_TST");
 			When.onTheSelectRoleDialogPage.iSelectRoles();
 			Then.onTheContextSharingVisibilityFragmentPage.iShouldSeeSelectedRole("/TEST/ROLE/HGWRTS_TST");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(true);
+		});
+
+		opaTest("Should enter existing adaptation title", function (Given, When, Then) {
+			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle(" ");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle(" ");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(false);
+			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle("German Admin");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle("German Admin");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitleValueState(ValueState.Error, "The adaptation title already exists. Please enter a different title.");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(false);
+			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle(" German Admin ");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle(" German Admin ");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitleValueState(ValueState.Error, "The adaptation title already exists. Please enter a different title.");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(false);
+			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle(" German Admin 2");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle(" German Admin 2");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitleValueState(ValueState.None, "");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(true);
 			When.onTheAddAdaptationDialogPage.iClickOnSave();
 		});
@@ -125,6 +147,7 @@ sap.ui.define(
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(false);
 			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle("Hello World");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle("Hello World");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitleValueState(ValueState.None, "");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(false);
 		});
 
@@ -147,10 +170,25 @@ sap.ui.define(
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(true);
 		});
 
-		opaTest("Should delete and then add mandatory title", function(Given, When, Then) {
+		opaTest("Should enter an empty title", function(Given, When, Then) {
 			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle("");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle("");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitleValueState(ValueState.Error, "Please enter a title.");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(false);
+		});
+
+		opaTest("Should add a title that exceeds the max title length", function(Given, When, Then) {
+			var sExceedingTitle = "";
+			for (var i = 0; i < 101; i++) {
+				sExceedingTitle += "A";
+			}
+			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle(sExceedingTitle);
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle(sExceedingTitle);
+			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitleValueState(ValueState.Error, "Adaptation titles are restricted to 100 characters");
+			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(false);
+		});
+
+		opaTest("Should add a valid title", function(Given, When, Then) {
 			When.onTheAddAdaptationDialogPage.iEnterContextBasedAdaptationTitle("Hello World");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeContextBasedAdaptationTitle("Hello World");
 			Then.onTheAddAdaptationDialogPage.iShouldSeeSaveButtonEnabled(true);
