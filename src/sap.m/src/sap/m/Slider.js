@@ -1554,7 +1554,7 @@ function(
 		 * Default value is <code>0</code>.
 		 *
 		 * @param {float} fNewValue new value for property <code>value</code>.
-		 * @param {object} mOptions The options object
+		 * @param {{snapValue: boolean}|object} mOptions The options object
 		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
