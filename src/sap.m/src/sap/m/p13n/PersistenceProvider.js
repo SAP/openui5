@@ -65,6 +65,7 @@ sap.ui.define([
 
 		var oModel = this.getModel(ControlVariantApplyAPI.getVariantModelName());
 		if (oModel) {
+			this.reinitialize();
 			this._fnResolveModel(oModel);
 		}
 	};
@@ -136,6 +137,21 @@ sap.ui.define([
 		this.setProperty("mode", sValue);
 
 		return this;
+	};
+
+	/**
+	 * This method reinitializes the inner <code>VariantManagement</code> control be providing the
+	 * variant model and triggering a reinitialize on the inner VM in the static area
+	 *
+	 * @ui5-restricted sap.m.p13n
+	 */
+	PersistenceProvider.prototype.reinitialize = function () {
+		var oVM = sap.ui.getCore().byId(this.getId() + "--vm");
+		if (this.getMode() === mode.Transient && oVM) {
+			var oVariantModel = this.getModel(ControlVariantApplyAPI.getVariantModelName());
+			oVM.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
+			oVM.reinitialize();
+		}
 	};
 
 	PersistenceProvider.prototype.exit = function () {
