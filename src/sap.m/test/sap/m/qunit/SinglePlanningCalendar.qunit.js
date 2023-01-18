@@ -752,6 +752,7 @@ sap.ui.define([
 
 	QUnit.test("viewChange", function (assert) {
 		var oSPC = new SinglePlanningCalendar({
+				startDate: new Date(2021, 1, 1),
 				views: [
 					new SinglePlanningCalendarDayView({
 						key: "DayView",
@@ -767,7 +768,8 @@ sap.ui.define([
 			sMonthViewId = oSPC.getViews()[1].getId(),
 			oDayViewSegmentedButtonItem = oSPC._getHeader()._getOrCreateViewSwitch().getItems()[0],
 			sDayViewId = oSPC.getViews()[0].getId(),
-			fnFireViewChange = this.spy(oSPC, "fireViewChange");
+			fnFireViewChange = this.spy(oSPC, "fireViewChange"),
+			sOpenPickerButtonText = oSPC._getHeader()._oPickerBtn.getText();
 
 		oSPC.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -775,9 +777,9 @@ sap.ui.define([
 		// Act - simulate press on a Month View SegmentedButton
 		oMonthViewSegmentedButtonItem.oButton.firePress();
 		oCore.applyChanges();
-
 		//assert - selected view must be Month View, and event must be called once
 		assert.equal(oSPC.getSelectedView(), sMonthViewId, "The proper View Id is stored in selectedView association");
+		assert.strictEqual(sOpenPickerButtonText, "February 1, 2021", "The text must be visible and with correct value February 1, 2021");
 		assert.ok(fnFireViewChange.firstCall, "Event was fired");
 
 		// Act - simulate press on a Day View SegmentedButton
