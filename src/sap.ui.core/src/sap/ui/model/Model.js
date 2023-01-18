@@ -513,16 +513,6 @@ sap.ui.define([
 		return this;
 	};
 
-	Model.prototype.attachMessageChange = function(oData, fnFunction, oListener) {
-		this.attachEvent("messageChange", oData, fnFunction, oListener);
-		return this;
-	};
-
-	Model.prototype.detachMessageChange = function(fnFunction, oListener) {
-		this.detachEvent("messageChange", fnFunction, oListener);
-		return this;
-	};
-
 	/**
 	 * Fires event {@link #event:propertyChange propertyChange} to attached listeners.
 	 *
