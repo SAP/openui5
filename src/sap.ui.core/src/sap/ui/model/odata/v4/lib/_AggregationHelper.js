@@ -133,13 +133,16 @@ sap.ui.define([
 		 *   The group level cache which the given element has been read from
 		 * @param {number} iIndex
 		 *   The index of the given element within the cache's collection
+		 * @param {string} [sNodeProperty]
+		 *   Optional property path to the hierarchy node value
 		 * @throws {Error}
 		 *   In case an unexpected element or placeholder would be overwritten, or in case of a
 		 *   structural change
 		 *
 		 * @private
 		 */
-		beforeOverwritePlaceholder : function (oPlaceholder, oElement, oCache, iIndex) {
+		beforeOverwritePlaceholder : function (oPlaceholder, oElement, oCache, iIndex,
+				sNodeProperty) {
 			var oParent = _Helper.getPrivateAnnotation(oPlaceholder, "parent");
 
 			if (!_Helper.hasPrivateAnnotation(oPlaceholder, "placeholder")) {
@@ -155,16 +158,22 @@ sap.ui.define([
 			}
 			["descendants", "filter", "predicate"].forEach(function (sAnnotation) {
 				if (_Helper.hasPrivateAnnotation(oPlaceholder, sAnnotation)
-					&& _Helper.getPrivateAnnotation(oElement, sAnnotation)
-						!== _Helper.getPrivateAnnotation(oPlaceholder, sAnnotation)) {
+					&& _Helper.getPrivateAnnotation(oPlaceholder, sAnnotation)
+						!== _Helper.getPrivateAnnotation(oElement, sAnnotation)) {
 					throw new Error("Unexpected structural change: " + sAnnotation);
 				}
 			});
+			if (sNodeProperty in oPlaceholder
+					&& oPlaceholder[sNodeProperty] !== oElement[sNodeProperty]) {
+				throw new Error("Unexpected structural change: " + sNodeProperty
+					+ " from " + JSON.stringify(oPlaceholder[sNodeProperty])
+					+ " to " + JSON.stringify(oElement[sNodeProperty]));
+			}
 
 			_Helper.copyPrivateAnnotation(oPlaceholder, "spliced", oElement);
 			if ("@$ui5.node.isExpanded" in oPlaceholder) {
-				if ((oElement["@$ui5.node.isExpanded"] === undefined)
-						!== (oPlaceholder["@$ui5.node.isExpanded"] === undefined)) {
+				if ((oPlaceholder["@$ui5.node.isExpanded"] === undefined)
+						!== (oElement["@$ui5.node.isExpanded"] === undefined)) {
 					throw new Error("Not a leaf anymore (or vice versa)");
 				}
 				oElement["@$ui5.node.isExpanded"] = oPlaceholder["@$ui5.node.isExpanded"];
@@ -395,8 +404,9 @@ sap.ui.define([
 		 * Builds the value for a "$apply" system query option based on the given data aggregation
 		 * information for a recursive hierarchy. If no query options are given, only a symbolic
 		 * "$apply" is constructed to avoid timing issues with metadata. The property paths for
-		 * DistanceFromRootProperty, DrillStateProperty, and LimitedDescendantCountProperty are
-		 * stored at <code>oAggregation</code> using a "$" prefix (if not already stored).
+		 * DistanceFromRootProperty, DrillStateProperty, LimitedDescendantCountProperty, and
+		 * NodeProperty are stored at <code>oAggregation</code> using a "$" prefix (if not already
+		 * stored).
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for a recursive hierarchy; see
@@ -413,8 +423,8 @@ sap.ui.define([
 		 *   The value for a "$orderby" system query option; it is removed from the returned map and
 		 *   turned into an "orderby()" transformation
 		 * @param {string[]} [mQueryOptions.$select]
-		 *   The value for a "$select" system query option; additional technical properties are
-		 *   added to the returned copy
+		 *   The value for a "$select" system query option; additional technical properties
+		 *   including NodeProperty ("the hierarchy node value") are added to the returned copy
 		 * @param {boolean} [bAllLevels]
 		 *   Whether to expand all levels
 		 * @returns {object}
@@ -427,12 +437,8 @@ sap.ui.define([
 		buildApply4Hierarchy : function (oAggregation, mQueryOptions, bAllLevels) {
 			var sApply = "",
 				sHierarchyQualifier = oAggregation.hierarchyQualifier,
+				sNodeProperty = oAggregation.$NodeProperty,
 				sPath = oAggregation.$path,
-				sNodeProperty = mQueryOptions
-					? oAggregation.$fetchMetadata(sPath
-						+ "/@Org.OData.Aggregation.V1.RecursiveHierarchy#" + sHierarchyQualifier
-						+ "/NodeProperty/$PropertyPath").getResult()
-					: "???",
 				mRecursiveHierarchy,
 				sSeparator = "";
 
@@ -455,9 +461,22 @@ sap.ui.define([
 				}
 			}
 
+			if (!sNodeProperty) {
+				if (mQueryOptions) {
+					sNodeProperty = oAggregation.$NodeProperty = oAggregation.$fetchMetadata(sPath
+						+ "/@Org.OData.Aggregation.V1.RecursiveHierarchy#" + sHierarchyQualifier
+						+ "/NodeProperty/$PropertyPath").getResult();
+				} else {
+					sNodeProperty = "???";
+				}
+			}
+
 			mQueryOptions = Object.assign({}, mQueryOptions); // shallow clone
 			if (mQueryOptions.$select) {
 				mQueryOptions.$select = mQueryOptions.$select.slice();
+				if (!mQueryOptions.$select.includes(sNodeProperty)) {
+					mQueryOptions.$select.push(sNodeProperty);
+				}
 			}
 
 			if (mQueryOptions.$filter || oAggregation.search) {

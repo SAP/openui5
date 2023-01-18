@@ -170,6 +170,25 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("beforeOverwritePlaceholder: $NodeProperty", function (assert) {
+		var oCache = {},
+			oElement = {"@$ui5.node.level" : 9, SomeNodeID : [23]},
+			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
+
+		// code under test (no ID known yet)
+		_AggregationHelper
+			.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42, "SomeNodeID");
+
+		oPlaceholder.SomeNodeID = "42";
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper
+				.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42, "SomeNodeID");
+		}, new Error('Unexpected structural change: SomeNodeID from "42" to [23]'));
+	});
+
+	//*********************************************************************************************
 	[{
 		oAggregation : {
 			group : {
@@ -1019,6 +1038,7 @@ sap.ui.define([
 			});
 
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
+		assert.deepEqual(oAggregation.$NodeProperty, "aNodeID");
 	});
 });
 
@@ -1061,31 +1081,37 @@ sap.ui.define([
 				$path : "/Foo",
 				$DistanceFromRootProperty : "DistFromRoot",
 				$DrillStateProperty : "myDrillState",
-				$LimitedDescendantCountProperty : "LtdDescendant_Count"
+				$LimitedDescendantCountProperty : "LtdDescendant_Count",
+				$NodeProperty : "SomeNodeID"
 			} : {
 				expandTo : iExpandTo,
 				hierarchyQualifier : "X",
 				$path : "/Foo",
-				$DrillStateProperty : "myDrillState"
+				$DrillStateProperty : "myDrillState",
+				$NodeProperty : "SomeNodeID"
 			},
 			iExpectedLevels = iExpandTo || 1,
 			aExpectedSelect = iExpandTo > 1
-			? ["ID", "DistFromRoot", "LtdDescendant_Count", "myDrillState"]
-			: ["ID", "myDrillState"],
+			? ["ID", "SomeNodeID", "DistFromRoot", "LtdDescendant_Count", "myDrillState"]
+			: ["ID", "SomeNodeID", "myDrillState"],
 			mQueryOptions = {
-				$select : ["ID"], //TODO auto-$select NodeProperty just like a key!
+				$select : ["ID"],
 				foo : "bar"
 			},
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
+		if (bStored) {
+			oAggregation.$NodeProperty = "SomeNodeID";
+		}
 		if (bAllLevels) {
 			iExpectedLevels = 9;
-			aExpectedSelect = ["ID", "DistFromRoot"];
+			aExpectedSelect = ["ID", "SomeNodeID", "DistFromRoot"];
 			oExpectedAggregation = {
 				expandTo : iExpandTo,
 				hierarchyQualifier : "X",
 				$path : "/Foo",
-				$DistanceFromRootProperty : "DistFromRoot"
+				$DistanceFromRootProperty : "DistFromRoot",
+				$NodeProperty : "SomeNodeID"
 			};
 			if (bStored) {
 				oAggregation.$DistanceFromRootProperty = "DistFromRoot";
@@ -1097,7 +1123,7 @@ sap.ui.define([
 				oAggregation.$LimitedDescendantCountProperty = "LtdDescendant_Count";
 			}
 		}
-		oAggregationMock.expects("$fetchMetadata").withExactArgs(
+		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1).withExactArgs(
 				"/Foo/@Org.OData.Aggregation.V1.RecursiveHierarchy#X/NodeProperty/$PropertyPath")
 			.returns(SyncPromise.resolve("SomeNodeID"));
 		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1)
@@ -1159,7 +1185,8 @@ sap.ui.define([
 			oAggregationMock = this.mock(oAggregation),
 			mQueryOptions = Object.assign({
 				$$filterBeforeAggregate : "ID eq '42'",
-				$select : ["ID"], // by now, auto-$expand/$select must have finished
+				// Note: let's assume "myID" is a key property or needed on UI...
+				$select : ["ID", "myID"], // by now, auto-$expand/$select must have finished
 				foo : "bar"
 			}, mFixture.mQueryOptions),
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
@@ -1177,11 +1204,12 @@ sap.ui.define([
 		assert.deepEqual(_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions), {
 				$apply : mFixture.sExpectedApply,
 				// no more $filter or $orderby!
-				$select : ["ID", "aDrillState"],
+				$select : ["ID", "myID", "aDrillState"],
 				foo : "bar"
 			});
 
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
+		assert.strictEqual(oAggregation.$NodeProperty, "myID");
 	});
 });
 
