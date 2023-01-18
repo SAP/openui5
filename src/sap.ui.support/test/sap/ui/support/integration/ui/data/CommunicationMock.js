@@ -3,12 +3,13 @@
  * It allows to focus the tests on the UI part of the tool.
  */
 sap.ui.define([
+	"sap/ui/VersionInfo",
 	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/IssueManager",
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/thirdparty/jquery"
-], function (CommunicationBus, Channels, IssueManager, RuleSerializer, jQuery) {
+], function (VersionInfo, CommunicationBus, Channels, IssueManager, RuleSerializer, jQuery) {
 	"use strict";
 
 	var CommunicationMock = {};
@@ -49,10 +50,12 @@ sap.ui.define([
 				CommunicationBus.publish(Channels.UPDATE_SUPPORT_RULES, {
 					sRuleSet: oRuleSets
 				});
-				CommunicationBus.publish(Channels.POST_APPLICATION_INFORMATION, {
-					// Sends info about the application under test
-					// Using deprecated function to ensure this would work for older versions.
-					versionInfo: sap.ui.getVersionInfo()
+
+				VersionInfo.load().then(function (oVersionInfo) {
+					CommunicationBus.publish(Channels.POST_APPLICATION_INFORMATION, {
+						// Sends info about the application under test
+						versionInfo: oVersionInfo
+					});
 				});
 			});
 		});

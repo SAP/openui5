@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/VersionInfo",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/core/Component",
@@ -21,7 +22,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/library"
 ],
-function (Log, ManagedObject, Element, Component, Analyzer, CoreFacade,
+function (Log, VersionInfo, ManagedObject, Element, Component, Analyzer, CoreFacade,
 		  ExecutionScope, Highlighter, CommunicationBus,
 		  IssueManager, History, DataCollector, channelNames,
 		  constants, RuleSetLoader, RuleSerializer, library) {
@@ -204,7 +205,7 @@ function (Log, ManagedObject, Element, Component, Analyzer, CoreFacade,
 			});
 		}, this);
 
-		CommunicationBus.subscribe(channelNames.DELETE_RULE,function (data) {
+		CommunicationBus.subscribe(channelNames.DELETE_RULE, function (data) {
 			var oTempRule = RuleSerializer.deserialize(data),
 				oTempRuleSet = RuleSetLoader.getRuleSet(constants.TEMP_RULESETS_NAME).ruleset;
 
@@ -218,9 +219,10 @@ function (Log, ManagedObject, Element, Component, Analyzer, CoreFacade,
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.ON_DOWNLOAD_REPORT_REQUEST, function (reportConstants) {
-			var data = this._getReportData(reportConstants);
-			sap.ui.require(["sap/ui/support/supportRules/report/ReportProvider"], function (ReportProvider) {
-				ReportProvider.downloadReportZip(data);
+			this._getReportData(reportConstants).then(function (oData) {
+				sap.ui.require(["sap/ui/support/supportRules/report/ReportProvider"], function (ReportProvider) {
+					ReportProvider.downloadReportZip(oData);
+				});
 			});
 		}, this);
 
@@ -256,19 +258,21 @@ function (Log, ManagedObject, Element, Component, Analyzer, CoreFacade,
 
 		CommunicationBus.subscribe(channelNames.ON_INIT_ANALYSIS_CTRL, function () {
 			RuleSetLoader.updateRuleSets(function () {
-				CommunicationBus.publish(channelNames.POST_APPLICATION_INFORMATION, {
-					// Sends info about the application under test
-					// Using deprecated function to ensure this would work for older versions.
-					versionInfo: sap.ui.getVersionInfo()
-				});
-				this.fireEvent("ready");
+				VersionInfo.load().then(function (oVersionInfo) {
+					CommunicationBus.publish(channelNames.POST_APPLICATION_INFORMATION, {
+						// Sends info about the application under test
+						versionInfo: oVersionInfo
+					});
+					this.fireEvent("ready");
+				}.bind(this));
 			}.bind(this));
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.ON_SHOW_REPORT_REQUEST, function (reportConstants) {
-			var data = this._getReportData(reportConstants);
-			sap.ui.require(["sap/ui/support/supportRules/report/ReportProvider"], function (ReportProvider) {
-				ReportProvider.openReport(data);
+			this._getReportData(reportConstants).then(function (oData) {
+				sap.ui.require(["sap/ui/support/supportRules/report/ReportProvider"], function (ReportProvider) {
+					ReportProvider.openReport(oData);
+				});
 			});
 		}, this);
 
@@ -378,7 +382,7 @@ function (Log, ManagedObject, Element, Component, Analyzer, CoreFacade,
 		this._setSelectedRules(vRuleDescriptors);
 
 		return this._oAnalyzer.start(this._aSelectedRules, this._oCoreFacade, this._oExecutionScope).then(function() {
-			that._done();
+			return that._done();
 		});
 	};
 
@@ -518,7 +522,7 @@ function (Log, ManagedObject, Element, Component, Analyzer, CoreFacade,
 			elapsedTime: this._oAnalyzer.getElapsedTimeString()
 		});
 
-		History.saveAnalysis(this);
+		return History.saveAnalysis(this);
 	};
 
 	/**
@@ -650,29 +654,31 @@ function (Log, ManagedObject, Element, Component, Analyzer, CoreFacade,
 	 * @returns {object} Contains all the information required to create a report
 	 */
 	Main.prototype._getReportData = function (oReportConstants) {
-		var mIssues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
-			mRules = RuleSetLoader.getRuleSets(),
-			mSelectedRules = this._oSelectedRulesIds,
-			oSelectedRulePreset = this._oSelectedRulePreset || null;
+		return this._oDataCollector.getTechInfoJSON().then(function (oTechData) {
+			var mIssues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
+				mRules = RuleSetLoader.getRuleSets(),
+				mSelectedRules = this._oSelectedRulesIds,
+				oSelectedRulePreset = this._oSelectedRulePreset || null;
 
-		return {
-			issues: mIssues,
-			technical: this._oDataCollector.getTechInfoJSON(),
-			application: this._oDataCollector.getAppInfo(),
-			rules: IssueManager.getRulesViewModel(mRules, mSelectedRules, mIssues),
-			rulePreset: oSelectedRulePreset,
-			scope: {
-				executionScope: this._oExecutionScope,
-				scopeDisplaySettings: {
-					executionScopes: oReportConstants.executionScopes,
-					executionScopeTitle: oReportConstants.executionScopeTitle
-				}
-			},
-			analysisDuration: this._oAnalyzer.getElapsedTimeString(),
-			analysisDurationTitle: oReportConstants.analysisDurationTitle,
-			abap: History.getFormattedHistory(library.HistoryFormats.Abap),
-			name: constants.SUPPORT_ASSISTANT_NAME
-		};
+			return {
+				issues: mIssues,
+				technical: oTechData,
+				application: this._oDataCollector.getAppInfo(),
+				rules: IssueManager.getRulesViewModel(mRules, mSelectedRules, mIssues),
+				rulePreset: oSelectedRulePreset,
+				scope: {
+					executionScope: this._oExecutionScope,
+					scopeDisplaySettings: {
+						executionScopes: oReportConstants.executionScopes,
+						executionScopeTitle: oReportConstants.executionScopeTitle
+					}
+				},
+				analysisDuration: this._oAnalyzer.getElapsedTimeString(),
+				analysisDurationTitle: oReportConstants.analysisDurationTitle,
+				abap: History.getFormattedHistory(library.HistoryFormats.Abap),
+				name: constants.SUPPORT_ASSISTANT_NAME
+			};
+		}.bind(this));
 	};
 
 	/**

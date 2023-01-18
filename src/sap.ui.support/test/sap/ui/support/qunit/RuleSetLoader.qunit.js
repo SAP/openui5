@@ -1,6 +1,7 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
+	"sap/ui/VersionInfo",
 	"sap/ui/support/Bootstrap",
 	"sap/ui/support/supportRules/RuleSet",
 	"sap/ui/support/supportRules/RuleSetLoader",
@@ -9,7 +10,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/deepExtend",
 	"sap/base/util/ObjectPath"
-], function (Bootstrap,
+], function (VersionInfo,
+			 Bootstrap,
 			 RuleSet,
 			 RuleSetLoader,
 			 CommunicationBus,
@@ -360,8 +362,8 @@ sap.ui.define([
 		];
 
 		// Returns all libraries available in the application (including non-loaded ones).
-		sinon.stub(sap.ui, "getVersionInfo", function () {
-			return {
+		sinon.stub(VersionInfo, "load", function () {
+			return Promise.resolve({
 				libraries: [
 					{name: "sap.ui.core"},
 					{name: "sap.m"},
@@ -371,7 +373,7 @@ sap.ui.define([
 					{name: "sap.ui.documentation"},
 					{name: "sap.ui.unknown"}
 				]
-			};
+			});
 		});
 
 		// Returns all libraries for which there are rulesets found.
@@ -400,7 +402,7 @@ sap.ui.define([
 			assert.ok(oLibraries.libNames.indexOf("sap.ui.fl") > -1, "Should have sap.ui.fl as non-loaded library.");
 			assert.ok(oLibraries.libNames.indexOf("sap.ui.table") > -1, "Should have sap.ui.table as non-loaded library.");
 
-			sap.ui.getVersionInfo.restore();
+			VersionInfo.load.restore();
 			RuleSetLoader._fetchLibraryNamesWithSupportRules.restore();
 			CommunicationBus.prototype.publish.restore();
 			that.clock.tick(500);

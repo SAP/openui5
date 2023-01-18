@@ -145,28 +145,30 @@ function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHist
 		 * @param {Object} oContext the context of the analysis
 		 */
 		saveAnalysis: function (oContext) {
-			var mIssues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
-				aIssues = IssueManager.getIssues(),
-				mRules = RuleSetLoader.getRuleSets(),
-				mSelectedRules = oContext._oSelectedRulesIds,
-				oSelectedRulePreset = oContext._oSelectedRulePreset;
+			return oContext._oDataCollector.getTechInfoJSON().then(function (oTechData) {
+				var mIssues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
+					aIssues = IssueManager.getIssues(),
+					mRules = RuleSetLoader.getRuleSets(),
+					mSelectedRules = oContext._oSelectedRulesIds,
+					oSelectedRulePreset = oContext._oSelectedRulePreset;
 
-			_aRuns.push({
-				date: new Date().toUTCString(),
-				issues: mIssues,
-				onlyIssues: aIssues,
-				application: oContext._oDataCollector.getAppInfo(),
-				technical: oContext._oDataCollector.getTechInfoJSON(),
-				rules: IssueManager.getRulesViewModel(mRules, mSelectedRules, mIssues),
-				rulePreset: oSelectedRulePreset,
-				scope: {
-					executionScope: {
-						type: oContext._oExecutionScope.getType(),
-						selectors: oContext._oExecutionScope._getContext().parentId || oContext._oExecutionScope._getContext().components
-					}
-				},
-				analysisDuration: oContext._oAnalyzer.getElapsedTimeString(),
-				analysisMetadata: oContext._oAnalysisMetadata || null
+				_aRuns.push({
+					date: new Date().toUTCString(),
+					issues: mIssues,
+					onlyIssues: aIssues,
+					application: oContext._oDataCollector.getAppInfo(),
+					technical: oTechData,
+					rules: IssueManager.getRulesViewModel(mRules, mSelectedRules, mIssues),
+					rulePreset: oSelectedRulePreset,
+					scope: {
+						executionScope: {
+							type: oContext._oExecutionScope.getType(),
+							selectors: oContext._oExecutionScope._getContext().parentId || oContext._oExecutionScope._getContext().components
+						}
+					},
+					analysisDuration: oContext._oAnalyzer.getElapsedTimeString(),
+					analysisMetadata: oContext._oAnalysisMetadata || null
+				});
 			});
 		},
 
