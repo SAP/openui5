@@ -23,7 +23,7 @@ sap.ui.define([
 	 * @namespace
 	 * @author SAP SE
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @experimental As of version 1.79
 	 * @since 1.79.0
 	 * @alias sap.ui.mdc.util.TypeUtil
