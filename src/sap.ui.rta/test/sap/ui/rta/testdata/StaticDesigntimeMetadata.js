@@ -211,7 +211,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 						changeType: "rename",
 						domRef: ".sapUxAPObjectPageSectionTitle",
 						isEnabled: function (oElement) {
-							return oElement.$("title").get(0) !== undefined;
+							return oElement.getShowTitle();
 						}
 					};
 				}
