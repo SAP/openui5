@@ -132,14 +132,9 @@ function(
 			return;
 		}
 
-		var oInitiallyFocusedControl = this._oSearchField;
-
-		if (this.getItems().length) {
-			oInitiallyFocusedControl = this.getItems()[0];
-		}
+		var oInitiallyFocusedControl = this._oDialog.getContent()[1];
 
 		this._oDialog.setInitialFocus(oInitiallyFocusedControl);
-	};
-
+	 };
 	return SelectDialogBase;
 });
