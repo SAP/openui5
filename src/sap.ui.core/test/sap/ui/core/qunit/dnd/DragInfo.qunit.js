@@ -63,6 +63,10 @@ sap.ui.define([
 
 		assert.ok(oDragInfo.isDraggable(oControl), "Draggable: The drag source is the control itself");
 
+		oControl.isDragAllowed = function() { assert.equal(arguments[0], oDragInfo); return false; };
+		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: oControl.isDragAllowed method did not permit");
+		delete oControl.isDragAllowed;
+
 		oDragInfo.setSourceAggregation("children");
 		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: sourceAggregation is defined");
 
@@ -84,6 +88,12 @@ sap.ui.define([
 
 		assert.ok(oDragInfo.isDraggable(oControl), "Draggable: Child control is in the defined sourceAggregation");
 		assert.ok(oControl.getDomRef().draggable, "Dom Draggable: Child control is in the defined sourceAggregation");
+
+		oControl.isDragAllowed = function() { assert.equal(arguments[0], oDragInfo); return false; };
+		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: oControl.isDragAllowed method did not permit");
+		oControl.rerender();
+		assert.notOk(oControl.getDomRef().draggable, "Dom Not Draggable: oControl.isDragAllowed method did not permit");
+		delete oControl.isDragAllowed;
 
 		oDragInfo.setSourceAggregation("thereIsNoSuchAnAggregationName");
 		sap.ui.getCore().applyChanges();

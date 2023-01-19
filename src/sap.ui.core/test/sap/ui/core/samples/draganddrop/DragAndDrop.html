@@ -130,10 +130,8 @@ var oFileList = new sap.m.List({
 				}
 			},
 			drop: function(oEvent) {
-				jQuery.sap.require("sap.ui.core.format.FileSizeFormat");
 				var oBrowserEvent = oEvent.getParameter("browserEvent");
-				var oFileSizeFormater = sap.ui.core.format.FileSizeFormat.getInstance();
-				var aFiles = [].slice.call(oBrowserEvent.dataTransfer.files);
+				var aFiles = Array.from(oBrowserEvent.dataTransfer.files);
 				var mFileTypes = {
 					"text/plain": "attachment-text-file",
 					"text/html": "attachment-text-file",
@@ -146,7 +144,7 @@ var oFileList = new sap.m.List({
 					oFileList.addItem(new sap.m.StandardListItem({
 						title: oFile.name,
 						icon : "sap-icon://" + (mFileTypes[oFile.type] || "document"),
-						info: oFileSizeFormater.format(oFile.size)
+						info: new Date(oFile.lastModified).toLocaleString()
 					}));
 				});
 			}
