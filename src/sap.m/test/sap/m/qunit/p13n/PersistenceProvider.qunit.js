@@ -53,7 +53,6 @@ sap.ui.define([
 			assert.equal(aStaticAreaContent[0].getDomRef().getAttribute("aria-hidden"), "true", "accWrapper container sets aria-hidden attribute");
 			done();
 		};
-
 	});
 
 	QUnit.test("PersistenceProvider created an inner fl.VariantManagement", function(assert){
