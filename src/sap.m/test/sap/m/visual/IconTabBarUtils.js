@@ -3,12 +3,11 @@
 	"use strict";
 
 	function _closeIconTabBarOverflow() {
-		browser.executeScript(function () {
-			return sap.ui.Device.system.phone;
-		}).then(function (bPhone) {
-			var sId = bPhone ? "__popover0-dialog-footer" : "page1-intHeader";
-			element(by.id(sId)).click();
-		});
+		browser.executeScript("return sap.ui.Device.system.phone;")
+			.then(function (bPhone) {
+				var sId = bPhone ? "__popover0-dialog-footer" : "page1-intHeader";
+				element(by.id(sId)).click();
+			});
 	}
 
 	function fnRunAllCases(sType) {
