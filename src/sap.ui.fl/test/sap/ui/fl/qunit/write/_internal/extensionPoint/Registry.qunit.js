@@ -266,6 +266,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated Since version 1.77 due to deprecation of sap.ui.control when create view with design mode true
+	 */
 	QUnit.module("Given an extensionPoint.Registry instantiated by the fl extensionPoint.Processor", {
 		beforeEach: function() {
 			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
