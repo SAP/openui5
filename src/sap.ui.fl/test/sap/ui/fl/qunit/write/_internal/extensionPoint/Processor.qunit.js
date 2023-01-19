@@ -145,7 +145,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * @deprecated Since version 1.77 due to deprecation of sync component creation
+	 * @deprecated Since version 1.77 due to deprecation of sync component/view/control creation and design mode true
 	 */
 	QUnit.module("ExtensionPoints with sync and async view when component is created sync with 'flexExtensionPointEnabled: false'", {
 		before: function () {
@@ -160,6 +160,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated Since version 1.77 due to deprecation of sync component/view/control creation and design mode true
+	 */
 	QUnit.module("ExtensionPoints with sync and async view when component is created async with 'flexExtensionPointEnabled: false'", {
 		before: function () {
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
