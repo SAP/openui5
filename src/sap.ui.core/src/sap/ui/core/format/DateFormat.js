@@ -2760,8 +2760,8 @@ sap.ui.define([
 	 * // output: oDate
 	 *
 	 * @param {string} sValue the string containing a formatted date/time value
-	 * @param {boolean} bUTC whether to use UTC
-	 * @param {boolean} bStrict whether to use strict value check
+	 * @param {boolean} [bUTC] whether to use UTC
+	 * @param {boolean} [bStrict] whether to use strict value check
 	 * @return {Date|Date[]} the parsed value(s)
 	 * @public
 	 */
@@ -3003,8 +3003,7 @@ sap.ui.define([
 	 * Parse a date string relative to the current date.
 	 *
 	 * @param {string} sValue the string containing a formatted date/time value
-	 * @param {boolean} bUTC whether to use UTC, if no timezone is contained
-	 * @param {boolean} bStrict to use strict value check
+	 * @param {boolean} [bUTC] whether to use UTC, if no timezone is contained
 	 * @returns {Date|null} the parsed value or <code>null</code> if relative parsing not possible
 	 * @private
 	 */
