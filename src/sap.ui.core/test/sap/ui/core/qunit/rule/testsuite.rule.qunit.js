@@ -37,6 +37,9 @@ sap.ui.define(function () {
 					}
 				}
 			},
+			/**
+			 * @deprecated As of version 1.111
+			 */
 			"app/globalApiUsage": {
 				title: "QUnit Tests for 'global api usage' rules"
 			},
@@ -70,6 +73,20 @@ sap.ui.define(function () {
 					}
 				}
 			},
+			/**
+			 * @deprecated As of version 1.111
+			 */
+			"app/controllerExtension_legacyAPIs": {
+				title: "QUnit Tests for controller extensions - legacy APIs",
+				loader: {
+					paths: {
+						"mvc": "test-resources/sap/ui/core/qunit/mvc"
+					}
+				}
+			},
+			/**
+			 * @deprecated As of version 1.111
+			 */
 			"app/deprecatedJSViewUsage": {
 				title: "QUnit Tests for 'deprecated JSView usage' rule"
 			},
