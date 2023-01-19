@@ -38,6 +38,8 @@ sap.ui.define([
 
 	function getCompEntities(mPropertyBag) {
 		var oControl = mPropertyBag.control;
+		var oVMControl = (oControl.getVariantManagement && oControl.getVariantManagement()) || oControl;
+		var sSVMControlId = oVMControl.getId();
 		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
 
 		// TODO clarify why in a test we come here without an initialized FlexState (1980546095)
@@ -50,8 +52,8 @@ sap.ui.define([
 			var sPersistencyKey = CompVariantUtils.getPersistencyKey(oControl);
 			var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
 			//Store external input data to FlexState so they can be restored after invalidating cache
-			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey, mPropertyBag.standardVariant, mPropertyBag.variants);
-			return mCompVariantsMap._initialize(sPersistencyKey, mPropertyBag.variants);
+			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey, mPropertyBag.standardVariant, mPropertyBag.variants, sSVMControlId);
+			return mCompVariantsMap._initialize(sPersistencyKey, mPropertyBag.variants, sSVMControlId);
 		});
 	}
 
@@ -110,7 +112,7 @@ sap.ui.define([
 			return getCompEntities(mPropertyBag)
 				.then(function(mCompMaps) {
 					var sPersistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
-					return CompVariantMerger.merge(sPersistencyKey, mCompMaps, mPropertyBag.standardVariant);
+					return CompVariantMerger.merge(sPersistencyKey, mCompMaps, mPropertyBag.standardVariant, mPropertyBag.control);
 				});
 		},
 

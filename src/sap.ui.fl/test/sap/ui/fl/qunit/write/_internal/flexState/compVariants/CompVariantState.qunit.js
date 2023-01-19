@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
@@ -21,6 +22,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Control,
 	UIComponent,
 	SmartVariantManagementApplyAPI,
 	CompVariant,
@@ -1799,6 +1801,64 @@ sap.ui.define([
 				assert.equal(oRemoveStub.getCalls()[0].args[0].parentVersion, Version.Number.Draft, "and parentVersion is set correct in delete");
 				assert.equal(oVersionsOnAllChangesSaved.callCount, 4, "and versions.onAllChangesSaved is called a fourth time");
 			});
+		});
+	});
+
+	QUnit.module("checkSVMControlsForDirty", {
+		before: function() {
+			this.oControl1 = new Control("controlId1");
+			this.oControl1.getModified = function() {return true;};
+			this.oControl2 = new Control("controlId2");
+			this.oControl2.getModified = function() {return false;};
+		},
+		beforeEach: function() {
+			this.oGetMapStub = sandbox.stub(FlexState, "getCompVariantsMap");
+		},
+		afterEach: function() {
+			sandbox.restore();
+		},
+		after: function() {
+			this.oControl1.destroy();
+			this.oControl2.destroy();
+		}
+	}, function() {
+		QUnit.test("with a modified control", function(assert) {
+			this.oGetMapStub.returns({
+				foo: function() {},
+				bar: false,
+				key1: {
+					controlId: "controlId1"
+				},
+				key2: {
+					controlId: "controlId2"
+				},
+				key3: {
+					controlId: "controlId3"
+				}
+			});
+			assert.ok(CompVariantState.checkSVMControlsForDirty(), "the modified control is found");
+		});
+
+		QUnit.test("without modified control", function(assert) {
+			this.oGetMapStub.returns({
+				foo: function() {},
+				bar: false,
+				key2: {
+					controlId: "controlId2"
+				},
+				key3: {
+					controlId: "controlId3"
+				}
+			});
+			assert.notOk(CompVariantState.checkSVMControlsForDirty(), "no modified control is found");
+		});
+
+		QUnit.test("without any control", function(assert) {
+			this.oGetMapStub.returns({
+				foo: function() {},
+				bar: false
+			});
+			assert.notOk(CompVariantState.checkSVMControlsForDirty(), "no modified control is found");
 		});
 	});
 

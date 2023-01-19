@@ -426,7 +426,8 @@ sap.ui.define([
 			};
 			var oStoredData1 = {
 				variants: aVariants1,
-				standardVariant: oStandardVariant1
+				standardVariant: oStandardVariant1,
+				controlId: "controlId1"
 			};
 			var aVariants2 = [{
 				id: "variant_2",
@@ -438,15 +439,16 @@ sap.ui.define([
 			};
 			var oStoredData2 = {
 				variants: aVariants2,
-				standardVariant: oStandardVariant2
+				standardVariant: oStandardVariant2,
+				controlId: "controlId2"
 			};
-			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey", oStandardVariant1, aVariants1);
+			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey", oStandardVariant1, aVariants1, "controlId1");
 			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component");
 			assert.deepEqual(oStoredData, {persistencyKey: oStoredData1}, "retrieve function return stored data correctly");
-			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey", oStandardVariant2, aVariants2);
+			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey", oStandardVariant2, aVariants2, "controlId2");
 			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component");
 			assert.deepEqual(oStoredData, {persistencyKey: oStoredData2}, "store the data will overwrite existing stored data");
-			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey2", oStandardVariant1, aVariants1);
+			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey2", oStandardVariant1, aVariants1, "controlId1");
 			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component");
 			assert.deepEqual(oStoredData, {persistencyKey: oStoredData2, persistencyKey2: oStoredData1}, "storing data for a new persistencyKey does not overwrite existing data");
 		});

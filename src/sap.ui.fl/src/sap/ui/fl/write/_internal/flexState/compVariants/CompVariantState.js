@@ -263,6 +263,14 @@ sap.ui.define([
 	 */
 	var CompVariantState = {};
 
+	CompVariantState.checkSVMControlsForDirty = function(sReference) {
+		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
+		return Object.values(mCompVariantsMap).some(function(mMap) {
+			var oControl = mMap.controlId && Core.byId(mMap.controlId);
+			return oControl && oControl.getModified();
+		});
+	};
+
 	/**
 	 * Creates a change to set which variant should be selected at the application start-up.
 	 *

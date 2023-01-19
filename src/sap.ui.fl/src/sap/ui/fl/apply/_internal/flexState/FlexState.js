@@ -493,11 +493,12 @@ sap.ui.define([
 		}
 	};
 
-	FlexState.setInitialNonFlCompVariantData = function(sReference, sPersistencyKey, oStandardVariant, aVariants) {
+	FlexState.setInitialNonFlCompVariantData = function(sReference, sPersistencyKey, oStandardVariant, aVariants, sSVMControlId) {
 		_mExternalData.compVariants[sReference] = _mExternalData.compVariants[sReference] || {};
 		_mExternalData.compVariants[sReference][sPersistencyKey] = {};
 		_mExternalData.compVariants[sReference][sPersistencyKey].standardVariant = oStandardVariant;
 		_mExternalData.compVariants[sReference][sPersistencyKey].variants = aVariants;
+		_mExternalData.compVariants[sReference][sPersistencyKey].controlId = sSVMControlId;
 	};
 
 	FlexState.getInitialNonFlCompVariantData = function(sReference) {

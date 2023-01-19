@@ -1,31 +1,33 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/write/api/ReloadInfoAPI",
-	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/base/util/UriParameters",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/write/_internal/FlexInfoSession",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/write/api/ReloadInfoAPI",
+	"sap/ui/fl/write/api/Version",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
-	"sap/base/util/UriParameters",
 	"sap/ui/fl/Layer",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/write/_internal/FlexInfoSession"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Version,
-	ReloadInfoAPI,
-	VersionsAPI,
+	UriParameters,
+	ManifestUtils,
+	CompVariantState,
+	FlexInfoSession,
 	FeaturesAPI,
 	PersistenceWriteAPI,
-	ManifestUtils,
+	ReloadInfoAPI,
+	Version,
+	VersionsAPI,
 	LayerUtils,
 	FlexUtils,
-	UriParameters,
 	Layer,
-	sinon,
-	FlexInfoSession
+	sinon
 ) {
 	"use strict";
 
@@ -34,6 +36,7 @@ sap.ui.define([
 	QUnit.module("Given that a getReloadReasonsForStart is called on RTA start,", {
 		beforeEach: function() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
+			this.oCheckSVMStub = sandbox.stub(CompVariantState, "checkSVMControlsForDirty").returns(false);
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -49,7 +52,7 @@ sap.ui.define([
 			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify({}));
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
-			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,
@@ -87,7 +90,7 @@ sap.ui.define([
 			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
-			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves();
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
@@ -169,7 +172,7 @@ sap.ui.define([
 
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
-			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,
@@ -209,7 +212,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
-			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,
@@ -239,8 +242,8 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
-			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
-			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").returns(true);
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,
 				isPublishEnabled: true,
@@ -269,8 +272,8 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
-			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
-			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").returns(true);
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,
 				isPublishEnabled: true,
@@ -282,6 +285,48 @@ sap.ui.define([
 				assert.deepEqual(oReloadInfo.isDraftAvailable, false, "isDraftAvailable is set to false");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false"); // parameter already set;
 				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
+			});
+		});
+
+		QUnit.test("higher layer changes are not available but SVM controls are dirty in the user layer", function(assert) {
+			var oReloadInfo = {
+				ignoreMaxLayerParameter: false,
+				layer: Layer.USER,
+				selector: {}
+			};
+
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			sandbox.stub(FlexUtils, "getParameter").returns(false);
+			sandbox.stub(FlexInfoSession, "get").returns({initialAllContexts: true});
+			this.oCheckSVMStub.reset();
+			this.oCheckSVMStub.returns(true);
+
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
+				assert.strictEqual(oReloadInfo.isDraftAvailable, false, "isDraftAvailable is set to false");
+				assert.strictEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
+				assert.strictEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
+			});
+		});
+
+		QUnit.test("higher layer changes are not available but SVM controls are dirty in the customer layer", function(assert) {
+			var oReloadInfo = {
+				ignoreMaxLayerParameter: false,
+				layer: Layer.CUSTOMER,
+				selector: {}
+			};
+
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			sandbox.stub(FlexUtils, "getParameter").returns(false);
+			sandbox.stub(FlexInfoSession, "get").returns({initialAllContexts: true});
+			this.oCheckSVMStub.reset();
+			this.oCheckSVMStub.returns(true);
+
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
+				assert.strictEqual(oReloadInfo.isDraftAvailable, false, "isDraftAvailable is set to false");
+				assert.strictEqual(oReloadInfo.hasHigherLayerChanges, true, "hasHigherLayerChanges is set to true");
+				assert.strictEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
 			});
 		});
 	});
@@ -938,7 +983,7 @@ sap.ui.define([
 		FlexInfoSession.setByReference(oFlexInfoResponse);
 		sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 		sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
-		sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
+		sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 		var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 		var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves();
 		sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
