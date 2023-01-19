@@ -147,6 +147,24 @@ sap.ui.define([
 		this._toggleRootOverlayClickHandler(false);
 	};
 
+	/**
+	 * Updates CViz after save
+	 *
+	 * @param {sap.ui.rta.toolbar.Base} oToolbar - Toolbar of RTA
+	 */
+	ChangeVisualization.prototype.updateAfterSave = function(oToolbar) {
+		if (this.getProperty("rootControlId")) {
+			this._oChangeIndicatorRegistry.reset();
+			this._updateChangeRegistry()
+				.then(function() {
+					this._selectChangeCategory(this._sSelectedChangeCategory);
+					this._selectChangeState(ChangeStates.ALL);
+					this._updateVisualizationModelMenuData();
+					oToolbar.setModel(this._oChangeVisualizationModel, "visualizationModel");
+				}.bind(this));
+		}
+	};
+
 	ChangeVisualization.prototype._reset = function() {
 		this._oChangeIndicatorRegistry.reset();
 	};

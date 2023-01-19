@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/thirdparty/sinon-4"
@@ -41,6 +42,7 @@ sap.ui.define([
 	CommandFactory,
 	Stack,
 	RuntimeAuthoring,
+	ChangeVisualization,
 	RtaUtils,
 	ReloadManager,
 	sinon
@@ -281,6 +283,7 @@ sap.ui.define([
 
 		QUnit.test("when saving RTA without exiting,", function(assert) {
 			var fnDone = assert.async();
+			var oCVizUpdateSpy = sandbox.spy(ChangeVisualization.prototype, "updateAfterSave");
 
 			function fnChecks() {
 				assert.ok(this.oRta, "RTA is still up and running");
@@ -291,6 +294,7 @@ sap.ui.define([
 					oToolbar.getControl("save").getEnabled(),
 					"then the save button is disabled"
 				);
+				assert.ok(oCVizUpdateSpy.called, "then CViz has been updated");
 				RtaQunitUtils.showActionsMenu(oToolbar)
 				.then(function () {
 					assert.ok(

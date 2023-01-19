@@ -1167,6 +1167,56 @@ sap.ui.define([
 			}.bind(this));
 		});
 	});
+
+	QUnit.module("On Save", {
+		before: function() {
+			return oComponentPromise;
+		},
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp,
+				flexSettings: this.oFlexSettings
+			});
+			RtaQunitUtils.clear()
+				.then(this.oRta.start.bind(this.oRta))
+				.then(function() {
+					this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
+					this.oChangeVisualization = this.oRta.getChangeVisualization();
+					this.oToolbar = this.oRta.getToolbar();
+					this.oRta.setMode("visualization");
+					oCore.applyChanges();
+					this.oRta.setMode("navigation");
+					fnDone();
+				}.bind(this));
+		},
+		afterEach: function() {
+			this.oRta.destroy();
+			sandbox.restore();
+			return RtaQunitUtils.clear();
+		}
+	}, function() {
+		QUnit.test("when save is triggered during cViz", function(assert) {
+			var fnDone = assert.async();
+			var oResetSpy = sandbox.spy(ChangeIndicatorRegistry.prototype, "reset");
+			var oSelectStateChangeSpy = sandbox.spy(ChangeVisualization.prototype, "_selectChangeState");
+			var oMenuModelUpdateSpy = sandbox.spy(ChangeVisualization.prototype, "_updateVisualizationModelMenuData");
+			this.oChangeVisualization.updateAfterSave(this.oToolbar);
+			this.oRta.setMode("visualization");
+			waitForMethodCall(this.oToolbar, "setModel")
+				.then(function() {
+					return this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
+				}.bind(this))
+				.then(function() {
+					oCore.applyChanges();
+					assert.ok(oResetSpy.called, "then changeIndicatorRegistry gets resetted");
+					assert.ok(oSelectStateChangeSpy.called, "then selected changeState gets reset");
+					assert.ok(oMenuModelUpdateSpy.called, "then the menu model gets updated");
+					fnDone();
+				});
+		});
+	});
+
 	QUnit.module("On Version Change", {
 		before: function() {
 			return oComponentPromise;

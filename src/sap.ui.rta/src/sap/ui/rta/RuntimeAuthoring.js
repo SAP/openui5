@@ -1183,7 +1183,15 @@ sap.ui.define([
 			mPropertyBag.saveAsDraft = this.getLayer() === Layer.CUSTOMER;
 		}
 
-		return this._oSerializer.saveCommands(mPropertyBag);
+		return this._oSerializer.saveCommands(mPropertyBag)
+			.then(function() {
+				if (!bIsExit) {
+					//clean CViz after Save
+					var oToolbar = this.getToolbar();
+					var oChangeVisualization = this.getChangeVisualization();
+					oChangeVisualization.updateAfterSave(oToolbar);
+				}
+			}.bind(this));
 	}
 
 	function onActivate(oEvent) {
