@@ -100,7 +100,7 @@ sap.ui.define([
 	]);
 
 	// declare components
-	sap.ui.predefine("test1/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
+	sap.ui.define("test1/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
 		return UIComponent.extend("test1.Component", {
 			metadata : {
 				includes : [ "style1.css" ]
@@ -108,7 +108,7 @@ sap.ui.define([
 		});
 	}, true);
 
-	sap.ui.predefine("test2/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
+	sap.ui.define("test2/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
 		return UIComponent.extend("test2.Component", {
 			metadata : {
 				includes : [ "style2.css" ]
@@ -116,7 +116,7 @@ sap.ui.define([
 		});
 	}, true);
 
-	sap.ui.predefine("test3/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
+	sap.ui.define("test3/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
 		return UIComponent.extend("test3.Component", {
 			metadata : {
 				includes : [ "style3.css" ]
@@ -124,7 +124,7 @@ sap.ui.define([
 		});
 	}, true);
 
-	sap.ui.predefine("test4/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
+	sap.ui.define("test4/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
 		return UIComponent.extend("test4.Component", {
 			metadata : {
 				includes : [ "style3.css" ]
@@ -132,7 +132,7 @@ sap.ui.define([
 		});
 	}, true);
 
-	sap.ui.predefine("test5/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
+	sap.ui.define("test5/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
 		return UIComponent.extend("test5.Component", {
 			metadata : {
 				includes : [ "style5.css" ]
@@ -179,8 +179,9 @@ sap.ui.define([
 		}).then(function() {
 
 			// Create a new component "test2" with style2.css
-			return sap.ui.component({
-				name: "test2"
+			return Component.create({
+				name: "test2",
+				manifest: false
 			});
 
 		}).then(function(oComponent) {
@@ -207,8 +208,9 @@ sap.ui.define([
 		}).then(function() {
 
 			// Create a new component "test3" with style3.css
-			return sap.ui.component({
-				name: "test3"
+			return Component.create({
+				name: "test3",
+				manifest: false
 			});
 
 		}).then(function(oComponent) {
@@ -247,9 +249,9 @@ sap.ui.define([
 		}).then(function() {
 
 			// Create new component "test3" with style4.css from Manifest Variant (oManifestAppdescr)
-			return sap.ui.component({
-				manifestUrl: "manifest.appdescr",
-				async: true
+			return Component.create({
+				name: "test3",
+				manifest: "manifest.appdescr"
 			});
 
 		}).then(function(oComponent) {
@@ -269,16 +271,18 @@ sap.ui.define([
 		}).then(function() {
 
 			// Create a new component "test3" and ...
-			var oComponent3 = sap.ui.component({
-				name: "test3"
+			var pComponent3 = Component.create({
+				name: "test3",
+				manifest: false
 			});
 
 			// ... create a new component "test4"
-			var oComponent4 = sap.ui.component({
-				name: "test4"
+			var pComponent4 = Component.create({
+				name: "test4",
+				manifest: false
 			});
 
-			return [oComponent3, oComponent4];
+			return Promise.all([pComponent3, pComponent4]);
 
 		}).then(function(aComponents) {
 
@@ -300,8 +304,9 @@ sap.ui.define([
 		}).then(function() {
 
 			// Create a new component "test3" and ...
-			return sap.ui.component({
-				name: "test3"
+			return Component.create({
+				name: "test3",
+				manifest: false
 			});
 
 		}).then(function(oComponent3) {
@@ -310,9 +315,9 @@ sap.ui.define([
 			assert.equal(document.querySelectorAll("link[href$='/style3.css']").length, 1, "style3.css should be available.");
 
 			// Create new component variant with style3.css from Manifest Variant (oManifestAppdescr1)
-			return Promise.all([oComponent3, sap.ui.component({
-				manifestUrl: "manifest1.appdescr",
-				async: true
+			return Promise.all([oComponent3, Component.create({
+				name: "test3",
+				manifest: "manifest1.appdescr"
 			})]);
 
 		}).then(function(aComponents) {
@@ -335,13 +340,11 @@ sap.ui.define([
 
 			// create two components with the same stylesheet (test3 and test4)
 			return Promise.all([
-				sap.ui.component({
-					name: "test3",
-					async: true
+				Component.create({
+					name: "test3"
 				}),
-				sap.ui.component({
-					name: "test4",
-					async: true
+				Component.create({
+					name: "test4"
 				})
 			]);
 
@@ -402,16 +405,18 @@ sap.ui.define([
 		}).then(function() {
 
 			// Create a new component "test6" and ...
-			var oComponent6 = sap.ui.component({
-				name: "test6"
+			var pComponent6 = Component.create({
+				name: "test6",
+				manifest: false
 			});
 
 			// ... create a new component "test7"
-			var oComponent7 = sap.ui.component({
-				name: "test7"
+			var pComponent7 = Component.create({
+				name: "test7",
+				manifest: false
 			});
 
-			return [oComponent6, oComponent7];
+			return Promise.all([pComponent6, pComponent7]);
 
 		}).then(function(aComponents) {
 

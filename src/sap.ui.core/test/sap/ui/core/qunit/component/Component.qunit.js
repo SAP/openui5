@@ -188,7 +188,7 @@ sap.ui.define([
 	QUnit.module("Special Cases & Compatibility Check", {
 		before: function() {
 			// Root View
-			sap.ui.predefine("sap/test/HandleValidationRootView", ["sap/ui/core/mvc/View", "sap/m/Button"], function(View, Button) {
+			sap.ui.define("sap/test/HandleValidationRootView", ["sap/ui/core/mvc/View", "sap/m/Button"], function(View, Button) {
 				return View.extend("sap.test.HandleValidationRootView", {
 					createContent: function() {
 						return Promise.resolve(new Button());
@@ -197,7 +197,7 @@ sap.ui.define([
 			});
 
 			// Component Class
-			sap.ui.predefine("sap/test/handleValidation/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			sap.ui.define("sap/test/handleValidation/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 				return UIComponent.extend("sap.test.handleValidation.Component", {
 					metadata: {
 						manifest: {
@@ -376,7 +376,7 @@ sap.ui.define([
 		// check the nested component having the ID of the parent component
 		var oNestedComponentContainer = this.oComp.byId("ContButton");
 		var sNestedComponentId = oNestedComponentContainer.getComponent();
-		var oNestedComponent = sap.ui.component(sNestedComponentId);
+		var oNestedComponent = Component.get(sNestedComponentId);
 		assert.equal(sRefComponentId, Component.getOwnerIdFor(oNestedComponent), "The nested component has the correct component context");
 		// check the control in the nested component to have the correct component context
 		var oNestedControl = oNestedComponent.byId("mybutn");
@@ -733,9 +733,8 @@ sap.ui.define([
 
 		//start test
 		var done = assert.async();
-		sap.ui.component({
-			manifestUrl : "anylocation/manifest.json",
-			async : true
+		Component.create({
+			manifest: "anylocation/manifest.json"
 		}).then(function(oComponent) {
 
 			assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
@@ -765,9 +764,8 @@ sap.ui.define([
 
 		//start test
 		var done = assert.async();
-		sap.ui.component.load({
-			manifestUrl : "anylocation/manifest.json",
-			async : true
+		Component.load({
+			manifest: "anylocation/manifest.json"
 		}).then(function(fnComponentClass) {
 
 			assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
@@ -810,10 +808,9 @@ sap.ui.define([
 
 		//start test
 		var done = assert.async();
-		sap.ui.component.load({
-			manifestUrl : "anyotherlocation2/manifest.json",
-			url : "test-resources/sap/ui/core/samples/components/oneview/",
-			async : true
+		Component.load({
+			manifest: "anyotherlocation2/manifest.json",
+			url : "test-resources/sap/ui/core/samples/components/oneview/"
 		}).then(function(fnComponentClass) {
 
 			assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
@@ -841,6 +838,10 @@ sap.ui.define([
 	QUnit.test("On instance created callback / hook (async, no promise)", function(assert) {
 
 		var oCallbackComponent;
+		var oConfig = {
+			manifest: "anylocation/manifest.json",
+			async: true
+		};
 
 		// set the instance created callback hook
 		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
@@ -854,12 +855,9 @@ sap.ui.define([
 			return 123;
 		};
 
-		var oConfig = {
-			manifestUrl: "anylocation/manifest.json",
-			async: true
-		};
-
-		return sap.ui.component(oConfig).then(function(oComponent) {
+		return Component.create({
+			manifest: "anylocation/manifest.json"
+		}).then(function(oComponent) {
 			assert.equal(oComponent, oCallbackComponent, "Returned component instances should be the same as within callback.");
 		});
 	});
@@ -871,9 +869,8 @@ sap.ui.define([
 			throw new Error("Error from _fnOnInstanceCreated");
 		};
 
-		return sap.ui.component({
-			manifestUrl: "anylocation/manifest.json",
-			async: true
+		return Component.create({
+			manifest: "anylocation/manifest.json"
 		}).then(function(oComponent) {
 			assert.ok(false, "Promise should not resolve");
 		}, function(oError) {
@@ -884,6 +881,10 @@ sap.ui.define([
 	QUnit.test("On instance created callback / hook (async, with promise)", function(assert) {
 
 		var oCallbackComponent;
+		var oConfig = {
+			manifest: "anylocation/manifest.json",
+			async: true
+		};
 
 		// set the instance created callback hook
 		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
@@ -901,12 +902,9 @@ sap.ui.define([
 			});
 		};
 
-		var oConfig = {
-			manifestUrl: "anylocation/manifest.json",
-			async: true
-		};
-
-		return sap.ui.component(oConfig).then(function(oComponent) {
+		return Component.create({
+			manifest: "anylocation/manifest.json"
+		}).then(function(oComponent) {
 			assert.equal(oCallbackComponent, oComponent, "Returned component instances should be the same as within callback.");
 		});
 	});
@@ -922,9 +920,8 @@ sap.ui.define([
 			});
 		};
 
-		return sap.ui.component({
-			manifestUrl: "anylocation/manifest.json",
-			async: true
+		return Component.create({
+			manifest: "anylocation/manifest.json"
 		}).then(function(oComponent) {
 			assert.ok(false, "Promise should not resolve");
 			Component._fnOnInstanceCreated = null;
@@ -939,7 +936,7 @@ sap.ui.define([
 
 		var bAfterInitCalled = false;
 
-		sap.ui.predefine("sap/test/myView", ["sap/ui/core/mvc/View", "sap/m/Button"], function(View, Button) {
+		sap.ui.define("sap/test/myView", ["sap/ui/core/mvc/View", "sap/m/Button"], function(View, Button) {
 			return View.extend("sap.test.myView", {
 				createContent: function() {
 					this.attachAfterInit(function() {
@@ -952,7 +949,7 @@ sap.ui.define([
 			});
 		});
 
-		sap.ui.predefine("sap/test/myComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		sap.ui.define("sap/test/myComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 			return UIComponent.extend("sap.test.myComponent", {
 				metadata: {
 					manifest: {
@@ -988,7 +985,7 @@ sap.ui.define([
 
 	QUnit.test("Usage of manifest property in component configuration for URL", function(assert) {
 
-		return sap.ui.component({
+		return Component.create({
 			manifest: "anylocation/manifest.json"
 		}).then(function(oComponent) {
 			assert.ok(true, "Component is loaded properly!");
@@ -1000,7 +997,7 @@ sap.ui.define([
 
 	QUnit.test("Usage of manifest property in component configuration for manifest object", function(assert) {
 
-		return sap.ui.component({
+		return Component.create({
 			manifest: {
 				"sap.app" : {
 					"id" : "samples.components.oneview"
@@ -1028,7 +1025,7 @@ sap.ui.define([
 			});
 		});
 
-		return sap.ui.component({
+		return Component.create({
 			name: "samples.components.oneview2",
 			url: "/someUrl/oneview2",
 			manifest: {
@@ -1227,54 +1224,50 @@ sap.ui.define([
 	});
 	QUnit.test("Async creation of component usage", function(assert) {
 
-		var oComponent = sap.ui.component({
+		var pComponent = Component.create({
 			name : "my.usage"
 		});
 		var oSpy = sinon.spy(Component, "create");
 
-		var done = (function() {
-			var asyncDone = assert.async();
-			return function cleanup() {
-				oSpy.restore();
-				oComponent.destroy();
-				asyncDone();
-			};
-		})();
+		return pComponent.then(function(oComponent) {
+			return new Promise(function(resolve, reject) {
+				sap.ui.require([
+					"my/used/Component"
+				], function(UsedComponent) {
+					var mConfig = {
+						usage: "myUsage",
+						settings: {
+							"key1": "value1"
+						},
+						componentData: {
+							"key2": "value2"
+						},
+						async: true,
+						asyncHints: {},
+						anything: "else"
+					};
 
-		sap.ui.require([
-			"my/used/Component"
-		], function(UsedComponent) {
-
-			var mConfig = {
-				usage: "myUsage",
-				settings: {
-					"key1": "value1"
-				},
-				componentData: {
-					"key2": "value2"
-				},
-				async: true,
-				asyncHints: {},
-				anything: "else"
-			};
-			var mSettings = deepExtend({}, mConfig.settings, { componentData: mConfig.componentData });
-			oComponent.createComponent(mConfig).then(function(oComponentUsage) {
-				assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
-				assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
-				assert.equal(oComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
-				assert.equal(1, oSpy.callCount, "Nested component created with instance factory function");
-				assert.equal(true, oSpy.args[0][0].async, "Nested component created with config 'async: true'");
-				assert.deepEqual(mConfig.settings, oSpy.args[0][0].settings, "ComponentUsage must receive the correct settings");
-				assert.deepEqual(mSettings, oComponentUsage._mSettings, "ComponentUsage must receive the correct settings");
-				assert.deepEqual(mConfig.componentData, oSpy.args[0][0].componentData, "ComponentUsage must receive the correct componentData");
-				assert.equal(undefined, oSpy.args[0][0].asyncHints, "ComponentUsage must not receive \"asyncHints\"");
-				assert.equal(undefined, oSpy.args[0][0].anything, "ComponentUsage must not receive \"anything\"");
-				done();
-			}).catch(function(oError) {
-				assert.ok(false, "createComponent must not be failing!");
-				done();
+					var mSettings = deepExtend({}, mConfig.settings, { componentData: mConfig.componentData });
+					oComponent.createComponent(mConfig).then(function(oComponentUsage) {
+						assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
+						assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
+						assert.equal(oComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
+						assert.equal(1, oSpy.callCount, "Nested component created with instance factory function");
+						assert.equal(true, oSpy.args[0][0].async, "Nested component created with config 'async: true'");
+						assert.deepEqual(mConfig.settings, oSpy.args[0][0].settings, "ComponentUsage must receive the correct settings");
+						assert.deepEqual(mSettings, oComponentUsage._mSettings, "ComponentUsage must receive the correct settings");
+						assert.deepEqual(mConfig.componentData, oSpy.args[0][0].componentData, "ComponentUsage must receive the correct componentData");
+						assert.equal(undefined, oSpy.args[0][0].asyncHints, "ComponentUsage must not receive \"asyncHints\"");
+						assert.equal(undefined, oSpy.args[0][0].anything, "ComponentUsage must not receive \"anything\"");
+					}).catch(function(oError) {
+						assert.ok(false, "createComponent must not be failing!");
+					}).then(function() {
+						oSpy.restore();
+						oComponent.destroy();
+						resolve();
+					});
+				});
 			});
-
 		});
 
 	});
@@ -1481,29 +1474,15 @@ sap.ui.define([
 
 	QUnit.test("Preload non-lazy component usages", function(assert) {
 
-		var oComponent;
 		var oSpy = sinon.spy(sap.ui.loader._, "loadJSResourceAsync");
-		var done = (function() {
-			var asyncDone = assert.async();
-			return function cleanup() {
-				oSpy.restore();
-				oComponent.destroy();
-				asyncDone();
-			};
-		})();
 
-		sap.ui.component({
+		return Component.create({
 			name : "my.preloadusage",
 			manifest: "anylocation/manifest.json"
 		}).then(function(oPreloadComponent) {
-
-			oComponent = oPreloadComponent;
-
-			//console.log(oSpy.calls);
 			assert.ok(oSpy.calledOnceWithExactly("nonLazyUsage/Component-preload.js"), "Only the non-lazy component usage should be preloaded!");
-
-			done();
-
+			oSpy.restore();
+			oPreloadComponent.destroy();
 		});
 
 	});
@@ -1726,26 +1705,6 @@ sap.ui.define([
 
 	QUnit.test("Component.create with asyncHints.components should respect final URL flag (legacy scenario)", function(assert) {
 
-		// Prepare
-		sap.ui.require.preload({
-			"test/resourceRoots/component3/manifest.json": JSON.stringify({
-				"sap.app": {
-					"id": "test.resourceRoots.component3"
-				}
-			}),
-			"test/resourceRoots/component3/Component.js": function() {
-				sap.ui.component.load({
-					name: "test.resourceRoots.parentcomponent1",
-					url: "/new/test/resourceRoots/parentcomponent1"
-				});
-				test.resourceRoots.parentcomponent1.Component.extend("test.resourceRoots.component3.Component", { // eslint-disable-line no-undef
-					metadata: {
-						manifest: "json"
-					}
-				});
-			}
-		});
-
 		sap.ui.require.preload({
 			"test/resourceRoots/parentcomponent1/manifest.json": JSON.stringify({
 				"sap.app": {
@@ -1753,8 +1712,7 @@ sap.ui.define([
 				}
 			})
 		});
-		// Using predefine to make module available synchronously
-		sap.ui.predefine("test/resourceRoots/parentcomponent1/Component", ["sap/ui/core/Component"], function(Component) {
+		sap.ui.define("test/resourceRoots/parentcomponent1/Component", ["sap/ui/core/Component"], function(Component) {
 			return Component.extend("test.resourceRoots.parentcomponent1.Component", {
 				metadata: {
 					manifest: "json"
@@ -1762,7 +1720,22 @@ sap.ui.define([
 			});
 		});
 
-		return sap.ui.component({
+		sap.ui.require.preload({
+			"test/resourceRoots/component3/manifest.json": JSON.stringify({
+				"sap.app": {
+					"id": "test.resourceRoots.component3"
+				}
+			})
+		});
+		sap.ui.define("test/resourceRoots/component3/Component", ["test/resourceRoots/parentcomponent1/Component"], function(Component) {
+			return Component.extend("test.resourceRoots.component3.Component", {
+				metadata: {
+					manifest: "json"
+				}
+			});
+		});
+
+		return Component.create({
 			name: "test.resourceRoots.component3",
 			asyncHints: {
 				components: [
@@ -1775,8 +1748,7 @@ sap.ui.define([
 						}
 					}
 				]
-			},
-			async: true
+			}
 		}).then(function() {
 
 			assert.equal(sap.ui.require.toUrl("test/resourceRoots/parentcomponent1"), "/final/test/resourceRoots/parentcomponent1",
