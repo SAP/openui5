@@ -675,12 +675,21 @@ sap.ui.define([
 	QUnit.test("Open menu", function (assert) {
 		var oOpenSpy = this.spy(this.oMenu, "openBy");
 		var oColumnPressSpy = this.spy(this.sut.getTable(), "fireEvent");
+		var oFakeEvent = new jQuery.Event("contextmenu");
 
 		this.sut.$().trigger("tap");
 		Core.applyChanges();
 
-		assert.equal(oOpenSpy.callCount, 1, "openBy called exactly once");
+		assert.equal(oOpenSpy.callCount, 1, "openBy called exactly once when the tap event is triggered");
 		assert.ok(oOpenSpy.calledWith(this.sut), "openBy called with correct column");
 		assert.notOk(oColumnPressSpy.calledWithExactly("columnPress"), "The columnPress event is not fired");
+
+		this.sut.$().trigger(oFakeEvent);
+		Core.applyChanges();
+
+		assert.equal(oOpenSpy.callCount, 2, "openBy called exactly once when the contextmenu event is triggered");
+		assert.ok(oOpenSpy.calledWith(this.sut), "openBy called with correct column");
+		assert.notOk(oColumnPressSpy.calledWithExactly("columnPress"), "The columnPress event is not fired");
+		assert.ok(oFakeEvent.isDefaultPrevented(), "Default action is prevented for event");
 	});
 });

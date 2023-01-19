@@ -268,6 +268,15 @@ sap.ui.define([
 
 	Column.prototype.onsapenter = Column.prototype.onsapspace;
 
+	Column.prototype.oncontextmenu = function (oEvent) {
+		var oMenu = this._getHeaderMenuInstance();
+
+		if (oMenu) {
+			oMenu.openBy(this);
+			oEvent.preventDefault();
+		}
+	};
+
 	Column.prototype.invalidate = function() {
 		var oParent = this.getParent();
 		if (!oParent || !oParent.bOutput) {

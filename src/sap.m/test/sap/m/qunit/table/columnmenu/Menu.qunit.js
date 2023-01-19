@@ -253,7 +253,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		oCore.applyChanges();
 
-		var sId = this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[0].getId();
+		var sId = this.oColumnMenu._getAllEffectiveQuickActions()[0].getContent()[0].sId;
 		assert.equal(document.activeElement.id, sId);
 	});
 
@@ -263,7 +263,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		oCore.applyChanges();
 
-		var sId = this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[0].getId();
+		var sId = this.oColumnMenu._getAllEffectiveQuickActions()[0].getContent()[0].sId;
 		assert.equal(document.activeElement.id, sId);
 	});
 
@@ -463,19 +463,18 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var oMenu = this.oColumnMenu;
-		var $MenuDomRef = oMenu.getDomRef();
 
 		assert.equal(oMenu._oPopover.getAriaLabelledBy(), oMenu.getId() + "-menuDescription",
 			"The popover is associated to the Menu description via aria-labelledby");
 		assert.equal(document.getElementById(oMenu.getId() + "-menuDescription").innerText,
 			oMenu._getResourceText("table.COLUMNMENU_TITLE"), "Menu description text is correct");
 
-		assert.equal($MenuDomRef.getElementsByClassName("sapMTCMenuQAList")[0].getAttribute("aria-labelledby"), oMenu.getId() + "-actionContainerDescription",
+		assert.equal(oMenu._oQuickActionContainer.getAriaLabelledBy(), oMenu.getId() + "-actionContainerDescription",
 			"The QuickActions section is associated to the Action container description via aria-labelledby");
 		assert.equal(document.getElementById(oMenu.getId() + "-actionContainerDescription").innerText,
 			oMenu._getResourceText("table.COLUMNMENU_ACTION_CONTAINER_DESC"), "Action container description text is correct");
 
-		assert.equal($MenuDomRef.getElementsByClassName("sapMTCMenuContainerWrapper")[0].getAttribute("aria-labelledby"), oMenu.getId() + "-itemContainerDescription",
+		assert.equal(oMenu._oItemsContainer._getNavigationList().getAriaLabelledBy(), oMenu.getId() + "-itemContainerDescription",
 			"The Items section is associated to the Item container description via aria-labelledby");
 		assert.equal(document.getElementById(oMenu.getId() + "-itemContainerDescription").innerText,
 			oMenu._getResourceText("table.COLUMNMENU_ITEM_CONTAINER_DESC"), "Item container description text is correct");
