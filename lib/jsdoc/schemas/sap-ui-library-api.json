@@ -308,6 +308,10 @@
 					"type": "boolean",
 					"defaultValue": false
 				},
+				"omissible": {
+					"type": "boolean",
+					"defaultValue": false
+				},
 				"repeatable": {
 					"type": "boolean",
 					"defaultValue": false
