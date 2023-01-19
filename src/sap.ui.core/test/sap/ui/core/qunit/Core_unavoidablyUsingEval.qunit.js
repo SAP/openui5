@@ -347,10 +347,6 @@ sap.ui.require([
 		// sync or async both activate the preload
 		this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
 
-		// clear the version information in case it's already set
-		// because the legacy option 'json' isn't supported by fetching transitive closure
-		sap.ui.versioninfo = null;
-
 		this.spy(sap.ui, 'requireSync');
 		sap.ui.getCore().loadLibraries([ { name: 'testlibs.scenario6.lib1', json: true } ], { async: false });
 		assert.isLibLoaded('testlibs.scenario6.lib1');

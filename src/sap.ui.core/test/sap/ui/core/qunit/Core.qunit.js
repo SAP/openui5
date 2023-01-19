@@ -6,6 +6,7 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	'sap/ui/Device',
 	'sap/ui/base/Interface',
+	'sap/ui/VersionInfo',
 	'sap/ui/core/Core',
 	'sap/ui/core/UIArea',
 	'sap/ui/core/Element',
@@ -13,7 +14,7 @@ sap.ui.define([
 	'sap/ui/core/RenderManager',
 	'sap/ui/core/theming/ThemeManager',
 	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, oCore, UIArea, Element, Configuration, RenderManager, ThemeManager, createAndAppendDiv) {
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, RenderManager, ThemeManager, createAndAppendDiv) {
 	"use strict";
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
@@ -587,7 +588,7 @@ sap.ui.define([
 	QUnit.module("loadLibrary", {
 		beforeEach: function(assert) {
 			assert.notOk(Configuration.getDebug(), "debug mode must be deactivated to properly test library loading");
-			this.oConfigurationGetPreloadStub = sinon.stub(Configuration, "getPreload").returns("sync");
+			this.oConfigurationGetPreloadStub = this.stub(Configuration, "getPreload").returns("sync");
 		},
 		afterEach: function(assert) {
 			this.oConfigurationGetPreloadStub.restore();
@@ -602,7 +603,7 @@ sap.ui.define([
 	QUnit.test("async (config object)", function(assert) {
 
 		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
-			sap.ui.predefine("testlibs/scenario9/lib1/library", function() {
+			sap.ui.define("testlibs/scenario9/lib1/library", function() {
 				oCore.initLibrary({
 					name: 'testlibs.scenario9.lib1',
 					noLibraryCSS: true
@@ -630,7 +631,7 @@ sap.ui.define([
 	QUnit.test("async (convenience shortcut)", function(assert) {
 
 		this.stub(sap.ui.loader._, "loadJSResourceAsync").callsFake(function() {
-			sap.ui.predefine("testlibs/scenario10/lib1/library", function() {
+			sap.ui.define("testlibs/scenario10/lib1/library", function() {
 				oCore.initLibrary({
 					name: 'testlibs.scenario10.lib1',
 					noLibraryCSS: true
@@ -708,30 +709,56 @@ sap.ui.define([
 	 *     -> lib2 (js), lib5 (js)
 	 *   lib2 (js)
 	 *     -> lib3 (js), lib5 (js, lazy: true), lib6 (js)
+	 *   lib3 (js)
+	 *     -> lib4 (js)
+	 *   lib4 (js)
+	 *   lib5 (js)
+	 *     -> lib7 (js)
+	 *   lib6 (js)
+	 *     -> lib7 (js)
+	 *   lib7 (js)
+	 *
+	 *   // for lib8, no transitive dependency information is contained in sap-ui-version.json
+	 *   lib8 (js)
+	 *     -> lib1 (js)
 	 */
-	QUnit.test("multiple libs (async, preloads) with transitive dependency closure, one lib is not in the sap.ui.versioninfo", function(assert) {
+	QUnit.test("multiple libs (async, preloads) with transitive dependency closure, one lib is not in the sap-ui-version.json", function(assert) {
+		assert.expect(32);
 
 		// make lib4 already loaded
-		sap.ui.predefine('testlibs/scenario14/lib4/library', [], function() {
+		sap.ui.define('testlibs/scenario14/lib4/library', [], function() {
 			oCore.initLibrary({
-				name: 'testlibs.scenario14.lib4'
+				name: 'testlibs.scenario14.lib4',
+				noLibraryCSS: true
 			});
 			return testlibs.scenario14.lib4;
 		});
 
-		return LoaderExtensions.loadResource({
-			dataType: "json",
-			url: sap.ui.require.toUrl("testlibs/scenario14/sap-ui-version.json"),
-			async: true
-		}).then(function(versioninfo) {
-			sap.ui.versioninfo = versioninfo;
+		// Stub LoaderExtension.loadResource so we can inject a different URL for
+		// a prebuilt sap-ui-version.json as a test-fixture
+		var LoaderExtensionStub = this.stub(LoaderExtensions, "loadResource");
 
+		LoaderExtensionStub.withArgs("sap-ui-version.json", {
+			async: true,
+			failOnError: true
+		}).callsFake(function() {
+			return fetch(sap.ui.require.toUrl("testlibs/scenario14/sap-ui-version.json")).then(function(oResult) {
+				return oResult.json();
+			});
+		});
+
+		LoaderExtensionStub.callThrough();
+
+		return VersionInfo.load().then(function(versioninfo) {
 			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 			this.spy(sap.ui, 'require');
 			this.spy(sap.ui, 'requireSync');
 
-			var vResult = oCore.loadLibraries(['testlibs.scenario14.lib8']);
+			var vLib8 = oCore.loadLibraries(['testlibs.scenario14.lib8']);
+			assert.ok(vLib8 instanceof Promise, "async call to loadLibraries should return a promise");
+
 			// initial request for lib 8 preload
+			sinon.assert.calledOnce(sap.ui.loader._.loadJSResourceAsync);
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib8\/library-preload\.js$/));
 
 			// loading of other libs should not be triggered yet
@@ -743,9 +770,7 @@ sap.ui.define([
 			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib6\/library-preload\.js$/));
 			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib7\/library-preload\.js$/));
 
-			assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
-
-			return vResult.then(function(vResult) {
+			return vLib8.then(function () {
 				// 1-3
 				assert.isLibLoaded('testlibs.scenario14.lib1');
 				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario14\/lib1\/library-preload\.js$/));
