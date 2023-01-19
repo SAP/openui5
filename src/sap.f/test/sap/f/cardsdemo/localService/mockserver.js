@@ -43,7 +43,7 @@ sap.ui.define([
 
 			aRequests.push({
 				method: "GET",
-				path: /.*/,
+				path: /.*Activities/,
 				response: function (oXhr, sQuery) {
 
 					var requestHeaders = oXhr.requestHeaders;
@@ -56,15 +56,32 @@ sap.ui.define([
 						headers["X-CSRF-Token"] = requestHeaders["X-CSRF-Token"];
 					}
 
-					if (oXhr.url.indexOf("ExpiringToken") !== -1) {
-						if (!this.firstTime) {
-							this.firstTime = true;
-						} else {
-							this.firstTime = false;
-							respondStatus = 403;
+					oXhr.respondJSON(respondStatus, headers, activities);
+				}
+			});
 
-							headers["X-CSRF-Token"] = "required";
-						}
+			aRequests.push({
+				method: "GET",
+				path: /.*ActivitiesExpiringToken/,
+				response: function (oXhr, sQuery) {
+
+					var requestHeaders = oXhr.requestHeaders;
+					var headers = {
+
+					};
+					var respondStatus = 200;
+
+					if (requestHeaders["X-CSRF-Token"]) {
+						headers["X-CSRF-Token"] = requestHeaders["X-CSRF-Token"];
+					}
+
+					if (!this.firstTime) {
+						this.firstTime = true;
+					} else {
+						this.firstTime = false;
+						respondStatus = 403;
+
+						headers["X-CSRF-Token"] = "required";
 					}
 
 					oXhr.respondJSON(respondStatus, headers, activities);

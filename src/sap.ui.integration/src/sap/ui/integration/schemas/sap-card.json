@@ -2574,6 +2574,18 @@
             }
           ]
         },
+        "timeout": {
+          "description": "A timeout (in milliseconds) for the request. A value of 0 means there will be no timeout.",
+          "oneOf": [
+            {
+              "type": "number",
+              "default": 15000
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
         "withCredentials": {
           "description": "Indicates whether cross-site requests should be made using credentials",
           "oneOf": [

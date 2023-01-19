@@ -414,11 +414,12 @@ sap.ui.define([
 		this.deferred.reject(null, null, "Some error message.");
 	});
 
-	QUnit.module("RequestDataProvider - Available Methods", {
+	QUnit.module("RequestDataProvider - Settings", {
 		beforeEach: function () {
 			this.oDataProviderFactory = new DataProviderFactory();
 			this.oServer = sinon.createFakeServer({
-				autoRespond: true
+				autoRespond: true,
+				autoRespondAfter: 100
 			});
 		},
 		afterEach: function () {
@@ -426,7 +427,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Test all methods", function (assert) {
+	QUnit.test("Test 'method' setting", function (assert) {
 		// Arrange
 		var done = assert.async(),
 			aMethods = ["GET", "POST", "HEAD", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -466,6 +467,41 @@ sap.ui.define([
 		}.bind(this);
 
 		fnTest();
+	});
+
+	QUnit.test("Test 'timeout' setting", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oServer.respondWith(function (oXhr) {
+			oXhr.respond(200, {"Content-Type": "application/json"}, "{}");
+		});
+
+		var oDataProvider = this.oDataProviderFactory.create({
+			request: {
+				url: "/data/provider/test/url",
+				timeout: 200
+			}
+		});
+
+		// Act
+		oDataProvider.getData().then(function () {
+			assert.ok(true, "request is successful");
+
+			oDataProvider = this.oDataProviderFactory.create({
+				request: {
+					url: "/data/provider/test/url",
+					timeout: 50
+				}
+			});
+
+			// Act
+			oDataProvider.getData().then(function () {
+			}, function () {
+				assert.ok(true, "request is not successful");
+				done();
+			});
+		}.bind(this));
 	});
 
 	QUnit.module("RequestDataProvider - Content encoding", {
