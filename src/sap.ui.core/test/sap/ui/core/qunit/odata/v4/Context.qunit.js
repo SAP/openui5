@@ -3931,6 +3931,45 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("setInactive", function (assert) {
+		var oBinding = {
+				checkKeepAlive : function () {}
+			},
+			oModel = {
+				bAutoExpandSelect : false
+			},
+			oContext = Context.create(oModel, oBinding, "/path");
+
+		assert.strictEqual(oContext.bInactive, undefined);
+
+		// code under test
+		assert.throws(function () {
+			oContext.setInactive();
+		}, new Error("Not inactive: undefined"));
+
+		oContext.bInactive = false;
+
+		// code under test
+		assert.throws(function () {
+			oContext.setInactive();
+		}, new Error("Not inactive: false"));
+
+		oContext.bInactive = true;
+
+		// code under test
+		oContext.setInactive();
+
+		assert.strictEqual(oContext.bInactive, true);
+
+		oContext.bInactive = 1;
+
+		// code under test
+		oContext.setInactive();
+
+		assert.strictEqual(oContext.bInactive, true);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("refreshDependentBindings", function (assert) {
 		var oModel = {
 				getDependentBindings : function () {}

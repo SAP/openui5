@@ -48,11 +48,15 @@
 								$$patchWithoutSideEffects : true,
 								$select : ['HasDraftEntity', 'HasActiveEntity']
 							}
-						}" mode="SingleSelectMaster" selectionChange="onSelectProduct">
+						}" mode="SingleSelectMaster"
+							rememberSelections="false"
+							selectionChange="onSelectProduct">
 							<headerToolbar>
 								<Toolbar>
 									<Title id="productsTitle" level="H2"
 										text="{headerContext0>$count} Products"/>
+									<Button id="resetProducts" icon="sap-icon://reset"
+											press="onResetChangesForProducts" tooltip="Reset Changes"/>
 								</Toolbar>
 							</headerToolbar>
 							<columns>
@@ -121,6 +125,8 @@
 								<Toolbar design="Transparent" class="sapMTBHeader-CTX">
 									<Title id="partsTitle" level="H2"
 										text="Product: {ID}, {headerContext1>$count} Parts"/>
+									<Button id="resetParts" icon="sap-icon://reset"
+											press="onResetChangesForParts"	tooltip="Reset Changes"/>
 								</Toolbar>
 							</t:extension>
 							<t:columns>

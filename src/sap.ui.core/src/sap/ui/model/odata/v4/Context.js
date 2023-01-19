@@ -1032,6 +1032,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the inactive flag to <code>true</code>
+	 *
+	 * Note: this is a private and internal API. Do not call this!
+	 *
+	 * @throws {Error} - If this context is not inactive
+	 *
+	 * @private
+	 * @see #isInactive
+	 */
+	Context.prototype.setInactive = function () {
+		if (!this.bInactive) {
+			throw new Error("Not inactive: " + this.bInactive);
+		}
+		this.bInactive = true;
+	};
+
+	/**
 	 * Returns whether this context is kept alive even when it is removed from its binding's
 	 * collection, for example if a filter is applied and the entity represented by this context
 	 * does not match the filter criteria.
@@ -1631,7 +1648,7 @@ sap.ui.define([
 	 *   <li> the binding's root binding is suspended,
 	 *   <li> a change of this context has already been sent to the server and there is no response
 	 *     yet,
-	 *   <li> this context is transient but not inactive and therefore should rather be reset via
+	 *   <li> this context is transient, but not inactive and therefore should rather be reset via
 	 *     {@link #delete}.
 	 * </ul>
 	 *

@@ -2336,7 +2336,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("resetInactiveEntity", function (assert) {
-		var oEntity = {foo : "n/a", bar : "n/a", baz : "n/a", notIn : "postBody"},
+		var oContext = {setInactive : function () {}},
+			oEntity = {foo : "n/a", bar : "n/a", baz : "n/a", notIn : "postBody"},
 			oHelperMock = this.mock(_Helper),
 			oInitialData = {foo : "foo"},
 			oPostBody = {foo : "n/a", bar : "n/a", baz : "n/a"};
@@ -2354,6 +2355,11 @@ sap.ui.define([
 
 		oHelperMock.expects("updateAll").withExactArgs("~mChangeListeners~", "path",
 			sinon.match.same(oEntity), {"@$ui5.context.isInactive" : true});
+
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oEntity), "context")
+			.returns(oContext);
+		this.mock(oContext).expects("setInactive").withExactArgs();
 
 		// code under test
 		_Helper.resetInactiveEntity("~mChangeListeners~", "path", oEntity);

@@ -1108,7 +1108,9 @@ sap.ui.define([
 			oBody2 = {"@$ui5._" : {transient : "update"}},
 			oBody3 = {"@$ui5._" : {transient : "update"}},
 			oBody4 = {"@$ui5._" : {transient : "update"}},
-			oBody5 = {"@$ui5._" : {transient : "$inactive.foo"}},
+			oBody5 = {"@$ui5._" : {
+				transient : "$inactive.foo", transientPredicate : "($uid=123-3)"
+			}},
 			oCache = new _Cache(this.oRequestor, "TEAMS"),
 			oCall1,
 			oCall2;
@@ -1126,6 +1128,9 @@ sap.ui.define([
 		oCall2 = this.oRequestorMock.expects("removePost")
 			.withExactArgs("update2", sinon.match.same(oBody1));
 		this.oRequestorMock.expects("removePost").withExactArgs("update", sinon.match.same(oBody4));
+		this.mock(_Helper).expects("resetInactiveEntity")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "($uid=123-3)",
+				sinon.match.same(oBody5));
 		this.oRequestorMock.expects("removePost").withArgs("$inactive.foo").never();
 
 		// code under test
@@ -1146,7 +1151,9 @@ sap.ui.define([
 	QUnit.test("_Cache#resetChangesForPath: top-level", function (assert) {
 		var oBody0 = {"@$ui5._" : {transient : "update"}},
 			oBody1 = {"@$ui5._" : {transient : "update"}},
-			oBody2 = {"@$ui5._" : {transient : "$inactive.foo"}},
+			oBody2 = {"@$ui5._" : {
+				transient : "$inactive.foo", transientPredicate : "($uid=123-3)"
+			}},
 			oCache = new _Cache(this.oRequestor, "TEAMS");
 
 		oCache.mPostRequests = {
@@ -1158,6 +1165,9 @@ sap.ui.define([
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.oRequestorMock.expects("removePost").withExactArgs("update", sinon.match.same(oBody0));
 		this.oRequestorMock.expects("removePost").withExactArgs("update", sinon.match.same(oBody1));
+		this.mock(_Helper).expects("resetInactiveEntity")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "($uid=123-3)",
+				sinon.match.same(oBody2));
 		this.oRequestorMock.expects("removePost").withArgs("$inactive.foo").never();
 
 		// code under test

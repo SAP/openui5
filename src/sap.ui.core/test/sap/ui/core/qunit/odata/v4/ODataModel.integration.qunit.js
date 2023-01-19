@@ -46313,12 +46313,17 @@ sap.ui.define([
 	// - Add values to the inline creation rows, they stay inactive because "Team_Id" is missing.
 	//   hasPendingChanges returns true at ODLB and contexts
 	// - Add "Team_Id" to the first inline creation row -> row is activated and persisted
-	// - Reset changes on second context -> entered data is lost and initial data is restored
+	// - If bAtContext, reset changes on second context, else reset changes on the list binding
+	//   -> entered data is lost and initial data is restored
 	// - Add "Team_Id" to second context -> activation works as expected
 	//
 	// JIRA: CPOUI5ODATAV4-1582
 	// JIRA: CPOUI5ODATAV4-1867
-	QUnit.test("Creation Rows: Support for required properties", function (assert) {
+[false, true].forEach(function (bAtContext) {
+	var sTitle = "Creation Rows: Support for required properties, reset at "
+			+ (bAtContext ? "context" : "binding");
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding,
 			oContext1,
 			oContext2,
@@ -46373,7 +46378,7 @@ sap.ui.define([
 			// inactive: ctx1, ctx2; pendingChanges: ctx1, ctx2, ODLB, ODLB(true), ODM
 			checkStates(true, true, false, false, false, false, false, false);
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "create inactive");
 		}).then(function () {
 			// no requests
 			that.expectChange("name", ["Team #1 edited", "Team #2 edited"])
@@ -46388,49 +46393,61 @@ sap.ui.define([
 			// inactive: ctx1, ctx2; pendingChanges: ctx1, ctx2, ODLB, ODLB(true), ODM
 			checkStates(1, 1, true, true, true, false, false);
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "edit");
 		}).then(function () {
-			that.expectRequest({
-					method : "POST",
-					url : "TEAMS",
-					payload : {
-						Team_Id : "TEAM_01",
-						Name : "Team #1 edited"
-					}
-				}, {
-					Team_Id : "TEAM_01",
-					Budget : 0,
-					Name : "Team #1 persisted"
-				})
-				.expectChange("id", ["TEAM_01"])
-				.expectChange("name", ["Team #1 persisted", "Team #2 inactive"])
-				.expectChange("budget", ["0", null])
-				.expectChange("inactive", [false, true]);
+			if (bAtContext) {
+				that.expectRequest({
+						method : "POST",
+						url : "TEAMS",
+						payload : {
+							Name : "Team #1 edited",
+							Team_Id : "TEAM_01"
+						}
+					}, {
+						Budget : 0,
+						Name : "Team #1 persisted",
+						Team_Id : "TEAM_01"
+					})
+					.expectChange("id", ["TEAM_01"])
+					.expectChange("name", ["Team #1 persisted", "Team #2 inactive"])
+					.expectChange("budget", ["0", null])
+					.expectChange("inactive", [false, true]);
 
-			// code under test
-			oContext1.setProperty("Team_Id", "TEAM_01");
-			oContext2.resetChanges();
+				// code under test
+				oContext1.setProperty("Team_Id", "TEAM_01");
+				oContext2.resetChanges();
 
-			// ctx1 is now active but still transient
-			// inactive: ctx1, ctx2; pendingChanges: ctx1, ctx2, ODLB, ODLB(true), ODM
-			checkStates(false, true, true, false, true, false, true);
+				// ctx1 is now active but still transient
+				// inactive: ctx1, ctx2; pendingChanges: ctx1, ctx2, ODLB, ODLB(true), ODM
+				checkStates(false, true, true, false, true, false, true);
+			} else {
+				that.expectChange("name", ["", "Team #2 inactive"])
+					.expectChange("budget", [, null])
+					.expectChange("inactive", [true, true]);
+
+				// code under test
+				oBinding.resetChanges();
+
+				// inactive: ctx1, ctx2; pendingChanges: ctx1, ctx2, ODLB, ODLB(true), ODM
+				checkStates(true, true, false, false, false, false, false);
+			}
 
 			return Promise.all([
-				oContext1.created(),
-				that.waitForChanges(assert)
+				bAtContext && oContext1.created(),
+				that.waitForChanges(assert, "reset")
 			]);
 		}).then(function () {
 			that.expectRequest({
 				method : "POST",
 				url : "TEAMS",
 				payload : {
-					Team_Id : "TEAM_02",
-					Name : "Team #2 inactive"
+					Name : "Team #2 inactive",
+					Team_Id : "TEAM_02"
 				}
 			}, {
-				Team_Id : "TEAM_02",
 				Budget : 0,
-				Name : "Team #2 persisted"
+				Name : "Team #2 persisted",
+				Team_Id : "TEAM_02"
 			})
 			.expectChange("id", [, "TEAM_02"])
 			.expectChange("name", [, "Team #2 persisted"])
@@ -46442,19 +46459,18 @@ sap.ui.define([
 
 			// ctx2 is now active but still transient
 			// inactive: ctx1, ctx2; pendingChanges: ctx1, ctx2, ODLB, ODLB(true), ODM
-			checkStates(false, false, false, true, true, false, true);
+			checkStates(!bAtContext, false, false, true, true, false, true);
 
 			return Promise.all([
 				oContext2.created(),
-				that.waitForChanges(assert)
+				that.waitForChanges(assert, "activate")
 			]);
 		}).then(function () {
 			// inactive: ctx1, ctx2; pendingChanges: ctx1, ctx2, ODLB, ODLB(true), ODM
-			checkStates(false, false, false, false, false, false, false);
-
-			return that.waitForChanges(assert);
+			checkStates(!bAtContext, false, false, false, false, false, false);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Main & dependent detail table. Create inactive rows for the detail table.
