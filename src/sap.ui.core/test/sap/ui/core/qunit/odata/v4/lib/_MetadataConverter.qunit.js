@@ -44,17 +44,23 @@ sap.ui.define([
 	 *   the XML snippet; it will be inserted below an Annotation element
 	 * @param {any} vExpected
 	 *   the expected value for the annotation
-	 * @param {string} sODataVersion
-	 *   the OData version to use for the test
+	 * @param {string} [sODataVersion]
+	 *   the OData version to use for the test; default is both "2.0" and "4.0"
 	 */
 	function testExpression(assert, sXmlSnippet, vExpected, sODataVersion) {
 		var aMatches, sPath;
 
 		function convert(Converter, sXml) {
-			var oResult = new Converter().convertXMLMetadata(xml(assert, sXml));
+			var oDocument = xml(assert, sXml),
+				oResult = new Converter().convertXMLMetadata(oDocument);
 
 			assert.deepEqual(oResult["foo."].$Annotations["foo.Bar"]["@foo.Term"], vExpected,
 				sXml);
+
+			// ignoreAnnotationsFromMetadata
+			oResult = new Converter().convertXMLMetadata(oDocument, "n/a", true);
+
+			assert.deepEqual(oResult["foo."].$Annotations, {});
 		}
 
 		function localTest() {
@@ -572,6 +578,7 @@ sap.ui.define([
 [false, true].forEach(function (bV4) {
 	QUnit.test("processAnnotations: bound action's overload, V4 = " + bV4, function (assert) {
 		var Converter = bV4 ? _V4MetadataConverter : _V2MetadataConverter,
+			oDocument,
 			oResult,
 			sXml = (bV4 ? sV4Start : sV2Start) + '\
 <Schema Namespace="foo" Alias="f">\
@@ -582,13 +589,20 @@ sap.ui.define([
 </Schema>'
 				+ sEnd;
 
+		oDocument = xml(assert, sXml);
+
 		// code under test
-		oResult = new Converter().convertXMLMetadata(xml(assert, sXml));
+		oResult = new Converter().convertXMLMetadata(oDocument);
 
 		assert.ok(oResult, JSON.stringify(oResult));
 		assert.deepEqual(
 			oResult["foo."].$Annotations["foo.Action(Collection(foo.Type),foo.Type)"],
 			{"@foo.Term" : "hello, world!"});
+
+		// code under test ("ignoreAnnotationsFromMetadata")
+		oResult = new Converter().convertXMLMetadata(oDocument, "n/a", true);
+
+		assert.deepEqual(oResult["foo."].$Annotations, {});
 	});
 });
 });

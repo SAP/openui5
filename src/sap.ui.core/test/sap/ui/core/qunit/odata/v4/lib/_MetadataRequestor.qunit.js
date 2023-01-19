@@ -110,20 +110,21 @@ sap.ui.define([
 				}).returns(createMock(oExpectedXml));
 			if (sODataVersion === "4.0") {
 				this.mock(_V4MetadataConverter.prototype).expects("convertXMLMetadata").twice()
-					.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
+					.withExactArgs(sinon.match.same(oExpectedXml), sUrl, false)
 					.returns(oExpectedJson);
 				this.mock(_V2MetadataConverter.prototype).expects("convertXMLMetadata").never();
 			} else {
 				this.mock(_V2MetadataConverter.prototype).expects("convertXMLMetadata")
-					.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
+					.withExactArgs(sinon.match.same(oExpectedXml), sUrl, false)
 					.returns(oExpectedJson);
 				this.mock(_V4MetadataConverter.prototype).expects("convertXMLMetadata")
-					.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
+					.withExactArgs(sinon.match.same(oExpectedXml), sUrl, false)
 					.returns(oExpectedJson);
 			}
 
 			// code under test
-			oMetadataRequestor = _MetadataRequestor.create(mHeaders, sODataVersion, mQueryParams);
+			oMetadataRequestor
+				= _MetadataRequestor.create(mHeaders, sODataVersion, false, mQueryParams);
 
 			// code under test
 			return oMetadataRequestor.read(sUrl).then(function (oResult) {
@@ -168,7 +169,7 @@ sap.ui.define([
 				method : "GET"
 			}).returns(createMock(oExpectedXml, false, sDate, sLastModified, sETag));
 		this.mock(_V4MetadataConverter.prototype).expects("convertXMLMetadata")
-			.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
+			.withExactArgs(sinon.match.same(oExpectedXml), sUrl, undefined)
 			.returns(oExpectedJson);
 
 		// code under test
@@ -204,14 +205,14 @@ sap.ui.define([
 		oHelperMock.expects("buildQuery")
 			.withExactArgs(sinon.match.same(mQueryParams))
 			.returns(sQuery1);
-		oMetadataRequestor = _MetadataRequestor.create(mHeaders, "4.0", mQueryParams);
+		oMetadataRequestor = _MetadataRequestor.create(mHeaders, "4.0", true, mQueryParams);
 		oJQueryMock.expects("ajax")
 			.withExactArgs(sAnnotationUrl, {
 				headers : sinon.match.same(mHeaders),
 				method : "GET"
 			}).returns(createMock(oXml0));
 		oV4MetadataConverterMock.expects("convertXMLMetadata")
-			.withExactArgs(sinon.match.same(oXml0), sAnnotationUrl)
+			.withExactArgs(sinon.match.same(oXml0), sAnnotationUrl, false)
 			.returns({});
 
 		// code under test (read annotations before 1st $metadata request)
@@ -223,7 +224,7 @@ sap.ui.define([
 				method : "GET"
 			}).returns(createMock(oXml1));
 		oV4MetadataConverterMock.expects("convertXMLMetadata")
-			.withExactArgs(sinon.match.same(oXml1), sUrl)
+			.withExactArgs(sinon.match.same(oXml1), sUrl, true)
 			.returns({});
 		oHelperMock.expects("buildQuery")
 			.withExactArgs(sinon.match.same(mQueryParams))
@@ -241,7 +242,7 @@ sap.ui.define([
 				method : "GET"
 			}).returns(createMock(oXml2));
 		oV4MetadataConverterMock.expects("convertXMLMetadata")
-			.withExactArgs(sinon.match.same(oXml2), sCrossServiceReferenceUrl)
+			.withExactArgs(sinon.match.same(oXml2), sCrossServiceReferenceUrl, true)
 			.returns({});
 
 		// code under test
@@ -290,7 +291,7 @@ sap.ui.define([
 
 			// Note: no addt'l request
 			oConverterMock.expects("convertXMLMetadata")
-				.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
+				.withExactArgs(sinon.match.same(oExpectedXml), sUrl, undefined)
 				.returns(oExpectedJson);
 
 			// code under test
@@ -315,7 +316,7 @@ sap.ui.define([
 						method : "GET"
 					}).returns(createMock(oNewExpectedXml));
 				oConverterMock.expects("convertXMLMetadata")
-					.withExactArgs(sinon.match.same(oNewExpectedXml), sUrl)
+					.withExactArgs(sinon.match.same(oNewExpectedXml), sUrl, undefined)
 					.returns(oNewExpectedJson);
 
 				// code under test
@@ -359,6 +360,20 @@ sap.ui.define([
 			jQuery.ajax("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/metadata.json")
 		]).then(function (aResults) {
 			assert.deepEqual(aResults[0], aResults[1]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read: test service; ignoreAnnotationsFromMetadata", function (assert) {
+		var oMetadataRequestor = _MetadataRequestor.create({}, "4.0", true, {});
+
+		return Promise.all([
+			oMetadataRequestor.read(
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"),
+			jQuery.ajax("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/metadata.json")
+		]).then(function (aResults) {
+			aResults[1]["com.sap.gateway.default.iwbep.tea_busi.v0001."].$Annotations = {};
+			assert.deepEqual(aResults[0], aResults[1], "metadata fully intact");
 		});
 	});
 });

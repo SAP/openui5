@@ -34142,6 +34142,101 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Use "ignoreAnnotationsFromMetadata" parameter. Check that annotations from an
+	// annotation file are not ignored. Check that a value list model does not ignore annotations
+	// from its metadata.
+	// JIRA: CPOUI5ODATAV4-1925
+	QUnit.test("ignoreAnnotationsFromMetadata: value list model", function (assert) {
+		var oMetaModel,
+			oModel = this.createSpecialCasesModel({
+				annotationURI : "/special/cases/annotations.xml",
+				autoExpandSelect : true,
+				// code under test
+				ignoreAnnotationsFromMetadata : true
+			}, {
+				"/special/cases/annotations.xml"
+					: {source : "odata/v4/data/annotations_special_cases.xml"},
+				"/special/countryoforigin/$metadata"
+					: {source : "odata/v4/data/metadata_countryoforigin.xml"}
+			}),
+			oValueListMapping = { // from metadata_countryoforigin.xml
+				CollectionPath : "I_AIVS_CountryCode",
+				Label : "Country Code Value Help",
+				Parameters : [{
+					$Type : "com.sap.vocabularies.Common.v1.ValueListParameterInOut",
+					LocalDataProperty : {
+						$PropertyPath : "Countryoforigin"
+					},
+					ValueListProperty : "CountryCode"
+				}]
+			};
+
+		return this.createView(assert, "", oModel).then(function () {
+			oMetaModel = oModel.getMetaModel();
+
+			return oMetaModel.requestData();
+		}).then(function (mMetaData) {
+			assert.deepEqual(mMetaData.$Annotations, { // from annotations_special_cases.xml
+				"special.cases.Create/Countryoforigin" : {
+					"@com.sap.vocabularies.Common.v1.ValueListReferences" : [
+						"../countryoforigin/$metadata"
+					]
+				}
+			}, "no annotations except from annotationURI");
+			delete mMetaData.$Annotations;
+			assert.notOk(JSON.stringify(mMetaData).includes("@"), "no inline annotations");
+
+			return oMetaModel.requestValueListInfo("/Artists/special.cases.Create/Countryoforigin");
+		}).then(function (mQualifier2ValueListType) {
+			var oValueListModel = mQualifier2ValueListType[""].$model;
+
+			delete mQualifier2ValueListType[""].$model;
+			assert.deepEqual(mQualifier2ValueListType, {"" : oValueListMapping});
+
+			return oValueListModel.getMetaModel().requestData();
+		}).then(function (mValueListMetaData) {
+			assert.deepEqual(mValueListMetaData.$Annotations, {
+				"special.cases.Create/Countryoforigin" : {
+					"@com.sap.vocabularies.Common.v1.ValueListMapping" : oValueListMapping
+				}
+			}, "annotations from metadata");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Use "ignoreAnnotationsFromMetadata" parameter. Check that annotations from
+	// metadata are also ignored for cross-service references.
+	// JIRA: CPOUI5ODATAV4-1925
+	QUnit.test("ignoreAnnotationsFromMetadata: cross-service references", function (assert) {
+		// code under test
+		var oMetaModel,
+			oModel = this.createTeaBusiModel({ignoreAnnotationsFromMetadata : true});
+
+		return this.createView(assert, "", oModel).then(function () {
+			oMetaModel = oModel.getMetaModel();
+
+			return oMetaModel.requestObject("/Equipments/EQUIPMENT_2_PRODUCT/SupplierIdentifier");
+		}).then(function (mPropertyMetadata) {
+			var mMetaData = oMetaModel.getData();
+
+			assert.deepEqual(mPropertyMetadata, {
+				$Nullable : false,
+				$Type : "Edm.Int32",
+				$kind : "Property"
+			});
+			assert.strictEqual(
+				mMetaData["com.sap.gateway.default.iwbep.tea_busi.v0001."].$kind,
+				"Schema");
+			assert.strictEqual(
+				mMetaData["com.sap.gateway.default.iwbep.tea_busi_product.v0001."].$kind,
+				"Schema");
+			assert.deepEqual(mMetaData.$Annotations, {}, "Look, ma - no annotations!");
+			delete mMetaData.$Annotations;
+			assert.notOk(JSON.stringify(mMetaData).includes("@"), "no inline annotations");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create on a relative binding with $expand refreshes the newly created entity so
 	// that navigation properties are available. Context#refresh is then used.
 	// JIRA: CPOUI5UISERVICESV3-1814

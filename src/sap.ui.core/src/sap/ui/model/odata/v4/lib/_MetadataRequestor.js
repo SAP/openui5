@@ -19,6 +19,9 @@ sap.ui.define([
 		 *   A map of headers
 		 * @param {string} sODataVersion
 		 *   The version of the OData service. Supported values are "2.0" and "4.0".
+		 * @param {boolean} [bIgnoreAnnotationsFromMetadata]
+		 *   Whether to ignore all annotations from metadata documents. Only annotations from
+		 *   additional annotation files are loaded.
 		 * @param {object} [mQueryParams={}]
 		 *   A map of query parameters as described in
 		 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}. Note that "sap-context-token"
@@ -26,7 +29,7 @@ sap.ui.define([
 		 * @returns {object}
 		 *   A new MetadataRequestor object
 		 */
-		create : function (mHeaders, sODataVersion, mQueryParams) {
+		create : function (mHeaders, sODataVersion, bIgnoreAnnotationsFromMetadata, mQueryParams) {
 			var mUrl2Promise = {},
 				sQuery = _Helper.buildQuery(mQueryParams);
 
@@ -61,10 +64,12 @@ sap.ui.define([
 						var Converter = sODataVersion === "4.0" || bAnnotations
 								? _V4MetadataConverter
 								: _V2MetadataConverter,
-							oData = oJSON.$XML;
+							oData = oJSON.$XML,
+							bIgnoreAnnotations = bIgnoreAnnotationsFromMetadata && !bAnnotations;
 
 						delete oJSON.$XML; // be nice to the garbage collector
-						return Object.assign(new Converter().convertXMLMetadata(oData, sUrl),
+						return Object.assign(
+							new Converter().convertXMLMetadata(oData, sUrl, bIgnoreAnnotations),
 							oJSON);
 					}
 
