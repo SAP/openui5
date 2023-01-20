@@ -163,12 +163,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds cache related headers.
-	 * @param {map} mHeaders Current headers.
-	 * @param {Object} oSettings Request settings
-	 * @returns {map} The new headers
+	 * @inheritdoc
 	 */
-	CacheAndRequestDataProvider.prototype._prepareHeaders = function (mHeaders, oSettings) {
+	CacheAndRequestDataProvider.prototype._modifyRequestBeforeSent = function (oRequest, oSettings) {
 		var oDefault = {
 				enabled: true,
 				maxAge: 0,
@@ -194,7 +191,7 @@ sap.ui.define([
 
 		oNewSettings.request.cache = oCache;
 
-		return RequestDataProvider.prototype._prepareHeaders.call(this, mHeaders, oNewSettings);
+		return RequestDataProvider.prototype._modifyRequestBeforeSent.call(this, oRequest, oNewSettings);
 	};
 
 	/**
