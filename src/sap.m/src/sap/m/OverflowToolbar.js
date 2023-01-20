@@ -253,6 +253,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * This method is a hook for the RenderManager that gets called
+	 * during the rendering of child Controls. It allows to add,
+	 * remove and update existing accessibility attributes (ARIA) of
+	 * those controls.
+	 *
+	 * @param {sap.ui.core.Control} oElement - The Control that gets rendered by the RenderManager
+	 * @param {object} mAriaProps - The mapping of "aria-" prefixed attributes
+	 * @protected
+	 */
+	OverflowToolbar.prototype.enhanceAccessibilityState = function (oElement, mAriaProps) {
+		if (oElement === this.getAggregation("_overflowButton")) {
+			this._enhanceOverflowButtonAccessibility(mAriaProps);
+		}
+	};
+
+	OverflowToolbar.prototype._enhanceOverflowButtonAccessibility = function (mAriaProps) {
+		var oPopover = this.getAggregation("_popover"),
+			oOverflowButton = this.getAggregation("_overflowButton");
+
+		if (!oOverflowButton) {
+			return;
+		}
+
+		// the overflow toolbar button is better represented as a menu button
+		// because it opens a menu with the overflowed content
+		// because of that the aria-pressed is to be removed and the aria-expanded is to be added
+		mAriaProps.expanded = oOverflowButton.getPressed();
+		delete mAriaProps.pressed;
+
+		if (oPopover && oPopover.getDomRef()) {
+			mAriaProps.controls = oPopover.getId();
+		}
+	};
+
+	/**
 	 * Sets the <code>asyncMode</code> property.
 	 *
 	 * @since 1.67

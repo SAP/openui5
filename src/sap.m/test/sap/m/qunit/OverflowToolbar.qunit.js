@@ -3381,24 +3381,88 @@ sap.ui.define([
 		assert.notOk(oButton3.hasStyleClass(sShrinkClass), "shrinkClass is not added when LayoutData is from a different type. Error is not thrown.");
 	});
 
-	QUnit.module("Accessibility");
+	QUnit.module("Accessibility overflow button", {
+		beforeEach: function () {
+			this.oOTB = new OverflowToolbar({
+				width: '200px',
+				content: [ new OverflowToolbarButton({ width: "300px" }) ]
+			});
 
-	QUnit.test("Aria attributes - OverflowButton", function (assert) {
+			this.oOTB.placeAt("qunit-fixture");
+			oCore.applyChanges();
+
+		},
+		afterEach: function () {
+			this.oOTB.destroy();
+			this.oOTB = null;
+		}
+	});
+
+	QUnit.test("Aria attributes - aria-haspopup", function (assert) {
 		// arrange
-		var aDefaultContent = [
-				new Button({width: "150px"}),
-				new Button({width: "150px"})
-			],
-			oOverflowTB = createOverflowToolbar({width: '200px'}, aDefaultContent),
-			sExpectedAriaHasPopup = AriaHasPopup.Menu,
-			sActualAriaHasPopup = oOverflowTB._getOverflowButton().getAriaHasPopup();
+		var sExpectedAriaHasPopup = AriaHasPopup.Menu,
+			oOverflowButton = this.oOTB._getOverflowButton(),
+			sActualAriaHasPopup = oOverflowButton.getAriaHasPopup();
 
 		// assert
 		assert.strictEqual(sActualAriaHasPopup, sExpectedAriaHasPopup, "aria-haspopup value is as expected");
-
-		// clean
-		oOverflowTB.destroy();
 	});
+
+	QUnit.test("Aria attributes initial values", function (assert) {
+		// arrange
+		var oOverflowButton = this.oOTB._getOverflowButton(),
+			oOverflowButtonDomRef = oOverflowButton.getDomRef();
+
+		// assert
+		assert.strictEqual(oOverflowButtonDomRef.getAttribute("aria-pressed"), null, "aria-pressed value is as expected");
+		assert.strictEqual(oOverflowButtonDomRef.getAttribute("aria-expanded"), "false", "aria-expanded value is as expected");
+		assert.strictEqual(oOverflowButtonDomRef.getAttribute("aria-controls"), null, "aria-controls value is not set before popover is opened becasue it was never rendered yet");
+	});
+
+	QUnit.test("Aria attributes while opened popover", function (assert) {
+		// arrange
+		var oOverflowButton = this.oOTB._getOverflowButton(),
+			oOverflowButtonDomRef = oOverflowButton.getDomRef();
+
+		// act
+		this.oOTB._getOverflowButton().setPressed(true);
+		this.oOTB._getOverflowButton().firePress();
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(oOverflowButtonDomRef.getAttribute("aria-pressed"), null, "aria-pressed value is as expected");
+		assert.strictEqual(oOverflowButtonDomRef.getAttribute("aria-expanded"), "true", "aria-expanded value is as expected");
+		assert.strictEqual(oOverflowButtonDomRef.getAttribute("aria-controls"), this.oOTB._getPopover().getId(), "aria-controls value is set because the popover is rendered");
+
+	});
+
+	QUnit.test("Aria attributes after closing the popover", function (assert) {
+		// arrange
+		var fnDone = assert.async(),
+			oOverflowButton = this.oOTB._getOverflowButton(),
+			oOverflowButtonDomRef = oOverflowButton.getDomRef();
+
+		assert.expect(3);
+
+		this.oOTB._getPopover().attachAfterClose(function () {
+			oCore.applyChanges();
+			// assert
+			assert.strictEqual(oOverflowButtonDomRef.getAttribute("aria-pressed"), null, "aria-pressed value is as expected");
+			assert.strictEqual(oOverflowButtonDomRef.getAttribute("aria-expanded"), "false", "aria-expanded value is as expected");
+			assert.strictEqual(oOverflowButtonDomRef.getAttribute("aria-controls"), this.oOTB._getPopover().getId(), "aria-controls is still set because the popover stays rendered (hidden)");
+
+			fnDone();
+		}.bind(this));
+
+		// act
+		this.oOTB._getOverflowButton().setPressed(true);
+		this.oOTB._getOverflowButton().firePress();
+		oCore.applyChanges();
+		this.oOTB.closeOverflow();
+		this.clock.tick(1000);
+	});
+
+	QUnit.module("Accessibility");
 
 	QUnit.test("Aria attributes", function (assert) {
 		// arrange
