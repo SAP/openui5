@@ -54,7 +54,7 @@ sap.ui.define([
 				}
 			}).placeAt("comparea1");
 			this.oComp = sap.ui.getCore().createComponent({
-				name: "sap.ui.test.verticalLayout",
+				name: "sap.ui.test.verticalLayout_legacyAPIs",
 				id: "vLayout",
 				componentData: {
 					"foo": "bar"
@@ -119,7 +119,7 @@ sap.ui.define([
 		);
 		assert.ok(oLink, "Stylsheet from include has been inserted");
 		assert.equal(oLink.getAttribute("href"),
-			"test-resources/sap/ui/core/qunit/component/testdata/verticalLayout/css/vlayout.css",
+			"test-resources/sap/ui/core/qunit/component/testdata/verticalLayout_legacyAPIs/css/vlayout.css",
 			"Stylesheet with correct href has been inserted"
 		);
 	});
@@ -129,7 +129,7 @@ sap.ui.define([
 		var oComponent = sap.ui.component(oComp.getId());
 		assert.equal(oComponent, oComp, "Factory function returns the same instance!");
 		oComponent = sap.ui.component({
-			name: "sap.ui.test.verticalLayout",
+			name: "sap.ui.test.verticalLayout_legacyAPIs",
 			id: "factoryVLayout"
 		});
 		assert.ok(!!oComponent, "Component has been created!");
@@ -173,7 +173,7 @@ sap.ui.define([
 	QUnit.module("Creation Context", {
 		beforeEach: function() {
 			this.oComp = sap.ui.getCore().createComponent({
-				name: "sap.ui.test.verticalLayout",
+				name: "sap.ui.test.verticalLayout_legacyAPIs",
 				id: "vLayout",
 				componentData: {
 					"foo": "bar"

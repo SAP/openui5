@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/library',
 	'sap/m/Button',
 	'sap/m/Text',
 	'sap/m/Toolbar',
@@ -11,14 +10,13 @@ sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/layout/VerticalLayout',
 	'sap/ui/core/Component'
-], function(coreLib, Button, Text, Toolbar, ComponentContainer, UIComponent, VerticalLayout, BaseComponent) {
+], function(Button, Text, Toolbar, ComponentContainer, UIComponent, VerticalLayout, BaseComponent) {
 	"use strict";
 
 	// new Component
-	var Component = UIComponent.extend("sap.ui.test.verticalLayout.Component", {
+	var Component = UIComponent.extend("sap.ui.test.verticalLayout_legacyAPIs.Component", {
 		metadata : {
 			"abstract": true,
-			interfaces: [coreLib.IAsyncContentCreation],
 			version : "1.0",
 			includes : [
 				"css/vlayout.css",
@@ -40,39 +38,34 @@ sap.ui.define([
 	});
 
 	Component.prototype.createContent = function() {
-		var oOuterComponent = this;
+		var oToolbar = new Toolbar({
+			id: this.createId("toolbar"),
+			content:[
+				new Button({text:"Button 1"}),
+				new Button({text:"Button with some text 2"}),
+				new Button({text:"Button with some text 3"})
+			]
+		});
 
-		return BaseComponent.create({
+		var oComp = sap.ui.component({
 			name : 'samples.components.styledbutton',
-			id : oOuterComponent.createId("comp_button"),
+			id : this.createId("comp_button"),
 			settings: {
 				text: "Hit me"
 			}
-		}).then(function(oComp) {
-			return oOuterComponent.runAsOwner(function() {
-				var oToolbar = new Toolbar({
-					id: oOuterComponent.createId("toolbar"),
-					content:[
-						new Button({text:"Button 1"}),
-						new Button({text:"Button with some text 2"}),
-						new Button({text:"Button with some text 3"})
-					]
-				});
-
-				var oCompCont = new ComponentContainer(oOuterComponent.createId("ContButton"), {
-					component : oComp
-				});
-
-				oOuterComponent.oVLayout = new VerticalLayout(oOuterComponent.createId("myLayout"), {
-					content: [
-						oToolbar,
-						new Text(oOuterComponent.createId("myText"), {text: oOuterComponent.getProperty("initalText")}),
-						oCompCont
-					]
-				});
-				return oOuterComponent.oVLayout;
-			});
 		});
+		var oCompCont = new ComponentContainer(this.createId("ContButton"), {
+			component : oComp
+		});
+
+		this.oVLayout = new VerticalLayout(this.createId("myLayout"), {
+			content: [
+				oToolbar,
+				new Text(this.createId("myText"), {text: this.getProperty("initalText")}),
+				oCompCont
+			]
+		});
+		return this.oVLayout;
 	};
 
 
