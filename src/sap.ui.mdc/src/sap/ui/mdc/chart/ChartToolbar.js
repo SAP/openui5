@@ -14,7 +14,9 @@ sap.ui.define([
         "./ChartSelectionDetails",
         "sap/m/ToolbarSeparator",
         "sap/m/OverflowToolbarLayoutData",
-        "sap/ui/core/library"
+        "sap/ui/core/library",
+        "sap/ui/Device",
+        "sap/ui/core/ShortcutHintsMixin"
     ],
     function (
         Core,
@@ -28,7 +30,9 @@ sap.ui.define([
         ChartSelectionDetails,
         ToolbarSeparator,
         OverflowToolbarLayoutData,
-        coreLibrary
+        coreLibrary,
+        Device,
+        ShortcutHintsMixin
     ) {
         "use strict";
 
@@ -194,6 +198,14 @@ sap.ui.define([
                         }
                     }
                 });
+
+                ShortcutHintsMixin.addConfig(this._oSettingsBtn, {
+					addAccessibilityLabel: true,
+					messageBundleKey: Device.os.macintosh ? "mdc.PERSONALIZATION_SHORTCUT_MAC" : "mdc.PERSONALIZATION_SHORTCUT" // Cmd+, or Ctrl+,
+				},
+				this
+                );
+
                 this.addEnd(this._oSettingsBtn);
                 this._chartInternalButtonsToEnable.push(this._oSettingsBtn);
             }

@@ -22,7 +22,8 @@ sap.ui.define([
         "sap/ui/base/ManagedObjectObserver",
         "sap/ui/mdc/chart/DrillBreadcrumbs",
         "sap/ui/mdc/actiontoolbar/ActionToolbarAction",
-        "sap/ui/core/library"
+        "sap/ui/core/library",
+        "sap/ui/events/KeyCodes"
     ],
     function (
         Core,
@@ -44,7 +45,8 @@ sap.ui.define([
         ManagedObjectObserver,
         Breadcrumbs,
         ActionToolbarAction,
-        coreLibrary
+        coreLibrary,
+        KeyCodes
     ) {
         "use strict";
 
@@ -1286,6 +1288,26 @@ sap.ui.define([
         Chart.prototype.getVariant = function() {
             var oToolbar = this.getAggregation("_toolbar");
             return oToolbar  ? oToolbar._getVariantReference() : this.getAggregation("variant");
+        };
+
+        Chart.prototype.onkeydown = function(oEvent) {
+            if (oEvent.isMarked()) {
+                return;
+            }
+
+            if ((oEvent.metaKey || oEvent.ctrlKey) && oEvent.which === KeyCodes.COMMA) {
+                // CTRL (or Cmd) + COMMA key combination to open the table personalisation dialog
+                var oSettingsBtn = this._getToolbar()._oSettingsBtn;
+                if (oSettingsBtn && oSettingsBtn.getVisible() && oSettingsBtn.getEnabled()) {
+                    oSettingsBtn.firePress();
+
+                    // Mark the event to ensure that parent handlers (e.g. FLP) can skip their processing if needed. Also prevent potential browser defaults
+                    // (e.g. Cmd+, opens browser settings on Mac).
+                    oEvent.setMarked();
+                    oEvent.preventDefault();
+                }
+            }
+
         };
 
         return Chart;
