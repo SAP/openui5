@@ -1276,15 +1276,18 @@ sap.ui.define([
 			return {
 				sorters: [
 					{
+						position: 0,
 						name: "String",
 						descending: true
 					}
 				],
 				items: [
 					{
+						position: 0,
 						name: "Decimal"
 					},
 					{
+						position: 1,
 						name: "Double"
 					}
 				],
@@ -1313,6 +1316,7 @@ sap.ui.define([
 				},
 				groupLevels: [
 					{
+						position: 0,
 						name: "String"
 					}
 				]
@@ -1432,6 +1436,48 @@ sap.ui.define([
 		.then(function(oStateDiff){
 			assert.equal(oStateDiff.items[0].name, "String", "The state diff includes the added item");
 			assert.equal(oStateDiff.items[0].position, 0, "The state diff includes the position for the added item");
+			done();
+		});
+
+	});
+
+	QUnit.test("Ceck diff takes position into account", function(assert) {
+
+		var done = assert.async();
+
+		var oInitialState = {
+			items: [{
+				name: "Single"
+			},{
+				name: "Decimal"
+			},{
+				name: "Double"
+			},{
+				name: "Int32"
+			}]
+		};
+
+		var oNewState = {
+			items: [
+			{
+				name: "Double"
+			},{
+				name: "Decimal"
+			},{
+				name: "Single"
+			},{
+				name: "Int32"
+			}]
+		};
+
+		StateUtil.diffState(this.oTable, oInitialState, oNewState)
+		.then(function(oStateDiff){
+
+			assert.equal(oStateDiff.items.length, 2, "Two item diffed in state");
+			assert.equal(oStateDiff.items[0].name, "Double", "Correct key position");
+			assert.equal(oStateDiff.items[0].position, 0, "Correct index position");
+			assert.equal(oStateDiff.items[1].name, "Decimal", "Correct key position");
+			assert.equal(oStateDiff.items[1].position, 1, "Correct index position");
 			done();
 		});
 
