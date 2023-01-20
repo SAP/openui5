@@ -23,6 +23,8 @@ sap.ui.define([
 		var o2Aug2018_00_00 = new Date(2018, 7, 2);
 		var o2Aug2018_18_00 = new Date(2018, 7, 2, 18, 0, 0);
 		var o3Aug2018_00_00 = new Date(2018, 7, 3);
+		var o3Aug2018_18_00 = new Date(2018, 7, 3, 18, 0, 0);
+		var o5Aug2018_00_00 = new Date(2018, 7, 5);
 		var i30Jul2018_00_00_UTC_Timestamp = 1532908800000;
 		var i9Sep2018_00_00_UTC_Timestamp = 1536451200000;
 		var i2Aug2018_00_00_UTC_Timestamp = 1533168000000;
@@ -48,9 +50,21 @@ sap.ui.define([
 							startDate: o2Aug2018_00_00,
 							endDate: o2Aug2018_18_00
 						}),
-						new CalendarAppointment({
+						new CalendarAppointment({ // Long appointment in overflow
 							startDate: o2Aug2018_00_00,
-							endDate: o2Aug2018_18_00
+							endDate: o5Aug2018_00_00
+						}),
+						new CalendarAppointment({
+							startDate: o3Aug2018_00_00,
+							endDate: o3Aug2018_18_00
+						}),
+						new CalendarAppointment({
+							startDate: o3Aug2018_00_00,
+							endDate: o3Aug2018_18_00
+						}),
+						new CalendarAppointment({
+							startDate: o3Aug2018_00_00,
+							endDate: o3Aug2018_18_00
 						})
 					]
 				}).placeAt("qunit-fixture");
@@ -69,6 +83,16 @@ sap.ui.define([
 			assert.ok(oLink, "there is something");
 			assert.ok(oLink.isA("sap.m.Link"), "it's a link");
 			assert.equal(oLink.getText(), "3 More", "it's text is correct");
+		});
+
+		QUnit.test("more link shows correct value for multi-day appointments", function(assert) {
+			var oLinkDay3 = this.oSPC._aLinks[4],
+				oLinkDay5 = this.oSPC._aLinks[6];
+
+			// assert
+			assert.equal(oLinkDay3.getText(), "2 More", "it's text is correct on the next day");
+			assert.equal(oLinkDay5.getText(), "1 More", "it's text is correct on the last day");
+
 		});
 
 		QUnit.test("more link custom data", function(assert) {

@@ -579,14 +579,14 @@ sap.ui.define([
 			var aVisibleDays = this._getVisibleDays(oStartDate),
 				oFirstVisibleDay = aVisibleDays[0],
 				oLastVisibleDay = aVisibleDays[aVisibleDays.length - 1],
-					// we do not need appointments without start and end dates
+					// We do not need appointments without start and end dates
 				aApps = this.getAppointments().filter(function(app) {
 					var bValid = app._getStartDateWithTimezoneAdaptation() && app._getEndDateWithTimezoneAdaptation();
 					if (!bValid) {
 						Log.warning("Appointment " + app.getId() + " has no start or no end date. It is ignored.");
 					}
 					return bValid;
-					// map to a structure ready for calculations
+					// Map to a structure ready for calculations
 				}).map(function(app) {
 					var oStart = CalendarDate.fromLocalJSDate(app._getStartDateWithTimezoneAdaptation()),
 						oEnd = CalendarDate.fromLocalJSDate(app._getEndDateWithTimezoneAdaptation());
@@ -596,21 +596,21 @@ sap.ui.define([
 						end: oEnd,
 						len: CalendarUtils._daysBetween(oEnd, oStart)
 					};
-					// get only the visible appointments
+					// Get only the visible appointments
 				}).filter(function(app) {
 					return CalendarUtils._isBetween(app.start, oFirstVisibleDay, oLastVisibleDay, true) // app starts in the current view port
 						|| CalendarUtils._isBetween(app.end, oFirstVisibleDay, oLastVisibleDay, true) // app ends in the current view port
 						|| (CalendarUtils._isBetween(oFirstVisibleDay, app.start, oLastVisibleDay, true) // app starts before the view port...
 							&& CalendarUtils._isBetween(oLastVisibleDay, oFirstVisibleDay, app.end,true)); // ...and ends after the view port
-					// sort by start date
+					// Sort by start date
 				}).sort(function compare(a, b) {
 					return a.start.valueOf() - b.start.valueOf();
 				}),
-				// array of taken levels per visible day
+				// Array of taken levels per visible day
 				aVisibleDaysLevels = [],
 				oApp,
-				iStartIndexVisibleDays,
-				iEndIndexVisibleDays,
+				iAppointmentStartIndex,
+				iAppointmentEndIndex,
 				iFirstFreeIndex,
 				i,
 				j,
@@ -620,25 +620,29 @@ sap.ui.define([
 				aVisibleDaysLevels.push([]);
 			}
 
-			// each appointment gets its width and level
+			// Each appointment gets its width and level
 			for (i = 0; i < aApps.length; i++) {
 				oApp = aApps[i];
-				iStartIndexVisibleDays = CalendarUtils._daysBetween(oApp.start, aVisibleDays[0]);
-				iEndIndexVisibleDays = iStartIndexVisibleDays + oApp.len;
-				iStartIndexVisibleDays = iStartIndexVisibleDays > 0 ? iStartIndexVisibleDays : 0;
-				iEndIndexVisibleDays = iEndIndexVisibleDays < aVisibleDays.length ? iEndIndexVisibleDays : aVisibleDays.length - 1;
+				iAppointmentStartIndex = CalendarUtils._daysBetween(oApp.start, aVisibleDays[0]);
+				iAppointmentEndIndex = iAppointmentStartIndex + oApp.len;
+
+				// If appointment is out of bounds, set it in bounds
+				iAppointmentStartIndex = iAppointmentStartIndex > 0 ? iAppointmentStartIndex : 0;
+				iAppointmentEndIndex = iAppointmentEndIndex < aVisibleDays.length ? iAppointmentEndIndex : aVisibleDays.length - 1;
 
 				oApp.width = oApp.len + 1;
 
-				// find the first level that is not taken for the start date of the appointment
-				iFirstFreeIndex = aVisibleDaysLevels[iStartIndexVisibleDays].indexOf(true);
+				// Find the first level that is not taken for the start date of the appointment
+				iFirstFreeIndex = aVisibleDaysLevels[iAppointmentStartIndex].indexOf(true);
 				if (iFirstFreeIndex === -1) {
-					iFirstFreeIndex = aVisibleDaysLevels[iStartIndexVisibleDays].length;
+					iFirstFreeIndex = aVisibleDaysLevels[iAppointmentStartIndex].length;
 				}
+
+				// Rendered position of appointment in day
 				oApp.level = iFirstFreeIndex;
 
-				// adjust the taken levels for all days of the current appointment
-				for (j = iStartIndexVisibleDays; j <= iEndIndexVisibleDays; j++) {
+				// Adjust the taken levels for all days of the current appointment
+				for (j = iAppointmentStartIndex; j <= iAppointmentEndIndex; j++) {
 					aVisibleDaysLevels[j][iFirstFreeIndex] = false;
 
 					for (k = 0; k < iFirstFreeIndex; k++) {
@@ -657,24 +661,19 @@ sap.ui.define([
 		SinglePlanningCalendarMonthGrid.prototype._getMoreCountPerCell = function(iCellIndex) {
 			var aLevelsForADay = this._aAppsLevelsPerDay[iCellIndex];
 			var iMaxAppointmentsRendered = this._getMaxAppointments();
-			var iAllApps = 0;
-			var iSlotsToRender = 0;
+			var iMoreCount = 0;
 
-			if (aLevelsForADay.length <= iMaxAppointmentsRendered) {
+			if (aLevelsForADay.length < iMaxAppointmentsRendered) {
 				return 0;
 			}
 
-			for (var i = 0; i < aLevelsForADay.length; i++) {
+			// Count the number of hidden appointments
+			for (var i = iMaxAppointmentsRendered - 1; i < aLevelsForADay.length; i++){
 				if (!aLevelsForADay[i]) {
-					iAllApps++;
-				}
-
-				if (i < iMaxAppointmentsRendered - 1) {
-					iSlotsToRender++;
+					iMoreCount++;
 				}
 			}
-
-			return iAllApps - iSlotsToRender;
+			return iMoreCount;
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._configureAppointmentsDragAndDrop = function() {
