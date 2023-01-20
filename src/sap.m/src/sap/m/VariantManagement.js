@@ -1111,6 +1111,10 @@ sap.ui.define([
 		}
 		this.addDependent(this.oVariantPopOver);
 
+		this.oVariantPopOver.isPopupAdaptationAllowed = function() {
+			return false;
+		};
+
 		// this.oVariantList.getBinding("items").filter(this._getFilters());
 	};
 
