@@ -1524,7 +1524,7 @@ sap.ui.define([
 					oList.scrollToIndex(iIndex).then(function() {
 						assert.ok(oSpy.called, "The scroll delegate was called");
 						assert.ok(oSpy.calledOnce, "The scroll delegate was called exactly once");
-						assert.ok(oSpy.calledWithExactly(oList.getVisibleItems()[iIndex].getDomRef(), null, [0, oList._getStickyAreaHeight() * -1]),
+						assert.ok(oSpy.calledWithExactly(oList.getVisibleItems()[iIndex].getDomRef(), null, [0, oList._getStickyAreaHeight() * -1], true),
 							"Scroll delegate was called with correct parameters");
 						oSpy.resetHistory();
 						resolve();
@@ -3325,7 +3325,7 @@ sap.ui.define([
 
 			oFocusedItemDomRef.focus();
 			this.clock.tick(0);
-			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -32]), "scrollToElement function called");
+			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -32], true), "scrollToElement function called");
 
 			oScrollContainer.destroy();
 			this.clock.restore();
@@ -3416,7 +3416,7 @@ sap.ui.define([
 
 			oFocusedItemDomRef.focus();
 			this.clock.tick(0);
-			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48]), "scrollToElement function called");
+			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48], true), "scrollToElement function called");
 
 			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
 			sut.getDomRef = fnGetDomRef;
@@ -3529,7 +3529,7 @@ sap.ui.define([
 
 			oFocusedItemDomRef.focus();
 			this.clock.tick(0);
-			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -80]), "scrollToElement function called");
+			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -80], true), "scrollToElement function called");
 
 			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
 			sut.getDomRef = fnGetDomRef;

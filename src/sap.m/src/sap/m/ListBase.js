@@ -2698,7 +2698,7 @@ function(
 		var iItemTop = Math.round(oItemDomRef.getBoundingClientRect().top);
 		if (iTHRectBottom > iItemTop || iInfoTBarContainerRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
 			window.requestAnimationFrame(function () {
-				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight - iStickyFocusOffset]);
+				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight - iStickyFocusOffset], true);
 			});
 		}
 	};
@@ -2720,9 +2720,10 @@ function(
 	 * new items when scrolling to the bottom of the list.
 	 *
 	 * @param {number} iIndex The list item index that must be scrolled into the viewport
-	 * @returns {Promise} A <code>Promise</code> that resolves after the table scrolls to the row
-	 * with the given index
+	 * @returns {Promise} A <code>Promise</code> that resolves after the table scrolls to the row with the given index.<br>
+	 * <b>Note:</b> This method can only be used if the control is inside a scrollable scroll container (e.g <code>sap.m.Page</code>).
 	 *
+	 * @since 1.76
 	 * @public
 	 */
 	ListBase.prototype.scrollToIndex = function(iIndex) {
@@ -2743,7 +2744,7 @@ function(
 			// adding timeout of 0 ensures the DOM is ready in case of rerendering
 			setTimeout(function() {
 				try {
-					oScrollDelegate.scrollToElement(oItem.getDomRef(), null, [0, this._getStickyAreaHeight() * -1]);
+					oScrollDelegate.scrollToElement(oItem.getDomRef(), null, [0, this._getStickyAreaHeight() * -1], true);
 					resolve();
 				} catch (e) {
 					reject(e);

@@ -1519,7 +1519,7 @@ sap.ui.define([
 
 		oFocusedItemDomRef.focus();
 		this.clock.tick(0);
-		assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48]), "scrollToElement function called");
+		assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48], true), "scrollToElement function called");
 
 		// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
 		sut.getDomRef = fnGetDomRef;
@@ -1587,7 +1587,7 @@ sap.ui.define([
 
 		oFocusedItemDomRef.focus();
 		this.clock.tick(0);
-		assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -32]), "scrollToElement function called");
+		assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -32], true), "scrollToElement function called");
 
 		oScrollContainer.destroy();
 		this.clock.restore();
@@ -1664,7 +1664,7 @@ sap.ui.define([
 
 		oFocusedItemDomRef.focus();
 		this.clock.tick(0);
-		assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48]), "scrollToElement function called");
+		assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48], true), "scrollToElement function called");
 
 		// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
 		sut.getDomRef = fnGetDomRef;
@@ -1783,7 +1783,7 @@ sap.ui.define([
 
 		oFocusedItemDomRef.focus();
 		this.clock.tick(0);
-		assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -128]), "scrollToElement function called");
+		assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -128], true), "scrollToElement function called");
 
 		// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
 		sut.getDomRef = fnGetDomRef;
