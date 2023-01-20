@@ -971,6 +971,10 @@ sap.ui.define([
 			bReset = false,
 			that = this;
 
+		if (oContext.isDeleted()) {
+			return oContext.oDeletePromise; // do not delete twice
+		}
+
 		this.iDeletedContexts += 1;
 
 		return oContext.doDelete(oGroupLock, sEditUrl, sPath, oETagEntity, this,

@@ -35079,6 +35079,58 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Delete an entity via ODM#delete while it is also being deleted using the context.
+	// There is an ODCB w/ own cache below this deleted, but not yet destroyed context. Ensure that
+	// the iteration over all bindings in ODM#delete does not fail in this ODCB.
+	// BCP: 2380008681
+	QUnit.test("BCP: 2380008681: ODM#delete: deleted context", function (assert) {
+		var oContext,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<Text id="listId" text="{SalesOrderID}"/>\
+</Table>\
+<FlexBox id="objectPage" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100",
+				{value : [{"@odata.etag" : "etag", SalesOrderID : "1"}]})
+			.expectChange("listId", ["1"])
+			.expectChange("id");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=SalesOrderID", {SalesOrderID : "1"})
+				.expectChange("id", "1");
+
+			oContext = that.oView.byId("table").getBinding("items").getCurrentContexts()[0];
+			that.oView.byId("objectPage").setBindingContext(oContext);
+
+			return that.waitForChanges(assert, "object page");
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					headers : {"If-Match" : "etag"},
+					url : "SalesOrderList('1')"
+				})
+				.expectRequest({
+					method : "DELETE",
+					headers : {"If-Match" : "*"},
+					url : "SalesOrderList('1')"
+				})
+				.expectChange("id", null);
+
+			return Promise.all([
+				oContext.delete(),
+				// code under test
+				oModel.delete("/SalesOrderList('1')"),
+				that.waitForChanges(assert, "delete")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Declarative event handlers can refer to property bindings.
 	// JIRA: CPOUI5UISERVICESV3-1912
 	QUnit.test("Declarative event handlers", function (assert) {

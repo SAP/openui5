@@ -4236,6 +4236,7 @@ sap.ui.define([
 				oContext1.iIndex = -1;
 				sPath = "-1";
 			}
+			oContext1Mock.expects("isDeleted").withExactArgs().returns(false);
 			oBindingMock.expects("destroyPreviousContexts").never();
 			oContext1Mock.expects("resetKeepAlive").never();
 			oDeleteCall = oContext1Mock.expects("doDelete")
@@ -4345,6 +4346,24 @@ sap.ui.define([
 	//TODO check the row of a pending update with higher index
 
 	//*********************************************************************************************
+	QUnit.test("delete: deleted context", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oContext = {
+				oDeletePromise : "~oDeletePromise~",
+				iIndex : 1,
+				isDeleted : function () {}
+			};
+
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(true);
+
+		assert.strictEqual(
+			// code under test
+			oBinding.delete("myGroup", "EMPLOYEES('1')", oContext),
+			"~oDeletePromise~"
+		);
+	});
+
+	//*********************************************************************************************
 [
 	{lengthFinal : false},
 	{lengthFinal : true, error : true},
@@ -4377,6 +4396,7 @@ sap.ui.define([
 				created : function () { return undefined; },
 				doDelete : function () {},
 				getPath : function () { return "~contextPath~"; },
+				isDeleted : function () {},
 				resetKeepAlive : function () {}
 			},
 			iOldMaxLength = oFixture.lengthFinal ? 42 : Infinity,
@@ -4394,6 +4414,7 @@ sap.ui.define([
 			"~contextPath~" : oKeptAliveContext
 		};
 
+		this.mock(oKeptAliveContext).expects("isDeleted").withExactArgs().returns(false);
 		oBindingMock.expects("destroyPreviousContexts").never();
 		oHelperMock.expects("getRelativePath")
 			.withExactArgs("~contextPath~", "/EMPLOYEES").returns("~predicate~");
