@@ -7840,6 +7840,65 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[false, true].forEach(function (bResetAndKeep) {
+	[undefined, true, 1].forEach(function (bInactive) {
+		var sTitle = "CollectionCache#create: cleanUp callback, bResetAndKeep=" + bResetAndKeep
+			+ ", bInactive=" + bInactive;
+
+	QUnit.test(sTitle, function (assert) {
+		var sResourcePath = "Employees",
+			oCache = this.createCache(sResourcePath),
+			oGroupLock = {
+				cancel : function () {},
+				getGroupId : function () {}
+			},
+			oPostRequest,
+			sTransientPredicate = "($uid=id-1-23)",
+			that = this;
+
+		return this.mockRequestAndRead(oCache, 0, sResourcePath, 0, 10, 10, undefined, "26")
+			.then(function () {
+				that.mock(oGroupLock).expects("getGroupId").withExactArgs()
+					.returns("$inactive.$auto");
+				oPostRequest = that.oRequestorMock.expects("request")
+					.withExactArgs("POST", "Employees", sinon.match.same(oGroupLock), null,
+						sinon.match.object, sinon.match.func, sinon.match.func, undefined,
+						sResourcePath + sTransientPredicate)
+					.callsArg(5) // fnSubmit
+					.resolves({});
+				return oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "",
+					sTransientPredicate, {}, null, false, function fnSubmitCallback() {});
+			})
+			.then(function () {
+				assert.strictEqual(oCache.aElements.length, 11);
+				assert.strictEqual(oCache.aElements.$created, 1);
+
+				oCache.aElements[0]["@$ui5.context.isInactive"] = bInactive;
+
+				that.mock(_Helper).expects("removeByPath")
+					.withExactArgs(sinon.match.same(oCache.mPostRequests), "",
+						sinon.match.same(oCache.aElements[0]))
+					.exactly(bResetAndKeep && bInactive ? 0 : 1);
+				that.mock(_Helper).expects("resetInactiveEntity")
+					.withExactArgs(sinon.match.same(oCache.mChangeListeners),
+						sTransientPredicate, sinon.match.same(oCache.aElements[0]))
+					.exactly(bResetAndKeep && bInactive === 1 ? 1 : 0);
+				that.mock(oGroupLock).expects("cancel").withExactArgs()
+					.exactly(bResetAndKeep && bInactive ? 0 : 1);
+
+				// code under test - cleanUp callback
+				// reset edited inactive, keep inactive untouched, delete all other
+				assert.strictEqual(oPostRequest.args[0][6](bResetAndKeep),
+					bResetAndKeep && bInactive ? true : undefined);
+
+				assert.strictEqual(oCache.aElements.length, bResetAndKeep && bInactive ? 11 : 10);
+				assert.strictEqual(oCache.aElements.$created, bResetAndKeep && bInactive ? 1 : 0);
+			});
+	});
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("CollectionCache#read: $count & delete, top level", function (assert) {
 		var oCache = this.createCache("Employees"),
 			that = this;

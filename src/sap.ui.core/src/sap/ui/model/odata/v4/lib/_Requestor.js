@@ -337,19 +337,22 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID to be canceled
+	 * @param {boolean} [bResetInactive]
+	 *   Whether an edited inactive entity should be reset to its initial state instead of being
+	 *   removed.
 	 * @throws {Error}
 	 *   If change requests for the given group ID are running
 	 *
 	 * @public
 	 */
-	_Requestor.prototype.cancelChanges = function (sGroupId) {
+	_Requestor.prototype.cancelChanges = function (sGroupId, bResetInactive) {
 		if (this.mRunningChangeRequests[sGroupId]) {
 			throw new Error("Cannot cancel the changes for group '" + sGroupId
 				+ "', the batch request is running");
 		}
 		this.cancelChangesByFilter(function () {
 			return true;
-		}, sGroupId);
+		}, sGroupId, bResetInactive);
 		this.cancelGroupLocks(sGroupId);
 	};
 
@@ -365,12 +368,15 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The ID of the group from which the requests shall be canceled; if not given all groups
 	 *   are processed
+	 * @param {boolean} [bResetInactive]
+	 *   Whether an edited inactive entity should be reset to its initial state instead of being
+	 *   removed.
 	 * @returns {boolean}
 	 *   Whether at least one request has been canceled
 	 *
 	 * @private
 	 */
-	_Requestor.prototype.cancelChangesByFilter = function (fnFilter, sGroupId) {
+	_Requestor.prototype.cancelChangesByFilter = function (fnFilter, sGroupId, bResetInactive) {
 		var bCanceled = false,
 			that = this;
 
@@ -388,13 +394,14 @@ sap.ui.define([
 					for (i = aChangeSet.length - 1; i >= 0; i -= 1) {
 						oChangeRequest = aChangeSet[i];
 						if (oChangeRequest.$cancel && fnFilter(oChangeRequest)) {
-							oChangeRequest.$cancel();
-							oError = new Error("Request canceled: " + oChangeRequest.method + " "
-								+ oChangeRequest.url + "; group: " + sGroupId0);
-							oError.canceled = true;
-							oChangeRequest.$reject(oError);
-							aChangeSet.splice(i, 1);
-							bCanceled = true;
+							if (!oChangeRequest.$cancel(bResetInactive)) {
+								oError = new Error("Request canceled: " + oChangeRequest.method
+									+ " " + oChangeRequest.url + "; group: " + sGroupId0);
+								oError.canceled = true;
+								oChangeRequest.$reject(oError);
+								aChangeSet.splice(i, 1);
+								bCanceled = true;
+							}
 						}
 					}
 				}
@@ -1731,10 +1738,11 @@ sap.ui.define([
 	 * @param {function} [fnSubmit]
 	 *   A function that is called when the request has been submitted, either immediately (when
 	 *   the group ID is "$direct") or via {@link #submitBatch}
-	 * @param {function} [fnCancel]
+	 * @param {function(boolean):boolean} [fnCancel]
 	 *   A function that is called for clean-up if the request is canceled while waiting in a batch
 	 *   queue, ignored for GET requests; {@link #cancelChanges} cancels this request only if this
-	 *   callback is given
+	 *   callback is given and a falsy value was returned. A boolean parameter is passed to the
+	 *   callback which indicates if inactive entities should be reset instead of being removed.
 	 * @param {string} [sMetaPath]
 	 *   The meta path corresponding to the resource path; needed in case V2 response does not
 	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty

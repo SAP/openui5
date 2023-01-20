@@ -222,6 +222,7 @@ sap.ui.define([
 					throw new Error("No 'delete' allowed while waiting for server response");
 				}
 				that.oRequestor.removePost(sTransientGroup, oEntity);
+
 				return undefined;
 			}
 
@@ -458,9 +459,27 @@ sap.ui.define([
 			fnResolve,
 			that = this;
 
-		// Clean-up when the create has been canceled.
-		function cleanUp() {
-			var iIndex = aCollection.indexOf(oEntityData);
+		/*
+		 * Clean-up when the create has been canceled.
+		 *
+		 * @param {boolean} bResetInactive
+		 *   Whether an edited inactive entity should be reset instead of being removed.
+		 * @returns {boolean}
+		 *   Whether the entity was reset only and kept in the collection instead of being removed.
+		 *
+		 * @see sap.ui.model.odata.v4.lib._Requestor#cancelChangesByFilter
+		 */
+		function cleanUp(bResetInactive) {
+			var bInactiveEntity = oEntityData["@$ui5.context.isInactive"],
+				iIndex = aCollection.indexOf(oEntityData);
+
+			if (bResetInactive && bInactiveEntity) {
+				if (bInactiveEntity === 1) {
+					_Helper.resetInactiveEntity(that.mChangeListeners, sTransientPredicate,
+						oEntityData);
+				} // there is nothing to reset if the entity is simply inactive
+				return true;
+			}
 
 			_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 			aCollection.splice(iIndex, 1);

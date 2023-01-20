@@ -2518,8 +2518,10 @@ sap.ui.define([
 	/**
 	 * Resets all property changes, created entities, and entity deletions associated with the given
 	 * group ID which have not been successfully submitted via {@link #submitBatch}. Resets also
-	 * invalid user input for the same group ID. This function does not reset the execution of OData
-	 * operations (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
+	 * invalid user input for the same group ID and (since 1.111.0) inactive contexts which had
+	 * their activation prevented (see {@link sap.ui.model.odata.v4.Context#isInactive}). This
+	 * function does not reset the execution of OData operations
+	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
 	 *
 	 * @param {string} [sGroupId]
 	 *   A valid group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}. If it is
@@ -2542,6 +2544,7 @@ sap.ui.define([
 
 		if (this.isAutoGroup(sGroupId)) {
 			this.oRequestor.cancelChanges("$parked." + sGroupId);
+			this.oRequestor.cancelChanges("$inactive." + sGroupId, true);
 		}
 		this.oRequestor.cancelChanges(sGroupId);
 
