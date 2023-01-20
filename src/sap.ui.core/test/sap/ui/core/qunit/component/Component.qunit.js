@@ -140,14 +140,16 @@ sap.ui.define([
 
 	QUnit.test("Factory Function", function(assert){
 		var oComp = this.oComp;
-		var oComponent = sap.ui.component(oComp.getId());
+		var oComponent = Component.get(oComp.getId());
 		assert.equal(oComponent, oComp, "Factory function returns the same instance!");
-		oComponent = sap.ui.component({
+
+		return Component.create({
 			name: "sap.ui.test.verticalLayout",
 			id: "factoryVLayout"
+		}).then(function() {
+			assert.ok(!!oComponent, "Component has been created!");
+			assert.equal(oComponent.getMetadata(), oComp.getMetadata(), "Component is equal!");
 		});
-		assert.ok(!!oComponent, "Component has been created!");
-		assert.equal(oComponent.getMetadata(), oComp.getMetadata(), "Component is equal!");
 	});
 
 	QUnit.test("Component Data", function(assert){
