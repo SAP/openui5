@@ -726,11 +726,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("dragged from outside the browser", function(assert) {
+		var oSession;
 		this.oTargetDomRef.focus();
 		this.oDropInfo.attachDragEnter(function(oEvent) {
-			assert.ok(oEvent.getParameter("dragSession"), "drag session exists");
+			oSession = oEvent.getParameter("dragSession");
+			assert.ok(oSession, "drag session exists");
 		});
+
 		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+		assert.equal(oSession.getDropControl(), this.oTargetControl, "drop control accessible from the session");
+		assert.equal(document.querySelector(".sapUiDnDIndicator").style.width, this.oTargetDomRef.style.width, "drop indicator width set correctly");
+		assert.equal(document.querySelector(".sapUiDnDIndicator").style.height, this.oTargetDomRef.style.height, "drop indicator height set correctly");
+		assert.notEqual(document.querySelector(".sapUiDnDIndicator").style.display, "none", "drop indicator is visible");
+
+		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragleave"));
+		assert.equal(document.querySelector(".sapUiDnDIndicator").style.display, "none", "drop indicator is not visible anylonger");
+		assert.notOk(oSession.getDropControl(), "there is no more drop control");
 	});
 
 	QUnit.test("setDropControl", function(assert) {

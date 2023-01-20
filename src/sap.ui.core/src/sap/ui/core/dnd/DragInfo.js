@@ -101,14 +101,11 @@ sap.ui.define(["./DragDropBase"],
 				return false;
 			}
 
-			// control itself is the drag source
-			if (oDragSource === oControl && !sSourceAggregation) {
-				return true;
-			}
-
+			// control itself is the drag source or
 			// control is in the aggregation of the drag source
-			if (oControl.getParent() === oDragSource && sSourceAggregation === oControl.sParentAggregationName) {
-				return true;
+			if ((oDragSource === oControl && !sSourceAggregation) ||
+				(oControl.getParent() === oDragSource && sSourceAggregation === oControl.sParentAggregationName)) {
+				return oControl.isDragAllowed && !oControl.isDragAllowed(this) ? false : true;
 			}
 
 			return false;
