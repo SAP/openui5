@@ -15,7 +15,7 @@ sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enum/BaseType',	'sap/bas
 	 * @experimental As of version 1.79
 	 * @since 1.79.0
 	 * @alias sap.ui.mdc.odata.v4.TypeUtil
-	 * @deprecated This module should not be used and will be removed in future versions!
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	var ODataV4TypeUtil = Object.assign({}, ODataTypeUtil);
 
