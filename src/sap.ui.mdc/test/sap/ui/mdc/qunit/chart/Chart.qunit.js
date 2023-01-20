@@ -897,6 +897,25 @@ function(
 		}.bind(this));
 	});
 
+	QUnit.test("setHeaderVisible", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+
+			var oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "setHeaderVisible");
+			assert.ok(this.oMDCChart.getHeaderVisible(), "Header is set to visible initially");
+
+			this.oMDCChart.setHeaderVisible(false);
+			assert.ok(oToolbarSpy.calledOnceWith(false), "Function on toolbar was called");
+
+			this.oMDCChart.setHeaderVisible(true);
+			assert.ok(oToolbarSpy.calledWith(true), "Function on toolbar was called");
+
+			done();
+
+		}.bind(this));
+	});
+
 	QUnit.test("setVariant", function(assert){
 		var oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"),"addVariantManagement");
 

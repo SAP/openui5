@@ -210,6 +210,24 @@ function(
 		}.bind(this));
 	});
 
+	QUnit.test("Header visibility", function(assert) {
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			var oToolbar = this.oMDCChart._getToolbar();
+
+			//Check initial title visibility
+			assert.equal(oToolbar._oTitle.getWidth(), "", "No title width set initially");
+
+			oToolbar.setHeaderVisible(false);
+			assert.equal(oToolbar._oTitle.getWidth(), "0px", "Title width set to 0");
+
+			oToolbar.setHeaderVisible(true);
+			assert.equal(oToolbar._oTitle.getWidth(), "", "Title width not defined");
+
+			done();
+		}.bind(this));
+	});
 
 	QUnit.module("sap.ui.mdc.chart.ChartToolbar: No Details button", {
 

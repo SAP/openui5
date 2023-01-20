@@ -250,6 +250,17 @@ sap.ui.define([
                         type: "sap.ui.core.TitleLevel",
                         group: "Appearance",
                         defaultValue: TitleLevel.Auto
+                    },
+                    /**
+                     * Determines whether the header text is shown in the chart. Regardless of its value, the given header text is used to label the chart
+                     * correctly for accessibility purposes.
+                     *
+                     * @since 1.111
+                     */
+                    headerVisible : {
+                        type: "boolean",
+                        group: "Misc",
+                        defaultValue: true
                     }
                 },
                 aggregations: {
@@ -1058,6 +1069,14 @@ sap.ui.define([
                 //This error merely happens as the setter is calle don init of the MDC CHart from framework side.
             }
 
+            return this;
+        };
+
+        Chart.prototype.setHeaderVisible = function(bVisible) {
+            this.setProperty("headerVisible", bVisible, true);
+            if (this.getAggregation("_toolbar")) {
+                this.getAggregation("_toolbar").setHeaderVisible(bVisible);
+            }
             return this;
         };
 
