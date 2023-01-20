@@ -83,7 +83,6 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 *
 		 * @param {sap.ui.mdc.Control} oControl Instance of a <code>sap.ui.mdc.Control</code>
 		 * @param {Object} oState The theoretical external state representation of an MDC control. The representation of this format is similar as processed by {@link sap.ui.mdc.p13n.StateUtil StateUtil}
-		 *
 		 * @returns {Object} An object that must contain at least the <code>validation</code> attribute {@link sap.ui.core.MessageType MessageType}.
 		 * If <code>warning</code> or <code>error</code> state types have been provided, the <code>message</code> is shown in addition.
 		 */
@@ -107,8 +106,27 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 */
 		onAfterXMLChangeProcessing: function(oControl, mPropertyBag) {
 			//Neccessary cleanups can be implemented here
-		}
+		},
 
+		/**
+		 * A validator to evaluate the state of a MDC control.
+		 *
+		 * @param {Object<sap.ui.mdc.Control>} oControl Instance of a MDC control
+		 * @param {map} [mValidation] Object Describing the validation result
+
+		 */
+		determineValidationState: function(oControl) {
+            return oControl.checkValidationState ? oControl.checkValidationState() : -1;
+		},
+
+		/**
+		 * Visualizes the validation state of a MDC control.
+		 *
+		 * @param {Object<sap.ui.mdc.Control>} oControl Instance of a MDC control
+		 * @returns {map} mValidation Describes the validation result.
+		 */
+	    visualizeValidationState: function(oControl, mValidation) {
+		}
 	});
 
 	return AggregationBaseDelegate;
