@@ -508,15 +508,7 @@ sap.ui.define([
 	QUnit.module("Component Metadata: Version Check", {
 		beforeEach: function() {
 			return VersionInfo.load().then(function(oVersionInfo) {
-				this.oVersionInfo = sap.ui.getVersionInfo();
-				this.stub(sap.ui, "getVersionInfo").callsFake(function(mConfig) {
-					if (mConfig && mConfig.async) {
-						return new Promise(function(fnResolve, fnReject) {
-							fnResolve(this.oVersionInfo);
-						}.bind(this));
-					}
-					return this.oVersionInfo;
-				}.bind(this));
+				this.oVersionInfo = oVersionInfo;
 				this.spy(Log, "warning");
 			}.bind(this));
 		},
