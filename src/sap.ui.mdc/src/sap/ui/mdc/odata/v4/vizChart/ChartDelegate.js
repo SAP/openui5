@@ -1777,21 +1777,22 @@ sap.ui.define([
     ChartDelegate._loadChart = function () {
 
         return new Promise(function (resolve) {
-            var aNotLoadedModulePaths = ['sap/chart/library', 'sap/chart/Chart', 'sap/chart/data/Dimension', 'sap/chart/data/HierarchyDimension', 'sap/chart/data/TimeDimension', 'sap/chart/data/Measure', 'sap/viz/ui5/controls/VizTooltip'];
+            var aNotLoadedModulePaths = ['sap/chart/library', 'sap/chart/Chart', 'sap/chart/data/Dimension', 'sap/chart/data/Measure', 'sap/viz/ui5/controls/VizTooltip'];
 
-            function onModulesLoadedSuccess(fnChartLibrary, fnChart, fnDimension, fnHierarchyDimension, fnTimeDimension, fnMeasure, fnVizTooltip) {
+            function onModulesLoadedSuccess(fnChartLibrary, fnChart, fnDimension, fnMeasure, fnVizTooltip) {
                 //ChartLibrary = fnChartLibrary;
                 Chart = fnChart;
                 Dimension = fnDimension;
-                //HierarchyDimension = fnHierarchyDimension;
-                //TimeDimension = fnTimeDimension;
                 Measure = fnMeasure;
                 VizTooltip = fnVizTooltip;
 
                 resolve();
             }
 
-            sap.ui.require(aNotLoadedModulePaths, onModulesLoadedSuccess);
+            Core.loadLibrary("sap.viz", {async: true}).then(function(){
+                sap.ui.require(aNotLoadedModulePaths, onModulesLoadedSuccess);
+            });
+
         });
 
     };
