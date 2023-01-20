@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/defineLazyProperty",
 	"sap/base/security/encodeCSS",
+	"sap/ui/util/openWindow",
 	// referenced here to enable the Support feature
 	'./Support'
 ],
@@ -34,7 +35,8 @@ sap.ui.define([
 	assert,
 	Log,
 	defineLazyProperty,
-	encodeCSS
+	encodeCSS,
+	openWindow
 ) {
 
 	"use strict";
@@ -4169,7 +4171,6 @@ sap.ui.define([
 			 *
 			 * @param {string} sURL Uniform resource locator
 			 * @param {boolean} [bNewWindow] Opens URL in a new browser window or tab. Please note that, opening a new window/tab can be ignored by browsers (e.g. on Windows Phone) or by popup blockers.
-			 * NOTE: On Windows Phone the URL will be enforced to open in the same window if opening in a new window/tab fails (because of a known system restriction on cross-window communications). Use sap.m.Link instead (with blank target) if you necessarily need to open URL in a new window.
 			 *
 			 * @public
 			 */
@@ -4179,16 +4180,7 @@ sap.ui.define([
 				if (!bNewWindow) {
 					window.location.href = sURL;
 				} else {
-					var oWindow = window.open(sURL, "_blank");
-					if (!oWindow) {
-						Log.error(this + "#redirect: Could not open " + sURL);
-						if (Device.os.windows_phone || (Device.browser.edge && Device.browser.mobile)) {
-							Log.warning("URL will be enforced to open in the same window as a fallback from a known Windows Phone system restriction. Check the documentation for more information.");
-							window.location.href = sURL;
-						}
-					} else {
-						oWindow.opener = null;
-					}
+					openWindow(sURL, "_blank");
 				}
 			},
 
