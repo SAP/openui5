@@ -143,7 +143,7 @@
 						delegate="{name: 'sap/ui/v4demo/delegate/FilterbarInOutValueHelp.delegate', payload: {
 							inParameters: [{contentId:'container-v4demo---authors--regions', source:'countryOfOrigin_code', target:'country_code'},
 											{contentId:'container-v4demo---authors--regionsTypeAhead', source:'countryOfOrigin_code', target:'country_code'}],
-							outParameters: [{source: 'country_code', target: 'countryOfOrigin_code', mode:'Always'}],
+							outParameters: [{source: 'country_code', target: 'countryOfOrigin_code', mode:'Always', valueHelpId: 'IOFFVHCountry'}],
 							payloadInfos: [{contentId:'container-v4demo---authors--regions', path:'country_code'},
 										   {contentId:'container-v4demo---authors--regionsTypeAhead', path:'country_code'}]
 						}}">
@@ -219,7 +219,7 @@
 						id="IOFFVHRegionFH"
 						delegate="{name: 'sap/ui/v4demo/delegate/FilterbarInOutValueHelp.delegate', payload: {
 							inParameters: [{contentId:'container-v4demo---authors--regionsFH', source:'country_code', target:'country_code'}],
-							outParameters: [{source: 'country_code', target: 'country_code', mode:'Always'}],
+							outParameters: [{source: 'country_code', target: 'country_code', mode:'Always', valueHelpId: 'IOFFVHCountry'}],
 							payloadInfos: [{contentId:'container-v4demo---authors--regionsFH', path:'country_code'}]
 						}}">
 						<!-- <mdc:inParameters>
@@ -264,8 +264,8 @@
 										   {contentId:'container-v4demo---authors--citiesTypeAhead', source:'countryOfOrigin_code', target:'country_code'},
 										   {contentId:'container-v4demo---authors--citiesTypeAhead', source:'regionOfOrigin_code', target:'region_code'}
 										   ],
-							outParameters: [{source: 'country_code', target: 'countryOfOrigin_code', mode:'Always'},
-											{source: 'region_code', target: 'regionOfOrigin_code', mode:'Always'}
+							outParameters: [{source: 'country_code', target: 'countryOfOrigin_code', mode:'Always', valueHelpId: 'IOFFVHCountry'},
+											{source: 'region_code', target: 'regionOfOrigin_code', mode:'Always', valueHelpId: 'IOFFVHRegion'}
 											],
 							payloadInfos: [{contentId:'container-v4demo---authors--cities', path:['country_code', 'region_code']},
 										   {contentId:'container-v4demo---authors--citiesTypeAhead', path:['country_code', 'region_code']}

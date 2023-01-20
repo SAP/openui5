@@ -2,14 +2,17 @@
  * ${copyright}
  */
 
+/*eslint max-nested-callbacks: [2, 20]*/
+
 sap.ui.define([
 	"./ValueHelp.delegate",
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/model/ParseException',
 	'sap/ui/core/Core'
 ], function(
-	BaseValueHelpDelegate, StateUtil, Condition, ConditionValidated, Core
+	BaseValueHelpDelegate, StateUtil, Condition, ConditionValidated, ParseException, Core
 ) {
 	"use strict";
 
@@ -22,7 +25,7 @@ sap.ui.define([
 		var oConditions = BaseValueHelpDelegate.getInitialFilterConditions(oPayload, oContent);
 
 		var oField = oControl;
-		if (oField.isA("sap.ui.mdc.Field")) {
+		if (oField && oField.isA("sap.ui.mdc.Field")) {
 			var sContentId = oContent.getId();
 			var aPropertyPromises = [];
 			var aPropertyPromiseTargets = [];
@@ -100,18 +103,45 @@ sap.ui.define([
 			var sTarget = oOutParameter.target || oOutParameter.targetFieldId;
 			var aAllOutValues = mAllOutValues[sTarget];
 			if (aAllOutValues && aAllOutValues.length) {
+				var vValue = aAllOutValues[0];
+				var bAlways = oOutParameter.mode === "Always";
 				if (oOutParameter.targetFieldId) {
 					// update field by Id
 					var sTargetFieldId = oOutParameter.targetFieldId;
 					var oTargetField = Core.byId(sTargetFieldId);
-					var bAlways = oOutParameter.mode === "Always";
-					if (!oTargetField.getValue() || bAlways) {
-						oTargetField.setValue(aAllOutValues[0]);
+					if (oTargetField && (bAlways || !oTargetField.getValue())) {
+						var sOutValueHelpId = oTargetField && oTargetField.getFieldHelp();
+						var oOutValueHelp = sOutValueHelpId && Core.byId(sOutValueHelpId);
+
+						if (oOutValueHelp) {
+							var oConfig = {
+								value: vValue,
+								parsedValue: vValue,
+								// dataType: oType,
+								checkKey: true,
+								checkDescription: false,
+								exception: ParseException,
+								control: oTargetField
+							};
+							oOutValueHelp.getItemForValue(oConfig).then(function(oItem) { // if this is an In-Parameter for another this update would need to wait until this one
+								var oNewCondition = Condition.createCondition("EQ", [oItem.key], undefined, undefined, ConditionValidated.Validated, oItem.payload);
+								if (oItem.description) {
+									oNewCondition.values.push(oItem.description);
+								}
+								oTargetField.setConditions([oNewCondition]);
+							}).catch(function(oError) { // if not found just use the given Out-value
+								oTargetField.setValue(vValue);
+								oTargetField.setAdditionalValue(); // as it might not longer be valid
+							});
+						} else {
+							oTargetField.setValue(vValue);
+							oTargetField.setAdditionalValue(); // as it might not longer be valid
+						}
 					}
-				} else if (oOutParameter.target && oOutParameter.mode === "Always") {
+				} else if (oOutParameter.target) {
 					var oBindingContext = oField.getBindingContext();
-					if (oBindingContext) {
-						oBindingContext.setProperty(oOutParameter.target, aAllOutValues[0]);
+					if (oBindingContext && (bAlways || !oBindingContext.getValue(oOutParameter.target))) {
+						oBindingContext.setProperty(oOutParameter.target, vValue);
 					}
 				}
 			}
