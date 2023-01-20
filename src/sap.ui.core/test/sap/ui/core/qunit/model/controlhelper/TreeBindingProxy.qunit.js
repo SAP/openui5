@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/model/controlhelper/TreeBindingProxy"
+	"sap/ui/model/controlhelper/TreeBindingProxy",
+	"sap/base/Log"
 ], function(
 	Control,
-	TreeBindingProxy
+	TreeBindingProxy,
+	Log
 ) {
 	"use strict";
 
@@ -148,6 +150,16 @@ sap.ui.define([
 		assert.notOk(this.oProxy.isLeaf(0), "isLeaf returns false");
 
 		fnGetContextByIndexStub.restore();
+	});
+
+	QUnit.test("#isLeaf without V4 flag set", function(assert) {
+		this.oProxy._bEnableV4 = false;
+		var fnLogErrorSpy = this.spy(Log, "error");
+
+		this.oProxy.isLeaf(0);
+		assert.ok(fnLogErrorSpy.calledOnce, "An error was logged regarding V4 usage");
+
+		fnLogErrorSpy.restore();
 	});
 
 	QUnit.test("#getNodeByIndex", function(assert) {
