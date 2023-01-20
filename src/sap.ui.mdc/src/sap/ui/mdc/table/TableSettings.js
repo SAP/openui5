@@ -112,9 +112,10 @@ sap.ui.define([
 		_loadResourceBundle: function() {
 			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		},
-		showPanel: function(oControl, sP13nType, aProperties) {
-			oControl.finalizePropertyHelper().then(function() {
-				TableSettings["showUI" + sP13nType](oControl, aProperties);
+
+		showPanel: function(oControl, sP13nType) {
+			return oControl.finalizePropertyHelper().then(function() {
+				return TableSettings["showUI" + sP13nType](oControl);
 			});
 		},
 
@@ -122,17 +123,14 @@ sap.ui.define([
 			if (oControl.getInbuiltFilter()) {
 				oControl.getInbuiltFilter().setVisibleFields(null);
 			}
-			oControl.getEngine().uimanager.show(oControl, oControl.getActiveP13nModes());
+			return oControl.getEngine().uimanager.show(oControl, oControl.getActiveP13nModes());
 		},
 
-		showUIFilter: function(oControl, aProperties) {
-			var aPropertyNames = (aProperties || []).map(function(oProperty) {
-				return oProperty.name;
-			});
+		showUIFilter: function(oControl) {
 			if (oControl.getInbuiltFilter()) {
-				oControl.getInbuiltFilter().setVisibleFields(aPropertyNames);
+				oControl.getInbuiltFilter().setVisibleFields(null);
 			}
-			oControl.getEngine().uimanager.show(oControl, "Filter");
+			return oControl.getEngine().uimanager.show(oControl, "Filter");
 		},
 
 		/**

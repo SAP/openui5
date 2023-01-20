@@ -6,14 +6,18 @@ sap.ui.define([
 	"./TableDelegateUtils",
 	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/util/FilterUtil",
+	"sap/ui/mdc/util/TypeUtil",
 	"sap/ui/model/Filter",
 	"sap/ui/core/Core"
 ], function(
 	TableDelegateUtils,
 	TableDelegate,
 	Column,
+	FilterField,
 	FilterUtil,
+	TypeUtil,
 	Filter,
 	Core
 ) {
@@ -65,6 +69,27 @@ sap.ui.define([
 
 	TestTableDelegate.getSupportedP13nModes = function() {
 		return ["Sort", "Filter", "Column", "Group"];
+	};
+
+	TestTableDelegate.getFilterDelegate = function() {
+		return {
+			addItem: function(sPropertyName, oTable) {
+				return this.fetchProperties(oTable).then(function(aProperties) {
+					var oProperty = aProperties.find(function(oProperty) {
+						return oProperty.name === sPropertyName;
+					});
+
+					return new FilterField({
+						label: oProperty.label,
+						conditions: "{$filters>/conditions/" + oProperty.name + "}"
+					});
+				});
+			}.bind(this)
+		};
+	};
+
+	TestTableDelegate.getTypeUtil = function(oPayload) {
+		return TypeUtil;
 	};
 
 	return TestTableDelegate;

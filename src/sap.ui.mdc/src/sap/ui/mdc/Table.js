@@ -752,7 +752,9 @@ sap.ui.define([
 		if (oDataStateIndicator) {
 			oDataStateIndicator[sAction + "ApplyFilter"](this._onApplyMessageFilter, this);
 			oDataStateIndicator[sAction + "ClearFilter"](this._onClearMessageFilter, this);
-			oDataStateIndicator[sAction + "Event"]("filterInfoPress", onShowFilterDialog, this);
+			oDataStateIndicator[sAction + "Event"]("filterInfoPress", function() {
+				showFilterDialog(this);
+			}, this);
 		}
 	};
 
@@ -1171,18 +1173,19 @@ sap.ui.define([
 					wrapping: false
 				})
 			],
-			press: [onShowFilterDialog, oTable]
-		});
-
-		// If the toolbar is hidden while it has the focus, the focus moves to the body. This can happen, for example, when all filters are removed in
-		// the filter dialog that was opened via the filter info bar.
-		oFilterInfoToolbar.focus = function() {
-			if (this.getDomRef()) {
-				OverflowToolbar.prototype.focus.apply(this, arguments);
-			} else {
-				oTable.focus();
+			press: function() {
+				showFilterDialog(oTable).then(function(oP13nDialog) {
+					// Because the filter info bar was pressed, it must have had the focus when opening the dialog. When removing all filters in
+					// the dialog and confirming, the filter info bar will be hidden, and the dialog tries to restore the focus on the hidden filter
+					// info bar. To avoid a focus loss, the table gets the focus.
+					oP13nDialog.attachEventOnce("afterClose", function() {
+						if (getInternallyFilteredProperties(oTable).length === 0) {
+							oTable.focus();
+						}
+					});
+				});
 			}
-		};
+		});
 
 		internal(oTable).oFilterInfoBar = oFilterInfoToolbar;
 		updateFilterInfoBar(oTable);
@@ -2543,8 +2546,8 @@ sap.ui.define([
 		TableSettings.showPanel(this, "Columns");
 	}
 
-	function onShowFilterDialog(oEvent, aFilterableProperties) {
-		TableSettings.showPanel(this, "Filter", aFilterableProperties);
+	function showFilterDialog(oTable) {
+		return TableSettings.showPanel(oTable, "Filter");
 	}
 
 	// TODO: move to a base util that can be used by most aggregations
