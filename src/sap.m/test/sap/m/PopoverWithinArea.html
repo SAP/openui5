@@ -9,29 +9,203 @@
 			overflow: hidden;
 		}
 
+		#within {
+			display: none;
+			position: absolute;
+			width: 50%;
+			height: 80%;
+			background-color: rgba(255, 0, 0, 0.5);
+			z-index: 1;
+			pointer-events: none;
+			top: 20px;
+			left: 20px;
+		}
+
+		/* bottom */
+		.positioned {
+			position: absolute !important;
+			top: 10px;
+			right: 0;
+		}
+
+		html[dir="rtl"] .positioned {
+			left: 0;
+			right: auto;
+		}
+
+		/* right */
+		.positioned1 {
+			position: absolute !important;
+			top: 25px;
+			left: 25px;
+		}
+
+		html[dir="rtl"] .positioned1 {
+			left: auto;
+			right: 25px;
+		}
+
+		/* left */
+		.positioned2 {
+			position: absolute !important;
+			top: 80px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned2 {
+			left: 10px;
+			right: auto;
+		}
+
+		/* top */
+		.positioned3 {
+			position: absolute !important;
+			bottom: 10px;
+			left: 100px;
+		}
+
+		html[dir="rtl"] .positioned3 {
+			left: auto;
+			right: 100px;
+		}
+
+		/* vertical bottom */
+		.positioned4 {
+			position: absolute !important;
+			top: 150px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned4 {
+			left: 10px;
+			right: auto;
+		}
+
+		/* vertical top */
+		.positioned5 {
+			position: absolute !important;
+			bottom: 100px;
+			left: 100px;
+		}
+
+		html[dir="rtl"] .positioned5 {
+			left: auto;
+			right: 100px;
+		}
+
+		/* horizontal left */
+		.positioned6 {
+			position: absolute !important;
+			top: 200px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned6 {
+			left: 10px;
+			right: auto;
+		}
+
 		.positioned11 {
 			position: absolute !important;
-			top: 250px;
+			top: 300px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned11 {
+			left: 10px;
+			right: auto;
+		}
+
+		/* horizontal right */
+		.positioned7 {
+			position: absolute !important;
+			top: 350px;
+			left: 100px;
+		}
+
+		html[dir="rtl"] .positioned7 {
+			left: auto;
+			right: 100px;
+		}
+
+		/* auto 1 */
+		.positioned8 {
+			position: absolute !important;
+			top: 200px;
+			right: 200px;
+		}
+
+		html[dir="rtl"] .positioned8 {
+			left: 200px;
+			right: auto;
+		}
+
+		/* auto 2 */
+		.positioned9 {
+			position: absolute !important;
+			bottom: 200px;
+			left: 200px;
+		}
+
+		html[dir="rtl"] .positioned9 {
+			left: auto;
+			right: 200px;
+		}
+
+		.positioned12 {
+			position: absolute !important;
+			top: 350px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned12 {
+			left: 10px;
+			right: auto;
 		}
 
 		.positioned14 {
 			position: absolute !important;
-			top: 300px;
+			top: 450px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned14 {
+			left: 10px;
+			right: auto;
 		}
 
 		.positioned15 {
 			position: absolute !important;
-			top: 350px;
+			top: 500px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned14 {
+			left: 10px;
+			right: auto;
 		}
 
 		.positioned16 {
 			position: absolute !important;
-			top: 400px;
+			top: 550px;
+			right: 10px;
+		}
+
+		.vbox {
+			position: absolute !important;
+			top: 100px;
+			left: 10px;
+		}
+
+		html[dir="rtl"] .vbox {
+			left: auto;
+			right: 10px;
 		}
 
 		.customClassForVisualTests {
 			caret-color: transparent;
 		}
+
 	</style>
 
 	<script src="shared-config.js"></script>
@@ -152,6 +326,7 @@
 			}
 		});
 
+
 		var oEndButton = new sap.m.Button({
 			text: "Close",
 			type: sap.m.ButtonType.Accept,
@@ -166,7 +341,7 @@
 		});
 
 		var oPopover = new sap.m.Popover("pop1", {
-			placement: sap.m.PlacementType.Auto,
+			placement: sap.m.PlacementType.Bottom,
 			title: "Popover",
 			showHeader: true,
 			beginButton: oBeginButton,
@@ -192,6 +367,126 @@
 
 		oPopover.setTitle("New Popover with long title");
 
+		var oPopover2 = new sap.m.Popover("pop2", {
+			placement: sap.m.PlacementType.Horizontal,
+			title: "Popover2",
+			showHeader: true,
+			subHeader: new sap.m.Bar({
+				contentMiddle: [
+					new sap.m.SearchField({
+						placeholder: "Search ...",
+						width: "100%"
+					})
+				]
+			}),
+			verticalScrolling: true,
+			horizontalScrolling: false,
+			content: [
+				oList2.clone()
+			]
+		});
+
+		var oPopover3 = new sap.m.Popover("pop3", {
+			placement: sap.m.PlacementType.Horizontal,
+			title: "Popover3",
+			showHeader: true,
+			verticalScrolling: false,
+			horizontalScrolling: true,
+			content: [
+				oList2.clone()
+			]
+		});
+
+
+		var oButton = new sap.m.Button("btn0", {
+			text: "Popover Bottom",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Bottom);
+				oPopover.openBy(this);
+			}
+		});
+
+		oButton.addStyleClass("positioned");
+		var oButton1 = new sap.m.Button("btn1", {
+			text: "Popover Preferred Right or Flip",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.PreferredRightOrFlip);
+				oPopover.openBy(this);
+			}
+		});
+
+		oButton1.addStyleClass("positioned1");
+		var oButton2 = new sap.m.Button("btn2", {
+			text: "Popover Left",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Left);
+				oPopover.openBy(this);
+			}
+		});
+
+		oButton2.addStyleClass("positioned2");
+
+		var oButton3 = new sap.m.Button("btn3", {
+			text: "Popover Top",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Top);
+				oPopover.openBy(this);
+			}
+		});
+		oButton3.addStyleClass("positioned3");
+
+		var oButton4 = new sap.m.Button("btn4", {
+			text: "Popover Vertical",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Vertical);
+				oPopover.openBy(this);
+			}
+		});
+		oButton4.addStyleClass("positioned4");
+
+		var oButton5 = new sap.m.Button("btn5", {
+			text: "Popover Vertical",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Vertical);
+				oPopover.openBy(this);
+			}
+		});
+		oButton5.addStyleClass("positioned5");
+
+		var oButton6 = new sap.m.Button("btn6", {
+			text: "Popover Horizontal",
+			press: function () {
+				oPopover3.openBy(this);
+			}
+		});
+		oButton6.addStyleClass("positioned6");
+
+		var oButton7 = new sap.m.Button("btn7", {
+			text: "Popover Horizontal",
+			press: function () {
+				oPopover2.openBy(this);
+			}
+		});
+		oButton7.addStyleClass("positioned7");
+
+		var oButton8 = new sap.m.Button("btn8", {
+			text: "Popover Auto",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Auto);
+				oPopover.openBy(this);
+			}
+		});
+		oButton8.addStyleClass("positioned8");
+
+		var oButton9 = new sap.m.Button("btn9", {
+			text: "Popover Auto",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Auto);
+				oPopover.openBy(this);
+			}
+		});
+		oButton9.addStyleClass("positioned9");
+
 		var oButton10 = new sap.m.Button("btn10", {
 			text: "Popover with dangers",
 			press: function () {
@@ -206,7 +501,7 @@
 		bindListData(data, oItemTemplate1, oList3);
 
 		var oPopover11 = new sap.m.Popover("popover11", {
-			placement: sap.m.PlacementType.Auto,
+			placement: sap.m.PlacementType.Left,
 			title: "Popover11",
 			showHeader: true,
 			subHeader: new sap.m.Bar({
@@ -243,7 +538,7 @@
 		oPopover11.addStyleClass("sapUiResponsivePadding--footer");
 
 		var oPopover12 = new sap.m.Popover("popover12", {
-			placement: sap.m.PlacementType.Auto,
+			placement: sap.m.PlacementType.Left,
 			showHeader: false,
 			content: [
 				new sap.m.CheckBox("popover12CheckBox1",{text:"test1"}),
@@ -275,7 +570,6 @@
 		});
 
 		var oPopoverSelect = new sap.m.Popover("popSelect", {
-			placement: sap.m.PlacementType.Auto,
 			content: [
 				new sap.m.Select("selectInPopover", {
 					items: [
@@ -362,7 +656,7 @@
 					press: function () {
 						oPopover.setShowHeader(true);
 						oPopover.setFooter(footer);
-						oPopover.setPlacement(sap.m.PlacementType.Auto);
+						oPopover.setPlacement(sap.m.PlacementType.Right);
 						oPopover.openBy(this);
 					}
 				}),
@@ -371,7 +665,7 @@
 					press: function () {
 						oPopover.setShowHeader(false);
 						oPopover.setFooter(footer);
-						oPopover.setPlacement(sap.m.PlacementType.Auto);
+						oPopover.setPlacement(sap.m.PlacementType.Right);
 						oPopover.openBy(this);
 					}
 				}),
@@ -380,7 +674,7 @@
 					press: function () {
 						oPopover.setShowHeader(true);
 						oPopover.setFooter(null);
-						oPopover.setPlacement(sap.m.PlacementType.Auto);
+						oPopover.setPlacement(sap.m.PlacementType.Right);
 						oPopover.openBy(this);
 					}
 				}),
@@ -389,13 +683,15 @@
 					press: function () {
 						oPopover.setShowHeader(false);
 						oPopover.setFooter(null);
-						oPopover.setPlacement(sap.m.PlacementType.Auto);
+						oPopover.setPlacement(sap.m.PlacementType.Right);
 						oPopover.openBy(this);
 					}
 				}),
 				oButton10
 			]
 		});
+
+		oVBox.addStyleClass("vbox");
 
 		var i,
 			aPopoverContent = [new sap.ui.core.Item({text: "UTC - (UTC+00:00) Burkina Faso, Bouvet Islands, Cote d'Ivoire, West Sahara, Ghana, Greenland, Gambia, Guinea, Guinea-Bissau, Heard/McDon.Isl, Brit.Ind.Oc.Ter, Iceland"})];
@@ -419,6 +715,21 @@
 		});
 		var page1 = new sap.m.Page("page1", {
 			headerContent: [
+				new sap.m.CheckBox("customWithin", {
+					text: "Custom Within",
+					selected : false,
+					select : function(event) {
+						var oWithin = document.getElementById("within");
+
+						if (event.getParameter("selected")) {
+							oWithin.style.display = "block";
+							sap.ui.core.Popup.setWithinArea(oWithin);
+						} else {
+							oWithin.style.display = "none";
+							sap.ui.core.Popup.setWithinArea(null);
+						}
+					}
+				}).addStyleClass("sapUiSmallMarginEnd"),
 				new sap.m.Title({
 					text: "sap.m.Popover"
 				}),
@@ -428,14 +739,16 @@
 				oCustomCssButton,
 			],
 			content: [
-				oOverflowingPopover, oVBox, oButton14, oButton15, oButton16
+				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox, oButton14, oButton15, oButton16
 			]
-		}).addStyleClass("sapUiContentPadding");
+		});
 
 		app.addPage(page1);
-		app.placeAt("body");
+		app.placeAt("div");
 	</script>
 </head>
-<body id="body" class="sapUiBody">
+<body class="sapUiBody">
+	<div id="within"></div>
+	<div id="div"></div>
 </body>
 </html>
