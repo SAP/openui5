@@ -295,26 +295,18 @@ sap.ui.define([
 		var isInMenuHierarchy = false,
 			touchEnabled = Device.support.touch || Device.system.combi;
 
-		if (oEvent.type == "mousedown" || oEvent.type == "touchstart") {
-			// Suppress the delayed mouse event from mobile browser
-			if (touchEnabled && (oEvent.isMarked("delayedMouseEvent") || oEvent.isMarked("cancelAutoClose"))) {
-				return;
-			}
+		if (touchEnabled && (oEvent.isMarked("delayedMouseEvent") || oEvent.isMarked("cancelAutoClose"))) {
+			return;
+		}
 
-			if (containsOrEquals(this.getDomRef(), oEvent.target) || containsOrEquals(Core.getStaticAreaRef(), oEvent.target) ||
-				isInControlTree(this, Core.byId(oEvent.target.id))) {
+		if (oEvent.type == "mousedown" || oEvent.type == "touchstart") {
+			if (containsOrEquals(this.getDomRef(), oEvent.target) || isInControlTree(this, Core.byId(oEvent.target.id))) {
 				isInMenuHierarchy = true;
 			}
 		} else if (oEvent.type == "sapfocusleave") {
-			if (touchEnabled) {
-				return;
-			}
-
-			if (oEvent.relatedControlId) {
-				if (containsOrEquals(this.getDomRef(), jQuery(document.getElementById(oEvent.relatedControlId)).get(0)) ||
-					isInControlTree(this, Core.byId(oEvent.relatedControlId))) {
-					isInMenuHierarchy = true;
-				}
+			if (oEvent.relatedControlId && containsOrEquals(this.getDomRef(), jQuery(document.getElementById(oEvent.relatedControlId)).get(0)) ||
+				isInControlTree(this, Core.byId(oEvent.relatedControlId))) {
+				isInMenuHierarchy = true;
 			}
 		}
 
