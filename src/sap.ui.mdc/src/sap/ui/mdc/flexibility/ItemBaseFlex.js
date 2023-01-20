@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/p13n/Engine", "sap/base/Log", "sap/ui/mdc/flexibility/Util", "sap/ui/fl/changeHandler/Base"
-], function(Engine, Log, Util, FLChangeHandlerBase) {
+	"sap/m/p13n/Engine", "sap/base/Log", "sap/ui/mdc/flexibility/Util", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/changeHandler/condenser/Classification"
+], function(Engine, Log, Util, FLChangeHandlerBase, CondenserClassification) {
 	"use strict";
 
 	var ItemBaseFlex = {
@@ -139,6 +139,7 @@ sap.ui.define([
 			var iIndex;
 			var aDefaultAggregation;
 			var oAggregation;
+			var sControlAggregationItemId;
 
 			var pAdd = this.determineAggregation(oModifier, oControl)
 
@@ -185,6 +186,8 @@ sap.ui.define([
 					return FLChangeHandlerBase.markAsNotApplicable("The specified change is already existing - change appliance ignored", true);
 				}
 
+				sControlAggregationItemId = oControlAggregationItem.getId ? oControlAggregationItem.getId() : oControlAggregationItem.id;
+
 				return oControlAggregationItem;
 			}.bind(this))
 
@@ -197,7 +200,8 @@ sap.ui.define([
 					// Set revert data on the change
 					oChange.setRevertData({
 						name: oChangeContent.name,
-						index: iIndex
+						index: iIndex,
+						item: sControlAggregationItemId
 					});
 				}
 
@@ -217,6 +221,7 @@ sap.ui.define([
 			var oAggregation;
 			var iIndex;
 			var oControlAggregationItem;
+			var sControlAggregationItemId;
 
 			// 1) Fetch the existimg item from the control
 			var pRemove = this.determineAggregation(oModifier, oControl)
@@ -256,6 +261,7 @@ sap.ui.define([
 						// Continue? --> destroy the item (but only if it exists, it may not exist if an earlier layer removed it already)
 						if (bContinue && oControlAggregationItem) {
 							// destroy the item
+							sControlAggregationItemId = sControlAggregationItemId = oControlAggregationItem.getId ? oControlAggregationItem.getId() : oControlAggregationItem.id;
 							oModifier.destroy(oControlAggregationItem, "KeepDom");
 						}
 						this.afterApply(oChange.getChangeType(), oControl, bIsRevert);
@@ -272,7 +278,8 @@ sap.ui.define([
 					// Set revert data on the change
 					oChange.setRevertData({
 						name: oChangeContent.name,
-						index: iIndex
+						index: iIndex,
+						item: sControlAggregationItemId
 					});
 				}
 			});
@@ -282,6 +289,7 @@ sap.ui.define([
 		},
 
 		_applyMove: function(oChange, oControl, mPropertyBag, sChangeReason) {
+			var sControlAggregationItemId;
 			var bIsRevert = (sChangeReason === Util.REVERT);
 			this.beforeApply(oChange.getChangeType(), oControl, bIsRevert);
 			if (this._bSupressFlickering) {
@@ -312,6 +320,7 @@ sap.ui.define([
 					//react gracefully and continue the appliance without errors by just skipping the handling
 					return FLChangeHandlerBase.markAsNotApplicable("The specified change is already existing - change appliance ignored", true);
 				} else {
+					sControlAggregationItemId = oControlAggregationItem.getId ? oControlAggregationItem.getId() : oControlAggregationItem.id;
 					return oModifier.findIndexInParentAggregation(oControlAggregationItem);
 				}
 			})
@@ -338,7 +347,8 @@ sap.ui.define([
 				} else {
 					oChange.setRevertData({
 						name: oChangeContent.name,
-						index: iOldIndex
+						index: iOldIndex,
+						item: sControlAggregationItemId
 					});
 				}
 				this.afterApply(oChange.getChangeType(), oControl, bIsRevert);
@@ -358,7 +368,25 @@ sap.ui.define([
 		createAddChangeHandler: function() {
 			return Util.createChangeHandler({
 				apply: this._applyAdd.bind(this),
-				revert: this._applyRemove.bind(this)
+				revert: this._applyRemove.bind(this),
+				getCondenserInfo: function(oChange, mPropertyBag) {
+					var oControl = mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
+					return this.determineAggregation(mPropertyBag.modifier, oControl)
+					.then(function(oAggregation){
+						return {
+							affectedControl: { idIsLocal: false, id: oChange.getRevertData().item },
+							targetContainer: oChange.getSelector(),
+							targetAggregation: oAggregation.name,
+							classification: CondenserClassification.Create,
+							setTargetIndex: function(oChange, iNewTargetIndex) {
+								oChange.getContent().index = iNewTargetIndex;
+							},
+							getTargetIndex: function(oChange) {
+								return oChange.getContent().index;
+							}
+						};
+					});
+				}.bind(this)
 			});
 		},
 
@@ -366,14 +394,49 @@ sap.ui.define([
 			return Util.createChangeHandler({
 				apply: this._applyRemove.bind(this),
 				complete: this._removeIndexFromChange.bind(this),
-				revert: this._applyAdd.bind(this)
+				revert: this._applyAdd.bind(this),
+				getCondenserInfo: function(oChange, mPropertyBag) {
+					var oControl = mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
+					return this.determineAggregation(mPropertyBag.modifier, oControl)
+					.then(function(oAggregation){
+						return {
+							affectedControl: { idIsLocal: false, id: oChange.getRevertData().item },
+							targetContainer: oChange.getSelector(),
+							targetAggregation: oAggregation.name,
+							classification: CondenserClassification.Destroy,
+							sourceIndex: oChange.getRevertData().index
+						};
+					});
+				}.bind(this)
 			});
 		},
 
 		createMoveChangeHandler: function() {
 			return Util.createChangeHandler({
 				apply: this._applyMove.bind(this),
-				revert: this._applyMove.bind(this)
+				revert: this._applyMove.bind(this),
+				getCondenserInfo: function(oChange, mPropertyBag) {
+					var oControl = mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
+					return this.determineAggregation(mPropertyBag.modifier, oControl)
+					.then(function(oAggregation){
+						return {
+							affectedControl: { idIsLocal: false, id: oChange.getRevertData().item },
+							targetContainer: oChange.getSelector(),
+							targetAggregation: oAggregation.name,
+							classification: CondenserClassification.Move,
+							sourceIndex: oChange.getRevertData().index,
+							//sourceIndex: oChange.getContent().index,
+							sourceContainer: oChange.getSelector(),
+							sourceAggregation: oAggregation.name,
+							setTargetIndex: function(oChange, iNewTargetIndex) {
+								oChange.getContent().index = iNewTargetIndex;
+							},
+							getTargetIndex: function(oChange) {
+								return oChange.getContent().index;
+							}
+						};
+					});
+				}.bind(this)
 			});
 		}
 

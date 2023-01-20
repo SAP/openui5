@@ -2,8 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/flexibility/Util"
-], function(Util) {
+	"sap/ui/mdc/flexibility/Util",
+	"sap/ui/fl/changeHandler/condenser/Classification"
+], function(Util, Classification) {
 	"use strict";
 
 	var ChartTypeFlex = {};
@@ -23,11 +24,21 @@ sap.ui.define([
 	var fRevertChartType = function(oChange, oChart, mPropertyBag) {
 		mPropertyBag.modifier.setProperty(oChart, "chartType", oChange.getRevertData());
 		oChange.resetRevertData();
+		return Promise.resolve();
+	};
+
+	var fGetCondenserInfoChartType = function(oChange, mPropertyBag) {
+		return {
+			classification: Classification.LastOneWins,
+			affectedControl: oChange.getSelector(),
+			uniqueKey: "chartType"
+		};
 	};
 
 	ChartTypeFlex.setChartType = Util.createChangeHandler({
 		apply: fSetChartType,
-		revert: fRevertChartType
+		revert: fRevertChartType,
+		getCondenserInfo: fGetCondenserInfoChartType
 	});
 
 	return ChartTypeFlex;

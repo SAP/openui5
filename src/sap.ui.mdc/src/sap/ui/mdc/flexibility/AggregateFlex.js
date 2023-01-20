@@ -3,8 +3,9 @@
  */
 sap.ui.define([
 	"sap/m/p13n/Engine",
-	"sap/ui/mdc/flexibility/Util"
-], function(Engine, Util) {
+	"sap/ui/mdc/flexibility/Util",
+	"sap/ui/fl/changeHandler/condenser/Classification"
+], function(Engine, Util, CondenserClassification) {
 	"use strict";
 
 	var fRebindControl = function (oControl) {
@@ -89,14 +90,25 @@ sap.ui.define([
 
 	var Aggregate = {};
 
+	var fGetCondenserInfoCondition = function(oChange, mPropertyBag) {
+		var oContent = oChange.getContent();
+		return {
+			classification: CondenserClassification.Reverse,
+			affectedControl: oChange.getSelector(),
+			uniqueKey: "aggregate" + "_" + oContent.name
+		};
+	};
+
 	Aggregate.addAggregate = Util.createChangeHandler({
 		apply: fAddAggregate,
-		revert: fRemoveAggregate
+		revert: fRemoveAggregate,
+		getCondenserInfo: fGetCondenserInfoCondition
 	});
 
 	Aggregate.removeAggregate = Util.createChangeHandler({
 		apply: fRemoveAggregate,
-		revert: fAddAggregate
+		revert: fAddAggregate,
+		getCondenserInfo: fGetCondenserInfoCondition
 	});
 
 	return Aggregate;

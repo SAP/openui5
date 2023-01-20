@@ -5,8 +5,9 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/base/Log',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/ui/mdc/flexibility/Util'
-], function(merge, Log, FilterOperatorUtil, Util) {
+	'sap/ui/mdc/flexibility/Util',
+	"sap/ui/fl/changeHandler/condenser/Classification"
+], function(merge, Log, FilterOperatorUtil, Util, Classification) {
 	"use strict";
 
 	/**
@@ -181,16 +182,27 @@ sap.ui.define([
 		});
 	};
 
+	var fGetCondenserInfoCondition = function(oChange, mPropertyBag) {
+		var oContent = oChange.getContent();
+		return {
+			classification: Classification.Reverse,
+			affectedControl: oChange.getSelector(),
+			uniqueKey: oContent.name + '_' + JSON.stringify(oContent.condition)
+		};
+	};
+
 	var ConditionFlex = {};
 
 	ConditionFlex.addCondition = Util.createChangeHandler({
 		apply: fAddCondition,
-		revert: fRemoveCondition
+		revert: fRemoveCondition,
+		getCondenserInfo: fGetCondenserInfoCondition
 	});
 
 	ConditionFlex.removeCondition = Util.createChangeHandler({
 		apply: fRemoveCondition,
-		revert: fAddCondition
+		revert: fAddCondition,
+		getCondenserInfo: fGetCondenserInfoCondition
 	});
 
 	return ConditionFlex;
