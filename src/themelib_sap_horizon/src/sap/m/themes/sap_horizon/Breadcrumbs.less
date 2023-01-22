@@ -3,9 +3,6 @@
 /* Horizon theme                     */
 /* ===============================   */
 
-
-
-
 .sapMBreadcrumbs {
 	.sapMBreadcrumbsCurrentLocation {
 		&:focus {
@@ -16,5 +13,49 @@
 	}
 	.sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState), .sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
 		outline-offset: 0;
+	}
+
+	.sapMSltIcon:before,
+	.sapMSltIcon:after {
+		font-size: @sapMFontMediumSize;
+		color: @sapUiLink;
+		padding-bottom: 0.0625rem;
+		speak: none;
+	}
+
+	.sapMSltIcon:before {
+		font-family: @sapUiFontLightFamily;
+		content: "••• ";
+		vertical-align: text-top;
+	}
+
+	.sapMSltIcon:after {
+		font-family: @sapUiContentIconFontFamily;
+		content: "\e1ef";
+		vertical-align: text-bottom;
+	}
+
+	.sapMBreadcrumbsItem.sapMBreadcrumbsSelectItem >
+	.sapMSlt.sapMSltIconOnly.sapMSltWithIcon.sapMSltHoverable.sapMSltWithArrow {
+		background: transparent;
+		border: none;
+
+		&.sapMSltFocused,
+		&:hover {
+			.sapMSltIcon {
+				background-color: @sapUiContentFocusColor;
+				text-decoration: underline;
+				color: @sapUiContentContrastTextColor;
+			}
+
+			.sapMSltIcon:before {
+				border-bottom: none;
+			}
+
+			.sapMSltIcon:before,
+			.sapMSltIcon:after {
+				color: @sapUiWhite;
+			}
+		}
 	}
 }
