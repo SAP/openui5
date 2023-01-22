@@ -2860,7 +2860,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._setAsCurrentSection = function (sSectionId) {
-		var oAnchorBar, oSectionBase, bShouldDisplayParentTitle;
+		var oAnchorBar, oSectionBase, bShouldDisplayParentTitle, bUpdateAnchorBar;
 
 		if (this._sScrolledSectionId === sSectionId) {
 			return;
@@ -2870,26 +2870,25 @@ sap.ui.define([
 		this._sScrolledSectionId = sSectionId;
 
 		oAnchorBar = this.getAggregation("_anchorBar");
+		bUpdateAnchorBar = oAnchorBar && this._getInternalAnchorBarVisible();
 
-		if (oAnchorBar && this._getInternalAnchorBarVisible()) {
-			oSectionBase = this.oCore.byId(sSectionId);
+		oSectionBase = this.oCore.byId(sSectionId);
 
-			bShouldDisplayParentTitle = oSectionBase && oSectionBase instanceof ObjectPageSubSection &&
-				(oSectionBase.getTitle().trim() === "" || !oSectionBase._getInternalTitleVisible() || oSectionBase.getParent()._getIsHidden());
+		bShouldDisplayParentTitle = oSectionBase && oSectionBase instanceof ObjectPageSubSection &&
+			(oSectionBase.getTitle().trim() === "" || !oSectionBase._getInternalTitleVisible() || oSectionBase.getParent()._getIsHidden());
 
-			//the sectionBase title needs to be visible (or the user won't "feel" scrolling that sectionBase but its parent)
-			//see Incident 1570016975 for more details
-			if (bShouldDisplayParentTitle) {
-				sSectionId = oSectionBase.getParent().getId();
+		//the sectionBase title needs to be visible (or the user won't "feel" scrolling that sectionBase but its parent)
+		//see Incident 1570016975 for more details
+		if (bShouldDisplayParentTitle) {
+			sSectionId = oSectionBase.getParent().getId();
 
-				Log.debug("ObjectPageLayout :: current section is a subSection with an empty or hidden title, selecting parent " + sSectionId);
-			}
+			Log.debug("ObjectPageLayout :: current section is a subSection with an empty or hidden title, selecting parent " + sSectionId);
+		}
 
-			if (oSectionBase && this._oSectionInfo[sSectionId]) {
-				oAnchorBar.setSelectedButton(this._oSectionInfo[sSectionId].buttonId);
-				this.setAssociation("selectedSection", ObjectPageSection._getClosestSection(sSectionId).getId(), true);
-				this._setSectionsFocusValues(sSectionId);
-			}
+		if (oSectionBase && this._oSectionInfo[sSectionId]) {
+			bUpdateAnchorBar && oAnchorBar.setSelectedButton(this._oSectionInfo[sSectionId].buttonId);
+			this.setAssociation("selectedSection", ObjectPageSection._getClosestSection(sSectionId).getId(), true);
+			this._setSectionsFocusValues(sSectionId);
 		}
 	};
 
