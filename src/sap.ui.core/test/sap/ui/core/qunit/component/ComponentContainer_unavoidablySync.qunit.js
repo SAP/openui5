@@ -148,7 +148,7 @@ sap.ui.define([
 		}
 	});
 
-	sap.ui.predefine("my/usage/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+	sap.ui.define("my/usage/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 		return UIComponent.extend("my.usage.Component", {
 			metadata: {
 				manifest: {
@@ -280,5 +280,70 @@ sap.ui.define([
 		assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
 
 	});
+
+	QUnit.module("Special handling of manifest property");
+
+	QUnit.test("Converted to boolean when provided initially", function (assert) {
+
+		assert.expect(4);
+
+		var fnFactoryOld = sap.ui.component;
+		var oComponentContainer;
+
+		sap.ui.component = function(mConfig) {
+			assert.strictEqual(mConfig.manifest, true, "sap.ui.component is called with boolean true");
+		};
+		oComponentContainer = new ComponentContainer({
+			manifest: "true",
+			async: false
+		});
+		assert.strictEqual(oComponentContainer.getManifest(), true, "Property manifest is converted to boolean true");
+		oComponentContainer._createComponent();
+		oComponentContainer.destroy();
+
+		sap.ui.component = function(mConfig) {
+			assert.strictEqual(mConfig.manifest, false, "sap.ui.component is called with boolean false");
+		};
+		oComponentContainer = new ComponentContainer({
+			manifest: "false",
+			async: false
+		});
+		assert.strictEqual(oComponentContainer.getManifest(), false, "Property manifest is converted to boolean false");
+		oComponentContainer._createComponent();
+		oComponentContainer.destroy();
+
+		sap.ui.component = fnFactoryOld;
+
+	});
+
+	QUnit.test("Not converted to boolean when calling setManifest", function (assert) {
+
+		assert.expect(4);
+
+		var fnFactoryOld = sap.ui.component;
+		var oComponentContainer;
+
+		sap.ui.component = function(mConfig) {
+			assert.strictEqual(mConfig.manifest, "true", "sap.ui.component is called with string true");
+		};
+		oComponentContainer = new ComponentContainer();
+		oComponentContainer.setManifest("true");
+		assert.strictEqual(oComponentContainer.getManifest(), "true", "Property manifest is not converted to boolean");
+		oComponentContainer._createComponent();
+		oComponentContainer.destroy();
+
+		sap.ui.component = function(mConfig) {
+			assert.strictEqual(mConfig.manifest, "false", "sap.ui.component is called with string false");
+		};
+		oComponentContainer = new ComponentContainer();
+		oComponentContainer.setManifest("false");
+		assert.strictEqual(oComponentContainer.getManifest(), "false", "Property manifest is not converted to boolean");
+		oComponentContainer._createComponent();
+		oComponentContainer.destroy();
+
+		sap.ui.component = fnFactoryOld;
+
+	});
+
 
 });
