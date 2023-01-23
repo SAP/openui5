@@ -45,7 +45,8 @@
         "1.32.0",
         "1.33.0",
         "1.34.0",
-        "1.35.0"
+        "1.35.0",
+        "1.36.0"
       ]
     },
     "designtime": {
@@ -1442,6 +1443,7 @@
                 "IconGroup",
                 "ComboBox",
                 "TextArea",
+                "RatingIndicator",
                 "phone",
                 "email",
                 "link",
@@ -1805,6 +1807,52 @@
            "description": "An extension function used to validate the value",
            "type": "string"
          }
+      }
+    },
+    "ContentType.Object.Item.RatingIndicator": {
+      "description": "[Experimental] Represents Rating Indicator",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxValue": {
+          "description": "The number of displayed rating symbols",
+          "oneOf": [
+            {
+              "type": "number",
+              "default": "5"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "value": {
+          "description": "The indicated value of the rating",
+          "oneOf": [
+            {
+              "type": "number",
+              "default": "0"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "visualMode": {
+          "description": "Defines how float values are visualized: Full (values are rounded to the nearest integer value (e.g. 1.7 -> 2)) or  Half (values are rounded to the nearest half value (e.g. 1.7 -> 1.5))",
+          "oneOf": [
+            {
+              "enum": [
+                "Full",
+                "Half"
+              ],
+              "default": "Half"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        }
       }
     },
     "ContentType.Table": {

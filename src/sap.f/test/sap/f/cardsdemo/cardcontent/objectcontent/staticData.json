@@ -38,6 +38,12 @@
 							"icon": {
 								"src": "../../images/Woman_avatar_02.png"
 							}
+						},
+						{
+							"label": "Rating",
+							"type": "RatingIndicator",
+							"maxValue": 5,
+							"value": 4.5
 						}
 					]
 				}

@@ -88,6 +88,12 @@
 					"alignment": "Stretch",
 					"items": [
 						{
+							"label": "Rating",
+							"type": "RatingIndicator",
+							"maxValue": 7,
+							"value": 4.5
+						},
+						{
 							"id": "reason",
 							"label": "Reason",
 							"type": "ComboBox",

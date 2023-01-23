@@ -62,6 +62,7 @@
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/formWithValidations.json"
 				width="400px"
 				class="sapUiTinyMargin" />
+
 		</Panel>
 	</Page>
 </mvc:View>

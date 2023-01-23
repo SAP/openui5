@@ -178,6 +178,13 @@ sap.ui.define([
 										}
 									}
 								]
+							},
+							{
+								"label": "Rating",
+								"type": "RatingIndicator",
+								"maxValue": 7,
+								"value": 4.5,
+								"visualMode": "Full"
 							}
 						]
 					}
@@ -818,7 +825,7 @@ sap.ui.define([
 			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[1].getText(), oData.manager.firstName + " " + oData.manager.lastName, "Should have correct item value.");
 
 			// Group 3 assertions
-			assert.equal(aGroups[2].getItems().length, 11, "Should have 11 items.");
+			assert.equal(aGroups[2].getItems().length, 13, "Should have 13 items.");
 			assert.equal(aGroups[2].getItems()[0].getText(), oManifestContent.groups[2].title, "Should have correct group title.");
 			assert.equal(aGroups[2].getItems()[1].getText(), oManifestContent.groups[2].items[0].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[2].getItems()[2].getText(), oData.company.name, "Should have correct item value.");
@@ -828,6 +835,11 @@ sap.ui.define([
 			assert.equal(aGroups[2].getItems()[6].getItems()[0].getText(), oData.company.email, "Should have correct item value.");
 			assert.equal(aGroups[2].getItems()[8].getItems()[0].getText(), "newmail@example.com", "Should have correct item value.");
 			assert.equal(aGroups[2].getItems()[10].getItems()[0].getText(), oData.company.website, "Should have correct item value.");
+			assert.ok(aGroups[2].getItems()[12].isA("sap.m.RatingIndicator"), "RatingIndicator is rendered.");
+			assert.equal(aGroups[2].getItems()[12].getMaxValue(), 7,  "RatingIndicator's maxValue is correctly set.");
+			assert.equal(aGroups[2].getItems()[12].getValue(), 4.5,  "RatingIndicator's value is correctly set.");
+			assert.equal(aGroups[2].getItems()[12].getVisualMode(), "Full",  "RatingIndicator's visualMode is correctly set.");
+
 
 			done();
 		}.bind(this));
