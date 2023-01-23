@@ -869,93 +869,136 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.module("relative to '2021-03-22T23:30:00Z'", {
-			beforeEach: function () {
-				stubTimezone("Europe/Berlin");
-				this.clock = sinon.useFakeTimers(new Date("2021-03-22T23:30:00Z").getTime());
-				// 28.03 - 0:30 (GMT+1)
-			},
-			afterEach: function () {
-				this.clock.restore();
-				stubTimezone(null);
-			}
+	//*********************************************************************************************
+	QUnit.module("relative to", {
+		beforeEach: function () {
+			stubTimezone("Europe/Berlin");
+		},
+		afterEach: function () {
+			this.clock.restore();
+			stubTimezone(null);
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("'2021-03-22T23:30:00Z' in Europe/Berlin; format and parse with UTC set/not set", function (assert) {
+		var oDate0 = new Date(Date.UTC(2021, 2, 21, 3, 33)), // 21.03.2021, 04:33 Europe/Berlin
+			oDate1 = new Date(Date.UTC(2021, 2, 21, 23, 33)), // 22.03.2021, 00:33 Europe/Berlin
+			oDateFormat = DateFormat.getDateInstance({relative: true}, new Locale("de"));
+
+		// set now to 23.03.2021, 0:30 (GMT+1, Europe/Berlin)
+		this.clock = sinon.useFakeTimers(new Date("2021-03-22T23:30:00Z").getTime());
+
+		// bUTC === true
+		assert.strictEqual(oDateFormat.format(oDate0, true), "vorgestern");
+		assert.strictEqual(oDateFormat.format(oDate1, true), "vorgestern");
+
+		assert.deepEqual(oDateFormat.parse("vorgestern", true), new Date(Date.UTC(2021, 2, 21, 0, 30)));
+
+		// bUTC not set
+		assert.strictEqual(oDateFormat.format(oDate0), "vorgestern");
+		assert.strictEqual(oDateFormat.format(oDate1), "vor 1 Tag");
+
+		assert.deepEqual(oDateFormat.parse("vorgestern"), new Date(Date.UTC(2021, 2, 20, 23, 30)));
+		assert.deepEqual(oDateFormat.parse("vor 1 Tag"), new Date(Date.UTC(2021, 2, 21, 23, 30)));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("'2021-03-22T03:30:00Z' in Europe/Berlin; format and parse with UTC set/not set", function (assert) {
+		var oDate0 = new Date(Date.UTC(2021, 2, 21, 3, 33)), // 21.03.2021, 04:33 Europe/Berlin
+			oDate1 = new Date(Date.UTC(2021, 2, 21, 23, 33)), // 22.03.2021, 00:33 Europe/Berlin
+			oDateFormat = DateFormat.getDateInstance({relative: true}, new Locale("de"));
+
+		// set now to 22.03.2021, 4:30 (GMT+1, Europe/Berlin)
+		this.clock = sinon.useFakeTimers(new Date("2021-03-22T03:30:00Z").getTime());
+
+		// bUTC === true
+		assert.strictEqual(oDateFormat.format(oDate0, true), "vor 1 Tag");
+		assert.strictEqual(oDateFormat.format(oDate1, true), "vor 1 Tag");
+
+		assert.deepEqual(oDateFormat.parse("vor 1 Tag", true), new Date(Date.UTC(2021, 2, 21, 4, 30)));
+
+		// bUTC not set
+		assert.strictEqual(oDateFormat.format(oDate0), "vor 1 Tag");
+		assert.strictEqual(oDateFormat.format(oDate1), "heute");
+
+		assert.deepEqual(oDateFormat.parse("vor 1 Tag"), new Date(Date.UTC(2021, 2, 21, 3, 30)));
+		assert.deepEqual(oDateFormat.parse("heute"), new Date(Date.UTC(2021, 2, 22, 3, 30)));
+	});
+
+	//*********************************************************************************************
+	QUnit.module("'now' for different time zones", {
+		beforeEach: function () {
+			this.clock = sinon.useFakeTimers(new Date("2022-12-15T09:45:00Z").getTime());
+		},
+		afterEach: function () {
+			this.clock.restore();
+			stubTimezone(null);
+		}
+	});
+
+	//*********************************************************************************************
+	[{
+		timezone: "Pacific/Niue", // -11:00
+		utcDate: new Date("2022-12-14T22:45:00Z")
+	}, {
+		timezone: "Pacific/Honolulu", // -10:00
+		utcDate: new Date("2022-12-14T23:45:00Z")
+	}, {
+		timezone: "America/New_York", // -05:00
+		utcDate: new Date("2022-12-15T04:45:00Z")
+	}, {
+		timezone: "UTC", // +00:00
+		utcDate: new Date("2022-12-15T09:45:00Z")
+	}, {
+		timezone: "Europe/Berlin", // +01:00
+		utcDate: new Date("2022-12-15T10:45:00Z")
+	}, {
+		timezone: "Asia/Kathmandu", // +05:45
+		utcDate: new Date("2022-12-15T15:30:00Z")
+	}, {
+		timezone: "Pacific/Auckland", // +13:00
+		utcDate: new Date("2022-12-15T22:45:00Z")
+	}].forEach(function (oFixture) {
+		QUnit.test("'now' relative to '2022-12-15T09:45:00Z' in " + oFixture.timezone, function (assert) {
+			var oDate,
+				// DateFormat instances format "now" as "today"
+				oRelativeDateFormat = DateFormat.getDateInstance({relative: true}, new Locale("en")),
+				// DateTimeFormat instances format "now" as "now"
+				oRelativeDateTimeFormat = DateFormat.getDateTimeInstance({relative: true}, new Locale("en"));
+
+			stubTimezone(oFixture.timezone);
+
+			// code under test
+			oDate = oRelativeDateFormat.parse("now");
+			assert.strictEqual(oDate.valueOf(), new Date(Date.UTC(2022, 11, 15, 9, 45)).valueOf());
+
+			// code under test
+			assert.strictEqual(oRelativeDateFormat.format(oDate), "today");
+
+			// code under test
+			oDate = oRelativeDateTimeFormat.parse("now");
+			assert.strictEqual(oDate.valueOf(), new Date(Date.UTC(2022, 11, 15, 9, 45)).valueOf());
+
+			// code under test
+			assert.strictEqual(oRelativeDateTimeFormat.format(oDate), "now");
+
+			// bUTC === true
+			// code under test
+			oDate = oRelativeDateFormat.parse("now", true);
+			assert.strictEqual(oDate.valueOf(), oFixture.utcDate.valueOf());
+
+			// code under test
+			assert.strictEqual(oRelativeDateFormat.format(oDate, true), "today");
+
+			// code under test
+			oDate = oRelativeDateTimeFormat.parse("now", true);
+			assert.strictEqual(oDate.valueOf(), oFixture.utcDate.valueOf());
+
+			// code under test
+			assert.strictEqual(oRelativeDateTimeFormat.format(oDate, true), "now");
 		});
-
-		QUnit.test("format and parse 3:33", function (assert) {
-			var oDateFormat = DateFormat.getDateInstance({ relative: true }, new Locale("de"));
-
-			var oDate = new Date(Date.UTC(2021,2,21,3,33));
-
-			var sRelativeUTC = oDateFormat.format(oDate, true);
-			assert.equal(sRelativeUTC, "vorgestern");
-			var oExpectedUTC = new Date(Date.UTC(2021,2,20,23,30));
-			assert.equal(oDateFormat.parse(sRelativeUTC, true).getTime(), oExpectedUTC.getTime());
-
-			var sRelative = oDateFormat.format(oDate);
-			assert.equal(sRelative, "vorgestern");
-			assert.equal(oDateFormat.parse(sRelative).getTime(), oExpectedUTC.getTime());
-		});
-
-		QUnit.test("format and parse 23:33", function (assert) {
-			var oDateFormat = DateFormat.getDateInstance({ relative: true }, new Locale("de"));
-
-			var oDate = new Date(Date.UTC(2021,2,21,23,33));
-
-			var sRelativeUTC = oDateFormat.format(oDate, true);
-			assert.equal(sRelativeUTC, "vorgestern");
-			var oExpectedUTC = new Date(Date.UTC(2021,2,20,23,30));
-			assert.equal(oDateFormat.parse(sRelativeUTC, true).getTime(), oExpectedUTC.getTime());
-
-			var sRelative = oDateFormat.format(oDate);
-			assert.equal(sRelative, "vor 1 Tag");
-			var oExpected = new Date(Date.UTC(2021,2,21,23,30));
-			assert.equal(oDateFormat.parse(sRelative).getTime(), oExpected.getTime());
-		});
-
-		QUnit.module("relative to '2021-03-22T03:30:00Z'", {
-			beforeEach: function () {
-				stubTimezone("Europe/Berlin");
-				this.clock = sinon.useFakeTimers(new Date("2021-03-22T03:30:00Z").getTime());
-				// 28.03 - 0:30 (GMT+1)
-			},
-			afterEach: function () {
-				this.clock.restore();
-				stubTimezone(null);
-			}
-		});
-
-		QUnit.test("3:33", function (assert) {
-			var oDateFormat = DateFormat.getDateInstance({ relative: true }, new Locale("de"));
-
-			var oDate = new Date(Date.UTC(2021,2,21,3,33));
-
-			var sRelativeUTC = oDateFormat.format(oDate, true);
-			assert.equal(sRelativeUTC, "vor 1 Tag");
-			var oExpectedUTC = new Date(Date.UTC(2021,2,21,3,30));
-			assert.equal(oDateFormat.parse(sRelativeUTC, true).getTime(), oExpectedUTC.getTime());
-
-			var sRelative = oDateFormat.format(oDate);
-			assert.equal(sRelative, "vor 1 Tag");
-			var oExpected = new Date(Date.UTC(2021,2,21,3,30));
-			assert.equal(oDateFormat.parse(sRelative).getTime(), oExpected.getTime());
-		});
-
-
-		QUnit.test("23:33", function (assert) {
-			var oDateFormat = DateFormat.getDateInstance({ relative: true }, new Locale("de"));
-
-			var oDate = new Date(Date.UTC(2021,2,21,23,33));
-
-			var sRelativeUTC = oDateFormat.format(oDate, true);
-			assert.equal(sRelativeUTC, "vor 1 Tag");
-			var oExpectedUTC = new Date(Date.UTC(2021,2,21,3,30));
-			assert.equal(oDateFormat.parse(sRelativeUTC, true).getTime(), oExpectedUTC.getTime());
-
-			var sRelative = oDateFormat.format(oDate);
-			assert.equal(sRelative, "heute");
-			var oExpected = new Date(Date.UTC(2021,2,22,3,30));
-			assert.equal(oDateFormat.parse(sRelative).getTime(), oExpected.getTime());
-		});
+	});
 
 		QUnit.module("German summer time 28.03.2021 (2h->3h) (offset: +2 -> +1)", {
 			beforeEach: function () {
