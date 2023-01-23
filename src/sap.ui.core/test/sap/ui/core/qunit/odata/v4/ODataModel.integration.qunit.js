@@ -48240,4 +48240,144 @@ sap.ui.define([
 			assert.notOk(oModel.hasPendingChanges());
 		});
 	});
+	//*********************************************************************************************
+	// Scenario: (5a) Context#resetChanges within a relative ODLB below an intermediate ODCB.
+	// Patch one line item in the relative ODLB, patch another for a different sales order. Select
+	// the sales order of the first patched line item and call #resetChanges. Submit changes and
+	// see that only the 2nd patch is sent.
+	// JIRA: CPOUI5ODATAV4-1818
+	QUnit.test("CPOUI5ODATAV4-1818: (5a) Context#resetChanges, resolved ODLB", function (assert) {
+		var oItems,
+			oModel = this.createSalesOrdersModel({
+				updateGroupId : "update",
+				autoExpandSelect : true
+			}),
+			oObjectPage,
+			aOrderContexts,
+			oOrders,
+			oPatchPromise11,
+			oPatchPromise22,
+			sView = '\
+<Table id="orders" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</Table>\
+<FlexBox id="objectPage" binding="{}">\
+	<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+		<Text id="note" text="{Note}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1"},
+					{SalesOrderID : "2"}
+				]
+			})
+			.expectChange("id", ["1", "2"])
+			.expectChange("note", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oOrders = that.oView.byId("orders").getBinding("items");
+			oItems = that.oView.byId("items").getBinding("items");
+			aOrderContexts = oOrders.getCurrentContexts();
+			oObjectPage = that.oView.byId("objectPage");
+
+			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
+				+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
+					value : [{
+						ItemPosition : 10, Note : "Item 2.10", SalesOrderID : "2"
+					}, {
+						ItemPosition : 20, Note : "Item 2.20", SalesOrderID : "2"
+					}]
+				})
+				.expectChange("note", ["Item 2.10", "Item 2.20"]);
+
+			oObjectPage.setBindingContext(aOrderContexts[1]);
+
+			return that.waitForChanges(assert, "set context to '2'");
+		}).then(function () {
+			var oItem20 = oItems.getCurrentContexts()[1];
+
+			that.expectChange("note", [, "Item 2.20 changed"]);
+
+			oPatchPromise22 = oItem20.setProperty("Note", "Item 2.20 changed");
+
+			assert.ok(oItem20.hasPendingChanges());
+			assert.ok(oItems.hasPendingChanges());
+			assert.ok(aOrderContexts[1].hasPendingChanges());
+			assert.ok(oOrders.hasPendingChanges());
+			assert.ok(oModel.hasPendingChanges());
+
+			return that.waitForChanges(assert, "patch item 2.20");
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+				+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
+					value : [{
+						ItemPosition : 10, Note : "Item 1.10", SalesOrderID : "1"
+					}]
+				})
+				.expectChange("note", ["Item 1.10"]);
+
+			oObjectPage.setBindingContext(aOrderContexts[0]);
+
+			return that.waitForChanges(assert, "set context to '1'");
+		}).then(function () {
+			var oItem10 = oItems.getCurrentContexts()[0];
+
+			//assert.ok(aOrderContexts[1].hasPendingChanges()); // don't care, because not current
+			assert.notOk(oItems.hasPendingChanges()); // sees no changes in inactive caches
+			assert.notOk(aOrderContexts[0].hasPendingChanges());
+
+			that.expectChange("note", ["Item 1.10 changed"]);
+
+			oPatchPromise11 = oItem10.setProperty("Note", "Item 1.10 changed");
+
+			assert.ok(oItem10.hasPendingChanges());
+			assert.ok(oItems.hasPendingChanges());
+			assert.ok(aOrderContexts[0].hasPendingChanges());
+			assert.ok(oOrders.hasPendingChanges());
+			assert.ok(oModel.hasPendingChanges());
+
+			return that.waitForChanges(assert, "patch item 1.10");
+		}).then(function () {
+			assert.ok(aOrderContexts[0].hasPendingChanges());
+
+			that.expectCanceledError("Failed to update path /SalesOrderList('1')"
+				+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')/Note",
+				"Request canceled: PATCH SalesOrderList('1')"
+				+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10'); group: update")
+				.expectChange("note", ["Item 1.10"]);
+
+			return Promise.all([
+				// code under test
+				aOrderContexts[0].resetChanges(),
+				checkCanceled(assert, oPatchPromise11),
+				that.waitForChanges(assert, "reset patched item 1.10")
+			]);
+		}).then(function () {
+			assert.notOk(oItems.hasPendingChanges());
+			assert.notOk(aOrderContexts[0].hasPendingChanges());
+			assert.ok(oOrders.hasPendingChanges());
+			assert.ok(oModel.hasPendingChanges());
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('2')/SO_2_SOITEM(SalesOrderID='2',ItemPosition='20')",
+					payload : {Note : "Item 2.20 changed"}
+				});// response does not matter here
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oPatchPromise22,
+				that.waitForChanges(assert, "only remaining PATCH for 2.20")
+			]);
+		}).then(function () {
+			assert.notOk(aOrderContexts[0].hasPendingChanges());
+			assert.notOk(aOrderContexts[1].hasPendingChanges());
+			assert.notOk(oItems.hasPendingChanges());
+			assert.notOk(oOrders.hasPendingChanges());
+			assert.notOk(oModel.hasPendingChanges());
+		});
+	});
 });
