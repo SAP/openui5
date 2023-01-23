@@ -134,6 +134,9 @@ sap.ui.define([
 	 */
 	Link.prototype.isTriggerable = function() {
 		return this.retrieveLinkType().then(function(oLinkTypeObject) {
+			if (!oLinkTypeObject) {
+				return false;
+			}
 			var oRuntimeLinkTypePromise = oLinkTypeObject.runtimeType;
 			var oInitialLinkType = oLinkTypeObject.initialType ? oLinkTypeObject.initialType : oLinkTypeObject;
 
@@ -186,6 +189,10 @@ sap.ui.define([
 	 */
 	Link.prototype._retrieveDirectLinkItem = function() {
 		return this.retrieveLinkType().then(function(oLinkTypeObject) {
+			if (!oLinkTypeObject) {
+				return null;
+			}
+
 			if (this._linkTypeHasDirectLink(this._oLinkType)) {
 				return this._oLinkType.directLink;
 			}
@@ -513,7 +520,7 @@ sap.ui.define([
 		if (this.awaitControlDelegate()) {
 			return this.awaitControlDelegate().then(function() {
 				var oPayload = Object.assign({}, this.getPayload());
-				return this.getControlDelegate().fetchLinkType(oPayload, this);
+				return this._bIsBeingDestroyed ? Promise.resolve() : this.getControlDelegate().fetchLinkType(oPayload, this);
 			}.bind(this));
 		}
 		SapBaseLog.error("mdc.Link retrieveLinkType: control delegate is not set - could not load LinkType from delegate.");
