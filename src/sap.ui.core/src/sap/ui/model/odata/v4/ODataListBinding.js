@@ -1840,15 +1840,32 @@ sap.ui.define([
 	 * Returns the current object holding the information needed for data aggregation, see
 	 * {@link #setAggregation}.
 	 *
+	 * @param {boolean} [bVerbose]
+	 *   Whether to additionally return the "$"-prefixed values described below which obviously
+	 *   cannot be given back to the setter (@experimental as of version 1.111.0). They are
+	 *   retrieved from the pair of "Org.OData.Aggregation.V1.RecursiveHierarchy" and
+	 *   "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy" annotations at this binding's
+	 *   entity type, identified via the <code>hierarchyQualifier</code> given to
+	 *   {@link #setAggregation}.
+	 *   <ul>
+	 *     <li> "$DistanceFromRootProperty" holds the path to the property which provides the raw
+	 *       value for "@$ui5.node.level" (minus one) and should be used only to interpret the
+	 *       response retrieved via {@link #getDownloadUrl}.
+	 *     <li> "$NodeProperty" holds the path to the property which provides the hierarchy node
+	 *       value. That property is always $select'ed automatically and can be accessed as usual.
+	 *   </ul>
 	 * @returns {object}
 	 *   The current data aggregation object, incl. some default values
 	 *
 	 * @public
 	 * @since 1.109.0
 	 */
-	ODataListBinding.prototype.getAggregation = function () {
+	ODataListBinding.prototype.getAggregation = function (bVerbose) {
 		return _Helper.clone(this.mParameters.$$aggregation, function (sKey, vValue) {
-			return sKey[0] === "$" ? undefined : vValue;
+			return sKey[0] === "$"
+				&& !(bVerbose && ["$DistanceFromRootProperty", "$NodeProperty"].includes(sKey))
+				? undefined
+				: vValue;
 		});
 	};
 
