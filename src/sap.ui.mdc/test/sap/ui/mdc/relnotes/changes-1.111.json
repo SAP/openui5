@@ -3,6 +3,17 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "7cbf43a672f779d5cd8134a9f77dc13f6f612736",
+        "type": "FIX",
+        "text": " mdc.FilterBarBase: fix for when diff calculates an empty change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280183816"
+          }
+        ]
+      },
+      {
         "id": "b57cd7f91ca2c9607e7af0b07d8ef4b98e73f1dc",
         "type": "FIX",
         "text": " Field: align Unit with with SmartField",

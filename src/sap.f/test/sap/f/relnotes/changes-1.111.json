@@ -1,0 +1,34 @@
+{
+  "1.111.0": {
+    "date": "January 2023",
+    "notes": [
+      {
+        "id": "66793879bd0fd4a8fcddf262994e2873cac87348",
+        "type": "FEATURE",
+        "text": " Integration cards: Add data request timeout setting"
+      },
+      {
+        "id": "1919bdde52c5593aa82352647cf31e5db8ae7576",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: resize doesn't occur on context menu opening by click on resize splitter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380008255"
+          }
+        ]
+      },
+      {
+        "id": "fdbf2722f43432778dc6044c0fdbe3a4f8ff623a",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Drop indicator background fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280200415"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "1.111.0": {
+    "date": "January 2023",
+    "notes": [
+      {
+        "id": "60851c17e9e84332760d329106448414135dcdbd",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: fix JSDoc"
+      },
+      {
+        "id": "390b5ab1c95db867f39e67e0468d82caabb37cd1",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel: Normalize entity key from location header for function imports",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270118627"
+          }
+        ]
+      }
+    ]
+  }
+}

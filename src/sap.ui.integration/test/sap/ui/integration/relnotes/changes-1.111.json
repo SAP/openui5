@@ -3,6 +3,33 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "66793879bd0fd4a8fcddf262994e2873cac87348",
+        "type": "FEATURE",
+        "text": " Integration cards: Add data request timeout setting"
+      },
+      {
+        "id": "59d19ce303db12878eba7a2246005a0b9176205f",
+        "type": "FIX",
+        "text": " Integration cards: Pagination is now working when no bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280198067"
+          }
+        ]
+      },
+      {
+        "id": "5639bfe492dcf2b1f4940513353cc20d7da38362",
+        "type": "FIX",
+        "text": " Integration cards: Validation is now correct when no data binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280200003"
+          }
+        ]
+      },
+      {
         "id": "1fc3abfbaabce0ac25612f97d0605039c425c04f",
         "type": "FIX",
         "text": " Integration cards: Status icons are now vertically aligned",

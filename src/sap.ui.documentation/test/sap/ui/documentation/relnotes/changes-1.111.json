@@ -1,0 +1,12 @@
+{
+  "1.111.0": {
+    "date": "January 2023",
+    "notes": [
+      {
+        "id": "d794959ecfb06ae181d3bd1fdaa327da45c6919e",
+        "type": "FIX",
+        "text": " Demo Kit: Version dialog visibility fixed"
+      }
+    ]
+  }
+}

@@ -3,6 +3,71 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "f30d9c99a8e5702fc3ea4313fd66d36500a145fe",
+        "type": "FEATURE",
+        "text": " sap.m.InputBase: Suggestions wrapping enablement"
+      },
+      {
+        "id": "200e4171b9a844d5f1a7422e1d501258462a051a",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarMonthGrid: More link shows correct number of appointments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270156096"
+          }
+        ]
+      },
+      {
+        "id": "5c75019ad260dc1fd27238f63dae136b0f102e69",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Styles in table are now aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009443262022"
+          }
+        ]
+      },
+      {
+        "id": "43283415cd133d54208a9084b5002e532c6c4742",
+        "type": "FIX",
+        "text": " sap.m.Bar: Header properly aligns with multiple items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270140701"
+          }
+        ]
+      },
+      {
+        "id": "826a372461c8d6df28d037bddc6db7b61d71cc6d",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Menu opens every time with SPACE after closing its menu with ESCAPE or TAB",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270189696"
+          }
+        ]
+      },
+      {
+        "id": "220167214f780c14e0fb2348fe5f5d9cf1a1a364",
+        "type": "FEATURE",
+        "text": " sap.m.IllustratedMessage: New property introduced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270181515"
+          }
+        ]
+      },
+      {
+        "id": "f87050834fab058b340034641770b342a6f53a27",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Pressing 'enter' on selected item now deselects it"
+      },
+      {
         "id": "d8f6a7a01af27d3cf97cfa025c5a76abf40789b1",
         "type": "FIX",
         "text": " sap.m.Dialog: Where there is no vertical scrollbar, class 'sapMDialogVerticalScrollIncluded' is removed",
