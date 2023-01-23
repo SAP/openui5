@@ -703,7 +703,12 @@ sap.ui.define([
 		this._bHeaderInTitleArea = this._shouldPreserveHeaderInTitleArea();
 
 		this._createHeaderContent();
+
+		/**
+		 * @deprecated Since version 1.40.1
+		 */
 		this._getHeaderContent().setContentDesign(this._getHeaderDesign());
+
 		this._oABHelper._getAnchorBar().setProperty("upperCase", this.getUpperCaseAnchorBar(), true);
 
 		this._storeScrollLocation(); // store location *before* applying the UXRules (=> while the old sectionInfo with positionTop of sections is still available)
