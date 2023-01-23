@@ -28,7 +28,7 @@
 				{
 					pageId	: "customPageId",
 					title	: "John Doe",
-					icon	: "",
+					avatarSrc : "",
 					description: "Department Manager1",
 					groups: [
 						{
@@ -76,7 +76,7 @@
 				{
 					pageId	: "customPageId2",
 					header	: "Page 2",
-					icon	: "sap-icon://person-placeholder",
+					avatarSrc : "sap-icon://person-placeholder",
 					title	: "Michael Muller",
 					description: "Account Manager",
 					groups: [
@@ -117,7 +117,7 @@
 				{
 					pageId	: "customPageId3",
 					header	: "Page 3",
-					icon	: "sap-icon://person-placeholder",
+					avatarSrc : "sap-icon://person-placeholder",
 					title	: "Ivaylo Ivanov",
 					description: "Developer",
 					groups: [
@@ -158,7 +158,7 @@
 				{
 					pageId	: "customPageId4",
 					header	: "Company View",
-					icon	: "sap-icon://building",
+					avatarSrc : "sap-icon://building",
 					title	: "SAP AG",
 					description: "Run it simple",
 					groups: [
@@ -219,9 +219,11 @@
 				path : '/pages',
 				template : new sap.m.QuickViewPage({
 					pageId : "{pageId}",
-					icon: "{icon}",
 					title: "{title}",
 					description: "{description}",
+					avatar: new sap.m.Avatar({
+						src: "{avatarSrc}"
+					}),
 					groups : {
 						templateShareable: false,
 						path : 'groups',
@@ -254,9 +256,11 @@
 				path : '/pages',
 				template : new sap.m.QuickViewPage({
 					pageId : "{pageId}",
-					icon: "http://www.iconshock.com/img_jpg/SUNNYDAY/general/jpg/128/toy_icon.jpg",
 					title: "Title - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
 					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+					avatar: new sap.m.Avatar({
+						src: "http://www.iconshock.com/img_jpg/SUNNYDAY/general/jpg/128/toy_icon.jpg"
+					}),
 					groups : {
 						templateShareable: false,
 						path : 'groups',
@@ -290,7 +294,6 @@
 				path : '/pages',
 				template : new sap.m.QuickViewPage({
 					pageId : "{pageId}",
-					icon: "",
 					title: "Title - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
 					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
 					groups : {
@@ -325,7 +328,6 @@
 				path : '/pages',
 				template : new sap.m.QuickViewPage({
 					pageId : "{pageId}",
-					icon: "",
 					title: "Not so long title",
 					titleUrl: "https://www.sap.com",
 					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
@@ -361,7 +363,6 @@
 				path : '/pages',
 				template : new sap.m.QuickViewPage({
 					pageId : "{pageId}",
-					icon: "",
 					title: "Title - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
 					titleUrl: "https://www.sap.com",
 					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",

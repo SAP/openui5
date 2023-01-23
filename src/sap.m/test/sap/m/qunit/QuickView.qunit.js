@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/library",
 	"sap/m/App",
+	"sap/m/Avatar",
 	"sap/m/Page",
 	"sap/m/QuickView",
 	"sap/m/QuickViewPage",
@@ -19,6 +20,7 @@ sap.ui.define([
 	Core,
 	mobileLibrary,
 	App,
+	Avatar,
 	Page,
 	QuickView,
 	QuickViewPage,
@@ -43,7 +45,7 @@ sap.ui.define([
 				pageId: "customPageId",
 				header: "Employee Info",
 				title: "John Doe",
-				icon: "",
+				avatarSrc: "",
 				description: "Department Manager1",
 				groups: [
 					{
@@ -108,7 +110,7 @@ sap.ui.define([
 			{
 				pageId: "customPageId2",
 				header: "Page 2",
-				icon: "sap-icon://person-placeholder",
+				avatarSrc: "sap-icon://person-placeholder",
 				title: "Michael Muller",
 				description: "Account Manager",
 				groups: [
@@ -149,7 +151,7 @@ sap.ui.define([
 			{
 				pageId: "customPageId3",
 				header: "Page 3",
-				icon: "sap-icon://person-placeholder",
+				avatarSrc: "sap-icon://person-placeholder",
 				title: "Ivaylo Ivanov",
 				description: "Developer",
 				groups: [
@@ -190,7 +192,7 @@ sap.ui.define([
 			{
 				pageId: "customPageId4",
 				header: "Company View",
-				icon: "sap-icon://building",
+				avatarSrc: "sap-icon://building",
 				title: "SAP AG",
 				description: "Run it simple",
 				groups: [
@@ -251,7 +253,7 @@ sap.ui.define([
 				pageId: "genericPageId",
 				title: "Inventarisation",
 				titleUrl: "http://de.wikipedia.org/wiki/Inventarisation",
-				icon: "sap-icon://camera",
+				avatarSrc: "sap-icon://camera",
 				groups: [
 					{
 						elements: [
@@ -282,7 +284,7 @@ sap.ui.define([
 			{
 				pageId: "genericPageId",
 				title: "Inventarisation",
-				icon: "sap-icon://camera",
+				avatarSrc: "sap-icon://camera",
 				groups: [
 					{
 						elements: [
@@ -325,9 +327,11 @@ sap.ui.define([
 				template: new QuickViewPage({
 					pageId: "{pageId}",
 					header: "{header}",
-					icon: "{icon}",
 					title: "{title}",
 					description: "{description}",
+					avatar: new Avatar({
+						src: "{avatarSrc}"
+					}),
 					groups: {
 						path: 'groups',
 						template: new QuickViewGroup({
@@ -836,7 +840,7 @@ sap.ui.define([
 			pageId: "newPageId",
 			header: "New Page",
 			title: "Page",
-			icon: "",
+			avatarSrc: "",
 			description: "Department Manager1",
 			groups: [
 				{
@@ -879,7 +883,7 @@ sap.ui.define([
 			pageId: "newPageId",
 			header: "New Page",
 			title: "Page",
-			icon: "",
+			avatarSrc: "",
 			description: "Department Manager1",
 			groups: [
 				{

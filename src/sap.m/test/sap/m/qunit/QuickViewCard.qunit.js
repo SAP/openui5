@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/App",
 	"sap/m/Page",
+	"sap/m/Avatar",
 	"sap/m/QuickViewCard",
 	"sap/m/QuickViewPage",
 	"sap/m/QuickViewGroup",
@@ -15,6 +16,7 @@ sap.ui.define([
 	mobileLibrary,
 	App,
 	Page,
+	Avatar,
 	QuickViewCard,
 	QuickViewPage,
 	QuickViewGroup,
@@ -36,7 +38,7 @@ sap.ui.define([
 				pageId: "customPageId",
 				header: "Employee Info",
 				title: "John Doe",
-				icon: "sap-icon://building",
+				avatarSrc: "sap-icon://building",
 				description: "Department Manager1",
 				groups: [
 					{
@@ -90,7 +92,7 @@ sap.ui.define([
 			{
 				pageId: "customPageId2",
 				header: "Page 2",
-				icon: "sap-icon://person-placeholder",
+				avatarSrc: "sap-icon://person-placeholder",
 				title: "Michael Muller",
 				description: "Account Manager",
 				groups: [
@@ -131,7 +133,7 @@ sap.ui.define([
 			{
 				pageId: "customPageId3",
 				header: "Page 3",
-				icon: "sap-icon://person-placeholder",
+				avatarSrc: "sap-icon://person-placeholder",
 				title: "Ivaylo Ivanov",
 				description: "Developer",
 				groups: [
@@ -172,7 +174,7 @@ sap.ui.define([
 			{
 				pageId: "customPageId4",
 				header: "Company View",
-				icon: "sap-icon://building",
+				avatarSrc: "sap-icon://building",
 				title: "SAP AG",
 				description: "Run it simple",
 				groups: [
@@ -249,9 +251,11 @@ sap.ui.define([
 				template: new QuickViewPage({
 					pageId: "{pageId}",
 					header: "{header}",
-					icon: "{icon}",
 					title: "{title}",
 					description: "{description}",
+					avatar: new Avatar({
+						src: "{avatarSrc}"
+					}),
 					groups: {
 						path: 'groups',
 						template: new QuickViewGroup({
@@ -305,8 +309,9 @@ sap.ui.define([
 
 		assert.strictEqual(QVCardScrollContainer.children.length, 2, "ScrollContainer inside QuickViewCard contains header and SimpleForm");
 
+		this.oQuickViewCard.getPages()[0].destroyAvatar();
+
 		mData.pages[0].title = "";
-		mData.pages[0].icon = "";
 		mData.pages[0].description = "";
 
 		oModel.setData(mData);

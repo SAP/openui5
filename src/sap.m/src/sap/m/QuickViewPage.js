@@ -432,7 +432,7 @@ sap.ui.define([
 		var oAvatar = this._getAvatar(),
 			oVLayout = new VerticalLayout(),
 			oHLayout = new HorizontalLayout(),
-			sIcon = this.getIcon(),
+			sIcon = this.getIcon && this.getIcon(),
 			sTitle = this.getTitle(),
 			sDescription = this.getDescription(),
 			sTitleUrl = this.getTitleUrl();
@@ -695,14 +695,14 @@ sap.ui.define([
 
 	QuickViewPage.prototype._getAvatar = function () {
 		var oAvatar = null,
-			sIcon = this.getIcon();
+			sIcon = this.getIcon && this.getIcon();
 
 		if (this.getAvatar()) {
 			// Copy the values of properties directly, don't clone bindings,
 			// as this avatar and the whole NavContainer are not aggregated by the real QuickViewPage
 			oAvatar = this.getAvatar().clone(null, null, { cloneBindings: false, cloneChildren: true });
 			this._checkAvatarProperties(oAvatar);
-		} else if (sIcon) {
+		} else if (sIcon && this.getFallbackIcon) {
 			oAvatar = new Avatar({
 				displayShape: AvatarShape.Square,
 				fallbackIcon: this.getFallbackIcon(),
