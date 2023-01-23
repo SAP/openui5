@@ -1858,6 +1858,41 @@ sap.ui.define([
 		oDP.destroy();
 	});
 
+	QUnit.test("Click on arrow buttons doesn't call internal Calendar _updateHeadersButtons method", function(assert) {
+		//Prepare
+		var oDP = new DatePicker(),
+			sIconId = oDP.getId() + "-icon",
+			oUpdateSpy,
+			oCalendarHeader;
+
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		qutils.triggerEvent("click", sIconId);
+		sap.ui.getCore().applyChanges();
+
+		oUpdateSpy = this.spy(oDP._oCalendar, "_updateHeadersButtons");
+		oCalendarHeader = oDP._oCalendar.getAggregation("header");
+
+		qutils.triggerEvent("click", oCalendarHeader.getDomRef("prev").id);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(oUpdateSpy.notCalled, "_updateHeadersButtons method of the internal Calendar was not called when prev arrow was pressed");
+
+		//Act
+		qutils.triggerEvent("click", oCalendarHeader.getDomRef("next").id);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(oUpdateSpy.notCalled, "_updateHeadersButtons method of the internal Calendar was not called when next arrow was pressed");
+
+		//Cleanup
+		qutils.triggerEvent("click", sIconId);
+		oDP.destroy();
+	});
+
 	QUnit.module("ARIA");
 
 	QUnit.test("aria-ownes and aria-expanded correctly set", function(assert) {

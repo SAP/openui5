@@ -1608,7 +1608,7 @@ sap.ui.define([
 			}
 
 			oFocusedDate.setDate(oFocusedDate.getDate() - 1);
-			this._renderMonth(bSkipFocus, true);
+			this._renderMonth(bSkipFocus, true, false, true);
 			break;
 
 		case 1: // month picker
@@ -1894,7 +1894,9 @@ sap.ui.define([
 
 			// change month and year
 			this._updateHeader(oFirstDate);
-			this._updateHeadersButtons();
+			if (!bArrowNavigation) {
+				this._updateHeadersButtons();
+			}
 			this._setPrimaryHeaderMonthButtonText();
 			this._toggleTwoMonthsInTwoColumnsCSS();
 
