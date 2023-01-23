@@ -1423,12 +1423,13 @@ sap.ui.define([
 
 		//Act
 		HashChanger.getInstance().setHash("detail");
-		HashChanger.getInstance().setHash("fullScreen");
 
-		assert.strictEqual(oDetailRouteMatchedSpy.callCount, 1, "_routeMatched has been called");
-		assert.strictEqual(oFullScreenRouteMatchedSpy.callCount, 1, "_routeMatched has been called");
+		return oDetailRouteMatchedSpy.returnValues[0].then(function() {
+			HashChanger.getInstance().setHash("fullScreen");
 
-		return Promise.all([oDetailRouteMatchedSpy.returnValues[0], oFullScreenRouteMatchedSpy.returnValues[0]]).then(function() {
+			assert.strictEqual(oDetailRouteMatchedSpy.callCount, 1, "_routeMatched has been called");
+			return oFullScreenRouteMatchedSpy.returnValues[0];
+		}).then(function() {
 			//Assert
 			assert.strictEqual(oApp.getPages().length, 2, "splitContainer and navContainer are added to App");
 
