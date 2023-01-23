@@ -56,4 +56,16 @@ sap.ui.define([
         oButton.firePress();
 	});
 
+    QUnit.test("isBehindOtherElement returns 'false', if element is outside the visible viewport", function (assert) {
+        // Arrange
+        var oButton = new Button({ text: "My Button" });
+
+        // QUnit fixture is usually positioned outside of the visible viewport
+        oButton.placeAt("qunit-fixture");
+        oCore.applyChanges();
+
+        // Assert
+        assert.strictEqual(isBehindOtherElement(oButton.getDomRef()), false, "Button is outside the visible viewport");
+	});
+
 });
