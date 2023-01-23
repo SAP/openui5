@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/Device",
-	"sap/base/security/encodeXML"
-], function(Device, encode) {
+	"sap/base/security/encodeXML",
+	"sap/ui/thirdparty/jquery"
+], function(Device, encode, jQuery) {
 	"use strict";
 
 	var uriParams = new URLSearchParams(window.location.search);
