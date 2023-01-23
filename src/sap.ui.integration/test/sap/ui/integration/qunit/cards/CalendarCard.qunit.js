@@ -761,6 +761,14 @@ sap.ui.define([
 								"type": "Type06"
 							},
 							{
+								"start": "2019-12-01T23:00",
+								"end": "2019-12-01T23:00",
+								"title": "Appointment from JSON",
+								"text": "working",
+								"icon": "sap-icon://desktop-mobile",
+								"type": "Type05"
+							},
+							{
 								"start": oFormatter.format(new Date(2021, 10, 19), true),
 								"end": oFormatter.format(new Date(2021, 10, 22), true),
 								"title": "3 whole days",
@@ -1326,6 +1334,30 @@ sap.ui.define([
 
 				// assert
 				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "there is 1 visible appointment");
+
+				done();
+			}.bind(this));
+		});
+
+		QUnit.test("start of the day appointment is shown only in the 2nd day", function (assert) {
+			// arrange
+			var done = assert.async();
+			this.oCard.setManifest(oManifest_DateSelect);
+
+			this.oCard.attachEvent("_ready", function () {
+				// act
+				this.selectDate(new Date(2019, 11, 2));
+				var aVisibleItems20191202 = this.oCard.getAggregation("_content")._calculateVisibleAppointments(this.oCard.getAggregation("_content").getAggregation("appointments"), new Date(2019, 11, 2));
+
+				// assert
+				assert.strictEqual(aVisibleItems20191202.length, 1, "there is 1 visible appointment");
+
+				// act
+				this.selectDate(new Date(2019, 11, 1));
+				var aVisibleItems20191201 = this.oCard.getAggregation("_content")._calculateVisibleAppointments(this.oCard.getAggregation("_content").getAggregation("appointments"), new Date(2019, 11, 1));
+
+				// assert
+				assert.strictEqual(aVisibleItems20191201.length, 0, "there is 0 visible appointment");
 
 				done();
 			}.bind(this));
