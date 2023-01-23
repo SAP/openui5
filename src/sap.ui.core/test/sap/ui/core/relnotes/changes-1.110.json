@@ -3,6 +3,17 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "2b72282980de05103915ac9442a13d70015922ce",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: sorting grouped columns when autoExpandMode = \"Sequential\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380000530"
+          }
+        ]
+      },
+      {
         "id": "69f8804af52f1e293a077e04261029a64ae8d905",
         "type": "FEATURE",
         "text": " CLDR: Upgrade to version 41.0.0"
