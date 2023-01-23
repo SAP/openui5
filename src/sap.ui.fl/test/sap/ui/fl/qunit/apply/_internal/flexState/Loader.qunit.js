@@ -291,6 +291,51 @@ sap.ui.define([
 				}, "the dependent selector of the third change is correct");
 			});
 		});
+
+		QUnit.test("when loadFlexData is called with newer FlVariants", function (assert) {
+			var mPropertyBag = {
+				manifest: Object.assign({}, this.oManifest),
+				otherValue: "a",
+				reference: "reference",
+				componentData: {}
+			};
+			this.oFlexDataResponse.variants.push({
+				content: {},
+				texts: {
+					variantName: {
+						value: "myVariantName",
+						type: "XFLD"
+					}
+				}
+			});
+			this.oFlexDataResponse.variants.push({
+				content: {},
+				texts: {
+					variantName: {
+						value: "mySecondVariantName",
+						type: "XFLD"
+					}
+				}
+			});
+
+			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
+				var aVariants = oResult.changes.variants;
+				assert.strictEqual(oResult.changes.changes.length, 3, "three changes are loaded");
+				assert.strictEqual(aVariants.length, 2, "two variants are loaded");
+				assert.deepEqual(aVariants[0], {
+					content: {
+						title: "myVariantName"
+					},
+					texts: {}
+				}, "the variant was migrated");
+				assert.deepEqual(aVariants[1], {
+					content: {
+						title: "mySecondVariantName"
+					},
+					texts: {}
+				}, "the variant was migrated");
+			});
+		});
 	});
 
 	QUnit.module("partialFlexState", {

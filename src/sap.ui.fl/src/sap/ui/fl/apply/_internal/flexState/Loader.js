@@ -65,6 +65,23 @@ sap.ui.define([
 		return oManifest && !!ManifestUtils.getOvpEntry(oManifest);
 	}
 
+	// after a downgrade of the UI5 version there could be FlVariants created with a newer version.
+	// variants created with a newer version have the title in the texts section instead of the content
+	// to make the title translatable (starting with 1.105).
+	// But this will break the app start, so a migration is needed
+	function migrateNewerFlVariants(mFlexData) {
+		mFlexData.variants.forEach(function(oVariant) {
+			if (
+				!oVariant.content.title
+				&& oVariant.texts.variantName
+			) {
+				oVariant.content.title = oVariant.texts.variantName.value;
+				delete oVariant.texts.variantName;
+			}
+		});
+		return mFlexData;
+	}
+
 	function formatFlexData(mFlexData) {
 		// TODO: rename "changes" everywhere to avoid oResponse.changes.changes calls
 		return {
@@ -125,7 +142,10 @@ sap.ui.define([
 				appDescriptor: mPropertyBag.manifest.getRawJson ? mPropertyBag.manifest.getRawJson() : mPropertyBag.manifest,
 				version: mPropertyBag.version,
 				allContexts: mPropertyBag.allContexts
-			}).then(migrateSelectorFlags.bind(undefined, isMigrationNeeded(mPropertyBag.manifest))).then(formatFlexData);
+			})
+			.then(migrateSelectorFlags.bind(undefined, isMigrationNeeded(mPropertyBag.manifest)))
+			.then(migrateNewerFlVariants)
+			.then(formatFlexData);
 		}
 	};
 });

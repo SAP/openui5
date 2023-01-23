@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/initial/_internal/Storage",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Change",
@@ -27,6 +28,7 @@ sap.ui.define([
 	FlexState,
 	States,
 	InitialStorage,
+	StorageUtils,
 	WriteStorage,
 	Settings,
 	Change,
@@ -351,7 +353,7 @@ sap.ui.define([
 					content: {}
 				}];
 				sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
-				sandbox.stub(InitialStorage, "loadFlexData").resolves({
+				sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
 					changes: [],
 					comp: {
 						compVariants: [],
@@ -374,7 +376,7 @@ sap.ui.define([
 						standardVariants: [],
 						defaultVariants: []
 					}
-				});
+				}));
 
 				return FlexState.clearAndInitialize({
 					reference: sReference,
@@ -436,7 +438,7 @@ sap.ui.define([
 				};
 
 				sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
-				sandbox.stub(InitialStorage, "loadFlexData").resolves({
+				sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
 					changes: [],
 					comp: {
 						compVariants: [],
@@ -460,7 +462,7 @@ sap.ui.define([
 						standardVariants: [],
 						defaultVariants: []
 					}
-				});
+				}));
 
 				return FlexState.clearAndInitialize({
 					reference: sReference,
@@ -710,7 +712,7 @@ sap.ui.define([
 					return sPersistencyKey;
 				};
 				testData.propertyBag.control = oControl;
-				sandbox.stub(InitialStorage, "loadFlexData").resolves({
+				sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
 					changes: [],
 					comp: {
 						variants: [testData.mockedVariant],
@@ -719,7 +721,7 @@ sap.ui.define([
 						defaultVariants: []
 					},
 					settings: {}
-				});
+				}));
 
 				return FlexState.clearAndInitialize({
 					reference: sReference,
@@ -856,7 +858,7 @@ sap.ui.define([
 			oControl.getPersistencyKey = function() {
 				return sPersistencyKey;
 			};
-			sandbox.stub(InitialStorage, "loadFlexData").resolves({
+			sandbox.stub(InitialStorage, "loadFlexData").resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
 				changes: [],
 				comp: {
 					variants: [{
@@ -878,7 +880,7 @@ sap.ui.define([
 					standardVariants: [],
 					defaultVariants: []
 				}
-			});
+			}));
 
 			return FlexState.clearAndInitialize({
 				reference: sReference,

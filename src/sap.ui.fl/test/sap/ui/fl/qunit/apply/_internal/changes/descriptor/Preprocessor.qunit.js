@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/Storage",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
 	"sap/ui/fl/Layer",
@@ -18,6 +19,7 @@ function (
 	AddLibrary,
 	FlexState,
 	Storage,
+	StorageUtils,
 	LrepConnector,
 	StaticFileConnector,
 	Layer,
@@ -87,7 +89,7 @@ function (
 				}
 			];
 
-			this.fnStorageStub.resolves({ appDescriptorChanges: aChanges });
+			this.fnStorageStub.resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), { appDescriptorChanges: aChanges }));
 
 			return Preprocessor.preprocessManifest(this.oManifest, this.oConfig).then(function() {
 				assert.equal(this.fnFlexStateSpy.callCount, 1, "FlexState was initialized once");
@@ -117,7 +119,7 @@ function (
 				}
 			];
 
-			this.fnStorageStub.resolves({ appDescriptorChanges: aChanges });
+			this.fnStorageStub.resolves(Object.assign(StorageUtils.getEmptyFlexDataResponse(), { appDescriptorChanges: aChanges }));
 
 			return Preprocessor.preprocessManifest(this.oManifest, this.oConfig).then(function() {
 				assert.equal(this.fnFlexStateSpy.callCount, 1, "FlexState was initialized once");
