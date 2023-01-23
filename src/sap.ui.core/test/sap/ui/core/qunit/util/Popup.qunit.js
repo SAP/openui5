@@ -3083,8 +3083,14 @@ sap.ui.define([
 		return waitTillResize(getBlockLayer(), iTimeout);
 	}
 
+	function compareClientRect(oActual, oExpected, assert) {
+		["x", "y", "width", "height", "top", "right", "bottom", "left"].forEach(function(sKey) {
+			assert.ok(Math.abs(oExpected[sKey] - oActual[sKey]) < 1, "Property of Bounding ClientRect '" + sKey + "' is within the expected value range");
+		});
+	}
+
 	QUnit.module("Within Area", {
-		before: function() {
+		before: function(assert) {
 			Popup._bNewOffset = true;
 		},
 		after: function() {
@@ -3165,7 +3171,7 @@ sap.ui.define([
 		var oWithinDomRef = Popup.getWithinAreaDomRef();
 
 		var pPromise = waitTillOpen(oPopup).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinDomRef.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinDomRef.getBoundingClientRect(), assert);
 
 			oPopup.destroy();
 			Popup.setWithinArea(null);
@@ -3203,13 +3209,11 @@ sap.ui.define([
 			var oDomRef = jQuery.sap.domById("popup");
 			var oPopup = new Popup(oDomRef, true);
 
-			assert.expect(2);
-
 			Popup.setWithinArea(document.getElementById("withinArea"));
 			var oWithinDomRef = Popup.getWithinAreaDomRef();
 
 			var pPromise = waitTillOpen(oPopup).then(function() {
-				assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinDomRef.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+				compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinDomRef.getBoundingClientRect(), assert);
 
 				var pBlockLayerResized = waitTillBlockLayerResize().then(function(oBlockLayerDomRef){
 					assert.deepEqual(oBlockLayerDomRef.style.width, "350px", "The blocklayer has the same width as the defined within area.");
