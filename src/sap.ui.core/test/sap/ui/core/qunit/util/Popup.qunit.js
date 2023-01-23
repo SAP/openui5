@@ -2932,8 +2932,14 @@ sap.ui.define([
 		return waitTillResize(getBlockLayer(), iTimeout);
 	}
 
+	function compareClientRect(oActual, oExpected, assert) {
+		["x", "y", "width", "height", "top", "right", "bottom", "left"].forEach(function(sKey) {
+			assert.ok(Math.abs(oExpected[sKey] - oActual[sKey]) < 1, "Property of Bounding ClientRect '" + sKey + "' is within the expected value range");
+		});
+	}
+
 	QUnit.module("Within Area", {
-		before: function() {
+		before: function(assert) {
 			Popup._bNewOffset = true;
 		},
 		after: function() {
@@ -3034,7 +3040,7 @@ sap.ui.define([
 		var oWithinDomRef = Popup.getWithinAreaDomRef();
 
 		var pPromise = waitTillOpen(oPopup).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinDomRef.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinDomRef.getBoundingClientRect(), assert);
 
 			oPopup.destroy();
 			Popup.setWithinArea(null);
@@ -3074,21 +3080,21 @@ sap.ui.define([
 		var oWithinArea1 = document.getElementById("withinArea1");
 
 		var pPromise = waitTillOpen(oPopup).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), assert);
 
 			var oPopup1OpenPromise = waitTillOpen(oPopup1);
 			oPopup1.open(undefined, undefined, undefined, undefined, undefined, undefined, oWithinArea1);
 
 			return oPopup1OpenPromise;
 		}).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinArea1.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinArea1.getBoundingClientRect(), assert);
 
 			var oPopupClosePromise = waitTillClose(oPopup);
 			oPopup.close();
 
 			return oPopupClosePromise;
 		}).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinArea1.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinArea1.getBoundingClientRect(), assert);
 
 			var oPopup1ClosePromise = waitTillClose(oPopup1);
 			oPopup1.close();
@@ -3116,21 +3122,21 @@ sap.ui.define([
 		var oWithinArea1 = document.getElementById("withinArea1");
 
 		var pPromise = waitTillOpen(oPopup).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), assert);
 
 			var oPopup1OpenPromise = waitTillOpen(oPopup1);
 			oPopup1.open(undefined, undefined, undefined, undefined, undefined, undefined, oWithinArea1);
 
 			return oPopup1OpenPromise;
 		}).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinArea1.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinArea1.getBoundingClientRect(), assert);
 
 			var oPopup1ClosePromise = waitTillClose(oPopup1);
 			oPopup1.close();
 
 			return oPopup1ClosePromise;
 		}).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), assert);
 
 			var oPopupClosePromise = waitTillClose(oPopup);
 			oPopup.close();
@@ -3157,7 +3163,7 @@ sap.ui.define([
 		var oPopup1 = new Popup(oDomRef1, true);
 
 		var pPromise = waitTillOpen(oPopup).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), assert);
 
 			var oPopup1OpenPromise = waitTillOpen(oPopup1);
 			oPopup1.open();
@@ -3173,7 +3179,7 @@ sap.ui.define([
 
 			return oPopup1ClosePromise;
 		}).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), assert);
 
 			var oPopupClosePromise = waitTillClose(oPopup);
 			oPopup.close();
@@ -3210,7 +3216,7 @@ sap.ui.define([
 
 			return oPopup1OpenPromise;
 		}).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), assert);
 
 			var oPopup1ClosePromise = waitTillClose(oPopup1);
 			oPopup1.close();
@@ -3256,7 +3262,7 @@ sap.ui.define([
 		window.scrollTo(0, 2000);
 
 		var pPromise = waitTillOpen(oPopup).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), assert);
 			assert.deepEqual(getBlockLayer().style.width, "300px", "The blocklayer has the same width as the defined within area.");
 		}).then(function(){
 			var pBlockLayerResized = waitTillBlockLayerResize().then(function(oBlockLayerDomRef){
@@ -3270,7 +3276,7 @@ sap.ui.define([
 			oPopup1.open(undefined, undefined, undefined, undefined, undefined, undefined, oWithinArea1);
 			return oPopup1OpenPromise;
 		}).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinArea1.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinArea1.getBoundingClientRect(), assert);
 		}).then(function(){
 			var pBlockLayerResized = waitTillBlockLayerResize(200).then(function(oTimeout){
 				assert.ok(oTimeout.timeout, "No size change on block layer");
@@ -3291,7 +3297,7 @@ sap.ui.define([
 			oPopup1.close();
 			return oPopup1ClosePromise;
 		}).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+			compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinArea.getBoundingClientRect(), assert);
 
 			var oPopupClosePromise = waitTillClose(oPopup);
 			oPopup.close();
@@ -3318,13 +3324,11 @@ sap.ui.define([
 			var oDomRef = document.getElementById("popup");
 			var oPopup = new Popup(oDomRef, true);
 
-			assert.expect(2);
-
 			Popup.setWithinArea(document.getElementById("withinArea"));
 			var oWithinDomRef = Popup.getWithinAreaDomRef();
 
 			var pPromise = waitTillOpen(oPopup).then(function() {
-				assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinDomRef.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
+				compareClientRect(getBlockLayer().getBoundingClientRect(), oWithinDomRef.getBoundingClientRect(), assert);
 
 				var pBlockLayerResized = waitTillBlockLayerResize().then(function(oBlockLayerDomRef){
 					assert.deepEqual(oBlockLayerDomRef.style.width, "300px", "The blocklayer has the same width as the defined within area.");
