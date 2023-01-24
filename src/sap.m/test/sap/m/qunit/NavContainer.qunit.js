@@ -369,6 +369,47 @@ sap.ui.define([
 		this.nc.backToPage("page1a");
 	});
 
+	QUnit.test("navigationFinished is fired if the nav container is NOT rendered", function (assert) {
+		assert.expect(2);
+		// Arrange
+		var fnDone = assert.async(),
+			oSpy = this.spy(this.nc, "fireNavigationFinished");
+
+		// Assert
+		assert.notOk(this.nc.getDomRef(), "NavContainer is not rendered");
+
+		this.nc.attachNavigationFinished(function () {
+			// Assert
+			assert.ok(oSpy.called, "NavContainer was not rendered and the event was fired");
+			fnDone();
+		});
+
+		// Act
+		this.nc.to("page2a");
+	});
+
+	QUnit.test("navigationFinished is fired if the nav container is rendered", function (assert) {
+		assert.expect(2);
+		// Arrange
+		var fnDone = assert.async(),
+			oSpy = this.spy(this.nc, "fireNavigationFinished");
+
+		this.nc.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.nc.getDomRef(), "NavContainer is rendered");
+
+		this.nc.attachNavigationFinished(function () {
+			// Assert
+			assert.ok(oSpy.called, "NavContainer was rendered and the event was fired");
+			fnDone();
+		});
+
+		// Act
+		this.nc.to("page2a");
+	});
+
 	QUnit.module("Page change");
 
 	QUnit.test("to page 2", function(assert) {

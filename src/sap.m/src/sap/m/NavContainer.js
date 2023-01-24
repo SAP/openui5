@@ -184,6 +184,8 @@ sap.ui.define([
 				/**
 				 * The event is fired when navigation between two pages has completed (once all events to the child controls have been fired).
 				 * In case of animated transitions this event is fired with some delay after the "navigate" event.
+				 * This event is only fired if the DOM ref of the <code>NavContainer</code> is available.
+				 * If the DOM ref is not available, the <code>navigationFinished</code> event should be used instead.
 				 * @since 1.7.1
 				 */
 				afterNavigate: {
@@ -232,6 +234,67 @@ sap.ui.define([
 						/**
 						 * Whether this was a navigation to a specific page, triggered by "backToPage()".
 						 * @since 1.7.2
+						 */
+						isBackToPage: {type: "boolean"},
+
+						/**
+						 * How the navigation was triggered, possible values are "to", "back", "backToPage", and "backToTop".
+						 */
+						direction: {type: "string"}
+					}
+				},
+
+				/**
+				 * The event is fired when navigation between two pages has completed regardless of whether the DOM is ready or not.
+				 * This event is useful when performing navigation without/before rendering of the <code>NavContainer</code>.
+				 * Keep in mind that the DOM is not guaranteed to be ready when this event is fired.
+				 * @since 1.111.0
+				 */
+				navigationFinished: {
+					parameters: {
+
+						/**
+						 * The page which had been shown before navigation.
+						 */
+						from: {type: "sap.ui.core.Control"},
+
+						/**
+						 * The ID of the page which had been shown before navigation.
+						 */
+						fromId: {type: "string"},
+
+						/**
+						 * The page which is now shown after navigation.
+						 */
+						to: {type: "sap.ui.core.Control"},
+
+						/**
+						 * The ID of the page which is now shown after navigation.
+						 */
+						toId: {type: "string"},
+
+						/**
+						 * Whether the "to" page (more precisely: a control with the ID of the page which has been navigated to) had not been shown/navigated to before.
+						 */
+						firstTime: {type: "boolean"},
+
+						/**
+						 * Whether was a forward navigation, triggered by "to()".
+						 */
+						isTo: {type: "boolean"},
+
+						/**
+						 * Whether this was a back navigation, triggered by "back()".
+						 */
+						isBack: {type: "boolean"},
+
+						/**
+						 * Whether this was a navigation to the root page, triggered by "backToTop()".
+						 */
+						isBackToTop: {type: "boolean"},
+
+						/**
+						 * Whether this was a navigation to a specific page, triggered by "backToPage()".
 						 */
 						isBackToPage: {type: "boolean"},
 
@@ -575,6 +638,7 @@ sap.ui.define([
 			this._applyAutoFocus(oNavInfo);
 		}
 
+		this.fireNavigationFinished(oNavInfo);
 		this.fireAfterNavigate(oNavInfo);
 		this._dequeueNavigation();
 	};
@@ -800,7 +864,7 @@ sap.ui.define([
 
 				if (!this.getDomRef()) { // the wanted animation has been recorded, but when the NavContainer is not rendered, we cannot animate, so just return
 					Log.info("'Hidden' 'to' navigation in not-rendered NavContainer " + this.toString());
-
+					this.fireNavigationFinished(oNavInfo);
 					// BCP: 1680140633 - Firefox issue
 					if (this._bRenderingInProgress) {
 						setTimeout(this.invalidate.bind(this), 0);
