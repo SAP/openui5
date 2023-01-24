@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
@@ -17,7 +18,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (Log, ObjectPath, CalendarType, Configuration, Control, DateFormat, FormatException,
+], function (Log, ObjectPath, CalendarType, Configuration, Control, UI5Date, DateFormat, FormatException,
 	ParseException, ValidateException, JSONModel, DateTime, DateTimeBase, DateTimeOffset,
 	ODataType, TestUtils) {
 	/*global QUnit */
@@ -25,16 +26,16 @@ sap.ui.define([
 	"use strict";
 
 	var oDateOnly = new Date(Date.UTC(2014, 10, 27, 0, 0, 0, 0)),
-		oDateTime = new Date(2014, 10, 27, 13, 47, 26),
+		oDateTime = UI5Date.getInstance(2014, 10, 27, 13, 47, 26),
 		sDateTimeOffset = "2014-11-27T13:47:26" + getTimezoneOffset(oDateTime),
 		sDateTimeOffsetWithMS = "2014-11-27T13:47:26.456" + getTimezoneOffset(oDateTime),
 		sDateTimeOffsetYear0 = "0000-11-27T13:47:26" + getTimezoneOffset(oDateTime),
 		oDateTimeUTC = new Date(Date.UTC(2014, 10, 27, 13, 47, 26)),
-		oDateTimeWithMS = new Date(2014, 10, 27, 13, 47, 26, 456),
+		oDateTimeWithMS = UI5Date.getInstance(2014, 10, 27, 13, 47, 26, 456),
 		sFormattedDateOnly = "Nov 27, 2014",
 		sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
 //		sFormattedDateTimeWithMS = "Nov 27, 2014, 1:47:26.456 PM",
-		iFullYear = new Date().getFullYear(),
+		iFullYear = UI5Date.getInstance().getFullYear(),
 		oMessages = {
 			"EnterDateTime" : "EnterDateTime Dec 31, " + iFullYear + ", 11:59:58 PM",
 			"EnterDate" : "EnterDate Dec 31, " + iFullYear
@@ -99,7 +100,14 @@ sap.ui.define([
 	 * Tests that the given value leads to a ParseException.
 	 */
 	function parseError(assert, oType, oValue, sExpectedErrorKey, sReason) {
+		var oUI5DateMock = this.mock(UI5Date);
+
 		TestUtils.withNormalizedMessages(function () {
+			oUI5DateMock.expects("getInstance").withExactArgs().callThrough();
+			if (sExpectedErrorKey === "EnterDateTime") {
+				oUI5DateMock.expects("getInstance").withExactArgs(iFullYear, 11, 31, 23, 59, 58).callThrough();
+			}
+
 			try {
 				oType.parseValue(oValue, "string");
 				assert.ok(false);
@@ -108,6 +116,8 @@ sap.ui.define([
 				assert.strictEqual(e.message, oMessages[sExpectedErrorKey], sReason + ": message");
 			}
 		});
+
+		oUI5DateMock.restore();
 	}
 
 	/*
@@ -129,7 +139,7 @@ sap.ui.define([
 	 * Tests the validation for a DateTime with the given constraints.
 	 */
 	function validate(assert, sTypeName, oConstraints, sExpectedErrorKey) {
-		var oDate = new Date(),
+		var oDate = UI5Date.getInstance(),
 			oType = createInstance(sTypeName, undefined, oConstraints);
 
 		oType.validateValue(null);
@@ -149,7 +159,7 @@ sap.ui.define([
 		});
 		oDate.setFullYear(0);
 		validateError(assert, oType, oDate, sExpectedErrorKey, "year 0");
-		oType.validateValue(new Date());
+		oType.validateValue(UI5Date.getInstance());
 	}
 
 	/*
@@ -242,8 +252,8 @@ sap.ui.define([
 				}
 			});
 
-			parseError(assert, oType, "foo", "EnterDateTime", "not a date");
-			parseError(assert, oType, "Feb 28, 2014, 11:69:30 AM", "EnterDateTime",
+			parseError.call(this, assert, oType, "foo", "EnterDateTime", "not a date");
+			parseError.call(this, assert, oType, "Feb 28, 2014, 11:69:30 AM", "EnterDateTime",
 				"invalid time");
 
 			this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
@@ -404,7 +414,7 @@ sap.ui.define([
 			"target type string");
 		assert.deepEqual(oType.parseValue(sFormattedDateOnly, "string"), oDateOnly);
 
-		parseError(assert, oType, "Feb 30, 2014", "EnterDate", "invalid date");
+		parseError.call(this, assert, oType, "Feb 30, 2014", "EnterDate", "invalid date");
 	});
 
 	//*********************************************************************************************
@@ -548,8 +558,10 @@ sap.ui.define([
 	QUnit.test("V4: formatValue", function (assert) {
 		var oDateTimeOffset = new DateTimeOffset();
 
-		assert.deepEqual(oDateTimeOffset.formatValue(oDateTimeUTC, "object"),
-			oDateTime, "JS date-object can be formatted");
+		this.mock(UI5Date).expects("getInstance").withExactArgs(2014, 10, 27, 13, 47, 26).returns("~newDate");
+
+		assert.deepEqual(oDateTimeOffset.formatValue(oDateTimeUTC, "object"), "~newDate",
+			"JS date-object can be formatted");
 		assert.deepEqual(oDateTimeOffset.formatValue("foo", "object"), null);
 		assert.deepEqual(oDateTimeOffset.formatValue(undefined, "object"), null);
 		assert.deepEqual(oDateTimeOffset.formatValue(null, "object"), null);

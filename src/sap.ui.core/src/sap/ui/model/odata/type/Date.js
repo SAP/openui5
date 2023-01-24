@@ -6,17 +6,17 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/extend",
 	"sap/ui/core/CalendarType",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/ODataType"
-], function (Log, extend, CalendarType, DateFormat, FormatException, ParseException,
+], function (Log, extend, CalendarType, UI5Date, DateFormat, FormatException, ParseException,
 		ValidateException, ODataType) {
 	"use strict";
 
 	var rDate = /\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])/,
-		oDemoDate = new Date().getFullYear() + "-12-31",
 		oModelFormatter;
 
 	/**
@@ -28,8 +28,10 @@ sap.ui.define([
 	 *   the locale-dependent error message
 	 */
 	function getErrorMessage(oType) {
+		var sDemoDate = UI5Date.getInstance().getFullYear() + "-12-31";
+
 		return sap.ui.getCore().getLibraryResourceBundle().getText("EnterDate",
-			[oType.formatValue(oDemoDate, "string")]);
+			[oType.formatValue(sDemoDate, "string")]);
 	}
 
 	/**
@@ -148,10 +150,10 @@ sap.ui.define([
 	 *   the target type; may be "any", "object" (since 1.69.0), "string", or a type with one of
 	 *   these types as its {@link sap.ui.base.DataType#getPrimitiveType primitive type}; see
 	 *   {@link sap.ui.model.odata.type} for more information.
-	 * @returns {string|Date}
+	 * @returns {string|Date|module:sap/ui/core/date/UI5Date}
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   are formatted to <code>null</code>; <code>Date</code> objects are returned for target type
-	 *   "object" and represent the given date with time "00:00:00" in local time
+	 *   "object" and represent the given date with time "00:00:00" in the configured time zone
 	 * @throws {sap.ui.model.FormatException}
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
@@ -167,7 +169,7 @@ sap.ui.define([
 				return vValue;
 			case "object":
 				return vValue instanceof Date
-					? new Date(vValue.getUTCFullYear(), vValue.getUTCMonth(), vValue.getUTCDate())
+					? UI5Date.getInstance(vValue.getUTCFullYear(), vValue.getUTCMonth(), vValue.getUTCDate())
 					: getModelFormatter().parse(vValue, false);
 			case "string":
 				oDate = vValue instanceof Date ? vValue : getModelFormatter().parse(vValue);

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/test/TestUtils"
-], function (Log, CalendarType, Configuration, Control, DateFormat, FormatException,
+], function (Log, CalendarType, Configuration, Control, UI5Date, DateFormat, FormatException,
 		ParseException, ValidateException, ODataType, TimeOfDay, TestUtils) {
 	/*global QUnit */
 	"use strict";
@@ -171,8 +172,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("formatValue success", function (assert) {
-		var oDate = new Date(1970, 0, 1, 2, 53, 49),
-			oDateWithMS = new Date(1970, 0, 1, 13, 53, 49),
+		var oDate = UI5Date.getInstance(1970, 0, 1, 2, 53, 49),
+			oDateWithMS = UI5Date.getInstance(1970, 0, 1, 13, 53, 49),
 			oType = new TimeOfDay(undefined, {precision : 7}),
 			sValue = "13:53:49.1234567";
 
@@ -190,6 +191,16 @@ sap.ui.define([
 		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
 			.returns("string");
 		assert.strictEqual(oType.formatValue(sValue, "sap.ui.core.CSSSize"), "1:53:49 PM");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("formatValue uses UI5Date", function (assert) {
+		var oType = new TimeOfDay();
+
+		this.mock(UI5Date).expects("getInstance").withExactArgs(1970, 0, 1, 2, 53, 49).returns("~ui5Date");
+
+		// code under test
+		assert.deepEqual(oType.formatValue("02:53:49", "object"), "~ui5Date");
 	});
 
 	//*********************************************************************************************

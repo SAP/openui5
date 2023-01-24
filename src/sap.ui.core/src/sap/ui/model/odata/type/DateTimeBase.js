@@ -5,18 +5,15 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/extend",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/ODataType"
-], function (Log, extend, DateFormat, FormatException, ParseException, ValidateException,
+], function (Log, extend, UI5Date, DateFormat, FormatException, ParseException, ValidateException,
 		ODataType) {
 	"use strict";
-
-	var iFullYear = new Date().getFullYear(),
-		oDemoDate = new Date(Date.UTC(iFullYear, 11, 31)), // UTC
-		oDemoDateTime = new Date(iFullYear, 11, 31, 23, 59, 58); // local time
 
 	/*
 	 * Returns true if the type uses only the date.
@@ -37,9 +34,14 @@ sap.ui.define([
 	 *   The locale-dependent error message
 	 */
 	function getErrorMessage(oType) {
-		return sap.ui.getCore().getLibraryResourceBundle().getText(
-			isDateOnly(oType) ? "EnterDate" : "EnterDateTime",
-				[oType.formatValue(isDateOnly(oType) ? oDemoDate : oDemoDateTime, "string")]);
+		var iFullYear = UI5Date.getInstance().getFullYear(),
+			oDate = isDateOnly(oType)
+				? new Date(Date.UTC(iFullYear, 11, 31)) // UTC
+				: UI5Date.getInstance(iFullYear, 11, 31, 23, 59, 58), // configured time zone
+			sText = isDateOnly(oType) ? "EnterDate" : "EnterDateTime",
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle();
+
+		return oResourceBundle.getText(sText, [oType.formatValue(oDate, "string")]);
 	}
 
 	/*
@@ -154,7 +156,7 @@ sap.ui.define([
 	 *   The target type, may be "any", "object" (since 1.69.0), "string", or a type with one of
 	 *   these types as its {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
-	 * @returns {Date|string}
+	 * @returns {Date|module:sap/ui/core/date/UI5Date|string}
 	 *   The formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   are formatted to <code>null</code>
 	 * @throws {sap.ui.model.FormatException}
@@ -194,7 +196,7 @@ sap.ui.define([
 	 *   "object" (since 1.69.0), "string", or a type with one of these types as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}.
 	 *   See {@link sap.ui.model.odata.type} for more information.
-	 * @returns {Date|string}
+	 * @returns {Date|module:sap/ui/core/date/UI5Date|string}
 	 *   The parsed value
 	 * @throws {sap.ui.model.ParseException}
 	 *   If <code>sSourceType</code> is not supported or if the given string cannot be parsed to a
