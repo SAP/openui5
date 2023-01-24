@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/LREPSerializer",
@@ -22,6 +23,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
 	Layer,
+	Settings,
 	Version,
 	CommandFactory,
 	CommandSerializer,
@@ -90,6 +92,18 @@ sap.ui.define([
 				this.oSerializer = new CommandSerializer({
 					commandStack: this.oCommandStack,
 					rootControl: this.oPanel
+				});
+
+				sandbox.stub(Settings, "getInstanceOrUndef").returns({
+					isKeyUser: function () {
+						return true;
+					},
+					isCondensingEnabled: function () {
+						return false;
+					},
+					hasPersoConnector: function() {
+						return false;
+					}
 				});
 			}.bind(this));
 		},
