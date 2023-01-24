@@ -223,9 +223,8 @@ sap.ui.define([
 				forwarding: {
 					getter: "_getPlanningCalendarCustomRowHeader",
 					aggregation: "content"
-				},
-				forwardBinding: true
 				}
+			}
 
 		},
 		events : {
