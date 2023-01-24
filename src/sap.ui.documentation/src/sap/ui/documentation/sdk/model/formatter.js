@@ -7,8 +7,10 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/base/util/merge",
 	"sap/ui/documentation/sdk/controller/util/JSDocUtil",
+	"sap/base/security/sanitizeHTML",
+	"sap/ui/documentation/sdk/controller/util/URLUtil",
 	"sap/base/strings/formatMessage"
-], function (BaseObject, merge, JSDocUtil,  formatMessage) {
+], function (BaseObject, merge, JSDocUtil, sanitizeHTML, URLUtil, formatMessage) {
 	"use strict";
 
 	// regexp for an extra route parameter in the format: a single 'p' letter followed by a digit
@@ -277,6 +279,24 @@ sap.ui.define([
 		formatImportantMessage: function (sMsg, sParam) {
 			var sParam = this._getUI5Distribution();
 			return formatMessage(sMsg, sParam);
+		},
+
+		//Formatter for links, coming from api.json text in static documentation format
+		formatMessageStripLinks: function (sText) {
+			var bStatic = window['sap-ui-documentation-static'];
+
+			if (sText) {
+
+				sText = sanitizeHTML(sText, {
+					uriRewriter: function(sUrl) {
+						if (bStatic && URLUtil.hasSEOOptimizedFormat("/" + sUrl)) {
+							sUrl = URLUtil.convertToNonSEOFormat(sUrl).replace(/^\//, "");
+						}
+						return sUrl;
+					}
+				});
+			}
+			return sText;
 		},
 
 		/**
