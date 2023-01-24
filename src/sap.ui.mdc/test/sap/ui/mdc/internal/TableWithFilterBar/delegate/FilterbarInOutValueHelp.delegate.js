@@ -2,14 +2,19 @@
  * ${copyright}
  */
 
+/*eslint max-nested-callbacks: [2, 20]*/
+
 sap.ui.define([
 	"./ValueHelp.delegate",
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/ui/mdc/condition/Condition',
+	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/util/IdentifierUtil',
+	'sap/ui/model/ParseException',
 	'sap/ui/core/Core'
 ], function(
-	BaseValueHelpDelegate, StateUtil, Condition, ConditionValidated, Core
+	BaseValueHelpDelegate, StateUtil, Condition, FilterOperatorUtil, ConditionValidated, IdentifierUtil, ParseException, Core
 ) {
 	"use strict";
 
@@ -22,8 +27,8 @@ sap.ui.define([
 		var oConditions = BaseValueHelpDelegate.getInitialFilterConditions(oPayload, oContent);
 
 		var oFilterField = oControl;
-		var oFilterBar = oFilterField.getParent();
-		if (oFilterBar.isA("sap.ui.mdc.filterbar.FilterBarBase")) {
+		var oFilterBar = oFilterField && oFilterField.getParent();
+		if (oFilterBar && oFilterBar.isA("sap.ui.mdc.filterbar.FilterBarBase")) {
 
 			return StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
 				var oInConditions = {};
@@ -87,20 +92,49 @@ sap.ui.define([
 					var sTarget = oOutParameter.target;
 					var aAllOutValues = mAllOutValues[oOutParameter.target];
 
-					aAllOutValues.forEach(function(sValue) {
-						var bExists = oState.filter && oState.filter[sTarget] && oState.filter[sTarget].find(function (oCondition) {
-							return oCondition.values[0] === sValue;
-						});
-						var bAlways = oOutParameter.mode === "Always";
-						if (!bExists || bAlways) {
-							var oNewCondition = Condition.createCondition("EQ", [sValue], undefined, undefined, ConditionValidated.Validated);
-							oState.filter[sTarget] = oState.filter && oState.filter[sTarget] || [];
-							oState.filter[sTarget].push(oNewCondition);
+					aAllOutValues.forEach(function(vValue) {
+						var aFilters = oState.filter && oState.filter[sTarget] ? oState.filter[sTarget] : [];
+						if (oOutParameter.mode !== "WhenEmpty" || aFilters.length === 0) {
+							var oView = IdentifierUtil.getView(oValueHelp);
+							var oOutValueHelp = oOutParameter.valueHelpId && oView.byId(oOutParameter.valueHelpId);
+							var oOutFilterField = oFilterBar._getFilterField(oOutParameter.target);
+							var oNewCondition;
+
+							if (oOutValueHelp) {
+								// valueHelpId provided to determine description and payload for out-parameter
+								var oConfig = {
+									value: vValue,
+									parsedValue: vValue,
+									// dataType: oType,
+									checkKey: true,
+									checkDescription: false,
+									exception: ParseException,
+									control: oOutFilterField
+								};
+								oNewCondition = oOutValueHelp.getItemForValue(oConfig).then(function(oItem) { // if this is an In-Parameter for another this update would need to wait until this one
+									oNewCondition = Condition.createCondition("EQ", [oItem.key], undefined, undefined, ConditionValidated.Validated, oItem.payload);
+									if (oItem.description) {
+										oNewCondition.values.push(oItem.description);
+									}
+									return oNewCondition;
+								}).catch(function(oError) { // if not found just use the given Out-value
+									return Condition.createCondition("EQ", [vValue], undefined, undefined, ConditionValidated.Validated, {});
+								});
+							} else {
+								oNewCondition = Condition.createCondition("EQ", [vValue], undefined, undefined, ConditionValidated.Validated, {});
+							}
+							Promise.all([oNewCondition]).then(function(aResult) {
+								var oNewCondition = aResult[0];
+								var iIndex = FilterOperatorUtil.indexOfCondition(oNewCondition, aFilters); // check if already exist
+								if (iIndex < 0) {
+									oState.filter[sTarget] = oState.filter && oState.filter[sTarget] || [];
+									oState.filter[sTarget].push(oNewCondition);
+								}
+								StateUtil.applyExternalState(oFilterBar, oState);
+							});
 						}
 					});
 				});
-
-				StateUtil.applyExternalState(oFilterBar, oState);
 			});
 		}
 
