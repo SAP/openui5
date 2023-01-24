@@ -751,7 +751,11 @@ sap.ui.define([
 
 	QUnit.module("Events", {
 		beforeEach: function () {
-			this.oColumnMenu = new Menu();
+			this.oColumnMenu = new Menu({
+				items: new ActionItem({
+					label: "Test"
+				})
+			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -779,6 +783,36 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton.getDomRef());
 		assert.ok(this.oColumnMenu.isOpen(), "The column menu is already open");
 		assert.ok(!oOpenSpy.called, "Popover.openBy is not called");
+	});
+
+	QUnit.test("ActionItem press", function(assert) {
+		var clock = sinon.useFakeTimers();
+		assert.expect(4);
+
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu.isOpen(), "The column menu is open");
+
+		var sId = this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[0].getId();
+		QUnitUtils.triggerEvent("mousedown", sId);
+		QUnitUtils.triggerEvent("mouseup", sId);
+		QUnitUtils.triggerEvent("click", sId);
+
+		clock.tick(1000);
+		assert.notOk(this.oColumnMenu.isOpen(), "When ActionItem is pressed, the column menu closes");
+
+		this.oColumnMenu._getAllEffectiveItems()[0].attachPress(function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu.isOpen(), "The column menu is open");
+
+		QUnitUtils.triggerEvent("mousedown", sId);
+		QUnitUtils.triggerEvent("mouseup", sId);
+		QUnitUtils.triggerEvent("click", sId);
+
+		clock.tick(1000);
+		assert.ok(this.oColumnMenu.isOpen(), "The column menu is still open because preventDefault was called in the event handler");
 	});
 
 	QUnit.module("Auto close behavior", {

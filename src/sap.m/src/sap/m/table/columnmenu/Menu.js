@@ -90,6 +90,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.m",
 			interfaces: ["sap.ui.core.IColumnHeaderMenu"],
+			defaultAggregation: "quickActions",
 			aggregations: {
 				/**
 				 * Defines the quick actions of the column menu.

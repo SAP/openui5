@@ -58,6 +58,7 @@ sap.ui.define([
 				 */
 				showCancelButton: {type: "boolean", defaultValue: true}
 			},
+			defaultAggregation : "content",
 			aggregations: {
 				/**
 				 * Defines the content that is shown when navigating to the item.

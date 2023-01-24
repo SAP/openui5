@@ -25,6 +25,15 @@
 					<m:OverflowToolbar style="Clear">
 						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
+						<m:Label
+							text="Use headerMenu association:"
+							labelFor="switchHeaderMenu" />
+						<m:Switch
+							id="switchHeaderMenu"
+							state="false"
+							customTextOn="Yes"
+							customTextOff="No"
+							change="onSwitchHeaderMenu"/>
 						<m:ToggleButton
 							icon="sap-icon://show"
 							tooltip="Enable / Disable Visibility Menu Entries"

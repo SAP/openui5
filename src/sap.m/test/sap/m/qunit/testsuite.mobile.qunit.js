@@ -1556,6 +1556,13 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			"table.columnmenu.ActionItem": {
+				title: "Test Page for sap.m.table.columnmenu.ActionItem",
+				module: "test-resources/sap/m/qunit/table/columnmenu/ActionItem.qunit",
+				paths: {
+					resourceroot: "test-resources/sap/m/qunit/table/columnmenu"
+				}
+			},
 			"table.columnmenu.Entry": {
 				title: "Test Page for sap.m.table.columnmenu.Entry",
 				module: "test-resources/sap/m/qunit/table/columnmenu/Entry.qunit",
