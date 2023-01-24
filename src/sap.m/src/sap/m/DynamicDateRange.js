@@ -402,14 +402,19 @@ sap.ui.define([
 			this._oInput.setValueState(this.getValueState());
 			this._oInput.setValueStateText(this.getValueStateText());
 
-			this.setValue(this._substitudeMissingValue(this.getValue()));
+			this.setValue(this._substituteMissingValue(this.getValue()));
 		};
 
+		/**
+		 * Setter for the <code>value</code> control property.
+		 * @param {sap.m.DynamicDateRangeValue} oValue A <code>sap.m.DynamicDateRangeValue</code>
+		 * @returns {this} Reference to <code>this</code> for method chaining
+		 */
 		DynamicDateRange.prototype.setValue = function(oValue) {
 			var sOptionKey = oValue && oValue.operator;
 
-			// substutude the semantically equivalent values
-			oValue = this._substitudeValue(oValue);
+			// substitute the semantically equivalent values
+			oValue = this._substituteValue(oValue);
 
 			this.setProperty("value", oValue);
 			this._oSelectedOption = DynamicDateUtil.getOption(sOptionKey);
@@ -703,7 +708,7 @@ sap.ui.define([
 
 		/**
 		 * Checks if the <code>value</code> property operator corresponds to a date range.
-		 * @param {object} oValue The control value
+		 * @param {sap.m.DynamicDateRangeValue} oValue A <code>sap.m.DynamicDateRangeValue</code>
 		 * @returns {boolean} True in case of a date range
 		 * @private
 		 */
@@ -713,7 +718,7 @@ sap.ui.define([
 
 		/**
 		 * Swaps the start and end date of the value if the start date is after the end date.
-		 * @param {array} aValues The control value array
+		 * @param {Array<Date>} aValues An array of JS Dates
 		 * @private
 		 */
 		DynamicDateRange.prototype._swapDates = function(aValues) {
@@ -1336,7 +1341,7 @@ sap.ui.define([
 		 * @private
 		 * @returns {object} A substituted value if needed, or the same value if not
 		 */
-		DynamicDateRange.prototype._substitudeValue = function(oValue) {
+		DynamicDateRange.prototype._substituteValue = function(oValue) {
 			var sKey, aParams, oNewValue;
 
 			if (!oValue || !oValue.operator || !oValue.values) {
@@ -1388,7 +1393,7 @@ sap.ui.define([
 		 * @private
 		 * @returns {object} A substituted value if needed, or the same value if not
 		 */
-		DynamicDateRange.prototype._substitudeMissingValue = function(oValue) {
+		DynamicDateRange.prototype._substituteMissingValue = function(oValue) {
 			var oNewValue = oValue;
 
 			if (oValue  && oValue.operator === "YESTERDAY" && !this.getOptions().includes("YESTERDAY") && this.getOptions().includes("LASTDAYS")) {

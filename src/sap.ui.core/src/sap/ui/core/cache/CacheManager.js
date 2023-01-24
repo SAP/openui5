@@ -142,7 +142,7 @@ sap.ui.define([
 
 			/**
 			 * Retrieves a value for given key.
-			 * @param key the key to retrieve a value for
+			 * @param {string|number} key the key to retrieve a value for
 			 * @returns {Promise<any|undefined>} a promise that would be resolved in case of successful operation or rejected with
 			 * value of the error message if the operation fails. It resolves with a value that is either:
 			 * <ul>
