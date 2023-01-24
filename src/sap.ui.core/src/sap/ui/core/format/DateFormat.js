@@ -2762,7 +2762,7 @@ sap.ui.define([
 	 * @param {string} sValue the string containing a formatted date/time value
 	 * @param {boolean} [bUTC] whether to use UTC
 	 * @param {boolean} [bStrict] whether to use strict value check
-	 * @return {Date|Date[]} the parsed value(s)
+	 * @return {Date|Date[]|module:sap/ui/core/date/UI5Date|module:sap/ui/core/date/UI5Date[]} the parsed value(s)
 	 * @public
 	 */
 	DateFormat.prototype.parse = function(sValue, bUTC, bStrict) {
