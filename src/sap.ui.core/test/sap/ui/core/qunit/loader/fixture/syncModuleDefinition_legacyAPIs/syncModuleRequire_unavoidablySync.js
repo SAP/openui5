@@ -5,4 +5,4 @@ sap.ui.loader.config({
 		"fixture": "./fixture"
 	}
 });
-sap.ui.requireSync("fixture/syncModuleDefinition/moduleDefinition");
+sap.ui.requireSync("fixture/syncModuleDefinition_legacyAPIs/moduleDefinition");
