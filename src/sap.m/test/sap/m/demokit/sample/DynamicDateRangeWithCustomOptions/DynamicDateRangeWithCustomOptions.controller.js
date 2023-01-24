@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/ui/model/FilterType',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/DynamicDateUtil',
+	'sap/m/DynamicDateRange',
 	'sap/m/DynamicDateValueHelpUIType',
 	'sap/m/StepInput',
 	'sap/m/Label',
@@ -23,6 +24,7 @@ sap.ui.define([
 	FilterType,
 	JSONModel,
 	DynamicDateUtil,
+	DynamicDateRange,
 	DynamicDateValueHelpUIType,
 	StepInput,
 	Label,
@@ -306,7 +308,7 @@ sap.ui.define([
 
 		_createFilter: function(oValue) {
 			if (oValue) {
-				var aDates = DynamicDateUtil.toDates(oValue);
+				var aDates = DynamicDateRange.toDates(oValue);
 				if (oValue.operator === "FROM" || oValue.operator === "FROMDATETIME") {
 					return new Filter("PerfomDateTime", FilterOperator.GT, aDates[0]);
 				} else if (oValue.operator === "TO" || oValue.operator === "TODATETIME") {

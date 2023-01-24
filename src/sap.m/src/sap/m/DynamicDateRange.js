@@ -1410,6 +1410,24 @@ sap.ui.define([
 			return this._getFormatter()._checkFormatterUTCTimezone(oValue.operator);
 		};
 
+		/**
+		 * Returns a date range from a provided object in the format of the DynamicDateRange's value.
+		 *
+		 * @param {object} oValue The provided value
+		 * @returns {Date[]} An array of two date objects - start and end date
+		 * @static
+		 * @public
+		 */
+		DynamicDateRange.toDates = function(oValue) {
+			return DynamicDateUtil.toDates(oValue).map(function (oDate) {
+				if (oDate instanceof Date) {
+					return oDate;
+				}
+
+				return oDate.getJSDate();
+			});
+		};
+
 		var DynamicDateRangeInputRenderer = Renderer.extend(InputRenderer);
 
 		DynamicDateRangeInputRenderer.apiVersion = 2;
