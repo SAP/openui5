@@ -194,9 +194,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("formatValue uses UI5Date", function (assert) {
-		var oType = new TimeOfDay();
+	QUnit.test("formatValue uses UI5Date", function (assert) {
+		var oDate = new Date(Date.UTC(2022, 3, 4, 2, 53, 49)),
+			oModelFormat = {parse : function () {}},
+			oType = new TimeOfDay();
 
+		this.mock(oType).expects("getModelFormat").withExactArgs().returns(oModelFormat);
+		this.mock(oModelFormat).expects("parse").withExactArgs("02:53:49").returns(oDate);
 		this.mock(UI5Date).expects("getInstance").withExactArgs(1970, 0, 1, 2, 53, 49).returns("~ui5Date");
 
 		// code under test

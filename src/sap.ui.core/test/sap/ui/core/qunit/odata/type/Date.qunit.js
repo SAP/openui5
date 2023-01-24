@@ -28,14 +28,9 @@ sap.ui.define([
 	 *   parseValue to check for a parse exception
 	 */
 	function checkError(assert, oType, oValue, sReason, sAction) {
-		var oUI5DateMock = this.mock(UI5Date);
+		var fnExpectedException;
 
 		TestUtils.withNormalizedMessages(function () {
-			var fnExpectedException,
-				iYear = UI5Date.getInstance().getFullYear();
-
-			oUI5DateMock.expects("getInstance").withExactArgs().callThrough();
-
 			try {
 				if (sAction === "parseValue") {
 					fnExpectedException = ParseException;
@@ -47,12 +42,10 @@ sap.ui.define([
 				assert.ok(false);
 			} catch (e) {
 				assert.ok(e instanceof fnExpectedException, sReason + ": exception");
-				assert.strictEqual(e.message, "EnterDate Dec 31, " + iYear,
+				assert.strictEqual(e.message, "EnterDate Dec 31, " + UI5Date.getInstance().getFullYear(),
 					sReason + ": message");
 			}
 		});
-
-		oUI5DateMock.restore();
 	}
 
 	//*********************************************************************************************
@@ -209,7 +202,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("parse value", function (assert) {
+	QUnit.test("parse value", function (assert) {
 		var oType = new DateType();
 
 		assert.strictEqual(oType.parseValue(null, "foo"), null, "null is always accepted");
@@ -229,8 +222,8 @@ sap.ui.define([
 			}
 		});
 
-		checkError.call(this, assert, oType, "foo", "not a date", "parseValue");
-		checkError.call(this, assert, oType, "Feb 29, 2015", "invalid date", "parseValue");
+		checkError(assert, oType, "foo", "not a date", "parseValue");
+		checkError(assert, oType, "Feb 29, 2015", "invalid date", "parseValue");
 
 		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
 			.returns("string");
@@ -238,7 +231,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("validate Date", function (assert) {
+	QUnit.test("validate Date", function (assert) {
 		var oConstraints = {},
 			oType = new DateType();
 
@@ -247,7 +240,7 @@ sap.ui.define([
 		oConstraints.nullable = false;
 		oType = new DateType({}, oConstraints);
 
-		checkError.call(this, assert, oType, null, "nullable: false", "validateValue");
+		checkError(assert, oType, null, "nullable: false", "validateValue");
 
 		try {
 			oType.validateValue("foo");
@@ -330,5 +323,20 @@ sap.ui.define([
 		DateType._resetModelFormatter();
 
 		assert.notStrictEqual(oFormat, oType.getModelFormat());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getErrorMessage", function (assert) {
+		var oDate = {getFullYear : function () {}},
+			oType = new DateType();
+
+		this.mock(UI5Date).expects("getInstance").withExactArgs().returns(oDate);
+		this.mock(oDate).expects("getFullYear").withExactArgs().returns(2022);
+		this.mock(oType).expects("formatValue").withExactArgs("2022-12-31", "string").returns("~formattedDate");
+
+		TestUtils.withNormalizedMessages(function () {
+			// code under test
+			assert.strictEqual(oType._getErrorMessage(), "EnterDate ~formattedDate");
+		});
 	});
 });

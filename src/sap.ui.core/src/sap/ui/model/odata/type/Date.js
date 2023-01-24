@@ -20,21 +20,6 @@ sap.ui.define([
 		oModelFormatter;
 
 	/**
-	 * Returns the matching locale-dependent error message for the type based on the constraints.
-	 *
-	 * @param {sap.ui.model.odata.type.Date} oType
-	 *   the type
-	 * @returns {string}
-	 *   the locale-dependent error message
-	 */
-	function getErrorMessage(oType) {
-		var sDemoDate = UI5Date.getInstance().getFullYear() + "-12-31";
-
-		return sap.ui.getCore().getLibraryResourceBundle().getText("EnterDate",
-			[oType.formatValue(sDemoDate, "string")]);
-	}
-
-	/**
 	 * Returns the formatter. Creates it lazily.
 	 * @param {sap.ui.model.odata.type.Date} oType
 	 *   the type instance
@@ -181,6 +166,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the matching locale-dependent error message for the type based on the constraints.
+	 *
+	 * @returns {string}
+	 *   The locale-dependent error message
+	 *
+	 * @private
+	 */
+	EdmDate.prototype._getErrorMessage = function () {
+		var sDemoDate = UI5Date.getInstance().getFullYear() + "-12-31";
+
+		return sap.ui.getCore().getLibraryResourceBundle().getText("EnterDate",
+			[this.formatValue(sDemoDate, "string")]);
+	};
+
+	/**
 	 * Returns a formatter that converts between the model format and a Javascript Date. It has two
 	 * methods: <code>format</code> takes a Date and returns a date as a String in the format
 	 * expected by the model, <code>parse</code> converts from the String to a Date.
@@ -235,7 +235,7 @@ sap.ui.define([
 			case "string":
 				oResult = getFormatter(this).parse(vValue);
 				if (!oResult) {
-					throw new ParseException(getErrorMessage(this));
+					throw new ParseException(this._getErrorMessage());
 				}
 				return getModelFormatter().format(oResult);
 			default:
@@ -257,7 +257,7 @@ sap.ui.define([
 	EdmDate.prototype.validateValue = function (sValue) {
 		if (sValue === null) {
 			if (this.oConstraints && this.oConstraints.nullable === false) {
-				throw new ValidateException(getErrorMessage(this));
+				throw new ValidateException(this._getErrorMessage());
 			}
 		} else if (typeof sValue !== "string" || !rDate.test(sValue)) {
 			throw new ValidateException("Illegal " + this.getName() + " value: " + sValue);

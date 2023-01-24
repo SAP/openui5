@@ -26,25 +26,6 @@ sap.ui.define([
 	}
 
 	/*
-	 * Returns the matching locale-dependent error message for the type based on the constraints.
-	 *
-	 * @param {sap.ui.model.odata.type.DateTimeBase} oType
-	 *   The type
-	 * @returns {string}
-	 *   The locale-dependent error message
-	 */
-	function getErrorMessage(oType) {
-		var iFullYear = UI5Date.getInstance().getFullYear(),
-			oDate = isDateOnly(oType)
-				? new Date(Date.UTC(iFullYear, 11, 31)) // UTC
-				: UI5Date.getInstance(iFullYear, 11, 31, 23, 59, 58), // configured time zone
-			sText = isDateOnly(oType) ? "EnterDate" : "EnterDateTime",
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle();
-
-		return oResourceBundle.getText(sText, [oType.formatValue(oDate, "string")]);
-	}
-
-	/*
 	 * Returns the formatter. Creates it lazily.
 	 *
 	 * @param {sap.ui.model.odata.type.DateTimeBase} oType
@@ -186,6 +167,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the matching locale-dependent error message for the type based on the constraints.
+	 *
+	 * @returns {string}
+	 *   The locale-dependent error message
+	 *
+	 * @private
+	 */
+	DateTimeBase.prototype._getErrorMessage = function () {
+		var iFullYear = UI5Date.getInstance().getFullYear(),
+			oDate = isDateOnly(this)
+				? new Date(Date.UTC(iFullYear, 11, 31)) // UTC
+				: UI5Date.getInstance(iFullYear, 11, 31, 23, 59, 58), // configured time zone
+			sText = isDateOnly(this) ? "EnterDate" : "EnterDateTime",
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle();
+
+		return oResourceBundle.getText(sText, [this.formatValue(oDate, "string")]);
+	};
+
+	/**
 	 * Parses the given value to a <code>Date</code> instance (OData V2).
 	 *
 	 * @param {string|Date} vValue
@@ -217,7 +217,7 @@ sap.ui.define([
 			case "string":
 				oResult = getFormatter(this).parse(vValue);
 				if (!oResult) {
-					throw new ParseException(getErrorMessage(this));
+					throw new ParseException(this._getErrorMessage());
 				}
 				return oResult;
 			default:
@@ -250,12 +250,12 @@ sap.ui.define([
 	DateTimeBase.prototype.validateValue = function (oValue) {
 		if (oValue === null) {
 			if (this.oConstraints && this.oConstraints.nullable === false) {
-				throw new ValidateException(getErrorMessage(this));
+				throw new ValidateException(this._getErrorMessage());
 			}
 			return;
 		} else if (oValue instanceof Date) {
 			if (oValue.getFullYear() === 0) {
-				throw new ValidateException(getErrorMessage(this));
+				throw new ValidateException(this._getErrorMessage());
 			}
 			return;
 		}
