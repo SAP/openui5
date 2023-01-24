@@ -4209,6 +4209,67 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: requestSideEffects refreshes one complete row and fails. See that the cache data
+	// remains, even in a nested list. (In the incident an action in the same batch failed.)
+	// BCP: 2380011682
+	QUnit.test("BCP: 2380011682", function (assert) {
+		var oEmployeeContext,
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			oTeamContext,
+			sView = '\
+<Table id="outer" items="{/TEAMS}">\
+	<Text id="team" text="{Team_Id}"/>\
+</Table>\
+<Table id="inner" items="{TEAM_2_EMPLOYEES}">\
+	<Text id="employee" text="{ID}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {value : [{Team_Id : "T1"}]})
+			.expectChange("team", ["T1"])
+			.expectChange("employee", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("TEAMS('T1')/TEAM_2_EMPLOYEES?$select=ID&$skip=0&$top=100",
+					{value : [{ID : "E1"}]})
+				.expectChange("employee", ["E1"]);
+
+			oTeamContext = that.oView.byId("outer").getBinding("items").getCurrentContexts()[0];
+			that.oView.byId("inner").setBindingContext(oTeamContext);
+
+			return that.waitForChanges(assert, "inner");
+		}).then(function () {
+			oEmployeeContext = that.oView.byId("inner").getBinding("items").getCurrentContexts()[0];
+
+			that.expectRequest("TEAMS('T1')?$select=Team_Id", createErrorInsideBatch())
+				.expectRequest("TEAMS('T1')/TEAM_2_EMPLOYEES?$select=ID&$skip=0&$top=100")
+				.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+			that.oLogMock.expects("error")
+				.withArgs("Failed to refresh entity: /TEAMS('T1')[0]",
+					sinon.match("Request intentionally failed"));
+			that.oLogMock.expects("error")
+				.withArgs(sinon.match("Failed to get contexts"), sinon.match(sPreviousFailed));
+
+			return Promise.all([
+				// code under test
+				oTeamContext.requestSideEffects([""]).then(mustFail(assert), function (oError) {
+					assert.strictEqual(oError.message, "Request intentionally failed");
+				}),
+				that.waitForChanges(assert, "requestSideEffects")
+			]);
+		}).then(function () {
+			assert.strictEqual(oTeamContext.getProperty("Team_Id"), "T1");
+			assert.strictEqual(oEmployeeContext.getProperty("ID"), "E1");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: deferred delete & requestSideEffects.
 	// - requestSideEffects fails on the deleted context
 	// - If delete runs in a different group, requestSideEffects...
