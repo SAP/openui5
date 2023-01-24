@@ -1,10 +1,10 @@
 (function() {
 	"use strict";
 
-	sap.ui.jsview("example.mvc.test", {
+	sap.ui.jsview("example.mvc_legacyAPIs.test", {
 
 		getControllerName: function() {
-			return "example.mvc.test";
+			return "example.mvc_legacyAPIs.test";
 		},
 
 		/*
@@ -21,13 +21,13 @@
 			var oButtonX = new sap.m.Button(this.createId("ButtonX"),{text:"Hello"});
 			oButtonX.attachPress(oController.sap.doIt,oController);
 			oPanel.addContent(oButtonX);
-			var oView1 = sap.ui.jsonview(this.createId("MyJSONView"),"example.mvc.test2");
+			var oView1 = sap.ui.jsonview(this.createId("MyJSONView"),"example.mvc_legacyAPIs.test2");
 			oPanel.addContent(oView1);
-			var oView2 = sap.ui.jsview(this.createId("MyJSView"),"example.mvc.test2");
+			var oView2 = sap.ui.jsview(this.createId("MyJSView"),"example.mvc_legacyAPIs.test2");
 			oPanel.addContent(oView2);
-			var oView3 = sap.ui.xmlview(this.createId("MyXMLView"),"example.mvc.test2");
+			var oView3 = sap.ui.xmlview(this.createId("MyXMLView"),"example.mvc_legacyAPIs.test2");
 			oPanel.addContent(oView3);
-			var oView4 = sap.ui.htmlview(this.createId("MyHTMLView"),{viewName:"example.mvc.test2",controllerName:"example.mvc.test"});
+			var oView4 = sap.ui.htmlview(this.createId("MyHTMLView"),{viewName:"example.mvc_legacyAPIs.test2",controllerName:"example.mvc_legacyAPIs.test"});
 			oPanel.addContent(oView4);
 			if (this.getViewData()) {
 				window.dataCreateView = this.getViewData().test;

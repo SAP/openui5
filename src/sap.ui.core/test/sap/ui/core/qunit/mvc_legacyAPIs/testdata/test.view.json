@@ -1,5 +1,5 @@
 {	"Type": "sap.ui.core.JSONView",
-	"controllerName":"example.mvc.test",
+	"controllerName":"example.mvc_legacyAPIs.test",
 	"content": [{
 		"Type":"sap.m.Panel",
 		"id":"myPanel",
@@ -26,23 +26,23 @@
 			},
 			{
 				"Type":"sap.ui.core.mvc.JSONView",
-				"viewName":"example.mvc.test2",
+				"viewName":"example.mvc_legacyAPIs.test2",
 				"id":"MyJSONView"
 			},
 			{
 				"Type":"sap.ui.core.mvc.JSView",
-				"viewName":"example.mvc.test2",
+				"viewName":"example.mvc_legacyAPIs.test2",
 				"id":"MyJSView"
 			},
 			{
 				"Type":"sap.ui.core.mvc.XMLView",
-				"viewName":"example.mvc.test2",
+				"viewName":"example.mvc_legacyAPIs.test2",
 				"id":"MyXMLView"
 			},
 			{
 				"Type":"sap.ui.core.mvc.HTMLView",
-				"viewName":"example.mvc.test2",
-				"controllerName":"example.mvc.test",
+				"viewName":"example.mvc_legacyAPIs.test2",
+				"controllerName":"example.mvc_legacyAPIs.test",
 				"id":"MyHTMLView"
 			},
 			{

@@ -26,7 +26,7 @@ sap.ui.define([
 			pView = fnViewFactory();
 
 			return pView.then(function(oView) {
-				assert.expect(7);
+				assert.expect(6);
 
 				view = oView;
 				assert.ok(view, "view must exist after creation");
@@ -55,7 +55,7 @@ sap.ui.define([
 
 		QUnit.test("Lifecycle: onAfterRendering", function(assert) {
 			return pView.then(function(oView) {
-				assert.expect(6);
+				assert.expect(5);
 				window.onAfterRenderingCalled = false;
 
 				oView.placeAt("content");
@@ -86,9 +86,7 @@ sap.ui.define([
 
 		QUnit.test("Child Views exists", function(assert) {
 			return pView.then(function(oView) {
-				assert.expect(3);
-				var oJSONView = document.getElementById(oView.createId("MyJSONView"));
-				assert.ok(oJSONView, "Child View (JSONView) should be rendered");
+				assert.expect(2);
 				var oJSView = document.getElementById(oView.createId("MyJSView"));
 				assert.ok(oJSView, "Child View (JSView) should be rendered");
 				var oXMLView = document.getElementById(oView.createId("MyXMLView"));
@@ -97,16 +95,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("Child Views content rendered", function(assert) {
-			assert.expect(9);
-			var oJSONView = view.byId("MyJSONView");
-			var oButton = document.getElementById(oJSONView.createId("Button1"));
-			assert.ok(oButton, "Content of Child View (JSONView) should be rendered");
-			var oLabel1 = oJSONView.byId("Label1");
-			assert.ok(oLabel1, "exists");
-			assert.equal(oLabel1.getLabelFor(), oJSONView.createId("Button1"), "assocation has been fixed");
+			assert.expect(6);
 
 			var oJSView = view.byId("MyJSView");
-			oButton = document.getElementById(oJSView.createId("Button1"));
+			var oButton = document.getElementById(oJSView.createId("Button1"));
 			assert.ok(oButton, "Content of Child View (JSView) should be rendered");
 			var oLabel = oJSView.byId("Label1");
 			assert.ok(!!oLabel, "Label exists");
@@ -138,7 +130,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Re-Rendering", function(assert) {
-			assert.expect(5 + oConfig.idsToBeChecked.length);
+			assert.expect(4 + oConfig.idsToBeChecked.length);
 			window.onBeforeRenderingCalled = false;
 			window.onAfterRenderingCalled = false;
 			view.invalidate();
@@ -219,12 +211,12 @@ sap.ui.define([
 
 		QUnit.test("Cloning: Event listeners are called on the correct controller instance", function(assert) {
 			return fnViewFactory().then(function(oView) {
-				assert.expect(12);
+				assert.expect(10);
 				var oTmpl = oView, oClone;
 				if (!oTmpl.sViewName) {
 					// Cloning views created from string or object (via viewContent) currently fails for HTML and JSON views
 					//	We will address this in a separate change, until then we skip testing those cases
-					assert.expect(6);
+					assert.expect(5);
 					assert.ok(true, "Skipping clone of views created from string of object");
 					return;
 				}

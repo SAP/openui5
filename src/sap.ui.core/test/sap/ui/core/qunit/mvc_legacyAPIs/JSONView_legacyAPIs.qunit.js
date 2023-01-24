@@ -14,13 +14,13 @@ sap.ui.define([
 	};
 
 	testsuite(oConfig, "JSONView creation loading from file", function() {
-		return sap.ui.jsonview("example.mvc.test");
+		return sap.ui.jsonview("example.mvc_legacyAPIs.test");
 	});
 
 	testsuite(oConfig, "JSONView creation via JSON string", function() {
 		var json = JSON.stringify({
 			"Type": "sap.ui.core.JSONView",
-			"controllerName": "example.mvc.test",
+			"controllerName": "example.mvc_legacyAPIs.test",
 			"content": [
 				{
 					"Type": "sap.m.Panel",
@@ -45,23 +45,23 @@ sap.ui.define([
 						},
 						{
 							"Type": "sap.ui.core.mvc.JSONView",
-							"viewName": "example.mvc.test2",
+							"viewName": "example.mvc_legacyAPIs.test2",
 							"id": "MyJSONView"
 						},
 						{
 							"Type": "sap.ui.core.mvc.JSView",
-							"viewName": "example.mvc.test2",
+							"viewName": "example.mvc_legacyAPIs.test2",
 							"id": "MyJSView"
 						},
 						{
 							"Type": "sap.ui.core.mvc.XMLView",
-							"viewName": "example.mvc.test2",
+							"viewName": "example.mvc_legacyAPIs.test2",
 							"id": "MyXMLView"
 						},
 						{
 							"Type": "sap.ui.core.mvc.HTMLView",
-							"viewName": "example.mvc.test2",
-							"controllerName": "example.mvc.test",
+							"viewName": "example.mvc_legacyAPIs.test2",
+							"controllerName": "example.mvc_legacyAPIs.test",
 							"id": "MyHTMLView"
 						}
 					]
@@ -72,11 +72,11 @@ sap.ui.define([
 	});
 
 	testsuite(oConfig, "JSONView creation via generic view factory", function() {
-		return sap.ui.view({type:ViewType.JSON,viewName:"example.mvc.test", viewData:{test:"testdata"}});
+		return sap.ui.view({type:ViewType.JSON,viewName:"example.mvc_legacyAPIs.test", viewData:{test:"testdata"}});
 	}, true);
 
 	QUnit.test("JSONView should be able to resolve controller methods", function(assert) {
-		var oView = sap.ui.jsonview("example.mvc.test");
+		var oView = sap.ui.jsonview("example.mvc_legacyAPIs.test");
 		var oButtonWithBinding = oView.byId("ButtonWithBinding");
 		assert.ok(oButtonWithBinding, "button could be found");
 		var oBindingInfo = oButtonWithBinding.getBindingInfo("text");

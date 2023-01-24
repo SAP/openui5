@@ -1,5 +1,8 @@
-sap.ui.define(['sap/ui/core/UIComponent', 'sap/ui/core/mvc/View'],
-	function (Component, View) {
+sap.ui.define([
+	'sap/m/App',
+	'sap/ui/core/UIComponent',
+	'sap/ui/core/mvc/XMLView'
+], function (App, Component, XMLView) {
 	"use strict";
 
 	var OPC = Component.extend("testdata.mvc.stashed.Component", {
@@ -8,13 +11,12 @@ sap.ui.define(['sap/ui/core/UIComponent', 'sap/ui/core/mvc/View'],
 			manifest: "json"
 		},
 		createContent: function() {
-			var oApp = new sap.m.App();
+			var oApp = new App();
 			var oModel = this.getModel();
 			var oMetaModel = oModel.getMetaModel();
 			oMetaModel.loaded().then(function() {
-				return sap.ui.view({
+				return XMLView.create({
 				   viewName: "testdata.mvc.stashed.OP",
-				   type: "XML",
 				   models : oModel,
 				   preprocessors : {
 					   xml : {

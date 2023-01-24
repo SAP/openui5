@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/VersionInfo",
-	"./testdata/TestPreprocessor",
+	"../mvc/testdata/TestPreprocessor",
 	"./AnyViewAsync_legacyAPIs.qunit",
 	"sap/base/Log",
 	"sap/base/strings/hash",
@@ -40,7 +40,7 @@ sap.ui.define([
 	oConfig.factory = function(bAsync) {
 		return sap.ui.view({
 			type : "XML",
-			viewName : "testdata.mvc.Async",
+			viewName : "testdata.mvc_legacyAPIs.Async",
 			async : bAsync
 		});
 	};
@@ -49,7 +49,7 @@ sap.ui.define([
 	// set XMLView factory
 	oConfig.factory = function(bAsync) {
 		return sap.ui.xmlview({
-			viewName : "testdata.mvc.Async",
+			viewName : "testdata.mvc_legacyAPIs.Async",
 			async : bAsync
 		});
 	};
@@ -98,13 +98,13 @@ sap.ui.define([
 
 	QUnit.test("Error in controller", function(assert) {
 		var sXml = [
-				'<mvc:View controllerName="example.mvc.test.error" xmlns:mvc="sap.ui.core.mvc">',
+				'<mvc:View controllerName="example.mvc_legacyAPIs.test.error" xmlns:mvc="sap.ui.core.mvc">',
 				'</mvc:View>'
 			].join('');
 		var sId = "erroneous_view_3";
 
 		// define erroneous controller
-		sap.ui.controller("example.mvc.test.error", {
+		sap.ui.controller("example.mvc_legacyAPIs.test.error", {
 			onInit: function() {
 				throw new Error("Controller error");
 			}

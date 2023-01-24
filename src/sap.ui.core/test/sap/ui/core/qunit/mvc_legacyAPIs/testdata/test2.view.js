@@ -1,10 +1,10 @@
 (function() {
 	"use strict";
 
-	sap.ui.jsview("example.mvc.test2", {
+	sap.ui.jsview("example.mvc_legacyAPIs.test2", {
 
 		getControllerName: function() {
-			return "example.mvc.test";
+			return "example.mvc_legacyAPIs.test";
 		},
 
 		/*

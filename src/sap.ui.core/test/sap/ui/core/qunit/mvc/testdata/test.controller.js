@@ -1,31 +1,30 @@
 /*global QUnit */
-(function() {
+sap.ui.define([
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel'
+], function(Controller, JSONModel){
 	"use strict";
 
-	sap.ui.controller("example.mvc.test", {
-
-
-		onInit: function() {
+	return Controller.extend("example.mvc.test", {
+		onInit: function () {
 			QUnit.config.current.assert.ok(true, "onInit is called now");
 			window.onInitCalled = this;
 			if (this.getView().getViewData()) {
 				window.dataOnInit = this.getView().getViewData().test;
 			}
-			sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel({
+			sap.ui.getCore().setModel(new JSONModel({
 				"key": "value"
 			}));
 		},
 
-
-		onBeforeRendering: function() {
+		onBeforeRendering: function () {
 			window.onBeforeRenderingCalled = this;
 			if (this.getView().getViewData()) {
 				window.dataBeforeRendering = this.getView().getViewData().test;
 			}
 		},
 
-
-		onAfterRendering: function() {
+		onAfterRendering: function () {
 			QUnit.config.current.assert.ok(true, "onAfterRendering is called now");
 			window.onAfterRenderingCalled = this;
 			if (this.getView().getViewData()) {
@@ -34,30 +33,28 @@
 		},
 
 
-		onExit: function() {
+		onExit: function () {
 			window.onExitCalled = this;
 		},
 
-		doIt: function(oEvent) {
+		doIt: function (oEvent) {
 			QUnit.config.current.assert.ok(true, "Event of " + oEvent.getSource().getId() + " executed in controller");
 			var controller = this;
-			QUnit.config.current.assert.ok(controller instanceof sap.ui.core.mvc.Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
+			QUnit.config.current.assert.ok(controller instanceof Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
 			if (this.getView().getViewData()) {
 				window.dataEventHandler = this.getView().getViewData().test;
 			}
 		},
 
-		valueFormatter: function(oValue) {
+		valueFormatter: function (oValue) {
 			return "formatted-" + oValue;
 		},
 
 		sap: {
-			doIt: function(oEvent) {
+			doIt: function (oEvent) {
 				QUnit.config.current.assert.ok(true, "Event of " + oEvent.getSource().getId() + " executed in controller");
-				QUnit.config.current.assert.ok(this instanceof sap.ui.core.mvc.Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
+				QUnit.config.current.assert.ok(this instanceof Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
 			}
 		}
-
 	});
-
-}());
+});

@@ -1,10 +1,10 @@
 (function() {
 	"use strict";
 
-	sap.ui.jsview("testdata.mvc.Async", { // this View file is called Async.view.js
+	sap.ui.jsview("testdata.mvc_legacyAPIs.Async", { // this View file is called Async.view.js
 
 		getControllerName: function() {
-			return "testdata.mvc.Async"; // the Controller lives in testdata.mvc.Async.controller.js
+			return "testdata.mvc_legacyAPIs.Async"; // the Controller lives in testdata.mvc_legacyAPIs.Async.controller.js
 		},
 
 		createContent: function(oController) {

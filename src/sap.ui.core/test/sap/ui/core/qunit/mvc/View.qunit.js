@@ -783,7 +783,7 @@ sap.ui.define([
 				"</mvc:View>"
 			].join("");
 
-			sap.ui.predefine("test/viewFactory/Component", [
+			sap.ui.define("test/viewFactory/Component", [
 				"sap/ui/core/Component"
 			], function(Component) {
 				return Component.extend("test.viewFactory.component", {
@@ -825,6 +825,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of version 1.110
+	 */
 	QUnit.test("Sync view created via constructor", function(assert) {
 		assert.expect(2);
 		var done = assert.async();
@@ -856,12 +859,12 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Async and sync typed Views embedded in XMLView", function(assert) {
+	QUnit.test("Async typed Views embedded in XMLView", function(assert) {
 		return XMLView.create({
 			viewName : "testdata.mvc.XMLViewEmbeddingTypedViews"
 		}).then(function(oXMLView) {
-			assert.expect(22);
-			assert.equal(this.oAfterInitSpy.callCount, 7, "AfterInit event fired before resolving");
+			assert.expect(14);
+			assert.equal(this.oAfterInitSpy.callCount, 5, "AfterInit event fired before resolving");
 
 			var oPanel = oXMLView.getContent()[0];
 			var oTypedView1 = oPanel.getContent()[0];
@@ -882,20 +885,10 @@ sap.ui.define([
 
 			var oTypedView4 = oPanel.getContent()[3];
 			assert.ok(oTypedView4, "embedded view with async=true flag has been created");
-			assert.ok(oTypedView4.isA("testdata.mvc.TypedView"), "embedded view is a typed view");
+			assert.ok(oTypedView4.isA("testdata.mvc.TypedViewWithRenderer"), "embedded view is a typed view");
 			assert.ok(oTypedView4.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
+			assert.equal(oTypedView4.getMetadata().getRendererName(), "testdata.mvc.TypedViewWithRendererRenderer", "Own Renderer set correctly");
 
-			var oTypedView5 = oPanel.getContent()[4];
-			assert.ok(oTypedView5, "embedded view with async=true flag has been created");
-			assert.ok(oTypedView5.isA("testdata.mvc.TypedViewWithRenderer"), "embedded view is a typed view");
-			assert.ok(oTypedView5.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
-			assert.equal(oTypedView5.getMetadata().getRendererName(), "testdata.mvc.TypedViewWithRendererRenderer", "Own Renderer set correctly");
-
-			var oView6 = oPanel.getContent()[5];
-			assert.ok(oView6, "embedded view with async=true flag has been created");
-			assert.ok(oView6.isA("sap.ui.core.mvc.JSView"), "embedded view is js view");
-			assert.ok(oView6.byId("Label1").isA("sap.m.Label"), "Content created successfully");
-			assert.equal(oView6.getMetadata().getRendererName(), "sap.ui.core.mvc.JSViewRenderer", "Renderer set correctly");
 			oXMLView.destroy();
 		}.bind(this));
 	});

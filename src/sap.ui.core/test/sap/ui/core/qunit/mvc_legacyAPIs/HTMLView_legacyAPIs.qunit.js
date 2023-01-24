@@ -13,34 +13,34 @@ sap.ui.define([
 	};
 
 	testsuite(oConfig, "HTMLView creation loading from file", function() {
-		return sap.ui.htmlview("example.mvc.test");
+		return sap.ui.htmlview("example.mvc_legacyAPIs.test");
 	});
 
 	testsuite(oConfig, "HTMLView creation via HTML string", function() {
 		var sHtml =
-			'<template data-controller-name="example.mvc.test">' +
+			'<template data-controller-name="example.mvc_legacyAPIs.test">' +
 			'<div class="test test2 test3" data-sap-ui-type="sap.m.Panel" id="myPanel">' +
 			'	<div class="test test2 test3" data-sap-ui-type="sap.m.Button" id="Button1" data-text="Hello World" data-press="doIt"></div>' +
 			'	<div data-sap-ui-type="sap.m.Button" id="Button2" data-text="Hello"></div>' +
 			'	<div data-sap-ui-type="sap.m.Button" id="ButtonX" data-text="Another Hello" data-press=".sap.doIt"></div>' +
-			'	<div data-sap-ui-type="sap.ui.core.mvc.HTMLView" id="MyHTMLView" data-view-name="example.mvc.test2"></div>"' +
-			'	<div data-sap-ui-type="sap.ui.core.mvc.JSView" id="MyJSView" data-view-name="example.mvc.test2"></div>' +
-			'	<div data-sap-ui-type="sap.ui.core.mvc.JSONView" id="MyJSONView" data-view-name="example.mvc.test2"></div>' +
-			'	<div data-sap-ui-type="sap.ui.core.mvc.XMLView" id="MyXMLView" data-view-name="example.mvc.test2"></div>' +
+			'	<div data-sap-ui-type="sap.ui.core.mvc.HTMLView" id="MyHTMLView" data-view-name="example.mvc_legacyAPIs.test2"></div>"' +
+			'	<div data-sap-ui-type="sap.ui.core.mvc.JSView" id="MyJSView" data-view-name="example.mvc_legacyAPIs.test2"></div>' +
+			'	<div data-sap-ui-type="sap.ui.core.mvc.JSONView" id="MyJSONView" data-view-name="example.mvc_legacyAPIs.test2"></div>' +
+			'	<div data-sap-ui-type="sap.ui.core.mvc.XMLView" id="MyXMLView" data-view-name="example.mvc_legacyAPIs.test2"></div>' +
 			'</div>' +
 			'</template>';
 		return sap.ui.htmlview({viewContent:sHtml});
 	});
 
 	testsuite(oConfig, "HTMLView creation via generic view factory", function() {
-		return sap.ui.view({type:ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
+		return sap.ui.view({type:ViewType.HTML,viewName:"example.mvc_legacyAPIs.test", viewData:{test:"testdata"}});
 	}, true);
 
 	QUnit.module("Custom Tests");
 
 	QUnit.test("Embedded HTML", function(assert) {
 		assert.expect(13);
-		var oView = sap.ui.view({type:ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
+		var oView = sap.ui.view({type:ViewType.HTML,viewName:"example.mvc_legacyAPIs.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		assert.equal(document.getElementById("htmlRoot").innerHTML, "THIS IS A TEST" , "HTML at root level rendered");
@@ -51,7 +51,7 @@ sap.ui.define([
 
 	QUnit.test("Assocations", function(assert) {
 		assert.expect(13);
-		var oView = sap.ui.view({type:ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
+		var oView = sap.ui.view({type:ViewType.HTML,viewName:"example.mvc_legacyAPIs.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		var oLabel = oView.byId("MyLabel");
@@ -64,7 +64,7 @@ sap.ui.define([
 
 	QUnit.test("Custom Data", function(assert) {
 		assert.expect(12);
-		var oView = sap.ui.view({type:ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
+		var oView = sap.ui.view({type:ViewType.HTML,viewName:"example.mvc_legacyAPIs.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		assert.equal(oView.byId("Button2").data("myData1"), "myvalue1", "Custom Data set properly");
@@ -91,25 +91,25 @@ sap.ui.define([
 		});
 
 		var htmlWithBindings = [
-			'<template data-controller-name="example.mvc.test">',
+			'<template data-controller-name="example.mvc_legacyAPIs.test">',
 			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn" data-enabled="{/booleanValue}" data-text="{/stringValue}" data-width="{/integerValue}"></div>',
 			'</template>'
 		].join('');
 
 		var htmlWithNamedBindings = [
-			'<template data-controller-name="example.mvc.test">',
+			'<template data-controller-name="example.mvc_legacyAPIs.test">',
 			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn" data-enabled="{model2>/booleanValue}" data-text="{model1>/stringValue}" data-width="{/integerValue}"></div>',
 			'</template>'
 		].join('');
 
 		var htmlWithElementBinding = [
-			'<template data-controller-name="example.mvc.test">',
+			'<template data-controller-name="example.mvc_legacyAPIs.test">',
 			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn" data-sap-ui-binding="{/data}" data-enabled="{booleanValue}" data-text="{stringValue}" data-width="{integerValue}"></div>',
 			'</template>'
 		].join('');
 
 		var htmlWithoutBindings = [
-			'<template data-controller-name="example.mvc.test">',
+			'<template data-controller-name="example.mvc_legacyAPIs.test">',
 			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn1" data-enabled="true" data-text="The following set is empty: \\{\\}" data-width="67"></div>',
 			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn2" data-enabled="false" data-text="\\{\\} is an empty set" data-width="42"></div>',
 			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn3" data-enabled="true" data-text="The following array is empty: []" data-width="67"></div>',
