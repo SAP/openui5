@@ -79,7 +79,6 @@ sap.ui.define([
 		var oIconTabBar = new IconTabBar();
 
 		// Assert
-		assert.ok(oIconTabBar.getShowSelection(), "showSelection is set to true");
 		assert.ok(oIconTabBar.getExpandable(), "expandable is set to true");
 		assert.ok(oIconTabBar.getExpanded(), "expanded is set to true");
 		assert.ok(oIconTabBar.getVisible(), "visible is set to true");
@@ -4422,8 +4421,6 @@ sap.ui.define([
 
 		try {
 			// Act
-			oIconTabBar.setShowSelection(true);
-			oIconTabBar.getShowSelection();
 			oIconTabBar.setSelectedKey("");
 			oIconTabBar.getSelectedKey();
 			oIconTabBar.addStyleClass("sapUiContentPadding");
