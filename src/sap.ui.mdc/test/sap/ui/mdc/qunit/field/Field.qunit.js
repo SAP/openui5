@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/DateTimeWithTimezone",
 	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/odata/type/DateTime",
+	"sap/ui/model/odata/type/String",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
@@ -67,6 +68,7 @@ sap.ui.define([
 	DateTimeWithTimezoneType,
 	DateTimeOffsetType,
 	DateTimeType,
+	StringOdataType,
 	JSONModel,
 	KeyCodes,
 	oCore

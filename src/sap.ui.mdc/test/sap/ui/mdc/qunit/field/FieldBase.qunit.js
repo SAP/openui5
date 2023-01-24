@@ -492,34 +492,43 @@ sap.ui.define([
 		oField.placeAt("content");
 		oCore.applyChanges();
 
-		assert.notOk(!!oField.getAggregation("_content"), "Field has no internal content");
-		assert.ok(oSlider.getDomRef(), "Slider rendered");
-		assert.equal(oSlider.getValue(), 70, "Value of Slider");
-		assert.equal(oSlider.getModel("$field"), oField._oManagedObjectModel, "Slider has ManagedObjectModel of Field");
-		assert.equal(oSlider.getBindingPath("value"), "/conditions", "Slider value bound to Fields conditions");
-		assert.equal(oSlider.aBeforeDelegates.length, 1, "Delegate with keyboard handling added");
-		assert.equal(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of Slider used in Field");
+		var fnDone = assert.async();
+		sap.ui.require(["sap/ui/model/odata/type/Single"], function(aModules) { // as type-module is loaded by creating control, check after this is done
+			setTimeout(function() { // as the order of the CallBack function ist not clear and a Promise is used inside LoadModules called in ContentFactory
+				assert.notOk(!!oField.getAggregation("_content"), "Field has no internal content");
+				assert.ok(oSlider.getDomRef(), "Slider rendered");
+				assert.equal(oSlider.getValue(), 70, "Value of Slider");
+				assert.equal(oSlider.getModel("$field"), oField._oManagedObjectModel, "Slider has ManagedObjectModel of Field");
+				assert.equal(oSlider.getBindingPath("value"), "/conditions", "Slider value bound to Fields conditions");
+				assert.equal(oSlider.aBeforeDelegates.length, 1, "Delegate with keyboard handling added");
+				assert.equal(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of Slider used in Field");
+				var oFormatOptions = oConditionsType.getFormatOptions();
+				assert.ok(oFormatOptions.valueType.isA("sap.ui.model.odata.type.Single"), "valueType");
 
-		oField.destroyContent();
-		oCore.applyChanges();
 
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
-		assert.ok(oContent, "internal content exist");
-		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
-		assert.equal(oSlider.aBeforeDelegates.length, 0, "Delegate with keyboard handling removed");
-		assert.notEqual(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of Slider not used in Field");
-		assert.ok(oField._oContentFactory._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
+				oField.destroyContent();
+				oCore.applyChanges();
 
-		oSlider = new Slider("S1");
-		oConditionsType = new ConditionsType();
-		oConditionsType._sId = "S1-Type"; // to identify instance
-		oSlider.bindProperty("value", { path: '$field>/conditions', type: oConditionsType});
-		oField.setContent(oSlider);
-		oCore.applyChanges();
+				var aContent = oField.getAggregation("_content");
+				var oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent, "internal content exist");
+				assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
+				assert.equal(oSlider.aBeforeDelegates.length, 0, "Delegate with keyboard handling removed");
+				assert.notEqual(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of Slider not used in Field");
+				assert.ok(oField._oContentFactory._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
 
-		aContent = oField.getAggregation("_content", []);
-		assert.equal(aContent.length, 0, "Field has no internal content");
+				oSlider = new Slider("S1");
+				oConditionsType = new ConditionsType();
+				oConditionsType._sId = "S1-Type"; // to identify instance
+				oSlider.bindProperty("value", { path: '$field>/conditions', type: oConditionsType});
+				oField.setContent(oSlider);
+				oCore.applyChanges();
+
+				aContent = oField.getAggregation("_content", []);
+				assert.equal(aContent.length, 0, "Field has no internal content");
+				fnDone();
+			}, 0);
+		});
 
 	});
 
@@ -537,32 +546,41 @@ sap.ui.define([
 		oField.placeAt("content");
 		oCore.applyChanges();
 
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
-		assert.ok(oContent, "Field has internal content");
-		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
-		assert.notOk(oProgressIndicator.getDomRef(), "ProgressIndicator not rendered");
-		assert.equal(oProgressIndicator.getPercentValue(), 0, "Value of ProgressIndicator not taken from Field");
-		assert.notOk(oProgressIndicator.getModel("$field"), "ProgressIndicator not bound to ManagedObjectModel of Field as not rendered");
-		assert.equal(oProgressIndicator.getBindingPath("percentValue"), "/conditions", "ProgressIndicator value bound to Fields conditions");
-		assert.notEqual(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of ProgressIndicator not used in Field");
-		assert.ok(oField._oContentFactory._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
+		var fnDone = assert.async();
+		sap.ui.require(["sap/ui/model/odata/type/Single"], function(aModules) { // as type-module is loaded by creating control, check after this is done
+			setTimeout(function() { // as the order of the CallBack function ist not clear and a Promise is used inside LoadModules called in ContentFactory
+				var aContent = oField.getAggregation("_content");
+				var oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent, "Field has internal content");
+				assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
+				assert.notOk(oProgressIndicator.getDomRef(), "ProgressIndicator not rendered");
+				assert.equal(oProgressIndicator.getPercentValue(), 0, "Value of ProgressIndicator not taken from Field");
+				assert.notOk(oProgressIndicator.getModel("$field"), "ProgressIndicator not bound to ManagedObjectModel of Field as not rendered");
+				assert.equal(oProgressIndicator.getBindingPath("percentValue"), "/conditions", "ProgressIndicator value bound to Fields conditions");
+				assert.notEqual(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of ProgressIndicator not used in Field");
+				assert.ok(oField._oContentFactory._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
 
-		oField.setEditMode(EditMode.Display);
-		oCore.applyChanges();
-		assert.notOk(!!oField.getAggregation("_content"), "Field has no internal content");
-		assert.ok(oProgressIndicator.getDomRef(), "ProgressIndicator is rendered");
-		assert.equal(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of ProgressIndicator used in Field");
-		assert.equal(oProgressIndicator.getPercentValue(), 70, "Value of ProgressIndicator");
-		assert.equal(oProgressIndicator.getModel("$field"), oField._oManagedObjectModel, "ProgressIndicator has ManagedObjectModel of Field");
+				oField.setEditMode(EditMode.Display);
+				oCore.applyChanges();
+				assert.notOk(!!oField.getAggregation("_content"), "Field has no internal content");
+				assert.ok(oProgressIndicator.getDomRef(), "ProgressIndicator is rendered");
+				assert.equal(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of ProgressIndicator used in Field");
+				var oFormatOptions = oConditionsType.getFormatOptions();
+				assert.ok(oFormatOptions.valueType.isA("sap.ui.model.odata.type.Single"), "valueType");
+				assert.equal(oProgressIndicator.getPercentValue(), 70, "Value of ProgressIndicator");
+				assert.equal(oProgressIndicator.getModel("$field"), oField._oManagedObjectModel, "ProgressIndicator has ManagedObjectModel of Field");
 
-		oField.destroyContentDisplay();
-		oCore.applyChanges();
-		aContent = oField.getAggregation("_content");
-		oContent = aContent && aContent.length > 0 && aContent[0];
-		assert.ok(oContent, "internal content exist");
-		assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-		assert.notOk(oProgressIndicator.getModel("$field"), "ProgressIndicator not bound to ManagedObjectModel of Field");
+				oField.destroyContentDisplay();
+				oCore.applyChanges();
+				aContent = oField.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent, "internal content exist");
+				assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+				assert.notOk(oProgressIndicator.getModel("$field"), "ProgressIndicator not bound to ManagedObjectModel of Field");
+
+				fnDone();
+			}, 0);
+		});
 
 	});
 
@@ -1252,100 +1270,102 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var fnDone = assert.async();
-		setTimeout(function() { // to update ConditionModel
-			oCore.applyChanges();
-			var aContent = oFieldEditMulti.getAggregation("_content");
-			var oContent = aContent && aContent.length > 0 && aContent[0];
-			var oToken = oContent && oContent.getTokens()[0];
-			assert.equal(oToken.getText(), "=September 19, 2017", "Text set on Token");
-			assert.ok(oContent.getShowValueHelp(), "valueHelp used");
-			assert.equal(oFieldEditMulti._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
+		sap.ui.require(["sap/ui/model/type/Date", "sap/ui/model/odata/type/DateTime"], function(aModules) { // as type-module is loaded by creating control, check after this is done
+			setTimeout(function() { // to update ConditionModel
+				oCore.applyChanges();
+				var aContent = oFieldEditMulti.getAggregation("_content");
+				var oContent = aContent && aContent.length > 0 && aContent[0];
+				var oToken = oContent && oContent.getTokens()[0];
+				assert.equal(oToken.getText(), "=September 19, 2017", "Text set on Token");
+				assert.ok(oContent.getShowValueHelp(), "valueHelp used");
+				assert.equal(oFieldEditMulti._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
 
-			aContent = oFieldDisplay.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-			assert.equal(oContent.getText(), "=Sep 19, 2017", "Text set on Text control");
-			assert.notOk(oFieldDisplay._sDefaultFieldHelp, "no Default Field help set");
+				aContent = oFieldDisplay.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+				assert.equal(oContent.getText(), "=Sep 19, 2017", "Text set on Text control");
+				assert.notOk(oFieldDisplay._sDefaultFieldHelp, "no Default Field help set");
 
-			aContent = oFieldEditSingle.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.ok(oContent instanceof DatePicker, "DatePicker rendered");
-			assert.equal(oContent.getValue(), "2017-09-19", "Value set on DatePicker control");
-			assert.equal(jQuery(oContent.getFocusDomRef()).val(), "September 19, 29 Heisei", "Value shown on DatePicker control");
-			assert.notOk(oFieldEditSingle._sDefaultFieldHelp, "no Default Field help set");
+				aContent = oFieldEditSingle.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent instanceof DatePicker, "DatePicker rendered");
+				assert.equal(oContent.getValue(), "2017-09-19", "Value set on DatePicker control");
+				assert.equal(jQuery(oContent.getFocusDomRef()).val(), "September 19, 29 Heisei", "Value shown on DatePicker control");
+				assert.notOk(oFieldEditSingle._sDefaultFieldHelp, "no Default Field help set");
 
-			aContent = oFieldEditSingle2.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.ok(oContent instanceof DatePicker, "DatePicker rendered");
-			assert.equal(oContent.getValue(), "2018-12-20", "Value set on DatePicker control");
-			assert.equal(jQuery(oContent.getFocusDomRef()).val(), "20/12/2018", "Value shown on DatePicker control");
-			assert.notOk(oFieldEditSingle2._sDefaultFieldHelp, "no Default Field help set");
+				aContent = oFieldEditSingle2.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent instanceof DatePicker, "DatePicker rendered");
+				assert.equal(oContent.getValue(), "2018-12-20", "Value set on DatePicker control");
+				assert.equal(jQuery(oContent.getFocusDomRef()).val(), "20/12/2018", "Value shown on DatePicker control");
+				assert.notOk(oFieldEditSingle2._sDefaultFieldHelp, "no Default Field help set");
 
-			// change pattern
-			oFieldEditSingle2.setDataTypeFormatOptions({pattern: "yyyy/MM/dd"});
-			oCore.applyChanges();
-			aContent = oFieldEditSingle2.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.ok(oContent instanceof DatePicker, "DatePicker rendered");
-			assert.equal(oContent.getValue(), "2018-12-20", "Value set on DatePicker control");
-			assert.equal(jQuery(oContent.getFocusDomRef()).val(), "2018/12/20", "Value shown on DatePicker control");
+				// change pattern
+				oFieldEditSingle2.setDataTypeFormatOptions({pattern: "yyyy/MM/dd"});
+				oCore.applyChanges();
+				aContent = oFieldEditSingle2.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent instanceof DatePicker, "DatePicker rendered");
+				assert.equal(oContent.getValue(), "2018-12-20", "Value set on DatePicker control");
+				assert.equal(jQuery(oContent.getFocusDomRef()).val(), "2018/12/20", "Value shown on DatePicker control");
 
-			// change edit mode
-			oFieldEditSingle2.setEditMode(EditMode.Display);
-			oCore.applyChanges();
-			aContent = oFieldEditSingle2.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-			assert.equal(oContent.getText(), "2018/12/20", "Text set on Text control");
+				// change edit mode
+				oFieldEditSingle2.setEditMode(EditMode.Display);
+				oCore.applyChanges();
+				aContent = oFieldEditSingle2.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+				assert.equal(oContent.getText(), "2018/12/20", "Text set on Text control");
 
-			// DateRangeSelection
-			aContent = oFieldEditSingle3.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.ok(oContent instanceof DateRangeSelection, "DateRangeSelection rendered");
-			assert.equal(oContent.getValue(), "2020-02-06...2020-02-08", "Value set on DateRangeSelection control");
-			assert.equal(jQuery(oContent.getFocusDomRef()).val(), "06/02/2020 ... 08/02/2020", "Value shown on DateRangeSelection control");
-			assert.notOk(oFieldEditSingle3._sDefaultFieldHelp, "no Default Field help set");
+				// DateRangeSelection
+				aContent = oFieldEditSingle3.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent instanceof DateRangeSelection, "DateRangeSelection rendered");
+				assert.equal(oContent.getValue(), "2020-02-06...2020-02-08", "Value set on DateRangeSelection control");
+				assert.equal(jQuery(oContent.getFocusDomRef()).val(), "06/02/2020 ... 08/02/2020", "Value shown on DateRangeSelection control");
+				assert.notOk(oFieldEditSingle3._sDefaultFieldHelp, "no Default Field help set");
 
-			oFieldEditSingle3.setEditMode(EditMode.Display);
-			oCore.applyChanges();
-			aContent = oFieldEditSingle3.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-			assert.equal(oContent.getText(), "06/02/2020...08/02/2020", "Text set on Text control");
+				oFieldEditSingle3.setEditMode(EditMode.Display);
+				oCore.applyChanges();
+				aContent = oFieldEditSingle3.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+				assert.equal(oContent.getText(), "06/02/2020...08/02/2020", "Text set on Text control");
 
-			// Input with default help
-			aContent = oFieldEditSingle4.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
-			var oCompareValue = {
-				"operator": "DATE",
-				values: [new Date(Date.UTC(2018, 11, 20))]
-			};
-			assert.ok(oContent instanceof DynamicDateRange, "DynamicDateRange rendered");
-			assert.deepEqual(oContent.getValue(), oCompareValue, "Value set on DynamicDateRange control");
-			assert.equal(jQuery(oContent.getFocusDomRef()).val(), "20.12.2018", "Value shown on DynamicDateRange control");
+				// Input with default help
+				aContent = oFieldEditSingle4.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				var oCompareValue = {
+					"operator": "DATE",
+					values: [new Date(Date.UTC(2018, 11, 20))]
+				};
+				assert.ok(oContent instanceof DynamicDateRange, "DynamicDateRange rendered");
+				assert.deepEqual(oContent.getValue(), oCompareValue, "Value set on DynamicDateRange control");
+				assert.equal(jQuery(oContent.getFocusDomRef()).val(), "20.12.2018", "Value shown on DynamicDateRange control");
 
-			oFieldEditSingle4.setEditMode(EditMode.Display);
-			oCore.applyChanges();
-			aContent = oFieldEditSingle4.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-			assert.equal(oContent.getText(), "=20.12.2018", "Text set on Text control");
-			assert.notOk(oFieldEditSingle4._sDefaultFieldHelp, "no Default Field help set");
+				oFieldEditSingle4.setEditMode(EditMode.Display);
+				oCore.applyChanges();
+				aContent = oFieldEditSingle4.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+				assert.equal(oContent.getText(), "=20.12.2018", "Text set on Text control");
+				assert.notOk(oFieldEditSingle4._sDefaultFieldHelp, "no Default Field help set");
 
-			// MultiInput with only EQ -> must use default help
-			var aContent = oFieldEditMulti2.getAggregation("_content");
-			var oContent = aContent && aContent.length > 0 && aContent[0];
-			var oToken = oContent && oContent.getTokens()[0];
-			assert.equal(oToken.getText(), "September 19, 2017", "Text set on Token");
-			assert.ok(oContent.getShowValueHelp(), "valueHelp used");
-			assert.equal(oFieldEditMulti2._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
+				// MultiInput with only EQ -> must use default help
+				aContent = oFieldEditMulti2.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				oToken = oContent && oContent.getTokens()[0];
+				assert.equal(oToken.getText(), "September 19, 2017", "Text set on Token");
+				assert.ok(oContent.getShowValueHelp(), "valueHelp used");
+				assert.equal(oFieldEditMulti2._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
 
-			oFieldEditSingle2.destroy();
-			oFieldEditSingle3.destroy();
-			oFieldEditSingle4.destroy();
-			oFieldEditMulti2.destroy();
-			fnDone();
-		}, 0);
+				oFieldEditSingle2.destroy();
+				oFieldEditSingle3.destroy();
+				oFieldEditSingle4.destroy();
+				oFieldEditMulti2.destroy();
+				fnDone();
+			}, 0);
+		});
 
 	});
 
@@ -1387,20 +1407,22 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var fnDone = assert.async();
-		setTimeout(function() { // to update ConditionModel
-			oCore.applyChanges();
-			var aContent = oFieldEditSingle.getAggregation("_content");
-			var oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.ok(oContent instanceof DateTimePicker, "DateTimePicker rendered");
-			assert.equal(oContent.getValue(), "2017-11-07T13:01:24", "Value set on DateTimePicker control");
-			assert.equal(jQuery(oContent.getFocusDomRef()).val(), "13:01:24 2017-11-07", "Value shown on DateTimePicker control");
+		sap.ui.require(["sap/ui/model/odata/type/DateTimeOffset"], function(aModules) { // as type-module is loaded by creating control, check after this is done
+			setTimeout(function() { // to update ConditionModel
+				oCore.applyChanges();
+				var aContent = oFieldEditSingle.getAggregation("_content");
+				var oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent instanceof DateTimePicker, "DateTimePicker rendered");
+				assert.equal(oContent.getValue(), "2017-11-07T13:01:24", "Value set on DateTimePicker control");
+				assert.equal(jQuery(oContent.getFocusDomRef()).val(), "13:01:24 2017-11-07", "Value shown on DateTimePicker control");
 
-			aContent = oFieldDisplay.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-			assert.equal(oContent.getText(), "=Nov 7, 2017, 1:01:24 PM", "Text set on Text control");
-			fnDone();
-		}, 0);
+				aContent = oFieldDisplay.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+				assert.equal(oContent.getText(), "=Nov 7, 2017, 1:01:24 PM", "Text set on Text control");
+				fnDone();
+			}, 0);
+		});
 
 	});
 
@@ -1416,37 +1438,42 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var fnDone = assert.async();
-		setTimeout(function() { // to update ConditionModel
-			var aContent = oFieldEditSingle.getAggregation("_content");
-			var oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.ok(oContent instanceof Input, "Input rendered");
-			assert.equal(oFieldEditSingle._sDefaultFieldHelp, "BoolDefaultHelp", "Default Field help set");
-			var oFieldHelp = oCore.byId("BoolDefaultHelp");
-			assert.ok(oFieldHelp && oFieldHelp instanceof ValueHelp, "ValueHelp used");
-			var oPopover = oFieldHelp && oFieldHelp.getTypeahead();
-			assert.ok(oPopover, "Typeahead used in ValueHelp");
-			assert.ok(oPopover && oPopover instanceof Popover, "Popover used");
-			var aPopoverContent = oPopover && oPopover.getContent()[0];
-			assert.ok(aPopoverContent && aPopoverContent instanceof Bool, "Bool content used");
-			assert.equal(oContent.getValue(), "Yes", "Value set on Input control");
-			assert.deepEqual(oFieldHelp.getDelegate(), {name: "delegates/odata/v4/ValueHelpDelegate", payload: {}}, "base delegate used on FieldHelp");
-			oFieldEditSingle.focus();
-			assert.equal(oPopover.getTitle(), "", "no title on typeahead");
+		sap.ui.require(["sap/ui/model/odata/type/Boolean"], function(aModules) { // as type-module is loaded by creating control, check after this is done
+			setTimeout(function() { // to update ConditionModel
+				oCore.applyChanges();
+				setTimeout(function() { // to load delegates in ValueHelp
+					var aContent = oFieldEditSingle.getAggregation("_content");
+					var oContent = aContent && aContent.length > 0 && aContent[0];
+					assert.ok(oContent instanceof Input, "Input rendered");
+					assert.equal(oFieldEditSingle._sDefaultFieldHelp, "BoolDefaultHelp", "Default Field help set");
+					var oFieldHelp = oCore.byId("BoolDefaultHelp");
+					assert.ok(oFieldHelp && oFieldHelp instanceof ValueHelp, "ValueHelp used");
+					var oPopover = oFieldHelp && oFieldHelp.getTypeahead();
+					assert.ok(oPopover, "Typeahead used in ValueHelp");
+					assert.ok(oPopover && oPopover instanceof Popover, "Popover used");
+					var aPopoverContent = oPopover && oPopover.getContent()[0];
+					assert.ok(aPopoverContent && aPopoverContent instanceof Bool, "Bool content used");
+					assert.equal(oContent.getValue(), "Yes", "Value set on Input control");
+					assert.deepEqual(oFieldHelp.getDelegate(), {name: "delegates/odata/v4/ValueHelpDelegate", payload: {}}, "base delegate used on FieldHelp");
+					oFieldEditSingle.focus();
+					assert.equal(oPopover.getTitle(), "", "no title on typeahead");
 
-			aContent = oFieldDisplay.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-			assert.equal(oContent.getText(), "Yes", "Text set on Text control");
+					aContent = oFieldDisplay.getAggregation("_content");
+					oContent = aContent && aContent.length > 0 && aContent[0];
+					assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+					assert.equal(oContent.getText(), "Yes", "Text set on Text control");
 
-			// setting FieldHelp needs to remove default help
-			oFieldEditSingle.setFieldHelp("X");
-			assert.notOk(oFieldEditSingle._sDefaultFieldHelp, "No Default Field help set");
+					// setting FieldHelp needs to remove default help
+					oFieldEditSingle.setFieldHelp("X");
+					assert.notOk(oFieldEditSingle._sDefaultFieldHelp, "No Default Field help set");
 
-			if (oFieldHelp) {
-				oFieldHelp.destroy(); // to initialze for next test
-			}
-			fnDone();
-		}, 0);
+					if (oFieldHelp) {
+						oFieldHelp.destroy(); // to initialze for next test
+					}
+					fnDone();
+				}, 0);
+			}, 0);
+		});
 
 	});
 
@@ -1468,30 +1495,35 @@ sap.ui.define([
 		assert.notOk(oFieldHelp, "BoolFieldHelp not created sync");
 
 		var fnDone = assert.async();
-		setTimeout(function() { // to update ConditionModel and wait for async control creation
-			var aContent = oFieldEditSingle.getAggregation("_content");
-			var oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.ok(oContent instanceof Input, "Input rendered");
-			assert.equal(oFieldEditSingle._sDefaultFieldHelp, "BoolDefaultHelp", "Default Field help set");
-			oFieldHelp = oCore.byId("BoolDefaultHelp");
-			assert.ok(oFieldHelp && oFieldHelp instanceof ValueHelp, "ValueHelp used");
-			var oPopover = oFieldHelp && oFieldHelp.getTypeahead();
-			assert.ok(oPopover, "Typeahead used in ValueHelp");
-			assert.ok(oPopover && oPopover instanceof Popover, "Popover used");
-			var aPopoverContent = oPopover && oPopover.getContent()[0];
-			assert.ok(aPopoverContent && aPopoverContent instanceof Bool, "Bool content used");
-			assert.equal(oContent.getValue(), "Yes", "Value set on Input control");
+		sap.ui.require(["sap/ui/model/odata/type/Boolean"], function(aModules) { // as type-module is loaded by creating control, check after this is done
+			setTimeout(function() { // to update ConditionModel and wait for async control creation
+				oCore.applyChanges();
+				setTimeout(function() { // to load delegates in ValueHelp
+					var aContent = oFieldEditSingle.getAggregation("_content");
+					var oContent = aContent && aContent.length > 0 && aContent[0];
+					assert.ok(oContent instanceof Input, "Input rendered");
+					assert.equal(oFieldEditSingle._sDefaultFieldHelp, "BoolDefaultHelp", "Default Field help set");
+					oFieldHelp = oCore.byId("BoolDefaultHelp");
+					assert.ok(oFieldHelp && oFieldHelp instanceof ValueHelp, "ValueHelp used");
+					var oPopover = oFieldHelp && oFieldHelp.getTypeahead();
+					assert.ok(oPopover, "Typeahead used in ValueHelp");
+					assert.ok(oPopover && oPopover instanceof Popover, "Popover used");
+					var aPopoverContent = oPopover && oPopover.getContent()[0];
+					assert.ok(aPopoverContent && aPopoverContent instanceof Bool, "Bool content used");
+					assert.equal(oContent.getValue(), "Yes", "Value set on Input control");
 
-			aContent = oFieldDisplay.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-			assert.equal(oContent.getText(), "Yes", "Text set on Text control");
+					aContent = oFieldDisplay.getAggregation("_content");
+					oContent = aContent && aContent.length > 0 && aContent[0];
+					assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+					assert.equal(oContent.getText(), "Yes", "Text set on Text control");
 
-			if (oFieldHelp) {
-				oFieldHelp.destroy(); // to initialze for next test
-			}
-			fnDone();
-		}, 0);
+					if (oFieldHelp) {
+						oFieldHelp.destroy(); // to initialze for next test
+					}
+					fnDone();
+				}, 0);
+			}, 0);
+		});
 
 		oStub.restore();
 
@@ -1549,13 +1581,19 @@ sap.ui.define([
 
 	QUnit.test("invalid dataType", function(assert) {
 
-		try {
-			oFieldEditSingle.setDataType("Invalid");
-			oCore.applyChanges();
-		} catch (oError) {
+		var oSpy = sinon.spy(oFieldEditSingle._getContentFactory(), "checkDataTypeChanged");
+
+		oFieldEditSingle.setDataType("Invalid");
+		oCore.applyChanges();
+		assert.ok(oSpy.calledOnce, "checkDataTypeChanged called");
+		var oResult = oSpy.returnValues[0].unwrap(); // as SyncPromise is returned
+		assert.ok(oResult instanceof Promise, "Promise reurned");
+
+		var fnDone = assert.async();
+		oResult.catch(function(oError) {
 			assert.ok(oError, "Exception thrown");
-			assert.equal(oError.message, "DataType 'Invalid' cannot be determined", "Error message");
-		}
+			fnDone();
+		});
 
 	});
 
@@ -2434,43 +2472,45 @@ sap.ui.define([
 		oField.setContent(oSlider);
 		oCore.applyChanges();
 
-		setTimeout(function() { // to update ConditionModel
-			assert.ok(!!oSlider.getDomRef(), "Slider is rendered");
-			if (oSlider.getDomRef()) {
-				oSlider.focus();
-				qutils.triggerKeydown(oSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
-				assert.equal(iCount, 1, "change event fired once");
-				assert.equal(sId, "F1", "change event fired on Field");
-				assert.equal(sValue, 71, "change event value");
-				assert.ok(bValid, "change event valid");
-				var aConditions = oCM.getConditions("Name");
-				assert.equal(aConditions.length, 1, "one condition in Codition model");
-				assert.equal(aConditions[0].values[0], 71, "condition value");
-				assert.equal(iLiveCount, 1, "liveChange event fired once");
-				assert.equal(sLiveId, "F1", "liveChange event fired on Field");
-				assert.equal(sLiveValue, 71, "liveChange event value");
+		sap.ui.require(["sap/ui/model/odata/type/Single"], function(aModules) { // as type-module is loaded by creating control, check after this is done
+			setTimeout(function() { // to update ConditionModel
+				assert.ok(!!oSlider.getDomRef(), "Slider is rendered");
+				if (oSlider.getDomRef()) {
+					oSlider.focus();
+					qutils.triggerKeydown(oSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
+					assert.equal(iCount, 1, "change event fired once");
+					assert.equal(sId, "F1", "change event fired on Field");
+					assert.equal(sValue, 71, "change event value");
+					assert.ok(bValid, "change event valid");
+					var aConditions = oCM.getConditions("Name");
+					assert.equal(aConditions.length, 1, "one condition in Codition model");
+					assert.equal(aConditions[0].values[0], 71, "condition value");
+					assert.equal(iLiveCount, 1, "liveChange event fired once");
+					assert.equal(sLiveId, "F1", "liveChange event fired on Field");
+					assert.equal(sLiveValue, 71, "liveChange event value");
 
-				qutils.triggerKeydown(oSlider.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-				assert.equal(iSubmitCount, 1, "submit event fired once");
-				assert.equal(sSubmitId, "F1", "submit event fired on Field");
-				assert.ok(oSubmitPromise, "submit: Promise returned");
+					qutils.triggerKeydown(oSlider.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+					assert.equal(iSubmitCount, 1, "submit event fired once");
+					assert.equal(sSubmitId, "F1", "submit event fired on Field");
+					assert.ok(oSubmitPromise, "submit: Promise returned");
 
-				var oButton = new Button("B1");
-				oButton.bindProperty("text", { path: '$field>/conditions', type: new ConditionsType() });
-				oField.setContent(oButton);
-				oSlider.placeAt("content");
-				oCore.applyChanges();
-				oSlider.focus();
-				qutils.triggerKeydown(oSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
-				assert.equal(iCount, 1, "change event of field not fired again");
+					var oButton = new Button("B1");
+					oButton.bindProperty("text", { path: '$field>/conditions', type: new ConditionsType() });
+					oField.setContent(oButton);
+					oSlider.placeAt("content");
+					oCore.applyChanges();
+					oSlider.focus();
+					qutils.triggerKeydown(oSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
+					assert.equal(iCount, 1, "change event of field not fired again");
 
-				oButton.firePress(); //simulate press
-				assert.equal(iPressCount, 1, "Press event fired once");
-				assert.equal(sPressId, "F1", "Press event fired on Field");
-				oSlider.destroy();
-			}
-			fnDone();
-		}, 0);
+					oButton.firePress(); //simulate press
+					assert.equal(iPressCount, 1, "Press event fired once");
+					assert.equal(sPressId, "F1", "Press event fired on Field");
+					oSlider.destroy();
+				}
+				fnDone();
+			}, 0);
+		});
 
 	});
 

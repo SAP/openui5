@@ -1098,13 +1098,15 @@ sap.ui.define([
 			// check only if different type (in Field type might be already taken from binding)
 			if (this._getContentFactory().getDataType()) {
 				var fnCheck = function(sType) {
-					var oTypeClass = this.getTypeUtil().getDataTypeClass(oChanges.current);
-					if (!(this._getContentFactory().getDataType() instanceof oTypeClass)) {
-						// TODO: also compare FormatOptions and Constraints
-						this._initDataType();
-						this.destroyAggregation("_content");
-						this._getContentFactory().updateConditionType();
-					}
+					this._getContentFactory().checkDataTypeChanged(sType).then(function(bChanged) {
+						if (bChanged && !this._bIsBeingDestroyed) {
+							this._initDataType();
+							this.destroyAggregation("_content");
+							this._getContentFactory().updateConditionType();
+						}
+					}.bind(this)).catch(function(oError) {
+						throw oError;
+					});
 				}.bind(this);
 				if (!this.bDelegateInitialized) {
 					// wait until delegate is loaded
@@ -1533,8 +1535,11 @@ sap.ui.define([
 			this._getContentFactory().setNoFormatting(false); // initialize
 			this.awaitControlDelegate().then(function() {
 				if (!this.bIsDestroyed) {
-					this._oContentFactory.setHideOperator(_isOnlyOneSingleValue.call(this, this._getOperators())); // in single value eq Field hide operator
-					this._oContentFactory.updateConditionType();
+					var bHideOperator = _isOnlyOneSingleValue.call(this, this._getOperators());
+					if (bHideOperator !== this._getContentFactory().getHideOperator()) {
+						this._getContentFactory().setHideOperator(bHideOperator); // in single value eq Field hide operator
+						this._getContentFactory()._setUsedConditionType(this.getContent(), this.getContentEdit(), this.getContentDisplay(), this.getEditMode()); // if external content use it's conditionType
+					}
 				}
 			}.bind(this));
 
@@ -1717,15 +1722,17 @@ sap.ui.define([
 
 		var sEditMode = this.getEditMode();
 		var oContent = this.getContent();
+		var oContentEdit = this.getContentEdit();
+		var oContentDisplay = this.getContentDisplay();
 
-		this._getContentFactory()._setUsedConditionType(oContent, sEditMode); // if external content use it's conditionType
+		this._getContentFactory()._setUsedConditionType(oContent, oContentEdit, oContentDisplay, sEditMode); // if external content use it's conditionType
 		_checkFieldHelpExist.call(this, this.getFieldHelp()); // as FieldHelp might be created after ID is assigned to Field
 		_setAriaAttributes.call(this, false);
 
 
 		if (oContent ||
-			(sEditMode === EditMode.Display && this.getContentDisplay()) ||
-			(sEditMode !== EditMode.Display && this.getContentEdit())) {
+			(sEditMode === EditMode.Display && oContentDisplay) ||
+			(sEditMode !== EditMode.Display && oContentEdit)) {
 			this._destroyInternalContent();
 			var aContent = this._getContent(); // external set content
 			if (aContent.length === 1) {
