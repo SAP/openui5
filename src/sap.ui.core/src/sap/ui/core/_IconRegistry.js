@@ -331,6 +331,7 @@ sap.ui.define([
 				'commission-check': 0x1e116,
 				'collections-insight': 0x1e117,
 				'clinical-tast-tracker': 0xe118,
+				'clinical-task-tracker': 0xe118,
 				'citizen-connect': 0xe119,
 				'cart-approval': 0x1e11a,
 				'capital-projects': 0x1e11b,
