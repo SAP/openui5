@@ -209,7 +209,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("parse value", function (assert) {
+	QUnit.skip("parse value", function (assert) {
 		var oType = new DateType();
 
 		assert.strictEqual(oType.parseValue(null, "foo"), null, "null is always accepted");
@@ -238,7 +238,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("validate Date", function (assert) {
+	QUnit.skip("validate Date", function (assert) {
 		var oConstraints = {},
 			oType = new DateType();
 

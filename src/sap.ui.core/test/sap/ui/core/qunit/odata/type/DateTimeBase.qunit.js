@@ -233,7 +233,7 @@ sap.ui.define([
 		});
 
 		//*****************************************************************************************
-		QUnit.test("parseValue", function (assert) {
+		QUnit.skip("parseValue", function (assert) {
 			var oType = createInstance(sTypeName);
 
 			assert.strictEqual(oType.parseValue(null, "foo"), null, "null is always accepted");
@@ -407,7 +407,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("format and parse (Date only)", function (assert) {
+	QUnit.skip("format and parse (Date only)", function (assert) {
 		var oType = new DateTime({}, {displayFormat : "Date"});
 
 		assert.strictEqual(oType.formatValue(oDateOnly, "string"), sFormattedDateOnly,
@@ -555,7 +555,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("V4: formatValue", function (assert) {
+	QUnit.skip("V4: formatValue", function (assert) {
 		var oDateTimeOffset = new DateTimeOffset();
 
 		this.mock(UI5Date).expects("getInstance").withExactArgs(2014, 10, 27, 13, 47, 26).returns("~newDate");

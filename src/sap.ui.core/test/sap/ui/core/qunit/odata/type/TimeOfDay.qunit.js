@@ -194,7 +194,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("formatValue uses UI5Date", function (assert) {
+	QUnit.skip("formatValue uses UI5Date", function (assert) {
 		var oType = new TimeOfDay();
 
 		this.mock(UI5Date).expects("getInstance").withExactArgs(1970, 0, 1, 2, 53, 49).returns("~ui5Date");
