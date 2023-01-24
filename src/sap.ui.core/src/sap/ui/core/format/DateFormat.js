@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/ui/core/CalendarType',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
+	'sap/ui/core/date/UI5Date',
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/date/CalendarUtils',
 	'sap/ui/core/date/CalendarWeekNumbering',
@@ -21,6 +22,7 @@ sap.ui.define([
 		CalendarType,
 		Locale,
 		LocaleData,
+		UI5Date,
 		UniversalDate,
 		CalendarUtils,
 		CalendarWeekNumbering,
@@ -3030,34 +3032,39 @@ sap.ui.define([
 		}
 
 		function computeRelativeDate(iDiff, sScale){
-			var iToday,
-				oToday = new Date(),
-				oJSDate;
+			var oResult = UI5Date.getInstance();
 
 			if (bUTC) {
-				iToday = oToday.getTime();
+				// date part and time part have to be set individually
+				oResult.setUTCFullYear(oResult.getFullYear(), oResult.getMonth(), oResult.getDate());
+				oResult.setUTCHours(oResult.getHours(), oResult.getMinutes(), oResult.getSeconds(),
+					oResult.getMilliseconds());
+				// eslint-disable-next-line default-case
+				switch (sScale) {
+					case "second": oResult.setUTCSeconds(oResult.getUTCSeconds() + iDiff); break;
+					case "minute": oResult.setUTCMinutes(oResult.getUTCMinutes() + iDiff); break;
+					case "hour": oResult.setUTCHours(oResult.getUTCHours() + iDiff); break;
+					case "day": oResult.setUTCDate(oResult.getUTCDate() + iDiff); break;
+					case "week": oResult.setUTCDate(oResult.getUTCDate() + iDiff * 7); break;
+					case "month": oResult.setUTCMonth(oResult.getUTCMonth() + iDiff); break;
+					case "quarter": oResult.setUTCMonth(oResult.getUTCMonth() + iDiff * 3); break;
+					case "year": oResult.setUTCFullYear(oResult.getUTCFullYear() + iDiff); break;
+				}
 			} else {
-				iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds(), oToday.getMilliseconds());
+				// eslint-disable-next-line default-case
+				switch (sScale) {
+					case "second": oResult.setSeconds(oResult.getSeconds() + iDiff); break;
+					case "minute": oResult.setMinutes(oResult.getMinutes() + iDiff); break;
+					case "hour": oResult.setHours(oResult.getHours() + iDiff); break;
+					case "day": oResult.setDate(oResult.getDate() + iDiff); break;
+					case "week": oResult.setDate(oResult.getDate() + iDiff * 7); break;
+					case "month": oResult.setMonth(oResult.getMonth() + iDiff); break;
+					case "quarter": oResult.setMonth(oResult.getMonth() + iDiff * 3); break;
+					case "year": oResult.setFullYear(oResult.getFullYear() + iDiff); break;
+				}
 			}
 
-			oJSDate = new Date(iToday);
-
-			switch (sScale) {
-				case "second": oJSDate.setUTCSeconds(oJSDate.getUTCSeconds() + iDiff); break;
-				case "minute": oJSDate.setUTCMinutes(oJSDate.getUTCMinutes() + iDiff); break;
-				case "hour": oJSDate.setUTCHours(oJSDate.getUTCHours() + iDiff); break;
-				case "day": oJSDate.setUTCDate(oJSDate.getUTCDate() + iDiff); break;
-				case "week": oJSDate.setUTCDate(oJSDate.getUTCDate() + iDiff * 7); break;
-				case "month": oJSDate.setUTCMonth(oJSDate.getUTCMonth() + iDiff); break;
-				case "quarter": oJSDate.setUTCMonth(oJSDate.getUTCMonth() + iDiff * 3); break;
-				case "year": oJSDate.setUTCFullYear(oJSDate.getUTCFullYear() + iDiff); break;
-			}
-
-			if (bUTC) {
-				return oJSDate;
-			} else {
-				return new Date(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate(), oJSDate.getUTCHours(), oJSDate.getUTCMinutes(), oJSDate.getUTCSeconds(), oJSDate.getUTCMilliseconds());
-			}
+			return oResult;
 		}
 	};
 
