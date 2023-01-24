@@ -1,10 +1,11 @@
 /* global QUnit,sinon */
 sap.ui.define([
+	"sap/ui/VersionInfo",
 	"sap/ui/support/library",
 	"sap/ui/support/supportRules/History",
 	"sap/ui/support/supportRules/IssueManager",
 	"sap/ui/support/supportRules/RuleSetLoader"],
-function (supportLibrary, History, IssueManager, RuleSetLoader) {
+function (VersionInfo, supportLibrary, History, IssueManager, RuleSetLoader) {
 	"use strict";
 
 	// shortcut for sap.ui.support.HistoryFormats
@@ -207,12 +208,14 @@ function (supportLibrary, History, IssueManager, RuleSetLoader) {
 						];
 					},
 					getTechInfoJSON: function () {
-						return {
-							title: "Mock",
-							sapUi5Version: {
-								version: sap.ui.getVersionInfo()
-							}
-						};
+						return  VersionInfo.load().then(function (oVersionInfo) {
+							return {
+								title: "Mock",
+								sapUi5Version: {
+									version: oVersionInfo
+								}
+							};
+						});
 					}
 				},
 				_oExecutionScope: {
@@ -249,95 +252,120 @@ function (supportLibrary, History, IssueManager, RuleSetLoader) {
 	});
 
 	QUnit.test("History saveAnalysis", function (assert) {
+		var done = assert.async();
+
 		assert.strictEqual(History.getRuns().length, 0, "The initial state of the history runs is empty");
 		// Act
-		History.saveAnalysis(this.oContext);
+		History.saveAnalysis(this.oContext).then(function () {
+			assert.strictEqual(History.getRuns().length, 1, "The analysis has been stored in the runs array");
+			assert.strictEqual(History.getRuns()[0]["analysisDuration"], "00:00:00:50", "Check the value is correct");
 
-		assert.strictEqual(History.getRuns().length, 1, "The analysis has been stored in the runs array");
-		assert.strictEqual(History.getRuns()[0]["analysisDuration"], "00:00:00:50", "Check the value is correct");
-
-		History.saveAnalysis(this.oContext);
-		assert.strictEqual(History.getRuns().length, 2, "Check if after second analysis the object is stored");
+			History.saveAnalysis(this.oContext).then(function () {
+				assert.strictEqual(History.getRuns().length, 2, "Check if after second analysis the object is stored");
+				done();
+			});
+		}.bind(this));
 	});
 
 	QUnit.test("History clearHistory", function (assert) {
-		History.saveAnalysis(this.oContext);
-		History.saveAnalysis(this.oContext);
+		var done = assert.async();
 
-		assert.strictEqual(History.getRuns().length, 2, "Ensure that we have some stored data");
-		// Act
-		History.clearHistory();
+		History.saveAnalysis(this.oContext).then(function () {
+			History.saveAnalysis(this.oContext).then(function () {
+				assert.strictEqual(History.getRuns().length, 2, "Ensure that we have some stored data");
+				// Act
+				History.clearHistory();
 
-		assert.strictEqual(History.getRuns().length, 0, "Ensure that everything was removed");
+				assert.strictEqual(History.getRuns().length, 0, "Ensure that everything was removed");
+
+				done();
+			});
+		}.bind(this));
 	});
 
 	QUnit.test("History getHistory", function (assert) {
+		var done = assert.async();
+
 		// Act
-		History.saveAnalysis(this.oContext);
-		var aResults = History.getHistory(),
-			aIssues = aResults[0]["loadedLibraries"]["sap.m"]["rules"]["breadcrumbsInOverflowToolbar"]["issues"],
-			bIsGeneratedJsonMatchTheTemplate = compareJSON(oTemplateObject, aResults[0]);
+		History.saveAnalysis(this.oContext).then(function () {
+			var aResults = History.getHistory(),
+				aIssues = aResults[0]["loadedLibraries"]["sap.m"]["rules"]["breadcrumbsInOverflowToolbar"]["issues"],
+				bIsGeneratedJsonMatchTheTemplate = compareJSON(oTemplateObject, aResults[0]);
 
-		// Assert
-		assert.strictEqual(bIsGeneratedJsonMatchTheTemplate, true, "The returned json matched the template.");
+			// Assert
+			assert.strictEqual(bIsGeneratedJsonMatchTheTemplate, true, "The returned json matched the template.");
 
-		assert.strictEqual(aIssues.length, 9, "The returned json matched the template.");
-		aIssues.forEach(function (oIssue) {
-			assert.strictEqual(compareJSON(oTemplateForIssue, oIssue), true, "The returned json matched the template.");
+			assert.strictEqual(aIssues.length, 9, "The returned json matched the template.");
+			aIssues.forEach(function (oIssue) {
+				assert.strictEqual(compareJSON(oTemplateForIssue, oIssue), true, "The returned json matched the template.");
+			});
+
+			done();
 		});
-		aIssues = null;
 	});
 
 	QUnit.test("History getFormattedHistory - ABAP format passed", function (assert) {
+		var done = assert.async();
 		// Act
-		History.saveAnalysis(this.oContext);
-		var oFormattedHistory = History.getFormattedHistory(HistoryFormats.Abap);
+		History.saveAnalysis(this.oContext).then(function () {
+			var oFormattedHistory = History.getFormattedHistory(HistoryFormats.Abap);
 
-		// Assert
-		// For ABAP parser the Collections should be arrays instead of dictionaries with key/value pairs.
-		assert.ok(Array.isArray(oFormattedHistory), "History should be an array.");
+			// Assert
+			// For ABAP parser the Collections should be arrays instead of dictionaries with key/value pairs.
+			assert.ok(Array.isArray(oFormattedHistory), "History should be an array.");
 
-		var oHistoryItem = oFormattedHistory[0];
+			var oHistoryItem = oFormattedHistory[0];
 
-		assert.ok(Array.isArray(oHistoryItem.loadedLibraries), "Loaded libraries should be an array.");
-		assert.ok(Array.isArray(oHistoryItem.loadedLibraries[0].rules), "Rules should be an array.");
-		assert.ok(Array.isArray(oHistoryItem.loadedLibraries[0].rules[0].issues), "Issues should be an array.");
+			assert.ok(Array.isArray(oHistoryItem.loadedLibraries), "Loaded libraries should be an array.");
+			assert.ok(Array.isArray(oHistoryItem.loadedLibraries[0].rules), "Rules should be an array.");
+			assert.ok(Array.isArray(oHistoryItem.loadedLibraries[0].rules[0].issues), "Issues should be an array.");
 
-		assert.ok(oHistoryItem.hasOwnProperty("rulePreset"), "Should have rule preset");
-		assert.ok(oHistoryItem.rulePreset.hasOwnProperty("id"), "Rule preset should have id");
-		assert.ok(oHistoryItem.rulePreset.hasOwnProperty("title"), "Rule preset should have title");
-		assert.ok(oHistoryItem.rulePreset.hasOwnProperty("description"), "Rule preset should have description");
-		assert.ok(oHistoryItem.rulePreset.hasOwnProperty("dateExported"), "Rule preset should have dateExported");
+			assert.ok(oHistoryItem.hasOwnProperty("rulePreset"), "Should have rule preset");
+			assert.ok(oHistoryItem.rulePreset.hasOwnProperty("id"), "Rule preset should have id");
+			assert.ok(oHistoryItem.rulePreset.hasOwnProperty("title"), "Rule preset should have title");
+			assert.ok(oHistoryItem.rulePreset.hasOwnProperty("description"), "Rule preset should have description");
+			assert.ok(oHistoryItem.rulePreset.hasOwnProperty("dateExported"), "Rule preset should have dateExported");
 
-		assert.ok(Array.isArray(oHistoryItem.registrationIds), "Registration ids should be an array.");
-		assert.deepEqual(oHistoryItem.registrationIds, ["F1234", "F5678", "F8888"], "Registration ids are correct.");
+			assert.ok(Array.isArray(oHistoryItem.registrationIds), "Registration ids should be an array.");
+			assert.deepEqual(oHistoryItem.registrationIds, ["F1234", "F5678", "F8888"], "Registration ids are correct.");
 
-		var oVersion = sap.ui.getVersionInfo();
-		assert.ok(oHistoryItem.hasOwnProperty("sapUi5Version"), "Should have sap ui5 version");
-		assert.strictEqual(oHistoryItem.sapUi5Version.name, oVersion.name, "Sap ui5 version name is correct");
-		assert.strictEqual(oHistoryItem.sapUi5Version.version, oVersion.version, "Sap ui5 version key is correct");
-		assert.strictEqual(oHistoryItem.sapUi5Version.buildTimestamp, oVersion.buildTimestamp, "Sap ui5 version build timestamp is correct");
+			VersionInfo.load().then(function (oVersion) {
+				assert.ok(oHistoryItem.hasOwnProperty("sapUi5Version"), "Should have sap ui5 version");
+				assert.strictEqual(oHistoryItem.sapUi5Version.name, oVersion.name, "Sap ui5 version name is correct");
+				assert.strictEqual(oHistoryItem.sapUi5Version.version, oVersion.version, "Sap ui5 version key is correct");
+				assert.strictEqual(oHistoryItem.sapUi5Version.buildTimestamp, oVersion.buildTimestamp, "Sap ui5 version build timestamp is correct");
 
-		assert.ok(oHistoryItem.hasOwnProperty("analysisMetadata"), "Should have analysisMetadata");
-		assert.deepEqual(oHistoryItem.analysisMetadata, oExampleAnalysisMetadata, "Analysis metadata is correct (unchanged)");
+				assert.ok(oHistoryItem.hasOwnProperty("analysisMetadata"), "Should have analysisMetadata");
+				assert.deepEqual(oHistoryItem.analysisMetadata, oExampleAnalysisMetadata, "Analysis metadata is correct (unchanged)");
 
+				done();
+			});
+		});
 	});
 
 	QUnit.test("History getFormattedHistory - String format passed", function (assert) {
+		var done = assert.async();
 		// Act
-		History.saveAnalysis(this.oContext);
-		var sFormattedHistory = prepareHistoryString(History.getFormattedHistory(HistoryFormats.String));
+		History.saveAnalysis(this.oContext).then(function () {
+			var sFormattedHistory = prepareHistoryString(History.getFormattedHistory(HistoryFormats.String));
 
-		// Assert
-		assert.ok(sFormattedHistory === sReferenceFormattedHistory, "History should be a correctly formatted string.");
+			// Assert
+			assert.ok(sFormattedHistory === sReferenceFormattedHistory, "History should be a correctly formatted string.");
+
+			done();
+		});
 	});
 
 	QUnit.test("History getFormattedHistory - NO format passed", function (assert) {
+		var done = assert.async();
 		// Act
-		History.saveAnalysis(this.oContext);
-		var sFormattedHistory = prepareHistoryString(History.getFormattedHistory());
+		History.saveAnalysis(this.oContext).then(function () {
+			var sFormattedHistory = prepareHistoryString(History.getFormattedHistory());
 
-		// Assert
-		assert.ok(sFormattedHistory === sReferenceFormattedHistory, "History should be a correctly formatted string.");
+			// Assert
+			assert.ok(sFormattedHistory === sReferenceFormattedHistory, "History should be a correctly formatted string.");
+
+			done();
+		});
 	});
 });

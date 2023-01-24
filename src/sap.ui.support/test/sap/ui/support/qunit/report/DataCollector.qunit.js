@@ -109,17 +109,22 @@ sap.ui.define([
 		});
 
 		QUnit.test("Technical Info", function (assert) {
+			var done = assert.async();
 			// Arrange
 			var oGetLoadedLibrariesMock = sinon.stub(Core, "getLoadedLibraries").returns(["sap.m"]);
 			var oGetThemePathMock = sinon.stub(ThemeManager, "_getThemePath").returns("http://www.example.com/");
 			var oGetThemeMock = sinon.stub(Configuration, "getTheme").returns("fiori_3");
 
-			// Assert
-			assert.equal(this.DataCollector.getTechInfoJSON().themePaths[0].theme, "fiori_3", "Theme string is correctly set");
-			assert.equal(this.DataCollector.getTechInfoJSON().themePaths[0].relativePath, "http://www.example.com/", "Theme path is correctly set");
+			this.DataCollector.getTechInfoJSON().then(function (oTechData) {
+				// Assert
+				assert.equal(oTechData.themePaths[0].theme, "fiori_3", "Theme string is correctly set");
+				assert.equal(oTechData.themePaths[0].relativePath, "http://www.example.com/", "Theme path is correctly set");
 
-			oGetLoadedLibrariesMock.restore();
-			oGetThemePathMock.restore();
-			oGetThemeMock.restore();
+				oGetLoadedLibrariesMock.restore();
+				oGetThemePathMock.restore();
+				oGetThemeMock.restore();
+
+				done();
+			});
 		});
 });
