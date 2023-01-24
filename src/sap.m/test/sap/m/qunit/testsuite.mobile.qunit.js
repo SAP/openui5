@@ -1539,6 +1539,9 @@ sap.ui.define([
 					animationMode: "none"
 				}
 			},
+			TablePersoControllerExtended: {
+				title: "QUnit Page for sap.m.TablePersoDialog - Extended"
+			},
 			TableSelectDialog: {
 				title: "QUnit Page for sap.m.TableSelectDialog",
 				sinon: {

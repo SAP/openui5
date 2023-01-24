@@ -58,6 +58,7 @@ sap.ui.define([
 				 */
 				"componentName": {type: "string", since: "1.20.2"},
 				"hasGrouping": {type: "boolean", defaultValue: false, since: "1.22"},
+				"saveColumnWidth": {type: "boolean", defaultValue: false, since: "1.103"},
 				"showSelectAll": {type: "boolean", defaultValue: true, since: "1.22"},
 
 				/**
@@ -445,6 +446,9 @@ sap.ui.define([
 				if (oTableColumn) {
 					oTableColumn.setVisible(oNewSetting.visible);
 					oTableColumn.setOrder(oNewSetting.order);
+					if (oNewSetting.width) {
+						oTableColumn.setWidth(oNewSetting.width);
+					}
 				} else {
 					Log.warning("Personalization could not be applied to column " + oNewSetting.id + " - not found!");
 				}
@@ -805,7 +809,8 @@ sap.ui.define([
 		if (oPersoMap) {
 			var aColumns = oTable.getColumns(),
 				aColumnInfo = [],
-				oPersoService = this.getPersoService();
+				oPersoService = this.getPersoService(),
+				that = this;
 			aColumns.forEach(function(oColumn){
 				var sCaption = null;
 				if (oPersoService.getCaption) {
@@ -836,13 +841,17 @@ sap.ui.define([
 
 				// In this case, oColumn is one of our controls. Therefore, sap.ui.core.Element.toString()
 				// is called which delivers something like 'Element sap.m.Column#<sId>' where sId is the column's sId property
-				aColumnInfo.push({
+				var oColumnInfo = {
 					text : sCaption,
 					order : oColumn.getOrder(),
 					visible : oColumn.getVisible(),
 					id: oPersoMap[oColumn],
 					group : sGroup
-				});
+				};
+				if (that.getSaveColumnWidth()) {
+					oColumnInfo["width"] = oColumn.getWidth();
+				}
+				aColumnInfo.push(oColumnInfo);
 			});
 
 			// Sort to make sure they're presented in the right order
