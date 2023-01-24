@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
-sap.ui.define(["../i18n/helper/_timezones", "sap/ui/core/format/TimezoneUtil", "sap/ui/core/Locale", "sap/ui/core/LocaleData"],
-	function (timezones, TimezoneUtil, Locale, LocaleData) {
+sap.ui.define(["../i18n/helper/_timezones", "sap/base/Log", "sap/ui/core/format/TimezoneUtil",
+	"sap/ui/core/Locale", "sap/ui/core/LocaleData"],
+	function (timezones, Log, TimezoneUtil, Locale, LocaleData) {
 		"use strict";
 
 		/**
@@ -541,7 +542,13 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/ui/core/format/TimezoneUtil", "
 			assert.deepEqual(TimezoneUtil.convertToTimezone(oDate, "UTC"), oDate, "Date should be converted.");
 		});
 
-		QUnit.module("Integration");
+		QUnit.module("Integration", {
+			beforeEach : function () {
+				this.oLogMock = this.mock(Log);
+				this.oLogMock.expects("error").never();
+				this.oLogMock.expects("warning").never();
+			}
+		});
 
 		QUnit.test("convertToTimezone + calculateOffset + isValidTimezone", function (assert) {
 			var oDate = new Date(Date.UTC(2018, 9, 7, 2, 30));
@@ -559,6 +566,27 @@ sap.ui.define(["../i18n/helper/_timezones", "sap/ui/core/format/TimezoneUtil", "
 				// check
 				assert.deepEqual(oConvertedDate, oDate, "timezone conversion forth and back: " + sTimezone);
 			});
+		});
+
+		//*********************************************************************************************
+		QUnit.test("_getParts: integrative test", function (assert) {
+			var oParts;
+
+			// code under test
+			oParts = TimezoneUtil._getParts(new Date(0), "Europe/Berlin");
+
+			assert.deepEqual(oParts, {
+					day: "01",
+					era: "A",
+					fractionalSecond: "000",
+					hour: "01",
+					minute: "00",
+					month: "01",
+					second: "00",
+					timeZoneName: "GMT+1",
+					weekday: "Thu",
+					year: "1970"
+				});
 		});
 	}
 );

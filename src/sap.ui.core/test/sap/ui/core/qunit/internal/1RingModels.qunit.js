@@ -37,6 +37,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/i18n/Islamic.qunit",
 		"sap/ui/core/qunit/i18n/Japanese.qunit",
 		"sap/ui/core/qunit/i18n/Persian.qunit",
+		"sap/ui/core/qunit/i18n/UI5Date.qunit",
 		"sap/ui/core/qunit/i18n/UniversalDate.qunit",
 		"sap/ui/core/qunit/i18n/UniversalDateUtils.qunit",
 
