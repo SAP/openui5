@@ -289,6 +289,7 @@ sap.ui.define([
 
 		oColumn.setModel(this._oManagedObjectModel, "$this");
 		oColumn.setModel(this._oSettingsModel, "$columnSettings");
+		oColumn.setHeaderMenu(oTable.getId() + "-columnHeaderMenu");
 
 		return oColumn;
 	};

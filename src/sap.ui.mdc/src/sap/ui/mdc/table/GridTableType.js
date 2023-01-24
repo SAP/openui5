@@ -184,7 +184,6 @@ sap.ui.define([
 			extension: [oTable._oToolbar],
 			ariaLabelledBy: [oTable._oTitle],
 			plugins: [this._createSelectionPlugin()],
-			columnSelect: [this._onColumnPress, this],
 			rowSettingsTemplate: this.getRowSettingsConfig(),
 			selectionBehavior: this._getSelectionBehavior()
 		});
@@ -204,22 +203,8 @@ sap.ui.define([
 		});
 	};
 
-	GridTableType.prototype._onColumnPress = function(oEvent) {
-		var oTable = this.getTable();
-
-		oEvent.preventDefault();
-		this.callHook("ColumnPress", this.getTable(), {
-			column: oTable.getColumns()[oEvent.getParameter("column").getIndex()]
-		});
-	};
-
 	GridTableType.createColumn = function(sId, mSettings) {
-		var oColumn = new InnerColumn(sId, mSettings);
-		/* **** Ensure that the columnSelect event is fired always (esp. mobile) **** */
-		oColumn.attachColumnMenuOpen(function(oEvent) { oEvent.preventDefault(); });
-		oColumn._menuHasItems = function() { return true; };
-		/* **** */
-		return oColumn;
+		return new InnerColumn(sId, mSettings);
 	};
 
 	GridTableType.prototype._createSelectionPlugin = function() {

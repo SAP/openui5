@@ -1916,7 +1916,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Generic event hander for <code>beforeExport</code> event of
+	 * Generic event handler for <code>beforeExport</code> event of
 	 * the referenced <code>ExportHandler</code>. The event parameters
 	 * will be enhanced with table specific information and its own
 	 * <code>beforeExport</code> is fired.
@@ -2008,6 +2008,41 @@ sap.ui.define([
 		if (this.isFilteringEnabled()) {
 			insertFilterInfoBar(this);
 		}
+
+		if (!this._oColumnHeaderMenu) {
+			this._oQuickActionContainer = new QuickActionContainer({table: this});
+			this._oItemContainer = new ItemContainer({table: this});
+			this._oColumnHeaderMenu = new ColumnMenu({
+				id: this.getId() + "-columnHeaderMenu",
+				_quickActions: [this._oQuickActionContainer],
+				_items: [this._oItemContainer]
+			});
+
+			this._oColumnHeaderMenu.attachBeforeOpen(this._createColumnMenuContent, this);
+		}
+	};
+
+	Table.prototype._createColumnMenuContent = function(oEvent) {
+		var oInnerColumn = oEvent.getParameter("openBy");
+		var oColumn = this.getColumns()[oInnerColumn.getParent().indexOfColumn(oInnerColumn)];
+
+		oEvent.preventDefault();
+
+		this._oQuickActionContainer.setColumn(oColumn);
+		this._oItemContainer.setColumn(oColumn);
+
+		this._fullyInitialized().then(function() {
+			return this.finalizePropertyHelper();
+		}.bind(this)).then(function() {
+			Promise.all([
+				this._oQuickActionContainer.initializeQuickActions(),
+				this._oItemContainer.initializeItems()
+			]).then(function() {
+				if (this._oQuickActionContainer.hasQuickActions() || this._oItemContainer.hasItems()) {
+					this._oColumnHeaderMenu.openBy(oInnerColumn, true);
+				}
+			}.bind(this));
+		}.bind(this));
 	};
 
 	/**
@@ -2027,38 +2062,6 @@ sap.ui.define([
 
 	Table.prototype._onColumnMove = function(mPropertyBag) {
 		TableSettings.moveColumn(this, mPropertyBag.column, mPropertyBag.newIndex);
-	};
-
-	Table.prototype._onColumnPress = function(mPropertyBag) {
-		if (this._bSuppressOpenMenu) {
-			return;
-		}
-
-		var oColumn = mPropertyBag.column;
-
-		this._fullyInitialized().then(function() {
-			return this.finalizePropertyHelper();
-		}.bind(this)).then(function() {
-			if (!this._oColumnHeaderMenu) {
-				this._oQuickActionContainer = new QuickActionContainer({table: this});
-				this._oItemContainer = new ItemContainer({table: this});
-				this._oColumnHeaderMenu = new ColumnMenu({
-					_quickActions: [this._oQuickActionContainer],
-					_items: [this._oItemContainer]
-				});
-			}
-			this._oQuickActionContainer.setAssociation("column", oColumn);
-			this._oItemContainer.setAssociation("column", oColumn);
-
-			Promise.all([
-				this._oQuickActionContainer.initializeQuickActions(),
-				this._oItemContainer.initializeItems()
-			]).then(function() {
-				if (this._oQuickActionContainer.hasQuickActions() || this._oItemContainer.hasItems()) {
-					this._oColumnHeaderMenu.openBy(oColumn);
-				}
-			}.bind(this));
-		}.bind(this));
 	};
 
 	Table.prototype._onCustomSort = function(oEvent, sSortOrder) {
@@ -2620,6 +2623,11 @@ sap.ui.define([
 		if (this._oFilterInfoBarInvisibleText) {
 			this._oFilterInfoBarInvisibleText.destroy();
 			this._oFilterInfoBarInvisibleText = null;
+		}
+
+		if (this._oColumnHeaderMenu) {
+			this._oColumnHeaderMenu.destroy();
+			this._oColumnHeaderMenu = null;
 		}
 
 		Control.prototype.exit.apply(this, arguments);

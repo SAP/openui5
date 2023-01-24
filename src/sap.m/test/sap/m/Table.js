@@ -440,7 +440,7 @@ sap.ui.define([
 			demandPopin : true
 		}).data("clipboard", "money")
 	];
-	aColumns[0].setAssociation("headerMenu", oMenu.getId());
+	aColumns[0].setHeaderMenu(oMenu.getId());
 
 	var oTemplate = new ColumnListItem({
 		vAlign: "Middle",

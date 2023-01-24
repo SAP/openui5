@@ -160,12 +160,7 @@ sap.ui.define([
 			return null;
 		}
 
-		var oResponsiveTable = new InnerTable(sId, this.getTableSettings());
-
-		oResponsiveTable.bActiveHeaders = true;
-		oResponsiveTable.attachEvent("columnPress", this._onColumnPress, this);
-
-		return oResponsiveTable;
+		return new InnerTable(sId, this.getTableSettings());
 	};
 
 	ResponsiveTableType.prototype.getTableSettings = function() {
@@ -210,15 +205,6 @@ sap.ui.define([
 			bindingContext: oEvent.getParameter("listItem").getBindingContext(),
 			selected: oEvent.getParameter("selected"),
 			selectAll: bSelectAll
-		});
-	};
-
-	ResponsiveTableType.prototype._onColumnPress = function(oEvent) {
-		var oTable = this.getTable();
-		var oResponsiveTable = this.getInnerTable();
-
-		this.callHook("ColumnPress", oTable, {
-			column: oTable.getColumns()[oResponsiveTable.indexOfColumn(oEvent.getParameter("column"))]
 		});
 	};
 

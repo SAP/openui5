@@ -331,12 +331,12 @@ sap.ui.define([
 		// Initial State
 		this.oColumnMenu.openBy(this.oButton);
 
-		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 2, "All quick actions are visible");
+		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 2, "All quick actions are visible");
 		assert.equal(getActiveItems(this.oColumnMenu).length, 2, "All items are visible");
 
 		// Public Quick Action hidden
 		this.oColumnMenu.getQuickActions()[0].setVisible(false);
-		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 1, "Only one quick action visible");
+		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 1, "Only one quick action visible");
 
 		// One item hidden
 		this.oColumnMenu.getItems()[0].setVisible(false);
@@ -348,13 +348,13 @@ sap.ui.define([
 
 		// All Quick Actions hidden
 		this.oColumnMenu.getAggregation("_quickActions")[0].setVisible(false);
-		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 0, "No quick actions are in the form");
+		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 0, "No quick actions are in the form");
 		assert.notOk(document.getElementById(this.oColumnMenu.getId() + "-quickActions"), "Quick Actions Container is not rendered");
 
 		// Make 1 QuickAction and 1 item visible
 		this.oColumnMenu.getItems()[0].setVisible(true);
 		this.oColumnMenu.getAggregation("_quickActions")[0].setVisible(true);
-		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 1, "One quick action is visible");
+		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 1, "One quick action is visible");
 		assert.equal(getActiveItems(this.oColumnMenu).length, 1, "One item is visible");
 
 		this.oColumnMenu.close();
@@ -370,7 +370,7 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		oCore.applyChanges();
 
-		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 3, "Three quick actions are visible");
+		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 3, "Three quick actions are visible");
 
 		this.oColumnMenu.close();
 
@@ -379,7 +379,7 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		oCore.applyChanges();
 
-		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 1, "One quick actions is visible");
+		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 1, "One quick actions is visible");
 
 		this.oColumnMenu.close();
 
@@ -389,7 +389,7 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		oCore.applyChanges();
 
-		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 2, "Two quick actions are visible");
+		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 2, "Two quick actions are visible");
 	});
 
 	QUnit.test("Add menu item", function (assert) {
@@ -480,7 +480,7 @@ sap.ui.define([
 		assert.equal(document.getElementById(oMenu.getId() + "-itemContainerDescription").innerText,
 			oMenu._getResourceText("table.COLUMNMENU_ITEM_CONTAINER_DESC"), "Item container description text is correct");
 
-		var oFormElements = oMenu._oForm.getFormContainers()[0].getFormElements();
+		var oFormElements = oMenu._oQuickActionContainer.getFormContainers()[0].getFormElements();
 		var sControlId, oControl;
 		for (var i = 0; i < oFormElements.length; i++) {
 			sControlId = oFormElements[i].getFields()[0].getControl();
@@ -682,7 +682,7 @@ sap.ui.define([
 		var oControl;
 		this.oColumnMenu.openBy(this.oButton);
 
-		var oContainer = this.oColumnMenu._oForm.getFormContainers()[0];
+		var oContainer = this.oColumnMenu._oQuickActionContainer.getFormContainers()[0];
 		var aFormElements = oContainer.getFormElements();
 
 		assert.equal(aFormElements.length, 4, "Form has only four Quick Action elements, as the last one is not visible");
@@ -738,7 +738,7 @@ sap.ui.define([
 
 		this.oColumnMenu.openBy(this.oButton);
 
-		oContainer = this.oColumnMenu._oForm.getFormContainers()[0];
+		oContainer = this.oColumnMenu._oQuickActionContainer.getFormContainers()[0];
 		aFormElements = oContainer.getFormElements();
 
 		// Check if added quick action is rendered

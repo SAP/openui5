@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/Column",
-	"sap/ui/mdc/library",
 	"sap/m/Text",
 	"sap/m/plugins/ColumnResizer"
 ], function(
@@ -14,13 +13,11 @@ sap.ui.define([
 	Table,
 	GridTableType,
 	Column,
-	library,
 	Text,
 	ColumnResizer
 ) {
 	"use strict";
 
-	var TableType = library.TableType;
 	var sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
 
 	function wait(iMilliseconds) {
@@ -30,11 +27,8 @@ sap.ui.define([
 	}
 
 	function openColumnMenu(oTable, iColumnIndex) {
-		var sEvent = oTable._isOfType(TableType.Table, true) ? "columnSelect" : "columnPress";
-
-		oTable._oTable.fireEvent(sEvent, {
-			column: oTable._oTable.getColumns()[iColumnIndex]
-		});
+		var oColumn = oTable._oTable.getColumns()[iColumnIndex];
+		Core.byId(oColumn.getHeaderMenu()).openBy(oColumn);
 
 		return oTable._fullyInitialized().then(function() {
 			return oTable.propertiesFinalized();
@@ -78,27 +72,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialize", function(assert) {
-		var oTable = this.oTable,
-			oInnerColumn,
-			fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
+		var oTable = this.oTable, oInnerColumn, oColumnMenu, oOpenSpy;
+		oTable.setP13nMode([
+			"Sort"
+		]);
 
 		return oTable._fullyInitialized().then(function () {
 			oTable.setEnableColumnResize(false);
 
-			assert.ok(oTable._oTable.bActiveHeaders, "The table has active headers");
-			assert.ok(!oTable._oColumnHeaderMenu, "The ColumnMenu is not initialized");
-			assert.ok(!oTable._oQuickActionContainer, "The QuickActionContainer is not initialized");
-			assert.ok(!oTable._oItemContainer, "The ItemContainer is not initialized");
-
-			oInnerColumn = oTable._oTable.getColumns()[0];
-			oTable._oTable.fireEvent("columnPress", {
-				column: oInnerColumn
-			});
-
-			assert.ok(fColumnPressSpy.calledOnce, "_onColumnPress event handler is called");
-
-			return wait(0);
-		}).then(function() {
 			assert.ok(oTable._oColumnHeaderMenu, "The ColumnMenu is initialized");
 			assert.ok(oTable._oColumnHeaderMenu.isA("sap.m.table.columnmenu.Menu"), "The ColumnMenu is instance of the correct class");
 			assert.ok(oTable._oQuickActionContainer, "The QuickActionContainer is initialized");
@@ -111,24 +92,48 @@ sap.ui.define([
 			assert.equal(oTable._oItemContainer.getEffectiveItems().length, 0, "The ColumnMenu contains no items");
 			assert.ok(!oTable._oColumnHeaderMenu._oPopover, "The popover is not initialized");
 
-			oTable.setP13nMode([
-				"Sort"
-			]);
-			oTable._oTable.fireEvent("columnPress", {
-				column: oInnerColumn
-			});
-
-			assert.ok(fColumnPressSpy.calledTwice, "_onColumnPress event handler is called");
+			oInnerColumn = oTable._oTable.getColumns()[0];
+			oColumnMenu = oTable._oColumnHeaderMenu;
+			oColumnMenu.openBy(oInnerColumn);
+			oOpenSpy = sinon.spy(oColumnMenu, "openBy");
 
 			return wait(0);
 		}).then(function() {
 			assert.equal(oTable._oQuickActionContainer.getEffectiveQuickActions().length, 1, "The ColumnMenu contains quick actions");
 			assert.equal(oTable._oItemContainer.getEffectiveItems().length, 1, "The ColumnMenu contains items");
-			assert.ok(oTable._oColumnHeaderMenu._oPopover, "The popover is initialized");
-			assert.ok(oTable._oColumnHeaderMenu._oPopover.isOpen(), "The popover is open");
-
-			fColumnPressSpy.restore();
+			assert.ok(oOpenSpy.calledWithExactly(oInnerColumn, true), "openBy is called once with the correct parameters");
 		});
+	});
+
+	QUnit.test("Open menu before the table is fully initialized", function(assert) {
+		var oTable = this.oTable, oColumn, oColumnMenu, oOpenMenuSpy;
+
+		oTable.setP13nMode([
+			"Sort"
+		]);
+
+		return Promise.all([
+			oTable.initialized().then(function() {
+				return new Promise(function(resolve) {
+					oColumn = oTable._oTable.getColumns()[0];
+					oColumnMenu = Core.byId(oColumn.getHeaderMenu());
+					oColumnMenu.openBy(oColumn);
+
+					oOpenMenuSpy = sinon.spy(oTable._oColumnHeaderMenu, "openBy");
+					assert.ok(oOpenMenuSpy.notCalled, "Menu does not open because the PropertyInfos are not yet final");
+					resolve();
+				});
+			}),
+
+			oTable.propertiesFinalized().then(function() {
+				wait(0).then(function() {
+					return new Promise(function(resolve) {
+						assert.ok(oOpenMenuSpy.calledOnce, "Menu opens after the table is fully initialized");
+						resolve();
+					});
+				});
+			})
+		]);
 	});
 
 	QUnit.module("QuickActionContainer", {
@@ -170,17 +175,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Responsive table - Sort", function(assert) {
-		var oTable = this.oTable,
-			oInnerColumn;
+		var oTable = this.oTable, oInnerColumn, oColumnMenu;
 
 		return oTable._fullyInitialized().then(function () {
 			oTable.setP13nMode([
 				"Sort"
 			]);
+
 			oInnerColumn = oTable._oTable.getColumns()[0];
-			oTable._oTable.fireEvent("columnPress", {
-				column: oInnerColumn
-			});
+			oColumnMenu = oTable._oColumnHeaderMenu;
+			oColumnMenu.openBy(oInnerColumn);
 
 			return Promise.all([
 				wait(0),
@@ -226,7 +230,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Grid table - Group", function(assert) {
-		var oTable = this.oTable;
+		var oTable = this.oTable, oInnerColumn, oColumnMenu;
 
 		return oTable._fullyInitialized().then(function () {
 			oTable.setType("Table");
@@ -235,7 +239,10 @@ sap.ui.define([
 			oTable.setP13nMode([
 				"Group"
 			]);
-			oTable._onColumnPress({column: oTable.getColumns()[0]});
+
+			oInnerColumn = oTable._oTable.getColumns()[0];
+			oColumnMenu = oInnerColumn.getHeaderMenuInstance();
+			oColumnMenu.openBy(oInnerColumn);
 
 			return Promise.all([
 				wait(0),
@@ -364,14 +371,13 @@ sap.ui.define([
 	QUnit.test("Item", function(assert) {
 		var oTable = this.oTable,
 			oInnerColumn,
+			oColumnMenu,
 			fUpdateSpy,
 			fHandleP13nSpy,
 			fResetSpy,
 			fUpdateQuickActionsSpy;
 
 		return oTable._fullyInitialized().then(function () {
-			return wait(0);
-		}).then(function () {
 			oTable.setP13nMode([
 				"Sort"
 			]);
@@ -379,9 +385,10 @@ sap.ui.define([
 				return ["Sort"];
 			};
 			oInnerColumn = oTable._oTable.getColumns()[0];
-			oTable._oTable.fireEvent("columnPress", {
-				column: oInnerColumn
-			});
+
+			oInnerColumn = oTable._oTable.getColumns()[0];
+			oColumnMenu = oTable._oColumnHeaderMenu;
+			oColumnMenu.openBy(oInnerColumn);
 
 			return wait(0);
 		}).then(function() {

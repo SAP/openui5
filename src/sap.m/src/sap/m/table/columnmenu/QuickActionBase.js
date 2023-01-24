@@ -57,7 +57,7 @@ sap.ui.define([
 		}
 
 		this.setProperty("visible", bVisible);
-		this.getMenu() && this.getMenu()._createQuickActionGrids();
+		this.getMenu() && this.getMenu()._initQuickActionContainer();
 		return this;
 	};
 
