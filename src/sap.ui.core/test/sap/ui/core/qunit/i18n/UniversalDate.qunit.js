@@ -6,10 +6,12 @@ sap.ui.define([
 	"sap/ui/core/date/Gregorian",
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/CalendarWeekNumbering"
-], function(Core, Locale, UniversalDate, Gregorian, Islamic, Japanese, CalendarType, Configuration, CalendarWeekNumbering) {
+], function(Core, Locale, UniversalDate, Gregorian, Islamic, Japanese, UI5Date, CalendarType,
+		Configuration, CalendarWeekNumbering) {
 	"use strict";
 
 	//next values must not overlap each other!
@@ -97,8 +99,31 @@ sap.ui.define([
 		assert.equal(oClass, Japanese, "getClass returns correct class object");
 	});
 
+	QUnit.test("getInstance creates UI5Date", function(assert) {
+		var oInnerDate = UI5Date.getInstance(),
+			oNativeDate = new Date(),
+			oUI5DateMock = this.mock(UI5Date),
+			oUniversalDate = UniversalDate.getInstance();
+
+		oUI5DateMock.expects("getInstance").withExactArgs().returns("~ui5Date");
+
+		// code under test: w/o oDate
+		assert.strictEqual(UniversalDate.getInstance().oDate, "~ui5Date");
+
+		oUI5DateMock.expects("getInstance").withExactArgs(sinon.match.same(oNativeDate)).returns("~ui5Date");
+
+		// code under test: with JS Date
+		assert.strictEqual(UniversalDate.getInstance(oNativeDate).oDate, "~ui5Date");
+
+		this.mock(oUniversalDate).expects("getJSDate").withExactArgs().returns(oInnerDate);
+		oUI5DateMock.expects("getInstance").withExactArgs(sinon.match.same(oInnerDate)).returns("~ui5Date");
+
+		// code under test: with UniversalDate
+		assert.strictEqual(UniversalDate.getInstance(oUniversalDate).oDate, "~ui5Date");
+	});
+
 	QUnit.test("getInstance", function(assert) {
-		var oDate, oGregorian, oJSDate = new Date();
+		var oDate, oGregorian, oJSDate = UI5Date.getInstance();
 
 		// Explicit calendar type
 		oDate = UniversalDate.getInstance(oJSDate, CalendarType.Gregorian);
@@ -161,61 +186,27 @@ sap.ui.define([
 		assert.equal(oUniversalDate.getCalendarType(), CalendarType.Japanese, "Universal date must report correct calendarType");
 	});
 
-	QUnit.test("Method calls are forwarded to the inner instance", function (assert) {
-		this.dateSpy.restore();
+	//*********************************************************************************************
+[
+	"getFullYear", "getYear", "getMonth", "getDate", "getDay", "getHours", "getMinutes",
+	"getSeconds", "getMilliseconds", "getUTCFullYear", "getUTCMonth", "getUTCDate", "getUTCDay",
+	"getUTCHours", "getUTCMinutes", "getUTCSeconds", "getUTCMilliseconds", "setFullYear",
+	"setYear", "setDate", "setMonth", "setHours", "setMinutes", "setSeconds", "setMilliseconds",
+	"setUTCFullYear", "setUTCDate", "setUTCMonth", "setUTCHours", "setUTCMinutes", "setUTCSeconds",
+	"setUTCMilliseconds", "getTime", "getTimezoneOffset", "valueOf", "toString", "toDateString"
+].forEach(function (sMethodName) {
+	QUnit.test("Method calls are forwarded to inner instance: " + sMethodName, function (assert) {
+		var oUniversalDate = UniversalDate.getInstance(),
+			oStub = sinon.stub(oUniversalDate.oDate, sMethodName);
 
-		var returnValue = 111,
-				sMethodName,
-				oDateConstructorStub,
-				oMethodStub,
-				oUniversalDate,
-				bMethodHasArgs,
-				result,
-				aMethodCallArg = [10, 11];
+		oStub.withArgs("~foo", "~bar").returns("~result");
 
-		var aMethods = [
-			{name: "getFullYear"}, {name: "getYear"}, {name: "getMonth"}, {name: "getDate"},
-			{name: "getDay"}, {name: "getHours"}, {name: "getMinutes"}, {name: "getSeconds"}, {name: "getMilliseconds"},
-			{name: "getUTCFullYear"}, {name: "getUTCMonth"}, {name: "getUTCDate"}, {name: "getUTCDay"},
-			{name: "getUTCHours"}, {name: "getUTCMinutes"}, {name: "getUTCSeconds"}, {name: "getUTCMilliseconds"},
-			{name: "setFullYear", hasArgs: true}, {name: "setYear", hasArgs: true}, {name: "setDate", hasArgs: true},
-			{name: "setMonth", hasArgs: true}, {name: "setHours", hasArgs: true}, {name: "setMinutes", hasArgs: true},
-			{name: "setSeconds", hasArgs: true}, {name: "setMilliseconds", hasArgs: true}, {name: "setUTCFullYear", hasArgs: true},
-			{name: "setUTCDate", hasArgs: true}, {name: "setUTCMonth", hasArgs: true}, {name: "setUTCHours", hasArgs: true},
-			{name: "setUTCMinutes", hasArgs: true}, {name: "setUTCSeconds", hasArgs: true}, {name: "setUTCMilliseconds", hasArgs: true},
-			{name: "getTime"}, {name: "valueOf"}, {name: "getTimezoneOffset"}, {name: "toString"}
-		];
+		// code under test
+		assert.strictEqual(oUniversalDate[sMethodName]("~foo", "~bar"), "~result");
 
-		var oMockDate = null;
-		for (var i = 0; i < aMethods.length; i++) {
-			sMethodName = aMethods[i].name;
-			bMethodHasArgs = aMethods[i].hasArgs;
-			oMockDate = {};
-			oMockDate.prototype = Date.prototype;
-			oMockDate[sMethodName] = function () {};
-
-			oDateConstructorStub = this.sandbox.stub(window, 'Date').returns(oMockDate);
-			oMethodStub = this.sandbox.stub(oMockDate, sMethodName).returns(returnValue);
-			Date.prototype[sMethodName] = oMockDate[sMethodName]; //eslint-disable-line no-extend-native
-
-			oUniversalDate = new UniversalDate();
-			if (bMethodHasArgs) {
-				result = oUniversalDate[sMethodName](aMethodCallArg[0], aMethodCallArg[1]);
-			} else {
-				result = oUniversalDate[sMethodName]();
-			}
-
-			assert.equal(oMethodStub.callCount, 1, "Method [" + sMethodName + "] has to be called once");
-			assert.equal(result, returnValue, "Method [" + sMethodName + "] call has to return a certain value");
-
-			if (bMethodHasArgs) {
-				assert.deepEqual(oMethodStub.firstCall.args, aMethodCallArg, "Method [" + sMethodName + "] call has to be called with certain arguments");
-			}
-
-			oMethodStub.restore();
-			oDateConstructorStub.restore();
-		}
+		oStub.restore();
 	});
+});
 
 	QUnit.test("Static methods call is forwarded to inner instance", function (assert) {
 		this.dateSpy.restore();
@@ -642,7 +633,7 @@ sap.ui.define([
 
 	QUnit.test("getWeek/getUTCWeek with invalid weekData", function (assert) {
 		this.dateSpy.restore();
-		var oUniversalDateInstance = new UniversalDate(new Date());
+		var oUniversalDateInstance = new UniversalDate();
 
 		var aFixtures = [
 			{
@@ -793,6 +784,34 @@ sap.ui.define([
 		assert.throws(function() {
 			UniversalDate.getInstance(oInvalidDate);
 		}, new Error("The given date object is invalid"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createDate: Date class", function (assert) {
+		this.mock(UI5Date).expects("getInstance").withExactArgs("~param0", "~param1").returns("~ui5Date");
+
+		// code under test
+		assert.strictEqual(UniversalDate.prototype.createDate(Date, ["~param0", "~param1"]), "~ui5Date");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCurrentEra", function (assert) {
+		var oDate = {
+				getDate: function () {},
+				getFullYear: function () {},
+				getMonth: function () {}
+			};
+
+		this.mock(UI5Date).expects("getInstance").withExactArgs().returns(oDate);
+		this.mock(oDate).expects("getFullYear").withExactArgs().returns("~year");
+		this.mock(oDate).expects("getMonth").withExactArgs().returns("~month");
+		this.mock(oDate).expects("getDate").withExactArgs().returns("~date");
+		this.mock(UniversalDate).expects("getEraByDate")
+			.withExactArgs("~sCalendarType", "~year", "~month", "~date")
+			.returns("~era");
+
+		// code under test
+		assert.strictEqual(UniversalDate.getCurrentEra("~sCalendarType"), "~era");
 	});
 
 	//--- helpers ----------------------------------------------------------------------------------------------
