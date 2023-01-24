@@ -488,7 +488,10 @@ sap.ui.define([
 					}), "Plugin#setAggregationInfo call");
 					fSetAggregationSpy.restore();
 					oDelegate.rebind = fnRebind;
-					done();
+					oTable.getEngine().reset(oTable, ["Group"])
+					.then(function(){
+						done();
+					});
 				};
 				getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup").getContent()[0].firePress();
 			});
@@ -524,7 +527,10 @@ sap.ui.define([
 					}), "Plugin#setAggregationInfo call");
 					fSetAggregationSpy.restore();
 					oDelegate.rebind = fnRebind;
-					done();
+					oTable.getEngine().reset(oTable, ["Aggregate"])
+					.then(function(){
+						done();
+					});
 				};
 				getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal").getContent()[0].firePress();
 			});
@@ -584,7 +590,10 @@ sap.ui.define([
 
 						fSetAggregationSpy.restore();
 						oDelegate.rebind = fnRebind;
-						done();
+						oTable.getEngine().reset(oTable, ["Group", "Aggregate"])
+						.then(function(){
+							done();
+						});
 					};
 
 					getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal").getContent()[0].firePress();

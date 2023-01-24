@@ -3,8 +3,9 @@
  */
 sap.ui.define([
 	"sap/m/p13n/Engine",
-	"sap/ui/mdc/flexibility/Util"
-], function(Engine, Util) {
+	"sap/ui/mdc/flexibility/Util",
+	"sap/ui/fl/changeHandler/Base"
+], function(Engine, Util, FLChangeHandlerBase) {
 	"use strict";
 	var fRebindControl = function(oControl) {
 		var bExecuteRebindForTable = oControl && oControl.isA && oControl.isA("sap.ui.mdc.Table") && oControl.isTableBound();
@@ -88,7 +89,12 @@ sap.ui.define([
 					});
 					var iIndex = aValue.indexOf(aFoundValue[0]);
 
-					aValue.splice(iIndex, 1);
+					if (iIndex > -1) {
+						aValue.splice(iIndex, 1);
+					} else {
+						// In case the specified change is already existing (e.g. nothing to be removed) we need to ignore the change gracefully and mark it as not applicable
+						return FLChangeHandlerBase.markAsNotApplicable("The specified change is already existing - change appliance ignored", true);
+					}
 
 					oSortConditions = {
 						sorters: aValue

@@ -133,6 +133,62 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("removeSort (for a sorter that does not exist) with a different existing sorter", function(assert) {
+		var done = assert.async();
+		var oAddContent = fCreateAddSortDefinition();
+
+		//create addSort
+		return ChangesWriteAPI.create({
+			changeSpecificData: oAddContent,
+			selector: this.oTable
+		}).then(function(oChange) {
+
+			this.fAddSort(oChange, this.oTable, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			}).then(function(){
+
+				var oSortConditions = this.oTable.getSortConditions();
+				var aSorters = oSortConditions.sorters;
+
+				assert.equal(aSorters.length, 1, "one sorter has been created");
+				assert.equal(aSorters[0].name, "Category", "correct sorter has been created");
+				assert.equal(aSorters[0].descending, false, "correct sort order has been created");
+
+				//create removeSort
+				var oRemoveContent = {
+					changeType: "removeSort",
+					selector: {
+						id: "comp---view--myTable"
+					},
+					content: {
+						name: "someNonExistingPropertyName"
+					}
+				};
+				return ChangesWriteAPI.create({
+					changeSpecificData: oRemoveContent,
+					selector: this.oTable
+				}).then(function(oChange) {
+
+					this.fRemoveSort(oChange, this.oTable, {
+						modifier: JsControlTreeModifier,
+						appComponent: this.oUiComponent,
+						view: this.oView
+					}).finally(function(){
+
+						oSortConditions = this.oTable.getSortConditions();
+
+						//Check that the false change has been ignored gracefully, the further appliance and chain of appliance works as expected
+						assert.equal(oSortConditions.sorters.length, 1, "sort conditions still contains the earlier existing sorter");
+
+						done();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		}.bind(this));
+	});
+
 	QUnit.test("apply and revert 'removeSort' with exisiting sortConditions", function(assert) {
 		var done = assert.async();
 

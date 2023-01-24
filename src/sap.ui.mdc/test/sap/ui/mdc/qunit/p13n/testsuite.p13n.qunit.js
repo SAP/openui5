@@ -316,6 +316,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"GroupFlex": {
+				group: "changehandler tests",
+				module: "./flexibility/GroupFlex.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
+			},
 			"ItemBaseFlex": {
 				group: "changehandler tests",
 				module: "./flexibility/ItemBaseFlex.qunit",
