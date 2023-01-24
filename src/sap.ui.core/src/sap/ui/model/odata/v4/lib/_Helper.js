@@ -1557,8 +1557,9 @@ sap.ui.define([
 		 * @param {string} sPath The path of both values in mChangeListeners
 		 * @param {any} vOld The old value
 		 * @param {any} vNew The new value
+		 * @param {boolean} [bAllowUndefined] Allow firing undefined as new value instead of null
 		 */
-		informAll : function (mChangeListeners, sPath, vOld, vNew) {
+		informAll : function (mChangeListeners, sPath, vOld, vNew, bAllowUndefined) {
 			if (vNew === vOld) {
 				return;
 			}
@@ -1566,12 +1567,13 @@ sap.ui.define([
 			if (vNew && typeof vNew === "object") {
 				Object.keys(vNew).forEach(function (sProperty) {
 					_Helper.informAll(mChangeListeners, _Helper.buildPath(sPath, sProperty),
-						vOld && vOld[sProperty], vNew[sProperty]);
+						vOld && vOld[sProperty], vNew[sProperty], bAllowUndefined);
 				});
 			} else {
 				// must fire null to guarantee that a property binding has not
 				// this.vValue === undefined, see ODataPropertyBinding.setValue
-				_Helper.fireChange(mChangeListeners, sPath, vNew === undefined ? null : vNew);
+				_Helper.fireChange(mChangeListeners, sPath,
+					!bAllowUndefined && vNew === undefined ? null : vNew);
 				vNew = {};
 			}
 
@@ -1580,7 +1582,7 @@ sap.ui.define([
 					// not covered in the new value
 					if (!vNew.hasOwnProperty(sProperty)) {
 						_Helper.informAll(mChangeListeners, _Helper.buildPath(sPath, sProperty),
-							vOld[sProperty], undefined);
+							vOld[sProperty], undefined, bAllowUndefined);
 					}
 				});
 			}
@@ -2047,18 +2049,19 @@ sap.ui.define([
 		 */
 		resetInactiveEntity : function (mChangeListeners, sPath, oEntity) {
 			var oInitialData = _Helper.getPrivateAnnotation(oEntity, "initialData"),
-				oPostBody = _Helper.getPrivateAnnotation(oEntity, "postBody");
+				oPostBody = _Helper.getPrivateAnnotation(oEntity, "postBody"),
+				oOldPostBody = Object.assign({}, oPostBody);
 
 			Object.keys(oPostBody).forEach(function (sKey) {
 				if (sKey in oInitialData) {
-					oEntity[sKey] = oPostBody[sKey] = oInitialData[sKey];
+					oEntity[sKey] = oPostBody[sKey] = _Helper.clone(oInitialData[sKey]);
 				} else {
 					delete oPostBody[sKey];
 					delete oEntity[sKey];
 				}
-				_Helper.fireChange(mChangeListeners, sPath + "/" + sKey, oEntity[sKey]);
 			});
 
+			_Helper.informAll(mChangeListeners, sPath, oOldPostBody, oPostBody, true);
 			_Helper.updateAll(mChangeListeners, sPath, oEntity,
 				{"@$ui5.context.isInactive" : true}
 			);

@@ -47009,7 +47009,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1582
 	//
 	// Reset changes on the binding (CPOUI5ODATAV4-1867), context, and model (CPOUI5ODATAV4-1942) to
-	// reset the contexts to their initial inactive state. "Normal" inactive rows are unaffected.
+	// reset the contexts to their initial inactive state including initial data. "Normal" inactive
+	// rows are unaffected.
 ["binding", "context", "model"].forEach(function (sCase) {
 	var sTitle = "Creation Rows: Support for required properties, reset at " + sCase;
 
@@ -47186,6 +47187,75 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("Creation rows: reset changes with default values", function (assert) {
+		var oBinding,
+			aCells,
+			oContext,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			oNoteBinding,
+			oNoteLangBinding,
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<Input id="id" value="{SalesOrderID}"/>\
+	<Input id="note" value="{Note}"/>\
+	<Input id="noteLang" value="{NoteLanguage}"/>\
+	<Text id="inactive" text="{= %{@$ui5.context.isInactive} }"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,NoteLanguage,SalesOrderID&$skip=0&$top=100",
+				{value : []})
+			.expectChange("id", [])
+			.expectChange("note", [])
+			.expectChange("noteLang", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectChange("id", ["43"])
+				.expectChange("note", [""])
+				.expectChange("noteLang", ["E"]);
+
+			oBinding.attachCreateActivate(function (oEvent) {
+				oEvent.preventDefault();
+			});
+			oContext = oBinding.create({SalesOrderID : "43"}, true, true, /*bInactive*/true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			aCells = that.oView.byId("table").getItems()[0].getCells();
+			oNoteBinding = aCells[1].getBinding("value");
+			oNoteLangBinding = aCells[2].getBinding("value");
+
+			that.expectChange("note", ["My Note"]);
+			that.expectChange("noteLang", ["D"]);
+
+			// code under test
+			oNoteBinding.setValue("My Note");
+			oNoteLangBinding.setValue("D");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note", [""]);
+			that.expectChange("noteLang", ["E"]);
+
+			// code under test
+			oContext.resetChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note", ["My Note 2"]);
+			that.expectChange("noteLang", ["C"]);
+
+			// code under test
+			oNoteBinding.setValue("My Note 2");
+			oNoteLangBinding.setValue("C");
+
+			return that.waitForChanges(assert);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: Main & dependent detail table. Create inactive rows for the detail table.

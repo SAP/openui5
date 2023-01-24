@@ -1854,8 +1854,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("informAll: comparison of old and new value fires all events", function (assert) {
+[true, undefined].forEach(function (bAllowUndefined) {
+	var sTitle = "informAll: comparison of old and new value fires all events, "
+		+ "bAllowUndefined=" + bAllowUndefined;
+
+	QUnit.test(sTitle, function (assert) {
 		var mChangeListeners = {},
+			vUndefinedValue = bAllowUndefined ? undefined : null,
 			oHelperMock = this.mock(_Helper),
 			oNew = {
 				add : "new",
@@ -1905,9 +1910,10 @@ sap.ui.define([
 		oHelperMock.expects("fireChange")
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/deep/changed", "changed");
 		oHelperMock.expects("fireChange")
-			.withExactArgs(sinon.match.same(mChangeListeners), "path/deep/deepOld", null);
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/deep/deepOld",
+				vUndefinedValue);
 		oHelperMock.expects("fireChange")
-			.withExactArgs(sinon.match.same(mChangeListeners), "path/deep/old", null);
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/deep/old", vUndefinedValue);
 		oHelperMock.expects("fireChange")
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/getDeep/inside", "value");
 		oHelperMock.expects("fireChange")
@@ -1915,17 +1921,19 @@ sap.ui.define([
 		oHelperMock.expects("fireChange")
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/getFlat", "now");
 		oHelperMock.expects("fireChange")
-			.withExactArgs(sinon.match.same(mChangeListeners), "path/getFlat/inside", null);
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/getFlat/inside",
+				vUndefinedValue);
 		oHelperMock.expects("fireChange")
-			.withExactArgs(sinon.match.same(mChangeListeners), "path/old", null);
+			.withExactArgs(sinon.match.same(mChangeListeners), "path/old", vUndefinedValue);
 
 		// code under test
-		_Helper.informAll(mChangeListeners, "path", oOld, oNew);
+		_Helper.informAll(mChangeListeners, "path", oOld, oNew, bAllowUndefined);
 
 		// assertion - no change on the old and the new value
 		assert.strictEqual(JSON.stringify(oOld), sUnchangedOld);
 		assert.strictEqual(JSON.stringify(oNew), sUnchangedNew);
 	});
+});
 
 	//*********************************************************************************************
 [{
@@ -2398,10 +2406,34 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("resetInactiveEntity", function (assert) {
 		var oContext = {setInactive : function () {}},
-			oEntity = {foo : "n/a", bar : "n/a", baz : "n/a", notIn : "postBody"},
 			oHelperMock = this.mock(_Helper),
-			oInitialData = {foo : "foo"},
-			oPostBody = {foo : "n/a", bar : "n/a", baz : "n/a"};
+			oInitialData = {
+				foo : "foo",
+				complex1 : {CITY : {ZIP : "ZIP"}},
+				complex3 : {REGION : "REGION"}
+			},
+			oPostBody = {
+				foo : "n/a", bar : "n/a", baz : "n/a",
+				complex1 : {CITY : {NAME : {PARTS : {PART : "n/a"}}, ZIP : "n/a"}, COUNTRY : "n/a"},
+				complex2 : {ID : "n/a"},
+				complex3 : null
+			},
+			oExpectedPostBody = {
+				foo : "foo",
+				complex1 : {CITY : {ZIP : "ZIP"}},
+				complex3 : {REGION : "REGION"}
+			},
+			oEntity = {
+				"@$ui5._" : {
+					context : oContext,
+					initialData : oInitialData,
+					postBody : oPostBody
+				},
+				foo : "n/a", bar : "n/a", baz : "n/a",
+				complex1 : {CITY : {NAME : {PARTS : {PART : "n/a"}}, ZIP : "n/a"}, COUNTRY : "n/a"},
+				complex2 : {ID : "n/a"},
+				complex3 : null
+			};
 
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oEntity), "initialData").returns(oInitialData);
@@ -2409,14 +2441,32 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oEntity), "postBody").returns(oPostBody);
 
 		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~", "path/foo", "foo");
-		oHelperMock.expects("fireChange")
-			.withExactArgs("~mChangeListeners~", "path/bar", undefined);
-		oHelperMock.expects("fireChange")
-			.withExactArgs("~mChangeListeners~", "path/baz", undefined);
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~",
+			"path/bar", undefined);
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~",
+			"path/baz", undefined);
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~",
+			"path/complex1/CITY/NAME/PARTS/PART", undefined);
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~",
+			"path/complex1/CITY/ZIP", "ZIP");
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~",
+			"path/complex1/COUNTRY", undefined);
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~",
+			"path/complex2/ID", undefined);
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~",
+			"path/complex3/REGION", "REGION");
+
+		// fireChange will be called for the following paths, but realistically there will be no
+		// change listeners for objects
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~",
+			"path/complex1/CITY/NAME", undefined);
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~",
+			"path/complex1/CITY/NAME/PARTS", undefined);
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~",
+			"path/complex2", undefined);
 
 		oHelperMock.expects("updateAll").withExactArgs("~mChangeListeners~", "path",
 			sinon.match.same(oEntity), {"@$ui5.context.isInactive" : true});
-
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oEntity), "context")
 			.returns(oContext);
@@ -2425,8 +2475,30 @@ sap.ui.define([
 		// code under test
 		_Helper.resetInactiveEntity("~mChangeListeners~", "path", oEntity);
 
-		assert.deepEqual(oEntity, {foo : "foo", notIn : "postBody"});
-		assert.deepEqual(oPostBody, {foo : "foo"});
+		assert.deepEqual(oEntity, {
+			"@$ui5._" : {
+				context : oContext,
+				initialData : oInitialData,
+				postBody : oExpectedPostBody
+			},
+			foo : "foo",
+			complex1 : {CITY : {ZIP : "ZIP"}},
+			complex3 : {REGION : "REGION"}
+		});
+
+		// to enforce object clone
+		oEntity.complex3.REGION = "IGB";
+		assert.deepEqual(oInitialData, {
+			foo : "foo",
+			complex1 : {CITY : {ZIP : "ZIP"}},
+			complex3 : {REGION : "REGION"}
+		});
+		oEntity["@$ui5._"].postBody.complex3.REGION = "IGB";
+		assert.deepEqual(oInitialData, {
+			foo : "foo",
+			complex1 : {CITY : {ZIP : "ZIP"}},
+			complex3 : {REGION : "REGION"}
+		});
 	});
 
 	//*********************************************************************************************
