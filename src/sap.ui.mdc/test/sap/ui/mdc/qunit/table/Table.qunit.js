@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/core/Control",
+	"sap/ui/core/Popup",
 	"sap/ui/core/library",
 	"sap/ui/mdc/library",
 	"sap/m/library",
@@ -73,6 +74,7 @@ sap.ui.define([
 	IllustratedMessage,
 	IllustratedMessageType,
 	Control,
+	Popup,
 	CoreLibrary,
 	MdcLibrary,
 	MLibrary,
@@ -4172,7 +4174,14 @@ sap.ui.define([
 
 	QUnit.module("Filter info bar", {
 		beforeEach: function() {
-			this.oTable = new Table();
+			this.oTable = new Table({
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "/testPath"
+					}
+				}
+			});
 			this.oTable.placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
@@ -4437,6 +4446,7 @@ sap.ui.define([
 				assert.ok(that.hasFilterInfoBar(), "Filter disabled: Filter info bar exists");
 				assert.ok(!oFilterInfoBar.getVisible(), "Filter disabled: Filter info bar is invisible");
 				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), "", "The associated invisible text is empty");
+				Core.applyChanges();
 				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 
 				that.oTable.destroy();
@@ -4486,7 +4496,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Press the filter info bar & focus handling in edge cases", function(assert) {
+	QUnit.test("Press the filter info bar & focus handling with p13n dialog (TODO: SHOULD BE AN OPA TEST!)", function(assert) {
 		var that = this;
 
 		this.oTable.addColumn(new Column({
@@ -4495,50 +4505,77 @@ sap.ui.define([
 		}));
 		this.oTable.setP13nMode(["Filter"]);
 
-		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
-			{
-				name: "age",
-				label: "AgeLabel"
-			}
-		]);
+		MDCQUnitUtils.stubPropertyInfos(this.oTable, [{
+			name: "name",
+			label: "NameLabel",
+			dataType: "sap.ui.model.type.String"
+		}]);
 
 		return this.oTable.initialized().then(function() {
 			that.oTable.setFilterConditions({
-				age: [
-					{
-						isEmpty: null,
-						operator: "EQ",
-						validated: "NotValidated",
-						values: ["test"]
-					}
-				]
+				name: [{
+					isEmpty: null,
+					operator: "EQ",
+					validated: "NotValidated",
+					values: ["test"]
+				}]
 			});
 
 			return that.oTable.awaitPropertyHelper();
 		}).then(function() {
 			return that.waitForFilterInfoBarRendered();
 		}).then(function() {
-			var oTableSettingsShowPanelStub = sinon.stub(TableSettings, "showPanel");
+			var oTableSettingsShowPanelStub = sinon.stub(TableSettings, "showPanel").resolves();
 			var oFilterInfoBar = that.getFilterInfoBar();
 
 			oFilterInfoBar.firePress();
-			assert.ok(oTableSettingsShowPanelStub.calledOnceWithExactly(that.oTable, "Filter", undefined), "TableSettings.showPanel call");
-
-			// Simulate that the filter info bar is focused after being set to invisible, but before rendering.
-			// The focus should still be somewhere in the table after the filter info bar is hidden.
-			that.oTable.setFilterConditions({name: []});
-			oFilterInfoBar.focus();
-			Core.applyChanges();
-			assert.notOk(oFilterInfoBar.getDomRef(), "The filter info bar has no DOM reference");
-			assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
+			assert.ok(oTableSettingsShowPanelStub.calledOnceWith(that.oTable, "Filter"),
+				"Pressing the filter info bar calls TableSettings.showPanel with the correct arguments");
+			oTableSettingsShowPanelStub.restore();
 
 			// Simulate setting the focus when the filter dialog is closed and all filters have been removed.
 			// The filter info bar will be hidden in this case. The focus should still be somewhere in the table and not on the document body.
-			document.body.focus();
-			that.getFilterInfoBar().focus();
-			assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
+			that.oTable.setFilterConditions({
+				name: [{
+					isEmpty: null,
+					operator: "EQ",
+					validated: "NotValidated",
+					values: ["test"]
+				}]
+			});
+			return that.waitForFilterInfoBarRendered();
+		}).then(function() {
+			var oFilterInfoBar = that.getFilterInfoBar();
 
-			oTableSettingsShowPanelStub.restore();
+			oFilterInfoBar.focus();
+			oFilterInfoBar.firePress(); // Opens the filter dialog
+
+			// Wait for filter dialog
+			return new Promise(function(resolve) {
+				new ManagedObjectObserver(function(oChange) {
+					if (oChange.mutation === "insert" && oChange.child.isA("sap.m.p13n.Popup")) {
+						var fnOriginalOpen = oChange.child.open;
+						oChange.child.open = function() {
+							fnOriginalOpen.apply(this, arguments);
+							resolve(oChange.child._oPopup);
+						};
+					}
+				}).observe(that.oTable, {
+					aggregations: ["dependents"]
+				});
+			});
+		}).then(function(oP13nDialog) {
+			return new Promise(function(resolve) {
+				oP13nDialog.attachEventOnce("afterClose", function() {
+					that.oTable.setFilterConditions({name: []}); // Hides the filter info bar
+					Core.applyChanges();
+					resolve();
+				});
+				oP13nDialog.getButtons()[0].firePress(); // Trigger press on the OK button in the sap.m.Dialog
+			});
+		}).then(function() {
+			assert.ok(that.oTable.getDomRef().contains(document.activeElement),
+				"After removing all filters in the dialog and closing it, the focus is in the table");
 		});
 	});
 
@@ -5273,7 +5310,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Enable/Disable column resize with ResponsiveTable (SHOULD BE AN OPA TEST!)", function(assert) {
+	QUnit.test("Enable/Disable column resize with ResponsiveTable (TODO: SHOULD BE AN OPA TEST!)", function(assert) {
 		var oTable = this.oTable;
 
 		sinon.stub(ColumnResizer, "_isInTouchMode").returns(true);
