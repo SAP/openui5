@@ -37,7 +37,7 @@ sap.ui.define([
 		header  : "Employee Info",
 		title  : "John Doe",
 		titleActive: false,
-		icon  : "sap-icon://person-placeholder",
+		avatarSrc  : "sap-icon://person-placeholder",
 		description: "Department Manager1",
 		groups: [
 			{
@@ -107,8 +107,10 @@ sap.ui.define([
 		return new QuickViewPage({
 			header: "{/header}",
 			title: "{/title}",
-			icon: "{/icon}",
 			description: "{/description}",
+			avatar: new Avatar({
+				src: "{/avatarSrc}"
+			}),
 			groups: {
 				path: '/groups',
 				template: new QuickViewGroup({
@@ -167,7 +169,7 @@ sap.ui.define([
 		assert.strictEqual(this.oQuickViewPage.getHeader(), "Employee Info", "Header should be set correctly");
 		assert.strictEqual(this.oQuickViewPage.getTitle(), "John Doe", "Title should be set correctly");
 		assert.strictEqual(this.oQuickViewPage.getDescription(), "Department Manager1", "Description should be set correctly");
-		assert.strictEqual(this.oQuickViewPage.getIcon(), "sap-icon://person-placeholder", "Icon should be set correctly");
+		assert.strictEqual(this.oQuickViewPage.getAvatar().getSrc(), "sap-icon://person-placeholder", "Icon should be set correctly");
 	});
 
 	QUnit.test("Group element properties", function (assert) {
@@ -239,7 +241,8 @@ sap.ui.define([
 	QUnit.test("crossApplicationNavigation when property 'icon and 'titleUrl' are set", function (assert) {
 		// Arrange
 		var oStub = sinon.stub(this.oQuickViewPage, "_crossApplicationNavigation");
-		this.oQuickViewPage.setIcon("sap-icon://building").setTitleUrl("someTitleUrl");
+		this.oQuickViewPage.setTitleUrl("someTitleUrl");
+		this.oQuickViewPage.setAvatar(new Avatar({src: "sap-icon://building"}));
 		Core.applyChanges();
 		var oAvatar = this.oQuickViewPage._mPageContent.header.getContent()[AVATAR_INDEX];
 
