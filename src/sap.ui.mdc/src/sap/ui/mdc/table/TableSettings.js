@@ -67,7 +67,7 @@ sap.ui.define([
 			if (!oRb) {
 				this._loadResourceBundle();
 			}
-			var sButtonType = ThemeParameters.get({name: "_sap_ui_mdc_table_Table_ExportButtonType"});
+			var sButtonType = ThemeParameters.get({name: "_sap_ui_mdc_Table_ExportButtonType"});
 			var oMenuButton = new MenuButton(sIdPrefix + "-export", {
 				icon: "sap-icon://excel-attachment",
 				tooltip: oRb.getText("table.EXPORT_BUTTON_TEXT"),
