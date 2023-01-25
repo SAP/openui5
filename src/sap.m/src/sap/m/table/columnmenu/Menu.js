@@ -314,7 +314,7 @@ sap.ui.define([
 		}
 
 		if (oEvent.type == "mousedown" || oEvent.type == "touchstart") {
-			if (containsOrEquals(this.getDomRef(), oEvent.target) || isInControlTree(this, Core.byId(oEvent.target.id))) {
+			if (containsOrEquals(this.getDomRef(), oEvent.target) || isInControlTree(this, Element.closestTo(jQuery(oEvent.target)))) {
 				isInMenuHierarchy = true;
 			}
 		} else if (oEvent.type == "sapfocusleave") {

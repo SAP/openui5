@@ -887,4 +887,32 @@ sap.ui.define([
 		oButton1.destroy();
 		oButton2.destroy();
 	});
+
+	QUnit.test("Auto close behavior when the Menu contains a control that opens a popup", function(assert) {
+		var oComboBox = new sap.m.ComboBox({
+			items: [
+				new sap.ui.core.Item({key: "v1", text: "Value 1"}),
+				new sap.ui.core.Item({key: "v2", text: "Value 2"})
+			]
+		});
+
+		this.oColumnMenu.addItem(
+			new Item({
+				label: "test item",
+				content: oComboBox
+			})
+		);
+
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu.isOpen());
+
+		var sId = this.oColumnMenu.getItems()[0].getId();
+		this.oColumnMenu._oItemsContainer.switchView(sId);
+		this.clock.tick(1000);
+
+		oComboBox.open();
+		QUnitUtils.triggerEvent("mousedown", oComboBox._getList().getItems()[0].$()[0].firstChild);
+		this.clock.tick(1000);
+		assert.ok(this.oColumnMenu.isOpen());
+	});
 });
