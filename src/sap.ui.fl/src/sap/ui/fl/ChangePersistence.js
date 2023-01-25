@@ -770,6 +770,7 @@ sap.ui.define([
 						oDirtyChange.setState(States.LifecycleState.PERSISTED);
 						Cache.updateChange(this._mComponent, oDirtyChange.convertToFileContent());
 						break;
+					default:
 				}
 			}
 		}

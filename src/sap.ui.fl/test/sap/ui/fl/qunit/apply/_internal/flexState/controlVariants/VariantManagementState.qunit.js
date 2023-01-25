@@ -771,12 +771,9 @@ sap.ui.define([
 			VariantManagementState.addUpdateStateListener("reference2", oStub2);
 			VariantManagementState.removeUpdateStateListener("reference2", oStub2);
 
-			var oVariantDependentControlChange = {
-				getState: function() {return States.LifecycleState.NEW;},
-				convertToFileContent: function() {
-					return {fileType: "change"};
-				}
-			};
+			var oVariantDependentControlChange = FlexObjectFactory.createFromFileContent({
+				fileType: "change"
+			});
 			VariantManagementState.updateVariantsState({
 				reference: this.sReference,
 				changeToBeAddedOrDeleted: oVariantDependentControlChange,
@@ -785,13 +782,15 @@ sap.ui.define([
 			assert.deepEqual(this.oResponse.variantDependentControlChanges[0], oVariantDependentControlChange.convertToFileContent(), "then the variants related change was added to flex state response");
 			assert.strictEqual(oStub1.callCount, 1, "the listener was called");
 			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
+			assert.strictEqual(
+				oVariantDependentControlChange.getState(),
+				States.LifecycleState.PERSISTED,
+				"then the change state is updated"
+			);
 
-			var oVariant = {
-				getState: function() {return States.LifecycleState.NEW;},
-				convertToFileContent: function() {
-					return {fileType: "ctrl_variant"};
-				}
-			};
+			var oVariant = FlexObjectFactory.createFromFileContent({
+				fileType: "ctrl_variant"
+			});
 			VariantManagementState.updateVariantsState({
 				reference: this.sReference,
 				changeToBeAddedOrDeleted: oVariant,
@@ -801,12 +800,9 @@ sap.ui.define([
 			assert.strictEqual(oStub1.callCount, 2, "the listener was called");
 			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 
-			var oVariantManagementChange = {
-				getState: function() {return States.LifecycleState.NEW;},
-				convertToFileContent: function() {
-					return {fileType: "ctrl_variant_management_change"};
-				}
-			};
+			var oVariantManagementChange = FlexObjectFactory.createFromFileContent({
+				fileType: "ctrl_variant_management_change"
+			});
 			VariantManagementState.updateVariantsState({
 				reference: this.sReference,
 				changeToBeAddedOrDeleted: oVariantManagementChange,
@@ -816,12 +812,9 @@ sap.ui.define([
 			assert.strictEqual(oStub1.callCount, 3, "the listener was called");
 			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 
-			var oVariantChange = {
-				getState: function() {return States.LifecycleState.NEW;},
-				convertToFileContent: function() {
-					return {fileType: "ctrl_variant_change"};
-				}
-			};
+			var oVariantChange = FlexObjectFactory.createFromFileContent({
+				fileType: "ctrl_variant_change"
+			});
 			VariantManagementState.updateVariantsState({
 				reference: this.sReference,
 				changeToBeAddedOrDeleted: oVariantChange,
@@ -832,12 +825,9 @@ sap.ui.define([
 			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 
 			VariantManagementState.removeUpdateStateListener(this.sReference);
-			var oVariantDependentControlChange1 = {
-				getState: function() {return States.LifecycleState.NEW;},
-				convertToFileContent: function() {
-					return {fileType: "change"};
-				}
-			};
+			var oVariantDependentControlChange1 = FlexObjectFactory.createFromFileContent({
+				fileType: "change"
+			});
 			VariantManagementState.updateVariantsState({
 				reference: this.sReference,
 				changeToBeAddedOrDeleted: oVariantDependentControlChange1,
@@ -916,6 +906,46 @@ sap.ui.define([
 				content: {}
 			});
 			assert.equal(this.oResponse.variantChanges.length, 0, "then the variants related change was deleted from the flex state response");
+		});
+
+		QUnit.test("when 'updateVariantsState' is called to update variant related changes", function(assert) {
+			var oVariantDependentControlChange = FlexObjectFactory.createFromFileContent({
+				fileType: "change",
+				fileName: "someChange",
+				state: States.LifecycleState.DIRTY
+			});
+			VariantManagementState.updateVariantsState({
+				reference: this.sReference,
+				changeToBeAddedOrDeleted: oVariantDependentControlChange,
+				content: {}
+			});
+			oVariantDependentControlChange.setContent({ key: "Some change to the file content" });
+			assert.strictEqual(
+				oVariantDependentControlChange.getState(),
+				States.LifecycleState.DIRTY,
+				"then the change state is set to dirty when changing the flex object"
+			);
+
+			VariantManagementState.updateVariantsState({
+				reference: this.sReference,
+				changeToBeAddedOrDeleted: oVariantDependentControlChange,
+				content: {}
+			});
+			assert.strictEqual(
+				this.oResponse.variantDependentControlChanges.length,
+				1,
+				"then no further change is added to the flex state response"
+			);
+			assert.deepEqual(
+				this.oResponse.variantDependentControlChanges[0].content,
+				{ key: "Some change to the file content" },
+				"then the change is updated"
+			);
+			assert.strictEqual(
+				oVariantDependentControlChange.getState(),
+				States.LifecycleState.PERSISTED,
+				"then the change state is set to persisted"
+			);
 		});
 	});
 

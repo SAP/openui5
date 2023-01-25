@@ -104,6 +104,15 @@ sap.ui.define([
 		}
 	}
 
+	function updateChange(oChangeContent, oFlexObjects) {
+		var sChangeCategory = getVariantChangeCategory(oChangeContent);
+		oFlexObjects[sChangeCategory] = oFlexObjects[sChangeCategory].map(function(oExistingFlexObject) {
+			return oChangeContent.fileName === oExistingFlexObject.fileName
+				? oChangeContent
+				: oExistingFlexObject;
+		});
+	}
+
 	function getVariantChangeCategory(oChangeContent) {
 		switch (oChangeContent.fileType) {
 			case "change":
@@ -548,12 +557,18 @@ sap.ui.define([
 		var oFlexObjects = FlexState.getFlexObjectsFromStorageResponse(mPropertyBag.reference);
 
 		if (mPropertyBag.changeToBeAddedOrDeleted) {
+			var oFileContent = mPropertyBag.changeToBeAddedOrDeleted.convertToFileContent();
 			switch (mPropertyBag.changeToBeAddedOrDeleted.getState()) {
 				case States.LifecycleState.NEW:
-					addChange(mPropertyBag.changeToBeAddedOrDeleted.convertToFileContent(), oFlexObjects);
+					addChange(oFileContent, oFlexObjects);
+					mPropertyBag.changeToBeAddedOrDeleted.setState(States.LifecycleState.PERSISTED);
 					break;
 				case States.LifecycleState.DELETE:
-					deleteChange(mPropertyBag.changeToBeAddedOrDeleted.convertToFileContent(), oFlexObjects);
+					deleteChange(oFileContent, oFlexObjects);
+					break;
+				case States.LifecycleState.DIRTY:
+					updateChange(oFileContent, oFlexObjects);
+					mPropertyBag.changeToBeAddedOrDeleted.setState(States.LifecycleState.PERSISTED);
 					break;
 				default:
 			}

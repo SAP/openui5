@@ -30,6 +30,7 @@ function(
 	var Cache = function() {};
 
 	function _getArray(sComponentName, oChange) {
+		// FIXME Don't mutate the storage response
 		var mStorageResponse = FlexState.getFlexObjectsFromStorageResponse(sComponentName);
 
 		if (oChange.fileType === "variant") {
