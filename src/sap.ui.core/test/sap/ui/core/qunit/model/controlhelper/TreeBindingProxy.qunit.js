@@ -162,6 +162,17 @@ sap.ui.define([
 		fnLogErrorSpy.restore();
 	});
 
+	QUnit.test("#getContexts without V4 flag set", function(assert) {
+		this.oProxy._bEnableV4 = false;
+		var fnLogErrorSpy = this.spy(Log, "error");
+
+		var aContexts = this.oProxy.getContexts(0);
+		assert.ok(fnLogErrorSpy.calledOnce, "An error was logged regarding V4 usage");
+		assert.equal(aContexts.length, 0, "Despite an error, the return value is an empty array");
+
+		fnLogErrorSpy.restore();
+	});
+
 	QUnit.test("#getNodeByIndex", function(assert) {
 		var fnGetContextByIndexStub = sinon.stub(this.oProxy, "getContextByIndex");
 		var oContext = { context: "test" };

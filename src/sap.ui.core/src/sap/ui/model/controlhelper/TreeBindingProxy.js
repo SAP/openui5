@@ -58,7 +58,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log"], function (assert, Log) {
 			case "sap.ui.model.odata.v4.ODataListBinding":
 				if (!this._bEnableV4) {
 					Log.error("UnsupportedOperationException: OData V4 is not supported");
-					return;
+					return false;
 				}
 				var oContext = this.getContextByIndex(iIndex);
 				return oContext
@@ -135,7 +135,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log"], function (assert, Log) {
 			case "sap.ui.model.odata.v4.ODataListBinding":
 				if (!this._bEnableV4) {
 					Log.error("UnsupportedOperationException: OData V4 is not supported");
-					return;
+					return false;
 				}
 				var oContext = this.getContextByIndex(iIndex);
 				return oContext ? !!oContext.getProperty("@$ui5.node.isExpanded") : false;
@@ -315,7 +315,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log"], function (assert, Log) {
 			case "sap.ui.model.odata.v4.ODataListBinding":
 				if (!this._bEnableV4) {
 					Log.error("UnsupportedOperationException: OData V4 is not supported");
-					return;
+					return [];
 				}
 				aContexts =  oBinding.getContexts(iStartIndex, iLength, iThreshold, bKeepCurrent);
 				aContexts.forEach(function (oContext) {
@@ -501,7 +501,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log"], function (assert, Log) {
 			case "sap.ui.model.odata.v4.ODataListBinding":
 				if (!this._bEnableV4) {
 					Log.error("UnsupportedOperationException: OData V4 is not supported");
-					return;
+					return 0;
 				}
 				var oContext = this.getContextByIndex(iIndex);
 				return getLevelFromObject(oContext, false);
@@ -527,7 +527,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log"], function (assert, Log) {
 			case "sap.ui.model.odata.v4.ODataListBinding":
 				if (!this._bEnableV4) {
 					Log.error("UnsupportedOperationException: OData V4 is not supported");
-					return;
+					return 0;
 				}
 				throw Error("The number of siblings of a node cannot be determined"
 					+ " with your current binding.");
@@ -553,7 +553,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log"], function (assert, Log) {
 			case "sap.ui.model.odata.v4.ODataListBinding":
 				if (!this._bEnableV4) {
 					Log.error("UnsupportedOperationException: OData V4 is not supported");
-					return;
+					return -1;
 				}
 				throw Error("The position of a node in its parent cannot be determined"
 					+ " with your current binding.");
