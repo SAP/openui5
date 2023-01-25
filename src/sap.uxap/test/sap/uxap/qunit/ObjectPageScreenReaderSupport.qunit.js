@@ -1,10 +1,13 @@
 /*global QUnit*/
 
-sap.ui.define(["sap/ui/core/Core",
-               "sap/uxap/ObjectPageLayout",
-               "sap/uxap/ObjectPageSection",
-               "sap/ui/core/mvc/XMLView"],
-function (Core, ObjectPageLayout, ObjectPageSection, XMLView) {
+sap.ui.define([
+		"sap/ui/core/Core",
+		"sap/uxap/ObjectPageLayout",
+		"sap/uxap/ObjectPageSection",
+		"sap/ui/core/mvc/XMLView",
+		"sap/ui/thirdparty/jquery"
+	],
+function (Core, ObjectPageLayout, ObjectPageSection, XMLView, $) {
 	"use strict";
 
 	var sRoleAttribute = "role",
@@ -144,11 +147,28 @@ function (Core, ObjectPageLayout, ObjectPageSection, XMLView) {
 		assertCorrectRoleDescription(this.oObjectPage.$("footerWrapper"), sRoleBundleText, "Footer element has appropriate role description set", assert);
 	});
 
-	QUnit.test("Footer element aria-label", function (assert) {
+	QUnit.test('AriaLabelledBy attribute is set correctly on the footer toolbar', function(assert) {
 		var oFooter = this.oObjectPage.getFooter(),
-			sAriaLabelBundleText = getResourceBundleText("FOOTER_ARIA_LABEL");
+			$InvisibleTextDomRef = $("#" + oFooter.getId() + "-FooterActions-InvisibleText");
 
-		assert.strictEqual(oFooter.$().attr("aria-label"), sAriaLabelBundleText, "The footer element has correct aria-label set");
+		// Assert
+		assert.strictEqual($InvisibleTextDomRef.length, 1, "InvisibleText DOM element exists");
+		assert.equal(oFooter.$().attr("aria-labelledby"), $InvisibleTextDomRef.attr('id'), "ObjectPageLayout Footer aria-labelledby points to the invisible text control");
+	});
+
+	QUnit.test('Invisible Text gets removed when footer aggregation is destroyed', function (assert) {
+		// Arrange
+		var oPage = this.oObjectPage,
+			oFooter = oPage.getFooter();
+
+		// Act
+		oPage.destroyFooter();
+		Core.applyChanges();
+
+		var $InvisibleTextDomRef = $("#" + oFooter.getId() + "-FooterActions-InvisibleText");
+
+		// Assert
+		assert.strictEqual($InvisibleTextDomRef.length, 0, "InvisibleText element is removed from the DOM");
 	});
 
 	QUnit.module("Screen reader support - Section/SubSection", {

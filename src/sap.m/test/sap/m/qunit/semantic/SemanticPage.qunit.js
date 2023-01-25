@@ -22,7 +22,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Label",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -46,7 +47,8 @@ sap.ui.define([
 	mobileLibrary,
 	Label,
 	InvisibleText,
-	oCore
+	oCore,
+	$
 ) {
 	"use strict";
 
@@ -54,10 +56,6 @@ sap.ui.define([
 	var OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
 
 	var oVisibleFixture = createAndAppendDiv("qunit-fixture-visible");
-
-
-
-	//
 
 	var _SemanticPageTypes = {
 		master: "master",
@@ -1539,5 +1537,34 @@ sap.ui.define([
 			sTextId = InvisibleText.getStaticId("sap.m", "SEMANTIC_CONTROL_MESSAGES_INDICATOR");
 
 		assert.strictEqual(sAriaDescribedBy, sTextId, "MessagesIndicator button aria-describedbyis set correctly.");
+	});
+
+	QUnit.test("AriaLabelledBy attribute on header toolbar is set correctly", function(assert) {
+		var oConfig = {
+			title: "This is a title",
+			showNavButton: true,
+			customFooterContent: [new Button({text: "custom"})]
+		},
+		oSemanticPage = createSemanticPageFactory(null, oConfig),
+		oHeader = oSemanticPage._getPage().getCustomHeader();
+
+		var $InvisibleTextDomRef = $('#' + oHeader.getId() + "-InvisibleText");
+		assert.strictEqual($InvisibleTextDomRef.length, 1, "InvisibleText DOM element exists - header actions toolbar");
+		assert.equal(oHeader.getAriaLabelledBy()[0], $InvisibleTextDomRef.attr("id"), "aria-labelledby is set correctly - header actions toolbar");
+	});
+
+	QUnit.test("AriaLabelledBy attribute on footer toolbar is set correctly", function(assert) {
+		var oConfig = {
+			title: "This is a title",
+			showNavButton: true,
+			customFooterContent: [new Button({text: "custom"})]
+		},
+		oSemanticPage = createSemanticPageFactory(null, oConfig),
+		oFooter = oSemanticPage._getPage().getFooter();
+
+		var $InvisibleTextDomRef = $('#' + oFooter.getId() + "-InvisibleText");
+
+		assert.strictEqual($InvisibleTextDomRef.length, 1, "InvisibleText DOM element exists - footer actions toolbar");
+		assert.equal(oFooter.getAriaLabelledBy()[0], $InvisibleTextDomRef.attr("id"), "aria-labelledby is set correctly - footer actions toolbar");
 	});
 });

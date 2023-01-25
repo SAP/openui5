@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/delegate/ScrollEnablement",
@@ -37,6 +38,7 @@ sap.ui.define([
 	ResizeHandler,
 	Configuration,
 	Control,
+	InvisibleText,
 	Device,
 	ManagedObject,
 	ScrollEnablement,
@@ -542,7 +544,6 @@ sap.ui.define([
 	ObjectPageLayout.DIV = "div";
 	ObjectPageLayout.HEADER = "header";
 	ObjectPageLayout.FOOTER = "section";
-	ObjectPageLayout.FOOTER = "section";
 
 	// Synced with @_sap_f_DynamicPageHeader_PaddingBottom in base less file of DynamicPageHeader
 	ObjectPageLayout.HEADER_CONTENT_PADDING_BOTTOM = DomUnitsRem.toPx("1rem");
@@ -553,6 +554,10 @@ sap.ui.define([
 	// Class which is added to the ObjectPageLayout if we don't have
 	// additional navigation (e.g. AnchorBar, IconTabBar, etc.)
 	ObjectPageLayout.NO_NAVIGATION_CLASS_NAME = "sapUxAPObjectPageNoNavigation";
+
+	ObjectPageLayout.ARIA = {
+		LABEL_TOOLBAR_FOOTER_ACTIONS: "ARIA_LABEL_TOOLBAR_FOOTER_ACTIONS"
+	};
 
 	ObjectPageLayout.prototype._getFirstEditableInput = function(sContainer) {
 		var oContainer = this.getDomRef(sContainer);
@@ -747,6 +752,36 @@ sap.ui.define([
 		// clear the cached DOM element to prevent obsolete layout calculations
 		// of the old <code>this._$titleArea</code> before rendering is finalized
 		this._$titleArea = [];
+
+		this._setFooterAriaLabelledBy();
+	};
+
+	/**
+	 * Sets the <code>aria-labelledby</code> attribute of the {@link sap.uxap.ObjectPageLayout} footer.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._setFooterAriaLabelledBy = function () {
+		var oFooter = this.getFooter();
+
+		if (oFooter && !oFooter.getAriaLabelledBy().length) {
+			this._oInvisibleText = new InvisibleText({
+				id: oFooter.getId() + "-FooterActions-InvisibleText",
+				text: ObjectPageLayout._getLibraryResourceBundle().getText(ObjectPageLayout.ARIA.LABEL_TOOLBAR_FOOTER_ACTIONS)
+			}).toStatic();
+
+			oFooter.addAriaLabelledBy(this._oInvisibleText);
+		}
+	};
+
+	/**
+	 * Destroys the invisible text object associated with the footer of the {@link sap.uxap.ObjectPageLayout} control.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._destroyInvisibleText = function () {
+		if (this._oInvisibleText) {
+			this._oInvisibleText.destroy();
+			this._oInvisibleText = null;
+		}
 	};
 
 	/**
@@ -1125,8 +1160,6 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype.onAfterRendering = function () {
 		var oHeaderContent = this._getHeaderContent(),
-			oFooter = this.getFooter(),
-			sFooterAriaLabel,
 			iWidth = this._getWidth(this);
 
 		this._bInvalidatedAndNotRerendered = false;
@@ -1162,11 +1195,6 @@ sap.ui.define([
 
 		if (oHeaderContent && oHeaderContent.supportsPinUnpin()) {
 			this._updatePinButtonState();
-		}
-
-		if (oFooter) {
-			sFooterAriaLabel = ObjectPageLayout._getLibraryResourceBundle().getText("FOOTER_ARIA_LABEL");
-			oFooter.$().attr("aria-label", sFooterAriaLabel);
 		}
 
 		// Attach expand button event
@@ -1305,6 +1333,8 @@ sap.ui.define([
 			this._oLazyLoading.destroy();
 			this._oLazyLoading = null;
 		}
+
+		this._destroyInvisibleText();
 
 		this._deregisterScreenSizeListener();
 		this._deregisterTitleSizeListener();
@@ -4321,6 +4351,12 @@ sap.ui.define([
 		this.$().toggleClass("sapUxAPObjectPageLayoutFooterVisible", bShowFooter);
 
 		return vResult;
+	};
+
+	ObjectPageLayout.prototype.destroyFooter = function () {
+		this._destroyInvisibleText();
+
+		return this.destroyAggregation("footer");
 	};
 
 	/**

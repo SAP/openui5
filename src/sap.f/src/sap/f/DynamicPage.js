@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
@@ -28,6 +29,7 @@ sap.ui.define([
 	ManagedObjectObserver,
 	ResizeHandler,
 	Configuration,
+	InvisibleText,
 	ScrollEnablement,
 	Device,
 	ManagedObject,
@@ -385,6 +387,7 @@ sap.ui.define([
 	DynamicPage.NAVIGATION_CLASS_NAME = "sapFDynamicPageNavigation";
 
 	DynamicPage.ARIA_ROLE_DESCRIPTION = "DYNAMIC_PAGE_ROLE_DESCRIPTION";
+	DynamicPage.ARIA_LABEL_TOOLBAR_FOOTER_ACTIONS = "ARIA_LABEL_TOOLBAR_FOOTER_ACTIONS";
 
 	/**
 	 * LIFECYCLE METHODS
@@ -428,6 +431,7 @@ sap.ui.define([
 		this._detachScrollHandler();
 		this._detachResizeHandlers();
 		this._toggleAdditionalNavigationClass();
+		this._setFooterAriaLabelledBy();
 	};
 
 	DynamicPage.prototype.onAfterRendering = function () {
@@ -484,6 +488,8 @@ sap.ui.define([
 		if (this._oStickySubheader) {
 			this._oStickySubheader.removeEventDelegate(this._oSubHeaderAfterRenderingDelegate);
 		}
+
+		this._destroyInvisibleText();
 	};
 
 	DynamicPage.prototype.setShowFooter = function (bShowFooter) {
@@ -510,6 +516,12 @@ sap.ui.define([
 		this._detachHeaderEventListeners();
 
 		return this.destroyAggregation("header");
+	};
+
+	DynamicPage.prototype.destroyFooter = function () {
+		this._destroyInvisibleText();
+
+		return this.destroyAggregation("footer");
 	};
 
 	DynamicPage.prototype._detachHeaderEventListeners = function () {
@@ -2410,6 +2422,33 @@ sap.ui.define([
 		return DynamicPage.FOOTER;
 	};
 
-	return DynamicPage;
+	/**
+	 * Sets the <code>aria-labelledby</code> attribute of the {@link sap.f.DynamicPage} footer.
+	 * @private
+	 */
+	DynamicPage.prototype._setFooterAriaLabelledBy = function () {
+		var oFooter = this.getFooter();
 
+		if (oFooter && !oFooter.getAriaLabelledBy().length) {
+			this._oInvisibleText = new InvisibleText({
+				id: oFooter.getId() + "-FooterActions-InvisibleText",
+				text: Core.getLibraryResourceBundle("sap.f").getText(DynamicPage.ARIA_LABEL_TOOLBAR_FOOTER_ACTIONS)
+			}).toStatic();
+
+			oFooter.addAriaLabelledBy(this._oInvisibleText);
+		}
+	};
+
+	/**
+	 * Destroys the invisible text object associated with the footer of the {@link sap.f.DynamicPage} control.
+	 * @private
+	 */
+	DynamicPage.prototype._destroyInvisibleText = function () {
+		if (this._oInvisibleText) {
+			this._oInvisibleText.destroy();
+			this._oInvisibleText = null;
+		}
+	};
+
+	return DynamicPage;
 });
