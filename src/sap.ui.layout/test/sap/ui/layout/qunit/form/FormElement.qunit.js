@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/layout/form/FormElement",
 	"sap/m/Label",
 	"sap/m/Input",
+	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core"
 	],
@@ -11,6 +12,7 @@ sap.ui.define([
 			FormElement,
 			Label,
 			Input,
+			Text,
 			JSONModel,
 			oCore
 	) {
@@ -393,14 +395,20 @@ sap.ui.define([
 		oFormElement.setLabel(oLabel);
 		var oField1 = new Input("I1");
 		oFormElement.addField(oField1);
+		var oField2 = new Text("T1");
+		oFormElement.addField(oField1);
 
 		var mAriaProps = {};
 		oFormElement.enhanceAccessibilityState(oField1, mAriaProps);
-		assert.equal(mAriaProps["labelledby"], "L1", "aria-labelledby set to Label");
+		assert.equal(mAriaProps["labelledby"], "L1", "aria-labelledby set to Label for Input");
 
 		mAriaProps = {labelledby: "X"};
 		oFormElement.enhanceAccessibilityState(oField1, mAriaProps);
-		assert.equal(mAriaProps["labelledby"], "L1 X", "aria-labelledby set to Label");
+		assert.equal(mAriaProps["labelledby"], "L1 X", "aria-labelledby set to Label for Input");
+
+		mAriaProps = {};
+		oFormElement.enhanceAccessibilityState(oField2, mAriaProps);
+		assert.notOk(mAriaProps["labelledby"], "aria-labelledby not set to Label for Text");
 	});
 
 	QUnit.test("onLayoutDataChange", function(assert) {
