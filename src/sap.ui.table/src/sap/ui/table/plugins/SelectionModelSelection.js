@@ -311,7 +311,8 @@ sap.ui.define([
 
 		this.fireSelectionChange({
 			rowIndices: aRowIndices,
-			selectAll: bSelectAll
+			selectAll: bSelectAll,
+			_internalTrigger: this._bInternalTrigger
 		});
 	}
 
@@ -341,7 +342,9 @@ sap.ui.define([
 		// If rows are added or removed, the index-based selection of the SelectionModel is invalid and needs to be cleared.
 		// Changes from 0 are ignored for compatibility, so it is possible to select something before the initial rows update is done.
 		if (this._iTotalRowCount > 0 && this._iTotalRowCount !== iTotalRowCount) {
+			this._bInternalTrigger = true;
 			this.clearSelection();
+			delete this._bInternalTrigger;
 		}
 
 		this._iTotalRowCount = iTotalRowCount;

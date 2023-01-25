@@ -122,6 +122,36 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Event parameters of internal default selection plugin", function(assert) {
+		var oMultiSelectionPlugin = new MultiSelectionPlugin();
+
+		this.oTable.destroy();
+		this.oTable = TableQUnitUtils.createTable({
+			rows: {path: "/"},
+			plugins: [
+				oMultiSelectionPlugin
+			],
+			models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
+		});
+		assert.expect(2);
+		oMultiSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+			assert.deepEqual(oEvent.getParameter("_internalTrigger"), undefined,
+				"SelectionChange _internalTrigger parameter is undefined");
+
+			oMultiSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+				assert.deepEqual(oEvent.getParameter("_internalTrigger"), true,
+					"SelectionChange _internalTrigger parameter is true after growing table and changing binding length");
+			});
+		});
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			return oMultiSelectionPlugin.addSelectionInterval(0, 4).then(function() {
+				this.oTable.getBinding().getModel().getData().push({});
+				this.oTable.getBinding().refresh();
+			}.bind(this));
+		}.bind(this));
+	});
+
 	QUnit.module("Multi selection behavior", {
 		beforeEach: function() {
 			this.oMockServer = startMockServer();
