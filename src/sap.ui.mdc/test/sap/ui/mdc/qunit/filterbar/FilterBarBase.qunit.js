@@ -325,11 +325,11 @@ sap.ui.define([
     QUnit.test("Check _handleFilterItemSubmit", function(assert){
         sinon.stub(this.oFilterBarBase, "triggerSearch");
 
+        var fnSubmitPromiseResolve = null;
         var fCallBack = function() {
             setTimeout(fnSubmitPromiseResolve, 100);
         };
 
-        var fnSubmitPromiseResolve = null;
         var oSubmitPromise = new Promise(function(resolve, reject) { fnSubmitPromiseResolve = resolve; });
         var oEvent = {
             getParameter: function() { fCallBack(); return Promise.resolve(); }
@@ -687,6 +687,60 @@ sap.ui.define([
                 }.bind(this));
             }.bind(this));
         }.bind(this));
+
+    });
+
+    QUnit.test("check reason information", function(assert){
+
+        var done = assert.async(3);
+
+        var fnSubmittedResolve = null;
+        var oSubmittedPromise = new Promise(function(resolve) {
+            fnSubmittedResolve = resolve;
+        });
+
+        var fnGoResolve = null;
+        var oGoPromise = new Promise(function(resolve) {
+            fnGoResolve = resolve;
+        });
+
+        var nCall = 0;
+        this.oFilterBarBase.attachSearch(function(oEvent) {
+
+            var sReason = oEvent.getParameter("reason");
+            ++nCall;
+
+            if (nCall === 1) {
+                assert.equal("Enter", sReason, "expected reason 'Enter'");
+                fnSubmittedResolve();
+            } else if (nCall === 2) {
+                assert.equal("Go", sReason, "expected reason 'Go'");
+                fnGoResolve();
+            } else if (nCall === 3) {
+                assert.equal("Variant", sReason, "expected reason 'Variant'");
+            }
+
+            done();
+        });
+
+        //SUBMIT
+        var oFilterField = new FilterField();
+        this.oFilterBarBase.setBasicSearchField(oFilterField);
+        oFilterField.fireSubmit({promise: Promise.resolve()});
+		sap.ui.getCore().applyChanges();
+
+        //GO
+		oSubmittedPromise.then(function() {
+	        this.oFilterBarBase.onSearch();
+			sap.ui.getCore().applyChanges();
+		}.bind(this));
+
+
+        //VARIANT
+		oGoPromise.then(function() {
+        sinon.stub(this.oFilterBarBase, "_getExecuteOnSelectionOnVariant").returns( true );
+        this.oFilterBarBase._handleVariantSwitch({});
+		}.bind(this));
 
     });
 
