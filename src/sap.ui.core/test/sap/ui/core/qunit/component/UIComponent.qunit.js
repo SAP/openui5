@@ -363,6 +363,7 @@ sap.ui.define([
 				},
 				"sap.ui5" : {
 					"rootView" : {
+						"async": true,
 						"viewName" : "my.own.View",
 						"type" : "XML"
 					}
@@ -374,6 +375,7 @@ sap.ui.define([
 				},
 				"sap.ui5" : {
 					"rootView" : {
+						"async": true,
 						"viewName" : "my.own.View",
 						"type" : "XML",
 						"id" : "theView"
@@ -1164,6 +1166,7 @@ sap.ui.define([
 			},
 			"sap.ui5": {
 				"rootView" : {
+					"async": true,
 					"viewName" : "testdata.view.MainAsync",
 					"type" : "XML"
 				},
@@ -1432,7 +1435,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Nested component - no duplicate ID issue expected", function(assert) {
-		assert.expect(4);
+		assert.expect(3);
 		var oManifest = {
 			"sap.app" : {
 				"id" : "app"

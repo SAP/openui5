@@ -52,7 +52,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 				}
 			},
 
-			"rootView": "sap.ui.test.view.Main",
+			"rootView": {
+				"viewName": "sap.ui.test.view.Main",
+				"type": "XML",
+				"async": true
+			},
 
 			"customizing": {
 				"sap.ui.viewReplacements": {
