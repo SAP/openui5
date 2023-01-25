@@ -112,17 +112,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[
-		{i : undefined, o : null},
-		{i : null, o : null},
-		{i : "foo", t : "any", o : "foo"},
-		{i : "2014-11-27", t : "string", o : "Nov 27, 2014"},
-		{i : "2014-11-34", t : "string", o : "2014-11-34"},
-		{i : new Date(Date.UTC(2014, 10, 27)), t : "string", o : "Nov 27, 2014"},
-		{i : "2014-11-27", t : "object", o : UI5Date.getInstance(2014, 10, 27)},
-		{i : new Date(Date.UTC(2014, 10, 27)), t : "object", o : UI5Date.getInstance(2014, 10, 27)}
-	].forEach(function (oFixture) {
-		QUnit.test("format value", function (assert) {
+	QUnit.test("format value", function (assert) {
+		[
+			{i : undefined, o : null},
+			{i : null, o : null},
+			{i : "foo", t : "any", o : "foo"},
+			{i : "2014-11-27", t : "string", o : "Nov 27, 2014"},
+			{i : "2014-11-34", t : "string", o : "2014-11-34"},
+			{i : new Date(Date.UTC(2014, 10, 27)), t : "string", o : "Nov 27, 2014"},
+			{i : "2014-11-27", t : "object", o : UI5Date.getInstance(2014, 10, 27)},
+			{i : new Date(Date.UTC(2014, 10, 27)), t : "object", o : UI5Date.getInstance(2014, 10, 27)}
+		].forEach(function (oFixture) {
 			var oType = new DateType();
 			assert.deepEqual(oType.formatValue(oFixture.i, oFixture.t), oFixture.o, oFixture.i);
 		});
