@@ -13,13 +13,9 @@
 	<div class="topic">
 		<div class="content">
 
-			<h1>
+			<h1 id="overview">
 				Data Handling
 			</h1>
-
-			<h2 id="overview">
-				Overview
-			</h2>
 
 			<p>
 				The data sections of the card can be defined on different levels (card level, header level,
@@ -39,7 +35,7 @@
 				<li>Provide "path" only to specify the context path of the current level.</li>
 			</ol>
 
-			<h3 id="data">Data:</h3>
+			<h2 id="dataProperties">Data Properties</h2>
 
 			<div class="tableWrapper">
 				<table>
@@ -53,7 +49,7 @@
 					</tr>
 					<tr>
 						<td>request</td>
-						<td><a href="#request">Request</a></td>
+						<td><a href="#requestProperties">Request</a></td>
 						<td>No</td>
 						<td>An object defining a request.</td>
 						<td>1.14.0</td>
@@ -69,7 +65,7 @@
 					</tr>
 					<tr>
 						<td>extension</td>
-						<td><a href="#extension">Extension</a></td>
+						<td><a href="#extensionProperties">Extension</a></td>
 						<td>No</td>
 						<td>An object defining which method of an Extension to be called for fetching the data.
 						</td>
@@ -115,8 +111,7 @@
 				</table>
 			</div>
 
-			<h3 id="request">Request:</h3>
-
+			<div id="requestProperties" class="boldBlock">Request Properties</div>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -216,7 +211,7 @@
 					</tr>
 					<tr>
 						<td>batch</td>
-						<td>Object&lt;string,<a href="#batch">Batch</a>&gt;</td>
+						<td>Object&lt;string,<a href="#batchProperties">Batch</a>&gt;</td>
 						<td>No</td>
 						<td>
 							A map of requests, which should be batched together.<br>
@@ -231,7 +226,7 @@
 					</tr>
 					<tr>
 						<td>cache</td>
-						<td><a href="#cache">Cache</a></td>
+						<td><a href="#cacheProperties">Cache</a></td>
 						<td>No</td>
 						<td>
 							An object defining the cache behaviour for the requested data.
@@ -244,8 +239,7 @@
 				</table>
 			</div>
 
-			<h3 id="batch">Batch (Experimental):</h3>
-
+			<div id="timelineItemProperties" class="boldBlock">Batch  Properties (Experimental)</div>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -291,8 +285,7 @@
 				</table>
 			</div>
 
-			<h3 id="cache">Cache (Experimental):</h3>
-
+			<div id="cacheProperties" class="boldBlock">Cache Properties (Experimental)</div>
 			<p>
 				<b>Note:</b> This feature is dependent on the host environment and if it’s not prepared, the card data requests will work without caching. If you are developing a host environment - see the instructions in the Integrate section.
 			</p>
@@ -358,8 +351,7 @@
 				</table>
 			</div>
 
-			<h3 id="extension">Extension:</h3>
-
+			<div id="extensionProperties" class="boldBlock">Extension Properties</div>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -480,16 +472,6 @@
 	}
 }</pre>
 			<a class="try-button" href="../../../index.html#/explore/data" target="_parent">Try it Out</a>
-		</div>
-		<div class="navigation">
-			<h4>Table of Contents</h4>
-			<div><a href="../../../index.html#/learn/features/data/overview" target="_parent">Overview</a></div>
-			<div><a href="#data">Data</a></div>
-			<div><a href="#request">Request</a></div>
-			<div><a href="#batch">Batch</a></div>
-			<div><a href="#cache">Cache</a></div>
-			<div><a href="#extension">Extension</a></div>
-			<div><a href="../../../index.html#/learn/features/data/examples" target="_parent">Examples</a></div>
 		</div>
 	</div>
 </body>
