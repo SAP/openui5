@@ -19,8 +19,17 @@ sap.ui.define([
 						Helper.pressButton(this, sViewName, "save");
 					}
 				},
+				enterProductName : function (iRow, sProductName, bPressSave) {
+					Helper.changeInputValue(this, sViewName, /name/, sProductName, iRow);
+					if (bPressSave) {
+						Helper.pressButton(this, sViewName, "save");
+					}
+				},
 				pressRefresh : function () {
 					Helper.pressButton(this, sViewName, "refresh");
+				},
+				pressResetButton : function (sId) {
+					Helper.pressButton(this, sViewName, "reset" + sId);
 				},
 				selectProduct : function (iRow) {
 					this.waitFor({
@@ -39,9 +48,36 @@ sap.ui.define([
 				}
 			},
 			assertions : {
-				checkProduct : function (iRowNumber, sExpectedProductId) {
-					Helper.checkInputValue(this, sViewName, /productId/, sExpectedProductId,
-						iRowNumber, undefined, false);
+				checkProduct : function (iRow, sExpectedProductId, sExpectedState, sExpectedName) {
+					Helper.waitForSortedByID(this, {
+						autoWait : false, // to match also disabled delete buttons
+						matchers : function (oControl) {
+							return oControl.getBindingContext()
+								&& oControl.getBindingContext().getIndex() === iRow;
+						},
+						id : /productDelete|productId|productState|name/,
+						success : function (aControls) {
+							var sName = aControls[0].getValue(),
+								bDeletable = aControls[1].getEnabled(),
+								sProductId = aControls[3].getValue(),
+								sState = aControls[4].getTooltip();
+
+							// productDelete also matches its img
+							Opa5.assert.strictEqual(aControls.length, 5, "exactly 5 controls");
+							Opa5.assert.strictEqual(sProductId, sExpectedProductId,
+								"Row: " + iRow + ", Product ID: " + sProductId);
+							Opa5.assert.strictEqual(bDeletable, sExpectedState !== "Inactive"
+									|| aControls[1].getTooltip() === "Reset",
+								"Row: " + iRow + ", deletable: " + bDeletable);
+							Opa5.assert.strictEqual(sState, sExpectedState,
+								"Row: " + iRow + ", state: " + sState);
+							if (sExpectedName) {
+								Opa5.assert.strictEqual(sName, sExpectedName,
+									"Row: " + iRow + ", name: " + sName);
+							}
+						},
+						viewName : sViewName
+					});
 				},
 				checkProductsLength : function (iExpectedLength) {
 					this.waitFor({
@@ -133,6 +169,9 @@ sap.ui.define([
 				pressCancel : function () {
 					Helper.pressButton(this, sViewName, "cancel");
 				},
+				pressResetButton : function (sId) {
+					Helper.pressButton(this, sViewName, "reset" + sId);
+				},
 				pressResetOrDeletePartButton : function (iRow) {
 					this.waitFor({
 						actions : new Press(),
@@ -192,7 +231,8 @@ sap.ui.define([
 							Opa5.assert.strictEqual(aControls.length, 4, "exactly 4 controls");
 							Opa5.assert.strictEqual(sPartId, sExpectedPartId,
 								"Row: " + iRow + ", Part ID: " + sPartId);
-							Opa5.assert.strictEqual(bDeletable, sExpectedState !== "Inactive",
+							Opa5.assert.strictEqual(bDeletable, sExpectedState !== "Inactive"
+									|| aControls[1].getTooltip() === "Reset",
 								"Row: " + iRow + ", deletable: " + bDeletable);
 							Opa5.assert.strictEqual(sState, sExpectedState,
 								"Row: " + iRow + ", state: " + sState);

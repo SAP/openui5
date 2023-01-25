@@ -17,6 +17,9 @@
 					tooltip="Save changes"/>
 				<Button id="cancel" text="Cancel" press="onCancel"
 					visible="{ui>/bAPI}" tooltip="Reset changes"/>
+				<!-- for resetting edited inactive rows -->
+				<Button id="resetAll" press="onResetAll" icon="sap-icon://reset"
+					visible="{= !${ui>/bAPI} }" tooltip="Reset changes"/>
 				<ToolbarSpacer/>
 				<Text text="Sample app for multiple inline creation rows"/>
 				<BusyIndicator text="{ui>/sActivity}" visible="{= !!${ui>/sActivity} }"/>
@@ -56,7 +59,7 @@
 									<Title id="productsTitle" level="H2"
 										text="{headerContext0>$count} Products"/>
 									<Button id="resetProducts" icon="sap-icon://reset"
-											press="onResetChangesForProducts" tooltip="Reset Changes"/>
+											press="onResetChangesForProducts" tooltip="Reset Products"/>
 								</Toolbar>
 							</headerToolbar>
 							<columns>
@@ -126,7 +129,7 @@
 									<Title id="partsTitle" level="H2"
 										text="Product: {ID}, {headerContext1>$count} Parts"/>
 									<Button id="resetParts" icon="sap-icon://reset"
-											press="onResetChangesForParts"	tooltip="Reset Changes"/>
+											press="onResetChangesForParts"	tooltip="Reset Parts"/>
 								</Toolbar>
 							</t:extension>
 							<t:columns>

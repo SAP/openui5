@@ -786,6 +786,7 @@ sap.ui.define([
 		this.mock(oModel).expects("checkBatchGroupId").withExactArgs("$auto");
 		this.mock(oModel).expects("isAutoGroup").withExactArgs("$auto").returns(true);
 		oRequestorMock.expects("cancelChanges").withExactArgs("$parked.$auto");
+		oRequestorMock.expects("cancelChanges").withExactArgs("$inactive.$auto", true);
 		oRequestorMock.expects("cancelChanges").withExactArgs("$auto");
 		this.mock(oBinding1).expects("resetInvalidDataState").withExactArgs();
 		this.mock(oBinding2).expects("resetInvalidDataState").withExactArgs();

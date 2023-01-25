@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style>
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Required Properties</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Required Properties</h1>
+		<h2>DESCRIPTION</h2>
+		Test of the Multiple Inline Creation Rows Grid application with inline creation rows,
+		required properties, and resetting changes.
+
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are no errors and warnings.
+
+		<h3>Testing with mock data</h3>
+		Start the Multiple Inline Creation Rows Grid application with following URL (adjust host and
+		port if necessary):
+		<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid">http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid</a>
+
+		<h2>REALIZE and CHECK</h2>
+		<h3>Test the app within draft mode.</h3>
+		<ol>
+			<li><b>Check</b>: A list with the title "3 Products" and two empty rows, followed by
+				three products appears.</li>
+			<li>Enter "Product 110" into the <code>Name</code> field of the first empty row and
+				press "Enter" key.</li>
+			<li><b>Check</b>: A warning message "ID must not be empty" appears.</li>
+			<li><b>Check</b>: The <code>ID</code> field has a colored border indicating the warning.
+				</li>
+			<li>Click on the <code>Reset Changes</code> button on the "Products" table header</li>
+			<li><b>Check</b>: The first row is empty again and the <code>Name</code>
+				<code>Product 110</code> disappears.</li>
+			<li><b>Check</b>: The warning message "ID must not be empty" disappears.</li>
+			<li>Again, enter "Product 110" into the <code>Name</code> field of the first empty
+				row and press "Enter" key.</li>
+			<li><b>Check</b>: A warning message "ID must not be empty" appears.</li>
+			<li><b>Check</b>: The <code>ID</code> field has a colored border indicating the warning.
+			</li>
+			<li>Enter "110" into the <code>ID</code> field of the first empty row and press
+				"Enter" key.</li>
+			<li><b>Check</b>: The warning message and the colored border of the <code>ID</code>
+				field disappear.</li>
+			<li><b>Check</b>: The <code>Delete product</code> button of the row becomes active.</li>
+			<li><b>Check</b>: A new empty row appears.</li>
+			<li><b>Check</b>: The product with ID "110" now has the state "Persisted".</li>
+
+			<li><b>Check</b>: A table with title "Product 110, 0 Parts" appears. It contains two
+				empty rows.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button is inactive for the empty rows.
+				</li>
+			<li>Enter "Part 50" into the <code>Description</code> field of the first empty row and
+				press "Enter" key.</li>
+			<li><b>Check</b>: A warning message "ID must not be empty" appears.</li>
+			<li><b>Check</b>: The <code>ID</code> field has a colored border indicating the warning.
+			</li>
+			<li>Click on the <code>Reset Changes</code> button on the "Parts" table header</li>
+			<li><b>Check</b>: The first row is empty again and the <code>Description</code>
+				<code>Part 50</code> disappeared.</li>
+			<li>Again, enter "Part 50" into the <code>Description</code> field of the first empty
+				row and press "Enter" key.</li>
+			<li><b>Check</b>: A warning message "ID must not be empty" appears.</li>
+			<li><b>Check</b>: The <code>ID</code> field has a colored border indicating the warning.
+			</li>
+			<li>Enter "50" into the <code>ID</code> field of the first empty row and press
+				"Enter" key.</li>
+			<li><b>Check</b>: The warning message and the colored border of the <code>ID</code>
+				field disappear.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 1 Parts".</li>
+			<li><b>Check</b>: A new empty row appears.</li>
+
+			<li>Enter "Part 50" into the <code>Description</code> field of the first empty row and
+			press "Enter" key.</li>
+			<li><b>Check</b>: A warning message "ID must not be empty" appears.</li>
+			<li><b>Check</b>: The <code>ID</code> field has a colored border indicating the warning.
+			</li>
+
+			<li>On the product table, enter "Product 110" into the <code>Name</code> field of the
+				first empty row and	press "Enter" key.</li>
+			<li><b>Check</b>: A warning message "ID must not be empty" appears.</li>
+			<li><b>Check</b>: The <code>ID</code> field has a colored border indicating the warning.
+			</li>
+			<li>Click on the <code>Reset</code> button on the application header bar</li>
+			<li><b>Check</b>: Both tables are empty again and contain only two inactive rows. All
+				messages disappear.</li>
+		</ol>
+	</body>
+</html>

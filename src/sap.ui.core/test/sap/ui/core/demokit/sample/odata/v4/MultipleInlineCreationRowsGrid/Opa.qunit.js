@@ -44,11 +44,11 @@ sap.ui.getCore().attachInit(function () {
 				});
 				Then.onTheListReport.checkProductsTableTitle("3 Products");
 				Then.onTheListReport.checkProductsLength(5);
-				Then.onTheListReport.checkProduct(0, "");
-				Then.onTheListReport.checkProduct(1, "");
-				Then.onTheListReport.checkProduct(2, "10");
-				Then.onTheListReport.checkProduct(3, "20");
-				Then.onTheListReport.checkProduct(4, "30");
+				Then.onTheListReport.checkProduct(0, "", "Inactive");
+				Then.onTheListReport.checkProduct(1, "", "Inactive");
+				Then.onTheListReport.checkProduct(2, "10", "From Server");
+				Then.onTheListReport.checkProduct(3, "20", "From Server");
+				Then.onTheListReport.checkProduct(4, "30", "From Server");
 
 				When.onTheListReport.selectProduct(2);
 				Then.onTheObjectPage.checkPartsLength(5);
@@ -192,6 +192,7 @@ sap.ui.getCore().attachInit(function () {
 						type : sap.ui.core.MessageType.Warning
 					}]);
 					When.onTheObjectPage.enterPartId(3, "99", bSubmitModeAPI);
+					When.onTheObjectPage.enterPartDescription(3, "Part 99");
 					Then.onTheObjectPage.checkPartsLength(6);
 					Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 4 Parts");
 					Then.onTheObjectPage.checkPart(3, "99", "Persisted", "Part 99");
@@ -321,6 +322,100 @@ sap.ui.getCore().attachInit(function () {
 	});
 });
 
+[false, true].forEach(function (sAtBinding) {
+	var sTitle = "Reset inactive contexts at " + (sAtBinding ? "binding" : "model");
+
+	opaTest(sTitle, function (Given, When, Then) {
+		var aExpectedLogs = [];
+
+		When.onAnyPage.applySupportAssistant();
+		Given.iStartMyUIComponent({
+			autoWait : true,
+			componentConfig : {
+				name : "sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid"
+			}
+		});
+		Then.onTheListReport.checkProductsTableTitle("3 Products");
+		Then.onTheListReport.checkProductsLength(5);
+		Then.onTheListReport.checkProduct(0, "", "Inactive");
+		Then.onTheListReport.checkProduct(1, "", "Inactive");
+		Then.onTheListReport.checkProduct(2, "10", "From Server");
+		Then.onTheListReport.checkProduct(3, "20", "From Server");
+		Then.onTheListReport.checkProduct(4, "30", "From Server");
+
+		// products
+		When.onTheListReport.enterProductName(0, "Product 110");
+		Then.onTheMessagePopover.checkMessages([{
+			message : "ID must not be empty",
+			type : sap.ui.core.MessageType.Warning
+		}]);
+		Then.onTheListReport.checkProduct(0, "", "Inactive", "Product 110");
+
+		When.onTheListReport.pressResetButton(sAtBinding ? "Products" : "All");
+		Then.onTheListReport.checkProduct(0, "", "Inactive", "");
+
+		When.onTheListReport.enterProductName(0, "Product 110");
+		Then.onTheMessagePopover.checkMessages([{
+			message : "ID must not be empty",
+			type : sap.ui.core.MessageType.Warning
+		}]);
+		Then.onTheListReport.checkProduct(0, "", "Inactive", "Product 110");
+
+		When.onTheListReport.enterProductId(0, "110");
+		Then.onTheListReport.checkProductsLength(6);
+		Then.onTheListReport.checkProductsTableTitle("4 Products");
+		Then.onTheListReport.checkProduct(0, "110", "Persisted", "Product 110");
+
+		// parts
+		Then.onTheObjectPage.checkPartsLength(2);
+		Then.onTheObjectPage.checkPartsTableTitle("Product: 110, 0 Parts");
+
+		When.onTheObjectPage.enterPartDescription(0, "Part 50");
+		Then.onTheMessagePopover.checkMessages([{
+			message : "ID must not be empty",
+			type : sap.ui.core.MessageType.Warning
+		}]);
+		When.onTheObjectPage.pressResetButton(sAtBinding ? "Parts" : "All");
+		Then.onTheObjectPage.checkPart(0, "", "Inactive", "");
+		When.onTheObjectPage.enterPartDescription(0, "Part 50");
+		Then.onTheMessagePopover.checkMessages([{
+			message : "ID must not be empty",
+			type : sap.ui.core.MessageType.Warning
+		}]);
+		When.onTheObjectPage.enterPartId(0, "50");
+		When.onTheObjectPage.enterPartDescription(0, "Part 50");
+		Then.onTheObjectPage.checkPartsLength(3);
+		Then.onTheObjectPage.checkPartsTableTitle("Product: 110, 1 Parts");
+		Then.onTheObjectPage.checkPart(0, "50", "Persisted", "Part 50");
+
+		// reset both tables at once
+		When.onTheObjectPage.enterPartDescription(1, "Part 51");
+		Then.onTheMessagePopover.checkMessages([{
+			message : "ID must not be empty",
+			type : sap.ui.core.MessageType.Warning
+		}]);
+
+		When.onTheListReport.enterProductName(1, "Product 111");
+		Then.onTheMessagePopover.checkMessages([{
+			message : "ID must not be empty",
+			type : sap.ui.core.MessageType.Warning
+		}, {
+			message : "ID must not be empty",
+			type : sap.ui.core.MessageType.Warning
+		}]);
+		Then.onTheListReport.checkProduct(1, "", "Inactive", "Product 111");
+		Then.onTheObjectPage.checkPart(1, "", "Inactive", "Part 51");
+
+		When.onTheListReport.pressResetButton("All");
+
+		Then.onTheListReport.checkProduct(1, "", "Inactive", "");
+		Then.onTheObjectPage.checkPart(1, "", "Inactive", "");
+
+		Then.onAnyPage.checkLog(aExpectedLogs);
+		Then.onAnyPage.analyzeSupportAssistant();
+		Then.iTeardownMyUIComponent();
+	});
+});
 			QUnit.start();
 		}
 	});

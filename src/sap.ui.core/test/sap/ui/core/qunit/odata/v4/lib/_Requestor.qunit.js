@@ -2760,12 +2760,17 @@ sap.ui.define([
 		var fnCancel1 = this.spy(),
 			fnCancel2 = this.spy(),
 			fnCancel3 = this.spy(),
-			fnCancelPost = this.spy(),
+			fnCancelPost1 = this.stub().returns(false),
+			fnCancelPost2 = this.stub().returns(true),
 			iCount = 1,
 			aExpectedRequests = [
 				sinon.match({
 					method : "POST",
 					url : "ActionImport('42')"
+				}),
+				sinon.match({
+					method : "POST",
+					url : "Employees"
 				}),
 				sinon.match({
 					method : "GET",
@@ -2775,8 +2780,10 @@ sap.ui.define([
 			oPostData = {},
 			oProduct0 = {},
 			oPromise,
+			bResetInactive = {},
 			oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
-				{"sap-client" : "123"});
+				{"sap-client" : "123"}),
+			oRequestorMock = this.mock(oRequestor);
 
 		function unexpected() {
 			assert.ok(false);
@@ -2803,7 +2810,7 @@ sap.ui.define([
 			oRequestor.addChangeSet("groupId"),
 			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit",
 					this.createGroupLock(), {"If-Match" : {/* leave requests 42 */}}, oPostData,
-					undefined, fnCancelPost)
+					undefined, fnCancelPost1)
 				.then(unexpected, function (oError) {
 					assert.strictEqual(oError.canceled, true);
 					assert.strictEqual(oError.message, "Request canceled: "
@@ -2817,26 +2824,45 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), true);
 
-		this.mock(oRequestor).expects("cancelChangesByFilter")
-			.withExactArgs(sinon.match.func, "groupId")
+		oRequestorMock.expects("cancelChangesByFilter")
+			.withExactArgs(sinon.match.func, "groupId", sinon.match.same(bResetInactive))
 			.callThrough();
 
 		// code under test
-		oRequestor.cancelChanges("groupId");
+		oRequestor.cancelChanges("groupId", bResetInactive);
 
 		sinon.assert.calledOnce(fnCancel1);
-		sinon.assert.calledWithExactly(fnCancel1);
+		sinon.assert.calledWithExactly(fnCancel1, sinon.match.same(bResetInactive));
 		sinon.assert.calledOnce(fnCancel2);
 		sinon.assert.calledOnce(fnCancel3);
-		sinon.assert.calledOnce(fnCancelPost);
+		sinon.assert.calledOnce(fnCancelPost1);
 
 		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 
+		oRequestor.request("POST", "Employees",
+			this.createGroupLock(), {"If-Match" : {/* leave requests 42 */}}, oPostData,
+			undefined, fnCancelPost2).then(function () {
+				assert.ok(true);
+		});
+
+		assert.strictEqual(oRequestor.mBatchQueue.groupId.length, 3);
+
+		oRequestorMock.expects("cancelChangesByFilter")
+			.withExactArgs(sinon.match.func, "groupId", sinon.match.same(bResetInactive))
+			.callThrough();
+
+		// code under test
+		oRequestor.cancelChanges("groupId", bResetInactive);
+
+		assert.strictEqual(oRequestor.mBatchQueue.groupId.length, 3);
+		sinon.assert.calledOnce(fnCancelPost2);
+		sinon.assert.calledWithExactly(fnCancelPost2, sinon.match.same(bResetInactive));
+
 		aExpectedRequests.iChangeSet = 1;
 		this.mock(oRequestor).expects("sendBatch")
 			.withExactArgs(aExpectedRequests, "groupId")
-			.resolves([createResponse(), createResponse()]);
+			.resolves([createResponse(), createResponse(), createResponse()]);
 
 		oRequestor.processBatch("groupId");
 

@@ -256,12 +256,18 @@ sap.ui.define([
 			this.getView().getModel().refresh();
 		},
 
+		onResetAll : function () {
+			this.getView().getModel().resetChanges();
+			this.removeCreateActivateMessages("Products");
+			this.removeCreateActivateMessages("Parts");
+		},
+
 		onResetChangesForParts : function () {
-			this.resetChanges("Parts", "rows");
+			this.resetChangesForBinding("Parts", "rows");
 		},
 
 		onResetChangesForProducts : function () {
-			this.resetChanges("Products", "items");
+			this.resetChangesForBinding("Products", "items");
 		},
 
 		onSave : function () {
@@ -309,11 +315,15 @@ sap.ui.define([
 			this.oUIModel.setProperty("/sSortPartsQuantityIcon", oSortOrder.sNewIcon);
 		},
 
-		resetChanges : function (sEntity, sBindingProperty) {
+		resetChangesForBinding : function (sEntity, sBindingProperty) {
+			this.getView().byId(sEntity.toLowerCase()).getBinding(sBindingProperty).resetChanges();
+			this.removeCreateActivateMessages(sEntity);
+		},
+
+		removeCreateActivateMessages : function (sEntity) {
 			var oMessageManager = sap.ui.getCore().getMessageManager(),
 				that = this;
 
-			this.getView().byId(sEntity.toLowerCase()).getBinding(sBindingProperty).resetChanges();
 			Object.keys(this.mCreateActivateMessages).forEach(function (sKey) {
 				if (sKey.includes(sEntity + "($uid")) {
 					oMessageManager.removeMessages(that.mCreateActivateMessages[sKey]);

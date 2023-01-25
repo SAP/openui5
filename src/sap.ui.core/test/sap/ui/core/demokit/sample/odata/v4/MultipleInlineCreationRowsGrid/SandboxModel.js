@@ -10,7 +10,13 @@ sap.ui.define([
 ], function (SandboxModelHelper, ODataModel, TestUtils) {
 	"use strict";
 
-	var oPart99 = {
+	var oPart50 = {
+			ID : 50,
+			description : "Part 50",
+			quantity : null,
+			_Product_ID : 100
+		},
+		oPart99 = {
 			ID : 99,
 			description : "Part 99",
 			quantity : null,
@@ -31,6 +37,16 @@ sap.ui.define([
 			HasDraftEntity : false,
 			IsActiveEntity : false,
 			name : null
+		},
+		oProduct110 = {
+			ID : 110,
+			amount : null,
+			categoryID : null,
+			_Category_ID : null,
+			HasActiveEntity : false,
+			HasDraftEntity : false,
+			IsActiveEntity : false,
+			name : "Product 110"
 		},
 		bPart101Persisted,
 		oMockData = {
@@ -86,9 +102,21 @@ sap.ui.define([
 				"Products(ID=100,IsActiveEntity=false)?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,name" : {
 					message : oProduct100
 				},
+				"Products(ID=110,IsActiveEntity=false)?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,name" : {
+					message : oProduct110
+				},
+				"Products(ID=110,IsActiveEntity=false)/_Parts?$count=true&$select=ID,description,quantity&$skip=0&$top=120" : {
+					message : {value : []}
+				},
+				"Products(ID=110,IsActiveEntity=false)/_Parts(50)?$select=ID,description,quantity" : {
+					message : oPart50
+				},
 				"POST Products" : [{
 					ifMatch : /"ID":100/,
 					message : oProduct100
+				}, {
+					ifMatch : /"ID":110/,
+					message : oProduct110
 				}],
 				"POST Products(ID=10,IsActiveEntity=false)/_Parts" : [{
 					ifMatch : /"ID":99/,
@@ -109,6 +137,10 @@ sap.ui.define([
 						return true;
 					},
 					message : oPart101
+				}],
+				"POST Products(ID=101,IsActiveEntity=false)/_Parts" : [{
+					ifMatch : /"ID":50/,
+					message : oPart50
 				}]
 			},
 			sSourceBase : "sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/data"
