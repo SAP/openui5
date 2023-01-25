@@ -30,71 +30,102 @@
 					</m:IconTabHeader>
 				</m:contentMiddle>
 			</m:Bar>
-			<f:SimpleForm
-					visible="{= ${/selectedRuleEditKey} === 'ruleProperties' }"
-					editable="true">
-				<f:content>
-					<m:Label text="ID" />
-					<m:Input value="{/editRule/id}" required = "true" />
-					<m:Label text="Async" />
-					<m:HBox>
-						<m:items>
-							<m:RadioButton groupName="asyncEditContext" text="true" selected="{= ${/editRule/async} === true }" select="onAsyncSwitch">
-								<m:customData>
-									<c:CustomData key="asyncEditContext" value="true" />
-								</m:customData>
-							</m:RadioButton>
-							<m:RadioButton groupName="asyncEditContext" text="false" selected="{= ${/editRule/async} !== true }" select="onAsyncSwitch">
-								<m:customData>
-									<c:CustomData key="asyncEditContext" value="false" />
-								</m:customData>
-							</m:RadioButton>
-							<c:Icon
-								src="sap-icon://message-warning"
-								class="sapUiSmallMarginBegin sapUiTinyMarginEnd"
-								color="#E09D00"
-								visible="{= ${/editRule/async} === true }">
-								<c:layoutData>
-									<m:FlexItemData alignSelf="Center" />
-								</c:layoutData>
-							</c:Icon>
-							<m:Text text="{/resolveDescription}" visible="{= ${/editRule/async} === true }">
-								<m:layoutData>
-									<m:FlexItemData alignSelf="Center" />
-								</m:layoutData>
-							</m:Text>
-						</m:items>
-					</m:HBox>
-					<m:Label text="Categories" />
-					<m:MultiComboBox selectedKeys="{/editRule/categories}" items="{/categories}"  required = "true">
-						<c:Item key="{}" text="{}" />
-					</m:MultiComboBox>
-					<m:Label text="Audiences" />
-					<m:MultiComboBox selectedKeys="{/editRule/audiences}" items="{/audiences}"  required = "true">
-						<c:Item key="{}" text="{}" />
-					</m:MultiComboBox>
-					<m:Label text="Title" />
-					<m:Input value="{/editRule/title}"  required = "true" />
-					<m:Label text="Description" />
-					<m:TextArea value="{/editRule/description}"  required = "true"/>
-					<m:Label text="Resolution" />
-					<m:TextArea value="{/editRule/resolution}"  required = "true"/>
-					<m:Label text="Min version" />
-					<m:TextArea value="{/editRule/minversion}"  required = "true"/>
-					<m:Label text="Resolution URLS" />
-					<l:VerticalLayout>
-						<l:HorizontalLayout>
-							<m:Input placeholder="Text" value="{/tempLink/text}" />
-							<m:Input placeholder="Href" value="{/tempLink/href}" />
-							<m:Button text="Add Link" press="addLinkToRule" icon="sap-icon://add" />
-						</l:HorizontalLayout>
-						<l:VerticalLayout
-								content="{/editRule/resolutionurls}">
-							<m:Link text="{text}" href="{href}" target="_blank"/>
-						</l:VerticalLayout>
-					</l:VerticalLayout>
-				</f:content>
-			</f:SimpleForm>
+			<f:Form
+					editable="true"
+					visible="{= ${/selectedRuleEditKey} === 'ruleProperties' }">
+				<f:layout>
+					<f:ColumnLayout />
+				</f:layout>
+				<f:formContainers>
+					<f:FormContainer>
+						<f:formElements>
+							<f:FormElement label="ID">
+								<f:fields>
+									<m:Input value="{/editRule/id}" required = "true" />
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Async">
+								<f:fields>
+									<m:RadioButton groupName="asyncEditContext" text="true" selected="{= ${/editRule/async} === true }" select="onAsyncSwitch">
+										<m:customData>
+											<c:CustomData key="asyncEditContext" value="true" />
+										</m:customData>
+									</m:RadioButton>
+									<m:RadioButton groupName="asyncEditContext" text="false" selected="{= ${/editRule/async} !== true }" select="onAsyncSwitch">
+										<m:customData>
+											<c:CustomData key="asyncEditContext" value="false" />
+										</m:customData>
+									</m:RadioButton>
+									<c:Icon
+											src="sap-icon://message-warning"
+											class="sapUiSmallMarginBegin sapUiTinyMarginEnd"
+											color="#E09D00"
+											visible="{= ${/editRule/async} === true }">
+										<c:layoutData>
+											<m:FlexItemData alignSelf="Center" />
+										</c:layoutData>
+									</c:Icon>
+									<m:Text text="{/resolveDescription}" visible="{= ${/editRule/async} === true }">
+										<m:layoutData>
+											<m:FlexItemData alignSelf="Center" />
+										</m:layoutData>
+									</m:Text>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Categories">
+								<f:fields>
+									<m:MultiComboBox selectedKeys="{/editRule/categories}" items="{/categories}"  required = "true">
+										<c:Item key="{}" text="{}" />
+									</m:MultiComboBox>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Audiences">
+								<f:fields>
+									<m:MultiComboBox selectedKeys="{/editRule/audiences}" items="{/audiences}"  required = "true">
+										<c:Item key="{}" text="{}" />
+									</m:MultiComboBox>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Title">
+								<f:fields>
+									<m:Input value="{/editRule/title}"  required = "true" />
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Description">
+								<f:fields>
+									<m:TextArea value="{/editRule/description}" required = "true"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Resolution">
+								<f:fields>
+									<m:TextArea value="{/editRule/resolution}" required = "true"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Min version">
+								<f:fields>
+									<m:TextArea value="{/editRule/minversion}" required = "true"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Resolution URLS">
+								<f:fields>
+									<m:Input placeholder="Text" value="{/tempLink/text}" />
+									<m:Input placeholder="Href" value="{/tempLink/href}" />
+									<m:Button text="Add Link" press="addLinkToRule" icon="sap-icon://add" />
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="" fields="{/editRule/resolutionurls}">
+								<f:fields>
+									<m:Link text="{text}" href="{href}" target="_blank">
+										<m:layoutData>
+											<f:ColumnElementData cellsLarge="8" cellsSmall="12" />
+										</m:layoutData>
+									</m:Link>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+				</f:formContainers>
+			</f:Form>
 			<m:Panel width="100%"
 						height="calc(100% - 2rem)"
 						visible="{= ${/selectedRuleEditKey} === 'checkFunction' }">
@@ -154,77 +185,102 @@
 					</m:IconTabHeader>
 				</m:contentMiddle>
 			</m:Bar>
-			<f:SimpleForm
-					visible="{= ${/selectedRuleCreateKey} === 'ruleProperties' }"
-					editable="true">
-				<f:content>
-					<m:Label text="ID" />
-					<m:Input value="{/newRule/id}"  required = "true"/>
-					<m:Label text="Async" />
-					<m:HBox>
-						<m:items>
-							<m:RadioButton groupName="asyncContext" text="true" selected="{= ${/newRule/async} === true }" select="onAsyncSwitch">
-								<m:customData>
-									<c:CustomData key="asyncContext" value="true" />
-								</m:customData>
-								<m:layoutData>
-									<m:FlexItemData alignSelf="Center" />
-								</m:layoutData>
-							</m:RadioButton>
-							<m:RadioButton groupName="asyncContext" text="false" selected="{= ${/newRule/async} !== true }" select="onAsyncSwitch">
-								<m:customData>
-									<c:CustomData key="asyncContext" value="false" />
-								</m:customData>
-								<m:layoutData>
-									<m:FlexItemData alignSelf="Center" />
-								</m:layoutData>
-							</m:RadioButton>
-							<c:Icon
-								src="sap-icon://message-warning"
-								class="sapUiSmallMarginBegin sapUiTinyMarginEnd"
-								color="#E09D00"
-								visible="{= ${/newRule/async} === true }">
-								<c:layoutData>
-									<m:FlexItemData alignSelf="Center" />
-								</c:layoutData>
-							</c:Icon>
-							<m:Text text="{/resolveDescription}" visible="{= ${/newRule/async} === true }">
-								<m:layoutData>
-									<m:FlexItemData alignSelf="Center" />
-								</m:layoutData>
-							</m:Text>
-						</m:items>
-					</m:HBox>
-					<m:Label text="Categories" />
-					<m:MultiComboBox selectedKeys="{/newRule/categories}" items="{/categories}"  required = "true">
-						<c:Item key="{}" text="{}" />
-					</m:MultiComboBox>
-					<m:Label text="Audiences" />
-					<m:MultiComboBox selectedKeys="{/newRule/audiences}" items="{/audiences}"  required = "true">
-						<c:Item key="{}" text="{}" />
-					</m:MultiComboBox>
-					<m:Label text="Title" />
-					<m:Input value="{/newRule/title}"  required = "true"/>
-					<m:Label text="Description" />
-					<m:TextArea value="{/newRule/description}"  required = "true"/>
-					<m:Label text="Resolution" />
-					<m:TextArea value="{/newRule/resolution}"  required = "true"/>
-					<m:Label text="Min version" />
-					<m:TextArea value="{/newRule/minversion}"  required = "true"/>
-					<m:Label text="Resolution URLS" />
-					<l:VerticalLayout>
-						<l:HorizontalLayout>
-							<m:Input placeholder="Text" value="{/tempLink/text}" />
-							<m:Input placeholder="Href" value="{/tempLink/href}" />
-							<m:Button text="Add" press="addLinkToRule" icon="sap-icon://add" />
-						</l:HorizontalLayout>
-						<l:VerticalLayout
-								content="{/newRule/resolutionurls}">
-							<m:Link text="{text}" />
-						</l:VerticalLayout>
-					</l:VerticalLayout>
-				</f:content>
-			</f:SimpleForm>
+			<f:Form
+					editable="true"
+					visible="{= ${/selectedRuleCreateKey} === 'ruleProperties' }">
+				<f:layout>
+					<f:ColumnLayout />
+				</f:layout>
+				<f:formContainers>
+					<f:FormContainer>
+						<f:formElements>
+							<f:FormElement label="ID">
+								<f:fields>
+									<m:Input value="{/newRule/id}" required = "true" />
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Async">
+								<f:fields>
+									<m:RadioButton groupName="asyncContext" text="true" selected="{= ${/newRule/async} === true }" select="onAsyncSwitch">
+										<m:customData>
+											<c:CustomData key="asyncContext" value="true" />
+										</m:customData>
+									</m:RadioButton>
+									<m:RadioButton groupName="asyncContext" text="false" selected="{= ${/newRule/async} !== true }" select="onAsyncSwitch">
+										<m:customData>
+											<c:CustomData key="asyncContext" value="false" />
+										</m:customData>
+									</m:RadioButton>
+									<c:Icon
+											src="sap-icon://message-warning"
+											class="sapUiSmallMarginBegin sapUiTinyMarginEnd"
+											color="#E09D00"
+											visible="{= ${/newRule/async} === true }">
+										<c:layoutData>
+											<m:FlexItemData alignSelf="Center" />
+										</c:layoutData>
+									</c:Icon>
+									<m:Text text="{/resolveDescription}" visible="{= ${/newRule/async} === true }">
+										<m:layoutData>
+											<m:FlexItemData alignSelf="Center" />
+										</m:layoutData>
+									</m:Text>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Categories">
+								<f:fields>
+									<m:MultiComboBox selectedKeys="{/newRule/categories}" items="{/categories}"  required = "true">
+										<c:Item key="{}" text="{}" />
+									</m:MultiComboBox>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Audiences">
+								<f:fields>
+									<m:MultiComboBox selectedKeys="{/newRule/audiences}" items="{/audiences}"  required = "true">
+										<c:Item key="{}" text="{}" />
+									</m:MultiComboBox>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Title">
+								<f:fields>
+									<m:Input value="{/newRule/title}"  required = "true" />
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Description">
+								<f:fields>
+									<m:TextArea value="{/newRule/description}" required = "true"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Resolution">
+								<f:fields>
+									<m:TextArea value="{/newRule/resolution}" required = "true"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Min version">
+								<f:fields>
+									<m:TextArea value="{/newRule/minversion}" required = "true"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Resolution URLS">
+								<f:fields>
+									<m:Input placeholder="Text" value="{/tempLink/text}" />
+									<m:Input placeholder="Href" value="{/tempLink/href}" />
+									<m:Button text="Add" press="addLinkToRule" icon="sap-icon://add" />
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="" fields="{/newRule/resolutionurls}">
+								<f:fields>
+									<m:Link text="{text}" >
+										<m:layoutData>
+											<f:ColumnElementData cellsLarge="8" cellsSmall="12" />
+										</m:layoutData>
+									</m:Link>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+				</f:formContainers>
+			</f:Form>
 			<m:Panel width="100%"
 						height="calc(100% - 2rem)"
 						visible="{= ${/selectedRuleCreateKey} === 'checkFunction' }">

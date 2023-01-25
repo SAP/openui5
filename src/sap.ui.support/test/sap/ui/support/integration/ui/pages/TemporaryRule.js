@@ -30,7 +30,7 @@ sap.ui.define([
 				iShouldSeeTheForm: function () {
 					var bFormHasFinishedLayouting = false;
 					return this.waitFor({
-						controlType: "sap.ui.layout.form.SimpleForm",
+						controlType: "sap.ui.layout.form.Form",
 						check: function () {
 							if (bFormHasFinishedLayouting) {
 								return true;
@@ -91,7 +91,7 @@ sap.ui.define([
 					var bFormHasFinishedLayouting = false;
 
 					return this.waitFor({
-						controlType: "sap.ui.layout.form.SimpleForm",
+						controlType: "sap.ui.layout.form.Form",
 						check: function () {
 							if (bFormHasFinishedLayouting) {
 								return true;

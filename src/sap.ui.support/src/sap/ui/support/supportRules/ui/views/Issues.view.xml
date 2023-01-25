@@ -190,40 +190,54 @@
 								</t:Column>
 							</t:columns>
 						</t:Table>
-						<f:SimpleForm
+						<f:Form
 							editable="true"
-							visible="{= ${/visibleIssuesCount} > 0}"
-							layout="ResponsiveGridLayout"
-							breakpointM="400">
-							<f:content>
-								<Label text="Details" />
-								<Text
-									text="{/selectedIssue/details}"
-									width="100%"
-									visible="{= ${/selectedIssue/details} !== ''}"/>
-								<Label text="Resolution" />
-								<Text text="{/selectedIssue/resolution}" />
-								<Label
-									text="URLs"
-									visible="{
-										parts: [
-											'/selectedIssue/resolutionUrls'
-										],
-										formatter: '.formatter.hasResolutionUrls'
-									}" />
-								<HBox
-									wrap="Wrap"
-									items="{/selectedIssue/resolutionUrls}">
-									<Link text="{
-										parts: [
-											'/selectedIssue/resolutionUrls',
-											''
-										],
-										formatter: '.formatter.resolutionUrl'
-									}" press="openDocumentation" />
-								</HBox>
-							</f:content>
-						</f:SimpleForm>
+							visible="{= ${/visibleIssuesCount} > 0}">
+							<f:layout>
+								<f:ColumnLayout />
+							</f:layout>
+							<f:formContainers>
+								<f:FormContainer>
+									<f:formElements>
+										<f:FormElement label="Details">
+											<f:fields>
+												<Text
+														text="{/selectedIssue/details}"
+														width="100%"
+														visible="{= ${/selectedIssue/details} !== ''}"/>
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="Resolution">
+											<f:fields>
+												<Text text="{/selectedIssue/resolution}" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="URLs"
+													   visible="{
+															parts: [
+																'/selectedIssue/resolutionUrls'
+															],
+															formatter: '.formatter.hasResolutionUrls'
+														}"
+													   fields="{/selectedIssue/resolutionUrls}">
+											<f:fields>
+												<Link text="{
+														parts: [
+															'/selectedIssue/resolutionUrls',
+															''
+														],
+														formatter: '.formatter.resolutionUrl'
+													}" press="openDocumentation">
+													<layoutData>
+														<f:ColumnElementData cellsLarge="8" cellsSmall="12" />
+													</layoutData>
+												</Link>
+											</f:fields>
+										</f:FormElement>
+									</f:formElements>
+								</f:FormContainer>
+							</f:formContainers>
+						</f:Form>
 					</Panel>
 				</content>
 			</Page>
