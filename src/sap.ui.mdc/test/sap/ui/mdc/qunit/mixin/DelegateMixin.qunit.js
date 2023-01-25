@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/ui/mdc/mixin/DelegateMixin",
 	"sap/ui/mdc/util/PropertyHelper",
-	"sap/ui/base/ManagedObject",
-	"jquery.sap.global"
+	"sap/ui/base/ManagedObject"
 ], function(
 	DelegateMixin,
 	PropertyHelper,
-	ManagedObject,
-	jQuery
+	ManagedObject
 ) {
 	"use strict";
 
@@ -36,9 +34,10 @@ sap.ui.define([
 	QUnit.module("DelegateMixin", {
 		beforeEach: function() {
 
-			jQuery.sap.unloadResources("sap/ui/mdc/BaseDelegate.js", false, true, true);
-			jQuery.sap.unloadResources("sap/ui/mdc/odata/BaseDelegate.js", false, true, true);
-			jQuery.sap.unloadResources("delegates/odata/v4/BaseDelegate.js", false, true, true);
+			var stubbedRequire = sinon.stub(sap.ui, "require").callThrough(); // subsequent calls in loadModules use array signature therefore function normally
+			stubbedRequire.withArgs('sap/ui/mdc/BaseDelegate').returns(undefined);
+			stubbedRequire.withArgs('sap/ui/mdc/odata/BaseDelegate').returns(undefined);
+			stubbedRequire.withArgs('sap/ui/mdc/odata/v4/BaseDelegate').returns(undefined);
 
 			TestClass = ManagedObject.extend("temp", {
 				metadata: {
@@ -56,6 +55,8 @@ sap.ui.define([
 			DelegateMixin.call(TestClass.prototype);
 		},
 		afterEach: function() {
+			sap.ui.require.restore();
+
 			if (oSomeInstance) {
 				oSomeInstance.destroy();
 				oSomeInstance = undefined;
@@ -102,7 +103,6 @@ sap.ui.define([
 
 	QUnit.test("subsequent initControlDelegate calls", function(assert) {
 		var done = assert.async();
-		sinon.spy(sap.ui, "require");
 		oSomeInstance = new TestClass();
 		var oFirstCall = oSomeInstance.initControlDelegate();
 		assert.ok(oFirstCall instanceof Promise, "First call to initControlDelegate");
@@ -113,7 +113,6 @@ sap.ui.define([
 			assert.ok(oThirdCall instanceof Promise, "Third call to initControlDelegate ");
 			oThirdCall.then(function () {
 				assert.ok(sap.ui.require.withArgs("sap/ui/mdc/BaseDelegate").calledOnce, "module is only loaded once");
-				sap.ui.require.restore();
 				done();
 			});
 		});
