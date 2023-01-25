@@ -444,7 +444,7 @@ sap.ui.define([
 				pressRefreshSalesOrdersButton : function () {
 					pressButton(this, "refreshSalesOrders");
 				},
-				pressRefreshSelectedSalesOrdersButton : function () {
+				pressRefreshSelectedSalesOrderButton : function () {
 					pressButton(this, "refreshSelectedSalesOrder");
 				},
 				pressUndoSalesOrderDeletionButton : function () {

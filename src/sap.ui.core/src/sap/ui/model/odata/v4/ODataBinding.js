@@ -55,6 +55,28 @@ sap.ui.define([
 	}
 
 	/**
+	 * Returns <code>true</code> if this binding or its dependent bindings have changes.
+	 *
+	 * Note: This private function is needed in order to hide the additional parameter
+	 * <code>bIgnoreInactiveCaches</code> from the public API {@link #hasPendingChanges}.
+	 *
+	 * @param {boolean} [bIgnoreKeptAlive]
+	 *   Whether to ignore changes which will not be lost by certain APIs, see
+	 *   {@link #hasPendingChanges}
+	 * @param {boolean} [bIgnoreInactiveCaches]
+	 *   Whether to ignore changes in inactive caches
+	 * @returns {boolean}
+	 *   <code>true</code> if the binding is resolved and has pending changes
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype._hasPendingChanges = function (bIgnoreKeptAlive, bIgnoreInactiveCaches) {
+		return this.isResolved()
+			&& (this.hasPendingChangesForPath("", bIgnoreKeptAlive)
+				|| this.hasPendingChangesInDependents(bIgnoreKeptAlive, bIgnoreInactiveCaches));
+	};
+
+	/**
 	 * Adjusts the paths of all contexts of this binding by replacing the given transient predicate
 	 * with the given predicate. Recursively adjusts all child bindings.
 	 *
@@ -898,9 +920,7 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	ODataBinding.prototype.hasPendingChanges = function (bIgnoreKeptAlive) {
-		return this.isResolved()
-			&& (this.hasPendingChangesForPath("", bIgnoreKeptAlive)
-				|| this.hasPendingChangesInDependents(bIgnoreKeptAlive));
+		return this._hasPendingChanges(bIgnoreKeptAlive);
 	};
 
 	/**
@@ -955,6 +975,8 @@ sap.ui.define([
 	 * @param {boolean} [bIgnoreKeptAlive]
 	 *   Whether to ignore changes which will not be lost by APIs like sort or filter because they
 	 *   relate to a deleted context or a context which is kept alive
+	 * @param {boolean} [bIgnoreInactiveCaches]
+	 *   Whether to ignore changes in inactive caches
 	 * @returns {boolean}
 	 *   <code>true</code> if this binding has pending changes
 	 *

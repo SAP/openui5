@@ -55,13 +55,19 @@ sap.ui.define([], function () {
 			Then.onTheMainPage.checkSalesOrderLineItemNote(0,
 				"EPM DG: SO ID 0500000000 Item 0000000010");
 
-			// check the same via Reset All button
+			// check refresh selected
 			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
 			When.onTheMainPage.changeNoteInLineItem(0, "Changed by OPA 2");
-			When.onTheMainPage.selectSalesOrderWithId("0500000001");
+			// check that refresh of the changed sales order is forbidden
+			When.onTheMainPage.pressRefreshSelectedSalesOrderButton();
+			When.onTheRefreshConfirmation.cancel();
+			// and that refresh of an unchanged sales order is allowed (CPOUI5ODATAV4-1813)
+			When.onTheMainPage.selectSalesOrderWithId("0500000004");
+			When.onTheMainPage.pressRefreshSelectedSalesOrderButton();
+
 			// check hasPendingChanges via refresh all button
 			When.onTheMainPage.pressRefreshAllButton();
-			When.onTheRefreshConfirmation.confirm();
+			When.onTheRefreshConfirmation.confirm(); // resets all changes
 			When.onTheMainPage.selectFirstSalesOrder();
 			Then.onTheMainPage.checkSalesOrderLineItemNote(0,
 				"EPM DG: SO ID 0500000000 Item 0000000010");

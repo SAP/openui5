@@ -19214,35 +19214,48 @@ sap.ui.define([
 	// (neither its contexts, nor its count).
 	// In a second test, sort before changing the parent context, so that the cache must be reset
 	// for the reinsertion.
-[false, true].forEach(function (bSort) {
+	// BCP: 2270160572
+	//
+	// Context#hasPendingChanges works properly for changes in active caches, even if there are
+	// intermediate bindings (w/ and w/o own cache) in place.
+	// JIRA: CPOUI5ODATAV4-1813
+[true, false].forEach(function (bSort) {
 	var sTitle = "BCP: 2270160572: deferred delete, reset in parked cache, sort=" + bSort;
 
 	QUnit.test(sTitle, function (assert) {
-		var oContext,
-			oDeletePromise,
+		var oDeletePromise,
+			sIntermediate = bSort
+				? "binding=\"{path : \'\', parameters : {$$ownRequest : true}}\""
+				: "",
 			oItemsBinding,
 			oModel = this.createSalesOrdersModel({updateGroupId : "update"}),
 			oObjectPage,
 			sOrderBy = bSort ? "&$orderby=SalesOrderID desc" : "",
 			oOrdersBinding,
+			oSalesOrder1,
+			oSalesOrder2,
 			sView = '\
 <Table id="orders" items="{/SalesOrderList}">\
 	<Text text="{SalesOrderID}"/>\
 </Table>\
-<FlexBox id="objectPage">\
-	<Text id="count" text="{header>$count}"/>\
-	<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$count : true}}">\
-		<Text id="pos" text="{ItemPosition}"/>\
-	</Table>\
+<FlexBox id="objectPage" ' + sIntermediate + '>\
+	<Text id="note" text="{Note}"/>\
+	<FlexBox binding="{}">\
+		<Text id="count" text="{header>$count}"/>\
+		<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$count : true}}">\
+			<Text id="pos" text="{ItemPosition}"/>\
+		</Table>\
+	</FlexBox>\
 </FlexBox>',
 			that = this;
 
 		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
 				value : [
-					{SalesOrderID : "1"},
-					{SalesOrderID : "2"}
+					{SalesOrderID : "1", Note : "Note 1"},
+					{SalesOrderID : "2", Note : "Note 2"}
 				]
 			})
+			.expectChange("note")
 			.expectChange("count")
 			.expectChange("pos", []);
 
@@ -19251,7 +19264,12 @@ sap.ui.define([
 			oOrdersBinding = that.oView.byId("orders").getBinding("items");
 			oItemsBinding = that.oView.byId("items").getBinding("items");
 			oObjectPage = that.oView.byId("objectPage");
+			oSalesOrder1 = oOrdersBinding.getCurrentContexts()[0];
+			oSalesOrder2 = oOrdersBinding.getCurrentContexts()[1];
 
+			if (sIntermediate) {
+				that.expectRequest("SalesOrderList('1')", {Note : "Note 1", SalesOrderID : "1"});
+			}
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$count=true&$skip=0&$top=100", {
 					"@odata.count" : "3",
 					value : [
@@ -19260,10 +19278,11 @@ sap.ui.define([
 						{ItemPosition : "13", SalesOrderID : "1"}
 					]
 				})
+				.expectChange("note", "Note 1")
 				.expectChange("count", "3")
 				.expectChange("pos", ["11", "12", "13"]);
 
-			oObjectPage.setBindingContext(oOrdersBinding.getCurrentContexts()[0]);
+			oObjectPage.setBindingContext(oSalesOrder1);
 			oObjectPage.setBindingContext(oItemsBinding.getHeaderContext(), "header");
 
 			return that.waitForChanges(assert, "SalesOrderList('1')");
@@ -19284,14 +19303,16 @@ sap.ui.define([
 				that.expectChange("pos", ["12", "13"]);
 			}
 
-			oContext = oItemsBinding.getCurrentContexts()[0];
-			oDeletePromise = oContext.delete();
+			oDeletePromise = oItemsBinding.getCurrentContexts()[0].delete();
 			if (bSort) {
 				oItemsBinding.sort(new Sorter("SalesOrderID", true));
 			}
 
 			return that.waitForChanges(assert, "deferred delete" + (bSort ? " and sort" : ""));
 		}).then(function () {
+			if (sIntermediate) {
+				that.expectRequest("SalesOrderList('2')", {Note : "Note 2", SalesOrderID : "2"});
+			}
 			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM?$count=true" + sOrderBy
 					+ "&$skip=0&$top=100", {
 					"@odata.count" : "1",
@@ -19299,11 +19320,19 @@ sap.ui.define([
 						{ItemPosition : "21", SalesOrderID : "2"}
 					]
 				})
+				.expectChange("note", "Note 2")
 				.expectChange("count", "1")
 				.expectChange("pos", ["21"]);
 
-			oObjectPage.setBindingContext(oOrdersBinding.getCurrentContexts()[1]);
+			assert.ok(oSalesOrder1.hasPendingChanges());
+
+			oObjectPage.setBindingContext(oSalesOrder2);
 			oObjectPage.setBindingContext(oItemsBinding.getHeaderContext(), "header");
+
+			assert.ok(oOrdersBinding.hasPendingChanges());
+			assert.notOk(oItemsBinding.hasPendingChanges());
+			// assert.ok(oSalesOrder1.hasPendingChanges()); we do not care, false is ok so far
+			assert.notOk(oSalesOrder2.hasPendingChanges());
 
 			return that.waitForChanges(assert, "SalesOrderList('2')");
 		}).then(function () {
@@ -19320,12 +19349,15 @@ sap.ui.define([
 				that.waitForChanges(assert, "cancel the delete")
 			]);
 		}).then(function () {
+			assert.notOk(oOrdersBinding.hasPendingChanges());
+			assert.notOk(oSalesOrder1.hasPendingChanges());
 			assert.strictEqual(oItemsBinding.getCount(), 1);
 			assert.deepEqual(oItemsBinding.getAllCurrentContexts().map(getPath), [
 				"/SalesOrderList('2')/SO_2_SOITEM(SalesOrderID='2',ItemPosition='21')"
 			]);
 
-			that.expectChange("count", "3");
+			that.expectChange("note", "Note 1")
+				.expectChange("count", "3");
 			if (bSort) {
 				that.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$count=true" + sOrderBy
 						+ "&$skip=0&$top=100", {

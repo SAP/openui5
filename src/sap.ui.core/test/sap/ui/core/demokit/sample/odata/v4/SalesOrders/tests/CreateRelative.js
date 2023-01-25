@@ -145,12 +145,12 @@ sap.ui.define([
 				When.onTheMessagePopover.close();
 
 				// check has pending changes
-				When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
+				When.onTheMainPage.pressRefreshSelectedSalesOrderButton();
 				When.onTheRefreshConfirmation.cancel();
 
 				// reset changes and refresh single sales order
 				When.onTheMainPage.pressCancelSalesOrderChangesButton();
-				When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
+				When.onTheMainPage.pressRefreshSelectedSalesOrderButton();
 
 				// change Note in details is now possible again
 				When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 3");
@@ -189,13 +189,13 @@ sap.ui.define([
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 				When.onTheSuccessInfo.confirm();
 				// test: refresh single row reads expands
-				When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
+				When.onTheMainPage.pressRefreshSelectedSalesOrderButton();
 				When.onTheMainPage.pressCreateSalesOrderItemButton();
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheSuccessInfo.confirm();
 				Then.onTheMainPage.checkTableLength(1, "SO_2_SOITEM");
 				// test: refresh single refreshes also dependent bindings
-				When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
+				When.onTheMainPage.pressRefreshSelectedSalesOrderButton();
 				Then.onTheMainPage.checkTableLength(1, "SO_2_SOITEM");
 
 				// Create a sales order line item; change Product ID manually

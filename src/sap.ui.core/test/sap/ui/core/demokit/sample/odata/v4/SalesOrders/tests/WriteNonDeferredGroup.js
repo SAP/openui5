@@ -85,7 +85,7 @@ sap.ui.define([
 				aExpectedLogs.push(oExpectedPatchLog1);
 				aExpectedLogs.push(oExpectedPatchLog1);
 				// get ETag before deletion
-				When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
+				When.onTheMainPage.pressRefreshSelectedSalesOrderButton();
 				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "patched line item Note");
 			}
 
