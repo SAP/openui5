@@ -245,13 +245,12 @@ sap.ui.define([
 
 	/*
 	 * Enhance Aria properties of fields to set aria-labelledby to FormElements label if not set otherwise
-	 * Set aria-describedby to the title of the container, but only for the first field in the container
 	 * This function is called during rendering.
 	 */
 	FormElement.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
 
 		var oLabel = this.getLabelControl();
-		if (oLabel && oLabel != oElement) {
+		if (oLabel && oLabel != oElement && oElement.getMetadata().getAllAssociations().ariaLabelledBy) { // as for SPAN (sap.m.Text) and other tags aria-labbeledby is not supported, add it only to controls that support it.
 
 			var sLabelledBy = mAriaProps["labelledby"];
 			if (!sLabelledBy) {
