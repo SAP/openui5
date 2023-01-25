@@ -231,6 +231,19 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				module: "./mixin/FilterIntegrationMixin.qunit",
 				sinon: true
 			},
+			"PromiseCache": {
+				group: "Util",
+				module: "./util/PromiseCache.qunit",
+				coverage: {
+					only: "[sap/ui/mdc/util]"
+				},
+				sinon: true
+			},
+			"PromiseMixin": {
+				group: "Mixin",
+				module: "./mixin/PromiseMixin.qunit",
+				sinon: true
+			},
 			"PropertyHelperMixin": {
 				group: "Mixin",
 				module: "./mixin/PropertyHelperMixin.qunit",
