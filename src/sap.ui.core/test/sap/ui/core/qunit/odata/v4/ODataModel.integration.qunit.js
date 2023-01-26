@@ -4366,6 +4366,43 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: Delete & requestSideEffects in one $batch.
+	// BCP: 2380019004
+	QUnit.test("BCP: 2380019004", function (assert) {
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1"},
+					{SalesOrderID : "2"}
+				]
+			})
+			.expectChange("id", ["1", "2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectChange("id", ["2"])
+				.expectRequest({method : "DELETE", url : "SalesOrderList('1')"})
+				.expectRequest("SalesOrderList?$select=SalesOrderID"
+					+ "&$filter=not (SalesOrderID eq '1')&$skip=0&$top=100", {
+					value : [{SalesOrderID : "2"}]
+				});
+
+			return Promise.all([
+				oBinding.getCurrentContexts()[0].delete(),
+				oBinding.getHeaderContext().requestSideEffects([""]),
+				that.waitForChanges(assert, "delete & requestSideEffects")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: ODLB, late property at an entity within $expand.
 	// JIRA: CPOUI5ODATAV4-23
 	QUnit.test("ODLB: late property at nested entity", function (assert) {
