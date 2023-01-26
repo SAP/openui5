@@ -137,7 +137,10 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	 * @property {int} maxConditions
 	 *   Defines if the filter supports multiple values <code>-1</code> or single values <code>1</code>
 	 *
-	 * @public
+	 * @private
+	 * @experimental
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 
 	/**
@@ -160,6 +163,11 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 	 *
 	 * @param {sap.ui.mdc.Control} oControl - The instance of a filter bar
 	 * @returns {Promise} Promise that is resolved once the action completes
+	 *
+	 * @private
+	 * @experimental
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	FilterBarDelegate.clearFilters = function(oControl) {
 		return Promise.resolve();
