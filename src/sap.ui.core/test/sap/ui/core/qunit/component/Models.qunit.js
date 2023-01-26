@@ -1204,6 +1204,53 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("pass 'ignoreAnnotationsFromMetadata' parameter to V2 and V4 model", function(assert) {
+		// For now the 'modelsMisc' Component contains only manifest definitions for
+		// the 'ignoreAnnotationsFromMetadata' parameter (aside from other necessary ones).
+		// The modelsMisc Component is intended to hold tests for additional parameters that just need
+		// to be passed onwards to the models.
+		return Component.create({
+			name: "sap.ui.test.modelsMisc"
+		}).then(function(oComponent) {
+
+			// check if models exist
+			assert.ok(oComponent.getModel("V2_withoutDataSource"), "V2 Model without dataSource is set on the Component instance");
+			assert.ok(oComponent.getModel("V4_withoutDataSource"), "V4 Model without dataSource is set on the Component instance");
+			assert.ok(oComponent.getModel("V2_withDataSource"), "V2 Model with dataSource is set on the Component instance");
+			assert.ok(oComponent.getModel("V4_withDataSource"), "V4 Model with dataSource is set on the Component instance");
+
+			// V2 ODataModels
+			assert.equal(this.modelSpy.odataV2.callCount, 2, "two V2 ODataModels created");
+
+			assert.ok(this.modelSpy.odataV2.getCall(0).calledWith({
+				ignoreAnnotationsFromMetadata: true,
+				serviceUrl: "/sap/odata/v2/service/"
+			}), "First V2 ODataModel was created without dataSource, ignoreAnnotationsFromMetadata paramater is <true>");
+
+			assert.ok(this.modelSpy.odataV2.getCall(1).calledWith({
+				ignoreAnnotationsFromMetadata: true,
+				metadataUrlParams: {"sap-language": 'EN'},
+				serviceUrl: "/sap/odata/v2/service/"
+			}), "Second V2 ODataModel was created from dataSource, ignoreAnnotationsFromMetadata paramater is <true>");
+
+			// V4 ODataModels
+			assert.equal(this.modelSpy.odataV4.callCount, 2, "two V4 ODataModels created");
+
+			assert.ok(this.modelSpy.odataV4.getCall(0).calledWith({
+				ignoreAnnotationsFromMetadata: true,
+				serviceUrl: "/sap/odata/v4/service/"
+			}), "First V4 ODataModel was created without dataSource, ignoreAnnotationsFromMetadata paramater is <true>");
+
+			assert.ok(this.modelSpy.odataV4.getCall(1).calledWith({
+				ignoreAnnotationsFromMetadata: true,
+				metadataUrlParams: {"sap-language": 'EN'},
+				odataVersion: "4.0",
+				serviceUrl: "/sap/odata/v4/service/"
+			}), "Second V4 ODataModel was created from dataSource, ignoreAnnotationsFromMetadata paramater is <true>");
+
+		}.bind(this));
+	});
+
 	QUnit.module("metadata v2 with dataSources (empty inheritance)", {
 		beforeEach: function() {
 			bindHelper.call(this);
