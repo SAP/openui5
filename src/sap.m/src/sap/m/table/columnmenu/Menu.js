@@ -284,17 +284,6 @@ sap.ui.define([
 			"onAfterRendering": this._focusItem
 		}, this);
 
-		if (this._getAllEffectiveItems().length === 0) {
-			this._oPopover.attachAfterOpen(this._focusInitialQuickAction.bind(this));
-		} else {
-			// focus the first visible menu item
-			this._oPopover.attachAfterOpen(function () {
-				var oItem = this._oItemsContainer._getNavigationList().getItems().find(function (oItem) {
-					return oItem.getVisible();
-				});
-				oItem && oItem.focus();
-			}.bind(this));
-		}
 		this._oPopover._oControl.oPopup.setAutoClose(false);
 	};
 
@@ -398,29 +387,27 @@ sap.ui.define([
 	};
 
 	Menu.prototype._createItemsContainer = function () {
-		var oMenu = this;
-
-		this._oBtnCancel =  new Button({
+		this._oBtnCancel = new Button({
 			text: this._getResourceText("table.COLUMNMENU_CANCEL"),
-			press: function () {
-				var sKey = oMenu._oItemsContainer.getCurrentViewKey();
-				if (oMenu._fireEvent(Core.byId(sKey), "cancel")) {
-					oMenu.close();
+			press: [function () {
+				var sKey = this._oItemsContainer.getCurrentViewKey();
+				if (this._fireEvent(Core.byId(sKey), "cancel")) {
+					this.close();
 				}
-			}
+			}, this]
 		});
 		this._oBtnOk = new Button({
 			text: this._getResourceText("table.COLUMNMENU_CONFIRM"),
 			type: library.ButtonType.Emphasized,
-			press: function () {
-				var sKey = oMenu._oItemsContainer.getCurrentViewKey();
-				if (oMenu._fireEvent(Core.byId(sKey), "confirm")) {
-					oMenu.close();
+			press: [function () {
+				var sKey = this._oItemsContainer.getCurrentViewKey();
+				if (this._fireEvent(Core.byId(sKey), "confirm")) {
+					this.close();
 				}
-			}
+			}, this]
 		});
 
-		oMenu._oItemsContainer = new Container({
+		this._oItemsContainer = new Container({
 			listLayout: true,
 			defaultView: DEFAULT_KEY,
 			footer: new Toolbar({
@@ -430,43 +417,44 @@ sap.ui.define([
 					this._oBtnCancel
 				]
 			}),
-			beforeViewSwitch: function (oEvent) {
+			beforeViewSwitch: [function (oEvent) {
 				var mParameters = oEvent.getParameters();
 
 				if (mParameters.target !== "$default") {
-					var oContainerItem = oMenu._oItemsContainer.getView(mParameters.target);
-					var oColumnMenuItem = oMenu._getItemFromContainerItem(oContainerItem);
-					if (oColumnMenuItem && !oMenu._fireEvent(oColumnMenuItem, "press")) {
+					var oContainerItem = this._oItemsContainer.getView(mParameters.target);
+					var oColumnMenuItem = this._getItemFromContainerItem(oContainerItem);
+					if (oColumnMenuItem && !this._fireEvent(oColumnMenuItem, "press")) {
 						oEvent.preventDefault();
 					}
 				}
-			},
-			afterViewSwitch: function (oEvent) {
+			}, this],
+			afterViewSwitch: [function (oEvent) {
 				var mParameters = oEvent.getParameters();
-				this.oLayout.setShowFooter(mParameters.target !== "$default");
+				oEvent.getSource().oLayout.setShowFooter(mParameters.target !== "$default");
 
-				oMenu._previousView = mParameters.source;
+				this._previousView = mParameters.source;
 				if (mParameters.target !== "$default") {
-					var oContainerItem = oMenu._oItemsContainer.getView(mParameters.target);
+					var oContainerItem = this._oItemsContainer.getView(mParameters.target);
 					if (oContainerItem) {
-						var oItem = oMenu._getItemFromContainerItem(oContainerItem);
-						oMenu._updateButtonState(oItem);
-						oMenu._focusItem();
+						var oItem = this._getItemFromContainerItem(oContainerItem);
+						this._updateButtonState(oItem);
+						this._focusItem();
 					}
 				} else {
-					oMenu._focusItem();
+					this._focusItem();
 					this._oPopover && this._oPopover.invalidate();
 				}
-			}
+			}, this]
 		});
-		oMenu._oItemsContainer.getHeader().addContentRight(new Button({
+		this._oItemsContainer.getHeader().addContentRight(new Button({
 			text: this._getResourceText("table.COLUMNMENU_RESET"),
-			press: function () {
-				oMenu._fireEvent(Core.byId(oMenu._oItemsContainer.getCurrentViewKey()), "reset", false);
-			}
+			press: [function () {
+				this._fireEvent(Core.byId(this._oItemsContainer.getCurrentViewKey()), "reset", false);
+			}, this]
 		}));
-		this._oPopover.addDependent(oMenu._oItemsContainer);
-		oMenu.addDependent(oMenu._oItemsContainer);
+		this._oItemsContainer._getNavigationList().addAriaLabelledBy(this.getId() + "-itemContainerDescription");
+		this._oPopover.addDependent(this._oItemsContainer);
+		this.addDependent(this._oItemsContainer);
 	};
 
 	Menu.prototype._fireEvent = function (oEntry, sEventType, bAllowPreventDefault) {
@@ -598,6 +586,7 @@ sap.ui.define([
 				formContainers: oFormContainer
 			});
 			this._oQuickActionContainer.addStyleClass("sapMTCMenuQAForm");
+			this._oQuickActionContainer.addAriaLabelledBy(this.getId() + "-actionContainerDescription");
 			this._oQuickActionContainer.addEventDelegate({
 				onAfterRendering: function() {
 					this.getDomRef().classList.remove("sapUiFormLblColon");
