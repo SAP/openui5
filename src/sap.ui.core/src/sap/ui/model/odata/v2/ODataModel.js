@@ -2966,6 +2966,7 @@ sap.ui.define([
 	 *   Comma-separated list of properties or paths to properties to select
 	 * @param {string} [mParameters.expand]
 	 *   Comma-separated list of navigation properties or paths to navigation properties to expand
+	 * @ui5-omissible-params oContext
 	 * @returns {any|undefined}
 	 *   The value for the given path and context or <code>undefined</code> if data or entity type
 	 *   cannot be found or if not all selected properties are available
