@@ -127,6 +127,8 @@ sap.ui.define([
 				oChange.condenserState = "delete";
 			}
 			mClassifications[sClassification][0].updateChange = oChange;
+		} else {
+			oChange.condenserState = "delete";
 		}
 
 		if (
