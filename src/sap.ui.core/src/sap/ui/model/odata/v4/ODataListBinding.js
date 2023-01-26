@@ -324,8 +324,9 @@ sap.ui.define([
 				throw new Error("Cannot combine $$aggregation and $apply");
 			}
 			if (!sChangeReason) { // called from c'tor or #setAggregation
-				_AggregationHelper.validateAggregation(mParameters.$$aggregation, this.sPath,
-					this.oModel.oInterface.fetchMetadata, this.oModel.bAutoExpandSelect);
+				_AggregationHelper.validateAggregationAndSetPath(mParameters.$$aggregation,
+					this.oModel.bAutoExpandSelect, this.oModel.oInterface.fetchMetadata,
+					this.getResolvedPath());
 			}
 			sApply = _AggregationHelper.buildApply(mParameters.$$aggregation).$apply;
 		}
@@ -3752,8 +3753,9 @@ sap.ui.define([
 					if (!this.oHeaderContext) {
 						this.oHeaderContext = Context.create(this.oModel, this, sResolvedPath);
 					}
-					if (this.bHasPathReductionToParent && this.oModel.bAutoExpandSelect
-							&& !this.mParameters.$$aggregation) {
+					if (this.mParameters.$$aggregation) {
+						_AggregationHelper.setPath(this.mParameters.$$aggregation, sResolvedPath);
+					} else if (this.bHasPathReductionToParent && this.oModel.bAutoExpandSelect) {
 						this.sChangeReason = "AddVirtualContext"; // JIRA: CPOUI5ODATAV4-848
 					}
 					if (oContext.getBinding

@@ -652,9 +652,9 @@ sap.ui.define([
 			"/Products" : {}
 		};
 		oBinding.oHeaderContext = undefined; // not yet...
-		this.mock(_AggregationHelper).expects("validateAggregation")
-			.withExactArgs(sinon.match.same(oAggregation), "/EMPLOYEES",
-				sinon.match.same(this.oModel.oInterface.fetchMetadata), "~autoExpandSelect~");
+		this.mock(_AggregationHelper).expects("validateAggregationAndSetPath")
+			.withExactArgs(sinon.match.same(oAggregation), "~autoExpandSelect~",
+				sinon.match.same(this.oModel.oInterface.fetchMetadata), "/EMPLOYEES");
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		oModelMock.expects("buildQueryOptions").withExactArgs(sinon.match.same(mParameters), true)
@@ -704,16 +704,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("applyParameters: validateAggregation fails", function (assert) {
+	QUnit.test("applyParameters: validateAggregationAndSetPath fails", function (assert) {
 		var oAggregation = {},
 			oBinding = this.bindList("/EMPLOYEES"),
 			oError = new Error("This call intentionally failed");
 
 		oBinding.mParameters.$$aggregation = oAggregation;
 		oBinding.mQueryOptions = {$apply : "A.P.P.L.E."};
-		this.mock(_AggregationHelper).expects("validateAggregation")
-			.withExactArgs({"n/a" : "unsupported content here"}, "/EMPLOYEES",
-				sinon.match.same(this.oModel.oInterface.fetchMetadata), false)
+		this.mock(_AggregationHelper).expects("validateAggregationAndSetPath")
+			.withExactArgs({"n/a" : "unsupported content here"}, false,
+				sinon.match.same(this.oModel.oInterface.fetchMetadata), "/EMPLOYEES")
 			.throws(oError);
 		this.mock(_AggregationHelper).expects("buildApply").never();
 
@@ -766,7 +766,7 @@ sap.ui.define([
 			mParameters.$$aggregation = oAggregation;
 		}
 
-		this.mock(_AggregationHelper).expects("validateAggregation").never();
+		this.mock(_AggregationHelper).expects("validateAggregationAndSetPath").never();
 		this.mock(_AggregationHelper).expects("buildApply").exactly(bAggregation ? 1 : 0)
 			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		oModelMock.expects("buildQueryOptions")
@@ -805,9 +805,9 @@ sap.ui.define([
 			};
 
 		oBinding.mQueryOptions.$apply = "old $apply";
-		this.mock(_AggregationHelper).expects("validateAggregation")
-			.withExactArgs(sinon.match.same(oAggregation), "/EMPLOYEES",
-				sinon.match.same(this.oModel.oInterface.fetchMetadata), false);
+		this.mock(_AggregationHelper).expects("validateAggregationAndSetPath")
+			.withExactArgs(sinon.match.same(oAggregation), false,
+				sinon.match.same(this.oModel.oInterface.fetchMetadata), "/EMPLOYEES");
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		this.mock(this.oModel).expects("buildQueryOptions")
@@ -840,7 +840,7 @@ sap.ui.define([
 			};
 
 		oBinding.mQueryOptions.$apply = "old $apply";
-		this.mock(_AggregationHelper).expects("validateAggregation").never();
+		this.mock(_AggregationHelper).expects("validateAggregationAndSetPath").never();
 		this.mock(_AggregationHelper).expects("buildApply").never();
 		this.mock(this.oModel).expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns({$filter : "bar"});
@@ -880,9 +880,9 @@ sap.ui.define([
 			// aggregate : {GrossAmount : {}},
 			// groupLevels : ["LifecycleStatus"]
 		};
-		this.mock(_AggregationHelper).expects("validateAggregation")
-			.withExactArgs(sinon.match.same(oAggregation), "/EMPLOYEES",
-				sinon.match.same(this.oModel.oInterface.fetchMetadata), false);
+		this.mock(_AggregationHelper).expects("validateAggregationAndSetPath")
+			.withExactArgs(sinon.match.same(oAggregation), false,
+				sinon.match.same(this.oModel.oInterface.fetchMetadata), "/EMPLOYEES");
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		this.mock(this.oModel).expects("buildQueryOptions")
@@ -924,9 +924,9 @@ sap.ui.define([
 			};
 
 		oBinding.bHasAnalyticalInfo = true;
-		this.mock(_AggregationHelper).expects("validateAggregation")
-			.withExactArgs(sinon.match.same(oAggregation), "/EMPLOYEES",
-				sinon.match.same(this.oModel.oInterface.fetchMetadata), false);
+		this.mock(_AggregationHelper).expects("validateAggregationAndSetPath")
+			.withExactArgs(sinon.match.same(oAggregation), false,
+				sinon.match.same(this.oModel.oInterface.fetchMetadata), "/EMPLOYEES");
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		this.mock(this.oModel).expects("buildQueryOptions")
@@ -979,9 +979,9 @@ sap.ui.define([
 
 		oBinding.mParameters.$$aggregation = oFixture.oOldAggregation;
 		oBinding.mQueryOptions.$apply = sApply;
-		this.mock(_AggregationHelper).expects("validateAggregation")
-			.withExactArgs(sinon.match.same(oFixture.oNewAggregation), "/EMPLOYEES",
-				sinon.match.same(this.oModel.oInterface.fetchMetadata), false);
+		this.mock(_AggregationHelper).expects("validateAggregationAndSetPath")
+			.withExactArgs(sinon.match.same(oFixture.oNewAggregation), false,
+				sinon.match.same(this.oModel.oInterface.fetchMetadata), "/EMPLOYEES");
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oFixture.oNewAggregation)).returns({$apply : sApply});
 		this.mock(this.oModel).expects("buildQueryOptions")
@@ -2295,7 +2295,8 @@ sap.ui.define([
 	{aggregation : true, autoExpandSelect : true, backLink : true, newContext : true}
 ].forEach(function (oFixture, i) {
 	QUnit.test("setContext: relative path, " + JSON.stringify(oFixture), function (assert) {
-		var oBinding = this.bindList("Suppliers", Context.create(this.oModel, oParentBinding,
+		var oAggregation = {},
+			oBinding = this.bindList("Suppliers", Context.create(this.oModel, oParentBinding,
 				"/foo")),
 			oBindingMock = this.mock(oBinding),
 			oBindingSetContextCall,
@@ -2311,7 +2312,7 @@ sap.ui.define([
 
 		this.oModel.bAutoExpandSelect = oFixture.autoExpandSelect;
 		if (oFixture.aggregation) {
-			oBinding.mParameters.$$aggregation = {};
+			oBinding.mParameters.$$aggregation = oAggregation;
 		}
 		oBinding.sChangeReason = "sChangeReason";
 		oBinding.bHasPathReductionToParent = oFixture.backLink;
@@ -2336,6 +2337,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/bar/Suppliers")
 			.returns(oNewHeaderContext);
+		this.mock(_AggregationHelper).expects("setPath").exactly(oFixture.aggregation ? 1 : 0)
+			.withExactArgs(sinon.match.same(oAggregation), "/bar/Suppliers");
 		oBindingSetContextCall = this.mock(Binding.prototype).expects("setContext").on(oBinding)
 			.withExactArgs(sinon.match.same(oContext), {detailedReason : sExpectedChangeReason});
 

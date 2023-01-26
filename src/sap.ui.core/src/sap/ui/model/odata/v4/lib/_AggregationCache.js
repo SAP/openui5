@@ -1110,7 +1110,7 @@ sap.ui.define([
 
 		sPredicate = _Helper.getKeyPredicate(oElement, sMetaPath, mTypeForMetaPath);
 		_Helper.setPrivateAnnotation(oElement, "predicate", sPredicate);
-		if (sMetaPath !== oAggregation.$path) { // related entity reached via navigation property
+		if (sMetaPath !== oAggregation.$metaPath) { // related entity (via navigation property)
 			return sPredicate;
 		}
 
