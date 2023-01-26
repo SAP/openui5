@@ -3317,6 +3317,9 @@ sap.ui.define([
 				for (i = 0, n = oResult.value.length; i < n; i += 1) {
 					oElement = oResult.value[i];
 					sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+					if (that.beforeUpdateSelected) {
+						that.beforeUpdateSelected(sPredicate, oElement);
+					}
 					_Helper.updateSelected(that.mChangeListeners, sPredicate,
 						that.aElements.$byPredicate[sPredicate], oElement, aPaths,
 						preventKeyPredicateChange);

@@ -134,7 +134,8 @@ sap.ui.define([
 	 * @private
 	 */
 	_AggregationCache.prototype.addElements = function (vReadElements, iOffset, oCache, iStart) {
-		var aElements = this.aElements;
+		var aElements = this.aElements,
+			sNodeProperty = this.oAggregation.$NodeProperty;
 
 		function addElement(oElement, i) {
 			var oOldElement = aElements[iOffset + i],
@@ -145,8 +146,8 @@ sap.ui.define([
 				if (oOldElement === oElement) {
 					return;
 				}
-				_AggregationHelper
-					.beforeOverwritePlaceholder(oOldElement, oElement, oCache, iStart + i);
+				_AggregationHelper.beforeOverwritePlaceholder(oOldElement, oElement, oCache,
+					iStart + i, sNodeProperty);
 			} else if (iOffset + i >= aElements.length) {
 				throw new Error("Array index out of bounds: " + (iOffset + i));
 			}
@@ -176,7 +177,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deletes the "$apply" system query option before side effects are requested.
+	 * Deletes the "$apply" system query option before side effects are requested and adds the
+	 * NodeProperty path to the "$select" system query option (if not already present).
 	 *
 	 * @param {object} mQueryOptions
 	 *   A modifiable map of key-value pairs representing the query string
@@ -190,6 +192,31 @@ sap.ui.define([
 			throw new Error("Missing recursive hierarchy");
 		}
 		delete mQueryOptions.$apply;
+		if (!mQueryOptions.$select.includes(this.oAggregation.$NodeProperty)) {
+			mQueryOptions.$select.push(this.oAggregation.$NodeProperty);
+		}
+	};
+
+	/**
+	 * Before trying to update the element with the given key predicate with the given new value
+	 * via {@link sap.ui.model.odata.v4.lib._Helper.updateSelected} (which might fail due to key
+	 * predicate checks), checks that the NodeProperty ("the hierarchy node value") has not changed.
+	 *
+	 * @param {string} sPredicate - A key predicate
+	 * @param {object} oNewValue - The new value, which usually just contains parts of the old
+	 * @throws {Error} In case of a structural change
+	 *
+	 * @see sap.ui.model.odata.v4.lib._CollectionCache#requestSideEffects
+	 */
+	_AggregationCache.prototype.beforeUpdateSelected = function (sPredicate, oNewValue) {
+		var oElement = this.aElements.$byPredicate[sPredicate],
+			sNodeProperty = this.oAggregation.$NodeProperty;
+
+		if (oElement[sNodeProperty] !== oNewValue[sNodeProperty]) {
+			throw new Error("Unexpected structural change: " + sNodeProperty
+				+ " from " + JSON.stringify(oElement[sNodeProperty])
+				+ " to " + JSON.stringify(oNewValue[sNodeProperty]));
+		}
 	};
 
 	/**
@@ -936,8 +963,8 @@ sap.ui.define([
 
 	/**
 	 * Replaces the given element, which is at the given position and has the given predicate, with
-	 * a placeholder which keeps all private annotations. The original element is removed from its
-	 * corresponding cache and must not be used any longer.
+	 * a placeholder which keeps all private annotations plus the hierarchy node value. The original
+	 * element is removed from its corresponding cache and must not be used any longer.
 	 *
 	 * @param {number} iIndex - Its index
 	 * @param {object} oElement - An element
@@ -946,16 +973,20 @@ sap.ui.define([
 	 * @private
 	 */
 	_AggregationCache.prototype.replaceByPlaceholder = function (iIndex, oElement, sPredicate) {
+		var sNodeProperty = this.oAggregation.$NodeProperty,
+			oPlaceholder;
+
 		if (_Helper.hasPrivateAnnotation(oElement, "placeholder")) {
 			return;
 		}
 
 		_AggregationHelper.markSplicedStale(oElement);
-		this.aElements[iIndex] = {
+		this.aElements[iIndex] = oPlaceholder = {
 			"@$ui5._" : Object.assign(oElement["@$ui5._"], {placeholder : true}),
 			"@$ui5.node.isExpanded" : oElement["@$ui5.node.isExpanded"],
 			"@$ui5.node.level" : oElement["@$ui5.node.level"]
 		};
+		oPlaceholder[sNodeProperty] = oElement[sNodeProperty];
 		delete this.aElements.$byPredicate[sPredicate];
 
 		// drop original element from its cache's collection

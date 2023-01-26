@@ -9469,6 +9469,7 @@ sap.ui.define([
 				iReceivedLength = oFixture.aValues.length,
 				sResourcePath = "TEAMS('42')/Foo",
 				oCache = this.createCache(sResourcePath),
+				oCacheMock = this.mock(oCache),
 				that = this,
 				i;
 
@@ -9554,7 +9555,7 @@ sap.ui.define([
 					iExpectedByPredicateLength = iLength === undefined
 						? Object.keys(oCache.aElements.$byPredicate).length
 						: iReceivedLength + (oCreatedElement ? 1 : 0);
-					that.mock(oCache).expects("checkSharedRequest").withExactArgs();
+					oCacheMock.expects("checkSharedRequest").withExactArgs();
 					that.mock(Object).expects("assign")
 						.withExactArgs({}, sinon.match.same(oCache.mQueryOptions),
 							sinon.match.same(oCache.mLateQueryOptions))
@@ -9565,22 +9566,25 @@ sap.ui.define([
 							"/TEAMS/Foo", "")
 						.returns(mMergedQueryOptions);
 					oCache.beforeRequestSideEffects = function () {};
-					that.mock(oCache).expects("beforeRequestSideEffects")
+					oCacheMock.expects("beforeRequestSideEffects")
 						.withExactArgs(sinon.match.same(mMergedQueryOptions))
 						.callsFake(function (mQueryOptions2) {
 							mQueryOptions2.foo = "baz";
 						});
-					that.mock(oCache).expects("keepOnlyGivenElements").exactly(bSingle ? 0 : 1)
+					oCacheMock.expects("keepOnlyGivenElements").exactly(bSingle ? 0 : 1)
 						.withExactArgs(aPredicates).callThrough(); // too hard to refactor :-(
 					// Note: fetchTypes() would have been triggered by read() already
-					that.mock(oCache).expects("fetchTypes").withExactArgs()
+					oCacheMock.expects("fetchTypes").withExactArgs()
 						.returns(SyncPromise.resolve(mTypeForMetaPath));
+					oCache.beforeUpdateSelected = function () {};
 					for (i = 0; i < iReceivedLength; i += 1) { // prepare request/response
 						sPredicate = "('" + oFixture.aValues[i].key + "')";
 						oHelperMock.expects("getKeyFilter").withExactArgs(
 								sinon.match.same(oCache.aElements.$byPredicate[sPredicate]),
 								"/TEAMS/Foo", sinon.match.same(mTypeForMetaPath))
 							.callsFake(getKeyFilter);
+						oCacheMock.expects("beforeUpdateSelected")
+							.withExactArgs(sPredicate, sinon.match.same(oFixture.aValues[i]));
 						oHelperMock.expects("updateSelected")
 							.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPredicate,
 								sinon.match.same(oCache.aElements.$byPredicate[sPredicate]),
@@ -9604,7 +9608,7 @@ sap.ui.define([
 									$select : ["Name"]
 								}, sinon.match.same(oCache), sinon.match.func)
 							.resolves(oResult);
-						that.mock(oCache).expects("visitResponse").withExactArgs(
+						oCacheMock.expects("visitResponse").withExactArgs(
 								sinon.match.same(oResult), sinon.match.same(mTypeForMetaPath),
 								undefined, "", false, NaN)
 							.callsFake(function () {

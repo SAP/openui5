@@ -2900,7 +2900,8 @@ sap.ui.define([
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
-				groupLevels : ["foo"]
+				groupLevels : ["foo"],
+				$NodeProperty : "SomeNodeID" // unrealistic mix, but never mind
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oPlaceholder = _AggregationHelper.createPlaceholder(NaN, 42, "~parent~"),
@@ -2917,7 +2918,7 @@ sap.ui.define([
 		};
 		this.mock(_AggregationHelper).expects("beforeOverwritePlaceholder")
 			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(aReadElements[0]),
-				"~parent~", 42);
+				"~parent~", 42, "SomeNodeID");
 
 		// code under test
 		oCache.addElements(aReadElements, 2, "~parent~", 42);
@@ -2964,7 +2965,7 @@ sap.ui.define([
 		};
 		this.mock(_AggregationHelper).expects("beforeOverwritePlaceholder")
 			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(oReadElement),
-				sinon.match.same(oGroupLevelCache), 42);
+				sinon.match.same(oGroupLevelCache), 42, undefined);
 		this.mock(_Helper).expects("setPrivateAnnotation").exactly(bWithParentCache ? 2 : 0);
 
 		// code under test
@@ -3006,7 +3007,7 @@ sap.ui.define([
 		oCache.aElements.$byPredicate = {};
 		this.mock(_AggregationHelper).expects("beforeOverwritePlaceholder")
 			.withExactArgs(sinon.match.same(oCache.aElements[1]), {},
-				sinon.match.same(oGroupLevelCache), 0);
+				sinon.match.same(oGroupLevelCache), 0, undefined);
 
 		assert.throws(function () {
 			// code under test
@@ -3160,9 +3161,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("beforeRequestSideEffects", function (assert) {
+[false, true].forEach(function (bIn) {
+	QUnit.test("beforeRequestSideEffects: NodeProperty already in = " + bIn, function (assert) {
 		var oAggregation = {
-				hierarchyQualifier : "X"
+				hierarchyQualifier : "X",
+				$NodeProperty : "SomeNodeID"
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			mQueryOptions = {
@@ -3172,7 +3175,7 @@ sap.ui.define([
 				$filter : "age gt 40",
 				$orderby : "TEAM_ID desc",
 				$search : "OR",
-				$select : ["Name"],
+				$select : bIn ? ["Name", "SomeNodeID", "XYZ"] : ["Name", "XYZ"],
 				foo : "bar",
 				"sap-client" : "123"
 			};
@@ -3186,16 +3189,39 @@ sap.ui.define([
 			$filter : "age gt 40",
 			$orderby : "TEAM_ID desc",
 			$search : "OR",
-			$select : ["Name"],
+			$select : bIn ? ["Name", "SomeNodeID", "XYZ"] : ["Name", "XYZ", "SomeNodeID"],
 			foo : "bar",
 			"sap-client" : "123"
 		}, "only $apply is dropped");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("beforeUpdateSelected", function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X",
+				$NodeProperty : "SomeNodeID"
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
+
+		oCache.aElements.$byPredicate = {
+			"('A')" : {SomeNodeID : "42"}
+		};
+
+		// code under test
+		oCache.beforeUpdateSelected("('A')", {SomeNodeID : "42"});
+
+		assert.throws(function () {
+			// code under test
+			oCache.beforeUpdateSelected("('A')", {SomeNodeID : [23]});
+		}, new Error('Unexpected structural change: SomeNodeID from "42" to [23]'));
 	});
 
 	//*********************************************************************************************
 	QUnit.test("replaceByPlaceholder", function (assert) {
 		var oAggregation = {
-				hierarchyQualifier : "X"
+				hierarchyQualifier : "X",
+				$NodeProperty : "SomeNodeID"
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oParentCache = {
@@ -3208,7 +3234,8 @@ sap.ui.define([
 				},
 				"@$ui5.node.isExpanded" : "~isExpanded~",
 				"@$ui5.node.level" : 9,
-				foo : "bar"
+				foo : "bar",
+				SomeNodeID : "a hierarchy node value"
 			},
 			oHelperMock = this.mock(_Helper);
 
@@ -3235,7 +3262,8 @@ sap.ui.define([
 				placeholder : true // added
 			},
 			"@$ui5.node.isExpanded" : "~isExpanded~",
-			"@$ui5.node.level" : 9
+			"@$ui5.node.level" : 9,
+			SomeNodeID : "a hierarchy node value"
 		}]);
 		assert.deepEqual(oCache.aElements.$byPredicate, {
 			"('A')" : "~a~",
@@ -3254,7 +3282,8 @@ sap.ui.define([
 		assert.deepEqual(oElement, {
 			"@$ui5.node.isExpanded" : "~isExpanded~",
 			"@$ui5.node.level" : 9,
-			foo : "bar"
+			foo : "bar",
+			SomeNodeID : "a hierarchy node value"
 		}, "otherwise unchanged");
 	});
 

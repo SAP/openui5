@@ -2593,8 +2593,8 @@ sap.ui.define([
 				that.expectChange("name", ["Frederic Fall", "Jonathan Smith"]);
 			} else {
 				that.oLogMock.expects("error")
-					.withArgs("Failed to get contexts for /sap/opu/odata4/IWBEP/TEA/default/IWBEP"
-						+ "/TEA_BUSI/0001/EMPLOYEES with start index 0 and length 100");
+					.withArgs("Failed to get contexts for " + sTeaBusi
+						+ "EMPLOYEES with start index 0 and length 100");
 				that.expectMessages([{
 						code : "CODE",
 						message : "Request intentionally failed",
@@ -23886,19 +23886,22 @@ sap.ui.define([
 	//
 	// Request various side effects that do not affect the hierarchy (JIRA: CPOUI5ODATAV4-1785).
 	// Check that create, delete, and refresh are not supported (JIRA: CPOUI5ODATAV4-1851).
+	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920).
 	//
-	// Additionally ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920)
+	// NodeID is selected automatically, even w/o UI, but "parent node ID" is not.
+	// JIRA: CPOUI5ODATAV4-1849
 	QUnit.test("Recursive Hierarchy: root is leaf", function (assert) {
-		var sExpectedDownloadUrl = sTeaBusi
-				+ "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
-				+ ",Levels=9)&$select=DistanceFromRoot,ID,MANAGER_ID"
-				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)",
-			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+		var sExpectedDownloadUrl
+				= "/special/cases/Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
+				+ ",NodeProperty='NodeID',Levels=9)"
+				+ "&$select=ArtistID,DistanceFromRoot,IsActiveEntity,NodeID"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)",
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oRoot,
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{path : \'/EMPLOYEES\',\
+<t:Table id="table" rows="{path : \'/Artists\',\
 		parameters : {\
 			$$aggregation : {\
 				hierarchyQualifier : \'OrgChart\'\
@@ -23906,27 +23909,28 @@ sap.ui.define([
 		}}" threshold="0" visibleRowCount="3">\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text text="{= %{@$ui5.node.level} }"/>\
-	<Text text="{ID}"/>\
-	<Text text="{MANAGER_ID}"/>\
-	<Text text="{EMPLOYEE_2_TEAM/Name}"/>\
+	<Text text="{BestFriend/Name}"/>\
 </t:Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
-				+ ",Levels=1)&$select=DrillState,ID,MANAGER_ID"
-				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$count=true&$skip=0&$top=3", {
+		this.expectRequest("Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart',NodeProperty='NodeID'"
+				+ ",Levels=1)&$select=ArtistID,DrillState,IsActiveEntity,NodeID"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "1",
 				value : [{
+					ArtistID : "0",
+					BestFriend : {
+						ArtistID : "01",
+						IsActiveEntity : true,
+						Name : "Friend #01"
+					},
 					// DescendantCount : "0", // not needed w/o expandTo
 					// DistanceFromRoot : "0", // not needed w/o expandTo
 					DrillState : "leaf",
-					EMPLOYEE_2_TEAM : {
-						Name : "Team #01",
-						Team_Id : "01"
-					},
-					ID : "0",
-					MANAGER_ID : null
+					IsActiveEntity : true,
+					NodeID : "0,true"
 				}]
 			});
 
@@ -23940,35 +23944,53 @@ sap.ui.define([
 			}, "JIRA: CPOUI5ODATAV4-1825");
 
 			checkTable("root is leaf", assert, oTable, [
-				"/EMPLOYEES('0')"
+				"/Artists(ArtistID='0',IsActiveEntity=true)"
 			], [
-				[undefined, 1, "0", "", "Team #01"],
-				["", "", "", "", ""],
-				["", "", "", "", ""]
+				[undefined, 1, "Friend #01"],
+				["", "", ""],
+				["", "", ""]
 			]);
+			assert.deepEqual(oRoot.getObject(), {
+					"@$ui5.node.level" : 1,
+					ArtistID : "0",
+					BestFriend : {
+						"@$ui5.node.level" : 1, //TODO
+						ArtistID : "01",
+						IsActiveEntity : true,
+						Name : "Friend #01"
+					},
+					IsActiveEntity : true,
+					NodeID : "0,true"
+				}, "technical properties have been removed");
+			assert.strictEqual(oRoot.getProperty("@$ui5.node.level"), 1);
+			assert.strictEqual(oRoot.getProperty("BestFriend/@$ui5.node.level"), 1); //TODO
 
 			// code under test
 			assert.strictEqual(oRoot.getBinding().getDownloadUrl(), sExpectedDownloadUrl,
 				"JIRA: CPOUI5ODATAV4-1920");
 
-			that.expectRequest("EMPLOYEES('0')?$select=AGE", {AGE : 60});
+			that.expectRequest("Artists(ArtistID='0',IsActiveEntity=true)?$select=defaultChannel", {
+					defaultChannel : "60"
+				});
 
 			return Promise.all([
 				// code under test
-				oRoot.requestProperty("AGE"),
+				oRoot.requestProperty("defaultChannel"),
 				// code under test
 				oRoot.getBinding().requestDownloadUrl(),
 				that.waitForChanges(assert, "late property")
 			]);
 		}).then(function (aResults) {
-			assert.strictEqual(aResults[0], 60);
+			assert.strictEqual(aResults[0], "60");
 			assert.strictEqual(aResults[1], sExpectedDownloadUrl, "JIRA: CPOUI5ODATAV4-1920");
 
-			that.expectRequest("EMPLOYEES?$select=AGE,ID,MANAGER_ID&$filter=ID eq '0'", {
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,NodeID,defaultChannel"
+					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
-						AGE : 160,
-						ID : "0",
-						MANAGER_ID : null
+						ArtistID : "0",
+						IsActiveEntity : true,
+						NodeID : "0,true",
+						defaultChannel : "160"
 					}]
 				});
 
@@ -23977,44 +23999,54 @@ sap.ui.define([
 				that.waitForChanges(assert, "side effect: * for single row")
 			]);
 		}).then(function () {
-			assert.strictEqual(oRoot.getProperty("AGE"), 160);
+			assert.strictEqual(oRoot.getProperty("defaultChannel"), "160");
 
-			that.expectRequest("EMPLOYEES?$select=AGE,ID&$filter=ID eq '0'", {
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,NodeID,defaultChannel"
+					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
-						AGE : 260,
-						ID : "0"
+						ArtistID : "0",
+						IsActiveEntity : true,
+						NodeID : "0,true",
+						defaultChannel : "260"
 					}]
 				});
 
 			return Promise.all([
-				oRoot.requestSideEffects(["AGE"]),
-				that.waitForChanges(assert, "side effect: AGE for single row")
+				oRoot.requestSideEffects(["defaultChannel"]),
+				that.waitForChanges(assert, "side effect: defaultChannel for single row")
 			]);
 		}).then(function () {
-			assert.strictEqual(oRoot.getProperty("AGE"), 260);
+			assert.strictEqual(oRoot.getProperty("defaultChannel"), "260");
 
-			that.expectRequest("EMPLOYEES?$select=ID&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)"
-					+ "&$filter=ID eq '0'", {
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,NodeID"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
-						EMPLOYEE_2_TEAM : {
-							Name : "Team #01 (updated)",
-							Team_Id : "01"
+						ArtistID : "0",
+						BestFriend : {
+							ArtistID : "01",
+							IsActiveEntity : true,
+							Name : "Friend #01 (updated)"
 						},
-						ID : "0"
+						IsActiveEntity : true,
+						NodeID : "0,true"
 					}]
 				});
 
 			return Promise.all([
-				oRoot.getBinding().getHeaderContext().requestSideEffects(["EMPLOYEE_2_TEAM/Name"]),
-				that.waitForChanges(assert, "side effect: EMPLOYEE_2_TEAM/Name for all rows")
+				oRoot.getBinding().getHeaderContext().requestSideEffects(["BestFriend/Name"]),
+				that.waitForChanges(assert, "side effect: BestFriend/Name for all rows")
 			]);
 		}).then(function () {
-			checkTable("side effect: EMPLOYEE_2_TEAM/Name for all rows", assert, oTable, [
-				"/EMPLOYEES('0')"
+			var sErrorMessage
+				= 'Unexpected structural change: NodeID from "0,true" to "-0,true-"';
+
+			checkTable("side effect: BestFriend/Name for all rows", assert, oTable, [
+				"/Artists(ArtistID='0',IsActiveEntity=true)"
 			], [
-				[undefined, 1, "0", "", "Team #01 (updated)"],
-				["", "", "", "", ""],
-				["", "", "", "", ""]
+				[undefined, 1, "Friend #01 (updated)"],
+				["", "", ""],
+				["", "", ""]
 			]);
 
 			assert.throws(function () {
@@ -24032,8 +24064,243 @@ sap.ui.define([
 				// code under test (JIRA: CPOUI5ODATAV4-1851)
 				oRoot.requestRefresh();
 			}, new Error("Cannot refresh " + oRoot + " when using data aggregation"));
+
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,NodeID,defaultChannel"
+					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
+					value : [{
+						ArtistID : "0",
+						IsActiveEntity : true,
+						NodeID : "-0,true-",
+						defaultChannel : "360"
+					}]
+				})
+				.expectMessages([{
+					message : sErrorMessage,
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to request side effects",
+					sinon.match(/Unexpected structural change: NodeID/), sODLB);
+
+			return Promise.all([
+				oRoot.requestSideEffects(["*"])
+					.then(mustFail(assert), function (oError) {
+						assert.strictEqual(oError.message, sErrorMessage);
+					}),
+				that.waitForChanges(assert, "side effect: * for single row w/ hierarchy change")
+			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2. Scroll down
+	// and request a side effect for all rows. Scroll up again and check that unexpected structural
+	// changes are properly detected.
+	// JIRA: CPOUI5ODATAV4-1849
+[ //TODO "DescendantCount"
+	undefined, "ArtistID", "DistanceFromRoot", "DrillState", "IsActiveEntity", "NodeID", "order"
+].forEach(function (sStructuralChange) {
+	var sTitle = "Recursive Hierarchy: beforeOverwritePlaceholder; Unexpected structural change: "
+			+ sStructuralChange;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			oTable,
+			sUrlPrefix = "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart',NodeProperty='NodeID'"
+				+ ",Levels=2)&$select=ArtistID,DescendantCount,DistanceFromRoot,DrillState"
+				+ ",IsActiveEntity,Name,NodeID",
+			sView = '\
+<t:Table id="table" rows="{path : \'/Artists\',\
+		parameters : {\
+			$$aggregation : {\
+				expandTo : 2,\
+				hierarchyQualifier : \'OrgChart\'\
+			}\
+		}}" threshold="0" visibleRowCount="2">\
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text text="{= %{@$ui5.node.level} }"/>\
+	<Text text="{ArtistID}"/>\
+	<Text text="{Name}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest(sUrlPrefix + "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "4",
+				value : [{
+					ArtistID : "0",
+					DescendantCount : "3",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					IsActiveEntity : true,
+					Name : "Alpha",
+					NodeID : "0,true"
+				}, {
+					ArtistID : "1",
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					IsActiveEntity : true,
+					Name : "Beta",
+					NodeID : "1,true"
+				}]
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			checkTable("initial page", assert, oTable, [
+				"/Artists(ArtistID='0',IsActiveEntity=true)",
+				"/Artists(ArtistID='1',IsActiveEntity=true)"
+			], [
+				[true, 1, "0", "Alpha"],
+				[undefined, 2, "1", "Beta"]
+			], 4);
+
+			that.expectRequest(sUrlPrefix + "&$skip=2&$top=2", {
+					value : [{
+						ArtistID : "2",
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						IsActiveEntity : true,
+						Name : "Gamma",
+						NodeID : "2,true"
+					}, {
+						ArtistID : "3",
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						IsActiveEntity : true,
+						Name : "Delta",
+						NodeID : "3,true"
+					}]
+				});
+
+			// code under test
+			oTable.setFirstVisibleRow(2);
+
+			return that.waitForChanges(assert, "scroll down");
+		}).then(function () {
+			checkTable("initial page", assert, oTable, [
+				"/Artists(ArtistID='0',IsActiveEntity=true)",
+				"/Artists(ArtistID='1',IsActiveEntity=true)",
+				"/Artists(ArtistID='2',IsActiveEntity=true)",
+				"/Artists(ArtistID='3',IsActiveEntity=true)"
+			], [
+				[undefined, 2, "2", "Gamma"],
+				[undefined, 2, "3", "Delta"]
+			], 4);
+
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name,NodeID"
+					+ "&$filter=ArtistID eq '2' and IsActiveEntity eq true"
+					+ " or ArtistID eq '3' and IsActiveEntity eq true&$top=2", {
+					value : [{
+						ArtistID : "2",
+						IsActiveEntity : true,
+						Name : "Gamma (updated)",
+						NodeID : "2,true"
+					}, {
+						ArtistID : "3",
+						IsActiveEntity : true,
+						Name : "Delta (updated)",
+						NodeID : "3,true"
+					}]
+				});
+
+			return Promise.all([
+				// code under test
+				oTable.getBinding("rows").getHeaderContext().requestSideEffects(["Name"]),
+				that.waitForChanges(assert, "side effects")
+			]);
+		}).then(function () {
+			var oAlpha = {
+					ArtistID : "0",
+					DescendantCount : "3",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					IsActiveEntity : true,
+					Name : "Alpha (updated)",
+					NodeID : "0,true"
+				},
+				oBeta = {
+					ArtistID : sStructuralChange === "ArtistID" ? "-1-" : "1",
+					DescendantCount : "0",
+					DistanceFromRoot : sStructuralChange === "DistanceFromRoot" ? "2" : "1",
+					DrillState : sStructuralChange === "DrillState" ? "collapsed" : "leaf",
+					IsActiveEntity : sStructuralChange !== "IsActiveEntity",
+					Name : "Beta (updated)",
+					NodeID : sStructuralChange === "NodeID" ? "-1,true-" : "1,true"
+				},
+				sErrorMessage = "???";
+
+			switch (sStructuralChange) {
+				case "ArtistID":
+				case "IsActiveEntity":
+					sErrorMessage = "Unexpected structural change: predicate";
+					break;
+				case "DistanceFromRoot":
+				case "order":
+					sErrorMessage = "Wrong placeholder";
+					break;
+				case "DrillState":
+					sErrorMessage = "Not a leaf anymore (or vice versa)";
+					break;
+				case "NodeID":
+					sErrorMessage
+						= 'Unexpected structural change: NodeID from "1,true" to "-1,true-"';
+				// no default
+			}
+
+			checkTable("initial page", assert, oTable, [
+				"/Artists(ArtistID='2',IsActiveEntity=true)",
+				"/Artists(ArtistID='3',IsActiveEntity=true)"
+			], [
+				[undefined, 2, "2", "Gamma (updated)"],
+				[undefined, 2, "3", "Delta (updated)"]
+			], 4);
+
+			that.expectRequest(sUrlPrefix + "&$skip=0&$top=2", {
+					value : sStructuralChange === "order"
+					? [oBeta, oAlpha]
+					: [oAlpha, oBeta]
+				});
+			if (sStructuralChange) {
+				that.expectMessages([{
+						message : sErrorMessage,
+						persistent : true,
+						technical : true,
+						type : "Error"
+					}]);
+				that.oLogMock.expects("error")
+					.withExactArgs("Failed to get contexts for /special/cases/Artists"
+						+ " with start index 0 and length 2",
+						sinon.match(sErrorMessage), sODLB);
+			}
+
+			// code under test
+			oTable.setFirstVisibleRow(0);
+
+			return that.waitForChanges(assert, "scroll up");
+		}).then(function () {
+			if (sStructuralChange) {
+				return; // no use to check state after error
+			}
+
+			checkTable("initial page", assert, oTable, [
+				"/Artists(ArtistID='0',IsActiveEntity=true)",
+				"/Artists(ArtistID='1',IsActiveEntity=true)",
+				"/Artists(ArtistID='2',IsActiveEntity=true)",
+				"/Artists(ArtistID='3',IsActiveEntity=true)"
+			], [
+				[true, 1, "0", "Alpha (updated)"],
+				[undefined, 2, "1", "Beta (updated)"]
+			], 4);
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Show a recursive hierarchy with a single root node, expand to show a single child.
@@ -24233,15 +24500,13 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1643
 	//
 	// Use a sort order (JIRA: CPOUI5ODATAV4-1675).
-	//
 	// Edit name as a non-hierarchy property (JIRA: CPOUI5ODATAV4-1742).
 	//
 	// Request a side effect for a single row that does not affect the hierarchy.
 	// JIRA: CPOUI5ODATAV4-1785
 	//
 	// Use $count (JIRA: CPOUI5ODATAV4-1855).
-	//
-	// Additionally ODLB#getDownloadUrl is tested w/ sort (JIRA: CPOUI5ODATAV4-1920)
+	// Additionally ODLB#getDownloadUrl is tested w/ sort (JIRA: CPOUI5ODATAV4-1920).
 	QUnit.test("Recursive Hierarchy: expand to 2, collapse & expand root etc.", function (assert) {
 		var oCollapsed,
 			oListBinding,
@@ -24592,8 +24857,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1675
 	//
 	// Use $count w/ $direct (JIRA: CPOUI5ODATAV4-1855).
-	//
-	// Additionally ODLB#getDownloadUrl is tested w/ filter/sort (JIRA: CPOUI5ODATAV4-1920)
+	// Additionally ODLB#getDownloadUrl is tested w/ filter/sort (JIRA: CPOUI5ODATAV4-1920).
 	QUnit.test("Recursive Hierarchy: expand root, w/ filter, search & orderby", function (assert) {
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
 			oTable,
@@ -24679,7 +24943,6 @@ sap.ui.define([
 	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 3. Collapse nested
 	// initially expanded nodes 1 (Beta) and 0 (Alpha). See that an additional root node becomes
 	// visible!
-	//
 	// JIRA: CPOUI5ODATAV4-1743
 	QUnit.test("Recursive Hierarchy: collapse nested initially expanded nodes", function (assert) {
 		var oAlpha,
@@ -24864,9 +25127,16 @@ sap.ui.define([
 	// initially expanded nodes 1.1 (Gamma) and 1 (Beta). Page down to load more data than visible.
 	// Expand the initially collapsed node 4.1.1 (Xi). Request side effects for all rows that do not
 	// affect the hierarchy. Scroll down to load 4.1.1.1 (Omicron) again. Scroll up and expand
-	// 1 (Beta) and 1.1 (Gamma) again.
+	// 1 (Beta) and 1.1 (Gamma) again (the latter w/ or w/o an "Unexpected structural change" of
+	// a certain property).
 	// JIRA: CPOUI5ODATAV4-1785
-	QUnit.test("Recursive Hierarchy: side effects for all rows", function (assert) {
+[
+	undefined, "DistanceFromRoot", "DrillState", "ID", "order"
+].forEach(function (sStructuralChange) {
+	var sTitle = "Recursive Hierarchy: side effects for all rows; Unexpected structural change: "
+			+ sStructuralChange;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBeta,
 			oGamma,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
@@ -25284,6 +25554,40 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "expand 1 (Beta) again");
 		}).then(function () {
+			var oDelta = {
+					AGE : 138,
+					DescendantCount : "0",
+					DistanceFromRoot : sStructuralChange === "DistanceFromRoot" ? "4" : "3",
+					DrillState : sStructuralChange === "DrillState" ? "collapsed" : "leaf",
+					ID : sStructuralChange === "ID" ? "1-1-1" : "1.1.1",
+					MANAGER_ID : "1.1",
+					Name : "Delta #1"
+				},
+				oEpsilon = {
+					AGE : 139,
+					DescendantCount : "0",
+					DistanceFromRoot : "3",
+					DrillState : "leaf",
+					ID : "1.1.2",
+					MANAGER_ID : "1.1",
+					Name : "Epsilon #1"
+				},
+				sErrorMessage = "???";
+
+			switch (sStructuralChange) {
+				case "DistanceFromRoot":
+					sErrorMessage = "Wrong placeholder";
+					break;
+				case "DrillState":
+					sErrorMessage = "Not a leaf anymore (or vice versa)";
+					break;
+				case "ID":
+				case "order":
+					sErrorMessage = "Unexpected structural change: predicate";
+					break;
+				// no default
+			}
+
 			oGamma = oTable.getRows()[2].getBindingContext(); // access new instance
 			assert.strictEqual(oGamma.getProperty("Name"), "Gamma #1");
 
@@ -25310,30 +25614,32 @@ sap.ui.define([
 						+ ",NodeProperty='ID',Levels=4)"
 					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
 					+ "&$skip=3&$top=2", {
-					value : [{
-						AGE : 138,
-						DescendantCount : "0",
-						DistanceFromRoot : "3",
-						DrillState : "leaf",
-						ID : "1.1.1",
-						MANAGER_ID : "1.1",
-						Name : "Delta #1"
-					}, {
-						AGE : 139,
-						DescendantCount : "0",
-						DistanceFromRoot : "3",
-						DrillState : "leaf",
-						ID : "1.1.2",
-						MANAGER_ID : "1.1",
-						Name : "Epsilon #1"
-					}]
+					value : sStructuralChange === "order"
+					? [oEpsilon, oDelta]
+					: [oDelta, oEpsilon]
 				});
+			if (sStructuralChange) {
+				that.expectMessages([{
+						message : sErrorMessage,
+						persistent : true,
+						technical : true,
+						type : "Error"
+					}]);
+				that.oLogMock.expects("error")
+					.withExactArgs("Failed to get contexts for " + sTeaBusi
+						+ "EMPLOYEES with start index 0 and length 5",
+						sinon.match(sErrorMessage), sODLB);
+			}
 
 			// code under test
 			oGamma.expand();
 
 			return that.waitForChanges(assert, "expand 1.1 (Gamma) again");
 		}).then(function () {
+			if (sStructuralChange) {
+				return; // no use to check state after error
+			}
+
 			checkTable("after expand 1.1 (Gamma) again", assert, oTable, [
 				"/EMPLOYEES('0')",
 				"/EMPLOYEES('1')",
@@ -25355,6 +25661,7 @@ sap.ui.define([
 			], 11);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 3. Collapse
@@ -44376,9 +44683,8 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.oLogMock.expects("error")
-				.withArgs("Failed to get contexts for "
-					+ "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS with start index"
-					+ " 0 and length 100");
+				.withArgs("Failed to get contexts for " + sTeaBusi
+					+ "TEAMS with start index 0 and length 100");
 			that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100",
 					createErrorInsideBatch())
 				.expectMessages([{
