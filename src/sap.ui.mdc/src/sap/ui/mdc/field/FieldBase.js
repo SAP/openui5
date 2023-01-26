@@ -2444,9 +2444,14 @@ sap.ui.define([
 			oFieldHelp = _getFieldHelp.call(this);
 		}
 
-		if (this._getContentFactory().isMeasure()) {
+		var aHelpConditions;
+		if (this._bParseError && this.getMaxConditionsForHelp() === 1) {
+			// if parsing error and single value case do not see the old (outdated) condition as selected
+			// TODO: handling if error only on unit or number part
+			aHelpConditions = [];
+		} else if (this._getContentFactory().isMeasure()) {
 			// for unit or curreny add only the unit/currency to FieldHelp
-			var aHelpConditions = [];
+			aHelpConditions = [];
 			for (var i = 0; i < aConditions.length; i++) {
 				var oCondition = aConditions[i];
 				if (oCondition.values[0] && oCondition.values[0][1]) {
@@ -2454,10 +2459,11 @@ sap.ui.define([
 					aHelpConditions.push(oHelpCondition);
 				}
 			}
-			oFieldHelp.setConditions(aHelpConditions);
 		} else {
-			oFieldHelp.setConditions(aConditions);
+			aHelpConditions = aConditions;
 		}
+
+		oFieldHelp.setConditions(aHelpConditions);
 
 	}
 
