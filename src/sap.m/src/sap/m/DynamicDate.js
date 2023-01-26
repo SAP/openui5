@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	'sap/m/DynamicDateUtil',
+	'sap/ui/core/date/UI5Date',
 	'sap/ui/model/SimpleType',
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
@@ -12,6 +13,7 @@ sap.ui.define([
 ],
 	function(
 		DynamicDateUtil,
+		UI5Date,
 		SimpleType,
 		FormatException,
 		ParseException,
@@ -194,7 +196,7 @@ sap.ui.define([
 					oValue = parseInt(oValue);
 				}
 
-				oValue = new Date(oValue);
+				oValue = UI5Date.getInstance(oValue);
 				return oValue;
 			}
 		};
