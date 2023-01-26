@@ -65,8 +65,7 @@ sap.ui.define([
 			var oContext;
 			var oCM;
 			if (oControl.isA("sap.ui.mdc.FilterField")) {
-				var oConfig = oControl._getFormatOptions(); // TODO: better API?
-				oCM = oConfig.conditionModel;
+				oCM = _getConditionModel(oControl);
 			} else {
 				oContext = oControl && oControl.getBindingContext(); // TODO: how to handle other Models or Contexts?
 			}
@@ -123,7 +122,7 @@ sap.ui.define([
 			var oCM;
 			var oModel;
 			if (oControl.isA("sap.ui.mdc.FilterField")) {
-				oCM = oConfig.conditionModel;
+				oCM = _getConditionModel(oControl);
 			} else {
 				oContext = oControl && oControl.getBindingContext(); // TODO: how to handle other Models or Contexts?
 				oModel = oContext.getModel();
@@ -294,6 +293,22 @@ sap.ui.define([
 				delete oCondition.outParameters;
 			}
 		}
+
+	}
+
+	function _getConditionModel(oFilterField) {
+
+		var oConditionModel;
+		var oBinding = oFilterField.getBinding("conditions");
+
+		if (oBinding) {
+			var oModel = oBinding.getModel();
+			if (oModel && oModel.isA("sap.ui.mdc.condition.ConditionModel")) {
+				oConditionModel = oModel;
+			}
+		}
+
+		return oConditionModel;
 
 	}
 

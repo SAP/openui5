@@ -176,8 +176,6 @@ sap.ui.define([
 			inParameters: undefined,
 			outParameters: undefined,
 			bindingContext: undefined,
-			conditionModel: undefined,
-			conditionModelName: undefined,
 			checkKey: true,
 			checkDescription: false,
 			exception: ParseException
@@ -234,8 +232,6 @@ sap.ui.define([
 			inParameters: undefined,
 			outParameters: undefined,
 			bindingContext: undefined,
-			conditionModel: undefined,
-			conditionModelName: undefined,
 			checkKey: false,
 			checkDescription: true,
 			exception: ParseException

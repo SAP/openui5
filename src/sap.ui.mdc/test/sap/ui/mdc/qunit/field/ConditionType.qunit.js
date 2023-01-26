@@ -703,8 +703,6 @@ sap.ui.define([
 				asyncParsing: fnAsync,
 				delegate: FieldBaseDelegate,
 				bindingContext: "BC", // just dummy to test forwarding to fieldHelp
-				conditionModel: "CM", // just dummy to test forwarding to fieldHelp
-				conditionModelName: "Name", // just dummy to test forwarding to fieldHelp
 				control: "Control" // just dummy to test forwarding to fieldHelp
 			});
 		},
@@ -750,8 +748,6 @@ sap.ui.define([
 			checkDescription: false,
 			context: {inParameters: undefined, outParameters: undefined, payload: undefined},
 			bindingContext: "BC",
-			conditionModel: "CM",
-			conditionModelName: "Name",
 			control: "Control",
 			caseSensitive: true,
 			exception: FormatException
@@ -972,8 +968,6 @@ sap.ui.define([
 				inParameters: undefined,
 				outParameters: undefined,
 				bindingContext: "BC",
-				conditionModel: "CM",
-				conditionModelName: "Name",
 				control: "Control",
 				exception: ParseException
 			};
@@ -2351,9 +2345,7 @@ sap.ui.define([
 				operators: ["EQ", "GT"],
 				asyncParsing: fnAsync,
 				delegate: FieldBaseDelegate,
-				bindingContext: "BC", // just dummy to test forwarding to fieldHelp
-				conditionModel: "CM", // just dummy to test forwarding to fieldHelp
-				conditionModelName: "Name" // just dummy to test forwarding to fieldHelp
+				bindingContext: "BC" // just dummy to test forwarding to fieldHelp
 			});
 		},
 		afterEach: function() {

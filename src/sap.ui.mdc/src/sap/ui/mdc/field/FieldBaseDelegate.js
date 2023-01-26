@@ -182,8 +182,6 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oConfig.bindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>FieldHelp</code> element might be connected to a different row.
 	 * @param {boolean} oConfig.checkKey If set, it should be checked if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
 	 * @param {boolean} oConfig.checkDescription If set, it should be checked if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
-	 * @param {sap.ui.mdc.condition.ConditionModel} [oConfig.conditionModel] <code>ConditionModel</code>, if bound to one
-	 * @param {string} [oConfig.conditionModelName] Name of the <code>ConditionModel</code>, if bound to one
 	 * @param {sap.ui.core.Control} oConfig.control Instance if the calling control
 	 * @returns {object|Promise} Object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.ParseException} if item cannot be determined
@@ -218,8 +216,8 @@ sap.ui.define([
 	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.)
 	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.)
 	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>FieldHelp</code> element might be connected to a different row.
-	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, if bound to one
-	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, if bound to one
+	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, if bound to one - NOT LONGER USED
+	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, if bound to one - NOT LONGER USED
 	 * @param {object} oConditionPayload Additional context information for this key
 	 * @param {sap.ui.core.Control} [oControl] Instance if the calling control
 	 * @param {sap.ui.model.Type} oType Type of the value
@@ -237,8 +235,6 @@ sap.ui.define([
 			dataType: oType,
 			context: {inParameters: oInParameters, outParameters: oOutParameters, payload: oConditionPayload},
 			bindingContext: oBindingContext,
-			conditionModel: oConditionModel,
-			conditionModelName: sConditionModelName,
 			checkKey: true,
 			checkDescription: false,
 			caseSensitive: true, // case sensitive as used to get description for known key

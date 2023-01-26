@@ -332,8 +332,6 @@ sap.ui.define([
 	 * @param {object} [oConfig.delegate] Field delegate to handle model-specific logic (required for condition panel)
 	 * @param {object} [oConfig.delegateName] Field delegate name to handle model-specific logic (required for condition panel)
 	 * @param {object} [oConfig.payload] Payload of the field delegate (required for condition panel)
-	 * @param {string} [oConfig.conditionModelName] Name of the <code>ConditionModel</code>, if bound to one (required if used for {@link sap.ui.mdc.FilterField FilterField})
-	 * @param {string} [oConfig.defaultOperatorName] Name of the default <code>Operator</code> (required if used for {@link sap.ui.mdc.FilterField FilterField})
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
@@ -737,30 +735,6 @@ sap.ui.define([
 		return false;
 	};
 
-	ValueHelp.prototype.getTextForKey = function (vKey, oContext, oBindingContext, oConditionModel, sConditionModelName) {
-		return this.getItemForValue({
-			parsedValue: vKey,
-			value: vKey,
-			context: oContext,
-			bindingContext: oBindingContext,
-			conditionModel: oConditionModel,
-			conditionModelName: sConditionModelName,
-			checkKey: true,
-			exception: FormatException,
-			caseSensitive: true // case sensitive as used to get description for known key
-		});
-	};
-
-	ValueHelp.prototype.getKeyForText = function(sText, oContext) {
-		return this.getItemForValue({
-			value: sText,
-			context: oContext,
-			checkDescription: true,
-			exception: ParseException,
-			caseSensitive: true // case sensitive as used to get description for known description
-		});
-	};
-
 	/**
 	 * Determines the item (key and description) for a given value.
 	 *
@@ -779,8 +753,6 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oConfig.bindingContext] <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
 	 * @param {boolean} oConfig.checkKey If set, the value help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
 	 * @param {boolean} oConfig.checkDescription If set, the value help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
-	 * @param {sap.ui.mdc.condition.ConditionModel} [oConfig.conditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
-	 * @param {string} [oConfig.conditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {boolean} [oConfig.caseSensitive] If set, the check is done case sensitive
 	 * @param {sap.ui.core.Control} oConfig.control Instance of the calling control
 	 * @returns {Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Promise returning object containing description, key and payload.

@@ -9,40 +9,24 @@ sap.ui.define([
 	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/valuehelp/base/Container",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/condition/ConditionModel",
-	"sap/ui/mdc/condition/FilterOperatorUtil",
-	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/mdc/enum/SelectType",
 	"sap/ui/core/Icon",
-	"sap/ui/model/Context",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/Filter",
 	"sap/ui/model/odata/type/String",
-	"sap/m/library",
-	"sap/m/Popover",
 	"sap/ui/core/Core"
 ], function (
 		ValueHelp,
 		ValueHelpDelegate,
 		Container,
 		Condition,
-		ConditionModel,
-		FilterOperatorUtil,
-		Operator,
 		ConditionValidated,
 		SelectType,
 		Icon,
-		Context,
 		FormatException,
 		ParseException,
-		JSONModel,
-		Filter,
 		StringType,
-		mLibrary,
-		Popover,
 		oCore
 	) {
 	"use strict";
@@ -163,69 +147,6 @@ sap.ui.define([
 				fnDone();
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called");
-				fnDone();
-			});
-		}
-
-	});
-
-	QUnit.test("getTextForKey", function(assert) {
-
-		sinon.spy(oValueHelp, "getItemForValue");
-
-		var vKey = "A";
-		var oConfig = {
-			parsedValue: vKey,
-			value: vKey,
-			bindingContext: undefined,
-			conditionModel: undefined,
-			conditionModelName: undefined,
-			checkKey: true,
-			exception: FormatException,
-			caseSensitive: true,
-			context: undefined
-		};
-
-		var oPromise = oValueHelp.getTextForKey(vKey);
-		assert.ok(oPromise instanceof Promise, "getTextForKey returns promise");
-		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with Config");
-
-		if (oPromise) {
-			var fnDone = assert.async();
-			oPromise.then(function(sText) {
-				assert.notOk(true, "Promise Then must not be called");
-				fnDone();
-			}).catch(function(oError) {
-				assert.ok(true, "Promise Catch called");
-				fnDone();
-			});
-		}
-
-	});
-
-	QUnit.test("getKeyForText", function(assert) {
-
-		sinon.spy(oValueHelp, "getItemForValue");
-
-		var sText = "A";
-		var oConfig = {
-				value: sText,
-				context: undefined,
-				checkDescription: true,
-				exception: ParseException,
-				caseSensitive: true
-		};
-		var oPromise = oValueHelp.getKeyForText(sText);
-		assert.ok(oPromise instanceof Promise, "getKeyForText returns promise");
-		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with Config");
-
-		if (oPromise) {
-			var fnDone = assert.async();
-			oPromise.then(function(vKey) {
-				assert.notOk(true, "Promise Then must not be called");
-				fnDone();
-			}).catch(function(oError) {
-				assert.ok(true, "Promise Catch called");
 				fnDone();
 			});
 		}
@@ -481,8 +402,6 @@ sap.ui.define([
 				parsedValue: "A",
 				value: "a",
 				bindingContext: "BC",
-				conditionModel: "CM",
-				conditionModelName: "Name",
 				checkKey: true,
 				checkDescription: true,
 				exception: ParseException
@@ -491,8 +410,6 @@ sap.ui.define([
 				parsedValue: "A",
 				value: "a",
 				bindingContext: "BC",
-				conditionModel: "CM",
-				conditionModelName: "Name",
 				checkKey: true,
 				checkDescription: true,
 				exception: ParseException,
@@ -525,8 +442,6 @@ sap.ui.define([
 				inParameters: null,
 				outParameters: null,
 				bindingContext: "BC",
-				conditionModel: "CM",
-				conditionModelName: "Name",
 				checkKey: true,
 				checkDescription: true,
 				exception: ParseException
@@ -1026,8 +941,6 @@ sap.ui.define([
 				parsedValue: "A",
 				value: "a",
 				bindingContext: "BC",
-				conditionModel: "CM",
-				conditionModelName: "Name",
 				checkKey: true,
 				exception: ParseException,
 				caseSensitive: true

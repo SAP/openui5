@@ -75,8 +75,6 @@ sap.ui.define([
 	 * @param {object} [oFormatOptions.delegate] Field delegate to handle model-specific logic
 	 * @param {object} [oFormatOptions.payload] Payload of the delegate
 	 * @param {boolean} [oFormatOptions.preventGetDescription] If set, description is not read by <code>formatValue</code> as it is known that no description exists or might be set later
-	 * @param {sap.ui.mdc.condition.ConditionModel} [oFormatOptions.conditionModel] <code>ConditionModel</code>, if bound to one
-	 * @param {string} [oFormatOptions.conditionModelName] Name of the <code>ConditionModel</code>, if bound to one
 	 * @param {string} [oFormatOptions.defaultOperatorName] Name of the default <code>Operator</code>
 	 * @param {boolean} [oFormatOptions.convertWhitespaces] If set, whitespaces will be replaced by special characters to display whitespaces in HTML
 	 * @param {sap.ui.core.Control} [oFormatOptions.control] Instance if the calling control
@@ -165,12 +163,10 @@ sap.ui.define([
 						(bIsUnit || (oCondition.operator === oEQOperator.name && !oCondition.values[1]))) {
 					// handle sync case and async case similar
 					var oBindingContext = this.oFormatOptions.bindingContext;
-					var oConditionModel = this.oFormatOptions.conditionModel;
-					var sConditionModelName = this.oFormatOptions.conditionModelName;
 					var vKey = bIsUnit ? oCondition.values[0][1] : oCondition.values[0];
 
 					return SyncPromise.resolve().then(function() {
-						return _getDescription.call(this, vKey, oCondition, oType, oBindingContext, oConditionModel, sConditionModelName);
+						return _getDescription.call(this, vKey, oCondition, oType, oBindingContext);
 					}.bind(this)).then(function(vDescription) { // if description needs to be requested -> return if it is resolved
 						if (vDescription) {
 							oCondition = merge({}, oCondition); // do not manipulate original object
@@ -513,8 +509,6 @@ sap.ui.define([
 		var vCheckValue;
 		var vCheckParsedValue;
 		var oBindingContext = this.oFormatOptions.bindingContext;
-		var oConditionModel = this.oFormatOptions.conditionModel;
-		var sConditionModelName = this.oFormatOptions.conditionModelName;
 		var aValues;
 
 		if (vValue === "") {
@@ -624,7 +618,7 @@ sap.ui.define([
 		}
 
 		return SyncPromise.resolve().then(function() {
-			return _getItemForValue.call(this, vCheckValue, vCheckParsedValue, oType, oBindingContext, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
+			return _getItemForValue.call(this, vCheckValue, vCheckParsedValue, oType, oBindingContext, bCheckKey, bCheckDescription);
 		}.bind(this)).then(function(oResult) {
 			return fnGetResult.call(this, oResult, fnSuccess);
 		}.bind(this)).catch(function(oException) {
@@ -982,7 +976,7 @@ sap.ui.define([
 
 	}
 
-	function _getItemForValue(vValue, vParsedValue, oType, oBindingContext, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
+	function _getItemForValue(vValue, vParsedValue, oType, oBindingContext, bCheckKey, bCheckDescription) {
 
 		var oFieldHelp = _getFieldHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
@@ -997,8 +991,6 @@ sap.ui.define([
 				bindingContext: oBindingContext,
 				checkKey: bCheckKey,
 				checkDescription: bCheckDescription,
-				conditionModel: oConditionModel,
-				conditionModelName: sConditionModelName,
 				exception: ParseException,
 				control: oControl
 		};
@@ -1011,14 +1003,14 @@ sap.ui.define([
 
 	}
 
-	function _getDescription(vKey, oCondition, oType, oBindingContext, oConditionModel, sConditionModelName) {
+	function _getDescription(vKey, oCondition, oType, oBindingContext) {
 
 		var oFieldHelp = _getFieldHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
 		var oPayload = this.oFormatOptions.payload;
 		var oControl = this.oFormatOptions.control;
 		if (oDelegate) {
-			return oDelegate.getDescription(oPayload, oFieldHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, oConditionModel, sConditionModelName, oCondition.payload, oControl, oType);
+			return oDelegate.getDescription(oPayload, oFieldHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, undefined, undefined, oCondition.payload, oControl, oType);
 		} else if (oFieldHelp) {
 			var oConfig = {
 				value: vKey,
@@ -1026,8 +1018,6 @@ sap.ui.define([
 				dataType: oType,
 				context: {inParameters: oCondition.inParameters, outParameters: oCondition.outParameters, payload: oCondition.payload},
 				bindingContext: oBindingContext,
-				conditionModel: oConditionModel,
-				conditionModelName: sConditionModelName,
 				checkKey: true,
 				checkDescription: false,
 				caseSensitive: true, // case sensitive as used to get description for known key
