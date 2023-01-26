@@ -2172,6 +2172,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("clearSessionContext", function (assert) {
+		var oModel = this.createModel();
+
+		this.mock(oModel.oRequestor).expects("clearSessionContext")
+			.withExactArgs() // no way to influence internal method
+			.returns("n/a"); // no way to leak internal results
+
+		// code under test
+		assert.strictEqual(oModel.clearSessionContext(2, "b", "ignored"), undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getMessages", function (assert) {
 		var oContext = {
 				getPath : function () { return "~path~"; }
