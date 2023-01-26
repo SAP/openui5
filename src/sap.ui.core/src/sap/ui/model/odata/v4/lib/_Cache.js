@@ -2802,7 +2802,7 @@ sap.ui.define([
 	 */
 	_CollectionCache.prototype.isDeletingInOtherGroup = function (sGroupId) {
 		return Object.values(this.aElements.$deleted || {}).some(function (oDeleted) {
-			return oDeleted.sGroupId !== sGroupId;
+			return oDeleted.groupId !== sGroupId;
 		});
 	};
 

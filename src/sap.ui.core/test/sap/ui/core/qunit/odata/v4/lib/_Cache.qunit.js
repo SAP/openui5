@@ -10130,10 +10130,10 @@ sap.ui.define([
 		oCache.aElements.$deleted = {};
 		assert.strictEqual(oCache.isDeletingInOtherGroup("group"), false);
 
-		oCache.aElements.$deleted = {a : {sGroupId : "group"}, b : {sGroupId : "group"}};
+		oCache.aElements.$deleted = {a : {groupId : "group"}, b : {groupId : "group"}};
 		assert.strictEqual(oCache.isDeletingInOtherGroup("group"), false);
 
-		oCache.aElements.$deleted = {a : {sGroupId : "group"}, b : {sGroupId : "otherGroup"}};
+		oCache.aElements.$deleted = {a : {groupId : "group"}, b : {groupId : "otherGroup"}};
 		assert.strictEqual(oCache.isDeletingInOtherGroup("group"), true);
 	});
 
