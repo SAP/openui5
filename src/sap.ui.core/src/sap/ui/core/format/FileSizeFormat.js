@@ -75,6 +75,7 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.binaryFilesize=false]
 	 *   Whether to use base 2, that means 1 Kibibyte = 1024 Byte, or base 10, that means 1 Kilobyte = 1000 Byte
 	 * @param {sap.ui.core.Locale} [oLocale] The locale to get the formatter for
+	 * @ui5-omissible-params oFormatOptions
 	 * @return {sap.ui.core.format.FileSizeFormat} instance of the FileSizeFormat
 	 * @static
 	 * @public
