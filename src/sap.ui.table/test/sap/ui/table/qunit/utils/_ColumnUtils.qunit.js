@@ -517,6 +517,12 @@ sap.ui.define([
 		assert.ok(!ColumnUtils.isColumnMovable(oTreeTable.getColumns()[0]), "ColumnReordering Disabled: First column in TreeTable");
 		assert.ok(!ColumnUtils.isColumnMovable(oTreeTable.getColumns()[2]), "ColumnReordering Disabled: Other column in TreeTable");
 
+		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[0], true), "ColumnReordering Disabled, but ignored: Fixed Column");
+		assert.ok(ColumnUtils.isColumnMovable(oTable.getColumns()[1], true), "ColumnReordering Disabled, but ignored: Non-Fixed Column");
+		assert.ok(ColumnUtils.isColumnMovable(oTable.getColumns()[2], true), "ColumnReordering Disabled, but ignored: Non-Fixed Column");
+		assert.ok(!ColumnUtils.isColumnMovable(oTreeTable.getColumns()[0], true), "ColumnReordering Disabled, but ignored: First column in TreeTable");
+		assert.ok(ColumnUtils.isColumnMovable(oTreeTable.getColumns()[2], true), "ColumnReordering Disabled, but ignored: Other column in TreeTable");
+
 		oTable.setEnableColumnReordering(true);
 		oTreeTable.setEnableColumnReordering(true);
 		oTable.getColumns()[1].setHeaderSpan(2);
@@ -547,6 +553,14 @@ sap.ui.define([
 		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
 			bExpect = false;
 			assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
+		}
+
+		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
+			bExpect = true;
+			if (i < 1) {
+				bExpect = false;
+			}
+			assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i, true) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
 		}
 
 		oTable.setEnableColumnReordering(true);

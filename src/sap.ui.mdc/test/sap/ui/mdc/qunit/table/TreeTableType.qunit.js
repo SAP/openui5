@@ -51,7 +51,6 @@ sap.ui.define([
 			oTreeTable = oTable._oTable;
 			assert.ok(oTable._oTable.isA("sap.ui.table.TreeTable"), "Is a sap.ui.table.TreeTable");
 			assert.equal(oTreeTable.getId(), oTable.getId() + "-innerTable", "ID");
-			assert.ok(oTreeTable.getDragDropConfig().length === 0, "Has no dragDropConfig");
 			assert.strictEqual(oTreeTable._oProxy._bEnableV4, true, "'_bEnableV4' flag on the TreeBinding proxy");
 			sinon.stub(oTable.getControlDelegate(), "isSelectionSupported").returns(false);
 			oTable.setType("TreeTable");

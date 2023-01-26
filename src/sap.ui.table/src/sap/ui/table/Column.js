@@ -1229,6 +1229,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * A hook getting called by the DragInfo to determine whether the column allows dragging.
+	 * @param {sap.ui.core.dnd.IDragInfo} oDragInfo drag information
+	 * @private
+	 */
+	Column.prototype.isDragAllowed = function(oDragInfo) {
+		return TableUtils.Column.isColumnMovable(this, true);
+	};
+
+	/**
 	 * Returns an unused column template clone. Unused means, it does not have a parent.
 	 *
 	 * @param {string} sTemplateType The template type for which a free clone should be retrieved from the clone pool.
