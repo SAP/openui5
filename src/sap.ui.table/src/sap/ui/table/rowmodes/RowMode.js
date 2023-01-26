@@ -714,10 +714,14 @@ sap.ui.define([
 	 * @protected
 	 */
 	RowMode.prototype.disableNoData = function() {
-		var oTable = this.getTable();
+		if (this.isNoDataDisabled()) {
+			return;
+		}
 
-		if (oTable && !this.isNoDataDisabled()) {
-			_private(this).bNoDataDisabled = true;
+		_private(this).bNoDataDisabled = true;
+
+		var oTable = this.getTable();
+		if (oTable) {
 			oTable.invalidate();
 		}
 	};
@@ -729,10 +733,14 @@ sap.ui.define([
 	 * @protected
 	 */
 	RowMode.prototype.enableNoData = function() {
-		var oTable = this.getTable();
+		if (!this.isNoDataDisabled()) {
+			return;
+		}
 
-		if (oTable && this.isNoDataDisabled()) {
-			_private(this).bNoDataDisabled = false;
+		_private(this).bNoDataDisabled = false;
+
+		var oTable = this.getTable();
+		if (oTable) {
 			oTable.invalidate();
 		}
 	};
