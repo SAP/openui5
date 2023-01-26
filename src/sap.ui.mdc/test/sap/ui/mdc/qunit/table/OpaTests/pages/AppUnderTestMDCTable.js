@@ -226,6 +226,19 @@ sap.ui.define([
 				},
 
 				/**
+				 * Emulates a press action on a column header to open the column menu.
+				 *
+				 * @function
+				 * @name iPressOnColumnHeader
+				 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+				 * @param {String|sap.ui.mdc.table.Column} vColumn Header name or control instance of the column
+				 * @returns {Promise} OPA waitFor
+				 */
+				iPressOnColumnHeader: function(oControl, vColumn) {
+					return AppUnderTestActions.iPressOnColumnHeader.call(this, oControl, vColumn);
+				},
+
+				/**
 				 * Selects all visible rows available in the MDCTable.
 				 *
 				 * @function
@@ -278,10 +291,6 @@ sap.ui.define([
 					return TableActions.iDeselectSomeRows.call(this, oControl, iStartIndex, iEndIndex);
 				},
 
-				iPressOnColumnHeader: function(sName, bResponsiveTable){
-					return AppUnderTestActions.iPressOnColumnHeader.apply(this, arguments);
-				},
-
 				iCloseTheColumnMenu: function() {
 					return AppUnderTestActions.iCloseTheColumnMenu.apply(this, arguments);
 				},
@@ -308,6 +317,20 @@ sap.ui.define([
 
 				iPressResetInColumnMenuItemContent: function() {
 					return AppUnderTestActions.iPressResetInColumnMenuItemContent.apply(this, arguments);
+				},
+
+				/**
+				 * Chooses the specified column in the combobox of the sort menu item inside the column menu.
+				 *
+				 * @function
+				 * @name iSortByColumnInColumnMenuItemContent
+				 * @param {String} sColumn Header of the column
+				 * @param {Boolean} bDescending Sorting direction is descending
+				 * @returns {Promise} OPA waitFor
+				 * @private
+				 */
+				iSortByColumnInColumnMenuItemContent: function(sColumn) {
+					return AppUnderTestActions.iSortByColumnInColumnMenuItemContent.apply(this, arguments);
 				},
 
 				iPressConfirmInColumnMenuItemContent: function() {
@@ -444,16 +467,17 @@ sap.ui.define([
 				},
 
 				/**
-				 * Checks if the P13n button is visible on the screen
+				 * Checks if the P13n button is visible/not visible on the MDCTable.
 				 *
 				 * @function
 				 * @name iShouldSeeTheP13nButton
 				 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+				 * @param {Boolean} bShowP13n Flag if P13n button should be visible
 				 * @returns {Promise} OPA waitFor
 				 * @private
 				 */
-				iShouldSeeTheP13nButton: function(oControl) {
-					return AppUnderTestAssertions.iShouldSeeTheP13nButton.call(this, oControl);
+				iShouldSeeTheP13nButton: function(oControl, bShowP13n) {
+					return AppUnderTestAssertions.iShouldSeeTheP13nButton.call(this, oControl, bShowP13n);
 				},
 
 				/**
@@ -551,6 +575,17 @@ sap.ui.define([
 					return AppUnderTestAssertions.iShouldSeeExportSettingsDialog.call(this);
 				},
 
+				/**
+				 * Checks if the ColumnMenu is visible.
+				 *
+				 * @function
+				 * @name iShouldSeeTheColumnMenu
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeTheColumnMenu: function() {
+					return AppUnderTestAssertions.iShouldSeeTheColumnMenu.call(this);
+				},
+
 				iShouldSeeOneColumnMenu: function() {
 					return AppUnderTestAssertions.iShouldSeeOneColumnMenu.apply(this, arguments);
 				},
@@ -583,6 +618,13 @@ sap.ui.define([
 					return AppUnderTestAssertions.iShouldSeeNumberOfColumnMenuItems.apply(this, arguments);
 				},
 
+				/**
+				 * Checks if there are no QuickActions available in the column menu.
+				 *
+				 * @function
+				 * @name iShouldNotSeeColumnMenuItems
+				 * @returns {Promise} OPA waitFor
+				 */
 				iShouldNotSeeColumnMenuItems: function() {
 					return AppUnderTestAssertions.iShouldNotSeeColumnMenuItems.apply(this, arguments);
 				},
@@ -597,6 +639,47 @@ sap.ui.define([
 
 				iShouldSeeColumnMenuItemContent: function(sTitle) {
 					return AppUnderTestAssertions.iShouldSeeColumnMenuItemContent.apply(this, arguments);
+				},
+
+				/**
+				 * Checks if sorting configuration of the column matches the specified sorting settings.
+				 *
+				 * @function
+				 * @name iShouldSeeColumnSorted
+				 * @param {sap.ui.mdc.Table} oControl Instance of the MDCTable
+				 * @param {String|sap.ui.mdc.table.Column} vColumn Header name or control instance of the column
+				 * @param {Boolean} bDescending Sorting direction is descending
+				 * @returns {Promise} OPA waitFor
+				 * @private
+				 */
+				iShouldSeeColumnSorted: function(oControl, vColumn, bDescending) {
+					return AppUnderTestAssertions.iShouldSeeColumnSorted.apply(this, arguments);
+				},
+
+				/**
+				 * Checks if the selected column of the sorting combobox matches the specified column in the parameter.
+				 *
+				 * @function
+				 * @name iShouldSeeSortedByColumnInColumnMenuItem
+				 * @param {String} sColumn Header of the column
+				 * @returns {Promise} OPA waitFor
+				 * @private
+				 */
+				iShouldSeeSortedByColumnInColumnMenuItem: function(sColumn) {
+					return AppUnderTestAssertions.iShouldSeeSortedByColumnInColumnMenuItem.apply(this, arguments);
+				},
+
+				/**
+				 * Checks if sorting direction inside the column menu matches the specified sorting direction in the parameter.
+				 *
+				 * @function
+				 * @name iShouldSeeSortDirectionInColumnMenuItem
+				 * @param {Boolean} bDescending Sorting direction is descending
+				 * @returns {Promise} OPA waitFor
+				 * @private
+				 */
+				iShouldSeeSortDirectionInColumnMenuItem: function(bDescending) {
+					return AppUnderTestAssertions.iShouldSeeSortDirectionInColumnMenuItem.apply(this, arguments);
 				},
 
 				/**

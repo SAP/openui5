@@ -1586,6 +1586,10 @@ sap.ui.define([
 		this._updateP13nButton();
 	};
 
+	Table.prototype._isP13nButtonHidden = function () {
+		return this._bHideP13nButton;
+	};
+
 	Table.prototype._createToolbar = function() {
 		if (this.isDestroyStarted() || this.isDestroyed()) {
 			return;

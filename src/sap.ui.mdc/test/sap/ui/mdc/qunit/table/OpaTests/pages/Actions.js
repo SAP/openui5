@@ -386,29 +386,35 @@ sap.ui.define([
 			});
 		},
 
-		iPressOnColumnHeader: function(sName, bResponsiveTable){
-			var sColumnNameSpace = bResponsiveTable ? "sap.m.Column" : "sap.ui.table.Column";
-			var sTableNameSpace = bResponsiveTable ? "sap.m.Table" : "sap.ui.table.Table";
-			return this.waitFor({
-				searchOpenDialogs: false,
-				controlType: sTableNameSpace,
-				success: function(aTables) {
+		/**
+		 * Emulates a press action on a column header to open the column menu.
+		 *
+		 * @function
+		 * @name iPressOnColumnHeader
+		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+		 * @param {String|sap.ui.mdc.table.Column} vColumn Header name or control instance of the column
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iPressOnColumnHeader: function(oControl, vColumn) {
+			return waitForTable.call(this, oControl, {
+				success: function() {
+					var oColumnSelectable;
 					return this.waitFor({
-						controlType: "sap.m.Label",
-						matchers: [
-							new PropertyStrictEquals({
-								name: "text",
-								value: sName
-							}),
-							new Ancestor(aTables[0])
-						],
-						success: function(aLabels){
-							return this.waitFor({
-								controlType: sColumnNameSpace,
-								matchers: new Descendant(aLabels[0]),
-								actions: new Press()
-							});
-						}
+						controlType: "sap.ui.mdc.table.Column",
+						check : function (aColumns) {
+							for (var i = 0; i < aColumns.length; i++) {
+								if (aColumns[i].getHeader() === vColumn || ( typeof vColumn === 'object' && aColumns[i].getHeader() === vColumn.getHeader())) {
+									oColumnSelectable = aColumns[i];
+									return true;
+								}
+							}
+							return false;
+						},
+						success: function () {
+							new Press().executeOn(oColumnSelectable);
+						},
+						errorMessage: "The column " + vColumn + " is not available"
 					});
 				}
 			});
@@ -578,6 +584,44 @@ sap.ui.define([
 						}],
 						actions: new Press(),
 						errorMessage: "Colum menu item content could not be reset"
+					});
+				}
+			});
+		},
+
+		/**
+		 * Chooses the specified column in the combobox of the sort menu inside the column menu.
+		 *
+		 * @function
+		 * @name iSortByColumnInColumnMenuItemContent
+		 * @param {String} sColumn Header title of a column
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iSortByColumnInColumnMenuItemContent: function(sColumn) {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.ComboBox",
+						matchers: [{
+							ancestor: oColumnMenu
+						}],
+						success: function(aComboBox) {
+							new Press().executeOn(aComboBox[0]);
+
+							this.waitFor({
+								controlType: "sap.m.StandardListItem",
+								matchers: [{
+									ancestor: oColumnMenu,
+									properties: {
+										title: sColumn
+									}
+								}],
+								actions: new Press(),
+								errorMessage: "Specified column was not found"
+							});
+						},
+						errorMessage: "Colum menu item content could not be confirmed"
 					});
 				}
 			});

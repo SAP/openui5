@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/test/Opa5"
+	"sap/ui/test/Opa5",
+	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable"
 ], function(
-	/** @type sap.ui.test.Opa5 */ Opa5) {
+	/** @type sap.ui.test.Opa5 */ Opa5,
+	/** @type sap.ui.test.Opa5 */ waitForTable) {
 	"use strict";
 
 	/**
@@ -19,6 +21,24 @@ sap.ui.define([
 			return this.iStartMyAppInAFrame({
 				source: "test-resources/sap/ui/mdc/qunit/table/OpaTests/appUnderTestMDCTable/start.html",
 				autoWait: true
+			});
+		},
+
+		/**
+		 * Retrieves the table instance by ID and forwards it to the provided callback function
+		 *
+		 * @function
+		 * @name iGetTheTableInstance
+		 * @param {String} sControl Id of the MDCTable
+		 * @param {function} fnCallback Callback function with table instance
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iGetTheTableInstance: function (sControl, fnCallback) {
+			return waitForTable.call(this, sControl, {
+				success: function(oTable) {
+					fnCallback(oTable);
+				}
 			});
 		}
 	});

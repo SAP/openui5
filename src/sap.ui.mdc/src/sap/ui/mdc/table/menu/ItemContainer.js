@@ -26,6 +26,10 @@ sap.ui.define([
 		var oTable = this.getTable();
 		this.removeAllItems();
 
+		if (oTable._isP13nButtonHidden()) {
+			return Promise.resolve();
+		}
+
 		if (oTable.isSortingEnabled()) {
 			this.addItem(new Item({key: "Sort", icon: "sap-icon://sort"}));
 		}
