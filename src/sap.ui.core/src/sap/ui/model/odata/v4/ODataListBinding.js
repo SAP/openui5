@@ -2982,6 +2982,8 @@ sap.ui.define([
 	 *   A removed context is destroyed unless it is
 	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept alive} and still exists on the
 	 *   server.
+	 * @param {boolean} [bKeepCacheOnError]
+	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves without a defined value when the entity is updated in the cache,
 	 *   or rejects if the refresh failed.
@@ -2990,7 +2992,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.refreshSingle = function (oContext, oGroupLock, bAllowRemoval) {
+	ODataListBinding.prototype.refreshSingle = function (oContext, oGroupLock, bAllowRemoval,
+			bKeepCacheOnError) {
 		var sContextPath = oContext.getPath(),
 			sResourcePathPrefix = sContextPath.slice(1),
 			that = this;
@@ -3077,7 +3080,7 @@ sap.ui.define([
 						if (bAllowRemoval) {
 							aUpdatePromises.push(
 								oContext.refreshDependentBindings(sResourcePathPrefix,
-									oGroupLock.getGroupId()));
+									oGroupLock.getGroupId(), false, bKeepCacheOnError));
 						}
 					}
 
@@ -3099,7 +3102,7 @@ sap.ui.define([
 				// call refreshInternal on all dependent bindings to ensure that all resulting data
 				// requests are in the same batch request
 				aPromises.push(oContext.refreshDependentBindings(sResourcePathPrefix,
-					oGroupLock.getGroupId()));
+					oGroupLock.getGroupId(), false, bKeepCacheOnError));
 			}
 
 			return SyncPromise.all(aPromises);
@@ -3349,7 +3352,7 @@ sap.ui.define([
 			}
 		}
 		if (bSingle) {
-			return this.refreshSingle(oContext, this.lockGroup(sGroupId), false);
+			return this.refreshSingle(oContext, this.lockGroup(sGroupId), false, true);
 		}
 		if (this.iCurrentEnd === 0) {
 			return SyncPromise.resolve();
