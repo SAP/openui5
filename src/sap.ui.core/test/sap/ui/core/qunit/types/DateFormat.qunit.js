@@ -5,11 +5,13 @@ sap.ui.define([
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/UniversalDate",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/library",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/CalendarWeekNumbering"
-], function (extend, DateFormat, Locale, LocaleData, UniversalDate, library, Configuration, CalendarWeekNumbering) {
-		"use strict";
+], function (extend, DateFormat, Locale, LocaleData, UniversalDate, UI5Date, library, Configuration,
+		CalendarWeekNumbering) {
+	"use strict";
 
 		// shortcut for sap.ui.core.CalendarType
 		var CalendarType = library.CalendarType;
@@ -766,7 +768,7 @@ sap.ui.define([
 			oFormatOptions.relative = false;
 
 			var oFormat = DateFormat.getDateInstance(oFormatOptions, new Locale(sLocale)),
-				sTargetDate = oFormat.format(new Date(iTarget)) + "",
+				sTargetDate = oFormat.format(UI5Date.getInstance(iTarget)) + "",
 				iDays = Math.abs(iDiff),
 				aRange = oFormatOptions.relativeRange || [-6, 6],
 				oLocaleData = LocaleData.getInstance(new Locale(sLocale));
@@ -783,16 +785,16 @@ sap.ui.define([
 				oFormatOptions.relativeStyle = sStyle;
 				var oFormat1 = DateFormat.getDateInstance(extend({ relative: true }, oFormatOptions), new Locale(sLocale)),
 					oFormat2 = DateFormat.getDateInstance(oFormatOptions, new Locale(sLocale)),
-					oToday = new Date(),
+					oToday = UI5Date.getInstance(),
 					iToday = oToday.getTime(),
 					iTarget, aExpected;
 
 				for (var i = -10; i <= 10; i++) {
 					// use Date Object for getting Dates in the past and in the future, to avoid summer/standard timezone change conflicts
-					iTarget = new Date(iToday).setDate(oToday.getDate() + i);
+					iTarget = UI5Date.getInstance(iToday).setDate(oToday.getDate() + i);
 					aExpected = getExpectedRelativeDate(i, iTarget, oFormatOptions, sLocale);
 					if (bFormat) {
-						assert.equal(oFormat1.format(new Date(iTarget)), aExpected[0], sTestInfo + " ----------- Today" + (i >= 0 ? " + " : " ") + i + " -> " + aExpected[0] + " " + (aExpected[0] == aExpected[1] ? "" : "(" + aExpected[1] + ")"));
+						assert.equal(oFormat1.format(UI5Date.getInstance(iTarget)), aExpected[0], sTestInfo + " ----------- Today" + (i >= 0 ? " + " : " ") + i + " -> " + aExpected[0] + " " + (aExpected[0] == aExpected[1] ? "" : "(" + aExpected[1] + ")"));
 					} else {
 						assert.equal(oFormat2.format(oFormat1.parse(aExpected[0])) + "", aExpected[1], sTestInfo + " ----------- " + aExpected[0] + " -> Today" + (i >= 0 ? " + " : " ") + i + " -> " + aExpected[1]);
 					}
@@ -814,7 +816,7 @@ sap.ui.define([
 				relative: true,
 				relativeScale: "auto"
 			}),
-				oDate = new Date(),
+				oDate = UI5Date.getInstance(),
 				sResult;
 
 			oDate.setFullYear(oDate.getFullYear() - 2000);
@@ -838,7 +840,8 @@ sap.ui.define([
 
 		QUnit.module("DateFormat relative date (1st jan 2021)", {
 			beforeEach: function () {
-				this.clock = sinon.useFakeTimers(new Date("2021-01-01T09:59:00Z").getTime()); // Mon Mar 01 2021 10:59:00 GMT+0100
+				// Fri Jan 01 2021 09:59:00 (in current time zone)
+				this.clock = sinon.useFakeTimers(UI5Date.getInstance("2021-01-01T09:59:00").getTime());
 			},
 			afterEach: function () {
 				this.clock.restore();
@@ -852,19 +855,19 @@ sap.ui.define([
 			});
 
 			[{
-				inputDate: "2021-01-29T09:59:00Z", // jan 29th
+				inputDate: "2021-01-29T09:59:00", // jan 29th
 				outputRelative: "in 4 weeks"
 			}, {
-				inputDate: "2021-01-30T09:59:00Z", // jan 30th
+				inputDate: "2021-01-30T09:59:00", // jan 30th
 				outputRelative: "in 4 weeks"
 			}, {
-				inputDate: "2021-01-31T09:59:00Z", // jan 31th
+				inputDate: "2021-01-31T09:59:00", // jan 31th
 				outputRelative: "this month"
 			}, {
-				inputDate: "2021-02-01T09:59:00Z", // feb 1st
+				inputDate: "2021-02-01T09:59:00", // feb 1st
 				outputRelative: "in 1 month"
 			}].forEach(function (oFixture) {
-				var oDate = new Date(oFixture.inputDate);
+				var oDate = UI5Date.getInstance(oFixture.inputDate);
 				assert.equal(oFixture.outputRelative, oDateFormat.format(oDate), "relative date: " + oDate);
 			});
 		});
@@ -1051,7 +1054,8 @@ sap.ui.define([
 
 		QUnit.module("DateFormat relative date (jan 14th 2021)", {
 			beforeEach: function () {
-				this.clock = sinon.useFakeTimers(new Date("2021-01-14T09:59:00Z").getTime()); // Thu Jan 14 2021 10:59:00 GMT+0100
+				// Thu Jan 14 2021 09:59:00 (in current time zone)
+				this.clock = sinon.useFakeTimers(UI5Date.getInstance("2021-01-14T09:59:00").getTime());
 			},
 			afterEach: function () {
 				this.clock.restore();
@@ -1066,65 +1070,66 @@ sap.ui.define([
 
 
 			[{
-				inputDate: "2021-01-20T09:59:00Z", // jan 14th - jan 20th
+				inputDate: "2021-01-20T09:59:00", // jan 14th - jan 20th
 				outputRelative: "in 6 days"
 			}, {
-				inputDate: "2021-01-21T09:59:00Z", // jan 14th - jan 21th
+				inputDate: "2021-01-21T09:59:00", // jan 14th - jan 21th
 				outputRelative: "in 1 week"
 			}, {
-				inputDate: "2021-01-22T09:59:00Z", // jan 14th - jan 22th
+				inputDate: "2021-01-22T09:59:00", // jan 14th - jan 22th
 				outputRelative: "in 1 week"
 			}, {
-				inputDate: "2021-01-23T09:59:00Z", // jan 14th - jan 23th
+				inputDate: "2021-01-23T09:59:00", // jan 14th - jan 23th
 				outputRelative: "in 1 week"
 			}, {
-				inputDate: "2021-01-24T09:59:00Z", // jan 14th - jan 24th
+				inputDate: "2021-01-24T09:59:00", // jan 14th - jan 24th
 				outputRelative: "in 2 weeks"
 			}, {
-				inputDate: "2021-01-25T09:59:00Z", // jan 14th - jan 25th
+				inputDate: "2021-01-25T09:59:00", // jan 14th - jan 25th
 				outputRelative: "in 2 weeks"
 			}, {
-				inputDate: "2021-01-26T09:59:00Z", // jan 14th - jan 26th
+				inputDate: "2021-01-26T09:59:00", // jan 14th - jan 26th
 				outputRelative: "in 2 weeks"
 			}, {
-				inputDate: "2021-01-27T09:59:00Z", // jan 14th - jan 27th
+				inputDate: "2021-01-27T09:59:00", // jan 14th - jan 27th
 				outputRelative: "in 2 weeks"
 			}, {
-				inputDate: "2021-01-28T09:59:00Z", // jan 14th - jan 28th
+				inputDate: "2021-01-28T09:59:00", // jan 14th - jan 28th
 				outputRelative: "in 2 weeks"
 			}, {
-				inputDate: "2021-01-29T09:59:00Z", // jan 14th - jan 29th
+				inputDate: "2021-01-29T09:59:00", // jan 14th - jan 29th
 				outputRelative: "in 2 weeks"
 			}, {
-				inputDate: "2021-01-30T09:59:00Z", // jan 14th - jan 30th
+				inputDate: "2021-01-30T09:59:00", // jan 14th - jan 30th
 				outputRelative: "in 2 weeks"
 			}, {
-				inputDate: "2021-01-31T09:59:00Z", // jan 14th - jan 31th
+				inputDate: "2021-01-31T09:59:00", // jan 14th - jan 31th
 				outputRelative: "in 3 weeks"
 			}, {
-				inputDate: "2021-02-01T09:59:00Z", // jan 14th - feb 1st
+				inputDate: "2021-02-01T09:59:00", // jan 14th - feb 1st
 				outputRelative: "in 3 weeks"
 			}, {
-				inputDate: "2021-02-12T09:59:00Z", // jan 14th - feb 12th
+				inputDate: "2021-02-12T09:59:00", // jan 14th - feb 12th
 				outputRelative: "in 4 weeks"
 			}, {
-				inputDate: "2021-02-13T09:59:00Z", // jan 14th - feb 13th
+				inputDate: "2021-02-13T09:59:00", // jan 14th - feb 13th
 				outputRelative: "in 4 weeks"
 			}, {
-				inputDate: "2021-02-14T09:59:00Z", // jan 14th - feb 14th
+				inputDate: "2021-02-14T09:59:00", // jan 14th - feb 14th
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-02-15T09:59:00Z", // jan 14th - feb 15th
+				inputDate: "2021-02-15T09:59:00", // jan 14th - feb 15th
 				outputRelative: "in 1 month"
 			}].forEach(function (oFixture) {
-				var oDate = new Date(oFixture.inputDate);
+				var oDate = UI5Date.getInstance(oFixture.inputDate);
 				assert.equal(oFixture.outputRelative, oDateFormat.format(oDate), "relative date: " + oDate);
 			});
 		});
 
 		QUnit.module("DateFormat relative date (feb 1st 2021)", {
 			beforeEach: function () {
-				this.clock = sinon.useFakeTimers(new Date("2021-02-01T09:59:00Z").getTime()); // Mon Mar 01 2021 10:59:00 GMT+0100
+				// Mon Feb 01 2021 09:59:00 (in current time zone)
+				this.clock = sinon.useFakeTimers(UI5Date.getInstance("2021-02-01T09:59:00").getTime());
 			},
 			afterEach: function () {
 				this.clock.restore();
@@ -1138,35 +1143,36 @@ sap.ui.define([
 			});
 
 			[{
-				inputDate: "2021-02-28T09:59:00Z", // feb 1st - feb 28th
+				inputDate: "2021-02-28T09:59:00", // feb 1st - feb 28th
 				outputRelative: "in 4 weeks"
 			}, {
-				inputDate: "2021-03-01T09:59:00Z", // feb 1st - mar 1st
+				inputDate: "2021-03-01T09:59:00", // feb 1st - mar 1st
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-03-02T09:59:00Z", // feb 1st - mar 2nd
+				inputDate: "2021-03-02T09:59:00", // feb 1st - mar 2nd
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-03-03T09:59:00Z", // feb 1st - mar 3rd
+				inputDate: "2021-03-03T09:59:00", // feb 1st - mar 3rd
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-03-04T09:59:00Z", // feb 1st - mar 4th
+				inputDate: "2021-03-04T09:59:00", // feb 1st - mar 4th
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-03-05T09:59:00Z", // feb 1st - mar 5th
+				inputDate: "2021-03-05T09:59:00", // feb 1st - mar 5th
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-03-06T09:59:00Z", // feb 1st - mar 6th
+				inputDate: "2021-03-06T09:59:00", // feb 1st - mar 6th
 				outputRelative: "in 1 month"
 			}].forEach(function (oFixture) {
-				var oDate = new Date(oFixture.inputDate);
+				var oDate = UI5Date.getInstance(oFixture.inputDate);
 				assert.equal(oFixture.outputRelative, oDateFormat.format(oDate), "relative date: " + oDate);
 			});
 		});
 
 		QUnit.module("DateFormat relative date (feb 14th 2021)", {
 			beforeEach: function () {
-				this.clock = sinon.useFakeTimers(new Date("2021-02-14T09:59:00Z").getTime()); // Mon Mar 01 2021 10:59:00 GMT+0100
+				// Sun Feb 14 2021 09:59:00 (in current time zone)
+				this.clock = sinon.useFakeTimers(UI5Date.getInstance("2021-02-14T09:59:00").getTime());
 			},
 			afterEach: function () {
 				this.clock.restore();
@@ -1180,62 +1186,63 @@ sap.ui.define([
 			});
 
 			[{
-				inputDate: "2021-01-13T09:59:00Z", // feb 14th - jan 13th
+				inputDate: "2021-01-13T09:59:00", // feb 14th - jan 13th
 				outputRelative: "1 month ago"
 			}, {
-				inputDate: "2021-01-14T09:59:00Z", // feb 14th - jan 14th
+				inputDate: "2021-01-14T09:59:00", // feb 14th - jan 14th
 				outputRelative: "1 month ago"
 			}, {
-				inputDate: "2021-01-15T09:59:00Z", // feb 14th - jan 15th
+				inputDate: "2021-01-15T09:59:00", // feb 14th - jan 15th
 				outputRelative: "5 weeks ago"
 			}, {
-				inputDate: "2021-01-16T09:59:00Z", // feb 14th - jan 16th
+				inputDate: "2021-01-16T09:59:00", // feb 14th - jan 16th
 				outputRelative: "5 weeks ago"
 			}, {
-				inputDate: "2021-01-17T09:59:00Z", // feb 14th - jan 17th
+				inputDate: "2021-01-17T09:59:00", // feb 14th - jan 17th
 				outputRelative: "4 weeks ago"
 			}, {
-				inputDate: "2021-01-18T09:59:00Z", // feb 14th - jan 18th
+				inputDate: "2021-01-18T09:59:00", // feb 14th - jan 18th
 				outputRelative: "4 weeks ago"
 			}, {
-				inputDate: "2021-01-19T09:59:00Z", // feb 14th - jan 19th
+				inputDate: "2021-01-19T09:59:00", // feb 14th - jan 19th
 				outputRelative: "4 weeks ago"
 			}, {
-				inputDate: "2021-02-28T09:59:00Z", // feb 14th - feb 28th
+				inputDate: "2021-02-28T09:59:00", // feb 14th - feb 28th
 				outputRelative: "in 2 weeks"
 			}, {
-				inputDate: "2021-03-01T09:59:00Z", // feb 14th - mar 1st
+				inputDate: "2021-03-01T09:59:00", // feb 14th - mar 1st
 				outputRelative: "in 2 weeks"
 			}, {
-				inputDate: "2021-03-13T09:59:00Z", // feb 14th - mar 13th
+				inputDate: "2021-03-13T09:59:00", // feb 14th - mar 13th
 				outputRelative: "in 3 weeks"
 			}, {
-				inputDate: "2021-03-14T09:59:00Z", // feb 14th - mar 14th
+				inputDate: "2021-03-14T09:59:00", // feb 14th - mar 14th
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-03-15T09:59:00Z", // feb 14th - mar 15th
+				inputDate: "2021-03-15T09:59:00", // feb 14th - mar 15th
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-03-16T09:59:00Z", // feb 14th - mar 16th
+				inputDate: "2021-03-16T09:59:00", // feb 14th - mar 16th
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-03-17T09:59:00Z", // feb 14th - mar 17th
+				inputDate: "2021-03-17T09:59:00", // feb 14th - mar 17th
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-03-18T09:59:00Z", // feb 14th - mar 18th
+				inputDate: "2021-03-18T09:59:00", // feb 14th - mar 18th
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-03-19T09:59:00Z", // feb 14th - mar 19th
+				inputDate: "2021-03-19T09:59:00", // feb 14th - mar 19th
 				outputRelative: "in 1 month"
 			}].forEach(function (oFixture) {
-				var oDate = new Date(oFixture.inputDate);
+				var oDate = UI5Date.getInstance(oFixture.inputDate);
 				assert.equal(oFixture.outputRelative, oDateFormat.format(oDate), "relative date: " + oDate);
 			});
 		});
 
 		QUnit.module("DateFormat relative date (mar 1st 2021)", {
 			beforeEach: function () {
-				this.clock = sinon.useFakeTimers(new Date("2021-03-01T09:59:00Z").getTime()); // Mon Mar 01 2021 10:59:00 GMT+0100
+				// Mon Mar 01 2021 09:59:00 (in current time zone)
+				this.clock = sinon.useFakeTimers(UI5Date.getInstance("2021-03-01T09:59:00").getTime());
 			},
 			afterEach: function () {
 				this.clock.restore();
@@ -1249,38 +1256,39 @@ sap.ui.define([
 			});
 
 			[{
-				inputDate: "2021-01-28T09:59:00Z", // mar 1st - jan 28th
+				inputDate: "2021-01-28T09:59:00", // mar 1st - jan 28th
 				outputRelative: "2 months ago"
 			}, {
-				inputDate: "2021-01-29T09:59:00Z", // mar 1st - jan 29th
+				inputDate: "2021-01-29T09:59:00", // mar 1st - jan 29th
 				outputRelative: "2 months ago"
 			}, {
-				inputDate: "2021-01-30T09:59:00Z", // mar 1st - jan 30th
+				inputDate: "2021-01-30T09:59:00", // mar 1st - jan 30th
 				outputRelative: "2 months ago"
 			}, {
-				inputDate: "2021-01-31T09:59:00Z", // mar 1st - jan 31st
+				inputDate: "2021-01-31T09:59:00", // mar 1st - jan 31st
 				outputRelative: "2 months ago"
 			}, {
-				inputDate: "2021-02-01T09:59:00Z", // mar 1st - feb 1st
+				inputDate: "2021-02-01T09:59:00", // mar 1st - feb 1st
 				outputRelative: "1 month ago"
 			}, {
-				inputDate: "2021-02-13T09:59:00Z", // mar 1st - feb 13th
+				inputDate: "2021-02-13T09:59:00", // mar 1st - feb 13th
 				outputRelative: "3 weeks ago"
 			}, {
-				inputDate: "2021-02-14T09:59:00Z", // mar 1st - feb 14th
+				inputDate: "2021-02-14T09:59:00", // mar 1st - feb 14th
 				outputRelative: "2 weeks ago"
 			}, {
-				inputDate: "2021-02-15T09:59:00Z", // mar 1st - feb 15th
+				inputDate: "2021-02-15T09:59:00", // mar 1st - feb 15th
 				outputRelative: "2 weeks ago"
 			}].forEach(function (oFixture) {
-				var oDate = new Date(oFixture.inputDate);
+				var oDate = UI5Date.getInstance(oFixture.inputDate);
 				assert.equal( oDateFormat.format(oDate), oFixture.outputRelative, "relative date: " + oDate);
 			});
 		});
 
 		QUnit.module("DateFormat relative date (mar 14th 2021)", {
 			beforeEach: function () {
-				this.clock = sinon.useFakeTimers(new Date("2021-03-14T09:59:00Z").getTime());
+				// Sun Mar 14 2021 09:59:00 (in current time zone)
+				this.clock = sinon.useFakeTimers(UI5Date.getInstance("2021-03-14T09:59:00").getTime());
 			},
 			afterEach: function () {
 				this.clock.restore();
@@ -1294,76 +1302,76 @@ sap.ui.define([
 			});
 
 			[{
-				inputDate: "2021-01-01T09:59:00Z", // mar 14th - jan 1st
+				inputDate: "2021-01-01T09:59:00", // mar 14th - jan 1st
 				outputRelative: "2 months ago"
 			}, {
-				inputDate: "2021-01-12T09:59:00Z", // mar 14th - jan 12th
+				inputDate: "2021-01-12T09:59:00", // mar 14th - jan 12th
 				outputRelative: "2 months ago"
 			}, {
-				inputDate: "2021-01-13T09:59:00Z", // mar 14th - jan 13th
+				inputDate: "2021-01-13T09:59:00", // mar 14th - jan 13th
 				outputRelative: "2 months ago"
 			}, {
-				inputDate: "2021-01-14T09:59:00Z", // mar 14th - jan 14th
+				inputDate: "2021-01-14T09:59:00", // mar 14th - jan 14th
 				outputRelative: "2 months ago"
 			}, {
-				inputDate: "2021-01-31T09:59:00Z", // mar 14th - jan 31st
+				inputDate: "2021-01-31T09:59:00", // mar 14th - jan 31st
 				outputRelative: "2 months ago"
 			}, {
-				inputDate: "2021-02-01T09:59:00Z", // mar 14th - feb 1st
+				inputDate: "2021-02-01T09:59:00", // mar 14th - feb 1st
 				outputRelative: "1 month ago"
 			}, {
-				inputDate: "2021-02-08T09:59:00Z", // mar 14th - feb 8th
+				inputDate: "2021-02-08T09:59:00", // mar 14th - feb 8th
 				outputRelative: "1 month ago"
 			}, {
-				inputDate: "2021-02-09T09:59:00Z", // mar 14th - feb 9th
+				inputDate: "2021-02-09T09:59:00", // mar 14th - feb 9th
 				outputRelative: "1 month ago"
 			}, {
-				inputDate: "2021-02-10T09:59:00Z", // mar 14th - feb 10th
+				inputDate: "2021-02-10T09:59:00", // mar 14th - feb 10th
 				outputRelative: "1 month ago"
 			}, {
-				inputDate: "2021-02-11T09:59:00Z", // mar 14th - feb 11th
+				inputDate: "2021-02-11T09:59:00", // mar 14th - feb 11th
 				outputRelative: "1 month ago"
 			}, {
-				inputDate: "2021-02-12T09:59:00Z", // mar 14th - feb 12th
+				inputDate: "2021-02-12T09:59:00", // mar 14th - feb 12th
 				outputRelative: "1 month ago"
 			}, {
-				inputDate: "2021-02-13T09:59:00Z", // mar 14th - feb 13th
+				inputDate: "2021-02-13T09:59:00", // mar 14th - feb 13th
 				outputRelative: "1 month ago"
 			}, {
-				inputDate: "2021-02-14T09:59:00Z", // mar 14th - feb 14th
+				inputDate: "2021-02-14T09:59:00", // mar 14th - feb 14th
 				outputRelative: "1 month ago"
 			}, {
-				inputDate: "2021-02-15T09:59:00Z", // mar 14th - feb 15th
+				inputDate: "2021-02-15T09:59:00", // mar 14th - feb 15th
 				outputRelative: "4 weeks ago"
 			}, {
-				inputDate: "2021-02-16T09:59:00Z", // mar 14th - feb 16th
+				inputDate: "2021-02-16T09:59:00", // mar 14th - feb 16th
 				outputRelative: "4 weeks ago"
 			}, {
-				inputDate: "2021-02-17T09:59:00Z", // mar 14th - feb 17th
+				inputDate: "2021-02-17T09:59:00", // mar 14th - feb 17th
 				outputRelative: "4 weeks ago"
 			}, {
-				inputDate: "2021-02-18T09:59:00Z", // mar 14th - feb 18th
+				inputDate: "2021-02-18T09:59:00", // mar 14th - feb 18th
 				outputRelative: "4 weeks ago"
 			}, {
-				inputDate: "2021-04-13T09:59:00Z", // mar 14th - apr 13th
+				inputDate: "2021-04-13T09:59:00", // mar 14th - apr 13th
 				outputRelative: "in 4 weeks"
 			}, {
-				inputDate: "2021-04-14T09:59:00Z", // mar 14th - apr 14th
+				inputDate: "2021-04-14T09:59:00", // mar 14th - apr 14th
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-04-15T09:59:00Z", // mar 14th - apr 15th
+				inputDate: "2021-04-15T09:59:00", // mar 14th - apr 15th
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-04-16T09:59:00Z", // mar 14th - apr 16th
+				inputDate: "2021-04-16T09:59:00", // mar 14th - apr 16th
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-04-30T09:59:00Z", // mar 14th - apr 30th
+				inputDate: "2021-04-30T09:59:00", // mar 14th - apr 30th
 				outputRelative: "in 1 month"
 			}, {
-				inputDate: "2021-05-01T09:59:00Z", // mar 14th - may 1st
+				inputDate: "2021-05-01T09:59:00", // mar 14th - may 1st
 				outputRelative: "in 2 months"
 			}].forEach(function (oFixture) {
-				var oDate = new Date(oFixture.inputDate);
+				var oDate = UI5Date.getInstance(oFixture.inputDate);
 				assert.equal(oFixture.outputRelative, oDateFormat.format(oDate), "relative date: " + oDate);
 			});
 		});
@@ -1603,7 +1611,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("parse short format without delimiter", function (assert) {
-			var oDate = new Date("Mon Apr 7 00:00:00 2014"),
+			var oDate = UI5Date.getInstance("Mon Apr 7 00:00:00 2014"),
 				oFormat = DateFormat.getDateInstance(),
 				sDateIn = "040714", oDateOut = oFormat.parse(sDateIn);
 			assert.strictEqual(oDateOut.toString(), oDate.toString(), "6 digit fallback: " + sDateIn + " to " + oDateOut);
@@ -1631,7 +1639,7 @@ sap.ui.define([
 			assert.equal(sDate, "1/1/2001", "Formatted as 2001");
 
 			// 1/1/1001
-			oDate = new Date(0);
+			oDate = UI5Date.getInstance(0);
 			oDate.setFullYear(1001, 0, 1);
 			assert.equal(oDate.getFullYear(), 1001, "Fullyear is 1001");
 			assert.equal(oDate.getMonth(), 0, "Month is 0");
@@ -1641,7 +1649,7 @@ sap.ui.define([
 			assert.equal(oDate.getFullYear(), 1001, "Fullyear is still 1001");
 
 			// 1/1/0002
-			oDate = new Date(0);
+			oDate = UI5Date.getInstance(0);
 			oDate.setFullYear(2, 0, 1);
 			assert.equal(oDate.getFullYear(), 2, "Fullyear is 2");
 			assert.equal(oDate.getMonth(), 0, "Month is 0");
@@ -1651,7 +1659,7 @@ sap.ui.define([
 			assert.equal(oDate.getFullYear(), 2, "Fullyear is still 2");
 
 			// 1/1/0001
-			oDate = new Date(0);
+			oDate = UI5Date.getInstance(0);
 			oDate.setFullYear(1, 0, 1);
 			assert.equal(oDate.getFullYear(), 1, "Fullyear is 1");
 			assert.equal(oDate.getMonth(), 0, "Month is 0");
@@ -1662,7 +1670,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("parse and format quarters", function (assert) {
-			var oDate = new Date("Wed Jul 4 2001"),
+			var oDate = UI5Date.getInstance("Wed Jul 4 2001"),
 				oQuarter1 = DateFormat.getDateInstance({ pattern: "qq" }),
 				oQuarter2 = DateFormat.getDateInstance({ pattern: "qqq" }),
 				oQuarter3 = DateFormat.getDateInstance({ pattern: "qqqq" }),
@@ -1683,7 +1691,7 @@ sap.ui.define([
 			var oLocaleEN = new Locale("en_US"),
 				oLocaleDE = new Locale("de_DE"),
 				oFormat,
-				iCompare = new Date(1975, 3, 16).getTime(),
+				iCompare = UI5Date.getInstance(1975, 3, 16).getTime(),
 				iFallbackOptionsLength = DateFormat.oDateInfo.aFallbackFormatOptions.length;
 
 			oFormat = DateFormat.getDateInstance({ style: "long" }, oLocaleEN);
@@ -1729,8 +1737,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("parse and format fractional seconds", function (assert) {
-			var oDate1 = new Date(1234),
-				oDate2 = new Date(14),
+			var oDate1 = UI5Date.getInstance(1234),
+				oDate2 = UI5Date.getInstance(14),
 				oMS1 = DateFormat.getDateInstance({ pattern: "s.S" }),
 				oMS2 = DateFormat.getDateInstance({ pattern: "s.SSS" }),
 				oMS3 = DateFormat.getDateInstance({ pattern: "s.SSSSSS" });
@@ -1826,7 +1834,7 @@ sap.ui.define([
 			var oFormat = DateFormat.getTimeInstance({
 					pattern: "hh:mm a"
 				}, new Locale("pt_PT")),
-				oDate = new Date(),
+				oDate = UI5Date.getInstance(),
 				sFormattedTime = oFormat.format(oDate),
 				oParsedDate = oFormat.parse(sFormattedTime);
 
@@ -1845,7 +1853,7 @@ sap.ui.define([
 ].forEach(function (oFixture, i) {
 	QUnit.test("format/parse time with day period, abbreviated pattern differs #" + i,
 			function (assert) {
-		var oDate = new Date(Date.UTC(2018, 7, 2, 11, 37)),
+		var oDate = UI5Date.getInstance(Date.UTC(2018, 7, 2, 11, 37)),
 			// in ko: pattern wide (aaaa) is different from the other patterns
 			oFormat = DateFormat.getTimeInstance({pattern : oFixture.pattern}, new Locale("ko")),
 			sFormattedTime = oFormat.format(oDate),
@@ -1871,7 +1879,7 @@ sap.ui.define([
 ].forEach(function (oFixture, i) {
 	QUnit.test("format/parse time with day period, narrow pattern differs #" + i,
 			function (assert) {
-		var oDate = new Date(Date.UTC(2022, 7, 15, 5, 37)),
+		var oDate = UI5Date.getInstance(Date.UTC(2022, 7, 15, 5, 37)),
 			// in lt: pattern narrow (aaaaa) is different from the other patterns
 			oFormat = DateFormat.getTimeInstance({pattern : oFixture.pattern}, new Locale("lt")),
 			sFormattedTime = oFormat.format(oDate),
@@ -1892,7 +1900,7 @@ sap.ui.define([
 				pattern: "dd MMMM, yyyy"
 			});
 
-			var iDate = new Date(2017, 3, 17).getTime();
+			var iDate = UI5Date.getInstance(2017, 3, 17).getTime();
 
 			assert.equal(oFormat.parse("17April,2017").getTime(), iDate, "string without any space can also be parsed");
 			assert.equal(oFormat.parse(" 17   April,   2017   ").getTime(), iDate, "string with redundant space can also be parsed");
@@ -1904,7 +1912,7 @@ sap.ui.define([
 				format: "yMMMd"
 			});
 
-			var aCompare = [new Date(2017, 3, 11), new Date(2017, 3, 17)];
+			var aCompare = [UI5Date.getInstance(2017, 3, 11), UI5Date.getInstance(2017, 3, 17)];
 
 			// the correct pattern is MMM d – d, y
 			assert.deepEqual(oIntervalFormat.parse("Apr 11–17, 2017"), aCompare, "string with missing spaces can also be parsed");
@@ -1980,28 +1988,28 @@ sap.ui.define([
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: "'W'w"
 			}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new Locale("xx-XX"));
-			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "W1", "week format with pattern 'w'");
+			assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 0, 1)), "W1", "week format with pattern 'w'");
 			assert.ok(oDateFormat.parse("W1") instanceof Date, "Date can be correctly parsed");
 			assert.notOk(isNaN(oDateFormat.parse("W1").getTime()), "Date is valid and can be correctly parsed 'W1'");
 
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: "'W'ww"
 			}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new Locale("xx-XX"));
-			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "W01", "week format with pattern 'ww'");
+			assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 0, 1)), "W01", "week format with pattern 'ww'");
 			assert.ok(oDateFormat.parse("W01") instanceof Date, "Date can be correctly parsed 'W01'");
 			assert.notOk(isNaN(oDateFormat.parse("W01").getTime()), "Date is valid and can be correctly parsed 'W01'");
 
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: "www"
 			}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new Locale("xx-XX"));
-			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "CW 01", "week format with pattern 'www'");
+			assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 0, 1)), "CW 01", "week format with pattern 'www'");
 			assert.ok(oDateFormat.parse("CW 01") instanceof Date, "Date can be correctly parsed 'CW 01'");
 			assert.notOk(isNaN(oDateFormat.parse("CW 01").getTime()), "Date is valid and can be correctly parsed 'CW 01'");
 
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: "wwww"
 			}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new Locale("xx-XX"));
-			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 01", "week format with pattern 'wwww'");
+			assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 0, 1)), "Calendar Week 01", "week format with pattern 'wwww'");
 			assert.ok(oDateFormat.parse("Calendar Week 01") instanceof Date, "Date can be correctly parsed 'Calendar Week 01'");
 			assert.notOk(isNaN(oDateFormat.parse("Calendar Week 01").getTime()), "Date is valid and can be correctly parsed 'Calendar Week 01'");
 
@@ -2009,14 +2017,14 @@ sap.ui.define([
 				pattern: "wwww",
 				calendarType: CalendarType.Islamic
 			});
-			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 11", "week number in Islamic calendar");
+			assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 0, 1)), "Calendar Week 11", "week number in Islamic calendar");
 			assert.notOk(isNaN(oDateFormat.parse("Calendar Week 11").getTime()), "Date can be correctly parsed in Islamic calendar 'Calendar Week 11'");
 
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: "wwww",
 				calendarType: CalendarType.Japanese
 			});
-			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 01", "week number in Japanese calendar");
+			assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 0, 1)), "Calendar Week 01", "week number in Japanese calendar");
 			assert.notOk(isNaN(oDateFormat.parse("Calendar Week 01").getTime()), "Date can be correctly parsed in Japanese calendar 'Calendar Week 01'");
 		});
 
@@ -2025,14 +2033,14 @@ sap.ui.define([
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: "YY'-'ww"
 			});
-			assert.equal(oDateFormat.format(new Date(2014, 11, 22)), "14-52", "Date can be correctly formatted to '14-52'");
-			assert.equal(oDateFormat.parse("14-52").valueOf(), new Date(2014, 11, 22).valueOf(), "'14-52' can be correctly parsed");
+			assert.equal(oDateFormat.format(UI5Date.getInstance(2014, 11, 22)), "14-52", "Date can be correctly formatted to '14-52'");
+			assert.equal(oDateFormat.parse("14-52").valueOf(), UI5Date.getInstance(2014, 11, 22).valueOf(), "'14-52' can be correctly parsed");
 
-			assert.equal(oDateFormat.format(new Date(2014, 11, 29)), "15-01", "Date can be correctly formatted to '15-01'");
-			assert.equal(oDateFormat.parse("15-01").valueOf(), new Date(2014, 11, 29).valueOf(), "'15-01' can be correctly parsed");
+			assert.equal(oDateFormat.format(UI5Date.getInstance(2014, 11, 29)), "15-01", "Date can be correctly formatted to '15-01'");
+			assert.equal(oDateFormat.parse("15-01").valueOf(), UI5Date.getInstance(2014, 11, 29).valueOf(), "'15-01' can be correctly parsed");
 
-			assert.equal(oDateFormat.format(new Date(2015, 0, 5)), "15-02", "Date can be correctly formatted to '15-02'");
-			assert.equal(oDateFormat.parse("15-02").valueOf(), new Date(2015, 0, 5).valueOf(), "'15-02' can be correctly parsed");
+			assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 0, 5)), "15-02", "Date can be correctly formatted to '15-02'");
+			assert.equal(oDateFormat.parse("15-02").valueOf(), UI5Date.getInstance(2015, 0, 5).valueOf(), "'15-02' can be correctly parsed");
 
 			Configuration.setLanguage("en_US");
 		});
@@ -2044,8 +2052,8 @@ sap.ui.define([
 			});
 
 			// first day of the week is Monday
-			var oSundayDate = new Date(2022, 1, 13);
-			var oMondayDate = new Date(2022, 1, 14);
+			var oSundayDate = UI5Date.getInstance(2022, 1, 13);
+			var oMondayDate = UI5Date.getInstance(2022, 1, 14);
 
 			assert.equal(oDateFormat.format(oSundayDate), "2022-07-Sun", "Date can be correctly formatted to '2022-07-Sun'");
 			assert.deepEqual(oDateFormat.parse("2022-07-Sun"), oSundayDate, "'2022-07-Sun' can be correctly parsed");
@@ -2069,18 +2077,18 @@ sap.ui.define([
 				oDateFormat = DateFormat.getDateInstance({
 					pattern: "Y-w"
 				});
-				assert.equal(oDateFormat.format(new Date(2014, 0, 1)), "2014-1", "For " + sLocale + " 1st of January is always week 1");
-				assert.deepEqual(oDateFormat.parse("2014-1"), new Date(2014, 0, 1), "Date can be correctly parsed to 1st of January 2014");
-				assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For " + sLocale + " 1st of January is always week 1");
-				assert.deepEqual(oDateFormat.parse("2015-1"), new Date(2015, 0, 1), "Date can be correctly parsed to 1st of January 2015");
-				assert.equal(oDateFormat.format(new Date(2016, 0, 1)), "2016-1", "For " + sLocale + " 1st of January is always week 1");
-				assert.deepEqual(oDateFormat.parse("2016-1"), new Date(2016, 0, 1), "Date can be correctly parsed to 1st of January 2016");
-				assert.equal(oDateFormat.format(new Date(2014, 11, 31)), "2014-53", "For " + sLocale + " 31st of December is always week 53");
-				assert.deepEqual(oDateFormat.parse("2014-53"), new Date(2014, 11, 28), "Date can be correctly parsed to 28th of December 2014");
-				assert.equal(oDateFormat.format(new Date(2015, 11, 31)), "2015-53", "For " + sLocale + " 31st of December is always week 53");
-				assert.deepEqual(oDateFormat.parse("2015-53"), new Date(2015, 11, 27), "Date can be correctly parsed to 27th of December 2015");
-				assert.equal(oDateFormat.format(new Date(2016, 11, 31)), "2016-53", "For " + sLocale + " 31st of December is always week 53");
-				assert.deepEqual(oDateFormat.parse("2016-53"), new Date(2016, 11, 25), "Date can be correctly parsed to 25th of December 2016");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2014, 0, 1)), "2014-1", "For " + sLocale + " 1st of January is always week 1");
+				assert.deepEqual(oDateFormat.parse("2014-1"), UI5Date.getInstance(2014, 0, 1), "Date can be correctly parsed to 1st of January 2014");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 0, 1)), "2015-1", "For " + sLocale + " 1st of January is always week 1");
+				assert.deepEqual(oDateFormat.parse("2015-1"), UI5Date.getInstance(2015, 0, 1), "Date can be correctly parsed to 1st of January 2015");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2016, 0, 1)), "2016-1", "For " + sLocale + " 1st of January is always week 1");
+				assert.deepEqual(oDateFormat.parse("2016-1"), UI5Date.getInstance(2016, 0, 1), "Date can be correctly parsed to 1st of January 2016");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2014, 11, 31)), "2014-53", "For " + sLocale + " 31st of December is always week 53");
+				assert.deepEqual(oDateFormat.parse("2014-53"), UI5Date.getInstance(2014, 11, 28), "Date can be correctly parsed to 28th of December 2014");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 11, 31)), "2015-53", "For " + sLocale + " 31st of December is always week 53");
+				assert.deepEqual(oDateFormat.parse("2015-53"), UI5Date.getInstance(2015, 11, 27), "Date can be correctly parsed to 27th of December 2015");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2016, 11, 31)), "2016-53", "For " + sLocale + " 31st of December is always week 53");
+				assert.deepEqual(oDateFormat.parse("2016-53"), UI5Date.getInstance(2016, 11, 25), "Date can be correctly parsed to 25th of December 2016");
 			});
 
 			// Western Traditional
@@ -2092,18 +2100,18 @@ sap.ui.define([
 				oDateFormat = DateFormat.getDateInstance({
 					pattern: "Y-w"
 				});
-				assert.equal(oDateFormat.format(new Date(2014, 0, 1)), "2014-1", "For " + sLocale + " 1st of January 2014 is week 1/2014");
-				assert.deepEqual(oDateFormat.parse("2014-1"), new Date(2013, 11, 29), "Date can be correctly parsed to 29th of December 2014");
-				assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For " + sLocale + " 1st of January 2015 is week 1/2015");
-				assert.deepEqual(oDateFormat.parse("2015-1"), new Date(2014, 11, 28), "Date can be correctly parsed to 28th of December 2014");
-				assert.equal(oDateFormat.format(new Date(2016, 0, 1)), "2016-1", "For " + sLocale + " 1st of January 2016 is week 1/2016");
-				assert.deepEqual(oDateFormat.parse("2016-1"), new Date(2015, 11, 27), "Date can be correctly parsed to 27th of December 2015");
-				assert.equal(oDateFormat.format(new Date(2014, 11, 31)), "2015-1", "For " + sLocale + " 31st of December 2014 is week 1/2015");
-				assert.deepEqual(oDateFormat.parse("2015-1"), new Date(2014, 11, 28), "Date can be correctly parsed to 28th of December 2014");
-				assert.equal(oDateFormat.format(new Date(2015, 11, 31)), "2016-1", "For " + sLocale + " 31st of December 2015 is week 1/2016");
-				assert.deepEqual(oDateFormat.parse("2015-53"), new Date(2015, 11, 27), "Date can be correctly parsed to 27th of December 2014");
-				assert.equal(oDateFormat.format(new Date(2016, 11, 31)), "2016-53", "For " + sLocale + " 31st of December 2016 is week 53/2016");
-				assert.deepEqual(oDateFormat.parse("2016-53"), new Date(2016, 11, 25), "Date can be correctly parsed to 25th of December 2016");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2014, 0, 1)), "2014-1", "For " + sLocale + " 1st of January 2014 is week 1/2014");
+				assert.deepEqual(oDateFormat.parse("2014-1"), UI5Date.getInstance(2013, 11, 29), "Date can be correctly parsed to 29th of December 2014");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 0, 1)), "2015-1", "For " + sLocale + " 1st of January 2015 is week 1/2015");
+				assert.deepEqual(oDateFormat.parse("2015-1"), UI5Date.getInstance(2014, 11, 28), "Date can be correctly parsed to 28th of December 2014");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2016, 0, 1)), "2016-1", "For " + sLocale + " 1st of January 2016 is week 1/2016");
+				assert.deepEqual(oDateFormat.parse("2016-1"), UI5Date.getInstance(2015, 11, 27), "Date can be correctly parsed to 27th of December 2015");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2014, 11, 31)), "2015-1", "For " + sLocale + " 31st of December 2014 is week 1/2015");
+				assert.deepEqual(oDateFormat.parse("2015-1"), UI5Date.getInstance(2014, 11, 28), "Date can be correctly parsed to 28th of December 2014");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 11, 31)), "2016-1", "For " + sLocale + " 31st of December 2015 is week 1/2016");
+				assert.deepEqual(oDateFormat.parse("2015-53"), UI5Date.getInstance(2015, 11, 27), "Date can be correctly parsed to 27th of December 2014");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2016, 11, 31)), "2016-53", "For " + sLocale + " 31st of December 2016 is week 53/2016");
+				assert.deepEqual(oDateFormat.parse("2016-53"), UI5Date.getInstance(2016, 11, 25), "Date can be correctly parsed to 25th of December 2016");
 			});
 
 			// ISO 8601
@@ -2116,18 +2124,18 @@ sap.ui.define([
 				oDateFormat = DateFormat.getDateInstance({
 					pattern: "Y-w"
 				});
-				assert.equal(oDateFormat.format(new Date(2014, 0, 1)), "2014-1", "For " + sLocale + " 1st of January 2014 is week 1/2014");
-				assert.deepEqual(oDateFormat.parse("2014-1"), new Date(2013, 11, 30), "Date can be correctly parsed to 1st of January 2014");
-				assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For " + sLocale + " 1st of January 2015 is week 1/2015");
-				assert.deepEqual(oDateFormat.parse("2015-1"), new Date(2014, 11, 29), "Date can be correctly parsed to 1st of January 2015");
-				assert.equal(oDateFormat.format(new Date(2016, 0, 1)), "2015-53", "For " + sLocale + " 1st of January 2016 is week 53/2015");
-				assert.deepEqual(oDateFormat.parse("2016-1"), new Date(2016, 0, 4), "Date can be correctly parsed to 1st of January 2016");
-				assert.equal(oDateFormat.format(new Date(2014, 11, 31)), "2015-1", "For " + sLocale + " 31st of December 2014 is week 1/2015");
-				assert.deepEqual(oDateFormat.parse("2015-1"), new Date(2014, 11, 29), "Date can be correctly parsed to 29th of December 2014");
-				assert.equal(oDateFormat.format(new Date(2015, 11, 31)), "2015-53", "For " + sLocale + " 31st of December 2015 is week 53/2015");
-				assert.deepEqual(oDateFormat.parse("2015-53"), new Date(2015, 11, 28), "Date can be correctly parsed to 29th of December 2014");
-				assert.equal(oDateFormat.format(new Date(2016, 11, 31)), "2016-52", "For " + sLocale + " 31st of December 2016 is week 52/2016");
-				assert.deepEqual(oDateFormat.parse("2016-52"), new Date(2016, 11, 26), "Date can be correctly parsed to 29th of December 2016");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2014, 0, 1)), "2014-1", "For " + sLocale + " 1st of January 2014 is week 1/2014");
+				assert.deepEqual(oDateFormat.parse("2014-1"), UI5Date.getInstance(2013, 11, 30), "Date can be correctly parsed to 1st of January 2014");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 0, 1)), "2015-1", "For " + sLocale + " 1st of January 2015 is week 1/2015");
+				assert.deepEqual(oDateFormat.parse("2015-1"), UI5Date.getInstance(2014, 11, 29), "Date can be correctly parsed to 1st of January 2015");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2016, 0, 1)), "2015-53", "For " + sLocale + " 1st of January 2016 is week 53/2015");
+				assert.deepEqual(oDateFormat.parse("2016-1"), UI5Date.getInstance(2016, 0, 4), "Date can be correctly parsed to 1st of January 2016");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2014, 11, 31)), "2015-1", "For " + sLocale + " 31st of December 2014 is week 1/2015");
+				assert.deepEqual(oDateFormat.parse("2015-1"), UI5Date.getInstance(2014, 11, 29), "Date can be correctly parsed to 29th of December 2014");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 11, 31)), "2015-53", "For " + sLocale + " 31st of December 2015 is week 53/2015");
+				assert.deepEqual(oDateFormat.parse("2015-53"), UI5Date.getInstance(2015, 11, 28), "Date can be correctly parsed to 29th of December 2014");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2016, 11, 31)), "2016-52", "For " + sLocale + " 31st of December 2016 is week 52/2016");
+				assert.deepEqual(oDateFormat.parse("2016-52"), UI5Date.getInstance(2016, 11, 26), "Date can be correctly parsed to 29th of December 2016");
 			});
 
 			Configuration.setLanguage("en_US");
@@ -2152,10 +2160,10 @@ sap.ui.define([
 					pattern: "Y-w"
 				}, new Locale("de-DE"))
 			].forEach(function(oDateFormat) {
-				assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For 1st of January 2015 is week 1/2015");
-				assert.deepEqual(oDateFormat.parse("2015-1"), new Date(2014, 11, 29), "Date can be correctly parsed to 1st of January 2015");
-				assert.equal(oDateFormat.format(new Date(2016, 0, 1)), "2015-53", "For 1st of January 2016 is week 53/2015");
-				assert.deepEqual(oDateFormat.parse("2016-1"), new Date(2016, 0, 4), "Date can be correctly parsed to 1st of January 2016");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2015, 0, 1)), "2015-1", "For 1st of January 2015 is week 1/2015");
+				assert.deepEqual(oDateFormat.parse("2015-1"), UI5Date.getInstance(2014, 11, 29), "Date can be correctly parsed to 1st of January 2015");
+				assert.equal(oDateFormat.format(UI5Date.getInstance(2016, 0, 1)), "2015-53", "For 1st of January 2016 is week 53/2015");
+				assert.deepEqual(oDateFormat.parse("2016-1"), UI5Date.getInstance(2016, 0, 4), "Date can be correctly parsed to 1st of January 2016");
 			});
 
 			// use formatOptions parameter and locale, formatOptions take precedence
@@ -2167,14 +2175,14 @@ sap.ui.define([
 			}, new Locale("en-US"));
 
 			// no en_US split week since both paramaters are specified
-			assert.equal(oDateFormat.format(new Date(2022, 0, 1)), "2022-1", "For 1st of January 2022 is week 1/2022");
-			assert.equal(oDateFormat.format(new Date(2021, 11, 31)), "2022-1", "For 1st of January 2022 is week 1/2022");
+			assert.equal(oDateFormat.format(UI5Date.getInstance(2022, 0, 1)), "2022-1", "For 1st of January 2022 is week 1/2022");
+			assert.equal(oDateFormat.format(UI5Date.getInstance(2021, 11, 31)), "2022-1", "For 1st of January 2022 is week 1/2022");
 
 			Configuration.setLanguage("en_US");
 		});
 
 		QUnit.test("format and parse weekInYear and dayNumberOfWeek", function (assert) {
-			var oDate = new Date(2016, 10, 13); // 13th, November, 2016, Sunday
+			var oDate = UI5Date.getInstance(2016, 10, 13); // 13th, November, 2016, Sunday
 			var sPattern = "Y/ww/u";
 
 			Configuration.setLanguage("en_US");
@@ -2199,7 +2207,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("format and parse dayName", function (assert) {
-			var oDate = new Date(2018, 2, 23); // 23th, March, 2018, Friday
+			var oDate = UI5Date.getInstance(2018, 2, 23); // 23th, March, 2018, Friday
 			var sPattern = "yyyy-MM-dd EEEE";
 
 			Configuration.setLanguage("en_US");
@@ -2224,7 +2232,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Parse precedence: day (d) over dayName (E)", function (assert) {
-			var oDate = new Date(1985, 9, 9); // 9th, October, 1985, Wednesday
+			var oDate = UI5Date.getInstance(1985, 9, 9); // 9th, October, 1985, Wednesday
 			var sPattern = "yyyy-MM-dd EEEE";
 
 			var oDateFormat = DateFormat.getDateInstance({
@@ -2236,7 +2244,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Parse precedence: year/month/day (yMd) over week (w)", function (assert) {
-			var oDate = new Date(1985, 9, 9); // 9th, October, 1985, Wednesday
+			var oDate = UI5Date.getInstance(1985, 9, 9); // 9th, October, 1985, Wednesday
 			var sPattern = "YYYY-MM-dd '(CW 'ww')'";
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: sPattern
@@ -2248,7 +2256,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Parse and format different formats", function (assert) {
-			var oDate = new Date(1985, 9, 9), oDateFormat, sFormattedDate, oParsedDate; // 9th, October, 1985, Wednesday
+			var oDate = UI5Date.getInstance(1985, 9, 9), oDateFormat, sFormattedDate, oParsedDate; // 9th, October, 1985, Wednesday
 
 			["YYYY'-W'ww'-'u'", "YYYY'-W'ww', 'E", "YYYY'-W'ww'-'u', 'E"].forEach(function (sPattern) {
 
@@ -2268,7 +2276,7 @@ sap.ui.define([
 
 
 		QUnit.test("format and parse week and dayName", function (assert) {
-			var oDate = new Date(2018, 2, 23); // 23th, March, 2018, Friday
+			var oDate = UI5Date.getInstance(2018, 2, 23); // 23th, March, 2018, Friday
 			var sPattern = "yyyy 'Week' ww EEEE";
 
 			var oDateFormat = DateFormat.getDateInstance({
@@ -2292,7 +2300,7 @@ sap.ui.define([
 
 
 		QUnit.test("format and parse week and dayName Jan 1st, 2017", function (assert) {
-			var oDate = new Date(2017, 0, 1);
+			var oDate = UI5Date.getInstance(2017, 0, 1);
 			var sPattern = "YYYY 'Week' ww EEEE";
 
 			var oDateFormat = DateFormat.getDateInstance({
@@ -2338,30 +2346,32 @@ sap.ui.define([
 		var oDateFormat = DateFormat.getDateInstance({pattern : oFixture.pattern},
 				new Locale("de_DE"));
 
-		assert.strictEqual(oDateFormat.format(new Date(2017, 0, 1, 14, 0)).toString(),
+		assert.strictEqual(oDateFormat.format(UI5Date.getInstance(2017, 0, 1, 14, 0)).toString(),
 			oFixture.sFormatted, "Formatted: " + oFixture.sFormatted);
 	});
 });
 
 	//*********************************************************************************************
 [
-	{oDate : new Date(2017, 0, 1, 0, 0), sFormatted : "2017-01-01 Mitternacht 12:00"},
-	{oDate : new Date(2017, 0, 1, 0, 1), sFormatted : "2017-01-01 nachts 12:01"},
-	{oDate : new Date(2017, 0, 1, 5, 0), sFormatted : "2017-01-01 morgens 05:00"},
-	{oDate : new Date(2017, 0, 1, 10, 0), sFormatted : "2017-01-01 vorm. 10:00"},
-	{oDate : new Date(2017, 0, 1, 12, 0), sFormatted : "2017-01-01 mittags 12:00"},
-	{oDate : new Date(2017, 0, 1, 13, 0), sFormatted : "2017-01-01 nachm. 01:00"},
-	{oDate : new Date(2017, 0, 1, 18, 0), sFormatted : "2017-01-01 abends 06:00"},
-	{oDate : new Date(2017, 0, 1, 23, 59), sFormatted : "2017-01-01 abends 11:59"}
+	{aDateParts : [2017, 0, 1, 0, 0], sFormatted : "2017-01-01 Mitternacht 12:00"},
+	{aDateParts : [2017, 0, 1, 0, 1], sFormatted : "2017-01-01 nachts 12:01"},
+	{aDateParts : [2017, 0, 1, 5, 0], sFormatted : "2017-01-01 morgens 05:00"},
+	{aDateParts : [2017, 0, 1, 10, 0], sFormatted : "2017-01-01 vorm. 10:00"},
+	{aDateParts : [2017, 0, 1, 12, 0], sFormatted : "2017-01-01 mittags 12:00"},
+	{aDateParts : [2017, 0, 1, 13, 0], sFormatted : "2017-01-01 nachm. 01:00"},
+	{aDateParts : [2017, 0, 1, 18, 0], sFormatted : "2017-01-01 abends 06:00"},
+	{aDateParts : [2017, 0, 1, 23, 59], sFormatted : "2017-01-01 abends 11:59"}
 ].forEach(function (oFixture, i) {
 	QUnit.test("format and parse flexible day period 'B' de_DE: " + i, function (assert) {
-		var oDateFormat = DateFormat.getDateInstance({
+		var // create UI5Date instance within the test to consider the time zone defined in beforeEach
+			oDate = UI5Date.getInstance.apply(null, oFixture.aDateParts),
+			oDateFormat = DateFormat.getDateInstance({
 				pattern: "yyyy-MM-dd B hh:mm"
 			}, new Locale("de_DE"));
 
-		assert.strictEqual(oDateFormat.format(oFixture.oDate).toString(), oFixture.sFormatted,
+		assert.strictEqual(oDateFormat.format(oDate).toString(), oFixture.sFormatted,
 			"Formatted: " + oFixture.sFormatted);
-		assert.deepEqual(oDateFormat.parse(oFixture.sFormatted), oFixture.oDate,
+		assert.deepEqual(oDateFormat.parse(oFixture.sFormatted), oDate,
 			"The formatted string can be correctly parsed");
 	});
 });
@@ -2373,44 +2383,48 @@ sap.ui.define([
 				pattern: sPattern
 			}, new Locale("de_DE"));
 
-		assert.deepEqual(oDateFormat.parse("2017-01-01 nachm. 1"), new Date(2017, 0, 1, 13, 0),
+		assert.deepEqual(oDateFormat.parse("2017-01-01 nachm. 1"), UI5Date.getInstance(2017, 0, 1, 13, 0),
 			"The formatted string can be correctly parsed");
 	});
 });
 
 	//*********************************************************************************************
 [
-	{oDate : new Date(2017, 0, 5, 4, 39), sFormatted : "2017-01-01 abends 99:99"},
-	{oDate : new Date(2017, 0, 2, 3, 1), sFormatted : "2017-01-01 nachts 26:61"},
-	{oDate : new Date(2017, 0, 2, 5, 0), sFormatted : "2017-01-01 nachm. 29:00"}
+	{aDateParts : [2017, 0, 5, 4, 39], sFormatted : "2017-01-01 abends 99:99"},
+	{aDateParts : [2017, 0, 2, 3, 1], sFormatted : "2017-01-01 nachts 26:61"},
+	{aDateParts : [2017, 0, 2, 5, 0], sFormatted : "2017-01-01 nachm. 29:00"}
 ].forEach(function (oFixture, i) {
 	QUnit.test("parse flexible day period 'B' de_DE for numbers > 24: " + i, function (assert) {
-		var oDateFormat = DateFormat.getDateInstance({
+		var // create UI5Date instance within the test to consider the time zone defined in beforeEach
+			oDate = UI5Date.getInstance.apply(null, oFixture.aDateParts),
+			oDateFormat = DateFormat.getDateInstance({
 				pattern: "yyyy-MM-dd B h:mm"
 			}, new Locale("de_DE"));
 
-		assert.deepEqual(oDateFormat.parse(oFixture.sFormatted), oFixture.oDate,
+		assert.deepEqual(oDateFormat.parse(oFixture.sFormatted), oDate,
 			"The formatted string can be correctly parsed");
 	});
 });
 
 	//*********************************************************************************************
 [
-	{oDate : new Date(2017, 0, 1, 0, 0), sFormatted : "2017-01-01 Mitternacht"},
-	{oDate : new Date(2017, 0, 1, 0, 1), sFormatted : "2017-01-01 Nacht"},
-	{oDate : new Date(2017, 0, 1, 5, 0), sFormatted : "2017-01-01 Morgen"},
-	{oDate : new Date(2017, 0, 1, 10, 0), sFormatted : "2017-01-01 Vorm."},
-	{oDate : new Date(2017, 0, 1, 12, 0), sFormatted : "2017-01-01 Mittag"},
-	{oDate : new Date(2017, 0, 1, 13, 0), sFormatted : "2017-01-01 Nachm."},
-	{oDate : new Date(2017, 0, 1, 18, 0), sFormatted : "2017-01-01 Abend"},
-	{oDate : new Date(2017, 0, 1, 23, 59), sFormatted : "2017-01-01 Abend"}
+	{aDateParts : [2017, 0, 1, 0, 0], sFormatted : "2017-01-01 Mitternacht"},
+	{aDateParts : [2017, 0, 1, 0, 1], sFormatted : "2017-01-01 Nacht"},
+	{aDateParts : [2017, 0, 1, 5, 0], sFormatted : "2017-01-01 Morgen"},
+	{aDateParts : [2017, 0, 1, 10, 0], sFormatted : "2017-01-01 Vorm."},
+	{aDateParts : [2017, 0, 1, 12, 0], sFormatted : "2017-01-01 Mittag"},
+	{aDateParts : [2017, 0, 1, 13, 0], sFormatted : "2017-01-01 Nachm."},
+	{aDateParts : [2017, 0, 1, 18, 0], sFormatted : "2017-01-01 Abend"},
+	{aDateParts : [2017, 0, 1, 23, 59], sFormatted : "2017-01-01 Abend"}
 ].forEach(function (oFixture, i) {
 	QUnit.test("format flexible day period stand-alone 'B' de_DE: " + i, function (assert) {
-		var oDateFormat = DateFormat.getDateInstance({
+		var // create UI5Date instance within the test to consider the time zone defined in beforeEach
+			oDate = UI5Date.getInstance.apply(null, oFixture.aDateParts),
+			oDateFormat = DateFormat.getDateInstance({
 				pattern: "yyyy-MM-dd B"
 			}, new Locale("de_DE"));
 
-		assert.strictEqual(oDateFormat.format(oFixture.oDate).toString(), oFixture.sFormatted,
+		assert.strictEqual(oDateFormat.format(oDate).toString(), oFixture.sFormatted,
 			"Formatted: " + oFixture.sFormatted);
 	});
 });
@@ -2439,42 +2453,46 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{oDate : new Date(2017, 0, 1, 24, 0), sFormatted : "2017-01-02 půlnoc 12:00"},
-	{oDate : new Date(2017, 0, 1, 0, 0), sFormatted : "2017-01-01 půlnoc 12:00"},
-	{oDate : new Date(2017, 0, 1, 0, 1), sFormatted : "2017-01-01 v noci 12:01"},
-	{oDate : new Date(2017, 0, 1, 23, 59), sFormatted : "2017-01-01 v noci 11:59"}
+	{aDateParts : [2017, 0, 1, 24, 0], sFormatted : "2017-01-02 půlnoc 12:00"},
+	{aDateParts : [2017, 0, 1, 0, 0], sFormatted : "2017-01-01 půlnoc 12:00"},
+	{aDateParts : [2017, 0, 1, 0, 1], sFormatted : "2017-01-01 v noci 12:01"},
+	{aDateParts : [2017, 0, 1, 23, 59], sFormatted : "2017-01-01 v noci 11:59"}
 ].forEach(function (oFixture, i) {
 	var sTitle = "format and parse overlapping time period rules for 'B' in 'cs_CZ': " + i;
 
 	QUnit.test(sTitle, function (assert) {
-		var oDateFormat = DateFormat.getDateInstance({
+		var // create UI5Date instance within the test to consider the time zone defined in beforeEach
+			oDate = UI5Date.getInstance.apply(null, oFixture.aDateParts),
+			oDateFormat = DateFormat.getDateInstance({
 				pattern: "yyyy-MM-dd BBBB hh:mm"
 			}, new Locale("cs_CZ"));
 
-		assert.strictEqual(oDateFormat.format(oFixture.oDate).toString(), oFixture.sFormatted,
+		assert.strictEqual(oDateFormat.format(oDate).toString(), oFixture.sFormatted,
 			"Formatted: " + oFixture.sFormatted);
-		assert.deepEqual(oDateFormat.parse(oFixture.sFormatted), oFixture.oDate,
+		assert.deepEqual(oDateFormat.parse(oFixture.sFormatted), oDate,
 			"The formatted string can be correctly parsed");
 	});
 });
 
 	//*********************************************************************************************
 [
-	{sFormatted : "2017-01-01 夜 10:59", oDate : new Date(2017, 0, 1, 22, 59), sLocale : "ja_JP"},
-	{sFormatted : "2017-01-01 夜中 11:00", oDate : new Date(2017, 0, 1, 23), sLocale : "ja_JP"},
-	{sFormatted : "2017-01-01 pusnaktī 00:00", oDate : new Date(2017, 0, 1), sLocale : "lv_LV"},
-	{sFormatted : "2017-01-01 naktī 00:01", oDate : new Date(2017, 0, 1, 0, 1), sLocale : "lv_LV"}
+	{sFormatted : "2017-01-01 夜 10:59", aDateParts : [2017, 0, 1, 22, 59], sLocale : "ja_JP"},
+	{sFormatted : "2017-01-01 夜中 11:00", aDateParts : [2017, 0, 1, 23], sLocale : "ja_JP"},
+	{sFormatted : "2017-01-01 pusnaktī 00:00", aDateParts : [2017, 0, 1], sLocale : "lv_LV"},
+	{sFormatted : "2017-01-01 naktī 00:01", aDateParts : [2017, 0, 1, 0, 1], sLocale : "lv_LV"}
 ].forEach(function (oFixture, i) {
 	// These cases are special since, the parsed day period strings contain other day periods as
 	// substrings e.g. pusnaktī contains naktī
 	var sTitle = "parse flexible time period special cases for 'B' in different languages: " + i;
 
 	QUnit.test(sTitle, function (assert) {
-		var oDateFormat = DateFormat.getDateInstance({
+		var // create UI5Date instance within the test to consider the time zone defined in beforeEach
+			oDate = UI5Date.getInstance.apply(null, oFixture.aDateParts),
+			oDateFormat = DateFormat.getDateInstance({
 				pattern: "yyyy-MM-dd B hh:mm"
 			}, new Locale(oFixture.sLocale));
 
-		assert.deepEqual(oDateFormat.parse(oFixture.sFormatted), oFixture.oDate,
+		assert.deepEqual(oDateFormat.parse(oFixture.sFormatted), oDate,
 			"The formatted string can be correctly parsed");
 	});
 });
@@ -2593,12 +2611,19 @@ sap.ui.define([
 
 		QUnit.module("Scaling: Relative Time Formatter", {
 			beforeEach: function () {
-				this.clock = sinon.useFakeTimers(1444724476000); // Tue Oct 13 2015 10:21:16 GMT+0200 (CEST)
-				var oDate = new Date();
-				var oJan = new Date(oDate.getFullYear(), 0, 1);
-				var oJul = new Date(oDate.getFullYear(), 6, 1);
+				var iJanTzOffset, iJulTzOffset;
+
+				// Tue Oct 13 2015 10:21:16 (in current time zone)
+				this.clock = sinon.useFakeTimers(UI5Date.getInstance("2015-10-13T10:21:16").getTime());
+
+				iJanTzOffset = UI5Date.getInstance(2015, 0, 1).getTimezoneOffset();
+				iJulTzOffset = UI5Date.getInstance(2015, 6, 1).getTimezoneOffset();
 				// check whether the Daylight Saving Time is used in the current timezone
-				this.dst = oJan.getTimezoneOffset() !== oJul.getTimezoneOffset();
+				if (iJanTzOffset === iJulTzOffset) {
+					this.dst = 0;
+				} else {
+					this.dst = iJanTzOffset > iJulTzOffset ? 1 : -1;
+				}
 			},
 			afterEach: function () {
 				this.clock.restore();
@@ -2606,8 +2631,8 @@ sap.ui.define([
 		});
 
 		function date(scale, diff) {
-			var oNow = new Date(),
-				oResult = new Date(Date.UTC(oNow.getFullYear(), oNow.getMonth(), oNow.getDate(), oNow.getHours(), oNow.getMinutes(), oNow.getSeconds(), oNow.getMilliseconds()));
+			var oNow = UI5Date.getInstance(),
+				oResult = UI5Date.getInstance(Date.UTC(oNow.getFullYear(), oNow.getMonth(), oNow.getDate(), oNow.getHours(), oNow.getMinutes(), oNow.getSeconds(), oNow.getMilliseconds()));
 			switch (scale) {
 				case "second": oResult.setUTCSeconds(oResult.getUTCSeconds() + diff); break;
 				case "minute": oResult.setUTCMinutes(oResult.getUTCMinutes() + diff); break;
@@ -2617,7 +2642,7 @@ sap.ui.define([
 				case "year": oResult.setUTCFullYear(oResult.getUTCFullYear() + diff); break;
 				default: throw new TypeError("unexpected scale " + scale);
 			}
-			return new Date(oResult.getUTCFullYear(), oResult.getUTCMonth(), oResult.getUTCDate(), oResult.getUTCHours(), oResult.getUTCMinutes(), oResult.getUTCSeconds(), oResult.getUTCMilliseconds());
+			return UI5Date.getInstance(oResult.getUTCFullYear(), oResult.getUTCMonth(), oResult.getUTCDate(), oResult.getUTCHours(), oResult.getUTCMinutes(), oResult.getUTCSeconds(), oResult.getUTCMilliseconds());
 		}
 
 		QUnit.test("Time relative: format and parse", function (assert) {
@@ -2708,8 +2733,8 @@ sap.ui.define([
 						{ unit: "day", diff: -32, results: ["1 month ago", "1 month ago", "1 mo. ago", "1 mo. ago"], description: "Today - 32 Days --> 1 month ago", parseDiff: -2 * 24 * 60 * 60 * 1000 },
 						{ unit: "month", diff: 1, results: ["in 1 month", "in 1 month", "in 1 mo.", "in 1 mo."], description: "Today + 1 Month --> in 1 month" },
 						{ unit: "month", diff: -1, results: ["1 month ago", "1 month ago", "1 mo. ago", "1 mo. ago"], description: "Today - 1 Month --> 1 month ago" },
-						{ unit: "month", diff: 13, results: ["in 1 year", "in 1 year", "in 1 yr.", "in 1 yr."], description: "Today + 13 Months --> in 1 year", parseDiff: (31 * 24 + (that.dst ? 1/* summer->winter switch */ : 0)) * 60 * 60 * 1000 },
-						{ unit: "month", diff: 26, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 26 Months --> in 2 years", parseDiff: (61 * 24 + (that.dst ? 1/* summer->winter switch */ : 0)) * 60 * 60 * 1000 },
+						{ unit: "month", diff: 13, results: ["in 1 year", "in 1 year", "in 1 yr.", "in 1 yr."], description: "Today + 13 Months --> in 1 year", parseDiff: (31 * 24 + that.dst) * 60 * 60 * 1000 },
+						{ unit: "month", diff: 26, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 26 Months --> in 2 years", parseDiff: (61 * 24 + that.dst) * 60 * 60 * 1000 },
 						{ unit: "day", diff: 90, results: ["in 1 quarter", "in 1 quarter", "in 1 qtr.", "in 1 qtr."], description: "Today + 90 Days", parseOnly: true, parseDiff: -2 * 24 * 60 * 60 * 1000 },
 						{ unit: "hour", diff: 24, results: ["in 24 hours", "in 24 hours", "in 24 hr.", "in 24 hr."], description: "Today + 1 Days", parseOnly: true },
 						{ unit: "hour", diff: 72, results: ["in 72 hours", "in 72 hours", "in 72 hr.", "in 72 hr."], description: "Today + 3 Days", parseOnly: true },
@@ -2769,8 +2794,8 @@ sap.ui.define([
 						{ unit: "day", diff: -32, results: ["1 month ago", "1 month ago", "1 mo. ago", "1 mo. ago"], description: "Today - 32 Days --> 1 month ago", parseDiff: -2 * 24 * 60 * 60 * 1000 },
 						{ unit: "month", diff: 1, results: ["in 1 month", "in 1 month", "in 1 mo.", "in 1 mo."], description: "Today + 1 Month --> in 1 month" },
 						{ unit: "month", diff: -1, results: ["1 month ago", "1 month ago", "1 mo. ago", "1 mo. ago"], description: "Today - 1 Month --> 1 month" },
-						{ unit: "month", diff: 13, results: ["in 1 year", "in 1 year", "in 1 yr.", "in 1 yr."], description: "Today + 13 Months --> in 1 year", parseDiff: (31 * 24 + (that.dst ? 1/* summer->winter switch */ : 0)) * 60 * 60 * 1000 },
-						{ unit: "month", diff: 26, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 26 Months --> in 2 years", parseDiff: (61 * 24 + (that.dst ? 1/* summer->winter switch */ : 0)) * 60 * 60 * 1000 },
+						{ unit: "month", diff: 13, results: ["in 1 year", "in 1 year", "in 1 yr.", "in 1 yr."], description: "Today + 13 Months --> in 1 year", parseDiff: (31 * 24 + that.dst) * 60 * 60 * 1000 },
+						{ unit: "month", diff: 26, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 26 Months --> in 2 years", parseDiff: (61 * 24 + that.dst) * 60 * 60 * 1000 },
 						{ unit: "year", diff: 1, results: ["in 1 year", "in 1 year", "in 1 yr.", "in 1 yr."], description: "Today + 1 year --> in 1 year" }
 					]
 				}];
@@ -2795,12 +2820,11 @@ sap.ui.define([
 
 		QUnit.module("Islamic Date in locale en");
 
-		var oDate = new Date("Wed Jul 4 2001");
-
 		QUnit.test("format date to Islamic type with locale en", function (assert) {
-			var oDateFormat = DateFormat.getDateInstance({
-				calendarType: CalendarType.Islamic
-			});
+			var oDate = UI5Date.getInstance("Wed Jul 4 2001"),
+				oDateFormat = DateFormat.getDateInstance({
+					calendarType: CalendarType.Islamic
+				});
 
 			assert.equal(oDateFormat.format(oDate), "Rab. II 12, 1422 AH", "Date is formatted in Islamic calendar");
 		});
@@ -2873,7 +2897,9 @@ sap.ui.define([
 
 		["ar", "ar_EG", "ar_SA", "he"].forEach(function (sLocale, index) {
 			QUnit.test("format Islamic date " + sLocale, function (assert) {
-				var oDateFormat = DateFormat.getDateInstance(new Locale(sLocale));
+				var oDate = UI5Date.getInstance("Wed Jul 4 2001"),
+					oDateFormat = DateFormat.getDateInstance(new Locale(sLocale));
+
 				assert.equal(oDateFormat.format(oDate), aResultLocal[index], "Date is formatted to Islamic Date in " + sLocale + " locale");
 			});
 
@@ -2900,16 +2926,15 @@ sap.ui.define([
 			// });
 		});
 
-		QUnit.module("Japanese Date", {
-			oDate: new Date("Wed Jul 4 2001")
-		});
+		QUnit.module("Japanese Date");
 
 		QUnit.test("format date to Japanese type", function (assert) {
-			var oDateFormat = DateFormat.getDateInstance({
-				calendarType: CalendarType.Japanese
-			}, new Locale("ja_JP"));
+			var oDate = UI5Date.getInstance("Wed Jul 4 2001"),
+				oDateFormat = DateFormat.getDateInstance({
+					calendarType: CalendarType.Japanese
+				}, new Locale("ja_JP"));
 
-			assert.equal(oDateFormat.format(this.oDate), "平成13年7月4日", "Date is formatted in Japanese calendar");
+			assert.equal(oDateFormat.format(oDate), "平成13年7月4日", "Date is formatted in Japanese calendar");
 		});
 
 		QUnit.test("format date to Japanese type - edge cases", function (assert) {
@@ -2939,7 +2964,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("format/parse date with Gannen instead of Ichinen", function (assert) {
-			var oDate = new Date("May 1 2019"),
+			var oDate = UI5Date.getInstance("May 1 2019"),
 				sDate = "令和元年5月1日",
 				oDateFormat = DateFormat.getDateInstance({
 					calendarType: CalendarType.Japanese
@@ -2950,7 +2975,7 @@ sap.ui.define([
 			assert.equal(sFormatted, sDate, "Date is formatted correctly with Gannen year");
 			assert.deepEqual(oParsed, oDate, "Date with Gannen year is parsed correctly");
 
-			oDate = new Date("Apr 1 2019");
+			oDate = UI5Date.getInstance("Apr 1 2019");
 			sDate = "平成31年4月1日";
 			sFormatted = oDateFormat.format(oDate);
 			oParsed = oDateFormat.parse(sDate);
@@ -2958,7 +2983,7 @@ sap.ui.define([
 			assert.equal(sFormatted, sDate, "Year ending with 1 is formatted as a number");
 			assert.deepEqual(oParsed, oDate, "Date with numeric year is parsed correctly");
 
-			oDate = new Date("May 1 2019");
+			oDate = UI5Date.getInstance("May 1 2019");
 			sDate = "R1/5/1";
 			oDateFormat = DateFormat.getDateInstance({
 				calendarType: CalendarType.Japanese,
@@ -2970,7 +2995,7 @@ sap.ui.define([
 			assert.equal(sFormatted, sDate, "Date is formatted correctly with numeric year");
 			assert.deepEqual(oParsed, oDate, "Date with numeric year is parsed correctly");
 
-			oDate = [new Date("May 1 2019"), new Date("May 10 2019")];
+			oDate = [UI5Date.getInstance("May 1 2019"), UI5Date.getInstance("May 10 2019")];
 			sDate = "令和元年5月1日～10日";
 			oDateFormat = DateFormat.getDateInstance({
 				calendarType: CalendarType.Japanese,
@@ -2983,7 +3008,7 @@ sap.ui.define([
 			assert.equal(sFormatted, sDate, "Date interval is formatted correctly with Gannen year");
 			assert.deepEqual(oParsed, oDate, "Date interval with Gannen year is parsed correctly");
 
-			oDate = [new Date("Apr 1 2019"), new Date("May 1 2019")];
+			oDate = [UI5Date.getInstance("Apr 1 2019"), UI5Date.getInstance("May 1 2019")];
 			sDate = "平成31年4月1日～令和元年5月1日";
 			sFormatted = oDateFormat.format(oDate);
 			oParsed = oDateFormat.parse(sDate);
@@ -3017,16 +3042,15 @@ sap.ui.define([
 			doTestRelative(assert, false, { style: "long", relativeRange: [1, 5], calendarType: CalendarType.Japanese }, "ja_JP", "style long, range [1, 5], en with calendar type Japanese");
 		});
 
-		QUnit.module("Japanese Date in locale en", {
-			oDate: new Date("Wed Jul 4 2001")
-		});
+		QUnit.module("Japanese Date in locale en");
 
 		QUnit.test("format date to Japanese type with locale en", function (assert) {
-			var oDateFormat = DateFormat.getDateInstance({
-				calendarType: CalendarType.Japanese
-			});
+			var oDate = UI5Date.getInstance("Wed Jul 4 2001"),
+				oDateFormat = DateFormat.getDateInstance({
+					calendarType: CalendarType.Japanese
+				});
 
-			assert.equal(oDateFormat.format(this.oDate), "Jul 4, 13 Heisei", "Date is formatted in Japanese calendar");
+			assert.equal(oDateFormat.format(oDate), "Jul 4, 13 Heisei", "Date is formatted in Japanese calendar");
 		});
 
 		QUnit.test("format date to Japanese type with relative and locale en", function (assert) {
@@ -3053,16 +3077,15 @@ sap.ui.define([
 			doTestRelative(assert, false, { style: "long", relativeRange: [1, 5], calendarType: CalendarType.Japanese }, "en", "style long, range [1, 5], en with calendar type Japanese");
 		});
 
-		QUnit.module("Persian Date", {
-			oDate: new Date("Wed Jul 4 2001")
-		});
+		QUnit.module("Persian Date");
 
 		QUnit.test("format date to Persian type", function (assert) {
-			var oDateFormat = DateFormat.getDateInstance({
-				calendarType: CalendarType.Persian
-			}, new Locale("fa_IR"));
+			var oDate = UI5Date.getInstance("Wed Jul 4 2001"),
+				oDateFormat = DateFormat.getDateInstance({
+					calendarType: CalendarType.Persian
+				}, new Locale("fa_IR"));
 
-			assert.equal(oDateFormat.format(this.oDate).toString(), "13 تیر 1380", "Date is formatted in Persian calendar");
+			assert.equal(oDateFormat.format(oDate).toString(), "13 تیر 1380", "Date is formatted in Persian calendar");
 		});
 
 		QUnit.test("format date to Persian type with relative", function (assert) {
@@ -3089,14 +3112,13 @@ sap.ui.define([
 			doTestRelative(assert, false, { style: "long", relativeRange: [1, 5], calendarType: CalendarType.Persian }, "fa_IR", "style long, range [1, 5], en with calendar type Persian");
 		});
 
-		QUnit.module("Persian Date in locale en", {
-			oDate: new Date("Wed Jul 4 2001")
-		});
+		QUnit.module("Persian Date in locale en");
 
 		QUnit.test("format date to Persian type with locale en", function (assert) {
-			var oDateFormat = DateFormat.getDateInstance({
-				calendarType: CalendarType.Persian
-			});
+			var oDate = UI5Date.getInstance("Wed Jul 4 2001"),
+				oDateFormat = DateFormat.getDateInstance({
+					calendarType: CalendarType.Persian
+				});
 
 			assert.equal(oDateFormat.format(oDate), "Tir 13, 1380 AP", "Date is formatted in Persian calendar");
 		});
@@ -3125,16 +3147,15 @@ sap.ui.define([
 			doTestRelative(assert, false, { style: "long", relativeRange: [1, 5], calendarType: CalendarType.Persian }, "en", "style long, range [1, 5], en with calendar type Persian");
 		});
 
-		QUnit.module("Buddhist Date", {
-			oDate: new Date("Wed Jul 4 2001")
-		});
+		QUnit.module("Buddhist Date");
 
 		QUnit.test("format date to Buddhist type", function (assert) {
-			var oDateFormat = DateFormat.getDateInstance({
-				calendarType: CalendarType.Buddhist
-			}, new Locale("th_TH"));
+			var oDate = UI5Date.getInstance("Wed Jul 4 2001"),
+				oDateFormat = DateFormat.getDateInstance({
+					calendarType: CalendarType.Buddhist
+				}, new Locale("th_TH"));
 
-			assert.equal(oDateFormat.format(this.oDate), "4 ก.ค. 2544", "Date is formatted in Buddhist calendar");
+			assert.equal(oDateFormat.format(oDate), "4 ก.ค. 2544", "Date is formatted in Buddhist calendar");
 		});
 
 		QUnit.test("format date to Buddhist type edge cases", function (assert) {
@@ -3188,32 +3209,32 @@ sap.ui.define([
 			doTestRelative(assert, false, { style: "long", relativeRange: [1, 5], calendarType: CalendarType.Buddhist }, "th_TH", "style long, range [1, 5], en with calendar type Buddhist");
 		});
 
-		QUnit.module("Buddhist Date in locale en", {
-			oDate: new Date("Wed Jul 4 2001")
-		});
+		QUnit.module("Buddhist Date in locale en");
 
 		QUnit.test("format date to Buddhist type with locale en", function (assert) {
-			var oDateFormat = DateFormat.getDateInstance({
-				calendarType: CalendarType.Buddhist
-			});
+			var oDate = UI5Date.getInstance("Wed Jul 4 2001"),
+				oDateFormat = DateFormat.getDateInstance({
+					calendarType: CalendarType.Buddhist
+				});
 
-			assert.equal(oDateFormat.format(this.oDate), "Jul 4, 2544 BE", "Date is formatted in Buddhist calendar");
+			assert.equal(oDateFormat.format(oDate), "Jul 4, 2544 BE", "Date is formatted in Buddhist calendar");
 		});
 
 		QUnit.test("format date to Buddhist type with locale en and calendar week", function (assert) {
-			var oDateFormat = DateFormat.getDateInstance({
-				calendarType: CalendarType.Buddhist,
-				pattern: "YYYY'/'ww"
-			});
+			var oDate = UI5Date.getInstance("Wed Jul 4 2001"),
+				oDateFormat = DateFormat.getDateInstance({
+					calendarType: CalendarType.Buddhist,
+					pattern: "YYYY'/'ww"
+				});
 
-			assert.equal(oDateFormat.format(this.oDate), "2544/27", "Date is formatted in Buddhist calendar");
+			assert.equal(oDateFormat.format(oDate), "2544/27", "Date is formatted in Buddhist calendar");
 
 
 			oDateFormat = DateFormat.getDateInstance({
 				calendarType: CalendarType.Buddhist,
 				pattern: "yyyy"
 			});
-			assert.equal(oDateFormat.format(this.oDate), "2544", "Date is formatted in Buddhist calendar");
+			assert.equal(oDateFormat.format(oDate), "2544", "Date is formatted in Buddhist calendar");
 		});
 
 		QUnit.test("format date to Buddhist type with relative and locale en", function (assert) {
@@ -3258,19 +3279,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("Interval format with no array", function (assert) {
-			this.oIntervalFormat.format(new Date());
+			this.oIntervalFormat.format(UI5Date.getInstance());
 			assert.equal(this.oErrorSpy.callCount, 1, "Error is logged");
 			assert.equal(this.oErrorSpy.getCall(0).args[0], "Interval DateFormat expects an array with two dates for the first argument but only one date is given.", "Correct log message");
 		});
 
 		QUnit.test("Interval format with array but length != 2", function (assert) {
-			this.oIntervalFormat.format([new Date()]);
+			this.oIntervalFormat.format([UI5Date.getInstance()]);
 			assert.equal(this.oErrorSpy.callCount, 1, "Error is logged");
 			assert.equal(this.oErrorSpy.getCall(0).args[0], "Interval DateFormat can only format with 2 date instances but 1 is given.");
 		});
 
 		QUnit.test("Interval format with invalid date", function (assert) {
-			this.oIntervalFormat.format([new Date(), new Date("abc")]);
+			this.oIntervalFormat.format([UI5Date.getInstance(), UI5Date.getInstance("abc")]);
 			assert.equal(this.oErrorSpy.callCount, 1, "Error is logged");
 			assert.equal(this.oErrorSpy.getCall(0).args[0], "At least one date instance which is passed to the interval DateFormat isn't valid.");
 		});
@@ -3288,8 +3309,8 @@ sap.ui.define([
 				strictParsing: true
 			});
 
-			var endDate = new Date(2018,1,1);
-			var startDate = new Date(2019,1,15);
+			var endDate = UI5Date.getInstance(2018,1,1);
+			var startDate = UI5Date.getInstance(2019,1,15);
 
 			// no strictParsing
 			aParsedInterval = this.oIntervalFormat.parse("Feb 15, 2019 – Feb 1, 2018");
@@ -3352,14 +3373,14 @@ sap.ui.define([
 
 			// + 2 days
 			var oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)), CalendarType.Gregorian);
-			var oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 2 * 24 * 3600 * 1000), CalendarType.Gregorian);
+			var oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 2 * 24 * 3600 * 1000), CalendarType.Gregorian);
 
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Day": true }, "correct diff returned");
 
 			// + 0.5 day
 			// if two dates are identical on the fields which we compare, no diff field will be returned
 			oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
-			oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 12 * 3600 * 1000));
+			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 12 * 3600 * 1000));
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "if two dates are identical on the fields which we compare, 'null' will be returned");
 
 			oIntervalFormat = DateFormat.getDateInstance({
@@ -3384,7 +3405,7 @@ sap.ui.define([
 				format: "Hms"
 			});
 			var oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
-			var oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 5400 * 1000));
+			var oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 5400 * 1000));
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Hour": true, "Minute": true }, "correct diff returned");
 
 
@@ -3399,7 +3420,7 @@ sap.ui.define([
 				format: "yMd"
 			});
 			oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
-			oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 1800 * 1000));
+			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 1800 * 1000));
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Minute": true }, "the correct diff returned.");
 
 			oIntervalFormat = DateFormat.getTimeInstance({
@@ -3429,13 +3450,13 @@ sap.ui.define([
 				format: "Hms"
 			});
 			var oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
-			var oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 5400 * 1000));
+			var oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 5400 * 1000));
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Hour": true, "Minute": true }, "correct diff returned");
 
 
 			// if two dates are identical on the fields which we compare, no diff field will be returned
 			oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
-			oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 999));
+			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 999));
 			assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "'null' will be returned");
 
 			// if the diff field doesn't exist in the 'format' option, the default diff field is used.
@@ -3444,7 +3465,7 @@ sap.ui.define([
 				format: "yMd"
 			});
 			oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
-			oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 1800 * 1000));
+			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(oDate.getTime() + 1800 * 1000));
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Minute": true }, "correct diff returned.");
 		});
 
@@ -3458,8 +3479,8 @@ sap.ui.define([
 				format: "yMMMd"
 			}, oLocale);
 
-			var oDate = new Date(2017, 3, 11);
-			var oDate1 = new Date(oDate.getTime() + 2 * 24 * 3600 * 1000);
+			var oDate = UI5Date.getInstance(2017, 3, 11);
+			var oDate1 = UI5Date.getInstance(oDate.getTime() + 2 * 24 * 3600 * 1000);
 			var sResult = oIntervalFormat.format([oDate, oDate1]);
 
 			assert.equal(sResult, "11.–13. Apr. 2017");
@@ -3478,29 +3499,29 @@ sap.ui.define([
 			var oDate1, oDate2, sResult;
 
 			// Same era
-			oDate1 = new Date(2019, 2, 1);
-			oDate2 = new Date(2019, 3, 1);
+			oDate1 = UI5Date.getInstance(2019, 2, 1);
+			oDate2 = UI5Date.getInstance(2019, 3, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
 			assert.equal(sResult, "Mar 1 – Apr 1, 31 Heisei");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
 			// Same era, different year
-			oDate1 = new Date(2018, 3, 1);
-			oDate2 = new Date(2019, 3, 1);
+			oDate1 = UI5Date.getInstance(2018, 3, 1);
+			oDate2 = UI5Date.getInstance(2019, 3, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
 			assert.equal(sResult, "Apr 1, 30 – Apr 1, 31 Heisei");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
 			// Different era
-			oDate1 = new Date(2019, 3, 1);
-			oDate2 = new Date(2019, 4, 1);
+			oDate1 = UI5Date.getInstance(2019, 3, 1);
+			oDate2 = UI5Date.getInstance(2019, 4, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
 			assert.equal(sResult, "Apr 1, 31 Heisei – May 1, 1 Reiwa");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
 			// Different era, same year
-			oDate1 = new Date(1989, 4, 1);
-			oDate2 = new Date(2019, 4, 1);
+			oDate1 = UI5Date.getInstance(1989, 4, 1);
+			oDate2 = UI5Date.getInstance(2019, 4, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
 			assert.equal(sResult, "May 1, 1 Heisei – May 1, 1 Reiwa");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
@@ -3524,14 +3545,14 @@ sap.ui.define([
 
 
 				// 2022 (Reiwa 4)
-				oDate = new Date(2022, 0, 1);
+				oDate = UI5Date.getInstance(2022, 0, 1);
 				assert.equal(oDateFormatYearWeek.format(oDate), "2021/52",
 					"Date is formatted in Japanese calendar (YYYY'/'ww)");
 				assert.equal(oDateFormatCalendarYear.format(oDate), "0004",
 					"Date is formatted in Japanese calendar (yyyy)");
 
 				// 2016 (Heisei 28)
-				oDate = new Date(2016, 0, 1);
+				oDate = UI5Date.getInstance(2016, 0, 1);
 				assert.equal(oDateFormatYearWeek.format(oDate), "2015/53",
 					"Date is formatted in Japanese calendar (YYYY'/'ww)");
 				assert.equal(oDateFormatCalendarYear.format(oDate), "0028",
@@ -3550,29 +3571,29 @@ sap.ui.define([
 			var oDate1, oDate2, sResult;
 
 			// Same era
-			oDate1 = new Date(2019, 2, 1);
-			oDate2 = new Date(2019, 3, 1);
+			oDate1 = UI5Date.getInstance(2019, 2, 1);
+			oDate2 = UI5Date.getInstance(2019, 3, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
 			assert.equal(sResult, "平成31年3月1日～4月1日");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
 			// Same era, different year
-			oDate1 = new Date(2018, 3, 1);
-			oDate2 = new Date(2019, 3, 1);
+			oDate1 = UI5Date.getInstance(2018, 3, 1);
+			oDate2 = UI5Date.getInstance(2019, 3, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
 			assert.equal(sResult, "平成30年4月1日～31年4月1日");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
 			// Different era
-			oDate1 = new Date(2019, 3, 1);
-			oDate2 = new Date(2019, 4, 1);
+			oDate1 = UI5Date.getInstance(2019, 3, 1);
+			oDate2 = UI5Date.getInstance(2019, 4, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
 			assert.equal(sResult, "平成31年4月1日～令和元年5月1日");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
 			// Different era, same year
-			oDate1 = new Date(1989, 4, 1);
-			oDate2 = new Date(2019, 4, 1);
+			oDate1 = UI5Date.getInstance(1989, 4, 1);
+			oDate2 = UI5Date.getInstance(2019, 4, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
 			assert.equal(sResult, "平成元年5月1日～令和元年5月1日");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
@@ -3585,8 +3606,8 @@ sap.ui.define([
 				format: "yw"
 			});
 
-			var oDate = UniversalDate.getInstance(new Date(2017, 2, 31));
-			var oDate1 = UniversalDate.getInstance(new Date(2017, 3, 1));
+			var oDate = UniversalDate.getInstance(UI5Date.getInstance(2017, 2, 31));
+			var oDate1 = UniversalDate.getInstance(UI5Date.getInstance(2017, 3, 1));
 			var sResult = oIntervalFormat.format([oDate, oDate1]);
 			assert.equal(sResult, "week 13 of 2017", "Two dates correctly formatted");
 
@@ -3604,8 +3625,8 @@ sap.ui.define([
 			sResult = oIntervalFormat.format([oDate, oDate1]);
 			assert.equal(sResult, "Q1 2017 – Q2 2017", "Two dates correctly formatted");
 
-			oDate = UniversalDate.getInstance(new Date(2017, 3, 1));
-			oDate1 = UniversalDate.getInstance(new Date(2017, 3, 13));
+			oDate = UniversalDate.getInstance(UI5Date.getInstance(2017, 3, 1));
+			oDate1 = UniversalDate.getInstance(UI5Date.getInstance(2017, 3, 13));
 			sResult = oIntervalFormat.format([oDate, oDate1]);
 			assert.equal(sResult, "Q2 2017", "Two dates correctly formatted");
 		});
@@ -3617,8 +3638,8 @@ sap.ui.define([
 				interval: true,
 				style: "short"
 			}, oLocale);
-			var oDate = new Date(2017, 3, 11);
-			var oDate1 = new Date(oDate.getTime() + 2 * 24 * 3600 * 1000);
+			var oDate = UI5Date.getInstance(2017, 3, 11);
+			var oDate1 = UI5Date.getInstance(oDate.getTime() + 2 * 24 * 3600 * 1000);
 
 			var sResult = oIntervalFormat.format([oDate, oDate1]);
 
@@ -3637,8 +3658,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("Allow single date", function(assert) {
-			var oDate1 = new Date(2019, 0, 24),
-				oDate2 = new Date(2019, 0, 31);
+			var oDate1 = UI5Date.getInstance(2019, 0, 24),
+				oDate2 = UI5Date.getInstance(2019, 0, 31);
 
 			// default interval formatting
 			var oIntervalFormat = DateFormat.getDateInstance({ interval: true	});
@@ -3669,8 +3690,8 @@ sap.ui.define([
 		QUnit.test("am/pm", function (assert) {
 			var oLocale = new Locale("en");
 
-			var oDate = new Date(1970, 0, 1, 9, 0, 0);
-			var oDate1 = new Date(1970, 0, 1, 13, 0, 0);
+			var oDate = UI5Date.getInstance(1970, 0, 1, 9, 0, 0);
+			var oDate1 = UI5Date.getInstance(1970, 0, 1, 13, 0, 0);
 
 			var oIntervalFormat = DateFormat.getTimeInstance({
 				interval: true,
@@ -3681,8 +3702,8 @@ sap.ui.define([
 			assert.equal(sResult, "9 AM – 1 PM");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 
-			oDate = new Date(1970, 0, 1, 11, 0, 0);
-			oDate1 = new Date(1970, 0, 1, 12, 0, 0);
+			oDate = UI5Date.getInstance(1970, 0, 1, 11, 0, 0);
+			oDate1 = UI5Date.getInstance(1970, 0, 1, 12, 0, 0);
 
 			oIntervalFormat = DateFormat.getTimeInstance({
 				interval: true,
@@ -3695,8 +3716,8 @@ sap.ui.define([
 			assert.equal(sResult, "11 AM – 12 PM");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 
-			oDate = new Date(1970, 0, 1, 10, 0, 0);
-			oDate1 = new Date(1970, 0, 1, 11, 0, 0);
+			oDate = UI5Date.getInstance(1970, 0, 1, 10, 0, 0);
+			oDate1 = UI5Date.getInstance(1970, 0, 1, 11, 0, 0);
 
 			oIntervalFormat = DateFormat.getTimeInstance({
 				interval: true,
@@ -3721,7 +3742,7 @@ sap.ui.define([
 			});
 
 			// if two dates are identical on the fields which we compare, no diff field will be returned
-			var oDate = new Date(2017, 3, 11);
+			var oDate = UI5Date.getInstance(2017, 3, 11);
 			var sResult = oIntervalFormat.format([oDate, oDate]);
 
 			assert.equal(sResult.toString(), oFormat.format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
@@ -3735,8 +3756,8 @@ sap.ui.define([
 			});
 
 			// if two dates are identical on the fields which we compare, no diff field will be returned
-			var oDate1 = new Date(2017, 3, 11);
-			var oDate2 = new Date(2017, 3, 12);
+			var oDate1 = UI5Date.getInstance(2017, 3, 11);
+			var oDate2 = UI5Date.getInstance(2017, 3, 12);
 			var sResult = oIntervalFormat.format([oDate1, oDate2]);
 			assert.equal(sResult.toString(), "Apr 11 – 12, 2017", "Different dates are formatted correctly");
 
@@ -3752,7 +3773,7 @@ sap.ui.define([
 			var oFormat = DateFormat.getDateInstance();
 
 			// if two dates are identical on the fields which we compare, no diff field will be returned
-			var oDate = new Date(2017, 3, 11);
+			var oDate = UI5Date.getInstance(2017, 3, 11);
 			var sResult = oIntervalFormat.format([oDate, oDate]);
 
 			assert.equal(sResult.toString(), oFormat.format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
@@ -3766,9 +3787,9 @@ sap.ui.define([
 			});
 
 			// if two dates are identical on the fields which we compare, no diff field will be returned
-			var oDate1 = new Date(2017, 2, 11);
-			var oDate2 = new Date(2017, 5, 11);
-			var oDate3 = new Date(2017, 1, 11);
+			var oDate1 = UI5Date.getInstance(2017, 2, 11);
+			var oDate2 = UI5Date.getInstance(2017, 5, 11);
+			var oDate3 = UI5Date.getInstance(2017, 1, 11);
 
 			var sResult1 = oIntervalFormat.format([oDate1, oDate2]);
 			var sResult2 = oIntervalFormat.format([oDate1, oDate3]);
@@ -3784,9 +3805,9 @@ sap.ui.define([
 			});
 
 			// if two dates are identical on the fields which we compare, no diff field will be returned
-			var oDate1 = new Date(2017, 2, 11);
-			var oDate2 = new Date(2017, 2, 21);
-			var oDate3 = new Date(2017, 2, 22);
+			var oDate1 = UI5Date.getInstance(2017, 2, 11);
+			var oDate2 = UI5Date.getInstance(2017, 2, 21);
+			var oDate3 = UI5Date.getInstance(2017, 2, 22);
 
 			var sResult1 = oIntervalFormat.format([oDate1, oDate2]);
 			var sResult2 = oIntervalFormat.format([oDate2, oDate3]);
@@ -3808,8 +3829,8 @@ sap.ui.define([
 				interval: true
 			});
 
-			var oDate = new Date(2017, 3, 11);
-			var oDate1 = new Date(oDate.getTime() + 2 * 24 * 3600 * 1000);
+			var oDate = UI5Date.getInstance(2017, 3, 11);
+			var oDate1 = UI5Date.getInstance(oDate.getTime() + 2 * 24 * 3600 * 1000);
 
 			var sResult = oIntervalFormat1.format([oDate, oDate1]);
 			assert.deepEqual(oIntervalFormat2.parse(sResult), [null, null]);
@@ -3821,8 +3842,8 @@ sap.ui.define([
 				interval: true
 			});
 
-			var oDate = new Date(2017, 3, 11);
-			var oDate1 = new Date(2017, 3, 13);
+			var oDate = UI5Date.getInstance(2017, 3, 11);
+			var oDate1 = UI5Date.getInstance(2017, 3, 13);
 			var aCompare = [oDate, oDate1];
 
 			assert.deepEqual(oIntervalFormat.parse("4/11/17 – 4/13/17"), aCompare, "Parse fallback short style");
@@ -3845,8 +3866,8 @@ sap.ui.define([
 				pattern: "'abc' dd.MM" // a non match pattern to test the fallbacks
 			}, new Locale("de_DE"));
 
-			var oDate = new Date(2017, 3, 11);
-			var oDate1 = new Date(2017, 3, 13);
+			var oDate = UI5Date.getInstance(2017, 3, 11);
+			var oDate1 = UI5Date.getInstance(2017, 3, 13);
 			var aCompare = [oDate, oDate1];
 
 			assert.deepEqual(oIntervalFormat.parse("11.04.17 – 13.04.17"), aCompare, "Parse fallback short style");
@@ -3866,7 +3887,7 @@ sap.ui.define([
 		QUnit.module("FallbackFormatOptions");
 
 		QUnit.test("Immutability of multiple DateFormat instances", function (assert) {
-			var oDate = new Date(2017, 3, 11);
+			var oDate = UI5Date.getInstance(2017, 3, 11);
 			var oDateFormat1 = DateFormat.getDateInstance({
 				style: "short",
 				interval: true
@@ -4475,12 +4496,12 @@ sap.ui.define([
 	pattern: "dd",
 	input: "11",
 	expected: [{symbol: "d", subValue: "11", exactLength: false}],
-	result: new Date(1970, 0, 11)
+	dateParts: [1970, 0, 11]
 }, {
 	pattern: "ddMM",
 	input: "1102",
 	expected: [{symbol: "d", subValue: "1102", exactLength: true}, {symbol: "M", subValue: "02", exactLength: true}],
-	result: new Date(1970, 1, 11)
+	dateParts: [1970, 1, 11]
 }, {
 	pattern: "dd-MM",
 	input: "11-02",
@@ -4489,7 +4510,7 @@ sap.ui.define([
 		{symbol: "", subValue: "-02", exactLength: false},
 		{symbol: "M", subValue: "02", exactLength: false}
 	],
-	result: new Date(1970, 1, 11)
+	dateParts: [1970, 1, 11]
 }, {
 	pattern: "-ddMM",
 	input: "-1102",
@@ -4498,7 +4519,7 @@ sap.ui.define([
 		{symbol: "d", subValue: "1102", exactLength: true},
 		{symbol: "M", subValue: "02", exactLength: true}
 	],
-	result: new Date(1970, 1, 11)
+	dateParts: [1970, 1, 11]
 }, {
 	pattern: "ddMM-",
 	input: "1102-",
@@ -4507,10 +4528,12 @@ sap.ui.define([
 		{symbol: "M", subValue: "02-", exactLength: true},
 		{symbol: "", subValue: "-", exactLength: false}
 	],
-	result: new Date(1970, 1, 11)
+	dateParts: [1970, 1, 11]
 }].forEach(function (oFixture) {
 	QUnit.test("_parse: determine exactLength for parse config; pattern: " + oFixture.pattern, function (assert) {
-		var mExpectedParts = {
+		var // create UI5Date instance within the test to consider the time zone defined in beforeEach
+			oDate = UI5Date.getInstance.apply(null, oFixture.dateParts),
+			mExpectedParts = {
 				"": {type: "text", value: "-"},
 				"d": {type: "day", symbol: "d", digits: 2},
 				"M": {type: "month", symbol: "M", digits: 2}
@@ -4530,7 +4553,7 @@ sap.ui.define([
 		});
 
 		// code under test
-		assert.deepEqual(oFormat.parse(oFixture.input), oFixture.result);
+		assert.deepEqual(oFormat.parse(oFixture.input), oDate);
 	});
 });
 
