@@ -6,14 +6,18 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary',
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Arrangements",
-	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/AppUnderTestMDCTable"
+	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
+	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/AppUnderTestMDCTable",
+	"sap/ui/core/library"
 ], function(
 	/** @type sap.base.Log */ Log,
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.opaQunit */ opaTest,
 	/** @type sap.ui.test.Opa5 */ TestLibrary,
 	/** @type sap.ui.test.Opa5 */ Arrangements,
-	/** @type sap.ui.test.PageObjectDefinition */ TestObjects) {
+	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
+	/** @type sap.ui.test.PageObjectDefinition */ TestObjects,
+	coreLibrary) {
 	"use strict";
 
 	if (window.blanket) {
@@ -33,7 +37,7 @@ sap.ui.define([
 		}
 	});
 
-	var sTableId = "__xmlview0--mdcTable";
+	var sTableId = "container-appUnderTestMDCTable---MyView--mdcTable";
 
 	QUnit.module("MDC Table OpaTests");
 
@@ -200,5 +204,77 @@ sap.ui.define([
 		Then.onTheAppUnderTestMDCTable.iShouldSeeSomeRowsSelected(sTableId, 7, 8);
 		When.onTheAppUnderTestMDCTable.iClearSelection(sTableId); // <- public action
 		Then.onTheAppUnderTestMDCTable.iShouldSeeAllVisibleRowsSelected(sTableId, false);
+	});
+
+	/* =========================================================== */
+	/* Column menu                                                 */
+	/* =========================================================== */
+
+	opaTest("Open column menu", function(Given, When, Then) {
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader("Category");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickSort({key: "Category", label: "Category", sortOrder: coreLibrary.SortOrder.None});
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickGroup({key: "Category", label: "Category", grouped: false});
+		Then.onTheAppUnderTestMDCTable.iShouldSeeNumberOfColumnMenuItems(4);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuItems([
+			Util.P13nDialogInfo.Titles.sort,
+			Util.P13nDialogInfo.Titles.filter,
+			Util.P13nDialogInfo.Titles.group,
+			Util.P13nDialogInfo.Titles.columns
+		]);
+	});
+
+	// TODO: Re-enable tests that are commented out. They are using APIs from qunit/p13n/OpaTests/utility. Make them reusable.
+
+	opaTest("Sort with column menu quick action", function(Given, When, Then) {
+		When.onTheAppUnderTestMDCTable.iUseColumnMenuQuickSort({key: "Category", sortOrder: coreLibrary.SortOrder.Ascending});
+		//Then.onTheAppUnderTestMDCTable.iShouldSeeColumnSorted("Name", true, false);
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
+	});
+
+	opaTest("Group with column menu quick action", function(Given, When, Then) {
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader("Category");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		When.onTheAppUnderTestMDCTable.iUseColumnMenuQuickGroup({key: "Category", grouped: true});
+		//Then.onTheAppUnderTestMDCTable.iShouldSeeGroupConditions({groupLevels: [{name: "Category"}]});
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
+	});
+
+	opaTest("Sort with column menu item", function(Given, When, Then) {
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader("Category");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		When.onTheAppUnderTestMDCTable.iPressOnColumnMenuItem(Util.P13nDialogInfo.Titles.sort);
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuItemContent(Util.P13nDialogInfo.Titles.sort);
+		//Then.onTheAppUnderTestMDCTable.iShouldSeeP13nSortItems([
+		//	{p13nItem: "Category", sorted: true, descending: false}
+		//]);
+		//When.onTheAppUnderTestMDCTable.iRemoveSorting();
+		When.onTheAppUnderTestMDCTable.iPressConfirmInColumnMenuItemContent();
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
+		//Then.onTheAppUnderTestMDCTable.iShouldSeeColumnSorted("Category", false, false);
+		When.onTheAppUnderTestMDCTable.iPressOnColumnHeader("Category");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickSort({key: "Category", label: "Category", sortOrder: coreLibrary.SortOrder.Ascending});
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickGroup({key: "Category", label: "Category", grouped: true});
+	});
+
+	opaTest("Reset p13n changes", function(Given, When, Then) {
+		//When.onTheAppUnderTestMDCTable.iUseColumnMenuQuickSort({key: "Category", sortOrder: coreLibrary.SortOrder.Ascending});
+		//When.onTheAppUnderTestMDCTable.iPressOnColumnHeader("Category");
+		Then.onTheAppUnderTestMDCTable.iShouldSeeOneColumnMenu();
+		When.onTheAppUnderTestMDCTable.iPressOnColumnMenuItem(Util.P13nDialogInfo.Titles.sort);
+		When.onTheAppUnderTestMDCTable.iPressResetInColumnMenuItemContent();
+		When.onTheAppUnderTestMDCTable.iNavigateBackFromColumnMenuItemContent();
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickSort({key: "Category", label: "Category", sortOrder: coreLibrary.SortOrder.None});
+		Then.onTheAppUnderTestMDCTable.iShouldSeeColumnMenuQuickGroup({key: "Category", label: "Category", grouped: true});
+	});
+
+	opaTest("Close column menu", function(Given, When, Then) {
+		When.onTheAppUnderTestMDCTable.iCloseTheColumnMenu();
+		Then.onTheAppUnderTestMDCTable.iShouldNotSeeTheColumnMenu();
+
+		// Teardown
+		Then.onTheAppUnderTestMDCTable.iTeardownMyAppFrame();
 	});
 });
