@@ -16711,13 +16711,13 @@ sap.ui.define([
 			oListBinding.setAggregation({aggregate : {AGE : {}}});
 
 			// code under test
-			assert.deepEqual(oListBinding.getAggregation(), {
+			assert.deepEqual(oListBinding.getAggregation(/*bVerbose*/true), {
 				aggregate : {
 					AGE : {}
 				},
 				group : {},
 				groupLevels : []
-			}, "JIRA: CPOUI5ODATAV4-1825");
+			}, "JIRA: CPOUI5ODATAV4-1825 & CPOUI5ODATAV4-1961");
 
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?custom=foo&$apply=aggregate(AGE)"
 					+ "&$orderby=Name&$filter=AGE gt 42&$skip=0&$top=100", {
@@ -23948,6 +23948,7 @@ sap.ui.define([
 	// Request various side effects that do not affect the hierarchy (JIRA: CPOUI5ODATAV4-1785).
 	// Check that create, delete, and refresh are not supported (JIRA: CPOUI5ODATAV4-1851).
 	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920).
+	// Retrieve "DistanceFromRoot" property path via ODLB#getAggregation (JIRA: CPOUI5ODATAV4-1961).
 	//
 	// NodeID is selected automatically, even w/o UI, but "parent node ID" is not.
 	// JIRA: CPOUI5ODATAV4-1849
@@ -23958,6 +23959,7 @@ sap.ui.define([
 				+ ",NodeProperty='NodeID',Levels=9)"
 				+ "&$select=ArtistID,DistanceFromRoot,IsActiveEntity,NodeID"
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)",
+			oListBinding,
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oRoot,
 			oTable,
@@ -23998,11 +24000,21 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
 			oRoot = oTable.getRows()[0].getBindingContext();
+			oListBinding = oRoot.getBinding();
 
 			// code under test
-			assert.deepEqual(oRoot.getBinding().getAggregation(), {
+			assert.deepEqual(oListBinding.getAggregation(), {
 				hierarchyQualifier : "OrgChart"
 			}, "JIRA: CPOUI5ODATAV4-1825");
+			// code under test
+			assert.deepEqual(oListBinding.getAggregation(/*bVerbose*/true), {
+				hierarchyQualifier : "OrgChart",
+				$DistanceFromRootProperty : "DistanceFromRoot",
+				$NodeProperty : "NodeID"
+			}, "JIRA: CPOUI5ODATAV4-1961");
+			// code under test
+			assert.strictEqual(oListBinding.getDownloadUrl(), sExpectedDownloadUrl,
+				"JIRA: CPOUI5ODATAV4-1920");
 
 			checkTable("root is leaf", assert, oTable, [
 				"/Artists(ArtistID='0',IsActiveEntity=true)"
@@ -24026,10 +24038,6 @@ sap.ui.define([
 			assert.strictEqual(oRoot.getProperty("@$ui5.node.level"), 1);
 			assert.strictEqual(oRoot.getProperty("BestFriend/@$ui5.node.level"), 1); //TODO
 
-			// code under test
-			assert.strictEqual(oRoot.getBinding().getDownloadUrl(), sExpectedDownloadUrl,
-				"JIRA: CPOUI5ODATAV4-1920");
-
 			that.expectRequest("Artists(ArtistID='0',IsActiveEntity=true)?$select=defaultChannel", {
 					defaultChannel : "60"
 				});
@@ -24038,7 +24046,7 @@ sap.ui.define([
 				// code under test
 				oRoot.requestProperty("defaultChannel"),
 				// code under test
-				oRoot.getBinding().requestDownloadUrl(),
+				oListBinding.requestDownloadUrl(),
 				that.waitForChanges(assert, "late property")
 			]);
 		}).then(function (aResults) {
@@ -24095,7 +24103,7 @@ sap.ui.define([
 				});
 
 			return Promise.all([
-				oRoot.getBinding().getHeaderContext().requestSideEffects(["BestFriend/Name"]),
+				oListBinding.getHeaderContext().requestSideEffects(["BestFriend/Name"]),
 				that.waitForChanges(assert, "side effect: BestFriend/Name for all rows")
 			]);
 		}).then(function () {
@@ -24112,9 +24120,8 @@ sap.ui.define([
 
 			assert.throws(function () {
 				// code under test (JIRA: CPOUI5ODATAV4-1851)
-				oRoot.getBinding().create();
-			}, new Error("Cannot create in " + oRoot.getBinding()
-				+ " when using data aggregation"));
+				oListBinding.create();
+			}, new Error("Cannot create in " + oListBinding + " when using data aggregation"));
 
 			assert.throws(function () {
 				// code under test (JIRA: CPOUI5ODATAV4-1851)

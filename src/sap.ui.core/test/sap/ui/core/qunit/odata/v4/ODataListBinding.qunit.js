@@ -537,7 +537,8 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("getAggregation: basics", function (assert) {
+[false, true].forEach(function (bVerbose) {
+	QUnit.test("getAggregation: basics, bVerbose=" + bVerbose, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oExpectation,
 			fnReplacer;
@@ -547,7 +548,7 @@ sap.ui.define([
 			.withExactArgs("~aggregation~", sinon.match.func).returns("~clone~");
 
 		// code under test
-		assert.strictEqual(oBinding.getAggregation(), "~clone~");
+		assert.strictEqual(oBinding.getAggregation(bVerbose), "~clone~");
 
 		fnReplacer = oExpectation.getCall(0).args[1];
 
@@ -563,7 +564,15 @@ sap.ui.define([
 		assert.strictEqual(fnReplacer("u$a", null), null);
 		assert.strictEqual(fnReplacer("u$a", ""), "");
 		assert.strictEqual(fnReplacer("u$a", 42), 42);
+		assert.strictEqual(fnReplacer("$DistanceFromRootProperty", "D.F.R.P."),
+			bVerbose ? "D.F.R.P." : undefined);
+		assert.strictEqual(fnReplacer("$NodeProperty", "NodeId"), bVerbose ? "NodeId" : undefined);
+		["$fetchMetadata", "$path", "$DrillStateProperty", "$LimitedDescendantCountProperty"]
+			.forEach(function (sName) {
+				assert.strictEqual(fnReplacer(sName, 42), undefined);
+			});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("getAggregation: example", function (assert) {
