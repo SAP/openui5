@@ -862,7 +862,8 @@ sap.ui.define([
 		var oAggregation = {
 				$DistanceFromRootProperty : "DistFromRoot",
 				$DrillStateProperty : "myDrillState",
-				$LimitedDescendantCountProperty : "LtdDescendant_Count"
+				$LimitedDescendantCountProperty : "LtdDescendant_Count",
+				$path : "/meta/path"
 			},
 			oElement = {
 				myDrillState : sDrillState,
@@ -953,6 +954,46 @@ sap.ui.define([
 			_AggregationCache.calculateKeyPredicateRH(/*oGroupNode*/null, {/*oAggregation*/},
 				/*oElement*/null, mTypeForMetaPath, "/Artists/BestFriend"),
 			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("calculateKeyPredicateRH: related entity", function (assert) {
+		var oAggregation = {
+				$DistanceFromRootProperty : "DistFromRoot",
+				$DrillStateProperty : "myDrillState",
+				$LimitedDescendantCountProperty : "LtdDescendant_Count",
+				$path : "/Artists"
+			},
+			oElement = {
+				DistFromRoot : "23",
+				myDrillState : "leaf",
+				LtdDescendant_Count : "42"
+			},
+			mTypeForMetaPath = {
+				"/Artists" : {},
+				"/Artists/BestFriend" : {}
+			};
+
+		this.mock(_Helper).expects("getKeyPredicate")
+			.withExactArgs(sinon.match.same(oElement), "/Artists/BestFriend",
+				sinon.match.same(mTypeForMetaPath))
+			.returns("~predicate~");
+		this.mock(_Helper).expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "predicate", "~predicate~");
+		this.mock(_Helper).expects("getKeyFilter").never();
+		this.mock(_AggregationHelper).expects("setAnnotations").never();
+
+		assert.strictEqual(
+			// code under test
+			_AggregationCache.calculateKeyPredicateRH(/*oGroupNode*/null, oAggregation,
+				oElement, mTypeForMetaPath, "/Artists/BestFriend"),
+			"~predicate~");
+
+		assert.deepEqual(oElement, {
+				DistFromRoot : "23",
+				myDrillState : "leaf",
+				LtdDescendant_Count : "42"
+			}, "unchanged");
 	});
 
 	//*********************************************************************************************
