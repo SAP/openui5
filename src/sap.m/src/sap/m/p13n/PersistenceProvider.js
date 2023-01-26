@@ -91,8 +91,10 @@ sap.ui.define([
 				this.getDomRef().setAttribute("aria-hidden", true);
 			};
 
-			var oStatic = sap.ui.getCore().getUIArea(sap.ui.getCore().getStaticAreaRef());
-			oStatic.addContent(this._oWrapper);
+			var sStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
+			var oStatic = sap.ui.getCore().getUIArea(sStaticAreaRef);
+			oStatic.addContent(this._oWrapper, true);
+			sap.ui.getCore().createRenderManager().render(this._oWrapper, sStaticAreaRef);
 		}
 
 		return this;
