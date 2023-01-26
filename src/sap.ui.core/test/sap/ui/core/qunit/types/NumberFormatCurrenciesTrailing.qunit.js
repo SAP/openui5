@@ -1558,9 +1558,9 @@ sap.ui.define([
 
 		assert.equal(oFormat.format(100000, "INR"), "1,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
 		assert.equal(oFormat.format(10000000, "INR"), "1,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
-		assert.equal(oFormat.format(10000000000, "INR"), "1,000,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
-		assert.equal(oFormat.format(1000000000000, "INR"), "1,00,000,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
-		assert.equal(oFormat.format(100000000000000, "INR"), "1,00,00,000,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
+		assert.equal(oFormat.format(10000000000, "INR"), "10,00,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
+		assert.equal(oFormat.format(1000000000000, "INR"), "10,00,00,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
+		assert.equal(oFormat.format(100000000000000, "INR"), "10,00,00,00,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
 
 		oFormat = getCurrencyInstance({ style: "short" }, oLocale);
 
