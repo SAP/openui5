@@ -1261,7 +1261,8 @@ sap.ui.define([
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/",
 							"sap.ui.mdc.app": "test-resources/sap/ui/mdc/sample/table",
-							"sap.ui.fl.testResources": "test-resources/sap/ui/fl/qunit/testResources"
+							"sap.ui.fl.testResources": "test-resources/sap/ui/fl/qunit/testResources",
+							delegates: "test-resources/sap/ui/mdc/delegates/"
 						}
 					},
 					qunit: {
