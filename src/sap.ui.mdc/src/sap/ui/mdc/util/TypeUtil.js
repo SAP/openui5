@@ -119,6 +119,8 @@ sap.ui.define([
 		/**
 		 * Returns a dataType class based on given object path, formatoptions and constraints
 		 *
+		 * <b>Note:</b> The module of the data type needs to be loaded before.
+		 *
 		 * @param {string} sDataType Class path as string where each name is separated by '.'
 		 * @returns {sap.ui.model.SimpleType} creates returns a dataType class
 		 * @private
