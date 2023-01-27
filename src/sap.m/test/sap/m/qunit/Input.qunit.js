@@ -5335,6 +5335,25 @@ sap.ui.define([
 		oInput = null;
 	});
 
+	QUnit.test("Typeahead should not autocomplete if there is an exact match", function (assert) {
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({text: "Braveheart"}),
+				new Item({text: "Brave"})
+			]
+		}).placeAt("content");
+		oCore.applyChanges();
+
+
+		oInput._bDoTypeAhead = true;
+		oInput._$input.trigger("focus").val("Brave").trigger("input");
+
+		assert.strictEqual(oInput.getValue(), "Brave", "Not-exact matched item is not autocompleted when there is an exact match");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Autocomplete on desktop", function (assert) {
 		// arrange
 		var oInput = new Input({
