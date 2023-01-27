@@ -12,7 +12,6 @@ updates:
     - "matz3"
     - "flovogt"
     - "codeworrior"
-    - "tobiasso85"
   versioning-strategy: increase
   labels:
     - "in progress"
