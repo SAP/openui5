@@ -8661,6 +8661,200 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: An analytical table is expanded to level 1. When ungrouping all groups there are
+	// no errors and no unnecessary requests.
+	// BCP: 2380008491
+	QUnit.test("AnalyticalBinding: ungroup all", function (assert) {
+		var oBinding, oTable,
+			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
+			sView = '\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="Customer" template="Customer"/>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="AccountingDocument"\
+		template="AccountingDocument"/>\
+	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
+		template="AmountInCompanyCodeCurrency"/>\
+</t:AnalyticalTable>',
+			that = this;
+
+		// invalidating the UI via refresh and calling setGrouped immediately after cause
+		// "Couldn't rerender..." warnings that can be ignored here
+		this.oLogMock.expects("warning")
+			.withExactArgs(sinon.match.string, undefined, "sap.ui.Rendering", undefined)
+			.atLeast(0);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectHeadRequest()
+				.expectRequest({ // count request
+					encodeRequestUri : false,
+					requestUri : "Items?$select=CompanyCode,Customer,AccountingDocument"
+						+ "&$top=0&$inlinecount=allpages"
+				}, {__count : "140", results : []})
+				.expectRequest({ // first level request
+					encodeRequestUri : false,
+					requestUri : "Items?$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc&$top=7"
+				}, {
+					results : [
+						getFarCustomerLineItem("A0"),
+						getFarCustomerLineItem("A1"),
+						getFarCustomerLineItem("A2"),
+						getFarCustomerLineItem("A3"),
+						getFarCustomerLineItem("A4"),
+						getFarCustomerLineItem("A5"),
+						getFarCustomerLineItem("A6")
+					]
+				})
+				.expectRequest({ // children of first level
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AccountingDocument,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc&$top=12"
+				}, {
+					results : [
+						getFarCustomerLineItem("A0", "B0", "C0"),
+						getFarCustomerLineItem("A0", "B0", "C1"),
+						getFarCustomerLineItem("A0", "B1", "C0"),
+						getFarCustomerLineItem("A0", "B1", "C1"),
+						getFarCustomerLineItem("A1", "B0", "C0"),
+						getFarCustomerLineItem("A2", "B0", "C0"),
+						getFarCustomerLineItem("A3", "B0", "C0"),
+						getFarCustomerLineItem("A4", "B0", "C0"),
+						getFarCustomerLineItem("A5", "B0", "C0"),
+						getFarCustomerLineItem("A6", "B0", "C0"),
+						getFarCustomerLineItem("A7", "B0", "C0"),
+						getFarCustomerLineItem("A8", "B0", "C2")
+					]
+				});
+
+			// bind it lately otherwise table resets numberOfExpandedLevels to 0
+			oTable.bindRows({
+				path : "/Items",
+				parameters : {
+					numberOfExpandedLevels : 1,
+					provideGrandTotals : false,
+					useBatchRequests : true
+				}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(getTableContent(oTable), [
+				["A0", "", "", "1"],
+				["A0", "B0", "C0", "1"],
+				["A0", "B0", "C1", "1"],
+				["A0", "B1", "C0", "1"]
+			]);
+
+			that.expectRequest({ // no grouping -> flat list request
+				encodeRequestUri : false,
+				requestUri : "Items?"
+					+ "$select=CompanyCode,Customer,AccountingDocument,AmountInCompanyCodeCurrency,Currency"
+					+ "&$top=14&$inlinecount=allpages"
+			}, {
+				results : [
+					getFarCustomerLineItem("A0", "B0", "C0"),
+					getFarCustomerLineItem("A0", "B0", "C1"),
+					getFarCustomerLineItem("A0", "B1", "C0"),
+					getFarCustomerLineItem("A0", "B1", "C1"),
+					getFarCustomerLineItem("A1", "B0", "C0"),
+					getFarCustomerLineItem("A2", "B0", "C0"),
+					getFarCustomerLineItem("A3", "B0", "C0"),
+					getFarCustomerLineItem("A4", "B0", "C0"),
+					getFarCustomerLineItem("A5", "B0", "C0"),
+					getFarCustomerLineItem("A6", "B0", "C0"),
+					getFarCustomerLineItem("A7", "B0", "C0"),
+					getFarCustomerLineItem("A8", "B0", "C2"),
+					getFarCustomerLineItem("A9", "B0", "C2"),
+					getFarCustomerLineItem("A10", "B0", "C2")
+				]
+			});
+
+			oBinding = oTable.getBinding("rows");
+			// simulate the issue in the ticket:
+			// - first a refresh is triggered which adds an expand request to the queue,
+			// - then the grouped property of the column is set to false which causes another refresh
+			// - and after that the number of expanded levels is set to 0 which causes another
+			//   refresh and which makes the expand request obsolete
+			// code under test
+			oBinding.refresh();
+			oTable.getColumns()[0].setGrouped(false);
+			oBinding.setNumberOfExpandedLevels(0);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(getTableContent(oTable), [
+				["A0", "B0", "C0", "1"],
+				["A0", "B0", "C1", "1"],
+				["A0", "B1", "C0", "1"],
+				["A0", "B1", "C1", "1"]
+			]);
+
+			that.expectRequest({ // count request
+					encodeRequestUri : false,
+					requestUri : "Items?$select=CompanyCode,Customer,AccountingDocument"
+						+ "&$top=0&$inlinecount=allpages"
+				}, {__count : "140", results : []})
+				.expectRequest({ // first level request
+					encodeRequestUri : false,
+					requestUri : "Items?$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc&$top=7"
+				}, {
+					results : [
+						getFarCustomerLineItem("A0"),
+						getFarCustomerLineItem("A1"),
+						getFarCustomerLineItem("A2"),
+						getFarCustomerLineItem("A3"),
+						getFarCustomerLineItem("A4"),
+						getFarCustomerLineItem("A5"),
+						getFarCustomerLineItem("A6")
+					]
+				})
+				.expectRequest({ // children of first level
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AccountingDocument,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc&$top=12"
+				}, {
+					results : [
+						getFarCustomerLineItem("A0", "B0", "C0"),
+						getFarCustomerLineItem("A0", "B0", "C1"),
+						getFarCustomerLineItem("A0", "B1", "C0"),
+						getFarCustomerLineItem("A0", "B1", "C1"),
+						getFarCustomerLineItem("A1", "B0", "C0"),
+						getFarCustomerLineItem("A2", "B0", "C0"),
+						getFarCustomerLineItem("A3", "B0", "C0"),
+						getFarCustomerLineItem("A4", "B0", "C0"),
+						getFarCustomerLineItem("A5", "B0", "C0"),
+						getFarCustomerLineItem("A6", "B0", "C0"),
+						getFarCustomerLineItem("A7", "B0", "C0"),
+						getFarCustomerLineItem("A8", "B0", "C2")
+					]
+				});
+
+			// revert the steps above
+			// code under test
+			oBinding.refresh();
+			// code under test
+			oTable.getColumns()[0].setGrouped(true);
+			// code under test
+			oBinding.setNumberOfExpandedLevels(1);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(getTableContent(oTable), [
+				["A0", "", "", "1"],
+				["A0", "B0", "C0", "1"],
+				["A0", "B0", "C1", "1"],
+				["A0", "B1", "C0", "1"]
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Root entity returns a message for a *:0..1 navigation property which is
 	// <code>null</code>. The data for the navigation property is requested in an own request.
 	// The GET request for the navigation property returns a 204 No Content and does not have any

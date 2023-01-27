@@ -3405,6 +3405,62 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("_resetData: without group ID", function (assert) {
+		var oAnalyticalBinding = {
+				aBatchRequestQueue: "~aBatchRequestQueue",
+				mEntityKey: "~mEntityKey",
+				mFinalLength: "~mFinalLength",
+				mKeyIndex: "~mKeyIndex",
+				mLength: "~mLength",
+				mMultiUnitKey: "~mMultiUnitKey",
+				mServiceFinalLength: "~mServiceFinalLength",
+				mServiceKey: "~mServiceKey",
+				mServiceLength: "~mServiceLength"
+			};
+
+		// code under test
+		AnalyticalBinding.prototype._resetData.call(oAnalyticalBinding);
+
+		assert.deepEqual(oAnalyticalBinding.aBatchRequestQueue, []);
+		assert.deepEqual(oAnalyticalBinding.mEntityKey, {});
+		assert.deepEqual(oAnalyticalBinding.mFinalLength, {});
+		assert.deepEqual(oAnalyticalBinding.mKeyIndex, {});
+		assert.deepEqual(oAnalyticalBinding.mLength, {});
+		assert.deepEqual(oAnalyticalBinding.mMultiUnitKey, {});
+		assert.strictEqual(oAnalyticalBinding.mServiceFinalLength, oAnalyticalBinding.mFinalLength);
+		assert.deepEqual(oAnalyticalBinding.mServiceKey, {});
+		assert.deepEqual(oAnalyticalBinding.mServiceLength, {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_resetData: with group ID", function (assert) {
+		var oAnalyticalBinding = {
+				aBatchRequestQueue: "~aBatchRequestQueue",
+				mEntityKey: {bar: "~bar", foo: "~foo"},
+				mFinalLength: "~mFinalLength",
+				mKeyIndex: {bar: "~bar", foo: "~foo"},
+				mLength: {bar: "~bar", foo: "~foo"},
+				mMultiUnitKey: {bar: "~bar", foo: "~foo"},
+				mServiceFinalLength: {bar: "~bar", foo: "~foo"},
+				mServiceKey: {bar: "~bar", foo: "~foo"},
+				mServiceLength: {bar: "~bar", foo: "~foo"}
+			};
+
+		// code under test
+		AnalyticalBinding.prototype._resetData.call(oAnalyticalBinding, "foo");
+
+		assert.deepEqual(oAnalyticalBinding.aBatchRequestQueue, "~aBatchRequestQueue", "unchanged");
+		assert.deepEqual(oAnalyticalBinding.mEntityKey, {bar: "~bar"});
+		assert.deepEqual(oAnalyticalBinding.mFinalLength, "~mFinalLength", "unchanged");
+		assert.deepEqual(oAnalyticalBinding.mKeyIndex, {bar: "~bar"});
+		assert.deepEqual(oAnalyticalBinding.mLength, {bar: "~bar"});
+		assert.deepEqual(oAnalyticalBinding.mMultiUnitKey, {bar: "~bar"});
+		assert.deepEqual(oAnalyticalBinding.mServiceFinalLength, {bar: "~bar"});
+		assert.deepEqual(oAnalyticalBinding.mServiceKey, {bar: "~bar"});
+		assert.deepEqual(oAnalyticalBinding.mServiceLength, {bar: "~bar"});
+	});
+
+	//*********************************************************************************************
 [{
 	aKeyIndex : undefined,
 	aServiceKeyIndex : undefined,

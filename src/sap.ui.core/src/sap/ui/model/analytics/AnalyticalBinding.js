@@ -4588,6 +4588,8 @@ sap.ui.define([
 			this.mMultiUnitKey = {};
 
 			this.mEntityKey = {};
+			// clear also the pending request queue because the contained requests are obsolete
+			this.aBatchRequestQueue = [];
 		}
 	};
 
