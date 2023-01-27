@@ -111,7 +111,6 @@ sap.ui.define([
 		dateValue: new Date("2019", "9", "25", "11", "12", "13")
 	}).placeAt("uiArea6");
 
-
 	QUnit.module("initialization");
 
 	QUnit.test("Date formatter", function(assert) {
@@ -125,7 +124,6 @@ sap.ui.define([
 		assert.equal(oDTP4.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP4: DateValue set");
 		assert.equal(oDTP6.getValue(), "Oct 25, 2019, 11:12:13 AM", "oDTP6: Default Value Format Set");
 	});
-
 
 	QUnit.test("Calendar instance is created poroperly", function(assert) {
 		//Prepare
@@ -970,74 +968,115 @@ sap.ui.define([
 
 	QUnit.module("Timezones");
 
-	QUnit.test("value + timezone", function(assert) {
-		// arrange
-		var oDTP = new DateTimePicker({
-			value: "Feb 2, 2022, 8:25:00 AM America/New_York",
-			timezone: "America/New_York"
-		});
-
-		// assert
-		assert.equal(oDTP.getDateValue().getTime(), 1643808300000, "dateValue contains the correct date and time");
-
-		// act
-		oDTP.setValue("Feb 2, 2022, 9:25:00 AM America/New_York");
-
-		// assert
-		assert.equal(oDTP.getDateValue().getTime(), 1643811900000, "dateValue contains the correct date and time");
-
-		// act
-		oDTP.setTimezone("Asia/Kabul");
-
-		// assert
-		assert.equal(oDTP.getDateValue().getTime(), 1643777700000, "dateValue contains the correct date and time");
-		assert.equal(oDTP.getValue(), "Feb 2, 2022, 9:25:00 AM Asia, Kabul", "the time part of the value stays the same");
-
-		// clean
-		oDTP.destroy();
-	});
-
 	QUnit.test("dateValue + timezone", function(assert) {
 		// arrange
+		var oTestDate = new Date(2022, 1, 2, 13, 25, 0);
 		var oDTP = new DateTimePicker({
-			dateValue: new Date(Date.UTC(2022, 1, 2, 13, 25, 0)),
+			dateValue: new Date(oTestDate),
 			timezone: "America/New_York"
 		});
-
+		var oDTPValueAsDate = new Date(oDTP.getValue());
 		// assert
-		assert.equal(oDTP.getValue(), "Feb 2, 2022, 8:25:00 AM Americas, New York", "the value is correct");
+		assert.equal(oDTPValueAsDate.getFullYear(), oTestDate.getFullYear(), "the year is correct 2022");
+		assert.equal(oDTPValueAsDate.getMonth(), oTestDate.getMonth(), "the month is correct 1");
+		assert.equal(oDTPValueAsDate.getDate(), oTestDate.getDate(), "the date is correct 2");
+		assert.equal(oDTPValueAsDate.getHours(), oTestDate.getHours(), "the hours is correct 13");
+		assert.equal(oDTPValueAsDate.getMinutes(), oTestDate.getMinutes(), "the minutes is correct 25");
+		assert.equal(oDTPValueAsDate.getSeconds(), oTestDate.getSeconds(), "the seconds is correct 00");
+
+		assert.equal(oDTP.getTimezone(), "America/New_York", "the Timezone value is correct");
 
 		// act
-		oDTP.setDateValue(new Date(Date.UTC(2022, 1, 2, 14, 25, 0)));
+		oTestDate = new Date(2022, 1, 2, 14, 25, 0);
+		oDTP.setDateValue(oTestDate);
+		oDTPValueAsDate = new Date(oDTP.getValue());
 
 		// assert
-		assert.equal(oDTP.getValue(), "Feb 2, 2022, 9:25:00 AM Americas, New York", "the value is correct");
+		assert.equal(oDTPValueAsDate.getFullYear(), oTestDate.getFullYear(), "the year is correct 2022");
+		assert.equal(oDTPValueAsDate.getMonth(), oTestDate.getMonth(), "the month is correct 1");
+		assert.equal(oDTPValueAsDate.getDate(), oTestDate.getDate(), "the date is correct 2");
+		assert.equal(oDTPValueAsDate.getHours(), oTestDate.getHours(), "the hours is correct 14");
+		assert.equal(oDTPValueAsDate.getMinutes(), oTestDate.getMinutes(), "the minutes is correct 25");
+		assert.equal(oDTPValueAsDate.getSeconds(), oTestDate.getSeconds(), "the seconds is correct 00");
+		assert.equal(oDTP.getTimezone(), "America/New_York", "the Timezone value is correct");
 
 		// act
 		oDTP.setTimezone("Asia/Kabul");
 
 		// assert
-		assert.equal(oDTP.getDateValue().getTime(), 1643777700000, "dateValue contains the correct date and time");
-		assert.equal(oDTP.getValue(), "Feb 2, 2022, 9:25:00 AM Asia, Kabul", "the time part of the value stays the same");
+		assert.equal(oDTP.getDateValue().getFullYear(), oTestDate.getFullYear(), "dateValue year not change after change timezone property");
+		assert.equal(oDTP.getDateValue().getMonth(), oTestDate.getMonth(), "dateValue month not change after change timezone property");
+		assert.equal(oDTP.getDateValue().getDate(), oTestDate.getDate(), "dateValue date not change after change timezone property");
+		assert.equal(oDTP.getDateValue().getHours(), oTestDate.getHours(), "dateValue hours not change after change timezone property");
+		assert.equal(oDTP.getDateValue().getMinutes(), oTestDate.getMinutes(), "dateValue minutes not change after change timezone property");
+		assert.equal(oDTP.getDateValue().getSeconds(), oTestDate.getSeconds(), "dateValue seconds not change after change timezone property");
+
+		assert.equal(oDTPValueAsDate.getFullYear(), oTestDate.getFullYear(), "the year is correct 2022");
+		assert.equal(oDTPValueAsDate.getMonth(), oTestDate.getMonth(), "the month is correct 1");
+		assert.equal(oDTPValueAsDate.getDate(), oTestDate.getDate(), "the date is correct 2");
+		assert.equal(oDTPValueAsDate.getHours(), oTestDate.getHours(), "the hours is correct 14");
+		assert.equal(oDTPValueAsDate.getMinutes(), oTestDate.getMinutes(), "the minutes is correct 25");
+		assert.equal(oDTPValueAsDate.getSeconds(), oTestDate.getSeconds(), "the seconds is correct 00");
+		assert.equal(oDTP.getTimezone(), "Asia/Kabul", "the time zone has a correct value");
 
 		// clean
 		oDTP.destroy();
 	});
 
-	QUnit.test("input value", function(assert) {
-		// arrange
-		var oDTP = new DateTimePicker({
-			value: "Feb 2, 2022, 8:25:00 AM America/New_York",
-			timezone: "America/New_York"
+	QUnit.test("Timezone interaction on picker", function(assert) {
+		//arange
+		this.stub(oCore.getConfiguration(), "getTimezone").callsFake(function() {
+			return "Europe/Sofia";
+		});
+		var oTestDate = new Date("Feb 1, 2022, 00:01:00 AM");
+		var oDTP = new DateTimePicker("DTP",{
+			value: "Feb 1, 2022, 00:01:00 AM",
+			showTimezone: true ,
+			timezone: "Asia/Kabul",
+			change: handleChange
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
+		var oConvertDTPInputValueToDate = new Date(oDTP.$("inner").val());
+
 		// assert
-		assert.equal(oDTP.$("inner").val(), "Feb 2, 2022, 8:25:00 AM", "correct displayed value");
+		assert.equal(oConvertDTPInputValueToDate.getFullYear(), oTestDate.getFullYear(), "value must be of the correct year value - 2022");
+		assert.equal(oConvertDTPInputValueToDate.getMonth(), oTestDate.getMonth(), "input value must be of the correct month value - 02");
+		assert.equal(oConvertDTPInputValueToDate.getDate(), oTestDate.getDate(), "input value must be of the correct date value - 02");
+		assert.equal(oConvertDTPInputValueToDate.getHours(), oTestDate.getHours(), "input value must be of the correct hors value - 0");
+		assert.equal(oConvertDTPInputValueToDate.getMinutes(), oTestDate.getMinutes(), "input value must be of the correct minutes value - 0");
+
+		var done = assert.async();
+
+		oDTP._createPopup();
+		oDTP._oPopup.attachEvent("afterOpen", function() {
+			oCore.applyChanges();
+			// assert
+			assert.equal(jQuery("#DTP-Clocks-clockH-selected").text(), "12" , "DTP: correct hours set after open picker");
+			assert.equal(jQuery("#DTP-Clocks-clockM-selected").text(), "1" , "DTP: correct hours set after open picker");
+			done();
+		});
+
+		oDTP.focus();
+		qutils.triggerEvent("click", "DTP-icon");
+		jQuery("#DTP-OK").trigger("focus");
+		qutils.triggerKeydown("DTP-OK", KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyup("DTP-OK", KeyCodes.ENTER, false, false, false);
+		oCore.applyChanges();
+
+		oConvertDTPInputValueToDate = new Date(oDTP.$("inner").val());
+
+		// assert
+		assert.equal(oConvertDTPInputValueToDate.getFullYear(), oTestDate.getFullYear(), "input value must be of the correct year value - 2022");
+		assert.equal(oConvertDTPInputValueToDate.getMonth(), oTestDate.getMonth(), "input value must be of the correct month value - 02");
+		assert.equal(oConvertDTPInputValueToDate.getDate(), oTestDate.getDate(), "input value must be of the correct date value - 02");
+		assert.equal(oConvertDTPInputValueToDate.getHours(), oTestDate.getHours(), "input value must be of the correct hors value - 0");
+		assert.equal(oConvertDTPInputValueToDate.getMinutes(), oTestDate.getMinutes(), "input value must be of the correct minutes value - 0");
 
 		// clean
 		oDTP.destroy();
 	});
+
 
 	QUnit.test("showTimezone", function(assert) {
 		var oDTP;
@@ -1087,9 +1126,10 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// assert
-		assert.equal(oDTP.getValue(), "Feb 18, 2016, 10:00:00 AM Americas, New York", "value is correct");
+		assert.equal(oDTP.getValue(), "Feb 18, 2016, 10:00:00 AM", "value is not changed despite the DTP timezone change");
+		assert.equal(oDTP.getTimezone(), "America/New_York", "the value changes when the time zone changes");
 		assert.equal(oDTP.$("inner").val(), "Jum. I 9, 1437 AH, 10:00:00 AM", "correct displayed value");
-		assert.equal(oDTP.getDateValue().getTime(), 1455807600000, "correct dateValue");
+		assert.equal(oDTP.getDateValue().getTime(), new Date(oDTP.getValue()).getTime(), "value is not changed despite the DTP timezone change");
 
 		// clean
 		oDTP.destroy();
@@ -1097,7 +1137,8 @@ sap.ui.define([
 
 	QUnit.test("bound dateValue + timezone", function(assert) {
 		// arrange
-		var oModel = new JSONModel({ date: new Date(Date.UTC(2016, 1, 18, 15, 0, 0)) }),
+		var oTestDate = new Date(2016, 1, 18, 15, 0, 0);
+		var oModel = new JSONModel({ date: oTestDate }),
 			oDTP = new DateTimePicker("dtpb", {
 				dateValue: { path: '/date' },
 				timezone: "America/New_York" // UTC-5
@@ -1108,17 +1149,28 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		oInputRef = oDTP.$("inner");
-
+		var oDTPValueAsDate = new Date(oInputRef.val());
 		// assert
-		assert.equal(oInputRef.val(), "Feb 18, 2016, 10:00:00 AM", "correct displayed value");
+		assert.equal(oDTPValueAsDate.getFullYear(), oTestDate.getFullYear(), "the year is correct 2016");
+		assert.equal(oDTPValueAsDate.getMonth(), oTestDate.getMonth(), "the month is correct 1");
+		assert.equal(oDTPValueAsDate.getDate(), oTestDate.getDate(), "the date is correct 18");
+		assert.equal(oDTPValueAsDate.getHours(), oTestDate.getHours(), "the hours is correct 15");
+		assert.equal(oDTPValueAsDate.getMinutes(), oTestDate.getMinutes(), "the minutes is correct 0");
+		assert.equal(oDTPValueAsDate.getSeconds(), oTestDate.getSeconds(), "the seconds is correct 0");
 
 		// act - type into the input
 		oInputRef.val("Feb 18, 2016, 9:00:00 AM");
 		qutils.triggerKeydown("dtpb-inner", KeyCodes.ENTER, false, false, false);
 		oInputRef.trigger("change");
+		oTestDate = new Date(2016, 1, 18, 9, 0, 0);
 
 		// assert
-		assert.equal(oDTP.getDateValue().getTime(), Date.UTC(2016, 1, 18, 14, 0, 0), "correct dateValue");
+		assert.equal(oDTP.getDateValue().getFullYear(), oTestDate.getFullYear(), "dateValue year has changed correctly after changing input val");
+		assert.equal(oDTP.getDateValue().getMonth(), oTestDate.getMonth(), "dateValue month has changed correctly after changing input val");
+		assert.equal(oDTP.getDateValue().getDate(), oTestDate.getDate(), "dateValue date has changed correctly after changing input val");
+		assert.equal(oDTP.getDateValue().getHours(), oTestDate.getHours(), "dateValue hours has changed correctly after changing input val");
+		assert.equal(oDTP.getDateValue().getMinutes(), oTestDate.getMinutes(), "dateValue minutes has changed correctly after changing input val");
+		assert.equal(oDTP.getDateValue().getSeconds(), oTestDate.getSeconds(), "dateValue seconds has changed correctly after changing input val");
 
 		// clean
 		oDTP.destroy();
@@ -1126,7 +1178,8 @@ sap.ui.define([
 
 	QUnit.test("timezone + bound value type DateTime - order", function(assert) {
 		// arrange
-		var oModel = new JSONModel({ date: new Date(2016, 1, 18, 3, 0, 0) }),
+		var oTestDate = new Date(2016, 1, 18, 3, 0, 0);
+		var oModel = new JSONModel({ date: oTestDate }),
 			oDTP = new DateTimePicker("dtpbo", {
 				timezone: "America/New_York" // UTC-5
 			}).setModel(oModel);
@@ -1139,7 +1192,12 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// assert
-		assert.equal(oDTP.getDateValue().getTime(), Date.UTC(2016, 1, 18, 8, 0, 0), "correct dateValue");
+		assert.equal(oDTP.getDateValue().getFullYear(), oTestDate.getFullYear(), "dateValue year has correct after binding");
+		assert.equal(oDTP.getDateValue().getMonth(), oTestDate.getMonth(), "dateValue month has correct after binding");
+		assert.equal(oDTP.getDateValue().getDate(), oTestDate.getDate(), "dateValue date has correct after binding");
+		assert.equal(oDTP.getDateValue().getHours(), oTestDate.getHours(), "dateValue hours has correct after binding");
+		assert.equal(oDTP.getDateValue().getMinutes(), oTestDate.getMinutes(), "dateValue minutes has correct after binding");
+		assert.equal(oDTP.getDateValue().getSeconds(), oTestDate.getSeconds(), "dateValue seconds has correct after binding");
 
 		// clean
 		oDTP.destroy();
@@ -1147,6 +1205,7 @@ sap.ui.define([
 
 	QUnit.test("timezone + bound value data type String", function(assert) {
 		// arrange
+		var oTestDate = new Date(2016, 1, 18, 3, 0, 0);
 		var oModel = new JSONModel({ date: "Feb++18++2016, 3:00:00 AM" }),
 			oDTP = new DateTimePicker("dtpbs", {
 				valueFormat: "MMM++dd++yyyy, h:mm:ss a",
@@ -1162,7 +1221,13 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oDTP.getDateValue(), "has dateValue");
-		assert.equal(oDTP.getDateValue().getTime(), Date.UTC(2016, 1, 18, 8, 0, 0), "correct dateValue");
+
+		assert.equal(oDTP.getDateValue().getFullYear(), oTestDate.getFullYear(), "dateValue year has correct value after parse string");
+		assert.equal(oDTP.getDateValue().getMonth(), oTestDate.getMonth(), "dateValue month has correct value after parse string");
+		assert.equal(oDTP.getDateValue().getDate(), oTestDate.getDate(), "dateValue date has correct value after parse string");
+		assert.equal(oDTP.getDateValue().getHours(), oTestDate.getHours(), "dateValue hours has correct value after parse string");
+		assert.equal(oDTP.getDateValue().getMinutes(), oTestDate.getMinutes(), "dateValue minutes has correct value after parse string");
+		assert.equal(oDTP.getDateValue().getSeconds(), oTestDate.getSeconds(), "dateValue seconds has correct value after parse string");
 
 		// clean
 		oDTP.destroy();
@@ -1258,13 +1323,16 @@ sap.ui.define([
 			timezone: "UTC"
 		}).placeAt("qunit-fixture");
 
+		var oExpectedDate = new Date(oDTP.getValue());
+
 		oCore.applyChanges();
 		oDTP.toggleOpen();
 		oDTP._selectDate(); //simulate date and time selection via picker
 
 		// assert
-		assert.equal(oDTP.getDateValue().getUTCDate(), 16, "the selected date is as expected");
-		assert.equal(oDTP.getDateValue().getUTCHours(), 1, "the selected hours is as expected");
+		assert.equal(oDTP.getDateValue().getDate(), oExpectedDate.getDate(), "the selected date is as expected (is same to value property)");
+		assert.equal(oDTP.getDateValue().getHours(), oExpectedDate.getHours(), "the selected hours is as expected (is same to value property)");
+		assert.equal(oDTP.getDateValue().getMinutes(), oExpectedDate.getMinutes(), "the selected minutes is as expected (is same to value property)");
 
 		// clean
 		oDTP.destroy();

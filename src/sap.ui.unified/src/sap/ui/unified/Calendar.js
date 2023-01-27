@@ -15,7 +15,8 @@ sap.ui.define([
 	'./calendar/YearPicker',
 	'./calendar/YearRangePicker',
 	'./calendar/CalendarDate',
-	"sap/ui/core/date/UniversalDate",
+	'sap/ui/core/date/UniversalDate',
+	'sap/ui/core/date/UI5Date',
 	'./library',
 	'sap/ui/Device',
 	'sap/ui/core/format/DateFormat',
@@ -42,6 +43,7 @@ sap.ui.define([
 	YearRangePicker,
 	CalendarDate,
 	UniversalDate,
+	UI5Date,
 	library,
 	Device,
 	DateFormat,
@@ -1410,7 +1412,7 @@ sap.ui.define([
 			oHighDate.setYear(oHighDate.getYear() + (iRangeSize * iYears) / 2 - 1);
 		} else {
 			iYears = oYearPicker.getYears();
-			oDate = oYearPicker.getProperty("_middleDate") ? oYearPicker.getProperty("_middleDate") : CalendarDate.fromLocalJSDate(new Date());
+			oDate = oYearPicker.getProperty("_middleDate") ? oYearPicker.getProperty("_middleDate") : CalendarDate.fromLocalJSDate(UI5Date.getInstance());
 			oLowDate = new CalendarDate(oDate);
 			oHighDate = new CalendarDate(oDate);
 
@@ -1564,7 +1566,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Calendar.prototype._handleCurrentDate = function() {
-		var oNow = new Date(),
+		var oNow = UI5Date.getInstance(),
 			oMaxDate = this.getMaxDate(),
 			oMinDate = this.getMinDate();
 
@@ -2515,7 +2517,7 @@ sap.ui.define([
 			this._oFocusedDate = CalendarDate.fromLocalJSDate(aSelectedDates[0].getStartDate(), sCalendarType);
 		} else {
 			// use current date
-			this._oFocusedDate = CalendarDate.fromLocalJSDate(new Date(), sCalendarType);
+			this._oFocusedDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), sCalendarType);
 		}
 
 		if (this._oFocusedDate.isBefore(this._oMinDate)) {
