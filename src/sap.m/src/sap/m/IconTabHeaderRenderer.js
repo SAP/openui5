@@ -2,8 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['./library'],
-		function (library) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Core',
+	'sap/ui/core/InvisibleText'],
+		function (
+			library,
+			Core,
+			InvisibleText) {
 	"use strict";
 
 	/**
@@ -16,6 +22,16 @@ sap.ui.define(['./library'],
 
 	// shortcut for sap.m.TabsOverflowMode
 	var TabsOverflowMode = library.TabsOverflowMode;
+
+	IconTabHeaderRenderer.getInvisibleSplitTabDescriptionText = function() {
+		if (!this.oInvisibleSplitTabDescriptionText) {
+			this.oInvisibleSplitTabDescriptionText = new InvisibleText({
+				text: Core.getLibraryResourceBundle("sap.m").getText("ICONTABHEADER_SPLIT_TAB_DESCRIPTION")
+			}).toStatic();
+		}
+
+		return this.oInvisibleSplitTabDescriptionText;
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -100,7 +116,13 @@ sap.ui.define(['./library'],
 
 		if (mAriaTexts.headerDescription) {
 			oRM.accessibilityState({
-				describedby: oControl._getInvisibleHeadText().getId()
+				describedby: {value: oControl._getInvisibleHeadText().getId(), append: true}
+			});
+		}
+
+		if (oControl._hasSubItems()) {
+			oRM.accessibilityState({
+				describedby: {value: IconTabHeaderRenderer.getInvisibleSplitTabDescriptionText().getId(), append: true}
 			});
 		}
 
