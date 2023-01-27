@@ -3,23 +3,14 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Placeholder",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/mvc/View",
-	"sap/ui/core/routing/HashChanger",
-	"sap/m/Button",
 	"sap/m/NavContainer",
-	"sap/m/Page",
-	"sap/m/routing/TargetHandler"
+	"sap/m/routing/TargetHandler",
+	"sap/m/routing/Router" /* need to require this module to correctly resolve router class in manifest */
 	], function(
 		LoaderExtensions,
 		ComponentContainer,
 		Placeholder,
-		UIComponent,
-		View,
-		HashChanger,
-		Button,
 		NavContainer,
-		Page,
 		MTargetHandler
 	) {
 

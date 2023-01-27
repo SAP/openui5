@@ -2,27 +2,21 @@
 sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Placeholder",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/mvc/JSView",
-	"sap/ui/core/routing/HashChanger",
 	"sap/f/FlexibleColumnLayout",
 	"sap/m/Button",
 	"sap/m/NavContainer",
 	"sap/m/Page",
-	"sap/m/Panel",
 	"sap/m/SplitApp",
-	"sap/m/routing/TargetHandler"
+	"sap/m/routing/TargetHandler",
+	"sap/m/routing/Router", /* need to require this module to correctly resolve router class in manifest */
+	"sap/f/routing/Router" /* need to require this module to correctly resolve router class in manifest */
 	], function(
 		ComponentContainer,
 		Placeholder,
-		UIComponent,
-		JSView,
-		HashChanger,
 		FlexibleColumnLayout,
 		Button,
 		NavContainer,
 		Page,
-		Panel,
 		SplitApp,
 		MTargetHandler
 	) {
@@ -215,12 +209,6 @@ sap.ui.define([
 
 			sap.ui.require.preload({
 				"my/placeholder1.fragment.html":"<div id='myPlaceholder1'></div>"
-			});
-
-			sap.ui.jsview("sampleView5", {
-				createContent : function() {
-					return new Panel(this.createId("panel"));
-				}
 			});
 		},
 		beforeEach: function() {
