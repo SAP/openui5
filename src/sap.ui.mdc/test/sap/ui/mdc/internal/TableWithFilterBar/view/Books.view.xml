@@ -154,7 +154,8 @@
 													</mdc:table.Column>
 												</mdc:columns>
 												<mdc:type>
-													<mdc:table.GridTableType rowCountMode="Auto"/>
+													<!-- <mdc:table.GridTableType rowCountMode="Auto"/> -->
+													<mdc:table.ResponsiveTableType growingMode="Scroll" />
 												</mdc:type>
 											</mdc:Table>
 										</mdcvc:MDCTable>

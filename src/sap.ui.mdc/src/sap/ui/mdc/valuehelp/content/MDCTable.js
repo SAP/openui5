@@ -558,19 +558,27 @@ sap.ui.define([
 		return this._oTableHelper && this._oTableHelper.getListBindingInfo();
 	};
 
-	MDCTable.prototype.onBeforeShow = function() {
+	MDCTable.prototype.onBeforeShow = function (bInitial) {
 		return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this, arguments)).then(function () {
 			var oTable = this.getTable();
-			var bOverlay = oTable && oTable.isTableBound() && oTable._oTable.getShowOverlay();
-			var bForceRebind = oTable && this._bRebindTable;
-			if (bForceRebind || bOverlay) {
-				oTable.rebind();
-				this._bRebindTable = false;
+			if (oTable) {
+				var bTableBound = oTable.isTableBound();
+				var bOverlay = bTableBound && oTable._oTable.getShowOverlay();
+				if (this._bRebindTable || bOverlay) {
+					oTable.rebind();
+					this._bRebindTable = false;
+				} else if (bInitial) {
+					if (this._sTableType === "ResponsiveTable") {
+						this._oScrollContainer.scrollTo(0, 0);
+					} else if (bTableBound) { //scrollToIndex throws error if internal table doesn't exist
+						return oTable.scrollToIndex(0);
+					}
+				}
 			}
 		}.bind(this));
 	};
 
-	MDCTable.prototype.onShow = function () {
+	MDCTable.prototype.onShow = function (bInitial) {
 		if (this._oTable) {
 			_adjustTable.call(this);
 			// check if selection mode is fine

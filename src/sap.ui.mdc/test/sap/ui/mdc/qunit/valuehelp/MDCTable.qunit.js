@@ -31,7 +31,8 @@ sap.ui.define([
 	"sap/m/p13n/Engine",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
-	"sap/ui/mdc/table/ResponsiveTableType"
+	"sap/ui/mdc/table/ResponsiveTableType",
+	"sap/ui/mdc/p13n/StateUtil"
 ], function (
 		qutils,
 		ValueHelpDelegate,
@@ -61,7 +62,8 @@ sap.ui.define([
 		Engine,
 		Table,
 		GridTableType,
-		ResponsiveTableType
+		ResponsiveTableType,
+		StateUtil
 	) {
 	"use strict";
 	var oMdcTableWrapper;
@@ -211,27 +213,46 @@ sap.ui.define([
 		if (oContent) {
 			var fnDone = assert.async();
 			oContent.then(function(oContent) {
-				oMdcTableWrapper.onShow(); // to update selection and scroll
-				assert.ok(oContent, "Content returned");
-				assert.ok(oContent.isA("sap.ui.layout.FixFlex"), "Content is sap.m.FixFlex");
-				assert.equal(oContent.getFixContent().length, 1, "FixFlex number of Fix items");
-				var oFixContent = oContent.getFixContent()[0];
-				assert.ok(oFixContent.isA("sap.m.VBox"), "FixContent is sap.m.VBox");
-				assert.ok(oFixContent.hasStyleClass("sapMdcValueHelpPanelFilterbar"), "VBox has style class sapMdcValueHelpPanelFilterbar");
-				assert.equal(oFixContent.getItems().length, 1, "VBox number of items");
-				var oTableBox = oContent.getFlexContent();
-				assert.ok(oTableBox.isA("sap.m.VBox"), "TableBox is sap.m.VBox");
-				assert.equal(oTableBox.getHeight(), "100%", "Panel height");
-				assert.ok(oTableBox.hasStyleClass("sapMdcValueHelpPanelTableBox"), "Panel has style class sapMdcTablePanel");
-				assert.equal(oTableBox.getItems().length, 1, "TableBox number of items");
-				//Test responsive mode
-				/* var oScrollContainer = oTableBox.getItems()[0];
-				assert.ok(oScrollContainer.isA("sap.m.ScrollContainer"), "Panel item is ScrollContainer");
-				assert.equal(oScrollContainer.getContent().length, 1, "ScrollContainer number of items");
-				assert.equal(oScrollContainer.getContent()[0], oTable, "Table inside ScrollContainer"); */
-				assert.equal(oTableBox.getItems()[0], oTable, "Table found");
-				assert.equal(oTable.getSelectionMode(), "Multi", "Table mode");
-				fnDone();
+
+				sinon.spy(oTable, "scrollToIndex");
+				sinon.stub(oTable, "isTableBound").returns(true);
+				sinon.stub(StateUtil, "applyExternalState").returns(Promise.resolve(true));
+				sinon.stub(StateUtil, "retrieveExternalState").returns(Promise.resolve({filter: {}}));
+				sinon.stub(StateUtil, "diffState").returns(Promise.resolve({filter: {}}));
+
+				return oTable.initialized().then(function () {
+					return oMdcTableWrapper.onBeforeShow(true).then(function () {
+						//oMdcTableWrapper.onShow(true); // to update selection and scroll
+						assert.ok(oContent, "Content returned");
+						assert.ok(oContent.isA("sap.ui.layout.FixFlex"), "Content is sap.m.FixFlex");
+						assert.equal(oContent.getFixContent().length, 1, "FixFlex number of Fix items");
+						var oFixContent = oContent.getFixContent()[0];
+						assert.ok(oFixContent.isA("sap.m.VBox"), "FixContent is sap.m.VBox");
+						assert.ok(oFixContent.hasStyleClass("sapMdcValueHelpPanelFilterbar"), "VBox has style class sapMdcValueHelpPanelFilterbar");
+						assert.equal(oFixContent.getItems().length, 1, "VBox number of items");
+						var oTableBox = oContent.getFlexContent();
+						assert.ok(oTableBox.isA("sap.m.VBox"), "TableBox is sap.m.VBox");
+						assert.equal(oTableBox.getHeight(), "100%", "Panel height");
+						assert.ok(oTableBox.hasStyleClass("sapMdcValueHelpPanelTableBox"), "Panel has style class sapMdcTablePanel");
+						assert.equal(oTableBox.getItems().length, 1, "TableBox number of items");
+						//Test responsive mode
+						/* var oScrollContainer = oTableBox.getItems()[0];
+						assert.ok(oScrollContainer.isA("sap.m.ScrollContainer"), "Panel item is ScrollContainer");
+						assert.equal(oScrollContainer.getContent().length, 1, "ScrollContainer number of items");
+						assert.equal(oScrollContainer.getContent()[0], oTable, "Table inside ScrollContainer"); */
+						assert.equal(oTableBox.getItems()[0], oTable, "Table found");
+						assert.equal(oTable.getSelectionMode(), "Multi", "Table mode");
+						assert.ok(oTable.scrollToIndex.calledWith(0), "Table scrolled to top");
+
+						oTable.isTableBound.restore();
+						oTable.scrollToIndex.restore();
+						StateUtil.applyExternalState.restore();
+						StateUtil.retrieveExternalState.restore();
+						StateUtil.diffState.restore();
+
+						fnDone();
+					}); // to update selection and scroll
+				});
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
 				fnDone();
