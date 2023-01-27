@@ -1277,6 +1277,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Clears the session context represented by the "SAP-ContextId" header.
+	 *
+	 * @private
+	 * @since 1.111.0
+	 * @ui5-restricted sap.fe
+	 */
+	ODataModel.prototype.clearSessionContext = function () {
+		this.oRequestor.clearSessionContext();
+	};
+
+	/**
 	 * Creates a binding context for the given path. A relative path can only be resolved if a
 	 * context is provided.
 	 * Note: The parameters <code>mParameters</code>, <code>fnCallBack</code>, and
