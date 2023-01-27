@@ -3611,7 +3611,6 @@ sap.ui.define([
 	QUnit.test("_checkGrouping", function (assert) {
 
 		var oInstance = {};
-		var dotRegexp = /\./g;
 		var oStrictGroupingOptions = {
 			groupingSeparator: ".", decimalSeparator: ",", groupingSize: 3, strictGroupingValidation: true
 		};
@@ -3621,33 +3620,33 @@ sap.ui.define([
 		},
 			oStrictGroupingOptions
 		].forEach(function (oOptions) {
-			assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000", oOptions, false, false, dotRegexp), "Check '1.000'");
-			assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000.000", oOptions, false, false, dotRegexp), "Check '1.000.000'");
-			assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000.000.000", oOptions, false, false, dotRegexp), "Check '1.000.000.000'");
-			assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000000.000", oOptions, false, false, dotRegexp), "Check '1.000000.000'");
-			assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1000000.000", oOptions, false, false, dotRegexp), "Check '1000000.000'");
+			assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000", oOptions, false), "Check '1.000'");
+			assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000.000", oOptions, false), "Check '1.000.000'");
+			assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000.000.000", oOptions, false), "Check '1.000.000.000'");
+			assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000000.000", oOptions, false), "Check '1.000000.000'");
+			assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1000000.000", oOptions, false), "Check '1000000.000'");
 
 			// exactly one grouping separator present and the one at the most right position is missing
-			assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000000000", oOptions, false, false, dotRegexp), "Check '1.000000000'");
+			assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000000000", oOptions, false), "Check '1.000000000'");
 		});
 
 		// invalid grouping position
-		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000.0000.00", oStrictGroupingOptions, false, false, dotRegexp), "Check '1.000.0000.00'");
-		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000.0000.000", oStrictGroupingOptions, false, false, dotRegexp), "Check '1.000.0000.000'");
-		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "10000000.0000", oStrictGroupingOptions, false, false, dotRegexp), "Check '10000000.0000'");
-		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "100000.00.0000", oStrictGroupingOptions, false, false, dotRegexp), "Check '100000.00.0000'");
-		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000.0000.0000", oStrictGroupingOptions, false, false, dotRegexp), "Check '1.000.0000.0000'");
+		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000.0000.00", oStrictGroupingOptions, false), "Check '1.000.0000.00'");
+		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000.0000.000", oStrictGroupingOptions, false), "Check '1.000.0000.000'");
+		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "10000000.0000", oStrictGroupingOptions, false), "Check '10000000.0000'");
+		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "100000.00.0000", oStrictGroupingOptions, false), "Check '100000.00.0000'");
+		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "1.000.0000.0000", oStrictGroupingOptions, false), "Check '1.000.0000.0000'");
 
 		// Indian
 		oInstance = {};
 		var oIndianStrictGroupingOptions = {groupingSeparator: ",", decimalSeparator: ".", groupingSize: 2, groupingBaseSize: 3, strictGroupingValidation: true};
-		assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1,00,00,00,00,000", oIndianStrictGroupingOptions, false, false, /,/g), "Check '1,00,00,00,00,000'");
-		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "1,00,000,00,00,000", oIndianStrictGroupingOptions, false, false, /,/g), "Check '1,00,000,00,00,000'");
+		assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1,00,00,00,00,000", oIndianStrictGroupingOptions, false), "Check '1,00,00,00,00,000'");
+		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "1,00,000,00,00,000", oIndianStrictGroupingOptions, false), "Check '1,00,000,00,00,000'");
 
 		// currency INR
-		assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1,00,000,00,00,000", oIndianStrictGroupingOptions, false, true, /,/g), "Check '1,00,000,00,00,000'");
-		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "100000,000,000", oIndianStrictGroupingOptions, false, true, /,/g), "Check '100000,000,000'");
-		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "1,00,00,00,00,000", oIndianStrictGroupingOptions, false, true, /,/g), "Check '1,00,00,00,00,000'");
+		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "1,00,000,00,00,000", oIndianStrictGroupingOptions, false), "Check '1,00,000,00,00,000'");
+		assert.notOk(NumberFormat.prototype._checkGrouping.call(oInstance, "100000,000,000", oIndianStrictGroupingOptions, false), "Check '100000,000,000'");
+		assert.ok(NumberFormat.prototype._checkGrouping.call(oInstance, "1,00,00,00,00,000", oIndianStrictGroupingOptions, false), "Check '1,00,00,00,00,000'");
 	});
 
 	QUnit.test("decimal separator is the same as grouping separator", function (assert) {

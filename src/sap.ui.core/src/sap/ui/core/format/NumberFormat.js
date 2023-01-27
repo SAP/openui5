@@ -54,11 +54,6 @@ sap.ui.define([
 		// Regex for checking that the given string only consists of '0' characters
 		rOnlyZeros = /^0+$/;
 
-	// Indian currency INR (e.g. xx.xx.yyy.xx.xx.yyy.xx.xx.yyy)
-	var getIndianCurrencyINRGroupingRegExp = function() {
-		return /^(?:\d{1,2},?\d{2},?\d{3}|\d{1,2},?\d{3}|\d{1,3})(?:,?\d{2},?\d{2},?\d{3})*$/;
-	};
-
 	/*
 	 * Is used to validate existing grouping separators.
 	 * e.g. yyy.yyy.yyy -> /^\d+(?:\.?\d{3})*\.?\d{3}$/
@@ -1167,48 +1162,33 @@ sap.ui.define([
 	/**
 	 * Applies the grouping to the given integer part and returns it.
 	 *
-	 * @param {string} sIntegerPart a string with the integer value, e.g. "1234567"
-	 * @param {object} oOptions the format options, relevant are: groupingSeparator,
-	 *   groupingBaseSize, groupingSize
-	 * @param {boolean} bIndianCurrency if it is an Indian currency (locale en-IN and currency INR)
-	 * @returns {string} integer part with grouping, e.g. "1.234.567" for locale de-DE
+	 * @param {string} sIntegerPart
+	 *   A string with the integer value, e.g. "1234567"
+	 * @param {object} oOptions
+	 *   The format options
+	 * @param {int} oOptions.groupingBaseSize
+	 *   The grouping base size in digits if it is different from the grouping size (e.g. Indian grouping)
+	 * @param {string} oOptions.groupingSeparator
+	 *   The character used as grouping separator
+	 * @param {int} oOptions.groupingSize
+	 *   The grouping size in digits
+	 * @returns {string}
+	 *   The integer part with grouping, e.g. "1.234.567" for locale de-DE
 	 * @private
 	 */
-	function applyGrouping(sIntegerPart, oOptions, bIndianCurrency) {
-		var iPosition;
-		var sGroupedIntegerPart = "";
+	function applyGrouping(sIntegerPart, oOptions) {
+		var iGroupSize = oOptions.groupingSize,
+			iBaseGroupSize = oOptions.groupingBaseSize || iGroupSize,
+			iLength = sIntegerPart.length,
+			iPosition = Math.max(iLength - iBaseGroupSize, 0) % iGroupSize || iGroupSize,
+			sGroupedIntegerPart = sIntegerPart.slice(0, iPosition);
 
-		// Special grouping for lakh crore/crore crore in India
-		if (bIndianCurrency) {
-			var aGroups = [3, 2, 2], iCurGroupSize, iIndex = 0;
-			iPosition = sIntegerPart.length;
-			while (iPosition > 0) {
-				iCurGroupSize = aGroups[iIndex % 3];
-				iPosition -= iCurGroupSize;
-				if (iIndex > 0) {
-					sGroupedIntegerPart = oOptions.groupingSeparator + sGroupedIntegerPart;
-				}
-				if (iPosition < 0) {
-					iCurGroupSize += iPosition;
-					iPosition = 0;
-				}
-				sGroupedIntegerPart = sIntegerPart.substr(iPosition, iCurGroupSize) + sGroupedIntegerPart;
-				iIndex++;
-			}
-		} else {
-			// default grouping
-			var iLength = sIntegerPart.length;
-			var iGroupSize = oOptions.groupingSize;
-			var iBaseGroupSize = oOptions.groupingBaseSize || iGroupSize;
-			iPosition = Math.max(iLength - iBaseGroupSize, 0) % iGroupSize || iGroupSize;
-			sGroupedIntegerPart = sIntegerPart.substr(0, iPosition);
-			while (iLength - iPosition >= iBaseGroupSize) {
-				sGroupedIntegerPart += oOptions.groupingSeparator;
-				sGroupedIntegerPart += sIntegerPart.substr(iPosition, iGroupSize);
-				iPosition += iGroupSize;
-			}
-			sGroupedIntegerPart += sIntegerPart.substr(iPosition);
+		while (iLength - iPosition >= iBaseGroupSize) {
+			sGroupedIntegerPart += oOptions.groupingSeparator;
+			sGroupedIntegerPart += sIntegerPart.slice(iPosition, iPosition + iGroupSize);
+			iPosition += iGroupSize;
 		}
+		sGroupedIntegerPart += sIntegerPart.slice(iPosition, iLength);
 
 		return sGroupedIntegerPart;
 	}
@@ -1525,7 +1505,7 @@ sap.ui.define([
 
 		// grouping
 		if (oOptions.groupingEnabled) {
-			sGroupedIntegerPart = applyGrouping(sIntegerPart, oOptions, bIndianCurrency);
+			sGroupedIntegerPart = applyGrouping(sIntegerPart, oOptions);
 		} else {
 			sGroupedIntegerPart = sIntegerPart;
 		}
@@ -1968,7 +1948,7 @@ sap.ui.define([
 		}
 
 		// strict grouping validation
-		var bIsGroupingValid = this._checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, bIndianCurrency && sMeasure === "INR");
+		var bIsGroupingValid = this._checkGrouping(sValueWithGrouping, oOptions, bScientificNotation);
 		if (!bIsGroupingValid) {
 			// treat invalid grouping the same way as if the value cannot be parsed
 			return (oOptions.type === mNumberType.CURRENCY || oOptions.type === mNumberType.UNIT) ? null : NaN;
@@ -2424,11 +2404,10 @@ sap.ui.define([
 	 * This means grouping separators which are space characters or RTL characters are not validated.
 	 * @param {object} oOptions the format options, relevant are: groupingSeparator, groupingSize, groupingBaseSize and decimalSeparator
 	 * @param {boolean} bScientificNotation is scientific notation, e.g. "1.234e+1"
-	 * @param {boolean} bIndianCurrency is an indian currency, e.g. number in combination with currency "INR" and locale is "en_IN"
 	 * @returns {boolean} true if the grouping is done correctly, e.g. "1.23" is not grouped correctly for grouping separator "." and groupingSize 3
 	 * @private
 	 */
-	NumberFormat.prototype._checkGrouping = function(sValueWithGrouping, oOptions, bScientificNotation, bIndianCurrency) {
+	NumberFormat.prototype._checkGrouping = function(sValueWithGrouping, oOptions, bScientificNotation) {
 		if (oOptions.groupingSeparator && sValueWithGrouping.includes(oOptions.groupingSeparator)) {
 			// All following checks are only done, if the value contains at least one (non-falsy) grouping separator.
 			// The examples below use the German locale:
@@ -2497,13 +2476,9 @@ sap.ui.define([
 			 * e.g. for "de" <code>1.2.3</code> becomes invalid
 			 */
 			if (oOptions.strictGroupingValidation) {
-				var rGrouping;
-				if (bIndianCurrency) {
-					this._rIndianCurrencyINRGrouping = this._rIndianCurrencyINRGrouping || getIndianCurrencyINRGroupingRegExp();
-					rGrouping = this._rIndianCurrencyINRGrouping;
-				} else {
-					this._rGrouping = this._rGrouping || getGroupingRegExp(oOptions.groupingSeparator, oOptions.groupingSize, oOptions.groupingBaseSize || oOptions.groupingSize);
-					rGrouping = this._rGrouping;
+				if (!this._rGrouping) {
+					this._rGrouping = getGroupingRegExp(oOptions.groupingSeparator,
+						oOptions.groupingSize, oOptions.groupingBaseSize || oOptions.groupingSize);
 				}
 
 				// e.g. for "de" with valid grouping separators at the correct position
@@ -2512,7 +2487,7 @@ sap.ui.define([
 				//                     123 456 789
 				//                     123.456.789
 				// Note: spaces are just there for visual aid.
-				if (!rGrouping.test(sValueWithGrouping)) {
+				if (!this._rGrouping.test(sValueWithGrouping)) {
 					return false;
 				}
 			}
