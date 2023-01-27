@@ -268,6 +268,7 @@ sap.ui.define([
 		"xx-waitForTheme"       : { type : "string",  defaultValue : ""}, // rendering|init
 		"xx-hyphenation" : { type : "string",  defaultValue : ""}, // (empty string)|native|thirdparty|disable
 		"xx-flexBundleRequestForced" : { type : "boolean",  defaultValue : false },
+		"xx-skipAutomaticFlLibLoading" : { type : "boolean",  defaultValue: false },
 		"xx-cssVariables"       : { type : "string",   defaultValue : "false" }, // false|true|additional (additional just includes the css_variables.css in addition)
 		"xx-debugModuleLoading"	: { type : "boolean",  defaultValue: false },
 		"statistics"            : { type : "boolean",  defaultValue : false },
@@ -566,8 +567,10 @@ sap.ui.define([
 			}
 
 			// in case the flexibilityServices configuration was set to a non-empty, non-default value, sap.ui.fl becomes mandatory
+			// if not overruled by xx-skipAutomaticFlLibLoading
 			if (config.flexibilityServices
 					&& config.flexibilityServices !== M_SETTINGS.flexibilityServices.defaultValue
+					&& !config['xx-skipAutomaticFlLibLoading']
 					&& config.modules.indexOf("sap.ui.fl.library") == -1) {
 				config.modules.push("sap.ui.fl.library");
 			}

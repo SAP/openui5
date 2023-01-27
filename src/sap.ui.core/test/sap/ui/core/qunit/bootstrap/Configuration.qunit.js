@@ -987,13 +987,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("Set flexibilityServices URL enforces the loading of sap.ui.fl", function(assert) {
-
 		var sEncodedConfig = encodeURI('[{"connector":"KeyUser","url": "/some/url","laverFilters":[]}]');
 		browserUrl.change(location.origin + "?sap-ui-flexibilityServices="  + sEncodedConfig);
 
 		try {
 			Configuration.setCore();
 			assert.equal(_getNumberOfFlModules(Configuration), 1);
+		} finally {
+			browserUrl.reset();
+		}
+	});
+
+	QUnit.test("Set flexibilityServices URL but setting the loading to async does NOT enforces the loading of sap.ui.fl", function(assert) {
+		var sEncodedConfig = encodeURI('[{"connector":"KeyUser","url": "/some/url","laverFilters":[]}]');
+		browserUrl.change(location.origin + "?sap-ui-xx-skipAutomaticFlLibLoading=true&sap-ui-flexibilityServices=" + sEncodedConfig);
+
+		try {
+			Configuration.setCore();
+			assert.equal(_getNumberOfFlModules(Configuration), 0);
 		} finally {
 			browserUrl.reset();
 		}
