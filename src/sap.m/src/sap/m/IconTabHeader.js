@@ -1257,6 +1257,19 @@ sap.ui.define([
 		return iWidth + iMargins;
 	};
 
+	IconTabHeader.prototype._hasSubItems = function () {
+		var aTabFilters = this.getTabFilters(),
+			i;
+
+		for (i = 0; i < aTabFilters.length; i++) {
+			if (aTabFilters[i].getItems().length > 0) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+
 	/**
 	 * Handles the activation of the tabs and arrows.
 	 * @private

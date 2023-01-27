@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/IconTabHeader",
+	"sap/m/IconTabHeaderRenderer",
 	"sap/m/List",
 	"sap/m/CustomListItem",
 	"sap/ui/core/library",
@@ -32,6 +33,7 @@ sap.ui.define([
 	Text,
 	JSONModel,
 	IconTabHeader,
+	IconTabHeaderRenderer,
 	List,
 	CustomListItem,
 	coreLibrary,
@@ -2576,7 +2578,7 @@ sap.ui.define([
 		assert.strictEqual(oOverflowButton._oPopover.getInitialFocus(), oSelectList.getVisibleItems()[0].getId(), "The first visible item in the Select List should be focused.");
 	});
 
-	QUnit.module("ARIA",{
+	QUnit.module("ARIA", {
 		beforeEach: function () {
 			this.oIconTabBar = getIconTabBar();
 			this.oIconTabBar.getItems()[1].setVisible(false);
@@ -2625,6 +2627,73 @@ sap.ui.define([
 
 		assert.strictEqual(oITH.$().attr("aria-label"), "Available spaces", "'aria-label' attribute should be set");
 		assert.strictEqual(oITH.$("head").attr("aria-describedby"), oITH._getInvisibleHeadText().getId(), "'aria-describedby' attribute should be set.");
+	});
+
+	QUnit.module("ARIA - tabs with sub items", {
+		beforeEach: function () {
+			this.oIconTabBar = new IconTabBar({
+				items: [
+					new IconTabFilter({
+						text: "Tab 1",
+						items: [
+							new IconTabFilter({
+								text: "Tab 1 1",
+								content: new Text({ text: "Content" })
+							}),
+							new IconTabFilter({
+								text: "Tab 1 2",
+								content: new Text({ text: "Content" })
+							})
+						]
+					}),
+					new IconTabFilter({
+						text: "Tab 2",
+						content: new Text({ text: "Content" }),
+						items: [
+							new IconTabFilter({
+								text: "Tab 2 1",
+								content: new Text({ text: "Content" })
+							}),
+							new IconTabFilter({
+								text: "Tab 2 2",
+								content: new Text({ text: "Content" })
+							})
+						]
+					}),
+					new IconTabFilter({
+						text: "Tab 3",
+						content: new Text({ text: "Content" })
+					})
+				]
+			});
+
+			this.oIconTabBar.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oIconTabBar.destroy();
+			this.oIconTabBar = null;
+		}
+	});
+
+	QUnit.test("aria-haspopup and aria-describedby", function (assert) {
+		var oIconTabHeader = this.oIconTabBar._getIconTabHeader(),
+			aItems = this.oIconTabBar.getItems();
+
+		assert.strictEqual(aItems[0].getDomRef().getAttribute("aria-haspopup"), "menu", "aria-haspopup is set");
+		assert.notOk(aItems[1].getDomRef().getAttribute("aria-haspopup"), "aria-haspopup is not set");
+		assert.notOk(aItems[2].getDomRef().getAttribute("aria-haspopup"), "aria-haspopup is not set");
+
+		assert.strictEqual(oIconTabHeader.getDomRef("head").getAttribute("aria-describedby"), IconTabHeaderRenderer.getInvisibleSplitTabDescriptionText().getId(), "aria-describedby is set");
+
+		aItems.forEach(function (oItem) {
+			oItem.destroyItems();
+		});
+
+		Core.applyChanges();
+
+		assert.notOk(aItems[0].getDomRef().getAttribute("aria-haspopup"), "aria-haspopup is not set");
+		assert.notOk(oIconTabHeader.getDomRef("head").getAttribute("aria-describedby"), "aria-describedby is not set");
 	});
 
 	QUnit.module("Padding");
