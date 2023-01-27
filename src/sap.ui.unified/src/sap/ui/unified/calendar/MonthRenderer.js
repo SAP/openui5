@@ -384,6 +384,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		var iWeekDay = oDay.getDay();
 		var iSelected = oMonth._checkDateSelected(oDay);
 		var aDayTypes = oMonth._getDateTypes(oDay);
+		var sSpecialDateTypeFilter = oHelper && oHelper.oLegend ? oHelper.oLegend._getSpecialDateTypeFilter() : '';
 		var bEnabled = oMonth._checkDateEnabled(oDay);
 		var i = 0;
 		var bShouldBeMarkedAsSpecialDate = oMonth._isSpecialDateMarkerEnabled(oDay);
@@ -445,10 +446,13 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 						sNonWorkingDayText = this._addNonWorkingDayText(mAccProps);
 						return;
 					}
-					oRm.class("sapUiCalItem" + oDayType.type);
-					sAriaType = oDayType.type;
-					if (oDayType.tooltip) {
-						oRm.attr('title', oDayType.tooltip);
+
+					if (sSpecialDateTypeFilter === "" || sSpecialDateTypeFilter === CalendarDayType.None || sSpecialDateTypeFilter === oDayType.type) {
+						oRm.class("sapUiCalItem" + oDayType.type);
+						sAriaType = oDayType.type;
+						if (oDayType.tooltip) {
+							oRm.attr('title', oDayType.tooltip);
+						}
 					}
 				}
 			}.bind(this));
@@ -513,7 +517,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		if (aDayTypes[0] && bShouldBeMarkedAsSpecialDate){ //if there's a special date inside current month, render it
 			oRm.openStart("div");
 			oRm.class("sapUiCalSpecialDate");
-			if (aDayTypes[0].color) { // if there's a custom color, render it
+			if (aDayTypes[0].color && (sSpecialDateTypeFilter === "" || sSpecialDateTypeFilter === CalendarDayType.None)) { // if there's a custom color and no special date filtering, render it
 
 				oRm.style("background-color", aDayTypes[0].color);
 			}

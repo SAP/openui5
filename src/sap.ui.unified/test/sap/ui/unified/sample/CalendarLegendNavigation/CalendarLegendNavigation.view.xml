@@ -1,0 +1,12 @@
+<mvc:View
+		controllerName="sap.ui.unified.sample.CalendarLegendNavigation.CalendarLegendNavigation"
+		xmlns:l="sap.ui.layout"
+		xmlns:u="sap.ui.unified"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		class="viewPadding">
+		<l:VerticalLayout>
+			<u:Calendar id="calendar" legend="legend" intervalSelection="true"/>
+			<u:CalendarLegend id="legend"/>
+		</l:VerticalLayout>
+</mvc:View>

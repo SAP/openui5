@@ -27,10 +27,13 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 			iCustomItemsLength = this.defineItemsLength(oLeg, aCustomItems.length),
 			i,
 			iIdLength,
-			sColumnWidth;
+			sColumnWidth,
+			iIndex = 1;
 
 		oRm.openStart("div", oLeg);
 		oRm.class("sapUiUnifiedLegend");
+		oRm.attr("aria-label", oLeg._getLegendAriaLabel());
+		oRm.attr("role", "listbox");
 		oRm.openEnd();
 
 		this.renderItemsHeader(oRm, oLeg);
@@ -49,14 +52,14 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 				iIdLength = oLeg.getId().length + 1; //+1, because of the dash in "CalLeg1-Today"?
 				for (i = 0; i < aStandardItems.length; ++i) {
 					var sClass = "sapUiUnifiedLegend" + aStandardItems[i].getId().slice(iIdLength);
-					this.renderLegendItem(oRm, sClass, aStandardItems[i], ["sapUiUnifiedLegendSquareColor"]);
+					this.renderLegendItem(oRm, sClass, aStandardItems[i], ["sapUiUnifiedLegendSquareColor"], iIndex++);
 				}
 			}
 
 			if (aCustomItems) {
 				// rendering special day and colors
 				for (i = 0; i < iCustomItemsLength; i++) {
-					this.renderLegendItem(oRm, "sapUiCalLegDayType" + oLeg._getItemType(aCustomItems[i], aCustomItems).slice(4), aCustomItems[i], ["sapUiUnifiedLegendSquareColor"]);
+					this.renderLegendItem(oRm, "sapUiCalLegDayType" + oLeg._getItemType(aCustomItems[i], aCustomItems).slice(4), aCustomItems[i], ["sapUiUnifiedLegendSquareColor"], iIndex++);
 				}
 			}
 			this.renderAdditionalItems(oRm, oLeg); //like more sections with items
@@ -76,7 +79,7 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 	 * @param {sap.ui.unified.CalenderLegendItem} oItem item element
 	 * @param {string[]} aColorClasses Css classes to be added to the color bullet item in front of the legend item
 	 */
-	CalendarLegendRenderer.renderLegendItem = function(oRm, sClass, oItem, aColorClasses) {
+	CalendarLegendRenderer.renderLegendItem = function(oRm, sClass, oItem, aColorClasses, iIndex) {
 
 		var sText = oItem.getText();
 		var sTooltip = oItem.getTooltip_AsString();
@@ -87,6 +90,9 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 		if (sTooltip) {
 			oRm.attr('title', sTooltip);
 		}
+
+		oRm.attr("role", "option");
+		oRm.attr("aria-posinset", iIndex);
 
 		oRm.class("sapUiUnifiedLegendItem");
 		oRm.class(sClass);
