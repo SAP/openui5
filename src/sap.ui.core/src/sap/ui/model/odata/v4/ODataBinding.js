@@ -893,7 +893,11 @@ sap.ui.define([
 	 * created entities, or entity deletions which have not been sent successfully to the server.
 	 * This function does not take the execution of OData operations
 	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}) into account. Since 1.98.0,
-	 * {@link sap.ui.model.odata.v4.Context#isInactive inactive} contexts are ignored.
+	 * {@link sap.ui.model.odata.v4.Context#isInactive inactive} contexts are ignored, unless
+	 * (since 1.100.0) their
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#event:createActivate activation} has been
+	 * prevented and {@link sap.ui.model.odata.v4.Context#isInactive} therefore returns
+	 * <code>1</code>.
 	 *
 	 * Note: If this binding is relative, its data is cached separately for each parent context
 	 * path. This method returns <code>true</code> if there are pending changes for the current
