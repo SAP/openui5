@@ -1171,6 +1171,52 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("calendarWeekNumbering affects days of week", function(assert) {
+		var oDRS = new DynamicDateRange({
+				id: 'myDDR',
+				value: {operator: 'DATE', values: [new Date('2023-01-09T18:00:00')]},
+				calendarWeekNumbering: "MiddleEastern"
+			});
+
+			oDRS.placeAt("qunit-fixture");
+			oCore.applyChanges();
+			oDRS.open();
+			oCore.applyChanges();
+
+			var oDateOptionDomRef = oCore.byId('myDDR-option-DATE');
+			oCore.applyChanges();
+
+			oDateOptionDomRef.firePress();
+			oCore.applyChanges();
+			var oMonthDomRef = oCore.byId("__calendar3").getAggregation("month")[0].getDomRef();
+			var aWeekHeaders = oMonthDomRef.querySelectorAll("#__calendar3 .sapUiCalWH:not(.sapUiCalDummy)");
+
+			//Assert
+			assert.strictEqual(aWeekHeaders.length, 7, "7 weekheaders rendered");
+			assert.strictEqual(aWeekHeaders[0].textContent, "Sat", "Saturday is the first weekday for MiddleEastern");
+
+			oDRS.setCalendarWeekNumbering('ISO_8601');
+			oCore.applyChanges();
+			oDateOptionDomRef.firePress();
+			oCore.applyChanges();
+			oMonthDomRef = oCore.byId("__calendar4").getAggregation("month")[0].getDomRef();
+			aWeekHeaders = oMonthDomRef.querySelectorAll("#__calendar4 .sapUiCalWH:not(.sapUiCalDummy)");
+			//Assert
+			assert.equal(aWeekHeaders[0].textContent, "Mon", "Monday is the first weekday for ISO_8601");
+
+			oDRS.setCalendarWeekNumbering('WesternTraditional');
+			oCore.applyChanges();
+			oDateOptionDomRef.firePress();
+			oCore.applyChanges();
+			oMonthDomRef = oCore.byId("__calendar5").getAggregation("month")[0].getDomRef();
+			aWeekHeaders = oMonthDomRef.querySelectorAll("#__calendar5 .sapUiCalWH:not(.sapUiCalDummy)");
+			//Assert
+			assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for WesternTraditional");
+
+			//Cleanup
+			oDRS.destroy();
+	});
+
 	QUnit.test("DynamicDateFormat doesn't allow year outside of the range [1-9999]", function (assert) {
 		var oResult;
 

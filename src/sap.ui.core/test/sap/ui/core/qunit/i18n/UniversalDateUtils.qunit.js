@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/core/date/UniversalDateUtils",
 	"sap/ui/core/date/UniversalDate",
-	"sap/ui/core/CalendarType"
-], function(UniversalDateUtils, UniversalDate, CalendarType) {
+	"sap/ui/core/CalendarType",
+	'sap/ui/core/Configuration'
+], function(UniversalDateUtils, UniversalDate, CalendarType, Configuration) {
 	"use strict";
 
 	var testDate = function(assert, oDate, iDuration, sUnit, iFullYear, iMonth, iDate, iHours, iMinutes, iSecond, iMilliseconds) {
@@ -455,6 +456,72 @@ sap.ui.define([
 
 		oUniversalDateUtilsStub.restore();
 	});
+
+	QUnit.test("CalendarType calendarWeekNumbering date calculation Stability", function(assert) {
+
+		var sCalendarWeekNumbering = "WesternTraditional",
+			oCurrentDate = new Date('2023-01-08T00:13:37'),
+			oClock = sinon.useFakeTimers(oCurrentDate.getTime()),
+			oConfigStub = sinon.stub(Configuration, "getCalendarType").returns("Islamic"),
+			//lastWeek
+			aRange = UniversalDateUtils.ranges.lastWeek(sCalendarWeekNumbering);
+
+		testDate(assert, aRange[0].getJSDate(), -1, "WEEK", 2023, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].getJSDate(), -1, "WEEK", 2023, 0, 7, 23,59,59,999);
+
+		//lastWeeks
+		aRange = UniversalDateUtils.ranges.lastWeeks(1, sCalendarWeekNumbering);
+		testDate(assert, aRange[0].oDate, -1, "WEEKS", 2023, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, -1, "WEEKS", 2023, 0, 7, 23,59,59,999);
+
+		//currentWeek
+		aRange = UniversalDateUtils.ranges.currentWeek(sCalendarWeekNumbering);
+		testDate(assert, aRange[0].oDate, 7, "DAY", 2023, 0, 8, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 7, "DAY", 2023, 0, 14, 23,59,59,999);
+
+		//firstDayOfWeek
+		aRange = UniversalDateUtils.ranges.firstDayOfWeek(sCalendarWeekNumbering);
+
+		testDate(assert, aRange[0].oDate, 1, "DAY", 2023, 0, 8, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "DAY", 2023, 0, 8, 23,59,59,999);
+
+		//lastDayOfWeek
+		aRange = UniversalDateUtils.ranges.lastDayOfWeek(sCalendarWeekNumbering);
+
+		testDate(assert, aRange[0].oDate, 1, "DAY", 2023, 0, 14, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "DAY", 2023, 0, 14, 23,59,59,999);
+
+		//nextWeek
+		aRange = UniversalDateUtils.ranges.nextWeek(sCalendarWeekNumbering);
+
+		testDate(assert, aRange[0].oDate, 1, "WEEK", 2023, 0, 15, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "WEEK", 2023, 0, 21, 23,59,59,999);
+
+		//nextWeeks
+		aRange = UniversalDateUtils.ranges.nextWeeks(1, sCalendarWeekNumbering);
+		testDate(assert, aRange[0].oDate, 1, "WEEKS", 2023, 0, 15, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "WEEKS", 2023, 0, 21, 23,59,59,999);
+
+		oConfigStub.restore();
+		oClock.restore();
+	});
+
+	QUnit.test("_getDateFromWeekStartByDayOffset", function(assert) {
+		var sCalendarWeekNumbering = 'WesternTraditional',
+			oCurrentDate = new Date('2023-01-09T00:13:37'),
+			oClock = sinon.useFakeTimers(oCurrentDate.getTime()),
+			oConfigStub = sinon.stub(Configuration, "getCalendarType").returns("Islamic"),
+			oFirstDateOfWeek = UniversalDateUtils._getDateFromWeekStartByDayOffset(sCalendarWeekNumbering);
+
+		testDate(assert, oFirstDateOfWeek, 1, "WEEKS", 1444, 5, 15, 0,0,0,0);
+
+		oFirstDateOfWeek = UniversalDateUtils._getDateFromWeekStartByDayOffset(sCalendarWeekNumbering, 1);
+		testDate(assert, oFirstDateOfWeek, 1, "WEEKS", 1444, 5, 16, 0,0,0,0);
+
+		oConfigStub.restore();
+		oClock.restore();
+	});
+
 
 	/**
 	 * Tested invariant:

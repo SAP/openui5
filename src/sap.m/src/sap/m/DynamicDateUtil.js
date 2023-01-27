@@ -233,13 +233,14 @@ sap.ui.define([
 	 * Calculates a date range from a provided object in the format of the DynamicDateRange's value.
 	 *
 	 * @param {string} oValue The provided value
+	 * @param {string} sCalendarWeekNumbering The type of calendar week numbering
 	 * @returns {sap.ui.core.date.UniversalDate[]} An array of two date objects - start and end date
 	 * @static
 	 * @public
 	 */
-	DynamicDateUtil.toDates = function(oValue) {
+	DynamicDateUtil.toDates = function(oValue, sCalendarWeekNumbering) {
 		var sKey = oValue.operator;
-		return DynamicDateUtil._options[sKey].toDates(oValue);
+		return DynamicDateUtil._options[sKey].toDates(oValue, sCalendarWeekNumbering);
 	};
 
 
