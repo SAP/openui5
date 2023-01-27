@@ -1720,74 +1720,76 @@ sap.ui.define([
 						bIsDataSourceUri = true;
 					}
 
-					if (oDataSource.type === 'OData' && oDataSource.settings && typeof oDataSource.settings.maxAge === "number") {
+					if (oDataSource.type === 'OData' && oDataSource.settings) {
 						oModelConfig.settings = oModelConfig.settings || {};
-						oModelConfig.settings.headers = oModelConfig.settings.headers || {};
-						oModelConfig.settings.headers["Cache-Control"] = "max-age=" + oDataSource.settings.maxAge;
-					}
 
-					// The ODataModel's "ignoreAnnotationsFromMetadata" parameter only accepts <true> (see ODataModel constructor documentation)
-					if (oDataSource.type === 'OData' && oDataSource.settings && oDataSource.settings.ignoreAnnotationsFromMetadata === true) {
-						oModelConfig.settings = oModelConfig.settings || {};
-						oModelConfig.settings.ignoreAnnotationsFromMetadata = oDataSource.settings.ignoreAnnotationsFromMetadata;
-					}
-
-					// read out OData annotations and create ODataModel settings for it
-					if (oDataSource.type === 'OData' && oDataSource.settings && oDataSource.settings.annotations) {
-						var aAnnotations = oDataSource.settings.annotations;
-
-						for (var i = 0; i < aAnnotations.length; i++) {
-							var sAnnotation = aAnnotations[i];
-							var oAnnotation = mConfig.dataSources[sAnnotation];
-
-							// dataSource entry should be defined!
-							if (!oAnnotation) {
-								Log.error("Component Manifest: ODataAnnotation \"" + sAnnotation + "\" for dataSource \"" + oModelConfig.dataSource + "\" could not be found in manifest", "[\"sap.app\"][\"dataSources\"][\"" + sAnnotation + "\"]", sLogComponentName);
-								continue;
-							}
-
-							// type should be ODataAnnotation!
-							if (oAnnotation.type !== 'ODataAnnotation') {
-								Log.error("Component Manifest: dataSource \"" + sAnnotation + "\" was expected to have type \"ODataAnnotation\" but was \"" + oAnnotation.type + "\"", "[\"sap.app\"][\"dataSources\"][\"" + sAnnotation + "\"]", sLogComponentName);
-								continue;
-							}
-
-							// uri is required!
-							if (!oAnnotation.uri) {
-								Log.error("Component Manifest: Missing \"uri\" for ODataAnnotation \"" + sAnnotation + "\"", "[\"sap.app\"][\"dataSources\"][\"" + sAnnotation + "\"]", sLogComponentName);
-								continue;
-							}
-
-							var oAnnotationUri = new URI(oAnnotation.uri);
-
-							if (bIsV2Model || bIsV4Model) {
-								/* eslint-disable no-loop-func */
-								["sap-language", "sap-client"].forEach(function(sName) {
-									if (!oAnnotationUri.hasQuery(sName) && oConfig.getSAPParam(sName)) {
-										oAnnotationUri.setQuery(sName, oConfig.getSAPParam(sName));
-									}
-								});
-								/* eslint-enable no-loop-func */
-
-								var sCacheTokenForAnnotation = mCacheTokens.dataSources && mCacheTokens.dataSources[oAnnotation.uri];
-								if (sCacheTokenForAnnotation) {
-									Component._applyCacheToken(oAnnotationUri, {
-										cacheToken: sCacheTokenForAnnotation,
-										componentName: sLogComponentName,
-										dataSource: sAnnotation
-									});
-								}
-							}
-
-							// resolve relative to component, ui5:// URLs are already resolved upfront
-							var oAnnotationSourceManifest = mConfig.origin.dataSources[aAnnotations[i]] || oManifest;
-							var sAnnotationUri = oAnnotationSourceManifest.resolveUri(oAnnotationUri.toString());
-
-							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
-							oModelConfig.settings = oModelConfig.settings || {};
-							oModelConfig.settings.annotationURI = oModelConfig.settings.annotationURI || [];
-							oModelConfig.settings.annotationURI.push(sAnnotationUri);
+						if (typeof oDataSource.settings.maxAge === "number") {
+							oModelConfig.settings.headers = oModelConfig.settings.headers || {};
+							oModelConfig.settings.headers["Cache-Control"] = "max-age=" + oDataSource.settings.maxAge;
 						}
+
+						// The ODataModel's "ignoreAnnotationsFromMetadata" parameter only accepts <true> (see ODataModel constructor documentation)
+						if (oDataSource.settings.ignoreAnnotationsFromMetadata === true) {
+							oModelConfig.settings.ignoreAnnotationsFromMetadata = oDataSource.settings.ignoreAnnotationsFromMetadata;
+						}
+
+						// read out OData annotations and create ODataModel settings for it
+						if (oDataSource.settings.annotations) {
+							var aAnnotations = oDataSource.settings.annotations;
+
+							for (var i = 0; i < aAnnotations.length; i++) {
+								var sAnnotation = aAnnotations[i];
+								var oAnnotation = mConfig.dataSources[sAnnotation];
+
+								// dataSource entry should be defined!
+								if (!oAnnotation) {
+									Log.error("Component Manifest: ODataAnnotation \"" + sAnnotation + "\" for dataSource \"" + oModelConfig.dataSource + "\" could not be found in manifest", "[\"sap.app\"][\"dataSources\"][\"" + sAnnotation + "\"]", sLogComponentName);
+									continue;
+								}
+
+								// type should be ODataAnnotation!
+								if (oAnnotation.type !== 'ODataAnnotation') {
+									Log.error("Component Manifest: dataSource \"" + sAnnotation + "\" was expected to have type \"ODataAnnotation\" but was \"" + oAnnotation.type + "\"", "[\"sap.app\"][\"dataSources\"][\"" + sAnnotation + "\"]", sLogComponentName);
+									continue;
+								}
+
+								// uri is required!
+								if (!oAnnotation.uri) {
+									Log.error("Component Manifest: Missing \"uri\" for ODataAnnotation \"" + sAnnotation + "\"", "[\"sap.app\"][\"dataSources\"][\"" + sAnnotation + "\"]", sLogComponentName);
+									continue;
+								}
+
+								var oAnnotationUri = new URI(oAnnotation.uri);
+
+								if (bIsV2Model || bIsV4Model) {
+									/* eslint-disable no-loop-func */
+									["sap-language", "sap-client"].forEach(function(sName) {
+										if (!oAnnotationUri.hasQuery(sName) && oConfig.getSAPParam(sName)) {
+											oAnnotationUri.setQuery(sName, oConfig.getSAPParam(sName));
+										}
+									});
+									/* eslint-enable no-loop-func */
+
+									var sCacheTokenForAnnotation = mCacheTokens.dataSources && mCacheTokens.dataSources[oAnnotation.uri];
+									if (sCacheTokenForAnnotation) {
+										Component._applyCacheToken(oAnnotationUri, {
+											cacheToken: sCacheTokenForAnnotation,
+											componentName: sLogComponentName,
+											dataSource: sAnnotation
+										});
+									}
+								}
+
+								// resolve relative to component, ui5:// URLs are already resolved upfront
+								var oAnnotationSourceManifest = mConfig.origin.dataSources[aAnnotations[i]] || oManifest;
+								var sAnnotationUri = oAnnotationSourceManifest.resolveUri(oAnnotationUri.toString());
+
+								// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
+								oModelConfig.settings.annotationURI = oModelConfig.settings.annotationURI || [];
+								oModelConfig.settings.annotationURI.push(sAnnotationUri);
+							}
+						}
+
 					}
 
 				} else {
