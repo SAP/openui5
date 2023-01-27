@@ -968,7 +968,8 @@ sap.ui.define([
 
 		if (bBlocked) {
 			this.addDelegate(oRenderingDelegate, false, this);
-		} else {
+		} else if (!this.getBusy()) {
+			// only remove delegate if control is not still in "busy" state
 			this.removeDelegate(oRenderingDelegate);
 		}
 
@@ -1038,7 +1039,11 @@ sap.ui.define([
 			Interaction.notifyShowBusyIndicator(this);
 			this.addDelegate(oRenderingDelegate, false, this);
 		} else {
-			this.removeDelegate(oRenderingDelegate);
+			// only remove the delegate if the control is not still in "blocked" state
+			if (!this.getProperty("blocked")) {
+				this.removeDelegate(oRenderingDelegate);
+			}
+
 			//If there is a pending delayed call we clear it
 			if (this._busyIndicatorDelayedCallId) {
 				clearTimeout(this._busyIndicatorDelayedCallId);

@@ -374,4 +374,33 @@ sap.ui.define([
 		oLogSpy.restore();
 	});
 
+	QUnit.test("Don't remove afterRendering delegate when either busy or block state is still active", function(assert) {
+		var iInitialDelegateCount = this.oButton.aDelegates.length;
+		assert.ok(iInitialDelegateCount >= 1, "Button should already have at least one delegate initially");
+		this.oButton.setBlocked(true);
+		assert.equal(this.oButton.getBlocked(), true, "setBlocked(true): Button should be blocked");
+		assert.equal(this.oButton.aDelegates.length, iInitialDelegateCount + 1, "onBefore-/onAfterRendering delegate should be added");
+
+		this.oButton.setBusyIndicatorDelay(0);
+		this.oButton.setBusy(true);
+		assert.equal(this.oButton.getBusy(), true, "setBusy(true): Button should be busy");
+		assert.equal(this.oButton.getBlocked(), true, "Button should still be blocked");
+
+		this.oButton.setBusy(false);
+		assert.equal(this.oButton.getBusy(), false, "setBusy(false): Button shouldn't be busy anymore");
+		assert.equal(this.oButton.getBlocked(), true, "Button should still be blocked");
+		assert.equal(this.oButton.aDelegates.length, iInitialDelegateCount + 1 , "onBefore-/onAfterRendering delegate should still be available");
+
+		this.oButton.rerender();
+		assert.equal(this.oButton.getBlocked(), true, "After Re-rendering: Button should still be blocked");
+
+		var oBlockLayerDOM = document.getElementsByClassName("sapUiBlockLayer");
+		assert.ok(oBlockLayerDOM, "After Re-rendering: BlockLayer should be available");
+
+		this.oButton.setBlocked(false);
+		assert.equal(this.oButton.getBlocked(), false, "setBlocked(false): Button shouldn't be blocked anymore");
+		assert.equal(oBlockLayerDOM.length, 0, "BlockLayer should be removed");
+		assert.equal(this.oButton.aDelegates.length, iInitialDelegateCount, "onBefore-/onAfterRendering delegate should be removed again");
+	});
+
 });
