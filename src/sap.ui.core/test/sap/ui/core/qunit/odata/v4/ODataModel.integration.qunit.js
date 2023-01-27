@@ -24064,7 +24064,6 @@ sap.ui.define([
 					"@$ui5.node.level" : 1,
 					ArtistID : "0",
 					BestFriend : {
-						"@$ui5.node.level" : 1, //TODO
 						ArtistID : "01",
 						IsActiveEntity : true,
 						Name : "Friend #01"
@@ -24072,8 +24071,6 @@ sap.ui.define([
 					IsActiveEntity : true,
 					NodeID : "0,true"
 				}, "technical properties have been removed");
-			assert.strictEqual(oRoot.getProperty("@$ui5.node.level"), 1);
-			assert.strictEqual(oRoot.getProperty("BestFriend/@$ui5.node.level"), 1); //TODO
 
 			that.expectRequest("Artists(ArtistID='0',IsActiveEntity=true)?$select=defaultChannel", {
 					defaultChannel : "60"
