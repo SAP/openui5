@@ -73,6 +73,7 @@ sap.ui.define([
 				this._scrollY = 0;
 				this._scrollCoef = 0.9; // Approximation coefficient used to mimic page down and page up behaviour when [CTRL] + [RIGHT] and [CTRL] + [LEFT] is used
 				this._iLastMaxScrollTop = 0;
+				this._iScrollPaddingTop = 0;
 
 				initDelegateMembers(this);
 
@@ -198,6 +199,22 @@ sap.ui.define([
 				return this;
 			},
 
+			/**
+			 * Sets the top offset of the optimal viewing region of the scrollport:
+			 * the region used as the target region for placing things in view of the user.
+			 * This offset is required when the topmost part of the scroll container is overlapped
+			 * by other content (e.g. overlapped by the sticky header content of the scrollable page)
+			 *
+			 * @param {number} iValue
+			 * @private
+			 * @ui5-restricted sap.uxap.ObjectPageLayout, sap.f.DynamicPage
+			 */
+			setScrollPaddingTop : function(iValue) {
+				if (typeof iValue === 'number') {
+					this._iScrollPaddingTop = iValue;
+				}
+			},
+
 			scrollTo : function(x, y, time, fnScrollEndCallback) {
 				this._scrollX = x; // remember for later rendering
 				this._scrollY = y;
@@ -252,6 +269,10 @@ sap.ui.define([
 					oElement.offsetParent.nodeName.toUpperCase() === "HTML") {
 						return this;
 				}
+
+				// the visible part of the scrollport is positioned below the
+				// <code>this._iScrollPaddingTop</code>, so we offset that padding as well
+				aOffset[1] -= this._iScrollPaddingTop;
 
 				var $Element = jQuery(oElement),
 					oScrollPosition = this.getChildPosition($Element),
