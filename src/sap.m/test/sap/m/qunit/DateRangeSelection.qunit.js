@@ -1069,7 +1069,7 @@ sap.ui.define([
 
 		oShippedDateUTCModel = this.sut.getModel().getProperty("/ShippedDate");
 		oShippedDateLocalDate = new Date(oShippedDateUTCModel.getUTCFullYear(), oShippedDateUTCModel.getUTCMonth(),
-			oShippedDateUTCModel.getUTCDate(), oShippedDateUTCModel.getUTCHours(), oShippedDateUTCModel.getUTCMinutes(), oShippedDateUTCModel.getUTCSeconds());
+			oShippedDateUTCModel.getUTCDate(), 23, 59, 59);
 
 		assert.equal(this.sut.getDateValue().toString(), oOrderDateLocalDate.toString(), "dateValue should be always a local date");
 		assert.equal(this.sut.getSecondDateValue().toString(), oShippedDateLocalDate.toString(), "secondDateValue should be always a local date");
@@ -1132,7 +1132,8 @@ sap.ui.define([
 				oDateLocalDate = new Date(oDateModelUTC.getUTCFullYear(), oDateModelUTC.getUTCMonth(), oDateModelUTC.getUTCDate());
 
 				oDate2UTCModel = oModelV2.getProperty("/EdmTypesCollection('1')/TravelEndDate");
-				oDate2Localdate = new Date(oDate2UTCModel.getUTCFullYear(), oDate2UTCModel.getUTCMonth(), oDate2UTCModel.getUTCDate());
+				oDate2Localdate = new Date(oDate2UTCModel.getUTCFullYear(), oDate2UTCModel.getUTCMonth(), oDate2UTCModel.getUTCDate(),
+					23, 59, 59, 999);
 
 				var oSut = view.byId("drs_odata");
 
