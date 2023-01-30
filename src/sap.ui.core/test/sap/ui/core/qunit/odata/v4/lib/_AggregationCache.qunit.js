@@ -863,7 +863,8 @@ sap.ui.define([
 				$DistanceFromRootProperty : "DistFromRoot",
 				$DrillStateProperty : "myDrillState",
 				$LimitedDescendantCountProperty : "LtdDescendant_Count",
-				$path : "/meta/path"
+				$metaPath : "/meta/path",
+				$path : "n/a"
 			},
 			oElement = {
 				myDrillState : sDrillState,
@@ -962,7 +963,8 @@ sap.ui.define([
 				$DistanceFromRootProperty : "DistFromRoot",
 				$DrillStateProperty : "myDrillState",
 				$LimitedDescendantCountProperty : "LtdDescendant_Count",
-				$path : "/Artists"
+				$metaPath : "/Artists",
+				$path : "n/a"
 			},
 			oElement = {
 				DistFromRoot : "23",

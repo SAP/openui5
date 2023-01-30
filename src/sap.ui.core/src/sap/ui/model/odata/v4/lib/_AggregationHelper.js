@@ -437,6 +437,7 @@ sap.ui.define([
 		buildApply4Hierarchy : function (oAggregation, mQueryOptions, bAllLevels) {
 			var sApply = "",
 				sHierarchyQualifier = oAggregation.hierarchyQualifier,
+				sMetaPath = oAggregation.$metaPath,
 				sNodeProperty = oAggregation.$NodeProperty,
 				sPath = oAggregation.$path,
 				mRecursiveHierarchy,
@@ -449,7 +450,7 @@ sap.ui.define([
 					sPropertyPath = oAggregation["$" + sProperty];
 					if (!sPropertyPath) {
 						if (!mRecursiveHierarchy) {
-							mRecursiveHierarchy = oAggregation.$fetchMetadata(sPath
+							mRecursiveHierarchy = oAggregation.$fetchMetadata(sMetaPath
 								+ "/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#"
 								+ sHierarchyQualifier).getResult();
 						}
@@ -463,7 +464,8 @@ sap.ui.define([
 
 			if (!sNodeProperty) {
 				if (mQueryOptions) {
-					sNodeProperty = oAggregation.$NodeProperty = oAggregation.$fetchMetadata(sPath
+					sNodeProperty = oAggregation.$NodeProperty
+						= oAggregation.$fetchMetadata(sMetaPath
 						+ "/@Org.OData.Aggregation.V1.RecursiveHierarchy#" + sHierarchyQualifier
 						+ "/NodeProperty/$PropertyPath").getResult();
 				} else {
@@ -508,7 +510,8 @@ sap.ui.define([
 					sApply += "orderby(" + mQueryOptions.$orderby + ")/";
 					delete mQueryOptions.$orderby;
 				}
-				sApply += "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sPath
+				sApply += "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root"
+					+ (sPath || "")
 					+ ",HierarchyQualifier='" + sHierarchyQualifier
 					+ "',NodeProperty='" + sNodeProperty
 					+ "',Levels=" + (bAllLevels ? 9 : oAggregation.expandTo || 1)
@@ -1006,6 +1009,24 @@ sap.ui.define([
 		},
 
 		/**
+		 * Stores the given path and its corresponding meta path inside the given data aggregation
+		 * information as <code>$metaPath</code> and <code>$path</code>.
+		 *
+		 *
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation; see
+		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
+		 * @param {string} [sPath]
+		 *   The list binding's absolute data path, <code>undefined</code> if currently unresolved
+		 *
+		 * @public
+		 */
+		setPath : function (oAggregation, sPath) {
+			oAggregation.$metaPath = sPath && _Helper.getMetaPath(sPath);
+			oAggregation.$path = sPath;
+		},
+
+		/**
 		 * Splits a filter depending on the aggregation information into an array that consists of
 		 * two filters, one that must be applied after and one that must be applied before
 		 * aggregating the data.
@@ -1078,27 +1099,21 @@ sap.ui.define([
 		},
 
 		/**
-		 * Validates the given data aggregation information. If successful, the given path and
-		 * function are stored inside that information as <code>$path</code> and
-		 * <code>$fetchMetadata</code> respectively.
-		 *
+		 * Validates the given data aggregation information.
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation; see
 		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
-		 * @param {string} sPath
-		 *   The list binding's absolute data path
-		 * @param {function} fnFetchMetadata
-		 *   Function which fetches metadata for a given meta path
 		 * @param {boolean} bAutoExpandSelect
 		 *   The value of the model's parameter <code>autoExpandSelect</code>
 		 * @throws {Error}
 		 *   If the given data aggregation object is unsupported, or if a recursive hierarchy is
 		 *   requested, but the model does not use the <code>autoExpandSelect</code> parameter.
 		 *
-		 * @public
+		 * @private
+		 * @see validateAggregationAndSetPath
 		 */
-		validateAggregation : function (oAggregation, sPath, fnFetchMetadata, bAutoExpandSelect) {
+		validateAggregation : function (oAggregation, bAutoExpandSelect) {
 			if (oAggregation.hierarchyQualifier && !bAutoExpandSelect) {
 				throw new Error("Missing parameter autoExpandSelect at model");
 			}
@@ -1106,9 +1121,37 @@ sap.ui.define([
 			_AggregationHelper.checkTypeof(oAggregation,
 				oAggregation.hierarchyQualifier ? mRecursiveHierarchyType : mDataAggregationType,
 				"$$aggregation");
+		},
+
+		/**
+		 * Validates the given data aggregation information. If successful, the given path and its
+		 * corresponding meta path as well as the given function are stored inside that information
+		 * as <code>$metaPath</code>, <code>$path</code>, and <code>$fetchMetadata</code>
+		 * respectively.
+		 *
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation; see
+		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
+		 * @param {boolean} bAutoExpandSelect
+		 *   The value of the model's parameter <code>autoExpandSelect</code>
+		 * @param {function} fnFetchMetadata
+		 *   Function which fetches metadata for a given meta path
+		 * @param {string} [sPath]
+		 *   The list binding's absolute data path, <code>undefined</code> if currently unresolved
+		 * @throws {Error}
+		 *   If the given data aggregation object is unsupported, or if a recursive hierarchy is
+		 *   requested, but the model does not use the <code>autoExpandSelect</code> parameter.
+		 *
+		 * @public
+		 * @see setPath
+		 * @see validateAggregation
+		 */
+		validateAggregationAndSetPath : function (oAggregation, bAutoExpandSelect, fnFetchMetadata,
+				sPath) {
+			_AggregationHelper.validateAggregation(oAggregation, bAutoExpandSelect);
 
 			oAggregation.$fetchMetadata = fnFetchMetadata;
-			oAggregation.$path = sPath;
+			_AggregationHelper.setPath(oAggregation, sPath);
 		}
 	};
 

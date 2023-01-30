@@ -1018,6 +1018,7 @@ sap.ui.define([
 		var oAggregation = Object.assign({
 				hierarchyQualifier : "X",
 				$fetchMetadata : function () {},
+				$metaPath : "/meta",
 				$path : "/Foo"
 			}, mFixture.oAggregation),
 			mQueryOptions = Object.assign({
@@ -1027,7 +1028,7 @@ sap.ui.define([
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
 		this.mock(oAggregation).expects("$fetchMetadata").withExactArgs(
-				"/Foo/@Org.OData.Aggregation.V1.RecursiveHierarchy#X/NodeProperty/$PropertyPath")
+				"/meta/@Org.OData.Aggregation.V1.RecursiveHierarchy#X/NodeProperty/$PropertyPath")
 			.returns(SyncPromise.resolve("aNodeID"));
 
 		// code under test
@@ -1046,15 +1047,17 @@ sap.ui.define([
 	QUnit.test("buildApply4Hierarchy: call from ODLB#applyParameters", function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X",
-				$fetchMetadata : function () {},
-				$path : "/Foo"
+				$fetchMetadata : function () {}
+				// Note: these are missing in case of a relative binding
+				// $metaPath : "/meta/path",
+				// $path : "/Foo"
 			};
 
 		this.mock(oAggregation).expects("$fetchMetadata").never(); // do not rely on metadata
 
 		// code under test
 		assert.deepEqual(_AggregationHelper.buildApply4Hierarchy(oAggregation), {
-				$apply : "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
+				$apply : "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root"
 					+ ",HierarchyQualifier='X',NodeProperty='???',Levels=1)"
 			});
 	});
@@ -1072,23 +1075,16 @@ sap.ui.define([
 				expandTo : iExpandTo,
 				hierarchyQualifier : "X",
 				$fetchMetadata : function () {},
+				$metaPath : "/meta",
 				$path : "/Foo"
 			},
 			oAggregationMock = this.mock(oAggregation),
 			oExpectedAggregation = iExpandTo > 1 ? {
-				expandTo : iExpandTo,
-				hierarchyQualifier : "X",
-				$path : "/Foo",
 				$DistanceFromRootProperty : "DistFromRoot",
 				$DrillStateProperty : "myDrillState",
-				$LimitedDescendantCountProperty : "LtdDescendant_Count",
-				$NodeProperty : "SomeNodeID"
+				$LimitedDescendantCountProperty : "LtdDescendant_Count"
 			} : {
-				expandTo : iExpandTo,
-				hierarchyQualifier : "X",
-				$path : "/Foo",
-				$DrillStateProperty : "myDrillState",
-				$NodeProperty : "SomeNodeID"
+				$DrillStateProperty : "myDrillState"
 			},
 			iExpectedLevels = iExpandTo || 1,
 			aExpectedSelect = iExpandTo > 1
@@ -1107,11 +1103,7 @@ sap.ui.define([
 			iExpectedLevels = 9;
 			aExpectedSelect = ["ID", "SomeNodeID", "DistFromRoot"];
 			oExpectedAggregation = {
-				expandTo : iExpandTo,
-				hierarchyQualifier : "X",
-				$path : "/Foo",
-				$DistanceFromRootProperty : "DistFromRoot",
-				$NodeProperty : "SomeNodeID"
+				$DistanceFromRootProperty : "DistFromRoot"
 			};
 			if (bStored) {
 				oAggregation.$DistanceFromRootProperty = "DistFromRoot";
@@ -1124,16 +1116,23 @@ sap.ui.define([
 			}
 		}
 		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1).withExactArgs(
-				"/Foo/@Org.OData.Aggregation.V1.RecursiveHierarchy#X/NodeProperty/$PropertyPath")
+				"/meta/@Org.OData.Aggregation.V1.RecursiveHierarchy#X/NodeProperty/$PropertyPath")
 			.returns(SyncPromise.resolve("SomeNodeID"));
 		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1)
-			.withExactArgs("/Foo/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#X")
+			.withExactArgs("/meta/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#X")
 			.returns(SyncPromise.resolve({
 				DistanceFromRootProperty : {$PropertyPath : "DistFromRoot"},
 				DrillStateProperty : {$PropertyPath : "myDrillState"},
 				LimitedDescendantCountProperty : {$PropertyPath : "LtdDescendant_Count"}
 			}));
-		oExpectedAggregation.$fetchMetadata = oAggregation.$fetchMetadata; // remember the mock(!)
+		oExpectedAggregation = Object.assign({
+			expandTo : iExpandTo,
+			hierarchyQualifier : "X",
+			$fetchMetadata : oAggregation.$fetchMetadata, // remember the mock(!)
+			$metaPath : "/meta",
+			$path : "/Foo",
+			$NodeProperty : "SomeNodeID"
+		}, oExpectedAggregation);
 
 		assert.deepEqual(
 			// code under test
@@ -1156,23 +1155,23 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{
-	sExpectedApply : "descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)"
+	sExpectedApply : "descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'),1)"
 }, {
-	sExpectedApply : "ancestors($root/some/path,XYZ,myID,filter(~$filter~),keep start)"
-		+ "/descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)",
+	sExpectedApply : "ancestors($root/some(0)/path,XYZ,myID,filter(~$filter~),keep start)"
+		+ "/descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'),1)",
 	mQueryOptions : {$filter : "~$filter~"}
 }, {
-	sExpectedApply : "descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)"
+	sExpectedApply : "descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'),1)"
 		+ "/orderby(~$orderby~)",
 	mQueryOptions : {$orderby : "~$orderby~"}
 }, {
 	oAggregation : {search : "~$search~"},
-	sExpectedApply : "ancestors($root/some/path,XYZ,myID,search(~$search~),keep start)"
-		+ "/descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)"
+	sExpectedApply : "ancestors($root/some(0)/path,XYZ,myID,search(~$search~),keep start)"
+		+ "/descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'),1)"
 }, {
 	oAggregation : {search : "~$search~"},
-	sExpectedApply : "ancestors($root/some/path,XYZ,myID,filter(~$filter~)/search(~$search~)"
-		+ ",keep start)/descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)"
+	sExpectedApply : "ancestors($root/some(0)/path,XYZ,myID,filter(~$filter~)/search(~$search~)"
+		+ ",keep start)/descendants($root/some(0)/path,XYZ,myID,filter(ID eq '42'),1)"
 		+ "/orderby(~$orderby~)",
 	mQueryOptions : {$filter : "~$filter~", $orderby : "~$orderby~"}
 }].forEach(function (mFixture, i) {
@@ -1180,7 +1179,8 @@ sap.ui.define([
 		var oAggregation = Object.assign({
 				hierarchyQualifier : "XYZ",
 				$fetchMetadata : function () {},
-				$path : "/some/path"
+				$metaPath : "/meta/path",
+				$path : "/some(0)/path"
 			}, mFixture.oAggregation),
 			oAggregationMock = this.mock(oAggregation),
 			mQueryOptions = Object.assign({
@@ -1191,11 +1191,11 @@ sap.ui.define([
 			}, mFixture.mQueryOptions),
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
-		oAggregationMock.expects("$fetchMetadata").withExactArgs("/some/path"
+		oAggregationMock.expects("$fetchMetadata").withExactArgs("/meta/path"
 				+ "/@Org.OData.Aggregation.V1.RecursiveHierarchy#XYZ/NodeProperty/$PropertyPath")
 			.returns(SyncPromise.resolve("myID"));
 		oAggregationMock.expects("$fetchMetadata")
-			.withExactArgs("/some/path/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#XYZ")
+			.withExactArgs("/meta/path/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#XYZ")
 			.returns(SyncPromise.resolve({
 				DrillStateProperty : {$PropertyPath : "aDrillState"}
 			}));
@@ -1265,7 +1265,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.validateAggregation(oAggregation, "", Function, true);
+			_AggregationHelper.validateAggregation(oAggregation, true);
 		}, oError);
 
 		assert.deepEqual(oAggregation, {hierarchyQualifier : "X"}, "unchanged");
@@ -1277,27 +1277,48 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.validateAggregation(oAggregation, "", Function, false);
+			_AggregationHelper.validateAggregation(oAggregation, false);
 		}, new Error("Missing parameter autoExpandSelect at model"));
 
 		assert.deepEqual(oAggregation, {hierarchyQualifier : "X"}, "unchanged");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("validateAggregation: decorations", function (assert) {
+	QUnit.test("validateAggregationAndSetPath: OK", function (assert) {
 		var oAggregation = {hierarchyQualifier : "X"};
 
-		this.mock(_AggregationHelper).expects("checkTypeof");
+		this.mock(_AggregationHelper).expects("validateAggregation")
+			.withExactArgs(sinon.match.same(oAggregation), "~bAutoExpandSelect~");
+		this.mock(_AggregationHelper).expects("setPath")
+			.withExactArgs(sinon.match.same(oAggregation), "/some(0)/path");
 
 		// code under test
-		_AggregationHelper.validateAggregation(oAggregation, "/some/path", "~fnFetchMetadata~",
-			true);
+		_AggregationHelper.validateAggregationAndSetPath(oAggregation, "~bAutoExpandSelect~",
+			"~fnFetchMetadata~", "/some(0)/path");
 
 		assert.deepEqual(oAggregation, {
 			hierarchyQualifier : "X",
-			$fetchMetadata : "~fnFetchMetadata~",
-			$path : "/some/path"
+			$fetchMetadata : "~fnFetchMetadata~"
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("validateAggregationAndSetPath: error", function (assert) {
+		var oAggregation = {hierarchyQualifier : "X"},
+			oError = new Error("...");
+
+		this.mock(_AggregationHelper).expects("validateAggregation")
+			.withExactArgs(sinon.match.same(oAggregation), "~bAutoExpandSelect~")
+			.throws(oError);
+		this.mock(_AggregationHelper).expects("setPath").never();
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.validateAggregationAndSetPath(oAggregation, "~bAutoExpandSelect~",
+				Function, "n/a");
+		}, oError);
+
+		assert.deepEqual(oAggregation, {hierarchyQualifier : "X"});
 	});
 
 	//*********************************************************************************************
@@ -1375,7 +1396,7 @@ sap.ui.define([
 			_AggregationHelper.validateAggregation({
 				expandTo : 0,
 				hierarchyQualifier : "X"
-			}, "", Function, true);
+			}, true);
 		}, new Error("Not a matching value for '$$aggregation/expandTo'"));
 
 		assert.throws(function () {
@@ -1383,7 +1404,7 @@ sap.ui.define([
 			_AggregationHelper.validateAggregation({
 				expandTo : -1,
 				hierarchyQualifier : "X"
-			}, "", Function, true);
+			}, true);
 		}, new Error("Not a matching value for '$$aggregation/expandTo'"));
 
 		assert.throws(function () {
@@ -1391,7 +1412,7 @@ sap.ui.define([
 			_AggregationHelper.validateAggregation({
 				search : true,
 				hierarchyQualifier : "X"
-			}, "", Function, true);
+			}, true);
 		}, new Error("Not a string value for '$$aggregation/search'"));
 	});
 
@@ -1949,6 +1970,32 @@ sap.ui.define([
 			foo : null,
 			group : "~group~",
 			measure : "~measure~"
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setPath", function (assert) {
+		var oAggregation = {};
+
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("/some(0)/path")
+			.returns("/meta/path"); // unrealistic, but stronger
+
+		// code under test
+		_AggregationHelper.setPath(oAggregation, "/some(0)/path");
+
+		assert.deepEqual(oAggregation, {
+			$metaPath : "/meta/path",
+			$path : "/some(0)/path"
+		});
+
+		// Note: no other call to _Helper.getMetaPath!
+
+		// code under test
+		_AggregationHelper.setPath(oAggregation, undefined);
+
+		assert.deepEqual(oAggregation, {
+			$metaPath : undefined,
+			$path : undefined
 		});
 	});
 
