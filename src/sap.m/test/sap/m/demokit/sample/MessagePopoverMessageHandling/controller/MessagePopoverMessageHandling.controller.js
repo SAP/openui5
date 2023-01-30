@@ -56,7 +56,9 @@ sap.ui.define([
 							if (bIsBehindOtherElement) {
 								this.close();
 							}
-							oControl.focus();
+							if (oControl.isFocusable()) {
+								oControl.focus();
+							}
 						}.bind(this), 300);
 					}
 				},
