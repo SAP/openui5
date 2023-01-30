@@ -57,5 +57,43 @@
         ]
       }
     ]
+  },
+  "1.108.3": {
+    "date": "January 2023",
+    "notes": [
+      {
+        "id": "ccff210a914ddaa364877bb4b862d2d4889eaee2",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.MonthPicker: adjust failing unit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "7e709d59b7cb1df60246c1eb2bdb2e60e25834e4",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: adjustment at more link press event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009425452022"
+          }
+        ]
+      },
+      {
+        "id": "1902bf76827cc702990644be1da3c344a3177839",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: fixed space before menu items without icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280155051"
+          }
+        ]
+      }
+    ]
   }
 }

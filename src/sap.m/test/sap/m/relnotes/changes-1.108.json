@@ -528,5 +528,84 @@
         ]
       }
     ]
+  },
+  "1.108.3": {
+    "date": "January 2023",
+    "notes": [
+      {
+        "id": "03fc6cb07fb8a24fa3103cf985d10818a2f6ced0",
+        "type": "FIX",
+        "text": " sap.m.Carousel: after setActivePage() the active page indexes are updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280200416"
+          }
+        ]
+      },
+      {
+        "id": "748b89cf91d989226f50a3819ed340c4377b31d8",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: OData V4 data is now handled correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280193741"
+          }
+        ]
+      },
+      {
+        "id": "7974e23f3134613a52bcd22c833f19cc01606ebf",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Repetitive announcement avoided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270174763"
+          }
+        ]
+      },
+      {
+        "id": "6889702be606ec2da1860b19a7eb53c0ec29e705",
+        "type": "FIX",
+        "text": " sap.m.Input: Dynamic suggestions on mobile corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270170231"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280197243"
+          }
+        ]
+      },
+      {
+        "id": "7e709d59b7cb1df60246c1eb2bdb2e60e25834e4",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: adjustment at more link press event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009425452022"
+          }
+        ]
+      },
+      {
+        "id": "a10f0003c4cffc2b476ca422db1977869a106f23",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: override default state announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004825672022"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270139091"
+          }
+        ]
+      }
+    ]
   }
 }
