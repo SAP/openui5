@@ -73,7 +73,8 @@
 						<CustomListItem>
 							<HBox>
 								<VBox class="sapUiSmallMarginTopBottom">
-									<Text text="{contextBased>title}"/>
+									<Text wrapping="false" maxLines="1" text="{contextBased>title}"
+									tooltip="{contextBased>title}"/>
 								</VBox>
 							</HBox>
 						</CustomListItem>

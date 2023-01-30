@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/strings/formatMessage",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/ValueState",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ContextSharingAPI",
@@ -18,6 +19,7 @@ sap.ui.define([
 	Log,
 	formatMessage,
 	Fragment,
+	ValueState,
 	Layer,
 	ContextBasedAdaptationsAPI,
 	ContextSharingAPI,
@@ -84,15 +86,17 @@ sap.ui.define([
 			});
 		}.bind(this)).catch(function(oError) {
 			Log.error(oError.stack);
-			return new JSONModel({ adaptations: [] });
-		}).then(function(oAdaptationsModel) {
+			this.oAdaptationsModel = new JSONModel({ adaptations: [] });
+			return this.oAdaptationsModel;
+		}.bind(this)).then(function(oAdaptationsModel) {
+			this.oAdaptationsModel = oAdaptationsModel;
 			return openDialog.call(this, oAdaptationsModel);
 		}.bind(this));
 	};
 
 	// ------ open dialog -----
-	function openDialog(oAdaptationsModelData) {
-		formatPriorityText.call(this, oAdaptationsModelData.getData());
+	function openDialog(oAdaptationsModel) {
+		formatPriorityText.call(this, oAdaptationsModel.getData());
 		return this._oAddAdaptationDialog.open();
 	}
 
@@ -113,8 +117,7 @@ sap.ui.define([
 		this._oAddAdaptationDialog.setModel(this.oPrioritySelectionModel, "prioritySelectionModel");
 	}
 
-	function onAdaptationTitleChange(oEvent) {
-		this.sAdaptationTitle = oEvent.getParameter("value");
+	function onAdaptationTitleChange() {
 		enableSaveAsButton.call(this);
 	}
 
@@ -146,6 +149,40 @@ sap.ui.define([
 		this.sPriority = oEvent.getParameters().selectedItem.getProperty("key");
 	}
 
+
+	function checkAdaptationsNameConstraints() {
+		// check for empty adaptations title
+		if (this._oAddAdaptationDialog && this._oAddAdaptationDialog.isOpen()) {
+			var oInputField = this.getToolbar().getControl("addAdaptationDialog--saveAdaptation-title-input");
+			var iAdaptationTitleLength = oInputField.getValue().trim().length;
+			var iMaxTitleLength = 100;
+			if (iAdaptationTitleLength === 0) {
+				oInputField.setValueState(ValueState.Error);
+				oInputField.setValueStateText(this.oTextResources.getText("TXT_CTX_ERROR_EMPTY_TITLE"));
+			} else if (iAdaptationTitleLength > iMaxTitleLength) {
+				oInputField.setValueState(ValueState.Error);
+				oInputField.setValueStateText(this.oTextResources.getText("TXT_CTX_ERROR_MAX_LEN", [
+					iMaxTitleLength
+				]));
+			} else if (iAdaptationTitleLength > 0) {
+				// check for duplicates
+				var iIndexOfDuplicate = this.oAdaptationsModel.getProperty("/adaptations").findIndex(function(adaptation) {
+					if (adaptation.title.trim().toLowerCase() === oInputField.getValue().trim().toLowerCase()) {
+						return true;
+					}
+					return false;
+				});
+				if (iIndexOfDuplicate > -1) {
+					oInputField.setValueState(ValueState.Error);
+					oInputField.setValueStateText(this.oTextResources.getText("TXT_CTX_ERROR_DUPLICATE_TITLE"));
+				} else {
+					oInputField.setValueState(ValueState.None);
+					oInputField.setValueStateText(null);
+				}
+			}
+		}
+	}
+
 	function createContextSharingComponent(sLayer) {
 		var mPropertyBag = { layer: sLayer || Layer.CUSTOMER };
 		return ContextSharingAPI.createComponent(mPropertyBag).then(function(oContextSharingComponent) {
@@ -161,7 +198,8 @@ sap.ui.define([
 	}
 
 	function getAdaptationTitle() {
-		return this.sAdaptationTitle || "";
+		var oInputField = this.getToolbar().getControl("addAdaptationDialog--saveAdaptation-title-input");
+		return oInputField ? oInputField.getValue().trim() : "";
 	}
 
 	function getAdaptationPriority() {
@@ -169,7 +207,9 @@ sap.ui.define([
 	}
 
 	function enableSaveAsButton() {
-		var bEnable = getAdaptationTitle.call(this).length > 0 && this._oContextComponentInstance.getSelectedContexts().role.length > 0;
+		checkAdaptationsNameConstraints.call(this);
+		var oInputField = this.getToolbar().getControl("addAdaptationDialog--saveAdaptation-title-input");
+		var bEnable = oInputField.getValueState() === ValueState.None && this._oContextComponentInstance.getSelectedContexts().role.length > 0;
 		this.getToolbar().getControl("addAdaptationDialog--saveAdaptation-saveButton").setEnabled(bEnable);
 	}
 
