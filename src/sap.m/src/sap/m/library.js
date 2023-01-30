@@ -2988,6 +2988,29 @@ sap.ui.define([
 	 * @since 1.110
 	 */
 
+	 /**
+	 * The object contains accessibility state for a control.
+	 *
+	 * @typedef {object} sap.m.InputBaseAccessibilityState
+	 *
+	 * @property {string} [role]
+	 * 	The WAI-ARIA role which is implemented by the control.
+	 * @property {boolean} [invalid]
+	 * 	Whether the control is invalid.
+	 * @property {string} [errormessage]
+	 * 	The errormessage property.
+	 * @property {{value: string, append: boolean}} [labelledby]
+	 * 	The labelledby property.
+	 * @property {{value: string, append: boolean}} [describedby]
+	 * 	The describedby property.
+	 * @property {boolean | null} [disabled]
+	 * 	Whether the control is disabled. If not relevant, it shouldn`t be set or set as <code>null</code>.
+	 * @property {boolean | null} [readonly]
+	 * 	Whether the control is readonly. If not relevant, it shouldn`t be set or set as <code>null</code>.
+	 * @protected
+	 * @since 1.111
+	 */
+
 	/**
 	 * Marker interface for controls which are suitable as items for the ObjectHeader.
 	 *
