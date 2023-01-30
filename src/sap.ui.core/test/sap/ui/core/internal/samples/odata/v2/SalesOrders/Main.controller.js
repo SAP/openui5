@@ -5,8 +5,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/security/encodeURL",
 	"sap/base/util/isEmptyObject",
+	"sap/m/DynamicDateRange",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
+	"sap/m/StandardDynamicDateRangeKeys",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
@@ -16,8 +18,8 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/ODataUtils"
-], function (Log, encodeURL, isEmptyObject, MessageBox, MessageToast, coreLibrary, Core, Element,
-	Message, Controller, Filter, FilterOperator, Sorter, ODataUtils) {
+], function (Log, encodeURL, isEmptyObject, DynamicDateRange, MessageBox, MessageToast, StandardDynamicDateRangeKeys,
+		coreLibrary, Core, Element, Message, Controller, Filter, FilterOperator, Sorter, ODataUtils) {
 	"use strict";
 	var sClassname = "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main.controller",
 		MessageType = coreLibrary.MessageType;
@@ -37,12 +39,20 @@ sap.ui.define([
 			}));
 		},
 
+		createDeliveryDate : function () {
+			var oDeliveryDate = DynamicDateRange.toDates(
+					{operator : StandardDynamicDateRangeKeys.NEXTWEEKS, values : [3]})[1],
+				oType = this.byId("deliveryDate::createSalesOrderItemDialog").getBinding("value").getType();
+
+			return oType.getModelValue(oDeliveryDate);
+		},
+
 		createInactiveLineItem : function () {
 			var oItemsBinding = this.getView().byId("ToLineItems").getBinding("rows");
 
 			oItemsBinding.create({
 					CurrencyCode : null,
-					DeliveryDate : new Date(Date.now() + 14 * 24 * 3600000),
+					DeliveryDate : this.createDeliveryDate(),
 					GrossAmount : null,
 					Quantity : null,
 					QuantityUnit : null,
@@ -143,7 +153,7 @@ sap.ui.define([
 			}
 
 			oCreatedContext = this.byId("ToLineItems").getBinding("rows").create({
-				DeliveryDate : new Date(Date.now() + 14 * 24 * 3600000),
+				DeliveryDate : this.createDeliveryDate(),
 				Note : "Created by OData V2 Sales Orders App",
 				ProductID : "HT-1000",
 				Quantity : "1",

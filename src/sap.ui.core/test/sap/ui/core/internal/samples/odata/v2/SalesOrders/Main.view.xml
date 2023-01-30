@@ -392,6 +392,15 @@
 									}" />
 							</t:template>
 						</t:Column>
+						<t:Column width="13em">
+							<Label text="Delivery Date" />
+							<t:template>
+								<Input editable="false" value="{
+									path : 'DeliveryDate',
+									type : 'sap.ui.model.odata.type.DateTime'
+								}" />
+							</t:template>
+						</t:Column>
 						<t:Column>
 							<Label text="Note" />
 							<t:template>
@@ -439,8 +448,7 @@
 							<Label text="Unit" />
 							<Input value="{QuantityUnit}" width="4em" />
 							<Label text="Delivery Date" />
-							<DateTimePicker value="{
-									constraints : {precision : 7},
+							<DateTimePicker id="deliveryDate::createSalesOrderItemDialog" value="{
 									path : 'DeliveryDate',
 									type : 'sap.ui.model.odata.type.DateTime'
 								}" />
