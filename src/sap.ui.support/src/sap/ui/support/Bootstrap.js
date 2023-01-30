@@ -11,7 +11,7 @@ sap.ui.define(["sap/base/Log"],
 
 	var Bootstrap = {
 		initSupportRules: function (aSettings, oDelegates) {
-			sap.ui.require(["sap/ui/support/supportRules/Main", "sap/ui/support/jQuery.sap.support"], function (Main) {
+			sap.ui.require(["sap/ui/support/supportRules/Main"], function (Main) {
 				if (aSettings[0].toLowerCase() === "true" || aSettings[0].toLowerCase() === "silent") {
 
 					var bHasReadyFunction = oDelegates && oDelegates.onReady && typeof oDelegates.onReady === "function";
