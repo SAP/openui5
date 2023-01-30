@@ -74,6 +74,8 @@ module.exports = [
 	"PlanningCalendarWithLegend.spec.js",
 	"PlanningCalendarRelativeView.spec.js",
 	"Popover.spec.js",
+	"PopoverPlacement.spec.js",
+	"PopoverWithinArea.spec.js",
 	"ProgressIndicator.spec.js",
 	"PullToRefresh.spec.js",
 	"QuickView.spec.js",
