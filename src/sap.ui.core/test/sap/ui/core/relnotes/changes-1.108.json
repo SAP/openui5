@@ -277,5 +277,43 @@
         ]
       }
     ]
+  },
+  "1.108.3": {
+    "date": "January 2023",
+    "notes": [
+      {
+        "id": "0deba6811733b8f4cbb1cf0ea4ef2d964b1f0d17",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel: Normalize entity key from location header for function imports",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270118627"
+          }
+        ]
+      },
+      {
+        "id": "47f81c707171980f326bb5cd7b2f5fc86d9909b3",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#requestContexts: empty $select remains when all entries were converted to $expand",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280192214"
+          }
+        ]
+      },
+      {
+        "id": "9d0ea52c18b003b41e92c4354e559c62bc315f4b",
+        "type": "FIX",
+        "text": " theming/Parameters: Fix parameter parsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009129202022"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -46,5 +46,21 @@
         ]
       }
     ]
+  },
+  "1.108.3": {
+    "date": "January 2023",
+    "notes": [
+      {
+        "id": "1902bf76827cc702990644be1da3c344a3177839",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: fixed space before menu items without icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280155051"
+          }
+        ]
+      }
+    ]
   }
 }
