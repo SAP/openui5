@@ -41,7 +41,12 @@ sap.ui.define([
 		oCard.startManifestProcessing();
 
 		return ManifestResolver._awaitReadyEvent(oCard)
-			.then(ManifestResolver._handleCardReady)
+			.then(function () {
+				return oCard.getModel("context").waitForPendingProperties();
+			})
+			.then(function () {
+				return ManifestResolver._handleCardReady(oCard);
+			})
 			.catch(function (oError) {
 				return ManifestResolver._handleCardSevereError(oCard, oError);
 			});

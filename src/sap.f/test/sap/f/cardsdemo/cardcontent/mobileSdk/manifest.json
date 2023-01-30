@@ -27,7 +27,7 @@
 				"country": {
 					"type": "Search",
 					"label": "Country",
-					"value": "France",
+					"value": "{context>/cardExplorer/stateChangedEvent/country}",
 					"placeholder": "Enter a country"
 				}
 			},
@@ -84,7 +84,7 @@
 		},
 		"content": {
 			"item": {
-				"title": "{ShipName}",
+				"title": "{context>/cardExplorer/stateChangedEvent/country}",
 				"description": "{ShipAddress}",
 				"info": {
 					"value": "{ShipCountry}"
