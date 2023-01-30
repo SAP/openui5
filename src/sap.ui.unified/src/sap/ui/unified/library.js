@@ -415,14 +415,7 @@ sap.ui.define([
 
 	};
 
-	/**
-	 * Types of HTTP request methods.
-	 *
-	 * @enum {string}
-	 * @alias sap.ui.unified.FileUploaderHttpRequestMethod
-	 * @public
-	 * @since 1.81.0
-	 */
+	// expose imported enum as property of library namespace, for documentation see FileUploaderHttpRequestMethod.js
 	thisLib.FileUploaderHttpRequestMethod = FileUploaderHttpRequestMethod;
 
 	/**
@@ -525,7 +518,7 @@ sap.ui.define([
 
 	};
 
-	// expose imported enum as property of library namespace, for documentation see module
+	// expose imported enum as property of library namespace, for documentation see ColorPickerDisplayMode.js
 	thisLib.ColorPickerDisplayMode = ColorPickerDisplayMode;
 
 	/**
