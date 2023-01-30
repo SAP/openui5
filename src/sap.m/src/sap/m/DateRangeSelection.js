@@ -409,6 +409,13 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Sets the displayFormat of the DatePicker.
+	 *
+	 * @param {string} sDisplayFormat  new value for <code>displayFormat</code>
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 */
 	DateRangeSelection.prototype.setDisplayFormat = function(sDisplayFormat) {
 
 		// if displayFormat changes the value must be formatted again
@@ -493,6 +500,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Getter for property <code>secondDateValue</code>.
+	 *
+	 * The end date of the range as JavaScript Date object. This is independent from any formatter.
+	 *
+	 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
+	 *
+	 * @returns {Date} the value of property <code>secondDateValue</code>
+	 * @public
+	 * @name sap.m.DateRangeSelection#getSecondDateValue
+	 * @function
+	 */
+
+	/**
 	 * Setter for property <code>secondDateValue</code>.
 	 *
 	 * The start date of the range as JavaScript Date object. This is independent from any formatter.
@@ -526,6 +546,11 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Set minimum date that can be shown and selected in the <code>DatePicker</code>. This must be a JavaScript date object.
+	 * @param {Date} oDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 */
 	DateRangeSelection.prototype.setMinDate = function(oDate) {
 
 		DatePicker.prototype.setMinDate.apply(this, arguments);
@@ -541,6 +566,11 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Set maximum date that can be shown and selected in the <code>DatePicker</code>. This must be a JavaScript date object.
+	 * @param {Date} oDate A JavaScript Date
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 */
 	DateRangeSelection.prototype.setMaxDate = function(oDate) {
 
 		DatePicker.prototype.setMaxDate.apply(this, arguments);
