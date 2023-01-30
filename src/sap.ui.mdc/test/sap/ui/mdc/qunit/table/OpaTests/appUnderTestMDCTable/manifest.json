@@ -8,6 +8,7 @@
   },
   "sap.ui5": {
 	"rootView": {
+      "id": "MyView",
 	  "viewName": "sap.ui.mdc.tableOpaTests.appUnderTestMDCTable.View",
 	  "type": "XML",
 	  "async": true

@@ -276,6 +276,46 @@ sap.ui.define([
 				 */
 				iDeselectSomeRows: function(oControl, iStartIndex, iEndIndex) {
 					return TableActions.iDeselectSomeRows.call(this, oControl, iStartIndex, iEndIndex);
+				},
+
+				iPressOnColumnHeader: function(sName, bResponsiveTable){
+					return AppUnderTestActions.iPressOnColumnHeader.apply(this, arguments);
+				},
+
+				iCloseTheColumnMenu: function() {
+					return AppUnderTestActions.iCloseTheColumnMenu.apply(this, arguments);
+				},
+
+				iUseColumnMenuQuickSort: function(mConfig) {
+					return AppUnderTestActions.iUseColumnMenuQuickSort.apply(this, arguments);
+				},
+
+				iUseColumnMenuQuickGroup: function(mConfig) {
+					return AppUnderTestActions.iUseColumnMenuQuickGroup.apply(this, arguments);
+				},
+
+				iUseColumnMenuQuickTotal: function(mConfig) {
+					return AppUnderTestActions.iUseColumnMenuQuickTotal.apply(this, arguments);
+				},
+
+				iPressOnColumnMenuItem: function(sLabel) {
+					return AppUnderTestActions.iPressOnColumnMenuItem.apply(this, arguments);
+				},
+
+				iNavigateBackFromColumnMenuItemContent: function() {
+					return AppUnderTestActions.iNavigateBackFromColumnMenuItemContent.apply(this, arguments);
+				},
+
+				iPressResetInColumnMenuItemContent: function() {
+					return AppUnderTestActions.iPressResetInColumnMenuItemContent.apply(this, arguments);
+				},
+
+				iPressConfirmInColumnMenuItemContent: function() {
+					return AppUnderTestActions.iPressConfirmInColumnMenuItemContent.apply(this, arguments);
+				},
+
+				iPressCancelInColumnMenuItemContent: function() {
+					return AppUnderTestActions.iPressCancelInColumnMenuItemContent.apply(this, arguments);
 				}
 			},
 			assertions: {
@@ -490,6 +530,54 @@ sap.ui.define([
 				 */
 				iShouldSeeExportSettingsDialog: function() {
 					return AppUnderTestAssertions.iShouldSeeExportSettingsDialog.call(this);
+				},
+
+				iShouldSeeOneColumnMenu: function() {
+					return AppUnderTestAssertions.iShouldSeeOneColumnMenu.apply(this, arguments);
+				},
+
+				iShouldNotSeeTheColumnMenu: function() {
+					return AppUnderTestAssertions.iShouldNotSeeTheColumnMenu.apply(this, arguments);
+				},
+
+				iShouldSeeNumberOfColumnMenuQuickActions: function(iCount) {
+					return AppUnderTestAssertions.iShouldSeeNumberOfColumnMenuQuickActions.apply(this, arguments);
+				},
+
+				iShouldNotSeeColumnMenuQuickActions: function() {
+					return AppUnderTestAssertions.iShouldNotSeeColumnMenuQuickActions.apply(this, arguments);
+				},
+
+				iShouldSeeColumnMenuQuickSort: function(mSortItemInfo) {
+					return AppUnderTestAssertions.iShouldSeeColumnMenuQuickSort.apply(this, arguments);
+				},
+
+				iShouldSeeColumnMenuQuickGroup: function(mGroupItemInfo) {
+					return AppUnderTestAssertions.iShouldSeeColumnMenuQuickGroup.apply(this, arguments);
+				},
+
+				iShouldSeeColumnMenuQuickTotal: function(mTotalItemInfo) {
+					return AppUnderTestAssertions.iShouldSeeColumnMenuQuickTotal.apply(this, arguments);
+				},
+
+				iShouldSeeNumberOfColumnMenuItems: function(iCount) {
+					return AppUnderTestAssertions.iShouldSeeNumberOfColumnMenuItems.apply(this, arguments);
+				},
+
+				iShouldNotSeeColumnMenuItems: function() {
+					return AppUnderTestAssertions.iShouldNotSeeColumnMenuItems.apply(this, arguments);
+				},
+
+				iShouldSeeColumnMenuItems: function(aLabels) {
+					return AppUnderTestAssertions.iShouldSeeColumnMenuItems.apply(this, arguments);
+				},
+
+				iShouldSeeColumnMenuItem: function(sLabel) {
+					return AppUnderTestAssertions.iShouldSeeColumnMenuItem.apply(this, arguments);
+				},
+
+				iShouldSeeColumnMenuItemContent: function(sTitle) {
+					return AppUnderTestAssertions.iShouldSeeColumnMenuItemContent.apply(this, arguments);
 				}
 			}
 		}

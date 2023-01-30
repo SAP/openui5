@@ -4,17 +4,21 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/library",
 	"sap/ui/mdc/library",
 	"sap/ui/test/Opa5",
 	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable",
+	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/PropertyStrictEquals"
 ], function(
 	/** @type sap.ui.core.Core */ Core,
+	/** @type sap.ui.core.library */ CoreLibrary,
 	/** @type sap.ui.mdc.library */ MdcLibrary,
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.Opa5 */ waitForTable,
+	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
 	/** @type sap.ui.test.matchers.Ancestor */ Ancestor,
 	/** @type sap.ui.test.matchers.Properties */ Properties,
 	/** @type sap.ui.test.matchers.PropertyStrictEquals */ PropertyStrictEquals) {
@@ -470,6 +474,254 @@ sap.ui.define([
 					Opa5.assert.ok(oDialog, "'Export settings' dialog is visible");
 				},
 				errorMessage: "No 'Export settings' dialog found"
+			});
+		},
+
+		iShouldSeeOneColumnMenu: function() {
+			return Util.waitForColumnMenu.call(this, {
+				findAll: true,
+				success: function(aColumnMenu) {
+					Opa5.getContext().columnMenu = aColumnMenu[0];
+					Opa5.assert.equal(aColumnMenu.length, 1, "One column menu is open");
+				}
+			});
+		},
+
+		iShouldNotSeeTheColumnMenu: function() {
+			return this.waitFor({
+				success: function() {
+					// We might need to wait for the close animation of the menu to finish.
+					this.iWaitForPromise(new Promise(function(resolve) {
+						setTimeout(resolve, 300);
+					})).then(function() {
+						var oContext = Opa5.getContext();
+						Opa5.assert.notOk(oContext.columnMenu.isOpen(), "The column menu is closed");
+						delete oContext.columnMenu;
+					});
+				}
+			});
+		},
+
+		iShouldSeeNumberOfColumnMenuQuickActions: function(iCount) {
+			if (iCount === 0) {
+				return this.iShouldNotSeeColumnMenuQuickActions();
+			}
+
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.Label", // QuickActions themselves are not rendered. We expect there's one label for every QuickAction.
+						matchers: [{
+							ancestor: oColumnMenu
+						}],
+						success: function(aLabels) {
+							Opa5.assert.equal(aLabels.length, iCount, "Number of visible column menu quick actions");
+						},
+						errorMessage: "No column menu quick actions found"
+					});
+				}
+			});
+		},
+
+		iShouldNotSeeColumnMenuQuickActions: function() {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						success: function() {
+							Opa5.assert.notOk(oColumnMenu.$().find(".sapMTCMenuQAList").is(":visible"), "No visible column menu quick actions");
+						}
+					});
+				}
+			});
+		},
+
+		iShouldSeeColumnMenuQuickSort: function(mSortItemInfo) {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.table.columnmenu.QuickSortItem",
+						visible: false,
+						matchers: [{
+							ancestor: oColumnMenu,
+							properties: {
+								key: mSortItemInfo.key,
+								label: mSortItemInfo.label,
+								sortOrder: mSortItemInfo.sortOrder
+							}
+						}],
+						success: function(aQuickSortItems) {
+							Opa5.assert.equal(aQuickSortItems.length, 1, "Found column menu QuickSortItem");
+							this.waitFor({
+								controlType: "sap.m.ToggleButton",
+								matchers: [{
+									ancestor: aQuickSortItems[0]
+								}],
+								success: function(aToggleButtons) {
+									Opa5.assert.equal(aToggleButtons.length, 2, "QuickSortItem content is visible");
+									Opa5.assert.equal(aToggleButtons[0].getPressed(), mSortItemInfo.sortOrder === CoreLibrary.SortOrder.Ascending,
+										"Ascending button pressed state");
+									Opa5.assert.equal(aToggleButtons[1].getPressed(), mSortItemInfo.sortOrder === CoreLibrary.SortOrder.Descending,
+										"Descending button pressed state");
+								},
+								errorMessage: "QuickSortItem content is not visible"
+							});
+						},
+						errorMessage: "Column menu QuickSortItem not found"
+					});
+				}
+			});
+		},
+
+		iShouldSeeColumnMenuQuickGroup: function(mGroupItemInfo) {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.table.columnmenu.QuickGroupItem",
+						visible: false,
+						matchers: [{
+							ancestor: oColumnMenu,
+							properties: {
+								key: mGroupItemInfo.key,
+								label: mGroupItemInfo.label,
+								grouped: mGroupItemInfo.grouped
+							}
+						}],
+						success: function(aQuickGroupItems) {
+							Opa5.assert.equal(aQuickGroupItems.length, 1, "Found column menu QuickGroupItem");
+							this.waitFor({
+								controlType: "sap.m.ToggleButton",
+								matchers: [{
+									ancestor: aQuickGroupItems[0].getParent(),
+									properties: {
+										text: mGroupItemInfo.label,
+										pressed: mGroupItemInfo.grouped
+									}
+								}],
+								success: function(aToggleButton) {
+									Opa5.assert.equal(aToggleButton.length, 1, "QuickGroupItem content is visible");
+								},
+								errorMessage: "QuickGroupItem content is not visible"
+							});
+						},
+						errorMessage: "Column menu QuickGroupItem not found"
+					});
+				}
+			});
+		},
+
+		iShouldSeeColumnMenuQuickTotal: function(mTotalItemInfo) {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.table.columnmenu.QuickTotalItem",
+						visible: false,
+						matchers: [{
+							ancestor: oColumnMenu,
+							properties: {
+								key: mTotalItemInfo.key,
+								label: mTotalItemInfo.label,
+								totaled: mTotalItemInfo.totaled
+							}
+						}],
+						success: function(aQuickTotalItems) {
+							Opa5.assert.equal(aQuickTotalItems.length, 1, "Found column menu QuickTotalItem");
+							this.waitFor({
+								controlType: "sap.m.ToggleButton",
+								matchers: [{
+									ancestor: aQuickTotalItems[0].getParent(),
+									properties: {
+										text: mTotalItemInfo.label,
+										pressed: mTotalItemInfo.totaled
+									}
+								}],
+								success: function(aToggleButton) {
+									Opa5.assert.equal(aToggleButton.length, 1, "QuickTotalItem content is visible");
+								},
+								errorMessage: "QuickTotalItem content is not visible"
+							});
+						},
+						errorMessage: "Column menu QuickTotalItem not found"
+					});
+				}
+			});
+		},
+
+		iShouldSeeNumberOfColumnMenuItems: function(iCount) {
+			if (iCount === 0) {
+				return this.iShouldNotSeeColumnMenuItems();
+			}
+
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.StandardListItem", // Items themselves are not rendered. We expect there's one list item for every Item.
+						matchers: [{
+							ancestor: oColumnMenu
+						}],
+						success: function(aLabels) {
+							Opa5.assert.equal(aLabels.length, iCount, "Number of visible column menu items");
+						},
+						errorMessage: "No column menu items found"
+					});
+				}
+			});
+		},
+
+		iShouldNotSeeColumnMenuItems: function() {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						success: function() {
+							Opa5.assert.notOk(oColumnMenu.$().find(".sapMTCMenuContainerWrapper").is(":visible"), "No visible column menu items");
+						}
+					});
+				}
+			});
+		},
+
+		iShouldSeeColumnMenuItems: function(aLabels) {
+			aLabels.forEach(this.iShouldSeeColumnMenuItem, this);
+			return this;
+		},
+
+		iShouldSeeColumnMenuItem: function(sLabel) {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.StandardListItem", // Items themselves are not rendered. We expect there's one list item for every Item.
+						matchers: [{
+							ancestor: oColumnMenu,
+							properties: {
+								title: sLabel
+							}
+						}],
+						success: function(aStandardListItems) {
+							Opa5.assert.equal(aStandardListItems.length, 1, "Column menu item '" + sLabel + "' found");
+						},
+						errorMessage: "No column menu items found"
+					});
+				}
+			});
+		},
+
+		iShouldSeeColumnMenuItemContent: function(sTitle) {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: [{
+							ancestor: oColumnMenu,
+							properties: {
+								text: sTitle,
+								type: "Back"
+							}
+						}],
+						success: function(aButtons) {
+							Opa5.assert.ok(true, "Colum menu item content '" + sTitle + "' is visible");
+						},
+						errorMessage: "Colum menu item content '" + sTitle + "' is not visible"
+					});
+				}
 			});
 		}
 	};
