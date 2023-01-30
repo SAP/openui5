@@ -501,7 +501,7 @@ function(
 	 *
 	 * @param {string} sText
 	 *         Defines the title text of the newly created Button
-	 * @param {sap.ui.core.URI} sURI
+	 * @param {sap.ui.core.URI} [sURI]
 	 *         Icon to be displayed as graphical element within the Button.
 	 *         Density related image will be loaded if image with density awareness name in format [imageName]@[densityValue].[extension] is provided.
 	 * @param {boolean} [bEnabled=true]
