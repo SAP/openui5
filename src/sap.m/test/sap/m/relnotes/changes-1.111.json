@@ -3,6 +3,32 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "b742d1ef6a5e70052a10a375b207c151ca1c9220",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: add support for calendarWeekNumbering"
+      },
+      {
+        "id": "110708f296bd592407af43984c1f286ada5a65ca",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: the button to open the calendar is visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "c828836c73f13ab024ee37eef384b3de0cf535b7",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Implement public static toDates method"
+      },
+      {
+        "id": "3c321f14921becd9446d5016d71a06d6dca8dd40",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDate: Improve JS Docs for Typescript Definition Files"
+      },
+      {
         "id": "f30d9c99a8e5702fc3ea4313fd66d36500a145fe",
         "type": "FEATURE",
         "text": " sap.m.InputBase: Suggestions wrapping enablement"

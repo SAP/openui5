@@ -3,6 +3,22 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "41a869d0fa642d6b5d5fec95df94c49b0a6f7fde",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.CalendarLegend: legend have focusable items that filter special days in Calendar"
+      },
+      {
+        "id": "d753c27211b55db781ec65e3e2d514edff234735",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Fix week selection when Min & Max dates are set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280178657"
+          }
+        ]
+      },
+      {
         "id": "826a372461c8d6df28d037bddc6db7b61d71cc6d",
         "type": "FIX",
         "text": " sap.m.MenuButton: Menu opens every time with SPACE after closing its menu with ESCAPE or TAB",
