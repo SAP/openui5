@@ -1039,7 +1039,7 @@ sap.ui.define([
 			});
 
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
-		assert.deepEqual(oAggregation.$NodeProperty, "aNodeID");
+		assert.strictEqual(oAggregation.$NodeProperty, "aNodeID");
 	});
 });
 
@@ -1060,6 +1060,36 @@ sap.ui.define([
 				$apply : "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root"
 					+ ",HierarchyQualifier='X',NodeProperty='???',Levels=1)"
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildApply4Hierarchy: $fetchMetadata async", function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X",
+				$fetchMetadata : function () {},
+				$metaPath : "/meta/path",
+				$path : "/some(0)/path"
+			},
+			// intentionally no $select here, e.g. some early call
+			mQueryOptions = {foo : "bar"},
+			oSyncPromise = new SyncPromise(function () {});
+
+		this.mock(oAggregation).expects("$fetchMetadata").withExactArgs("/meta/path"
+				+ "/@Org.OData.Aggregation.V1.RecursiveHierarchy#X/NodeProperty/$PropertyPath")
+			.returns(oSyncPromise);
+		this.mock(oSyncPromise).expects("isFulfilled").returns(false);
+		this.mock(oSyncPromise).expects("getResult").never();
+
+		// code under test
+		assert.deepEqual(_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions), {
+				$apply : "com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/some(0)/path,HierarchyQualifier='X',NodeProperty='???'"
+					+ ",Levels=1)",
+				foo : "bar"
+			});
+
+		assert.notOk("$NodeProperty" in oAggregation);
+		assert.deepEqual(mQueryOptions, {foo : "bar"});
 	});
 
 	//*********************************************************************************************
