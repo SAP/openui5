@@ -1718,6 +1718,61 @@ sap.ui.define([
 		assert.ok(oSpy.called, "Popover should be closed");
 	});
 
+	QUnit.test("Deleting a bound token by delete key should place focus to the next token", function (assert) {
+		var oModel = new JSONModel({
+			items: [
+				{key: "1", text: "Item 1"},
+				{key: "2", text: "Item 2"},
+				{key: "3", text: "Item 3"},
+				{key: "4", text: "Item 4"},
+				{key: "5", text: "Item 5"}
+			]
+		});
+
+		var oTokenTemplate = new Token({
+			key: {path: "key"},
+			text: {path: "text"}
+		});
+
+		var oMI = new sap.m.MultiInput({
+			tokens: {path: "/items", template: oTokenTemplate},
+			tokenUpdate: function(oEvent){
+				if (oEvent.getParameter("type") === "removed") {
+					var aRemovedTokens = oEvent.getParameter("removedTokens");
+					var oData = oModel.getData();
+					var aItems = oData.items;
+
+					aRemovedTokens.forEach(function (oToken) {
+						aItems = aItems.filter(function (oItem) {
+							return oItem.key !== oToken.getKey();
+						});
+					});
+
+					oModel.setProperty("/items", aItems);
+				}
+			}
+		}).placeAt("content");
+
+		oMI.setModel(oModel);
+		Core.applyChanges();
+
+		var aTokens = oMI.getTokens();
+		var oToken = aTokens[aTokens.length - 2];
+
+		oToken.focus();
+		Core.applyChanges();
+
+		qutils.triggerKeydown(oToken.getDomRef(), KeyCodes.DELETE);
+		Core.applyChanges();
+
+		aTokens = oMI.getTokens();
+		var oLastToken = aTokens[aTokens.length - 1];
+
+		assert.strictEqual(document.activeElement, oLastToken.getDomRef(), "Last Token is focused");
+
+		oMI.destroy();
+	});
+
 	QUnit.test("Add tokens on mobile", function(assert) {
 		// system under test
 		this.stub(Device, "system", {

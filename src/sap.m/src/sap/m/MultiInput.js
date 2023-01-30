@@ -253,8 +253,15 @@ function(
 
 		/* Backward compatibility */
 		oTokenizer.updateTokens = function () {
+			var oDomRef = that.getDomRef();
+
 			this.destroyTokens();
 			this.updateAggregation("tokens");
+
+			// trigger tokenizer's focus handling only if focus is already applied to the Multi Input
+			if (oDomRef && oDomRef.contains(document.activeElement)) {
+				that.bTokensUpdated = true;
+			}
 		};
 
 		oTokenizer.setShouldRenderTabIndex(false);
@@ -392,6 +399,19 @@ function(
 		this._registerResizeHandler();
 
 		Input.prototype.onAfterRendering.apply(this, arguments);
+
+		// if tokens are updated via binding focus the newly bound tokens based on last state
+		if (this.bTokensUpdated && this.bDeletePressed) {
+			var aTokens = oTokenizer.getTokens();
+
+			if (aTokens[this.iFocusedIndexBeforeUpdate]) {
+				aTokens[this.iFocusedIndexBeforeUpdate].focus();
+			} else {
+				this.focus();
+			}
+		}
+
+		this.bTokensUpdated = false;
 	};
 
 	/**
@@ -423,6 +443,11 @@ function(
 		var oFirstRemovedToken = aDeletingTokens[0];
 
 		iIndex = this.getTokens().indexOf(bBackspace ? oFirstRemovedToken : oLastRemovedToken);
+
+		// store these for after rendering
+		// used to focus correct token when aggregation is bound
+		this.iFocusedIndexBeforeUpdate = iIndex;
+		this.bDeletePressed = !bBackspace;
 
 		oTokenizer.focusToken(iIndex, oOptions, function () {
 			this.focus();
