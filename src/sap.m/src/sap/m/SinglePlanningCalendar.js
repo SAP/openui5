@@ -21,6 +21,7 @@ sap.ui.define([
 	'sap/ui/unified/DateTypeRange',
 	'sap/ui/unified/library',
 	'sap/ui/base/ManagedObjectObserver',
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/date/CalendarWeekNumbering"
 ],
@@ -42,6 +43,7 @@ function(
 	DateTypeRange,
 	unifiedLibrary,
 	ManagedObjectObserver,
+    UI5Date,
 	jQuery,
 	CalendarWeekNumbering
 ) {
@@ -501,7 +503,7 @@ function(
 		this._attachHeaderEvents();
 		this._attachGridEvents();
 		this._attachDelegates();
-		this.setStartDate(new Date());
+		this.setStartDate(UI5Date.getInstance());
 	};
 
 	/**
@@ -972,8 +974,8 @@ function(
 		var oHeader = this._getHeader(),
 			oPicker = oHeader.getAggregation("_calendarPicker") ? oHeader.getAggregation("_calendarPicker") : oHeader._oPopup.getContent()[0],
 			oSelectedView = this._getSelectedView(),
-			oStartDate = this.getStartDate() || new Date(),
-			oSPCStart = oSelectedView.calculateStartDate(new Date(oStartDate.getTime())),
+			oStartDate = this.getStartDate() || UI5Date.getInstance(),
+			oSPCStart = oSelectedView.calculateStartDate(UI5Date.getInstance(oStartDate.getTime())),
 			oMonthGrid = this.getAggregation("_mvgrid");
 
 		this.setStartDate(oSPCStart);
@@ -1210,17 +1212,17 @@ function(
 			var oGrid = this.getAggregation("_grid"),
 				oFormat = oGrid._getDateFormatter(),
 				iNavDelta = this._getSelectedView().getScrollEntityCount() - oGrid._getColumns() + 1,
-				oCellStartDate = new Date(oEvent.getParameter("startDate")),
+				oCellStartDate = UI5Date.getInstance(oEvent.getParameter("startDate")),
 				bFullDay = oEvent.getParameter("fullDay"),
 				oNavDate = this.getStartDate();
 
 			if (oEvent.getParameter("next")) {
 				oCellStartDate.setDate(oCellStartDate.getDate() + iNavDelta);
-				oNavDate = new Date(oNavDate.setDate(oNavDate.getDate() + this._getSelectedView().getScrollEntityCount()));
+				oNavDate = UI5Date.getInstance(oNavDate.setDate(oNavDate.getDate() + this._getSelectedView().getScrollEntityCount()));
 				this.setStartDate(oNavDate);
 			} else {
 				oCellStartDate.setDate(oCellStartDate.getDate() - iNavDelta);
-				oNavDate = new Date(oNavDate.setDate(oNavDate.getDate() - this._getSelectedView().getScrollEntityCount()));
+				oNavDate = UI5Date.getInstance(oNavDate.setDate(oNavDate.getDate() - this._getSelectedView().getScrollEntityCount()));
 				this.setStartDate(oNavDate);
 			}
 
@@ -1229,7 +1231,7 @@ function(
 				"[data-sap-start-date='" + oFormat.format(oCellStartDate) + "'].sapMSinglePCRow";
 		};
 		var fnHandleBorderReachedMonthView = function(oEvent) {
-			var oDate = new Date(oEvent.getParameter("startDate")),
+			var oDate = UI5Date.getInstance(oEvent.getParameter("startDate")),
 				oCalNextDate = CalendarDate.fromLocalJSDate(oDate),
 				oNextDate;
 
@@ -1290,7 +1292,7 @@ function(
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._handlePressToday = function () {
-		var oStartDate = this._getSelectedView().calculateStartDate(new Date());
+		var oStartDate = this._getSelectedView().calculateStartDate(UI5Date.getInstance());
 
 		this.setStartDate(oStartDate);
 		this.fireStartDateChange({
@@ -1342,7 +1344,7 @@ function(
 		var oStartDate = this._getHeader().getStartDate(),
 			oSPCStartDate;
 
-		oSPCStartDate = this._getSelectedView().calculateStartDate(new Date(oStartDate.getTime()));
+		oSPCStartDate = this._getSelectedView().calculateStartDate(UI5Date.getInstance(oStartDate.getTime()));
 		this.setStartDate(oSPCStartDate);
 		if (!this._getSelectedView().isA("sap.m.SinglePlanningCalendarMonthView")) {
 			this.getAggregation("_grid")._getColumnHeaders().setDate(oStartDate);
@@ -1406,7 +1408,7 @@ function(
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._applyArrowsLogic = function (bBackwards) {
-		var oCalStartDate = CalendarDate.fromLocalJSDate(this.getStartDate() || new Date()),
+		var oCalStartDate = CalendarDate.fromLocalJSDate(this.getStartDate() || UI5Date.getInstance()),
 			iOffset = bBackwards ? -1 : 1,
 			iNumberToAdd = this._getSelectedView().getScrollEntityCount(this.getStartDate(), iOffset),
 			oStartDate;
@@ -1432,12 +1434,12 @@ function(
 	 */
 	SinglePlanningCalendar.prototype._getFirstAndLastRangeDate = function () {
 		var oSelectedView = this._getSelectedView(),
-			oStartDate = this._getHeader().getStartDate() || new Date(),
+			oStartDate = this._getHeader().getStartDate() || UI5Date.getInstance(),
 			iDaysToAdd = oSelectedView.getEntityCount() - 1,
 			oCalViewStartDate,
 			oCalViewEndDate;
 
-		oCalViewStartDate = CalendarDate.fromLocalJSDate(oSelectedView.calculateStartDate(new Date(oStartDate.getTime())));
+		oCalViewStartDate = CalendarDate.fromLocalJSDate(oSelectedView.calculateStartDate(UI5Date.getInstance(oStartDate.getTime())));
 		oCalViewEndDate = new CalendarDate(oCalViewStartDate);
 		oCalViewEndDate.setDate(oCalViewStartDate.getDate() + iDaysToAdd);
 
@@ -1456,8 +1458,8 @@ function(
 			oGrid = this.getAggregation("_grid"),
 			oGridMV = this.getAggregation("_mvgrid"),
 			oView = this._getSelectedView(),
-			oDate = this.getStartDate() || new Date(),
-			oViewStartDate = oView.calculateStartDate(new Date(oDate.getTime())),
+			oDate = this.getStartDate() || UI5Date.getInstance(),
+			oViewStartDate = oView.calculateStartDate(UI5Date.getInstance(oDate.getTime())),
 			oCalViewDate = CalendarDate.fromLocalJSDate(oViewStartDate);
 
 		oHeader.setStartDate(oViewStartDate);

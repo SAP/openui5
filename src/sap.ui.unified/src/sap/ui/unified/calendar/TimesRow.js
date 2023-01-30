@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/DateRange",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	Control,
 	LocaleData,
@@ -32,7 +33,8 @@ sap.ui.define([
 	deepEqual,
 	jQuery,
 	DateRange,
-	Configuration
+	Configuration,
+	UI5Date
 ) {
 	"use strict";
 
@@ -305,7 +307,7 @@ sap.ui.define([
 	TimesRow.prototype._getDate = function(){
 
 		if (!this._oUTCDate) {
-			this._oUTCDate = CalendarUtils._createUniversalUTCDate(new Date(), undefined, true);
+			this._oUTCDate = CalendarUtils._createUniversalUTCDate(UI5Date.getInstance(), undefined, true);
 		}
 
 		return this._oUTCDate;
