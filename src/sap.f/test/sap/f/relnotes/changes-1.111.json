@@ -3,6 +3,11 @@
     "date": "January 2023",
     "notes": [
       {
+        "id": "dc7376024fb016ebc3cb5cc253f6f0fd32af3691",
+        "type": "FEATURE",
+        "text": " Integration Cards: Rating Indicator can be used in the Object Card"
+      },
+      {
         "id": "66793879bd0fd4a8fcddf262994e2873cac87348",
         "type": "FEATURE",
         "text": " Integration cards: Add data request timeout setting"
