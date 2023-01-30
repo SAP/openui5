@@ -100,11 +100,13 @@ sap.ui.define([
 		},
 
 		initSettingsPopoverModel: function () {
-			var supportAssistantOrigin = new URL(sap.ui.require.toUrl("sap/ui/support"), window.location.origin + window.location.pathname).toString(),
-				supportAssistantVersion = sap.ui.version;
+			VersionInfo.load().then(function (oVersionInfo) {
+				var supportAssistantOrigin = new URL(sap.ui.require.toUrl("sap/ui/support"), window.location.origin + window.location.pathname).toString(),
+					supportAssistantVersion = oVersionInfo.version;
 
-			this.model.setProperty("/supportAssistantOrigin", supportAssistantOrigin);
-			this.model.setProperty("/supportAssistantVersion", supportAssistantVersion);
+				this.model.setProperty("/supportAssistantOrigin", supportAssistantOrigin);
+				this.model.setProperty("/supportAssistantVersion", supportAssistantVersion);
+			}.bind(this));
 		},
 
 		copySupportAssistantOriginToClipboard: function (oEvent) {
