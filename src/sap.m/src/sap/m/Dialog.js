@@ -480,7 +480,7 @@ function(
 			header: {suffix: "header"},
 			subHeader: {selector: ".sapMDialogSubHeader .sapMIBar"},
 			content: {selector: ".sapMDialogScrollCont"},
-			footer: {suffix: "footer"}
+			footer: {selector: ".sapMDialogFooter .sapMIBar"}
 		});
 
 		// Add title propagation support
