@@ -127,7 +127,7 @@ sap.ui.define([
 		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
 		 *
-		 * @deprecated Since version 1.40.1
+		 * @deprecated As of version 1.40.1
 		 */
 		ObjectPageDynamicHeaderTitle.prototype.getHeaderDesign = function () {
 			return library.ObjectPageHeaderDesign.Light;

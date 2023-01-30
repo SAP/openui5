@@ -2516,25 +2516,6 @@ function (
 		}
 	});
 
-	QUnit.test("_onModifyHeaderTitle", function (assert) {
-		var oHeaderContent = this.oObjectPageLayout.getAggregation("_headerContent"),
-			oHeaderTitle = this.oObjectPageLayout.getAggregation("headerTitle"),
-			oSpy = this.spy(oHeaderContent, "setBackgroundDesign"),
-			oParamsMock = {
-				current: "Transparent"
-			};
-
-		// assert
-		assert.strictEqual(oHeaderContent.getBackgroundDesign(), "Solid", "backgroundDesign of HeaderContent is 'Solid'");
-		assert.strictEqual(oHeaderContent.getBackgroundDesign(), oHeaderTitle.getBackgroundDesign(), "backgroundDesign of HeaderTitle and HeaderContent are the same");
-
-		// act
-		this.oObjectPageLayout._onModifyHeaderTitle(oParamsMock);
-
-		// assert
-		assert.strictEqual(oHeaderContent.getBackgroundDesign(), "Transparent", "backgroundDesign of HeaderContent is 'Transparent' after _onModifyHeaderTitle call");
-		assert.ok(oSpy.calledWith("Transparent"), "setBackgroundDesign is called on headerContent with correct param");
-	});
 
 	QUnit.test("_getStickyAreaHeight calculation while header expanded in the title-area", function (assert) {
 		var iStickyAreaHeight,

@@ -166,7 +166,7 @@ sap.ui.define([
 				 * Determines the design of the header - Light or Dark.
 				 * <b>Note: </b>This property is deprecated. It will continue to work in the Blue Crystal theme,
 				 * but it will not be taken into account for the Belize themes.
-				 * @deprecated Since version 1.40.1
+				 * @deprecated As of version 1.40.1
 				 */
 				headerDesign: {
 					type: "sap.uxap.ObjectPageHeaderDesign",
@@ -232,7 +232,7 @@ sap.ui.define([
 				/**
 				 *
 				 * A list of all the active link elements in the BreadCrumbs control.
-				 * @deprecated as of version 1.50, use the <code>breadcrumbs</code> aggregation instead.
+				 * @deprecated As of version 1.50, use the <code>breadcrumbs</code> aggregation instead.
 				 */
 				breadCrumbsLinks: {type: "sap.m.Link", multiple: true, singularName: "breadCrumbLink", deprecated: true},
 
@@ -380,7 +380,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @deprecated as of version 1.50, breadCrumbsLinks has been deprecated
+	 * @deprecated As of version 1.50, <code>breadCrumbsLinks</code> has been deprecated
 	 */
 	ObjectPageHeader.getMetadata().forwardAggregation(
 		"breadCrumbsLinks",
@@ -536,7 +536,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @deprecated Since version 1.40.1
+	 * @deprecated As of version 1.40.1
 	 */
 	ObjectPageHeader.prototype.setHeaderDesign = function (sHeaderDesign) {
 		this.setProperty("headerDesign", sHeaderDesign);
@@ -1071,11 +1071,13 @@ sap.ui.define([
 
 	/**
 	 * Determines whether to render the <code>breadcrumbs</code> or the <code>breadCrumbsLinks</code> aggregation.
-	 * If <code>breadcrumbs</code> is set, the <code>breadCrumbsLinks</code> is omitted.
 	 * @private
 	 */
 	ObjectPageHeader.prototype._getBreadcrumbsAggregation = function () {
 		var oBreadCrumbs = this.getBreadcrumbs(),
+		/**
+		 * @deprecated As of version 1.50, <code>breadCrumbsLinks</code> has been deprecated
+		 */
 		oBreadCrumbsLegacy = this._lazyLoadInternalAggregation('_breadCrumbs', true);
 
 		return oBreadCrumbs

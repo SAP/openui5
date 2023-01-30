@@ -5,7 +5,6 @@
 					  showTitleInHeaderContent="true">
 		<headerTitle>
 			<ObjectPageHeader id="headerForTest"
-							  headerDesign="Light"
 							  objectTitle="John Smith"
 							  showTitleSelector="true"
 							  showMarkers="true"

@@ -27,7 +27,6 @@
 			<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="false" showFooter="true" useIconTabBar="true" showHeaderContent="true" alwaysShowContentHeader="false">
 				<headerTitle>
 					<ObjectPageHeader id="headerForTest"
-									  headerDesign="Light"
 									  objectTitle="Long title that wraps and goes over more lines"
 									  showTitleSelector="true"
 									  titleSelectorPress="handleTitleSelectorPress"
@@ -44,10 +43,12 @@
 						    <ObjectPageHeaderActionButton text="Toggle UseIconTabBar" hideIcon="true" hideText="false" type="Emphasized" id="btnToggleUseIconTabBar"/>
 							<ObjectPageHeaderActionButton icon="sap-icon://action" text="action" importance="Low"/>
 						</actions>
-						<breadCrumbsLinks>
-							<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
-							<m:Link text="Page 2 long link" press="handleLink2Press"/>
-						</breadCrumbsLinks>
+						<breadcrumbs>
+							<m:Breadcrumbs>
+								<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
+								<m:Link text="Page 2 long link" press="handleLink2Press"/>
+							</m:Breadcrumbs>
+					   </breadcrumbs>
 					</ObjectPageHeader>
 				</headerTitle>
 				<headerContent>

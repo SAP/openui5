@@ -60,7 +60,6 @@ sap.ui.define([
 		"    <ObjectPageLayout id=\"objectPageLayout\" showTitleInHeaderContent=\"true\">" +
 		"        <headerTitle>" +
 		"            <ObjectPageHeader id=\"headerForTest\"" +
-		"                              headerDesign=\"Light\"" +
 		"                              objectTitle=\"Long title that wraps and goes over more lines\"" +
 		"                              showTitleSelector=\"true\"" +
 		"                              showMarkers=\"true\"" +
@@ -88,10 +87,12 @@ sap.ui.define([
 		"                    <ObjectPageHeaderActionButton icon=\"sap-icon://refresh\" text=\"refresh\"/>" +
 		"                    <ObjectPageHeaderActionButton icon=\"sap-icon://attachment\" text=\"attach\"/>" +
 		"                </actions>" +
-		"                <breadCrumbsLinks>" +
-		"                    <m:Link text=\"Page 1 a very long link\"/>" +
-		"                    <m:Link text=\"Page 2 long link\"/>" +
-		"                </breadCrumbsLinks>" +
+		"				<breadcrumbs>" +
+		"					<m:Breadcrumbs>" +
+		"                       <m:Link text=\"Page 1 a very long link\"/>" +
+		"                       <m:Link text=\"Page 2 long link\"/>" +
+		"					</m:Breadcrumbs>" +
+		"                </breadcrumbs>" +
 		"            </ObjectPageHeader>" +
 		"        </headerTitle>" +
 		"        <headerContent>" +
