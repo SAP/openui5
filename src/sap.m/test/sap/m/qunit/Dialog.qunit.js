@@ -3064,6 +3064,60 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.test("Correct Responsive padding is applied on custom footer", function (assert) {
+		// Arrange
+		var oDialog = new Dialog({
+				title: "Header",
+				footer: new Toolbar({
+					content: [
+						new Button({ text: "custom footer button" })
+					]
+				})
+			}),
+			fnHasClass = function (sSelector, sClass) {
+				return oDialog.$().find(sSelector).hasClass(sClass);
+			},
+			fnAssertCorrectPaddingsAppliedOnBreakpoint = function (sBreakpoint) {
+				var sClass = "sapUi-Std-Padding" + sBreakpoint;
+				assert.ok(fnHasClass(".sapMDialogFooter .sapMIBar", sClass), "Custom footer should have correct responsive padding class applied on " + sBreakpoint + " breakpoint");
+			};
+		this.stub(window, "requestAnimationFrame", function (fnCallback) {
+			fnCallback();
+		});
+
+		oDialog.addStyleClass("sapUiResponsivePadding--footer");
+		Core.applyChanges();
+
+		oDialog.open();
+
+		// Arrange for size S
+		oDialog.setContentWidth("0%");
+		Core.applyChanges();
+		this.clock.tick(500);
+
+		// Assert for size S
+		fnAssertCorrectPaddingsAppliedOnBreakpoint("S");
+
+		// Arrange for size M
+		oDialog.setContentWidth("600px");
+		Core.applyChanges();
+		this.clock.tick(500);
+
+		// Assert for size M
+		fnAssertCorrectPaddingsAppliedOnBreakpoint("M");
+
+		// Arrange for size S
+		oDialog.setContentWidth("0%");
+		Core.applyChanges();
+		this.clock.tick(500);
+
+		// Assert for size S
+		fnAssertCorrectPaddingsAppliedOnBreakpoint("S");
+
+		// Clean up
+		oDialog.destroy();
+	});
+
 	QUnit.module("Close Dialog with ESC", {
 		beforeEach: function() {
 			this.oDialog = new Dialog({
