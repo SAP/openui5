@@ -1423,6 +1423,8 @@ function(
 			this._sAriaRoleDescription = Core.getLibraryResourceBundle("sap.m").getText("SELECT_ROLE_DESCRIPTION");
 
 			this._oInvisibleMessage = null;
+
+			this._referencingLabelsHandlers = [];
 		};
 
 		Select.prototype.onBeforeRendering = function() {
@@ -1454,6 +1456,8 @@ function(
 
 			this._setHiddenSelectValue();
 			this._attachHiddenSelectHandlers();
+			this._clearReferencingLabelsHandlers();
+			this._handleReferencingLabels();
 		};
 
 		Select.prototype.exit = function() {
@@ -2597,6 +2601,43 @@ function(
 			}
 		};
 
+        /**
+         * Ensures clicking on external referencing labels will put the focus on the Select container.
+         * @private
+         */
+        Select.prototype._handleReferencingLabels = function () {
+            var aLabels = this.getLabels(),
+                oDelegate,
+                that = this;
+
+			aLabels.forEach(function (oLabel) {
+				if (!oLabel) {
+					return;
+				}
+				oDelegate = {
+					ontap: function () {
+						that.focus();
+					}
+				};
+				that._referencingLabelsHandlers.push({
+					oDelegate: oDelegate,
+					sLabelId: oLabel.getId()
+				});
+				oLabel.addEventDelegate(oDelegate);
+			});
+        };
+
+        Select.prototype._clearReferencingLabelsHandlers = function () {
+			var oLabel;
+            this._referencingLabelsHandlers.forEach(function (oHandler) {
+				oLabel = Core.byId(oHandler.sLabelId);
+				if (oLabel) {
+					oLabel.removeEventDelegate(oHandler.oDelegate);
+				}
+            });
+            this._referencingLabelsHandlers = [];
+        };
+
 		/**
 		 * Gets the labels referencing this control.
 		 *
@@ -2613,7 +2654,8 @@ function(
 			})
 			.map(function(sLabelID) {
 				return Core.byId(sLabelID);
-			});
+			})
+			.filter(Boolean);
 
 			return aLabelIDs;
 		};
