@@ -378,7 +378,9 @@ sap.ui.define([
 			if (mModelProperty.hideFromReveal) {
 				return false;
 			}
-			_enhanceInvisibleElement(oInvisibleElement, mModelProperty);
+			if (bHasAddViaDelegate) {
+				_enhanceInvisibleElement(oInvisibleElement, mModelProperty);
+			}
 			return true;
 		}
 		// if model property is not found, it depends if the hidden field is a removed custom field (AddViaDelegate case) or a standard field.

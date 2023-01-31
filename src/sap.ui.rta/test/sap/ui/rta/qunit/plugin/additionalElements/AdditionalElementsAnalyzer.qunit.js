@@ -119,6 +119,30 @@ sap.ui.define([
 				}.bind(this));
 		});
 
+		QUnit.test("skip adding oData information if AddViaDelegate is not available", function(assert) {
+			var oSection1 = this.oView.byId("ObjectPageSectionForNavigation");
+
+			oCore.applyChanges();
+			return registerTestOverlaysWithRelevantContainer.call(this, oSection1)
+				.then(function () {
+					var oActionsObject = {
+						aggregation: "sections",
+						reveal: {
+							elements: [{
+								element: oSection1,
+								action: {} //nothing relevant for the analyzer tests
+							}]
+						}
+					};
+					return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSection1.getParent(), oActionsObject).then(function(aAdditionalElements) {
+						assert.notOk(aAdditionalElements[0].originalLabel, "the section does not have an original label");
+					});
+				})
+				.then(function () {
+					this.oDesignTime.destroy();
+				}.bind(this));
+		});
+
 		QUnit.test("checks if navigation and absolute binding work with delegate", function(assert) {
 			var oGroupElement1 = this.oView.byId("DelegateEntityType02.NavigationProperty"); // With correct navigation binding
 			var oGroupElement2 = this.oView.byId("DelegateEntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
