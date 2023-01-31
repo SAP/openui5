@@ -16,12 +16,12 @@
 		<VBox>
 			<Text text="This is a test to see if the view is loaded!" />
 		
-			<mdc:Chart id="bookChart" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
-				'name': 'delegates/odata/v4/vizChart/ChartDelegate',
-				'payload': {
-					collectionName: 'Books'
-				}
-			}" chartType="column" header="Remake Chart" height="400px" width="100%" propertyInfo='[\{
+			<mdc:Chart id="bookChart" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate='\{
+				"name": "delegates/odata/v4/vizChart/ChartDelegate",
+				"payload": \{
+					"collectionName": "Books"
+				\}
+			\}' chartType="column" header="Remake Chart" height="400px" width="100%" propertyInfo='[\{
                     "name": "language_code",
                     "propertyPath": "language_code",
                     "label": "Language",

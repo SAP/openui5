@@ -15,7 +15,7 @@
 								<mdc:Field value="{ProductId}" editMode="Display">
 									<mdc:fieldInfo>
 										<mdc:Link
-											delegate='{ name: "appUnderTestAdditionalContent/TestDelegate" }'>
+											delegate='\{ "name": "appUnderTestAdditionalContent/TestDelegate" \}'>
 										</mdc:Link>
 									</mdc:fieldInfo>
 								</mdc:Field>

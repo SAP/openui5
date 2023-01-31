@@ -13,12 +13,12 @@
 	xmlns:variants="sap.ui.fl.variants"
 	xmlns="sap.m"
 	controllerName="applicationUnderTestMDCChart.controller.ChartNew">
-		<mdc:Chart id="bookChart" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
-				'name': 'delegates/odata/v4/vizChart/ChartDelegate',
-				'payload': {
-					collectionName: 'Books'
-				}
-			}" chartType="column" header="Remake Chart" height="400px" width="100%">
+		<mdc:Chart id="bookChart" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate='\{
+				"name": "delegates/odata/v4/vizChart/ChartDelegate",
+				"payload": \{
+					"collectionName": "Books"
+				\}
+			\}' chartType="column" header="Remake Chart" height="400px" width="100%">
 
 			<mdc:variant>
 				<variants:VariantManagement id="variantManagementChart" for="bookChart" class="sapUiTinyMarginBottom"/>

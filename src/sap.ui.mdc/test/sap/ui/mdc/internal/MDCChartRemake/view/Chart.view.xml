@@ -42,7 +42,7 @@
 			<f2:header>
 				<f2:DynamicPageHeader>
 					<f2:content>
-						<mdc:FilterBar id="booksFilterBar"  filtersChanged="onFiltersChanged" filterConditions = '\{"stock" : [\{"operator":"BT","values":[0,99999]}]\}' liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Books.FB.delegate', payload: {collectionName: 'Books'}}" p13nMode="Item,Value">
+						<mdc:FilterBar id="booksFilterBar"  filtersChanged="onFiltersChanged" filterConditions = '\{"stock" : [\{"operator":"BT","values":[0,99999]}]\}' liveMode="false" delegate='\{"name": "sap/ui/v4demo/delegate/Books.FB.delegate", "payload": \{"collectionName": "Books"\}\}' p13nMode="Item,Value">
 						<mdc:dependents>
 
 							<mdc:ValueHelp id="FH4"
@@ -554,7 +554,7 @@
 						</mdc:dependents>
 
 						<mdc:basicSearchField>
-							<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
+							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="field0"
 							dataType="Edm.String"
 							placeholder= "Search Books"
 							conditions="{$filters>/conditions/$search}"
@@ -562,39 +562,39 @@
 						</mdc:basicSearchField>
 
 						<mdc:filterItems>
-							<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 								id="ff1" label="Author"
 								conditions="{$filters>/conditions/author_ID}"
 								dataType="Edm.Int32"
 								required="false" fieldHelp="FH1" display="DescriptionValue"/>
 
-							<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 								id="ff2" label="Title"
 								conditions="{$filters>/conditions/title}"
 								fieldHelp="FH4"/>
 
-							<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 								id="ff4" label="Published"
-								dataType="Edm.Date" dataTypeConstraints="{V4: true}"
+								dataType="Edm.Date" dataTypeConstraints='\{"V4": true\}'
 								conditions="{$filters>/conditions/published}"
 								maxConditions="-1" fieldHelp="FHPublished"
 								operators="EQ,GT,LT,BT,MEDIEVAL,RENAISSANCE,MODERN,LASTYEAR" />
 
-							<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 								id="ff5" label="Language" display="Description"
 								dataType="Edm.String"
 								dataTypeConstraints= "{nullable: false}"
 								conditions="{$filters>/conditions/language_code}"
 								maxConditions="-1" fieldHelp="FHLanguage"/>
 
-							<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 								id="ff7" label="Genre"
 								conditions="{$filters>/conditions/genre_code}"
 								dataType="Edm.String"
 								required="false" fieldHelp="FHGenre"
 								display="Description"/>
 
-							<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 								id="ff8" label="Sub Genre"
 								conditions="{$filters>/conditions/subgenre_code}"
 								dataType="Edm.String"
@@ -607,12 +607,12 @@
 			</f2:header>
 			<f2:content>
 				<VBox>
-					<mdc:Chart id="bookChart" filter="booksFilterBar" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
-							'name': 'delegates/odata/v4/vizChart/ChartDelegate',
-							'payload': {
-								collectionName: 'Books'
-							}
-						}" chartType="column" header="Remake Chart with cached properties and VM" height="400px" width="100%" propertyInfo='[\{
+					<mdc:Chart id="bookChart" filter="booksFilterBar" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate='\{
+							"name": "delegates/odata/v4/vizChart/ChartDelegate",
+							"payload": \{
+								"collectionName": "Books"
+							\}
+						\}' chartType="column" header="Remake Chart with cached properties and VM" height="400px" width="100%" propertyInfo='[\{
                     "name": "language_code",
                     "propertyPath": "language_code",
                     "label": "Language",
@@ -681,12 +681,12 @@
 						</mdc:items>
 					</mdc:Chart>
 
-					<mdc:Chart id="bookChart-3" filter="booksFilterBar" autoBindOnInit="false" noDataText="This will be overriden" p13nMode="Type,Item,Sort" delegate="{
-							'name': 'delegates/odata/v4/vizChart/ChartDelegate',
-							'payload': {
-								collectionName: 'Books'
-							}
-						}" chartType="column" header="Remake Chart with Illustrated message (autoBindOnInit=false)" height="400px" width="100%">
+					<mdc:Chart id="bookChart-3" filter="booksFilterBar" autoBindOnInit="false" noDataText="This will be overriden" p13nMode="Type,Item,Sort" delegate='\{
+							"name": "delegates/odata/v4/vizChart/ChartDelegate",
+							"payload": \{
+								"collectionName": "Books"
+							\}
+						\}' chartType="column" header="Remake Chart with Illustrated message (autoBindOnInit=false)" height="400px" width="100%">
 
 						<mdc:noData>
 							<IllustratedMessage enableVerticalResponsiveness="true" illustrationType="sapIllus-BeforeSearch" title="No data found" description="Try adjusting the filter settings">
@@ -702,12 +702,12 @@
 						</mdc:items>
 					</mdc:Chart>
 
-					<mdc:Chart id="bookChart-2" filter="booksFilterBar" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Type,Item,Sort" delegate="{
-							'name': 'delegates/odata/v4/vizChart/ChartDelegate',
-							'payload': {
-								collectionName: 'Books'
-							}
-						}" chartType="column" header="Remake Chart" height="400px" width="100%">
+					<mdc:Chart id="bookChart-2" filter="booksFilterBar" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Type,Item,Sort" delegate='\{
+							"name": "delegates/odata/v4/vizChart/ChartDelegate",
+							"payload": \{
+								"collectionName": "Books"
+							\}
+						\}' chartType="column" header="Remake Chart" height="400px" width="100%">
 
 						 <mdc:selectionDetailsActions>
 							<mdcc:SelectionDetailsActions>

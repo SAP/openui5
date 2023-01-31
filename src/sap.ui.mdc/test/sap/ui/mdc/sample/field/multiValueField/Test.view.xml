@@ -29,7 +29,7 @@
 					fieldHelp="VH1">
 					<mdcField:MultiValueFieldItem key="{path: 'view>ProductId', type:'sap.ui.model.type.String'}" description="{view>Name}" />
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH1" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH1-Pop">
 									<mdcValueHelpContent:MTable id="VH1-Pop-MTable"
@@ -129,7 +129,7 @@
 					fieldHelp="VH2">
 					<mdcField:MultiValueFieldItem key="{path: 'view>ProductId', type:'sap.ui.model.type.String'}" description="{view>Name}" />
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH2" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="VH2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH2-Pop">
 									<mdcValueHelpContent:MTable id="VH2-Pop-MTable"

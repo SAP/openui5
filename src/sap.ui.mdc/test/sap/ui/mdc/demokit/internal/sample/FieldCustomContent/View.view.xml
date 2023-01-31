@@ -40,7 +40,7 @@
 
 		<form:dependents>
 			<mdc:ValueHelp id="VH-Title"
-				delegate="{name: 'delegates/odata/v4/ValueHelpDelegate', payload: {}}">
+				delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcValueHelp:Popover title="Title">
 						<mdcValueHelpContent:MTable id="VH-Title-MTable" keyPath="title" descriptionPath="title" filterFields="$search" useAsValueHelp="true">
@@ -67,12 +67,12 @@
 		</form:dependents>
 
 		<Label text="int Field with Slider as Content"/>
-		<mdc:Field id="F1" value="{path:'metricsWords', type:'sap.ui.model.odata.type.Int32'}" editMode="{view>/editMode}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" change="handleChange">
+		<mdc:Field id="F1" value="{path:'metricsWords', type:'sap.ui.model.odata.type.Int32'}" editMode="{view>/editMode}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' change="handleChange">
 			<Slider id="F1-S" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" enabled="{path: '$field>/editMode', formatter: '.formatEditMode'}" min="0" max="1000000"/>
 		</mdc:Field>
 
 		<Label text="int Field with Slider as ContentEdit and ObjectStatus as ContentDisplay"/>
-		<mdc:Field id="F2" value="{path:'metricsWords', type:'sap.ui.model.odata.type.Int32'}" editMode="{view>/editMode}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" change="handleChange">
+		<mdc:Field id="F2" value="{path:'metricsWords', type:'sap.ui.model.odata.type.Int32'}" editMode="{view>/editMode}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' change="handleChange">
 			<mdc:contentEdit>
 				<Slider id= "F2-S" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" enabled="{path: '$field>/editMode', formatter: '.formatEditMode'}" min="0" max="1000000"/>
 			</mdc:contentEdit>
@@ -82,12 +82,12 @@
 		</mdc:Field>
 
 		<Label text="int Field with Custom control and own parsing and eventing"/>
-		<mdc:Field id="F3" value="{path:'metricsSentences', type:'sap.ui.model.odata.type.Int32'}" editMode="{view>/editMode}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" change="handleChange">
+		<mdc:Field id="F3" value="{path:'metricsSentences', type:'sap.ui.model.odata.type.Int32'}" editMode="{view>/editMode}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' change="handleChange">
 			<custom:CustomRating id="F3-CR" conditions="{path: '$field>/conditions'}" displayOnly="{path: '$field>/editMode', formatter: '.formatDisplayOnly'}"/>
 		</mdc:Field>
 
 		<Label text="Field with custom control and ValueHelp"/>
-		<mdc:Field id="F4" value="{path:'title', type:'sap.ui.model.odata.type.String'}" editMode="{view>/editMode}" fieldHelp="VH-Title" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" change="handleChange">
+		<mdc:Field id="F4" value="{path:'title', type:'sap.ui.model.odata.type.String'}" editMode="{view>/editMode}" fieldHelp="VH-Title" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' change="handleChange">
 			<custom:CustomInput id="F4-CI" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"/>
 		</mdc:Field>
 	</form:SimpleForm>

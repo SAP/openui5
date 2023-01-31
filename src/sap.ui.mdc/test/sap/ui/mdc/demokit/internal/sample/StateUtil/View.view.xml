@@ -20,10 +20,10 @@
 		id="mdcFilterBar"
 		liveMode="false"
 		p13nMode="Item,Value"
-		delegate="{name: 'sap/ui/mdc/sample/TableWithFilterBar/FilterBar.delegate', payload: {collectionName: 'Books'}}">
+		delegate='\{"name": "sap/ui/mdc/sample/TableWithFilterBar/FilterBar.delegate", "payload": \{"collectionName": "Books"\}\}'>
 
 		<mdc:basicSearchField>
-			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
+			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="field0"
 			dataType="Edm.String"
 			placeholder= "Search"
 			conditions="{$filters>/conditions/$search}"
@@ -33,7 +33,7 @@
 
 		<mdc:filterItems>
 			<mdc:FilterField
-				delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+				delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="ff1"
 				label="Author ID"
 				conditions="{$filters>/conditions/author_ID}"
@@ -44,7 +44,7 @@
 				width="100%"/>
 
 			<mdc:FilterField
-				delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+				delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="ff2"
 				label="Title"
 				conditions="{$filters>/conditions/title}"
@@ -67,12 +67,12 @@
 	</Panel>
 
 	<Panel headerText="Chart" class="sapUiSmallMarginTop" expandable="true">
-		<mdc:Chart id="mdcChart" filter="booksFilterBar" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
-			'name':  'delegates/odata/v4/vizChart/ChartDelegate',
-			'payload': {
-				collectionName: 'Books'
-			}
-		}" chartType="column" header="Books Chart" height="400px" width="100%">
+		<mdc:Chart id="mdcChart" filter="booksFilterBar" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate='\{
+			"name":  "delegates/odata/v4/vizChart/ChartDelegate",
+			"payload": \{
+				"collectionName": "Books"
+			\}
+		\}' chartType="column" header="Books Chart" height="400px" width="100%">
 
 			<mdc:items>
 				<mdcc:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
@@ -100,7 +100,7 @@
 			filter="FilterBar"
 			header="Books"
 			showRowCount="false"
-			delegate="{ name: 'sap/ui/mdc/sample/TableWithFilterBar/Books.Table.delegate', payload: {collectionName: 'Books'}}"
+			delegate='\{ "name": "sap/ui/mdc/sample/TableWithFilterBar/Books.Table.delegate", "payload": \{"collectionName": "Books"\}\}'
 			p13nMode="Column,Sort,Filter,Group"
 			selectionMode="Multi"
 			height="100%">

@@ -24,7 +24,7 @@
 	<layout:dependents>
 			<mdc:ValueHelp
 				id="FH1"
-				delegate="{name: 'sap/ui/v4demo/delegate/typeahead/ValueHelp.delegate', payload: {}}">
+				delegate='\{"name": "sap/ui/v4demo/delegate/typeahead/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1" opensOnClick="{settings>/opensOnClick}">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search">
@@ -61,7 +61,7 @@
 	<Toolbar>
 		<Label text="Field with Typeahead-ValueHelp:" labelFor="fAuthor" />
 
-		<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" 
+		<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' 
 		id="fAuthor" 
 		value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" 
 		fieldHelp="FH1" 

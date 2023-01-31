@@ -51,7 +51,7 @@
                     </mdc:actions>
                 </mdc:ActionToolbar>
 
-                <mdc:Table id="actionToolbarTable" header="Dummy Table" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'delegates/TableDelegate', payload: {collectionName: 'Books'}}" showRowCount="true" threshold="50" width="100%">
+                <mdc:Table id="actionToolbarTable" header="Dummy Table" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate='\{"name": "delegates/TableDelegate", "payload": \{"collectionName": "Books"\}\}' showRowCount="true" threshold="50" width="100%">
                     <mdc:variant>
                         <variants:VariantManagement id="IDVariantManagementOfTable" for="dynamicPage"/>
                     </mdc:variant>
@@ -86,7 +86,7 @@
                     </mdc:type>
                 </mdc:Table>
 
-                <mdc:Chart id="actionToolbarChart" autoBindOnInit="true" noDataText="This is a test noData text" delegate="{'name': 'delegates/ChartDelegate'}" chartType="column" header="Books Chart" height="400px" width="100%">
+                <mdc:Chart id="actionToolbarChart" autoBindOnInit="true" noDataText="This is a test noData text" delegate='\{"name": "delegates/ChartDelegate"\}' chartType="column" header="Books Chart" height="400px" width="100%">
                     <mdc:variant>
                         <variants:VariantManagement id="IDVariantManagementOfChart" for="dynamicPage"/>
                     </mdc:variant>

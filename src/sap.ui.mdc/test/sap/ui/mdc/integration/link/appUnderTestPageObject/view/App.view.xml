@@ -11,7 +11,7 @@
 		<mdc:Field id="Field" value="LinkText" editMode="Display">
 			<mdc:fieldInfo>
 				<mdc:Link
-					delegate='{ name: "sap/ui/mdc/LinkIntegrationTesting/appUnderTestPageObject/LinkDelegate", payload: {} }'>
+					delegate='\{ "name": "sap/ui/mdc/LinkIntegrationTesting/appUnderTestPageObject/LinkDelegate", "payload": \{\} \}'>
 				</mdc:Link>
 			</mdc:fieldInfo>
 		</mdc:Field>

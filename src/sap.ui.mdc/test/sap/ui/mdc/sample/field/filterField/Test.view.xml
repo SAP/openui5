@@ -137,8 +137,8 @@
 					<mdc:FilterField id="FF5"
 						conditions="{cm>/conditions/Description}"
 						dataType="sap.ui.model.odata.type.String"
-						dataTypeConstraints="{nullable: false}"
-						delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}"
+						dataTypeConstraints='\{"nullable": false\}'
+						delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 						maxConditions="3"
 						placeholder="{/#Product/Description/@sap:label}"
 						label="{/#Product/Description/@sap:label}"
@@ -161,7 +161,7 @@
 					<mdc:FilterField id="FF7"
 						conditions="{cm>/conditions/DateTime}"
 						dataType="sap.ui.model.odata.type.DateTime"
-						dataTypeFormatOptions="{style: 'long'}"
+						dataTypeFormatOptions='\{"style": "long"\}'
 						display="Value"
 						maxConditions="1"
 						operators="EQ"
@@ -175,7 +175,7 @@
 					<mdc:FilterField id="FF7d"
 						conditions="{cm>/conditions/DateTime}"
 						dataType="sap.ui.model.odata.type.DateTime"
-						dataTypeFormatOptions="{style: 'short'}"
+						dataTypeFormatOptions='\{"style": "short"\}'
 						display="Value"
 						maxConditions="1"
 						placeholder="{/#Product/DateTime/@sap:label}"
@@ -188,7 +188,7 @@
 					<mdc:FilterField id="FF8"
 						conditions="{cm>/conditions/DateTime}"
 						dataType="sap.ui.model.odata.type.DateTime"
-						dataTypeFormatOptions="{style: 'medium'}"
+						dataTypeFormatOptions='\{"style": "medium"\}'
 						maxConditions="1"
 						editMode="Display"
 						placeholder="{/#Product/DateTime/@sap:label}"
@@ -201,8 +201,8 @@
 					<mdc:FilterField id="FF7a"
 						conditions="{cm>/conditions/Date}"
 						dataType="sap.ui.model.odata.type.DateTime"
-						dataTypeFormatOptions="{style: 'long'}"
-						dataTypeConstraints="{displayFormat: 'Date'}"
+						dataTypeFormatOptions='\{"style": "long"\}'
+						dataTypeConstraints='\{"displayFormat": "Date"\}'
 						display="Value"
 						maxConditions="1"
 						placeholder="{/#Product/Date/@sap:label}"
@@ -216,8 +216,8 @@
 					<mdc:FilterField id="FF7a-DDR"
 						conditions="{cm>/conditions/Date}"
 						dataType="sap.ui.model.odata.type.DateTime"
-						dataTypeFormatOptions="{style: 'long'}"
-						dataTypeConstraints="{displayFormat: 'Date'}"
+						dataTypeFormatOptions='\{"style": "long"\}'
+						dataTypeConstraints='\{"displayFormat": "Date"\}'
 						display="Value"
 						maxConditions="1"
 						placeholder="{/#Product/Date/@sap:label}"
@@ -230,8 +230,8 @@
 					<mdc:FilterField id="FF7b"
 						conditions="{cm>/conditions/Date}"
 						dataType="sap.ui.model.odata.type.DateTime"
-						dataTypeFormatOptions="{style: 'short'}"
-						dataTypeConstraints="{displayFormat: 'Date'}"
+						dataTypeFormatOptions='\{"style": "short"\}'
+						dataTypeConstraints='\{"displayFormat": "Date"\}'
 						display="Value"
 						maxConditions="1"
 						operators="BT"
@@ -245,8 +245,8 @@
 					<mdc:FilterField id="FF7c"
 						conditions="{cm>/conditions/Date}"
 						dataType="sap.ui.model.odata.type.DateTime"
-						dataTypeFormatOptions="{style: 'short'}"
-						dataTypeConstraints="{displayFormat: 'Date'}"
+						dataTypeFormatOptions='\{"style": "short"\}'
+						dataTypeConstraints='\{"displayFormat": "Date"\}'
 						display="Value"
 						maxConditions="-1"
 						operators="EQ"
@@ -318,7 +318,7 @@
 					<mdc:FilterField id="FF11"
 						conditions="{cm>/conditions/Quantity}"
 						dataType="Edm.Int32"
-						dataTypeConstraints="{nullable: false}"
+						dataTypeConstraints='\{"nullable": false\}'
 						display="Value"
 						maxConditions="2"
 						placeholder="{/#Product/Quantity/@sap:label}"
@@ -359,7 +359,7 @@
 					<mdc:FilterField id="FF15"
 						conditions="{cm>/conditions/WeightMeasure,WeightUnit}"
 						dataType="sap.ui.model.type.Unit"
-						dataTypeConstraints="{minimum: 0}"
+						dataTypeConstraints='\{"minimum": 0\}'
 						display="Description"
 						editMode="Editable"
 						placeholder="{/#Product/WeightMeasure/@sap:label}"
@@ -396,8 +396,8 @@
 					<mdc:FilterField id="FF_Material"
 						conditions="{cm>/conditions/MatrId}"
 						dataType="sap.ui.model.type.String"
-						dataTypeConstraints="{maxLength: 10, search: '^(|[0-9])+$', nullable: false}"
-						dataTypeFormatOptions="{'parseKeepsEmptyString': true}"
+						dataTypeConstraints='\{"maxLength": 10, "search": "^(|[0-9])+$", "nullable": false\}'
+						dataTypeFormatOptions='\{"parseKeepsEmptyString": true\}'
 						display="ValueDescription"
 						placeholder="{/#Product/MatrId/@sap:label}"
 						label="{/#Product/MatrId/@sap:label}"
@@ -471,7 +471,7 @@
 						conditions="{cm>/conditions/CountryId}"
 						operators="EQ,NE,EUROPE"
 						dataType="sap.ui.model.type.String"
-						dataTypeConstraints="{maxLength: 3}"
+						dataTypeConstraints='\{"maxLength": 3\}'
 						display="ValueDescription"
 						label="{/#Product/CountryId/@sap:label}"
 						change="handleChange"
@@ -543,7 +543,7 @@
 						id="IOFFRegion"
 						conditions="{cm>/conditions/RegionId}"
 						dataType="sap.ui.model.type.String"
-						dataTypeConstraints="{maxLength: 2, search: '^[0-9]+$'}"
+						dataTypeConstraints='\{"maxLength": 2, "search": "^[0-9]+$"\}'
 						display="ValueDescription"
 						label="{/#Product/RegionId/@sap:label}"
 						change="handleChange"
@@ -551,7 +551,7 @@
 						fieldHelp="VH-Region">
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH-Region"
-								delegate="{name: 'sap/ui/mdc/sample/field/ValueHelp.delegate', payload: {in: [{path: 'countryId', source: 'conditions/CountryId'}], out: [{path: 'countryId', target: 'conditions/CountryId'}]}}">
+								delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"in": [\{"path": "countryId", "source": "conditions/CountryId"\}], "out": [\{"path": "countryId", "target": "conditions/CountryId"\}]\}\}'>
 								<mdc:typeahead>
 									<mdcValueHelp:Popover id="VH-Region-Pop">
 										<mdcValueHelpContent:MTable id="VH-Region-Pop-MTable"
@@ -599,7 +599,7 @@
 														editMode= "Editable"
 														display= "ValueDescription"
 														dataType="sap.ui.model.type.String"
-														dataTypeConstraints="{maxLength: 3}"
+														dataTypeConstraints='\{"maxLength": 3\}'
 														width="100%"
 														conditions="{$filters>/conditions/countryId}"
 														operators="EQ,NE,EUROPE"
@@ -639,7 +639,7 @@
 						id="IOFFCity"
 						conditions="{cm>/conditions/CityId}"
 						dataType="sap.ui.model.odata.type.String"
-						dataTypeConstraints="{maxLength: 2, isDigitSequence: true, nullable: false}"
+						dataTypeConstraints='\{"maxLength": 2, "isDigitSequence": true, "nullable": false\}'
 						display="ValueDescription"
 						label="{/#Product/CityId/@sap:label}"
 						change="handleChange"
@@ -672,9 +672,9 @@
 				</form:SimpleForm>
 				<m:dependents> <!-- To have outside of control tree of ConditionModel -->
 					<mdc:ValueHelp id="VH-City"
-						delegate="{name: 'sap/ui/mdc/sample/field/ValueHelp.delegate', payload: {
-							in: [{path: 'countryId', source: 'conditions/CountryId'}, {path: 'regionId', source: 'conditions/RegionId'}, {path: 'info', source: 'view>/info', initialValueFilterEmpty: false}],
-							out: [{path: 'countryId', target: 'conditions/CountryId'}, {path: 'regionId', target: 'conditions/RegionId'}]}}">
+						delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{
+							"in": [\{"path": "countryId", "source": "conditions/CountryId"\}, \{"path": "regionId", "source": "conditions/RegionId"\}, \{"path": "info", "source": "view>/info", "initialValueFilterEmpty": false\}],
+							"out": [\{"path": "countryId", "target": "conditions/CountryId"\}, \{"path": "regionId", "target": "conditions/RegionId"\}]\}\}'>
 						<mdc:typeahead>
 							<mdcValueHelp:Popover id="VH-City-Pop">
 								<mdcValueHelpContent:MTable id="VH-City-Pop-MTable"
@@ -726,7 +726,7 @@
 												editMode= "Editable"
 												display= "ValueDescription"
 												dataType="sap.ui.model.type.String"
-												dataTypeConstraints="{maxLength: 3}"
+												dataTypeConstraints='\{"maxLength": 3\}'
 												width="100%"
 												conditions="{$filters>/conditions/countryId}"
 												operators="EQ,NE,EUROPE"
@@ -737,7 +737,7 @@
 												editMode= "Editable"
 												display= "ValueDescription"
 												dataType="sap.ui.model.type.String"
-												dataTypeConstraints="{maxLength: 2, search: '^[0-9]+$'}"
+												dataTypeConstraints='\{"maxLength": 2, "search": "^[0-9]+$"\}'
 												width="100%"
 												conditions="{$filters>/conditions/regionId}"
 												fieldHelp="VH-Region2">
@@ -748,13 +748,13 @@
 												editMode= "Editable"
 												display= "Value"
 												dataType="sap.ui.model.odata.type.String"
-												dataTypeFormatOptions="{parseKeepsEmptyString: true}"
-												dataTypeConstraints="{maxLength: 100, nullable: false}"
+												dataTypeFormatOptions='\{"parseKeepsEmptyString": true\}'
+												dataTypeConstraints='\{"maxLength": 100, "nullable": false\}'
 												width="100%"
 												conditions="{$filters>/conditions/info}"/>
 											<vhfb:dependents>
 												<mdc:ValueHelp id="VH-Region2"
-													delegate="{name: 'sap/ui/mdc/sample/field/ValueHelp.delegate', payload: {in: [{path: 'countryId', source: 'conditions/countryId'}], out: [{path: 'countryId', target: 'conditions/countryId'}]}}">
+													delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"in": [\{"path": "countryId", "source": "conditions/countryId"\}], "out": [\{"path": "countryId", "target": "conditions/countryId"\}]\}\}'>
 													<mdc:typeahead>
 														<mdcValueHelp:Popover id="VH-Region2-Pop">
 															<mdcValueHelpContent:MTable id="VH-Region2-Pop-MTable"
