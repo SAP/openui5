@@ -446,8 +446,7 @@ sap.ui.define([
 					forwarding : {
 						getter : "_getHeader",
 						aggregation : "actions"
-					},
-					forwardBinding: true
+					}
 				},
 
 				/**
