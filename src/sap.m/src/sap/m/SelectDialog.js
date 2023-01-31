@@ -11,13 +11,14 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
-	'sap/ui/base/ManagedObject',
 	'sap/m/Toolbar',
 	'sap/m/Label',
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/m/Title',
 	'sap/ui/core/theming/Parameters',
+	'sap/ui/core/Core',
+	'sap/ui/core/InvisibleText',
 	'./SelectDialogRenderer',
 	"sap/base/Log"
 ],
@@ -29,13 +30,14 @@ function(
 	library,
 	Control,
 	Device,
-	ManagedObject,
 	Toolbar,
 	Label,
 	BusyIndicator,
 	Bar,
 	Title,
 	Parameters,
+	Core,
+	InvisibleText,
 	SelectDialogRenderer,
 	Log
 	) {
@@ -323,6 +325,7 @@ function(
 					})
 				]
 			}),
+			ariaLabelledBy: SelectDialog.getInvisibleText(),
 			selectionChange: this._selectionChange.bind(this)
 		});
 
@@ -487,6 +490,16 @@ function(
 
 		// Should return "this" (sap.m.SelectDialog)
 		return this;
+	};
+
+	SelectDialog.getInvisibleText = function() {
+		if (!this.oInvisibleText) {
+			this.oInvisibleText = new InvisibleText({
+				text: Core.getLibraryResourceBundle("sap.m").getText("SELECTDIALOGBASE_LISTLABEL")
+			}).toStatic();
+		}
+
+		return this.oInvisibleText;
 	};
 
 	SelectDialog.prototype.getBusy = function () {

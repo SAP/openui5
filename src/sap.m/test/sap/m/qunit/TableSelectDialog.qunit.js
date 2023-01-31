@@ -339,6 +339,7 @@ sap.ui.define([
 		assert.strictEqual(oTableSelectDialog1.getNoDataText(), "No Data", '"No Data" should be displayed when no data is there');
 		assert.strictEqual(oTableSelectDialog1.getMultiSelect(), false, 'Multi Select should by default be set to "false"');
 		assert.strictEqual(oTableSelectDialog1.getShowClearButton(), false, 'ShowClearButton should by default be set to "false"');
+		assert.ok(oTableSelectDialog1._oTable.getAriaLabelledBy()[0], 'Table has aria-labelledby value');
 		oTableSelectDialog1.setMultiSelect(true);
 		oTableSelectDialog1.setShowClearButton(true);
 		sap.ui.getCore().applyChanges();

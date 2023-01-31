@@ -11,34 +11,35 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
-	'sap/ui/base/ManagedObject',
 	'sap/m/Toolbar',
 	'sap/m/Label',
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/ui/core/theming/Parameters',
+	'sap/ui/core/Core',
+	'sap/ui/core/InvisibleText',
 	'sap/m/Title',
 	'./TableSelectDialogRenderer',
 	'sap/base/Log'
-],
-	function(
-		Button,
-		Dialog,
-		SearchField,
-		Table,
-		library,
-		Control,
-		Device,
-		ManagedObject,
-		Toolbar,
-		Label,
-		BusyIndicator,
-		Bar,
-		Parameters,
-		Title,
-		TableSelectDialogRenderer,
-		Log
-	) {
+], function (
+	Button,
+	Dialog,
+	SearchField,
+	Table,
+	library,
+	Control,
+	Device,
+	Toolbar,
+	Label,
+	BusyIndicator,
+	Bar,
+	Parameters,
+	Core,
+	InvisibleText,
+	Title,
+	TableSelectDialogRenderer,
+	Log) {
+
 	"use strict";
 
 
@@ -332,6 +333,7 @@ sap.ui.define([
 					})
 				]
 			}),
+			ariaLabelledBy: TableSelectDialog.getInvisibleText(),
 			selectionChange: function (oEvent) {
 				if (that._oDialog) {
 					if (!that.getMultiSelect()) {
@@ -653,6 +655,16 @@ sap.ui.define([
 
 		// Should return "this"
 		return this;
+	};
+
+	TableSelectDialog.getInvisibleText = function() {
+		if (!this.oInvisibleText) {
+			this.oInvisibleText = new InvisibleText({
+				text: Core.getLibraryResourceBundle("sap.m").getText("SELECTDIALOGBASE_LISTLABEL")
+			}).toStatic();
+		}
+
+		return this.oInvisibleText;
 	};
 
 	/**
