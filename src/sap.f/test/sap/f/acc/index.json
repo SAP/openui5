@@ -29,6 +29,11 @@
 		  "control": "sap.f.GridContainer",
 		  "url": "GridContainer.html",
 		  "appComponent": "CA-UI5-CTR-ROD"
+		},
+		{
+		  "control": "sap.f.ProductSwitch",
+		  "url": "ProductSwitch.html",
+		  "appComponent": "CA-UI5-CTR-PIR"
 		}
 	]
 }
