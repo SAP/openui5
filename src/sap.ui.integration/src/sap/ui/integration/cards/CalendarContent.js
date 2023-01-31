@@ -404,7 +404,7 @@ sap.ui.define([
 					bEndHourBetweenStartAndEnd;
 
 				oSelectedEnd.setDate(oSelectedEnd.getDate() + 1);
-				iSelectedEndTime = oSelectedEnd.getTime();
+				iSelectedEndTime = oSelectedEnd.getTime() - 1000;
 
 				bBiggerThanVisibleHours = iAppStartTime < iSelectedStartTime && iAppEndTime > iSelectedEndTime;
 				bStartHourBetweenStartAndEnd = iAppStartTime >= iSelectedStartTime && iAppStartTime < iSelectedEndTime;
