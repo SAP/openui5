@@ -18,19 +18,25 @@ sap.ui.define([
  		 * @returns {Promise} resolves when a destroy change is added to UI Reconstruction Map
 		 */
 		addToReconstructionMap: function(mUIReconstructions, oCondenserInfo) {
-			return CondenserUtils.getContainerElementIds(oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation)
-				.then(function (aTargetContainerElementIds) {
-					var aContainerElementIds = CondenserUtils.getInitialUIContainerElementIds(mUIReconstructions, oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation, aTargetContainerElementIds);
-					if (aContainerElementIds.length - 1 < oCondenserInfo.sourceIndex) {
-						while (aContainerElementIds.length - 1 < oCondenserInfo.sourceIndex) {
-							var iIndex = aContainerElementIds.length;
-							aContainerElementIds.splice(aContainerElementIds.length, 0, CondenserUtils.PLACEHOLDER + iIndex);
-						}
-						aContainerElementIds[oCondenserInfo.sourceIndex] = oCondenserInfo.affectedControl;
-					} else {
-						aContainerElementIds.splice(oCondenserInfo.sourceIndex, 0, oCondenserInfo.affectedControl);
+			return CondenserUtils.getContainerElementIds(
+				oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation,
+				oCondenserInfo.customAggregation, oCondenserInfo.affectedControlIdProperty
+			)
+			.then(function (aTargetContainerElementIds) {
+				var aContainerElementIds = CondenserUtils.getInitialUIContainerElementIds(
+					mUIReconstructions, oCondenserInfo.targetContainer,
+					oCondenserInfo.targetAggregation, aTargetContainerElementIds
+				);
+				if (aContainerElementIds.length - 1 < oCondenserInfo.sourceIndex) {
+					while (aContainerElementIds.length - 1 < oCondenserInfo.sourceIndex) {
+						var iIndex = aContainerElementIds.length;
+						aContainerElementIds.splice(aContainerElementIds.length, 0, CondenserUtils.PLACEHOLDER + iIndex);
 					}
-				});
+					aContainerElementIds[oCondenserInfo.sourceIndex] = oCondenserInfo.affectedControl;
+				} else {
+					aContainerElementIds.splice(oCondenserInfo.sourceIndex, 0, oCondenserInfo.affectedControl);
+				}
+			});
 		},
 
 		/**
