@@ -209,6 +209,27 @@ sap.ui.define([
 		return waitForMethodCall(oRta.getToolbar(), "setModel");
 	}
 
+
+	function getIndicatorForElement(aIndicators, sId) {
+		return aIndicators.find(function(oIndicator) {
+			return oIndicator.getSelectorId() === sId;
+		}).getDomRef();
+	}
+
+	function startRta() {
+		this.oRta = new RuntimeAuthoring({
+			rootControl: oComp,
+			flexSettings: this.oFlexSettings
+		});
+		return RtaQunitUtils.clear()
+		.then(this.oRta.start.bind(this.oRta))
+		.then(function() {
+			this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
+			this.oChangeVisualization = this.oRta.getChangeVisualization();
+			this.oToolbar = this.oRta.getToolbar();
+		}.bind(this));
+	}
+
 	QUnit.module("Change Viz - Menu Button & Model Test", {
 		before: function() {
 			return oComponentPromise;
@@ -300,9 +321,29 @@ sap.ui.define([
 		});
 
 		QUnit.test("With changes - Check if Menu is bound correctly to the model", function(assert) {
+			// create additional split and combine changes
+			this.aMockChanges.push(createMockChange("testSplit", "split", "Comp1---idMain1--lb2"));
+			this.aMockChanges.push(createMockChange("testCombine", "combine", "Comp1---idMain1--lb2"));
+			// create additional add changes
+			this.aMockChanges.push(createMockChange("testCreateContainer", "createContainer", "Comp1---idMain1--lb2"));
+			this.aMockChanges.push(createMockChange("testAddDelegateProperty", "addDelegateProperty", "Comp1---idMain1--lb2"));
+			this.aMockChanges.push(createMockChange("testReveal", "reveal", "Comp1---idMain1--lb2"));
+			this.aMockChanges.push(createMockChange("testAddIFrame", "addIFrame", "Comp1---idMain1--lb2"));
 			prepareChanges(this.aMockChanges);
-			this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [3]);
-			this.oCheckModelAll.count = 3;
+			this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [9]);
+			this.oCheckModelAll.count = 8;
+			this.oCheckModelCombineAndSplit = {
+				key: "combinesplit",
+				title: oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_COMBINESPLIT", [0]),
+				icon: "sap-icon://combine",
+				count: 2
+			};
+			this.oCheckModelAdd = {
+				key: "add",
+				title: oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ADD", [0]),
+				icon: "sap-icon://add",
+				count: 5
+			};
 			return startVisualization(this.oRta)
 				.then(function() {
 					oCore.applyChanges();
@@ -324,8 +365,12 @@ sap.ui.define([
 					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[2].getItems();
 					checkModel(assert, aVizModel[0], this.oCheckModelAll);
 					checkModel(assert, aVizModel[2], this.oCheckModelMove);
+					checkModel(assert, aVizModel[1], this.oCheckModelAdd);
+					checkModel(assert, aVizModel[4], this.oCheckModelCombineAndSplit);
 					checkBinding(assert, aVizModel[0], aMenuItems[0]);
 					checkBinding(assert, aVizModel[2], aMenuItems[2]);
+					checkBinding(assert, aVizModel[1], aMenuItems[1]);
+					checkBinding(assert, aVizModel[4], aMenuItems[4]);
 				}.bind(this));
 		});
 
@@ -1018,26 +1063,6 @@ sap.ui.define([
 		});
 	});
 
-	function getIndicatorForElement(aIndicators, sId) {
-		return aIndicators.find(function(oIndicator) {
-			return oIndicator.getSelectorId() === sId;
-		}).getDomRef();
-	}
-
-	function startRta() {
-		this.oRta = new RuntimeAuthoring({
-			rootControl: oComp,
-			flexSettings: this.oFlexSettings
-		});
-		return RtaQunitUtils.clear()
-		.then(this.oRta.start.bind(this.oRta))
-		.then(function() {
-			this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
-			this.oChangeVisualization = this.oRta.getChangeVisualization();
-			this.oToolbar = this.oRta.getToolbar();
-		}.bind(this));
-	}
-
 	QUnit.module("Keyboard and focus handling", {
 		before: function() {
 			return oComponentPromise;
@@ -1139,6 +1164,7 @@ sap.ui.define([
 				}
 			});
 		});
+
 		QUnit.test("when the visualization is started and application is scrolled down", function(assert) {
 			var fnDone = assert.async();
 			// Decrease fixture height to test scrolling

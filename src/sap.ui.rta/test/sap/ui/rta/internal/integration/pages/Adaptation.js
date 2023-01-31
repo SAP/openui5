@@ -106,7 +106,17 @@ sap.ui.define([
 							return oButton.getDomRef().closest(".sapUiRtaToolbar") && oButton.getIcon() === "sap-icon://undo";
 						},
 						actions: new Press(),
-						errorMessage: "Did not find UndoButton"
+						errorMessage: "Did not find the undo button"
+					});
+				},
+				iClickTheSaveButton: function() {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: function(oButton) {
+							return oButton.getDomRef().closest(".sapUiRtaToolbar") && oButton.getIcon() === "sap-icon://save";
+						},
+						actions: new Press(),
+						errorMessage: "Did not find the save button"
 					});
 				},
 				iWaitUntilTheBusyIndicatorIsGone: function(sId, sViewName) {
@@ -342,6 +352,11 @@ sap.ui.define([
 				},
 				clearChangesFromSessionStorage: function() {
 					FakeLrepConnectorSessionStorage.forTesting.synchronous.clearAll();
+				},
+				iPressOnEscape: function() {
+					window.dispatchEvent(new KeyboardEvent('keydown', {
+						key: 'escape'
+					}));
 				}
 			},
 
