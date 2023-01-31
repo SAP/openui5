@@ -1036,8 +1036,14 @@ sap.ui.define([
 		var oRegisterConfig = {
 			controller: {}
 		};
+
+		var aStableKeys = [];
+		if (this.getColumns().length > 0 && this._isOfType(TableType.TreeTable)) {
+			aStableKeys.push(this.getColumns()[0].getDataProperty());
+		}
+
 		var mRegistryOptions = {
-			Column: new ColumnController({control: this}),
+			Column: new ColumnController({control: this, stableKeys: aStableKeys}),
 			Sort: new SortController({control: this}),
 			Group: new GroupController({control: this}),
 			Filter: new FilterController({control: this}),
