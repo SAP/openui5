@@ -22,7 +22,7 @@ sap.ui.define([
 			MessageBox.error("Unable to load data.", {
 				title: "Error",
 				id: "messageBoxId2",
-				details: "<p><strong>This can happen if:</strong></p>\n" +
+				details: "<p><strong>This can happen if:</strong></p>" +
 					"<ul>" +
 					"<li>You are not connected to the internet</li>" +
 					"<li>a backend component is not <em>available</em></li>" +
