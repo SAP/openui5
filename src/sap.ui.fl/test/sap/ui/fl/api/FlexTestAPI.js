@@ -6,6 +6,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
+	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
@@ -14,6 +16,8 @@ sap.ui.define([
 	FlexState,
 	ChangesController,
 	ChangesWriteAPI,
+	LocalStorageConnector,
+	SessionStorageConnector,
 	VariantModel,
 	ChangePersistenceFactory,
 	FlexControllerFactory,
@@ -31,6 +35,7 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var FlexTestAPI = {};
+	var FL_PREFIX = "sap.ui.fl";
 
 	/**
 	 * Clears the instance cache of FlexController and ChangePersistence and the FlexState
@@ -93,6 +98,69 @@ sap.ui.define([
 			changeSpecificData: mPropertyBag.changeSpecificData,
 			selector: mPropertyBag.selector
 		});
+	};
+
+	/**
+	 * Returns the number of changes stored on a storage
+	 *
+	 * @param {string} sStorageType Type of storage being used ("LocalStorage" or "SessionStorage")
+	 * @param {string} sReference Flex Reference
+	 * @returns {Promise} Resolving with the number of changes on the storage
+	 */
+	FlexTestAPI.getNumberOfStoredChanges = function(sStorageType, sReference) {
+		var oConnector = sStorageType === "LocalStorage" ? LocalStorageConnector : SessionStorageConnector;
+
+		return oConnector.loadFlexData({reference: sReference})
+		.then(function (aResponses) {
+			return aResponses.reduce(function (iNumberOfChanges, oResponse) {
+				return iNumberOfChanges + oResponse.changes.length;
+			}, 0);
+		});
+	};
+
+	/**
+	 * Returns the number of changes on a storage
+	 *
+	 * @param {string} sStorageType Type of storage being used ("LocalStorage" or "SessionStorage")
+	 * @param {string} sReference Flex Reference
+	 * @returns {int} Number of changes on the storage
+	 */
+	FlexTestAPI.getNumberOfChangesSynchronous = function(sStorageType, sReference) {
+		var oStorage = sStorageType === "LocalStorage" ? LocalStorageConnector.storage : SessionStorageConnector.storage;
+
+		var iCount = 0;
+		Object.keys(oStorage).map(function(sKey) {
+			var bIsFlexObject = sKey.includes(FL_PREFIX);
+
+			if (!bIsFlexObject) {
+				return;
+			}
+			var oFlexObject = JSON.parse(oStorage.getItem(sKey));
+			if (oFlexObject.reference === sReference || oFlexObject.reference + ".Component" === sReference) {
+				iCount++;
+			}
+		});
+		return iCount;
+	};
+
+	/**
+	 * Clears the flex entries in the given storage
+	 *
+	 * @param {string} sStorageType Type of storage being used ("LocalStorage" or "SessionStorage")
+	 */
+	FlexTestAPI.clearStorage = function(sStorageType) {
+		var oStorage = sStorageType === "LocalStorage" ? LocalStorageConnector.storage : SessionStorageConnector.storage;
+		var fnRemoveItem = function(sKey) {
+			var bIsFlexObject = sKey.includes(FL_PREFIX);
+
+			if (!bIsFlexObject) {
+				return;
+			}
+
+			oStorage.removeItem(sKey);
+		};
+
+		Object.keys(oStorage).map(fnRemoveItem);
 	};
 
 	return FlexTestAPI;
