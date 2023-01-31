@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/demo/iconexplorer/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/documentation/sdk/controller/util/ThemePicker"
 ], function(
 	Label,
 	mobileLibrary,
@@ -29,8 +30,9 @@ sap.ui.define([
 	formatter,
 	Filter,
 	FilterOperator,
-	JSONModel
-) {
+	JSONModel,
+	ThemePicker
+	) {
 	"use strict";
 
 	var TYPING_DELAY = 200; // ms
@@ -49,7 +51,8 @@ sap.ui.define([
 		 */
 		onInit : function () {
 			var oViewModel,
-				oTagModel;
+				oTagModel,
+				oComponent = this;
 
 			this._oPreviousQueryContext = {};
 			this._oCurrentQueryContext = null;
@@ -72,6 +75,8 @@ sap.ui.define([
 			// register to both new and legacy pattern to not break bookmarked URLs
 			this.getRouter().getRoute("legacy").attachPatternMatched(this._updateUI, this);
 			this.getRouter().getRoute("overview").attachPatternMatched(this._updateUI, this);
+
+			ThemePicker.init(oComponent);
 		},
 
 		/**
@@ -129,6 +134,13 @@ sap.ui.define([
 				fontName: sSelectedFont
 			});
 			this.byId("selectFont").close();
+		},
+
+		handleMenuItemClick: function (oEvent) {
+			var sTargetText = oEvent.getParameter("item").getKey();
+			if (ThemePicker._getTheme()[sTargetText]) {
+				this._updateAppearance(sTargetText);
+			}
 		},
 
 		/**
@@ -387,6 +399,21 @@ sap.ui.define([
 			} catch (oException) {
 				MessageToast.show(exceptionText);
 			}
+		},
+
+
+		/**
+		 * Updates the appearance of the Demo Kit depending of the incoming appearance keyword.
+		 * If the keyword is "auto" the appearance will be updated to light or dark depending on the
+		 * user's OS settings.
+		 * @param {string} sKey the appearance keyword
+		 * @param {object} oComponent the component where the theme will be changed
+		 * @private
+		 */
+
+		_updateAppearance: function(sKey) {
+			var oComponent = this;
+			ThemePicker._updateAppearance(sKey, oComponent);
 		},
 
 		/**
