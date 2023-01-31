@@ -346,6 +346,7 @@ function(
 					})
 				]
 			}),
+			ariaLabelledBy: SelectDialogBase.getInvisibleText(),
 			selectionChange: this._selectionChange.bind(this),
 			updateStarted: this._updateStarted.bind(this),
 			updateFinished: this._updateFinished.bind(this)
