@@ -2084,8 +2084,9 @@ sap.ui.define([
 			illustrationType: sIllustratedMessageType,
 			illustrationSize: sIllustratedMessageSize,
 			title: sTitle,
+			enableDefaultTitleAndDescription: false,
 			enableVerticalResponsiveness: true,
-			description: sDescription ? sDescription : " "
+			description: sDescription
 		});
 
 		if (this.getCardContent() && this.getCardContent().getDomRef()) {
