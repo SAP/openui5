@@ -474,14 +474,14 @@ sap.ui.define([
 			var oButtonControl = this._getButtonControl(),
 				bOpeningMenuButton = oButtonControl,
 				oMenu = this.getMenu(),
-				bHasInternalMenu = oMenu && oMenu._getMenu && oMenu._getMenu();
+				oUnifiedMenu = oMenu && oMenu._getMenu && oMenu._getMenu();
 
 			if (this._isSplitButton()) {
 				oButtonControl.setArrowState(false);
 				bOpeningMenuButton = oButtonControl._getArrowButton();
 			}
 
-			if (bHasInternalMenu && oMenu._getMenu()._bLeavingMenu){
+			if (oUnifiedMenu && oUnifiedMenu._bLeavingMenu){
 				this._bPopupOpen = false;
 			}
 
@@ -687,6 +687,18 @@ sap.ui.define([
 
 		MenuButton.prototype.getFocusDomRef = function() {
 			return this._getButtonControl().getDomRef();
+		};
+
+		MenuButton.prototype.onsapescape = function(oEvent) {
+			var oMenu = this.getMenu(),
+				oUnifiedMenu = oMenu && oMenu._getMenu && oMenu._getMenu();
+
+			if (oUnifiedMenu && this._bPopupOpen) {
+				oUnifiedMenu._bLeavingMenu = true;
+				oUnifiedMenu.close();
+				this._menuClosed();
+				oEvent.preventDefault();
+			}
 		};
 
 		MenuButton.prototype.onsapup = function(oEvent) {
