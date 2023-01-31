@@ -1121,11 +1121,11 @@ var FrameType = library.FrameType;
 		var aItems = this.oGrid.getItems();
 		oCore.applyChanges();
 		// Assert
-		assert.ok(aItems[0].hasStyleClass("sapMSTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem");
+		assert.ok(aItems[0].hasStyleClass("sapMSTGridContainerOneRemGap"),"Width has been applied successfully when the gap is 1rem");
 		//small tiles
 		aItems[0].setSizeBehavior("Small");
 		//Assert
-		assert.ok(aItems[0].hasStyleClass("sapMSTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem");
+		assert.ok(aItems[0].hasStyleClass("sapMSTGridContainerOneRemGap"),"Width has been applied successfully when the gap is 1rem");
 
 	QUnit.test("S4 home slide tile", function(assert) {
 		//Arrange
@@ -1144,11 +1144,11 @@ var FrameType = library.FrameType;
 		var aItems = this.oGrid.getItems();
 		oCore.applyChanges();
 		// Assert
-		assert.notOk(aItems[0].hasStyleClass("sapMSTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem");
+		assert.notOk(aItems[0].hasStyleClass("sapMSTGridContainerOneRemGap"),"Width has been applied successfully when the gap is 1rem");
 		//small tiles
 		aItems[0].setSizeBehavior("Small");
 		//Assert
-		assert.notOk(aItems[0].hasStyleClass("sapMSTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem");
+		assert.notOk(aItems[0].hasStyleClass("sapMSTGridContainerOneRemGap"),"Width has been applied successfully when the gap is 1rem");
 
 	});
 	QUnit.test("Tab Navigation on tiles", function(assert) {

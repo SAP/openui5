@@ -4553,6 +4553,13 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 						frameType : FrameType.OneByOne,
 						state:"Loaded",
 						layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 })
+					}),
+					this.oTile4 = new GenericTile({
+						header: "headerText 2",
+						subheader: "subheaderText",
+						frameType : FrameType.OneByHalf,
+						state:"Loaded",
+						layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 })
 					})
 				]
 			});
@@ -4568,9 +4575,10 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		var aItems = this.oGrid.getItems();
 
 		// Assert
-		assert.ok(aItems[0].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem for TwoByOne tile");
-		assert.ok(aItems[1].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem for TwoByHalf tile");
-		assert.notOk(aItems[2].hasStyleClass("sapMGTWidthForGridContainer"),"Width has not been applied when the gap is 1rem for OneByOne tile");
+		assert.ok(aItems[0].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been applied successfully when the gap is 1rem");
+		assert.ok(aItems[1].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been applied successfully when the gap is 1rem");
+		assert.ok(aItems[2].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been applied successfully when the gap is 1rem");
+		assert.ok(aItems[3].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been applied successfully when the gap is 1rem");
 
 
 		//small tiles
@@ -4579,20 +4587,22 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		aItems[2].setSizeBehavior("Small");
 
 		//Assert
-		assert.ok(aItems[0].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem for small TwoByOne tile");
-		assert.ok(aItems[1].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem for small TwoByHalf tile");
-		assert.notOk(aItems[2].hasStyleClass("sapMGTWidthForGridContainer"),"Width has not been applied when the gap is 1rem for small OneByOne tile");
+		assert.ok(aItems[0].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been applied successfully when the gap is 1rem");
+		assert.ok(aItems[1].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been applied successfully when the gap is 1rem");
+		assert.ok(aItems[2].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been applied successfully when the gap is 1rem");
+		assert.ok(aItems[3].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been applied successfully when the gap is 1rem");
 
 	});
 
-	QUnit.test("Checking if the width has not been applied for the tiles when the gap is not 1rem", function (assert) {
+	QUnit.test("Checking if the Class has not been applied for the tiles when the gap is not 1rem", function (assert) {
 		// Arrange
 		this.fnCreateGridContainer("0.5rem");
 		var aItems = this.oGrid.getItems();
 		// Assert
-		assert.notOk(aItems[0].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for TwoByOne tile");
-		assert.notOk(aItems[1].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for TwoByHalf tile");
-		assert.notOk(aItems[2].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for OneByOne tile");
+		assert.notOk(aItems[0].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been not applied when the gap is 0.5rem");
+		assert.notOk(aItems[1].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been not applied when the gap is 0.5rem");
+		assert.notOk(aItems[2].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been not applied when the gap is 0.5rem");
+		assert.notOk(aItems[3].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been not applied when the gap is 0.5rem");
 
 		//small tiles
 		aItems[0].setSizeBehavior("Small");
@@ -4600,9 +4610,10 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		aItems[2].setSizeBehavior("Small");
 
 		//Assert
-		assert.notOk(aItems[0].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for small TwoByOne tile");
-		assert.notOk(aItems[1].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for small TwoByHalf tile");
-		assert.notOk(aItems[2].hasStyleClass("sapMGTWidthForGridContainer"),"Width has been not applied when the gap is 0.5rem for small OneByOne tile");
+		assert.notOk(aItems[0].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been not applied when the gap is 0.5rem");
+		assert.notOk(aItems[1].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been not applied when the gap is 0.5rem");
+		assert.notOk(aItems[2].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been not applied when the gap is 0.5rem");
+		assert.notOk(aItems[3].hasStyleClass("sapMGTGridContainerOneRemGap"),"Class has been not applied when the gap is 0.5rem");
 	});
 
 	QUnit.module("Button created in Place of action more icon", {

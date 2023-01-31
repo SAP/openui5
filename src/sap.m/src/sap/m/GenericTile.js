@@ -619,14 +619,10 @@ sap.ui.define([
 			this._sGenericTileResizeListenerId = null;
 		}
 
-		//sets the extra width of 0.5rem when the grid container has 1rem gap for the TwoByxxxx tiles
+		//Applies new dimensions for the GenericTile if it is inscribed inside a GridContainer
 		var oGetParent = this.getParent();
 		if (oGetParent && oGetParent.isA("sap.f.GridContainer")){
-			this._applyExtraWidth();
-		}
-
-		if (oGetParent && oGetParent.getParent() && oGetParent.getParent().isA("sap.f.GridContainer") && oGetParent.isA("sap.m.SlideTile")){
-			this._applyExtraWidth(oGetParent.getParent(), true);
+			this._applyNewDim();
 		}
 
 		Device.media.detachHandler(this._handleMediaChange, this, DEVICE_SET);
@@ -853,6 +849,10 @@ sap.ui.define([
 	 */
 	GenericTile.prototype._setupResizeClassHandler = function () {
 		var fnCheckMedia = function () {
+			var oParent = this.getParent();
+			if (oParent && oParent.isA("sap.f.GridContainer")) {
+				this._applyNewDim();
+			}
 			if (this.getSizeBehavior() === TileSizeBehavior.Small || window.matchMedia("(max-width: 374px)").matches || this._isSmallStretchTile()) {
 				this.$().addClass("sapMTileSmallPhone");
 				if (this._isSmallStretchTile()) {
@@ -1925,22 +1925,17 @@ GenericTile.prototype._isNavigateActionEnabled = function() {
 	};
 
 	/**
-	 * An extra width of 0.5rem would be applied when the gap is 1rem(16px) in the grid container for the TwoByOne and TwoByHalf tiles
+	 * Applies new dimensions for the GenericTile if it is inscribed inside a GridContainer
+	 * @param {sap.f.GridContainer} oSlideTileParentContainer The GridContainer where SlideTile is inscribed
 	 * @private
 	 */
-	GenericTile.prototype._applyExtraWidth = function(oGetParent, bTrue) {
-		var sGap;
-		if (bTrue == true){
-			sGap = oGetParent.getActiveLayoutSettings().getGap();
-		} else {
-		sGap = this.getParent().getActiveLayoutSettings().getGap();
-		}
-		var bisLargeTile = this.getFrameType() === FrameType.TwoByHalf || this.getFrameType() === FrameType.TwoByOne,
-		bisGap16px = sGap === "16px" || sGap === "1rem";
-		if (bisGap16px && bisLargeTile){
-			this.addStyleClass("sapMGTWidthForGridContainer");
-		} else if (!bisGap16px && this.hasStyleClass("sapMGTWidthForGridContainer")){
-			this.removeStyleClass("sapMGTWidthForGridContainer");
+	GenericTile.prototype._applyNewDim = function(oSlideTileParentContainer) {
+		var sGap = (oSlideTileParentContainer) ? oSlideTileParentContainer.getActiveLayoutSettings().getGap() : this.getParent().getActiveLayoutSettings().getGap();
+		var bisGap16px = sGap === "16px" || sGap === "1rem";
+		if (bisGap16px){
+			this.addStyleClass("sapMGTGridContainerOneRemGap");
+		} else if (!bisGap16px && this.hasStyleClass("sapMGTGridContainerOneRemGap")){
+			this.removeStyleClass("sapMGTGridContainerOneRemGap");
 		}
 	};
 	/**
