@@ -5284,6 +5284,31 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.equal(oSpy.calledOnce, true, "onsaptabprevious method has been called");
 		assert.notOk(this.oGenericTile.$("action-more").hasClass("sapMGTVisible"),"The Action More button should not be visible");
 	});
+
+	QUnit.module("Getting focus on IconMode tiles", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile("tile",{
+				header: "GenericTile",
+				subheader: "GenericTile subHeader",
+				mode: "IconMode",
+				tileIcon: "sap-icon://table-view",
+				backgroundColor: "sapLegendColor1",
+				frameType: "OneByOne"
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+		}
+	});
+
+	QUnit.test("Getting the Focus on the tile", function (assert) {
+		//Simulating focus on the tile
+		simulateCssEvent(":focus");
+		assert.equal(getComputedStyle(document.querySelector(".sapMGTFocusDiv")).outlineOffset,"2px","The width of the inner focus has been set successfully");
+		//Removing the focus on the tile
+		simulateCssEvent("stop");
+	});
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
 		for (var i = 0; i < aContainers.length; i++) {
@@ -5322,6 +5347,35 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			setTimeout(function(){
 				handleResize(oSpy,fnCallback);
 			},200);
+		}
+	}
+
+	// Simulates any CSS event like hover,focus.....etc
+	function simulateCssEvent(type){
+		var id = 'simulatedStyle';
+		var generateEvent = function(selector){
+			var style = "";
+			for (var i in document.styleSheets) {
+				var rules = document.styleSheets[i].cssRules;
+				for (var r in rules) {
+					if (rules[r].cssText && rules[r].selectorText){
+						if (rules[r].selectorText.indexOf(selector) > -1){
+							var regex = new RegExp(selector,"g");
+							var text = rules[r].cssText.replace(regex,"");
+							style += text + "\n";
+						}
+					}
+				}
+			}
+			document.querySelector("head").insertAdjacentHTML("beforeend","<style id=" + id + ">" + style + "</style>");
+		};
+		var stopEvent = function(){
+			document.querySelector("#" + id).remove();
+		};
+		if (type === "stop") {
+			return stopEvent();
+		} else {
+			return generateEvent(type);
 		}
 	}
 });
