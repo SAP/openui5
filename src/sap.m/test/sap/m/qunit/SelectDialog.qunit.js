@@ -129,6 +129,7 @@ sap.ui.define([
 			assert.strictEqual(this.oSelectDialog.getShowClearButton(), false, 'There is no clear button');
 			assert.strictEqual(this.oSelectDialog.getDraggable(), false, 'The draggable property should be false');
 			assert.strictEqual(this.oSelectDialog.getResizable(), false, 'The resizable property should be false');
+			assert.ok(this.oSelectDialog._oList.getAriaLabelledBy()[0], 'List has aria-labelledby value');
 		});
 
 		QUnit.test("setBusy", function (assert) {

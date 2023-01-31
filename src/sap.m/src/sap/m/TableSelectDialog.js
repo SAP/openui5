@@ -16,6 +16,8 @@ sap.ui.define([
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/ui/core/theming/Parameters',
+	'sap/ui/core/Core',
+	'sap/ui/core/InvisibleText',
 	'sap/m/Title',
 	'sap/base/Log'
 ], function (
@@ -31,6 +33,8 @@ sap.ui.define([
 	BusyIndicator,
 	Bar,
 	Parameters,
+	Core,
+	InvisibleText,
 	Title,
 	Log) {
 
@@ -350,6 +354,7 @@ sap.ui.define([
 					})
 				]
 			}),
+			ariaLabelledBy: TableSelectDialog.getInvisibleText(),
 			selectionChange: function (oEvent) {
 				if (that._oDialog) {
 					if (!that.getMultiSelect()) {
@@ -665,6 +670,16 @@ sap.ui.define([
 
 		// Should return "this"
 		return this;
+	};
+
+	TableSelectDialog.getInvisibleText = function() {
+		if (!this.oInvisibleText) {
+			this.oInvisibleText = new InvisibleText({
+				text: Core.getLibraryResourceBundle("sap.m").getText("SELECTDIALOGBASE_LISTLABEL")
+			}).toStatic();
+		}
+
+		return this.oInvisibleText;
 	};
 
 	/**
