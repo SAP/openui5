@@ -130,6 +130,66 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[false, true].forEach(function (bRemovePersistedCreatedAfterRefresh, i) {
+	QUnit.test("loadData: remove persisted created contexts on success, " + i, function (assert) {
+		var oReadCall, fnSuccess, oSuccessCallPromise,
+			oModel = {
+				callAfterUpdate : function () {},
+				read : function () {}
+			},
+			oBinding = {
+				oModel : oModel,
+				sPath : "/~Path",
+				bRemovePersistedCreatedAfterRefresh : bRemovePersistedCreatedAfterRefresh,
+				mRequestHandles : {},
+				bSkipDataEvents : true,
+				_addFilterQueryOption : function () {},
+				isRelative : function () {},
+				_removePersistedCreatedContexts : function () {},
+				useClientMode : function () {}
+			},
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("useClientMode").withExactArgs().returns(false);
+		oBindingMock.expects("_addFilterQueryOption")
+			.withExactArgs([], /*!useClientMode()*/true)
+			.callsFake(function (aParams) {
+				aParams.push("~filter"); // simulate _addFilterQueryOption implementation
+			});
+		oBindingMock.expects("isRelative").withExactArgs().returns(false);
+		oReadCall = this.mock(oModel).expects("read").withExactArgs("/~Path", {
+				canonicalRequest : undefined,
+				context : undefined,
+				error : sinon.match.func,
+				groupId : undefined,
+				headers : undefined,
+				success : sinon.match.func,
+				updateAggregatedMessages : undefined,
+				urlParameters : ["~filter"]
+			});
+
+		// code under test
+		ODataListBinding.prototype.loadData.call(oBinding);
+
+		fnSuccess = oReadCall.args[0][1].success;
+		oBindingMock.expects("useClientMode").withExactArgs().returns(false);
+		oBindingMock.expects("_removePersistedCreatedContexts").withExactArgs()
+			.exactly(bRemovePersistedCreatedAfterRefresh ? 1 : 0);
+		this.mock(oModel).expects("callAfterUpdate").withExactArgs(sinon.match.func);
+
+		// code under test: call success function
+		// call it async to be able to check that bRemovePersistedCreatedAfterRefresh is considered even if it has
+		// been reset synchronously in the meantime
+		oSuccessCallPromise = Promise.resolve().then(fnSuccess.bind(oBinding, /*oData*/{results : []}));
+
+		// ODataListBinding#refresh sets this.bRemovePersistedCreatedAfterRefresh to false before fnSuccess is called
+		oBinding.bRemovePersistedCreatedAfterRefresh = false;
+
+		return oSuccessCallPromise;
+	});
+});
+
+	//*********************************************************************************************
 [
 	{operationMode : OperationMode.Auto, useFilterParams : false},
 	{operationMode : OperationMode.Client, useFilterParams : true},
@@ -336,6 +396,7 @@ sap.ui.define([
 		assert.deepEqual(oBinding.oCreatedPersistedToRemove, new Set());
 		assert.strictEqual(oBinding.iThreshold, 0);
 		assert.strictEqual(oBinding.bThresholdRejected, false);
+		assert.strictEqual(oBinding.bRemovePersistedCreatedAfterRefresh, false);
 	});
 
 	//*********************************************************************************************
@@ -2671,6 +2732,7 @@ sap.ui.define([
 			.withExactArgs(oFixture.expectedForceUpdate)
 			.callsFake(function () {
 				assert.strictEqual(oBinding.sRefreshGroupId, oFixture.expectedRefreshGroupId);
+				assert.strictEqual(oBinding.bRemovePersistedCreatedAfterRefresh, true);
 			});
 
 		// code under test
@@ -2678,6 +2740,7 @@ sap.ui.define([
 
 		assert.ok(oBinding.hasOwnProperty("sRefreshGroupId"));
 		assert.strictEqual(oBinding.sRefreshGroupId, undefined);
+		assert.strictEqual(oBinding.bRemovePersistedCreatedAfterRefresh, false);
 		assert.ok(oRefreshExpectation.calledImmediatelyAfter(oRemoveExpectation));
 	});
 });
