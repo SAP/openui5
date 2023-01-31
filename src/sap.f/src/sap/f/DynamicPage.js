@@ -1255,9 +1255,10 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._needsVerticalScrollBar = function () {
-		// use Math.floor in order to avoid adding a scrollbar when
-		// the returned max scrollHeight is less than 1px
-		return Math.floor(this._getMaxScrollPosition()) > 0;
+		// treat maxScrollHeight values in the range [0, 1] as 0,
+		// to cover the known cases where the nested content overflows
+		// the container with up to 1px because of rounding issues
+		return Math.floor(this._getMaxScrollPosition()) > 1;
 	};
 
 	/**
