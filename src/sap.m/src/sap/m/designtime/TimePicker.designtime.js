@@ -16,6 +16,11 @@ sap.ui.define([],
 			},
 			templates: {
 				create: "sap/m/designtime/TimePicker.create.fragment.xml"
+			},
+			aggregations: {
+				rules: {
+					ignore: true
+				}
 			}
 		};
 
