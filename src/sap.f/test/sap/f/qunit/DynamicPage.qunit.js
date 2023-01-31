@@ -2327,6 +2327,17 @@ function (
 
 	});
 
+	QUnit.test("DynamicPage _needsVerticalScrollBar() allows 1px content overflow", function (assert) {
+		// Arrange
+		this.stub(this.oDynamicPage, "_getMaxScrollPosition").returns(1);
+
+		// Assert: the page workarounds a known issue with VizChart that
+		// overflows its container with 1px [in the case when it should fit in]
+		// because of rounding issues
+		assert.strictEqual(this.oDynamicPage._needsVerticalScrollBar(), false,
+			"allows 1px content overflow");
+	});
+
 	QUnit.test("DynamicPage _getMaxScrollPosition() prevents 1px maxScrollPosition due to rounding", function (assert) {
 		// Arrange
 		var iScrollHeight = this.oDynamicPage.$wrapper[0].scrollHeight;
