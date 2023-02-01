@@ -36,6 +36,10 @@ sap.ui.define([
 					type: "boolean"
 				}
 			}
+		},
+		constructor: function() {
+			BaseCommand.apply(this, arguments);
+			this.setRelevantForSave(false);
 		}
 	});
 

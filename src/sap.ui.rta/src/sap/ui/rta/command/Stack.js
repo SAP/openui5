@@ -287,6 +287,12 @@ sap.ui.define([
 		return (this._toBeExecuted + 1) < this.getCommands().length;
 	};
 
+	Stack.prototype.canSave = function() {
+		return this.canUndo() && this.getAllExecutedCommands().some(function(oCommand) {
+			return oCommand.getRelevantForSave();
+		});
+	};
+
 	Stack.prototype.undo = function() {
 		return this._unExecute();
 	};

@@ -29,6 +29,14 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function(ManagedObject) {
 				},
 				runtimeOnly: {
 					type: "boolean"
+				},
+				/**
+				 * decides if the command execution is relevant for persistency which
+				 * enables or disables the save option
+				 */
+				relevantForSave: {
+					type: "boolean",
+					defaultValue: true
 				}
 			},
 			associations: {

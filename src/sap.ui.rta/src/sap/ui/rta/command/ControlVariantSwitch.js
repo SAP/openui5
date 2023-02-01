@@ -42,6 +42,10 @@ sap.ui.define([
 			},
 			associations: {},
 			events: {}
+		},
+		constructor: function() {
+			BaseCommand.apply(this, arguments);
+			this.setRelevantForSave(false);
 		}
 	});
 
@@ -57,7 +61,6 @@ sap.ui.define([
 		var oElement = this.getElement();
 		return oElement ? flUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
 	};
-
 
 	/**
 	 * Template Method to implement execute logic, with ensure precondition Element is available.
