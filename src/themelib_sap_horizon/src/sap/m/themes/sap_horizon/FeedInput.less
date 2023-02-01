@@ -6,7 +6,41 @@
 @_sap_m_FeedInput_BackgroundColor: darken(@sapUiBaseColor, 9);
 
 .sapMFeedIn {
-	background-color: @_sap_m_FeedInput_BackgroundColor;
+	
+	padding-top:1rem;
+	padding-bottom:1rem;
+	padding-right:0.5rem;
+	background-color: @sapGroup_ContentBackground;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+.sapMTextArea{
+	width:100%;
+	min-width:6rem;
+	margin-top:0.25rem;
+	min-height:2.25rem;
+}
+.sapMTextAreaInner
+{
+	font-style: normal;
+}
+.sapMFeedIn >.sapMFeedInContainer > .sapMTextArea> .sapMInputBaseInner {
+	color: @sapField_PlaceholderTextColor;
+	font-style: normal;
+	font-weight: normal;
+	color: @sapField_TextColor;
+}
+.sapFAvatarM{
+	size: 3rem;
+	font-size: 1.125rem;
+}
+.sapMFeedIn .sapMBtn {
+	margin-top: 0.125rem;
+	margin-bottom:0.125rem;
+	// padding-left:0.625rem;
+	// padding-right: 0.625rem;
+	border-width: @sapButton_BorderWidth;
+	border-radius: @sapButton_BorderCornerRadius;
 }
 
 .sapMFeedIn .sapMFeedInContainer {
