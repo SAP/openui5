@@ -1303,8 +1303,7 @@ sap.ui.define([
 				vNoData.setIllustrationType(IllustratedMessageType.EmptyList);
 				vNoData.setTitle(oRb.getText("table.NO_DATA"));
 			}
-		} else {
-			if (isFiltered(this)) {
+		} else if (isFiltered(this)) {
 				vNoData.setTitle(oRb.getText("table.NO_RESULTS_TITLE"));
 				vNoData.setDescription(oRb.getText("table.NO_RESULTS_DESCRIPTION"));
 				vNoData.setIllustrationType(IllustratedMessageType.NoFilterResults);
@@ -1312,7 +1311,6 @@ sap.ui.define([
 				vNoData.setTitle(oRb.getText("table.NO_DATA")).setDescription(" ");
 				vNoData.setIllustrationType(IllustratedMessageType.NoEntries);
 			}
-		}
 		this._sLastNoDataTitle = vNoData.getTitle();
 	};
 
@@ -1445,7 +1443,15 @@ sap.ui.define([
 			}
 
 			if (this.getAutoBindOnInit()) {
-				this.rebind();
+				var oEngine = this.getEngine();
+
+				if (oEngine.isModificationSupported(this)) {
+					oEngine.waitForChanges(this).then(function() {
+						this.rebind();
+					}.bind(this));
+				} else {
+					this.rebind();
+				}
 			}
 
 			return this.awaitPropertyHelper();
