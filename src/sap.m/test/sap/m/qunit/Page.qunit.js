@@ -669,6 +669,47 @@ sap.ui.define([
 		oPage.destroy();
 	});
 
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oPage = new Page({
+				backgroundDesign: "Standard",
+				title : "Accessibility Test",
+				showNavButton: true,
+				showFooter: true,
+				showHeader: true,
+				footer: new Bar({ contentRight: [new Button({ text: "Button" })] })
+			});
+			this.oPage.placeAt("content");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oPage.destroy();
+			this.oPage = null;
+		}
+	});
+
+	QUnit.test("Verifies that the invisible text element is correctly associated with the header via the aria-labelledby attribute", function(assert) {
+		// Setup
+		var oPage = this.oPage,
+			oHeader = oPage._getAnyHeader(),
+			invisibleText = document.getElementById(oHeader.getId() + "-InvisibleText");
+
+		// Assert
+		assert.ok(invisibleText, "Invisible text is rendered");
+		assert.strictEqual(oHeader.$().attr("aria-labelledby"), invisibleText.id, "Invisible text is set as aria-labelledby on the header");
+	});
+
+	QUnit.test("Verifies that the invisible text element is correctly associated with the footer via the aria-labelledby attribute", function(assert) {
+		// Setup
+		var oPage = this.oPage,
+			oFooter = oPage.getFooter(),
+			invisibleText = document.getElementById(oFooter.getId() + "-InvisibleText");
+
+		// Assert
+		assert.ok(invisibleText, "Invisible text is rendered");
+		assert.strictEqual(oFooter.$().attr("aria-labelledby"), invisibleText.id, "Invisible text is set as aria-labelledby on the footer");
+	});
+
 	QUnit.module("LandmarkInfo", {
 		beforeEach: function () {
 			this.oPage = new Page();
