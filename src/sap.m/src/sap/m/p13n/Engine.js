@@ -86,11 +86,10 @@ sap.ui.define([
 	 * The registration is a precondition for using <code>Engine</code> functionality for a control instance.
 	 * Once the control instance has been registered, it can be passed to the related <code>Engine</code>
 	 * methods that always expect a control instance as parameter. Only registered control instances can be used for personalization through the <code>Engine</code>.
-	 *
+	 * @public
 	 * @typedef {object} sap.m.p13n.EngineRegistrationConfig
-	 * @property {sap.m.p13n.ModificationHandler} modification The desired <code>{@link sap.m.p13n.modification.ModificationHandler ModificationHandler}</code> instance that is used for persistence.
 	 * @property {sap.m.p13n.MetadataHelper} helper The <code>{@link sap.m.p13n.modification.MetadataHelper MetadataHelper}</code> to provide metadata-specific information.
-	 * @property {object} controller A map of arbitrary keys that contain a controller instance as value. The key must be unique and needs to be provided for later access when using <code>Engine</code> functionality specific for one controller type.
+	 * @property {Object<string,sap.m.p13n.SelectionController>} controller A map of arbitrary keys that contain a controller instance as value. The key must be unique and needs to be provided for later access when using <code>Engine</code> functionality specific for one controller type.
 	 */
 
 	/**
@@ -200,7 +199,7 @@ sap.ui.define([
 	 * @param {object} [mSettings.contentHeight] Height configuration for the related popup container
 	 * @param {object} [mSettings.contentWidth] Width configuration for the related popup container
 	 *
-	 * @returns {Promise} Promise resolving in the <code>sap.m.p13n.Popup</code> instance
+	 * @returns {Promise<sap.m.p13n.Popup>} Promise resolving in the <code>sap.m.p13n.Popup</code> instance
 	 */
 	Engine.prototype.show = function(oControl, vPanelKeys, mSettings) {
 		return this.uimanager.show(oControl, vPanelKeys, mSettings);
@@ -212,7 +211,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 *
-	 * @param {function} fnStateEventHandler The handler function to call when the event occurs
+	 * @param {function(sap.ui.base.Event):void} fnStateEventHandler The handler function to call when the event occurs
 	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 */
 	Engine.prototype.attachStateChange = function(fnStateEventHandler) {
@@ -225,7 +224,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 *
-	 * @param {function} fnStateEventHandler The handler function to detach from the event
+	 * @param {function(sap.ui.base.Event):void} fnStateEventHandler The handler function to detach from the event
 	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 */
 	Engine.prototype.detachStateChange = function(fnStateEventHandler) {
@@ -240,7 +239,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl The related control instance
 	 * @param {string} aKeys The key for the affected configuration
 	 *
-	 * @returns {Promise} A Promise resolving once the reset is completed
+	 * @returns {Promise<null>} A Promise resolving once the reset is completed
 	 */
 	Engine.prototype.reset = function(oControl, aKeys) {
 
@@ -280,6 +279,12 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	/**
+	 *
+	 * @public
+	 * @typedef {object} sap.m.p13n.State
+	 * @property {Object<string,Object[]>} controller A map of arbitrary keys that contain a controller instance as value. The key must be unique and needs to be provided for later access when using <code>Engine</code> functionality specific for one controller type.
+	 */
 
 	/**
 	 * Applies a state to a control by passing an object that contains the
@@ -293,9 +298,9 @@ sap.ui.define([
 	 * }
 	 *
 	 * @param {sap.ui.core.Control} oControl The registered control instance
-	 * @param {object} oState The state object
+	 * @param {sap.m.p13n.State} oState The state object
 	 *
-	 * @returns {Promise} A Promise resolving after the state has been applied
+	 * @returns {Promise<sap.m.p13n.State>} A Promise resolving after the state has been applied
 	 */
 	 Engine.prototype.applyState = function(oControl, oState) {
 
@@ -361,9 +366,9 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @experimental Since 1.104. Please note that the API of this control is not yet finalized!
-	 * @param {object} oControl The control instance implementing IxState to retrieve the externalized state
+	 * @param {sap.ui.core.Control} oControl The control instance implementing IxState to retrieve the externalized state
 	 *
-	 * @returns {Promise} A Promise resolving in the current control state
+	 * @returns {Promise<sap.m.p13n.State>} A Promise resolving in the current control state
 	 */
 	Engine.prototype.retrieveState = function(oControl) {
 
