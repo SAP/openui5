@@ -24410,7 +24410,7 @@ sap.ui.define([
 	// and child. Execute a bound action for both root and child to see that it updates the node.
 	// JIRA: CPOUI5ODATAV4-1851
 	//
-	// Use relative ODLB (JIRA: CPOUI5ODATAV4-1985)
+	// Use relative ODLB with an initially suspended parent (JIRA: CPOUI5ODATAV4-1985 etc.)
 	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920).
 	QUnit.test("Recursive Hierarchy: edit w/ currency", function (assert) {
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
@@ -24421,6 +24421,7 @@ sap.ui.define([
 			oRootAmountBinding,
 			oTable,
 			sView = '\
+<FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\', suspended : true}" />\
 <t:Table id="table" rows="{path : \'TEAM_2_EMPLOYEES\',\
 		parameters : {\
 			$$aggregation : {\
@@ -24438,6 +24439,8 @@ sap.ui.define([
 			that = this;
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oContextBinding = that.oView.byId("form").getObjectBinding();
+
 			oTable = that.oView.byId("table");
 
 			that.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES"
@@ -24460,9 +24463,12 @@ sap.ui.define([
 					}]
 				});
 
-			oTable.getBinding("rows").setContext(oModel.createBindingContext("/TEAMS('42')"));
+			oTable.getBinding("rows").setContext(oContextBinding.getBoundContext());
 
-			return that.waitForChanges(assert, "setContext");
+			return Promise.all([
+				oContextBinding.resumeAsync(), // Note: resume*Async* makes a big difference
+				that.waitForChanges(assert, "setContext, resume")
+			]);
 		}).then(function () {
 			oRootAmountBinding = oTable.getRows()[0].getCells()[4].getBinding("value");
 			oRoot = oRootAmountBinding.getContext();

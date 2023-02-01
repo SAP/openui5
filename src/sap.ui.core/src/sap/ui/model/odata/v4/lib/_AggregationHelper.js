@@ -441,7 +441,8 @@ sap.ui.define([
 				sNodeProperty = oAggregation.$NodeProperty,
 				sPath = oAggregation.$path,
 				mRecursiveHierarchy,
-				sSeparator = "";
+				sSeparator = "",
+				oSyncPromise;
 
 			function select(sProperty) {
 				var sPropertyPath;
@@ -463,13 +464,14 @@ sap.ui.define([
 			}
 
 			if (!sNodeProperty) {
+				sNodeProperty = "???";
 				if (mQueryOptions) {
-					sNodeProperty = oAggregation.$NodeProperty
-						= oAggregation.$fetchMetadata(sMetaPath
+					oSyncPromise = oAggregation.$fetchMetadata(sMetaPath
 						+ "/@Org.OData.Aggregation.V1.RecursiveHierarchy#" + sHierarchyQualifier
-						+ "/NodeProperty/$PropertyPath").getResult();
-				} else {
-					sNodeProperty = "???";
+						+ "/NodeProperty/$PropertyPath");
+					if (oSyncPromise.isFulfilled()) {
+						sNodeProperty = oAggregation.$NodeProperty = oSyncPromise.getResult();
+					}
 				}
 			}
 
