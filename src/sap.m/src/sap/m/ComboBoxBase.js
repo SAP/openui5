@@ -222,10 +222,6 @@ sap.ui.define([
 				oList.setBusy(false);
 				oList.setShowNoData(!this.getItems().length);
 				this.bInitialBusyIndicatorState = false;
-
-				if (this.getValue()) {
-					this.open();
-				}
 			}
 		};
 

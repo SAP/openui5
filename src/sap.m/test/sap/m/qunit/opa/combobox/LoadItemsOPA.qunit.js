@@ -45,6 +45,22 @@ sap.ui.define([
 				actions: new Press(),
 				errorMessage: "Did not find the Button"
 			});
+		},
+
+		iOpenTheSecondComboBox: function () {
+			return this.waitFor({
+				id: "c2-arrow",
+				actions: new Press(),
+				errorMessage: "Did not find the Icon"
+			});
+		},
+
+		iPressUpdateItemsButton: function () {
+			return this.waitFor({
+				id: "updateItems",
+				actions: new Press(),
+				errorMessage: "Did not find the Button"
+			});
 		}
 	});
 
@@ -79,6 +95,31 @@ sap.ui.define([
 					Opa5.assert.ok(!!aLists[0].getItems().length, "List has items");
 				},
 				errorMessage: "List has no items"
+			});
+		},
+
+		iSeeTheDropDown: function () {
+			return this.waitFor({
+				controlType: "sap.m.List",
+				searchOpenDialogs: true,
+				success: function (aLists) {
+					Opa5.assert.ok(!!aLists[0].getItems().length, "Suggestions are visible");
+				},
+				errorMessage: "There are no suggestions available"
+			});
+		},
+
+		iSeeClosedDropDown: function () {
+			return this.waitFor({
+				id: "c2",
+				timeout: 20,
+				matchers: function (oNode) {
+					return oNode.$().find("input");
+				},
+				success: function (oNode) {
+					Opa5.assert.ok(oNode.attr("aria-expanded") === 'false', "Dropdown is closed");
+				},
+				errorMessage: "The dropdown is open."
 			});
 		}
 	});
@@ -150,6 +191,26 @@ sap.ui.define([
 		// assert
 		Then.iSeeOpenPicker();
 		Then.iSeeADropDownWithNoData();
+
+		// Act
+		Then.iTeardownMyApp();
+	});
+
+	opaTest('Open picker to check no data then close, focus the combo and press arow down', function (Given, When, Then) {
+		// Arrange
+		Given.iStartMyAppInAFrame("./test-resources/sap/m/qunit/opa/combobox/LoadItems/LoadItems.html");
+
+		// Act (Open combo via click)
+		When.iOpenTheSecondComboBox();
+
+		// Assert
+		Then.iSeeTheDropDown();
+
+		// Act (Press updateItems button to update the items aggregation)
+		When.iPressUpdateItemsButton();
+
+		// Assert
+		Then.iSeeClosedDropDown();
 
 		// Act
 		Then.iTeardownMyApp();

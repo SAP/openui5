@@ -51,6 +51,15 @@ sap.ui.getCore().attachInit(function () {
 
 				oControlEvent.getSource().getBinding("items").resume();
 			},
+			updateItems: function() {
+				this.byId("c2").bindAggregation("items", {
+					path: "/Employees",
+					template: new Item({
+						key: "{ID}",
+						text: "{Name}"
+					})
+				});
+			},
 			setupMockServer: function (service) {
 				var basePath = service;
 
