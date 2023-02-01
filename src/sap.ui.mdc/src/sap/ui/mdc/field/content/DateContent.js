@@ -39,7 +39,7 @@ sap.ui.define([
 			return [null];
 		},
 		getEdit: function() {
-			return ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/StandardDynamicDateRangeKeys", "sap/m/DynamicDateUtil", "sap/m/DynamicDateFormat"];
+			return ["sap/m/DynamicDateRange", "sap/ui/mdc/condition/OperatorDynamicDateOption", "sap/ui/mdc/field/DynamicDateRangeConditionsType", "sap/m/library", "sap/m/DynamicDateUtil", "sap/m/DynamicDateFormat"];
 		},
 		getEditOperator: function() {
 			return {
@@ -184,9 +184,10 @@ sap.ui.define([
 			var DynamicDateRange = aControlClasses[0];
 			var OperatorDynamicDateOption = aControlClasses[1];
 			var DynamicDateRangeConditionsType = aControlClasses[2];
+			var mLibrary = aControlClasses[3];
 
 			if (!StandardDynamicDateRangeKeys || !DynamicDateUtil || !DynamicDateFormat) {
-				StandardDynamicDateRangeKeys = aControlClasses[3];
+				StandardDynamicDateRangeKeys = mLibrary.StandardDynamicDateRangeKeys;
 				DynamicDateUtil = aControlClasses[4];
 				DynamicDateFormat = aControlClasses[5];
 			}
