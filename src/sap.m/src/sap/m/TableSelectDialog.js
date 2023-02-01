@@ -368,6 +368,7 @@ sap.ui.define([
 					})
 				]
 			}),
+			ariaLabelledBy: SelectDialogBase.getInvisibleText(),
 			selectionChange: function (oEvent) {
 				that.fireSelectionChange(oEvent.getParameters());
 
