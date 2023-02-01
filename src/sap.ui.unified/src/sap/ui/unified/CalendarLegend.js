@@ -140,12 +140,14 @@ sap.ui.define([
 	};
 
 	CalendarLegend.prototype._initItemNavigation = function() {
-		var aItems = this.getAggregation("_standardItems"),
+		var aStandardItems = this.getAggregation("_standardItems") || [],
+			aLegendItems = this.getItems() || [],
+			aItems,
 			aItemsDomRef = [],
 			oItemDomRef,
 			oRootDomRef;
 
-		aItems = aItems.concat(this.getItems());
+		aItems = aStandardItems.concat(aLegendItems);
 
 		if (!aItems.length) {
 			return;
