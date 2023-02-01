@@ -415,12 +415,15 @@ sap.ui.define([
 
 			oToolbar.addEventDelegate({
 				"onAfterRendering": function () {
+					var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+					var sTooltipText = oResourceBundle.getText("CARD_ACTIONS_OVERFLOW_BUTTON_TOOLTIP");
 					var oButton = oToolbar.getDomRef("overflowButton");
 
 					oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
 						// Assert
 						assert.ok(oToolbar.getAggregation("_actionSheet").isOpen(), "Action sheet is opened after overflow button is pressed.");
 						assert.ok(fnHeaderPressStub.notCalled, "Header press is not triggered.");
+						assert.strictEqual(oButton.title, sTooltipText, "Overflow button tooltip is correctly set to string: " + sTooltipText);
 						done();
 					});
 
