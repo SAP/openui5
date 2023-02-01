@@ -1526,4 +1526,32 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Details containing HTML tags", function (assert) {
+		// arrange
+		var sDetails = "<p>This can happen if</p>" +
+			"<ul>" +
+			"<li>You are not connected to the internet</li>" +
+			"<li>a backend component is not <em>available</em></li>" +
+			"</ul>" +
+			"<a href='//www.sap.com'>Get more help here</a>.";
+
+		MessageBox.show("Message", {
+			id: "messageId",
+			details: sDetails
+		});
+
+		var oMessageBox = oCore.byId("messageId");
+		var oViewDetails = oMessageBox.$().find("a.sapMMessageBoxLinkText");
+		pressLink(oViewDetails);
+		oCore.applyChanges();
+		var oDetailsDom = oMessageBox.$().find(".sapMMessageBoxDetails")[0];
+
+		// assert
+		assert.strictEqual(oDetailsDom.querySelector("p").textContent, "This can happen if", "'<p>' should be treated as HTML element");
+		assert.strictEqual(oDetailsDom.querySelector("a").textContent, "Get more help here", "'<a>' should be treated as HTML element");
+
+		// clean up
+		oMessageBox.destroy();
+	});
+
 });
