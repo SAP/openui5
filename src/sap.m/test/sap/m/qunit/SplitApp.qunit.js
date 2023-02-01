@@ -133,7 +133,8 @@ sap.ui.define([
 			oSplitApp.destroy();
 			done();
 		});
-		oSplitApp._oPopOver.openBy(oSplitApp._oShowMasterBtn);
+
+		oSplitApp._onMasterButtonTap();
 	});
 
 	QUnit.test("ShowHideMode_portrait", function(assert){
