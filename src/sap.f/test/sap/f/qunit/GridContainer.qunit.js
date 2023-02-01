@@ -1,12 +1,12 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/f/library",
 	"sap/f/GridContainer",
 	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/m/Panel",
+	"sap/m/SearchField",
 	"sap/m/GenericTile",
 	"sap/f/Card",
 	"sap/f/GridContainerItemLayoutData",
@@ -26,12 +26,12 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler"
 ],
 function (
-	jQuery,
 	library,
 	GridContainer,
 	Core,
 	DragInfo,
 	Panel,
+	SearchField,
 	GenericTile,
 	Card,
 	GridContainerItemLayoutData,
@@ -1963,7 +1963,7 @@ function (
 	});
 
 	QUnit.test("Navigation between items of different size based on starting position top", function (assert) {
-		// Arrange
+		// ArrangeKeyCodes.
 		var oSecondItemWrapper = this.oGrid.getItems()[1].getDomRef().parentElement;
 
 		oSecondItemWrapper.focus();
@@ -2015,4 +2015,77 @@ function (
 
 		oGrid.destroy();
 	});
+
+	QUnit.module("Keyboard handling", {
+		beforeEach: function () {
+			this.oGrid = new GridContainer();
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oGrid.destroy();
+		}
+	});
+
+	QUnit.test("HOME keydown on indirect child", function (assert) {
+		var oSf = new SearchField();
+		this.oGrid.addItem(new SearchField());
+		this.oGrid.addItem(new SearchField());
+		this.oGrid.addItem(oSf);
+		Core.applyChanges();
+		oSf.focus();
+
+		assert.strictEqual(document.activeElement, oSf.getFocusDomRef(), "Focus is in the search field");
+
+		qutils.triggerKeydown(oSf.getFocusDomRef(), KeyCodes.HOME);
+
+		assert.strictEqual(document.activeElement, oSf.getFocusDomRef(), "Focus should still be on the search field");
+	});
+
+	QUnit.test("END keydown on indirect child", function (assert) {
+		var oSf = new SearchField();
+		this.oGrid.addItem(oSf);
+		this.oGrid.addItem(new SearchField());
+		this.oGrid.addItem(new SearchField());
+		Core.applyChanges();
+		oSf.focus();
+
+		assert.strictEqual(document.activeElement, oSf.getFocusDomRef(), "Focus is in the search field");
+
+		qutils.triggerKeydown(oSf.getFocusDomRef(), KeyCodes.END);
+
+		assert.strictEqual(document.activeElement, oSf.getFocusDomRef(), "Focus should still be on the search field");
+	});
+
+	QUnit.test("HOME keydown on direct child (item wrapper)", function (assert) {
+		this.oGrid.addItem(new SearchField());
+		this.oGrid.addItem(new SearchField());
+		this.oGrid.addItem(new SearchField());
+		Core.applyChanges();
+		var oFirstItemWrapper = this.oGrid.getDomRef().children[1];
+		var oLastItemWrapper = this.oGrid.getDomRef().children[3];
+		oLastItemWrapper.focus();
+
+		assert.strictEqual(document.activeElement, oLastItemWrapper, "Focus is on the last grid item");
+
+		qutils.triggerKeydown(oLastItemWrapper, KeyCodes.HOME);
+
+		assert.strictEqual(document.activeElement, oFirstItemWrapper, "Focus should be moved to the first grid item");
+	});
+
+	QUnit.test("HOME keydown on direct child (item wrapper)", function (assert) {
+		this.oGrid.addItem(new SearchField());
+		this.oGrid.addItem(new SearchField());
+		this.oGrid.addItem(new SearchField());
+		Core.applyChanges();
+		var oFirstItemWrapper = this.oGrid.getDomRef().children[1];
+		var oLastItemWrapper = this.oGrid.getDomRef().children[3];
+		oFirstItemWrapper.focus();
+
+		assert.strictEqual(document.activeElement, oFirstItemWrapper, "Focus is on the first grid item");
+
+		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.END);
+
+		assert.strictEqual(document.activeElement, oLastItemWrapper, "Focus should be moved to the last grid item");
+	});
+
 });
