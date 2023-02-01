@@ -405,7 +405,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.doDeregisterChangeListener = function (sPath, oListener) {
-		this.oCache.deregisterChangeListener(sPath, oListener);
+		if (this.oCache) {
+			this.oCache.deregisterChangeListener(sPath, oListener);
+		}
 	};
 
 	/**

@@ -3003,7 +3003,8 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("doDeregisterChangeListener", function () {
+[false, true].forEach(function (bHasCache) {
+	QUnit.test("doDeregisterChangeListener: cache=" + bHasCache, function () {
 		var oBinding = new ODataBinding(),
 			oCache = {
 				deregisterChangeListener : function () {}
@@ -3011,13 +3012,16 @@ sap.ui.define([
 			oListener = {},
 			sPath = "foo";
 
-		oBinding.oCache = oCache;
-		this.mock(oCache).expects("deregisterChangeListener")
+		if (bHasCache) {
+			oBinding.oCache = oCache;
+		}
+		this.mock(oCache).expects("deregisterChangeListener").exactly(bHasCache ? 1 : 0)
 			.withExactArgs(sPath, sinon.match.same(oListener));
 
 		// code under test
 		oBinding.doDeregisterChangeListener(sPath, oListener);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("allow for super calls", function (assert) {
