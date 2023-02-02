@@ -512,6 +512,7 @@ sap.ui.define([
 					sapnext : ["alt", "meta", "ctrl"],
 					sapprevious : ["alt", "meta", "ctrl"]
 				})
+				.setTableMode(true, true)
 				.setFocusedIndex(0)
 				.attachEvent(ItemNavigation.Events.AfterFocus, this._onItemWrapperFocusIn.bind(this));
 
