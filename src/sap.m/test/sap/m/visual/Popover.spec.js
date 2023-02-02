@@ -30,6 +30,7 @@ describe("sap.m.Popover", function () {
 		element(by.id("no-h-with-f")).click();
 
 		expect(takeScreenshot(element(by.id("pop1")))).toLookAs("popover-footer");
+		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	});
 
 	it("Should open Popover with header and no footer", function () {
@@ -43,6 +44,7 @@ describe("sap.m.Popover", function () {
 		element(by.id("__item0-__list0-0")).click(); // Remove the focus from input
 
 		expect(takeScreenshot(element(by.id("pop1")))).toLookAs("popover-no-header-footer");
+		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	});
 
 	it("Should open Popover with responsive paddings", function () {

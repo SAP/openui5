@@ -88,17 +88,6 @@ describe("sap.m.PopoverWithinArea", function () {
 		expect(takeScreenshot(element(by.id("pop1")))).toLookAs("popover-no-header-footer");
 	});
 
-	it("Should open Popover with responsive paddings", function () {
-		element(by.id("btn11")).click();
-		expect(takeScreenshot()).toLookAs("popover-responsivePaddings");
-
-		element(by.id("btn-set-width-700")).click();
-		expect(takeScreenshot()).toLookAs("700px-responsivePaddings");
-
-		element(by.id("btn-set-width-1024")).click();
-		expect(takeScreenshot()).toLookAs("1024px-responsivePaddings");
-	});
-
 	it("Should open Popover with checkboxes and check one of them", function () {
 		element(by.id("btn15")).click();
 		element(by.id("popover12CheckBox1")).click();
