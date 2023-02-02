@@ -36,6 +36,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/m/FormattedText",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core",
 	"sap/ui/dom/jquery/zIndex" // provides jQuery.fn.zIndex
 ], function(
 	qutils,
@@ -73,7 +74,8 @@ sap.ui.define([
 	Filter,
 	FilterOperator,
 	FormattedText,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 
@@ -7119,6 +7121,42 @@ sap.ui.define([
 		assert.strictEqual(oInput.getValue(), "Item", "The input value is updated.");
 		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on OK button press.");
 		assert.ok(oInput.getSelectedRow(), "Selected row is set");
+
+		// clean up
+		oInput.destroy();
+	});
+
+	QUnit.test("Change event should be fired on focusout", function (assert) {
+		// arrange
+		var oSystem = {
+			desktop: false,
+			phone: true,
+			tablet: false
+		};
+		this.stub(Device, "system", oSystem);
+
+		var bChangeFired = false;
+		var oInput = new Input({
+			value: "t"
+		});
+
+		oInput.placeAt("content");
+		oCore.applyChanges();
+
+		oInput.attachChange(function() {
+			bChangeFired = true;
+		});
+		oCore.applyChanges();
+
+		//act
+		oInput._$input.trigger("focus").trigger(jQuery.Event("keydown", { which: KeyCodes.BACKSPACE })).val("").trigger("input");
+		this.clock.tick(300);
+
+		oInput._$input.trigger("blur");
+		this.clock.tick(200);
+
+		// assert
+		assert.ok(bChangeFired, "Change event is fired");
 
 		// clean up
 		oInput.destroy();

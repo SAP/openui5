@@ -1458,7 +1458,7 @@ function(
 		}
 
 		// Inform InputBase to fire the change event on Input only when focus doesn't go into the suggestion popup
-		if (!bFocusInPopup && !this.isMobileDevice()) {
+		if (!bFocusInPopup) {
 			InputBase.prototype.onsapfocusleave.apply(this, arguments);
 		}
 
