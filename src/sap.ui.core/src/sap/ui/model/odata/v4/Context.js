@@ -96,6 +96,7 @@ sap.ui.define([
 		this.bInactive = bInactive || undefined; // be in sync with the annotation
 		this.iIndex = iIndex;
 		this.bKeepAlive = false;
+		this.bSelected = false;
 		this.fnOnBeforeDestroy = undefined;
 	}
 
@@ -354,6 +355,7 @@ sap.ui.define([
 		this.oSyncCreatePromise = undefined;
 		this.bInactive = undefined;
 		this.bKeepAlive = undefined;
+		this.bSelected = false;
 		// When removing oModel, ManagedObject#getBindingContext does not return the destroyed
 		// context although the control still refers to it
 		this.oModel = undefined;
@@ -1061,6 +1063,19 @@ sap.ui.define([
 	 */
 	Context.prototype.isKeepAlive = function () {
 		return this.bKeepAlive;
+	};
+
+	/**
+	 * Tells whether this context is currently selected.
+	 *
+	 * @returns {boolean} Whether this context is currently selected
+	 *
+	 * @experimental As of version 1.111.0
+	 * @public
+	 * @see #setSelected
+	 */
+	Context.prototype.isSelected = function () {
+		return this.bSelected;
 	};
 
 	/**
@@ -1848,9 +1863,36 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a string representation of this object including the {@link #getPath binding path},
-	 * {@link #getIndex index}, and state (see also "Context states" of
-	 * {@link topic:c9723f8265f644af91c0ed941e114d46 Creating an Entity}).
+	 * Determines whether this context is currently selected.
+	 *
+	 * @param {boolean} bSelected - Whether this context is currently selected
+	 * @throws {Error}
+	 *   If this context does not belong to a list binding, or if it is {@link #isDeleted deleted}
+	 *   and <code>bSelected</code> is <code>true</code>
+	 *
+	 * @experimental As of version 1.111.0
+	 * @public
+	 * @see #isSelected
+	 */
+	Context.prototype.setSelected = function (bSelected) {
+		if (!this.oBinding.getHeaderContext) {
+			throw new Error("Unsupported context: " + this);
+		}
+		if (bSelected && this.isDeleted()) {
+			throw new Error("Must not select a deleted entity: " + this);
+		}
+		this.bSelected = bSelected;
+	};
+
+	/**
+	 * Returns a string representation of this object including the following information:
+	 * <ul>
+	 *   <li> {@link #getPath Binding path},
+	 *   <li> {@link #getIndex Index},
+	 *   <li> State (see also "Context states" of
+	 *     {@link topic:c9723f8265f644af91c0ed941e114d46 Creating an Entity}), including whether
+	 *     this context is {@link #isSelected selected}.
+	 * </ul>
 	 *
 	 * @returns {string} A string description of this binding
 	 *
@@ -1883,6 +1925,9 @@ sap.ui.define([
 
 					// no default
 				}
+			}
+			if (this.bSelected) {
+				sSuffix += ";selected";
 			}
 			sSuffix = "[" + this.iIndex + sSuffix + "]";
 		}

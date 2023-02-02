@@ -779,6 +779,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("fetchCache").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oBinding.oContext));
 		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Change);
+		this.mock(oBinding.oHeaderContext).expects("setSelected").exactly(iCallCount)
+			.withExactArgs(false);
 		this.mock(oBinding.oHeaderContext).expects("checkUpdate").exactly(iCallCount)
 			.withExactArgs();
 
@@ -3463,6 +3465,8 @@ sap.ui.define([
 					.withExactArgs(ChangeReason.Filter);
 				oBindingMock.expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
 					.withExactArgs(ChangeReason.Filter);
+				this.mock(oBinding.oHeaderContext).expects("setSelected")
+					.exactly(bSuspended ? 0 : 1).withExactArgs(false);
 				this.mock(oBinding.oHeaderContext).expects("checkUpdate")
 					.exactly(bSuspended ? 0 : 1).withExactArgs();
 

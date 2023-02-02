@@ -315,7 +315,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Changes this binding's parameters and refreshes the binding.
+	 * Changes this binding's parameters and refreshes the binding. Since 1.111.0, a list binding's
+	 * header context is deselected.
 	 *
 	 * If there are pending changes that cannot be ignored, an error is thrown. Use
 	 * {@link #hasPendingChanges} to check if there are such pending changes. If there are, call

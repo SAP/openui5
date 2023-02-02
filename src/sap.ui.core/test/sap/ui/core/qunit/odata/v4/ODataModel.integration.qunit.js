@@ -4801,6 +4801,8 @@ sap.ui.define([
 	//
 	// Additionally ODLB#getDownloadUrl is tested
 	// JIRA: CPOUI5ODATAV4-12
+	//
+	// "Select all" is reset by #filter (JIRA: CPOUI5ODATAV4-1943).
 	QUnit.test("Relative ODLB inherits parent ODCB's query options on filter", function (assert) {
 		var oBinding,
 			oModel,
@@ -4843,6 +4845,8 @@ sap.ui.define([
 			var sResourceUrl = "EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS?$orderby=ID&$select=Name&c1=a"
 					+ "&c2=b&$filter=EQUIPMENT_2_PRODUCT/SupplierIdentifier%20eq%202";
 
+			oBinding.getHeaderContext().setSelected(true); // "select all"
+
 			that.expectRequest(sResourceUrl + "&$skip=0&$top=100", {
 					value : [
 						{Name : "Monitor Basic 24"},
@@ -4854,6 +4858,9 @@ sap.ui.define([
 			// code under test - filter becomes async because product metadata has to be loaded
 			oBinding.filter(
 				new Filter("EQUIPMENT_2_PRODUCT/SupplierIdentifier", FilterOperator.EQ, 2));
+
+			assert.strictEqual(oBinding.getHeaderContext().isSelected(), false,
+				"JIRA: CPOUI5ODATAV4-1943");
 
 			assert.throws(function () {
 				oBinding.getDownloadUrl();
@@ -6652,6 +6659,8 @@ sap.ui.define([
 	//
 	// Also check that unchanged $expand/$select is tolerated by #changeParameters
 	// JIRA: CPOUI5ODATAV4-1098
+	//
+	// "Select all" is reset by #changeParameters (JIRA: CPOUI5ODATAV4-1943).
 	QUnit.test("ODLB: $count and changeParameters()", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
@@ -6684,6 +6693,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			oTableBinding.getHeaderContext().setSelected(true); // "select all"
+
 			that.expectRequest("SalesOrderList?$expand=SO_2_BP&$select=SalesOrderID"
 					+ "&$filter=SalesOrderID gt '0500000001'&$skip=0&$top=100",
 					{value : [{SalesOrderID : "0500000002", SO_2_BP : null}]}
@@ -6697,6 +6708,9 @@ sap.ui.define([
 				$filter : "SalesOrderID gt '0500000001'",
 				$select : "SalesOrderID"
 			});
+
+			assert.strictEqual(oTableBinding.getHeaderContext().isSelected(), false,
+				"JIRA: CPOUI5ODATAV4-1943");
 
 			return that.waitForChanges(assert);
 		});
@@ -6870,6 +6884,8 @@ sap.ui.define([
 	// dependent property bindings have been destroyed. In the incident, the list table contains
 	// the items and the detail table the schedules (with 1:n, which we don't have here).
 	// BCP: 2080123400
+	//
+	// "Select all" is reset by #setContext (JIRA: CPOUI5ODATAV4-1943).
 	QUnit.test("BCP: 2080123400", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
@@ -6910,6 +6926,8 @@ sap.ui.define([
 			var fnResolve,
 				oRowContext = that.oView.byId("list").getItems()[1].getBindingContext();
 
+			oTable.getBinding("items").getHeaderContext().setSelected(true);
+
 			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20",
 					new Promise(function (resolve) {
@@ -6934,11 +6952,14 @@ sap.ui.define([
 				.expectChange("note", ["Note 2"]);
 
 			return Promise.all([
+				oTable.setBindingContext(oRowContext),
 				resolveLater(function () {
+					assert.strictEqual(oTable.getBinding("items").getHeaderContext().isSelected(),
+						false, "JIRA: CPOUI5ODATAV4-1943");
+
 					resolveLater(fnResolve); // must not respond before requestSideEffects
 					return oRowContext.requestSideEffects(["SO_2_SOITEM"]);
 				}, 0),
-				oTable.setBindingContext(oRowContext),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -18257,6 +18278,8 @@ sap.ui.define([
 	// context again.
 	// JIRA: CPOUI5ODATAV4-1629
 	// JIRA: CPOUI5ODATAV4-1831: unresolve dependents
+	//
+	// Selection on contexts which are deleted and restored (JIRA: CPOUI5ODATAV4-1943).
 [
 	{desc : "submit", success : true},
 	{desc : "reset via model", resetViaModel : true},
@@ -18364,8 +18387,22 @@ sap.ui.define([
 				.expectChange("id", null)
 				.expectChange("note", null);
 
+			// code under test (JIRA: CPOUI5ODATAV4-1943)
+			oContext2.setSelected(true);
+			oContext4.setSelected(true);
+
+			assert.strictEqual(oContext2.toString(), "/SalesOrderList('2')[1;selected]");
+
 			oPromise2 = oContext2.delete();
 			oPromise4 = oContext4.delete();
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-1943)
+				oContext2.setSelected(true);
+			}, new Error("Must not select a deleted entity: /SalesOrderList('2');deleted"));
+			// code under test (JIRA: CPOUI5ODATAV4-1943)
+			oContext2.setSelected(false);
+			assert.strictEqual(oContext2.isSelected(), false, "JIRA: CPOUI5ODATAV4-1943");
 
 			assert.ok(oBinding.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges());
@@ -18485,11 +18522,13 @@ sap.ui.define([
 				oPromise4.then(function () {
 					assert.ok(oFixture.success);
 					assert.ok(oContext4.isDeleted());
+					assert.strictEqual(oContext4.isSelected(), true, "JIRA: CPOUI5ODATAV4-1943");
 				}, function (oError) {
 					assert.notOk(oFixture.success);
 					assert.ok(oError.canceled);
 					assert.notOk(oContext4.hasPendingChanges());
 					assert.notOk(oContext4.isDeleted());
+					assert.strictEqual(oContext4.isSelected(), true, "JIRA: CPOUI5ODATAV4-1943");
 					assert.strictEqual(oContext4.getProperty("SalesOrderID"), "4");
 				}),
 				oModel.submitBatch("update"),
@@ -23989,6 +24028,8 @@ sap.ui.define([
 	//
 	// NodeID is selected automatically, even w/o UI, but "parent node ID" is not.
 	// JIRA: CPOUI5ODATAV4-1849
+	//
+	// Selection on header and root context (JIRA: CPOUI5ODATAV4-1943).
 	QUnit.test("Recursive Hierarchy: root is leaf", function (assert) {
 		var sExpectedDownloadUrl
 				= "/special/cases/Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -23996,6 +24037,7 @@ sap.ui.define([
 				+ ",NodeProperty='NodeID',Levels=9)"
 				+ "&$select=ArtistID,DistanceFromRoot,IsActiveEntity,NodeID"
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)",
+			oHeaderContext,
 			oListBinding,
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oRoot,
@@ -24038,6 +24080,7 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 			oRoot = oTable.getRows()[0].getBindingContext();
 			oListBinding = oRoot.getBinding();
+			oHeaderContext = oListBinding.getHeaderContext();
 
 			// code under test
 			assert.deepEqual(oListBinding.getAggregation(), {
@@ -24071,6 +24114,20 @@ sap.ui.define([
 					IsActiveEntity : true,
 					NodeID : "0,true"
 				}, "technical properties have been removed");
+
+			// code under test
+			assert.strictEqual(oRoot.isSelected(), false, "JIRA: CPOUI5ODATAV4-1943");
+			assert.strictEqual(oHeaderContext.isSelected(), false);
+
+			// code under test
+			oRoot.setSelected(true);
+			assert.strictEqual(oRoot.isSelected(), true);
+			assert.strictEqual(oRoot.toString(),
+				"/Artists(ArtistID='0',IsActiveEntity=true)[0;selected]");
+
+			// code under test
+			oHeaderContext.setSelected(true);
+			assert.strictEqual(oHeaderContext.isSelected(), true);
 
 			that.expectRequest("Artists(ArtistID='0',IsActiveEntity=true)?$select=defaultChannel", {
 					defaultChannel : "60"
@@ -24137,7 +24194,7 @@ sap.ui.define([
 				});
 
 			return Promise.all([
-				oListBinding.getHeaderContext().requestSideEffects(["BestFriend/Name"]),
+				oHeaderContext.requestSideEffects(["BestFriend/Name"]),
 				that.waitForChanges(assert, "side effect: BestFriend/Name for all rows")
 			]);
 		}).then(function () {
@@ -40518,6 +40575,8 @@ sap.ui.define([
 	//
 	// JIRA: CPOUI5ODATAV4-1264
 	// JIRA: CPOUI5ODATAV4-1380 (allow SubmitMode.API)
+	//
+	// Selection on inactive context which is then deleted and destroyed (JIRA: CPOUI5ODATAV4-1943).
 [false, true].forEach(function (bAPI) {
 	QUnit.test("Multiple creation rows, grid table, SubmitMode.API = " + bAPI, function (assert) {
 		var oBinding,
@@ -40662,11 +40721,15 @@ sap.ui.define([
 				"Context#toString: createdPersisted");
 
 			// code under test
+			oContext2.setSelected(true);
+
+			// code under test
 			oContext2.delete();
 
 			assert.strictEqual(normalizeUID(oContext2.toString()),
-				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;deleted]",
+				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;deleted;selected]",
 				"Context#toString: deleted");
+			assert.strictEqual(oContext2.isSelected(), true, "JIRA: CPOUI5ODATAV4-1943");
 
 			return Promise.all([
 				checkCanceled(assert, oContext2.created()),
@@ -40679,6 +40742,7 @@ sap.ui.define([
 			assert.strictEqual(normalizeUID(oContext2.toString()),
 				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;destroyed]",
 				"Context#toString: destroyed");
+			assert.strictEqual(oContext2.isSelected(), false, "JIRA: CPOUI5ODATAV4-1943");
 
 			that.expectChange("count", "3")
 				.expectChange("note", [,, "Note 3"])
