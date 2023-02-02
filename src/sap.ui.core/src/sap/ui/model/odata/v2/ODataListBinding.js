@@ -138,6 +138,8 @@ sap.ui.define([
 				&& mParameters.transitionMessagesOnly);
 			this.sCreatedEntitiesKey = mParameters && mParameters.createdEntitiesKey || "";
 			this.oCreatedPersistedToRemove = new Set();
+			// whether persisted, created contexts are removed after successful GET for a binding refresh
+			this.bRemovePersistedCreatedAfterRefresh = false;
 
 			// check filter integrity
 			this.oModel.checkFilterOperation(this.aApplicationFilters);
@@ -775,6 +777,7 @@ sap.ui.define([
 			bInlineCountRequested = false,
 			aParams = [],
 			sPath = this.sPath,
+			bRemovePersistedCreatedAfterRefresh = this.bRemovePersistedCreatedAfterRefresh,
 			that = this;
 
 		// create range parameters and store start index for sort/filter requests
@@ -895,6 +898,10 @@ sap.ui.define([
 			// If request is originating from this binding, change must be fired afterwards
 			that.bNeedsUpdate = true;
 			that.bIgnoreSuspend = true;
+
+			if (bRemovePersistedCreatedAfterRefresh) {
+				that._removePersistedCreatedContexts();
+			}
 
 			//register datareceived call as  callAfterUpdate
 			that.oModel.callAfterUpdate(function() {
@@ -1094,8 +1101,10 @@ sap.ui.define([
 		}
 		this._removePersistedCreatedContexts();
 		this.sRefreshGroupId = sGroupId;
+		this.bRemovePersistedCreatedAfterRefresh = true;
 		this._refresh(bForceUpdate);
 		this.sRefreshGroupId = undefined;
+		this.bRemovePersistedCreatedAfterRefresh = false;
 	};
 
 	/**

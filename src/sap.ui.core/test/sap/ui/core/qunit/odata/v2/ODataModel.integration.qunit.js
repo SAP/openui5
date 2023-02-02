@@ -18698,4 +18698,72 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(oModel.hasPendingChanges(), false);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: The POST request for inline create in a table (ODLB#create) and the GET for table refresh
+	// (ODLB#refresh) are sent in one $batch. The newly created row should be considered "persistent" and thus
+	// removed so that it does not appear as duplicate when being returned in the GET response.
+	// One must therefore remove created, persisted rows also when the response for the GET request is processed, not
+	// only when ODLB#refresh is called as the newly created row is still transient then.
+	// BCP: 2380015211
+	QUnit.test("No duplicate rows with ODLB#create/POST and ODLB#refresh/GET in one $batch", function (assert) {
+		var oBinding, oTable,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="2">\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
+</t:Table>',
+			that = this;
+
+		oModel.setDeferredGroups(["myGroup"]);
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=102", {
+				results : []
+			})
+			.expectValue("salesOrderID", ["", ""])
+			.expectValue("note", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectValue("note", ["foo"]);
+			oBinding = oTable.getBinding("rows");
+			oBinding.create({Note : "foo"}, true, {groupId : "myGroup"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oNewSalesOrderData = {
+					__metadata : {
+						uri : "SalesOrderSet('42')"
+					},
+					Note : "bar",
+					SalesOrderID : "42"
+				};
+
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {
+							type : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						Note : "foo"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : oNewSalesOrderData,
+					statusCode : 201
+				})
+				.expectRequest("SalesOrderSet?$skip=0&$top=102", {
+					results : [oNewSalesOrderData]
+				})
+				.expectValue("salesOrderID", ["42"])
+				.expectValue("note", ["bar"]);
+
+			oBinding.refresh(/*bForceUpdate*/true, "myGroup");
+			oModel.submitChanges({groupId : "myGroup"});
+		});
+	});
 });
