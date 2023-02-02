@@ -1977,6 +1977,14 @@ html[data-sap-ui-browser*='ff'] {
 			}
 		}
 	}
+	&:focus:not(:active){
+		outline: 0.125rem solid @sapTile_Background;
+		.sapMGTFocusDiv {
+			border: none;
+			outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+			outline-offset: 0.125rem;
+		}
+	}
 }
 
 .sapMGTHdrContent.sapMGTOneByOne > .sapMGTHdrTxt > .sapMText{
@@ -2356,4 +2364,24 @@ html[data-sap-ui-browser*='ff'] {
 html.sap-desktop .sapMGT.sapMGTTwoByHalf.sapMGTIconMode.HighContrastTile:not(.sapMGTStateDisabled):hover {
 	box-shadow: 0 0 0 0.188rem @sapUiContentShadowColor inset;
 	border: none;
+}
+
+.sapMGT.sapMGTOneByOne.HighContrastTile:focus:not(:active) {
+	outline-offset: 0.0625rem;
+	.sapMGTFocusDiv{
+		outline: none;
+	}
+	&::before {
+		content: "";
+		position: absolute;
+		outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+		border-radius: 0.1rem;
+		outline-offset: 0.25rem;
+		inset: 0;
+	}
+}
+.sapMGT.sapMGTOneByOne.HighContrastTile:hover {
+	.sapMGTFocusDiv {
+		outline-offset: 0 !important;
+	}
 }
