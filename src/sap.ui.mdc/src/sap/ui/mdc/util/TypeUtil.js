@@ -12,7 +12,7 @@ sap.ui.define([
 ], function(BaseType, ObjectPath, isEmptyObject, merge, SimpleType, DateUtil) {
 	"use strict";
 
-	var sDateTimePattern = "yyyy-MM-ddTHH:mm:ssZ"; // milliseconds missing
+	// var sDateTimePattern = "yyyy-MM-ddTHH:mm:ssZ"; // milliseconds missing
 	var sDatePattern = "yyyy-MM-dd";
 	var sTimePattern = "HH:mm:ss";
 
@@ -192,9 +192,12 @@ sap.ui.define([
 			var sBaseType = this.getBaseTypeForType(oTypeInstance);
 			switch (sBaseType) {
 				case BaseType.DateTime:
-					return DateUtil.stringToType(sValue, oTypeInstance, sDateTimePattern);
+					return DateUtil.ISOToType(sValue, oTypeInstance, sBaseType);
 
 				case BaseType.Date:
+					if (sValue.indexOf("T") >= 0) { // old variant with DateTime for DateValues
+						sValue = sValue.substr(0, sValue.indexOf("T")); // just take the date part
+					}
 					return DateUtil.stringToType(sValue, oTypeInstance, sDatePattern);
 
 				case BaseType.Time:
@@ -233,7 +236,7 @@ sap.ui.define([
 			var sBaseType = this.getBaseTypeForType(oTypeInstance);
 			switch (sBaseType) {
 				case BaseType.DateTime:
-					return DateUtil.typeToString(vValue, oTypeInstance, sDateTimePattern);
+					return DateUtil.typeToISO(vValue, oTypeInstance, sBaseType);
 
 				case BaseType.Date:
 					return DateUtil.typeToString(vValue, oTypeInstance, sDatePattern);
