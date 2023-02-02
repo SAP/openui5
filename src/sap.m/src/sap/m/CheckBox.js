@@ -131,7 +131,9 @@ sap.ui.define([
 				partiallySelected : {type : "boolean", group : "Data", defaultValue : false},
 
 				/**
-				 * Disables the Checkbox. Disabled controls are not interactive and are rendered differently according to the theme.
+				 * Whether the <code>CheckBox</code> is enabled.
+				 *
+				 * <b>Note:</b> Disabled <code>CheckBox</code> is not interactive and is rendered differently according to the theme.
 				 */
 				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
