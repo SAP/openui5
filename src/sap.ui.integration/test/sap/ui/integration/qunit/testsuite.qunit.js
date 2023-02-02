@@ -172,7 +172,6 @@ sap.ui.define(function () {
 			"cards/ListCard": {},
 			"cards/TableCard": {},
 			"cards/ObjectCard": {},
-			"cards/TimelineCard": {},
 			"cards/WebPageCard": {},
 			"cards/AnalyticsCloudContent": {
 				coverage: {
