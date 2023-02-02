@@ -7268,6 +7268,42 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Change event should be fired on focusout", function (assert) {
+		// arrange
+		var oSystem = {
+			desktop: false,
+			phone: true,
+			tablet: false
+		};
+		this.stub(Device, "system", oSystem);
+
+		var bChangeFired = false;
+		var oInput = new Input({
+			value: "t"
+		});
+
+		oInput.placeAt("content");
+		oCore.applyChanges();
+
+		oInput.attachChange(function() {
+			bChangeFired = true;
+		});
+		oCore.applyChanges();
+
+		//act
+		oInput._$input.trigger("focus").trigger(jQuery.Event("keydown", { which: KeyCodes.BACKSPACE })).val("").trigger("input");
+		this.clock.tick(300);
+
+		oInput._$input.trigger("blur");
+		this.clock.tick(200);
+
+		// assert
+		assert.ok(bChangeFired, "Change event is fired");
+
+		// clean up
+		oInput.destroy();
+	});
+
 	QUnit.module("selectedKey vs. value behavior", {
 		beforeEach: function () {
 			this.oData = {
