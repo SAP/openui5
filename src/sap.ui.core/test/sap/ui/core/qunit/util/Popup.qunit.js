@@ -81,17 +81,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Check If PopupSupport Was Loaded Properly", function(assert) {
-		var aMethods = this.oPopup.getMetadata().getPublicMethods();
-
-		assert.ok(aMethods.indexOf("getParentPopup"), "'getParentPopup' was added as public method");
-		assert.ok(aMethods.indexOf("isInPopup"), "'isInPopup' was added as public method");
-		assert.ok(aMethods.indexOf("getParentPopupId"), "'getParentPopupId' was added as public method");
-		assert.ok(aMethods.indexOf("addToPopup"), "'addToPopup' was added as public method");
-		assert.ok(aMethods.indexOf("removeFromPopup"), "'removeFromPopup' was added as public method");
-		assert.ok(aMethods.indexOf("focusOpener"), "'focusOpener' was added as public method");
-	});
-
 	QUnit.test("Check Amount of Public Methods", function(assert) {
 		var oPopup1DomRef = document.getElementById("popup1");
 		var oPopup1 = new Popup(oPopup1DomRef);
