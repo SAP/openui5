@@ -339,4 +339,49 @@ sap.ui.define([
 			assert.strictEqual(oType._getErrorMessage(), "EnterDate ~formattedDate");
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getModelValue", function (assert) {
+		var oType = new DateType(),
+			oTypeMock = this.mock(oType);
+
+		oTypeMock.expects("validateValue").withExactArgs("0099-12-31");
+
+		// code under test
+		assert.strictEqual(oType.getModelValue(UI5Date.getInstance("0099-12-31T08:07:06")), "0099-12-31");
+
+		oTypeMock.expects("validateValue").withExactArgs(null);
+
+		// code under test
+		assert.strictEqual(oType.getModelValue(null), null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getModelValue: checkDate fails", function (assert) {
+		var oType = new DateType();
+
+		this.mock(UI5Date).expects("checkDate").withExactArgs("~oDate").throws(new Error("~error"));
+
+		// code under test
+		assert.throws(function () {
+			oType.getModelValue("~oDate");
+		}, new Error("~error"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getModelValue: validateValue fails", function (assert) {
+		var oFormat = {format : function () {}},
+			oType = new DateType();
+
+		this.mock(oType).expects("getModelFormat").withExactArgs().returns(oFormat);
+		this.mock(oFormat).expects("format")
+			.withExactArgs(UI5Date.getInstance("0099-12-31T00:00:00Z"))
+			.returns("~result");
+		this.mock(oType).expects("validateValue").withExactArgs("~result").throws(new ValidateException("~error"));
+
+		// code under test
+		assert.throws(function () {
+			oType.getModelValue(UI5Date.getInstance("0099-12-31T08:07:06"));
+		}, new ValidateException("~error"));
+	});
 });

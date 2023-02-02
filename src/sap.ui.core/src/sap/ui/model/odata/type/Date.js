@@ -196,6 +196,40 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the model value according to this type's constraints and format options for the given
+	 * date object representing a date. Validates the resulting value against the constraints of
+	 * this type instance.
+	 *
+	 * @param {Date|module:sap/ui/core/date/UI5Date|null} oDate
+	 *   The date object considering the configured time zone. Must be created via
+	 *   {@link module:sap/ui/core/date/UI5Date.getInstance}
+	 * @returns {string|null}
+	 *   The model representation of the date
+	 * @throws {Error}
+	 *   If the given date object is not valid or does not consider the configured time zone
+	 * @throws {sap.ui.model.ValidateException}
+	 *   If the constraints of this type instance are violated
+	 *
+	 * @public
+	 * @since 1.111.0
+	 */
+	EdmDate.prototype.getModelValue = function (oDate) {
+		var vResult;
+
+		if (oDate === null) {
+			vResult = null;
+		} else {
+			UI5Date.checkDate(oDate);
+			vResult = UI5Date.getInstance(0);
+			vResult.setUTCFullYear(oDate.getFullYear(), oDate.getMonth(), oDate.getDate());
+			vResult = this.getModelFormat().format(vResult);
+		}
+		this.validateValue(vResult);
+
+		return vResult;
+	};
+
+	/**
 	 * Returns the type's name.
 	 *
 	 * @returns {string}
