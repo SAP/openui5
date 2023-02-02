@@ -5483,6 +5483,88 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Focus should be restored to tokenizer after invalidation", function(assert) {
+		var aTokens;
+		var oMCB = new MultiComboBox({
+			selectionChange: function (oEvent) {
+				oEvent.getSource().invalidate();
+			},
+			items: [
+				new Item({ text: "One", key: "1" }),
+				new Item({ text: "two", key: "2" })
+			],
+			selectedKeys: ["1", "2"]
+		}).placeAt("MultiComboBoxContent");
+
+		Core.applyChanges();
+		this.clock.tick(10);
+
+		aTokens = oMCB.getAggregation("tokenizer").getTokens();
+
+		aTokens[1].focus();
+		Core.applyChanges();
+		this.clock.tick(10);
+
+		qutils.triggerKeydown(aTokens[1].getDomRef(), KeyCodes.BACKSPACE);
+		Core.applyChanges();
+		this.clock.tick(10);
+
+		// store tokens again as list is recreated
+		aTokens = oMCB.getAggregation("tokenizer").getTokens();
+
+		assert.strictEqual(aTokens[0].getDomRef(), document.activeElement, "Focus is restored to the first token");
+
+		oMCB.destroy();
+	});
+
+	QUnit.test("Focus should not go to list after token deletion", function(assert) {
+		var oMCB = new MultiComboBox({
+			selectionChange: function (oEvent) {
+				oEvent.getSource().invalidate();
+			},
+			items: [
+				new Item({ text: "Item 1", key: "1" }),
+				new Item({ text: "Item 2", key: "2" }),
+				new Item({ text: "Item 3", key: "3" })
+			],
+			selectedKeys: ["1", "2", "3"]
+		}).placeAt("MultiComboBoxContent");
+
+		Core.applyChanges();
+		this.clock.tick(10);
+
+		oMCB.open();
+		Core.applyChanges();
+		this.clock.tick(300);
+
+		var triggerBackspaceOnLastToken = function () {
+			var aTokens = oMCB.getAggregation("tokenizer").getTokens();
+
+			aTokens[aTokens.length - 1].focus();
+			Core.applyChanges();
+			this.clock.tick(10);
+
+			qutils.triggerKeydown(aTokens[aTokens.length - 1].getDomRef(), KeyCodes.BACKSPACE);
+			Core.applyChanges();
+			this.clock.tick(10);
+		}.bind(this);
+
+		triggerBackspaceOnLastToken();
+		Core.applyChanges();
+
+		// arrange
+		oMCB._iFocusedIndex = 1;
+
+		triggerBackspaceOnLastToken();
+		Core.applyChanges();
+
+		// arrange
+		oMCB._iFocusedIndex = 0;
+
+		assert.strictEqual(document.activeElement, oMCB.getAggregation("tokenizer").getTokens()[0].getDomRef(), "First token is focused");
+
+		oMCB.destroy();
+	});
 
 	QUnit.module("Accessibility");
 

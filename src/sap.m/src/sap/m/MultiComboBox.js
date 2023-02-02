@@ -1299,8 +1299,9 @@ function(
 	 * @returns {sap.m.Dialog|sap.m.Popover} The picker instance
 	 */
 	MultiComboBox.prototype.syncPickerContent = function (bForceListSync) {
-		var aItems, oList,
-			oPicker = this.getPicker();
+		var aItems, oList;
+		var oPicker = this.getPicker();
+		var oTokenizer = this.getAggregation("tokenizer");
 
 		if (!oPicker) {
 			oPicker = this.createPicker(this.getPickerType());
@@ -1314,10 +1315,18 @@ function(
 
 			this._synchronizeSelectedItemAndKey();
 
+			var aTokens = oTokenizer.getTokens();
+			var iFocusedIndex = aTokens.findIndex(function (oToken) {
+				return document.activeElement === oToken.getDomRef();
+			});
+
 			// prevent closing of popup on re-rendering
 			oList.destroyItems();
 			this._clearTokenizer();
 			this._fillList(aItems);
+
+			this.bShouldRestoreTokenizerFocus = iFocusedIndex > -1;
+			this.iFocusedIndex = iFocusedIndex;
 
 			// save focused index, and re-apply after rendering of the list
 			if (oList.getItemNavigation()) {
@@ -2237,10 +2246,12 @@ function(
 	 */
 	MultiComboBox.prototype.onAfterRenderingList = function() {
 		var bInputFocussed = document.activeElement === this.getFocusDomRef();
+		var bControlFocussed = Element.closestTo(document.activeElement);
+		var bTokenFocused = bControlFocussed && bControlFocussed.isA("sap.m.Token");
 		var oList = this._getList();
 		var aVisibleItems = oList ? oList.getVisibleItems() : [];
 
-		if (this.getEditable() && !bInputFocussed && aVisibleItems[this._iFocusedIndex]) {
+		if (this.getEditable() && !bInputFocussed && !bTokenFocused && aVisibleItems[this._iFocusedIndex]) {
 			aVisibleItems[this._iFocusedIndex].focus();
 			this._iFocusedIndex = null;
 		}
@@ -2271,6 +2282,7 @@ function(
 	 */
 	MultiComboBox.prototype.onAfterRendering = function() {
 		var oTokenizer = this.getAggregation("tokenizer");
+		var oTokenToFocus;
 
 		ComboBoxBase.prototype.onAfterRendering.apply(this, arguments);
 		this._registerResizeHandler();
@@ -2278,6 +2290,16 @@ function(
 		setTimeout(function() {
 			oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 		}.bind(this), 0);
+
+		if (this.bShouldRestoreTokenizerFocus) {
+			oTokenToFocus = oTokenizer.getTokens()[this.iFocusedIndex];
+
+			if (oTokenToFocus) {
+				oTokenToFocus.focus();
+			}
+
+			this.bShouldRestoreTokenizerFocus = false;
+		}
 	};
 
 	/**
