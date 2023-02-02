@@ -70,8 +70,9 @@ sap.ui.define([
 	 *
 	 * @param {object} mSettings An object defining the changehandler settings
 	 * @param {function} mSettings.apply The changehandler applyChange function
-	 * @param {function} mSettings.revert The changehandler applyChange function
-	 * @param {function} [mSettings.complete] The changehandler applyChange function
+	 * @param {function} mSettings.revert The changehandler revertChange function
+	 * @param {function} [mSettings.complete] The changehandler completeChangeContent function
+	 * @param {function} [mSettings.getCondenserInfo] The changehandler condenser info
 	 *
 	 * @returns {object} A Changehandler object
 	 */
@@ -119,7 +120,8 @@ sap.ui.define([
 
 						});
 					});
-				}
+				},
+				getCondenserInfo: mSettings.getCondenserInfo
 			},
 			"layers": {
 				"USER": true

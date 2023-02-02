@@ -4,8 +4,9 @@
 
 sap.ui.define([
     'sap/m/p13n/Engine',
-    'sap/ui/mdc/flexibility/Util'
-], function(Engine, Util) {
+    'sap/ui/mdc/flexibility/Util',
+	'sap/ui/fl/changeHandler/condenser/Classification'
+], function(Engine, Util, CondenserClassification) {
 	"use strict";
 
 	/**
@@ -108,7 +109,14 @@ sap.ui.define([
 
         return Util.createChangeHandler({
             apply: fApply,
-            revert: fRevert
+            revert: fRevert,
+            getCondenserInfo: function(oChange, mPropertyBag) {
+                return {
+                    classification: CondenserClassification.LastOneWins,
+                    affectedControl: oChange.getSelector(),
+                    uniqueKey: oChange.getContent().name + "_" + mMetaConfig.aggregation + "_" + mMetaConfig.property
+                };
+            }
         });
 
     };
