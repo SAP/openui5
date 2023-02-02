@@ -4,6 +4,7 @@
 
 // Provides class sap.ui.core.support.plugins.ControlTree (ControlTree support plugin)
 sap.ui.define([
+	'sap/ui/core/Core',
 	'sap/ui/core/support/Plugin',
 	'sap/ui/core/util/serializer/ViewSerializer',
 	'sap/ui/core/util/File',
@@ -27,6 +28,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/cursorPos",// jQuery Plugin "cursorPos"
 	'sap/ui/core/mvc/Controller' // provides sap.ui.controller
 ], function(
+	Core,
 	Plugin,
 	ViewSerializer,
 	File,
@@ -106,18 +108,7 @@ sap.ui.define([
 						this.getId() + "RefreshBinding"
 					];
 
-					// register as core plugin
-					var that = this;
-
-					sap.ui.getCore().registerPlugin({
-						startPlugin: function(oCore) {
-							that.oCore = oCore;
-						},
-						stopPlugin: function() {
-							that.oCore = undefined;
-						}
-					});
-
+					this.oCore = Core;
 				}
 			}
 		});
@@ -159,6 +150,9 @@ sap.ui.define([
 
 		ControlTree.prototype.exit = function(oSupportStub) {
 			Plugin.prototype.exit.apply(this, arguments);
+
+			this.oCore = null;
+
 			if (this.runsAsToolPlugin()) {
 				$(document)
 				.off('click', 'li img.sapUiControlTreeIcon')
@@ -195,7 +189,7 @@ sap.ui.define([
 		}
 
 		ControlTree.prototype.renderContentAreas = function() {
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = Core.createRenderManager();
 
 			rm.openStart("div").class("sapUiSupportControlTreeTitle").openEnd().text("You can find a control in this tree by clicking it in the application UI while pressing the Ctrl+Alt+Shift keys.").close("div");
 
@@ -217,7 +211,7 @@ sap.ui.define([
 
 		ControlTree.prototype.renderControlTree = function(aControlTree) {
 
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = Core.createRenderManager();
 
 			function renderNode (iIndex, mElement) {
 				var bHasChildren = mElement.aggregation.length > 0 || mElement.association.length > 0;
@@ -277,7 +271,7 @@ sap.ui.define([
 
 		ControlTree.prototype.renderPropertiesTab = function(aControlProps, sControlId) {
 
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = Core.createRenderManager();
 
 			rm.openStart("ul").class("sapUiSupportControlTreeList").attr("data-sap-ui-controlid", sControlId).openEnd();
 			each(aControlProps, function(iIndex, oValue) {
@@ -441,7 +435,7 @@ sap.ui.define([
 
 		ControlTree.prototype.renderBindingsTab = function(mBindingInfos, sControlId) {
 
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = Core.createRenderManager();
 
 			if (mBindingInfos.contexts.length > 0) {
 
@@ -726,7 +720,7 @@ sap.ui.define([
 										.close("a");
 									rm.close("div");
 								} else {
-									rm.openStart("div").openEnd().openStart("span").attr("title", "sap.ui.getCore()").openEnd().text("Core").close("span").close("div");
+									rm.openStart("div").openEnd().openStart("span").attr("title", "Core").openEnd().text("Core").close("span").close("div");
 								}
 							} else {
 								rm.openStart("div").openEnd().openStart("span").openEnd().text("No binding").close("span").close("div");
@@ -751,7 +745,7 @@ sap.ui.define([
 
 		ControlTree.prototype.renderBreakpointsTab = function(aMethods, sControlId) {
 
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = Core.createRenderManager();
 
 			rm.openStart("div").class("sapUiSupportControlMethods").attr("data-sap-ui-controlid", sControlId).openEnd();
 
@@ -794,7 +788,7 @@ sap.ui.define([
 
 		ControlTree.prototype.renderExportTab = function() {
 
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = Core.createRenderManager();
 
 			rm.openStart("button", "sapUiSupportControlExportToXml").class("sapUiSupportRoundedButton").class("sapUiSupportExportButton").openEnd().text("Export To XML").close("button");
 			rm.voidStart("br").voidEnd();
