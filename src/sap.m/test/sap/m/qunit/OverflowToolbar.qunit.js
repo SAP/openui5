@@ -13,12 +13,15 @@ sap.ui.define([
 	"sap/m/ButtonRenderer",
 	"sap/m/library",
 	"sap/ui/core/library",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Select",
 	"sap/ui/core/Item",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
+	"sap/m/Dialog",
 	"sap/m/GenericTag",
+	"sap/m/SearchField",
 	"sap/m/Table",
 	"sap/m/Text",
 	"sap/m/ToggleButton",
@@ -48,12 +51,15 @@ sap.ui.define([
 	ButtonRenderer,
 	mobileLibrary,
 	coreLibrary,
+	jQuery,
 	JSONModel,
 	Select,
 	Item,
 	Column,
 	ColumnListItem,
+	Dialog,
 	GenericTag,
+	SearchField,
 	Table,
 	Text,
 	ToggleButton,
@@ -2752,6 +2758,97 @@ sap.ui.define([
 		assert.strictEqual(spy.called, true, "The listener for the private event is notified");
 
 		oOverflowTB.destroy();
+	});
+
+	QUnit.module("In Dialog", {
+		beforeEach: function() {
+			sinon.config.useFakeTimers = false;
+		},
+		afterEach: function() {
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test("OverflowToolbar in resizable Dialog", function (assert) {
+		// Arrange
+
+		var oOFT = new OverflowToolbar({
+			content: [
+					new SearchField({
+						width: "80%"
+					}),
+					new ToolbarSpacer(),
+					new Button({
+						icon: "sap-icon://navigation-up-arrow"
+					}),
+					new Button({
+						icon: "sap-icon://navigation-down-arrow"
+					})
+				]
+			}),
+			oDialog = new Dialog({
+			title: "Resizable Available Products",
+			contentWidth: "830px",
+			contentHeight: "450px",
+			resizable: true,
+			content: [oOFT]
+		}),
+		fnMockResizeEvent = function () {
+			var oResizeHandler = oDialog.$().find(".sapMDialogResizeHandler")[0],
+				oResizeHandlerRect = oResizeHandler.getBoundingClientRect();
+
+			// event in which the mouse is on the resize handler
+			return {
+				clientX: oResizeHandlerRect.left,
+				clientY: oResizeHandlerRect.top,
+				offsetX: 5,
+				offsetY: 5,
+				preventDefault: function () {},
+				stopPropagation: function () {},
+				target: oResizeHandler
+			};
+		},
+		fnOnFirstOpen = function () {
+			oDialog.detachAfterOpen(fnOnFirstOpen);
+			oMockEvent = fnMockResizeEvent();
+
+			// Act - Resize Dialog
+			oDialog.onmousedown(oMockEvent);
+			// move mouse right and down, making Dialog with bigger size
+			oMockEvent.clientX += 100;
+			oMockEvent.clientY += 100;
+
+			$document.trigger(new jQuery.Event("mousemove", oMockEvent));
+
+			setTimeout(function() {
+				$document.trigger(new jQuery.Event("mouseup", oMockEvent));
+				oOFT._handleResize();
+				// Close Dialog
+				oDialog.close();
+
+				oDialog.attachAfterClose(function () {
+					// Open Dialog again (after resizing)
+					oDialog.open();
+
+					oDialog.attachAfterOpen(function () {
+						// Assert
+						assert.strictEqual(oOFT._getPopover()._getAllContent().length, 0, "There should be no controls in the Popover");
+
+						// Clean up
+						oDialog.destroy();
+						fnDone();
+					});
+				});
+			}, 500);
+		},
+		fnDone = assert.async(),
+		$document = jQuery(document),
+		oMockEvent;
+
+		oDialog.attachAfterOpen(fnOnFirstOpen);
+
+		// Open Dialog
+		oDialog.open();
 	});
 
 	QUnit.module("Control size measurement");

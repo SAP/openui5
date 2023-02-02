@@ -302,6 +302,14 @@ sap.ui.define([
 		return this.setProperty("asyncMode", bValue, true);
 	};
 
+	/**
+	 * Called before the control is rendered
+	 */
+	OverflowToolbar.prototype.onBeforeRendering = function () {
+		if (!this.getDomRef()) {
+			this._bControlsInfoCached = false;
+		}
+	};
 
 	/**
 	 * Called after the control is rendered
