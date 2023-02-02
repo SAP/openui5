@@ -321,13 +321,14 @@ sap.ui.define([
 				controlType: "sap.ui.mdc.Table",
 				success: function(aTables) {
 					var oTable = aTables[0];
-					var aTableGroupCondtions = oTable.getGroupConditions().groupLevels;
+					var aTableGroupConditions = oTable.getGroupConditions() ? oTable.getGroupConditions().groupLevels : undefined;
 
+					Opa5.assert.ok(aTableGroupConditions, "Group Conditions set on table");
 					if (oGroupConditions.length > 1) {
-						Opa5.assert.equal(aTableGroupCondtions.length, 0, "No Groupings in Table");
+						Opa5.assert.equal(aTableGroupConditions.length, 0, "No Groupings in Table");
 					} else {
 						oGroupConditions.groupLevels.forEach(function(oGrouping, iIndex){
-							Opa5.assert.equal(aTableGroupCondtions[iIndex].name, oGrouping.name, "Correct grouping on correct position in Table");
+							Opa5.assert.equal(aTableGroupConditions[iIndex].name, oGrouping.name, "Correct grouping on correct position in Table");
 						});
 					}
 

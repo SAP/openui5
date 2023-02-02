@@ -4,8 +4,9 @@
 sap.ui.define([
 	"sap/m/p13n/Engine",
 	"sap/ui/mdc/flexibility/Util",
-	"sap/ui/fl/changeHandler/Base"
-], function(Engine, Util, FLChangeHandlerBase) {
+	"sap/ui/fl/changeHandler/Base",
+	"sap/ui/fl/changeHandler/condenser/Classification"
+], function(Engine, Util, FLChangeHandlerBase, CondenserClassification) {
 	"use strict";
 	var fRebindControl = function(oControl) {
 		var bExecuteRebindForTable = oControl && oControl.isA && oControl.isA("sap.ui.mdc.Table") && oControl.isTableBound();
@@ -144,19 +145,65 @@ sap.ui.define([
 	};
 
 	var Sort = {};
-	Sort.removeSort = Util.createChangeHandler({
-		apply: fRemoveSort,
-		revert: fAddSort
-	});
-
 	Sort.addSort = Util.createChangeHandler({
 		apply: fAddSort,
-		revert: fRemoveSort
+		revert: fRemoveSort,
+		getCondenserInfo: function(oChange, mPropertyBag) {
+			return {
+				affectedControl: {id: oChange.getContent().name},
+				affectedControlIdProperty: "name",
+				targetContainer: oChange.getSelector(),
+				targetAggregation: "sorters",
+				customAggregation: mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent).getSortConditions().sorters,
+				classification: CondenserClassification.Create,
+				setTargetIndex: function(oChange, iNewTargetIndex) {
+					oChange.getContent().index = iNewTargetIndex;
+				},
+				getTargetIndex: function(oChange) {
+					return oChange.getContent().index;
+				}
+			};
+		}
+	});
+
+	Sort.removeSort = Util.createChangeHandler({
+		apply: fRemoveSort,
+		revert: fAddSort,
+		getCondenserInfo: function(oChange, mPropertyBag) {
+			return {
+				affectedControl: {id: oChange.getContent().name},
+				affectedControlIdProperty: "name",
+				targetContainer: oChange.getSelector(),
+				targetAggregation: "sorters",
+				customAggregation: mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent).getSortConditions().sorters,
+				classification: CondenserClassification.Destroy,
+				sourceIndex: oChange.getRevertData().index
+			};
+		}
 	});
 
 	Sort.moveSort = Util.createChangeHandler({
 		apply: fMoveSort,
-		revert: fMoveSort
+		revert: fMoveSort,
+		getCondenserInfo: function(oChange, mPropertyBag) {
+			return {
+				affectedControl: {id: oChange.getContent().name},
+				affectedControlIdProperty: "name",
+				targetContainer: oChange.getSelector(),
+				targetAggregation: "sorters",
+				classification: CondenserClassification.Move,
+				sourceIndex: oChange.getContent().index,
+				customAggregation: mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent).getSortConditions().sorters,
+				sourceContainer: oChange.getSelector(),
+				sourceAggregation: "sorters",
+				setTargetIndex: function(oChange, iNewTargetIndex) {
+					oChange.getContent().index = iNewTargetIndex;
+				},
+				getTargetIndex: function(oChange) {
+					return oChange.getContent().index;
+				}
+			};
+		}
 	});
 
 	return Sort;
