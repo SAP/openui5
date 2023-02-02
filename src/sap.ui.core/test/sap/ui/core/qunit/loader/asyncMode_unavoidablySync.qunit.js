@@ -209,7 +209,7 @@
 			this.spy(this.logger, "warning");
 			this.spy(sap.ui.require, "load");
 			window.fixture = window.fixture || {};
-			window.fixture["async-sync-conflict"] = {
+			window.fixture["async-sync-conflict_legacyAPIs"] = {
 				executions: 0,
 				EXPECTED_EXPORT: {}
 			};
@@ -217,7 +217,7 @@
 		afterEach: function() {
 			this.logger.warning.restore();
 			sap.ui.require.load.restore();
-			delete window.fixture["async-sync-conflict"];
+			delete window.fixture["async-sync-conflict_legacyAPIs"];
 		}
 	});
 
@@ -230,7 +230,7 @@
 			var _fnOriginalAppendChild = document.head.appendChild;
 			this.stub(document.head, "appendChild").callsFake(function(oElement) {
 				// when the script tag for the module is appended, register for its load/error events
-				if ( oElement.getAttribute("data-sap-ui-module") === "fixture/async-sync-conflict/simple.js" ) {
+				if ( oElement.getAttribute("data-sap-ui-module") === "fixture/async-sync-conflict_legacyAPIs/simple.js" ) {
 					oElement.addEventListener("load", resolve);
 					oElement.addEventListener("error", reject);
 				}
@@ -244,11 +244,11 @@
 
 		// Act:
 		// first require async
-		sap.ui.require(["fixture/async-sync-conflict/simple"], function() {
+		sap.ui.require(["fixture/async-sync-conflict_legacyAPIs/simple"], function() {
 			done();
 		});
 		// then sync -> should trigger a second request for the same resource
-		sap.ui.requireSync("fixture/async-sync-conflict/simple");
+		sap.ui.requireSync("fixture/async-sync-conflict_legacyAPIs/simple");
 
 		// Assert:
 		assert.ok(
@@ -272,7 +272,7 @@
 			var _fnOriginalAppendChild = document.head.appendChild;
 			this.stub(document.head, "appendChild").callsFake(function(oElement) {
 				// when the script tag for the module is appended, register for its load/error events
-				if ( oElement.getAttribute("data-sap-ui-module") === "fixture/async-sync-conflict/unique-executions.js" ) {
+				if ( oElement.getAttribute("data-sap-ui-module") === "fixture/async-sync-conflict_legacyAPIs/unique-executions.js" ) {
 					oElement.addEventListener("load", resolve);
 					oElement.addEventListener("error", reject);
 				}
@@ -288,12 +288,12 @@
 
 		// Act:
 		// first require async
-		sap.ui.require(["fixture/async-sync-conflict/unique-executions"], function() {
+		sap.ui.require(["fixture/async-sync-conflict_legacyAPIs/unique-executions"], function() {
 			assert.equal(window.aModuleExecutions.length, 1, "callback for async request is called after sync request completed");
 			done();
 		}, done);
 		// then sync -> should trigger a second request for the same resource
-		sap.ui.requireSync("fixture/async-sync-conflict/unique-executions");
+		sap.ui.requireSync("fixture/async-sync-conflict_legacyAPIs/unique-executions");
 
 		// Assert:
 		return scriptCompleted.then(function() {
@@ -318,7 +318,7 @@
 		// async request for the module
 		var whenLoaded = new Promise(function(resolve, reject) {
 			sap.ui.require([moduleName], function(oModuleExport) {
-				assert.strictEqual(oModuleExport, window.fixture["async-sync-conflict"].EXPECTED_EXPORT, "async require should provide the expected module export");
+				assert.strictEqual(oModuleExport, window.fixture["async-sync-conflict_legacyAPIs"].EXPECTED_EXPORT, "async require should provide the expected module export");
 				resolve();
 			}, reject);
 		});
@@ -327,14 +327,14 @@
 		var oModuleExportSync = sap.ui.requireSync(moduleNameForSyncRequire);
 
 		// Assert
-		assert.strictEqual(oModuleExportSync, window.fixture["async-sync-conflict"].EXPECTED_EXPORT, "sync require should return the expected module export");
+		assert.strictEqual(oModuleExportSync, window.fixture["async-sync-conflict_legacyAPIs"].EXPECTED_EXPORT, "sync require should return the expected module export");
 
 		return whenLoaded.then(function() {
-			assert.equal(window.fixture["async-sync-conflict"].executions, executions, "required module should have been executed only once");
+			assert.equal(window.fixture["async-sync-conflict_legacyAPIs"].executions, executions, "required module should have been executed only once");
 			assert.ok(
 				!sap.ui.require.load.calledWithMatch(sinon.match.any, moduleName + ".js"),
 				"module should not have been requested externally");
-			assert.notOk(window.fixture["async-sync-conflict"].externalModuleLoaded, "flag for external module must not have been set");
+			assert.notOk(window.fixture["async-sync-conflict_legacyAPIs"].externalModuleLoaded, "flag for external module must not have been set");
 		});
 
 	}
@@ -343,29 +343,29 @@
 	QUnit.test("Conflict for a preloaded module (sap.ui.define)", function(assert) {
 
 		// prepare
-		sap.ui.predefine("fixture/async-sync-conflict/SomeModuleUsingDefine", [], function() {
-			window.fixture["async-sync-conflict"].executions++;
-			return window.fixture["async-sync-conflict"].EXPECTED_EXPORT;
+		sap.ui.predefine("fixture/async-sync-conflict_legacyAPIs/SomeModuleUsingDefine", [], function() {
+			window.fixture["async-sync-conflict_legacyAPIs"].executions++;
+			return window.fixture["async-sync-conflict_legacyAPIs"].EXPECTED_EXPORT;
 		});
 
 		// Act and Assert
-		return testConflictScenario(assert, "fixture/async-sync-conflict/SomeModuleUsingDefine");
+		return testConflictScenario(assert, "fixture/async-sync-conflict_legacyAPIs/SomeModuleUsingDefine");
 	});
 
 	QUnit.test("Conflict for a preloaded module (sap.ui.define, no matching module definition)", function(assert) {
 
 		// prepare
 		sap.ui.require.preload({
-			"fixture/async-sync-conflict/SomeModuleUsingDefineNoMatch.js": function() {
-				sap.ui.define("fixture/async-sync-conflict/InconsistentName", [], function() {
-					window.fixture["async-sync-conflict"].executions++;
-					return window.fixture["async-sync-conflict"].EXPECTED_EXPORT;
+			"fixture/async-sync-conflict_legacyAPIs/SomeModuleUsingDefineNoMatch.js": function() {
+				sap.ui.define("fixture/async-sync-conflict_legacyAPIs/InconsistentName", [], function() {
+					window.fixture["async-sync-conflict_legacyAPIs"].executions++;
+					return window.fixture["async-sync-conflict_legacyAPIs"].EXPECTED_EXPORT;
 				});
 			}
 		});
 
 		// Act and Assert
-		return testConflictScenario(assert, "fixture/async-sync-conflict/SomeModuleUsingDefineNoMatch");
+		return testConflictScenario(assert, "fixture/async-sync-conflict_legacyAPIs/SomeModuleUsingDefineNoMatch");
 	});
 
 	QUnit.test("Conflict for a preloaded module (jQuery.sap.declare)", function(assert) {
@@ -374,19 +374,19 @@
 		// a substitute
 
 		sap.ui.require.preload({
-			"fixture/async-sync-conflict/SomeModuleUsingDeclare.js": function() {
+			"fixture/async-sync-conflict_legacyAPIs/SomeModuleUsingDeclare.js": function() {
 				function jQuerySapDeclare(module) {
 					module = module.replace(/\./g, "/") + ".js";
 					sap.ui.loader._.declareModule(module);
 				}
 				jQuerySapDeclare("fixture.async-sync-conflict.SomeModuleUsingDeclare");
-				window.fixture["async-sync-conflict"].executions++;
-				window.fixture["async-sync-conflict"].SomeModuleUsingDeclare = window.fixture["async-sync-conflict"].EXPECTED_EXPORT;
+				window.fixture["async-sync-conflict_legacyAPIs"].executions++;
+				window.fixture["async-sync-conflict_legacyAPIs"].SomeModuleUsingDeclare = window.fixture["async-sync-conflict_legacyAPIs"].EXPECTED_EXPORT;
 			}
 		});
 
 		// Act and Assert
-		return testConflictScenario(assert, "fixture/async-sync-conflict/SomeModuleUsingDeclare");
+		return testConflictScenario(assert, "fixture/async-sync-conflict_legacyAPIs/SomeModuleUsingDeclare");
 
 	});
 
@@ -396,15 +396,15 @@
 		// a substitute
 
 		sap.ui.require.preload({
-			"fixture/async-sync-conflict/SomeModuleUsingDeclareWithCycle.js": function() {
+			"fixture/async-sync-conflict_legacyAPIs/SomeModuleUsingDeclareWithCycle.js": function() {
 				function jQuerySapDeclare(module) {
 					module = module.replace(/\./g, "/") + ".js";
 					sap.ui.loader._.declareModule(module);
 				}
 				jQuerySapDeclare("fixture.async-sync-conflict.SomeModuleUsingDeclareWithCycle");
-				window.fixture["async-sync-conflict"].executions++;
-				window.fixture["async-sync-conflict"].SomeModuleUsingDeclareWithCycle = window.fixture["async-sync-conflict"].EXPECTED_EXPORT;
-				sap.ui.requireSync("fixture/async-sync-conflict/SomeModuleUsingDeclareWithCycle");
+				window.fixture["async-sync-conflict_legacyAPIs"].executions++;
+				window.fixture["async-sync-conflict_legacyAPIs"].SomeModuleUsingDeclareWithCycle = window.fixture["async-sync-conflict_legacyAPIs"].EXPECTED_EXPORT;
+				sap.ui.requireSync("fixture/async-sync-conflict_legacyAPIs/SomeModuleUsingDeclareWithCycle");
 			}
 		});
 
@@ -412,7 +412,7 @@
 		// Note: When the sync/async conflict is detected, we're in the middle of the first execution.
 		//       Together with the then necessary sync re-execution, we measure 2 executions.
 		//       Only the delayed execution of AMD modules can prevent this
-		return testConflictScenario(assert, "fixture/async-sync-conflict/SomeModuleUsingDeclareWithCycle", null, 2);
+		return testConflictScenario(assert, "fixture/async-sync-conflict_legacyAPIs/SomeModuleUsingDeclareWithCycle", null, 2);
 
 	});
 
@@ -420,14 +420,14 @@
 
 		// prepare
 		sap.ui.require.preload({
-			"fixture/async-sync-conflict/SomeGlobalScript.js": function() {
-				window.fixture["async-sync-conflict"].executions++;
-				window.fixture["async-sync-conflict"].SomeGlobalScript = window.fixture["async-sync-conflict"].EXPECTED_EXPORT;
+			"fixture/async-sync-conflict_legacyAPIs/SomeGlobalScript.js": function() {
+				window.fixture["async-sync-conflict_legacyAPIs"].executions++;
+				window.fixture["async-sync-conflict_legacyAPIs"].SomeGlobalScript = window.fixture["async-sync-conflict_legacyAPIs"].EXPECTED_EXPORT;
 			}
 		});
 
 		// Act and Assert
-		return testConflictScenario(assert, "fixture/async-sync-conflict/SomeGlobalScript");
+		return testConflictScenario(assert, "fixture/async-sync-conflict_legacyAPIs/SomeGlobalScript");
 
 	});
 
@@ -438,27 +438,27 @@
 	QUnit.test("Conflict for a preloaded module", function(assert) {
 		var done = assert.async();
 
-		sap.ui.predefine("fixture/async-sync-conflict/SomeControl", ["fixture/async-sync-conflict/SomeControlRenderer"], function(Renderer) {
+		sap.ui.predefine("fixture/async-sync-conflict_legacyAPIs/SomeControl", ["fixture/async-sync-conflict_legacyAPIs/SomeControlRenderer"], function(Renderer) {
 			Renderer.someProperty = "some value";
 			return {};
 		});
 
-		sap.ui.predefine("fixture/async-sync-conflict/SomeControlRenderer", function() {
+		sap.ui.predefine("fixture/async-sync-conflict_legacyAPIs/SomeControlRenderer", function() {
 			return {};
 		});
 
 		// Act:
 		// async request for the control class
-		sap.ui.require(["fixture/async-sync-conflict/SomeControl"], function(SomeControlASync) {
+		sap.ui.require(["fixture/async-sync-conflict_legacyAPIs/SomeControl"], function(SomeControlASync) {
 			assert.ok(SomeControlASync, "control should have been loaded async");
-			assert.strictEqual(sap.ui.require("fixture/async-sync-conflict/SomeControlRenderer").someProperty, "some value", "render property should have been init after async loading");
+			assert.strictEqual(sap.ui.require("fixture/async-sync-conflict_legacyAPIs/SomeControlRenderer").someProperty, "some value", "render property should have been init after async loading");
 			done();
 		});
 		// conflicting sync request for the same class
-		/* var SomeControl = */ sap.ui.requireSync("fixture/async-sync-conflict/SomeControl");
+		/* var SomeControl = */ sap.ui.requireSync("fixture/async-sync-conflict_legacyAPIs/SomeControl");
 
 		// Assert
-		assert.equal(sap.ui.require("fixture/async-sync-conflict/SomeControlRenderer").someProperty, "some value", "property should have the expected value after sync loading");
+		assert.equal(sap.ui.require("fixture/async-sync-conflict_legacyAPIs/SomeControlRenderer").someProperty, "some value", "property should have the expected value after sync loading");
 	});
 
 

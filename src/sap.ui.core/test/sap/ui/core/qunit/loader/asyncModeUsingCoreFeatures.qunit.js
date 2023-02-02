@@ -31,8 +31,8 @@ sap.ui.define(function() {
 		// Act:
 		return sap.ui.getCore().loadLibraries(
 			[
-				"fixture/async-sync-conflict/library-using-AMD",
-				"fixture/async-sync-conflict/library-using-require-declare"
+				"fixture/async-sync-conflict_legacyAPIs/library-using-AMD",
+				"fixture/async-sync-conflict_legacyAPIs/library-using-require-declare"
 			]
 		).then(function() {
 			assert.ok(true, "loading the libs succeeded");
