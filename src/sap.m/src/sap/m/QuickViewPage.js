@@ -134,8 +134,9 @@ sap.ui.define([
 
 				/**
 				 * Specifies the application which provides target and param configuration for cross-application navigation from the 'page header'.
+				 * @deprecated As of version 1.111. Attach avatar <code>press</code> event instead.
 				 */
-				crossAppNavCallback: { type: "object", group: "Misc" },
+				crossAppNavCallback: { type: "object", group: "Misc", deprecated: true },
 
 				/**
 				 * Specifies the text displayed under the header of the content section.
@@ -184,7 +185,7 @@ sap.ui.define([
 	 * Specifies the application which provides target and param configuration for cross-application navigation from the 'page header'.
 	 *
 	 * When called with a value of <code>null</code> or <code>undefined</code>, the default value of the property will be restored.
-	 *
+	 * @deprecated As of version 1.111.
 	 * @method
 	 * @param {function(): {target: object, params: object}} [oCrossAppNavCallback] New value for property <code>crossAppNavCallback</code>
 	 * @public
@@ -196,7 +197,7 @@ sap.ui.define([
 	 * Gets current value of property {@link #getCrossAppNavCallback crossAppNavCallback}.
 	 *
 	 * Specifies the application which provides target and param configuration for cross-application navigation from the 'page header'.
-	 *
+	 * @deprecated As of version 1.111.
 	 * @method
 	 * @returns {function(): {target: object, params: object}} Value of property <code>crossAppNavCallback</code>
 	 * @public
@@ -204,6 +205,15 @@ sap.ui.define([
 	 */
 
 	QuickViewPage.prototype.init =  function() {
+		if (this._initCrossAppNavigationService) {
+			this._initCrossAppNavigationService();
+		}
+	};
+
+	/**
+	* @deprecated As of version 1.111.
+	*/
+	QuickViewPage.prototype._initCrossAppNavigationService =  function() {
 		//see API docu for sap.ushell.services.CrossApplicationNavigation
 		var fGetService =  sap.ushell && sap.ushell.Container && sap.ushell.Container.getService;
 		if (fGetService) {
@@ -453,7 +463,7 @@ sap.ui.define([
 				href	: sTitleUrl,
 				target	: "_blank"
 			});
-		} else if (this.getCrossAppNavCallback()) {
+		} else if (this.getCrossAppNavCallback && this.getCrossAppNavCallback()) {
 			oTitle = new Link({
 				text	: sTitle
 			});
@@ -566,7 +576,7 @@ sap.ui.define([
 	 * @private
 	 */
 	QuickViewPage.prototype._crossApplicationNavigation = function () {
-		if (this.getCrossAppNavCallback() && this.oCrossAppNavigator) {
+		if (this.getCrossAppNavCallback && this.getCrossAppNavCallback() && this.oCrossAppNavigator) {
 			var targetConfigCallback = this.getCrossAppNavCallback();
 			if (typeof targetConfigCallback == "function") {
 				var targetConfig = targetConfigCallback();

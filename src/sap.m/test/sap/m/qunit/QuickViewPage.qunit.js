@@ -237,7 +237,9 @@ sap.ui.define([
 		assert.strictEqual(oAvatar.getSrc(), sIcon, "'icon' property should be correctly propagated to inner avatar");
 	});
 
-	// TODO should there be a _crossApplicationNavigation without icon?
+	/**
+	 * @deprecated As of version 1.111
+	 */
 	QUnit.test("crossApplicationNavigation when property 'icon and 'titleUrl' are set", function (assert) {
 		// Arrange
 		var oStub = sinon.stub(this.oQuickViewPage, "_crossApplicationNavigation");
