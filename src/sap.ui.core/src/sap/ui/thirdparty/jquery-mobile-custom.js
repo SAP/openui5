@@ -1893,7 +1893,9 @@ if ( eventCaptureSupported ) {
 		// MODIFIED BY SAP
 		// touchcancel has to be used because touchcancel is fired under some condition instead of
 		// touchend when runs on Windows 8 device.
-		touchStopEvent = supportTouch ? "touchend touchcancel" : "mouseup",
+		//
+		// dragstart is added because "mouseup" event isn't fired anymore once dragstart is fired
+		touchStopEvent = supportTouch ? "touchend touchcancel" : "mouseup dragstart",
 		touchMoveEvent = supportTouch ? "touchmove" : "mousemove";
 
 	function triggerCustomEvent( obj, eventType, event ) {
@@ -1998,6 +2000,9 @@ if ( eventCaptureSupported ) {
 				$this.off( "vclick", clickHandler )
 					.off( "vmouseup", clearTapTimer );
 				$document.off( "vmousecancel", clearTapHandlers )
+				// MODIFIED BY SAP: deregister the function of clearing handlers from 'dragstart' event
+				// on document
+					.off( "dragstart", clearTapHandlers )
 				// MODIFIED BY SAP: deregister the function of clearing handlers from 'mouseup' event
 				// on document
 					.off( "vmouseup", checkAndClearTapHandlers );
@@ -2047,6 +2052,9 @@ if ( eventCaptureSupported ) {
 				$this.on( "vmouseup", clearTapTimer )
 					.on( "vclick", clickHandler );
 				$document.on( "vmousecancel", clearTapHandlers )
+				// MODIFIED BY SAP: register the function of clearing handlers to 'dragstart' event
+				// on document, because no 'mouseup' and 'click' event is fired after 'dragstart'
+					.on( "dragstart", clearTapHandlers )
 				// MODIFIED BY SAP: register the function of clearing handlers to 'mouseup' event
 				// on document
 				// MODIFIED BY SAP: replace deprecated API .bind -> .on
