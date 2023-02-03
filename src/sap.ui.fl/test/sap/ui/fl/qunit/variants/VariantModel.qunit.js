@@ -222,12 +222,9 @@ sap.ui.define([
 		QUnit.test("when the updateStateListener is called", function(assert) {
 			sandbox.stub(VariantManagementState, "getContent").returns("{}");
 			var oCheckStub = sandbox.stub(this.oModel, "checkDirtyStateForControlModels");
-			var oChange = {
-				getState: function() {return States.LifecycleState.NEW;},
-				convertToFileContent: function() {
-					return {fileType: "change"};
-				}
-			};
+			var oChange = FlexObjectFactory.createFromFileContent({
+				fileType: "change"
+			});
 			VariantManagementState.updateVariantsState({
 				reference: this.oComponent.name,
 				changeToBeAddedOrDeleted: oChange,
