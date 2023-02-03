@@ -6,14 +6,15 @@ sap.ui.define([
 	"sap/f/library",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/TestUtils"
-], function (_Formatter, library, MessageBox, MessageToast, Controller, Filter, FilterOperator,
-		Sorter, JSONModel, TestUtils) {
+], function (_Formatter, library, MessageBox, MessageToast, UI5Date, Controller, Filter,
+		FilterOperator, Sorter, JSONModel, TestUtils) {
 	"use strict";
 
 	var LayoutType = library.LayoutType;
@@ -52,13 +53,15 @@ sap.ui.define([
 
 		onCreateLineItem : function () {
 			var oContext,
-				oDeliveryDate = new Date();
+				oDeliveryDate = UI5Date.getInstance(),
+				oListBinding = this.byId("SO_2_SOITEM").getBinding("items"),
+				sPath = oListBinding.getHeaderContext().getPath() + "/DeliveryDate",
+				oType = oListBinding.getModel().getMetaModel().getUI5Type(sPath);
 
 			oDeliveryDate.setFullYear(oDeliveryDate.getFullYear() + 1);
-			oDeliveryDate.setMilliseconds(0);
-			this.byId("SO_2_SOITEM").getBinding("items").create({
+			oListBinding.create({
 				CurrencyCode : "EUR",
-				DeliveryDate : oDeliveryDate.toJSON(),
+				DeliveryDate : oType.getModelValue(oDeliveryDate),
 				GrossAmount : "42.0",
 				ProductID : "HT-1000",
 				Quantity : "2.000",

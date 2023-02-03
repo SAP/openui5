@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/library",
 	"sap/ui/core/sample/common/Controller",
@@ -12,8 +13,8 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/Sorter"
-], function (Log, MessageBox, MessageToast, DateFormat, library, Controller, Filter, FilterOperator,
-		FilterType, Sorter) {
+], function (Log, MessageBox, MessageToast, UI5Date, DateFormat, library, Controller, Filter,
+		FilterOperator, FilterType, Sorter) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
@@ -161,15 +162,17 @@ sap.ui.define([
 
 		onCreateSalesOrderLineItem : function () {
 			var oContext,
-				oDeliveryDate = new Date(),
+				oDeliveryDate = UI5Date.getInstance(),
 				oTable = this.byId("SO_2_SOITEM"),
+				oListBinding = oTable.getBinding("items"),
+				sPath = oListBinding.getHeaderContext().getPath() + "/DeliveryDate",
+				oType = oListBinding.getModel().getMetaModel().getUI5Type(sPath),
 				that = this;
 
 			oDeliveryDate.setFullYear(oDeliveryDate.getFullYear() + 1);
-			oDeliveryDate.setMilliseconds(0);
-			oContext = this.byId("SO_2_SOITEM").getBinding("items").create({
+			oContext = oListBinding.create({
 				CurrencyCode : "EUR",
-				DeliveryDate : oDeliveryDate.toJSON(),
+				DeliveryDate : oType.getModelValue(oDeliveryDate),
 				GrossAmount : "1137.64",
 				ProductID : "HT-1000",
 				Quantity : "1",
