@@ -187,11 +187,18 @@ sap.ui.define([
 			}.bind(this));
 		} else if (oParams.type === "addOrSetAggregation") {
 			debounceFunction(this._mDebounceFunctions["addOrSet"], oOverlay, oParams.name, function() {
-				if (this.getDesignTime().getStatus() === "synced") {
+				// Designtime might have been destroyed while waiting for the debounce callback
+				// In this case, the updates are no longer relevant
+				var oDesignTime = this.getDesignTime();
+				if (!oDesignTime) {
+					return;
+				}
+
+				if (oDesignTime.getStatus() === "synced") {
 					aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
 					this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
 				} else {
-					this.getDesignTime().attachEventOnce("synced", function () {
+					oDesignTime.attachEventOnce("synced", function () {
 						aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
 						this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
 					}, this);

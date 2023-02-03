@@ -488,6 +488,22 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when the elementModified callback is triggered after the designtime was destroyed", function(assert) {
+			var oEvaluateEditableSpy = sandbox.spy(this.oRenamePlugin, "evaluateEditable");
+			var fnDone = assert.async();
+			this.oLayoutOverlay.fireElementModified({
+				type: "addOrSetAggregation",
+				name: "content"
+			});
+			// Using a timeout here is bad but there is no reliable way to access the
+			// callback that was debounced without exposing private members of the plugin
+			setTimeout(function() {
+				assert.ok(oEvaluateEditableSpy.notCalled, "then the original callback is never executed");
+				fnDone();
+			}, 100);
+			this.oDesignTime.destroy();
+		});
+
 		QUnit.test("when the event elementModified is thrown with afterRendering", function(assert) {
 			var oSetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "setRelevantOverlays");
 			var oGetRelevantSpy = sandbox.spy(this.oLayoutOverlay, "getRelevantOverlays");
