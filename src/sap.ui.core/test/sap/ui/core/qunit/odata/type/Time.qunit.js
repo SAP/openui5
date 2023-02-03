@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
@@ -12,9 +13,9 @@ sap.ui.define([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/test/TestUtils"
-], function (Log, Configuration, Control, DateFormat, FormatException, ParseException,
+], function (Log, Configuration, Control, UI5Date, DateFormat, FormatException, ParseException,
 		ValidateException, ODataType, Time, TestUtils) {
-	/*global QUnit */
+	/*global sinon, QUnit */
 	"use strict";
 
 	var sDefaultLanguage = Configuration.getLanguage(),
@@ -303,5 +304,51 @@ sap.ui.define([
 		var oType = new Time({pattern : "HH:mm:ss.SSS"});
 
 		assert.deepEqual(oType.parseValue("12:34:56.789", "string"), createTime(12, 34, 56, 789));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getModelValue", function (assert) {
+		var oInput = UI5Date.getInstance("0099-12-31T14:15:56.789"),
+			oResult = createTime(14, 15, 56, 789),
+			oType = new Time(),
+			oTypeMock = this.mock(oType);
+
+		this.mock(UI5Date).expects("checkDate").withExactArgs(sinon.match.same(oInput));
+		oTypeMock.expects("validateValue").withExactArgs(oResult);
+
+		// code under test
+		assert.deepEqual(oType.getModelValue(oInput), oResult);
+
+		oTypeMock.expects("validateValue").withExactArgs(null);
+
+		// code under test
+		assert.strictEqual(oType.getModelValue(null), null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getModelValue: checkDate fails", function (assert) {
+		var oType = new Time();
+
+		this.mock(UI5Date).expects("checkDate").withExactArgs("~oDate").throws(new Error("~error"));
+
+		// code under test
+		assert.throws(function () {
+			oType.getModelValue("~oDate");
+		}, new Error("~error"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getModelValue: validateValue fails", function (assert) {
+		var oResult = createTime(14, 15, 56, 789),
+			oType = new Time();
+
+		this.mock(oType).expects("validateValue")
+			.withExactArgs(oResult)
+			.throws(new ValidateException("~error"));
+
+		// code under test
+		assert.throws(function () {
+			oType.getModelValue(UI5Date.getInstance("0099-12-31T14:15:56.789"));
+		}, new ValidateException("~error"));
 	});
 });

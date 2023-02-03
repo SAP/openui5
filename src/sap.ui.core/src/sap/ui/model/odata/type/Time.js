@@ -5,12 +5,13 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/extend",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/ODataType"
-], function (Log, extend, DateFormat, FormatException, ParseException, ValidateException,
+], function (Log, extend, UI5Date, DateFormat, FormatException, ParseException, ValidateException,
 		ODataType) {
 	"use strict";
 
@@ -222,6 +223,40 @@ sap.ui.define([
 	 */
 	Time.prototype.getModelFormat = function () {
 		return oModelFormat;
+	};
+
+	/**
+	 * Gets the model value according to this type's constraints and format options for the given
+	 * date object representing a time. Validates the resulting value against the constraints of
+	 * this type instance.
+	 *
+	 * @param {Date|module:sap/ui/core/date/UI5Date|null} oDate
+	 *   The date object considering the configured time zone. Must be created via
+	 *   {@link module:sap/ui/core/date/UI5Date.getInstance}
+	 * @returns {{__edmType: string, ms: int}|null}
+	 *   The model representation of the time
+	 * @throws {Error}
+	 *   If the given date object is not valid or does not consider the configured time zone
+	 * @throws {sap.ui.model.ValidateException}
+	 *   If the constraints of this type instance are violated
+	 *
+	 * @public
+	 * @since 1.111.0
+	 */
+	Time.prototype.getModelValue = function (oDate) {
+		var oResult;
+
+		if (oDate === null) {
+			oResult = null;
+		} else {
+			UI5Date.checkDate(oDate);
+			oResult = UI5Date.getInstance(0);
+			oResult.setUTCHours(oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds());
+			oResult = toModel(oResult);
+		}
+		this.validateValue(oResult);
+
+		return oResult;
 	};
 
 	/**
