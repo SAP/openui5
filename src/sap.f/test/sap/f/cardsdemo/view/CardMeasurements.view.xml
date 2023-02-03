@@ -8,14 +8,14 @@
 	displayBlock="true">
 	<mvc:dependents>
 		<VBox id="measurementDetails" class="sapUiTinyMarginTopBottom">
-			<Title text="{cardMeasurements>id}" wrapping="true" titleStyle="H5"></Title>
+			<Title text="{cardMeasurements>name}" wrapping="true" titleStyle="H5"></Title>
 			<HBox class="sapUiTinyMarginBottom" renderType="Bare">
 				<Label text="Start Time" showColon="true" class="sapUiTinyMarginEnd">
 					<layoutData>
 						<FlexItemData shrinkFactor="0"></FlexItemData>
 					</layoutData>
 				</Label>
-				<Text text="{cardMeasurements>start}" wrapping="true"/>
+				<Text text="{cardMeasurements>startTime}" wrapping="true"/>
 			</HBox>
 			<HBox class="sapUiTinyMarginBottom" renderType="Bare">
 				<Label text="Duration (ms)" showColon="true" class="sapUiTinyMarginEnd">
@@ -26,12 +26,12 @@
 				<Text text="{cardMeasurements>duration}" wrapping="true"/>
 			</HBox>
 			<HBox class="sapUiTinyMarginBottom" renderType="Bare">
-				<Label text="Info" showColon="true" class="sapUiTinyMarginEnd">
+				<Label text="Detail" showColon="true" class="sapUiTinyMarginEnd">
 					<layoutData>
 						<FlexItemData shrinkFactor="0"></FlexItemData>
 					</layoutData>
 				</Label>
-				<Text text="{cardMeasurements>info}" wrapping="true"/>
+				<Text text="{cardMeasurements>detail}" wrapping="true"/>
 			</HBox>
 		</VBox>
 	</mvc:dependents>
@@ -44,7 +44,7 @@
 			</Toolbar>
 		</subHeader>
 		<FormattedText
-			htmlText="To enable the measurements add &lt;strong&gt;sap-ui-measure=true&lt;/strong&gt; in the query string of the URL"
+			htmlText="To enable the measurements add &lt;strong&gt;sap-ui-xx-measure-cards=true&lt;/strong&gt; in the query string of the URL or &lt;strong&gt;data-sap-ui-xx-measure-cards&lt;/strong&gt; in the UI5 bootstrap configuration."
 			class="sapUiSmallMargin">
 		</FormattedText>
 		<Panel headerText="Snippets for API usage" expandable="true" content="{cardMeasurements>/snippets}">

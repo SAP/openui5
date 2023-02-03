@@ -272,7 +272,8 @@ sap.ui.define([
 		"xx-cssVariables"       : { type : "string",   defaultValue : "false" }, // false|true|additional (additional just includes the css_variables.css in addition)
 		"xx-debugModuleLoading"	: { type : "boolean",  defaultValue: false },
 		"statistics"            : { type : "boolean",  defaultValue : false },
-		"xx-acc-keys"           : { type : "boolean",  defaultValue : false }
+		"xx-acc-keys"           : { type : "boolean",  defaultValue : false },
+		"xx-measure-cards"      : { type : "boolean",  defaultValue : false }
 	};
 
 	var M_COMPAT_FEATURES = {
@@ -1761,6 +1762,17 @@ sap.ui.define([
 		 */
 		getSecurityTokenHandlers : function () {
 			return this.getValue("securityTokenHandlers").slice();
+		},
+
+		/**
+		 * Gets if performance measurement for UI5 Integration Cards should happen.
+		 *
+		 * @returns {boolean} whether measurement should be executed
+		 * @since 1.112.0
+		 * @experimental
+		 */
+		getMeasureCards: function () {
+			return this.getValue("xx-measure-cards");
 		},
 
 		/**

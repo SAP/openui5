@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/ui/performance/Measurement"
+	"sap/ui/integration/util/Measurement"
 ], function (
 	ManagedObject,
 	Measurement
@@ -191,29 +191,29 @@ sap.ui.define([
 	};
 
 	DataProvider.prototype._triggerDataUpdate = function () {
+		var oCard = this.getCard(),
+			sMeasureId;
+
 		this._bActive = true;
 		this._iCurrentRequestNumber++;
-		var oGetDataMeasurement;
 
-		if (this.getCard()) {
-			oGetDataMeasurement = Measurement.start(
-				"UI5 Integration Cards - " + this.getCard() +  "-" + this.getId() + "---getData#" + this._iCurrentRequestNumber,
-				this.getDetails()
-			);
+		if (oCard) {
+			sMeasureId = "UI5 Integration Cards " + oCard +  " " + this.getId() + " getData#" + this._iCurrentRequestNumber;
+			Measurement.start(sMeasureId, this.getDetails());
 		}
 
 		return this.getData()
 			.then(function (oData) {
-				if (oGetDataMeasurement) {
-					Measurement.end(oGetDataMeasurement.id);
+				if (oCard) {
+					Measurement.end(sMeasureId);
 				}
 
 				this.fireDataChanged({data: oData});
 				this.onDataRequestComplete();
 			}.bind(this))
 			.catch(function (oResult) {
-				if (oGetDataMeasurement) {
-					Measurement.end(oGetDataMeasurement.id);
+				if (oCard) {
+					Measurement.end(sMeasureId);
 				}
 
 				if (Array.isArray(oResult) && oResult.length > 0) {
