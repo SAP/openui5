@@ -57,6 +57,54 @@
 						</mdcvc:MTable>
 					</mdcv:Popover>
 				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcv:Dialog title="MDC Table with ui.Table">
+						<mdcvc:MDCTable id="mdcTableContent1" keyPath="ID" descriptionPath="name" filterFields="$search" group="group1" title="Default Search Template">
+							<mdcvc:filterBar>
+								<vhfb:FilterBar id="mdcFilterbar1" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+									<vhfb:basicSearchField>
+										<mdc:FilterField
+											delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+											dataType= "Edm.String"
+											conditions= "{$filters>/conditions/$search}"
+											width="50%"
+											maxConditions="1"
+											placeholder="Search" />
+									</vhfb:basicSearchField>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
+									</vhfb:filterItems>
+								</vhfb:FilterBar>
+							</mdcvc:filterBar>
+
+								<!-- type="ResponsiveTable" -->
+							<mdc:Table autoBindOnInit="false"
+								id="mdcTable1"
+								width="100%"
+								height="100%"
+								headerVisible="true"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								p13nMode="Column,Sort"
+								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}}"
+								threshold="50">
+								<mdc:type>
+									<mdc:table.GridTableType rowCountMode="Auto"/>
+								</mdc:type>
+								<mdc:columns>
+									<mdc:table.Column id="mdcTable1_col_ID" header="ID" dataProperty="ID">
+										<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+									</mdc:table.Column>
+									<mdc:table.Column id="mdcTable1_col_name" header="Name" dataProperty="name">
+										<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="Display"/>
+									</mdc:table.Column>
+									<mdc:table.Column id="mdcTable1_col_dateOfBirth" header="Date of birth" dataProperty="dateOfBirth">
+										<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{dateOfBirth}" editMode="Display"/>
+									</mdc:table.Column>
+								</mdc:columns>
+							</mdc:Table>
+						</mdcvc:MDCTable>
+					</mdcv:Dialog>
+				</mdc:dialog>
 			</mdc:ValueHelp>
 
 			
