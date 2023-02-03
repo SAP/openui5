@@ -279,4 +279,31 @@ describe('sap.m.MultiComboBox', function() {
 		defaultMultiComboBoxArrow.click();
 		element(by.id("compactMode")).click();
 	});
+
+	//MultiComboBox - Order of Tokens
+	it("Should visualize the tokens in the same order when picker is reopened", function(){
+		browser.executeScript('document.getElementById("multiComboBoxStrangeKeys").scrollIntoView()').then(function() {
+			var oMCArrow = element(by.id("multiComboBoxStrangeKeys-arrow"));
+			oMCArrow.click();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.SPACE).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+			browser.actions().sendKeys(protractor.Key.SPACE).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+			browser.actions().sendKeys(protractor.Key.SPACE).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+			browser.actions().sendKeys(protractor.Key.SPACE).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+			browser.actions().sendKeys(protractor.Key.SPACE).perform();
+			expect(takeScreenshot()).toLookAs("multiComboBox_tokens_order_initial");
+			oMCArrow.click();
+			expect(takeScreenshot()).toLookAs("multiComboBox_tokens_order_after_closed");
+			oMCArrow.click();
+			expect(takeScreenshot()).toLookAs("multiComboBox_tokens_order_after_reopen");
+		});
+	});
 });

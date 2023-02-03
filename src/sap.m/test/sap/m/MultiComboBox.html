@@ -1031,6 +1031,18 @@
 	});
 	var oLabelWrapping = new sap.m.Label("wrappingLabel", {text: "MultiComboBox with suggestions wrapping", width:"100%", labelFor: "multiComboBoxWrapping"});
 
+	var oMultiComboBoxStrangeKeys = new sap.m.MultiComboBox("multiComboBoxStrangeKeys", {
+		width: "600px",
+		items : [
+			new sap.ui.core.Item({ text: "Item A", key: '' }),
+			new sap.ui.core.Item({ text: "Item B", key:'Y' }),
+			new sap.ui.core.Item({ text: "Item C" }),
+			new sap.ui.core.Item({ text: "Item D", key:'X' }),
+			new sap.ui.core.Item({ text: "Item E", key: null})
+		]
+	});
+	var oLabelItemsOrder = new sap.m.Label("orderLabel", {text: "MultiComboBox with strange keys", width:"100%", labelFor: "multiComboBoxStrangeKeys"});
+
 	// Add a css class to the body HTML element, in order to be used for caret stylization in visual tests run.
 	var oCustomCssButton = new sap.m.Button ("customCssButton",{
 			text: "Toggle custom CSS for visual test",
@@ -1059,7 +1071,8 @@
 			oMultiComboBoxDisabledListItemSelectable, oMultiComboBoxDisabledListItemDisabled, oMultiComboBoxReadOnly,
 			oMultiComboBoxErrorWithLink, oMultiComboBoxWarningWithLinks, oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxWarning,
 			oMultiComboBoxSuccess, oMultiComboBoxOneToken, readOnlyButtonOneToken, oMultiComboBoxFourItems,
-			oMultiComboBoxBinding, oMultiComboBoxWithGrouping, oMultiComboBoxSelectAll, oToolbar, oEmptyMultiComboBox, oLabelWrapping, oMultiComboBoxLongSuggestions
+			oMultiComboBoxBinding, oMultiComboBoxWithGrouping, oMultiComboBoxSelectAll, oToolbar, oEmptyMultiComboBox, oLabelWrapping, oMultiComboBoxLongSuggestions,
+			oLabelItemsOrder, oMultiComboBoxStrangeKeys
 		],
 		showNavButton : true,
 		navButtonPress : function() {

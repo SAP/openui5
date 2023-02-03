@@ -3099,18 +3099,6 @@ function(
 		sListItemSelected = (this.isItemSelected(oItem)) ? sListItem + "Selected" : "";
 		oListItem.addStyleClass(sListItem + " " + sListItemSelected);
 
-		if (sListItemSelected) {
-			var oToken = new Token({
-				key: oItem.getKey()
-			});
-
-			oToken.setText(oItem.getText());
-
-			oItem.data(ListHelpers.CSS_CLASS + "Token", oToken);
-			// TODO: Check this invalidation
-			this.getAggregation("tokenizer").addToken(oToken, true);
-		}
-
 		this.setSelectable(oItem, oItem.getEnabled());
 		return oListItem;
 	};
@@ -3142,6 +3130,9 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._fillList = function() {
+		var oTokenizer;
+		var aSelectedItems;
+		var oItem;
 		var oList = this._getList();
 		var aItems = this.getEditable() ?
 		this.getItems() : this.getSelectedItems();
@@ -3166,6 +3157,22 @@ function(
 				this._getList().setSelectedItem(oListItem, true);
 			}
 		}
+
+		// the following code adds the selected items to the tokenizer
+		// in the order they have been selected
+		oTokenizer = this.getAggregation("tokenizer");
+		aSelectedItems = this.getSelectedItems();
+
+		for ( var j = 0; j < aSelectedItems.length; j++) {
+			oItem = aSelectedItems[j];
+			var oToken = new Token({
+				key: oItem.getKey(),
+				text: oItem.getText()
+			});
+			oItem.data(ListHelpers.CSS_CLASS + "Token", oToken);
+			oTokenizer.addToken(oToken, true);
+		}
+
 	};
 
 	/**
