@@ -2731,11 +2731,11 @@ sap.ui.define([
 
 		assert.throws(function () {
 			oContext.doSetProperty("~sPath~", "~sValue~", oGroupLock);
-		}, new Error("must not modify a deleted entity: " + oContext));
+		}, new Error("Must not modify a deleted entity: " + oContext));
 
 		assert.throws(function () {
 			oContext.doSetProperty("~sPath~", "~sValue~", null);
-		}, new Error("must not modify a deleted entity: " + oContext));
+		}, new Error("Must not modify a deleted entity: " + oContext));
 	});
 
 	//*********************************************************************************************

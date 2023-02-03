@@ -17771,7 +17771,9 @@ sap.ui.define([
 				+ "), bReset=" + bReset;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+		var oContext,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			oParentContext,
 			oPromise,
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'0500000000\')}" id="form">'
@@ -17798,7 +17800,8 @@ sap.ui.define([
 			.expectChange("note", "Test");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContext = that.oView.byId("blackBinding").getBindingContext();
+			oContext = that.oView.byId("blackBinding").getBindingContext();
+			oParentContext = that.oView.byId("form").getBindingContext();
 
 			// Note: The value of the property binding is undefined because there is no
 			// explicit cache value for it, but the type's formatValue converts this to null.
@@ -17809,6 +17812,9 @@ sap.ui.define([
 
 			// code under test
 			oPromise = oContext.delete("update");
+
+			assert.ok(oContext.isDeleted());
+			assert.ok(oParentContext.isDeleted());
 
 			return that.waitForChanges(assert, "delete");
 		}).then(function () {
@@ -17835,6 +17841,9 @@ sap.ui.define([
 				oModel.submitBatch("update"),
 				that.waitForChanges(assert, bReset ? "reset" : "submit")
 			]);
+		}).then(function () {
+			assert.notStrictEqual(oContext.isDeleted(), bReset);
+			assert.notStrictEqual(oParentContext.isDeleted(), bReset);
 		});
 	});
 	});
@@ -18372,7 +18381,7 @@ sap.ui.define([
 
 			assert.throws(function () {
 				oContext2.setProperty("Note", "n/a");
-			}, /must not modify a deleted entity/);
+			}, new Error("Must not modify a deleted entity: " + oContext2));
 			assert.strictEqual(that.oView.byId("id").getBinding("text").isResolved(), false);
 			assert.strictEqual(that.oView.byId("note").getObjectBinding().isResolved(), false);
 			assert.strictEqual(that.oView.byId("note").getBinding("value").isResolved(), false);

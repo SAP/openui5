@@ -351,6 +351,7 @@ sap.ui.define([
 		});
 		this.oBinding = undefined;
 		this.oCreatedPromise = undefined;
+		// keep oDeletePromise so that isDeleted does not unexpectedly become false
 		this.oSyncCreatePromise = undefined;
 		this.bInactive = undefined;
 		this.bKeepAlive = undefined;
@@ -450,7 +451,7 @@ sap.ui.define([
 			if (oGroupLock) {
 				oGroupLock.unlock();
 			}
-			throw new Error("must not modify a deleted entity: " + this);
+			throw new Error("Must not modify a deleted entity: " + this);
 		}
 		if (oGroupLock && this.isTransient() && !this.isInactive()) {
 			oValue = this.getValue();
@@ -1029,23 +1030,6 @@ sap.ui.define([
 	 */
 	Context.prototype.isInactive = function () {
 		return this.bInactive;
-	};
-
-	/**
-	 * Sets the inactive flag to <code>true</code>
-	 *
-	 * Note: this is a private and internal API. Do not call this!
-	 *
-	 * @throws {Error} - If this context is not inactive
-	 *
-	 * @private
-	 * @see #isInactive
-	 */
-	Context.prototype.setInactive = function () {
-		if (!this.bInactive) {
-			throw new Error("Not inactive: " + this.bInactive);
-		}
-		this.bInactive = true;
 	};
 
 	/**
@@ -1683,15 +1667,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets a new unique number for this context's generation, just like
-	 * {@link sap.ui.model.odata.v4.Context.createNewContext} does for a new context.
+	 * Sets the inactive flag to <code>true</code>
+	 *
+	 * Note: this is a private and internal API. Do not call this!
+	 *
+	 * @throws {Error} - If this context is not inactive
 	 *
 	 * @private
-	 * @see #getGeneration
+	 * @see #isInactive
 	 */
-	Context.prototype.setNewGeneration = function () {
-		iGenerationCounter += 1;
-		this.iGeneration = iGenerationCounter;
+	Context.prototype.setInactive = function () {
+		if (!this.bInactive) {
+			throw new Error("Not inactive: " + this.bInactive);
+		}
+		this.bInactive = true;
 	};
 
 	/**
@@ -1768,6 +1757,18 @@ sap.ui.define([
 
 		this.bKeepAlive = bKeepAlive;
 		this.fnOnBeforeDestroy = bKeepAlive ? fnOnBeforeDestroy : undefined;
+	};
+
+	/**
+	 * Sets a new unique number for this context's generation, just like
+	 * {@link sap.ui.model.odata.v4.Context.createNewContext} does for a new context.
+	 *
+	 * @private
+	 * @see #getGeneration
+	 */
+	Context.prototype.setNewGeneration = function () {
+		iGenerationCounter += 1;
+		this.iGeneration = iGenerationCounter;
 	};
 
 	/**
