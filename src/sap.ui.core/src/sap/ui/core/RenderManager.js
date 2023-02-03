@@ -57,6 +57,28 @@ sap.ui.define([
 	var ATTR_STYLE_KEY_MARKER = "data-sap-ui-stylekey";
 
 	/**
+	 * An attribute marker that is set on a DOM element of a control or element to indicate
+	 * that the rendering cannot be skipped and always should be executed.
+	 *
+	 * The attribute is set for the root DOM element of a control when the control's renderer
+	 * does not support apiVersion 4. For controls that support apiVersion 4, this attribute is
+	 * also set when
+	 *  - the control has at least one delegate that implements an `onAfterRendering`
+	 *    and/or `onBeforeRendering` event handler without also setting the `canSkipRendering` flag.
+	 *    See {@link sap.ui.core.Element#addEventDelegate Element#addEventDelegate} for more information.
+	 *  - the parent of the control implements the `enhanceAccessibilityState` method
+	 *    and does not set the `canSkipRendering` property in the enhanced accessibility state.
+	 *    See {@link sap.ui.core.Element#enhanceAccessibilityState Element#enhanceAccessibilityState} for more information.
+	 *
+	 * Controls define the apiVersion 4 contract only for their own rendering, therefore
+	 * apiVersion 4 optimization only works when all child controls support apiVersion 4.
+	 * This makes this attribute important for RM to determine apiVersion 4 optimization.
+	 * @constant
+	 * @private
+	 */
+	var ATTR_DO_NOT_SKIP_RENDERING_MARKER = "data-sap-ui-render";
+
+	/**
 	 * Creates an instance of the RenderManager.
 	 *
 	 * Applications or controls must not call the <code>RenderManager</code> constructor on their own
@@ -105,7 +127,7 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * By default, when the control is invalidated (e.g. a property is changed, an aggregation is removed, or an
-	 * association is added), it will be registered for re-rendering. During the (re)rendering, the <code>render</code>
+	 * association is added), it will be registered for rerendering. During the (re)rendering, the <code>render</code>
 	 * method of the control renderer is executed via a specified <code>RenderManager</code> interface and the control
 	 * instance.
 	 *
@@ -175,9 +197,35 @@ sap.ui.define([
 	 *     <code>rm.openStart("div", oControl.getId() + "-suffix");</code> instead of
 	 *     <code>rm.openStart("div").attr("id", oControl.getId() + "-suffix");</code></li>
 	 * <li>Controls that listen to the <code>focusin</code> event must double check their focus handling. Since DOM nodes
-	 *     are not removed and only reused, the <code>focusin</code> event might not be fired during re-rendering.</li>
+	 *     are not removed and only reused, the <code>focusin</code> event might not be fired during rerendering.</li>
 	 * </ul>
 	 *
+	 * <h3>Contract for Renderer.apiVersion 4</h3>
+	 * The <code>apiVersion 4</code> marker of the control renderer lets the <code>RenderManager</code> know if a control's output is not affected by changes in the parent control.
+	 * By default, if a property, an aggregation, or an association of a control is changed, then the control gets invalidated, and the rerendering process for that control and all of its
+	 * children starts. That means child controls rerender together with their parent even though there is no DOM update necessary. If a control's output is only affected by its own
+	 * properties, aggregations, or associations, then the <code>apiVersion 4</code> marker can help to reuse the control's DOM output and prevent child controls from rerendering unnecessarily
+	 * while they are getting rendered by their parent. This can help to improve performance by reducing the number of re-renderings.<br>
+	 * For example: A control called "ParentControl" has a child control called "ChildControl". ChildControl has its own properties, aggregations, and associations, and its output is only affected by them.
+	 * The <code>apiVersion 4</code> marker is set in the renderer of ChildControl. Whenever a property of the ParentControl is changed during the re-rendering process, the <code>RenderManager</code>
+	 * will check the <code>apiVersion</code> marker of the ChildControl's renderer, and if it's 4, the <code>RenderManager</code> will skip rendering of the ChildControl.<br>
+	 *
+	 * To allow a more efficient rerendering with an <code>apiVersion 4</code> marker, the following prerequisites must be fulfilled for the control to ensure compatibility:
+	 *
+	 * <ul>
+	 * <li>All the prerequisites of the <code>apiVersion 2</code> marker must be fulfilled by the control.</li>
+	 * <li>The behavior and rendering logic of the control must not rely on the assumption that it will always be re-rendered at the same time as its parent.</li>
+	 * <li>The <code>onBeforeRendering</code> and <code>onAfterRendering<code> hooks of the control must not be used to manipulate or access any elements outside of the control's own DOM structure.</li>
+	 * <li>The control renderer must maintain a proper rendering encapsulation and render only the properties, aggregations, and associations that are specific to the control. The renderer should not reference or depend on any state of the parent control or any other external element.</li>
+	 * <li>If certain aggregations are dependent on the state of the parent control, they must always be rendered together with their parent. To accomplish this, the parent control must use the {@link sap.ui.core.Control#invalidate invalidate} method to signal to the child controls
+	 * that they need to re-render whenever the dependent state of the parent control changes. This guarantees that the child controls are always in sync with the parent control, regardless of the <code>apiVersion</code> definition of their renderer.</li>
+	 * </ul><br>
+	 *
+	 * <b>Note:</b> The rendering can only be skipped if the renderer of each descendant control has the <code>apiVersion 4</code> marker, and no <code>onBeforeRendering</code> or <code>onAfterRendering</code> event delegates are registered. However, while
+	 * {@link sap.ui.core.Element#addEventDelegate adding the event delegate}, setting the <code>canSkipRendering</code> property to <code>true</code> on the event delegate object can be done to indicate that those delegate handlers are compliant with the
+	 * <code>apiVersion:4</code> prerequisites and still allows for rendering optimization.<br>
+	 * The <code>canSkipRendering</code> property can also be used for the controls that enhance the accessibility state of child controls with implementing the {@link sap.ui.core.Element#enhanceAccessibilityState enhanceAccessibilityState} method. In this case,
+	 * setting the <code>canSkipRendering</code> property to <code>true</code> lets the <code>RenderManager</code> know that the parent control's accessibility enhancement is static and does not interfere with the child control's rendering optimization.
 	 *
 	 * @see sap.ui.core.Core
 	 * @see sap.ui.getCore
@@ -194,7 +242,6 @@ sap.ui.define([
 			aBuffer,
 			aRenderedControls,
 			aStyleStack,
-			aRenderStack,
 			bLocked,
 			sOpenTag = "",                 // stores the last open tag that is used for the validation
 			bVoidOpen = false,             // specifies whether the last open tag is a void tag or not
@@ -918,7 +965,7 @@ sap.ui.define([
 		 *
 		 * <b>Note:</b>: the functionality of this method is different from the default handling for
 		 * invisible controls (controls with <code>visible == false</code>). The standard rendering
-		 * for invisible controls still renders a placeholder DOM. This allows re-rendering of the
+		 * for invisible controls still renders a placeholder DOM. This allows rerendering of the
 		 * invisible control once it becomes visible again without a need to render its parent, too.
 		 * Children that are cleaned up with this method here, are supposed to have no more DOM at all.
 		 * Rendering them later on therefore requires an involvement (typically: a rendering) of
@@ -945,10 +992,112 @@ sap.ui.define([
 
 				// Preserved controls still need to be alive
 				if (!oDomRef.hasAttribute(ATTR_PRESERVE_MARKER)) {
+					oControl._bNeedsRendering = false;
 					oControl.bOutput = false;
 				}
 			}
 		};
+
+		/**
+		 * Executes the control renderer with the valid rendering interface.
+		 *
+		 * @param {sap.ui.core.Control} oControl The control that should be rendered
+		 * @param {boolean} bTriggerEvent Whether onBeforeRendering event should be triggered or not
+		 * @private
+		 */
+		function executeRenderer(oControl, bTriggerEvent) {
+			// trigger onBeforeRendering hook of the control if needed
+			if (bTriggerEvent) {
+				triggerBeforeRendering(oControl);
+			}
+
+			// unbind any generically bound browser event handlers
+			if (oControl.bOutput == true) {
+				var aBindings = oControl.aBindParameters;
+				if (aBindings && aBindings.length > 0) {
+					var $Control = oControl.$();
+					aBindings.forEach(function(mParams) {
+						$Control.off(mParams.sEventType, mParams.fnProxy);
+					});
+				}
+			}
+
+			// if the control uses default visible property then use the InvisibleRenderer, otherwise the renderer of the control
+			var oRenderer = getCurrentRenderer(oControl);
+			if (oRenderer == InvisibleRenderer) {
+
+				// invoke the InvisibleRenderer in case the control uses the default visible property
+				InvisibleRenderer.render(bDomInterface ? oDomInterface : oStringInterface, oControl);
+
+				// if an invisible placeholder was rendered, mark with invisible marker
+				oControl.bOutput = "invisible";
+
+			} else if (oRenderer && typeof oRenderer.render === "function") {
+
+				// before the control rendering get custom style classes of the control
+				var oControlStyles = {};
+				if (oControl.aCustomStyleClasses && oControl.aCustomStyleClasses.length > 0) {
+					oControlStyles.aCustomStyleClasses = oControl.aCustomStyleClasses;
+				}
+
+				// push them to the style stack that will be read by the first writeClasses/openEnd/voidEnd call to append additional classes
+				aStyleStack.push(oControlStyles);
+
+				// execute the control renderer according to rendering interface
+				if (bDomInterface) {
+
+					// remember the cursor of the Patcher before the control renderer is executed
+					var oCurrentNode = oPatcher.getCurrentNode();
+
+					// let the rendering happen with DOM rendering interface
+					oRenderer.render(oDomInterface, oControl);
+
+					// determine whether an output is produced
+					if (oPatcher.getCurrentNode() == oCurrentNode) {
+
+						// during the rendering the cursor of the Patcher should move to the next element when openStart or voidStart is called
+						// compare after rendering cursor with before rendering cursor to determine whether the control produced any output
+						// we need to remove the control DOM if there is no output produced
+						oPatcher.unsafeHtml("", oControl.getId());
+						oControl.bOutput = false;
+
+					} else {
+
+						// the cursor of the patcher is moved so the output is produced
+						oControl.bOutput = true;
+					}
+
+				} else {
+
+					// remember the buffer size before the control renderer is executed
+					var iBufferLength = aBuffer.length;
+
+					// let the rendering happen with DOM rendering interface
+					oRenderer.render(oStringInterface, oControl);
+
+					// compare after rendering buffer size with the before rendering buffer size to determine whether the control produced any output
+					oControl.bOutput = (aBuffer.length != iBufferLength);
+				}
+
+				// pop from the style stack after rendering for the next control
+				aStyleStack.pop();
+
+			} else {
+				Log.error("The renderer for class " + oControl.getMetadata().getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!");
+			}
+
+			// store the rendered control
+			aRenderedControls.push(oControl);
+
+			// clear the controls dirty marker
+			oControl._bNeedsRendering = false;
+
+			// let the UIArea know that this control has been rendered
+			var oUIArea = oControl.getUIArea();
+			if (oUIArea) {
+				oUIArea._onControlRendered(oControl);
+			}
+		}
 
 		/**
 		 * Turns the given control into its HTML representation and appends it to the
@@ -962,166 +1111,91 @@ sap.ui.define([
 		 */
 		this.renderControl = function(oControl) {
 			assert(!oControl || BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
-			// don't render a NOTHING
 			if (!oControl) {
 				return this;
 			}
 
-			// create stack to determine rendered parent
-			if (!aRenderStack) {
-				aRenderStack = [];
-			}
-			// stop the measurement of parent
-			if (aRenderStack && aRenderStack.length > 0) {
-				Measurement.pause(aRenderStack[0] + "---renderControl");
-			} else if (oControl.getParent() && oControl.getParent().getMetadata().getName() == "sap.ui.core.UIArea") {
-				Measurement.pause(oControl.getParent().getId() + "---rerender");
-			}
-			aRenderStack.unshift(oControl.getId());
+			var oDomRef, oRenderer;
+			var bTriggerBeforeRendering = true;
 
-			// start performance measurement
-			Measurement.start(oControl.getId() + "---renderControl", "Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
+			// determine the rendering interface
+			if (aBuffer.length) {
 
-			// Trigger onBeforeRendering before checking visibility, as visible property might be changed in handler
-			triggerBeforeRendering(oControl);
+				// string rendering has been already started therefore we cannot use DOM rendering interface anymore
+				bDomInterface = false;
 
-			Measurement.pause(oControl.getId() + "---renderControl");
-			// don't measure getRenderer because if Load needed its measured in Ajax call
+			} else if (bDomInterface === undefined) {
 
-			// Either render the control normally, or invoke the InvisibleRenderer in case the control
-			// uses the default visible property
-			var oRenderer;
-			var oMetadata = oControl.getMetadata();
-			var bVisible = oControl.getVisible();
-			if (bVisible) {
-				// If the control is visible, return its renderer (Should be the default case, just like before)
-				oRenderer = oMetadata.getRenderer();
-			} else {
-				// If the control is invisible, find out whether it uses its own visible implementation
-				var oVisibleProperty = oMetadata.getProperty("visible");
+				// trigger onBeforeRendering before checking the visibility, since the visible property might change in the event handler
+				triggerBeforeRendering(oControl);
 
-				var bUsesDefaultVisibleProperty =
-					   oVisibleProperty
-					&& oVisibleProperty._oParent
-					&& oVisibleProperty._oParent.getName() == "sap.ui.core.Control";
+				// mark that onBeforeRendering event has been already triggered and yet another onBeforeRendering event is not necessary
+				bTriggerBeforeRendering = false;
 
-				oRenderer = bUsesDefaultVisibleProperty
-					// If the control inherited its visible property from sap.ui.core.Control, use
-					// the default InvisibleRenderer to render a placeholder instead of the real
-					// control HTML
-					? InvisibleRenderer
-					// If the control has their own visible property or one not inherited from
-					// sap.ui.core.Control, return the real renderer
-					: oMetadata.getRenderer();
-			}
+				// if the control uses the default visible property then use the InvisibleRenderer, otherwise the renderer of the control
+				oRenderer = getCurrentRenderer(oControl);
 
-			Measurement.resume(oControl.getId() + "---renderControl");
+				// rendering interface must be determined for the root control once per rendering
+				if (RenderManager.getApiVersion(oRenderer) != 1) {
 
-			// unbind any generically bound browser event handlers
-			var aBindings = oControl.aBindParameters,
-				oDomRef;
-			// if we have stored bind calls and we have a DomRef
-			if (aBindings && aBindings.length > 0 && (oDomRef = oControl.getDomRef())) {
-				var $DomRef = jQuery(oDomRef);
-				for (var i = 0; i < aBindings.length; i++) {
-					var oParams = aBindings[i];
-					$DomRef.off(oParams.sEventType, oParams.fnProxy);
-				}
-			}
+					// get the visible or invisible DOM element of the control
+					oDomRef = oControl.getDomRef() || InvisibleRenderer.getDomRef(oControl);
 
-			// Render the control using the RenderManager interface
-			if (oRenderer && typeof oRenderer.render === "function") {
-
-				// Determine the rendering interface
-				if (aBuffer.length) {
-
-					// string rendering has already started therefore we cannot use DOM rendering interface
-					bDomInterface = false;
-
-				} else if (bDomInterface === undefined) {
-
-					// rendering interface must be determined for the root control once per rendering
-					if (RenderManager.getApiVersion(oRenderer) == 2) {
-
-						// get the visible or invisible DOM element of the control
-						oDomRef = oDomRef || oControl.getDomRef() || InvisibleRenderer.getDomRef(oControl);
-
-						// If the control is in the preserved area then we should not use the DOM-based rendering to avoid patching of preserved nodes
-						if (RenderManager.isPreservedContent(oDomRef)) {
-							bDomInterface = false;
-						} else {
-							// patching will happen during the control renderer calls therefore we need to get the focus info before the patching
-							if (oDomRef) {
-								FocusHandler.storePatchingControlFocusInfo(oDomRef);
-							}
-
-							// set the starting point of the Patcher
-							oPatcher.setRootNode(oDomRef);
-
-							// remember that we are using DOM based rendering interface
-							bDomInterface = true;
-						}
-
-					} else {
-
-						// DOM rendering is not possible we fall back to string rendering interface
+					// If the control is in the preserved area then we should not use the DOM-based rendering to avoid patching of preserved nodes
+					if (RenderManager.isPreservedContent(oDomRef)) {
 						bDomInterface = false;
-					}
-
-				} else if (!sLegacyRendererControlId && bDomInterface) {
-
-					// for every subsequent renderControl call we need to check whether we can continue with the DOM based rendering
-					if (RenderManager.getApiVersion(oRenderer) != 2) {
-
-						// remember the control id that we have to provide string rendering interface
-						sLegacyRendererControlId = oControl.getId();
-						bDomInterface = false;
-					}
-				}
-
-				// before the rendering get custom style classes of the control
-				var oControlStyles = {};
-				if (oControl.aCustomStyleClasses && oControl.aCustomStyleClasses.length > 0) {
-					oControlStyles.aCustomStyleClasses = oControl.aCustomStyleClasses;
-				}
-
-				// push them to the style stack that will be read by the first writeClasses/openEnd/voidEnd call to append additional classes
-				aStyleStack.push(oControlStyles);
-
-				// execute the renderer of the control via valid rendering interface
-				if (bDomInterface) {
-
-					// remember the cursor of the Patcher before the control renderer is executed
-					var oCurrentNode = oPatcher.getCurrentNode();
-
-					// execute the control renderer with DOM rendering interface
-					oRenderer.render(oDomInterface, oControl);
-
-					// during the rendering the cursor of the Patcher should move to the next element when openStart or voidStart is called
-					// compare after rendering cursor with before rendering cursor to determine whether the control produced any output
-					if (oPatcher.getCurrentNode() == oCurrentNode) {
-
-						// we need to remove the control DOM if there is no output produced
-						oPatcher.unsafeHtml("", oControl.getId());
-						oControl.bOutput = false;
 					} else {
-						oControl.bOutput = true;
+						// patching will happen during the control renderer calls therefore we need to get the focus info before the patching
+						oDomRef && FocusHandler.storePatchingControlFocusInfo(oDomRef);
+
+						// set the starting point of the Patcher
+						oPatcher.setRootNode(oDomRef);
+
+						// remember that we are using DOM based rendering interface
+						bDomInterface = true;
 					}
 
 				} else {
 
-					// remember the buffer size before the control renderer is executed
-					var iBufferLength = aBuffer.length;
-
-					// execute the control renderer with string rendering interface
-					oRenderer.render(oStringInterface, oControl);
-
-					// compare after rendering buffer size with before rendering buffer size to determine whether the control produced any output
-					oControl.bOutput = (aBuffer.length !== iBufferLength);
+					// DOM rendering is not possible we fall back to string rendering interface
+					bDomInterface = false;
 				}
 
-				// pop from the style stack after rendering for the next control
-				aStyleStack.pop();
+			} else if (!sLegacyRendererControlId && bDomInterface) {
+
+				// if the control uses the default visible property then use the InvisibleRenderer, otherwise the renderer of the control
+				oRenderer = getCurrentRenderer(oControl);
+
+				// for every subsequent renderControl call we need to check whether we can continue with the DOM based rendering
+				if (RenderManager.getApiVersion(oRenderer) == 1) {
+
+					// remember the control id that we have to provide string rendering interface
+					sLegacyRendererControlId = oControl.getId();
+					bDomInterface = false;
+				}
+			}
+
+			// execute the renderer of the control through the valid rendering interface
+			if (bDomInterface) {
+
+				// determine whether we should execute the control renderer with DOM rendering interface or whether we can skip the rendering of the control if it does not need rendering
+				if (oControl._bNeedsRendering || !oControl.getParent() || oPatcher.isCreating() || !RenderManager.canSkipRendering(oControl)
+					|| !(oDomRef = oDomRef || oControl.getDomRef() || InvisibleRenderer.getDomRef(oControl))
+					|| oDomRef.hasAttribute(ATTR_DO_NOT_SKIP_RENDERING_MARKER) || oDomRef.querySelector("[" + ATTR_DO_NOT_SKIP_RENDERING_MARKER + "]")) {
+
+					// let the rendering happen with DOM rendering interface
+					executeRenderer(oControl, bTriggerBeforeRendering);
+
+				} else {
+
+					// skip the control rendering and re-arrange the cursor of the Patcher
+					oPatcher.alignWithDom(oDomRef);
+				}
+
+			} else {
+
+				// let the rendering happen with string rendering interface
+				executeRenderer(oControl, bTriggerBeforeRendering);
 
 				// at the end of the rendering apply the rendering buffer of the control that is forced to render string interface
 				if (sLegacyRendererControlId && sLegacyRendererControlId === oControl.getId()) {
@@ -1130,34 +1204,6 @@ sap.ui.define([
 					bDomInterface = true;
 					aBuffer = [];
 				}
-			} else {
-				Log.error("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!");
-			}
-
-			// Remember the rendered control
-			aRenderedControls.push(oControl);
-
-			// let the UIArea know that this control has been rendered
-			// FIXME: RenderManager (RM) should not need to know about UIArea. Maybe UIArea should delegate rendering to RM
-			var oUIArea = oControl.getUIArea();
-			if (oUIArea) {
-				oUIArea._onControlRendered(oControl);
-			}
-
-			// Special case: If an invisible placeholder was rendered, use a non-boolean value
-			if (oRenderer === InvisibleRenderer) {
-				oControl.bOutput = "invisible"; // Still evaluates to true, but can be checked for the special case
-			}
-
-			// end performance measurement
-			Measurement.end(oControl.getId() + "---renderControl");
-			aRenderStack.shift();
-
-			// resume the measurement of parent
-			if (aRenderStack && aRenderStack.length > 0) {
-				Measurement.resume(aRenderStack[0] + "---renderControl");
-			} else if (oControl.getParent() && oControl.getParent().getMetadata().getName() == "sap.ui.core.UIArea") {
-				Measurement.resume(oControl.getParent().getId() + "---rerender");
 			}
 
 			return this;
@@ -1772,8 +1818,28 @@ sap.ui.define([
 		}
 
 		// allow parent (e.g. FormElement) to overwrite or enhance aria attributes
-		if (BaseObject.isA(oElement, 'sap.ui.core.Element') && oElement.getParent() && oElement.getParent().enhanceAccessibilityState) {
-			oElement.getParent().enhanceAccessibilityState(oElement, mAriaProps);
+		if (BaseObject.isA(oElement, 'sap.ui.core.Element')) {
+			var oParent = oElement.getParent();
+			if (oParent && oParent.enhanceAccessibilityState) {
+				var mOldAriaProps = Object.assign({}, mAriaProps);
+				oParent.enhanceAccessibilityState(oElement, mAriaProps);
+
+				// disable the rendering skip in case of parent#enhanceAccessibilityState
+				// disallows or changes the accessibility state of the child control
+				if (mAriaProps.canSkipRendering == false
+					|| (
+						mAriaProps.canSkipRendering == undefined
+						&& BaseObject.isA(oElement, "sap.ui.core.Control")
+						&& RenderManager.canSkipRendering(oElement)
+						&& JSON.stringify(mOldAriaProps) != JSON.stringify(mAriaProps)
+					)
+				) {
+					this.attr(ATTR_DO_NOT_SKIP_RENDERING_MARKER, "");
+				}
+
+				// delete the canSkipRendering marker in case of it exist
+				delete mAriaProps.canSkipRendering;
+			}
 		}
 
 		for (var p in mAriaProps) {
@@ -2157,7 +2223,11 @@ sap.ui.define([
 	 * Create a placeholder node for the given node (which must have an ID) and insert it before the node
 	 */
 	function makePlaceholder(node) {
-		jQuery("<div></div>", { id: RenderPrefixes.Dummy + node.id}).addClass("sapUiHidden").insertBefore(node);
+		var $Placeholder = jQuery("<div></div>", { id: RenderPrefixes.Dummy + node.id}).addClass("sapUiHidden");
+		if (node.hasAttribute(ATTR_DO_NOT_SKIP_RENDERING_MARKER)) {
+			$Placeholder.attr(ATTR_DO_NOT_SKIP_RENDERING_MARKER, "");
+		}
+		$Placeholder.insertBefore(node);
 	}
 
 	// Stores {@link sap.ui.core.RenderManager.preserveContent} listener as objects with following structure:
@@ -2287,6 +2357,11 @@ sap.ui.define([
 				// - otherwise, the placeholder might be unnecessary but will be removed with the DOM removal following the current preserve
 				if ( candidate === oRootNode || needsPlaceholder(candidate) ) {
 					makePlaceholder(candidate);
+				} else if ( oCandidateControl && candidate.hasAttribute(ATTR_DO_NOT_SKIP_RENDERING_MARKER) ) {
+					// if the preservation is triggered by the UIArea and if the control cannot skip the rendering then we must ensure that
+					// this control gets rendered to bring the control from preserved area to the original DOM tree. Leaving the placeholder
+					// with ATTR_DO_NOT_SKIP_RENDERING_MARKER at the candicate location will ensure that parent rendering cannot be skipped.
+					makePlaceholder(candidate);
 				}
 
 				FocusHandler.trackFocusForPreservedElement(candidate);
@@ -2414,11 +2489,44 @@ sap.ui.define([
 	 * @static
 	 */
 	RenderManager.getApiVersion = function(oRenderer) {
-		if (oRenderer.hasOwnProperty("apiVersion")) {
-			return oRenderer.apiVersion;
+		return (oRenderer && oRenderer.hasOwnProperty("apiVersion")) ? oRenderer.apiVersion : 1;
+	};
+
+	/**
+	 * Indicates whether the control can skip the rendering.
+	 *
+	 * To skip the rendering:
+	 *  1 - The own apiVersion property of the control renderer must be set to 4
+	 *  2 - There must be no rendering related delegates belong to the control
+	 *
+	 * iUpdateDom options for the RENDER_ALWAYS dom marker:
+	 *  0 : The DOM marker is not needed e.g. during the rendering
+	 *  1 : Update the DOM marker only if the control's apiVersion is 4
+	 *  2 : Always set the DOM marker independent of the control's apiVersion
+	 *
+	 * @param {sap.ui.core.Control} oControl The <code>Control</code> instance
+	 * @param {int} [iUpdateDom=0] Whether a DOM marker should be updated or not
+	 * @returns {boolean}
+	 * @private
+	 * @static
+	 * @ui5-restricted sap.ui.core
+	 */
+	RenderManager.canSkipRendering = function(oControl, iUpdateDom) {
+		var oRenderer = this.getRenderer(oControl);
+		var bApiVersion4 = this.getApiVersion(oRenderer) == 4;
+		if (!bApiVersion4 && iUpdateDom != 2) {
+			return false;
 		}
 
-		return 1;
+		var bSkipRendering = bApiVersion4 && !oControl.hasRenderingDelegate();
+		if (iUpdateDom) {
+			var oDomRef = oControl.getDomRef();
+			if (oDomRef) {
+				oDomRef.toggleAttribute(ATTR_DO_NOT_SKIP_RENDERING_MARKER, !bSkipRendering);
+			}
+		}
+
+		return bSkipRendering;
 	};
 
 	//#################################################################################################
@@ -2436,6 +2544,10 @@ sap.ui.define([
 		// render data attribute
 		var sId = oElement.getId();
 		oRm.attr("data-sap-ui", sId);
+
+		if (BaseObject.isA(oElement, "sap.ui.core.Control") && !RenderManager.canSkipRendering(oElement)) {
+			oRm.attr(ATTR_DO_NOT_SKIP_RENDERING_MARKER, "");
+		}
 
 		if (oElement.__slot) {
 			oRm.attr("slot", oElement.__slot);
@@ -2497,6 +2609,23 @@ sap.ui.define([
 		} else {
 			oElement[sPosition](vHTMLorNode);
 		}
+	}
+
+	/**
+	 * Returns the renderer that should be used for the provided control in its current state.
+	 *
+	 * If the control is invisible and inherits its visible property from the sap.ui.core.Control
+	 * then returns the InvisibleRenderer otherwise the renderer of the provided control class.
+	 *
+	 * @param {sap.ui.core.Control} oControl The <code>Control</code> instance
+	 * @returns {object} Either InvisibleRenderer or the renderer of the control class
+	 * @private
+	 */
+	function getCurrentRenderer(oControl) {
+		var oMetadata = oControl.getMetadata();
+		var bUsesInvisibleRenderer = (!oControl.getVisible() && oMetadata.getProperty("visible")._oParent.getName() == "sap.ui.core.Control");
+
+		return bUsesInvisibleRenderer ? InvisibleRenderer : oMetadata.getRenderer();
 	}
 
 	return RenderManager;

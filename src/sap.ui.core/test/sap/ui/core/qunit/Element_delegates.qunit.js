@@ -66,6 +66,36 @@ sap.ui.define([
 		assert.equal(this.lastThisId, "del1"); // del2 should be called earlier, the this context should be the delegate itself
 	});
 
+	QUnit.test("Rendering Delegates", function(assert) {
+		var element = this.element;
+
+		assert.notOk(element.hasRenderingDelegate(), "Initiall there is no rendering delegate");
+
+		element.addDelegate(this.del1);
+		assert.notOk(element.hasRenderingDelegate(), "del1 does not contain any rendering delegate");
+
+		element.removeDelegate(this.del1);
+		this.del1.onAfterRendering = Function.prototype;
+		element.addDelegate(this.del1);
+		assert.ok(element.hasRenderingDelegate(), "the element has onAfterRendering event delegate");
+
+		element.removeDelegate(this.del1);
+		this.del1.onBeforeRendering = Function.prototype;
+		delete this.del1.onAfterRendering;
+		element.addDelegate(this.del1);
+		assert.ok(element.hasRenderingDelegate(), "the element has onBeforeRendering event delegate");
+
+		element.removeDelegate(this.del1);
+		this.del1.canSkipRendering = true;
+		element.addDelegate(this.del1);
+		assert.notOk(element.hasRenderingDelegate(), "the rendering delegate has canSkipRendering flag");
+
+		element.removeDelegate(this.del1);
+		delete this.del1.canSkipRendering;
+		element.addDelegate(this.del1);
+		assert.ok(element.hasRenderingDelegate(), "the canSkipRendering flag has been removed and the rendering has onBeforeRendering event delegate");
+	});
+
 	QUnit.test("Removing Delegates", function(assert) {
 		var element = this.element;
 		element.addDelegate(this.del1);

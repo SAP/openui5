@@ -710,14 +710,46 @@ sap.ui.define([
 				}
 			};
 
+			var aControlsRenderedTogetherWithAncestor = [];
 			for (var n in mInvalidatedControls) {
 				var oControl = Element.registry.get(n);
 				// CSN 0000834961 2011: control may have been destroyed since invalidation happened -> check whether it still exists
-				if ( oControl && !isRenderedTogetherWithAncestor(oControl) ) {
-					oControl.rerender();
-					bUpdated = true;
+				if ( oControl ) {
+					if ( !isRenderedTogetherWithAncestor(oControl) ) {
+						oControl.rerender();
+						bUpdated = true;
+					} else {
+						aControlsRenderedTogetherWithAncestor.push(oControl);
+					}
 				}
 			}
+
+			/**
+			 * Let us suppose that A is the parent of B, and B is the parent of C. The controls A and C are invalidated, but B isn't.
+			 * Controls A and C will be added to the UIArea as invalidated controls. At the next tick, UIArea will be rendered again.
+			 * Thanks to the isRenderedTogetherWithAncestor method above, C.rerender will never be executed but only A.rerender.
+			 *
+			 * In apiVersion 1 or 2:
+			 * During the rendering of A, RM.renderControl(B) renders the control B, and during the rendering of B, RM.renderControl(C)
+			 * renders the control C. At the end of the UIArea re-rendering, there shall be no control remaining in an invalidated state.
+			 *
+			 * In apiVersion 4:
+			 * During the rendering of A when RM.renderControl(B) is called the RenderManager first checks whether control B is
+			 * invalidated. Since it was not invalidated the RenderManager skips the rendering of control B. Consequently, there will be
+			 * no RM.renderControl(C) call to render the control C, and it remains in an invalidated state.
+			 *
+			 * The implementation below re-renders the invalidated controls that are skipped and not rendered with their ancestor.
+			 * The re-rendering here is only required for controls that already have DOM output.
+			 */
+			aControlsRenderedTogetherWithAncestor.forEach(function(oControl) {
+				if (!oControl._bNeedsRendering) {
+					return;
+				}
+				if (oControl.bOutput == true && oControl.getDomRef() ||
+					oControl.bOutput == "invisible" && document.getElementById(RenderManager.createInvisiblePlaceholderId(oControl))) {
+					oControl.rerender();
+				}
+			});
 		}
 
 		// enrich the bookkeeping
