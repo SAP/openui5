@@ -365,7 +365,7 @@ sap.ui.define([
 				}
 			}
 
-			sKey = vItem ? vItem.getKey() : "";
+			sKey = vItem ? vItem.getKey() : this.getMetadata().getProperty("selectedKey").defaultValue;
 			this._setPropertyProtected("selectedKey", sKey);
 		};
 
@@ -1712,7 +1712,7 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.setSelectedKey = function(sKey) {
 			sKey = this.validateProperty("selectedKey", sKey);
-			var bDefaultKey = (sKey === ""),
+			var bDefaultKey = (sKey === this.getMetadata().getProperty("selectedKey").defaultValue),
 				// the correct solution for tackling the coupling of selectedKey and value should be by using debounce
 				// however this makes the API async, which alters the existing behaviour of the control
 				// that's why the solution is implemented with skipModelUpdate property
