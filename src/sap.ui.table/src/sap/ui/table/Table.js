@@ -1579,8 +1579,9 @@ sap.ui.define([
 				var oTableElement = this.getDomRef("header");
 				var iTableWidth = oTableElement.clientWidth;
 				var iColumnsWidth = this.getColumns().reduce(function(iColumnsWidth, oColumn) {
-					if (oColumn.getDomRef() && oColumn.getIndex() >= this.getComputedFixedColumnCount()) {
-						return iColumnsWidth + TableUtils.convertCSSSizeToPixel(oColumn.getWidth());
+					var oDomRef = oColumn.getDomRef();
+					if (oDomRef && oColumn.getIndex() >= this.getComputedFixedColumnCount()) {
+						iColumnsWidth += oDomRef.offsetWidth;
 					}
 					return iColumnsWidth;
 				}.bind(this), 0);
