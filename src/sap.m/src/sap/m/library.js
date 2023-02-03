@@ -3569,6 +3569,18 @@ sap.ui.define([
 		DATETOYEAR : "DATETOYEAR",
 
 		/**
+		 * The range will contain the last X minutes. The count of the minutes is selected from a StepInput.
+		 * @public
+		 */
+		LASTMINUTES : "LASTMINUTES",
+
+		/**
+		 * The range will contain the last X hours. The count of the hours is selected from a StepInput.
+		 * @public
+		 */
+		 LASTHOURS : "LASTHOURS",
+
+		/**
 		 * The range will contain the last X days. The count of the days is selected from a StepInput.
 		 * @public
 		 */
@@ -3597,6 +3609,18 @@ sap.ui.define([
 		 * @public
 		 */
 		LASTYEARS : "LASTYEARS",
+
+		/**
+		 * The range will contain the next X minutes. The count of the minutes is selected from a StepInput.
+		 * @public
+		 */
+		NEXTMINUTES : "NEXTMINUTES",
+
+		/**
+		 * The range will contain the next X hours. The count of the hours is selected from a StepInput.
+		 * @public
+		 */
+		NEXTHOURS : "NEXTHOURS",
 
 		/**
 		 * The range will contain the next X days. The count of the days is selected from a StepInput.

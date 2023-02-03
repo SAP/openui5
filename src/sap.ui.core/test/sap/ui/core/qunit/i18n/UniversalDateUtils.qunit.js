@@ -47,12 +47,42 @@ sap.ui.define([
 
 	QUnit.test("Static Methods Test getRange", function (assert) {
 
-		var oDate = new UniversalDate();
-		oDate.setDate(1);
-		oDate.setMonth(0);
-		oDate.setFullYear(2000);
+		var oDate = new UniversalDate(2000, 0, 1, 0, 0, 0, 0),
+			oUniversalDateUtilsStub = sinon.stub(UniversalDateUtils, "createNewUniversalDate").returns( oDate);
 
-		var oUniversalDateUtilsStub = sinon.stub(UniversalDateUtils, "createNewUniversalDate").returns( oDate);
+		//DateRange MINUTE
+		var aRange = UniversalDateUtils.getRange(3, "MINUTE");
+		testDate(assert, aRange[0].oDate, 1, "MINUTE", 2000, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "MINUTE", 2000, 0, 1, 0,3,0,0);
+
+		var aRange = UniversalDateUtils.getRange(-3, "MINUTE");
+		testDate(assert, aRange[0].oDate, 1, "MINUTE", 1999, 11, 31, 23,57,0,0);
+		testDate(assert, aRange[1].oDate, 1, "MINUTE", 2000, 0, 1, 0,0,0,0);
+
+		var aRange = UniversalDateUtils.getRange(0, "MINUTE");
+		testDate(assert, aRange[0].oDate, 1, "MINUTE", 2000, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "MINUTE", 2000, 0, 1, 0,0,0,0);
+
+		var aRange = UniversalDateUtils.getRange(61, "MINUTE");
+		testDate(assert, aRange[0].oDate, 1, "MINUTE", 2000, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "MINUTE", 2000, 0, 1, 1,1,0,0);
+
+		//DateRange HOUR
+		var aRange = UniversalDateUtils.getRange(3, "HOUR");
+		testDate(assert, aRange[0].oDate, 1, "HOUR", 2000, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "HOUR", 2000, 0, 1, 3,0,0,0);
+
+		var aRange = UniversalDateUtils.getRange(-3, "HOUR");
+		testDate(assert, aRange[0].oDate, 1, "HOUR", 1999, 11, 31, 21,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "HOUR", 2000, 0, 1, 0,0,0,0);
+
+		var aRange = UniversalDateUtils.getRange(0, "HOUR");
+		testDate(assert, aRange[0].oDate, 1, "HOUR", 2000, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "HOUR", 2000, 0, 1, 0,0,0,0);
+
+		var aRange = UniversalDateUtils.getRange(25, "HOUR");
+		testDate(assert, aRange[0].oDate, 1, "HOUR", 2000, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "HOUR", 2000, 0, 2, 1,0,0,0);
 
 		//DateRange DAY
 		var aRange = UniversalDateUtils.getRange(1, "DAY");
@@ -206,11 +236,25 @@ sap.ui.define([
 
 
 		var oDate = new UniversalDate(); // to test determination of interval start
+		oDate.setMilliseconds(0);
+		oDate.setSeconds(0);
+		oDate.setMinutes(0);
+		oDate.setHours(0);
 		oDate.setDate(1);
 		oDate.setMonth(0);
 		oDate.setFullYear(2000);
 
 		var oUniversalDateUtilsStub = sinon.stub(UniversalDateUtils, "createNewUniversalDate").returns( oDate);
+
+		//lastMinutes
+		var aRange = UniversalDateUtils.ranges.lastMinutes(3);
+		testDate(assert, aRange[0].oDate, -3, "MINUTE", 1999, 11, 31, 23,57,0,0);
+		testDate(assert, aRange[1].oDate, -3, "MINUTE", 2000, 0, 1, 0,0,0,0);
+
+		//lastHours
+		var aRange = UniversalDateUtils.ranges.lastHours(3);
+		testDate(assert, aRange[0].oDate, -3, "HOURS", 1999, 11, 31, 21,0,0,0);
+		testDate(assert, aRange[1].oDate, -3, "HOURS", 2000, 0, 1, 0,0,0,0);
 
 		//lastDays
 		var aRange = UniversalDateUtils.ranges.lastDays(3);
@@ -232,10 +276,20 @@ sap.ui.define([
 		testDate(assert, aRange[0].oDate, 1, "DAY", 2000, 0, 2, 0,0,0,0);
 		testDate(assert, aRange[1].oDate, 1, "DAY", 2000, 0, 2, 23,59,59,999);
 
+		//nextMinutes
+		var aRange = UniversalDateUtils.ranges.nextMinutes(3);
+		testDate(assert, aRange[0].oDate, 3, "MINUTE", 2000, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 3, "MINUTE", 2000, 0, 1, 0,3,0,0);
+
+		//nextHours
+		var aRange = UniversalDateUtils.ranges.nextHours(3);
+		testDate(assert, aRange[0].oDate, 3, "HOURS", 2000, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 3, "HOURS", 2000, 0, 1, 3,0,0,0);
+
 		//nextDays
 		aRange = UniversalDateUtils.ranges.nextDays(3);
-		testDate(assert, aRange[0].oDate, -3, "DAY", 2000, 0, 2, 0,0,0,0);
-		testDate(assert, aRange[1].oDate, -3, "DAY", 2000, 0, 4, 23,59,59,999);
+		testDate(assert, aRange[0].oDate, 3, "DAY", 2000, 0, 2, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 3, "DAY", 2000, 0, 4, 23,59,59,999);
 
 
 		//lastWeeks

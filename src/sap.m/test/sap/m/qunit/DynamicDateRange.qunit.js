@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/m/DynamicDateRange",
 	"sap/m/CustomDynamicDateOption",
@@ -189,6 +189,7 @@ sap.ui.define([
 			oSwapDatesSpy = this.spy(oDDR, "_swapDates");
 
 		// act
+		oDDR.placeAt("qunit-fixture");
 		oDDR._handleInputChange(oFakeEvent);
 		// assert
 		assert.ok(oSwapDatesSpy.calledOnce, "Dates are swapped on input change");
@@ -212,7 +213,9 @@ sap.ui.define([
 		this.stub(oDDR, "_getDatesLabel").returns({
 			setText: function() {}
 		});
+		oCore.applyChanges();
 
+		oDDR.open();
 		oDDR._updateDatesLabel();
 		// assert
 		assert.ok(oSwapDatesSpy.calledThrice, "Dates are swapped on for the label");
@@ -596,6 +599,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("today -x/+y creating and validating the option UI", function(assert) {
+		this.ddr.placeAt("qunit-fixture");
+		this.ddr.open();
+
 		var oOptionToday = new StandardDynamicDateOption({ key: "TODAYFROMTO" }),
 			oValidateValueHelpUISpy = this.spy(oOptionToday, "validateValueHelpUI"),
 			oStepInput,
@@ -769,6 +775,7 @@ sap.ui.define([
 
 		// act
 		this.ddr.setValue({ operator: "LASTDAYS", values:[1] });
+		oCore.applyChanges();
 
 		// assert
 		assert.deepEqual(this.ddr.getValue(), { operator: "YESTERDAY", values: [] }, "the value is correctly substituted");
@@ -818,6 +825,58 @@ sap.ui.define([
 		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00 AM", "correct start date");
 		assert.equal(oDateFormatter.format(aResultRange[1]), "Sep 23, 2021, 11:59:59 PM", "correct end date");
 	});
+
+	QUnit.test("DynamicDateRange - Last/Next options", function(assert) {
+		var oCurrentDate = new Date('2023-01-08T00:13:37'),
+		oClock = sinon.useFakeTimers(oCurrentDate.getTime());
+
+		oCore.applyChanges();
+		var oDDR = oCore.byId("__range8");
+		var oLastMinutesOption;
+		var oNextMinutesOption;
+		var sLabelText;
+		var oPages;
+
+		oDDR.addOption("NEXTHOURS");
+		oDDR.addOption("LASTHOURS");
+		oLastMinutesOption = oCore.byId('__range8-option-LASTMINUTES');
+		oNextMinutesOption = oCore.byId('__range8-option-NEXTMINUTES');
+
+		oLastMinutesOption.firePress();
+		oPages = oDDR._oNavContainer.getPages()[1];
+		sLabelText = oPages
+			.getAggregation('footer')
+			.getAggregation('content')[0]
+			.getText();
+
+		//Check the label.
+		assert.strictEqual(sLabelText, "Selected: Jan 8, 2023, 12:12:37 AM – Jan 8, 2023, 12:13:37 AM", "correct label for last minute");
+
+		oNextMinutesOption.firePress();
+		sLabelText = oPages
+			.getAggregation('footer')
+			.getAggregation('content')[0]
+			.getText();
+
+		//Check the label.
+		assert.strictEqual(sLabelText, "Selected: Jan 8, 2023, 12:13:37 AM – Jan 8, 2023, 12:14:37 AM", "correct label for next minute");
+
+		//act
+		oDDR.setValue({ operator: "LASTHOURS", values:[1] });
+		oLastMinutesOption = oCore.byId('__range8-option-LASTMINUTES');
+		oLastMinutesOption.firePress();
+
+		sLabelText = oDDR._oNavContainer.getPages()[1]
+			.getAggregation('footer')
+			.getAggregation('content')[0]
+			.getText();
+
+		//Check the label.
+		assert.strictEqual(sLabelText, "Selected: Jan 7, 2023, 11:13:37 PM – Jan 8, 2023, 12:13:37 AM", "correct label for last hour");
+
+		oClock.restore();
+	});
+
 
 	QUnit.test("toDates - DATE", function(assert) {
 		// arrange
@@ -1017,6 +1076,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("DateTimeRange text", function(assert) {
+		this.ddr.open();
+
 		var oDateTimeOption = DynamicDateUtil.getOption("DATETIMERANGE"),
 			sText = oDateTimeOption.getText(this.ddr),
 			sOptionText = oRb.getText("DYNAMIC_DATE_DATETIMERANGE_TITLE");

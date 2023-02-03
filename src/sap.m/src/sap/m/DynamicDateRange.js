@@ -37,7 +37,8 @@ sap.ui.define([
 	'./library',
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/Configuration',
-	'sap/ui/unified/calendar/CalendarUtils'
+	'sap/ui/unified/calendar/CalendarUtils',
+	"sap/ui/core/CustomData"
 ], function(
 		InvisibleText,
 		Element,
@@ -72,7 +73,8 @@ sap.ui.define([
 		library,
 		jQuery,
 		Configuration,
-		CalendarUtils
+		CalendarUtils,
+		CustomData
 	) {
 		"use strict";
 
@@ -249,11 +251,15 @@ sap.ui.define([
 							"TODATETIME",
 							"YEARTODATE",
 							"DATETOYEAR",
+							"LASTMINUTES",
+							"LASTHOURS",
 							"LASTDAYS",
 							"LASTWEEKS",
 							"LASTMONTHS",
 							"LASTQUARTERS",
 							"LASTYEARS",
+							"NEXTMINUTES",
+							"NEXTHOURS",
 							"NEXTDAYS",
 							"NEXTWEEKS",
 							"NEXTMONTHS",
@@ -344,6 +350,16 @@ sap.ui.define([
 		});
 
 		MessageMixin.call(DynamicDateRange.prototype);
+
+		var aDateTimeOperators = [
+			"LASTHOURS",
+			"LASTMINUTES",
+			"NEXTHOURS",
+			"NEXTMINUTES"
+		];
+
+		var aLastOptions = ["LASTMINUTES", "LASTHOURS", "LASTDAYS", "LASTWEEKS", "LASTMONTHS", "LASTQUARTERS", "LASTYEARS"];
+		var aNextOptions = ["NEXTMINUTES", "NEXTHOURS", "NEXTDAYS", "NEXTWEEKS", "NEXTMONTHS", "NEXTQUARTERS", "NEXTYEARS"];
 
 		DynamicDateRange.prototype.init = function() {
 			this._oInput = new DynamicDateRangeInput(this.getId() + "-input", {
@@ -620,25 +636,85 @@ sap.ui.define([
 			});
 		};
 
-		DynamicDateRange.prototype._getDatesLabelFormatter = function() {
-			var oFormatOptions,
-				aValueHelpTypes = this._oSelectedOption ? this._oSelectedOption.getValueHelpUITypes() : [],
+		DynamicDateRange.prototype._getValueHelpTypeForFormatter = function() {
+			var	sOptionKey = this._oSelectedOption ? this._oSelectedOption.getKey() : '',
+				aLastOptionsSelectedIndex = aLastOptions.indexOf(sOptionKey),
+				aNextOptionsSelectedIndex = aNextOptions.indexOf(sOptionKey),
+				aPopupContent = this._oNavContainer ? this._oNavContainer.getPages()[1].getContent()[3] || [] : [],
+				aButtons = aPopupContent.getButtons ? aPopupContent.getButtons() : [],
+				aSuggestionItems = this.getAggregation('_input').getAggregation('suggestionItems'),
+				oValue = this.getValue(),
+				oCustomData,
+				aPopupContent,
+				aButtons,
+				aValueHelpTypes,
+				sType,
+				iButtonSelectedIndex,
+				sRealOptionKey,
+				sSuggestionOptionKey;
+
+			if (
+				!oValue &&
+				(!aButtons[0] || !aButtons[0].getDomRef()) &&
+				aSuggestionItems && aSuggestionItems.length &&
+				aSuggestionItems[aSuggestionItems.length - 1].getCustomData
+			) {
+				oCustomData = aSuggestionItems[aSuggestionItems.length - 1].getCustomData()[0];
+			}
+
+			if (oCustomData) {
+				sSuggestionOptionKey = oCustomData.getValue();
+				aLastOptionsSelectedIndex = aDateTimeOperators.indexOf(sSuggestionOptionKey);
+				aNextOptionsSelectedIndex = aDateTimeOperators.indexOf(sSuggestionOptionKey);
+			}
+
+			if (oCustomData && sSuggestionOptionKey) {
+				if (aDateTimeOperators.indexOf(sSuggestionOptionKey) > -1) {
+					sType = 'datetime';
+					return sType;
+				}
+			}
+
+			//if option requires extra formatting.
+			if (this._oNavContainer && aButtons.length && (aLastOptionsSelectedIndex > -1 || aNextOptionsSelectedIndex > -1)) {
+				iButtonSelectedIndex = aButtons[0].getParent().getSelectedIndex();
+				if (aLastOptionsSelectedIndex > -1) {
+					sRealOptionKey = aLastOptions[iButtonSelectedIndex];
+				} else if (aNextOptionsSelectedIndex > -1) {
+					sRealOptionKey = aNextOptions[iButtonSelectedIndex];
+				}
+				aValueHelpTypes = this._oSelectedOption ? this._oSelectedOption.getValueHelpUITypes() : [];
 				sType = aValueHelpTypes && aValueHelpTypes.length ? aValueHelpTypes[0].getType() : "";
 
-			if (!this._oDatesLabelFormatter) {
-				switch (sType) {
-					case "datetime":
-						oFormatOptions = Object.create(this._getFormatter()._dateTimeFormatter.oFormatOptions);
-						oFormatOptions.singleIntervalValue = true;
-						oFormatOptions.interval = true;
-						this._oDatesLabelFormatter = DateFormat.getDateTimeInstance(oFormatOptions);
-						break;
-					default:
-						oFormatOptions = Object.create(this._getFormatter()._dateFormatter.oFormatOptions);
-						oFormatOptions.singleIntervalValue = true;
-						oFormatOptions.interval = true;
-						this._oDatesLabelFormatter = DateFormat.getInstance(oFormatOptions);
+				if (aDateTimeOperators.indexOf(sRealOptionKey) > -1) {
+					sType = 'datetime';
 				}
+
+				return sType;
+			}
+
+			aValueHelpTypes = this._oSelectedOption ? this._oSelectedOption.getValueHelpUITypes() : [];
+
+			return aValueHelpTypes && aValueHelpTypes.length ? aValueHelpTypes[0].getType() : "";
+		};
+
+		DynamicDateRange.prototype._getDatesLabelFormatter = function() {
+			var oFormatOptions,
+				sType = this._getValueHelpTypeForFormatter();
+
+			switch (sType) {
+				case "datetime":
+					oFormatOptions = Object.create(this._getFormatter()._dateTimeFormatter.oFormatOptions);
+					oFormatOptions.singleIntervalValue = true;
+					oFormatOptions.interval = true;
+					this._oDatesLabelFormatter = DateFormat.getDateTimeInstance(oFormatOptions);
+
+					break;
+				default:
+					oFormatOptions = Object.create(this._getFormatter()._dateFormatter.oFormatOptions);
+					oFormatOptions.singleIntervalValue = true;
+					oFormatOptions.interval = true;
+					this._oDatesLabelFormatter = DateFormat.getInstance(oFormatOptions);
 			}
 
 			return this._oDatesLabelFormatter;
@@ -671,10 +747,19 @@ sap.ui.define([
 
 			var oItem = new ListItem({
 				text: DynamicDateUtil.getOption(oSuggestValue.operator).format(oSuggestValue, this._getFormatter()),
-				additionalText: this._getDatesLabelFormatter().format(aResultingDates)
+				additionalText: '',
+				customData: [
+					new CustomData({
+						key : "operator",
+						value: oSuggestValue.operator
+					})
+				]
 			});
 
 			this._oInput.addSuggestionItem(oItem);
+
+			// Called after addSuggestionItem because the suggested items are needed in _getDatesLabelFormatter.
+			oItem.setAdditionalText(this._getDatesLabelFormatter().format(aResultingDates));
 		};
 
 		/**
@@ -767,7 +852,6 @@ sap.ui.define([
 			for (var i = 0; i < aValueDates.length; i++) {
 				aDates[i] = this._convertDate(aValueDates[i], bTimezone);
 			}
-
 			return this._getDatesLabelFormatter().format(aDates);
 		};
 
@@ -801,7 +885,6 @@ sap.ui.define([
 			if (!this._calendarParser) {
 				this._calendarParser = DateFormat.getDateTimeWithTimezoneInstance({ showTimezone: false });
 			}
-
 			return this._calendarParser;
 		};
 
@@ -1019,7 +1102,8 @@ sap.ui.define([
 			var oOutputValue = this._oSelectedOption.getValueHelpOutput(this),
 				bTimezone = this._checkFormatterUTCTimezone(oOutputValue),
 				aResultDates = [],
-				sFormattedDates;
+				sFormattedDates,
+				sSelectedOptionKey;
 
 			var aValueDates = DynamicDateUtil.toDates(oOutputValue, this.getCalendarWeekNumbering());
 
@@ -1036,8 +1120,13 @@ sap.ui.define([
 			}
 
 			if (aResultDates) {
-				if (this._oSelectedOption.getKey() === "FROMDATETIME" || this._oSelectedOption.getKey() === "TODATETIME"
-					|| this._oSelectedOption.getKey() === "FROM" || this._oSelectedOption.getKey() === "TO") {
+				sSelectedOptionKey = this._oSelectedOption.getKey();
+				if (
+					sSelectedOptionKey === "FROMDATETIME" ||
+					sSelectedOptionKey === "TODATETIME" ||
+					sSelectedOptionKey === "FROM" ||
+					sSelectedOptionKey === "TO"
+				) {
 					aResultDates.push(null);
 				}
 				sFormattedDates = this._getDatesLabelFormatter().format(aResultDates, true);
@@ -1141,6 +1230,31 @@ sap.ui.define([
 		};
 
 		/**
+		 * Function which determines which DDR option should be focused. Also considers hidden options.
+		 * @param {object} oValue The DynamicDateRange value.
+		 */
+		DynamicDateRange.prototype._determineOptionFocus = function (oValue) {
+				var aOptions = this._oOptionsList.getItems(),
+				oOption = aOptions.filter(
+					function (oItem) { return oItem.getOptionKey && oItem.getOptionKey() === oValue.operator; }
+				)[0];
+
+			if (!oOption) {
+				if (aLastOptions.indexOf(oValue.operator) > -1) {
+					oOption = aOptions.filter(
+						function (oItem) { return oItem.getOptionKey && oItem.getOptionKey() === aLastOptions[0];}
+					)[0];
+				} else if (aNextOptions.indexOf(oValue.operator) > -1) {
+					oOption = aOptions.filter(
+						function (oItem) { return oItem.getOptionKey && oItem.getOptionKey() === aNextOptions[0];}
+					)[0];
+				}
+			}
+
+			return oOption;
+		};
+
+		/**
 		 * Applies focus to the navigated page.
 		 *
 		 * @param {sap.m.Page} oToPage the page receiving focus.
@@ -1152,30 +1266,24 @@ sap.ui.define([
 				oElementToFocus;
 
 			if (oToPage === oOptionsListPage && oValue) {
-				oElementToFocus = this._oOptionsList.getItems().find(function(oListItem) {
-					if (oListItem.isA("sap.m.DynamicDateRangeListItem")) {
-						var sValueOperator = oValue.operator;
-						var aLastXOperators = ["LASTDAYS", "LASTWEEKS", "LASTMONTHS", "LASTQUARTERS", "LASTYEARS"];
-						var aNextXOperators = ["NEXTDAYS", "NEXTWEEKS", "NEXTMONTHS", "NEXTQUARTERS", "NEXTYEARS"];
+				oElementToFocus = this._determineOptionFocus(oValue) || oElementToFocus;
+			}
 
-						if (aLastXOperators.indexOf(sValueOperator) > -1) {
-							sValueOperator = "LASTDAYS";
-						} else if (aNextXOperators.indexOf(sValueOperator) > -1) {
-							sValueOperator = "NEXTDAYS";
-						}
-					}
-
-					return oListItem.isA("sap.m.DynamicDateRangeListItem") &&
-						(oListItem.getOptionKey() === sValueOperator);
-				});
+			if (!oToPage.getDomRef()) {
+				return;
 			}
 
 			if (!oElementToFocus) {
 				oElementToFocus = jQuery(oToPage.getDomRef().querySelector("section")).firstFocusableDomRef();
 			}
 
-			oElementToFocus.focus();
-			oElementToFocus && oElementToFocus.setSelected && oElementToFocus.setSelected(true);
+			if (oValue && oValue.operator !== "PARSEERROR" && oElementToFocus) {
+				oElementToFocus.setSelected && oElementToFocus.setSelected(true);
+			}
+
+			if (oElementToFocus) {
+				oElementToFocus.focus();
+			}
 
 			this._reApplyFocusToElement(oToPage, oValue);
 		};
