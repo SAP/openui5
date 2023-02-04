@@ -32,7 +32,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @param {sap.ui.test.generic.ClassInfo} oClassInfo Info object containing the <code>sap.ui.test.generic.ClassInfo</code> object
-		 * @param {QUnit.assert} assert QUnit Assert class of which instances are passed as the argument to QUnit.test() callbacks
+		 * @param {QUnit.Assert} assert QUnit Assert class of which instances are passed as the argument to QUnit.test() callbacks
 		 * @return {boolean} Returns 'true' if control should not be tested
 		 *
 		 */
@@ -45,7 +45,7 @@ sap.ui.define([
 		 * Must be implemented by sub-classes.
 		 *
 		 * @param {sap.ui.test.generic.ClassInfo} oClassInfo Info object containing the <code>sap.ui.test.generic.ClassInfo</code> object
-		 * @param {QUnit.assert} assert QUnit Assert class of which instances are passed as the argument to QUnit.test() callbacks
+		 * @param {QUnit.Assert} assert QUnit Assert class of which instances are passed as the argument to QUnit.test() callbacks
 		 * @private
 		 * @abstract
 		 */
