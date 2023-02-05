@@ -3,26 +3,19 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/deepExtend",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/mvc/JSView",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/routing/HashChanger",
-	"sap/ui/core/routing/RouterHashChanger",
 	"sap/ui/core/routing/Router",
 	"sap/ui/core/routing/Views",
-	"sap/ui/model/json/JSONModel",
 	"sap/m/App",
-	"sap/m/Button",
 	"sap/m/NavContainer",
 	"sap/m/Panel",
-	"sap/m/SplitContainer",
 	"./AsyncViewModuleHook",
 	"sap/ui/base/EventProvider",
 	"sap/ui/core/Component",
-	"sap/ui/core/ComponentContainer",
-	"sap/m/VBox"
-], function (Log, deepExtend, UIComponent, Controller, JSView, View, ViewType, HashChanger, RouterHashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider, Component, ComponentContainer, VBox) {
+	"sap/ui/core/ComponentContainer"
+], function (Log, deepExtend, UIComponent, View, ViewType, HashChanger, Router, Views, App, NavContainer, Panel, ModuleHook, EventProvider, Component, ComponentContainer) {
 	"use strict";
 
 	// This global namespace is used for creating custom component classes.
@@ -1496,8 +1489,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.module("View events");
-
 	function createXmlView () {
 		var sXmlViewContent = [
 			'<View xmlns="sap.ui.core.mvc">',
@@ -1512,6 +1503,9 @@ sap.ui.define([
 		return View.create(oViewOptions);
 	}
 
+	/**
+	 * @deprecated As of version 1.28
+	 */
 	QUnit.module("views - creation and caching", {
 		beforeEach: function () {
 			// System under test + Arrange
@@ -1555,8 +1549,10 @@ sap.ui.define([
 		assert.strictEqual(this.fnLegayCreateViewStub.callCount, 0, "the stub not invoked - view was loaded from the cache");
 	});
 
-
-	QUnit.module("events", {
+	/**
+	 * @deprecated As of version 1.28
+	 */
+	QUnit.module("View events", {
 		beforeEach: function () {
 			// System under test + Arrange
 			this.oRouter = fnCreateRouter();
@@ -1915,6 +1911,9 @@ sap.ui.define([
 			}.bind(this));
 	});
 
+	/**
+	 * @deprecated As of version 1.28
+	 */
 	QUnit.module("component", {
 		beforeEach: function () {
 			return createXmlView().then(function (oView) {
@@ -2441,6 +2440,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.56
+	 */
 	QUnit.module("Special Asynchronity Combination Among Component, Root View", {
 		beforeEach: function() {
 			hasher.setHash("");
@@ -3125,6 +3127,9 @@ sap.ui.define([
 
 	QUnit.module("Router in nested component (edge cases)");
 
+	/**
+	 * @deprecated As of version 1.90
+	 */
 	QUnit.test("Should throw an error if a nested component has configured synchronous routing", function(assert){
 		return Component.create({
 			name: "qunit.router.component.nestedComponentSync.Parent",
