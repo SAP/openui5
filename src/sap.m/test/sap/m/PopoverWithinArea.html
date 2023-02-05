@@ -163,24 +163,13 @@
 			right: auto;
 		}
 
-		.positioned14 {
-			position: absolute !important;
-			top: 450px;
-			right: 10px;
-		}
-
-		html[dir="rtl"] .positioned14 {
-			left: 10px;
-			right: auto;
-		}
-
 		.positioned15 {
 			position: absolute !important;
 			top: 500px;
 			right: 10px;
 		}
 
-		html[dir="rtl"] .positioned14 {
+		html[dir="rtl"] .positioned15 {
 			left: 10px;
 			right: auto;
 		}
@@ -500,43 +489,6 @@
 
 		bindListData(data, oItemTemplate1, oList3);
 
-		var oPopover11 = new sap.m.Popover("popover11", {
-			placement: sap.m.PlacementType.Left,
-			title: "Popover11",
-			showHeader: true,
-			subHeader: new sap.m.Bar({
-				contentMiddle: [
-					new sap.m.SearchField({
-						placeholder: "Search ...",
-						width: "100%"
-					})
-				]
-			}),
-			content: [
-				oList3
-			],
-			footer:
-			new sap.m.Bar({
-				contentLeft: [new sap.m.Button("btn-set-width-700", {
-					text: "Set width to 700px",
-					press: function () {
-						oList3.setWidth("700px");
-					}
-				})],
-				contentRight: [new sap.m.Button("btn-set-width-1024", {
-					text: "Set width to 1024px",
-					press: function () {
-						oList3.setWidth("1024px");
-					}
-				})]
-			})
-		});
-
-		oPopover11.addStyleClass("sapUiResponsivePadding--header");
-		oPopover11.addStyleClass("sapUiResponsivePadding--subHeader");
-		oPopover11.addStyleClass("sapUiResponsivePadding--content");
-		oPopover11.addStyleClass("sapUiResponsivePadding--footer");
-
 		var oPopover12 = new sap.m.Popover("popover12", {
 			placement: sap.m.PlacementType.Left,
 			showHeader: false,
@@ -546,15 +498,6 @@
 				new sap.m.CheckBox("popover12CheckBox3",{text:"test3"})
 			]
 		});
-
-		var oButton14 = new sap.m.Button("btn11", {
-			text: "Popover with Responsive paddings",
-			press: function () {
-				oPopover11.openBy(this);
-			}
-		});
-
-		oButton14.addStyleClass("positioned14");
 
 		var oButton15 = new sap.m.Button("btn15", {
 			text: "Popover with checkboxes",
@@ -739,7 +682,7 @@
 				oCustomCssButton,
 			],
 			content: [
-				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox, oButton14, oButton15, oButton16
+				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox, oButton15, oButton16
 			]
 		});
 
