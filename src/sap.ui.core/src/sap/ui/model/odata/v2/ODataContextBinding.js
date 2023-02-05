@@ -192,6 +192,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
 	 * @param {string} [sGroupId] The group Id for the refresh
+	 * @ui5-omissible-params bForceUpdate
 	 *
 	 * @public
 	 */
