@@ -40,6 +40,7 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
+	 * @ui5-omissible-params oFormatOptions
 	 * @return {sap.ui.core.format.ListFormat} Instance of the ListFormat
 	 * @public
 	 *

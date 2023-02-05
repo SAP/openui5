@@ -234,6 +234,7 @@ sap.ui.define([
 			 *   index of part in case of the root formatter of a composite binding
 			 * @param {string} [sPath]
 			 *   a path, interpreted relative to <code>this.getPath(iPart)</code>
+			 * @ui5-omissible-params iPart
 			 * @returns {sap.ui.core.util.XMLPreprocessor.IContext}
 			 *   the context interface related to the indicated part
 			 * @throws {Error}

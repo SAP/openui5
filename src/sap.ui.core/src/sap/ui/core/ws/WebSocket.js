@@ -486,6 +486,7 @@ sap.ui.define([
 	 * @param {int} [iCode=1000] Status code that explains why the connection is closed. Must either be 1000, or
 	 *                      between 3000 and 4999
 	 * @param {string} [sReason] Closing reason as a string
+	 * @ui5-omissible-params iCode
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */

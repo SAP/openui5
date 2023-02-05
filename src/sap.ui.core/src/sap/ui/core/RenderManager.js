@@ -1730,6 +1730,7 @@ sap.ui.define([
 	 *            [oElement] The <code>Element</code> whose accessibility state should be rendered
 	 * @param {object}
 	 *            [mProps] A map of additional properties that should be added or changed.
+	 * @ui5-omissible-params oElement
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
