@@ -69,6 +69,18 @@ sap.ui.define([
 		assert.equal(oLocale.hasPrivateUseSubtag("ufmt"), false, "parts of PrivateUse subtag must not be detected");
 	});
 
+	QUnit.test("_getSAPLogonLanguage", function(assert) {
+		aLocales.forEach(function(aLocaleData) {
+			var oLocale = new Locale(aLocaleData[0]);
+			assert.equal(oLocale._getSAPLogonLanguage(), aLocaleData[7],
+				"locale '" + aLocaleData[0] + "'"
+				+ " should return the SAP logon language '" + aLocaleData[7] + "'");
+		});
+	});
+
+	/**
+	 * @deprecated As of 1.44
+	 */
 	QUnit.test("getSAPLogonLanguage", function(assert) {
 		aLocales.forEach(function(aLocaleData) {
 			var oLocale = new Locale(aLocaleData[0]);
@@ -96,6 +108,15 @@ sap.ui.define([
 		assert.equal(Locale.fromSAPLogonLanguage("XX").toString(), "xx");
 	});
 
+	QUnit.test("fromSAPLogonLanguage reverse _getSAPLogonLanguage", function(assert) {
+		["ZH", "ZF", "SH", "6N", "1P", "1X", "3F", "1Q", "2Q", "3Q"].forEach(function(sSAPLanguage) {
+			assert.equal(Locale.fromSAPLogonLanguage(sSAPLanguage)._getSAPLogonLanguage(), sSAPLanguage);
+		});
+	});
+
+	/**
+	 * @deprecated As of 1.44
+	 */
 	QUnit.test("fromSAPLogonLanguage reverse getSAPLogonLanguage", function(assert) {
 		["ZH", "ZF", "SH", "6N", "1P", "1X", "3F", "1Q", "2Q", "3Q"].forEach(function(sSAPLanguage) {
 			assert.equal(Locale.fromSAPLogonLanguage(sSAPLanguage).getSAPLogonLanguage(), sSAPLanguage);
