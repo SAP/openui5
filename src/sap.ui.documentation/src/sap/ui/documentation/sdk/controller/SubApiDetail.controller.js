@@ -40,6 +40,10 @@ sap.ui.define([
 				"fields": "properties",
 				"special settings": "specialsettings"
 			},
+			EXTERNAL_BASE_TYPES: [
+				"Date",
+				"Object"
+			],
 			formatter: formatter,
 
 			onInit: function () {
@@ -452,15 +456,20 @@ sap.ui.define([
 							}, true);
 						},
 						_getExtendsBlock: function (oControlData, oEntityData) {
+							// whether the base class can be linked to
+							var bExtendsAPIEntity =
+								oControlData.isDerived
+								&& !this.EXTERNAL_BASE_TYPES.includes(oControlData.extendsText);
+
 							return _getHBox({
 								items: [
 									_getLabel({text: "Extends:"}),
 									_getLink({
 										text: oControlData.extendsText,
 										href: "api/" + oControlData.extendsText,
-										visible: oControlData.isDerived
+										visible: bExtendsAPIEntity
 									}),
-									_getText({text: oControlData.extendsText, visible: !oControlData.isDerived})
+									_getText({text: oControlData.extendsText, visible: !bExtendsAPIEntity})
 								]
 							}, true);
 						},
