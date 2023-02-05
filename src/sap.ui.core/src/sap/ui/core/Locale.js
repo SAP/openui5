@@ -82,7 +82,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			 * Note that the case might differ from the original script tag
 			 * (Lower case is enforced as recommended by BCP47/ISO639).
 			 *
-			 * @return {string} the language code
+			 * @returns {string} the language code
 			 * @public
 			 */
 			getLanguage : function() {
@@ -109,7 +109,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			 * Note that the case might differ from the original script tag
 			 * (Upper case is enforced as recommended by BCP47/ISO3166-1).
 			 *
-			 * @return {string} the ISO3166-1 region code (2-letter or 3-digits)
+			 * @returns {string} the ISO3166-1 region code (2-letter or 3-digits)
 			 * @public
 			 */
 			getRegion : function() {
@@ -121,7 +121,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			 *
 			 * Multiple variants are separated by a dash '-'.
 			 *
-			 * @return {string|null} the variant or <code>null</code>
+			 * @returns {string|null} the variant or <code>null</code>
 			 * @public
 			 */
 			getVariant : function() {
@@ -134,7 +134,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			 * The separating dashes are not part of the result.
 			 * If there is no variant section in the locale tag, an empty array is returned.
 			 *
-			 * @return {string[]} the individual variant sections
+			 * @returns {string[]} the individual variant sections
 			 * @public
 			 */
 			getVariantSubtags : function() {
@@ -150,7 +150,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			 *
 			 * Use {@link #getExtensions} to get the individual extension tokens as an array.
 			 *
-			 * @return {string|null} the extension or <code>null</code>
+			 * @returns {string|null} the extension or <code>null</code>
 			 * @public
 			 */
 			getExtension : function() {
@@ -163,7 +163,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			 * The leading singleton and the separating dashes are not part of the result.
 			 * If there is no extensions section in the locale tag, an empty array is returned.
 			 *
-			 * @return {string[]} the individual extension sections
+			 * @returns {string[]} the individual extension sections
 			 * @public
 			 */
 			getExtensionSubtags : function() {
@@ -173,7 +173,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			/**
 			 * Get the locale private use section or <code>null</code>.
 			 *
-			 * @return {string} the private use section
+			 * @returns {string} the private use section
 			 * @public
 			 */
 			getPrivateUse : function() {
@@ -186,7 +186,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			 * The leading singleton and the separating dashes are not part of the result.
 			 * If there is no private use section in the locale tag, an empty array is returned.
 			 *
-			 * @return {string[]} the tokens of the private use section
+			 * @returns {string[]} the tokens of the private use section
 			 * @public
 			 */
 			getPrivateUseSubtags : function() {
@@ -260,7 +260,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			 * supported by the default set of SAP languages. This method has no knowledge
 			 * about the concrete languages of any given backend system.
 			 *
-			 * @return {string} a language code that should
+			 * @returns {string} a language code that should
 			 * @public
 			 * @since 1.17.0
 			 * @deprecated As of 1.44, use {@link sap.ui.core.Configuration#getSAPLogonLanguage} instead
@@ -269,6 +269,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			getSAPLogonLanguage : function() {
 				return this._getSAPLogonLanguage();
 			},
+
 			/**
 			 * Best guess to get a proper SAP Logon Language for this locale.
 			 *
@@ -286,7 +287,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/base/assert', './CalendarType'],
 			 * supported by the default set of SAP languages. This method has no knowledge
 			 * about the concrete languages of any given backend system.
 			 *
-			 * @return {string} a language code that should
+			 * @returns {string} a language code that should
 			 * @private
 			 * @ui5-restricted sap.ui.core.Configuration
 			 **/
