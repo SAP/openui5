@@ -21,7 +21,7 @@
 			type="ResponsiveTable"
 			header="Books"
 			showRowCount="false"
-			delegate="{ name: 'sap/ui/mdc/sample/Table/Books.Table.delegate', payload: {collectionName: 'Books'}}"
+			delegate='\{ "name": "sap/ui/mdc/sample/Table/Books.Table.delegate", "payload": \{"collectionName": "Books"\}\}'
 			p13nMode="Column,Sort,Filter"
 			selectionMode="Multi"
 			height="100%"

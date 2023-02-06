@@ -33,21 +33,21 @@
 								<mdc:Field id="IDField_N" value="{Name}" editMode="Display">
 									<mdc:fieldInfo>
 										<mdc:Link
-											delegate='{ name: "appUnderTest/FlpTestDelegate", payload: { semanticObjects: ["appUnderTest_SemanticObjectName"], mainSemanticObject: "appUnderTest_SemanticObjectName" } }'>
+											delegate='\{ "name": "appUnderTest/FlpTestDelegate", "payload": \{ "semanticObjects": ["appUnderTest_SemanticObjectName"], "mainSemanticObject": "appUnderTest_SemanticObjectName" \} \}'>
 										</mdc:Link>
 									</mdc:fieldInfo>
 								</mdc:Field>
 								<mdc:Field id="IDField_P" value="{ProductId}" editMode="Display">
 									<mdc:fieldInfo>
 										<mdc:Link
-											delegate='{ name: "appUnderTest/TestDelegate" }'>
+											delegate='\{ "name": "appUnderTest/TestDelegate" \}'>
 										</mdc:Link>
 									</mdc:fieldInfo>
 								</mdc:Field>
 								<mdc:Field id="IDField_C" value="{Category}" editMode="Display">
 									<mdc:fieldInfo>
 										<mdc:Link
-											delegate='{ name: "sap/ui/mdc/flp/FlpLinkDelegate", payload: { semanticObjects: ["appUnderTest_SemanticObjectCategory"], mainSemanticObject: "appUnderTest_SemanticObjectCategory" } }'>
+											delegate='\{ "name": "sap/ui/mdc/flp/FlpLinkDelegate", "payload": \{ "semanticObjects": ["appUnderTest_SemanticObjectCategory"], "mainSemanticObject": "appUnderTest_SemanticObjectCategory" \} \}'>
 										</mdc:Link>
 									</mdc:fieldInfo>
 								</mdc:Field>

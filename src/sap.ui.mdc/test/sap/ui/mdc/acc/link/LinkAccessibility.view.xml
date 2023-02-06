@@ -9,7 +9,7 @@
 						<mdc:fieldInfo>
 							<mdc:Link 
 								sourceControl="IDField_MNACI"
-								delegate='{ name: "sap/ui/mdc/acc/link/LinkDelegate", payload: {} }'/>
+								delegate='\{ "name": "sap/ui/mdc/acc/link/LinkDelegate", "payload": \{\} \}'/>
 						</mdc:fieldInfo>
 					</mdc:Field>
 				</l:content>

@@ -86,18 +86,18 @@
 				<c:Title text="different types"></c:Title>
 
 				<m:Label text="type date"></m:Label>
-				<mdc:Field id="F8" value="{path:'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}, constraints: {displayFormat: 'Date'}, targetType: 'string'}" dataType="Edm.DateTime" dataTypeFormatOptions="{style: 'short'}" dataTypeConstraints="{displayFormat: 'Date'}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F8" value="{path:'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}, constraints: {displayFormat: 'Date'}, targetType: 'string'}" dataType="Edm.DateTime" dataTypeFormatOptions='\{"style": "short"\}' dataTypeConstraints='\{"displayFormat": "Date"\}' change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
 				<m:Text id="T1" text="{path:'Date', type:'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}" />
 
 				<m:Label text="type date in display mode"></m:Label>
-				<mdc:Field id="F9" value="{Date}" dataType="Edm.DateTime" dataTypeFormatOptions="{style: 'short'}" dataTypeConstraints="{displayFormat: 'Date'}" editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F9" value="{Date}" dataType="Edm.DateTime" dataTypeFormatOptions='\{"style": "short"\}' dataTypeConstraints='\{"displayFormat": "Date"\}' editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>
 
 				<m:Label text="type dateTime"></m:Label>
-				<mdc:Field id="F10" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions="{style: 'short'}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F10" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions='\{"style": "short"\}' change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
 				<mdc:Field id="F10a" value="{path: 'DateTime', type:'sap.ui.model.type.DateTime', targetType: 'string'}" dataType="sap.ui.model.type.DateTime" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
 
 				<m:Label text="type dateTime in display mode"></m:Label>
-				<mdc:Field id="F13" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions="{style: 'short'}" editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F13" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions='\{"style": "short"\}' editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>
 
 				<m:Label text="dateTime with timezone"/>
 				<mdc:Field id="F25" value="{parts: [{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}, {path: 'TimeZone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone', formatOptions: {showDate: true, showTime: true, showTimezone: true, style: 'short'}}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
@@ -106,10 +106,10 @@
 				<mdc:Field id="F26" value="{parts: [{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}, {path: 'TimeZone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone', formatOptions: {showDate: true, showTime: true, showTimezone: true, style: 'medium'}}" editMode="Display" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
 
 				<m:Label text="type Time"></m:Label>
-				<mdc:Field id="F14" value="{path:'Time', type:'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}, targetType: 'string'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F14" value="{path:'Time', type:'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}, targetType: 'string'}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
 
 				<m:Label text="type Time in display mode"></m:Label>
-				<mdc:Field id="F15" value="{path:'Time', type:'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}, targetType: 'string'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}" editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F15" value="{path:'Time', type:'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}, targetType: 'string'}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>
 <!--
 				<m:Label text="Link"></m:Label>
 				<mdc:Field id="F16" value="SAP" additionalValue="http://www.sap.com" dataType="Link" editMode="Display" press="handlePress"></mdc:Field>
@@ -152,7 +152,7 @@
 				singleContainerFullSize="false" adjustLabelSpan="false">
 				<form:dependents>
 					<mdc:ValueHelp id="VH-IO1"
-						delegate="{name: 'sap/ui/mdc/sample/field/ValueHelp.delegate', payload: {out: [{path: 'defaultUnit', target: 'MatrUnit', mode: 'WhenEmpty'}]}}">
+						delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"out": [\{"path": "defaultUnit", "target": "MatrUnit", "mode": "WhenEmpty"\}]\}\}'>
 						<mdc:typeahead>
 							<mdcValueHelp:Popover id="VH-IO1-Pop">
 								<mdcValueHelpContent:MTable id="VH-IO1-Pop-MTable"
@@ -224,7 +224,7 @@
 				<m:Label text="Empty ValueHelp"/>
 				<mdc:Field id="F6-1" value="{SupplierName}" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="F6-1-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-1-H" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}"></mdc:ValueHelp>
+						<mdc:ValueHelp id="F6-1-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'></mdc:ValueHelp>
 					</mdc:dependents>
 				</mdc:Field>
 
@@ -258,7 +258,7 @@
 				<m:Label text="using FixedList"/>
 				<mdc:Field id="F6-4" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="F6-4-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-4-H" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="F6-4-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-4-H-Pop">
 									<mdcValueHelpContent:FixedList id="F6-4-H-FL" useFirstMatch="false" items="{path: '/ProductCollection'}" >
@@ -275,7 +275,7 @@
 				<m:Label text="Select-like usage"/>
 				<mdc:Field id="F6-Select" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="F6-Select-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-Select-H" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="F6-Select-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-Select-H-Pop">
 									<mdcValueHelpContent:FixedList id="F6-Select-H-FL" filterList="false" useFirstMatch="true" items="{path: '/ProductCollection'}" >
@@ -290,7 +290,7 @@
 				<m:Label text="Grouped List"/>
 				<mdc:Field id="F6-Group" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" fieldHelp="F6-Group-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-Group-H" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="F6-Group-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-Group-H-Pop">
 									<mdcValueHelpContent:FixedList id="F6-Group-H-FL" useFirstMatch="false" groupable="true" items="{path: '/ProductCollection'}" >
@@ -306,7 +306,7 @@
 				<m:Label text="mTable without dialog"/>
 				<mdc:Field id="F6-6" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="F6-6-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-6-H" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="F6-6-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-6-H-Pop">
 									<mdcValueHelpContent:MTable id="F6-6-H-MTable"
@@ -347,7 +347,7 @@
 				<m:Label text="Grouped table"/>
 				<mdc:Field id="F6-6b" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" fieldHelp="F6-6b-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-6b-H" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="F6-6b-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-6b-H-Pop">
 									<mdcValueHelpContent:MTable id="F6-6b-H-MTable"
@@ -393,7 +393,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH1">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH1" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH1-Pop">
 									<mdcValueHelpContent:MTable id="VH1-Pop-MTable"
@@ -493,7 +493,7 @@
 					fieldHelp="VH2">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH2"
-							delegate="{name: 'sap/ui/mdc/sample/field/ValueHelp.delegate', payload: {'VH2-Pop-MTable': 'VH2-Pop-T', 'VH2-Dialog-MTable': 'VH2-Dialog-T'}}"
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"VH2-Pop-MTable": "VH2-Pop-T", "VH2-Dialog-MTable": "VH2-Dialog-T"\}\}'
 							validateInput="false">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH2-Pop">
@@ -569,7 +569,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH-7d">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-7d" validateInput="false" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="VH-7d" validateInput="false" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:dialog>
 								<mdcValueHelp:Dialog id="VH-7d-Dialog">
 									<mdcValueHelpContent:MTable id="VH-7d-Dialog-MTable"
@@ -618,7 +618,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH-7f">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-7f" validateInput="false" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="VH-7f" validateInput="false" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-7f-Pop">
 									<mdcValueHelpContent:MTable id="VH-7f-Pop-MTable"
@@ -678,7 +678,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH-Currency">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-Currency" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="VH-Currency" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Currency-Pop">
 									<mdcValueHelpContent:FixedList id="VH-Currency-FL" useFirstMatch="false" items="{/currencies}" >
@@ -703,14 +703,14 @@
 				<mdc:Field
 					id="F6-9_1"
 					value="{parts: [{path: 'Price'}, {path: 'CurrencyCode'}, 'view>/ODataCurrencyCodeList'], type: 'sap.ui.model.odata.type.Currency'}"
-					delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}"
+					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/Price/@sap:label}"
 					display="Value" change="handleChange"
 					liveChange="handleLiveChange"
 					submit="handleSubmit"
 					fieldHelp="VH-Currency2">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-Currency2" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="VH-Currency2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Currency2-Pop">
 									<mdcValueHelpContent:FixedList id="VH-Currency2-FL" useFirstMatch="false" items="{/currencies}" >
@@ -723,13 +723,13 @@
 				</mdc:Field>
 
 				<m:Label text="odata-currency field, unit readonly"/>
-				<mdc:Field id="F6-9_2" value="{parts: [{path: 'Price'}, {path: 'CurrencyCode'}, 'view>/ODataCurrencyCodeList'], type: 'sap.ui.model.odata.type.Currency'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}" display="Value" editMode="EditableReadOnly" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+				<mdc:Field id="F6-9_2" value="{parts: [{path: 'Price'}, {path: 'CurrencyCode'}, 'view>/ODataCurrencyCodeList'], type: 'sap.ui.model.odata.type.Currency'}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' display="Value" editMode="EditableReadOnly" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
 
 				<m:Label text="odata-currency field, unit display"/>
-				<mdc:Field id="F6-9_3" value="{parts: [{path: 'Price'}, {path: 'CurrencyCode'}, 'view>/ODataCurrencyCodeList'], type: 'sap.ui.model.odata.type.Currency'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}" display="Value" editMode="EditableDisplay" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+				<mdc:Field id="F6-9_3" value="{parts: [{path: 'Price'}, {path: 'CurrencyCode'}, 'view>/ODataCurrencyCodeList'], type: 'sap.ui.model.odata.type.Currency'}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' display="Value" editMode="EditableDisplay" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
 
 				<m:Label text="odata-currency field in display mode"/>
-				<mdc:Field id="F6-9_4" value="{parts: [{path: 'Price'}, {path: 'CurrencyCode'}, 'view>/ODataCurrencyCodeList'], type: 'sap.ui.model.odata.type.Currency'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}" display="Value" editMode="Display" change="handleChange" submit="handleSubmit"/>
+				<mdc:Field id="F6-9_4" value="{parts: [{path: 'Price'}, {path: 'CurrencyCode'}, 'view>/ODataCurrencyCodeList'], type: 'sap.ui.model.odata.type.Currency'}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' display="Value" editMode="Display" change="handleChange" submit="handleSubmit"/>
 
 				<m:Label text="input with odata-currency"/>
 				<m:Input id="F6-9_5" value="{parts: [{path: 'Price'}, {path: 'CurrencyCode'}, 'view>/ODataCurrencyCodeList'], type: 'sap.ui.model.odata.type.Currency'}"/>
@@ -747,7 +747,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH-WeightUnit">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-WeightUnit" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="VH-WeightUnit" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-WeightUnit-Pop">
 									<mdcValueHelpContent:FixedList id="VH-WeightUnit-FL" useFirstMatch="false" items="{/weightUnits}" >
@@ -772,14 +772,14 @@
 				<mdc:Field
 					id="F6-10_3"
 					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString: 0 }}"
-					delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}"
+					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Value" change="handleChange"
 					liveChange="handleLiveChange"
 					submit="handleSubmit"
 					fieldHelp="VH-WeightUnit1">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-WeightUnit1" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="VH-WeightUnit1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-WeightUnit1-Pop">
 									<mdcValueHelpContent:FixedList id="VH-WeightUnit1-FL" useFirstMatch="false" items="{/weightODataUnits}">
@@ -795,7 +795,7 @@
 				<mdc:Field
 					id="F6-10_4"
 					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString: '' }}"
-					delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}"
+					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Value" change="handleChange"
 					liveChange="handleLiveChange"
@@ -803,7 +803,7 @@
 					fieldHelp="VH-WeightUnit3">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-WeightUnit3"
-							delegate="{name: 'sap/ui/mdc/sample/field/ValueHelp.delegate', payload: {in: [{path: 'MatrId', value: 1}]}}">
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"in": [\{"path": "MatrId", "value": 1\}]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-WeightUnit3-Pop">
 									<mdcValueHelpContent:MTable id="VH-WeightUnit3-Pop-MTable"
@@ -872,7 +872,7 @@
 				<mdc:Field
 					id="F6-10_5"
 					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {emptyString: ''}}"
-					delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}"
+					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Description" change="handleChange"
 					liveChange="handleLiveChange"
@@ -883,7 +883,7 @@
 				<mdc:Field
 					id="F6-10_6"
 					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {emptyString: 0}}"
-					delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}"
+					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Value" change="handleChange"
 					liveChange="handleLiveChange"
@@ -894,7 +894,7 @@
 				<mdc:Field
 					id="F6-10_1"
 					value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {showMeasure: false, showNumber: true, emptyString : 0 }}"
-					delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}"
+					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/WeightMeasure/@sap:label}"
 					display="Value" change="handleChange"
 					liveChange="handleLiveChange"
@@ -909,7 +909,7 @@
 					submit="handleSubmit"
 					fieldHelp="VH-WeightUnit2">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-WeightUnit2" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="VH-WeightUnit2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-WeightUnit2-Pop">
 									<mdcValueHelpContent:FixedList id="VH-WeightUnit2-FL" useFirstMatch="false" items="{/weightODataUnits}">
@@ -923,7 +923,7 @@
 
 
 				<m:Label text="odata-unit field in display mode"/>
-				<mdc:Field id="F6-11_1" value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString : 0 }}" dataType="sap.ui.model.odata.type.Unit" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}" display="Value" editMode="Display" change="handleChange" submit="handleSubmit"/>
+				<mdc:Field id="F6-11_1" value="{parts: ['WeightMeasure', 'WeightODataUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString : 0 }}" dataType="sap.ui.model.odata.type.Unit" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' display="Value" editMode="Display" change="handleChange" submit="handleSubmit"/>
 
 				<m:Label text="input with odata-unit"/>
 				<m:Input
@@ -948,7 +948,7 @@
 				<mdc:Field
 					id="F6-IO2"
 					value="{parts: [{path: 'MatrQuantity', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}}, {path: 'MatrUnit', type: 'sap.ui.model.odata.type.String', formatOptions: {parseKeepsEmptyString: true}, constraints: {nullable: false}}, 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {preserveDecimals: true, emptyString: 0, parseAsString: false, unitOptional: true}}"
-					delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}"
+					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
 					placeholder="{/#Product/MatrQuantity/@sap:label}"
 					display="Value" change="handleChange"
 					liveChange="handleLiveChange"
@@ -957,7 +957,7 @@
 					fieldGroupIds="MyFieldGroup">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-WeightUnit4"
-							delegate="{name: 'sap/ui/mdc/sample/field/ValueHelp.delegate', payload: {in: [{path: 'MatrId', source: 'MatrId'}], out: [{path: 'MatrId', target: 'MatrId'}]}}">
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"in": [\{"path": "MatrId", "source": "MatrId"\}], "out": [\{"path": "MatrId", "target": "MatrId"\}]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-WeightUnit4-Pop">
 									<mdcValueHelpContent:MTable id="VH-WeightUnit4-Pop-MTable"
@@ -1049,7 +1049,7 @@
 					fieldHelp="VH-Country">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-Country"
-							delegate="{name: 'sap/ui/mdc/sample/field/ValueHelp.delegate', payload: {}}">
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Country-Pop">
 									<mdcValueHelpContent:MTable id="VH-Country-Pop-MTable"
@@ -1120,7 +1120,7 @@
 					fieldHelp="VH-Region">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-Region"
-							delegate="{name: 'sap/ui/mdc/sample/field/ValueHelp.delegate', payload: {in: [{path: 'countryId', source: 'CountryId'}], out: [{path: 'countryId', target: 'CountryId'}, {target: 'CityId', fixedValue: ''}]}}">
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"in": [\{"path": "countryId", "source": "CountryId"\}], "out": [\{"path": "countryId", "target": "CountryId"\}, \{"target": "CityId", "fixedValue": ""\}]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Region-Pop">
 									<mdcValueHelpContent:MTable id="VH-Region-Pop-MTable"
@@ -1188,7 +1188,7 @@
 													editMode= "Editable"
 													display= "ValueDescription"
 													dataType="sap.ui.model.type.String"
-													dataTypeConstraints="{maxLength: 3}"
+													dataTypeConstraints='\{"maxLength": 3\}'
 													width="100%"
 													conditions="{$filters>/conditions/countryId}"
 													fieldHelp="VH-Country"/>
@@ -1213,9 +1213,9 @@
 					fieldHelp="VH-City">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-City"
-							delegate="{name: 'sap/ui/mdc/sample/field/ValueHelp.delegate', payload: {
-								in: [{path: 'countryId', source: 'CountryId'}, {path: 'regionId', source: 'RegionId'}, {path: 'info', source: 'CityInfo', initialValueFilterEmpty: true}],
-								out: [{path: 'countryId', target: 'CountryId', mode: 'Always'}, {path: 'regionId', target: 'RegionId', mode: 'Always'}, {path: 'info', target: 'CityInfo', mode: 'Always'}]}}">
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{
+								"in": [\{"path": "countryId", "source": "CountryId"\}, \{"path": "regionId", "source": "RegionId"\}, \{"path": "info", "source": "CityInfo", "initialValueFilterEmpty": true\}],
+								"out": [\{"path": "countryId", "target": "CountryId", "mode": "Always"\}, \{"path": "regionId", "target": "RegionId", "mode": "Always"\}, \{"path": "info", "target": "CityInfo", "mode": "Always"\}]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-City-Pop">
 									<mdcValueHelpContent:MTable id="VH-City-Pop-MTable"
@@ -1299,7 +1299,7 @@
 													editMode= "Editable"
 													display= "ValueDescription"
 													dataType="sap.ui.model.type.String"
-													dataTypeConstraints="{maxLength: 3}"
+													dataTypeConstraints='\{"maxLength": 3\}'
 													width="100%"
 													conditions="{$filters>/conditions/countryId}"
 													fieldHelp="VH-Country"/>
@@ -1309,7 +1309,7 @@
 													editMode= "Editable"
 													display= "ValueDescription"
 													dataType="sap.ui.model.type.String"
-													dataTypeConstraints="{maxLength: 2, search: '^(|[0-9])+$'}"
+													dataTypeConstraints='\{"maxLength": 2, "search": "^(|[0-9])+$"\}'
 													width="100%"
 													conditions="{$filters>/conditions/regionId}"/>
 												<mdc:FilterField
@@ -1318,8 +1318,8 @@
 													editMode= "Editable"
 													display= "Value"
 													dataType="sap.ui.model.odata.type.String"
-													dataTypeFormatOptions="{parseKeepsEmptyString: true}"
-													dataTypeConstraints="{maxLength: 100, nullable: false}"
+													dataTypeFormatOptions='\{"parseKeepsEmptyString": true\}'
+													dataTypeConstraints='\{"maxLength": 100, "nullable": false\}'
 													width="100%"
 													conditions="{$filters>/conditions/info}"/>
 											</vhfb:FilterBar>
@@ -1346,7 +1346,7 @@
 					fieldHelp="VH-CollSearch">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-CollSearch"
-							delegate="{name: 'sap/ui/mdc/sample/field/ValueHelp.delegate', payload: {}}">
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-CollSearch-Pop">
 									<mdcValueHelpContent:MTable id="VH-CollSearch-Pop-MTable"
@@ -1608,14 +1608,14 @@
 						<mdc:Field id="T-F5" value="{DateTime}" dataType="Edm.DateTimeOffset" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" width="100%"></mdc:Field>
 						<mdc:Field id="T-F6" value="{Status}" display="Description" fieldHelp="T-F6-H" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" width="100%"></mdc:Field>
 						<mdc:Field id="T-F7" value="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 10, search: '^(|[0-9])+$', nullable:true}}" display="Description" fieldHelp="VH-IO1" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" width="100%"/>
-						<mdc:Field id="T-F8" value="{parts: ['MatrQuantity', 'MatrUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}" placeholder="{/#Product/WeightMeasure/@sap:label}" display="Value" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" fieldHelp="FVH-WeightUnit4" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+						<mdc:Field id="T-F8" value="{parts: ['MatrQuantity', 'MatrUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit'}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' placeholder="{/#Product/WeightMeasure/@sap:label}" display="Value" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" fieldHelp="FVH-WeightUnit4" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
 						<mdc:Field id="T-F9" value="{path: 'CountryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}" placeholder="{/#Product/CountryId/@sap:label}" display="ValueDescription" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="VH-Country"/>
 						<mdc:Field id="T-F10" value="{path: 'RegionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}" placeholder="{/#Product/RegionId/@sap:label}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" display="ValueDescription" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="VH-Region"/>
 						<mdc:Field id="T-F11" value="{path: 'CityId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}" placeholder="{/#Product/CityId/@sap:label}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display' }" display="ValueDescription" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="VH-City"/>
 					</m:ColumnListItem>
 				</m:items>
 				<m:dependents>
-					<mdc:ValueHelp id="T-F6-H" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+					<mdc:ValueHelp id="T-F6-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 						<mdc:typeahead>
 							<mdcValueHelp:Popover id="T-F6-H-Pop">
 								<mdcValueHelpContent:FixedList id="T-F6-H-FL" useFirstMatch="false" items="{path: '/StatusCollection'}" >
@@ -1647,8 +1647,8 @@
 					</form:SemanticFormElement>
 					<form:SemanticFormElement label="Date Fields">
 						<mdc:Field id="F4-3" value="{path:'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}, constraints: {displayFormat: 'Date'}, targetType: 'string'}" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress"/>
-						<mdc:Field id="F4-4" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions="{style: 'short'}" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
-						<mdc:Field id="F4-5" value="{path:'Time', type:'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}, targetType: 'string'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+						<mdc:Field id="F4-4" value="{DateTime}" dataType="Edm.DateTimeOffset" dataTypeFormatOptions='\{"style": "short"\}' editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
+						<mdc:Field id="F4-5" value="{path:'Time', type:'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}, targetType: 'string'}" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}' editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
 					</form:SemanticFormElement>
 					<form:SemanticFormElement label="Boolean Fields">
 						<mdc:Field id="F4-6" value="{path:'Important', type:'sap.ui.model.odata.type.Boolean', constraints: {nullable: false}}" display="Description" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>

@@ -24,11 +24,11 @@
 
 	<Text text="This scenario covers the following entities: FilterBar, FilterField, ValueHelp, MTable, MDCTable (ResponsiveTableType), ConditionsPanel"/>
 	
-	<mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate="{name: 'delegates/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
+	<mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate='\{"name": "delegates/odata/v4/FilterBarDelegate", "payload": \{"collectionName": "Books"\}\}'>
 		<mdc:dependents>
 			<mdc:ValueHelp id="FH4_DEFCOND"
 								validateInput="false"
-								delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover title="Title">
 										<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search">
@@ -54,7 +54,7 @@
 							</mdc:ValueHelp>
 			<mdc:ValueHelp
 				id="FH-DC"
-				delegate="{name: 'delegates/odata/v4/ValueHelpDelegate', payload: {}}">
+				delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 				<mdc:dialog>
 					<mdcv:Popover title="Define Filter Conditions">
 						<mdcvc:Conditions label="My Define Conditions Panel" fieldHelp="FH4_DEFCOND"></mdcvc:Conditions>
@@ -64,7 +64,7 @@
 		</mdc:dependents>
 		<mdc:filterItems>
 			
-			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF1-10"
 				label="TestField"
 				conditions="{$filters>/conditions/author_ID}"

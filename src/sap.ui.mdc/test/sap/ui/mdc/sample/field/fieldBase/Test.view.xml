@@ -34,7 +34,7 @@
 								submit="handleSubmit"
 								fieldHelp="VH1">
 								<mdcField:dependents>
-									<mdc:ValueHelp id="VH1" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+									<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 										<mdc:typeahead>
 											<mdcValueHelp:Popover id="VH1-Pop">
 												<mdcValueHelpContent:MTable id="VH1-Pop-MTable"
@@ -163,7 +163,7 @@
 								submit="handleSubmit"
 								fieldHelp="VH2">
 								<mdcField:dependents>
-									<mdc:ValueHelp id="VH2" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+									<mdc:ValueHelp id="VH2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 										<mdc:typeahead>
 											<mdcValueHelp:Popover id="VH2-Pop">
 												<mdcValueHelpContent:MTable id="VH2-Pop-MTable"
@@ -264,8 +264,8 @@
 							<mdcField:FieldBase id="FB7"
 								conditions="{cm>/conditions/Date}"
 								dataType="Edm.DateTime"
-								dataTypeFormatOptions="{style: 'short'}"
-								dataTypeConstraints="{displayFormat: 'Date'}"
+								dataTypeFormatOptions='\{"style": "short"\}'
+								dataTypeConstraints='\{"displayFormat": "Date"\}'
 								maxConditions="1"
 								placeholder="{/#Product/Date/@sap:label}"
 								liveChange="handleLiveChange"
@@ -277,8 +277,8 @@
 							<mdcField:FieldBase id="FB8"
 								conditions="{cm>/conditions/Date}"
 								dataType="Edm.DateTime"
-								dataTypeFormatOptions="{style: 'long'}"
-								dataTypeConstraints="{displayFormat: 'Date'}"
+								dataTypeFormatOptions='\{"style": "long"\}'
+								dataTypeConstraints='\{"displayFormat": "Date"\}'
 								maxConditions="1"
 								editMode="Display"
 								placeholder="Placeholder"
@@ -397,7 +397,7 @@
 								submit="handleSubmit"
 								fieldHelp="VH3">
 								<mdcField:dependents>
-									<mdc:ValueHelp id="VH3" validateInput="false" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+									<mdc:ValueHelp id="VH3" validateInput="false" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 										<mdc:dialog>
 											<mdcValueHelp:Dialog id="VH3-Dialog">
 												<mdcValueHelpContent:Conditions id="VH3-Pop-Conditions" label="{/#Product/Quantity/@sap:label}" shortTitle="{/#Product/Quantity/@sap:label}"/>
@@ -430,7 +430,7 @@
 								submit="handleSubmit">
 								<mdcField:dependents>
 									<mdc:ValueHelp id="VH-Status"
-										delegate="{name: 'sap/ui/mdc/sample/field/fieldBase/ValueHelp-Status.delegate', payload: {}}">
+										delegate='\{"name": "sap/ui/mdc/sample/field/fieldBase/ValueHelp-Status.delegate", "payload": \{\}\}'>
 										<mdc:typeahead>
 											<mdcValueHelp:Popover id="VH-Status-Pop">
 												<mdcValueHelpContent:MTable id="VH-Status-Pop-MTable"/>
@@ -476,7 +476,7 @@
 							<mdcField:FieldBase id="FB16"
 								conditions="{cm>/conditions/Important}"
 								dataType="sap.ui.model.odata.type.Boolean"
-								dataTypeConstraints="{nullable: false}"
+								dataTypeConstraints='\{"nullable": false\}'
 								maxConditions="1"
 								display="Value"
 								placeholder="{/#Product/Important/@sap:label}"
@@ -511,7 +511,7 @@
 							<mdcField:FieldBase id="FB18"
 								conditions="{cm>/conditions/WeightMeasure,WeightUnit}"
 								dataType="sap.ui.model.type.Unit"
-								dataTypeConstraints="{minimum: 0}"
+								dataTypeConstraints='\{"minimum": 0\}'
 								maxConditions="1"
 								display="Description"
 								editMode="Editable"
@@ -520,7 +520,7 @@
 								submit="handleSubmit"
 								fieldHelp="VH-WeightUnit">
 								<mdcField:dependents>
-									<mdc:ValueHelp id="VH-WeightUnit" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+									<mdc:ValueHelp id="VH-WeightUnit" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 										<mdc:typeahead>
 											<mdcValueHelp:Popover id="VH-WeightUnit-Pop">
 												<mdcValueHelpContent:FixedList id="VH-WeightUnit-FL" useFirstMatch="false" items="{view>/weightUnits}">
@@ -572,14 +572,14 @@
 								id="FB-Country"
 								conditions="{cm>/conditions/CountryId}"
 								dataType="sap.ui.model.type.String"
-								dataTypeConstraints="{maxLength: 3}"
+								dataTypeConstraints='\{"maxLength": 3\}'
 								display="ValueDescription"
 								placeholder="{/#Product/CountryId/@sap:label}"
 								liveChange="handleLiveChange"
 								submit="handleSubmit"
 								fieldHelp="VH-Country">
 								<mdcField:dependents>
-									<mdc:ValueHelp id="VH-Country" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+									<mdc:ValueHelp id="VH-Country" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 										<mdc:dialog>
 											<mdcValueHelp:Dialog id="VH-Country-Dialog" title="Countries">
 												<mdcValueHelpContent:MTable id="VH-Country-Dialog-MTable"
@@ -647,7 +647,7 @@
 							<mdcField:FieldBase id="FB-MatrId"
 								conditions="{cm>/conditions/MatrId}"
 								dataType="sap.ui.model.type.String"
-								dataTypeConstraints="{maxLength: 5, search: '^(|[0-9])+$'}"
+								dataTypeConstraints='\{"maxLength": 5, "search": "^(|[0-9])+$"\}'
 								maxConditions="-1"
 								editMode="Editable"
 								display="ValueDescription"
@@ -656,7 +656,7 @@
 								submit="handleSubmit"
 								fieldHelp="VH-MatrId">
 								<mdcField:dependents>
-									<mdc:ValueHelp id="VH-MatrId" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+									<mdc:ValueHelp id="VH-MatrId" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 										<mdc:typeahead>
 											<mdcValueHelp:Popover id="VH-MatrId-Pop">
 												<mdcValueHelpContent:MTable id="VH-MatrId-Pop-MTable"
@@ -714,7 +714,7 @@
 											</mdcValueHelp:Dialog>
 										</mdc:dialog>
 									</mdc:ValueHelp>
-									<mdc:ValueHelp id="VH-MatrId-FL" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+									<mdc:ValueHelp id="VH-MatrId-FL" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 										<mdc:typeahead>
 											<mdcValueHelp:Popover id="VH-MatrId-FL-Pop">
 												<mdcValueHelpContent:FixedList id="VH-MatrId-FL-Pop-FL" useFirstMatch="false" items="{path: '/MaterialCollection'}" >
@@ -745,7 +745,7 @@
 						</form:FormElement>
 					</form:FormContainer>
 					<form:dependents>
-						<mdc:ValueHelp id="VH-Conditions" validateInput="false" delegate="{name: 'sap/ui/mdc/sample/field/ValueHelpODataV2.delegate'}">
+						<mdc:ValueHelp id="VH-Conditions" validateInput="false" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:dialog>
 								<mdcValueHelp:Popover id="VH-Conditions-Pop" title="Conditions">
 									<mdcValueHelpContent:Conditions id="VH-Conditions-Pop-Conditions"/>

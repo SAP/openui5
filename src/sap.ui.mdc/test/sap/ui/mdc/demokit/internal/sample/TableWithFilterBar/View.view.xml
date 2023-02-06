@@ -17,7 +17,7 @@
 	<mdc:FilterBar
 		id="FilterBar"
 		liveMode="false"
-		delegate="{name: 'sap/ui/mdc/sample/TableWithFilterBar/FilterBar.delegate', payload: {collectionName: 'Books'}}"
+		delegate='\{"name": "sap/ui/mdc/sample/TableWithFilterBar/FilterBar.delegate", "payload": \{"collectionName": "Books"\}\}'
 	>
 	<mdc:dependents>
 		<mdc:ValueHelp id="VH2"
@@ -167,7 +167,7 @@
 	</mdc:dependents>
 
 	<mdc:basicSearchField>
-		<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
+		<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="field0"
 		dataType="Edm.String"
 		placeholder= "Search"
 		conditions="{$filters>/conditions/$search}"
@@ -177,7 +177,7 @@
 
 	<mdc:filterItems>
 		<mdc:FilterField
-			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 			id="ff1"
 			label="Author ID"
 			conditions="{$filters>/conditions/author_ID}"
@@ -188,7 +188,7 @@
 			width="100%"/>
 
 		<mdc:FilterField
-			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+			delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 			id="ff2"
 			label="Title"
 			conditions="{$filters>/conditions/title}"
@@ -203,7 +203,7 @@
 			filter="FilterBar"
 			header="Books"
 			showRowCount="false"
-			delegate="{ name: 'sap/ui/mdc/sample/TableWithFilterBar/Books.Table.delegate', payload: {collectionName: 'Books'}}"
+			delegate='\{ "name": "sap/ui/mdc/sample/TableWithFilterBar/Books.Table.delegate", "payload": \{"collectionName": "Books"\}\}'
 			type="ResponsiveTable"
 			p13nMode="Column,Sort,Filter"
 			selectionMode="Multi"

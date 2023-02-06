@@ -22,11 +22,11 @@
 
 	<Title class="sapUiSmallMarginBottom" level="H3" text="Simple Scenario" />
 	
-	<mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate="{name: 'delegates/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
+	<mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate='\{"name": "delegates/odata/v4/FilterBarDelegate", "payload": \{"collectionName": "Books"\}\}'>
 		<mdc:dependents>
 			<mdc:ValueHelp
 				id="FB0-FH1-10"
-				delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+				delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:dialog>
 					<mdcv:Dialog title="MDC Table with ui.Table">
 						<mdcvc:MDCTable id="mdcTableContent1" keyPath="ID" descriptionPath="name" filterFields="$search" group="group1" title="Default Search Template" forceBind="true">
@@ -37,7 +37,7 @@
 								headerVisible="true"
 								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
 								p13nMode="Column,Sort"
-								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}}"
+								delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 								threshold="50">
 								<mdc:type>
 									<mdc:table.GridTableType rowCountMode="Auto"/>
@@ -62,7 +62,7 @@
 		</mdc:dependents>
 		<mdc:filterItems>
 			
-			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
+			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF1-10"
 				label="TestField"
 				conditions="{$filters>/conditions/author_ID}"

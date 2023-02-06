@@ -16,12 +16,12 @@
 			<VBox>
 				<items>
 					<mdc:Chart id="IDChartOfAppUnderTestChart"
-								delegate='{
+								delegate='\{
 									"name": "delegates/odata/v4/vizChart/ChartDelegate",
-									"payload": {
-									   		collectionName: "Books"
-										}
-									}'
+									"payload": \{
+									   		"collectionName": "Books"
+										\}
+									\}'
 								p13nMode="Item,Sort,Type"
 								autoBindOnInit="true" 
 								header="MDC: Chart Sample"
