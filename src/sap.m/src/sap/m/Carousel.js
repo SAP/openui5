@@ -498,8 +498,8 @@ sap.ui.define([
 			return;
 		}
 
-		this._sNewActivePageId = this.getPages()[iNextSlide - 1].getId();
-		this._updateActivePages(this._sNewActivePageId);
+		var sNewActivePageId = this.getPages()[iNextSlide - 1].getId();
+		this._updateActivePages(sNewActivePageId);
 
 		this.fireBeforePageChanged({
 			activePages: this._aAllActivePagesIndexes
@@ -747,12 +747,7 @@ sap.ui.define([
 				if (this._oMobifyCarousel) {
 					this._sOldActivePageId = this.getActivePage();
 					this._oMobifyCarousel.setShouldFireEvent(true);
-
-					if (this._isPageDisplayed(iPageNr)) {
-						this._changeActivePage(iPageNr);
-					} else {
-						this._moveToPage(iPageNr, iPageNr + 1, true);
-					}
+					this._moveToPage(iPageNr, iPageNr + 1, true);
 				}
 				// if oMobifyCarousel is not present yet, move takes place
 				// 'onAfterRendering', when oMobifyCarousel is created
@@ -760,7 +755,6 @@ sap.ui.define([
 		}
 
 		this.setAssociation("activePage", sPageId, true);
-		this._updateActivePages(this._sNewActivePageId ? this._sNewActivePageId : sPageId);
 
 		return this;
 	};
