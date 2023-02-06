@@ -1591,6 +1591,7 @@ sap.ui.define([
 			assert.strictEqual(oList.getDomRef("before").getAttribute("tabindex"), "-1", "Before dummy element is not at the tab chain");
 			assert.strictEqual(oList.getNavigationRoot().getAttribute("tabindex"), "0", "Navigation root is at the tab chain");
 			assert.strictEqual(oList.getDomRef("after").getAttribute("tabindex"), "0", "After dummy element is at the tab chain");
+			assert.strictEqual(oList.getDomRef("after").getAttribute("role"), "none", "After dummy element has role=none");
 
 			if (!document.hasFocus()) {
 				return;
