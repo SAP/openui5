@@ -736,7 +736,7 @@ sap.ui.define([
 	 *     <li> the new value is not primitive.
 	 *     <li> no value has been read before and the binding does not have the parameter
 	 *       <code>$$noPatch</code>.
-	 *     <li> the binding is not relative to a {@link sap.ui.model.odata.v4.Context}.
+	 *     <li> the binding is not relative to an {@link sap.ui.model.odata.v4.Context}.
 	 *     <li> the binding has the parameter <code>$$noPatch</code> and a group ID has been given.
 	 *   </ul>
 	 *

@@ -3217,8 +3217,8 @@ sap.ui.define([
 	ODataListBinding.prototype.requestDownloadUrl = _Helper.createRequestMethod("fetchDownloadUrl");
 
 	/**
-	 * Requests a {@link sap.ui.model.Filter} object which can be used to filter the list binding by
-	 * entries with model messages. With the filter callback, you can define if a message is
+	 * Requests an {@link sap.ui.model.Filter} object which can be used to filter the list binding
+	 * by entries with model messages. With the filter callback, you can define if a message is
 	 * considered when creating the filter for entries with messages.
 	 *
 	 * The resulting filter does not consider application or control filters specified for this list
@@ -3230,7 +3230,7 @@ sap.ui.define([
 	 *   given {@link sap.ui.core.message.Message} is considered. If no callback function is given,
 	 *   all messages are considered.
 	 * @returns {Promise<sap.ui.model.Filter|null>}
-	 *   A Promise that resolves with a {@link sap.ui.model.Filter} representing the entries with
+	 *   A Promise that resolves with an {@link sap.ui.model.Filter} representing the entries with
 	 *   messages; it resolves with <code>null</code> if the binding is not resolved or if there is
 	 *   no message for any entry
 	 *
@@ -3953,7 +3953,7 @@ sap.ui.define([
 	 * @param {object} oEntityType The metadata for the entity type
 	 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel The meta model
 	 * @param {string} sMetaPath The meta path
-	 * @returns {sap.ui.model.Filter} a {@link sap.ui.model.Filter} for the given key predicate
+	 * @returns {sap.ui.model.Filter} an {@link sap.ui.model.Filter} for the given key predicate
 	 *
 	 * @private
 	 */

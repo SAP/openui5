@@ -22,8 +22,8 @@ sap.ui.define([
 		 * @author SAP SE
 		 * @class Implementation of an OData V4 model's context.
 		 *
-		 *   The context is a pointer to model data as returned by a query from a
-		 *   {@link sap.ui.model.odata.v4.ODataContextBinding} or a
+		 *   The context is a pointer to model data as returned by a query from an
+		 *   {@link sap.ui.model.odata.v4.ODataContextBinding} or an
 		 *   {@link sap.ui.model.odata.v4.ODataListBinding}. Contexts are always and only
 		 *   created by such bindings. A context for a context binding points to the complete query
 		 *   result. A context for a list binding points to one specific entry in the binding's

@@ -17,7 +17,7 @@ sap.ui.define([
 		 * @classdesc
 		 * A collection of methods which help to consume <a href=
 		 * "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html#_Vocabulary_and_Annotation"
-		 * >OData V4 annotations</a> in XML template views. Every context argument must belong to a
+		 * >OData V4 annotations</a> in XML template views. Every context argument must belong to an
 		 * {@link sap.ui.model.odata.v4.ODataMetaModel} instance.
 		 *
 		 * @alias sap.ui.model.odata.v4.AnnotationHelper
