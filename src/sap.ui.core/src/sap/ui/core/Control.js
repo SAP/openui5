@@ -522,8 +522,8 @@ sap.ui.define([
 	 *
 	 * Use {@link #detachBrowserEvent} to remove the event handler(s) again.
 	 *
-	 * @param {string} [sEventType] A string containing one or more JavaScript event types, such as "click" or "blur".
-	 * @param {function} [fnHandler] A function to execute each time the event is triggered.
+	 * @param {string} sEventType A string containing one or more JavaScript event types, such as "click" or "blur".
+	 * @param {function} fnHandler A function to execute each time the event is triggered.
 	 * @param {object} [oListener] The object, that wants to be notified, when the event occurs
 	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
@@ -563,8 +563,8 @@ sap.ui.define([
 	 * Note: listeners are only removed, if the same combination of event type, callback function
 	 * and context object is given as in the call to <code>attachBrowserEvent</code>.
 	 *
-	 * @param {string} [sEventType] A string containing one or more JavaScript event types, such as "click" or "blur".
-	 * @param {function} [fnHandler] The function that is to be no longer executed.
+	 * @param {string} sEventType A string containing one or more JavaScript event types, such as "click" or "blur".
+	 * @param {function} fnHandler The function that is to be no longer executed.
 	 * @param {object} [oListener] The context object that was given in the call to <code>attachBrowserEvent</code>.
 	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
