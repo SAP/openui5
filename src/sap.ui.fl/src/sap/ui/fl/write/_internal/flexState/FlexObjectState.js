@@ -127,6 +127,11 @@ sap.ui.define([
 				var aDirtyChanges = [];
 				if (mPropertyBag.includeDirtyChanges) {
 					aDirtyChanges = oChangePersistence.getDirtyChanges();
+					if (mPropertyBag.currentLayer) {
+						aDirtyChanges = aDirtyChanges.filter(function(oChange) {
+							return oChange.getLayer() === mPropertyBag.currentLayer;
+						});
+					}
 				}
 				var aChanges = aPersistedChanges.concat(aDirtyChanges);
 				if (mPropertyBag.onlyCurrentVariants) {
@@ -155,6 +160,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
+	 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading change; if this parameter is set, the max layer filtering is not applied
 	 * @param {boolean} [mPropertyBag.invalidateCache] - Flag if the cache should be invalidated
 	 * @param {boolean} [mPropertyBag.includeCtrlVariants] - Flag if control variant changes should be included
 	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Flag if dirty UI changes should be included
