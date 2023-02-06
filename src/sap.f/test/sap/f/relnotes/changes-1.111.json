@@ -1,7 +1,40 @@
 {
   "1.111.0": {
-    "date": "January 2023",
+    "date": "February 2023",
     "notes": [
+      {
+        "id": "df6d8b0e8d43a0c1cb792d30893d8b6d52d9bddf",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Aligned incorrect dropdown logo icon position",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280200786"
+          }
+        ]
+      },
+      {
+        "id": "025228e36e09c55fca2301463d6052aa008a790e",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Home and End keydowns on indirect children now don't navigate through the grid",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380022965"
+          }
+        ]
+      },
+      {
+        "id": "2ecc3abebe0fc11fde5a6d97d27665b790eb4ebb",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Prevent flickering issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009522772022"
+          }
+        ]
+      },
       {
         "id": "dc7376024fb016ebc3cb5cc253f6f0fd32af3691",
         "type": "FEATURE",
