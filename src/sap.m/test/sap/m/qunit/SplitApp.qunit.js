@@ -39,10 +39,6 @@ sap.ui.define([
 		return oApp.getDomRef("BG");
 	}
 
-	function getAbsoluteURL(sRelPath) {
-		return document.baseURI + sRelPath;
-	}
-
 	var sBackgroundImageSrc  = "test-resources/sap/m/images/SAPLogo.jpg";
 
 	QUnit.module("Initial Check");
@@ -862,7 +858,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Check
-		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + (Device.browser.safari ? getAbsoluteURL(sBackgroundImageSrc) : sBackgroundImageSrc) + '\")',
+		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sBackgroundImageSrc + '\")',
 			"correct property value");
 	});
 
@@ -889,7 +885,7 @@ sap.ui.define([
 		oApp.setBackgroundImage(sImgSrc2);
 		oCore.applyChanges();
 		// Check
-		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + (Device.browser.safari ? getAbsoluteURL(sImgSrc2) : sImgSrc2) + '\")',
+		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sImgSrc2 + '\")',
 			"correct property value");
 	});
 
