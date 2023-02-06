@@ -181,6 +181,16 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines href of a link.
+				 *
+				 * @since 1.96.18
+				 */
+				internalHref: {
+					type: "string",
+					defaultValue: null
+				},
+
+				/**
 				 * Defines target of a link.
 				 */
 				target: {

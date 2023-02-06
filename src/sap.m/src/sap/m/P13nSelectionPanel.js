@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nSelectionPanel.
 sap.ui.define([
-	'./library', './ColumnListItem', './P13nPanel', './SearchField', './Text', './Table', './Column', './ScrollContainer', './P13nSelectionItem', './VBox', './Link', './OverflowToolbar', './OverflowToolbarLayoutData', './ToolbarSpacer', 'sap/ui/core/library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', "sap/ui/thirdparty/jquery"
-], function(library, ColumnListItem, P13nPanel, SearchField, Text, Table, Column, ScrollContainer, P13nSelectionItem /* kept for compatibility*/, VBox, Link, OverflowToolbar, OverflowToolbarLayoutData, ToolbarSpacer, CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, jQuery) {
+	'./library', './ColumnListItem', './P13nPanel', './SearchField', './Text', './Table', './Column', './ScrollContainer', './P13nSelectionItem', './VBox', './Link', './OverflowToolbar', './OverflowToolbarLayoutData', './ToolbarSpacer', 'sap/ui/core/library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', "sap/ui/thirdparty/jquery", "sap/ui/core/CustomData"
+], function(library, ColumnListItem, P13nPanel, SearchField, Text, Table, Column, ScrollContainer, P13nSelectionItem /* kept for compatibility*/, VBox, Link, OverflowToolbar, OverflowToolbarLayoutData, ToolbarSpacer, CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, jQuery, CustomData) {
 	"use strict";
 
 	// shortcut for sap.m.ToolbarDesign
@@ -370,6 +370,12 @@ sap.ui.define([
 										return !!oValue;
 									}
 								},
+								customData: [
+									new CustomData({
+										key: "internalHref",
+										value: "{internalHref}"
+									})
+								],
 								press: function(oEvent) {
 									var sHref = oEvent.getSource().getHref();
 									var oItems = that.getItems().filter(function(oItem) {
@@ -586,6 +592,7 @@ sap.ui.define([
 				text: oItem.getText(),
 				tooltip: oItem.getTooltip(),
 				href: oItem.getHref(),
+				internalHref: oItem.getInternalHref(),
 				target: oItem.getTarget(),
 				// default value
 				persistentSelected: oItem.getVisible(),
