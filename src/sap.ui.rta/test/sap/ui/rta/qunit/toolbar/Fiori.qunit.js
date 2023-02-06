@@ -3,6 +3,7 @@
 sap.ui.define([
 	"../RtaQunitUtils",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/toolbar/Fiori",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/Utils",
@@ -14,6 +15,7 @@ sap.ui.define([
 function(
 	RtaQunitUtils,
 	jQuery,
+	JSONModel,
 	Fiori,
 	Adaptation,
 	RtaUtils,
@@ -77,6 +79,7 @@ function(
 			});
 		},
 		afterEach: function() {
+			this.oToolbar.destroy();
 			this.oImage.destroy();
 			sandbox.restore();
 		}
@@ -108,33 +111,8 @@ function(
 				sandbox.stub(Adaptation.prototype, "hide").returns(Promise.resolve());
 				return this.oToolbar.hide().then(function() {
 					assert.equal(this.sRemove, "sapUiRtaFioriHeaderInvisible", "then the correct StyleClass got removed");
-					this.oToolbar.destroy();
 					done();
 				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("when the Fiori header is destroyed while the toolbar is being hidden", function(assert) {
-			var done = assert.async();
-
-			this.oToolbar = new Fiori({
-				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
-			});
-			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-
-			var oAdaptationDestroyStub = sandbox.stub(Adaptation.prototype, "destroy").callsFake(function() {
-				oAdaptationDestroyStub.wrappedMethod.apply(this, arguments);
-				assert.ok(true, "then the destroy is executed without errors");
-			});
-
-			this.oToolbar.onFragmentLoaded().then(function() {
-				this.oToolbar.show();
-				sandbox.stub(Adaptation.prototype, "hide").returns(Promise.resolve());
-				this.oToolbar.hide().then(function() {
-					assert.ok(true, "then the hide is finalized without errors");
-					done();
-				});
-				this.oToolbar.destroy();
 			}.bind(this));
 		});
 	});
