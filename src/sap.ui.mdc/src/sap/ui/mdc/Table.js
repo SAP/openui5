@@ -398,14 +398,29 @@ sap.ui.define([
 				},
 
 				/**
-				 * Specifies the table metadata.<br>
-				 * <b>Note</b>: This property must not be bound.<br>
+				 * Specifies the table metadata.
+				 *
+				 * Whenever the <code>TableDelegate</code> needs to wait for, for example, server-side information to provide the
+				 * <code>PropertyInfo</code> objects, specifying an array of {@link sap.ui.mdc.table.PropertyInfo PropertyInfo} objects here
+				 * enables the table to speed up the initial setup.
+				 *
+				 * Instead of requesting the <code>PropertyInfo</code> objects from the <code>TableDelegate</code> and waiting for them, the table
+				 * will use the <code>PropertyInfo</code> objects specified here for rendering-specific tasks, e.g. automatic column width
+				 * calculation, and to trigger the initial data request.
+				 *
+				 * To enable the table for these tasks, certain attributes of a <code>PropertyInfo</code> must be specified. You can
+				 * find the list of required attributes in the documentation of the <code>PropertyInfo</code>, for example, in
+				 * {@link sap.ui.mdc.table.PropertyInfo}.
+				 *
+				 * This property is processed only once during the instantiation of the table. Any subsequent changes have no effect.
+				 *
+				 * <b>Note</b>: This property must not be bound.
 				 * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility / Fiori Elements. Do not use it otherwise.
 				 *
-				 * @since 1.110
+				 * @since 1.111
 				 */
 				propertyInfo: {
-					type: "object",
+					type: "object[]",
 					defaultValue: []
 				}
 			},

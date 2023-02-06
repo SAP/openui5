@@ -24,6 +24,7 @@ sap.ui.define([
 			new PropertyHelper([{
 				name: "prop",
 				label: "Property",
+				dataType: "String",
 				groupable: true,
 				extension: {
 					technicallyGroupable: false
@@ -37,6 +38,7 @@ sap.ui.define([
 			new PropertyHelper([{
 				name: "prop",
 				label: "Property",
+				dataType: "String",
 				aggregatable: true,
 				extension: {
 					technicallyAggregatable: false
@@ -48,7 +50,8 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'aggregatable'", function(assert) {
 		new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}, {
 			name: "complexProp",
 			label: "ComplexProperty",
@@ -61,7 +64,8 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'extension.technicallyGroupable'", function(assert) {
 		new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}, {
 			name: "complexProp",
 			label: "ComplexProperty",
@@ -76,7 +80,8 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'extension.technicallyAggregatable'", function(assert) {
 		new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}, {
 			name: "complexProp",
 			label: "ComplexProperty",
@@ -91,7 +96,8 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'extension.customAggregate'", function(assert) {
 		new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}, {
 			name: "complexProp",
 			label: "ComplexProperty",
@@ -108,6 +114,7 @@ sap.ui.define([
 			this.oSimplePropertyDefaults = {
 				name: "prop",
 				label: "Property",
+				dataType: "String",
 				tooltip: "",
 				caseSensitive: true,
 				exportSettings: {},
@@ -121,7 +128,8 @@ sap.ui.define([
 				path: "",
 				sortable: true,
 				text: "",
-				typeConfig: null,
+				formatOptions: null,
+				constraints: null,
 				unit: "",
 				visible: true,
 				visualSettings: {
@@ -154,11 +162,8 @@ sap.ui.define([
 				groupable: false,
 				aggregatable: false,
 				key: false,
-				maxConditions: null,
-				path: null,
 				propertyInfos: ["prop"],
 				sortable: false,
-				typeConfig: null,
 				visible: true,
 				visualSettings: {
 					widthCalculation: {
@@ -187,7 +192,8 @@ sap.ui.define([
 	QUnit.test("Simple property", function(assert) {
 		var oPropertyHelper = new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}]);
 
 		assert.deepEqual(oPropertyHelper.getProperties(), [this.oSimplePropertyDefaults]);
@@ -198,6 +204,7 @@ sap.ui.define([
 		var oPropertyHelper = new PropertyHelper([{
 			name: "prop",
 			label: "Property",
+			dataType: "String",
 			groupable: true,
 			aggregatable: true
 		}]);
@@ -233,6 +240,7 @@ sap.ui.define([
 				name: "propA",
 				path: "propAPath",
 				label: "Property A",
+				dataType: "String",
 				unit: "unit",
 				groupable: true,
 				aggregatable: true,
@@ -340,6 +348,7 @@ sap.ui.define([
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "prop",
 				label: "Property",
+				dataType: "String",
 				aggregatable: true,
 				extension: {
 					customAggregate: {
@@ -348,7 +357,8 @@ sap.ui.define([
 				}
 			}, {
 				name: "prop2",
-				label: "Property 2"
+				label: "Property 2",
+				dataType: "String"
 			}, {
 				name: "complexProp",
 				label: "Complex property",

@@ -24,6 +24,7 @@ sap.ui.define([
 		new PropertyHelper([{
 			name: "prop",
 			label: "Property",
+			dataType: "String",
 			aggregatable: true
 		}]).destroy();
 		assert.equal(this.logWarning.callCount, 1, "Warning logged");
@@ -32,7 +33,8 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'groupable'", function(assert) {
 		new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}, {
 			name: "complexProp",
 			label: "ComplexProperty",
@@ -45,7 +47,8 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'key'", function(assert) {
 		new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}, {
 			name: "complexProp",
 			label: "ComplexProperty",
@@ -58,7 +61,8 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'unit'", function(assert) {
 		new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}, {
 			name: "complexProp",
 			label: "ComplexProperty",
@@ -71,7 +75,8 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'text'", function(assert) {
 		new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}, {
 			name: "complexProp",
 			label: "ComplexProperty",
@@ -86,6 +91,7 @@ sap.ui.define([
 			this.oSimplePropertyDefaults = {
 				name: "prop",
 				label: "Property",
+				dataType: "String",
 				tooltip: "",
 				caseSensitive: true,
 				exportSettings: {},
@@ -98,7 +104,8 @@ sap.ui.define([
 				path: "",
 				sortable: true,
 				text: "",
-				typeConfig: null,
+				formatOptions: null,
+				constraints: null,
 				unit: "",
 				visible: true,
 				visualSettings: {
@@ -125,11 +132,8 @@ sap.ui.define([
 				groupLabel: "",
 				groupable: false,
 				key: false,
-				maxConditions: null,
-				path: null,
 				propertyInfos: ["prop"],
 				sortable: false,
-				typeConfig: null,
 				visible: true,
 				visualSettings: {
 					widthCalculation: {
@@ -154,7 +158,8 @@ sap.ui.define([
 	QUnit.test("Simple property", function(assert) {
 		var oPropertyHelper = new PropertyHelper([{
 			name: "prop",
-			label: "Property"
+			label: "Property",
+			dataType: "String"
 		}]);
 
 		assert.deepEqual(oPropertyHelper.getProperties(), [this.oSimplePropertyDefaults]);
@@ -180,6 +185,7 @@ sap.ui.define([
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "propA",
 				label: "Property A",
+				dataType: "String",
 				visible: false,
 				path: "propAPath",
 				exportSettings: {
@@ -191,6 +197,7 @@ sap.ui.define([
 				name: "propB",
 				path: "propBPath",
 				label: "Property B",
+				dataType: "String",
 				sortable: false,
 				filterable: false,
 				groupable: true,
@@ -199,6 +206,7 @@ sap.ui.define([
 				name: "propC",
 				path: "propCPath",
 				label: "Property C",
+				dataType: "String",
 				exportSettings: null
 			}, {
 				name: "complexPropA",
@@ -224,6 +232,7 @@ sap.ui.define([
 				name: "price",
 				path: "price",
 				label: "Price",
+				dataType: "String",
 				exportSettings: {
 					type: "Currency",
 					displayUnit: true,
@@ -233,10 +242,12 @@ sap.ui.define([
 			}, {
 				name: "currencyCode",
 				label: "Currency",
+				dataType: "String",
 				path: "currency"
 			}, {
 				name: "noDataColumn1",
 				label: "NoDataColumn1",
+				dataType: "String",
 				sortable: false,
 				filterable: false,
 				exportSettings: {
@@ -245,6 +256,7 @@ sap.ui.define([
 			}, {
 				name: "noDataColumn2",
 				label: "NoDataColumn2",
+				dataType: "String",
 				sortable: false,
 				filterable: false
 			}, {
@@ -442,10 +454,12 @@ sap.ui.define([
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "prop",
 				label: "Property",
+				dataType: "String",
 				groupable: true
 			}, {
 				name: "prop2",
 				label: "Property 2",
+				dataType: "String",
 				sortable: false,
 				filterable: false,
 				visible: false
@@ -503,6 +517,7 @@ sap.ui.define([
 		new PropertyHelper([{
 			name: "foo",
 			label: "bar",
+			dataType: "String",
 			extension: {}
 		}]).destroy();
 		assert.equal(this.logWarning.callCount, 1, "Warning logged");
@@ -512,6 +527,7 @@ sap.ui.define([
 		var oPropertyHelper = new PropertyHelper([{
 			name: "foo",
 			label: "bar",
+			dataType: "String",
 			extension: {
 				newAttribute: "test"
 			}
@@ -529,7 +545,8 @@ sap.ui.define([
 	QUnit.test("'extension' attribute has default value", function(assert) {
 		var oPropertyHelper = new PropertyHelper([{
 			name: "foo",
-			label: "bar"
+			label: "bar",
+			dataType: "String"
 		}], null, {
 			newAttribute: {type: "string", "default": {value: "myValue"}}
 		});
@@ -544,7 +561,8 @@ sap.ui.define([
 	QUnit.test("Attributes cannot be mandatory", function(assert) {
 		new PropertyHelper([{
 			name: "foo",
-			label: "bar"
+			label: "bar",
+			dataType: "String"
 		}], null, {
 			newAttribute: {type: "string", mandatory: true}
 		}).destroy();
@@ -554,7 +572,8 @@ sap.ui.define([
 	QUnit.test("Complex property", function(assert) {
 		var oPropertyHelper = new PropertyHelper([{
 			name: "foo",
-			label: "bar"
+			label: "bar",
+			dataType: "String"
 		}, {
 			name: "complexFoo",
 			label: "Complex Foo",
@@ -578,7 +597,8 @@ sap.ui.define([
 		this.logWarning.reset();
 		new PropertyHelper([{
 			name: "foo",
-			label: "bar"
+			label: "bar",
+			dataType: "String"
 		}, {
 			name: "complexFoo",
 			label: "Complex Foo",
@@ -591,5 +611,43 @@ sap.ui.define([
 			notAllowedForComplex: {type: "string", forComplexProperty: {valueIfNotAllowed: "not allowed"}}
 		}).destroy();
 		assert.equal(this.logWarning.callCount, 1, "Warning logged if a complex property contains an extension attribute that is not allowed.");
+	});
+
+	QUnit.module("Computed attributes", {
+		beforeEach: function() {
+			this.oGetTypeConfigStub = sinon.stub().returns("MyFakeTypeConfig");
+			sinon.stub(PropertyHelper.prototype, "getParent").returns({
+				getControlDelegate: sinon.stub().returns({
+					getTypeUtil: sinon.stub().returns({
+						getTypeConfig: this.oGetTypeConfigStub
+					})
+				})
+			});
+
+			this.oPropertyHelper = new PropertyHelper([{
+				name: "prop",
+				label: "Property",
+				dataType: "String",
+				formatOptions: {something: 5},
+				constraints: {maxLength: 10}
+			}, {
+				name: "complexProp",
+				label: "Complex property",
+				propertyInfos: ["prop"]
+			}]);
+		},
+		afterEach: function() {
+			PropertyHelper.prototype.getParent.restore();
+			this.oPropertyHelper.destroy();
+		}
+	});
+
+	QUnit.test("typeConfig", function(assert) {
+		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+
+		assert.strictEqual(oSimpleProperty.typeConfig, "MyFakeTypeConfig", "Reading 'typeConfig' is possible");
+		assert.ok(this.oGetTypeConfigStub.calledOnceWithExactly(oSimpleProperty.dataType, oSimpleProperty.formatOptions, oSimpleProperty.constraints),
+			"'typeConfig' created with a single call to TypeUtil with the correct arguments");
+		assert.notOk("typeConfig" in this.oPropertyHelper.getProperty("complexProp"), "No 'typeConfig' on a complex property");
 	});
 });

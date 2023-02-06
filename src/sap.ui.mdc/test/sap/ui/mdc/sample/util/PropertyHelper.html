@@ -72,17 +72,14 @@
 			var aInitialPropertyInfos = [
 				{
 					name: "PropertyA",
-					label: "Property A"
+					label: "Property A",
+					dataType: "String"
 				}, {
 					name: "PropertyB",
 					label: "Property B",
 					visible: false,
 					path: "blub",
-					typeConfig: {
-						baseType: "String",
-						className: "sap.ui.model.type.String",
-						typeInstance: new StringType()
-					},
+					dataType: "String",
 					maxConditions: 2,
 					group: "groupA",
 					groupLabel: "Group A",
@@ -249,6 +246,7 @@
 					} catch (e) {
 						oPropertyOutput.setValue();
 						writeLogEntry(e.message, Log.Level.ERROR);
+						throw e;
 					}
 
 					aLogEntries.forEach(function(oEntry) {
