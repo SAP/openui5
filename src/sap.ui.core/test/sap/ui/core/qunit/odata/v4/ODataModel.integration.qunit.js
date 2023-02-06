@@ -48674,14 +48674,20 @@ sap.ui.define([
 			assert.notOk(oModel.hasPendingChanges());
 		});
 	});
+
 	//*********************************************************************************************
 	// Scenario: (5a) Context#resetChanges within a relative ODLB below an intermediate ODCB.
 	// Patch one line item in the relative ODLB, patch another for a different sales order. Select
 	// the sales order of the first patched line item and call #resetChanges. Submit changes and
 	// see that only the 2nd patch is sent.
 	// JIRA: CPOUI5ODATAV4-1818
+	//
+	// See that edited inactive creation rows are also reset to their initial state.
+	// JIRA: CPOUI5ODATAV4-2011
 	QUnit.test("CPOUI5ODATAV4-1818: (5a) Context#resetChanges, resolved ODLB", function (assert) {
-		var oItems,
+		var oItem1New,
+			oItem2New,
+			oItems,
 			oModel = this.createSalesOrdersModel({
 				updateGroupId : "update",
 				autoExpandSelect : true
@@ -48690,7 +48696,9 @@ sap.ui.define([
 			aOrderContexts,
 			oOrders,
 			oPatchPromise11,
+			oPatchPromise1New,
 			oPatchPromise22,
+			oPatchPromise2New,
 			sView = '\
 <Table id="orders" items="{/SalesOrderList}">\
 	<Text id="id" text="{SalesOrderID}"/>\
@@ -48717,6 +48725,10 @@ sap.ui.define([
 			aOrderContexts = oOrders.getCurrentContexts();
 			oObjectPage = that.oView.byId("objectPage");
 
+			oItems.attachCreateActivate(function (oEvent) {
+				oEvent.preventDefault(); // always results in an edited inactive creation row
+			});
+
 			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
 				+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
 					value : [{
@@ -48733,17 +48745,23 @@ sap.ui.define([
 		}).then(function () {
 			var oItem20 = oItems.getCurrentContexts()[1];
 
-			that.expectChange("note", [, "Item 2.20 changed"]);
+			that.expectChange("note", [, "Item 2.20 changed", "Item 2.new"]);
 
 			oPatchPromise22 = oItem20.setProperty("Note", "Item 2.20 changed");
+			oItem2New = oItems.create(undefined, true, true, /*bInactive*/true);
+			oPatchPromise2New = oItem2New.setProperty("Note", "Item 2.new");
 
+			assert.strictEqual(oItem2New.isInactive(), 1);
 			assert.ok(oItem20.hasPendingChanges());
 			assert.ok(oItems.hasPendingChanges());
 			assert.ok(aOrderContexts[1].hasPendingChanges());
 			assert.ok(oOrders.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges());
 
-			return that.waitForChanges(assert, "patch item 2.20");
+			return Promise.all([
+				that.waitForChanges(assert, "patch item 2.20, create inactive 2.new"),
+				oPatchPromise2New // already resolved because update was stored in the POST body
+			]);
 		}).then(function () {
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
 				+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
@@ -48763,17 +48781,24 @@ sap.ui.define([
 			assert.notOk(oItems.hasPendingChanges()); // sees no changes in inactive caches
 			assert.notOk(aOrderContexts[0].hasPendingChanges());
 
-			that.expectChange("note", ["Item 1.10 changed"]);
+			that.expectChange("note", ["Item 1.10 changed", "Item 1.new"]);
 
 			oPatchPromise11 = oItem10.setProperty("Note", "Item 1.10 changed");
+			oItem1New = oItems.create(undefined, true, true, /*bInactive*/true);
+			oPatchPromise1New = oItem1New.setProperty("Note", "Item 1.new");
 
+			assert.strictEqual(oItem1New.isInactive(), 1);
+			assert.strictEqual(oItem2New.isInactive(), 1);
 			assert.ok(oItem10.hasPendingChanges());
 			assert.ok(oItems.hasPendingChanges());
 			assert.ok(aOrderContexts[0].hasPendingChanges());
 			assert.ok(oOrders.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges());
 
-			return that.waitForChanges(assert, "patch item 1.10");
+			return Promise.all([
+				that.waitForChanges(assert, "patch item 1.10, create inactive 1.new"),
+				oPatchPromise1New
+			]);
 		}).then(function () {
 			assert.ok(aOrderContexts[0].hasPendingChanges());
 
@@ -48781,15 +48806,17 @@ sap.ui.define([
 				+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')/Note",
 				"Request canceled: PATCH SalesOrderList('1')"
 				+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10'); group: update")
-				.expectChange("note", ["Item 1.10"]);
+				.expectChange("note", ["Item 1.10", ""]);
 
 			return Promise.all([
 				// code under test
 				aOrderContexts[0].resetChanges(),
 				checkCanceled(assert, oPatchPromise11),
-				that.waitForChanges(assert, "reset patched item 1.10")
+				that.waitForChanges(assert, "reset patched item 1.10 + edited inactive 1.new")
 			]);
 		}).then(function () {
+			assert.strictEqual(oItem1New.isInactive(), true);
+			assert.strictEqual(oItem2New.isInactive(), 1);
 			assert.notOk(oItems.hasPendingChanges());
 			assert.notOk(aOrderContexts[0].hasPendingChanges());
 			assert.ok(oOrders.hasPendingChanges());
@@ -48807,11 +48834,13 @@ sap.ui.define([
 				that.waitForChanges(assert, "only remaining PATCH for 2.20")
 			]);
 		}).then(function () {
+			assert.strictEqual(oItem1New.isInactive(), true);
+			assert.strictEqual(oItem2New.isInactive(), 1);
+			assert.notOk(oItems.hasPendingChanges()); // inactive is not in current binding hierar.
+			assert.ok(oOrders.hasPendingChanges()); // parent binding sees still the edited inactive
 			assert.notOk(aOrderContexts[0].hasPendingChanges());
-			assert.notOk(aOrderContexts[1].hasPendingChanges());
-			assert.notOk(oItems.hasPendingChanges());
-			assert.notOk(oOrders.hasPendingChanges());
-			assert.notOk(oModel.hasPendingChanges());
+			// assert.notOk(aOrderContexts[1].hasPendingChanges()); don't care
+			assert.notOk(oModel.hasPendingChanges()); // model does not see inactive creation rows
 		});
 	});
 });
