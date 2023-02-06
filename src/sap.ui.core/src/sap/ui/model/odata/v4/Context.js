@@ -1633,16 +1633,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resets all pending changes of this context, see {@link #hasPendingChanges}. Resets also
-	 * invalid user input. If this context is currently {@link #delete deleted} on the client, but
-	 * not yet on the server, this method cancels the deletion and restores the context.
+	 * Resets all property changes, created entities, and entity deletions of this context. Resets
+	 * also invalid user input and inactive contexts which had their activation prevented (see
+	 * {@link sap.ui.model.odata.v4.Context#isInactive}). This function does not reset the execution
+	 * of OData operations (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}). For a
+	 * context which is currently {@link #delete deleted} on the client, but not yet on the server,
+	 * this method cancels the deletion and restores the context.
 	 *
-	 * Note: This is an experimental API. Currently only PATCH and DELETE changes for row contexts
-	 * of an absolute {@link sap.ui.model.odata.v4.ODataListBinding} are supported.
+	 * Note: This is an experimental API. Currently only row contexts of an
+	 * {@link sap.ui.model.odata.v4.ODataListBinding} are supported.
 	 *
 	 * @returns {Promise}
 	 *   A promise which is resolved without a defined result as soon as all changes in the context
-	 *   itself are canceled
+	 *   and its current dependent bindings are canceled
 	 * @throws {Error} If
 	 * <ul>
 	 *   <li> the binding's root binding is suspended,
@@ -1654,6 +1657,7 @@ sap.ui.define([
 	 *
 	 * @experimental As of version 1.109.0
 	 * @public
+	 * @see #hasPendingChanges
 	 */
 	Context.prototype.resetChanges = function () {
 		var aPromises = this.oDeletePromise
@@ -1669,6 +1673,8 @@ sap.ui.define([
 		if (this.bInactive === 1) {
 			this.bInactive = true;
 		}
+		this.oBinding.resetChangesInDependents(aPromises, true);
+
 		return Promise.all(aPromises).then(function () {});
 	};
 

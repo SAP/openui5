@@ -1327,6 +1327,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.SyncPromise[]} aPromises
 	 *   List of promises which is extended for each call to {@link #resetChangesInDependents}.
+	 * @param {boolean} [bIgnoreInactiveCaches]
+	 *   Whether to ignore changes in inactive caches
 	 * @throws {Error}
 	 *   If there is a change of this binding which has been sent to the server and for which there
 	 *   is no response yet.

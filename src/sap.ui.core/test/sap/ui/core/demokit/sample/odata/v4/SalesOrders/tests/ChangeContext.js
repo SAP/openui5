@@ -55,17 +55,28 @@ sap.ui.define([], function () {
 			Then.onTheMainPage.checkSalesOrderLineItemNote(0,
 				"EPM DG: SO ID 0500000000 Item 0000000010");
 
-			// check refresh selected
-			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
-			When.onTheMainPage.changeNoteInLineItem(0, "Changed by OPA 2");
-			// check that refresh of the changed sales order is forbidden
-			When.onTheMainPage.pressRefreshSelectedSalesOrderButton();
-			When.onTheRefreshConfirmation.cancel();
+			// check refresh selected sales order
+			When.onTheMainPage.pressCreateSalesOrderItemButton(); // create in dependent ODLB
+			When.onTheMainPage.changeNoteInDetails("Changed by OPA 1a"); // change in intermed. ODBC
+			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000020");
+			When.onTheMainPage.deleteSelectedSalesOrderLineItem(); // delete in dependent ODLB
+
 			// and that refresh of an unchanged sales order is allowed (CPOUI5ODATAV4-1813)
 			When.onTheMainPage.selectSalesOrderWithId("0500000004");
 			When.onTheMainPage.pressRefreshSelectedSalesOrderButton();
+			When.onTheMainPage.selectFirstSalesOrder();
+			// check that refresh of the changed sales order is forbidden
+			When.onTheMainPage.pressRefreshSelectedSalesOrderButton();
+			When.onTheRefreshConfirmation.cancel();
+			// reset changes and refresh selected sales order afterwards
+			When.onTheMainPage.pressCancelSelectedSalesOrderChangesButton();
+			Then.onTheMainPage.checkSalesOrderLineItemNote(0,
+				"EPM DG: SO ID 0500000000 Item 0000000010");
+			When.onTheMainPage.pressRefreshSelectedSalesOrderButton();
 
 			// check hasPendingChanges via refresh all button
+			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
+			When.onTheMainPage.changeNoteInLineItem(0, "Changed by OPA 2");
 			When.onTheMainPage.pressRefreshAllButton();
 			When.onTheRefreshConfirmation.confirm(); // resets all changes
 			When.onTheMainPage.selectFirstSalesOrder();

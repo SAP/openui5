@@ -3410,7 +3410,10 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("resetChangesInDependents", function (assert) {
+[undefined, true].forEach(function (bIgnoreInactiveCaches) {
+	var sTitle = "resetChangesInDependents, bIgnoreInactiveCaches: " + bIgnoreInactiveCaches;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache1 = {
 				resetChangesForPath : function () {}
 			},
@@ -3445,29 +3448,31 @@ sap.ui.define([
 			.withExactArgs().returns([oChild1, oChild2, oChild3]);
 		this.mock(oCache1).expects("resetChangesForPath").withExactArgs("");
 		this.mock(oChild1).expects("resetChangesInDependents")
-			.withExactArgs(sinon.match.same(aPromises))
+			.withExactArgs(sinon.match.same(aPromises), bIgnoreInactiveCaches)
 			.callsFake(function (aPromises0) {
 				aPromises0.push("foo");
 			});
 		this.mock(oChild1).expects("resetInvalidDataState").withExactArgs();
 		this.mock(oChild2).expects("resetChangesInDependents")
-			.withExactArgs(sinon.match.same(aPromises))
+			.withExactArgs(sinon.match.same(aPromises), bIgnoreInactiveCaches)
 			.callsFake(function (aPromises0) {
 				aPromises0.push("bar");
 			});
 		this.mock(oChild2).expects("resetInvalidDataState").withExactArgs();
 		this.mock(oCache3).expects("resetChangesForPath").withExactArgs("");
 		this.mock(oChild3).expects("resetChangesInDependents")
-			.withExactArgs(sinon.match.same(aPromises))
+			.withExactArgs(sinon.match.same(aPromises), bIgnoreInactiveCaches)
 			.callsFake(function (aPromises0) {
 				aPromises0.push("baz");
 			});
 		this.mock(oChild3).expects("resetInvalidDataState").withExactArgs();
-		this.mock(oCache31).expects("resetChangesForPath").withExactArgs("");
-		this.mock(oCache32).expects("resetChangesForPath").withExactArgs("");
+		this.mock(oCache31).expects("resetChangesForPath").exactly(bIgnoreInactiveCaches ? 0 : 1)
+			.withExactArgs("");
+		this.mock(oCache32).expects("resetChangesForPath").exactly(bIgnoreInactiveCaches ? 0 : 1)
+			.withExactArgs("");
 
 		// code under test
-		oBinding.resetChangesInDependents(aPromises);
+		oBinding.resetChangesInDependents(aPromises, bIgnoreInactiveCaches);
 
 		assert.strictEqual(aPromises.length, 6);
 		assert.ok(SyncPromise.isThenable(aPromises[0]));
@@ -3479,6 +3484,7 @@ sap.ui.define([
 
 		return Promise.all(aPromises);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("resetChangesInDependents: synchronous error", function (assert) {

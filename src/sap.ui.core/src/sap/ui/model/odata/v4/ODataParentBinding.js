@@ -1214,7 +1214,8 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#resetChangesInDependents
 	 */
-	ODataParentBinding.prototype.resetChangesInDependents = function (aPromises) {
+	ODataParentBinding.prototype.resetChangesInDependents = function (aPromises,
+			bIgnoreInactiveCaches) {
 		this.getDependentBindings().forEach(function (oDependent) {
 			aPromises.push(oDependent.oCachePromise.then(function (oCache) {
 				if (oCache) {
@@ -1224,14 +1225,14 @@ sap.ui.define([
 			}).unwrap());
 
 			// mCacheByResourcePath may have changes nevertheless
-			if (oDependent.mCacheByResourcePath) {
+			if (oDependent.mCacheByResourcePath && !bIgnoreInactiveCaches) {
 				Object.keys(oDependent.mCacheByResourcePath).forEach(function (sPath) {
 					oDependent.mCacheByResourcePath[sPath].resetChangesForPath("");
 				});
 			}
 			// Reset dependents, they might have no cache, but pending changes in
 			// mCacheByResourcePath
-			oDependent.resetChangesInDependents(aPromises);
+			oDependent.resetChangesInDependents(aPromises, bIgnoreInactiveCaches);
 		});
 	};
 
