@@ -366,25 +366,13 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageView.prototype._setItemType = function (oListItem) {
-		var sSelector,
-			bActiveTitle = oListItem.getActiveTitle();
+		var oItemTitleRef = oListItem.getTitleRef();
 
-		if (!oListItem.getTitle() || !oListItem.getDescription()) {
-			if (bActiveTitle) {
-				sSelector = ".sapMSLITitleOnly a";
-			} else {
-				sSelector = ".sapMSLITitleOnly";
-			}
-		} else if (bActiveTitle) {
-			sSelector = ".sapMSLITitle a";
-		} else {
-			sSelector = ".sapMSLITitle";
-		}
+		if (oItemTitleRef &&  (oItemTitleRef.offsetWidth < oItemTitleRef.scrollWidth)) {
 
-		var oItemDomRef = oListItem.getDomRef().querySelector(sSelector);
-
-		if (oItemDomRef.offsetWidth < oItemDomRef.scrollWidth) {
+			// if title's text overflows, make the item type Navigation
 			oListItem.setType(ListType.Navigation);
+
 			if (this.getItems().length === 1) {
 				this._fnHandleForwardNavigation(oListItem, "show");
 			}

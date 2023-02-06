@@ -1234,6 +1234,22 @@ sap.ui.define([
 		assert.strictEqual(oFirstListItem.getInfoState(), this.oMessageView._mapInfoState(oFirstMessageItem.getType()), "MessageListItem infoState should be present and mapped correctly");
 	});
 
+	QUnit.test("MessageListItem should not throw an exception when only subtitle is set", function (assert) {
+		var oMV = new MessageView({
+			items: [
+				new MessageItem({
+					subtitle: "test"
+				})
+			]
+		}).placeAt("qunit-fixture");
+
+		Core.applyChanges();
+
+		assert.ok(true, "No exception has been thrown");
+
+		oMV.destroy();
+	});
+
 	QUnit.test("Escaping brackets", function (assert) {
 		// set up
 		var oMessageTemplate, aMockMessages, oModel,

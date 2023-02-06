@@ -112,6 +112,27 @@ sap.ui.define([
 			return sAnnouncement;
 		};
 
+		/**
+		 * Returns item's title dom ref
+		 *
+		 * @returns {HTMLElement} Dom Ref of the list item's title
+		 * @public
+		 */
+		MessageListItem.prototype.getTitleRef = function () {
+			var bActiveTitle = this.getActiveTitle();
+			var sDescription = this.getDescription();
+
+			if (bActiveTitle) {
+				return this.getDomRef().querySelector("a");
+			}
+
+			if (sDescription) {
+				return this.getDomRef().querySelector(".sapMSLITitle");
+			}
+
+			return this.getDomRef().querySelector(".sapMSLITitleOnly");
+		};
+
 		return MessageListItem;
 
 	});
