@@ -833,7 +833,7 @@ sap.ui.define([
 		//Act
 		var $oImageControlRef = ohResponsiveIcon._oImageControl.$();
 		$oImageControlRef.trigger("focus");
-		qutils.triggerKeyup($oImageControlRef, KeyCodes.SPACE);
+		qutils.triggerKeydown($oImageControlRef, KeyCodes.SPACE);
 
 		//Assert
 		assert.ok(domRef, "Icon should fire 'iconPress' event when object header is responsive");
