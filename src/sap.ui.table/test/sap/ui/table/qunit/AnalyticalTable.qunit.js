@@ -13,8 +13,6 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/Core",
-	"sap/ui/model/analytics/ODataModelAdapter",
-	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
 	"sap/ui/core/qunit/analytics/TBA_ServiceDocument", // provides mock data
 	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts" // provides mock data
 ], function(TableQUnitUtils, AnalyticalTable, TableUtils, ODataModel, ODataModelV2, o4aFakeService,

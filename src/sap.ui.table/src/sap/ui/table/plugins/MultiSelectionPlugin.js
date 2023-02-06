@@ -350,7 +350,7 @@ sap.ui.define([
 			}
 		}
 
-		return loadMultipleContexts(oPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function() {
+		return loadContexts(oPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function() {
 			return {indexFrom: iIndexFrom, indexTo: iIndexTo};
 		});
 	}
@@ -555,33 +555,18 @@ sap.ui.define([
 		this._oNotificationPopover.close();
 	};
 
-	function loadMultipleContexts(oBinding, iStartIndex, iLength) {
-		return new Promise(function(resolve) {
-			loadContexts(oBinding, iStartIndex, iLength, resolve);
-		});
-	}
-
-	function loadContexts(oBinding, iStartIndex, iLength, fResolve) {
+	function loadContexts(oBinding, iStartIndex, iLength) {
 		var aContexts = oBinding.getContexts(iStartIndex, iLength, 0, true);
-		var bLoadItems = false;
+		var bContextsAvailable = aContexts.length === iLength && !aContexts.includes(undefined);
 
-		for (var i = 0; i < aContexts.length; i++) {
-			if (!aContexts[i]) {
-				bLoadItems = true;
-				break;
-			}
-		}
-		if (!bLoadItems && !aContexts.dataRequested) {
-			fResolve(aContexts);
-			return;
+		if (bContextsAvailable) {
+			return Promise.resolve(aContexts);
 		}
 
-		oBinding.attachEventOnce("dataReceived", function() {
-			if (aContexts.length == iLength) {
-				fResolve(aContexts);
-			} else {
-				loadContexts(oBinding, iStartIndex, iLength, fResolve);
-			}
+		return new Promise(function(resolve) {
+			oBinding.attachEventOnce("dataReceived", function() {
+				resolve(loadContexts(oBinding, iStartIndex, iLength));
+			});
 		});
 	}
 
