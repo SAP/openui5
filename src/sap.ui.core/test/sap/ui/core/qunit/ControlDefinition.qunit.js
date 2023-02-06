@@ -214,23 +214,19 @@ sap.ui.define([
 
 		var properties = md.getProperties();
 		assert.equal(Object.keys(properties).length, 2, "there should be two local public properties");
-		var properties = md.getAllProperties();
-		assert.equal(Object.keys(properties).length, 8, "there should be eight public properties");
+		var baseProperties = Control.getMetadata().getAllProperties();
+		properties = md.getAllProperties();
+
+		assert.ok(Object.keys(baseProperties).every(function(name) {
+			return Object.keys(properties).includes(name);
+		}), "getAllProperties should contain the inherited properties");
 		assert.ok(properties.text, "there should be a 'text' property");
 		assert.equal(properties.text.type, "string", "'text' should be a string property");
-
-		var methods = md.getAllPublicMethods();
-		assert.ok(methods.length > 0, "there should be at least one public method");
-		assert.ok(methods.indexOf("add") >= 0, "'add' should be one of the public method");
-		assert.ok(methods.indexOf("init") < 0, "'init' must not be part of the public methods");
-		assert.ok(methods.indexOf("_secret") < 0, "'_secret' must not be part of the public methods");
-		assert.ok(methods.indexOf("onfocusin") < 0, "'onfocusin' must not be part of the public methods");
-		assert.ok(methods.indexOf("renderer") < 0, "'renderer' must not be part of the public methods");
 
 		var aggregations = md.getAggregations();
 		assert.equal(Object.keys(aggregations).length, 2, "there should be one public aggregation");
 		assert.ok(aggregations.dots, "there should be a 'dots' aggregation");
-		var aggregations = md.getAllAggregations();
+		aggregations = md.getAllAggregations();
 		assert.equal(Object.keys(aggregations).length, 7, "there should be 7 public aggregations across the hierarchy");
 		assert.ok(aggregations.dots, "there should be a 'dots' aggregation");
 
@@ -242,6 +238,20 @@ sap.ui.define([
 		var events = md.getAllEvents();
 		assert.equal(Object.keys(events).length, 7, "there should be 7 public events");
 		assert.ok(events.somethingHappened, "there should be a 'somethingHappened' event");
+	});
+
+	/**
+	 * @deprecated As of 1.58
+	 */
+	QUnit.test("Metadata public methods", function(assert) {
+		var md = this.myControl.getMetadata();
+		var methods = md.getAllPublicMethods();
+		assert.ok(methods.length > 0, "there should be at least one public method");
+		assert.ok(methods.indexOf("add") >= 0, "'add' should be one of the public method");
+		assert.ok(methods.indexOf("init") < 0, "'init' must not be part of the public methods");
+		assert.ok(methods.indexOf("_secret") < 0, "'_secret' must not be part of the public methods");
+		assert.ok(methods.indexOf("onfocusin") < 0, "'onfocusin' must not be part of the public methods");
+		assert.ok(methods.indexOf("renderer") < 0, "'renderer' must not be part of the public methods");
 	});
 
 	QUnit.test("Metadata singluar names", function(assert) {
@@ -462,6 +472,15 @@ sap.ui.define([
 		// _secretRenderer should be a function
 		assert.equal(typeof myObj._secretRenderer, "function", "'_secretRenderer' should be added as normal function");
 		assert.equal(myObj._secretRenderer(), "secret renderer", "'_secretRenderer' should work as normal function");
+
+		myObj.destroy();
+	});
+
+	/**
+	 * @deprecated As of 1.111
+	 */
+	QUnit.test("Instantiate inherited Object - getInterface", function(assert) {
+		var myObj = new MyObject("myObj");
 
 		// Object.getInterface() should work and return only the public method
 		var intf = myObj.getInterface();

@@ -117,6 +117,9 @@ sap.ui.define([
 		oUIArea.remove();
 	});
 
+	/**
+	 * @deprecated As of 1.69
+	 */
 	QUnit.test("Element isn't focusable when it's blocked", function(assert) {
 		var oUIArea = createAndAppendDiv("uiarea_focus");
 
@@ -158,6 +161,9 @@ sap.ui.define([
 		oUIArea.remove();
 	});
 
+	/**
+	 * @deprecated As of 1.69
+	 */
 	QUnit.test("Element isn't focusable when its parent is blocked", function(assert) {
 		var oUIArea = createAndAppendDiv("uiarea_focus");
 
