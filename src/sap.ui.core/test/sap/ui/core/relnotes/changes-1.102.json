@@ -508,5 +508,21 @@
         ]
       }
     ]
+  },
+  "1.102.14": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "a9da908192c3d08e5f2be5c162ff9e4e64ed0031",
+        "type": "FIX",
+        "text": " core/qunit/util/Popup.qunit: stabilize test of client rect",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380014962"
+          }
+        ]
+      }
+    ]
   }
 }
