@@ -286,8 +286,6 @@ sap.ui.define([
 			inParameters: undefined,
 			outParameters: undefined,
 			bindingContext: undefined,
-			conditionModel: undefined,
-			conditionModelName: undefined,
 			checkKey: true,
 			checkDescription: true,
 			exception: ParseException
@@ -318,8 +316,6 @@ sap.ui.define([
 			inParameters: undefined,
 			outParameters: undefined,
 			bindingContext: undefined,
-			conditionModel: undefined,
-			conditionModelName: undefined,
 			checkKey: true,
 			checkDescription: false,
 			exception: ParseException
@@ -350,8 +346,6 @@ sap.ui.define([
 			inParameters: undefined,
 			outParameters: undefined,
 			bindingContext: undefined,
-			conditionModel: undefined,
-			conditionModelName: undefined,
 			checkKey: true,
 			checkDescription: false,
 			exception: ParseException
@@ -382,8 +376,6 @@ sap.ui.define([
 			inParameters: undefined,
 			outParameters: undefined,
 			bindingContext: undefined,
-			conditionModel: undefined,
-			conditionModelName: undefined,
 			checkKey: false,
 			checkDescription: true,
 			exception: ParseException
@@ -414,8 +406,6 @@ sap.ui.define([
 			inParameters: undefined,
 			outParameters: undefined,
 			bindingContext: undefined,
-			conditionModel: undefined,
-			conditionModelName: undefined,
 			checkKey: false, // as value might not be a valid key, jsut a part of it
 			checkDescription: false,
 			exception: ParseException
@@ -447,8 +437,6 @@ sap.ui.define([
 			inParameters: undefined,
 			outParameters: undefined,
 			bindingContext: undefined,
-			conditionModel: undefined,
-			conditionModelName: undefined,
 			checkKey: false,
 			checkDescription: true,
 			exception: ParseException
@@ -480,8 +468,6 @@ sap.ui.define([
 			inParameters: undefined,
 			outParameters: undefined,
 			bindingContext: undefined,
-			conditionModel: undefined,
-			conditionModelName: undefined,
 			checkKey: true,
 			checkDescription: false,
 			exception: FormatException

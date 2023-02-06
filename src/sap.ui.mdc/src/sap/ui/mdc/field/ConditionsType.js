@@ -62,8 +62,6 @@ sap.ui.define([
 	 * @param {object} [oFormatOptions.delegate] Field delegate to handle model-specific logic
 	 * @param {object} [oFormatOptions.payload] Payload of the delegate
 	 * @param {boolean} [oFormatOptions.preventGetDescription] If set, description is not read by <code>formatValue</code> as it is known that no description exists or might be set later
-	 * @param {sap.ui.mdc.condition.ConditionModel} [oFormatOptions.conditionModel] <code>ConditionModel</code>, if bound to one
-	 * @param {string} [oFormatOptions.conditionModelName] Name of the <code>ConditionModel</code>, if bound to one
 	 * @param {string} [oFormatOptions.defaultOperatorName] Name of the default <code>Operator</code>
 	 * @param {boolean} [oFormatOptions.convertWhitespaces] If set, whitespaces will be replaced by special characters to display whitespaces in HTML
 	 * @param {sap.ui.core.Control} [oFormatOptions.control] Instance if the calling control

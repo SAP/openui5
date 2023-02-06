@@ -527,7 +527,6 @@ sap.ui.define([
 				setTimeout(function() {
 					var oFormatOptions = merge({}, this.getFormatOptions());
 					delete oFormatOptions.fieldHelpID;
-					delete oFormatOptions.conditionModelName;
 					oFormatOptions.maxConditions = 1;
 					oFormatOptions.display = FieldDisplay.Value;
 					//oFormatOptions.valueType = this._getFieldType.call(this, oOperator.name, 0); //TODO using the _getFieldType for better support of types

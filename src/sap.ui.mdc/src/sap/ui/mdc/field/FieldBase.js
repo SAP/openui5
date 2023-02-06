@@ -2823,7 +2823,6 @@ sap.ui.define([
 
 		var oFieldHelp = _getFieldHelp.call(this);
 		if (oFieldHelp) { // as Config or BindingContext might change, update connection on every focus
-			var oConditionModelInfo = _getConditionModelInfo.call(this);
 			var oType;
 			var bIsMeasure = this._getContentFactory().isMeasure();
 
@@ -2844,8 +2843,6 @@ sap.ui.define([
 					delegate: this.getControlDelegate(),
 					delegateName: this.getDelegate() && this.getDelegate().name,
 					payload: this.getPayload(),
-					conditionModel: oConditionModelInfo.model,
-					conditionModelName: oConditionModelInfo.name,
 					defaultOperatorName: this.getDefaultOperator ? this.getDefaultOperator() : null
 			};
 			oFieldHelp.connect(this, oConfig);
@@ -2955,8 +2952,6 @@ sap.ui.define([
 			this._asyncParsingCall = _asyncParsingCall.bind(this); //as variable to have the same function after each update of formatOptions. Otherwise it would be a change on FormatOption in ValueHelpPanel every time
 		}
 
-		var oConditionModelInfo = _getConditionModelInfo.call(this);
-
 		return {
 			valueType: this._getContentFactory().retrieveDataType(),
 			originalDateType: this._getContentFactory().getDateOriginalType() || this._getContentFactory().getUnitOriginalType(),
@@ -2974,8 +2969,6 @@ sap.ui.define([
 			delegateName: this.getDelegate() && this.getDelegate().name,
 			payload: this.getPayload(),
 			preventGetDescription: this._bPreventGetDescription,
-			conditionModel: oConditionModelInfo.model,
-			conditionModelName: oConditionModelInfo.name,
 			convertWhitespaces: this.getEditMode() === EditMode.Display || this.getMaxConditions() !== 1, // also replace whitespaces in tokens
 			control: this,
 			defaultOperatorName : this.getDefaultOperator ? this.getDefaultOperator() : null,
@@ -3036,8 +3029,6 @@ sap.ui.define([
 			this._asyncParsingCall = _asyncParsingCall.bind(this);
 		}
 
-		var oConditionModelInfo = _getConditionModelInfo.call(this);
-
 		return {
 			valueType: this._getContentFactory().getUnitType(),
 			originalDateType: this._getContentFactory().getDateOriginalType() || this._getContentFactory().getUnitOriginalType(),
@@ -3055,8 +3046,6 @@ sap.ui.define([
 			delegateName: this.getDelegate() && this.getDelegate().name,
 			payload: this.getPayload(),
 			preventGetDescription: this._bPreventGetDescription,
-			conditionModel: oConditionModelInfo.model,
-			conditionModelName : oConditionModelInfo.name,
 			convertWhitespaces: this.getEditMode() === EditMode.Display || this.getEditMode() === EditMode.EditableDisplay,
 			control: this,
 			getConditions: this.getConditions.bind(this), // TODO: better solution to update unit in all conditions
@@ -3198,35 +3187,6 @@ sap.ui.define([
 		}
 
 		return false;
-
-	}
-
-	/*
-	 * In FilterField case the Field help needs to be bound to the same ConditionModel to
-	 * bind the In- and OutParameters in the right way.
-	 * As the FieldHelp might be placed outside the FilterBar in the control tree it might not
-	 * inherit the ConditionModel.
-	 */
-	function _getConditionModelInfo() {
-
-		var oConditionModel;
-		var sName;
-		var oBinding = this.getBinding("conditions");
-
-		if (oBinding) {
-			var oModel = oBinding.getModel();
-			if (oModel && oModel.isA("sap.ui.mdc.condition.ConditionModel")) {
-				oConditionModel = oModel;
-				var oBindingInfo = this.getBindingInfo("conditions");
-				if (oBindingInfo.model) {
-					sName = oBindingInfo.model;
-				} else if (oBindingInfo.parts && oBindingInfo.parts.length === 1) {
-					sName = oBindingInfo.parts[0].model;
-				}
-			}
-		}
-
-		return {name: sName, model: oConditionModel};
 
 	}
 

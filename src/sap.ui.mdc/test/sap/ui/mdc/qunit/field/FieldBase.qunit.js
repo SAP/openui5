@@ -926,8 +926,6 @@ sap.ui.define([
 		assert.equal(oFormatOptions.delegateName, "sap/ui/mdc/field/FieldBaseDelegate", "delegateName");
 		assert.deepEqual(oFormatOptions.payload, {}, "payload");
 		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
-		assert.equal(oFormatOptions.conditionModel, oCM, "conditionModel");
-		assert.equal(oFormatOptions.conditionModelName, "cm", "conditionModelName");
 		assert.ok(oFormatOptions.convertWhitespaces, "convertWhitespaces set");
 
 		oField.setDataType("sap.ui.model.type.Currency");
@@ -950,8 +948,6 @@ sap.ui.define([
 		assert.equal(oFormatOptions.delegateName, "sap/ui/mdc/field/FieldBaseDelegate", "delegateName");
 		assert.deepEqual(oFormatOptions.payload, {}, "payload");
 		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
-		assert.equal(oFormatOptions.conditionModel, oCM, "conditionModel");
-		assert.equal(oFormatOptions.conditionModelName, "cm", "conditionModelName");
 		assert.notOk(oFormatOptions.convertWhitespaces, "convertWhitespaces not set");
 		assert.equal(oFormatOptions.control, oField, "control");
 
@@ -971,8 +967,6 @@ sap.ui.define([
 		assert.equal(oFormatOptions.delegateName, "sap/ui/mdc/field/FieldBaseDelegate", "delegateName");
 		assert.deepEqual(oFormatOptions.payload, {}, "payload");
 		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
-		assert.equal(oFormatOptions.conditionModel, oCM, "conditionModel");
-		assert.equal(oFormatOptions.conditionModelName, "cm", "conditionModelName");
 		assert.notOk(oFormatOptions.convertWhitespaces, "convertWhitespaces not set");
 		assert.equal(oFormatOptions.control, oField, "control");
 
@@ -3278,9 +3272,7 @@ sap.ui.define([
 			control: oField,
 			dataType: oField._getContentFactory().retrieveDataType(),
 			exception: FormatException,
-			bindingContext: undefined,
-			conditionModel: oCM,
-			conditionModelName: "cm"
+			bindingContext: undefined
 		};
 		assert.ok(oFieldHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 		oField.setDisplay(FieldDisplay.DescriptionValue);
@@ -3438,9 +3430,7 @@ sap.ui.define([
 				control: oField,
 				dataType: oField._getContentFactory().retrieveDataType(),
 				exception: FormatException,
-				bindingContext: undefined,
-				conditionModel: oCM,
-				conditionModelName: "cm"
+				bindingContext: undefined
 			};
 			assert.ok(oFieldHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 			fnDone();
@@ -3874,8 +3864,6 @@ sap.ui.define([
 			dataType: oField._getContentFactory().retrieveDataType(),
 			exception: ParseException,
 			bindingContext: undefined,
-			conditionModel: oCM,
-			conditionModelName: "cm",
 			inParameters: undefined,
 			outParameters: undefined
 		};
@@ -3911,8 +3899,6 @@ sap.ui.define([
 			dataType: oField._getContentFactory().retrieveDataType(),
 			exception: ParseException,
 			bindingContext: undefined,
-			conditionModel: oCM,
-			conditionModelName: "cm",
 			inParameters: undefined,
 			outParameters: undefined
 		};
@@ -3983,8 +3969,6 @@ sap.ui.define([
 			dataType: oField._getContentFactory().retrieveDataType(),
 			exception: ParseException,
 			bindingContext: undefined,
-			conditionModel: oCM,
-			conditionModelName: "cm",
 			inParameters: undefined,
 			outParameters: undefined
 		};

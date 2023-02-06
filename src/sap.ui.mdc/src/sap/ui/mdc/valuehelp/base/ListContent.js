@@ -45,7 +45,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * If set, <code>getKeyForText</code> returns the first item that matches the text.
+				 * If set, <code>getItemForValue</code> returns the first item that matches the text.
 				 *
 				 * This is the case if the text of the item starts with the text entered.
 				 */
