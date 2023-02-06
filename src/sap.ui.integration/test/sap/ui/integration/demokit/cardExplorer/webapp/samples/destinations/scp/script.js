@@ -3,10 +3,12 @@
  */
 
 // reflects changes from code editor to the card in the example page
-(function() {
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Core"
+], function(jQuery, ComponentContainer, Core) {
 	"use strict";
-
-	/*global jQuery */
 
 	var rDestinations = /^\/destinations\/northwind\/V3\/Northwind\/Northwind\.svc\/(.*)/;
 	var fnOldAjax = jQuery.ajax;
@@ -39,8 +41,8 @@
 			return;
 		}
 
-		sap.ui.getCore().attachInit(function () {
-			var oComponent = sap.ui.getCore().getComponent("container-scp");
+		Core.attachInit(function () {
+			var oComponent = Core.getComponent("container-scp");
 
 			if (oComponent) {
 				var oView = oComponent.getRootControl(),
@@ -49,4 +51,14 @@
 			}
 		});
 	});
-})();
+
+	// instantiate the component
+	new ComponentContainer({
+		name: "sap.ui.integration.sample.scp",
+		manifest: true,
+		settings : {
+			id : "container-scp"
+		},
+		async: true
+	}).placeAt("content");
+});
