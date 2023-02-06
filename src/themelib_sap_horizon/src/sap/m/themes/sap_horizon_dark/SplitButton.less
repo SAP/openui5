@@ -1,6 +1,6 @@
 /* ================================== */
 /* CSS for control sap.m/SplitButton  */
-/* Evening Horizon theme              */
+/* Horizon theme                      */
 /* ================================== */
 
 .sapMIBar-CTX.sapMFooter-CTX .sapMSB.sapMSBEmphasized:focus .sapMSBInner::after,
@@ -45,7 +45,7 @@
 }
 
 .sapMSB .sapMSBInner .sapMSBText:not(.sapMSBTextIE) .sapMBtnInner {
-	margin-right: 2.3rem;
+	margin-right: 2.3125rem;
 }
 
 .sapMSB .sapMSBInner {
@@ -162,21 +162,66 @@
 	border-color: @sapUiContentContrastFocusColor;
 }
 
+.sapMSB .sapMSBText:not(.sapMBtnDisabled)  > span.sapMBtnInner.sapMBtnEmphasized.sapMBtnActive {
+	margin-right: 2.25rem;
+}
+
 .sapMSB :not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnEmphasized.sapMBtnActive {
 	border: 0.125rem solid @sapUiContentFocusColor;
-	.sapMBtnContent,
-    .sapUiIcon {
-		position: absolute;
-		top: -2px;
-	}
-	.sapUiIcon {
+	min-width: 2.3125rem;
+
+	&.sapMBtnText > .sapUiIcon {
 		left: 0.4375rem;
 	}
-	&.sapMBtnIconFirst .sapMBtnContent {
-		left: 1.8rem;
+
+	.sapUiIcon {
+		position: absolute;
+		top: -0.0625rem;
+		left: -0.0625rem;
+		padding-left: 0.0625rem;
+		padding-right: 0.0625rem;
 	}
+
 	.sapMBtnContent {
-		left: 0.4rem;
+		top: 2px;
+		padding-left: 0.0625rem;
+	}
+
+	.sapUiIcon + .sapMBtnContent {
+		top: -1px;
+		padding-left: 1.4375rem;
+	}
+}
+
+.sapMMenuBtnSplit .sapMSB:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnEmphasized:not(.sapMBtnIconFirst) .sapMBtnContent {
+	position: relative;
+	left: 0.0625rem;
+	top: 0.0625rem;
+}
+
+.sapMMenuBtnSplit .sapMSB:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnEmphasized.sapMBtnActive:not(.sapMBtnIconFirst) .sapMBtnContent {
+	position: relative;
+	left: 0;
+	top: -0.0625rem;
+}
+
+.sapUiSizeCompact .sapMSB {
+	.sapMSBText:not(.sapMBtnDisabled)  > span.sapMBtnInner.sapMBtnEmphasized.sapMBtnActive {
+		margin-right: 2rem;
+	}
+
+	:not(.sapMBtnDisabled) > span.sapMBtnInner {
+		&.sapMBtnInner.sapMBtnText {
+			padding-left: 0.4375rem;
+			padding-right: 0.5rem;
+		}
+		&.sapMBtnEmphasized.sapMBtnActive {
+			min-width: 2rem;
+
+			&.sapMBtnText > .sapUiIcon {
+				left: 0.3125rem;
+			}
+		}
 	}
 }
 
@@ -230,6 +275,10 @@ html.sap-desktop .sapMSB .sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator
 	background-color: @sapUiButtonActiveTextColor;
 }
 
-.sapMIBar .sapMSB .sapMBtn {
-	background-color: transparent;
+.sapMIBar .sapMSB {
+	&:not(.sapMSBAccept):not(.sapMSBReject):not(.sapMSBEmphasized):not(.sapMSBCritical):not(.sapMSBNegative):not(.sapMSBSuccess):not(.sapMSBNeutral):not(.sapMSBAttention) {
+		.sapMBtn {
+			background-color: transparent;
+		}
+	}
 }
