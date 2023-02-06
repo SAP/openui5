@@ -19,6 +19,7 @@
 			xmlns:mvc="sap.ui.core.mvc"
 			xmlns:core="sap.ui.core"
 			xmlns="sap.m"
+			xmlns:layout="sap.ui.layout"
 			xmlns:f="sap.f">
 
 			<f:DynamicPage id="dynamicPageId">
@@ -89,13 +90,14 @@
 
 				<!-- DynamicPage Content -->
 				<f:content>
-					<VBox fitContainer="true">
-						<MessageStrip text="I am in DynamicPage content"/>
-						<MessageStrip text="I am in DynamicPage content"/>
-						<MessageStrip text="I am in DynamicPage content"/>
-						<MessageStrip text="I am in DynamicPage content"/>
-						<MessageStrip text="I am in DynamicPage content"/>
-					</VBox>
+					<layout:DynamicSideContent id="idDynamicGanttChartSideContent" containerQuery="false" showSideContent="false" sideContentPosition="End">
+						<layout:mainContent>
+							<Button text="Test" />
+						</layout:mainContent>
+						<layout:sideContent>
+							<Page title="test"/>
+						</layout:sideContent>
+					</layout:DynamicSideContent>
 				</f:content>
 
 				<!-- DynamicPage Footer -->
@@ -116,31 +118,29 @@
 		(function (jQuery) {
 
 			sap.ui.controller("dynamicPageController", {
-				onInit: function() {
-					var oView = this.getView();
-					this.oDynamicPageTitle = oView.byId("dynamicPageTitleId");
-					this.oDynamicPageHeader = oView.byId("dynamicPageHeaderId");
-				},
-				onSetSolidBackground: function () {
-					this.setBackgroundDesign("Solid");
-				},
-				onSetTransparentBackground: function () {
-					this.setBackgroundDesign("Transparent");
-				},
-				onSetTranslucentBackground: function () {
-					this.setBackgroundDesign("Translucent");
-				},
-				setBackgroundDesign: function (backgroundDesign) {
-					this.oDynamicPageTitle.setBackgroundDesign(backgroundDesign);
-					this.oDynamicPageHeader.setBackgroundDesign(backgroundDesign);
-				},
-				getPage: function() {
-					return this.byId("dynamicPageId");
-				},
-				onToggleFooter: function () {
-					this.getPage().setShowFooter(!this.getPage().getShowFooter());
-				}
-			});
+			onInit: function() {
+				var oView = this.getView();
+				this.oDynamicPageTitle = oView.byId("dynamicPageTitleId");
+				this.oDynamicPageHeader = oView.byId("dynamicPageHeaderId");
+				this.oDynamicPage = oView.byId("dynamicPageId");
+			},
+			onSetSolidBackground: function () {
+				this.setBackgroundDesign("Solid");
+			},
+			onSetTransparentBackground: function () {
+				this.setBackgroundDesign("Transparent");
+			},
+			onSetTranslucentBackground: function () {
+				this.setBackgroundDesign("Translucent");
+			},
+			setBackgroundDesign: function (backgroundDesign) {
+				this.oDynamicPageTitle.setBackgroundDesign(backgroundDesign);
+				this.oDynamicPageHeader.setBackgroundDesign(backgroundDesign);
+			},
+			onToggleFooter: function () {
+				this.oDynamicPage.setShowFooter(!this.oDynamicPage.getShowFooter());
+			}
+		});
 
 			sap.ui.xmlview({viewContent:jQuery('#view1').html()}).placeAt("content");
 		}(jQuery));

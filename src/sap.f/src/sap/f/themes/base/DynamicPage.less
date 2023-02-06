@@ -87,19 +87,26 @@ html[data-sap-ui-browser^="ie"] {
 
 // adds space underneath the footer (when page in scrollable mode)
 .sapFDynamicPageContentFitContainerFooterVisible:not(.sapFDynamicPageContentFitContainer) {
-	padding-bottom: 4rem;
-}
-
-// adds space underneath the footer (when page in non-scrollable mode)
-.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer > div::after {
-	content: '';
-	display: block;
-	height: 4rem;
+	padding-bottom: ~"calc(@{_sap_f_DynamicPage_FooterHeight} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 2 ) )";
 }
 
 .sapUiSizeCompact {
-	.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer > div::after {
-		height: 3.5rem;
+	.sapFDynamicPageContentFitContainerFooterVisible:not(.sapFDynamicPageContentFitContainer) {
+		padding-bottom: ~"calc(@{_sap_f_DynamicPage_FooterHeight_Compact} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 2 ) )";
+	}
+}
+
+// adds space underneath the footer (when page in non-scrollable mode)
+.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer {
+	max-height: ~"calc(100% - (@{_sap_f_DynamicPage_FooterHeight} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 4 ) ))";
+	// Some controls appearing in fitContainer case could be using minimum height and
+	// "overflow-y: auto" helps to have proper scroll behavior
+	overflow-y: auto;
+}
+
+.sapUiSizeCompact {
+	.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer {
+		max-height: ~"calc(100% - (@{_sap_f_DynamicPage_FooterHeight_Compact} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 4 ) ))";
 	}
 }
 

@@ -8,7 +8,7 @@
 		xmlns:f="sap.f"
 		xmlns:layout="sap.ui.layout"
 		height="100%">
-		<f:DynamicPage id="dynamicPageId" preserveHeaderStateOnScroll="true" headerExpanded="{/headerExpanded}">
+		<f:DynamicPage id="dynamicPageId" preserveHeaderStateOnScroll="true" headerExpanded="{/headerExpanded}" showFooter="true" fitContent="true">
 			<!-- DynamicPage Title -->
 			<f:title>
 				<f:DynamicPageTitle>
@@ -89,7 +89,8 @@
 			<f:content>
 				<t:Table
 						rows="{/ProductCollection}"
-						selectionMode="MultiToggle">
+						selectionMode="MultiToggle"
+						visibleRowCountMode="Auto">
 					<t:extension>
 						<OverflowToolbar style="Clear">
 							<Title text="Products"/>
