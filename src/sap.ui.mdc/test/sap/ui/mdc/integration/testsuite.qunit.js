@@ -95,7 +95,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				module: "test-resources/sap/ui/mdc/integration/twfb/TestJourney.qunit",
 				sinon: false
 			},
-			"ValueHelpSelectFromListJourney": {
+			"SelectFromListJourney": {
+				group: "ValueHelp",
 				loader: {
 					paths: {
 						"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
@@ -108,10 +109,11 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					reorder: false
 				},
 				autostart: false, // tests are added asynchronously because the V4 server needs to be found first
-				module: "test-resources/sap/ui/mdc/integration/valuehelp/ValueHelpSelectFromListJourney.qunit",
+				module: "test-resources/sap/ui/mdc/integration/valuehelp/SelectFromListJourney.qunit",
 				sinon: false
 			},
-			"ValueHelpDefineConditionsJourney": {
+			"DefineConditionsJourney": {
+				group: "ValueHelp",
 				loader: {
 					paths: {
 						"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
@@ -124,7 +126,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					reorder: false
 				},
 				autostart: false, // tests are added asynchronously because the V4 server needs to be found first
-				module: "test-resources/sap/ui/mdc/integration/valuehelp/ValueHelpDefineConditionsJourney.qunit",
+				module: "test-resources/sap/ui/mdc/integration/valuehelp/DefineConditionsJourney.qunit",
 				sinon: false
 			},
 			"ActionToolbar": {

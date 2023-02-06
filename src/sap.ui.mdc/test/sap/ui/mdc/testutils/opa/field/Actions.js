@@ -21,7 +21,7 @@ sap.ui.define([
 ) {
     "use strict";
 
-    return {
+    var oActions =  {
 		iEnterTextOnTheField: function(vIdentifier, sValue) {
 			return waitForField.call(this, Utils.enhanceWaitFor(vIdentifier, {
 				actions: new EnterText({
@@ -43,7 +43,9 @@ sap.ui.define([
 			}));
 		},
 		iOpenTheValueHelpForField: function (vIdentifier) {
-            return this.iPressKeyOnTheField(vIdentifier, KeyCodes.F4);
+            return oActions.iPressKeyOnTheField.call(this, vIdentifier, KeyCodes.F4);
         }
 	};
+
+	return oActions;
 });

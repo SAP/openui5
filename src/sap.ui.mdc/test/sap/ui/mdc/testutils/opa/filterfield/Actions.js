@@ -19,7 +19,7 @@ sap.ui.define([
 ) {
     "use strict";
 
-    return {
+    var oActions =  {
 		iEnterTextOnTheFilterField: function(vIdentifier, sValue, oConfig) {
 			return waitForFilterField.call(this, Utils.enhanceWaitFor(vIdentifier, {
 				actions: new EnterText(oConfig ? Object.assign({
@@ -52,7 +52,9 @@ sap.ui.define([
 			}));
 		},
 		iOpenTheValueHelpForFilterField: function (vIdentifier) {
-            return this.iPressKeyOnTheFilterField(vIdentifier, KeyCodes.F4);
+            return oActions.iPressKeyOnTheFilterField.call(this, vIdentifier, KeyCodes.F4);
         }
 	};
+
+	return oActions;
 });

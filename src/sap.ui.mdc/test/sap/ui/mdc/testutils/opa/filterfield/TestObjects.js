@@ -32,17 +32,6 @@ sap.ui.define([
 				/**
 				 * OPA5 test action
 				 * @memberof onTheMDCFilterField
-				 * @method iPressKeyOnTheFilterField
-				 * @param {string|object} vOptions Id or a plain object providing properties identifying the given <code>sap.ui.mdc.FilterField</code>
-				 * @param {string} sValue Value of the key code that is pressed
-				 * @returns {Promise} OPA waitFor
-				 */
-				 iPressKeyOnTheFilterField: function(vOptions, sValue) {
-					return fieldActions.iPressKeyOnTheFilterField.apply(this, arguments);
-				},
-				/**
-				 * OPA5 test action
-				 * @memberof onTheMDCFilterField
 				 * @method iOpenTheValueHelpForFilterField
 				 * @param {Object | string} oFilterField ID or identifying properties of the <code>sap.ui.mdc.FilterField</code>
 				 * @returns {Promise} OPA waitFor

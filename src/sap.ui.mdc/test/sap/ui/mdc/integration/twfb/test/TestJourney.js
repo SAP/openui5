@@ -6,10 +6,12 @@
 
 sap.ui.define([
 	"sap/ui/test/Opa5",
+	"test-resources/sap/ui/mdc/testutils/opa/valueHelp/Actions",
 	"sap/ui/test/opaQunit"
 	// "test-resources/sap/ui/mdc/testutils/opa/Util"
 ], function(
 	Opa5,
+	ValueHelpActions,
 	opaTest
 ) {
 	"use strict";
@@ -32,7 +34,7 @@ sap.ui.define([
 		},
 
 		arrangements: {
-			iStartMyUIComponentInViewMode: function() {
+			iStartMyUIComponentInViewMode: function(oOptions) {
 
 				// In some cases when a test fails in a success function,
 				// the UI component is not properly teardown.
@@ -46,7 +48,7 @@ sap.ui.define([
 					this.iTeardownMyUIComponent();
 				}
 
-				return this.iStartMyUIComponent({
+				return this.iStartMyUIComponent(Object.assign({
 					componentConfig: {
 						name: "sap.ui.v4demo",
 						async: true,
@@ -54,9 +56,14 @@ sap.ui.define([
 					},
 					hash: "",
 					autoWait: true
-				});
+				}, oOptions));
 			}
-		}
+		},
+		actions: new Opa5({
+			iToggleTheValueHelpListItem: function (sText, sValueHelpId) {
+				return ValueHelpActions.iToggleTheValueHelpListItem.call(this, sText, sValueHelpId);
+			}
+		})
 	});
 
 	var oModuleSettings = {
@@ -95,13 +102,39 @@ sap.ui.define([
 
 
 
-	opaTest("twfb - start app and test field and valuehelp", function(Given, When, Then) {
+	opaTest("twfb - start app and test filterfield and valuehelp", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
 		var sFieldID = "listreport---books--ff1";
 		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField(sFieldID, true);
-		//TODO not more action or assertions available
-		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(true); //TODO close only work with FieldValueHelp
+
+		Then.onTheMDCValueHelp.iShouldSeeTheValueHelpDialog("listreport---books--FH1");
+		Then.onTheMDCValueHelp.iShouldSeeValueHelpListItems("Austen, Jane");
+
+		When.onTheMDCValueHelp.iNavigateToValueHelpContent({label: "Author ID"});
+		Then.onTheMDCValueHelp.iShouldSeeValueHelpContent({label: "Author ID"});
+		When.onTheMDCValueHelp.iNavigateToValueHelpContent({title: "Default"});
+
+		When.iToggleTheValueHelpListItem("Austen, Jane");
+
+		When.onTheMDCValueHelp.iCloseTheValueHelpDialog();
+		Then.onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues(sFieldID, "Austen, Jane");
+
+
+		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField(sFieldID, true);
+
+		When.iToggleTheValueHelpListItem("Carroll, Lewis");
+		When.iToggleTheValueHelpListItem("Twain, Mark");
+
+		Then.onTheMDCValueHelp.iShouldSeeValueHelpToken("Austen, Jane");
+		Then.onTheMDCValueHelp.iShouldSeeValueHelpToken("Carroll, Lewis");
+		Then.onTheMDCValueHelp.iShouldSeeValueHelpToken("Twain, Mark");
+
+		When.onTheMDCValueHelp.iRemoveValueHelpToken("Austen, Jane");
+		When.onTheMDCValueHelp.iRemoveAllValueHelpTokens();
+
+
+		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(true);
 
 		sFieldID = "listreport---books--ff2";
 		When.onTheMDCFilterField.iOpenTheValueHelpForFilterField(sFieldID, true);
@@ -109,7 +142,6 @@ sap.ui.define([
 
 		Then.iTeardownMyUIComponent();
 	});
-
 
 	opaTest("twfb - start app and test personalization of table", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
@@ -334,5 +366,24 @@ sap.ui.define([
 		Then.iTeardownMyUIComponent();
 	});
 
+	QUnit.module("TwFb - Books/New");
 
+	opaTest("twfb - start app and test field and valuehelp", function(Given, When, Then) {
+		Given.iStartMyUIComponentInViewMode({hash: "/Books/new"});
+
+		var sAuthorsFieldID = "listreport---bookdetails--fAuthor";
+		var sAuthorsValueHelpID = "listreport---bookdetails--FH1";
+
+		Then.onTheMDCField.iShouldSeeTheFieldWithValues(sAuthorsFieldID, "105 (Kafka, Franz)");
+
+		When.onTheMDCField.iOpenTheValueHelpForField(sAuthorsFieldID, true);
+		Then.onTheMDCValueHelp.iShouldSeeTheValueHelpDialog(sAuthorsValueHelpID);
+		Then.onTheMDCValueHelp.iShouldSeeValueHelpListItems("Austen, Jane");
+		When.iToggleTheValueHelpListItem("Austen, Jane");
+
+		Then.onTheMDCField.iShouldSeeTheFieldWithValues(sAuthorsFieldID, "101 (Austen, Jane)");
+
+		Then.iTeardownMyUIComponent();
+
+	});
 });

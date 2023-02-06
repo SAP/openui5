@@ -36,7 +36,7 @@ sap.ui.define([
 		if (bServerAvailable) {
 
 			sap.ui.require([
-				"sap/ui/v4demo/test/ValueHelpSelectFromListJourney"
+				"sap/ui/v4demo/test/DefineConditionsJourney"
 			], function() {
 				QUnit.start();
 			});
