@@ -2086,7 +2086,7 @@ sap.ui.define([
 		this.oCarousel.attachPageChanged(function (oEvent) {
 			assert.strictEqual(oEvent.getParameter("oldActivePageId"), "page1");
 			assert.strictEqual(oEvent.getParameter("newActivePageId"), "page2");
-			assert.deepEqual(oEvent.getParameter("activePages"), [0, 1, 2]);
+			assert.deepEqual(oEvent.getParameter("activePages"), [1, 2, 3]);
 		});
 
 		// act
