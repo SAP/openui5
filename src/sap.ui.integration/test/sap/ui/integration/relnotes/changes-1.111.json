@@ -1,7 +1,18 @@
 {
   "1.111.0": {
-    "date": "January 2023",
+    "date": "February 2023",
     "notes": [
+      {
+        "id": "8d4c4fb934e54b1a839290ce71a9bc257fc7cf65",
+        "type": "FIX",
+        "text": " sap.ui.integration.cards.CalendarContent: Appointments in start of the day are now correctly presented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280095761"
+          }
+        ]
+      },
       {
         "id": "dc7376024fb016ebc3cb5cc253f6f0fd32af3691",
         "type": "FEATURE",

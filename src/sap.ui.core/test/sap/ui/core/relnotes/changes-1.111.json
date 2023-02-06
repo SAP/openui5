@@ -1,7 +1,44 @@
 {
   "1.111.0": {
-    "date": "January 2023",
+    "date": "February 2023",
     "notes": [
+      {
+        "id": "989a5c0a86db2e6b7355986535e0105fcc623eb1",
+        "type": "FIX",
+        "text": " jquery: cleanup handler of swipe/taphold event after dragstart",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380000404"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380011392"
+          }
+        ]
+      },
+      {
+        "id": "6dd294f5cbf58b424aeb784bc09b422a22efb26c",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#refresh: Remove created, persisted contexts after request",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380015211"
+          }
+        ]
+      },
+      {
+        "id": "3de6a423e023f1cd6f25501b534c8e52a3b0094d",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: clear pending request queue when resetting the binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380008491"
+          }
+        ]
+      },
       {
         "id": "3c753313767d22c9a4ed5305f355b97a81ea6955",
         "type": "FEATURE",

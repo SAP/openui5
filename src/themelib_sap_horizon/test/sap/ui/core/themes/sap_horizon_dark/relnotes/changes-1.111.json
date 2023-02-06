@@ -1,11 +1,27 @@
 {
   "1.111.0": {
-    "date": "January 2023",
+    "date": "February 2023",
     "notes": [
+      {
+        "id": "d5b598a3abeb06653484dfe8cae110d46c98c7b5",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Icon's line-height adjusted"
+      },
       {
         "id": "41a869d0fa642d6b5d5fec95df94c49b0a6f7fde",
         "type": "FEATURE",
         "text": " sap.ui.unified.CalendarLegend: legend have focusable items that filter special days in Calendar"
+      },
+      {
+        "id": "e6fe46ab28bdb1f2bf037f5ec8c31e14868396b6",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Correct alignment in Horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380018697"
+          }
+        ]
       },
       {
         "id": "dc7376024fb016ebc3cb5cc253f6f0fd32af3691",

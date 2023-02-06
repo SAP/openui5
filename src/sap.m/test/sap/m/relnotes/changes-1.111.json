@@ -1,7 +1,159 @@
 {
   "1.111.0": {
-    "date": "January 2023",
+    "date": "February 2023",
     "notes": [
+      {
+        "id": "c2997e0e3fff18957c3e111d2145e25ecb900fb2",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Focus correct token after binding change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270149965"
+          }
+        ]
+      },
+      {
+        "id": "d5b598a3abeb06653484dfe8cae110d46c98c7b5",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Icon's line-height adjusted"
+      },
+      {
+        "id": "391c1581a1591114214c5fcb85ee34cd154da088",
+        "type": "FIX",
+        "text": " sap.m.MessageView: List Item speech output improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270182409"
+          }
+        ]
+      },
+      {
+        "id": "26d728a207e94a8509d6b17c594be08f683cbcfc",
+        "type": "FIX",
+        "text": " sap.m.Input: Change event is fired when focus out on mobile device",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380011401"
+          }
+        ]
+      },
+      {
+        "id": "953b52ba3e95d3d0dc4e39343b49937746b8d836",
+        "type": "FEATURE",
+        "text": "sap.m.Input: Type-ahead with exact match"
+      },
+      {
+        "id": "8d3a18b68fa71fb4a744fb40f79e1f8fcd10a675",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Document details property HTML support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380018671"
+          }
+        ]
+      },
+      {
+        "id": "b9f65fbd57f10f1170b0b556c6c51a9b18057d40",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Add ARIA label to the items list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007520392022"
+          }
+        ]
+      },
+      {
+        "id": "f1773225e176ac4753445be0a93c7b7c8c05530b",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Ignore TimePicker rules in adaptation mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270191208"
+          }
+        ]
+      },
+      {
+        "id": "8f858984b7328aca86951597f9738011234a9102",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Dialog's OK button is now emphasized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380010404"
+          }
+        ]
+      },
+      {
+        "id": "f30e828fd391c4e2d2335030d47f5280fa52d7ef",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxBase: Don't open picker when items are updated"
+      },
+      {
+        "id": "ad25e0668cc838c47df440f780dd32374518b5a9",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: restore focus after invalidation and token deletion",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280179586"
+          }
+        ]
+      },
+      {
+        "id": "499ecc52662299e895230c5a18b6ea8651392d8b",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Selection in tokenizer is preserved after opening the picker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170315279"
+          }
+        ]
+      },
+      {
+        "id": "0bb1f434245cde9d33e7f507374cff038f0a8976",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Responsive paddings now work for custom footer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380021412"
+          }
+        ]
+      },
+      {
+        "id": "6ed117e27dc64e42d80762ffb7bcb20b3a94cfb2",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Removing unused property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280185048"
+          }
+        ]
+      },
+      {
+        "id": "27eafff973d68800e5187f876e6302fbb0026a7f",
+        "type": "FEATURE",
+        "text": " Icon Explorer: Added appearance change option"
+      },
+      {
+        "id": "3accd4206ecb701eddd934433af37dfcb44c99d3",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: Improve documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380020427"
+          }
+        ]
+      },
       {
         "id": "b742d1ef6a5e70052a10a375b207c151ca1c9220",
         "type": "FEATURE",
