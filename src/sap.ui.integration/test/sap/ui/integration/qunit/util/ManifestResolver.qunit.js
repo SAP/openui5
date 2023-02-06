@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/integration/Host",
 	"sap/ui/integration/util/ManifestResolver",
 	"sap/ui/integration/util/SkeletonCard"
 ], function (
 	Core,
+	Host,
 	ManifestResolver,
 	SkeletonCard
 ) {
@@ -1984,6 +1986,75 @@ sap.ui.define([
 				// Assert
 				assert.deepEqual(oRes["sap.card"].content.groups[0].items[0], oExpectedIconGroup);
 				assert.deepEqual(oRes["sap.card"].content.groups[0].items[1], oExpectedButtonGroup);
+
+				oCard.destroy();
+			});
+	});
+
+	QUnit.module("Resolve host context parameters");
+
+	QUnit.test("Host context parameters", function (assert) {
+		// Arrange
+		var oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"configuration": {
+					"filters": {
+						"country": {
+							"type": "Search",
+							"value": "{context>/country}"
+						}
+					}
+				},
+				"data": {
+					"request": {
+						"url": "./products.json"
+					}
+				},
+				"type": "List",
+				"header": {
+					"title": "{context>/country}"
+				},
+				"content": {
+					"data": {
+						"path": "/items"
+					},
+					"item": {
+						"title": "{context>/country}"
+					}
+				}
+			}
+		};
+
+		var oHost = new Host();
+		oHost.getContextValue = function (sKey) {
+			return new Promise(function (resolve, reject) {
+				setTimeout(function () {
+					if (sKey === "country") {
+						resolve("France");
+						return;
+					}
+					reject("Host context parameter " + sKey + " doesn't exist");
+				}, 200);
+			});
+		};
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/",
+			host: oHost
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(function (oRes) {
+				// Assert
+				assert.strictEqual(oRes["sap.card"].configuration.filters.country.value, "France", "Host context binding is resolved in the filter");
+				assert.strictEqual(oRes["sap.card"].header.title, "France", "Host context binding is resolved in the title");
+				assert.strictEqual(oRes["sap.card"].content.groups[0].items[0].title, "France", "Host context binding is resolved in the list items");
 
 				oCard.destroy();
 			});

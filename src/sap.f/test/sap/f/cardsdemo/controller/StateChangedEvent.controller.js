@@ -1,13 +1,27 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/integration/util/ManifestResolver",
+	"sap/ui/integration/Host",
 	"sap/m/MessageToast"
-], function (Controller, ManifestResolver, MessageToast) {
+], function (Controller, ManifestResolver, Host, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.StateChangedEvent", {
 
 		onInit: function () {
+			var oHost = new Host();
+			oHost.getContextValue = function (sPath) {
+				return new Promise(function (resolve, reject) {
+					setTimeout(function () {
+						if (sPath === "cardExplorer/stateChangedEvent/country") {
+							resolve("France");
+							return;
+						}
+						reject("Host context parameter " + sPath + " doesn't exist");
+					}, 1000);
+				});
+			};
+			this.byId("card1").setHost(oHost);
 		},
 
 		onStateChanged: function () {
