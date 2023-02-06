@@ -50,7 +50,6 @@ function(
 		this._oRenderer = Utils.getFiori2Renderer();
 		this._oFioriHeader = this._oRenderer.getRootControl().getOUnifiedShell().getHeader();
 		Adaptation.prototype.init.apply(this, arguments);
-		this._pHidePromise = Promise.resolve();
 	};
 
 	Fiori.prototype.show = function () {
@@ -91,11 +90,10 @@ function(
 	};
 
 	Fiori.prototype.hide = function () {
-		this._pHidePromise = Adaptation.prototype.hide.apply(this, arguments)
+		return Adaptation.prototype.hide.apply(this, arguments)
 		.then(function () {
 			this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
 		}.bind(this));
-		return this._pHidePromise;
 	};
 
 	Fiori.prototype._checkLogoSize = function(oLogo, iWidth, iHeight) {
@@ -112,17 +110,13 @@ function(
 	};
 
 	Fiori.prototype.destroy = function () {
-		// Wait for the hide process to be completed before destroying it
-		this._pHidePromise
-		.then(function() {
-			// In case of destroy() without normal hide() call.
-			this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
+		// In case of destroy() without normal hide() call.
+		this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
 
-			delete this._oRenderer;
-			delete this._oFioriHeader;
+		delete this._oRenderer;
+		delete this._oFioriHeader;
 
-			Adaptation.prototype.destroy.apply(this, arguments);
-		}.bind(this));
+		Adaptation.prototype.destroy.apply(this, arguments);
 	};
 
 	return Fiori;
