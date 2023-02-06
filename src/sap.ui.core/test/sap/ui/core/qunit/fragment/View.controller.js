@@ -1,9 +1,10 @@
 sap.ui.define([
+	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
-], function(JSONModel) {
+], function(Controller, JSONModel) {
 	"use strict";
 
-	sap.ui.controller("my.View", {
+	return Controller.extend("my.View", {
 		onInit: function() {
 			var oView = this.getView();
 			var oModel = new JSONModel({

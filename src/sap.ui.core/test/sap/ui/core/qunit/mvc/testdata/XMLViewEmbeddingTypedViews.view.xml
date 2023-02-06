@@ -2,7 +2,7 @@
 	<Panel id="aPanel">
 		<content>
 			<mvc:View id="embedded-async-true" viewName="module:testdata/mvc/TypedView" async="true"></mvc:View>
-			<mvc:JSView id="embedded-async-true2" viewName="module:testdata/mvc/TypedView" async="true"></mvc:JSView>
+			<mvc:View id="embedded-async-true2" viewName="module:testdata/mvc/TypedView" async="true"></mvc:View>
 			<test:TypedViewSyncCreateContent id="embedded-async-typed-declaration" async="true"/>
 			<test:TypedViewWithRenderer id="embedded-async-typed-declaration-with-renderer" async="true"/>
 		</content>
