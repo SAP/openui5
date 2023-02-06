@@ -636,6 +636,18 @@ sap.ui.define([
 			},
 
 			// Toolbar
+			"toolbar/contextBased/ManageAdaptations": {
+				group: "Toolbar",
+				coverage: {
+					only: ["sap/ui/rta/toolbar/contextBased/ManageAdaptations", "sap/ui/rta/toolbar/Adaptation"]
+				}
+			},
+			"toolbar/contextBased/SaveAsAdaptation": {
+				group: "Toolbar",
+				coverage: {
+					only: ["sap/ui/rta/toolbar/contextBased/SaveAsAdaptation", "sap/ui/rta/toolbar/Adaptation"]
+				}
+			},
 			"toolbar/translation/Translation": {
 				group: "Toolbar",
 				coverage: {

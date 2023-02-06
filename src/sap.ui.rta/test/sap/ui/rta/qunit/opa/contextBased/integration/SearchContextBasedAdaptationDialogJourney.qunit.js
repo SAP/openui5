@@ -111,8 +111,8 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(true);
 		});
 
-		// Filter createdAt
-		opaTest("Should search for createdAt that does not exist and clears the search field", function (Given, When, Then) {
+		// Filter changedBy
+		opaTest("Should search for changedBy that does not exist and clears the search field", function (Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor("NotExistingCreatedAt");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(0);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(false);
@@ -121,7 +121,7 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(true);
 		});
 
-		opaTest("Should search for createdAt='Test User 2' and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for changedBy='Test User 2' and clears the search field", function (Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor("Test User 2");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(1);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(false);
@@ -130,7 +130,7 @@ sap.ui.define(
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(true);
 		});
 
-		opaTest("Should search for createdAt='TeSt uSeR 1' and clears the search field", function (Given, When, Then) {
+		opaTest("Should search for changedBy='TeSt uSeR 1' and clears the search field", function (Given, When, Then) {
 			When.onTheManageAdaptationsDialogPage.iSearchFor("TeSt uSeR 1");
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeRows(3);
 			Then.onTheManageAdaptationsDialogPage.iShouldSeeTheDefaultContextTable(false);
