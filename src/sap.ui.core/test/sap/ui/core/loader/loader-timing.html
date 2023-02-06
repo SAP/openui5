@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html style="height:100%;">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<title>ui5loader test page</title>
+	<base href="../../../../../">
+	<script src="resources/ui5loader.js"></script>
+	<script src="resources/ui5loader-autoconfig.js"
+			data-sap-ui-async="true"
+			id="sap-ui-bootstrap"></script>
+</head>
+<script>
+	sap.ui.loader.config({
+		paths: {
+			"fixture": "test-resources/sap/ui/core/loader/fixture"
+		}
+	});
+
+	function busyWait(ms) {
+		const tStart = Date.now();
+		const tEnd = tStart + ms;
+		while ( Date.now() < tEnd );
+	}
+
+	async function sleep(ms) {
+		return new Promise((resolve) => setTimeout(() => resolve(), ms));
+	}
+</script>
+<body>
+	<script>
+	async function testDeepDependencies() {
+		console.time("require");
+		return new Promise((resolve) => {
+			sap.ui.require(["fixture/deepDependencies/deep1"], function(deep1) {
+				console.timeEnd("require");
+				resolve();
+			});
+		});
+	}
+
+	async function testBroadDependencies() {
+		console.time("require");
+		return new Promise((resolve) => {
+			sap.ui.require(["fixture/broadDependencies/broad1"], function(broad1) {
+				console.timeEnd("require");
+				resolve();
+			});
+		});
+	}
+
+	(async function main() {
+		await sap.ui.loader._.loadJSResourceAsync("fixture/custom-bundle.js");
+
+		await sleep(100);
+		await testDeepDependencies();
+
+		await sleep(100);
+		await testBroadDependencies();
+
+		document.body.insertAdjacentHTML("beforeEnd", "<div>FCP</div>");
+	}());
+	</script>
+</body>
+</html>
