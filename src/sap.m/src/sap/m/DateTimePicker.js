@@ -356,7 +356,7 @@ sap.ui.define([
 			}
 
 			if (sKey === "Cal") {
-				oCalendar.$().css("display", "flex");
+				oCalendar.$().css("display", "");
 				oClocks.$().css("display", "none");
 				oCalendar.getFocusDomRef() && oCalendar.getFocusDomRef().focus();
 			} else {
@@ -1101,7 +1101,7 @@ sap.ui.define([
 		} else {
 			oSwitcher.setVisible(false);
 			oClocks.$().css("display", "");
-			oCalendar.$().css("display", "flex");
+			oCalendar.$().css("display", "");
 		}
 	};
 

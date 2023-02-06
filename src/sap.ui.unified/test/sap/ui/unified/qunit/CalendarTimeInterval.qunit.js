@@ -576,7 +576,7 @@ sap.ui.define([
 		var $MP = oCore.byId("Cal1").getAggregation("monthPicker").$();
 		var aMonths = $MP.find(".sapUiCalItem");
 		assert.equal(aMonths.length, 6, "Calendar1: 4 months rendered");
-		assert.equal(jQuery(aMonths[0]).text(), "January", "Calendar1: first displayed month");
+		assert.equal(jQuery(aMonths[0]).text(), "Jan", "Calendar1: first displayed month");
 		assert.equal(jQuery(aMonths[2]).attr("tabindex"), "0", "Calendar1: 3. displayed month is focused");
 		assert.notOk(jQuery(aMonths[2]).hasClass("sapUiCalItemSel"), "Calendar1: 3. displayed month is not selected");
 
@@ -604,14 +604,14 @@ sap.ui.define([
 		assert.ok(jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Calendar1: next button disabled");
 		var $MP = oCore.byId("Cal1").getAggregation("monthPicker").$();
 		var aMonths = $MP.find(".sapUiCalItem");
-		assert.equal(jQuery(aMonths[0]).text(), "July", "Calendar1: first displayed month");
+		assert.equal(jQuery(aMonths[0]).text(), "Jul", "Calendar1: first displayed month");
 		assert.equal(jQuery(aMonths[2]).attr("tabindex"), "0", "Calendar1: 3. displayed month is focused");
 
 		qutils.triggerEvent("click", "Cal1--Head-prev");
 		oCore.applyChanges();
 		$MP = oCore.byId("Cal1").getAggregation("monthPicker").$();
 		aMonths = $MP.find(".sapUiCalItem");
-		assert.equal(jQuery(aMonths[0]).text(), "January", "Calendar1: first displayed month");
+		assert.equal(jQuery(aMonths[0]).text(), "Jan", "Calendar1: first displayed month");
 		assert.equal(jQuery(aMonths[2]).attr("tabindex"), "0", "Calendar1: 3. displayed month is focused");
 	});
 

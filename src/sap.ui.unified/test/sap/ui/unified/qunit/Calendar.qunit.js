@@ -1918,6 +1918,20 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("initialFocusedDate", function(assert) {
+		// Arrange
+		var oFocusDateSpy = this.spy(this.oCal, "focusDate");
+		this.oCal.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		this.oCal.setInitialFocusedDate(new Date(2022, 5, 10));
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(oFocusDateSpy.calledOnce, "Calendar is properly navigated");
+	});
+
 	QUnit.module("Other");
 
 	QUnit.test("interval selection feedback", function(assert) {

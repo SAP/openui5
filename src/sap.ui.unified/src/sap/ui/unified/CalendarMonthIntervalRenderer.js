@@ -52,6 +52,9 @@ sap.ui.define([],
 
 		oRm.openEnd(); // div element
 
+		var oHeader = oCal.getAggregation("header");
+		oRm.renderControl(oHeader);
+
 		oRm.openStart("div", sId + "-content");
 		oRm.class("sapUiCalContent");
 		oRm.openEnd();
@@ -63,9 +66,6 @@ sap.ui.define([],
 		oRm.openEnd();
 		oRm.text(rb.getText("CALENDAR_CANCEL"));
 		oRm.close("button");
-
-		var oHeader = oCal.getAggregation("header");
-		oRm.renderControl(oHeader);
 
 		if (oCal.getPickerPopup()) {
 			oRm.openStart("div", sId + "-contentOver");

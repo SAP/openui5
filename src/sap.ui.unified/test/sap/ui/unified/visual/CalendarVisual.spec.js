@@ -27,9 +27,8 @@ describe("sap.ui.unified.CalendarVisual", function() {
 	it("should show calendar with current date button", function () {
 		_initCalendar("9");
 
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		var sShiftTab = protractor.Key.chord(protractor.Key.SHIFT, protractor.Key.TAB);
+		browser.actions().sendKeys(sShiftTab).perform();
 		expect(takeScreenshot(oCal)).toLookAs("today_button_focus");
 	});
 

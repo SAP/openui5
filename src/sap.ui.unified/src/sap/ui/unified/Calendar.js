@@ -207,7 +207,14 @@ sap.ui.define([
 			 * Note: This property should not be used with firstDayOfWeek property.
 			 * @since 1.108.0
 			 */
-			calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
+			calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
+
+			/**
+			 * Holds a reference to a JavaScript Date Object to define the initially navigated date in the calendar.
+			 *
+			 * @since 1.111
+			 */
+			initialFocusedDate: {type: "object", group: "Data", defaultValue: null}
 
 		},
 		aggregations : {
@@ -562,6 +569,9 @@ sap.ui.define([
 		this._updateHeadersButtons();
 
 		this._updateLegendParent();
+		if (this.getInitialFocusedDate()) {
+			this.focusDate(this.getInitialFocusedDate());
+		}
 	};
 
 	Calendar.prototype.onAfterRendering = function(oEvent){
@@ -816,7 +826,6 @@ sap.ui.define([
 				oMonth.attachEvent("_bindMousemove", _handleBindMousemove, this);
 				oMonth.attachEvent("_unbindMousemove", _handleUnbindMousemove, this);
 				oMonth._bNoThemeChange = true;
-				oMonth._bNotInTabChain = true;
 				oMonth.setCalendarWeekNumbering(this.getCalendarWeekNumbering());
 				oMonth.setSecondaryCalendarType(this._getSecondaryCalendarType());
 				this.addAggregation("month", oMonth);
@@ -1699,6 +1708,12 @@ sap.ui.define([
 		this.setProperty("_currentPicker", CURRENT_PICKERS.MONTH);
 		// show again hidden month button
 		this._togglePrevNext(this._getFocusedDate(), true);
+
+		if (this.getAggregation("month").length > 1) {
+			this.getAggregation("month").forEach(function(oMonth) {
+				oMonth._oItemNavigation.iActiveTabIndex = 0;
+			});
+		}
 	};
 
 	Calendar.prototype._setDisabledMonths = function(iYear, oMonthPicker) {
@@ -1852,6 +1867,12 @@ sap.ui.define([
 			this._setDisabledMonths(oDate.getYear(), oMonthPicker);
 		}
 
+		if (this.getAggregation("month").length > 1 && this.getProperty("_currentPicker") == CURRENT_PICKERS.MONTH_PICKER) {
+			this.getAggregation("month").forEach(function(oMonth) {
+				oMonth._oItemNavigation.iActiveTabIndex = -1;
+			});
+		}
+
 		this._togglePrevNext(oDate, true);
 		this._setHeaderText(this._getFocusedDate());
 	};
@@ -1888,6 +1909,12 @@ sap.ui.define([
 		} else {
 			oYearPicker.setDate(oDate.toLocalJSDate());
 			this._updateHeadersYearPrimaryText(this._getYearString());
+		}
+
+		if (this.getAggregation("month").length > 1 && this.getProperty("_currentPicker") == CURRENT_PICKERS.YEAR_PICKER) {
+			this.getAggregation("month").forEach(function(oMonth) {
+				oMonth._oItemNavigation.iActiveTabIndex = -1;
+			});
 		}
 	};
 
@@ -2170,8 +2197,7 @@ sap.ui.define([
 		oFocusedDate = oDate;
 
 		this._focusDate(oFocusedDate, true, false, false);
-		this._togglePrevNext(this._getFocusedDate(), true);
-		this.setProperty("_currentPicker", CURRENT_PICKERS.MONTH);
+		this._closePickers();
 		this._addMonthFocusDelegate();
 		this._setHeaderText(this._getFocusedDate());
 	};
