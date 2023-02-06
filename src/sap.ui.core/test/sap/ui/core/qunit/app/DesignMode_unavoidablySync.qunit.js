@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/core/mvc/HTMLView",
-	"./_createDesignModeTests.qunit"
+	"./_createDesignModeTests_legacyAPIs.qunit"
 ], function (HTMLView, _createDesignModeTests) {
 	"use strict";
 

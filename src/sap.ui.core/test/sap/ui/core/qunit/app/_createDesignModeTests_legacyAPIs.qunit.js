@@ -7,8 +7,9 @@ sap.ui.define([
 	return function _createDesignModeTests(ViewClass) {
 		QUnit.module("DesignMode, Controller Deactivation", {
 			beforeEach: function() {
-				this.stub(Configuration.prototype, "getDesignMode").returns(true);
-				this.stub(Configuration.prototype, "getSuppressDeactivationOfControllerCode").returns(false);
+				window["sap-ui-config"]["xx-designmode"] = true;
+				window["sap-ui-config"]["xx-suppressdeactivationofcontrollercode"] = false;
+				Configuration.setCore();
 			}
 		});
 
@@ -40,8 +41,8 @@ sap.ui.define([
 
 		QUnit.module("DesignMode, Suppressed Deactivation of Controller Code", {
 			beforeEach: function() {
-				this.stub(Configuration.prototype, "getDesignMode").returns(true);
-				this.stub(Configuration.prototype, "getSuppressDeactivationOfControllerCode").returns(true);
+				window["sap-ui-config"]["xx-suppressdeactivationofcontrollercode"] = true;
+				Configuration.setCore();
 			}
 		});
 
