@@ -12,6 +12,9 @@ sap.ui.define(function() {
 			}
 		},
 		tests: {
+			/**
+			 * @deprecated As of version 1.111
+			 */
 			"jquery.sap.global-config": {
 				title: "jquery.sap.global: External configuration",
 				beforeBootstrap: "test-resources/sap/ui/core/qunit/jquery.sap.global-config_beforeBootstrap.qunit"

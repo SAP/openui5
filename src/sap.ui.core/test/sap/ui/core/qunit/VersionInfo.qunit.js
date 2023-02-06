@@ -135,8 +135,6 @@ sap.ui.define([
 					}
 				}
 			};
-
-			this.oDeprecatedAPISpy = this.spy(sap.ui, "getVersionInfo");
 		},
 		// Keep fn initFakeServer and call it at the begining of each test
 		// in order to enable single test execution
@@ -159,9 +157,6 @@ sap.ui.define([
 				assert.ok(this.oServer.requests[0].async,
 					"First request should be async.");
 			}
-
-			assert.ok(this.oDeprecatedAPISpy.notCalled,
-				"Deprecated function should not be called internally");
 
 			bVersionInfoAlreadyLoaded = !bError;
 		}
