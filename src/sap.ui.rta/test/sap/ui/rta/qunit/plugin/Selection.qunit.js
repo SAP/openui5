@@ -369,6 +369,18 @@ sap.ui.define([
 			assert.ok(oOverlay2.isSelected(), "then Overlay2 is selected");
 		});
 
+		QUnit.test("Pressing SHIFT-ENTER on an Overlay", function (assert) {
+			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
+			this.oSelectionManager.add(oOverlay1);
+			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			oOverlay2.focus();
+			this.oEvent.keyCode = KeyCodes.ENTER;
+			this.oEvent.shiftKey = true;
+			oOverlay2.getDomRef().dispatchEvent(this.oEvent);
+			assert.ok(oOverlay1.isSelected(), "then Overlay1 is selected");
+			assert.ok(oOverlay2.isSelected(), "then Overlay2 is selected");
+		});
+
 		QUnit.test("Pressing ESC on an Overlay when there are selected Overlays", function (assert) {
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			this.oSelectionManager.add(oOverlay1);

@@ -258,7 +258,7 @@ function (
 			}
 			return;
 		}
-		var bMultiSelection = oEvent.metaKey || oEvent.ctrlKey;
+		var bMultiSelection = oEvent.metaKey || oEvent.ctrlKey || oEvent.shiftKey;
 		var bContextMenu = oEvent.type === "contextmenu";
 
 		if (oOverlay && oOverlay.getSelectable()) {
