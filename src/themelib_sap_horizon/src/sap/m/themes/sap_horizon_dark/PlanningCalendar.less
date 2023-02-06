@@ -101,9 +101,21 @@ html.sap-desktop .sapMPlanCal .sapUiCalItemOtherMonth:not(.sapUiCalItemSel):hove
 	border-radius: 0.25rem;
 }
 
-.sapMPlanCal .sapMListTbl .sapMSLIImgIcon.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon) {
-	border-radius: @sapGroup_BorderCornerRadius;
-	background-color: @sapAccentBackgroundColor5;
-	color: @sapAccentColor5;
-	font-size: @sapMFontHeader4Size;
+.sapMPlanCal .sapMListTbl {
+	.sapMSLIImgIcon.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon) {
+		border-radius: @sapGroup_BorderCornerRadius;
+		background-color: @sapAccentBackgroundColor5;
+		color: @sapAccentColor5;
+		font-size: @sapMFontHeader4Size;
+	}
+	.sapUiIcon {
+		line-height: 1rem;
+	}
+	.sapUiCalendarAppArrowIconLeft.sapUiIcon,
+	.sapUiCalendarAppArrowIconRight.sapUiIcon {
+		line-height: 1;
+	}
+	.sapMFlexItem .sapMText {
+		line-height: inherit;
+	}
 }
