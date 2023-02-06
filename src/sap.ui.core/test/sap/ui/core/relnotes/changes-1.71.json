@@ -1462,5 +1462,21 @@
         ]
       }
     ]
+  },
+  "1.71.54": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "4f403554a178c961def4c482e21edc90b753c5cf",
+        "type": "FIX",
+        "text": " core/qunit/util/Popup.qunit: stabilize test of client rect",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380014962"
+          }
+        ]
+      }
+    ]
   }
 }

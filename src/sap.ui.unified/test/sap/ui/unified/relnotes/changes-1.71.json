@@ -567,5 +567,21 @@
         ]
       }
     ]
+  },
+  "1.71.54": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "5d012633a379cb165d06569a7340138c6a811f62",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Picker popup doesn't close when arrow buttons are touched on combi device",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000141052023"
+          }
+        ]
+      }
+    ]
   }
 }
