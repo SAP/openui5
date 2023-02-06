@@ -888,6 +888,36 @@ sap.ui.define([
 		this.oMenuItem2.setEnabled(true);
 	});
 
+	QUnit.test("Escape closes the menu if it contains only disabled items", function(assert) {
+		var oEvent = new jQuery.Event();
+
+		this.oMenuItem1.setEnabled(false);
+		this.oMenuItem2.setEnabled(false);
+		oCore.applyChanges();
+
+		this.sut.openMenuByKeyboard();
+
+		// Act
+		oEvent.which = KeyCodes.ESCAPE;
+		this.sut.onsapescape(oEvent);
+
+		// Assert
+		assert.strictEqual(this.sut._bPopupOpen, false, "The Menu in Regular mode was closed by pressing Escape");
+
+		// Act
+		this.sut.setButtonMode("Split");
+		oCore.applyChanges();
+		this.sut.openMenuByKeyboard();
+		this.sut.onsapescape(oEvent);
+
+		// Assert
+		assert.strictEqual(this.sut._bPopupOpen, false, "The Menu in Split mode was closed by pressing Escape");
+
+
+		this.oMenuItem1.setEnabled(true);
+		this.oMenuItem2.setEnabled(true);
+	});
+
 	QUnit.test("_menuItemSelected is fired", function(assert) {
 		var fnHandleMenuItemSelected = sinon.spy();
 		this.sut.attachEvent("_menuItemSelected", fnHandleMenuItemSelected);
