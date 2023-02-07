@@ -13,14 +13,13 @@ sap.ui.require([
 	"sap/m/ToolbarSpacer",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/m/RadioButton",
-	"sap/m/RadioButtonGroup",
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/ui/model/Sorter",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/thirdparty/jquery"
 	],
 	function(
 		SimpleForm,
@@ -37,95 +36,106 @@ sap.ui.require([
 		ToolbarSpacer,
 		Label,
 		Input,
-		RadioButton,
-		RadioButtonGroup,
 		App,
 		Page,
 		HBox,
 		VBox,
 		Sorter,
-		JSONModel
+		JSONModel,
+		jQuery
 	){
 
 		"use strict";
 
-		var aInputIds = ["inpText", "inpPlaceholder", "inpEmpty", "inpMinWidth"];
-
-		function handleStateChange(oEvent) {
-			var choice = oEvent.getSource().getText();
-			switch (choice) {
-				case "Standard":
-				aInputIds.forEach(function(inp) {
-					sap.ui.getCore().byId(inp).setEnabled(true);
-					sap.ui.getCore().byId(inp).setEditable(true);
-				});
-					break;
-				case "Not enabled":
-				aInputIds.forEach(function(inp) {
-					sap.ui.getCore().byId(inp).setEnabled(false);
-					sap.ui.getCore().byId(inp).setEditable(true);
-				});
-					break;
-				case "Not editable":
-				aInputIds.forEach(function(inp) {
-					sap.ui.getCore().byId(inp).setEnabled(true);
-					sap.ui.getCore().byId(inp).setEditable(false);
-				});
-					break;
-			}
-		}
-
-		function handleValueStateChange(oEvent) {
-			var choice = oEvent.getSource().getText();
-				aInputIds.forEach(function(inp) {
-				sap.ui.getCore().byId(inp).setValueState(choice);
-				if ( choice === "Error") {
-					sap.ui.getCore().byId(inp).setValueStateText("123 123 123 123 123 123 123 11111111111111111111111111111");
-				}
-			});
-		}
-
-		function handleDescriptionChange(oEvent) {
-			var choice = oEvent.getSource().getText();
-			switch (choice) {
-				case "None":
-					aInputIds.forEach(function(inp) {
-						sap.ui.getCore().byId(inp).setDescription("");
-					});
-					break;
-				case "Visible":
-					aInputIds.forEach(function(inp) {
-						sap.ui.getCore().byId(inp).setDescription("EUR");
-					});
-					break;
-			}
-		}
-
-		function handleValueHelpChange(oEvent) {
-			var choice = oEvent.getSource().getText();
-			switch (choice) {
-				case "None":
-				aInputIds.forEach(function(inp) {
-					sap.ui.getCore().byId(inp).setShowValueHelp(false);
-				});
-				break;
-				case "Visible":
-				aInputIds.forEach(function(inp) {
-					sap.ui.getCore().byId(inp).setShowValueHelp(true);
-				});
-				break;
-			}
-		}
-
-		function handleTextDirChange(oEvent) {
-			var choice = oEvent.getSource().getText();
-			aInputIds.forEach(function(inp) {
-			 sap.ui.getCore().byId(inp).setTextDirection(choice);
-			});
-		}
-
 		var app = new App("myApp", {initialPage: "inpPage"});
 		app.placeAt("body");
+
+		var oRegularInput = new Input("regularInput", {
+			value: "Test",
+			width: "200px"
+
+		}).addStyleClass("sapUiMediumMarginEnd");
+
+		var oRegularInputWithVh = new Input("regularVHInput", {
+			placeholder: "Type in text",
+			showValueHelp: true,
+			description: "EUR",
+			width: "400px"
+		}).addStyleClass("sapUiMediumMarginEnd");
+
+		var oReadonlyInput = new Input("readonlyInput", {
+			width: "400px",
+			editable: false,
+			showValueHelp: true,
+			placeholder: "Type in text",
+			description: "USD"
+		}).addStyleClass("sapUiMediumMarginEnd");
+
+		var oReadonlyErrorInput = new Input("readonlyErrorInput", {
+			width: "200px",
+			editable: false,
+			showValueHelp: true,
+			value: "Test",
+			valueState: "Error"
+		}).addStyleClass("sapUiMediumMarginEnd");
+
+		var oDisabledInput = new Input("disabledInput", {
+			width: "400px",
+			enabled: false,
+			showValueHelp: true,
+			placeholder: "Type in text",
+			description: "USD"
+		}).addStyleClass("sapUiMediumMarginEnd");
+
+		var oDisabledWarningInput = new Input("disabledWarningInput", {
+			width: "200px",
+			enabled: false,
+			showValueHelp: true,
+			value: "Test",
+			valueState: "Warning"
+		});
+
+		var oInputValueStateErrorLink = new Input("inputError", {
+			placeholder: "Error value message text with link",
+			valueState: "Error",
+			width: "300px",
+			formattedValueStateText: new sap.m.FormattedText({
+				htmlText: "Error value state message with formatted text containing %%0",
+				controls: [
+					new sap.m.Link({
+						text: "link",
+						href: "https://www.sap.com"
+					})
+				]
+			})
+		}).addStyleClass("sapUiMediumMarginEnd");
+
+		var oInputValueStateWarning = new Input("inputWarning", {
+			placeholder: "Warning ...",
+			valueState: "Warning",
+			width: "300px"
+		}).addStyleClass("sapUiMediumMarginEnd");
+
+		var oInputValueStateInformationLink = new Input("inputInformation", {
+			placeholder: "Information value message text with link",
+			valueState: "Information",
+			width: "300px",
+			formattedValueStateText: new sap.m.FormattedText({
+				htmlText: "Information value state message with formatted text containing %%0",
+				controls: [
+					new sap.m.Link({
+						text: "link",
+						href: "https://www.sap.com"
+					})
+				]
+			})
+		}).addStyleClass("sapUiMediumMarginEnd");
+
+		var oInputValueStateSuccess = new Input("inputSuccess", {
+			placeholder: "Success ...",
+			valueState: "Success",
+			width: "300px"
+		});
 
 		var aData = [
 			{
@@ -366,7 +376,7 @@ sap.ui.require([
 		oTabularSeparatorsInput.setModel(oModel);
 		oTabularSeparatorsInput.bindAggregation("suggestionRows", "/tabularSuggestionItems", oSuggestionRowTemplate);
 
-		var oLongSuggestionsInput = new sap.m.Input("inputWrapping", {
+		var oLongSuggestionsInput = new Input("inputWrapping", {
 			width: "300px",
 			showSuggestion: true,
 			suggestionItems: [
@@ -376,7 +386,7 @@ sap.ui.require([
 			]
 		});
 
-		var oSecondaryValueInput = new sap.m.Input("inputSecondaryValue", {
+		var oSecondaryValueInput = new Input("inputSecondaryValue", {
 			width: "300px",
 			showSuggestion: true,
 			suggestionItems: [
@@ -386,10 +396,23 @@ sap.ui.require([
 			]
 		});
 
+		var oClearIconInput = new Input("inputClearIcon", {
+			value: "Test",
+			showClearIcon: true
+		});
+
 		var oCustomCssButton = new Button("customCssButton",{
 			text: "Toggle custom CSS for visual test",
 			press: function() {
 				document.body.classList.toggle("customClassForVisualTests");
+			}
+		});
+
+		var theCompactMode = new sap.m.CheckBox("compactMode", {
+			text: "Compact Mode",
+			selected : false,
+			select : function() {
+				jQuery("body").toggleClass("sapUiSizeCompact");
 			}
 		});
 
@@ -399,89 +422,33 @@ sap.ui.require([
 					text: "sap.m.Input"
 				}),
 				new ToolbarSpacer({
-					width: "600px"
+					width: "200px"
+				}),
+				theCompactMode,
+				new ToolbarSpacer({
+					width: "200px"
 				}),
 				oCustomCssButton
 			],
 			content: [
 				new HBox({
-					wrap: "Wrap",
 					items: [
-						new VBox({
-							items: [
-								new Title({text: "Input States:"}).addStyleClass("sapUiSmallMargin"),
-								new RadioButtonGroup({
-									selectedIndex: 2,
-									buttons: [
-										new RadioButton("rb1", {text: "Not enabled", select: handleStateChange}),
-										new RadioButton("rb2", {text: "Not editable", select: handleStateChange}),
-										new RadioButton("rb3", {text: "Standard", select: handleStateChange})
-									]
-								})
-							]
-						}),
-						new VBox({
-							items: [
-								new Title({text: "Input Value States:"}).addStyleClass("sapUiSmallMargin"),
-								new RadioButtonGroup({
-									selectedIndex: 4,
-									buttons: [
-										new RadioButton("rb4", {text: "Success", select: handleValueStateChange}),
-										new RadioButton("rb5", {text: "Warning", select: handleValueStateChange}),
-										new RadioButton("rb6", {text: "Error", select: handleValueStateChange}),
-										new RadioButton("rb7", {text: "Information", select: handleValueStateChange}),
-										new RadioButton("rb8", {text: "None", select: handleValueStateChange})
-									]
-								})
-							]
-						}),
-						new VBox({
-							items: [
-								new Title({text: "Input Description:"}).addStyleClass("sapUiSmallMargin"),
-								new RadioButtonGroup({
-									selectedIndex: 1,
-									buttons: [
-										new RadioButton("rb9", {text: "Visible", select: handleDescriptionChange}),
-										new RadioButton("rb10", {text: "None", select: handleDescriptionChange})
-									]
-								})
-							]
-						}),
-						new VBox({
-							items: [
-								new Title({text: "Input Value Help:"}).addStyleClass("sapUiSmallMargin"),
-								new RadioButtonGroup({
-									selectedIndex: 1,
-									buttons: [
-										new RadioButton("rb11", {text: "Visible", select: handleValueHelpChange}),
-										new RadioButton("rb12", {text: "None", select: handleValueHelpChange})
-									]
-								})
-							]
-						}),
-						new VBox({
-							items: [
-								new Title({text: "Input Text Direction:"}).addStyleClass("sapUiSmallMargin"),
-								new RadioButtonGroup({
-									selectedIndex: 0,
-									buttons: [
-										new RadioButton("rb13", {text: "LTR", select: handleTextDirChange}),
-										new RadioButton("rb14", {text: "RTL", select: handleTextDirChange})
-									]
-								})
-							]
-						})
+						oRegularInput,
+						oRegularInputWithVh,
+						oReadonlyInput,
+						oReadonlyErrorInput,
+						oDisabledInput,
+						oDisabledWarningInput
 					]
-				}),
-				new VBox("inpHolder", {
-					width: "10rem",
+				}).addStyleClass("sapUiMediumMarginBottom"),
+				new HBox({
 					items: [
-						new Input(aInputIds[0], {value: "some text"}),
-						new Input(aInputIds[1], {placeholder: "placeholder"}),
-						new Input(aInputIds[2], {}),
-						new Input(aInputIds[3], { value: "min width", width: "2rem"})
+						oInputValueStateErrorLink,
+						oInputValueStateWarning,
+						oInputValueStateInformationLink,
+						oInputValueStateSuccess
 					]
-				}),
+				}).addStyleClass("sapUiMediumMarginBottom"),
 				new SimpleForm("sf", {
 					width: "100%",
 					maxContainerCols: 2,
@@ -511,7 +478,7 @@ sap.ui.require([
 						oSuggestionsInput,
 						new Label({text: "Input with sticky column header suggestions", labelFor: "inputWithStickySuggestions"}),
 						oInputWithStickySuggestions,
-						new Label({text: "Input with table suggetions", labelFor: "oSuggestTableInput"}),
+						new Label({text: "Input with tabular suggetions", labelFor: "oSuggestTableInput"}),
 						oSuggestTableInput,
 						new Label({text: "Input with startSuggestions = 2", labelFor: "inputStartSuggestions"}),
 						oStartSuggestionsInput,
@@ -520,11 +487,13 @@ sap.ui.require([
 						new Label({text: "Input with long suggestions", labelFor: "inputWrapping"}),
 						oLongSuggestionsInput,
 						new Label({text: "Input with two columns layout", labelFor: "inputSecondaryValue"}),
-						oSecondaryValueInput
+						oSecondaryValueInput,
+						new Label({text: "Input with clear icon", labelFor: "inputClearIcon"}),
+						oClearIconInput
 					]
 				})
 
 			]
-		});
+		}).addStyleClass("sapUiContentPadding");
 		app.addPage(initialPage);
 });
