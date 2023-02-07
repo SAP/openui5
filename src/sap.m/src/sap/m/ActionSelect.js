@@ -23,6 +23,7 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', 'sap/ui/Device', 'sap/ui
 		 * @constructor
 		 * @public
 		 * @since 1.16
+		 * @deprecated as of version 1.111.
 		 * @alias sap.m.ActionSelect
 		 */
 		var ActionSelect = Select.extend("sap.m.ActionSelect", /** @lends sap.m.ActionSelect.prototype */ {
