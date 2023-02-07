@@ -56,7 +56,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * @param {string} sContent - Content of the file saved to the layered repository
 	 * @param {string} sTransportId - ID of an ABAP transport or ATO_NOTIFICATION
 	 * @param {string} sPackageName - Name of an ABAP package
-	 * @param [boolean] bSupport - Save file with support mode for activated version
+	 * @param {boolean} [bSupport] - Save file with support mode for activated version
 	 * @returns {Promise} Promise of the SAVE content request to the back end
 	 * @public
 	 */
@@ -87,7 +87,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * @param {string} sFileName - Name of the file
 	 * @param {string} sFileType - Type of the file
 	 * @param {string} sTransportId - ID of the ABAP transport or ATO_NOTIFICATION
-	 * @param [boolean] bSupport - Delete file with support mode for activated version
+	 * @param {boolean} [bSupport] - Delete file with support mode for activated version
 	 * @returns {Promise} Promise of DELETE content request to the back end
 	 * @public
 	 */

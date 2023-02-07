@@ -427,13 +427,14 @@ sap.ui.define([
 	 * <code>Engine#createChanges</code> can be used to programmatically trigger the creation
 	 * of a set of changes based on the current control state and the provided state.
 	 *
+	 * @private
 	 * @ui5-restricted
 	 *
 	 * @param {object} mDiffParameters A map defining the configuration to create the changes
 	 * @param {sap.ui.core.Control} mDiffParameters.control The control instance that should be adapted
 	 * @param {string} mDiffParameters.key The key used to retrieve the related controller
 	 * @param {object} mDiffParameters.state The state that is applied to the provided control instance
-	 * @param {sap.ui.mdc.p13n.ProcessingStrategy} [mDiffParameters.applyAbsolute] Determines about the comparison algorithm between two states
+	 * @param {sap.m.p13n.enum.ProcessingStrategy} [mDiffParameters.applyAbsolute] Determines about the comparison algorithm between two states
 	 * @param {boolean} [mDiffParameters.stateBefore] If the state should be diffed manually;
 	 * for example, if "A" exists in the control state, but is not mentioned in the new state provided in the
 	 * mDiffParameters.state then the absolute appliance decides whether to remove "A" or to keep it.

@@ -854,7 +854,7 @@ sap.ui.define([
 		 * // {length: 4, index: 2}
 		 *
 		 * @param {string} sValue the input value, e.g. "MÄRZ 2013"
-		 * @param {string[]} aList, the list of values to check, e.g. ["Januar", "Februar", "März", "April", ...]
+		 * @param {string[]} aList the list of values to check, e.g. ["Januar", "Februar", "März", "April", ...]
 		 * @param {string} sLocale the locale which is used for the string comparison, e.g. "de-DE"
 		 * @returns {{length: number, index: number}} the length of the match in sValue, the index in the list of values
 		 *   e.g. length: 4, index: 2 ("MÄRZ")

@@ -41,8 +41,8 @@ sap.ui.define([
 
 	/**
 	 * Returns true if create container action is enabled for the selected element overlays
-	 * @param {boolean} bSibling Indicator for a sibling action
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays Array of selected element overlays
+	 * @param {boolean} bSibling Indicator for a sibling action
 	 * @return {boolean} Indicates if action is enabled
 	 * @override
 	 */

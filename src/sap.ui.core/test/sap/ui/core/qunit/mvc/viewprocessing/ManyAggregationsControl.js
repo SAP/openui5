@@ -5,8 +5,8 @@ sap.ui.define(['sap/ui/core/Control'], function(Control) {
 	"use strict";
 
 	var ManyAggregationsControl = Control.extend("sap.ui.core.qunit.mvc.viewprocessing.ManyAggregationsControl", {
-		library: "sap.ui.core.qunit.mvc.viewprocessing",
 		metadata: {
+			library: "sap.ui.core.qunit.mvc.viewprocessing",
 			defaultAggregation: "bottomControls",
 			aggregations: {
 

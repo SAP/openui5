@@ -9,6 +9,8 @@ sap.ui.define(function () {
      * @enum {string}
      * @since 1.104
      * @alias sap.m.p13n.enum.PersistenceMode
+     * @private
+     * @ui5-restricted
      */
     var PersistenceMode = {
         /**
@@ -24,6 +26,7 @@ sap.ui.define(function () {
          * control reference could be found. If a <code>sap.ui.fl.variants.VariantManagement</code> has been found,
          * it will be used instead.
          *
+         * @private
          * @ui5-restricted sap.fe
          */
         Auto: "Auto",

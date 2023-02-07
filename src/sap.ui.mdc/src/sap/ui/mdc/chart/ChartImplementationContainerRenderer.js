@@ -26,7 +26,7 @@ sap.ui.define([],
          * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
          *
          * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-         * @param {sap.ui.mdc.Chart} oMDCChart An object representation of the control that should be rendered
+         * @param {sap.ui.mdc.chart.ChartImplementationContainer} oChartImplContainer An object representation of the control that should be rendered
          */
         ChartRenderer.render = function(oRm, oChartImplContainer) {
                 oRm.openStart("div", oChartImplContainer);
