@@ -173,7 +173,7 @@ sap.ui.define([
 
 		if (!oBinding) {
 			return 0;
-		} else if (oBinding.getGrandTotalContextInfo) { // AnalyticalBinding
+		} else if (oBinding.isA("sap.ui.model.analytics.AnalyticalBinding")) {
 			var oRootNode = oBinding.getGrandTotalContextInfo();
 			return oRootNode ? oRootNode.totalNumberOfLeafs : 0;
 		} else {
@@ -327,7 +327,15 @@ sap.ui.define([
 	 */
 	BindingSelection.prototype._getHighestSelectableIndex = function() {
 		var oBinding = this.getTableBinding();
-		return oBinding ? oBinding.getLength() - 1 : -1;
+
+		if (!oBinding) {
+			return -1;
+		} else if (oBinding.isA("sap.ui.model.analytics.AnalyticalBinding")) {
+			var bHasGrandTotal = oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
+			return oBinding.getLength() - 1 - (bHasGrandTotal ? 1 : 0);
+		} else {
+			return oBinding.getLength() - 1;
+		}
 	};
 
 	/**
