@@ -92,7 +92,10 @@ function(
 	Fiori.prototype.hide = function () {
 		return Adaptation.prototype.hide.apply(this, arguments)
 		.then(function () {
-			this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
+			//TODO: this._oFioriHeader should never be empty here
+			if (this._oFioriHeader) {
+				this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
+			}
 		}.bind(this));
 	};
 
