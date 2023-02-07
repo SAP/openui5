@@ -30,7 +30,7 @@ sap.ui.define([
 			assert.ok(oIntf1 === oIntf2, "stable interface");
 			for (var m in oIntf1) {
 				if (typeof oIntf1[m] === "function") {
-					assert.ok(this.oNewClassInstance.getMetadata()._aAllPublicMethods.indexOf(m) >= 0, "interface has only functions from the list");
+					assert.ok(this.oNewClassInstance.getMetadata().getAllPublicMethods().indexOf(m) >= 0, "interface has only functions from the list");
 					// TODO the following tests only work for methods that have stable results and that don't require arguments
 					var r1 = this.oNewClassInstance[m]();
 					var r2 = oIntf1[m]();
@@ -51,9 +51,6 @@ sap.ui.define([
 			assert.strictEqual(this.oNewSubClassInstance.getMetadata().getParent(), this.oNewClassInstance.getMetadata(), "basetype as expected");
 		});
 
-		/**
-		 * @deprecated As of version 1.111 All deprecated APIs
-		 */
 		QUnit.test("PublicMethods", function(assert) {
 			assert.deepEqual(this.oNewClassInstance.getMetadata().getPublicMethods(), ["method1"], "public methods");
 			assert.deepEqual(this.oNewClassInstance.getMetadata().getAllPublicMethods(), ["method1"], "public methods");
@@ -124,69 +121,32 @@ sap.ui.define([
 
 	ObjectPath.create("sap.test");
 
-	var BestPracticeClass = BaseObject.extend("sap.test.BestPracticeClass", {
-		constructor: function(v1) {
-			this.value1 = v1;
-		},
-		metadata: {
-			interfaces: ["sap.ui.base.Poolable", "sap.test.MyInterface"],
-			publicMethods: ["method1"]
-		},
-		method1: function() {
-			return this.value1;
-		}
+	var LegacyClass = sap.test.LegacyClass = function(v1) {
+		this.value1 = v1;
+	};
+	LegacyClass.prototype = Object.create(BaseObject.prototype);
+	BaseObject.defineClass("sap.test.LegacyClass", {
+		baseType: "sap.ui.base.Object",
+		interfaces: ["sap.ui.base.Poolable", "sap.test.MyInterface"],
+		publicMethods: ["method1"]
 	});
+	LegacyClass.prototype.method1 = function() {
+		return this.value1;
+	};
 
-	var BestPracticeSubClass = BestPracticeClass.extend("sap.test.BestPracticeSubClass", {
-		constructor: function(v1, v2) {
-			BestPracticeClass.call(this, v1);
-			this.value2 = v2;
-		},
-		metadata: {
-			interfaces: ["sap.ui.base.Cacheable", "sap.ui.base.Poolable"],
-			publicMethods: ["method2"]
-		},
-		method2: function() {
-			return this.value2;
-		}
+	var LegacySubClass = sap.test.LegacySubClass = function(v1, v2) {
+		LegacyClass.call(this, v1);
+		this.value2 = v2;
+	};
+	LegacySubClass.prototype = Object.create(LegacyClass.prototype);
+	BaseObject.defineClass("sap.test.LegacySubClass", {
+		baseType: "sap.test.LegacyClass",
+		interfaces: ["sap.ui.base.Cacheable", "sap.ui.base.Poolable"],
+		publicMethods: ["method2"]
 	});
+	LegacySubClass.prototype.method2 = function() {
+		return this.value2;
+	};
 
-	testsuite("Best Practice Class Definition", BestPracticeClass, "sap.test.BestPracticeClass", BestPracticeSubClass, "sap.test.BestPracticeSubClass");
-
-
-
-	QUnit.module("Base Class Functions");
-
-	QUnit.test("isA static function", function(assert) {
-		var oIcon = new Icon();
-		assert.strictEqual(BaseObject.isA(oIcon, "sap.ui.core.Icon"), true, "self test: instance is a sap.ui.core.Icon");
-		assert.strictEqual(BaseObject.isA(oIcon, "sap.ui.base.ManagedObject"), true, "inheritance: instance is a ManagedObject");
-		assert.strictEqual(BaseObject.isA(oIcon, "sap.ui.base.Object"), true, "inheritance: instance is a BaseObject");
-		assert.strictEqual(BaseObject.isA(oIcon, [
-			"sap.ui.base.Object",
-			"sap.test.rainbow"
-		]), true, "multiple: instance is a 'sap.test.rainbow' (doesn't exist) or BaseObject");
-
-		assert.strictEqual(BaseObject.isA(oIcon, "sap.ui.core.HTML"), false, "Icon is not HTML");
-		assert.strictEqual(BaseObject.isA(oIcon, null), false, "null check");
-		assert.strictEqual(BaseObject.isA(oIcon, ""), false, "'' check");
-		assert.strictEqual(BaseObject.isA(oIcon), false, "undefined check");
-		assert.strictEqual(BaseObject.isA(oIcon), false, "undefined check");
-		assert.strictEqual(BaseObject.isA(oIcon, [
-			"sap.test.pony",
-			"sap.test.rainbow"
-		]), false, "multiple: instance is not 'sap.test.pony' or 'sap.test.rainbow'");
-
-		var MyClass = function() {};
-		MyClass.prototype.isA = function() {
-			assert.ok(false, "Custom 'isA' method should not be called");
-		};
-		var oMyObject = new MyClass();
-		assert.strictEqual(BaseObject.isA(oMyObject, "sap.ui.base.Object"), false, "MyClass is not BaseObject");
-		assert.strictEqual(BaseObject.isA({}, "sap.ui.base.Object"), false, "Plain Object is not BaseObject");
-		assert.strictEqual(BaseObject.isA(null, "sap.ui.base.Object"), false, "null is not BaseObject");
-		assert.strictEqual(BaseObject.isA(undefined, "sap.ui.base.Object"), false, "undefined is not BaseObject");
-		assert.strictEqual(BaseObject.isA(NaN, "sap.ui.base.Object"), false, "NaN is not BaseObject");
-		assert.strictEqual(BaseObject.isA("", "sap.ui.base.Object"), false, "Empty string is not BaseObject");
-	});
+	testsuite("Legacy Class Definition", LegacyClass, "sap.test.LegacyClass", LegacySubClass, "sap.test.LegacySubClass");
 });

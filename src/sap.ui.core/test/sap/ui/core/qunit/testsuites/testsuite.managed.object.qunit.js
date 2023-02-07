@@ -53,11 +53,20 @@ sap.ui.define(function() {
 					qunitBridge: true
 				}
 			},
+			/**
+			 * @deprecated As of version 1.111 Mostly testing deprecated APIs
+			 */
 			Metadata: {
 				title: "sap.ui.base.Metadata"
 			},
 			Object: {
 				title: "sap.ui.base.Object"
+			},
+			/**
+			 * @deprecated As of version 1.111
+			 */
+			Object_legacyAPIs: {
+				title: "sap.ui.base.Object (legacy APIs)"
 			}
 		}
 	};
