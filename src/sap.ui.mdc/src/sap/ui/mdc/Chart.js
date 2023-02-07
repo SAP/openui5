@@ -23,7 +23,10 @@ sap.ui.define([
         "sap/ui/mdc/chart/DrillBreadcrumbs",
         "sap/ui/mdc/actiontoolbar/ActionToolbarAction",
         "sap/ui/core/library",
-        "sap/ui/events/KeyCodes"
+        "sap/ui/events/KeyCodes",
+        "sap/ui/mdc/util/InfoBar",
+        "sap/m/Label",
+        "sap/ui/core/format/ListFormat"
     ],
     function (
         Core,
@@ -46,7 +49,10 @@ sap.ui.define([
         Breadcrumbs,
         ActionToolbarAction,
         coreLibrary,
-        KeyCodes
+        KeyCodes,
+        InfoBar,
+        Label,
+        ListFormat
     ) {
         "use strict";
 
@@ -305,6 +311,11 @@ sap.ui.define([
                         type: "sap.ui.mdc.chart.SelectionDetailsActions",
                         multiple: false
                     },
+                    _infoToolbar: {
+                        type: "sap.ui.mdc.util.InfoBar",
+                        multiple: false,
+                        visibility: "hidden"
+                    },
                     /**
                      * Reference to a {@link sap.ui.fl.variants.VariantManagement} control for the chart.
                      */
@@ -477,6 +488,8 @@ sap.ui.define([
                 oP13nFilter.setFilterConditions(mConditions);
             }
 
+            this._updateInfoToolbar();
+
             return this;
         };
 
@@ -565,6 +578,11 @@ sap.ui.define([
                 }
 
                 this.setAggregation("_innerChart", oInnerChart);
+
+                if (this.getP13nMode().includes("Filter")){
+                    this._initInfoToolbar();
+                }
+
                 this._bInnerChartReady = true;
                 this._fnResolveInitialized();
                 this.invalidate();
@@ -575,6 +593,60 @@ sap.ui.define([
 
             //independent from fetchProperties
             this._getToolbar().createToolbarContent(this);
+        };
+
+        Chart.prototype._initInfoToolbar = function() {
+            this.setAggregation("_infoToolbar", new InfoBar(this.getId() + "--infoToolbar", {infoText: this._getFilterInfoText(),
+                press: function() {
+                    this.finalizePropertyHelper().then(function(){
+                       return ChartSettings.showPanel(this, "Filter");
+                    }.bind(this)).then(function(oP13nDialog) {
+
+                        oP13nDialog.attachEventOnce("afterClose", function() {
+
+                            var aConditions = this.getFilterConditions();
+                            var bNoConditions = !Object.keys(aConditions).find(function(oKey) {
+                                return aConditions[oKey] && aConditions[oKey].length > 0;
+                            });
+
+                            if (bNoConditions && this.getAggregation("_toolbar")) {
+                                    this.getAggregation("_toolbar").getSettingsButton().focus();
+                            }
+
+                        }.bind(this));
+                    }.bind(this));
+                }.bind(this)}));
+
+            if (this.getDomRef()) {
+                this.getDomRef().setAttribute("aria-labelledby", this.getAggregation("_infoToolbar").getACCTextId());
+            }
+        };
+
+        Chart.prototype._updateInfoToolbar = function() {
+            if (this.getP13nMode().includes("Filter") && this.getAggregation("_infoToolbar")){
+                this.getAggregation("_infoToolbar").setInfoText(this._getFilterInfoText());
+            }
+        };
+
+        Chart.prototype._getFilterInfoText = function() {
+            if (this.getInbuiltFilter()) {
+                var sText;
+                var aFilterNames = this._getLabelsFromFilterConditions();
+                var oListFormat = ListFormat.getInstance();
+
+                if (aFilterNames.length > 0) {
+
+                    if (aFilterNames.length > 1) {
+                        sText = MDCRb.getText("chart.MULTIPLE_FILTERS_ACTIVE", [aFilterNames.length, oListFormat.format(aFilterNames)]);
+                    } else {
+                        sText = MDCRb.getText("chart.ONE_FILTER_ACTIVE", aFilterNames[0]);
+                    }
+                }
+
+                return sText;
+            }
+
+            return undefined;
         };
 
         /**

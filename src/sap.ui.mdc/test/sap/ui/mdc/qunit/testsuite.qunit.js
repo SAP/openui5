@@ -231,6 +231,11 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				module: "./mixin/FilterIntegrationMixin.qunit",
 				sinon: true
 			},
+			"InfoBar": {
+				group: "Util",
+				module: "./util/InfoBar.qunit",
+				sinon: true
+			},
 			"PromiseCache": {
 				group: "Util",
 				module: "./util/PromiseCache.qunit",

@@ -507,12 +507,14 @@ function(
             var getInbuiltFilterStub = sinon.stub(this.oMDCChart,"getInbuiltFilter").returns(
                 {setFilterConditions: setFilterConditionsStub}
             );
+			var oUpdateInfoToolbarSpy = sinon.spy(this.oMDCChart, "_updateInfoToolbar");
 
             this.oMDCChart.setFilterConditions(mConditions);
 
             assert.ok(setPropertySpy.calledWith("filterConditions", mConditions, true),"filterConditions property correctly set");
             assert.ok(getInbuiltFilterStub.calledOnce, "getInbuiltFilter correctly called once");
             assert.ok(setFilterConditionsStub.calledWith(mConditions),"setFilterConditions correcly called with parameters");
+			assert.ok(oUpdateInfoToolbarSpy.calledOnce, "_updateInfoToolbar function was called");
 
             done();
         }.bind(this));
@@ -825,6 +827,43 @@ function(
 		assert.ok(!oOverlaySpy.called, "Overlay function was not called");
 
     });
+
+	QUnit.test("_initInfoToolbar", function(assert) {
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function() {
+			this.oMDCChart.setAggregation("_infoToolbar", null);
+			var oAttributeSpy = sinon.spy(this.oMDCChart.getDomRef(), "setAttribute");
+
+			this.oMDCChart._initInfoToolbar();
+
+			assert.ok(this.oMDCChart.getAggregation("_infoToolbar"), "Toolbar was created");
+			assert.ok(oAttributeSpy.calledOnce, "Aria label setter was called on dom-ref");
+			assert.equal(this.oMDCChart.getDomRef().getAttribute("aria-labelledby"), this.oMDCChart.getAggregation("_infoToolbar").getACCTextId(), "ACC text was corrected connected via aria-labelledby");
+			done();
+		}.bind(this));
+
+	});
+
+	QUnit.test("_updateInfoToolbar function", function(assert) {
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function() {
+			this.oMDCChart.setP13nMode(["Filter"]);
+			this.oMDCChart._initInfoToolbar();
+			var oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_infoToolbar"), "setInfoText");
+			var sMockLabel = "ABC";
+			var oConditionsStub = sinon.stub(this.oMDCChart, "_getFilterInfoText").returns(sMockLabel);
+
+			this.oMDCChart._updateInfoToolbar();
+
+			assert.ok(oToolbarSpy.calledOnceWith(sMockLabel), "Toolbar text was updated");
+
+			oConditionsStub.restore();
+
+			done();
+		}.bind(this));
+	});
 
 	QUnit.module("sap.ui.mdc.Chart: Toolbar Actions", {
 
