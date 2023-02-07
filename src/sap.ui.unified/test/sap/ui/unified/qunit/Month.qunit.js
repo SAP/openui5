@@ -1277,8 +1277,9 @@ sap.ui.define([
 
 		QUnit.test("_handleWeekSelection", function(assert) {
 			// Prepare
-			var oStartDate = CalendarDate.fromLocalJSDate(new Date(2016, 0, 3)),
-				oMinDate = CalendarDate.fromLocalJSDate(new Date(2016, 0, 4)),
+			var oStartDateInBounds = CalendarDate.fromLocalJSDate(new Date(2016, 0, 3)),
+				oStartDateOutBounds = CalendarDate.fromLocalJSDate(new Date(2016, 0, 10)),
+				oMinDate = CalendarDate.fromLocalJSDate(new Date(2016, 0, 1)),
 				oMaxDate = CalendarDate.fromLocalJSDate(new Date(2016, 0, 8)),
 				oMinDateStub = this.stub(this.oM, "_oMinDate").value(oMinDate),
 				oMaxDateStub = this.stub(this.oM, "_oMaxDate").value(oMaxDate),
@@ -1291,26 +1292,44 @@ sap.ui.define([
 				oHandleWeekSelectionByMultipleDaysSpy = this.spy(this.oM, "_handleWeekSelectionByMultipleDays"),
 				oHandleWeekSelectionBySingleIntervalSpy = this.spy(this.oM, "_handleWeekSelectionBySingleInterval");
 
-			// Act
-			this.oM._handleWeekSelection(oStartDate);
+			// Act - Out of Bounds
+			this.oM._handleWeekSelection(oStartDateOutBounds);
 
 			// Assert
 			assert.ok(
-				oHandleWeekSelectionBySingleIntervalSpy.calledWith("2", oMinDate, oMaxDate),
-				"Single interval selection respects the min/max constraints"
+				oHandleWeekSelectionBySingleIntervalSpy.notCalled,
+				"Single interval selection not called when outside of min/max constraints"
+			);
+
+			// Act - In Bounds
+			this.oM._handleWeekSelection(oStartDateInBounds);
+
+			// Assert
+			assert.ok(
+				oHandleWeekSelectionBySingleIntervalSpy.calledWith("2", oStartDateInBounds, oMaxDate),
+				"Single interval selection called when inside the min/max constraints"
 			);
 
 			// Prepare
 			oGetIntervalSelectionStub.restore();
 			oGetSingleSelectionStub = this.stub(this.oM, "getSingleSelection").returns(false);
 
-			// Act
-			this.oM._handleWeekSelection(oStartDate);
+			// Act - Out of Bounds
+			this.oM._handleWeekSelection(oStartDateOutBounds);
 
 			// Assert
 			assert.ok(
-				oHandleWeekSelectionByMultipleDaysSpy.calledWith("2", oMinDate, oMaxDate),
-				"Week selection by multiple day selection respects the min/max constraints"
+				oHandleWeekSelectionByMultipleDaysSpy.notCalled,
+				"Week selection by multiple day selection not called when outside of min/max constraints"
+			);
+
+			// Act - In Bounds
+			this.oM._handleWeekSelection(oStartDateInBounds);
+
+			// Assert
+			assert.ok(
+				oHandleWeekSelectionByMultipleDaysSpy.calledWith("2", oStartDateInBounds, oMaxDate),
+				"Week selection by multiple day selection called when inside the min/max constraints"
 			);
 
 			// Clean
