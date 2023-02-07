@@ -18,6 +18,7 @@
 
 			jQuery.sap.require("sap.ui.core.date.UniversalDate");
 			var UniversalDate = sap.ui.core.date.UniversalDate;
+			var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
 
 			var oYearPicker = new sap.ui.unified.calendar.YearPicker("YP1",{
 				select: function(oEvent){
@@ -50,7 +51,7 @@
 				}
 			}).placeAt("event1");
 
-			var oDate = new Date(2015,0,1);
+			var oDate = UI5Date.getInstance(2015,0,1);
 			oYearPicker = new sap.ui.unified.calendar.YearPicker("YP2",{
 				years: 5,
 				columns: 0,

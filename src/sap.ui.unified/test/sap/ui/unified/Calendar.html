@@ -18,7 +18,7 @@
 
 			jQuery.sap.require("sap.ui.model.type.Date");
 
-
+			var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
 			var oCalendars = new sap.ui.model.json.JSONModel(sap.ui.core.CalendarType);
 
 			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
@@ -113,7 +113,7 @@
 				fields: [ new sap.ui.commons.Button({
 					text: "focus today",
 					press: function(oEvent){
-						sap.ui.getCore().byId("Cal1").focusDate(new Date());
+						sap.ui.getCore().byId("Cal1").focusDate(UI5Date.getInstance());
 						var oTF = sap.ui.getCore().byId("TF2");
 						var oCalendar = sap.ui.getCore().byId("Cal1");
 						var oDate = oCalendar.getStartDate();
@@ -153,17 +153,17 @@
 							if (bPressed) {
 								var oDate = oCal.getStartDate();
 								if (oDate) {
-									oDate = new Date(oDate.getTime());
+									oDate = UI5Date.getInstance(oDate.getTime());
 								} else {
-									oDate = new Date();
+									oDate = UI5Date.getInstance();
 								}
 								oDate.setDate(2);
 								oCal.addDisabledDate(new sap.ui.unified.DateRange({
 									startDate: oDate
 								}));
-								oStartDate = new Date(oDate);
+								oStartDate = UI5Date.getInstance(oDate);
 								oStartDate.setDate(10);
-								oEndDate = new Date(oDate);
+								oEndDate = UI5Date.getInstance(oDate);
 								oEndDate.setDate(20);
 								oCal.addDisabledDate(new sap.ui.unified.DateRange({
 									startDate: oStartDate,
@@ -481,7 +481,7 @@
 					new sap.ui.commons.Button({
 						text: "focus today",
 						press: function(oEvent){
-							sap.ui.getCore().byId("Cal4").focusDate(new Date());
+							sap.ui.getCore().byId("Cal4").focusDate(UI5Date.getInstance());
 						}
 					})
 				]
@@ -565,7 +565,7 @@
 			addRemoveSelectedDateSample();
 
 			function addRemoveSelectedDateSample(){
-				var oDateRange = new sap.ui.unified.DateRange({startDate: new Date(2017, 4, 10)});
+				var oDateRange = new sap.ui.unified.DateRange({startDate: UI5Date.getInstance(2017, 4, 10)});
 				var oCalRemove = new sap.ui.unified.Calendar({
 					selectedDates: [oDateRange]
 				});

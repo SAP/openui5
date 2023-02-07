@@ -17,43 +17,44 @@
 		<script>
 
 			jQuery.sap.require("sap.ui.model.type.Date");
+			var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
 
 			var oFormatYyyyMMddHHmmss = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmmss", calendarType: sap.ui.core.CalendarType.Gregorian});
 
 			var aSpecialDays = [["20150101",undefined,"Neujahr",1],
-			                    ["20150106",undefined,"Heilige Drei Könige",1],
-			                    ["20150214",undefined,"Valentinstag",2],
-			                    ["20150216",undefined,"Rosenmontag",2],
-			                    ["20150217",undefined,"Fastnacht",2],
-			                    ["20150218",undefined,"Aschermittwoch",2],
-			                    ["20150403",undefined,"Karfreitag",1],
-			                    ["20150405",undefined,"Ostersonntag",1],
-			                    ["20150406",undefined,"Ostermontag",1],
-			                    ["20150501",undefined,"Maifeiertag",1],
-			                    ["20150510",undefined,"Muttertag",2],
-			                    ["20150514",undefined,"Christi Himmelfahrt",1],
-			                    ["20150524",undefined,"Pfingstsonntag",1],
-			                    ["20150525",undefined,"Pfingstmontag",1],
-			                    ["20150604",undefined,"Fronleichnam",1],
-			                    ["20150815",undefined,"Mariä Himmelfahrt",2],
-			                    ["20151003",undefined,"Tag der Deutschen Einheit",1],
-			                    ["20151004",undefined,"Erntedankfest",2],
-			                    ["20151031",undefined,"Reformationstag",2],
-			                    ["20151101",undefined,"Allerheiligen",1],
-			                    ["20151115",undefined,"Volkstrauertag",2],
-			                    ["20151118",undefined,"Buß- und Bettag",2],
-			                    ["20151122",undefined,"Totensonntag",2],
-			                    ["20151129",undefined,"1. Advent",2],
-			                    ["20151206",undefined,"Nikolaus",2],
-			                    ["20151206",undefined,"2. Advent",2],
-			                    ["20151213",undefined,"3. Advent",2],
-			                    ["20151220",undefined,"4. Advent",2],
-			                    ["20151224",undefined,"Heiligabend",2],
-			                    ["20151225","20141226","Weihnachten",1],
-			                    ["20151231",undefined,"Silvester",2],
-			                    ["20160101",undefined,"Neujahr",1],
-			                    ["20160106",undefined,"Heilige Drei Könige",1],
-			                    ["20150804","20140810","Urlaub",3]];
+								["20150106",undefined,"Heilige Drei Könige",1],
+								["20150214",undefined,"Valentinstag",2],
+								["20150216",undefined,"Rosenmontag",2],
+								["20150217",undefined,"Fastnacht",2],
+								["20150218",undefined,"Aschermittwoch",2],
+								["20150403",undefined,"Karfreitag",1],
+								["20150405",undefined,"Ostersonntag",1],
+								["20150406",undefined,"Ostermontag",1],
+								["20150501",undefined,"Maifeiertag",1],
+								["20150510",undefined,"Muttertag",2],
+								["20150514",undefined,"Christi Himmelfahrt",1],
+								["20150524",undefined,"Pfingstsonntag",1],
+								["20150525",undefined,"Pfingstmontag",1],
+								["20150604",undefined,"Fronleichnam",1],
+								["20150815",undefined,"Mariä Himmelfahrt",2],
+								["20151003",undefined,"Tag der Deutschen Einheit",1],
+								["20151004",undefined,"Erntedankfest",2],
+								["20151031",undefined,"Reformationstag",2],
+								["20151101",undefined,"Allerheiligen",1],
+								["20151115",undefined,"Volkstrauertag",2],
+								["20151118",undefined,"Buß- und Bettag",2],
+								["20151122",undefined,"Totensonntag",2],
+								["20151129",undefined,"1. Advent",2],
+								["20151206",undefined,"Nikolaus",2],
+								["20151206",undefined,"2. Advent",2],
+								["20151213",undefined,"3. Advent",2],
+								["20151220",undefined,"4. Advent",2],
+								["20151224",undefined,"Heiligabend",2],
+								["20151225","20141226","Weihnachten",1],
+								["20151231",undefined,"Silvester",2],
+								["20160101",undefined,"Neujahr",1],
+								["20160106",undefined,"Heilige Drei Könige",1],
+								["20150804","20140810","Urlaub",3]];
 
 			var oTimesRow = new sap.ui.unified.calendar.TimesRow("TR1",{
 				focus: function(oEvent){
@@ -171,7 +172,7 @@
 
 						var oDate;
 						for( i = 1; i <= 10; i++) {
-							oDate = new Date();
+							oDate = UI5Date.getInstance();
 							oDate.setHours(oDate.getHours() + i);
 							sType = "";
 							if(i < 10) {
@@ -186,9 +187,9 @@
 							}));
 						}
 
-						oDate = new Date();
+						oDate = UI5Date.getInstance();
 						oDate.setDate(oDate.getDate() + 1);
-						var oDate2 = new Date();
+						var oDate2 = UI5Date.getInstance();
 						oDate2.setDate(oDate2.getDate() + 1);
 						oDate2.setHours(oDate2.getHours() + 3);
 						sType = "Type01";
@@ -205,7 +206,7 @@
 			}).placeAt("event1");
 
 			// single interval selection
-			var oStartDate = new Date();
+			var oStartDate = UI5Date.getInstance();
 			oStartDate.setHours(oStartDate.getHours() - 1);
 			oTimesRow = new sap.ui.unified.calendar.TimesRow("TR2",{
 				intervalSelection: true,

@@ -19,8 +19,32 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/unified/library"
-], function(Button, HBox, Input, Label, List, MessageToast, StandardListItem, ToggleButton, VBox, CalendarType, oCore, DateFormat, coreLibrary, Device, Calendar, CalendarDateInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary) {
+	"sap/ui/unified/library",
+	"sap/ui/core/date/UI5Date"
+], function(
+		Button,
+		HBox,
+		Input,
+		Label,
+		List,
+		MessageToast,
+		StandardListItem,
+		ToggleButton,
+		VBox,
+		CalendarType,
+		oCore,
+		DateFormat,
+		coreLibrary,
+		Device,
+		Calendar,
+		CalendarDateInterval,
+		CalendarLegend,
+		CalendarLegendItem,
+		DateRange,
+		DateTypeRange,
+		unifiedLibrary,
+		UI5Date
+		) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
@@ -181,7 +205,7 @@ sap.ui.define([
 							new Button({
 								text: "focus today",
 								press: function(oEvent){
-									oCore.byId("Cal1").focusDate(new Date());
+									oCore.byId("Cal1").focusDate(UI5Date.getInstance());
 									var oTF = oCore.byId("TF2");
 									var oCalendar = oCore.byId("Cal1");
 									var oDate = oCalendar.getStartDate();
@@ -221,17 +245,17 @@ sap.ui.define([
 									if (bPressed) {
 										var oDate = oCal.getStartDate();
 										if (oDate) {
-											oDate = new Date(oDate.getTime());
+											oDate = UI5Date.getInstance(oDate.getTime());
 										} else {
-											oDate = new Date();
+											oDate = UI5Date.getInstance();
 										}
 										oDate.setDate(2);
 										oCal.addDisabledDate(new DateRange({
 											startDate: oDate
 										}));
-										var oStartDate = new Date(oDate);
+										var oStartDate = UI5Date.getInstance(oDate);
 										oStartDate.setDate(10);
-										var oEndDate = new Date(oDate);
+										var oEndDate = UI5Date.getInstance(oDate);
 										oEndDate.setDate(20);
 										oCal.addDisabledDate(new DateRange({
 											startDate: oStartDate,
@@ -295,7 +319,7 @@ sap.ui.define([
 
 
 	// single interval selection
-	var oStartDate = new Date();
+	var oStartDate = UI5Date.getInstance();
 	oStartDate.setDate(oStartDate.getDate() - 1);
 	oCal = new CalendarDateInterval("Cal2", {
 		width: Device.system.phone ? "340px" : "464px",

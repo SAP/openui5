@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegend",
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/type/DateTime"
+	"sap/ui/model/type/DateTime",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	App,
 	Bar,
@@ -33,7 +34,8 @@ sap.ui.define([
 	CalendarLegend,
 	CalendarLegendItem,
 	JSONModel,
-	DateTime
+	DateTime,
+	UI5Date
 ) {
 	"use strict";
 
@@ -132,7 +134,7 @@ sap.ui.define([
 		}
 		if (bPressed) {
 			for (var i = 0; i < 10; i++) {
-				var oDate = new Date(oDTP.getDateValue());
+				var oDate = UI5Date.getInstance(oDTP.getDateValue());
 				oDate.setDate(oDate.getDate() + i);
 				var sType = "Type" + (i < 9 ? "0" + (i + 1) : "10");
 				var oSpecialDate = new DateTypeRange({startDate: oDate, type: sType});
@@ -145,7 +147,7 @@ sap.ui.define([
 
 	var oModel = new JSONModel();
 	oModel.setData({
-		dateValue: new Date()
+		dateValue: UI5Date.getInstance()
 	});
 	oCore.setModel(oModel);
 
@@ -154,17 +156,17 @@ sap.ui.define([
 		content : [
 			new Label({text: "initial DateTimePicker", labelFor: "DTP1"}),
 			new DateTimePicker("DTP1", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
-			new Label({text: "initial DateTimePicker initialFocusedDateValue new Date(2017, 5, 13, 11, 12, 13)", labelFor: "DTP1_v0"}),
-			new DateTimePicker("DTP1_v0", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation, initialFocusedDateValue: new Date(2017, 5, 13, 11, 12, 13) }),
+			new Label({text: "initial DateTimePicker initialFocusedDateValue UI5Date.getInstance(2017, 5, 13, 11, 12, 13)", labelFor: "DTP1_v0"}),
+			new DateTimePicker("DTP1_v0", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation, initialFocusedDateValue: UI5Date.getInstance(2017, 5, 13, 11, 12, 13) }),
 			new Label({text: "DateTimePicker with given Value, Formatter, and with shortcuts for current date and current time", labelFor: "DTP2"}),
 			new DateTimePicker("DTP2", { value: "2016-02-16,12-50-30", valueFormat: "yyyy-MM-dd,HH-mm-ss", displayFormat: "long/short", showCurrentDateButton: true, showCurrentTimeButton: true, fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
 			new ToggleButton("TB1", { text: "specialDates", press: toggleSpecialDates}),
 			new Label({text: "DateTimePicker with given DateValue and Formatter", labelFor: "DTP3", width: "100%"}),
-			new DateTimePicker("DTP3", { dateValue: new Date(2016, 1, 16, 12, 50, 30), displayFormat: "short", change: handleChange }),
+			new DateTimePicker("DTP3", { dateValue: UI5Date.getInstance(2016, 1, 16, 12, 50, 30), displayFormat: "short", change: handleChange }),
 			new Label({text: "readonly DateTimePicker with given DateValue and Formatter", labelFor: "DTP4"}),
-			new DateTimePicker("DTP4", { dateValue: new Date(2016, 1, 16, 12, 50, 30), displayFormat: "yyyy-MM-dd, HH:mm:ss", editable: false, change: handleChange }),
+			new DateTimePicker("DTP4", { dateValue: UI5Date.getInstance(2016, 1, 16, 12, 50, 30), displayFormat: "yyyy-MM-dd, HH:mm:ss", editable: false, change: handleChange }),
 			new Label({text: "disabled DateTimePicker with given DateValue and Formatter", labelFor: "DTP5"}),
-			new DateTimePicker("DTP5", { dateValue: new Date(2016, 1, 16, 12, 50, 30), displayFormat: "yyyy-MM-dd, HH:mm:ss", enabled: false, change: handleChange }),
+			new DateTimePicker("DTP5", { dateValue: UI5Date.getInstance(2016, 1, 16, 12, 50, 30), displayFormat: "yyyy-MM-dd, HH:mm:ss", enabled: false, change: handleChange }),
 			new Label({text: "DateTimePicker using DataBinding", labelFor: "DTP6"}),
 			new DateTimePicker("DTP6", {
 				value: {
@@ -180,7 +182,7 @@ sap.ui.define([
 			new Label({text: "islamic DateTimePicker with secondary gregorianic", labelFor: "DTP7"}),
 			new DateTimePicker("DTP7", { displayFormatType: "Islamic", secondaryCalendarType: "Gregorian", change: handleChange }),
 			new Label({text: "DateTimePicker with minDate=2016-01-01 and maxDate=2016-12-31", labelFor: "DP8"}),
-			new DateTimePicker("DP8", { minDate: new Date(2016, 0, 1, 0, 0, 0), maxDate: new Date(2016, 11, 31, 23, 59, 59), change: handleChange }),
+			new DateTimePicker("DP8", { minDate: UI5Date.getInstance(2016, 0, 1, 0, 0, 0), maxDate: UI5Date.getInstance(2016, 11, 31, 23, 59, 59), change: handleChange }),
 			new Label({text: "DateTimePicker events display", labelFor: "I2"}),
 			new Input("I2", {value: "Content of events DateTimePicker", editable: false}),
 			new Label({text: "DateTimePicker with minutesStep: 3, secondsStep: 5", labelFor: "DP9"}),

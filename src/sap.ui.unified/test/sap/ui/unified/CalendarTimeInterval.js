@@ -23,8 +23,35 @@ sap.ui.define([
 	"sap/ui/unified/CalendarTimeInterval",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/unified/library"
-], function(Button, Input, Label, MessageToast, ScrollContainer, SelectList, ToggleButton, CalendarType, oCore, DateFormat, Item, coreLibrary, Device, Form, FormContainer, FormElement, ResponsiveGridLayout, layoutLibrary, Calendar, CalendarLegend, CalendarLegendItem, CalendarTimeInterval, DateRange, DateTypeRange, unifiedLibrary) {
+	"sap/ui/unified/library",
+	"sap/ui/core/date/UI5Date"
+], function(
+		Button,
+		Input,
+		Label,
+		MessageToast,
+		ScrollContainer,
+		SelectList,
+		ToggleButton,
+		CalendarType,
+		oCore,
+		DateFormat,
+		Item,
+		coreLibrary,
+		Device,
+		Form,
+		FormContainer,
+		FormElement,
+		ResponsiveGridLayout,
+		layoutLibrary,
+		Calendar,
+		CalendarLegend,
+		CalendarLegendItem,
+		CalendarTimeInterval,
+		DateRange,
+		DateTypeRange,
+		unifiedLibrary,
+		UI5Date) {
 	"use strict";
 
 	var BackgroundDesign = layoutLibrary.BackgroundDesign;
@@ -115,7 +142,7 @@ sap.ui.define([
 			new Button({
 				text: "focus now",
 				press: function(oEvent){
-					oCore.byId("Cal1").focusDate(new Date());
+					oCore.byId("Cal1").focusDate(UI5Date.getInstance());
 				}
 			}),
 			new ToggleButton({
@@ -143,7 +170,7 @@ sap.ui.define([
 
 						var oDate;
 						for ( i = 1; i <= 10; i++) {
-							oDate = new Date();
+							oDate = UI5Date.getInstance();
 							oDate.setHours(oDate.getHours() + i);
 							sType = "";
 							if (i < 10) {
@@ -158,9 +185,9 @@ sap.ui.define([
 							}));
 						}
 
-						oDate = new Date();
+						oDate = UI5Date.getInstance();
 						oDate.setDate(oDate.getDate() + 1);
-						var oDate2 = new Date();
+						var oDate2 = UI5Date.getInstance();
 						oDate2.setDate(oDate2.getDate() + 1);
 						oDate2.setHours(oDate2.getHours() + 3);
 						sType = "Type01";
@@ -276,7 +303,7 @@ sap.ui.define([
 	oFormContainer.addFormElement(oFormElement);
 
 	// single interval selection
-	var oStartDate = new Date();
+	var oStartDate = UI5Date.getInstance();
 	oStartDate.setHours(oStartDate.getHours() - 1);
 	new CalendarTimeInterval("Cal2",{
 		width: "500px",
