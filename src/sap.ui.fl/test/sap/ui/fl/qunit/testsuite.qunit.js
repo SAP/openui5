@@ -199,6 +199,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeInbound", "sap/ui/fl/util/DescriptorChangeCheck", "sap/ui/fl/util/changePropertyValueByPath"]
 				}
 			},
+			"apply/_internal/changes/descriptor/app/AddNewInbound": {
+				group: "Apply Internal - Descriptor Change Merger",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/AddNewInbound", "sap/ui/fl/util/DescriptorChangeCheck"]
+				}
+			},
 			"apply/_internal/changes/descriptor/ui5/SetMinUI5Version": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
