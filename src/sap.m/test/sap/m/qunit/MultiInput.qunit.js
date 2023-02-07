@@ -1782,7 +1782,6 @@ sap.ui.define([
 		});
 
 		var oMultiInput = new MultiInput({
-			enableMultiLineMode: true,
 			filterSuggests: false,
 			showSuggestion: true,
 			showValueHelp: true

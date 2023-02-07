@@ -103,7 +103,8 @@ sap.ui.define([
 	var page = new Page("myFirstPage", {
 		title: "Test",
 		showNavButton: true,
-		enableScrolling: true,
+		verticalScrolling: true,
+		horizontalScrolling: true,
 		content: [
 			oButton,
 			oButton2
@@ -825,12 +826,14 @@ sap.ui.define([
 
 	QUnit.test("Set enable scrolling (mapped to vertical/horizontal scrolling)", function (assert){
 		var oPopover4 = new Popover({
-			enableScrolling: true
+			verticalScrolling: true,
+			horizontalScrolling: true
 		});
 
 		assert.strictEqual(oPopover4.getVerticalScrolling(), true);
 		assert.strictEqual(oPopover4.getHorizontalScrolling(), true);
-		oPopover4.setEnableScrolling(false);
+		oPopover4.setVerticalScrolling(false);
+		oPopover4.setHorizontalScrolling(false);
 		assert.strictEqual(oPopover4.getVerticalScrolling(), false);
 		assert.strictEqual(oPopover4.getHorizontalScrolling(), false);
 	});
@@ -1181,8 +1184,7 @@ sap.ui.define([
 				new Button({text: 'text2'})
 			],
 			verticalScrolling: false,
-			horizontalScrolling: false,
-			enableScrolling: false
+			horizontalScrolling: false
 		});
 
 		oPopover.openBy(oButton);

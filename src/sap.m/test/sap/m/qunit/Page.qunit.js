@@ -57,7 +57,6 @@ sap.ui.define([
 		backgroundDesign: "Standard",
 		title : "Test",
 		showNavButton : true,
-		icon: "../images/SAPUI5.jpg",
 		enableScrolling : false,
 		content : oHtml,
 		headerContent: [new Button("hdrbtn",{text:"HDRBTN"})]
