@@ -41,6 +41,8 @@ sap.ui.define([
 	// shortcut for sap.ui.core.IllustratedMessageType
 	var TextAlign = coreLibrary.TextAlign;
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 * Constructor for a new <code>IllustratedMessage</code>.
@@ -166,7 +168,17 @@ sap.ui.define([
 				 *
 				 * @since 1.98
 				 */
-				title: {type: "string", group: "Misc", defaultValue: ""}
+				title: {type: "string", group: "Misc", defaultValue: ""},
+
+				/**
+				 * Defines the semantic level of the title. When using <code>Auto</code>, no explicit level information is written.
+				 *
+				 * <b>Note:</b> Used for accessibility purposes only.
+				 *
+				 * @public
+				 * @since 1.111
+				 */
+				ariaTitleLevel: {type: "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.Auto}
 			},
 			aggregations: {
 
@@ -803,6 +815,13 @@ sap.ui.define([
 		return this;
 	};
 
+	IllustratedMessage.prototype.setAriaTitleLevel = function(sTitleLevel) {
+		this.setProperty("ariaTitleLevel", sTitleLevel, true);
+
+		this._getTitle().setLevel(sTitleLevel);
+
+		return this;
+	};
 
 	return IllustratedMessage;
 
