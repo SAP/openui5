@@ -52,6 +52,10 @@ sap.ui.define([
 						oComponent.showMessageStrip(true);
 						oComponent.setSelectedContexts({role: []});
 						oComponentContainer = new ComponentContainer("contextSharingContainer", {component: oComponent});
+						// Ensure view is fully loaded
+						return oComponent.getRootControl().oAsyncState.promise.then(function() {
+							return oComponentContainer;
+						});
 					}
 					return oComponentContainer;
 				}
