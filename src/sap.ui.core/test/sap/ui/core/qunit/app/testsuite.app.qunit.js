@@ -15,8 +15,19 @@ sap.ui.define(function () {
 			MessageListBinding: {
 				title: "Tests for sap/ui/model/message/MessageListBinding"
 			},
-			DesignMode: {
-				title: "Tests for sap/ui/core/Configuration: DesignMode (XMLView)"
+			DesignMode_controllerDeactivated: {
+				title: "Tests for sap/ui/core/Configuration: DesignMode (XMLView) - DesignMode on, Controller Deactivated",
+				ui5: {
+					"xx-designMode": true,
+					"xx-suppressDeactivationOfControllerCode": false
+				}
+			},
+			DesignMode_suppressedDeactivation: {
+				title: "Tests for sap/ui/core/Configuration: DesignMode (XMLView) - DesignMode on, Suppress Deactivation of Controller Code",
+				ui5: {
+					"xx-designMode": true,
+					"xx-suppressDeactivationOfControllerCode": true
+				}
 			},
 			DesignMode_unavoidablySync: {
 				title: "Tests for sap/ui/core/Configuration: DesignMode (HTMLView)"
