@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
+	"sap/base/util/deepEqual",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/isEmptyObject",
@@ -18,6 +19,7 @@ sap.ui.define([
 	Component,
 	Utils,
 	Log,
+	deepEqual,
 	merge,
 	ObjectPath,
 	isEmptyObject,
@@ -175,6 +177,7 @@ sap.ui.define([
 		var oParsedHash = oURLParsingService && oURLParsingService.parseShellHash(hasher.getHash());
 
 		if (oParsedHash && oParsedHash.params) {
+			var mOldHashParams = Object.assign({}, oParsedHash.params);
 			var mTechnicalParameters = oModel.oAppComponent
 				&& oModel.oAppComponent.getComponentData
 				&& oModel.oAppComponent.getComponentData()
@@ -195,7 +198,7 @@ sap.ui.define([
 				hasher.changed.active = false; // disable changed signal
 				hasher.replaceHash(oURLParsingService.constructShellHash(oParsedHash));
 				hasher.changed.active = true; // re-enable changed signal
-			} else {
+			} else if (!deepEqual(mOldHashParams, oParsedHash.params)) {
 				oCrossApplicationNavigationService.toExternal({
 					target: {
 						semanticObject: oParsedHash.semanticObject,

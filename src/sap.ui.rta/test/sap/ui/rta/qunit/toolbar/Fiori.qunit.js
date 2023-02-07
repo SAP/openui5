@@ -79,7 +79,6 @@ function(
 			});
 		},
 		afterEach: function() {
-			this.oToolbar.destroy();
 			this.oImage.destroy();
 			sandbox.restore();
 		}
@@ -111,8 +110,30 @@ function(
 				sandbox.stub(Adaptation.prototype, "hide").returns(Promise.resolve());
 				return this.oToolbar.hide().then(function() {
 					assert.equal(this.sRemove, "sapUiRtaFioriHeaderInvisible", "then the correct StyleClass got removed");
+					this.oToolbar.destroy();
 					done();
 				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("when the toolbar is destroyed before the toolbar is hidden (TODO: should not happen!)", function(assert) {
+			var done = assert.async();
+
+			this.oToolbar = new Fiori({
+				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
+			});
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+
+			this.oToolbar.onFragmentLoaded().then(function() {
+				this.oToolbar.show();
+				sandbox.stub(Adaptation.prototype, "hide").callsFake(function() {
+					this.oToolbar.destroy();
+					return Promise.resolve();
+				}.bind(this));
+				return this.oToolbar.hide().then(function() {
+					assert.ok(true, "then no errors occur");
+					done();
+				});
 			}.bind(this));
 		});
 	});

@@ -231,6 +231,32 @@ sap.ui.define([
 			URLHandler.update(mPropertyBag);
 			assert.deepEqual(this.oModel._oHashData.hashParams, mPropertyBag.parameters, "then hash register was updated");
 		});
+
+		QUnit.test("when update() is called to update hash register with a URL update, but the parameters didn't change", function(assert) {
+			var mPropertyBag = {
+				parameters: ["testParam1", "testParam2"],
+				updateHashEntry: true,
+				updateURL: true,
+				model: this.oModel
+			};
+
+			var oReturnObject = {params: {}};
+			oReturnObject.params[URLHandler.variantTechnicalParameterName] = ["testParam1", "testParam2"];
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
+				parseShellHash: function() {
+					return oReturnObject;
+				}
+			});
+
+			this.oGetUShellServiceStub.withArgs("CrossApplicationNavigation").returns({
+				toExternal: function() {
+					assert.ok(false, "but 'toExternal' should not be called");
+				}
+			});
+
+			URLHandler.update(mPropertyBag);
+			assert.ok(true, "update is called");
+		});
 	});
 
 	QUnit.module("Given multiple variant management controls", {
