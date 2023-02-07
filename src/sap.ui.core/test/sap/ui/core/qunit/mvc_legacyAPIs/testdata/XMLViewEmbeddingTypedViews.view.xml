@@ -2,8 +2,8 @@
 	<Panel id="aPanel">
 		<content>
 			<mvc:View id="embedded-async-true" viewName="module:testdata/mvc/TypedView" async="true"></mvc:View>
-			<mvc:JSView id="embedded-async-true2" viewName="module:testdata/mvc/TypedView" async="true"></mvc:JSView>
-			<mvc:JSView id="embedded-async-false" viewName="module:testdata/mvc/TypedViewSyncCreateContent" async="false"></mvc:JSView>
+			<mvc:View id="embedded-async-true2" viewName="module:testdata/mvc/TypedView" async="true"></mvc:View>
+			<mvc:View id="embedded-async-false" viewName="module:testdata/mvc/TypedViewSyncCreateContent" async="false"></mvc:View>
 			<test:TypedViewSyncCreateContent id="embedded-async-typed-declaration" async="true"/>
 			<test:TypedViewWithRenderer id="embedded-async-typed-declaration-with-renderer" async="true"/>
 			<mvc:View id="embedded-async-true-js" viewName="example.mvc_legacyAPIs.test2" type="JS" async="false"></mvc:View>

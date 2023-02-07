@@ -739,12 +739,13 @@ sap.ui.define([
 					type: "XML"
 				}).then(function(oFragment) {
 					// the nested View inside the fragment tries to access the owner component. Without it the test would crash.
-					assert.ok(oFragment, "Fragment is loaded.");
-					assert.ok(oFragment.getController().getOwnerComponent(), "Owner component should be propagated correctly.");
-					assert.equal(oFragment.getController().getOwnerComponent().getId(), "myComponent", "Owner component should be propagated correctly.");
-
-					oFragment.destroy();
-					oComponent.destroy();
+					return oFragment.loaded().then(function() {
+						assert.ok(oFragment, "Fragment is loaded.");
+						assert.ok(oFragment.getController().getOwnerComponent(), "Owner component should be propagated correctly.");
+						assert.equal(oFragment.getController().getOwnerComponent().getId(), "myComponent", "Owner component should be propagated correctly.");
+						oFragment.destroy();
+						oComponent.destroy();
+					});
 				});
 			});
 		});
