@@ -63,6 +63,9 @@ sap.ui.define([
 
 	QUnit.module("Basic");
 
+	/**
+	 * @deprecated As of version 1.111, Core facade will be abandoned
+	 */
 	QUnit.test("facade", function(assert) {
 		assert.notStrictEqual(sap.ui.getCore(), oRealCore, "Facade should be different from the implementation");
 		assert.notOk(sap.ui.getCore() instanceof oRealCore.constructor, "Facade should not be an instance of sap.ui.core.Core");
