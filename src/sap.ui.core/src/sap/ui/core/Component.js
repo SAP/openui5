@@ -1728,8 +1728,8 @@ sap.ui.define([
 							oModelConfig.settings.headers["Cache-Control"] = "max-age=" + oDataSource.settings.maxAge;
 						}
 
-						// The ODataModel's "ignoreAnnotationsFromMetadata" parameter only accepts <true> (see ODataModel constructor documentation)
-						if (oDataSource.settings.ignoreAnnotationsFromMetadata === true) {
+						// Pass the ODataModel's "ignoreAnnotationsFromMetadata" setting, if specified
+						if ("ignoreAnnotationsFromMetadata" in oDataSource.settings) {
 							oModelConfig.settings.ignoreAnnotationsFromMetadata = oDataSource.settings.ignoreAnnotationsFromMetadata;
 						}
 
