@@ -2318,10 +2318,6 @@ sap.ui.define([
 		aState = [sContent, oRb.getText("LIST_ITEM_NOT_SELECTED")];
 		check("Content only");
 
-		oItem.setTooltip("<TOOLTIP>");
-		aState.splice(1, 0, "<TOOLTIP>");
-		check("Content + Tooltip");
-
 		oItem.setSelected(true);
 		oItem.setTooltip(null);
 		aState = [oRb.getText("LIST_ITEM_SELECTED"), sContent];

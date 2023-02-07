@@ -847,7 +847,7 @@ sap.ui.define([
 
 	// updates the type column visibility and sets the aria flag
 	Table.prototype._setTypeColumnVisibility = function(bVisible) {
-		jQuery(this.getTableDomRef()).toggleClass("sapMListTblHasNav", bVisible);
+		this._bItemsBeingBound || jQuery(this.getTableDomRef()).toggleClass("sapMListTblHasNav", bVisible);
 	};
 
 	Table.prototype.onkeydown = function(oEvent) {
