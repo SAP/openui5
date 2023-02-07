@@ -1153,8 +1153,20 @@ sap.ui.define([
 
 			if (oToPage === oOptionsListPage && oValue) {
 				oElementToFocus = this._oOptionsList.getItems().find(function(oListItem) {
+					if (oListItem.isA("sap.m.DynamicDateRangeListItem")) {
+						var sValueOperator = oValue.operator;
+						var aLastXOperators = ["LASTDAYS", "LASTWEEKS", "LASTMONTHS", "LASTQUARTERS", "LASTYEARS"];
+						var aNextXOperators = ["NEXTDAYS", "NEXTWEEKS", "NEXTMONTHS", "NEXTQUARTERS", "NEXTYEARS"];
+
+						if (aLastXOperators.indexOf(sValueOperator) > -1) {
+							sValueOperator = "LASTDAYS";
+						} else if (aNextXOperators.indexOf(sValueOperator) > -1) {
+							sValueOperator = "NEXTDAYS";
+						}
+					}
+
 					return oListItem.isA("sap.m.DynamicDateRangeListItem") &&
-						(oListItem.getOptionKey() === oValue.operator);
+						(oListItem.getOptionKey() === sValueOperator);
 				});
 			}
 
