@@ -108,8 +108,9 @@ sap.ui.define([
 				}
 			},
 			"rootView": {
+				"viewName": "sap.ui.test.view.Main",
 				"type": "XML",
-				"viewName": "sap.ui.test.view.Main"
+				"async": true
 			},
 			"customizing": {
 				"sap.ui.viewReplacements": {
@@ -234,8 +235,9 @@ sap.ui.define([
 					}
 				},
 				"rootView": {
+					"viewName": "sap.ui.test.view.Main",
 					"type": "XML",
-					"viewName": "sap.ui.test.view.Main"
+					"async": true
 				},
 				"config": {
 					"any1": {
@@ -450,7 +452,7 @@ sap.ui.define([
 			this.oExpectedManifest["sap.app"]["description"] = this.oExpectedRawManifest["sap.app"]["description"];
 			this.oExpectedManifest["sap.app"]["title"] = this.oExpectedRawManifest["sap.app"]["title"];
 			this.oExpectedManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"] = this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"];
-			this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"]["viewName"];
+			this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"];
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -471,7 +473,7 @@ sap.ui.define([
 			this.oExpectedManifest["sap.app"]["description"] = this.oExpectedRawManifest["sap.app"]["description"];
 			this.oExpectedManifest["sap.app"]["title"] = this.oExpectedRawManifest["sap.app"]["title"];
 			this.oExpectedManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"] = this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"];
-			this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"]["viewName"];
+			this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"];
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);

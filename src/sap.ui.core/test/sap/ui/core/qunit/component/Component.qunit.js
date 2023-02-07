@@ -1,5 +1,6 @@
 sap.ui.define([
 	'sap/ui/qunit/utils/createAndAppendDiv',
+	'sap/ui/core/Core',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/UIComponentMetadata',
@@ -10,7 +11,7 @@ sap.ui.define([
 	'sap/base/util/LoaderExtensions',
 	'sap/ui/core/Manifest',
 	'sap/base/i18n/ResourceBundle'
-], function (createAndAppendDiv, Component, ComponentContainer, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle) {
+], function (createAndAppendDiv, Core, Component, ComponentContainer, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -27,19 +28,13 @@ sap.ui.define([
 	//Test preparation for custom component configuration
 	var TestComp1 = Component.extend("test.comp1.Component", {
 		metadata: {
+			"version": "1.0",
 			"properties" : {
 				"test" : "string"
 			},
 			"my.custom.config" : {
 				"property1" : "value1",
 				"property2" : "value2"
-			}
-		}
-	});
-	var TestComp2 = TestComp1.extend("test.comp2.Component", {
-		metadata: {
-			"my.custom.config" : {
-				"property1" : "value3"
 			}
 		}
 	});
@@ -85,7 +80,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Simple Component Instance", function(assert){
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(document.getElementById("CompCont1"));
 		var elem = document.getElementById("buttonComponent---mybutn");
 		assert.equal(elem.textContent, "Text changed through settings", "Settings applied");
@@ -103,26 +98,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("Components Metadata", function(assert){
-		var includes = ["css/vlayout.css","/js/includeme.js"];
-		var components =  ["samples.components.styledbutton"];
+		var resources = {
+			css: [{ uri: "css/vlayout.css" }],
+			js: [{ uri: "/js/includeme.js" }]
+		};
+		var components =  {
+			"samples.components.styledbutton" : {}
+		};
 		var oComp = this.oComp;
-		assert.equal(oComp.getMetadata().getVersion(), "1.0", "Version retrieved");
-		assert.deepEqual(oComp.getMetadata().getIncludes(), includes, "Includes Array retrieved");
-		assert.notEqual(oComp.getMetadata().getDependencies(), null, "Dependencies retrieved");
-		assert.deepEqual(oComp.getMetadata().getComponents(), components, "Child components retrieved");
-		assert.equal(oComp.getMetadata().getUI5Version(), "1.13.0", "UI5 Version retrieved");
-	});
-
-	QUnit.test("Components Metadata - Custom Configuration Entry", function(assert){
-		var oSuccessMerged = TestComp2.getMetadata().getCustomEntry("my.custom.config", true);
-		var oSuccessUnMerged = TestComp2.getMetadata().getCustomEntry("my.custom.config", false);
-		var oFail = TestComp2.getMetadata().getCustomEntry("properties");
-
-		assert.ok(!oFail, "Standard metadata can not be accessed.");
-		assert.equal(oSuccessMerged.property1, "value3", "Property 1 merged and overridden.");
-		assert.equal(oSuccessMerged.property2, "value2", "Property 2 merged and but not overridden.");
-		assert.equal(oSuccessUnMerged.property1, "value3", "Property 1 not merged.");
-		assert.ok(!oSuccessUnMerged.property2, "Property 2 not merged (does not exist).");
+		assert.equal(oComp.getManifestEntry("/sap.app/applicationVersion/version"), "1.0", "Version retrieved");
+		assert.deepEqual(oComp.getManifestEntry("/sap.ui5/resources"), resources, "Resources retrieved");
+		assert.notEqual(oComp.getManifestEntry("/sap.ui5/dependencies"), null, "Dependencies retrieved");
+		assert.deepEqual(oComp.getManifestEntry("/sap.ui5/dependencies/components"), components, "Child components retrieved");
+		assert.equal(oComp.getManifestEntry("/sap.ui5/dependencies/minUI5Version"), "1.13.0", "UI5 Version retrieved");
 	});
 
 	QUnit.test("Components Includes", function(assert){
@@ -157,7 +145,7 @@ sap.ui.define([
 		var oCompCont1 = this.oCompCont1;
 		assert.ok(!!oComp.getComponentData(), "Component has component data");
 		assert.equal(oComp.getComponentData().foo, "bar", "Component data is correct");
-		var oComponent = sap.ui.getCore().getComponent(oCompCont1.getComponent());
+		var oComponent = Component.registry.get(oCompCont1.getComponent());
 		assert.ok(!!oComponent.getComponentData(), "Component has component data");
 		assert.equal(oComponent.getComponentData().foo, "bar", "Component data is correct");
 	});
@@ -167,7 +155,7 @@ sap.ui.define([
 		var oComponent = new TestComp1();
 
 		assert.equal(oComponent.getMetadata(), TestComp1.getMetadata(), "getMetadata returns static Metadata");
-		assert.equal(oComponent.getManifest(), TestComp1.getMetadata().getManifest(), "getManifest returns static Metadata manifest");
+		assert.deepEqual(oComponent.getManifest(), TestComp1.getMetadata()._getManifest(), "_getManifest() returns static Metadata manifest");
 
 		oComponent.destroy();
 	});
@@ -221,7 +209,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			// Clear all messages so the tests don't interfere with eachother
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Core.getMessageManager().removeAllMessages();
 		}
 	});
 
@@ -245,7 +233,7 @@ sap.ui.define([
 				newValue: false
 			});
 
-			var oMM = sap.ui.getCore().getMessageManager();
+			var oMM = Core.getMessageManager();
 			var aMessages = oMM.getMessageModel().getData();
 
 			assert.equal(aMessages.length, 0, "No messages must be created. The Component should not be registered to the MessageManager.");
@@ -293,7 +281,7 @@ sap.ui.define([
 				newValue: true
 			});
 
-			var oMM = sap.ui.getCore().getMessageManager();
+			var oMM = Core.getMessageManager();
 			var aMessages = oMM.getMessageModel().getData();
 
 			assert.equal(aMessages.length, 1, "One messages must be created. The Component is automatically registered to the MessageManager.");
@@ -769,8 +757,6 @@ sap.ui.define([
 		}).then(function(fnComponentClass) {
 
 			assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
-			assert.ok(fnComponentClass.getMetadata().getManifest(), "Manifest is available");
-			assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oExpectedManifest, "Manifest matches the manifest behind manifestUrl");
 			assert.throws(function() {
 				fnComponentClass.extend("new.Component", {});
 			}, new Error("Extending Components created by Manifest is not supported!"), "Extend should raise an exception");
@@ -814,8 +800,6 @@ sap.ui.define([
 		}).then(function(fnComponentClass) {
 
 			assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
-			assert.ok(fnComponentClass.getMetadata().getManifest(), "Manifest is available");
-			assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oExpectedManifest, "Manifest matches the manifest behind manifestUrl");
 			assert.throws(function() {
 				fnComponentClass.extend("new.Component", {});
 			}, new Error("Extending Components created by Manifest is not supported!"), "Extend should raise an exception");

@@ -4,8 +4,11 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Event, Component, ComponentContainer, Controller, View, createAndAppendDiv) {
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	'sap/ui/core/XMLTemplateProcessor',
+	'sap/ui/core/mvc/XMLProcessingMode'
+], function (Event, Component, ComponentContainer, Controller, View, XMLView, createAndAppendDiv, XMLTemplateProcessor, XMLProcessingMode) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -340,6 +343,90 @@ sap.ui.define([
 
 		return  createComponentAndContainer();
 
+	});
+
+	QUnit.module("No interface", {
+
+		before: function () {
+			this.oXMLTPSpy = sinon.spy(XMLTemplateProcessor, "parseTemplatePromise");
+		},
+		beforeEach: function () {
+			this.oXMLTPSpy.resetHistory();
+		},
+		after: function () {
+			this.oXMLTPSpy.restore();
+		}
+	});
+
+	QUnit.test("SequentialLegacy - ExtensionPoint contains async View/Fragment", function (assert) {
+		// var sManifestUrl = sap.ui.require.toUrl("sap/ui/test/customizing/async/noInterface/customer/manifest.json");
+		var oRootComponent, oManualCreatedView;
+
+		return Component.create({
+			id: "myCustomerComponent",
+			name: "testdata.customizing.async.noInterface.customer",
+			manifest: true
+		})
+			.then(function (oComponent) {
+				oRootComponent = oComponent;
+				assert.ok(oComponent, "Component created successfully.");
+
+				return oRootComponent.getRootControl().loaded();
+
+			}).then(function () {
+				// manually create a view with legacy factory
+				return oRootComponent.runAsOwner(function () {
+					return sap.ui.xmlview({
+						id: "manualView",
+						async: true,
+						viewName: "testdata.customizing.async.noInterface.sap.views.Main"
+					}).loaded();
+				});
+			})
+			.then(function (oManuallyCreatedView) {
+				oManualCreatedView = oManuallyCreatedView;
+
+				assert.equal(oManuallyCreatedView._sProcessingMode, XMLProcessingMode.SequentialLegacy, "Root view should be processed 'SequentialLegacy'");
+
+				var aViewContent = oManuallyCreatedView.getContent();
+				assert.equal(aViewContent.length, 6, "Correct amount of top-level controls.");
+
+				assert.equal(aViewContent[0], oManuallyCreatedView.byId("outerView_button_before"), "Button before ExtensionPoint is at the correct position.");
+				assert.equal(aViewContent[1], oManuallyCreatedView.byId("extPoint1View"), "View from ExtensionPoint is at the correct position.");
+				assert.equal(aViewContent[2], oManuallyCreatedView.byId("manualView--extPoint2Fragment--buttonExtPoint2_1"), "Button from ExtensionPoint2 is at the correct position.");
+				assert.equal(aViewContent[3], oManuallyCreatedView.byId("manualView--extPoint2Fragment--buttonExtPoint2_2"), "Button from ExtensionPoint2 is at the correct position.");
+				assert.equal(aViewContent[4], oManuallyCreatedView.byId("manualView--extPoint2Fragment--extPoint3View"), "View from ExtensionPoint3 is at the correct position.");
+				assert.equal(aViewContent[5], oManuallyCreatedView.byId("outerView_button_after"), "Button after ExtensionPoint is at the correct position.");
+
+				var oExtPoint1View = oManuallyCreatedView.byId("extPoint1View");
+
+				return oExtPoint1View.loaded();
+			})
+			.then(function (oExtensionView) {
+				assert.equal(oExtensionView._sProcessingMode, XMLProcessingMode.SequentialLegacy, "ExtPoint1View should be processed 'SequentialLegacy'");
+
+				var aExtPoint1Content = oExtensionView.getContent();
+				assert.equal(aExtPoint1Content.length, 2, "Correct amount controls inside ExtensionPoint View.");
+				assert.equal(aExtPoint1Content[0], oExtensionView.byId("buttonExtPoint1_1"), "Button1 inside ExtensionPoint View is at the correct position.");
+				assert.equal(aExtPoint1Content[1], oExtensionView.byId("buttonExtPoint1_2"), "Button2 inside ExtensionPoint View is at the correct position.");
+
+				return oManualCreatedView.byId("manualView--extPoint2Fragment--extPoint3View").loaded();
+			}).then(function (oExtPoint3View) {
+				assert.equal(oExtPoint3View._sProcessingMode, XMLProcessingMode.SequentialLegacy, "ExtPoint3View should be processed 'Sequential'");
+
+				var aExtPoint3Content = oExtPoint3View.getContent();
+				assert.equal(aExtPoint3Content[0],
+					oExtPoint3View.byId("extPoint4Fragment--buttonExtPoint4_1"),
+					"Button1 inside ExtensionPoint View is at the correct position.");
+				assert.equal(aExtPoint3Content[1],
+					oExtPoint3View.byId("extPoint4Fragment--buttonExtPoint4_2"),
+					"Button2 inside ExtensionPoint View is at the correct position.");
+
+
+				// cleanup
+				oManualCreatedView.destroy();
+				oRootComponent.destroy();
+			});
 	});
 
 });
