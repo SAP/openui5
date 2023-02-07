@@ -10,7 +10,6 @@
 sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/base/Log",
-	"sap/ui/core/library",
 	"sap/ui/core/mvc/View", // sap.ui.view()
 	"sap/ui/core/mvc/XMLView", // type : ViewType.XML
 	"sap/ui/core/sample/common/Component",
@@ -18,12 +17,11 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (UriParameters, Log, library, _View, _XMLView, BaseComponent, MockServer, JSONModel,
+], function (UriParameters, Log, _View, _XMLView, BaseComponent, MockServer, JSONModel,
 		ODataModel, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = library.mvc.ViewType;
 
 	return BaseComponent.extend("sap.ui.core.sample.ViewTemplate.valuelist.Component", {
 		metadata : "json",
@@ -141,13 +139,11 @@ sap.ui.define([
 				metadataUrlParams : sValueList ? {"sap-value-list" : sValueList} : undefined,
 				useBatch : false // make network trace easier to read
 			});
-			return sap.ui.view({
-				async : true,
+			return _XMLView.create({
 				models : {
 					undefined : oModel,
 					ui : new JSONModel({valueHelpDetails : false})
 				},
-				type : ViewType.XML,
 				viewName : "sap.ui.core.sample.ViewTemplate.valuelist.Main"
 			});
 		}

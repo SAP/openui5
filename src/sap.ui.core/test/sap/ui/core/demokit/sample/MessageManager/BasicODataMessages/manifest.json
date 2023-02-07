@@ -6,7 +6,10 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "sap.ui.core.sample.MessageManager.BasicODataMessages.View",
+		"rootView": {
+			"async": true,
+			"viewName": "sap.ui.core.sample.MessageManager.BasicODataMessages.View"
+		},
 		"dependencies": {
 			"libs": {
 				"sap.ui.layout": {}
