@@ -10,12 +10,14 @@ sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterType",
 	"sap/ui/model/Model",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
@@ -31,9 +33,9 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
 ], function (Log, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration,
-		coreLibrary, Message, Controller, View, BindingMode, Filter, FilterOperator, Model, Sorter,
-		JSONModel, MessageModel, CountMode, MessageScope, Context, ODataModel, XMLModel, TestUtils,
-		datajs, XMLHelper) {
+		coreLibrary, UI5Date, Message, Controller, View, BindingMode, Filter, FilterOperator,
+		FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context,
+		ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
@@ -18764,6 +18766,70 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			oBinding.refresh(/*bForceUpdate*/true, "myGroup");
 			oModel.submitChanges({groupId : "myGroup"});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Use OData V2 list binding and a DateRangeSelection control to determine filter
+	// values.
+	// JIRA: CPOUI5MODELS-1131
+	QUnit.test("ODataListBinding#filter: client side filtering", function (assert) {
+		var oJSONModel = new JSONModel({
+				start: null,
+				end: null
+			}),
+			oModel = createSalesOrdersModel({}),
+			mModels = {json: oJSONModel,"undefined": oModel},
+			sView = '\
+<DateRangeSelection id="DateRangeSelection" value="{\
+		parts: [{\
+			path: \'json>/start\',\
+			type: \'sap.ui.model.odata.type.DateTime\'\
+		}, {\
+			path: \'json>/end\',\
+			type: \'sap.ui.model.odata.type.DateTime\'\
+		}],\
+		type: \'sap.ui.model.type.DateInterval\'\
+	}" />\
+<Table id="Table" growing="true" growingThreshold="2" items="{\
+			parameters: {operationMode: \'Client\'},\
+			path: \'/SalesOrderSet\'\
+		}\">\
+	<Text id="SalesOrderID" text="{SalesOrderID}" />\
+	<Text id="CreatedAt" text="{path: \'CreatedAt\', type: \'sap.ui.model.odata.type.DateTime\'}" />\
+</Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet", {
+				results : [
+					{CreatedAt: UI5Date.getInstance(2023, 0, 25), SalesOrderID : "1"},
+					{CreatedAt: UI5Date.getInstance(2023, 0, 29, 23), SalesOrderID : "2"},
+					{CreatedAt: UI5Date.getInstance(2023, 0, 31, 23), SalesOrderID : "3"},
+					{CreatedAt: UI5Date.getInstance(2023, 1, 1), SalesOrderID : "4"}
+				]
+			})
+			.expectValue("SalesOrderID", ["1", "2"])
+			.expectValue("CreatedAt", ["Jan 25, 2023, 12:00:00 AM", "Jan 29, 2023, 11:00:00 PM"]);
+
+		return this.createView(assert, sView, mModels).then(function () {
+			that.oView.byId("DateRangeSelection").setValue("Jan 30, 2023 - Jan 31, 2023");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("SalesOrderID", ["3"])
+				.expectValue("CreatedAt", ["Jan 31, 2023, 11:00:00 PM"]);
+
+			// code under test
+			that.oView.byId("Table").getBinding("items").filter(new Filter({
+				filters: [
+					new Filter("CreatedAt", FilterOperator.GE, oJSONModel.getProperty("/start")),
+					new Filter("CreatedAt", FilterOperator.LE, oJSONModel.getProperty("/end"))
+				],
+				and: true
+			}), FilterType.Application);
+
+			return that.waitForChanges(assert);
 		});
 	});
 });
