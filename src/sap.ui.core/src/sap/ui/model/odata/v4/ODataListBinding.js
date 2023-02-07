@@ -300,7 +300,8 @@ sap.ui.define([
 
 	/**
 	 * Applies the given map of parameters to this binding's parameters and triggers the
-	 * creation of a new cache if called with a change reason.
+	 * creation of a new cache if called with a change reason. Since 1.111.0, the header context is
+	 * deselected.
 	 *
 	 * @param {object} mParameters
 	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
@@ -355,6 +356,7 @@ sap.ui.define([
 		this.fetchCache(this.oContext);
 		this.reset(sChangeReason);
 		if (this.oHeaderContext) {
+			this.oHeaderContext.setSelected(false);
 			// Update after the refresh event, otherwise $count is fetched before the request
 			this.oHeaderContext.checkUpdate();
 		}
@@ -1715,7 +1717,7 @@ sap.ui.define([
 
 	/**
 	 * Filters the list with the given filters. Since 1.97.0, if filters are unchanged, no request
-	 * is sent, regardless of pending changes.
+	 * is sent, regardless of pending changes. Since 1.111.0, the header context is deselected.
 	 *
 	 * If there are pending changes that cannot be ignored, an error is thrown. Use
 	 * {@link #hasPendingChanges} to check if there are such pending changes. If there are, call
@@ -1810,6 +1812,7 @@ sap.ui.define([
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Filter);
 		if (this.oHeaderContext) {
+			this.oHeaderContext.setSelected(false);
 			// Update after the refresh event, otherwise $count is fetched before the request
 			this.oHeaderContext.checkUpdate();
 		}

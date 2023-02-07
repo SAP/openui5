@@ -54,6 +54,7 @@ sap.ui.define([
 		assert.strictEqual(oContext.isDeleted(), false);
 		assert.strictEqual(oContext.isInactive(), undefined);
 		assert.strictEqual(oContext.isKeepAlive(), false);
+		assert.strictEqual(oContext.isSelected(), false);
 		assert.ok(oContext.hasOwnProperty("fnOnBeforeDestroy"));
 		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
 		assert.strictEqual(oContext.oDeletePromise, null);
@@ -222,7 +223,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("toString", function (assert) {
+[false, true].forEach(function (bSelected) {
+	QUnit.test("toString; bSelected=" + bSelected, function (assert) {
 		var oContext,
 			fnResolve;
 
@@ -236,20 +238,26 @@ sap.ui.define([
 			Context.create({}, {}, "/Employees('42')", 5).toString(),
 			"/Employees('42')[5]");
 
-		oContext = Context.create({}, {}, "/Employees($uid=123)", -1,
+		oContext = Context.create({}, {getHeaderContext : true}, "/Employees($uid=123)", -1,
 			new SyncPromise(function (resolve) {
 				fnResolve = resolve;
 			}));
+		oContext.setSelected(bSelected);
 
 		// code under test
-		assert.strictEqual(oContext.toString(), "/Employees($uid=123)[-1;transient]");
+		assert.strictEqual(oContext.toString(), bSelected
+			? "/Employees($uid=123)[-1;transient;selected]"
+			: "/Employees($uid=123)[-1;transient]");
 
 		fnResolve();
 		return oContext.created().then(function () {
 			// code under test
-			assert.strictEqual(oContext.toString(), "/Employees($uid=123)[-1;createdPersisted]");
+			assert.strictEqual(oContext.toString(), bSelected
+				? "/Employees($uid=123)[-1;createdPersisted;selected]"
+				: "/Employees($uid=123)[-1;createdPersisted]");
 		});
 	});
+});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bAutoExpandSelect) {
@@ -1068,6 +1076,7 @@ sap.ui.define([
 		var oBinding = {
 				checkSuspended : function () {},
 				delete : function () {},
+				getHeaderContext : function () {},
 				lockGroup : function () {},
 				mParameters : {}
 			},
@@ -1076,6 +1085,7 @@ sap.ui.define([
 			oDeletePromise,
 			oExpectation;
 
+		oContext.setSelected(!!oFixture.groupId);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").exactly(oFixture.transient ? 0 : 1)
 			.withExactArgs("myGroup");
@@ -1096,6 +1106,9 @@ sap.ui.define([
 		assert.ok(oDeletePromise instanceof Promise);
 
 		oContext.oDeletePromise = "~oDeletePromise~";
+		assert.strictEqual(oContext.toString(), oFixture.groupId
+			? "/Foo/Bar('42')[42;deleted;selected]"
+			: "/Foo/Bar('42')[42;deleted]");
 
 		// code under test - callback
 		oExpectation.args[0][5]();
@@ -3984,6 +3997,52 @@ sap.ui.define([
 		oContext.setInactive();
 
 		assert.strictEqual(oContext.bInactive, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setSelected", function (assert) {
+		var oBinding = {
+				getHeaderContext : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/some/path", 42),
+			oContextMock = this.mock(oContext);
+
+		// code under test
+		assert.strictEqual(oContext.isSelected(), false);
+
+		oContextMock.expects("isDeleted").withExactArgs().returns(false);
+
+		// code under test
+		oContext.setSelected(true);
+
+		assert.strictEqual(oContext.isSelected(), true);
+
+		oContextMock.expects("isDeleted").withExactArgs().returns(false);
+
+		// code under test
+		assert.strictEqual(oContext.toString(), "/some/path[42;selected]");
+
+		// Note: no addt' call to #isDeleted!
+
+		// code under test
+		oContext.setSelected(false);
+
+		assert.strictEqual(oContext.isSelected(), false);
+
+		oContextMock.expects("isDeleted").thrice().withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.setSelected(true);
+		}, new Error("Must not select a deleted entity: " + oContext));
+
+		// Note: it's about the binding, not the index!
+		oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/some/path", 42);
+
+		assert.throws(function () {
+			// code under test
+			oContext.setSelected(false);
+		}, new Error("Unsupported context: " + oContext));
 	});
 
 	//*********************************************************************************************
