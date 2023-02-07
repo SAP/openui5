@@ -378,7 +378,7 @@ sap.ui.define([
 			}
 
 			// after growing-button gets hidden scroll container should still be scrollable
-			return this._oScrollDelegate.getMaxScrollTop() > this._oControl.getDomRef("triggerList").clientHeight;
+			return this._oScrollDelegate.getMaxScrollTop() > this._oControl.getDomRef("triggerList").offsetHeight;
 		},
 
 		// destroy all items in the list and cleanup
