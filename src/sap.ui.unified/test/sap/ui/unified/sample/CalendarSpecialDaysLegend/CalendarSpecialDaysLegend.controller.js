@@ -40,9 +40,11 @@ sap.ui.define([
 					}));
 
 					oLeg1.addItem(new CalendarLegendItem({
+						type: sType,
 						text : "Placeholder " + i
 					}));
 					oLeg2.addItem(new CalendarLegendItem({
+						type: sType,
 						text : "Placeholder " + i
 					}));
 				}

@@ -1,11 +1,7 @@
 /* ============================================== */
 /* CSS for control sap.ui.unified/CalendarLegend  */
-/* Horizon theme                                  */
+/* Horizon High Contrast Black theme              */
 /* ============================================== */
-
-.sapUiUnifiedLegend {
-	border-radius: 0.5rem;
-}
 
 .sapUiUnifiedLegendItem {
 	position: relative;
@@ -21,8 +17,11 @@
 			right: 0.0625rem;
 			bottom: 0.0625rem;
 			border: @sapContent_FocusWidth @sapContent_FocusStyle @sapUiContentFocusColor;
-			border-radius: 0.25rem;
 			pointer-events: none;
 		}
+	}
+
+	.sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+		border-radius: 0;
 	}
 }

@@ -559,6 +559,7 @@ sap.ui.define([
 
 		this._updateHeadersButtons();
 
+		this._updateLegendParent();
 	};
 
 	Calendar.prototype.onAfterRendering = function(oEvent){
@@ -793,6 +794,7 @@ sap.ui.define([
 
 		return this;
 	};
+
 	Calendar.prototype.setMonths = function(iMonths){
 
 		this._bDateRangeChanged = undefined; // to force rerendering
@@ -815,7 +817,7 @@ sap.ui.define([
 				oMonth._bNotInTabChain = true;
 				oMonth.setCalendarWeekNumbering(this.getCalendarWeekNumbering());
 				oMonth.setSecondaryCalendarType(this._getSecondaryCalendarType());
-				this.addAggregation("month",oMonth);
+				this.addAggregation("month", oMonth);
 			}
 		} else if (aMonths.length > iMonths){
 			for (i = aMonths.length; i > iMonths; i--) {
@@ -1285,6 +1287,13 @@ sap.ui.define([
 		this._setHeaderText(oCalDate);
 		this._setPrimaryHeaderMonthButtonText();
 		this._toggleTwoMonthsInTwoColumnsCSS();
+	};
+
+	Calendar.prototype._updateLegendParent = function(){
+		var sLegend = this.getLegend(),
+			oLegend = oCore.byId(sLegend);
+
+		oLegend && oLegend._setParent(this);
 	};
 
 	/**
