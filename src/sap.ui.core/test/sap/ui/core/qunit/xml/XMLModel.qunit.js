@@ -131,6 +131,9 @@ sap.ui.define([
 		oLabel.setBindingContext(undefined);
 	});
 
+	/**
+	 * @deprecated As of version 1.111
+	 */
 	QUnit.test("test model setProperty onlabel without bindingContext and relative path (legacySyntax = true)", function(assert) {
 		oModel.setLegacySyntax(true);
 		oLabel.bindProperty("text", "member/1/@firstName");
@@ -141,6 +144,9 @@ sap.ui.define([
 		oModel.setLegacySyntax(false);
 	});
 
+	/**
+	 * @deprecated As of version 1.111 legacySyntax is deprecated
+	 */
 	QUnit.test("test model setProperty onlabel with bindingContext and relative path (legacySyntax = true)", function(assert) {
 		oModel.setLegacySyntax(true);
 		var oContext = oModel.createBindingContext("/member");
@@ -153,6 +159,9 @@ sap.ui.define([
 		oModel.setLegacySyntax(false);
 	});
 
+	/**
+	 * @deprecated As of version 1.111 legacySyntax is deprecated
+	 */
 	QUnit.test("test model setProperty onlabel with bindingContext and absolute path (legacySyntax = true)", function(assert) {
 		oModel.setLegacySyntax(true);
 		var oContext = oModel.createBindingContext("/member/HorstDerGrosse");
@@ -329,6 +338,9 @@ sap.ui.define([
 		assert.equal(oModel.getData().getElementsByTagName("bar")[0].textContent, "ABCDEFG", "get XML test");
 	});
 
+	/**
+	 * @deprecated As of version 1.111 legacySyntax is deprecated
+	 */
 	QUnit.test("test XML compatible syntax", function(assert) {
 		var oModel = new XMLModel(),
 			value, oContext;
@@ -345,6 +357,9 @@ sap.ui.define([
 		assert.equal(value, "Wallace", "model value");
 	});
 
+	/**
+	 * @deprecated As of version 1.111 legacySyntax is deprecated
+	 */
 	QUnit.test("test XML compatible syntax fail", function(assert) {
 		var oModel = new XMLModel(),
 			value, oContext;
