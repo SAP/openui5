@@ -726,7 +726,7 @@ sap.ui.define([
 	 *   parameter (see {@link sap.ui.model.odata.v4.ODataModel#constructor}), paths with navigation
 	 *   properties can be included and will contribute to the "5.1.2 System Query Option $expand".
 	 * @param {boolean} [mParameters.$$canonicalPath]
-	 *   Whether a binding relative to a {@link sap.ui.model.odata.v4.Context} uses the canonical
+	 *   Whether a binding relative to an {@link sap.ui.model.odata.v4.Context} uses the canonical
 	 *   path computed from its context's path for data service requests; only the value
 	 *   <code>true</code> is allowed.
 	 * @param {string} [mParameters.$$groupId]
@@ -872,7 +872,7 @@ sap.ui.define([
 	 *   An object holding the information needed for data aggregation, see
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation} for details.
 	 * @param {boolean} [mParameters.$$canonicalPath]
-	 *   Whether a binding relative to a {@link sap.ui.model.odata.v4.Context} uses the canonical
+	 *   Whether a binding relative to an {@link sap.ui.model.odata.v4.Context} uses the canonical
 	 *   path computed from its context's path for data service requests; only the value
 	 *   <code>true</code> is allowed.
 	 * @param {boolean} [mParameters.$$getKeepAliveContext]
@@ -1329,7 +1329,7 @@ sap.ui.define([
 	 *   The binding context with the resolved path and the model instance
 	 * @throws {Error}
 	 *   If a relative path is provided without a context or in case of unsupported parameters or
-	 *   if the given context is a {@link sap.ui.model.odata.v4.Context}
+	 *   if the given context is an {@link sap.ui.model.odata.v4.Context}
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#createBindingContext
@@ -1389,7 +1389,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a {@link sap.ui.core.message.Message} from a given "raw" message object. For a
+	 * Creates an {@link sap.ui.core.message.Message} from a given "raw" message object. For a
 	 * bound message, targets are resolved if they are not yet resolved. A message is called a bound
 	 * message if is has a target, even if it is empty.
 	 *

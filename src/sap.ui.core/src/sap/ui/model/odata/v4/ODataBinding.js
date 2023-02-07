@@ -1078,7 +1078,7 @@ sap.ui.define([
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
 	 * group ID and notifies the control that new data is available.
 	 *
-	 * Refresh is supported for bindings which are not relative to a
+	 * Refresh is supported for bindings which are not relative to an
 	 * {@link sap.ui.model.odata.v4.Context}.
 	 *
 	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by

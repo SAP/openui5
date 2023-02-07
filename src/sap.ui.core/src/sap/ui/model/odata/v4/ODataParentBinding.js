@@ -1280,7 +1280,7 @@ sap.ui.define([
 	 * @param {boolean} bAsPrerenderingTask
 	 *   Whether resume is done as a prerendering task
 	 * @throws {Error}
-	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
+	 *   If this binding is relative to an {@link sap.ui.model.odata.v4.Context} or if it is an
 	 *   operation binding or if it is not suspended
 	 *
 	 * @private
@@ -1328,7 +1328,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If this binding
 	 *   <ul>
-	 *     <li> is relative to a {@link sap.ui.model.odata.v4.Context},
+	 *     <li> is relative to an {@link sap.ui.model.odata.v4.Context},
 	 *     <li> is an operation binding,
 	 *     <li> has {@link sap.ui.model.Binding#isSuspended} set to <code>false</code>,
 	 *     <li> is not a root binding. Use {@link #getRootBinding} to determine the root binding.
@@ -1353,7 +1353,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} A promise which is resolved when the binding is resumed.
 	 * @throws {Error}
-	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
+	 *   If this binding is relative to an {@link sap.ui.model.odata.v4.Context} or if it is an
 	 *   operation binding or if it is not suspended
 	 *
 	 * @protected
@@ -1394,7 +1394,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If this binding
 	 *   <ul>
-	 *     <li> is relative to a {@link sap.ui.model.odata.v4.Context},
+	 *     <li> is relative to an {@link sap.ui.model.odata.v4.Context},
 	 *     <li> is an operation binding,
 	 *     <li> has {@link sap.ui.model.Binding#isSuspended} set to <code>true</code>,
 	 *     <li> has pending changes that cannot be ignored,

@@ -914,10 +914,10 @@ sap.ui.define([
 	 *   value context at all or the existing context as described above is currently part of the
 	 *   list's collection (that is, has an index).
 	 *   <br>
-	 *   A return value context is a {@link sap.ui.model.odata.v4.Context} which represents a bound
+	 *   A return value context is an {@link sap.ui.model.odata.v4.Context} which represents a bound
 	 *   operation response. It is created only if the operation is bound and has a single entity
 	 *   return value from the same entity set as the operation's binding parameter and has a
-	 *   parent context which is a {@link sap.ui.model.odata.v4.Context} and points to an entity
+	 *   parent context which is an {@link sap.ui.model.odata.v4.Context} and points to an entity
 	 *   from an entity set. It is destroyed the next time this operation binding is executed again!
 	 *   <br>
 	 *   If a return value context is created, it must be used instead of
