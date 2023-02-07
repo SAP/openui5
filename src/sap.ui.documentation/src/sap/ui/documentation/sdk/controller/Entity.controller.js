@@ -557,7 +557,9 @@ sap.ui.define([
 				"float",
 				"int",
 				"boolean",
-				"string"
+				"string",
+				"Date",
+				"Object"
 			],
 			_formatTypeNav: function (sType) {
 				return this._baseTypes.indexOf(sType) === -1;
