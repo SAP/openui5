@@ -639,15 +639,12 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
-	ValueHelp.prototype.shouldOpenOnClick = function () { // was openByClick before, better naming?
-
-		var oContainer = _getValueHelpContainer.call(this);
-
-		if (oContainer) {
-			return oContainer.shouldOpenOnClick(); // TODO: needed async to load content
-		}
-
-		return false;
+	ValueHelp.prototype.shouldOpenOnClick = function () {
+		var oTypeahead = this.getTypeahead();
+		var oDialog = this.getDialog();
+		var bTypeaheadEnabled = oTypeahead && (oTypeahead.getUseAsValueHelp() || !!oDialog); // Prefer typeahead, but only if dialog is available or dialog-like usage is enabled
+		var oContainer = bTypeaheadEnabled ? oTypeahead : oDialog;
+		return oContainer && oContainer.shouldOpenOnClick();
 	};
 
 	/**
