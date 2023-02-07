@@ -13,6 +13,7 @@ sap.ui.define([
 	 * For example, this controller can be used for <code>sap.ui.mdc</code> controls.
 	 *
 	 * @class
+	 * @private
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 *
 	 * @since 1.104

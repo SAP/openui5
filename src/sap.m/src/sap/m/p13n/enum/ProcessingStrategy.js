@@ -11,8 +11,9 @@ sap.ui.define(function() {
 	 *
 	 * @enum {string}
      * @private
+     * @ui5-restricted
 	 * @since 1.108
-	 * @alias sap.m.p13n.ProcessingStrategy
+	 * @alias sap.m.p13n.enum.ProcessingStrategy
 	 */
 	var ProcessingStrategy = {
 		/**

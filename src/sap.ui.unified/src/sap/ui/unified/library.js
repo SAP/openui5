@@ -541,7 +541,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.52
 	 * @param {Blob[]} aBlobs The initial Blobs which can be used to determine a new array of Blobs for further processing.
-	 * @return {Promise} A Promise that resolves with an array of Blobs which is used for the final uploading.
+	 * @returns {Promise<Blob[]>} A Promise that resolves with an array of Blobs which is used for the final uploading.
 	 * @function
 	 * @name sap.ui.unified.IProcessableBlobs.getProcessedBlobsFromArray
 	 */

@@ -34,8 +34,8 @@ sap.ui.define([
 	 */
 	var ColumnPopoverSelectListItem = ColumnPopoverItem.extend("sap.m.ColumnPopoverSelectListItem", /** @lends sap.m.ColumnPopoverSelectListItem.prototype */
 	{
-		library: "sap.m",
 		metadata: {
+			library: "sap.m",
 			properties: {
 				/**
 				 * Label to be displayed as toolTip by the control

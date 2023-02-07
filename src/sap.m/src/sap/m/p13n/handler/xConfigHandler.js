@@ -15,7 +15,7 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @private
-	 * @alias sap.m.flexibility.xConfigHandler
+	 * @alias sap.m.p13n.handler.xConfigHandler
 	 */
     var xConfigHandler = {};
 
