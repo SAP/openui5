@@ -172,7 +172,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Remove.prototype._onKeyDown = function(oEvent) {
-		if (oEvent.keyCode === KeyCodes.DELETE) {
+		if (oEvent.keyCode === KeyCodes.DELETE || oEvent.keyCode === KeyCodes.BACKSPACE) {
 			oEvent.stopPropagation();
 			this.removeElement();
 		}

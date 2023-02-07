@@ -300,6 +300,34 @@ sap.ui.define([
 			assert.ok(true, "... when plugin removeElement is called ...");
 		});
 
+		QUnit.test("when an overlay has remove action designTime metadata defined and backspace button is pressed", function (assert) {
+			var done = assert.async();
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions: {
+					remove: {
+						changeType: "hideControl"
+					}
+				}
+			});
+			this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
+			this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
+
+			this.oLayoutOverlay.setSelectable(true);
+			this.oButtonOverlay.setSelectable(true);
+			this.oButtonOverlay.setSelected(true);
+
+			this.oRemovePlugin.attachEventOnce("elementModified", function(oEvent) {
+				assert.notOk(this.oButtonOverlay.getSelected(), "the overlay was deselected");
+				var oCompositeCommand = oEvent.getParameter("command");
+				assert.strictEqual(oCompositeCommand.getCommands().length, 1, "... command is created for selected overlay");
+				assert.strictEqual(oCompositeCommand.getCommands()[0].getMetadata().getName(), "sap.ui.rta.command.Remove", "and command is of the correct type");
+				done();
+			}.bind(this));
+
+			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.BACKSPACE);
+			assert.ok(true, "... when plugin removeElement is called ...");
+		});
+
 		QUnit.test("when an overlay has remove action designTime metadata, and isEnabled property is boolean", function(assert) {
 			var done = assert.async();
 			this.oButtonOverlay.setDesignTimeMetadata({
