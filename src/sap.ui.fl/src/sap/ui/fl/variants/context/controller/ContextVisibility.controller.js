@@ -200,7 +200,7 @@ sap.ui.define([
 		},
 
 		isRemoveAllEnabled: function(aSelectedRoleIds) {
-			return aSelectedRoleIds.length !== 0;
+			return aSelectedRoleIds && aSelectedRoleIds.length !== 0;
 		},
 
 		isMessageStripVisible: function(aSelectedRoles, bShowMessageStrip) {
