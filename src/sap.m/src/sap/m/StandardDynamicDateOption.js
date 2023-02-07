@@ -93,11 +93,15 @@ sap.ui.define([
 			"NEXTMONTH": "NEXTMONTH",
 			"NEXTQUARTER": "NEXTQUARTER",
 			"NEXTYEAR": "NEXTYEAR",
+			"LASTMINUTES": "LASTMINUTES",
+			"LASTHOURS": "LASTHOURS",
 			"LASTDAYS": "LASTDAYS",
 			"LASTWEEKS": "LASTWEEKS",
 			"LASTMONTHS": "LASTMONTHS",
 			"LASTQUARTERS": "LASTQUARTERS",
 			"LASTYEARS": "LASTYEARS",
+			"NEXTMINUTES": "NEXTMINUTES",
+			"NEXTHOURS": "NEXTHOURS",
 			"NEXTDAYS": "NEXTDAYS",
 			"NEXTWEEKS": "NEXTWEEKS",
 			"NEXTMONTHS": "NEXTMONTHS",
@@ -155,11 +159,15 @@ sap.ui.define([
 			"NEXTMONTH": _Groups.Months,
 			"NEXTQUARTER": _Groups.Quarters,
 			"NEXTYEAR": _Groups.Years,
+			"LASTMINUTES": _Groups.DateRanges,
+			"LASTHOURS": _Groups.DateRanges,
 			"LASTDAYS": _Groups.DateRanges,
 			"LASTWEEKS": _Groups.DateRanges,
 			"LASTMONTHS": _Groups.DateRanges,
 			"LASTQUARTERS": _Groups.DateRanges,
 			"LASTYEARS": _Groups.DateRanges,
+			"NEXTMINUTES": _Groups.DateRanges,
+			"NEXTHOURS": _Groups.DateRanges,
 			"NEXTDAYS": _Groups.DateRanges,
 			"NEXTWEEKS": _Groups.DateRanges,
 			"NEXTMONTHS": _Groups.DateRanges,
@@ -178,8 +186,8 @@ sap.ui.define([
 			"QUARTER4": _Groups.Quarters
 		};
 
-		var aLastOptions = ["LASTDAYS", "LASTWEEKS", "LASTMONTHS", "LASTQUARTERS", "LASTYEARS"];
-		var aNextOptions = ["NEXTDAYS", "NEXTWEEKS", "NEXTMONTHS", "NEXTQUARTERS", "NEXTYEARS"];
+		var aLastOptions = ["LASTMINUTES", "LASTHOURS", "LASTDAYS", "LASTWEEKS", "LASTMONTHS", "LASTQUARTERS", "LASTYEARS"];
+		var aNextOptions = ["NEXTMINUTES", "NEXTHOURS", "NEXTDAYS", "NEXTWEEKS", "NEXTMONTHS", "NEXTQUARTERS", "NEXTYEARS"];
 
 		StandardDynamicDateOption.LastXKeys = aLastOptions;
 		StandardDynamicDateOption.NextXKeys = aNextOptions;
@@ -215,11 +223,15 @@ sap.ui.define([
 			}
 
 			switch (sKey) {
+				case Keys.LASTMINUTES:
+				case Keys.LASTHOURS:
 				case Keys.LASTDAYS:
 				case Keys.LASTWEEKS:
 				case Keys.LASTMONTHS:
 				case Keys.LASTQUARTERS:
 				case Keys.LASTYEARS:
+				case Keys.NEXTMINUTES:
+				case Keys.NEXTHOURS:
 				case Keys.NEXTDAYS:
 				case Keys.NEXTWEEKS:
 				case Keys.NEXTMONTHS:
@@ -307,11 +319,15 @@ sap.ui.define([
 								type: "custommonth"
 							})];
 						break;
+					case Keys.LASTMINUTES:
+					case Keys.LASTHOURS:
 					case Keys.LASTDAYS:
 					case Keys.LASTWEEKS:
 					case Keys.LASTMONTHS:
 					case Keys.LASTQUARTERS:
 					case Keys.LASTYEARS:
+					case Keys.NEXTMINUTES:
+					case Keys.NEXTHOURS:
 					case Keys.NEXTDAYS:
 					case Keys.NEXTWEEKS:
 					case Keys.NEXTMONTHS:
@@ -769,6 +785,10 @@ sap.ui.define([
 					return UniversalDateUtils.ranges.nextQuarter();
 				case "NEXTYEAR":
 					return UniversalDateUtils.ranges.nextYear();
+				case "LASTMINUTES":
+					return UniversalDateUtils.ranges.lastMinutes(iParamLastNext);
+				case "LASTHOURS":
+					return UniversalDateUtils.ranges.lastHours(iParamLastNext);
 				case "LASTDAYS":
 					return UniversalDateUtils.ranges.lastDays(iParamLastNext);
 				case "LASTWEEKS":
@@ -779,6 +799,10 @@ sap.ui.define([
 					return UniversalDateUtils.ranges.lastQuarters(iParamLastNext);
 				case "LASTYEARS":
 					return UniversalDateUtils.ranges.lastYears(iParamLastNext);
+				case "NEXTMINUTES":
+					return UniversalDateUtils.ranges.nextMinutes(iParamLastNext);
+				case "NEXTHOURS":
+					return UniversalDateUtils.ranges.nextHours(iParamLastNext);
 				case "NEXTDAYS":
 					return UniversalDateUtils.ranges.nextDays(iParamLastNext);
 				case "NEXTWEEKS":

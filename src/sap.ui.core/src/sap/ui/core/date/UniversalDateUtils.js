@@ -88,6 +88,10 @@ sap.ui.define([
 
 			if (bBaseOnUnit) {
 				switch (sUnit) {
+				case "MINUTE":
+				case "HOUR":
+					oStartDate = UniversalDateUtils.createNewUniversalDate();
+					break;
 				case "DAY":
 					break;
 				case "WEEK":
@@ -108,6 +112,14 @@ sap.ui.define([
 			}
 
 			switch (sUnit) {
+			case "MINUTE":
+					oEndDate = clone(oStartDate);
+					oEndDate.setMinutes(oStartDate.getMinutes() + iDuration);
+				break;
+			case "HOUR":
+					oEndDate = clone(oStartDate);
+					oEndDate.setHours(oStartDate.getHours() + iDuration);
+				break;
 			case "DAY":
 				if (iDuration > 0) {
 					oStartDate.setDate(oStartDate.getDate() + 1);
@@ -155,6 +167,9 @@ sap.ui.define([
 			if (oEndDate.getTime() < oStartDate.getTime()) {
 				// swap start/end date
 				oEndDate = [oStartDate, oStartDate = oEndDate][0];
+			}
+			if (sUnit === "HOUR" || sUnit === "MINUTE") {
+				return [ oStartDate, oEndDate ];
 			}
 			// adjust endDate (it is 'inclusive')
 			oEndDate.setDate(oEndDate.getDate() - 1);
@@ -396,7 +411,8 @@ sap.ui.define([
 		UniversalDateUtils.ranges = {
 			/**
 			 * @param {int} iDays Number of days before the current day
-			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of iDays before the current day
+			 * @returns {sap.ui.core.date.UniversalDate[]}
+			 * Array with start and end date of iDays before the current day
 			 * @private
 			 * @ui5-restricted sap.ui.comp, sap.ui.mdc
 			 */
@@ -404,7 +420,28 @@ sap.ui.define([
 				return UniversalDateUtils.getRange(-iDays, "DAY");
 			},
 			/**
-			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of yesterday's date
+			 * @param {int} iMinutes Number of minutes before the current time
+			 * @returns {sap.ui.core.date.UniversalDate[]}
+			 * Array with start and end date of iMinutes before the current time
+			 * @private
+			 * @ui5-restricted sap.ui.comp, sap.ui.mdc
+			 */
+			lastMinutes: function (iMinutes) {
+				return UniversalDateUtils.getRange(-iMinutes, "MINUTE");
+			},
+			/**
+			 * @param {int} iHours Number of hours before the current time
+			 * @returns {sap.ui.core.date.UniversalDate[]}
+			 * Array with start and end date of iHours before the current time
+			 * @private
+			 * @ui5-restricted sap.ui.comp, sap.ui.mdc
+			 */
+			lastHours: function (iHours) {
+				return UniversalDateUtils.getRange(-iHours, "HOUR");
+			},
+			/**
+			 * @returns {sap.ui.core.date.UniversalDate[]}
+			 * Array with start and end date of yesterday's date
 			 * @private
 			 * @ui5-restricted sap.ui.comp, sap.ui.mdc
 			 */
@@ -412,7 +449,8 @@ sap.ui.define([
 				return UniversalDateUtils.getRange(-1, "DAY");
 			},
 			/**
-			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of today's date
+			 * @returns {sap.ui.core.date.UniversalDate[]}
+			 * Array with start and end date of today's date
 			 * @private
 			 * @ui5-restricted sap.ui.comp, sap.ui.mdc
 			 */
@@ -420,7 +458,8 @@ sap.ui.define([
 				return UniversalDateUtils.getRange(0, "DAY");
 			},
 			/**
-			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of tomorrow's date
+			 * @returns {sap.ui.core.date.UniversalDate[]}
+			 * Array with start and end date of tomorrow's date
 			 * @private
 			 * @ui5-restricted sap.ui.comp, sap.ui.mdc
 			 */
@@ -428,8 +467,29 @@ sap.ui.define([
 				return UniversalDateUtils.getRange(1, "DAY");
 			},
 			/**
+			 * @param {int} iMinutes Number of minutes after the current time
+			 * @returns {sap.ui.core.date.UniversalDate[]}
+			 * Array with start and end date of iMinutes after the current time
+			 * @private
+			 * @ui5-restricted sap.ui.comp, sap.ui.mdc
+			 */
+			nextMinutes: function (iMinutes) {
+				return UniversalDateUtils.getRange(iMinutes, "MINUTE");
+			},
+			/**
+			 * @param {int} iHours Number of hours after the current time
+			 * @returns {sap.ui.core.date.UniversalDate[]}
+			 * Array with start and end date of iHours after the current time
+			 * @private
+			 * @ui5-restricted sap.ui.comp, sap.ui.mdc
+			 */
+			nextHours: function (iHours) {
+				return UniversalDateUtils.getRange(iHours, "HOUR");
+			},
+			/**
 			 * @param {int} iDays Number of days after the current day
-			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of iDays after the current day
+			 * @returns {sap.ui.core.date.UniversalDate[]}
+			 * Array with start and end date of iDays after the current day
 			 * @private
 			 * @ui5-restricted sap.ui.comp, sap.ui.mdc
 			 */
@@ -440,7 +500,8 @@ sap.ui.define([
 			/**
 			 * @param {int} iWeeks Number of weeks before the current week
 			 * @param {string} sCalendarWeekNumbering The type of calendar week numbering
-			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of iWeeks before the current week
+			 * @returns {sap.ui.core.date.UniversalDate[]}
+			 * Array with start and end date of iWeeks before the current week
 			 * @private
 			 * @ui5-restricted sap.ui.comp, sap.ui.mdc
 			 */
