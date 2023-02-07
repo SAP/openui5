@@ -1195,6 +1195,21 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'My Agenda',
+								key: 'agenda',
+								settings: {
+									columns: 3
+								},
+								mockServer: true,
+								files: [
+									{
+										url: '/samples/filters/dateRange/agenda.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
 								title: "Completed Orders",
 								key: "completedOrders",
 								files: [

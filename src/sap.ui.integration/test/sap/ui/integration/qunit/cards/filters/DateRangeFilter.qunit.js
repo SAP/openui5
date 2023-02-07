@@ -233,6 +233,169 @@ sap.ui.define([
 		assert.strictEqual(oModelValue.value.option, "lastDays");
 	});
 
+	QUnit.module("DateRangeFilter DateTime Options", {
+		beforeEach: function () {
+			this.oDRF = new DateRangeFilter();
+		},
+		afterEach: function () {
+			this.oDRF.destroy();
+		}
+	});
+
+	QUnit.test("DateTimeRange in the value is in ISO format", function (assert) {
+		// Arrange
+		var oDateStart = new Date("2023-02-07T10:15:44.001Z");
+		var oDateEnd = new Date("2023-02-08T12:06:07.002Z");
+
+		var aLocalDates = DynamicDateUtil.toDates({
+			operator: "DATETIMERANGE",
+			values: [oDateStart,oDateEnd]
+		});
+		this.oDRF.setConfig({
+			value: {
+				option: "dateTimeRange",
+				values: ["2023-02-07T10:15:44.001Z","2023-02-08T12:06:07.002Z"]
+			},
+			options: [
+				"dateTimeRange"
+			]
+		});
+		var oModelValue = this.oDRF.getValueForModel();
+
+		// Assert
+		assert.strictEqual(oModelValue.range.start, aLocalDates[0].getJSDate().toISOString(), "Range start should be in ISO format");
+		assert.strictEqual(oModelValue.range.end, aLocalDates[1].getJSDate().toISOString(), "Range end should be in ISO format");
+	});
+
+	QUnit.test("fromDateTime in the value is in ISO format", function (assert) {
+		// Arrange
+		var oDateFrom = new Date("2023-02-07T10:15:44.001Z");
+
+		var aLocalDatesFrom = DynamicDateUtil.toDates({
+			operator: "FROMDATETIME",
+			values: [oDateFrom]
+		});
+		this.oDRF.setConfig({
+			value: {
+				option: "fromDateTime",
+				values: ["2023-02-07T10:15:44.001Z"]
+			},
+			options: [
+				"fromDateTime"
+			]
+		});
+		var oModelValue = this.oDRF.getValueForModel();
+
+		// Assert
+		assert.strictEqual(oModelValue.range.start, aLocalDatesFrom[0].getJSDate().toISOString(), "Range start should be in ISO format");
+		assert.strictEqual(oModelValue.rangeOData.start, aLocalDatesFrom[0].getJSDate().toISOString(), "rangeOData start should be in ISO format");
+	});
+
+	QUnit.test("toDateTime in the value is in ISO format", function (assert) {
+		// Arrange
+		var oDateTo = new Date("2023-02-08T12:06:07.002Z");
+
+		var aLocalDatesTo = DynamicDateUtil.toDates({
+			operator: "TODATETIME",
+			values: [oDateTo]
+		});
+		this.oDRF.setConfig({
+			value: {
+				option: "toDateTime",
+				values: ["2023-02-08T12:06:07.002Z"]
+			},
+			options: [
+				"toDateTime"
+			]
+		});
+		var oModelValue = this.oDRF.getValueForModel();
+
+		// Assert
+		assert.strictEqual(oModelValue.range.end, aLocalDatesTo[0].getJSDate().toISOString(), "Range end should be in ISO format");
+		assert.strictEqual(oModelValue.rangeOData.end, aLocalDatesTo[0].getJSDate().toISOString(), "rangeOData end should be in ISO format");
+	});
+
+	QUnit.test("Lower boundary of 'toDateTime' filter", function (assert) {
+		// Arrange
+		this.oDRF.setConfig({
+			value: {
+				option: "toDateTime",
+				values: ["2023-02-08T14:20:09.002Z"]
+			},
+			options: [
+				"toDateTime"
+			]
+		});
+		var oModelValue = this.oDRF.getValueForModel();
+
+		// Assert
+		assert.strictEqual(oModelValue.range.start, new Date(-8640000000000000).toISOString(), "Lower boundary should be correct");
+		assert.strictEqual(oModelValue.rangeOData.start, new Date("1753-01-01").toISOString(), "Lower boundary of rangeOData should be correct");
+	});
+
+	QUnit.test("Upper boundary of 'fromDateTime' filter", function (assert) {
+		// Arrange
+		this.oDRF.setConfig({
+			value: {
+				option: "fromDateTime",
+				values: ["2023-02-07T10:35:14.021Z"]
+			},
+			options: [
+				"fromDateTime"
+			]
+		});
+		var oModelValue = this.oDRF.getValueForModel();
+
+		// Assert
+		assert.strictEqual(oModelValue.range.end, new Date(8640000000000000).toISOString(), "Upper boundary should be correct");
+		assert.strictEqual(oModelValue.rangeOData.end, new Date("9999-12-31").toISOString(), "Upper boundary of rangeOData should be correct");
+	});
+
+	QUnit.test("DateTime value properties when config is set", function (assert) {
+		// Arrange
+		this.oDRF.setConfig({
+			value: {
+				option: "dateTime",
+				values: ["2023-02-07T10:15:05.000Z"]
+			},
+			options: [
+				"dateTime"
+			]
+		});
+		var oModelValue = this.oDRF.getValueForModel();
+
+		// Assert
+		assert.ok(oModelValue.value.hasOwnProperty("option"), "'option' property should be part of value");
+		assert.ok(oModelValue.value.hasOwnProperty("values"), "'values' property should be part of value");
+		assert.ok(oModelValue.range.hasOwnProperty("start"), "'start' property should be part of range");
+		assert.ok(oModelValue.range.hasOwnProperty("end"), "'end' property should be part of range");
+		assert.ok(oModelValue.rangeOData.hasOwnProperty("start"), "'start' property should be part of rangeOData");
+		assert.ok(oModelValue.rangeOData.hasOwnProperty("end"), "'end' property should be part of rangeOData");
+	});
+
+	QUnit.test("Value is updated when new DateTime value is entered", function (assert) {
+		// Arrange
+		this.oDRF.setConfig({
+			value: {
+				option: "dateTime",
+				values: ["2023-02-07T10:15:06.900Z"]
+			},
+			options: [
+				"dateTime"
+			]
+		});
+		this.oDRF.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+		var oOldValue = this.oDRF.getValue();
+
+		// Act
+		this.oDRF._getDdr().$("input-inner").val("Feb 8, 2023, 11:04:20 PM").trigger("input");
+		QUnitUtils.triggerKeydown(this.oDRF._getDdr().getDomRef("input"), KeyCodes.ENTER);
+
+		// Assert
+		assert.notEqual(this.oDRF.getValue(), oOldValue, "Value should be changed after new value is entered");
+	});
+
 	QUnit.module("DateRangeFilter Properties");
 
 	QUnit.test("Label", function (assert) {

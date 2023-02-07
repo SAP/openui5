@@ -30,8 +30,11 @@ sap.ui.define([
 		"TOMORROW": "tomorrow",
 
 		"DATERANGE": "dateRange",
+		"DATETIMERANGE": "dateTimeRange",
 		"FROM": "from",
 		"TO": "to",
+		"FROMDATETIME": "fromDateTime",
+		"TODATETIME": "toDateTime",
 		"YEARTODATE": "yearToDate",
 		"LASTDAYS": "lastDays",
 		"LASTWEEKS": "lastWeeks",
@@ -64,7 +67,8 @@ sap.ui.define([
 
 		"THISYEAR": "thisYear",
 		"LASTYEAR": "lastYear",
-		"NEXTYEAR": "nextYear"
+		"NEXTYEAR": "nextYear",
+		"DATETIME": "dateTime"
 	};
 
 	/**
@@ -139,7 +143,9 @@ sap.ui.define([
 
 			var aDates = DynamicDateUtil.toDates(oDateRangeValue),
 				dStart = aDates[0].getJSDate ? aDates[0].getJSDate() : aDates[0],
-				iSecondIndex = oDateRangeValue.operator === "TO" || oDateRangeValue.operator === "FROM" ? 0 : 1,
+				bToOperator = oDateRangeValue.operator === "TO" || oDateRangeValue.operator === "TODATETIME",
+				bFromOperator = oDateRangeValue.operator === "FROM" || oDateRangeValue.operator === "FROMDATETIME",
+				iSecondIndex = bToOperator || bFromOperator ? 0 : 1,
 				dEnd = aDates[iSecondIndex] && aDates[iSecondIndex].getJSDate ? aDates[iSecondIndex].getJSDate() : aDates[iSecondIndex];
 
 			oRange = {
@@ -151,12 +157,12 @@ sap.ui.define([
 				end: dEnd.toISOString()
 			};
 
-			if (oDateRangeValue.operator === "TO") {
+			if (bToOperator) {
 				oRange.start = MIN_DATE.toISOString();
 				oRangeOData.start = MIN_ODATA_DATE.toISOString();
 			}
 
-			if (oDateRangeValue.operator === "FROM") {
+			if (bFromOperator) {
 				oRange.end = MAX_DATE.toISOString();
 				oRangeOData.end = MAX_ODATA_DATE.toISOString();
 			}
@@ -196,7 +202,7 @@ sap.ui.define([
 			oValue = {
 				operator: sOption,
 				values: oConfig.value.values.map(function (vValue, i) {
-					if (aTypes[i] === "date") {
+					if (aTypes[i] === "date" || aTypes[i] === "datetime") {
 						return new Date(vValue);
 					}
 					return vValue;

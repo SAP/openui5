@@ -1,0 +1,44 @@
+[
+	{
+		"Title": "Weekly sync: Marketplace / Design Stream",
+		"Icon": "sap-icon://appointment-2",
+		"Time": "2023-02-07T10:00:00.000"
+	},
+	{
+		"Title": "Call 'Project TESTY'",
+		"Icon": "sap-icon://outgoing-call",
+		"Time": "2023-02-07T14:00:00.000"
+	},
+	{
+		"Title": "Video Conference for FLP@SF, S4,Hybris",
+		"Icon": "sap-icon://my-view",
+		"Time": "2021-10-20T16:00:00.000"
+	},
+	{
+		"Title": "Visit Nimbus",
+		"Icon": "sap-icon://visits",
+		"Time": "2021-10-20T16:30:00.000"
+	},
+	{
+		"Title": "Quarter Financial Results",
+		"Icon": "sap-icon://customer-financial-fact-sheet",
+		"Time": "2021-10-20T14:25:00.000"
+	},
+	{
+		"Title": "Sync with Manager",
+		"Icon": "sap-icon://appointment-2",
+		"Time": "2023-02-07T17:45:00.000"
+	},
+	{
+		"Title": "Weekly Sync - CP Design",
+		"Description": "MR 02 2.43",
+		"Icon": "sap-icon://appointment-2",
+		"Time": "2021-10-20T12:25:00.000"
+	},
+	{
+		"Title": "Video Conference Call - UI5",
+		"Description": "Online meeting",
+		"Icon": "sap-icon://appointment-2",
+		"Time": "2021-10-20T13:30:00.000"
+	}
+]
