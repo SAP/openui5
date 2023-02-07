@@ -215,7 +215,7 @@ sap.ui.define([
 	 * <ul>
 	 * <li>All the prerequisites of the <code>apiVersion 2</code> marker must be fulfilled by the control.</li>
 	 * <li>The behavior and rendering logic of the control must not rely on the assumption that it will always be re-rendered at the same time as its parent.</li>
-	 * <li>The <code>onBeforeRendering</code> and <code>onAfterRendering<code> hooks of the control must not be used to manipulate or access any elements outside of the control's own DOM structure.</li>
+	 * <li>The <code>onBeforeRendering</code> and <code>onAfterRendering</code> hooks of the control must not be used to manipulate or access any elements outside of the control's own DOM structure.</li>
 	 * <li>The control renderer must maintain a proper rendering encapsulation and render only the properties, aggregations, and associations that are specific to the control. The renderer should not reference or depend on any state of the parent control or any other external element.</li>
 	 * <li>If certain aggregations are dependent on the state of the parent control, they must always be rendered together with their parent. To accomplish this, the parent control must use the {@link sap.ui.core.Control#invalidate invalidate} method to signal to the child controls
 	 * that they need to re-render whenever the dependent state of the parent control changes. This guarantees that the child controls are always in sync with the parent control, regardless of the <code>apiVersion</code> definition of their renderer.</li>
