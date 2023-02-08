@@ -399,26 +399,33 @@ sap.ui.define([
 	 */
 	KeyboardExtension.prototype.updateNoDataAndOverlayFocus = function() {
 		var oTable = this.getTable();
-		var oFocusRef = document.activeElement;
+		var oActiveElement = document.activeElement;
 
 		if (!oTable || !oTable.getDomRef()) {
 			return;
 		}
 
 		if (oTable.getShowOverlay()) {
-			if (containsOrEquals(oTable.getDomRef(), oFocusRef) && oTable.$("overlay")[0] !== oFocusRef) {
-				this._oLastFocus = {Ref: oFocusRef, Pos: "overlay"};
+			if (containsOrEquals(oTable.getDomRef(), oActiveElement) && oTable.$("overlay")[0] !== oActiveElement) {
+				this._oLastFocus = {Ref: oActiveElement, Pos: "overlay"};
 				oTable.getDomRef("overlay").focus();
 			}
-		} else if (TableUtils.isNoDataVisible(oTable) && oTable.$("noDataCnt")[0] !== oFocusRef) {
-			if (containsOrEquals(oTable.getDomRef("tableCCnt"), oFocusRef)) {
-				this._oLastFocus = {Ref: oFocusRef, Pos: "table content"};
+		} else if (TableUtils.isNoDataVisible(oTable)) {
+			if (oTable.$("noDataCnt")[0] === oActiveElement) {
+				return;
+			}
+			if (containsOrEquals(oTable.getDomRef("tableCCnt"), oActiveElement)) {
+				this._oLastFocus = {Ref: oActiveElement, Pos: "table content"};
 				if (Device.browser.safari) {
 					oTable.getDomRef("noDataCnt").getBoundingClientRect();
 				}
 				oTable.getDomRef("noDataCnt").focus();
-			} else if (oTable.$("overlay")[0] === oFocusRef) {
+			} else if (oTable.$("overlay")[0] === oActiveElement) {
 				setFocusFallback(oTable, this);
+			} else if (oTable._bApplyFocusInfoFailed) {
+				this._oLastFocus = {Ref: oActiveElement, Pos: "table content"};
+				delete oTable._bApplyFocusInfoFailed;
+				oTable.getDomRef("noDataCnt").focus();
 			}
 		} else if (this._oLastFocus) {
 			if (this._oLastFocus.Pos === "table content") {
