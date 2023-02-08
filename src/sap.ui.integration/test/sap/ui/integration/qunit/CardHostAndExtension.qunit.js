@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/Log",
 	"sap/ui/integration/Host",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/integration/cards/actions/CustomAction"
 ],
 function (
 	Card,
 	Core,
 	Log,
 	Host,
-	QUnitUtils
+	QUnitUtils,
+	CustomAction
 ) {
 	"use strict";
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -40,15 +42,7 @@ function (
 		"sap.card": {
 			"type": "List",
 			"header": {
-				"title": "Header sample",
-				"actions": [
-					{
-						"type": "Custom"
-					},
-					{
-						"type": "Navigation"
-					}
-				]
+				"title": "Header sample"
 			}
 		}
 	};
@@ -60,15 +54,27 @@ function (
 			"type": "List"
 		}
 	};
+	var oManifestExtensionPreventDefault = {
+		"sap.app": {
+			"id": "sap.ui.integration.test"
+		},
+		"sap.card": {
+			"extension": "./testResources/extensions/ExtensionPreventDefault",
+			"type": "List",
+			"header": {
+				"title": "Header sample",
+				"actions": [
+					{
+						"type": "Custom"
+					}
+				]
+			}
+		}
+	};
 
 	QUnit.module("Actions sequence", {
 		beforeEach: function () {
 			this.oHost = new Host({
-				actions: [{
-						type: 'Custom',
-						text: 'Text'
-					}
-				],
 				action: function (oEvent) {
 					Log.error("Host");
 				}
@@ -82,6 +88,7 @@ function (
 					Log.error("Card");
 				}
 			});
+			this.spyCustomAction = this.spy(CustomAction.prototype, "execute");
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -102,12 +109,13 @@ function (
 			QUnitUtils.triggerEvent("tap", oHeader);
 
 			//Assert
+			assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
 			assert.ok(oLogSpy.calledWith("Card"), "Action called from card");
 			assert.ok(oLogSpy.calledWith("Host"), "Action called from host");
-			assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
-			assert.strictEqual(oLogSpy.firstCall.args[0], "Card", "Action first call was from the card");
-			assert.strictEqual(oLogSpy.secondCall.args[0], "Host", "Action second call was from the host");
-			assert.strictEqual(oLogSpy.thirdCall.args[0], "Extension", "Action third call was from the extension");
+			assert.strictEqual(oLogSpy.firstCall.args[0], "Extension", "Action first call was from the extension");
+			assert.strictEqual(oLogSpy.secondCall.args[0], "Card", "Action second call was from the card");
+			assert.strictEqual(oLogSpy.thirdCall.args[0], "Host", "Action third call was from the host");
+			assert.ok(this.spyCustomAction.called, "The default action handler is executed.");
 
 			//Cleanup
 			oLogSpy.restore();
@@ -118,14 +126,63 @@ function (
 		Core.applyChanges();
 	});
 
+	QUnit.module("Actions sequence extension prevents default", {
+		beforeEach: function () {
+			this.oHost = new Host({
+				action: function (oEvent) {
+					Log.error("Host");
+				}
+			});
+			this.oCardHostPreventDefault = new Card({
+				id: "card2",
+				baseUrl: "test-resources/sap/ui/integration/qunit/",
+				manifest: oManifestExtensionPreventDefault,
+				host: this.oHost,
+				action: function(oEvent) {
+					Log.error("Card");
+				}
+			});
+			this.spyCustomAction = this.spy(CustomAction.prototype, "execute");
+		},
+		afterEach: function () {
+			this.oCardHostPreventDefault.destroy();
+			this.oCardHostPreventDefault = null;
+			this.oHost.destroy();
+			this.oHost = null;
+		}
+	});
+
+	QUnit.test("Extension prevents default", function (assert) {
+		//Arrange
+		var done = assert.async();
+		this.oCardHostPreventDefault.attachEvent("_ready", function () {
+			var oHeader = this.oCardHostPreventDefault.getCardHeader(),
+				oLogSpy = sinon.spy(Log, "error");
+
+			//Act
+			QUnitUtils.triggerEvent("tap", oHeader);
+
+			//Assert
+			assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
+			assert.notOk(oLogSpy.calledWith("Card"), "Action not called from card");
+			assert.notOk(oLogSpy.calledWith("Host"), "Action not called from host");
+			assert.strictEqual(oLogSpy.firstCall.args[0], "Extension", "Action first call was from the extension");
+			assert.strictEqual(oLogSpy.secondCall, null, "Action second call did not happen");
+			assert.strictEqual(oLogSpy.thirdCall, null, "Action third call did not happen");
+			assert.notOk(this.spyCustomAction.called, "The default action handler is not executed.");
+
+			//Cleanup
+			oLogSpy.restore();
+			done();
+		}.bind(this));
+
+		this.oCardHostPreventDefault.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+	});
+
 	QUnit.module("Actions sequence host prevents default", {
 		beforeEach: function () {
 			this.oHostPreventDefault = new Host({
-				actions: [{
-						type: 'Custom',
-						text: 'Text'
-					}
-				],
 				action: function (oEvent) {
 					Log.error("Host");
 					oEvent.preventDefault();
@@ -140,6 +197,7 @@ function (
 					Log.error("Card");
 				}
 			});
+			this.spyCustomAction = this.spy(CustomAction.prototype, "execute");
 		},
 		afterEach: function () {
 			this.oCardHostPreventDefault.destroy();
@@ -160,12 +218,13 @@ function (
 			QUnitUtils.triggerEvent("tap", oHeader);
 
 			//Assert
+			assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
 			assert.ok(oLogSpy.calledWith("Card"), "Action called from card");
 			assert.ok(oLogSpy.calledWith("Host"), "Action called from host");
-			assert.notOk(oLogSpy.calledWith("Extension"), "Action not called from extension");
-			assert.strictEqual(oLogSpy.firstCall.args[0], "Card", "Action first call was from the card");
-			assert.strictEqual(oLogSpy.secondCall.args[0], "Host", "Action second call was from the host");
-			assert.strictEqual(oLogSpy.thirdCall, null, "Action not called third time");
+			assert.strictEqual(oLogSpy.firstCall.args[0], "Extension", "Action first call was from the extension");
+			assert.strictEqual(oLogSpy.secondCall.args[0], "Card", "Action second call was from the card");
+			assert.strictEqual(oLogSpy.thirdCall.args[0], "Host", "Action third call was from the host");
+			assert.notOk(this.spyCustomAction.called, "The default action handler is not executed.");
 
 			//Cleanup
 			oLogSpy.restore();
@@ -179,11 +238,6 @@ function (
 	QUnit.module("Actions sequence card prevents default", {
 		beforeEach: function () {
 			this.oHost = new Host({
-				actions: [{
-						type: 'Custom',
-						text: 'Text'
-					}
-				],
 				action: function (oEvent) {
 					Log.error("Host");
 				}
@@ -198,6 +252,7 @@ function (
 					oEvent.preventDefault();
 				}
 			});
+			this.spyCustomAction = this.spy(CustomAction.prototype, "execute");
 		},
 		afterEach: function () {
 			this.oCardPreventDefault.destroy();
@@ -218,11 +273,13 @@ function (
 			QUnitUtils.triggerEvent("tap", oHeader);
 
 			//Assert
+			assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
 			assert.ok(oLogSpy.calledWith("Card"), "Action called from card");
 			assert.notOk(oLogSpy.calledWith("Host"), "Action not called from host");
-			assert.notOk(oLogSpy.calledWith("Extension"), "Action not called from extension");
-			assert.strictEqual(oLogSpy.firstCall.args[0], "Card", "Action first call was from the card");
-			assert.strictEqual(oLogSpy.secondCall, null, "Action not called second time");
+			assert.strictEqual(oLogSpy.firstCall.args[0], "Extension", "Action first call was from the extension");
+			assert.strictEqual(oLogSpy.secondCall.args[0], "Card", "Action second call was from the card");
+			assert.strictEqual(oLogSpy.thirdCall, null, "Action not called third time");
+			assert.notOk(this.spyCustomAction.called, "The default action handler is not executed.");
 
 			//Cleanup
 			oLogSpy.restore();

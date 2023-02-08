@@ -57,6 +57,10 @@ sap.ui.define([
 
 				/**
 				 * Fired when an action is triggered in the card.
+				 *
+				 * When an action is triggered in the card it can be handled on several places by "action" event handlers. In consecutive order those places are: <code>Extension</code>, <code>Card</code>, <code>Host</code>.
+				 * Each of them can prevent the next one to handle the action by calling <code>oEvent.preventDefault()</code>.
+				 *
 				 * @experimental since 1.75
 				 * Disclaimer: this event is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
