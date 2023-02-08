@@ -319,9 +319,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Icon.prototype.onkeydown = function(oEvent) {
-
 		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
-
 			// note: prevent document scrolling
 			oEvent.preventDefault();
 
@@ -348,13 +346,19 @@ sap.ui.define([
 	 * @private
 	 */
 	Icon.prototype.onkeyup = function(oEvent) {
-
 		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
-
 			this.$().removeClass("sapUiIconActive");
 			this._restoreColors();
-			this.firePress({/* no parameters */});
 		}
+	};
+
+	Icon.prototype.onsapenter = Icon.prototype.onsapspace = function(oEvent) {
+		if (this.hasListeners("press")) {
+			// mark the event for components that needs to know if the event was handled
+			oEvent.setMarked();
+		}
+
+		this.firePress({/* no parameters */});
 	};
 
 	/* =========================================================== */

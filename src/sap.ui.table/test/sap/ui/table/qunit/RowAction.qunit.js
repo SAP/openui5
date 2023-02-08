@@ -404,7 +404,7 @@ sap.ui.define([
 			oEventParams = oEvent.getParameters();
 		});
 
-		qutils.triggerKeyup(this.aInnerIcons[1].getDomRef(), "ENTER");
+		qutils.triggerKeydown(this.aInnerIcons[1].getDomRef(), "ENTER");
 		assert.ok(!oEventParams, "Press Event Not Triggered");
 
 		var oMenu = this.oRowAction.getAggregation("_menu");
