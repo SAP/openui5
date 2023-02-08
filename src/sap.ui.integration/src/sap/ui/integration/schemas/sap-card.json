@@ -1425,7 +1425,14 @@
         },
         "value": {
           "description": "Represents the text, which is associated with the label",
-          "type": "string"
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            }
+          ]
         },
         "tooltip": {
           "description": "Defines the tooltip of the link",
@@ -1608,6 +1615,33 @@
           "items": {
             "$ref": "#/definitions/ContentType.Object.Item.Validation"
           }
+        },
+        "maxValue": {
+          "description": "The number of displayed symbols for RatingIndicator",
+          "oneOf": [
+            {
+              "type": "number",
+              "default": 5
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "visualMode": {
+          "description": "Defines how float values are visualized for RatingIndicator: Full (values are rounded to the nearest integer value (e.g. 1.7 -> 2)) or  Half (values are rounded to the nearest half value (e.g. 1.7 -> 1.5))",
+          "oneOf": [
+            {
+              "enum": [
+                "Full",
+                "Half"
+              ],
+              "default": "Half"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },
@@ -1807,52 +1841,6 @@
            "description": "An extension function used to validate the value",
            "type": "string"
          }
-      }
-    },
-    "ContentType.Object.Item.RatingIndicator": {
-      "description": "[Experimental] Represents Rating Indicator",
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "maxValue": {
-          "description": "The number of displayed rating symbols",
-          "oneOf": [
-            {
-              "type": "number",
-              "default": "5"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
-        },
-        "value": {
-          "description": "The indicated value of the rating",
-          "oneOf": [
-            {
-              "type": "number",
-              "default": "0"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
-        },
-        "visualMode": {
-          "description": "Defines how float values are visualized: Full (values are rounded to the nearest integer value (e.g. 1.7 -> 2)) or  Half (values are rounded to the nearest half value (e.g. 1.7 -> 1.5))",
-          "oneOf": [
-            {
-              "enum": [
-                "Full",
-                "Half"
-              ],
-              "default": "Half"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
-        }
       }
     },
     "ContentType.Table": {
