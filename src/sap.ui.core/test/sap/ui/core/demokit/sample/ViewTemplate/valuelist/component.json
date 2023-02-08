@@ -1,4 +1,5 @@
 {
+	"interfaces": ["sap.ui.core.IAsyncContentCreation"],
 	"config": {
 		"sample": {
 			"files": [
