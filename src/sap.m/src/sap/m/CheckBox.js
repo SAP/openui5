@@ -298,7 +298,7 @@ sap.ui.define([
 
 	CheckBox.prototype.onBeforeRendering = function () {
 		if (this.getText()) {
-			this.setProperty("accesskey", this.getText()[0].toLowerCase(), true);
+			this.setProperty("accesskey", this.getText()[0].toLowerCase());
 		}
 	};
 

@@ -19,7 +19,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		 * @namespace
 		 */
 		var AvatarRenderer = {
-			apiVersion: 2
+			apiVersion: 4
 		};
 
 		/**

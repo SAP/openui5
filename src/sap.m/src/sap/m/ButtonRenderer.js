@@ -33,7 +33,7 @@ sap.ui.define([
 	 * Button renderer.
 	 * @namespace
 	 */
-	var ButtonRenderer = {apiVersion: 2};
+	var ButtonRenderer = {apiVersion: 4};
 
 	/**
 	 * Renders the HTML for the given control, using the provided

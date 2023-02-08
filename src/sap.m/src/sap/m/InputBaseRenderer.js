@@ -21,7 +21,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 	 * @protected
 	 */
 	var InputBaseRenderer = {
-		apiVersion: 2
+		apiVersion: 4
 	};
 
 	/**

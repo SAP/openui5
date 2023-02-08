@@ -22,7 +22,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 * @protected
 	 */
 	var InputRenderer = Renderer.extend(InputBaseRenderer);
-	InputRenderer.apiVersion = 2;
+	InputRenderer.apiVersion = 4;
 
 	/**
 	 * Adds control specific class

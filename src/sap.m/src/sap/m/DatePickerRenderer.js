@@ -10,7 +10,7 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 	 * @namespace
 	 */
 	var DatePickerRenderer = Renderer.extend(InputBaseRenderer);
-	DatePickerRenderer.apiVersion = 2;
+	DatePickerRenderer.apiVersion = 4;
 
 	/**
 	 * Write the value of the input.

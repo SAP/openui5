@@ -13,7 +13,7 @@ sap.ui.define(['./_IconRegistry', './library', "sap/base/security/encodeCSS"], f
 	 * @alias sap.ui.core.IconRenderer
 	 */
 	var IconRenderer = {
-		apiVersion: 2
+		apiVersion: 4
 	};
 
 	/**

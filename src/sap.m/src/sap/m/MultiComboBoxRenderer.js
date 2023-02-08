@@ -10,7 +10,7 @@ sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', 'sap/ui/c
 	 * @namespace
 	 */
 	var MultiComboBoxRenderer = Renderer.extend(ComboBoxBaseRenderer);
-	MultiComboBoxRenderer.apiVersion = 2;
+	MultiComboBoxRenderer.apiVersion = 4;
 	/**
 	 * CSS class to be applied to the HTML root element of the MultiComboBox control.
 	 *

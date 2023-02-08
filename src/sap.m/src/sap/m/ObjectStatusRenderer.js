@@ -22,7 +22,7 @@ sap.ui.define(['sap/ui/core/library', './library', 'sap/ui/core/Core'],
 	 * @namespace
 	 */
 	var ObjectStatusRenderer = {
-			apiVersion: 2
+		apiVersion: 4
 	};
 
 

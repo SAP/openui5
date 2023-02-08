@@ -20,7 +20,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @namespace
 		 */
 		var SelectRenderer = {
-			apiVersion: 2
+			apiVersion: 4
 		};
 
 		/**

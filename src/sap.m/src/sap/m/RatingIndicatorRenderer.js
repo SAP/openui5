@@ -16,7 +16,7 @@ sap.ui.define(
 		 * @namespace
 		 */
 		var RatingIndicatorRenderer = {
-				apiVersion: 2
+				apiVersion: 4
 			},
 			sIconSizeMeasure = "px";
 
