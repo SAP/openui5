@@ -37,6 +37,27 @@ sap.ui.define([
 	}
 
 	/**
+	 * Processing the response to activate the draft if the expected status is contained in the response object
+	 * @param {object} oResponse - Object with response data
+	 * @param {number} oResponse.status - HTTP response code
+	 * @param {number} nExpectedStatus - Expected HTTP response code
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.reference - Reference of the application
+	 * @param {string} mPropertyBag.layer - Layer
+	 * @returns {object} Object with response data
+	 */
+	function handleResponseForVersioning(oResponse, nExpectedStatus, mPropertyBag) {
+		if (oResponse.status === nExpectedStatus) {
+			Versions.onAllChangesSaved({
+				reference: mPropertyBag.reference,
+				layer: mPropertyBag.layer,
+				contextBasedAdaptation: true
+			});
+		}
+		return oResponse;
+	}
+
+	/**
 	 * Create new context-based adaptation and saves it in the backend
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
@@ -63,6 +84,8 @@ sap.ui.define([
 			flexObject: mPropertyBag.contextBasedAdaptation,
 			reference: mPropertyBag.reference,
 			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.reference }).getProperty("/displayedVersion")
+		}).then(function (oResponse) {
+			return handleResponseForVersioning(oResponse, 201, mPropertyBag);
 		});
 	};
 
@@ -91,6 +114,8 @@ sap.ui.define([
 			flexObjects: mPropertyBag.parameters,
 			reference: mPropertyBag.reference,
 			parentVersion: Versions.getVersionsModel({ layer: mPropertyBag.layer, reference: mPropertyBag.reference }).getProperty("/displayedVersion")
+		}).then(function (oResponse) {
+			return handleResponseForVersioning(oResponse, 204, mPropertyBag);
 		});
 	};
 

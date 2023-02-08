@@ -976,6 +976,109 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Calling the Storage: Given Versions.initialize is called", {
+		before: function() {
+			this.aReturnedVersions = [];
+			this.oAppComponent = {
+				getManifest: function () {
+					return {};
+				},
+				getId: function () {
+					return this.sComponentId;
+				}
+			};
+		},
+		beforeEach: function () {
+			setVersioningEnabled({CUSTOMER: true});
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "LrepConnector", layers: ['ALL'], url: "/sap/bc/lrep"}
+			]);
+		},
+		afterEach: function() {
+			Versions.clearInstances();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("to trigger onAllChangesSaved without contextBasedAdaptation parameter", function (assert) {
+			var done = assert.async();
+			var sReference = "com.sap.app";
+
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				reference: sReference,
+				nonNormalizedReference: sReference,
+				appComponent: this.oAppComponent,
+				version: '3'
+			};
+
+			var oFirstVersion = {
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				version: "1",
+				isPublished: true
+			};
+
+			var aReturnedVersions = [
+				oFirstVersion
+			];
+
+			_prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
+
+			return Versions.initialize(mPropertyBag)
+				.then(Versions.onAllChangesSaved.bind(Versions, mPropertyBag))
+				.then(Versions.getVersionsModel.bind(Versions, mPropertyBag))
+				.then(function (oResponse) {
+					var aVersions = oResponse.getProperty("/versions");
+					assert.deepEqual(aVersions.length, 2, "a new draft is added to the version model");
+					assert.deepEqual(aVersions[0].type, "draft", "the latest version type is draft");
+					assert.deepEqual(oResponse.getProperty("/versioningEnabled"), true);
+					assert.deepEqual(oResponse.getProperty("/dirtyChanges"), true, "dirty changes exits");
+					assert.deepEqual(oResponse.getProperty("/backendDraft"), false, "backend draft does not exists");
+					done();
+				});
+		});
+
+		QUnit.test("to trigger onAllChangesSaved with contextBasedAdaptation parameter", function (assert) {
+			var done = assert.async();
+			var sReference = "com.sap.app";
+
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				reference: sReference,
+				nonNormalizedReference: sReference,
+				appComponent: this.oAppComponent,
+				version: '3',
+				contextBasedAdaptation: true
+			};
+
+			var oFirstVersion = {
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				version: "1",
+				isPublished: true
+			};
+
+			var aReturnedVersions = [
+				oFirstVersion
+			];
+
+			_prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
+
+			return Versions.initialize(mPropertyBag)
+				.then(Versions.onAllChangesSaved.bind(Versions, mPropertyBag))
+				.then(Versions.getVersionsModel.bind(Versions, mPropertyBag))
+				.then(function (oResponse) {
+					var aVersions = oResponse.getProperty("/versions");
+					assert.deepEqual(aVersions.length, 2, "a new version (draft) is added to the version model");
+					assert.deepEqual(aVersions[0].type, "draft", "the latest version type is draft");
+					assert.deepEqual(oResponse.getProperty("/versioningEnabled"), true);
+					assert.deepEqual(oResponse.getProperty("/dirtyChanges"), true, "dirty changes exits");
+					assert.deepEqual(oResponse.getProperty("/backendDraft"), true, "backed draft exists");
+					done();
+				});
+		});
+	});
+
 	QUnit.done(function () {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
