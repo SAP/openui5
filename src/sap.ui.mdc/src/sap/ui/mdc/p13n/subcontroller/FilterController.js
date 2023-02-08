@@ -119,14 +119,16 @@ sap.ui.define([
     };
 
     FilterController.prototype.update = function(oPropertyHelper){
-        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
-        this._oPanel.setP13nData(oAdaptationData);
-        var oAdaptationControl = this.getAdaptationControl();
-        var oInbuiltFilter = oAdaptationControl && oAdaptationControl.getInbuiltFilter();
-
-        if (oInbuiltFilter) {
-            oInbuiltFilter.createFilterFields();
+        if (this._oPanel) {
+            var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+            this._oPanel.setP13nData(oAdaptationData);
+            var oAdaptationControl = this.getAdaptationControl();
+            var oInbuiltFilter = oAdaptationControl && oAdaptationControl.getInbuiltFilter();
+            if (oInbuiltFilter) {
+                oInbuiltFilter.createFilterFields();
+            }
         }
+
     };
 
     FilterController.prototype.getDelta = function(mPropertyBag) {

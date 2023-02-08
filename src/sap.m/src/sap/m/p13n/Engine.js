@@ -271,9 +271,7 @@ sap.ui.define([
 			return this.initAdaptation(oControl, aKeys).then(function(oPropertyHelper){
 				aKeys.forEach(function(sKey){
 					var oController = this.getController(oControl, sKey);
-					if (this.hasActiveP13n(oControl)) {
-						oController.update(oPropertyHelper);
-					}
+					oController.update(oPropertyHelper);
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));

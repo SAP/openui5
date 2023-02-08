@@ -71,9 +71,11 @@ sap.ui.define([
     };
 
     AdaptFiltersController.prototype.update = function(oPropertyHelper) {
-        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
-        this._oPanel.setP13nData(oAdaptationData);
-        this.getAdaptationControl().getInbuiltFilter().createFilterFields();
+        if (this._oPanel) {
+            var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+            this._oPanel.setP13nData(oAdaptationData);
+            this.getAdaptationControl().getInbuiltFilter().createFilterFields();
+        }
     };
 
     AdaptFiltersController.prototype.mixInfoAndState = function(oPropertyHelper) {
