@@ -500,7 +500,9 @@ sap.ui.define([
 			.returns("~bResult~");
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChanges("~bIgnoreKeptAlive~"), "~bResult~");
+		assert.strictEqual(
+			oBinding.hasPendingChanges("~bIgnoreKeptAlive~", {/*not passed to _hasPendingCh...*/}),
+			"~bResult~");
 	});
 
 	//*********************************************************************************************
@@ -603,7 +605,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resetChanges", function (assert) {
+	QUnit.test("_resetChanges", function (assert) {
 		var oBinding = new ODataBinding(),
 			oExpectation,
 			oBindingMock = this.mock(oBinding),
@@ -621,7 +623,7 @@ sap.ui.define([
 				aPromises.push(oResetChangesForPathPromise);
 			});
 		oBindingMock.expects("resetChangesInDependents")
-			.withExactArgs([oResetChangesForPathPromise])
+			.withExactArgs([oResetChangesForPathPromise], "~bIgnoreKeptAlive~")
 			.callsFake(function (aPromises) {
 				assert.strictEqual(aPromises, oExpectation.firstCall.args[1]);
 
@@ -630,7 +632,7 @@ sap.ui.define([
 		oBindingMock.expects("resetInvalidDataState").withExactArgs();
 
 		// code under test
-		oResetChangesPromise = oBinding.resetChanges();
+		oResetChangesPromise = oBinding._resetChanges("~bIgnoreKeptAlive~");
 		assert.ok(oResetChangesPromise instanceof Promise);
 
 		return oResetChangesPromise.then(function (oResult) {
@@ -638,6 +640,17 @@ sap.ui.define([
 			assert.ok(oResetChangesInDependentsPromise.isFulfilled());
 			assert.strictEqual(oResult, undefined);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges", function (assert) {
+		var oBinding = new ODataBinding();
+
+		this.mock(oBinding).expects("_resetChanges").withExactArgs()
+			.returns("~bResult~");
+
+		// code under test
+		assert.strictEqual(oBinding.resetChanges({/*not passed to _resetChanges*/}), "~bResult~");
 	});
 
 	//*********************************************************************************************

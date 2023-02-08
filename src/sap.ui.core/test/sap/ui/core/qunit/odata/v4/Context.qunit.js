@@ -3643,25 +3643,65 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [true, 1, false, undefined].forEach(function (bInactive) {
-	QUnit.test("resetChanges, bInactive=" + bInactive, function (assert) {
+	QUnit.test("resetChanges, w/o oDeletePromise, bInactive=" + bInactive, function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
-				resetChangesForPath : function () {},
-				resetChangesInDependents : function () {}
+				resetChangesForPath : function () {}
 			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/path"),
+			oModel = {
+				getDependentBindings : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/path"),
+			oResetChangesPromise;
+
+		oContext.bInactive = bInactive;
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("resetChangesForPath")
+			.withExactArgs("/path", sinon.match.array);
+		this.mock(oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oContext)).returns([]);
+
+		// code under test
+		oResetChangesPromise = oContext.resetChanges();
+
+		assert.strictEqual(oContext.bInactive, bInactive ? true : bInactive);
+
+		return oResetChangesPromise;
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges, promise enrichment", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {},
+				resetChangesForPath : function () {}
+			},
+			oModel = {
+				getDependentBindings : function () {}
+			},
+			oDependentWithCache = {
+				oCache : {},
+				_resetChanges : function () {}
+			},
+			oDependentWithOutCache = {
+				resetChangesInDependents : function () {},
+				resetInvalidDataState : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/path"),
 			oError = new Error("deletion cancelled"),
 			oDeletePromise = Promise.reject(oError),
 			oResetChangesPromise,
 			oResetChangesForPathPromise = SyncPromise.resolve(new Promise(function (resolve) {
 				setTimeout(resolve.bind(null, "foo"));
 			})),
-			oResetChangesInDependentPromise = SyncPromise.resolve(new Promise(function (resolve) {
+			oPrivateResetChangesPromise = SyncPromise.resolve(new Promise(function (resolve) {
 				setTimeout(resolve.bind(null, "bar"));
+			})),
+			oResetChangesInDependentPromise = SyncPromise.resolve(new Promise(function (resolve) {
+				setTimeout(resolve.bind(null, "baz"));
 			}));
 
 		oContext.oDeletePromise = oDeletePromise;
-		oContext.bInactive = bInactive;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("resetChangesForPath")
 			.withExactArgs("/path", sinon.match.array)
@@ -3672,46 +3712,36 @@ sap.ui.define([
 				});
 				aPromises.push(oResetChangesForPathPromise);
 			});
-		this.mock(oBinding).expects("resetChangesInDependents")
+		this.mock(oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oContext))
+			.returns([oDependentWithCache, oDependentWithOutCache]);
+		this.mock(oDependentWithCache).expects("_resetChanges")
+			.withExactArgs(true).returns(oPrivateResetChangesPromise);
+		this.mock(oDependentWithOutCache).expects("resetInvalidDataState")
+			.withExactArgs();
+		this.mock(oDependentWithOutCache).expects("resetChangesInDependents")
 			.withExactArgs(sinon.match.array, true)
 			.callsFake(function (aPromises, _bIgnoreInactiveCaches) {
-				assert.strictEqual(aPromises.length, 2);
+				assert.strictEqual(aPromises.length, 3);
 				aPromises[0].catch(function (oError0) {
 					assert.strictEqual(oError0, oError);
 				});
 				assert.strictEqual(aPromises[1], oResetChangesForPathPromise);
+				assert.strictEqual(aPromises[2], oPrivateResetChangesPromise);
 				aPromises.push(oResetChangesInDependentPromise);
 			});
 
 		// code under test
 		oResetChangesPromise = oContext.resetChanges();
 
-		assert.strictEqual(oContext.bInactive, bInactive ? true : bInactive);
 		assert.ok(oResetChangesPromise instanceof Promise);
 
 		return oResetChangesPromise.then(function (oResult) {
 			assert.ok(oResetChangesForPathPromise.isFulfilled());
+			assert.ok(oPrivateResetChangesPromise.isFulfilled());
 			assert.ok(oResetChangesInDependentPromise.isFulfilled());
 			assert.strictEqual(oResult, undefined);
 		});
-	});
-});
-
-	//*********************************************************************************************
-	QUnit.test("resetChanges: w/o oDeletePromise", function () {
-		var oBinding = {
-				checkSuspended : function () {},
-				resetChangesForPath : function () {},
-				resetChangesInDependents : function () {}
-			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/path");
-
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oBinding).expects("resetChangesForPath").withExactArgs("/path", []);
-		this.mock(oBinding).expects("resetChangesInDependents").withExactArgs([], true);
-
-		// code under test
-		return oContext.resetChanges();
 	});
 
 	//*********************************************************************************************

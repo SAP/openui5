@@ -1672,7 +1672,14 @@ sap.ui.define([
 		if (this.bInactive === 1) {
 			this.bInactive = true;
 		}
-		this.oBinding.resetChangesInDependents(aPromises, true);
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			if (oDependentBinding.oCache) {
+				aPromises.push(oDependentBinding._resetChanges(true));
+			} else {
+				oDependentBinding.resetChangesInDependents(aPromises, true);
+				oDependentBinding.resetInvalidDataState();
+			}
+		});
 
 		return Promise.all(aPromises).then(function () {});
 	};

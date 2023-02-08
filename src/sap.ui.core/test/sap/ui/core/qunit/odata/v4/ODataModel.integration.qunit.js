@@ -12212,6 +12212,53 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: (7) Test whether an invalid data state is properly reset once #resetChanges for its
+	// row context is called, other contexts remain unchanged.
+	// JIRA: CPOUI5ODATAV4-1817
+	QUnit.test("CPOUI5ODATAV4-1817: reset invalid data state via context", function (assert) {
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			sView = '\
+<Table id="table" items="{/EMPLOYEES}">\
+	<Input id="age" value="{AGE}"/>\
+</Table>',
+			that = this;
+
+		function setInvalidValue(oPropertyBinding) {
+			var fnFormatter = oPropertyBinding.fnFormatter;
+
+			delete oPropertyBinding.fnFormatter;
+			assert.throws(function () {
+				oPropertyBinding.setExternalValue("bad");
+			});
+			assert.ok(oPropertyBinding.getDataState().isControlDirty());
+			oPropertyBinding.fnFormatter = fnFormatter;
+		}
+
+		this.expectRequest("EMPLOYEES?$select=AGE,ID&$skip=0&$top=100",
+				{value : [{AGE : 24, ID : "0"}, {AGE : 42, ID : "1"}]})
+			.expectChange("age", ["24", "42"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table"),
+				oPropertyBinding0 = oTable.getItems()[0].getCells()[0].getBinding("value"),
+				oPropertyBinding1 = oTable.getItems()[1].getCells()[0].getBinding("value");
+
+			setInvalidValue(oPropertyBinding0);
+			setInvalidValue(oPropertyBinding1);
+
+			that.expectChange("age", ["24"]);
+
+			// code under test
+			oPropertyBinding0.getContext().resetChanges().then(function () {
+					assert.notOk(oPropertyBinding0.getDataState().isControlDirty());
+					assert.ok(oPropertyBinding1.getDataState().isControlDirty());
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Metadata access to MANAGERS which is not loaded yet.
 	QUnit.test("Metadata access to MANAGERS which is not loaded yet", function (assert) {
 		var sView = '\
@@ -48772,18 +48819,24 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: (5a) Context#resetChanges within a relative ODLB below an intermediate ODCB.
-	// Patch one line item in the relative ODLB, patch another for a different sales order. Select
-	// the sales order of the first patched line item and call #resetChanges. Submit changes and
-	// see that only the 2nd patch is sent.
+	// Scenario: (5a) Context#resetChanges within a relative ODLB below an object page ODCB w/ own
+	// cache and an intermediate ODCB w/o cache. For the first sales order patch a property in the
+	// object page and one line item in the relative ODLB, patch another line item for a different
+	// sales order. Select the sales order of the first patched line item and call #resetChanges.
+	// Submit changes and see that only the 2nd patch is sent.
 	// JIRA: CPOUI5ODATAV4-1818
 	//
 	// See that edited inactive creation rows are also reset to their initial state.
 	// JIRA: CPOUI5ODATAV4-2011
-	QUnit.test("CPOUI5ODATAV4-1818: (5a) Context#resetChanges, resolved ODLB", function (assert) {
+[true, false].forEach(function (bIntermediate) {
+	var sTitle = "CPOUI5ODATAV4-1818: (5a) Context#resetChanges, resolved ODLB, bIntermediate="
+		+ bIntermediate;
+
+	QUnit.test(sTitle, function (assert) {
 		var oItem1New,
 			oItem2New,
 			oItems,
+			oIntermediate,
 			oModel = this.createSalesOrdersModel({
 				updateGroupId : "update",
 				autoExpandSelect : true
@@ -48791,6 +48844,7 @@ sap.ui.define([
 			oObjectPage,
 			aOrderContexts,
 			oOrders,
+			oPatchPromise1,
 			oPatchPromise11,
 			oPatchPromise1New,
 			oPatchPromise22,
@@ -48799,10 +48853,13 @@ sap.ui.define([
 <Table id="orders" items="{/SalesOrderList}">\
 	<Text id="id" text="{SalesOrderID}"/>\
 </Table>\
-<FlexBox id="objectPage" binding="{}">\
-	<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
-		<Text id="note" text="{Note}"/>\
-	</Table>\
+<FlexBox id="intermediate" ' + (bIntermediate ? 'binding="{}"' : "") + '>\
+	<FlexBox id="objectPage" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
+		<Input id="soNote" value="{Note}"/>\
+		<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+			<Input id="note" value="{Note}"/>\
+		</Table>\
+	</FlexBox>\
 </FlexBox>',
 			that = this;
 
@@ -48813,6 +48870,7 @@ sap.ui.define([
 				]
 			})
 			.expectChange("id", ["1", "2"])
+			.expectChange("soNote")
 			.expectChange("note", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -48820,12 +48878,14 @@ sap.ui.define([
 			oItems = that.oView.byId("items").getBinding("items");
 			aOrderContexts = oOrders.getCurrentContexts();
 			oObjectPage = that.oView.byId("objectPage");
+			oIntermediate = bIntermediate ? that.oView.byId("intermediate") : oObjectPage;
 
 			oItems.attachCreateActivate(function (oEvent) {
 				oEvent.preventDefault(); // always results in an edited inactive creation row
 			});
 
-			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
+			that.expectRequest("SalesOrderList('2')?$select=Note,SalesOrderID", {Note : "SO 2"})
+				.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
 				+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
 					value : [{
 						ItemPosition : 10, Note : "Item 2.10", SalesOrderID : "2"
@@ -48833,9 +48893,10 @@ sap.ui.define([
 						ItemPosition : 20, Note : "Item 2.20", SalesOrderID : "2"
 					}]
 				})
+				.expectChange("soNote", "SO 2")
 				.expectChange("note", ["Item 2.10", "Item 2.20"]);
 
-			oObjectPage.setBindingContext(aOrderContexts[1]);
+			oIntermediate.setBindingContext(aOrderContexts[1]);
 
 			return that.waitForChanges(assert, "set context to '2'");
 		}).then(function () {
@@ -48859,15 +48920,17 @@ sap.ui.define([
 				oPatchPromise2New // already resolved because update was stored in the POST body
 			]);
 		}).then(function () {
-			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+			that.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID", {Note : "SO 1"})
+				.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
 				+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
 					value : [{
 						ItemPosition : 10, Note : "Item 1.10", SalesOrderID : "1"
 					}]
 				})
+				.expectChange("soNote", "SO 1")
 				.expectChange("note", ["Item 1.10"]);
 
-			oObjectPage.setBindingContext(aOrderContexts[0]);
+			oIntermediate.setBindingContext(aOrderContexts[0]);
 
 			return that.waitForChanges(assert, "set context to '1'");
 		}).then(function () {
@@ -48877,9 +48940,11 @@ sap.ui.define([
 			assert.notOk(oItems.hasPendingChanges()); // sees no changes in inactive caches
 			assert.notOk(aOrderContexts[0].hasPendingChanges());
 
-			that.expectChange("note", ["Item 1.10 changed", "Item 1.new"]);
+			that.expectChange("soNote", "SO 1 changed")
+				.expectChange("note", ["Item 1.10 changed", "Item 1.new"]);
 
 			oPatchPromise11 = oItem10.setProperty("Note", "Item 1.10 changed");
+			oPatchPromise1 = oObjectPage.getBindingContext().setProperty("Note", "SO 1 changed");
 			oItem1New = oItems.create(undefined, true, true, /*bInactive*/true);
 			oPatchPromise1New = oItem1New.setProperty("Note", "Item 1.new");
 
@@ -48898,16 +48963,20 @@ sap.ui.define([
 		}).then(function () {
 			assert.ok(aOrderContexts[0].hasPendingChanges());
 
-			that.expectCanceledError("Failed to update path /SalesOrderList('1')"
+			that.expectCanceledError("Failed to update path /SalesOrderList('1')/Note",
+				"Request canceled: PATCH SalesOrderList('1'); group: update")
+				.expectCanceledError("Failed to update path /SalesOrderList('1')"
 				+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')/Note",
 				"Request canceled: PATCH SalesOrderList('1')"
 				+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10'); group: update")
+				.expectChange("soNote", "SO 1")
 				.expectChange("note", ["Item 1.10", ""]);
 
 			return Promise.all([
 				// code under test
 				aOrderContexts[0].resetChanges(),
 				checkCanceled(assert, oPatchPromise11),
+				checkCanceled(assert, oPatchPromise1),
 				that.waitForChanges(assert, "reset patched item 1.10 + edited inactive 1.new")
 			]);
 		}).then(function () {
@@ -48939,4 +49008,5 @@ sap.ui.define([
 			assert.notOk(oModel.hasPendingChanges()); // model does not see inactive creation rows
 		});
 	});
+});
 });
