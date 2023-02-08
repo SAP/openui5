@@ -1518,6 +1518,29 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("updateSelected: $transient", function (assert) {
+		var oNewValue = {
+				transient : [{foo : "new"}],
+				upcoming : []
+			},
+			oOldValue = {
+				transient : [{foo : "old"}],
+				upcoming : null
+			};
+
+		oOldValue.transient.$transient = true;
+		this.mock(_Helper).expects("fireChange").never();
+
+		// code under test
+		_Helper.updateSelected("~mChangeListener~", "", oOldValue, oNewValue);
+
+		assert.deepEqual(oOldValue, {
+			transient : [{foo : "old"}],
+			upcoming : []
+		});
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bNull) {
 	var sTitle = "updateSelected: complex type was " + (bNull ? "null" : "missing") + " in cache";
 
@@ -4923,5 +4946,18 @@ sap.ui.define([
 			// code under test
 			_Helper.setLanguage("/some/path?mysap-language=bar", "XY"),
 			"/some/path?mysap-language=bar&sap-language=%58Y");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addDeepCreatePromise", function (assert) {
+		var oElement = {},
+			oPromise;
+
+		// code under test
+		oPromise = _Helper.addDeepCreatePromise(oElement);
+
+		assert.strictEqual(oPromise.isPending(), true);
+		_Helper.getPrivateAnnotation(oElement, "resolve")("foo");
+		assert.strictEqual(oPromise.getResult(), "foo");
 	});
 });

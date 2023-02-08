@@ -47297,6 +47297,160 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Deep create, nested list binding w/o own cache; create is called twice in the
+	// nested binding while the parent context is still transient. Patch one nested entity while
+	// transient and when created-persisted.
+	// JIRA: CPOUI5ODATAV4-1973
+[false, true].forEach(function (bSkipRefresh) {
+	var sTitle = "CPOUI5ODATAV4-1973: Deep create, nested ODLB w/o cache, bSkipRefresh="
+			+ bSkipRefresh;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCreatedItemContext1,
+			oCreatedItemContext2,
+			oCreatedOrderContext,
+			oItemsBinding,
+			oOrdersBinding,
+			oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "update"}),
+			sView = '\
+<Table id="orders" items="{/SalesOrderList}">\
+	<Text id="order" text="{SalesOrderID}"/>\
+	<Table items="{path : \'SO_2_SOITEM\', templateShareable : true}">\
+		<Input id="note" value="{Note}"/>\
+	</Table>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID"
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)&$skip=0&$top=100",
+				{value : []})
+			.expectChange("order", [])
+			.expectChange("note", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("order", [""]);
+
+			oOrdersBinding = that.oView.byId("orders").getBinding("items");
+
+			// code under test
+			oCreatedOrderContext = oOrdersBinding.create({}, bSkipRefresh);
+
+			return that.waitForChanges(assert, "create order");
+		}).then(function () {
+			that.expectChange("note", ["note20", "note1"]);
+
+			oItemsBinding = that.oView.byId("orders").getItems()[0].getCells()[1]
+				.getBinding("items");
+
+			// code under test
+			oCreatedItemContext1 = oItemsBinding.create({Note : "note1"});
+			oCreatedItemContext2 = oItemsBinding.create({Note : "note20"});
+
+			assert.strictEqual(oCreatedItemContext1.isTransient(), true);
+			assert.strictEqual(oCreatedItemContext2.isTransient(), true);
+
+			return that.waitForChanges(assert, "create items");
+		}).then(function () {
+			that.expectChange("note", [, "note10"]);
+
+			return Promise.all([
+				// code under test
+				oCreatedItemContext1.setProperty("Note", "note10"),
+				that.waitForChanges(assert, "patch transient item")
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {
+						SO_2_SOITEM : [
+							{Note : "note20"},
+							{Note : "note10"}
+						]
+					}
+				}, {
+					"@odata.etag" : "etag",
+					SalesOrderID : "new",
+					SO_2_SOITEM : [{
+						"@odata.etag" : "etag20",
+						GrossAmount : "42.99", // excess property
+						ItemPosition : "0020",
+						Note : "note*20",
+						SalesOrderID : "new"
+					}, {
+						"@odata.etag" : "etag10",
+						GrossAmount : "42.99", // excess property
+						ItemPosition : "0010",
+						Note : "note*10",
+						SalesOrderID : "new"
+					}]
+				})
+				.expectChange("order", ["new"])
+				.expectChange("note", ["note*20", "note*10"]);
+			if (!bSkipRefresh) {
+				that.expectRequest("SalesOrderList('new')?$select=SalesOrderID"
+					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+					"@odata.etag" : "etag",
+					SalesOrderID : "new",
+					SO_2_SOITEM : [{
+						"@odata.etag" : "etag20",
+						ItemPosition : "0020",
+						Note : "note*20",
+						SalesOrderID : "new"
+					}, {
+						"@odata.etag" : "etag10",
+						ItemPosition : "0010",
+						Note : "note*10",
+						SalesOrderID : "new"
+					}]
+				});
+			}
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oCreatedOrderContext.created(),
+				oCreatedItemContext1.created(),
+				oCreatedItemContext2.created(),
+				that.waitForChanges(assert, "submit POST")
+			]);
+		}).then(function () {
+			assert.strictEqual(oCreatedItemContext1, oItemsBinding.getCurrentContexts()[1]);
+			assert.strictEqual(oCreatedItemContext1.isTransient(), false);
+			assert.strictEqual(oCreatedItemContext1.getPath(),
+				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0010')");
+			assert.strictEqual(oCreatedItemContext2, oItemsBinding.getCurrentContexts()[0]);
+			assert.strictEqual(oCreatedItemContext2.isTransient(), false);
+			assert.strictEqual(oCreatedItemContext2.getPath(),
+				"/SalesOrderList('new')/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0020')");
+			assert.deepEqual(oCreatedItemContext1.getObject(), {
+				"@odata.etag" : "etag10",
+				// no GrossAmount
+				ItemPosition : "0010",
+				Note : "note*10",
+				SalesOrderID : "new"
+			});
+
+			that.expectChange("note", [, "note**10"])
+				.expectRequest({
+					method : "PATCH",
+					headers : {"If-Match" : "etag10"},
+					url : "SalesOrderList('new')"
+						+ "/SO_2_SOITEM(SalesOrderID='new',ItemPosition='0010')",
+					payload : {Note : "note**10"}
+				});
+
+			return Promise.all([
+				// code under test
+				oCreatedItemContext1.setProperty("Note", "note**10"),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert, "patch created-persisted item")
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario:
 	// (1) Binding for a part of a structural instance annotation works without binding the
 	//     property itself

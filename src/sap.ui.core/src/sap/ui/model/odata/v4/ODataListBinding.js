@@ -124,6 +124,7 @@ sap.ui.define([
 		// BEWARE: #doReplaceWith can insert a context w/ negative index, but w/o #created promise
 		// into aContexts' area of "created contexts"!
 		this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
+		this.bDeepCreate = false; // Whether the binding is within a deep create
 		this.iDeletedContexts = 0; // number of (client-side) deleted contexts
 		this.oDiff = undefined;
 		this.aFilters = [];
@@ -288,7 +289,7 @@ sap.ui.define([
 			// => reduced path may, but need not, be affected; other contexts for sure are!
 			asODataParentBinding.prototype.adjustPredicate.apply(this, arguments);
 			if (this.mCacheQueryOptions) {
-				// Note: this.oCache === null because of special case in #createAndSetCache
+				// Note: this.oCache === null because of #prepareDeepCreate
 				this.fetchCache(this.oContext, /*bIgnoreParentCache*/true);
 			}
 			this.oHeaderContext.adjustPredicate(sTransientPredicate, sPredicate);
@@ -693,8 +694,13 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.Context#requestSideEffects} in the same $batch to refresh the
 	 * complete collection containing the newly created entity.
 	 *
-	 * Note: A deep create is not supported. The dependent entity has to be created using a second
-	 * list binding. Note that it is not supported to bind relative to a transient context.
+	 * Since 1.112.0 it is possible to create nested entities in a collection-valued navigation
+	 * property together with the entity (so-called "deep create"), for example a list of items for
+	 * an order. For this purpose, bind the list relative to a transient context. Calling this
+	 * method then adds a transient entity to the parent's navigation property, which is sent with
+	 * the payload of the parent entity. Such a nested context also has a
+	 * {@link sap.ui.model.odata.v4.Context#created created} promise, which resolves when the deep
+	 * create resolves. Deep create is an <b>experimental</b> API.
 	 *
 	 * Note: Creating at the end is only allowed if the final length of the binding is known (see
 	 * {@link #isLengthFinal}), so that there is a clear position to place this entity at. This is
@@ -704,7 +710,8 @@ sap.ui.define([
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
 	 * @param {boolean} [bSkipRefresh]
-	 *   Whether an automatic refresh of the created entity will be skipped
+	 *   Whether an automatic refresh of the created entity will be skipped; ignored within a deep
+	 *   create (when the binding's parent context is transient)
 	 * @param {boolean} [bAtEnd]
 	 *   Whether the entity is inserted at the end of the list. Supported since 1.66.0.
 	 *   Since 1.99.0 the first insertion determines the overall position of created contexts
@@ -816,6 +823,9 @@ sap.ui.define([
 					that.adjustPredicate(sTransientPredicate, sPredicate, oContext);
 					that.oModel.checkMessages();
 				}
+			}
+			if (that.isTransient()) {
+				return;
 			}
 			that.fireEvent("createCompleted", {context : oContext, success : true});
 			sGroupId = that.getGroupId();
@@ -2849,6 +2859,38 @@ sap.ui.define([
 	};
 
 	/**
+	 * Prepares the binding for a deep create if there is a transient parent context. Adds a
+	 * transient collection to the parent binding's cache.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
+	 *   The parent context or <code>undefined</code> for absolute bindings
+	 * @param {object} mQueryOptions
+	 *   The binding's cache query options if it would create a cache
+	 * @returns {boolean}
+	 *   Whether the binding works with a transient parent context
+	 *
+	 * @private
+	 */
+	// @override sap.ui.model.odata.v4.ODataBinding#prepareDeepCreate
+	ODataListBinding.prototype.prepareDeepCreate = function (oContext, mQueryOptions) {
+		if (!(oContext && oContext.isTransient && oContext.isTransient()) || this.bDeepCreate) {
+			// only relevant if the context is transient and the binding is not in deep create yet
+			return false;
+		}
+
+		this.bDeepCreate = true;
+
+		// If there are mQueryOptions we must create a cache after the successful create
+		// (in adjustPredicate)
+		this.mCacheQueryOptions = mQueryOptions;
+		oContext.withCache(function (oCache, sPath) {
+			oCache.addTransientCollection(sPath, mQueryOptions);
+		}, this.sPath);
+
+		return true;
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
@@ -2890,6 +2932,7 @@ sap.ui.define([
 				iCreatedContexts = that.iCreatedContexts,
 				aContexts = that.aContexts.slice(0, iCreatedContexts),
 				aDependentBindings,
+				bDrop,
 				oKeptElementsPromise,
 				oPromise = that.oRefreshPromise;
 
@@ -2942,8 +2985,16 @@ sap.ui.define([
 			}
 			// Note: after reset the dependent bindings cannot be found anymore
 			aDependentBindings = that.getDependentBindings();
-			that.reset(ChangeReason.Refresh, !oCache || (bKeepCacheOnError ? false : undefined),
-				sGroupId); // this may reset that.oRefreshPromise
+			if (that.bDeepCreate) {
+				bDrop = false;
+				that.bDeepCreate = false; // after the final refresh deep create is finished
+			} else if (!oCache) {
+				bDrop = true;
+			} else if (bKeepCacheOnError) {
+				bDrop = false;
+			} // otherwise (default) undefined
+			// this may reset that.oRefreshPromise
+			that.reset(ChangeReason.Refresh, bDrop, sGroupId);
 			return SyncPromise.all(
 				refreshAll(aDependentBindings).concat(oPromise, oKeptElementsPromise)
 			).then(function () {

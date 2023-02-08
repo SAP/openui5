@@ -1058,6 +1058,9 @@ sap.ui.define([
 				mQueryOptions : undefined,
 				sReducedPath : "/resolved/path"
 			})));
+		oBindingMock.expects("prepareDeepCreate")
+			.withExactArgs(sinon.match.same(oContext), undefined)
+			.returns(false);
 		oBindingMock.expects("createAndSetCache").never();
 
 		// code under test
@@ -1106,6 +1109,9 @@ sap.ui.define([
 				mQueryOptions : mLocalQueryOptions,
 				sReducedPath : "/resolved/path"
 			})));
+		oBindingMock.expects("prepareDeepCreate")
+			.withExactArgs(undefined, sinon.match.same(mLocalQueryOptions))
+			.returns(false);
 		oBindingMock.expects("fetchResourcePath").withExactArgs(undefined)
 			.returns(SyncPromise.resolve("absolute"));
 		oBindingMock.expects("createAndSetCache")
@@ -1165,6 +1171,9 @@ sap.ui.define([
 			oBindingMock.expects("fetchQueryOptionsForOwnCache")
 				.withExactArgs(sinon.match.same(oContext), undefined)
 				.returns(oQueryOptionsPromise);
+			oBindingMock.expects("prepareDeepCreate")
+				.withExactArgs(sinon.match.same(oContext), sinon.match.same(mLocalQueryOptions))
+				.returns(false);
 			oBindingMock.expects("fetchResourcePath")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(oResourcePathPromise);
@@ -1222,6 +1231,9 @@ sap.ui.define([
 		this.mock(oRequestor).expects("ready")
 			.returns(SyncPromise.resolve(Promise.resolve().then(function () {
 				// Now that the requestor is ready, the cache must be created
+				oBindingMock.expects("prepareDeepCreate")
+					.withExactArgs(undefined, sinon.match.same(mLocalQueryOptions))
+					.returns(false);
 				oBindingMock.expects("fetchResourcePath").withExactArgs(undefined)
 					.returns(SyncPromise.resolve("absolute"));
 				oBindingMock.expects("createAndSetCache")
@@ -1336,6 +1348,40 @@ sap.ui.define([
 		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache")
 			.withExactArgs(sinon.match.same(oContext), undefined)
 			.returns(SyncPromise.resolve({}));
+		this.mock(oBinding).expects("prepareDeepCreate")
+			.withExactArgs(sinon.match.same(oContext), undefined).returns(false);
+		this.mock(oBinding).expects("fetchResourcePath").never();
+
+		// code under test
+		oBinding.fetchCache(oContext);
+
+		assert.strictEqual(oBinding.oCache, null);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
+		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCache: prepareDeepCreate", function (assert) {
+		var oBinding = new ODataBinding({
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
+				oModel : {
+					oRequestor : {
+						ready : function () { return SyncPromise.resolve(); }
+					},
+					getReporter : getForbiddenReporter
+				},
+				bRelative : true
+			}),
+			oContext = {};
+
+		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache")
+			.withExactArgs(sinon.match.same(oContext), undefined)
+			.returns(SyncPromise.resolve({mQueryOptions : "~mQueryOptions~"}));
+		this.mock(oBinding).expects("prepareDeepCreate")
+			.withExactArgs(sinon.match.same(oContext), "~mQueryOptions~")
+			.returns(true);
+		this.mock(oBinding).expects("fetchResourcePath").never();
 
 		// code under test
 		oBinding.fetchCache(oContext);
@@ -2781,6 +2827,7 @@ sap.ui.define([
 
 		this.mock(oContext).expects("getPath").withExactArgs()
 			.returns("/SalesOrderList('42')/SO_2_BP");
+		this.mock(oBinding).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oContext).expects("fetchCanonicalPath").never();
 		this.mock(_Helper).expects("buildPath")
 			.withExactArgs("/SalesOrderList('42')/SO_2_BP", "bindingPath")
@@ -2815,6 +2862,31 @@ sap.ui.define([
 		// code under test
 		return oBinding.fetchResourcePath(oContext).then(function (sResourcePath) {
 			assert.strictEqual(sResourcePath, "BusinessPartnerList('77')/bindingPath");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchResourcePath, V4 context, transient binding", function (assert) {
+		var oBinding = new ODataBinding({
+				sPath : "bindingPath",
+				bRelative : true
+			}),
+			oContext = {
+				fetchCanonicalPath : function () {},
+				getPath : function () {}
+			};
+
+		this.mock(oContext).expects("getPath").withExactArgs()
+			.returns("/A($uid=id-1-23)");
+		this.mock(oBinding).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext).expects("fetchCanonicalPath").never();
+		this.mock(_Helper).expects("buildPath")
+			.withExactArgs("/A($uid=id-1-23)", "bindingPath")
+			.returns("/A($uid=id-1-23)/bindingPath");
+
+		// code under test
+		return oBinding.fetchResourcePath(oContext).then(function (sResourcePath) {
+			assert.strictEqual(sResourcePath, "A($uid=id-1-23)/bindingPath");
 		});
 	});
 
@@ -3251,5 +3323,40 @@ sap.ui.define([
 
 		// code under test
 		oBinding.fireDataReceived("~oParameters~", true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isTransient", function (assert) {
+		var oBinding,
+			oContext = {isTransient : function () {}};
+
+		oBinding = new ODataBinding({bRelative : true, oContext : oContext}); // v4 context
+		this.mock(oContext).expects("isTransient").withExactArgs().returns("~bTransient~");
+
+		// code under test
+		assert.strictEqual(oBinding.isTransient(), "~bTransient~");
+
+		oBinding = new ODataBinding({bRelative : true, oContext : {}}); // base context
+
+		// code under test
+		assert.notOk(oBinding.isTransient());
+
+		oBinding = new ODataBinding({bRelative : true}); // unresolved
+
+		// code under test
+		assert.notOk(oBinding.isTransient());
+
+		oBinding = new ODataBinding({bRelative : false, oContext : oContext}); // absolute
+
+		// code under test
+		assert.notOk(oBinding.isTransient());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("prepareDeepCreate", function (assert) {
+		var oBinding = new ODataBinding();
+
+		// code under test
+		assert.strictEqual(oBinding.prepareDeepCreate(), false);
 	});
 });

@@ -340,6 +340,37 @@ sap.ui.define([
 	};
 
 	/**
+	 * Adds a collection below a transient element.
+	 *
+	 * @param {string} sPath - The collection path
+	 * @returns {object[]} The elements collection (either from the initial data or empty)
+	 *
+	 * @public
+	 */
+	_Cache.prototype.addTransientCollection = function (sPath) {
+		var aElements,
+			aSegments = sPath.split("/"),
+			sName = aSegments.pop(),
+			oParent = this.fetchValue(_GroupLock.$cached, aSegments.join("/")).getResult(),
+			oPostBody = _Helper.getPrivateAnnotation(oParent, "postBody");
+
+		function setPostBodyCollection() {
+			aElements.$postBodyCollection = oPostBody[sName] = [];
+		}
+
+		if (sName in oParent) {
+			throw new Error("Deep create with initial data is not supported yet");
+		}
+		aElements = oParent[sName] = [];
+		aElements.$count = aElements.$created = 0;
+		aElements.$byPredicate = {};
+		// allow creating on demand when there is a create in the child list
+		aElements.$postBodyCollection = setPostBodyCollection;
+
+		return aElements;
+	};
+
+	/**
 	 * Adjusts the indexes in the collection.
 	 *
 	 * @param {string} sPath The path of the collection in the cache
@@ -514,6 +545,7 @@ sap.ui.define([
 			]).then(function (aResult) {
 				var oCreatedEntity = aResult[0],
 					sPredicate,
+					sResultingPath,
 					aSelect;
 
 				_Helper.deletePrivateAnnotation(oEntityData, "postBody");
@@ -536,13 +568,16 @@ sap.ui.define([
 						// contexts still use the transient predicate to access the data
 					} // else: transient element was not kept by #reset, leave it like that!
 				}
-				// update the cache with the POST response (note that a deep create is not supported
-				// because updateSelected does not handle key predicates, ETags and $count)
+				// update the cache with the POST response
 				aSelect = _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath).$select;
-				_Helper.updateSelected(that.mChangeListeners,
-					_Helper.buildPath(sPath, sPredicate || sTransientPredicate), oEntityData,
+				sResultingPath = _Helper.buildPath(sPath, sPredicate || sTransientPredicate);
+				// update selected properties (incl. single-valued navigation properties), ETags,
+				// and predicates
+				_Helper.updateSelected(that.mChangeListeners, sResultingPath, oEntityData,
 					oCreatedEntity, aSelect, /*fnCheckKeyPredicate*/ undefined,
 					/*bOkIfMissing*/ true);
+				// update properties from collections in a deep create
+				that.updateNestedCreates(sResultingPath, oEntityData, oCreatedEntity);
 
 				that.removePendingRequest();
 				fnResolve(true);
@@ -609,6 +644,15 @@ sap.ui.define([
 		aCollection.$byPredicate = aCollection.$byPredicate || {};
 		aCollection.$byPredicate[sTransientPredicate] = oEntityData;
 		that.adjustIndexes(sPath, aCollection, 0, 1, 0, true);
+		if (aCollection.$postBodyCollection) { // within a deep create
+			if (typeof aCollection.$postBodyCollection === "function") {
+				aCollection.$postBodyCollection(); // creation on demand
+			}
+			_Helper.setPrivateAnnotation(oEntityData, "transient", sGroupId);
+			aCollection.$postBodyCollection.unshift(oPostBody);
+			oGroupLock.unlock();
+			return _Helper.addDeepCreatePromise(oEntityData);
+		}
 
 		return oPostPathPromise.then(function (sPostPath) {
 			sPostPath += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
@@ -2198,6 +2242,57 @@ sap.ui.define([
 			// send and register the PATCH request
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return patch(oGroupLock);
+		});
+	};
+
+	/**
+	 * Creates key predicates and updates listeners for nested entity collections after a deep
+	 * create.
+	 *
+	 * @param {string} sPath - The path of the created entity within the cache
+	 * @param {object} oEntity - The entity in the cache
+	 * @param {object} oCreatedEntity - The created entity from the response
+	 *
+	 * @private
+	 */
+	_Cache.prototype.updateNestedCreates = function (sPath, oEntity, oCreatedEntity) {
+		var that = this;
+
+		Object.keys(oEntity).forEach(function (sSegment) {
+			var vCollection = oEntity[sSegment],
+				sCollectionPath,
+				aCreatedCollection,
+				mQueryOptions;
+
+			if (vCollection && vCollection.$postBodyCollection) {
+				aCreatedCollection = oCreatedEntity[sSegment];
+				if (aCreatedCollection) { // otherwise no create was called in nested list binding
+					sCollectionPath = sPath + "/" + sSegment;
+					mQueryOptions
+						= _Helper.getQueryOptionsForPath(that.mQueryOptions, sCollectionPath);
+					aCreatedCollection.forEach(function (oCreatedChildEntity, i) {
+						var oChildEntity = vCollection[i],
+							sPredicate
+								= _Helper.getPrivateAnnotation(oCreatedChildEntity, "predicate"),
+							fnResolve = _Helper.getPrivateAnnotation(oChildEntity, "resolve"),
+							sTransientPredicate = _Helper.getPrivateAnnotation(oChildEntity,
+								"transientPredicate");
+
+						_Helper.updateTransientPaths(that.mChangeListeners, sTransientPredicate,
+							sPredicate);
+						vCollection.$byPredicate[sPredicate] = oChildEntity;
+						_Helper.updateSelected(that.mChangeListeners, sCollectionPath + sPredicate,
+							oChildEntity, oCreatedChildEntity, mQueryOptions.$select,
+							/*fnCheckKeyPredicate*/undefined, true);
+						_Helper.deletePrivateAnnotation(oChildEntity, "postBody");
+						_Helper.deletePrivateAnnotation(oChildEntity, "resolve");
+						_Helper.deletePrivateAnnotation(oChildEntity, "transient");
+						delete oChildEntity["@$ui5.context.isTransient"];
+						fnResolve(oChildEntity); // resolve the create promise
+					});
+				}
+				delete vCollection.$postBodyCollection;
+			}
 		});
 	};
 

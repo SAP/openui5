@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/uid",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/URI"
-], function (Log, deepEqual, isEmptyObject, merge, uid, URI) {
+], function (Log, deepEqual, isEmptyObject, merge, uid, SyncPromise, URI) {
 	"use strict";
 
 	var rAmpersand = /&/g,
@@ -86,6 +87,18 @@ sap.ui.define([
 					}
 				});
 			}
+		},
+
+		/**
+		 * Adds a SyncPromise to private annotations of the element and returns it.
+		 *
+		 * @param {object} oElement - The cache element
+		 * @returns {sap.ui.base.SyncPromise} The promise
+		 */
+		addDeepCreatePromise : function (oElement) {
+			return new SyncPromise(function (fnResolve) {
+				_Helper.setPrivateAnnotation(oElement, "resolve", fnResolve);
+			});
 		},
 
 		/**
@@ -2503,8 +2516,11 @@ sap.ui.define([
 						}
 					} else if (Array.isArray(vSourceProperty)) {
 						// copy complete collection; no change events as long as collection-valued
-						// properties are not supported
-						oTarget[sProperty] = vSourceProperty;
+						// properties are not supported; transient entity collections from a deep
+						// insert are handled elsewhere
+						if (!(vTargetProperty && vTargetProperty.$transient)) {
+							oTarget[sProperty] = vSourceProperty;
+						}
 					} else if (vSourceProperty && typeof vSourceProperty === "object"
 							&& !sProperty.includes("@")) {
 						oTarget[sProperty] = update(sPropertyPath, vSelected, vTargetProperty || {},

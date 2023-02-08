@@ -521,12 +521,15 @@ sap.ui.define([
 		];
 		this.mCacheQueryOptions = undefined;
 		this.oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
-			var mQueryOptions = aResult[0].mQueryOptions;
+			var mQueryOptions = aResult[0].mQueryOptions,
+				bPreparedDeepCreate = that.prepareDeepCreate(oContext, mQueryOptions);
 
 			that.sReducedPath = aResult[0].sReducedPath;
 
-			// Note: do not create a cache for a virtual context
-			if (mQueryOptions && !(oContext && oContext.iIndex === Context.VIRTUAL)) {
+			// If there are mQueryOptions, the binding must create a cache. Do not create a cache if
+			// a deep create was prepared or for a virtual context
+			if (mQueryOptions && !bPreparedDeepCreate
+					&& !(oContext && oContext.iIndex === Context.VIRTUAL)) {
 				return that.fetchResourcePath(oContext).then(function (sResourcePath) {
 					var oError;
 
@@ -692,7 +695,7 @@ sap.ui.define([
 		sContextPath = oContext.getPath();
 		bCanonicalPath = oContext.fetchCanonicalPath
 			&& (this.mParameters && this.mParameters.$$canonicalPath
-				|| rIndexOrTransientPredicate.test(sContextPath));
+				|| !this.isTransient() && rIndexOrTransientPredicate.test(sContextPath));
 		oContextPathPromise = bCanonicalPath
 			? oContext.fetchCanonicalPath()
 			: SyncPromise.resolve(sContextPath);
@@ -1022,6 +1025,18 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Whether the binding is transient (relative to a transient context).
+	 *
+	 * @returns {boolean} Whether the binding is transient
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.isTransient = function () {
+		return this.bRelative && this.oContext && this.oContext.isTransient
+			&& this.oContext.isTransient();
+	};
+
+	/**
 	 * Method not supported
 	 *
 	 * @returns {boolean}
@@ -1102,6 +1117,23 @@ sap.ui.define([
 	 * @name sap.ui.model.odata.v4.ODataBinding#onDelete
 	 * @private
 	 */
+
+	/**
+	 * Prepares the binding for a deep create if there is a transient parent context. The default
+	 * implementation does nothing.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} [_oContext]
+	 *   The parent context
+	 * @param {object} _mQueryOptions
+	 *   The binding's cache query options if it would create a cache
+	 * @returns {boolean}
+	 *   Whether the binding works with a transient parent context
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.prepareDeepCreate = function (_oContext, _mQueryOptions) {
+		return false;
+	};
 
 	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
