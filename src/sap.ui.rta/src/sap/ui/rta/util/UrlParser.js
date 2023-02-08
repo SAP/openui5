@@ -16,21 +16,28 @@ sap.ui.define([], function() {
 		return module.getParams()[sParamName];
 	};
 
-	module.getParams = function () {
-		return document.location.search
-			.replace(/^\?/, '')
-			.split('&')
+	/**
+	 * Get URL parameters object from the url or given url string
+	 * @param {string} [sUrl] - Url parameter string notation starting with ? and following key value pair
+	 * @returns {object} Object with key value pairs of given parameters
+	 */
+	module.getParams = function (sUrl) {
+		sUrl = (sUrl || sUrl === "") ? sUrl : document.location.search;
+		return sUrl
+			.replace(/^\?/, "")
+			.split("&")
 			.reduce(function (mParams, sParam) {
-				var aParts = sParam.split('='); //split on key/value
+				var aParts = sParam.split("="); //split on key/value
 				var sValue = aParts[1];
 
 				switch (sValue) {
-					case 'true':
+					case "true":
 						sValue = true;
 						break;
-					case 'false':
+					case "false":
 						sValue = false;
 						break;
+					default: break;
 				}
 
 				mParams[aParts[0]] = sValue;
