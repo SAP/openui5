@@ -1587,6 +1587,9 @@ sap.ui.define([
 		}.bind(this));
 
 
+		assert.ok(!this.oVM.getSupportContexts());
+		this.oVM.setSupportContexts(true);
+
 		this.oVM._sStyleClass = "STYLECLASS";
 		this.oVM._createManagementDialog();
 		assert.ok(this.oVM.oManagementDialog, "manage dialog should exists.");
@@ -1594,6 +1597,8 @@ sap.ui.define([
 		this.oVM.oManagementDialog.attachAfterOpen(function() {
 			var oIcon = null;
 			var oRb = this.oVM._oRb;
+
+			assert.ok(this.oVM.getSupportContexts());
 
 			var aItems = this.oVM.oManagementTable.getItems();
 			assert.ok(aItems, "items in the management table exists");

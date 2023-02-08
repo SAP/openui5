@@ -1331,12 +1331,17 @@ sap.ui.define([
 				resolve({});
 			});
 
+			assert.ok(!this._oVM.getSupportContexts());
+			this._oVM.setSupportContexts(true);
+
 			this._oVM._sStyleClass = "KUStyle";
 			this._oVM._createManagementDialog();
 			assert.ok(this._oVM.oManagementDialog);
 
 
 			this._oVM.oManagementDialog.attachAfterOpen(function() {
+				assert.ok(this._oVM.getSupportContexts());
+
 				var aRows = this._oVM.oManagementTable.getItems();
 				assert.ok(aRows);
 				assert.equal(aRows.length, 5);
