@@ -454,7 +454,7 @@ sap.ui.define([
 		 *
 		 * @param {string} [options.fragmentId] @since 1.63 The ID of a fragment. If set, controls will match only if their IDs contain the fragment ID prefix.
 		 *
-		 * @param {function|array|object|sap.ui.test.matchers.Matcher} [options.matchers] Matchers used to filter controls.
+		 * @param {function(sap.ui.core.Element)|Object<string,object>|sap.ui.test.matchers.Matcher|Array<function(sap.ui.core.Element)>|Array<Object<string,object>>|sap.ui.test.matchers.Matcher[]} [options.matchers] Matchers used to filter controls.
 		 * Could be a function, a single matcher instance, an array of matcher instances, or, since version 1.72, a plain
 		 * object to specify matchers declaratively. For a full list of built-in matchers, see {@link sap.ui.test.matchers}.
 		 *
@@ -547,10 +547,10 @@ sap.ui.define([
 		 * @param {int} [options.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.O means it will wait forever.
 		 * @param {int} [options.debugTimeout=0] @since 1.47 (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
 		 * @param {int} [options.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
-		 * @param {function} [options.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
+		 * @param {function((sap.ui.core.Element|sap.ui.core.Element[])): boolean} [options.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
 		 * The first parameter passed into the function is the same value that gets passed to the success function.
 		 * Returning something other than boolean in check will not change the first parameter of success.
-		 * @param {function} [options.success] Will get invoked after the following conditions are met:
+		 * @param {function((sap.ui.core.Element|sap.ui.core.Element[]))} [options.success] Will get invoked after the following conditions are met:
 		 * <ol>
 		 *     <li>
 		 *         One or multiple controls were found using controlType, Id, viewName. If visible is true (it is by default), the controls also need to be rendered.
@@ -747,7 +747,7 @@ sap.ui.define([
 				if (iFrameLauncher.hasLaunched() && Array.isArray(vResult)) {
 					// People are using instanceof Array in their check so i need to make sure the Array
 					// comes from the current document. I cannot use slice(0) or map because the original array is kept
-					// so i need to use the slowest way to create a swallow copy of the array
+					// so i need to use the slowest way to create a shallow copy of the array
 					var aResult = [];
 					vResult.forEach(function (oControl) {
 						aResult.push(oControl);
