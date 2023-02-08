@@ -7,6 +7,7 @@
 		class="sapUiSmallMargin">
 
 		<NavContainer
+			navigationFinished="onNavigationFinished"
 			id="navCon"
 			width="98%"
 			height="16em"
