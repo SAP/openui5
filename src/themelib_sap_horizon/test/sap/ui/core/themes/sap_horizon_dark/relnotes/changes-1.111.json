@@ -3,9 +3,31 @@
     "date": "February 2023",
     "notes": [
       {
+        "id": "e1c2ce595e3e07b5edc90201a279bb3cc6ead552",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Icons correctly aligned in Horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380016164"
+          }
+        ]
+      },
+      {
         "id": "d5b598a3abeb06653484dfe8cae110d46c98c7b5",
         "type": "FIX",
         "text": " sap.m.InputBase: Icon's line-height adjusted"
+      },
+      {
+        "id": "ba442bbbb0451e156cf71f432ee456ebd95a3db3",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: fixed visualization of Emphasized SplitButton",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380011180"
+          }
+        ]
       },
       {
         "id": "41a869d0fa642d6b5d5fec95df94c49b0a6f7fde",

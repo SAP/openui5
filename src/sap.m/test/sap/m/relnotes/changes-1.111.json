@@ -3,6 +3,71 @@
     "date": "February 2023",
     "notes": [
       {
+        "id": "9e79fcd2ba73209cdd0edea518efbd44af608f9f",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: add more date range options"
+      },
+      {
+        "id": "f9817f5555814e982e9b9f6125ce6bda084a7eca",
+        "type": "FIX",
+        "text": " sap.m.SplitApp: Fixed failing test on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270154471"
+          }
+        ]
+      },
+      {
+        "id": "75c80d08fb02708163eb2241874d695dfbd7c862",
+        "type": "FIX",
+        "text": " core/Icon: use pseudo keyboard event to fire \"press\" event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380023188"
+          }
+        ]
+      },
+      {
+        "id": "583c8ae9c5c043f97ca8a917c911e0ee529fecb7",
+        "type": "FIX",
+        "text": " sap.m.Carousel: setActivePage now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280200416"
+          }
+        ]
+      },
+      {
+        "id": "74b8ba431b98796514a592df0c611bf27aad83d9",
+        "type": "FIX",
+        "text": " sap.m.MessageView: prevent exception when only subtitle of the item is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380027474"
+          }
+        ]
+      },
+      {
+        "id": "5f3a46165e71342f63d8fc208085519bc561cdd9",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: menu closes with Escape if all menu items are disabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270174053"
+          }
+        ]
+      },
+      {
+        "id": "33b73ba889b45f8a379c7b76b719e2681df15c6f",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: adjust focus handling"
+      },
+      {
         "id": "c2997e0e3fff18957c3e111d2145e25ecb900fb2",
         "type": "FIX",
         "text": " sap.m.MultiInput: Focus correct token after binding change",
@@ -26,6 +91,17 @@
           {
             "type": "BCP",
             "reference": "2270182409"
+          }
+        ]
+      },
+      {
+        "id": "4032cf8ae5b641457d5b92a4612dbcb7f5cfd32e",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: improve navigation in options list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380000923"
           }
         ]
       },

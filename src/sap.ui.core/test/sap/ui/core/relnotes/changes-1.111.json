@@ -3,6 +3,53 @@
     "date": "February 2023",
     "notes": [
       {
+        "id": "e25c3dbb21fa473e6548c411fa0d44a3ac6de90d",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.Date#getModelValue"
+      },
+      {
+        "id": "57ae61d97d3017a61586c97772eac7e71437e5c2",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.TimeOfDay#getModelValue"
+      },
+      {
+        "id": "a6c717dd8e84e4df189d308b6f2a8110f012a919",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.Time#getModelValue"
+      },
+      {
+        "id": "9e79fcd2ba73209cdd0edea518efbd44af608f9f",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: add more date range options"
+      },
+      {
+        "id": "e1e74a350e41dfa11d4cd9a1881a5fab093b0bc3",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.DateTime|DateTimeOffset#getModelValue"
+      },
+      {
+        "id": "75c80d08fb02708163eb2241874d695dfbd7c862",
+        "type": "FIX",
+        "text": " core/Icon: use pseudo keyboard event to fire \"press\" event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380023188"
+          }
+        ]
+      },
+      {
+        "id": "9c6d943314b353d58341a23c29ad2d27df3afd2a",
+        "type": "FIX",
+        "text": " core.Control: Don't remove afterRendering delegates when busy/blocked state is toggled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270180106"
+          }
+        ]
+      },
+      {
         "id": "989a5c0a86db2e6b7355986535e0105fcc623eb1",
         "type": "FIX",
         "text": " jquery: cleanup handler of swipe/taphold event after dragstart",

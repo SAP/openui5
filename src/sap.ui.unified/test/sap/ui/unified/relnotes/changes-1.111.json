@@ -3,6 +3,11 @@
     "date": "February 2023",
     "notes": [
       {
+        "id": "33b73ba889b45f8a379c7b76b719e2681df15c6f",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: adjust focus handling"
+      },
+      {
         "id": "2c2154605fa7de6ea59d4268c185f453664eee9a",
         "type": "FIX",
         "text": " sap.ui.unified.CalendarLegend: fixed JS error when there are no standard legend items",
