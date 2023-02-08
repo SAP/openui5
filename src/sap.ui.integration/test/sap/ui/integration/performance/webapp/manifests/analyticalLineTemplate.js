@@ -1,9 +1,10 @@
 sap.ui.define([], function () {
-	'use strict';
+	"use strict";
+
 	return {
 		"_version": "1.14.0",
 		"sap.app": {
-			"id": "cards.performance.manifests.analyticalCard",
+			"id": "",
 			"type": "card",
 			"title": "Sample of a Line Chart",
 			"subTitle": "Sample of a Line Chart",

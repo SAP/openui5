@@ -1,9 +1,10 @@
 sap.ui.define([], function () {
-	'use strict';
+	"use strict";
+
 	return {
 		"sap.app": {
 			"type": "card",
-			"id": "cards.performance.manifests.extension"
+			"id": ""
 		},
 		"sap.card": {
 			"extension": "./extensions/CustomFormattersExtension",

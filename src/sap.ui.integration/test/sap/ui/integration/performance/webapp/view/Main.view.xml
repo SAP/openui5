@@ -3,8 +3,10 @@
 	xmlns ="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
-	xmlns:w="sap.ui.integration.widgets"
-	xmlns:cssgrid="sap.ui.layout.cssgrid">
-	<f:GridContainer id="cardsContainer" class="sapUiSmallMargin">
-	</f:GridContainer>
+	displayBlock="true">
+	<App>
+		<Page showHeader="false">
+			<f:GridContainer id="cardsContainer" class="sapUiSmallMargin" snapToRow="true"></f:GridContainer>
+		</Page>
+	</App>
 </mvc:View>

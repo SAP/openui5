@@ -1,8 +1,9 @@
 sap.ui.define([], function () {
-	'use strict';
+	"use strict";
+
 	return {
 		"sap.app": {
-			"id": "cards.performance.bulletChart.list.card",
+			"id": "",
 			"type": "card",
 			"title": "Sample of a List with Bullet Chart",
 			"subTitle": "Sample of a List with Bullet Chart",
@@ -88,7 +89,7 @@ sap.ui.define([], function () {
 						}
 					]
 				},
-				"maxItems": 5,
+				"maxItems": 4,
 				"item": {
 					"title": "{Name}",
 					"description": "{Description}",

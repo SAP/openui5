@@ -1,60 +1,106 @@
 sap.ui.define([
-		"sap/ui/core/mvc/Controller",
-		"sap/ui/integration/widgets/Card",
-		"sap/f/GridContainerItemLayoutData",
-		"cards/performance/manifests/objectCardManifest",
-		"cards/performance/manifests/additionalObjectCardManifest",
-		"cards/performance/manifests/listCardManifest",
-		"cards/performance/manifests/tableCardManifest",
-		"cards/performance/manifests/numericListCardManifest",
-		"cards/performance/manifests/analyticalCardManifest",
-		"cards/performance/manifests/timelineCardManifest",
-		"cards/performance/manifests/calendarCardManifest",
-		"cards/performance/manifests/extensionsCardManifest",
-		"cards/performance/manifests/adaptiveCardManifest",
-		"cards/performance/manifests/filterCardManifest",
-		"cards/performance/manifests/bulletChartCardManifest"
-	],
-	function (Controller, Card, GridContainerItemLayoutData,
-		ObjectCardManifest, AdditionalObjectCardManifest, ListCarManifest, TableCardManifest, NumericListCardManifest, AnalyticalCardManifest,
-		TimeLineCardManifest, CalendarCardManifest, ExtensionsCardManifest, AdaptiveCardManifest,
-		FilterCardManifest, BulletChartCardManifest) {
-		"use strict";
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/integration/library",
+	"sap/ui/integration/widgets/Card",
+	"sap/f/GridContainerItemLayoutData",
+	"../manifests/objectCardSimpleTemplate",
+	"../manifests/objectCardInputsTemplate",
+	"../manifests/objectCardAdditionalDetailsTemplate",
+	"../manifests/listCardBarChartTemplate",
+	"../manifests/listBulletChartTemplate",
+	"../manifests/listCardQuickActionsTemplate",
+	"../manifests/analyticalLineTemplate",
+	"../manifests/analyticalDonutTemplate",
+	"../manifests/timelineTemplate",
+	"../manifests/calendarTemplate",
+	"../manifests/tableTemplate",
+	"../manifests/extensionFormattersTemplate",
+	"../manifests/adaptiveMarkdownTemplate",
+	"../manifests/adaptiveTemplatingTemplate",
+	"../manifests/filterSelectTemplate",
+	"../manifests/filterMultipleTemplate"
+], function (
+	Controller,
+	integrationLibrary,
+	Card,
+	GridContainerItemLayoutData,
+	objectCardSimpleTemplate,
+	objectCardInputsTemplate,
+	objectCardAdditionalDetailsTemplate,
+	listCardBarChartTemplate,
+	listBulletChartTemplate,
+	listCardQuickActionsTemplate,
+	analyticalLineTemplate,
+	analyticalDonutTemplate,
+	timelineTemplate,
+	calendarTemplate,
+	tableTemplate,
+	extensionFormattersTemplate,
+	adaptiveMarkdownTemplate,
+	adaptiveTemplatingTemplate,
+	filterSelectTemplate,
+	filterMultipleTemplate
+) {
+	"use strict";
 
-		return Controller.extend("cards.performance.controller.Main", {
-			onInit: function () {
+	var TOTAL_CARDS_COUNT = 50;
+	var CardDataMode = integrationLibrary.CardDataMode;
+	var sCardsBaseUrl = sap.ui.require.toUrl("cards/performance/manifests/");
+	var aTemplates = [
+		{ manifest: objectCardSimpleTemplate, layout: { columns: 8, minRows: 3 } },
+		{ manifest: objectCardAdditionalDetailsTemplate, layout: { columns: 4, minRows: 5 } },
+		{ manifest: listCardQuickActionsTemplate, layout: { columns: 4, minRows: 5 } },
+		{ manifest: listCardBarChartTemplate, layout: { columns: 4, minRows: 5 } },
+		{ manifest: listBulletChartTemplate, layout: { columns: 4, minRows: 5 } },
+		{ manifest: analyticalLineTemplate, layout: { columns: 4, minRows: 4 } },
+		{ manifest: objectCardInputsTemplate, layout: { columns: 4, minRows: 7 } },
+		{ manifest: analyticalDonutTemplate, layout: { columns: 4, minRows: 3 } },
+		{ manifest: calendarTemplate, layout: { columns: 8, minRows: 6 } },
+		{ manifest: tableTemplate, layout: { columns: 8, minRows: 4 } },
+		{ manifest: timelineTemplate, layout: { columns: 4, minRows: 5 } },
+		{ manifest: extensionFormattersTemplate, layout: { columns: 4, minRows: 5 } },
+		{ manifest: adaptiveMarkdownTemplate, layout: { columns: 4, minRows: 4 } },
+		{ manifest: adaptiveTemplatingTemplate, layout: { columns: 4, minRows: 4 } },
+		{ manifest: filterSelectTemplate, layout: { columns: 4, minRows: 5 } },
+		{ manifest: filterMultipleTemplate, layout: { columns: 4, minRows: 5 } }
+	];
 
-				var oContainer = this.byId("cardsContainer"),
-					iNumberOfCards = 5;
-				oContainer.destroyItems();
+	return Controller.extend("cards.performance.controller.Main", {
+		onInit: function () {
+			var aCardsSettings = [];
+			var iCurrTemplate = 0;
 
-				this._generateCards(oContainer, iNumberOfCards, ObjectCardManifest);
-				this._generateCards(oContainer, iNumberOfCards, AdditionalObjectCardManifest);
-				this._generateCards(oContainer, iNumberOfCards, ListCarManifest);
-				this._generateCards(oContainer, iNumberOfCards, TableCardManifest);
-				this._generateCards(oContainer, iNumberOfCards, NumericListCardManifest);
-				this._generateCards(oContainer, iNumberOfCards, AnalyticalCardManifest);
-				this._generateCards(oContainer, iNumberOfCards, TimeLineCardManifest);
-				this._generateCards(oContainer, iNumberOfCards, CalendarCardManifest);
-				this._generateCards(oContainer, iNumberOfCards, AdaptiveCardManifest);
-				this._generateCards(oContainer, iNumberOfCards, FilterCardManifest);
-				this._generateCards(oContainer, iNumberOfCards, ExtensionsCardManifest);
-				this._generateCards(oContainer, iNumberOfCards, BulletChartCardManifest);
-			},
-
-			_generateCards: function (oContainer, iNumberOfCards, oManifest) {
-
-				for (var i = 0; i < iNumberOfCards; i++) {
-					var oCard = new Card({
-						layoutData: new GridContainerItemLayoutData({
-							columns: 4
-						}),
-						baseUrl: sap.ui.require.toUrl("cards/performance/manifests/")
-					});
-					oManifest["sap.card"].id = oManifest["sap.card"].id + i;
-					oCard.setManifest(oManifest);
-					oContainer.addItem(oCard);
-				}
+			// Generate cards from templates, until the total count reaches TOTAL_CARDS_COUNT
+			while (aCardsSettings.length < TOTAL_CARDS_COUNT) {
+				var oSettings = aTemplates[iCurrTemplate];
+				oSettings.manifest["sap.app"].id = "cards.performance.manifests.generatedCard-" + aCardsSettings.length;
+				aCardsSettings.push(oSettings);
+				iCurrTemplate = (iCurrTemplate + 1) % aTemplates.length;
 			}
-		});
+
+			this._createCards(aCardsSettings);
+		},
+
+		_createCards: function (aCardsSettings) {
+			var sDataMode = this._getDataMode();
+			var oContainer = this.byId("cardsContainer");
+
+			aCardsSettings.forEach(function (oCardSettings) {
+				oContainer.addItem(new Card({
+					manifest: oCardSettings.manifest,
+					layoutData: new GridContainerItemLayoutData(oCardSettings.layout),
+					baseUrl: sCardsBaseUrl,
+					dataMode: sDataMode
+				}));
+			});
+		},
+
+		_getDataMode: function () {
+			if (new URLSearchParams(document.location.search).get("lazy-loading") === "true") {
+				return CardDataMode.Auto;
+			}
+
+			return CardDataMode.Active;
+		}
 	});
+});

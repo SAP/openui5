@@ -1,9 +1,10 @@
 sap.ui.define([], function () {
-	'use strict';
+	"use strict";
+
 	return {
 		"_version": "1.15.0",
 		"sap.app": {
-			"id": "cards.performance.manifests.tableCard",
+			"id": "",
 			"type": "card",
 			"title": "Sample of a Table Card",
 			"subTitle": "Sample of a Table Card",
@@ -61,46 +62,6 @@ sap.ui.define([], function () {
 						"status": "Delivered",
 						"statusState": "Success",
 						"deliveryProgress": 100
-					},
-					{
-						"salesOrder": "5000010054",
-						"customerName": "Development Para O Governo",
-						"netAmount": "7K USD",
-						"status": "Delivered",
-						"statusState": "Success",
-						"deliveryProgress": 100
-					},
-					{
-						"salesOrder": "5000010050",
-						"customerName": "Robert Brown Entertainment",
-						"netAmount": "2K USD",
-						"status": "Delivered",
-						"statusState": "Success",
-						"deliveryProgress": 100
-					},
-					{
-						"salesOrder": "5000010051",
-						"customerName": "Entertainment Argentinia",
-						"netAmount": "127k USD",
-						"status": "Canceled",
-						"statusState": "Error",
-						"deliveryProgress": 0
-					},
-					{
-						"salesOrder": "5000010052",
-						"customerName": "Brazil Technologies",
-						"netAmount": "8K USD",
-						"status": "In Progress",
-						"statusState": "Warning",
-						"deliveryProgress": 27
-					},
-					{
-						"salesOrder": "5000010052",
-						"customerName": "Brazil Technologies",
-						"netAmount": "8K USD",
-						"status": "In Progress",
-						"statusState": "Warning",
-						"deliveryProgress": 51
 					}
 				]
 			},
@@ -109,7 +70,7 @@ sap.ui.define([], function () {
 				"subTitle": "Today"
 			},
 			"content": {
-				"maxItems": 9,
+				"maxItems": 4,
 				"row": {
 					"columns": [{
 							"title": "Sales Order",

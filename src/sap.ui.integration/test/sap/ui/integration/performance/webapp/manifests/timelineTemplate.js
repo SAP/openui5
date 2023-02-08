@@ -1,9 +1,10 @@
 sap.ui.define([], function () {
-	'use strict';
+	"use strict";
+
 	return {
 		"_version": "1.15.0",
 		"sap.app": {
-			"id": "cards.performance.manifests.timelineCard",
+			"id": "",
 			"type": "card",
 			"title": "Sample of a Activities Timeline",
 			"subTitle": "Sample of a Activities Timeline",

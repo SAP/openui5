@@ -1,9 +1,10 @@
 sap.ui.define([], function () {
-	'use strict';
+	"use strict";
+
 	return {
 		"_version": "1.14.0",
 		"sap.app": {
-			"id": "cards.performance.manifests.calendarCard",
+			"id": "",
 			"type": "card",
 			"title": "Sample of a List with Highlight",
 			"subTitle": "Sample of a Calendar with Highlight",
