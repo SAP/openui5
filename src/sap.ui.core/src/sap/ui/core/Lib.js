@@ -1180,8 +1180,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Library.init = function(mSettings) {
-		assert(typeof mSettings === "object" , "mSettings given to 'sap/ui/core/Lib.create' must be an object");
-		assert(typeof mSettings.name === "string" && mSettings.name, "mSettings given to 'sap/ui/core/Lib.create' must have the 'name' property set");
+		assert(typeof mSettings === "object" , "mSettings given to 'sap/ui/core/Lib.init' must be an object");
+		assert(typeof mSettings.name === "string" && mSettings.name, "mSettings given to 'sap/ui/core/Lib.init' must have the 'name' property set");
 
 		var METHOD = "sap/ui/core/Lib.init";
 		Log.debug("Analyzing Library " + mSettings.name, null, METHOD);
@@ -1457,7 +1457,7 @@ sap.ui.define([
 					// check for legacy code
 					if (!aLibs[index].isSettingsEnhanced()) {
 						Log.warning("library " + aLibs[index].name + " didn't initialize itself");
-						Library.create(aLibs[index].name); // TODO redundant to generated initLibrary call....
+						Library.init({ name: aLibs[index].name }); // TODO redundant to generated initLibrary call....
 					}
 				});
 			}
