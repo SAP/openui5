@@ -1,0 +1,114 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:custom="sap.ui.documentation"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:l="sap.ui.layout">
+	<l:BlockLayoutCell
+			backgroundColorSet="ColorSet10"
+			backgroundColorShade="ShadeB">
+		<l:VerticalLayout
+				width="100%">
+			<custom:TitleLink
+				href="topic/bf2d55eaa33b44a78ef95e7946d658e8"
+				text="{i18n>WELCOME_BLOCK_4_TITLE}"
+				class="sapUiSmallMarginBottom"
+				titleStyle="H2"/>
+			<Text
+					text="{i18n>WELCOME_BLOCK_4_TEXT_1}"
+					class="sapUiSmallMarginBottom"/>
+				<HBox>
+					<core:Icon
+							src="sap-icon://accept"
+							size="0.875rem"
+							color="Default"
+							class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+					<Text text="{i18n>WELCOME_BLOCK_4_TEXT_2}"/>
+				</HBox>
+				<HBox>
+					<core:Icon
+							src="sap-icon://accept"
+							size="0.875rem"
+							color="Default"
+							class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+					<Text text="{i18n>WELCOME_BLOCK_4_TEXT_3}"/>
+				</HBox>
+				<HBox>
+					<core:Icon
+							src="sap-icon://accept"
+							size="0.875rem"
+							color="Default"
+							class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+					<Text text="{i18n>WELCOME_BLOCK_4_TEXT_4}"/>
+				</HBox>
+				<HBox>
+					<core:Icon
+							src="sap-icon://accept"
+							size="0.875rem"
+							color="Default"
+							class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+					<Text text="{i18n>WELCOME_BLOCK_4_TEXT_5}"/>
+				</HBox>
+				<HBox>
+					<core:Icon
+							src="sap-icon://accept"
+							size="0.875rem"
+							color="Default"
+							class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+					<Text text="{i18n>WELCOME_BLOCK_4_TEXT_6}"/>
+				</HBox>
+				<HBox>
+					<core:Icon
+							src="sap-icon://accept"
+							size="0.875rem"
+							color="Default"
+							class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+					<Text text="{i18n>WELCOME_BLOCK_4_TEXT_7}"/>
+				</HBox>
+				<HBox>
+					<core:Icon
+							src="sap-icon://accept"
+							size="0.875rem"
+							color="Default"
+							class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+					<Text text="{i18n>WELCOME_BLOCK_4_TEXT_8}"/>
+				</HBox>
+		</l:VerticalLayout>
+	</l:BlockLayoutCell>
+
+	<l:BlockLayoutCell
+			backgroundColorSet="ColorSet10"
+			backgroundColorShade="ShadeA">
+		<l:Grid
+				defaultSpan="L6 M12 S12"
+				hSpacing="0"
+				vSpacing="0">
+			<l:VerticalLayout width="100%">
+				<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+					<custom:TitleLink
+						href="https://experience.sap.com/fiori-design/"
+						text="{i18n>WELCOME_BLOCK_5_TITLE}"
+						titleStyle="H2"
+						target="_blank"/>
+					<Image
+						src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
+						tooltip="{i18n>LEGAL_DISCLAIMER_EXTERNAL_TOOLTIP}"
+						width="1.25rem"
+						press="onDisclaimerLinkPress"/>
+				</html:div>
+				<Text
+						text="{i18n>WELCOME_BLOCK_5_TEXT}"
+						class="sapUiSmallMarginBottom"/>
+			</l:VerticalLayout>
+			<Image
+					src="./resources/sap/ui/documentation/sdk/images/Fiori_design_examples.png"
+					alt="{i18n>WELCOME_BLOCK_5_IMG_ALT}"
+					densityAware="false"
+					width="100%">
+				<layoutData>
+					<l:GridData span="L6 M12 S12"/>
+				</layoutData>
+			</Image>
+		</l:Grid>
+	</l:BlockLayoutCell>
+</core:FragmentDefinition>
