@@ -1183,4 +1183,34 @@ sap.ui.define([
 		assert.strictEqual(oDate.toLocaleDateString("de-DE", {day: "2-digit", month: "2-digit"}),
 			"05.01.");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("checkDate", function (assert) {
+		var oDate = new Date(),
+			oConfigurationMock = this.mock(Configuration),
+			oTimezoneUtilMock = this.mock(TimezoneUtil);
+
+		// code under test
+		UI5Date.checkDate(new UI5Date([], "Europe/Berlin"));
+
+		oConfigurationMock.expects("getTimezone").withExactArgs().returns("~configuredTimezone");
+		oTimezoneUtilMock.expects("getLocalTimezone").withExactArgs().returns("~localTimezone");
+
+		// code under test
+		assert.throws(function () {
+			UI5Date.checkDate(oDate);
+		}, new Error("Configured time zone requires the parameter 'oDate' to be an instance of "
+			+ "sap.ui.core.date.UI5Date"));
+
+		oConfigurationMock.expects("getTimezone").withExactArgs().returns("~localTimezone");
+		oTimezoneUtilMock.expects("getLocalTimezone").withExactArgs().returns("~localTimezone");
+
+		// code under test
+		UI5Date.checkDate(oDate);
+
+		// code under test
+		assert.throws(function () {
+			UI5Date.checkDate(new Date("invalid"));
+		}, new Error("The given Date is not valid"));
+	});
 });

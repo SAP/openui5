@@ -18,8 +18,9 @@ sap.ui.define([
 			Unit : 5,
 			GrossAmount : 6,
 			Currency : 7,
-			Note : 8,
-			Fix : 9
+			DeliveryDate : 8,
+			Note : 9,
+			Fix : 10
 		},
 		mMessageShort2Message = {
 			approval : "For a quantity greater than 1 you need an approval reason",

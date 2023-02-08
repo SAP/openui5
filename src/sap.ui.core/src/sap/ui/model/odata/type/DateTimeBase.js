@@ -263,6 +263,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the model value according to this type's constraints and format options for the given
+	 * date object which represents a timestamp in the configured time zone.
+	 *
+	 * @param {Date|module:sap/ui/core/date/UI5Date|null} oDate
+	 *   The date object considering the configured time zone. Must be created via
+	 *   {@link module:sap/ui/core/date/UI5Date.getInstance}
+	 * @returns {Date|module:sap/ui/core/date/UI5Date|null}
+	 *   The model representation of the timestamp
+	 * @throws {Error}
+	 *   If the given date object is not valid or it does not consider the configured time zone
+	 *
+	 * @private
+	 */
+	DateTimeBase.prototype._getModelValue = function (oDate) {
+		var oResult;
+
+		if (oDate === null) {
+			return null;
+		}
+
+		UI5Date.checkDate(oDate);
+
+		oResult = UI5Date.getInstance(oDate);
+		if (isDateOnly(this)) {
+			oResult.setUTCFullYear(oDate.getFullYear(), oDate.getMonth(), oDate.getDate());
+			oResult.setUTCHours(0, 0, 0, 0);
+		} else if (this.oFormatOptions && this.oFormatOptions.UTC) {
+			oResult.setUTCFullYear(oDate.getFullYear(), oDate.getMonth(), oDate.getDate());
+			oResult.setUTCHours(oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds());
+		}
+
+		return oResult;
+	};
+
+	/**
 	 * Returns the type's name.
 	 *
 	 * @abstract

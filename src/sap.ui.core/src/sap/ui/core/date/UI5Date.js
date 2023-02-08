@@ -943,5 +943,26 @@ sap.ui.define([
 		return UI5Date._createDateInstance(arguments);
 	};
 
+	/**
+	 * Checks whether the given date object is a valid date, considers the configured time zone
+	 * and throws an error otherwise.
+	 *
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate
+	 *   The date object created via <code>UI5Date.getInstance</code>
+	 * @throws {Error}
+	 *   If the given date object is not valid or does not consider the configured time zone
+	 *
+	 * @private
+	 */
+	UI5Date.checkDate = function (oDate) {
+		if (isNaN(oDate.getTime())) {
+			throw new Error("The given Date is not valid");
+		}
+		if (!(oDate instanceof UI5Date) && (Configuration.getTimezone() !== TimezoneUtil.getLocalTimezone())) {
+			throw new Error("Configured time zone requires the parameter 'oDate' to be an instance of"
+				+ " sap.ui.core.date.UI5Date");
+		}
+	};
+
 	return UI5Date;
 });

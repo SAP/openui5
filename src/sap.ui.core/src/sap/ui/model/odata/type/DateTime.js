@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/model/odata/type/DateTimeBase"
-], function (Log, DateTimeBase) {
+], function (Log, UI5Date, DateTimeBase) {
 	"use strict";
 
 	/**
@@ -52,7 +53,8 @@ sap.ui.define([
 	 *
 	 * In {@link sap.ui.model.odata.v2.ODataModel} this type is represented as a
 	 * <code>Date</code>. With the constraint <code>displayFormat: "Date"</code>, the time zone is
-	 * UTC and the time part is ignored, otherwise it is a date/time value in local time.
+	 * UTC, and all time related parts (hours, minutes, etc.) are set to zero;
+	 * otherwise it is a date/time value in local time.
 	 *
 	 * @extends sap.ui.model.odata.type.DateTimeBase
 	 *
@@ -102,6 +104,33 @@ sap.ui.define([
 	 */
 	DateTime.prototype.getName = function () {
 		return "sap.ui.model.odata.type.DateTime";
+	};
+
+	/**
+	 * Gets the model value according to this type's constraints and format options for the given
+	 * date object which represents a timestamp in the configured time zone. Validates the resulting
+	 * value against the constraints of this type instance.
+	 *
+	 * @param {Date|module:sap/ui/core/date/UI5Date|null} oDate
+	 *   The date object considering the configured time zone. Must be created via
+	 *   {@link module:sap/ui/core/date/UI5Date.getInstance}
+	 * @returns {Date|module:sap/ui/core/date/UI5Date|null}
+	 *   The model representation for the given Date
+	 * @throws {Error}
+	 *   If the given date object is not valid or does not consider the configured time zone
+	 * @throws {sap.ui.model.ValidateException}
+	 *   If the constraints of this type instance are violated
+	 *
+	 * @public
+	 * @see {@link sap.ui.core.Configuration.getTimezone}
+	 * @since 1.111.0
+	 */
+	DateTime.prototype.getModelValue = function (oDate) {
+		var oResult = this._getModelValue(oDate);
+
+		this.validateValue(oResult);
+
+		return oResult;
 	};
 
 	return DateTime;
