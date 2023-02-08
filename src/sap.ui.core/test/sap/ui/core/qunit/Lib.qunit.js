@@ -3,8 +3,9 @@ sap.ui.require([
 	"sap/ui/core/Lib",
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/theming/ThemeManager",
-	"sap/base/i18n/ResourceBundle"
-], function(Library, ObjectPath, ThemeManager, ResourceBundle) {
+	"sap/base/i18n/ResourceBundle",
+	"sap/ui/dom/includeScript"
+], function(Library, ObjectPath, ThemeManager, ResourceBundle, includeScript) {
 	"use strict";
 
 	QUnit.module("Instance methods");
@@ -211,6 +212,76 @@ sap.ui.require([
 			checkLibInitialized('testlibs.scenario1.lib5');
 			var oLib5 = Library.get('testlibs.scenario1.lib5');
 			sinon.assert.calledOn(Library.prototype._preload, oLib5, "Library.prototype.preload is called");
+		});
+	});
+
+	QUnit.module("Library.js included in custom bundle");
+
+	/**
+	 * testlibs/scenario17 contains one custom bundle (custom-bundle.js) which preloads:
+	 *   - testlibs/scenario17/lib1/library.js
+	 *   - testlibs/scenario17/lib1/manifest.json
+	 *   - testlibs/scenario17/lib4/library.js
+	 *   - testlibs/scenario17/lib4/manifest.json
+	 *
+	 * There are two libraries testlibs/scenario17/lib1 and testlibs/scenario17/lib2 which have dependency of each
+	 * other. A cycle also exists for 'lib1' and 'lib4'.
+	 *
+	 * testlibs/scenario17/lib2 contains a dependency to testlibs/scenario17/lib3
+	 */
+	QUnit.test("Two libraries which have dependency of each other", function (assert) {
+		var oLoadResourceBundleSpy = this.spy(Library.prototype, "loadResourceBundle");
+		var oResourceBundleCreateSpy = this.spy(ResourceBundle, "create");
+		var oPreloadJSFormatSpy = this.spy(Library.prototype, "_preloadJSFormat");
+
+		return includeScript({
+			url: sap.ui.require.toUrl("testlibs/scenario17/custom-bundle.js")
+		}).then(function() {
+			return Library.load("testlibs.scenario17.lib1");
+		}).then(function() {
+			var mLoadedLibraries = Library.all();
+			var oLib1 = mLoadedLibraries["testlibs.scenario17.lib1"];
+			var oLib2 = mLoadedLibraries["testlibs.scenario17.lib2"];
+			var oLib3 = mLoadedLibraries["testlibs.scenario17.lib3"]; // Transitive dependency of lib2
+			var oLib4 = mLoadedLibraries["testlibs.scenario17.lib4"];
+
+			// library-preload of lib1 is already available with the custom-bundle
+			assert.equal(oPreloadJSFormatSpy.callCount, 2, "Library.prototype._preloadJSFormat should be called only twice (lib2, lib3)");
+
+			assert.ok(oPreloadJSFormatSpy.calledOn(oLib2), "library-preload of testlibs/scenario17/lib2 is loaded asynchronously");
+			assert.notOk(oPreloadJSFormatSpy.getCall(0).args[0].sync, "library-preload of lib2 should be loaded async");
+
+			assert.ok(oPreloadJSFormatSpy.calledOn(oLib3), "library-preload of testlibs/scenario17/lib3 is loaded asynchronously");
+			assert.notOk(oPreloadJSFormatSpy.getCall(1).args[0].sync, "library-preload of lib3 should be loaded async");
+
+			assert.ok(oLib1, "testlibs.scenario17.lib1 is loaded");
+			assert.ok(oLib2, "testlibs.scenario17.lib2 is loaded");
+			assert.ok(oLib3, "testlibs.scenario17.lib3 is loaded");
+			assert.ok(oLib4, "testlibs.scenario17.lib4 is loaded");
+
+			assert.ok(oLib1.isSettingsEnhanced(), "testlibs.scenario17.lib1 is initialized");
+			assert.ok(oLib2.isSettingsEnhanced(), "testlibs.scenario17.lib2 is initialized");
+			assert.ok(oLib3.isSettingsEnhanced(), "testlibs.scenario17.lib3 is initialized");
+			assert.ok(oLib4.isSettingsEnhanced(), "testlibs.scenario17.lib4 is initialized");
+
+			assert.equal(oLoadResourceBundleSpy.callCount, 4, "Lib#loadResourceBundle should be called four times");
+			assert.ok(oLoadResourceBundleSpy.calledOn(oLib1), "ResourceBundle of testlibs/scenario17/lib1 is loaded asynchronously");
+			assert.ok(oLoadResourceBundleSpy.calledOn(oLib2), "ResourceBundle of testlibs/scenario17/lib2 is loaded asynchronously");
+			assert.ok(oLoadResourceBundleSpy.calledOn(oLib3), "ResourceBundle of testlibs/scenario17/lib3 is loaded asynchronously");
+			assert.ok(oLoadResourceBundleSpy.calledOn(oLib4), "ResourceBundle of testlibs/scenario17/lib4 is loaded asynchronously");
+
+			assert.equal(oResourceBundleCreateSpy.callCount, 4, "ResourceBundle.create should be called only four times");
+			assert.ok(oResourceBundleCreateSpy.getCall(0).args[0].async, "bundle should be loaded async");
+			assert.ok(oResourceBundleCreateSpy.getCall(1).args[0].async, "bundle should be loaded async");
+			assert.ok(oResourceBundleCreateSpy.getCall(2).args[0].async, "bundle should be loaded async");
+			assert.ok(oResourceBundleCreateSpy.getCall(3).args[0].async, "bundle should be loaded async");
+
+			oResourceBundleCreateSpy.resetHistory();
+			assert.equal(oLib1.getResourceBundle().getText("someText"), "I am a lib1 text", "Text from the resource bundle should be correct");
+			assert.equal(oLib2.getResourceBundle().getText("someText"), "I am a lib2 text", "Text from the resource bundle should be correct");
+			assert.equal(oLib3.getResourceBundle().getText("someText"), "I am a lib3 text", "Text from the resource bundle should be correct");
+			assert.equal(oLib4.getResourceBundle().getText("someText"), "I am a lib4 text", "Text from the resource bundle should be correct");
+			assert.equal(oResourceBundleCreateSpy.callCount, 0, "getResourceBundle calls shouldn't trigger additional ResourceBundle.create calls");
 		});
 	});
 });
