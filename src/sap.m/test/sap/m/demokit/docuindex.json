@@ -620,6 +620,7 @@
 			"sap.m.sample.IllustratedMessageInPageSimple",
 			"sap.m.sample.IllustratedMessageInPageIllustrative",
 			"sap.m.sample.IllustratedMessageInPageTNT",
+			"sap.m.sample.IllustratedMessageInPageCustom",
 			"sap.m.sample.IllustratedMessageSessionTimeout"
 			]
 		},
@@ -2233,6 +2234,11 @@
 			"id": "sap.m.sample.IllustratedMessageInPageTNT",
 			"name": "Illustrated Message in a Page with Configurable Properties (TNT Illustration Set)",
 			"description": "The available properties of the IllustratedMessage are configurable in this sample. The available illustrations are from the 'tnt' illustration set."
+		},
+		{
+			"id": "sap.m.sample.IllustratedMessageInPageCustom",
+			"name": "Illustrated Message in a Page with Configurable Properties (Custom Illustration Set)",
+			"description": "The available properties of the IllustratedMessage are configurable in this sample. The available illustrations are from the 'custom' illustration set."
 		},
 		{
 			"id": "sap.m.sample.IllustratedMessageSessionTimeout",
