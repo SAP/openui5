@@ -1727,29 +1727,6 @@ function(
 	};
 
 	/**
-	 * Shows value help suggestions in table.
-	 *
-	 * @public
-	 * @param {boolean} bValue Show suggestions.
-	 * @return {this} this Input instance for chaining.
-	 */
-	Input.prototype.setShowTableSuggestionValueHelp = function (bValue) {
-		var oSuggestionsPopover = this._getSuggestionsPopover();
-		this.setProperty("showTableSuggestionValueHelp", bValue, true);
-
-		if (!oSuggestionsPopover.getPopover()) {
-			return this;
-		}
-
-		if (bValue) {
-			this._addShowMoreButton();
-		} else {
-			this._removeShowMoreButton();
-		}
-		return this;
-	};
-
-	/**
 	 * Event handler for browsers' <code>change</code> event.
 	 *
 	 * @since 1.73
