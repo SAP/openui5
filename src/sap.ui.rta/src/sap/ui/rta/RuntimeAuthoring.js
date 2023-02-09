@@ -1158,7 +1158,18 @@ sap.ui.define([
 
 	function saveOnly(oEvent) {
 		var fnCallback = oEvent.getParameter("callback") || function() {};
+		var bVersionsEnabled = this._oVersionsModel.getProperty("/versioningEnabled");
 		return this.save()
+			.then(function() {
+				showMessageToast.call(
+					this,
+					bVersionsEnabled ? "MSG_SAVE_DRAFT_SUCCESS" : "MSG_SAVE_SUCCESS",
+					{ duration: 5000 }
+				);
+			}.bind(this))
+			.catch(function(vError) {
+				return showTechnicalError(vError);
+			})
 			.then(fnCallback);
 	}
 
