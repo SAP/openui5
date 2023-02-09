@@ -31,6 +31,9 @@ sap.ui.define([],
 		FilterBarBaseRenderer.render = function (oRm, oControl) {
 			oRm.openStart("div", oControl);
 			oRm.class(FilterBarBaseRenderer.CSS_CLASS);
+			if (oControl.hasOwnProperty("_useFixedWidth") && oControl.getProperty("_useFixedWidth")) {
+				oRm.style("width", oControl.getWidth());
+			}
 			oRm.openEnd();
 			var oInnerLayout = oControl.getAggregation("layout") ? oControl.getAggregation("layout").getInner() : null;
 			oRm.renderControl(oInnerLayout);

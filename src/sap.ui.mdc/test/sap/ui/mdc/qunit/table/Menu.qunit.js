@@ -346,25 +346,42 @@ sap.ui.define([
 
 	QUnit.test("Initialize Items", function(assert) {
 		var oTable = this.oTable;
+		oTable.setP13nMode([
+			"Sort", "Filter", "Group", "Column"
+		]);
 
 		return oTable._fullyInitialized().then(function () {
 			oTable.setType("Table");
 			return oTable._fullyInitialized();
 		}).then(function () {
-			oTable.setP13nMode([
-				"Sort", "Filter", "Group"
-			]);
 			oTable.getSupportedP13nModes = function() {
-				return ["Sort", "Filter", "Group"];
+				return ["Sort", "Filter", "Group", "Column"];
 			};
 			return openColumnMenu(oTable, 0);
 		}).then(function() {
+			return wait(0);
+		}).then(function() {
 			var aItems = oTable._oItemContainer.getItems();
+			var oItem;
 
-			assert.equal(aItems.length, 3, "The ItemContainer contains 3 Items");
-			assert.equal(aItems[0].getKey(), "Sort", "Sort");
-			assert.equal(aItems[1].getKey(), "Filter", "Filter");
-			assert.equal(aItems[2].getKey(), "Group", "Group");
+			assert.equal(aItems.length, 4, "The ItemContainer contains 3 Items");
+			oItem = aItems[0];
+			assert.equal(oItem.getKey(), "Sort", "Sort");
+			assert.ok(oItem.getContent().getProperty("_useFixedWidth"), "fixed width is applied to the sort panel");
+			oItem = aItems[1];
+			assert.equal(oItem.getKey(), "Filter", "Filter");
+			assert.ok(oItem.getContent().getProperty("_useFixedWidth"), "fixed width is applied to the filter panel");
+			oItem = aItems[2];
+			assert.equal(oItem.getKey(), "Group", "Group");
+			assert.ok(oItem.getContent().getProperty("_useFixedWidth"), "fixed width is applied to the group panel");
+			oItem = aItems[3];
+			assert.equal(oItem.getKey(), "Column", "Column");
+			assert.ok(oItem.getContent().getProperty("_useFixedWidth"), "fixed width is applied to the column panel");
+
+			oTable._getP13nButton().firePress();
+			return wait(1000);
+		}).then(function() {
+			assert.notOk(oTable._oP13nFilter.getProperty("_useFixedWidth"), "in the P13nDialog the FilterPanel doesn't get a fixed width");
 		});
 	});
 
@@ -384,8 +401,6 @@ sap.ui.define([
 			oTable.getSupportedP13nModes = function() {
 				return ["Sort"];
 			};
-			oInnerColumn = oTable._oTable.getColumns()[0];
-
 			oInnerColumn = oTable._oTable.getColumns()[0];
 			oColumnMenu = oTable._oColumnHeaderMenu;
 			oColumnMenu.openBy(oInnerColumn);

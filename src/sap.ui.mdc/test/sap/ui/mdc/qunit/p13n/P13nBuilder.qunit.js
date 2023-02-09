@@ -152,6 +152,7 @@ sap.ui.define([
 			assert.ok(oDialog.getId(), "myTestDialog");
 			assert.ok(oDialog.isA("sap.m.Dialog"), "Correct container control created");
 			assert.ok(oDialog.getContent()[0].isA("sap.m.p13n.BasePanel"), "correct Content provided");
+			assert.ok(!oDialog.getContent()[0].getProperty("_useFixedWidth"), "the panel does not have fixed width");
 			assert.equal(oDialog.getTitle(), "Test");
 
 			oDialog.destroy();
