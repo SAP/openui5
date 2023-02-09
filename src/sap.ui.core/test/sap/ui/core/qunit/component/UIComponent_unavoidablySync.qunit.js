@@ -733,11 +733,12 @@ sap.ui.define([
 			manifest: true
 		}).then(function(oComponent){
 			var oView = oComponent.getRootControl();
-
 			assert.ok(oComponent.getRootControl(), "root control created");
 			assert.ok(oView, "view created");
 			assert.ok(oView.getContent().length > 0, "view content created");
 			assert.equal(this.oViewCreateSpy.callCount, 0, "async view factory is not called");
+
+			return oView.byId("nestedView").loaded();
 		}.bind(this)).catch(function() {
 			assert.ok(false, "Modules could not be loaded and an error occured.");
 		});
