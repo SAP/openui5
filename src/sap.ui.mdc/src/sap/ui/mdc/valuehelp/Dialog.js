@@ -268,29 +268,59 @@ sap.ui.define([
 					};
 					oDialog.addStyleClass("sapMdcValueHelp");
 					oDialog.addStyleClass("sapMdcValueHelpTitle");
-					oDialog.addStyleClass("sapMdcValueHelpTitleShadow");
 
-					var oVBox = new VBox(this.getId() + "-Content", { fitContainer: true});
-					oVBox.addStyleClass("sapMdcValueHelpPanel");
-					oDialog.addContent(oVBox);
+					var oContentArea = new VBox(this.getId() + "-Content", { fitContainer: true});
+					oContentArea.addStyleClass("sapMdcValueHelpPanel");
+					oDialog.addContent(oContentArea);
 
-					var aPromises = [];
-					aPromises.push(this._getIconTabBar(oDialog));
+					return oDialog;
 
-					if (_isTokenizerRequired(this.getMaxConditions(), this.getContent())) {
-						aPromises.push(this._getTokenizerPanel());
-					}
-					return Promise.all(aPromises).then(function (aControls) {
-						aControls.forEach(function (oControl) {
-							oVBox.addItem(oControl);
-						});
-						return oDialog;
-					});
 				}.bind(this));
 			}.bind(this));
 		}
 
 		return oDialog;
+	};
+
+	Dialog.prototype._placeContent = function (oDialog) {
+
+		var oContentArea = oDialog.getContent()[0];
+		var aSelectableContents = this.getProperty("_selectableContents");
+
+		if (!aSelectableContents.length) { // no content assigned to dialog
+			return Promise.resolve(oDialog);
+		}
+
+		var bMultiContentMode = aSelectableContents.length > 1;
+
+		var aContentPromises = [];
+		if (bMultiContentMode) { // Multiple contents are displayed using an IconTabBar
+			aContentPromises.push(this._getIconTabBar(oDialog));
+		} else {
+			if (!this._oStandaloneTab) {
+				this._oStandaloneTab = new DialogTab(this.getId() + "-Standalone-DT", {content: {path: "/_selectableContents/0/displayContent", model: "$help"}, layoutData: new sap.m.FlexItemData({growFactor: 1, minHeight: "0"})});
+			}
+			aContentPromises.push(this._oStandaloneTab);
+		}
+
+		if (_isTokenizerRequired(this.getMaxConditions(), this.getContent())) {
+			aContentPromises.push(this._getTokenizerPanel());
+		}
+
+		return Promise.all(aContentPromises).then(function (aControls) {
+			oContentArea.removeAllItems();
+			aControls.forEach(function (oControl) {
+				oContentArea.addItem(oControl);
+			});
+
+			if (bMultiContentMode) {
+				oDialog.addStyleClass("sapMdcValueHelpTitleShadow"); // make the Header border invisible
+			} else {
+				oDialog.removeStyleClass("sapMdcValueHelpTitleShadow"); // make the Header border visible
+			}
+
+			return oDialog;
+		});
 	};
 
 	Dialog.prototype._handleSelect = function (oEvent) {
@@ -448,7 +478,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	Dialog.prototype._getIconTabBar = function (oDialog) {
+	Dialog.prototype._getIconTabBar = function () {
 		if (!this._oIconTabBar) {
 			return this._retrievePromise("IconTabBar", function (){
 				return loadModules([
@@ -465,32 +495,10 @@ sap.ui.define([
 							headerMode: IconTabHeaderMode.Inline,
 							select: this._onTabBarSelect.bind(this),
 							layoutData: new FlexItemData({growFactor: 1}),
-							selectedKey: "{path: '$help>/_selectedContentKey', mode: 'OneWay'}",
-							visible: {parts : ['$help>/_selectableContents'], formatter:
-								function(aContent) {
-									if (aContent && aContent.length == 1) {
-										oDialog.removeStyleClass("sapMdcValueHelpTitleShadow"); // make the Header border visible
-									} else {
-										oDialog.addStyleClass("sapMdcValueHelpTitleShadow"); // make the Header border invisible
-									}
-									return true;
-								}
-							}
+							selectedKey: "{path: '$help>/_selectedContentKey', mode: 'OneWay'}"
 						});
 						// this._oIconTabBar.setModel(this._oManagedObjectModel, "$help");
 						this._oIconTabBar.addStyleClass("sapUiNoContentPadding");
-						var oIconTabHeader = this._oIconTabBar._getIconTabHeader();
-						oIconTabHeader.bindProperty("visible", {parts : ['$help>/_selectableContents'], formatter:
-							function(aContent) {
-								if (aContent && aContent.length === 1) {
-									return false;
-								} else {
-									return true;
-								}
-							}
-						});
-
-
 						var oITF = new IconTabFilter(this.getId() + "-ITF", {
 							key: {path: "$help>id"},
 							content: new DialogTab(this.getId() + "-DT", {content: {path: "$help>displayContent"}}),
@@ -757,7 +765,7 @@ sap.ui.define([
 			throw new Error("sap.ui.mdc.ValueHelp: No content found.");
 		}
 
-		var aNecessaryPromises = [oNextContent.getContent()];
+		var aNecessaryPromises = [oNextContent.getContent()]; // Content.getContent() initializes displayContent asynchonously
 		var sSelectedContentGroup = oNextContent.getGroup && oNextContent.getGroup();
 		var oGroupSelectPromise;
 		if (sSelectedContentGroup && _isValidContentGroup.call(this, sSelectedContentGroup)) {
@@ -775,7 +783,7 @@ sap.ui.define([
 			this.setProperty("_selectedContentKey", sNextContentId);
 			this.setProperty("_selectableContents", this._getSelectableContents());
 			this._oManagedObjectModel.checkUpdate(true, false, function (oBinding) { // force update as bindings to $help>displayContent are not updated automatically in some cases
-				if (oBinding.getPath() === "displayContent") { // do not update other bindings as this might lead to rerendering of IconTabBar ot other unwanted updates.
+				if (oBinding.getPath().indexOf("displayContent") >= 0) { // do not update other bindings as this might lead to rerendering of IconTabBar ot other unwanted updates.
 					return true;
 				}
 			});
@@ -851,7 +859,8 @@ sap.ui.define([
 			"_oGroupSelectModel",
 			"_sInitialContentKey",
 			"_mAlreadyShownContents",
-			"oInvisibleMessage"
+			"oInvisibleMessage",
+			"_oStandaloneTab"
 		]);
 
 		Container.prototype.exit.apply(this, arguments);
