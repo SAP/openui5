@@ -697,6 +697,23 @@ sap.ui.define([
 		assert.ok(listItemSpy.notCalled, "UploadSetItem not created for item in destruction phase.");
 	});
 
+	QUnit.test("Test to validate enable/disable status of upload button on illustrated message section", function(assert) {
+
+		//arrange
+		this.oUploadSet.removeAllItems();
+		oCore.applyChanges();
+
+		//assert initial case
+		assert.ok(this.oUploadSet._oUploadButton && this.oUploadSet._oUploadButton.getEnabled(), "By default uploadenabled is set to true and Upload button is enabled");
+
+		//act
+		this.oUploadSet.setUploadEnabled(false);
+		oCore.applyChanges();
+
+		//assert
+		assert.ok(this.oUploadSet._oUploadButton && !this.oUploadSet._oUploadButton.getEnabled(), "Upload button on illustrated message section is disabled when uploadenabled is set to false");
+	});
+
 	QUnit.module("UploadSet general functionality", {
 		beforeEach: function () {
 			this.oUploadSet = new UploadSet("uploadSet", {
