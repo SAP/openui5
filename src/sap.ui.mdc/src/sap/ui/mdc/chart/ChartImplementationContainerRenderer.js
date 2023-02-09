@@ -30,8 +30,6 @@ sap.ui.define([],
          */
         ChartRenderer.render = function(oRm, oChartImplContainer) {
                 oRm.openStart("div", oChartImplContainer);
-                //TODO: Clarify why providing the control in openStart doesn't work on rerender
-                oRm.attr("id", oChartImplContainer.getId());
                 //oRm.class(ChartRenderer.CSS_CLASS);
                 //oRm.class("sapUiFixFlex");
                 //oRm.style("overflow", "hidden");
