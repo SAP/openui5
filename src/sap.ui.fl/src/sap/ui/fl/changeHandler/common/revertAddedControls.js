@@ -24,41 +24,31 @@ sap.ui.define([
 	 */
 	return function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
-		var oChangeContent = oChange.getContent();
-		var sAggregationName = oChangeContent.targetAggregation;
+		var sAggregationName = oChange.getContent().targetAggregation;
 		var oView = mPropertyBag.view || Utils.getViewForControl(oControl);
 		var oAppComponent = mPropertyBag.appComponent;
 		var aRevertData = oChange.getRevertData() || [];
-		var aControlsToRemove = aRevertData.map(function (vRevert) {
-			var sControlId;
-			if (typeof vRevert === "string") {
-				sControlId = vRevert;
-			} else {
-				sControlId = vRevert.id;
-				sAggregationName = sAggregationName || vRevert.aggregationName;
-			}
-			// when we apply the change in XML and revert in JS, the saved ID is not yet concatinated with the view
-			return oModifier.bySelector(sControlId, oAppComponent, oView) || oView && oView.createId && oModifier.bySelector(oView.createId(sControlId));
-		});
 
-		var aPromises = [];
-		aControlsToRemove.forEach(function(oControlToRemove) {
-			var fnPromise = function() {
-				return Promise.resolve()
-					.then(oModifier.removeAggregation.bind(oModifier, oControl, sAggregationName, oControlToRemove))
-					.then(function() {
-						if (oControlToRemove.destroy) {
-							oControlToRemove.destroy();
-						}
-					});
-			};
-			aPromises.push(fnPromise);
-		});
-
-		return Utils.execPromiseQueueSequentially(aPromises, true, true)
-			.then(function() {
-				oChange.resetRevertData();
-				return true;
+		return aRevertData.reduce(function(oPreviousPromise, vRevertData) {
+			return oPreviousPromise.then(function() {
+				var sControlId;
+				if (typeof vRevertData === "string") {
+					sControlId = vRevertData;
+				} else {
+					sControlId = vRevertData.id;
+					sAggregationName = sAggregationName || vRevertData.aggregationName;
+				}
+				// when we apply the change in XML and revert in JS, the saved ID is not yet concatenated with the view
+				return oModifier.bySelector(sControlId, oAppComponent, oView) || oView && oView.createId && oModifier.bySelector(oView.createId(sControlId));
+			}).then(function(oControlToRemove) {
+				if (oControlToRemove.destroy) {
+					return oControlToRemove.destroy();
+				}
+				return oModifier.removeAggregation(oControl, sAggregationName, oControlToRemove);
 			});
+		}, Promise.resolve())
+		.then(function() {
+			oChange.resetRevertData();
+		});
 	};
 });
