@@ -50,6 +50,10 @@ sap.ui.define([
 					type: "string",
 					group: "content"
 				},
+				title: {
+					type: "string",
+					group: "content"
+				},
 				changeType: {
 					type: "string",
 					defaultValue: "addIFrame"

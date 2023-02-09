@@ -47,6 +47,7 @@ sap.ui.define([
 		var oView = mPropertyBag.view;
 		var oComponent = mPropertyBag.appComponent;
 		var oBaseSelector = oContent.selector;
+		// keep default title for legacy changes (without subsequent rename)
 		var sDefaultTitle = sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_TITLE_FOR_IFRAME");
 
 		var oOPSection;
@@ -71,7 +72,12 @@ sap.ui.define([
 			.then(function () {
 				var oIFrameSelector = Object.create(oBaseSelector);
 				oIFrameSelector.id += "-iframe";
-				return createIFrame(oChange, mPropertyBag, oIFrameSelector);
+				var mRenameInfo = {
+					sourceControlId: oModifier.getId(oOPSubSection),
+					selectorControlId: oModifier.getId(oOPSection),
+					propertyName: "title"
+				};
+				return createIFrame(oChange, mPropertyBag, oIFrameSelector, mRenameInfo);
 			})
 			.then(function(oIFrame) {
 				return oModifier.insertAggregation(oOPSubSection, "blocks", oIFrame, 0, oView);

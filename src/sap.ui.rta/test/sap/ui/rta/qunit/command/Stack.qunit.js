@@ -401,6 +401,18 @@ sap.ui.define([
 				assert.notOk(this.oCommandStack.canSave(), "then canSave returns false when the composite command was executed");
 			}.bind(this));
 		});
+
+		QUnit.test("compositeLastTwoCommands", function(assert) {
+			var oBaseCommand1 = new BaseCommand();
+			var oBaseCommand2 = new BaseCommand();
+			this.oCommandStack.push(oBaseCommand1);
+			this.oCommandStack.push(oBaseCommand2);
+
+			this.oCommandStack.compositeLastTwoCommands();
+			var oCompositeCommand = this.oCommandStack.top();
+			assert.deepEqual(oCompositeCommand.getCommands(), [oBaseCommand1, oBaseCommand2], "then the composite command was created correctly");
+			assert.deepEqual(this.oCommandStack.getCommands().length, 1, "then the stack has only one command");
+		});
 	});
 
 	QUnit.done(function() {

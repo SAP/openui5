@@ -69,14 +69,14 @@ sap.ui.define([
 
 	var aImportTestData = [{
 		input: {
-			asNewSection: true,
+			asContainer: true,
 			frameWidth: "16px",
 			frameHeight: "9rem",
 			frameUrl: "https_url",
 			unitsOfMeasure: aUnitsOfMeasure
 		},
 		expectedResults: {
-			asNewSection: true,
+			asContainer: true,
 			frameWidth: 16,
 			frameHeight: 9,
 			frameWidthUnit: "px",
@@ -97,7 +97,7 @@ sap.ui.define([
 		}
 	}];
 	var mTestURLBuilderData = {
-		asNewSection: true,
+		asContainer: true,
 		frameWidth: "16px",
 		frameHeight: "9rem",
 		frameUrl: "https_url",
@@ -135,7 +135,7 @@ sap.ui.define([
 
 	function createJSONModel() {
 		return new JSONModel({
-			sectionName: {
+			title: {
 				value: "",
 				valueState: ValueState.None
 			},
@@ -231,8 +231,9 @@ sap.ui.define([
 
 		QUnit.test("When AddIFrameDialog is opened then text input fields should be empty", function (assert) {
 			this.oAddIFrameDialog.attachOpened(function () {
-				this.oController = new AddIFrameDialogController(this.oAddIFrameDialog._oJSONModel);
-				assert.strictEqual(this.oController._areAllTextFieldsValid(), false, "Text input fields are empty");
+				var oData = new AddIFrameDialogController(this.oAddIFrameDialog._oJSONModel)._oJSONModel.getData();
+				assert.strictEqual(oData.frameUrl.value, "", "then the url input is empty");
+				assert.strictEqual(oData.title.value, "Embedded Content", "then the default title is set");
 				clickOnCancel();
 			}, this);
 			return this.oAddIFrameDialog.open();
@@ -394,7 +395,6 @@ sap.ui.define([
 				aNumericInputFields.forEach(function (sFieldName) {
 					oData[sFieldName].value = 100;
 				});
-				oData.asNewSection.value = true;
 				oData.frameWidthUnit.value = "rem";
 				oData.frameHeightUnit.value = "%";
 				updateSaveButtonEnablement(!!oData.frameUrl.value);
@@ -405,7 +405,6 @@ sap.ui.define([
 				aNumericInputFields.forEach(function (sFieldName) {
 					assert.strictEqual(mSettings[sFieldName], 100, "Setting for " + sFieldName + " is correct");
 				});
-				assert.strictEqual(mSettings.asNewSection, true, "Setting for asNewSection is correct");
 				assert.strictEqual(mSettings.frameWidthUnit, "rem", "Setting for frameWidthUnit is correct");
 				assert.strictEqual(mSettings.frameHeightUnit, "%", "Setting for frameHeightUnit is correct");
 			});

@@ -61,7 +61,7 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
-			sandbox.stub(AddIFrameDialog.prototype, "open").callsFake(function () {
+			this.oOpenStub = sandbox.stub(AddIFrameDialog.prototype, "open").callsFake(function () {
 				return Promise.resolve({
 					frameUrl: TEST_URL
 				});
@@ -512,6 +512,14 @@ sap.ui.define([
 
 		QUnit.test("when the the menu item handler is called with the sibling overlay", function(assert) {
 			var fnDone = assert.async();
+			var sTitle = "Potato";
+
+			this.oOpenStub.callsFake(function () {
+				return Promise.resolve({
+					frameUrl: TEST_URL,
+					title: sTitle
+				});
+			});
 
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
@@ -533,6 +541,7 @@ sap.ui.define([
 				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.AddIFrame", "and command is of the correct type");
 				assert.ok(oEvent.getParameter("action"), "then the action is in the event");
 				assert.deepEqual(oCommand.getIndex(), 1, "then the correct index is in the command");
+				assert.strictEqual(oEvent.getParameter("title"), sTitle, "then the title is in the event");
 				fnDone();
 			});
 

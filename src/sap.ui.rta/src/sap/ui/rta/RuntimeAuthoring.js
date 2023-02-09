@@ -1599,8 +1599,9 @@ sap.ui.define([
 	 *
 	 * @param {object} vAction - The create action from designtime metadata
 	 * @param {string} sNewControlID - The id of the newly created container
+	 * @param {string} sNewContainerName - The name of the newly created container
 	 */
-	function scheduleRenameOnCreatedContainer(vAction, sNewControlID) {
+	function scheduleRenameOnCreatedContainer(vAction, sNewControlID, sNewContainerName) {
 		var fnStartEdit = function(oElementOverlay) {
 			oElementOverlay.setSelected(true);
 			this.getPluginManager().getPlugin("rename").startEdit(oElementOverlay);
@@ -1611,7 +1612,15 @@ sap.ui.define([
 			var sNewContainerID = this.getPluginManager().getPlugin("createContainer").getCreatedContainerId(vAction, oElementOverlay.getElement().getId());
 			var oContainerElementOverlay = OverlayRegistry.getOverlay(sNewContainerID);
 			if (oContainerElementOverlay) {
-				fnStartEdit(oContainerElementOverlay);
+				if (sNewContainerName) {
+					this.getPluginManager().getPlugin("rename").createRenameCommand(oContainerElementOverlay, sNewContainerName)
+					.then(function() {
+						// The create container and rename must be a single command in the stack
+						this.getCommandStack().compositeLastTwoCommands();
+					}.bind(this));
+				} else {
+					fnStartEdit(oContainerElementOverlay);
+				}
 			} else {
 				scheduleOnCreatedAndVisible.call(this, sNewContainerID, fnStartEdit);
 			}
@@ -1629,6 +1638,7 @@ sap.ui.define([
 		var oCommand = oEvent.getParameter("command");
 		var sNewControlID = oEvent.getParameter("newControlId");
 		var vAction = oEvent.getParameter("action");
+		var sContainerTitle = oEvent.getParameter("title");
 
 		this._pElementModified = this._pElementModified.then(function() {
 			this.getPluginManager().handleStopCutPaste();
@@ -1643,7 +1653,7 @@ sap.ui.define([
 						}
 					});
 					if (vAction) {
-						scheduleRenameOnCreatedContainer.call(this, vAction, sNewControlID);
+						scheduleRenameOnCreatedContainer.call(this, vAction, sNewControlID, sContainerTitle);
 					}
 				}
 				return this.getCommandStack().pushAndExecute(oCommand)

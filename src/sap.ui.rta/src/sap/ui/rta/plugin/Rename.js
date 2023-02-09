@@ -173,22 +173,15 @@ sap.ui.define([
 		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
 	};
 
-	/**
-	 * @returns {Promise} Empty promise
-	 * @private
-	 */
-	Rename.prototype._emitLabelChangeEvent = function() {
-		var sText = RenameHandler._getCurrentEditableFieldText.call(this);
-		this._fnSetControlText(sText);
-
-		var oResponsibleElementOverlay = this.getResponsibleElementOverlay(this._oEditedOverlay);
+	Rename.prototype.createRenameCommand = function(oElementOverlay, sNewText) {
+		var oResponsibleElementOverlay = this.getResponsibleElementOverlay(oElementOverlay);
 		var oRenamedElement = oResponsibleElementOverlay.getElement();
 		var oDesignTimeMetadata = oResponsibleElementOverlay.getDesignTimeMetadata();
 		var sVariantManagementReference = this.getVariantManagementReference(oResponsibleElementOverlay);
 
 		return this.getCommandFactory().getCommandFor(oRenamedElement, "rename", {
 			renamedElement: oRenamedElement,
-			newValue: sText
+			newValue: sNewText
 		}, oDesignTimeMetadata, sVariantManagementReference)
 
 		.then(function(oRenameCommand) {
@@ -200,6 +193,17 @@ sap.ui.define([
 		.catch(function(oError) {
 			Log.error("Error during rename: ", oError);
 		});
+	};
+
+	/**
+	 * @returns {Promise} Empty promise
+	 * @private
+	 */
+	Rename.prototype._emitLabelChangeEvent = function() {
+		var sText = RenameHandler._getCurrentEditableFieldText.call(this);
+		this._fnSetControlText(sText);
+
+		return this.createRenameCommand(this._oEditedOverlay, sText);
 	};
 
 	/**

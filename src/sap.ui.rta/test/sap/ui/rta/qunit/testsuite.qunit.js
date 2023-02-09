@@ -742,6 +742,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/util/validateStableIds"]
 				}
 			},
+			"util/validateText": {
+				group: "util",
+				coverage: {
+					only: ["sap/ui/rta/util/validateText"]
+				}
+			},
 			"util/showMessageBox": {
 				group: "util",
 				coverage: {

@@ -49,10 +49,12 @@ sap.ui.define([
 		editUrlLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_EDIT_URL_LABEL"),
 		parametersLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_PARAMETERS_LABEL"),
 		columnParameterLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TABLE_PARAMETER_LABEL"),
-		columnUiValueLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TABLE_UI_VALUE_LABEL")
+		columnUiValueLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TABLE_UI_VALUE_LABEL"),
+		containerTitleLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_CONTAINER_TITLE_LABEL"),
+		containerTitleDefaultValue: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_CONTAINER_TITLE_DEFAULT_VALUE_TEXT")
 	};
 
-	function createJSONModel(bSetUpdateTitle) {
+	function createJSONModel(bSetUpdateTitle, bAsContainer) {
 		if (bSetUpdateTitle) {
 			_mText.dialogTitle = _mText.dialogUpdateTitle;
 		} else {
@@ -60,15 +62,13 @@ sap.ui.define([
 		}
 		return new JSONModel({
 			text: _mText,
-			section: {
-				visible: false
+			asContainer: {
+				value: bAsContainer
 			},
-			asNewSection: {
-				value: false
-			},
-			sectionName: {
-				value: "",
-				valueState: ValueState.None
+			title: {
+				value: _mText.containerTitleDefaultValue,
+				valueState: ValueState.None,
+				id: "sapUiRtaAddIFrameDialog_ContainerTitle_TitleInput"
 			},
 			frameWidth: {
 				value: 100,
@@ -148,11 +148,13 @@ sap.ui.define([
 	 */
 	AddIFrameDialog.prototype._createDialog = function(mSettings) {
 		// set the correct title
-		var bSetUpdateTitle = false;
+		var bSetUpdateTitle;
+		var bAsContainer;
 		if (mSettings) {
-			bSetUpdateTitle = mSettings.updateMode ? mSettings.updateMode : false;
+			bSetUpdateTitle = !!mSettings.updateMode;
+			bAsContainer = !!mSettings.asContainer;
 		}
-		this._oJSONModel = createJSONModel(bSetUpdateTitle);
+		this._oJSONModel = createJSONModel(bSetUpdateTitle, bAsContainer);
 		this._oController = new AddIFrameDialogController(this._oJSONModel, mSettings);
 		Fragment.load({
 			name: "sap.ui.rta.plugin.iframe.AddIFrameDialog",
