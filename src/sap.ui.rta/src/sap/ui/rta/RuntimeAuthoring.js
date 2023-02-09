@@ -587,10 +587,11 @@ sap.ui.define([
 	};
 
 	function showSaveConfirmation() {
+		var bVersionEnabled = this._oVersionsModel.getProperty("/versioningEnabled");
 		return Utils.showMessageBox("warning", "MSG_UNSAVED_CHANGES_ON_CLOSE", {
 			titleKey: "TIT_UNSAVED_CHANGES_ON_CLOSE",
 			actionKeys: [
-				"BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE",
+				bVersionEnabled ? "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE_DRAFT" : "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE",
 				"BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"
 			],
 			emphasizedActionKey: "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE",
@@ -614,7 +615,7 @@ sap.ui.define([
 			.then(function() {
 				var sLayer = this.getLayer();
 				if (sLayer !== Layer.USER && !bSkipSave && this.canSave()) {
-					return showSaveConfirmation()
+					return showSaveConfirmation.call(this)
 					.then(function (sAction) {
 						if (sAction === MessageBox.Action.CANCEL) {
 							bUserCancelled = true;

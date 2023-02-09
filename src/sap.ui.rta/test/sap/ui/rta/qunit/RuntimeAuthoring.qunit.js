@@ -442,11 +442,18 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when stopping rta with changes and pressing cancel on the dialog,", function(assert) {
-			sandbox.stub(RtaUtils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
+		QUnit.test("when stopping rta with versioning enabled, existing changes and pressing cancel on the dialog,", function(assert) {
+			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
+			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 
 			return this.oRta.stop(false)
 				.then(function() {
+					assert.deepEqual(oMessageBoxStub.getCall(0).args[2], {
+						titleKey: "TIT_UNSAVED_CHANGES_ON_CLOSE",
+						actionKeys: ["BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE_DRAFT", "BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"],
+						emphasizedActionKey: "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE",
+						showCancel: true
+					}, "and the message box is called with the right parameters (save draft button)");
 					assert.ok(true, "then the promise gets resolved");
 					assert.ok(this.oRta, "RTA is still up and running");
 					assert.ok(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), "and the Toolbar is visible.");

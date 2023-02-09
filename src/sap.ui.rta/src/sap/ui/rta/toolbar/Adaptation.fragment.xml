@@ -168,7 +168,7 @@
 						type="Transparent"
 						press=".save"
 						enabled="{controls>/save/enabled}"
-						tooltip="{i18n>BTN_SAVE}"
+						tooltip="{= ${versions>/versioningEnabled} ? ${i18n>BTN_SAVE_DRAFT} : ${i18n>BTN_SAVE} }"
 						icon="sap-icon://save" >
 					<toolbar:layoutData>
 						<OverflowToolbarLayoutData priority="High" />
