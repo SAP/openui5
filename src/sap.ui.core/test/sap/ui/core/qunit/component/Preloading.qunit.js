@@ -692,15 +692,12 @@ sap.ui.define([
 				url: sap.ui.require.toUrl("testlibs/scenario15/sap-ui-version.json"),
 				async: true
 			}).then(function(oVersionInfo) {
-				this.oServer = this._oSandbox.useFakeServer();
-				this.oServer.autoRespond = true;
-				this.oServer.respondWith("GET", sap.ui.require.toUrl("sap-ui-version.json"), [
-					200,
-					{
-						"Content-Type": "application/json"
-					},
-					JSON.stringify(oVersionInfo)
-				]);
+				this.stub(LoaderExtensions, "loadResource").withArgs("sap-ui-version.json", {
+					async: true,
+					failOnError: true
+				}).resolves(oVersionInfo);
+
+				LoaderExtensions.loadResource.callThrough();
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -717,20 +714,21 @@ sap.ui.define([
 	 */
 	QUnit.test("Load library-preload.js instead of Component-preload.js when the Component.js is included in a library preload", function(assert) {
 		return VersionInfo.load().then(function() {
+			assert.equal(LoaderExtensions.loadResource.callCount, 1, "The loadResource call is called once for loading the sap-ui-version.json");
 			this.spy(sap.ui, 'require');
 			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 
 			var loadLibrariesSpy = this.spy(Library, '_load');
 
-			this.spy(LoaderExtensions, 'loadResource');
+			// this.spy(LoaderExtensions, 'loadResource');
 
 			var pLoad =  Component.load({
 				name: "testlibs.scenario15.lib1.comp"
 			});
 
-			assert.equal(LoaderExtensions.loadResource.callCount, 1, "The loadResource call is called once");
+			assert.equal(LoaderExtensions.loadResource.callCount, 2, "The loadResource call is called once more for loading the component's manifest.json");
 
-			var sURL = LoaderExtensions.loadResource.getCall(0).args[0].url;
+			var sURL = LoaderExtensions.loadResource.getCall(1).args[0].url;
 			assert.ok(/\/scenario15\/lib1\/comp\/manifest\.json/.test(sURL), "The manifest.json load request is sent");
 
 			return pLoad.then(function() {

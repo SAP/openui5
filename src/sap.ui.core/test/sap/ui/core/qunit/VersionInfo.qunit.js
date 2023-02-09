@@ -141,8 +141,9 @@ sap.ui.define([
 		this.stub(LoaderExtensions, "loadResource").withArgs("sap-ui-version.json", {
 			async: true,
 			failOnError: true
-		}).rejects().callThrough();
-		// this.initFakeServer(404); // Make sure the request fails as 404 - Not found
+		}).rejects();
+
+		LoaderExtensions.loadResource.callThrough();
 
 		return VersionInfo.load().then(function() {
 			assert.ok(false, "Promise should not get resolved.");
@@ -156,7 +157,9 @@ sap.ui.define([
 		this.stub(LoaderExtensions, "loadResource").withArgs("sap-ui-version.json", {
 			async: true,
 			failOnError: true
-		}).resolves(this.oVersionInfo).callThrough();
+		}).resolves(this.oVersionInfo);
+
+		LoaderExtensions.loadResource.callThrough();
 
 		return VersionInfo.load({
 			library: "sap.ui.core"
@@ -174,7 +177,9 @@ sap.ui.define([
 		this.stub(LoaderExtensions, "loadResource").withArgs("sap-ui-version.json", {
 			async: true,
 			failOnError: true
-		}).resolves(this.oVersionInfo).callThrough();
+		}).resolves(this.oVersionInfo);
+
+		LoaderExtensions.loadResource.callThrough();
 
 		return VersionInfo.load().then(function(oVersionInfo) {
 
@@ -190,7 +195,9 @@ sap.ui.define([
 		this.stub(LoaderExtensions, "loadResource").withArgs("sap-ui-version.json", {
 			async: true,
 			failOnError: true
-		}).resolves(this.oVersionInfo).callThrough();
+		}).resolves(this.oVersionInfo);
+
+		LoaderExtensions.loadResource.callThrough();
 
 		return VersionInfo.load({
 			library: "sap.invalid.library"
@@ -203,7 +210,9 @@ sap.ui.define([
 		this.stub(LoaderExtensions, "loadResource").withArgs("sap-ui-version.json", {
 			async: true,
 			failOnError: true
-		}).resolves(this.oVersionInfo).callThrough();
+		}).resolves(this.oVersionInfo);
+
+		LoaderExtensions.loadResource.callThrough();
 
 		return VersionInfo.load().then(function() {
 			assert.deepSortedEqual(
@@ -232,7 +241,9 @@ sap.ui.define([
 		this.stub(LoaderExtensions, "loadResource").withArgs("sap-ui-version.json", {
 			async: true,
 			failOnError: true
-		}).resolves(this.oVersionInfo).callThrough();
+		}).resolves(this.oVersionInfo);
+
+		LoaderExtensions.loadResource.callThrough();
 
 		return VersionInfo.load().then(function() {
 
