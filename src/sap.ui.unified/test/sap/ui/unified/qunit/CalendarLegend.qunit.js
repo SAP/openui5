@@ -275,7 +275,7 @@ sap.ui.define([
 		assert.equal($Leg[13].textContent, specialDates[9].getTooltip(), "Type10 matches");
 	});
 
-	QUnit.module("items", {
+	QUnit.module("Items", {
 		beforeEach: function () {
 			this.oLegend = new CalendarLegend({
 				items: [
@@ -366,4 +366,35 @@ sap.ui.define([
 			"When the given type does not match legend item's type, 'describedby' is correct");
 
 	});
+
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oLegend = new CalendarLegend({
+				items: [
+					new CalendarLegendItem({text: "Type01", type: CalendarDayType.Type01}),
+					new CalendarLegendItem({text: "Type02", type: CalendarDayType.Type02}),
+					new CalendarLegendItem({text: "Type03", type: CalendarDayType.Type03})
+				]
+			});
+
+			this.oLegend.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oLegend.destroy();
+			this.oLegend = null;
+		}
+	});
+
+	QUnit.test("CalendarLegendRenderer.addCalendarTypeAccInfo", function (assert) {
+		var oLegendDomRef = this.oLegend.getDomRef(),
+			oItems = this.oLegend.getItems();
+
+		assert.equal(oLegendDomRef.getAttribute("role"), "list", "Parent container has proper role");
+		assert.equal(oItems[0].getDomRef().getAttribute("role"), "listitem", "First item container has proper role");
+		assert.equal(oItems[1].getDomRef().getAttribute("role"), "listitem", "Second item container has proper role");
+		assert.equal(oItems[2].getDomRef().getAttribute("role"), "listitem", "Third item container has proper role");
+
+	});
+
 });

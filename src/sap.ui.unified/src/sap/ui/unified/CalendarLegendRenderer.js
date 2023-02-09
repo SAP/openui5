@@ -29,6 +29,7 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 		oRm.write("<div");
 		oRm.writeControlData(oLeg);
 		oRm.addClass("sapUiUnifiedLegend");
+		oRm.writeAttribute("role", "list");
 		oRm.writeClasses();
 		oRm.write(">");
 
@@ -88,6 +89,7 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 			oRm.writeAttributeEscaped('title', sTooltip);
 		}
 
+		oRm.writeAttribute("role", "listitem");
 		oRm.addClass("sapUiUnifiedLegendItem");
 		oRm.addClass(sClass);
 		oRm.writeClasses();
