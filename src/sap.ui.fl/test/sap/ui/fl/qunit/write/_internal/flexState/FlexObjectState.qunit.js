@@ -386,7 +386,8 @@ sap.ui.define([
 				})
 				.then(FlexObjectState.getFlexObjects.bind(undefined, {
 					selector: this.appComponent,
-					includeDirtyChanges: bIncludeDirtyChanges
+					includeDirtyChanges: bIncludeDirtyChanges,
+					currentLayer: Layer.USER
 				}))
 				.then(function(aFlexObjects) {
 					assert.equal(aFlexObjects[0].getChangeType(), "renameField", "the first change from the persistence is present");
@@ -409,13 +410,34 @@ sap.ui.define([
 
 				return FlexObjectState.getFlexObjects({
 					selector: this.appComponent,
-					includeDirtyChanges: bIncludeDirtyChanges
+					includeDirtyChanges: bIncludeDirtyChanges,
+					currentLayer: Layer.USER
 				})
 				.then(function(aFlexObjects) {
 					if (bIncludeDirtyChanges) {
 						assert.equal(aFlexObjects.length, 2, "an array with two entries is returned");
 						assert.equal(aFlexObjects[0].getChangeType(), "dirtyRenameField", "the first change from the persistence is present");
 						assert.equal(aFlexObjects[1].getChangeType(), "dirtyAddGroup", "the second change from the persistence is present");
+					} else {
+						assert.equal(aFlexObjects.length, 0, "an empty array is returned");
+					}
+				});
+			});
+
+			sText = "Get - Given only dirty changes from USER Layer are present in the ChangePersistence with include dirty changes ";
+			sText += bIncludeDirtyChanges ? "set" : "not set";
+			QUnit.test(sText, function(assert) {
+				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+				addDirtyChanges(oChangePersistence);
+
+				return FlexObjectState.getFlexObjects({
+					selector: this.appComponent,
+					includeDirtyChanges: bIncludeDirtyChanges,
+					currentLayer: Layer.CUSTOMER
+				})
+				.then(function(aFlexObjects) {
+					if (bIncludeDirtyChanges) {
+						assert.equal(aFlexObjects.length, 0, "an empty array is returned");
 					} else {
 						assert.equal(aFlexObjects.length, 0, "an empty array is returned");
 					}
