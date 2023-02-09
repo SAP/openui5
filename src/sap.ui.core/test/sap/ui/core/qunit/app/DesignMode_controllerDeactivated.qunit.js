@@ -23,10 +23,8 @@ sap.ui.define([
 			viewName: "test.designmode.test01"
 		}).then(function (oView) {
 			var oController = oView.getController();
-
 			assert.ok(typeof oController !== "undefined", "Controller is not undefined");
 			assert.ok(oController["_sap.ui.core.mvc.EmptyControllerImpl"], "Controller is an empty Controller");
-
 			oView.destroy();
 		});
 	});
