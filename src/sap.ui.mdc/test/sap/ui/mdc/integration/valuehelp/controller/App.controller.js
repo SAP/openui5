@@ -36,7 +36,9 @@ sap.ui.define([
 		{path: "sap.ui.v4demo.view.OPA-3", text: "OPA: Define Conditions Popover", maxConditions: -1},
 		{path: "sap.ui.v4demo.view.OPA-4", text: "OPA: Dialog with Default FilterBar Configuration", maxConditions: 1},
 		{path: "sap.ui.v4demo.view.OPA-5", footer: "sap.ui.v4demo.view.OPA-5-Footer",  text: "OPA: ValueHelps With Complex Keys", maxConditions: -1, maxConditionsToggleEnabled: true},
-		{path: "sap.ui.v4demo.view.OPA-6", text: "OPA: Popover.opensOnClick", maxConditions: 1}
+		{path: "sap.ui.v4demo.view.OPA-6", text: "OPA: Popover.opensOnClick", maxConditions: 1},
+		{path: "sap.ui.v4demo.view.OPA-7", text: "OPA: Popover.opensOnFocus", maxConditions: 1}
+
 
 	];
 

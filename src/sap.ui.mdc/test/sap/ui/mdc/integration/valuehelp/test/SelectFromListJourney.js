@@ -8,8 +8,10 @@ sap.ui.define([
 	'sap/ui/test/Opa5',
 	'sap/ui/test/opaQunit',
 	"sap/ui/events/KeyCodes",
-	'sap/ui/v4demo/test/pages/Opa'
-], function (Opa5, opaTest, KeyCodes, OpaPage) {
+	'sap/ui/v4demo/test/pages/Opa',
+	'test-resources/sap/ui/mdc/testutils/opa/filterfield/waitForFilterField'
+
+], function (Opa5, opaTest, KeyCodes, OpaPage, waitForFilterField) {
 	'use strict';
 
 	Opa5.extendConfig({
@@ -48,7 +50,7 @@ sap.ui.define([
 		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField"});
 
 		// We do not blur after entering text, so the filterValue is kept
-		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "aust", {keepFocus: true, clearTextFirst: false, pressEnterKey: false});
+		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "aust", {keepFocus: true, clearTextFirst: true, pressEnterKey: false});
 		Then.onTheOPAPage.iShouldSeeValueHelpListItems([
 			["101", "Austen, Jane"],
 			["373", "Craig, Austin"]
@@ -71,6 +73,60 @@ sap.ui.define([
 		]);
 
 		When.onTheOPAPage.iEnterTextOnTheFilterField({label: "TestField"}, "", {keepFocus: true, clearTextFirst: true, pressEnterKey: false});
+		Then.onTheOPAPage.iShouldNotSeeTheValueHelp();
+
+		Then.iTeardownMyAppFrame();
+	});
+
+	opaTest("Popover.opensOnFocus", function (Given, When, Then) {
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-7");
+		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField1"});
+		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField2"});
+
+		When.onTheOPAPage.iPressKeyOnTheFilterField({label: "TestField1"}, KeyCodes.TAB);
+
+		Then.onTheOPAPage.iShouldSeeValueHelpListItems([
+			"101", "Austen, Jane",
+			"102", "Gilman, Charlotte Perkins",
+			"103", "Carroll, Lewis",
+			"104", "Shelley, Mary Wollstonecraft",
+			"105", "Kafka, Franz",
+			"106", "Twain, Mark",
+			"107", "Wilde, Oscar",
+			"109", "Douglass, Frederick",
+			"110", "Ibsen, Henrik",
+			"111", "Melville, Herman"
+		], "FH1");
+
+		When.onTheOPAPage.iPressKeyOnTheFilterField({label: "TestField2"}, KeyCodes.TAB);
+
+		Then.onTheOPAPage.iShouldSeeValueHelpListItems([
+			"101", "Austen, Jane",
+			"102", "Gilman, Charlotte Perkins",
+			"103", "Carroll, Lewis",
+			"104", "Shelley, Mary Wollstonecraft",
+			"105", "Kafka, Franz",
+			"106", "Twain, Mark",
+			"107", "Wilde, Oscar",
+			"109", "Douglass, Frederick",
+			"110", "Ibsen, Henrik",
+			"111", "Melville, Herman"
+		], "FH2");
+
+		waitForFilterField.call(When, {
+			properties: {
+				label: "TestField1"
+			},
+			actions: function (oField) {
+				return new Promise(function (resolve, reject) {
+					oField.getFocusDomRef().focus();
+					setTimeout(function () {
+						oField.getFocusDomRef().blur();
+					},50);
+				});
+			}
+		});
+
 		Then.onTheOPAPage.iShouldNotSeeTheValueHelp();
 
 		Then.iTeardownMyAppFrame();

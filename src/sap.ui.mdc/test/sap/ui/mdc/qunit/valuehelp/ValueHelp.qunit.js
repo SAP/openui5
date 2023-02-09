@@ -130,6 +130,7 @@ sap.ui.define([
 		assert.equal(oValueHelp.getConditions().length, 0, "Conditions");
 		assert.equal(oValueHelp.getFilterValue(), "", "FilterValue");
 		assert.notOk(oValueHelp.shouldOpenOnClick(), "shouldOpenOnClick");
+		assert.notOk(oValueHelp.shouldOpenOnFocus(), "shouldOpenOnFocus");
 		assert.notOk(oValueHelp.isFocusInHelp(), "isFocusInHelp");
 		assert.notOk(oValueHelp.valueHelpEnabled(), "valueHelpEnabled");
 
@@ -521,6 +522,19 @@ sap.ui.define([
 		sinon.stub(oContainer, "isOpen").returns(true);
 		oAttributes = oValueHelp.getAriaAttributes();
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes on open typeaheas");
+
+	});
+
+	QUnit.test("shouldOpenOnFocus", function(assert) {
+
+		sinon.stub(oContainer, "shouldOpenOnFocus").returns(true);
+		assert.notOk(oValueHelp.shouldOpenOnFocus(), "if only typeahed no opening on click");
+
+		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
+		assert.ok(oValueHelp.shouldOpenOnFocus(), "returns value of container (true) if used as valueHelp");
+
+		oContainer.shouldOpenOnFocus.returns(false);
+		assert.notOk(oValueHelp.shouldOpenOnFocus(), "returns value of container (false) if used as valueHelp");
 
 	});
 
@@ -1027,6 +1041,13 @@ sap.ui.define([
 		sinon.stub(oContainer, "isOpen").returns(true);
 		oAttributes = oValueHelp.getAriaAttributes();
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes on open typeaheas");
+
+	});
+
+	QUnit.test("shouldOpenOnFocus", function(assert) {
+
+		sinon.stub(oContainer, "shouldOpenOnFocus").returns(true);
+		assert.ok(oValueHelp.shouldOpenOnFocus(), "returns value of container");
 
 	});
 

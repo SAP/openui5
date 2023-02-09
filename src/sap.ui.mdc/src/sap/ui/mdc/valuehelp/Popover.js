@@ -59,6 +59,18 @@ sap.ui.define([
 				opensOnClick: {
 					type: "boolean",
 					defaultValue: false
+				},
+				/**
+				 * Controls the possibility to open this popover container by focussing a connected control
+				 *
+				 * <b>Note:</b> By default, a typeahead is only shown to provide suggestions when users enter input in a connected control.
+				 * This property enables scenarios, where popovers need to be shown earlier (e. g. recommendations or recently entered values)
+				 * Please also see {@link sap.ui.mdc.ValueHelpDelegate.showTypahead showTypahead}
+	 			 * @since 1.112.0
+				 */
+				opensOnFocus: {
+					type: "boolean",
+					defaultValue: false
 				}
 			},
 			defaultAggregation: "content"
@@ -385,6 +397,12 @@ sap.ui.define([
 		}
 
 		return Container.prototype.getAriaAttributes.apply(this, arguments);
+
+	};
+
+	Popover.prototype.shouldOpenOnFocus = function() {
+
+		return this.getOpensOnFocus();
 
 	};
 
