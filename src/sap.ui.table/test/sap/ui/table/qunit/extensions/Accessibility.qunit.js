@@ -2137,7 +2137,9 @@ sap.ui.define([
 		oTable._getAccExtension()._accMode = false;
 		var oConfigStub = sinon.stub(Configuration, "getAccessibility");
 		oConfigStub.returns(false);
-		oTable.invalidate();
+		oTable.findElements(true, function(oElement) {
+			oElement.invalidate();
+		});
 		oCore.applyChanges();
 
 		var sHtml = oTable.$().html();
