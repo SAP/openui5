@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/type/Boolean",
 	"sap/ui/model/type/Currency",
-	"sap/ui/model/type/Date",
 	"sap/ui/model/type/DateTime",
 	"sap/ui/model/type/DateTimeInterval",
 	"sap/ui/model/type/FileSize",
@@ -19,9 +18,9 @@ sap.ui.define([
 	"sap/ui/model/type/TimeInterval",
 	"sap/ui/model/type/Unit",
 	"sap/ui/test/TestUtils"
-], function (Log, Configuration, NumberFormat, FormatException, ParseException, ValidateException,
-		BooleanType, CurrencyType, DateType, DateTimeType, DateTimeIntervalType, FileSizeType,
-		FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType, TestUtils) {
+], function (Log, Configuration, NumberFormat, FormatException, ParseException, ValidateException, BooleanType,
+		CurrencyType, DateTimeType, DateTimeIntervalType, FileSizeType, FloatType, IntegerType, StringType, TimeType,
+		TimeIntervalType, UnitType, TestUtils) {
 	"use strict";
 
 	function checkValidateException(oEx) {
@@ -721,169 +720,6 @@ sap.ui.define([
 		assert.strictEqual(oResult.message, oFixture.sResult);
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.module("sap.ui.model.type.Date", {
-		beforeEach : function() {
-			Configuration.setLanguage("en-US");
-		},
-		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
-		}
-	});
-
-	QUnit.test("date formatValue", function (assert) {
-		// as date object is locale dependend fill it manually
-		var dateValue = new Date(2003, 1, 1);
-
-		var dateType = new DateType();
-		//			assert.strictEqual(dateType.formatValue(dateValue, "string"), "02/01/2003", "format test");
-		//as default pattern is locale dependend
-
-		dateType = new DateType({ pattern: "yy-MM-dd" });
-		assert.strictEqual(dateType.formatValue(dateValue, "string"), "03-02-01", "format test with pattern");
-
-		dateType = new DateType({ pattern: "yy-MM-dd EEE" });
-		assert.strictEqual(dateType.formatValue(dateValue, "string"), "03-02-01 Sat", "format test with pattern including dayName");
-
-		dateType = new DateType({ pattern: "yy 'week' w, EEE" });
-		assert.strictEqual(dateType.formatValue(dateValue, "string"), "03 week 5, Sat", "format test with pattern with week");
-
-		dateType = new DateType({ source: { pattern: "yyyy/MM/dd" }, pattern: "dd.MM.yyyy" });
-		assert.strictEqual(dateType.formatValue("2012/01/23", "string"), "23.01.2012", "format test with source pattern");
-
-		dateType = new DateType({ source: { pattern: "timestamp" }, pattern: "dd.MM.yy" });
-		assert.strictEqual(dateType.formatValue(dateValue.getTime(), "string"), "01.02.03", "format test with timestamp");
-		assert.strictEqual(dateType.formatValue(null, "string"), "", "format test");
-		assert.strictEqual(dateType.formatValue(undefined, "string"), "", "format test");
-		assert.throws(function () { dateType.formatValue(1044068706007, "untype"); }, FormatException, "format test");
-	});
-
-	QUnit.test("date parseValue", function (assert) {
-		// as date object is locale dependend fill it manually
-		var dateValue = new Date(2003, 1, 1);
-
-		var dateType = new DateType();
-		//			assert.strictEqual(dateType.parseValue("02/01/2003", "string").getTime(), dateValue.getTime(), "parse test");
-		//as default pattern is locale dependend
-
-		dateType = new DateType({ pattern: "yy-MM-dd" });
-		assert.strictEqual(dateType.parseValue("03-02-01", "string").getTime(), dateValue.getTime(), "parse test with pattern");
-
-		dateType = new DateType({ pattern: "yy-MM-dd EEE" });
-		assert.strictEqual(dateType.parseValue("03-02-01 Sat", "string").getTime(), dateValue.getTime(), "parse test with pattern including dayName");
-
-		dateType = new DateType({ pattern: "yy 'week' w, EEE" });
-		assert.strictEqual(dateType.parseValue("03 week 5, Sat", "string").getTime(), dateValue.getTime(), "parse test with week pattern");
-
-		dateType = new DateType({ source: { pattern: "yyyy/MM/dd" }, pattern: "dd.MM.yyyy" });
-		assert.strictEqual(dateType.parseValue("01.02.2003", "string"), "2003/02/01", "parse test with source pattern");
-
-		dateType = new DateType({ source: { pattern: "timestamp" }, pattern: "dd.MM.yy" });
-		assert.strictEqual(dateType.parseValue("01.02.03", "string"), dateValue.getTime(), "parse test with timestamp");
-
-		assert.throws(function () { dateType.parseValue(true, "untype"); }, ParseException, "parse test");
-		assert.throws(function () { dateType.parseValue(true, "boolean"); }, ParseException, "parse test");
-		// TODO: This test does not throw an exception
-		//assert.throws(function() { dateType.parseValue("test", "string"); }, ParseException, "parse test");
-	});
-
-	QUnit.test("date validateValue", function (assert) {
-		// as date object is locale dependend fill it manually
-		var dateValueMin = new Date(2000, 0, 1);
-		var dateValueMax = new Date(2000, 11, 31);
-
-		var dateType = new DateType(null, {
-			minimum: dateValueMin, //01.01.2000
-			maximum: dateValueMax //31.12.2000
-		});
-
-		var dateValue = new Date(2000, 1, 1);
-
-		try {
-			assert.strictEqual(dateType.validateValue(dateValue), undefined, "validate test");
-		} catch (e) {
-			assert.ok(false, "one of the validation tests failed please check");
-		}
-
-		dateValue = new Date(1999, 1, 1);
-		assert.throws(function () { dateType.validateValue(dateValue); }, checkValidateException, "validate test");
-
-		dateValue = new Date(2001, 1, 1);
-		assert.throws(function () { dateType.validateValue(dateValue); }, checkValidateException, "validate test");
-
-		dateType = new DateType({
-			pattern: 'yyyy-MM-dd'
-		}, {
-			minimum: new Date(2018, 0, 1), //01.01.2018
-			maximum: new Date(2019, 11, 31) //31.12.2019
-		});
-
-		dateValue = new Date(2017, 0, 1);
-
-		try {
-			TestUtils.withNormalizedMessages(function () {
-				dateType.validateValue(dateValue);
-			});
-		} catch (error) {
-			assert.strictEqual(error.message, "Date.Minimum 2018-01-01", "Correct error message shown");
-		}
-
-		assert.throws(function () { dateType.validateValue(dateValue); }, checkValidateException, "validate test");
-
-		dateType = new DateType({
-			source: { pattern: "dd.MM.yyyy" },
-			pattern: "yyyy/mm/dd"
-		}, {
-			minimum: "01.01.2000",
-			maximum: "31.12.2000"
-		});
-		try {
-			assert.strictEqual(dateType.validateValue("01.01.2000"), undefined, "validate test");
-			assert.strictEqual(dateType.validateValue("06.06.2000"), undefined, "validate test");
-			assert.strictEqual(dateType.validateValue("31.12.2000"), undefined, "validate test");
-		} catch (e) {
-			assert.ok(false, "one of the validation tests failed please check");
-		}
-		assert.throws(function () { dateType.validateValue("10.10.1999"); }, checkValidateException, "validate test");
-		assert.throws(function () { dateType.validateValue("10.10.2001"); }, checkValidateException, "validate test");
-	});
-
-	QUnit.test("date getModelFormat() without source option", function (assert) {
-		var dateType = new DateType();
-
-		var oFormat = dateType.getModelFormat();
-		var oDate = new Date(2001, 1, 1);
-		var sDate = "01.01.2000";
-
-		assert.ok(oFormat, "InputFormat exists");
-		assert.strictEqual(oFormat.format(oDate), oDate, "InputFormat should have the default implementation of SimpleType");
-		assert.strictEqual(oFormat.parse(sDate), sDate, "InputFormat should have the default implementation of SimpleType");
-	});
-
-	QUnit.test("date getModelFormat() with timestamp", function (assert) {
-		var dateType = new DateType({ source: { pattern: "timestamp" } });
-		var dateValue = new Date(2000, 1, 1);
-
-		var oFormat = dateType.getModelFormat();
-
-		assert.ok(oFormat, "InputFormat is created");
-		assert.ok(oFormat.parse(dateValue.getTime()) instanceof Date, "InputFormat parses Timestamp correctly");
-	});
-
-	QUnit.test("date getModelFormat() with default source option", function (assert) {
-		var dateType = new DateType({ source: {} });
-		var sValue = "2002-01-02";
-
-		var oFormat = dateType.getModelFormat();
-
-		assert.ok(oFormat, "InputFormat is created");
-		var oDate = oFormat.parse(sValue);
-		assert.ok(oDate instanceof Date, "InputFormat parses date string correctly");
-		assert.strictEqual(oDate.getFullYear(), 2002);
-		assert.strictEqual(oDate.getMonth(), 0);
-		assert.strictEqual(oDate.getDate(), 2);
-	});
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.DateTime", {
