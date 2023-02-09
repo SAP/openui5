@@ -39,6 +39,7 @@ sap.ui.define([
 			}, {})
 			.then(function(oCreatedCommand) {
 				oSwitchCommand = oCreatedCommand;
+				assert.notOk(oCreatedCommand.getRelevantForSave(), "then the relevantForSave property is set to false");
 				assert.equal(oSwitchCommand.getSourceVariantId(), sSourceVariantId, "the property was properly set");
 				assert.equal(oSwitchCommand.getTargetVariantId(), sTargetVariantId, "the property was properly set");
 				assert.notOk(oSwitchCommand.getDiscardVariantContent(), "the discardVariantContent property was not set");
@@ -105,6 +106,10 @@ sap.ui.define([
 				assert.equal(this.oSetModifiedStub.callCount, 3, "setModified was called again on the control");
 				assert.notOk(this.oSetModifiedStub.lastCall.args[0], "with value 'false'");
 			}.bind(this));
+		});
+
+		QUnit.done(function () {
+			document.getElementById("qunit-fixture").style.display = "none";
 		});
 	});
 });

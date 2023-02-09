@@ -47,6 +47,7 @@ sap.ui.define([
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "switch", oSwitchCommandData)
 				.then(function(oCommand) {
+					assert.notOk(oCommand.getRelevantForSave(), "then the relevantForSave property is set to false");
 					assert.ok(oCommand, "switch command for VariantManagement exists");
 					oSwitchCommand = oCommand;
 					return oSwitchCommand.execute();

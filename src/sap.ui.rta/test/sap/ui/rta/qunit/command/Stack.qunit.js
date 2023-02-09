@@ -4,6 +4,8 @@ sap.ui.define([
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/rta/command/CompositeCommand",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/LREPSerializer",
 	"sap/ui/rta/command/Stack",
@@ -17,6 +19,8 @@ sap.ui.define([
 	DesignTimeMetadata,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
+	BaseCommand,
+	CompositeCommand,
 	CommandFactory,
 	CommandSerializer,
 	CommandStack,
@@ -304,6 +308,98 @@ sap.ui.define([
 				var aCommands = oStack.getCommands();
 				assert.equal(aCommands.length, 0, "the CommandStack contains no commands");
 			});
+		});
+	});
+
+	QUnit.module("Given a command stack", {
+		beforeEach: function() {
+			this.oCommandStack = new CommandStack();
+		},
+		afterEach: function() {
+			this.oCommandStack.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("canUndo", function(assert) {
+			assert.notOk(this.oCommandStack.canUndo(), "then canUndo returns false when the stack is empty");
+
+			var oBaseCommand = new BaseCommand();
+			this.oCommandStack.push(oBaseCommand);
+			assert.notOk(this.oCommandStack.canUndo(), "then canUndo returns false when the command was not executed");
+
+			return this.oCommandStack.execute()
+			.then(function() {
+				assert.ok(this.oCommandStack.canUndo(), "then canUndo returns true when the command was executed");
+			}.bind(this));
+		});
+
+		QUnit.test("canSave and all commands are relevant for save", function(assert) {
+			assert.notOk(this.oCommandStack.canSave(), "then canSave returns false when the stack is empty");
+			var oBaseCommand = new BaseCommand();
+			this.oCommandStack.push(oBaseCommand);
+			assert.notOk(this.oCommandStack.canSave(), "then canSave returns false when the command was not executed");
+
+			return this.oCommandStack.execute()
+			.then(function() {
+				assert.ok(this.oCommandStack.canSave(), "then canSave returns true when the command was executed");
+			}.bind(this));
+		});
+
+		QUnit.test("canSave and only some commands are relevant for save", function(assert) {
+			var oBaseCommand = new BaseCommand();
+			var oBaseCommand2 = new BaseCommand();
+			oBaseCommand.setRelevantForSave(false);
+			this.oCommandStack.push(oBaseCommand);
+			this.oCommandStack.push(oBaseCommand2);
+			assert.notOk(this.oCommandStack.canSave(), "then canSave returns false when the command was not executed");
+
+			return this.oCommandStack.execute()
+			.then(this.oCommandStack.execute.bind(this.oCommandStack))
+			.then(function() {
+				assert.ok(this.oCommandStack.canSave(), "then canSave returns true when the command was executed");
+			}.bind(this));
+		});
+
+		QUnit.test("canSave and no commands are relevant for save", function(assert) {
+			var oBaseCommand = new BaseCommand();
+			oBaseCommand.setRelevantForSave(false);
+			this.oCommandStack.push(oBaseCommand);
+			assert.notOk(this.oCommandStack.canSave(), "then canSave returns false when the command was not executed");
+
+			return this.oCommandStack.execute()
+			.then(function() {
+				assert.notOk(this.oCommandStack.canSave(), "then canSave returns false when the command was executed");
+			}.bind(this));
+		});
+
+		QUnit.test("canSave with composite command - some are relevant for save", function(assert) {
+			var oBaseCommand = new BaseCommand();
+			oBaseCommand.setRelevantForSave(false);
+			var oBaseCommand2 = new BaseCommand();
+			var oCompositeCommand = new CompositeCommand();
+			oCompositeCommand.addCommand(oBaseCommand);
+			oCompositeCommand.addCommand(oBaseCommand2);
+
+			return this.oCommandStack.pushAndExecute(oCompositeCommand)
+			.then(function() {
+				assert.ok(this.oCommandStack.canSave(), "then canSave returns true when the composite command was executed");
+			}.bind(this));
+		});
+
+		QUnit.test("canSave with composite command - none are relevant for save", function(assert) {
+			var oBaseCommand = new BaseCommand();
+			oBaseCommand.setRelevantForSave(false);
+			var oBaseCommand2 = new BaseCommand();
+			oBaseCommand2.setRelevantForSave(false);
+			var oCompositeCommand = new CompositeCommand();
+			oCompositeCommand.addCommand(oBaseCommand);
+			oCompositeCommand.addCommand(oBaseCommand2);
+
+
+			return this.oCommandStack.pushAndExecute(oCompositeCommand)
+			.then(function() {
+				assert.notOk(this.oCommandStack.canSave(), "then canSave returns false when the composite command was executed");
+			}.bind(this));
 		});
 	});
 

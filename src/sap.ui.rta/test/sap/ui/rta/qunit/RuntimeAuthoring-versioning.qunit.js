@@ -75,8 +75,8 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when something can be undone", function(assert) {
-			sandbox.stub(this.oRta, "canUndo").returns(true);
+		QUnit.test("when save is enabled", function(assert) {
+			sandbox.stub(this.oRta, "canSave").returns(true);
 			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
 
 			this.oRta.getToolbar().fireSwitchVersion({
@@ -134,13 +134,13 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in the FLP, something can be undone and a dialog fires an event", {
+	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in the FLP, save is enabled and a dialog fires an event", {
 		beforeEach: function() {
 			givenAnFLP(sandbox.stub(), {});
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp
 			});
-			sandbox.stub(this.oRta, "canUndo").returns(true);
+			sandbox.stub(this.oRta, "canSave").returns(true);
 			this.oSerializeStub = sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
 			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");

@@ -242,10 +242,10 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		function createCommandstackStub(oRta, bCanUndo, bCanRedo) {
+		function createCommandstackStub(oRta, bCanSave, bCanRedo) {
 			return sandbox.stub(oRta, "getCommandStack").returns({
-				canUndo: function() {
-					return bCanUndo;
+				canSave: function() {
+					return bCanSave;
 				},
 				canRedo: function() {
 					return bCanRedo;

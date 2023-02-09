@@ -612,9 +612,8 @@ sap.ui.define([
 		checkToolbarAndExecuteFunction.call(this, "setBusy", true);
 		return waitForPendingActions.call(this)
 			.then(function() {
-				var oCommandStack = this.getCommandStack();
 				var sLayer = this.getLayer();
-				if (sLayer !== Layer.USER && !bSkipSave && oCommandStack.canUndo()) {
+				if (sLayer !== Layer.USER && !bSkipSave && this.canSave()) {
 					return showSaveConfirmation()
 					.then(function (sAction) {
 						if (sAction === MessageBox.Action.CANCEL) {
@@ -884,6 +883,10 @@ sap.ui.define([
 		return this.getCommandStack().canUndo();
 	};
 
+	RuntimeAuthoring.prototype.canSave = function() {
+		return this.getCommandStack().canSave();
+	};
+
 	RuntimeAuthoring.prototype.canRedo = function() {
 		return this.getCommandStack().canRedo();
 	};
@@ -930,8 +933,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype._onUnload = function() {
 		// this function is still in the prototype scope for easier testing
-		var oCommandStack = this.getCommandStack();
-		if (oCommandStack.canUndo() && this.getShowWindowUnloadDialog()) {
+		if (this.canSave() && this.getShowWindowUnloadDialog()) {
 			return this._getTextResources().getText("MSG_UNSAVED_CHANGES");
 		}
 		window.onbeforeunload = this._oldUnloadHandler;
@@ -1081,6 +1083,7 @@ sap.ui.define([
 			var oCommandStack = this.getCommandStack();
 			var bCanUndo = oCommandStack.canUndo();
 			var bCanRedo = oCommandStack.canRedo();
+			var bCanSave = oCommandStack.canSave();
 			var bWasSaved = oCommandStack.getSaved();
 			var bTranslationRelevantDirtyChange = this._oToolbarControlsModel.getProperty("/translation/visible") &&
 				TranslationAPI.hasTranslationRelevantDirtyChanges({layer: Layer.CUSTOMER, selector: this.getRootControlInstance()});
@@ -1089,8 +1092,8 @@ sap.ui.define([
 			this._oVersionsModel.setDirtyChanges(PersistenceWriteAPI.hasDirtyChanges({selector: this.getRootControlInstance()}));
 			this._oToolbarControlsModel.setProperty("/undo/enabled", bCanUndo);
 			this._oToolbarControlsModel.setProperty("/redo/enabled", bCanRedo);
-			this._oToolbarControlsModel.setProperty("/save/enabled", bCanUndo);
-			this._oToolbarControlsModel.setProperty("/restore/enabled", this.bInitialResetEnabled || bCanUndo || bWasSaved);
+			this._oToolbarControlsModel.setProperty("/save/enabled", bCanSave);
+			this._oToolbarControlsModel.setProperty("/restore/enabled", this.bInitialResetEnabled || bCanSave || bWasSaved);
 			this._oToolbarControlsModel.setProperty("/translation/enabled", this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange);
 		}
 		this.fireUndoRedoStackModified();
@@ -1274,7 +1277,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (this.canUndo()) {
+		if (this.canSave()) {
 			this._sSwitchToVersion = sVersion;
 			Utils.showMessageBox("warning", "MSG_SWITCH_VERSION_DIALOG", {
 				titleKey: "TIT_SWITCH_VERSION_DIALOG",
