@@ -12,14 +12,16 @@ sap.ui.define([
 		},
 
 		createContent: function (oController) {
-			var oPanel = new Panel();
-			var oLabel = new Label(this.createId("Label1"), { text: "Label", labelFor: this.createId("Button1") });
-			oPanel.addContent(oLabel);
-			var oButton = new Button(this.createId("Button1"), { text: "Hello JS View2" });
-			oButton.attachPress(oController.doIt, oController);
-			oPanel.addContent(oButton);
+			return new Promise(function(resolve, reject) {
+				var oPanel = new Panel();
+				var oLabel = new Label(this.createId("Label1"), { text: "Label", labelFor: this.createId("Button1") });
+				oPanel.addContent(oLabel);
+				var oButton = new Button(this.createId("Button1"), { text: "Hello JS View2" });
+				oButton.attachPress(oController.doIt, oController);
+				oPanel.addContent(oButton);
 
-			return oButton;
+				resolve(oPanel);
+			}.bind(this));
 		}
 	});
 });
