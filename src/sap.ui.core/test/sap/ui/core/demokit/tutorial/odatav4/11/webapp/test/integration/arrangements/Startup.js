@@ -16,7 +16,8 @@ sap.ui.define([
 					name : "sap.ui.core.tutorial.odatav4",
 					async : true
 				},
-				autoWait : true
+				autoWait : true,
+				timeout : 30 // BCP: 2270085466
 			});
 		}
 	});
