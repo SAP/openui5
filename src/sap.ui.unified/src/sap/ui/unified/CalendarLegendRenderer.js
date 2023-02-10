@@ -31,6 +31,7 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 
 		oRm.openStart("div", oLeg);
 		oRm.class("sapUiUnifiedLegend");
+		oRm.attr("role", "list");
 		oRm.openEnd();
 
 		this.renderItemsHeader(oRm, oLeg);
@@ -88,6 +89,7 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 			oRm.attr('title', sTooltip);
 		}
 
+		oRm.attr("role", "listitem");
 		oRm.class("sapUiUnifiedLegendItem");
 		oRm.class(sClass);
 		oRm.openEnd();
