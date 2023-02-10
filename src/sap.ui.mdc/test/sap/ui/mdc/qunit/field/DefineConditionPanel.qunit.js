@@ -150,7 +150,7 @@ sap.ui.define([
 
 		oDefineConditionPanel.setFormatOptions(oFormatOptions);
 		oModel.removeAllConditions("Name");
-		oDefineConditionPanel.rerender(); // to invalidate operator texts
+		oDefineConditionPanel.invalidate(); // to invalidate operator texts
 		oCore.applyChanges();
 
 		var fnDone = assert.async();

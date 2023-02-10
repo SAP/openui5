@@ -1759,7 +1759,8 @@ sap.ui.define([
 
 		// remove inner controls to test initial setting
 		oFieldEditMulti.destroyAggregation("_content");
-		oFieldEditMulti.rerender();
+		oFieldEditMulti.invalidate();
+		oCore.applyChanges();
 		aContent = oFieldEditMulti.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getAriaLabelledBy().length, 1, "Inner control labelled");
@@ -1786,7 +1787,8 @@ sap.ui.define([
 
 		// remove inner controls to test initial setting
 		oFieldEditSingle.destroyAggregation("_content");
-		oFieldEditSingle.rerender();
+		oFieldEditSingle.invalidate();
+		oCore.applyChanges();
 		aContent = oFieldEditSingle.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getAriaLabelledBy().length, 1, "Inner control labelled");
