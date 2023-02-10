@@ -2205,6 +2205,68 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Tabular suggestions and setShowTableSuggestionValueHelp", function(assert) {
+		var aData = [
+			{ "a": "Alma1" },
+			{ "a": "AlDDDa1" },
+			{ "a": "Bcc1" }
+		];
+		var oInput = new Input({
+			showSuggestion : true,
+			suggestionColumns : [
+				new sap.m.Column({
+					header : new sap.m.Label({text : "A"})
+				})
+			],
+			suggestionItemSelected: function (oEvent) {
+				var oSelectedRow = sap.ui.getCore().byId(oEvent.getSource().getSelectedRow());
+
+				if (oSelectedRow) {
+					oInput.getModel().setData([
+						{ "a": "Alma1" },
+						{ "a": "AlDDDa1" },
+						{ "a": "Bcc1" },
+						{ "a": "Al1" },
+						{ "a": "Alma1" },
+						{ "a": "Al1" },
+						{ "a": "Alm3" },
+						{ "a": "Alma2" }
+					]);
+
+					oInput.setShowTableSuggestionValueHelp(false);
+				}
+			}
+		}).placeAt("content");
+
+		oInput.setModel(new sap.ui.model.json.JSONModel(aData));
+		oInput.bindAggregation("suggestionRows", {
+			path : "/",
+			template : new sap.m.ColumnListItem({
+				cells : [
+					new sap.m.Label({text : "{a}"})
+				]
+			})
+		});
+
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.trigger("focus").val("a").trigger("input");
+
+		this.clock.tick(300);
+
+		var oRow = oInput.getSuggestionRows()[0];
+
+		oRow.ontap(new jQuery.Event());
+		this.clock.tick(300);
+
+		var sVisibility = oInput._getSuggestionsPopover().getPopover().getDomRef().style.visibility;
+
+		assert.strictEqual(sVisibility, "hidden", "Popover should not be visible in DOM");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Tabular Suggestions Show More Button", function(assert) {
 		var oSuggestionData = {
 			tabularSuggestionItems: [
