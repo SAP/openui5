@@ -2361,8 +2361,8 @@ sap.ui.define([
 		// var iTimezoneOffset = oStartDate.getTimezoneOffset();
 		// var iTokyoOffsetMinutes = 9 * 60 + iTimezoneOffset;
 
-		assert.strictEqual(this.oSPC.getAggregation("appointments")[0]._getStartDateWithTimezoneAdaptation().toString(), oStartDate.toString(), "The appointment StartDate changes accordingly");
-		assert.strictEqual(this.oSPC.getAggregation("appointments")[0]._getEndDateWithTimezoneAdaptation().toString(), oEndDate.toString(), "The appointment EndDate changes accordingly");
+		assert.strictEqual(this.oSPC.getAggregation("appointments")[0].getStartDate().toString(), oStartDate.toString(), "The appointment StartDate changes accordingly");
+		assert.strictEqual(this.oSPC.getAggregation("appointments")[0].getEndDate().toString(), oEndDate.toString(), "The appointment EndDate changes accordingly");
 
 		/*
 			TODO Timezone Configuration: Configuration#setTimezone currently does not change the

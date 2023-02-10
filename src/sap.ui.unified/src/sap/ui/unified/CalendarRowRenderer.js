@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/unified/library',
 	'sap/ui/core/InvisibleText',
+	"sap/ui/core/date/UI5Date",
 	'sap/base/Log',
 	'sap/ui/core/IconPool' // required by RenderManager#icon
 	],
@@ -19,6 +20,7 @@ sap.ui.define([
 		Device,
 		library,
 		InvisibleText,
+        UI5Date,
 		Log) {
 		"use strict";
 
@@ -262,7 +264,7 @@ sap.ui.define([
 		var i;
 		var bShowIntervalHeaders = oRow.getShowIntervalHeaders() && (oRow.getShowEmptyIntervalHeaders() || aIntervalHeaders.length > 0);
 		var iMonth = oRow.getStartDate().getMonth();
-		var iDaysLength = new Date(oRow.getStartDate().getFullYear(), iMonth + 1, 0).getDate();
+		var iDaysLength = UI5Date.getInstance(oRow.getStartDate().getFullYear(), iMonth + 1, 0).getDate();
 
 		oRm.openStart("div", sId);
 		oRm.class("sapUiCalendarRowAppsInt");
@@ -478,8 +480,8 @@ sap.ui.define([
 		}
 
 		// ARIA information about start and end
-		sStartEndAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRow._oFormatAria.format(oIntervalHeader.appointment._getStartDateWithTimezoneAdaptation())
-				+ "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRow._oFormatAria.format(oIntervalHeader.appointment._getEndDateWithTimezoneAdaptation());
+		sStartEndAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRow._oFormatAria.format(oIntervalHeader.appointment.getStartDate())
+				+ "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRow._oFormatAria.format(oIntervalHeader.appointment.getEndDate());
 
 		if (sType && sType !== CalendarDayType.None) {
 
@@ -647,12 +649,12 @@ sap.ui.define([
 		}
 
 		// ARIA information about start and end
-		var sAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRow._oFormatAria.format(oAppointment._getStartDateWithTimezoneAdaptation());
-		sAriaText = sAriaText + "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRow._oFormatAria.format(oAppointment._getEndDateWithTimezoneAdaptation());
+		var sAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRow._oFormatAria.format(oAppointment.getStartDate());
+		sAriaText = sAriaText + "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRow._oFormatAria.format(oAppointment.getEndDate());
 		if (oRow._getRelativeInfo && oRow._getRelativeInfo().bIsRelative) {
 			var oRelativeInfo = oRow._getRelativeInfo();
-			sAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRelativeInfo.intervalLabelFormatter(oRelativeInfo._getIndexFromDate(oAppointment._getStartDateWithTimezoneAdaptation()));
-			sAriaText = sAriaText + "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRelativeInfo.intervalLabelFormatter(oRelativeInfo._getIndexFromDate(oAppointment._getEndDateWithTimezoneAdaptation()));
+			sAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRelativeInfo.intervalLabelFormatter(oRelativeInfo._getIndexFromDate(oAppointment.getStartDate()));
+			sAriaText = sAriaText + "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRelativeInfo.intervalLabelFormatter(oRelativeInfo._getIndexFromDate(oAppointment.getEndDate()));
 		}
 		if (sType && sType != CalendarDayType.None) {
 			sAriaText = sAriaText + "; " + this.getAriaTextForType(sType, aTypes);
@@ -676,9 +678,9 @@ sap.ui.define([
 			sId = oRow.getId() + "-AppsInt" + iInterval,
 			i,
 			bShowIntervalHeaders = oRow.getShowIntervalHeaders() && (oRow.getShowEmptyIntervalHeaders() || aIntervalHeaders.length > 0),
-			oRowStartDate = new Date(oRow.getStartDate()),
+			oRowStartDate = UI5Date.getInstance(oRow.getStartDate()),
 			iMonth = oRowStartDate.getMonth(),
-			iDaysLength = new Date(oRowStartDate.getFullYear(), iMonth + 1, 0).getDate(),
+			iDaysLength = UI5Date.getInstance(oRowStartDate.getFullYear(), iMonth + 1, 0).getDate(),
 			sNoAppointments,
 			oPC = oRow._getPlanningCalendar(),
 			// gets a concatenated array with appointments + interval headers, which intersect the visible interval
@@ -689,8 +691,8 @@ sap.ui.define([
 
 		oRowStartDate.setHours(0, 0, 0, 0); // get the appointments and interval headers for the whole day
 		aSortedAppInfos = aAppointments.concat(oRow.getIntervalHeaders().filter(function(oIntHeadApp) {
-			var iAppStart = oIntHeadApp._getStartDateWithTimezoneAdaptation().getTime(),
-				iAppEnd = oIntHeadApp._getEndDateWithTimezoneAdaptation().getTime(),
+			var iAppStart = oIntHeadApp.getStartDate().getTime(),
+				iAppEnd = oIntHeadApp.getEndDate().getTime(),
 				iRowStart = oRowStartDate.getTime(),
 				iRowEnd = iRowStart + 1000 * 60 * 60 * 24;
 			return !(iAppStart >= iRowEnd || iAppEnd <= iRowStart);
