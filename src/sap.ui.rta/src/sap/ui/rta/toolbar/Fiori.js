@@ -92,10 +92,7 @@ function(
 	Fiori.prototype.hide = function () {
 		return Adaptation.prototype.hide.apply(this, arguments)
 		.then(function () {
-			//TODO: this._oFioriHeader should never be empty here
-			if (this._oFioriHeader) {
-				this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
-			}
+			this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
 		}.bind(this));
 	};
 
@@ -113,11 +110,8 @@ function(
 	};
 
 	Fiori.prototype.destroy = function () {
-		// In case of destroy() without normal hide() call.
+		// In case of destroy() without normal hide() call
 		this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
-
-		delete this._oRenderer;
-		delete this._oFioriHeader;
 
 		Adaptation.prototype.destroy.apply(this, arguments);
 	};

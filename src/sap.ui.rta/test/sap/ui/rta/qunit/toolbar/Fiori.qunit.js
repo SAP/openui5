@@ -116,7 +116,7 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("when the toolbar is destroyed before the toolbar is hidden (TODO: should not happen!)", function(assert) {
+		QUnit.test("when the Fiori header is destroyed while the toolbar is being hidden", function(assert) {
 			var done = assert.async();
 
 			this.oToolbar = new Fiori({
@@ -124,16 +124,24 @@ function(
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
+			var oAdaptationDestroyStub = sandbox.stub(Adaptation.prototype, "destroy").callsFake(function() {
+				oAdaptationDestroyStub.wrappedMethod.apply(this, arguments);
+				assert.ok(true, "then the destroy is executed without errors");
+			});
+
+			var oRemoveStyleClassSpy = sandbox.spy(this.oToolbar._oFioriHeader, "removeStyleClass");
+
 			this.oToolbar.onFragmentLoaded().then(function() {
 				this.oToolbar.show();
-				sandbox.stub(Adaptation.prototype, "hide").callsFake(function() {
-					this.oToolbar.destroy();
-					return Promise.resolve();
-				}.bind(this));
-				return this.oToolbar.hide().then(function() {
-					assert.ok(true, "then no errors occur");
+				sandbox.stub(Adaptation.prototype, "hide").returns(Promise.resolve());
+				this.oToolbar.hide().then(function() {
+					assert.ok(
+						oRemoveStyleClassSpy.called,
+						"then the invisible style class was removed before the destruction"
+					);
 					done();
 				});
+				this.oToolbar.destroy();
 			}.bind(this));
 		});
 	});
