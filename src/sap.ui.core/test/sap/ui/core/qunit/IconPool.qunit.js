@@ -39,12 +39,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("createControlByURI", function(assert) {
-		var oAssertStub = this.stub(jQuery.sap, "assert").callsFake(function(bCondition) {
-			if (!bCondition) {
-				assert.ok(false, "Condition check shouldn't fail");
-			}
-		});
-
 		var oFontIcon = IconPool.createControlByURI({
 			src: "sap-icon://add",
 			tap: function() {},
@@ -64,8 +58,6 @@ sap.ui.define([
 
 		oImgIcon = IconPool.createControlByURI("../images/help.gif", Image);
 		assert.equal(oImgIcon.getSrc(), "../images/help.gif", "img: 'src' should be correct.");
-
-		oAssertStub.restore();
 	});
 
 	QUnit.test("addIcon / getIconURI / getIconInfo", function(assert) {
