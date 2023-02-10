@@ -28,7 +28,7 @@ sap.ui.define([
 	}
 
 	function initTags() {
-		Core.loadLibraries(["sap/ui/integration"], {
+		Core.loadLibraries(["sap.ui.integration"], {
 			async: true
 		}).then(function () {
 			//register the tags for this library

@@ -123,7 +123,7 @@
 	}
 
 	function initTags() {
-		coreInstance.loadLibraries(["sap/ui/integration"], {
+		coreInstance.loadLibraries(["sap.ui.integration"], {
 			async: true
 		}).then(function () {
 			//register the tags for this library
