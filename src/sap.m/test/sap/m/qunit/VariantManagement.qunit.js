@@ -571,6 +571,20 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 	});
 
+	QUnit.test("check opening the varian list display in simulated designmode", function(assert) {
+		this.oVM.addItem(new VariantItem({key: "1", title:"One"}));
+
+		sinon.stub(this.oVM, "_openVariantList");
+
+		this.oVM.setDesignMode(true);
+		this.oVM.onclick();
+        assert.ok(!this.oVM._openVariantList.called);
+
+		this.oVM.setDesignMode(false);
+		this.oVM.onclick();
+        assert.ok(this.oVM._openVariantList.called);
+	});
+
 	QUnit.module("VariantManagement SaveAs dialog", {
 		beforeEach: function() {
 			this.oVM = new VariantManagement();
