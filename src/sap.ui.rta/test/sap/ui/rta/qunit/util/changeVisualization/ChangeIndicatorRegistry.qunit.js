@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry",
 	"sap/ui/rta/util/changeVisualization/ChangeStates",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Log,
 	JsControlTreeModifier,
@@ -17,29 +18,25 @@ sap.ui.define([
 	ChangesWriteAPI,
 	ChangeIndicatorRegistry,
 	ChangeStates,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	function createMockChange(sId, sState) {
-		return {
-			getId: function() {
-				return sId;
+		var oChange = RtaQunitUtils.createUIChange({
+			selector: {
+				id: "myControl"
 			},
-			getSelector: function() {
-				return {
-					id: "myControl"
-				};
-			},
-			getLayer: function() {},
-			getChangeType: function() {},
-			getState: function() {
-				return sState;
-			}
-		};
+			fileName: sId
+		});
+		oChange.setState(sState);
+		oChange.markFinished();
+		return oChange;
 	}
+
 	function createMockVersioning(aDraftChangeFileNames) {
 		return {
 			getData: function() {
