@@ -2490,7 +2490,7 @@ sap.ui.define([
 	 * @static
 	 */
 	RenderManager.getApiVersion = function(oRenderer) {
-		return (oRenderer && oRenderer.hasOwnProperty("apiVersion")) ? oRenderer.apiVersion : 1;
+		return (oRenderer && oRenderer.hasOwnProperty("apiVersion")) ? Math.min(this.MAX_API_VERSION, oRenderer.apiVersion) : 1;
 	};
 
 	/**
@@ -2529,6 +2529,9 @@ sap.ui.define([
 
 		return bSkipRendering;
 	};
+
+	RenderManager.MAX_API_VERSION = Number(new window.URLSearchParams(window.parent.parent.location.search).get("MAX_API_VERSION")) || 4;
+
 
 	//#################################################################################################
 	// Helper Methods

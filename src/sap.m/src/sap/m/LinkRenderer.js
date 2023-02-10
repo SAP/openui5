@@ -27,7 +27,7 @@
 	 * @namespace
 	 */
 	var LinkRenderer = {
-			apiVersion: 2
+		apiVersion: 4
 	};
 
 	// shortcut for sap.m.EmptyIndicator

@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @namespace
 	 */
 	var ObjectNumberRenderer = {
-			apiVersion: 2
+		apiVersion: 4
 	};
 
 	/**

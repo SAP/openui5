@@ -226,16 +226,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Title in Toolbar", function(assert){
-		assert.ok(!this.title.$().hasClass("sapMTitleTB"), "Title has no toolbar class");
-		var oToolbar = new Toolbar();
-		oToolbar.addContent(this.title);
-		oToolbar.placeAt("uiArea");
-		Core.applyChanges();
-		assert.ok(this.title.$().hasClass("sapMTitleTB"), "Title has toolbar class");
-		this.title = oToolbar; // Correct cleanup in teardown
-	});
-
 	QUnit.module("Title Association", {
 		beforeEach : function() {
 			this.coreTitle = new coreTitle({

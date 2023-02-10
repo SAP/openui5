@@ -23,7 +23,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/Renderer', 'sap/ui/core/AccessKe
 	 * @namespace
 	 */
 	var LabelRenderer = {
-		apiVersion: 2
+		apiVersion: 4
 	};
 
 	/**
@@ -71,8 +71,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/Renderer', 'sap/ui/core/AccessKe
 
 		if (sLabelForRendering) {
 			LabelEnablement.writeLabelForAttribute(rm, oLabel);
-		} else if (oLabel.getParent() && oLabel.getParent().isA("sap.m.Toolbar")) {
-			rm.class("sapMLabelTBHeader");
 		}
 
 		// text direction

@@ -718,14 +718,14 @@ function(
 		if (bShowValueHelpIcon) {
 			// ensure the creation of an icon
 			oIcon = this._getValueHelpIcon();
-			oIcon.setProperty("visible", true, true);
+			oIcon.setVisible(true);
 		} else if (oIcon) {
 			// if the icon should not be shown and has never be initialized - do nothing
-			oIcon.setProperty("visible", false, true);
+			oIcon.setVisible(false);
 		}
 
 		if (!this.getWidth()) {
-			this.setProperty("width", "100%", true);
+			this.setWidth("100%");
 		}
 
 		if (this._hasTabularSuggestions()) {

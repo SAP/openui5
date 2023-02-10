@@ -11,7 +11,7 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
 		 * @namespace
 		 */
 		var ComboBoxBaseRenderer = Renderer.extend(ComboBoxTextFieldRenderer);
-		ComboBoxBaseRenderer.apiVersion = 2;
+		ComboBoxBaseRenderer.apiVersion = 4;
 		/**
 		 * CSS class to be applied to the root element of the control.
 		 *

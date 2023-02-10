@@ -1274,7 +1274,7 @@ function(
 
 		this._deregisterResizeHandler();
 		this._synchronizeSelectedItemAndKey();
-		this.setProperty("hasSelection", !!this.getSelectedItems().length, true);
+		this.setProperty("hasSelection", !!this.getSelectedItems().length);
 
 		if (!this._bAlreadySelected) {
 			this._sInitialValueStateText = this.getValueStateText();

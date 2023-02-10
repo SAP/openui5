@@ -23,7 +23,7 @@ sap.ui.define([
 	 * @namespace
 	 */
 	var TextAreaRenderer = Renderer.extend(InputBaseRenderer);
-	TextAreaRenderer.apiVersion = 2;
+	TextAreaRenderer.apiVersion = 4;
 
 	// Adds control specific class
 	TextAreaRenderer.addOuterClasses = function(oRm, oControl) {

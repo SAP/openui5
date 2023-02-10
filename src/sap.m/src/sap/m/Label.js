@@ -226,7 +226,7 @@ function(
 		var oLabeledControl = Core.byId(sLabelForId);
 
 		if (oLabeledControl && oLabeledControl.isA("sap.m.Input") && oLabeledControl.getProperty("highlightAccKeysRef")) {
-			Core.byId(sLabelForId).setProperty("accesskey", (sText[0].toLowerCase()), true);
+			Core.byId(sLabelForId).setProperty("accesskey", (sText[0].toLowerCase()));
 		}
 	};
 

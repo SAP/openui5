@@ -16,7 +16,7 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 	 * @namespace
 	 */
 	var CheckBoxRenderer = {
-		apiVersion: 2
+		apiVersion: 4
 	};
 
 

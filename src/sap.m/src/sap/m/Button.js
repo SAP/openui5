@@ -412,7 +412,7 @@ sap.ui.define([
 	};
 
 	Button.prototype.setType = function(sButtonType) {
-		this.setProperty("type", sButtonType, false);
+		this.setProperty("type", sButtonType);
 
 		switch (sButtonType) {
 			case ButtonType.Critical:
@@ -452,7 +452,7 @@ sap.ui.define([
 		var sText = this.getText();
 
 		if (sText) {
-			this.setProperty("accesskey", sText[0].toLowerCase(), true);
+			this.setProperty("accesskey", sText[0].toLowerCase());
 		}
 	};
 

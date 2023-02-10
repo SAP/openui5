@@ -294,7 +294,7 @@ sap.ui.define([
 		this._cleanup();
 
 		// Inner control can be determined here as all property values are known
-		this._adjustControl(true);
+		this._adjustControl(false);
 	};
 
 	/**

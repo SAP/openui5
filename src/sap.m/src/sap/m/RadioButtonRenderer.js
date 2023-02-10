@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @namespace
 	 */
 	var RadioButtonRenderer = {
-		apiVersion: 2
+		apiVersion: 4
 	};
 
 	/**
