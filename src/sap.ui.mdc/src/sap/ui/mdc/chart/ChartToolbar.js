@@ -176,7 +176,7 @@ sap.ui.define([
                 //Enabled via toggleZoomButtons()
             }
 
-            if (aP13nMode.indexOf("Sort") > -1 || aP13nMode.indexOf("Item") > -1) {
+            if (aP13nMode.indexOf("Sort") > -1 || aP13nMode.indexOf("Item") > -1 || aP13nMode.indexOf("Filter") > -1) {
                 this._oSettingsBtn = new OverflowButton(oMDCChart.getId() + "-chart_settings", {
                     icon: "sap-icon://action-settings",//TODO the right icon for P13n chart dialog
                     tooltip: MDCRb.getText('chart.SETTINGS'),
