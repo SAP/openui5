@@ -101,6 +101,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 	 * Sorts items based on the best match. The first item is most likely to be the selected one.
 	 *
 	 * Items could have multiple texts and the sorting criteria is:
+	 * - item with text that matches exactly the input value has the highest priority
 	 * - the matching text with lower index in the array gets a higher priority
 	 * For example, if there's an array of texts: left: ["bar", "foo"], right: ["foo", "bar"] and the search is "fo",
 	 * the order would be:
@@ -126,6 +127,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				for (var i = 0; i < aLeftTexts.length; i++) {
 					bLeft = _startsWithIgnoreCase(aLeftTexts[i], sTextToFilter);
 					bRight = _startsWithIgnoreCase(aRightTexts[i], sTextToFilter);
+
+					// In case of exact match always return with highest priority
+					if (aLeftTexts[i].toLowerCase() === sTextToFilter.toLowerCase()) {
+						return -1;
+					}
+
+					if (aRightTexts[i].toLowerCase() === sTextToFilter.toLowerCase()) {
+						return 1;
+					}
 
 					if (bLeft && bRight) {
 						return 0;
