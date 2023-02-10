@@ -4,6 +4,27 @@ sap.ui.define([
 ], function(elementActionTest) {
     'use strict';
 
+    function fnGetView() {
+        var sDelegate = '\\{"name": "sap/ui/mdc/qunit/table/CondenserDelegate"\\}';
+        var sView =
+        '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.mdc.table" xmlns:m="sap.m" xmlns:mdc="sap.ui.mdc">' +
+            '<mdc:Table id="myMDCTable" ' +
+                'selectionMode="Multi" ' +
+                'type="Table" ' +
+                'delegate=\'' +  sDelegate + '\' ' +
+                'p13nMode="Column,Group,Sort">' +
+                '<mdc:columns>' +
+                    '<Column id="IDTableName_01" header="Name" dataProperty="name"></Column>' +
+                    '<Column id="IDTableYear" header="Founding Year" dataProperty="foundingYear"></Column>' +
+                    '<Column id="IDTablemodified" header="Changed By" dataProperty="modifiedBy"></Column>' +
+                    '<Column id="IDTableCreated" header="Created On" dataProperty="createdAt"></Column>' +
+                '</mdc:columns>' +
+            '</mdc:Table>' +
+        '</mvc:View>';
+
+        return sView;
+    }
+
     function getIdForPropertyName(sPropertyName) {
         switch (sPropertyName) {
             case "name":
@@ -19,7 +40,9 @@ sap.ui.define([
         }
     }
 
-    function fnConfirmInitialState(oUiComponent, oViewAfterAction, assert) {
+    // ---------------------------------------------------------------------
+
+    function fnConfirmInitialColumnState(oUiComponent, oViewAfterAction, assert) {
         var oTable = oViewAfterAction.byId("myMDCTable");
         var aColumns = oTable.getColumns();
 		assert.ok(oTable, "then the mdc.Table exists");
@@ -60,27 +83,6 @@ sap.ui.define([
         };
     }
 
-    function fnGetView() {
-        var sDelegate = '\\{"name": "sap/ui/mdc/qunit/table/CondenserDelegate"\\}';
-        var sView =
-        '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.mdc.table" xmlns:m="sap.m" xmlns:mdc="sap.ui.mdc">' +
-            '<mdc:Table id="myMDCTable" ' +
-                'selectionMode="Multi" ' +
-                'type="Table" ' +
-                'delegate=\'' +  sDelegate + '\' ' +
-                'p13nMode="Column">' +
-                '<mdc:columns>' +
-                    '<Column id="IDTableName_01" header="Name" dataProperty="name"></Column>' +
-                    '<Column id="IDTableYear" header="Founding Year" dataProperty="foundingYear"></Column>' +
-                    '<Column id="IDTablemodified" header="Changed By" dataProperty="modifiedBy"></Column>' +
-                    '<Column id="IDTableCreated" header="Created On" dataProperty="createdAt"></Column>' +
-                '</mdc:columns>' +
-            '</mdc:Table>' +
-        '</mvc:View>';
-
-        return sView;
-    }
-
     elementActionTest("addColumn and removeColumn change condensed", {
         xmlView: fnGetView(),
         action: {
@@ -110,7 +112,7 @@ sap.ui.define([
 		}],
         changesAfterCondensing: 0, // OPTIONAL
 		afterAction: fnConfirmColumnGotAdded("name"),
-		afterUndo: fnConfirmInitialState,
+		afterUndo: fnConfirmInitialColumnState,
 		afterRedo: fnConfirmColumnGotAdded("name")
     });
 
@@ -130,7 +132,7 @@ sap.ui.define([
         },
         changesAfterCondensing: 1, // OPTIONAL
 		afterAction: fnConfirmColumnGotRemoved("modifiedBy"),
-		afterUndo: fnConfirmInitialState,
+		afterUndo: fnConfirmInitialColumnState,
 		afterRedo: fnConfirmColumnGotRemoved("modifiedBy")
     });
 
@@ -151,7 +153,7 @@ sap.ui.define([
         },
         changesAfterCondensing: 1, // OPTIONAL
 		afterAction: fnConfirmColumnGotMoved("modifiedBy", 0),
-		afterUndo: fnConfirmInitialState,
+		afterUndo: fnConfirmInitialColumnState,
 		afterRedo: fnConfirmColumnGotMoved("modifiedBy", 0)
     });
 
@@ -185,7 +187,7 @@ sap.ui.define([
 		}],
         changesAfterCondensing: 0, // OPTIONAL
 		afterAction: fnConfirmColumnGotMoved("modifiedBy", 2),
-		afterUndo: fnConfirmInitialState,
+		afterUndo: fnConfirmInitialColumnState,
 		afterRedo: fnConfirmColumnGotMoved("modifiedBy", 2)
     });
 
@@ -219,8 +221,103 @@ sap.ui.define([
 		}],
         changesAfterCondensing: 1, // OPTIONAL
 		afterAction: fnConfirmColumnGotMoved("modifiedBy", 1),
-		afterUndo: fnConfirmInitialState,
+		afterUndo: fnConfirmInitialColumnState,
 		afterRedo: fnConfirmColumnGotMoved("modifiedBy", 1)
+    });
+
+    // ---------------------------------------------------------------------
+
+    function fnConfirmInitialGroupingState(oUiComponent, oViewAfterAction, assert) {
+        var oTable = oViewAfterAction.byId("myMDCTable");
+        assert.ok(oTable, "then the mdc.Table exists");
+    }
+
+    function fnConfirmGroupingGotAdded(sName, iIndex) {
+        return function(oUiComponent, oViewAfterAction, assert) {
+            var oTable = oViewAfterAction.byId("myMDCTable");
+            assert.ok(oTable, "then the mdc.Table exists");
+        };
+    }
+
+    elementActionTest("addGroup removeGroup condensed", {
+        xmlView: fnGetView(),
+        action: {
+            name: "settings",
+            controlId: "myMDCTable",
+            parameter: function() {
+                return {
+                    changeType: "removeGroup",
+                    content: {
+                        name: "modifiedBy"
+                    }
+                };
+            }
+        },
+        previousActions: [{
+            name: "settings",
+            controlId: "myMDCTable",
+            parameter: function() {
+                return {
+                    changeType: "addGroup",
+                    content: {
+                        index: 0,
+                        name: "modifiedBy"
+                    }
+                };
+            }
+        }],
+        changesAfterCondensing: 0,
+        afterAction: fnConfirmInitialGroupingState,
+		afterUndo: fnConfirmGroupingGotAdded(),
+		afterRedo: fnConfirmInitialGroupingState
+    });
+
+    // ---------------------------------------------------------------------
+
+    function fnConfirmInitialSortingState(oUiComponent, oViewAfterAction, assert) {
+        var oTable = oViewAfterAction.byId("myMDCTable");
+        assert.ok(oTable, "then the mdc.Table exists");
+    }
+
+    function fnConfirmSortingGotAdded(sName, iIndex, bDescending) {
+        return function(oUiComponent, oViewAfterAction, assert) {
+            var oTable = oViewAfterAction.byId("myMDCTable");
+            assert.ok(oTable, "then the mdc.Table exists");
+        };
+    }
+
+    elementActionTest("addSort removeSort condensed", {
+        xmlView: fnGetView(),
+        action: {
+            name: "settings",
+            controlId: "myMDCTable",
+            parameter: function() {
+                return {
+                    changeType: "removeSort",
+                    content: {
+                        name: "modifiedBy"
+                    }
+                };
+            }
+        },
+        previousActions: [{
+            name: "settings",
+            controlId: "myMDCTable",
+            parameter: function() {
+                return {
+                    changeType: "addSort",
+                    content: {
+                        index: 0,
+                        name: "modifiedBy",
+                        descending: false
+                    }
+                };
+            }
+        }],
+        changesAfterCondensing: 0,
+        afterAction: fnConfirmInitialSortingState,
+		afterUndo: fnConfirmSortingGotAdded(),
+		afterRedo: fnConfirmInitialSortingState
     });
 
 });

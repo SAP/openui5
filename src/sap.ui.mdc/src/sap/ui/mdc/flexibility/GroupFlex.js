@@ -4,8 +4,9 @@
 sap.ui.define([
 	"sap/m/p13n/Engine",
 	"sap/ui/mdc/flexibility/Util",
-	"sap/ui/fl/changeHandler/Base"
-], function(Engine, Util, FLChangeHandlerBase) {
+	"sap/ui/fl/changeHandler/Base",
+	"sap/ui/fl/changeHandler/condenser/Classification"
+], function(Engine, Util, FLChangeHandlerBase, CondenserClassification) {
 	"use strict";
 
 	var fRebindControl = function (oControl) {
@@ -144,19 +145,65 @@ sap.ui.define([
 	};
 
 	var Group = {};
-	Group.removeGroup = Util.createChangeHandler({
-		apply: fRemoveGroup,
-		revert: fAddGroup
-	});
-
 	Group.addGroup = Util.createChangeHandler({
 		apply: fAddGroup,
-		revert: fRemoveGroup
+		revert: fRemoveGroup,
+		getCondenserInfo: function(oChange, mPropertyBag) {
+			return {
+				affectedControl: {id: oChange.getContent().name},
+				affectedControlIdProperty: "name",
+				targetContainer: oChange.getSelector(),
+				targetAggregation: "groupLevels",
+				customAggregation: mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent).getGroupConditions().groupLevels,
+				classification: CondenserClassification.Create,
+				setTargetIndex: function(oChange, iNewTargetIndex) {
+					oChange.getContent().index = iNewTargetIndex;
+				},
+				getTargetIndex: function(oChange) {
+					return oChange.getContent().index;
+				}
+			};
+		}
+	});
+
+	Group.removeGroup = Util.createChangeHandler({
+		apply: fRemoveGroup,
+		revert: fAddGroup,
+		getCondenserInfo: function(oChange, mPropertyBag) {
+			return {
+				affectedControl: {id: oChange.getContent().name},
+				affectedControlIdProperty: "name",
+				targetContainer: oChange.getSelector(),
+				targetAggregation: "groupLevels",
+				customAggregation: mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent).getGroupConditions().groupLevels,
+				classification: CondenserClassification.Destroy,
+				sourceIndex: oChange.getRevertData().index
+			};
+		}
 	});
 
 	Group.moveGroup = Util.createChangeHandler({
 		apply: fMoveGroup,
-		revert: fMoveGroup
+		revert: fMoveGroup,
+		getCondenserInfo: function(oChange, mPropertyBag) {
+			return {
+				affectedControl: {id: oChange.getContent().name},
+				affectedControlIdProperty: "name",
+				targetContainer: oChange.getSelector(),
+				targetAggregation: "groupLevels",
+				classification: CondenserClassification.Move,
+				sourceIndex: oChange.getContent().index,
+				customAggregation: mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent).getGroupConditions().groupLevels,
+				sourceContainer: oChange.getSelector(),
+				sourceAggregation: "groupLevels",
+				setTargetIndex: function(oChange, iNewTargetIndex) {
+					oChange.getContent().index = iNewTargetIndex;
+				},
+				getTargetIndex: function(oChange) {
+					return oChange.getContent().index;
+				}
+			};
+		}
 	});
 
 	return Group;

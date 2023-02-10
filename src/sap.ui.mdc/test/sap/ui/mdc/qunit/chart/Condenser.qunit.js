@@ -12,7 +12,7 @@ sap.ui.define([
 		var sDelegate = '\\{"name": "delegates/odata/v4/vizChart/ChartDelegate", "payload": \\{"collectionName": "Books"\\}\\}';
 
 		var b = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc">' +
-		'<mdc:Chart id="myChart" p13nMode="Type" chartType="column" delegate=\'' +  sDelegate + '\' propertyInfo=\'' + sPropertyInfo + '\'>' +
+		'<mdc:Chart id="myChart" p13nMode="Item,Sort,Type" chartType="column" delegate=\'' +  sDelegate + '\' propertyInfo=\'' + sPropertyInfo + '\'>' +
 		'</mdc:Chart>' +
 		'</mvc:View>';
 
@@ -64,6 +64,54 @@ sap.ui.define([
 		afterAction: fnOnAfterAction,
 		afterUndo: fnConfirm,
 		afterRedo: fnConfirm
+    });
+
+	// ---------------------------------------------------------------------
+
+    function fnConfirmInitialSortingState(oUiComponent, oViewAfterAction, assert) {
+        var oTable = oViewAfterAction.byId("myChart");
+        assert.ok(oTable, "then the mdc.Table exists");
+    }
+
+    function fnConfirmSortingGotAdded(sName, iIndex, bDescending) {
+        return function(oUiComponent, oViewAfterAction, assert) {
+            var oTable = oViewAfterAction.byId("myChart");
+            assert.ok(oTable, "then the mdc.Table exists");
+        };
+    }
+
+    elementActionTest("addSort removeSort condensed", {
+        xmlView: buildXML(""),
+        action: {
+            name: "settings",
+            controlId: "myChart",
+            parameter: function() {
+                return {
+                    changeType: "removeSort",
+                    content: {
+                        name: "modifiedBy"
+                    }
+                };
+            }
+        },
+        previousActions: [{
+            name: "settings",
+            controlId: "myChart",
+            parameter: function() {
+                return {
+                    changeType: "addSort",
+                    content: {
+                        index: 0,
+                        name: "modifiedBy",
+                        descending: false
+                    }
+                };
+            }
+        }],
+        changesAfterCondensing: 0,
+        afterAction: fnConfirmInitialSortingState,
+		afterUndo: fnConfirmSortingGotAdded(),
+		afterRedo: fnConfirmInitialSortingState
     });
 
 });
