@@ -1664,7 +1664,7 @@ sap.ui.define([
 						this._filterItemRemoved(oFilterField);
 					}
 
-					this._oFilterBarLayout.rerender();
+					this._oFilterBarLayout.invalidate();
 				}
 			}
 		}
