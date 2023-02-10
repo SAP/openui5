@@ -74,10 +74,12 @@ sap.ui.define([
 				// In personalization mode the variant management overlay cannot be selected
 				var bDesignTimeMode = true;
 				fnSetControlAttributes(oVariantManagement, bDesignTimeMode);
+				oVariantManagement.enteringDesignMode();
 			},
 			stop: function(oVariantManagement) {
 				var bDesignTimeMode = false;
 				fnSetControlAttributes(oVariantManagement, bDesignTimeMode);
+				oVariantManagement.leavingDesignMode();
 			}
 		},
 		actions: {

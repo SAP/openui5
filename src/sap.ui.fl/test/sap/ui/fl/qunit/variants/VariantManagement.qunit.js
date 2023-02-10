@@ -420,6 +420,18 @@ sap.ui.define([
 			assert.equal(this._oVM.oVariantList.getItems()[0].getText(), "One");
 		});
 
+		QUnit.test("check opening the varian list display in simulated designmode", function(assert) {
+			sinon.stub(this._oVM, "_openVariantList");
+
+			this.oVariantManagement.enteringDesignMode();
+			this._oVM.onclick();
+			assert.ok(!this._oVM._openVariantList.called);
+
+			this.oVariantManagement.leavingDesignMode();
+			this._oVM.onclick();
+			assert.ok(this._oVM._openVariantList.called);
+		});
+
 		QUnit.test("Check 'variantsEditable'", function(assert) {
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 			this._oVM._openVariantList();

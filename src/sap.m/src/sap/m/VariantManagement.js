@@ -697,7 +697,8 @@ sap.ui.define([
 	VariantManagement.prototype._createInnerModel = function() {
 		var oModel = new JSONModel({
 			showManualVariantKey: false,
-			showCreateTile: false
+			showCreateTile: false,
+			isDesignMode: false
 		});
 		this.setModel(oModel, VariantManagement.INNER_MODEL_NAME);
 	};
@@ -715,6 +716,13 @@ sap.ui.define([
 	};
 	VariantManagement.prototype._setShowManualVariantKey = function(bValue) {
 		this._setInnerModelProperty("/showManualVariantKey", bValue);
+	};
+
+	VariantManagement.prototype.getDesignMode = function() {
+		return this._getInnerModelProperty("/isDesignMode");
+	};
+	VariantManagement.prototype.setDesignMode = function(bValue) {
+		this._setInnerModelProperty("/isDesignMode", bValue);
 	};
 
 	VariantManagement.prototype._setInnerModelProperty = function(sPropertyPath, vValue) {
@@ -850,6 +858,11 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype.onclick = function(oEvent) {
+
+		if (this.getDesignMode()) {
+			return;
+		}
+
 		if (this.oVariantPopoverTrigger && !this.bPopoverOpen) {
 			this.oVariantPopoverTrigger.focus();
 		}

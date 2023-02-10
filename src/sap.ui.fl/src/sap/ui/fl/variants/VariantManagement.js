@@ -748,6 +748,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Indicates the design mode was entered.
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
+	 */
+	VariantManagement.prototype.enteringDesignMode = function() {
+		this._oVM.setDesignMode(true);
+	};
+	/**
+	 * Indicates the design mode was left.
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
+	 */
+	VariantManagement.prototype.leavingDesignMode = function() {
+		this._oVM.setDesignMode(false);
+	};
+
+	/**
 	 * Determines if the current variant is modified.
 	 * @public
 	 * @returns {boolean} If the current variant is modified <code>true</code>, otherwise <code>false</code>
