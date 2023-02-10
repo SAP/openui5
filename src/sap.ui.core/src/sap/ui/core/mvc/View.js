@@ -434,12 +434,16 @@ sap.ui.define([
 	 * @private
 	 */
 	var createAndConnectController = function(oThis, mSettings) {
+		var bAsync = mSettings.async;
+		var connectToView = function (oController) {
+			oThis.oController = oController;
+			oController.oView = oThis;
+		};
 
 		if (!Configuration.getControllerCodeDeactivated()) {
 			// only set when used internally
 			var oController = mSettings.controller,
-				sName = oController && typeof oController.getMetadata === "function" && oController.getMetadata().getName(),
-				bAsync = mSettings.async;
+				sName = oController && typeof oController.getMetadata === "function" && oController.getMetadata().getName();
 
 			if (!oController && oThis.getControllerName) {
 				oThis.bControllerIsViewManaged = true;
@@ -476,11 +480,6 @@ sap.ui.define([
 			}
 
 			if (oController) {
-				var connectToView = function(oController) {
-					oThis.oController = oController;
-					oController.oView = oThis;
-				};
-
 				if (bAsync) {
 					if (!oThis.oAsyncState) {
 						throw new Error("The view " + oThis.sViewName + " runs in sync mode and therefore cannot use async controller extensions!");
@@ -490,8 +489,13 @@ sap.ui.define([
 					connectToView(oController);
 				}
 			}
+		} else if (bAsync) {
+			Controller.extend("sap.ui.core.mvc.EmptyControllerImpl", { "_sap.ui.core.mvc.EmptyControllerImpl": true });
+			return Controller.create({
+				name: "sap.ui.core.mvc.EmptyControllerImpl"
+			}).then(connectToView);
 		} else {
-			sap.ui.controller("sap.ui.core.mvc.EmptyControllerImpl", {"_sap.ui.core.mvc.EmptyControllerImpl":true});
+			sap.ui.controller("sap.ui.core.mvc.EmptyControllerImpl", {"_sap.ui.core.mvc.EmptyControllerImpl":true}); // legacy-relevant
 			oThis.oController = sap.ui.controller("sap.ui.core.mvc.EmptyControllerImpl");
 		}
 	};
