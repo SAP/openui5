@@ -274,6 +274,38 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
+			"MultiSelectionPlugin with ODataV2 (ListBinding)": {
+				group: "Plugins",
+				module: "./plugins/MultiSelectionPlugin.ODataV2.ListBinding.qunit",
+				ui5: {
+					// sap.ui.table.plugins.MultiSelectionPlugin requires sap.m modules
+					libs: ["sap.ui.table", "sap.m"]
+				}
+			},
+			"MultiSelectionPlugin with ODataV2 (TreeBinding)": {
+				group: "Plugins",
+				module: "./plugins/MultiSelectionPlugin.ODataV2.TreeBinding.qunit",
+				ui5: {
+					// sap.ui.table.plugins.MultiSelectionPlugin requires sap.m modules
+					libs: ["sap.ui.table", "sap.m"]
+				}
+			},
+			"MultiSelectionPlugin with ODataV2 (AnalyticalBinding)": {
+				group: "Plugins",
+				module: "./plugins/MultiSelectionPlugin.ODataV2.AnalyticalBinding.qunit",
+				ui5: {
+					// sap.ui.table.plugins.MultiSelectionPlugin requires sap.m modules
+					libs: ["sap.ui.table", "sap.m"]
+				}
+			},
+			"MultiSelectionPlugin with ODataV4": {
+				group: "Plugins",
+				module: "./plugins/MultiSelectionPlugin.ODataV4.qunit",
+				ui5: {
+					// sap.ui.table.plugins.MultiSelectionPlugin requires sap.m modules
+					libs: ["sap.ui.table", "sap.m"]
+				}
+			},
 			"Support of external plugins": {
 				group: "Plugins",
 				module: "./plugins/SupportOfExternalPlugins.qunit",
