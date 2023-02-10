@@ -49,7 +49,7 @@ sap.ui.define([],
 
             aOptions.forEach(function (sOption, index) {
                 oRm.openStart("li");
-                oRm.openEnd("li");
+                oRm.openEnd();
                 oRm.voidStart("input");
                 if (aChecked[index].value) {
                     oRm.attr("checked", "true");
@@ -60,7 +60,7 @@ sap.ui.define([],
                 oRm.voidEnd();
 				oRm.openStart("label");
 				oRm.attr("for", "dropDownFilterOption" + index);
-				oRm.openEnd("label");
+				oRm.openEnd();
 				oRm.text(sOption);
 				oRm.close("label");
                 oRm.close("li");
@@ -71,7 +71,7 @@ sap.ui.define([],
         DataTableFilterDropDownRenderer.renderDefaultOptions = function (oRm, oControl) {
             oControl.getDefaultOptions().forEach(function (oOption) {
                 oRm.openStart("li");
-                oRm.openEnd("li");
+                oRm.openEnd();
                 oRm.openStart("a");
                 oRm.attr("tabindex", 0);
                 oRm.class(oOption.key);

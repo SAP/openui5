@@ -24,7 +24,7 @@ sap.ui.define(function() {
 	TableRenderer.render = function(rm, oTable) {
 		rm.openStart("div", oTable);
 		rm.class("sapUiDtTableReport");
-		rm.openEnd(">");
+		rm.openEnd();
 
 		rm.renderControl(oTable._getTable());
 
