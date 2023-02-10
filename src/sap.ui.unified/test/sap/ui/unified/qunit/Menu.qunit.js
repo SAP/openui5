@@ -1115,7 +1115,7 @@ sap.ui.define([
 		assert.ok(!lastSelectedItemId, "No Event triggered on Escape");
 	});
 
-	QUnit.test("_fnInvisibleCountInformationFactory", function(assert) {
+	QUnit.test("_fnInvisibleDescriptionFactory", function(assert) {
 		// arrange
 		// act
 		var oLanguageStub = this.stub(Core.getConfiguration(), "getLanguage")
@@ -1123,13 +1123,13 @@ sap.ui.define([
 				return "en-US";
 			}),
 			oInvisibleCountInformation = new MenuTextFieldItem()
-			._fnInvisibleCountInformationFactory({
+			._fnInvisibleDescriptionFactory({
 				iItemNo: 1,
 				iTotalItems: 3
 			});
 
 		// assert
-		assert.strictEqual(oInvisibleCountInformation.getText(), "1 of 3", "Proper count information is created");
+		assert.strictEqual(oInvisibleCountInformation.getText(), "1 of 3 Type in text", "Proper count information is created");
 
 		// clean up
 		oLanguageStub.restore();
@@ -1217,7 +1217,7 @@ sap.ui.define([
 		oMenu.destroy();
 	});
 
-	QUnit.test("MenuTextFieldItem input field has count information referenced", function(assert) {
+	QUnit.test("MenuTextFieldItem input field has count and type information referenced", function(assert) {
 		// arrange
 		var oLanguageStub = this.stub(Core.getConfiguration(), "getLanguage"),
 			oInputFields, sCountDescriptionOne, sCountDescriptionTwo,
@@ -1232,8 +1232,8 @@ sap.ui.define([
 		sCountDescriptionTwo = document.getElementById(oInputFields[1].getAttribute("aria-describedby").split(" ")[1]).innerText;
 
 		// assert
-		assert.strictEqual(sCountDescriptionOne, "1 of 2", "Count information is refered");
-		assert.strictEqual(sCountDescriptionTwo, "2 of 2", "Count information is refered");
+		assert.strictEqual(sCountDescriptionOne, "1 of 2 Type in text", "Proper description text is referenced");
+		assert.strictEqual(sCountDescriptionTwo, "2 of 2 Type in text", "Proper description text is referenced");
 
 		// clean up
 		oMenu.destroy();
