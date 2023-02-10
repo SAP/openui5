@@ -1102,6 +1102,21 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates a V4 OData model for <code>TEA_BUSI</code> using client "123".
+		 *
+		 * @param {object} [mModelParameters] Map of parameters for model construction
+		 * @returns {sap.ui.model.odata.v4.ODataModel} The model
+		 */
+		createTeaBusiModel123 : function (mModelParameters) {
+			return this.createModel(sTeaBusi + "?sap-client=123", mModelParameters, {
+					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=123"
+						: {source : "odata/v4/data/metadata.xml"},
+					"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?sap-client=123"
+						: {source : "odata/v4/data/metadata_tea_busi_product.xml"}
+				});
+		},
+
+		/**
 		 * Helper to create a third sales order in a table. Performs checks on change events,
 		 * requests and $count.
 		 *
@@ -25052,12 +25067,15 @@ sap.ui.define([
 	//
 	// Use $count w/ $direct (JIRA: CPOUI5ODATAV4-1855).
 	// Additionally ODLB#getDownloadUrl is tested w/ filter/sort (JIRA: CPOUI5ODATAV4-1920).
+	//
+	// Use a filter with spaces (BCP: 2380032202).
 	QUnit.test("Recursive Hierarchy: expand root, w/ filter, search & orderby", function (assert) {
-		var oModel = this.createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
+		var oModel = this.createTeaBusiModel123({autoExpandSelect : true, groupId : "$direct"}),
 			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <t:Table id="table" rows="{path : \'/EMPLOYEES\',\
+		filters : {path : \'AGE\', operator : \'GE\', value1 : 0},\
 		parameters : {\
 			$$aggregation : {\
 				hierarchyQualifier : \'OrgChart\',\
@@ -25071,9 +25089,10 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES/$count?$filter=Is_Manager&$search=covfefe", 2)
-			.expectRequest("EMPLOYEES?$apply=ancestors"
-				+ "($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager)/search(covfefe),keep start)"
+		this.expectRequest("EMPLOYEES/$count?sap-client=123&$filter=AGE ge 0 and (Is_Manager)"
+				+ "&$search=covfefe", 2)
+			.expectRequest("EMPLOYEES?sap-client=123&$apply=ancestors($root/EMPLOYEES,OrgChart,ID"
+				+ ",filter(AGE ge 0 and (Is_Manager))/search(covfefe),keep start)"
 				+ "/orderby(AGE desc)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
 				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
 				+ ",Levels=1)&$select=DrillState,ID&$count=true&$skip=0&$top=110", {
@@ -25095,9 +25114,9 @@ sap.ui.define([
 			assert.strictEqual(oListBinding.getCount(), 2, "count of nodes"); // code under test
 
 			// code under test
-			assert.strictEqual(oListBinding.getDownloadUrl(), sTeaBusi + "EMPLOYEES"
-				+ "?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager)/search(covfefe)"
-					+ ",keep%20start)"
+			assert.strictEqual(oListBinding.getDownloadUrl(), sTeaBusi + "EMPLOYEES?sap-client=123"
+				+ "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID"
+					+ ",filter(AGE%20ge%200%20and%20(Is_Manager))/search(covfefe),keep%20start)"
 				+ "/orderby(AGE%20desc)"
 				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=9)"
@@ -25113,8 +25132,9 @@ sap.ui.define([
 		}).then(function () {
 			var oRoot = oTable.getRows()[0].getBindingContext();
 
-			that.expectRequest("EMPLOYEES?$apply=ancestors"
-					+ "($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager)/search(covfefe),keep start)"
+			that.expectRequest("EMPLOYEES?sap-client=123"
+					+ "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID"
+					+ ",filter(AGE ge 0 and (Is_Manager))/search(covfefe),keep start)"
 					+ "/descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
 					+ "/orderby(AGE desc)"
 					+ "&$select=DrillState,ID&$count=true&$skip=0&$top=110", {

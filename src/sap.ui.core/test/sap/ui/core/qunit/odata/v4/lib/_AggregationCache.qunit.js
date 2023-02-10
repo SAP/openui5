@@ -1301,7 +1301,8 @@ sap.ui.define([
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation,
+				{/*mQueryOptions*/}),
 			oError = new Error(),
 			oGroupLock = {
 				getUnlockedCopy : function () {}
@@ -1310,10 +1311,12 @@ sap.ui.define([
 		oCache.oCountPromise = {
 			$resolve : true // will not be called :-)
 		};
+		this.mock(this.oRequestor).expects("buildQueryString").withExactArgs(null, {})
+			.returns("?~query~");
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
 			.returns("~oGroupLockCopy~");
 		this.mock(this.oRequestor).expects("request")
-			.withExactArgs("GET", "~/$count", "~oGroupLockCopy~").rejects(oError);
+			.withExactArgs("GET", "~/$count?~query~", "~oGroupLockCopy~").rejects(oError);
 
 		// code under test
 		return oCache.readCount(oGroupLock).then(function () {
@@ -1324,36 +1327,71 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{sExpectedPath : "~/$count"},
-	{$filter : "Is_Manager", sExpectedPath : "~/$count?$filter=Is_Manager"},
-	{search : "covfefe", sExpectedPath : "~/$count?$search=covfefe"},
-	{
-		$filter : "Is_Manager",
-		search : "covfefe",
-		sExpectedPath : "~/$count?$filter=Is_Manager&$search=covfefe"
+[{
+	mExpectedQueryOptions : {
+		foo : "bar",
+		"sap-client" : "123"
 	}
-].forEach(function (oFixture, i) {
+}, {
+	$filter : "Is_Manager",
+	mExpectedQueryOptions : {
+		$filter : "Is_Manager",
+		foo : "bar",
+		"sap-client" : "123"
+	}
+}, {
+	search : "covfefe",
+	mExpectedQueryOptions : {
+		$search : "covfefe",
+		foo : "bar",
+		"sap-client" : "123"
+	}
+}, {
+	$filter : "Is_Manager",
+	search : "covfefe",
+	mExpectedQueryOptions : {
+		$filter : "Is_Manager",
+		$search : "covfefe",
+		foo : "bar",
+		"sap-client" : "123"
+	}
+}].forEach(function (oFixture, i) {
 	QUnit.test("readCount: #" + i, function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X",
 				search : oFixture.search
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation,
-				{$filter : oFixture.$filter}),
+			oCache,
 			oGroupLock = {
 				getUnlockedCopy : function () {}
+			},
+			mQueryOptions = {
+				$apply : "A.P.P.L.E",
+				$count : true,
+				$expand : {EMPLOYEE_2_TEAM : null},
+				// $filter : oFixture.$filter,
+				$orderby : "TEAM_ID desc",
+				// Unsupported system query option: $search
+				$select : ["Name"],
+				foo : "bar",
+				"sap-client" : "123"
 			},
 			fnResolve = sinon.spy(),
 			oResult;
 
+		if ("$filter" in oFixture) {
+			mQueryOptions.$filter = oFixture.$filter;
+		}
+		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, mQueryOptions);
 		oCache.oCountPromise = {
 			$resolve : fnResolve
 		};
+		this.mock(this.oRequestor).expects("buildQueryString")
+			.withExactArgs(null, oFixture.mExpectedQueryOptions).returns("?~query~");
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
 			.returns("~oGroupLockCopy~");
 		this.mock(this.oRequestor).expects("request")
-			.withExactArgs("GET", oFixture.sExpectedPath, "~oGroupLockCopy~").resolves(42);
+			.withExactArgs("GET", "~/$count?~query~", "~oGroupLockCopy~").resolves(42);
 
 		// code under test
 		oResult = oCache.readCount(oGroupLock);

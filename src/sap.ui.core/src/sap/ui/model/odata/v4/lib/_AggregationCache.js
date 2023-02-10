@@ -781,19 +781,28 @@ sap.ui.define([
 	 * @private
 	 */
 	_AggregationCache.prototype.readCount = function (oGroupLock) {
-		var fnResolve = this.oCountPromise && this.oCountPromise.$resolve,
-			sResourcePath = this.sResourcePath + "/$count",
-			sSeparator = "?";
+		var mQueryOptions,
+			fnResolve = this.oCountPromise && this.oCountPromise.$resolve,
+			sResourcePath;
 
 		if (fnResolve) {
 			delete this.oCountPromise.$resolve;
-			if (this.mQueryOptions.$filter) {
-				sResourcePath += "?$filter=" + this.mQueryOptions.$filter;
-				sSeparator = "&";
-			}
+
+			mQueryOptions = Object.assign({}, this.mQueryOptions);
+			// // drop collection related system query options (except $filter,$search)
+			delete mQueryOptions.$apply;
+			delete mQueryOptions.$count;
+			// keep mQueryOptions.$filter;
+			delete mQueryOptions.$expand;
+			delete mQueryOptions.$orderby;
 			if (this.oAggregation.search) {
-				sResourcePath += sSeparator + "$search=" + this.oAggregation.search;
+				// Note: A recursive hierarchy cannot be combined with "$search"
+				mQueryOptions.$search = this.oAggregation.search;
 			}
+			delete mQueryOptions.$select;
+			// Note: sMetaPath only needed for $filter by V42, but V42 cannot work here!
+			sResourcePath = this.sResourcePath + "/$count"
+				+ this.oRequestor.buildQueryString(/*sMetaPath*/null, mQueryOptions);
 
 			return this.oRequestor.request("GET", sResourcePath, oGroupLock.getUnlockedCopy())
 				.then(fnResolve); // Note: $count is already of type number here
