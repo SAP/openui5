@@ -364,16 +364,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the table has data.
 		 */
 		hasData: function(oTable) {
-			var oBinding = oTable.getBinding();
-			var iTotalRowCount = oTable._getTotalRowCount();
-			var bHasData = iTotalRowCount > 0;
-
-			if (oBinding && oBinding.providesGrandTotal) { // Analytical Binding
-				var bHasTotal = oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
-				bHasData = (bHasTotal && iTotalRowCount > 1) || (!bHasTotal && iTotalRowCount > 0);
-			}
-
-			return bHasData;
+			return oTable._getTotalRowCount() > 0;
 		},
 
 		/**

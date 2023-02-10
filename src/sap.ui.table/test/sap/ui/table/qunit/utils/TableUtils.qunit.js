@@ -826,81 +826,48 @@ sap.ui.define([
 		oTable.destroyNoData();
 	});
 
-	QUnit.test("isNoDataVisible / hasData", function(assert) {
-		var oGetTotalRowCount = sinon.stub(oTable, "_getTotalRowCount");
-		var oGetBinding = sinon.stub(oTable, "getBinding");
-		var oGetVisibleColumns = sinon.stub(oTable, "_getVisibleColumns");
+	QUnit.test("isNoDataVisible", function(assert) {
+		sinon.stub(oTable, "_getTotalRowCount");
 
-		function prepareTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals, aVisibleColumns) {
-			var oBinding = {};
-
-			if (bAnalytical) {
-				oBinding.providesGrandTotal = function() {
-					return bHasTotals;
-				};
-				oBinding.hasTotaledMeasures = function() {
-					return bHasTotals;
-				};
-			}
-
+		function prepareTable(bShowNoData, iBindingLength) {
 			oTable.setShowNoData(bShowNoData);
-			oGetTotalRowCount.returns(iBindingLength);
-			oGetBinding.returns(oBinding);
-			oGetVisibleColumns.returns(aVisibleColumns);
+			oTable._getTotalRowCount.returns(iBindingLength);
 		}
 
-		function testNoDataVisibility(bShowNoData, iBindingLength, bAnalytical, bHasTotals, bExpectedResult, aVisibleColumns) {
-			prepareTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals, aVisibleColumns);
-			var bResult = TableUtils.isNoDataVisible(oTable);
-			assert.equal(bResult, bExpectedResult,
-				"ShowNoData: " + bShowNoData + ", Binding Length: " + iBindingLength + ", Analytical: " + bAnalytical + ", Totals: " + bHasTotals + ", Visible columns: " + aVisibleColumns);
+		function testNoDataVisibility(sTitle, bShowNoData, iBindingLength, bExpectedResult) {
+			prepareTable(bShowNoData, iBindingLength);
+			assert.strictEqual(TableUtils.isNoDataVisible(oTable), bExpectedResult,
+				sTitle + " - ShowNoData: " + bShowNoData + "; Binding Length: " + iBindingLength);
 		}
 
-		testNoDataVisibility(true, 2, false, false, false, [1]);
-		testNoDataVisibility(true, 1, false, false, false, [1]);
-		testNoDataVisibility(true, 0, false, false, true, [1]);
-		testNoDataVisibility(false, 2, false, false, false, [1]);
-		testNoDataVisibility(false, 1, false, false, false, [1]);
-		testNoDataVisibility(false, 0, false, false, false, [1]);
+		testNoDataVisibility("With visible columns", true, 1, false);
+		testNoDataVisibility("With visible columns", true, 0, true);
+		testNoDataVisibility("With visible columns", false, 1, false);
+		testNoDataVisibility("With visible columns", false, 0, false);
 
-		testNoDataVisibility(true, 2, true, false, false, [1]);
-		testNoDataVisibility(true, 1, true, false, false, [1]);
-		testNoDataVisibility(true, 0, true, false, true, [1]);
-		testNoDataVisibility(false, 2, true, false, false, [1]);
-		testNoDataVisibility(false, 1, true, false, false, [1]);
-		testNoDataVisibility(false, 0, true, false, false, [1]);
+		oTable.getColumns().forEach(function(oColumn) {
+			oColumn.setVisible(false);
+		});
+		testNoDataVisibility("Without visible columns", true, 1, true);
+		testNoDataVisibility("Without visible columns", true, 0, true);
+		testNoDataVisibility("Without visible columns", false, 1, true);
+		testNoDataVisibility("Without visible columns", false, 0, true);
 
-		testNoDataVisibility(true, 2, true, true, false, [1]);
-		testNoDataVisibility(true, 1, true, true, true, [1]);
-		testNoDataVisibility(true, 0, true, true, true, [1]);
-		testNoDataVisibility(false, 2, true, true, false, [1]);
-		testNoDataVisibility(false, 1, true, true, false, [1]);
-		testNoDataVisibility(false, 0, true, true, false, [1]);
+		oTable.destroyColumns();
+		testNoDataVisibility("Without columns", true, 1, true);
+		testNoDataVisibility("Without columns", true, 0, true);
+		testNoDataVisibility("Without columns", false, 1, true);
+		testNoDataVisibility("Without columns", false, 0, true);
+	});
 
-		testNoDataVisibility(true, 2, false, false, true, []);
-		testNoDataVisibility(true, 1, false, false, true, []);
-		testNoDataVisibility(true, 0, false, false, true, []);
-		testNoDataVisibility(false, 2, false, false, true, []);
-		testNoDataVisibility(false, 1, false, false, true, []);
-		testNoDataVisibility(false, 0, false, false, true, []);
+	QUnit.test("hasData", function(assert) {
+		sinon.stub(oTable, "_getTotalRowCount");
 
-		testNoDataVisibility(true, 2, true, false, true, []);
-		testNoDataVisibility(true, 1, true, false, true, []);
-		testNoDataVisibility(true, 0, true, false, true, []);
-		testNoDataVisibility(false, 2, true, false, true, []);
-		testNoDataVisibility(false, 1, true, false, true, []);
-		testNoDataVisibility(false, 0, true, false, true, []);
+		oTable._getTotalRowCount.returns(1);
+		assert.strictEqual(TableUtils.hasData(oTable), true, "Table has data");
 
-		testNoDataVisibility(true, 2, true, true, true, []);
-		testNoDataVisibility(true, 1, true, true, true, []);
-		testNoDataVisibility(true, 0, true, true, true, []);
-		testNoDataVisibility(false, 2, true, true, true, []);
-		testNoDataVisibility(false, 1, true, true, true, []);
-		testNoDataVisibility(false, 0, true, true, true, []);
-
-		oGetTotalRowCount.restore();
-		oGetBinding.restore();
-		oGetVisibleColumns.restore();
+		oTable._getTotalRowCount.returns(0);
+		assert.strictEqual(TableUtils.hasData(oTable), false, "Table has no data");
 	});
 
 	QUnit.test("isBusyIndicatorVisible", function(assert) {
