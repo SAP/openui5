@@ -1017,10 +1017,12 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Table.prototype.applySettings = function(mSettings, oScope) {
+		// The threshold must be set before the OData binding for the "rows" aggregation is initialized. If the metadata is already loaded, a
+		// getContexts call may be triggered immediately with the default threshold (100) instead of the one in the settings.
 		// Some settings might rely on the existence of a row mode or plugin. If row modes and plugins are in the settings and applied before
 		// other settings, initialization of legacy row modes and plugins can be avoided.
 		if (mSettings) {
-			var aEarlySettings = ["rowMode", "plugins"];
+			var aEarlySettings = ["threshold", "rowMode", "plugins"];
 			var mEarlySettings = {};
 
 			for (var i = 0; i < aEarlySettings.length; i++) {

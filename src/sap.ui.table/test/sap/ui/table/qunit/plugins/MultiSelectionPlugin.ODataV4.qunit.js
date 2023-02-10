@@ -15,8 +15,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var iCount = 400;
+
 	function createData(iStartIndex, iLength) {
 		var aData = [];
+
+		if (iStartIndex + iLength > iCount) {
+			iLength = iCount - iStartIndex;
+		}
 
 		for (var i = iStartIndex; i < iStartIndex + iLength; i++) {
 			aData.push({
@@ -43,23 +49,23 @@ sap.ui.define([
 		return mResponse;
 	}
 
-	TestUtils.useFakeServer(sinon.sandbox.create(), "sap/ui/core/qunit/odata/v4/data/", null, [{
+	TestUtils.useFakeServer(sinon.sandbox.create(), "sap/ui/core/qunit/odata/v4/data", null, [{
 		regExp: /^GET \/MyService(WithPaging)?\/\$metadata$/,
 		response: {
 			source: "metadata_tea_busi_product.xml"
 		}
 	}, {
-		regExp: /^GET \/MyService(WithPaging)?\/Products\?(\$count=true)?&\$skip=(\d+)\&\$top=(\d+)$/,
+		regExp: /^GET \/MyService(WithPaging)?\/Products\?(\$count=true&)?\$skip=(\d+)\&\$top=(\d+)$/,
 		response: {
 			buildResponse: function(aMatches, oResponse) {
-				var iPageSize = aMatches[1] === "WithPaging" ? 50 : 0;
-				var bWithCount = aMatches[2] === "$count=true";
+				var iPageSize = aMatches[1] ? 50 : 0;
+				var bWithCount = !!aMatches[2];
 				var iSkip = parseInt(aMatches[3]);
 				var iTop = parseInt(aMatches[4]);
 				var mResponse = createResponse(iSkip, iTop, iPageSize);
 
 				if (bWithCount) {
-					mResponse.message["@odata.count"] = "200";
+					mResponse.message["@odata.count"] = iCount;
 				}
 
 				oResponse.message = JSON.stringify(mResponse.message);
@@ -75,16 +81,28 @@ sap.ui.define([
 				$count: true
 			}
 		},
-		columns: TableQUnitUtils.createTextColumn({text: "Name", bind: true})
+		columns: TableQUnitUtils.createTextColumn({text: "Name", bind: true}),
+		models: new ODataModel({
+			serviceUrl: "/MyService/"
+		})
 	});
+
+	function assertAllContextsAvailable(assert, oTable) {
+		assert.equal(oTable.getBinding().getAllCurrentContexts().length, iCount, "All binding contexts are available");
+	}
+
+	function assertContextsAvailable(assert, oTable, iNumber) {
+		var oBinding = oTable.getBinding();
+		var aContexts = oBinding.getContexts(0, iNumber, 0, true);
+
+		assert.equal(oBinding.getAllCurrentContexts().length, iNumber, "The expected number of binding contexts is available");
+		assert.equal(aContexts.length, iNumber, "Binding contexts in relevant range are available");
+		assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
+	}
 
 	QUnit.module("Load data", {
 		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
-				models: new ODataModel({
-					serviceUrl: "/MyService/"
-				})
-			});
+			this.oTable = TableQUnitUtils.createTable();
 			this.oMultiSelectionPlugin = this.oTable.getPlugins()[0];
 			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
 		},
@@ -98,21 +116,17 @@ sap.ui.define([
 		Core.applyChanges();
 
 		return this.oMultiSelectionPlugin.selectAll().then(function() {
-			assert.equal(this.oTable.getBinding().getAllCurrentContexts().length, 200, "All binding contexts are available");
+			assertAllContextsAvailable(assert, this.oTable);
 		}.bind(this));
 	});
 
 	QUnit.test("Select range", function(assert) {
 		return this.oMultiSelectionPlugin.setSelectionInterval(0, 189).then(function() {
-			var aContexts = this.oTable.getBinding().getContexts(0, 190, 0, true);
-
-			assert.equal(this.oTable.getBinding().getAllCurrentContexts().length, 190, "The expected number of binding contexts is available");
-			assert.equal(aContexts.length, 190, "Binding contexts in selected range are available");
-			assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
+			assertContextsAvailable(assert, this.oTable, 190);
 		}.bind(this));
 	});
 
-	QUnit.module("Load data with server-side paging", {
+	QUnit.module("Load data with server-driven paging", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
 				models: new ODataModel({
@@ -132,17 +146,73 @@ sap.ui.define([
 		Core.applyChanges();
 
 		return this.oMultiSelectionPlugin.selectAll().then(function() {
-			assert.equal(this.oTable.getBinding().getAllCurrentContexts().length, 200, "All binding contexts are available");
+			assertAllContextsAvailable(assert, this.oTable);
 		}.bind(this));
 	});
 
 	QUnit.test("Select range", function(assert) {
 		return this.oMultiSelectionPlugin.setSelectionInterval(0, 189).then(function() {
-			var aContexts = this.oTable.getBinding().getContexts(0, 190, 0, true);
+			assertContextsAvailable(assert, this.oTable, 190);
+		}.bind(this));
+	});
 
-			assert.equal(this.oTable.getBinding().getAllCurrentContexts().length, 190, "The expected number of binding contexts is available");
-			assert.equal(aContexts.length, 190, "Binding contexts in selected range are available");
-			assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
+	QUnit.module("Load data without count", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				rows: {
+					path: "/Products"
+				}
+			});
+			this.oMultiSelectionPlugin = this.oTable.getPlugins()[0];
+			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Select all", function(assert) {
+		this.oMultiSelectionPlugin.setLimit(0);
+		Core.applyChanges();
+
+		return this.oMultiSelectionPlugin.selectAll().then(function() {
+			assert.ok(this.oTable.getBinding().getAllCurrentContexts().length < iCount,
+				"Not all binding contexts are available, but at least the Promise resolved");
+		}.bind(this));
+	});
+
+	QUnit.test("Select range", function(assert) {
+		return this.oMultiSelectionPlugin.setSelectionInterval(0, 189).then(function() {
+			assert.ok(this.oTable.getBinding().getAllCurrentContexts().length < 190,
+				"Not all binding contexts are available, but at least the Promise resolved");
+		}.bind(this));
+	});
+
+	QUnit.module("Load data without count and short read", {
+		before: function() {
+			iCount = 180;
+		},
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				rows: {
+					path: "/Products"
+				}
+			});
+			this.oMultiSelectionPlugin = this.oTable.getPlugins()[0];
+			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		after: function() {
+			iCount = 200;
+		}
+	});
+
+	QUnit.test("Select range", function(assert) {
+		return this.oMultiSelectionPlugin.setSelectionInterval(0, 189).then(function() {
+			assert.ok(this.oTable.getBinding().getAllCurrentContexts().length < 180,
+				"Not all binding contexts are available, but at least the Promise resolved");
 		}.bind(this));
 	});
 });

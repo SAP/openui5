@@ -63,7 +63,7 @@ sap.ui.define([
 		// refreshRows, render, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
-			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, 10, 100); // #applySettings: Binding init before setThreshold
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, 10, 10);
 			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, 10, 10);
 			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, 10, 10);
 			oTable.destroy();

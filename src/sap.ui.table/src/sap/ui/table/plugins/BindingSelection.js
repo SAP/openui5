@@ -332,7 +332,7 @@ sap.ui.define([
 			return -1;
 		} else if (oBinding.isA("sap.ui.model.analytics.AnalyticalBinding")) {
 			var bHasGrandTotal = oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
-			return oBinding.getLength() - 1 - (bHasGrandTotal ? 1 : 0);
+			return oBinding.getLength() - (bHasGrandTotal ? 2 : 1);
 		} else {
 			return oBinding.getLength() - 1;
 		}
