@@ -1232,6 +1232,37 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("prototype.openFilePicker", function(assert) {
+		// Prepare
+		var oFU = new FileUploader();
+		oFU.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		var oElementClickSpy = this.spy(oFU.getInputReference(), "click");
+
+		// Act
+		oFU.openFilePicker();
+
+		// Assert
+		assert.ok(oElementClickSpy.calledOnce, "File picker is opened.");
+
+		// Clean
+		oFU.destroy();
+	});
+
+	QUnit.test("prototype.getInputReference", function(assert) {
+		// Prepare
+		var oFU = new FileUploader();
+		oFU.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		// Assert
+		assert.deepEqual(oFU.getInputReference(), oFU.getDomRef().querySelector("[type='file']"), "Proper input reference gets returned");
+
+		// Clean
+		oFU.destroy();
+	});
+
 	function testInputRerender(sMethodName, vValue) {
 		QUnit.test(sMethodName + " will call _resizeDomElements after input is re-rendered", function (assert) {
 			// setup
