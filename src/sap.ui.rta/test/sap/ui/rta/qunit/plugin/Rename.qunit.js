@@ -650,13 +650,14 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when the Label gets modified with DELETE key", function(assert) {
+		QUnit.test("when the Label gets modified with DELETE or BACKSPACE key", function(assert) {
 			var fnDone = assert.async();
 			triggerAndWaitForStartEdit(this.oRenamePlugin, this.oLayoutOverlay).then(function() {
 				var oSpy = sandbox.spy();
 				this.oLayoutOverlay.attachBrowserEvent("keydown", oSpy);
 
 				triggerEventOnEditableField(this.oRenamePlugin, KeyCodes.DELETE);
+				triggerEventOnEditableField(this.oRenamePlugin, KeyCodes.BACKSPACE);
 
 				// Wait a bit if any of other listeners are being called
 				setTimeout(function() {
