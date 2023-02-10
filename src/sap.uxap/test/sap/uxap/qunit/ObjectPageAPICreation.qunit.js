@@ -287,9 +287,22 @@ function (
 	});
 
 	QUnit.test("test UseIconTabBar APIs", function (assert) {
+		// Act
 		this.oObjectPage.setUseIconTabBar(false);
+		Core.applyChanges();
+
+		// Assert
 		assert.ok(!this.oObjectPage.getUseIconTabBar(), false);
+		assert.notOk(this.oObjectPage.$().hasClass("sapUxAPObjectPageLayoutIconTabBar"),
+			"'sapUxAPObjectPageLayoutIconTabBar' is not applied when OPL is not in iconTabBar mode");
+
+		// Act
 		this.oObjectPage.setUseIconTabBar(true);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oObjectPage.$().hasClass("sapUxAPObjectPageLayoutIconTabBar"),
+			"'sapUxAPObjectPageLayoutIconTabBar' is  applied when OPL is in iconTabBar mode");
 		assert.ok(this.oObjectPage.getUseIconTabBar(), true);
 	});
 

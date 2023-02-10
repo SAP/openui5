@@ -1772,7 +1772,10 @@ sap.ui.define([
 		if (bValue != bOldValue) {
 			this._applyUxRules(); // UxRules contain logic that depends on whether we use iconTabBar or not
 		}
+
 		this.setProperty("useIconTabBar", bValue);
+		this.toggleStyleClass("sapUxAPObjectPageLayoutIconTabBar", bValue);
+
 		return this;
 	};
 
