@@ -25,6 +25,7 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 		var aStandardItems = oLeg.getAggregation("_standardItems"),
 			aCustomItems = oLeg.getItems(),
 			iCustomItemsLength = this.defineItemsLength(oLeg, aCustomItems.length),
+			iCount = (aStandardItems ? aStandardItems.length : 0) + (aCustomItems ? aCustomItems.length : 0),
 			i,
 			iIdLength,
 			sColumnWidth,
@@ -33,7 +34,7 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 		oRm.openStart("div", oLeg);
 		oRm.class("sapUiUnifiedLegend");
 		oRm.attr("aria-label", oLeg._getLegendAriaLabel());
-		oRm.attr("role", "listbox");
+		oRm.attr("role", "list");
 		oRm.openEnd();
 
 		this.renderItemsHeader(oRm, oLeg);
@@ -52,14 +53,14 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 				iIdLength = oLeg.getId().length + 1; //+1, because of the dash in "CalLeg1-Today"?
 				for (i = 0; i < aStandardItems.length; ++i) {
 					var sClass = "sapUiUnifiedLegend" + aStandardItems[i].getId().slice(iIdLength);
-					this.renderLegendItem(oRm, sClass, aStandardItems[i], ["sapUiUnifiedLegendSquareColor"], iIndex++);
+					this.renderLegendItem(oRm, sClass, aStandardItems[i], ["sapUiUnifiedLegendSquareColor"], iIndex++, iCount);
 				}
 			}
 
 			if (aCustomItems) {
 				// rendering special day and colors
 				for (i = 0; i < iCustomItemsLength; i++) {
-					this.renderLegendItem(oRm, "sapUiCalLegDayType" + oLeg._getItemType(aCustomItems[i], aCustomItems).slice(4), aCustomItems[i], ["sapUiUnifiedLegendSquareColor"], iIndex++);
+					this.renderLegendItem(oRm, "sapUiCalLegDayType" + oLeg._getItemType(aCustomItems[i], aCustomItems).slice(4), aCustomItems[i], ["sapUiUnifiedLegendSquareColor"], iIndex++, iCount);
 				}
 			}
 			this.renderAdditionalItems(oRm, oLeg); //like more sections with items
@@ -79,7 +80,7 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 	 * @param {sap.ui.unified.CalenderLegendItem} oItem item element
 	 * @param {string[]} aColorClasses Css classes to be added to the color bullet item in front of the legend item
 	 */
-	CalendarLegendRenderer.renderLegendItem = function(oRm, sClass, oItem, aColorClasses, iIndex) {
+	CalendarLegendRenderer.renderLegendItem = function(oRm, sClass, oItem, aColorClasses, iIndex, iCount) {
 
 		var sText = oItem.getText();
 		var sTooltip = oItem.getTooltip_AsString();
@@ -91,8 +92,9 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 			oRm.attr('title', sTooltip);
 		}
 
-		oRm.attr("role", "option");
+		oRm.attr("role", "listitem");
 		oRm.attr("aria-posinset", iIndex);
+		oRm.attr("aria-setsize", iCount);
 
 		oRm.class("sapUiUnifiedLegendItem");
 		oRm.class(sClass);

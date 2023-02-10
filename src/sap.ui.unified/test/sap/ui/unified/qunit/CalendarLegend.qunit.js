@@ -516,17 +516,21 @@ sap.ui.define([
 	QUnit.test("Accessibility attributes", function (assert) {
 		var oLegendDomRef = this.oLegend.getDomRef(),
 			aStandardItems = this.oLegend.getAggregation("_standardItems"),
-			aLegendItems = this.oLegend.getItems();
+			aLegendItems = this.oLegend.getItems(),
+			iCount = (aStandardItems ? aStandardItems.length : 0) + (aLegendItems ? aLegendItems.length : 0);
 
 		// Assert (Calendar Legend)
 		assert.strictEqual(oLegendDomRef.getAttribute("aria-label"), this.oLegend._getLegendAriaLabel(), "calendar legend has proper aria-label attribute");
-		assert.strictEqual(oLegendDomRef.getAttribute("role"), "listbox", "calendar legend has proper role attribute");
+		assert.strictEqual(oLegendDomRef.getAttribute("role"), "list", "calendar legend has proper role attribute");
 
 		// Assert (Calendar Legend Items)
-		assert.strictEqual(aLegendItems[0].getDomRef().getAttribute("role"), "option", "calendar legend items have proper role attribute");
-		assert.strictEqual(parseInt(aStandardItems[0].getDomRef().getAttribute("aria-posinset")), 1, "first standard calendar legend item has proper role aria-posinset attribute");
-		assert.strictEqual(parseInt(aLegendItems[0].getDomRef().getAttribute("aria-posinset")), aStandardItems.length + 1, "first calendar legend item has proper role aria-posinset attribute");
-		assert.strictEqual(parseInt(aLegendItems[aLegendItems.length - 1].getDomRef().getAttribute("aria-posinset")), aStandardItems.length + aLegendItems.length, "last calendar legend item has proper role aria-posinset attribute");
+		assert.strictEqual(aLegendItems[0].getDomRef().getAttribute("role"), "listitem", "calendar legend items have proper role attribute");
+		assert.strictEqual(parseInt(aStandardItems[0].getDomRef().getAttribute("aria-posinset")), 1, "first standard calendar legend item has proper aria-posinset attribute");
+		assert.strictEqual(parseInt(aStandardItems[0].getDomRef().getAttribute("aria-setsize")), iCount, "first standard calendar legend item has proper aria-setsize attribute");
+		assert.strictEqual(parseInt(aLegendItems[0].getDomRef().getAttribute("aria-posinset")), aStandardItems.length + 1, "first calendar legend item has proper aria-posinset attribute");
+		assert.strictEqual(parseInt(aLegendItems[0].getDomRef().getAttribute("aria-setsize")), iCount, "first calendar legend item has proper aria-setsize attribute");
+		assert.strictEqual(parseInt(aLegendItems[aLegendItems.length - 1].getDomRef().getAttribute("aria-posinset")), iCount, "last calendar legend item has proper aria-posinset attribute");
+		assert.strictEqual(parseInt(aLegendItems[aLegendItems.length - 1].getDomRef().getAttribute("aria-setsize")), iCount, "last calendar legend item has proper aria-setsize attribute");
 	});
 
 	// returns DOM references of all dates in a Month that are special dates of given Calendar Legend Item type
