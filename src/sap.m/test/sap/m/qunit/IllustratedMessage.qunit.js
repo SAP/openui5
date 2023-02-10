@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/IllustratedMessage",
 	"sap/m/Button",
 	"sap/ui/core/Core",
+	'sap/ui/core/library',
 	"sap/ui/core/InvisibleText"
 ],
 function (
@@ -13,6 +14,7 @@ function (
 	IllustratedMessage,
 	Button,
 	Core,
+	coreLibrary,
 	InvisibleText
 ) {
 	"use strict";
@@ -22,6 +24,9 @@ function (
 
 	// shortcut for sap.m.IllustratedMessageType
 	var IllustratedMessageType = library.IllustratedMessageType;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/* --------------------------- IllustratedMessage API -------------------------------------- */
 	QUnit.module("IllustratedMessage - API ", {
@@ -322,6 +327,21 @@ function (
 			+ "if enableDefaultTitleAndDescription is false");
 		assert.strictEqual(sTitleText, sEmptyString, "The Title is correctly set to empty string");
 		assert.strictEqual(this.oIllustratedMessage._getTitle().getDomRef(), null, "The description control instance is not rendered when no text is present");
+	});
+
+	QUnit.test("ariaTitleLevel is set correctly", function(assert) {
+		// Arrange
+		this.oIllustratedMessage.setTitle("Test Title");
+
+		// Assert
+		assert.strictEqual(this.oIllustratedMessage.getAriaTitleLevel(), TitleLevel.Auto, "IllustratedMessage is initialized with default titleLevel");
+
+		// Act
+		this.oIllustratedMessage.setAriaTitleLevel(TitleLevel.H3);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oIllustratedMessage._getTitle().getLevel(), TitleLevel.H3, "IllustratedMessage ariaTitleLevel is correctly set to the title instance");
 	});
 
 	/* --------------------------- IllustratedMessage Private methods -------------------------------------- */
