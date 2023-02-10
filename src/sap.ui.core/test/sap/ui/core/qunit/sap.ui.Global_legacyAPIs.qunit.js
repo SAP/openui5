@@ -20,6 +20,10 @@ sap.ui.define([
 	// right away. If this is the case and the behavior is expected these module/tests should be adopted.
 	QUnit.module("sap.ui.getVersionInfo", {
 		before: function() {
+			// unload it from the preload cache in case it's loaded for any reason
+			// for example, by the UI5 Inspector browser plugin
+			sap.ui.loader._.unloadResources("sap-ui-version.json", false, true, true);
+
 			QUnit.assert.deepSortedEqual = function(a, b, msg) {
 				return this.deepEqual(deepSort(a), deepSort(b), msg);
 			};
