@@ -2530,8 +2530,14 @@ sap.ui.define([
 		return bSkipRendering;
 	};
 
-	RenderManager.MAX_API_VERSION = Number(new window.URLSearchParams(window.parent.parent.location.search).get("MAX_API_VERSION")) || 4;
-
+	var sQueryString = "";
+	try {
+		sQueryString = window.parent.parent.location.search;
+	} catch (e) {
+		sQueryString = window.location.search;
+	} finally {
+		RenderManager.MAX_API_VERSION = Number(new window.URLSearchParams(sQueryString).get("MAX_API_VERSION")) || 4;
+	}
 
 	//#################################################################################################
 	// Helper Methods
