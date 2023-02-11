@@ -12743,13 +12743,15 @@ sap.ui.define([
 		var oFormattedValueStateText;
 
 		// Act
-		this.oErrorComboBox.focus();
+		qutils.triggerEvent("focusin", this.oErrorComboBox.getDomRef("inner"));
 		this.clock.tick(300);
 
 		assert.strictEqual(document.querySelector("#" + this.oErrorComboBox.getValueStateMessageId() + " div").textContent, "Value state message containing a link", "Formatted text value state message popup is displayed on focus");
 		assert.strictEqual(document.querySelectorAll("#" + this.oErrorComboBox.getValueStateMessageId() + " a").length, 1, "Value state message link is rendered");
 
 		// Act
+		this.oErrorComboBox.closeValueStateMessage();
+		this.clock.tick(300);
 		this.oErrorComboBox.open();
 
 		oFormattedValueStateText = this.oErrorComboBox._oSuggestionPopover._getValueStateHeader().getFormattedText();
