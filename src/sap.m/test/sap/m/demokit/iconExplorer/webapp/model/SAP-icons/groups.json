@@ -207,7 +207,7 @@
 				{ "name" : "mri-scan" },
 				{ "name" : "physical-activity" },
 				{ "name" : "nutrition-activity" },
-				{ "name" : "clinical-tast-tracker" },
+				{ "name" : "clinical-task-tracker" },
 				{ "name" : "temperature" }
 			]
 		},
@@ -882,7 +882,7 @@
 				{ "name" : "task" },
 				{ "name" : "workflow-tasks" },
 				{ "name" : "crm-service-manager" },
-				{ "name" : "clinical-tast-tracker" },
+				{ "name" : "clinical-task-tracker" },
 				{ "name" : "activity-individual" },
 				{ "name" : "activity-2" },
 				{ "name" : "add-activity-2" },
@@ -1036,7 +1036,7 @@
 				{ "name" : "offsite-work" },
 				{ "name" : "energy-saving-lightbulb" },
 				{ "name" : "palette" },
-				{ "name" : "soccor" },
+				{ "name" : "soccer" },
 				{ "name" : "goalseek" },
 				{ "name" : "sap-ui5" },
 				{ "name" : "study-leave" },

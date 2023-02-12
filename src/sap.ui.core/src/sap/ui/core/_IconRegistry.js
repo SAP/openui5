@@ -33,7 +33,8 @@ sap.ui.define([
 					fontFamily: SAP_ICON_FONT_FAMILY
 				},
 				metadataLoaded: true,
-				inserted: true
+				inserted: true,
+				deprecatedNames: new Set(["soccor", "clinical-tast-tracker"])
 			}
 		};
 
@@ -974,8 +975,16 @@ sap.ui.define([
 		 * See IconPool.getIconNames
 		 */
 		_IconRegistry.getIconNames = function (collectionName) {
-			var collection = mRegistry[collectionName];
-			return collection ? Object.keys(collection) : [];
+			var collection = mRegistry[collectionName],
+				deprecatedNames = mFontRegistry[collectionName] && mFontRegistry[collectionName].deprecatedNames,
+				res = [];
+
+			for (var name in collection) {
+				if (collection.hasOwnProperty(name) && (!deprecatedNames || !deprecatedNames.has(name))) {
+					res.push(name);
+				}
+			}
+			return res;
 		};
 
 		/*
