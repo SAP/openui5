@@ -4549,23 +4549,18 @@ sap.ui.define([
 	 *   The entry data
 	 * @param {boolean} [sUpdateMethod]
 	 *   Sets <code>MERGE/PUT</code> method, defaults to <code>MERGE</code> if not provided
-	 * @param {string} [sDeepPath]
-	 *   The deep path
 	 * @returns {object}
 	 *   The request object
 	 *
 	 * @private
 	 */
-	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod, sDeepPath) {
-		var sContentID, oContext, bCreated, oEntityType, sETag, oExpandRequest, mHeaders, sMethod,
+	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod) {
+		var sContentID, oContext, bCreated, sDeepPath, oEntityType, sETag, oExpandRequest, mHeaders, sMethod,
 			mParams, oPayload, oRequest, oUnModifiedEntry, sUrl, aUrlParams,
 			sEntityPath = "/" + sKey,
 			that = this;
 
-		if (sDeepPath && this.mChangedEntities[sKey] && this.mChangedEntities[sKey].__metadata) {
-			// store or update deep path
-			this.mChangedEntities[sKey].__metadata.deepPath = sDeepPath;
-		} else if (!sDeepPath && this.mChangedEntities[sKey] && this.mChangedEntities[sKey].__metadata && this.mChangedEntities[sKey].__metadata.deepPath){
+		if (this.mChangedEntities[sKey] && this.mChangedEntities[sKey].__metadata && this.mChangedEntities[sKey].__metadata.deepPath){
 			// retrieve deep path
 			sDeepPath = this.mChangedEntities[sKey].__metadata.deepPath;
 		}
