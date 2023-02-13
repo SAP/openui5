@@ -205,4 +205,14 @@ sap.ui.define([
 		assert.notOk(this.oToDo.hasStyleClass("sapMATHideActionButton"),"Style class should not get added");
 		assert.notOk(this.oSituation.hasStyleClass("sapMATHideActionButton"),"Style class should not get added");
 	});
+
+	QUnit.test("Priority text will not be rendered on the ToDo cards", function(assert) {
+		var sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY");
+		assert.notOk(document.querySelector("#tileCont1-priority-value").innerText.includes(sPriority),"Priority text is not rendered inside the tile");
+	});
+
+	QUnit.test("Priority text will not be rendered on the tooltip of the ToDo cards", function(assert) {
+		var sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY");
+		assert.notOk(this.oToDo.getTileContent()[0].getAltText().includes(sPriority),"Priority text is not rendered inside the tooltip");
+	});
 });
