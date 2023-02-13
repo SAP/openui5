@@ -350,6 +350,9 @@ sap.ui.define([
 			// a list of functions to be called to clean up expanded lists when the side effects
 			// have been processed
 			this.aSideEffectCleanUpFunctions = [];
+			// a set of group IDs for which the "sap-messages" header must be "transientOnly" for
+			// all create and change requests, which were caused by #createEntry or #setProperty
+			this.oTransitionMessagesOnlyGroups = new Set();
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -4549,14 +4552,17 @@ sap.ui.define([
 	 *   The entry data
 	 * @param {boolean} [sUpdateMethod]
 	 *   Sets <code>MERGE/PUT</code> method, defaults to <code>MERGE</code> if not provided
+	 * @param {string} sGroupId
+	 *   The group ID
 	 * @returns {object}
 	 *   The request object
 	 *
 	 * @private
 	 */
-	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod) {
-		var sContentID, oContext, bCreated, sDeepPath, oEntityType, sETag, oExpandRequest, mHeaders, sMethod,
-			mParams, oPayload, oRequest, oUnModifiedEntry, sUrl, aUrlParams,
+	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod, sGroupId) {
+		var sContentID, oContext, bCreated, sDeepPath, oEntityType, sETag, oExpandRequest,
+			bFunctionImport, mHeaders, sMethod, mParams, oPayload, oRequest, oUnModifiedEntry,
+			sUrl, aUrlParams,
 			sEntityPath = "/" + sKey,
 			that = this;
 
@@ -4583,7 +4589,8 @@ sap.ui.define([
 			mParams = oData.__metadata.created;
 			oExpandRequest = oData.__metadata.created.expandRequest;
 			sContentID = oData.__metadata.created.contentID;
-			if (oData.__metadata.created.functionImport){
+			bFunctionImport = oData.__metadata.created.functionImport;
+			if (bFunctionImport){
 				// update request url params with changed data from payload
 				mParams.urlParameters = this._createFunctionImportParameters(oData.__metadata.created.key, sMethod, oPayload );
 				// clear data
@@ -4651,6 +4658,9 @@ sap.ui.define([
 		//get additional request info for created entries
 		aUrlParams = mParams && mParams.urlParameters ? ODataUtils._createUrlParamsArray(mParams.urlParameters) : undefined;
 		mHeaders = mParams ? this._getHeaders(mParams.headers) : this._getHeaders();
+		if (!bFunctionImport && this._isTransitionMessagesOnly(sGroupId)) {
+			mHeaders["sap-messages"] = "transientOnly";
+		}
 		sETag = mParams && mParams.eTag ? mParams.eTag : this.getETag(oPayload);
 
 		sUrl = this._createRequestUrl('/' + sKey, null, aUrlParams, this.bUseBatch);
@@ -4667,7 +4677,7 @@ sap.ui.define([
 				oRequest.contentID = sContentID;
 			}
 			// for callFunction requests we need to store the updated functionTarget
-			if (oData.__metadata.created.functionMetadata) {
+			if (bFunctionImport) {
 				oRequest.functionTarget = this.oMetadata._getCanonicalPathOfFunctionImport(
 					oData.__metadata.created.functionMetadata, mParams.urlParameters);
 			} else {
@@ -6154,7 +6164,8 @@ sap.ui.define([
 				}
 
 				if (oGroupInfo.groupId === sGroupId || !sGroupId) {
-					oRequest = that._processChange(sKey, oData, sMethod || that.sDefaultUpdateMethod);
+					oRequest = that._processChange(sKey, oData, sMethod || that.sDefaultUpdateMethod,
+						oGroupInfo.groupId);
 					oRequest.key = sKey;
 					//get params for created entries: could contain success/error handler
 					oCreatedInfo = oData.__metadata && oData.__metadata.created
@@ -6460,9 +6471,8 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
-
 		var oContextToActivate, oChangeObject, bCreated, sDeepPath, oEntityMetadata, oEntityType,
-			oEntry, oGroupInfo, bIsNavPropExpanded, sKey, mKeys, oNavPropRefInfo, oOriginalEntry,
+			oEntry, sGroupId, oGroupInfo, bIsNavPropExpanded, sKey, mKeys, oNavPropRefInfo, oOriginalEntry,
 			oOriginalValue, mParams, aParts, sPropertyPath, oRef, bRefreshAfterChange, oRequest,
 			mRequests, oRequestHandle, sResolvedPath,
 			mChangedEntities = {},
@@ -6581,20 +6591,21 @@ sap.ui.define([
 		}
 
 		oGroupInfo = this._resolveGroup(sKey);
+		sGroupId = oGroupInfo.groupId;
 
 		mRequests = this.mRequests;
 
-		if (oGroupInfo.groupId in this.mDeferredGroups) {
+		if (sGroupId in this.mDeferredGroups) {
 			mRequests = this.mDeferredRequests;
-			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata}, this.sDefaultUpdateMethod);
+			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata}, this.sDefaultUpdateMethod, sGroupId);
 		} else {
-			oRequest = this._processChange(sKey, this._getObject('/' + sKey), this.sDefaultUpdateMethod);
+			oRequest = this._processChange(sKey, this._getObject('/' + sKey), this.sDefaultUpdateMethod, sGroupId);
 		}
 		oRequest.key = sKey;
 		//get params for created entries: could contain success/error handler
 		mParams = oChangeObject.__metadata && oChangeObject.__metadata.created ? oChangeObject.__metadata.created : {};
 
-		bRefreshAfterChange = this._getRefreshAfterChange(undefined, oGroupInfo.groupId);
+		bRefreshAfterChange = this._getRefreshAfterChange(undefined, sGroupId);
 
 		if (oEntry.__metadata.created && !oEntry.__metadata.created.functionImport) {
 			oContextToActivate = this.oCreatedContextsCache.findCreatedContext(sResolvedPath);
@@ -6608,8 +6619,8 @@ sap.ui.define([
 					oRequest._aborted = true;
 				}
 			};
-			that._pushToRequestQueue(mRequests, oGroupInfo.groupId,
-				oGroupInfo.changeSetId, oRequest, mParams.success, mParams.error, oRequestHandle, bRefreshAfterChange);
+			that._pushToRequestQueue(mRequests, sGroupId, oGroupInfo.changeSetId, oRequest,
+				mParams.success, mParams.error, oRequestHandle, bRefreshAfterChange);
 			that._processRequestQueueAsync(that.mRequests);
 		});
 
@@ -7031,13 +7042,14 @@ sap.ui.define([
 
 		function create() {
 			var oCreateData, oCreatedContext, oCreateResponse, oEntitySetMetadata, sEntityType,
-				sEntityUri, oExpandRequest, oGroupInfo, oParentEntity, sUID,
+				sEntityUri, mExpandHeaders, oExpandRequest, oGroupInfo, oParentEntity,
+				bTransitionMessagesOnly, sUID,
 				bCreateFailed = false,
 				fnErrorFromParameters = fnError,
 				fnSuccessFromParameters = fnSuccess;
 
 			bCanonical = that._isCanonicalRequestNeeded(bCanonical);
-			mHeaders = mHeaders || {};
+			mHeaders = Object.assign({}, mHeaders);
 			aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 			if (!sPath.startsWith("/") && !oContext) {
 				sPath = "/" + sPath;
@@ -7095,11 +7107,7 @@ sap.ui.define([
 				return oCreatedContext;
 			}
 			if (sExpand) {
-				mHeaders = Object.assign({}, mHeaders, {
-					"Content-ID" : sUID,
-					// skip state messages for the POST, they are requested by the following GET
-					"sap-messages" : "transientOnly"
-				});
+				mHeaders["Content-ID"] = sUID;
 				fnSuccess = function (oData, oCreateResponse0) {
 					if (!oCreateData) {
 						// successful POST, wait for GET
@@ -7160,6 +7168,10 @@ sap.ui.define([
 			sGroupId = sGroupId || oGroupInfo.groupId;
 			sChangeSetId = sChangeSetId || oGroupInfo.changeSetId;
 			bRefreshAfterChange = that._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
+			bTransitionMessagesOnly = that._isTransitionMessagesOnly(sGroupId);
+			if (bTransitionMessagesOnly || sExpand) {
+				mHeaders["sap-messages"] = "transientOnly";
+			}
 			oEntity.__metadata = {
 				type : sEntityType,
 				uri : sEntityUri,
@@ -7205,10 +7217,13 @@ sap.ui.define([
 			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oEntity, sETag);
 
 			if (sExpand) {
+				mExpandHeaders = that._getHeaders(undefined, true);
+				if (bTransitionMessagesOnly) {
+					mExpandHeaders["sap-messages"] = "transientOnly";
+				}
 				oExpandRequest = that._createRequest("$" + sUID + "?"
 						+ ODataUtils._encodeURLParameters({$expand : sExpand, $select : sExpand}),
-					"/$" + sUID, "GET", that._getHeaders(undefined, true), null, undefined,
-					undefined, true);
+					"/$" + sUID, "GET", mExpandHeaders, null, undefined, undefined, true);
 				oExpandRequest.contentID = sUID;
 				oRequest.expandRequest = oExpandRequest;
 				oRequest.contentID = sUID;
@@ -8574,6 +8589,44 @@ sap.ui.define([
 				this._addSubEntitiesToPayload(vSubContexts, oSubEntity);
 			}
 		}
+	};
+
+	/**
+	 * Checks whether the <code>sap-messages</code> header must be set to <code>transientOnly</code>
+	 * for all create and change requests belonging to the given group, which were caused by
+	 * {@link #createEntry} or {@link #setProperty}.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @returns {boolean}
+	 *   Whether changes belonging to the given group only request transition messages from the
+	 *   back end
+	 *
+	 * @private
+	 */
+	ODataModel.prototype._isTransitionMessagesOnly = function (sGroupId) {
+		return this.oTransitionMessagesOnlyGroups.has(sGroupId);
+	};
+
+	/**
+	 * Sets the <code>sap-messages</code> header to <code>transientOnly</code> for all create and
+	 * change requests belonging to the given group, which were caused by {@link #createEntry} or
+	 * {@link #setProperty}.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {boolean} bTransitionMessagesOnly
+	 *   Whether changes belonging to the given group only request transition messages from the
+	 *   back end
+	 *
+	 * @private
+	 * @ui5-restricted sap.suite.ui.generic
+	 * @since 1.112.0
+	 */
+	ODataModel.prototype.setTransitionMessagesOnlyForGroup = function (sGroupId, bTransitionMessagesOnly) {
+		var sOperation = bTransitionMessagesOnly ? "add" : "delete";
+
+		this.oTransitionMessagesOnlyGroups[sOperation](sGroupId);
 	};
 
 	return ODataModel;

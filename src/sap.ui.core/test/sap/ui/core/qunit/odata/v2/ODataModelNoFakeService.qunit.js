@@ -148,6 +148,8 @@ sap.ui.define([
 		assert.deepEqual(oModel.mCustomHeaders, oFixture.oHeaderParameter || {});
 		assert.ok(oModel.oCreatedContextsCache instanceof _CreatedContextsCache);
 		assert.deepEqual(oModel.aSideEffectCleanUpFunctions, []);
+		assert.ok(oModel.oTransitionMessagesOnlyGroups instanceof Set);
+		assert.strictEqual(oModel.oTransitionMessagesOnlyGroups.size, 0);
 	});
 });
 
@@ -699,7 +701,7 @@ sap.ui.define([
 		var oContext = {hasSubContexts : function () {}},
 			oData = {__metadata : {etag : "~changedETag"}},
 			sETag = "~etag",
-			mHeaders = "~headers",
+			mHeaders = {},
 			sKey = "~key",
 			oModel = {
 				_createRequest : function () {},
@@ -707,6 +709,7 @@ sap.ui.define([
 				_getEntity : function () {},
 				_getHeaders : function () {},
 				_getObject : function () {},
+				_isTransitionMessagesOnly : function () {},
 				_removeReferences : function () {},
 				getContext : function () {},
 				getETag : function () {},
@@ -744,6 +747,7 @@ sap.ui.define([
 			}))
 			.returns(oPayload);
 		this.mock(oModel).expects("_getHeaders").withExactArgs().returns(mHeaders);
+		this.mock(oModel).expects("_isTransitionMessagesOnly").withExactArgs("~sGroupId").returns(true);
 		this.mock(oModel).expects("getETag").withExactArgs(oPayload).returns(sETag);
 		this.mock(oModel).expects("getContext").withExactArgs("/" + sKey).returns(oContext);
 		this.mock(oModel).expects("_createRequestUrl")
@@ -751,12 +755,13 @@ sap.ui.define([
 			.returns(sUrl);
 		this.mock(oContext).expects("hasSubContexts").withExactArgs().returns("~hasSubContexts");
 		this.mock(oModel).expects("_createRequest")
-			.withExactArgs(sUrl, "~deepPath", "MERGE", mHeaders, oPayload, sETag, undefined, true,
-				"~hasSubContexts")
+			.withExactArgs(sUrl, "~deepPath", "MERGE",
+				sinon.match.same(mHeaders).and(sinon.match.has("sap-messages", "transientOnly")),
+				oPayload, sETag, undefined, true, "~hasSubContexts")
 			.returns(oRequest);
 
 		// code under test
-		oResult = ODataModel.prototype._processChange.call(oModel, sKey, oData, sUpdateMethod);
+		oResult = ODataModel.prototype._processChange.call(oModel, sKey, oData, sUpdateMethod, "~sGroupId");
 
 		assert.strictEqual(oResult, oRequest);
 		assert.deepEqual(oResult, {requestUri : "~requestUri"});
@@ -2552,6 +2557,7 @@ sap.ui.define([
 				_createRequestUrl : function () {},
 				_getHeaders : function () {},
 				_getObject : function () {},
+				_isTransitionMessagesOnly : function () {},
 				_removeReferences : function () {},
 				getContext : function () {},
 				getETag : function () {}
@@ -2572,6 +2578,7 @@ sap.ui.define([
 			.withExactArgs({__metadata : {}})
 			.returns("~oPayload");
 		this.mock(oModel).expects("_getHeaders").withExactArgs(undefined).returns("~mHeaders");
+		this.mock(oModel).expects("_isTransitionMessagesOnly").withExactArgs("~sGroupId").returns(false);
 		this.mock(oModel).expects("getETag").withExactArgs("~oPayload").returns("~sETag");
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
 		this.mock(oModel).expects("_createRequestUrl")
@@ -2586,7 +2593,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oContext), "~oPayload");
 
 		// code under test
-		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "POST");
+		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "POST", "~sGroupId");
 
 		assert.deepEqual(oResult, {
 			contentID : "~contentID",
@@ -2683,6 +2690,7 @@ sap.ui.define([
 				_createRequestUrl : function () {},
 				_getHeaders : function () {},
 				_getObject : function () {},
+				_isTransitionMessagesOnly : function () {},
 				_removeReferences : function () {},
 				getContext : function () {},
 				getETag : function () {}
@@ -2700,6 +2708,7 @@ sap.ui.define([
 			.withExactArgs({__metadata : {}, foo : 7})
 			.returns("~payload");
 		this.mock(oModel).expects("_getHeaders").withExactArgs(undefined).returns("~mHeaders");
+		this.mock(oModel).expects("_isTransitionMessagesOnly").withExactArgs("~sGroupId").returns(false);
 		this.mock(oModel).expects("getETag").withExactArgs("~payload").returns("~sETag");
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
 		this.mock(oModel).expects("_createRequestUrl")
@@ -2713,7 +2722,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oContext), "~payload");
 
 		// code under test
-		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "POST");
+		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "POST", "~sGroupId");
 
 		assert.deepEqual(oRequest, {created : true});
 		assert.strictEqual(oResult, oRequest);
@@ -3086,6 +3095,7 @@ sap.ui.define([
 				_getHeaders : function () {},
 				_getRefreshAfterChange : function () {},
 				_isCanonicalRequestNeeded : function () {},
+				_isTransitionMessagesOnly : function () {},
 				_normalizePath : function () {},
 				_processRequestQueueAsync : function () {},
 				_pushToRequestQueue : function () {},
@@ -3120,6 +3130,7 @@ sap.ui.define([
 		oModelMock.expects("_getRefreshAfterChange")
 			.withExactArgs("~refreshAfterChange", "~groupId")
 			.returns("~bRefreshAfterChange");
+		oModelMock.expects("_isTransitionMessagesOnly").withExactArgs("~groupId").returns(false);
 		oMetadataMock.expects("_getEntityTypeByPath")
 			.withExactArgs("/~sNormalizedPath")
 			.returns(oEntityMetadata);
@@ -3336,6 +3347,7 @@ sap.ui.define([
 				_createRequestUrlWithNormalizedPath : function () {},
 				_getRefreshAfterChange : function () {},
 				_isCanonicalRequestNeeded : function () {},
+				_isTransitionMessagesOnly : function () {},
 				_normalizePath : function () {},
 				_processRequestQueueAsync : function () {},
 				_pushToRequestQueue : function () {},
@@ -3368,6 +3380,7 @@ sap.ui.define([
 		this.mock(oModel).expects("_getRefreshAfterChange")
 			.withExactArgs(undefined, "~defaultGroupId")
 			.returns("~bRefreshAfterChange");
+		this.mock(oModel).expects("_isTransitionMessagesOnly").withExactArgs("~defaultGroupId").returns(false);
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
 			.withExactArgs("/~sNormalizedPath")
 			.returns(oEntityMetadata);
@@ -3419,6 +3432,124 @@ sap.ui.define([
 		// code under test
 		fnAfterContextActivated();
 	});
+
+	//*********************************************************************************************
+[undefined, "~expand"].forEach(function (sExpand) {
+	var sTitle = "createEntry: transientOnly header required for group" + (sExpand ? "; with expand" : "");
+
+	QUnit.test(sTitle, function (assert) {
+		var oCreatedContext = {fetchActivated: function () {}},
+			oEntityMetadata = {entityType: "~entityType"},
+			oModel = {
+				mChangedEntities: {},
+				mDeferredGroups: {},
+				oMetadata: {
+					_getEntitySetByType: function () {},
+					_getEntityTypeByPath: function () {},
+					_isCollection: function () {},
+					isLoaded: function () {},
+					loaded: function () {}
+				},
+				mRequests: "~mRequests",
+				bUseBatch: "~bUseBatch",
+				_addEntity: function () {},
+				_createRequest: function () {},
+				_createRequestUrlWithNormalizedPath: function () {},
+				_getHeaders: function () {},
+				_getRefreshAfterChange: function () {},
+				_isCanonicalRequestNeeded: function () {},
+				_isTransitionMessagesOnly: function () {},
+				_normalizePath: function () {},
+				_processRequestQueueAsync: function () {},
+				_pushToRequestQueue: function () {},
+				_resolveGroup: function () {},
+				getContext: function () {},
+				resolveDeep: function () {}
+			},
+			oModelMock = this.mock(oModel),
+			mOriginalHeaders = {},
+			oRequest = {},
+			sUID;
+
+		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
+		// function create()
+		oModelMock.expects("_isCanonicalRequestNeeded").withExactArgs(undefined).returns("~bCanonical");
+		this.mock(ODataUtils).expects("_createUrlParamsArray").withExactArgs(undefined).returns("~aUrlParams");
+		oModelMock.expects("_normalizePath")
+			.withExactArgs("/~path", undefined, "~bCanonical")
+			.returns("/~sNormalizedPath");
+		oModelMock.expects("resolveDeep").withExactArgs("/~path", undefined).returns("~sDeepPath");
+		this.mock(oModel.oMetadata).expects("_isCollection").withExactArgs("~sDeepPath").returns(false);
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("/~sNormalizedPath")
+			.returns(oEntityMetadata);
+		this.mock(oModel.oMetadata).expects("_getEntitySetByType")
+			.withExactArgs(sinon.match.same(oEntityMetadata))
+			.returns({name: "~entitySetName"});
+		oModelMock.expects("_resolveGroup")
+			.withExactArgs("/~sNormalizedPath")
+			.returns({changeSetId: "~defaultChangeSetId", groupId: "~defaultGroupId"});
+		oModelMock.expects("_getRefreshAfterChange")
+			.withExactArgs(undefined, "~defaultGroupId")
+			.returns("~bRefreshAfterChange");
+		oModelMock.expects("_isTransitionMessagesOnly").withExactArgs("~defaultGroupId").returns(true);
+		oModelMock.expects("_addEntity").callsFake(function (oEntity0) {
+				assert.strictEqual(oEntity0.__metadata.created.headers["sap-messages"], "transientOnly");
+
+				return "~sKey";
+			});
+		oModelMock.expects("getContext")
+			.withExactArgs("/~sKey", "~sDeepPath", sinon.match.object, undefined, undefined)
+			.returns(oCreatedContext);
+		oModelMock.expects("_createRequestUrlWithNormalizedPath")
+			.withExactArgs("/~sNormalizedPath", "~aUrlParams", "~bUseBatch")
+			.returns("~sUrl");
+		oModelMock.expects("_createRequest")
+			.callsFake(function (sUrl, sDeepPath, sMethod, mHeaders, oData, sETag) {
+				sUID = mHeaders["Content-ID"];
+
+				assert.strictEqual(sUrl, "~sUrl");
+				assert.strictEqual(sDeepPath, "~sDeepPath");
+				assert.strictEqual(sMethod, "POST");
+				assert.strictEqual(mHeaders["sap-messages"], "transientOnly");
+				assert.strictEqual(oData.__metadata.created.headers["sap-messages"], "transientOnly");
+				assert.strictEqual(sETag, undefined);
+
+				return oRequest;
+			});
+		if (sExpand) {
+			oModelMock.expects("_getHeaders").withExactArgs(undefined, true).returns({});
+			this.mock(ODataUtils).expects("_encodeURLParameters")
+				.withExactArgs({$expand: "~expand", $select: "~expand"})
+				.returns("~encodedUrlParams");
+			oModelMock.expects("_createRequest")
+				.callsFake(function (sUrl, sDeepPath, sMethod, mHeaders, oData, sETag, bAsync,
+						bUpdateAggregatedMessages) {
+					assert.strictEqual(sUrl, "$" + sUID + "?~encodedUrlParams");
+					assert.strictEqual(sDeepPath, "/$" + sUID);
+					assert.strictEqual(sMethod, "GET");
+					assert.strictEqual(mHeaders["sap-messages"], "transientOnly");
+					assert.strictEqual(oData, null);
+					assert.strictEqual(sETag, undefined);
+					assert.strictEqual(bAsync, undefined);
+					assert.strictEqual(bUpdateAggregatedMessages, true);
+
+					return {};
+				});
+		}
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns({then: function () {}});
+		// handling of oMetadata.loaded() promise not relevant
+
+		// code under test
+		ODataModel.prototype.createEntry.call(oModel, "/~path", {
+			expand: sExpand,
+			headers: mOriginalHeaders,
+			properties: {}
+		});
+
+		assert.deepEqual(mOriginalHeaders, {});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("createEntry: deep create", function (assert) {
@@ -3553,6 +3684,7 @@ sap.ui.define([
 				_createRequestUrlWithNormalizedPath : function () {},
 				_getRefreshAfterChange : function () {},
 				_isCanonicalRequestNeeded : function () {},
+				_isTransitionMessagesOnly : function () {},
 				_normalizePath : function () {},
 				_pushToRequestQueue : function () {},
 				_processRequestQueueAsync : function () {},
@@ -3593,6 +3725,7 @@ sap.ui.define([
 		this.mock(oModel).expects("_getRefreshAfterChange")
 			.withExactArgs(undefined, "~groupId")
 			.returns("~bRefreshAfterChange");
+		this.mock(oModel).expects("_isTransitionMessagesOnly").withExactArgs("~groupId").returns(false);
 		this.mock(oModel).expects("_addEntity")
 			.withExactArgs(sinon.match.object/*aspect already tested*/)
 			.returns("~sKey");
@@ -6594,7 +6727,7 @@ sap.ui.define([
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
 		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
 		this.mock(oModel).expects("_processChange")
-			.withExactArgs("~sKey", /*copy of*/oFixture.oData, "~sDefaultUpdateMethod")
+			.withExactArgs("~sKey", /*copy of*/oFixture.oData, "~sDefaultUpdateMethod", "~groupId")
 			.returns(oRequest);
 		this.mock(oModel).expects("_pushToRequestQueue")
 			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), "~groupId", "~changeSetId",
@@ -6669,7 +6802,7 @@ sap.ui.define([
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
 		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
 		this.mock(oModel).expects("_processChange")
-			.withExactArgs("~sKey", {}, "~sDefaultUpdateMethod")
+			.withExactArgs("~sKey", {}, "~sDefaultUpdateMethod", "~groupId")
 			.returns(oRequest);
 		this.mock(oModel).expects("_pushToRequestQueue")
 			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), "~groupId", "~changeSetId",
@@ -6753,7 +6886,7 @@ sap.ui.define([
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
 		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
 		this.mock(oModel).expects("_processChange")
-			.withExactArgs("~sKey", {}, "~sDefaultUpdateMethod")
+			.withExactArgs("~sKey", {}, "~sDefaultUpdateMethod", "~groupId")
 			.returns(oRequest);
 		this.mock(oModel).expects("_pushToRequestQueue")
 			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), "~groupId", "~changeSetId",
@@ -6810,6 +6943,85 @@ sap.ui.define([
 			}), undefined, undefined, undefined);
 
 		return oMetadataPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setProperty: deferred request", function (assert) {
+		var oRequestQueuedPromise,
+			oEntry = {__metadata: {foo: "bar"}},
+			oMetadataLoadedPromise = Promise.resolve(),
+			oModel = {
+				mChangedEntities: {},
+				sDefaultUpdateMethod: "~sDefaultUpdateMethod",
+				mDeferredGroups: {"~groupId": "~groupId"},
+				mDeferredRequests: "~mDeferredRequests",
+				oMetadata: {
+					_getEntityTypeByPath: function () {},
+					loaded: function () {}
+				},
+				mRequests: "~mRequests",
+				checkUpdate: function () {},
+				getEntityByPath: function () {},
+				_getObject: function () {},
+				_getRefreshAfterChange: function () {},
+				_processChange: function () {},
+				_processRequestQueueAsync: function () {},
+				_pushToRequestQueue: function () {},
+				resolve: function () {},
+				resolveDeep: function () {},
+				_resolveGroup: function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oOriginalEntry = {__metadata: {}};
+
+		oModelMock.expects("resolve").withExactArgs("~sPath", "~oContext").returns("/resolved/~path");
+		oModelMock.expects("resolveDeep").withExactArgs("~sPath", "~oContext").returns("/deep/path/~propertyPath");
+		oModelMock.expects("getEntityByPath")
+			.withExactArgs("/resolved/~path", null, /*by ref oEntityInfo*/{})
+			.callsFake(function (sResolvedPath, oContext, oEntityInfo) { // fill reference parameter
+				oEntityInfo.key = "~key";
+				oEntityInfo.propertyPath = "~propertyPath";
+
+				return oEntry;
+			});
+		oModelMock.expects("_getObject").withExactArgs("/~key", null, true).returns(oOriginalEntry);
+		oModelMock.expects("_getObject").withExactArgs("~sPath", "~oContext", true).returns("~oOriginalValue");
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath").withExactArgs("~key").returns(/*oEntityType*/);
+		oModelMock.expects("_resolveGroup")
+			.withExactArgs("~key")
+			.returns({changeSetId: "~changeSetId", groupId: "~groupId"});
+		oModelMock.expects("_processChange")
+			.withExactArgs("~key", {__metadata: {deepPath: "/deep/path", foo: "bar"}}, "~sDefaultUpdateMethod",
+				"~groupId")
+			.returns(/*oRequest*/{});
+		oModelMock.expects("_getRefreshAfterChange")
+			.withExactArgs(undefined, "~groupId")
+			.returns("~bRefreshAfterChange");
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oMetadataLoadedPromise);
+		oModelMock.expects("checkUpdate").withExactArgs(false, "~bAsyncUpdate", {"~key": true});
+		oRequestQueuedPromise = oMetadataLoadedPromise.then(function () {
+			oModelMock.expects("_pushToRequestQueue")
+				.withExactArgs("~mDeferredRequests", "~groupId", "~changeSetId", {key: "~key"}, /*success*/ undefined,
+					/*error*/ undefined, /*oRequestHandle*/sinon.match.object, "~bRefreshAfterChange");
+			oModelMock.expects("_processRequestQueueAsync").withExactArgs("~mRequests");
+		});
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.setProperty.call(oModel, "~sPath", "~oValue", "~oContext", "~bAsyncUpdate"),
+			true);
+
+		assert.deepEqual(
+			oModel.mChangedEntities["~key"],
+			{
+				__metadata: {
+					deepPath: "/deep/path",
+					foo: "bar"
+				},
+				"~path": "~oValue"
+			});
+
+		return oRequestQueuedPromise;
 	});
 
 	//*********************************************************************************************
@@ -6900,7 +7112,7 @@ sap.ui.define([
 			.withExactArgs("/key")
 			.returns("~oData");
 		oModelMock.expects("_processChange")
-			.withExactArgs("key", "~oData", "~sDefaultUpdateMethod")
+			.withExactArgs("key", "~oData", "~sDefaultUpdateMethod", "~groupId")
 			.returns(/*oRequest*/{});
 		oModelMock.expects("_getRefreshAfterChange")
 			.withExactArgs(undefined, "~groupId")
@@ -7814,5 +8026,31 @@ sap.ui.define([
 				{key : "LineItem1"}
 			]
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_isTransitionMessagesOnly", function (assert) {
+		var oModel = {oTransitionMessagesOnlyGroups: new Set(["~group"])};
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype._isTransitionMessagesOnly.call(oModel, "~group"), true);
+		assert.strictEqual(ODataModel.prototype._isTransitionMessagesOnly.call(oModel, "~group2"), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setTransitionMessagesOnlyForGroup", function (assert) {
+		var oModel = {oTransitionMessagesOnlyGroups: new Set()};
+
+		// code under test
+		ODataModel.prototype.setTransitionMessagesOnlyForGroup.call(oModel, "~group", true);
+
+		assert.ok(oModel.oTransitionMessagesOnlyGroups.has("~group"));
+		assert.strictEqual(oModel.oTransitionMessagesOnlyGroups.size, 1);
+
+		// code under test
+		ODataModel.prototype.setTransitionMessagesOnlyForGroup.call(oModel, "~group", false);
+
+		assert.notOk(oModel.oTransitionMessagesOnlyGroups.has("~group"));
+		assert.strictEqual(oModel.oTransitionMessagesOnlyGroups.size, 0);
 	});
 });
