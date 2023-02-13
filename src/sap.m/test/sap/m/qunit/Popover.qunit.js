@@ -2059,6 +2059,8 @@ sap.ui.define([
 		this.clock.tick(400);
 
 		assert.equal(oPopover.$().attr('role'), 'dialog', 'Popover has role dialog');
+		assert.equal(oPopover.$("firstfe").attr('role'), 'presentation', "Popover' hidden focusable span has role presentation");
+		assert.equal(oPopover.$("lastfe").attr('role'), 'presentation', "Popovers' hidden focusable span has role presentation");
 
 		oPopover.destroy();
 		oButton.destroy();
