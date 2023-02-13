@@ -179,8 +179,8 @@ sap.ui.define([
 							var oObj = oCtx.getObject();
 							if (oObj && oObj.key) {
 								sap.ui.require([
-									"sap/ui/mdc/p13n/FlexUtil", "sap/ui/mdc/flexibility/Chart.flexibility"
-								], function(FlexUtil,ChartFlex) {
+									"sap/ui/mdc/flexibility/Chart.flexibility"
+								], function(ChartFlex) {
 									//var aChanges = [];
 
 									oMDCChart.getEngine().createChanges({

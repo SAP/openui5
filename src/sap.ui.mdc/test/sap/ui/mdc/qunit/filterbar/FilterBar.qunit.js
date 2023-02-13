@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/FilterField",
 	'sap/ui/model/json/JSONModel',
-	"sap/ui/mdc/p13n/FlexUtil",
+	"sap/m/p13n/FlexUtil",
 	"sap/ui/mdc/odata/TypeUtil",
 	"sap/ui/mdc/util/FilterUtil",
 	'sap/base/util/merge',

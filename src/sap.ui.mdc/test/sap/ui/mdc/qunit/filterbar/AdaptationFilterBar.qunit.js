@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/mdc/filterbar/p13n/AdaptationFilterBar",
-	"sap/ui/mdc/p13n/FlexUtil",
+	"sap/m/p13n/FlexUtil",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/Control",
 	"sap/ui/mdc/AggregationBaseDelegate",

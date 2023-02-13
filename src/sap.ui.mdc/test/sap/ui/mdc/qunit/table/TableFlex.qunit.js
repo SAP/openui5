@@ -3,7 +3,7 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
 	"sap/ui/mdc/util/TypeUtil",
 	"sap/ui/mdc/FilterField",
-	"sap/ui/mdc/p13n/FlexUtil",
+	"sap/m/p13n/FlexUtil",
 	"sap/ui/mdc/p13n/StateUtil",
 	"sap/ui/mdc/table/TableSettings",
 	"sap/ui/mdc/flexibility/Table.flexibility",
