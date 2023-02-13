@@ -150,7 +150,9 @@ sap.ui.define([
 			}, {
 				name: "r2",
 				pattern: "/register"
-			}]),
+			}], {
+				async: true
+			}),
 			sUrl,
 			that = this;
 
