@@ -724,5 +724,32 @@
         ]
       }
     ]
+  },
+  "1.84.32": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "3510c3954d36c9c6c8b215fb119b2c167507ae3b",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Scroll position corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380020933"
+          }
+        ]
+      },
+      {
+        "id": "e634cc980939cc640c2d99814cf91282acb61899",
+        "type": "FIX",
+        "text": " core/qunit/util/Popup.qunit: stabilize test of client rect",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380014962"
+          }
+        ]
+      }
+    ]
   }
 }

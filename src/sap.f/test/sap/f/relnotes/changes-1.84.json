@@ -250,5 +250,43 @@
         ]
       }
     ]
+  },
+  "1.84.32": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "3510c3954d36c9c6c8b215fb119b2c167507ae3b",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Scroll position corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380020933"
+          }
+        ]
+      },
+      {
+        "id": "c874e6f6a0155f931945fe5ca42b4b799ac58697",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Corrected positioning issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270108645"
+          }
+        ]
+      },
+      {
+        "id": "9d5e3dda42590b2b36c48c88c4dde2b212704c41",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Correct header visibility issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280122057"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1641,5 +1641,91 @@
         ]
       }
     ]
+  },
+  "1.84.32": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "d6fab2277af9b499c566c941116d52ea842e0662",
+        "type": "FIX",
+        "text": " sap.m.SplitApp: Fixed failing test on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270154471"
+          }
+        ]
+      },
+      {
+        "id": "92cb9d39ebc05dc0aefcc45a8776bf329fc983bf",
+        "type": "FIX",
+        "text": " sap.m.Input: Failing QUnit test in IE fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380004059"
+          }
+        ]
+      },
+      {
+        "id": "14b429f1d6a5a0cab8022933fe095f007665b8d4",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Where there is no vertical scrollbar, class 'sapMDialogVerticalScrollIncluded' is removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270156416"
+          }
+        ]
+      },
+      {
+        "id": "6ead5dc81f5e761014878c6c992faddefe4903f4",
+        "type": "FIX",
+        "text": " sap.m.Input: Dynamic suggestions on mobile corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280197243"
+          }
+        ]
+      },
+      {
+        "id": "6892696454f78ac9f05ef969af6a5aed3809b054",
+        "type": "FIX",
+        "text": " sap.m.delegate.ValueStateMessage: Close on scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008943272022"
+          }
+        ]
+      },
+      {
+        "id": "855154d537ab4aefa5de7e968704e117c2a61114",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: override default state announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004825672022"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270139091"
+          }
+        ]
+      },
+      {
+        "id": "ac101bd3c5091eaf1d23a6f5d45e0dceba09f008",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: added ability to create appointments in RTL mode with D&D",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005237632022"
+          }
+        ]
+      }
+    ]
   }
 }

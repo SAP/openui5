@@ -471,5 +471,32 @@
         ]
       }
     ]
+  },
+  "1.84.32": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "3d30ba97a876b294b767689287bf70d5a4a3c89d",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: added roles to legend and items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000890982023"
+          }
+        ]
+      },
+      {
+        "id": "34087cdd84ee7e8947a8b3a6bd2edc2fb25f8933",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: fixed space before menu items without icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280155051"
+          }
+        ]
+      }
+    ]
   }
 }
