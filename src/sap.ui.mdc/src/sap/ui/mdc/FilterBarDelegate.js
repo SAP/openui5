@@ -105,43 +105,6 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enum/FilterBarV
 		return Promise.resolve();
     };
 
-	/**
-	 * @typedef {object} sap.ui.mdc.filterbar.PropertyInfo
-	 *
-	 * @property {string} path
-	 *   The identifier of the property
-	 * @property {string} [name]
-	 *   The alternative identifier of the property. Either path or name can be used; preference is on path.
-	 * @property {string} label
-	 *   The label of the identifier
-	 * @property {string} [tooltip]
-	 *   The tooltip of the identifier
-	 * @property {string} datatype
-	 *   The name of the type of the property
-	 * @property {object} [constraints]
-	 *   Defines constraints for the data type of the property
-	 * @property {object} [formatOptions]
-	 *   Defines format options for the data type of the property
-	 * @property {string} [group]
-	 *   The group identifier to which the property belongs
-	 * @property {string} [groupLabel]
-	 *   The group name of the group identifier
-	 * @property {boolean} [caseSensitive = false]
-	 *   If <code>true</code> defines that the filter value will be treated as case-sensitive
-	 * @property {sap.ui.mdc.enum.FieldDisplay} [display]
-	 *   Describes how the value will be presented to the user
-	 * @property {boolean} [hiddenFilter = false]
-	 *   Defines if the filter will be visible on the filter bar
-	 * @property {boolean} [required = false]
-	 *   Defines if the filter is mandatory
-	 * @property {int} maxConditions
-	 *   Defines if the filter supports multiple values <code>-1</code> or single values <code>1</code>
-	 *
-	 * @private
-	 * @experimental
-	 * @ui5-restricted sap.fe
-	 * @MDC_PUBLIC_CANDIDATE
-	 */
 
 	/**
 	 * Retrieves the relevant metadata for a given payload and returns the property info array.
