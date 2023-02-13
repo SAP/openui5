@@ -770,8 +770,9 @@ sap.ui.define([
 			);
 			// the component's original manifest should also be loaded even if a manifest object is given
 			var InheritAsyncComponent = sap.ui.require("sap/ui/test/inheritAsync/Component");
+			var oInheritAsyncComponent = new InheritAsyncComponent();
 			assert.equal(
-				InheritAsyncComponent.getMetadata().getManifestEntry("/sap.ui5/config/any/entry1"),
+				oInheritAsyncComponent.getManifestEntry("/sap.ui5/config/any/entry1"),
 				"test",
 				"Instance specific manifest should not be reused for static manifest"
 			);
