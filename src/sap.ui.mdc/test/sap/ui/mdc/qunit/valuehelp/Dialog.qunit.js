@@ -301,8 +301,8 @@ sap.ui.define([
 				assert.ok(aPanelContent[0].isA("sap.m.HBox"), "HBox is inside Panel");
 				aItems = aPanelContent[0].getItems();
 				assert.equal(aItems.length, 2, "HBox content length");
-				var oTokenizer = aItems[0];
-				var aTokens = oTokenizer.getTokens();
+				var oTokenMultiInput = aItems[0];
+				var aTokens = oTokenMultiInput.getTokens();
 				assert.equal(aTokens.length, 1, "number of tokens");
 				assert.equal(aTokens[0].getText(), "Text", "Token text");
 				var oBinding = aTokens[0].getBinding("text");
@@ -322,7 +322,7 @@ sap.ui.define([
 				};
 				assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
 				var oButton = aItems[1];
-				assert.ok(oTokenizer.isA("sap.m.MultiInput"), "MultiInput is first HBox item");
+				assert.ok(oTokenMultiInput.isA("sap.m.MultiInput"), "MultiInput is first HBox item");
 				assert.ok(oButton.isA("sap.m.Button"), "Button is second HBox item");
 				assert.equal(oButton.getType(), mLibrary.ButtonType.Transparent, "Button type");
 				assert.equal(oButton.getIcon(), "sap-icon://decline", "Button icon");
@@ -397,8 +397,8 @@ sap.ui.define([
 				assert.ok(aPanelContent[0].isA("sap.m.HBox"), "HBox is inside Panel");
 				aItems = aPanelContent[0].getItems();
 				assert.equal(aItems.length, 2, "HBox content length");
-				var oTokenizer = aItems[0];
-				var aTokens = oTokenizer.getTokens();
+				var oTokenMultiInput = aItems[0];
+				var aTokens = oTokenMultiInput.getTokens();
 				assert.equal(aTokens.length, 1, "number of tokens");
 				assert.equal(aTokens[0].getText(), "Text", "Token text");
 				var oBinding = aTokens[0].getBinding("text");
@@ -418,7 +418,7 @@ sap.ui.define([
 				};
 				assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
 				var oButton = aItems[1];
-				assert.ok(oTokenizer.isA("sap.m.MultiInput"), "Tokenizer is first HBox item");
+				assert.ok(oTokenMultiInput.isA("sap.m.MultiInput"), "Tokenizer is first HBox item");
 				assert.ok(oButton.isA("sap.m.Button"), "Button is first HBox item");
 				assert.equal(oButton.getType(), mLibrary.ButtonType.Transparent, "Button type");
 				assert.equal(oButton.getIcon(), "sap-icon://decline", "Button icon");
@@ -519,8 +519,8 @@ sap.ui.define([
 					var oPanel = aItems[1];
 					var aPanelContent = oPanel.getContent();
 					aItems = aPanelContent[0].getItems();
-					var oTokenizer = aItems[0];
-					var aTokens = oTokenizer.getTokens();
+					var oTokenMultiInput = aItems[0];
+					var aTokens = oTokenMultiInput.getTokens();
 					var oBinding = aTokens[0].getBinding("text");
 					var oBindingType = oBinding.getType();
 					assert.ok(oBindingType.isA("sap.ui.mdc.field.ConditionType"), "Token bound using ConditionType");
@@ -539,8 +539,8 @@ sap.ui.define([
 					assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
 
 					// the inner input element has to been set to transparent.
-					assert.ok(oTokenizer.isA("sap.m.MultiInput"), "MultiInput is first HBox item");
-					assert.equal(jQuery(oTokenizer.getDomRef("inner")).css("opacity"), "0", "input part of multiInput is not visible");
+					assert.ok(oTokenMultiInput.isA("sap.m.MultiInput"), "MultiInput is first HBox item");
+					assert.equal(jQuery(oTokenMultiInput.getDomRef("inner")).css("opacity"), "0", "input part of multiInput is not visible");
 
 					// simulate ok-button click
 					var aButtons = oContainer.getButtons();
@@ -568,7 +568,7 @@ sap.ui.define([
 								setTimeout(function() { // wait until open
 									assert.equal(iOpened, 2, "Opened event fired again");
 									assert.ok(oContainer.isOpen(), "sap.m.Dialog is open");
-									aTokens = oTokenizer.getTokens();
+									aTokens = oTokenMultiInput.getTokens();
 									oBinding = aTokens[0].getBinding("text");
 									oBindingType = oBinding.getType();
 									assert.ok(oBindingType.isA("sap.ui.mdc.field.ConditionType"), "Token bound using ConditionType");
@@ -785,10 +785,10 @@ sap.ui.define([
 				var oPanel = aItems[1];
 				var aPanelContent = oPanel.getContent();
 				aItems = aPanelContent[0].getItems();
-				var oTokenizer = aItems[0];
-				var aTokens = oTokenizer.getTokens();
+				var oTokenMultiInput = aItems[0];
+				var aTokens = oTokenMultiInput.getTokens();
 
-				oTokenizer.fireTokenUpdate({removedTokens: aTokens});
+				oTokenMultiInput.fireTokenUpdate({removedTokens: aTokens});
 				assert.equal(iSelect, 1, "select event fired");
 				assert.deepEqual(aConditions, [Condition.createItemCondition("X", "Text")], "select event conditions");
 				assert.equal(sType, SelectType.Remove, "select event type");

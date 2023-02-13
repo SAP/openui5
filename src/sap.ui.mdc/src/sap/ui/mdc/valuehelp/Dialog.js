@@ -593,7 +593,7 @@ sap.ui.define([
 					var oFormatOptions = _getConditionFormatOptions.call(this);
 					this._oConditionType = new ConditionType(oFormatOptions);
 					this._oConditionType._bVHTokenizer = true; // just help for debugging
-					this.oTokenizer = new MultiInput(this.getId() + "-Tokenizer", {
+					this.oTokenMultiInput = new MultiInput(this.getId() + "-Tokenizer", {
 						width: "100%",
 						showValueHelp: false,
 						editable: true,
@@ -620,16 +620,16 @@ sap.ui.define([
 					// Overwrite the setValueVisible to make the input part not visible (transparent).
 					// Problem: you can still enter a value into the $input dom ref and this will be shown when you remove all tokens. this can be solved inside the afterRender handler.
 					// ACC issue: the screenreader is still reading this control as input field and that the user can enter a value - which is not correct.
-					this.oTokenizer._setValueVisible = function (bVisible) {
+					this.oTokenMultiInput._setValueVisible = function (bVisible) {
 						this.$("inner").css("opacity", "0");
 					};
 
-					var org = this.oTokenizer.onAfterRendering;
-					this.oTokenizer.onAfterRendering = function() {
-						org.apply(this.oTokenizer, arguments);
+					var org = this.oTokenMultiInput.onAfterRendering;
+					this.oTokenMultiInput.onAfterRendering = function() {
+						org.apply(this.oTokenMultiInput, arguments);
 
-						this.oTokenizer._setValueVisible();  // make the input always invisible
-						this.oTokenizer.setValue(""); // set the value to empty string
+						this.oTokenMultiInput._setValueVisible();  // make the input always invisible
+						this.oTokenMultiInput.setValue(""); // set the value to empty string
 					}.bind(this);
 
 					_bindTokenizer.call(this, true);
@@ -647,7 +647,7 @@ sap.ui.define([
 					});
 					this.oRemoveAllBtn.addStyleClass("sapUiTinyMarginBegin");
 
-					oHBox.addItem(this.oTokenizer);
+					oHBox.addItem(this.oTokenMultiInput);
 					oHBox.addItem(this.oRemoveAllBtn);
 					this.oTokenizerPanel.addContent(oHBox);
 
@@ -697,17 +697,17 @@ sap.ui.define([
 
 	function _bindTokenizer(bBind) {
 
-		if (this.oTokenizer) {
-			var oBindingInfo = this.oTokenizer.getBindingInfo("tokens");
+		if (this.oTokenMultiInput) {
+			var oBindingInfo = this.oTokenMultiInput.getBindingInfo("tokens");
 			if (bBind) {
 				if (!oBindingInfo) { // not bound -> create binding
 					var oFilter = new Filter({path:'isEmpty', operator:'NE', value1:true});
 					this._oConditionType.setFormatOptions(_getConditionFormatOptions.call(this)); // as config might be changed
 					var oTokenTemplate = new Token(this.getId() + "-Token", {text: {path: '$valueHelp>', type: this._oConditionType}});
-					this.oTokenizer.bindAggregation("tokens", {path: '/conditions', model: "$valueHelp", templateShareable: false, template: oTokenTemplate, filters: oFilter});
+					this.oTokenMultiInput.bindAggregation("tokens", {path: '/conditions', model: "$valueHelp", templateShareable: false, template: oTokenTemplate, filters: oFilter});
 				}
 			} else if (oBindingInfo) { // remove binding if dialog is closed to prevent updated on tokens if conditions are updated. (Suspend would not be enough, as every single binding on token would need to be suspended too.)
-				this.oTokenizer.unbindAggregation("tokens");
+				this.oTokenMultiInput.unbindAggregation("tokens");
 			}
 		}
 
@@ -748,7 +748,7 @@ sap.ui.define([
 					fnRenderContent();
 				});
 			} else {
-				if (this.oTokenizer) { // restore tokenizer binding to enable updates if open
+				if (this.oTokenMultiInput) { // restore tokenizer binding to enable updates if open
 					_bindTokenizer.call(this, true);
 				}
 				fnRenderContent();
@@ -811,7 +811,7 @@ sap.ui.define([
 		if (oContainer) {
 			oContainer.close();
 
-			if (this.oTokenizer) { // remove tokenizer binding to prevent updates if closed
+			if (this.oTokenMultiInput) { // remove tokenizer binding to prevent updates if closed
 				_bindTokenizer.call(this, false);
 			}
 		}
@@ -853,7 +853,7 @@ sap.ui.define([
 			"oButtonOK",
 			"oButtonCancel",
 			"oTokenizerPanel",
-			"oTokenizer",
+			"oTokenMultiInput",
 			"_oIconTabBar",
 			"_oGroupSelect",
 			"_oGroupSelectModel",
