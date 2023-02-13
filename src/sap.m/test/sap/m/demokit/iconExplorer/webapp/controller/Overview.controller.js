@@ -143,6 +143,10 @@ sap.ui.define([
 			}
 		},
 
+		handleCopyToClipboardClick: function (oEvent) {
+			this._onCopyIconToClipboard(oEvent.getSource().getParent().getParent().getItems()[0].getSrc());
+		},
+
 		/**
 		 * Triggered by the table's 'updateFinished' event and by the other tabs change: after new table
 		 * data is available, this handler method updates the icon counter.
@@ -338,14 +342,9 @@ sap.ui.define([
 		 * @public
 		 */
 		onCopyIconToClipboard: function () {
-			var sString = this.byId("previewCopyCode").getValue(),
-				oResourceBundle = this.getResourceBundle(),
-				sSuccessText, sExceptionText,
-				sIcon = this.getModel().getUnicode(sString);
+			var sString = this.byId("previewCopyCode").getValue();
 
-			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [sString]);
-			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [sString]);
-			this._copyStringToClipboard(sIcon, sSuccessText, sExceptionText);
+			this._onCopyIconToClipboard(sString);
 		},
 
 		/**
@@ -379,6 +378,21 @@ sap.ui.define([
 		/* =========================================================== */
 		/* internal method                                             */
 		/* =========================================================== */
+
+		/**
+		 * Copies the icon to the clipboard and displays a message
+		 * @param {string} iconName the icon name string that has to be copied to the clipboard
+		 * @private
+		 */
+		_onCopyIconToClipboard: function (iconName) {
+			var	oResourceBundle = this.getResourceBundle(),
+				sSuccessText, sExceptionText,
+				sIcon = this.getModel().getUnicode(iconName);
+
+			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [iconName]);
+			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [iconName]);
+			this._copyStringToClipboard(sIcon, sSuccessText, sExceptionText);
+		},
 
 		/**
 		 * Copies the string to the clipboard and displays a message
