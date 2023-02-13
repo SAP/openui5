@@ -447,7 +447,8 @@ sap.ui.define([
 					RenameHandler._preventDefault.call(this, oEvent);
 					break;
 				case KeyCodes.DELETE:
-					//Incident ID: #1680315103
+				case KeyCodes.BACKSPACE:
+					//Incident IDs: #1680315103, #2380033173
 					RenameHandler._stopPropagation.call(this, oEvent);
 					break;
 				default:
