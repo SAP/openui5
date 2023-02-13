@@ -28,21 +28,15 @@ sap.ui.define([
 				],
 				snippets: [
 					{
-						title: "UI5 Integration Card Measurements for Specific Card",
-						code: 'sap.ui.requireSync(["sap/ui/performance/Measurement"]).filterMeasurements(function (measurement) {\n' +
-							'\treturn measurement.id.includes("yourCardId") && measurement.id.includes("UI5 Integration Cards");\n' +
-						'});'
-					},
-					{
-						title: "Native Markers for Specific Card",
+						title: "Markers for Specific Card",
 						code: 'performance.getEntriesByType("mark").filter(function (mark) {\n' +
 							'\treturn mark.name.includes("yourCardId") && mark.name.includes("UI5 Integration Cards");\n' +
 						'});'
 					},
 					{
-						title: "All UI5 Measurements for Specific Card",
-						code: 'sap.ui.requireSync(["sap/ui/performance/Measurement"]).filterMeasurements(function (measurement) {\n' +
-							'\treturn measurement.id.includes("yourCardId");\n' +
+						title: "Measurements for Specific Card",
+						code: 'performance.getEntriesByType("measure").filter(function (measure) {\n' +
+							'\treturn measure.name.includes("yourCardId") && measure.name.includes("UI5 Integration Cards");\n' +
 						'});'
 					}
 				]
@@ -50,8 +44,8 @@ sap.ui.define([
 		},
 
 		getMeasurements: function (cardId) {
-			return Measurement.filterMeasurements(function (measurement) {
-				return measurement.id.includes(cardId) && measurement.id.includes("UI5 Integration Cards");
+			return performance.getEntriesByType("measure").filter(function (measure) {
+				return measure.name.includes(cardId) && measure.name.includes("UI5 Integration Cards");
 			});
 		},
 
@@ -68,24 +62,19 @@ sap.ui.define([
 				var bindingPath = card.getBindingContext("cardMeasurements").getPath();
 
 				measurements.sort(this.sortWithFirstRenderingWithDynamicDataLast);
-				measurements.forEach(this.shortenMeasurementId.bind(null, card.getId()));
 
 				this.getView().getModel("cardMeasurements").setProperty(bindingPath + "/measurements", measurements);
 			}.bind(this));
 		},
 
 		sortWithFirstRenderingWithDynamicDataLast: function (measurement1, measurement2) {
-			if (measurement1.id.includes("firstRenderingWithDynamicData")) {
+			if (measurement1.name.includes("firstRenderingWithDynamicData")) {
 				return 1;
-			} else if (measurement2.id.includes("firstRenderingWithDynamicData")) {
+			} else if (measurement2.name.includes("firstRenderingWithDynamicData")) {
 				return -1;
 			}
 
 			return 0;
-		},
-
-		shortenMeasurementId: function (cardId, measurement) {
-			measurement.id = measurement.id.substring(measurement.id.indexOf(cardId) + cardId.length + 3 /* 3 for the --- symbols */);
 		},
 
 		cardFactory: function (idPrefix, bindingContext) {

@@ -500,7 +500,7 @@ sap.ui.define([
 		this._oContentFactory = new ContentFactory(this);
 		this._oCardObserver = new CardObserver(this);
 		this._aSevereErrors = [];
-		this._sPerformanceId = "UI5 Integration Cards - " + this.getId() + "---";
+		this._sPerformanceId = "UI5 Integration Cards " + this.getId() + " ";
 		this._aActiveLoadingProviders = [];
 		this._fnOnDataReady = function () {
 			this._bDataReady = true;
