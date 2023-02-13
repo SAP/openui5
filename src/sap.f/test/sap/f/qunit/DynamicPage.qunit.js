@@ -2901,6 +2901,31 @@ function (
 			"The tooltip is correct: resetted when preserveHeaderStateOnScroll is false");
 	});
 
+	QUnit.test('DynamicPage - AriaLabelledBy attribute is set correctly on the footer toolbar', function (assert) {
+		// Arrange
+		var oFooter = this.oDynamicPage.getFooter(),
+			$InvisibleTextDomRef = $("#" + oFooter.getId() + "-FooterActions-InvisibleText");
+
+		// Assert
+		assert.strictEqual($InvisibleTextDomRef.length, 1, "InvisibleText element exists in the DOM");
+		assert.equal(oFooter.$().attr("aria-labelledby"), $InvisibleTextDomRef.attr('id'), "DynamicPage Footer aria-labelledby points to the invisible text control");
+	});
+
+	QUnit.test('DynamicPage - Hidden Invisible Text gets removed when footer aggregation is destroyed', function (assert) {
+		// Arrange
+		var oPage = this.oDynamicPage,
+			oFooter = oPage.getFooter();
+
+		// Act
+		oPage.destroyFooter();
+		Core.applyChanges();
+
+		var $InvisibleTextDomRef = $("#" + oFooter.getId() + "-FooterActions-InvisibleText");
+
+		// Assert
+		assert.strictEqual($InvisibleTextDomRef.length, 0, "InvisibleText element is removed from the DOM");
+	});
+
 	QUnit.module("Title responsiveness", {
 		beforeEach: function(assert) {
 

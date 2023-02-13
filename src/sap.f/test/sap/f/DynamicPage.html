@@ -116,28 +116,34 @@
 		(function (jQuery) {
 
 			sap.ui.controller("dynamicPageController", {
-			onInit: function() {
-				var oView = this.getView();
-				this.oDynamicPageTitle = oView.byId("dynamicPageTitleId");
-				this.oDynamicPageHeader = oView.byId("dynamicPageHeaderId");
-			},
-			onSetSolidBackground: function () {
-				this.setBackgroundDesign("Solid");
-			},
-			onSetTransparentBackground: function () {
-				this.setBackgroundDesign("Transparent");
-			},
-			onSetTranslucentBackground: function () {
-				this.setBackgroundDesign("Translucent");
-			},
-			setBackgroundDesign: function (backgroundDesign) {
-				this.oDynamicPageTitle.setBackgroundDesign(backgroundDesign);
-				this.oDynamicPageHeader.setBackgroundDesign(backgroundDesign);
-			}
-		});
+				onInit: function() {
+					var oView = this.getView();
+					this.oDynamicPageTitle = oView.byId("dynamicPageTitleId");
+					this.oDynamicPageHeader = oView.byId("dynamicPageHeaderId");
+				},
+				onSetSolidBackground: function () {
+					this.setBackgroundDesign("Solid");
+				},
+				onSetTransparentBackground: function () {
+					this.setBackgroundDesign("Transparent");
+				},
+				onSetTranslucentBackground: function () {
+					this.setBackgroundDesign("Translucent");
+				},
+				setBackgroundDesign: function (backgroundDesign) {
+					this.oDynamicPageTitle.setBackgroundDesign(backgroundDesign);
+					this.oDynamicPageHeader.setBackgroundDesign(backgroundDesign);
+				},
+				getPage: function() {
+					return this.byId("dynamicPageId");
+				},
+				onToggleFooter: function () {
+					this.getPage().setShowFooter(!this.getPage().getShowFooter());
+				}
+			});
 
 			sap.ui.xmlview({viewContent:jQuery('#view1').html()}).placeAt("content");
-		}(jQuery))
+		}(jQuery));
 	</script>
 	<div class="container" id="content"></div>
 </body>

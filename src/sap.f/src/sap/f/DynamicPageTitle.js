@@ -371,6 +371,19 @@ sap.ui.define([
 	DynamicPageTitle.DEFAULT_HEADER_TEXT_ID = InvisibleText.getStaticId("sap.f", "DEFAULT_HEADER_TEXT");
 
 	/**
+	 * Retrieves the resource bundle for the <code>sap.f</code> library.
+	 * @returns {Object} the resource bundle object
+	 * @private
+	 */
+	DynamicPageTitle._getResourceBundle = function () {
+		return oCore.getLibraryResourceBundle("sap.f");
+	};
+
+	DynamicPageTitle.ARIA = {
+		TOOLBAR_HEADER_ACTIONS: DynamicPageTitle._getResourceBundle().getText("ARIA_LABEL_TOOLBAR_HEADER_ACTIONS")
+	};
+
+	/**
 	 * Flushes the given control into the given container.
 	 * @param {Element} oContainerDOM
 	 * @param {sap.ui.core.Control} oControlToRender
@@ -389,23 +402,22 @@ sap.ui.define([
 		oRenderManager.destroy();
 	};
 
-
 	function isFunction(oObject) {
 		return typeof oObject === "function";
 	}
 
 	/* ========== LIFECYCLE METHODS  ========== */
-
 	DynamicPageTitle.prototype.init = function () {
 		this._bExpandedState = true;
 		this._bShowExpandButton = false;
 		this._bIsFocusable = true;
+		this._bNavigationActionsInTopArea = false;
+		this._oInvisibleMessage = null;
+		this._aCachedInvisibleTexts = [];
+
 		this._fnActionSubstituteParentFunction = function () {
 			return this;
 		}.bind(this);
-
-		this._bNavigationActionsInTopArea = false;
-		this._oRB = oCore.getLibraryResourceBundle("sap.f");
 
 		this._oObserver = new ManagedObjectObserver(DynamicPageTitle.prototype._observeChanges.bind(this));
 		this._oObserver.observe(this, {
@@ -414,9 +426,6 @@ sap.ui.define([
 				"_actionsToolbar"
 			]
 		});
-
-		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.f");
-		this._oInvisibleMessage = null;
 	};
 
 	DynamicPageTitle.prototype.onBeforeRendering = function () {
@@ -448,6 +457,8 @@ sap.ui.define([
 			this._oObserver.disconnect();
 			this._oObserver = null;
 		}
+
+		this._destroyInvisibleTexts();
 	};
 
 	/* ========== PUBLIC METHODS  ========== */
@@ -683,6 +694,35 @@ sap.ui.define([
 	/* ========== PRIVATE METHODS  ========== */
 
 	/**
+	 * Creates and caches an instance of the {@link sap.ui.core.InvisibleText} control for the specified aria label.
+	 * @param {string} sId The ID for the invisible text control.
+	 * @param {string} sAriaLabel The aria label to set for the invisible text control.
+	 * @returns {sap.ui.core.InvisibleText} The created invisible text control.
+	 * @private
+	 */
+	DynamicPageTitle.prototype._getInvisibleText = function(sId, sAriaLabel) {
+		var oInvisibleText = new InvisibleText({
+			id: sId + "-InvisibleText",
+			text: sAriaLabel
+		}).toStatic();
+
+		this._aCachedInvisibleTexts.push(oInvisibleText);
+		return oInvisibleText;
+	};
+
+	/**
+ 	 * Destroys all cached instances of the {@link sap.ui.core.InvisibleText} control.
+	 * @private
+ 	 */
+	DynamicPageTitle.prototype._destroyInvisibleTexts = function () {
+		this._aCachedInvisibleTexts.forEach(function (oInvisibleText) {
+			oInvisibleText.destroy();
+		});
+
+		this._aCachedInvisibleTexts = [];
+	};
+
+	/**
 	 * Checks if an action already exists in <code>DynamicPageTitle</code> actions/navigationActions.
 	 * @param {sap.ui.core.Control} oAction
 	 * @param {string} sAggregationName
@@ -718,10 +758,13 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._getActionsToolbar = function () {
+		var sId = this.getId() + "-_actionsToolbar";
+
 		if (!this.getAggregation("_actionsToolbar")) {
 			this.setAggregation("_actionsToolbar", new OverflowToolbar({
-				id: this.getId() + "-_actionsToolbar",
-				style: ToolbarStyle.Clear
+				id: sId,
+				style: ToolbarStyle.Clear,
+				ariaLabelledBy: this._getInvisibleText(sId, DynamicPageTitle.ARIA.TOOLBAR_HEADER_ACTIONS)
 			}).addStyleClass("sapFDynamicPageTitleActionsBar"), true); // suppress invalidate, as this is always called onBeforeRendering
 		}
 
@@ -734,10 +777,13 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._getNavigationActionsToolbar = function () {
+		var sId = this.getId() + "-navActionsToolbar";
+
 		if (!this.getAggregation("_navActionsToolbar")) {
 			this.setAggregation("_navActionsToolbar", new Toolbar({
-				id: this.getId() + "-navActionsToolbar",
-				style: ToolbarStyle.Clear
+				id: sId,
+				style: ToolbarStyle.Clear,
+				ariaLabelledBy: this._getInvisibleText(sId, DynamicPageTitle.ARIA.TOOLBAR_HEADER_ACTIONS)
 			}).addStyleClass("sapFDynamicPageTitleActionsBar"), true);
 		}
 
@@ -1136,7 +1182,7 @@ sap.ui.define([
 				id: this.getId() + "-expandBtn",
 				icon: "sap-icon://slim-arrow-down",
 				press: this._onExpandButtonPress.bind(this),
-				tooltip: this._oRB.getText("EXPAND_HEADER_BUTTON_TOOLTIP")
+				tooltip: DynamicPageTitle._getResourceBundle().getText("EXPAND_HEADER_BUTTON_TOOLTIP")
 			}).addStyleClass("sapFDynamicPageToggleHeaderIndicator sapUiHidden");
 			this.setAggregation("_expandButton", oExpandButton, true);
 		}
@@ -1203,7 +1249,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._focusExpandButton = function () {
-		var sTextToAnnounce = this._oRB.getText("SNAPPED_HEADER");
+		var sTextToAnnounce = DynamicPageTitle._getResourceBundle().getText("SNAPPED_HEADER");
 		this._getExpandButton().$().trigger("focus");
 		this._oInvisibleMessage.announce(sTextToAnnounce, InvisibleMessageMode.Polite);
 	};

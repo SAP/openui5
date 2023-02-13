@@ -2,6 +2,7 @@
 sap.ui.define([
 	"./SemanticUtil",
 	"sap/m/Button",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/core/Core",
 	"sap/f/DynamicPageAccessibleLandmarkInfo",
@@ -18,6 +19,7 @@ sap.ui.define([
 function (
 	SemanticUtil,
 	Button,
+	$,
 	ResourceModel,
 	Core,
 	DynamicPageAccessibleLandmarkInfo,
@@ -1271,6 +1273,60 @@ function (
 
 		// Assert
 		assert.strictEqual(oDynamicPage.$().attr('aria-roledescription'), sExpectedRoleDescription, "aria-roledescription is set");
+
+		// Clean
+		oSemanticPage.destroy();
+	});
+
+	QUnit.test("AriaLabelledBy attribute on actions toolbar is set correctly", function(assert) {
+		// Arrange
+		var oSemanticPage = oFactory.getSemanticPage(),
+			oSemanticTitle = oSemanticPage._getSemanticTitle(),
+			oTitleContainer = oSemanticTitle._getContainer(),
+			oActionsToolbar = oTitleContainer._getActionsToolbar();
+
+		// Act
+		oUtil.renderObject(oSemanticPage);
+
+		// Assert
+		var $InvisibleTextDomRef = $('#' + oActionsToolbar.getId() + "-InvisibleText");
+		assert.strictEqual($InvisibleTextDomRef.length, 1, "InvisibleText DOM element exists - actionsToolbar");
+		assert.equal(oActionsToolbar.getAriaLabelledBy()[0], $InvisibleTextDomRef.attr("id"), "aria-labelledby is set correctly - actionsToolbar");
+
+		// Clean
+		oSemanticPage.destroy();
+	});
+
+	QUnit.test("AriaLabelledBy attribute on navigation actions toolbar is set correctly", function(assert) {
+		// Arrange
+		var oSemanticPage = oFactory.getSemanticPage(),
+			oSemanticTitle = oSemanticPage._getSemanticTitle(),
+			oTitleContainer = oSemanticTitle._getContainer(),
+			oNavigationActionsToolbar = oTitleContainer._getNavigationActionsToolbar();
+
+		// Act
+		oUtil.renderObject(oSemanticPage);
+
+		// Assert
+		var $InvisibleTextDomRef = $('#' + oNavigationActionsToolbar.getId() + "-InvisibleText");
+		assert.strictEqual($InvisibleTextDomRef.length, 1, "InvisibleText DOM element exists - navigation actions toolbar");
+		assert.equal(oNavigationActionsToolbar.getAriaLabelledBy()[0], $InvisibleTextDomRef.attr("id"), "aria-labelledby is set correctly - navigation actions toolbar");
+
+		// Clean
+		oSemanticPage.destroy();
+	});
+
+	QUnit.test("AriaLabelledBy attribute on footer actions toolbar is set correctly", function(assert) {
+		// Arrange
+		var oSemanticPage = oFactory.getSemanticPage(),
+			oFooterToolbar = oSemanticPage._getFooter();
+		// Act
+		oUtil.renderObject(oSemanticPage);
+
+		// Assert
+		var $InvisibleTextDomRef = $('#' + oFooterToolbar.getId() + "-FooterActions-InvisibleText");
+		assert.strictEqual($InvisibleTextDomRef.length, 1, "InvisibleText DOM element exists - footer actions");
+		assert.equal(oFooterToolbar.getAriaLabelledBy()[0], $InvisibleTextDomRef.attr("id"), "aria-labelledby is set correctly - footer actions");
 
 		// Clean
 		oSemanticPage.destroy();

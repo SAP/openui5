@@ -114,6 +114,32 @@ function (
 		oTitle.destroy();
 	});
 
+	QUnit.test("DynamicPageTitle - AriaLabelledBy attribute is set correctly on both navigation and action toolbars", function (assert) {
+		// Arrange
+		var oTitle = oFactory.getDynamicPageTitleWithStandardAndNavigationActions(),
+			oActionsToolbar = oTitle._getActionsToolbar(),
+			oNavigationToolbar = oTitle._getNavigationActionsToolbar();
+
+		oUtil.renderObject(oTitle);
+		Core.applyChanges();
+
+		// Assert
+		var $InvisibleTextDomRef = $('#' + oActionsToolbar.getId() + "-InvisibleText");
+		assert.strictEqual($InvisibleTextDomRef.length, 1, "InvisibleText DOM element exists - actionsToolbar");
+
+		assert.ok(oActionsToolbar.getDomRef().hasAttribute("aria-labelledby"), "AriaLabelledBy attribute is set on the actionsToolbar DOM element");
+		assert.equal(oActionsToolbar.getDomRef().getAttribute("aria-labelledby"), $InvisibleTextDomRef.attr("id"), "AriaLabelledBy attribute points to the correct InvisibleText DOM element");
+
+		// Assert
+		$InvisibleTextDomRef = $('#' + oNavigationToolbar.getId() + "-InvisibleText");
+		assert.strictEqual($InvisibleTextDomRef.length, 1, "InvisibleText DOM element exists - navigationToolbar");
+
+		assert.ok(oNavigationToolbar.getDomRef().hasAttribute("aria-labelledby"), "AriaLabelledBy attribute is set on the navigationToolbar DOM element");
+		assert.equal(oNavigationToolbar.getDomRef().getAttribute("aria-labelledby"), $InvisibleTextDomRef.attr("id"), "AriaLabelledBy attribute points to the correct InvisibleText DOM element");
+
+		// Clean up
+		oTitle.destroy();
+	  });
 
 	QUnit.module("DynamicPage - Rendering - Title with Breadcrumbs", {
 		beforeEach: function () {
