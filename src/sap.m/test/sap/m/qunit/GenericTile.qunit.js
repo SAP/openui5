@@ -3617,6 +3617,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 
 	QUnit.test("Priority Changes for TileContent", function(assert) {
 		var oTileContent = this.oGenericTile.getTileContent()[0];
+		var sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY");
 
 		//Switch to None Priority
 		oTileContent.setPriority(Priority.None);
@@ -3669,6 +3670,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.ok(document.getElementById("tile-cont-priority-content"), Priority.Low + ":Priority content is rendered");
 		assert.equal(document.getElementById("tile-cont-priority-value").innerText, this.oGenericTile.getTileContent()[0].getPriorityText(), Priority.Low + ":Priority value is rendered");
 		assert.ok(document.getElementById("tile-cont-priority-border"), Priority.Low + ":Priority border is rendered");
+		assert.notOk(this.oGenericTile.getTileContent()[0].getAltText().includes(sPriority),"Priority text is not rendered inside the tooltip");
 	});
 
 	QUnit.test("Action Mode for Different Frame Types", function(assert) {

@@ -54,11 +54,10 @@ sap.ui.define([
 
     ActionTileContent.prototype.getAltText = function() {
         var sAltText = "";
-        var sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY");
         var sPriorityText = this.getPriorityText();
         var aCustomAttributes = this.getAggregation("attributes");
         if (this.getPriority() !== Priority.None && sPriorityText) {
-            sAltText += (sPriorityText + " " + sPriority) + "\n";
+            sAltText += (sPriorityText) + "\n";
         }
         // Returns the first four attributes to display in the tooltip,aria-label on the ActionTile
         for (var iIndex = 0; iIndex < aCustomAttributes.length && iIndex < 4; iIndex++) {
