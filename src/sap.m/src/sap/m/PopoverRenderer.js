@@ -97,6 +97,7 @@ sap.ui.define([
 				oRm.openStart("span", oControl.getId() + "-firstfe")
 					.class("sapMPopoverHiddenFocusable")
 					.attr("tabindex", "0")
+					.attr("role", "presentation")
 					.openEnd()
 					.close("span");
 			}
@@ -213,6 +214,7 @@ sap.ui.define([
 				oRm.openStart("span", oControl.getId() + "-lastfe")
 					.class("sapMPopoverHiddenFocusable")
 					.attr("tabindex", "0")
+					.attr("role", "presentation")
 					.openEnd()
 					.close("span");
 			}
