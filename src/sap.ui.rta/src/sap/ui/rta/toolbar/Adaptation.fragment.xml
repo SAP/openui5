@@ -5,7 +5,9 @@
 	<HBox
 			id="sapUiRta_toolbarIconAndDraftSection"
 			class="sapUiRtaToolbarIconAndDraftSection" >
-		<OverflowToolbar class="sapUiRta_iconAndDraftBar">
+		<OverflowToolbar
+			id="sapUiRta_iconAndDraftToolbar"
+			class="sapUiRtaIconAndDraftToolbar">
 			<content>
 				<HBox id="sapUiRta_iconBox" />
 				<ToolbarSpacer
@@ -55,11 +57,10 @@
 		</OverflowToolbar>
 	</HBox>
 	<HBox
-			id="sapUiRta_switcherSection"
+			id="sapUiRta_toolbarSwitcherSection"
 			class="sapUiRtaToolbarSwitcherSection" >
-		<OverflowToolbar>
+		<Toolbar>
 			<content>
-				<ToolbarSpacer />
 				<SegmentedButton
 						id="sapUiRta_modeSwitcher"
 						selectionChange=".modeChange"
@@ -84,15 +85,16 @@
 								key="visualization" />
 					</items>
 				</SegmentedButton>
-				<ToolbarSpacer />
 			</content>
-		</OverflowToolbar>
+		</Toolbar>
 	</HBox>
 	<HBox
 			id="sapUiRta_toolbarActionsSection"
 			class="sapUiRtaToolbarActionsSection"
 			justifyContent="End" >
-		<OverflowToolbar id="sapUiRta_actionsToolbar">
+		<OverflowToolbar
+				id="sapUiRta_actionsToolbar"
+				class="sapUiRtaActionsToolbar">
 			<content>
 				<ToolbarSpacer />
 				<Button
@@ -161,23 +163,29 @@
 						<OverflowToolbarLayoutData priority="Low" />
 					</toolbar:layoutData>
 				</toolbar:OverflowToolbarButton>
+				<toolbar:OverflowToolbarButton
+						id="sapUiRta_save"
+						type="Transparent"
+						press=".save"
+						enabled="{controls>/save/enabled}"
+						tooltip="{i18n>BTN_SAVE}"
+						icon="sap-icon://save" >
+					<toolbar:layoutData>
+						<OverflowToolbarLayoutData priority="High" />
+					</toolbar:layoutData>
+				</toolbar:OverflowToolbarButton>
+				<toolbar:OverflowToolbarButton
+						id="sapUiRta_exit"
+						type="Transparent"
+						press=".exit"
+						tooltip="{i18n>BTN_EXIT}"
+						icon="sap-icon://decline" >
+					<toolbar:layoutData>
+						<OverflowToolbarLayoutData priority="High" />
+					</toolbar:layoutData>
+				</toolbar:OverflowToolbarButton>
 			</content>
 		</OverflowToolbar>
-		<Button
-				id="sapUiRta_save"
-				type="Transparent"
-				press=".save"
-				enabled="{controls>/save/enabled}"
-				tooltip="{i18n>BTN_SAVE}"
-				icon="sap-icon://save" >
-		</Button>
-		<Button
-				id="sapUiRta_exit"
-				type="Transparent"
-				press=".exit"
-				tooltip="{i18n>BTN_EXIT}"
-				icon="sap-icon://decline" >
-		</Button>
 		<layoutData>
 			<FlexItemData growFactor="0" />
 		</layoutData>

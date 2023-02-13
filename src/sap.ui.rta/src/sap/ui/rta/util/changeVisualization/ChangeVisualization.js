@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/core/Fragment",
 	"sap/base/util/restricted/_difference",
 	"sap/base/util/deepEqual",
@@ -20,6 +21,7 @@ sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/ChangeCategories",
 	"sap/ui/rta/util/changeVisualization/ChangeStates"
 ], function(
+	Core,
 	Fragment,
 	difference,
 	deepEqual,
@@ -96,7 +98,7 @@ sap.ui.define([
 
 			Control.prototype.constructor.apply(this, arguments);
 
-			this._oTextBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			this._oTextBundle = Core.getLibraryResourceBundle("sap.ui.rta");
 			this.setModel(new ResourceModel({
 				bundle: this._oTextBundle
 			}), "i18n");
@@ -292,7 +294,7 @@ sap.ui.define([
 	ChangeVisualization.prototype.openChangeCategorySelectionPopover = function(oEvent) {
 		if (!this._oToolbarButton) {
 			// Event bubbled through the toolbar, get original source
-			this._oToolbarButton = sap.ui.getCore().byId(oEvent.getParameter("id"));
+			this._oToolbarButton = Core.byId(oEvent.getParameter("id"));
 		}
 		var oPopover = this.getPopover();
 
@@ -582,7 +584,7 @@ sap.ui.define([
 		// Sort the Indicators according XY-Position
 		// Set the tabindex according the sorting
 		// Focus the first visible indicator
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var aVisibleIndicators = this._oChangeIndicatorRegistry.getChangeIndicators()
 			.filter(function(oIndicator) {
@@ -672,6 +674,10 @@ sap.ui.define([
 		this._updateChangeRegistry()
 			.then(function() {
 				this._selectChangeCategory(this._sSelectedChangeCategory);
+				// This is required to avoid flickering of the toolbar when switching
+				// to visualization mode when the mode switcher is displayed as icons
+				oToolbar.adjustToolbarSectionWidths();
+
 				this._updateVisualizationModelMenuData();
 				oToolbar.setModel(this._oChangeVisualizationModel, "visualizationModel");
 			}.bind(this));

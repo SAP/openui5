@@ -631,7 +631,8 @@ sap.ui.define([
 						"then changes where the command is defined on the element are properly categorized"
 					);
 					fnDone();
-				}
+				},
+				adjustToolbarSectionWidths: function () {}
 			});
 		});
 	});

@@ -2,10 +2,15 @@
 
 sap.ui.define([
 	"../RtaQunitUtils",
-	"sap/ui/thirdparty/jquery",
+	"sap/m/Button",
+	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/rta/toolbar/Fiori",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/toolbar/Adaptation",
+	"sap/ui/rta/toolbar/Base",
+	"sap/ui/rta/toolbar/Fiori",
+	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
 	"sap/m/Image",
 	"sap/base/Log",
@@ -14,10 +19,15 @@ sap.ui.define([
 ],
 function(
 	RtaQunitUtils,
-	jQuery,
+	Button,
+	VersionsAPI,
+	VerticalLayout,
 	JSONModel,
-	Fiori,
+	jQuery,
 	Adaptation,
+	BaseToolbar,
+	Fiori,
+	RuntimeAuthoring,
 	RtaUtils,
 	Image,
 	Log,
@@ -28,55 +38,61 @@ function(
 
 	var sandbox = sinon.createSandbox();
 
+	function stubFioriRenderer(assert) {
+		var done = assert.async();
+
+		this.oImage = new Image({
+			src: "test-resources/sap/ui/rta/testdata/sap_logo.png"
+		});
+
+		this.oImage.attachEventOnce("load", function() {
+			done();
+		}, this);
+
+		this.oImage.placeAt("qunit-fixture");
+
+		sandbox.stub(RtaUtils, "getFiori2Renderer").returns({
+			getRootControl: function() {
+				return {
+					getOUnifiedShell: function() {
+						return {
+							getHeader: function() {
+								return {
+									getLogo: function() {
+										return "logo";
+									},
+									addStyleClass: function(sText) {
+										this.sAdd = sText;
+									}.bind(this),
+									removeStyleClass: function(sText) {
+										this.sRemove = sText;
+									}.bind(this),
+									getShowLogo: function() {
+										return true;
+									},
+									$: function() {
+										return {
+											find: function() {
+												return jQuery(this.oImage.getDomRef());
+											}.bind(this)
+										};
+									}.bind(this)
+								};
+							}.bind(this)
+						};
+					}.bind(this)
+				};
+			}.bind(this)
+		});
+	}
+
 	QUnit.module('Basic functionality', {
 		beforeEach: function(assert) {
-			var done = assert.async();
-			this.oImage = new Image({
-				src: "test-resources/sap/ui/rta/testdata/sap_logo.png"
-			});
-
-			this.oImage.attachEventOnce("load", function() {
-				done();
-			}, this);
-
-			this.oImage.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
 			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 
-			sandbox.stub(RtaUtils, "getFiori2Renderer").returns({
-				getRootControl: function() {
-					return {
-						getOUnifiedShell: function() {
-							return {
-								getHeader: function() {
-									return {
-										getLogo: function() {
-											return "logo";
-										},
-										addStyleClass: function(sText) {
-											this.sAdd = sText;
-										}.bind(this),
-										removeStyleClass: function(sText) {
-											this.sRemove = sText;
-										}.bind(this),
-										getShowLogo: function() {
-											return true;
-										},
-										$: function() {
-											return {
-												find: function() {
-													return jQuery(this.oImage.getDomRef());
-												}.bind(this)
-											};
-										}.bind(this)
-									};
-								}.bind(this)
-							};
-						}.bind(this)
-					};
-				}.bind(this)
-			});
+			stubFioriRenderer.call(this, assert);
 		},
 		afterEach: function() {
 			this.oImage.destroy();
@@ -142,6 +158,89 @@ function(
 					done();
 				});
 				this.oToolbar.destroy();
+			}.bind(this));
+		});
+	});
+
+	function createAndStartRTA() {
+		this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
+		var oButton = new Button("testButton");
+		this.oContainer = new VerticalLayout({
+			id: this.oComponent.createId("myVerticalLayout"),
+			content: [oButton],
+			width: "100%"
+		});
+		this.oContainer.placeAt("qunit-fixture");
+		this.oRta = new RuntimeAuthoring({
+			rootControl: this.oContainer,
+			flexSettings: {
+				developerMode: false
+			}
+		});
+		return this.oRta.start()
+		.then(function() {
+			this.oToolbar = this.oRta.getToolbar();
+		}.bind(this));
+	}
+
+	QUnit.module("Different Screen Sizes", {
+		beforeEach: function(assert) {
+			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
+				this.placeAt("qunit-fixture");
+			});
+			sandbox.stub(RtaUtils, "isOriginalFioriToolbarAccessible").returns(true);
+			var oVersionsModel = new JSONModel({
+				versioningEnabled: true
+			});
+			oVersionsModel.setDirtyChanges = function() {};
+			sandbox.stub(VersionsAPI, "initialize").resolves(oVersionsModel);
+			stubFioriRenderer.call(this, assert);
+		},
+		afterEach: function() {
+			this.oContainer.destroy();
+			this.oComponent.destroy();
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when the toolbar gets initially shown in a wide window (1600px)", function(assert) {
+			document.getElementById("qunit-fixture").style.width = "1600px";
+			return createAndStartRTA.call(this)
+			.then(function() {
+				assert.ok(this.oToolbar.getControl("iconBox").getVisible(), "then the logo is visible");
+			}.bind(this));
+		});
+
+		QUnit.test("when the toolbar gets initially shown in a narrow window (600px)", function(assert) {
+			var fnDone = assert.async();
+			document.getElementById("qunit-fixture").style.width = "600px";
+			var oSetLogoVisibilityStub = sandbox.stub(Fiori.prototype, "_setLogoVisibility")
+			.callsFake(function() {
+				oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, arguments);
+				assert.notOk(this.oToolbar.getControl("iconBox").getVisible(), "then the logo is not visible");
+				fnDone();
+			}.bind(this));
+			return createAndStartRTA.call(this);
+		});
+
+		QUnit.test("when the toolbar gets initially shown in a wide window (1600px), then the window is reduced and then expanded again", function(assert) {
+			var fnDone = assert.async();
+			document.getElementById("qunit-fixture").style.width = "1600px";
+			var oSetLogoVisibilityStub = sandbox.stub(Fiori.prototype, "_setLogoVisibility")
+			.callsFake(function() {
+				oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, arguments);
+				assert.notOk(this.oToolbar.getControl("iconBox").getVisible(), "then the logo disappears");
+				oSetLogoVisibilityStub.callsFake(function() {
+					oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, arguments);
+					assert.ok(this.oToolbar.getControl("iconBox").getVisible(), "then the logo is visible again");
+					fnDone();
+				}.bind(this));
+				document.getElementById("qunit-fixture").style.width = "1600px";
+				window.dispatchEvent(new Event('resize'));
+			}.bind(this));
+			return createAndStartRTA.call(this).then(function() {
+				assert.ok(this.oToolbar.getControl("iconBox").getVisible(), "first the logo is visible");
+				document.getElementById("qunit-fixture").style.width = "600px";
 			}.bind(this));
 		});
 	});
