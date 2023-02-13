@@ -356,7 +356,7 @@ sap.ui.define([
 	//and month name(s) in the button is as expected
 	var _assertDatesAreVisible = function(aDates, oPC, sMessagePrefix) {
 		var sDaysSelector = oPC.getId() + "-" + _getIntervalId.call(this, oPC),
-			iAvailableDays = jQuery('#' + sDaysSelector).children().length,
+			iAvailableDays = jQuery('#' + sDaysSelector).find(".sapUiCalItem").length,
 			oFirstDate = aDates[0],
 			oLastDate = aDates[aDates.length - 1],
 			sExpectedDateRange = _formatDate.call(this, oFirstDate) + "-" + _formatDate.call(this, oLastDate),

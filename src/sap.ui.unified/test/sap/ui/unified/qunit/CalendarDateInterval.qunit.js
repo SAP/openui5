@@ -313,7 +313,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		oMonthDomRef = oExternalControl.getAggregation("month")[0].getDomRef();
-		sExpected = oMonthDomRef.childNodes[1].id;
+		sExpected = oMonthDomRef.childNodes[1].childNodes[0].id;
 
 		oExternalControl.focus();
 		_assertFocus(oExternalControl.getDomRef(), sExpected, "Prerequisites check: 'extControl' (another DateInterval) should be focused", assert);

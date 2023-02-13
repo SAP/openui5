@@ -113,7 +113,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 			aWeekNumbers = oDatesRow.getWeekNumbers();
 
 			aWeekNumbers.forEach(function(oWeek) {
-				oRm.openStart("div");
+				oRm.openStart("div", oDatesRow.getId() + "-week-" + oWeek.number + "-text");
 				oRm.class('sapUiCalRowWeekNumber');
 				oRm.style("width", oWeek.len * iDaysWidth + "%");
 				oRm.attr("data-sap-ui-week", oWeek.number);
@@ -152,6 +152,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 		if (oDatesRow.getShowDayNamesLine()) {
 			oRm.openStart("div", sId + "-Names");
 			oRm.style("display", "inline");
+			oRm.attr("role", "row");
 			oRm.openEnd();
 			this.renderDayNames(oRm, oDatesRow, oLocaleData, oDate.getDay(), iDays, false, sWidth);
 			oRm.close("div");
@@ -226,10 +227,16 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 		}
 		var oDay = new CalendarDate(oDate, sCalendarType);
 
+		oRm.openStart("div");
+		oRm.attr("role", "row");
+		oRm.openEnd();
+
 		for (var i = 0; i < iDays; i++) {
 			this.renderDay(oRm, oDatesRow, oDay, oHelper, false, false, i, sWidth, !bShowDayNamesLine);
 			oDay.setDate(oDay.getDate() + 1);
 		}
+
+		oRm.close("div");
 
 	};
 
