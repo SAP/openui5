@@ -1,27 +1,27 @@
 sap.ui.define([
-	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"sap/ui/model/json/JSONModel",
+	"sap/ui/VersionInfo",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/IconPool",
+	"sap/ui/core/UIComponent",
 	"sap/ui/demo/iconexplorer/model/models",
 	"sap/ui/demo/iconexplorer/model/IconModel",
 	"sap/ui/demo/iconexplorer/model/FavoriteModel",
 	"sap/ui/demo/iconexplorer/controller/ErrorHandler",
-	"sap/ui/core/IconPool",
-	"sap/ui/VersionInfo",
-	"sap/ui/core/Core",
-	"sap/ui/documentation/sdk/controller/util/ConfigUtil"
+	"sap/ui/documentation/sdk/controller/util/ConfigUtil",
+	"sap/ui/model/json/JSONModel"
 ], function(
-	UIComponent,
 	Device,
-	JSONModel,
+	VersionInfo,
+	Configuration,
+	IconPool,
+	UIComponent,
 	models,
 	IconModel,
 	FavoriteModel,
 	ErrorHandler,
-	IconPool,
-	VersionInfo,
-	oCore,
-	ConfigUtil
+	ConfigUtil,
+	JSONModel
 ) {
 	"use strict";
 
@@ -73,10 +73,16 @@ sap.ui.define([
 
 				var oTNTConfig = {
 					fontFamily: "SAP-icons-TNT",
-					fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts/"),
 					downloadURI: sLocalFontFolder,
 					downloadURIForHorizon: sap.ui.require.toUrl("sap/ui/demo/iconexplorer/fonts/sap_horizon/")
 				};
+
+				if (Configuration.getTheme().includes("sap_horizon")) {
+					oTNTConfig.fontURI = sap.ui.require.toUrl("sap/tnt/themes/base/fonts/horizon/");
+					oTNTConfig.metadataURI = sap.ui.require.toUrl("sap/tnt/themes/base/fonts/") + oTNTConfig.fontFamily + ".json";
+				} else {
+					oTNTConfig.fontURI = sap.ui.require.toUrl("sap/tnt/themes/base/fonts/");
+				}
 
 				// register TNT icon font
 				IconPool.registerFont(oTNTConfig);
@@ -86,9 +92,15 @@ sap.ui.define([
 				// load SAPUI5 fonts on demand
 				if (!oVersionModel.getProperty("/isOpenUI5")) {
 					var oBusinessSuiteConfig = {
-						fontFamily: "BusinessSuiteInAppSymbols",
-						fontURI: sap.ui.require.toUrl("sap/ushell/themes/base/fonts/")
+						fontFamily: "BusinessSuiteInAppSymbols"
 					};
+
+					if (Configuration.getTheme().includes("sap_horizon")) {
+						oBusinessSuiteConfig.fontURI = sap.ui.require.toUrl("sap/ushell/themes/base/fonts/horizon/");
+						oBusinessSuiteConfig.metadataURI = sap.ui.require.toUrl("sap/ushell/themes/base/fonts/") + oBusinessSuiteConfig.fontFamily + ".json";
+					} else {
+						oBusinessSuiteConfig.fontURI = sap.ui.require.toUrl("sap/ushell/themes/base/fonts/");
+					}
 
 					// register BusinessSuiteInAppSymbols icon font
 					IconPool.registerFont(oBusinessSuiteConfig);
