@@ -1,0 +1,18 @@
+{
+  "1.112.0": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "5f26259d0d3340a01103a951970ac0b510f85a29",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: improved accessibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380032801"
+          }
+        ]
+      }
+    ]
+  }
+}

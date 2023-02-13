@@ -1,0 +1,40 @@
+{
+  "1.112.0": {
+    "date": "February 2023",
+    "notes": [
+      {
+        "id": "0cba8f0a51f97fcb5a10c276ce28e3fa3718395a",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Improve sub items accessibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000485332023"
+          }
+        ]
+      },
+      {
+        "id": "7ceada37b40eedfa376ffb16fbdc8d07b50d237a",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Issue in resizable Dialog fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380024979"
+          }
+        ]
+      },
+      {
+        "id": "9956fe1a055a4e544637f10237a197f83d66b923",
+        "type": "FIX",
+        "text": " sap.m.Input: remove showTableSuggestionValueHelp custom setter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380028182"
+          }
+        ]
+      }
+    ]
+  }
+}
