@@ -1761,8 +1761,8 @@
 		},
 		{
 		  "id": "sap.m.sample.ComboBoxLazyLoading",
-		  "name": "Combo box - Lazy loading",
-		  "description": "Use this feature to defer initialization of items until the point at which the items are needed. It can improve performance, reduce memory usage and unnecessary client/server round-trips."
+		  "name": "Combo box - Deferred loading of the items",
+		  "description": "Use this feature to defer initialization of items until the point at which the items are needed. It can improve performance, reduce memory usage and unnecessary client/server round-trips. <br><br><b>Note:</b> This feature loads the items <b>once</b>, it is not intended to be used for paging the results or loading more items on demand."
 		},
 		{
 		  "id": "sap.m.sample.ComboBoxSearchBoth",
