@@ -35616,9 +35616,11 @@ sap.ui.define([
 	// There is an ODCB w/ own cache below this deleted, but not yet destroyed context. Ensure that
 	// the iteration over all bindings in ODM#delete does not fail in this ODCB.
 	// BCP: 2380008681
+	//
+	// Ensure that the request contains custom query options (BCP: 2380034674)
 	QUnit.test("BCP: 2380008681: ODM#delete: deleted context", function (assert) {
 		var oContext,
-			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = this.createSalesOrdersModel123({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Text id="listId" text="{SalesOrderID}"/>\
@@ -35628,13 +35630,14 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100",
+		this.expectRequest("SalesOrderList?sap-client=123&$select=SalesOrderID&$skip=0&$top=100",
 				{value : [{"@odata.etag" : "etag", SalesOrderID : "1"}]})
 			.expectChange("listId", ["1"])
 			.expectChange("id");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("SalesOrderList('1')?$select=SalesOrderID", {SalesOrderID : "1"})
+			that.expectRequest("SalesOrderList('1')?sap-client=123&$select=SalesOrderID",
+					{SalesOrderID : "1"})
 				.expectChange("id", "1");
 
 			oContext = that.oView.byId("table").getBinding("items").getCurrentContexts()[0];
@@ -35645,12 +35648,12 @@ sap.ui.define([
 			that.expectRequest({
 					method : "DELETE",
 					headers : {"If-Match" : "etag"},
-					url : "SalesOrderList('1')"
+					url : "SalesOrderList('1')?sap-client=123"
 				})
 				.expectRequest({
 					method : "DELETE",
 					headers : {"If-Match" : "*"},
-					url : "SalesOrderList('1')"
+					url : "SalesOrderList('1')?sap-client=123"
 				})
 				.expectChange("id", null);
 

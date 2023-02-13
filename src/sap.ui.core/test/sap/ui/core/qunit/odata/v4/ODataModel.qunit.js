@@ -3163,7 +3163,7 @@ sap.ui.define([
 			}, {
 				onDelete : function () {}
 			}],
-			oModel = this.createModel(),
+			oModel = this.createModel("?sap-client=123"),
 			oPromise;
 
 		oModel.aAllBindings = aAllBindings;
@@ -3171,11 +3171,14 @@ sap.ui.define([
 		this.mock(oModel).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
 			.withExactArgs().returns("group");
 		this.mock(oModel).expects("isApiGroup").withExactArgs("group").returns(false);
+		this.mock(_Helper).expects("buildQuery")
+			.withExactArgs(sinon.match.same(oModel.mUriParameters))
+			.returns("?~");
 		this.mock(oModel).expects("lockGroup")
 			.withExactArgs("group", sinon.match.same(oModel), true, true)
 			.returns("~groupLock~");
 		this.mock(oModel.oRequestor).expects("request")
-			.withExactArgs("DELETE", "Entity('key')", "~groupLock~", {"If-Match" : "*"})
+			.withExactArgs("DELETE", "Entity('key')?~", "~groupLock~", {"If-Match" : "*"})
 			.resolves();
 		this.mock(aAllBindings[0]).expects("onDelete").withExactArgs("/Entity('key')");
 		this.mock(aAllBindings[1]).expects("onDelete").withExactArgs("/Entity('key')");

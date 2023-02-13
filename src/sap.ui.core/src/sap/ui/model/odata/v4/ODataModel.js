@@ -1517,7 +1517,8 @@ sap.ui.define([
 			throw new Error("Illegal update group ID: " + sGroupId);
 		}
 
-		return this.oRequestor.request("DELETE", sCanonicalPath.slice(1),
+		return this.oRequestor.request("DELETE",
+			sCanonicalPath.slice(1) + _Helper.buildQuery(this.mUriParameters),
 			this.lockGroup(sGroupId, this, true, true),
 			{"If-Match" : "*"}
 		).catch(function (oError) {
