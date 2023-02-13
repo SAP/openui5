@@ -223,6 +223,9 @@ sap.ui.define([
 				/**
 				 * Selection mode of the table. Specifies whether single or multiple rows can be selected and how the selection can be extended. It
 				 * may also influence the visual appearance.
+				 *
+				 * With the {@link sap.ui.mdc.table.GridTableType GridTableType} and server-side models, range selections, including Select All, only
+				 * work properly if the count is known. Make sure the model/binding is configured to request the count from the service.
 				 */
 				selectionMode: {
 					type: "sap.ui.mdc.SelectionMode",
