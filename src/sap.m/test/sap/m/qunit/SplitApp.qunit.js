@@ -82,38 +82,35 @@ sap.ui.define([
 	});
 
 	QUnit.module("Modes Check on desktop");
-	QUnit.test("PopoverMode_portrait", function(assert) {
+	QUnit.test("PopoverMode_portrait", function(assert){
 		var done = assert.async();
 		var oSystem = {
-			desktop: true,
-			tablet: false,
-			phone: false
-		}, oPortrait = {
-			landscape: false,
-			portrait: true
-		};
-
-		var sWidth = document.getElementById("content").style.width;
+				desktop: true,
+				tablet: false,
+				phone: false
+			}, oPortrait = {
+				landscape: false,
+				portrait: true
+			};
 
 		this.stub(Device, "system").value(oSystem);
 		this.stub(Device, "orientation").value(oPortrait);
-		document.getElementById("content").style.width = "320px";
 
 		var oSplitApp = new SplitApp("splitapp", {
 			masterPages: [
-				new Page("master", {
-					title: "Master 1"
+				new Page("master",{
+					title : "Master 1"
 				}),
-				new Page("master2", {
-					title: "Master 2"
+				new Page("master2",{
+					title : "Master 2"
 				})
 			],
 			detailPages: [
-				new Page("detail", {
-					title: "Detail 1"
+				new Page("detail",{
+					title : "Detail 1"
 				}),
-				new Page("detail2", {
-					title: "Detail 2"
+				new Page("detail2",{
+					title : "Detail 2"
 				})
 			],
 			mode: "PopoverMode"
@@ -123,24 +120,21 @@ sap.ui.define([
 
 		assert.equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
 
-		oSplitApp._oPopOver.attachAfterOpen(function () {
+		oSplitApp._oPopOver.attachAfterOpen(function(){
 			assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 			assert.ok(jQuery("#splitapp-Popover").length, "Popover should be rendered.");
 			assert.ok(oSplitApp.isMasterShown(), "Master area is shown");
-			assert.equal(oSplitApp._oPopOver.getContent().length, 1, "Popover content should not be empty.");
+			assert.equal(oSplitApp._oPopOver.getContent().length,1, "Popover content should not be empty.");
 			assert.ok(jQuery("#splitapp-MasterBtn").length, "Master Button should be rendered");
 			assert.ok(jQuery("#splitapp-MasterBtn").is(":visible"), "Master Button is shown");
 			assert.ok(jQuery("#detail").length, "Detail page should be rendered  initially.");
-			assert.equal(oSplitApp.$().children().length, 2, "SplitApp should only contain the detail nav container.");
+			assert.equal(oSplitApp.$().children().length,2, "SplitApp should only contain the detail nav container.");
 			assert.equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp-Popover", "Parent of Master Nav container page should be Popover.");
 			oSplitApp.destroy();
-			document.getElementById("content").style.width = sWidth;
 			done();
 		});
 
-		setTimeout(function () {
-			oSplitApp._onMasterButtonTap();
-		}, 300);
+		oSplitApp._onMasterButtonTap();
 	});
 
 	QUnit.test("ShowHideMode_portrait", function(assert){
