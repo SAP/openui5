@@ -10,13 +10,8 @@
 				"uri" : "/sap/opu/odata4/sap/zsadl_hierarchy_v4_srvc_bdg/srvd/sap/zsadl_hierarchy_service_def/0001/",
 				"type" : "OData",
 				"settings" : {
-					"annotations" : ["localAnnotations"],
 					"odataVersion" : "4.0"
 				}
-			},
-			"localAnnotations" : {
-				"uri" : "data/annotations.xml",
-				"type" : "ODataAnnotation"
 			}
 		},
 		"description" : "Example for OData V4 Ancestry",

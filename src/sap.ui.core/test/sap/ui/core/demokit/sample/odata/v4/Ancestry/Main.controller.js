@@ -95,7 +95,7 @@ sap.ui.define([
 
 			this._oAggregation = {
 				expandTo : 2,
-				hierarchyQualifier : "SADL_V_RS_ANCESTRY_HIER"
+				hierarchyQualifier : "SADL_V_RS_Ancestry_Hier"
 			};
 			oRowsBinding.setAggregation(this._oAggregation);
 			oRowsBinding.resume();
