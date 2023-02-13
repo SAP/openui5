@@ -142,7 +142,7 @@ sap.ui.define([
 
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.String).length, 20, "Default operators for String");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Date).length, 54, "Default operators for date");
-		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.DateTime).length, 54, "Default operators for datetime");
+		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.DateTime).length, 58, "Default operators for datetime");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Time).length, 12, "Default operators for time");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Numeric).length, 12, "Default operators for numeric");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Boolean).length, 2, "Default operators for boolean");
@@ -1445,7 +1445,50 @@ sap.ui.define([
 				valid: true,
 				isSingleValue: true
 			}],
-
+			"NEXTHOURS": [{
+				formatArgs: [Condition.createCondition("NEXTHOURS", [2])],
+				formatValue: "Next 2 hours",
+				parsedValue: "2",
+				condition: Condition.createCondition("NEXTHOURS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true,
+				longText: "Next X hours",
+				tokenText: "Next {0} hours"
+			}],
+			"LASTHOURS": [{
+				formatArgs: [Condition.createCondition("LASTHOURS", [2])],
+				formatValue: "Last 2 hours",
+				parsedValue: "2",
+				condition: Condition.createCondition("LASTHOURS", [2], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true,
+				longText: "Last X hours",
+				tokenText: "Last {0} hours"
+			}],
+			"NEXTMINUTES": [{
+				formatArgs: [Condition.createCondition("NEXTMINUTES", [2])],
+				formatValue: "Next 2 minutes",
+				parsedValue: "2",
+				condition: Condition.createCondition("NEXTMINUTES", [2], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true,
+				longText: "Next X minutes",
+				tokenText: "Next {0} minutes"
+			}],
+			"LASTMINUTES": [{
+				formatArgs: [Condition.createCondition("LASTMINUTES", [2])],
+				formatValue: "Last 2 minutes",
+				parsedValue: "2",
+				condition: Condition.createCondition("LASTMINUTES", [2], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true,
+				longText: "Last X minutes",
+				tokenText: "Last {0} minutes"
+			}],
 			"LASTWEEK": [{
 				formatArgs: [Condition.createCondition("LASTWEEK", [undefined])],
 				formatValue: "Last week",
