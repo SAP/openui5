@@ -89,12 +89,12 @@ sap.ui.define([
 
 	QUnit.test("boolean formatValue", function (assert) {
 		var boolType = new BooleanType();
-		assert.equal(boolType.formatValue(true, "boolean"), true, "format test");
-		assert.equal(boolType.formatValue(null, "boolean"), null, "format test");
-		assert.equal(boolType.formatValue(undefined, "boolean"), null, "format test");
-		assert.equal(boolType.formatValue(false, "boolean"), false, "format test");
-		assert.equal(boolType.formatValue(true, "string"), "true", "format test");
-		assert.equal(boolType.formatValue(false, "string"), "false", "format test");
+		assert.strictEqual(boolType.formatValue(true, "boolean"), true, "format test");
+		assert.strictEqual(boolType.formatValue(null, "boolean"), null, "format test");
+		assert.strictEqual(boolType.formatValue(undefined, "boolean"), null, "format test");
+		assert.strictEqual(boolType.formatValue(false, "boolean"), false, "format test");
+		assert.strictEqual(boolType.formatValue(true, "string"), "true", "format test");
+		assert.strictEqual(boolType.formatValue(false, "string"), "false", "format test");
 		assert.throws(function () { boolType.formatValue(true, "int"); }, "format test");
 		assert.throws(function () { boolType.formatValue(false, "int"); }, "format test");
 		assert.throws(function () { boolType.formatValue(true, "float"); }, "format test");
@@ -103,13 +103,13 @@ sap.ui.define([
 
 	QUnit.test("boolean parseValue", function (assert) {
 		var boolType = new BooleanType();
-		assert.equal(boolType.parseValue(true, "boolean"), true, "parse test");
-		assert.equal(boolType.parseValue(false, "boolean"), false, "parse test");
-		assert.equal(boolType.parseValue("true", "string"), true, "parse test");
-		assert.equal(boolType.parseValue("false", "string"), false, "parse test");
-		assert.equal(boolType.parseValue("X", "string"), true, "parse test");
-		assert.equal(boolType.parseValue("", "string"), false, "parse test");
-		assert.equal(boolType.parseValue(" ", "string"), false, "parse test");
+		assert.strictEqual(boolType.parseValue(true, "boolean"), true, "parse test");
+		assert.strictEqual(boolType.parseValue(false, "boolean"), false, "parse test");
+		assert.strictEqual(boolType.parseValue("true", "string"), true, "parse test");
+		assert.strictEqual(boolType.parseValue("false", "string"), false, "parse test");
+		assert.strictEqual(boolType.parseValue("X", "string"), true, "parse test");
+		assert.strictEqual(boolType.parseValue("", "string"), false, "parse test");
+		assert.strictEqual(boolType.parseValue(" ", "string"), false, "parse test");
 
 		assert.throws(function () { boolType.parseValue(true, "int"); }, ParseException, "parse test");
 		assert.throws(function () { boolType.parseValue(false, "int"); }, ParseException, "parse test");
@@ -199,15 +199,15 @@ sap.ui.define([
 
 	QUnit.test("currency formatValue", function (assert) {
 		var currencyType = new CurrencyType();
-		assert.equal(currencyType.formatValue([22, "EUR"], "string"), "22.00" + "\xa0" + "EUR", "format test");
-		assert.equal(currencyType.formatValue([22, "JPY"], "string"), "22" + "\xa0" + "JPY", "format test");
-		assert.equal(currencyType.formatValue([-6622.333, "EUR"], "string"), "-6,622.333" + "\xa0" + "EUR", "format test");
-		assert.equal(currencyType.formatValue([1.0, "EUR"], "string"), "1.00" + "\xa0" + "EUR", "format test");
-		assert.equal(currencyType.formatValue([1.0000, "EUR"], "string"), "1.00" + "\xa0" + "EUR", "format test");
+		assert.strictEqual(currencyType.formatValue([22, "EUR"], "string"), "22.00" + "\xa0" + "EUR", "format test");
+		assert.strictEqual(currencyType.formatValue([22, "JPY"], "string"), "22" + "\xa0" + "JPY", "format test");
+		assert.strictEqual(currencyType.formatValue([-6622.333, "EUR"], "string"), "-6,622.333" + "\xa0" + "EUR", "format test");
+		assert.strictEqual(currencyType.formatValue([1.0, "EUR"], "string"), "1.00" + "\xa0" + "EUR", "format test");
+		assert.strictEqual(currencyType.formatValue([1.0000, "EUR"], "string"), "1.00" + "\xa0" + "EUR", "format test");
 
-		assert.equal(currencyType.formatValue(null, "string"), null, "format test");
-		assert.equal(currencyType.formatValue([null, "EUR"], "string"), null, "format test");
-		assert.equal(currencyType.formatValue([1, null], "string"), "1.00", "format test");
+		assert.strictEqual(currencyType.formatValue(null, "string"), null, "format test");
+		assert.strictEqual(currencyType.formatValue([null, "EUR"], "string"), null, "format test");
+		assert.strictEqual(currencyType.formatValue([1, null], "string"), "1.00", "format test");
 
 		assert.throws(function () { currencyType.formatValue(22.0, "int"); }, FormatException, "format test");
 		assert.throws(function () { currencyType.formatValue(22.0, "float"); }, FormatException, "format test");
@@ -281,9 +281,9 @@ sap.ui.define([
 
 		currencyType = new CurrencyType(null, {minimum: 3, maximum: 10});
 		try {
-			assert.equal(currencyType.validateValue([3.0, "EUR"]), undefined, "validate test");
-			assert.equal(currencyType.validateValue([3.01, "USD"]), undefined, "validate test");
-			assert.equal(currencyType.validateValue([10, "JPY"]), undefined, "validate test");
+			assert.strictEqual(currencyType.validateValue([3.0, "EUR"]), undefined, "validate test");
+			assert.strictEqual(currencyType.validateValue([3.01, "USD"]), undefined, "validate test");
+			assert.strictEqual(currencyType.validateValue([10, "JPY"]), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -305,25 +305,25 @@ sap.ui.define([
 			showMeasure: false
 		});
 
-		assert.equal(currencyType.formatValue([22, "USD"], "string"), "22.00", "format test");
-		assert.equal(currencyType.formatValue([-6622.333, "USD"], "string"), "-6,622.333", "format test");
-		assert.equal(currencyType.formatValue([-6622.339, "EUR"], "string"), "-6,622.339", "format test");
-		assert.equal(currencyType.formatValue([1.0, "USD"], "string"), "1.00", "format test");
-		assert.equal(currencyType.formatValue([1.0000, "JPY"], "string"), "1", "format test");
-		assert.equal(currencyType.formatValue([1.009, "EUR"], "string"), "1.009", "format test");
-		assert.equal(currencyType.formatValue([1.00001, "USD"], "string"), "1.00001", "format test");
+		assert.strictEqual(currencyType.formatValue([22, "USD"], "string"), "22.00", "format test");
+		assert.strictEqual(currencyType.formatValue([-6622.333, "USD"], "string"), "-6,622.333", "format test");
+		assert.strictEqual(currencyType.formatValue([-6622.339, "EUR"], "string"), "-6,622.339", "format test");
+		assert.strictEqual(currencyType.formatValue([1.0, "USD"], "string"), "1.00", "format test");
+		assert.strictEqual(currencyType.formatValue([1.0000, "JPY"], "string"), "1", "format test");
+		assert.strictEqual(currencyType.formatValue([1.009, "EUR"], "string"), "1.009", "format test");
+		assert.strictEqual(currencyType.formatValue([1.00001, "USD"], "string"), "1.00001", "format test");
 
 		currencyType = new CurrencyType({
 			currencyCode: false
 		});
 
-		assert.equal(currencyType.formatValue([22, "USD"], "string"), "$22.00", "format test");
-		assert.equal(currencyType.formatValue([-6622.333, "USD"], "string"), "$" + "\ufeff" + "-6,622.333", "format test");
-		assert.equal(currencyType.formatValue([-6622.339, "EUR"], "string"), "€" + "\ufeff" + "-6,622.339", "format test");
-		assert.equal(currencyType.formatValue([1.0, "USD"], "string"), "$1.00", "format test");
-		assert.equal(currencyType.formatValue([1.0000, "JPY"], "string"), "¥1", "format test");
-		assert.equal(currencyType.formatValue([1.009, "EUR"], "string"), "€1.009", "format test");
-		assert.equal(currencyType.formatValue([1.00001, "USD"], "string"), "$1.00001", "format test");
+		assert.strictEqual(currencyType.formatValue([22, "USD"], "string"), "$22.00", "format test");
+		assert.strictEqual(currencyType.formatValue([-6622.333, "USD"], "string"), "$" + "\ufeff" + "-6,622.333", "format test");
+		assert.strictEqual(currencyType.formatValue([-6622.339, "EUR"], "string"), "€" + "\ufeff" + "-6,622.339", "format test");
+		assert.strictEqual(currencyType.formatValue([1.0, "USD"], "string"), "$1.00", "format test");
+		assert.strictEqual(currencyType.formatValue([1.0000, "JPY"], "string"), "¥1", "format test");
+		assert.strictEqual(currencyType.formatValue([1.009, "EUR"], "string"), "€1.009", "format test");
+		assert.strictEqual(currencyType.formatValue([1.00001, "USD"], "string"), "$1.00001", "format test");
 	});
 
 	QUnit.test("currency formatOptions.source", function (assert) {
@@ -331,14 +331,14 @@ sap.ui.define([
 			source: {}
 		});
 
-		assert.equal(currencyType.parseValue("EUR3333", "string"), "3333.00" + "\xa0" + "EUR", "parse test");
-		assert.equal(currencyType.parseValue("USD3333.555", "string"), "3333.56" + "\xa0" + "USD", "parse test");
-		assert.equal(currencyType.parseValue("$3.555", "string"), "3.56" + "\xa0" + "USD", "parse test");
-		assert.equal(currencyType.parseValue("JPY-3.555", "string"), "-4" + "\xa0" + "JPY", "parse test");
+		assert.strictEqual(currencyType.parseValue("EUR3333", "string"), "3333.00" + "\xa0" + "EUR", "parse test");
+		assert.strictEqual(currencyType.parseValue("USD3333.555", "string"), "3333.56" + "\xa0" + "USD", "parse test");
+		assert.strictEqual(currencyType.parseValue("$3.555", "string"), "3.56" + "\xa0" + "USD", "parse test");
+		assert.strictEqual(currencyType.parseValue("JPY-3.555", "string"), "-4" + "\xa0" + "JPY", "parse test");
 
-		assert.equal(currencyType.formatValue("EUR22", "string"), "22.00" + "\xa0" + "EUR", "format test");
-		assert.equal(currencyType.formatValue("USD-6622.333", "string"), "-6,622.333" + "\xa0" + "USD", "format test");
-		assert.equal(currencyType.formatValue("JPY-6622.339", "string"), "-6,622.339" + "\xa0" + "JPY", "format test");
+		assert.strictEqual(currencyType.formatValue("EUR22", "string"), "22.00" + "\xa0" + "EUR", "format test");
+		assert.strictEqual(currencyType.formatValue("USD-6622.333", "string"), "-6,622.333" + "\xa0" + "USD", "format test");
+		assert.strictEqual(currencyType.formatValue("JPY-6622.339", "string"), "-6,622.339" + "\xa0" + "JPY", "format test");
 	});
 
 	QUnit.test("currency formatOptions.source and validateValue", function (assert) {
@@ -349,9 +349,9 @@ sap.ui.define([
 			maximum: 10
 		});
 		try {
-			assert.equal(currencyType.validateValue("EUR3.00"), undefined, "validate test");
-			assert.equal(currencyType.validateValue("USD3.01"), undefined, "validate test");
-			assert.equal(currencyType.validateValue("JPY10"), undefined, "validate test");
+			assert.strictEqual(currencyType.validateValue("EUR3.00"), undefined, "validate test");
+			assert.strictEqual(currencyType.validateValue("USD3.01"), undefined, "validate test");
+			assert.strictEqual(currencyType.validateValue("JPY10"), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -737,25 +737,25 @@ sap.ui.define([
 		var dateValue = new Date(2003, 1, 1);
 
 		var dateType = new DateType();
-		//			assert.equal(dateType.formatValue(dateValue, "string"), "02/01/2003", "format test");
+		//			assert.strictEqual(dateType.formatValue(dateValue, "string"), "02/01/2003", "format test");
 		//as default pattern is locale dependend
 
 		dateType = new DateType({ pattern: "yy-MM-dd" });
-		assert.equal(dateType.formatValue(dateValue, "string"), "03-02-01", "format test with pattern");
+		assert.strictEqual(dateType.formatValue(dateValue, "string"), "03-02-01", "format test with pattern");
 
 		dateType = new DateType({ pattern: "yy-MM-dd EEE" });
-		assert.equal(dateType.formatValue(dateValue, "string"), "03-02-01 Sat", "format test with pattern including dayName");
+		assert.strictEqual(dateType.formatValue(dateValue, "string"), "03-02-01 Sat", "format test with pattern including dayName");
 
 		dateType = new DateType({ pattern: "yy 'week' w, EEE" });
-		assert.equal(dateType.formatValue(dateValue, "string"), "03 week 5, Sat", "format test with pattern with week");
+		assert.strictEqual(dateType.formatValue(dateValue, "string"), "03 week 5, Sat", "format test with pattern with week");
 
 		dateType = new DateType({ source: { pattern: "yyyy/MM/dd" }, pattern: "dd.MM.yyyy" });
-		assert.equal(dateType.formatValue("2012/01/23", "string"), "23.01.2012", "format test with source pattern");
+		assert.strictEqual(dateType.formatValue("2012/01/23", "string"), "23.01.2012", "format test with source pattern");
 
 		dateType = new DateType({ source: { pattern: "timestamp" }, pattern: "dd.MM.yy" });
-		assert.equal(dateType.formatValue(dateValue.getTime(), "string"), "01.02.03", "format test with timestamp");
-		assert.equal(dateType.formatValue(null, "string"), "", "format test");
-		assert.equal(dateType.formatValue(undefined, "string"), "", "format test");
+		assert.strictEqual(dateType.formatValue(dateValue.getTime(), "string"), "01.02.03", "format test with timestamp");
+		assert.strictEqual(dateType.formatValue(null, "string"), "", "format test");
+		assert.strictEqual(dateType.formatValue(undefined, "string"), "", "format test");
 		assert.throws(function () { dateType.formatValue(1044068706007, "untype"); }, FormatException, "format test");
 	});
 
@@ -764,23 +764,23 @@ sap.ui.define([
 		var dateValue = new Date(2003, 1, 1);
 
 		var dateType = new DateType();
-		//			assert.equal(dateType.parseValue("02/01/2003", "string").getTime(), dateValue.getTime(), "parse test");
+		//			assert.strictEqual(dateType.parseValue("02/01/2003", "string").getTime(), dateValue.getTime(), "parse test");
 		//as default pattern is locale dependend
 
 		dateType = new DateType({ pattern: "yy-MM-dd" });
-		assert.equal(dateType.parseValue("03-02-01", "string").getTime(), dateValue.getTime(), "parse test with pattern");
+		assert.strictEqual(dateType.parseValue("03-02-01", "string").getTime(), dateValue.getTime(), "parse test with pattern");
 
 		dateType = new DateType({ pattern: "yy-MM-dd EEE" });
-		assert.equal(dateType.parseValue("03-02-01 Sat", "string").getTime(), dateValue.getTime(), "parse test with pattern including dayName");
+		assert.strictEqual(dateType.parseValue("03-02-01 Sat", "string").getTime(), dateValue.getTime(), "parse test with pattern including dayName");
 
 		dateType = new DateType({ pattern: "yy 'week' w, EEE" });
-		assert.equal(dateType.parseValue("03 week 5, Sat", "string").getTime(), dateValue.getTime(), "parse test with week pattern");
+		assert.strictEqual(dateType.parseValue("03 week 5, Sat", "string").getTime(), dateValue.getTime(), "parse test with week pattern");
 
 		dateType = new DateType({ source: { pattern: "yyyy/MM/dd" }, pattern: "dd.MM.yyyy" });
-		assert.equal(dateType.parseValue("01.02.2003", "string"), "2003/02/01", "parse test with source pattern");
+		assert.strictEqual(dateType.parseValue("01.02.2003", "string"), "2003/02/01", "parse test with source pattern");
 
 		dateType = new DateType({ source: { pattern: "timestamp" }, pattern: "dd.MM.yy" });
-		assert.equal(dateType.parseValue("01.02.03", "string"), dateValue.getTime(), "parse test with timestamp");
+		assert.strictEqual(dateType.parseValue("01.02.03", "string"), dateValue.getTime(), "parse test with timestamp");
 
 		assert.throws(function () { dateType.parseValue(true, "untype"); }, ParseException, "parse test");
 		assert.throws(function () { dateType.parseValue(true, "boolean"); }, ParseException, "parse test");
@@ -801,7 +801,7 @@ sap.ui.define([
 		var dateValue = new Date(2000, 1, 1);
 
 		try {
-			assert.equal(dateType.validateValue(dateValue), undefined, "validate test");
+			assert.strictEqual(dateType.validateValue(dateValue), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -826,7 +826,7 @@ sap.ui.define([
 				dateType.validateValue(dateValue);
 			});
 		} catch (error) {
-			assert.equal(error.message, "Date.Minimum 2018-01-01", "Correct error message shown");
+			assert.strictEqual(error.message, "Date.Minimum 2018-01-01", "Correct error message shown");
 		}
 
 		assert.throws(function () { dateType.validateValue(dateValue); }, checkValidateException, "validate test");
@@ -839,9 +839,9 @@ sap.ui.define([
 			maximum: "31.12.2000"
 		});
 		try {
-			assert.equal(dateType.validateValue("01.01.2000"), undefined, "validate test");
-			assert.equal(dateType.validateValue("06.06.2000"), undefined, "validate test");
-			assert.equal(dateType.validateValue("31.12.2000"), undefined, "validate test");
+			assert.strictEqual(dateType.validateValue("01.01.2000"), undefined, "validate test");
+			assert.strictEqual(dateType.validateValue("06.06.2000"), undefined, "validate test");
+			assert.strictEqual(dateType.validateValue("31.12.2000"), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -857,8 +857,8 @@ sap.ui.define([
 		var sDate = "01.01.2000";
 
 		assert.ok(oFormat, "InputFormat exists");
-		assert.equal(oFormat.format(oDate), oDate, "InputFormat should have the default implementation of SimpleType");
-		assert.equal(oFormat.parse(sDate), sDate, "InputFormat should have the default implementation of SimpleType");
+		assert.strictEqual(oFormat.format(oDate), oDate, "InputFormat should have the default implementation of SimpleType");
+		assert.strictEqual(oFormat.parse(sDate), sDate, "InputFormat should have the default implementation of SimpleType");
 	});
 
 	QUnit.test("date getModelFormat() with timestamp", function (assert) {
@@ -880,9 +880,9 @@ sap.ui.define([
 		assert.ok(oFormat, "InputFormat is created");
 		var oDate = oFormat.parse(sValue);
 		assert.ok(oDate instanceof Date, "InputFormat parses date string correctly");
-		assert.equal(oDate.getFullYear(), 2002);
-		assert.equal(oDate.getMonth(), 0);
-		assert.equal(oDate.getDate(), 2);
+		assert.strictEqual(oDate.getFullYear(), 2002);
+		assert.strictEqual(oDate.getMonth(), 0);
+		assert.strictEqual(oDate.getDate(), 2);
 	});
 
 	//*********************************************************************************************
@@ -901,19 +901,19 @@ sap.ui.define([
 
 		var dateType = new DateTimeType();
 
-		assert.equal(dateType.formatValue(dateValue, "string"), "Feb 1, 2003, 4:05:06 AM", "format test");
+		assert.strictEqual(dateType.formatValue(dateValue, "string"), "Feb 1, 2003, 4:05:06 AM", "format test");
 
 		dateType = new DateTimeType({ pattern: "yy-MM-dd '/' hh:mm" });
-		assert.equal(dateType.formatValue(dateValue, "string"), "03-02-01 / 04:05", "format test with pattern");
+		assert.strictEqual(dateType.formatValue(dateValue, "string"), "03-02-01 / 04:05", "format test with pattern");
 
 		dateType = new DateTimeType({ source: { pattern: "yyyy/MM/dd HH/mm/ss/SSS" }, pattern: "dd.MM.yyyy HH:mm:ss '+' SSS'" });
-		assert.equal(dateType.formatValue("2012/01/23 18/30/05/123", "string"), "23.01.2012 18:30:05 + 123", "format test with source pattern");
+		assert.strictEqual(dateType.formatValue("2012/01/23 18/30/05/123", "string"), "23.01.2012 18:30:05 + 123", "format test with source pattern");
 
 		dateType = new DateTimeType({ source: { pattern: "timestamp" }, pattern: "dd.MM.yy hh:mm:ss'+'SSS" });
-		assert.equal(dateType.formatValue(dateValue.getTime(), "string"), "01.02.03 04:05:06+007", "format test with timestamp");
+		assert.strictEqual(dateType.formatValue(dateValue.getTime(), "string"), "01.02.03 04:05:06+007", "format test with timestamp");
 
-		assert.equal(dateType.formatValue(null, "string"), "", "format test");
-		assert.equal(dateType.formatValue(undefined, "string"), "", "format test");
+		assert.strictEqual(dateType.formatValue(null, "string"), "", "format test");
+		assert.strictEqual(dateType.formatValue(undefined, "string"), "", "format test");
 
 		assert.throws(function () { dateType.formatValue(dateValue.getTime(), "untype"); }, FormatException, "format test");
 	});
@@ -921,18 +921,18 @@ sap.ui.define([
 	QUnit.test("dateTime parseValue", function (assert) {
 		var dateValue = new Date(2003, 1, 1, 4, 5, 6);
 		var dateType = new DateTimeType();
-		assert.equal(dateType.parseValue("Feb 1, 2003, 4:05:06 AM", "string").getTime(), dateValue.getTime(), "parse test");
+		assert.strictEqual(dateType.parseValue("Feb 1, 2003, 4:05:06 AM", "string").getTime(), dateValue.getTime(), "parse test");
 
 		dateValue = new Date(2003, 1, 1, 4, 5, 6, 7);
 		dateType = new DateTimeType({ pattern: "yy-MM-dd HH:mm:ss'+'SSS'" });
-		assert.equal(dateType.parseValue("03-02-01 04:05:06+007", "string").getTime(), dateValue.getTime(), "parse test with pattern");
+		assert.strictEqual(dateType.parseValue("03-02-01 04:05:06+007", "string").getTime(), dateValue.getTime(), "parse test with pattern");
 
 		dateType = new DateTimeType({ source: { pattern: "yyyy/MM/dd HHmmssSSS" }, pattern: "dd.MM.yyyy HH-mm-ss.SSS" });
-		assert.equal(dateType.parseValue("01.02.2003 04-05-06.007", "string"), "2003/02/01 040506007", "parse test with source pattern");
+		assert.strictEqual(dateType.parseValue("01.02.2003 04-05-06.007", "string"), "2003/02/01 040506007", "parse test with source pattern");
 
 		dateValue = new Date(2012, 0, 24, 14, 33, 0);
 		dateType = new DateTimeType({ source: { pattern: "timestamp" }, pattern: "dd.MM.yyyy HH:mm" });
-		assert.equal(dateType.parseValue("24.01.2012 14:33", "string"), dateValue.getTime(), "parse test with timestamp");
+		assert.strictEqual(dateType.parseValue("24.01.2012 14:33", "string"), dateValue.getTime(), "parse test with timestamp");
 
 		assert.throws(function () { dateType.parseValue(true, "untype"); }, ParseException, "parse test");
 		assert.throws(function () { dateType.parseValue(true, "boolean"); }, ParseException, "parse test");
@@ -948,7 +948,7 @@ sap.ui.define([
 			maximum: "24.01.2012 11:00:00"
 		});
 		try {
-			assert.equal(dateType.validateValue("24.01.2012 10:30:00"), undefined, "validate test");
+			assert.strictEqual(dateType.validateValue("24.01.2012 10:30:00"), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -972,12 +972,12 @@ sap.ui.define([
 		var oDateTime1 = new Date(2003, 1, 1, 4, 5, 6);
 		var oDateTime2 = new Date(2003, 1, 2, 5, 6, 7);
 
-		assert.equal(oDateTimeIntervalType.formatValue([oDateTime1, oDateTime2], "string"), "Feb 1, 2003, 4:05:06 AM – Feb 2, 2003, 5:06:07 AM", "dates can be formatted as interval");
+		assert.strictEqual(oDateTimeIntervalType.formatValue([oDateTime1, oDateTime2], "string"), "Feb 1, 2003, 4:05:06 AM – Feb 2, 2003, 5:06:07 AM", "dates can be formatted as interval");
 
 		oDateTimeIntervalType = new DateTimeIntervalType({
 			source: {}
 		});
-		assert.equal(oDateTimeIntervalType.formatValue(["Feb 1, 2003, 4:05:06 AM", "Feb 2, 2003, 5:06:07 AM"], "string"), "Feb 1, 2003, 4:05:06 AM – Feb 2, 2003, 5:06:07 AM", "dates can be formatted as interval");
+		assert.strictEqual(oDateTimeIntervalType.formatValue(["Feb 1, 2003, 4:05:06 AM", "Feb 2, 2003, 5:06:07 AM"], "string"), "Feb 1, 2003, 4:05:06 AM – Feb 2, 2003, 5:06:07 AM", "dates can be formatted as interval");
 	});
 
 	QUnit.test("DateTimeInterval parseValue", function (assert) {
@@ -1005,7 +1005,7 @@ sap.ui.define([
 		});
 
 		try {
-			assert.equal(oDateTimeIntervalType.validateValue([oDateTime1, oDateTime2]), undefined, "validate test");
+			assert.strictEqual(oDateTimeIntervalType.validateValue([oDateTime1, oDateTime2]), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "validate test fails");
 		}
@@ -1024,25 +1024,25 @@ sap.ui.define([
 	QUnit.test("filesize formatValue", function (assert) {
 		var filesizeType = new FileSizeType();
 
-		assert.equal(filesizeType.formatValue(null, "string"), null, "format test: null-string");
-		assert.equal(filesizeType.formatValue(1000, "string").toUpperCase(), "1 KB", "format test: 1000-string");
-		assert.equal(filesizeType.formatValue(1000.5, "string").toUpperCase(), "1.0005 KB", "format test: 1000.5-string");
+		assert.strictEqual(filesizeType.formatValue(null, "string"), null, "format test: null-string");
+		assert.strictEqual(filesizeType.formatValue(1000, "string").toUpperCase(), "1 KB", "format test: 1000-string");
+		assert.strictEqual(filesizeType.formatValue(1000.5, "string").toUpperCase(), "1.0005 KB", "format test: 1000.5-string");
 		assert.throws(function () { filesizeType.formatValue("Hello", "string"); }, FormatException, "format test: Hello-string");
 		assert.throws(function () { filesizeType.formatValue("1 kB", "string"); }, FormatException, "format test: 1 kB-string");
 
-		assert.equal(filesizeType.formatValue(null, "int"), null, "format test: null-int");
-		assert.equal(filesizeType.formatValue(1000, "int"), 1000, "format test: 1000-int");
-		assert.equal(filesizeType.formatValue(1000.5, "int"), 1000, "format test: 1000.5-int");
+		assert.strictEqual(filesizeType.formatValue(null, "int"), null, "format test: null-int");
+		assert.strictEqual(filesizeType.formatValue(1000, "int"), 1000, "format test: 1000-int");
+		assert.strictEqual(filesizeType.formatValue(1000.5, "int"), 1000, "format test: 1000.5-int");
 		assert.throws(function () { filesizeType.formatValue("Hello", "int"); }, FormatException, "format test: Hello-int");
 		assert.throws(function () { filesizeType.formatValue("1 kB", "int"); }, FormatException, "format test: 1 kB-int");
 
-		assert.equal(filesizeType.formatValue(null, "float"), null, "format test: null-float");
-		assert.equal(filesizeType.formatValue(1000, "float"), 1000, "format test: 1000-float");
-		assert.equal(filesizeType.formatValue(1000.5, "float"), 1000.5, "format test: 1000.5-float");
+		assert.strictEqual(filesizeType.formatValue(null, "float"), null, "format test: null-float");
+		assert.strictEqual(filesizeType.formatValue(1000, "float"), 1000, "format test: 1000-float");
+		assert.strictEqual(filesizeType.formatValue(1000.5, "float"), 1000.5, "format test: 1000.5-float");
 		assert.throws(function () { filesizeType.formatValue("Hello", "float"); }, FormatException, "format test: Hello-float");
 		assert.throws(function () { filesizeType.formatValue("1 kB", "float"); }, FormatException, "format test: 1 kB-float");
 
-		assert.equal(filesizeType.formatValue(null, "untype"), null, "format test: null-untype");
+		assert.strictEqual(filesizeType.formatValue(null, "untype"), null, "format test: null-untype");
 		assert.throws(function () { filesizeType.formatValue(1000, "untype"); }, FormatException, "format test: 1000-untype");
 		assert.throws(function () { filesizeType.formatValue(1000.5, "untype"); }, FormatException, "format test: 1000.5-untype");
 		assert.throws(function () { filesizeType.formatValue("Hello", "untype"); }, FormatException, "format test: Hello-untype");
@@ -1050,25 +1050,25 @@ sap.ui.define([
 
 		filesizeType.setFormatOptions({ source: {} });
 
-		assert.equal(filesizeType.formatValue(null, "string"), null, "format test: null-string-inputformat");
-		assert.equal(filesizeType.formatValue(1000, "string").toUpperCase(), "1 KB", "format test: 1000-string-inputformat");
-		assert.equal(filesizeType.formatValue(1000.5, "string").toUpperCase(), "1.0005 KB", "format test: 1000.5-string-inputformat");
+		assert.strictEqual(filesizeType.formatValue(null, "string"), null, "format test: null-string-inputformat");
+		assert.strictEqual(filesizeType.formatValue(1000, "string").toUpperCase(), "1 KB", "format test: 1000-string-inputformat");
+		assert.strictEqual(filesizeType.formatValue(1000.5, "string").toUpperCase(), "1.0005 KB", "format test: 1000.5-string-inputformat");
 		assert.throws(function () { filesizeType.formatValue("Hello", "string"); }, FormatException, "format test: Hello-string-inputformat");
-		assert.equal(filesizeType.formatValue("1 kB", "string").toUpperCase(), "1 KB", "format test: 1kB-string-inputformat");
+		assert.strictEqual(filesizeType.formatValue("1 kB", "string").toUpperCase(), "1 KB", "format test: 1kB-string-inputformat");
 
-		assert.equal(filesizeType.formatValue(null, "int"), null, "format test: null-int-inputformat");
-		assert.equal(filesizeType.formatValue(1000, "int"), 1000, "format test: 1000-int-inputformat");
-		assert.equal(filesizeType.formatValue(1000.5, "int"), 1000, "format test: 1000.5-int-inputformat");
+		assert.strictEqual(filesizeType.formatValue(null, "int"), null, "format test: null-int-inputformat");
+		assert.strictEqual(filesizeType.formatValue(1000, "int"), 1000, "format test: 1000-int-inputformat");
+		assert.strictEqual(filesizeType.formatValue(1000.5, "int"), 1000, "format test: 1000.5-int-inputformat");
 		assert.throws(function () { filesizeType.formatValue("Hello", "int"); }, FormatException, "format test: Hello-int-inputformat");
-		assert.equal(filesizeType.formatValue("1 kB", "int"), 1000, "format test: 1kB-int-inputformat");
+		assert.strictEqual(filesizeType.formatValue("1 kB", "int"), 1000, "format test: 1kB-int-inputformat");
 
-		assert.equal(filesizeType.formatValue(null, "float"), null, "format test: null-float-inputformat");
-		assert.equal(filesizeType.formatValue(1000, "float"), 1000, "format test: 1000-float-inputformat");
-		assert.equal(filesizeType.formatValue(1000.5, "float"), 1000.5, "format test: 1000.5-float-inputformat");
+		assert.strictEqual(filesizeType.formatValue(null, "float"), null, "format test: null-float-inputformat");
+		assert.strictEqual(filesizeType.formatValue(1000, "float"), 1000, "format test: 1000-float-inputformat");
+		assert.strictEqual(filesizeType.formatValue(1000.5, "float"), 1000.5, "format test: 1000.5-float-inputformat");
 		assert.throws(function () { filesizeType.formatValue("Hello", "float"); }, FormatException, "format test: Hello-float-inputformat");
-		assert.equal(filesizeType.formatValue("1 kB", "float"), 1000, "format test: 1kB-float-inputformat");
+		assert.strictEqual(filesizeType.formatValue("1 kB", "float"), 1000, "format test: 1kB-float-inputformat");
 
-		assert.equal(filesizeType.formatValue(null, "untype"), null, "format test: null-untype-inputformat");
+		assert.strictEqual(filesizeType.formatValue(null, "untype"), null, "format test: null-untype-inputformat");
 		assert.throws(function () { filesizeType.formatValue(1000, "untype"); }, FormatException, "format test: 1000-untype-inputformat");
 		assert.throws(function () { filesizeType.formatValue(1000.5, "untype"); }, FormatException, "format test: 1000.5-untype-inputformat");
 		assert.throws(function () { filesizeType.formatValue("Hello", "untype"); }, FormatException, "format test: Hello-untype-inputformat");
@@ -1078,20 +1078,20 @@ sap.ui.define([
 	QUnit.test("filesize parseValue", function (assert) {
 		var filesizeType = new FileSizeType();
 
-		assert.equal(filesizeType.parseValue(null, "string"), null, "parse test: null-string");
+		assert.strictEqual(filesizeType.parseValue(null, "string"), null, "parse test: null-string");
 		assert.throws(function () { filesizeType.parseValue("Hello", "string"); }, ParseException, "parse test: Hello-string");
-		assert.equal(filesizeType.parseValue("1 kB", "string"), 1000, "parse test: 1 kB-string");
-		assert.equal(filesizeType.parseValue("1.0005 kB", "string"), 1000.5, "parse test: 1.0005 kB-string");
+		assert.strictEqual(filesizeType.parseValue("1 kB", "string"), 1000, "parse test: 1 kB-string");
+		assert.strictEqual(filesizeType.parseValue("1.0005 kB", "string"), 1000.5, "parse test: 1.0005 kB-string");
 
-		assert.equal(filesizeType.parseValue(null, "int"), null, "parse test: null-int");
-		assert.equal(filesizeType.parseValue(1000, "int"), 1000, "parse test: 1000-int");
-		assert.equal(filesizeType.parseValue(1000.5, "int"), 1000.5, "parse test: 1000.5 kB-int");
+		assert.strictEqual(filesizeType.parseValue(null, "int"), null, "parse test: null-int");
+		assert.strictEqual(filesizeType.parseValue(1000, "int"), 1000, "parse test: 1000-int");
+		assert.strictEqual(filesizeType.parseValue(1000.5, "int"), 1000.5, "parse test: 1000.5 kB-int");
 
-		assert.equal(filesizeType.parseValue(null, "float"), null, "parse test: null-float");
-		assert.equal(filesizeType.parseValue(1000, "float"), 1000, "parse test: 1000-float");
-		assert.equal(filesizeType.parseValue(1000.5, "float"), 1000.5, "parse test: 1000.5 kB-float");
+		assert.strictEqual(filesizeType.parseValue(null, "float"), null, "parse test: null-float");
+		assert.strictEqual(filesizeType.parseValue(1000, "float"), 1000, "parse test: 1000-float");
+		assert.strictEqual(filesizeType.parseValue(1000.5, "float"), 1000.5, "parse test: 1000.5 kB-float");
 
-		assert.equal(filesizeType.parseValue(null, "untype"), null, "parse test: null-untype");
+		assert.strictEqual(filesizeType.parseValue(null, "untype"), null, "parse test: null-untype");
 		assert.throws(function () { filesizeType.parseValue("Hello", "untype"); }, ParseException, "parse test: Hello-untype");
 		assert.throws(function () { filesizeType.parseValue("1 kB", "untype"); }, ParseException, "parse test: 1 kB-untype");
 		assert.throws(function () { filesizeType.parseValue("1.0005 kB", "untype"); }, ParseException, "parse test: 1.0005 kB-untype");
@@ -1100,20 +1100,20 @@ sap.ui.define([
 
 		filesizeType.setFormatOptions({ source: {} });
 
-		assert.equal(filesizeType.parseValue(null, "string"), null, "parse test: null-string-inputformat");
+		assert.strictEqual(filesizeType.parseValue(null, "string"), null, "parse test: null-string-inputformat");
 		assert.throws(function () { filesizeType.parseValue("Hello", "string"); }, checkParseException, "parse test: Hello-string-inputformat");
-		assert.equal(filesizeType.parseValue("1 kB", "string").toUpperCase(), "1 KB", "parse test: 1 kB-string-inputformat");
-		assert.equal(filesizeType.parseValue("1.0005 kB", "string").toUpperCase(), "1.0005 KB", "parse test: 1.0005 kB-string-inputformat");
+		assert.strictEqual(filesizeType.parseValue("1 kB", "string").toUpperCase(), "1 KB", "parse test: 1 kB-string-inputformat");
+		assert.strictEqual(filesizeType.parseValue("1.0005 kB", "string").toUpperCase(), "1.0005 KB", "parse test: 1.0005 kB-string-inputformat");
 
-		assert.equal(filesizeType.parseValue(null, "int"), null, "parse test: null-int-inputformat");
-		assert.equal(filesizeType.parseValue(1000, "int").toUpperCase(), "1 KB", "parse test: 1000-int-inputformat");
-		assert.equal(filesizeType.parseValue(1000.5, "int").toUpperCase(), "1.0005 KB", "parse test: 1000.5 kB-int-inputformat");
+		assert.strictEqual(filesizeType.parseValue(null, "int"), null, "parse test: null-int-inputformat");
+		assert.strictEqual(filesizeType.parseValue(1000, "int").toUpperCase(), "1 KB", "parse test: 1000-int-inputformat");
+		assert.strictEqual(filesizeType.parseValue(1000.5, "int").toUpperCase(), "1.0005 KB", "parse test: 1000.5 kB-int-inputformat");
 
-		assert.equal(filesizeType.parseValue(null, "float"), null, "parse test: null-float-inputformat");
-		assert.equal(filesizeType.parseValue(1000, "float").toUpperCase(), "1 KB", "parse test: 1000-float-inputformat");
-		assert.equal(filesizeType.parseValue(1000.5, "float").toUpperCase(), "1.0005 KB", "parse test: 1000.5 kB-float-inputformat");
+		assert.strictEqual(filesizeType.parseValue(null, "float"), null, "parse test: null-float-inputformat");
+		assert.strictEqual(filesizeType.parseValue(1000, "float").toUpperCase(), "1 KB", "parse test: 1000-float-inputformat");
+		assert.strictEqual(filesizeType.parseValue(1000.5, "float").toUpperCase(), "1.0005 KB", "parse test: 1000.5 kB-float-inputformat");
 
-		assert.equal(filesizeType.parseValue(null, "untype"), null, "parse test: null-untype");
+		assert.strictEqual(filesizeType.parseValue(null, "untype"), null, "parse test: null-untype");
 		assert.throws(function () { filesizeType.parseValue("Hello", "untype"); }, ParseException, "parse test: Hello-untype-inputformat");
 		assert.throws(function () { filesizeType.parseValue("1 kB", "untype"); }, ParseException, "parse test: 1 kB-untype-inputformat");
 		assert.throws(function () { filesizeType.parseValue("1.0005 kB", "untype"); }, ParseException, "parse test: 1.0005 kB-untype-inputformat");
@@ -1133,9 +1133,9 @@ sap.ui.define([
 		});
 
 		try {
-			assert.equal(filesizeType.validateValue(1000.0), undefined, "validate test: 1000.0-floatcompare");
-			assert.equal(filesizeType.validateValue(1000), undefined, "validate test: 1000-floatcompare");
-			assert.equal(filesizeType.validateValue(1500), undefined, "validate test: 1500-floatcompare");
+			assert.strictEqual(filesizeType.validateValue(1000.0), undefined, "validate test: 1000.0-floatcompare");
+			assert.strictEqual(filesizeType.validateValue(1000), undefined, "validate test: 1000-floatcompare");
+			assert.strictEqual(filesizeType.validateValue(1500), undefined, "validate test: 1500-floatcompare");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -1159,10 +1159,10 @@ sap.ui.define([
 		filesizeType2.setFormatOptions({ source: {} });
 
 		try {
-			assert.equal(filesizeType.validateValue(1000.0), undefined, "validate test: 1000.0-floatcompare-inputformat");
-			assert.equal(filesizeType.validateValue(1000), undefined, "validate test: 1000-floatcompare-inputformat");
-			assert.equal(filesizeType.validateValue(1500), undefined, "validate test: 1500-floatcompare-inputformat");
-			assert.equal(filesizeType.validateValue("1.5 kB"), undefined, "validate test: 5 kB-floatcompare-inputformat");
+			assert.strictEqual(filesizeType.validateValue(1000.0), undefined, "validate test: 1000.0-floatcompare-inputformat");
+			assert.strictEqual(filesizeType.validateValue(1000), undefined, "validate test: 1000-floatcompare-inputformat");
+			assert.strictEqual(filesizeType.validateValue(1500), undefined, "validate test: 1500-floatcompare-inputformat");
+			assert.strictEqual(filesizeType.validateValue("1.5 kB"), undefined, "validate test: 5 kB-floatcompare-inputformat");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -1173,10 +1173,10 @@ sap.ui.define([
 		assert.throws(function () { filesizeType.validateValue("5 kB"); }, checkValidateException, "validate test: 5 kB-floatcompare-inputformat");
 
 		try {
-			assert.equal(filesizeType2.validateValue(1000.0), undefined, "validate test: 1000.0-stringcompare-inputformat");
-			assert.equal(filesizeType2.validateValue(1000), undefined, "validate test: 1000-stringcompare-inputformat");
-			assert.equal(filesizeType2.validateValue(1500), undefined, "validate test: 1500-stringcompare-inputformat");
-			assert.equal(filesizeType2.validateValue("1.5 kB"), undefined, "validate test: 5 kB-stringcompare-inputformat");
+			assert.strictEqual(filesizeType2.validateValue(1000.0), undefined, "validate test: 1000.0-stringcompare-inputformat");
+			assert.strictEqual(filesizeType2.validateValue(1000), undefined, "validate test: 1000-stringcompare-inputformat");
+			assert.strictEqual(filesizeType2.validateValue(1500), undefined, "validate test: 1500-stringcompare-inputformat");
+			assert.strictEqual(filesizeType2.validateValue("1.5 kB"), undefined, "validate test: 5 kB-stringcompare-inputformat");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -1263,23 +1263,23 @@ sap.ui.define([
 
 	QUnit.test("float formatValue", function (assert) {
 		var floatType = new FloatType();
-		assert.equal(floatType.formatValue(22, "string"), "22", "format test");
-		assert.equal(floatType.formatValue(-6622.333, "string"), "-6,622.333", "format test");
-		assert.equal(floatType.formatValue(1.0, "string"), "1", "format test");
-		assert.equal(floatType.formatValue(1.0000, "string"), "1", "format test");
-		assert.equal(floatType.formatValue(1234, "int"), 1234, "format test");
-		assert.equal(floatType.formatValue(34.44, "int"), 34, "format test");
-		assert.equal(floatType.formatValue(undefined, "int"), null, "format test");
-		assert.equal(floatType.formatValue(null, "int"), null, "format test");
-		assert.equal(floatType.formatValue(0, "float"), 0, "format test");
-		assert.equal(floatType.formatValue(0.0000, "int"), 0, "format test");
-		assert.equal(floatType.formatValue(34.64, "int"), 34, "format test");
-		assert.equal(floatType.formatValue(30.000, "int"), 30, "format test");
-		assert.equal(floatType.formatValue(134.12, "float"), 134.12, "format test");
-		assert.equal(floatType.formatValue(344456.5667, "float"), 344456.5667, "format test");
-		assert.equal(floatType.formatValue(-344456.5667, "float"), -344456.5667, "format test");
-		assert.equal(floatType.formatValue(134.00, "float"), 134, "format test");
-		assert.equal(floatType.formatValue(134.000, "float"), 134, "format test");
+		assert.strictEqual(floatType.formatValue(22, "string"), "22", "format test");
+		assert.strictEqual(floatType.formatValue(-6622.333, "string"), "-6,622.333", "format test");
+		assert.strictEqual(floatType.formatValue(1.0, "string"), "1", "format test");
+		assert.strictEqual(floatType.formatValue(1.0000, "string"), "1", "format test");
+		assert.strictEqual(floatType.formatValue(1234, "int"), 1234, "format test");
+		assert.strictEqual(floatType.formatValue(34.44, "int"), 34, "format test");
+		assert.strictEqual(floatType.formatValue(undefined, "int"), null, "format test");
+		assert.strictEqual(floatType.formatValue(null, "int"), null, "format test");
+		assert.strictEqual(floatType.formatValue(0, "float"), 0, "format test");
+		assert.strictEqual(floatType.formatValue(0.0000, "int"), 0, "format test");
+		assert.strictEqual(floatType.formatValue(34.64, "int"), 34, "format test");
+		assert.strictEqual(floatType.formatValue(30.000, "int"), 30, "format test");
+		assert.strictEqual(floatType.formatValue(134.12, "float"), 134.12, "format test");
+		assert.strictEqual(floatType.formatValue(344456.5667, "float"), 344456.5667, "format test");
+		assert.strictEqual(floatType.formatValue(-344456.5667, "float"), -344456.5667, "format test");
+		assert.strictEqual(floatType.formatValue(134.00, "float"), 134, "format test");
+		assert.strictEqual(floatType.formatValue(134.000, "float"), 134, "format test");
 
 		assert.throws(function () { floatType.formatValue(22.0, "untype"); }, FormatException, "format test");
 	});
@@ -1287,14 +1287,14 @@ sap.ui.define([
 	QUnit.test("float parseValue", function (assert) {
 		var floatType = new FloatType();
 
-		assert.equal(floatType.parseValue("3333", "string"), 3333, "parse test");
-		assert.equal(floatType.parseValue("3333.555", "string"), 3333.555, "parse test");
-		assert.equal(floatType.parseValue("3.555", "string"), 3.555, "parse test");
-		assert.equal(floatType.parseValue("-3.555", "string"), -3.555, "parse test");
-		assert.equal(floatType.parseValue(-3.555, "float"), -3.555, "parse test");
-		assert.equal(floatType.parseValue(-222, "int"), -222, "parse test");
-		assert.equal(floatType.parseValue(-4.3657, "float"), -4.3657, "parse test");
-		assert.equal(floatType.parseValue(4.657, "float"), 4.657, "parse test");
+		assert.strictEqual(floatType.parseValue("3333", "string"), 3333, "parse test");
+		assert.strictEqual(floatType.parseValue("3333.555", "string"), 3333.555, "parse test");
+		assert.strictEqual(floatType.parseValue("3.555", "string"), 3.555, "parse test");
+		assert.strictEqual(floatType.parseValue("-3.555", "string"), -3.555, "parse test");
+		assert.strictEqual(floatType.parseValue(-3.555, "float"), -3.555, "parse test");
+		assert.strictEqual(floatType.parseValue(-222, "int"), -222, "parse test");
+		assert.strictEqual(floatType.parseValue(-4.3657, "float"), -4.3657, "parse test");
+		assert.strictEqual(floatType.parseValue(4.657, "float"), 4.657, "parse test");
 
 		assert.throws(function () { floatType.parseValue(true, "untype"); }, ParseException, "parse test");
 		assert.throws(function () { floatType.parseValue(true, "boolean"); }, ParseException, "parse test");
@@ -1309,9 +1309,9 @@ sap.ui.define([
 			oFormatMock;
 
 		try {
-			assert.equal(floatType.validateValue(3.0), undefined, "validate test");
-			assert.equal(floatType.validateValue(3.01), undefined, "validate test");
-			assert.equal(floatType.validateValue(10), undefined, "validate test");
+			assert.strictEqual(floatType.validateValue(3.0), undefined, "validate test");
+			assert.strictEqual(floatType.validateValue(3.01), undefined, "validate test");
+			assert.strictEqual(floatType.validateValue(10), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -1340,21 +1340,21 @@ sap.ui.define([
 			maxFractionDigits: 2
 		});
 
-		assert.equal(floatType.formatValue(22, "string"), "22.00", "format test");
-		assert.equal(floatType.formatValue(-6622.333, "string"), "-6,622.333", "format test");
-		assert.equal(floatType.formatValue(-6622.339, "string"), "-6,622.339", "format test");
-		assert.equal(floatType.formatValue(1.0, "string"), "1.00", "format test");
-		assert.equal(floatType.formatValue(1.0000, "string"), "1.00", "format test");
-		assert.equal(floatType.formatValue(1.009, "string"), "1.009", "format test");
-		assert.equal(floatType.formatValue(1.00001, "string"), "1.00001", "format test");
+		assert.strictEqual(floatType.formatValue(22, "string"), "22.00", "format test");
+		assert.strictEqual(floatType.formatValue(-6622.333, "string"), "-6,622.333", "format test");
+		assert.strictEqual(floatType.formatValue(-6622.339, "string"), "-6,622.339", "format test");
+		assert.strictEqual(floatType.formatValue(1.0, "string"), "1.00", "format test");
+		assert.strictEqual(floatType.formatValue(1.0000, "string"), "1.00", "format test");
+		assert.strictEqual(floatType.formatValue(1.009, "string"), "1.009", "format test");
+		assert.strictEqual(floatType.formatValue(1.00001, "string"), "1.00001", "format test");
 
 		// TODO is this right?! no formatting for floats?
 		// see numberformat.qunit for more formatting tests
-		assert.equal(floatType.formatValue(134.12, "float"), 134.12, "format test");
-		assert.equal(floatType.formatValue(344456.5667, "float"), 344456.5667, "format test");
-		assert.equal(floatType.formatValue(-344456.5667, "float"), -344456.5667, "format test");
-		assert.equal(floatType.formatValue(134.00, "float"), 134, "format test");
-		assert.equal(floatType.formatValue(134.000, "float"), 134, "format test");
+		assert.strictEqual(floatType.formatValue(134.12, "float"), 134.12, "format test");
+		assert.strictEqual(floatType.formatValue(344456.5667, "float"), 344456.5667, "format test");
+		assert.strictEqual(floatType.formatValue(-344456.5667, "float"), -344456.5667, "format test");
+		assert.strictEqual(floatType.formatValue(134.00, "float"), 134, "format test");
+		assert.strictEqual(floatType.formatValue(134.000, "float"), 134, "format test");
 	});
 
 	QUnit.test("float formatOptions.source", function (assert) {
@@ -1362,16 +1362,16 @@ sap.ui.define([
 			source: {}
 		});
 
-		assert.equal(floatType.parseValue("3333", "string"), "3333", "parse test");
-		assert.equal(floatType.parseValue("3333.555", "string"), "3333.555", "parse test");
-		assert.equal(floatType.parseValue("3.555", "string"), "3.555", "parse test");
-		assert.equal(floatType.parseValue("-3.555", "string"), "-3.555", "parse test");
-		assert.equal(floatType.parseValue(-3.555, "float"), "-3.555", "parse test");
-		assert.equal(floatType.parseValue(-222, "int"), "-222", "parse test");
+		assert.strictEqual(floatType.parseValue("3333", "string"), "3333", "parse test");
+		assert.strictEqual(floatType.parseValue("3333.555", "string"), "3333.555", "parse test");
+		assert.strictEqual(floatType.parseValue("3.555", "string"), "3.555", "parse test");
+		assert.strictEqual(floatType.parseValue("-3.555", "string"), "-3.555", "parse test");
+		assert.strictEqual(floatType.parseValue(-3.555, "float"), "-3.555", "parse test");
+		assert.strictEqual(floatType.parseValue(-222, "int"), "-222", "parse test");
 
-		assert.equal(floatType.formatValue("22", "string"), "22", "format test");
-		assert.equal(floatType.formatValue("-6622.333", "string"), "-6,622.333", "format test");
-		assert.equal(floatType.formatValue("-6622.339", "string"), "-6,622.339", "format test");
+		assert.strictEqual(floatType.formatValue("22", "string"), "22", "format test");
+		assert.strictEqual(floatType.formatValue("-6622.333", "string"), "-6,622.333", "format test");
+		assert.strictEqual(floatType.formatValue("-6622.339", "string"), "-6,622.339", "format test");
 	});
 
 	QUnit.test("float formatOptions.source and validateValue", function (assert) {
@@ -1385,9 +1385,9 @@ sap.ui.define([
 			maximum: 10
 		});
 		try {
-			assert.equal(floatType.validateValue("3,0"), undefined, "validate test");
-			assert.equal(floatType.validateValue("3,01"), undefined, "validate test");
-			assert.equal(floatType.validateValue("10"), undefined, "validate test");
+			assert.strictEqual(floatType.validateValue("3,0"), undefined, "validate test");
+			assert.strictEqual(floatType.validateValue("3,01"), undefined, "validate test");
+			assert.strictEqual(floatType.validateValue("10"), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -1407,16 +1407,16 @@ sap.ui.define([
 
 	QUnit.test("integer formatValue", function (assert) {
 		var intType = new IntegerType();
-		assert.equal(intType.formatValue(22, "string"), "22", "format test");
-		assert.equal(intType.formatValue(-6622, "string"), "-6622", "format test");
-		assert.equal(intType.formatValue(1234, "int"), 1234, "format test");
-		assert.equal(intType.formatValue(null, "int"), null, "format test");
-		assert.equal(intType.formatValue(undefined, "int"), null, "format test");
-		assert.equal(intType.formatValue(0, "int"), 0, "format test");
-		assert.equal(intType.formatValue(0.00, "int"), 0, "format test");
-		assert.equal(intType.formatValue(34, "int"), 34, "format test");
-		assert.equal(intType.formatValue(134, "float"), 134, "format test");
-		assert.equal(intType.formatValue(344456, "float"), 344456, "format test");
+		assert.strictEqual(intType.formatValue(22, "string"), "22", "format test");
+		assert.strictEqual(intType.formatValue(-6622, "string"), "-6622", "format test");
+		assert.strictEqual(intType.formatValue(1234, "int"), 1234, "format test");
+		assert.strictEqual(intType.formatValue(null, "int"), null, "format test");
+		assert.strictEqual(intType.formatValue(undefined, "int"), null, "format test");
+		assert.strictEqual(intType.formatValue(0, "int"), 0, "format test");
+		assert.strictEqual(intType.formatValue(0.00, "int"), 0, "format test");
+		assert.strictEqual(intType.formatValue(34, "int"), 34, "format test");
+		assert.strictEqual(intType.formatValue(134, "float"), 134, "format test");
+		assert.strictEqual(intType.formatValue(344456, "float"), 344456, "format test");
 
 		assert.throws(function () { intType.formatValue(33456, "boolean"); }, "format test");
 		assert.throws(function () { intType.formatValue(22, "untype"); }, FormatException, "format test");
@@ -1425,13 +1425,13 @@ sap.ui.define([
 	QUnit.test("integer parseValue", function (assert) {
 		var intType = new IntegerType();
 
-		assert.equal(intType.parseValue("3333", "string"), 3333, "parse test");
-		assert.equal(intType.parseValue("3,555", "string"), 3555, "parse test");
-		assert.equal(intType.parseValue("-3,555", "string"), -3555, "parse test");
-		assert.equal(intType.parseValue(-3, "float"), -3, "parse test");
+		assert.strictEqual(intType.parseValue("3333", "string"), 3333, "parse test");
+		assert.strictEqual(intType.parseValue("3,555", "string"), 3555, "parse test");
+		assert.strictEqual(intType.parseValue("-3,555", "string"), -3555, "parse test");
+		assert.strictEqual(intType.parseValue(-3, "float"), -3, "parse test");
 		assert.throws(function () { intType.parseValue("-3.444", "float"); }, ParseException, "parse test");
-		assert.equal(intType.parseValue(-222, "int"), -222, "parse test");
-		assert.equal(intType.parseValue(4444, "float"), 4444, "parse test");
+		assert.strictEqual(intType.parseValue(-222, "int"), -222, "parse test");
+		assert.strictEqual(intType.parseValue(4444, "float"), 4444, "parse test");
 
 		TestUtils.withNormalizedMessages(function () {
 			assert.throws(function () { intType.parseValue("3333.555", "string"); },
@@ -1452,8 +1452,8 @@ sap.ui.define([
 			});
 
 		try {
-			assert.equal(intType.validateValue(4), undefined, "validate test");
-			assert.equal(intType.validateValue(9999), undefined, "validate test");
+			assert.strictEqual(intType.validateValue(4), undefined, "validate test");
+			assert.strictEqual(intType.validateValue(9999), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -1478,12 +1478,12 @@ sap.ui.define([
 			maxIntegerDigits: 4
 		});
 
-		assert.equal(intType.formatValue(22, "string"), "22", "format test");
-		assert.equal(intType.formatValue(333, "string"), "333", "format test");
-		assert.equal(intType.formatValue(6666, "string"), "6666", "format test");
-		assert.equal(intType.formatValue(-6622, "string"), "-6622", "format test");
-		assert.equal(intType.formatValue(662244, "string"), "????", "format test");
-		assert.equal(intType.formatValue(1, "string"), "01", "format test");
+		assert.strictEqual(intType.formatValue(22, "string"), "22", "format test");
+		assert.strictEqual(intType.formatValue(333, "string"), "333", "format test");
+		assert.strictEqual(intType.formatValue(6666, "string"), "6666", "format test");
+		assert.strictEqual(intType.formatValue(-6622, "string"), "-6622", "format test");
+		assert.strictEqual(intType.formatValue(662244, "string"), "????", "format test");
+		assert.strictEqual(intType.formatValue(1, "string"), "01", "format test");
 		// see NumberFormat.qunit for further formatting tests...
 	});
 
@@ -1494,13 +1494,13 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(intType.formatValue("22", "string"), "22", "format test");
-		assert.equal(intType.formatValue("333", "string"), "333", "format test");
-		assert.equal(intType.formatValue("6,666", "string"), "6666", "format test");
-		assert.equal(intType.formatValue("-6622", "string"), "-6622", "format test");
-		assert.equal(intType.parseValue("3333", "string"), "3,333", "parse test");
-		assert.equal(intType.parseValue("3,555", "string"), "3,555", "parse test");
-		assert.equal(intType.parseValue("-3,555", "string"), "-3,555", "parse test");
+		assert.strictEqual(intType.formatValue("22", "string"), "22", "format test");
+		assert.strictEqual(intType.formatValue("333", "string"), "333", "format test");
+		assert.strictEqual(intType.formatValue("6,666", "string"), "6666", "format test");
+		assert.strictEqual(intType.formatValue("-6622", "string"), "-6622", "format test");
+		assert.strictEqual(intType.parseValue("3333", "string"), "3,333", "parse test");
+		assert.strictEqual(intType.parseValue("3,555", "string"), "3,555", "parse test");
+		assert.strictEqual(intType.parseValue("-3,555", "string"), "-3,555", "parse test");
 	});
 
 	QUnit.test("integer formatOptions.source and validateValue", function (assert) {
@@ -1515,8 +1515,8 @@ sap.ui.define([
 			});
 
 		try {
-			assert.equal(intType.validateValue("4,0"), undefined, "validate test");
-			assert.equal(intType.validateValue("10"), undefined, "validate test");
+			assert.strictEqual(intType.validateValue("4,0"), undefined, "validate test");
+			assert.strictEqual(intType.validateValue("10"), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -1535,7 +1535,7 @@ sap.ui.define([
 			oType.validateValue(0);
 		} catch (e) {
 			assert.ok(e instanceof ValidateException, "ValidateException is thrown");
-			assert.equal(e.message, sExpectedMessage, "Validation message for constraint is returned");
+			assert.strictEqual(e.message, sExpectedMessage, "Validation message for constraint is returned");
 		}
 	});
 
@@ -1553,7 +1553,7 @@ sap.ui.define([
 			oType.validateValue(1);
 		} catch (e) {
 			assert.ok(e instanceof ValidateException, "ValidateException is thrown");
-			assert.equal(e.message, sExpectedMessage, "Combined validation message for both contraints is returned");
+			assert.strictEqual(e.message, sExpectedMessage, "Combined validation message for both contraints is returned");
 		}
 	});
 
@@ -1569,18 +1569,18 @@ sap.ui.define([
 
 	QUnit.test("string formatValue", function (assert) {
 		var stringType = new StringType();
-		assert.equal(stringType.formatValue("true", "boolean"), true);
-		assert.equal(stringType.formatValue("false", "boolean"), false);
-		assert.equal(stringType.formatValue("X", "boolean"), true);
-		assert.equal(stringType.formatValue("", "boolean"), false);
-		assert.equal(stringType.formatValue(undefined, "boolean"), null);
-		assert.equal(stringType.formatValue(null, "boolean"), null);
-		assert.equal(stringType.formatValue("test", "string"), "test");
-		assert.equal(stringType.formatValue("X", "string"), "X");
-		assert.equal(stringType.formatValue("1234", "int"), 1234);
-		assert.equal(stringType.formatValue("34", "int"), 34);
-		assert.equal(stringType.formatValue("1.34", "float"), 1.34);
-		assert.equal(stringType.formatValue("33.456", "float"), 33.456);
+		assert.strictEqual(stringType.formatValue("true", "boolean"), true);
+		assert.strictEqual(stringType.formatValue("false", "boolean"), false);
+		assert.strictEqual(stringType.formatValue("X", "boolean"), true);
+		assert.strictEqual(stringType.formatValue("", "boolean"), false);
+		assert.strictEqual(stringType.formatValue(undefined, "boolean"), null);
+		assert.strictEqual(stringType.formatValue(null, "boolean"), null);
+		assert.strictEqual(stringType.formatValue("test", "string"), "test");
+		assert.strictEqual(stringType.formatValue("X", "string"), "X");
+		assert.strictEqual(stringType.formatValue("1234", "int"), 1234);
+		assert.strictEqual(stringType.formatValue("34", "int"), 34);
+		assert.strictEqual(stringType.formatValue("1.34", "float"), 1.34);
+		assert.strictEqual(stringType.formatValue("33.456", "float"), 33.456);
 
 		assert.throws(function () { stringType.formatValue("33.456", "untype"); });
 		assert.throws(function () { stringType.formatValue("notfalse", "boolean"); },
@@ -1592,14 +1592,14 @@ sap.ui.define([
 
 	QUnit.test("string parseValue", function (assert) {
 		var stringType = new StringType();
-		assert.equal(stringType.parseValue(true, "boolean"), "true");
-		assert.equal(stringType.parseValue(false, "boolean"), "false");
-		assert.equal(stringType.parseValue("true", "string"), "true");
-		assert.equal(stringType.parseValue("false", "string"), "false");
-		assert.equal(stringType.parseValue("X", "string"), "X");
-		assert.equal(stringType.parseValue("", "string"), "");
-		assert.equal(stringType.parseValue(-222, "int"), "-222");
-		assert.equal(stringType.parseValue(-4.3657, "float"), "-4.3657");
+		assert.strictEqual(stringType.parseValue(true, "boolean"), "true");
+		assert.strictEqual(stringType.parseValue(false, "boolean"), "false");
+		assert.strictEqual(stringType.parseValue("true", "string"), "true");
+		assert.strictEqual(stringType.parseValue("false", "string"), "false");
+		assert.strictEqual(stringType.parseValue("X", "string"), "X");
+		assert.strictEqual(stringType.parseValue("", "string"), "");
+		assert.strictEqual(stringType.parseValue(-222, "int"), "-222");
+		assert.strictEqual(stringType.parseValue(-4.3657, "float"), "-4.3657");
 
 		assert.throws(function () { stringType.parseValue(true, "untype"); }, ParseException);
 	});
@@ -1611,8 +1611,8 @@ sap.ui.define([
 				maxLength: 10
 			});
 
-		assert.equal(stringType.validateValue("fff"), undefined);
-		assert.equal(stringType.validateValue("ffdddddddd"), undefined);
+		assert.strictEqual(stringType.validateValue("fff"), undefined);
+		assert.strictEqual(stringType.validateValue("ffdddddddd"), undefined);
 		assert.throws(function () { stringType.validateValue("dd"); }, checkValidateException);
 		assert.throws(function () { stringType.validateValue("ddggggggggggg"); },
 			checkValidateException);
@@ -1622,8 +1622,8 @@ sap.ui.define([
 			contains: "cd"
 		});
 
-		assert.equal(stringType.validateValue("abcccdfff"), undefined);
-		assert.equal(stringType.validateValue("abcd"), undefined);
+		assert.strictEqual(stringType.validateValue("abcccdfff"), undefined);
+		assert.strictEqual(stringType.validateValue("abcd"), undefined);
 		assert.throws(function () { stringType.validateValue("cdab"); }, checkValidateException);
 		assert.throws(function () { stringType.validateValue("abdccsbaab"); },
 			checkValidateException);
@@ -1632,7 +1632,7 @@ sap.ui.define([
 			equals: "ab"
 		});
 
-		assert.equal(stringType.validateValue("ab"), undefined);
+		assert.strictEqual(stringType.validateValue("ab"), undefined);
 		assert.throws(function () { stringType.validateValue("cdab"); }, checkValidateException);
 		assert.throws(function () { stringType.validateValue("abdaab"); }, checkValidateException);
 
@@ -1640,8 +1640,8 @@ sap.ui.define([
 			search: "ab"
 		});
 
-		assert.equal(stringType.validateValue("ddabcccdfff"), undefined);
-		assert.equal(stringType.validateValue("abcd"), undefined);
+		assert.strictEqual(stringType.validateValue("ddabcccdfff"), undefined);
+		assert.strictEqual(stringType.validateValue("abcd"), undefined);
 		assert.throws(function () { stringType.validateValue("cdb"); }, checkValidateException);
 		assert.throws(function () { stringType.validateValue("adccsbba"); },
 			checkValidateException);
@@ -1672,7 +1672,7 @@ sap.ui.define([
 	QUnit.test("string validateValue with null, success, " + i, function (assert) {
 		var oType = new StringType(null, oConstraints);
 
-		assert.equal(oType.validateValue(null), undefined);
+		assert.strictEqual(oType.validateValue(null), undefined);
 	});
 });
 
@@ -1716,19 +1716,19 @@ sap.ui.define([
 		// as date object is locale dependend fill it manually
 		var timeValue = new Date(2003, 1, 1, 16, 58, 49);
 
-		assert.equal(timeType.formatValue(timeValue, "string"), "4:58:49 PM", "format test");
+		assert.strictEqual(timeType.formatValue(timeValue, "string"), "4:58:49 PM", "format test");
 
 		timeType = new TimeType({ pattern: "HH:mm:ss" });
-		assert.equal(timeType.formatValue(timeValue, "string"), "16:58:49", "format test with pattern");
+		assert.strictEqual(timeType.formatValue(timeValue, "string"), "16:58:49", "format test with pattern");
 
 		timeType = new TimeType({ source: { pattern: "HH:mm:ss" }, pattern: "hh-mm" });
-		assert.equal(timeType.formatValue("17:01:02", "string"), "05-01", "format test with source pattern");
+		assert.strictEqual(timeType.formatValue("17:01:02", "string"), "05-01", "format test with source pattern");
 
 		timeType = new TimeType({ source: { pattern: "timestamp" }, pattern: "hh-mm-ss" });
-		assert.equal(timeType.formatValue(timeValue.getTime(), "string"), "04-58-49", "format test with timestamp");
+		assert.strictEqual(timeType.formatValue(timeValue.getTime(), "string"), "04-58-49", "format test with timestamp");
 
-		assert.equal(timeType.formatValue(null, "string"), "", "format test");
-		assert.equal(timeType.formatValue(undefined, "string"), "", "format test");
+		assert.strictEqual(timeType.formatValue(null, "string"), "", "format test");
+		assert.strictEqual(timeType.formatValue(undefined, "string"), "", "format test");
 
 		assert.throws(function () { timeType.formatValue(timeValue.getTime(), "untype"); }, FormatException, "format test");
 	});
@@ -1738,16 +1738,16 @@ sap.ui.define([
 		var timeValue = new Date(1970, 0, 1, 16, 58, 49);
 
 		var timeType = new TimeType();
-		assert.equal(timeType.parseValue("04:58:49 PM", "string").getTime(), timeValue.getTime(), "parse test");
+		assert.strictEqual(timeType.parseValue("04:58:49 PM", "string").getTime(), timeValue.getTime(), "parse test");
 
 		timeType = new TimeType({ pattern: "HH:mm:ss" });
-		assert.equal(timeType.parseValue("16:58:49", "string").getTime(), timeValue.getTime(), "parse test with pattern");
+		assert.strictEqual(timeType.parseValue("16:58:49", "string").getTime(), timeValue.getTime(), "parse test with pattern");
 
 		timeType = new TimeType({ source: { pattern: "HH:mm_ss" }, pattern: "hh-mm-ss" });
-		assert.equal(timeType.parseValue("10-05-15", "string"), "10:05_15", "parse test with source pattern");
+		assert.strictEqual(timeType.parseValue("10-05-15", "string"), "10:05_15", "parse test with source pattern");
 
 		timeType = new TimeType({ source: { pattern: "timestamp" }, pattern: "HH:mm:ss" });
-		assert.equal(timeType.parseValue("16:58:49", "string"), timeValue.getTime(), "parse test with timestamp");
+		assert.strictEqual(timeType.parseValue("16:58:49", "string"), timeValue.getTime(), "parse test with timestamp");
 
 		assert.throws(function () { timeType.parseValue(true, "untype"); }, ParseException, "parse test");
 		assert.throws(function () { timeType.parseValue(true, "boolean"); }, ParseException, "parse test");
@@ -1763,7 +1763,7 @@ sap.ui.define([
 			maximum: "11:00:00"
 		});
 		try {
-			assert.equal(timeType.validateValue("10:30:00"), undefined, "validate test");
+			assert.strictEqual(timeType.validateValue("10:30:00"), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -1786,12 +1786,12 @@ sap.ui.define([
 		var oTime1 = new Date(2003, 1, 1, 16, 58, 49);
 		var oTime2 = new Date(2003, 1, 1, 17,  0,  0);
 
-		assert.equal(oTimeIntervalType.formatValue([oTime1, oTime2], "string"), "4:58:49 PM – 5:00:00 PM", "dates can be formatted as interval");
+		assert.strictEqual(oTimeIntervalType.formatValue([oTime1, oTime2], "string"), "4:58:49 PM – 5:00:00 PM", "dates can be formatted as interval");
 
 		oTimeIntervalType = new TimeIntervalType({
 			source: {}
 		});
-		assert.equal(oTimeIntervalType.formatValue(["4:58:49 PM", "5:00:00 PM"], "string"), "4:58:49 PM – 5:00:00 PM", "dates can be formatted as interval");
+		assert.strictEqual(oTimeIntervalType.formatValue(["4:58:49 PM", "5:00:00 PM"], "string"), "4:58:49 PM – 5:00:00 PM", "dates can be formatted as interval");
 	});
 
 	QUnit.test("TimeInterval parseValue", function (assert) {
@@ -1819,7 +1819,7 @@ sap.ui.define([
 		});
 
 		try {
-			assert.equal(oTimeIntervalType.validateValue([oTime1, oTime2]), undefined, "validate test");
+			assert.strictEqual(oTimeIntervalType.validateValue([oTime1, oTime2]), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "validate test fails");
 		}
@@ -1910,16 +1910,16 @@ sap.ui.define([
 
 	QUnit.test("unit formatValue", function (assert) {
 		var unitType = new UnitType();
-		assert.equal(unitType.formatValue([22, "duration-hour"], "string"), "22 hr", "format test");
-		assert.equal(unitType.formatValue([22, "speed-mile-per-hour"], "string"), "22 mph", "format test");
-		assert.equal(unitType.formatValue([-6622.333, "duration-hour"], "string"), "-6,622.333 hr", "format test");
-		assert.equal(unitType.formatValue([1.0, "duration-hour"], "string"), "1 hr", "format test");
-		assert.equal(unitType.formatValue([1.0000, "duration-hour"], "string"), "1 hr", "format test");
-		assert.equal(unitType.formatValue([1.0000, "electric-ohm"], "string"), "1 Ω", "format test");
+		assert.strictEqual(unitType.formatValue([22, "duration-hour"], "string"), "22 hr", "format test");
+		assert.strictEqual(unitType.formatValue([22, "speed-mile-per-hour"], "string"), "22 mph", "format test");
+		assert.strictEqual(unitType.formatValue([-6622.333, "duration-hour"], "string"), "-6,622.333 hr", "format test");
+		assert.strictEqual(unitType.formatValue([1.0, "duration-hour"], "string"), "1 hr", "format test");
+		assert.strictEqual(unitType.formatValue([1.0000, "duration-hour"], "string"), "1 hr", "format test");
+		assert.strictEqual(unitType.formatValue([1.0000, "electric-ohm"], "string"), "1 Ω", "format test");
 
-		assert.equal(unitType.formatValue(null, "string"), null, "format test");
-		assert.equal(unitType.formatValue([null, "duration-hour"], "string"), null, "format test");
-		assert.equal(unitType.formatValue([1, null], "string"), "1", "format test");
+		assert.strictEqual(unitType.formatValue(null, "string"), null, "format test");
+		assert.strictEqual(unitType.formatValue([null, "duration-hour"], "string"), null, "format test");
+		assert.strictEqual(unitType.formatValue([1, null], "string"), "1", "format test");
 
 		assert.throws(function () { unitType.formatValue(22.0, "int"); }, FormatException, "format test");
 		assert.throws(function () { unitType.formatValue(22.0, "float"); }, FormatException, "format test");
@@ -2016,11 +2016,11 @@ sap.ui.define([
 		var oType = new UnitType();
 
 		// format and parse "kg" (unit-1)
-		assert.equal(oType.formatValue([100, "mass-kilogram"], "string"), "100 kg");
+		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100 kg");
 		assert.deepEqual(oType.parseValue("100 kg", "string"), [100, "mass-kilogram"]);
 
 		// format and parse "Ω" (unit-2)
-		assert.equal(oType.formatValue([30, "electric-ohm"], "string"), "30 Ω");
+		assert.strictEqual(oType.formatValue([30, "electric-ohm"], "string"), "30 Ω");
 		assert.deepEqual(oType.parseValue("30 Ω", "string"), [30, "electric-ohm"]);
 	});
 
@@ -2039,7 +2039,7 @@ sap.ui.define([
 		});
 
 		// format and parse invalid unit
-		assert.equal(oType.formatValue([100, "mass-kilogram"], "string"), "100 mass-kilogram", "Format of unknown unit returns number and measure (just as NumberFormat returns it)");
+		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100 mass-kilogram", "Format of unknown unit returns number and measure (just as NumberFormat returns it)");
 		assert.throws(function () {
 				oType.parseValue("100 kg", "string");
 			},
@@ -2047,7 +2047,7 @@ sap.ui.define([
 			"ParseException is thrown for wrong unit");
 
 		// format and parse valid unit
-		assert.equal(oType.formatValue([200.535, "electric-inductance"], "string"), "200.535 H", "precision 5 is respected (rounded)");
+		assert.strictEqual(oType.formatValue([200.535, "electric-inductance"], "string"), "200.535 H", "precision 5 is respected (rounded)");
 		assert.deepEqual(oType.parseValue("200.5123 H", "string"), [200.5123, "electric-inductance"], "parsing is valid");
 	});
 
@@ -2066,11 +2066,11 @@ sap.ui.define([
 		var oType = new UnitType();
 
 		// format and parse valid unit
-		assert.equal(oType.formatValue([100, "mass-kilogram"], "string"), "100 kg", "Format: Standard Unit shines through global custom units");
+		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100 kg", "Format: Standard Unit shines through global custom units");
 		assert.deepEqual(oType.parseValue("100 kg", "string"), [100, "mass-kilogram"], "Parse: Standard Unit shines through global custom units");
 
 		// format and parse valid unit
-		assert.equal(oType.formatValue([200.57, "lebkuchen"], "string"), "200.570 LKs", "decimals '3' is respected");
+		assert.strictEqual(oType.formatValue([200.57, "lebkuchen"], "string"), "200.570 LKs", "decimals '3' is respected");
 		assert.deepEqual(oType.parseValue("200.5123 LKs", "string"), [200.5123, "lebkuchen"], "parsing is valid");
 	});
 
@@ -2102,7 +2102,7 @@ sap.ui.define([
 		});
 
 		// format and parse invalid unit (excluded by local config)
-		assert.equal(oType.formatValue([100, "mass-kilogram"], "string"), "100 mass-kilogram", "Format of unknown unit leads to empty string (just as NumberFormat returns it)");
+		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100 mass-kilogram", "Format of unknown unit leads to empty string (just as NumberFormat returns it)");
 		assert.throws(function () {
 				oType.parseValue("100 kg", "string");
 			},
@@ -2110,7 +2110,7 @@ sap.ui.define([
 			"ParseException is thrown for wrong unit");
 
 		// format and parse invalid unit (excluded by local config)
-		assert.equal(oType.formatValue([123.4, "lebkuchen"], "string"), "123.4 lebkuchen", "Lebkuchen is not formatted (excluded by local configuration)");
+		assert.strictEqual(oType.formatValue([123.4, "lebkuchen"], "string"), "123.4 lebkuchen", "Lebkuchen is not formatted (excluded by local configuration)");
 		assert.throws(function () {
 			oType.parseValue("1234.56 LKs", "string");
 		},
@@ -2118,7 +2118,7 @@ sap.ui.define([
 		"ParseException is thrown for wrong unit");
 
 		// format and parse valid unit
-		assert.equal(oType.formatValue([200.575, "electric-inductance"], "string"), "200.575 H", "precision 4 is respected (rounded)");
+		assert.strictEqual(oType.formatValue([200.575, "electric-inductance"], "string"), "200.575 H", "precision 4 is respected (rounded)");
 		assert.deepEqual(oType.parseValue("200.5123 H", "string"), [200.5123, "electric-inductance"], "parsing is valid");
 	});
 
@@ -2130,9 +2130,9 @@ sap.ui.define([
 
 		//values are within range therefore no error should be thrown
 		try {
-			assert.equal(unitType.validateValue([3.0, "duration-hour"]), undefined, "validate test");
-			assert.equal(unitType.validateValue([3.01, "electric-ohm"]), undefined, "validate test");
-			assert.equal(unitType.validateValue([10, "speed-mile-per-hour"]), undefined, "validate test");
+			assert.strictEqual(unitType.validateValue([3.0, "duration-hour"]), undefined, "validate test");
+			assert.strictEqual(unitType.validateValue([3.01, "electric-ohm"]), undefined, "validate test");
+			assert.strictEqual(unitType.validateValue([10, "speed-mile-per-hour"]), undefined, "validate test");
 		} catch (e) {
 			assert.ok(false, "one of the validation tests failed please check");
 		}
@@ -2147,13 +2147,13 @@ sap.ui.define([
 			showMeasure: false
 		});
 
-		assert.equal(unitType.formatValue([22, "electric-ohm"], "string"), "22", "format test");
-		assert.equal(unitType.formatValue([-6622.333, "electric-ohm"], "string"), "-6,622.333", "format test");
-		assert.equal(unitType.formatValue([-6622.339, "duration-hour"], "string"), "-6,622.339", "format test");
-		assert.equal(unitType.formatValue([1.0, "electric-ohm"], "string"), "1", "format test");
-		assert.equal(unitType.formatValue([1.0000, "speed-mile-per-hour"], "string"), "1", "format test");
-		assert.equal(unitType.formatValue([1.009, "duration-hour"], "string"), "1.009", "format test");
-		assert.equal(unitType.formatValue([1.00001, "electric-ohm"], "string"), "1.00001", "format test");
+		assert.strictEqual(unitType.formatValue([22, "electric-ohm"], "string"), "22", "format test");
+		assert.strictEqual(unitType.formatValue([-6622.333, "electric-ohm"], "string"), "-6,622.333", "format test");
+		assert.strictEqual(unitType.formatValue([-6622.339, "duration-hour"], "string"), "-6,622.339", "format test");
+		assert.strictEqual(unitType.formatValue([1.0, "electric-ohm"], "string"), "1", "format test");
+		assert.strictEqual(unitType.formatValue([1.0000, "speed-mile-per-hour"], "string"), "1", "format test");
+		assert.strictEqual(unitType.formatValue([1.009, "duration-hour"], "string"), "1.009", "format test");
+		assert.strictEqual(unitType.formatValue([1.00001, "electric-ohm"], "string"), "1.00001", "format test");
 	});
 
 	QUnit.test("unit type - formatValue with maxFractionDigits 2", function (assert) {
@@ -2161,13 +2161,13 @@ sap.ui.define([
 			maxFractionDigits: 2
 		});
 
-		assert.equal(unitType.formatValue([22, "electric-ohm"], "string"), "22 Ω", "format test");
-		assert.equal(unitType.formatValue([-6622.333, "electric-ohm"], "string"), "-6,622.333 Ω", "format test");
-		assert.equal(unitType.formatValue([-6622.339, "duration-hour"], "string"), "-6,622.339 hr", "format test");
-		assert.equal(unitType.formatValue([1.0, "electric-ohm"], "string"), "1 Ω", "format test");
-		assert.equal(unitType.formatValue([1.0000, "speed-mile-per-hour"], "string"), "1 mph", "format test");
-		assert.equal(unitType.formatValue([1.009, "duration-hour"], "string"), "1.009 hr", "format test");
-		assert.equal(unitType.formatValue([1.00001, "electric-ohm"], "string"), "1.00001 Ω", "format test");
+		assert.strictEqual(unitType.formatValue([22, "electric-ohm"], "string"), "22 Ω", "format test");
+		assert.strictEqual(unitType.formatValue([-6622.333, "electric-ohm"], "string"), "-6,622.333 Ω", "format test");
+		assert.strictEqual(unitType.formatValue([-6622.339, "duration-hour"], "string"), "-6,622.339 hr", "format test");
+		assert.strictEqual(unitType.formatValue([1.0, "electric-ohm"], "string"), "1 Ω", "format test");
+		assert.strictEqual(unitType.formatValue([1.0000, "speed-mile-per-hour"], "string"), "1 mph", "format test");
+		assert.strictEqual(unitType.formatValue([1.009, "duration-hour"], "string"), "1.009 hr", "format test");
+		assert.strictEqual(unitType.formatValue([1.00001, "electric-ohm"], "string"), "1.00001 Ω", "format test");
 	});
 
 	QUnit.test("unit formatOptions.source", function (assert) {
@@ -2175,14 +2175,14 @@ sap.ui.define([
 			source: {}
 		});
 
-		assert.equal(unitType.parseValue("3333 hr", "string"), "3333 hr", "parse test");
-		assert.equal(unitType.parseValue("3333.555 Ω", "string"), "3333.555 Ω", "parse test");
-		assert.equal(unitType.parseValue("3.555 Ω", "string"), "3.555 Ω", "parse test");
-		assert.equal(unitType.parseValue("-3.555 mph", "string"), "-3.555 mph", "parse test");
+		assert.strictEqual(unitType.parseValue("3333 hr", "string"), "3333 hr", "parse test");
+		assert.strictEqual(unitType.parseValue("3333.555 Ω", "string"), "3333.555 Ω", "parse test");
+		assert.strictEqual(unitType.parseValue("3.555 Ω", "string"), "3.555 Ω", "parse test");
+		assert.strictEqual(unitType.parseValue("-3.555 mph", "string"), "-3.555 mph", "parse test");
 
-		assert.equal(unitType.formatValue("22 hr", "string"), "22 hr", "format test");
-		assert.equal(unitType.formatValue("-6622.333 Ω", "string"), "-6,622.333 Ω", "format test");
-		assert.equal(unitType.formatValue("-6622.339 mph", "string"), "-6,622.339 mph", "format test");
+		assert.strictEqual(unitType.formatValue("22 hr", "string"), "22 hr", "format test");
+		assert.strictEqual(unitType.formatValue("-6622.333 Ω", "string"), "-6,622.333 Ω", "format test");
+		assert.strictEqual(unitType.formatValue("-6622.339 mph", "string"), "-6,622.339 mph", "format test");
 	});
 
 	QUnit.test("unit formatOptions.source and validateValue", function (assert) {
@@ -2196,10 +2196,10 @@ sap.ui.define([
 				decimals: 10
 			});
 		try {
-			assert.equal(unitType.validateValue("3.00 hr"), undefined, "validate test");
-			assert.equal(unitType.validateValue("3.01 Ω"), undefined, "validate test");
-			assert.equal(unitType.validateValue("10 mph"), undefined, "validate test");
-			assert.equal(unitType.validateValue("3.0000000001 mph"), undefined, "validate test 10 digits");
+			assert.strictEqual(unitType.validateValue("3.00 hr"), undefined, "validate test");
+			assert.strictEqual(unitType.validateValue("3.01 Ω"), undefined, "validate test");
+			assert.strictEqual(unitType.validateValue("10 mph"), undefined, "validate test");
+			assert.strictEqual(unitType.validateValue("3.0000000001 mph"), undefined, "validate test 10 digits");
 		} catch (e) {
 			assert.ok(!e, "one of the validation tests failed please check");
 		}
@@ -2244,34 +2244,34 @@ sap.ui.define([
 		var oMeterType = new MeterType();
 		var oMeterTypeInstanceSpy = this.spy(NumberFormat, "getUnitInstance");
 		//4 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 4], "string"), "123.123123 m", "format 4 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.123123, "length-meter", 4], "string"), "123.123123 m", "format 4 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse 4 digits meters expected");
 		oMeterType.validateValue([123.1231, "length-meter"]);
-		assert.equal(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 decimal option is provided (4)");
+		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 decimal option is provided (4)");
 
 		// 5 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 5], "string"), "123.123123 m", "format 5 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.123123, "length-meter", 5], "string"), "123.123123 m", "format 5 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.12312 m", "string"), [123.12312, "length-meter"], "parse 5 digits meters expected");
 		oMeterType.validateValue([123.12312, "length-meter"]);
 
-		assert.equal(oMeterType.formatValue([123.1, "length-meter", 5], "string"), "123.10000 m", "small number format 5 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.1, "length-meter", 5], "string"), "123.10000 m", "small number format 5 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.10000 m", "string"), [123.1, "length-meter"], "small number parse 5 digits meters expected");
 		oMeterType.validateValue([123.1, "length-meter"]);
 
 		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
-		assert.equal(oMeterTypeInstanceSpy.callCount, 4, "4 instances because 4 different decimal options are provided");
+		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 4, "4 instances because 4 different decimal options are provided");
 
 		// 6 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 6], "string"), "123.123123 m", "format 6 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.123123, "length-meter", 6], "string"), "123.123123 m", "format 6 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.123123 m", "string"), [123.123123, "length-meter"], "parse 6 digits meters expected");
 		oMeterType.validateValue([123.123123, "length-meter"]);
 
-		assert.equal(oMeterType.formatValue([123.1, "length-meter", 6], "string"), "123.100000 m", "small number format 6 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.1, "length-meter", 6], "string"), "123.100000 m", "small number format 6 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.100000 m", "string"), [123.1, "length-meter"], "small number parse 6 digits meters expected");
 		oMeterType.validateValue([123.1, "length-meter"]);
 
 		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
-		assert.equal(oMeterTypeInstanceSpy.callCount, 6, "6 instances because 6 different decimal options are provided");
+		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 6, "6 instances because 6 different decimal options are provided");
 
 		try {
 			TestUtils.withNormalizedMessages(function () {
@@ -2280,8 +2280,8 @@ sap.ui.define([
 			assert.ok(false, "validation should fail as too many digits");
 		} catch (e) {
 			assert.ok(e);
-			assert.equal(e.name, "ValidateException");
-			assert.equal(e.message, "Unit.Decimals 6");
+			assert.strictEqual(e.name, "ValidateException");
+			assert.strictEqual(e.message, "Unit.Decimals 6");
 		}
 	});
 
@@ -2309,39 +2309,39 @@ sap.ui.define([
 		var oMeterTypeInstanceSpy = this.spy(NumberFormat, "getUnitInstance");
 
 		// zero
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 0], "string"), "123.123123 m", "format with decimals 3 expected");
+		assert.strictEqual(oMeterType.formatValue([123.123123, "length-meter", 0], "string"), "123.123123 m", "format with decimals 3 expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
-		assert.equal(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 decimal value is used");
+		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 decimal value is used");
 
 		// empty
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", undefined], "string"), "123.123123 m", "format with decimals 3 expected");
+		assert.strictEqual(oMeterType.formatValue([123.123123, "length-meter", undefined], "string"), "123.123123 m", "format with decimals 3 expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
-		assert.equal(oMeterTypeInstanceSpy.callCount, 4, "4 instance because 4 decimal value is used");
+		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 4, "4 instance because 4 decimal value is used");
 
 		//4 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 4], "string"), "123.123123 m", "format 4 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.123123, "length-meter", 4], "string"), "123.123123 m", "format 4 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse 4 digits meters expected");
-		assert.equal(oMeterTypeInstanceSpy.callCount, 6, "6 instance because 6 decimal option is provided (4)");
+		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 6, "6 instance because 6 decimal option is provided (4)");
 
 		// 5 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 5], "string"), "123.123123 m", "format 5 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.123123, "length-meter", 5], "string"), "123.123123 m", "format 5 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.12312 m", "string"), [123.12312, "length-meter"], "parse 5 digits meters expected");
 
-		assert.equal(oMeterType.formatValue([123.1, "length-meter", 5], "string"), "123.10000 m", "small number format 5 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.1, "length-meter", 5], "string"), "123.10000 m", "small number format 5 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.10000 m", "string"), [123.1, "length-meter"], "small number parse 5 digits meters expected");
 
 		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
-		assert.equal(oMeterTypeInstanceSpy.callCount, 8, "8 instances because 8 different decimal options are provided");
+		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 8, "8 instances because 8 different decimal options are provided");
 
 		// 6 digits
-		assert.equal(oMeterType.formatValue([123.1231236, "length-meter", 6], "string"), "123.1231236 m", "format 6 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.1231236, "length-meter", 6], "string"), "123.1231236 m", "format 6 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.12312345 m", "string"), [123.12312345, "length-meter"], "parse 6 digits meters expected");
 
-		assert.equal(oMeterType.formatValue([123.1, "length-meter", 6], "string"), "123.100000 m", "small number format 6 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.1, "length-meter", 6], "string"), "123.100000 m", "small number format 6 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.100000 m", "string"), [123.1, "length-meter"], "small number parse 6 digits meters expected");
 
 		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
-		assert.equal(oMeterTypeInstanceSpy.callCount, 10, "10 instances because 10 different decimal options are provided");
+		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 10, "10 instances because 10 different decimal options are provided");
 	});
 
 	QUnit.test("Unit: Dynamic values & unit overdefiniton via Configuration (precision)", function (assert) {
@@ -2368,39 +2368,39 @@ sap.ui.define([
 		var oMeterTypeInstanceSpy = this.spy(NumberFormat, "getUnitInstance");
 
 		// empty
-		assert.equal(oMeterType.formatValue([123.163123, "length-meter", 0], "string"), "123.163123 m", "format with precision 4 expected");
+		assert.strictEqual(oMeterType.formatValue([123.163123, "length-meter", 0], "string"), "123.163123 m", "format with precision 4 expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
-		assert.equal(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 precision value is used");
+		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 precision value is used");
 
 		// empty
-		assert.equal(oMeterType.formatValue([123.163123, "length-meter", undefined], "string"), "123.163123 m", "format with precision 4 expected");
+		assert.strictEqual(oMeterType.formatValue([123.163123, "length-meter", undefined], "string"), "123.163123 m", "format with precision 4 expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
-		assert.equal(oMeterTypeInstanceSpy.callCount, 4, "4 instance because 4 precision value is used");
+		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 4, "4 instance because 4 precision value is used");
 
 		//4 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 3], "string"), "123.123123 m", "format with precision 3 expected");
+		assert.strictEqual(oMeterType.formatValue([123.123123, "length-meter", 3], "string"), "123.123123 m", "format with precision 3 expected");
 		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
-		assert.equal(oMeterTypeInstanceSpy.callCount, 6, "6 instances because 6 different precision values are used");
+		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 6, "6 instances because 6 different precision values are used");
 
 		// 5 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 2], "string"), "123.123123 m", "format 5 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.123123, "length-meter", 2], "string"), "123.123123 m", "format 5 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.12312 m", "string"), [123.12312, "length-meter"], "parse 5 digits meters expected");
 
-		assert.equal(oMeterType.formatValue([123.1, "length-meter", 2], "string"), "123.1 m", "small number format 5 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.1, "length-meter", 2], "string"), "123.1 m", "small number format 5 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.10000 m", "string"), [123.1, "length-meter"], "small number parse 5 digits meters expected");
 
 		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
-		assert.equal(oMeterTypeInstanceSpy.callCount, 8, "8 instances because 8 different precision options are provided");
+		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 8, "8 instances because 8 different precision options are provided");
 
 		// 6 digits
-		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 1], "string"), "123.123123 m", "format 6 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.123123, "length-meter", 1], "string"), "123.123123 m", "format 6 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.123123 m", "string"), [123.123123, "length-meter"], "parse 6 digits meters expected");
 
-		assert.equal(oMeterType.formatValue([123.1, "length-meter", 1], "string"), "123.1 m", "small number format 6 digits meters expected");
+		assert.strictEqual(oMeterType.formatValue([123.1, "length-meter", 1], "string"), "123.1 m", "small number format 6 digits meters expected");
 		assert.deepEqual(oMeterType.parseValue("123.100000 m", "string"), [123.1, "length-meter"], "small number parse 6 digits meters expected");
 
 		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
-		assert.equal(oMeterTypeInstanceSpy.callCount, 10, "10 instances because 10 different precision options are provided");
+		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 10, "10 instances because 10 different precision options are provided");
 	});
 
 	QUnit.test("Multiple Unit-Instances with bound custom units and other distinct format options", function (assert) {
@@ -2427,15 +2427,15 @@ sap.ui.define([
 		var oCustomUnitType3 = new CustomUnitType({showMeasure: false});
 
 		// straight forward case
-		assert.equal(oCustomUnitType.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.456789 m");
-		assert.equal(oCustomUnitTypeInstanceSpy.callCount, 1, "1st instance created");
+		assert.strictEqual(oCustomUnitType.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string"), "123.456789 m");
+		assert.strictEqual(oCustomUnitTypeInstanceSpy.callCount, 1, "1st instance created");
 
 		// additional format options
-		assert.equal(oCustomUnitType2.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.456789", "formatted value respects the 'decimals' of custom unit");
-		assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "2nd instance created, because of different format options");
+		assert.strictEqual(oCustomUnitType2.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string"), "123.456789", "formatted value respects the 'decimals' of custom unit");
+		assert.strictEqual(oCustomUnitTypeInstanceSpy.callCount, 2, "2nd instance created, because of different format options");
 
-		assert.equal(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.456789", "formatted value respects the 'decimals' of custom unit");
-		assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "No additional instance is created, 2nd instance is taken from cache");
+		assert.strictEqual(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string"), "123.456789", "formatted value respects the 'decimals' of custom unit");
+		assert.strictEqual(oCustomUnitTypeInstanceSpy.callCount, 2, "No additional instance is created, 2nd instance is taken from cache");
 	});
 
 	QUnit.test("Parse/Format emptyString values", function (assert) {
@@ -2524,15 +2524,15 @@ sap.ui.define([
 		var oCustomUnitType3 = new CustomUnitType({showMeasure: false});
 
 		// straight forward case
-		assert.equal(oCustomUnitType.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.456789 m");
-		assert.equal(oCustomUnitTypeInstanceSpy.callCount, 1, "1st instance created");
+		assert.strictEqual(oCustomUnitType.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string"), "123.456789 m");
+		assert.strictEqual(oCustomUnitTypeInstanceSpy.callCount, 1, "1st instance created");
 
 		// additional format options
-		assert.equal(oCustomUnitType2.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.456789", "formatted value respects the 'decimals' of custom unit");
-		assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "2nd instance created, because of different format options");
+		assert.strictEqual(oCustomUnitType2.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string"), "123.456789", "formatted value respects the 'decimals' of custom unit");
+		assert.strictEqual(oCustomUnitTypeInstanceSpy.callCount, 2, "2nd instance created, because of different format options");
 
-		assert.equal(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.456789", "formatted value respects the 'decimals' of custom unit");
-		assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "No additional instance is created, 2nd instance is taken from cache");
+		assert.strictEqual(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string"), "123.456789", "formatted value respects the 'decimals' of custom unit");
+		assert.strictEqual(oCustomUnitTypeInstanceSpy.callCount, 2, "No additional instance is created, 2nd instance is taken from cache");
 	});
 
 	QUnit.test("unit parseValue with strict mode - CLDR (showMeasure=true)", function (assert) {

@@ -104,8 +104,7 @@ sap.ui.define([
 		assert.strictEqual(oDateInterval.formatValue([UI5Date.getInstance(0), oDate2], "string"),
 			"Jan 1, 1970 \u2013 Dec 6, 2003");
 		checkFormatException(assert, oDateInterval, oDate1, "string",
-			"Cannot format date interval: " + oDate1.toString() + " is expected as an Array but"
-				+ " given the wrong format");
+			"Cannot format date interval: " + oDate1 + " is expected as an Array but given the wrong format");
 		assert.strictEqual(oDateInterval.formatValue([oDate1], "string"), "", "format type with invalid parameter");
 		// logged by DataType.getType
 		this.oLogMock.expects("error").withExactArgs("data type 'untype' could not be found.");

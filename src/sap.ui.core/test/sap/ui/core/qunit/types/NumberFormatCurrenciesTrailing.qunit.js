@@ -27,46 +27,46 @@ sap.ui.define([
 	QUnit.test("Currency format with sMeasure", function (assert) {
 		var oLocale = new Locale("en-US");
 		var oFormat = getCurrencyInstance({}, oLocale);
-		assert.equal(oFormat.format(123456.789, "EUR").toString(), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oFormat.format([123456.789, "EUR"]).toString(), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oFormat.format(-123456.789, "EUR").toString(), "-123,456.79" + "\xa0" + "EUR", "-123456.789 EUR");
-		assert.equal(oFormat.format([-123456.789, "EUR"]).toString(), "-123,456.79" + "\xa0" + "EUR", "-123456.789 EUR");
-		assert.equal(oFormat.format(123456.789, "JPY").toString(), "123,457" + "\xa0" + "JPY", "123456.789 JPY");
-		assert.equal(oFormat.format([123456.789, "JPY"]).toString(), "123,457" + "\xa0" + "JPY", "123456.789 JPY");
-		assert.equal(oFormat.format(-123456.789, "JPY").toString(), "-123,457" + "\xa0" + "JPY", "-123456.789 JPY");
-		assert.equal(oFormat.format([-123456.789, "JPY"]).toString(), "-123,457" + "\xa0" + "JPY", "-123456.789 JPY");
-		assert.equal(oFormat.format([-123456.789, "ABC"]).toString(), "-123,456.79" + "\xa0" + "ABC", "-123456.789 ABC");
-		assert.equal(oFormat.format(123456.789, "£").toString(), "£123,456.79", "£123456.789 EUR - Not trailing because it's not a valid currency code.");
-		assert.equal(oFormat.format([123456.789, "£"]).toString(), "£123,456.79", "£123456.789 EUR - Not trailing because it's not a valid currency code.");
-		assert.equal(oFormat.format(-123456.789, "£").toString(), "£" + "\ufeff" + "-123,456.79", "£-123456.789 EUR - Not trailing because it's not a valid currency code.");
-		assert.equal(oFormat.format([-123456.789, "£"]).toString(), "£" + "\ufeff" + "-123,456.79", "£-123456.789 EUR - Not trailing because it's not a valid currency code.");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format([123456.789, "EUR"]), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(-123456.789, "EUR"), "-123,456.79" + "\xa0" + "EUR", "-123456.789 EUR");
+		assert.strictEqual(oFormat.format([-123456.789, "EUR"]), "-123,456.79" + "\xa0" + "EUR", "-123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "JPY"), "123,457" + "\xa0" + "JPY", "123456.789 JPY");
+		assert.strictEqual(oFormat.format([123456.789, "JPY"]), "123,457" + "\xa0" + "JPY", "123456.789 JPY");
+		assert.strictEqual(oFormat.format(-123456.789, "JPY"), "-123,457" + "\xa0" + "JPY", "-123456.789 JPY");
+		assert.strictEqual(oFormat.format([-123456.789, "JPY"]), "-123,457" + "\xa0" + "JPY", "-123456.789 JPY");
+		assert.strictEqual(oFormat.format([-123456.789, "ABC"]), "-123,456.79" + "\xa0" + "ABC", "-123456.789 ABC");
+		assert.strictEqual(oFormat.format(123456.789, "£"), "£123,456.79", "£123456.789 EUR - Not trailing because it's not a valid currency code.");
+		assert.strictEqual(oFormat.format([123456.789, "£"]), "£123,456.79", "£123456.789 EUR - Not trailing because it's not a valid currency code.");
+		assert.strictEqual(oFormat.format(-123456.789, "£"), "£" + "\ufeff" + "-123,456.79", "£-123456.789 EUR - Not trailing because it's not a valid currency code.");
+		assert.strictEqual(oFormat.format([-123456.789, "£"]), "£" + "\ufeff" + "-123,456.79", "£-123456.789 EUR - Not trailing because it's not a valid currency code.");
 	});
 
 	QUnit.test("Currency format with sMeasure and style", function (assert) {
 		var oLocale = new Locale("en-US");
 		var oFormat = getCurrencyInstance({style: "long"}, oLocale);
-		assert.equal(oFormat.format(123456.789, "EUR").toString(), "123K" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oFormat.format(123456.789, "£").toString(), "£123K", "£123456.789 - Not trailing because it's not a valid currency code.");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "123K" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "£"), "£123K", "£123456.789 - Not trailing because it's not a valid currency code.");
 
 		oFormat = getCurrencyInstance({style: "short"}, oLocale);
-		assert.equal(oFormat.format(123456.789, "EUR").toString(), "123K" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oFormat.format(123456.789, "£").toString(), "£123K", "£123456.789 - Not trailing because it's not a valid currency code.");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "123K" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "£"), "£123K", "£123456.789 - Not trailing because it's not a valid currency code.");
 
 		oFormat = getCurrencyInstance({style: "standard"}, oLocale);
-		assert.equal(oFormat.format(123456.789, "EUR").toString(), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oFormat.format(123456.789, "£").toString(), "£123,456.79", "£123456.789 - Not trailing because it's not a valid currency code.");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "£"), "£123,456.79", "£123456.789 - Not trailing because it's not a valid currency code.");
 
 		oFormat = getCurrencyInstance({style: "foo"}, oLocale);
-		assert.equal(oFormat.format(123456.789, "EUR").toString(), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oFormat.format(123456.789, "£").toString(), "£123,456.79", "£123456.789 - Not trailing because it's not a valid currency code.");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "£"), "£123,456.79", "£123456.789 - Not trailing because it's not a valid currency code.");
 	});
 
 	QUnit.test("Currency format with sMeasure and currencyContext accounting", function (assert) {
 		var oLocale = new Locale("en-US");
 		var oFormat = getCurrencyInstance({currencyContext: "accounting"}, oLocale);
 		// Using negative numbers since only then the result will defer from "standard" currency context
-		assert.equal(oFormat.format(-123456.789, "EUR").toString(), "(123,456.79" + "\xa0" + "EUR)", "-123456.789 EUR");
-		assert.equal(oFormat.format(-123456.789, "£").toString(), "(£123,456.79)", "£-123456.789 - Not trailing because it's not a valid currency code.");
+		assert.strictEqual(oFormat.format(-123456.789, "EUR"), "(123,456.79" + "\xa0" + "EUR)", "-123456.789 EUR");
+		assert.strictEqual(oFormat.format(-123456.789, "£"), "(£123,456.79)", "£-123456.789 - Not trailing because it's not a valid currency code.");
 	});
 
 	QUnit.test("Currency format for locale DE", function (assert) {
@@ -75,12 +75,12 @@ sap.ui.define([
 		["long", "short"].forEach(function(sStyle) {
 			var oFormat = getCurrencyInstance({ style: sStyle }, oLocale);
 			// thousand format for locale "de" does not reformat the number (pattern: "100000-other": "0")
-			assert.equal(oFormat.format(123456.789, "EUR").toString(), "123.456,79" + "\xa0" + "EUR");
-			assert.equal(oFormat.format(-123456.789, "JPY").toString(), "-123.457" + "\xa0" + "JPY");
+			assert.strictEqual(oFormat.format(123456.789, "EUR"), "123.456,79" + "\xa0" + "EUR");
+			assert.strictEqual(oFormat.format(-123456.789, "JPY"), "-123.457" + "\xa0" + "JPY");
 
 			// million format for locale "de" does reformat the number (pattern: "1000000-other": "0 Mio'.' ¤")
-			assert.equal(oFormat.format(47123456.789, "EUR").toString(), "47" + "\xa0" + "Mio." + "\xa0" + "EUR");
-			assert.equal(oFormat.format(-47123456.789, "JPY").toString(), "-47" + "\xa0" + "Mio." + "\xa0" + "JPY");
+			assert.strictEqual(oFormat.format(47123456.789, "EUR"), "47" + "\xa0" + "Mio." + "\xa0" + "EUR");
+			assert.strictEqual(oFormat.format(-47123456.789, "JPY"), "-47" + "\xa0" + "Mio." + "\xa0" + "JPY");
 		});
 	});
 
@@ -94,53 +94,53 @@ sap.ui.define([
 				}
 			}
 		});
-		assert.equal(oFormat.format(undefined, undefined), "", "no values returns an empty string");
-		assert.equal(oFormat.format(1234.56, undefined), "1,234.56", "only number formatted");
-		assert.equal(oFormat.format(1234.5728, "FOB"), "F" + "\xa0" + "1,234.573", "formatted both");
+		assert.strictEqual(oFormat.format(undefined, undefined), "", "no values returns an empty string");
+		assert.strictEqual(oFormat.format(1234.56, undefined), "1,234.56", "only number formatted");
+		assert.strictEqual(oFormat.format(1234.5728, "FOB"), "F" + "\xa0" + "1,234.573", "formatted both");
 	});
 
 	QUnit.test("Currency format with sMeasure - unknown currency", function (assert) {
 		var oFormat = getCurrencyInstance();
 
 		// Unknown measure parameter
-		assert.equal(oFormat.format(123456.789, "£").toString(), "£123,456.79" , "£123456.789");
-		assert.equal(oFormat.format([-123456.789, "£"]).toString(), "£\ufeff-123,456.79" , "£-123456.789");
-		assert.equal(oFormat.format(123456.789, "ASDEF").toString(), "ASDEF" + "\xa0" + "123,456.79", "ASDEF 123456.789");
-		assert.equal(oFormat.format([-123456.789, "ASDEF"]).toString(), "ASDEF" + "\ufeff" + "-123,456.79", "ASDEF -123456.789");
+		assert.strictEqual(oFormat.format(123456.789, "£"), "£123,456.79" , "£123456.789");
+		assert.strictEqual(oFormat.format([-123456.789, "£"]), "£\ufeff-123,456.79" , "£-123456.789");
+		assert.strictEqual(oFormat.format(123456.789, "ASDEF"), "ASDEF" + "\xa0" + "123,456.79", "ASDEF 123456.789");
+		assert.strictEqual(oFormat.format([-123456.789, "ASDEF"]), "ASDEF" + "\ufeff" + "-123,456.79", "ASDEF -123456.789");
 
 		// Invalid or no measure parameter
-		assert.equal(oFormat.format(123456.789, undefined).toString(), "123,456.79", "123456.79 undefined");
-		assert.equal(oFormat.format(-123456.789, undefined).toString(), "-123,456.79", "-123456.79 undefined");
-		assert.equal(oFormat.format([123456.789, undefined]).toString(), "123,456.79", "123456.79 undefined");
-		assert.equal(oFormat.format([-123456.789, undefined]).toString(), "-123,456.79", "-123456.789 undefined");
-		assert.equal(oFormat.format([-123456.789, false]).toString(), "", "-123456.789 false");
-		assert.equal(oFormat.format([-123456.789, NaN]).toString(), "", "-123456.789 NaN");
-		assert.equal(oFormat.format([-123456.789, null]).toString(), "-123,456.79", "-123456.789 null");
+		assert.strictEqual(oFormat.format(123456.789, undefined), "123,456.79", "123456.79 undefined");
+		assert.strictEqual(oFormat.format(-123456.789, undefined), "-123,456.79", "-123456.79 undefined");
+		assert.strictEqual(oFormat.format([123456.789, undefined]), "123,456.79", "123456.79 undefined");
+		assert.strictEqual(oFormat.format([-123456.789, undefined]), "-123,456.79", "-123456.789 undefined");
+		assert.strictEqual(oFormat.format([-123456.789, false]), "", "-123456.789 false");
+		assert.strictEqual(oFormat.format([-123456.789, NaN]), "", "-123456.789 NaN");
+		assert.strictEqual(oFormat.format([-123456.789, null]), "-123,456.79", "-123456.789 null");
 	});
 
 	QUnit.test("Currency Format with fraction as decimals", function (assert) {
 		var oFormat = getCurrencyInstance({minFractionDigits:6, maxFractionDigits: 6});
-		assert.equal(oFormat.format(2, "EUR"), "2.000000" + "\xa0" + "EUR", "fractions should set the decimals if not specified");
+		assert.strictEqual(oFormat.format(2, "EUR"), "2.000000" + "\xa0" + "EUR", "fractions should set the decimals if not specified");
 	});
 
 	QUnit.test("Currency format with sMeasure and showMeasure as symbol", function (assert) {
 		var oFormat = getCurrencyInstance({
 			currencyCode: false // Show symbol instead of currency code
 		});
-		assert.equal(oFormat.format(123456.789, "EUR"), "€" + "123,456.79", "123456.789 EUR");
-		assert.equal(oFormat.format([123456.789, "EUR"]), "€" + "123,456.79", "123456.789 EUR");
-		assert.equal(oFormat.format(-123456.789, "EUR"), "€\ufeff" + "-123,456.79", "123456.789 EUR");
-		assert.equal(oFormat.format([-123456.789, "EUR"]), "€\ufeff" + "-123,456.79", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "€" + "123,456.79", "123456.789 EUR");
+		assert.strictEqual(oFormat.format([123456.789, "EUR"]), "€" + "123,456.79", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(-123456.789, "EUR"), "€\ufeff" + "-123,456.79", "123456.789 EUR");
+		assert.strictEqual(oFormat.format([-123456.789, "EUR"]), "€\ufeff" + "-123,456.79", "123456.789 EUR");
 	});
 
 	QUnit.test("Currency format with custom number of decimals", function (assert) {
 		var oFormat = getCurrencyInstance({
 			currencyCode: false
 		});
-		assert.equal(oFormat.format(123456.789, "EUR"), "€" + "123,456.79", "123456.789 EUR");
-		assert.equal(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,457", "123456.789 YEN");
-		assert.equal(oFormat.format(123456.789, "CZK"), "CZK\xa0" + "123,456.79", "123456.789 CZK");
-		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.79", "123456.79 BTC");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "€" + "123,456.79", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,457", "123456.789 YEN");
+		assert.strictEqual(oFormat.format(123456.789, "CZK"), "CZK\xa0" + "123,456.79", "123456.789 CZK");
+		assert.strictEqual(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.79", "123456.79 BTC");
 
 		// set custom currency digits
 		Configuration.getFormatSettings().setCustomCurrencies({
@@ -153,10 +153,10 @@ sap.ui.define([
 		oFormat = getCurrencyInstance({
 			currencyCode: false
 		});
-		assert.equal(oFormat.format(123456.789, "EUR"), "€" + "123,456.8", "123456.789 EUR");
-		assert.equal(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,456.789", "123456.789 YEN");
-		assert.equal(oFormat.format(123456.789, "CZK"), "CZK\xa0" + "123,456.789", "123456.789 CZK");
-		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.78900", "123456.789 BTC");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "€" + "123,456.8", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,456.789", "123456.789 YEN");
+		assert.strictEqual(oFormat.format(123456.789, "CZK"), "CZK\xa0" + "123,456.789", "123456.789 CZK");
+		assert.strictEqual(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.78900", "123456.789 BTC");
 
 		// add custom currencies
 		Configuration.getFormatSettings().addCustomCurrencies({
@@ -165,8 +165,8 @@ sap.ui.define([
 		oFormat = getCurrencyInstance({
 			currencyCode: false
 		});
-		assert.equal(oFormat.format(123456.789, "EUR"), "€" + "123,456.8", "123456.789 EUR");
-		assert.equal(oFormat.format(123456.789, "MON"), "MON\xa0" + "123,456.789000", "123456.789 MON");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "€" + "123,456.8", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "MON"), "MON\xa0" + "123,456.789000", "123456.789 MON");
 
 		// reset custom currencies
 		Configuration.getFormatSettings().setCustomCurrencies();
@@ -174,20 +174,20 @@ sap.ui.define([
 		oFormat = getCurrencyInstance({
 			currencyCode: false
 		});
-		assert.equal(oFormat.format(123456.789, "EUR"), "€" + "123,456.79", "123456.789 EUR");
-		assert.equal(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,457", "123456.789 YEN");
-		assert.equal(oFormat.format(123456.789, "CZK"), "CZK\xa0" + "123,456.79", "123456.789 CZK");
-		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.79", "123456.789 BTC");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "€" + "123,456.79", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,457", "123456.789 YEN");
+		assert.strictEqual(oFormat.format(123456.789, "CZK"), "CZK\xa0" + "123,456.79", "123456.789 CZK");
+		assert.strictEqual(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.79", "123456.789 BTC");
 	});
 
 	QUnit.test("Currency format with sMeasure and showMeasure set to false", function (assert) {
 		var oFormat = getCurrencyInstance({
 			showMeasure: false
 		});
-		assert.equal(oFormat.format(123456.789, "EUR"), "123,456.79", "123456.789 EUR");
-		assert.equal(oFormat.format([123456.789, "EUR"]), "123,456.79", "123456.789 EUR");
-		assert.equal(oFormat.format(-123456.789, "EUR"), "-123,456.79", "123456.789 EUR");
-		assert.equal(oFormat.format([-123456.789, "EUR"]), "-123,456.79", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "123,456.79", "123456.789 EUR");
+		assert.strictEqual(oFormat.format([123456.789, "EUR"]), "123,456.79", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(-123456.789, "EUR"), "-123,456.79", "123456.789 EUR");
+		assert.strictEqual(oFormat.format([-123456.789, "EUR"]), "-123,456.79", "123456.789 EUR");
 	});
 
 	QUnit.module("Custom currencies - Unknown currencies", {
@@ -208,7 +208,7 @@ sap.ui.define([
 		});
 		var sFormatted = oFormat.format(123456.789, "EUR"); // Empty string "";
 
-		assert.equal(sFormatted, "", "Empty string formatted.");
+		assert.strictEqual(sFormatted, "", "Empty string formatted.");
 		assert.deepEqual(oFormat.parse(""), [NaN, undefined], "[NaN, undefined] is returned.");
 
 		// emptyString: ""
@@ -223,7 +223,7 @@ sap.ui.define([
 		});
 		var sFormatted2 = oFormat2.format(123456.789, "EUR"); // Empty string "";
 
-		assert.equal(sFormatted2, "", "Empty string formatted.");
+		assert.strictEqual(sFormatted2, "", "Empty string formatted.");
 		assert.deepEqual(oFormat2.parse(""), ["", undefined], "['', undefined] is returned.");
 
 		var oFormat3 = getCurrencyInstance({
@@ -234,7 +234,7 @@ sap.ui.define([
 				}
 			}
 		});
-		assert.equal(oFormat3.format(123456.789, "Ƀ").toString(), "", "Empty string formatted");
+		assert.strictEqual(oFormat3.format(123456.789, "Ƀ"), "", "Empty string formatted");
 		assert.deepEqual(oFormat3.parse("123,456.789Ƀ"), [123456.789, "BTC"], "[123456.789, \"BTC\"] is returned.");
 	});
 
@@ -279,7 +279,7 @@ sap.ui.define([
 
 		var sFormatted = oFormat.format(123456.789, "BTC");
 
-		assert.equal(sFormatted.toString(), "123,456.79" + "\xa0" + "BTC", "Default decimals are 2");
+		assert.strictEqual(sFormatted, "123,456.79" + "\xa0" + "BTC", "Default decimals are 2");
 	});
 
 	QUnit.test("Custom Currencies defined via currency instance options", function (assert) {
@@ -289,7 +289,7 @@ sap.ui.define([
 			currencyCode: false
 		}), sFormatted1 = oFormat1.format(123456.789, "USD");
 
-		assert.equal(sFormatted1, "$123,456.79", "$123,456.79");
+		assert.strictEqual(sFormatted1, "$123,456.79", "$123,456.79");
 
 		// currencyCode: true
 		var oFormat = getCurrencyInstance({
@@ -301,7 +301,7 @@ sap.ui.define([
 			}
 		}), sFormatted = oFormat.format(123456.789, "BTC");
 
-		assert.equal(sFormatted, "123,456.789" + "\xa0" + "BTC", "BTC 123,456.789");
+		assert.strictEqual(sFormatted, "123,456.789" + "\xa0" + "BTC", "BTC 123,456.789");
 		assert.deepEqual(oFormat.parse(sFormatted), [123456.789, "BTC"], "Array [123456.789, 'BTC'] is returned.");
 
 		// currencyCode: false
@@ -315,7 +315,7 @@ sap.ui.define([
 			}
 		}), sFormatted2 = oFormat2.format(123456.789, "BTC");
 
-		assert.equal(sFormatted2, "Ƀ\xa0123,456.789", "Ƀ\xa0123,456.789");
+		assert.strictEqual(sFormatted2, "Ƀ\xa0123,456.789", "Ƀ\xa0123,456.789");
 		assert.deepEqual(oFormat.parse(sFormatted2), [123456.789, "BTC"], "Array [123456.789, 'BTC'] is returned.");
 
 		var oFormat3 = getCurrencyInstance({
@@ -327,7 +327,7 @@ sap.ui.define([
 			}
 		}, new Locale("de-x-sapufmt")), sFormatted3 = oFormat3.format(123456.789, "BTC");
 
-		assert.equal(sFormatted3, "123.456,789" + "\xa0" + "BTC", "123.456,789 BTC");
+		assert.strictEqual(sFormatted3, "123.456,789" + "\xa0" + "BTC", "123.456,789 BTC");
 		assert.deepEqual(oFormat3.parse(sFormatted3), [123456.789, "BTC"], "Array [123456.789, 'BTC'] is returned.");
 
 		var oFormat4 = getCurrencyInstance({
@@ -340,7 +340,7 @@ sap.ui.define([
 			}
 		}, new Locale("de-x-sapufmt")), sFormatted4 = oFormat4.format(123456.789, "BTC");
 
-		assert.equal(sFormatted4, "123.456,789" + "\xa0" + "Ƀ", "123.456,789 Ƀ");
+		assert.strictEqual(sFormatted4, "123.456,789" + "\xa0" + "Ƀ", "123.456,789 Ƀ");
 		assert.deepEqual(oFormat4.parse(sFormatted4), [123456.789, "BTC"], "Array [123456.789, 'BTC'] is returned.");
 
 		// currencyCode: true
@@ -353,7 +353,7 @@ sap.ui.define([
 			}
 		}), sFormatted5 = oFormat5.format(123456.789, "Ƀ");
 
-		assert.equal(sFormatted5, "123,456.789" + "\xa0" + "Ƀ", "123,456.789 Ƀ");
+		assert.strictEqual(sFormatted5, "123,456.789" + "\xa0" + "Ƀ", "123,456.789 Ƀ");
 		assert.deepEqual(oFormat5.parse(sFormatted5), [123456.789, "Ƀ"], "Array [123456.789, 'Ƀ'] is returned.");
 
 		// currencyCode: false
@@ -367,7 +367,7 @@ sap.ui.define([
 			}
 		}), sFormatted6 = oFormat6.format(123456.789, "Ƀ");
 
-		assert.equal(sFormatted6.toString(), "Ƀ" + "\xa0" + "123,456.789", "Ƀ 123,456.789");
+		assert.strictEqual(sFormatted6, "Ƀ" + "\xa0" + "123,456.789", "Ƀ 123,456.789");
 		assert.deepEqual(oFormat6.parse(sFormatted6), [123456.789, "Ƀ"], "Array [123456.789, 'Ƀ'] is returned.");
 	});
 
@@ -383,7 +383,7 @@ sap.ui.define([
 			decimals: 1
 		});
 
-		assert.equal(oFormatEN.format(1234.5728, "FOB"), "F€1,234.572800", "formatted with 6 decimals - en");
+		assert.strictEqual(oFormatEN.format(1234.5728, "FOB"), "F€1,234.572800", "formatted with 6 decimals - en");
 
 		var oFormatDE = getCurrencyInstance({
 			currencyCode: false,
@@ -396,7 +396,7 @@ sap.ui.define([
 			decimals: 1
 		}, new Locale("de"));
 
-		assert.equal(oFormatDE.format(1234.5728, "HOD"), "1.234,5728" + "\xa0" + "H$", "formatted with 4 decimals - de");
+		assert.strictEqual(oFormatDE.format(1234.5728, "HOD"), "1.234,5728" + "\xa0" + "H$", "formatted with 4 decimals - de");
 	});
 
 	QUnit.test("'decimals' only set on format-options", function (assert) {
@@ -411,7 +411,7 @@ sap.ui.define([
 			decimals: 3
 		});
 
-		assert.equal(oFormatEN.format(1234.5728, "FOB"), "F€1,234.573", "formatted with default 2 decimals - en");
+		assert.strictEqual(oFormatEN.format(1234.5728, "FOB"), "F€1,234.573", "formatted with default 2 decimals - en");
 
 		// known currency
 		var oFormatDE = getCurrencyInstance({
@@ -419,7 +419,7 @@ sap.ui.define([
 			decimals: 1
 		}, new Locale("de"));
 
-		assert.equal(oFormatDE.format(1234.5728, "HUF"), "1.234,6" + "\xa0" + "HUF", "formatted with default 2 decimals - de");
+		assert.strictEqual(oFormatDE.format(1234.5728, "HUF"), "1.234,6" + "\xa0" + "HUF", "formatted with default 2 decimals - de");
 	});
 
 	QUnit.test("no 'decimals' set at all", function (assert) {
@@ -432,13 +432,13 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(oFormatEN.format(1234.5728, "FOB"), "F€1,234.57", "formatted with default 2 decimals - en");
+		assert.strictEqual(oFormatEN.format(1234.5728, "FOB"), "F€1,234.57", "formatted with default 2 decimals - en");
 
 		var oFormatDE = getCurrencyInstance({
 			currencyCode: false
 		}, new Locale("de"));
 
-		assert.equal(oFormatDE.format(1234.5728, "HUF"), "1.235" + "\xa0" + "HUF", "formatted with default 2 decimals - de");
+		assert.strictEqual(oFormatDE.format(1234.5728, "HUF"), "1.235" + "\xa0" + "HUF", "formatted with default 2 decimals - de");
 	});
 
 	QUnit.module("Custom currencies - currencyCode: false", {
@@ -459,7 +459,7 @@ sap.ui.define([
 			}
 		}), sFormatted = oFormat.format(123456.789, "Bitcoin");
 
-		assert.equal(sFormatted, "Ƀ" + "\xa0" + "123,456.789", "'Ƀ\xa0123,456.789' is formatted");
+		assert.strictEqual(sFormatted, "Ƀ" + "\xa0" + "123,456.789", "'Ƀ\xa0123,456.789' is formatted");
 		assert.deepEqual(oFormat.parse(sFormatted), [123456.789, 'Bitcoin'], "[123456.789, 'Bitcoin']");
 	});
 
@@ -489,15 +489,15 @@ sap.ui.define([
 		});
 
 		// symbol lookup in global configuration
-		assert.equal(oFormat.format(123456.789, "Bitcoin"), "Ƀ" + "\xa0" + "123,456.789", "Ƀ\xa0123,456.789 - symbol lookup in global configuration.");
+		assert.strictEqual(oFormat.format(123456.789, "Bitcoin"), "Ƀ" + "\xa0" + "123,456.789", "Ƀ\xa0123,456.789 - symbol lookup in global configuration.");
 		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "Bitcoin")), [123456.789, "Bitcoin"], "[123456.789, 'Bitcoin']");
 
 		// symbol lookup in CLDR
-		assert.equal(oFormat.format(123456.789, "EURO"), "€123,456.79", "€123,456.79 - symbol lookup in CLDR");
+		assert.strictEqual(oFormat.format(123456.789, "EURO"), "€123,456.79", "€123,456.79 - symbol lookup in CLDR");
 		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "EURO")), [123456.79, "EURO"], "[123456.79, 'EURO']");
 
 		// currency symbol is n/a in the options
-		assert.equal(oFormat.format(123456.789, "DOLLAR"), "DOLLAR" + "\xa0" + "123,456.7890", "DOLLAR 123,456.7890.");
+		assert.strictEqual(oFormat.format(123456.789, "DOLLAR"), "DOLLAR" + "\xa0" + "123,456.7890", "DOLLAR 123,456.7890.");
 		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "DOLLAR")), [123456.789, "DOLLAR"], "[123456.789, 'DOLLAR']");
 	});
 
@@ -518,14 +518,14 @@ sap.ui.define([
 			currencyCode: false
 		});
 
-		assert.equal(oFormat.format(123456.789, "BTC"), "Ƀ" + "\xa0" + "123,456.79", "Ƀ\xa0123,456.79 - symbol lookup in global configuration.");
+		assert.strictEqual(oFormat.format(123456.789, "BTC"), "Ƀ" + "\xa0" + "123,456.79", "Ƀ\xa0123,456.79 - symbol lookup in global configuration.");
 		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "BTC")), [123456.79, "BTC"], "[123456.79, 'BTC']");
 
-		assert.equal(oFormat.format(123456.789, "Bitcoin"), "Bitcoin" + "\xa0" + "123,456.789", "Bitcoin\xa0123,456.789 - No symbol found");
+		assert.strictEqual(oFormat.format(123456.789, "Bitcoin"), "Bitcoin" + "\xa0" + "123,456.789", "Bitcoin\xa0123,456.789 - No symbol found");
 		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "Bitcoin")), [123456.789, "Bitcoin"], "[123456.789, 'Bitcoin']");
 
 		// currency symbol is n/a in the options
-		assert.equal(oFormat.format(123456.789, "DOLLAR"), "DOLLAR" + "\xa0" + "123,456.7890", "DOLLAR 123,456.7890.");
+		assert.strictEqual(oFormat.format(123456.789, "DOLLAR"), "DOLLAR" + "\xa0" + "123,456.7890", "DOLLAR 123,456.7890.");
 		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "DOLLAR")), [123456.789, "DOLLAR"], "[123456.789, 'DOLLAR']");
 	});
 
@@ -546,15 +546,15 @@ sap.ui.define([
 			currencyCode: true
 		});
 
-		assert.equal(oFormat.format(123456.789, "BTC").toString(), "123,456.79" + "\xa0" + "BTC", "Ƀ\xa0123,456.79 - symbol lookup in global configuration.");
-		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "BTC").toString()), [123456.79, "BTC"], "[123456.79, 'BTC']");
+		assert.strictEqual(oFormat.format(123456.789, "BTC"), "123,456.79" + "\xa0" + "BTC", "Ƀ\xa0123,456.79 - symbol lookup in global configuration.");
+		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "BTC")), [123456.79, "BTC"], "[123456.79, 'BTC']");
 
-		assert.equal(oFormat.format(123456.789, "Bitcoin").toString(), "123,456.789" + "\xa0" + "Bitcoin", "Bitcoin\xa0123,456.789 - No symbol found");
-		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "Bitcoin").toString()), [123456.789, "Bitcoin"], "[123456.789, 'Bitcoin']");
+		assert.strictEqual(oFormat.format(123456.789, "Bitcoin"), "123,456.789" + "\xa0" + "Bitcoin", "Bitcoin\xa0123,456.789 - No symbol found");
+		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "Bitcoin")), [123456.789, "Bitcoin"], "[123456.789, 'Bitcoin']");
 
 		// currency symbol is n/a in the options
-		assert.equal(oFormat.format(123456.789, "DOLLAR").toString(), "123,456.7890" + "\xa0" + "DOLLAR", "DOLLAR 123,456.7890.");
-		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "DOLLAR").toString()), [123456.789, "DOLLAR"], "[123456.789, 'DOLLAR']");
+		assert.strictEqual(oFormat.format(123456.789, "DOLLAR"), "123,456.7890" + "\xa0" + "DOLLAR", "DOLLAR 123,456.7890.");
+		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "DOLLAR")), [123456.789, "DOLLAR"], "[123456.789, 'DOLLAR']");
 	});
 
 	QUnit.module("Custom currencies - exclusive behaviour", {
@@ -590,13 +590,13 @@ sap.ui.define([
 			customCurrencies: oCustomCurrencyOptions
 		});
 
-		assert.equal(oFormat1.format(12345.6789, "DOLLAR"), "12,345.679" + "\xa0" + "DOLLAR", "DOLLAR 12,345.679");
+		assert.strictEqual(oFormat1.format(12345.6789, "DOLLAR"), "12,345.679" + "\xa0" + "DOLLAR", "DOLLAR 12,345.679");
 		assert.deepEqual(oFormat1.parse(oFormat1.format(12345.6789, "DOLLAR")), [12345.679, "DOLLAR"], "[12345.679, 'DOLLAR']");
 
 		// Parse with symbol
 		assert.deepEqual(oFormat1.parse("$12,345.679"), [12345.679, "DOLLAR"], "[12345.679, 'DOLLAR']");
 
-		assert.equal(oFormat2.format(12345.6789, "DOLLAR"), "$12,345.679", "$12,345.679");
+		assert.strictEqual(oFormat2.format(12345.6789, "DOLLAR"), "$12,345.679", "$12,345.679");
 		assert.deepEqual(oFormat2.parse(oFormat2.format(12345.6789, "DOLLAR")), [12345.679, "DOLLAR"], "[12345.679, 'DOLLAR']");
 	});
 
@@ -634,25 +634,25 @@ sap.ui.define([
 		});
 
 		// these assertions also check if the longest match is found
-		assert.equal(oFormatEN.format(1234.5678, "4DOL"), "1,234.57" + "\xa0" + "4DOL", "format in English locale - number at the start");
+		assert.strictEqual(oFormatEN.format(1234.5678, "4DOL"), "1,234.57" + "\xa0" + "4DOL", "format in English locale - number at the start");
 		assert.deepEqual(oFormatEN.parse("4DOL 1,234.57"), [1234.57, "4DOL"], "parse in English locale - number at the start");
 		assert.deepEqual(oFormatEN.parse("4DOL1,234.57"), [1234.57, "4DOL"], "parse in English locale - number at the start - no delimiter");
 
 		// smaller match should win
-		assert.equal(oFormatEN.format(1234.5678, "DO"), "1,234.5678" + "\xa0" + "DO", "format in English locale - number at the start");
+		assert.strictEqual(oFormatEN.format(1234.5678, "DO"), "1,234.5678" + "\xa0" + "DO", "format in English locale - number at the start");
 		assert.deepEqual(oFormatEN.parse("DO 1,234.5678"), [1234.5678, "DO"], "parse in English locale - number at the start");
 		assert.deepEqual(oFormatEN.parse("DO1,234.56789"), [1234.56789, "DO"], "parse in English locale - number at the start - no delimiter");
 
-		assert.equal(oFormatEN.format(1234.5678, "D4OL"), "1,234.6" + "\xa0" + "D4OL", "format in English locale - number in the middle");
+		assert.strictEqual(oFormatEN.format(1234.5678, "D4OL"), "1,234.6" + "\xa0" + "D4OL", "format in English locale - number in the middle");
 		assert.deepEqual(oFormatEN.parse("D4OL 1,234.6"), [1234.6, "D4OL"], "parse in English locale - number in the middle");
 		assert.deepEqual(oFormatEN.parse("D4OL1,234.6"), [1234.6, "D4OL"], "parse in English locale - number in the middle - no delimiter");
 
-		assert.equal(oFormatEN.format(1234.5678, "DOL4"), "1,234.568" + "\xa0" + "DOL4", "format in English locale - number at the end");
+		assert.strictEqual(oFormatEN.format(1234.5678, "DOL4"), "1,234.568" + "\xa0" + "DOL4", "format in English locale - number at the end");
 		assert.deepEqual(oFormatEN.parse("DOL4 1,234.568"), [1234.568, "DOL4"], "parse in English locale - number at the end");
 		assert.deepEqual(oFormatEN.parse("DOL41,234.568"), null, "parse in English locale - number at the end - no delimiter");
 
 		// negative values
-		assert.equal(oFormatEN.format(-1234.56789, "DO"), "-1,234.5679" + "\xa0" + "DO", "format in English locale - short match");
+		assert.strictEqual(oFormatEN.format(-1234.56789, "DO"), "-1,234.5679" + "\xa0" + "DO", "format in English locale - short match");
 		assert.deepEqual(oFormatEN.parse("DO -1,234.568"), [-1234.568, "DO"], "parse in English locale - short match");
 		assert.deepEqual(oFormatEN.parse("DO-1,234.568"), [-1234.568, "DO"], "parse in English locale - short match - no delimiter");
 
@@ -686,25 +686,25 @@ sap.ui.define([
 		}, new Locale("de"));
 
 		// these assertation also check if the longest match is found
-		assert.equal(oFormatDE.format(1234.5678, "4DOL"), "1.234,57" + "\xa0" + "4DOL", "format in German locale - number at the start");
+		assert.strictEqual(oFormatDE.format(1234.5678, "4DOL"), "1.234,57" + "\xa0" + "4DOL", "format in German locale - number at the start");
 		assert.deepEqual(oFormatDE.parse("1.234,57 4DOL"), [1234.57, "4DOL"], "parse in German locale - number at the start");
 		assert.deepEqual(oFormatDE.parse("1.234,574DOL"), null, "parse in German locale - number at the start - no delimiter");
 
 		// smaller match should win
-		assert.equal(oFormatDE.format(1234.5678, "DO"), "1.234,5678" + "\xa0" + "DO", "format in German locale - short match");
+		assert.strictEqual(oFormatDE.format(1234.5678, "DO"), "1.234,5678" + "\xa0" + "DO", "format in German locale - short match");
 		assert.deepEqual(oFormatDE.parse("1.234,5678 DO"), [1234.5678, "DO"], "parse in German locale - short match");
 		assert.deepEqual(oFormatDE.parse("1.234,56789DO"), [1234.56789, "DO"], "parse in German locale - short match - no delimiter");
 
-		assert.equal(oFormatDE.format(1234.5678, "D4OL"), "1.234,6" + "\xa0" + "D4OL", "format in German locale - number in the middle");
+		assert.strictEqual(oFormatDE.format(1234.5678, "D4OL"), "1.234,6" + "\xa0" + "D4OL", "format in German locale - number in the middle");
 		assert.deepEqual(oFormatDE.parse("1.234,6 D4OL"), [1234.6, "D4OL"], "parse in German locale - number in the middle");
 		assert.deepEqual(oFormatDE.parse("1.234,6D4OL"), [1234.6, "D4OL"], "parse in German locale - number in the middle - no delimiter");
 
-		assert.equal(oFormatDE.format(1234.5678, "DOL4"), "1.234,568" + "\xa0" + "DOL4", "format in German locale - number at the end");
+		assert.strictEqual(oFormatDE.format(1234.5678, "DOL4"), "1.234,568" + "\xa0" + "DOL4", "format in German locale - number at the end");
 		assert.deepEqual(oFormatDE.parse("1.234,568 DOL4"), [1234.568, "DOL4"], "parse in German locale - number at the end");
 		assert.deepEqual(oFormatDE.parse("1.234,568DOL4"), [1234.568, "DOL4"], "parse in German locale - number at the end - no delimiter");
 
 		// negative values
-		assert.equal(oFormatDE.format(-1234.56789, "DO"), "-1.234,5679" + "\xa0" + "DO", "format in German locale - short match");
+		assert.strictEqual(oFormatDE.format(-1234.56789, "DO"), "-1.234,5679" + "\xa0" + "DO", "format in German locale - short match");
 		assert.deepEqual(oFormatDE.parse("-1.234,568 DO"), [-1234.568, "DO"], "parse in German locale - short match");
 		assert.deepEqual(oFormatDE.parse("-1.234,568DO"), [-1234.568, "DO"], "parse in German locale - short match - no delimiter");
 
@@ -740,27 +740,27 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(oFormatEN.format(1234.5678, "4DOL"), "!!\xa01,234.57", "format in English locale - number at the start");
+		assert.strictEqual(oFormatEN.format(1234.5678, "4DOL"), "!!\xa01,234.57", "format in English locale - number at the start");
 		assert.deepEqual(oFormatEN.parse("!! 1,234.57"), [1234.57, "4DOL"], "parse in English locale - number at the start");
 		assert.deepEqual(oFormatEN.parse("!!1,234.57"), [1234.57, "4DOL"], "parse in English locale - number at the start - no delimiter");
 
-		assert.equal(oFormatEN.format(1234.5678, "D4OL"), "§\xa01,234.6", "format in English locale - number in the middle");
+		assert.strictEqual(oFormatEN.format(1234.5678, "D4OL"), "§\xa01,234.6", "format in English locale - number in the middle");
 		assert.deepEqual(oFormatEN.parse("§ 1,234.6"), [1234.6, "D4OL"], "parse in English locale - number in the middle");
 		assert.deepEqual(oFormatEN.parse("§1,234.6"), [1234.6, "D4OL"], "parse in English locale - number in the middle - no delimiter");
 
-		assert.equal(oFormatEN.format(1234.5678, "DOL4"), "$1,234.568", "format in English locale - number at the end");
+		assert.strictEqual(oFormatEN.format(1234.5678, "DOL4"), "$1,234.568", "format in English locale - number at the end");
 		assert.deepEqual(oFormatEN.parse("$ 1,234.568"), [1234.568, "DOL4"], "parse in English locale - number at the end");
 		assert.deepEqual(oFormatEN.parse("$1,234.568"), [1234.568, "DOL4"], "parse in English locale - number at the end - no delimiter");
 
-		assert.equal(oFormatEN.format(1234.56789, "DO"), "My#\xa01,234.5679", "format in English locale - short match");
+		assert.strictEqual(oFormatEN.format(1234.56789, "DO"), "My#\xa01,234.5679", "format in English locale - short match");
 		assert.deepEqual(oFormatEN.parse("My# 1,234.568"), [1234.568, "DO"], "parse in English locale - short match");
 		assert.deepEqual(oFormatEN.parse("My#1,234.568"), [1234.568, "DO"], "parse in English locale - short match - no delimiter");
 
-		assert.equal(oFormatEN.format(-1234.5678, "DOL4"), "$" + "\ufeff" + "-1,234.568", "format in English locale - number at the end");
+		assert.strictEqual(oFormatEN.format(-1234.5678, "DOL4"), "$" + "\ufeff" + "-1,234.568", "format in English locale - number at the end");
 		assert.deepEqual(oFormatEN.parse("$ -1,234.568"), [-1234.568, "DOL4"], "parse in English locale - number at the end");
 		assert.deepEqual(oFormatEN.parse("$-1,234.568"), [-1234.568, "DOL4"], "parse in English locale - number at the end - no delimiter");
 
-		assert.equal(oFormatEN.format(-1234.56789, "DO"), "My#" + "\ufeff" + "-1,234.5679", "format in English locale - short match");
+		assert.strictEqual(oFormatEN.format(-1234.56789, "DO"), "My#" + "\ufeff" + "-1,234.5679", "format in English locale - short match");
 		assert.deepEqual(oFormatEN.parse("My# -1,234.568"), [-1234.568, "DO"], "parse in English locale - short match");
 		assert.deepEqual(oFormatEN.parse("My#-1,234.568"), [-1234.568, "DO"], "parse in English locale - short match - no delimiter");
 
@@ -790,27 +790,27 @@ sap.ui.define([
 			}
 		}, new Locale("de"));
 
-		assert.equal(oFormatDE.format(1234.5678, "4DOL"), "1.234,57" + "\xa0" + "!!", "format in German locale - number at the start");
+		assert.strictEqual(oFormatDE.format(1234.5678, "4DOL"), "1.234,57" + "\xa0" + "!!", "format in German locale - number at the start");
 		assert.deepEqual(oFormatDE.parse("1.234,57 !!"), [1234.57, "4DOL"], "parse in German locale - number at the start");
 		assert.deepEqual(oFormatDE.parse("1.234,57!!"), [1234.57, "4DOL"], "parse in German locale - number at the start - no delimiter");
 
-		assert.equal(oFormatDE.format(1234.5678, "D4OL"), "1.234,6" + "\xa0" + "§", "format in German locale - number in the middle");
+		assert.strictEqual(oFormatDE.format(1234.5678, "D4OL"), "1.234,6" + "\xa0" + "§", "format in German locale - number in the middle");
 		assert.deepEqual(oFormatDE.parse("1.234,6 §"), [1234.6, "D4OL"], "parse in German locale - number in the middle");
 		assert.deepEqual(oFormatDE.parse("1.234,6§"), [1234.6, "D4OL"], "parse in German locale - number in the middle - no delimiter");
 
-		assert.equal(oFormatDE.format(1234.5678, "DOL4"), "1.234,568" + "\xa0" + "$", "format in German locale - number at the end");
+		assert.strictEqual(oFormatDE.format(1234.5678, "DOL4"), "1.234,568" + "\xa0" + "$", "format in German locale - number at the end");
 		assert.deepEqual(oFormatDE.parse("1.234,568 $"), [1234.568, "DOL4"], "parse in German locale - number at the end");
 		assert.deepEqual(oFormatDE.parse("1.234,568$"), [1234.568, "DOL4"], "parse in German locale - number at the end - no delimiter");
 
-		assert.equal(oFormatDE.format(1234.5678, "DO"), "1.234,5678" + "\xa0" + "My#", "format in German locale - short match");
+		assert.strictEqual(oFormatDE.format(1234.5678, "DO"), "1.234,5678" + "\xa0" + "My#", "format in German locale - short match");
 		assert.deepEqual(oFormatDE.parse("1.234,568 My#"), [1234.568, "DO"], "parse in German locale - short match");
 		assert.deepEqual(oFormatDE.parse("1.234,568My#"), [1234.568, "DO"], "parse in German locale - short match - no delimiter");
 
-		assert.equal(oFormatDE.format(-1234.5678, "DOL4"), "-1.234,568" + "\xa0" + "$", "format in German locale - number at the end");
+		assert.strictEqual(oFormatDE.format(-1234.5678, "DOL4"), "-1.234,568" + "\xa0" + "$", "format in German locale - number at the end");
 		assert.deepEqual(oFormatDE.parse("-1.234,568 $"), [-1234.568, "DOL4"], "parse in German locale - number at the end");
 		assert.deepEqual(oFormatDE.parse("-1.234,568$"), [-1234.568, "DOL4"], "parse in German locale - number at the end - no delimiter");
 
-		assert.equal(oFormatDE.format(-1234.5678, "DO"), "-1.234,5678" + "\xa0" + "My#", "format in German locale - short match");
+		assert.strictEqual(oFormatDE.format(-1234.5678, "DO"), "-1.234,5678" + "\xa0" + "My#", "format in German locale - short match");
 		assert.deepEqual(oFormatDE.parse("-1.234,568 My#"), [-1234.568, "DO"], "parse in German locale - short match");
 		assert.deepEqual(oFormatDE.parse("-1.234,568My#"), [-1234.568, "DO"], "parse in German locale - short match - no delimiter");
 	});
@@ -843,18 +843,18 @@ sap.ui.define([
 		});
 
 		// these assertation also check if the longest match is found
-		assert.equal(oFormatEN.format(1234.5678, "4DOL"), "1,234.57\xa04DOL", "format in English locale - number at the start");
-		assert.equal(oFormatEN.format(-1234.5678, "4DOL"), "(1,234.57\xa04DOL)", "format in English locale - number at the start");
+		assert.strictEqual(oFormatEN.format(1234.5678, "4DOL"), "1,234.57\xa04DOL", "format in English locale - number at the start");
+		assert.strictEqual(oFormatEN.format(-1234.5678, "4DOL"), "(1,234.57\xa04DOL)", "format in English locale - number at the start");
 
 		// smaller match should win
-		assert.equal(oFormatEN.format(1234.5678, "DO"), "1,234.5678\xa0DO", "format in English locale - short match");
-		assert.equal(oFormatEN.format(-1234.5678, "DO"), "(1,234.5678\xa0DO)", "format in English locale - short match");
+		assert.strictEqual(oFormatEN.format(1234.5678, "DO"), "1,234.5678\xa0DO", "format in English locale - short match");
+		assert.strictEqual(oFormatEN.format(-1234.5678, "DO"), "(1,234.5678\xa0DO)", "format in English locale - short match");
 
-		assert.equal(oFormatEN.format(1234.5678, "D4OL"), "1,234.6\xa0D4OL", "format in English locale - number in the middle");
-		assert.equal(oFormatEN.format(-1234.5678, "D4OL"), "(1,234.6\xa0D4OL)", "format in English locale - number in the middle");
+		assert.strictEqual(oFormatEN.format(1234.5678, "D4OL"), "1,234.6\xa0D4OL", "format in English locale - number in the middle");
+		assert.strictEqual(oFormatEN.format(-1234.5678, "D4OL"), "(1,234.6\xa0D4OL)", "format in English locale - number in the middle");
 
-		assert.equal(oFormatEN.format(1234.5678, "DOL4"), "1,234.568\xa0DOL4", "format in English locale - number at the end");
-		assert.equal(oFormatEN.format(-1234.5678, "DOL4"), "(1,234.568\xa0DOL4)", "format in English locale - number at the end");
+		assert.strictEqual(oFormatEN.format(1234.5678, "DOL4"), "1,234.568\xa0DOL4", "format in English locale - number at the end");
+		assert.strictEqual(oFormatEN.format(-1234.5678, "DOL4"), "(1,234.568\xa0DOL4)", "format in English locale - number at the end");
 
 		// German
 		var oFormatDE = getCurrencyInstance({
@@ -883,18 +883,18 @@ sap.ui.define([
 		}, new Locale("de"));
 
 		// these assertation also check if the longest match is found
-		assert.equal(oFormatDE.format(1234.5678, "4DOL"), "1.234,57\xa04DOL", "format in German locale - number at the start");
-		assert.equal(oFormatDE.format(-1234.5678, "4DOL"), "-1.234,57\xa04DOL", "format in German locale - number at the start");
+		assert.strictEqual(oFormatDE.format(1234.5678, "4DOL"), "1.234,57\xa04DOL", "format in German locale - number at the start");
+		assert.strictEqual(oFormatDE.format(-1234.5678, "4DOL"), "-1.234,57\xa04DOL", "format in German locale - number at the start");
 
 		// smaller match should win
-		assert.equal(oFormatDE.format(1234.5678, "DO"), "1.234,5678\xa0DO", "format in German locale - short match");
-		assert.equal(oFormatDE.format(-1234.5678, "DO"), "-1.234,5678\xa0DO", "format in German locale - short match");
+		assert.strictEqual(oFormatDE.format(1234.5678, "DO"), "1.234,5678\xa0DO", "format in German locale - short match");
+		assert.strictEqual(oFormatDE.format(-1234.5678, "DO"), "-1.234,5678\xa0DO", "format in German locale - short match");
 
-		assert.equal(oFormatDE.format(1234.5678, "D4OL"), "1.234,6\xa0D4OL", "format in German locale - number in the middle");
-		assert.equal(oFormatDE.format(-1234.5678, "D4OL"), "-1.234,6\xa0D4OL", "format in German locale - number in the middle");
+		assert.strictEqual(oFormatDE.format(1234.5678, "D4OL"), "1.234,6\xa0D4OL", "format in German locale - number in the middle");
+		assert.strictEqual(oFormatDE.format(-1234.5678, "D4OL"), "-1.234,6\xa0D4OL", "format in German locale - number in the middle");
 
-		assert.equal(oFormatDE.format(1234.5678, "DOL4"), "1.234,568\xa0DOL4", "format in German locale - number at the end");
-		assert.equal(oFormatDE.format(-1234.5678, "DOL4"), "-1.234,568\xa0DOL4", "format in German locale - number at the end");
+		assert.strictEqual(oFormatDE.format(1234.5678, "DOL4"), "1.234,568\xa0DOL4", "format in German locale - number at the end");
+		assert.strictEqual(oFormatDE.format(-1234.5678, "DOL4"), "-1.234,568\xa0DOL4", "format in German locale - number at the end");
 	});
 
 	QUnit.test("Currencies with numbers in their names - Log", function(assert) {
@@ -921,8 +921,8 @@ sap.ui.define([
 
 		assert.ok(oLogSpy.calledOnceWith("Symbol '$' is defined multiple times in custom currencies.", undefined, "NumberFormat"),
 			"Correct error log is displayed.");
-		assert.equal(oFormatEN.format(1234.5678, "DOL"), "$1,234.6", "format in English locale - number at the start");
-		assert.equal(oFormatEN.format(1234.5678, "DOL4"), "$1,234.568", "format in English locale - number at the start");
+		assert.strictEqual(oFormatEN.format(1234.5678, "DOL"), "$1,234.6", "format in English locale - number at the start");
+		assert.strictEqual(oFormatEN.format(1234.5678, "DOL4"), "$1,234.568", "format in English locale - number at the start");
 
 		// restore spy
 		oLogSpy.resetHistory();
@@ -953,8 +953,8 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(oFormat.format(12345.6789, "MON"), "12,345.68" + "\xa0" + "MON", "MON 12,345.68");
-		assert.equal(oFormat.format(12345.6789, "MONERO"), "12,345.67890" + "\xa0" + "MONERO", "MONERO 12,345.6789");
+		assert.strictEqual(oFormat.format(12345.6789, "MON"), "12,345.68" + "\xa0" + "MON", "MON 12,345.68");
+		assert.strictEqual(oFormat.format(12345.6789, "MONERO"), "12,345.67890" + "\xa0" + "MONERO", "MONERO 12,345.6789");
 		assert.deepEqual(oFormat.parse("µ12,345.679"), [12345.679, undefined], "[12345.679, undefined] returned.");
 
 		var oFormat2 = getCurrencyInstance({
@@ -971,8 +971,8 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(oFormat2.format(12345.6789, "EUR5"), "€12,345.67890", "€12,345.68");
-		assert.equal(oFormat2.format(12345.6789, "EU"), "€12,345.68", "€12,345.6789");
+		assert.strictEqual(oFormat2.format(12345.6789, "EUR5"), "€12,345.67890", "€12,345.68");
+		assert.strictEqual(oFormat2.format(12345.6789, "EU"), "€12,345.68", "€12,345.6789");
 		assert.deepEqual(oFormat2.parse("€12,345.679"), [12345.679, undefined], "[12345.679, undefined] returned.");
 	});
 
@@ -1002,7 +1002,7 @@ sap.ui.define([
 			}
 		});
 
-		assert.deepEqual(oFormat.format(123, "180"), "123.00\xa0180", "formatting [123, '180']");
+		assert.strictEqual(oFormat.format(123, "180"), "123.00\xa0180", "formatting [123, '180']");
 
 		assert.deepEqual(oFormat.parse("123.00 180"), [123, "180"], "parsing 123.00 180");
 		assert.deepEqual(oFormat.parse("123.00180"), [123, "180"], "parsing 123.00 180");
@@ -1029,9 +1029,9 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(oFormat.format(123, "Bitcoin"), "Bitcoin\xa0123.000");
+		assert.strictEqual(oFormat.format(123, "Bitcoin"), "Bitcoin\xa0123.000");
 
-		assert.equal(oSpy.callCount, 0, "Error log for duplicated currencies was was not called");
+		assert.strictEqual(oSpy.callCount, 0, "Error log for duplicated currencies was was not called");
 
 		oSpy.restore();
 	});
@@ -1046,9 +1046,9 @@ sap.ui.define([
 				}
 			}
 		});
-		assert.equal(oFormatEN.format(undefined, undefined), "", "no values returns an empty string - en");
-		assert.equal(oFormatEN.format(1234.56, undefined), "1,234.56", "only number formatted - en");
-		assert.equal(oFormatEN.format(1234.5728, "FOB"), "F€1,235", "formatted both - en");
+		assert.strictEqual(oFormatEN.format(undefined, undefined), "", "no values returns an empty string - en");
+		assert.strictEqual(oFormatEN.format(1234.56, undefined), "1,234.56", "only number formatted - en");
+		assert.strictEqual(oFormatEN.format(1234.5728, "FOB"), "F€1,235", "formatted both - en");
 
 		var oFormatDE = getCurrencyInstance({
 			currencyCode: false,
@@ -1059,9 +1059,9 @@ sap.ui.define([
 				}
 			}
 		}, new Locale("de"));
-		assert.equal(oFormatDE.format(undefined, undefined), "", "no values returns an empty string - de");
-		assert.equal(oFormatDE.format(1234.56, undefined), "1.234,56", "only number formatted - de");
-		assert.equal(oFormatDE.format(1234.5728, "HOD"), "1.235" + "\xa0" + "H$", "formatted both - de");
+		assert.strictEqual(oFormatDE.format(undefined, undefined), "", "no values returns an empty string - de");
+		assert.strictEqual(oFormatDE.format(1234.56, undefined), "1.234,56", "only number formatted - de");
+		assert.strictEqual(oFormatDE.format(1234.5728, "HOD"), "1.235" + "\xa0" + "H$", "formatted both - de");
 	});
 
 	QUnit.module("Custom currencies - parseAsString: true", {
@@ -1185,10 +1185,10 @@ sap.ui.define([
 			showMeasure: true,
 			currencyContext: "accounting"
 		});
-		assert.equal(oFormat.format(123456.789, "EUR"), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oFormat.format([123456.789, "EUR"]), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oFormat.format(-123456.789, "EUR"), "(123,456.79" + "\xa0" + "EUR)", "123456.789 EUR");
-		assert.equal(oFormat.format([-123456.789, "EUR"]), "(123,456.79" + "\xa0" + "EUR)", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format([123456.789, "EUR"]), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(-123456.789, "EUR"), "(123,456.79" + "\xa0" + "EUR)", "123456.789 EUR");
+		assert.strictEqual(oFormat.format([-123456.789, "EUR"]), "(123,456.79" + "\xa0" + "EUR)", "123456.789 EUR");
 	});
 
 	QUnit.test("Currency format with showMeasure false and currencyContext accounting", function (assert) {
@@ -1196,10 +1196,10 @@ sap.ui.define([
 			showMeasure: false,
 			currencyContext: "accounting"
 		});
-		assert.equal(oFormat.format(123456.789, "EUR"), "123,456.79", "123456.789 EUR");
-		assert.equal(oFormat.format([123456.789, "EUR"]), "123,456.79", "123456.789 EUR");
-		assert.equal(oFormat.format(-123456.789, "EUR"), "(123,456.79)", "123456.789 EUR");
-		assert.equal(oFormat.format([-123456.789, "EUR"]), "(123,456.79)", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "123,456.79", "123456.789 EUR");
+		assert.strictEqual(oFormat.format([123456.789, "EUR"]), "123,456.79", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(-123456.789, "EUR"), "(123,456.79)", "123456.789 EUR");
+		assert.strictEqual(oFormat.format([-123456.789, "EUR"]), "(123,456.79)", "123456.789 EUR");
 	});
 
 	QUnit.test("Currency format with sMeasure specific locale ko", function (assert) {
@@ -1210,10 +1210,10 @@ sap.ui.define([
 			currencyContext: "accounting"
 		}, oLocale);
 
-		assert.equal(oFormat.format(123456.789, "EUR"), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oFormat.format([123456.789, "EUR"]), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oFormat.format(-123456.789, "EUR"), "(123,456.79" + "\xa0" + "EUR)", "-123456.789 EUR");
-		assert.equal(oFormat.format([-123456.789, "EUR"]), "(123,456.79" + "\xa0" + "EUR)", "-123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format([123456.789, "EUR"]), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(-123456.789, "EUR"), "(123,456.79" + "\xa0" + "EUR)", "-123456.789 EUR");
+		assert.strictEqual(oFormat.format([-123456.789, "EUR"]), "(123,456.79" + "\xa0" + "EUR)", "-123456.789 EUR");
 	});
 
 	QUnit.test("Currency format with sMeasure and set decimal option to overwrite the default number of decimal", function (assert) {
@@ -1221,10 +1221,10 @@ sap.ui.define([
 			decimals: 1
 		});
 
-		assert.equal(oFormat.format(123456.789, "EUR"), "123,456.8" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oFormat.format([123456.789, "EUR"]), "123,456.8" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oFormat.format(-123456.789, "EUR"), "-123,456.8" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oFormat.format([-123456.789, "EUR"]), "-123,456.8" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456.789, "EUR"), "123,456.8" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format([123456.789, "EUR"]), "123,456.8" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format(-123456.789, "EUR"), "-123,456.8" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oFormat.format([-123456.789, "EUR"]), "-123,456.8" + "\xa0" + "EUR", "123456.789 EUR");
 	});
 
 	QUnit.test("Currency format with sMeasure and the precision option should be ignored", function (assert) {
@@ -1232,10 +1232,10 @@ sap.ui.define([
 			precision: 7
 		});
 
-		assert.equal(oFormat.format(123456, "EUR"), "123,456.00" + "\xa0" + "EUR", "123456 EUR");
-		assert.equal(oFormat.format([123456.7, "EUR"]), "123,456.70" + "\xa0" + "EUR", "123456.7 EUR");
-		assert.equal(oFormat.format(-123456.78, "EUR"), "-123,456.78" + "\xa0" + "EUR", "-123456.78 EUR");
-		assert.equal(oFormat.format([-123456.789, "EUR"]), "-123,456.79" + "\xa0" + "EUR", "-123456.789 EUR");
+		assert.strictEqual(oFormat.format(123456, "EUR"), "123,456.00" + "\xa0" + "EUR", "123456 EUR");
+		assert.strictEqual(oFormat.format([123456.7, "EUR"]), "123,456.70" + "\xa0" + "EUR", "123456.7 EUR");
+		assert.strictEqual(oFormat.format(-123456.78, "EUR"), "-123,456.78" + "\xa0" + "EUR", "-123456.78 EUR");
+		assert.strictEqual(oFormat.format([-123456.789, "EUR"]), "-123,456.79" + "\xa0" + "EUR", "-123456.789 EUR");
 	});
 
 	QUnit.test("Currency format with sMeasure and style short. The default precision option shouldn't be ignored", function (assert) {
@@ -1243,9 +1243,9 @@ sap.ui.define([
 			style: "short"
 		});
 
-		assert.equal(oFormat.format(123456, "EUR"), "123K" + "\xa0" + "EUR", "123456 EUR");
-		assert.equal(oFormat.format([1234567.8, "EUR"]), "1.2M" + "\xa0" + "EUR", "123456.7 EUR");
-		assert.equal(oFormat.format(12345678.9, "EUR"), "12M" + "\xa0" + "EUR", "-123456.78 EUR");
+		assert.strictEqual(oFormat.format(123456, "EUR"), "123K" + "\xa0" + "EUR", "123456 EUR");
+		assert.strictEqual(oFormat.format([1234567.8, "EUR"]), "1.2M" + "\xa0" + "EUR", "123456.7 EUR");
+		assert.strictEqual(oFormat.format(12345678.9, "EUR"), "12M" + "\xa0" + "EUR", "-123456.78 EUR");
 	});
 
 	QUnit.test("check space between currency code and number in different scenarios", function (assert) {
@@ -1256,12 +1256,12 @@ sap.ui.define([
 				currencyCode: false
 			});
 
-		assert.equal(oCurrencyCodeFormatter.format(123456.789, "EUR"), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oCurrencyCodeFormatter.format(-123456.789, "EUR"), "-123,456.79" + "\xa0" + "EUR", "-123456.789 EUR");
-		assert.equal(oCurrencySymbolFormatter.format(123456.789, "EUR"), "€" + "123,456.79", "123456.789 EUR");
-		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "EUR"), "€\ufeff" + "-123,456.79", "-123456.789 EUR");
-		assert.equal(oCurrencySymbolFormatter.format(123456.789, "HKD"), "HK$123,456.79", "123456.789 HKD");
-		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "HKD"), "HK$\ufeff-123,456.79", "-123456.789 HKD");
+		assert.strictEqual(oCurrencyCodeFormatter.format(123456.789, "EUR"), "123,456.79" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oCurrencyCodeFormatter.format(-123456.789, "EUR"), "-123,456.79" + "\xa0" + "EUR", "-123456.789 EUR");
+		assert.strictEqual(oCurrencySymbolFormatter.format(123456.789, "EUR"), "€" + "123,456.79", "123456.789 EUR");
+		assert.strictEqual(oCurrencySymbolFormatter.format(-123456.789, "EUR"), "€\ufeff" + "-123,456.79", "-123456.789 EUR");
+		assert.strictEqual(oCurrencySymbolFormatter.format(123456.789, "HKD"), "HK$123,456.79", "123456.789 HKD");
+		assert.strictEqual(oCurrencySymbolFormatter.format(-123456.789, "HKD"), "HK$\ufeff-123,456.79", "-123456.789 HKD");
 
 		// in "de-DE" locale there's already space in the currency pattern: #,##0.00 ¤
 		// there shouldn't be more space inserted
@@ -1270,12 +1270,12 @@ sap.ui.define([
 			currencyCode: false
 		}, new Locale("de-DE"));
 
-		assert.equal(oCurrencyCodeFormatter.format(123456.789, "EUR"), "123.456,79" + "\xa0" + "EUR", "123456.789 EUR");
-		assert.equal(oCurrencyCodeFormatter.format(-123456.789, "EUR"), "-123.456,79" + "\xa0" + "EUR", "-123456.789 EUR");
-		assert.equal(oCurrencySymbolFormatter.format(123456.789, "EUR"), "123.456,79" + "\xa0" + "€", "123456.789 EUR");
-		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "EUR"), "-123.456,79" + "\xa0" + "€", "-123456.789 EUR");
-		assert.equal(oCurrencySymbolFormatter.format(123456.789, "HKD"), "123.456,79" + "\xa0" + "HK$", "123456.789 HKD");
-		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "HKD"), "-123.456,79" + "\xa0" + "HK$", "-123456.789 HKD");
+		assert.strictEqual(oCurrencyCodeFormatter.format(123456.789, "EUR"), "123.456,79" + "\xa0" + "EUR", "123456.789 EUR");
+		assert.strictEqual(oCurrencyCodeFormatter.format(-123456.789, "EUR"), "-123.456,79" + "\xa0" + "EUR", "-123456.789 EUR");
+		assert.strictEqual(oCurrencySymbolFormatter.format(123456.789, "EUR"), "123.456,79" + "\xa0" + "€", "123456.789 EUR");
+		assert.strictEqual(oCurrencySymbolFormatter.format(-123456.789, "EUR"), "-123.456,79" + "\xa0" + "€", "-123456.789 EUR");
+		assert.strictEqual(oCurrencySymbolFormatter.format(123456.789, "HKD"), "123.456,79" + "\xa0" + "HK$", "123456.789 HKD");
+		assert.strictEqual(oCurrencySymbolFormatter.format(-123456.789, "HKD"), "-123.456,79" + "\xa0" + "HK$", "-123456.789 HKD");
 
 		// in "uk" locale there's no space in the currency pattern and the symbol is at the end: #,##0.00¤
 		// there shouldn't be more space inserted
@@ -1287,12 +1287,12 @@ sap.ui.define([
 			currencyContext: "accounting"
 		}, new Locale("uk"));
 
-		assert.equal(oCurrencyCodeFormatter.format(123456.789, "UAH"), "123" + "\xa0" + "456,79" + "\xa0" + "UAH", "123456.789 UAH");
-		assert.equal(oCurrencyCodeFormatter.format(-123456.789, "UAH"), "-123" + "\xa0" + "456,79" + "\xa0" + "UAH", "-123456.789 UAH");
-		assert.equal(oCurrencySymbolFormatter.format(123456.789, "UAH"), "123" + "\xa0" + "456,79" + "\xa0\u20b4", "123456.789 UAH");
-		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "UAH"), "-123" + "\xa0" + "456,79" + "\xa0\u20b4", "-123456.789 UAH");
-		assert.equal(oCurrencySymbolFormatter.format(123456.789, "UAK"), "123" + "\xa0" + "456,79" + "\xa0\u043a\u0440\u0431\u002e", "123456.789 UAK");
-		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "UAK"), "-123" + "\xa0" + "456,79" + "\xa0\u043a\u0440\u0431\u002e", "-123456.789 UAK");
+		assert.strictEqual(oCurrencyCodeFormatter.format(123456.789, "UAH"), "123" + "\xa0" + "456,79" + "\xa0" + "UAH", "123456.789 UAH");
+		assert.strictEqual(oCurrencyCodeFormatter.format(-123456.789, "UAH"), "-123" + "\xa0" + "456,79" + "\xa0" + "UAH", "-123456.789 UAH");
+		assert.strictEqual(oCurrencySymbolFormatter.format(123456.789, "UAH"), "123" + "\xa0" + "456,79" + "\xa0\u20b4", "123456.789 UAH");
+		assert.strictEqual(oCurrencySymbolFormatter.format(-123456.789, "UAH"), "-123" + "\xa0" + "456,79" + "\xa0\u20b4", "-123456.789 UAH");
+		assert.strictEqual(oCurrencySymbolFormatter.format(123456.789, "UAK"), "123" + "\xa0" + "456,79" + "\xa0\u043a\u0440\u0431\u002e", "123456.789 UAK");
+		assert.strictEqual(oCurrencySymbolFormatter.format(-123456.789, "UAK"), "-123" + "\xa0" + "456,79" + "\xa0\u043a\u0440\u0431\u002e", "-123456.789 UAK");
 	});
 
 
@@ -1316,43 +1316,43 @@ sap.ui.define([
 		var oFormat = getCurrencyInstance();
 		var aResult = oFormat.parse("EUR -12,345.67");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], -12345.67, "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], -12345.67, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("-12,345.67 EURO");
 		assert.strictEqual(aResult, null, "Currency parser should return null");
 
 		aResult = oFormat.parse("-12,345.67 EUR");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], -12345.67, "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], -12345.67, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("USD23.4567");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 23.4567, "Number is parsed correctly");
-		assert.equal(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], 23.4567, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR-1234567.89");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], -1234567.89, "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], -1234567.89, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR");
-		assert.equal(aResult, null, "String with currency code only can't be parsed");
+		assert.strictEqual(aResult, null, "String with currency code only can't be parsed");
 
 		aResult = oFormat.parse("1234567.89");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
+		assert.strictEqual(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("€" + " 1,234,567.89");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
+		assert.strictEqual(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("$ 1234567.89");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
+		assert.strictEqual(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
 		oFormat = getCurrencyInstance({
@@ -1360,20 +1360,20 @@ sap.ui.define([
 		});
 
 		aResult = oFormat.parse("-12,345.67 EUR");
-		assert.equal(aResult, null, "Currency with measure cannot be parsed");
+		assert.strictEqual(aResult, null, "Currency with measure cannot be parsed");
 
 		aResult = oFormat.parse("USD23.4567");
-		assert.equal(aResult, null, "Currency with measure cannot be parsed");
+		assert.strictEqual(aResult, null, "Currency with measure cannot be parsed");
 
 		aResult = oFormat.parse("EUR-1234567.89");
-		assert.equal(aResult, null, "Currency with measure cannot be parsed");
+		assert.strictEqual(aResult, null, "Currency with measure cannot be parsed");
 
 		aResult = oFormat.parse("EUR");
-		assert.equal(aResult, null, "String with currency code only can't be parsed");
+		assert.strictEqual(aResult, null, "String with currency code only can't be parsed");
 
 		aResult = oFormat.parse("1234567.89");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 1234567.89, "Number is parsed correctly");
+		assert.strictEqual(aResult[0], 1234567.89, "Number is parsed correctly");
 		assert.strictEqual(aResult[1], undefined, "Currency Code is parsed correctly: expected, parsed " + aResult[1]);
 
 		oFormat = getCurrencyInstance({
@@ -1382,49 +1382,49 @@ sap.ui.define([
 
 		aResult = oFormat.parse("EUR-12,345.67");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], "-12345.67", "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], "-12345.67", "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("-12,345.67 EUR");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], "-12345.67", "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], "-12345.67", "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR-00012,345.67");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], "-12345.67", "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], "-12345.67", "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR-12,345,678,901,123,456.78");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], "-12345678901123456.78", "Long number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], "-12345678901123456.78", "Long number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR-12,345,678,901,123,456,345,678,901,123,456.78");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], "-12345678901123456345678901123456.78", "Ridiculously long number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], "-12345678901123456345678901123456.78", "Ridiculously long number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		oFormat = getCurrencyInstance({}, new Locale("de"));
 		aResult = oFormat.parse("-12.345,67 EUR");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], -12345.67, "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], -12345.67, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("23,4567 USD");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 23.4567, "Number is parsed correctly");
-		assert.equal(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], 23.4567, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("23,4567 $");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 23.4567, "Number is parsed correctly");
-		assert.equal(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], 23.4567, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("-1234567,89EUR");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], -1234567.89, "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], -1234567.89, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 	});
 
@@ -1469,46 +1469,46 @@ sap.ui.define([
 		var oFormat = getCurrencyInstance();
 		var aResult = oFormat.parse("GBP 5");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 5, "Number is parsed correctly");
-		assert.equal(aResult[1], "GBP", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], 5, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "GBP", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("SEK 6");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 6, "Number is parsed correctly");
-		assert.equal(aResult[1], "SEK", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], 6, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "SEK", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("12 EUR K");
-		assert.equal(aResult, null, "Currency between number and scale cannot be parsed");
+		assert.strictEqual(aResult, null, "Currency between number and scale cannot be parsed");
 
 		aResult = oFormat.parse("EUR-12K");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], -12000, "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], -12000, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("-12K EUR");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], -12000, "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], -12000, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("USD23M");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 23000000, "Number is parsed correctly");
-		assert.equal(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], 23000000, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR -12 million");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], -12000000, "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], -12000000, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR 0.00T");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 0, "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], 0, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR 0.2M");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 200000, "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], 200000, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
 
 	QUnit.test("currency for 'he' locale with big number. Contains the RTL character u+200F", function (assert) {
@@ -1523,7 +1523,7 @@ sap.ui.define([
 
 		// execution
 		var sFormatted = oFormat.format(iExpectedNumber);
-		assert.equal(sFormatted.toString(), "‏50,000.00‎", "can be formatted '" + sFormatted + "' (contains RTL character)");
+		assert.strictEqual(sFormatted, "‏50,000.00‎", "can be formatted '" + sFormatted + "' (contains RTL character)");
 
 		var aParsed = oFormat.parse(sFormatted);
 		assert.deepEqual(aParsed, [50000, undefined], "should match input number " + iExpectedNumber);
@@ -1556,55 +1556,55 @@ sap.ui.define([
 		var oLocale = new Locale("en-IN");
 		var oFormat = getCurrencyInstance({}, oLocale);
 
-		assert.equal(oFormat.format(100000, "INR"), "1,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
-		assert.equal(oFormat.format(10000000, "INR"), "1,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
-		assert.equal(oFormat.format(10000000000, "INR"), "10,00,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
-		assert.equal(oFormat.format(1000000000000, "INR"), "10,00,00,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
-		assert.equal(oFormat.format(100000000000000, "INR"), "10,00,00,00,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
+		assert.strictEqual(oFormat.format(100000, "INR"), "1,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
+		assert.strictEqual(oFormat.format(10000000, "INR"), "1,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
+		assert.strictEqual(oFormat.format(10000000000, "INR"), "10,00,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
+		assert.strictEqual(oFormat.format(1000000000000, "INR"), "10,00,00,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
+		assert.strictEqual(oFormat.format(100000000000000, "INR"), "10,00,00,00,00,00,000.00" + "\xa0" + "INR", "INR is formatted with correct grouping");
 
 		oFormat = getCurrencyInstance({ style: "short" }, oLocale);
 
-		assert.equal(oFormat.format(100000, "INR"), "1 Lk" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
-		assert.equal(oFormat.format(10000000, "INR"), "1 Cr" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
-		assert.equal(oFormat.format(10000000000, "INR"), "1,000 Cr" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
-		assert.equal(oFormat.format(1000000000000, "INR"), "1 Lk Cr" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
-		assert.equal(oFormat.format(100000000000000, "INR"), "1 Cr Cr" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
+		assert.strictEqual(oFormat.format(100000, "INR"), "1 Lk" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
+		assert.strictEqual(oFormat.format(10000000, "INR"), "1 Cr" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
+		assert.strictEqual(oFormat.format(10000000000, "INR"), "1,000 Cr" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
+		assert.strictEqual(oFormat.format(1000000000000, "INR"), "1 Lk Cr" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
+		assert.strictEqual(oFormat.format(100000000000000, "INR"), "1 Cr Cr" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
 
-		assert.equal(oFormat.format(100000, "USD"), "100K" + "\xa0" + "USD", "USD is formatted as M/B/T");
-		assert.equal(oFormat.format(1000000, "USD"), "1M" + "\xa0" + "USD", "USD is formatted as M/B/T");
-		assert.equal(oFormat.format(1000000000, "USD"), "1B" + "\xa0" + "USD", "USD is formatted as M/B/T");
+		assert.strictEqual(oFormat.format(100000, "USD"), "100K" + "\xa0" + "USD", "USD is formatted as M/B/T");
+		assert.strictEqual(oFormat.format(1000000, "USD"), "1M" + "\xa0" + "USD", "USD is formatted as M/B/T");
+		assert.strictEqual(oFormat.format(1000000000, "USD"), "1B" + "\xa0" + "USD", "USD is formatted as M/B/T");
 
 		var aResult = oFormat.parse("INR 12 Lk");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 1200000, "Number is parsed correctly");
-		assert.equal(aResult[1], "INR", "Currency Code is parsed correctly: expected INR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], 1200000, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "INR", "Currency Code is parsed correctly: expected INR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("12 Lk INR");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 1200000, "Number is parsed correctly");
-		assert.equal(aResult[1], "INR", "Currency Code is parsed correctly: expected INR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], 1200000, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "INR", "Currency Code is parsed correctly: expected INR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("INR 12 Cr");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 120000000, "Number is parsed correctly");
-		assert.equal(aResult[1], "INR", "Currency Code is parsed correctly: expected INR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], 120000000, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "INR", "Currency Code is parsed correctly: expected INR, parsed " + aResult[1]);
 
 		aResult = oFormat.parse("EUR 12M");
 		assert.ok(Array.isArray(aResult), "Currency parser should return an array");
-		assert.equal(aResult[0], 12000000, "Number is parsed correctly");
-		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
+		assert.strictEqual(aResult[0], 12000000, "Number is parsed correctly");
+		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
 
 	QUnit.test("getScale", function (assert) {
 		var oLocale = new Locale("en");
 		var oFormat = getCurrencyInstance({style: "short", shortRefNumber: 1234}, oLocale);
-		assert.equal(oFormat.getScale(), "K\xa0\u00a4", "scale is correctly retrieved");
+		assert.strictEqual(oFormat.getScale(), "K\xa0\u00a4", "scale is correctly retrieved");
 
 		oFormat = getCurrencyInstance({style: "short"}, oLocale);
-		assert.equal(oFormat.getScale(), undefined, "scale not retrieved");
+		assert.strictEqual(oFormat.getScale(), undefined, "scale not retrieved");
 
 		oFormat = getCurrencyInstance({}, oLocale);
-		assert.equal(oFormat.getScale(), undefined, "scale not retrieved");
+		assert.strictEqual(oFormat.getScale(), undefined, "scale not retrieved");
 	});
 
 	// RTL
