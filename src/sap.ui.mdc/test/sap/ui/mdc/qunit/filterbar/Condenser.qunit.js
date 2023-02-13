@@ -1,7 +1,8 @@
 /* global */
 sap.ui.define([
+	"sap/ui/model/type/String",
     "sap/ui/rta/enablement/elementActionTest"
-], function(elementActionTest) {
+], function(StringType, elementActionTest) {
     'use strict';
 
 

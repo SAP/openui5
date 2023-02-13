@@ -7,8 +7,17 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"delegates/json/FilterBarDelegate", 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/util/TypeUtil'
-], function (FilterBarDelegate, IdentifierUtil, TypeUtil) {
+	"delegates/json/FilterBarDelegate",
+	'sap/ui/mdc/util/IdentifierUtil',
+	'sap/ui/mdc/util/TypeUtil',
+	'sap/ui/model/type/Boolean',
+	'sap/ui/model/type/String',
+	'sap/ui/model/type/Integer',
+	'sap/ui/model/type/Date',
+	'sap/ui/model/type/DateTime',
+	'sap/ui/model/type/Time',
+	'sap/ui/model/type/Float'
+], function (FilterBarDelegate, IdentifierUtil, TypeUtil, BooleanType, StringType, IntegerType, DateType, DateTimeType, TimeType, FloatType) {
 	"use strict";
 
 	var FilterBarTestDelegate = Object.assign({}, FilterBarDelegate);
