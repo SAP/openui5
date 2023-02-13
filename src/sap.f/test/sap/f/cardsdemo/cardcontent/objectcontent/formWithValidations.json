@@ -54,7 +54,8 @@
 					}
 				],
 				"selectedKey": "",
-				"msg": "dddd"
+				"msg": "dddd",
+				"inputValue": "Some Value"
 			}
 		},
 		"header": {
@@ -130,6 +131,19 @@
 								},
 								{
 									"restrictToPredefinedOptions": true
+								}
+							]
+						},
+						{
+							"id": "input1",
+							"label": "Enter Value",
+							"type": "Input",
+							"placeholder": "Enter value",
+							"value": "{/inputValue}",
+							"required": true,
+							"validations": [
+								{
+									"required": true
 								}
 							]
 						},
