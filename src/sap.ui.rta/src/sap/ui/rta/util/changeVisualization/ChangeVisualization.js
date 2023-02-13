@@ -370,6 +370,10 @@ sap.ui.define([
 			return sCommand;
 		}
 
+		if (!oChange.getSelector || !oChange.getSelector()) {
+			return false;
+		}
+
 		var oComponent = this._getComponent();
 		var oSelectorControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
 		var oLastDependentSelector = oChange.getDependentSelectorList().slice(-1)[0];
@@ -413,7 +417,7 @@ sap.ui.define([
 		var mPropertyBag = {
 			selector: oComponent,
 			invalidateCache: false,
-			// includeCtrlVariants: true,
+			includeCtrlVariants: true,
 			currentLayer: Layer.CUSTOMER,
 			includeDirtyChanges: true,
 			onlyCurrentVariants: true
@@ -433,11 +437,6 @@ sap.ui.define([
 			}
 			var aRegisteredChangeIds = this._oChangeIndicatorRegistry.getRegisteredChangeIds();
 			var oCurrentChanges = aChanges
-				.filter(function(oChange) {
-					// Filter out changes with different fileTypes (e.g. variant)
-					// or without selectors (e.g. App Descriptor changes)
-					return oChange.getFileType() === "change" && oChange.getSelector();
-				})
 				.reduce(function(oChanges, oChange) {
 					oChanges[oChange.getId()] = oChange;
 					return oChanges;

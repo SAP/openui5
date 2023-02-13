@@ -111,11 +111,14 @@ sap.ui.define([
 		});
 
 		// 2. Remove variant-dependent changes not assigned to a current variant reference
+		// only changes of type 'change' are relevant for this filter
+		// 'ctrl_variants' also have a variant reference, but should not be filtered
 		return aChanges.filter(function(oChange) {
-			return aCurrentVariantReferences.some(function(sCurrentVariantReference) {
-				return oChange.getVariantReference() === sCurrentVariantReference
-					|| !oChange.getVariantReference();
-			});
+			return oChange.getFileType() !== "change"
+				|| aCurrentVariantReferences.some(function(sCurrentVariantReference) {
+					return oChange.getVariantReference() === sCurrentVariantReference
+						|| !oChange.getVariantReference();
+				});
 		});
 	}
 

@@ -240,7 +240,7 @@ sap.ui.define([
 		return getInfoFromChangeHandler(oAppComponent, oChange)
 			.then(function(oInfoFromChangeHandler) {
 				var mVisualizationInfo = oInfoFromChangeHandler || {};
-				var aAffectedElementIds = getSelectorIds(mVisualizationInfo.affectedControls || [oChange.getSelector()]);
+				var aAffectedElementIds = getSelectorIds(mVisualizationInfo.affectedControls || oChange.getSelector && [oChange.getSelector()] || []);
 
 				return {
 					affectedElementIds: aAffectedElementIds,
@@ -253,7 +253,7 @@ sap.ui.define([
 	}
 
 	function getInfoFromChangeHandler(oAppComponent, oChange) {
-		var oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+		var oControl = oChange.getSelector && JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 		if (oControl) {
 			return ChangesWriteAPI.getChangeHandler({
 				changeType: oChange.getChangeType(),
@@ -262,7 +262,10 @@ sap.ui.define([
 				layer: oChange.getLayer()
 			})
 				.then(function(oChangeHandler) {
-					if (oChangeHandler && typeof oChangeHandler.getChangeVisualizationInfo === "function") {
+					if (
+						oChangeHandler && typeof oChangeHandler.getChangeVisualizationInfo === "function"
+						&& oChange.isSuccessfullyApplied && oChange.isSuccessfullyApplied()
+					) {
 						return oChangeHandler.getChangeVisualizationInfo(oChange, oAppComponent);
 					}
 					return undefined;
@@ -323,7 +326,7 @@ sap.ui.define([
 
 	/**
 	 * Removes changes without any displayElementIds from the registry so the change can be re-registered and
-	 * the visualizationInfo is updated => if an element is inside a dialog which hasnt been opened yet
+	 * the visualizationInfo is updated => if an element is inside a dialog which hasn't been opened yet
 	 */
 	ChangeIndicatorRegistry.prototype.removeRegisteredChangesWithoutVizInfo = function () {
 		this.getAllRegisteredChanges().forEach(function(oChange) {
