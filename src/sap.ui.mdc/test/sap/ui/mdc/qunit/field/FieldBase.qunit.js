@@ -44,7 +44,6 @@ sap.ui.define([
 	"sap/m/DynamicDateRange",
 	"sap/m/Button",
 	"sap/m/Link",
-	"sap/m/Tokenizer",
 	"sap/m/Token",
 	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/mdc/condition/Condition",
@@ -111,7 +110,6 @@ sap.ui.define([
 	DynamicDateRange,
 	Button,
 	Link,
-	Tokenizer,
 	Token,
 	ConditionModel,
 	Condition,
@@ -2516,12 +2514,9 @@ sap.ui.define([
 		var oToken = new Token("T1");
 		var oConditionType = new ConditionType();
 		oToken.bindProperty("text", { path: '$field>', type: oConditionType});
-		var oTokenizer = new Tokenizer("TZ1");
-		oTokenizer.bindAggregation("tokens", { path: '$field>/conditions', template: oToken });
-		var oStub = sinon.stub(oTokenizer, "isA");
-		oStub.withArgs("sap.ui.core.IFormContent").returns(true); // fake form content
-		oStub.callThrough();
-		oField.setContentEdit(oTokenizer);
+		var oMultiInput = new MultiInput("MI1");
+		oMultiInput.bindAggregation("tokens", { path: '$field>/conditions', template: oToken });
+		oField.setContentEdit(oMultiInput);
 		var oCondition = Condition.createCondition("EQ", ["A"], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
 		oCondition = Condition.createCondition("EQ", ["B"], undefined, undefined, ConditionValidated.Validated);
@@ -2530,8 +2525,8 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		setTimeout(function() { // to update ConditionModel
-			assert.ok(oTokenizer.getDomRef(), "Tokenizer is rendered");
-			var aTokens = oTokenizer.getTokens();
+			assert.ok(oMultiInput.getDomRef(), "Tokenizer is rendered");
+			var aTokens = oMultiInput.getTokens();
 			assert.equal(aTokens.length, 2, "Tokenizer has 2 tokens");
 
 			// simulate deletion of token
@@ -2549,7 +2544,7 @@ sap.ui.define([
 				assert.equal(aConditions.length, 1, "one condition in Codition model");
 				assert.equal(aConditions[0].values[0], "B", "condition value");
 				assert.equal(aConditions[0].operator, "EQ", "condition operator");
-				aTokens = oTokenizer.getTokens();
+				aTokens = oMultiInput.getTokens();
 				assert.equal(aTokens.length, 1, "Tokenizer has one Token");
 				assert.equal(aTokens[0].getText(), "B", "Text of Token0");
 
