@@ -4691,5 +4691,57 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.module("Card preview modes", {
+			beforeEach: function () {
+				this.oCard = new Card();
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Card in 'Abstract' preview mode", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+				var oContent = this.oCard.getCardContent();
+
+				// Assert
+				assert.ok(oContent.isA("sap.ui.integration.cards.ObjectContent"), "ObjectContent is created as card content");
+				assert.ok(oContent.getAggregation("_loadingPlaceholder").getDomRef(), "Loading placeholder is displayed in the content");
+				assert.ok(this.oCard.getDomRef().classList.contains("sapFCardPreview"), "'sapFCardPreview' CSS class should be added");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setPreviewMode(library.CardPreviewMode.Abstract);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.previewMode"
+				},
+				"sap.card": {
+					"type": "Object",
+					"header": {
+						"title": "Title"
+					},
+					"content": {
+						"groups": [{
+							"items": [
+								{
+									"id": "item1"
+								}
+							]
+						}]
+					}
+				}
+			});
+		});
+
 	}
 );
+

@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
+sap.ui.define([
+	"sap/ui/core/Renderer",
+	"sap/ui/integration/library"
+], function (Renderer, library) {
 	"use strict";
+
+	var CardPreviewMode = library.CardPreviewMode;
 
 	/**
 	 * BaseContent renderer.
@@ -30,9 +35,9 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 		var sClass = "sapFCard",
 			sName = oCardContent.getMetadata().getName(),
 			sType = sName.slice(sName.lastIndexOf(".") + 1),
-			oCard = oCardContent.getParent(),
-			bIsCardValid = oCard && oCard.isA("sap.f.ICard"),
-			bLoading = sType !== "AdaptiveContent" && bIsCardValid && oCardContent.isLoading(),
+			oCard = oCardContent.getCardInstance(),
+			bLoading = oCardContent.isLoading(),
+			bIsAbstractPreviewMode =  oCard && oCard.getPreviewMode() === CardPreviewMode.Abstract,
 			oMessageContainer = oCardContent.getAggregation("_messageContainer");
 
 		sClass += sType;
@@ -45,18 +50,18 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 			oRm.class("sapFCardClickable");
 		}
 
-		if (bIsCardValid && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+		if (oCard && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
 			var sHeight = this.getMinHeight(oCardContent.getParsedConfiguration(), oCardContent, oCard);
 			oRm.style("min-height", sHeight);
 		}
 
-		if (bLoading) {
+		if (bLoading || bIsAbstractPreviewMode) {
 			oRm.class("sapFCardContentLoading");
 		}
 
 		oRm.openEnd();
 
-		if (bLoading) {
+		if (bLoading || bIsAbstractPreviewMode) {
 			oRm.renderControl(oCardContent.getAggregation("_loadingPlaceholder"));
 		}
 

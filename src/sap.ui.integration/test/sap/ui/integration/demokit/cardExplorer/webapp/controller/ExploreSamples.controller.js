@@ -1020,6 +1020,13 @@ sap.ui.define([
 				MockServerManager.initAll(!!oCurrentSample.mockServer),
 				this._initCaching(oCurrentSample)
 			]).then(this._cancelIfSampleChanged(function () {
+				// TODO
+				if (oCurrentSample.key === "mockData") {
+					this._oCardSample.setPreviewMode("MockData");
+				} else {
+					this._oCardSample.setPreviewMode("Off");
+				}
+
 				//invisble "Show Card Configuration Editor" menu item if there is no designtime.js file
 				//load an additional file for manifestchanges
 				if (oCurrentSample && oCurrentSample.files) {

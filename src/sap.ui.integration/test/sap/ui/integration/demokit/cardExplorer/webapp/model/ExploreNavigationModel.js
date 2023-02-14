@@ -1535,6 +1535,23 @@ sap.ui.define([
 										key: 'manifest.json'
 									}
 								]
+							},
+							{
+								title: 'Mock Data for Preview',
+								key: 'mockData',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/data/mockData/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/data/mockData/mockData.json',
+										name: 'mockData.json',
+										key: 'mockData.json'
+									}
+								]
 							}
 						]
 					},
@@ -2396,6 +2413,136 @@ sap.ui.define([
 								url: '/samples/hostAndExtensionActions/Component.js',
 								name: 'Component.js',
 								key: 'Component.js'
+							}
+						]
+					},
+					{
+						key: 'preview',
+						target: 'exploreSamples',
+						title: 'Preview',
+						experimental: true,
+						subSamples: [
+							{
+								title: 'All Modes',
+								key: "allModes",
+								useIFrame: true,
+								isApplication: true,
+								files: [
+									{
+										url: '/samples/preview/allModes/indexTemplate.html',
+										name: 'index.html',
+										key: 'index.html'
+									},
+									{
+										url: '/samples/preview/allModes/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									},
+									{
+										url: '/samples/preview/allModes/PreviewMode.controller.js',
+										name: 'Controller.controller.js',
+										key: 'Controller.controller.js'
+									},
+									{
+										url: '/samples/preview/allModes/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										isApplicationManifest: true
+									},
+									{
+										url: '/samples/preview/allModes/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/preview/allModes/listCard/manifest.json',
+										name: 'listCard/manifest.json',
+										key: 'listCard/manifest.json'
+									},
+									{
+										url: '/samples/preview/allModes/listCard/mockData.json',
+										name: 'listCard/mockData.json',
+										key: 'listCard/mockData.json'
+									}
+								]
+							},
+							{
+								title: 'Missing Mock Data Configuration',
+								key: "missingMockConfiguration",
+								useIFrame: true,
+								isApplication: true,
+								files: [
+									{
+										url: '/samples/preview/missingMockConfiguration/indexTemplate.html',
+										name: 'index.html',
+										key: 'index.html'
+									},
+									{
+										url: '/samples/preview/missingMockConfiguration/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									},
+									{
+										url: '/samples/preview/missingMockConfiguration/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										isApplicationManifest: true
+									},
+									{
+										url: '/samples/preview/missingMockConfiguration/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/preview/missingMockConfiguration/tableCard/manifest.json',
+										name: 'tableCard/manifest.json',
+										key: 'tableCard/manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Component Card',
+								key: "component",
+								useIFrame: true,
+								isApplication: true,
+								files: [
+									{
+										url: '/samples/preview/component/indexTemplate.html',
+										name: 'index.html',
+										key: 'index.html'
+									},
+									{
+										url: '/samples/preview/component/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									},
+									{
+										url: '/samples/preview/component/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										isApplicationManifest: true
+									},
+									{
+										url: '/samples/preview/component/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/preview/component/sampleComponent/manifest.json',
+										name: 'sampleComponent/manifest.json',
+										key: 'sampleComponent/manifest.json'
+									},
+									{
+										url: '/samples/preview/component/sampleComponent/Component.js',
+										name: 'sampleComponent/Component.js',
+										key: 'sampleComponent/Component.js'
+									},
+									{
+										url: '/samples/preview/component/sampleComponent/Main.view.xml',
+										name: 'sampleComponent/Main.view.xml',
+										key: 'sampleComponent/Main.view.xml'
+									}
+								]
 							}
 						]
 					},

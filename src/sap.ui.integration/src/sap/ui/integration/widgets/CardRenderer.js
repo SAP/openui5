@@ -12,6 +12,7 @@ sap.ui.define([
 		TYPE: "/sap.card/type"
 	};
 	var CardDesign = library.CardDesign;
+	var CardPreviewMode = library.CardPreviewMode;
 
 	return FCardRenderer.extend("sap.ui.integration.widgets.CardRenderer", {
 		apiVersion: 2,
@@ -36,6 +37,10 @@ sap.ui.define([
 
 			if (oCard.getDesign() === CardDesign.Transparent) {
 				oRm.class("sapFCardTransparent");
+			}
+
+			if (oCard.getPreviewMode() === CardPreviewMode.Abstract) {
+				oRm.class("sapFCardPreview");
 			}
 		},
 
