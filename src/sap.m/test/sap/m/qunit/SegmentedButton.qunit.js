@@ -102,6 +102,9 @@ sap.ui.define([
 
 	QUnit.module("Render");
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Check if buttons are rendered", function(assert) {
 		// Arrange
 		var oButton1 = new Button(),
@@ -135,6 +138,9 @@ sap.ui.define([
 		oButton3.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("SegmentedButton selection after rendering", function(assert) {
 		// Arrange
 		var oButton1 = new Button(),
@@ -183,6 +189,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("SegmentedButton selection before and after rendering", function(assert) {
 		// Arrange
 		var oButton1 = new Button(),
@@ -211,6 +220,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("SegmentedButton set selected button to invalid value before rendering", function(assert) {
 		// Arrange
 		var oButton1 = new Button(),
@@ -234,6 +246,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("SegmentedButton set selected button to invalid value after rendering", function(assert) {
 		// Arrange
 		var oButton1 = new Button(),
@@ -259,6 +274,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("SegmentedButton set selected button to null value", function(assert) {
 		// Arrange
 		var oButton1 = new Button(),
@@ -282,6 +300,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("SegmentedButton set selected button to undefined value", function(assert) {
 		// Arrange
 		var oButton1 = new Button(),
@@ -305,6 +326,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("SegmentedButton set selected button to \"\" value", function(assert) {
 		// Arrange
 		var oButton1 = new Button(),
@@ -328,6 +352,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("SegmentedButton set selected button before adding the buttons", function(assert) {
 		// Arrange
 		var oButton1 = new Button(),
@@ -354,6 +381,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Check icon button", function(assert) {
 		// Arrange
 		var oButton1 = new Button({
@@ -388,6 +418,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Check icon and text button", function(assert) {
 		// Arrange
 		var oButton1 = new Button({
@@ -420,6 +453,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Check when in bar container with button width set in percent", function(assert) {
 
 		var oButton1,
@@ -469,6 +505,9 @@ sap.ui.define([
 	});
 
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Button textDirecton attribute", function(assert) {
 
 		// Arrange
@@ -501,6 +540,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Button visible attribute", function(assert) {
 
 		// Arrange
@@ -544,6 +586,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Mixed content buttons width calculation when in bar (all buttons should have the same width)", function(assert) {
 
 		// Arrange
@@ -921,6 +966,9 @@ sap.ui.define([
 
 	QUnit.module("Event");
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("SegmentedButton Select Events", function(assert) {
 		// Arrange
 		var oButton1 = new Button();
@@ -951,6 +999,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Select event fire count", function(assert) {
 		// Arrange
 		var fnCallback = sinon.spy();
@@ -1067,6 +1118,9 @@ sap.ui.define([
 		after : function () { sinon.config.useFakeTimers = true; }
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("SegmentedButton in Dialog's header", function(assert) {
 		assert.expect(3);
 		var done = assert.async();
@@ -1125,6 +1179,9 @@ sap.ui.define([
 
 	QUnit.module("API");
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("SegmentedButton setSelectedButton API call", function(assert) {
 
 		// Arrange
@@ -1264,6 +1321,9 @@ sap.ui.define([
 	/* Check default values           */
 	/* ------------------------------ */
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Test default values", function(assert) {
 		// System under Test
 		var oSegmentedButton = new SegmentedButton({
@@ -1293,6 +1353,9 @@ sap.ui.define([
 	/* addButton and indexOfButton    */
 	/* ------------------------------ */
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("addButton and indexOfButton ", function(assert) {
 		// System under Test
 		var oSegmentedButton = new SegmentedButton();
@@ -1313,6 +1376,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("indexOfButton ", function(assert) {
 		// System under Test
 		var oSegmentedButton = new SegmentedButton();
@@ -1340,6 +1406,9 @@ sap.ui.define([
 	/* setEnabled()                   */
 	/* ------------------------------ */
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Disbale SegmentedButton", function(assert) {
 		// Arrange
 		var oButton1 = new Button();
@@ -1369,6 +1438,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Disable single button", function(assert) {
 		// Arrange
 		var oButton1 = new Button();
@@ -1402,6 +1474,9 @@ sap.ui.define([
 	/* removeButton()                 */
 	/* ------------------------------ */
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("remove button", function(assert) {
 		// Arrange
 		var oButton1 = new Button();
@@ -1432,6 +1507,9 @@ sap.ui.define([
 	});
 
 	// BCP: 1880235141
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("remove button returns the removed button", function (assert) {
 		// Arrange
 		var oResult,
@@ -1455,6 +1533,9 @@ sap.ui.define([
 	/* removeAllButtons()             */
 	/* ------------------------------ */
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("remove all buttons", function(assert) {
 		// Arrange
 		var oButton1 = new Button();
@@ -1486,6 +1567,9 @@ sap.ui.define([
 	});
 
 	// BCP: 1880235141
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("remove all buttons returns the removed buttons", function (assert) {
 		assert.expect(2);
 		// Arrange
@@ -1511,6 +1595,9 @@ sap.ui.define([
 	/* destroyButtons()               */
 	/* ------------------------------ */
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Destroy button", function(assert) {
 		// Arrange
 		var oButton1 = new Button();
@@ -1995,6 +2082,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("_getRenderedButtonWidths private method", function (assert) {
 		// Arrange
 		var oSB,
@@ -2246,6 +2336,9 @@ sap.ui.define([
 
 	QUnit.module("Data binding");
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Data binding buttons aggregation", function(assert) {
 		// Arrange
 		var mData = {
@@ -2519,6 +2612,9 @@ sap.ui.define([
 	});
 
 	function checkKeyboardEventhandling(sTestName, oOptions) {
+		/**
+		 * @deprecated Since version 1.28.
+		 */
 		QUnit.test(sTestName, function(assert) {
 			// Arrange
 			var oButton1 = new Button();
@@ -2621,71 +2717,119 @@ sap.ui.define([
 		SegmentedIcons.destroy();
 	}
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Left Arrow after setSelectedButton call on image buttons - fix 619572', function(assert) {
 		// Flip the arrow keys in RTL mode
 		var keyCode = (oCore.getConfiguration().getRTL()) ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT;
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: keyCode});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Left Arrow when the first button has the focus', function(assert) {
 		var keyCode = (oCore.getConfiguration().getRTL()) ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT;
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: keyCode});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Right Arrow', function(assert) {
 		var keyCode = (oCore.getConfiguration().getRTL()) ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT;
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: keyCode});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Right Arrow when the last button has the focus', function(assert) {
 		var keyCode = (oCore.getConfiguration().getRTL()) ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT;
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: keyCode});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Up Arrow', function(assert) {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: KeyCodes.ARROW_UP});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Up Arrow when the first button has the focus', function(assert) {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: KeyCodes.ARROW_UP});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Down Arrow', function(assert) {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: KeyCodes.ARROW_DOWN});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Down Arrow when the last button has the focus', function(assert) {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: KeyCodes.ARROW_DOWN});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Home', function(assert) {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: KeyCodes.HOME});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Home when the first button has the focus', function(assert) {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: KeyCodes.HOME});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Page up', function(assert) {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: KeyCodes.PAGE_UP});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Page up when the first button has the focus', function(assert) {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: KeyCodes.PAGE_UP});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('End', function(assert) {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: KeyCodes.END});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('End when the last button has the focus', function(assert) {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: KeyCodes.END});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Page up', function(assert) {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: KeyCodes.PAGE_DOWN});
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test('Page up when the last button has the focus', function(assert) {
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: KeyCodes.PAGE_DOWN});
 	});
@@ -2766,6 +2910,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Selection", function(assert) {
 		// Arrange
 		var oButton1 = new Button();
@@ -2855,6 +3002,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Chech aria-posinset and aria-setsize attributes for SegmentedButton with invisible button ", function(assert) {
 		// Arrange
 		var oButton1 = new Button({ text: "First" }),
@@ -2920,6 +3070,9 @@ sap.ui.define([
 
 	QUnit.module('Select Mode');
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("When not in select mode, there is no overhead", function(assert) {
 
 		// Arrange
@@ -2960,6 +3113,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Activating select mode works", function(assert) {
 
 		// Arrange
@@ -3000,6 +3156,9 @@ sap.ui.define([
 	});
 
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Modifying the segmented button affects the select", function(assert) {
 		var newText = "new text",
 			newIcon = "sap-icon://accept";
@@ -3044,6 +3203,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Modifying the select affects the segmented button", function(assert) {
 		var newText = "new text";
 
@@ -3079,6 +3241,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("When switched to select mode and back to normal mode, the select is reused", function(assert) {
 
 		// Arrange
@@ -3120,6 +3285,9 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("_toSelectMode transfers only visible buttons into select items", function(assert) {
 
 		// Arrange
@@ -3192,6 +3360,9 @@ sap.ui.define([
 
 	QUnit.module("SegmentedButton in communicates changes in its aggregated items/buttons");
 
+	/**
+	 * @deprecated Since version 1.28.
+	 */
 	QUnit.test("Changing the text property aggregated buttons", function (assert) {
 		// Arrange
 		var oTestButton = new Button({text: "Button 1"}),

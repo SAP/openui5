@@ -636,6 +636,10 @@ function(
 		return this;
 	};
 
+	SegmentedButton.prototype.getButtons = function () {
+		return this.getAggregation("buttons") || [];
+	};
+
 	SegmentedButton.prototype.removeButton = function (oButton) {
 		var oRemovedButton = this.removeAggregation("buttons", oButton);
 		if (oRemovedButton) {
