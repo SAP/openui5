@@ -15,6 +15,9 @@
   },
   "dependencies": {
     "@openui5/sap.ui.core": "1.112.0-SNAPSHOT",
-    "@openui5/sap.f": "1.112.0-SNAPSHOT"
+    "@openui5/sap.f": "1.112.0-SNAPSHOT",
+    "@openui5/sap.m": "1.112.0-SNAPSHOT",
+    "@openui5/sap.ui.unified": "1.112.0-SNAPSHOT",
+    "@openui5/sap.ui.layout": "1.112.0-SNAPSHOT"
   }
 }
