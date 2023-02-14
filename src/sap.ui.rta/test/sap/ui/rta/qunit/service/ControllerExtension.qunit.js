@@ -133,7 +133,7 @@ sap.ui.define([
 				assert.strictEqual(this.oCreateChangeParameter.codeRef, "coding/foo.js", "the codeRef was set correctly");
 				assert.strictEqual(this.oCreateChangeParameter.moduleName, "sap/ui/rta/service/controllerExtension/changes/coding/foo", "the moduleName was set correctly");
 				assert.strictEqual(this.oCreateChangeParameter.namespace, "my/namespace/changes/", "the namespace was set correctly");
-				assert.strictEqual(this.oCreateChangeParameter.reference, "sap.ui.rta.service.controllerExtension", "the reference was set correctly");
+				assert.strictEqual(this.oCreateChangeParameter.reference, "sap.ui.rta.service.controllerExtension.Component", "the reference was set correctly");
 				assert.strictEqual(this.oCreateChangeParameter.generator, "rta.service.ControllerExtension", "the generator was set correctly");
 			}.bind(this));
 		});

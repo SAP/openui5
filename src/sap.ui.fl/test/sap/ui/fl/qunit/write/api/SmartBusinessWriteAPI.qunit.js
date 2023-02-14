@@ -129,7 +129,7 @@ sap.ui.define([
 					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 2, "then 2 Descriptor changes have been added to the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 2, "then 2 Descriptor changes have been added to the persistence");
 					return SmartBusinessWriteAPI.create({
 						selector: {
 							appId: "reference.app"
@@ -141,7 +141,7 @@ sap.ui.define([
 					});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 					// Get the app variant to be saved to backend
 					var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
 					assert.strictEqual(oAppVariant.packageName, "TEST_PACKAGE", "then the app variant will be saved with a provided package");
@@ -179,7 +179,7 @@ sap.ui.define([
 					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
 					return SmartBusinessWriteAPI.create({
 						selector: {
 							appId: "reference.app"
@@ -189,7 +189,7 @@ sap.ui.define([
 					});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 					// Get the app variant to be saved to backend
 					var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
 					assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
@@ -214,7 +214,7 @@ sap.ui.define([
 					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
 					return SmartBusinessWriteAPI.create({
 						selector: {
 							appId: "reference.app"
@@ -226,7 +226,7 @@ sap.ui.define([
 					});
 				})
 				.catch(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 					// Get the app variant to be saved to backend
 					var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
 					assert.strictEqual(oAppVariant.packageName, "TEST_PACKAGE", "then the app variant will be saved with a provided package");
@@ -251,7 +251,7 @@ sap.ui.define([
 					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
 					return SmartBusinessWriteAPI.create({
 						selector: {
 							appId: "reference.app"
@@ -266,7 +266,7 @@ sap.ui.define([
 					assert.ok(false, "Should not succeed");
 				})
 				.catch(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 					assert.ok(oNewConnectorCall.notCalled, "then backend call is never triggered");
 				});
 		});
@@ -285,7 +285,7 @@ sap.ui.define([
 					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
 					return SmartBusinessWriteAPI.create({
 						selector: {
 							appId: "reference.app"
@@ -296,7 +296,7 @@ sap.ui.define([
 					});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 					// Get the app variant to be saved to backend
 					var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
 					assert.strictEqual(oAppVariant.packageName, "$TMP", "then the app variant will be saved with an empty package");
@@ -321,7 +321,7 @@ sap.ui.define([
 					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
 					return SmartBusinessWriteAPI.create({
 						selector: {
 							appId: "reference.app"
@@ -336,7 +336,7 @@ sap.ui.define([
 					assert.ok(false, "Should not succeed");
 				})
 				.catch(function() {
-					assert.equal(ChangesController.getFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 					assert.ok(oNewConnectorCall.notCalled, "then backend call is never triggered");
 				});
 		});

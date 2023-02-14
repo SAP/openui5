@@ -111,9 +111,19 @@ sap.ui.define([
 				oStorage.setItem(sFlexKey, sItem);
 			},
 			getNumberOfChanges: function(oStorage, sReference) {
-				return Object.keys(oStorage).filter(function(sKey) {
-					return sKey.includes(FL_PREFIX) && ObjectStorageUtils.isSameReference(JSON.parse(oStorage.getItem(sKey)), sReference);
-				}).length;
+				var iCount = 0;
+				Object.keys(oStorage).map(function(sKey) {
+					var bIsFlexObject = sKey.includes(FL_PREFIX);
+
+					if (!bIsFlexObject) {
+						return;
+					}
+					var oFlexObject = JSON.parse(oStorage.getItem(sKey));
+					if (oFlexObject.reference === sReference || oFlexObject.reference + ".Component" === sReference) {
+						iCount++;
+					}
+				});
+				return iCount;
 			}
 		}
 	};

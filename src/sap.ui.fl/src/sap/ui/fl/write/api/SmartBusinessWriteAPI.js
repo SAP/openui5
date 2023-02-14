@@ -41,7 +41,7 @@ sap.ui.define([
 			appId: mPropertyBag.appId
 		};
 
-		var oDescriptorFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
+		var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
 
 		mPropertyBag.id = oDescriptorFlexController.getComponentName();
 		// Pass a flag to know which consumer is calling SaveAs handler
@@ -95,7 +95,7 @@ sap.ui.define([
 				return Promise.reject("App variant ID must be provided");
 			}
 
-			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
+			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
 			mPropertyBag.reference = oFlexController.getComponentName();
 
 			// Pass a flag to determine the consumer who is calling SaveAs handler

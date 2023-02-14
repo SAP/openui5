@@ -146,7 +146,22 @@ sap.ui.define([
 			mPropertyBag.layer,
 			mPropertyBag.removeOtherLayerChanges,
 			mPropertyBag.condenseAnyLayer
-		);
+		)
+			.then(function () {
+				//In case of pseudo app variant by startup parameter "sap-app-id", descriptor changes can not be saved because there is no real descriptor for merging.
+				if (Utils.isVariantByStartupParameter(mPropertyBag.selector)) {
+					return Promise.resolve();
+				}
+				var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
+				return oDescriptorFlexController.saveAll(
+					oAppComponent,
+					mPropertyBag.skipUpdateCache,
+					mPropertyBag.draft,
+					mPropertyBag.layer,
+					mPropertyBag.removeOtherLayerChanges,
+					mPropertyBag.condenseAnyLayer
+				);
+			});
 	}
 
 	/**

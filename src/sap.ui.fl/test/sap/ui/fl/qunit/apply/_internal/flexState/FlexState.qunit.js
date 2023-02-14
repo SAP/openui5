@@ -209,6 +209,26 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when initialize is called with a reference ending in '.Component'", function(assert) {
+			return FlexState.initialize({
+				reference: sReference + ".Component",
+				componentId: sComponentId
+			})
+			.then(function(oReturn) {
+				assert.equal(oReturn, undefined, "the function resolves without value");
+				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the FlexState made a call to load the flex data");
+				assert.equal(this.oCallPrepareFunctionStub.callCount, 0, "no prepare function was called");
+				return Promise.all([
+					FlexState.getStorageResponse(sReference),
+					FlexState.getStorageResponse(sReference + ".Component")
+				]);
+			}.bind(this))
+			.then(function(aStorageResponses) {
+				assert.notEqual(aStorageResponses[0], undefined, "the FlexState without .Component was initialized");
+				assert.notEqual(aStorageResponses[1], undefined, "the FlexState with .Component was initialized");
+			});
+		});
+
 		QUnit.test("when initialize is called without a reference and with a componentID", function(assert) {
 			var oMockResponse = {changes: {foo: "FlexResponse"}};
 			this.oLoadFlexDataStub.resolves(oMockResponse);

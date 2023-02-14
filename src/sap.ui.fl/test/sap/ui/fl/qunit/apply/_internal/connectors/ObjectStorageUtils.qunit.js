@@ -21,7 +21,7 @@ sap.ui.define([
 			this.sVariantKey2 = ObjectStorageUtils.createFlexKey("id4");
 			this.oStorage = {};
 			this.oStorage[this.sChangeKey1] = JSON.stringify({reference: "sap.ui.fl.test", layer: Layer.USER, name: "change1"});
-			this.oStorage[this.sChangeKey2] = JSON.stringify({reference: "sap.ui.fl.test.Component", layer: Layer.USER, name: "change2"});
+			this.oStorage[this.sChangeKey2] = JSON.stringify({reference: "sap.ui.fl.test.1", layer: Layer.USER, name: "change2"});
 			this.oStorage[this.sVariantKey1] = JSON.stringify({reference: "sap.ui.fl.test.2", layer: Layer.CUSTOMER, name: "variant1"});
 			this.oStorage[this.sVariantKey2] = JSON.stringify({reference: "sap.ui.fl.test.3", layer: Layer.CUSTOMER, name: "variant2"});
 			this.oStorage.foo = JSON.stringify({name: "bar"});
@@ -56,7 +56,7 @@ sap.ui.define([
 			}.bind(this))
 			.then(function () {
 				parseAndAssertProperty(this.oStorage, this.sChangeKey1, "name", "change1called", "the callback was called and the value was changed", assert);
-				parseAndAssertProperty(this.oStorage, this.sChangeKey2, "name", "change2called", "the callback was called and the value was changed", assert);
+				parseAndAssertProperty(this.oStorage, this.sChangeKey2, "name", "change2", "the callback was not called", assert);
 				parseAndAssertProperty(this.oStorage, this.sVariantKey1, "name", "variant1", "the callback was not called", assert);
 				parseAndAssertProperty(this.oStorage, this.sVariantKey2, "name", "variant2", "the callback was not called", assert);
 				parseAndAssertProperty(this.oStorage, "foo", "name", "bar", "the value was not changed", assert);

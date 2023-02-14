@@ -85,7 +85,7 @@ sap.ui.define([
 					}
 				}
 			};
-			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "componentName", "the componentName is returned");
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "componentName.Component", "the componentName is returned");
 		});
 
 		QUnit.test("without old or new appvar id or componentName (raw manifest)", function (assert) {
@@ -99,7 +99,7 @@ sap.ui.define([
 					}
 				}
 			};
-			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId", "the app id is returned");
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId.Component", "the app id is returned");
 		});
 
 		QUnit.test("with an appvar id (manifest object)", function (assert) {
@@ -121,7 +121,7 @@ sap.ui.define([
 					}
 				})
 			};
-			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "componentName", "the componentName is returned");
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "componentName.Component", "the componentName is returned");
 		});
 
 		QUnit.test("without old or new appvar id or componentName (manifest object)", function (assert) {
@@ -135,7 +135,7 @@ sap.ui.define([
 					}
 				})
 			};
-			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId", "the app id is returned");
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId.Component", "the app id is returned");
 		});
 
 		QUnit.test("with manifest object at design time and getComponentName is available", function (assert) {
@@ -151,7 +151,7 @@ sap.ui.define([
 					}
 				}
 			};
-			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId", "the app id is returned");
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId.Component", "the app id is returned");
 		});
 
 		QUnit.test("with manifest object at design time and getComponentName is not available", function (assert) {
@@ -164,7 +164,7 @@ sap.ui.define([
 					}
 				}
 			};
-			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), APP_ID_AT_DESIGN_TIME, "the app id at design time is returned");
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), APP_ID_AT_DESIGN_TIME + ".Component", "the app id at design time is returned");
 		});
 
 		QUnit.test("with manifest raw at design time and name property available", function (assert) {
@@ -176,10 +176,10 @@ sap.ui.define([
 					"sap.app": {
 						id: APP_ID_AT_DESIGN_TIME
 					},
-					name: "appId"
+					name: "appId.Component"
 				}
 			};
-			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId", "the app id is returned");
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId.Component", "the app id is returned");
 		});
 
 		QUnit.test("with manifest raw at design time and name property is not available", function (assert) {
@@ -193,7 +193,7 @@ sap.ui.define([
 					}
 				}
 			};
-			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), APP_ID_AT_DESIGN_TIME, "the app id at design time is returned");
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), APP_ID_AT_DESIGN_TIME + ".Component", "the app id at design time is returned");
 		});
 	});
 

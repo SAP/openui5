@@ -523,7 +523,9 @@ sap.ui.define([
 			ManifestUtils.getFlexReferenceForControl.returns("name");
 			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll");
 			var oFlexController = ChangesController.getFlexControllerInstance(oComponent);
+			var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oComponent);
 			var oSaveAllStub1 = sandbox.stub(oFlexController, "saveAll").resolves();
+			var oSaveAllStub2 = sandbox.stub(oDescriptorFlexController, "saveAll").resolves();
 			var oGetFlexObjectsStub = sandbox.stub(FlexObjectState, "getFlexObjects").resolves("foo");
 
 			return FlexObjectState.saveFlexObjects({
@@ -541,6 +543,11 @@ sap.ui.define([
 				assert.deepEqual(oSaveAllStub1.firstCall.args[1], true, "the skipUpdateCache flag was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[2], true, "the draft flag was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[5], true, "the condense flag was passed");
+				assert.equal(oSaveAllStub2.callCount, 1, "the descriptor Changes were saved");
+				assert.deepEqual(oSaveAllStub2.firstCall.args[0], oComponent, "the component was passed");
+				assert.deepEqual(oSaveAllStub2.firstCall.args[1], true, "the skipUpdateCache flag was passed");
+				assert.deepEqual(oSaveAllStub2.firstCall.args[2], true, "the draft flag was passed");
+				assert.deepEqual(oSaveAllStub2.firstCall.args[5], true, "the condense flag was passed");
 
 				assert.equal(oGetFlexObjectsStub.callCount, 1, "the changes were retrieved at the end");
 				var oExpectedParameters = {
@@ -563,7 +570,9 @@ sap.ui.define([
 			ManifestUtils.getFlexReferenceForControl.returns("name");
 			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll");
 			var oFlexController = ChangesController.getFlexControllerInstance(oComponent);
+			var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oComponent);
 			var oSaveAllStub1 = sandbox.stub(oFlexController, "saveAll").resolves();
+			var oSaveAllStub2 = sandbox.stub(oDescriptorFlexController, "saveAll").resolves();
 			var oGetFlexObjectsStub = sandbox.stub(FlexObjectState, "getFlexObjects").resolves("foo");
 
 			return FlexObjectState.saveFlexObjects({
@@ -581,6 +590,7 @@ sap.ui.define([
 				assert.deepEqual(oSaveAllStub1.firstCall.args[1], true, "the skipUpdateCache flag was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[2], true, "the draft flag was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[5], true, "the condense flag was passed");
+				assert.ok(oSaveAllStub2.notCalled, "Saving of descriptor Changes is not necessary");
 
 				assert.equal(oGetFlexObjectsStub.callCount, 1, "the changes were retrieved at the end");
 				var oExpectedParameters = {

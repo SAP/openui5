@@ -65,6 +65,38 @@ sap.ui.define([
 			assert.equal(ChangesController.getFlexControllerInstance(sComponentName), sReturnValue, "then the correct values were returned");
 		});
 
+		QUnit.test("when getDescriptorFlexControllerInstance is called with a selector object", function(assert) {
+			var oSelector = {
+				elementId: "selector",
+				elementType: "sap.ui.core.Control",
+				appComponent: {
+					id: "appComponent"
+				}
+			};
+			var sAppId = "descriptorPersistenceName";
+
+			setMethodStub([FlexUtils, "getAppDescriptor"], {}, oSelector.appComponent);
+			setMethodStub([ManifestUtils, "getAppIdFromManifest"], [oSelector.appComponent], sAppId);
+			setMethodStub([FlexControllerFactory, "create"], [sAppId], sReturnValue);
+
+			assert.equal(ChangesController.getDescriptorFlexControllerInstance(oSelector), sReturnValue, "then the correct values were returned");
+		});
+
+		QUnit.test("when getDescriptorFlexControllerInstance is called with a managed object instance", function(assert) {
+			var oManagedObject = new ManagedObject();
+			var sAppId = "descriptorPersistenceName";
+			var oAppComponent = {
+				id: "appComponent"
+			};
+
+			setMethodStub([FlexUtils, "getAppDescriptor"], {}, oAppComponent);
+			setMethodStub([ManifestUtils, "getAppIdFromManifest"], [oAppComponent], sAppId);
+			setMethodStub([FlexControllerFactory, "create"], [sAppId], sReturnValue);
+
+			assert.equal(ChangesController.getDescriptorFlexControllerInstance(oManagedObject), sReturnValue, "then the correct values were returned");
+			oManagedObject.destroy();
+		});
+
 		QUnit.test("when getAppComponentForSelector is called with a selector", function(assert) {
 			var oAppComponent = {
 				id: "appComponent"

@@ -10,6 +10,13 @@ function(
 ) {
 	"use strict";
 
+	function appendComponentToReference(sComponentName) {
+		if (sComponentName && sComponentName.indexOf(".Component") < 0) {
+			sComponentName += ".Component";
+		}
+		return sComponentName;
+	}
+
 	function getFlAsyncHintRequest(oAsyncHints, sReference) {
 		if (oAsyncHints && oAsyncHints.requests && Array.isArray(oAsyncHints.requests)) {
 			return oAsyncHints.requests.find(function(oAsyncHint) {
@@ -36,11 +43,11 @@ function(
 			}
 
 			if (oSapUi5Entry.componentName) {
-				return oSapUi5Entry.componentName;
+				return appendComponentToReference(oSapUi5Entry.componentName);
 			}
 		}
 
-		return getAppIdFromManifest(oManifest);
+		return appendComponentToReference(getAppIdFromManifest(oManifest));
 	}
 
 	function getAppIdFromManifest(oManifest) {

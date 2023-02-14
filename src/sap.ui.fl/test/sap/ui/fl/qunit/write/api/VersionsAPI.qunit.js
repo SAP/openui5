@@ -451,7 +451,7 @@ sap.ui.define([
 					return [];
 				}
 			});
-			var sReference = "com.sap.app";
+			var sReference = "com.sap.app.Component";
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			var aReturnedVersions = [];
@@ -478,7 +478,7 @@ sap.ui.define([
 				version: Version.Number.Draft
 			};
 
-			var sReference = "com.sap.app";
+			var sReference = "com.sap.app.Component";
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			var aReturnedVersions = [];
@@ -511,7 +511,7 @@ sap.ui.define([
 				}
 			});
 
-			var sReference = "com.sap.app";
+			var sReference = "com.sap.app.Component";
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			var aReturnedVersions = [];
@@ -604,7 +604,7 @@ sap.ui.define([
 				title: "new Title"
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.app");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.app.Component");
 			var aReturnedVersions = [];
 			sandbox.stub(Versions, "activate").resolves(aReturnedVersions);
 
@@ -678,7 +678,7 @@ sap.ui.define([
 			};
 
 			var sReference = "com.sap.app";
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.app");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.app.Component");
 			var oClearAndInitStub = sandbox.stub(FlexState, "clearAndInitialize").resolves();
 			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves({backendChangesDiscarded: true, dirtyChangesDiscarded: true});
 			return VersionsAPI.discardDraft(mPropertyBag)

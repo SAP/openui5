@@ -64,7 +64,7 @@ sap.ui.define([
 			var oFlexController;
 			// descriptor change
 			if (includes(DescriptorChangeTypes.getChangeTypes(), mPropertyBag.changeSpecificData.changeType)) {
-				oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
+				oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
 				var sReference = oFlexController.getComponentName();
 				var sLayer;
 				if (mPropertyBag.changeSpecificData.layer) {

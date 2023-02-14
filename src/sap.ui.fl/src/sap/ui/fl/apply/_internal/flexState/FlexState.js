@@ -253,6 +253,25 @@ sap.ui.define([
 		}
 	}
 
+	function createSecondInstanceIfNecessary(mPropertyBag) {
+		if (mPropertyBag.reference.endsWith(".Component")) {
+			var aParts = mPropertyBag.reference.split(".");
+			aParts.pop();
+			var sReferenceWithoutComponent = aParts.join(".");
+			var oStorageResponse = {changes: StorageUtils.getEmptyFlexDataResponse()};
+			_mInstances[sReferenceWithoutComponent] = merge({}, {
+				storageResponse: oStorageResponse,
+				unfilteredStorageResponse: {changes: StorageUtils.getEmptyFlexDataResponse()},
+				preparedMaps: {},
+				componentId: mPropertyBag.componentId,
+				partialFlexState: mPropertyBag.partialFlexState,
+				runtimePersistence: buildRuntimePersistence(oStorageResponse)
+			});
+			oFlexObjectDataSelector.checkUpdate({ reference: sReferenceWithoutComponent });
+			_mInitPromises[sReferenceWithoutComponent] = _mInitPromises[mPropertyBag.reference];
+		}
+	}
+
 	// TODO turn into utility or put it somewhere central
 	function filterByMaxLayer(mResponse) {
 		var mFilteredReturn = merge({}, mResponse);
@@ -279,6 +298,9 @@ sap.ui.define([
 					partialFlexState: mPropertyBag.partialFlexState
 				});
 
+				// temporarily create an instance without '.Component'
+				// TODO remove as soon as both with and without '.Component' are harmonized
+				createSecondInstanceIfNecessary(mPropertyBag);
 				registerMaxLayerHandler(mPropertyBag.reference);
 				storeAllContextsProvided(mPropertyBag.reference, mResponse);
 
