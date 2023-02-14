@@ -90,8 +90,8 @@ sap.ui.define([
      /**
      * Defines which control(s) are considered for the reset.
      *
-     * @returns {sap.ui.core.Control|sap.ui.core.Control[]}
-     */
+     * @returns {sap.ui.core.Control | sap.ui.core.Control[]}
+     **/
     SelectionController.prototype.getSelectorForReset = function() {
         return this._oAdaptationControl;
     };
@@ -211,83 +211,157 @@ sap.ui.define([
     *
     * @returns {array} Array containing the delta based created changes
     */
-    SelectionController.prototype.getArrayDeltaChanges = function (mDeltaInfo) {
+	SelectionController.prototype.getArrayDeltaChanges = function(mDeltaInfo) {
+		var aExistingArray = mDeltaInfo.existingState;
+		var aChangedArray = mDeltaInfo.changedState;
+		var oControl = mDeltaInfo.control;
+		var sInsertOperation = mDeltaInfo.changeOperations.add;
+		var sRemoveOperation = mDeltaInfo.changeOperations.remove;
+		var sMoveOperation = mDeltaInfo.changeOperations.move;
+		var aDeltaAttributes = mDeltaInfo.deltaAttributes || [];
 
-        var aExistingArray = mDeltaInfo.existingState;
-        var aChangedArray = mDeltaInfo.changedState;
-        var oControl = mDeltaInfo.control;
-        var sInsertOperation = mDeltaInfo.changeOperations.add;
-        var sRemoveOperation = mDeltaInfo.changeOperations.remove;
-        var sMoveOperation = mDeltaInfo.changeOperations.move;
-        var sGenerator = mDeltaInfo.generator;
+		var mDeleteInsert = this._calculateDeleteInserts(aExistingArray, aChangedArray, aDeltaAttributes);
+		var aChanges = this._createAddRemoveChanges(mDeleteInsert.deletes, oControl, sRemoveOperation, aDeltaAttributes);
 
-        var aDeltaAttributes = mDeltaInfo.deltaAttributes || [];
+		if (sMoveOperation) {
+			var aExistingArrayWithoutDeletes = this._removeItems(aExistingArray, mDeleteInsert.deletes);
+			var aChangedArrayWithoutnserts = this._removeItems(aChangedArray, mDeleteInsert.inserts);
+			var aMoveChanges = this._createMoveChanges(aExistingArrayWithoutDeletes, aChangedArrayWithoutnserts, oControl, sMoveOperation, aDeltaAttributes);
+			aChanges = aChanges.concat(aMoveChanges);
+		}
 
-        var fnSymbol = function(o) {
-            var sDiff = "";
-            aDeltaAttributes.forEach(function(sAttribute){
-                sDiff = sDiff + o[sAttribute];
-            });
-            return sDiff;
-        };
+		var aInsertChanges = this._createAddRemoveChanges(mDeleteInsert.inserts, oControl, sInsertOperation, aDeltaAttributes);
+		aChanges = aChanges.concat(aInsertChanges);
 
-        var aResults = diff(aExistingArray, aChangedArray, fnSymbol);
-        // Function to match field with exising field in the given array
-        var fMatch = function (oField, aArray) {
-            return aArray.filter(function (oExistingField) {
-                return oExistingField && (oExistingField.key === oField.key);
-            })[0];
-        };
+		return aChanges;
+	};
 
-        var aChanges = [];
-        var aProcessedArray = aExistingArray.slice(0);
+	SelectionController.prototype._createMoveChanges = function(aExistingItems, aChangedItems, oControl, sOperation, aDeltaAttributes) {
+		var sKey, nIndex, oItem, aChanges = [];
 
-        aResults.forEach(function (oResult) {
-            // Begin --> hack for handling result returned by diff
-            if (oResult.type === "delete" && aProcessedArray[oResult.index] === undefined) {
-                aProcessedArray.splice(oResult.index, 1);
-                return;
-            }
+		if (aExistingItems.length === aChangedItems.length) {
 
-            var oProp, oExistingProp, iLength;
-            if (oResult.type === "insert") {
-                oExistingProp = fMatch(aChangedArray[oResult.index], aProcessedArray);
-                if (oExistingProp) {
-                    oExistingProp.index = aProcessedArray.indexOf(oExistingProp);
-                    aProcessedArray.splice(oExistingProp.index, 1, undefined);
-                    aChanges = aChanges.concat(this._createAddRemoveChange(oControl, sRemoveOperation, this._getChangeContent(oExistingProp, aDeltaAttributes), sGenerator));
-                }
-            }
-            // End hack
-            oProp = oResult.type === "delete" ? aProcessedArray[oResult.index] : aChangedArray[oResult.index];
-            oProp.index = oResult.index;
-            if (oResult.type === "delete") {
-                aProcessedArray.splice(oProp.index, 1);
-            } else {
-                aProcessedArray.splice(oProp.index, 0, oProp);
-            }
-            // Move operation shows up as insert followed by delete OR delete followed by insert
-            if (sMoveOperation) {
-                iLength = aChanges.length;
-                // Get the last added change
-                if (iLength) {
-                    oExistingProp = aChanges[iLength - 1];
-                    oExistingProp = oExistingProp ? oExistingProp.changeSpecificData.content : undefined;
-                }
-                // Matching property exists with a different index --> then this is a move operation
-                if (oExistingProp && (oExistingProp.key || oExistingProp.name) === oProp.key && oResult.index != oExistingProp.index) {
-                    // remove the last insert/delete operation
-                    aChanges.pop();
-                    aChanges = aChanges.concat(this._createMoveChange(oExistingProp.id, (oExistingProp.key || oExistingProp.name), oResult.index, sMoveOperation, oControl, sMoveOperation !== "moveSort", sGenerator));
-                    return;
-                }
-            }
+			var fnSymbol = function(o) {
+				var sDiff = "";
+				aDeltaAttributes.forEach(function(sAttribute) {
+					sDiff = sDiff + o[sAttribute];
+				});
+				return sDiff;
+			};
 
-            aChanges = aChanges.concat(this._createAddRemoveChange(oControl, oResult.type === "delete" ? sRemoveOperation : sInsertOperation, this._getChangeContent(oProp, aDeltaAttributes), sGenerator));
 
-        }.bind(this));
-        return aChanges;
-    };
+			var aDiff = diff(aExistingItems, aChangedItems, fnSymbol);
+			var aDeleted = [];
+			for (var i = 0; i < aDiff.length; i++) {
+				if (aDiff[i].type === "delete") {
+					oItem = aExistingItems[aDiff[i].index];
+					aDeleted.push(oItem);
+				} else if (aDiff[i].type === "insert") {
+					sKey = aChangedItems[aDiff[i].index].key || aChangedItems[aDiff[i].index].name;
+
+					nIndex = aDiff[i].index;
+					// eslint-disable-next-line no-loop-func
+					aDeleted.forEach(function(oItem) {
+						var nDelIndex = this._indexOfByKeyName(aChangedItems, oItem.key || oItem.name);
+						if (nDelIndex <= aDiff[i].index) {
+							nIndex++;
+						}
+					}.bind(this));
+					// eslint-enable-next-line no-loop-func
+
+					aChanges.push(this._createMoveChange(sKey, Math.min(nIndex, aChangedItems.length), sOperation, oControl));
+				}
+			}
+
+		}
+
+		return aChanges;
+	};
+
+   SelectionController.prototype._createAddRemoveChanges = function (aItems, oControl, sOperation, aDeltaAttributes) {
+	   var aChanges = [];
+	   for (var i = 0; i < aItems.length; i++) {
+		   aChanges.push(this._createAddRemoveChange(oControl, sOperation, this._getChangeContent(aItems[i], aDeltaAttributes)));
+	   }
+	   return aChanges;
+   };
+
+   SelectionController.prototype._removeItems = function (aTarget, aItems) {
+	   var sKey;
+	   var aResultingTarget = [];
+
+	   for (var i = 0; i < aTarget.length; i++) {
+		   sKey = aTarget[i].key || aTarget[i].name;
+		   if (this._indexOfByKeyName(aItems, sKey) === -1) {
+			   aResultingTarget.push(aTarget[i]);
+		   }
+	   }
+
+	   return aResultingTarget;
+   };
+
+   SelectionController.prototype._indexOfByKeyName = function (aArray, sKey) {
+	   var nIndex = -1;
+	   aArray.some(function(oItem, nIdx){
+		   if ((oItem.key === sKey) || (oItem.name === sKey)) {
+			   nIndex = nIdx;
+		   }
+		   return (nIndex != -1);
+	   });
+
+	   return nIndex;
+   };
+
+   SelectionController.prototype._calculateDeleteInserts = function (aSource, aTarget, aDeltaAttributes) {
+	   var i, sKey, oItem, nIdx;
+	   var mDeleteInserts = {
+		   deletes: [],
+		   inserts: []
+	   };
+
+	   for (i = 0; i < aSource.length; i++) {
+		   sKey = aSource[i].key || aSource[i].name;
+		   nIdx = this._indexOfByKeyName(aTarget, sKey);
+		   if (nIdx === -1) {
+			   oItem = merge({}, aSource[i]);
+			   oItem.index = i;
+			   mDeleteInserts.deletes.push(oItem);
+		   } else if ((nIdx === i) && aDeltaAttributes.length){
+			   if (this._verifyDeltaAttributes(aSource[i], aTarget[i], aDeltaAttributes)) {
+				   mDeleteInserts.deletes.push(aSource[i]);
+
+				   oItem = merge({}, aTarget[i]);
+			       oItem.index = i;
+				   mDeleteInserts.inserts.push(oItem);
+			   }
+		   }
+	   }
+	   for (i = 0; i < aTarget.length; i++) {
+		   sKey = aTarget[i].key || aTarget[i].name;
+		   if (this._indexOfByKeyName(aSource, sKey) === -1) {
+			   oItem = merge({}, aTarget[i]);
+			   oItem.index = i;
+			   mDeleteInserts.inserts.push(oItem);
+		   }
+	   }
+
+	   return mDeleteInserts;
+   };
+    SelectionController.prototype._verifyDeltaAttributes = function (oSource, oTarget, aDeltaAttributes) {
+		var bReturn = false;
+
+		aDeltaAttributes.some(function(sAttr) {
+			if (!oSource.hasOwnProperty(sAttr) && oTarget.hasOwnProperty(sAttr)  ||
+			     oSource.hasOwnProperty(sAttr) && !oTarget.hasOwnProperty(sAttr) ||
+				(oSource[sAttr] != oTarget[sAttr]) ) {
+					bReturn = true;
+				}
+
+				return bReturn;
+		});
+		return bReturn;
+
+	};
 
      /**
      * Method which reduces a propertyinfo map to changecontent relevant attributes.
@@ -332,7 +406,7 @@ sap.ui.define([
         return oAddRemoveChange;
     };
 
-    SelectionController.prototype._createMoveChange = function(sId, sPropertykey, iNewIndex, sMoveOperation, oControl, bPersistId){
+    SelectionController.prototype._createMoveChange = function(sPropertykey, iNewIndex, sMoveOperation, oControl){
         var oMoveChange =  {
             selectorElement: oControl,
             changeSpecificData: {
@@ -540,7 +614,7 @@ sap.ui.define([
         var oCollator = window.Intl.Collator(sLocale, {});
 
         // group selected / unselected --> sort alphabetically in each group
-        aItems.sort(function (mField1, mField2) {
+        aItems.sort(function(mField1, mField2) {
             if (mField1[sSelectedAttribute] && mField2[sSelectedAttribute]) {
                 return (mField1[sPositionAttribute] || 0) - (mField2[sPositionAttribute] || 0);
             } else if (mField1[sSelectedAttribute]) {

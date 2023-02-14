@@ -55,7 +55,7 @@ sap.ui.define([
 		return SelectionController.prototype.getDelta.apply(this, arguments);
 	};
 
-	MDCSelectionController.prototype._createMoveChange = function(sId, sPropertykey, iNewIndex, sMoveOperation, oControl, bPersistId){
+	MDCSelectionController.prototype._createMoveChange = function(sPropertykey, iNewIndex, sMoveOperation, oControl){
 		var oMoveChange =  {
 			selectorElement: oControl,
 			changeSpecificData: {
