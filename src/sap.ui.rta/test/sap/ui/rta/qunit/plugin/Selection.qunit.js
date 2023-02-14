@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Combine",
 	"sap/ui/rta/plugin/Remove",
+	"sap/ui/rta/plugin/Rename",
 	"sap/ui/rta/plugin/Selection",
 	"sap/ui/rta/Utils",
 	"sap/m/InstanceManager",
@@ -41,6 +42,7 @@ sap.ui.define([
 	CommandFactory,
 	Combine,
 	Remove,
+	Rename,
 	Selection,
 	Utils,
 	InstanceManager,
@@ -118,7 +120,8 @@ sap.ui.define([
 				plugins: [
 					this.oSelectionPlugin,
 					new Remove({commandFactory: this.oCommandFactory}),
-					new Combine({commandFactory: this.oCommandFactory})
+					new Combine({commandFactory: this.oCommandFactory}),
+					new Rename({commandFactory: this.oCommandFactory})
 				],
 				rootElements: [this.oVBox],
 				designTimeMetadata: {
@@ -147,7 +150,12 @@ sap.ui.define([
 								changeType: "combineChange",
 								changeOnRelevantContainer: true
 							},
-							remove: null
+							remove: null,
+							rename: {
+								domRef: function (oElement) {
+									return oElement.getDomRef();
+								}
+							}
 						}
 					},
 					"sap.m.Text": {
@@ -189,6 +197,54 @@ sap.ui.define([
 
 			assert.ok(oOverlay1.isSelected(), "then innerBtn11 overlay is selected");
 			assert.ok(oOverlay2.isSelected(), "then innerBtn12 overlay is selected");
+		});
+
+		QUnit.test("when trying to select the 2. controls and deselect individually", function(assert) {
+			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
+			this.oSelectionManager.set([oOverlay1, oOverlay2]);
+
+			assert.ok(oOverlay1.isSelected(), "then innerBtn11 overlay is selected");
+			assert.ok(oOverlay2.isSelected(), "then innerBtn12 overlay is selected");
+
+			oOverlay1.getDomRef().dispatchEvent(new Event("click"));
+			assert.ok(oOverlay1.isSelected(), "then after click on innerBtn11, overlay is not selected anymore");
+			assert.notOk(oOverlay2.isSelected(), "then innerBtn12 overlay is selected");
+		});
+
+		QUnit.test("when trying to select the 2. controls and deselect one overlay by holding SHIFT key", function(assert) {
+			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
+
+			this.oSelectionManager.set([oOverlay1, oOverlay2]);
+			assert.ok(oOverlay1.isSelected(), "then innerBtn11 overlay is selected");
+			assert.ok(oOverlay2.isSelected(), "then innerBtn12 overlay is selected");
+
+			var oClickEvent = new Event("click");
+			oClickEvent.shiftKey = true;
+			oOverlay1.getDomRef().dispatchEvent(oClickEvent);
+			assert.notOk(oOverlay1.isSelected(), "then after click on innerBtn11 with SHIFT key pressed, overlay is not selected anymore");
+			assert.ok(oOverlay2.isSelected(), "then innerBtn12 overlay is still selected");
+
+			this.oSelectionManager.set([oOverlay1, oOverlay2]);
+			assert.ok(true, "then select both overlays again");
+			assert.ok(oOverlay1.isSelected(), "then innerBtn11 overlay is selected");
+			assert.ok(oOverlay2.isSelected(), "then innerBtn12 overlay is selected");
+
+			oClickEvent.ctrlKey = true;
+			oOverlay1.getDomRef().dispatchEvent(oClickEvent);
+			assert.notOk(oOverlay1.isSelected(), "then after click on innerBtn11 with CTRL key pressed, overlay is not selected anymore");
+			assert.ok(oOverlay2.isSelected(), "then innerBtn12 overlay is still selected");
+
+			this.oSelectionManager.set([oOverlay1, oOverlay2]);
+			assert.ok(true, "then select both overlays again");
+			assert.ok(oOverlay1.isSelected(), "then innerBtn11 overlay is selected");
+			assert.ok(oOverlay2.isSelected(), "then innerBtn12 overlay is selected");
+
+			oClickEvent.metaKey = true;
+			oOverlay1.getDomRef().dispatchEvent(oClickEvent);
+			assert.notOk(oOverlay1.isSelected(), "then after click on innerBtn11 with META key pressed, overlay is not selected anymore");
+			assert.ok(oOverlay2.isSelected(), "then innerBtn12 overlay is still selected");
 		});
 
 		QUnit.test("when trying to select the 2. control not multiselection enabled control (removable/combinable)", function(assert) {
