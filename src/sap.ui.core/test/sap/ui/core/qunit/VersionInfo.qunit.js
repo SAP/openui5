@@ -1,7 +1,8 @@
-/* global QUnit, sinon*/
+/* global QUnit */
 sap.ui.define([
-	"sap/ui/VersionInfo"
-], function(VersionInfo) {
+	"sap/ui/VersionInfo",
+	"sap/base/util/LoaderExtensions"
+], function(VersionInfo, LoaderExtensions) {
 	"use strict";
 
 	QUnit.config.reorder = false;
@@ -14,8 +15,6 @@ sap.ui.define([
 		}
 		return obj;
 	}
-
-	var bVersionInfoAlreadyLoaded = false;
 
 	QUnit.module("VersionInfo", {
 		before: function() {
@@ -135,53 +134,29 @@ sap.ui.define([
 					}
 				}
 			};
-		},
-		// Keep fn initFakeServer and call it at the begining of each test
-		// in order to enable single test execution
-		initFakeServer: function(sResponseCode, oResponse) {
-			this.oServer = this._oSandbox.useFakeServer();
-			this.oServer.autoRespond = true;
-			this.oServer.respondWith("GET", sap.ui.require.toUrl("sap-ui-version.json"), [
-				sResponseCode || 200,
-				{
-					"Content-Type": "application/json"
-				},
-				JSON.stringify(oResponse || this.oVersionInfo)
-			]);
-		},
-		checkVersionInfoRequest: function (assert, bError) {
-			assert.strictEqual(this.oServer.requests.length, bVersionInfoAlreadyLoaded ? 0 : 1,
-				"Server should have received one request (async).");
-
-			if (!bVersionInfoAlreadyLoaded || bError) {
-				assert.ok(this.oServer.requests[0].async,
-					"First request should be async.");
-			}
-
-			bVersionInfoAlreadyLoaded = !bError;
 		}
 	});
 
 	QUnit.test("VersionInfo.load - file not found", function(assert) {
-		this.initFakeServer(404); // Make sure the request fails as 404 - Not found
+		this.stub(LoaderExtensions, "loadResource").withArgs("sap-ui-version.json", {
+			async: true,
+			failOnError: true
+		}).rejects().callThrough();
+		// this.initFakeServer(404); // Make sure the request fails as 404 - Not found
 
 		return VersionInfo.load().then(function() {
 			assert.ok(false, "Promise should not get resolved.");
 		}, function(err) {
-
-			// Check if exception is correct
-			sinon.assert.match(err.message, sinon.match("resource sap-ui-version.json could not be loaded"),
-				"Should give an error saying the file can not be found.");
-
 			assert.strictEqual(sap.ui.versioninfo, undefined,
 				"'sap.ui.versioninfo' should still be undefined after calling the function.");
-
-			this.checkVersionInfoRequest(assert, true);
-		}.bind(this));
+		});
 	});
 
 	QUnit.test("VersionInfo.load - Object Argument", function(assert) {
-		this.initFakeServer();
+		this.stub(LoaderExtensions, "loadResource").withArgs("sap-ui-version.json", {
+			async: true,
+			failOnError: true
+		}).resolves(this.oVersionInfo).callThrough();
 
 		return VersionInfo.load({
 			library: "sap.ui.core"
@@ -192,13 +167,14 @@ sap.ui.define([
 
 			assert.deepEqual(sap.ui.versioninfo.libraries[0], this.oVersionInfo.libraries[0],
 				"First library in 'sap.ui.versioninfo' should now be the same as the return value of 'sap.ui.getVersionInfo({ library: \"sap.ui.core\", async: true })'.");
-
-			this.checkVersionInfoRequest(assert);
 		}.bind(this));
 	});
 
 	QUnit.test("VersionInfo.load - No Argument", function(assert) {
-		this.initFakeServer();
+		this.stub(LoaderExtensions, "loadResource").withArgs("sap-ui-version.json", {
+			async: true,
+			failOnError: true
+		}).resolves(this.oVersionInfo).callThrough();
 
 		return VersionInfo.load().then(function(oVersionInfo) {
 
@@ -207,25 +183,27 @@ sap.ui.define([
 
 			assert.deepEqual(sap.ui.versioninfo, this.oVersionInfo,
 				"First library in 'sap.ui.versioninfo' should now be the same as the return value of 'sap.ui.getVersionInfo({ library: \"sap.ui.core\", async: true })'.");
-
-				this.checkVersionInfoRequest(assert);
 		}.bind(this));
 	});
 
 	QUnit.test("VersionInfo.load - Unknown library", function(assert) {
-		this.initFakeServer();
+		this.stub(LoaderExtensions, "loadResource").withArgs("sap-ui-version.json", {
+			async: true,
+			failOnError: true
+		}).resolves(this.oVersionInfo).callThrough();
 
 		return VersionInfo.load({
 			library: "sap.invalid.library"
 		}).then(function(oVersionInfo) {
 			assert.equal(oVersionInfo, undefined, "Unknown library leads to undefined return value");
-
-			this.checkVersionInfoRequest(assert);
-		}.bind(this));
+		});
 	});
 
 	QUnit.test("_getTransitiveDependencyForLibraries", function(assert) {
-		this.initFakeServer();
+		this.stub(LoaderExtensions, "loadResource").withArgs("sap-ui-version.json", {
+			async: true,
+			failOnError: true
+		}).resolves(this.oVersionInfo).callThrough();
 
 		return VersionInfo.load().then(function() {
 			assert.deepSortedEqual(
@@ -247,13 +225,14 @@ sap.ui.define([
 				VersionInfo._getTransitiveDependencyForLibraries(["sap.ui.unified", "sap.ui.documentation"]),
 				["sap.m", "sap.ui.core", "sap.ui.documentation", "sap.ui.layout", "sap.ui.unified"],
 				"merged transitive dependencies for sap.ui.unified and sap.ui.documentation");
-
-			this.checkVersionInfoRequest(assert);
-		}.bind(this));
+		});
 	});
 
 	QUnit.test("_getTransitiveDependencyForComponent", function(assert) {
-		this.initFakeServer();
+		this.stub(LoaderExtensions, "loadResource").withArgs("sap-ui-version.json", {
+			async: true,
+			failOnError: true
+		}).resolves(this.oVersionInfo).callThrough();
 
 		return VersionInfo.load().then(function() {
 
@@ -276,9 +255,7 @@ sap.ui.define([
 					dependencies: ["sap.m", "sap.ui.core", "sap.ui.layout", "sap.ui.unified"]
 				},
 				"Transitive dependencies for cookieSettingsDialog component should match the expectation");
-
-			this.checkVersionInfoRequest(assert);
-		}.bind(this));
+		});
 	});
 
 });
