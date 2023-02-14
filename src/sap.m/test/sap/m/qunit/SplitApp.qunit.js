@@ -134,7 +134,7 @@ sap.ui.define([
 			done();
 		});
 
-		oSplitApp._onMasterButtonTap();
+		oCore.byId("splitapp-MasterBtn").firePress();
 	});
 
 	QUnit.test("ShowHideMode_portrait", function(assert){
