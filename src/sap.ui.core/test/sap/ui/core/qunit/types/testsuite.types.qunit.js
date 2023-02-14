@@ -12,7 +12,6 @@ sap.ui.define(function () {
 				qunitBridge: true
 			},
 			ui5: {
-				originInfo: true,
 				language: "en-US"
 			}
 		},
