@@ -68,11 +68,11 @@ sap.ui.define([
 		afterEach: function() {
 			this.destroyTable();
 		},
-		createTable: function() {
+		createTable: function(mSettings) {
 			this.destroyTable();
-			this.oTable = new Table({
+			this.oTable = new Table(Object.assign({
 				type: new TreeTableType()
-			});
+			}, mSettings));
 			return this.oTable;
 		},
 		initTable: function() {
@@ -95,5 +95,26 @@ sap.ui.define([
 			P13nMode.Group, // The delegate is responsible to forbid this
 			P13nMode.Aggregate // The delegate is responsible to forbid this
 		]);
+	});
+
+	QUnit.test("Fix column count", function(assert) {
+		var oTable = this.createTable({
+			type: new TreeTableType({fixedColumnCount: 1})
+		});
+
+		return oTable.initialized().then(function() {
+			assert.equal(oTable.getType().getFixedColumnCount(), 1, "fixedColumnCount for type is set to 1");
+			assert.equal(oTable._oTable.getFixedColumnCount(), 1, "Inner table has a fixed column count of 1");
+
+			oTable.getType().setFixedColumnCount(2);
+
+			assert.equal(oTable.getType().getFixedColumnCount(), 2, "fixedColumnCount for type is set to 2");
+			assert.equal(oTable._oTable.getFixedColumnCount(), 2, "Inner table has a fixed column count of 2");
+
+			oTable.getType().setFixedColumnCount(0);
+
+			assert.equal(oTable.getType().getFixedColumnCount(), 0, "fixedColumnCount for type is set to 0");
+			assert.equal(oTable._oTable.getFixedColumnCount(), 0, "Inner table has a fixed column count of 0");
+		});
 	});
 });
