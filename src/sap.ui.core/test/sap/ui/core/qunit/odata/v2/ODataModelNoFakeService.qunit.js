@@ -695,10 +695,9 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_processChange: ", function (assert) {
+	QUnit.test("_processChange", function (assert) {
 		var oContext = {hasSubContexts : function () {}},
 			oData = {__metadata : {etag : "~changedETag"}},
-			sDeepPath = "~deepPath",
 			sETag = "~etag",
 			mHeaders = "~headers",
 			sKey = "~key",
@@ -711,7 +710,9 @@ sap.ui.define([
 				_removeReferences : function () {},
 				getContext : function () {},
 				getETag : function () {},
-				mChangedEntities : {},
+				mChangedEntities : {
+					"~key" : {__metadata : {deepPath : "~deepPath"}}
+				},
 				oMetadata : {
 					_getEntityTypeByPath : function () {},
 					_getNavigationPropertyNames : function () {}
@@ -750,13 +751,12 @@ sap.ui.define([
 			.returns(sUrl);
 		this.mock(oContext).expects("hasSubContexts").withExactArgs().returns("~hasSubContexts");
 		this.mock(oModel).expects("_createRequest")
-			.withExactArgs(sUrl, sDeepPath, "MERGE", mHeaders, oPayload, sETag, undefined, true,
+			.withExactArgs(sUrl, "~deepPath", "MERGE", mHeaders, oPayload, sETag, undefined, true,
 				"~hasSubContexts")
 			.returns(oRequest);
 
 		// code under test
-		oResult = ODataModel.prototype._processChange.call(oModel, sKey, oData, sUpdateMethod,
-			sDeepPath);
+		oResult = ODataModel.prototype._processChange.call(oModel, sKey, oData, sUpdateMethod);
 
 		assert.strictEqual(oResult, oRequest);
 		assert.deepEqual(oResult, {requestUri : "~requestUri"});
