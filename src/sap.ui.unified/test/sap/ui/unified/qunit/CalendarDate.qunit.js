@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Core"
-], function(CalendarDate, CalendarType, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+], function(CalendarDate, CalendarType, oCore, UI5Date) {
 	"use strict";
 
 	QUnit.module("Constructor");
 	//check with no parameters
 	QUnit.test("Without any parameters", function (assert) {
 		//Act
-		var oCurrentJSDate = new Date(),
+		var oCurrentJSDate = UI5Date.getInstance(),
 				oCalendarDate = new CalendarDate();
 
 		//Assert
@@ -77,7 +78,7 @@ sap.ui.define([
 
 	QUnit.test("With 2 parameters(CalendarDate, CalendarType(Non-gregorian))", function (assert) {
 		//Act
-		var oSourceJSDate = new Date(2017, 3, 23),
+		var oSourceJSDate = UI5Date.getInstance(2017, 3, 23),
 				oSourceCalendarDate = new CalendarDate(oSourceJSDate.getFullYear(), oSourceJSDate.getMonth(), oSourceJSDate.getDate(),
 						CalendarType.Gregorian),
 				oTargetCalendarDate = new CalendarDate(oSourceCalendarDate, CalendarType.Islamic),
@@ -673,7 +674,7 @@ sap.ui.define([
 		//Act
 		var oCalendarDate = new CalendarDate(2017, 3, 23),
 				oGeneratedJSDate = oCalendarDate.toLocalJSDate(),
-				oJSDate = new Date(2017, 3, 23, 2, 50, 40, 35);
+				oJSDate = UI5Date.getInstance(2017, 3, 23, 2, 50, 40, 35);
 
 		oGeneratedJSDate.setHours(2, 50, 40, 35);
 
@@ -690,7 +691,7 @@ sap.ui.define([
 
 	QUnit.test("Non-gregorian CalendarDate.toLocalJSDate() returns Gregorian date", function (assert) {
 		//Act
-		var oSourceJSDate = new Date(2017, 3, 23),
+		var oSourceJSDate = UI5Date.getInstance(2017, 3, 23),
 				oSourceCalendarDate = new CalendarDate(oSourceJSDate.getFullYear(), oSourceJSDate.getMonth(), oSourceJSDate.getDate(),
 						CalendarType.Islamic),
 				oGeneratedJSDate = oSourceCalendarDate.toLocalJSDate();
@@ -718,8 +719,8 @@ sap.ui.define([
 		//Act
 		var oCalendarDate = new CalendarDate(2017, 3, 23),
 				oGeneratedJSDate = oCalendarDate.toUTCJSDate(),
-				oJSDate = new Date(2017, 3, 23, 2, 50, 40, 35),
-				oExpectedUTCJSDate = new Date(Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate(),
+				oJSDate = UI5Date.getInstance(2017, 3, 23, 2, 50, 40, 35),
+				oExpectedUTCJSDate = UI5Date.getInstance(Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate(),
 						oJSDate.getHours(), oJSDate.getMinutes(), oJSDate.getSeconds(), oJSDate.getMilliseconds()));
 
 		oGeneratedJSDate.setUTCHours(2, 50, 40, 35);
@@ -737,11 +738,11 @@ sap.ui.define([
 
 	QUnit.test("Non-gregorian CalendarDate.toUTCJSDate() returns Gregorian date", function (assert) {
 		//Act
-		var oJSDate = new Date(2017, 3, 23),
+		var oJSDate = UI5Date.getInstance(2017, 3, 23),
 				oSourceCalendarDate = new CalendarDate(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate(),
 						CalendarType.Islamic),
 				oGeneratedJSDate = oSourceCalendarDate.toUTCJSDate(),
-				oExpectedUTCJSDate = new Date(Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate(), oJSDate.getHours(), oJSDate.getMinutes(), oJSDate.getSeconds(), oJSDate.getMilliseconds()));
+				oExpectedUTCJSDate = UI5Date.getInstance(Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate(), oJSDate.getHours(), oJSDate.getMinutes(), oJSDate.getSeconds(), oJSDate.getMilliseconds()));
 
 		//Assert
 		assert.equal(oGeneratedJSDate.getFullYear(), oExpectedUTCJSDate.getFullYear(), "the returned year is the same");
@@ -754,10 +755,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("getEra returns the right era", function(assert) {
-		var o7_Jan_1989_Showa_End = CalendarDate.fromLocalJSDate(new Date(1989, 0, 7), "Japanese");
-		var o8_Jan_1989_Heisei_Begin = CalendarDate.fromLocalJSDate(new Date(1989, 0, 8), "Japanese");
+		var o7_Jan_1989_Showa_End = CalendarDate.fromLocalJSDate(UI5Date.getInstance(1989, 0, 7), "Japanese");
+		var o8_Jan_1989_Heisei_Begin = CalendarDate.fromLocalJSDate(UI5Date.getInstance(1989, 0, 8), "Japanese");
 
-		var now = CalendarDate.fromLocalJSDate(new Date(), "Gregorian");
+		var now = CalendarDate.fromLocalJSDate(UI5Date.getInstance(), "Gregorian");
 
 		assert.equal(o7_Jan_1989_Showa_End.getEra(), 234, "era is right");
 		assert.equal(o8_Jan_1989_Heisei_Begin.getEra(), 235, "era is right");
@@ -798,9 +799,9 @@ sap.ui.define([
 
 	QUnit.test("the generated values are the same as the ones in the source date", function (assert) {
 		//Act
-		var oJSDate = new Date(),
+		var oJSDate = UI5Date.getInstance(),
 				oCalendarDate = CalendarDate.fromLocalJSDate(oJSDate),
-				oExpectedUTCJSDate = new Date(Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate())),
+				oExpectedUTCJSDate = UI5Date.getInstance(Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate())),
 				oGeneratedValue = oCalendarDate.valueOf();
 
 
@@ -813,7 +814,7 @@ sap.ui.define([
 	QUnit.test("returns CalendarDate date", function (assert) {
 		//Act
 		var oCalendarDate = new CalendarDate(),
-				oJSDate = new Date(),
+				oJSDate = UI5Date.getInstance(),
 				oGeneratedDate = CalendarDate.fromLocalJSDate(oJSDate),
 				sTypeOfCalendarDate = typeof oCalendarDate;
 
@@ -869,7 +870,7 @@ sap.ui.define([
 
 	QUnit.test("the generated values are the same as the ones in the JS date object", function (assert) {
 		//Act
-		var oJSDate = new Date(2017, 3, 23, 2, 50, 40, 35),
+		var oJSDate = UI5Date.getInstance(2017, 3, 23, 2, 50, 40, 35),
 				oGeneratedJSDate = CalendarDate.fromLocalJSDate(oJSDate);
 
 		//Assert

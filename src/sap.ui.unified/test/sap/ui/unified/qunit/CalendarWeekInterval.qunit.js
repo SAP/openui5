@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(qutils, CalendarWeekInterval, CalendarDateInterval, CalendarDate, KeyCodes, jQuery, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
+], function(qutils, CalendarWeekInterval, CalendarDateInterval, CalendarDate, KeyCodes, jQuery, oCore, UI5Date) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -17,7 +18,7 @@ sap.ui.define([
 	QUnit.module("Events", {
 		beforeEach: function () {
 			this.sut = new CalendarWeekInterval("CalP",{
-				startDate: new Date("2015", "0", "1", "8", "0", "0"),
+				startDate: UI5Date.getInstance("2015", "0", "1", "8", "0", "0"),
 				pickerPopup: true
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -34,7 +35,7 @@ sap.ui.define([
 		var _handleFocusCalendarDateSpy = this.spy(CalendarDateInterval.prototype, "_handleFocus"),
 			_focusDateExtendCalendarDateSpy = this.spy(CalendarDateInterval.prototype, "_focusDateExtend"),
 			_focusDateExtendWeekDateSpy = this.spy(this.sut, "_focusDateExtend"),
-			oDate = new Date(2015, 0, 2, 19, 15, 0);
+			oDate = UI5Date.getInstance(2015, 0, 2, 19, 15, 0);
 		//act
 		this.sutMonth.fireFocus({
 			date : oDate,
@@ -52,7 +53,7 @@ sap.ui.define([
 		var _handleFocusCalendarDateSpy = this.spy(CalendarDateInterval.prototype, "_handleFocus"),
 				_focusDateExtendCalendarDateSpy = this.spy(CalendarDateInterval.prototype, "_focusDateExtend"),
 				_focusDateExtendWeekDateSpy = this.spy(this.sut, "_focusDateExtend"),
-				oDate = new Date(2015, 0, 2, 19, 15, 0);
+				oDate = UI5Date.getInstance(2015, 0, 2, 19, 15, 0);
 		//act
 		this.sutMonth.fireFocus({
 			date : oDate,
@@ -69,7 +70,7 @@ sap.ui.define([
 	QUnit.test("'_focusDateExtend()' has correct output", function (assert) {
 		//prepare
 		var _focusDateExtendSpy = this.spy(this.sut, "_focusDateExtend"),
-			oExpectedDate = CalendarDate.fromLocalJSDate(new Date(2015, 0, 3, 12, 0, 0));
+			oExpectedDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2015, 0, 3, 12, 0, 0));
 
 		//act
 		this.sut._focusDate(oExpectedDate, false, true);
@@ -88,7 +89,7 @@ sap.ui.define([
 		// arrange
 		var $Date,
 			oCalP = new CalendarWeekInterval("CalP",{
-						startDate: new Date("2015", "7", "9"),
+						startDate: UI5Date.getInstance("2015", "7", "9"),
 						pickerPopup: true
 					}).placeAt("qunit-fixture");
 
@@ -119,7 +120,7 @@ sap.ui.define([
 		// arrange
 		var $Date,
 			oCalP = new CalendarWeekInterval("CalP",{
-						startDate: new Date("2015", "7", "9"),
+						startDate: UI5Date.getInstance("2015", "7", "9"),
 						pickerPopup: true
 					}).placeAt("qunit-fixture");
 
@@ -152,7 +153,7 @@ sap.ui.define([
 		var $Date, oCalStartDate,
 			oSpyFireDateChange = this.spy(CalendarWeekInterval.prototype, "fireStartDateChange"),
 			oCalP = new CalendarWeekInterval("CalP",{
-						startDate: new Date("2015", "7", "9"),
+						startDate: UI5Date.getInstance("2015", "7", "9"),
 						pickerPopup: true
 					}).placeAt("qunit-fixture");
 
@@ -222,7 +223,7 @@ sap.ui.define([
 		var oCalPicker,
 			$Date,
 			oCalP = new CalendarWeekInterval("CalP",{
-						startDate: new Date("2017", "7", "6"),
+						startDate: UI5Date.getInstance("2017", "7", "6"),
 						pickerPopup: true
 					}).placeAt("qunit-fixture");
 
@@ -261,7 +262,7 @@ sap.ui.define([
 		// arrange
 		var $Date,
 			oCalP = new CalendarWeekInterval("CalP",{
-						startDate: new Date("2017", "4", "11"),
+						startDate: UI5Date.getInstance("2017", "4", "11"),
 						pickerPopup: true
 					}).placeAt("qunit-fixture");
 
@@ -305,8 +306,8 @@ sap.ui.define([
 		// change the pickerPopup to true, this will destroy the yearPicker aggregation
 		oCalP.setPickerPopup(true);
 		// set new min and max dates
-		oCalP.setMinDate(new Date("2015", "7", "13", "8", "0", "0"));
-		oCalP.setMaxDate(new Date("2017", "7", "13", "8", "0", "0"));
+		oCalP.setMinDate(UI5Date.getInstance("2015", "7", "13", "8", "0", "0"));
+		oCalP.setMaxDate(UI5Date.getInstance("2017", "7", "13", "8", "0", "0"));
 
 		// return pickrPopup property to true, this will create the yearPicker aggregation
 		oCalP.setPickerPopup(false);
@@ -345,8 +346,8 @@ sap.ui.define([
 		// change the pickerPopup to false
 		oCalP.setPickerPopup(false);
 		// set new min and max dates
-		oCalP.setMinDate(new Date("2015", "7", "13", "8", "0", "0"));
-		oCalP.setMaxDate(new Date("2017", "7", "13", "8", "0", "0"));
+		oCalP.setMinDate(UI5Date.getInstance("2015", "7", "13", "8", "0", "0"));
+		oCalP.setMaxDate(UI5Date.getInstance("2017", "7", "13", "8", "0", "0"));
 
 		// return pickerPopup property to true, this will create the calendarPicker
 		oCalP.setPickerPopup(true);
@@ -372,7 +373,7 @@ sap.ui.define([
 		var iDays = 6,
 				oExpectedCalculatedMaxDate = new CalendarDate(2018, 11, 20),
 				oStartDate = new CalendarDate(2018, 10, 20),
-				oCalendarWeekInterval = new CalendarWeekInterval({ maxDate: new Date(2018, 11, 20) }),
+				oCalendarWeekInterval = new CalendarWeekInterval({ maxDate: UI5Date.getInstance(2018, 11, 20) }),
 				ogetMaxDateAlignedToMinDateSpy = this.spy(oCalendarWeekInterval, "_getMaxDateAlignedToMinDate"),
 				oAlignStartDateToMinAndMaxSpy = this.spy(oCalendarWeekInterval, "_getStartDateAlignedToMinAndMaxDate"),
 				oGetDaysStub = this.stub(oCalendarWeekInterval, "_getDays").returns(iDays);

@@ -29,7 +29,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -60,7 +61,8 @@ sap.ui.define([
 	XMLView,
 	InvisibleText,
 	KeyCodes,
-	oCore
+	oCore,
+	UI5Date
 ) {
 	"use strict";
 
@@ -94,20 +96,20 @@ sap.ui.define([
 		/*the SUT won't be destroyed when single test is run*/
 		bSkipDestroy = new URLSearchParams(window.location.search).has("testId");
 
-	var oPCStartDate = new Date("2015", "0", "1", "08", "00");
+	var oPCStartDate = UI5Date.getInstance("2015", "0", "1", "08", "00");
 
 	var createPlanningCalendar = function(sID, oSearchField, oButton, oParamStartDate, sViewKey, oLegend, aSpecialDates, aRows) {
 
 		if (!aSpecialDates || !aSpecialDates.length) {
 			aSpecialDates = [
 				new DateTypeRange(sID + "SD1", {
-					startDate: new Date(2015, 0, 6),
+					startDate: UI5Date.getInstance(2015, 0, 6),
 					type: CalendarDayType.Type01,
 					tooltip: "Heilige 3 Könige"
 				}),
 				new DateTypeRange(sID + "SD2", {
-					startDate: new Date(2015, 0, 1, 12, 0),
-					endDate: new Date(2015, 0, 1, 14, 0),
+					startDate: UI5Date.getInstance(2015, 0, 1, 12, 0),
+					endDate: UI5Date.getInstance(2015, 0, 1, 14, 0),
 					type: CalendarDayType.Type02,
 					tooltip: "Lunch"
 				})
@@ -121,8 +123,8 @@ sap.ui.define([
 				text: "Musterteam",
 				tooltip: "Header tooltip",
 				intervalHeaders: [ new CalendarAppointment(sID + "-R1H1",{
-					startDate: new Date("2015", "0", "1", "09", "00"),
-					endDate: new Date("2015", "0", "1", "11", "00"),
+					startDate: UI5Date.getInstance("2015", "0", "1", "09", "00"),
+					endDate: UI5Date.getInstance("2015", "0", "1", "11", "00"),
 					type: CalendarDayType.Type02,
 					color: "#FF0000",
 					title: "SAPUI5",
@@ -132,7 +134,7 @@ sap.ui.define([
 				],
 				appointments: [ new CalendarAppointment(sID + "-R1A1", {
 					startDate: oPCStartDate,
-					endDate: new Date("2015", "0", "1", "09", "00"),
+					endDate: UI5Date.getInstance("2015", "0", "1", "09", "00"),
 					type: CalendarDayType.Type01,
 					color: "#FF00FF",
 					title: "App 1",
@@ -141,7 +143,7 @@ sap.ui.define([
 					text: "Text"
 				}),
 					new CalendarAppointment(sID + "-R1A2", {
-						startDate: new Date("2015", "0", "1", "07", "00"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "07", "00"),
 						endDate: oPCStartDate,
 						type: CalendarDayType.Type02,
 						title: "App 2",
@@ -151,16 +153,16 @@ sap.ui.define([
 						tentative: true
 					}),
 					new CalendarAppointment(sID + "-R1A3", {
-						startDate: new Date("2015", "0", "2", "08", "30"),
-						endDate: new Date("2015", "0", "2", "09", "30"),
+						startDate: UI5Date.getInstance("2015", "0", "2", "08", "30"),
+						endDate: UI5Date.getInstance("2015", "0", "2", "09", "30"),
 						type: CalendarDayType.Type03,
 						title: "App3",
 						icon: "sap-icon://home",
 						tooltip: "Tooltip"
 					}),
 					new CalendarAppointment(sID + "-R1A4", {
-						startDate: new Date("2014", "6", "1", "0", "0"),
-						endDate: new Date("2014", "6", "2", "0", "0"),
+						startDate: UI5Date.getInstance("2014", "6", "1", "0", "0"),
+						endDate: UI5Date.getInstance("2014", "6", "2", "0", "0"),
 						type: CalendarDayType.Type04,
 						title: "Meeting 4",
 						tooltip: "Tooltip 4",
@@ -176,8 +178,8 @@ sap.ui.define([
 					nonWorkingDays: [2,3],
 					nonWorkingHours: [11, 12],
 					intervalHeaders: [ new CalendarAppointment(sID + "-R2H1",{
-						startDate: new Date("2015", "0", "2", "00", "00"),
-						endDate: new Date("2015", "0", "2", "23", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "2", "00", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "2", "23", "59"),
 						type: CalendarDayType.Type01,
 						title: "SAPUI5",
 						tooltip: "Test",
@@ -185,8 +187,8 @@ sap.ui.define([
 					})
 					],
 					appointments: [ new CalendarAppointment(sID + "-R2A1", {
-						startDate: new Date("2015", "0", "1", "00", "00"),
-						endDate: new Date("2015", "0", "2", "23", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "00", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "2", "23", "59"),
 						type: CalendarDayType.Type01,
 						title: "App 1",
 						tooltip: "Tooltip",
@@ -294,7 +296,7 @@ sap.ui.define([
 
 		if (bWizardUsesDaysPicker && iDay != undefined) {
 			// click on 14 of September
-			sDate = DateFormat().getInstance({pattern: "yyyymmdd"}).format(new Date(iYear, iMonth, iDay));
+			sDate = DateFormat().getInstance({pattern: "yyyymmdd"}).format(UI5Date.getInstance(iYear, iMonth, iDay));
 			$Date = jQuery("#" + sCalendarPickerId + "--Month0-" + sDate);
 			$Date.trigger("focus");
 			qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
@@ -378,7 +380,7 @@ sap.ui.define([
 			oSpecialDateEnd,
 			aResult = [];
 
-		oSpecialDateStart = new Date(oStartDate.getTime());
+		oSpecialDateStart = UI5Date.getInstance(oStartDate.getTime());
 		oSpecialDateEnd = createEndDate(sCalendarIntervalType, oSpecialDateStart);
 
 		for (var i = iTypeBegin; i <= iTypeEnd; i++) {
@@ -391,8 +393,8 @@ sap.ui.define([
 			sTypeName = CalendarDayType[sTypeName];
 			aResult.push(new DateTypeRange({
 				type: sTypeName,
-				startDate: new Date(oSpecialDateStart.getTime()),
-				endDate: new Date(oSpecialDateEnd.getTime())
+				startDate: UI5Date.getInstance(oSpecialDateStart.getTime()),
+				endDate: UI5Date.getInstance(oSpecialDateEnd.getTime())
 			}));
 
 			oSpecialDateStart = getNextStartDate(sCalendarIntervalType, oSpecialDateStart);
@@ -400,7 +402,7 @@ sap.ui.define([
 		}
 
 		function getNextStartDate(sCalendarIntervalType, oDate1) {
-			var oTempDate = new Date(oDate1.getTime());
+			var oTempDate = UI5Date.getInstance(oDate1.getTime());
 
 			switch (sCalendarIntervalType) {
 				case CalendarIntervalType.Hour:
@@ -426,7 +428,7 @@ sap.ui.define([
 			return oTempDate;
 		}
 		function createEndDate(sCalendarIntervalType, oStartDate) {
-			var oEndDate = new Date(oStartDate.getTime());
+			var oEndDate = UI5Date.getInstance(oStartDate.getTime());
 
 			switch (sCalendarIntervalType) {
 				case CalendarIntervalType.Hour:
@@ -453,7 +455,7 @@ sap.ui.define([
 		}
 
 		function getLastMonthDate(oDate) {
-			var oTempDate = new Date(oDate.getTime());
+			var oTempDate = UI5Date.getInstance(oDate.getTime());
 			oTempDate.setMonth(oTempDate.getMonth() + 1);
 			oTempDate.setDate(0);
 			return oTempDate.getDate();
@@ -468,8 +470,8 @@ sap.ui.define([
 			oAppEndDate,
 			aResult = [];
 
-		oAppStartDate = new Date(oStartDate.getTime());
-		oAppEndDate = new Date(oAppStartDate.getTime());
+		oAppStartDate = UI5Date.getInstance(oStartDate.getTime());
+		oAppEndDate = UI5Date.getInstance(oAppStartDate.getTime());
 		oAppEndDate.setMinutes(oAppStartDate.getMinutes() + 10);  //appointments duration
 
 		for (var i = iTypeBegin; i <= iTypeEnd; i++) {
@@ -482,11 +484,11 @@ sap.ui.define([
 			sTypeName = CalendarDayType[sTypeName];
 			aResult.push(new CalendarAppointment({
 				type: sTypeName,
-				startDate: new Date(oAppStartDate.getTime()),
-				endDate: new Date(oAppEndDate.getTime())
+				startDate: UI5Date.getInstance(oAppStartDate.getTime()),
+				endDate: UI5Date.getInstance(oAppEndDate.getTime())
 			}));
 			oAppStartDate.setMinutes(oAppStartDate.getMinutes() + 30);// 2appointments per hour
-			oAppEndDate = new Date(oAppStartDate.getTime());
+			oAppEndDate = UI5Date.getInstance(oAppStartDate.getTime());
 			oAppEndDate.setMinutes(oAppStartDate.getMinutes() + 10); //appointments duration
 		}
 		return aResult;
@@ -513,8 +515,8 @@ sap.ui.define([
 		beforeEach: function() {
 			var oSearchField = new SearchField(),
 				oButton = new Button();
-			this.o14Sep2016MidOfMonth = new Date(2016, 8, 14);
-			this.o10Feb2016 = new Date(2016, 1, 10);
+			this.o14Sep2016MidOfMonth = UI5Date.getInstance(2016, 8, 14);
+			this.o10Feb2016 = UI5Date.getInstance(2016, 1, 10);
 			this.oPC = createPlanningCalendar("oneMonthPlanningCalendar", oSearchField, oButton, this.o14Sep2016MidOfMonth,
 				CalendarIntervalType.OneMonth);
 			this.oPC.placeAt("bigUiArea");
@@ -542,16 +544,16 @@ sap.ui.define([
 
 		_get1stInNextMonth: function(oDate) {
 			if (oDate.getMonth() == 11) {
-				var oNext = new Date(oDate.getFullYear() + 1, 0, 1);
+				var oNext = UI5Date.getInstance(oDate.getFullYear() + 1, 0, 1);
 			} else {
-				var oNext = new Date(oDate.getFullYear(), oDate.getMonth() + 1, 1);
+				var oNext = UI5Date.getInstance(oDate.getFullYear(), oDate.getMonth() + 1, 1);
 			}
 
 			return oNext;
 		},
 
 		_getNextDay: function(oDate) {
-			var oNext = new Date(oDate.getTime());
+			var oNext = UI5Date.getInstance(oDate.getTime());
 			oNext.setDate(oNext.getDate() + 1);
 
 			return oNext;
@@ -711,7 +713,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('today button is disabled when today is visible', function(assert) {
-		var oToday = new Date();
+		var oToday = UI5Date.getInstance();
 		var oTodayBtn = _getTodayButton.call(this, this.oPC);
 
 		//assert
@@ -726,10 +728,10 @@ sap.ui.define([
 	});
 
 	QUnit.test('clicking today navigates to todays month', function(assert) {
-		var oFakeNow = new Date(2016, 8, 10),
+		var oFakeNow = UI5Date.getInstance(2016, 8, 10),
 			clock = sinon.useFakeTimers(oFakeNow.getTime());
 
-		this.oPC.setStartDate(new Date(2016, 5, 1));
+		this.oPC.setStartDate(UI5Date.getInstance(2016, 5, 1));
 
 		//act
 		_clickTodayButton.call(this, this.oPC);
@@ -807,7 +809,7 @@ sap.ui.define([
 	QUnit.module("OneMonth view (size S)", {
 		beforeEach: function () {
 			this._simulateMobileEnvironment();
-			this.o14Sep2016MidOfMonth = new Date(2016, 8, 14);
+			this.o14Sep2016MidOfMonth = UI5Date.getInstance(2016, 8, 14);
 		},
 		afterEach: function () {
 			this._restoreDesktopEnvironment();
@@ -858,24 +860,24 @@ sap.ui.define([
 		this._createCalendar(this.o14Sep2016MidOfMonth);
 
 		//assert
-		assert.strictEqual(this._oPC.getStartDate().getTime(), new Date(2016, 8, 1).getTime(), "The correct date is auto adjusted for the first day of month");
+		assert.strictEqual(this._oPC.getStartDate().getTime(), UI5Date.getInstance(2016, 8, 1).getTime(), "The correct date is auto adjusted for the first day of month");
 	});
 
 	QUnit.test("'setStartDate()' setter calls '_setRowsStartDate()' with correct date parameter", function (assert) {
 		//arrange
-		this._createCalendar(new Date(2015, 3, 5));
+		this._createCalendar(UI5Date.getInstance(2015, 3, 5));
 		var oSetRowsStartDateSpy = this.spy(this._oPC, "_setRowsStartDate");
 
 		//act
-		this._oPC.setStartDate(new Date(2015, 2, 4));
+		this._oPC.setStartDate(UI5Date.getInstance(2015, 2, 4));
 
 		//assert
 		assert.strictEqual(oSetRowsStartDateSpy.callCount, 1, "'_setRowsStartDate()' is called only once");
-		assert.strictEqual(oSetRowsStartDateSpy.getCall(0).args[0].getTime(), new Date(2015, 3, 5).getTime(), "'_setRowsStartDate()' is called with correct parameter");
+		assert.strictEqual(oSetRowsStartDateSpy.getCall(0).args[0].getTime(), UI5Date.getInstance(2015, 3, 5).getTime(), "'_setRowsStartDate()' is called with correct parameter");
 	});
 
 	QUnit.test("_setRowsStartDate", function(assert) {
-		var oTestDate = new Date(5, 5, 5);
+		var oTestDate = UI5Date.getInstance(5, 5, 5);
 		this._createCalendar();
 		this._oPC._setRowsStartDate(oTestDate);
 		assert.equal(_getRowTimeline(this._oPC.getRows()[0]).getStartDate().getTime(), oTestDate.getTime(), 'row 1 start date');
@@ -889,7 +891,7 @@ sap.ui.define([
 
 		this._createCalendar();
 		//set date outside the current month
-		this._oPC.setStartDate(new Date(2000, 0, 1));
+		this._oPC.setStartDate(UI5Date.getInstance(2000, 0, 1));
 		oSetStartDateSpy = this.spy(this._oPC, "setStartDate");
 		qutils.triggerEvent('tap', this._oPC._oTodayButton.getDomRef());
 		//assert
@@ -975,7 +977,7 @@ sap.ui.define([
 		this._createCalendar();
 
 		this._oPC._oOneMonthsRow.removeAllSelectedDates();
-		this._oPC._oOneMonthsRow.addSelectedDate(new DateRange({ startDate: new Date(2019, 1, 18) }));
+		this._oPC._oOneMonthsRow.addSelectedDate(new DateRange({ startDate: UI5Date.getInstance(2019, 1, 18) }));
 
 		//act
 		this._oPC.addRow(oRow);
@@ -990,7 +992,7 @@ sap.ui.define([
 
 	QUnit.test("Appointment select is fired", function (assert) {
 		//arrange
-		this._createCalendar(new Date(2015, 0, 1));
+		this._createCalendar(UI5Date.getInstance(2015, 0, 1));
 		this._oPC.placeAt("smallUiArea");
 		oCore.applyChanges();
 
@@ -1062,7 +1064,7 @@ sap.ui.define([
 
 	QUnit.test("Appointments for currently selected date should be rendered in One Month view on small screen", function (assert) {
 		// arrange
-		this._createCalendar(new Date(2015, 0, 1));
+		this._createCalendar(UI5Date.getInstance(2015, 0, 1));
 
 		// assert
 		assert.equal(this._oPC.$().find(".sapUiCalendarNoApps").length, 0, "'No Entries' div should not be rendered");
@@ -1071,7 +1073,7 @@ sap.ui.define([
 
 	QUnit.test("'No entries' text should be shown when no date is selected in One Month view on small screen and no appointments should be rendered", function (assert) {
 		// arrange
-		this._createCalendar(new Date(2015, 0, 1));
+		this._createCalendar(UI5Date.getInstance(2015, 0, 1));
 
 		this.stub(this._oPC._oOneMonthsRow, "getSelectedDates").returns([]);
 
@@ -1234,10 +1236,10 @@ sap.ui.define([
 			this._testAriaAppointmentsAndSpecialDatesIfLegendIsDestroyed = function(sIntervalType, fnExtendSut, oPCStartDate) {
 				//Prepare
 				var sMessagePrefix = "After legend is destroyed",
-					aAppointments = _createAppointmentsOfTypes(1, 20, new Date(2015, 0, 1, 19)),
-					aSpecialDates = _createSpecialDates(1, 20,  sIntervalType, oPCStartDate || new Date(2015, 0, 1, 19)),
+					aAppointments = _createAppointmentsOfTypes(1, 20, UI5Date.getInstance(2015, 0, 1, 19)),
+					aSpecialDates = _createSpecialDates(1, 20,  sIntervalType, oPCStartDate || UI5Date.getInstance(2015, 0, 1, 19)),
 					oSut = createPlanningCalendar("accPC-LegendDestoyed", new SearchField(), new Button(),
-						new Date(2015, 0, 1, 19),
+						UI5Date.getInstance(2015, 0, 1, 19),
 						null, // View key
 						this.oLegendWithItemsTypes01UpToTypes10,
 						aSpecialDates,
@@ -1275,10 +1277,10 @@ sap.ui.define([
 			this._testAriaAppointmentsAndSpecialDates = function(sIntervalType, fnExtendSut, oPCStartDate) {
 				//Prepare
 				var sMessagePrefix = "Initial legend is available",
-					aAppointments = _createAppointmentsOfTypes(1, 20, new Date(2015, 0, 1, 19)),
-					aSpecialDates = _createSpecialDates(1, 20,  sIntervalType, oPCStartDate || new Date(2015, 0, 1, 19)),
+					aAppointments = _createAppointmentsOfTypes(1, 20, UI5Date.getInstance(2015, 0, 1, 19)),
+					aSpecialDates = _createSpecialDates(1, 20,  sIntervalType, oPCStartDate || UI5Date.getInstance(2015, 0, 1, 19)),
 					oSut = createPlanningCalendar("accPC", new SearchField(), new Button(),
-						new Date(2015, 0, 1, 19),
+						UI5Date.getInstance(2015, 0, 1, 19),
 						null, // View key
 						this.oLegendWithItemsTypes01UpToTypes10,
 						aSpecialDates,
@@ -1420,7 +1422,7 @@ sap.ui.define([
 
 	QUnit.test("Week day and date aria", function(assert) {
 		//Prepare
-		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), new Date(2015, 0, 1)),
+		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), UI5Date.getInstance(2015, 0, 1)),
 			oFormatDate = DateFormat.getInstance({style: "long", calendarType: "Gregorian"}),
 			oDate = new CalendarDate(2015, 0, 2, CalendarType.Gregorian),
 			sAriaDate = oFormatDate.format(oDate.toUTCJSDate(), true),
@@ -1443,7 +1445,7 @@ sap.ui.define([
 
 	QUnit.test("role button set on header cells in different views when we have intervalSelect event attached", function(assert) {
 		//Prepare
-		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), new Date(2015, 0, 1)),
+		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), UI5Date.getInstance(2015, 0, 1)),
 			sExpectedRole = "button";
 		oSut.attachIntervalSelect(this.stub());
 
@@ -1489,7 +1491,7 @@ sap.ui.define([
 
 	QUnit.test("role gridcell set on header cells in different views when there is no intervalSelect event attached", function(assert) {
 		//Prepare
-		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), new Date(2015, 0, 1)),
+		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), UI5Date.getInstance(2015, 0, 1)),
 			sExpectedRole = "gridcell";
 
 		//Act
@@ -1534,7 +1536,7 @@ sap.ui.define([
 
 	QUnit.test("Hidden 'Selected' text when selecting/deselecting appointment", function (assert) {
 		// Arrange
-		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), new Date(2015, 0, 1)),
+		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), UI5Date.getInstance(2015, 0, 1)),
 			sSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED"),
 			$appointmentRef;
 
@@ -1574,8 +1576,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("1 Week view: appointments and special dates", function (assert) {
-		this._testAriaAppointmentsAndSpecialDates(CalendarIntervalType.Week, undefined, new Date(2015, 0, 6, 19));
-		this._testAriaAppointmentsAndSpecialDatesIfLegendIsDestroyed(CalendarIntervalType.Week, undefined, new Date(2015, 0, 6, 19));
+		this._testAriaAppointmentsAndSpecialDates(CalendarIntervalType.Week, undefined, UI5Date.getInstance(2015, 0, 6, 19));
+		this._testAriaAppointmentsAndSpecialDatesIfLegendIsDestroyed(CalendarIntervalType.Week, undefined, UI5Date.getInstance(2015, 0, 6, 19));
 	});
 
 	QUnit.test("1 Month view: appointments and special dates", function (assert) {
@@ -1757,7 +1759,7 @@ sap.ui.define([
 		// prepare
 		var oModel = new JSONModel();
 		oModel.setData({
-			startDate: new Date("2018", "6", "9"),
+			startDate: UI5Date.getInstance("2018", "6", "9"),
 			viewKey: CalendarIntervalType.Day
 		});
 
@@ -1788,7 +1790,7 @@ sap.ui.define([
 		// prepare
 		var sKey = "NotTestView",
 			oPC = new PlanningCalendar({
-				startDate: new Date("2018", "6", "9"),
+				startDate: UI5Date.getInstance("2018", "6", "9"),
 				viewKey: sKey,
 				views: [
 					new PlanningCalendarView({
@@ -1860,7 +1862,7 @@ sap.ui.define([
 		var done = assert.async(),
 			$Date,
 			oPC = new PlanningCalendar({
-				startDate: new Date("2018", "6", "9"),
+				startDate: UI5Date.getInstance("2018", "6", "9"),
 				viewKey: CalendarIntervalType.OneMonth,
 				intervalSelect: function (oEvent) {
 					var oStartDate = oEvent.getParameter("startDate"),
@@ -1915,35 +1917,35 @@ sap.ui.define([
 	QUnit.test('_getComparer', function(assert) {
 		var aAppInfos = [
 			new CalendarAppointment({
-				startDate: new Date(2015, 0, 2, 8, 0),
-				endDate: new Date(2015, 0, 2, 10, 0),
+				startDate: UI5Date.getInstance(2015, 0, 2, 8, 0),
+				endDate: UI5Date.getInstance(2015, 0, 2, 10, 0),
 				title: "3"
 			}),
 			new CalendarAppointment({
-				startDate: new Date(2015, 0, 1, 8, 0),
-				endDate: new Date(2015, 0, 3, 10, 0),
+				startDate: UI5Date.getInstance(2015, 0, 1, 8, 0),
+				endDate: UI5Date.getInstance(2015, 0, 3, 10, 0),
 				title: "1"
 			}),
 			new CalendarAppointment({
-				startDate: new Date(2014, 11, 31, 8, 0),
-				endDate: new Date(2015, 0, 2, 11, 0),
+				startDate: UI5Date.getInstance(2014, 11, 31, 8, 0),
+				endDate: UI5Date.getInstance(2015, 0, 2, 11, 0),
 				title: "2"
 			}),
 			new CalendarAppointment({
-				startDate: new Date(2015, 0, 2, 9, 0),
-				endDate: new Date(2015, 0, 2, 12, 0),
+				startDate: UI5Date.getInstance(2015, 0, 2, 9, 0),
+				endDate: UI5Date.getInstance(2015, 0, 2, 12, 0),
 				title: "4"
 			}),
 			new CalendarAppointment({
-				startDate: new Date(2015, 0, 1, 7, 0),
-				endDate: new Date(2015, 0, 3, 5, 0),
+				startDate: UI5Date.getInstance(2015, 0, 1, 7, 0),
+				endDate: UI5Date.getInstance(2015, 0, 3, 5, 0),
 				title: "0"
 			})
 		].map(function(appointment) {
 			return { appointment: appointment };
 		});
 
-		var aSortedInfos = aAppInfos.sort(CalendarAppointment._getComparer(new Date(2015, 0, 2)));
+		var aSortedInfos = aAppInfos.sort(CalendarAppointment._getComparer(UI5Date.getInstance(2015, 0, 2)));
 		assert.equal(aSortedInfos[0].appointment.getTitle(), "0", 'item sorted correctly');
 		assert.equal(aSortedInfos[1].appointment.getTitle(), "1", 'item sorted correctly');
 		assert.equal(aSortedInfos[2].appointment.getTitle(), "2", 'item sorted correctly');
@@ -1953,35 +1955,35 @@ sap.ui.define([
 	QUnit.test('_getDateRangeIntersectionText', function(assert) {
 		var aAppInfos = [
 				new CalendarAppointment({
-					startDate: new Date(2015, 0, 3, 8, 0),
-					endDate: new Date(2015, 0, 3, 10, 0)
+					startDate: UI5Date.getInstance(2015, 0, 3, 8, 0),
+					endDate: UI5Date.getInstance(2015, 0, 3, 10, 0)
 				}),
 				new CalendarAppointment({
-					startDate: new Date(2015, 0, 1, 8, 0),
-					endDate: new Date(2015, 0, 3, 10, 0)
+					startDate: UI5Date.getInstance(2015, 0, 1, 8, 0),
+					endDate: UI5Date.getInstance(2015, 0, 3, 10, 0)
 				}),
 				new CalendarAppointment({
-					startDate: new Date(2014, 11, 31, 8, 0),
-					endDate: new Date(2015, 0, 2, 11, 0)
+					startDate: UI5Date.getInstance(2014, 11, 31, 8, 0),
+					endDate: UI5Date.getInstance(2015, 0, 2, 11, 0)
 				}),
 				new CalendarAppointment({
-					startDate: new Date(2015, 0, 2, 9, 0),
-					endDate: new Date(2015, 0, 4, 12, 0)
+					startDate: UI5Date.getInstance(2015, 0, 2, 9, 0),
+					endDate: UI5Date.getInstance(2015, 0, 4, 12, 0)
 				}),
 				new CalendarAppointment({
-					startDate: new Date(2015, 0, 2, 7, 0),
-					endDate: new Date(2015, 0, 2, 15, 0)
+					startDate: UI5Date.getInstance(2015, 0, 2, 7, 0),
+					endDate: UI5Date.getInstance(2015, 0, 2, 15, 0)
 				}),
 				new CalendarAppointment({
-					startDate: new Date(2015, 0, 2, 7, 0),
-					endDate: new Date(2015, 0, 2, 15, 34)
+					startDate: UI5Date.getInstance(2015, 0, 2, 7, 0),
+					endDate: UI5Date.getInstance(2015, 0, 2, 15, 34)
 				}),
 				new CalendarAppointment({
-					startDate: new Date(2015, 0, 2, 7, 0),
-					endDate: new Date(2015, 0, 2, 7, 34)
+					startDate: UI5Date.getInstance(2015, 0, 2, 7, 0),
+					endDate: UI5Date.getInstance(2015, 0, 2, 7, 34)
 				})
 			],
-			oCurrentlyDisplayedDate = new Date(2015, 0, 2),
+			oCurrentlyDisplayedDate = UI5Date.getInstance(2015, 0, 2),
 			oOriginalFormatLocale = oCore.getConfiguration().getFormatSettings().getFormatLocale(),
 			sOriginalFormatLocale = oOriginalFormatLocale.getLanguage() + "_" +  oOriginalFormatLocale.getRegion();
 
@@ -2023,8 +2025,8 @@ sap.ui.define([
 			oModel = new JSONModel(),
 			oData = [{
 				title: "just title",
-				start: new Date(2020, 1, 1, 11),
-				end: new Date(2020, 1, 1, 12),
+				start: UI5Date.getInstance(2020, 1, 1, 11),
+				end: UI5Date.getInstance(2020, 1, 1, 12),
 				selected: true
 			}];
 
@@ -2047,8 +2049,8 @@ sap.ui.define([
 	QUnit.test('Appointment with custom content has correct acc output in the DOM', function(assert) {
 		// Prepare
 		var oApp = new CalendarAppointment("AppCustCont", {
-				startDate: new Date(2015, 0, 2, 8, 0),
-				endDate: new Date(2015, 0, 2, 10, 0),
+				startDate: UI5Date.getInstance(2015, 0, 2, 8, 0),
+				endDate: UI5Date.getInstance(2015, 0, 2, 10, 0),
 				title: "3",
 				customContent: [
 					new Text({
@@ -2057,7 +2059,7 @@ sap.ui.define([
 				]
 			}),
 			oPC = new PlanningCalendar({
-				startDate: new Date(2015, 0, 2, 8, 0),
+				startDate: UI5Date.getInstance(2015, 0, 2, 8, 0),
 				rows: [
 					new PlanningCalendarRow("row1", {
 						appointments: [
@@ -2173,7 +2175,7 @@ sap.ui.define([
 
 
 		//act
-		this.oPC.addSpecialDate(new DateTypeRange({startDate: new Date(), tooltip: "test"}));
+		this.oPC.addSpecialDate(new DateTypeRange({startDate: UI5Date.getInstance(), tooltip: "test"}));
 		this.oPC._bIsBeingDestroyed = true;
 		this.oPC.invalidate();
 
@@ -2267,198 +2269,198 @@ sap.ui.define([
 
 	QUnit.test("_calcNewHoursAppPos: Calculate new position of the appointment in 'Hours' view", function(assert) {
 		//arrange
-		var oRowStartDate = new Date(2017, 10, 13),
-			oAppStartDate = new Date(2017, 10, 13, 1, 0, 0),
-			oAppEndDate = new Date(2017, 10, 13, 2, 0, 0),
+		var oRowStartDate = UI5Date.getInstance(2017, 10, 13),
+			oAppStartDate = UI5Date.getInstance(2017, 10, 13, 1, 0, 0),
+			oAppEndDate = UI5Date.getInstance(2017, 10, 13, 2, 0, 0),
 			newAppPos;
 
 		//act
 		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 10);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 5, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 6, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2017, 10, 13, 5, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 13, 6, 0, 0), "Correct new end position");
 
 		//act
 		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 16);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 8, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 9, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2017, 10, 13, 8, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 13, 9, 0, 0), "Correct new end position");
 
 		//act
 		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 8);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 4, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 5, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2017, 10, 13, 4, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 13, 5, 0, 0), "Correct new end position");
 	});
 
 	QUnit.test("_calcNewHoursAppPos: Calculate new position of the appointment in 'Hours' view near DST change", function(assert) {
 		//arrange
-		var oRowStartDate = new Date(2019, 9, 27),
-			oAppStartDate = new Date(2019, 9, 27, 1, 0, 0),
-			oAppEndDate = new Date(2019, 9, 27, 3, 0, 0),
+		var oRowStartDate = UI5Date.getInstance(2019, 9, 27),
+			oAppStartDate = UI5Date.getInstance(2019, 9, 27, 1, 0, 0),
+			oAppEndDate = UI5Date.getInstance(2019, 9, 27, 3, 0, 0),
 			newAppPos;
 
 		//act
 		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 4);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 27, 2, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 4, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2019, 9, 27, 2, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 4, 0, 0), "Correct new end position");
 
 		//act
 		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 6);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 27, 3, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 5, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2019, 9, 27, 3, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 5, 0, 0), "Correct new end position");
 
 		//act
 		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 8);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 27, 4, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 6, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2019, 9, 27, 4, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 6, 0, 0), "Correct new end position");
 
 		//act
 		newAppPos = this.oPC._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 14);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 27, 7, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 9, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2019, 9, 27, 7, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 9, 0, 0), "Correct new end position");
 	});
 
 	QUnit.test("_calcNewDaysAppPos: Calculate new position of the appointment in 'Days' view", function(assert) {
 		//arrange
-		var oRowStartDate = new Date(2017, 10, 13),
-			oAppStartDate = new Date(2017, 10, 15, 1, 0, 0),
-			oAppEndDate = new Date(2017, 10, 15, 2, 0, 0),
+		var oRowStartDate = UI5Date.getInstance(2017, 10, 13),
+			oAppStartDate = UI5Date.getInstance(2017, 10, 15, 1, 0, 0),
+			oAppEndDate = UI5Date.getInstance(2017, 10, 15, 2, 0, 0),
 			newAppPos;
 
 		//act
 		newAppPos = this.oPC._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 4);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 17, 1, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 17, 2, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2017, 10, 17, 1, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 17, 2, 0, 0), "Correct new end position");
 
 		//act
 		newAppPos = this.oPC._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 16, 1, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 16, 2, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2017, 10, 16, 1, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 16, 2, 0, 0), "Correct new end position");
 
 		//act
 		newAppPos = this.oPC._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 6);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 19, 1, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 19, 2, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2017, 10, 19, 1, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 19, 2, 0, 0), "Correct new end position");
 	});
 
 	QUnit.test("_calcNewDaysAppPos: Calculate new position of the appointment in 'Days' view near DST change", function(assert) {
 		//arrange
-		var oRowStartDate = new Date(2019, 9, 27),
-			oAppStartDate = new Date(2019, 9, 27, 0, 0, 0),
-			oAppEndDate = new Date(2019, 9, 27, 4, 0, 0),
+		var oRowStartDate = UI5Date.getInstance(2019, 9, 27),
+			oAppStartDate = UI5Date.getInstance(2019, 9, 27, 0, 0, 0),
+			oAppEndDate = UI5Date.getInstance(2019, 9, 27, 4, 0, 0),
 			newAppPos;
 
 		//act
 		newAppPos = this.oPC._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 1);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 28, 0, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 28, 4, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2019, 9, 28, 0, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 28, 4, 0, 0), "Correct new end position");
 
 		//act
 		newAppPos = this.oPC._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 2);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 29, 0, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 29, 4, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2019, 9, 29, 0, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 29, 4, 0, 0), "Correct new end position");
 
 		//act
 		newAppPos = this.oPC._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 0);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2019, 9, 27, 0, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 4, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2019, 9, 27, 0, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 4, 0, 0), "Correct new end position");
 	});
 
 	QUnit.test("_calcNewMonthsAppPos: Calculate new position of the appointment in 'Months' view", function(assert) {
 		//arrange
-		var oRowStartDate = new Date(2017, 10, 13),
-			oAppStartDate = new Date(2017, 11, 13, 1, 0, 0),
-			oAppEndDate = new Date(2017, 11, 13, 2, 0, 0),
+		var oRowStartDate = UI5Date.getInstance(2017, 10, 13),
+			oAppStartDate = UI5Date.getInstance(2017, 11, 13, 1, 0, 0),
+			oAppEndDate = UI5Date.getInstance(2017, 11, 13, 2, 0, 0),
 			newAppPos;
 
 		//act
 		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2018, 1, 13, 1, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2018, 1, 13, 2, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2018, 1, 13, 1, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2018, 1, 13, 2, 0, 0), "Correct new end position");
 
 		//act
 		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 1);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2017, 11, 13, 1, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 11, 13, 2, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2017, 11, 13, 1, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 11, 13, 2, 0, 0), "Correct new end position");
 
 		//act
 		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 2);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2018, 0, 13, 1, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2018, 0, 13, 2, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2018, 0, 13, 1, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2018, 0, 13, 2, 0, 0), "Correct new end position");
 	});
 
 	QUnit.test("_calcNewMonthsAppPos: Calculate new position of the appointment in 'Months' view near DST change", function(assert) {
 		//arrange
-		var oRowStartDate = new Date(2019, 9, 27),
-			oAppStartDate = new Date(2019, 9, 27, 0, 0, 0),
-			oAppEndDate = new Date(2019, 9, 27, 4, 0, 0),
+		var oRowStartDate = UI5Date.getInstance(2019, 9, 27),
+			oAppStartDate = UI5Date.getInstance(2019, 9, 27, 0, 0, 0),
+			oAppEndDate = UI5Date.getInstance(2019, 9, 27, 4, 0, 0),
 			newAppPos;
 
 		//act
 		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 1);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2019, 10, 27, 0, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2019, 10, 27, 4, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2019, 10, 27, 0, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 10, 27, 4, 0, 0), "Correct new end position");
 
 		//act
 		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 4);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2020, 1, 27, 0, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2020, 1, 27, 4, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2020, 1, 27, 0, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2020, 1, 27, 4, 0, 0), "Correct new end position");
 
 		//act
 		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 6);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2020, 3, 27, 0, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2020, 3, 27, 4, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2020, 3, 27, 0, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2020, 3, 27, 4, 0, 0), "Correct new end position");
 	});
 
 	QUnit.test("_calcNewMonthsAppPos: Calculate new position of the appointment in 'Months' view when row start day is different than the appointment's day", function (assert) {
 		//arrange
-		var oRowStartDate = new Date(2017, 10, 13),
-			oAppStartDate = new Date(2017, 11, 14, 1, 0, 0),
-			oAppEndDate = new Date(2017, 11, 14, 2, 0, 0),
+		var oRowStartDate = UI5Date.getInstance(2017, 10, 13),
+			oAppStartDate = UI5Date.getInstance(2017, 11, 14, 1, 0, 0),
+			oAppEndDate = UI5Date.getInstance(2017, 11, 14, 2, 0, 0),
 			newAppPos;
 
 		//act
 		newAppPos = this.oPC._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2018, 1, 14, 1, 0, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2018, 1, 14, 2, 0, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2018, 1, 14, 1, 0, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2018, 1, 14, 2, 0, 0), "Correct new end position");
 	});
 
 	QUnit.test("setEnableAppointmentsDragAndDrop", function(assert) {
@@ -2524,7 +2526,7 @@ sap.ui.define([
 
 	QUnit.test("_calcCreateNewAppHours: Calculate proper position of the new appointment in 'Hours' view", function (assert) {
 		//arrange
-		var oRowStartDate = new Date(2017, 10, 13, 0, 38, 11),
+		var oRowStartDate = UI5Date.getInstance(2017, 10, 13, 0, 38, 11),
 			iStartIndex = 3,
 			iEndIndex = 6,
 			newAppPos;
@@ -2533,8 +2535,8 @@ sap.ui.define([
 		newAppPos = this.oPC._calcCreateNewAppHours(oRowStartDate, iStartIndex, iEndIndex);
 
 		//assert
-		assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 1, 30, 0), "Correct new start position");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 3, 30, 0), "Correct new end position");
+		assert.deepEqual(newAppPos.startDate, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), "Correct new start position");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 13, 3, 30, 0), "Correct new end position");
 	});
 
 	QUnit.module("Resize Appointments", {
@@ -2578,9 +2580,9 @@ sap.ui.define([
 
 	QUnit.test("_calcResizeNewHoursAppPos: Calculate new size of the appointment in 'Hours' view", function (assert) {
 		// arrange
-		var oRowStartDate = new Date(2017, 10, 13, 0, 0, 0),
-			oAppStartDate = new Date(2017, 10, 13, 1, 0, 0),
-			oAppEndDate = new Date(2017, 10, 13, 2, 0, 0),
+		var oRowStartDate = UI5Date.getInstance(2017, 10, 13, 0, 0, 0),
+			oAppStartDate = UI5Date.getInstance(2017, 10, 13, 1, 0, 0),
+			oAppEndDate = UI5Date.getInstance(2017, 10, 13, 2, 0, 0),
 			newAppPos;
 
 		// act - resize appointment's end with 5 hours (10 x 30 mins) from the beginning of the line
@@ -2588,21 +2590,21 @@ sap.ui.define([
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 5, 0, 0), "End date hour is correct");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 13, 5, 0, 0), "End date hour is correct");
 
 		// act - resize appointment's if end time is less than the start time than use just 30 mins from the beggining
 		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 0);
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 1, 30, 0), "End date hour is correct");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), "End date hour is correct");
 	});
 
 	QUnit.test("_calcResizeNewHoursAppPos: Calculate new size of the appointment in 'Hours' view near DST change", function (assert) {
 		// arrange
-		var oRowStartDate = new Date(2019, 9, 27, 0, 0, 0),
-			oAppStartDate = new Date(2019, 9, 27, 1, 0, 0),
-			oAppEndDate = new Date(2019, 9, 27, 3, 0, 0),
+		var oRowStartDate = UI5Date.getInstance(2019, 9, 27, 0, 0, 0),
+			oAppStartDate = UI5Date.getInstance(2019, 9, 27, 1, 0, 0),
+			oAppEndDate = UI5Date.getInstance(2019, 9, 27, 3, 0, 0),
 			newAppPos;
 
 		// act - resize appointment's end to the 6th hour
@@ -2610,35 +2612,35 @@ sap.ui.define([
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 6, 0, 0), "End date hour is correct (6:00)");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 6, 0, 0), "End date hour is correct (6:00)");
 
 		// act - resize appointment's end to the 5th hour
 		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 9);
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 5, 0, 0), "End date hour is correct (5:00)");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 5, 0, 0), "End date hour is correct (5:00)");
 
 		// act - resize appointment's end to the 4th hour
 		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 7);
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 4, 0, 0), "End date hour is correct (4:00)");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 4, 0, 0), "End date hour is correct (4:00)");
 
 		// act - resize appointment's end to the 3th hour
 		newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 5);
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(newAppPos.endDate, new Date(2019, 9, 27, 3, 0, 0), "End date hour is correct (3:00)");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2019, 9, 27, 3, 0, 0), "End date hour is correct (3:00)");
 	});
 
 	QUnit.test("_calcResizeNewDaysAppPos: Calculate new size of the appointment in 'Days' view", function (assert) {
 		// arrange
-		var oRowStartDate = new Date(2017, 10, 13),
-			oAppStartDate = new Date(2017, 10, 13),
-			oAppEndDate = new Date(2017, 10, 14),
+		var oRowStartDate = UI5Date.getInstance(2017, 10, 13),
+			oAppStartDate = UI5Date.getInstance(2017, 10, 13),
+			oAppEndDate = UI5Date.getInstance(2017, 10, 14),
 			newAppPos;
 
 		// act - resize appointment's end with 4 days from the beginning of the line
@@ -2646,21 +2648,21 @@ sap.ui.define([
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 17), "End date day is correct");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 17), "End date day is correct");
 
 		// act - resize appointment's if end time is less than the start time than use just 1 day from the beggining
 		newAppPos = this.oPCRow._calcResizeNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 0);
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 14), "End date day is correct");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 14), "End date day is correct");
 	});
 
 	QUnit.test("_calcResizeNewDaysAppPos: Calculate new size of the appointment in 'Days' view - shrink event", function (assert) {
 		// arrange
-		var oRowStartDate = new Date(2017, 6, 13),
-			oAppStartDate = new Date(2017, 6, 13),
-			oAppEndDate = new Date(2017, 6, 20),
+		var oRowStartDate = UI5Date.getInstance(2017, 6, 13),
+			oAppStartDate = UI5Date.getInstance(2017, 6, 13),
+			oAppEndDate = UI5Date.getInstance(2017, 6, 20),
 			newAppPos;
 
 		// act - resize appointment's end with 5 days from the beginning of the line
@@ -2668,14 +2670,14 @@ sap.ui.define([
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 6, 18), "End date day is correct");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 6, 18), "End date day is correct");
 	});
 
 	QUnit.test("_calcResizeNewMonthsAppPos: Calculate new size of the appointment in 'Months' view", function (assert) {
 		// arrange
-		var oRowStartDate = new Date(2017, 6, 13),
-			oAppStartDate = new Date(2017, 6, 13),
-			oAppEndDate = new Date(2017, 7, 13),
+		var oRowStartDate = UI5Date.getInstance(2017, 6, 13),
+			oAppStartDate = UI5Date.getInstance(2017, 6, 13),
+			oAppEndDate = UI5Date.getInstance(2017, 7, 13),
 			newAppPos;
 
 		// act - resize appointment's end with 4 Months from the beginning of the line
@@ -2683,21 +2685,21 @@ sap.ui.define([
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 1), "End date month is correct");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 1), "End date month is correct");
 
 		// act - resize appointment's if end time is less than the start time than use just 1 month from the beggining
 		newAppPos = this.oPCRow._calcResizeNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 0);
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 7, 1), "End date month is correct");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 7, 1), "End date month is correct");
 	});
 
 	QUnit.test("_calcResizeNewMonthsAppPos: Calculate new size of the appointment in 'Months' view - shrink event", function (assert) {
 		// arrange
-		var oRowStartDate = new Date(2017, 6, 13),
-			oAppStartDate = new Date(2017, 6, 13),
-			oAppEndDate = new Date(2017, 11, 13),
+		var oRowStartDate = UI5Date.getInstance(2017, 6, 13),
+			oAppStartDate = UI5Date.getInstance(2017, 6, 13),
+			oAppEndDate = UI5Date.getInstance(2017, 11, 13),
 			newAppPos;
 
 		// act - resize appointment's end with 4 Months from the beginning of the line
@@ -2705,14 +2707,14 @@ sap.ui.define([
 
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 1), "End date month is correct");
+		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 1), "End date month is correct");
 	});
 
 	QUnit.test("_calcResizeNewMonthsAppPos: Calculate new size of the appointment in '1 Month' view when appointment starts from previous month", function (assert) {
 		// arrange
-		var oRowStartDate = new Date(2017, 11, 1),
-			oAppStartDate = new Date(2017, 10, 24),
-			oAppEndDate = new Date(2017, 11, 7),
+		var oRowStartDate = UI5Date.getInstance(2017, 11, 1),
+			oAppStartDate = UI5Date.getInstance(2017, 10, 24),
+			oAppEndDate = UI5Date.getInstance(2017, 11, 7),
 			oNewAppPos;
 
 		// act - resize appointment's end with 6 Days from the beginning of the line
@@ -2720,14 +2722,14 @@ sap.ui.define([
 
 		// assert
 		assert.deepEqual(oNewAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(oNewAppPos.endDate, new Date(2017, 11, 8), "End date month is correct");
+		assert.deepEqual(oNewAppPos.endDate, UI5Date.getInstance(2017, 11, 8), "End date month is correct");
 	});
 
 	QUnit.test("_calcResizeNewMonthsAppPos: Calculate new size of the appointment in '1 Month' view when aapointment starts from previous year", function (assert) {
 		// arrange
-		var oRowStartDate = new Date(2018, 0, 1),
-			oAppStartDate = new Date(2017, 11, 24),
-			oAppEndDate = new Date(2018, 0, 7),
+		var oRowStartDate = UI5Date.getInstance(2018, 0, 1),
+			oAppStartDate = UI5Date.getInstance(2017, 11, 24),
+			oAppEndDate = UI5Date.getInstance(2018, 0, 7),
 			oNewAppPos;
 
 		// act - resize appointment's end with 6 Days from the beginning of the line
@@ -2735,14 +2737,14 @@ sap.ui.define([
 
 		// assert
 		assert.deepEqual(oNewAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(oNewAppPos.endDate, new Date(2018, 0, 8), "End date month is correct");
+		assert.deepEqual(oNewAppPos.endDate, UI5Date.getInstance(2018, 0, 8), "End date month is correct");
 	});
 
 	QUnit.test("_calcResizeNewMonthsAppPos: Calculate new size of the appointment in '1 Month' view when appointment starts from previous month", function (assert) {
 		// arrange
-		var oRowStartDate = new Date(2017, 11, 1),
-			oAppStartDate = new Date(2017, 10, 24),
-			oAppEndDate = new Date(2017, 11, 7),
+		var oRowStartDate = UI5Date.getInstance(2017, 11, 1),
+			oAppStartDate = UI5Date.getInstance(2017, 10, 24),
+			oAppEndDate = UI5Date.getInstance(2017, 11, 7),
 			oNewAppPos;
 
 		// act - resize appointment's end with 6 Days from the beginning of the line
@@ -2750,14 +2752,14 @@ sap.ui.define([
 
 		// assert
 		assert.deepEqual(oNewAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(oNewAppPos.endDate, new Date(2017, 11, 8), "End date month is correct");
+		assert.deepEqual(oNewAppPos.endDate, UI5Date.getInstance(2017, 11, 8), "End date month is correct");
 	});
 
 	QUnit.test("_calcResizeNewMonthsAppPos: Calculate new size of the appointment in '1 Month' view when aapointment starts from previous year", function (assert) {
 		// arrange
-		var oRowStartDate = new Date(2018, 0, 1),
-			oAppStartDate = new Date(2017, 11, 24),
-			oAppEndDate = new Date(2018, 0, 7),
+		var oRowStartDate = UI5Date.getInstance(2018, 0, 1),
+			oAppStartDate = UI5Date.getInstance(2017, 11, 24),
+			oAppEndDate = UI5Date.getInstance(2018, 0, 7),
 			oNewAppPos;
 
 		// act - resize appointment's end with 6 Days from the beginning of the line
@@ -2765,14 +2767,14 @@ sap.ui.define([
 
 		// assert
 		assert.deepEqual(oNewAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(oNewAppPos.endDate, new Date(2018, 0, 8), "End date month is correct");
+		assert.deepEqual(oNewAppPos.endDate, UI5Date.getInstance(2018, 0, 8), "End date month is correct");
 	});
 
 	QUnit.test("_calcResizeNewMonthsAppPos: Calculate new size of the appointment in '1 Month' view when appointment starts from previous month", function (assert) {
 		// arrange
-		var oRowStartDate = new Date(2017, 11, 1),
-			oAppStartDate = new Date(2017, 10, 24),
-			oAppEndDate = new Date(2017, 11, 7),
+		var oRowStartDate = UI5Date.getInstance(2017, 11, 1),
+			oAppStartDate = UI5Date.getInstance(2017, 10, 24),
+			oAppEndDate = UI5Date.getInstance(2017, 11, 7),
 			oNewAppPos;
 
 		// act - resize appointment's end with 6 Days from the beginning of the line
@@ -2780,14 +2782,14 @@ sap.ui.define([
 
 		// assert
 		assert.deepEqual(oNewAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(oNewAppPos.endDate, new Date(2017, 11, 8), "End date month is correct");
+		assert.deepEqual(oNewAppPos.endDate, UI5Date.getInstance(2017, 11, 8), "End date month is correct");
 	});
 
 	QUnit.test("_calcResizeNewMonthsAppPos: Calculate new size of the appointment in '1 Month' view when aapointment starts from previous year", function (assert) {
 		// arrange
-		var oRowStartDate = new Date(2018, 0, 1),
-			oAppStartDate = new Date(2017, 11, 24),
-			oAppEndDate = new Date(2018, 0, 7),
+		var oRowStartDate = UI5Date.getInstance(2018, 0, 1),
+			oAppStartDate = UI5Date.getInstance(2017, 11, 24),
+			oAppEndDate = UI5Date.getInstance(2018, 0, 7),
 			oNewAppPos;
 
 		// act - resize appointment's end with 6 Days from the beginning of the line
@@ -2795,7 +2797,7 @@ sap.ui.define([
 
 		// assert
 		assert.deepEqual(oNewAppPos.startDate, oAppStartDate, "Start date should not be changed");
-		assert.deepEqual(oNewAppPos.endDate, new Date(2018, 0, 8), "End date month is correct");
+		assert.deepEqual(oNewAppPos.endDate, UI5Date.getInstance(2018, 0, 8), "End date month is correct");
 	});
 
 	QUnit.module("Create Appointments: setEnableAppointmentsCreate");
@@ -2830,7 +2832,7 @@ sap.ui.define([
 	QUnit.module("Create Appointments: _calcCreateNewAppHours", {
 		beforeEach: function () {
 			this.oPCRow = new PlanningCalendar();
-			this.oRowStartDate = new Date(2017, 10, 13, 0, 0, 0);
+			this.oRowStartDate = UI5Date.getInstance(2017, 10, 13, 0, 0, 0);
 			this.test = function (assert, iStartIndex, iEndIndex, oExpectedStartDate, oExpectedEndDate) {
 				// arrange
 				var oNewAppPos;
@@ -2850,33 +2852,33 @@ sap.ui.define([
 	});
 
 	QUnit.test("startIndex and endIndex are the same: indexes = 0 - (30 minutes event at the beginning of the row)", function (assert) {
-		this.test(assert, 0, 0, this.oRowStartDate, new Date(2017, 10, 13, 0, 30, 0));
+		this.test(assert, 0, 0, this.oRowStartDate, UI5Date.getInstance(2017, 10, 13, 0, 30, 0));
 	});
 
 	QUnit.test("startIndex and endIndex are the same: indexes = 3 - (30 minutes event in 1 hour and 30 mins from the row's startDate)", function (assert) {
-		this.test(assert, 3, 3, new Date(2017, 10, 13, 1, 30, 0), new Date(2017, 10, 13, 2, 0, 0));
+		this.test(assert, 3, 3, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), UI5Date.getInstance(2017, 10, 13, 2, 0, 0));
 	});
 
 	QUnit.test("startIndex is lower than the endIndex: startIndex = 0, endIndex = 1 - (1h event at the beginning of the row)", function (assert) {
-		this.test(assert, 0, 1, this.oRowStartDate, new Date(2017, 10, 13, 1, 0, 0));
+		this.test(assert, 0, 1, this.oRowStartDate, UI5Date.getInstance(2017, 10, 13, 1, 0, 0));
 	});
 
 	QUnit.test("startIndex is lower than the endIndex: startIndex = 3, endIndex = 6 - (2h event in 1h and 30 mins from the row's startDate)", function (assert) {
-		this.test(assert, 3, 6, new Date(2017, 10, 13, 1, 30, 0), new Date(2017, 10, 13, 3, 30, 0));
+		this.test(assert, 3, 6, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), UI5Date.getInstance(2017, 10, 13, 3, 30, 0));
 	});
 
 	QUnit.test("startIndex is greater than the end Index: startIndex = 1, endIndex = 0 -  (30mins event at the beginning of the row)", function (assert) {
-		this.test(assert, 1, 0, this.oRowStartDate, new Date(2017, 10, 13, 0, 30, 0));
+		this.test(assert, 1, 0, this.oRowStartDate, UI5Date.getInstance(2017, 10, 13, 0, 30, 0));
 	});
 
 	QUnit.test("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (1h and 30 mins event in 1h and 30 mins from the row's startDate)", function (assert) {
-		this.test(assert, 6, 3, new Date(2017, 10, 13, 1, 30, 0), new Date(2017, 10, 13, 3, 0, 0));
+		this.test(assert, 6, 3, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), UI5Date.getInstance(2017, 10, 13, 3, 0, 0));
 	});
 
 	QUnit.module("Create Appointments near DST change: _calcCreateNewAppHours", {
 		beforeEach: function () {
 			this.oPCRow = new PlanningCalendar();
-			this.oRowStartDate = new Date(2019, 9, 27, 0, 0, 0);
+			this.oRowStartDate = UI5Date.getInstance(2019, 9, 27, 0, 0, 0);
 			this.test = function (assert, iStartIndex, iEndIndex, oExpectedStartDate, oExpectedEndDate) {
 				// arrange
 				var oNewAppPos;
@@ -2896,25 +2898,25 @@ sap.ui.define([
 	});
 
 	QUnit.test("startIndex and endIndex are on the same side of DST (inside): startIndex = 0, endIndex = 2", function (assert) {
-		this.test(assert, 0, 1, this.oRowStartDate, new Date(2019, 9, 27, 1, 0, 0));
+		this.test(assert, 0, 1, this.oRowStartDate, UI5Date.getInstance(2019, 9, 27, 1, 0, 0));
 	});
 
 	QUnit.test("startIndex and endIndex are on the same side of DST (outside): startIndex = 10, endIndex = 12", function (assert) {
-		this.test(assert, 10, 11, new Date(2019, 9, 27, 5, 0, 0), new Date(2019, 9, 27, 6, 0, 0));
+		this.test(assert, 10, 11, UI5Date.getInstance(2019, 9, 27, 5, 0, 0), UI5Date.getInstance(2019, 9, 27, 6, 0, 0));
 	});
 
 	QUnit.test("startIndex and endIndex are on the different sides of DST (inside-outside): startIndex = 6, endIndex = 7", function (assert) {
-		this.test(assert, 6, 7, new Date(2019, 9, 27, 3, 0, 0), new Date(2019, 9, 27, 4, 0, 0));
+		this.test(assert, 6, 7, UI5Date.getInstance(2019, 9, 27, 3, 0, 0), UI5Date.getInstance(2019, 9, 27, 4, 0, 0));
 	});
 
 	QUnit.test("startIndex and endIndex are on the different sides of DST (inside-outside): startIndex = 6, endIndex = 7", function (assert) {
-		this.test(assert, 4, 9, new Date(2019, 9, 27, 2, 0, 0), new Date(2019, 9, 27, 5, 0, 0));
+		this.test(assert, 4, 9, UI5Date.getInstance(2019, 9, 27, 2, 0, 0), UI5Date.getInstance(2019, 9, 27, 5, 0, 0));
 	});
 
 	QUnit.module("Create Appointments: _calcCreateNewAppDays", {
 		beforeEach: function () {
 			this.oPCRow = new PlanningCalendar();
-			this.oRowStartDate = new Date(2017, 10, 13, 0, 0, 0);
+			this.oRowStartDate = UI5Date.getInstance(2017, 10, 13, 0, 0, 0);
 			this.test = function (assert, iStartIndex, iEndIndex, oExpectedStartDate, oExpectedEndDate) {
 				// arrange
 				var oNewAppPos;
@@ -2934,33 +2936,33 @@ sap.ui.define([
 	});
 
 	QUnit.test("startIndex and endIndex are the same: indexes = 0 - (1 day event at the beginning of the row)", function (assert) {
-		this.test(assert, 0, 0, this.oRowStartDate, new Date(2017, 10, 14));
+		this.test(assert, 0, 0, this.oRowStartDate, UI5Date.getInstance(2017, 10, 14));
 	});
 
 	QUnit.test("startIndex and endIndex are the same: indexes = 3 - (1 day event in 3 days from the row's startDate)", function (assert) {
-		this.test(assert, 3, 3, new Date(2017, 10, 16), new Date(2017, 10, 17));
+		this.test(assert, 3, 3, UI5Date.getInstance(2017, 10, 16), UI5Date.getInstance(2017, 10, 17));
 	});
 
 	QUnit.test("startIndex is lower than the endIndex: startIndex = 0, endIndex = 1 - (2 day event at the beginning of the row)", function (assert) {
-		this.test(assert, 0, 1, this.oRowStartDate, new Date(2017, 10, 15));
+		this.test(assert, 0, 1, this.oRowStartDate, UI5Date.getInstance(2017, 10, 15));
 	});
 
 	QUnit.test("startIndex is lower than the endIndex: startIndex = 3, endIndex = 6 - (4 days event in 3 days from the row's startDate)", function (assert) {
-		this.test(assert, 3, 6, new Date(2017, 10, 16), new Date(2017, 10, 20));
+		this.test(assert, 3, 6, UI5Date.getInstance(2017, 10, 16), UI5Date.getInstance(2017, 10, 20));
 	});
 
 	QUnit.test("startIndex is greater than the end Index: startIndex = 1, endIndex = 0 -  (1 day event at the beginning of the row)", function (assert) {
-		this.test(assert, 1, 0, this.oRowStartDate, new Date(2017, 10, 14));
+		this.test(assert, 1, 0, this.oRowStartDate, UI5Date.getInstance(2017, 10, 14));
 	});
 
 	QUnit.test("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (3 days event in 3 days from the row's startDate)", function (assert) {
-		this.test(assert, 6, 3, new Date(2017, 10, 16), new Date(2017, 10, 19));
+		this.test(assert, 6, 3, UI5Date.getInstance(2017, 10, 16), UI5Date.getInstance(2017, 10, 19));
 	});
 
 	QUnit.module("Create Appointments: _calcCreateNewAppMonths", {
 		beforeEach: function () {
 			this.oPCRow = new PlanningCalendar();
-			this.oRowStartDate = new Date(2017, 10, 13, 0, 0, 0);
+			this.oRowStartDate = UI5Date.getInstance(2017, 10, 13, 0, 0, 0);
 			this.test = function (assert, iStartIndex, iEndIndex, oExpectedStartDate, oExpectedEndDate) {
 				// arrange
 				var oNewAppPos;
@@ -2980,27 +2982,27 @@ sap.ui.define([
 	});
 
 	QUnit.test("startIndex and endIndex are the same: indexes = 0 - (1 month event at the first day of beginning of the row)", function (assert) {
-		this.test(assert, 0, 0, new Date(2017, 10, 1), new Date(2017, 11, 1));
+		this.test(assert, 0, 0, UI5Date.getInstance(2017, 10, 1), UI5Date.getInstance(2017, 11, 1));
 	});
 
 	QUnit.test("startIndex and endIndex are the same: indexes = 3 - (1 month event in 3 months from the row's startDate)", function (assert) {
-		this.test(assert, 3, 3, new Date(2018, 1, 1), new Date(2018, 2, 1));
+		this.test(assert, 3, 3, UI5Date.getInstance(2018, 1, 1), UI5Date.getInstance(2018, 2, 1));
 	});
 
 	QUnit.test("startIndex is lower than the endIndex: startIndex = 0, endIndex = 1 - (2 months event at the first day of beginning of the row)", function (assert) {
-		this.test(assert, 0, 1, new Date(2017, 10, 1), new Date(2017, 12, 1));
+		this.test(assert, 0, 1, UI5Date.getInstance(2017, 10, 1), UI5Date.getInstance(2017, 12, 1));
 	});
 
 	QUnit.test("startIndex is lower than the endIndex: startIndex = 3, endIndex = 6 - (4 months event in 3 months from the row's startDate)", function (assert) {
-		this.test(assert, 3, 6, new Date(2018, 1, 1), new Date(2018, 5, 1));
+		this.test(assert, 3, 6, UI5Date.getInstance(2018, 1, 1), UI5Date.getInstance(2018, 5, 1));
 	});
 
 	QUnit.test("startIndex is greater than the end Index: startIndex = 1, endIndex = 0 -  (1 month event at the first day of beginning of the row)", function (assert) {
-		this.test(assert, 1, 0, new Date(2017, 10, 1), new Date(2017, 11, 1));
+		this.test(assert, 1, 0, UI5Date.getInstance(2017, 10, 1), UI5Date.getInstance(2017, 11, 1));
 	});
 
 	QUnit.test("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (3 months event in 3 months from the row's startDate)", function (assert) {
-		this.test(assert, 6, 3, new Date(2018, 1, 1), new Date(2018, 4, 1));
+		this.test(assert, 6, 3, UI5Date.getInstance(2018, 1, 1), UI5Date.getInstance(2018, 4, 1));
 	});
 
 	QUnit.module("headerContent + binding");

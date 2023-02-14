@@ -18,9 +18,10 @@ sap.ui.define([
 	'sap/ui/core/CalendarType',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/UI5Date"
 ],
-	function(UniversalDate, CalendarDate, CalendarType, Locale, LocaleData, Configuration) {
+	function(UniversalDate, CalendarDate, CalendarType, Locale, LocaleData, Configuration, UI5Date) {
 		"use strict";
 
 		// Static class
@@ -66,7 +67,7 @@ sap.ui.define([
 					oMyDate = oDate;
 				}
 
-				oLocaleDate = new Date(oMyDate.getUTCFullYear(), oMyDate.getUTCMonth(), oMyDate.getUTCDate());
+				oLocaleDate = UI5Date.getInstance(oMyDate.getUTCFullYear(), oMyDate.getUTCMonth(), oMyDate.getUTCDate());
 				if (oMyDate.getFullYear() < 1000) {
 					oLocaleDate.setFullYear(oMyDate.getFullYear());
 				}
@@ -103,7 +104,7 @@ sap.ui.define([
 					oMyDate = oDate;
 				}
 
-				oUTCDate = new Date(Date.UTC(oMyDate.getFullYear(), oMyDate.getMonth(), oMyDate.getDate()));
+				oUTCDate = UI5Date.getInstance(Date.UTC(oMyDate.getFullYear(), oMyDate.getMonth(), oMyDate.getDate()));
 				if (oMyDate.getFullYear() < 1000) {
 					oUTCDate.setUTCFullYear(oMyDate.getFullYear());
 				}
@@ -291,7 +292,7 @@ sap.ui.define([
 		CalendarUtils._getNumberOfWeeksForYear = function (iYear) {
 			var sLocale = Configuration.getFormatLocale(),
 				oLocaleData = LocaleData.getInstance(new Locale(sLocale)),
-				o1stJan = new Date(Date.UTC(iYear, 0, 1)),
+				o1stJan = UI5Date.getInstance(Date.UTC(iYear, 0, 1)),
 				i1stDay = o1stJan.getUTCDay(),
 				iNumberOfWeeksInYear = 52;
 
@@ -328,7 +329,7 @@ sap.ui.define([
 		 * @public
 		 */
 		CalendarUtils.isDateLastInMonth = function(oDate) {
-			var oNextDay = new Date(oDate.getTime() + 24 * 60 * 60 * 1000);
+			var oNextDay = UI5Date.getInstance(oDate.getTime() + 24 * 60 * 60 * 1000);
 			return oNextDay.getUTCDate() < oDate.getUTCDate();
 		};
 
@@ -432,7 +433,7 @@ sap.ui.define([
 		 * @private
 		 */
 		CalendarUtils._areCurrentMinutesLessThan = function (iMinutes) {
-			var iCurrentMinutes = new Date().getMinutes();
+			var iCurrentMinutes = UI5Date.getInstance().getMinutes();
 
 			return iMinutes >= iCurrentMinutes;
 		};
@@ -445,7 +446,7 @@ sap.ui.define([
 		 * @private
 		 */
 		CalendarUtils._areCurrentMinutesMoreThan = function (iMinutes) {
-			var iCurrentMinutes = new Date().getMinutes();
+			var iCurrentMinutes = UI5Date.getInstance().getMinutes();
 
 			return iMinutes <= iCurrentMinutes;
 		};
@@ -460,8 +461,8 @@ sap.ui.define([
 		 * @private
 		 */
 		CalendarUtils._monthsBetween = function(oFirstDate, oSecondDate, bDontAbsResult) {
-			var oUTCFirstDate = new Date(Date.UTC(oFirstDate.getUTCFullYear(), oFirstDate.getUTCMonth(), oFirstDate.getUTCDate())),
-				oUTCSecondDate = new Date(Date.UTC(oSecondDate.getUTCFullYear(), oSecondDate.getUTCMonth(), oSecondDate.getUTCDate())),
+			var oUTCFirstDate = UI5Date.getInstance(Date.UTC(oFirstDate.getUTCFullYear(), oFirstDate.getUTCMonth(), oFirstDate.getUTCDate())),
+				oUTCSecondDate = UI5Date.getInstance(Date.UTC(oSecondDate.getUTCFullYear(), oSecondDate.getUTCMonth(), oSecondDate.getUTCDate())),
 				iMonths;
 
 			oUTCFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear());
@@ -485,9 +486,9 @@ sap.ui.define([
 		 * @private
 		 */
 		CalendarUtils._hoursBetween = function(oFirstDate, oSecondDate) {
-			var oNewFirstDate = new Date(Date.UTC(oFirstDate.getUTCFullYear(),
+			var oNewFirstDate = UI5Date.getInstance(Date.UTC(oFirstDate.getUTCFullYear(),
 				oFirstDate.getUTCMonth(), oFirstDate.getUTCDate(), oFirstDate.getUTCHours()));
-			var oNewSecondDate = new Date(Date.UTC(oSecondDate.getUTCFullYear(),
+			var oNewSecondDate = UI5Date.getInstance(Date.UTC(oSecondDate.getUTCFullYear(),
 				oSecondDate.getUTCMonth(), oSecondDate.getUTCDate(), oSecondDate.getUTCHours()));
 
 			oNewFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear());

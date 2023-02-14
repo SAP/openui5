@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/dom/jquery/cursorPos"
 ], function(
 	qutils,
@@ -43,7 +44,8 @@ sap.ui.define([
 	Log,
 	jQuery,
 	oCore,
-	Element
+	Element,
+	UI5Date
 ) {
 	"use strict";
 
@@ -76,13 +78,13 @@ sap.ui.define([
 
 	//Preparing input dates for testing purposes:
 	//From: April 1, 2014 0:00 (local time)
-	var dateFrom = new Date(2014, 3, 1, 0, 0, 0);
+	var dateFrom = UI5Date.getInstance(2014, 3, 1, 0, 0, 0);
 
 	//To: April 10, 2014 0:00 (local time)
-	var dateTo1 = new Date(2014, 3, 10, 0, 0, 0);
+	var dateTo1 = UI5Date.getInstance(2014, 3, 10, 0, 0, 0);
 
 	//To: April 3, 2014 0:00 (local time)
-	var dateTo2 = new Date(2014, 3, 3, 0, 0, 0);
+	var dateTo2 = UI5Date.getInstance(2014, 3, 3, 0, 0, 0);
 
 	var bChange = false;
 	var bValid = false;
@@ -222,7 +224,7 @@ sap.ui.define([
 		var oDRS = new DateRangeSelection({
 				displayFormat: "yyyy"
 			}),
-			oYear = new Date().getFullYear(),
+			oYear = UI5Date.getInstance().getFullYear(),
 			oYearPicker;
 
 		oDRS.placeAt("qunit-fixture");
@@ -243,8 +245,8 @@ sap.ui.define([
 	QUnit.module("interaction");
 
 	QUnit.test("min/max", function(assert) {
-		var oNewMinDate = new Date(2014,0,1);
-		var oNewMaxDate = new Date(2014,11,31);
+		var oNewMinDate = UI5Date.getInstance(2014,0,1);
+		var oNewMaxDate = UI5Date.getInstance(2014,11,31);
 		oDRS2.setMinDate(oNewMinDate);
 		oDRS2.setMaxDate(oNewMaxDate);
 		oCore.applyChanges();
@@ -267,8 +269,8 @@ sap.ui.define([
 		jQuery("#DRS2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bChange, "DRS2: change event fired by typing valid date");
 		assert.ok(bValid, "DRS2: valid typed date is valid");
-		assert.ok(deepEqual(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue changed by valid typing");
-		assert.ok(deepEqual(oDRS2.getSecondDateValue(), new Date(2014,3,11,23,59,59,999)), "DRS2: secondDateValue changed by valid typing");
+		assert.ok(deepEqual(oDRS2.getDateValue(), UI5Date.getInstance(2014,3,2)), "DRS2: dateValue changed by valid typing");
+		assert.ok(deepEqual(oDRS2.getSecondDateValue(), UI5Date.getInstance(2014,3,11,23,59,59,999)), "DRS2: secondDateValue changed by valid typing");
 
 		bChange = false;
 		bValid = true;
@@ -278,8 +280,8 @@ sap.ui.define([
 		jQuery("#DRS2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bChange, "DRS2: change event fired by typing invalid date");
 		assert.ok(!bValid, "DRS2: invalid typed date is not valid");
-		assert.ok(deepEqual(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue not changed by invalid typing");
-		assert.ok(deepEqual(oDRS2.getSecondDateValue(), new Date(2014,3,11,23,59,59,999)), "DRS2: secondDateValue not changed by invalid typing");
+		assert.ok(deepEqual(oDRS2.getDateValue(), UI5Date.getInstance(2014,3,2)), "DRS2: dateValue not changed by invalid typing");
+		assert.ok(deepEqual(oDRS2.getSecondDateValue(), UI5Date.getInstance(2014,3,11,23,59,59,999)), "DRS2: secondDateValue not changed by invalid typing");
 
 		oDRS2.setMinDate();
 		oDRS2.setMaxDate();
@@ -325,13 +327,13 @@ sap.ui.define([
 
 	QUnit.test("opening picker when current values are outside min/max range", function(assert) {
 		//Prepare
-		var oMaxDate = new Date(2014,0,1),
+		var oMaxDate = UI5Date.getInstance(2014,0,1),
 			oDRS = new DateRangeSelection({
-			minDate: new Date(2014,0,1),
+			minDate: UI5Date.getInstance(2014,0,1),
 			maxDate: oMaxDate
 		});
-		oDRS.setDateValue(new Date(2001, 0, 1));
-		oDRS.setSecondDateValue(new Date(2001, 0, 10));
+		oDRS.setDateValue(UI5Date.getInstance(2001, 0, 1));
+		oDRS.setSecondDateValue(UI5Date.getInstance(2001, 0, 10));
 		oDRS.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
@@ -341,7 +343,7 @@ sap.ui.define([
 		oDRS._fillDateRange();
 
 		//Assert
-		var oNewMaxDateUTC = new Date(Date.UTC(oMaxDate.getFullYear(), oMaxDate.getMonth(), oMaxDate.getDate()));
+		var oNewMaxDateUTC = UI5Date.getInstance(Date.UTC(oMaxDate.getFullYear(), oMaxDate.getMonth(), oMaxDate.getDate()));
 		var oFocusedDate = oDRS._oCalendar._getFocusedDate().toUTCJSDate();
 		var aSelectedDates = oDRS._oCalendar.getSelectedDates();
 		assert.equal(oFocusedDate.toString(), oNewMaxDateUTC.toString(), "DRS: focused date equals min date " +
@@ -360,7 +362,7 @@ sap.ui.define([
 	QUnit.test("Choosing a range in month with 4 weeks is possible", function(assert) {
 		//Prepare
 		var oDRS = new DateRangeSelection({
-			dateValue: new Date(2021, 1, 1)
+			dateValue: UI5Date.getInstance(2021, 1, 1)
 		}).placeAt("qunit-fixture");
 		oCore.getConfiguration().setLanguage("en-GB"); // ensure that there are 4 weeks
 		oCore.applyChanges();
@@ -370,7 +372,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		try {
-			oDRS._getCalendar().getAggregation("month")[0]._selectDay(CalendarDate.fromLocalJSDate(new Date(2021, 1, 10)));
+			oDRS._getCalendar().getAggregation("month")[0]._selectDay(CalendarDate.fromLocalJSDate(UI5Date.getInstance(2021, 1, 10)));
 			//Assert
 			assert.ok(1, "The control doesn't throw error when the the user selects a date range");
 		} catch (e) {
@@ -494,8 +496,8 @@ sap.ui.define([
 				displayFormat: "dd.MM.yyyy",
 				displayFormatType: CalendarType.Gregorian,
 				delimiter:'',
-				dateValue: new Date(2019,0,17),
-				secondDateValue: new Date(2019,0,18)
+				dateValue: UI5Date.getInstance(2019,0,17),
+				secondDateValue: UI5Date.getInstance(2019,0,18)
 			}),
 			aDates;
 
@@ -536,11 +538,11 @@ sap.ui.define([
 	QUnit.test("weekNumberSelect applies new selection", function(assert) {
 		// Arrange
 		var oDateRangeSelection = new DateRangeSelection({
-				dateValue: new Date(2014,1,2),
-				secondDateValue: new Date(2014,1,18)
+				dateValue: UI5Date.getInstance(2014,1,2),
+				secondDateValue: UI5Date.getInstance(2014,1,18)
 			}).placeAt("qunit-fixture"),
-			oStartDate = new Date(2014, 1, 16),
-			oEndDate = new Date(2014, 1, 22);
+			oStartDate = UI5Date.getInstance(2014, 1, 16),
+			oEndDate = UI5Date.getInstance(2014, 1, 22);
 		oCore.applyChanges();
 
 		// Act
@@ -567,8 +569,8 @@ sap.ui.define([
 			this.oDRS = new DateRangeSelection("DRS4", {
 				delimiter : "@",
 				displayFormat: "yyyy/MM/dd",
-				dateValue: new Date(2014, 2, 16),
-				secondDateValue: new Date(2014, 2, 27)
+				dateValue: UI5Date.getInstance(2014, 2, 16),
+				secondDateValue: UI5Date.getInstance(2014, 2, 27)
 			});
 			this.oFakeEvent = {
 				target: {
@@ -629,7 +631,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/17 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2014/03/17 @ 2014/03/27", "PageUp: Value in internal format set");
-		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2014, 2, 17).getTime(), "PageUp: dateValue set");
+		assert.equal(this.oDRS.getDateValue().getTime(), UI5Date.getInstance(2014, 2, 17).getTime(), "PageUp: dateValue set");
 		assert.equal(this.oDRS._$input.val(), "2014/03/17 @ 2014/03/27", "PageUp: Value in external format displayed");
 
 		//cleanup
@@ -650,7 +652,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/15 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2014/03/15 @ 2014/03/27", "PageDown: Value in internal format set");
-		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2014, 2, 15).getTime(), "PageDown: dateValue set");
+		assert.equal(this.oDRS.getDateValue().getTime(), UI5Date.getInstance(2014, 2, 15).getTime(), "PageDown: dateValue set");
 		assert.equal(this.oDRS._$input.val(), "2014/03/15 @ 2014/03/27", "PageDown: Value in external format displayed");
 
 		//cleanup
@@ -672,7 +674,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/04/16 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2014/04/16 @ 2014/03/27", "PageUp: Value in internal format set");
-		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2014, 3, 16).getTime(), "PageUp: dateValue set");
+		assert.equal(this.oDRS.getDateValue().getTime(), UI5Date.getInstance(2014, 3, 16).getTime(), "PageUp: dateValue set");
 		assert.equal(this.oDRS._$input.val(), "2014/04/16 @ 2014/03/27", "PageUp: Value in external format displayed");
 
 		//cleanup
@@ -694,7 +696,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/02/16 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2014/02/16 @ 2014/03/27", "PageDown: Value in internal format set");
-		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2014, 1, 16).getTime(), "PageDown: dateValue set");
+		assert.equal(this.oDRS.getDateValue().getTime(), UI5Date.getInstance(2014, 1, 16).getTime(), "PageDown: dateValue set");
 		assert.equal(this.oDRS._$input.val(), "2014/02/16 @ 2014/03/27", "PageDown: Value in external format displayed");
 
 		//cleanup
@@ -717,7 +719,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2015/03/16 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2015/03/16 @ 2014/03/27", "PageUp: Value in internal format set");
-		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2015, 2, 16).getTime(), "PageUp: dateValue set");
+		assert.equal(this.oDRS.getDateValue().getTime(), UI5Date.getInstance(2015, 2, 16).getTime(), "PageUp: dateValue set");
 		assert.equal(this.oDRS._$input.val(), "2015/03/16 @ 2014/03/27", "PageUp: Value in external format displayed");
 
 		//cleanup
@@ -740,7 +742,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2013/03/16 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2013/03/16 @ 2014/03/27", "PageDown: Value in internal format set");
-		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2013, 2, 16).getTime(), "PageDown: dateValue set");
+		assert.equal(this.oDRS.getDateValue().getTime(), UI5Date.getInstance(2013, 2, 16).getTime(), "PageDown: dateValue set");
 		assert.equal(this.oDRS._$input.val(), "2013/03/16 @ 2014/03/27", "PageDown: Value in external format displayed");
 
 		//cleanup
@@ -761,7 +763,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2014/03/28", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2014/03/16 @ 2014/03/28", "PageUp: Value in internal format set");
-		assert.equal(this.oDRS.getSecondDateValue().getTime(), new Date(2014, 2, 28).getTime(), "PageUp: secondDateValue set");
+		assert.equal(this.oDRS.getSecondDateValue().getTime(), UI5Date.getInstance(2014, 2, 28).getTime(), "PageUp: secondDateValue set");
 		assert.equal(this.oDRS._$input.val(), "2014/03/16 @ 2014/03/28", "PageUp: Value in external format displayed");
 
 		//cleanup
@@ -782,7 +784,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2014/03/26", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2014/03/16 @ 2014/03/26", "PageDown: Value in internal format set");
-		assert.equal(this.oDRS.getSecondDateValue().getTime(), new Date(2014, 2, 26).getTime(), "PageDown: secondDateValue set");
+		assert.equal(this.oDRS.getSecondDateValue().getTime(), UI5Date.getInstance(2014, 2, 26).getTime(), "PageDown: secondDateValue set");
 		assert.equal(this.oDRS._$input.val(), "2014/03/16 @ 2014/03/26", "PageDown: Value in external format displayed");
 
 		//cleanup
@@ -804,7 +806,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2014/04/27", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2014/03/16 @ 2014/04/27", "PageUp: Value in internal format set");
-		assert.equal(this.oDRS.getSecondDateValue().getTime(), new Date(2014, 3, 27).getTime(), "PageUp: secondDateValue set");
+		assert.equal(this.oDRS.getSecondDateValue().getTime(), UI5Date.getInstance(2014, 3, 27).getTime(), "PageUp: secondDateValue set");
 		assert.equal(this.oDRS._$input.val(), "2014/03/16 @ 2014/04/27", "PageUp: Value in external format displayed");
 
 		//cleanup
@@ -826,7 +828,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2014/02/27", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2014/03/16 @ 2014/02/27", "PageDown: Value in internal format set");
-		assert.equal(this.oDRS.getSecondDateValue().getTime(), new Date(2014, 1, 27).getTime(), "PageDown: secondDateValue set");
+		assert.equal(this.oDRS.getSecondDateValue().getTime(), UI5Date.getInstance(2014, 1, 27).getTime(), "PageDown: secondDateValue set");
 		assert.equal(this.oDRS._$input.val(), "2014/03/16 @ 2014/02/27", "PageDown: Value in external format displayed");
 
 		//cleanup
@@ -849,7 +851,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2015/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2014/03/16 @ 2015/03/27", "PageUp: Value in internal format set");
-		assert.equal(this.oDRS.getSecondDateValue().getTime(), new Date(2015, 2, 27).getTime(), "PageUp: secondDateValue set");
+		assert.equal(this.oDRS.getSecondDateValue().getTime(), UI5Date.getInstance(2015, 2, 27).getTime(), "PageUp: secondDateValue set");
 		assert.equal(this.oDRS._$input.val(), "2014/03/16 @ 2015/03/27", "PageUp: Value in external format displayed");
 
 		//cleanup
@@ -872,7 +874,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2013/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2014/03/16 @ 2013/03/27", "PageDown: Value in internal format set");
-		assert.equal(this.oDRS.getSecondDateValue().getTime(), new Date(2013, 2, 27).getTime(), "PageDown: secondDateValue set");
+		assert.equal(this.oDRS.getSecondDateValue().getTime(), UI5Date.getInstance(2013, 2, 27).getTime(), "PageDown: secondDateValue set");
 		assert.equal(this.oDRS._$input.val(), "2014/03/16 @ 2013/03/27", "PageDown: Value in external format displayed");
 
 		//cleanup
@@ -880,7 +882,7 @@ sap.ui.define([
 
 	QUnit.test("Change first date month with page up + shift key when current day dosen't exist in the next month", function(assert) {
 		// prepare
-		this.oDRS.setDateValue(new Date(2014, 0, 31));
+		this.oDRS.setDateValue(UI5Date.getInstance(2014, 0, 31));
 		this.oDRS._$input.cursorPos(11);
 		this.oFakeEvent.shiftKey = true;
 
@@ -895,7 +897,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/02/28 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2014/02/28 @ 2014/03/27", "PageUp: Value in internal format set");
-		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2014, 1, 28).getTime(), "PageUp: DateValue set");
+		assert.equal(this.oDRS.getDateValue().getTime(), UI5Date.getInstance(2014, 1, 28).getTime(), "PageUp: DateValue set");
 		assert.equal(this.oDRS._$input.val(), "2014/02/28 @ 2014/03/27", "PageUp: Value in external format displayed");
 
 		//cleanup
@@ -903,8 +905,8 @@ sap.ui.define([
 
 	QUnit.test("Change first date year with page down + shift key when current day dosen't exist in the next year (leep year)", function(assert) {
 		// prepare
-		this.oDRS.setDateValue(new Date(2020, 1, 29));
-		this.oDRS.setSecondDateValue(new Date(2020, 2, 27));
+		this.oDRS.setDateValue(UI5Date.getInstance(2020, 1, 29));
+		this.oDRS.setSecondDateValue(UI5Date.getInstance(2020, 2, 27));
 		this.oDRS._$input.cursorPos(11);
 		this.oFakeEvent.shiftKey = true;
 		this.oFakeEvent.ctrlKey = true;
@@ -920,7 +922,7 @@ sap.ui.define([
 		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2019/02/28 @ 2020/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
 
 		assert.equal(this.oDRS.getValue(), "2019/02/28 @ 2020/03/27", "PageDown: Value in internal format set");
-		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2019, 1, 28).getTime(), "PageDown: DateValue set");
+		assert.equal(this.oDRS.getDateValue().getTime(), UI5Date.getInstance(2019, 1, 28).getTime(), "PageDown: DateValue set");
 		assert.equal(this.oDRS._$input.val(), "2019/02/28 @ 2020/03/27", "PageDown: Value in external format displayed");
 
 		//cleanup
@@ -981,14 +983,14 @@ sap.ui.define([
 		beforeEach: function() {
 			this.model = new JSONModel({
 				"ShipName": "Titanic",
-				"OrderDate": new Date(2017,5,28),
-				"ShippedDate": new Date(2017,6,1)
+				"OrderDate": UI5Date.getInstance(2017,5,28),
+				"ShippedDate": UI5Date.getInstance(2017,6,1)
 			});
 
 			this.modelUTCDates = new JSONModel({
 				"ShipName": "Titanic",
-				"OrderDate": new Date(Date.UTC(2017,5,28)),
-				"ShippedDate": new Date(Date.UTC(2017,6,1))
+				"OrderDate": UI5Date.getInstance(Date.UTC(2017,5,28)),
+				"ShippedDate": UI5Date.getInstance(Date.UTC(2017,6,1))
 			});
 
 			this.sut = new DateRangeSelection();
@@ -1064,11 +1066,11 @@ sap.ui.define([
 		//assert
 		assert.equal(this.sut.getValue(), expectedValue, "value is correct");
 		oOrderDateUTCModel = this.sut.getModel().getProperty("/OrderDate");
-		oOrderDateLocalDate = new Date(oOrderDateUTCModel.getUTCFullYear(), oOrderDateUTCModel.getUTCMonth(),
+		oOrderDateLocalDate = UI5Date.getInstance(oOrderDateUTCModel.getUTCFullYear(), oOrderDateUTCModel.getUTCMonth(),
 			oOrderDateUTCModel.getUTCDate(), oOrderDateUTCModel.getUTCHours(), oOrderDateUTCModel.getUTCMinutes(), oOrderDateUTCModel.getUTCSeconds());
 
 		oShippedDateUTCModel = this.sut.getModel().getProperty("/ShippedDate");
-		oShippedDateLocalDate = new Date(oShippedDateUTCModel.getUTCFullYear(), oShippedDateUTCModel.getUTCMonth(),
+		oShippedDateLocalDate = UI5Date.getInstance(oShippedDateUTCModel.getUTCFullYear(), oShippedDateUTCModel.getUTCMonth(),
 			oShippedDateUTCModel.getUTCDate(), 23, 59, 59);
 
 		assert.equal(this.sut.getDateValue().toString(), oOrderDateLocalDate.toString(), "dateValue should be always a local date");
@@ -1129,10 +1131,10 @@ sap.ui.define([
 
 				oDateModelUTC = oModelV2.getProperty("/EdmTypesCollection('1')/TravelStartDate");
 				/*Time part is cut off by the sap.ui.model.type.DateInterval when DateRangeSelection.setValue is called*/
-				oDateLocalDate = new Date(oDateModelUTC.getUTCFullYear(), oDateModelUTC.getUTCMonth(), oDateModelUTC.getUTCDate());
+				oDateLocalDate = UI5Date.getInstance(oDateModelUTC.getUTCFullYear(), oDateModelUTC.getUTCMonth(), oDateModelUTC.getUTCDate());
 
 				oDate2UTCModel = oModelV2.getProperty("/EdmTypesCollection('1')/TravelEndDate");
-				oDate2Localdate = new Date(oDate2UTCModel.getUTCFullYear(), oDate2UTCModel.getUTCMonth(), oDate2UTCModel.getUTCDate(),
+				oDate2Localdate = UI5Date.getInstance(oDate2UTCModel.getUTCFullYear(), oDate2UTCModel.getUTCMonth(), oDate2UTCModel.getUTCDate(),
 					23, 59, 59, 999);
 
 				var oSut = view.byId("drs_odata");
@@ -1196,14 +1198,14 @@ sap.ui.define([
 				oDateInterval = oDRS.getBinding("value").getType();
 
 				//Assert
-				assert.equal(oDRS.getDateValue().toString(), new Date(2017, 11, 10).toString(),
+				assert.equal(oDRS.getDateValue().toString(), UI5Date.getInstance(2017, 11, 10).toString(),
 					"dateValue corresponds to the chosen by the end user date range in local time");
-				assert.equal(oDRS.getSecondDateValue().toString(), new Date(2017, 11, 20, 23, 59, 59, 999).toString(),
+				assert.equal(oDRS.getSecondDateValue().toString(), UI5Date.getInstance(2017, 11, 20, 23, 59, 59, 999).toString(),
 					"secondDateValue corresponds to the chosen by the end user date range in local time");
 
 				assert.equal(oDRS.getValue(), oDateInterval.formatValue([
-						new Date(Date.UTC(2017, 11, 10)),
-						new Date(Date.UTC(2017, 11, 20))], "string"),
+						UI5Date.getInstance(Date.UTC(2017, 11, 10)),
+						UI5Date.getInstance(Date.UTC(2017, 11, 20))], "string"),
 					"Value corresponds to the chosen by the end user range");
 
 				//Clean up
@@ -1269,8 +1271,8 @@ sap.ui.define([
 	QUnit.module("API");
 
 	QUnit.test("setMinDate when dateValue & secondDateValue do not match the new min date", function (assert) {
-		var oDateValue = new Date(2017, 0, 1),
-			oNewMinDate = new Date(2018, 0, 1),
+		var oDateValue = UI5Date.getInstance(2017, 0, 1),
+			oNewMinDate = UI5Date.getInstance(2018, 0, 1),
 			oSut = new DateRangeSelection({
 				dateValue: oDateValue,
 				secondDateValue: oDateValue,
@@ -1308,8 +1310,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("setMaxDate when dateValue & secondDateValue do not match the new max date", function (assert) {
-		var oDateValue = new Date(2017, 0, 1),
-			oNewMaxDate = new Date(2016, 0, 1),
+		var oDateValue = UI5Date.getInstance(2017, 0, 1),
+			oNewMaxDate = UI5Date.getInstance(2016, 0, 1),
 			oSut = new DateRangeSelection({
 				dateValue: oDateValue,
 				secondDateValue: oDateValue,
@@ -1318,11 +1320,11 @@ sap.ui.define([
 			}),
 			sExpectedErrorMsg1 = "dateValue " + oSut.getDateValue().toString() + "(value=20170101 - 20170101) does" +
 				" not match min/max date range(" + oDefaultMinDate.toString() + " - " +
-				new Date(oNewMaxDate.setHours(23, 59, 59)).toString() + "). App. developers should take care to " +
+				UI5Date.getInstance(oNewMaxDate.setHours(23, 59, 59)).toString() + "). App. developers should take care to " +
 				"maintain dateValue/value accordingly.",
 			sExpectedErrorMsg2 = "secondDateValue " + oSut.getSecondDateValue().toString() + "(value=20170101 - 20170101) does" +
 				" not match min/max date range(" + oDefaultMinDate.toString() + " - " +
-				new Date(oNewMaxDate.setHours(23, 59, 59)).toString() + "). App. developers should take care to " +
+				UI5Date.getInstance(oNewMaxDate.setHours(23, 59, 59)).toString() + "). App. developers should take care to " +
 				"maintain secondDateValue/value accordingly.",
 			oSpySetProperty = this.spy(oSut, "setProperty"),
 			oSpyLogError = this.spy(Log, "error");
@@ -1359,10 +1361,10 @@ sap.ui.define([
 				 */
 				var oModelInvalid = new JSONModel({
 							value: "20170101 - 20170120",
-							minDate: new Date(2018, 0, 1)
+							minDate: UI5Date.getInstance(2018, 0, 1)
 						}),
 						oModelValid = new JSONModel({
-							minDate: new Date(2017, 0, 10),
+							minDate: UI5Date.getInstance(2017, 0, 10),
 							value: "20170120 - 20170130"
 						}),
 						oDP1 = new DateRangeSelection({
@@ -1377,11 +1379,11 @@ sap.ui.define([
 							minDate: "{/minDate}",
 							value: "{/value}"
 						}),
-						sErrorMsgDP11 = "dateValue " + new Date(2017, 0, 1).toString() + "(value=20170101 - 20170120)" +
+						sErrorMsgDP11 = "dateValue " + UI5Date.getInstance(2017, 0, 1).toString() + "(value=20170101 - 20170120)" +
 							" does not match min/max date range(" + oModelInvalid.getProperty("/minDate").toString() +
 							" - " + oDefaultMaxDate.toString() + "). App. developers should take care to maintain " +
 							"dateValue/value accordingly.",
-						sErrorMsgDP12 = "secondDateValue " + new Date(2017, 0, 20).toString() + "(value=20170101 - 20170120)" +
+						sErrorMsgDP12 = "secondDateValue " + UI5Date.getInstance(2017, 0, 20).toString() + "(value=20170101 - 20170120)" +
 							" does not match min/max date range(" + oModelInvalid.getProperty("/minDate").toString() +
 							" - " + oDefaultMaxDate.toString() + "). App. developers should take care to maintain " +
 							"secondDateValue/value accordingly.",
@@ -1401,14 +1403,14 @@ sap.ui.define([
 				assert.equal(oDP2.getValue().toString(), "20170101 - 20170120",
 						"Although outside min range, DP2 property <value> should be always set");
 
-				assert.equal(oDP1.getDateValue().toString(), new Date(2017, 0, 1).toString(),
+				assert.equal(oDP1.getDateValue().toString(), UI5Date.getInstance(2017, 0, 1).toString(),
 						"Although outside min range, DP1 property <value> should update the <dateValue> as well");
-				assert.equal(oDP1.getSecondDateValue().toString(), new Date(2017, 0, 20).toString(),
+				assert.equal(oDP1.getSecondDateValue().toString(), UI5Date.getInstance(2017, 0, 20).toString(),
 					"Although outside min range, DP1 property <value> should update the <secondDateValue> as well");
 
-				assert.equal(oDP2.getDateValue().toString(), new Date(2017, 0, 1).toString(),
+				assert.equal(oDP2.getDateValue().toString(), UI5Date.getInstance(2017, 0, 1).toString(),
 					"Although outside min range, DP2 property <value> should update the <dateValue> as well");
-				assert.equal(oDP2.getSecondDateValue().toString(), new Date(2017, 0, 20).toString(),
+				assert.equal(oDP2.getSecondDateValue().toString(), UI5Date.getInstance(2017, 0, 20).toString(),
 					"Although outside min range, DP2 property <value> should update the <secondDateValue> as well");
 
 				assert.equal(oSpyLogError.callCount, 4, "There should be error messages in the console");
@@ -1433,14 +1435,14 @@ sap.ui.define([
 				assert.equal(oDP1.getValue().toString(), "20170120 - 20170130", "A valid DP1 property <value> should be always set");
 				assert.equal(oDP2.getValue().toString(), "20170120 - 20170130", "A valid DP2 property <value> should be always set");
 
-				assert.equal(oDP1.getDateValue().toString(), new Date(2017, 0, 20).toString(),
+				assert.equal(oDP1.getDateValue().toString(), UI5Date.getInstance(2017, 0, 20).toString(),
 					"A valid DP1 property <value> should update the <dateValue> as well");
-				assert.equal(oDP2.getDateValue().toString(), new Date(2017, 0, 20).toString(),
+				assert.equal(oDP2.getDateValue().toString(), UI5Date.getInstance(2017, 0, 20).toString(),
 					"A valid DP2 property <value> should update the <dateValue> as well");
 
-				assert.equal(oDP1.getSecondDateValue().toString(), new Date(2017, 0, 30).toString(),
+				assert.equal(oDP1.getSecondDateValue().toString(), UI5Date.getInstance(2017, 0, 30).toString(),
 					"A valid DP1 property <value> should update the <secondDateValue> as well");
-				assert.equal(oDP2.getSecondDateValue().toString(), new Date(2017, 0, 30).toString(),
+				assert.equal(oDP2.getSecondDateValue().toString(), UI5Date.getInstance(2017, 0, 30).toString(),
 					"A valid DP2 property <value> should update the <secondDateValue> as well");
 
 				assert.equal(oSpyLogError.callCount, 0, "There must be no error messages in the console");
@@ -1528,10 +1530,10 @@ sap.ui.define([
 	QUnit.test("Date with seconds set to the last second of the maxDate is displayed", function(assert) {
 		var oDateRangeSelector = new DateRangeSelection({
 			displayFormat: "yyyy-MM-dd",
-			minDate: new Date(2017, 0, 1, 0, 0, 0, 0),
-			maxDate: new Date(2017, 11, 31, 23, 59, 59, 100),
-			dateValue: new Date(2017, 0, 1, 0, 0, 0, 0),
-			secondDateValue: new Date(2017, 11, 31, 23, 59, 59, 100)
+			minDate: UI5Date.getInstance(2017, 0, 1, 0, 0, 0, 0),
+			maxDate: UI5Date.getInstance(2017, 11, 31, 23, 59, 59, 100),
+			dateValue: UI5Date.getInstance(2017, 0, 1, 0, 0, 0, 0),
+			secondDateValue: UI5Date.getInstance(2017, 11, 31, 23, 59, 59, 100)
 		});
 		oDateRangeSelector.placeAt('qunit-fixture');
 		oCore.applyChanges();

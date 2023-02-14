@@ -30,7 +30,8 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/core/Locale"
+	"sap/ui/core/Locale",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -62,7 +63,8 @@ sap.ui.define([
 	InvisibleText,
 	KeyCodes,
 	Core,
-	Locale
+	Locale,
+	UI5Date
 ) {
 	"use strict";
 
@@ -91,20 +93,20 @@ sap.ui.define([
 		/*the SUT won't be destroyed when single test is run*/
 		bSkipDestroy = new URLSearchParams(window.location.search).has("testId");
 
-	var oPCStartDate = new Date("2015", "0", "1", "08", "00");
+	var oPCStartDate = UI5Date.getInstance("2015", "0", "1", "08", "00");
 
 	var createPlanningCalendar = function(sID, oSearchField, oButton, oParamStartDate, sViewKey, oLegend, aSpecialDates, aRows) {
 
 		if (!aSpecialDates || !aSpecialDates.length) {
 			aSpecialDates = [
 				new DateTypeRange(sID + "SD1", {
-					startDate: new Date(2015, 0, 6),
+					startDate: UI5Date.getInstance(2015, 0, 6),
 					type: CalendarDayType.Type01,
 					tooltip: "Heilige 3 Könige"
 				}),
 				new DateTypeRange(sID + "SD2", {
-					startDate: new Date(2015, 0, 4, 12, 0),
-					endDate: new Date(2015, 0, 4, 14, 0),
+					startDate: UI5Date.getInstance(2015, 0, 4, 12, 0),
+					endDate: UI5Date.getInstance(2015, 0, 4, 14, 0),
 					type: CalendarDayType.Type02,
 					tooltip: "Lunch"
 				})
@@ -118,8 +120,8 @@ sap.ui.define([
 				text: "Musterteam",
 				tooltip: "Header tooltip",
 				intervalHeaders: [ new CalendarAppointment(sID + "-R1H1",{
-					startDate: new Date("2015", "0", "1", "09", "00"),
-					endDate: new Date("2015", "0", "1", "11", "00"),
+					startDate: UI5Date.getInstance("2015", "0", "1", "09", "00"),
+					endDate: UI5Date.getInstance("2015", "0", "1", "11", "00"),
 					type: CalendarDayType.Type02,
 					color: "#FF0000",
 					title: "SAPUI5",
@@ -129,7 +131,7 @@ sap.ui.define([
 				],
 				appointments: [ new CalendarAppointment(sID + "-R1A1", {
 					startDate: oPCStartDate,
-					endDate: new Date("2015", "0", "1", "09", "00"),
+					endDate: UI5Date.getInstance("2015", "0", "1", "09", "00"),
 					type: CalendarDayType.Type01,
 					color: "#FF00FF",
 					title: "App 1",
@@ -138,7 +140,7 @@ sap.ui.define([
 					text: "Text"
 				}),
 					new CalendarAppointment(sID + "-R1A2", {
-						startDate: new Date("2015", "0", "1", "07", "00"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "07", "00"),
 						endDate: oPCStartDate,
 						type: CalendarDayType.Type02,
 						title: "App 2",
@@ -148,16 +150,16 @@ sap.ui.define([
 						tentative: true
 					}),
 					new CalendarAppointment(sID + "-R1A3", {
-						startDate: new Date("2015", "0", "2", "08", "30"),
-						endDate: new Date("2015", "0", "2", "09", "30"),
+						startDate: UI5Date.getInstance("2015", "0", "2", "08", "30"),
+						endDate: UI5Date.getInstance("2015", "0", "2", "09", "30"),
 						type: CalendarDayType.Type03,
 						title: "App3",
 						icon: "sap-icon://home",
 						tooltip: "Tooltip"
 					}),
 					new CalendarAppointment(sID + "-R1A4", {
-						startDate: new Date("2014", "6", "1", "0", "0"),
-						endDate: new Date("2014", "6", "2", "0", "0"),
+						startDate: UI5Date.getInstance("2014", "6", "1", "0", "0"),
+						endDate: UI5Date.getInstance("2014", "6", "2", "0", "0"),
 						type: CalendarDayType.Type04,
 						title: "Meeting 4",
 						tooltip: "Tooltip 4",
@@ -173,8 +175,8 @@ sap.ui.define([
 					nonWorkingDays: [2,3],
 					nonWorkingHours: [11, 12],
 					intervalHeaders: [ new CalendarAppointment(sID + "-R2H1",{
-						startDate: new Date("2015", "0", "2", "00", "00"),
-						endDate: new Date("2015", "0", "2", "23", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "2", "00", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "2", "23", "59"),
 						type: CalendarDayType.Type01,
 						title: "SAPUI5",
 						tooltip: "Test",
@@ -182,8 +184,8 @@ sap.ui.define([
 					})
 					],
 					appointments: [ new CalendarAppointment(sID + "-R2A1", {
-						startDate: new Date("2015", "0", "1", "00", "00"),
-						endDate: new Date("2015", "0", "2", "23", "59"),
+						startDate: UI5Date.getInstance("2015", "0", "1", "00", "00"),
+						endDate: UI5Date.getInstance("2015", "0", "2", "23", "59"),
 						type: CalendarDayType.Type01,
 						title: "App 1",
 						tooltip: "Tooltip",
@@ -333,7 +335,7 @@ sap.ui.define([
 			oSpecialDateEnd,
 			aResult = [];
 
-		oSpecialDateStart = new Date(oStartDate.getTime());
+		oSpecialDateStart = UI5Date.getInstance(oStartDate.getTime());
 		oSpecialDateEnd = createEndDate(sCalendarIntervalType, oSpecialDateStart);
 
 		for (var i = iTypeBegin; i <= iTypeEnd; i++) {
@@ -346,8 +348,8 @@ sap.ui.define([
 			sTypeName = CalendarDayType[sTypeName];
 			aResult.push(new DateTypeRange({
 				type: sTypeName,
-				startDate: new Date(oSpecialDateStart.getTime()),
-				endDate: new Date(oSpecialDateEnd.getTime())
+				startDate: UI5Date.getInstance(oSpecialDateStart.getTime()),
+				endDate: UI5Date.getInstance(oSpecialDateEnd.getTime())
 			}));
 
 			oSpecialDateStart = getNextStartDate(sCalendarIntervalType, oSpecialDateStart);
@@ -355,7 +357,7 @@ sap.ui.define([
 		}
 
 		function getNextStartDate(sCalendarIntervalType, oDate1) {
-			var oTempDate = new Date(oDate1.getTime());
+			var oTempDate = UI5Date.getInstance(oDate1.getTime());
 
 			switch (sCalendarIntervalType) {
 				case CalendarIntervalType.Hour:
@@ -381,7 +383,7 @@ sap.ui.define([
 			return oTempDate;
 		}
 		function createEndDate(sCalendarIntervalType, oStartDate) {
-			var oEndDate = new Date(oStartDate.getTime());
+			var oEndDate = UI5Date.getInstance(oStartDate.getTime());
 
 			switch (sCalendarIntervalType) {
 				case CalendarIntervalType.Hour:
@@ -408,7 +410,7 @@ sap.ui.define([
 		}
 
 		function getLastMonthDate(oDate) {
-			var oTempDate = new Date(oDate.getTime());
+			var oTempDate = UI5Date.getInstance(oDate.getTime());
 			oTempDate.setMonth(oTempDate.getMonth() + 1);
 			oTempDate.setDate(0);
 			return oTempDate.getDate();
@@ -423,8 +425,8 @@ sap.ui.define([
 			oAppEndDate,
 			aResult = [];
 
-		oAppStartDate = new Date(oStartDate.getTime());
-		oAppEndDate = new Date(oAppStartDate.getTime());
+		oAppStartDate = UI5Date.getInstance(oStartDate.getTime());
+		oAppEndDate = UI5Date.getInstance(oAppStartDate.getTime());
 		oAppEndDate.setMinutes(oAppStartDate.getMinutes() + 10);  //appointments duration
 
 		for (var i = iTypeBegin; i <= iTypeEnd; i++) {
@@ -437,11 +439,11 @@ sap.ui.define([
 			sTypeName = CalendarDayType[sTypeName];
 			aResult.push(new CalendarAppointment({
 				type: sTypeName,
-				startDate: new Date(oAppStartDate.getTime()),
-				endDate: new Date(oAppEndDate.getTime())
+				startDate: UI5Date.getInstance(oAppStartDate.getTime()),
+				endDate: UI5Date.getInstance(oAppEndDate.getTime())
 			}));
 			oAppStartDate.setMinutes(oAppStartDate.getMinutes() + 30);// 2appointments per hour
-			oAppEndDate = new Date(oAppStartDate.getTime());
+			oAppEndDate = UI5Date.getInstance(oAppStartDate.getTime());
 			oAppEndDate.setMinutes(oAppStartDate.getMinutes() + 10); //appointments duration
 		}
 		return aResult;
@@ -468,8 +470,8 @@ sap.ui.define([
 		beforeEach: function() {
 			var oSearchField = new SearchField(),
 				oButton = new Button();
-			this.o14Sep2016MidOfMonth = new Date(2016, 8, 14);
-			this.o10Feb2016 = new Date(2016, 4, 10);
+			this.o14Sep2016MidOfMonth = UI5Date.getInstance(2016, 8, 14);
+			this.o10Feb2016 = UI5Date.getInstance(2016, 4, 10);
 			this.oPC = createPlanningCalendar("oneMonthPlanningCalendar", oSearchField, oButton, this.o14Sep2016MidOfMonth,
 				CalendarIntervalType.OneMonth);
 			this.oPC.placeAt("bigUiArea");
@@ -505,7 +507,7 @@ sap.ui.define([
 		},
 
 		_getNextDay: function(oDate) {
-			var oNext = new Date(oDate.getTime());
+			var oNext = UI5Date.getInstance(oDate.getTime());
 			oNext.setDate(oNext.getDate() + 1);
 
 			return oNext;
@@ -617,10 +619,10 @@ sap.ui.define([
 	});
 
 	QUnit.test('clicking today navigates to todays month', function(assert) {
-		var oFakeNow = new Date(2016, 8, 10),
+		var oFakeNow = UI5Date.getInstance(2016, 8, 10),
 			clock = sinon.useFakeTimers(oFakeNow.getTime());
 
-		this.oPC.setStartDate(new Date(2016, 5, 1));
+		this.oPC.setStartDate(UI5Date.getInstance(2016, 5, 1));
 
 		//act
 		_clickTodayButton.call(this, this.oPC);
@@ -698,7 +700,7 @@ sap.ui.define([
 	QUnit.module("OneMonth view (size S)", {
 		beforeEach: function () {
 			this._simulateMobileEnvironment();
-			this.o14Sep2016MidOfMonth = new Date(2016, 8, 14);
+			this.o14Sep2016MidOfMonth = UI5Date.getInstance(2016, 8, 14);
 		},
 		afterEach: function () {
 			this._restoreDesktopEnvironment();
@@ -749,7 +751,7 @@ sap.ui.define([
 		this._createCalendar(this.o14Sep2016MidOfMonth);
 
 		//assert
-		assert.strictEqual(this._oPC.getStartDate().getTime(), new Date(2016, 8, 4).getTime(), "The correct date is auto adjusted for the first day of month");
+		assert.strictEqual(this._oPC.getStartDate().getTime(), UI5Date.getInstance(2016, 8, 4).getTime(), "The correct date is auto adjusted for the first day of month");
 	});
 
 	QUnit.module("ARIA", {
@@ -780,10 +782,10 @@ sap.ui.define([
 			this._testAriaAppointmentsAndSpecialDatesIfLegendIsDestroyed = function(sIntervalType, fnExtendSut, oPCStartDate) {
 				//Prepare
 				var sMessagePrefix = "After legend is destroyed",
-					aAppointments = _createAppointmentsOfTypes(1, 20, new Date(2015, 0, 4, 19)),
-					aSpecialDates = _createSpecialDates(1, 20,  sIntervalType, oPCStartDate || new Date(2015, 0, 4, 19)),
+					aAppointments = _createAppointmentsOfTypes(1, 20, UI5Date.getInstance(2015, 0, 4, 19)),
+					aSpecialDates = _createSpecialDates(1, 20,  sIntervalType, oPCStartDate || UI5Date.getInstance(2015, 0, 4, 19)),
 					oSut = createPlanningCalendar("accPC-LegendDestoyed", new SearchField(), new Button(),
-						new Date(2015, 0, 4, 19),
+						UI5Date.getInstance(2015, 0, 4, 19),
 						null, // View key
 						this.oLegendWithItemsTypes01UpToTypes10,
 						aSpecialDates,
@@ -821,10 +823,10 @@ sap.ui.define([
 			this._testAriaAppointmentsAndSpecialDates = function(sIntervalType, fnExtendSut, oPCStartDate) {
 				//Prepare
 				var sMessagePrefix = "Initial legend is available",
-					aAppointments = _createAppointmentsOfTypes(1, 20, new Date(2015, 0, 4, 19)),
-					aSpecialDates = _createSpecialDates(1, 20,  sIntervalType, oPCStartDate || new Date(2015, 0, 4, 19)),
+					aAppointments = _createAppointmentsOfTypes(1, 20, UI5Date.getInstance(2015, 0, 4, 19)),
+					aSpecialDates = _createSpecialDates(1, 20,  sIntervalType, oPCStartDate || UI5Date.getInstance(2015, 0, 4, 19)),
 					oSut = createPlanningCalendar("accPC", new SearchField(), new Button(),
-						new Date(2015, 0, 4, 19),
+						UI5Date.getInstance(2015, 0, 4, 19),
 						null, // View key
 						this.oLegendWithItemsTypes01UpToTypes10,
 						aSpecialDates,
@@ -966,7 +968,7 @@ sap.ui.define([
 
 	QUnit.test("Week day and date aria", function(assert) {
 		//Prepare
-		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), new Date(2015, 0, 1)),
+		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), UI5Date.getInstance(2015, 0, 1)),
 			oFormatDate = DateFormat.getInstance({style: "long", calendarType: "Islamic"}),
 			oDate = new CalendarDate(2015, 0, 2, CalendarType.Islamic),
 			sAriaDate = oFormatDate.format(oDate.toUTCJSDate(), true),
@@ -991,9 +993,9 @@ sap.ui.define([
 		beforeEach: function() {
 			var oSearchField = new SearchField(),
 				oButton = new Button();
-			this.o1Sep2016MidOfWeek = new Date(2016, 8, 1, 1);
-			this.o10Sep2016Morning = new Date(2016, 8, 10, 9);
-			this.o10Sep2016 = new Date(2016, 8, 10);
+			this.o1Sep2016MidOfWeek = UI5Date.getInstance(2016, 8, 1, 1);
+			this.o10Sep2016Morning = UI5Date.getInstance(2016, 8, 10, 9);
+			this.o10Sep2016 = UI5Date.getInstance(2016, 8, 10);
 			this.oPC2 = createPlanningCalendar("startDateAtTheMiddleOfTheWeek", oSearchField, oButton, this.o1Sep2016MidOfWeek,
 				CalendarIntervalType.Week);
 			this.oPC2.placeAt("bigUiArea");
@@ -1123,13 +1125,13 @@ sap.ui.define([
 	QUnit.test("When start date is defined the planning calendar should shift to the first day of the week that includes the start date ", function(assert) {
 		//assert initial state
 		this._assertDatesAreVisible.call(this, [
-				new Date(2016, 7, 29),
-				new Date(2016, 7, 30),
-				new Date(2016, 7, 31),
-				new Date(2016, 8, 1),
-				new Date(2016, 8, 2),
-				new Date(2016, 8, 3),
-				new Date(2016, 8, 4)],
+				UI5Date.getInstance(2016, 7, 29),
+				UI5Date.getInstance(2016, 7, 30),
+				UI5Date.getInstance(2016, 7, 31),
+				UI5Date.getInstance(2016, 8, 1),
+				UI5Date.getInstance(2016, 8, 2),
+				UI5Date.getInstance(2016, 8, 3),
+				UI5Date.getInstance(2016, 8, 4)],
 			this.oPC2, "Initially set start date");
 		//act
 		this.oPC2.setStartDate(this.o10Sep2016);
@@ -1137,13 +1139,13 @@ sap.ui.define([
 
 		//assert
 		this._assertDatesAreVisible.call(this, [
-				new Date(2016, 8, 5),
-				new Date(2016, 8, 6),
-				new Date(2016, 8, 7),
-				new Date(2016, 8, 8),
-				new Date(2016, 8, 9),
-				new Date(2016, 8, 10),
-				new Date(2016, 8, 11)],
+				UI5Date.getInstance(2016, 8, 5),
+				UI5Date.getInstance(2016, 8, 6),
+				UI5Date.getInstance(2016, 8, 7),
+				UI5Date.getInstance(2016, 8, 8),
+				UI5Date.getInstance(2016, 8, 9),
+				UI5Date.getInstance(2016, 8, 10),
+				UI5Date.getInstance(2016, 8, 11)],
 			this.oPC2, "StartDate modified afterwards");
 	});
 
@@ -1153,13 +1155,13 @@ sap.ui.define([
 
 		//assert
 		this._assertDatesAreVisible.call(this, [
-				new Date(2016, 7, 22),
-				new Date(2016, 7, 23),
-				new Date(2016, 7, 24),
-				new Date(2016, 7, 25),
-				new Date(2016, 7, 26),
-				new Date(2016, 7, 27),
-				new Date(2016, 7, 28)],
+				UI5Date.getInstance(2016, 7, 22),
+				UI5Date.getInstance(2016, 7, 23),
+				UI5Date.getInstance(2016, 7, 24),
+				UI5Date.getInstance(2016, 7, 25),
+				UI5Date.getInstance(2016, 7, 26),
+				UI5Date.getInstance(2016, 7, 27),
+				UI5Date.getInstance(2016, 7, 28)],
 			this.oPC2, "Initially navigating back once");
 
 		//act
@@ -1167,13 +1169,13 @@ sap.ui.define([
 
 		//assert
 		this._assertDatesAreVisible.call(this, [
-				new Date(2016, 7, 15),
-				new Date(2016, 7, 16),
-				new Date(2016, 7, 17),
-				new Date(2016, 7, 18),
-				new Date(2016, 7, 19),
-				new Date(2016, 7, 20),
-				new Date(2016, 7, 21)],
+				UI5Date.getInstance(2016, 7, 15),
+				UI5Date.getInstance(2016, 7, 16),
+				UI5Date.getInstance(2016, 7, 17),
+				UI5Date.getInstance(2016, 7, 18),
+				UI5Date.getInstance(2016, 7, 19),
+				UI5Date.getInstance(2016, 7, 20),
+				UI5Date.getInstance(2016, 7, 21)],
 			this.oPC2, "Navigating back twice");
 	});
 
@@ -1182,9 +1184,9 @@ sap.ui.define([
 		var oStartDate = this.oPC2.getStartDate();
 
 		//Arrange
-		this.oPC2.setMinDate(new Date(1999, 1, 1, 0, 0, 0));
-		this.oPC2.setStartDate(new Date(1999, 1, 1, 0, 0, 0));
-		this.oPC2._dateNav.setCurrent(new Date(1999, 1, 1, 0, 0, 0));
+		this.oPC2.setMinDate(UI5Date.getInstance(1999, 1, 1, 0, 0, 0));
+		this.oPC2.setStartDate(UI5Date.getInstance(1999, 1, 1, 0, 0, 0));
+		this.oPC2._dateNav.setCurrent(UI5Date.getInstance(1999, 1, 1, 0, 0, 0));
 
 		//Act
 		this.oPC2._applyArrowsLogic(true);
@@ -1193,9 +1195,9 @@ sap.ui.define([
 		assert.equal(this.oPC2._getHeader()._oPrevBtn.getEnabled(), false, "Back Arrow Is Disabled");
 
 		//Arrange
-		this.oPC2.setMaxDate(new Date(2222,22,22,22,22,22));
-		this.oPC2.setStartDate(new Date(2222,22,22,22,22,22));
-		this.oPC2._dateNav.setCurrent(new Date(2222,22,22,22,22,22));
+		this.oPC2.setMaxDate(UI5Date.getInstance(2222,22,22,22,22,22));
+		this.oPC2.setStartDate(UI5Date.getInstance(2222,22,22,22,22,22));
+		this.oPC2._dateNav.setCurrent(UI5Date.getInstance(2222,22,22,22,22,22));
 
 		//Act
 		this.oPC2._applyArrowsLogic(false);
@@ -1209,8 +1211,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selected date is in visible range after navigation", function(assert){
-		this.oPC2._dateNav.setCurrent(new Date(2016, 8, 2));
-		this.oPC2.setStartDate(new Date());
+		this.oPC2._dateNav.setCurrent(UI5Date.getInstance(2016, 8, 2));
+		this.oPC2.setStartDate(UI5Date.getInstance());
 		this.oPC2._applyArrowsLogic();
 
 		assert.ok(1, "Error is not thrown.");
@@ -1220,8 +1222,8 @@ sap.ui.define([
 		// arange
 		var oPC = new PlanningCalendar({
 			viewKey: "One Month",
-			startDate: new Date(2019, 11, 6),
-			minDate: new Date(2019, 11, 1)
+			startDate: UI5Date.getInstance(2019, 11, 6),
+			minDate: UI5Date.getInstance(2019, 11, 1)
 		}).placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -1237,12 +1239,12 @@ sap.ui.define([
 
 	QUnit.test("today press disables previous button if necessary", function(assert) {
 		// arrange
-		var oFakeNow = new Date(2019, 11, 22),
+		var oFakeNow = UI5Date.getInstance(2019, 11, 22),
 			clock = sinon.useFakeTimers(oFakeNow.getTime()),
 			oPC = new PlanningCalendar({
 				viewKey: "One Month",
-				startDate: new Date(2020, 0, 6),
-				minDate: new Date(2019, 11, 1)
+				startDate: UI5Date.getInstance(2020, 0, 6),
+				minDate: UI5Date.getInstance(2019, 11, 1)
 			}).placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -1265,8 +1267,8 @@ sap.ui.define([
 		// arrange
 		var oPC = new PlanningCalendar({
 				viewKey: "One Month",
-				startDate: new Date(2020, 0, 6, 8, 0, 0),
-				minDate: new Date(2019, 11, 1, 0, 0, 0)
+				startDate: UI5Date.getInstance(2020, 0, 6, 8, 0, 0),
+				minDate: UI5Date.getInstance(2019, 11, 1, 0, 0, 0)
 			}).placeAt("qunit-fixture");
 		Core.applyChanges();
 
@@ -1307,13 +1309,13 @@ sap.ui.define([
 						_assertFocus.call(oSelf, oNextTarget);
 						setTimeout(function () {
 							this._assertDatesAreVisible.call(oSelf, [
-								new Date(2016, 7, 22),
-								new Date(2016, 7, 23),
-								new Date(2016, 7, 24),
-								new Date(2016, 7, 25),
-								new Date(2016, 7, 26),
-								new Date(2016, 7, 27),
-								new Date(2016, 7, 28)
+								UI5Date.getInstance(2016, 7, 22),
+								UI5Date.getInstance(2016, 7, 23),
+								UI5Date.getInstance(2016, 7, 24),
+								UI5Date.getInstance(2016, 7, 25),
+								UI5Date.getInstance(2016, 7, 26),
+								UI5Date.getInstance(2016, 7, 27),
+								UI5Date.getInstance(2016, 7, 28)
 							], oSelf.oPC2, "Navigated to the correct viewport");
 							fnDone();
 						}.bind(this), 0);
@@ -1333,7 +1335,7 @@ sap.ui.define([
 			fnDone = assert.async();
 
 		Core.getConfiguration().setFormatLocale("en-GB");
-		this.oPC2.setStartDate(new Date("2014", "10", "5", "08", "00"));
+		this.oPC2.setStartDate(UI5Date.getInstance("2014", "10", "5", "08", "00"));
 		this.oPC2.rerender();
 
 		aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
@@ -1346,13 +1348,13 @@ sap.ui.define([
 			oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
 			_assertFocus.call(oSelf, oNextTarget);
 			this._assertDatesAreVisible.call(oSelf, [
-				new Date(2014, 9, 27),
-				new Date(2014, 9, 28),
-				new Date(2014, 9, 29),
-				new Date(2014, 9, 30),
-				new Date(2014, 9, 31),
-				new Date(2014, 10, 1),
-				new Date(2014, 10, 2)
+				UI5Date.getInstance(2014, 9, 27),
+				UI5Date.getInstance(2014, 9, 28),
+				UI5Date.getInstance(2014, 9, 29),
+				UI5Date.getInstance(2014, 9, 30),
+				UI5Date.getInstance(2014, 9, 31),
+				UI5Date.getInstance(2014, 10, 1),
+				UI5Date.getInstance(2014, 10, 2)
 			], oSelf.oPC2, "Navigated to the correct viewport");
 			Core.getConfiguration().setFormatLocale(sOriginalFormatLocale);
 			fnDone();
@@ -1365,13 +1367,13 @@ sap.ui.define([
 
 		//assert
 		this._assertDatesAreVisible.call(this, [
-				new Date(2016, 8, 5),
-				new Date(2016, 8, 6),
-				new Date(2016, 8, 7),
-				new Date(2016, 8, 8),
-				new Date(2016, 8, 9),
-				new Date(2016, 8, 10),
-				new Date(2016, 8, 11)],
+				UI5Date.getInstance(2016, 8, 5),
+				UI5Date.getInstance(2016, 8, 6),
+				UI5Date.getInstance(2016, 8, 7),
+				UI5Date.getInstance(2016, 8, 8),
+				UI5Date.getInstance(2016, 8, 9),
+				UI5Date.getInstance(2016, 8, 10),
+				UI5Date.getInstance(2016, 8, 11)],
 			this.oPC2, "Navigating forward once");
 
 		//act
@@ -1379,13 +1381,13 @@ sap.ui.define([
 
 		//assert
 		this._assertDatesAreVisible.call(this, [
-				new Date(2016, 8, 12),
-				new Date(2016, 8, 13),
-				new Date(2016, 8, 14),
-				new Date(2016, 8, 15),
-				new Date(2016, 8, 16),
-				new Date(2016, 8, 17),
-				new Date(2016, 8, 18)],
+				UI5Date.getInstance(2016, 8, 12),
+				UI5Date.getInstance(2016, 8, 13),
+				UI5Date.getInstance(2016, 8, 14),
+				UI5Date.getInstance(2016, 8, 15),
+				UI5Date.getInstance(2016, 8, 16),
+				UI5Date.getInstance(2016, 8, 17),
+				UI5Date.getInstance(2016, 8, 18)],
 			this.oPC2, "Navigating forward twice");
 	});
 
@@ -1413,13 +1415,13 @@ sap.ui.define([
 						_assertFocus.call(oSelf, oNextTarget);
 						setTimeout(function () {
 							this._assertDatesAreVisible.call(oSelf, [
-								new Date(2016, 8, 5),
-								new Date(2016, 8, 6),
-								new Date(2016, 8, 7),
-								new Date(2016, 8, 8),
-								new Date(2016, 8, 9),
-								new Date(2016, 8, 10),
-								new Date(2016, 8, 11)
+								UI5Date.getInstance(2016, 8, 5),
+								UI5Date.getInstance(2016, 8, 6),
+								UI5Date.getInstance(2016, 8, 7),
+								UI5Date.getInstance(2016, 8, 8),
+								UI5Date.getInstance(2016, 8, 9),
+								UI5Date.getInstance(2016, 8, 10),
+								UI5Date.getInstance(2016, 8, 11)
 							], oSelf.oPC2, "Navigated to the correct viewport");
 							fnDone();
 						}.bind(this), 0);
@@ -1435,12 +1437,12 @@ sap.ui.define([
 
 		var oStartDate = this.oPC2.getStartDate(),
 			oLastDay,
-			oComparisonDate = new Date(oStartDate.getTime());
+			oComparisonDate = UI5Date.getInstance(oStartDate.getTime());
 
 		//Act
 		oComparisonDate.setDate(oComparisonDate.getDate() + 1);
 		Core.applyChanges();
-		oLastDay = new Date(2016, 8, 12);
+		oLastDay = UI5Date.getInstance(2016, 8, 12);
 		this.oPC2.shiftToDate(oLastDay, false);
 
 		//Assert
@@ -1451,13 +1453,13 @@ sap.ui.define([
 		//Arrange
 		this.oPC2.setViewKey(CalendarIntervalType.Day);
 		var oStartDate = this.oPC2.getStartDate(),
-			oComparisonDate = new Date(oStartDate.getTime()),
-			oGoToDate = new Date(oStartDate.getTime()),
-			oMaxDate = new Date(2016, 8, 14),
-			oGoToDate2 = new Date(2016, 8, 15),
-			oComparisonDate2 = new Date(2016, 8, 1);
+			oComparisonDate = UI5Date.getInstance(oStartDate.getTime()),
+			oGoToDate = UI5Date.getInstance(oStartDate.getTime()),
+			oMaxDate = UI5Date.getInstance(2016, 8, 14),
+			oGoToDate2 = UI5Date.getInstance(2016, 8, 15),
+			oComparisonDate2 = UI5Date.getInstance(2016, 8, 1);
 
-		this.oPC2.setMinDate(new Date(oStartDate.getTime()));
+		this.oPC2.setMinDate(UI5Date.getInstance(oStartDate.getTime()));
 
 		//Act
 		oGoToDate.setDate(oGoToDate.getDate() - 1);
@@ -1488,7 +1490,7 @@ sap.ui.define([
 			return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 		});
 		Core.applyChanges();
-		this.oPC2.setStartDate(new Date(2017, 0, 1));
+		this.oPC2.setStartDate(UI5Date.getInstance(2017, 0, 1));
 		Core.applyChanges();
 		this.oPC2.setViewKey(CalendarIntervalType.Week);
 		Core.applyChanges();
@@ -1496,13 +1498,13 @@ sap.ui.define([
 		setTimeout(function() {
 			//assert
 			this._assertDatesAreVisible.call(oSelf, [
-				new Date(2017, 0, 1),
-				new Date(2017, 0, 2),
-				new Date(2017, 0, 3),
-				new Date(2017, 0, 4),
-				new Date(2017, 0, 5),
-				new Date(2017, 0, 6),
-				new Date(2017, 0, 7)
+				UI5Date.getInstance(2017, 0, 1),
+				UI5Date.getInstance(2017, 0, 2),
+				UI5Date.getInstance(2017, 0, 3),
+				UI5Date.getInstance(2017, 0, 4),
+				UI5Date.getInstance(2017, 0, 5),
+				UI5Date.getInstance(2017, 0, 6),
+				UI5Date.getInstance(2017, 0, 7)
 			], oSelf.oPC2, "Navigated to 1st of January");
 
 			//clear
@@ -1524,21 +1526,21 @@ sap.ui.define([
 
 		//assert
 		this._assertDatesAreVisible.call(this, [
-				new Date(2016, 8, 5),
-				new Date(2016, 8, 6),
-				new Date(2016, 8, 7),
-				new Date(2016, 8, 8),
-				new Date(2016, 8, 9),
-				new Date(2016, 8, 10),
-				new Date(2016, 8, 11)],
+				UI5Date.getInstance(2016, 8, 5),
+				UI5Date.getInstance(2016, 8, 6),
+				UI5Date.getInstance(2016, 8, 7),
+				UI5Date.getInstance(2016, 8, 8),
+				UI5Date.getInstance(2016, 8, 9),
+				UI5Date.getInstance(2016, 8, 10),
+				UI5Date.getInstance(2016, 8, 11)],
 			this.oPC2, "Navigating forward once");
 	});
 
 	QUnit.test("Selecting the visible dates from the previous/next month in the calendar picker - in Hours view", function (assert) {
 		// Prepare
 		var oApp2ndSept2016 = new CalendarAppointment("app2ndSept2016", {
-				startDate: new Date(2016, 8, 2, 6),
-				endDate: new Date(2016, 8, 2, 10)
+				startDate: UI5Date.getInstance(2016, 8, 2, 6),
+				endDate: UI5Date.getInstance(2016, 8, 2, 10)
 			}),
 			fnDone = assert.async(),
 			oPC2 = this.oPC2,
@@ -1578,8 +1580,8 @@ sap.ui.define([
 	QUnit.test("Selecting the visible dates from the previous/next month in the calendar picker - in Days view", function (assert) {
 		// Prepare
 		var oApp30Aug2016 = new CalendarAppointment("app30Aug2016", {
-				startDate: new Date(2016, 7, 30, 6),
-				endDate: new Date(2016, 7, 30, 10)
+				startDate: UI5Date.getInstance(2016, 7, 30, 6),
+				endDate: UI5Date.getInstance(2016, 7, 30, 10)
 			}),
 			fnDone = assert.async(),
 			oPC2 = this.oPC2,
@@ -1620,8 +1622,8 @@ sap.ui.define([
 	QUnit.test("Selecting the visible dates from the previous/next month in the calendar picker - in Weeks view", function (assert) {
 		// Prepare
 		var oApp30Aug2016 = new CalendarAppointment("app30Aug2016", {
-				startDate: new Date(2016, 7, 30, 6),
-				endDate: new Date(2016, 7, 30, 10)
+				startDate: UI5Date.getInstance(2016, 7, 30, 6),
+				endDate: UI5Date.getInstance(2016, 7, 30, 10)
 			}),
 			fnDone = assert.async(),
 			oPC2 = this.oPC2,
@@ -1663,7 +1665,7 @@ sap.ui.define([
 		assert.equal(_getTodayButton.call(this, this.oPC2).getEnabled(), true, "Today button should be enabled as current day IS NOT visible");
 
 		//act
-		this.oPC2.setStartDate(new Date());
+		this.oPC2.setStartDate(UI5Date.getInstance());
 		//assert
 		assert.equal(_getTodayButton.call(this, this.oPC2).getEnabled(), false, "Today button should not be enabled  as current day IS visible");
 	});
@@ -1680,13 +1682,13 @@ sap.ui.define([
 		assert.equal(_getTodayButton.call(this, this.oPC2).getEnabled(), false, "Today button should not be enabled as current day IS visible");
 
 		this._assertDatesAreVisible.call(this, [
-				new Date(2016, 8, 5),
-				new Date(2016, 8, 6),
-				new Date(2016, 8, 7),
-				new Date(2016, 8, 8),
-				new Date(2016, 8, 9),
-				new Date(2016, 8, 10),
-				new Date(2016, 8, 11)],
+				UI5Date.getInstance(2016, 8, 5),
+				UI5Date.getInstance(2016, 8, 6),
+				UI5Date.getInstance(2016, 8, 7),
+				UI5Date.getInstance(2016, 8, 8),
+				UI5Date.getInstance(2016, 8, 9),
+				UI5Date.getInstance(2016, 8, 10),
+				UI5Date.getInstance(2016, 8, 11)],
 			this.oPC2, "StartDate modified afterwards");
 		//assert
 		assert.equal(_getTodayButton.call(this, this.oPC2).getEnabled(), false, "Today button should not be enabled as current day IS visible");
@@ -1698,7 +1700,7 @@ sap.ui.define([
 
 	QUnit.test("Clicking 'Today' button in week view then changing back to hours shows the hours unchanged", function (assert) {
 		//act
-		var oFakeNow = new Date(2016, 8, 1, 3),
+		var oFakeNow = UI5Date.getInstance(2016, 8, 1, 3),
 			clock = sinon.useFakeTimers(oFakeNow.getTime()),
 			aExpectedVisibleHours = [],
 			iInterval;
@@ -1718,26 +1720,26 @@ sap.ui.define([
 		//assert
 		if (iInterval === 12) { //Hours View large
 			aExpectedVisibleHours = [
-				new Date(2016, 7, 29, 9),
-				new Date(2016, 7, 29, 10),
-				new Date(2016, 7, 29, 11),
-				new Date(2016, 7, 29, 12),
-				new Date(2016, 7, 29, 13),
-				new Date(2016, 7, 29, 14),
-				new Date(2016, 7, 29, 15),
-				new Date(2016, 7, 29, 16),
-				new Date(2016, 7, 29, 17),
-				new Date(2016, 7, 29, 18),
-				new Date(2016, 7, 29, 19),
-				new Date(2016, 7, 29, 20)];
+				UI5Date.getInstance(2016, 7, 29, 9),
+				UI5Date.getInstance(2016, 7, 29, 10),
+				UI5Date.getInstance(2016, 7, 29, 11),
+				UI5Date.getInstance(2016, 7, 29, 12),
+				UI5Date.getInstance(2016, 7, 29, 13),
+				UI5Date.getInstance(2016, 7, 29, 14),
+				UI5Date.getInstance(2016, 7, 29, 15),
+				UI5Date.getInstance(2016, 7, 29, 16),
+				UI5Date.getInstance(2016, 7, 29, 17),
+				UI5Date.getInstance(2016, 7, 29, 18),
+				UI5Date.getInstance(2016, 7, 29, 19),
+				UI5Date.getInstance(2016, 7, 29, 20)];
 		} else {
 			aExpectedVisibleHours = [
-				new Date(2016, 7, 29, 9),
-				new Date(2016, 7, 29, 10),
-				new Date(2016, 7, 29, 11),
-				new Date(2016, 7, 29, 12),
-				new Date(2016, 7, 29, 13),
-				new Date(2016, 7, 29, 14)];
+				UI5Date.getInstance(2016, 7, 29, 9),
+				UI5Date.getInstance(2016, 7, 29, 10),
+				UI5Date.getInstance(2016, 7, 29, 11),
+				UI5Date.getInstance(2016, 7, 29, 12),
+				UI5Date.getInstance(2016, 7, 29, 13),
+				UI5Date.getInstance(2016, 7, 29, 14)];
 		}
 
 		this._assertHoursAreVisible.call(this, aExpectedVisibleHours, this.oPC2,
@@ -1785,27 +1787,27 @@ sap.ui.define([
 		//assert
 		if (iInterval === 12) { //Hours View large
 			this._assertHoursAreVisible.call(this, [
-					new Date(2016, 7, 29, 1),
-					new Date(2016, 7, 29, 2),
-					new Date(2016, 7, 29, 3),
-					new Date(2016, 7, 29, 4),
-					new Date(2016, 7, 29, 5),
-					new Date(2016, 7, 29, 6),
-					new Date(2016, 7, 29, 7),
-					new Date(2016, 7, 29, 8),
-					new Date(2016, 7, 29, 9),
-					new Date(2016, 7, 29, 10),
-					new Date(2016, 7, 29, 11),
-					new Date(2016, 7, 29, 12)],
+					UI5Date.getInstance(2016, 7, 29, 1),
+					UI5Date.getInstance(2016, 7, 29, 2),
+					UI5Date.getInstance(2016, 7, 29, 3),
+					UI5Date.getInstance(2016, 7, 29, 4),
+					UI5Date.getInstance(2016, 7, 29, 5),
+					UI5Date.getInstance(2016, 7, 29, 6),
+					UI5Date.getInstance(2016, 7, 29, 7),
+					UI5Date.getInstance(2016, 7, 29, 8),
+					UI5Date.getInstance(2016, 7, 29, 9),
+					UI5Date.getInstance(2016, 7, 29, 10),
+					UI5Date.getInstance(2016, 7, 29, 11),
+					UI5Date.getInstance(2016, 7, 29, 12)],
 				this.oPC2, "1 Sept 2016, 01:00: Weeks->Hours");
 		} else { //6, Hours View small - 6
 			this._assertHoursAreVisible.call(this, [
-					new Date(2016, 7, 29, 1),
-					new Date(2016, 7, 29, 2),
-					new Date(2016, 7, 29, 3),
-					new Date(2016, 7, 29, 4),
-					new Date(2016, 7, 29, 5),
-					new Date(2016, 7, 29, 6)],
+					UI5Date.getInstance(2016, 7, 29, 1),
+					UI5Date.getInstance(2016, 7, 29, 2),
+					UI5Date.getInstance(2016, 7, 29, 3),
+					UI5Date.getInstance(2016, 7, 29, 4),
+					UI5Date.getInstance(2016, 7, 29, 5),
+					UI5Date.getInstance(2016, 7, 29, 6)],
 				this.oPC2, "1 Sept 2016, 01:00: Weeks->Hours");
 		}
 
@@ -1826,13 +1828,13 @@ sap.ui.define([
 
 		//assert initial state
 		this._assertDatesAreVisible.call(this, [
-				new Date(2016, 7, 29),
-				new Date(2016, 7, 30),
-				new Date(2016, 7, 31),
-				new Date(2016, 8, 1),
-				new Date(2016, 8, 2),
-				new Date(2016, 8, 3),
-				new Date(2016, 8, 4)],
+				UI5Date.getInstance(2016, 7, 29),
+				UI5Date.getInstance(2016, 7, 30),
+				UI5Date.getInstance(2016, 7, 31),
+				UI5Date.getInstance(2016, 8, 1),
+				UI5Date.getInstance(2016, 8, 2),
+				UI5Date.getInstance(2016, 8, 3),
+				UI5Date.getInstance(2016, 8, 4)],
 			this.oPC2, "Initial week should not be changed");
 	});
 
@@ -1841,7 +1843,7 @@ sap.ui.define([
 		var oEvent = {
 			oSource: {
 				getStartDate: function () {
-					return new Date(2015, 1, 12);
+					return UI5Date.getInstance(2015, 1, 12);
 				}
 			}
 		};
@@ -1880,7 +1882,7 @@ sap.ui.define([
 		var oEvent = {
 			oSource: {
 				getStartDate: function () {
-					return new Date(2015, 1, 12);
+					return UI5Date.getInstance(2015, 1, 12);
 				}
 			}
 		};
@@ -1910,7 +1912,7 @@ sap.ui.define([
 		var oEvent = {
 			oSource: {
 				getStartDate: function () {
-					return new Date(2015, 1, 12);
+					return UI5Date.getInstance(2015, 1, 12);
 				}
 			}
 		};
@@ -1935,7 +1937,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('Clicking today is updating calendars start date and Navigations current date', function(assert) {
-		var oToday = new Date();
+		var oToday = UI5Date.getInstance();
 		this.oPC2.setViewKey(CalendarIntervalType.Hour);
 		Core.applyChanges();
 
@@ -1953,7 +1955,7 @@ sap.ui.define([
 
 	QUnit.test("Selection is correct after resizing", function(assert) {
 		// Prepare
-		var oSelectedDate = new Date(2019, 11, 3);
+		var oSelectedDate = UI5Date.getInstance(2019, 11, 3);
 
 		this.oPC2.setViewKey("One Month");
 		this.oPC2._oOneMonthsRow.addSelectedDate(new DateTypeRange({

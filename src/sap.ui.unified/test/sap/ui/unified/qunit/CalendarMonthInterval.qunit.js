@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
 ], function(qutils, CalendarMonthInterval, CalendarLegend, CalendarLegendItem,
-	DateRange, DateTypeRange, Button, unifiedLibrary, DateFormat, KeyCodes, jQuery, oCore) {
+	DateRange, DateTypeRange, Button, unifiedLibrary, DateFormat, KeyCodes, jQuery, oCore, UI5Date) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -59,11 +60,11 @@ sap.ui.define([
 			this.oCal1 = new CalendarMonthInterval("Cal1").placeAt("qunit-fixture");
 			this.oCal2 = new CalendarMonthInterval("Cal2",{
 				width: "1500px",
-				startDate: new Date("2015", "7", "4"),
+				startDate: UI5Date.getInstance("2015", "7", "4"),
 				months: 18,
-				selectedDates: [new DateRange({startDate: new Date("2015", "11", "4"), endDate: new Date("2016", "1", "6")})],
-				specialDates: [new DateTypeRange({startDate: new Date("2015", "8", "8"), type: CalendarDayType.Type01, tooltip: "Text"}),
-					new DateTypeRange({startDate: new Date("2015", "9", "9"), endDate: new Date("2015", "10", "10"), type: CalendarDayType.Type02, tooltip: "Text"})],
+				selectedDates: [new DateRange({startDate: UI5Date.getInstance("2015", "11", "4"), endDate: UI5Date.getInstance("2016", "1", "6")})],
+				specialDates: [new DateTypeRange({startDate: UI5Date.getInstance("2015", "8", "8"), type: CalendarDayType.Type01, tooltip: "Text"}),
+					new DateTypeRange({startDate: UI5Date.getInstance("2015", "9", "9"), endDate: UI5Date.getInstance("2015", "10", "10"), type: CalendarDayType.Type02, tooltip: "Text"})],
 				legend: oLegend
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -77,7 +78,7 @@ sap.ui.define([
 	QUnit.test("rendered months", function(assert) {
 		// use sinon to simulate the June 24th 2015
 		sinon.useFakeTimers(Date.UTC(2015, 6, 24));
-		var oToday = new Date();
+		var oToday = UI5Date.getInstance();
 		oToday.setDate(1);
 		var oCal = new CalendarMonthInterval("Cal",{}).placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -140,7 +141,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCal1 = new CalendarMonthInterval("Cal1").placeAt("qunit-fixture");
 			this.oCal2 = new CalendarMonthInterval("Cal2",{
-				startDate: new Date("2015", "7", "4")
+				startDate: UI5Date.getInstance("2015", "7", "4")
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -151,7 +152,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("setStartDate", function(assert) {
-		this.oCal1.setStartDate(new Date("2015", "2", "10"));
+		this.oCal1.setStartDate(UI5Date.getInstance("2015", "2", "10"));
 		oCore.applyChanges();
 		var $MonthsRow = oCore.byId("Cal1").getAggregation("monthsRow").$();
 		var aMonths = $MonthsRow.find(".sapUiCalItem");
@@ -159,7 +160,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("focusDate", function(assert) {
-		this.oCal2.focusDate(new Date("2015", "8", "11"));
+		this.oCal2.focusDate(UI5Date.getInstance("2015", "8", "11"));
 		oCore.applyChanges();
 		var oStartDate = this.oCal2.getStartDate();
 		assert.equal(oFormatYyyymmdd.format(oStartDate), "20150804", "Calendar2: start date not changed");
@@ -168,7 +169,7 @@ sap.ui.define([
 		assert.equal(jQuery(aMonths[0]).attr("data-sap-month"), "20150801", "Calendar2: rendered start month not changed");
 		assert.equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar2: second month has focus");
 
-		this.oCal2.focusDate(new Date("2014", "3", "11"));
+		this.oCal2.focusDate(UI5Date.getInstance("2014", "3", "11"));
 		oCore.applyChanges();
 		oStartDate = this.oCal2.getStartDate();
 		assert.equal(oFormatYyyymmdd.format(oStartDate), "20140301", "Calendar2: new start date");
@@ -189,7 +190,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCal2 = new CalendarMonthInterval("Cal2",{
 				startDateChange: handleStartDateChange,
-				startDate: new Date("2014", "2", "4"),
+				startDate: UI5Date.getInstance("2014", "2", "4"),
 				months: 18
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -200,7 +201,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("next/prev months", function(assert) {
-		this.oCal2.focusDate(new Date("2014", "3", "11"));
+		this.oCal2.focusDate(UI5Date.getInstance("2014", "3", "11"));
 		bStartDateChanged = false;
 		qutils.triggerEvent("click", "Cal2--Head-next");
 		oCore.applyChanges();
@@ -266,7 +267,7 @@ sap.ui.define([
 	QUnit.module("YearPicker", {
 		beforeEach: function () {
 			this.oCal1 = new CalendarMonthInterval("Cal1",{
-				startDate: new Date("2015", "2", "10")
+				startDate: UI5Date.getInstance("2015", "2", "10")
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -303,7 +304,7 @@ sap.ui.define([
 	QUnit.module("Interaction", {
 		beforeEach: function () {
 			this.oCal1 = new CalendarMonthInterval("Cal1",{
-				startDate: new Date("2015", "2", "10"),
+				startDate: UI5Date.getInstance("2015", "2", "10"),
 				select: function(oEvent){
 					bSelectFired = true;
 					var oCalendar = oEvent.oSource;
@@ -344,7 +345,7 @@ sap.ui.define([
 			aSelectedDays;
 
 		// Act
-		oCalMonthInterval.addSelectedDate(new DateRange(new Date("1/1/2019"), new Date("1/1/2021")));
+		oCalMonthInterval.addSelectedDate(new DateRange(UI5Date.getInstance("1/1/2019"), UI5Date.getInstance("1/1/2021")));
 		aSelectedDays  = oYearPicker.getSelectedDates();
 
 		// Assert
@@ -356,7 +357,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Min/Max", function(assert) {
-		this.oCal1.focusDate(new Date(9998, 10, 10));
+		this.oCal1.focusDate(UI5Date.getInstance(9998, 10, 10));
 		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
 		assert.ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
 		qutils.triggerEvent("click", "Cal1--Head-next");
@@ -370,7 +371,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "Cal1--Head-B2");
 		oCore.applyChanges();
 
-		var oDate = new Date(2,1,1);
+		var oDate = UI5Date.getInstance(2,1,1);
 		oDate.setFullYear(2);
 		this.oCal1.focusDate(oDate);
 		oCore.applyChanges();
@@ -386,11 +387,11 @@ sap.ui.define([
 		assert.equal(jQuery(aYears[0]).text(), "0001", "Min Year is first rendered year");
 		qutils.triggerEvent("click", "Cal1--Head-B2");
 
-		this.oCal1.focusDate(new Date(2013, 1, 1));
+		this.oCal1.focusDate(UI5Date.getInstance(2013, 1, 1));
 	});
 
 	QUnit.test("select event", function(assert) {
-		this.oCal1.setStartDate(new Date(2013, 0, 3));
+		this.oCal1.setStartDate(UI5Date.getInstance(2013, 0, 3));
 		oCore.applyChanges();
 
 		var $selectMonth = jQuery("#Cal1--MonthsRow-20130501");
@@ -410,7 +411,7 @@ sap.ui.define([
 		// arrange
 		var oSpyFireDateChange = this.spy(CalendarMonthInterval.prototype, "fireStartDateChange");
 		var oCalP = new CalendarMonthInterval("CalP",{
-			startDate: new Date("2015", "7", "13", "8", "0", "0"),
+			startDate: UI5Date.getInstance("2015", "7", "13", "8", "0", "0"),
 			pickerPopup: true
 		}).placeAt("qunit-fixture");
 
@@ -461,7 +462,7 @@ sap.ui.define([
 		// arrange
 		this.spy(CalendarMonthInterval.prototype, "fireCancel");
 		var oCalP = new CalendarMonthInterval("CalP",{
-			startDate: new Date("2015", "7", "13"),
+			startDate: UI5Date.getInstance("2015", "7", "13"),
 			pickerPopup: true
 		}).placeAt("qunit-fixture");
 
@@ -493,8 +494,8 @@ sap.ui.define([
 		// change the pickerPopup to true, this will destroy the yearPicker aggregation
 		oCalP.setPickerPopup(true);
 		// set new min and max dates
-		oCalP.setMinDate(new Date("2015", "7", "13", "8", "0", "0"));
-		oCalP.setMaxDate(new Date("2017", "7", "13", "8", "0", "0"));
+		oCalP.setMinDate(UI5Date.getInstance("2015", "7", "13", "8", "0", "0"));
+		oCalP.setMaxDate(UI5Date.getInstance("2017", "7", "13", "8", "0", "0"));
 
 		// return pickrPopup property to true, this will create the yearPicker aggregation
 		oCalP.setPickerPopup(false);
@@ -533,8 +534,8 @@ sap.ui.define([
 		// change the pickerPopup to false
 		oCalP.setPickerPopup(false);
 		// set new min and max dates
-		oCalP.setMinDate(new Date("2015", "7", "13", "8", "0", "0"));
-		oCalP.setMaxDate(new Date("2017", "7", "13", "8", "0", "0"));
+		oCalP.setMinDate(UI5Date.getInstance("2015", "7", "13", "8", "0", "0"));
+		oCalP.setMaxDate(UI5Date.getInstance("2017", "7", "13", "8", "0", "0"));
 
 		// return pickerPopup property to true, this will create the calendarPicker aggregation
 		oCalP.setPickerPopup(true);

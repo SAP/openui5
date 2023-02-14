@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/Element",
 	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
 ], function(
@@ -59,6 +60,7 @@ sap.ui.define([
 	XMLView,
 	KeyCodes,
 	oCore,
+	UI5Date,
 	Element
 ) {
 	"use strict";
@@ -406,7 +408,7 @@ sap.ui.define([
 		beforeEach: function () {
 			// SUT
 			this.oTimePicker = new TimePicker({
-				dateValue: new Date(2016, 1, 17, 10, 11, 12)
+				dateValue: UI5Date.getInstance(2016, 1, 17, 10, 11, 12)
 			});
 			this.oTimePicker.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -478,7 +480,7 @@ sap.ui.define([
 	}
 
 	function getDate(hours, minutes, seconds) {
-		return new Date("2000", "1", "1", hours, minutes, seconds);
+		return UI5Date.getInstance("2000", "1", "1", hours, minutes, seconds);
 	}
 
 	//test the final result after setting some properties in order
@@ -794,7 +796,7 @@ sap.ui.define([
 		//arrange
 		var iHours = 4,
 			oTP = new TimePicker({
-				dateValue: new Date(2000, 10, 10, iHours, 10, 10)
+				dateValue: UI5Date.getInstance(2000, 10, 10, iHours, 10, 10)
 			}),
 			oFakePageupEventObject = {
 				preventDefault: function() {}
@@ -814,7 +816,7 @@ sap.ui.define([
 		//arrange
 		var iHours = 4,
 			oTP = new TimePicker({
-				dateValue: new Date(2000, 10, 10, iHours, 10, 10)
+				dateValue: UI5Date.getInstance(2000, 10, 10, iHours, 10, 10)
 			}),
 			oFakePagedownEventObject = {
 				preventDefault: function() {}
@@ -835,7 +837,7 @@ sap.ui.define([
 		var iSeconds = 21,
 			iMinutes = 20,
 			oTP = new TimePicker({
-				dateValue: new Date(2000, 10, 10, 10, iMinutes, iSeconds)
+				dateValue: UI5Date.getInstance(2000, 10, 10, 10, iMinutes, iSeconds)
 			}),
 			oFakePageupEventObject = {
 				preventDefault: function() {}
@@ -857,7 +859,7 @@ sap.ui.define([
 		//arrange
 		var iMinutes = 15,
 			oTP = new TimePicker({
-				dateValue: new Date(2000, 10, 10, 10, iMinutes, 10)
+				dateValue: UI5Date.getInstance(2000, 10, 10, 10, iMinutes, 10)
 			}),
 			oFakePageupEventObject = {
 				ctrlKey: false,
@@ -881,7 +883,7 @@ sap.ui.define([
 		//arrange
 		var iMinutes = 13,
 			oTP = new TimePicker({
-				dateValue: new Date(2000, 10, 10, 10, iMinutes, 10)
+				dateValue: UI5Date.getInstance(2000, 10, 10, 10, iMinutes, 10)
 			}),
 			oFakePagedownEventObject = {
 				ctrlKey: false,
@@ -906,7 +908,7 @@ sap.ui.define([
 		var iHours = 5,
 			iSeconds = 21,
 			oTP = new TimePicker({
-				dateValue: new Date(2000, 10, 10, iHours, 10, iSeconds)
+				dateValue: UI5Date.getInstance(2000, 10, 10, iHours, 10, iSeconds)
 			}),
 			oFakePageupEventObject = {
 				ctrlKey: false,
@@ -932,7 +934,7 @@ sap.ui.define([
 		//arrange
 		var iSeconds = 11,
 			oTP = new TimePicker({
-				dateValue: new Date(2000, 10, 10, 10, 10, iSeconds)
+				dateValue: UI5Date.getInstance(2000, 10, 10, 10, 10, iSeconds)
 			}),
 			oFakePageupEventObject = {
 				ctrlKey: true,
@@ -956,7 +958,7 @@ sap.ui.define([
 		//arrange
 		var iSeconds = 4,
 			oTP = new TimePicker({
-				dateValue: new Date(2000, 10, 10, 10, 10, iSeconds)
+				dateValue: UI5Date.getInstance(2000, 10, 10, 10, 10, iSeconds)
 			}),
 			oFakePagedownEventObject = {
 				ctrlKey: true,
@@ -981,7 +983,7 @@ sap.ui.define([
 		var iHours = 5,
 			iMinutes = 38,
 			oTP = new TimePicker({
-				dateValue: new Date(2000, 10, 10, iHours, iMinutes, 10)
+				dateValue: UI5Date.getInstance(2000, 10, 10, iHours, iMinutes, 10)
 			}),
 			oFakePageupEventObject = {
 				ctrlKey: true,
@@ -1049,7 +1051,7 @@ sap.ui.define([
 
 	QUnit.test("right moves the cursor but jumps over the immutable chars", function(assert) {
 		//arrange
-		var oDate = new Date();
+		var oDate = UI5Date.getInstance();
 		oDate.setHours(5);
 		oDate.setMinutes(38);
 
@@ -1078,7 +1080,7 @@ sap.ui.define([
 
 	QUnit.test("left moves the cursor but jumps over the immutable chars", function(assert) {
 		//arrange
-		var oDate = new Date();
+		var oDate = UI5Date.getInstance();
 		oDate.setHours(5);
 		oDate.setMinutes(38);
 
@@ -1181,8 +1183,8 @@ sap.ui.define([
 
 		//arrange
 		var oModel = new JSONModel();
-		var oDate = new Date(2000, 1, 2, 16, 35, 54);
-		var oDate2 = new Date(2000, 1, 2, 20, 10, 11);
+		var oDate = UI5Date.getInstance(2000, 1, 2, 16, 35, 54);
+		var oDate2 = UI5Date.getInstance(2000, 1, 2, 20, 10, 11);
 		oModel.setData({
 			timeValue: oDate
 		});
@@ -1224,7 +1226,7 @@ sap.ui.define([
 		//arrange
 		var oModel = new JSONModel();
 		oModel.setData({
-			timeValue: new Date(2000, 1, 2, 16, 35, 54)
+			timeValue: UI5Date.getInstance(2000, 1, 2, 16, 35, 54)
 		});
 		tp.setModel(oModel);
 
@@ -1350,19 +1352,21 @@ sap.ui.define([
 		tp.destroy();
 	});
 
-	/* Temporary disabled until robust solution (across all timezones is implemented) QUnit.test("decrease time when daylight saving begins", function(assert) {
-	 var tp = new TimePicker();
-	 tp.placeAt("qunit-fixture");
-	 sap.ui.getCore().applyChanges();
+	QUnit.test("decrease time", function(assert) {
+		var oGetTimezoneStub = this.stub(sap.ui.getCore().getConfiguration(), "getTimezone").callsFake(function () { return "Europe/Sofia"; });
 
-	 tp.setDateValue(new Date(2015, 2, 29, 3, 12, 15));
-	 tp._increaseTime(-1, "hour");
+		var oTp = new TimePicker();
+		oTp.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
-	 assert.equal(tp.getDateValue().toString(), new Date(2015, 2, 29, 1, 12, 15).toString(), "_increaseTime works as expected when decreasing in daylight saving");
+		oTp.setDateValue(UI5Date.getInstance(2015, 11, 1, 3, 12, 15));
+		oTp._increaseTime(-1, "hour");
 
-	 tp.destroy();
-	 });*/
+		assert.equal(oTp.getDateValue().toString(), UI5Date.getInstance(2015, 11, 1, 2, 12, 15).toString(), "_increaseTime works as expected when decreasing in standart time");
 
+		oTp.destroy();
+		oGetTimezoneStub.restore();
+	 });
 
 	QUnit.module("support2400");
 
@@ -1371,7 +1375,7 @@ sap.ui.define([
 		var oTP = new TimePicker({
 			displayFormat: "HH:mm:ss",
 			valueFormat: "HH:mm:ss",
-			dateValue: new Date(2000, 1, 2, 23, 35, 54),
+			dateValue: UI5Date.getInstance(2000, 1, 2, 23, 35, 54),
 			support2400: true
 		});
 
@@ -1437,7 +1441,7 @@ sap.ui.define([
 		assert.equal(jQuery("#" + tpId + "-inner").val(), '24:00:00', "input value is correct");
 
 		//act
-		oTP._formatValue(new Date(2022, 4, 1));
+		oTP._formatValue(UI5Date.getInstance(2022, 4, 1));
 
 		//assert
 		assert.equal(oTP.getValue(), "24:00:00", "Value is set to 24:00:00");
@@ -1448,7 +1452,7 @@ sap.ui.define([
 		oTP.onBeforeOpen();
 
 		//assert
-		assert.ok(oClocksSpy.calledWithExactly(new Date(1970, 0, 1), true), "The set value is passed to the clocks");
+		assert.ok(oClocksSpy.calledWithExactly(UI5Date.getInstance(1970, 0, 1), true), "The set value is passed to the clocks");
 
 		//cleanup
 		oClocksSpy.restore();
@@ -1989,7 +1993,7 @@ sap.ui.define([
 	QUnit.test("entering incomplete value updates the model only once", function(assert) {
 		// arrange
 		var oModel = new JSONModel({
-				timeValue: new Date(2000, 1, 2, 16, 35, 54)
+				timeValue: UI5Date.getInstance(2000, 1, 2, 16, 35, 54)
 			}),
 			oTp = new TimePicker({
 				value: {
@@ -2968,7 +2972,7 @@ sap.ui.define([
 
 	QUnit.test("_shouldSetInitialFocusedDateValue should return false if TimePicker has value and initialFocusedDate", function (assert) {
 		// prepare
-		var oGetInitialFocusedDateValueStub = this.stub(this.oTp, "getInitialFocusedDateValue").callsFake(function () { return new Date(2017, 10, 10, 10, 11, 12, 13); }),
+		var oGetInitialFocusedDateValueStub = this.stub(this.oTp, "getInitialFocusedDateValue").callsFake(function () { return UI5Date.getInstance(2017, 10, 10, 10, 11, 12, 13); }),
 			oIsValidValue = this.stub(this.oTp, "_isValidValue").callsFake(function () { return true; });
 		this.oTp.setValue("12:11:10");
 
@@ -3001,7 +3005,7 @@ sap.ui.define([
 
 	QUnit.test("_shouldSetInitialFocusedDateValue should return true if TimePicker has initialFocusedDate and no value", function (assert) {
 		// prepare
-		var oGetInitialFocusedDateValueStub = this.stub(this.oTp, "getInitialFocusedDateValue").callsFake(function () { return new Date(2017, 10, 10, 10, 11, 12, 13); }),
+		var oGetInitialFocusedDateValueStub = this.stub(this.oTp, "getInitialFocusedDateValue").callsFake(function () { return UI5Date.getInstance(2017, 10, 10, 10, 11, 12, 13); }),
 				oIsValidValue = this.stub(this.oTp, "_isValidValue").callsFake(function () { return true; });
 
 		// assert
@@ -3025,8 +3029,8 @@ sap.ui.define([
 
 	QUnit.test("onBeforeOpen should call _setTimeValues with provided dateValue not initialFocusedDateValue", function (assert) {
 		// prepare
-		var oExpectedDateValue = new Date(2017, 8, 9, 10, 11, 12, 13),
-			oInitialFocusedDateValue = new Date(2017, 2, 3, 4, 5, 6, 7),
+		var oExpectedDateValue = UI5Date.getInstance(2017, 8, 9, 10, 11, 12, 13),
+			oInitialFocusedDateValue = UI5Date.getInstance(2017, 2, 3, 4, 5, 6, 7),
 			oTimePickerClocks = new TimePickerClocks(this.oTp.getId() + "-clocks", {
 				displayFormat: "hh:mm",
 				labelText: "",
@@ -3059,7 +3063,7 @@ sap.ui.define([
 
 	QUnit.test("onBeforeOpen should call _setTimeValues with provided initialFocusedDateValue if there is no value", function (assert) {
 		// prepare
-		var oExpectedDateValue = new Date(2017, 8, 9, 10, 11, 12, 13),
+		var oExpectedDateValue = UI5Date.getInstance(2017, 8, 9, 10, 11, 12, 13),
 			oTimePickerClocks = new TimePickerClocks(this.oTp.getId() + "-clocks", {
 				displayFormat: "hh:mm",
 				labelText: "",

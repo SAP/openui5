@@ -15,9 +15,10 @@ sap.ui.define([
 	"sap/ui/unified/calendar/DatesRow",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
 ], function(KeyCodes, qutils, CalendarDateInterval, CalendarType, Locale, LocaleData, DateFormat, DateRange, DateTypeRange,
-	CalendarDate, CalendarWeekInterval, DatesRow, Device, jQuery, oCore) {
+	CalendarDate, CalendarWeekInterval, DatesRow, Device, jQuery, oCore, UI5Date) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -37,13 +38,13 @@ sap.ui.define([
 	};
 
 	var oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd"});
-	var oToday = new Date();
+	var oToday = UI5Date.getInstance();
 
 	QUnit.module("Rendering", {
 		beforeEach: function () {
 			this.oCal = new CalendarDateInterval("myCal",{
 				startDateChange: handleStartDateChange,
-				startDate: new Date("2015", "1", "2"),
+				startDate: UI5Date.getInstance("2015", "1", "2"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -148,7 +149,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
-				startDate: new Date("2015", "1", "2"),
+				startDate: UI5Date.getInstance("2015", "1", "2"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -185,7 +186,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
-				startDate: new Date("2015", "1", "2"),
+				startDate: UI5Date.getInstance("2015", "1", "2"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -198,7 +199,7 @@ sap.ui.define([
 	QUnit.test("setStartDate", function(assert) {
 		// act
 		iStartDateChanged = 0;
-		this.oCal.setStartDate(new Date("2015", "2", "10"));
+		this.oCal.setStartDate(UI5Date.getInstance("2015", "2", "10"));
 		oCore.applyChanges();
 		var $DatesRow = oCore.byId("myCal").getAggregation("month")[0].$();
 		var aDays = $DatesRow.find(".sapUiCalItem");
@@ -209,13 +210,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("focusDate", function(assert) {
-		this.oCal.setStartDate(new Date("2015", "2", "10"));
+		this.oCal.setStartDate(UI5Date.getInstance("2015", "2", "10"));
 		this.oCal.setDays(14);
 		oCore.applyChanges();
 
 		//act
 		iStartDateChanged = 0;
-		this.oCal.focusDate(new Date("2015", "2", "11"));
+		this.oCal.focusDate(UI5Date.getInstance("2015", "2", "11"));
 		oCore.applyChanges();
 		var $DatesRow = oCore.byId("myCal").getAggregation("month")[0].$();
 		var aDays = $DatesRow.find(".sapUiCalItem");
@@ -225,7 +226,7 @@ sap.ui.define([
 		assert.equal(jQuery(aDays[1]).attr("tabindex"), "0", "Calendar: second day has focus");
 
 		//act
-		this.oCal.focusDate(new Date("2015", "3", "11"));
+		this.oCal.focusDate(UI5Date.getInstance("2015", "3", "11"));
 		oCore.applyChanges();
 		aDays = $DatesRow.find(".sapUiCalItem");
 
@@ -240,7 +241,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
-				startDate: new Date("2015", "3", "10"),
+				startDate: UI5Date.getInstance("2015", "3", "10"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -255,7 +256,7 @@ sap.ui.define([
 		iStartDateChanged = 0;
 
 		// act
-		this.oCal.focusDate(new Date("2015", "3", "11"));
+		this.oCal.focusDate(UI5Date.getInstance("2015", "3", "11"));
 		qutils.triggerEvent("click", "myCal--Head-next");
 		oCore.applyChanges();
 
@@ -330,7 +331,7 @@ sap.ui.define([
 	QUnit.test("Header next button handler works correct for YearRangePicker", function (assert) {
 		// Prepare
 		// open calendarPicker
-		this.oCal.setStartDate(new Date(2000, 0, 1));
+		this.oCal.setStartDate(UI5Date.getInstance(2000, 0, 1));
 		// Make rendering sync, so we can assert safely
 		oCore.applyChanges();
 		var oYearRangePicker = this.oCal.getAggregation("yearRangePicker"),
@@ -350,7 +351,7 @@ sap.ui.define([
 		// Assert
 		assert.ok(oNextPageSpy.calledOnce, "YearRangePicker nextPage is called");
 		assert.ok(oTogglePrevNexYearPicker.called, "Calendar _togglePrevNexYearPicker is called");
-		assert.deepEqual(oYearRangePicker.getFirstRenderedDate(), new Date(2005, 0, 1), "Year picker page is updated correctly");
+		assert.deepEqual(oYearRangePicker.getFirstRenderedDate(), UI5Date.getInstance(2005, 0, 1), "Year picker page is updated correctly");
 
 		// Clean
 		oNextPageSpy.restore();
@@ -361,7 +362,7 @@ sap.ui.define([
 		// Prepare
 		var oCal = new CalendarDateInterval({
 				primaryCalendarType: CalendarType.Gregorian,
-				selectedDates: [new DateRange({startDate:new Date(2000, 0, 1)})]
+				selectedDates: [new DateRange({startDate:UI5Date.getInstance(2000, 0, 1)})]
 			}).placeAt("qunit-fixture"),
 			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
 			oPreviousPageSpy = this.spy(oYearRangePicker, "previousPage"),
@@ -380,7 +381,7 @@ sap.ui.define([
 		// Assert
 		assert.ok(oPreviousPageSpy.calledOnce, "YearRangePicker previousPage is called");
 		assert.ok(oTogglePrevNexYearPicker.called, "Calendar _togglePrevNexYearPicker is called");
-		assert.deepEqual(oYearRangePicker.getFirstRenderedDate(), new Date(1987, 0, 1), "Year picker page is updated correctly");
+		assert.deepEqual(oYearRangePicker.getFirstRenderedDate(), UI5Date.getInstance(1987, 0, 1), "Year picker page is updated correctly");
 
 		// Clean
 		oCal.destroy();
@@ -424,7 +425,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
-				startDate: new Date("2015", "3", "10"),
+				startDate: UI5Date.getInstance("2015", "3", "10"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -452,7 +453,7 @@ sap.ui.define([
 
 	QUnit.test("displayed months when days are 14", function(assert) {
 		// System under test
-		this.oCal.setStartDate(new Date("2015", "1", "2"));
+		this.oCal.setStartDate(UI5Date.getInstance("2015", "1", "2"));
 		this.oCal.setDays(14);
 		oCore.applyChanges();
 
@@ -487,7 +488,7 @@ sap.ui.define([
 
 	QUnit.test("change block 14 days", function(assert) {
 		// System under test
-		this.oCal.setStartDate(new Date("2015", "1", "2"));
+		this.oCal.setStartDate(UI5Date.getInstance("2015", "1", "2"));
 		this.oCal.setDays(14);
 		oCore.applyChanges();
 
@@ -521,7 +522,7 @@ sap.ui.define([
 			aMonths;
 
 		// System under test
-		this.oCal.setStartDate(new Date("2015", "4", "2"));
+		this.oCal.setStartDate(UI5Date.getInstance("2015", "4", "2"));
 		this.oCal.setDays(14);
 		oCore.applyChanges();
 
@@ -557,7 +558,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
-				startDate: new Date("2015", "3", "10"),
+				startDate: UI5Date.getInstance("2015", "3", "10"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -573,7 +574,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		this.oCal._showYearRangePicker();
 		oCore.applyChanges();
-		this.oCal._getYearRangePicker().setDate(new Date("2014", "3", "10"));
+		this.oCal._getYearRangePicker().setDate(UI5Date.getInstance("2014", "3", "10"));
 		this.oCal._selectYearRange();
 		oCore.applyChanges();
 		this.oCal._selectYear();
@@ -609,7 +610,7 @@ sap.ui.define([
 
 	QUnit.test("displayed years 14 days", function(assert) {
 		// System under test
-		this.oCal.setStartDate(new Date("2015", "1", "2"));
+		this.oCal.setStartDate(UI5Date.getInstance("2015", "1", "2"));
 		this.oCal.setDays(14);
 		oCore.applyChanges();
 
@@ -642,7 +643,7 @@ sap.ui.define([
 
 	QUnit.test("change block 14 days", function(assert) {
 		// System under test
-		this.oCal.setStartDate(new Date("2015", "1", "2"));
+		this.oCal.setStartDate(UI5Date.getInstance("2015", "1", "2"));
 		this.oCal.setDays(14);
 		oCore.applyChanges();
 
@@ -662,9 +663,9 @@ sap.ui.define([
 
 	QUnit.test("Min/Max", function(assert) {
 		// System under test
-		this.oCal.setStartDate(new Date("2000", "1", "2"));
-		this.oCal.setMinDate(new Date("2000", "1", "1"));
-		this.oCal.setMaxDate(new Date("2050", "7", "31"));
+		this.oCal.setStartDate(UI5Date.getInstance("2000", "1", "2"));
+		this.oCal.setMinDate(UI5Date.getInstance("2000", "1", "1"));
+		this.oCal.setMaxDate(UI5Date.getInstance("2050", "7", "31"));
 		this.oCal.setDays(14);
 		oCore.applyChanges();
 
@@ -706,7 +707,7 @@ sap.ui.define([
 		assert.ok(jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button disabled");
 
 		// act
-		this.oCal.setStartDate(new Date(2050, 7, 17));
+		this.oCal.setStartDate(UI5Date.getInstance(2050, 7, 17));
 		oCore.applyChanges();
 
 		// assert
@@ -748,7 +749,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
-				startDate: new Date("2015", "1", "2"),
+				startDate: UI5Date.getInstance("2015", "1", "2"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -769,7 +770,7 @@ sap.ui.define([
 		assert.equal(this.oCal._oFocusedDate, oOldFocusedDate,
 				"_getFocusedDate() does not change the oFocusedDate after initial calculation");
 
-		var oNewDate = new Date(Date.UTC(2000, 1, 4));
+		var oNewDate = UI5Date.getInstance(Date.UTC(2000, 1, 4));
 		this.oCal.setProperty("startDate", oNewDate);
 
 		//Act
@@ -782,7 +783,7 @@ sap.ui.define([
 		var oSpy = sinon.spy(this.oCal, "_getFocusedDate");
 
 		//Act
-		this.oCal.setStartDate(new Date(2000, 2, 4));
+		this.oCal.setStartDate(UI5Date.getInstance(2000, 2, 4));
 
 		assert.ok(oSpy.getCall(0).args[0], "When .setStartDate is called, _getFocusedDate is always forcing recalculation");
 
@@ -868,7 +869,7 @@ sap.ui.define([
 		var iDays = 6,
 			oExpectedCalculatedMaxDate = new CalendarDate(2018, 11, 20 - iDays + 1),
 			oStartDate = new CalendarDate(2018, 10, 20),
-			oCalendarDateInterval = new CalendarDateInterval({ maxDate: new Date(2018, 11, 20) }),
+			oCalendarDateInterval = new CalendarDateInterval({ maxDate: UI5Date.getInstance(2018, 11, 20) }),
 			ogetMaxDateAlignedToMinDateSpy = this.spy(oCalendarDateInterval, "_getMaxDateAlignedToMinDate"),
 			oAlignStartDateToMinAndMaxSpy = this.spy(oCalendarDateInterval, "_getStartDateAlignedToMinAndMaxDate"),
 			oGetDaysStub = this.stub(oCalendarDateInterval, "_getDays").returns(iDays);
@@ -915,10 +916,10 @@ sap.ui.define([
 
 	QUnit.test("special days", function(assert) {
 		// Arrange
-		this.oCal.setStartDate(new Date("2015", "0", "31"));
+		this.oCal.setStartDate(UI5Date.getInstance("2015", "0", "31"));
 		this.oCal.addSpecialDate(new DateTypeRange({
-			startDate: new Date("2015", "0", "31"),
-			endDate: new Date("2015", "1", "1"),
+			startDate: UI5Date.getInstance("2015", "0", "31"),
+			endDate: UI5Date.getInstance("2015", "1", "1"),
 			type: "Type01"
 		}));
 		oCore.applyChanges();
@@ -931,7 +932,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCal = new CalendarDateInterval("CalP", {
 				startDateChange: handleStartDateChange,
-				startDate: new Date("2015", "7", "13"),
+				startDate: UI5Date.getInstance("2015", "7", "13"),
 				pickerPopup: true,
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
@@ -1029,7 +1030,7 @@ sap.ui.define([
 			$Date;
 
 		// System under test
-		this.oCal.setStartDate(new Date("2017", "7", "10"));
+		this.oCal.setStartDate(UI5Date.getInstance("2017", "7", "10"));
 		oCore.applyChanges();
 
 		qutils.triggerEvent("click", "CalP--Head-B1");
@@ -1064,7 +1065,7 @@ sap.ui.define([
 		var $Date;
 
 		// System under test
-		this.oCal.setStartDate(new Date("2017", "4", "11"));
+		this.oCal.setStartDate(UI5Date.getInstance("2017", "4", "11"));
 		oCore.applyChanges();
 
 		qutils.triggerEvent("click", "CalP--Head-B1");
@@ -1102,8 +1103,8 @@ sap.ui.define([
 		// change the pickerPopup to true, this will destroy the yearPicker aggregation
 		oCalP.setPickerPopup(true);
 		// set new min and max dates
-		oCalP.setMinDate(new Date("2015", "7", "13", "8", "0", "0"));
-		oCalP.setMaxDate(new Date("2017", "7", "13", "8", "0", "0"));
+		oCalP.setMinDate(UI5Date.getInstance("2015", "7", "13", "8", "0", "0"));
+		oCalP.setMaxDate(UI5Date.getInstance("2017", "7", "13", "8", "0", "0"));
 
 		// return pickrPopup property to true, this will create the yearPicker aggregation
 		oCalP.setPickerPopup(false);
@@ -1138,8 +1139,8 @@ sap.ui.define([
 		// change the pickerPopup to false
 		this.oCal.setPickerPopup(false);
 		// set new min and max dates
-		this.oCal.setMinDate(new Date("2015", "7", "13", "8", "0", "0"));
-		this.oCal.setMaxDate(new Date("2017", "7", "13", "8", "0", "0"));
+		this.oCal.setMinDate(UI5Date.getInstance("2015", "7", "13", "8", "0", "0"));
+		this.oCal.setMaxDate(UI5Date.getInstance("2017", "7", "13", "8", "0", "0"));
 
 		// return pickerPopup property to true, this will create the calendarPicker aggregation
 		this.oCal.setPickerPopup(true);
@@ -1208,7 +1209,7 @@ sap.ui.define([
 	QUnit.test("DatesRow getWeekNumbers", function(assert) {
 		//arrange
 		var oDatesRow = new DatesRow({
-			startDate: new Date(2016, 11, 26),
+			startDate: UI5Date.getInstance(2016, 11, 26),
 			days: 14
 		});
 
@@ -1233,7 +1234,7 @@ sap.ui.define([
 	QUnit.test("DatesRow getWeekNumbers in ISO_8601", function(assert) {
 		//arrange
 		var oDatesRow = new DatesRow({
-			startDate: new Date(2016, 0, 1),
+			startDate: UI5Date.getInstance(2016, 0, 1),
 			days: 14,
 			calendarWeekNumbering: "ISO_8601"
 		});
@@ -1259,7 +1260,7 @@ sap.ui.define([
 	QUnit.test("DatesRow getWeekNumbers in MiddleEastern", function(assert) {
 		//arrange
 		var oDatesRow = new DatesRow({
-			startDate: new Date(2016, 0, 1),
+			startDate: UI5Date.getInstance(2016, 0, 1),
 			days: 14,
 			calendarWeekNumbering: "MiddleEastern"
 		});
@@ -1285,7 +1286,7 @@ sap.ui.define([
 	QUnit.test("DatesRow getWeekNumbers in WesternTraditional", function(assert) {
 		//arrange
 		var oDatesRow = new DatesRow({
-			startDate: new Date(2016, 0, 1),
+			startDate: UI5Date.getInstance(2016, 0, 1),
 			days: 14,
 			calendarWeekNumbering: "WesternTraditional"
 		});
@@ -1313,7 +1314,7 @@ sap.ui.define([
 	QUnit.test("CalendarDateInterval year range picker interaction sets proper start date", function(assert) {
 		//arrange
 		var oCDI = new CalendarDateInterval({
-			startDate: new Date(2022, 1, 7),
+			startDate: UI5Date.getInstance(2022, 1, 7),
 			days: 7
 		});
 
@@ -1326,7 +1327,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		//assert
-		assert.equal(oCDI.getAggregation("month")[0].getStartDate().getTime(), new Date(2029, 1, 7).getTime(), "New start date is properly set");
+		assert.equal(oCDI.getAggregation("month")[0].getStartDate().getTime(), UI5Date.getInstance(2029, 1, 7).getTime(), "New start date is properly set");
 
 		//clean
 		oCDI.destroy();
