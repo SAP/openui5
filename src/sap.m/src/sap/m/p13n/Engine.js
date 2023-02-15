@@ -1013,24 +1013,8 @@ sap.ui.define([
 		var aPersistenceProvider = aPPResults.length ? aPPResults : undefined;
 		var sHandlerMode = aPersistenceProvider ? aPersistenceProvider[0].getMode() : "Standard";
 
-		var mHandlerMode = {
-			//During preprocessing, it might be necessary to calculate the modification handler instance
-			//without an initialized control instance --> use flex as default
-			undefined: FlexModificationHandler,
-			Global: FlexModificationHandler,
-			Transient: FlexModificationHandler,
-			Standard: FlexModificationHandler,
-			Auto: FlexModificationHandler
-		};
-
-		var ModificiationHandler = mHandlerMode[sHandlerMode];
-
-		if (!ModificiationHandler) {
-			throw new Error("Please provide a valid ModificationHandler! - valid Modification handlers are:" + Object.keys(mHandlerMode));
-		}
-
 		var oModificationSetting = {
-			handler: ModificiationHandler.getInstance(),
+			handler: FlexModificationHandler.getInstance(),
 			payload: {
 				hasVM: aVMResults && aVMResults.length > 0,
 				hasPP: aPPResults && aPPResults.length > 0,
