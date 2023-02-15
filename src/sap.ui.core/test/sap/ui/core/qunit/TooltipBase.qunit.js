@@ -1,23 +1,23 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/TooltipBase",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/commons/RichTooltip",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/m/Button",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/events/KeyCodes"
-], function(QUnitUtils, RichTooltip, HorizontalLayout, Button, createAndAppendDiv, KeyCodes) {
+], function (TooltipBase, QUnitUtils, HorizontalLayout, Button, createAndAppendDiv, KeyCodes) {
 	"use strict";
 
 	createAndAppendDiv("target");
 
 	/**
 	 * This function checks whether the given tooltip is a standard tooltip or
-	 * a RichTooltip
+	 * a MyToolTip
 	 * @param  {object | string} vTooltip either a string with text or an instanceof
-	 *                   of the RichTooltip
+	 *                   of the MyToolTip
 	 * @return {boolean} <code>true</code> if the tooltip is just a string. <false>
-	 *                                     if the tooltip is a RichTooltip
+	 *                                     if the tooltip is a MyToolTip
 	 */
 	var isStandardTooltip = function(vTooltip, assert) {
 		return (typeof vTooltip === "string" && vTooltip.trim() !== "");
@@ -123,12 +123,48 @@ sap.ui.define([
 		});
 	};
 
+	/*
+	 * a simple Tooltip control, inheriting from TooltipBase
+	 */
+	var MyToolTip = TooltipBase.extend("MyToolTip", {
+		metadata: {
+			properties: {
+				title: "string",
+				text: "string"
+			}
+		},
+		renderer: {
+			apiVersion: 2,
+			render: function (rm, ctrl) {
+				rm.openStart("div", ctrl)
+					.style("background", "white")
+					.style("border", "1px solid black")
+					.style("padding", "0.5rem")
+					.openEnd();
+				if (ctrl.getTitle()) {
+					rm.openStart("div")
+						.style("font-weight", "bold")
+						.style("border-bottom", "1px solid gray")
+						.style("margin-bottom", "1rem")
+						.attr("role", "tooltip")
+						.openEnd();
+					rm.text(ctrl.getTitle());
+					rm.close("div");
+				}
+				rm.openStart("div").openEnd();
+				rm.text(ctrl.getText());
+				rm.close("div");
+				rm.close("div");
+			}
+		}
+	});
+
 	QUnit.module("Basics", {
 		beforeEach: function() {
 			this.oButton1 = new Button({
 				icon: "sap-icon://syringe",
 				text: "Rich Fuel Injection",
-				tooltip: new RichTooltip({
+				tooltip: new MyToolTip({
 					title: "Title",
 					text: "Text"
 				})
@@ -138,7 +174,7 @@ sap.ui.define([
 			this.oButton2 = new Button({
 				icon: "sap-icon://syringe",
 				text: "Rich Fuel Injection",
-				tooltip: new RichTooltip({
+				tooltip: new MyToolTip({
 					title: "Title",
 					text: "Text"
 				})
@@ -158,7 +194,7 @@ sap.ui.define([
 			});
 
 			this.oLayout = new HorizontalLayout({
-				tooltip: new RichTooltip({
+				tooltip: new MyToolTip({
 					title: "Title",
 					text: "Text"
 				}),
@@ -191,8 +227,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check Type of Set Tooltip", function(assert) {
-		assert.equal(isStandardTooltip(this.oTooltip1, assert), false, "Button1 has a RichTooltip");
-		assert.equal(isStandardTooltip(this.oTooltip2, assert), false, "Button2 has a RichTooltip");
+		assert.equal(isStandardTooltip(this.oTooltip1, assert), false, "Button1 has a MyToolTip");
+		assert.equal(isStandardTooltip(this.oTooltip2, assert), false, "Button2 has a MyToolTip");
 		assert.equal(isStandardTooltip(this.oTooltip3, assert), true, "Button3 has a standard tooltip");
 	});
 
@@ -240,10 +276,10 @@ sap.ui.define([
 	QUnit.module("Open and Close", {
 		beforeEach: function() {
 			this.oButton1 = new Button({
-				id: "button1RichTooltip",
+				id: "button1MyToolTip",
 				icon: "sap-icon://syringe",
 				text: "Rich Fuel Injection",
-				tooltip: new RichTooltip({
+				tooltip: new MyToolTip({
 					title: "Title",
 					text: "Text",
 					openDuration: 0,
@@ -255,10 +291,10 @@ sap.ui.define([
 			this.oTooltip1 = this.oButton1.getTooltip();
 
 			this.oButton2 = new Button({
-				id: "button2RichTooltip",
+				id: "button2MyToolTip",
 				icon: "sap-icon://syringe",
 				text: "Rich Fuel Injection",
-				tooltip: new RichTooltip({
+				tooltip: new MyToolTip({
 					title: "Title",
 					text: "Text",
 					openDuration: 0,
@@ -284,7 +320,7 @@ sap.ui.define([
 			});
 
 			this.oLayout = new HorizontalLayout({
-				tooltip: new RichTooltip({
+				tooltip: new MyToolTip({
 					title: "Title",
 					text: "Text",
 					openDuration: 0,
