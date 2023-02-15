@@ -624,7 +624,27 @@ sap.ui.define([
 		return this._oContentFactory;
 	};
 
+	var _setFocusTimer = function (oEvent) {
+		var oFieldHelp = _getFieldHelp.call(this);
+		if (oFieldHelp && !this._iFocusTimer && oFieldHelp.shouldOpenOnFocus() && !oFieldHelp.isOpen()) {
+			this._iFocusTimer = setTimeout(function () {
+				oFieldHelp.open(true);
+				this._redirectFocus(oEvent, oFieldHelp);
+				this._iFocusTimer = null;
+			}.bind(this),300);
+		}
+	};
+
+	var _clearFocusTimer = function () {
+		if (this._iFocusTimer) {
+			clearTimeout(this._iFocusTimer);
+			this._iFocusTimer = null;
+		}
+	};
+
 	FieldBase.prototype.exit = function() {
+
+		_clearFocusTimer.call(this);
 
 		var oFieldInfo = this.getFieldInfo();
 		if (oFieldInfo) {
@@ -715,15 +735,13 @@ sap.ui.define([
 	};
 
 	FieldBase.prototype.onfocusin = function(oEvent) {
-
 		_connectFieldhelp.call(this);
-
+		_setFocusTimer.call(this, oEvent);
 	};
 
 	FieldBase.prototype.onsapfocusleave = function(oEvent) {
-
+		_clearFocusTimer.call(this);
 		_clearLiveChangeTimer.call(this);
-
 	};
 
 	// fire change event only if unit and currency field are left
@@ -804,7 +822,7 @@ sap.ui.define([
 
 		// if same value is entered again no change event is triggered, So we need to close the suggestion here
 		var oFieldHelp = _getFieldHelp.call(this);
-		if (oFieldHelp && oFieldHelp.isOpen(true)) {
+		if (oFieldHelp && oFieldHelp.isOpen()) {
 			oFieldHelp.close();
 		}
 		this._sFilterValue = "";
@@ -818,19 +836,23 @@ sap.ui.define([
 
 	};
 
+	FieldBase.prototype._redirectFocus = function (oEvent, oFieldHelp) {
+		var oSource = oEvent.srcControl;
+		if (oFieldHelp.isOpen() && (!this._getContentFactory().isMeasure() || (oSource.getShowValueHelp && oSource.getShowValueHelp()))) {
+			oSource.addStyleClass("sapMFocus"); // to show focus outline again after navigation
+			oFieldHelp.removeFocus();
+		}
+	};
+
 	FieldBase.prototype.ontap = function(oEvent) {
 
 		// in "Select"-case the suggestion help should open on click into field
 		var oFieldHelp = _getFieldHelp.call(this);
 		if (oFieldHelp) {
-			if (oFieldHelp.shouldOpenOnClick() && !oFieldHelp.isOpen(true)) {
+			if (oFieldHelp.shouldOpenOnClick() && !oFieldHelp.isOpen()) {
 				oFieldHelp.open(true);
 			}
-			var oSource = oEvent.srcControl;
-			if (oFieldHelp.isOpen(true) && (!this._getContentFactory().isMeasure() || (oSource.getShowValueHelp && oSource.getShowValueHelp()))) {
-				oSource.addStyleClass("sapMFocus"); // to show focus outline again after navigation
-				oFieldHelp.removeFocus();
-			}
+			this._redirectFocus(oEvent, oFieldHelp);
 		}
 
 	};
@@ -2219,7 +2241,7 @@ sap.ui.define([
 		if (oFieldHelp && (!this._getContentFactory().isMeasure() || oSource.getShowValueHelp())) {
 			if (bEscPressed) {
 				// close FieldHelp if escape pressed and not repoen it for last typed characters
-				if (oFieldHelp.isOpen(true)) {
+				if (oFieldHelp.isOpen()) {
 					oFieldHelp.close();
 					_setConditionsOnFieldHelp.call(this, this.getConditions(), oFieldHelp); // reset conditions
 					_clearLiveChangeTimer.call(this);
@@ -2243,6 +2265,9 @@ sap.ui.define([
 					this._bIgnoreInputValue = false; // after typing the input value is the current one and should be used
 					this._vLiveChangeValue = vValue;
 					if (!this._fnLiveChangeTimer) {
+
+						_clearFocusTimer.call(this);
+
 						this._fnLiveChangeTimer = debounce(function() {
 							var sDisplay = this.getDisplay();
 							// remove "(", ")" from serach string

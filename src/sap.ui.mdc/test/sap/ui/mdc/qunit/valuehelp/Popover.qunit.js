@@ -110,6 +110,7 @@ sap.ui.define([
 		assert.notOk(oPopover._isSingleSelect(), "_isSingleSelect");
 		assert.notOk(oPopover.getUseAsValueHelp(), "getUseAsValueHelp");
 		assert.notOk(oPopover.shouldOpenOnClick(), "shouldOpenOnClick");
+		assert.notOk(oPopover.shouldOpenOnFocus(), "shouldOpenOnFocus");
 		assert.notOk(oPopover.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
 		assert.notOk(oPopover.isNavigationEnabled(1), "isNavigationEnabled");
 		assert.notOk(oPopover.isFocusInHelp(), "isFocusInHelp");
@@ -468,6 +469,16 @@ sap.ui.define([
 		oAttributes = oPopover.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
+
+	});
+
+	QUnit.test("shouldOpenOnFocus", function(assert) {
+
+		oPopover.setOpensOnFocus(true);
+		assert.ok(oPopover.shouldOpenOnFocus(), "shouldOpenOnFocus enabled by container property");
+
+		oPopover.setOpensOnFocus(false);
+		assert.notOk(oPopover.shouldOpenOnFocus(), "shouldOpenOnFocus disabled by container property");
 
 	});
 

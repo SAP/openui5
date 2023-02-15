@@ -3045,7 +3045,41 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnClick - FieldHelp should open on focus", function (assert) {
+	QUnit.test("shouldOpenOnFocus - FieldHelp should open on focus", function (assert) {
+
+		var oFieldHelp = oCore.byId(oField.getFieldHelp());
+
+		sinon.stub(oFieldHelp, "shouldOpenOnFocus").returns(true);
+		sinon.spy(oFieldHelp, "open");
+
+		oField.focus();
+
+		return new Promise(function (resolve, reject) {
+			setTimeout(function () {
+				assert.ok(oFieldHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
+				assert.ok(oFieldHelp.open.calledOnce, "open called once");
+
+				//do the same test with opensOnFocus(false) and the open should not be called
+				oField.getFocusDomRef().blur();
+				oFieldHelp.shouldOpenOnFocus.resetHistory();
+				oFieldHelp.shouldOpenOnFocus.returns(false);
+				oFieldHelp.open.resetHistory();
+
+				oField.focus();
+
+				setTimeout(function () {
+					assert.ok(oFieldHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
+					assert.notOk(oFieldHelp.open.calledOnce, "open not called");
+
+					oFieldHelp.close();
+
+					resolve();
+				},350);
+			},350);
+		});
+	});
+
+	QUnit.test("shouldOpenOnClick - FieldHelp should open on click", function (assert) {
 
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
 

@@ -483,6 +483,16 @@
 	 */
 
 	/**
+	 * Defines if the typeahead container desires to be opened whenever a user focuses a connected control
+	 *
+	 * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.shouldOpenOnFocus
+	 * @method
+	 * @returns {boolean} True if value help shall open on focus
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 */
+
+	/**
 	 * Defines if the typeahead container desires to be opened whenever a user clicks on a connected control
 	 *
 	 * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.shouldOpenOnClick

@@ -627,6 +627,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if the value help should be opened when the user focuses the connected control.
+	 *
+	 * Opening the value help must be triggered by the control the <code>ValueHelp</code> element
+	 * belongs to.
+	 *
+	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
+	 * belongs to, not by the application.
+	 *
+	 * @returns {boolean} If <code>true</code>, the value help should open when user focuses the connected field control
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 */
+	ValueHelp.prototype.shouldOpenOnFocus = function () {
+		var oContainer = _getValueHelpContainer.call(this, true);
+		return oContainer && oContainer.shouldOpenOnFocus();
+	};
+
+	/**
 	 * Determines if the value help should be opened when the user clicks into the connected control.
 	 *
 	 * Opening the value help must be triggered by the control the <code>ValueHelp</code> element
@@ -640,10 +658,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ValueHelp.prototype.shouldOpenOnClick = function () {
-		var oTypeahead = this.getTypeahead();
-		var oDialog = this.getDialog();
-		var bTypeaheadEnabled = oTypeahead && (oTypeahead.getUseAsValueHelp() || !!oDialog); // Prefer typeahead, but only if dialog is available or dialog-like usage is enabled
-		var oContainer = bTypeaheadEnabled ? oTypeahead : oDialog;
+		var oContainer = _getValueHelpContainer.call(this, true);
 		return oContainer && oContainer.shouldOpenOnClick();
 	};
 
@@ -1004,19 +1019,17 @@ sap.ui.define([
 		this.setBindingContext(oBindingContext);
 	}
 
-	function _getValueHelpContainer() {
+	function _getValueHelpContainer(bPreferTypeahead) {
 
-		var oContainer = this.getDialog();
+		var oTypeahead = this.getTypeahead();
+		var bUseAsValueHelp = !!oTypeahead && oTypeahead.getUseAsValueHelp();
+		var oDialog = this.getDialog();
 
-		if (!oContainer) { // no Dialog -> check if Typeahead should be opened
-			var oTypeahead = this.getTypeahead();
-			if (oTypeahead && oTypeahead.getUseAsValueHelp()) {
-				oContainer = oTypeahead;
-			}
+		if (bPreferTypeahead) {
+			return bUseAsValueHelp && oTypeahead || oDialog;
+		} else {
+			return oDialog || bUseAsValueHelp && oTypeahead;
 		}
-
-		return oContainer;
-
 	}
 
 	// overwrite standard logic of Element to use FieldGroups of connected Field for all content (children aggregations)
