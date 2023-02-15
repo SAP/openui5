@@ -915,7 +915,44 @@ function(
 						calcRange: function() {
 							return UniversalDateUtils.ranges.dateToYear();
 						}
+					}),
+					lastMinutes: new RangeOperator({
+						name: "LASTMINUTES",
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
+						paramTypes: ["(\\d+)"],
+						additionalInfo: "",
+						calcRange: function(iDuration) {
+							return UniversalDateUtils.ranges.lastMinutes(iDuration);
+						}
+					}),
+					nextMinutes: new RangeOperator({
+						name: "NEXTMINUTES",
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
+						paramTypes: ["(\\d+)"],
+						additionalInfo: "",
+						calcRange: function(iDuration) {
+							return UniversalDateUtils.ranges.nextMinutes(iDuration);
+						}
+					}),
+					lastHours: new RangeOperator({
+						name: "LASTHOURS",
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
+						paramTypes: ["(\\d+)"],
+						additionalInfo: "",
+						calcRange: function(iDuration) {
+							return UniversalDateUtils.ranges.lastHours(iDuration);
+						}
+					}),
+					nextHours: new RangeOperator({
+						name: "NEXTHOURS",
+						valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}, constraints: { minimum: 0 }}],
+						paramTypes: ["(\\d+)"],
+						additionalInfo: "",
+						calcRange: function(iDuration) {
+							return UniversalDateUtils.ranges.nextHours(iDuration);
+						}
 					})
+
 				},
 
 				_mDefaultOpsForType: {}, // defines default operators for types
@@ -1640,6 +1677,11 @@ function(
 				 FilterOperatorUtil._mOperators.notLessEqual,
 				 FilterOperatorUtil._mOperators.notGreaterThan,
 				 FilterOperatorUtil._mOperators.notGreaterEqual,
+
+				 FilterOperatorUtil._mOperators.lastMinutes,
+				 FilterOperatorUtil._mOperators.nextMinutes,
+				 FilterOperatorUtil._mOperators.lastHours,
+				 FilterOperatorUtil._mOperators.nextHours,
 
 				 FilterOperatorUtil._mOperators.today,
 				 FilterOperatorUtil._mOperators.yesterday,
