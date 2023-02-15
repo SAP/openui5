@@ -118,9 +118,16 @@ sap.ui.define([
 		oSplitApp.placeAt("content");
 		oCore.applyChanges();
 
+		// assert
 		assert.equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
 
-		oSplitApp._oPopOver.attachAfterOpen(function(){
+		// act
+		var oMasterButton = oSplitApp._oShowMasterBtn;
+		qutils.triggerKeydown(oMasterButton.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeyup(oMasterButton.getDomRef(), KeyCodes.ENTER);
+
+		setTimeout(function() {
+			// assert
 			assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 			assert.ok(jQuery("#splitapp-Popover").length, "Popover should be rendered.");
 			assert.ok(oSplitApp.isMasterShown(), "Master area is shown");
@@ -130,11 +137,12 @@ sap.ui.define([
 			assert.ok(jQuery("#detail").length, "Detail page should be rendered  initially.");
 			assert.equal(oSplitApp.$().children().length,2, "SplitApp should only contain the detail nav container.");
 			assert.equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp-Popover", "Parent of Master Nav container page should be Popover.");
+
+			//clean up
 			oSplitApp.destroy();
 			done();
-		});
+		}, 500);
 
-		oCore.byId("splitapp-MasterBtn").firePress();
 	});
 
 	QUnit.test("ShowHideMode_portrait", function(assert){
