@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper",
 	"sap/ui/base/Event",
 	"sap/ui/core/Component",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -11,6 +12,7 @@ sap.ui.define([
 	XMLHelper,
 	Event,
 	Component,
+	XMLView,
 	JSONModel,
 	sinon
 ) {
@@ -1089,17 +1091,14 @@ sap.ui.define([
 	QUnit.module("Events", {
 		before: function () {
 			this.createView = function (oXmlView) {
-				return sap.ui.xmlview({
-					viewContent: XMLHelper.serialize(oXmlView)
+				return XMLView.create({
+					definition: XMLHelper.serialize(oXmlView)
+				}).then(function(oView) {
+					return oView;
 				});
 			};
 		},
 		beforeEach: function () {
-			this.oComponent = sap.ui.getCore().createComponent({
-				name: "sap.ui.test.other",
-				id: "testComponent"
-			});
-
 			this.oXmlString = (
 				'<mvc:View ' +
 					'id="testComponent---myView" ' +
@@ -1118,12 +1117,21 @@ sap.ui.define([
 
 			this.oSpy2 = sandbox.spy();
 			window.$sap__qunit_presshandler2 = this.oSpy2;
+
+			return Component.create({
+				name: "sap.ui.test.other",
+				id: "testComponent"
+			}).then(function (oComponent) {
+				this.oComponent = oComponent;
+			}.bind(this));
 		},
 		afterEach: function () {
 			if (this.oView) {
 				this.oView.destroy();
 			}
+
 			this.oComponent.destroy();
+
 			delete window.$sap__qunit_presshandler1;
 			delete window.$sap__qunit_presshandler2;
 			sandbox.restore();
@@ -1132,22 +1140,26 @@ sap.ui.define([
 		QUnit.test("attachEvent() — basic case", function (assert) {
 			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
 				.then(function () {
-					this.oView = this.createView(this.oXmlView);
-					this.oView.byId("button1").firePress();
+					return this.createView(this.oXmlView).then(function(oView) {
+						this.oView = oView;
+						this.oView.byId("button1").firePress();
 
-					assert.strictEqual(this.oSpy1.callCount, 1);
-					assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event)).callCount, 1);
+						assert.strictEqual(this.oSpy1.callCount, 1);
+						assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event)).callCount, 1);
+					}.bind(this));
 				}.bind(this));
 		});
 
 		QUnit.test("attachEvent() — basic case with parameters", function (assert) {
 			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1", { foo: "bar" }])
 				.then(function () {
-					this.oView = this.createView(this.oXmlView);
-					this.oView.byId("button1").firePress();
+					return this.createView(this.oXmlView).then(function(oView) {
+						this.oView = oView;
+						this.oView.byId("button1").firePress();
 
-					assert.strictEqual(this.oSpy1.callCount, 1);
-					assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1", { foo: "bar" }]).callCount, 1);
+						assert.strictEqual(this.oSpy1.callCount, 1);
+						assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1", { foo: "bar" }]).callCount, 1);
+					}.bind(this));
 				}.bind(this));
 		});
 
@@ -1155,13 +1167,15 @@ sap.ui.define([
 			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"])
 				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]))
 				.then(function () {
-					this.oView = this.createView(this.oXmlView);
-					this.oView.byId("button1").firePress();
+					return this.createView(this.oXmlView).then(function(oView) {
+						this.oView = oView;
+						this.oView.byId("button1").firePress();
 
-					assert.strictEqual(this.oSpy1.callCount, 1);
-					assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1"]).callCount, 1);
-					assert.strictEqual(this.oSpy2.callCount, 1);
-					assert.strictEqual(this.oSpy2.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+						assert.strictEqual(this.oSpy1.callCount, 1);
+						assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1"]).callCount, 1);
+						assert.strictEqual(this.oSpy2.callCount, 1);
+						assert.strictEqual(this.oSpy2.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+					}.bind(this));
 				}.bind(this));
 		});
 
@@ -1176,11 +1190,13 @@ sap.ui.define([
 			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"])
 				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1", ["param2", "param3"]))
 				.then(function () {
-					this.oView = this.createView(this.oXmlView);
-					this.oView.byId("button1").firePress();
-					assert.strictEqual(this.oSpy1.callCount, 2);
-					assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1"]).callCount, 1);
-					assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+					return this.createView(this.oXmlView).then(function(oView) {
+						this.oView = oView;
+						this.oView.byId("button1").firePress();
+						assert.strictEqual(this.oSpy1.callCount, 2);
+						assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1"]).callCount, 1);
+						assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+					}.bind(this));
 				}.bind(this));
 		});
 
@@ -1190,9 +1206,11 @@ sap.ui.define([
 				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1"))
 				.then(function () {
 					assert.notOk(this.oButton.hasAttribute("press"));
-					this.oView = this.createView(this.oXmlView);
-					this.oView.byId("button1").firePress();
-					assert.strictEqual(this.oSpy1.callCount, 0);
+					return this.createView(this.oXmlView).then(function(oView) {
+						this.oView = oView;
+						this.oView.byId("button1").firePress();
+						assert.strictEqual(this.oSpy1.callCount, 0);
+					}.bind(this));
 				}.bind(this));
 		});
 
@@ -1202,9 +1220,11 @@ sap.ui.define([
 				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1"))
 				.then(function () {
 					assert.notOk(this.oButton.hasAttribute("press"));
-					this.oView = this.createView(this.oXmlView);
-					this.oView.byId("button1").firePress();
-					assert.strictEqual(this.oSpy1.callCount, 0);
+					return this.createView(this.oXmlView).then(function (oView) {
+						this.oView = oView;
+						this.oView.byId("button1").firePress();
+						assert.strictEqual(this.oSpy1.callCount, 0);
+					}.bind(this));
 				}.bind(this));
 		});
 
@@ -1214,11 +1234,14 @@ sap.ui.define([
 				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]))
 				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2"))
 				.then(function () {
-					this.oView = this.createView(this.oXmlView);
-					this.oView.byId("button1").firePress();
-					assert.strictEqual(this.oSpy1.callCount, 1);
-					assert.strictEqual(this.oSpy2.callCount, 1);
-					assert.strictEqual(this.oSpy2.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+					return this.createView(this.oXmlView).then(function (oView) {
+						this.oView = oView;
+						this.oView.byId("button1").firePress();
+
+						assert.strictEqual(this.oSpy1.callCount, 1);
+						assert.strictEqual(this.oSpy2.callCount, 1);
+						assert.strictEqual(this.oSpy2.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+					}.bind(this));
 				}.bind(this));
 		});
 
@@ -1233,16 +1256,18 @@ sap.ui.define([
 	QUnit.module("Aggregation binding", {
 		before: function () {
 			this.createView = function (oXmlView) {
-				return sap.ui.xmlview({
-					viewContent: XMLHelper.serialize(oXmlView)
+				return XMLView.create({
+					definition: XMLHelper.serialize(oXmlView)
 				});
 			};
 		},
 		beforeEach: function () {
-			this.oComponent = sap.ui.getCore().createComponent({
+			this.pComponent = Component.create({
 				name: "sap.ui.test.other",
 				id: "testComponent"
-			});
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+			}.bind(this));
 
 			this.oXmlString = (
 				'<mvc:View ' +
@@ -1271,7 +1296,10 @@ sap.ui.define([
 			if (this.oView) {
 				this.oView.destroy();
 			}
-			this.oComponent.destroy();
+			this.pComponent.then(function() {
+				this.oComponent.destroy();
+			}.bind(this));
+
 			sandbox.restore();
 		}
 	}, function () {
@@ -1299,11 +1327,13 @@ sap.ui.define([
 				);
 			}.bind(this))
 			.then(function () {
-				this.oView = this.createView(this.oXmlView);
-				this.oView.setModel(this.oModel, this.sModelName);
-				this.oButtonInstance = this.oView.byId("button1");
-				assert.strictEqual(this.oButtonInstance.getCustomData()[0].getKey(), "foo");
-				assert.strictEqual(this.oButtonInstance.getCustomData()[0].getValue(), "bar");
+				return this.createView(this.oXmlView).then(function(oView) {
+					this.oView = oView;
+					this.oView.setModel(this.oModel, this.sModelName);
+					this.oButtonInstance = this.oView.byId("button1");
+					assert.strictEqual(this.oButtonInstance.getCustomData()[0].getKey(), "foo");
+					assert.strictEqual(this.oButtonInstance.getCustomData()[0].getValue(), "bar");
+				}.bind(this));
 			}.bind(this));
 		});
 
@@ -1335,11 +1365,13 @@ sap.ui.define([
 				);
 			}.bind(this))
 			.then(function () {
-				this.oView = this.createView(this.oXmlView);
-				this.oView.setModel(this.oModel, this.sModelName);
-				this.oButtonInstance = this.oView.byId("button1");
-				assert.strictEqual(this.oButtonInstance.getCustomData()[0].getKey(), "foo");
-				assert.strictEqual(this.oButtonInstance.getCustomData()[0].getValue(), "bar");
+				return this.createView(this.oXmlView).then(function (oView) {
+					this.oView = oView;
+					this.oView.setModel(this.oModel, this.sModelName);
+					this.oButtonInstance = this.oView.byId("button1");
+					assert.strictEqual(this.oButtonInstance.getCustomData()[0].getKey(), "foo");
+					assert.strictEqual(this.oButtonInstance.getCustomData()[0].getValue(), "bar");
+				}.bind(this));
 			}.bind(this));
 		});
 
@@ -1368,10 +1400,12 @@ sap.ui.define([
 			}.bind(this))
 			.then(XmlTreeModifier.unbindAggregation.bind(XmlTreeModifier, this.oButton, "customData"))
 			.then(function () {
-				this.oView = this.createView(this.oXmlView);
-				this.oView.setModel(this.oModel, this.sModelName);
-				this.oButtonInstance = this.oView.byId("button1");
-				assert.strictEqual(this.oButtonInstance.getCustomData().length, 0);
+				return this.createView(this.oXmlView).then(function (oView) {
+					this.oView = oView;
+					this.oView.setModel(this.oModel, this.sModelName);
+					this.oButtonInstance = this.oView.byId("button1");
+					assert.strictEqual(this.oButtonInstance.getCustomData().length, 0);
+				}.bind(this));
 			}.bind(this));
 		});
 	});
