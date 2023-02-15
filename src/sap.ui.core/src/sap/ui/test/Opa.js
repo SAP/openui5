@@ -212,9 +212,56 @@ sap.ui.define([
 	};
 
 	/**
+	 * @typedef {object} sap.ui.test.Opa.BaseParameters
+	 * @description Configuration parameters for Opa.
+	 * @property {int} [timeout=15] (seconds) Specifies how long the waitFor function polls before it fails. The default value is 15 seconds, 0 means it will wait forever.
+	 * @property {int} [debugTimeout=0] (seconds) @since 1.47 Specifies how long the waitFor function polls before it fails in debug mode. 0 means it will wait forever.
+	 * @property {int} [pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls. The default is 400ms.
+	 * @property {boolean} [asyncPolling=false] @since 1.55 Enable asynchronous polling after success() call. This allows more stable autoWaiter synchronization with event flows originating from within success(). Especially useful to stabilize synchronization with overflow toolbars. False by default.
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.test.Opa.BaseParameters} sap.ui.test.Opa.Config
+	 * @description The global configuration of Opa.
+	 * @property {sap.ui.test.Opa} [arrangements] A new Opa instance
+	 * @property {sap.ui.test.Opa} [actions] A new Opa instance
+	 * @property {sap.ui.test.Opa} [assertions] A new Opa instance
+	 * @property {int} [executionDelay] The value is a number representing milliseconds. The default values are 0 or 50 (depending on the browser).
+	 * The executionDelay will slow down the execution of every single waitFor statement to be delayed by the number of milliseconds.
+	 * This does not effect the polling interval it just adds an initial pause.
+	 * Use this parameter to slow down OPA when you want to watch your test during development or checking the UI of your app.
+	 * It is not recommended to use this parameter in any automated test executions.
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.test.Opa.BaseParameters} sap.ui.test.Opa.WaitForOptions
+	 * @description Configuration parameters for an individual {@link sap.ui.test.Opa#waitFor} call.
+	 * @property {function(any):boolean} [check] Will get invoked in every polling interval.
+	 * If it returns true, the check is successful and the polling will stop.
+	 * The first parameter passed into the function is the same value that gets passed to the success function.
+	 * Returning something other than boolean in the check will not change the first parameter of success.
+	 * @property {function} [success] Will get invoked after the check function returns true.
+	 * If there is no check function defined, it will be directly invoked.
+	 * waitFor statements added in the success handler will be executed before previously added waitFor statements.
+	 * @property {string} [errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
+	 * Currently the only adapter for Opa is QUnit.
+	 * This message is displayed there if Opa has reached its timeout but QUnit has not yet reached it.
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.test.Opa} sap.ui.test.Opa.Chain
+	 * @description Used as return value of the {@link sap.ui.test.Opa#waitFor} to assist chaining
+	 * @property {sap.ui.test.Opa} and A reference to the same <code>sap.ui.test.Opa</code> instance that can be used for chaining statements
+	 * @public
+	 */
+
+	/**
 	 * The global configuration of Opa.
-	 * All of the global values can be overwritten in an individual <code>waitFor</code> call.
-	 * The default values are:
+	 * The subset of the global values defined in {@link sap.ui.test.Opa.BaseParameters}.can be overwritten in an individual <code>waitFor</code> call.
+	 * The default values for the global configuration are:
 	 * <ul>
 	 * 		<li>arrangements: A new Opa instance</li>
 	 * 		<li>actions: A new Opa instance</li>
@@ -225,6 +272,7 @@ sap.ui.define([
 	 * 		<li>asyncPolling: false</li>
 	 * </ul>
 	 * You can either directly manipulate the config, or extend it using {@link sap.ui.test.Opa.extendConfig}.
+	 * @type sap.ui.test.Opa.Config
 	 * @public
 	 */
 	Opa.config = {};
@@ -290,7 +338,7 @@ sap.ui.define([
 	 * @since 1.48 All config parameters could be overwritten from URL. Should be prefixed with 'opa'
 	 * and have uppercase first character. Like 'opaExecutionDelay=1000' will overwrite 'executionDelay'
 	 *
-	 * @param {object} options The values to be added to the existing config
+	 * @param {sap.ui.test.Opa.Config} options The values to be added to the existing config
 	 * @public
 	 */
 	Opa.extendConfig = function (oOptions) {
@@ -385,7 +433,7 @@ sap.ui.define([
 	 * Gives access to a singleton object you can save values in.
 	 * Same as {@link sap.ui.test.Opa#getContext}
 	 * @since 1.29.0
-	 * @returns {object} the context object
+	 * @returns {Object<string,any>} the context object
 	 * @public
 	 * @function
 	 */
@@ -507,23 +555,8 @@ sap.ui.define([
 		 *
 		 *
 		 * @public
-		 * @param {object} options These contain check, success and error functions
-		 * @param {int} [options.timeout] default: 15 - (seconds) Specifies how long the waitFor function polls before it fails.O means it will wait forever.
-		 * @param {int} [options.debugTimeout] @since 1.47 default: 0 - (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
-		 * @param {int} [options.pollingInterval] default: 400 - (milliseconds) Specifies how often the waitFor function polls.
-		 * @param {boolean} [options.asyncPolling] @since 1.55 default: false Enable asynchronous polling after success() call. This allows more stable autoWaiter synchronization with event flows originating from within success(). Especially usefull to stabilize synchronization with overflow toolbars.
-		 * @param {function} [options.check] Will get invoked in every polling interval.
-		 * If it returns true, the check is successful and the polling will stop.
-		 * The first parameter passed into the function is the same value that gets passed to the success function.
-		 * Returning something other than boolean in the check will not change the first parameter of success.
-		 * @param {function} [options.success] Will get invoked after the check function returns true.
-		 * If there is no check function defined, it will be directly invoked.
-		 * waitFor statements added in the success handler will be executed before previously added waitFor statements.
-		 * @param {string} [options.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
-		 * Currently the only adapter for Opa is QUnit.
-		 * This message is displayed there if Opa has reached its timeout but QUnit has not yet reached it.
-		 *
-		 * @returns {object} an object extending a jQuery promise.
+		 * @param {sap.ui.test.Opa.WaitForOptions} options configuration options
+		 * @returns {sap.ui.test.Opa.Chain} an object extending a jQuery promise.
 		 * The object is essentially a jQuery promise with an additional "and" method that can be used for chaining waitFor statements.
 		 * The promise is resolved when the waitFor completes successfully.
 		 * The promise is rejected with the options object, if an error occurs. In this case, options.errorMessage will contain a detailed error message containing the stack trace and Opa logs.

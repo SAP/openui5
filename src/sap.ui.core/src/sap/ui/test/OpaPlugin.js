@@ -51,7 +51,7 @@ sap.ui.define([
 			 *
 			 * @param {Function} [fnConstructorType] the control type, e.g: sap.m.CheckBox
 			 * @param {string} [sControlType] optional control type name, e.g: "sap.m.CheckBox"
-			 * @returns {Array} an array of the found controls (can be empty)
+			 * @returns {Array<sap.ui.core.Element>} an array of the found controls (can be empty)
 			 * @public
 			 */
 			getAllControls : function (fnConstructorType, sControlType) {
@@ -129,8 +129,13 @@ sap.ui.define([
 			 * eg : { viewName : "bar", viewNamespace : "baz." } will return all the Controls in the view with the name baz.bar<br/>
 			 * eg : { viewId : "viewBar" } will return all the controls inside the view with the ID viewBar<br/>
 			 *
-			 * @param {object} oOptions can contain a viewName, viewNamespace, viewId, fragmentId, id and controlType properties.
-			 * oOptions.id can be string, array or regular expression
+			 * @param {object} options can contain a viewName, viewNamespace, viewId, fragmentId, id and controlType properties.
+			 * @param {string} [options.viewName]
+			 * @param {string} [options.viewNamespace]
+			 * @param {string} [options.viewId]
+			 * @param {string} [options.fragmentId]
+			 * @param {string|RegExp|Array<string|RegExp>} [options.id]
+			 * @param {function} [options.controlType]
 			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]|null}
 			 * If oOptions.id is a string, will return the control with such an ID or null.<br/>
 			 * If the view is not found or no control matches the given criteria, will return an empty array <br/>
