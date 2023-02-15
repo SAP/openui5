@@ -2220,7 +2220,7 @@ sap.ui.define([
 	 * @param {object} [mParameters] Map which contains additional parameters for the binding
 	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
 	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
-	 * @param {boolean} [mParameters.preliminaryContext]
+	 * @param {boolean} [mParameters.createPreliminaryContext]
 	 *   Whether a preliminary context will be created. When set to <code>true</code>, the model
 	 *   can bundle the OData calls for dependent bindings into fewer $batch requests. For more
 	 *   information, see
