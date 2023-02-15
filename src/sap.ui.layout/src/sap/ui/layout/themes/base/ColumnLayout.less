@@ -148,6 +148,8 @@ html.sap-phone .sapUiFormCL > .sapUiFormCLContent > .sapUiFormCLContainer:not(:l
 	width: 100%; /* to use the whole column */
 	display: inline-block; /* otherwise it wraps inside element -> label in one column, field in another */
 	font-size: @sapUiFontSize; /* restore default font size */
+	margin-block: initial; // to remove margin from native <p>
+	margin-inline: initial; // to remove margin from native <p>
 }
 
 .sapUiFormCLContent:after,
