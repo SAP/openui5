@@ -366,7 +366,6 @@ sap.ui.define([
 		assert.deepEqual(oBinding.aKeys, []);
 		assert.strictEqual(oBinding.sCountMode, "~sDefaultCountMode");
 		assert.strictEqual(oBinding.sOperationMode, "~sDefaultOperationMode");
-		assert.strictEqual(oBinding.bCreatePreliminaryContext, "~bPreliminaryContext");
 		assert.strictEqual(oBinding.bUsePreliminaryContext, "~bPreliminaryContext");
 		assert.strictEqual(oBinding.bRefresh, false);
 		assert.strictEqual(oBinding.bNeedsUpdate, false);
