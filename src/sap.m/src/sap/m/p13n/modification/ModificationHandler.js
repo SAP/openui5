@@ -2,9 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/base/Object",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
-], function(BaseObject, JsControlTreeModifier) {
+	"sap/ui/base/Object"
+], function(BaseObject) {
 	"use strict";
 
 	var oModificationHandler;
@@ -20,8 +19,6 @@ sap.ui.define([
 	 */
 	var ModificationHandler = BaseObject.extend("sap.m.p13n.modification.ModificationHandler");
 
-	var mInitialState = new WeakMap();
-
 	/**
 	 * Should implement the appliance of changes
 	 *
@@ -30,48 +27,7 @@ sap.ui.define([
 	 * @returns {Promise} Returns a <code>Promise</code> reflecting change processing
 	 */
 	ModificationHandler.prototype.processChanges = function(aChanges, oModificationPayload){
-
 		var aChangeAppliance = [];
-
-		aChanges.forEach(function(oChange){
-			var oChangeContent = oChange.changeSpecificData.content;
-			var oControl = oChange.selectorElement;
-			var sChangeType = oChange.changeSpecificData.changeType;
-			// var oItem = sap.ui.getCore().byId(oChangeContent.name);
-			// var sTargetAggregation = oChangeContent.targetAggregation;
-			// var oSelector = oChange.selectorElement;
-			// var oContent = oChange.changeSpecificData.content;
-
-			var oTransientChange = {
-				getContent: function() {
-					return oChangeContent;
-				},
-
-				getChangeType: function() {
-					return sChangeType;
-				},
-
-				getControl: function() {
-					return oControl;
-				},
-
-				setRevertData: function() {
-				}
-			};
-
-			var oPromise = new Promise(function(resolve){
-				sap.ui.require(["sap/m/flexibility/EngineFlex"], function(EngineFlex){
-					var pAppliance = EngineFlex[sChangeType].changeHandler.applyChange(oTransientChange, oControl, {
-						modifier: JsControlTreeModifier
-					});
-
-					resolve(pAppliance);
-				});
-			});
-
-			aChangeAppliance.push(oPromise);
-		});
-
 		return Promise.all(aChangeAppliance);
 	};
 
@@ -101,20 +57,17 @@ sap.ui.define([
 	 * @returns {Promise} Returns a <code>Promise</code> reflecting the reset execution
 	 */
 	ModificationHandler.prototype.reset = function(mPropertyBag, oModificationPayload) {
-		var oControl = mPropertyBag.selector;
-		return sap.m.p13n.Engine.getInstance().applyState(oControl, mInitialState.get(oControl), true);
+		return Promise.resolve();
 	};
 
+	/**
+	 * One time operation after <code>Engine</code> registry initialization.
+	 *
+	 * @param {sap.ui.core.Control} oControl The registered control instance
+	 * @returns {Promise} Returns a <code>Promise</code> to initialize necessary persistence dependencies
+	 */
 	ModificationHandler.prototype.initialize = function(oControl) {
-		var pInitial, oInitialState;
-
-		pInitial = sap.m.p13n.Engine.getInstance().retrieveState(oControl)
-		.then(function(oRetrievedState){
-			oInitialState = oRetrievedState;
-			mInitialState.set(oControl, oInitialState);
-		});
-
-		return pInitial;
+		return Promise.resolve();
 	};
 
 	/**

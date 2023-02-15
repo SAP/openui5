@@ -23,7 +23,7 @@ sap.ui.define([
 			function(oError) {
 				return (
 					oError instanceof Error &&
-					oError.message === "DefaultProviderRegistry: This class is a singleton and should not be used without an AdaptationProvider. Please use 'sap.m.p13n.Engine.getInstance().defaultProviderRegistry' instead"
+					oError.message === "DefaultProviderRegistry: This class is a singleton and should not be used without an AdaptationProvider. Please use 'Engine.getInstance().defaultProviderRegistry' instead"
 				);
 			},
 			"calling the constructor subsequently throws an error."
