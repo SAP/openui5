@@ -56,11 +56,21 @@ sap.ui.define([
 		idsToBeChecked : ["myPanel", "Button1", "localTableId"]
 	};
 
+	var fnWaitForNestedViews = function(oView) {
+		var pNestedView1 = oView.byId("MyJSView").loaded();
+		var pNestedView2 = oView.byId("MyXMLView").loaded();
+		var pNestedView3 = oView.byId("MyHTMLView").loaded();
+
+		return Promise.all([pNestedView1, pNestedView2, pNestedView3]).then(function () {
+			return oView;
+		});
+	};
+
 	// run the full testset for a view loaded from a file
 	testsuite(oConfig, "XMLView creation loading from file", function() {
 		return XMLView.create({
 			viewName: "example.mvc.test"
-		});
+		}).then(fnWaitForNestedViews);
 	});
 
 	// run the full testset for a view created from a string
@@ -68,7 +78,7 @@ sap.ui.define([
 		// let the XMLView parse the XML string
 		return XMLView.create({
 			definition: sViewXML
-		});
+		}).then(fnWaitForNestedViews);
 	});
 
 	// run the full testset for a view created from an XML document
@@ -76,7 +86,7 @@ sap.ui.define([
 		// parse the XML string and pass the XML document
 		return XMLView.create({
 			definition: XMLHelper.parse(sViewXML)
-		});
+		}).then(fnWaitForNestedViews);
 	});
 
 	// run the full testset for a view created from the root element of an XML document
@@ -84,7 +94,7 @@ sap.ui.define([
 		// parse the XML string and pass the XML root element
 		return XMLView.create({
 			xmlNode: XMLHelper.parse(sViewXML).documentElement
-		});
+		}).then(fnWaitForNestedViews);
 	});
 
 	// run the full testset for a view created via the generic factory method
@@ -93,7 +103,7 @@ sap.ui.define([
 			type: ViewType.XML,
 			viewName: "example.mvc.test",
 			viewData: {test:"testdata"}
-		});
+		}).then(fnWaitForNestedViews);
 	}, /* bCheckViewData = */ true);
 
 
