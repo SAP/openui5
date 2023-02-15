@@ -1019,7 +1019,7 @@ sap.ui.define([
 			var sPageId = oPage.getId();
 
 			if (!this._isPageDisplayed(this._getPageIndex(sPageId))) {
-				this.getFocusDomRef().focus();
+				this.getFocusDomRef().focus({ preventScroll: true });
 			} else if (sPageId !== this.getActivePage()) {
 				this._oMobifyCarousel.setShouldFireEvent(true);
 				this._changeActivePage(this._getPageIndex(sPageId));
