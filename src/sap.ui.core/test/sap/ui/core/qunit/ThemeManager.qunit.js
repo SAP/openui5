@@ -169,6 +169,46 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Check link tags modified by defineProperty (e.g. AppCacheBuster) are handled correctly", function (assert) {
+		assert.expect(2);
+
+		var oDescriptor = Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, "href");
+		var oCheckThemeSpy = sinon.spy(ThemeManager, "checkThemeChanged");
+		var pThemeChanged;
+
+		Object.defineProperty(HTMLLinkElement.prototype, "href", {
+			get: oDescriptor.get,
+			set: function(val) {
+				if (!val.endsWith("-qunit")) {
+					val = val + "-qunit";
+				}
+				oDescriptor.set.call(this, val);
+			}
+		});
+
+		pThemeChanged = themeChanged().then(function () {
+			ThemeManager.includeLibraryTheme("sap.ui.fakeLib");
+
+			assert.ok(oCheckThemeSpy.notCalled, "checkThemeChanged was not called because no link tag changed.");
+
+			Object.defineProperty(HTMLLinkElement.prototype, "href", oDescriptor);
+			oCheckThemeSpy.restore();
+		});
+		// setTimeout is only relevant in single test execution
+		// Core is not attached to themeChanged event of ThemeManager in case the core did not call _getThemeManager yet
+		// but the ThemeManager was already loaded from somewhere else. Because attachEvent("themeChanged") by core is done within
+		// an (immediately resolved) promise, the handler will be attached async within the next stack execution
+		// Because the library loaded by includeLibraryTheme does not exist the themeChanged event is fired sync
+		setTimeout(function () {
+			ThemeManager.includeLibraryTheme("sap.ui.fakeLib");
+
+			assert.ok(oCheckThemeSpy.calledOnce, "checkThemeChanged was called once because a was modified by '-qunit' suffix.");
+			oCheckThemeSpy.reset();
+		});
+
+		return pThemeChanged;
+	});
+
 
 	QUnit.module("Library Loading");
 

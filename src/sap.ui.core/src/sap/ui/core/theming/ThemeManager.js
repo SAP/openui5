@@ -408,8 +408,17 @@ sap.ui.define([
 			var sLinkId = "sap-ui-theme-" + sLibId;
 			var sOldCssUri = document.getElementById(sLinkId) && document.getElementById(sLinkId).href;
 			var sCssBasePath = new URL(this._getThemePath(sLibName, this.sTheme), document.baseURI).toString();
-			var sCssPathAndName = sCssBasePath + sLibFileName + ".css" + (sQuery ? sQuery : "");
-			var sCssVariablesPathAndName = sCssBasePath + "css_variables.css" + (sQuery ? sQuery : "");
+			// Create a link tag and set the URL as href in order to ensure AppCacheBuster handling.
+			// AppCacheBuster ID is added to the href by defineProperty for the "href" property of
+			// HTMLLinkElement in AppCacheBuster.js
+			// Note: Considered to use AppCacheBuster.js#convertURL for adding the AppCachebuster ID
+			//       but there would be a dependency to AppCacheBuster as trade-off
+			var oTmpLink = document.createElement("link");
+			oTmpLink.href = sCssBasePath + sLibFileName + ".css" + (sQuery ? sQuery : "");
+			var sCssPathAndName = oTmpLink.href;
+			oTmpLink.href = sCssBasePath + "css_variables.css" + (sQuery ? sQuery : "");
+			var sCssVariablesPathAndName = oTmpLink.href;
+
 			// includeStylesheet takes care of adding link tag for library only once but we need to take care to skip
 			// checkThemeChanged in case the link tag does not change in order to avoid fireThemeChanged
 			if (!(sCssPathAndName === sOldCssUri || sCssVariablesPathAndName === sOldCssUri)) {
