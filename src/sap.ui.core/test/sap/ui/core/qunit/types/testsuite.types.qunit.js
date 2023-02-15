@@ -39,6 +39,12 @@ sap.ui.define(function () {
 				},
 				title: "QUnit Page for sap/ui/base/DataType"
 			},
+			Date: {
+				coverage : {
+					only : "sap/ui/model/type/Date"
+				},
+				title: "QUnit Page for sap/ui/model/type/Date"
+			},
 			DateFormat: {
 				coverage : {
 					only : "sap/ui/core/format/DateFormat"
@@ -101,7 +107,7 @@ sap.ui.define(function () {
 			},
 			Types: {
 				coverage : {
-					only : "[sap/ui/model/type/Boolean,sap/ui/model/type/String,sap/ui/model/type/Integer,sap/ui/model/type/Float,sap/ui/model/type/Currency,sap/ui/model/type/Unit,sap/ui/model/type/Date,sap/ui/model/type/Time,sap/ui/model/type/DateTime,sap/ui/model/type/TimeInverval,sap/ui/model/type/DateTimeInterval,sap/ui/model/type/FileSize]"
+					only : "[sap/ui/model/type/Boolean,sap/ui/model/type/String,sap/ui/model/type/Integer,sap/ui/model/type/Float,sap/ui/model/type/Currency,sap/ui/model/type/Unit,sap/ui/model/type/Time,sap/ui/model/type/DateTime,sap/ui/model/type/TimeInverval,sap/ui/model/type/DateTimeInterval,sap/ui/model/type/FileSize]"
 				},
 				title: "QUnit Page for sap/ui/model/type/*"
 			},

@@ -50,6 +50,7 @@ sap.ui.require([
 		// "sap/ui/core/qunit/types/NumberFormat.qunit",
 		// "sap/ui/core/qunit/types/NumberFormatCurrencies.qunit",
 		// "sap/ui/core/qunit/types/NumberFormatCurrenciesTrailing.qunit",
+		"sap/ui/core/qunit/types/Date.qunit",
 		"sap/ui/core/qunit/types/DateFormatTimezones.qunit",
 		"sap/ui/core/qunit/types/DateInterval.qunit",
 		"sap/ui/core/qunit/types/FileSizeFormat.qunit",
