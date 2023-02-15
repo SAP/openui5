@@ -4,6 +4,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
+	"sap/ui/core/Core",
+	"sap/ui/events/KeyCodes",
 	"sap/m/SplitApp",
 	"sap/m/Page",
 	"sap/m/Button",
@@ -16,6 +18,8 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	Device,
+        oCore,
+	KeyCodes,
 	SplitApp,
 	Page,
 	Button,
@@ -112,24 +116,33 @@ sap.ui.define([
 			mode: "PopoverMode"
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
+		// assert
 		assert.equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
 
-		oSplitApp._oPopOver.attachAfterOpen(function(){
-			assert.ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
-			assert.ok(jQuery.sap.byId("splitapp-Popover").length, "Popover should be rendered.");
+		// act
+		var oMasterButton = oSplitApp._oShowMasterBtn;
+		qutils.triggerKeydown(oMasterButton.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeyup(oMasterButton.getDomRef(), KeyCodes.ENTER);
+
+		setTimeout(function() {
+			// assert
+			assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
+			assert.ok(jQuery("#splitapp-Popover").length, "Popover should be rendered.");
 			assert.ok(oSplitApp.isMasterShown(), "Master area is shown");
 			assert.equal(oSplitApp._oPopOver.getContent().length,1, "Popover content should not be empty.");
-			assert.ok(jQuery.sap.byId("splitapp-MasterBtn").length, "Master Button should be rendered");
-			assert.ok(jQuery.sap.byId("splitapp-MasterBtn").is(":visible"), "Master Button is shown");
-			assert.ok(jQuery.sap.byId("detail").length, "Detail page should be rendered  initially.");
+			assert.ok(jQuery("#splitapp-MasterBtn").length, "Master Button should be rendered");
+			assert.ok(jQuery("#splitapp-MasterBtn").is(":visible"), "Master Button is shown");
+			assert.ok(jQuery("#detail").length, "Detail page should be rendered  initially.");
 			assert.equal(oSplitApp.$().children().length,2, "SplitApp should only contain the detail nav container.");
 			assert.equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp-Popover", "Parent of Master Nav container page should be Popover.");
+
+			//clean up
 			oSplitApp.destroy();
 			done();
-		});
-		oSplitApp._oPopOver.openBy(oSplitApp._oShowMasterBtn);
+		}, 500);
+
 	});
 
 	QUnit.test("ShowHideMode_portrait", function(assert){
