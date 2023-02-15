@@ -782,6 +782,9 @@ sap.ui.define([
 				} else {
 					checkSingleRequest(oRequest, fnSuccess, fnError);
 				}
+				return { // request handle
+					abort : fnError.bind(that.oModel, ODataModel._createAbortedError())
+				};
 			}
 
 			/**
@@ -864,7 +867,7 @@ sap.ui.define([
 
 			/**
 			 * Checks that the expected request arrived and handles its response. If the status of
-			 * the expected request is less than 300 the given success handler is called, otherwise
+			 * the expected request is 2xx, the given success handler is called, otherwise
 			 * the given error handler is called. This function can also be used to check requests
 			 * within a $batch request. In this case the resulting promise is resolved with the
 			 * return value of the given success or error handler.
@@ -18830,6 +18833,87 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}), FilterType.Application);
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: While the read for the object page root entity including an $expand on a navigation property is
+	// underway, a list binding for the navigation property is created. The object page's context binding is
+	// set to "create preliminary context".
+	// Case from BCP 2280184236: If the list binding is set to *not use* preliminary contexts, there must be no
+	// additional request on the navigation property. Also check that the updated flag of the object page's
+	// context is not set, as this caused the issue in the incident.
+	// TODO, Additional case: If the list binding is set to *use* preliminary contexts, the additional request on
+	//   the navigation property may be sent. When this request is aborted, the binding context for the root
+	//   entity must however not be marked as "updated", as this may lead to an endless loop of read requests
+	//   for bindings dependent on this context.
+	//
+	// BCP: 2280184236
+	QUnit.test("No request from ODLB with preliminary context and usePreliminaryContext=false", function (assert) {
+		var oObjectPage, fnResolveObjectPageRead,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="objectPage">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<t:Table id="table" visibleRowCount="2">\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oObjectPage = that.oView.byId("objectPage");
+
+			that.expectHeadRequest()
+				.expectRequest({
+					batchNo : 1,
+					requestUri : "SalesOrderSet('1')?$expand=ToLineItems&$select=SalesOrderID"
+				}, new Promise(function (resolve) { fnResolveObjectPageRead = resolve; }));
+
+			// code under test: bind object page
+			// in BCP scenario: triggered by FE on navigation from entity information contained in URL hash
+			oObjectPage.bindObject({path : "/SalesOrderSet('1')",
+				parameters : {createPreliminaryContext : true, expand : "ToLineItems", select : "SalesOrderID"}});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// no request expected
+
+			// code under test: bind dependent table *while the read for the entity of its context is still underway*
+			// in BCP scenario: triggered by SmartMultiInput when creating "internal" control
+			that.oView.byId("table").bindRows({
+				path : "ToLineItems",
+				parameters : {usePreliminaryContext : false, select : "ItemPosition"}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("id", "1")
+				.expectValue("itemPosition", ["10", ""]);
+
+			// code under test: read for root-entity with $expand is responded to by server
+			fnResolveObjectPageRead({
+				data : {
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1",
+					ToLineItems : {
+						results : [{
+							__metadata : {
+								uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+							},
+							SalesOrderID : "1",
+							ItemPosition : "10"
+						}]
+					}
+				},
+				statusCode : 200
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// if context is still "updated", further dependent bindings will continuously send read requests
+			// as they assume a change: an "endless loop of $batch"
+			assert.strictEqual(oObjectPage.getObjectBinding().getBoundContext().isUpdated(), false);
 		});
 	});
 });
