@@ -1575,9 +1575,6 @@ sap.ui.define([
 			var oDummyColumn = this.getDomRef("dummycolhdr");
 
 			if (oDummyColumn) {
-				// This complexity is required because of Chrome's zoom math.
-				var oTableElement = this.getDomRef("header");
-				var iTableWidth = oTableElement.clientWidth;
 				var iColumnsWidth = this.getColumns().reduce(function(iColumnsWidth, oColumn) {
 					var oDomRef = oColumn.getDomRef();
 					if (oDomRef && oColumn.getIndex() >= this.getComputedFixedColumnCount()) {
@@ -1585,10 +1582,7 @@ sap.ui.define([
 					}
 					return iColumnsWidth;
 				}.bind(this), 0);
-				var bDummyColumnHasWidth = iTableWidth > iColumnsWidth + 1;
-				// when the column widths contain subpixels, iTableWidth might be higher than iColumnsWidth
-				// for just a fraction of a pixel even though no dummy column is needed. To avoid left positioning
-				// of the row actions instead of absolute right, the calculation is adjusted with +1 pixel.
+				var bDummyColumnHasWidth = oDummyColumn.clientWidth > 0;
 
 				if (!bHasFlexibleRowActions && bDummyColumnHasWidth) {
 					var iRowActionPos = iColumnsWidth + oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth;
