@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/m/Text",
+	"sap/m/Dialog",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/m/ResponsivePopover",
@@ -26,6 +27,7 @@ sap.ui.define([
 	Page,
 	Button,
 	Text,
+	Dialog,
 	KeyCodes,
 	Device,
 	ResponsivePopover,
@@ -2135,4 +2137,48 @@ sap.ui.define([
 		oCarousel.destroy();
 	});
 
+	QUnit.module("Carousel in a Dialog", {
+		beforeEach: function () {
+			this.oDialog = new Dialog({
+				content: new Carousel({
+					activePage: "page3",
+					pages: [
+						new Page("page1", {
+							content: new Button({text: "Button"})
+						}),
+						new Page("page2", {
+							content: new Button({text: "Button"})
+						}),
+						new Page("page3"),
+						new Page("page4"),
+						new Page("page5"),
+						new Page("page6"),
+						new Page("page7"),
+						new Page("page8"),
+						new Page("page9")
+					]
+				})
+			});
+		},
+		afterEach: function () {
+			this.oDialog.destroy();
+		}
+	});
+
+	QUnit.test("'pageChanged' event", function (assert) {
+		var done = assert.async(),
+			oCarousel = this.oDialog.getContent()[0],
+			fnPageChangedSpy = sinon.spy(oCarousel, 'firePageChanged');
+
+		this.oDialog.attachAfterOpen(function () {
+			this.oDialog._setInitialFocus();
+			assert.ok(fnPageChangedSpy.notCalled, "pageChanged event is not fired");
+			fnPageChangedSpy.restore();
+			done();
+
+		}.bind(this));
+
+		this.oDialog.open();
+		this.clock.tick(3000);
+	});
 });
