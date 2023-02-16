@@ -204,8 +204,11 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			oRm.attr("tabindex", "-1");
 			oRm.attr("aria-hidden", "true");
 
-			//The hidden field is not shown to the user, but the data is sent when the form is submitted.
-			oRm.attr("type", "hidden");
+			if (!oSelect.getEnabled()) {
+				oRm.attr("disabled", "disabled");
+			} else if (!oSelect.getEditable()) {
+				oRm.attr("readonly", "readonly");
+			}
 
 			// Classes
 			oRm.class("sapUiPseudoInvisibleText");
