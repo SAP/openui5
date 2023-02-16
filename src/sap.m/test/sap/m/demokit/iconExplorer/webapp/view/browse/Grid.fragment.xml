@@ -39,14 +39,23 @@
 					textAlign="Center"
 					width="6rem"
 					class="sapUiTinyMarginTop"/>
-				<RatingIndicator
-					iconUnselected="sap-icon://unfavorite"
-					value="{
-						path: 'name',
-						formatter: '.formatter.favoriteRating'
-					}"
-					maxValue="1"
-					change=".onToggleFavorite"/>
+				<HBox>
+					<RatingIndicator
+						iconUnselected="sap-icon://unfavorite"
+						value="{
+							path: 'name',
+							formatter: '.formatter.favoriteRating'
+						}"
+						maxValue="1"
+						change=".onToggleFavorite"/>
+					<Button
+						icon="sap-icon://copy"
+						type="Transparent"
+						tooltip="{i18n>previewCopyIconToClipboard}"
+						press=".handleCopyToClipboardClick"
+						class="sapUiTinyMarginBegin"
+						ariaLabelledBy="labelCopyButton"/>
+				</HBox>
 				</VBox>
 		</f:GridListItem>
 	</f:GridList>
