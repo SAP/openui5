@@ -231,6 +231,9 @@ sap.ui.define([
 			sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves(oResult);
 			return this.oFlexController.saveAll(oComponent, undefined, nParentVersion !== false).then(function() {
 				assert.equal(oVersionsStub.callCount, nCallCount);
+				if (nParentVersion === Version.Number.Draft && vResponse) {
+					assert.equal(oVersionsStub.args[0][0].draftFilenames.length, vResponse.length);
+				}
 			});
 		}
 
@@ -251,11 +254,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when saveAll is called with draft and a change was saved", function(assert) {
-			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component"}], Version.Number.Draft, 1);
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component", fileName: "draftname"}], Version.Number.Draft, 1);
 		});
 
 		QUnit.test("when saveAll is called with draft and multiple changes were saved", function(assert) {
-			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component"}, {}], Version.Number.Draft, 1);
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component", fileName: "draftname"}, {fileName: "secDraftname"}], Version.Number.Draft, 1);
 		});
 
 		QUnit.test("when saveSequenceOfDirtyChanges is called with an array of changes", function(assert) {

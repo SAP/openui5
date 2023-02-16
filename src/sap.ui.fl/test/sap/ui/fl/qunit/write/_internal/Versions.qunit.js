@@ -1008,7 +1008,13 @@ sap.ui.define([
 				reference: sReference,
 				nonNormalizedReference: sReference,
 				appComponent: this.oAppComponent,
-				version: '3'
+				version: '3',
+				draftFilenames: ["filename1", "filename2"]
+			};
+
+			var oDraftVersion = {
+				version: Version.Number.Draft,
+				filenames: ["old draftfilename"]
 			};
 
 			var oFirstVersion = {
@@ -1019,6 +1025,7 @@ sap.ui.define([
 			};
 
 			var aReturnedVersions = [
+				oDraftVersion,
 				oFirstVersion
 			];
 
@@ -1029,11 +1036,13 @@ sap.ui.define([
 				.then(Versions.getVersionsModel.bind(Versions, mPropertyBag))
 				.then(function (oResponse) {
 					var aVersions = oResponse.getProperty("/versions");
+					var aDraftFilenames = oResponse.getProperty("/draftFilenames");
 					assert.deepEqual(aVersions.length, 2, "a new draft is added to the version model");
 					assert.deepEqual(aVersions[0].type, "draft", "the latest version type is draft");
 					assert.deepEqual(oResponse.getProperty("/versioningEnabled"), true);
 					assert.deepEqual(oResponse.getProperty("/dirtyChanges"), true, "dirty changes exits");
 					assert.deepEqual(oResponse.getProperty("/backendDraft"), false, "backend draft does not exists");
+					assert.equal(aDraftFilenames.length, 3, "add dirty change filenames into draft filename list");
 					done();
 				});
 		});

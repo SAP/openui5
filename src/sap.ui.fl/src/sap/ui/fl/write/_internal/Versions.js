@@ -248,12 +248,15 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested (this reference must not contain the ".Component" suffix)
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {boolean} [mPropertyBag.contextBasedAdaptation] - Parameter that indicates whether or not a new backend draft was triggered via contextBasedAdaptationsAPI
+	 * @param {array} [mPropertyBag.draftFilenames] - Array with filesnames which was saved as draft
 	 */
 	Versions.onAllChangesSaved = function (mPropertyBag) {
 		mPropertyBag.reference = Utils.normalizeReference(mPropertyBag.reference);
 		var oModel = Versions.getVersionsModel(mPropertyBag);
 		var bVersioningEnabled = oModel.getProperty("/versioningEnabled");
 		var bDirtyChanges = oModel.getProperty("/dirtyChanges");
+		var aDraftFilenames = oModel.getProperty("/draftFilenames");
+		oModel.setProperty("/draftFilenames", aDraftFilenames.concat(mPropertyBag.draftFilenames));
 		oModel.setProperty("/dirtyChanges", true);
 		oModel.setProperty("/backendDraft", bVersioningEnabled && bDirtyChanges || !!mPropertyBag.contextBasedAdaptation);
 		oModel.updateDraftVersion();

@@ -114,7 +114,8 @@ sap.ui.define([
 				if (sParentVersion) {
 					Versions.onAllChangesSaved({
 						reference: result.response.reference,
-						layer: result.response.layer
+						layer: result.response.layer,
+						draftFilenames: result.response.fileName
 					});
 				}
 			} else {
@@ -793,7 +794,8 @@ sap.ui.define([
 					if (sParentVersion) {
 						Versions.onAllChangesSaved({
 							reference: result.response[0].reference,
-							layer: result.response[0].layer
+							layer: result.response[0].layer,
+							draftFilenames: [result.response[0].fileName]
 						});
 					}
 				} else {
