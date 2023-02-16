@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadModules, Log) {
+sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDelegate"], function (loadModules, Log, BaseDelegate) {
 	"use strict";
 
 	var _validateDelegateConfig = function (oConfig) {
@@ -160,7 +160,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 	 * Returns the <code>typeUtil</code> made available by a delegate module.
 	 *
 	 * @protected
-	 * @returns {sap.ui.mdc.util.TypeUtil} <code>typeUtil</code> made available by the delegate module
+	 * @returns {sap.ui.mdc.ITypeUtil} <code>TypeUtil</code> object
 	 * @throws Throws an error if the delegate module is not available
 	 */
 	DelegateMixin.getTypeUtil = function () {
@@ -168,7 +168,13 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 			if (!this._oDelegate) {
 				throw new Error("A delegate instance providing typeUtil is not (yet) available.");
 			}
-			this._oTypeUtil = this._oDelegate.getTypeUtil && this._oDelegate.getTypeUtil(this._oPayload);
+
+			var bCustomTypeUtil = this._oDelegate.getTypeUtil && this._oDelegate.getTypeUtil !== BaseDelegate.getTypeUtil;
+			if (bCustomTypeUtil) {
+				Log.warning("DelegateMixin: Delegate.getTypeUtil is final, please implement Delegate.getTypeMap instead.");
+			}
+
+			this._oTypeUtil = this._oDelegate.getTypeUtil(this._oPayload);
 		}
 
 		return this._oTypeUtil;

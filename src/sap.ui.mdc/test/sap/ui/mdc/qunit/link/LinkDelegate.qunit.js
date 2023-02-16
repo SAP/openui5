@@ -1,13 +1,11 @@
 /*globals sinon*/
 sap.ui.define([
     "sap/ui/thirdparty/qunit-2",
-    "sap/ui/mdc/BaseDelegate",
-    "sap/ui/mdc/util/TypeUtil",
     "sap/ui/mdc/LinkDelegate",
     "sap/ui/mdc/link/LinkItem",
     "sap/ui/mdc/Link",
     "sap/ui/test/actions/Press"
-], function(QUnit, BaseDelegate, TypeUtil, LinkDelegate, LinkItem, Link, Press) {
+], function(QUnit, LinkDelegate, LinkItem, Link, Press) {
     "use strict";
 
     var aLinkItems = [
@@ -17,10 +15,6 @@ sap.ui.define([
             initiallyVisible: true
         })
     ];
-
-    QUnit.test("BaseDelegate", function(assert) {
-        assert.deepEqual(BaseDelegate.getTypeUtil(), TypeUtil, "BaseDelegate returns correct TypeUtil");
-    });
 
     QUnit.test("Default values for delegate calls", function(assert) {
         var done = assert.async(5);

@@ -8,10 +8,11 @@
 
 sap.ui.define([
 	"sap/ui/mdc/field/FieldBaseDelegate",
-	"delegates/odata/v4/TypeUtil"
+	'sap/ui/mdc/odata/v4/TypeMap'
+
 ], function(
 		FieldBaseDelegate,
-		TypeUtil
+		ODataV4TypeMap
 ) {
 	"use strict";
 
@@ -31,6 +32,10 @@ sap.ui.define([
 	 * @alias module:delegates/odata/v4/FieldBaseDelegate
 	 */
 	var ODataFieldBaseDelegate = Object.assign({}, FieldBaseDelegate);
+
+	ODataFieldBaseDelegate.getTypeMap = function (oPayload) {
+		return ODataV4TypeMap;
+	};
 
 	ODataFieldBaseDelegate.initializeTypeFromBinding = function(oPayload, oType, vValue) {
 
@@ -73,10 +78,6 @@ sap.ui.define([
 
 		return {name: "delegates/odata/v4/ValueHelpDelegate", payload: {}};
 
-	};
-
-	ODataFieldBaseDelegate.getTypeUtil = function (oPayload) {
-		return TypeUtil;
 	};
 
 	return ODataFieldBaseDelegate;

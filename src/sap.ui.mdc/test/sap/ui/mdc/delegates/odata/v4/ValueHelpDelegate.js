@@ -4,16 +4,17 @@
 
 sap.ui.define([
 	"sap/ui/mdc/ValueHelpDelegate",
-	"delegates/odata/v4/TypeUtil",
 	'sap/base/Log',
 	'sap/ui/model/FilterType',
-	'sap/base/util/deepEqual'
+	'sap/base/util/deepEqual',
+	'sap/ui/mdc/odata/v4/TypeMap'
+
 ], function(
 	ValueHelpDelegate,
-	TypeUtil,
 	Log,
 	FilterType,
-	deepEqual
+	deepEqual,
+	ODataV4TypeMap
 ) {
 	"use strict";
 
@@ -32,6 +33,10 @@ sap.ui.define([
 	 * @alias module:delegates/odata/v4/ValueHelpDelegate
 	 */
 	var ODataV4ValueHelpDelegate = Object.assign({}, ValueHelpDelegate);
+
+	ODataV4ValueHelpDelegate.getTypeMap = function (oPayload) {
+		return ODataV4TypeMap;
+	};
 
 	ODataV4ValueHelpDelegate.isSearchSupported = function(oPayload, oContent, oListBinding) {
 		return !!oListBinding.changeParameters;
@@ -77,10 +82,6 @@ sap.ui.define([
 		return oListBinding.requestContexts(0, iRequestedItems).then(function(aContexts) {
 			return aContexts.length === 0;
 		});
-	};
-
-	ODataV4ValueHelpDelegate.getTypeUtil = function (oPayload) {
-		return TypeUtil;
 	};
 
 	return ODataV4ValueHelpDelegate;

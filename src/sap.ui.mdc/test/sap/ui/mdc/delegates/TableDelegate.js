@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/util/FilterUtil",
-	"sap/ui/mdc/util/TypeUtil",
 	"sap/ui/model/Filter",
 	"sap/ui/core/Core"
 ], function(
@@ -17,7 +16,6 @@ sap.ui.define([
 	Column,
 	FilterField,
 	FilterUtil,
-	TypeUtil,
 	Filter,
 	Core
 ) {
@@ -86,10 +84,6 @@ sap.ui.define([
 				});
 			}.bind(this)
 		};
-	};
-
-	TestTableDelegate.getTypeUtil = function(oPayload) {
-		return TypeUtil;
 	};
 
 	return TestTableDelegate;

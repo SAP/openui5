@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/core/format/ListFormat",
-	"sap/ui/base/ManagedObjectObserver"
+	"sap/ui/base/ManagedObjectObserver",
+	'sap/ui/mdc/odata/v4/TypeMap'
 ], function(
 	TableDelegate,
 	V4AnalyticsPropertyHelper,
@@ -25,7 +26,8 @@ sap.ui.define([
 	Core,
 	coreLibrary,
 	ListFormat,
-	ManagedObjectObserver
+	ManagedObjectObserver,
+	ODataV4TypeMap
 ) {
 	"use strict";
 
@@ -50,6 +52,10 @@ sap.ui.define([
 	 * @since 1.85
 	 */
 	var Delegate = Object.assign({}, TableDelegate);
+
+	Delegate.getTypeMap = function (oPayload) {
+		return ODataV4TypeMap;
+	};
 
 	/**
 	 * Gets the model-specific <code>PropertyHelper</code> class to create an instance of.

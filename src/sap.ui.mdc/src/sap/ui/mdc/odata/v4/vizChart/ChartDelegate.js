@@ -17,7 +17,6 @@ sap.ui.define([
     "sap/ui/base/ManagedObjectObserver",
     "sap/ui/mdc/p13n/panels/ChartItemPanel",
     "sap/m/MessageStrip",
-    "sap/ui/mdc/odata/v4/TypeUtil",
     "sap/ui/mdc/FilterBarDelegate",
     "sap/ui/model/Filter",
     "sap/ui/mdc/chart/PropertyHelper",
@@ -38,7 +37,6 @@ sap.ui.define([
     ManagedObjectObserver,
     ChartItemPanel,
     MessageStrip,
-    V4TypeUtil,
     FilterBarDelegate,
     Filter,
     PropertyHelper,
@@ -81,10 +79,6 @@ sap.ui.define([
 
     ChartDelegate._setState = function(oMDCChart, oState) {
         mStateMap.set(oMDCChart, oState);
-    };
-
-    ChartDelegate.getTypeUtil = function() {
-        return V4TypeUtil;
     };
 
     ChartDelegate.getFilterDelegate = function() {

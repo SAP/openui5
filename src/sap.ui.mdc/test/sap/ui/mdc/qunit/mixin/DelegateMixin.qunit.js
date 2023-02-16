@@ -4,11 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/mdc/mixin/DelegateMixin",
-	"sap/ui/mdc/util/PropertyHelper",
 	"sap/ui/base/ManagedObject"
 ], function(
 	DelegateMixin,
-	PropertyHelper,
 	ManagedObject
 ) {
 	"use strict";
@@ -37,7 +35,7 @@ sap.ui.define([
 			var stubbedRequire = sinon.stub(sap.ui, "require").callThrough(); // subsequent calls in loadModules use array signature therefore function normally
 			stubbedRequire.withArgs('sap/ui/mdc/BaseDelegate').returns(undefined);
 			stubbedRequire.withArgs('sap/ui/mdc/odata/BaseDelegate').returns(undefined);
-			stubbedRequire.withArgs('sap/ui/mdc/odata/v4/BaseDelegate').returns(undefined);
+			stubbedRequire.withArgs('sap/ui/mdc/odata/v4/TypeMap').returns(undefined);
 
 			TestClass = ManagedObject.extend("temp", {
 				metadata: {
