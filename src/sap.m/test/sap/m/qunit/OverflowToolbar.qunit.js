@@ -3571,4 +3571,31 @@ sap.ui.define([
 			assert.notEqual(oResultAssociativePopover[sProperty], undefined, "Result object has property: " + sProperty);
 		});
 	});
+
+	QUnit.test("Popover _recalculateMargins method overwrite margin bottom", function (assert) {
+		// Arrange
+		var oFakeObject = {
+				_fWindowHeight: 5,
+				_fPopoverOffsetY: 5,
+				_$parent: {
+					offset: function () {
+						return {top: 5};
+					}
+				}
+			},
+			oOverflowToolbarAssociativePopover = new OverflowToolbarAssociativePopover(),
+			oResultAssociativePopover;
+
+		// mock
+		oOverflowToolbarAssociativePopover._arrowOffset = 18;
+
+		// Act
+		oResultAssociativePopover = oOverflowToolbarAssociativePopover._recalculateMargins(PopoverPlacementType.Top, Object.assign({}, oFakeObject));
+
+		// Assert
+		assert.ok(oResultAssociativePopover._fPopoverMarginBottom, "Margin bottom is calculated");
+
+		//Clean up
+		oOverflowToolbarAssociativePopover.destroy();
+	});
 });
