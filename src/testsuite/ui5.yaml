@@ -2,7 +2,7 @@
 specVersion: "2.0"
 type: application
 metadata:
-  name: testsuite
+  name: openui5-testsuite
   allowSapInternal: true
   copyright: |-
    OpenUI5
