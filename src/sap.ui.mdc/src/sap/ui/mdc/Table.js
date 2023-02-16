@@ -1452,14 +1452,16 @@ sap.ui.define([
 
 			if (this.getAutoBindOnInit()) {
 				var oEngine = this.getEngine();
-
-				if (oEngine.isModificationSupported(this)) {
-					oEngine.waitForChanges(this).then(function() {
+				oEngine.isModificationSupported(this)
+				.then(function(bModificationSupported) {
+					if (bModificationSupported) {
+						oEngine.waitForChanges(this).then(function() {
+							this.rebind();
+						}.bind(this));
+					} else {
 						this.rebind();
-					}.bind(this));
-				} else {
-					this.rebind();
-				}
+					}
+				}.bind(this));
 			}
 
 			this._bFullyInitialized = true;

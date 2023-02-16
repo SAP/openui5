@@ -177,7 +177,6 @@ sap.ui.define([
         this.oFilterBarBase.setBasicSearchField(oFilterField);
 
         this.oFilterBarBase._bPersistValues = true;
-        sinon.stub(this.oFilterBarBase, "_isPersistenceSupported").returns(true);
 
         this.oFilterBarBase._handleConditionModelPropertyChange({ getParameter: function(sParam) {
             if (sParam === "path") {

@@ -4,14 +4,25 @@
 sap.ui.define([
     "./ModificationHandler",
     "sap/m/p13n/FlexUtil",
-    "sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
     "sap/m/p13n/enum/PersistenceMode",
-    "sap/m/p13n/modules/StateHandlerRegistry"
-], function(ModificationHandler, FlexUtil, FlexRuntimeInfoAPI, mode, StateHandlerRegistry) {
+    "sap/ui/core/Core"
+], function(ModificationHandler, FlexUtil, mode, Core) {
 	"use strict";
 
-    var oFlexModificationHandler;
+    var oFlexModificationHandler, pInitialize, pRuntimeAPI;
 
+    var _requireFlexRuntimeAPI = function() {
+        if (!pRuntimeAPI) {
+            pRuntimeAPI = new Promise(function (resolve, reject) {
+                sap.ui.require([
+                    "sap/ui/fl/apply/api/FlexRuntimeInfoAPI"
+                ], function (FlexRuntimeInfoAPI) {
+                    resolve(FlexRuntimeInfoAPI);
+                }, reject);
+            });
+        }
+        return pRuntimeAPI;
+    };
 
     /**
 	 * @class This class offers <code>sap.ui.fl</code> capabilities.
@@ -41,14 +52,23 @@ sap.ui.define([
         var bIsGlobal = sInternalPersistenceMode === mode.Global;
 
         var bIsTransient = sInternalPersistenceMode === mode.Transient;
-        var oHandleChangesPromise = FlexUtil.handleChanges.call(this, aChanges, bIsGlobal, bIsTransient);
-        return bIsGlobal ? oHandleChangesPromise.then(function(aDirtyChanges){
-            return FlexUtil.saveChanges.call(this, oControl, aDirtyChanges);
-        }) : oHandleChangesPromise;
-    };
 
+        return this.initialize()
+        .then(function(){
+
+            var oHandleChangesPromise = FlexUtil.handleChanges(aChanges, bIsGlobal, bIsTransient);
+            return bIsGlobal ? oHandleChangesPromise.then(function(aDirtyChanges){
+                return FlexUtil.saveChanges(oControl, aDirtyChanges);
+            }) : oHandleChangesPromise;
+        });
+    };
     FlexModificationHandler.prototype.waitForChanges = function(mPropertyBag, oModificationPayload){
-        return FlexRuntimeInfoAPI.waitForChanges.apply(this, arguments);
+        return this.initialize()
+        .then(function(){
+            return _requireFlexRuntimeAPI().then(function(FlexRuntimeInfoAPI){
+                return FlexRuntimeInfoAPI.waitForChanges(mPropertyBag, oModificationPayload);
+            });
+        });
     };
 
     FlexModificationHandler.prototype.reset = function(mPropertyBag, oModificationPayload){
@@ -57,25 +77,28 @@ sap.ui.define([
         var bIsGlobal = sPersistenceMode === mode.Global;
         var bIsAutoGlobal = !oModificationPayload.hasVM && oModificationPayload.hasPP && sPersistenceMode === mode.Auto;
 
-        return (bIsGlobal || bIsAutoGlobal) ? FlexUtil.reset.call(this, mPropertyBag) : FlexUtil.restore.call(this, mPropertyBag);
+        return this.initialize()
+        .then(function(){
+            return (bIsGlobal || bIsAutoGlobal) ? FlexUtil.reset(mPropertyBag) : FlexUtil.restore(mPropertyBag);
+        });
     };
 
     FlexModificationHandler.prototype.isModificationSupported = function(mPropertyBag, oModificationPayload){
-        return FlexRuntimeInfoAPI.isFlexSupported.apply(this, arguments);
+        return this.initialize()
+        .then(function(){
+            return _requireFlexRuntimeAPI().then(function(FlexRuntimeInfoAPI){
+                return FlexRuntimeInfoAPI.isFlexSupported(mPropertyBag, oModificationPayload);
+            });
+        });
     };
 
-    FlexModificationHandler.prototype.initialize = function(oControl) {
-        return sap.ui.getCore().loadLibrary('sap.ui.fl', {
-			async: true
-		})
-		.then(function() {
-            return this.waitForChanges({
-                element: oControl
+    FlexModificationHandler.prototype.initialize = function() {
+        if (!pInitialize) {
+            pInitialize = Core.loadLibrary('sap.ui.fl', {
+                async: true
             });
-        }.bind(this))
-        .then(function(){
-            StateHandlerRegistry.getInstance().fireStateChange(oControl);
-        });
+        }
+        return pInitialize;
     };
 
     FlexModificationHandler.getInstance = function() {

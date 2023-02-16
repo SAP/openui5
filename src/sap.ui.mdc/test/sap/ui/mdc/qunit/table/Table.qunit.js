@@ -365,7 +365,7 @@ sap.ui.define([
 		var oWaitForChangesStub = sinon.stub(oTable.getEngine(), "waitForChanges");
 		var oIsModificationSupportedStub = sinon.stub(oTable.getEngine(), "isModificationSupported");
 
-		oIsModificationSupportedStub.withArgs(oTable).returns(true);
+		oIsModificationSupportedStub.withArgs(oTable).returns(Promise.resolve(true));
 		oWaitForChangesStub.withArgs(oTable).returns(oWaitForChanges.promise);
 
 		return oTable._fullyInitialized().then(function() {
@@ -396,7 +396,7 @@ sap.ui.define([
 		var oWaitForChanges = new Deferred();
 		var oIsModificationSupportedStub = sinon.stub(oTable.getEngine(), "isModificationSupported");
 
-		oIsModificationSupportedStub.withArgs(oTable).returns(false);
+		oIsModificationSupportedStub.withArgs(oTable).returns(Promise.resolve(false));
 		oWaitForChanges.resolve();
 
 		return oTable.initialized().then(function() {

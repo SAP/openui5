@@ -118,7 +118,10 @@ sap.ui.define([
 			oTable.setSortConditions({sorters: [{name: "Name", descending: true}]});
 			oTable.setGroupConditions({groupLevels: [{name: "Name"}]});
 			oTable.rebind();
-			return oTable._fullyInitialized();
+			return oTable._fullyInitialized()
+			.then(function(){
+				return oTable.getEngine().isModificationSupported(oTable);
+			});
 		}).then(function() {
 			var aSorter = [new Sorter("Name_Path", true)];
 			var oBindingInfo = {};
@@ -128,7 +131,10 @@ sap.ui.define([
 			assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aSorter, filters: [], path: "/foo"});
 
 			oTable.setType("ResponsiveTable");
-			return oTable._fullyInitialized();
+			return oTable._fullyInitialized()
+			.then(function(){
+				return oTable.getEngine().isModificationSupported(oTable);
+			});
 		}).then(function() {
 			var oSorter = oTable._oTable.getBindingInfo("items").sorter[0];
 
