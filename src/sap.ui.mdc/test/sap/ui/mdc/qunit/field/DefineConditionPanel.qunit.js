@@ -609,7 +609,7 @@ sap.ui.define([
 										assert.equal(oModel.getConditions("Name")[0].values[0], "C", "condition value0 should be changed");
 										assert.equal(oModel.getConditions("Name")[0].values[1], "C", "condition value1 should be changed");
 
-										oField1._bParseError = true; // fake parse error
+										oField1._setInvalidInput(new Error()); // fake parse error
 										oDefineConditionPanel.cleanUp();
 										assert.equal(oField1.getValue(), null, "first Field value cleared");
 										// removing valueStae is tested in Field.qunit -> needs a real parse error to work

@@ -191,11 +191,11 @@ sap.ui.define([
 				// BindingContextChanged -> if parsing error trigger update to remove valueState and wrong input
 				this._oBindingContext = oBindingContext;
 				this._getContentFactory().updateConditionType();
-				if (this._bParseError || this.getFieldHelp()) { // In FieldHelp case InParameters might need an update
+				if (this._isInvalidInput() || this.getFieldHelp()) { // In FieldHelp case InParameters might need an update
 					if (this._oManagedObjectModel) {
 						this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates
 					}
-					this._bParseError = false;
+					this._resetInvalidInput();
 				}
 			}
 
@@ -220,12 +220,12 @@ sap.ui.define([
 
 	Field.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
 
-		if (sPropertyName === "value" && this._bParseError && deepEqual(this.getValue(), this.validateProperty(sPropertyName, oValue))) {
+		if (sPropertyName === "value" && this._isInvalidInput() && deepEqual(this.getValue(), this.validateProperty(sPropertyName, oValue))) {
 			// in parse error and same value - no update on property - so remove error here
 			if (this._oManagedObjectModel) {
 				this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates (additionalValue will follow)
 			}
-			this._bParseError = false;
+			this._resetInvalidInput();
 		}
 
 		return FieldBase.prototype.setProperty.apply(this, arguments);

@@ -510,7 +510,8 @@ sap.ui.define([
 			defaultAggregation: "content"
 		},
 		renderer: FieldBaseRenderer,
-		_oManagedObjectModel: null
+		_oManagedObjectModel: null,
+		_oInvalidInput: null
 	});
 
 	// apply the message mixin so all message on the input will get the associated label-texts injected
@@ -758,7 +759,7 @@ sap.ui.define([
 					if (oPromise) {
 						_executeChange.call(this, undefined, undefined, undefined, oPromise);
 					} else {
-						_executeChange.call(this, this.getConditions(), !this._bParseError);
+						_executeChange.call(this, this.getConditions(), !this._isInvalidInput());
 					}
 				}
 			}
@@ -946,7 +947,12 @@ sap.ui.define([
 			if (bValid) {
 				oPromise = Promise.resolve(this._getResultForPromise(aConditions));
 			} else {
-				oPromise = Promise.reject(vWrongValue);
+				var oException = this._getInvalidInputException();
+				if (oException) {
+					oPromise = Promise.reject(oException);
+				} else { // maybe e.g. DatePicker fires change with valid=false but no exception
+					oPromise = Promise.reject(vWrongValue);
+				}
 			}
 		}
 
@@ -971,7 +977,7 @@ sap.ui.define([
 
 			if (oPromise) {
 				bPending = true;
-			} else if (this._bParseError) {
+			} else if (this._isInvalidInput()) {
 				oPromise = Promise.reject();
 			} else {
 				oPromise = Promise.resolve(this._getResultForPromise(this.getConditions()));
@@ -981,7 +987,7 @@ sap.ui.define([
 				if (bPending) {
 					_executeChange.call(this, undefined, undefined, undefined, oPromise);
 				} else {
-					_executeChange.call(this, this.getConditions(), !this._bParseError, undefined, oPromise);
+					_executeChange.call(this, this.getConditions(), !this._isInvalidInput(), undefined, oPromise);
 				}
 			}
 
@@ -1153,7 +1159,7 @@ sap.ui.define([
 		}
 
 		if (oChanges.name === "conditions") {
-			this._bParseError = false; // if conditions updated from outside parse error is obsolete. If updated from inside no parse error occurs
+			this._resetInvalidInput(); // if conditions updated from outside parse error is obsolete. If updated from inside no parse error occurs
 			_handleConditionsChange.call(this, oChanges.current, oChanges.old);
 
 			// try to find the corresponding async. change
@@ -1847,9 +1853,9 @@ sap.ui.define([
 			this._getContentFactory().setUnitOriginalType(undefined);
 		}
 
-		if (this._bParseError) {
+		if (this._isInvalidInput()) {
 			// as wrong input get lost if content control is destroyed.
-			this._bParseError = false;
+			this._resetInvalidInput();
 			this._removeUIMessage();
 		}
 
@@ -2095,10 +2101,36 @@ sap.ui.define([
 
 	}
 
+	FieldBase.prototype._setInvalidInput = function(oException, vValue, sReason) {
+
+		this._oInvalidInput = {exception: oException, value: vValue, reason: sReason};
+
+	};
+
+	FieldBase.prototype._getInvalidInputException = function() {
+
+		return this._oInvalidInput && this._oInvalidInput.exception;
+
+	};
+
+	FieldBase.prototype._resetInvalidInput = function() {
+
+		this._oInvalidInput = null;
+
+	};
+
+	FieldBase.prototype._isInvalidInput = function() {
+
+		return !!this._oInvalidInput;
+
+	};
+
 	function _handleParseError(oEvent) {
 
 		// as change event if inner control is fired even Input is wrong, check parse exception from binding
-		this._bParseError = true;
+		var vValue = oEvent.getParameter("newValue");
+		var oException = oEvent.getParameter("exception");
+		this._setInvalidInput(oException, vValue, "ParseError");
 		this._sFilterValue = "";
 
 	}
@@ -2106,12 +2138,12 @@ sap.ui.define([
 	function _handleValidationError(oEvent) {
 
 		// as change event if inner control is fired even Input is wrong, check validation exception from binding
-		this._bParseError = true;
+		var vValue = oEvent.getParameter("newValue");
+		var oException = oEvent.getParameter("exception");
+		this._setInvalidInput(oException, vValue, "ValidationError");
 		this._sFilterValue = "";
 
 		// try to find the corresponding async. change and reject it
-		var vValue = oEvent.getParameter("newValue");
-		var oException = oEvent.getParameter("exception");
 		var aWrongConditions = oException && oException instanceof ConditionValidateException && oException.getConditions(); // we store the conditions in the ConditionValidationException
 		var bFound = false;
 		var i = 0;
@@ -2139,7 +2171,7 @@ sap.ui.define([
 
 	function _handleValidationSuccess(oEvent) {
 
-		this._bParseError = false; // if last valif value is entered again no condition is updated
+		this._resetInvalidInput(); // if last valid value is entered again no condition is updated
 
 	}
 
@@ -2172,7 +2204,7 @@ sap.ui.define([
 
 		if (oChange.changeEvent.parameters.hasOwnProperty("valid")) {
 			bValid = oChange.changeEvent.parameters["valid"];
-		} else if (this._bParseError) {
+		} else if (this._isInvalidInput()) {
 			// this might be result of a value that cannot be parsed
 			bValid = false;
 		}
@@ -2477,7 +2509,7 @@ sap.ui.define([
 		}
 
 		var aHelpConditions;
-		if (this._bParseError && this.getMaxConditionsForHelp() === 1) {
+		if (this._isInvalidInput() && this.getMaxConditionsForHelp() === 1) {
 			// if parsing error and single value case do not see the old (outdated) condition as selected
 			// TODO: handling if error only on unit or number part
 			aHelpConditions = [];
@@ -2638,8 +2670,8 @@ sap.ui.define([
 			}
 
 			// after selection input cannot be wrong
-			if (this._bParseError) { // only remove messages set by Field itself, message from outside should stay.
-				this._bParseError = false;
+			if (this._isInvalidInput()) { // only remove messages set by Field itself, message from outside should stay.
+				this._resetInvalidInput();
 				this._removeUIMessage();
 				bChangeAfterError = true;
 			}
@@ -2812,7 +2844,7 @@ sap.ui.define([
 		//		// also in display mode to get right text
 		//		_handleConditionsChange.call(this, this.getConditions());
 		if (!isEditing && !this._bPendingConditionUpdate && this.getConditions().length > 0 &&
-			(this.getMaxConditions() !== 1 || (this.getDisplay() !== FieldDisplay.Value && !this._bParseError))
+			(this.getMaxConditions() !== 1 || (this.getDisplay() !== FieldDisplay.Value && !this._isInvalidInput()))
 			&& this._oManagedObjectModel) {
 			// update tokens in MultiValue
 			// update text/value only if no parse error, otherwise wrong value would be removed
@@ -3099,7 +3131,7 @@ sap.ui.define([
 
 			oPromise.then(function(vResult) {// vResult can be a condition or an array of conditions
 				oChange.result = vResult;
-				this._bParseError = false;
+				this._resetInvalidInput();
 				var aConditions = this.getConditions();
 				if (deepEqual(vResult, aConditions)) {
 					// parsingResult is same as current value -> no update will happen
@@ -3113,7 +3145,7 @@ sap.ui.define([
 					// unknown error -> just raise it
 					throw oException;
 				}
-				this._bParseError = true;
+				this._setInvalidInput(oException, undefined, "AsyncParsing");
 				fReject(oException);
 				_removeAsyncChange.call(this, oChange);
 			}.bind(this));

@@ -207,6 +207,11 @@ sap.ui.define([
 		iValidationError++;
 	};
 
+	var iValidationSuccess = 0;
+	var _myValidationSuccessHandler = function(oEvent) {
+		iValidationSuccess++;
+	};
+
 	QUnit.module("Delegate", {
 		beforeEach: function() {
 		},
@@ -1853,6 +1858,7 @@ sap.ui.define([
 			oField.attachSubmit(_mySubmitHandler);
 			oField.attachParseError(_myParseErrorHandler);
 			oField.attachValidationError(_myValidationErrorHandler);
+			oField.attachValidationSuccess(_myValidationSuccessHandler);
 			oCore.getMessageManager().registerObject(oField, true); // to test valueState
 			oField.placeAt("content");
 			oCore.applyChanges();
@@ -1873,8 +1879,9 @@ sap.ui.define([
 			iSubmitCount = 0;
 			sSubmitId = "";
 			oSubmitPromise = null;
-			iParseError = 0; // eslint-disable-line
+			iParseError = 0;
 			iValidationError = 0;
+			iValidationSuccess = 0;
 			FieldBase._init();
 		}
 	});
@@ -1891,6 +1898,9 @@ sap.ui.define([
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 		assert.equal(iCount, 1, "change event fired once");
+		assert.equal(iParseError, 0, "ParseError event not fired");
+		assert.equal(iValidationError, 0, "ValidationError event not fired");
+		assert.equal(iValidationSuccess, 1, "ValidationSuccess event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.equal(sValue, "X", "change event value");
 		assert.ok(bValid, "change event valid");
@@ -1916,10 +1926,14 @@ sap.ui.define([
 
 				iCount = 0; sId = ""; sValue = ""; bValid = undefined; oPromise = undefined;
 				iSubmitCount = 0; sSubmitId = ""; oSubmitPromise = undefined;
+				iParseError = 0; iValidationError = 0; iValidationSuccess = 0;
 				jQuery(oContent.getFocusDomRef()).val("X");
 				qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 				setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
 					assert.equal(iCount, 1, "change event fired");
+					assert.equal(iParseError, 1, "ParseError event fired once");
+					assert.equal(iValidationError, 0, "ValidationError event not fired");
+					assert.equal(iValidationSuccess, 0, "ValidationSuccess event not fired");
 					assert.notOk(bValid, "change event not valid");
 					assert.equal(sValue, "X", "change event value");
 					assert.ok(oPromise, "Promise returned");
@@ -1932,7 +1946,7 @@ sap.ui.define([
 					}).catch(function(oException) {
 						var oTokenDeleteIcon = oToken.getAggregation("deleteIcon");
 						assert.ok(true, "Promise rejected");
-						assert.equal(oException, "X", "wrongValue");
+						assert.ok(oException instanceof ParseException, "ParseExpetion returned");
 						aConditions = oCM.getConditions("Name");
 						assert.equal(aConditions.length, 1, "one condition in Codition model");
 						assert.equal(aConditions[0].values[0], "X", "condition value");
@@ -2049,6 +2063,9 @@ sap.ui.define([
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
 			assert.equal(iCount, 1, "change event fired once");
+			assert.equal(iParseError, 0, "ParseError event not fired");
+			assert.equal(iValidationError, 1, "ValidationError event fired once");
+			assert.equal(iValidationSuccess, 0, "ValidationSuccess event not fired");
 			assert.equal(sId, "F1", "change event fired on Field");
 			assert.equal(sValue, "15", "change event value");
 			assert.notOk(bValid, "change event not valid");
@@ -2073,6 +2090,7 @@ sap.ui.define([
 				fnDone();
 			}).catch(function(oException) {
 				assert.ok(true, "Promise must be rejected");
+				assert.ok(oException instanceof ValidateException, "ValidateExpetion returned");
 				fnDone();
 			});
 		}, 0);
@@ -2088,6 +2106,9 @@ sap.ui.define([
 		}).placeAt("content");
 		oField._fireChange = _myFireChange;
 		oField.attachEvent("change", _myChangeHandler);
+		oField.attachParseError(_myParseErrorHandler);
+		oField.attachValidationError(_myValidationErrorHandler);
+		oField.attachValidationSuccess(_myValidationSuccessHandler);
 		oCore.getMessageManager().registerObject(oField, true); // to test valueState
 		oCore.applyChanges();
 
@@ -2099,6 +2120,9 @@ sap.ui.define([
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
 			assert.equal(iCount, 1, "change event fired once");
+			assert.equal(iParseError, 0, "ParseError event not fired");
+			assert.equal(iValidationError, 1, "ValidationError event fired once");
+			assert.equal(iValidationSuccess, 0, "ValidationSuccess event not fired");
 			assert.equal(sId, "F1", "change event fired on Field");
 			assert.equal(sValue, "15", "change event value");
 			assert.notOk(bValid, "change event not valid");
@@ -3366,7 +3390,7 @@ sap.ui.define([
 		oField.setValueState("Error"); // as valueState is set async
 		oField.setValueStateText("Error");
 		oContent.setValue("I"); // to test clearing of content
-		assert.ok(oField._bParseError, "parse error"); // just to be sure that set before test
+		assert.ok(oField._isInvalidInput(), "parse error"); // just to be sure that set before test
 		oFieldHelp.fireSelect({ conditions: aConditions, add: false, close: true }); // check choosing old conditions after wrong input
 		assert.equal(iCount, 1, "Change Event fired once");
 		assert.ok(bValid, "Change event valid");
@@ -3379,7 +3403,7 @@ sap.ui.define([
 		assert.equal(oContent.getDOMValue(), "", "value not longer shown in inner control");
 		assert.equal(oField.getValueState(), "None", "No ValueState");
 		assert.equal(oField.getValueStateText(), "", "No ValueStateText");
-		assert.notOk(oField._bParseError, "no parse error");
+		assert.notOk(oField._isInvalidInput(), "no parse error");
 
 		// simulate select event with close to see if field is updated
 		oFieldHelp.getItemForValue.resetHistory();
@@ -3389,7 +3413,7 @@ sap.ui.define([
 		oField.setValueState("Error"); // as valueState is set async
 		oField.setValueStateText("Error");
 		oContent.setValue("J"); // to test clearing of content
-		assert.ok(oField._bParseError, "parse error"); // just to be sure that set before test
+		assert.ok(oField._isInvalidInput(), "parse error"); // just to be sure that set before test
 		oFieldHelp.fireSelect({ conditions: [oCondition], add: true, close: true });
 		assert.equal(iCount, 1, "Change Event fired once");
 		assert.ok(bValid, "Change event valid");
@@ -3406,7 +3430,7 @@ sap.ui.define([
 		assert.equal(oContent.getProperty("value"), "", "no value set in inner control"); // as getValue returns DomValue, not property
 		assert.equal(oField.getValueState(), "None", "No ValueState"); // after updating conditions valueStae should be cleared
 		assert.equal(oField.getValueStateText(), "", "No ValueStateText");
-		assert.notOk(oField._bParseError, "no parse error");
+		assert.notOk(oField._isInvalidInput(), "no parse error");
 		oField._oContentFactory._oConditionsType.parseValue.restore();
 
 		oIcon.destroy();

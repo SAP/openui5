@@ -136,7 +136,7 @@ sap.ui.define([
 
 	FilterField.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
 
-		if (sPropertyName === "conditions" && this._bParseError && deepEqual(this.getConditions(), this.validateProperty(sPropertyName, oValue))) {
+		if (sPropertyName === "conditions" && this._isInvalidInput() && deepEqual(this.getConditions(), this.validateProperty(sPropertyName, oValue))) {
 			// in parse error and same Conditions - no update on property - so remove error here
 			// As ConditionModel triggers checkUpdate in forced mode on addCondition, setConditions... also unchanged conditions will be updated
 			// So e.g. if a variant is applied an error will be removed.
@@ -144,7 +144,7 @@ sap.ui.define([
 				this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates (additionalValue will follow)
 			}
 			// TODO: prevent unneeded update of tokens?
-			this._bParseError = false;
+			this._resetInvalidInput();
 		}
 
 		return FieldBase.prototype.setProperty.apply(this, arguments);
