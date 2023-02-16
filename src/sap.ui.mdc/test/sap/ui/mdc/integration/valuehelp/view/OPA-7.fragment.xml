@@ -64,7 +64,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/opensonfocus/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover title="Popover2" opensOnFocus="true">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
 							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>
 									<Column width="5rem">
@@ -90,6 +90,11 @@
 						</mdcvc:MTable>
 					</mdcv:Popover>
 				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcv:Dialog>
+						<mdcvc:Conditions/>
+					</mdcv:Dialog>
+				</mdc:dialog>
 			</mdc:ValueHelp>
 		</mdc:dependents>
 		<mdc:filterItems>
