@@ -23,7 +23,7 @@ sap.ui.define(["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtens
 		onBeforeSomething: function() {
 
 		},
-		override: {
+		overrides: {
 			onInit: function() {
 				window.assert.ok(this instanceof ControllerExtension, "onInit: Context is ControllerExtension 'AnotherExtension'");
 				window.assert.equal(this.getMetadata().getNamespace(), "my.test.reuse", "onInit: Context is correct ControllerExtension 'AnotherExtension'");

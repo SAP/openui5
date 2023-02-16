@@ -37,10 +37,11 @@ sap.ui.define([
 	ControllerMetadata.prototype.constructor = ControllerMetadata;
 
 	ControllerMetadata.prototype.applySettings = function(oClassInfo) {
-		// property 'override' needs to be handled separately and must not be attached to the prototype
-		if (oClassInfo.override) {
-			this._override = oClassInfo.override;
+		// property 'overrides' needs to be handled separately and must not be attached to the prototype
+		if (oClassInfo.overrides || oClassInfo.override) { // also consider the deprecated 'override' property
+			this._override = oClassInfo.overrides || oClassInfo.override; // ...but only when the new property is not set
 			delete oClassInfo.override;
+			delete oClassInfo.overrides;
 		}
 
 		Metadata.prototype.applySettings.call(this, oClassInfo);

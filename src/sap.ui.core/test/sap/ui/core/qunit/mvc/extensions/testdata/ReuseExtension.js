@@ -24,9 +24,9 @@ sap.ui.define(["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtens
 
 		},
 		onInit: function() {
-		   this.base.getLifeCycleCalls().onInit.push('reuseExtension');
+			this.base.getLifeCycleCalls().onInit.push('reuseExtension');
 		},
-		override: {
+		overrides: {
 			onInit: function() {
 				this.base.getLifeCycleCalls().onInit.push('reuseExtension');
 			},

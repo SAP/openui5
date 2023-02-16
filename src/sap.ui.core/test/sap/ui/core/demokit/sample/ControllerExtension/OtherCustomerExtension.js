@@ -37,7 +37,7 @@ sap.ui.define([
 			oMyOwnButtonFromExtension.setText(sText);
 		},
 
-		override: {
+		overrides: {
 			//Override controller method; this is the second extension, so this override will win
 			getToolbarTitle: function(){
 				return "OtherExtension Table Operations:";

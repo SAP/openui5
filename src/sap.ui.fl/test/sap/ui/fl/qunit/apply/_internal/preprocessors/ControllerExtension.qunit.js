@@ -193,7 +193,7 @@ sap.ui.define([
 			});
 			sap.ui.define(sModuleName1, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) { // legacy-relevant: simulates a loaded code extension. no option to replace this regarding legacy free coding
 				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension2", {
-					override: {
+					overrides: {
 						onInit: function () {
 							assert.strictEqual(this.base.getView().getId(), "testView1", "View1 is available and ID of View1 is correct");
 							done1();
@@ -215,7 +215,7 @@ sap.ui.define([
 			});
 			sap.ui.define(sModuleName2, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) { // legacy-relevant: simulates a loaded code extension. no option to replace this regarding legacy free coding
 				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension3", {
-					override: {
+					overrides: {
 						onInit: function () {
 							assert.strictEqual(this.base.getView().getId(), "testView2", "View2 is available and ID of View2 is correct");
 							done2();

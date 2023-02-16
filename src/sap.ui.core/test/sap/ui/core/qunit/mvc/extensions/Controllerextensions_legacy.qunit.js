@@ -163,7 +163,7 @@ sap.ui.define([
 		myAfter: function() {
 			this.base.overrideCalledAfter = true;
 		},
-		overrides: {
+		override: {
 			callbackMethod: function() {
 				return "callbackOfControllerExt1";
 			}
@@ -286,7 +286,7 @@ sap.ui.define([
 			},
 			myAfter: function() {
 			},
-			overrides: {
+			override: {
 				extHookLegacy: function() {
 					return "extHookLegacy App implementation";
 				},
@@ -360,7 +360,7 @@ sap.ui.define([
 			},
 			myAfter: function() {
 			},
-			overrides: {
+			override: {
 				extension: {
 					"example.ProviderExt1": {
 						publicMethodToOverride: function() {
