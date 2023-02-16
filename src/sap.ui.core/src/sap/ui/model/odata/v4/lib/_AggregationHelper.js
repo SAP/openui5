@@ -163,20 +163,20 @@ sap.ui.define([
 					throw new Error("Unexpected structural change: " + sAnnotation);
 				}
 			});
-			if (sNodeProperty in oPlaceholder
-					&& oPlaceholder[sNodeProperty] !== oElement[sNodeProperty]) {
-				throw new Error("Unexpected structural change: " + sNodeProperty
-					+ " from " + JSON.stringify(oPlaceholder[sNodeProperty])
-					+ " to " + JSON.stringify(oElement[sNodeProperty]));
+			if (sNodeProperty) {
+				_AggregationHelper.checkNodeProperty(oPlaceholder, oElement, sNodeProperty);
 			}
 
 			_Helper.copyPrivateAnnotation(oPlaceholder, "spliced", oElement);
-			if ("@$ui5.node.isExpanded" in oPlaceholder) {
+			if (_Helper.getPrivateAnnotation(oPlaceholder, "placeholder") === 1) {
 				if ((oPlaceholder["@$ui5.node.isExpanded"] === undefined)
 						!== (oElement["@$ui5.node.isExpanded"] === undefined)) {
 					throw new Error("Not a leaf anymore (or vice versa)");
 				}
-				oElement["@$ui5.node.isExpanded"] = oPlaceholder["@$ui5.node.isExpanded"];
+				if (oPlaceholder["@$ui5.node.isExpanded"] !== undefined) {
+					// restore previous expansion state
+					oElement["@$ui5.node.isExpanded"] = oPlaceholder["@$ui5.node.isExpanded"];
+				}
 			}
 		},
 
@@ -531,6 +531,31 @@ sap.ui.define([
 			mQueryOptions.$apply = sApply;
 
 			return mQueryOptions;
+		},
+
+		/**
+		 * Checks that the NodeProperty ("the hierarchy node value") has not changed.
+		 *
+		 * @param {object} oOld
+		 *   The old node object
+		 * @param {object} oNew
+		 *   The new node object
+		 * @param {string} sNodeProperty
+		 *   The path to the property which provides the hierarchy node value
+		 * @param {boolean} [bMandatory]
+		 *   Whether a hierarchy node value is mandatory for the old node object (else it may be
+		 *   missing because old node object is just a placeholder)
+		 * @throws {Error} In case of a structural change
+		 */
+		checkNodeProperty : function (oOld, oNew, sNodeProperty, bMandatory) {
+			var vNewNodeID = _Helper.drillDown(oNew, sNodeProperty),
+				vOldNodeID = _Helper.drillDown(oOld, sNodeProperty);
+
+			if ((bMandatory || vOldNodeID !== undefined) && vOldNodeID !== vNewNodeID) {
+				throw new Error("Unexpected structural change: " + sNodeProperty
+					+ " from " + JSON.stringify(vOldNodeID)
+					+ " to " + JSON.stringify(vNewNodeID));
+			}
 		},
 
 		/**

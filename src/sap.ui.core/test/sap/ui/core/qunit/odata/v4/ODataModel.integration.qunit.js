@@ -24106,8 +24106,8 @@ sap.ui.define([
 		var sExpectedDownloadUrl
 				= "/special/cases/Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
-				+ ",NodeProperty='NodeID',Levels=9)"
-				+ "&$select=ArtistID,DistanceFromRoot,IsActiveEntity,NodeID"
+				+ ",NodeProperty='_/NodeID',Levels=9)"
+				+ "&$select=ArtistID,IsActiveEntity,_/DistanceFromRoot,_/NodeID"
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)",
 			oHeaderContext,
 			oListBinding,
@@ -24128,8 +24128,9 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart',NodeProperty='NodeID'"
-				+ ",Levels=1)&$select=ArtistID,DrillState,IsActiveEntity,NodeID"
+				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
+				+ ",NodeProperty='_/NodeID',Levels=1)"
+				+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "1",
@@ -24140,11 +24141,13 @@ sap.ui.define([
 						IsActiveEntity : true,
 						Name : "Friend #01"
 					},
-					// DescendantCount : "0", // not needed w/o expandTo
-					// DistanceFromRoot : "0", // not needed w/o expandTo
-					DrillState : "leaf",
 					IsActiveEntity : true,
-					NodeID : "0,true"
+					_ : {
+						// DescendantCount : "0", // not needed w/o expandTo
+						// DistanceFromRoot : "0", // not needed w/o expandTo
+						DrillState : "leaf",
+						NodeID : "0,true"
+					}
 				}]
 			});
 
@@ -24161,8 +24164,8 @@ sap.ui.define([
 			// code under test
 			assert.deepEqual(oListBinding.getAggregation(/*bVerbose*/true), {
 				hierarchyQualifier : "OrgChart",
-				$DistanceFromRootProperty : "DistanceFromRoot",
-				$NodeProperty : "NodeID"
+				$DistanceFromRootProperty : "_/DistanceFromRoot",
+				$NodeProperty : "_/NodeID"
 			}, "JIRA: CPOUI5ODATAV4-1961");
 			// code under test
 			assert.strictEqual(oListBinding.getDownloadUrl(), sExpectedDownloadUrl,
@@ -24184,7 +24187,9 @@ sap.ui.define([
 						Name : "Friend #01"
 					},
 					IsActiveEntity : true,
-					NodeID : "0,true"
+					_ : {
+						NodeID : "0,true"
+					}
 				}, "technical properties have been removed");
 
 			// code under test
@@ -24217,13 +24222,15 @@ sap.ui.define([
 			assert.strictEqual(aResults[1], sExpectedDownloadUrl, "JIRA: CPOUI5ODATAV4-1920");
 
 			that.expectRequest("Artists"
-					+ "?$select=ArtistID,IsActiveEntity,Messages,NodeID,defaultChannel"
+						+ "?$select=ArtistID,IsActiveEntity,Messages,_/NodeID,defaultChannel"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
 						ArtistID : "0",
 						IsActiveEntity : true,
 						Messages : [],
-						NodeID : "0,true",
+						_ : {
+							NodeID : "0,true"
+						},
 						defaultChannel : "160"
 					}]
 				});
@@ -24235,12 +24242,14 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oRoot.getProperty("defaultChannel"), "160");
 
-			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,NodeID,defaultChannel"
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,_/NodeID,defaultChannel"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
 						ArtistID : "0",
 						IsActiveEntity : true,
-						NodeID : "0,true",
+						_ : {
+							NodeID : "0,true"
+						},
 						defaultChannel : "260"
 					}]
 				});
@@ -24252,7 +24261,7 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oRoot.getProperty("defaultChannel"), "260");
 
-			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,NodeID"
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,_/NodeID"
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
@@ -24263,7 +24272,9 @@ sap.ui.define([
 							Name : "Friend #01 (updated)"
 						},
 						IsActiveEntity : true,
-						NodeID : "0,true"
+						_ : {
+							NodeID : "0,true"
+						}
 					}]
 				});
 
@@ -24273,7 +24284,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			var sErrorMessage
-				= 'Unexpected structural change: NodeID from "0,true" to "-0,true-"';
+				= 'Unexpected structural change: _/NodeID from "0,true" to "-0,true-"';
 
 			checkTable("side effect: BestFriend/Name for all rows", assert, oTable, [
 				"/Artists(ArtistID='0',IsActiveEntity=true)"
@@ -24299,13 +24310,15 @@ sap.ui.define([
 			}, new Error("Cannot refresh " + oRoot + " when using data aggregation"));
 
 			that.expectRequest("Artists"
-					+ "?$select=ArtistID,IsActiveEntity,Messages,NodeID,defaultChannel"
+						+ "?$select=ArtistID,IsActiveEntity,Messages,_/NodeID,defaultChannel"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
 						ArtistID : "0",
 						IsActiveEntity : true,
 						Messages : [],
-						NodeID : "-0,true-",
+						_ : {
+							NodeID : "-0,true-"
+						},
 						defaultChannel : "360"
 					}]
 				})
@@ -24317,7 +24330,7 @@ sap.ui.define([
 				}]);
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to request side effects",
-					sinon.match(/Unexpected structural change: NodeID/), sODLB);
+					sinon.match(/Unexpected structural change: _\/NodeID/), sODLB);
 
 			return Promise.all([
 				oRoot.requestSideEffects(["*"])
@@ -24344,9 +24357,9 @@ sap.ui.define([
 		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oTable,
 			sUrlPrefix = "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart',NodeProperty='NodeID'"
-				+ ",Levels=2)&$select=ArtistID,DescendantCount,DistanceFromRoot,DrillState"
-				+ ",IsActiveEntity,Name,NodeID",
+				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
+				+ ",NodeProperty='_/NodeID',Levels=2)&$select=ArtistID,IsActiveEntity,Name"
+				+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID",
 			sView = '\
 <t:Table id="table" rows="{path : \'/Artists\',\
 		parameters : {\
@@ -24366,20 +24379,24 @@ sap.ui.define([
 				"@odata.count" : "4",
 				value : [{
 					ArtistID : "0",
-					DescendantCount : "3",
-					DistanceFromRoot : "0",
-					DrillState : "expanded",
 					IsActiveEntity : true,
 					Name : "Alpha",
-					NodeID : "0,true"
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "0,true"
+					}
 				}, {
 					ArtistID : "1",
-					DescendantCount : "0",
-					DistanceFromRoot : "1",
-					DrillState : "leaf",
 					IsActiveEntity : true,
 					Name : "Beta",
-					NodeID : "1,true"
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						NodeID : "1,true"
+					}
 				}]
 			});
 
@@ -24397,20 +24414,24 @@ sap.ui.define([
 			that.expectRequest(sUrlPrefix + "&$skip=2&$top=2", {
 					value : [{
 						ArtistID : "2",
-						DescendantCount : "0",
-						DistanceFromRoot : "1",
-						DrillState : "leaf",
 						IsActiveEntity : true,
 						Name : "Gamma",
-						NodeID : "2,true"
+						_ : {
+							DescendantCount : "0",
+							DistanceFromRoot : "1",
+							DrillState : "leaf",
+							NodeID : "2,true"
+						}
 					}, {
 						ArtistID : "3",
-						DescendantCount : "0",
-						DistanceFromRoot : "1",
-						DrillState : "leaf",
 						IsActiveEntity : true,
 						Name : "Delta",
-						NodeID : "3,true"
+						_ : {
+							DescendantCount : "0",
+							DistanceFromRoot : "1",
+							DrillState : "leaf",
+							NodeID : "3,true"
+						}
 					}]
 				});
 
@@ -24429,19 +24450,23 @@ sap.ui.define([
 				[undefined, 2, "3", "Delta"]
 			], 4);
 
-			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name,NodeID"
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name,_/NodeID"
 					+ "&$filter=ArtistID eq '2' and IsActiveEntity eq true"
 					+ " or ArtistID eq '3' and IsActiveEntity eq true&$top=2", {
 					value : [{
 						ArtistID : "2",
 						IsActiveEntity : true,
 						Name : "Gamma (updated)",
-						NodeID : "2,true"
+						_ : {
+							NodeID : "2,true"
+						}
 					}, {
 						ArtistID : "3",
 						IsActiveEntity : true,
 						Name : "Delta (updated)",
-						NodeID : "3,true"
+						_ : {
+							NodeID : "3,true"
+						}
 					}]
 				});
 
@@ -24453,21 +24478,25 @@ sap.ui.define([
 		}).then(function () {
 			var oAlpha = {
 					ArtistID : "0",
-					DescendantCount : "3",
-					DistanceFromRoot : "0",
-					DrillState : "expanded",
 					IsActiveEntity : true,
 					Name : "Alpha (updated)",
-					NodeID : "0,true"
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "0,true"
+					}
 				},
 				oBeta = {
 					ArtistID : sStructuralChange === "ArtistID" ? "-1-" : "1",
-					DescendantCount : "0",
-					DistanceFromRoot : sStructuralChange === "DistanceFromRoot" ? "2" : "1",
-					DrillState : sStructuralChange === "DrillState" ? "collapsed" : "leaf",
 					IsActiveEntity : sStructuralChange !== "IsActiveEntity",
 					Name : "Beta (updated)",
-					NodeID : sStructuralChange === "NodeID" ? "-1,true-" : "1,true"
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : sStructuralChange === "DistanceFromRoot" ? "2" : "1",
+						DrillState : sStructuralChange === "DrillState" ? "collapsed" : "leaf",
+						NodeID : sStructuralChange === "NodeID" ? "-1,true-" : "1,true"
+					}
 				},
 				sErrorMessage = "???";
 
@@ -24485,7 +24514,7 @@ sap.ui.define([
 					break;
 				case "NodeID":
 					sErrorMessage
-						= 'Unexpected structural change: NodeID from "1,true" to "-1,true-"';
+						= 'Unexpected structural change: _/NodeID from "1,true" to "-1,true-"';
 				// no default
 			}
 

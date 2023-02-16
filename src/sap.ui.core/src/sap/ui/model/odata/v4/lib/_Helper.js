@@ -726,6 +726,23 @@ sap.ui.define([
 		},
 
 		/**
+		 * Deletes the property identified by the given path from the given object.
+		 *
+		 * @param {object} oObject - The object to start at
+		 * @param {string} sPath - Some relative path
+		 */
+		deleteProperty : function (oObject, sPath) {
+			var aSegments;
+
+			if (sPath.includes("/")) {
+				aSegments = sPath.split("/");
+				sPath = aSegments.pop();
+				oObject = _Helper.drillDown(oObject, aSegments);
+			}
+			delete oObject[sPath];
+		},
+
+		/**
 		 * Deletes within the given entity and property path the property annotation
 		 * "@$ui5.updating".
 		 *
@@ -757,14 +774,17 @@ sap.ui.define([
 		 *
 		 * @param {object} oObject
 		 *   The object to start at
-		 * @param {string[]} aSegments
-		 *   Relative path to drill-down into, as array of segments
+		 * @param {string|string[]} vSegments
+		 *   Relative path to drill-down into, may already be split as array of segments
 		 * @returns {any}
 		 *   The result matching to the given path, or <code>undefined</code> if the path leads
 		 *   into void
 		 */
-		drillDown : function (oObject, aSegments) {
-			return aSegments.reduce(function (oCurrent, sSegment) {
+		drillDown : function (oObject, vSegments) {
+			if (typeof vSegments === "string") {
+				vSegments = vSegments.split("/");
+			}
+			return vSegments.reduce(function (oCurrent, sSegment) {
 				return (oCurrent && sSegment in oCurrent) ? oCurrent[sSegment] : undefined;
 			}, oObject);
 		},

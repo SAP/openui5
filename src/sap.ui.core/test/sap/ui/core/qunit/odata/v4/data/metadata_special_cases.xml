@@ -305,17 +305,17 @@
 			<Annotations Target="special.cases.ArtistsType">
 				<Annotation Qualifier="OrgChart" Term="Org.OData.Aggregation.V1.RecursiveHierarchy">
 					<Record>
-						<PropertyValue Property="NodeProperty" PropertyPath="NodeID"/>
+						<PropertyValue Property="NodeProperty" PropertyPath="_/NodeID"/>
 					</Record>
 				</Annotation>
 				<Annotation Qualifier="OrgChart" Term="com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy">
 					<Record>
 						<!--Edm.Int64-->
-						<PropertyValue Property="DistanceFromRootProperty" PropertyPath="DistanceFromRoot"/>
+						<PropertyValue Property="DistanceFromRootProperty" PropertyPath="_/DistanceFromRoot"/>
 						<!--Edm.String: collapsed,expanded,leaf-->
-						<PropertyValue Property="DrillStateProperty" PropertyPath="DrillState"/>
+						<PropertyValue Property="DrillStateProperty" PropertyPath="_/DrillState"/>
 						<!--Edm.Int64-->
-						<PropertyValue Property="LimitedDescendantCountProperty" PropertyPath="DescendantCount"/>
+						<PropertyValue Property="LimitedDescendantCountProperty" PropertyPath="_/DescendantCount"/>
 					</Record>
 				</Annotation>
 			</Annotations>

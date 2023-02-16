@@ -209,14 +209,8 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.lib._CollectionCache#requestSideEffects
 	 */
 	_AggregationCache.prototype.beforeUpdateSelected = function (sPredicate, oNewValue) {
-		var oElement = this.aElements.$byPredicate[sPredicate],
-			sNodeProperty = this.oAggregation.$NodeProperty;
-
-		if (oElement[sNodeProperty] !== oNewValue[sNodeProperty]) {
-			throw new Error("Unexpected structural change: " + sNodeProperty
-				+ " from " + JSON.stringify(oElement[sNodeProperty])
-				+ " to " + JSON.stringify(oNewValue[sNodeProperty]));
-		}
+		_AggregationHelper.checkNodeProperty(this.aElements.$byPredicate[sPredicate], oNewValue,
+			this.oAggregation.$NodeProperty, true);
 	};
 
 	/**
@@ -381,12 +375,12 @@ sap.ui.define([
 
 			iCount = aSpliced.length;
 			this.aElements.$count = aElements.$count + iCount;
-			aSpliced.forEach(function (oElement, i) {
+			aSpliced.forEach(function (oElement) {
 				var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 
 				if (!_Helper.hasPrivateAnnotation(oElement, "placeholder")) {
 					if (bStale) {
-						that.replaceByPlaceholder(iIndex + i, oElement, sPredicate);
+						that.turnIntoPlaceholder(oElement, sPredicate);
 					} else {
 						that.aElements.$byPredicate[sPredicate] = oElement;
 						if (_Helper.hasPrivateAnnotation(oElement, "expanding")) {
@@ -615,7 +609,7 @@ sap.ui.define([
 
 	/**
 	 * Determines the list of elements determined by the given predicates. All other elements are
-	 * replaced by placeholders (lazily).
+	 * turned into placeholders (lazily).
 	 *
 	 * @param {string[]} aPredicates
 	 *   The key predicates of the elements to request side effects for
@@ -634,7 +628,7 @@ sap.ui.define([
 			mPredicates[sPredicate] = true;
 		});
 
-		return this.aElements.filter(function (oElement, i) {
+		return this.aElements.filter(function (oElement) {
 			var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 
 			if (mPredicates[sPredicate]) {
@@ -642,7 +636,7 @@ sap.ui.define([
 				return true; // keep and request
 			}
 
-			that.replaceByPlaceholder(i, oElement, sPredicate);
+			that.turnIntoPlaceholder(oElement, sPredicate);
 		});
 	};
 
@@ -971,39 +965,6 @@ sap.ui.define([
 	_AggregationCache.prototype.refreshKeptElements = function () {};
 
 	/**
-	 * Replaces the given element, which is at the given position and has the given predicate, with
-	 * a placeholder which keeps all private annotations plus the hierarchy node value. The original
-	 * element is removed from its corresponding cache and must not be used any longer.
-	 *
-	 * @param {number} iIndex - Its index
-	 * @param {object} oElement - An element
-	 * @param {string} sPredicate - Its predicate
-	 *
-	 * @private
-	 */
-	_AggregationCache.prototype.replaceByPlaceholder = function (iIndex, oElement, sPredicate) {
-		var sNodeProperty = this.oAggregation.$NodeProperty,
-			oPlaceholder;
-
-		if (_Helper.hasPrivateAnnotation(oElement, "placeholder")) {
-			return;
-		}
-
-		_AggregationHelper.markSplicedStale(oElement);
-		this.aElements[iIndex] = oPlaceholder = {
-			"@$ui5._" : Object.assign(oElement["@$ui5._"], {placeholder : true}),
-			"@$ui5.node.isExpanded" : oElement["@$ui5.node.isExpanded"],
-			"@$ui5.node.level" : oElement["@$ui5.node.level"]
-		};
-		oPlaceholder[sNodeProperty] = oElement[sNodeProperty];
-		delete this.aElements.$byPredicate[sPredicate];
-
-		// drop original element from its cache's collection
-		_Helper.getPrivateAnnotation(oElement, "parent")
-			.drop(_Helper.getPrivateAnnotation(oElement, "index"), sPredicate);
-	};
-
-	/**
 	 * Returns the cache's URL.
 	 *
 	 * @returns {string} The URL
@@ -1014,6 +975,29 @@ sap.ui.define([
 	// @override sap.ui.model.odata.v4.lib._Cache#toString
 	_AggregationCache.prototype.toString = function () {
 		return this.sDownloadUrl;
+	};
+
+	/**
+	 * Turns the given element, which has the given predicate, into a placeholder which keeps all
+	 * private annotations plus the hierarchy node value. The original element is removed from its
+	 * corresponding cache and must not be used any longer.
+	 *
+	 * @param {object} oElement - An element
+	 * @param {string} sPredicate - Its predicate
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.turnIntoPlaceholder = function (oElement, sPredicate) {
+		if (_Helper.hasPrivateAnnotation(oElement, "placeholder")) {
+			return;
+		}
+
+		_Helper.setPrivateAnnotation(oElement, "placeholder", 1); // not an initial placeholder
+		_AggregationHelper.markSplicedStale(oElement);
+		delete this.aElements.$byPredicate[sPredicate];
+		// drop original element from its cache's collection
+		_Helper.getPrivateAnnotation(oElement, "parent")
+			.drop(_Helper.getPrivateAnnotation(oElement, "index"), sPredicate);
 	};
 
 	//*********************************************************************************************
@@ -1106,11 +1090,10 @@ sap.ui.define([
 	// @override sap.ui.model.odata.v4.lib._Cache#calculateKeyPredicate
 	_AggregationCache.calculateKeyPredicateRH = function (oGroupNode, oAggregation, oElement,
 			mTypeForMetaPath, sMetaPath) {
-		var sDistanceFromRootProperty = oAggregation.$DistanceFromRootProperty,
-			sDrillStateProperty = oAggregation.$DrillStateProperty,
+		var sDistanceFromRoot,
 			bIsExpanded,
 			iLevel = 1,
-			sLimitedDescendantCountProperty = oAggregation.$LimitedDescendantCountProperty,
+			sLimitedDescendantCount,
 			sPredicate;
 
 		if (!(sMetaPath in mTypeForMetaPath)) {
@@ -1123,7 +1106,7 @@ sap.ui.define([
 			return sPredicate;
 		}
 
-		switch (oElement[sDrillStateProperty]) {
+		switch (_Helper.drillDown(oElement, oAggregation.$DrillStateProperty)) {
 			case "expanded":
 				bIsExpanded = true;
 				break;
@@ -1137,21 +1120,30 @@ sap.ui.define([
 			default: // "leaf"
 				// bIsExpanded = undefined;
 		}
+		_Helper.deleteProperty(oElement, oAggregation.$DrillStateProperty);
 		if (oGroupNode) {
 			iLevel = oGroupNode["@$ui5.node.level"] + 1;
-		} else if (oElement[sDistanceFromRootProperty]) { // Edm.Int64
-			iLevel = parseInt(oElement[sDistanceFromRootProperty]) + 1;
+		} else {
+			sDistanceFromRoot = _Helper.drillDown(oElement, oAggregation.$DistanceFromRootProperty);
+			if (sDistanceFromRoot) { // Edm.Int64
+				_Helper.deleteProperty(oElement, oAggregation.$DistanceFromRootProperty);
+				iLevel = parseInt(sDistanceFromRoot) + 1;
+			}
 		}
 		// set the node values
 		_AggregationHelper.setAnnotations(oElement, bIsExpanded, /*bIsTotal*/undefined, iLevel);
-		if (oElement[sLimitedDescendantCountProperty]
-			&& oElement[sLimitedDescendantCountProperty] !== "0") { // Edm.Int64
-			_Helper.setPrivateAnnotation(oElement, "descendants",
-				parseInt(oElement[sLimitedDescendantCountProperty]));
+
+		if (oAggregation.$LimitedDescendantCountProperty) {
+			sLimitedDescendantCount
+				= _Helper.drillDown(oElement, oAggregation.$LimitedDescendantCountProperty);
+			if (sLimitedDescendantCount) {
+				_Helper.deleteProperty(oElement, oAggregation.$LimitedDescendantCountProperty);
+				if (sLimitedDescendantCount !== "0") { // Edm.Int64
+					_Helper.setPrivateAnnotation(oElement, "descendants",
+						parseInt(sLimitedDescendantCount));
+				}
+			}
 		}
-		delete oElement[sDistanceFromRootProperty];
-		delete oElement[sDrillStateProperty];
-		delete oElement[sLimitedDescendantCountProperty];
 
 		return sPredicate;
 	};
