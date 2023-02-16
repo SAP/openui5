@@ -265,9 +265,10 @@ sap.ui.define([
 				items: [
 					new Label({
 						text: "'type' property",
-						wrapping: true
+						wrapping: true,
+						labelFor: "S1"
 					}).addStyleClass("sapUiSmallMarginTop"),
-					new Select({
+					new Select("S1", {
 						items: [
 							new Item({text: "sap.m.DateTimeInputType.Date", key: DateTimeInputType.Date}),
 							new Item({text: "sap.m.DateTimeInputType.Time", key: DateTimeInputType.Time}),
@@ -286,9 +287,10 @@ sap.ui.define([
 				items: [
 					new Label({
 						text: "Supported bindings",
-						wrapping: true
+						wrapping: true,
+						labelFor: "S2"
 					}).addStyleClass("sapUiSmallMarginTop"),
-					new Select({
+					new Select("S2", {
 						items: [
 							new Item({text: "sap.ui.model.type.Date", key: "Date"}),
 							new Item({text: "sap.ui.model.type.Time", key: "Time"}),
@@ -312,7 +314,8 @@ sap.ui.define([
 				items: [
 					new Label({
 						text: "DateTimeInput",
-						wrapping: true
+						wrapping: true,
+						labelFor: "DTIBinding"
 					}).addStyleClass("sapUiSmallMarginTop"),
 					new DateTimeInput("DTIBinding",{
 						type: DateTimeInputType.Date,
@@ -324,9 +327,10 @@ sap.ui.define([
 				items: [
 					new Label({
 						text: "Input bound to the same model property, without binding type",
-						wrapping: true
+						wrapping: true,
+						labelFor: "I3"
 					}).addStyleClass("sapUiSmallMarginTop"),
-					new Input({
+					new Input("I3", {
 						value: {path: "/dateVal1"}
 					}).setModel(oModel)
 				]
