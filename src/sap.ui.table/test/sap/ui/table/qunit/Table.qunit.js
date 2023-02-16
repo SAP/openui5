@@ -732,8 +732,14 @@ sap.ui.define([
 		assert.ok(!oTable.$().hasClass("sapUiTableRAct"), "RowActionCount is 1: No CSS class sapUiTableRAct");
 		assert.ok(oTable.$().hasClass("sapUiTableRActS"), "RowActionCount is 1: CSS class sapUiTableRActS");
 		assert.ok(oTable.$("sapUiTableRowActionScr").length, "Action area exists");
-
 		assert.notOk(oTable.$().hasClass("sapUiTableRActFlexible"), "The RowActions column is positioned right");
+
+		oTable.getColumns().forEach(function(oCol) {
+			oCol.setWidth("150.23999999px");
+		});
+		oCore.applyChanges();
+		assert.notOk(oTable.$().hasClass("sapUiTableRActFlexible"), "The RowActions column is positioned right");
+
 		oTable.getColumns().forEach(function(oCol) {
 			oCol.setWidth("50px");
 		});
@@ -742,6 +748,7 @@ sap.ui.define([
 		var oTableSizes = oTable._collectTableSizes();
 		assert.ok(oTable.$("sapUiTableRowActionScr").css("left") === 400 + oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth + "px",
 			"The RowActions column is positioned correctly");
+
 		oTable.setFixedColumnCount(2);
 		oCore.applyChanges();
 		oTableSizes = oTable._collectTableSizes();

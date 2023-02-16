@@ -1575,16 +1575,16 @@ sap.ui.define([
 			var oDummyColumn = this.getDomRef("dummycolhdr");
 
 			if (oDummyColumn) {
-				var iColumnsWidth = this.getColumns().reduce(function(iColumnsWidth, oColumn) {
-					var oDomRef = oColumn.getDomRef();
-					if (oDomRef && oColumn.getIndex() >= this.getComputedFixedColumnCount()) {
-						iColumnsWidth += oDomRef.offsetWidth;
-					}
-					return iColumnsWidth;
-				}.bind(this), 0);
 				var bDummyColumnHasWidth = oDummyColumn.clientWidth > 0;
 
 				if (!bHasFlexibleRowActions && bDummyColumnHasWidth) {
+					var iColumnsWidth = this.getColumns().reduce(function(iColumnsWidth, oColumn) {
+						var oDomRef = oColumn.getDomRef();
+						if (oDomRef && oColumn.getIndex() >= this.getComputedFixedColumnCount()) {
+							iColumnsWidth += oDomRef.offsetWidth;
+						}
+						return iColumnsWidth;
+					}.bind(this), 0);
 					var iRowActionPos = iColumnsWidth + oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth;
 					var oRowActionStyles = {};
 					if (!TableUtils.hasRowActions(this)) {
