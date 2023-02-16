@@ -17,7 +17,6 @@ sap.ui.define([
 	 * Only available during build time {@link sap.ui.fl.apply._internal.changes.descriptor.RegistrationBuild}.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.fiori.SetAbstract
-	 * @experimental
 	 * @version ${version}
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal
@@ -26,7 +25,7 @@ sap.ui.define([
 		/**
 		 * Method to apply the <code>appdescr_fiori_setAbstract</code> change to the manifest.
 		 * @param {object} oManifest - Original manifest
-		 * @param {object} oChange - Change with type <code>appdescr_fiori_setAbstract</code>
+		 * @param {sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange} oChange - Change with type <code>appdescr_fiori_setAbstract</code>
 		 * @param {boolean} oChange.content.abstract - Boolean flag (only allowed value is <code>false</code>)
 		 * @returns {object} Updated manifest with changed <code>appdescr_fiori_setAbstract</code>
 		 *

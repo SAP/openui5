@@ -135,7 +135,6 @@ sap.ui.define([
 	 * Available only for build {@link sap.ui.fl.apply._internal.changes.descriptor.RegistrationBuild}.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.app.AddAnnotationsToOData
-	 * @experimental
 	 * @since 1.87
 	 * @version ${version}
 	 * @private
@@ -147,7 +146,7 @@ sap.ui.define([
 		 * Method to apply the <code>appdescr_app_addAnnotationsToOData</code> change to the manifest.
 		 *
 		 * @param {object} oManifest - Original manifest
-		 * @param {object} oChange - Change with type <code>appdescr_app_addAnnotationsToOData</code>
+		 * @param {sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange} oChange - Change with type <code>appdescr_app_addAnnotationsToOData</code>
 		 * @param {string} oChange.content.dataSourceId - ID of <code>sap.app/dataSource</code> that is being changed
 		 * @param {Array<string>} oChange.content.annotations - Array of annotations in OData dataSource <code>sap.app/dataSource/settings/annotations</code> that is being changed
 		 * @param {string} oChange.content.annotationsInsertPosition - Insert position operation that is performed under annotations. Allowed values: <code>BEGINNING</code> and <code>END</code> default: (<code>BEGINNING</code)

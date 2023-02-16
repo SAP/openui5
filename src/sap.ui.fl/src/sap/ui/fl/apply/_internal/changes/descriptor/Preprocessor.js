@@ -24,7 +24,6 @@ sap.ui.define([
 	 * Flex hook for preprocessing manifest early. Merges descriptor changes if needed.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.Preprocessor
-	 * @experimental
 	 * @since 1.74
 	 * @version ${version}
 	 * @private

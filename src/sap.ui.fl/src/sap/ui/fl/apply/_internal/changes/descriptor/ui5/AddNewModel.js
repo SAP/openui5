@@ -93,7 +93,6 @@ sap.ui.define([
 	 * Available only for build {@link sap.ui.fl.apply._internal.changes.descriptor.RegistrationBuild}.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.ui5.AddNewModel
-	 * @experimental
 	 * @since 1.87
 	 * @version ${version}
 	 * @private
@@ -105,7 +104,7 @@ sap.ui.define([
 		 * Method to apply the <code>appdescr_ui5_addNewModel</code> change to the manifest.
 		 *
 		 * @param {object} oManifest - Original manifest
-		 * @param {object} oChange - Change with type <code>appdescr_ui5_addNewModel</code>
+		 * @param {sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange} oChange - Change with type <code>appdescr_ui5_addNewModel</code>
 		 * @param {object} oChange.content.model - Model that will be added
 		 * @param {object} oChange.content.dataSource - DataSource for model
 		 * @returns {object} Updated manifest with merged content

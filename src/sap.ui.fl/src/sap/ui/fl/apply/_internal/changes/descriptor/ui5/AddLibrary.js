@@ -45,7 +45,6 @@ sap.ui.define([
 	 * Available for both runtime and build {@link sap.ui.fl.apply._internal.changes.descriptor.Registration}.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.ui5.AddLibrary
-	 * @experimental
 	 * @since 1.74
 	 * @version ${version}
 	 * @private
@@ -55,9 +54,9 @@ sap.ui.define([
 
 		/**
 		 * Method to apply the <code>appdescr_ui5_addLibraries</code> change to the manifest.
-		 * @param {object} oManifest Original manifest
-		 * @param {object} oChange Change with type <code>appdescr_ui5_addLibraries</code>
-		 * @param {object} oChange.content.libraries Change content containing libraries names and minVersion
+		 * @param {object} oManifest - Original manifest
+		 * @param {sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange} oChange - Change with type <code>appdescr_ui5_addLibraries</code>
+		 * @param {object} oChange.content.libraries - Change content containing libraries names and minVersion
 		 * @returns {object} Updated manifest with merged dependencies
 		 *
 		 * @private

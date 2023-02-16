@@ -16,7 +16,6 @@ sap.ui.define([
 	 * Available for both runtime and build {@link sap.ui.fl.apply._internal.changes.descriptor.Registration}.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.ovp.DeleteCard
-	 * @experimental
 	 * @version ${version}
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal
@@ -25,9 +24,9 @@ sap.ui.define([
 
 		/**
 		 * Method to apply the <code>appdescr_ovp_removeCard</code> change to the manifest.
-		 * @param {object} oManifest Original manifest
-		 * @param {object} oChange Change made by key user
-		 * @param {string} oChange.content.cardID ID of the card to be deleted
+		 * @param {object} oManifest - Original manifest
+		 * @param {sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange} oChange - Change made by key user
+		 * @param {string} oChange.content.cardID - ID of the card to be deleted
 		 * @returns {object} Updated manifest
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
