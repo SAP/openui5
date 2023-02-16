@@ -58,7 +58,7 @@ sap.ui.define([
 ].forEach(function (sMethod) {
 	QUnit.test(sMethod, function (assert) {
 		var oDate = {},
-			oUI5Date = {oDate: oDate};
+			oUI5Date = {oDate: oDate, oDateParts: "~cachedDateParts"};
 
 		oDate[sMethod] = function () {};
 
@@ -70,6 +70,8 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(UI5Date.prototype[sMethod].call(oUI5Date, "~foo", "~bar", "~baz"), "~result");
+
+		assert.strictEqual(oUI5Date.oDateParts, undefined);
 	});
 });
 
