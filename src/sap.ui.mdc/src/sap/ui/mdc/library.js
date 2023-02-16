@@ -1202,6 +1202,13 @@
 	/**
 	 * @namespace
 	 * @name sap.ui.mdc.filterbar
+	 * @private
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @experimental As of version 1.112.0
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 */
+
+	/**
 	 *
 	 * @typedef {object} sap.ui.mdc.filterbar.PropertyInfo
 	 * @property {string} path
