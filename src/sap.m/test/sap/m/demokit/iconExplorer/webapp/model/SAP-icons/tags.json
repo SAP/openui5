@@ -6769,5 +6769,65 @@
 			"fill",
 			"filled"
 		]
+	},
+	"biometric-face": {
+		"tags": [
+			"face",
+			"faceid",
+			"viewfinder",
+			"id",
+			"recognition"
+		]
+	},
+	"biometric-thumb": {
+		"tags": [
+			"fingerprint",
+			"finger",
+			"thumb",
+			"id",
+			"recognition"
+		]
+	},
+	"dark-mode": {
+		"tags": [
+			"dark",
+			"moon",
+			"night",
+			"mode"
+		]
+	},
+	"light-mode": {
+		"tags": [
+			"light",
+			"sun",
+			"sunny",
+			"mode",
+			"day"
+		]
+	},
+	"people-connected": {
+		"tags": [
+			"people",
+			"connection",
+			"connected",
+			"collaboration",
+			"task-center",
+			"team",
+			"collaborate",
+			"work"
+		]
+	},
+	"select-appointments": {
+		"tags": [
+			"date picker",
+			"calendar",
+			"month",
+			"week",
+			"day",
+			"appointment",
+			"check",
+			"select",
+			"choose"
+		]
 	}
 }
