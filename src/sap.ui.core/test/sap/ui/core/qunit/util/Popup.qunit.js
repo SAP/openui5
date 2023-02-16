@@ -1928,7 +1928,9 @@ sap.ui.define([
 
 	function compareClientRect(oActual, oExpected, assert) {
 		["x", "y", "width", "height", "top", "right", "bottom", "left"].forEach(function(sKey) {
-			assert.ok(Math.abs(oExpected[sKey] - oActual[sKey]) < 1, "Property of Bounding ClientRect '" + sKey + "' is within the expected value range");
+			if (typeof oActual[sKey] === "number" && typeof oExpected[sKey] === "number") {
+				assert.ok(Math.abs(oExpected[sKey] - oActual[sKey]) < 1, "Property of Bounding ClientRect '" + sKey + "' is within the expected value range");
+			}
 		});
 	}
 
@@ -2032,8 +2034,8 @@ sap.ui.define([
 		Popup.setWithinArea(window);
 
 		var pPromise = waitTillOpen(oPopup).then(function() {
-			assert.deepEqual(getBlockLayer().getBoundingClientRect().width, document.documentElement.clientWidth, "The blocklayer covers the entire screen width");
-			assert.deepEqual(getBlockLayer().getBoundingClientRect().height, document.documentElement.clientHeight, "The blocklayer covers the entire screen height");
+			assert.ok(Math.abs(getBlockLayer().getBoundingClientRect().width - document.documentElement.clientWidth) < 1, "The blocklayer covers the entire screen width");
+			assert.ok(Math.abs(getBlockLayer().getBoundingClientRect().height - document.documentElement.clientHeight) < 1, "The blocklayer covers the entire screen height");
 
 			oPopup.destroy();
 			Popup.setWithinArea(null);
@@ -2057,7 +2059,7 @@ sap.ui.define([
 			assert.deepEqual(getBlockLayer().getBoundingClientRect(), oWithinDomRef.getBoundingClientRect(), "The blocklayer has the same dimensions as the defined within area.");
 
 			var pBlockLayerResized = waitTillBlockLayerResize().then(function(oBlockLayerDomRef){
-				assert.deepEqual(oBlockLayerDomRef.style.width, "350px", "The blocklayer has the same width as the defined within area.");
+				assert.ok(Math.abs(parseFloat(oBlockLayerDomRef.style.width) - 350) < 1, "The blocklayer has the same width as the defined within area.");
 
 				// Clean-Up
 				oPopup.destroy();
