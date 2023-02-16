@@ -79,9 +79,9 @@
 				Whether an action is defined by the card developer, or built-in, it is dispatched for handling in the following order:
 			</p>
 			<ol>
+				<li>Extension</li>
 				<li>Card</li>
 				<li>Host</li>
-				<li>Extension</li>
 			</ol>
 			<p>
 				If any of the listed handles the action, it can prevent the dispatching to the next handlers and prevent default behavior by calling <code>preventDefault()</code> on the event object.
