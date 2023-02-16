@@ -130,7 +130,10 @@
 				{ "name" : "non-binary" },
 				{ "name" : "female" },
 				{ "name" : "gender-male-and-female" },
-				{ "name" : "male" }
+				{ "name" : "male" },
+				{ "name" : "biometric-face" },
+				{ "name" : "biometric-thumb" },
+				{ "name" : "people-connected" }
 			]
 		},
 		{
@@ -905,7 +908,8 @@
 				{ "name" : "date-time" },
 				{ "name" : "check-availability" },
 				{ "name" : "accelerated" },
-				{ "name" : "workflow-tasks" }
+				{ "name" : "workflow-tasks" },
+				{ "name" : "select-appointments" }
 			]
 		},
 		{

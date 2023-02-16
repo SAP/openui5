@@ -733,7 +733,13 @@ sap.ui.define([
 				'locate-me-2': 0xe302,
 				'map-fill': 0xe303,
 				'cloud-check': 0x1e304,
-				'enablement': 0x1e305
+				'enablement': 0x1e305,
+				'biometric-thumb': 0xe306,
+				'biometric-face': 0xe307,
+				'people-connected': 0xe308,
+				'light-mode': 0xe309,
+				'dark-mode': 0xe30a,
+				'select-appointments': 0x1e30b
 			}
 		};
 
