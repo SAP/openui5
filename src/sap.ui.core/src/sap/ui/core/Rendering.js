@@ -160,9 +160,10 @@ sap.ui.define([
 		 */
 		renderPendingUIUpdates: function(sCaller, iTimeout) {
 			if (iTimeout !== undefined) {
+				// start async interaction step
+				Rendering.aFnDone.push(Interaction.notifyAsyncStep());
 				_sRerenderTimer = setTimeout(_renderPendingUIUpdates.bind(null, sCaller), iTimeout);
 			} else {
-				Rendering.aFnDone.push(Interaction.notifyAsyncStep());
 				_renderPendingUIUpdates(sCaller);
 			}
 		},
@@ -245,8 +246,6 @@ sap.ui.define([
 			if ( !_sRerenderTimer ) {
 				// TODO: we should handle xx-waitForTheme here...
 				oRenderLog.debug("Registering timer for delayed re-rendering");
-				// start async interaction step
-				Rendering.aFnDone.push(Interaction.notifyAsyncStep());
 				Rendering.renderPendingUIUpdates('invalidated UIArea', 0); // decoupled for collecting several invalidations into one redraw
 			}
 		}
