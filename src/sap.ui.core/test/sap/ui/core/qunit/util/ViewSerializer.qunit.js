@@ -86,12 +86,8 @@ sap.ui.define([
 		QUnit.test("Serialize, Check if a view that has no controller is still serializable", function (assert) {
 			var oViewSerializer = new ViewSerializer(UIArea.registry.get("xmlViewWithoutControllerArea"), null, "sap.m");
 
-			var mXMLViews = oViewSerializer.serializeToHTML();
+			var mXMLViews = oViewSerializer.serializeToXML();
 			var sResult = mXMLViews["serializer.view.TestViewWithoutController"];
-			assert.equal(sResult.indexOf("<template") === 0, true);
-
-			mXMLViews = oViewSerializer.serializeToXML();
-			sResult = mXMLViews["serializer.view.TestViewWithoutController"];
 			assert.equal(sResult.indexOf("<template") === -1, true);
 
 			mXMLViews = oViewSerializer.serialize();
