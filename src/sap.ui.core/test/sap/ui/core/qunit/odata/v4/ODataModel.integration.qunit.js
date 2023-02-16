@@ -4256,7 +4256,8 @@ sap.ui.define([
 		}).then(function () {
 			oEmployeeContext = that.oView.byId("inner").getBinding("items").getCurrentContexts()[0];
 
-			that.expectRequest("TEAMS('T1')?$select=Team_Id", createErrorInsideBatch())
+			that.expectRequest("TEAMS('T1')?$select=Team_Id,__CT__FAKE__Message/__FAKE__Messages",
+					createErrorInsideBatch())
 				.expectRequest("TEAMS('T1')/TEAM_2_EMPLOYEES?$select=ID&$skip=0&$top=100")
 				.expectMessages([{
 					code : "CODE",
@@ -4311,8 +4312,8 @@ sap.ui.define([
 }, {
 	name : "refresh undeleted context",
 	run : function (_assert, oUndeletedContext) {
-		this.expectRequest("SalesOrderList('2')?$select=Note,SalesOrderID",
-				{Note : "Note 2", SalesOrderID : "2"});
+		this.expectRequest("SalesOrderList('2')?$select=Messages,Note,SalesOrderID",
+				{Messages : [], Note : "Note 2", SalesOrderID : "2"});
 
 		return oUndeletedContext.requestSideEffects([""]);
 	}
@@ -24168,11 +24169,13 @@ sap.ui.define([
 			assert.strictEqual(aResults[0], "60");
 			assert.strictEqual(aResults[1], sExpectedDownloadUrl, "JIRA: CPOUI5ODATAV4-1920");
 
-			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,NodeID,defaultChannel"
+			that.expectRequest("Artists"
+					+ "?$select=ArtistID,IsActiveEntity,Messages,NodeID,defaultChannel"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
 						ArtistID : "0",
 						IsActiveEntity : true,
+						Messages : [],
 						NodeID : "0,true",
 						defaultChannel : "160"
 					}]
@@ -24248,11 +24251,13 @@ sap.ui.define([
 				oRoot.requestRefresh();
 			}, new Error("Cannot refresh " + oRoot + " when using data aggregation"));
 
-			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,NodeID,defaultChannel"
+			that.expectRequest("Artists"
+					+ "?$select=ArtistID,IsActiveEntity,Messages,NodeID,defaultChannel"
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
 						ArtistID : "0",
 						IsActiveEntity : true,
+						Messages : [],
 						NodeID : "-0,true-",
 						defaultChannel : "360"
 					}]
@@ -31750,8 +31755,9 @@ sap.ui.define([
 			var o2ndRowContext = oTableBinding.getCurrentContexts()[1];
 
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
-					+ "/_Publication('42-1')?$select=CurrencyCode,Price,PublicationID", {
+					+ "/_Publication('42-1')?$select=CurrencyCode,Messages,Price,PublicationID", {
 					CurrencyCode : "JPY",
+					Messages : [],
 					Price : "123", // side effect
 					PublicationID : "42-1"
 				})
@@ -31852,10 +31858,11 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("Artists('42')/_Publication('New 1')"
-					+ "?$select=Price,PublicationID", {
+					+ "?$select=Messages,Price,PublicationID", {
+					Messages : [],
 					Price : "3.34",
 					PublicationID : "New 1"
-					})
+				})
 				.expectChange("price", ["3.34"]);
 
 			return Promise.all([
@@ -48065,9 +48072,10 @@ sap.ui.define([
 
 			// Note: this test is just about the right key predicate, no need for fake side effect
 			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=true)"
-					+ "?$select=ArtistID,IsActiveEntity", {
+					+ "?$select=ArtistID,IsActiveEntity,Messages", {
 					ArtistID : "23",
-					IsActiveEntity : true
+					IsActiveEntity : true,
+					Messages : []
 				});
 
 			return Promise.all([
@@ -48612,6 +48620,241 @@ sap.ui.define([
 				oModel.submitBatch("noSubmit"), // expect no PATCH
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: An object page is requesting messages for its root object, including messages for
+	// its items. For a single item, messages are requested as a side effect, replacing exactly
+	// those of this one item. Still, the items table does not request messages when paging.
+	//
+	// A side effect for all structural properties ("*") or an empty navigation property path ("")
+	// of a single(!) row requests messages, but does not remove other rows' messages. On the other
+	// hand, a refresh of a single row does not treat messages specially. Sorting of the items table
+	// does not remove any messages, although its cache has reported some of them.
+	// BCP: 2380020646
+	QUnit.test("BCP: 2380020646", function (assert) {
+		var oListBinding,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			sPrefix = "/SalesOrderList('1')/",
+			oTable,
+			sView = '\
+<FlexBox binding="{path : \'/SalesOrderList(\\\'1\\\')\', parameters : {$select : \'Messages\'}}"\
+		id="form">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<t:Table id="table" rows="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}"\
+			 threshold="0" visibleRowCount="2">\
+		<Text id="itemPosition" text="{ItemPosition}"/>\
+		<Text id="quantity" text="{Quantity}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+				+ "?$select=ItemPosition,Quantity,SalesOrderID&$skip=0&$top=2", {
+				value : [{
+					ItemPosition : "0010",
+					Quantity : "0",
+					SalesOrderID : "1"
+				}, {
+					ItemPosition : "0020",
+					Quantity : "20",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("itemPosition", ["0010", "0020"])
+			.expectChange("quantity", ["0.000", "20.000"])
+			.expectRequest("SalesOrderList('1')?$select=Messages,SalesOrderID", {
+				Messages : [{
+					code : "1.0010",
+					message : "Enter a minimum quantity of 0010",
+					numericSeverity : 3,
+					target : "SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')/Quantity",
+					transition : false
+				}, {
+					code : "1.0030",
+					message : "Enter a minimum quantity of 0030",
+					numericSeverity : 3,
+					target : "SO_2_SOITEM(SalesOrderID='1',ItemPosition='0030')/Quantity",
+					transition : false
+				}],
+				SalesOrderID : "1"
+			})
+			.expectChange("id", "1")
+			.expectMessages([{
+				code : "1.0010",
+				message : "Enter a minimum quantity of 0010",
+				target : sPrefix + "SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')/Quantity",
+				type : "Warning"
+			}, {
+				code : "1.0030",
+				message : "Enter a minimum quantity of 0030",
+				target : sPrefix + "SO_2_SOITEM(SalesOrderID='1',ItemPosition='0030')/Quantity",
+				type : "Warning"
+			}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oListBinding = oTable.getBinding("rows");
+
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Messages,SalesOrderID"
+					+ "&$filter=SalesOrderID eq '1' and ItemPosition eq '0010'", {
+					value : [{
+						ItemPosition : "0010",
+						Messages : [{
+							code : "OK",
+							message : "Just A Message",
+							numericSeverity : 1,
+							target : "Quantity",
+							transition : false
+						}],
+						SalesOrderID : "1"
+					}]
+				})
+				.expectMessages([{
+					code : "OK",
+					message : "Just A Message",
+					target : sPrefix + "SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')/Quantity",
+					type : "Success"
+				}, {
+					code : "1.0030",
+					message : "Enter a minimum quantity of 0030",
+					target : sPrefix + "SO_2_SOITEM(SalesOrderID='1',ItemPosition='0030')/Quantity",
+					type : "Warning"
+				}]);
+
+			return Promise.all([
+				// code under test
+				oListBinding.getCurrentContexts()[0].requestSideEffects(["Messages"]),
+				that.waitForChanges(assert, "side effect: single row's messages")
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Quantity,SalesOrderID&$skip=2&$top=2", {
+					value : [{
+						ItemPosition : "0030",
+						Quantity : "0",
+						SalesOrderID : "1"
+					}, {
+						ItemPosition : "0040",
+						Quantity : "40",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("itemPosition", [,, "0030", "0040"])
+				.expectChange("quantity", [,, "0.000", "40.000"]);
+
+			// code under test
+			oTable.setFirstVisibleRow(2);
+
+			return that.waitForChanges(assert, "scroll down");
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
+					+ "&$filter=SalesOrderID eq '1' and ItemPosition eq '0030'", {
+					value : [{
+						ItemPosition : "0030",
+						Messages : [{
+							code : "NEW",
+							message : "Yet Another Message",
+							numericSeverity : 2,
+							target : "Quantity",
+							transition : false
+						}],
+						Quantity : "30",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("quantity", [,, "30.000"])
+				.expectMessages([{
+					code : "OK",
+					message : "Just A Message",
+					target : sPrefix + "SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')/Quantity",
+					type : "Success"
+				}, {
+					code : "NEW",
+					message : "Yet Another Message",
+					target : sPrefix + "SO_2_SOITEM(SalesOrderID='1',ItemPosition='0030')/Quantity",
+					type : "Information"
+				}]);
+
+			return Promise.all([
+				// code under test
+				oListBinding.getCurrentContexts()[0].requestSideEffects(["*"]),
+				that.waitForChanges(assert, "side effect: * for single row")
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')"
+					+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0030')"
+					+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID", {
+					ItemPosition : "0030",
+					Messages : [{
+						code : "OLD",
+						message : "Yesterday",
+						numericSeverity : 4,
+						target : "Quantity",
+						transition : true
+					}],
+					Quantity : "31",
+					SalesOrderID : "1"
+				})
+				.expectChange("quantity", [,, "31.000"])
+				.expectMessages([{
+					code : "OK",
+					message : "Just A Message",
+					target : sPrefix + "SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')/Quantity",
+					type : "Success"
+				}, {
+					code : "OLD",
+					message : "Yesterday",
+					persistent : true,
+					target : sPrefix + "SO_2_SOITEM(SalesOrderID='1',ItemPosition='0030')/Quantity",
+					type : "Error"
+				}]);
+
+			return Promise.all([
+				// code under test
+				oListBinding.getCurrentContexts()[0].requestSideEffects([""]),
+				that.waitForChanges(assert, "side-effects refresh of single row")
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')"
+					+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0040')"
+					+ "?$select=ItemPosition,Quantity,SalesOrderID", {
+					ItemPosition : "0040",
+					Quantity : "41",
+					SalesOrderID : "1"
+				})
+				.expectChange("quantity", [,,, "41.000"]);
+
+			return Promise.all([
+				// code under test
+				oListBinding.getCurrentContexts()[1].requestRefresh(),
+				that.waitForChanges(assert, "refresh single row: no messages")
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Quantity,SalesOrderID&$orderby=ItemPosition desc"
+					+ "&$skip=0&$top=2", {
+					value : [{
+						ItemPosition : "0040",
+						Quantity : "42",
+						SalesOrderID : "1"
+					}, {
+						ItemPosition : "0030",
+						Quantity : "32",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("itemPosition", ["0040", "0030"])
+				.expectChange("quantity", ["42.000", "32.000"]);
+				// Note: expect NO change in messages
+
+			// code under test
+			oListBinding.sort(new Sorter("ItemPosition", true));
+
+			return that.waitForChanges(assert, "sort");
 		});
 	});
 
