@@ -876,8 +876,6 @@ sap.ui.define([
 	[
 		"getTime", "getUTCDate", "getUTCDay", "getUTCFullYear", "getUTCHours", "getUTCMilliseconds",
 		"getUTCMinutes", "getUTCMonth", "getUTCSeconds",
-		"setUTCDate", "setUTCFullYear", "setUTCHours", "setUTCMilliseconds", "setUTCMinutes",
-		"setUTCMonth", "setUTCSeconds",
 		"toGMTString", "toISOString", "toJSON", "toUTCString", "valueOf"
 	].forEach(function (sMethod) {
 		UI5Date.prototype[sMethod] = function () {
@@ -889,6 +887,17 @@ sap.ui.define([
 		UI5Date.prototype[sMethod] = function (sLocale, oOptions) {
 			return this.oDate[sMethod](sLocale || Configuration.getLanguageTag(),
 				Object.assign({timeZone: this.sTimezoneID}, oOptions));
+		};
+	});
+
+	// before delegating to the inner date instance clear the cached date parts
+	[
+		"setUTCDate", "setUTCFullYear", "setUTCHours", "setUTCMilliseconds", "setUTCMinutes",
+		"setUTCMonth", "setUTCSeconds"
+	].forEach(function (sMethod) {
+		UI5Date.prototype[sMethod] = function () {
+			this.oDateParts = undefined;
+			return this.oDate[sMethod].apply(this.oDate, arguments);
 		};
 	});
 
