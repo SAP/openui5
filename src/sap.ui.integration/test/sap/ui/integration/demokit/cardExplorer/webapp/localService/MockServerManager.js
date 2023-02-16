@@ -29,15 +29,15 @@ sap.ui.define([
 	];
 
 	MockServerManager.initAll = function (bSampleUsesMockServer) {
-		MockServer.config({
-			autoRespond: true,
-			autoRespondAfter: 600
-		});
-
 		var pAwait = Promise.resolve();
 
 		// init mock server only on demand
 		if (bSampleUsesMockServer) {
+			MockServer.config({
+				autoRespond: true,
+				autoRespondAfter: 600
+			});
+
 			pAwait = Promise.all(
 				MockServerManager._aMockServers.map(function (oMockServer) {
 					return oMockServer.init();
