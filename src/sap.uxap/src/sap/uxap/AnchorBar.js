@@ -30,6 +30,9 @@ sap.ui.define([
 	// shortcut for sap.m.SelectType
 	var SelectType = mobileLibrary.SelectType;
 
+	// 2px tollerance when calculating how much the scroll of the AnchorBar should be moved, when using arrow keys. This way the focus border is not cut.
+	var OFFSET_SCROLL = 2;
+
 	/**
 	 * Constructor for a new <code>AnchorBar</code>.
 	 *
@@ -686,8 +689,9 @@ sap.ui.define([
 	AnchorBar.prototype.onsapright = function (oEvent) {
 		oEvent.preventDefault();
 
-		var iNextIndex;
-		var aAnchors = this.getContent();
+		var iNextIndex,
+			aAnchors = this.getContent(),
+			oAnchor;
 
 		aAnchors.forEach(function (oAnchor, iAnchorIndex) {
 			if (oEvent.target.id.indexOf(oAnchor.getId()) > -1) {
@@ -697,10 +701,14 @@ sap.ui.define([
 		});
 
 		if (iNextIndex && aAnchors[iNextIndex]) {
-			aAnchors[iNextIndex].focus();
+			oAnchor = aAnchors[iNextIndex];
+			oAnchor.focus();
 		} else if (aAnchors[aAnchors.length - 1]) {
-			aAnchors[aAnchors.length - 1].focus();
+			oAnchor = aAnchors[aAnchors.length - 1];
+			oAnchor.focus();
 		}
+
+		this._forceScrollIfNeeded(oAnchor);
 	};
 
 	/**
@@ -712,8 +720,9 @@ sap.ui.define([
 	AnchorBar.prototype.onsapleft = function (oEvent) {
 		oEvent.preventDefault();
 
-		var iNextIndex;
-		var aAnchors = this.getContent();
+		var iNextIndex,
+			aAnchors = this.getContent(),
+			oAnchor;
 
 		aAnchors.forEach(function (oAnchor, iAnchorIndex) {
 			if (oEvent.target.id.indexOf(oAnchor.getId()) > -1) {
@@ -723,10 +732,97 @@ sap.ui.define([
 		});
 
 		if (iNextIndex && aAnchors[iNextIndex]) {
-			aAnchors[iNextIndex].focus();
+			oAnchor = aAnchors[iNextIndex];
+			oAnchor.focus();
 		} else if (aAnchors[0]) {
-			aAnchors[0].focus();
+			oAnchor = aAnchors[0];
+			oAnchor.focus();
 		}
+
+		this._forceScrollIfNeeded(oAnchor, true);
+	};
+
+	/**
+	 * Checks if AnchorBar should be scrolled and scrolls it forcly, if needed.
+	 *
+	 * @param {object} oAnchor
+	 * @param {boolean} bLeft
+	 * @private
+	 */
+	AnchorBar.prototype._forceScrollIfNeeded = function (oAnchor, bLeft) {
+		var oAnchorDomRef = oAnchor.getDomRef(),
+			oParentRef = oAnchorDomRef.parentElement,
+			iParentRefOffsetLeft = oParentRef.offsetLeft,
+			oParentRefOffsetWidth = oParentRef.offsetWidth,
+			iAnchorDomRefWidth = oAnchorDomRef && oAnchorDomRef.offsetWidth,
+			iAnchorDomOffsetLeft = oAnchorDomRef && oAnchorDomRef.offsetLeft,
+			iCurrentScrollPosition = this._oScroller.getScrollLeft(),
+			iVisibleScrollPosition,
+			iAnchorPosition,
+			iOffsetScroll;
+
+		if (!oParentRef || !iAnchorDomRefWidth) {
+			return;
+		}
+
+		if (!this._bRtl) {
+			// The right position of the tab
+			iAnchorPosition =  iAnchorDomOffsetLeft + iAnchorDomRefWidth;
+
+			// Calculates how much the scroll container should be scrolled, so that the right position of the tab will be visible
+			iOffsetScroll = oParentRefOffsetWidth - (iParentRefOffsetLeft + iAnchorPosition - iCurrentScrollPosition);
+			if (!bLeft && iOffsetScroll < 0 && oParentRefOffsetWidth - iAnchorPosition < 0) {
+				this._scrollAnchorBar(bLeft, iOffsetScroll);
+			}
+
+			// Calculates how much the scroll container should be scrolled, so that the left position of the tab will be visible
+			iOffsetScroll = iAnchorDomOffsetLeft - this._iOffset - iParentRefOffsetLeft - OFFSET_SCROLL;
+			if (bLeft && iCurrentScrollPosition > iOffsetScroll) {
+				this._scrollAnchorBar(bLeft, iOffsetScroll);
+			}
+		} else {
+			if (bLeft) {
+				// The last visible right position of the scroll container (in RTL left/right scrolling is reversed)
+				iVisibleScrollPosition =  iCurrentScrollPosition + oParentRefOffsetWidth - this._iOffset;
+				// The right position of the tab
+				iAnchorPosition = iAnchorDomOffsetLeft - iParentRefOffsetLeft;
+
+				if (iAnchorPosition + iAnchorDomRefWidth > iVisibleScrollPosition) {
+					// Calculates how much the scroll container should be scrolled, so that the right position of the tab will be visible
+					iOffsetScroll = ((iAnchorPosition + iAnchorDomRefWidth) - iVisibleScrollPosition + OFFSET_SCROLL);
+					this._scrollAnchorBar(bLeft, iOffsetScroll);
+				}
+			} else {
+				if (iAnchorDomOffsetLeft - iParentRefOffsetLeft - this._iOffset - OFFSET_SCROLL < iCurrentScrollPosition) {
+					// Calculates how much the scroll container should be scrolled, so that the left position of the tab will be visible
+					iOffsetScroll = iAnchorDomRefWidth - iAnchorDomOffsetLeft + OFFSET_SCROLL;
+					this._scrollAnchorBar(bLeft, iOffsetScroll);
+				}
+			}
+		}
+	};
+
+	/**
+	 * Forcly scrolls AnchorBar, if the currently focused tab is not fully visible.
+	 *
+	 * @param {boolean} bScrollLeft
+	 * @param {number} iOffsetScroll
+	 * @private
+	 */
+	AnchorBar.prototype._scrollAnchorBar = function (bScrollLeft, iOffsetScroll) {
+		var iScrollDirection = ((!this._bRtl && bScrollLeft) || (this._bRtl && !bScrollLeft)) ? -1 : 1,
+			iCurrentScrollPosition = this._oScroller.getScrollLeft(),
+			iNewScrollPosition = iOffsetScroll;
+
+		if (iScrollDirection === 1) {
+			iNewScrollPosition = this._bRtl ? iCurrentScrollPosition + iOffsetScroll : iCurrentScrollPosition + Math.abs(iOffsetScroll);
+		}
+
+		if (this._bRtl && iScrollDirection === -1) {
+			iNewScrollPosition = iOffsetScroll * iScrollDirection;
+		}
+
+		this._oScroller.scrollTo(iNewScrollPosition, 0, AnchorBar.SCROLL_DURATION * 3);
 	};
 
 	/**
