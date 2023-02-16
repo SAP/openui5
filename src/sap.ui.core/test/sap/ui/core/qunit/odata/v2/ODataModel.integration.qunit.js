@@ -5564,11 +5564,19 @@ usePreliminaryContext : false}}">\
 	// and the corresponding GET request for the expansion of the navigation properties are repeated
 	// with the next call of submitBatch.
 	// JIRA: CPOUI5MODELS-198
-	QUnit.test("createEntry: automatic expand of navigation properties", function (assert) {
+	// Scenario 2: If the change group is marked for transient messages only the GET request must also
+	// have the "sap-message" header set to "transientOnly".
+	// JIRA: CPOUI5MODELS-1129
+[false, true].forEach(function (bWithTransientOnlyHeader) {
+	var sTitle = "createEntry: automatic expand of navigation properties"
+			+ (bWithTransientOnlyHeader ? ", GET with header: 'sap-messages': 'transientOnly'" : "");
+
+	QUnit.test(sTitle, function (assert) {
 		var iBatchNo = 1,
 			oCreatedContext,
 			oGETRequest = {
-				requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
+				requestUri : "$~key~?$expand=ToProduct&$select=ToProduct",
+				headers : bWithTransientOnlyHeader ? {"sap-messages" : "transientOnly"} : {}
 			},
 			oModel = createSalesOrdersModelMessageScope({canonicalRequests : true}),
 			oNoteError = this.createResponseMessage("Note"),
@@ -5589,6 +5597,8 @@ usePreliminaryContext : false}}">\
 	<Text id="productName" text="{Name}" />\
 </FlexBox>',
 			that = this;
+
+		oModel.setTransitionMessagesOnlyForGroup("changes", bWithTransientOnlyHeader);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oErrorGET = createErrorResponse({message : "GET failed", statusCode : 424}),
@@ -5662,12 +5672,13 @@ usePreliminaryContext : false}}">\
 						Name : "Product 1",
 						ProductID : "P1"
 					}
-				}, {
-					"sap-message" : getMessageHeader([oNoteError])
-				})
-				.expectMessage(oNoteError,
+				}, bWithTransientOnlyHeader ? undefined : {"sap-message" : getMessageHeader([oNoteError])});
+
+			if (!bWithTransientOnlyHeader) {
+				that.expectMessage(oNoteError,
 					"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/",
 					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/");
+			}
 
 			oModel.submitChanges();
 
@@ -5693,6 +5704,7 @@ usePreliminaryContext : false}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: The creation (POST) of a new entity leads to an automatic expand of the given
@@ -6351,6 +6363,91 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: If the change group is marked to only request transient messages from the server,
+	// a MERGE and a POST request must have the "sap-message" header set to "transientOnly". This
+	// must also be true if a failed request is sent again.
+	// JIRA: CPOUI5MODELS-1129
+	QUnit.test("MERGE and POST requests have transientOnly header", function (assert) {
+		var oMergeRequest = {
+				data : {
+					__metadata : {uri : "SalesOrderSet('1')"},
+					Note : "Bar"
+				},
+				headers : {"sap-messages" : "transientOnly"},
+				key : "SalesOrderSet('1')",
+				method : "MERGE",
+				requestUri : "SalesOrderSet('1')"
+			},
+			oModel = createSalesOrdersModel({refreshAfterChange : false}),
+			oPostRequest = {
+				created : true,
+				data : {
+					__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"}
+				},
+				headers : {"sap-messages" : "transientOnly"},
+				method : "POST",
+				requestUri : "SalesOrderSet"
+			},
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="note" value="{Note}" />\
+</FlexBox>',
+			that = this;
+
+		oModel.setTransitionMessagesOnlyForGroup("changes", true);
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				Note : "Foo",
+				SalesOrderID : "1"
+			})
+			.expectValue("note", "Foo");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest(oMergeRequest, createErrorResponse({crashBatch : true}))
+				.expectRequest(oPostRequest, undefined /*not relevant*/)
+				.expectValue("note", "Bar")
+				.expectMessages([{
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/$batch",
+					message : "Internal Server Error",
+					persistent : false,
+					target : "/$batch",
+					technical : true,
+					type : "Error"
+				}]);
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Request failed with status code 500: "
+						+ "POST /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$batch",
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+
+			// code under test
+			oModel.setProperty("/SalesOrderSet('1')/Note", "Bar");
+			oModel.createEntry("/SalesOrderSet", {properties : {}});
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest(oMergeRequest, NO_CONTENT)
+				.expectRequest(oPostRequest, {
+					data : {
+						__metadata : {
+							uri : "SalesOrderSet('2')"
+						},
+						SalesOrderID : "2"
+					},
+					statusCode : 201
+				});
+
+			// code under test
+			oModel.submitChanges();
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: The OData response of an updated entity contains changed __metadata (new ETag).
