@@ -65,6 +65,7 @@ function(
 				controller: {
 					formatContextColumnCell: formatContextColumnCell.bind(this),
 					formatContextColumnTooltip: formatContextColumnTooltip.bind(this),
+					formatCreatedChangedOnColumnCell: formatCreatedChangedOnColumnCell.bind(this),
 					onLiveSearch: onLiveSearch.bind(this),
 					moveUp: moveUp.bind(this),
 					moveDown: moveDown.bind(this),
@@ -76,10 +77,6 @@ function(
 				this._oManageAdaptationDialog = oDialog;
 				oDialog.addStyleClass(Utils.getRtaStyleClassName());
 				this.getToolbar().addDependent(this._oManageAdaptationDialog);
-				// TODO: discuss how to set width, height etc. when we finish implementing this dialog
-				oDialog.setContentWidth("650px");
-				oDialog.setContentHeight("450px");
-				oDialog.setHorizontalScrolling(false);
 			}.bind(this));
 		} else {
 			setEnabledPropertyOfMoveButton.call(this, false);
@@ -116,6 +113,15 @@ function(
 
 	function formatContextColumnTooltip(aRoles) {
 		return aRoles.join("\n");
+	}
+
+	function formatCreatedChangedOnColumnCell(sModifiedBy, sModifiedDate) {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "MMM d, yyyy"
+		});
+		var oDate = oDateFormat.format(new Date(sModifiedDate));
+
+		return sModifiedBy + "\n" + oDate;
 	}
 
 	function onSelectionChange(oEvent) {
