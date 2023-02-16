@@ -47,6 +47,14 @@ builder:
               - sap/ui/core/support/Hotkeys.js
               - '!sap/ui/integration/thirdparty/'
               - '!sap/ui/integration/designtime/thirdparty/'
+              # own manifest
+              - sap/ui/integration/manifest.json
+              # manifests for library dependencies
+              - sap/ui/core/manifest.json
+              - sap/m/manifest.json
+              - sap/f/manifest.json
+              - sap/ui/unified/manifest.json
+              - sap/ui/layout/manifest.json
             resolve: true
             renderer: true
           - mode: require

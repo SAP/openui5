@@ -15,6 +15,15 @@
     <dependency>
       <libraryName>sap.f</libraryName>
     </dependency>
+    <dependency>
+      <libraryName>sap.m</libraryName>
+    </dependency>
+    <dependency>
+      <libraryName>sap.ui.unified</libraryName>
+    </dependency>
+    <dependency>
+      <libraryName>sap.ui.layout</libraryName>
+    </dependency>
   </dependencies>
 
   <appData>
