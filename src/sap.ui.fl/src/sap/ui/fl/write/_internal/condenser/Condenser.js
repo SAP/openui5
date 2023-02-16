@@ -71,7 +71,7 @@ sap.ui.define([
 	/**
 	 * Verify 'move' subtype has already been added to the data structure before 'create' subtype and they both belong to the same targetContainer
 	 *
-	 * @param {Map} mSubtypes - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
+	 * @param {object} mSubtypes - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
 	 * @param {object} oCondenserInfo - Condenser specific information that is delivered by the change handler
 	 * @returns {boolean} <code>true</code> if the 'move' subtype has been added to the data structure before 'create' subtype
 	 */
@@ -85,7 +85,7 @@ sap.ui.define([
 	/**
 	 * Verify 'destroy' subtype has already been added to the data structure before 'move' subtype
 	 *
-	 * @param {Map} mSubtypes - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
+	 * @param {object} mSubtypes - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
 	 * @param {object} oCondenserInfo - Condenser specific information that is delivered by the change handler
 	 * @returns {boolean} <code>true</code> if the 'destroy' subtype has been added to the data structure before 'move' subtype
 	 */
@@ -96,7 +96,7 @@ sap.ui.define([
 	/**
 	 * Verify 'destroy' subtype has already been added to the data structure before 'create' subtype
 	 *
-	 * @param {Map} mClassifications - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
+	 * @param {object} mClassifications - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
 	 * @param {object} oCondenserInfo - Condenser specific information that is delivered by the change handler
 	 * @returns {boolean} <code>true</code> if the 'move' subtype has been added to the data structure before 'create' subtype
 	 */
@@ -107,8 +107,8 @@ sap.ui.define([
 	/**
 	 * Adds an index-related change to the data structures.
 	 *
-	 * @param {Map} mClassifications - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
-	 * @param {Map} mUIReconstructions - Map of UI reconstructions that holds key-value pairs. A key is a selector ID of the container. A value is a nested map which contains initial and target UI reconstructions
+	 * @param {object} mClassifications - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
+	 * @param {object} mUIReconstructions - Map of UI reconstructions that holds key-value pairs. A key is a selector ID of the container. A value is a nested map which contains initial and target UI reconstructions
 	 * @param {object} oCondenserInfo - Condenser specific information that is delivered by the change handler
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance that will be added to the array
 	 * @returns {Promise} resolves when the change is added to the data structure
@@ -153,7 +153,7 @@ sap.ui.define([
 
 	/**
 	 * Adds a non-index related change to the map.
-	 * @param {Map} mClassifications - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
+	 * @param {object} mClassifications - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
 	 * @param {object} oCondenserInfo - Condenser specific information that is delivered by the change handler
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance that will be added to the array
 	 * @returns {Promise} returns when change is added to the map
@@ -170,10 +170,10 @@ sap.ui.define([
 	/**
 	 * Adds a classified change to the data structures.
 	 *
-	 * @param {Map} mTypes - Map of classification types that holds key-value pairs. A key is a unique identifier. A value is a nested map which contains non-index-related and index-related reduced changes
-	 * @param {Map} mUIReconstructions - Map of UI reconstructions that holds key-value pairs. A key is a selector ID of the container. A value is a nested map which contains initial and target UI reconstructions
+	 * @param {object} mTypes - Map of classification types that holds key-value pairs. A key is a unique identifier. A value is a nested map which contains non-index-related and index-related reduced changes
+	 * @param {object} mUIReconstructions - Map of UI reconstructions that holds key-value pairs. A key is a selector ID of the container. A value is a nested map which contains initial and target UI reconstructions
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aIndexRelatedChanges - Array of all index related changes
-	 * @param {Object} oCondenserInfo - Condenser-specific information that is delivered by the change handler
+	 * @param {object} oCondenserInfo - Condenser-specific information that is delivered by the change handler
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance that will be added to the array
 	 * @returns {Promise} returns when change is added to the data structures
 	 */
@@ -194,7 +194,7 @@ sap.ui.define([
 	/**
 	 * Adds an unclassified change to the data structure.
 	 *
-	 * @param {Map} mTypes - Map of change types that holds key-value pairs. A key is a unique identifier. A value is an array object that contains all unclassified changes
+	 * @param {object} mTypes - Map of change types that holds key-value pairs. A key is a unique identifier. A value is an array object that contains all unclassified changes
 	 * @param {string} sKey - Key of the "unclassified" map that reflects the fact that the delivered change is not classified
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
 	 */
@@ -260,14 +260,16 @@ sap.ui.define([
 	/**
 	 * Retrieves the classification types map.
 	 *
-	 * @param {Map} mReducedChanges - Map of reduced changes
+	 * @param {object} mReducedChanges - Map of reduced changes
 	 * @param {object} oCondenserInfo - Condenser-specific information that is delivered by the change handler
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
 	 * @param {sap.ui.core.Component} oAppComponent - Application component of the control at runtime
-	 * @returns {Map} Classification types map
+	 * @returns {object} Classification types map
 	 */
 	function getTypesMap(mReducedChanges, oCondenserInfo, oChange, oAppComponent) {
-		var sAffectedControlId = oCondenserInfo !== undefined ? oCondenserInfo.affectedControl : JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), oAppComponent);
+		var sAffectedControlId = oCondenserInfo !== undefined
+			? oCondenserInfo.affectedControl
+			: JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), oAppComponent);
 		if (!mReducedChanges[sAffectedControlId]) {
 			mReducedChanges[sAffectedControlId] = {};
 		}
@@ -275,8 +277,13 @@ sap.ui.define([
 		// (e.g. iFrame added as Section) and the changes must be brought to the same group (= same affected control)
 		if (oCondenserInfo && oCondenserInfo.updateControl) {
 			var sUpdateControlId = oCondenserInfo.updateControl;
-			mReducedChanges[sAffectedControlId] = Object.assign(mReducedChanges[sAffectedControlId], mReducedChanges[sUpdateControlId]);
-			delete mReducedChanges[sUpdateControlId];
+			var aPath = [CondenserUtils.NOT_INDEX_RELEVANT, CondenserClassification.Update, oCondenserInfo.uniqueKey];
+			var oUpdateCondenserInfo = ObjectPath.get(aPath, mReducedChanges[sUpdateControlId]);
+			if (oUpdateCondenserInfo) {
+				ObjectPath.set(aPath, oUpdateCondenserInfo, mReducedChanges[sAffectedControlId]);
+				delete mReducedChanges[sUpdateControlId][CondenserUtils.NOT_INDEX_RELEVANT]
+					[CondenserClassification.Update][oCondenserInfo.uniqueKey];
+			}
 		}
 		return mReducedChanges[sAffectedControlId];
 	}
@@ -320,8 +327,8 @@ sap.ui.define([
 	 * 		}
 	 *
 	 * @param {sap.ui.core.Component} oAppComponent - Application component of the control at runtime
-	 * @param {Map} mReducedChanges - Map of reduced changes
-	 * @param {Map} mUIReconstructions - Map of UI reconstructions
+	 * @param {object} mReducedChanges - Map of reduced changes
+	 * @param {object} mUIReconstructions - Map of UI reconstructions
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aIndexRelatedChanges - Array of all index related changes
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges - All Change instances
 	 * @returns {Promise} Resolves when all changes were added to the maps
@@ -373,7 +380,7 @@ sap.ui.define([
 	 * If the original change is marked for deletion, the update can be skipped
 	 * If the original change is already persisted, the new content is an update
 	 *
-	 * @param {Map} mTypes - Map with the changes
+	 * @param {object} mTypes - Map with the changes
 	 * @param {object} oCondenserInfo - Condenser-specific information that is delivered by the change handler
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - The change that is getting updated
 	 */
@@ -394,7 +401,7 @@ sap.ui.define([
 	/**
 	 * Retrieves an array of changes from the delivered data structure.
 	 *
-	 * @param {Map} mObjects - Delivered data structure
+	 * @param {object} mObjects - Delivered data structure
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges - Array of changes
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} All necessary changes in the map of reduced changes
 	 */
@@ -422,7 +429,7 @@ sap.ui.define([
 	/**
 	 * Retrieves an array of changes from the reduced changes map.
 	 *
-	 * @param {Map} mReducedChanges - Map of reduced changes
+	 * @param {object} mReducedChanges - Map of reduced changes
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of the reduced changes
 	 */
 	function getAllReducedChanges(mReducedChanges) {
@@ -432,7 +439,7 @@ sap.ui.define([
 	/**
 	 * Retrieves an array of index-related changes from the array of reduced changes.
 	 *
-	 * @param {Map} mReducedChanges - Map of reduced changes
+	 * @param {object} mReducedChanges - Map of reduced changes
 	 * @param {object[]} aCondenserInfos - Empty array object that will be filled with condenser info objects
 	 * @returns {object[]} Array of objects that contain condenser-specific information and change instance
 	 */

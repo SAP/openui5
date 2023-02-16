@@ -64,6 +64,21 @@
 		}
 	},
 	{
+		"fileName": "id_1576490260883_39_rename",
+		"changeType": "rename",
+		"reference": "sap.ui.rta.test.Component",
+		"selector": {
+			"id": "myView--id-1651835377345-99",
+			"idIsLocal": false
+		},
+		"texts": {
+			"newText": {
+				"value": "New Section Title",
+				"type": "XFLD"
+			}
+		}
+	},
+	{
 		"fileName": "id_1579844823982_42_updateIFrame",
 		"changeType": "updateIFrame",
 		"reference": "componentId.Component",

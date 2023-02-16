@@ -790,7 +790,7 @@ sap.ui.define([
 			QUnit.test(sName, function(assert) {
 				var aPersistedChanges = bPersistedChanges ? [0, 1, 2, 3] : [];
 				// eslint-disable-next-line max-nested-callbacks
-				return loadApplyCondenseChanges.call(this, "addIFrameUpdateIFrame.json", 6, 2, assert, aPersistedChanges).then(function(aRemainingChanges) {
+				return loadApplyCondenseChanges.call(this, "addIFrameUpdateIFrame.json", 7, 3, assert, aPersistedChanges).then(function(aRemainingChanges) {
 					assert.strictEqual(aRemainingChanges[0].condenserState, bPersistedChanges ? "update" : "select", "the condenser state is set correctly");
 					assert.strictEqual(aRemainingChanges[0].getContent().url, "https://www.example.com", "the url got updated");
 					assert.strictEqual(aRemainingChanges[0].getContent().height, "100px", "the height got updated");
