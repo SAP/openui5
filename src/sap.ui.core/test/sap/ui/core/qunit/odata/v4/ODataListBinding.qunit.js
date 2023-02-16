@@ -6566,7 +6566,7 @@ sap.ui.define([
 		this.mock(oContext).expects("getModelIndex").withExactArgs().returns(42);
 		oRefreshSingleExpectation = this.mock(oCache).expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oGroupLock), "path/in/cache", 42, "~key~predicate~",
-				"~keep~alive~", sinon.match.func)
+				"~keep~alive~", "~bWithMessages~", sinon.match.func)
 			.returns(oRefreshSinglePromise);
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 		this.mock(oContext).expects("refreshDependentBindings")
@@ -6600,14 +6600,14 @@ sap.ui.define([
 		});
 
 		// code under test
-		oPromise = oBinding.refreshSingle(oContext, oGroupLock);
+		oPromise = oBinding.refreshSingle(oContext, oGroupLock, undefined, "~bWithMessages~");
 
 		assert.strictEqual(oPromise.isFulfilled(), false);
 
 		this.mock(oBinding).expects("fireDataRequested").withExactArgs();
 
 		// code under test - callback fires data requested event
-		oRefreshSingleExpectation.firstCall.args[5]();
+		oRefreshSingleExpectation.firstCall.args[6]();
 
 		return oPromise.then(function () {
 			assert.strictEqual(bContextUpdated, bSameCache);
@@ -6860,7 +6860,7 @@ sap.ui.define([
 			.returns("~key~predicate~");
 		this.mock(oCache).expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oGroupLock), "", 42, "~key~predicate~", "~keep~alive~",
-				sinon.match.func)
+				undefined, sinon.match.func)
 			.returns(SyncPromise.resolve({/*refreshed entity*/}));
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 
@@ -6899,10 +6899,10 @@ sap.ui.define([
 			this.mock(oContext).expects("getModelIndex").withExactArgs().returns(42);
 			oExpectation = this.mock(oCache).expects("refreshSingle")
 				.withExactArgs(sinon.match.same(oGroupLock), "", 42, "~key~predicate~",
-					"~keep~alive~", sinon.match.func)
+					"~keep~alive~", undefined, sinon.match.func)
 				.returns(Promise.reject(oError));
 			if (bDataRequested) {
-				oExpectation.callsArg(5);
+				oExpectation.callsArg(6);
 			}
 			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 			this.mock(oContext).expects("refreshDependentBindings")
@@ -6936,6 +6936,20 @@ sap.ui.define([
 			// code under test
 			oBinding.refreshSingle(oHeaderContext);
 		}, new Error("Unsupported header context: " + oHeaderContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSingle: bAllowRemoval && bWithMessages", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oContext = {
+				getPath : function () { return "n/a"; }
+			};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.refreshSingle(oContext, /*oGroupLock*/null, /*bAllowRemoval*/true,
+				/*bWithMessages*/true);
+		}, new Error("Unsupported: bAllowRemoval && bWithMessages"));
 	});
 
 	//*********************************************************************************************
@@ -7306,7 +7320,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding).expects("refreshSingle")
-			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock), false)
+			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock), false, true)
 			.rejects(oError);
 
 		// code under test
@@ -7362,7 +7376,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("lockGroup").withExactArgs("group").returns(oGroupLock);
 		this.mock(oBinding).expects("refreshSingle")
-			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock), false)
+			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock), false, true)
 			.resolves(oResult);
 		this.mock(oBinding).expects("refreshInternal").never();
 
@@ -7434,7 +7448,7 @@ sap.ui.define([
 			.returns(true);
 		oCacheMock.expects("requestSideEffects").exactly(bHasCache ? 1 : 0)
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths),
-				bHeader ? ["('3')", "('4')", "('6')", "('8')"] : ["('foo')"], !bHeader)
+				bHeader ? ["('3')", "('4')", "('6')", "('8')"] : ["('foo')"], !bHeader, !bHeader)
 			.callsFake(function (_oGroupLock, _aPaths) {
 				expectVisitAndRefresh([oPromise]);
 
@@ -7491,7 +7505,7 @@ sap.ui.define([
 		this.mock(oBinding.aContexts[1]).expects("isTransient").withExactArgs().returns(false);
 		oCacheMock.expects("requestSideEffects")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), ["('0')"],
-				undefined)
+				undefined, undefined)
 			.callsFake(function (_oGroupLock, aPaths) {
 				that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
 						sinon.match.same(aPaths), undefined, [oPromise]);

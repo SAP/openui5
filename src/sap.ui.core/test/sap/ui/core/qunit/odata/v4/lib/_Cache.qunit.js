@@ -3659,7 +3659,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bSharedRequest) {
-	var sTitle = "_Cache#visitResponse: operation message; bSharedRequest = " + bSharedRequest;
+	[false, true].forEach(function (bKeepReportedMessagesPath) {
+		var sTitle = "_Cache#visitResponse: operation message; bSharedRequest = " + bSharedRequest
+				+ "; bKeepReportedMessagesPath = " + bKeepReportedMessagesPath;
 
 	QUnit.test(sTitle, function (assert) {
 		var sResourcePath = "OperationImport",
@@ -3691,11 +3693,13 @@ sap.ui.define([
 			.withExactArgs("~path~", mExpectedMessages, undefined);
 
 		// code under test
-		oCache.visitResponse(oData, mTypeForMetaPath);
+		oCache.visitResponse(oData, mTypeForMetaPath, undefined, "", false, undefined,
+			bKeepReportedMessagesPath);
 
-		if (!bSharedRequest) {
-			assert.strictEqual(oCache.sReportedMessagesPath, "~path~");
-		}
+		assert.strictEqual(oCache.sReportedMessagesPath, bSharedRequest || bKeepReportedMessagesPath
+			? "~sReportedMessagesPath~"
+			: "~path~");
+	});
 	});
 });
 
@@ -3821,11 +3825,12 @@ sap.ui.define([
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oElement), sinon.match.same(mTypeForMetaPath),
 				"/TEAMS/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENTS",
-				"TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS('42')");
+				"TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS('42')", false, undefined,
+				"~bKeepReportedMessagesPath~");
 
 		// code under test
 		oCache.replaceElement(aElements, 4, "('42')", oElement, mTypeForMetaPath,
-			"TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS");
+			"TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS", "~bKeepReportedMessagesPath~");
 
 		assert.strictEqual(aElements[3], oElement);
 		assert.strictEqual(aElements.$byPredicate["('42')"], oElement);
@@ -3855,7 +3860,7 @@ sap.ui.define([
 			.returns("~meta~path~");
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oNewElement), sinon.match.same(mTypeForMetaPath),
-				"~meta~path~", "~('42')");
+				"~meta~path~", "~('42')", false, undefined, undefined);
 
 		// code under test
 		oCache.replaceElement(aElements, undefined, "('42')", oNewElement, mTypeForMetaPath, "~");
@@ -3875,9 +3880,15 @@ sap.ui.define([
 	{index : 1, keepAlive : true, lateQueryOptions : false},
 	{index : 1, keepAlive : true, lateQueryOptions : true}
 ].forEach(function (oFixture) {
-	var mLateQueryOptions = oFixture.lateQueryOptions ? {} : null,
-		sTitle = "_Cache#refreshSingle: iIndex = " + oFixture.index + ", bKeepAlive = "
-			+ oFixture.keepAlive + ", mLateQueryOptions = " + mLateQueryOptions;
+	["", "EMPLOYEE_2_EQUIPMENTS"].forEach(function (sPath) {
+		// undefined => no $select at all ;-)
+		[undefined, false, true].forEach(function (bMessagesAlreadySelected) {
+			var mLateQueryOptions = oFixture.lateQueryOptions ? {} : null,
+				sTitle = "_Cache#refreshSingle: iIndex = " + oFixture.index
+					+ ", bKeepAlive = " + oFixture.keepAlive
+					+ ", mLateQueryOptions = " + mLateQueryOptions
+					+ ", sPath = " + sPath
+					+ ", bMessagesAlreadySelected = " + bMessagesAlreadySelected;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Employees('31')", {/*mQueryOptions*/},
@@ -3888,10 +3899,16 @@ sap.ui.define([
 			sKeyPredicate = "('13')",
 			oElement = {"@$ui5._" : {predicate : sKeyPredicate}},
 			aElements = oFixture.index !== undefined ? [{}, oElement, {}] : [{}, {}],
+			mExpectedQueryOptions = {
+				$expand : {EMPLOYEE_2_TEAM : null},
+				$select : ["Name"],
+				foo : "bar",
+				"sap-client" : "123"
+			},
 			oFetchValuePromise = Promise.resolve(aElements),
 			oGroupLock = {},
 			oPromise,
-			mQueryOptionsCopy = {
+			mQueryOptionsClone = {
 				$apply : "A.P.P.L.E.", // dropped
 				$count : true, // dropped
 				$expand : {EMPLOYEE_2_TEAM : null},
@@ -3904,47 +3921,57 @@ sap.ui.define([
 			},
 			mQueryOptionsForPath = {},
 			oResponse = {},
-			mTypeForMetaPath = {};
+			mTypeForMetaPath = {},
+			bWithMessages = oFixture.lateQueryOptions,
+			bMessagesAnnotated = bWithMessages && sPath === "" && oFixture.keepAlive;
 
+		if (bMessagesAlreadySelected) {
+			mQueryOptionsClone.$select = ["Name", "SAP_Messages"];
+			mExpectedQueryOptions.$select = ["Name", "SAP_Messages"];
+		} else if (bMessagesAlreadySelected === undefined) {
+			delete mQueryOptionsClone.$select;
+			delete mExpectedQueryOptions.$select;
+		} else if (bMessagesAnnotated) {
+			mExpectedQueryOptions.$select = ["Name", "SAP_Messages"];
+		}
 		oCache.mLateQueryOptions = mLateQueryOptions;
 		aElements.$byPredicate = {};
 		aElements.$byPredicate[sKeyPredicate] = oElement;
 		oCache.fetchValue = function () {};
 		oCacheMock.expects("checkSharedRequest").withExactArgs();
 		oCacheMock.expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), sPath)
 			// Note: CollectionCache#fetchValue may be async, $cached just sends no new request!
 			.returns(SyncPromise.resolve(oFetchValuePromise));
 		this.mock(_Helper).expects("aggregateExpandSelect")
 			.exactly(oFixture.keepAlive && oFixture.lateQueryOptions ? 1 : 0)
-			.withExactArgs(sinon.match.same(mQueryOptionsCopy),
+			.withExactArgs(sinon.match.same(mQueryOptionsClone),
 				sinon.match.same(mLateQueryOptions));
 
 		// code under test
-		oPromise = oCache.refreshSingle(oGroupLock, "EMPLOYEE_2_EQUIPMENTS", oFixture.index,
-			sKeyPredicate, oFixture.keepAlive, fnDataRequested);
+		oPromise = oCache.refreshSingle(oGroupLock, sPath, oFixture.index, sKeyPredicate,
+			oFixture.keepAlive, bWithMessages, fnDataRequested);
 
 		assert.ok(oPromise.isFulfilled, "returned a SyncPromise");
 		assert.strictEqual(oCache.bSentRequest, false);
 
 		// simulate _Cache#setQueryOptions which is still allowed because of bSentRequest
 		oCache.mQueryOptions = mCacheQueryOptions;
+		this.mock(this.oRequestor.getModelInterface()).expects("fetchMetadata")
+			.exactly(bWithMessages && sPath === "" ? 1 : 0)
+			.withExactArgs("/Employees/@com.sap.vocabularies.Common.v1.Messages/$Path")
+			.returns(SyncPromise.resolve(bMessagesAnnotated ? "SAP_Messages" : undefined));
 		this.mock(_Helper).expects("getQueryOptionsForPath")
-			.withExactArgs(sinon.match.same(mCacheQueryOptions), "EMPLOYEE_2_EQUIPMENTS")
+			.withExactArgs(sinon.match.same(mCacheQueryOptions), sPath)
 			.returns(mQueryOptionsForPath);
-		this.mock(Object).expects("assign")
-			.withExactArgs({}, sinon.match.same(mQueryOptionsForPath))
-			.returns(mQueryOptionsCopy);
+		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(mQueryOptionsForPath))
+			.returns(mQueryOptionsClone);
 		this.mock(_Helper).expects("buildPath")
-			.withExactArgs("Employees('31')", "EMPLOYEE_2_EQUIPMENTS", sKeyPredicate)
+			.withExactArgs("Employees('31')", sPath, sKeyPredicate)
 			.returns("~");
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(oCache.sMetaPath, {
-					$expand : {EMPLOYEE_2_TEAM : null},
-					$select : ["Name"],
-					foo : "bar",
-					"sap-client" : "123"
-				}, false, sinon.match.same(oCache.bSortExpandSelect))
+			.withExactArgs(oCache.sMetaPath, mExpectedQueryOptions, false,
+				sinon.match.same(oCache.bSortExpandSelect))
 			.returns("?$select=Name");
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "~?$select=Name", sinon.match.same(oGroupLock), undefined,
@@ -3960,10 +3987,12 @@ sap.ui.define([
 
 			oCacheMock.expects("replaceElement")
 				.withExactArgs(sinon.match.same(aElements), oFixture.index, sKeyPredicate,
-					sinon.match.same(oResponse), sinon.match.same(mTypeForMetaPath),
-					"EMPLOYEE_2_EQUIPMENTS");
+					sinon.match.same(oResponse), sinon.match.same(mTypeForMetaPath), sPath,
+					bMessagesAlreadySelected === false && bMessagesAnnotated);
 
 			return oPromise;
+		});
+	});
 		});
 	});
 });
@@ -3978,13 +4007,15 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
 			// Note: CollectionCache#fetchValue may be async, $cached just sends no new request!
 			.returns(SyncPromise.resolve(Promise.resolve([{/* "No key predicate known" here */}])));
+		this.mock(this.oRequestor.getModelInterface()).expects("fetchMetadata").never();
 		this.mock(_Helper).expects("aggregateExpandSelect").never();
 		this.mock(oCache).expects("fetchTypes").never();
 		this.mock(this.oRequestor).expects("buildQueryString").never();
 		this.mock(this.oRequestor).expects("request").never();
 
 		// code under test
-		return oCache.refreshSingle({/*oGroupLock*/}, "EMPLOYEE_2_EQUIPMENTS", 0, "($uid=id-1-23)")
+		return oCache.refreshSingle({/*oGroupLock*/}, "EMPLOYEE_2_EQUIPMENTS", 0, "($uid=id-1-23)",
+				false, /*bWithMessages*/true)
 			.then(function () {
 				assert.ok(false, "Unexpected success");
 			}, function (oError) {
@@ -9392,7 +9423,7 @@ sap.ui.define([
 					that.mock(_Helper).expects("intersectQueryOptions")
 						.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
-							"/TEAMS/Foo", "", true)
+							"/TEAMS/Foo", "", true, "~bWithMessages~")
 						.returns(mMergedQueryOptions);
 					// Note: fetchTypes() would have been triggered by read() already
 					that.mock(oCache).expects("fetchTypes").withExactArgs()
@@ -9428,7 +9459,7 @@ sap.ui.define([
 							.resolves(oResult);
 						that.mock(oCache).expects("visitResponse").withExactArgs(
 								sinon.match.same(oResult), sinon.match.same(mTypeForMetaPath),
-								undefined, "", false, NaN)
+								undefined, "", false, NaN, true)
 							.callsFake(function () {
 								for (i = 0; i < iReceivedLength; i += 1) {
 									_Helper.setPrivateAnnotation(oFixture.aValues[i], "predicate",
@@ -9438,7 +9469,8 @@ sap.ui.define([
 					}
 
 					// code under test
-					return oCache.requestSideEffects(oGroupLock, aPaths, aPredicates, bSingle)
+					return oCache.requestSideEffects(oGroupLock, aPaths, aPredicates, bSingle,
+							"~bWithMessages~")
 						.then(function () {
 							var oElement,
 								sKeys = "",
@@ -9530,7 +9562,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				"/TEAMS/Foo", "", true)
+				"/TEAMS/Foo", "", true, undefined)
 			.returns(null); // "nothing to do"
 		this.mock(_Helper).expects("getKeyFilter").never();
 		this.mock(_Helper).expects("selectKeyProperties").never();
@@ -9618,7 +9650,7 @@ sap.ui.define([
 				oHelperMock.expects("intersectQueryOptions")
 					.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 						sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
-						"/TEAMS/Foo", "", true)
+						"/TEAMS/Foo", "", true, undefined)
 					.returns(mMergedQueryOptions);
 				oHelperMock.expects("getKeyFilter")
 					.withExactArgs(sinon.match.same(oCache.aElements[2]), "/TEAMS/Foo",
@@ -9688,7 +9720,7 @@ sap.ui.define([
 					that.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 							sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
-							"/TEAMS/Foo", "", true)
+							"/TEAMS/Foo", "", true, undefined)
 						.returns(mMergedQueryOptions);
 					that.mock(_Helper).expects("getKeyFilter")
 						.withExactArgs(sinon.match.same(oCache.aElements[2]), "/TEAMS/Foo",
@@ -9763,7 +9795,7 @@ sap.ui.define([
 			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 					sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 					sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-					"/TEAMS/Foo", "", true)
+					"/TEAMS/Foo", "", true, undefined)
 				.returns(mIntersectedQueryOptions);
 			this.mock(_Helper).expects("getKeyFilter")
 				.withExactArgs(sinon.match.same(oCache.aElements[0]), "/TEAMS/Foo",
@@ -9795,7 +9827,7 @@ sap.ui.define([
 			oVisitResponseExpectation = this.mock(oCache).expects("visitResponse")
 				.exactly(bSkip ? 0 : 1)
 				.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath),
-					undefined, "", false, NaN);
+					undefined, "", false, NaN, true);
 
 			oUpdateSelectedExpectation = this.mock(_Helper).expects("updateSelected")
 				.exactly(bSkip ? 0 : 1)

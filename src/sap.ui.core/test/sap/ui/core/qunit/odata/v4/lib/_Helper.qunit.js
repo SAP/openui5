@@ -47,12 +47,21 @@ sap.ui.define([
 	 *   A map from meta path to symbolic type, for example
 	 *   <code>{"/Me/A" : "", "/Me/to1" : "1", "/Me/toN" : "N"}</code>, where "" means structural
 	 *   property, "N" means collection-valued navigation property and "1" means navigation property
+	 * @param {boolean} [bAllowAnnotations]
+	 *   Whether it is allowed to ask for annotations
 	 * @returns {function}
 	 *   "fnFetchMetadata"
 	 */
-	function getFetchMetadata(mMetaPath2Type) {
+	function getFetchMetadata(mMetaPath2Type, bAllowAnnotations) {
 		return function (sMetaPath) {
 			var vResult = mMetaPath2Type[sMetaPath];
+
+			if (sMetaPath.includes("@")) {
+				if (!bAllowAnnotations) {
+					throw new Error(sMetaPath);
+				}
+				return SyncPromise.resolve(vResult);
+			}
 
 			switch (vResult) {
 				case "":
@@ -2433,7 +2442,15 @@ sap.ui.define([
 	{$kind : "NavigationProperty"},
 	{$kind : "NavigationProperty", $isCollection : true}
 ].forEach(function (oRootMetadata, i) {
-	QUnit.test("intersectQueryOptions: real intersection", function (assert) {
+	[false, true].forEach(function (bWithMessages) {
+		[false, true].forEach(function (bMessagesRequested) {
+			[false, true].forEach(function (bMessagesAnnotated) {
+				var sTitle = "intersectQueryOptions: real intersection #" + i
+						+ "; messages treated specially: " + bWithMessages
+						+ "; messages explicitly requested: " + bMessagesRequested
+						+ "; messages annotated: " + bMessagesAnnotated;
+
+	QUnit.test(sTitle, function (assert) {
 		var aCacheSelects = [/*"A", "B/b", "C", ...*/],
 			mCacheQueryOptions = {
 				$expand : {to1 : null},
@@ -2449,15 +2466,23 @@ sap.ui.define([
 			},
 			oType = {},
 			fnFetchMetadata = getFetchMetadata({
+				"/Me/@com.sap.vocabularies.Common.v1.Messages/$Path" :
+					bMessagesAnnotated ? "SAP_Messages" : undefined,
 				"/Me" : oRootMetadata,
 				"/Me/" : oType,
 				"/Me/A/a" : "",
 				"/Me/B/b" : "",
 				"/Me/to1" : "1"
-			}),
+			}, bWithMessages),
 			oHelperMock = this.mock(_Helper),
 			aPaths = [/*"to1", "A/a", "B"*/];
 
+		if (bMessagesRequested) {
+			aPaths = ["to1", "A/a", "SAP_Messages", "B"];
+			if (bWithMessages && bMessagesAnnotated) {
+				mExpectedResult.$select.push("SAP_Messages");
+			}
+		}
 		oHelperMock.expects("addChildrenWithAncestor")
 			.withExactArgs(sinon.match.same(aPaths), sinon.match.same(aCacheSelects), {})
 			.callsFake(function (_aChildren, _aAncestors, mChildren0) {
@@ -2481,10 +2506,14 @@ sap.ui.define([
 
 		assert.deepEqual(
 			// code under test
-			_Helper.intersectQueryOptions(mCacheQueryOptions, aPaths, fnFetchMetadata, "/Me"),
+			_Helper.intersectQueryOptions(mCacheQueryOptions, aPaths, fnFetchMetadata, "/Me",
+				"", false, bWithMessages),
 			mExpectedResult);
 
 		assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions, "unmodified");
+	});
+			});
+		});
 	});
 });
 
@@ -2683,9 +2712,10 @@ sap.ui.define([
 	}, {
 		aPaths : ["X", "*", "Z"],
 		mResult : {
-			$select : ["A", "B", "C", "E/toF"],
+			$select : ["A", "B", "C", "E/toF", "SAP_Messages"],
 			"sap-client" : "123"
-		}
+		},
+		bWithMessages : true
 	}, {
 		// Note: this test is using a recursion into "toA", but w/o mCacheQueryOptions the same
 		// would happen for "$count" already!
@@ -2699,6 +2729,13 @@ sap.ui.define([
 			$select : ["toA"], // avoid $select= in URL, use any navigation property
 			"sap-client" : "123"
 		}
+	}, {
+		aPaths : ["X", "SAP_Messages", "*", "Z"],
+		mResult : {
+			$select : ["A", "B", "C", "E/toF", "SAP_Messages"],
+			"sap-client" : "123"
+		},
+		bWithMessages : true
 	}].forEach(function (o, i) {
 		var sTitle = "intersectQueryOptions: " + o.aPaths + ", " + i;
 
@@ -2717,6 +2754,7 @@ sap.ui.define([
 				},
 				sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
 				mMetaPath2Type = {
+					"/Me/@com.sap.vocabularies.Common.v1.Messages/$Path" : "SAP_Messages",
 					"/Me" : {},
 					"/Me/" : {},
 					"/Me/A" : "",
@@ -2739,7 +2777,7 @@ sap.ui.define([
 					"/Me/toG/" : {},
 					"/Me/toG/g" : ""
 				},
-				fnFetchMetadata = getFetchMetadata(mMetaPath2Type),
+				fnFetchMetadata = getFetchMetadata(mMetaPath2Type, o.bWithMessages),
 				oHelperMock = this.mock(_Helper),
 				mResult;
 
@@ -2752,7 +2790,7 @@ sap.ui.define([
 			}
 			// code under test
 			mResult = _Helper.intersectQueryOptions(mCacheQueryOptions, o.aPaths, fnFetchMetadata,
-				"/Me");
+				"/Me", "", false, o.bWithMessages);
 
 			assert.deepEqual(mResult, o.mResult);
 			if (mResult) {
@@ -2761,6 +2799,28 @@ sap.ui.define([
 			assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions,
 				"unmodified");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("intersectQueryOptions: *, SAP_Messages", function (assert) {
+		var mCacheQueryOptions = {
+				$select : ["A", "SAP_Messages", "C"]
+			},
+			sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
+			fnFetchMetadata = getFetchMetadata({
+				"/Me/@com.sap.vocabularies.Common.v1.Messages/$Path" : "SAP_Messages",
+				"/Me" : {}
+			}, true);
+
+		assert.deepEqual(
+			// code under test
+			_Helper.intersectQueryOptions(mCacheQueryOptions, ["*", "SAP_Messages"],
+				fnFetchMetadata, "/Me", "", false, true),
+			{$select : ["A", "SAP_Messages", "C"]}
+		);
+
+		assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions,
+			"unmodified");
 	});
 
 	//*********************************************************************************************

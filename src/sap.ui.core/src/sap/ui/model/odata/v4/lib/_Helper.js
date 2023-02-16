@@ -1537,6 +1537,8 @@ sap.ui.define([
 		 *   Optional prefix for navigation property meta paths used during recursion
 		 * @param {boolean} [bAllowEmptySelect]
 		 *   Whether an empty "$select" is allowed
+		 * @param {boolean} bWithMessages
+		 *   Whether the "@com.sap.vocabularies.Common.v1.Messages" path is treated specially
 		 * @returns {object}
 		 *   The updated query options or <code>null</code> if no request is needed
 		 * @throws {Error}
@@ -1544,9 +1546,11 @@ sap.ui.define([
 		 *   collection-valued navigation property
 		 */
 		intersectQueryOptions : function (mCacheQueryOptions, aPaths, fnFetchMetadata,
-				sRootMetaPath, sPrefix, bAllowEmptySelect) {
+				sRootMetaPath, sPrefix, bAllowEmptySelect, bWithMessages) {
 			var aExpands = [],
 				mExpands = {},
+				sMessagesPath = bWithMessages && fnFetchMetadata(sRootMetaPath
+					+ "/@com.sap.vocabularies.Common.v1.Messages/$Path").getResult(),
 				mResult,
 				oRootMetaData,
 				aSelects,
@@ -1580,10 +1584,16 @@ sap.ui.define([
 
 			if (aPaths.indexOf("*") >= 0) {
 				aSelects = (mCacheQueryOptions && mCacheQueryOptions.$select || []).slice();
+				if (sMessagesPath && !aSelects.includes(sMessagesPath)) {
+					aSelects.push(sMessagesPath);
+				}
 			} else if (mCacheQueryOptions && mCacheQueryOptions.$select
 					&& mCacheQueryOptions.$select.indexOf("*") < 0) {
 				_Helper.addChildrenWithAncestor(aPaths, mCacheQueryOptions.$select, mSelects);
 				_Helper.addChildrenWithAncestor(mCacheQueryOptions.$select, aPaths, mSelects);
+				if (sMessagesPath && aPaths.includes(sMessagesPath)) {
+					mSelects[sMessagesPath] = true;
+				}
 				aSelects = Object.keys(mSelects).filter(filterStructural.bind(null, true));
 			} else {
 				aSelects = aPaths.filter(filterStructural.bind(null, false));
