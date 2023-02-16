@@ -1,8 +1,9 @@
 sap.ui.define([], function () {
-	'use strict';
+	"use strict";
+
 	return {
 		"sap.app": {
-			"id": "cards.performance.manifests.filterCard",
+			"id": "",
 			"type": "card"
 		},
 		"sap.card": {
@@ -62,26 +63,6 @@ sap.ui.define([], function () {
 					"Name": "Notebook Professional 15",
 					"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
 					"Id": "HT-1010",
-					"SubCategoryId": "Notebooks",
-					"icon": "./images/DonnaMoore.png",
-					"state": "Success",
-					"info": "29.45 EUR",
-					"infoState": "Success"
-				},
-				{
-					"Name": "Notebook Professional 26",
-					"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-					"Id": "HT-1022",
-					"SubCategoryId": "Notebooks",
-					"icon": "./images/DonnaMoore.png",
-					"state": "Success",
-					"info": "29.45 EUR",
-					"infoState": "Success"
-				},
-				{
-					"Name": "Notebook Professional 27",
-					"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-					"Id": "HT-1024",
 					"SubCategoryId": "Notebooks",
 					"icon": "./images/DonnaMoore.png",
 					"state": "Success",

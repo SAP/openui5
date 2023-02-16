@@ -1,8 +1,9 @@
 sap.ui.define([], function () {
-	'use strict';
+	"use strict";
+
 	return {
 		"sap.app": {
-			"id": "cards.performance.manifests.additionalObjectCard",
+			"id": "",
 			"type": "card",
 			"title": "Sample of an Object Card",
 			"subTitle": "Sample of an Object Card",
