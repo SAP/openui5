@@ -1009,6 +1009,21 @@ sap.ui.define([
 		}
 	};
 
+	AnalyticalTable.prototype._getTotalRowCount = function() {
+		var iTotalRowCount = Table.prototype._getTotalRowCount.apply(this, arguments);
+
+		if (iTotalRowCount === 1) {
+			var oBinding = this.getBinding();
+			var bHasGrandTotal = oBinding ? oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() : false;
+
+			if (bHasGrandTotal) {
+				iTotalRowCount = 0; // If there's only the grand total, the table has to act as if it's empty.
+			}
+		}
+
+		return iTotalRowCount;
+	};
+
 	/**
 	 * Returns the total size of the data entries.
 	 *
