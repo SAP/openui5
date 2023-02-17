@@ -8,8 +8,11 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterConverter",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
+	'sap/ui/mdc/enum/BaseType',
 	"sap/ui/mdc/enum/ConditionValidated",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date",
+	"sap/m/DatePicker"
 ], function(
 	Controller,
 	Filter,
@@ -20,8 +23,11 @@ sap.ui.define([
 	FilterConverter,
 	FilterOperatorUtil,
 	Operator,
+	BaseType,
 	ConditionValidated,
-	oCore
+	oCore,
+	UI5Date,
+	DatePicker
 ) {
 	"use strict";
 
@@ -75,6 +81,45 @@ sap.ui.define([
 					return new Filter({ filters: [oFilter1, oFilter2], and: false });
 				}
 			}));
+
+			FilterOperatorUtil.addOperator(new Operator({ // Date for DateTime FilterField
+				name: "MYDATE",
+				alias: {Date: "DATE", DateTime: "DATE"},
+				filterOperator: FilterOperator.EQ,
+				longText: "Date", // only needed for MultiValue
+				tokenText: "Date", // only needed for MultiValue
+				tokenParse: "^=([^=].*)$", // only needed for MultiValue
+				tokenFormat: "{0}", // only needed for MultiValue
+				valueTypes: [{name: "sap.ui.model.odata.type.DateTime", constraints: {displayFormat: "Date"}}], // use date type to have no time part
+				createControl: function(oType, sPath, iIndex, sId)  { // only needed for MultiValue
+					return new DatePicker(sId, { // render always a DatePicker, also for DateTime
+						value: {path: sPath, type: oType, mode: 'TwoWay'},
+						width: "100%"
+					});
+				},
+				getModelFilter: function (oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+					if (oType.isA("sap.ui.model.odata.type.DateTime")) {
+						// var oOperatorType = this._createLocalType(this.valueTypes[0]);
+						var oFrom = UI5Date.getInstance(oCondition.values[0]); // do not modify original date object
+						// var oModelFormat = oType.getModelFormat(); // use ModelFormat to convert in JS-Date and add 23:59:59
+						// var oOperatorModelFormat = oOperatorType.getModelFormat(); // use ModelFormat to convert in JS-Date and add 23:59:59
+						// var oDate = oOperatorModelFormat.parse(oFrom, false);
+						// oFrom = oModelFormat.format(oDate);
+						var oDate = UI5Date.getInstance(oFrom.getUTCFullYear(), oFrom.getUTCMonth(), oFrom.getUTCDate()); // TODO we need a Type function to convert it to a locale date
+						oFrom = UI5Date.getInstance(oDate.getTime());
+						oDate.setHours(23);
+						oDate.setMinutes(59);
+						oDate.setSeconds(59);
+						oDate.setMilliseconds(999);
+						// var oTo = oModelFormat.format(oDate);
+						var oTo = UI5Date.getInstance(oDate.getTime());
+						return new Filter({path: sFieldPath, operator: FilterOperator.BT, value1: oFrom, value2: oTo});
+					} else {
+						return new Filter({path: sFieldPath, operator: this.filterOperator, value1: oCondition.values[0]});
+					}
+				}
+			}));
+			FilterOperatorUtil.addOperatorForType(BaseType.DateTime, "MYDATE");
 		},
 
 		handleChange: function(oEvent) {

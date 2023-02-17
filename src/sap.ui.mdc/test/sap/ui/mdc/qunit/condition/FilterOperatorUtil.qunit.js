@@ -16,10 +16,12 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/odata/type/String",
+	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/DateTimeWithTimezone",
 	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/UniversalDateUtils",
+	"sap/ui/core/date/UI5Date",
 	"sap/m/library"
 ], function(
 	FilterOperatorUtil,
@@ -32,10 +34,12 @@ sap.ui.define([
 	Filter,
 	IntegerType,
 	StringType,
+	DateType,
 	DateTimeWithTimezoneType,
 	DateTimeOffsetType,
 	UniversalDate,
 	UniversalDateUtils,
+	UI5Date,
 	mLibrary
 ) {
 	"use strict";
@@ -277,7 +281,7 @@ sap.ui.define([
 						}
 
 						if (oTest.filter) {
-							var oFilter = oOperator.getModelFilter(oCondition, "test", oTest.oType);
+							var oFilter = oOperator.getModelFilter(oCondition, "test", oTest.oType, oTest.caseSensitive, oTest.baseType);
 							assert.ok(oFilter, "Filter returned");
 							assert.equal(oFilter.sPath, oTest.filter.path, "Filter path");
 							assert.equal(oFilter.sOperator, oTest.filter.operator, "Filter operator");
@@ -1267,6 +1271,31 @@ sap.ui.define([
 			aOperators.push(FilterOperatorUtil._mOperators[sName]);
 		}
 
+		var oDateTimeOffsetType = new DateTimeOffsetType({pattern: "yyyyMMdd-HHmmssSSS"}, {V4: true});
+		var oDateType = new DateType({pattern: "yyyyMMdd"}, {});
+		var oDate = UI5Date.getInstance(); // Today (filter-test for one range should be enough)
+		var sYear = oDate.getFullYear().toString();
+		var iMonth = oDate.getMonth() + 1;
+		var sMonth = iMonth < 10 ? "0" + iMonth : iMonth.toString();
+		var iDate = oDate.getDate();
+		var sDate = iDate < 10 ? "0" + iDate : iDate.toString();
+		var sTodayStart = oDateTimeOffsetType.parseValue(sYear + sMonth + sDate + "-000000000", "string"); // Today start
+		var sTodayEnd = oDateTimeOffsetType.parseValue(sYear + sMonth + sDate + "-235959999", "string"); // Today end
+		oDate.setDate(iDate - 1);
+		sYear = oDate.getFullYear().toString();
+		iMonth = oDate.getMonth() + 1;
+		sMonth = iMonth < 10 ? "0" + iMonth : iMonth.toString();
+		iDate = oDate.getDate();
+		sDate = iDate < 10 ? "0" + iDate : iDate.toString();
+		var sLastDaysEnd = oDateType.parseValue(sYear + sMonth + sDate, "string"); // LastDays end
+		oDate.setDate(iDate - 3);
+		sYear = oDate.getFullYear().toString();
+		iMonth = oDate.getMonth() + 1;
+		sMonth = iMonth < 10 ? "0" + iMonth : iMonth.toString();
+		iDate = oDate.getDate();
+		sDate = iDate < 10 ? "0" + iDate : iDate.toString();
+		var sLastDaysStart = oDateType.parseValue(sYear + sMonth + sDate, "string"); // LastDays start
+
 		var aFormatTest = {
 			"YESTERDAY": [{
 				formatArgs: [Condition.createCondition("YESTERDAY", [undefined])],
@@ -1286,7 +1315,10 @@ sap.ui.define([
 				condition: Condition.createCondition("TODAY", [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
-				isSingleValue: true
+				isSingleValue: true,
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: "BT", value1 : sTodayStart, value2: sTodayEnd}
 			}],
 			"TOMORROW": [{
 				formatArgs: [Condition.createCondition("TOMORROW", [undefined])],
@@ -1309,7 +1341,10 @@ sap.ui.define([
 				valid: true,
 				isSingleValue: true,
 				longText: "Last X days",
-				tokenText: "Last {0} days"
+				tokenText: "Last {0} days",
+				oType: oDateType,
+				baseType: BaseType.Date,
+				filter: {path: "test", operator: "BT", value1 : sLastDaysStart, value2: sLastDaysEnd}
 			},
 			{
 				formatArgs: [Condition.createCondition("LASTDAYS", [4]), undefined, undefined, true],

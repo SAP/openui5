@@ -153,7 +153,7 @@ sap.ui.define([
 		tokenText: "Date", // only needed for MultiValue
 		tokenParse: "^=([^=].*)$", // only needed for MultiValue
 		tokenFormat: "{0}", // only needed for MultiValue
-		valueTypes: [Operator.ValueType.Self],
+		valueTypes: [{name: "sap.ui.model.odata.type.Date"}], // use date type to have no time part
 		createControl: function(oType, sPath, iIndex, sId)  { // only needed for MultiValue
 			var oDatePicker = new DatePicker(sId, { // render always a DatePicker, also for DateTime
 				value: {path: sPath, type: oType, mode: 'TwoWay'},
@@ -164,14 +164,16 @@ sap.ui.define([
 		},
 		getModelFilter: function (oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 			if (oType.isA("sap.ui.model.odata.type.DateTimeOffset")) {
+				var oOperatorType = this._createLocalType(this.valueTypes[0]);
 				var sFrom = oCondition.values[0];
-				var oModelFormat = oType.getModelFormat(); // use ModelFormat to convert in JS-Date and add 23:59:59
-				var oDate = oModelFormat.parse(sFrom);
+				var oOperatorModelFormat = oOperatorType.getModelFormat(); // use ModelFormat to convert in JS-Date and add 23:59:59
+				var oDate = oOperatorModelFormat.parse(sFrom, false);
+				sFrom = oType.getModelValue(oDate);
 				oDate.setHours(23);
 				oDate.setMinutes(59);
 				oDate.setSeconds(59);
 				oDate.setMilliseconds(999);
-				var sTo = oModelFormat.format(oDate);
+				var sTo = oType.getModelValue(oDate);
 				return new Filter({path: sFieldPath, operator: ModelOperator.BT, value1: sFrom, value2: sTo});
 			} else {
 				return new Filter({path: sFieldPath, operator: this.filterOperator, value1: oCondition.values[0]});
@@ -187,7 +189,7 @@ sap.ui.define([
 		tokenText: "Date Range", // only needed for MultiValue
 		tokenParse: "^([^!].*)\\.\\.\\.(.+)$", // only needed for MultiValue
 		tokenFormat: "{0}...{1}", // only needed for MultiValue
-		valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
+		valueTypes: [{name: "sap.ui.model.odata.type.Date"}, {name: "sap.ui.model.odata.type.Date"}], // use date type to have no time part
 		createControl: function(oType, sPath, iIndex, sId)  { // only needed for MultiValue
 			var oDatePicker = new DatePicker(sId, { // render always a DatePicker, also for DateTime
 				value: {path: sPath, type: oType, mode: 'TwoWay'},
@@ -198,14 +200,20 @@ sap.ui.define([
 		},
 		getModelFilter: function (oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 			if (oType.isA("sap.ui.model.odata.type.DateTimeOffset")) {
+				var oOperatorType = this._createLocalType(this.valueTypes[0]);
 				var sFrom = oCondition.values[0];
-				var oModelFormat = oType.getModelFormat(); // use ModelFormat to convert in JS-Date and add 23:59:59
-				var oDate = oModelFormat.parse(oCondition.values[1]);
+				var oOperatorModelFormat = oOperatorType.getModelFormat(); // use ModelFormat to convert in JS-Date and add 23:59:59
+				var oDate = oOperatorModelFormat.parse(sFrom, false);
+				sFrom = oType.getModelValue(oDate);
+				oOperatorType = this._createLocalType(this.valueTypes[1]);
+				oOperatorModelFormat = oOperatorType.getModelFormat(); // use ModelFormat to convert in JS-Date and add 23:59:59
+				var sTo = oCondition.values[1];
+				oDate = oOperatorModelFormat.parse(sTo, false);
 				oDate.setHours(23);
 				oDate.setMinutes(59);
 				oDate.setSeconds(59);
 				oDate.setMilliseconds(999);
-				var sTo = oModelFormat.format(oDate);
+				sTo = oType.getModelValue(oDate);
 				return new Filter({path: sFieldPath, operator: ModelOperator.BT, value1: sFrom, value2: sTo});
 			} else {
 				return new Filter({path: sFieldPath, operator: this.filterOperator, value1: oCondition.values[0], value2: oCondition.values[1]});

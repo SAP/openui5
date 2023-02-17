@@ -3,15 +3,15 @@
 */
 sap.ui.define([
 		'sap/ui/mdc/condition/Operator',
-		'sap/ui/model/Filter',
 		'sap/ui/mdc/util/DateUtil',
+		'sap/ui/model/Filter',
 		'sap/base/Log'
 	],
 
 	function(
 		Operator,
-		Filter,
 		DateUtil,
+		Filter,
 		Log
 	) {
 		"use strict";
@@ -91,7 +91,7 @@ sap.ui.define([
 		};
 
 		RangeOperator.prototype._getRange = function(aValues, oType, sBaseType) {
-			var aRange;
+			var aRange; // contains UniversalDates in local time
 			if (aValues) {
 				if (aValues.length === 2) {
 					aRange = this.calcRange(aValues[0], aValues[1]);
@@ -103,12 +103,11 @@ sap.ui.define([
 			}
 
 			for (var i = 0; i < 2; i++) {
-				//the calcRange result must be converted from local time to UTC and into the correct type format.
-				aRange[i].oDate = DateUtil.localToUtc(aRange[i].oDate);
-				aRange[i] = DateUtil.universalDateToType(aRange[i], oType, sBaseType);
+				//the calcRange result must be converted from local time into the correct type format.
+				aRange[i] = DateUtil.dateToType(aRange[i].getJSDate(), oType, sBaseType);
 			}
 
-			return aRange;
+			return aRange; // containes type presentation of dates in local time
 		};
 
 		/**

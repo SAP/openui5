@@ -112,13 +112,61 @@ sap.ui.define([
 	});
 
 	QUnit.test("internalizeValue", function (assert) {
-		var oTypedValue = TypeUtil.internalizeValue("2000-01-01", new DateType());
-		assert.equal(oTypedValue.toDateString(), 'Sat Jan 01 2000', "expected value returned");
+		var oType = new DateType();
+		var oTypedValue = TypeUtil.internalizeValue("2000-01-01", oType);
+		var oDate = new Date(2000, 0, 1);
+		assert.equal(oTypedValue.toString(), oDate.toString(), "expected value returned");
+
+		oTypedValue = TypeUtil.internalizeValue("2000-01-01T00:00:00+0100", oType); // old variant value for pure date inside DateTime FilterField
+		assert.equal(oTypedValue.toString(), oDate.toString(), "expected value returned");
+
+		oType.destroy();
+		oType = new DateTime();
+		oDate = new Date(Date.UTC(2000, 0, 1, 10, 10, 10, 100));
+		oTypedValue = TypeUtil.internalizeValue("2000-01-01T10:10:10.100Z", oType);
+		assert.equal(oTypedValue.toString(), oDate.toString(), "expected value returned");
+
+		oDate = new Date("2000-01-01T10:10:10+0100");
+		oTypedValue = TypeUtil.internalizeValue("2000-01-01T10:10:10+0100", oType); // old variant value for DateTime FilterField
+		assert.equal(oTypedValue.toString(), oDate.toString(), "expected value returned");
+
+		oType.destroy();
+		oType = new DateTime({UTC: true});
+		oDate = new Date(Date.UTC(2000, 0, 1, 10, 10, 10, 100));
+		oTypedValue = TypeUtil.internalizeValue("2000-01-01T10:10:10.100Z", oType);
+		assert.equal(oTypedValue.toString(), oDate.toString(), "expected value returned");
+
+		oType.destroy();
+		oType = new Time();
+		oDate = new Date(1970, 0, 1, 10, 10, 10);
+		oTypedValue = TypeUtil.internalizeValue("10:10:10", oType);
+		assert.equal(oTypedValue.toString(), oDate.toString(), "expected value returned");
+		oType.destroy();
 	});
 
 	QUnit.test("externalizeValue", function (assert) {
-		var oDate = new Date("2000-01-01 UTC");
-		var oStringifiedValue = TypeUtil.externalizeValue(oDate, new DateType());
+		var oType = new DateType();
+		var oDate = new Date(2000, 0, 1); // inside type the date is 00:00:00 on local time
+		var oStringifiedValue = TypeUtil.externalizeValue(oDate, oType);
 		assert.equal(oStringifiedValue, "2000-01-01", "stringified value returned");
+
+		oType.destroy();
+		oType = new DateTime();
+		oDate = new Date(Date.UTC(2000, 0, 1, 10, 10, 10, 100));
+		oStringifiedValue = TypeUtil.externalizeValue(oDate, oType);
+		assert.equal(oStringifiedValue, "2000-01-01T10:10:10.100Z", "stringified value returned");
+
+		oType.destroy();
+		oType = new DateTime({UTC: true});
+		oDate = new Date(Date.UTC(2000, 0, 1, 10, 10, 10, 100));
+		oStringifiedValue = TypeUtil.externalizeValue(oDate, oType);
+		assert.equal(oStringifiedValue, "2000-01-01T10:10:10.100Z", "stringified value returned");
+
+		oType.destroy();
+		oType = new Time();
+		oDate = new Date(1970, 0, 1, 10, 10, 10);
+		oStringifiedValue = TypeUtil.externalizeValue(oDate, oType);
+		assert.equal(oStringifiedValue, "10:10:10", "stringified value returned");
+		oType.destroy();
 	});
 });

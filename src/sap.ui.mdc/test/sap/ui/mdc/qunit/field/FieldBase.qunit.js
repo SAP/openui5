@@ -67,7 +67,8 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/date/UI5Date"
 ], function(
 	jQuery,
 	qutils,
@@ -133,7 +134,8 @@ sap.ui.define([
 	containsOrEquals,
 	Device,
 	KeyCodes,
-	oCore
+	oCore,
+	UI5Date
 ) {
 	"use strict";
 
@@ -1329,7 +1331,7 @@ sap.ui.define([
 				oContent = aContent && aContent.length > 0 && aContent[0];
 				var oCompareValue = {
 					"operator": "DATE",
-					values: [new Date(Date.UTC(2018, 11, 20))]
+					values: [UI5Date.getInstance(2018, 11, 20)] // DynamicDateRange works always with locale date
 				};
 				assert.ok(oContent instanceof DynamicDateRange, "DynamicDateRange rendered");
 				assert.deepEqual(oContent.getValue(), oCompareValue, "Value set on DynamicDateRange control");

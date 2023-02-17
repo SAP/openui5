@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/mdc/enum/BaseType',
 	"sap/ui/model/SimpleType",
 	"sap/ui/model/odata/type/Date",
+	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/model/odata/type/Unit",
 	"sap/ui/model/odata/type/Currency",
@@ -22,6 +23,7 @@ sap.ui.define([
 	BaseType,
 	SimpleType,
 	ODataDate,
+	ODataDateTimeOffset,
 	ODataTimeOfDay,
 	Unit,
 	Currency,
@@ -72,4 +74,61 @@ sap.ui.define([
 			assert.equal(ODataV4TypeUtil.getDataTypeClassName(sKey), oExpected, "expected odata type returned for edm type " + sKey + ": " + oExpected);
 		});
 	});
+
+	QUnit.test("internalizeValue", function (assert) {
+		var oType = new ODataDate();
+		var sTypedValue = ODataV4TypeUtil.internalizeValue("2000-01-01", oType);
+		assert.equal(sTypedValue, "2000-01-01", "expected value returned");
+
+		sTypedValue = ODataV4TypeUtil.internalizeValue("2000-01-01T00:00:00+0100", oType); // old variant value for pure date inside DateTime FilterField
+		assert.equal(sTypedValue, "2000-01-01", "expected value returned");
+
+		oType.destroy();
+		var oDate = new Date(2000, 0, 1, 10, 10, 10, 100);
+		oType = new ODataDateTimeOffset({pattern: "yyyy M d hh mm ss"}, {V4: true});
+		sTypedValue = ODataV4TypeUtil.internalizeValue(oDate.toISOString(), oType);
+		assert.equal(sTypedValue, oType.parseValue("2000 1 1 10 10 10", "string"), "expected value returned"); // compare with parsing result as string depends on browser timezone
+
+		oDate = new Date(Date.UTC(2000, 0, 1, 9, 10, 10, 100));
+		var sString = "" + oDate.getFullYear() + " " + (oDate.getMonth() + 1) + " " + oDate.getDate() + " " + oDate.getHours() + " " + oDate.getMinutes() + " " + oDate.getSeconds();
+		sTypedValue = ODataV4TypeUtil.internalizeValue("2000-01-01T10:10:10+0100", oType); // old variant value for DateTime FilterField
+		assert.equal(sTypedValue, oType.parseValue(sString, "string"), "expected value returned"); // compare with parsing result as string depends on browser timezone
+
+		// oType.destroy();
+		// oType = new ODataDateTimeOffset({pattern: "yyyy M d hh mm ss", UTC: true}, {V4: true});
+		// oDate = new Date(Date.UTC(2000, 0, 1, 10, 10, 10, 100));
+		// sTypedValue = ODataV4TypeUtil.internalizeValue("2000-01-01T10:10:10Z", oType);
+		// assert.equal(sTypedValue, oType.parseValue("2000 1 1 10 10 10", "string"), "expected value returned"); // compare with parsing result as string depends on browser timezone
+
+		oType.destroy();
+		oType = new ODataTimeOfDay();
+		sTypedValue = ODataV4TypeUtil.internalizeValue("10:10:10", oType);
+		assert.equal(sTypedValue, "10:10:10", "expected value returned");
+		oType.destroy();
+	});
+
+	QUnit.test("externalizeValue", function (assert) {
+		var oType = new ODataDate();
+		var sStringifiedValue = ODataV4TypeUtil.externalizeValue("2000-01-01", oType);
+		assert.equal(sStringifiedValue, "2000-01-01", "stringified value returned");
+
+		oType.destroy();
+		oType = new ODataDateTimeOffset({pattern: "yyyy M d hh mm ss"}, {V4: true});
+		var oDate = new Date(2000, 0, 1, 10, 10, 10);
+		sStringifiedValue = ODataV4TypeUtil.externalizeValue(oType.parseValue("2000 1 1 10 10 10", "string"), oType);
+		assert.equal(sStringifiedValue, oDate.toISOString(), "stringified value returned");
+
+		oType.destroy();
+		oType = new ODataDateTimeOffset({pattern: "yyyy M d hh mm ss", UTC: true}, {V4: true});
+		oDate = new Date(Date.UTC(2000, 0, 1, 10, 10, 10));
+		sStringifiedValue = ODataV4TypeUtil.externalizeValue(oType.parseValue("2000 1 1 10 10 10", "string"), oType);
+		assert.equal(sStringifiedValue, "2000-01-01T10:10:10.000Z", "stringified value returned");
+
+		oType.destroy();
+		oType = new ODataTimeOfDay();
+		sStringifiedValue = ODataV4TypeUtil.externalizeValue("10:10:10", oType);
+		assert.equal(sStringifiedValue, "10:10:10", "stringified value returned");
+		oType.destroy();
+	});
+
 });
