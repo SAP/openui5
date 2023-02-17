@@ -319,7 +319,7 @@ sap.ui.define([
 	 * @returns {int}
 	 *   The year of this date instance minus 1900 according to the configured time zone
 	 *
-	 * @deprecated since version 1.111.0 as it is deprecated in JavaScript Date; use
+	 * @deprecated As of version 1.111 as it is deprecated in the base class JavaScript Date; use
 	 *   {@link #getFullYear} instead
 	 * @public
 	 */
@@ -468,7 +468,7 @@ sap.ui.define([
 	 *   The milliseconds of the new timestamp based on the UNIX epoch, or <code>NaN</code> if the
 	 *   timestamp could not be updated
 	 *
-	 * @deprecated since version 1.111.0 as it is deprecated in JavaScript Date; use
+	 * @deprecated As of version 1.111 as it is deprecated in the base class JavaScript Date; use
 	 *   {@link #setFullYear} instead
 	 * @public
 	 */
