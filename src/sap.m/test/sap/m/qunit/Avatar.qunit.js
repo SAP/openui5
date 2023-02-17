@@ -292,6 +292,14 @@ sap.ui.define([
 		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), "When initials inside sap.m.Avatar are overflwing, default icon should be shown after theme is changed");
 	});
 
+	QUnit.test("Avatar with initials consisting of accented characters", function (assert) {
+		this.oAvatar.setInitials("ÌÒ");
+		oCore.applyChanges();
+
+		var $oAvatar = this.oAvatar.$();
+		assert.ok($oAvatar.hasClass("sapFAvatarInitials"), sPreAvatarType + "Initials");
+	});
+
 	QUnit.module("Rendering different fit types", {
 		beforeEach: setupFunction,
 		afterEach: teardownFunction
