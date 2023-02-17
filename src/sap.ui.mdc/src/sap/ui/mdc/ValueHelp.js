@@ -1026,7 +1026,7 @@ sap.ui.define([
 		var oDialog = this.getDialog();
 
 		if (bPreferTypeahead) {
-			return bUseAsValueHelp && oTypeahead || oDialog;
+			return (bUseAsValueHelp || oDialog) && oTypeahead || oDialog;
 		} else {
 			return oDialog || bUseAsValueHelp && oTypeahead;
 		}
