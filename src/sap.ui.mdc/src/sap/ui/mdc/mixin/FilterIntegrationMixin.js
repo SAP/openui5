@@ -231,11 +231,12 @@ sap.ui.define([
 					return;
 				}
 
-				var sLabel = this.getPropertyHelper().getProperty(oConditionKey) ? this.getPropertyHelper().getProperty(oConditionKey).label : null;
+				var sLabel = this.getPropertyHelper().getProperty(oConditionKey) ? this.getPropertyHelper().getProperty(oConditionKey).label : oConditionKey; //TODO the property for the filter might not exitst when you select a variant
 
 				if (sLabel) {
 					aLabels.push(sLabel);
-				} else {
+				}
+				if (!sLabel || sLabel === oConditionKey) {
 					Log.error("No valid property found for filter with key " + oConditionKey + ". Check your metadata.");
 				}
 			}.bind(this));
