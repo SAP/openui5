@@ -1544,8 +1544,12 @@ sap.ui.define([
 
 		/**
 		 * Returns a date range from a provided object in the format of the DynamicDateRange's value.
+		 * @example
+		 * var aDates = DynamicDateRange.toDates({operator: StandardDynamicDateRangeKeys.TODAY, values: []});
+		 * aDates[0].toString()
+		 * // output: "Fri Mar 31 2023 00:00:00 GMT+0200 (Eastern European Standard Time)" - assuming TODAY is Mar 31, 2023, 2:37:00 PM in the configured time zone
 		 *
-		 * @param {object} oValue The provided value
+		 * @param {sap.m.DynamicDateRangeValue} oValue A <code>sap.m.DynamicDateRangeValue</code>
 	 	 * @param {string} sCalendarWeekNumbering The type of calendar week numbering
 		 * @returns {Date[]} An array of two date objects - start and end date
 		 * @static
