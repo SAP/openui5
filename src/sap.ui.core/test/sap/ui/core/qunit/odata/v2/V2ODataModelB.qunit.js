@@ -2306,7 +2306,6 @@ sap.ui.define([
 		};
 
 		oModel.attachRequestCompleted(this, function(test) {
-			assert.equal(spy.getCall(0).args[2], UpdateMethod.Put);
 			assert.equal(spy.callCount, 1, "processChange call count");
 			var oRequest = spy.returnValues[0];
 			assert.equal(oRequest.method, "PUT", "request method");

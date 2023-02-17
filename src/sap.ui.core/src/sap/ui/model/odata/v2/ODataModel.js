@@ -4550,49 +4550,45 @@ sap.ui.define([
 	 *   Key of the entity to change
 	 * @param {object} oData
 	 *   The entry data
-	 * @param {boolean} [sUpdateMethod]
-	 *   Sets <code>MERGE/PUT</code> method, defaults to <code>MERGE</code> if not provided
 	 * @param {string} sGroupId
 	 *   The group ID
+	 * @param {boolean} [sUpdateMethod]
+	 *   Sets <code>MERGE/PUT</code> method, defaults to <code>MERGE</code> if not provided
 	 * @returns {object}
 	 *   The request object
 	 *
 	 * @private
 	 */
-	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod, sGroupId) {
-		var sContentID, oContext, bCreated, sDeepPath, oEntityType, sETag, oExpandRequest,
-			bFunctionImport, mHeaders, sMethod, mParams, oPayload, oRequest, oUnModifiedEntry,
+	ODataModel.prototype._processChange = function(sKey, oData, sGroupId, sUpdateMethod) {
+		var sContentID, oContext, oCreated, sDeepPath, oEntityType, sETag, oExpandRequest,
+			bFunctionImport, mHeaders, sMethod, oPayload, oRequest, oUnModifiedEntry,
 			sUrl, aUrlParams,
 			sEntityPath = "/" + sKey,
 			that = this;
 
-		if (this.mChangedEntities[sKey] && this.mChangedEntities[sKey].__metadata && this.mChangedEntities[sKey].__metadata.deepPath){
-			// retrieve deep path
-			sDeepPath = this.mChangedEntities[sKey].__metadata.deepPath;
-		}
-
 		// delete expand properties = navigation properties
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
 
-		//default to MERGE
 		if (!sUpdateMethod) {
-			sUpdateMethod = "MERGE";
+			sUpdateMethod = this.sDefaultUpdateMethod;
 		}
 
-		// do a copy of the payload or the changes will be deleted in the model as well (reference)
-		oPayload = merge({}, this._getObject('/' + sKey, true), oData);
+		// use #_getObject to receive the complete shadow cache entity (existing entity + current
+		// changes); merge oData into the latest shadow cache entity to ensure that the given
+		// changes are included (shadow cache could have been changed in the meanwhile)
+		oPayload = merge({}, this._getObject(sEntityPath), oData);
+		sDeepPath = oPayload.__metadata.deepPath;
+		oCreated = oPayload.__metadata.created;
 
-		if (oData.__metadata && oData.__metadata.created){
-			sMethod = oData.__metadata.created.method ? oData.__metadata.created.method : "POST";
-			sKey = oData.__metadata.created.key;
-			bCreated = true;
-			mParams = oData.__metadata.created;
-			oExpandRequest = oData.__metadata.created.expandRequest;
-			sContentID = oData.__metadata.created.contentID;
-			bFunctionImport = oData.__metadata.created.functionImport;
-			if (bFunctionImport){
+		if (oCreated) {
+			sMethod = oCreated.method ? oCreated.method : "POST";
+			sKey = oCreated.key;
+			oExpandRequest = oCreated.expandRequest;
+			sContentID = oCreated.contentID;
+			bFunctionImport = oCreated.functionImport;
+			if (bFunctionImport) {
 				// update request url params with changed data from payload
-				mParams.urlParameters = this._createFunctionImportParameters(oData.__metadata.created.key, sMethod, oPayload );
+				oCreated.urlParameters = this._createFunctionImportParameters(oCreated.key, sMethod, oPayload);
 				// clear data
 				oPayload = undefined;
 			} else {
@@ -4656,12 +4652,12 @@ sap.ui.define([
 		oPayload = this._removeReferences(oPayload);
 
 		//get additional request info for created entries
-		aUrlParams = mParams && mParams.urlParameters ? ODataUtils._createUrlParamsArray(mParams.urlParameters) : undefined;
-		mHeaders = mParams ? this._getHeaders(mParams.headers) : this._getHeaders();
+		aUrlParams = oCreated && oCreated.urlParameters ? ODataUtils._createUrlParamsArray(oCreated.urlParameters) : undefined;
+		mHeaders = oCreated ? this._getHeaders(oCreated.headers) : this._getHeaders();
 		if (!bFunctionImport && this._isTransitionMessagesOnly(sGroupId)) {
 			mHeaders["sap-messages"] = "transientOnly";
 		}
-		sETag = mParams && mParams.eTag ? mParams.eTag : this.getETag(oPayload);
+		sETag = oCreated && oCreated.eTag ? oCreated.eTag : this.getETag(oPayload);
 
 		sUrl = this._createRequestUrl('/' + sKey, null, aUrlParams, this.bUseBatch);
 
@@ -4669,7 +4665,7 @@ sap.ui.define([
 		oRequest = this._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oPayload, sETag,
 			undefined, true, oContext.hasSubContexts());
 
-		if (bCreated) {
+		if (oCreated) {
 			oRequest.created = true;
 			// for createEntry requests we need to flag request again
 			if (oExpandRequest) {
@@ -4679,7 +4675,7 @@ sap.ui.define([
 			// for callFunction requests we need to store the updated functionTarget
 			if (bFunctionImport) {
 				oRequest.functionTarget = this.oMetadata._getCanonicalPathOfFunctionImport(
-					oData.__metadata.created.functionMetadata, mParams.urlParameters);
+					oCreated.functionMetadata, oCreated.urlParameters);
 			} else {
 				this._addSubEntitiesToPayload(oContext, oPayload);
 			}
@@ -6170,8 +6166,7 @@ sap.ui.define([
 				}
 
 				if (oGroupInfo.groupId === sGroupId || !sGroupId) {
-					oRequest = that._processChange(sKey, oData, sMethod || that.sDefaultUpdateMethod,
-						oGroupInfo.groupId);
+					oRequest = that._processChange(sKey, oData, oGroupInfo.groupId, sMethod);
 					oRequest.key = sKey;
 					//get params for created entries: could contain success/error handler
 					oCreatedInfo = oData.__metadata && oData.__metadata.created
@@ -6603,10 +6598,8 @@ sap.ui.define([
 
 		if (sGroupId in this.mDeferredGroups) {
 			mRequests = this.mDeferredRequests;
-			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata}, this.sDefaultUpdateMethod, sGroupId);
-		} else {
-			oRequest = this._processChange(sKey, this._getObject('/' + sKey), this.sDefaultUpdateMethod, sGroupId);
 		}
+		oRequest = this._processChange(sKey, this._getObject('/' + sKey), sGroupId);
 		oRequest.key = sKey;
 		//get params for created entries: could contain success/error handler
 		mParams = oChangeObject.__metadata && oChangeObject.__metadata.created ? oChangeObject.__metadata.created : {};

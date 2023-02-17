@@ -699,7 +699,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_processChange", function (assert) {
 		var oContext = {hasSubContexts : function () {}},
-			oData = {__metadata : {etag : "~changedETag"}},
+			oData = {
+				__metadata : {
+					deepPath : "~deepPath",
+					etag : "~changedETag"
+				}
+			},
 			sETag = "~etag",
 			mHeaders = {},
 			sKey = "~key",
@@ -716,6 +721,7 @@ sap.ui.define([
 				mChangedEntities : {
 					"~key" : {__metadata : {deepPath : "~deepPath"}}
 				},
+				sDefaultUpdateMethod : "MERGE",
 				oMetadata : {
 					_getEntityTypeByPath : function () {},
 					_getNavigationPropertyNames : function () {}
@@ -726,13 +732,12 @@ sap.ui.define([
 			oPayload = "~payload",
 			oRequest = {requestUri : "~requestUri"},
 			oResult,
-			sUpdateMethod,
 			sUrl = "~url";
 
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
 			.withExactArgs(sKey)
 			.returns("~oEntityType");
-		this.mock(oModel).expects("_getObject").withExactArgs("/~key", true)
+		this.mock(oModel).expects("_getObject").withExactArgs("/~key")
 			.returns({/* content not relevant for this test */});
 		this.mock(oModel).expects("_getEntity").withExactArgs(sKey)
 			.returns({__metadata : {etag : "~internalETag"}});
@@ -761,7 +766,7 @@ sap.ui.define([
 			.returns(oRequest);
 
 		// code under test
-		oResult = ODataModel.prototype._processChange.call(oModel, sKey, oData, sUpdateMethod, "~sGroupId");
+		oResult = ODataModel.prototype._processChange.call(oModel, sKey, oData, "~sGroupId", undefined);
 
 		assert.strictEqual(oResult, oRequest);
 		assert.deepEqual(oResult, {requestUri : "~requestUri"});
@@ -2541,13 +2546,11 @@ sap.ui.define([
 						contentID : "~contentID",
 						expandRequest : "~expandRequest",
 						key : "~createdKey"
-					}
+					},
+					deepPath : "~deepPath"
 				}
 			},
 			oModel = {
-				mChangedEntities : {
-					"~sKey" : {__metadata : {deepPath : "~deepPath"}}
-				},
 				oMetadata : {
 					_getEntityTypeByPath : function () {},
 					_getNavigationPropertyNames : function () {}
@@ -2568,9 +2571,7 @@ sap.ui.define([
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
 			.withExactArgs("~sKey")
 			.returns("~oEntityType");
-		this.mock(oModel).expects("_getObject")
-			.withExactArgs("/~sKey", true)
-			.returns({});
+		this.mock(oModel).expects("_getObject").withExactArgs("/~sKey").returns({});
 		this.mock(oModel.oMetadata).expects("_getNavigationPropertyNames")
 			.withExactArgs("~oEntityType")
 			.returns([]);
@@ -2593,7 +2594,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oContext), "~oPayload");
 
 		// code under test
-		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "POST", "~sGroupId");
+		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "~sGroupId", "POST");
 
 		assert.deepEqual(oResult, {
 			contentID : "~contentID",
@@ -2612,13 +2613,11 @@ sap.ui.define([
 						functionImport : true,
 						functionMetadata : "~functionMetadata",
 						key : "~createdKey"
-					}
+					},
+					deepPath : "~deepPath"
 				}
 			},
 			oModel = {
-				mChangedEntities : {
-					"~sKey" : {__metadata : {deepPath : "~deepPath"}}
-				},
 				oMetadata : {
 					_getCanonicalPathOfFunctionImport : function () {},
 					_getEntityTypeByPath : function () {}
@@ -2637,7 +2636,7 @@ sap.ui.define([
 
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath").withExactArgs("~sKey")
 			.returns("~oEntityType");
-		this.mock(oModel).expects("_getObject").withExactArgs("/~sKey", true).returns({});
+		this.mock(oModel).expects("_getObject").withExactArgs("/~sKey").returns({});
 		this.mock(oModel).expects("_createFunctionImportParameters")
 			.withExactArgs("~createdKey", "POST", oData).returns("~urlParameters");
 		this.mock(oModel).expects("_removeReferences").withExactArgs(undefined).returns("~payload");
@@ -2658,7 +2657,7 @@ sap.ui.define([
 			.returns("~functionTarget");
 
 		// code under test
-		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "POST");
+		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "~sGroupId", "POST");
 
 		assert.deepEqual(oResult, {
 				created : true,
@@ -2674,13 +2673,11 @@ sap.ui.define([
 				__metadata : {
 					created : {
 						key : "~createdKey"
-					}
+					},
+					deepPath : "~deepPath"
 				}
 			},
 			oModel = {
-				mChangedEntities : {
-					"~sKey" : {__metadata : {deepPath : "~deepPath"}}
-				},
 				oMetadata : {
 					_getEntityTypeByPath : function () {},
 					_getNavigationPropertyNames : function () {}
@@ -2700,7 +2697,7 @@ sap.ui.define([
 
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath").withExactArgs("~sKey")
 			.returns("~oEntityType");
-		this.mock(oModel).expects("_getObject").withExactArgs("/~sKey", true).returns({foo : 7});
+		this.mock(oModel).expects("_getObject").withExactArgs("/~sKey").returns({foo : 7});
 		this.mock(oModel.oMetadata).expects("_getNavigationPropertyNames")
 			.withExactArgs("~oEntityType")
 			.returns([]);
@@ -2722,7 +2719,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oContext), "~payload");
 
 		// code under test
-		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "POST", "~sGroupId");
+		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "~sGroupId", "POST");
 
 		assert.deepEqual(oRequest, {created : true});
 		assert.strictEqual(oResult, oRequest);
@@ -6700,7 +6697,6 @@ sap.ui.define([
 				mChangedEntities : {
 					"~sKey" : oFixture.oData
 				},
-				sDefaultUpdateMethod : "~sDefaultUpdateMethod",
 				mDeferredGroups : {"~groupId" : "~groupId"},
 				mDeferredRequests : {},
 				oMetadata : {
@@ -6727,7 +6723,7 @@ sap.ui.define([
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
 		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
 		this.mock(oModel).expects("_processChange")
-			.withExactArgs("~sKey", /*copy of*/oFixture.oData, "~sDefaultUpdateMethod", "~groupId")
+			.withExactArgs("~sKey", /*copy of*/oFixture.oData, "~groupId", undefined)
 			.returns(oRequest);
 		this.mock(oModel).expects("_pushToRequestQueue")
 			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), "~groupId", "~changeSetId",
@@ -6751,7 +6747,6 @@ sap.ui.define([
 			oMetadataPromise = Promise.resolve(),
 			oModel = {
 				mChangedEntities : {"~sKey" : {}},
-				sDefaultUpdateMethod : "~sDefaultUpdateMethod",
 				mDeferredGroups : {"~groupId" : "~groupId"},
 				mDeferredRequests : {},
 				oMetadata : {
@@ -6802,7 +6797,7 @@ sap.ui.define([
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
 		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
 		this.mock(oModel).expects("_processChange")
-			.withExactArgs("~sKey", {}, "~sDefaultUpdateMethod", "~groupId")
+			.withExactArgs("~sKey", {}, "~groupId", undefined)
 			.returns(oRequest);
 		this.mock(oModel).expects("_pushToRequestQueue")
 			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), "~groupId", "~changeSetId",
@@ -6833,7 +6828,6 @@ sap.ui.define([
 			oMetadataPromise = Promise.resolve(),
 			oModel = {
 				mChangedEntities : {"~sKey" : {}},
-				sDefaultUpdateMethod : "~sDefaultUpdateMethod",
 				mDeferredGroups : {"~groupId" : "~groupId"},
 				mDeferredRequests : {},
 				oMetadata : {
@@ -6886,7 +6880,7 @@ sap.ui.define([
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
 		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
 		this.mock(oModel).expects("_processChange")
-			.withExactArgs("~sKey", {}, "~sDefaultUpdateMethod", "~groupId")
+			.withExactArgs("~sKey", {}, "~groupId", undefined)
 			.returns(oRequest);
 		this.mock(oModel).expects("_pushToRequestQueue")
 			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), "~groupId", "~changeSetId",
@@ -6952,7 +6946,6 @@ sap.ui.define([
 			oMetadataLoadedPromise = Promise.resolve(),
 			oModel = {
 				mChangedEntities: {},
-				sDefaultUpdateMethod: "~sDefaultUpdateMethod",
 				mDeferredGroups: {"~groupId": "~groupId"},
 				mDeferredRequests: "~mDeferredRequests",
 				oMetadata: {
@@ -6990,9 +6983,9 @@ sap.ui.define([
 		oModelMock.expects("_resolveGroup")
 			.withExactArgs("~key")
 			.returns({changeSetId: "~changeSetId", groupId: "~groupId"});
+		oModelMock.expects("_getObject").withExactArgs("/~key").returns("~oData");
 		oModelMock.expects("_processChange")
-			.withExactArgs("~key", {__metadata: {deepPath: "/deep/path", foo: "bar"}}, "~sDefaultUpdateMethod",
-				"~groupId")
+			.withExactArgs("~key", "~oData", "~groupId")
 			.returns(/*oRequest*/{});
 		oModelMock.expects("_getRefreshAfterChange")
 			.withExactArgs(undefined, "~groupId")
@@ -7056,7 +7049,6 @@ sap.ui.define([
 				mChangedEntities : {
 					"key" : {}
 				},
-				sDefaultUpdateMethod : "~sDefaultUpdateMethod",
 				mDeferredGroups : {},
 				oMetadata : {
 					_getEntityTypeByPath : function () {},
@@ -7112,7 +7104,7 @@ sap.ui.define([
 			.withExactArgs("/key")
 			.returns("~oData");
 		oModelMock.expects("_processChange")
-			.withExactArgs("key", "~oData", "~sDefaultUpdateMethod", "~groupId")
+			.withExactArgs("key", "~oData", "~groupId")
 			.returns(/*oRequest*/{});
 		oModelMock.expects("_getRefreshAfterChange")
 			.withExactArgs(undefined, "~groupId")
