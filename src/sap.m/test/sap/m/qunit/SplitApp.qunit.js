@@ -141,7 +141,7 @@ sap.ui.define([
 			//clean up
 			oSplitApp.destroy();
 			done();
-		}, 1500);
+		}, 500);
 
 	});
 
