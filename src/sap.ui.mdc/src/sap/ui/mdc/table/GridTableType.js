@@ -67,6 +67,13 @@ sap.ui.define([
 				showHeaderSelector: {
 					type: "boolean",
 					defaultValue: true
+				},
+				/**
+				 * Defines the number of fixed columns in the inner table.
+				 */
+				fixedColumnCount: {
+					type: "int",
+					defaultValue: 0
 				}
 			}
 		}
@@ -114,6 +121,8 @@ sap.ui.define([
 			if (oMultiSelectionPlugin) {
 				oMultiSelectionPlugin.setShowHeaderSelector(vValue);
 			}
+		} else if (sProperty === "fixedColumnCount") {
+			oGridTable.setFixedColumnCount(vValue);
 		}
 	};
 

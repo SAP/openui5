@@ -133,6 +133,15 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"GridTableType": {
+				group: "Control element",
+				module: "./GridTableType.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"V4AnalyticsPropertyHelper": {
 				group: "Control helper",
 				module: "./V4AnalyticsPropertyHelper.qunit",
