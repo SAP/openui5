@@ -20,10 +20,6 @@ sap.ui.define([
 	// right away. If this is the case and the behavior is expected these module/tests should be adopted.
 	QUnit.module("sap.ui.getVersionInfo", {
 		before: function() {
-			// unload it from the preload cache in case it's loaded for any reason
-			// for example, by the UI5 Inspector browser plugin
-			sap.ui.loader._.unloadResources("sap-ui-version.json", false, true, true);
-
 			QUnit.assert.deepSortedEqual = function(a, b, msg) {
 				return this.deepEqual(deepSort(a), deepSort(b), msg);
 			};
@@ -142,6 +138,9 @@ sap.ui.define([
 			};
 
 			this.oDeprecatedAPISpy = this.spy(sap.ui, "getVersionInfo");
+
+			// Clear cached version info data before each test starts
+			VersionInfo._reset();
 		},
 		initFakeServer: function(sResponseCode, oResponse) {
 			this.oServer = this._oSandbox.useFakeServer();
@@ -153,11 +152,6 @@ sap.ui.define([
 				},
 				JSON.stringify(oResponse || this.oVersionInfo)
 			]);
-		},
-		afterEach: function() {
-			// Clear cached version info data after each test
-			// do not delete as this removes the defined setters / getters
-			sap.ui.versioninfo = undefined;
 		}
 	});
 

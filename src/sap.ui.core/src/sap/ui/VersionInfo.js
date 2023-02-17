@@ -288,5 +288,19 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 		}
 	};
 
+	/**
+	 * Reset the cached version info data that is saved internally within this module.
+	 *
+	 * This function is intended to be used in unit tests where a custom version
+	 * info object is needed.
+	 *
+	 * @static
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	VersionInfo._reset = function() {
+		updateVersionInfo();
+	};
+
 	return VersionInfo;
 });
